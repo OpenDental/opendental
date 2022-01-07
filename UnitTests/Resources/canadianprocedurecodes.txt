@@ -1,0 +1,1360 @@
+00011	Exam & Diag.,Clinical Oral Dental Visit/Orientation	3	0	0	0	0	Diagnostic	/X/	EDCODV
+01101	Exam & Diag.,Clinical Oral Primary Dentition	3	0	0	0	0	Diagnostic	/X/	Primary Exam
+01102	Exam & Diag.,Clinical Oral Mixed Dentition	3	0	0	0	0	Diagnostic	/X/	Mixed Exam
+01103	Exam & Diag.,Clinical Oral Permanent Dentition	3	0	0	0	0	Diagnostic	/X/	Permanent Exam
+01201	Exam & Diag.,Limited Oral New Patient	3	0	0	0	0	Diagnostic	/X/	Ex,NP, Ltd
+01202	Exam & Diag.,Limited Oral Previous Patient (recall)	3	0	0	0	0	Diagnostic	/X/	Recare Exam
+01204	Exam & Diag.,Limited Oral Specific	3	0	0	0	0	Diagnostic	/X/	Specific Exam
+01205	Exam & Diag.,Limited Oral Emergency	3	0	0	0	0	Diagnostic	/X/	Emerg Exam
+01301	Exam&D,Stomatognathic,Dysfnc Comprehensive	3	0	0	0	0	Diagnostic	/X/	TMD, Ex, Comp
+01302	Exam&D,Stomatognathic,Dysfnc Limited	3	0	0	0	0	Diagnostic	/X/	TMD, Ex, Ltd
+01401	Exam & Diag.,Oral Pathology General	3	0	0	0	0	Diagnostic	/X/	Ex,Path,Gen
+01402	Exam & Diag.,Oral Pathology Specific	3	0	0	0	0	Diagnostic	/X/	Ex,Path,Spec
+01501	Exam & Diag.,Periodontal General	3	0	0	0	0	Diagnostic	/X/	Ex, Perio, Gen
+01502	Exam & Diag.,Periodontal Previous Patient (recall)	3	0	0	0	0	Diagnostic	/X/	Ex, Perio, Recare
+01503	Exam & Diag.,Periodontal Specific	3	0	0	0	0	Diagnostic	/X/	EDPS
+01601	Exam & Diag.,Surgical General	3	0	0	0	0	Diagnostic	/X/	Ex, Surg, Gen
+01602	Exam & Diag.,Surgical Specific	3	0	0	0	0	Diagnostic	/X/	Ex, Surg, Specific
+01701	Exam & Diag.,Prosthodontic General,Edentulous	3	0	0	0	0	Diagnostic	/X/	Ex, Prosth, Gen
+01702	Exam & Diag.,Prosthodontic Specific	3	0	0	0	0	Diagnostic	/X/	Ex, Prosth,Spec
+01703	Exam & Diag.,Prosthodontic Fixed Oral Rehabilitation	3	0	0	0	0	Diagnostic	/X/	Ex, Prosth, Fixed
+01801	Exam & Diag.,Endodontic General	3	0	0	0	0	Diagnostic	/X/	Ex, Endo, Comp
+01802	Exam & Diag.,Endodontic Specific	3	0	0	0	0	Diagnostic	/X/	Ex, Endo, Spec
+01901	Exam & Diag.,Orthodontic General	3	0	0	0	0	Diagnostic	/X/	Ex, Ortho, Gen
+01902	Exam & Diag.,Orthodontic Specific	3	0	0	0	0	Diagnostic	/X/	Ex, Ortho, Spec
+02101	Radiographs,Regional/Localized Compl.Series(12min),E	3	0	0	0	0	Diagnostic	/X/	Xrays, Pedo, FMS
+02102	Radiographs,Regional/Localized Complete Series (16min),E	3	0	0	0	0	Diagnostic	/X/	Xrays, Adult, FMS
+02111	Radiographs,Periapical -1 image	3	0	0	0	0	Diagnostic	/X/	1PA
+02112	Radiographs,Periapical -2 images	3	0	0	0	0	Diagnostic	/X/	2PA's
+02113	Radiographs,Periapical -3 images	3	0	0	0	0	Diagnostic	/X/	3PA's
+02114	Radiographs,Periapical -4 images	3	0	0	0	0	Diagnostic	/X/	4PA's
+02115	Radiographs,Periapical -5 images	3	0	0	0	0	Diagnostic	/X/	5PA's
+02116	Radiographs,Periapical -6 images	3	0	0	0	0	Diagnostic	/X/	6PA's
+02117	Radiographs,Periapical -7 images	3	0	0	0	0	Diagnostic	/X/	7PA's
+02118	Radiographs,Periapical -8 images	3	0	0	0	0	Diagnostic	/X/	8PA's
+02119	Radiographs,Periapical -9 images	3	0	0	0	0	Diagnostic	/X/	9PA's
+02120	Radiographs,Periapical -10 images	3	0	0	0	0	Diagnostic	/X/	10PA's
+02121	Radiographs,Periapical -11 images	3	0	0	0	0	Diagnostic	/X/	RP11
+02122	Radiographs,Periapical -12 images	3	0	0	0	0	Diagnostic	/X/	RP12
+02123	Radiographs,Periapical -13 images	3	0	0	0	0	Diagnostic	/X/	RP13
+02124	Radiographs,Periapical -14 images	3	0	0	0	0	Diagnostic	/X/	RP14
+02125	Radiographs,Periapical -15 images	3	0	0	0	0	Diagnostic	/X/	RP15
+02131	Radiographs,Occlusal - 1 image	3	0	0	0	0	Diagnostic	/X/	Xray, Occ'l, 1
+02132	Radiographs,Occlusal - 2 images	3	0	0	0	0	Diagnostic	/X/	Xray, Occ'l, 2
+02133	Radiographs,Occlusal - 3 images	3	0	0	0	0	Diagnostic	/X/	Xray, Occ'l, 3
+02141	Radiographs,Bitewing-1 image	3	0	0	0	0	Diagnostic	/X/	1 BW
+02142	Radiographs,Bitewing-2 images	3	0	0	0	0	Diagnostic	/X/	2 BW's
+02143	Radiographs,Bitewing-3 images	3	0	0	0	0	Diagnostic	/X/	3 BW's
+02144	Radiographs,Bitewing-4 images	3	0	0	0	0	Diagnostic	/X/	4 BW's
+02151	Rgraphs,Reg/Localized,other 1 image	3	0	0	0	0	Diagnostic	/X/	RR1
+02152	Rgraphs,Reg/Localized,other 2 images	3	0	0	0	0	Diagnostic	/X/	RR2
+02153	Rgraphs,Reg/Localized,other 3 images	3	0	0	0	0	Diagnostic	/X/	RR3
+02154	Rgraphs,Reg/Localized,other 4 images	3	0	0	0	0	Diagnostic	/X/	RR4
+02159	Rgraphs,Reg/Localized,other Each Additional image Over 4	3	0	0	0	0	Diagnostic	/X/	RREO4
+02301	Rgraphs,Postero-Ant/LatSkull 1 image	3	0	0	0	0	Diagnostic	/X/	Xray, skull, 1
+02302	Rgraphs,Postero-Ant/LatSkull 2 images	3	0	0	0	0	Diagnostic	/X/	Xray, skull, 2
+02303	Rgraphs,Postero-Ant/LatSkull 3 images	3	0	0	0	0	Diagnostic	/X/	Xray, skull, 3
+02304	Rgraphs,Postero-Ant/LatSkull Sinus Exam - 4 images	3	0	0	0	0	Diagnostic	/X/	Xray, Sinus
+02309	Rgraphs,Postero-Ant/LatSkull Each Additional image Over 4	3	0	0	0	0	Diagnostic	/X/	Xray, Sinus, add'l
+02401	Radiographs,Sialography 1 image	3	0	0	0	0	Diagnostic	/X/	Sialography, 1
+02402	Radiographs,Sialography 2 images	3	0	0	0	0	Diagnostic	/X/	Sialography, 2
+02409	Radiographs,Sialography Each Additional image Over 2	3	0	0	0	0	Diagnostic	/X/	Sialography, 3
+02501	Rgraphs,TMJ 1 image	3	0	0	0	0	Diagnostic	/X/	Xray, TMJ, 1
+02502	Rgraphs,TMJ 2 images	3	0	0	0	0	Diagnostic	/X/	Xray, TMJ, 2
+02503	Rgraphs,TMJ 3 images	3	0	0	0	0	Diagnostic	/X/	Xray, TMJ, 3
+02504	Rgraphs,TMJ 4 images (minimum exam)	3	0	0	0	0	Diagnostic	/X/	Xray, TMJ, 4
+02509	Rgraphs,TMJ Each Additional image Over 4	3	0	0	0	0	Diagnostic	/X/	Xray, TMJ, add'l
+02601	Radiographs,Panoramic 1 image	3	0	0	0	0	Diagnostic	/X/	PAN
+02701	Radiographs,Cephalometric 1 image	3	0	0	0	0	Diagnostic	/X/	RC1
+02702	Radiographs,Cephalometric 2 images	3	0	0	0	0	Diagnostic	/X/	RC2
+02703	Radiographs,Cephalometric 3 images	3	0	0	0	0	Diagnostic	/X/	RC3
+02704	Radiographs,Cephalometric 4 images	3	0	0	0	0	Diagnostic	/X/	RC4
+02751	Radiographs,Cephalometric Tracing/Interpretation,1U	3	0	0	0	0	Diagnostic	/X/	RCT1U
+02752	Radiographs,Cephalometric Tracing/Interpretation,2U	3	0	0	0	0	Diagnostic	/X/	RCT2U
+02759	Radiographs,Cephalometric Tracing/Interpretation,EAUO 2	3	0	0	0	0	Diagnostic	/X/	RCTEO2
+02801	Radiographs,Interpretation (from other source),1U,E	3	0	0	0	0	Diagnostic	/X/	Xray, Interpret, 1
+02802	Radiographs,Interpretation (from other source),2U,E	3	0	0	0	0	Diagnostic	/X/	Xray, Interpret, 2
+02807	Radiographs,Interpretation (from other source),1/2U,E	3	0	0	0	0	Diagnostic	/X/	RI1E
+02809	Radiographs,Interpretation (from other source),EAUO 2,E	3	0	0	0	0	Diagnostic	/X/	Xray, Interpret, add'l
+02911	Radiographs,Duplications 1 image	3	0	0	0	0	Diagnostic	/X/	Xray, Dup, 1
+02912	Radiographs,Duplications 2 images	3	0	0	0	0	Diagnostic	/X/	Xray, Dup, 2
+02913	Radiographs,Duplications 3 images	3	0	0	0	0	Diagnostic	/X/	Xray, Dup 3
+02919	Radiographs,Duplications Each Additional image	3	0	0	0	0	Diagnostic	/X/	Xray, Dup, add'l
+02921	Radiographs,Duplications Complete Series of 12	3	0	0	0	0	Diagnostic	/X/	RDCS12
+02922	Radiographs,Duplications Complete Series,13 or more	3	0	0	0	0	Diagnostic	/X/	RDCS13
+02931	Radiographs,Tomography 1 View	3	0	0	0	0	Diagnostic	/X/	RT1V
+02932	Radiographs,Tomography 2 Views	3	0	0	0	0	Diagnostic	/X/	RT2V
+02933	Radiographs,Tomography 3 Views	3	0	0	0	0	Diagnostic	/X/	RT3V
+02934	Radiographs,Tomography 4 Views	3	0	0	0	0	Diagnostic	/X/	RT4V
+02939	Radiographs,Tomography Each additional View over 4	3	0	0	0	0	Diagnostic	/X/	RTEV4
+02941	Radiograph,Hand and Wrist Per Case	3	0	0	0	0	Diagnostic	/X/	RHWPC
+02951	Radiographs,Radiog. Guide Upper,LE	3	0	0	0	0	Diagnostic	/X/	Xray, Max Guide
+02952	Radiographs,Radiog. Guide Lower,LE	3	0	0	0	0	Diagnostic	/X/	Xray, Mand Guide
+03001	Radiographs,Surgical Temp. Upper Template,LE	3	0	0	0	0	Diagnostic	/X/	Max Surg Template
+03002	Radiographs,Surgical Temp. Lower Template,LE	3	0	0	0	0	Diagnostic	/X/	Mand Surg Template
+04101	Microbiological Test For Pathological Agents,L	3	0	0	0	0	Diagnostic	/X/	Microbio Test + Lab
+04201	Caries Susceptibility Bacteriological Test,L	3	0	0	0	0	Diagnostic	/X/	Bacterio Test + Lab
+04311	Tests,Histopatholog/SoftTiss Biopsy,by Puncture,L	3	0	0	0	0	Diagnostic	/X/	Biopsy Soft, Puncture + Lab
+04312	Tests,Histopatholog/SoftTiss Biopsy,by Incision,L	3	0	0	0	0	Diagnostic	/X/	Biopsy Soft, Incistion + Lab
+04322	Tests,Histopatholog/HardTiss Biopsy,by Incision,L	3	0	0	0	0	Diagnostic	/X/	Biopsy Hard, Incistion
+04401	Tests,Cytological Cyt Smear from Oral Cavity,LE	3	0	0	0	0	Diagnostic	/X/	Cytological Smear + Lab
+04402	Tests,Cytological Vit Staining of Oral Mucosal,E	3	0	0	0	0	Diagnostic	/X/	Mucosa, Vital Stain + Lab
+04403	Tests,Cytological DirFluorescence Visualisation,E	3	0	0	0	0	Diagnostic	/X/	TCDFVE
+04501	Tests,Pulp Vitality 1 Unit	3	0	0	0	3	Diagnostic	/X/	Pulp Test, 1 unit
+04507	Tests,Pulp Vitality 1/2 Unit	3	0	0	0	3	Diagnostic	/X/	TPV1U
+04602	Reports Laboratory Histopathological - OralPath,L	3	0	0	0	0	Diagnostic	/X/	RLHOPL
+04603	Reports Laboratory Cytological by Oral Path.,L	3	0	0	0	0	Diagnostic	/X/	RLCOPL
+04711	Misc/Equil/Casts for Restor 1 Unit,L	3	0	0	0	0	Diagnostic	/X/	Equil Casts, 1 unit + Lab 
+04712	Misc/Equil/Casts for Restor 2 Units,L	3	0	0	0	0	Diagnostic	/X/	Equil Casts, 2 unit + Lab 
+04721	Wax-Up/Diagnostic 1 Unit,L	3	0	0	0	0	Diagnostic	/X/	Wax-up, 1 unit + Lab
+04741	Interpret Diagnostic Casts First Unit	3	0	0	0	0	Diagnostic	/X/	Interpret Models, 1 unit
+04801	Photographs,Diagnostic 1 Photo	3	0	0	0	0	Diagnostic	/X/	Diagnostic Photo, 1
+04802	Photographs,Diagnostic 2 Photos	3	0	0	0	0	Diagnostic	/X/	Diagnostic Photo, 2
+04803	Photographs,Diagnostic 3 Photos	3	0	0	0	0	Diagnostic	/X/	Diagnostic Photo, 3
+04809	Photographs,Diagnostic Each Add Photo Over 3	3	0	0	0	0	Diagnostic	/X/	Diagnostic Photo, each add'l
+04911	Casts,Unmounted,L	3	0	0	0	0	Diagnostic	/X/	Casts, Unmounted + Lab
+04921	Casts,Mounted,L	3	0	0	0	0	Diagnostic	/X/	Casts, Mounted + Lab
+04922	Casts,Mounted Using Face Bow Transfer,L	3	0	0	0	0	Diagnostic	/X/	Casts, Mounted, Facebow + Lab
+04923	Casts,Mounted Using Face Bow & Occlusal Rec,L	3	0	0	0	0	Diagnostic	/X/	Casts, Mounted, Faceb + Occlusion + Lab
+04931	Casts,Orthodontic Unmounted,Angle Trim &Soaped,L	3	0	0	0	0	Diagnostic	/X/	Casts, Ortho + Lab
+04941	Casts,Misc. Procedures Trans. Axis Loc & Transfer,L	3	0	0	0	0	Diagnostic	/X/	Transverse Axis Location
+04942	Casts,Misc. Procedures 3 Dimension Record for Artic.	3	0	0	0	0	Diagnostic	/X/	3D Recordings
+05201	CasePresentation/TX Planning Consultation - 1 Unit	3	0	0	0	0	Diagnostic	/X/	Consult, 1 unit
+05202	CasePresentation/TX Planning Consultation - 2 Units	3	0	0	0	0	Diagnostic	/X/	Consult, 2 units
+05209	CasePresentation/TX Planning Consultation - EAUO 2	3	0	0	0	0	Diagnostic	/X/	Consult, add'l units
+06941	Radiograph,Hand/ Wrist,Tech P Per Case	3	0	0	0	0	Diagnostic	/X/	RHWTPPC
+07011	Radiographs,CBCT,Acquisition Small Field of View(sext or part o	3	0	0	0	0	Diagnostic	/X/	RCBCTASFV
+07012	Radiographs,CBCT,Acquisition Large Field of View (1 arch)	3	0	0	0	0	Diagnostic	/X/	RCBCTALFV1
+07013	Radiographs,CBCT,Acquisition Large Field of View (2 arches)	3	0	0	0	0	Diagnostic	/X/	RCBCTALFV2
+07021	Radiographs,CBCT,Image Proces 1 Unit	3	0	0	0	0	Diagnostic	/X/	RCBCTIP1U
+07022	Radiographs,CBCT,Image Proces 2 Units	3	0	0	0	0	Diagnostic	/X/	RCBCTIP2U
+07027	Radiographs,CBCT,Image Proces 1/2 Unit	3	0	0	0	0	Diagnostic	/X/	RCBCTIP1U
+07029	Radiographs,CBCT,Image Proces Each Addtl Unit Over 2	3	0	0	0	0	Diagnostic	/X/	RCBCTIPEO2
+07031	Radiographs,CBCT,Interpretati 1 Unit	3	0	0	0	0	Diagnostic	/X/	RCBCTI1U
+07032	Radiographs,CBCT,Interpretati 2 Units	3	0	0	0	0	Diagnostic	/X/	RCBCTI2U
+07037	Radiographs,CBCT,Interpretati 1/2 Unit	3	0	0	0	0	Diagnostic	/X/	RCBCTI1U
+07039	Radiographs,CBCT,Interpretati Each Addtl Unit Over 2	3	0	0	0	0	Diagnostic	/X/	RCBCTIEO2
+07041	Radiographs,CBCT,Acquis/Proc/ Small Field of View(sext or part o	3	0	0	0	0	Diagnostic	/X/	RCBCTASFV
+07042	Radiographs,CBCT,Acquis/Proc/ Large Field of View (1 arch)	3	0	0	0	0	Diagnostic	/X/	RCBCTALFV1
+07043	Radiographs,CBCT,Acquis/Proc/ Large Field of View (2 arches)	3	0	0	0	0	Diagnostic	/X/	RCBCTALFV2
+11101	Polishing	3	0	0	1	0	Preventive	/X/	Polish, 1 unit
+11111	Scaling 1 Unit	3	0	0	1	0	Preventive	/X/	Scale, 1 unit
+11112	Scaling 2 Units	3	0	0	1	0	Preventive	/X/	Scale, 2 units
+11113	Scaling 3 Units	3	0	0	1	0	Preventive	/X/	Scale, 3 units
+11114	Scaling 4 Units	3	0	0	1	0	Preventive	/X/	Scale, 4 units
+11115	Scaling 5 Units	3	0	0	1	0	Preventive	/X/	Scale, 5 units
+11116	Scaling 6 Units	3	0	0	1	0	Preventive	/X/	Scale, 6 units
+11117	Scaling 1/2 Unit	3	0	0	1	0	Preventive	/X/	S1U
+11119	Scaling EAU over 6	3	0	0	1	0	Preventive	/X/	Scale, add'l unit
+12101	Fluoride Treatments Topical Application	3	0	0	1	0	Preventive	/X/	Fluoride, Topical
+12102	Fluoride Treatments Self-Administered Brush-In	3	0	0	1	0	Preventive	/X/	Fluoride, Self Admin
+12601	Fluoride,Custom Applicances Upper Arch,L	6	0	0	1	0	Preventive	/X/	Fluoride, Custom Appliance - Maxillary Arch + Lab
+12602	Fluoride,Custom Applicances Lower Arch,L	6	0	0	1	0	Preventive	/X/	Fluoride, Custom Appliance - Mandibular Arch + Lab
+12603	Fluoride,Custom Applicances Upper Plus Lower Combined,L	3	0	0	1	0	Preventive	/X/	FCAUPLCL
+13101	Nutritional Counselling 1 Unit	3	0	0	1	0	Preventive	/X/	Nutrition Counsel, 1 unit
+13211	OralHygiene Instr/Plaque Ctl Individual Instruction,1U	3	0	0	1	0	Preventive	/X/	OHI, 1 unit
+13401	Sealants,Pit and Fissure First Tooth	2	0	0	1	13	Preventive	/X/	Sealant, First Tooth
+13409	Sealants,Pit and Fissure Each Addtl Tooth - Same Quad	2	0	0	1	13	Preventive	/X/	Sealant, Add'l Tooth
+13411	Preventive Restorative Resin	3	0	0	1	0	Preventive	/X/	Prev Rest Comp, First Tooth
+13601	Topical Applicants/Hard Tiss 1 Unit,E	3	0	0	1	0	Preventive	/X/	Topical Appl'n, Antimicrobial, 1 unit
+13602	Topical Applicants/Hard Tiss 2 Units,E	3	0	0	1	0	Preventive	/X/	Topical Appl'n, Antimicrobial, 2 units
+14101	Removable,Control Oral Habit Upper,L	3	0	0	1	0	Preventive	/X/	Removable Appliance, Maxillary + Lab
+14102	Removable,Control Oral Habit Lower,L	3	0	0	1	0	Preventive	/X/	Removable Appliance, Mandibular + Lab
+14103	Removable,Control Oral Habit Upper + Lower,L	3	0	0	1	0	Preventive	/X/	Removable Appliance, Max +Man + Lab
+14201	Fixed/Cemented,Cntrl Oral Hab Upper,L	3	0	0	1	0	Preventive	/X/	Fixed Appliance, Mandibular + Lab
+14202	Fixed/Cemented,Cntrl Oral Hab Lower,L	3	0	0	1	0	Preventive	/X/	Fixed Appliance, Maxillary + Lab
+14301	Motivate Patient Psychological Aproach/visit,L	3	0	0	1	0	Preventive	/X/	Oral Habits - Motivation
+14311	Myofunctional Therapy 1 Unit per visit,L	3	0	0	1	0	Preventive	/X/	Myofunctional, 1 unit
+14312	Myofunctional Therapy 2 Units,L	3	0	0	1	0	Preventive	/X/	Myofunctional, 2 units
+14319	Myofunctional Therapy Each Addtl Unit Over 2,L	3	0	0	1	0	Preventive	/X/	Myofunctional, add'l units
+14321	Direct Approach,Bonded 1 Unit	3	0	0	1	0	Preventive	/X/	DAB1U
+14322	Direct Approach,Bonded 2 Units	3	0	0	1	0	Preventive	/X/	DAB2U
+14329	Direct Approach,Bonded Each Addtl Unit Over 2	3	0	0	1	0	Preventive	/X/	DABEO2
+14401	ControlOralHabit,Adj,Rep,Mntc 1 Unit,L	3	0	0	1	0	Preventive	/X/	Repair Oral Habit Appliance, 1 unit + Lab
+14402	ControlOralHabit,Adj,Rep,Mntc 2 Units,L	3	0	0	1	0	Preventive	/X/	Repair Oral Habit Appliance, 2 units + Lab
+14501	Mouth Guards Preformed	3	0	0	1	0	Preventive	/X/	Mouth Guards, Preformed + Lab
+14502	Mouth Guards Processed,L	3	0	0	1	0	Preventive	/X/	Mouth Guards, Processed + Lab
+14611	Periodontal Upper,L	3	0	0	1	0	Preventive	/X/	Bruxism Appliance, Maxillary + Lab
+14612	Periodontal Lower,L	3	0	0	1	0	Preventive	/X/	Bruxism Appliance, Mandibular + Lab
+14621	Periodontal,Maint/Adj/Repair 1 Unit,L	3	0	0	1	0	Preventive	/X/	Bruxism Appliance, Adjustment/Repair , 1 unit + La
+14622	Periodontal,Maint/Adj/Repair 2 Units,L	3	0	0	1	0	Preventive	/X/	Bruxism Appliance, Adjustment/Repair , 2 units + L
+14623	Periodontal,Maint/Adj/Repair 3 Units,L	3	0	0	1	0	Preventive	/X/	Bruxism Appliance, Adjustmen/Repair t, 3 units + L
+14629	Periodontal,Maint/Adj/Repair Each Addtl Over 3,L	3	0	0	1	0	Preventive	/X/	Bruxism Appliance, Adjustment/Repair , add'l units
+14631	Periodontal,Reline Direct	3	0	0	1	0	Preventive	/X/	PRD
+14711	TMJ,Diagnostic Upper,L	3	0	0	1	0	Preventive	/X/	Diagnostic Splint + Lab
+14712	TMJ,Diagnostic Lower,L	3	0	0	1	0	Preventive	/X/	TMJ Diagnostic, Mandibular  + Lab
+14721	TMJ,Intraoral Rep Upper,L	3	0	0	1	0	Preventive	/X/	TMJ Repositioning, Maxillary  + Lab
+14722	TMJ,Intraoral Rep Lower,L	3	0	0	1	0	Preventive	/X/	TMJ Repositioning, Mandibular + Lab
+14731	TMJ,Maint/Adj/Rep 1 Unit,L	3	0	0	1	0	Preventive	/X/	TMJ Appliance Adjustment, 1 unit + Lab
+14732	TMJ,Maint/Adj/Rep 2 Units,L	3	0	0	1	0	Preventive	/X/	TMJ Appliance Adjustment, 2 units + Lab
+14741	TMJ,Reline Direct	3	0	0	1	0	Preventive	/X/	TMJRD
+14811	Myofascial Pain Dysfunction Synd. Upper,L	3	0	0	1	0	Preventive	/X/	MPDSUL
+14812	Myofascial Pain Dysfunction Synd. Lower,L	3	0	0	1	0	Preventive	/X/	MPDSLL
+14821	Myofascial Pain Dysfn.Synd.Maint/Adj/Repair 1U,L	3	0	0	1	0	Preventive	/X/	MPDSM1UL
+14822	Myofascial Pain Dysfn.Synd.Maint/Adj/Repair 2U,L	3	0	0	1	0	Preventive	/X/	MPDSM2UL
+14831	Myofascial Pain Dysfn.Synd.,Reline,Direct,L	3	0	0	1	0	Preventive	/X/	MPDSRDL
+14901	Intraoral,sleep apnea,uars Ridge or tooth supported,L	2	0	0	1	0	Preventive	/X/	IRL
+14902	Intraoral,sleep apnea,uars Tongue Retaining Device,E	3	0	0	1	0	Preventive	/X/	ITRDE
+14911	Intraoral,sleep apnea,uars Periodic Maint/Adj/Repair 1 U,L	3	0	0	1	0	Preventive	/X/	IPM1UL
+14912	Intraoral,sleep apnea,uars Periodic Maint/Adj/Repair 2 U,L	3	0	0	1	0	Preventive	/X/	IPM2UL
+14919	Intraoral,sleep apnea,uars Periodic Maint/Adj/Repair Each,L	3	0	0	1	0	Preventive	/X/	IPMEL
+14921	Intraoral,sleep apnea,uars Monitoring Patient 1U	3	0	0	1	0	Preventive	/X/	IMP1U
+14922	Intraoral,sleep apnea,uars Monitoring Patient 2U	3	0	0	1	0	Preventive	/X/	IMP2U
+14929	Intraoral,sleep apnea,uars Monitoring Patient Each Addtl Over	3	0	0	1	0	Preventive	/X/	IMPEO
+15101	Band Type,Fixed Unilateral,L	3	0	0	0	0	Preventive	/X/	Space Maintainer, Band, Unilateral + Lab
+15102	Band Type,Fixed Unilateral/Intra-alveolar Att,L	3	0	0	0	0	Preventive	/X/	Space Maintainer, Band, Unilateral, Alveolar + Lab
+15103	Band Type,Fixed Bilateral (SLA),L	3	0	0	0	0	Preventive	/X/	Space Maintainer, Band, Bilateral + Lab
+15104	Band Type,Fixed Bilateral (SLA) w/Teeth Att,L	3	0	0	0	0	Preventive	/X/	Space Maintainer, Band, Bilateral, with teeth + La
+15105	Band Type,Fixed Bilateral,Tubes&Locking Wires,L	3	0	0	0	0	Preventive	/X/	Space Maintainer, Band, Bilateral, with tubes + La
+15201	Stainless Steel Crown Type Fixed,L	2	0	0	0	7	Preventive	/X/	Space Maintainer, SS Crown, Fixed + Lab
+15202	Stainless Steel Crown Type Fixed,+ Intra Alveolar Att,L	2	0	0	0	7	Preventive	/X/	Space Maintainer, SS Crown, Fixed, Alverolar + Lab
+15401	Acrylic,Removable Bilateral clasps,Ret Wires,L	3	0	0	0	0	Preventive	/X/	Space Maintainer, Acrylic, Bilateral + Lab
+15402	Acrylic,Removable Bilat Clasps/Ret Wires+Teeth,L	3	0	0	0	0	Preventive	/X/	Space Maintainer, Acrylic, Bilateral, with teeth +
+15403	Acrylic,Removable No Clasps,L	3	0	0	0	0	Preventive	/X/	Space Maintainer, Acrylic Removable, No Clasps + L
+15501	Acid Etched Pontic Type,L	3	0	0	0	10	Preventive	/X/	Space Maintainer, Bonded + Lab
+15601	Maintenance Adj/Recementation After 30 Dys	3	0	0	0	0	Preventive	/X/	Maintenance, Space Maintainer + Lab
+15602	Maintenance Add Clasps and/or Act Wires,L	3	0	0	0	0	Preventive	/X/	Maintenance, Space Maintainer, Add'n Clasps + Lab
+15603	Maintenance Repairs(include recementation),L	3	0	0	0	0	Preventive	/X/	Repairs, Space Maintainer + Lab
+15604	Maintenance Rem of Fixed App by 2nd Dent	3	0	0	0	0	Preventive	/X/	Removal of Fixed Space Maintainer
+16101	Finishing Restorations 1 Unit	3	0	0	0	0	Preventive	/X/	Finish Another Dentist's Rest'n, 1 unit
+16102	Finishing Restorations 2 Units	3	0	0	0	0	Preventive	/X/	Finish Another Dentist's Rest'n, 2 units
+16201	Disking,Interproximal 1 Unit	3	0	0	0	0	Preventive	/X/	Remove overhangs, 1 unit
+16202	Disking,Interproximal 2 Units	3	0	0	0	0	Preventive	/X/	Remove overhangs, 2 units
+16203	Disking,Interproximal 3 Units	3	0	0	0	0	Preventive	/X/	Remove overhangs, 3 units
+16209	Disking,Interproximal Each Addtl Unit Over 3	3	0	0	0	0	Preventive	/X/	Remove overhangs, add'l units
+16301	Recontouring - Aesthetic 1 Unit	3	0	0	0	0	Preventive	/X/	Recontour Aesthetic, 1 unit
+16309	Recontouring - Aesthetic Each Additional Unit	3	0	0	0	0	Preventive	/X/	Recontour Aesthetic, 2 units
+16401	Recontouring - Functional 1 Unit	3	0	0	0	0	Preventive	/X/	Recontour Functional, 1 unit
+16409	Recontouring - Functional Each Additional Unit	3	0	0	0	0	Preventive	/X/	Recontour Functional, 2 units
+16511	Occlusal Adj/Equilibrat 1 Unit	3	0	0	0	0	Preventive	/X/	Occlusal Adjustment, 1 unit
+16512	Occlusal Adj/Equilibrat 2 Units	3	0	0	0	0	Preventive	/X/	Occlusal Adjustment, 2 units
+16513	Occlusal Adj/Equilibrat 3 Units	3	0	0	0	0	Preventive	/X/	Occlusal Adjustment, 3 units
+16514	Occlusal Adj/Equilibrat 4 Units	3	0	0	0	0	Preventive	/X/	OA4U
+16517	Occlusal Adj/Equilibrat 1/2 Unit	3	0	0	0	0	Preventive	/X/	OA1U
+16519	Occlusal Adj/Equilibrat Each Addtl Over 4	3	0	0	0	0	Preventive	/X/	Occlusal Adjustment, add'l units
+20111	Caries,Trauma,Pain Control First Tooth	2	0	0	0	0	Restorative	/X/	Caries Control, First  tooth
+20119	Caries,Trauma,Pain Control Each Addtl Tooth Same Quadrant	2	0	0	0	0	Restorative	/X/	Caries Control, Add'l  tooth
+20121	Caries,Trauma,Pain Control Plus Band - First Tooth	2	0	0	0	0	Restorative	/X/	Caries Control, with Retentive Band
+20129	Caries,Trauma,Pain Control Plus Band - EA Tooth Same Quad	2	0	0	0	0	Restorative	/X/	Caries Control, with Retentive Band, Add'l Tooth
+20131	Trauma Ctl,Smooth Fract Surf First Tooth	2	0	0	0	0	Restorative	/X/	Trauma, Smooth Fractured Tooth, First Tooth
+20139	Trauma Ctl,Smooth Fract Surf Each Addtl Tooth Same Quad	2	0	0	0	0	Restorative	/X/	Trauma, Smooth Fractured Tooth, Add'l Tooth
+20141	Pulp Cap,Direct First Tooth	2	0	0	0	3	Restorative	/X/	PCDFT
+21111	Non Bonded,Primary Teeth 1 Surface	1	0	0	0	0	Restorative	/X/	Primary Amalgam, 1 Surface
+21112	Non Bonded,Primary Teeth 2 Surfaces	1	0	0	0	0	Restorative	/X/	Primary Amalgam, 2 Surface
+21113	Non Bonded,Primary Teeth 3 Surfaces	1	0	0	0	0	Restorative	/X/	Primary Amalgam, 3 Surface
+21114	Non Bonded,Primary Teeth 4 Surfaces	1	0	0	0	0	Restorative	/X/	Primary Amalgam, 4 Surface
+21115	Non Bonded,Primary Teeth 5 Surfaces or Upper per Tooth	1	0	0	0	0	Restorative	/X/	Primary Amalgam, 5 Surface
+21121	Bonded,Primary Teeth 1 Surface	1	0	0	0	0	Restorative	/X/	BPT1S
+21122	Bonded,Primary Teeth 2 Surfaces	1	0	0	0	0	Restorative	/X/	BPT2S
+21123	Bonded,Primary Teeth 3 Surfaces	1	0	0	0	0	Restorative	/X/	BPT3S
+21124	Bonded,Primary Teeth 4 Surfaces	1	0	0	0	0	Restorative	/X/	BPT4S
+21125	Bonded,Primary Teeth 5 Surfaces or Upper per Tooth	1	0	0	0	0	Restorative	/X/	BPT5SUT
+21211	Non Bonded,Perm Bicusp/Ants 1 Surface	1	0	0	0	0	Restorative	/X/	Permanent Bicuspid, Amalgam, 1 Surface
+21212	Non Bonded,Perm Bicusp/Ants 2 Surfaces	1	0	0	0	0	Restorative	/X/	Permanent Bicuspid, Amalgam, 2 Surface
+21213	Non Bonded,Perm Bicusp/Ants 3 Surfaces	1	0	0	0	0	Restorative	/X/	Permanent Bicuspid, Amalgam, 3 Surface
+21214	Non Bonded,Perm Bicusp/Ants 4 Surfaces	1	0	0	0	0	Restorative	/X/	Permanent Bicuspid, Amalgam, 4 Surface
+21215	Non Bonded,Perm Bicusp/Ants 5 Surfaces or Upper per Tooth	1	0	0	0	0	Restorative	/X/	Permanent Bicuspid, Amalgam, 5 Surface
+21221	Non Bonded,Permanent Molars 1 Surface	1	0	0	0	0	Restorative	/X/	Permanent Molar Amalgam, 1 Surface
+21222	Non Bonded,Permanent Molars 2 Surfaces	1	0	0	0	0	Restorative	/X/	Permanent Molar Amalgam, 2 Surface
+21223	Non Bonded,Permanent Molars 3 Surfaces	1	0	0	0	0	Restorative	/X/	Permanent Molar Amalgam, 3 Surface
+21224	Non Bonded,Permanent Molars 4 Surfaces	1	0	0	0	0	Restorative	/X/	Permanent Molar Amalgam, 4 Surface
+21225	Non Bonded,Permanent Molars 5 Surfaces or Upper per Tooth	1	0	0	0	0	Restorative	/X/	Permanent Molar Amalgam, 5 Surface
+21231	Bonded,Perm Bicusp/Ants 1 Surface	1	0	0	0	0	Restorative	/X/	BPB1S
+21232	Bonded,Perm Bicusp/Ants 2 Surfaces	1	0	0	0	0	Restorative	/X/	BPB2S
+21233	Bonded,Perm Bicusp/Ants 3 Surfaces	1	0	0	0	0	Restorative	/X/	BPB3S
+21234	Bonded,Perm Bicusp/Ants 4 Surfaces	1	0	0	0	0	Restorative	/X/	BPB4S
+21235	Bonded,Perm Bicusp/Ants 5 Surfaces or Upper per Tooth	1	0	0	0	0	Restorative	/X/	BPB5SUT
+21241	Bonded,Permanent Molars 1 Surface	1	0	0	0	0	Restorative	/X/	BPM1S
+21242	Bonded,Permanent Molars 2 Surfaces	1	0	0	0	0	Restorative	/X/	BPM2S
+21243	Bonded,Permanent Molars 3 Surfaces	1	0	0	0	0	Restorative	/X/	BPM3S
+21244	Bonded,Permanent Molars 4 Surfaces	1	0	0	0	0	Restorative	/X/	BPM4S
+21245	Bonded,Permanent Molars 5 Surfaces or Upper per Tooth	1	0	0	0	0	Restorative	/X/	BPM5SUT
+21301	Cores NonBond,Conj W/Crown/FixBrid Ret	1	0	0	0	8	Restorative	/X/	Amalgam Core, with Crown
+21302	Cores Bond,in Conj W/Crown/FixBrid Ret	1	0	0	0	8	Restorative	/X/	CBCWR
+21401	Pins,Retentive/Restoration 1 Pin	1	0	0	0	0	Restorative	/X/	Retentive Pin, 1
+21402	Pins,Retentive/Restoration 2	1	0	0	0	0	Restorative	/X/	Retentive Pin, 2
+21403	Pins,Retentive/Restoration 3	1	0	0	0	0	Restorative	/X/	Retentive Pin, 3
+21404	Pins,Retentive/Restoration 4	1	0	0	0	0	Restorative	/X/	Retentive Pin, 4
+21405	Pins,Retentive/Restoration 5,or More	1	0	0	0	0	Restorative	/X/	Retentive Pin, 5
+21501	Restoration to tooth Supp partial dent. Clasp / rest.	1	0	0	0	0	Restorative	/X/	Adapt Filling to Existing Partial, Per Filling
+22201	Full Coverage,Metal,Primary Anterior	2	0	0	0	8	Restorative	/X/	SS Cr, Primary Anterior
+22202	Full Coverage,Metal,Primary Anterior - Open Face,L	2	0	0	0	8	Restorative	/X/	FCMPAOFL
+22211	Full Coverage,Metal,Primary Posterior	3	0	0	0	8	Restorative	/X/	SS Cr, Primary Posterior
+22212	Full Coverage,Metal,Primary Posterior - Open Face	3	0	0	0	8	Restorative	/X/	FCMPPOF
+22301	Full Coverage,Metal,Permanent Anterior	2	0	0	0	8	Restorative	/X/	FCMPA
+22311	Full Coverage,Metal,Permanent Posterior	3	0	0	0	8	Restorative	/X/	FCMPP
+22401	Full Cov,Plastic,Primary Anterior	2	0	0	0	0	Restorative	/X/	Plastic Crown, Primary Anterior
+22411	Full Cov,Plastic,Primary Posterior	3	0	0	0	0	Restorative	/X/	Plastic Crown, Primary Posterior
+22501	Full Cov,Plastic,Permanent Anterior	2	0	0	0	0	Restorative	/X/	Plastic Crown, Permanent Anterior
+22511	Full Cov,Plastic,Permanent Posterior	3	0	0	0	0	Restorative	/X/	Plastic Crown, Permanent Posterior
+23101	Plastic/SilverFill/Perm Ant Non Bonded Tech,1S	3	0	0	0	6	Restorative	/X/	PANBT1S
+23102	Plastic/SilverFill/Perm Ant Non Bonded Tech,2SC	3	0	0	0	6	Restorative	/X/	PANBT2SC
+23103	Plastic/SilverFill/Perm Ant Non Bonded Tech,3SC	3	0	0	0	6	Restorative	/X/	PANBT3SC
+23104	Plastic/SilverFill/Perm Ant Non Bonded Tech,4SC	3	0	0	0	6	Restorative	/X/	PANBT4SC
+23105	Plastic/SilverFill/Perm Ant Non Bonded Tech,(max),5SC	3	0	0	0	6	Restorative	/X/	PANBT5SC
+23111	Plastic/SilverFill/Perm Ant Bonded,1S	3	0	0	0	6	Restorative	/X/	Composite, Permanent Anterior, 1 Surface
+23112	Plastic/SilverFill/Perm Ant Bonded,2SC	3	0	0	0	6	Restorative	/X/	Composite, Permanent Anterior, 2 Surface
+23113	Plastic/SilverFill/Perm Ant Bonded,3SC	3	0	0	0	6	Restorative	/X/	Composite, Permanent Anterior, 3 Surface
+23114	Plastic/SilverFill/Perm Ant Bonded,4SC	3	0	0	0	6	Restorative	/X/	Composite, Permanent Anterior, 4 Surface
+23115	Plastic/SilverFill/Perm Ant Bonded,(max),5SC	3	0	0	0	6	Restorative	/X/	Composite, Permanent Anterior, 5 Surface
+23121	Plastic/Silver Fill/Veneer Direct Chair.Prefab/Bonded	2	0	0	0	6	Restorative	/X/	PFDCP
+23122	Plastic/Silver Fill/Veneer Non Prefab,Direct B/U Bond	2	0	0	0	6	Restorative	/X/	PFNPDBB
+23123	Plastic/Silver Fill/Veneer Diastema,Interprox. Bond	2	0	0	0	6	Restorative	/X/	PFDIB
+23211	Plastic/SilverFill/Perm Pos Non Bonded Perm. Bicuspids,1S	2	0	0	0	6	Restorative	/X/	PPNBPB1S
+23212	Plastic/SilverFill/Perm Pos Non Bonded Perm. Bicuspids,2S	2	0	0	0	6	Restorative	/X/	PPNBPB2S
+23213	Plastic/SilverFill/Perm Pos Non Bonded Perm. Bicuspids,3S	2	0	0	0	6	Restorative	/X/	PPNBPB3S
+23214	Plastic/SilverFill/Perm Pos Non Bonded Perm. Bicuspids,4S	2	0	0	0	6	Restorative	/X/	PPNBPB4S
+23215	Plastic/SilverFill/Perm Pos Non BondedPermBicusp,(max) 5S	3	0	0	0	6	Restorative	/X/	PPNBPB5S
+23221	Plastic/SilverFill/Perm Pos Non Bonded/Molars,1S	2	0	0	0	6	Restorative	/X/	PPNB1S
+23222	Plastic/SilverFill/Perm Pos Non Bonded/Molars,2S	2	0	0	0	6	Restorative	/X/	PPNB2S
+23223	Plastic/SilverFill/Perm Pos Non Bonded/Molars,3S	2	0	0	0	6	Restorative	/X/	PPNB3S
+23224	Plastic/SilverFill/Perm Pos Non Bonded/Molars,4S	2	0	0	0	6	Restorative	/X/	PPNB4S
+23225	Plastic/SilverFill/Perm Pos Non Bonded/Molars,(max) 5S	2	0	0	0	6	Restorative	/X/	PPNB5S
+23311	Plastic/SilverFill/Perm Pos Bonded,Bicusp,1S	3	0	0	0	6	Restorative	/X/	Composite, Permanent Bicuspid, 1 Surface
+23312	Plastic/SilverFill/Perm Pos Bonded,Bicusp,2S	3	0	0	0	6	Restorative	/X/	Composite, Permanent Bicuspid, 2 Surface
+23313	Plastic/SilverFill/Perm Pos Bonded,Bicusp,3S	3	0	0	0	6	Restorative	/X/	Composite, Permanent Bicuspid, 3 Surface
+23314	Plastic/SilverFill/Perm Pos Bonded,Bicusp,4S	3	0	0	0	6	Restorative	/X/	Composite, Permanent Bicuspid, 4 Surface
+23315	Plastic/SilverFill/Perm Pos Bonded Bicusp,(max) 5S	3	0	0	0	6	Restorative	/X/	Composite, Permanent Bicuspid, 5 Surface
+23321	Plastic/SilverFill/Perm Pos Bonded Molars,1S	2	0	0	0	6	Restorative	/X/	Composite, Permanent Molar, 1 Surface
+23322	Plastic/SilverFill/Perm Pos Bonded Molars,2S	2	0	0	0	6	Restorative	/X/	Composite, Permanent Molar, 2 Surface
+23323	Plastic/SilverFill/Perm Pos Bonded Molars,3S	2	0	0	0	6	Restorative	/X/	Composite, Permanent Molar, 3 Surface
+23324	Plastic/SilverFill/Perm Pos Bonded Molars,4S	2	0	0	0	6	Restorative	/X/	Composite, Permanent Molar, 4 Surface
+23325	Plastic/SilverFill/Perm Pos Bonded Molars,(max) 5S	2	0	0	0	6	Restorative	/X/	Composite, Permanent Molar, 5 Surface
+23401	Plastic/SilverFill/Prim Ant Non Bonded,1S	3	0	0	0	6	Restorative	/X/	PANB1S
+23402	Plastic/SilverFill/Prim Ant Non Bonded,2SC	3	0	0	0	6	Restorative	/X/	PANB2SC
+23403	Plastic/SilverFill/Prim Ant Non Bonded,3SC	3	0	0	0	6	Restorative	/X/	PANB3SC
+23404	Plastic/SilverFill/Prim Ant Non Bonded,4SC	3	0	0	0	6	Restorative	/X/	PANB4SC
+23405	Plastic/SilverFill/Prim Ant Non Bonded,(max) 5SC	3	0	0	0	6	Restorative	/X/	PANB5SC
+23411	Plastic/SilverFill/Prim Ant Bonded,1S	3	0	0	0	6	Restorative	/X/	Composite, Primary Anterior, 1 Surface
+23412	Plastic/SilverFill/Prim Ant Bonded,2SC	3	0	0	0	6	Restorative	/X/	Composite, Primary Anterior, 2 Surface
+23413	Plastic/SilverFill/Prim Ant Bonded,3SC	3	0	0	0	6	Restorative	/X/	Composite, Primary Anterior, 3 Surface
+23414	Plastic/SilverFill/Prim Ant Bonded,4SC	3	0	0	0	6	Restorative	/X/	Composite, Primary Anterior, 4 Surface
+23415	Plastic/SilverFill/Prim Ant Bonded,(max) 5SC	3	0	0	0	6	Restorative	/X/	Composite, Primary Anterior, 5 Surface
+23501	Plastic/SilverFill/Prim Pos Non Bonded,1S	3	0	0	0	6	Restorative	/X/	PPNB1S
+23502	Plastic/SilverFill/Prim Pos Non Bonded,2S	3	0	0	0	6	Restorative	/X/	PPNB2S
+23503	Plastic/SilverFill/Prim Pos Non Bonded,3S	3	0	0	0	6	Restorative	/X/	PPNB3S
+23504	Plastic/SilverFill/Prim Pos Non Bonded,4S	3	0	0	0	6	Restorative	/X/	PPNB4S
+23505	Plastic/SilverFill/Prim Pos Non Bonded,(max),5S	3	0	0	0	6	Restorative	/X/	PPNB5S
+23511	Plastic/SilverFill/Prim Pos Bonded,1S	3	0	0	0	6	Restorative	/X/	Composite, Primary Posterior, 1 Surface
+23512	Plastic/SilverFill/Prim Pos Bonded,2S	3	0	0	0	6	Restorative	/X/	Composite, Primary Posterior, 2 Surface
+23513	Plastic/SilverFill/Prim Pos Bonded,3S	3	0	0	0	6	Restorative	/X/	Composite, Primary Posterior, 3 Surface
+23514	Plastic/SilverFill/Prim Pos Bonded,4S	3	0	0	0	6	Restorative	/X/	Composite, Primary Posterior, 4 Surface
+23515	Plastic/SilverFill/Prim Pos Bonded,(max),5S	3	0	0	0	6	Restorative	/X/	Composite, Primary Posterior, 5 Surface
+23601	Plastic/Silver Fill/Cores NonBond,Conj W/Crown/FixBrid Ret	2	0	0	0	8	Restorative	/X/	Composite Core, Non-Bonded, for Crown
+23602	Plastic/Silver Fill/Cores Bond,in Conj W/Crown/FixBrid Ret	2	0	0	0	8	Restorative	/X/	Composite Core, Bonded, for Crown
+24101	Anteriors Class I	2	0	0	0	6	Restorative	/X/	ACI
+24102	Anteriors Class III	2	0	0	0	6	Restorative	/X/	ACIII
+24103	Anteriors Class V	2	0	0	0	6	Restorative	/X/	ACV
+24104	Anteriors Class IV	2	0	0	0	6	Restorative	/X/	ACIV
+24201	Posteriors Class I	3	0	0	0	6	Restorative	/X/	PCI
+24202	Posteriors Class II	3	0	0	0	6	Restorative	/X/	PCII
+24203	Posteriors Class V	3	0	0	0	6	Restorative	/X/	PCV
+25111	Metal 1 Surface,L	1	0	0	0	0	Restorative	/X/	Gold Inlay, 1 Surface
+25112	Metal 2 Surfaces,L	1	0	0	0	0	Restorative	/X/	Gold Inlay, 2 Surfaces
+25113	Metal 3 Surfaces,L	1	0	0	0	0	Restorative	/X/	Gold Inlay, 3 Surfaces
+25114	Metal 3 Surfaces,Modified,L	1	0	0	0	0	Restorative	/X/	Gold Inlay, 4 Surfaces
+25121	Composite/Compomer Indirect,Bonded,1S,L	3	0	0	0	0	Restorative	/X/	Composite Inlay, 1 Surface
+25122	Composite/Compomer Indirect,Bonded,2S,L	3	0	0	0	0	Restorative	/X/	Composite Inlay, 2 Surfaces
+25123	Composite/Compomer Indirect,Bonded,3S,L	3	0	0	0	0	Restorative	/X/	Composite Inlay, 3 Surfaces
+25124	Composite/Compomer Indirect,Bonded,Modified,3S,L	3	0	0	0	0	Restorative	/X/	Composite Inlay, 4 Surfaces
+25141	Porcelain/Ceramic/PolyGlass Bonded,1S,L	3	0	0	0	0	Restorative	/X/	Porcelain Inlay, Bonded, 1 Surface
+25142	Porcelain/Ceramic/PolyGlass Bonded,2S,L	3	0	0	0	0	Restorative	/X/	Porcelain Inlay, Bonded, 2 Surfaces
+25143	Porcelain/Ceramic/PolyGlass Bonded,3S,L	3	0	0	0	0	Restorative	/X/	Porcelain Inlay, Bonded, 3 Surfaces
+25144	Porcelain/Ceramic/PolyGlass Bonded,Modified,3S,L	3	0	0	0	0	Restorative	/X/	Porcelain Inlay, Bonded, 4 Surfaces
+25511	Cast Metal,Indirect Per Tooth,L	2	0	0	0	0	Restorative	/X/	Gold Onlay + Lab
+25521	Composite/Compomer,Indirect Bonded,Per Tooth,L	2	0	0	0	0	Restorative	/X/	Composite Onlay, Bonded + Lab
+25531	Porcelain,Ceramic,PolyGlass Bonded,Per Tooth,L	2	0	0	0	0	Restorative	/X/	Porcelain Onlay, Bonded + Lab
+25601	Pins,Retentive 1 Pin per Tooth,L	2	0	0	0	0	Restorative	/X/	Retentive Pin, Inlay/Onlay, 1 per tooth
+25602	Pins,Retentive 2,per Tooth,L	2	0	0	0	0	Restorative	/X/	Retentive Pin, Inlay/Onlay, 2 per tooth
+25603	Pins,Retentive 3,per Tooth,L	2	0	0	0	0	Restorative	/X/	Retentive Pin, Inlay/Onlay, 3 per tooth
+25604	Pins,Retentive 4,per Tooth,L	2	0	0	0	0	Restorative	/X/	Retentive Pin, Inlay/Onlay, 4 per tooth
+25605	Pins,Retentive 5,or More per Tooth,L	2	0	0	0	0	Restorative	/X/	Retentive Pin, Inlay/Onlay,5 per tooth
+25711	Cast Metal (including Core) Separate Procedure,1sect,L	3	0	0	0	4	Restorative	/X/	Cast Metal Post, Separate Procedure, 1 Section + L
+25712	Cast Metal (including Core) Separate Procedure,2sect,L	3	0	0	0	4	Restorative	/X/	Cast Metal Post, Separate Procedure, 2 Section + L
+25713	Cast Metal (including Core) Separate Procedure,3sect,L	3	0	0	0	4	Restorative	/X/	CMCSP3L
+25721	Cast Metal (including Core) Concurrent w Impress,1sect,L	3	0	0	0	4	Restorative	/X/	Cast Metal Post, With Crown, 1 Section + Lab
+25722	Cast Metal (including Core) Concurrent w Impress,2sect,L	3	0	0	0	4	Restorative	/X/	Cast Metal Post, With Crown, 2 Section + Lab
+25731	Prefabricated Retentive 1 Post,E	3	0	0	0	4	Restorative	/X/	Glass Fibre Post, 1 Section
+25732	Prefabricated Retentive 2 Posts same Tooth,E	2	0	0	0	4	Restorative	/X/	Glass Fibre Post, 2 Section
+25733	Prefabricated Retentive 3 Posts same Tooth,E	2	0	0	0	4	Restorative	/X/	Glass Fibre Post, 3 Section
+25771	Provisional Per Post,LE	3	0	0	0	4	Restorative	/X/	Provisional Post
+25781	Post Removal 1 Unit	3	0	0	0	4	Restorative	/X/	Post Removal, 1 unit 
+25782	Post Removal 2 Units	3	0	0	0	4	Restorative	/X/	Post Removal, 2 units
+25783	Post Removal 3 Units	3	0	0	0	4	Restorative	/X/	Post Removal, 3 units
+25784	Post Removal 4 Units	3	0	0	0	4	Restorative	/X/	Post Removal,4 units
+25789	Post Removal Each Addtl Unit Over 4	3	0	0	0	4	Restorative	/X/	Post Removal, additional units
+26101	Mesostructures,Osseo-integr Indirect,Angulated,/implant,LE	2	0	0	0	0	Restorative	/X/	Angulated, Post, Implant
+26102	Mesostructures,Osseo-integr Indirect,Custom Lab/implant,LE	2	0	0	0	0	Restorative	/X/	Custom Fabricated Post, Implant
+26103	Mesostructures,Osseo-integr Direct,/implant site,E	2	0	0	0	0	Restorative	/X/	Direct Post, Implant
+27111	Acrylic/Composite/Compomer Crown,Indirect,L	2	0	0	0	8	Restorative	/X/	ACIL
+27113	Acrylic/Composite/Compomer Provisional,Indirect,L	3	0	0	0	0	Restorative	/X/	APIL
+27121	Acrylic/Composite/Compomer Direct,Prov.,Chairside,E	3	0	0	0	0	Restorative	/X/	ADPCE
+27131	Acrylic/Composite/Compomer Cast Metal Base,Indirect,L	3	0	0	0	0	Restorative	/X/	ACMBIL
+27135	Crown,Acry/Compos/Compomer Cast Metal Base,Implant-supp,LE	2	0	0	0	8	Restorative	/X/	CACMBILE
+27138	Crown,Acry/Compos/Compomer Semi-Precis. Attachmt,LE	2	0	0	0	8	Restorative	/X/	CASPALE
+27145	Crown,Acry/Compos/Compomer Prefab Mtl Base,Direct,E	2	0	0	0	8	Restorative	/X/	CAPMBDE
+27155	Crown,Acry/Compos/Compomer CstMtl Base,Impl-supp,Indirect LE	2	0	0	0	8	Restorative	/X/	CACMBIILE
+27201	Porcelain/Ceramic/Poly.Glass Crown,L	2	0	0	0	8	Restorative	/X/	Porcelain Crown, Natural Tooth + Lab
+27205	Crown,Porc/Ceramic/Poly.Glass CstMtl Base,Impl-supported,LE	2	0	0	0	8	Restorative	/X/	Porcelain Crown, Implant + Lab
+27211	Porcln/Cerm/PolyGFused to Met Crown,L	2	0	0	0	8	Restorative	/X/	PFM Crown + Lab
+27213	Porcln/Cerm/PolyGFused to Met W/Porcelain Margin,L	3	0	0	0	0	Restorative	/X/	PMWML
+27215	Crown,Porc/Ceramic/Poly.Glass Fused-MetalBase,Implant-supp,LE	2	0	0	0	8	Restorative	/X/	PFM Crown, Implant + Lab
+27217	On Prc/Cm/PGFused-MetBasCrown Semi-Precision Rest,LE	2	0	0	0	8	Restorative	/X/	OPSPRLE
+27218	On Prc/Cm/PGFused-MetBasCrown Semi-Prc/Prc RPD Retainer,LE	2	0	0	0	8	Restorative	/X/	OPSPRPDRLE
+27221	Porcln/Cerm/Poly.Glass 3/4 Crown,L	2	0	0	0	8	Restorative	/X/	Porcelain, 
+27301	Cast Metal Uncomplicated,L	3	0	0	0	0	Restorative	/X/	Gold Crown + Lab
+27305	Crown,Cast Metal Implant-supported,LE	2	0	0	0	8	Restorative	/X/	Gold Crown, Implant + Lab
+27311	3/4 Cast Metal Crown,L	2	0	0	0	8	Restorative	/X/	Gold, 
+27401	To ExistPartDentureClasp 1 Crown	2	0	0	0	8	Restorative	/X/	Crown Adapted to Existing Partial Denture + Lab
+27409	To ExistPartDentureClasp Each Additional Crown	2	0	0	0	8	Restorative	/X/	Crown Adapted to Existing Partial Denture, Add'l T
+27511	Copings,Metal/Acrylic Trnsfer Thimble,As SeparateProcedure,L	3	0	0	0	0	Restorative	/X/	Metal Coping, Separate Procedure + Lab
+27519	Copings,Metal/Acrylic Trnsfer Thimble,EA Coping as Sep.Pro,L	3	0	0	0	0	Restorative	/X/	CMTTEACSPL
+27601	Veneers,Lab Processed Acr./Composite/Compom,Bonded,L	2	0	0	0	14	Restorative	/X/	VLPABL
+27602	Veneers,Lab Processed Porcln/Cerm/Poly.Glass,Bonded,L	2	0	0	0	14	Restorative	/X/	VLPPBL
+27711	Repairs-inlays,onlays,crowns Acr./Composite/Compom,Direct	2	0	0	0	8	Restorative	/X/	Repair Composite Crown/Inlay/Onlay + Lab
+27721	Repairs-inlays,onlays,crowns Porc/Cerm/Poly.Gl-Direct	2	0	0	0	8	Restorative	/X/	Repair Porcelain Crown/Inlay/Onlay + Lab
+27722	Repairs-inlays,onlays,crowns Porc/Cerm/Poly.Gl-Indir.,L	2	0	0	0	8	Restorative	/X/	Repair Porcelain Crown/Inlay/Onlay + Lab
+27801	Recontouring of Exist Crowns 1 Unit per Tooth	2	0	0	0	8	Restorative	/X/	Recontour Crown, 1 unit
+27809	Recontouring of Exist Crowns Each Addtl Unit per Tooth	2	0	0	0	8	Restorative	/X/	Recontour Crown, add'l unit per tooth
+28101	Direct,Nat Tooth Prep Place Pulp Chamber Rest+Fluor	2	0	0	0	3	Restorative	/X/	Overdenture Crown, in pulp chamber
+28102	Direct,Nat Tooth Prep Fluoride App.,Vital	2	0	0	0	0	Restorative	/X/	Overdenture Crown, Vital Tooth
+28103	Direct,Prefab Attach Internal/Ext. Retentive,Dir.,LE	3	0	0	0	0	Restorative	/X/	DPAIRDLE
+28105	Overdenture,Dir,Prefab Attach Implant-supported-RetDevice,E	2	0	0	0	0	Restorative	/X/	Overdenture Attachment, Implant + Lab
+28211	Indirect,CastMet.CopingCrown No Attachment,L	2	0	0	0	8	Restorative	/X/	Coping Crown, No Attachments + Lab
+28215	Overdenture,Indir,CopingCrown No Attachment,Implant-supp,LE	2	0	0	0	8	Restorative	/X/	Coping Crown, No Attachments, Implant + Lab
+28221	Indirect,CastMet.CopingCrown W/Attachment,LE	2	0	0	0	8	Restorative	/X/	Coping Crown, Attachments + Lab
+28225	Overdenture,Indir,CopingCrown W/Attachment,Implant-supp,LE	2	0	0	0	8	Restorative	/X/	Coping Crown, Attachment, Implant + Lab
+29101	Recementation/Rebonding IN/ON/CR/VEN/Post/ToothFrag 1U LE	2	0	0	0	0	Restorative	/X/	Recement Restoration or Natural Tooth, 1 unit + La
+29102	Recementation/Rebonding IN/ON/CR/VEN/Post/ToothFrag 2U LE	2	0	0	0	0	Restorative	/X/	Recement Restoration or Natural Tooth, 2 units + L
+29103	Recementation/Rebonding IN/ON/CR/VEN/Post/ToothFrag 3U LE	2	0	0	0	0	Restorative	/X/	Recement Restoration or Natural Tooth, 3 units + L
+29104	Recementation/Rebonding IN/ON/CR/VEN/Post/ToothFrag 4U LE	2	0	0	0	0	Restorative	/X/	Recement Restoration or Natural Tooth, 4 units + L
+29109	Recementation/Rebonding IN/ON/CR/VEN/Post/ToothF EAUO3 LE	2	0	0	0	0	Restorative	/X/	RINEO3LE
+29111	Implant-supported Crown Re-insert/Recement,1U,L	2	0	0	0	8	Restorative	/X/	ICR1UL
+29112	Implant-supported Crown Re-insert/Recement,2U,L	2	0	0	0	8	Restorative	/X/	ICR2UL
+29113	Implant-supported Crown Re-insert/Recement,3U,L	2	0	0	0	8	Restorative	/X/	ICR3UL
+29114	Implant-supported Crown Re-insert/Recement,4U,L	2	0	0	0	8	Restorative	/X/	ICR4UL
+29301	Removal Inlay/Onlay/Crown/Veneer,1U	2	0	0	0	8	Restorative	/X/	Remove inlay/onlay/crown/veneer, 1 unit
+29302	Removal Inlay/Onlay/Crown/Veneer,2U	2	0	0	0	8	Restorative	/X/	Remove inlay/onlay/crown/veneer, 2 units
+29311	Implant-supported Crown Remove (1 units only),1U	2	0	0	0	8	Restorative	/X/	ICR11U
+29312	Implant-supported Crown Remove (1 units only),2U	2	0	0	0	8	Restorative	/X/	ICR12U
+29313	Implant-supported Crown Remove (1 units only),3U	2	0	0	0	8	Restorative	/X/	ICR13U
+29314	Implant-supported Crown Remove (1 units only),4U	2	0	0	0	8	Restorative	/X/	ICR14U
+29321	Mesostructure Remove (to be reseated),1U	2	0	0	0	0	Restorative	/X/	MR1U
+29322	Mesostructure Remove (to be reseated),2U	2	0	0	0	0	Restorative	/X/	MR2U
+29323	Mesostructure Remove (to be reseated),3U	2	0	0	0	0	Restorative	/X/	MR3U
+29324	Mesostructure Remove (to be reseated),4U	2	0	0	0	0	Restorative	/X/	MR4U
+29331	Compromised Mesostructure Remove (to be replaced),1U	2	0	0	0	0	Restorative	/X/	CMR1U
+29332	Compromised Mesostructure Remove (to be replaced),2U	2	0	0	0	0	Restorative	/X/	CMR2U
+29333	Compromised Mesostructure Remove (to be replaced),3U	2	0	0	0	0	Restorative	/X/	CMR3U
+29334	Compromised Mesostructure Remove (to be replaced),4U	2	0	0	0	0	Restorative	/X/	CMR4U
+29341	Healing Abutment Remove & Replace,1U,E	3	0	0	0	0	Restorative	/X/	HARR1UE
+29342	Healing Abutment Remove & Replace,2U,E	3	0	0	0	0	Restorative	/X/	HARR2UE
+29343	Healing Abutment Remove & Replace,3U,E	3	0	0	0	0	Restorative	/X/	HARR3UE
+29344	Healing Abutment Remove & Replace,4U,E	3	0	0	0	0	Restorative	/X/	HARR4UE
+29351	Implant-sup Crown Ret.Screw Removal,Fractured,1U	2	0	0	0	8	Restorative	/X/	ICRSRF1U
+29352	Implant-sup Crown Ret.Screw Removal,Fractured,2U	2	0	0	0	8	Restorative	/X/	ICRSRF2U
+29353	Implant-sup Crown Ret.Screw Removal,Fractured,3U	2	0	0	0	8	Restorative	/X/	ICRSRF3U
+29354	Implant-sup Crown Ret.Screw Removal,Fractured,4U	2	0	0	0	8	Restorative	/X/	ICRSRF4U
+29359	Implant-sup Crown Ret.Screw Removal,Fractured,EAUO 4	2	0	0	0	8	Restorative	/X/	ICRSRFEO4
+29501	Implant - supported Crown Impression Only,1U LE	2	0	0	0	8	Restorative	/X/	ICIO1ULE
+29509	Implant - supported Crown Impression Only,2U LE	2	0	0	0	8	Restorative	/X/	ICIO2ULE
+32221	Permanent Teeth,SepEmergProc Anteriors and Bicuspids	2	0	0	0	0	Endodontics	/X/	Pulpotomy, Permanent Anterior or Bicuspid, Emerg. 
+32222	Permanent Teeth,SepEmergProc Molars	2	0	0	0	0	Endodontics	/X/	Pulpotomy, Permanent Molar, Emerg. 
+32231	Primary Teeth Separate Procedure	3	0	0	0	0	Endodontics	/X/	Pulpotomy, Primary Tooth, Separate Procedure
+32232	Primary Teeth Concurrent with Restorations	3	0	0	0	0	Endodontics	/X/	Pulpotomy, Primary Tooth, Concurrent Procedure
+32311	Permanent,Retained Primary 1 Canal	2	0	0	0	3	Endodontics	/X/	Pulpectomy, 1 canal
+32312	Permanent,Retained Primary 2 Canals	2	0	0	0	3	Endodontics	/X/	Pulpectomy, 2 canals
+32313	Permanent,Retained Primary 3 Canals	2	0	0	0	3	Endodontics	/X/	Pulpectomy, 3 canals
+32314	Permanent,Retained Primary 4 Canals or More	2	0	0	0	3	Endodontics	/X/	Pulpectomy, 4 canals
+32315	Permanent,Retained Primary Plus Difficult Access	3	0	0	0	0	Endodontics	/X/	PRPPDA
+32321	Primary Teeth Anterior Tooth	2	0	0	0	0	Endodontics	/X/	Pulpectomy, Primary Tooth, Anterior Tooth
+32322	Primary Teeth Posterior Tooth	2	0	0	0	0	Endodontics	/X/	Pulpectomy, Primary Tooth, Posterior Tooth
+33111	Permanent,Ret.Primary,1C 1 Canal	2	0	0	0	3	Endodontics	/X/	Endo, 1 canal
+33112	Permanent,Ret.Primary,1C Difficult Access	2	0	0	0	0	Endodontics	/X/	Endo, 1 canal, Difficult access
+33113	Permanent,Ret.Primary,1C Exceptional Anatomy	2	0	0	0	0	Endodontics	/X/	Endo, 1 canal, Exceptional Anatomy
+33114	Permanent,Ret.Primary,1C Calcified Canal	2	0	0	0	3	Endodontics	/X/	Endo, 1 canal, Calcified Canal
+33115	Permanent,Ret.Primary,1C Retreatment of Prev. Therapy	2	0	0	0	0	Endodontics	/X/	Endo, 1 canal, Retreatment
+33116	Permanent,Ret.Primary,1C Continuing Treatment	2	0	0	0	0	Endodontics	/X/	PRP1CCT
+33121	Permanent,Ret.Primary,2C 2 Canals	2	0	0	0	3	Endodontics	/X/	Endo, 2 canals
+33122	Permanent,Ret.Primary,2C Difficult Access	2	0	0	0	0	Endodontics	/X/	Endo, 2 canals, Difficult access
+33123	Permanent,Ret.Primary,2C Exceptional Anatomy	2	0	0	0	0	Endodontics	/X/	Endo, 2 canals, Exceptional Anatomy
+33124	Permanent,Ret.Primary,2C Calcified Canal	2	0	0	0	3	Endodontics	/X/	Endo, 2 canals, Calcified Canal
+33125	Permanent,Ret.Primary,2C Retreatment of Prev. Therapy	2	0	0	0	0	Endodontics	/X/	Endo, 2 canals, Retreatment
+33126	Permanent,Ret.Primary,2C Continuing Treatment	2	0	0	0	0	Endodontics	/X/	PRP2CCT
+33131	Permanent,Ret.Primary,3C 3 Canals	2	0	0	0	3	Endodontics	/X/	Endo, 3 canals
+33132	Permanent,Ret.Primary,3C Difficult Access	2	0	0	0	0	Endodontics	/X/	Endo, 3 canals, Difficult access
+33133	Permanent,Ret.Primary,3C Exceptional Anatomy	2	0	0	0	0	Endodontics	/X/	Endo, 3 canals, Exceptional Anatomy
+33134	Permanent,Ret.Primary,3C Calcified Canal	2	0	0	0	3	Endodontics	/X/	Endo, 3 canals, Calcified Canal
+33135	Permanent,Ret.Primary,3C Retreatment of Prev. Therapy	2	0	0	0	0	Endodontics	/X/	Endo, 3 canals, Retreatment
+33136	Permanent,Ret.Primary,3C Continuing Treatment	2	0	0	0	0	Endodontics	/X/	PRP3CCT
+33141	Permanent,Ret.Primary,4C 4 Canals or More	2	0	0	0	3	Endodontics	/X/	Endo, 4 canals
+33142	Permanent,Ret.Primary,4C Difficult Access	2	0	0	0	0	Endodontics	/X/	Endo, 4 canals, Difficult access
+33143	Permanent,Ret.Primary,4C Exceptional Anatomy	2	0	0	0	0	Endodontics	/X/	Endo, 4 canals, Exceptional Anatomy
+33144	Permanent,Ret.Primary,4C Calcified Canal	2	0	0	0	3	Endodontics	/X/	Endo, 4 canals, Calcified Canal
+33145	Permanent,Ret.Primary,4C Retreatment of Prev. Therapy	2	0	0	0	0	Endodontics	/X/	Endo, 4 canals, Retreatment
+33146	Permanent,Ret.Primary,4C Continuing Treatment	2	0	0	0	0	Endodontics	/X/	PRP4CCT
+33401	Primary Teeth 1 canal	2	0	0	0	3	Endodontics	/X/	PT1
+33402	Primary Teeth 2 canals	2	0	0	0	3	Endodontics	/X/	PT2
+33403	Primary Teeth 3 canals or more	2	0	0	0	3	Endodontics	/X/	PT3
+33601	Apexification/Apexogenesis Induction HardTissue Rep,1can	2	0	0	0	0	Endodontics	/X/	Apexification, One canal
+33602	Perm,Ret.Prim,Apex/Apical Induction HardTissue Rep,2can	2	0	0	0	0	Endodontics	/X/	Apexification, Two canals
+33603	Perm,Ret.Prim,Apex/Apical Induction HardTissue Rep,3can	2	0	0	0	0	Endodontics	/X/	Apexification, Three canals
+33604	Perm,Ret.Prim,Apex/Apical Induction HardTissue Rep 4can+	2	0	0	0	0	Endodontics	/X/	Apexification, Four canals or more
+33605	Perm,Ret.Prim,Apex/Apical Closure/Induct - Diff Access	3	0	0	0	0	Endodontics	/X/	PRPACDA
+33611	Permanent,Retained Primary Re-Insert Dent Media,1can	2	0	0	0	0	Endodontics	/X/	Re-insertion of CaOH, Per Visit, One canal
+33612	Permanent,Retained Primary Re-Insert Dent Media,2can	2	0	0	0	0	Endodontics	/X/	Re-insertion of CaOH, Per Visit, Two canals
+33613	Permanent,Retained Primary Re-Insert Dent Media,3can	2	0	0	0	0	Endodontics	/X/	Re-insertion of CaOH, Per Visit, Three canals
+33614	Permanent,Retained Primary Re-Insert Dent Media,4can+	2	0	0	0	0	Endodontics	/X/	Re-insertion of CaOH, Per Visit, Four canals or mo
+33621	Permanent,Retained Primary Obturation of Apex. Canal 1can	2	0	0	0	3	Endodontics	/X/	PRPOAC1
+33622	Permanent,Retained Primary Obturation of Apex. Canal 2can	2	0	0	0	3	Endodontics	/X/	PRPOAC2
+33623	Permanent,Retained Primary Obturation of Apex. Canal 3can	2	0	0	0	3	Endodontics	/X/	PRPOAC3
+33624	Permanent,Retained Primary Obturation of Apex.Canal 4can+	2	0	0	0	3	Endodontics	/X/	PRPOAC4
+34111	Apicoectomy/Apical Curettage Upper Anterior,1R	2	0	0	0	0	Endodontics	/X/	Apicoectomy, Maxillary Anterior, One root
+34112	Apicoectomy/Apical Curettage Upper Anterior,2R	2	0	0	0	0	Endodontics	/X/	Apicoectomy, Maxillary Anterior, Two roots
+34121	Apicoectomy/Apical Curettage Upper Bicuspid,1R	2	0	0	0	0	Endodontics	/X/	Apicoectomy, Maxillary Bicuspid, One root
+34122	Apicoectomy/Apical Curettage Upper Bicuspid,2R	2	0	0	0	0	Endodontics	/X/	Apicoectomy, Maxillary Bicuspid, Two roots
+34123	Apicoectomy/Apical Curettage Upper Bicuspid,3R	2	0	0	0	0	Endodontics	/X/	Apicoectomy, Maxillary Bicuspid, Three roots
+34131	Apicoectomy/Apical Curettage Upper Molar,1R	2	0	0	0	0	Endodontics	/X/	Apicoectomy, Maxillary Molar, One root
+34132	Apicoectomy/Apical Curettage Upper Molar,2R	2	0	0	0	0	Endodontics	/X/	Apicoectomy, Maxillary Molar, Two roots
+34133	Apicoectomy/Apical Curettage Upper Molar,3R	2	0	0	0	0	Endodontics	/X/	Apicoectomy, Maxillary Molar, Three roots
+34134	Apicoectomy/Apical Curettage Upper Molar,4R	2	0	0	0	0	Endodontics	/X/	ACUM4R
+34141	Apicoectomy/Apical Curettage Lower Anterior,1R	2	0	0	0	0	Endodontics	/X/	Apicoectomy, Mandibular Anterior, One root
+34142	Apicoectomy/Apical Curettage Lower Anterior,2R+	2	0	0	0	0	Endodontics	/X/	Apicoectomy, Mandibular Anterior, Two or more root
+34151	Apicoectomy/Apical Curettage Lower Bicuspid,1R	2	0	0	0	0	Endodontics	/X/	Apicoectomy, Mandibular Bicuspid, One root
+34152	Apicoectomy/Apical Curettage Lower Bicuspid,2R	2	0	0	0	0	Endodontics	/X/	Apicoectomy, Mandibular Bicuspid, Two roots
+34153	Apicoectomy/Apical Curettage Lower Bicuspid,3R+	2	0	0	0	0	Endodontics	/X/	Apicoectomy, Mandibular Bicuspid, Three or more ro
+34161	Apicoectomy/Apical Curettage Lower Molar,1R	2	0	0	0	0	Endodontics	/X/	Apicoectomy, Mandibular Molar, One root
+34162	Apicoectomy/Apical Curettage Lower Molar,2R	2	0	0	0	0	Endodontics	/X/	Apicoectomy, Mandibular Molar, Two roots
+34163	Apicoectomy/Apical Curettage Lower Molar,3R	2	0	0	0	0	Endodontics	/X/	Apicoectomy, Mandibular Molar, Three roots
+34164	Apicoectomy/Apical Curettage Lower Molar,4R+	2	0	0	0	0	Endodontics	/X/	ACLM4R
+34211	Retrofilling Upper Anterior,1can	2	0	0	0	6	Endodontics	/X/	Retrofilling, Maxillary Anterior, One canal
+34212	Retrofilling Upper Anterior,2can+	2	0	0	0	6	Endodontics	/X/	Retrofilling, Maxillary Anterior, Two or more cana
+34221	Retrofilling Upper Bicuspid,1can	2	0	0	0	6	Endodontics	/X/	Retrofilling, Maxillary Bicuspid, One canal
+34222	Retrofilling Upper Bicuspid,2can	2	0	0	0	6	Endodontics	/X/	Retrofilling, Maxillary Bicuspid, Two canals
+34223	Retrofilling Upper Bicuspid,3can	2	0	0	0	6	Endodontics	/X/	Retrofilling, Maxillary Bicuspid, Three canals
+34224	Retrofilling Upper Bicuspid,4can+	2	0	0	0	6	Endodontics	/X/	Retrofilling, Maxillary Bicuspid, Four or more can
+34231	Retrofilling Upper Molar,1can	2	0	0	0	6	Endodontics	/X/	Retrofilling, Maxillary Molar, One canal
+34232	Retrofilling Upper Molar,2can	2	0	0	0	6	Endodontics	/X/	Retrofilling, Maxillary Molar, Two canals
+34233	Retrofilling Upper Molar,3can	2	0	0	0	6	Endodontics	/X/	Retrofilling, Maxillary Molar, Three canals
+34234	Retrofilling Upper Molar,4can+	2	0	0	0	6	Endodontics	/X/	Retrofilling, Maxillary Molar, Four or more canals
+34241	Retrofilling Lower Anterior,1can	2	0	0	0	6	Endodontics	/X/	Retrofilling, Mandibular Anterior,One canal
+34242	Retrofilling Lower Anterior,2can+	2	0	0	0	6	Endodontics	/X/	Retrofilling, Mandibular Anterior,Two or more cana
+34251	Retrofilling Lower Bicuspid,1can	2	0	0	0	6	Endodontics	/X/	Retrofilling, Mandibular Bicuspid, One canal
+34252	Retrofilling Lower Bicuspid,2can	2	0	0	0	6	Endodontics	/X/	Retrofilling, Mandibular Bicuspid, Two canals
+34253	Retrofilling Lower Bicuspid,3can	2	0	0	0	6	Endodontics	/X/	Retrofilling, Mandibular Bicuspid, Three canals
+34254	Retrofilling Lower Bicuspid,4can	2	0	0	0	6	Endodontics	/X/	Retrofilling, Mandibular Bicuspid, Four or more ca
+34261	Retrofilling Lower Molar,1can	2	0	0	0	6	Endodontics	/X/	Retrofilling, Mandibular Molar, One canal
+34262	Retrofilling Lower Molar,2can	2	0	0	0	6	Endodontics	/X/	Retrofilling, Mandibular Molar, Two canals
+34263	Retrofilling Lower Molar,3can	2	0	0	0	6	Endodontics	/X/	Retrofilling, Mandibular Molar, Three canals
+34264	Retrofilling Lower Molar,4can+	2	0	0	0	6	Endodontics	/X/	Retrofilling, Mandibular Molar, Four or more canal
+34311	Retreat,Apico/Aprical Curr Upper Anterior,1root	2	0	0	0	0	Endodontics	/X/	Retreat, Apicoectomy, Maxillary Anterior, One root
+34312	Retreat,Apico/Aprical Curr Upper Anterior,2roots	2	0	0	0	0	Endodontics	/X/	Retreat, Apicoectomy, Maxillary Anterior, Two root
+34321	Retreat,Apico/Aprical Curr Upper Bicuspid,1root	2	0	0	0	0	Endodontics	/X/	Retreat, Apicoectomy, Maxillary Bicuspid, One root
+34322	Retreat,Apico/Aprical Curr Upper Bicuspid,2roots	2	0	0	0	0	Endodontics	/X/	Retreat, Apicoectomy, Maxillary Bicuspid, Two root
+34323	Retreat,Apico/Aprical Curr Upper Bicuspid,3roots	2	0	0	0	0	Endodontics	/X/	Retreat, Apicoectomy, Maxillary Bicuspid, Three ro
+34324	Retreat,Apico/Aprical Curr Upper Bicuspid,4roots+	2	0	0	0	0	Endodontics	/X/	RACUB4
+34331	Retreat,Apico/Aprical Curr Upper Molar,1root	2	0	0	0	0	Endodontics	/X/	Retreat, Apicoectomy, Maxillary Molar, One root
+34332	Retreat,Apico/Aprical Curr Upper Molar,2roots	2	0	0	0	0	Endodontics	/X/	Retreat, Apicoectomy, Maxillary Molar, Two roots
+34333	Retreat,Apico/Aprical Curr Upper Molar,3roots	2	0	0	0	0	Endodontics	/X/	Retreat, Apicoectomy, Maxillary Molar, Three roots
+34334	Retreat,Apico/Aprical Curr Upper Molar,4roots+	2	0	0	0	0	Endodontics	/X/	RACUM4
+34341	Retreat,Apico/Aprical Curr Lower Anterior,1root	2	0	0	0	0	Endodontics	/X/	Retreat, Apicoectomy, Mandibular Anterior, One roo
+34342	Retreat,Apico/Aprical Curr Lower Anterior,2roots+	2	0	0	0	0	Endodontics	/X/	Retreat, Apicoectomy, Mandibular Anterior, Two or 
+34351	Retreat,Apico/Aprical Curr Lower Bicuspid,1root	2	0	0	0	0	Endodontics	/X/	Retreat, Apicoectomy, Mandibular Bicuspid, One roo
+34352	Retreat,Apico/Aprical Curr Lower Bicuspid,2roots	2	0	0	0	0	Endodontics	/X/	Retreat, Apicoectomy, Mandibular Bicuspid, Two roo
+34353	Retreat,Apico/Aprical Curr Lower Bicuspid,3roots	2	0	0	0	0	Endodontics	/X/	Retreat, Apicoectomy, Mandibular Bicuspid, Three o
+34354	Retreat,Apico/Aprical Curr Lower Bicuspid,4roots+	2	0	0	0	0	Endodontics	/X/	RACLB4
+34361	Retreat,Apico/Aprical Curr Lower Molar,1root	2	0	0	0	0	Endodontics	/X/	Retreat, Apicoectomy, Mandibular Molar, One root
+34362	Retreat,Apico/Aprical Curr Lower Molar,2roots	2	0	0	0	0	Endodontics	/X/	Retreat, Apicoectomy, Mandibular Molar, Two roots
+34363	Retreat,Apico/Aprical Curr Lower Molar,3roots	2	0	0	0	0	Endodontics	/X/	Retreat, Apicoectomy, Mandibular Molar, Three root
+34364	Retreat,Apico/Aprical Curr Lower Molar,4roots+	2	0	0	0	0	Endodontics	/X/	RACLM4
+34411	Surgical Services,Misc Amputations,Root,1R	2	0	0	0	0	Endodontics	/X/	SSMAR1R
+34412	Surgical Services,Misc Amputations,Root,2R	2	0	0	0	0	Endodontics	/X/	SSMAR2R
+34422	Surgical Services,Misc Hemisection,Upper Molar	2	0	0	0	0	Endodontics	/X/	SSMHUM
+34423	Surgical Services,Misc Hemisection,Lower. Molar	2	0	0	0	0	Endodontics	/X/	SSMHLM
+34431	Surgical Services,Misc Decompression,1st Visit	3	0	0	0	0	Endodontics	/X/	SSMD1V
+34432	Surgical Services,Misc Decompression,Addnl Visit	3	0	0	0	0	Endodontics	/X/	SSMDAV
+34441	Surgical Services,Misc Exploratory,Upper Anterior	2	0	0	0	0	Endodontics	/X/	SSMEUA
+34442	Surgical Services,Misc Exploratory,Upper Bicuspid	2	0	0	0	0	Endodontics	/X/	SSMEUB
+34443	Surgical Services,Misc Exploratory,Upper Molar	2	0	0	0	0	Endodontics	/X/	SSMEUM
+34444	Surgical Services,Misc Exploratory,Lower Anterior	2	0	0	0	0	Endodontics	/X/	SSMELA
+34445	Surgical Services,Misc Exploratory,Lower Bicuspid	2	0	0	0	0	Endodontics	/X/	SSMELB
+34446	Surgical Services,Misc Exploratory,Lower Molar	2	0	0	0	0	Endodontics	/X/	SSMELM
+34451	Surgical Services,Misc Remove,Replant 1R tooth	2	0	0	0	0	Endodontics	/X/	SSMRR1R
+34452	Surgical Services,Misc Remove,Replant 2R tooth	2	0	0	0	0	Endodontics	/X/	SSMRR2R
+34453	Surgical Services,Misc Remove,Replant 3+R tooth	2	0	0	0	0	Endodontics	/X/	SSMRR3R
+34511	Perforations/ResorptiveDefect Non-Surgical,per tooth	2	0	0	0	0	Endodontics	/X/	PNS
+34521	Perforations/ResorptiveDefect Surgical - Anterior Tooth	2	0	0	0	0	Endodontics	/X/	PSAT
+34522	Perforations/ResorptiveDefect Surgical - Bicuspid Tooth	2	0	0	0	0	Endodontics	/X/	PSBT
+34523	Perforations/ResorptiveDefect Surgical - Molar Tooth	2	0	0	0	0	Endodontics	/X/	PSMT
+34601	Enlarge Canal/Pulp Chamber In Tooth filled by Another	2	0	0	0	6	Endodontics	/X/	Post Space Preparation
+34602	Enlarge Canal/Pulp Chamber In Calcified Canals	2	0	0	0	3	Endodontics	/X/	Post Space Preparation, Calcified Canal
+39101	Isolation for Asepsis Banding and/or Contouring	3	0	0	0	0	Endodontics	/X/	Isolation of Tooth Prior to Endo
+39201	Open and Drain (Sep Proc) Anteriors,Bicuspids	2	0	0	0	0	Endodontics	/X/	Open and Drain, Anteriors and Bicuspids
+39202	Open and Drain (Sep Proc) Molars	2	0	0	0	0	Endodontics	/X/	Open and Drain, Molars
+39211	Open and Drain (In Addition) Thru Crown,Ant & Bicuspids	2	0	0	0	8	Endodontics	/X/	Opening through Crown, Anteriors and Bicuspids
+39212	Open and Drain (In Addition) Thru Crown,Molars	2	0	0	0	8	Endodontics	/X/	Opening through Crown, Molars
+39311	Bleaching,Non Vital 1 Unit	3	0	0	0	0	Endodontics	/X/	BNV1U
+39312	Bleaching,Non Vital 2 Units	3	0	0	0	0	Endodontics	/X/	BNV2U
+39313	Bleaching,Non Vital 3 Units	3	0	0	0	0	Endodontics	/X/	BNV3U
+39319	Bleaching,Non Vital Each Addtl Over 3	3	0	0	0	0	Endodontics	/X/	BNVEO3
+39411	Exploratory,Prev. Treated Anterior	2	0	0	0	0	Endodontics	/X/	Exploratory Access of Previously treated tooth, An
+39412	Exploratory,Prev. Treated Bicuspid	2	0	0	0	0	Endodontics	/X/	Exploratory Access of Previously treated tooth, Bi
+39413	Exploratory,Prev. Treated Molar	2	0	0	0	0	Endodontics	/X/	Exploratory Access of Previously treated tooth, Mo
+41211	Oral Diseases,Mucosal 1 Unit	3	0	0	0	0	Periodontics	/X/	ODM1U
+41212	Oral Diseases,Mucosal 2 Units	3	0	0	0	0	Periodontics	/X/	ODM2U
+41213	Oral Diseases,Mucosal 3 Units	3	0	0	0	0	Periodontics	/X/	ODM3U
+41214	Oral Diseases,Mucosal 4 Units	3	0	0	0	0	Periodontics	/X/	ODM4U
+41219	Oral Diseases,Mucosal Each Addtl Over 4	3	0	0	0	0	Periodontics	/X/	ODMEO4
+41221	Oral Diseases,Nerv/Muscular 1 Unit	3	0	0	0	0	Periodontics	/X/	ODN1U
+41222	Oral Diseases,Nerv/Muscular 2 Units	3	0	0	0	0	Periodontics	/X/	ODN2U
+41223	Oral Diseases,Nerv/Muscular 3 Units	3	0	0	0	0	Periodontics	/X/	ODN3U
+41224	Oral Diseases,Nerv/Muscular 4 Units	3	0	0	0	0	Periodontics	/X/	ODN4U
+41229	Oral Diseases,Nerv/Muscular Each Addtl Over 4	3	0	0	0	0	Periodontics	/X/	ODNEO4
+41231	Oral Diseases,Systemic 1 Unit	3	0	0	0	0	Periodontics	/X/	ODS1U
+41232	Oral Diseases,Systemic 2 Units	3	0	0	0	0	Periodontics	/X/	ODS2U
+41233	Oral Diseases,Systemic 3 Units	3	0	0	0	0	Periodontics	/X/	ODS3U
+41234	Oral Diseases,Systemic 4 Units	3	0	0	0	0	Periodontics	/X/	ODS4U
+41239	Oral Diseases,Systemic Each Addtl Over 4	3	0	0	0	0	Periodontics	/X/	ODSEO4
+41301	Desensitization 1 Unit	3	0	0	0	0	Periodontics	/X/	Desensitization, One unit of time
+41302	Desensitization 2 Units	3	0	0	0	0	Periodontics	/X/	Desensitization, Two units
+41309	Desensitization Each Addtl Over 2	3	0	0	0	0	Periodontics	/X/	Desensitization, Each additional unit over two
+42111	Gingival Curettage Incl Root Planing per sxt/site	2	0	0	0	0	Periodontics	/X/	Surgical Curettage, Per sextant
+42121	Gingival Curettage Incl Debride Implant-sxt/site	2	0	0	0	0	Periodontics	/X/	GCIDI
+42201	Gingivoplasty Per sxt/site	5	0	0	0	0	Periodontics	/X/	Gingivoplasty, Per sextant
+42211	Gingivoplasty Around an Implant - sxt/site	2	0	0	0	0	Periodontics	/X/	GAI
+42311	Gingivectomy per site	3	0	0	0	0	Periodontics	/X/	Gingivectomy, Uncomplicated, Per sextant
+42331	Gingivectomy Fibre Incision - 1 tooth	2	0	0	0	0	Periodontics	/X/	Gingival Fiber Incision, First tooth
+42339	Gingivectomy Fibre Incision - addtl teeth	3	0	0	0	0	Periodontics	/X/	Gingival Fiber Incision, Each additional tooth
+42341	Gingivectomy Soft Tissue Recont-per tooth	2	0	0	0	0	Periodontics	/X/	GSTR
+42411	Flap Approach W Osteoplasty/Ostectomy / sxt	5	0	0	0	0	Periodontics	/X/	FAWO
+42421	Flap Approach W Curettage of Osseous,/ sxt	5	0	0	0	0	Periodontics	/X/	FAWCO
+42441	Flap Approach Exploratory,/ site	3	0	0	0	0	Periodontics	/X/	FAE
+42451	Flap Approach Osteopl/Ostoect/Crn Lngth/site	3	0	0	0	0	Periodontics	/X/	FAOL
+42461	Flap Approach w/Curettage of Oss.DefectAboutImplant/site	2	0	0	0	0	Periodontics	/X/	FAODAI
+42471	Flap Approach w/Curettage of Oss.DefectInclDetox/site	3	0	0	0	0	Periodontics	/X/	FAODID
+42481	Flap Approach w/Curettage of Oss.Defect&Osteoplsty/site	3	0	0	0	0	Periodontics	/X/	FAODO
+42511	Grafts,Soft Tissue,Pedicle Per site	3	0	0	0	0	Periodontics	/X/	GSTPP
+42521	Grafts,Soft Tissue,Pedicle Coronally Positi1d,/site	3	0	0	0	0	Periodontics	/X/	GSTPCP1
+42531	Grafts,Free Soft Tissue Per Site	3	0	0	0	0	Periodontics	/X/	GFSTPS
+42536	Grafts,Free Soft Tissue Adjacent to Implant,/site	2	0	0	0	0	Periodontics	/X/	GFSTAI
+42541	Grafts,Soft Tissue,Pedicle with Free Graft,/site	3	0	0	0	0	Periodontics	/X/	GSTPFG
+42551	Grafts,FreeConnectiveTissue For Root Coverage,/site	2	0	0	0	0	Periodontics	/X/	GFCTFRC
+42556	Grafts,FreeConnectiveTissue Adjacent to Implant,/site	2	0	0	0	0	Periodontics	/X/	GFCTAI
+42561	Grafts,FreeConnectiveTissue For Ridge Augmentation,/site	3	0	0	0	0	Periodontics	/X/	GFCTFRA
+42611	Grafts,OsseousTiss,Autograft Per Site	3	0	0	0	0	Periodontics	/X/	GOTAPS
+42621	Grafts,OsseousTiss,Allograft Per Site,E	3	0	0	0	0	Periodontics	/X/	GOTAPSE
+42631	Grafts,Osseous,Xenograft Incl Flap Entry & Close /site,E	3	0	0	0	0	Periodontics	/X/	GOXIFECE
+42701	Guided Tissue Regeneration Non-Resorbable Membrane /site,E	3	0	0	0	0	Periodontics	/X/	GTRNRME
+42702	Guided Tissue Regeneration Resorbable Membrane,/site,E	3	0	0	0	0	Periodontics	/X/	GTRRME
+42703	Guided Tissue Regeneration NR Membrane,RemvlRentry/site,E	3	0	0	0	0	Periodontics	/X/	GTRNRMRRE
+42721	Biomat not incl surg ent/clos Per site,E	3	0	0	0	0	Periodontics	/X/	BPE
+42811	Miscellaneous,Proximal Wedge With Flap Curettage,/ site	3	0	0	0	0	Periodontics	/X/	Proximal Wedge with Curettage
+42819	Miscellaneous,Proximal Wedge w/Flap Curettage & Ost,/ site	3	0	0	0	0	Periodontics	/X/	Proximal Wedge with Curettage and Osteoplasty
+42821	Misc,Post Surgical Perio TX 1 Unit	3	0	0	0	0	Periodontics	/X/	Post surgical dressing change, 1 unit 
+42822	Misc,Post Surgical Perio TX 2 Units	3	0	0	0	0	Periodontics	/X/	Post surgical dressing change, 2 units
+43111	Splint or Ligation 'A',/ joint,E	3	0	0	0	0	Periodontics	/X/	Periodontal Splint, Composite + Wire, per joint
+43211	Splint or Ligation Bonded Joint Restor.,/,E	3	0	0	0	0	Periodontics	/X/	SLBJRE
+43231	Splint or Ligation Wire,/ joint	3	0	0	0	0	Periodontics	/X/	SLW
+43241	Splint or Ligation Wire Lig/Acrylic Cov,/ joint	3	0	0	0	0	Periodontics	/X/	SLWLC
+43271	Splint or Ligation Cast/Sold/Cerm/PolyGls,Bonded,L	3	0	0	0	0	Periodontics	/X/	SLCBL
+43281	Splint or Ligation Removal Fixed Splints,1U	3	0	0	0	0	Periodontics	/X/	Removal of Periodontal Splint, 1 unit
+43289	Splint or Ligation Removal Fixed Splints,EAU	3	0	0	0	0	Periodontics	/X/	Removal of Periodontal Splint, add'l unit
+43421	Root Planing 1 Unit	2	0	0	0	0	Periodontics	/X/	Root Planing, 1 unit
+43422	Root Planing 2 Units	2	0	0	0	0	Periodontics	/X/	Root Planing, 2 unit
+43423	Root Planing 3 Units	2	0	0	0	0	Periodontics	/X/	Root Planing, 3 unit
+43424	Root Planing 4 Units	2	0	0	0	0	Periodontics	/X/	Root Planing, 4 unit
+43425	Root Planing 5 Units	2	0	0	0	0	Periodontics	/X/	Root Planing, 5 unit
+43426	Root Planing 6 Units	2	0	0	0	0	Periodontics	/X/	Root Planing, 5 unit
+43427	Root Planing 1/2 Unit	2	0	0	0	0	Periodontics	/X/	RP1U
+43429	Root Planing Each Addtl Over 6	2	0	0	0	0	Periodontics	/X/	Root Planing, add'l unit
+43511	Chemother/Antimicrobial Topical Application,1U	3	0	0	0	0	Periodontics	/X/	Antimicrobial, Topical, 1 unit
+43519	Chemother/Antimicrobial Topical Application,EAU	3	0	0	0	0	Periodontics	/X/	Antimicrobial, Topical, add'l unit
+43521	Chemother/Antimicrobial Intra-sulcular Application,1U,E	3	0	0	0	0	Periodontics	/X/	Antimicrobial, Intrasulcular, 1 unit
+43529	Chemother/Antimicrobial Intra-sulcular Application EAU,E	3	0	0	0	0	Periodontics	/X/	Antimicrobial,  Intrasulcular, add'l unit
+49101	Re-evaluation 1 Unit	3	0	0	0	0	Periodontics	/X/	Perio Revaluation, 1 unit
+49102	Re-evaluation 2 Units	3	0	0	0	0	Periodontics	/X/	Perio Revaluation, 2 units
+49109	Re-evaluation Each Addtl Over 2	3	0	0	0	0	Periodontics	/X/	Perio Revaluation, add'l units
+49211	Irrigation,Subgingival 1 Unit,E	2	0	0	0	0	Periodontics	/X/	Periodontal Irrigation, 1 unit 
+49219	Irrigation,Subgingival Each Addtl Unit,E	2	0	0	0	0	Periodontics	/X/	Periodontal Irrigation, add'l unit 
+49221	Irrigation,Subgingival About Implants,1U,E	2	0	0	0	0	Periodontics	/X/	ISAI1UE
+49229	Irrigation,Subgingival About Implants,EAU,E	2	0	0	0	0	Periodontics	/X/	ISAIAUE
+51101	Complete Dentures,Standard Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	CUD + Lab
+51102	Complete Dentures,Standard Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	CLD + Lab
+51104	Complete Dentures,Standard Liners,Resilient	6	0	0	0	12	Prosthodontics - Removable	/X/	Complete Denture Resilient Liner + Lab
+51201	Complete Dentures,Complex Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	CUD, Equilibrated + Lab
+51202	Complete Dentures,Complex Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	CLD, Equilibrated + Lab
+51204	Complete Dentures,Complex Liners,Resilient	6	0	0	0	12	Prosthodontics - Removable	/X/	Complete Denture, Equilibrated, Resilient Liner + 
+51301	CompleteDentures,Surgical/Std (Immediate) Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	Immediate CUD + Lab
+51302	Complete Dentures,Surgical/Std (Immediate) Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	Immediate CLD + Lab
+51601	Complete Dentures,Provisional Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	CUD, Provisional + Lab
+51602	Complete Dentures,Provisional Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	CLD, Provisional + Lab
+51711	CompleteOverdentures,TissueB Sup by Nat Teeth,NoAttach,Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	COTBSTNAUL
+51712	CompleteOverdentures,TissueB Sup by Nat Teeth,NoAttach,Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	COTBSTNALL
+51721	CompleteOverdentures,TissueB Sup by Implants,NoAttach,Upper,L	6	0	1	0	2	Prosthodontics - Removable	/X/	COTBSINAUL
+51722	CompleteOverdentures,TissueB Sup by Implants,NoAttach,Lower,L	6	0	1	0	2	Prosthodontics - Removable	/X/	COTBSINALL
+51731	CompleteOverdentures,TissueB Sup-NatTth&Impl,NoAttach,Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	COTBSINAUL
+51732	CompleteOverdentures,TissueB Sup-NatTth&Impl,NoAttach,Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	COTBSINALL
+51811	CompleteOverdentures,TissueB No Attachments,Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	COTBNAUL
+51812	CompleteOverdentures,TissueB No Attachments,Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	COTBNALL
+51821	CompleteOverden(Immed),TissB Sup by Implants,NoAttach,Upper,L	6	0	1	0	2	Prosthodontics - Removable	/X/	COITBINAUL
+51822	CompleteOverden(Immed),TissB Sup by Implants,NoAttach,Lower,L	6	0	1	0	2	Prosthodontics - Removable	/X/	COITBINALL
+51831	CompleteOverden(Immed),TissB Sup-NatTth&Impl,NoAttach,Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	COITBINAUL
+51832	CompleteOverden(Immed),TissB Sup-NatTth&Impl,NoAttach,Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	COITBINALL
+51911	Complete Dentures,Attached Ind.Attachments,Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	CDAIAUL
+51912	Complete Dentures,Attached Ind.Attachments,Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	CDAIALL
+51921	CompleteOverdentures,TissueB W/Indep.Attach,Sec-Impl,Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	COTBWSIUL
+51922	CompleteOverdentures,TissueB W/Indep.Attach,Sec-Impl,Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	COTBWSILL
+51931	CompleteOverdentures,TissueB W/IndAtt,Sec-NatTth&Impl,Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	COTBWNTIUL
+51932	CompleteOverdentures,TissueB W/IndAtt,Sec-NatTth&Impl,Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	COTBWNTILL
+51941	CompleteOverdentures,TissueB W/RetBar,SupByNatTeeth,Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	COTBWBNTUL
+51942	CompleteOverdentures,TissueB W/RetBar,SupByNatTeeth,Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	COTBWBNTLL
+51951	CompleteOverdentures,TissueB W/RetBar,SupBy Implants,Upper,L	6	0	1	0	2	Prosthodontics - Removable	/X/	COTBWSBIUL
+51952	CompleteOverdentures,TissueB W/RetBar,SupBy Implants,Lower,L	6	0	1	0	2	Prosthodontics - Removable	/X/	COTBWSBILL
+51961	CompleteOverdentures,TissueB W/RetBar,SupByNatTth&Impl,Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	COTBWNTIUL
+51962	CompleteOverdentures,TissueB W/RetBar,SupByNatTth&Impl,Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	COTBWNTILL
+52101	Dentures,Partial,AcrylicBase Provs,w/without Clasps - Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	PUD, Provisional + Lab
+52102	Dentures,Partial,AcrylicBase Provs,w/without Clasps - Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	PLD, Provisional + Lab
+52111	Dentures,Partial,AcrylicBase Immediate,- Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	PUD, Immediate Provisional + Lab
+52112	Dentures,Partial,AcrylicBase Immediate,- Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	PLD, Immediate Provisional + Lab
+52201	Dentures,Partial,Acrylic Resilient Retainer,- Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	DPARRUL
+52202	Dentures,Partial,Acrylic Resilient Retainer,- Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	DPARRLL
+52211	Dentures,Partial,Acrylic Resilient Ret. Immed.,- Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	DPARRIUL
+52212	Dentures,Partial,Acrylic Resilient Ret. Immed.,- Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	DPARRILL
+52301	Dentures,Partial,Acrylic Wrought/Cast Clasps,- Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	PUD, Wrought Clasps + Lab
+52302	Dentures,Partial,Acrylic Wrought/Cast Clasps,- Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	PLD, Wrought Clasps + Lab
+52311	Dentures,Partial,Acrylic Wrt/Cast Clasps-Immed,- Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	PUD, Immediate, Wrought Clasps + Lab
+52312	Dentures,Partial,Acrylic Wrt/Cast Clasps-Immed. - Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	PLD, Immediate Wrought Clasps + Lab
+52401	Dentures,Partial,Acrylic Palatal/Lingual Bar,- Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	DPAPBUL
+52402	Dentures,Partial,Acrylic Palatal/Lingual Bar,- Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	DPAPBLL
+52411	Dentures,Partial,Acrylic Palat/Lingual Bar-Immed- Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	DPAPBIUL
+52412	Dentures,Partial,Acrylic Palat/Lingual Bar-Immed- Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	DPAPBILL
+52511	Dentures,Partial,FlexibleAcr. Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	DPFAUL
+52512	Dentures,Partial,FlexibleAcr. Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	DPFALL
+52711	Partial,Overdentures,Acrylic w/Clasps,NoAttachments - Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	POANAUL
+52712	Partial,Overdentures,Acrylic w/Clasps,NoAttachments - Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	POANALL
+52721	PartOverdent,Acry,w/CastClsp Sup by Implants,NoAttach,Upper,L	6	0	1	0	2	Prosthodontics - Removable	/X/	POASINAUL
+52722	PartOverdent,Acry,w/CastClsp Sup by Implants,NoAttach,Lower,L	6	0	1	0	2	Prosthodontics - Removable	/X/	POASINALL
+52731	PartOverdent,Acry,w/CastClsp Sup-NatTth&Impl,NoAttach,Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	POASNINAUL
+52732	PartOverdent,Acry,w/CastClsp Sup-NatTth&Impl,NoAttach,Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	POASNINALL
+52811	Partial,Overd,Immed,Acrylic w/Clasps,NoAttachments - Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	POIANAUL
+52812	Partial,Overd,Immed,Acrylic w/Clasps,NoAttachments - Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	POIANALL
+52821	PartOD(Immd),Acry,w/CastClsp Sup by Implants,NoAttach,Upper,L	6	0	1	0	2	Prosthodontics - Removable	/X/	PODIAINAUL
+52822	PartOD(Immd),Acry,w/CastClsp Sup by Implants,NoAttach,Lower,L	6	0	1	0	2	Prosthodontics - Removable	/X/	PODIAINALL
+52831	PartOD(Immd),Acry,w/CastClsp Sup-NatTth&Impl,NoAttach,Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	PODIAINAUL
+52832	PartOD(Immd),Acry,w/CastClsp Sup-NatTth&Impl,NoAttach,Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	PODIAINALL
+52911	Partial,Overdentures,Acrylic w/Clasps,IndAttachments- Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	POAIAUL
+52912	Partial,Overdentures,Acrylic w/Clasps,IndAttachments- Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	POAIALL
+52921	PartOD(Immd),Acry,w/CastClsp W/Indep.Attach,Sec-Impl,Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	PODIAWSIUL
+52922	PartOD(Immd),Acry,w/CastClsp W/Indep.Attach,Sec-Impl,Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	PODIAWSILL
+52931	PartOD(Immd),Acry,w/CastClsp W/IndAtt,Sec-NatTth&Impl,Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	PODIANTIUL
+52932	PartOD(Immd),Acry,w/CastClsp W/IndAtt,Sec-NatTth&Impl,Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	PODIANTILL
+52941	Partial,Overdentures,Acrylic w/Clasps,Retentive Bar - Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	POARBUL
+52942	Partial,Overdentures,Acrylic w/Clasps,Retentive Bar - Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	POARBLL
+52951	PartOD(Immd),Acry,w/CastClsp W/RetBar,SupBy Implants,Upper,L	6	0	1	0	2	Prosthodontics - Removable	/X/	PODIASBIUL
+52952	PartOD(Immd),Acry,w/CastClsp W/RetBar,SupBy Implants,Lower,L	6	0	1	0	2	Prosthodontics - Removable	/X/	PODIASBILL
+52961	PartOD(Immd),Acry,w/CastClsp W/RetBar,SupByNatTth&Impl,Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	PODIANTIUL
+52962	PartOD(Immd),Acry,w/CastClsp W/RetBar,SupByNatTth&Impl,Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	PODIANTILL
+53101	Dentures,Part,Cast/Acrylic FE Cast Frame/Connector- Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PUD, Cast Frame, Free End + Lab
+53102	Dentures,Part,Cast/Acrylic FE Cast Frame/Connector- Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PLD, Cast Frame, Free End + Lab
+53104	Dentures,Part,Cast/Acrylic Altered Cast Impression,L	6	0	0	0	12	Prosthodontics - Removable	/X/	DPCACIL
+53111	Dentures,Part,Cast/Acrylic FE Cast Frame/Connector- Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PUD, Immediate, Cast Frame, Free End + Lab
+53112	Dentures,Part,Cast/Acrylic FE Cast Frame/Connector- Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PLD, Immediate, Cast Frame, Free End + Lab
+53201	Dentures,Part,Cast/Acrylic Tooth Borne,- Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PUD, Cast Frame, Tooth-Borne + Lab
+53202	Dentures,Part,Cast/Acrylic Tooth Borne,- Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PLD, Cast Frame, Tooth-Borne + Lab
+53205	Dentures,Part,Cast/Acrylic Tooth Borne - Unilateral,L	6	0	0	0	12	Prosthodontics - Removable	/X/	Partial, Cast Frame, Tooth-Borne, Unilateral + Lab
+53211	Dentures,Part,Tth Borne,Cast,Frame/Connector- Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PUD, Immediate, Cast Frame, Tooth-Borne + Lab
+53212	Dentures,Part,Tth Borne,Cast,Frame/Connector- Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PLD, Immediate, Cast Frame, Tooth-Borne + Lab
+53215	Dentures,Part,Tth Borne,Cast Unilateral,1 pc Casing,L	6	0	0	0	12	Prosthodontics - Removable	/X/	Partial, Immediate, Cast Frame, Tooth-Borne, Unila
+53401	Dentures,Partial,Cast Precision Attachment,- Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PUD, Cast Frame, Precision Attachments + Lab
+53402	Dentures,Partial,Cast Precision Attachment,- Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PLD, Cast Frame, Precision Attachments + Lab
+53611	Dentures,Partial,Cast Stress Breaker (resil) - Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PUD, Cast, Stress Breaker Attachments, (resilient)
+53621	Dentures,Partial,Cast Stress Breaker (resil) - Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PLD, Cast, Stress Breaker Attachments, (resilient)
+53711	Partial,Cast,Overdentures SupByNatTeeth,NoAttach - Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOSBTNAUL
+53712	Partial,Cast,Overdentures SupByNatTeeth,NoAttach - Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOSBTNALL
+53714	Partial,Cast,Overdentures Altered,Impression,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOAIL
+53721	Partial Cast Overdentures Sup by Implants,NoAttach,Upper,L	6	0	0	0	2	Prosthodontics - Removable	/X/	PCOSINAUL
+53722	Partial Cast Overdentures Sup by Implants,NoAttach,Lower,L	6	0	0	0	2	Prosthodontics - Removable	/X/	PCOSINALL
+53724	Partial Cast Overdentures AltCast Impression Technique	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOACIT
+53731	Partial Cast Overdentures Sup-NatTth&Impl,NoAttach,Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOSNINAUL
+53732	Partial Cast Overdentures Sup-NatTth&Impl,NoAttach,Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOSNINALL
+53734	Partial Cast Overdentures AltCast Impression Technique	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOACIT
+53811	Partial,Cast,Overdenture,Imm. SupByNatTeeth,NoAttach - Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOISTNAUL
+53812	Partial,Cast,Overdenture,Imm. SupByNatTeeth,NoAttach - Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOISTNALL
+53814	Partial,Cast,Overdenture,Imm. Altered,Impression,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOIAIL
+53821	Partial Cast Overdent (Immed) Sup by Implants,NoAttach,Upper,L	6	0	0	0	2	Prosthodontics - Removable	/X/	PCOISINAUL
+53822	Partial Cast Overdent (Immed) Sup by Implants,NoAttach,Lower,L	6	0	0	0	2	Prosthodontics - Removable	/X/	PCOISINALL
+53824	Partial Cast Overdent (Immed) AltCast Impression Technique	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOIACIT
+53831	Partial Cast Overdent (Immed) Sup-NatTth&Impl,NoAttach,Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOISINAUL
+53832	Partial Cast Overdent (Immed) Sup-NatTth&Impl,NoAttach,Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOISINALL
+53834	Partial Cast Overdent (Immed) AltCast Impression Technique	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOIACIT
+53911	Partial,Cast,Overdentures Ind. Attach-NatTeeth,- Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOIANTUL
+53912	Partial,Cast,Overdentures Ind. Attach-NatTeeth,- Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOIANTLL
+53921	Partial Cast Overdentures W/Indep.Attach,Sec-Impl,Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOWSIUL
+53922	Partial Cast Overdentures W/Indep.Attach,Sec-Impl,Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOWSILL
+53931	Partial Cast Overdentures W/IndAtt,Sec-NatTth&Impl,Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOWSNTIUL
+53932	Partial Cast Overdentures W/IndAtt,Sec-NatTth&Impl,Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOWSNTILL
+53941	Partial,Cast,Overdentures RetentiveBar-NatTeeth,- Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCORBNTUL
+53942	Partial,Cast,Overdentures RetentiveBar-NatTeeth,- Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCORBNTLL
+53951	Partial Cast Overdentures W/RetBar,SupBy Implants,Upper,L	6	0	0	0	2	Prosthodontics - Removable	/X/	PCOWSBIUL
+53952	Partial Cast Overdentures W/RetBar,SupBy Implants,Lower,L	6	0	0	0	2	Prosthodontics - Removable	/X/	PCOWSBILL
+53961	Partial Cast Overdentures W/RetBar,SupByNatTth&Impl,Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOWSNTIUL
+53962	Partial Cast Overdentures W/RetBar,SupByNatTth&Impl,Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PCOWSNTILL
+54201	Dentures,Adjustments Minor,1U,L	6	0	0	0	12	Prosthodontics - Removable	/X/	Denture Adjustment, Minor, one unit
+54202	Dentures,Adjustments Minor,2U,L	6	0	0	0	12	Prosthodontics - Removable	/X/	Denture Adjustment, Minor,  two units
+54209	Dentures,Adjustments Minor,EAU,L	6	0	0	0	12	Prosthodontics - Removable	/X/	Denture Adjustment, Minor,  each add'l unit
+54301	Dentures,Adjustments Remount & Occlusal Equil -Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	DAROEUL
+54302	Dentures,Adjustments Remount & Occlusal Equil -Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	DAROELL
+55101	Dentures,Repairs/Add/Complete No Impression Req'd,- Upper,L	6	0	0	0	0	Prosthodontics - Removable	/X/	Denture Repair, CUD, No Impression Required + Lab
+55102	Dentures,Repairs/Add/Complete No Impression Req'd,- Lower,L	6	0	0	0	0	Prosthodontics - Removable	/X/	Denture Repair, CLD, No Impression Required + Lab
+55201	Dentures,Repairs/Add/Complete Impression Req'd,- Upper,L	6	0	0	0	0	Prosthodontics - Removable	/X/	Denture Repair, CUD, Impression Required + Lab
+55202	Dentures,Repairs/Add/Complete Impression Req'd,- Lower,L	6	0	0	0	0	Prosthodontics - Removable	/X/	Denture Repair, CLD, Impression Required + Lab
+55301	Partial Dentures,Repairs/Add No Impression Req'd,- Upper,L	6	0	0	0	0	Prosthodontics - Removable	/X/	Denture Repair, PUD, No Impression Required + Lab
+55302	Partial Dentures,Repairs/Add No Impression Req'd,- Lower,L	6	0	0	0	0	Prosthodontics - Removable	/X/	Denture Repair, PLD, No Impression Required + Lab
+55401	Partial Dentures,Repairs/Add Impression Req'd,- Upper,L	6	0	0	0	0	Prosthodontics - Removable	/X/	Denture Repair, PUD, Impression Required + Lab
+55402	Partial Dentures,Repairs/Add Impression Req'd,- Lower,L	6	0	0	0	0	Prosthodontics - Removable	/X/	Denture Repair, PLD, Impression Required + Lab
+55501	Dentures/Implant Ret.Prosth. Prophylaxis/Polishing,1U,L	6	0	0	0	2	Prosthodontics - Removable	/X/	Denture Prophy + Polish, 1 unit
+55509	Dentures/Implant Ret.Prosth. Prophylaxis/Polishing,EAU,L	6	0	0	0	2	Prosthodontics - Removable	/X/	Denture Prophy + Polish, add'l unit
+55601	Rebuild Worn Acr.Dent.Teeth Direct Chairside,1U	6	0	0	0	12	Prosthodontics - Removable	/X/	RWADTDC1U
+55609	Rebuild Worn Acr.Dent.Teeth Direct Chairside,EAU	6	0	0	0	12	Prosthodontics - Removable	/X/	RWADTDCAU
+56111	Dentures,Replication,Prov. Complete Denture,- Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	Denture Replication, CUD, No Intraoral Impression 
+56112	Dentures,Replication,Prov. Complete Denture,- Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	Denture Replication, CLD, No Intraoral Impression 
+56211	Dentures,Reline,Direct Complete Denture,- Upper	6	0	0	0	12	Prosthodontics - Removable	/X/	DRDCDU
+56212	Dentures,Reline,Direct Complete Denture,- Lower	6	0	0	0	12	Prosthodontics - Removable	/X/	DRDCDL
+56221	Dentures,Reline,Direct Partial Denture,- Upper	6	0	0	0	12	Prosthodontics - Removable	/X/	DRDPDU
+56222	Dentures,Reline,Direct Partial Denture,- Lower	6	0	0	0	12	Prosthodontics - Removable	/X/	DRDPDL
+56231	Dentures,Reline,Processed Complete Denture,- Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	CUD Processed Reline + Lab
+56232	Dentures,Reline,Processed Complete Denture,- Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	CLD Processed Reline + Lab
+56241	Dentures,Reline,Processed Partial Denture,- Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PUD Processed Reline + Lab
+56242	Dentures,Reline,Processed Partial Denture,- Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PLD Processed Reline + Lab
+56251	Dentures,Reline,Processed Functional,Complete,- Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	DRPFCUL
+56252	Dentures,Reline,Processed Functional,Complete,- Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	DRPFCLL
+56261	Dentures,Reline,Processed Functional,Partial,- Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	DRPFPUL
+56262	Dentures,Reline,Processed Functional,Partial,- Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	DRPFPLL
+56311	Dentures,Rebase Complete Denture,- Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	CUD Processed Rebase + Lab
+56312	Dentures,Rebase Complete Denture,- Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	CLD Processed Rebase + Lab
+56321	Dentures,Rebase Partial Denture,- Upper,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PUD Processed Rebase + Lab
+56322	Dentures,Rebase Partial Denture,- Lower,L	6	0	0	0	12	Prosthodontics - Removable	/X/	PLD Processed Rebase + Lab
+56411	Dentures,Remake,Exist Frame Partial,- Upper,L	6	0	1	0	12	Prosthodontics - Removable	/X/	Remake PUD with existing framework + Lab
+56412	Dentures,Remake,Exist Frame Partial,- Lower,L	6	0	1	0	12	Prosthodontics - Removable	/X/	Remake PLD with existing framework + Lab
+56511	Dentures,Tissue Conditioning Complete Denture,- Upper	6	0	0	0	12	Prosthodontics - Removable	/X/	CUD, Tissue Conditioner
+56512	Dentures,Tissue Conditioning Complete Denture,- Lower	6	0	0	0	12	Prosthodontics - Removable	/X/	CLD, Tissue Conditioner
+56521	Dentures,Tissue Conditioning Partial Denture,- Upper	6	0	0	0	12	Prosthodontics - Removable	/X/	PUD, Tissue Conditioner
+56522	Dentures,Tissue Conditioning Partial Denture,- Lower	6	0	0	0	12	Prosthodontics - Removable	/X/	PLD, Tissue Conditioner
+56541	Ther. Tissue Conditioning Comp. Overdent,Imp-supp.,Upper	6	0	0	0	12	Prosthodontics - Removable	/X/	TTCCOIU
+56542	Ther. Tissue Conditioning Comp. Overdent,Imp-supp.,Lower	6	0	0	0	12	Prosthodontics - Removable	/X/	TTCCOIL
+56561	Ther. Tissue Conditioning Part. Overdent,Imp-supp.,Upper	6	0	0	0	12	Prosthodontics - Removable	/X/	TTCPOIU
+56562	Ther. Tissue Conditioning Part. Overdent,Imp-supp.,Lower	6	0	0	0	12	Prosthodontics - Removable	/X/	TTCPOIL
+56601	Miscellaneous Services Resilient Liner/Rebased,L	6	0	0	0	12	Prosthodontics - Removable	/X/	Resilient Liner Rebase/Reline (In Addition)
+56602	Miscellaneous Services Resetting of Teeth,L	6	0	0	0	12	Prosthodontics - Removable	/X/	Resetting Teeth
+56603	Miscellaneous Services Cast Occlusal Surfaces,L	6	0	0	0	12	Prosthodontics - Removable	/X/	MSCOSL
+56611	Miscellaneous Services Attachd Retentn Elements-1U,E	6	0	0	0	12	Prosthodontics - Removable	/X/	MSARE1UE
+56612	Miscellaneous Services Attachd Retentn Elements-2U,E	6	0	0	0	12	Prosthodontics - Removable	/X/	MSARE2UE
+56619	Miscellaneous Services Attachd Retentn Elements-EAU,E	6	0	0	0	12	Prosthodontics - Removable	/X/	MSAREAUE
+56621	iscellaneous Services Attachd Retentn Elements-Ind,L+E	6	0	0	0	12	Prosthodontics - Removable	/X/	SAREILE
+57372	Prosthesis,Upperillofacial Gingival	7	0	1	0	12	Prosthodontics - Removable	/X/	PUG
+59111	Partial Dentures,Acrylic Resilient Retainer,- Upper	6	0	1	0	12	Prosthodontics - Removable	/X/	PDARRU
+59112	Partial Dentures,Acrylic Resilient Retainer,- Lower	6	0	1	0	12	Prosthodontics - Removable	/X/	PDARRL
+59121	PartialDentures,w/AcrBase Resilient Retainer,Immed- Upper	6	0	1	0	12	Prosthodontics - Removable	/X/	PDRRIU
+59122	PartialDentures,w/AcrBase Resilient Retainer,Immed- Lower	6	0	1	0	12	Prosthodontics - Removable	/X/	PDRRIL
+59201	Partial Dentures,Acrylic W/Metal Clasps/Rests,- Upper	6	0	1	0	12	Prosthodontics - Removable	/X/	PDAWCU
+59202	Partial Dentures,Acrylic W/Metal Clasps/Rests,- Lower	6	0	1	0	12	Prosthodontics - Removable	/X/	PDAWCL
+59211	PartialDentures,w/AcrBase W/Metal Clasps/Rests,Imm- Upper	6	0	1	0	12	Prosthodontics - Removable	/X/	PDWCIU
+59212	PartialDentures,w/AcrBase W/Metal Clasps/Rests,Imm- Lower	6	0	1	0	12	Prosthodontics - Removable	/X/	PDWCIL
+59301	PartialDentures,Acrylic W/Palatal/Lingual Bar,- Upper	6	0	1	0	12	Prosthodontics - Removable	/X/	PDAWBU
+59302	PartialDentures,Acrylic W/Palatal/Lingual Bar,- Lower	6	0	1	0	12	Prosthodontics - Removable	/X/	PDAWBL
+59311	PartialDentures,Acrylic W/Metal Pal/LingBar,Imm - Upper	6	0	1	0	12	Prosthodontics - Removable	/X/	PDAWPIU
+59312	PartialDentures,Acrylic W/Metal Pal/LingBar,Imm- Lower	6	0	1	0	12	Prosthodontics - Removable	/X/	PDAWPIL
+59511	PartialDentures,CastW/AcBase FE,CastFrame/Con,Clasps - Upper	6	0	1	0	12	Prosthodontics - Removable	/X/	PDCWFECFCU
+59512	PartialDentures,CastW/AcBase FE,CastFrame/Con,Clasps - Lower	6	0	1	0	12	Prosthodontics - Removable	/X/	PDCWFECFCL
+59521	PartialDentures,CastW/AcBase FE,CastFrame/Con,Cl,Imm - Upper	6	0	1	0	12	Prosthodontics - Removable	/X/	PDCWFCFCIU
+59522	PartialDentures,CastW/AcBase FE,CastFrame/Con,Cl,Imm - Lower	6	0	1	0	12	Prosthodontics - Removable	/X/	PDCWFCFCIL
+59531	PartialDentures,CastW/AcBase TB,CastFrame/Con,Clasps - Upper	6	0	1	0	12	Prosthodontics - Removable	/X/	PDCWTBCFCU
+59532	PartialDentures,CastW/AcBase TB,CastFrame/Con,Clasps - Lower	6	0	1	0	12	Prosthodontics - Removable	/X/	PDCWTBCFCL
+59541	PartialDentures,CastW/AcBase TB,CastFrame/Con,Cl,Imm - Upper	6	0	1	0	12	Prosthodontics - Removable	/X/	PDCWTCFCIU
+59542	PartialDentures,CastW/AcBase TB,CastFrame/Con,Cl,Imm - Lower	6	0	1	0	12	Prosthodontics - Removable	/X/	PDCWTCFCIL
+59601	Examination & Diagnosis Prosthetic by Dentist	6	0	0	0	12	Prosthodontics - Removable	/X/	EDPD
+62101	Pontics,Bridge,Cast Metal,Pontic,L	2	0	1	0	12	Prosthodontics - Fixed	/X/	Pontic, Gold + Lab
+62102	Pontics,Bridge,Cast Metal W/Sep Porc/Cer/PolyGl Jacket,L	2	0	1	0	12	Prosthodontics - Fixed	/X/	PBCMWPJL
+62103	Pontics,Bridge,Cast Metal Prefab Att. Facing,L	2	0	1	0	12	Prosthodontics - Fixed	/X/	PBCMPAFL
+62104	Pontics,Bridge,Cast Metal Ret. Bar,Prefab,LE	2	0	1	0	12	Prosthodontics - Fixed	/X/	Dolder Bar
+62105	Pontics,Retentive Bar Prefab or Custom,each,LE	2	0	1	0	12	Prosthodontics - Fixed	/X/	Dolder Bar, Implant Supported
+62107	Pontics,Bridge,Cast Metal Semi-prec/Prec Rest,LE	2	0	1	0	12	Prosthodontics - Fixed	/X/	PBCMSRLE
+62108	Pontics,Bridge,Cast Metal Semi-prec/Prec Attachment,LE	2	0	1	0	12	Prosthodontics - Fixed	/X/	PBCMSALE
+62501	Pontc,Bridge,Prcln/Cerm/PolyG Fused to Metal,L	7	0	1	0	12	Prosthodontics - Fixed	/X/	PFM, Pontic + Lab
+62502	Pontc,Bridge,Prcln/Cerm/PolyG Aluminous,L	7	0	1	0	12	Prosthodontics - Fixed	/X/	PBPAL
+62701	Pontics,Acr/Compos/Compomer Processed to Metal,L	2	0	1	0	12	Prosthodontics - Fixed	/X/	PAPML
+62702	Pontics,Acr/Compos/Compomer Indirect (Provisional),L	2	0	1	0	12	Prosthodontics - Fixed	/X/	PAIPL
+62703	Pontics,Acr/Compos/Compomer BondedToTeeth,Direct(Prov),E	2	0	1	0	12	Prosthodontics - Fixed	/X/	PABTTDPE
+62704	Pontics,Acr/Compos/Compomer BondedToTeeth,Direct,L	2	0	1	0	12	Prosthodontics - Fixed	/X/	PABTTDL
+62801	Pontics,Natural Tooth NatCrown,Direct,Provisional	2	0	1	0	12	Prosthodontics - Fixed	/X/	PNTNCDP
+62802	Pontics,Natural Tooth NatCrown,Dir,LongTermProv	2	0	1	0	12	Prosthodontics - Fixed	/X/	PNTNCDLTP
+63001	Recontour Retainers/Pont Existing Bridge,1U	7	0	0	0	12	Prosthodontics - Fixed	/X/	Recontour Pontic, 1 Unit
+63009	Recontour Retainers/Pont Existing Bridge,EAU	7	0	0	0	12	Prosthodontics - Fixed	/X/	Recontour Pontic, add'l Unit
+66211	Repair,Remove,Recement Fixed Bridge/Prosthesis,1U	7	0	0	0	0	Prosthodontics - Fixed	/X/	Remove Bridge, to Recement, 1 unit
+66212	Repair,Remove,Recement Fixed Bridge/Prosthesis,2U	7	0	0	0	0	Prosthodontics - Fixed	/X/	Remove Bridge, to Recement, 2 units
+66213	Repair,Remove,Recement Fixed Bridge/Prosthesis,3U	7	0	0	0	0	Prosthodontics - Fixed	/X/	Remove Bridge, to Recement, 3 units
+66214	Repair,Remove,Recement Fixed Bridge/Prosthesis,4U	7	0	0	0	0	Prosthodontics - Fixed	/X/	Remove Bridge, to Recement, 4 units
+66219	Repair,Remove,Recement Fixed Bridge/Prosthesis,EAU	7	0	0	0	0	Prosthodontics - Fixed	/X/	Remove Bridge, to Recement, add'l units
+66221	Repair,Remove,Replace Fixed Bridge/Prosthesis,1U	7	0	0	0	0	Prosthodontics - Fixed	/X/	Remove Bridge, to Replace with New, 1 unit
+66222	Repair,Remove,Replace Fixed Bridge/Prosthesis,2U	7	0	0	0	0	Prosthodontics - Fixed	/X/	Remove Bridge, to Replace with New, 2 units
+66223	Repair,Remove,Replace Fixed Bridge/Prosthesis,3U	7	0	0	0	0	Prosthodontics - Fixed	/X/	Remove Bridge, to Replace with New, 3 units
+66224	Repair,Remove,Replace Fixed Bridge/Prosthesis,4U	7	0	0	0	0	Prosthodontics - Fixed	/X/	Remove Bridge, to Replace with New, 4 units
+66229	Repair,Remove,Replace Fixed Bridge/Prosthesis,EAU	7	0	0	0	0	Prosthodontics - Fixed	/X/	Remove Bridge, to Replace with New, add'l units
+66231	ExstFixdBridge/Prosth,Imp-Sup Repair,Remove-reinsert,1U	7	0	0	0	0	Prosthodontics - Fixed	/X/	EFBISRR1U
+66232	ExstFixdBridge/Prosth,Imp-Sup Repair,Remove-reinsert,2U	7	0	0	0	0	Prosthodontics - Fixed	/X/	EFBISRR2U
+66233	ExstFixdBridge/Prosth,Imp-Sup Repair,Remove-reinsert,3U	7	0	0	0	0	Prosthodontics - Fixed	/X/	EFBISRR3U
+66234	ExstFixdBridge/Prosth,Imp-Sup Repair,Remove-reinsert,4U	7	0	0	0	0	Prosthodontics - Fixed	/X/	EFBISRR4U
+66239	ExstFixdBridge/Prosth,Imp-Sup Repair,Remove-reinsert,EAU	7	0	0	0	0	Prosthodontics - Fixed	/X/	EFBISRRAU
+66241	ExstFixdBridge/Prosth,Imp-Sup Repair,Remove-replace,1U	7	0	0	0	0	Prosthodontics - Fixed	/X/	EFBISRR1U
+66242	ExstFixdBridge/Prosth,Imp-Sup Repair,Remove-replace,2U	7	0	0	0	0	Prosthodontics - Fixed	/X/	EFBISRR2U
+66243	ExstFixdBridge/Prosth,Imp-Sup Repair,Remove-replace,3U	7	0	0	0	0	Prosthodontics - Fixed	/X/	EFBISRR3U
+66244	ExstFixdBridge/Prosth,Imp-Sup Repair,Remove-replace,4U	7	0	0	0	0	Prosthodontics - Fixed	/X/	EFBISRR4U
+66249	ExstFixdBridge/Prosth,Imp-Sup Repair,Remove-replace,EAU	7	0	0	0	0	Prosthodontics - Fixed	/X/	EFBISRRAU
+66251	Repair,SectAbutment/Pontic &PolishExistingBridge,1U	2	0	0	0	0	Prosthodontics - Fixed	/X/	RSAPEB1U
+66252	Repair,SectAbutment/Pontic &PolishExistingBridge,2U	2	0	0	0	0	Prosthodontics - Fixed	/X/	RSAPEB2U
+66253	Repair,SectAbutment/Pontic &PolishExistingBridge,3U	2	0	0	0	0	Prosthodontics - Fixed	/X/	RSAPEB3U
+66254	Repair,SectAbutment/Pontic &PolishExistingBridge,4U	2	0	0	0	0	Prosthodontics - Fixed	/X/	RSAPEB4U
+66259	Repair,SectAbutment/Pontic &PolishExistingBridge,EAU	2	0	0	0	0	Prosthodontics - Fixed	/X/	RSAPEBAU
+66301	Repair,Reinsert/Recement,1U,L	6	0	0	0	0	Prosthodontics - Fixed	/X/	Recement Bridge, 1 unit + Lab
+66302	Repair,Reinsert/Recement,2U,L	6	0	0	0	0	Prosthodontics - Fixed	/X/	Recement Bridge, 2 units + Lab
+66303	Repair,Reinsert/Recement,3U,L	6	0	0	0	0	Prosthodontics - Fixed	/X/	Recement Bridge, 3 units + Lab
+66304	Repair,Reinsert/Recement,4U,L	6	0	0	0	0	Prosthodontics - Fixed	/X/	Recement Bridge, 4 units + Lab
+66309	Repair,Reinsert/Recement,EAU,L	6	0	0	0	0	Prosthodontics - Fixed	/X/	Recement Bridge, add'l units + Lab
+66311	ExstFixdBridge/Prosth,Imp-Sup Repair,Reinsert/Recement,1U LE	7	0	0	0	0	Prosthodontics - Fixed	/X/	EFBISR1ULE
+66312	ExstFixdBridge/Prosth,Imp-Sup Repair,Reinsert/Recement,2U LE	7	0	0	0	0	Prosthodontics - Fixed	/X/	EFBISR2ULE
+66313	ExstFixdBridge/Prosth,Imp-Sup Repair,Reinsert/Recement,3U LE	7	0	0	0	0	Prosthodontics - Fixed	/X/	EFBISR3ULE
+66314	ExstFixdBridge/Prosth,Imp-Sup Repair,Reinsert/Recement,4U LE	7	0	0	0	0	Prosthodontics - Fixed	/X/	EFBISR4ULE
+66319	ExstFixdBridge/Prosth,Imp-Sup Repair,Reinsert/Recement,EAU LE	7	0	0	0	0	Prosthodontics - Fixed	/X/	EFBISRAULE
+66711	Repair,FixedBridge/Prosthesis Por/Cer/PolyG/Ac/Comp-Dir,1T	7	0	0	0	0	Prosthodontics - Fixed	/X/	Repair Bridge with Composite, First Tooth
+66719	Repair,FixedBridge/Prosthesis Por/Cer/PolyG/Ac/Comp-Dir,EAT	7	0	0	0	0	Prosthodontics - Fixed	/X/	Repair Bridge with Composite, Each Add'l Tooth
+66721	Repair,FixedBridge/Prosthesis Solder Indexing,1U,L	7	0	0	0	0	Prosthodontics - Fixed	/X/	RFBSI1UL
+66729	Repair,FixedBridge/Prosthesis Solder Indexing,EAU,L	7	0	0	0	0	Prosthodontics - Fixed	/X/	RFBSIAUL
+66731	Repair,FracPor/MetalPontic w Telescoping Crown 1st pontic,L	2	0	0	0	0	Prosthodontics - Fixed	/X/	RFPTC1L
+66739	Repair,FracPor/MetalPontic w Telescoping Crown,EA,L	2	0	0	0	0	Prosthodontics - Fixed	/X/	RFPTCEAL
+66743	ExstFixdBridge/Prosth,Imp-Sup Repair,Direct,3U,E	7	0	1	0	0	Prosthodontics - Fixed	/X/	EFBISRD3UE
+66744	ExstFixdBridge/Prosth,Imp-Sup Repair,Direct,4U,E	7	0	1	0	0	Prosthodontics - Fixed	/X/	EFBISRD4UE
+67111	Fixed Bridge Retainer Acr/Compos/Compomer-Indir,L	7	0	1	0	12	Prosthodontics - Fixed	/X/	FBRAL
+67115	FixedBridgeRet,Implant-Sup Acr/Compos/Compom-Indirect,L	7	0	1	0	2	Prosthodontics - Fixed	/X/	FBRISAL
+67121	Fixed Bridge Retainer Acr/Compos/Compomer-Direct,E	7	0	1	0	12	Prosthodontics - Fixed	/X/	FBRAE
+67125	FixedBridgeRet,Implant-Sup Acr/Compos/Compom-Prov,Direct,E	7	0	1	0	2	Prosthodontics - Fixed	/X/	FBRISADE
+67131	Fixed Bridge Retainer Compos/Compomer/Resin-Indir,L	7	0	1	0	12	Prosthodontics - Fixed	/X/	FBRCL
+67135	FixedBridgeRet,Implant-Sup Comps/Compm,Resin/Acr,Indir,LE	7	0	1	0	2	Prosthodontics - Fixed	/X/	FBRISCRILE
+67145	FixedBridgeRet,Impl-Sup,Prv Acr/Comps/Compm,MtlBase,Dir,E	7	0	1	0	12	Prosthodontics - Fixed	/X/	FBRISAMBDE
+67155	FixedBridgeRet,Impl-Sup,Prv Acr/Comps/Compm,MtlBase,Indir,LE	7	0	1	0	12	Prosthodontics - Fixed	/X/	FBRISMBILE
+67161	FBRetainer,Acry/Compos/Compom 2 Surface Inlay,BondIndirct,L	6	0	1	0	12	Prosthodontics - Fixed	/X/	FBRA2SIBIL
+67171	FBRetainer,Acry/Compos/Compom 3 Surface Inlay,BondIndirct,L	6	0	1	0	12	Prosthodontics - Fixed	/X/	FBRA3SIBIL
+67181	FBRetainer,Acry/Compos/Compom Onlay,Acr/Comps/CompBndIndir,L	6	0	1	0	12	Prosthodontics - Fixed	/X/	FBRAOAL
+67201	FixedBridge Ret Porc/Cerm/PG,L	7	0	1	0	12	Prosthodontics - Fixed	/X/	Porcelain Retainer + Lab
+67202	FixedBridge Ret Porc/Cerm/PG Complicated,L	7	0	1	0	12	Prosthodontics - Fixed	/X/	Porcelain Retainer, Complicated + Lab
+67205	Retainer,Imp-Sup,Porc/Cerm/PG,LE	6	0	1	0	12	Prosthodontics - Fixed	/X/	Porcelain Retainer, Implant + Lab
+67211	FixedBridge Ret Porc/Cerm/PG Fused to Metal Base,L	7	0	1	0	12	Prosthodontics - Fixed	/X/	PFM Retainer + Lab
+67212	FixedBridge Ret Porc/Cerm/PG Fused-Metal Base,Complicated,L	7	0	1	0	12	Prosthodontics - Fixed	/X/	PFM Retainer, Complicated + Lab
+67215	Retainer,Imp-Sup,Porc/Cerm/PG Fused to Metal Base,LE	6	0	1	0	12	Prosthodontics - Fixed	/X/	PFM Retainer, Implant + Lab
+67217	FixedBridge Ret Porc/Cerm/PG Semi-precision Rest,LE	7	0	1	0	12	Prosthodontics - Fixed	/X/	FBRPSRLE
+67218	FixedBridge Ret Porc/Cerm/PG Semi-prec/Prec Attachment,LE	7	0	1	0	12	Prosthodontics - Fixed	/X/	FBRPSALE
+67221	FixedBridge Ret Porc/Cerm/PG Part Coverage,Bonded,ExtRet,L	7	0	1	0	12	Prosthodontics - Fixed	/X/	FBRPPCBERL
+67231	FixedBridge Ret Porc/Cerm/PG 2 Surface Inlay,Bonded,L	7	0	1	0	12	Prosthodontics - Fixed	/X/	FBRP2SIBL
+67241	FixedBridge Ret Porc/Cerm/PG 3 Surface Inlay,Bonded,L	7	0	1	0	12	Prosthodontics - Fixed	/X/	FBRP3SIBL
+67251	FixedBridge Ret Porc/Cerm/PG Onlay,Bonded,L	7	0	1	0	12	Prosthodontics - Fixed	/X/	FBRPOBL
+67301	Retainers,Cast Metal,L	6	0	1	0	12	Prosthodontics - Fixed	/X/	Gold Retainer + Lab
+67305	Retainer,Imp-Supported,Cast,LE	6	0	1	0	12	Prosthodontics - Fixed	/X/	Gold Retainer, Implant + Lab
+67311	Retainers,3/4,Cast Metal,Retainer,L	6	0	1	0	12	Prosthodontics - Fixed	/X/	R3CMRL
+67317	Retainers,3/4,Cast Metal Semi-precInterlock,LE	6	0	1	0	12	Prosthodontics - Fixed	/X/	R3CMSILE
+67318	Retainers,3/4,Cast Metal Semi-prec/Prec Attach,RPD,LE	6	0	1	0	12	Prosthodontics - Fixed	/X/	R3CMSRPDLE
+67321	Retainers,Cast Metal Inlay 2 Surfaces,L	6	0	1	0	12	Prosthodontics - Fixed	/X/	Gold Inlay Retainer, 2 Surfaces
+67322	Retainers,Cast Metal Inlay 3 or more Surfaces,L	6	0	1	0	12	Prosthodontics - Fixed	/X/	Gold Inlay Retainer, 3 Surfaces
+67331	Retainers,Cast Metal Onlay,(Internal Retention),L	6	0	1	0	12	Prosthodontics - Fixed	/X/	Gold Onlay Retainer
+67341	Retainers,Metal,Onlay(ext) W/wo Perf,Bonded to Tooth,L	6	0	1	0	12	Prosthodontics - Fixed	/X/	RMOWPBTL
+67415	Retainer,Imp-Supported,Metal Prefab/Custom Cast,LE	6	0	1	0	12	Prosthodontics - Fixed	/X/	RISMPCLE
+67501	Abutments/Retainers,MiscServ Abutment Preparation,L	7	0	0	0	12	Prosthodontics - Fixed	/X/	Adapt Retainer to Existing Partial
+67502	Abutments/Retainers,MiscServ Telescoping Crown Unit,L	7	0	0	0	12	Prosthodontics - Fixed	/X/	Telescoping Unit for Retainer
+69201	Other Services Splinting,Per tooth,L	6	0	0	0	12	Prosthodontics - Fixed	/X/	OSSPL
+69301	Other Services Retentive Pins- 1 Pin/Rest,L	6	0	0	0	12	Prosthodontics - Fixed	/X/	Retainer, 1 Pin
+69302	Other Services Retentive Pins- 2 Pins/Rest,L	6	0	0	0	12	Prosthodontics - Fixed	/X/	Retainer, 2 Pins
+69303	Other Services Retentive Pins- 3 Pins/Rest,L	6	0	0	0	12	Prosthodontics - Fixed	/X/	Retainer, 3 Pins
+69304	Other Services Retentive Pins- 4 Pins/Rest,L	6	0	0	0	12	Prosthodontics - Fixed	/X/	Retainer, 4 Pins
+69305	Other Services Retentive Pins- 5 Pins+/Rest,L	6	0	0	0	12	Prosthodontics - Fixed	/X/	Retainer, 5 Pins
+69401	Other Services Staining,Porcelain,1U	6	0	0	0	12	Prosthodontics - Fixed	/X/	OSSP1U
+69409	Other Services Staining,Porcelain,EAU	6	0	0	0	12	Prosthodontics - Fixed	/X/	OSSPAU
+69701	Provisional Coverage Abutment Tooth,L	7	0	1	0	12	Prosthodontics - Fixed	/X/	Provisional Retainer for Abutment
+69702	Provisional Coverage Pontic,L	2	0	1	0	12	Prosthodontics - Fixed	/X/	Provisional Retainer for Pontic
+69811	Framework,Osseo-Intg,Imp-Sup AttW/Screws&IncDentTth&Ac,Upper,L	6	0	1	0	12	Prosthodontics - Fixed	/X/	FOIISAWUL
+69812	Framework,Osseo-Intg,Imp-Sup AttW/Screws&IncDentTth&Ac,Lower,L	6	0	1	0	12	Prosthodontics - Fixed	/X/	FOIISAWLL
+69821	Framework,Osseo-Intg,Imp-Sup AttW/Screws&IncTth(Metal)Upper,L	6	0	1	0	12	Prosthodontics - Fixed	/X/	FOIISAWL
+69822	Framework,Osseo-Intg,Imp-Sup AttW/Screws&IncTth(Metal)Lower,L	6	0	1	0	12	Prosthodontics - Fixed	/X/	FOIISAWL
+71101	Removal,Extraction,Erupted Uncomplicated-1 Tooth	2	0	0	0	1	Oral & Maxillofacial Surgery	/X/	Extraction, Uncomplicated
+71109	Removal,Extraction,Erupted Uncomplicated-EA Tooth-SQ,SA	2	0	0	0	1	Oral & Maxillofacial Surgery	/X/	REEUATSQSA
+71201	Removal,Extraction,Erupted Complicated-1 Tooth	2	0	0	0	1	Oral & Maxillofacial Surgery	/X/	Extraction, Surgical Approach (Flap or Sectioning)
+71209	Removal,Extraction,Erupted Complicated-EA Tooth-SQ	2	0	0	0	1	Oral & Maxillofacial Surgery	/X/	REECATSQ
+71211	Removal,Extraction,Erupted Req. Flap Elev,etc-1 Tooth	2	0	0	0	1	Oral & Maxillofacial Surgery	/X/	REERFE1T
+71219	Removal,Extraction,Erupted Req.FlapElev,etc-EA Tooth-SQ	2	0	0	0	1	Oral & Maxillofacial Surgery	/X/	REERFEATSQ
+72111	Removals,Impact,Soft Tiss Incision&Removal- 1 Tooth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Extraction, Soft Tissue Impaction
+72119	Removals,Impact,Soft Tiss Incision&Removal- EA Tth SQ	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	RISTIRATSQ
+72211	Removals,Impact,Tiss/B1Cov Incision,Elev,Rem/Sec-1 Tth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Extraction, Partial Bone Impaction
+72219	Removals,Impact,Tiss/B1Cov Incis,Elev,Rem/Sec-EA Tth SQ	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	RITIERTSQ
+72221	Removals,Impact,Tiss/B1Cov Inc,Elev,Rem&Sect-1 tooth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Extraction, Complete Bone Impaction
+72229	Removals,Impact,Tiss/B1Cov Inc,Elev,Rem&Sect-EA Tth SQ	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	RITIESATSQ
+72311	Removals,Residual Roots Erupted,First Tooth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Extraction, Residual Roots, Erupted
+72319	Removals,Residual Roots Erupted,EA Tth - SQ	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	RRREATSQ
+72321	Removals,Residual Roots Soft Tissue - First Tooth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Extraction, Residual Roots, Soft Tissue Coverage
+72329	Removals,Residual Roots Soft Tissue - EA Tooth SQ	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	RRRSTATSQ
+72331	Removals,Residual Roots B1 Tissue - First Tooth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Extraction, Residual Roots, BoneTissue Coverage
+72339	Removals,Residual Roots B1 Tissue -EA Tooth SQ	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	RRRB1TATSQ
+72411	Simple Ridge Preservation Autograft- 1st Tooth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SRPA1T
+72419	Simple Ridge Preservation Autograft- EA Tooth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SRPAAT
+72421	Simple Ridge Preservation Allograph - First Tooth,E	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SRPAFTE
+72429	Simple Ridge Preservation Allograph - EA Tooth,E	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SRPAATE
+72431	Simple Ridge Preservation Xenograph - First Tooth,E	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SRPXFTE
+72439	Simple Ridge Preservation Xenograph - EA Tooth,E	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SRPXATE
+72511	Surgical Exposure,Unerupted Uncomplicated-1 Tooth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SEUU1T
+72519	Surgical Exposure,Unerupted Uncomplicated-EA Tooth-SQ	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SEUUATSQ
+72521	SurgicalExposure,HardTissue Complex - 1 Tooth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SEHTC1T
+72529	SurgicalExposure,HardTissue Complex - EA Tooth-SQ	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SEHTCATSQ
+72531	Surgical Exposure,Unerupted W Ortho Attachment,1 Tth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SEUWOA1T
+72539	Surgical Exposure,Unerupted W Ortho Attachment,EA Tth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SEUWOAAT
+72541	SurgExp,Unerupted,Soft Tissue Cover w PosAttGing,1 Tth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SEUSTPAG1T
+72551	SurgExp,Unerupted,Hard Tissue Cover w PosAttGing,1 Tth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SEUHTPAG1T
+72561	Anchorage Device Ortho Appl Place without elevat of flap,E	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	ADOAPE
+72562	Anchorage Device Ortho Appl Place with elevation of flap,E	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	ADOAPE
+72563	Anchorage Device Ortho Appl Remove without elevat of flap	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	ADOAR
+72564	Anchorage Device Ortho Appl Remove with elevation of flap	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	ADOAR
+72611	Surgical Movement of Teeth Transplant,Erupted - 1st Tooth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SMTTE1T
+72621	Surgical Movement of Teeth Transplant,Unerupted-1st Tooth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SMTTU1T
+72711	Surgical Enucleation,Unerupted -,1T	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SEU1T
+72719	Surgical Enucleation,Unerupted -EA T-SQ	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SEUATSQ
+72801	Remove Fractured Cust Separate Procedure,-,1T	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	RFCSP1T
+72809	Surgical Separate Procedure,-EA T-SQ	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SSPATSQ
+73111	Remodelling & Recontouring Alveo with Extractions,/sext	5	0	0	0	1	Oral & Maxillofacial Surgery	/X/	Alveoplasty, with Extraction, per Sextant
+73121	Remodelling & Recontouring Alveo no Extractions,/sext	5	0	0	0	1	Oral & Maxillofacial Surgery	/X/	Alveoplasy, Separate Procedure, per Sextant
+73152	Excision of B1 Torus Palatinus	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	EB1TP
+73153	Excision of B1 Torus Lower,Unilateral	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	EB1TLU
+73154	Excision of B1 Torus Lower,Bilateral	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	EB1TLB
+73161	Removal of B1 Exostosis,Multiple,/ Quad	4	0	0	0	0	Oral & Maxillofacial Surgery	/X/	RB1EMQ
+73171	Reduction of B1 Tuberosity,Unilateral	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	RB1TU
+73172	Reduction of B1 Tuberosity,Bilateral	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	RB1TB
+73181	Augmentation of B1 Unil.,Pterygomaxillary Tuber.,E	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	AB1UPTE
+73182	Augmentation of B1 Bilt,Pterygomaxillary Tuber.,E	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	AB1BPTE
+73183	Augmentation of B1 Unilateral,Lower Ridge,E	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	AB1ULRE
+73184	Augmentation of B1 Bilateral,Lower Ridge,E	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	AB1BLRE
+73222	Gingivoplasty,Stomatoplasty Excision of Vest Hyperpl /sext	5	0	0	0	0	Oral & Maxillofacial Surgery	/X/	GSEVH
+73223	Gingivoplasty,Stomatoplasty Shave Papillary Hyperplasia	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	GSSPH
+73224	Gingivoplasty,Stomatoplasty ExcisePericoronalGingiva /T/I	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	GSEPG
+73231	Gingivoplasty,Stomatoplasty RemoveTissue,Hyperplastic/sxt	5	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Remove Hyperplastic Tissue
+73421	Vestibuloplasty Sulcus Deepening/sext	5	0	0	0	0	Oral & Maxillofacial Surgery	/X/	VSD
+74111	SurgExcision,Tumour,Benign Scar Tissue - 1 cm and under	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SETBST1
+74112	SurgExcision,Tumour,Benign Scar Tissue - 1,2 cm	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SETBST12
+74113	SurgExcision,Tumour,Benign Scar Tissue - 2,3 cm	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SETBST23
+74114	SurgExcision,Tumour,Benign Scar Tissue - 3,4 cm	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SETBST34
+74115	SurgExcision,Tumour,Benign Scar Tissue - 4,6 cm	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SETBST46
+74116	SurgExcision,Tumour,Benign Scar Tissue - 6,9 cm	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SETBST69
+74121	SurgExcision,Tumour,Benign B1 Tissue - 1 cm and under	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SETBB1T1
+74122	SurgExcision,Tumour,Benign B1 Tissue - 1,2 cm	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SETBB1T12
+74401	SurgExcision,HardTissueGraft Autograft,Upper or Lower / site,E	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SEHTGAULE
+74402	SurgExcision,HardTissueGraft Allograft,Upper or Lower / site,E	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SEHTGAULE
+74403	SurgExcision,HardTissueGraft Xenograft,Upper or Lower / site,E	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SEHTGXULE
+74611	SurgExcision,Cysts/Granul Enucleation - 1 cm and under	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SECE1
+74612	SurgExcision,Cysts/Granul Enucleation - 1,2 cm	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SECE12
+74621	SurgExcision,Cysts/Granul Marsupialization Cyst	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SECMC
+74631	SurgExcision,Cysts/Granul Exision of Cyst-1 cm and under	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SECEC1
+74632	SurgExcision,Cysts/Granul Exision of Cyst - 1,2 cm	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SECEC12
+75111	Surg Incision/Drain,Intra Soft Tissue Exploration	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Incision + Drainage, Surgical Exploration
+75112	Surg Incision/Drain,Intra Soft Tissue Abscess	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Incision + Drainage, Abcess
+75121	Surg Incision/Drain,Intra Hard Tissue Trephination	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SIIHTT
+75211	SurgIncision,Drain,Extra Soft Tissue Abscess,Superfici	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SIDESTAS
+75301	SurgIncis,RemoveForeignBody From Skin or Sub Alveolar Tis	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SIRFBFSSAT
+75302	SurgIncis,RemoveForeignBody Reaction-Prod Foreign Bodies	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SIRFBRPFB
+76116	Fractures,Splints/Arch Intermaxillary Fixation	6	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FSIF
+76141	Fractures,Remove Splint/Wire,Wire	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FRSW
+76142	Fractures,Remove Spllint/Wire,Arch Splint	6	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FRSAS
+76201	Fractures,Reductions Lower,Closed	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FRLC
+76301	Fractures,Reductions Upper,Horiz. LeFort's	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FRUHLF
+76911	Fractures,Reduce Alveolar Debride,Teeth Removd-3cm less	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FRADTR3
+76912	Fractures,Reduce Alveolar Debride,Teeth Removd- 3-6cm	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FRADTR36
+76921	Fractures,Reduction Alveolar,Closed-3cm or less	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FRAC3
+76922	Fractures,Reduction Alveolar,Closed- 3-6 cm	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FRAC36
+76941	Fractures,Replantation Avulsed inclSplint-1st Tooth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FRAS1T
+76949	Fractures,Replantation Avulsed inclSplint-EA Tooth	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FRASAT
+76951	Fractures,Repositioning Displaced Teeth,1U	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FRDT1U
+76952	Fractures,Repositioning Displaced Teeth,2U	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FRDT2U
+76959	Fractures,Repositioning Displaced Teeth,EAU	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FRDTAU
+76961	Fractures,Repair Laceration,Uncomp 2cm or less	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FRLU2
+76962	Fractures,Repair Laceration,Uncomp 2-4cm	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FRLU24
+76963	Fractures,Repair Laceration,Uncomp 4-6cm	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FRLU46
+77604	Upperil.Deformities,Misc Tx Expand Alvolar Ridge,Upper/sext	5	0	0	0	0	Oral & Maxillofacial Surgery	/X/	UDMTEARU
+77605	Upperil.Deformities,Misc Tx Expand Alvolar Ridge,Lower/sext	5	0	0	0	0	Oral & Maxillofacial Surgery	/X/	UDMTEARL
+77801	Frenectomy/Frenoplasty Upper Labial	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Frenectomy, Upper Labial
+77802	Frenectomy/Frenoplasty Lower Labial	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Frenectomy, Lower Labial
+77803	"Frenectomy/Frenoplasty Lower Lingual or ""Z"" Plasty"	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FLLZP
+77804	"Frenectomy/Frenoplasty LowLing or""Z""Pl w/Myotomy"	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FLLZP
+77805	Frenectomy/Frenoplasty Frenoplasty,Upper Z	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FFUZ
+77806	Frenectomy/Frenoplasty Frenoplasty,Lower Z	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	FFLZ
+78102	TMJ Dysfunctions,Treatment Dislocation,Uncomplicated	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	TMJDTDU
+78104	TMJ Dysfunctions,Treatment Luxation,Reduction no Anesthes	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	TMJDTLRA
+78601	TMJ Dysfunctions,Treatment Inject Anti-Inflammatory	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	TMJDTIAI
+79101	Oral Surgery,Salivary Glands Dilation of,Duct	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	OSSGDD
+79111	Oral Surgery,Salivary Duct Sialolithotomy,Anterior 1/3	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	OSSDSA1
+79311	Oral Surgery,Antral Immed Recovery Foreign Body	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	OSAIRFB
+79331	Oro-Antral Fistula Closure W/ Buccal Flap,same session	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	OAFCWBF
+79333	Oro-Antral Fistula Closure W/ Palatal Flap,same session	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	OAFCWPF
+79341	Oro-Antral Fistula Closure W/ Buccal Flap,other session	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	OAFCWBF
+79343	Oro-Antral Fistula Closure W/ Palatal Flap,other session	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	OAFCWPF
+79351	Sinus Osseous Augmentation Open Lateral Appr-Autograft,E	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SOAOLAAE
+79352	Sinus Osseous Augmentation Open Lateral Appr-Allograft,E	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SOAOLAAE
+79353	Sinus Osseous Augmentation Open Lateral Appr-Xenograft,E	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SOAOLAXE
+79354	Sinus Osseous Augmentation Indir.InferiorApprch-Autograft,E	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SOAIIAAE
+79355	Sinus Osseous Augmentation Indir.InferiorApprch-Allograft,E	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SOAIIAAE
+79356	Sinus Osseous Augmentation Indir.InferiorApprch-Xenograft,E	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	SOAIIAXE
+79601	Post Surgical Care AfterInitial PostS Tx,Minor	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Post Surgical Care, Second Appointment
+79602	Post Surgical Care Minor,not by Tx Dentist	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Post Surgical Care, Minor, by Other Than Treating 
+79605	Post Surgical Care Alveolitis (no anesthesia)	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Dry Socket Palliative (No anesthetic)
+79606	Post Surgical Care Alveolitis (with anesthesia)	3	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Dry Socket Palliative (Anesthetic)
+79921	Implants,Subperiosteal Upper,L	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	ISUL
+79922	Implants,Subperiosteal Lower,L	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	ISLL
+79931	Impl,Osseointegrated,RootForm With Cover Screw,per implant,E	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	IORFWCSE
+79932	Impl,Osseointegrated,RootForm WHealTrnsmucosalElem per imp,E	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	IORFWHTEE
+79933	Impl,Osseointegrated,RootForm WFinlTrnsmucosalElem per imp,E	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	IORFWFTEE
+79934	Impl,Osseointegrated,RootForm ReEntRemScrewPlTrnsElem perimp,E	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	IORFRSPTEE
+79935	Impl,Osseointegrated,RootForm ReEntRemScrPlFinalStndElem,E	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	IORFRPFSEE
+79936	Impl,Osseointegrated,RootForm ReEntRemScrPlCustomStndElem,LE	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	IORFRCSELE
+79941	Impl,Osseointegrated,RootForm SurgicalInst of Implant/imp,E	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	IORFSIIE
+79951	Impl,Osseointegrated,Provisnl Inst of ProvImplant/imp,E	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Implant, Maxillary
+79952	Impl,Osseointegrated,Provisnl Remvl of ProvImplant/imp,E	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	Implant, Mandibular
+79961	Implants,Removal of Uncomplicated/Implant	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	IRU
+79962	Implants,Removal of Complicated/Implant	2	0	0	0	0	Oral & Maxillofacial Surgery	/X/	IRC
+80601	Observations & Adjustments For Tooth Guidance	2	0	0	0	0	Orthodontics	/X/	OAFTG
+80602	Observations & Adjustments To Ortho Appliances	3	0	0	0	0	Orthodontics	/X/	OATOA
+80631	Observations & Adjustments Repair Appliances,1U,L	3	0	0	0	0	Orthodontics	/X/	OARA1UL
+80632	Observations & Adjustments Repair Appliances,2U,L	3	0	0	0	0	Orthodontics	/X/	OARA2UL
+80639	Observations & Adjustments Repair Appliances,EAU,L	3	0	0	0	0	Orthodontics	/X/	OARAAUL
+80641	Observations & Adjustments Alterations to Appliances,1U,L	3	0	0	0	0	Orthodontics	/X/	OAAA1UL
+80642	Observations & Adjustments Alterations to Appliances,2U,L	3	0	0	0	0	Orthodontics	/X/	OAAA2UL
+80649	Observations & Adjustments Alterations to Appliances,EAU,L	3	0	0	0	0	Orthodontics	/X/	OAAAAUL
+80651	Observations & Adjustments Recement,Fixed Appliances,1U	3	0	0	0	0	Orthodontics	/X/	OARFA1U
+80659	Observations & Adjustments Recement,Fixed Appliances,EAU	3	0	0	0	0	Orthodontics	/X/	OARFAAU
+80661	Observations & Adjustments Separation,1U	3	0	0	0	0	Orthodontics	/X/	OAS1U
+80669	Observations & Adjustments Separation,EAU	3	0	0	0	0	Orthodontics	/X/	OASAU
+80671	Observations & Adjustments Rem of Fixed Appliance,1U	3	0	0	0	0	Orthodontics	/X/	OARFA1U
+80679	Observations & Adjustments Rem of Fixed Appliance,EAU	3	0	0	0	0	Orthodontics	/X/	OARFAAU
+81113	Applicances,Removable Space Reg,Upper Bilateral,L	3	0	0	0	0	Orthodontics	/X/	ARSRUBL
+81114	Applicances,Removable Space Reg,Lower Bilateral,L	3	0	0	0	0	Orthodontics	/X/	ARSRLBL
+81115	Applicances,Removable Space Reg,Upper,Complex,L	3	0	0	0	0	Orthodontics	/X/	ARSRUCL
+81116	Applicances,Removable Space Reg,Lower,Complex,L	3	0	0	0	0	Orthodontics	/X/	ARSRLCL
+81121	Applicances,Removable Cross-Bite Corr,Upper Simple,L	3	0	0	0	0	Orthodontics	/X/	ARCBCUSL
+81122	Applicances,Removable Cross-Bite Corr,Lower Simple,L	3	0	0	0	0	Orthodontics	/X/	ARCBCLSL
+81123	Applicances,Removable Cross-Bite Corr,Upper Complex,L	3	0	0	0	0	Orthodontics	/X/	ARCBCUCL
+81124	Applicances,Removable Cross-Bite Corr,Lower Complex,L	3	0	0	0	0	Orthodontics	/X/	ARCBCLCL
+81131	Applicances,Removable Dent Arch Exp,Upper Simple,L	6	0	0	0	0	Orthodontics	/X/	ARDAEUSL
+81132	Applicances,Removable Dent Arch Exp,Lower Simple,L	6	0	0	0	0	Orthodontics	/X/	ARDAELSL
+81133	Applicances,Removable Dent Arch Exp,Upper Complex,L	6	0	0	0	0	Orthodontics	/X/	ARDAEUCL
+81134	Applicances,Removable Dent Arch Exp,Lower Complex,L	6	0	0	0	0	Orthodontics	/X/	ARDAELCL
+81135	Applicances,Removable Dent Arch Exp,Upper,RapidExpans,L	6	0	0	0	0	Orthodontics	/X/	ARDAEUREL
+81141	Applicances,Removable Close Diastemas,Upper Simple,L	3	0	0	0	0	Orthodontics	/X/	ARCDUSL
+81142	Applicances,Removable Close Diastemas,Lower Simple,L	3	0	0	0	0	Orthodontics	/X/	ARCDLSL
+81143	Applicances,Removable Close Diastemas,Upper Complex,L	3	0	0	0	0	Orthodontics	/X/	ARCDUCL
+81144	Applicances,Removable Close Diastemas,Lower Complex,L	3	0	0	0	0	Orthodontics	/X/	ARCDLCL
+81151	Applicances,Removable Alignment,Upper Simple,L	3	0	0	0	0	Orthodontics	/X/	ARAUSL
+81152	Applicances,Removable Alignment,Lower Simple,L	3	0	0	0	0	Orthodontics	/X/	ARALSL
+81153	Applicances,Removable Alignment,Upper Complex,L	3	0	0	0	0	Orthodontics	/X/	ARAUCL
+81154	Applicances,Removable Alignment,Lower Complex,L	3	0	0	0	0	Orthodontics	/X/	ARALCL
+81211	Appliances,Fixed/Cemented Space Regaining,Upper,L	3	0	0	0	0	Orthodontics	/X/	AFSRUL
+81212	Appliances,Fixed/Cemented Space Regaining,Lower,L	3	0	0	0	0	Orthodontics	/X/	AFSRLL
+81221	Appliances,Fixed/Cemented Space Reg,Unilateral,Upper,L	3	0	0	0	0	Orthodontics	/X/	AFSRUUL
+81222	Appliances,Fixed/Cemented Space Reg,Unilateral,Lower,L	3	0	0	0	0	Orthodontics	/X/	AFSRULL
+81231	Appliances,Fixed/Cemented Cross-Bite Corr Anterior,Upper,L	2	0	0	0	0	Orthodontics	/X/	AFCBCAUL
+81232	Appliances,Fixed/Cemented Cross-Bite Corr Anterior,Lower,L	2	0	0	0	0	Orthodontics	/X/	AFCBCALL
+81241	Appliances,Fixed/Cemented Cross-Bite Corr Post,Upper,L	3	0	0	0	0	Orthodontics	/X/	AFCBCPUL
+81242	Appliances,Fixed/Cemented Cross-Bite Corr Post,Lower,L	3	0	0	0	0	Orthodontics	/X/	AFCBCPLL
+81243	Appliances,Fixed/Cemented C-B Corr Post,2 Molar Band,L	2	0	0	0	0	Orthodontics	/X/	AFCBCP2MBL
+81251	Appliances,Fixed/Cemented Dent Arch Expansion,Upper,L	6	0	0	0	0	Orthodontics	/X/	AFDAEUL
+81252	Appliances,Fixed/Cemented Dent Arch Expansion,Lower,L	6	0	0	0	0	Orthodontics	/X/	AFDAELL
+81253	Appliances,Fixed/Cemented Dent Arch Expans,Upper,Rapid,L	6	0	0	0	0	Orthodontics	/X/	AFDAEURL
+81254	Appliances,Fixed/Cemented Dent Arch Expans,Headgear,L	6	0	0	0	0	Orthodontics	/X/	AFDAEHL
+81261	Appliances,Fixed/Cemented Close Diastemas,Upper Simple,L	3	0	0	0	0	Orthodontics	/X/	AFCDUSL
+81262	Appliances,Fixed/Cemented Close Diastemas,Lower Simple,L	3	0	0	0	0	Orthodontics	/X/	AFCDLSL
+81263	Appliances,Fixed/Cemented Close Diastemas,Upper Complex,L	3	0	0	0	0	Orthodontics	/X/	AFCDUCL
+81264	Appliances,Fixed/Cemented Close Diastemas,Lower Complex,L	3	0	0	0	0	Orthodontics	/X/	AFCDLCL
+81271	Appliances,Fixed/Cemented Alignment/Incis,Upper Simple,L	3	0	0	0	0	Orthodontics	/X/	AFAUSL
+81272	Appliances,Fixed/Cemented Alignment/Incis,Lower Simple,L	3	0	0	0	0	Orthodontics	/X/	AFALSL
+81273	Appliances,Fixed/Cemented Alignment/Incis,Upper Complex,L	3	0	0	0	0	Orthodontics	/X/	AFAUCL
+81274	Appliances,Fixed/Cemented Alignment/Incis,Lower Complex,L	3	0	0	0	0	Orthodontics	/X/	AFALCL
+81291	Appliances,Fixed/Cemented Mechanical,Upper Impaction,L	3	0	0	0	0	Orthodontics	/X/	AFMUIL
+81292	Appliances,Fixed/Cemented Mechanical,Lower Impaction,L	3	0	0	0	0	Orthodontics	/X/	AFMLIL
+81293	Appliances,Fixed/Cemented Mechanical,Upper Erupted,L	3	0	0	0	0	Orthodontics	/X/	AFMUEL
+81294	Appliances,Fixed/Cemented Mechanical,Lower Erupted,L	3	0	0	0	0	Orthodontics	/X/	AFMLEL
+83101	Appl.,Removable,Retention Upper,L	3	0	0	0	0	Orthodontics	/X/	ARRUL
+83102	Appl.,Removable,Retention Lower,L	3	0	0	0	0	Orthodontics	/X/	ARRLL
+83103	Appl.,Removable,Retention Tooth Positi1r,L	2	0	0	0	0	Orthodontics	/X/	ARRTP1L
+83201	Appl.,Fixed/Cem,Retention Upper,L	3	0	0	0	0	Orthodontics	/X/	AFRUL
+83202	Appl.,Fixed/Cem,Retention Lower,L	3	0	0	0	0	Orthodontics	/X/	AFRLL
+84101	Fixed App,Perm Dentition Class I Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	Class I Malocclusion
+84201	Fixed App,Perm Dentition Class II Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	Class II Malocclusion
+84301	Fixed App,Perm Dentition Class III Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	Class III Malocclusion
+84401	Fixed App,Perm Dentition Malocclusion-Partial Banding,L	3	0	0	0	0	Orthodontics	/X/	FAPDMPBL
+85101	Fixed App,Mixed Dentition Class I Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	FAMDCIML
+85201	Fixed App,Mixed Dentition Class II Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	FAMDCIIML
+85301	Fixed App,Mixed Dentition Class III Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	FAMDCIIIML
+86101	Fixed App,Primary Dentition Class I Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	FAPDCIML
+86201	Fixed App,Primary Dentition Class II Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	FAPDCIIML
+86301	Fixed App,Primary Dentition Class III Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	FAPDCIIIML
+87101	Remov App,Perm Dentition Class I Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	RAPDCIML
+87201	Remov App,Perm Dentition Class II Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	RAPDCIIML
+87301	Remov App,Perm Dentition Class III Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	RAPDCIIIML
+88101	Remov App,Mixed Dentition Class I Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	RAMDCIML
+88201	Remov App,Mixed Dentition Class II Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	RAMDCIIML
+88301	Remov App,Mixed Dentition Class III Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	RAMDCIIIML
+89101	Remov App,Primary Dentition Class I Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	RAPDCIML
+89201	Remov App,Primary Dentition Class II Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	RAPDCIIML
+89301	Remov App,Primary Dentition Class III Malocclusion,L	3	0	0	0	6	Orthodontics	/X/	RAPDCIIIML
+91211	Unclassified Treatments Unusual Time/Responsibility 1U	3	0	0	0	6	Adjunctive General Services	/X/	Unusual time and responsibility, 1 unit 
+91212	Unclassified Treatments Unusual Time/Responsibility 2U	3	0	0	0	6	Adjunctive General Services	/X/	Unusual time and responsibility, 2 units
+91213	Unclassified Treatments Unusual Time/Responsibility 3U	3	0	0	0	6	Adjunctive General Services	/X/	Unusual time and responsibility, 3 units
+91219	Unclassified Treatments Unusual Time/Respons,EAU	3	0	0	0	6	Adjunctive General Services	/X/	Unusual time and responsibility, add'l units
+91231	Unclassified Treatments Management-Exceptl Patient,1U	3	0	0	0	6	Adjunctive General Services	/X/	Management of exceptional patient, 1 unit 
+91232	Unclassified Treatments Management-Exceptl Patient,2U	3	0	0	0	6	Adjunctive General Services	/X/	Management of exceptional patient, 2 units
+91233	Unclassified Treatments Management-Exceptl Patient,3U	3	0	0	0	6	Adjunctive General Services	/X/	Management of exceptional patient, 3 units
+91234	Unclassified Treatments Management-Exceptl Patient,4U	3	0	0	0	6	Adjunctive General Services	/X/	Management of exceptional patient, 4 units
+91239	Unclassified Treatments Management-Exceptl Patient EAU	3	0	0	0	6	Adjunctive General Services	/X/	Management of exceptional patient, add'l unit 
+92101	Anesthesia,Local Regional Block	3	0	0	0	0	Adjunctive General Services	/X/	ALRB
+92102	Anesthesia,Local Trigeminal Division Block	3	0	0	0	0	Adjunctive General Services	/X/	ALTDB
+92212	Anesthesia,General Incl evaluation & follow-up 2U	3	0	0	0	0	Adjunctive General Services	/X/	General Anesthesia, 2 units
+92213	Anesthesia,General Incl evaluation & follow-up 3U	3	0	0	0	0	Adjunctive General Services	/X/	General Anesthesia, 3 units
+92214	Anesthesia,General Incl evaluation & follow-up 4U	3	0	0	0	0	Adjunctive General Services	/X/	General Anesthesia, 4 units
+92215	Anesthesia,General Incl evaluation & follow-up 5U	3	0	0	0	0	Adjunctive General Services	/X/	General Anesthesia, 5 units
+92216	Anesthesia,General Incl evaluation & follow-up 6U	3	0	0	0	0	Adjunctive General Services	/X/	General Anesthesia, 6 units
+92217	Anesthesia,General Incl evaluation & follow-up 7U	3	0	0	0	0	Adjunctive General Services	/X/	General Anesthesia, 7 units
+92218	Anesthesia,General Incl evaluation & follow-up 8U	3	0	0	0	0	Adjunctive General Services	/X/	General Anesthesia, 8 units
+92219	Anesthesia,General Incl evaluation & follow-upEAU	3	0	0	0	0	Adjunctive General Services	/X/	General Anesthesia, add'l unit 
+92222	Anesthesia,General Provision Fac/Equip/Supp,2U	3	0	0	0	0	Adjunctive General Services	/X/	Facility Fee for General Anesthetic, 2 units
+92223	Anesthesia,General Provision Fac/Equip/Supp,3U	3	0	0	0	0	Adjunctive General Services	/X/	Facility Fee for General Anesthetic, 3 units
+92224	Anesthesia,General Provision Fac/Equip/Supp,4U	3	0	0	0	0	Adjunctive General Services	/X/	Facility Fee for General Anesthetic, 4 units
+92225	Anesthesia,General Provision Fac/Equip/Supp,5U	3	0	0	0	0	Adjunctive General Services	/X/	Facility Fee for General Anesthetic, 5 units
+92226	Anesthesia,General Provision Fac/Equip/Supp,6U	3	0	0	0	0	Adjunctive General Services	/X/	Facility Fee for General Anesthetic, 6 units
+92227	Anesthesia,General Provision Fac/Equip/Supp,7U	3	0	0	0	0	Adjunctive General Services	/X/	Facility Fee for General Anesthetic, 7 units
+92228	Anesthesia,General Provision Fac/Equip/Supp,8U	3	0	0	0	0	Adjunctive General Services	/X/	Facility Fee for General Anesthetic, 8 units
+92229	Anesthesia,General Provision Fac/Equip/Supp,EAU	3	0	0	0	0	Adjunctive General Services	/X/	Facility Fee for General Anesthetic, add'l unit 
+92301	Anesthesia Deep Sedation,1U	3	0	0	0	0	Adjunctive General Services	/X/	ADS1U
+92302	Anesthesia Deep Sedation,2U	3	0	0	0	0	Adjunctive General Services	/X/	Anesthesia, Deep Sedation, 2 units
+92303	Anesthesia Deep Sedation,3U	3	0	0	0	0	Adjunctive General Services	/X/	Anesthesia, Deep Sedation, 3 units
+92304	Anesthesia Deep Sedation,4U	3	0	0	0	0	Adjunctive General Services	/X/	Anesthesia, Deep Sedation, 4 units
+92305	Anesthesia Deep Sedation,5U	3	0	0	0	0	Adjunctive General Services	/X/	Anesthesia, Deep Sedation, 5 units
+92306	Anesthesia Deep Sedation,6U	3	0	0	0	0	Adjunctive General Services	/X/	Anesthesia, Deep Sedation, 6 units
+92307	Anesthesia Deep Sedation,7U	3	0	0	0	0	Adjunctive General Services	/X/	Anesthesia, Deep Sedation, 7 units
+92308	Anesthesia Deep Sedation,8U	3	0	0	0	0	Adjunctive General Services	/X/	Anesthesia, Deep Sedation, 8 units
+92309	Anesthesia Deep Sedation,EAU	3	0	0	0	0	Adjunctive General Services	/X/	Anesthesia, Deep Sedation, add'l unit 
+92411	Anesthesia,ConsciousSedation Nitrous Oxide,1U	3	0	0	0	0	Adjunctive General Services	/X/	Nitrous Oxide,  1 unit 
+92412	Anesthesia,ConsciousSedation Nitrous Oxide,2U	3	0	0	0	0	Adjunctive General Services	/X/	Nitrous Oxide, 2 units
+92413	Anesthesia,ConsciousSedation Nitrous Oxide,3U	3	0	0	0	0	Adjunctive General Services	/X/	Nitrous Oxide, 3 units
+92414	Anesthesia,ConsciousSedation Nitrous Oxide,4U	3	0	0	0	0	Adjunctive General Services	/X/	Nitrous Oxide, 4 units
+92415	Anesthesia,ConsciousSedation Nitrous Oxide,5U	3	0	0	0	0	Adjunctive General Services	/X/	Nitrous Oxide, 5 units
+92416	Anesthesia,ConsciousSedation Nitrous Oxide,6U	3	0	0	0	0	Adjunctive General Services	/X/	Nitrous Oxide, 6 units
+92417	Anesthesia,ConsciousSedation Nitrous Oxide,7U	3	0	0	0	0	Adjunctive General Services	/X/	Nitrous Oxide, 7 units
+92418	Anesthesia,ConsciousSedation Nitrous Oxide,8U	3	0	0	0	0	Adjunctive General Services	/X/	Nitrous Oxide, 8 units
+92419	Anesthesia,ConsciousSedation Nitrous Oxide,EAU	3	0	0	0	0	Adjunctive General Services	/X/	Nitrous Oxide, add'l unit 
+92421	Anesthesia,ConsciousSedation Oral Sedation,1U	3	0	0	0	0	Adjunctive General Services	/X/	ACSOS1U
+92422	Anesthesia,ConsciousSedation Oral Sedation,2U	3	0	0	0	0	Adjunctive General Services	/X/	ACSOS2U
+92423	Anesthesia,ConsciousSedation Oral Sedation,3U	3	0	0	0	0	Adjunctive General Services	/X/	ACSOS3U
+92424	Anesthesia,ConsciousSedation Oral Sedation,4U	3	0	0	0	0	Adjunctive General Services	/X/	ACSOS4U
+92425	Anesthesia,ConsciousSedation Oral Sedation,5U	3	0	0	0	0	Adjunctive General Services	/X/	ACSOS5U
+92426	Anesthesia,ConsciousSedation Oral Sedation,6U	3	0	0	0	0	Adjunctive General Services	/X/	ACSOS6U
+92427	Anesthesia,ConsciousSedation Oral Sedation,7U	3	0	0	0	0	Adjunctive General Services	/X/	ACSOS7U
+92428	Anesthesia,ConsciousSedation Oral Sedation,8U	3	0	0	0	0	Adjunctive General Services	/X/	ACSOS8U
+92429	Anesthesia,ConsciousSedation Oral Sedation,EAU	3	0	0	0	0	Adjunctive General Services	/X/	ACSOSAU
+92431	Anesthesia,ConsciousSedation NO & Oral Sedation,1U	3	0	0	0	0	Adjunctive General Services	/X/	ACSNOOS1U
+92432	Anesthesia,ConsciousSedation NO & Oral Sedation,2U	3	0	0	0	0	Adjunctive General Services	/X/	ACSNOOS2U
+92433	Anesthesia,ConsciousSedation NO & Oral Sedation,3U	3	0	0	0	0	Adjunctive General Services	/X/	ACSNOOS3U
+92434	Anesthesia,ConsciousSedation NO & Oral Sedation,4U	3	0	0	0	0	Adjunctive General Services	/X/	ACSNOOS4U
+92435	Anesthesia,ConsciousSedation NO & Oral Sedation,5U	3	0	0	0	0	Adjunctive General Services	/X/	ACSNOOS5U
+92436	Anesthesia,ConsciousSedation NO & Oral Sedation,6U	3	0	0	0	0	Adjunctive General Services	/X/	ACSNOOS6U
+92437	Anesthesia,ConsciousSedation NO & Oral Sedation,7U	3	0	0	0	0	Adjunctive General Services	/X/	ACSNOOS7U
+92438	Anesthesia,ConsciousSedation NO & Oral Sedation,8U	3	0	0	0	0	Adjunctive General Services	/X/	ACSNOOS8U
+92439	Anesthesia,ConsciousSedation NO & Oral Sedation,EAU	3	0	0	0	0	Adjunctive General Services	/X/	ACSNOOSAU
+92441	Anesthesia,ConsciousSedation Parenteral Cons. Sedation,1U	3	0	0	0	0	Adjunctive General Services	/X/	ACSPCS1U
+92442	Anesthesia,ConsciousSedation Parenteral Cons. Sedation,2U	3	0	0	0	0	Adjunctive General Services	/X/	ACSPCS2U
+92443	Anesthesia,ConsciousSedation Parenteral Cons. Sedation,3U	3	0	0	0	0	Adjunctive General Services	/X/	ACSPCS3U
+92444	Anesthesia,ConsciousSedation Parenteral Cons. Sedation,4U	3	0	0	0	0	Adjunctive General Services	/X/	ACSPCS4U
+92445	Anesthesia,ConsciousSedation Parenteral Cons. Sedation,5U	3	0	0	0	0	Adjunctive General Services	/X/	ACSPCS5U
+92446	Anesthesia,ConsciousSedation Parenteral Cons. Sedation,6U	3	0	0	0	0	Adjunctive General Services	/X/	ACSPCS6U
+92447	Anesthesia,ConsciousSedation Parenteral Cons. Sedation,7U	3	0	0	0	0	Adjunctive General Services	/X/	ACSPCS7U
+92448	Anesthesia,ConsciousSedation Parenteral Cons. Sedation,8U	3	0	0	0	0	Adjunctive General Services	/X/	ACSPCS8U
+92449	Anesthesia,ConsciousSedation Parenteral Cons. Sedation,EAU	3	0	0	0	0	Adjunctive General Services	/X/	ACSPCSAU
+92451	Anesthesia,ConsciousSedation Combined Techniques,1U	3	0	0	0	0	Adjunctive General Services	/X/	ACSCT1U
+92452	Anesthesia,ConsciousSedation Combined Techniques,2U	3	0	0	0	0	Adjunctive General Services	/X/	ACSCT2U
+92459	Anesthesia,ConsciousSedation Combined Techniques,EAU	3	0	0	0	0	Adjunctive General Services	/X/	ACSCTAU
+92511	Non Pharmacol. Pain Control Hypnosis,1U	3	0	0	0	0	Adjunctive General Services	/X/	NPPCH1U
+92512	Non Pharmacol. Pain Control Hypnosis,2U	3	0	0	0	0	Adjunctive General Services	/X/	NPPCH2U
+92519	Non Pharmacol. Pain Control Hypnosis,EAU	3	0	0	0	0	Adjunctive General Services	/X/	NPPCHAU
+92521	Non Pharmacol. Pain Control Acupuncture,1U	3	0	0	0	0	Adjunctive General Services	/X/	NPPCA1U
+92522	Non Pharmacol. Pain Control Acupuncture,2U	3	0	0	0	0	Adjunctive General Services	/X/	NPPCA2U
+92529	Non Pharmacol. Pain Control Acupuncture,EAU	3	0	0	0	0	Adjunctive General Services	/X/	NPPCAAU
+92531	Non Pharmacol. Pain Control Electronic Anesthesia,1U	3	0	0	0	0	Adjunctive General Services	/X/	NPPCEA1U
+92532	Non Pharmacol. Pain Control Electronic Anesthesia,2U	3	0	0	0	0	Adjunctive General Services	/X/	NPPCEA2U
+92539	Non Pharmacol. Pain Control Electronic Anesthesia,EAU	3	0	0	0	0	Adjunctive General Services	/X/	NPPCEAAU
+93111	Professional Communications Consult Member of Prof.,1U,E	3	0	0	0	0	Adjunctive General Services	/X/	Consultation, 1 unit
+93112	Professional Communications Consult Member of Prof.,2U,E	3	0	0	0	0	Adjunctive General Services	/X/	Consultation, 2 units
+93119	Professional Communications Consult Member of Prof.,EAU,E	3	0	0	0	0	Adjunctive General Services	/X/	Consultation, add'l unit
+93121	Professional Communications Dental Legal Report - Short	3	0	0	0	0	Adjunctive General Services	/X/	Dental Legal Report, Simple
+93122	Professional Communications Dental Legal Rpt-Comprehens	3	0	0	0	0	Adjunctive General Services	/X/	Dental Legal Report, Comprehensive
+93123	Professional Communications Dental Legal Opinion-Compreh	3	0	0	0	0	Adjunctive General Services	/X/	PCDLOC
+93131	Professional Communications Consult/Participate-Autopsy 1U,E	3	0	0	0	0	Adjunctive General Services	/X/	PCC1UE
+93132	Professional Communications Consult/Participate-Autopsy 2U,E	3	0	0	0	0	Adjunctive General Services	/X/	PCC2UE
+93139	Professional Communications Consult/Participate-Autop. EAU,E	3	0	0	0	0	Adjunctive General Services	/X/	PCCAUE
+93211	Professional Communications Copy/Transfer Patient's File,E	3	0	0	0	0	Adjunctive General Services	/X/	PCCPFE
+93301	Claim and Treatment Forms CDA 'Blank' Standard	3	0	0	0	0	Adjunctive General Services	/X/	CTFCDABS
+93302	Claim and Treatment Forms Written TX Plan/Outline	3	0	0	0	0	Adjunctive General Services	/X/	CTFWTXP
+93303	Claim and Treatment Forms Prepaid	3	0	0	0	0	Adjunctive General Services	/X/	Non-compliant Insurance Form
+93311	Claim and Treatment Forms Extraordinary Time/Ph1,1U,E	3	0	0	0	0	Adjunctive General Services	/X/	CTFET1UE
+93312	Claim and Treatment Forms Extraordinary Time/Ph1,2U,E	3	0	0	0	0	Adjunctive General Services	/X/	CTFET2UE
+93319	Claim and Treatment Forms Extraordinary Time/Ph1,EAU,E	3	0	0	0	0	Adjunctive General Services	/X/	CTFETAUE
+93321	Claim and Treatment Forms Extraordinary Time/Office,1U E	3	0	0	0	0	Adjunctive General Services	/X/	CTFET1UE
+93322	Claim and Treatment Forms Extraordinary Time/Office,2U E	3	0	0	0	0	Adjunctive General Services	/X/	CTFET2UE
+93329	Claim and Treatment Forms Extraordinary Time/Office,EAU E	3	0	0	0	0	Adjunctive General Services	/X/	CTFETAUE
+93331	Claim and Treatment Forms Payment/Instal for Orth Tx,E	3	0	0	0	0	Adjunctive General Services	/X/	CTFPOTE
+93332	Claim and Treatment Forms Monthly Pay/Instalmnt-Orth Tx	3	0	0	0	0	Adjunctive General Services	/X/	CTFMPT
+93333	Claim and Treatment Forms Quartrly Pay/Instalmnt-OrthTx	3	0	0	0	0	Adjunctive General Services	/X/	CTFQP
+93334	Claim and Treatment Forms 1 Time Ortho Appliance	3	0	0	0	0	Adjunctive General Services	/X/	CTF1TOA
+94101	Professional Visits House Call,Non Emergency	3	0	0	0	0	Adjunctive General Services	/X/	PVHCNE
+94102	Professional Visits House Call,Emergency	3	0	0	0	0	Adjunctive General Services	/X/	PVHCE
+94301	Professional Visits Office/Inst - Regular Hrs	3	0	0	0	0	Adjunctive General Services	/X/	PVORH
+94302	Professional Visits Office/Inst - After Reg Hrs	3	0	0	0	0	Adjunctive General Services	/X/	PVOARH
+94303	Missed/Cancelled Appt. Insuff.Notice,in office hrs.	3	0	0	0	0	Adjunctive General Services	/X/	MAIN
+94304	Missed/Cancelled Appt. Insuff.Notice,special	3	0	0	0	0	Adjunctive General Services	/X/	MAIN
+94305	Professional Visits Travelling Expenses	3	0	0	0	0	Adjunctive General Services	/X/	PVTE
+94306	Professional Visits Out of Office + Services,E	3	0	0	0	0	Adjunctive General Services	/X/	PVOOSE
+94411	CourtAppearances/Preparation Prep As Expert Witness,1U	3	0	0	0	0	Adjunctive General Services	/X/	CAPAEW1U
+94412	CourtAppearances/Preparation Prep As Expert Witness,2U	3	0	0	0	0	Adjunctive General Services	/X/	CAPAEW2U
+94413	CourtAppearances/Preparation Prep As Expert Witness,3U	3	0	0	0	0	Adjunctive General Services	/X/	CAPAEW3U
+94414	CourtAppearances/Preparation Prep As Expert Witness,4U	3	0	0	0	0	Adjunctive General Services	/X/	CAPAEW4U
+94419	CourtAppearances/Preparation Prep As Expert Witness,EAU	3	0	0	0	0	Adjunctive General Services	/X/	CAPAEWAU
+94421	CourtAppearances/Preparation Appear/Expt Witness-1/2 day	3	0	0	0	0	Adjunctive General Services	/X/	CAAW1
+94422	CourtAppearances/Preparation Appear/Expt Witness-Full day	3	0	0	0	0	Adjunctive General Services	/X/	CAAWF
+95101	Forensic Services,Misc Identification,Opinion,E	3	0	0	0	0	Adjunctive General Services	/X/	FSMIOE
+95102	Forensic Services,Misc Participation Civil Disaster,E	3	0	0	0	0	Adjunctive General Services	/X/	FSMPCDE
+95104	Forensic Services,Misc Written Odontology Report,E	3	0	0	0	0	Adjunctive General Services	/X/	FSMWORE
+96101	Drugs/Medication,Dispensing Prescription,Emergency	3	0	0	0	0	Adjunctive General Services	/X/	DDPE
+96102	Drugs/Medication,Dispensing Emergency,1 /2 doses theraputi E	3	0	0	0	0	Adjunctive General Services	/X/	DDE1E
+96103	Drugs/Medication,Dispensing Prescription,Non Emergency,E	3	0	0	0	0	Adjunctive General Services	/X/	DDPNEE
+96201	Drugs/Medication,Dispensing Intramuscular Injection,E	3	0	0	0	0	Adjunctive General Services	/X/	DDIIE
+96202	Drugs/Medication,Dispensing Intravenous Injection,E	3	0	0	0	0	Adjunctive General Services	/X/	DDIIE
+96203	Drugs/Medication,Dispensing Intralesional Delivery,E	3	0	0	0	0	Adjunctive General Services	/X/	DDIDE
+97111	Drugs/Medication,Dispensing Bleaching,Vital,In Office 1U	3	0	0	0	0	Adjunctive General Services	/X/	Whitening, In Office, 1 unit 
+97112	Drugs/Medication,Dispensing Bleaching,Vital,In Office 2U	3	0	0	0	0	Adjunctive General Services	/X/	Whitening,  In Office, 2 units
+97113	Drugs/Medication,Dispensing Bleaching,Vital,In Office 3U	3	0	0	0	0	Adjunctive General Services	/X/	Whitening,  In Office, 3 units
+97119	Drugs/Medication,Dispensing Bleaching,Vital,Office,EAU	3	0	0	0	0	Adjunctive General Services	/X/	Whitening,  In Office, add'l unit 
+97121	Drugs/Medication,Dispensing Bleaching,Vtl,Home,Upper Arch,LE	3	0	0	0	0	Adjunctive General Services	/X/	Whitening at Home, Upper Arch + Lab
+97122	Drugs/Medication,Dispensing Bleaching,Vtl,Home,LowerArch,LE	3	0	0	0	0	Adjunctive General Services	/X/	Whitening at Home, Lower Arch + Lab
+97123	Drugs/Medication,Dispensing Bleaching,Vtl,Home,Upper+Lower,LE	3	0	0	0	0	Adjunctive General Services	/X/	DDBVHULLE
+97131	Drugs/Medication,Dispensing Micro-Abrasion,1U	3	0	0	0	0	Adjunctive General Services	/X/	DDMA1U
+97132	Drugs/Medication,Dispensing Micro-Abrasion,2U	3	0	0	0	0	Adjunctive General Services	/X/	DDMA2U
+97133	Drugs/Medication,Dispensing Micro-Abrasion,3U	3	0	0	0	0	Adjunctive General Services	/X/	DDMA3U
+97134	Drugs/Medication,Dispensing Micro-Abrasion,4U	3	0	0	0	0	Adjunctive General Services	/X/	DDMA4U
+97139	Drugs/Medication,Dispensing Micro-Abrasion,EAU	3	0	0	0	0	Adjunctive General Services	/X/	DDMAAU
+98101	Counselling Tobacco-use Cessation,1U,E	3	0	0	0	0	Adjunctive General Services	/X/	CTC1UE
+98102	Counselling Tobacco-use Cessation,2U,E	3	0	0	0	0	Adjunctive General Services	/X/	CTC2UE
+98109	Counselling Tobacco-use Cessation,EAU,E	3	0	0	0	0	Adjunctive General Services	/X/	CTCAUE
+99111	Laboratory & Expense Proced '+L' Commercial Lab Procdrs	3	0	0	0	0	Adjunctive General Services	/X/	Lab Fee
+99222	Laboratory & Expense Proced '+L' for oral path biopsy	3	0	0	0	0	Adjunctive General Services	/X/	LEPL
+99333	Laboratory & Expense Proced '+L' In-Office Lab Procdrs	3	0	0	0	0	Adjunctive General Services	/X/	Lab Fee, In Office
+99555	Laboratory & Expense Proced '+E' Addit,Material	3	0	0	0	0	Adjunctive General Services	/X/	Expense, Materials
+99711	Laboratory & Expense Proced + GST	3	0	0	0	0	Adjunctive General Services	/X/	LEPGST
+99712	Laboratory & Expense Proced + PST	3	0	0	0	0	Adjunctive General Services	/X/	LEPPST
+99713	Laboratory & Expense Proced + HST	3	0	0	0	0	Adjunctive General Services	/X/	LEPHST

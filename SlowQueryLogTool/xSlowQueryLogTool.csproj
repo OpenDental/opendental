@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9689F3C3-7DE7-4249-A02B-B0D5DFD7EA11}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SlowQueryLogTool</RootNamespace>
+    <AssemblyName>SlowQueryLogTool</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>imageedit_5_6521778434_MPt_icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PoorMansTSqlFormatterLib35">
+      <HintPath>..\Required dlls\PoorMansTSqlFormatterLib35.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FormQueryGroup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormQueryGroup.Designer.cs">
+      <DependentUpon>FormQueryGroup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormQuery.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormQuery.Designer.cs">
+      <DependentUpon>FormQuery.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormSlowQueryLog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormSlowQueryLog.Designer.cs">
+      <DependentUpon>FormSlowQueryLog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryLog.cs" />
+    <Compile Include="UI\ODDatePicker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ODDatePicker.designer.cs">
+      <DependentUpon>ODDatePicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ODDateRangePicker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ODDateRangePicker.designer.cs">
+      <DependentUpon>ODDateRangePicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ValidDate.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <EmbeddedResource Include="FormQueryGroup.resx">
+      <DependentUpon>FormQueryGroup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormQuery.resx">
+      <DependentUpon>FormQuery.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSlowQueryLog.resx">
+      <DependentUpon>FormSlowQueryLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="UI\ODDatePicker.resx">
+      <DependentUpon>ODDatePicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ODDateRangePicker.resx">
+      <DependentUpon>ODDateRangePicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="downArrowWinForm.png" />
+    <Content Include="imageedit_5_6521778434_MPt_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CodeBase\xCodeBase.csproj">
+      <Project>{18F7BC78-4B99-48D3-A1F1-0D13A63E3CF9}</Project>
+      <Name>xCodeBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenDentBusiness\OpenDentBusiness.csproj">
+      <Project>{3D0FC76E-803C-4DE2-BDB1-47D63A4E2357}</Project>
+      <Name>OpenDentBusiness</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataConnectionBase\xDataConnectionBase.csproj">
+      <Project>{29c41020-4411-41f2-9061-9b71b5b32b5d}</Project>
+      <Name>xDataConnectionBase</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,389 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
+<database version="21.4.9.0">
+    <table name="alertcategorylink">
+        <summary></summary>
+        <column order="2" name="AlertType" type="tinyint(4)">
+            <summary>Enum:AlertType Identifies what types of alert this row is assocaited to.</summary>
+            <Enumeration name="AlertType">
+                <summary>Enum representing different alert types.</summary>
+                <EnumValue name="WebSchedRecallsNotSending">34 - Alert that no recalls have sent in a period of time.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="alertitem">
+        <summary></summary>
+        <column order="3" name="Type" type="tinyint(4)">
+            <summary>Enum:AlertType Identifies what type of alert this row is.</summary>
+            <Enumeration name="AlertType">
+                <summary>Enum representing different alert types.</summary>
+                <EnumValue name="WebSchedRecallsNotSending">34 - Alert that no recalls have sent in a period of time.</EnumValue>
+            </Enumeration>
+        </column>
+        <column order="10" name="SecDateTEntry" type="datetime">
+            <summary>Date this row was added to the database. Not editable by the user</summary>
+        </column>
+    </table>
+    <table name="apikey">
+        <summary></summary>
+        <column order="0" name="APIKeyNum" type="bigint(20)">
+            <summary>Primary key.</summary>
+        </column>
+        <column order="1" name="CustApiKey" type="varchar(255)">
+            <summary>Customer's API key.</summary>
+        </column>
+        <column order="2" name="DevName" type="varchar(255)">
+            <summary>Developer's name, exactly as they entered it in FHIR developer portal.</summary>
+        </column>
+    </table>
+    <table name="appointment">
+        <summary></summary>
+        <column order="33" name="SecurityHash" type="varchar(255)">
+            <summary>Holds the salted hash of the following appointment fields: AptStatus, Confirmed, AptDateTime. </summary>
+        </column>
+    </table>
+    <table name="apptfielddef">
+        <summary></summary>
+        <column order="4" name="ItemOrder" type="int(11)">
+            <summary>Zero based ordering for the items.</summary>
+        </column>
+    </table>
+    <table name="carecreditwebresponse">
+        <summary></summary>
+        <column order="14" name="ServiceType" type="varchar(255)">
+            <summary>Enum:CareCreditServiceType Used to determine what service was requested for this web response.</summary>
+            <Enumeration name="CareCreditServiceType">
+                <summary />
+                <EnumValue name="IndividualQS">2.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="commlog">
+        <summary></summary>
+        <column order="5" name="Mode_" type="tinyint">
+            <summary>Enum:CommItemMode Phone, email, etc.</summary>
+            <Enumeration name="CommItemMode">
+                <summary />
+                <EnumValue name="PhoneAndText">7</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="deflink">
+        <summary></summary>
+        <column order="3" name="LinkType" type="tinyint(4)">
+            <summary>Enum:DefLinkType The type of link.</summary>
+            <Enumeration name="DefLinkType">
+                <summary>The manner in which a definition is linked.</summary>
+                <EnumValue name="ClinicSpecialty">0. Specialties for a clinic.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="document">
+        <summary></summary>
+        <column order="8" name="DegreesRotated" type="float">
+            <summary>Any positive or negative, including decimals.</summary>
+        </column>
+        <column order="26" name="IsCropOld" type="tinyint">
+            <summary>Set to true as part of conversion to 21.4. Set back to false once the crop is converted to the new scheme. It would take too long to do this conversion in the normal script because it involves loading each image to obtain width and height. So this is a lazy conversion.</summary>
+        </column>
+    </table>
+    <table name="eclipboardsheetdef">
+        <summary></summary>
+        <column order="8" name="IgnoreSheetDefNums" type="text">
+            <summary>Comma delimited list of sheetdef nums to ignore.</summary>
+        </column>
+    </table>
+    <table name="eservicelog">
+        <summary></summary>
+        <column order="4" name="EServiceAction" type="smallint(6)">
+            <summary>Enum:eServiceAction</summary>
+            <Enumeration name="eServiceAction">
+                <summary>List of some possible eServices.</summary>
+                <EnumValue name="PPStatementPortalArrived">26 - Patient Portal, Patient Arrived At Statement Portal.</EnumValue>
+                <EnumValue name="PPStatementPortalLoggedIn">27 - Patient Portal, Patient Logged In At Statement Portal.</EnumValue>
+                <EnumValue name="PPStatementPortalDownloadStatement">28 - Patient Portal, Patient Downloaded Statement.</EnumValue>
+                <EnumValue name="PPPaymentFormOpened">29 - Patient Portal, Patient Opened Payment Form.</EnumValue>
+                <EnumValue name="PPPaymentFormOpenedFromLogin">30 - Patient Portal, Patient Opened Payment Form From Login.</EnumValue>
+                <EnumValue name="PPOpenedHostedPaymentForm">31 - Patient Portal, Patient Opened Hosted Payment Form.</EnumValue>
+                <EnumValue name="PPPayWithExistingFromClient">32 - Patient Portal, Patient Paid With Existing Card.</EnumValue>
+                <EnumValue name="PPPaymentCreatedByXWeb">33 - Patient Portal, Patient Submitted Payment With XWeb.</EnumValue>
+                <EnumValue name="PPPaymentCreatedByPayconnect">34 - Patient Portal, Patient Submitted Payment With PayConnect.</EnumValue>
+            </Enumeration>
+        </column>
+        <column order="10" name="Note" type="varchar(255)">
+            <summary>Additional information for the log. This is intentionally limited to 255 characters to prevent bloat.
+            Add any new uses of this field to the list below. Provide the eServiceAction types and what the Note field represents for those types.
+            PPPaymentCreatedByXWeb:				The amount of the payment.
+            PPPaymentCreatedByPayconnect:	The amount of the payment.
+            PPOpenedHostedPaymentForm:			The name of the merchant service that the hosted payment form belongs to.</summary>
+        </column>
+    </table>
+    <table name="grouppermission">
+        <summary></summary>
+        <column order="4" name="PermType" type="tinyint">
+            <summary>Enum:Permissions</summary>
+            <Enumeration name="Permissions">
+                <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+                <EnumValue name="TextMessageView">217 - Allows user to view text messages.</EnumValue>
+                <EnumValue name="TextMessageSend">218 - Allows uer to send text messages.</EnumValue>
+                <EnumValue name="RxMerge">219 - Allows user to merge prescriptions.</EnumValue>
+                <EnumValue name="DefEdit">220 - Allows user to add or update Definitions.</EnumValue>
+                <EnumValue name="UpdateInstall">221 - Allows user to install Open Dental updates.</EnumValue>
+                <EnumValue name="AdjustmentTypeDeny">222 - Denies users access to specific adjustment types. Special type of permission where having this permission actually 
+            denies users access. If a usergroup has an entry for this permission, then they do not have access to the adjustment type with the defnum
+            that is stored in grouppermission.FKey. Pattern approved by Jordan.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="histappointment">
+        <summary></summary>
+        <column order="38" name="SecurityHash" type="varchar(255)">
+            <summary>Copied from Appointment.</summary>
+        </column>
+    </table>
+    <table name="imagedraw">
+        <summary></summary>
+        <column order="8" name="DrawType" type="tinyint(4)">
+            <summary>Enum:ImageDrawType</summary>
+            <Enumeration name="ImageDrawType">
+                <summary />
+                <EnumValue name="ScaleValue">3 - Stores a float, decimals, and units in the drawing segement. Only one of this type is allowed per image or mount.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="insplanpreference">
+        <summary></summary>
+        <column order="0" name="InsPlanPrefNum" type="bigint(20)">
+            <summary>Primary key.</summary>
+        </column>
+        <column order="1" name="PlanNum" type="bigint(20)" fk="insplan">
+            <summary>FK to insplan.PlanNum.</summary>
+        </column>
+        <column order="2" name="FKey" type="bigint(20)">
+            <summary>FK to to a table associated with FKeyType</summary>
+        </column>
+        <column order="3" name="FKeyType" type="tinyint(4)">
+            <summary>Enum:InsPlanPrefFKeyType ProcCodeNoBillIns</summary>
+            <Enumeration name="InsPlanPrefFKeyType">
+                <summary>The different types of overrides that can be created for an insurance plan.</summary>
+                <EnumValue name="ProcCodeNoBillIns">0 - Overrides the procedurecode.NoBillIns field at the insurance plan level. FKey stores the CodeNum. ValueString stores NoBillInsOverride enum value.</EnumValue>
+            </Enumeration>
+        </column>
+        <column order="4" name="ValueString" type="text">
+            <summary>Used to hold the override. NoBillIns stores 0, 1.</summary>
+        </column>
+    </table>
+    <table name="limitedbetafeature">
+        <summary></summary>
+        <column order="0" name="LimitedBetaFeatureNum" type="bigint(20)">
+            <summary></summary>
+        </column>
+        <column order="1" name="LimitedBetaFeatureTypeNum" type="bigint(20)">
+            <summary>Stores the integer value of the LimitedBetaFeatureEnum. This is done to prevent out of bounds exceptions due to versioning.</summary>
+        </column>
+        <column order="2" name="ClinicNum" type="bigint(20)">
+            <summary>ClinicNum that is signed up for the feature. Clinic independant features only have one row with a clinicNum of -1.</summary>
+        </column>
+        <column order="3" name="IsSignedUp" type="tinyint(4)">
+            <summary>An office is considered signed up if they have a valid version to be using this feature on, the feature is on limited beta, and they've signed up with HQ.</summary>
+        </column>
+    </table>
+    <table name="mobileappdevice">
+        <summary></summary>
+        <column order="10" name="DevicePage" type="tinyint(4)">
+            <summary>Current page of the device.</summary>
+        </column>
+    </table>
+    <table name="mobiledatabyte">
+        <summary></summary>
+        <column order="5" name="ActionType" type="tinyint(4)">
+            <summary>Enum:eActionType Stores the intended action associated to this rows data.</summary>
+            <Enumeration name="eActionType">
+                <summary>Actions representing different endpoints in mobile app.</summary>
+                <EnumValue name="PerioExam">4 - Associated with a list of perio exams.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="mount">
+        <summary></summary>
+        <column order="10" name="ColorFore" type="int(11)">
+            <summary>Color of drawings and text.  Typically black for photos and white for radiographs.</summary>
+        </column>
+        <column order="11" name="ColorTextBack" type="int(11)">
+            <summary>Color of drawing text background.  Typically white for photos and black for radiographs. Transparent is allowed.</summary>
+        </column>
+    </table>
+    <table name="mountdef">
+        <summary></summary>
+        <column order="6" name="ColorFore" type="int(11)">
+            <summary>Color of drawings and text.  Typically black for photos and white for radiographs.</summary>
+        </column>
+        <column order="7" name="ColorTextBack" type="int(11)">
+            <summary>Color of drawing text background.  Typically white for photos and black for radiographs. Transparent is allowed.</summary>
+        </column>
+        <column order="8" name="ScaleValue" type="varchar(255)">
+            <summary>Scale, decimal places, and units, separated by spaces.  Example: "123.4 0 mm". The first two are required; units is optional.  When a mount is created, this is converted into an ImageDraw of type ScaleValue.</summary>
+        </column>
+    </table>
+    <table name="mountitem">
+        <summary></summary>
+        <column order="9" name="TextShowing" type="text">
+            <summary>Instead of an image, a mount item can show text. In this case, ItemOrder=0. Text color and background will be the mount default.</summary>
+        </column>
+        <column order="10" name="FontSize" type="float">
+            <summary>This could vary significantly based on the size of the mount.  It's always relative to mount pixels.</summary>
+        </column>
+    </table>
+    <table name="mountitemdef">
+        <summary></summary>
+        <column order="9" name="TextShowing" type="text">
+            <summary>Instead of an image, a mount item can show text. In this case, ItemOrder=0. Text color and background will be the mount default.</summary>
+        </column>
+        <column order="10" name="FontSize" type="float">
+            <summary>This could vary significantly based on the size of the mount.  It's always relative to mount pixels.</summary>
+        </column>
+    </table>
+    <table name="patient">
+        <summary></summary>
+        <column order="83" name="SecurityHash" type="varchar(255)">
+            <summary>Holds the salted hash of the following patient fields: Guarantor, Email, FamFinUrgNote, ApptModNote. </summary>
+        </column>
+    </table>
+    <table name="payconnectresponseweb">
+        <summary></summary>
+        <column order="21" name="LogGuid" type="varchar(36)">
+            <summary>The GUID used in EserviceLogs related to this response. May be blank.</summary>
+        </column>
+    </table>
+    <table name="payplan">
+        <summary></summary>
+        <column order="24" name="SecurityHash" type="varchar(255)">
+            <summary>Holds the salted hash of the following paysplit fields: Guarantor, PayAmt, IsClosed, IsLocked. </summary>
+        </column>
+    </table>
+    <table name="paysplit">
+        <summary></summary>
+        <column order="20" name="SecurityHash" type="varchar(255)">
+            <summary>Holds the salted hash of the following paysplit fields: PatNum, SplitAmt, DateEntry. </summary>
+        </column>
+    </table>
+    <table name="securitylog">
+        <summary></summary>
+        <column order="1" name="PermType" type="tinyint">
+            <summary>Enum:Permissions</summary>
+            <Enumeration name="Permissions">
+                <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+                <EnumValue name="TextMessageView">217 - Allows user to view text messages.</EnumValue>
+                <EnumValue name="TextMessageSend">218 - Allows uer to send text messages.</EnumValue>
+                <EnumValue name="RxMerge">219 - Allows user to merge prescriptions.</EnumValue>
+                <EnumValue name="DefEdit">220 - Allows user to add or update Definitions.</EnumValue>
+                <EnumValue name="UpdateInstall">221 - Allows user to install Open Dental updates.</EnumValue>
+                <EnumValue name="AdjustmentTypeDeny">222 - Denies users access to specific adjustment types. Special type of permission where having this permission actually 
+            denies users access. If a usergroup has an entry for this permission, then they do not have access to the adjustment type with the defnum
+            that is stored in grouppermission.FKey. Pattern approved by Jordan.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="signalod">
+        <summary></summary>
+        <column order="5" name="IType" type="tinyint(4)">
+            <summary>Enum:InvalidType Indicates what cache or entity has been changed.</summary>
+            <Enumeration name="InvalidType">
+                <summary>When the autorefresh message is sent to the other computers, this is the type.</summary>
+                <EnumValue name="LimitedBetaFeature">103. Used for limitedBetaFeature Cache.</EnumValue>
+                <EnumValue name="PerioExams">104. Used to refresh Perio Chart.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="taskattachment">
+        <summary></summary>
+        <column order="0" name="TaskAttachmentNum" type="bigint(20)">
+            <summary>Primary key.</summary>
+        </column>
+        <column order="1" name="TaskNum" type="bigint(20)" fk="task">
+            <summary>FK to task.TaskNum.</summary>
+        </column>
+        <column order="2" name="DocNum" type="bigint(20)" fk="document">
+            <summary>FK to document.DocNum. If no document is attached, then this field will be 0.</summary>
+        </column>
+        <column order="3" name="TextValue" type="text">
+            <summary>Used to store text that doesn't need to be visible from the main task edit window at all times.</summary>
+        </column>
+        <column order="4" name="Description" type="varchar(255)">
+            <summary>A brief description of this attachment. If document is linked, used for document description as well.</summary>
+        </column>
+    </table>
+    <table name="userodpref">
+        <summary></summary>
+        <column order="3" name="FkeyType" type="tinyint(4)">
+            <summary>Enum:UserOdFkeyType Specifies which flag is overridden for the specified definition, since an individual definition can have multiple flags.</summary>
+            <Enumeration name="UserOdFkeyType">
+                <summary>These FKey Types are to be used as an identifier for what table the Fkey column is associated to, or what type of override it is.
+            Not always associated to a database table.  Example:  TaskCollapse,SuppressLogOffMessage,AcctProcBreakdown.
+            Do not reorder items, since they are numbers in the db.</summary>
+                <EnumValue name="ImageCategoryExpanded">0 - Imaging module expanded categories.  Presence of a row means expanded.  Absence means collapsed.  No valuestring needed.</EnumValue>
+                <EnumValue name="ImageSelectorWidth">27 - Stores the width of the left Image Selector (tree) of the Imaging module in the ValueString. Does not store expanded/collapsed, so this width would be the expanded width. There is no limit. Does not use FKey.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="webschedcarrierrule">
+        <summary></summary>
+        <column order="0" name="WebSchedCarrierRuleNum" type="bigint(20)">
+            <summary>Primary key.</summary>
+        </column>
+        <column order="1" name="ClinicNum" type="bigint(20)" fk="clinic">
+            <summary>FK to clinic.ClinicNum.</summary>
+        </column>
+        <column order="2" name="CarrierName" type="varchar(255)">
+            <summary>Name of the carrier.</summary>
+        </column>
+        <column order="3" name="DisplayName" type="varchar(255)">
+            <summary>Set by the user. This is what is shown as a selection for the patient in the WebSched UI.</summary>
+        </column>
+        <column order="4" name="Message" type="text">
+            <summary>Return message sent back to patients through WebSched. Set by the office after a patient has made a carrier selection.</summary>
+        </column>
+        <column order="5" name="Rule" type="tinyint(4)">
+            <summary>Enum:RuleType Allow, AllowWithInput, AllowWithMessage, Block.</summary>
+            <Enumeration name="RuleType">
+                <summary />
+                <EnumValue name="Allow">0</EnumValue>
+                <EnumValue name="AllowWithInput">1</EnumValue>
+                <EnumValue name="AllowWithMessage">2</EnumValue>
+                <EnumValue name="Block">3</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="xwebresponse">
+        <summary></summary>
+        <column order="36" name="LogGuid" type="varchar(36)">
+            <summary>The GUID used in EserviceLogs related to this response. May be blank.</summary>
+        </column>
+    </table>
+    <table name="deflink">
+        <summary></summary>
+        <column order="3" name="LinkType" type="tinyint(4)">
+            <summary>Enum:DefLinkType The type of link.</summary>
+            <Enumeration name="DefLinkType">
+                <summary>The manner in which a definition is linked.</summary>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="document">
+        <summary></summary>
+        <column order="8" name="DegreesRotated" type="smallint(6)">
+            <summary>Any positive or negative, including decimals.</summary>
+        </column>
+    </table>
+    <table name="userodpref">
+        <summary></summary>
+        <column order="3" name="FkeyType" type="tinyint(4)">
+            <summary>Enum:UserOdFkeyType Specifies which flag is overridden for the specified definition, since an individual definition can have multiple flags.</summary>
+            <Enumeration name="UserOdFkeyType">
+                <summary>These FKey Types are to be used as an identifier for what table the Fkey column is associated to, or what type of override it is.
+            Not always associated to a database table.  Example:  TaskCollapse,SuppressLogOffMessage,AcctProcBreakdown.
+            Do not reorder items, since they are numbers in the db.</summary>
+            </Enumeration>
+        </column>
+    </table>
+</database>

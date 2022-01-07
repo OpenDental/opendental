@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SheetDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <IsNew>false</IsNew>
+  <SheetDefNum>0</SheetDefNum>
+  <Description>Referral Letter</Description>
+  <SheetType>ReferralLetter</SheetType>
+  <FontSize>11</FontSize>
+  <FontName>Microsoft Sans Serif</FontName>
+  <Width>850</Width>
+  <Height>1100</Height>
+  <IsLandscape>false</IsLandscape>
+  <PageCount>1</PageCount>
+  <IsMultiPage>false</IsMultiPage>
+  <SheetFieldDefs>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3631</SheetFieldDefNum>
+      <SheetDefNum>74</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>referral.cityStateZip</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>233</YPos>
+      <Width>200</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3638</SheetFieldDefNum>
+      <SheetDefNum>74</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>patient.priProvNameFL</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>518</YPos>
+      <Width>250</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3637</SheetFieldDefNum>
+      <SheetDefNum>74</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Sincerely,</FieldValue>
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>442</YPos>
+      <Width>100</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3636</SheetFieldDefNum>
+      <SheetDefNum>74</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>letter text</FieldValue>
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>404</YPos>
+      <Width>650</Width>
+      <Height>19</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3635</SheetFieldDefNum>
+      <SheetDefNum>74</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>referral.salutation</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>366</YPos>
+      <Width>280</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3634</SheetFieldDefNum>
+      <SheetDefNum>74</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>patient.nameFL</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>190</XPos>
+      <YPos>328</YPos>
+      <Width>200</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3633</SheetFieldDefNum>
+      <SheetDefNum>74</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>RE patient:</FieldValue>
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>328</YPos>
+      <Width>90</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3632</SheetFieldDefNum>
+      <SheetDefNum>74</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>today.DayDate</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>309</YPos>
+      <Width>200</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3630</SheetFieldDefNum>
+      <SheetDefNum>74</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>referral.address</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>214</YPos>
+      <Width>200</Width>
+      <Height>19</Height>
+      <GrowthBehavior>DownLocal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3629</SheetFieldDefNum>
+      <SheetDefNum>74</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>referral.nameFL</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>195</YPos>
+      <Width>200</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3628</SheetFieldDefNum>
+      <SheetDefNum>74</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>practiceCityStateZip</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>138</YPos>
+      <Width>200</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3627</SheetFieldDefNum>
+      <SheetDefNum>74</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>PracticeAddress</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>119</YPos>
+      <Width>200</Width>
+      <Height>19</Height>
+      <GrowthBehavior>DownLocal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3626</SheetFieldDefNum>
+      <SheetDefNum>74</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>PracticeTitle</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>100</YPos>
+      <Width>200</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+  </SheetFieldDefs>
+</SheetDef>

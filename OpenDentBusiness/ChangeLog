@@ -1,0 +1,8 @@
+2007-03-30  Frederik Carlier  <frederik.carlier@carlier-online.be>
+
+    * DataConnection.cs: Use Mono's (or .NET's) built-in Oracle data provider when building with the LINUX constant enabled. Oracle's .NET provider is (currently) not compatible with Linux.
+ 
+2007-03-16  Frederik Carlier  <frederik.carlier@carlier-online.be>
+
+	* DataConnection.cs: Fix error CS0724: A throw statement with no arguments is not allowed inside of a finally clause nested inside of the innermost catch clause. [http://msdn2.microsoft.com/en-us/library/b23atcbd(vs.80).aspx]
+    * ChangeLog: Created

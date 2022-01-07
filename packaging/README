@@ -1,0 +1,56 @@
+This directory contains the tools required to package Open Dental on Debian and Ubuntu Linux.
+
+The packaging is controlled by the scripts in the scripts/ directory:
+* scripts/package-mono
+  builds packages that install Mono on Debian and Ubuntu Linux. They are taken from the Debian
+  SVN repository that can be found at http://pkg-mono.alioth.debian.org/. The modifications made
+  were:
+  - Support Mono 1.2.3.50 (main reason for packaging).
+  - Support Debian Sarge (version 3.1), the current stable version of Debian GNU/Linux.
+    Support for such an old version of Linux (released in 2005 and ships with kernel 2.4)
+    is possible because of the low requirements that Mono set.
+
+* scripts/package-opendental
+  This will build Debian packages for Open Dental. 
+
+* scripts/make-iso
+  Creates an iso image of a cd containing the packages required to install Open Dental. 
+
+* scripts/publish
+  Publishes packages from the packages directory to the repository and download folder.
+
+NOTE: Do not run these scripts as root!
+
+These scripts assume the following layout:
+* ~/sources
+  Contains a working copy of the sources for mono, mcs, libgdiplus and opendental.
+  Created if it doesn't exist.
+
+* ~/packaging
+  Directory used to package sources. The sources are downloaded (be it from the web or subversion)
+  and then Debian packages are build
+
+* ~/packages
+  When built, the packages will eventualy end up in the ~/packages directory. From here, they will
+  be published to the repository
+
+* ~/repository
+  A directory containing the repository for Open Dental
+
+* ~/download
+  A directory containing files for direct, public download
+
+You'll need to have some tools installed:
+* Subversion (apt-get install subversion)
+* svn-buildpackage (apt-get install svn-buildpackage)
+* gawk (apt-get install gawk)
+* A recent version of maketools. Debian Sarge comes with maketools1.4, maketools1.9 is required.
+  To see which version you are using:
+    automake --version
+  To install the latest version:
+    sudo apt-get install automake1.9
+    sudo apt-get remove automake1.4
+  (it is very important to remove automake 1.4)
+* and the usual packages required for building Debian packages
+
+The scripts should be documented clearly, refer to them for more information.
