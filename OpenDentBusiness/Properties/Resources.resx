@@ -1,0 +1,337 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="PatientLetterTxFinder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PatientLetterTxFinder.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ClaimFormDenti_Cal" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ClaimForms\ClaimFormDenti-Cal.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ReferralLetter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ReferralLetter.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="LabelReferral" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LabelReferral.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="PatientLetter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PatientLetter.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="HIPAA" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HIPAA.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="EraGridHeader" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\EraGridHeader.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ClaimFormADA_2012_J430D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ClaimForms\ClaimFormADA 2012_J430D.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="LabelPatientLFAddress" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LabelPatientLFAddress.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ClaimForm1500_02_12" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ClaimForms\ClaimForm1500_02_12.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ClaimFormHCFA_1500_preprinted" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ClaimForms\ClaimFormHCFA-1500 preprinted.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="RXMulti" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RXMulti.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Patient_Info" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Patient Info.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Right" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Right.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Rx" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Rx.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="MedicalHistSimple" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MedicalHistSimple.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ClaimFormADA_2000" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ClaimForms\ClaimFormADA 2000.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ClaimFormADA_2002" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ClaimForms\ClaimFormADA 2002.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ReferralSlip" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ReferralSlip.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="MedicalHistNewPat" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MedicalHistNewPat.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="LabelPatientLFPatNum" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LabelPatientLFPatNum.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="NoFields" xml:space="preserve">
+    <value>The current object does not contain any data fields.</value>
+  </data>
+  <data name="RxInstruction" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RxInstruction.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="NotASinglePrimaryKey" xml:space="preserve">
+    <value>This object has a primary key that consists of multiple columns.</value>
+  </data>
+  <data name="ObjectAlreadyDeleted" xml:space="preserve">
+    <value>The object has already been deleted, and cannot be deleted twice.</value>
+  </data>
+  <data name="RoutingSlip" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RoutingSlip.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="LabSlip" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LabSlip.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ClaimFormUB04" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ClaimForms\ClaimFormUB04.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ClaimForm1500" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ClaimForms\ClaimForm1500.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="LabelCarrier" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LabelCarrier.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ERA" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ERA.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="LabelPatientLFChartNumber" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LabelPatientLFChartNumber.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="CannotOverridePrimaryKey" xml:space="preserve">
+    <value>The primary key could not be overriden, because either the object is not new and has been loaded from the database or the object does not contain an Identity key.</value>
+  </data>
+  <data name="TreatmentPlan" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TreatmentPlan.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="LabelPatientRadiograph" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LabelPatientRadiograph.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="PaymentPlan" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PaymentPlan.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ClaimFormADA_2006" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ClaimForms\ClaimFormADA 2006.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ObjectNotSaved" xml:space="preserve">
+    <value>The object does not exist in the database, and can therefore not be deleted.</value>
+  </data>
+  <data name="DataTypeNotSupportedByPOut" xml:space="preserve">
+    <value>The current data type ({0}) is not supported by the POut class.</value>
+  </data>
+  <data name="ApptBackTest" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ApptBackTest.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FinancialAgreement" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\FinancialAgreement.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ExamSheet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ExamSheet.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Consent" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Consent.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="DtoNotSupportedException" xml:space="preserve">
+    <value>A DTO of type {0} is not supported.</value>
+  </data>
+  <data name="ClaimFormHCFA_1500" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ClaimForms\ClaimFormHCFA-1500.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ClaimFormADA_2012" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ClaimForms\ClaimFormADA 2012.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="LabelText" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LabelText.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="TooManyDataFieldAttributes" xml:space="preserve">
+    <value>An attribute of type "DataFieldAttribute" can only be specified once.</value>
+  </data>
+  <data name="PatientRegistration" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PatientRegistration.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="CannotSaveDeletedObject" xml:space="preserve">
+    <value>The object has been deleted, and can not be saved again to the database.</value>
+  </data>
+  <data name="Screening" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Screening.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="MedicalHistUpdate" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MedicalHistUpdate.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Statement" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Statement.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="DataTypeNotSupportedByPIn" xml:space="preserve">
+    <value>The current data type is not supported by the PIn class.</value>
+  </data>
+  <data name="DepositSlip" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DepositSlip.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="LabelPatientMail" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LabelPatientMail.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Left" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Left.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PrimaryKeyNotAnInteger" xml:space="preserve">
+    <value>The primary key is not of the type Integer.</value>
+  </data>
+  <data name="LabelAppointment" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LabelAppointment.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="PatientTransferCEMT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PatientTransferCEMT.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ClaimFormADA_2018" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ClaimForms\ClaimFormADA 2018.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ChartModuleStandardLayout" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ChartModuleStandardLayout.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="PatientDashboard" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PatientDashboard.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="RecallPastDue_P" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RecallPastDue_P.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RecallPastDue_R" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RecallPastDue_R.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PatientDashboardToothChart" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PatientDashboardToothChart.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ClaimFormADA_2019" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\claimforms\claimformada 2019.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="deleteX10" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\deleteX10.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="eSig" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\eSig.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="topazPen10" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\topazPen10.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="COVID19" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\COVID19.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="COVID191" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\COVID19.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+</root>

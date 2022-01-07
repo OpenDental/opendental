@@ -1,0 +1,285 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
+<database version="21.3.29.0">
+    <table name="apptreminderrule">
+        <summary></summary>
+        <column order="27" name="SendMultipleInvites" type="tinyint(4)">
+            <summary>Enum:SendMultipleInvites . Whether we are able to send multiple invites.</summary>
+            <Enumeration name="SendMultipleInvites">
+                <summary>The different modes in which we will send a patient portal invite for this rule.</summary>
+                <EnumValue name="UntilPatientVisitsPortal">0 - Send a patient portal invite if the patient has not visited patient portal before.</EnumValue>
+                <EnumValue name="EveryAppointment">1 - Send a patient portal invite every appointment.</EnumValue>
+                <EnumValue name="NoVisitInTimespan">2 - Send a patient portal invite if the patient hasn't visited patient portal within TimeSpanMultipleInvites pref.</EnumValue>
+            </Enumeration>
+        </column>
+        <column order="28" name="TimeSpanMultipleInvites" type="bigint(20)">
+            <summary>Used in conjunction with CanSendMultipleInvites. We will not send an invite if a patient has visited Patient Portal within this timespan.</summary>
+        </column>
+    </table>
+    <table name="clockevent">
+        <summary></summary>
+        <column order="16" name="Rate3Hours" type="time">
+            <summary>This is a manual override for Rate3Auto.  Typically -1 hour (-01:00:00) to indicate no override.  When used as override, allowed values are zero or positive.  This is the portion of the hours worked which are at Rate3, so it's not in addition to the hours worked.  Also used to calculate the Rate3 OT.</summary>
+        </column>
+        <column order="17" name="Rate3Auto" type="time">
+            <summary>Automatically calculated Rate3 pay.  Will be zero if none.</summary>
+        </column>
+    </table>
+    <table name="dbmlog">
+        <summary></summary>
+        <column order="3" name="FKeyType" type="tinyint(4)">
+            <summary>Enum:DbmLogFKeyType The type of log.</summary>
+            <Enumeration name="DbmLogFKeyType">
+                <summary />
+                <EnumValue name="DiscountPlanSub">This means FKey will link to DiscountPlanSub.</EnumValue>
+                <EnumValue name="Provider">This means FKey will link to ProvNum</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="eservicelog">
+        <summary></summary>
+        <column order="9" name="DateTimeUploaded" type="datetime">
+            <summary>The time this log was uploaded.</summary>
+        </column>
+    </table>
+    <table name="eserviceshortguid">
+        <summary></summary>
+        <column order="1" name="EServiceCode" type="varchar(255)">
+            <summary>Enum:eServiceCode EService that this short GUID applies to.</summary>
+            <Enumeration name="eServiceCode">
+                <summary>Used by EServiceSignal.ServiceCode. Each service will have an entry here. Stored as an int for forward compatibility.</summary>
+                <EnumValue name="LicenseAgreementSig">40 - Used for storing customers license agreement acceptance signature. </EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="grouppermission">
+        <summary></summary>
+        <column order="4" name="PermType" type="tinyint">
+            <summary>Enum:Permissions</summary>
+            <Enumeration name="Permissions">
+                <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+                <EnumValue name="ProblemDefEdit">63</EnumValue>
+                <EnumValue name="ManageHighSecurityProgProperties">212 - Permission for managing high security program properties.</EnumValue>
+                <EnumValue name="CreditCardEdit">213 - Logs when a patient's credit card is edited.</EnumValue>
+                <EnumValue name="MedicationDefEdit">214 - Allows user to edit medication definitions.</EnumValue>
+                <EnumValue name="AllergyDefEdit">215 - Allows user to edit allergy definitions.</EnumValue>
+                <EnumValue name="Advertising">216 - Allows user to setup and use Advertising features like Postcards.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="histappointment">
+        <summary></summary>
+        <column order="4" name="ApptSource" type="tinyint(4)">
+            <summary>Enum:EServiceTypes .</summary>
+            <Enumeration name="EServiceTypes">
+                <summary />
+                <EnumValue name="OpenDentalService">Used by the OpenDentalService. Not a eService but we need the "phantom" user to behave like eService users.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="imagedraw">
+        <summary></summary>
+        <column order="0" name="ImageDrawNum" type="bigint(20)">
+            <summary>Primary key.</summary>
+        </column>
+        <column order="1" name="DocNum" type="bigint(20)" fk="document">
+            <summary>FK to document.DocNum</summary>
+        </column>
+        <column order="2" name="MountNum" type="bigint(20)" fk="mount">
+            <summary>FK to mount.MountNum</summary>
+        </column>
+        <column order="3" name="ColorDraw" type="int(11)">
+            <summary>For text, this is the foreground color. For lines, this is the color, and ColorBack is not used.</summary>
+        </column>
+        <column order="4" name="ColorBack" type="int(11)">
+            <summary>Background color for text. Can be Transparent (0,255,255,255).</summary>
+        </column>
+        <column order="5" name="DrawingSegment" type="text">
+            <summary>Point data for a drawing segment.  The format would look similar to this: 45,68;48,70;49,72;0,0;55,88;etc.  It's simply a sequence of points, separated by semicolons.  Only positive numbers are used.  0,0 is the upper left of the image or mount.  Cropping is ignored. Floats with tenths can be included.  If the pen is picked up, it becomes a new segment, so a new row in the database.</summary>
+        </column>
+        <column order="6" name="DrawText" type="varchar(255)">
+            <summary>The location of the text in pixels is incorporated into this string.  Example: 25,123;This shows.  Carriage returns etc are not supported.  ColorDraw and FontSize are also used.  Unlike tooth initial, this does not support floats.</summary>
+        </column>
+        <column order="7" name="FontSize" type="float">
+            <summary>This could vary significantly based on the size of the image.</summary>
+        </column>
+        <column order="8" name="DrawType" type="tinyint(4)">
+            <summary>Enum:ImageDrawType</summary>
+            <Enumeration name="ImageDrawType">
+                <summary />
+                <EnumValue name="Text">0 - Location and string, combined</EnumValue>
+                <EnumValue name="Line">1 - A series of straight lines, stored the same as a pen drawing.</EnumValue>
+                <EnumValue name="Pen">2 - One continuous segment of a drawing.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="imagingdevice">
+        <summary></summary>
+        <column order="3" name="DeviceType" type="tinyint(4)">
+            <summary>Enum:EnumImgDeviceType </summary>
+            <Enumeration name="EnumImgDeviceType">
+                <summary>Order cannot change, since we store in db as enum number.  But we show the list in the UI in a different order or our choosing.</summary>
+                <EnumValue name="TwainMulti">2</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="mobiledatabyte">
+        <summary></summary>
+        <column order="5" name="ActionType" type="tinyint(4)">
+            <summary>Enum:eActionType Stores the intended action associated to this rows data.</summary>
+            <Enumeration name="eActionType">
+                <summary>Actions representing different endpoints in mobile app.</summary>
+                <EnumValue name="MakePayment">2 - Instructs eClipboard to present patient with payment window.</EnumValue>
+                <EnumValue name="PaymentPlan">3 - </EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="patientnote">
+        <summary></summary>
+        <column order="14" name="UserNumOrthoLocked" type="bigint(20)" fk="userod">
+            <summary>FK to userod.UserNum. A real-time flag of which user is currently editing the Orth Chart.  Prevents concurrency issues. 0 indicates unlocked.</summary>
+        </column>
+    </table>
+    <table name="payconnectresponseweb">
+        <summary></summary>
+        <column order="20" name="EmailResponse" type="varchar(255)">
+            <summary>Email address used for a requested receipt provided by the user when making a payment via the patient portal.</summary>
+        </column>
+    </table>
+    <table name="payplan">
+        <summary></summary>
+        <column order="23" name="MobileAppDeviceNum" type="bigint(20)">
+            <summary>A FK to the mobile app device that the PayPlan is currently on.</summary>
+        </column>
+    </table>
+    <table name="programproperty">
+        <summary></summary>
+        <column order="7" name="IsHighSecurity" type="tinyint(4)">
+            <summary>Is true if the program property is a high security property. False by default.</summary>
+        </column>
+    </table>
+    <table name="scheduledprocess">
+        <summary></summary>
+        <column order="1" name="ScheduledAction" type="varchar(50)">
+            <summary>Enum:ScheduledActionEnum </summary>
+            <Enumeration name="ScheduledActionEnum">
+                <summary>Action to be selected by user when scheduling. When adding a new value to this Enum add a case for it in the ScheduledProcessThread in
+            OpendentalService and a method to handle the action.</summary>
+                <EnumValue name="Statements">2</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="securitylog">
+        <summary></summary>
+        <column order="1" name="PermType" type="tinyint">
+            <summary>Enum:Permissions</summary>
+            <Enumeration name="Permissions">
+                <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+                <EnumValue name="ProblemDefEdit">63</EnumValue>
+                <EnumValue name="ManageHighSecurityProgProperties">212 - Permission for managing high security program properties.</EnumValue>
+                <EnumValue name="CreditCardEdit">213 - Logs when a patient's credit card is edited.</EnumValue>
+                <EnumValue name="MedicationDefEdit">214 - Allows user to edit medication definitions.</EnumValue>
+                <EnumValue name="AllergyDefEdit">215 - Allows user to edit allergy definitions.</EnumValue>
+                <EnumValue name="Advertising">216 - Allows user to setup and use Advertising features like Postcards.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="sheetdef">
+        <summary></summary>
+        <column order="14" name="AutoCheckSaveImage" type="tinyint(4)">
+            <summary>Indicates whether sheets created with this sheet def load with the "Save to Images" box checked</summary>
+        </column>
+    </table>
+    <table name="signalod">
+        <summary></summary>
+        <column order="4" name="FKeyType" type="varchar(255)">
+            <summary>Enum:KeyType Describes the type of object referenced by the FKey.</summary>
+            <Enumeration name="KeyType">
+                <summary>Do not combine with SignalType, they must be seperate. Stored as string, safe to reorder enum values.</summary>
+                <EnumValue name="UserOd">12 - Indicates Signalod pertains to a specific UserOd.</EnumValue>
+            </Enumeration>
+        </column>
+        <column order="5" name="IType" type="tinyint(4)">
+            <summary>Enum:InvalidType Indicates what cache or entity has been changed.</summary>
+            <Enumeration name="InvalidType">
+                <summary>When the autorefresh message is sent to the other computers, this is the type.</summary>
+                <EnumValue name="UserOdPrefs">100. Used for refreshing user preferences.</EnumValue>
+                <EnumValue name="JobTeams">101. Used internally by OD HQ.</EnumValue>
+                <EnumValue name="AccModule">102. Used to refresh the Account Module for a specific patient.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="stmtlink">
+        <summary></summary>
+        <column order="2" name="StmtLinkType" type="tinyint(4)">
+            <summary>Enum:StmtLinkTypes Represents what object FKey corresponds to.</summary>
+            <Enumeration name="StmtLinkTypes">
+                <summary />
+                <EnumValue name="PayPlanCharge">4 - Pay plan charge</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="timecardrule">
+        <summary></summary>
+        <column order="7" name="HasWeekendRate3" type="tinyint(4)">
+            <summary>Indicates if the employee is eligible to earn Rate3 rate for weekend hours.</summary>
+        </column>
+    </table>
+    <table name="updatehistory">
+        <summary></summary>
+        <column order="3" name="Signature" type="text">
+            <summary>Obfuscated string containing when and who accepted the license agreement.</summary>
+        </column>
+    </table>
+    <table name="userodpref">
+        <summary></summary>
+        <column order="3" name="FkeyType" type="tinyint(4)">
+            <summary>Enum:UserOdFkeyType Specifies which flag is overridden for the specified definition, since an individual definition can have multiple flags.</summary>
+            <Enumeration name="UserOdFkeyType">
+                <summary>These FKey Types are to be used as an identifier for what table the Fkey column is associated to, or what type of override it is.
+            Not always associated to a database table.  Example:  TaskCollapse,SuppressLogOffMessage,AcctProcBreakdown.
+            Do not reorder items, since they are numbers in the db.</summary>
+                <EnumValue name="TaskBlockedMakeSound">26 - Sets whether tasks popups that are blocked still play the sound notification. If true, sound will play. If false, sound will be blocked as well.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="xchargetransaction">
+        <summary></summary>
+        <column order="15" name="BatchTotal" type="double">
+            <summary>BatchTotal. Stores the BatchTotal from XCharge. This is a cumulative value for all transactions up to this row in the same batch. BatchTotal from the last transaction in a batch should match the sum of all the Amount fields for the same batch</summary>
+        </column>
+    </table>
+    <table name="xwebresponse">
+        <summary></summary>
+        <column order="35" name="EmailResponse" type="varchar(255)">
+            <summary>Email address used for a requested receipt provided by the user when making a payment via the patient portal.</summary>
+        </column>
+    </table>
+    <table name="grouppermission">
+        <summary></summary>
+        <column order="4" name="PermType" type="tinyint">
+            <summary>Enum:Permissions</summary>
+            <Enumeration name="Permissions">
+                <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="mobiledatabyte">
+        <summary></summary>
+        <column order="5" name="ActionType" type="tinyint(4)">
+            <summary>Enum:eActionType Stores the intended action associated to this rows data.</summary>
+            <Enumeration name="eActionType">
+                <summary>Actions representing different endpoints in mobile app.</summary>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="securitylog">
+        <summary></summary>
+        <column order="1" name="PermType" type="tinyint">
+            <summary>Enum:Permissions</summary>
+            <Enumeration name="Permissions">
+                <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+            </Enumeration>
+        </column>
+    </table>
+</database>

@@ -1,0 +1,57 @@
+# config/chroot - options for live-helper(7), chroot stage
+
+# $LH_CHROOT_FILESYSTEM: set chroot filesystem
+# (Default: squashfs)
+LH_CHROOT_FILESYSTEM="squashfs"
+
+# $LH_UNION_FILESYSTEM: set union filesystem
+# (Default: unionfs
+LH_UNION_FILESYSTEM="unionfs"
+
+# $LH_HOOKS: set hook commands
+# (Default: empty)
+LH_HOOKS=""
+
+# $LH_INTERACTIVE: set interactive build
+# (Default: disabled)
+LH_INTERACTIVE="disabled"
+
+# $LH_KEYRING_PACKAGES: set keyring packages
+# (Default: empty)
+LH_KEYRING_PACKAGES=""
+
+# $LH_LANGUAGE: set language to use
+# (Default: empty)
+LH_LANGUAGE=""
+
+# $LH_LINUX_FLAVOURS: set kernel flavour to use
+# (Default: autodetected)
+LH_LINUX_FLAVOURS="486"
+
+# $LH_LINUX_PACKAGES: set kernel packages to use
+# (Default: autodetected)
+LH_LINUX_PACKAGES="linux-image-2.6 unionfs-modules-2.6 squashfs-modules-2.6"
+
+# $LH_PACKAGES: set packages to install
+# (Default: empty)
+LH_PACKAGES=""
+
+# $LH_PACKAGES_LISTS: set package list to install
+# (Default: gnome-core)
+LH_PACKAGES_LISTS="gnome-core"
+
+# $LH_TASKS: set tasks to install
+# (Default: empty)
+LH_TASKS=""
+
+# $LH_SECURITY: enable security updates
+# (Default: enabled)
+LH_SECURITY="enabled"
+
+# $LH_SYMLINKS: enable symlink convertion
+# (Default: disabled)
+LH_SYMLINKS="disabled"
+
+# $LH_SYSVINIT: enable sysvinit
+# (Default: disabled)
+LH_SYSVINIT="disabled"

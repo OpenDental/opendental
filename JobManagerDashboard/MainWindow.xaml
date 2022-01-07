@@ -1,0 +1,478 @@
+﻿<Window x:Class="JobManagerDashboard.JobManagerDashboardTiles"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JobManagerDashboard"
+        mc:Ignorable="d"
+        Title="JobManagerDashboard" 
+		WindowState="Maximized" 
+		SizeChanged="Window_SizeChanged"
+		Background="White">
+	<Grid Name="gridParentToAll">
+		<Grid Name="EngInfoWrapperGrid">
+			<Grid.RowDefinitions>
+				<RowDefinition Height=".25*"/>
+				<RowDefinition Height="3*"/>
+			</Grid.RowDefinitions>
+		</Grid>
+		<!--Toolbar logic starts here-->
+		<Grid Name="GridToolbar" Background="#f1f1f1" Grid.Row="0" Height="40" VerticalAlignment="Top">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="40"/>
+				<ColumnDefinition Width="85"/>
+				<ColumnDefinition Width="1*"/>
+			</Grid.ColumnDefinitions>
+			<Button Grid.Column="0" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Click="ButtonBackClick" BorderBrush="Black" BorderThickness="0" Background="#f1f1f1">
+				<Path Width="40" Height="20" 
+									Data="F1M646.688,13.5518L646.783,13.4593 646.965,13.639 668.383,35.0583 689.459,35.0583 665.155,10.751 657.503,3.10126 657.323,2.92023 664.876,-4.63837 689.184,-28.9417 668.109,-28.9417 646.688,-7.52637 636.15,3.01398 646.688,13.5518z" 
+									  Stretch="Uniform" Fill="#ffbd4a" 
+									  RenderTransformOrigin="0.5,0.5" />
+				<Button.Style>
+					<Style TargetType="Button">
+						<Setter Property="BorderThickness" Value="0"/>
+						<Setter Property="BorderBrush" Value="#ffbd4a"/>
+						<Setter Property="Template">
+							<Setter.Value>
+								<ControlTemplate TargetType="Button">
+									<Border Name="border" Background="{TemplateBinding Background}" BorderBrush="White" BorderThickness="1" Padding="5">
+										<ContentPresenter/>
+									</Border>
+									<ControlTemplate.Triggers>
+										<Trigger Property="IsMouseOver" Value="True">
+											<Setter TargetName="border" Property="BorderThickness" Value="1"/>
+											<Setter TargetName="border" Property="BorderBrush" Value="#ffbd4a"/>
+										</Trigger>
+									</ControlTemplate.Triggers>
+								</ControlTemplate>
+							</Setter.Value>
+						</Setter>
+					</Style>
+				</Button.Style>
+			</Button>
+		</Grid>
+		<Grid Name="EngSpecificInfo" Margin="0,42,0,0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="2*"/>
+				<ColumnDefinition Width="1*"/>
+			</Grid.ColumnDefinitions>
+			<!--Engineer schedule starts here-->
+			<Border Name="EngSched" BorderThickness="1 0 0 0" Grid.Column="1" BorderBrush="#ffbd4a">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="1*"/>
+						<ColumnDefinition Width="1*"/>
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="1.5*"/>
+						<RowDefinition Height="1*"/>
+					</Grid.RowDefinitions>
+					<Viewbox Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Bottom" MaxHeight="40">
+					</Viewbox>
+					<!--<Viewbox Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" MaxHeight="400" MaxWidth="300" Margin="0,50,5,0">-->
+					<Viewbox HorizontalAlignment="Left" VerticalAlignment="Top" MaxHeight="400" MaxWidth="300" Margin="0,50,5,0">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="1*"/>
+								<ColumnDefinition Width="2*"/>
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="1*"/>
+								<RowDefinition Height="1*"/>
+								<RowDefinition Height="1*"/>
+								<RowDefinition Height="1*"/>
+								<RowDefinition Height="1*"/>
+								<RowDefinition Height="1*"/>
+								<RowDefinition Height="1*"/>
+								<RowDefinition Height="1*"/>
+							</Grid.RowDefinitions>
+							<Label Grid.Column="0" Name="titleSunday" Grid.Row="0" Content="Sunday:" HorizontalAlignment="Left" Foreground="LightGray" FontWeight="Bold"/>
+							<Label Grid.Column="0" Name="titleMonday" Grid.Row="1" Content="Monday:" HorizontalAlignment="Left" Foreground="LightGray" FontWeight="Bold"/>
+							<Label Grid.Column="0" Name="titleTuesday" Grid.Row="2" Content="Tuesday:" HorizontalAlignment="Left" Foreground="LightGray" FontWeight="Bold"/>
+							<Label Grid.Column="0" Name="titleWednesday" Grid.Row="3" Content="Wednesday:" HorizontalAlignment="Left" Foreground="LightGray" FontWeight="Bold"/>
+							<Label Grid.Column="0" Name="titleThursday" Grid.Row="4" Content="Thursday:" HorizontalAlignment="Left" Foreground="LightGray" FontWeight="Bold"/>
+							<Label Grid.Column="0" Name="titleFriday" Grid.Row="5" Content="Friday:" HorizontalAlignment="Left" Foreground="LightGray" FontWeight="Bold"/>
+							<Label Grid.Column="0" Name="titleSaturday" Grid.Row="6" Content="Saturday:" HorizontalAlignment="Left" Foreground="LightGray" FontWeight="Bold"/>
+							<Label Name="LabelSunday" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Gray" FontWeight="Bold"/>
+							<Label Name="LabelMonday" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Gray" FontWeight="Bold"/>
+							<Label Name="LabelTuesday" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Gray" FontWeight="Bold"/>
+							<Label Name="LabelWednesday" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Gray" FontWeight="Bold"/>
+							<Label Name="LabelThursday" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Gray" FontWeight="Bold"/>
+							<Label Name="LabelFriday" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Gray" FontWeight="Bold"/>
+							<Label Name="LabelSaturday" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Gray" FontWeight="Bold"/>
+						</Grid>
+					</Viewbox>
+					<Grid Grid.Column="1">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="auto"/>
+							<RowDefinition Height="auto"/>
+							<RowDefinition Name="AnimationRow" Height="1*"/>
+						</Grid.RowDefinitions>
+						<Viewbox Name="calViewBox" Grid.Row="0" MaxHeight="250" MaxWidth="250" VerticalAlignment="Stretch">
+							<Calendar Name="dailyCalendar" TextElement.Foreground="#47bba4" SelectedDatesChanged="calendar_SelectedDatesChanged" HorizontalAlignment="Stretch" Padding="0"/>
+						</Viewbox>
+						<Viewbox Grid.Row="1" HorizontalAlignment="Center">
+							<StackPanel>
+								<StackPanel Orientation="Horizontal" Grid.Row="0">
+									<Button Name="BackOneWeek" Click="BackOneWeek_Click" Background="White" BorderThickness="0,0,0,0" Padding="0" MaxHeight="40">
+										<Button.Content>
+											<Path Width="40" Height="30" 
+									Data="F1M646.688,13.5518L646.783,13.4593 646.965,13.639 668.383,35.0583 689.459,35.0583 665.155,10.751 657.503,3.10126 657.323,2.92023 664.876,-4.63837 689.184,-28.9417 668.109,-28.9417 646.688,-7.52637 636.15,3.01398 646.688,13.5518z" 
+									  Stretch="Uniform" Fill="#ffbd4a" 
+									  RenderTransformOrigin="0.5,0.5" />
+										</Button.Content>
+										<Button.Style>
+											<Style TargetType="Button">
+												<Setter Property="BorderThickness" Value="0"/>
+												<Setter Property="BorderBrush" Value="#ffbd4a"/>
+												<Setter Property="Template">
+													<Setter.Value>
+														<ControlTemplate TargetType="Button">
+															<Border Name="border" Background="{TemplateBinding Background}" BorderBrush="White" BorderThickness="1" Padding="5">
+																<ContentPresenter/>
+															</Border>
+															<ControlTemplate.Triggers>
+																<Trigger Property="IsMouseOver" Value="True">
+																	<Setter TargetName="border" Property="BorderThickness" Value="1"/>
+																	<Setter TargetName="border" Property="BorderBrush" Value="#ffbd4a"/>
+																</Trigger>
+															</ControlTemplate.Triggers>
+														</ControlTemplate>
+													</Setter.Value>
+												</Setter>
+											</Style>
+										</Button.Style>
+									</Button>
+									<Label Name="DateForSched" Content="" VerticalAlignment="Center" Foreground="Gray" FontWeight="Bold" Padding="0"/>
+									<Button Name="ForwardOneWeek" Click="ForwardOneWeek_Click" BorderThickness="0,0,0,0" Background="White" Padding="0" MaxHeight="40">
+										<Button.Content>
+											<Path Width="40" Height="30" 
+									Data="F1M646.688,-13.5518L646.783,-13.4593 646.965,-13.639 668.383,-35.0583 689.459,-35.0583 665.155,-10.751 657.503,-3.10126 657.323,-2.92023 664.876,4.63837 689.184,28.9417 668.109,28.9417 646.688,7.52637 636.15,-3.01398 646.688,-13.5518z" 
+									  Stretch="Uniform" Fill="#ffbd4a" 
+									  RenderTransformOrigin="0.5,0.5" >
+												<Path.RenderTransform>
+													<TransformGroup>
+														<ScaleTransform/>
+														<SkewTransform/>
+														<RotateTransform Angle="180"/>
+														<TranslateTransform/>
+													</TransformGroup>
+												</Path.RenderTransform>
+											</Path>
+										</Button.Content>
+										<Button.Style>
+											<Style TargetType="Button">
+												<Setter Property="BorderThickness" Value="0"/>
+												<Setter Property="BorderBrush" Value="#ffbd4a"/>
+												<Setter Property="Template">
+													<Setter.Value>
+														<ControlTemplate TargetType="Button">
+															<Border Name="border" Background="{TemplateBinding Background}" BorderBrush="White" BorderThickness="1" Padding="5">
+																<ContentPresenter/>
+															</Border>
+															<ControlTemplate.Triggers>
+																<Trigger Property="IsMouseOver" Value="True">
+																	<Setter TargetName="border" Property="BorderThickness" Value="1"/>
+																	<Setter TargetName="border" Property="BorderBrush" Value="#ffbd4a"/>
+																</Trigger>
+															</ControlTemplate.Triggers>
+														</ControlTemplate>
+													</Setter.Value>
+												</Setter>
+											</Style>
+										</Button.Style>
+									</Button>
+								</StackPanel>
+								<Viewbox Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" MaxHeight="60" MaxWidth="50">
+									<Button Background="White" Content="Today" Click="ButtonTodayClick" Margin="0">
+										<Button.Style>
+											<Style TargetType="Button">
+												<Setter Property="Background" Value="White"/>
+												<Setter Property="Foreground" Value="#ffbd4a"/>
+												<Setter Property="Template">
+													<Setter.Value>
+														<ControlTemplate TargetType="Button">
+															<Border Name="border" Background="{TemplateBinding Background}" BorderBrush="#ffbd4a" BorderThickness="1" Padding="5">
+																<ContentPresenter/>
+															</Border>
+															<ControlTemplate.Triggers>
+																<Trigger Property="IsMouseOver" Value="True">
+																	<Setter TargetName="border" Property="Background" Value="#ffbd4a" />
+																	<Setter Property="Foreground" Value="White" />
+																</Trigger>
+															</ControlTemplate.Triggers>
+														</ControlTemplate>
+													</Setter.Value>
+												</Setter>
+											</Style>
+										</Button.Style>
+									</Button>
+								</Viewbox>
+							</StackPanel>
+						</Viewbox>
+						<Grid Grid.Row="2" Name="DailyMetrics" VerticalAlignment="Top">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+							<Grid Grid.Column="0">
+								<Grid.RowDefinitions>
+									<RowDefinition/>
+									<RowDefinition/>
+									<RowDefinition/>
+								</Grid.RowDefinitions>
+								<Viewbox Grid.Row="0" HorizontalAlignment="Right" MaxHeight="60" MaxWidth="60">
+									<Label Content="In:" Foreground="Gray" FontWeight="Bold"/>
+								</Viewbox>
+								<Viewbox Grid.Row="1" HorizontalAlignment="Right" MaxHeight="60" MaxWidth="60">
+									<Label Content="Out:" Foreground="Gray" FontWeight="Bold"/>
+								</Viewbox>
+								<Viewbox Grid.Row="2" HorizontalAlignment="Right" MaxHeight="140" MaxWidth="100">
+									<Label Content="Worked:" Foreground="Gray" FontWeight="Bold"/>
+								</Viewbox>
+							</Grid>
+							<Grid Grid.Column="1">
+								<Grid.RowDefinitions>
+									<RowDefinition/>
+									<RowDefinition/>
+									<RowDefinition/>
+								</Grid.RowDefinitions>
+								<Viewbox Grid.Row="0" MaxHeight="200" MaxWidth="140" HorizontalAlignment="Left">
+									<Label Name="labelArrived" Foreground="Gray" HorizontalAlignment="Left"/>
+								</Viewbox>
+								<Viewbox Grid.Row="1" MaxHeight="200" MaxWidth="140" HorizontalAlignment="Left">
+									<Label Name="labelLeftAt" Foreground="Gray" HorizontalAlignment="Left"/>
+								</Viewbox>
+								<Viewbox Grid.Row="2" MaxHeight="200" MaxWidth="120" HorizontalAlignment="Left">
+									<Label Name="labelHoursWorked" Foreground="Gray" HorizontalAlignment="Left"/>
+								</Viewbox>
+							</Grid>
+						</Grid>
+					</Grid>
+					<Viewbox Grid.Row="1" VerticalAlignment="Top" Grid.ColumnSpan="2" MaxHeight="800" MaxWidth="500">
+						<DockPanel HorizontalAlignment="Stretch" Margin="10,10,10,10">
+							<Viewbox DockPanel.Dock="Top" MaxWidth="350" MaxHeight="200">
+								<Label Name="labelClockEventsWeek" Content="Clock Events for the Week" HorizontalAlignment="Center" Foreground="#3C5A96" Padding="0"/>
+							</Viewbox>
+							<DataGrid Name="ClockEventsWeek" HorizontalAlignment="Center" CanUserAddRows="False" Margin="0,5,0,0" Padding="0" MaxHeight="250"/>
+						</DockPanel>
+					</Viewbox>
+				</Grid>
+			</Border>
+			<Border Name="GridEngJobs" BorderThickness="0 0 1 0" BorderBrush="#ffbd4a" Visibility="Hidden">
+				<Grid Grid.Column="0">
+					<Grid.RowDefinitions>
+						<RowDefinition Height=".5*"/>
+						<RowDefinition Height="1*"/>
+						<RowDefinition Height=".5*"/>
+						<RowDefinition Height="1*"/>
+						<RowDefinition Height=".5*"/>
+						<RowDefinition Height="1*"/>
+					</Grid.RowDefinitions>
+					<Viewbox Grid.Row="0">
+						<Label Name="labelWriteConcept" Content="Write Concept" Foreground="#47bba4"/>
+					</Viewbox>
+					<!--<Viewbox Grid.Row="1" VerticalAlignment="Center">-->
+					<DataGrid Name="DataGridWriteConcept" Grid.Row="1" ItemsSource="{Binding}" CanUserAddRows="False" IsReadOnly="True" VerticalAlignment="Top" HorizontalAlignment="Center">
+					</DataGrid>
+					<!--</Viewbox>-->
+					<Viewbox Grid.Row="2">
+						<Label Name="labelWriteJob" Content="Write Job" Foreground="#47bba4"/>
+					</Viewbox>
+					<!--<Viewbox Grid.Row="3" VerticalAlignment="Center">-->
+					<DataGrid Name="DataGridWriteJob" Grid.Row="3" ItemsSource="{Binding}" CanUserAddRows="False" IsReadOnly="True" VerticalAlignment="Top" HorizontalAlignment="Center">
+					</DataGrid>
+					<!--</Viewbox>-->
+					<Viewbox Grid.Row="4">
+						<Label Name="labelWriteCode" Content="Write Code" Foreground="#47bba4"/>
+					</Viewbox>
+					<!--<Viewbox Grid.Row="5" VerticalAlignment="Center">-->
+					<DataGrid Name="DataGridWriteCode" Grid.Row="5" ItemsSource="{Binding}" CanUserAddRows="False" IsReadOnly="True" VerticalAlignment="Top" HorizontalAlignment="Center">
+					</DataGrid>
+					<!--</Viewbox>-->
+				</Grid>
+			</Border>
+			<!--The engineer specific metrics and jobs are held here-->
+			<Grid Grid.Column="0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="2*"/>
+				</Grid.ColumnDefinitions>
+				<Grid Grid.Row="0">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="1*"/>
+						<RowDefinition Height="1.5*"/>
+						<RowDefinition Height="2*" Name="ActiveJobsGridRow"/>
+					</Grid.RowDefinitions>
+					<Grid Name="GridEngJobMetrics" Grid.Row="0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="1*"/>
+							<ColumnDefinition Width=".5*"/>
+							<ColumnDefinition Width="1*"/>
+						</Grid.ColumnDefinitions>
+						<Viewbox Grid.Column="0" Name="JobStats1" VerticalAlignment="Bottom" HorizontalAlignment="Center" MaxHeight="250" MaxWidth="250">
+							<Label Content="Job Overview" Foreground="#3C5A96" BorderThickness="0 0 0 1" BorderBrush="#3C5A96" Margin="5 0" Padding="5 0"/>
+						</Viewbox>
+						<Viewbox Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center">
+							<Label Name="LabelEngName" Content="Eng Name" FontWeight="Bold" Foreground="#3C5A96"/>
+						</Viewbox>
+						<Viewbox Grid.Column="2" VerticalAlignment="Bottom" HorizontalAlignment="Center" Height="{Binding ActualHeight, ElementName=JobStats1}" Width="{Binding ActualWidth, ElementName=JobStats1}">
+							<Label Content="Job Count" Foreground="#3C5A96" BorderThickness="0 0 0 1" BorderBrush="#3C5A96" Margin="5 0" Padding="5 0"/>
+						</Viewbox>
+					</Grid>
+					<Grid Grid.Row="1" Margin="5 0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="1*"/>
+							<ColumnDefinition Width=".5*"/>
+							<ColumnDefinition Width="1*"/>
+						</Grid.ColumnDefinitions>
+						<Viewbox HorizontalAlignment="Center">
+							<Grid Grid.Column="0">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="1*"/>
+									<ColumnDefinition Width=".5*"/>
+								</Grid.ColumnDefinitions>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="1*"/>
+									<RowDefinition Height="1*"/>
+									<RowDefinition Height="1*"/>
+									<RowDefinition Height="1*"/>
+									<RowDefinition Height="1*"/>
+									<RowDefinition Height="1*"/>
+								</Grid.RowDefinitions>
+								<Label Content="Longest Hour Est." Grid.Row="1" Grid.Column="0" Foreground="Gray" FontWeight="Bold"/>
+								<Label Content="Jobs With No Est." Grid.Row="2" Grid.Column="0" Foreground="Gray" FontWeight="Bold"/>
+								<Label Content="Review Requests" Grid.Row="3" Grid.Column="0" Foreground="Gray" FontWeight="Bold"/>
+								<Label Content="Quoted Total" Grid.Row="5" Grid.Column="0" Foreground="Gray" FontWeight="Bold"/>
+								<Label Content="Total Dev Hours" Grid.Row="0" Grid.Column="0" Foreground="Gray" FontWeight="Bold"/>
+								<Label Content="Jobs On Hold" Grid.Row="4" Grid.Column="0" Foreground="Gray" FontWeight="Bold"/>
+								<Label Name="labeltotDev" Grid.Row="0" Grid.Column="1" Foreground="Gray"/>
+								<Label Name="labelLongEst" Grid.Row="1" Grid.Column="1" Foreground="Gray"/>
+								<Label Name="labelNoEst" Grid.Row="2" Grid.Column="1" Foreground="Gray"/>
+								<Label Name="labelRewiewReq" Grid.Row="3" Grid.Column="1" Foreground="Gray"/>
+								<Label Name="labelQuoteTotal" Grid.Row="5" Grid.Column="1" Foreground="Gray"/>
+								<Label Name="labelJobsOnHold" Grid.Row="4" Grid.Column="1" Foreground="Gray"/>
+							</Grid>
+						</Viewbox>
+						<Viewbox Grid.Column="2" HorizontalAlignment="Center">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="1*"/>
+									<ColumnDefinition Width=".5*"/>
+								</Grid.ColumnDefinitions>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="1*"/>
+									<RowDefinition Height="1*"/>
+									<RowDefinition Height="1*"/>
+									<RowDefinition Height="1*"/>
+									<RowDefinition Height="1*"/>
+								</Grid.RowDefinitions>
+								<Label Content="Concept Jobs" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Foreground="Gray" FontWeight="Bold"/>
+								<Label Content="Writeup Jobs" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Foreground="Gray" FontWeight="Bold"/>
+								<Label Content="Development Jobs" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" Foreground="Gray" FontWeight="Bold"/>
+								<Label Content="Active Advisor Jobs" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" Foreground="Gray" FontWeight="Bold"/>
+								<Label Content="High Priority Jobs" Grid.Column="0 " Grid.Row="4" HorizontalAlignment="Left" Foreground="Gray" FontWeight="Bold"/>
+								<Label Name="labelConceptJobs" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Foreground="Gray"/>
+								<Label Name="labelWriteupJobs" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Foreground="Gray"/>
+								<Label Name="labelDevJobs" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Foreground="Gray"/>
+								<Label Name="labelAdvisorJobs" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" Foreground="Gray"/>
+								<Label Name="labelPriorityJobs" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" Foreground="Gray"/>
+							</Grid>
+						</Viewbox>
+					</Grid>
+					<Grid Grid.Row="2" Grid.ColumnSpan="2">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="1*"/>
+							<RowDefinition Height="3*"/>
+						</Grid.RowDefinitions>
+						<Viewbox Grid.Row="0" MaxHeight="250" MaxWidth="250" VerticalAlignment="Bottom" Margin="0,5,0,5">
+							<Label Name="labelActiveJobs" Foreground="#3C5A96" HorizontalAlignment="Stretch" BorderThickness="0 0 0 1" BorderBrush="#3C5A96" Margin="5 0" Padding="5 0">Active Jobs</Label>
+						</Viewbox>
+						<DataGrid Grid.Row="1" x:Name="dataGridEngJobs" CanUserAddRows="False" IsReadOnly="True" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+					</Grid>
+				</Grid>
+			</Grid>
+		</Grid>
+		<Grid Name="buttonGrid">
+			<ItemsControl Name="EngTiles" Visibility="Visible">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<UniformGrid Rows="4"/>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Button x:Name="button"
+                        Padding="0"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch" Background="#fff"
+                        Click="button_ClickEngInfo"
+						Tag="{Binding EngName}">
+							<Button.Style>
+								<Style TargetType="{x:Type Button}">
+									<Setter Property="Template">
+										<Setter.Value>
+											<ControlTemplate TargetType="{x:Type Button}">
+												<Border Background="{TemplateBinding Background}">
+													<ContentPresenter/>
+												</Border>
+											</ControlTemplate>
+										</Setter.Value>
+									</Setter>
+									<Style.Triggers>
+										<DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type UniformGrid}},Path=IsMouseOver}" Value="True">
+											<Setter Property="Opacity" Value=".6" />
+										</DataTrigger>
+										<DataTrigger Binding="{Binding RelativeSource={RelativeSource Self},Path=IsMouseOver}" Value="True">
+											<Setter Property="Opacity" Value="1" />
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</Button.Style>
+							<Border Margin="1" BorderBrush="#3C5A96" BorderThickness="1">
+								<DockPanel Name="engInfo">
+									<Border DockPanel.Dock="Top" Background="#3C5A96" TextElement.Foreground="#fff">
+										<StackPanel DockPanel.Dock="Top" Margin="5,5,5,5" HorizontalAlignment="Center" VerticalAlignment="Top">
+											<TextBlock Name="EngName" Text="{Binding EngName}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"></TextBlock>
+											<TextBlock Name="ClockStatus" Text="{Binding EngClockStatus}" HorizontalAlignment="Center"></TextBlock>
+											<TextBlock Name="WorkStatus" Text="{Binding EngWorkStatus}" HorizontalAlignment="Center"></TextBlock>
+											<TextBlock Name="Stats1" Text="{Binding StatField1}" HorizontalAlignment="Center">
+                                            <!--We are setting a trigger here on this textblock to hide itself if it is empty-->
+												<TextBlock.Style>
+													<Style TargetType="{x:Type TextBlock}">
+														<Style.Triggers>
+															<Trigger Property="Text" Value="">
+																<Setter Property="Visibility" Value="Collapsed"/>
+															</Trigger>
+														</Style.Triggers>
+													</Style>
+												</TextBlock.Style>
+											</TextBlock>
+										</StackPanel>
+									</Border>
+									<ListBox Name="EngJobs" ItemsSource="{Binding EngJobs}" 
+                                  ScrollViewer.VerticalScrollBarVisibility="Hidden" 
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  BorderBrush="#3C5A96" BorderThickness="0,1,0,0">
+										<!--We are setting a trigger here on this listbox to set the background color to match the header to appear invisible if the list is empty-->
+										<ListBox.Style>
+											<Style TargetType="{x:Type ListBox}">
+												<Setter Property="Visibility" Value="Visible" />
+												<Setter Property="Background" Value="#fff" />
+												<Style.Triggers>
+													<DataTrigger Binding="{Binding HasItems, RelativeSource={RelativeSource Self}}" 
+                                                             Value="False">
+														<Setter Property="Background" Value="#3C5A96" />
+													</DataTrigger>
+												</Style.Triggers>
+											</Style>
+										</ListBox.Style>
+									</ListBox>
+								</DockPanel>
+							</Border>
+						</Button>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</Grid>
+	</Grid>
+</Window>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc12="http://www.w3.org/2003/05/soap-encoding" xmlns:soapenc11="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope" xmlns:tns="http://api.campaign.dialer.skyyconsulting.com" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap11="http://schemas.xmlsoap.org/soap/envelope/" targetNamespace="http://api.campaign.dialer.skyyconsulting.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://api.campaign.dialer.skyyconsulting.com">
+      <xsd:complexType name="ArrayOfString">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="sendSMSCampaign">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="1" name="key" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="1" maxOccurs="1" name="numbers" nillable="true" type="tns:ArrayOfString" />
+            <xsd:element minOccurs="1" maxOccurs="1" name="campaignName" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="sendSMSCampaignResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="1" name="out" type="xsd:long" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="sendSMSCampaignResponse">
+    <wsdl:part name="parameters" element="tns:sendSMSCampaignResponse" />
+  </wsdl:message>
+  <wsdl:message name="sendSMSCampaignRequest">
+    <wsdl:part name="parameters" element="tns:sendSMSCampaign" />
+  </wsdl:message>
+  <wsdl:portType name="SMSServicePortType">
+    <wsdl:operation name="sendSMSCampaign">
+      <wsdl:input name="sendSMSCampaignRequest" message="tns:sendSMSCampaignRequest" />
+      <wsdl:output name="sendSMSCampaignResponse" message="tns:sendSMSCampaignResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SMSServiceHttpBinding" type="tns:SMSServicePortType">
+    <wsdlsoap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="sendSMSCampaign">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="sendSMSCampaignRequest">
+        <wsdlsoap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="sendSMSCampaignResponse">
+        <wsdlsoap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SMSService">
+    <wsdl:port name="SMSServiceHttpPort" binding="tns:SMSServiceHttpBinding">
+      <wsdlsoap:address location="https://www.callfire.com/service/SMSService" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
