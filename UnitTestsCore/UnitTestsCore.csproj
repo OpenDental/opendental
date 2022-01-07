@@ -1,0 +1,222 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7BBDDEDF-C015-43C0-A532-FED224993281}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>UnitTestsCore</RootNamespace>
+    <AssemblyName>UnitTestsCore</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_Web|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug_Web\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_Web|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug_Web\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Misc\DatabaseTools.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TableTypes\AccountEntryT.cs" />
+    <Compile Include="TableTypes\AdjustmentT.cs" />
+    <Compile Include="TableTypes\AlertSubT.cs" />
+    <Compile Include="TableTypes\AppointmentRuleT.cs" />
+    <Compile Include="TableTypes\AppointmentT.cs" />
+    <Compile Include="TableTypes\AppointmentTypeT.cs" />
+    <Compile Include="TableTypes\ApptFieldDefT.cs" />
+    <Compile Include="TableTypes\ApptGeneralMessageSentT.cs" />
+    <Compile Include="TableTypes\ApptReminderRuleT.cs" />
+    <Compile Include="TableTypes\ApptThankYouSentT.cs" />
+    <Compile Include="TableTypes\ApptReminderSentT.cs" />
+    <Compile Include="TableTypes\ApptViewItemT.cs" />
+    <Compile Include="TableTypes\ApptViewT.cs" />
+    <Compile Include="TableTypes\AsapCommT.cs" />
+    <Compile Include="TableTypes\BenefitT.cs" />
+    <Compile Include="TableTypes\CareCreditWebResponseT.cs" />
+    <Compile Include="TableTypes\CarrierT.cs" />
+    <Compile Include="TableTypes\ClaimProcT.cs" />
+    <Compile Include="TableTypes\ClaimSnapshotT.cs" />
+    <Compile Include="TableTypes\ClaimT.cs" />
+    <Compile Include="TableTypes\ClearinghouseT.cs" />
+    <Compile Include="TableTypes\ClinicPrefT.cs" />
+    <Compile Include="TableTypes\CommlogT.cs" />
+    <Compile Include="TableTypes\DiscountPlanSubT.cs" />
+    <Compile Include="TableTypes\EhrMeasureEventT.cs" />
+    <Compile Include="TableTypes\EmailHostingTemplateT.cs" />
+    <Compile Include="TableTypes\EmailAttachT.cs" />
+    <Compile Include="TableTypes\EmailSecureT.cs" />
+    <Compile Include="TableTypes\EServiceBillingT.cs" />
+    <Compile Include="TableTypes\HieClinicT.cs" />
+    <Compile Include="TableTypes\HieQueueT.cs" />
+    <Compile Include="TableTypes\MedicationPatT.cs" />
+    <Compile Include="TableTypes\MedicationT.cs" />
+    <Compile Include="TableTypes\Icd10T.cs" />
+    <Compile Include="TableTypes\DiseaseDefT.cs" />
+    <Compile Include="TableTypes\DiseaseT.cs" />
+    <Compile Include="TableTypes\EmailAddressT.cs" />
+    <Compile Include="TableTypes\ClinicT.cs" />
+    <Compile Include="TableTypes\ClockEventT.cs" />
+    <Compile Include="TableTypes\CommOptOutT.cs" />
+    <Compile Include="TableTypes\ConfirmationRequestT.cs" />
+    <Compile Include="TableTypes\CreditCardT.cs" />
+    <Compile Include="TableTypes\DefT.cs" />
+    <Compile Include="TableTypes\DefLinkT.cs" />
+    <Compile Include="TableTypes\AlertItemT.cs" />
+    <Compile Include="TableTypes\EmailMessageT.cs" />
+    <Compile Include="TableTypes\EmployeeT.cs" />
+    <Compile Include="TableTypes\EServiceSignalT.cs" />
+    <Compile Include="TableTypes\EtransT.cs" />
+    <Compile Include="TableTypes\FeeSchedT.cs" />
+    <Compile Include="TableTypes\FeeT.cs" />
+    <Compile Include="TableTypes\InsPlanT.cs" />
+    <Compile Include="TableTypes\InsSubT.cs" />
+    <Compile Include="TableTypes\IntrospectionT.cs" />
+    <Compile Include="TableTypes\MobileAppDeviceT.cs" />
+    <Compile Include="TableTypes\OperatoryT.cs" />
+    <Compile Include="TableTypes\OrthoProcLinkT.cs" />
+    <Compile Include="TableTypes\PatientPortalInviteT.cs" />
+    <Compile Include="TableTypes\DiscountPlanT.cs" />
+    <Compile Include="TableTypes\PayPlanChargeT.cs" />
+    <Compile Include="TableTypes\PayPlanLinkT.cs" />
+    <Compile Include="TableTypes\PhoneNumberT.cs" />
+    <Compile Include="TableTypes\ProgramPropertyT.cs" />
+    <Compile Include="TableTypes\PromotionLogT.cs" />
+    <Compile Include="TableTypes\ProviderClinicT.cs" />
+    <Compile Include="TableTypes\ReactivationT.cs" />
+    <Compile Include="TableTypes\ReferralT.cs" />
+    <Compile Include="TableTypes\ResellerT.cs" />
+    <Compile Include="TableTypes\RegistrationKeyT.cs" />
+    <Compile Include="TableTypes\RepeatChargeT.cs" />
+    <Compile Include="TableTypes\PharmacyT.cs" />
+    <Compile Include="TableTypes\SessionTokenT.cs" />
+    <Compile Include="TableTypes\SiteT.cs" />
+    <Compile Include="TableTypes\SiteLinkT.cs" />
+    <Compile Include="TableTypes\SmsFromMobileT.cs" />
+    <Compile Include="TableTypes\StatementT.cs" />
+    <Compile Include="TableTypes\SheetDefT.cs" />
+    <Compile Include="TableTypes\SheetT.cs" />
+    <Compile Include="TableTypes\OrthoCaseT.cs" />
+    <Compile Include="TableTypes\ToothInitialT.cs" />
+    <Compile Include="TableTypes\UserGroupT.cs" />
+    <Compile Include="TableTypes\UserOdPrefT.cs" />
+    <Compile Include="TableTypes\UserodT.cs" />
+    <Compile Include="TableTypes\SignalodT.cs" />
+    <Compile Include="TableTypes\TaskListT.cs" />
+    <Compile Include="TableTypes\TaskT.cs" />
+    <Compile Include="TableTypes\TaskSubscriptionT.cs" />
+    <Compile Include="TableTypes\PatientT.cs" />
+    <Compile Include="TableTypes\PatPlanT.cs" />
+    <Compile Include="TableTypes\PaymentT.cs" />
+    <Compile Include="TableTypes\PayPeriodT.cs" />
+    <Compile Include="TableTypes\PayPlanT.cs" />
+    <Compile Include="TableTypes\PaySplitT.cs" />
+    <Compile Include="TableTypes\PrefT.cs" />
+    <Compile Include="TableTypes\ProcedureCodeT.cs" />
+    <Compile Include="TableTypes\ProcedureT.cs" />
+    <Compile Include="TableTypes\ProviderT.cs" />
+    <Compile Include="TableTypes\RecallT.cs" />
+    <Compile Include="TableTypes\RecallTypeT.cs" />
+    <Compile Include="TableTypes\RecurringChargeT.cs" />
+    <Compile Include="TableTypes\ScheduleOpT.cs" />
+    <Compile Include="TableTypes\ScheduleT.cs" />
+    <Compile Include="TableTypes\SmsToMobileT.cs" />
+    <Compile Include="TableTypes\SubstitutionLinkT.cs" />
+    <Compile Include="TableTypes\TestT.cs" />
+    <Compile Include="TableTypes\TimeCardRuleT.cs" />
+    <Compile Include="TableTypes\UpdateHistoryT.cs" />
+    <Compile Include="MultiTypes\InsuranceT.cs" />
+    <Compile Include="TableTypes\UserWebT.cs" />
+    <Compile Include="TableTypes\VitalsignT.cs" />
+    <Compile Include="TableTypes\WebForms_SheetT.cs" />
+    <Compile Include="TableTypes\WebSchedRecallT.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CodeBase\xCodeBase.csproj">
+      <Project>{18f7bc78-4b99-48d3-a1f1-0d13a63e3cf9}</Project>
+      <Name>xCodeBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataConnectionBase\xDataConnectionBase.csproj">
+      <Project>{29c41020-4411-41f2-9061-9b71b5b32b5d}</Project>
+      <Name>xDataConnectionBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenDentBusiness\OpenDentBusiness.csproj">
+      <Project>{3d0fc76e-803c-4de2-bdb1-47d63a4e2357}</Project>
+      <Name>OpenDentBusiness</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

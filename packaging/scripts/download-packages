@@ -1,0 +1,26 @@
+#/bin/bash
+cat distributions | while read line; do
+	distribution=`echo $line | cut -f 2 -d " "`
+	repository=`echo $line |cut -f 1 -d " "`
+	echo Distribution: $distribution
+	echo Repository: $repository
+
+	root="/home/fcarlier/incoming/$distribution"
+	rm -rf $root
+	mkdir $root
+
+	for arch in all i386; do
+		echo "Downloading files for $distribution ($arch). This may take a while, please wait..."
+		mkdir $root/$arch
+		wget --directory-prefix=$root/$arch ftp://opensuse.mirrors.skynet.be/mirror2/opensuse.org/opensuse/repositories/home:/fcarlier/$repository/$arch/*.deb
+
+		echo "Adding files to repository for $distribution ($arch)"
+		for file in $(ls $root/$arch/*.deb); do
+			reprepro --basedir /home/fcarlier/repository/$distribution includedeb $distribution $file
+		done
+	done
+done
+
+wput --basename=/home/fcarlier/repository/ ftp://opendental.carlier-online.be/httpdocs/apt/ /home/fcarlier/repository/
+
+

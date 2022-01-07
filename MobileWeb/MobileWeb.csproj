@@ -1,0 +1,349 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9AA8DE60-462D-4169-88EB-0ADE7F1BD71A}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MobileWeb</RootNamespace>
+    <AssemblyName>MobileWeb</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <!--Dennis: Exclude the source css and js files while publishing ===start===-->
+    <ExcludeFilesFromDeployment>
+    **\*.js;**\*.css
+    </ExcludeFilesFromDeployment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>4.0</OldToolsVersion>
+    <TargetFrameworkProfile />
+    <UseIISExpress>false</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <!--Dennis: Exclude the source css and js files while publishing ===end===-->
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.GeneratedImage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\Microsoft.Web.GeneratedImage.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AppointmentDetails.aspx" />
+    <Content Include="AppointmentFilter.aspx" />
+    <Content Include="AppointmentList.aspx" />
+    <Content Include="AppointmentImage.aspx" />
+    <Content Include="css\iphone.css" />
+    <Content Include="css\jqueryui\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="css\jqueryui\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="css\jqueryui\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="css\jqueryui\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="css\jqueryui\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="css\jqueryui\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="css\jqueryui\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="css\jqueryui\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="css\jqueryui\images\ui-icons_222222_256x240.png" />
+    <Content Include="css\jqueryui\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="css\jqueryui\images\ui-icons_454545_256x240.png" />
+    <Content Include="css\jqueryui\images\ui-icons_888888_256x240.png" />
+    <Content Include="css\jqueryui\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="css\jqueryui\jquery.ui.all.css" />
+    <Content Include="css\jqueryui\jquery.ui.base.css" />
+    <Content Include="css\jqueryui\jquery.ui.core.css" />
+    <Content Include="css\jqueryui\jquery.ui.datepicker.css" />
+    <Content Include="css\jqueryui\jquery.ui.theme.css" />
+    <Content Include="css\themes\apple\img\backButton.png" />
+    <Content Include="css\themes\apple\img\blueButton.png" />
+    <Content Include="css\themes\apple\img\cancel.png" />
+    <Content Include="css\themes\apple\img\chevron.png" />
+    <Content Include="css\themes\apple\img\grayButton.png" />
+    <Content Include="css\themes\apple\img\listArrowSel.png" />
+    <Content Include="css\themes\apple\img\listArrowSelFlipped.png" />
+    <Content Include="css\themes\apple\img\listGroup.png" />
+    <Content Include="css\themes\apple\img\loading.gif" />
+    <Content Include="css\themes\apple\img\on_off.png" />
+    <Content Include="css\themes\apple\img\pinstripes.png" />
+    <Content Include="css\themes\apple\img\selection.png" />
+    <Content Include="css\themes\apple\img\thumb.png" />
+    <Content Include="css\themes\apple\img\toggle.png" />
+    <Content Include="css\themes\apple\img\toggleOn.png" />
+    <Content Include="css\themes\apple\img\toolbar.png" />
+    <Content Include="css\themes\apple\img\toolButton.png" />
+    <Content Include="css\themes\apple\img\whiteButton.png" />
+    <Content Include="css\themes\apple\theme.css" />
+    <Content Include="favicon.ico" />
+    <Content Include="Global.asax" />
+    <Content Include="Mob.png" />
+    <Content Include="PatientList.aspx" />
+    <Content Include="PharmacyDetails.aspx" />
+    <Content Include="PharmacyList.aspx" />
+    <Content Include="ProcessLogout.aspx" />
+    <Content Include="css\jqtouch.css" />
+    <Content Include="Index.aspx" />
+    <Content Include="ProcessLogin.aspx" />
+    <Content Include="scripts\iphone.js" />
+    <Content Include="scripts\jqtouch.js" />
+    <Content Include="scripts\jquery.js" />
+    <Content Include="scripts\jqueryui\jquery.ui.core.js" />
+    <Content Include="scripts\jqueryui\jquery.ui.datepicker.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="PatientDetails.aspx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppointmentDetails.aspx.cs">
+      <DependentUpon>AppointmentDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AppointmentDetails.aspx.designer.cs">
+      <DependentUpon>AppointmentDetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AppointmentFilter.aspx.cs">
+      <DependentUpon>AppointmentFilter.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AppointmentFilter.aspx.designer.cs">
+      <DependentUpon>AppointmentFilter.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AppointmentList.aspx.cs">
+      <DependentUpon>AppointmentList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AppointmentList.aspx.designer.cs">
+      <DependentUpon>AppointmentList.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AppointmentImage.aspx.cs">
+      <DependentUpon>AppointmentImage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AppointmentImage.aspx.designer.cs">
+      <DependentUpon>AppointmentImage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="PatientList.aspx.cs">
+      <DependentUpon>PatientList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PatientList.aspx.designer.cs">
+      <DependentUpon>PatientList.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="PharmacyDetails.aspx.cs">
+      <DependentUpon>PharmacyDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PharmacyDetails.aspx.designer.cs">
+      <DependentUpon>PharmacyDetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="PharmacyList.aspx.cs">
+      <DependentUpon>PharmacyList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PharmacyList.aspx.designer.cs">
+      <DependentUpon>PharmacyList.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ProcessLogout.aspx.cs">
+      <DependentUpon>ProcessLogout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProcessLogout.aspx.designer.cs">
+      <DependentUpon>ProcessLogout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Index.aspx.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Index.aspx.designer.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ProcessLogin.aspx.cs">
+      <DependentUpon>ProcessLogin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProcessLogin.aspx.designer.cs">
+      <DependentUpon>ProcessLogin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PatientDetails.aspx.cs">
+      <DependentUpon>PatientDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PatientDetails.aspx.designer.cs">
+      <DependentUpon>PatientDetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.cs" />
+    <Compile Include="Util.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenDentBusiness\OpenDentBusiness.csproj">
+      <Project>{3D0FC76E-803C-4DE2-BDB1-47D63A4E2357}</Project>
+      <Name>OpenDentBusiness</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebForms\WebForms.csproj">
+      <Project>{099AC80B-E862-42F1-8109-87BF450DC3D9}</Project>
+      <Name>WebForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebHostSynch\WebHostSynch.csproj">
+      <Project>{5D4EEBF8-FB60-49CF-83C5-5AA8FB4926CB}</Project>
+      <Name>WebHostSynch</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ImageHandler1.ashx" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>False</AutoAssignPort>
+          <DevelopmentServerPort>2253</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <!--Dennis: added lines to minify css and .js files ===start===-->
+  <Import Project="ajaxmin.tasks" />
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <JS Include="**\*.js" Exclude="**\*.min.js" />
+    </ItemGroup>
+    <ItemGroup>
+      <CSS Include="**\*.css" Exclude="**\*.min.css" />
+    </ItemGroup>
+    <AjaxMin JsSourceFiles="@(JS)" JsSourceExtensionPattern="\.js$" JsTargetExtension=".min.js" CssSourceFiles="@(CSS)" CssSourceExtensionPattern="\.css$" CssTargetExtension=".min.css" />
+  </Target>
+  <!--Dennis: added lines to minify css and js files ===end===-->
+  <!--Dennis: Include the minified css and js files while publishing ===start===-->
+  <PropertyGroup>
+    <CopyAllFilesToSingleFolderForPackageDependsOn>
+      CustomCollectFiles;
+      $(CopyAllFilesToSingleFolderForPackageDependsOn);
+    </CopyAllFilesToSingleFolderForPackageDependsOn>
+  </PropertyGroup>
+  <Target Name="CustomCollectFiles">
+    <ItemGroup>
+      <_CustomFiles Include="css\**\*.min.css" />
+      <FilesForPackagingFromProject Include="%(_CustomFiles.Identity)">
+        <DestinationRelativePath>css\%(RecursiveDir)%(Filename)%(Extension)</DestinationRelativePath>
+      </FilesForPackagingFromProject>
+      <_CustomFiles1 Include="scripts\**\*.min.js" />
+      <FilesForPackagingFromProject Include="%(_CustomFiles1.Identity)">
+        <DestinationRelativePath>scripts\%(RecursiveDir)%(Filename)%(Extension)</DestinationRelativePath>
+      </FilesForPackagingFromProject>
+      <!--css\jqtouch.css does not minify properly hence we want it copied as it is-->
+      <_CustomFiles2 Include="css\jqtouch.css" />
+      <FilesForPackagingFromProject Include="%(_CustomFiles2.Identity)">
+        <DestinationRelativePath>css\%(Filename)%(Extension)</DestinationRelativePath>
+      </FilesForPackagingFromProject>
+    </ItemGroup>
+  </Target>
+  <!--Dennis: Include the minified css and js files while publishing ===end===-->
+</Project>

@@ -1,0 +1,3 @@
+2007-03-17  Frederik Carlier  <frederik.carlier@carlier-online.be>
+
+	* SparksToothChart.build: Reference dll's in the ../Required dlls/ folder rather than RequiredDlls

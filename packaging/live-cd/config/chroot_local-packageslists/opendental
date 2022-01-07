@@ -1,0 +1,7 @@
+# sample package list for live-helper(7) with dwm, iceweasel,
+# and icedove.
+
+#<include> gnome-core
+
+# Mozilla
+libmono-oracle2.0-cil mysql-server opendental opendentaldata

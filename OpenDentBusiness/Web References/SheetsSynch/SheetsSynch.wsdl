@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://opendental.com/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://opendental.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://opendental.com/">
+      <s:element name="SetPreferences">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetPreferencesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SetPreferencesResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPreferences">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPreferencesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPreferencesResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetWebFormSheets">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetWebFormSheetsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetWebFormSheetsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteSheetData">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteSheetDataResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DeleteSheetDataResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDentalOfficeID">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDentalOfficeIDResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDentalOfficeIDResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSheetDefAddress">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSheetDefAddressResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetSheetDefAddressResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DownloadSheetDefs">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DownloadSheetDefsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DownloadSheetDefsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteSheetDef">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteSheetDefResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DeleteSheetDefResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpLoadSheetDef">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpLoadSheetDefResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UpLoadSheetDefResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UploadSheetDefChunk">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UploadSheetDefChunkResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UploadSheetDefChunkResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UploadSheetDefFromFile">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UploadSheetDefFromFileResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UploadSheetDefFromFileResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateSheetDef">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateSheetDefResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UpdateSheetDefResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateSheetDefFromFile">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateSheetDefFromFileResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UpdateSheetDefFromFileResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckWebFormsDb">
+        <s:complexType />
+      </s:element>
+      <s:element name="CheckWebFormsDbResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckWebFormsDbResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="SetPreferencesSoapIn">
+    <wsdl:part name="parameters" element="tns:SetPreferences" />
+  </wsdl:message>
+  <wsdl:message name="SetPreferencesSoapOut">
+    <wsdl:part name="parameters" element="tns:SetPreferencesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetPreferencesSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPreferences" />
+  </wsdl:message>
+  <wsdl:message name="GetPreferencesSoapOut">
+    <wsdl:part name="parameters" element="tns:GetPreferencesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetWebFormSheetsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetWebFormSheets" />
+  </wsdl:message>
+  <wsdl:message name="GetWebFormSheetsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetWebFormSheetsResponse" />
+  </wsdl:message>
+  <wsdl:message name="DeleteSheetDataSoapIn">
+    <wsdl:part name="parameters" element="tns:DeleteSheetData" />
+  </wsdl:message>
+  <wsdl:message name="DeleteSheetDataSoapOut">
+    <wsdl:part name="parameters" element="tns:DeleteSheetDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDentalOfficeIDSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDentalOfficeID" />
+  </wsdl:message>
+  <wsdl:message name="GetDentalOfficeIDSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDentalOfficeIDResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSheetDefAddressSoapIn">
+    <wsdl:part name="parameters" element="tns:GetSheetDefAddress" />
+  </wsdl:message>
+  <wsdl:message name="GetSheetDefAddressSoapOut">
+    <wsdl:part name="parameters" element="tns:GetSheetDefAddressResponse" />
+  </wsdl:message>
+  <wsdl:message name="DownloadSheetDefsSoapIn">
+    <wsdl:part name="parameters" element="tns:DownloadSheetDefs" />
+  </wsdl:message>
+  <wsdl:message name="DownloadSheetDefsSoapOut">
+    <wsdl:part name="parameters" element="tns:DownloadSheetDefsResponse" />
+  </wsdl:message>
+  <wsdl:message name="DeleteSheetDefSoapIn">
+    <wsdl:part name="parameters" element="tns:DeleteSheetDef" />
+  </wsdl:message>
+  <wsdl:message name="DeleteSheetDefSoapOut">
+    <wsdl:part name="parameters" element="tns:DeleteSheetDefResponse" />
+  </wsdl:message>
+  <wsdl:message name="UpLoadSheetDefSoapIn">
+    <wsdl:part name="parameters" element="tns:UpLoadSheetDef" />
+  </wsdl:message>
+  <wsdl:message name="UpLoadSheetDefSoapOut">
+    <wsdl:part name="parameters" element="tns:UpLoadSheetDefResponse" />
+  </wsdl:message>
+  <wsdl:message name="UploadSheetDefChunkSoapIn">
+    <wsdl:part name="parameters" element="tns:UploadSheetDefChunk" />
+  </wsdl:message>
+  <wsdl:message name="UploadSheetDefChunkSoapOut">
+    <wsdl:part name="parameters" element="tns:UploadSheetDefChunkResponse" />
+  </wsdl:message>
+  <wsdl:message name="UploadSheetDefFromFileSoapIn">
+    <wsdl:part name="parameters" element="tns:UploadSheetDefFromFile" />
+  </wsdl:message>
+  <wsdl:message name="UploadSheetDefFromFileSoapOut">
+    <wsdl:part name="parameters" element="tns:UploadSheetDefFromFileResponse" />
+  </wsdl:message>
+  <wsdl:message name="UpdateSheetDefSoapIn">
+    <wsdl:part name="parameters" element="tns:UpdateSheetDef" />
+  </wsdl:message>
+  <wsdl:message name="UpdateSheetDefSoapOut">
+    <wsdl:part name="parameters" element="tns:UpdateSheetDefResponse" />
+  </wsdl:message>
+  <wsdl:message name="UpdateSheetDefFromFileSoapIn">
+    <wsdl:part name="parameters" element="tns:UpdateSheetDefFromFile" />
+  </wsdl:message>
+  <wsdl:message name="UpdateSheetDefFromFileSoapOut">
+    <wsdl:part name="parameters" element="tns:UpdateSheetDefFromFileResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckWebFormsDbSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckWebFormsDb" />
+  </wsdl:message>
+  <wsdl:message name="CheckWebFormsDbSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckWebFormsDbResponse" />
+  </wsdl:message>
+  <wsdl:portType name="SheetsSynchSoap">
+    <wsdl:operation name="SetPreferences">
+      <wsdl:input message="tns:SetPreferencesSoapIn" />
+      <wsdl:output message="tns:SetPreferencesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPreferences">
+      <wsdl:input message="tns:GetPreferencesSoapIn" />
+      <wsdl:output message="tns:GetPreferencesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetWebFormSheets">
+      <wsdl:input message="tns:GetWebFormSheetsSoapIn" />
+      <wsdl:output message="tns:GetWebFormSheetsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSheetData">
+      <wsdl:input message="tns:DeleteSheetDataSoapIn" />
+      <wsdl:output message="tns:DeleteSheetDataSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDentalOfficeID">
+      <wsdl:input message="tns:GetDentalOfficeIDSoapIn" />
+      <wsdl:output message="tns:GetDentalOfficeIDSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSheetDefAddress">
+      <wsdl:input message="tns:GetSheetDefAddressSoapIn" />
+      <wsdl:output message="tns:GetSheetDefAddressSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DownloadSheetDefs">
+      <wsdl:input message="tns:DownloadSheetDefsSoapIn" />
+      <wsdl:output message="tns:DownloadSheetDefsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSheetDef">
+      <wsdl:input message="tns:DeleteSheetDefSoapIn" />
+      <wsdl:output message="tns:DeleteSheetDefSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpLoadSheetDef">
+      <wsdl:input message="tns:UpLoadSheetDefSoapIn" />
+      <wsdl:output message="tns:UpLoadSheetDefSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UploadSheetDefChunk">
+      <wsdl:input message="tns:UploadSheetDefChunkSoapIn" />
+      <wsdl:output message="tns:UploadSheetDefChunkSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UploadSheetDefFromFile">
+      <wsdl:input message="tns:UploadSheetDefFromFileSoapIn" />
+      <wsdl:output message="tns:UploadSheetDefFromFileSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateSheetDef">
+      <wsdl:input message="tns:UpdateSheetDefSoapIn" />
+      <wsdl:output message="tns:UpdateSheetDefSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateSheetDefFromFile">
+      <wsdl:input message="tns:UpdateSheetDefFromFileSoapIn" />
+      <wsdl:output message="tns:UpdateSheetDefFromFileSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckWebFormsDb">
+      <wsdl:input message="tns:CheckWebFormsDbSoapIn" />
+      <wsdl:output message="tns:CheckWebFormsDbSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SheetsSynchSoap" type="tns:SheetsSynchSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SetPreferences">
+      <soap:operation soapAction="http://opendental.com/SetPreferences" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPreferences">
+      <soap:operation soapAction="http://opendental.com/GetPreferences" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetWebFormSheets">
+      <soap:operation soapAction="http://opendental.com/GetWebFormSheets" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSheetData">
+      <soap:operation soapAction="http://opendental.com/DeleteSheetData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDentalOfficeID">
+      <soap:operation soapAction="http://opendental.com/GetDentalOfficeID" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSheetDefAddress">
+      <soap:operation soapAction="http://opendental.com/GetSheetDefAddress" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DownloadSheetDefs">
+      <soap:operation soapAction="http://opendental.com/DownloadSheetDefs" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSheetDef">
+      <soap:operation soapAction="http://opendental.com/DeleteSheetDef" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpLoadSheetDef">
+      <soap:operation soapAction="http://opendental.com/UpLoadSheetDef" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UploadSheetDefChunk">
+      <soap:operation soapAction="http://opendental.com/UploadSheetDefChunk" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UploadSheetDefFromFile">
+      <soap:operation soapAction="http://opendental.com/UploadSheetDefFromFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateSheetDef">
+      <soap:operation soapAction="http://opendental.com/UpdateSheetDef" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateSheetDefFromFile">
+      <soap:operation soapAction="http://opendental.com/UpdateSheetDefFromFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckWebFormsDb">
+      <soap:operation soapAction="http://opendental.com/CheckWebFormsDb" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="SheetsSynchSoap12" type="tns:SheetsSynchSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SetPreferences">
+      <soap12:operation soapAction="http://opendental.com/SetPreferences" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPreferences">
+      <soap12:operation soapAction="http://opendental.com/GetPreferences" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetWebFormSheets">
+      <soap12:operation soapAction="http://opendental.com/GetWebFormSheets" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSheetData">
+      <soap12:operation soapAction="http://opendental.com/DeleteSheetData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDentalOfficeID">
+      <soap12:operation soapAction="http://opendental.com/GetDentalOfficeID" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSheetDefAddress">
+      <soap12:operation soapAction="http://opendental.com/GetSheetDefAddress" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DownloadSheetDefs">
+      <soap12:operation soapAction="http://opendental.com/DownloadSheetDefs" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSheetDef">
+      <soap12:operation soapAction="http://opendental.com/DeleteSheetDef" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpLoadSheetDef">
+      <soap12:operation soapAction="http://opendental.com/UpLoadSheetDef" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UploadSheetDefChunk">
+      <soap12:operation soapAction="http://opendental.com/UploadSheetDefChunk" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UploadSheetDefFromFile">
+      <soap12:operation soapAction="http://opendental.com/UploadSheetDefFromFile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateSheetDef">
+      <soap12:operation soapAction="http://opendental.com/UpdateSheetDef" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateSheetDefFromFile">
+      <soap12:operation soapAction="http://opendental.com/UpdateSheetDefFromFile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckWebFormsDb">
+      <soap12:operation soapAction="http://opendental.com/CheckWebFormsDb" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SheetsSynch">
+    <wsdl:port name="SheetsSynchSoap" binding="tns:SheetsSynchSoap">
+      <soap:address location="http://localhost:2923/SheetsSynch.asmx" />
+    </wsdl:port>
+    <wsdl:port name="SheetsSynchSoap12" binding="tns:SheetsSynchSoap12">
+      <soap12:address location="http://localhost:2923/SheetsSynch.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

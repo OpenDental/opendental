@@ -1,0 +1,2726 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3D0FC76E-803C-4DE2-BDB1-47D63A4E2357}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OpenDentBusiness</RootNamespace>
+    <AssemblyName>OpenDentBusiness</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <ResGenToolArchitecture>Managed32Bit</ResGenToolArchitecture>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputType>Library</OutputType>
+    <AssemblyName>OpenDentBusiness</AssemblyName>
+    <RootNamespace>OpenDentBusiness</RootNamespace>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>3</WarningLevel>
+    <DocumentationFile>bin\Release\OpenDentBusiness.xml</DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputType>Library</OutputType>
+    <AssemblyName>OpenDentBusiness</AssemblyName>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>OpenDentBusiness</RootNamespace>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LinuxRelease|AnyCPU' ">
+    <OutputPath>bin\LinuxRelease\</OutputPath>
+    <DefineConstants>TRACE;LINUX</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
+    <AssemblyName>OpenDentBusiness</AssemblyName>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>OpenDentBusiness</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <DocumentationFile>bin\Debug\OpenDentBusiness.XML</DocumentationFile>
+    <WarningLevel>3</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DocumentationFile>bin\Release\OpenDentBusiness.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LinuxRelease|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\LinuxRelease\</OutputPath>
+    <DefineConstants>TRACE;LINUX</DefineConstants>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Alpha_Release|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Alpha_Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DocumentationFile>bin\Release\OpenDentBusiness.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Alpha_Release|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Alpha_Release\</OutputPath>
+    <DefineConstants>TRACE;ALPHA</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DocumentationFile>bin\Release\OpenDentBusiness.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Alpha_Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Alpha_Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Alpha_Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Alpha_Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;ALPHA</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DocumentationFile>bin\Debug\OpenDentBusiness.XML</DocumentationFile>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_Web|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug_Web\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_Web|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug_Web\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DocumentationFile>bin\Debug\OpenDentBusiness.XML</DocumentationFile>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Avalara.AvaTax.RestClient.net45">
+      <HintPath>..\Required dlls\Avalara.AvaTax.RestClient.net45.dll</HintPath>
+    </Reference>
+    <Reference Include="Bridges, Version=21.1.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Bridges.dll</HintPath>
+    </Reference>
+    <Reference Include="CDT, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\CDT.dll</HintPath>
+    </Reference>
+    <Reference Include="Dicom.Core, Version=4.0.7.0, Culture=neutral, PublicKeyToken=3a13f649e28eb09a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Dicom.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Dicom.Native, Version=4.0.7.0, Culture=neutral, PublicKeyToken=3a13f649e28eb09a, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Dicom.Native.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis, Version=1.44.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Google.Apis.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Auth">
+      <HintPath>..\Required dlls\Google.Apis.Auth.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Auth.PlatformServices">
+      <HintPath>..\Required dlls\Google.Apis.Auth.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Core, Version=1.44.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Google.Apis.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Gmail.v1">
+      <HintPath>..\Required dlls\Google.Apis.Gmail.v1.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.PlatformServices">
+      <HintPath>..\Required dlls\Google.Apis.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="Health.Direct.Agent">
+      <HintPath>..\Required dlls\Health.Direct.Agent.dll</HintPath>
+    </Reference>
+    <Reference Include="Health.Direct.Common">
+      <HintPath>..\Required dlls\Health.Direct.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Health.Direct.ResolverPlugins">
+      <HintPath>..\Required dlls\Health.Direct.ResolverPlugins.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.Word, Version=8.2.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Interop.Word.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\Required dlls\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="MailKit">
+      <HintPath>..\Required dlls\MailKit.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="MimeKit">
+      <HintPath>..\Required dlls\MimeKit.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="ODCrypt, Version=18.2.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\ODCrypt.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenPop">
+      <HintPath>..\Required dlls\OpenPop.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp, Version=1.2.1269.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="RS232">
+      <HintPath>..\Required dlls\RS232.dll</HintPath>
+    </Reference>
+    <Reference Include="SigPlusNET">
+      <HintPath>..\Required dlls\SigPlusNET.dll</HintPath>
+    </Reference>
+    <Reference Include="Sparks3D">
+      <HintPath>..\Required dlls\Sparks3D\Sparks3D.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Tamir.SharpSSH">
+      <HintPath>..\Required dlls\Tamir.SharpSSH.dll</HintPath>
+    </Reference>
+    <Reference Include="VirtualWeb, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\VirtualWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Cache\CacheAbs.cs" />
+    <Compile Include="Cache\CacheDictAbs.cs" />
+    <Compile Include="Cache\CacheDictNonPkAbs.cs" />
+    <Compile Include="Cache\CacheListAbs.cs" />
+    <Compile Include="Cache\FeeCache.cs" />
+    <Compile Include="Crud\ActiveInstanceCrud.cs" />
+    <Compile Include="Crud\AddressCrud.cs" />
+    <Compile Include="Crud\AlertCategoryCrud.cs" />
+    <Compile Include="Crud\AlertCategoryLinkCrud.cs" />
+    <Compile Include="Crud\ApptGeneralMessageSentCrud.cs" />
+    <Compile Include="Crud\ApptThankYouSentCrud.cs" />
+    <Compile Include="Crud\AsapCommCrud.cs" />
+    <Compile Include="Crud\BugSubmissionCrud.cs" />
+    <Compile Include="Crud\BugSubmissionHashCrud.cs" />
+    <Compile Include="Crud\CertCrud.cs" />
+    <Compile Include="Crud\CertEmployeeCrud.cs" />
+    <Compile Include="Crud\CloudAddressCrud.cs" />
+    <Compile Include="Crud\DiscountPlanSubCrud.cs" />
+    <Compile Include="Crud\EmailHostingTemplateCrud.cs" />
+    <Compile Include="Crud\CareCreditWebResponseCrud.cs" />
+    <Compile Include="Crud\EmailSecureAttachCrud.cs" />
+    <Compile Include="Crud\EmailSecureCrud.cs" />
+    <Compile Include="Crud\EServiceLogCrud.cs" />
+    <Compile Include="Crud\EServiceShortGuidCrud.cs" />
+    <Compile Include="Crud\Etrans835Crud.cs" />
+    <Compile Include="Crud\FaqCrud.cs" />
+    <Compile Include="Crud\EClipboardSheetDefCrud.cs" />
+    <Compile Include="Crud\FeeSchedGroupCrud.cs" />
+    <Compile Include="Crud\HieClinicCrud.cs" />
+    <Compile Include="Crud\HieQueueCrud.cs" />
+    <Compile Include="Crud\ImagingDeviceCrud.cs" />
+    <Compile Include="Crud\InsBlueBookCrud.cs" />
+    <Compile Include="Crud\InsBlueBookLogCrud.cs" />
+    <Compile Include="Crud\InsBlueBookRuleCrud.cs" />
+    <Compile Include="Crud\InsEditPatLogCrud.cs" />
+    <Compile Include="Crud\JobActiveLinkCrud.cs" />
+    <Compile Include="Crud\JobNotificationCrud.cs" />
+    <Compile Include="Crud\JobSprintCrud.cs" />
+    <Compile Include="Crud\JobSprintLinkCrud.cs" />
+    <Compile Include="Crud\LoginAttemptCrud.cs" />
+    <Compile Include="Crud\MobileAppDeviceCrud.cs" />
+    <Compile Include="Crud\MobileDataByteCrud.cs" />
+    <Compile Include="Crud\OrthoCaseCrud.cs" />
+    <Compile Include="Crud\OrthoChartRowCrud.cs" />
+    <Compile Include="Crud\OrthoPlanLinkCrud.cs" />
+    <Compile Include="Crud\OrthoProcLinkCrud.cs" />
+    <Compile Include="Crud\OrthoScheduleCrud.cs" />
+    <Compile Include="Crud\PayConnectResponseWebCrud.cs" />
+    <Compile Include="Crud\PayPlanLinkCrud.cs" />
+    <Compile Include="Crud\PharmClinicCrud.cs" />
+    <Compile Include="Crud\ProcMultiVisitCrud.cs" />
+    <Compile Include="Crud\PromotionCrud.cs" />
+    <Compile Include="Crud\PromotionLogCrud.cs" />
+    <Compile Include="Crud\ProviderClinicLinkCrud.cs" />
+    <Compile Include="Crud\ReactivationCrud.cs" />
+    <Compile Include="Crud\ReferralClinicLinkCrud.cs" />
+    <Compile Include="Crud\ScheduledProcessCrud.cs" />
+    <Compile Include="Crud\SessionTokenCrud.cs" />
+    <Compile Include="Crud\StatementProdCrud.cs" />
+    <Compile Include="Crud\TransactionInvoiceCrud.cs" />
+    <Compile Include="Crud\TreatPlanParamCrud.cs" />
+    <Compile Include="Crud\WebChatMessageCrud.cs" />
+    <Compile Include="Crud\WebChatPrefCrud.cs" />
+    <Compile Include="Crud\WebChatSessionCrud.cs" />
+    <Compile Include="Crud\ChatUserCrud.cs" />
+    <Compile Include="Crud\ClaimTrackingCrud.cs" />
+    <Compile Include="Crud\ClinicErxCrud.cs" />
+    <Compile Include="Crud\CommOptOutCrud.cs" />
+    <Compile Include="Crud\DatabaseMaintenanceCrud.cs" />
+    <Compile Include="Crud\DbmLogCrud.cs" />
+    <Compile Include="Crud\DefLinkCrud.cs" />
+    <Compile Include="Crud\DiscountPlanCrud.cs" />
+    <Compile Include="Crud\EntryLogCrud.cs" />
+    <Compile Include="Crud\Etrans835AttachCrud.cs" />
+    <Compile Include="Crud\HistAppointmentCrud.cs" />
+    <Compile Include="Crud\InsEditLogCrud.cs" />
+    <Compile Include="Crud\PatientLinkCrud.cs" />
+    <Compile Include="Crud\PatientPortalInviteCrud.cs" />
+    <Compile Include="Crud\PhoneCompCrud.cs" />
+    <Compile Include="Crud\ProviderClinicCrud.cs" />
+    <Compile Include="Crud\RecurringChargeCrud.cs" />
+    <Compile Include="Crud\SiteLinkCrud.cs" />
+    <Compile Include="Crud\SmsBlockPhoneCrud.cs" />
+    <Compile Include="Crud\SubstitutionLinkCrud.cs" />
+    <Compile Include="Crud\StmtLinkCrud.cs" />
+    <Compile Include="Crud\TaskTakenCrud.cs" />
+    <Compile Include="Crud\TriageMetricCrud.cs" />
+    <Compile Include="Crud\TsiTransLogCrud.cs" />
+    <Compile Include="Crud\UserGroupAttachCrud.cs" />
+    <Compile Include="Crud\WebChatSurveyCrud.cs" />
+    <Compile Include="Crud\WebSchedRecallCrud.cs" />
+    <Compile Include="Data Interface\ActiveInstances.cs" />
+    <Compile Include="Data Interface\Addresses.cs" />
+    <Compile Include="Data Interface\AlertCategories.cs" />
+    <Compile Include="Data Interface\AlertCategoryLinks.cs" />
+    <Compile Include="Data Interface\ApptGeneralMessageSents.cs" />
+    <Compile Include="Data Interface\CareCreditWebResponses.cs" />
+    <Compile Include="Data Interface\CloudAddresses.cs" />
+    <Compile Include="Data Interface\Etrans835s.cs" />
+    <Compile Include="Data Interface\OrthoChartRows.cs" />
+    <Compile Include="Data Interface\ReferralClinicLinks.cs" />
+    <Compile Include="Data Interface\HieClinics.cs" />
+    <Compile Include="Data Interface\HieQueues.cs" />
+    <Compile Include="Data Interface\TransactionInvoices.cs" />
+    <Compile Include="Data Interface\TreatPlanParams.cs" />
+    <Compile Include="Email\BasicEmailAttachment.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\CreateSignedS3LinksRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\CreateSignedS3LinksResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\EmailResourceBase.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetChainEmailsTotalEmailsRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetChainEmailsTotalEmailsResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\SendReplyWebClientRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\SendReplyWebClientResponse.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\GetHealthRequest.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\GetHealthResponse.cs" />
+    <Compile Include="InternalTools\Cloud\CloudBillings.cs" />
+    <Compile Include="Data Interface\DiscountPlanSubs.cs" />
+    <Compile Include="Data Interface\CertEmployees.cs" />
+    <Compile Include="Data Interface\Certs.cs" />
+    <Compile Include="Data Interface\EmailHostingTemplates.cs" />
+    <Compile Include="Data Interface\EmailSecureAttaches.cs" />
+    <Compile Include="Data Interface\EmailSecures.cs" />
+    <Compile Include="Data Interface\EServiceLogs.cs" />
+    <Compile Include="Data Interface\EServiceShortGuids.cs" />
+    <Compile Include="Data Interface\InsBlueBookLogs.cs" />
+    <Compile Include="Data Interface\InsBlueBookRules.cs" />
+    <Compile Include="Data Interface\InsBlueBooks.cs" />
+    <Compile Include="Data Interface\PromotionLogs.cs" />
+    <Compile Include="Data Interface\Promotions.cs" />
+    <Compile Include="Data Interface\ImagingDevices.cs" />
+    <Compile Include="Data Interface\SessionTokens.cs" />
+    <Compile Include="Data Interface\StatementProds.cs" />
+    <Compile Include="Db Multi Table\InsPlanSubstitution.cs" />
+    <Compile Include="Email\EmailHosting\Account\AccountApi.cs" />
+    <Compile Include="Email\EmailHosting\Account\AccountApiMock.cs" />
+    <Compile Include="Email\EmailHosting\Account\IAccountApi.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\AppendAttachmentDataRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\AppendAttachmentDataResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\AttachmentResource.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\CreateAccessCodeRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\CreateAccessCodeResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\CreateDomainIdentityRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\CreateDomainIdentityResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\CreateEmailAddressIdentityRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\CreateEmailAddressIdentityResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\CreateTemplateRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\CreateTemplateResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\DeleteIdentityRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\DeleteIdentityResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\DeleteTemplateRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\DeleteTemplateResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\DownloadAttachmentRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\DownloadAttachmentResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\EmailAddressResource.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\EmailResource.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\ExternalTag.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\FinishUploadRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\FinishUploadResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetAllTemplatesByAccountRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetAllTemplatesByAccountResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetAllTemplatesByGuarantorRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetAllTemplatesByGuarantorResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetChainEmailsRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetChainEmailsResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetDomainDKIMTokensRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetDomainDKIMTokensResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetEmailRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetEmailResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetIdentitiesRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetIdentitiesResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetIdentityRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetIdentityResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetTemplateRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\GetTemplateResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\IdentityResource.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\IdentityVerificationStatus.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\S3ObjectPurpose.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\S3ObjectType.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\SendMassEmailRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\SendMassEmailResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\SendNewEmailRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\SendNewEmailResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\SendReplyRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\SendReplyResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\StartUploadRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\StartUploadResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\Template.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\TemplateDestination.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\UpdateSignatureRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\UpdateSignatureResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\UpdateTemplateRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\UpdateTemplateResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\UploadS3ObjectRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\UploadS3ObjectResponse.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\ValidateAccessCodeRequest.cs" />
+    <Compile Include="Email\EmailHosting\Account\Models\ValidateAccessCodeResponse.cs" />
+    <Compile Include="Email\EmailHosting\Models\AccountTransmissionType.cs" />
+    <Compile Include="Email\EmailHosting\Provider\IProviderApi.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\AccountResource.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\AccountUsage.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\CreateAccountGuarantorRequest.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\CreateAccountGuarantorResponse.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\CreateAccountRequest.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\CreateAccountResponse.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\GetAccountGuarantorRequest.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\GetAccountGuarantorResponse.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\GetAccountRequest.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\GetAccountResponse.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\GetGuarantorUsageRequest.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\GetGuarantorUsageResponse.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\UpdateAccountGuarantorStatusRequest.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\UpdateAccountGuarantorStatusResponse.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\UpdateAccountStatusRequest.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\UpdateAccountStatusResponse.cs" />
+    <Compile Include="Email\EmailHosting\Provider\ProviderApi.cs" />
+    <Compile Include="Email\EmailHosting\Provider\ProviderApiDebugWSHQ.cs" />
+    <Compile Include="Imaging\BitmapDicom.cs" />
+    <Compile Include="InternalTools\Cloud\Crud\CloudBillingCrud.cs" />
+    <Compile Include="InternalTools\Cloud\TableTypes\CloudBilling.cs" />
+    <Compile Include="InternalTools\EServices\APIBillings.cs" />
+    <Compile Include="Data Interface\ApptThankYouSents.cs" />
+    <Compile Include="Data Interface\AsapComms.cs" />
+    <Compile Include="Data Interface\BugSubmissions.cs" />
+    <Compile Include="Data Interface\ClaimTrackings.cs" />
+    <Compile Include="Data Interface\ClinicErxs.cs" />
+    <Compile Include="Data Interface\CommOptOuts.cs" />
+    <Compile Include="Data Interface\DatabaseMaintenances.cs" />
+    <Compile Include="Data Interface\DbmLogs.cs" />
+    <Compile Include="Data Interface\DefLinks.cs" />
+    <Compile Include="Data Interface\DiscountPlans.cs" />
+    <Compile Include="Data Interface\EClipboardSheetDefs.cs" />
+    <Compile Include="Data Interface\EntryLogs.cs" />
+    <Compile Include="Data Interface\Etrans835Attaches.cs" />
+    <Compile Include="Data Interface\InsEditPatLogs.cs" />
+    <Compile Include="Data Interface\MobileDataBytes.cs" />
+    <Compile Include="Db Multi Table\FamilyAccount.cs" />
+    <Compile Include="Data Interface\FeeSchedGroups.cs" />
+    <Compile Include="Eclaims\EdsMedical.cs" />
+    <Compile Include="InternalTools\EServices\Crud\APIBillingCrud.cs" />
+    <Compile Include="InternalTools\EServices\TableTypes\APIBilling.cs" />
+    <Compile Include="InternalTools\Job Manager\Crud\MobileBugVersionCrud.cs" />
+    <Compile Include="InternalTools\Job Manager\HelperClasses\JobManagerCore.cs" />
+    <Compile Include="InternalTools\Job Manager\Crud\MobileBugCrud.cs" />
+    <Compile Include="InternalTools\Job Manager\Crud\MobileReleaseBuildCrud.cs" />
+    <Compile Include="InternalTools\Job Manager\Crud\MobileReleaseCrud.cs" />
+    <Compile Include="InternalTools\Job Manager\JobActiveLinks.cs" />
+    <Compile Include="Data Interface\LoginAttempts.cs" />
+    <Compile Include="Data Interface\OrthoCases.cs" />
+    <Compile Include="Data Interface\OrthoPlanLinks.cs" />
+    <Compile Include="Data Interface\OrthoProcLinks.cs" />
+    <Compile Include="Data Interface\OrthoSchedules.cs" />
+    <Compile Include="Data Interface\PayPlanLinks.cs" />
+    <Compile Include="Data Interface\ScheduledProcesses.cs" />
+    <Compile Include="Db Multi Table\PayPlanProductionEntry.cs" />
+    <Compile Include="Db Multi Table\ProcFeeHelper.cs" />
+    <Compile Include="Db\DataExtensions.cs" />
+    <Compile Include="InternalTools\Faq\Faqs.cs" />
+    <Compile Include="Data Interface\MobileAppDevices.cs" />
+    <Compile Include="Data Interface\PayConnectResponseWebs.cs" />
+    <Compile Include="Data Interface\PharmClinics.cs" />
+    <Compile Include="Data Interface\ProcMultiVisits.cs" />
+    <Compile Include="Data Interface\ProviderClinicLinks.cs" />
+    <Compile Include="Data Interface\Reactivations.cs" />
+    <Compile Include="Db Multi Table\StaticTextFields.cs" />
+    <Compile Include="Db Multi Table\ApptSearch.cs" />
+    <Compile Include="Email\BasicEmailAddress.cs" />
+    <Compile Include="Email\BasicEmailMessage.cs" />
+    <Compile Include="Email\EmailRequest.cs" />
+    <Compile Include="Email\EmailResult.cs" />
+    <Compile Include="Email\SendEmails.cs" />
+    <Compile Include="Email\SerializeEmail.cs" />
+    <Compile Include="InternalTools\Job Manager\BugSubmissionHashes.cs" />
+    <Compile Include="InternalTools\Job Manager\JobHelper.cs" />
+    <Compile Include="InternalTools\Job Manager\JobNotifications.cs" />
+    <Compile Include="Data Interface\ProviderClinics.cs" />
+    <Compile Include="Data Interface\RecurringCharges.cs" />
+    <Compile Include="Data Interface\TaskTakens.cs" />
+    <Compile Include="Db Multi Table\AgingData.cs" />
+    <Compile Include="Db Multi Table\MarkupEdit.cs" />
+    <Compile Include="Db Multi Table\PayPlanEdit.cs" />
+    <Compile Include="InternalTools\Job Manager\Backports.cs" />
+    <Compile Include="InternalTools\Job Manager\JobSprintLinks.cs" />
+    <Compile Include="InternalTools\Job Manager\JobSprints.cs" />
+    <Compile Include="InternalTools\Job Manager\MobileBugs.cs" />
+    <Compile Include="InternalTools\Job Manager\MobileBugVersions.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\MobileBug.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\MobileBugVersion.cs" />
+    <Compile Include="InternalTools\Job Manager\MobileReleaseBuilds.cs" />
+    <Compile Include="InternalTools\Job Manager\MobileReleases.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\BugSubmissionHash.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\JobActiveLink.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\JobSprint.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\JobSprintLink.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\JobNotification.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\MobileRelease.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\MobileReleaseBuild.cs" />
+    <Compile Include="InternalTools\RemoteSupport\PeerInfos.cs" />
+    <Compile Include="InternalTools\RemoteSupport\TableTypes\PeerInfo.cs" />
+    <Compile Include="InternalTools\WebChat\TableTypes\WebChatSurvey.cs" />
+    <Compile Include="InternalTools\WebChat\WebChatSurveys.cs" />
+    <Compile Include="Logic\CodeMapping.cs" />
+    <Compile Include="Logic\USlocales.cs" />
+    <Compile Include="Misc\ConvertDatabases.cs" />
+    <Compile Include="Misc\Authentication.cs" />
+    <Compile Include="Misc\ConvertDatabases6.cs" />
+    <Compile Include="InternalTools\WebChat\WebChatMessages.cs" />
+    <Compile Include="InternalTools\WebChat\WebChatPrefs.cs" />
+    <Compile Include="InternalTools\WebChat\WebChatSessions.cs" />
+    <Compile Include="InternalTools\WebChat\TableTypes\WebChatMessage.cs" />
+    <Compile Include="InternalTools\WebChat\TableTypes\WebChatPref.cs" />
+    <Compile Include="InternalTools\WebChat\TableTypes\WebChatSession.cs" />
+    <Compile Include="InternalTools\WebChat\WebChatMisc.cs" />
+    <Compile Include="Misc\ConvertDatabases7.cs" />
+    <Compile Include="Misc\FHIRUtils.cs" />
+    <Compile Include="Misc\Introspection.cs" />
+    <Compile Include="Misc\ReplaceTags.cs" />
+    <Compile Include="ODEvents\ODEvents.cs" />
+    <Compile Include="ODEvents\MiddleTierConnectionEvent.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Remoting\XmlConverter.cs" />
+    <Compile Include="Reports\RpDPPOvercharged.cs" />
+    <Compile Include="Reports\RpHiddenPaySplits.cs" />
+    <Compile Include="Reports\RpProcOverpaid.cs" />
+    <Compile Include="Reports\RpProdGoal.cs" />
+    <Compile Include="InternalTools\Faq\TableTypes\Faq.cs" />
+    <Compile Include="Reports\RpServiceDateView.cs" />
+    <Compile Include="Shared\ODCloudClient\Sirona.cs" />
+    <Compile Include="Shared\ODCloudClient\x837Controller.cs" />
+    <Compile Include="SheetFramework\GraphicsHelper.cs" />
+    <Compile Include="SheetFramework\SheetDataTableUtil.cs" />
+    <Compile Include="SheetFramework\SheetDrawingJob.cs" />
+    <Compile Include="SheetFramework\SheetFiller.cs" />
+    <Compile Include="SheetFramework\SheetPrinting2.cs" />
+    <Compile Include="SheetFramework\SheetUtil.cs" />
+    <Compile Include="SheetFramework\ToothChartHelper.cs" />
+    <Compile Include="TableTypes\ApptGeneralMessageSent.cs" />
+    <Compile Include="TableTypes\CertEmployee.cs" />
+    <Compile Include="TableTypes\Cert.cs" />
+    <Compile Include="TableTypes\ActiveInstance.cs" />
+    <Compile Include="TableTypes\Address.cs" />
+    <Compile Include="TableTypes\CloudAddress.cs" />
+    <Compile Include="TableTypes\DiscountPlanSub.cs" />
+    <Compile Include="TableTypes\EmailSecureAttach.cs" />
+    <Compile Include="TableTypes\EmailSecure.cs" />
+    <Compile Include="TableTypes\EServiceLog.cs" />
+    <Compile Include="TableTypes\EServiceShortGuid.cs" />
+    <Compile Include="TableTypes\ApptThankYouSent.cs" />
+    <Compile Include="TableTypes\CareCreditWebResponse.cs" />
+    <Compile Include="TableTypes\EClipboardSheetDef.cs" />
+    <Compile Include="TableTypes\EmailHostingTemplate.cs" />
+    <Compile Include="TableTypes\Etrans835.cs" />
+    <Compile Include="TableTypes\FeeSchedGroup.cs" />
+    <Compile Include="TableTypes\HieClinic.cs" />
+    <Compile Include="TableTypes\HieQueue.cs" />
+    <Compile Include="TableTypes\InsBlueBook.cs" />
+    <Compile Include="TableTypes\InsBlueBookLog.cs" />
+    <Compile Include="TableTypes\InsBlueBookRule.cs" />
+    <Compile Include="TableTypes\InsEditPatLog.cs" />
+    <Compile Include="TableTypes\LoginAttempt.cs" />
+    <Compile Include="TableTypes\MobileAppDevice.cs" />
+    <Compile Include="TableTypes\MobileDataByte.cs" />
+    <Compile Include="TableTypes\ImagingDevice.cs" />
+    <Compile Include="TableTypes\OrthoCase.cs" />
+    <Compile Include="TableTypes\OrthoChartRow.cs" />
+    <Compile Include="TableTypes\OrthoPlanLink.cs" />
+    <Compile Include="TableTypes\OrthoProcLink.cs" />
+    <Compile Include="TableTypes\OrthoSchedule.cs" />
+    <Compile Include="TableTypes\PayConnectResponseWeb.cs" />
+    <Compile Include="TableTypes\PayPlanLink.cs" />
+    <Compile Include="TableTypes\PharmClinic.cs" />
+    <Compile Include="TableTypes\ProcMultiVisit.cs" />
+    <Compile Include="TableTypes\Promotion.cs" />
+    <Compile Include="TableTypes\PromotionLog.cs" />
+    <Compile Include="TableTypes\Reactivation.cs" />
+    <Compile Include="TableTypes\ProviderClinicLink.cs" />
+    <Compile Include="TableTypes\ReferralClinicLink.cs" />
+    <Compile Include="TableTypes\ScheduledProcess.cs" />
+    <Compile Include="TableTypes\SessionToken.cs" />
+    <Compile Include="TableTypes\StatementProd.cs" />
+    <Compile Include="TableTypes\TransactionInvoice.cs" />
+    <Compile Include="TableTypes\TreatPlanParam.cs" />
+    <Compile Include="UI\DpiScale.cs" />
+    <Compile Include="UI\ODGridPageNav.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\PopupHelper.cs" />
+    <Compile Include="UI\SignatureBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\SignatureBox.Designer.cs">
+      <DependentUpon>SignatureBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\SignatureBoxWrapper.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\SignatureBoxWrapper.Designer.cs">
+      <DependentUpon>SignatureBoxWrapper.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\TopazWrapper.cs" />
+    <Compile Include="WebBridges\APIRequest.cs" />
+    <Compile Include="WebBridges\AvaTax.cs" />
+    <Compile Include="WebBridges\EdgeExpress.cs" />
+    <Compile Include="WebBridges\Google\Google.cs" />
+    <Compile Include="WebBridges\Google\GoogleApiConnector.cs" />
+    <Compile Include="WebBridges\HqProgram.cs" />
+    <Compile Include="WebBridges\IApiRequest.cs" />
+    <Compile Include="WebBridges\PDMP\ApprissScript.cs" />
+    <Compile Include="WebBridges\PDMP\PDMPAppriss.cs" />
+    <Compile Include="WebBridges\PDMP\PdmpProperty.cs" />
+    <Compile Include="WebBridges\PDMP\PDMP.cs" />
+    <Compile Include="WebBridges\PDMP\PDMPLogicoy.cs" />
+    <Compile Include="WebBridges\PDMP\PDMPScript.cs" />
+    <Compile Include="WebBridges\RESTfulTemplate.cs" />
+    <Compile Include="WebServices\CustomerUpdatesProxy.cs" />
+    <Compile Include="Remoting\DtoProcessor.cs" />
+    <Compile Include="Remoting\NullObject.cs" />
+    <Compile Include="TableTypes\CommOptOut.cs" />
+    <Compile Include="TableTypes\DbmLog.cs" />
+    <Compile Include="TableTypes\ProviderClinic.cs" />
+    <Compile Include="Db\LargeTableHelper.cs" />
+    <Compile Include="Misc\CreditCardUtils\CreditCardUtils.cs" />
+    <Compile Include="Misc\CreditCardUtils\MagstripCardParser.cs" />
+    <Compile Include="TableTypes\RecurringCharge.cs" />
+    <Compile Include="UI\SigBox.cs" />
+    <Compile Include="Db Multi Table\AccountEntry.cs" />
+    <Compile Include="Db Multi Table\SplitCollection.cs" />
+    <Compile Include="InternalTools\Phones\PhoneComps.cs" />
+    <Compile Include="Db Multi Table\ApptEdit.cs" />
+    <Compile Include="Db Multi Table\ClaimEdit.cs" />
+    <Compile Include="Data Interface\HistAppointments.cs" />
+    <Compile Include="Data Interface\InsEditLogs.cs" />
+    <Compile Include="Data Interface\PatientLinks.cs" />
+    <Compile Include="Data Interface\PatientPortalInvites.cs" />
+    <Compile Include="Db Multi Table\PaymentEdit.cs" />
+    <Compile Include="Db Multi Table\ProcEdit.cs" />
+    <Compile Include="InternalTools\Phones\TableTypes\PhoneComp.cs" />
+    <Compile Include="Misc\ItransNCpl.cs" />
+    <Compile Include="Reports\RpDiscountPlan.cs" />
+    <Compile Include="TableTypes\ClinicErx.cs" />
+    <Compile Include="TableTypes\DatabaseMaintenance.cs" />
+    <Compile Include="TableTypes\EntryLog.cs" />
+    <Compile Include="TableTypes\TaskTaken.cs" />
+    <Compile Include="Data Interface\SiteLinks.cs" />
+    <Compile Include="Data Interface\Sites.cs" />
+    <Compile Include="Data Interface\SmsBlockPhones.cs" />
+    <Compile Include="Data Interface\SubstitutionLinks.cs" />
+    <Compile Include="Data Interface\StmtLinks.cs" />
+    <Compile Include="InternalTools\Phones\TriageMetrics.cs" />
+    <Compile Include="Data Interface\TsiTransLogs.cs" />
+    <Compile Include="Data Interface\UserGroupAttaches.cs" />
+    <Compile Include="Data Interface\WebSchedRecalls.cs" />
+    <Compile Include="Db Multi Table\TreatmentPlanModules.cs" />
+    <Compile Include="Db\ConnectionStore.cs" />
+    <Compile Include="Db\DataAction.cs" />
+    <Compile Include="Db\DataConnectionCancelable.cs" />
+    <Compile Include="Db\SQLWhere.cs" />
+    <Compile Include="Eclaims\AOS.cs" />
+    <Compile Include="Eclaims\BCBSGA.cs" />
+    <Compile Include="Eclaims\Canadian.cs" />
+    <Compile Include="Eclaims\CanadianOutput.cs" />
+    <Compile Include="Eclaims\CCDerror.cs" />
+    <Compile Include="Eclaims\CCDField.cs" />
+    <Compile Include="Eclaims\CCDFieldInputter.cs" />
+    <Compile Include="Eclaims\ClaimConnect.cs" />
+    <Compile Include="Eclaims\ClaimX.cs" />
+    <Compile Include="Eclaims\DentiCal.cs" />
+    <Compile Include="Eclaims\DocumentGenerator.cs" />
+    <Compile Include="Eclaims\Dutch.cs" />
+    <Compile Include="Eclaims\Eclaims.cs" />
+    <Compile Include="Eclaims\EDS.cs" />
+    <Compile Include="Eclaims\EmdeonMedical.cs" />
+    <Compile Include="Eclaims\Inmediata.cs" />
+    <Compile Include="Eclaims\ITerminalConnector.cs" />
+    <Compile Include="Eclaims\MercuryDE.cs" />
+    <Compile Include="Eclaims\NHS.cs" />
+    <Compile Include="Eclaims\Ramq.cs" />
+    <Compile Include="Eclaims\RECS.cs" />
+    <Compile Include="Eclaims\Renaissance.cs" />
+    <Compile Include="Eclaims\Rs232.cs" />
+    <Compile Include="Eclaims\TerminalConnector.cs" />
+    <Compile Include="Eclaims\Tesia.cs" />
+    <Compile Include="Eclaims\WebMD.cs" />
+    <Compile Include="Eclaims\x270Controller.cs" />
+    <Compile Include="Eclaims\x837Controller.cs" />
+    <Compile Include="InternalTools\EServices\EServiceBilling.cs" />
+    <Compile Include="InternalTools\EServices\EServiceCodeLink.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\FeatureRequest.cs" />
+    <Compile Include="InternalTools\Phones\ChatUsers.cs" />
+    <Compile Include="CrudFramework\CrudTableAttribute.cs" />
+    <Compile Include="CrudFramework\CrudColumnAttribute.cs" />
+    <Compile Include="Crud\AccountCrud.cs" />
+    <Compile Include="Crud\AccountingAutoPayCrud.cs" />
+    <Compile Include="Crud\AdjustmentCrud.cs" />
+    <Compile Include="Crud\AlertItemCrud.cs" />
+    <Compile Include="Crud\AlertReadCrud.cs" />
+    <Compile Include="Crud\AlertSubCrud.cs" />
+    <Compile Include="Crud\AllergyCrud.cs" />
+    <Compile Include="Crud\AllergyDefCrud.cs" />
+    <Compile Include="Crud\AppointmentCrud.cs" />
+    <Compile Include="Crud\AppointmentRuleCrud.cs" />
+    <Compile Include="Crud\AppointmentTypeCrud.cs" />
+    <Compile Include="Crud\ApptFieldCrud.cs" />
+    <Compile Include="Crud\ApptFieldDefCrud.cs" />
+    <Compile Include="Crud\ApptReminderRuleCrud.cs" />
+    <Compile Include="Crud\ApptReminderSentCrud.cs" />
+    <Compile Include="Crud\ApptViewCrud.cs" />
+    <Compile Include="Crud\ApptViewItemCrud.cs" />
+    <Compile Include="Crud\AutoCodeCondCrud.cs" />
+    <Compile Include="Crud\AutoCodeCrud.cs" />
+    <Compile Include="Crud\AutoCodeItemCrud.cs" />
+    <Compile Include="Crud\AutomationConditionCrud.cs" />
+    <Compile Include="Crud\AutomationCrud.cs" />
+    <Compile Include="Crud\AutoNoteControlCrud.cs" />
+    <Compile Include="Crud\AutoNoteCrud.cs" />
+    <Compile Include="Crud\CDSPermissionCrud.cs" />
+    <Compile Include="Crud\ClaimSnapshotCrud.cs" />
+    <Compile Include="Crud\ClinicPrefCrud.cs" />
+    <Compile Include="Crud\ConfirmationRequestCrud.cs" />
+    <Compile Include="Crud\ConnectionGroupCrud.cs" />
+    <Compile Include="Crud\ConnGroupAttachCrud.cs" />
+    <Compile Include="Crud\DashboardCellCrud.cs" />
+    <Compile Include="Crud\DashboardLayoutCrud.cs" />
+    <Compile Include="Crud\DisplayReportCrud.cs" />
+    <Compile Include="Crud\DispSupplyCrud.cs" />
+    <Compile Include="Crud\EbillCrud.cs" />
+    <Compile Include="Crud\EhrAptObsCrud.cs" />
+    <Compile Include="Crud\EhrCarePlanCrud.cs" />
+    <Compile Include="Crud\EhrLabClinicalInfoCrud.cs" />
+    <Compile Include="Crud\EhrLabCrud.cs" />
+    <Compile Include="Crud\EhrLabImageCrud.cs" />
+    <Compile Include="Crud\EhrLabNoteCrud.cs" />
+    <Compile Include="Crud\EhrLabResultCrud.cs" />
+    <Compile Include="Crud\EhrLabResultsCopyToCrud.cs" />
+    <Compile Include="Crud\EhrLabSpecimenConditionCrud.cs" />
+    <Compile Include="Crud\EhrLabSpecimenCrud.cs" />
+    <Compile Include="Crud\EhrLabSpecimenRejectReasonCrud.cs" />
+    <Compile Include="Crud\EhrPatientCrud.cs" />
+    <Compile Include="Crud\EhrTriggerCrud.cs" />
+    <Compile Include="Crud\BenefitCrud.cs" />
+    <Compile Include="Crud\CanadianNetworkCrud.cs" />
+    <Compile Include="Crud\CarrierCrud.cs" />
+    <Compile Include="Crud\CdcrecCrud.cs" />
+    <Compile Include="Crud\CentralConnectionCrud.cs" />
+    <Compile Include="Crud\ChartViewCrud.cs" />
+    <Compile Include="Crud\ClaimAttachCrud.cs" />
+    <Compile Include="Crud\ClaimCondCodeLogCrud.cs" />
+    <Compile Include="Crud\ClaimCrud.cs" />
+    <Compile Include="Crud\ClaimFormCrud.cs" />
+    <Compile Include="Crud\ClaimFormItemCrud.cs" />
+    <Compile Include="Crud\ClaimPaymentCrud.cs" />
+    <Compile Include="Crud\ClaimProcCrud.cs" />
+    <Compile Include="Crud\ClaimValCodeLogCrud.cs" />
+    <Compile Include="Crud\ClearinghouseCrud.cs" />
+    <Compile Include="Crud\ClinicCrud.cs" />
+    <Compile Include="Crud\ClockEventCrud.cs" />
+    <Compile Include="Crud\CodeSystemCrud.cs" />
+    <Compile Include="Crud\CommlogCrud.cs" />
+    <Compile Include="Crud\ComputerCrud.cs" />
+    <Compile Include="Crud\ComputerPrefCrud.cs" />
+    <Compile Include="Crud\ContactCrud.cs" />
+    <Compile Include="Crud\CountyCrud.cs" />
+    <Compile Include="Crud\CovCatCrud.cs" />
+    <Compile Include="Crud\CovSpanCrud.cs" />
+    <Compile Include="Crud\CptCrud.cs" />
+    <Compile Include="Crud\CreditCardCrud.cs" />
+    <Compile Include="Crud\CustRefEntryCrud.cs" />
+    <Compile Include="Crud\CustReferenceCrud.cs" />
+    <Compile Include="Crud\CvxCrud.cs" />
+    <Compile Include="Crud\DashboardARCrud.cs" />
+    <Compile Include="Crud\DefCrud.cs" />
+    <Compile Include="Crud\DeletedObjectCrud.cs" />
+    <Compile Include="Crud\DepositCrud.cs" />
+    <Compile Include="Crud\DictCustomCrud.cs" />
+    <Compile Include="Crud\DiseaseCrud.cs" />
+    <Compile Include="Crud\DiseaseDefCrud.cs" />
+    <Compile Include="Crud\DisplayFieldCrud.cs" />
+    <Compile Include="Crud\DocumentCrud.cs" />
+    <Compile Include="Crud\DocumentMiscCrud.cs" />
+    <Compile Include="Crud\DrugManufacturerCrud.cs" />
+    <Compile Include="Crud\DrugUnitCrud.cs" />
+    <Compile Include="Crud\DunningCrud.cs" />
+    <Compile Include="Crud\EduResourceCrud.cs" />
+    <Compile Include="Crud\EhrAmendmentCrud.cs" />
+    <Compile Include="Crud\EhrCodeCrud.cs" />
+    <Compile Include="Crud\EhrMeasureCrud.cs" />
+    <Compile Include="Crud\EhrMeasureEventCrud.cs" />
+    <Compile Include="Crud\EhrNotPerformedCrud.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Crud\EhrProvKeyCrud.cs" />
+    <Compile Include="Crud\EhrQuarterlyKeyCrud.cs" />
+    <Compile Include="Crud\EhrSummaryCcdCrud.cs" />
+    <Compile Include="Crud\ElectIDCrud.cs" />
+    <Compile Include="Crud\EmailAddressCrud.cs" />
+    <Compile Include="Crud\EmailAttachCrud.cs" />
+    <Compile Include="Crud\EmailAutographCrud.cs" />
+    <Compile Include="Crud\EmailMessageCrud.cs" />
+    <Compile Include="Crud\EmailMessageUidCrud.cs" />
+    <Compile Include="Crud\EmailTemplateCrud.cs" />
+    <Compile Include="Crud\EmployeeCrud.cs" />
+    <Compile Include="Crud\EmployerCrud.cs" />
+    <Compile Include="Crud\EncounterCrud.cs" />
+    <Compile Include="Crud\EobAttachCrud.cs" />
+    <Compile Include="Crud\EquipmentCrud.cs" />
+    <Compile Include="Crud\ErxLogCrud.cs" />
+    <Compile Include="Crud\EServiceSignalCrud.cs" />
+    <Compile Include="Crud\EtransCrud.cs" />
+    <Compile Include="Crud\EtransMessageTextCrud.cs" />
+    <Compile Include="Crud\EvaluationCriterionCrud.cs" />
+    <Compile Include="Crud\EvaluationCriterionDefCrud.cs" />
+    <Compile Include="Crud\EvaluationCrud.cs" />
+    <Compile Include="Crud\EvaluationDefCrud.cs" />
+    <Compile Include="Crud\FamAgingCrud.cs" />
+    <Compile Include="Crud\FamilyHealthCrud.cs" />
+    <Compile Include="Crud\FeeCrud.cs" />
+    <Compile Include="Crud\FeeSchedCrud.cs" />
+    <Compile Include="Crud\FHIRContactPointCrud.cs" />
+    <Compile Include="Crud\FHIRSubscriptionCrud.cs" />
+    <Compile Include="Crud\FieldDefLinkCrud.cs" />
+    <Compile Include="Crud\FormPatCrud.cs" />
+    <Compile Include="Crud\GradingScaleCrud.cs" />
+    <Compile Include="Crud\GradingScaleItemCrud.cs" />
+    <Compile Include="Crud\GroupPermissionCrud.cs" />
+    <Compile Include="Crud\GuardianCrud.cs" />
+    <Compile Include="Crud\HcpcsCrud.cs" />
+    <Compile Include="Crud\HL7DefCrud.cs" />
+    <Compile Include="Crud\HL7DefFieldCrud.cs" />
+    <Compile Include="Crud\HL7DefMessageCrud.cs" />
+    <Compile Include="Crud\HL7DefSegmentCrud.cs" />
+    <Compile Include="Crud\HL7MsgCrud.cs" />
+    <Compile Include="Crud\HL7ProcAttachCrud.cs" />
+    <Compile Include="Crud\Icd10Crud.cs" />
+    <Compile Include="Crud\ICD9Crud.cs" />
+    <Compile Include="Crud\InsFilingCodeCrud.cs" />
+    <Compile Include="Crud\InsFilingCodeSubtypeCrud.cs" />
+    <Compile Include="Crud\InsPlanCrud.cs" />
+    <Compile Include="Crud\InsSubCrud.cs" />
+    <Compile Include="Crud\InstallmentPlanCrud.cs" />
+    <Compile Include="Crud\InsVerifyCrud.cs" />
+    <Compile Include="Crud\InsVerifyHistCrud.cs" />
+    <Compile Include="Crud\InterventionCrud.cs" />
+    <Compile Include="Crud\JobControlCrud.cs" />
+    <Compile Include="Crud\JobCrud.cs" />
+    <Compile Include="Crud\JobLinkCrud.cs" />
+    <Compile Include="Crud\JobLogCrud.cs" />
+    <Compile Include="Crud\JobNoteCrud.cs" />
+    <Compile Include="Crud\JobPermissionCrud.cs" />
+    <Compile Include="Crud\JobProjectCrud.cs" />
+    <Compile Include="Crud\JobQuoteCrud.cs" />
+    <Compile Include="Crud\JobReviewCrud.cs" />
+    <Compile Include="Crud\JournalEntryCrud.cs" />
+    <Compile Include="Crud\LabCaseCrud.cs" />
+    <Compile Include="Crud\LaboratoryCrud.cs" />
+    <Compile Include="Crud\LabPanelCrud.cs" />
+    <Compile Include="Crud\LabResultCrud.cs" />
+    <Compile Include="Crud\LabTurnaroundCrud.cs" />
+    <Compile Include="Crud\LanguageCrud.cs" />
+    <Compile Include="Crud\LanguageForeignCrud.cs" />
+    <Compile Include="Crud\LetterCrud.cs" />
+    <Compile Include="Crud\LetterMergeCrud.cs" />
+    <Compile Include="Crud\LetterMergeFieldCrud.cs" />
+    <Compile Include="Crud\LoincCrud.cs" />
+    <Compile Include="Crud\MapAreaCrud.cs" />
+    <Compile Include="Crud\MedicalOrderCrud.cs" />
+    <Compile Include="Crud\MedicationCrud.cs" />
+    <Compile Include="Crud\MedicationPatCrud.cs" />
+    <Compile Include="Crud\MedLabFacAttachCrud.cs" />
+    <Compile Include="Crud\MedLabCrud.cs" />
+    <Compile Include="Crud\MedLabFacilityCrud.cs" />
+    <Compile Include="Crud\MedLabResultCrud.cs" />
+    <Compile Include="Crud\MedLabSpecimenCrud.cs" />
+    <Compile Include="Crud\MountCrud.cs" />
+    <Compile Include="Crud\MountDefCrud.cs" />
+    <Compile Include="Crud\MountItemCrud.cs" />
+    <Compile Include="Crud\MountItemDefCrud.cs" />
+    <Compile Include="Crud\OIDExternalCrud.cs" />
+    <Compile Include="Crud\OIDInternalCrud.cs" />
+    <Compile Include="Crud\OperatoryCrud.cs" />
+    <Compile Include="Crud\OrionProcCrud.cs" />
+    <Compile Include="Crud\OrthoChartCrud.cs" />
+    <Compile Include="Crud\OrthoChartTabCrud.cs" />
+    <Compile Include="Crud\OrthoChartTabLinkCrud.cs" />
+    <Compile Include="Crud\PatFieldCrud.cs" />
+    <Compile Include="Crud\PatFieldDefCrud.cs" />
+    <Compile Include="Crud\PatientCrud.cs" />
+    <Compile Include="Crud\PatientNoteCrud.cs" />
+    <Compile Include="Crud\PatientRaceCrud.cs" />
+    <Compile Include="Crud\PatPlanCrud.cs" />
+    <Compile Include="Crud\PatRestrictionCrud.cs" />
+    <Compile Include="Crud\PaymentCrud.cs" />
+    <Compile Include="Crud\PayorTypeCrud.cs" />
+    <Compile Include="Crud\PayPeriodCrud.cs" />
+    <Compile Include="Crud\PayPlanChargeCrud.cs" />
+    <Compile Include="Crud\PayPlanCrud.cs" />
+    <Compile Include="Crud\PaySplitCrud.cs" />
+    <Compile Include="Crud\PerioExamCrud.cs" />
+    <Compile Include="Crud\PerioMeasureCrud.cs" />
+    <Compile Include="Crud\PharmacyCrud.cs" />
+    <Compile Include="Crud\PhoneConfCrud.cs" />
+    <Compile Include="Crud\PhoneCrud.cs" />
+    <Compile Include="Crud\PhoneEmpDefaultCrud.cs" />
+    <Compile Include="Crud\PhoneEmpSubGroupCrud.cs" />
+    <Compile Include="Crud\PhoneGraphCrud.cs" />
+    <Compile Include="Crud\PhoneMetricCrud.cs" />
+    <Compile Include="Crud\PhoneNumberCrud.cs" />
+    <Compile Include="Crud\PlannedApptCrud.cs" />
+    <Compile Include="Crud\PopupCrud.cs" />
+    <Compile Include="Crud\PrefCrud.cs" />
+    <Compile Include="Crud\PrinterCrud.cs" />
+    <Compile Include="Crud\ProcApptColorCrud.cs" />
+    <Compile Include="Crud\ProcButtonCrud.cs" />
+    <Compile Include="Crud\ProcButtonItemCrud.cs" />
+    <Compile Include="Crud\ProcButtonQuickCrud.cs" />
+    <Compile Include="Crud\ProcCodeNoteCrud.cs" />
+    <Compile Include="Crud\ProcedureCodeCrud.cs" />
+    <Compile Include="Crud\ProcedureCrud.cs" />
+    <Compile Include="Crud\ProcGroupItemCrud.cs" />
+    <Compile Include="Crud\ProcNoteCrud.cs" />
+    <Compile Include="Crud\ProcTPCrud.cs" />
+    <Compile Include="Crud\ProgramCrud.cs" />
+    <Compile Include="Crud\ProgramPropertyCrud.cs" />
+    <Compile Include="Crud\ProviderCrud.cs" />
+    <Compile Include="Crud\ProviderErxCrud.cs" />
+    <Compile Include="Crud\ProviderIdentCrud.cs" />
+    <Compile Include="Crud\QuestionCrud.cs" />
+    <Compile Include="Crud\QuestionDefCrud.cs" />
+    <Compile Include="Crud\QuickPasteCatCrud.cs" />
+    <Compile Include="Crud\QuickPasteNoteCrud.cs" />
+    <Compile Include="Crud\RecallCrud.cs" />
+    <Compile Include="Crud\RecallTriggerCrud.cs" />
+    <Compile Include="Crud\RecallTypeCrud.cs" />
+    <Compile Include="Crud\ReconcileCrud.cs" />
+    <Compile Include="Crud\RefAttachCrud.cs" />
+    <Compile Include="Crud\ReferralCrud.cs" />
+    <Compile Include="Crud\RegistrationKeyCrud.cs" />
+    <Compile Include="Crud\ReminderRuleCrud.cs" />
+    <Compile Include="Crud\RepeatChargeCrud.cs" />
+    <Compile Include="Crud\ReplicationServerCrud.cs" />
+    <Compile Include="Crud\ReqNeededCrud.cs" />
+    <Compile Include="Crud\ReqStudentCrud.cs" />
+    <Compile Include="Crud\RequiredFieldConditionCrud.cs" />
+    <Compile Include="Crud\RequiredFieldCrud.cs" />
+    <Compile Include="Crud\ResellerCrud.cs" />
+    <Compile Include="Crud\ResellerServiceCrud.cs" />
+    <Compile Include="Crud\RxAlertCrud.cs" />
+    <Compile Include="Crud\RxDefCrud.cs" />
+    <Compile Include="Crud\RxNormCrud.cs" />
+    <Compile Include="Crud\RxPatCrud.cs" />
+    <Compile Include="Crud\ScheduleCrud.cs" />
+    <Compile Include="Crud\ScheduleOpCrud.cs" />
+    <Compile Include="Crud\SchoolClassCrud.cs" />
+    <Compile Include="Crud\SchoolCourseCrud.cs" />
+    <Compile Include="Crud\ScreenCrud.cs" />
+    <Compile Include="Crud\ScreenGroupCrud.cs" />
+    <Compile Include="Crud\ScreenPatCrud.cs" />
+    <Compile Include="Crud\SecurityLogCrud.cs" />
+    <Compile Include="Crud\SecurityLogHashCrud.cs" />
+    <Compile Include="Crud\SheetCrud.cs" />
+    <Compile Include="Crud\SheetDefCrud.cs" />
+    <Compile Include="Crud\SheetFieldCrud.cs" />
+    <Compile Include="Crud\SheetFieldDefCrud.cs" />
+    <Compile Include="Crud\SigButDefCrud.cs" />
+    <Compile Include="Crud\SigElementDefCrud.cs" />
+    <Compile Include="Crud\SigMessageCrud.cs" />
+    <Compile Include="Crud\SignalodCrud.cs" />
+    <Compile Include="Crud\SiteCrud.cs" />
+    <Compile Include="Crud\StateAbbrCrud.cs" />
+    <Compile Include="Crud\TreatPlanAttachCrud.cs" />
+    <Compile Include="Crud\UpdateHistoryCrud.cs" />
+    <Compile Include="Crud\UserClinicCrud.cs" />
+    <Compile Include="Crud\UserOdPrefCrud.cs" />
+    <Compile Include="Crud\UserWebCrud.cs" />
+    <Compile Include="Crud\VoiceMailCrud.cs" />
+    <Compile Include="Crud\XWebResponseCrud.cs" />
+    <Compile Include="Data Interface\AlertItems.cs" />
+    <Compile Include="Data Interface\AlertReads.cs" />
+    <Compile Include="Data Interface\AlertSubs.cs" />
+    <Compile Include="Data Interface\ApptReminderRules.cs" />
+    <Compile Include="Data Interface\ApptReminderSents.cs" />
+    <Compile Include="Data Interface\ClaimSnapshots.cs" />
+    <Compile Include="Data Interface\ClinicPrefs.cs" />
+    <Compile Include="Data Interface\ConfirmationRequests.cs" />
+    <Compile Include="Data Interface\DashboardCells.cs" />
+    <Compile Include="Data Interface\DashboardLayouts.cs" />
+    <Compile Include="Data Interface\DisplayReports.cs" />
+    <Compile Include="Data Interface\Ebills.cs" />
+    <Compile Include="Data Interface\EmailAutographs.cs" />
+    <Compile Include="Data Interface\FamAgings.cs" />
+    <Compile Include="Data Interface\FHIRContactPoints.cs" />
+    <Compile Include="Data Interface\FHIRSubscriptions.cs" />
+    <Compile Include="Data Interface\FieldDefLinks.cs" />
+    <Compile Include="Data Interface\HL7ProcAttaches.cs" />
+    <Compile Include="Data Interface\InsVerifies.cs" />
+    <Compile Include="Data Interface\InsVerifyHists.cs" />
+    <Compile Include="InternalTools\Job Manager\JobLogs.cs" />
+    <Compile Include="Data Interface\OrthoChartTabLinks.cs" />
+    <Compile Include="Data Interface\OrthoChartTabs.cs" />
+    <Compile Include="Data Interface\PatRestrictions.cs" />
+    <Compile Include="Data Interface\SigMessages.cs" />
+    <Compile Include="Data Interface\TreatPlanAttaches.cs" />
+    <Compile Include="Data Interface\UpdateHistories.cs" />
+    <Compile Include="Data Interface\UserOdPrefs.cs" />
+    <Compile Include="Data Interface\UserWebs.cs" />
+    <Compile Include="Data Interface\XWebResponses.cs" />
+    <Compile Include="InternalTools\Job Manager\BugCrud.cs" />
+    <Compile Include="InternalTools\Job Manager\Bugs.cs" />
+    <Compile Include="Data Interface\UserClinics.cs" />
+    <Compile Include="InternalTools\Job Manager\FeatureRequests.cs" />
+    <Compile Include="InternalTools\Job Manager\JobNotes.cs" />
+    <Compile Include="InternalTools\Job Manager\JobQuotes.cs" />
+    <Compile Include="InternalTools\Job Manager\JobPermissions.cs" />
+    <Compile Include="Data Interface\ProviderErxs.cs" />
+    <Compile Include="Data Interface\StateAbbrs.cs" />
+    <Compile Include="Data Interface\RequiredFieldConditions.cs" />
+    <Compile Include="Data Interface\RequiredFields.cs" />
+    <Compile Include="InternalTools\EServices\EServiceMetrics.cs" />
+    <Compile Include="InternalTools\IntegratedTexting\SmsBillingCrud.cs" />
+    <Compile Include="Crud\SmsFromMobileCrud.cs" />
+    <Compile Include="Crud\SmsToMobileCrud.cs" />
+    <Compile Include="Crud\SmsPhoneCrud.cs" />
+    <Compile Include="Crud\SnomedCrud.cs" />
+    <Compile Include="Crud\SopCrud.cs" />
+    <Compile Include="Crud\StatementCrud.cs" />
+    <Compile Include="Crud\SupplierCrud.cs" />
+    <Compile Include="Crud\SupplyCrud.cs" />
+    <Compile Include="Crud\SupplyNeededCrud.cs" />
+    <Compile Include="Crud\SupplyOrderCrud.cs" />
+    <Compile Include="Crud\SupplyOrderItemCrud.cs" />
+    <Compile Include="Crud\TaskAncestorCrud.cs" />
+    <Compile Include="Crud\TaskCrud.cs" />
+    <Compile Include="Crud\TaskHistCrud.cs" />
+    <Compile Include="Crud\TaskListCrud.cs" />
+    <Compile Include="Crud\TaskNoteCrud.cs" />
+    <Compile Include="Crud\TaskSubscriptionCrud.cs" />
+    <Compile Include="Crud\TaskUnreadCrud.cs" />
+    <Compile Include="Crud\TerminalActiveCrud.cs" />
+    <Compile Include="Crud\TimeAdjustCrud.cs" />
+    <Compile Include="Crud\TimeCardRuleCrud.cs" />
+    <Compile Include="Crud\ToolButItemCrud.cs" />
+    <Compile Include="Crud\ToothGridCellCrud.cs" />
+    <Compile Include="Crud\ToothGridColCrud.cs" />
+    <Compile Include="Crud\ToothGridDefCrud.cs" />
+    <Compile Include="Crud\ToothInitialCrud.cs" />
+    <Compile Include="Crud\TransactionCrud.cs" />
+    <Compile Include="Crud\TreatPlanCrud.cs" />
+    <Compile Include="Crud\UcumCrud.cs" />
+    <Compile Include="Crud\UserGroupCrud.cs" />
+    <Compile Include="Crud\UserodApptViewCrud.cs" />
+    <Compile Include="Crud\UserodCrud.cs" />
+    <Compile Include="Crud\UserQueryCrud.cs" />
+    <Compile Include="Crud\VaccineDefCrud.cs" />
+    <Compile Include="Crud\VaccineObsCrud.cs" />
+    <Compile Include="Crud\VaccinePatCrud.cs" />
+    <Compile Include="Crud\VitalsignCrud.cs" />
+    <Compile Include="Crud\WikiListHeaderWidthCrud.cs" />
+    <Compile Include="Crud\WikiListHistCrud.cs" />
+    <Compile Include="Crud\WikiPageCrud.cs" />
+    <Compile Include="Crud\WikiPageHistCrud.cs" />
+    <Compile Include="Crud\XChargeTransactionCrud.cs" />
+    <Compile Include="Crud\ZipCodeCrud.cs" />
+    <Compile Include="Data Interface\Allergies.cs" />
+    <Compile Include="Data Interface\AllergyDefs.cs" />
+    <Compile Include="Data Interface\AppointmentTypes.cs" />
+    <Compile Include="Data Interface\ApptFieldDefs.cs" />
+    <Compile Include="Data Interface\ApptFields.cs" />
+    <Compile Include="Data Interface\AutomationConditions.cs" />
+    <Compile Include="Data Interface\Automations.cs" />
+    <Compile Include="Data Interface\CDSPermissions.cs" />
+    <Compile Include="Data Interface\ConnectionGroups.cs" />
+    <Compile Include="Data Interface\ConnGroupAttaches.cs" />
+    <Compile Include="Data Interface\DispSupplies.cs" />
+    <Compile Include="Data Interface\EhrAptObses.cs" />
+    <Compile Include="Data Interface\EhrCarePlans.cs" />
+    <Compile Include="Data Interface\EhrLabClinicalInfos.cs" />
+    <Compile Include="Data Interface\EhrLabImages.cs" />
+    <Compile Include="Data Interface\EhrLabNotes.cs" />
+    <Compile Include="Data Interface\EhrLabResults.cs" />
+    <Compile Include="Data Interface\EhrLabResultsCopyTos.cs" />
+    <Compile Include="Data Interface\EhrLabs.cs" />
+    <Compile Include="Data Interface\EhrLabSpecimenConditions.cs" />
+    <Compile Include="Data Interface\EhrLabSpecimenRejectReasons.cs" />
+    <Compile Include="Data Interface\EhrLabSpecimens.cs" />
+    <Compile Include="Data Interface\EhrPatients.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data Interface\EhrTriggers.cs" />
+    <Compile Include="Data Interface\Cdcrecs.cs" />
+    <Compile Include="Data Interface\CentralConnections.cs" />
+    <Compile Include="Data Interface\ChartViews.cs" />
+    <Compile Include="Data Interface\CodeSystems.cs" />
+    <Compile Include="Data Interface\Cpts.cs" />
+    <Compile Include="Data Interface\Cvxs.cs" />
+    <Compile Include="Data Interface\EhrAmendments.cs" />
+    <Compile Include="Data Interface\EhrCodes.cs" />
+    <Compile Include="Data Interface\EhrNotPerformeds.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data Interface\EmailMessageUids.cs" />
+    <Compile Include="Data Interface\Encounters.cs" />
+    <Compile Include="Data Interface\EServiceSignals.cs" />
+    <Compile Include="Data Interface\EvaluationCriterionDefs.cs" />
+    <Compile Include="Data Interface\EvaluationCriterions.cs" />
+    <Compile Include="Data Interface\EvaluationDefs.cs" />
+    <Compile Include="Data Interface\Evaluations.cs" />
+    <Compile Include="Data Interface\FamilyHealths.cs" />
+    <Compile Include="Data Interface\GradingScaleItems.cs" />
+    <Compile Include="Data Interface\GradingScales.cs" />
+    <Compile Include="Data Interface\Hcpcses.cs" />
+    <Compile Include="Data Interface\Icd10s.cs" />
+    <Compile Include="Data Interface\Interventions.cs" />
+    <Compile Include="Data Interface\Loincs.cs" />
+    <Compile Include="Data Interface\MapAreas.cs" />
+    <Compile Include="Data Interface\MedLabFacAttaches.cs" />
+    <Compile Include="Data Interface\MedLabFacilities.cs" />
+    <Compile Include="Data Interface\MedLabResults.cs" />
+    <Compile Include="Data Interface\MedLabs.cs" />
+    <Compile Include="Data Interface\MedLabSpecimens.cs" />
+    <Compile Include="Data Interface\OIDExternals.cs" />
+    <Compile Include="Data Interface\OIDInternals.cs" />
+    <Compile Include="Data Interface\PatientRaces.cs" />
+    <Compile Include="Data Interface\PayorTypes.cs" />
+    <Compile Include="InternalTools\IntegratedTexting\SmsBillings.cs" />
+    <Compile Include="Data Interface\SmsFromMobiles.cs" />
+    <Compile Include="Data Interface\SmsToMobiles.cs" />
+    <Compile Include="Data Interface\SmsPhones.cs" />
+    <Compile Include="Data Interface\TaskHists.cs" />
+    <Compile Include="InternalTools\IntegratedTexting\TableTypes\SmsBilling.cs" />
+    <Compile Include="InternalTools\Job Manager\JobControls.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\Bug.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\JobCustContact.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\JobLog.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\JobQuote.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\JobPermission.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\JobControl.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\JobLink.cs" />
+    <Compile Include="InternalTools\Job Manager\JobLinks.cs" />
+    <Compile Include="InternalTools\Job Manager\JobProjects.cs" />
+    <Compile Include="InternalTools\Job Manager\JobReviews.cs" />
+    <Compile Include="InternalTools\Job Manager\Jobs.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\Job.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\JobProject.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\JobReview.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\JobNote.cs" />
+    <Compile Include="InternalTools\Job Manager\TableTypes\VersionRelease.cs" />
+    <Compile Include="InternalTools\Job Manager\VersionReleases.cs" />
+    <Compile Include="InternalTools\Phones\PhoneConfs.cs" />
+    <Compile Include="Data Interface\ProcButtonQuicks.cs" />
+    <Compile Include="Data Interface\Resellers.cs" />
+    <Compile Include="Data Interface\ResellerServices.cs" />
+    <Compile Include="Data Interface\SecurityLogHashes.cs" />
+    <Compile Include="Data Interface\Snomeds.cs" />
+    <Compile Include="Data Interface\Sops.cs" />
+    <Compile Include="Data Interface\Ucums.cs" />
+    <Compile Include="Data Interface\UserodApptViews.cs" />
+    <Compile Include="Data Interface\VaccineObses.cs" />
+    <Compile Include="Data Interface\WikiListHeaderWidths.cs" />
+    <Compile Include="Data Interface\WikiListHists.cs" />
+    <Compile Include="Data Interface\WikiLists.cs" />
+    <Compile Include="Data Interface\CreditCards.cs" />
+    <Compile Include="Data Interface\CustRefEntries.cs" />
+    <Compile Include="Data Interface\CustReferences.cs" />
+    <Compile Include="Data Interface\DashboardARs.cs" />
+    <Compile Include="Data Interface\DictCustoms.cs" />
+    <Compile Include="Data Interface\DisplayFields.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data Interface\DocumentMiscs.cs" />
+    <Compile Include="Data Interface\DrugManufacturers.cs" />
+    <Compile Include="Data Interface\DrugUnits.cs" />
+    <Compile Include="Data Interface\EduResources.cs" />
+    <Compile Include="Data Interface\EhrMeasureEvents.cs" />
+    <Compile Include="Data Interface\EhrMeasures.cs" />
+    <Compile Include="Data Interface\EhrProvKeys.cs" />
+    <Compile Include="Data Interface\EhrQuarterlyKeys.cs" />
+    <Compile Include="Data Interface\EhrSummaryCcds.cs" />
+    <Compile Include="Data Interface\EmailAddresses.cs" />
+    <Compile Include="Data Interface\EobAttaches.cs" />
+    <Compile Include="Data Interface\ErxLogs.cs" />
+    <Compile Include="Data Interface\Guardians.cs" />
+    <Compile Include="Data Interface\Equipments.cs" />
+    <Compile Include="Data Interface\HL7DefFields.cs" />
+    <Compile Include="Data Interface\HL7DefMessages.cs" />
+    <Compile Include="Data Interface\HL7Defs.cs" />
+    <Compile Include="Data Interface\HL7DefSegments.cs" />
+    <Compile Include="Data Interface\ICD9s.cs" />
+    <Compile Include="Data Interface\InsSubs.cs" />
+    <Compile Include="Data Interface\InstallmentPlans.cs" />
+    <Compile Include="Data Interface\LabPanels.cs" />
+    <Compile Include="Data Interface\LabResults.cs" />
+    <Compile Include="Data Interface\MedicalOrders.cs" />
+    <Compile Include="Data Interface\OrionProcs.cs" />
+    <Compile Include="Data Interface\OrthoCharts.cs" />
+    <Compile Include="Data Interface\ProcApptColors.cs" />
+    <Compile Include="Data Interface\ProcGroupItems.cs" />
+    <Compile Include="Data Interface\ReminderRules.cs" />
+    <Compile Include="Data Interface\ReplicationServers.cs" />
+    <Compile Include="Data Interface\InsFilingCodes.cs" />
+    <Compile Include="Data Interface\EtransMessageTexts.cs" />
+    <Compile Include="Data Interface\InsFilingCodeSubtypes.cs" />
+    <Compile Include="Data Interface\RxNorms.cs" />
+    <Compile Include="Data Interface\ScreenPats.cs" />
+    <Compile Include="Data Interface\Signalods.cs" />
+    <Compile Include="Data Interface\TaskNotes.cs" />
+    <Compile Include="Data Interface\TaskUnreads.cs" />
+    <Compile Include="Cache\aaCache.cs" />
+    <Compile Include="Cache\Cache.cs" />
+    <Compile Include="Cache\EnumRemotingRole.cs" />
+    <Compile Include="Cache\PrefC.cs" />
+    <Compile Include="Data Interface\TimeCardRules.cs" />
+    <Compile Include="Data Interface\ToothGridCells.cs" />
+    <Compile Include="Data Interface\ToothGridCols.cs" />
+    <Compile Include="Data Interface\ToothGridDefs.cs" />
+    <Compile Include="Data Interface\VaccineDefs.cs" />
+    <Compile Include="Data Interface\VaccinePats.cs" />
+    <Compile Include="Data Interface\Vitalsigns.cs" />
+    <Compile Include="Data Interface\WikiPageHists.cs" />
+    <Compile Include="Data Interface\WikiPages.cs" />
+    <Compile Include="Data Interface\XChargeTransactions.cs" />
+    <Compile Include="Db Multi Table\DashboardQueries.cs" />
+    <Compile Include="Db Multi Table\EhrPatListElements.cs" />
+    <Compile Include="Db Multi Table\EhrPatListElement.cs" />
+    <Compile Include="Db Multi Table\QualityMeasure.cs" />
+    <Compile Include="Db Multi Table\QualityMeasures.cs" />
+    <Compile Include="Db\DbSchemaCol.cs" />
+    <Compile Include="Db\OdDbType.cs" />
+    <Compile Include="Db\PoIn.cs" />
+    <Compile Include="Db\SchemaCrudProposedTest.cs" />
+    <Compile Include="Db\SchemaCrudTest.cs" />
+    <Compile Include="InternalTools\Phones\TableTypes\TriageMetric.cs" />
+    <Compile Include="TableTypes\PatientPortalInvite.cs" />
+    <Compile Include="Web References\DentalxchangePartnerService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\PayConnectService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\SheetsSynch\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="WebBridges\Erx\ErxXml.cs" />
+    <Compile Include="WebBridges\Erx\NewCrop\NCScript.cs" />
+    <Compile Include="HL7old\EhrADT_A01.cs" />
+    <Compile Include="HL7old\EhrORU.cs" />
+    <Compile Include="HL7old\EhrVXU.cs" />
+    <Compile Include="HL7\FieldParserMedLab.cs" />
+    <Compile Include="HL7\MessageParserMedLab.cs" />
+    <Compile Include="HL7\MedLabv2_3.cs" />
+    <Compile Include="HL7\InternalHL7v2_6.cs" />
+    <Compile Include="HL7\InternalCentricity.cs" />
+    <Compile Include="HL7\FieldConstructor.cs" />
+    <Compile Include="HL7\InternalEcwFull.cs" />
+    <Compile Include="HL7\InternalEcwStandalone.cs" />
+    <Compile Include="HL7\InternalEcwTight.cs" />
+    <Compile Include="HL7\FieldParser.cs" />
+    <Compile Include="HL7\MessageParser.cs" />
+    <Compile Include="HL7\MessageConstructor.cs" />
+    <Compile Include="InternalTools\Phones\PhoneAsterisks.cs" />
+    <Compile Include="InternalTools\Phones\PhoneEmpDefaults.cs" />
+    <Compile Include="InternalTools\Phones\PhoneEmpSubGroups.cs" />
+    <Compile Include="InternalTools\Phones\PhoneMapJSON.cs" />
+    <Compile Include="InternalTools\Phones\PhoneGraphs.cs" />
+    <Compile Include="InternalTools\Phones\PhoneMetrics.cs" />
+    <Compile Include="Data Interface\PhoneNumbers.cs" />
+    <Compile Include="InternalTools\Phones\PhoneOverrides.cs" />
+    <Compile Include="InternalTools\Phones\Phones.cs" />
+    <Compile Include="InternalTools\Phones\TableTypes\ChatUser.cs" />
+    <Compile Include="InternalTools\Phones\TableTypes\PhoneConf.cs" />
+    <Compile Include="InternalTools\Phones\TableTypes\Phone.cs" />
+    <Compile Include="InternalTools\Phones\TableTypes\PhoneEmpDefault.cs" />
+    <Compile Include="InternalTools\Phones\TableTypes\PhoneEmpSubGroup.cs" />
+    <Compile Include="InternalTools\Phones\TableTypes\PhoneGraph.cs" />
+    <Compile Include="InternalTools\Phones\TableTypes\PhoneMetric.cs" />
+    <Compile Include="TableTypes\PhoneNumber.cs" />
+    <Compile Include="InternalTools\Phones\TableTypes\SiteLink.cs" />
+    <Compile Include="InternalTools\Phones\VoiceMails.cs" />
+    <Compile Include="Misc\ConvertDatabases3.cs" />
+    <Compile Include="Misc\ConvertDatabases4.cs" />
+    <Compile Include="Misc\ConvertDatabases5.cs" />
+    <Compile Include="Misc\EhrCCD.cs" />
+    <Compile Include="Misc\FileAtoZ.cs" />
+    <Compile Include="Misc\InnoDb.cs" />
+    <Compile Include="Misc\ConvertDatabases2.cs" />
+    <Compile Include="Misc\ConvertDatabases1.cs" />
+    <Compile Include="Misc\Mime.cs" />
+    <Compile Include="Misc\NTPv4.cs" />
+    <Compile Include="Misc\TsiMsgConstructor.cs" />
+    <Compile Include="Misc\WindowsTime.cs" />
+    <Compile Include="Mobile\Crud\AllergyDefmCrud.cs" />
+    <Compile Include="Mobile\Crud\AllergymCrud.cs" />
+    <Compile Include="Mobile\Crud\DiseaseDefmCrud.cs" />
+    <Compile Include="Mobile\Crud\DiseasemCrud.cs" />
+    <Compile Include="Mobile\Crud\DocumentmCrud.cs" />
+    <Compile Include="Mobile\Crud\ICD9mCrud.cs" />
+    <Compile Include="Mobile\Crud\LabPanelmCrud.cs" />
+    <Compile Include="Mobile\Crud\LabResultmCrud.cs" />
+    <Compile Include="Mobile\Crud\MedicationmCrud.cs" />
+    <Compile Include="Mobile\Crud\MedicationPatmCrud.cs" />
+    <Compile Include="Mobile\Crud\PharmacymCrud.cs" />
+    <Compile Include="Mobile\Crud\ProvidermCrud.cs" />
+    <Compile Include="Mobile\Crud\RecallmCrud.cs" />
+    <Compile Include="Mobile\Crud\RxPatmCrud.cs" />
+    <Compile Include="Mobile\Crud\StatementmCrud.cs" />
+    <Compile Include="Mobile\Crud\UsermCrud.cs" />
+    <Compile Include="Mobile\Data Interface\AllergyDefms.cs" />
+    <Compile Include="Mobile\Data Interface\Allergyms.cs" />
+    <Compile Include="Mobile\Data Interface\DiseaseDefms.cs" />
+    <Compile Include="Mobile\Data Interface\Diseasems.cs" />
+    <Compile Include="Mobile\Data Interface\Documentms.cs" />
+    <Compile Include="Mobile\Data Interface\ICD9ms.cs" />
+    <Compile Include="Mobile\Data Interface\LabPanelms.cs" />
+    <Compile Include="Mobile\Data Interface\LabResultms.cs" />
+    <Compile Include="Mobile\Data Interface\Medicationms.cs" />
+    <Compile Include="Mobile\Data Interface\MedicationPatms.cs" />
+    <Compile Include="Mobile\Data Interface\Pharmacyms.cs" />
+    <Compile Include="Mobile\Data Interface\PrefmC.cs" />
+    <Compile Include="Mobile\Data Interface\Prefms.cs" />
+    <Compile Include="Mobile\Data Interface\Providerms.cs" />
+    <Compile Include="Mobile\Data Interface\Recallms.cs" />
+    <Compile Include="Mobile\Data Interface\RxPatms.cs" />
+    <Compile Include="Mobile\Data Interface\Statementms.cs" />
+    <Compile Include="Mobile\Data Interface\Userms.cs" />
+    <Compile Include="Mobile\TableTypes\AllergyDefm.cs" />
+    <Compile Include="Mobile\TableTypes\Allergym.cs" />
+    <Compile Include="Mobile\TableTypes\DiseaseDefm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mobile\TableTypes\Diseasem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mobile\TableTypes\Documentm.cs" />
+    <Compile Include="Mobile\TableTypes\ICD9m.cs" />
+    <Compile Include="Mobile\TableTypes\LabPanelm.cs" />
+    <Compile Include="Mobile\TableTypes\LabResultm.cs" />
+    <Compile Include="Mobile\TableTypes\Medicationm.cs" />
+    <Compile Include="Mobile\TableTypes\MedicationPatm.cs" />
+    <Compile Include="Mobile\TableTypes\Pharmacym.cs" />
+    <Compile Include="Mobile\TableTypes\Providerm.cs" />
+    <Compile Include="Mobile\TableTypes\Recallm.cs" />
+    <Compile Include="Mobile\TableTypes\Statementm.cs" />
+    <Compile Include="Mobile\TableTypes\Userm.cs" />
+    <Compile Include="Mobile\TableTypes\RxPatm.cs" />
+    <Compile Include="Remoting\ClientSL.cs" />
+    <Compile Include="Data Interface\AccountingAutoPays.cs" />
+    <Compile Include="Data Interface\Accounts.cs" />
+    <Compile Include="Data Interface\Adjustments.cs" />
+    <Compile Include="Data Interface\AppointmentRules.cs" />
+    <Compile Include="Data Interface\ApptViewItems.cs" />
+    <Compile Include="Data Interface\ApptViews.cs" />
+    <Compile Include="Data Interface\AutoCodeConds.cs" />
+    <Compile Include="Data Interface\AutoCodeItems.cs" />
+    <Compile Include="Data Interface\AutoCodes.cs" />
+    <Compile Include="Data Interface\AutoNoteControls.cs" />
+    <Compile Include="Data Interface\AutoNotes.cs" />
+    <Compile Include="Data Interface\Benefits.cs" />
+    <Compile Include="Data Interface\CanadianNetworks.cs" />
+    <Compile Include="Data Interface\Carriers.cs" />
+    <Compile Include="Data Interface\ClaimAttaches.cs" />
+    <Compile Include="Data Interface\ClaimCondCodeLogs.cs" />
+    <Compile Include="Data Interface\ClaimFormItems.cs" />
+    <Compile Include="Data Interface\ClaimForms.cs" />
+    <Compile Include="Data Interface\ClaimPayments.cs" />
+    <Compile Include="Data Interface\ClaimProcs.cs" />
+    <Compile Include="Data Interface\Claims.cs" />
+    <Compile Include="Data Interface\ClaimValCodeLogs.cs" />
+    <Compile Include="Data Interface\Clearinghouses.cs" />
+    <Compile Include="Data Interface\Clinics.cs" />
+    <Compile Include="Data Interface\ClockEvents.cs" />
+    <Compile Include="Data Interface\Commlogs.cs" />
+    <Compile Include="Data Interface\ComputerPrefs.cs" />
+    <Compile Include="Data Interface\Computers.cs" />
+    <Compile Include="Data Interface\Contacts.cs" />
+    <Compile Include="Data Interface\Counties.cs" />
+    <Compile Include="Data Interface\Deposits.cs" />
+    <Compile Include="Data Interface\DiseaseDefs.cs" />
+    <Compile Include="Data Interface\Diseases.cs" />
+    <Compile Include="Data Interface\Dunnings.cs" />
+    <Compile Include="Data Interface\ElectIDs.cs" />
+    <Compile Include="Data Interface\EmailAttaches.cs" />
+    <Compile Include="Data Interface\EmailMessages.cs" />
+    <Compile Include="Data Interface\EmailTemplates.cs" />
+    <Compile Include="Data Interface\Employees.cs" />
+    <Compile Include="Data Interface\Employers.cs" />
+    <Compile Include="Data Interface\Etranss.cs" />
+    <Compile Include="Data Interface\Fees.cs" />
+    <Compile Include="Data Interface\FormPats.cs" />
+    <Compile Include="Data Interface\HL7Msgs.cs" />
+    <Compile Include="Data Interface\FeeScheds.cs" />
+    <Compile Include="Data Interface\InsPlans.cs" />
+    <Compile Include="Data Interface\JournalEntries.cs" />
+    <Compile Include="Data Interface\LabCases.cs" />
+    <Compile Include="Data Interface\Laboratories.cs" />
+    <Compile Include="Data Interface\LabTurnarounds.cs" />
+    <Compile Include="Data Interface\LanguageForeigns.cs" />
+    <Compile Include="Data Interface\LetterMergeFields.cs" />
+    <Compile Include="Data Interface\LetterMerges.cs" />
+    <Compile Include="Data Interface\Letters.cs" />
+    <Compile Include="Data Interface\MedicationPats.cs" />
+    <Compile Include="Data Interface\Medications.cs" />
+    <Compile Include="Data Interface\PatFieldDefs.cs" />
+    <Compile Include="Data Interface\PatFields.cs" />
+    <Compile Include="Data Interface\PatPlans.cs" />
+    <Compile Include="Data Interface\Payments.cs" />
+    <Compile Include="Data Interface\PayPeriods.cs" />
+    <Compile Include="Data Interface\PayPlanCharges.cs" />
+    <Compile Include="Data Interface\PayPlans.cs" />
+    <Compile Include="Data Interface\PaySplits.cs" />
+    <Compile Include="Data Interface\PerioExams.cs" />
+    <Compile Include="Data Interface\PerioMeasures.cs" />
+    <Compile Include="Data Interface\PlannedAppts.cs" />
+    <Compile Include="Data Interface\Popups.cs" />
+    <Compile Include="Data Interface\Printers.cs" />
+    <Compile Include="Data Interface\ProcButtonItems.cs" />
+    <Compile Include="Data Interface\ProcButtons.cs" />
+    <Compile Include="Data Interface\ProcCodeNotes.cs" />
+    <Compile Include="Data Interface\ProcedureCodes.cs" />
+    <Compile Include="Data Interface\Procedures.cs" />
+    <Compile Include="Data Interface\ProcTPs.cs" />
+    <Compile Include="Data Interface\ProgramProperties.cs" />
+    <Compile Include="Data Interface\Programs.cs" />
+    <Compile Include="Data Interface\ProviderIdents.cs" />
+    <Compile Include="Data Interface\QuestionDefs.cs" />
+    <Compile Include="Data Interface\Questions.cs" />
+    <Compile Include="Data Interface\QuickPasteCats.cs" />
+    <Compile Include="Data Interface\QuickPasteNotes.cs" />
+    <Compile Include="Data Interface\Recalls.cs" />
+    <Compile Include="Data Interface\RecallTriggers.cs" />
+    <Compile Include="Data Interface\RecallTypes.cs" />
+    <Compile Include="Data Interface\DeletedObjects.cs" />
+    <Compile Include="Data Interface\Reconciles.cs" />
+    <Compile Include="Data Interface\RefAttaches.cs" />
+    <Compile Include="Data Interface\Referrals.cs" />
+    <Compile Include="Data Interface\RegistrationKeys.cs" />
+    <Compile Include="Data Interface\RepeatCharges.cs" />
+    <Compile Include="Data Interface\ReqNeededs.cs" />
+    <Compile Include="Data Interface\ReqStudents.cs" />
+    <Compile Include="Data Interface\RxAlerts.cs" />
+    <Compile Include="Data Interface\RxDefs.cs" />
+    <Compile Include="Data Interface\RxPats.cs" />
+    <Compile Include="Data Interface\ScheduleOps.cs" />
+    <Compile Include="Data Interface\Schedules.cs" />
+    <Compile Include="Data Interface\SchoolClasses.cs" />
+    <Compile Include="Data Interface\SchoolCourses.cs" />
+    <Compile Include="Data Interface\ScreenGroups.cs" />
+    <Compile Include="Data Interface\Screens.cs" />
+    <Compile Include="Db Multi Table\Security.cs" />
+    <Compile Include="Data Interface\SecurityLogs.cs" />
+    <Compile Include="Data Interface\SheetFieldDefs.cs" />
+    <Compile Include="Data Interface\SheetDefs.cs" />
+    <Compile Include="Data Interface\SheetFields.cs" />
+    <Compile Include="Data Interface\Sheets.cs" />
+    <Compile Include="Data Interface\Pharmacies.cs" />
+    <Compile Include="Data Interface\CovCats.cs" />
+    <Compile Include="Data Interface\CovSpans.cs" />
+    <Compile Include="Data Interface\Defs.cs" />
+    <Compile Include="Db Multi Table\FamilyModules.cs" />
+    <Compile Include="Data Interface\GroupPermissions.cs" />
+    <Compile Include="Data Interface\Operatories.cs" />
+    <Compile Include="Data Interface\Prefs.cs" />
+    <Compile Include="Data Interface\SigButDefs.cs" />
+    <Compile Include="Data Interface\SigElementDefs.cs" />
+    <Compile Include="Data Interface\Statements.cs" />
+    <Compile Include="Data Interface\Documents.cs" />
+    <Compile Include="Db Multi Table\Family.cs" />
+    <Compile Include="Db\Db.cs" />
+    <Compile Include="Db Multi Table\Ledgers.cs" />
+    <Compile Include="Data Interface\MountDefs.cs" />
+    <Compile Include="Data Interface\MountItemDefs.cs" />
+    <Compile Include="Data Interface\MountItems.cs" />
+    <Compile Include="Data Interface\Mounts.cs" />
+    <Compile Include="Data Interface\PatientNotes.cs" />
+    <Compile Include="Data Interface\Patients.cs" />
+    <Compile Include="Data Interface\Providers.cs" />
+    <Compile Include="Data Interface\Suppliers.cs" />
+    <Compile Include="Data Interface\Supplies.cs" />
+    <Compile Include="Data Interface\SupplyNeededs.cs" />
+    <Compile Include="Data Interface\SupplyOrderItems.cs" />
+    <Compile Include="Data Interface\SupplyOrders.cs" />
+    <Compile Include="Data Interface\TaskAncestors.cs" />
+    <Compile Include="Data Interface\TaskLists.cs" />
+    <Compile Include="Data Interface\Tasks.cs" />
+    <Compile Include="Data Interface\TaskSubscriptions.cs" />
+    <Compile Include="Data Interface\TerminalActives.cs" />
+    <Compile Include="Data Interface\TimeAdjusts.cs" />
+    <Compile Include="Data Interface\ToolButItems.cs" />
+    <Compile Include="Data Interface\ToothInitials.cs" />
+    <Compile Include="Data Interface\Transactions.cs" />
+    <Compile Include="Data Interface\TreatPlans.cs" />
+    <Compile Include="Data Interface\UserGroups.cs" />
+    <Compile Include="Data Interface\UserQueries.cs" />
+    <Compile Include="Data Interface\ZipCodes.cs" />
+    <Compile Include="Remoting\DtoObject.cs" />
+    <Compile Include="HL7old\EcwADT.cs" />
+    <Compile Include="HL7\ComponentHL7.cs" />
+    <Compile Include="HL7old\EcwDFT.cs" />
+    <Compile Include="HL7\FieldHL7.cs" />
+    <Compile Include="HL7\MessageHL7.cs" />
+    <Compile Include="HL7\SegmentHL7.cs" />
+    <Compile Include="HL7old\EcwSegmentPID.cs" />
+    <Compile Include="HL7old\EcwSIU.cs" />
+    <Compile Include="Imaging\ImageHelper.cs" />
+    <Compile Include="Imaging\ImageStore.cs" />
+    <Compile Include="Db Multi Table\MiscData.cs" />
+    <Compile Include="Remoting\DataTransferObject.cs" />
+    <Compile Include="Db\Enumerations.cs" />
+    <Compile Include="Data Interface\Lans.cs" />
+    <Compile Include="Logic\aaLogic.cs" />
+    <Compile Include="Db Multi Table\AccountModules.cs" />
+    <Compile Include="Data Interface\Appointments.cs" />
+    <Compile Include="Logic\BenefitLogic.cs" />
+    <Compile Include="Db Multi Table\ChartModules.cs" />
+    <Compile Include="Db\DataCore.cs" />
+    <Compile Include="Logic\PatientLogic.cs" />
+    <Compile Include="Logic\ProcedureLogic.cs" />
+    <Compile Include="Data Interface\ProcNotes.cs" />
+    <Compile Include="Logic\TelephoneNumbers.cs" />
+    <Compile Include="Logic\Tooth.cs" />
+    <Compile Include="Logic\ToothComparer.cs" />
+    <Compile Include="Data Interface\Userods.cs" />
+    <Compile Include="Remoting\Meth.cs" />
+    <Compile Include="Db\DbHelper.cs" />
+    <Compile Include="Db\DbSchema.cs" />
+    <Compile Include="Misc\HouseCallsQueries.cs" />
+    <Compile Include="Misc\LetterMergesQueries.cs" />
+    <Compile Include="Db\OdSqlParameter.cs" />
+    <Compile Include="Misc\TimeSpanExtension.cs" />
+    <Compile Include="Misc\TrojanQueries.cs" />
+    <Compile Include="Mobile\ConvertDatabasem.cs" />
+    <Compile Include="Mobile\Crud\AppointmentmCrud.cs" />
+    <Compile Include="Mobile\Crud\PatientmCrud.cs" />
+    <Compile Include="Mobile\Data Interface\Appointmentms.cs" />
+    <Compile Include="Mobile\Data Interface\Patientms.cs" />
+    <Compile Include="Mobile\TableTypes\Appointmentm.cs" />
+    <Compile Include="Mobile\TableTypes\Patientm.cs" />
+    <Compile Include="Mobile\TableTypes\Prefm.cs" />
+    <Compile Include="Plugins\PluginBase.cs" />
+    <Compile Include="Plugins\PluginContainer.cs" />
+    <Compile Include="Plugins\Plugins.cs" />
+    <Compile Include="Remoting\SerializableDictionary.cs" />
+    <Compile Include="Remoting\WebSerializer.cs" />
+    <Compile Include="Reports\RpCustomAging.cs" />
+    <Compile Include="Reports\RpInsAging.cs" />
+    <Compile Include="Reports\RpInsCo.cs" />
+    <Compile Include="Reports\RpFinanceCharge.cs" />
+    <Compile Include="Reports\RpCapitation.cs" />
+    <Compile Include="Reports\RpTreatmentFinder.cs" />
+    <Compile Include="Reports\RpWriteoffSheet.cs" />
+    <Compile Include="Reports\RpTreatPlanPresentationStatistics.cs" />
+    <Compile Include="Reports\RpReferralAnalysis.cs" />
+    <Compile Include="Reports\RpReceivablesBreakdown.cs" />
+    <Compile Include="Reports\RpPresentedTreatmentProduction.cs" />
+    <Compile Include="Reports\RpPrescriptions.cs" />
+    <Compile Include="Reports\RpPPOwriteoff.cs" />
+    <Compile Include="Reports\RpDentalSealantMeasure.cs" />
+    <Compile Include="Reports\RpBrokenAppointments.cs" />
+    <Compile Include="Reports\RpBirthday.cs" />
+    <Compile Include="Reports\RpAppointments.cs" />
+    <Compile Include="Reports\RpAdjSheet.cs" />
+    <Compile Include="Reports\RpAging.cs" />
+    <Compile Include="Reports\RpClaimNotSent.cs" />
+    <Compile Include="Reports\RpActivePatients.cs" />
+    <Compile Include="Reports\RpInsOverpaid.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Reports\RpNewPatients.cs" />
+    <Compile Include="Reports\RpOutstandingIns.cs" />
+    <Compile Include="Reports\RpPayPlan.cs" />
+    <Compile Include="Reports\ReportsComplex.cs" />
+    <Compile Include="Reports\RpPaySheet.cs" />
+    <Compile Include="Reports\RpProcNote.cs" />
+    <Compile Include="Reports\RpProcCodes.cs" />
+    <Compile Include="Reports\RpProcNotBilledIns.cs" />
+    <Compile Include="Reports\RpProcSheet.cs" />
+    <Compile Include="Reports\RpProdInc.cs" />
+    <Compile Include="Reports\RpPatPortionUncollected.cs" />
+    <Compile Include="Reports\RpUnfinalizedInsPay.cs" />
+    <Compile Include="Reports\RpRouting.cs" />
+    <Compile Include="Reports\RpUnearnedIncome.cs" />
+    <Compile Include="TableTypes\AlertCategoryLink.cs" />
+    <Compile Include="TableTypes\AlertCategory.cs" />
+    <Compile Include="TableTypes\AsapComm.cs" />
+    <Compile Include="TableTypes\BugSubmission.cs" />
+    <Compile Include="TableTypes\DefLink.cs" />
+    <Compile Include="TableTypes\Etrans835Attach.cs" />
+    <Compile Include="TableTypes\InsEditLog.cs" />
+    <Compile Include="TableTypes\ClaimTracking.cs" />
+    <Compile Include="TableTypes\DiscountPlan.cs" />
+    <Compile Include="TableTypes\FamAging.cs" />
+    <Compile Include="TableTypes\FieldDefLink.cs" />
+    <Compile Include="TableTypes\ClinicPref.cs" />
+    <Compile Include="TableTypes\AlertItem.cs" />
+    <Compile Include="TableTypes\AlertRead.cs" />
+    <Compile Include="TableTypes\AlertSub.cs" />
+    <Compile Include="TableTypes\ApptReminderSent.cs" />
+    <Compile Include="TableTypes\ApptReminderRule.cs" />
+    <Compile Include="TableTypes\ConfirmationRequest.cs" />
+    <Compile Include="TableTypes\FHIRContactPoint.cs" />
+    <Compile Include="TableTypes\FHIRSubscription.cs" />
+    <Compile Include="TableTypes\PatientLink.cs" />
+    <Compile Include="TableTypes\PatRestriction.cs" />
+    <Compile Include="TableTypes\SigMessage.cs" />
+    <Compile Include="TableTypes\SmsBlockPhone.cs" />
+    <Compile Include="TableTypes\StmtLink.cs" />
+    <Compile Include="TableTypes\DisplayReport.cs" />
+    <Compile Include="TableTypes\OrthoChartTabLink.cs" />
+    <Compile Include="TableTypes\OrthoChartTab.cs" />
+    <Compile Include="TableTypes\HistAppointment.cs" />
+    <Compile Include="TableTypes\SubstitutionLink.cs" />
+    <Compile Include="TableTypes\TsiTransLog.cs" />
+    <Compile Include="TableTypes\UpdateHistory.cs" />
+    <Compile Include="TableTypes\CDSPermission.cs" />
+    <Compile Include="TableTypes\AppointmentType.cs" />
+    <Compile Include="TableTypes\ConnectionGroup.cs" />
+    <Compile Include="TableTypes\ConnGroupAttach.cs" />
+    <Compile Include="TableTypes\ClaimSnapshot.cs" />
+    <Compile Include="TableTypes\DashboardCell.cs" />
+    <Compile Include="TableTypes\DashboardLayout.cs" />
+    <Compile Include="TableTypes\HL7ProcAttach.cs" />
+    <Compile Include="TableTypes\InsVerify.cs" />
+    <Compile Include="TableTypes\InsVerifyHist.cs" />
+    <Compile Include="TableTypes\TreatPlanAttach.cs" />
+    <Compile Include="TableTypes\Ebill.cs" />
+    <Compile Include="TableTypes\EmailAutograph.cs" />
+    <Compile Include="TableTypes\EServiceSignal.cs" />
+    <Compile Include="TableTypes\ProviderErx.cs" />
+    <Compile Include="TableTypes\RequiredField.cs" />
+    <Compile Include="TableTypes\RequiredFieldCondition.cs" />
+    <Compile Include="TableTypes\SmsPhone.cs" />
+    <Compile Include="TableTypes\SmsToMobile.cs" />
+    <Compile Include="TableTypes\SmsFromMobile.cs" />
+    <Compile Include="TableTypes\MedLabFacAttach.cs" />
+    <Compile Include="TableTypes\MedLabFacility.cs" />
+    <Compile Include="TableTypes\MedLabSpecimen.cs" />
+    <Compile Include="TableTypes\MedLabResult.cs" />
+    <Compile Include="TableTypes\MedLab.cs" />
+    <Compile Include="TableTypes\StateAbbr.cs" />
+    <Compile Include="TableTypes\TaskHist.cs" />
+    <Compile Include="TableTypes\UserClinic.cs" />
+    <Compile Include="TableTypes\UserGroupAttach.cs" />
+    <Compile Include="TableTypes\UserodApptView.cs" />
+    <Compile Include="TableTypes\UserOdPref.cs" />
+    <Compile Include="TableTypes\UserWeb.cs" />
+    <Compile Include="InternalTools\Phones\TableTypes\VoiceMail.cs" />
+    <Compile Include="TableTypes\WebSchedRecall.cs" />
+    <Compile Include="TableTypes\WikiListHist.cs" />
+    <Compile Include="TableTypes\DispSupply.cs" />
+    <Compile Include="TableTypes\ProcButtonQuick.cs" />
+    <Compile Include="TableTypes\EhrAptObs.cs" />
+    <Compile Include="TableTypes\EhrLabImage.cs" />
+    <Compile Include="TableTypes\EhrPatient.cs" />
+    <Compile Include="TableTypes\OIDExternal.cs" />
+    <Compile Include="TableTypes\OIDInternal.cs" />
+    <Compile Include="TableTypes\EhrLabSpecimenRejectReason.cs" />
+    <Compile Include="TableTypes\EhrLabSpecimenCondition.cs" />
+    <Compile Include="TableTypes\EhrLabSpecimen.cs" />
+    <Compile Include="TableTypes\EhrLabResult.cs" />
+    <Compile Include="TableTypes\EhrLabNote.cs" />
+    <Compile Include="TableTypes\EhrLabResultsCopyTo.cs" />
+    <Compile Include="TableTypes\EhrLabClinicalInfo.cs" />
+    <Compile Include="TableTypes\EhrLab.cs" />
+    <Compile Include="TableTypes\EhrCarePlan.cs" />
+    <Compile Include="TableTypes\Ucum.cs" />
+    <Compile Include="TableTypes\EmailMessageUid.cs" />
+    <Compile Include="TableTypes\EhrTrigger.cs" />
+    <Compile Include="TableTypes\MapArea.cs" />
+    <Compile Include="TableTypes\EhrAmendment.cs" />
+    <Compile Include="TableTypes\Automation.cs" />
+    <Compile Include="TableTypes\ApptFieldDef.cs" />
+    <Compile Include="TableTypes\ApptField.cs" />
+    <Compile Include="TableTypes\AutomationCondition.cs" />
+    <Compile Include="TableTypes\ChartView.cs" />
+    <Compile Include="TableTypes\AllergyDef.cs" />
+    <Compile Include="TableTypes\Allergy.cs" />
+    <Compile Include="TableTypes\CentralConnection.cs" />
+    <Compile Include="TableTypes\CodeSystem.cs" />
+    <Compile Include="TableTypes\Cdcrec.cs" />
+    <Compile Include="TableTypes\Cpt.cs" />
+    <Compile Include="TableTypes\Encounter.cs" />
+    <Compile Include="TableTypes\PayorType.cs" />
+    <Compile Include="TableTypes\SOP.cs" />
+    <Compile Include="TableTypes\Cvx.cs" />
+    <Compile Include="TableTypes\Hcpcs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TableTypes\Icd10.cs" />
+    <Compile Include="TableTypes\Intervention.cs" />
+    <Compile Include="TableTypes\EhrNotPerformed.cs" />
+    <Compile Include="TableTypes\EhrCode.cs" />
+    <Compile Include="TableTypes\Loinc.cs" />
+    <Compile Include="TableTypes\SecurityLogHash.cs" />
+    <Compile Include="TableTypes\FamilyHealth.cs" />
+    <Compile Include="TableTypes\PatientRace.cs" />
+    <Compile Include="TableTypes\ResellerService.cs" />
+    <Compile Include="TableTypes\Reseller.cs" />
+    <Compile Include="TableTypes\Snomed.cs" />
+    <Compile Include="TableTypes\VaccineObs.cs" />
+    <Compile Include="TableTypes\WikiListHeaderWidth.cs" />
+    <Compile Include="TableTypes\EvaluationCriterion.cs" />
+    <Compile Include="TableTypes\GradingScaleItem.cs" />
+    <Compile Include="TableTypes\EvaluationCriterionDef.cs" />
+    <Compile Include="TableTypes\EvaluationDef.cs" />
+    <Compile Include="TableTypes\GradingScale.cs" />
+    <Compile Include="TableTypes\Evaluation.cs" />
+    <Compile Include="TableTypes\WikiPageHist.cs" />
+    <Compile Include="TableTypes\WikiPage.cs" />
+    <Compile Include="TableTypes\DictCustom.cs" />
+    <Compile Include="TableTypes\EmailAddress.cs" />
+    <Compile Include="TableTypes\ErxLog.cs" />
+    <Compile Include="TableTypes\ScreenPat.cs" />
+    <Compile Include="TableTypes\ToothGridCell.cs" />
+    <Compile Include="TableTypes\ToothGridCol.cs" />
+    <Compile Include="TableTypes\ToothGridDef.cs" />
+    <Compile Include="TableTypes\DocumentMisc.cs" />
+    <Compile Include="TableTypes\CustReference.cs" />
+    <Compile Include="TableTypes\CustRefEntry.cs" />
+    <Compile Include="TableTypes\EobAttach.cs" />
+    <Compile Include="TableTypes\DashboardAR.cs" />
+    <Compile Include="TableTypes\EhrQuarterlyKey.cs" />
+    <Compile Include="TableTypes\EhrSummaryCcd.cs" />
+    <Compile Include="TableTypes\EhrProvKey.cs" />
+    <Compile Include="TableTypes\DrugManufacturer.cs" />
+    <Compile Include="TableTypes\DrugUnit.cs" />
+    <Compile Include="TableTypes\EduResource.cs" />
+    <Compile Include="TableTypes\EhrMeasure.cs" />
+    <Compile Include="TableTypes\EhrMeasureEvent.cs" />
+    <Compile Include="TableTypes\HL7DefMessage.cs" />
+    <Compile Include="TableTypes\HL7DefSegment.cs" />
+    <Compile Include="TableTypes\HL7Def.cs" />
+    <Compile Include="TableTypes\HL7DefField.cs" />
+    <Compile Include="TableTypes\InstallmentPlan.cs" />
+    <Compile Include="TableTypes\LabPanel.cs" />
+    <Compile Include="TableTypes\LabResult.cs" />
+    <Compile Include="TableTypes\MedicalOrder.cs" />
+    <Compile Include="TableTypes\CreditCard.cs" />
+    <Compile Include="TableTypes\ICD9.cs" />
+    <Compile Include="TableTypes\InsSub.cs" />
+    <Compile Include="TableTypes\OrionProc.cs" />
+    <Compile Include="TableTypes\OrthoChart.cs" />
+    <Compile Include="TableTypes\ProcGroupItem.cs" />
+    <Compile Include="TableTypes\ProcApptColor.cs" />
+    <Compile Include="TableTypes\Guardian.cs" />
+    <Compile Include="TableTypes\ReminderRule.cs" />
+    <Compile Include="TableTypes\RxNorm.cs" />
+    <Compile Include="TableTypes\Signalod.cs" />
+    <Compile Include="TableTypes\TaskNote.cs" />
+    <Compile Include="TableTypes\TaskUnread.cs" />
+    <Compile Include="TableTypes\Equipment.cs" />
+    <Compile Include="TableTypes\ReplicationServer.cs" />
+    <Compile Include="TableTypes\EtransMessageText.cs" />
+    <Compile Include="TableTypes\InsFilingCode.cs" />
+    <Compile Include="TableTypes\InsFilingCodeSubtype.cs" />
+    <Compile Include="CrudFramework\TableBase.cs" />
+    <Compile Include="TableTypes\TimeCardRule.cs" />
+    <Compile Include="TableTypes\VaccineDef.cs" />
+    <Compile Include="TableTypes\VaccinePat.cs" />
+    <Compile Include="TableTypes\Vitalsign.cs" />
+    <Compile Include="TableTypes\XChargeTransaction.cs" />
+    <Compile Include="TableTypes\XWebResponse.cs" />
+    <Compile Include="UI\GridOD.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ODGridCell.cs" />
+    <Compile Include="UI\ODGridColumn.cs" />
+    <Compile Include="UI\ODGridColumnCollection.cs" />
+    <Compile Include="UI\ODGridRow.cs" />
+    <Compile Include="Web References\com.dentalxchange.webservices\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\DoseSpotService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\customerUpdates\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\Dentalxchange2016\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\EmdeonITS\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\localhost\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\WebServiceMainHQ\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="WebBridges\CloudStorage.cs" />
+    <Compile Include="WebBridges\Dropbox.cs" />
+    <Compile Include="WebBridges\Erx\DoseSpot.cs" />
+    <Compile Include="WebBridges\Erx\Erx.cs" />
+    <Compile Include="WebBridges\Erx\NewCrop\NewCrop.cs" />
+    <Compile Include="WebBridges\PayConnect.cs" />
+    <Compile Include="WebBridges\PaySimple.cs" />
+    <Compile Include="WebBridges\Podium.cs" />
+    <Compile Include="WebBridges\Sftp.cs" />
+    <Compile Include="WebServices\IOpenDentalServer.cs" />
+    <Compile Include="WebServices\ISheetsSynch.cs" />
+    <Compile Include="WebServices\IWebServiceMainHQ.cs" />
+    <Compile Include="WebServices\OpenDentalServerMockIIS.cs" />
+    <Compile Include="WebServices\OpenDentalServerReal.cs" />
+    <Compile Include="WebServices\PayloadHelper.cs" />
+    <Compile Include="WebServices\SheetsSynchProxy.cs" />
+    <Compile Include="WebServices\WebServiceHqServer.cs" />
+    <Compile Include="WebServices\WebServiceMainHQMockDemo.cs" />
+    <Compile Include="WebServices\OpenDentalServerProxy.cs" />
+    <Compile Include="WebServices\SheetsSynchReal.cs" />
+    <Compile Include="WebServices\WebServiceMainHQReal.cs" />
+    <Compile Include="WebServices\WebServiceMainHQProxy.cs" />
+    <Compile Include="WebServiceTests.cs" />
+    <Compile Include="WebTypes\AutoComm\Arrivals\Arrivals.cs" />
+    <Compile Include="WebTypes\AutoComm\AutoCommObj\ApptLite.cs" />
+    <Compile Include="WebTypes\AutoComm\AutoCommObj\AutoCommObj.cs" />
+    <Compile Include="WebTypes\AutoComm\AutoCommObj\Byod.cs" />
+    <Compile Include="WebTypes\AutoComm\AutoCommObj\BirthdayLite.cs" />
+    <Compile Include="WebTypes\AutoComm\AutoCommObj\ClinicRule.cs" />
+    <Compile Include="WebTypes\AutoComm\AutoCommObj\PatPortalInviteLite.cs" />
+    <Compile Include="WebTypes\AutoComm\AutoCommObj\WebSchedAgg.cs" />
+    <Compile Include="WebTypes\AutoComm\TagReplacementPhiSafe\ApptTagReplacer.cs" />
+    <Compile Include="WebTypes\AutoComm\TagReplacementPhiSafe\ArrivalsTagReplacer.cs" />
+    <Compile Include="WebTypes\AutoComm\TagReplacementPhiSafe\ByodTagReplacer.cs" />
+    <Compile Include="WebTypes\AutoComm\TagReplacementPhiSafe\BirthdayTagReplacer.cs" />
+    <Compile Include="WebTypes\AutoComm\TagReplacementPhiSafe\PatientPortalInviteTagReplacer.cs" />
+    <Compile Include="WebTypes\AutoComm\TagReplacementPhiSafe\RecallTagReplacer.cs" />
+    <Compile Include="WebTypes\AutoComm\TagReplacementPhiSafe\TagReplacer.cs" />
+    <Compile Include="WebTypes\AutoComm\TagReplacementPhiSafe\ThankYouTagReplacer.cs" />
+    <Compile Include="WebTypes\eConnector\EConnectorRequest.cs" />
+    <Compile Include="WebTypes\eConnector\EConnectorStatistics.cs" />
+    <Compile Include="WebTypes\eConnector\InvalidTypeHistory.cs" />
+    <Compile Include="WebTypes\eConnector\ShutDownAlert.cs" />
+    <Compile Include="WebTypes\PushNotifications\PushNotificationAction.cs" />
+    <Compile Include="WebTypes\PushNotifications\PushNotificationPayload.cs" />
+    <Compile Include="WebTypes\PushNotifications\PushNotificationConstants.cs" />
+    <Compile Include="WebTypes\PushNotifications\PushNotificationUtils.cs" />
+    <Compile Include="WebTypes\Payments\PaySimpleStatus.cs" />
+    <Compile Include="WebTypes\Shared\XWeb\EdgeExpressResponse.cs" />
+    <Compile Include="WebTypes\Shared\XWeb\XWeb.cs" />
+    <Compile Include="WebTypes\Shared\XWeb\XWebCrud.cs" />
+    <Compile Include="WebTypes\Shared\XWeb\XWebs.cs" />
+    <Compile Include="WebTypes\WebForms\Crud\WebForms_LogCrud.cs" />
+    <Compile Include="WebTypes\WebForms\Crud\WebForms_PreferenceCrud.cs" />
+    <Compile Include="WebTypes\WebForms\Crud\WebForms_SheetCrud.cs" />
+    <Compile Include="WebTypes\WebForms\Crud\WebForms_SheetDefCrud.cs" />
+    <Compile Include="WebTypes\WebForms\Crud\WebForms_SheetFieldCrud.cs" />
+    <Compile Include="WebTypes\WebForms\Crud\WebForms_SheetFieldDefCrud.cs" />
+    <Compile Include="WebTypes\WebForms\Data Interface\WebForms_Logs.cs" />
+    <Compile Include="WebTypes\WebForms\Data Interface\WebForms_Preferences.cs" />
+    <Compile Include="WebTypes\WebForms\Data Interface\WebForms_SheetDefs.cs" />
+    <Compile Include="WebTypes\WebForms\Data Interface\WebForms_SheetFieldDefs.cs" />
+    <Compile Include="WebTypes\WebForms\Data Interface\WebForms_SheetFields.cs" />
+    <Compile Include="WebTypes\WebForms\Data Interface\WebForms_Sheets.cs" />
+    <Compile Include="WebTypes\WebForms\TableTypes\WebForms_Log.cs" />
+    <Compile Include="WebTypes\WebForms\TableTypes\WebForms_Preference.cs" />
+    <Compile Include="WebTypes\WebForms\TableTypes\WebForms_Sheet.cs" />
+    <Compile Include="WebTypes\WebForms\TableTypes\WebForms_SheetDef.cs" />
+    <Compile Include="WebTypes\WebForms\TableTypes\WebForms_SheetField.cs" />
+    <Compile Include="WebTypes\WebForms\TableTypes\WebForms_SheetFieldDef.cs" />
+    <Compile Include="WebTypes\WebForms\WebUtils.cs" />
+    <Compile Include="WebTypes\WebSched\TimeSlot\TimeSlot.cs" />
+    <Compile Include="WebTypes\WebSched\TimeSlot\TimeSlotCrud.cs" />
+    <Compile Include="WebTypes\WebSched\TimeSlot\TimeSlots.cs" />
+    <Compile Include="WebTypes\WebBase.cs" />
+    <Compile Include="X12\X834.cs" />
+    <Compile Include="X12\X835.cs" />
+    <Compile Include="X12\X277.cs" />
+    <Compile Include="X12\X999.cs" />
+    <Compile Include="X12\X837_5010.cs" />
+    <Compile Include="X12\DTP271.cs" />
+    <Compile Include="X12\EB271.cs" />
+    <Compile Include="X12\X12Generator.cs" />
+    <Compile Include="X12\X12Validate.cs" />
+    <Compile Include="X12\X12Parse.cs" />
+    <Compile Include="X12\X271.cs" />
+    <Compile Include="X12\X270.cs" />
+    <Compile Include="X12\X837_4010.cs" />
+    <Compile Include="X12\X997.cs" />
+    <Compile Include="ODDataSet\ODDataRow.cs" />
+    <Compile Include="ODDataSet\ODDataSet.cs" />
+    <Compile Include="ODDataSet\ODDataTable.cs" />
+    <Compile Include="Db\PIn.cs" />
+    <Compile Include="Db\POut.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Remoting\RemotingClient.cs" />
+    <Compile Include="Reports\Reports.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="SheetFramework\SheetEnums.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TableTypes\FeeSched.cs" />
+    <Compile Include="TableTypes\HL7Msg.cs" />
+    <Compile Include="TableTypes\ScheduleOp.cs" />
+    <Compile Include="TableTypes\PlannedAppt.cs" />
+    <Compile Include="TableTypes\RecallTrigger.cs" />
+    <Compile Include="TableTypes\RecallType.cs" />
+    <Compile Include="TableTypes\DeletedObject.cs" />
+    <Compile Include="TableTypes\SheetDef.cs" />
+    <Compile Include="TableTypes\SheetFieldDef.cs" />
+    <Compile Include="SheetFramework\SheetFieldsAvailable.cs" />
+    <Compile Include="SheetFramework\SheetParameter.cs" />
+    <Compile Include="SheetFramework\SheetsInternal.cs" />
+    <Compile Include="TableTypes\Account.cs" />
+    <Compile Include="TableTypes\AccountingAutoPay.cs" />
+    <Compile Include="TableTypes\Adjustment.cs" />
+    <Compile Include="TableTypes\Appointment.cs" />
+    <Compile Include="TableTypes\AppointmentRule.cs" />
+    <Compile Include="TableTypes\ApptView.cs" />
+    <Compile Include="TableTypes\ApptViewItem.cs" />
+    <Compile Include="TableTypes\AutoCode.cs" />
+    <Compile Include="TableTypes\AutoCodeCond.cs" />
+    <Compile Include="TableTypes\AutoCodeItem.cs" />
+    <Compile Include="TableTypes\AutoNote.cs" />
+    <Compile Include="TableTypes\AutoNoteControl.cs" />
+    <Compile Include="TableTypes\Benefit.cs" />
+    <Compile Include="TableTypes\Carrier.cs" />
+    <Compile Include="TableTypes\Claim.cs" />
+    <Compile Include="TableTypes\ClaimCondCodeLog.cs" />
+    <Compile Include="TableTypes\ClaimForm.cs" />
+    <Compile Include="TableTypes\ClaimFormItem.cs" />
+    <Compile Include="TableTypes\ClaimPayment.cs" />
+    <Compile Include="TableTypes\ClaimProc.cs" />
+    <Compile Include="TableTypes\ClaimValCodeLog.cs" />
+    <Compile Include="TableTypes\Clearinghouse.cs" />
+    <Compile Include="TableTypes\Clinic.cs" />
+    <Compile Include="TableTypes\ClockEvent.cs" />
+    <Compile Include="TableTypes\Commlog.cs" />
+    <Compile Include="TableTypes\Computer.cs" />
+    <Compile Include="TableTypes\ComputerPref.cs" />
+    <Compile Include="TableTypes\Contact.cs" />
+    <Compile Include="TableTypes\CanadianNetwork.cs" />
+    <Compile Include="TableTypes\ClaimAttach.cs" />
+    <Compile Include="TableTypes\SheetField.cs" />
+    <Compile Include="TableTypes\FilesOld.cs" />
+    <Compile Include="TableTypes\Pharmacy.cs" />
+    <Compile Include="TableTypes\Sheet.cs" />
+    <Compile Include="TableTypes\Site.cs" />
+    <Compile Include="TableTypes\Statement.cs" />
+    <Compile Include="TableTypes\TaskAncestor.cs" />
+    <Compile Include="TableTypes\TaskSubscription.cs" />
+    <Compile Include="TableTypes\SupplyOrderItem.cs" />
+    <Compile Include="TableTypes\SupplyOrder.cs" />
+    <Compile Include="TableTypes\Supply.cs" />
+    <Compile Include="TableTypes\Supplier.cs" />
+    <Compile Include="TableTypes\SupplyNeeded.cs" />
+    <Compile Include="TableTypes\Popup.cs" />
+    <Compile Include="TableTypes\DisplayField.cs" />
+    <Compile Include="TableTypes\ProcCodeNote.cs" />
+    <Compile Include="TableTypes\ReqStudent.cs" />
+    <Compile Include="TableTypes\ReqNeeded.cs" />
+    <Compile Include="TableTypes\LabTurnaround.cs" />
+    <Compile Include="TableTypes\LabCase.cs" />
+    <Compile Include="TableTypes\Laboratory.cs" />
+    <Compile Include="TableTypes\Mount.cs" />
+    <Compile Include="TableTypes\MountItem.cs" />
+    <Compile Include="TableTypes\MountItemDef.cs" />
+    <Compile Include="TableTypes\MountDef.cs" />
+    <Compile Include="TableTypes\Etrans.cs" />
+    <Compile Include="TableTypes\FormPat.cs" />
+    <Compile Include="TableTypes\County.cs" />
+    <Compile Include="TableTypes\CovCat.cs" />
+    <Compile Include="TableTypes\CovSpan.cs" />
+    <Compile Include="TableTypes\Def.cs" />
+    <Compile Include="TableTypes\Deposit.cs" />
+    <Compile Include="TableTypes\Disease.cs" />
+    <Compile Include="TableTypes\DiseaseDef.cs" />
+    <Compile Include="TableTypes\Document.cs" />
+    <Compile Include="TableTypes\Dunning.cs" />
+    <Compile Include="TableTypes\ElectID.cs" />
+    <Compile Include="TableTypes\EmailAttach.cs" />
+    <Compile Include="TableTypes\EmailMessage.cs" />
+    <Compile Include="TableTypes\EmailTemplate.cs" />
+    <Compile Include="TableTypes\Employee.cs" />
+    <Compile Include="TableTypes\Employer.cs" />
+    <Compile Include="TableTypes\Fee.cs" />
+    <Compile Include="TableTypes\GroupPermission.cs" />
+    <Compile Include="TableTypes\InsPlan.cs" />
+    <Compile Include="TableTypes\InstructorOld.cs" />
+    <Compile Include="Db\Interval.cs" />
+    <Compile Include="TableTypes\JournalEntry.cs" />
+    <Compile Include="TableTypes\Language.cs" />
+    <Compile Include="TableTypes\LanguageForeign.cs" />
+    <Compile Include="TableTypes\Letter.cs" />
+    <Compile Include="TableTypes\LetterMerge.cs" />
+    <Compile Include="TableTypes\LetterMergeField.cs" />
+    <Compile Include="TableTypes\Medication.cs" />
+    <Compile Include="TableTypes\MedicationPat.cs" />
+    <Compile Include="TableTypes\Operatory.cs" />
+    <Compile Include="TableTypes\PatField.cs" />
+    <Compile Include="TableTypes\PatFieldDef.cs" />
+    <Compile Include="TableTypes\Patient.cs" />
+    <Compile Include="TableTypes\PatientNote.cs" />
+    <Compile Include="TableTypes\PatPlan.cs" />
+    <Compile Include="TableTypes\Payment.cs" />
+    <Compile Include="TableTypes\PayPeriod.cs" />
+    <Compile Include="TableTypes\PayPlan.cs" />
+    <Compile Include="TableTypes\PayPlanCharge.cs" />
+    <Compile Include="TableTypes\PaySplit.cs" />
+    <Compile Include="TableTypes\PerioExam.cs" />
+    <Compile Include="TableTypes\PerioMeasure.cs" />
+    <Compile Include="TableTypes\Pref.cs" />
+    <Compile Include="TableTypes\Printer.cs" />
+    <Compile Include="TableTypes\ProcButton.cs" />
+    <Compile Include="TableTypes\ProcButtonItem.cs" />
+    <Compile Include="TableTypes\Procedure.cs" />
+    <Compile Include="TableTypes\ProcedureCode.cs" />
+    <Compile Include="TableTypes\ProcNote.cs" />
+    <Compile Include="TableTypes\ProcTP.cs" />
+    <Compile Include="TableTypes\Program.cs" />
+    <Compile Include="TableTypes\ProgramProperty.cs" />
+    <Compile Include="TableTypes\Provider.cs" />
+    <Compile Include="TableTypes\ProviderIdent.cs" />
+    <Compile Include="TableTypes\Question.cs" />
+    <Compile Include="TableTypes\QuestionDef.cs" />
+    <Compile Include="TableTypes\QuickPasteCat.cs" />
+    <Compile Include="TableTypes\QuickPasteNote.cs" />
+    <Compile Include="TableTypes\Recall.cs" />
+    <Compile Include="TableTypes\Reconcile.cs" />
+    <Compile Include="TableTypes\RefAttach.cs" />
+    <Compile Include="TableTypes\Referral.cs" />
+    <Compile Include="TableTypes\RegistrationKey.cs" />
+    <Compile Include="TableTypes\RepeatCharge.cs" />
+    <Compile Include="TableTypes\RxAlert.cs" />
+    <Compile Include="TableTypes\RxDef.cs" />
+    <Compile Include="TableTypes\RxPat.cs" />
+    <Compile Include="TableTypes\Schedule.cs" />
+    <Compile Include="TableTypes\SchoolClass.cs" />
+    <Compile Include="TableTypes\SchoolCourse.cs" />
+    <Compile Include="TableTypes\ScreenGroup.cs" />
+    <Compile Include="TableTypes\Screen.cs" />
+    <Compile Include="TableTypes\SecurityLog.cs" />
+    <Compile Include="TableTypes\SigButDef.cs" />
+    <Compile Include="TableTypes\SigElementDef.cs" />
+    <Compile Include="TableTypes\Task.cs" />
+    <Compile Include="TableTypes\TaskList.cs" />
+    <Compile Include="TableTypes\TerminalActive.cs" />
+    <Compile Include="TableTypes\TimeAdjust.cs" />
+    <Compile Include="TableTypes\ToolButItem.cs" />
+    <Compile Include="TableTypes\ToothInitial.cs" />
+    <Compile Include="TableTypes\Transaction.cs" />
+    <Compile Include="TableTypes\TreatPlan.cs" />
+    <Compile Include="TableTypes\Userod.cs" />
+    <Compile Include="TableTypes\UserGroup.cs" />
+    <Compile Include="TableTypes\UserQuery.cs" />
+    <Compile Include="TableTypes\ZipCode.cs" />
+    <Compile Include="Web References\OpenDentalServer\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="X12\X12object.cs" />
+    <Compile Include="Remoting\XmlConverterSerializer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CodeBase\xCodeBase.csproj">
+      <Project>{18F7BC78-4B99-48D3-A1F1-0D13A63E3CF9}</Project>
+      <Name>xCodeBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataConnectionBase\xDataConnectionBase.csproj">
+      <Project>{29c41020-4411-41f2-9061-9b71b5b32b5d}</Project>
+      <Name>xDataConnectionBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenDentalCloud\OpenDentalCloud.csproj">
+      <Project>{f90d0481-3d97-4c72-af6e-dd81177e3de1}</Project>
+      <Name>OpenDentalCloud</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\GridOD.resx">
+      <DependentUpon>GridOD.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ODGridCell.resx">
+      <DependentUpon>ODGridCell.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ODGridColumn.resx">
+      <DependentUpon>ODGridColumn.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ODGridPageNav.resx">
+      <DependentUpon>ODGridPageNav.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ODGridRow.resx">
+      <DependentUpon>ODGridRow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\SignatureBoxWrapper.resx">
+      <DependentUpon>SignatureBoxWrapper.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Web References\com.dentalxchange.webservices\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\com.dentalxchange.webservices\Response.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\com.dentalxchange.webservices\wsdl.wsdl" />
+    <None Include="Web References\Dentalxchange2016\PayerListInfoResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DentalxchangePartnerService\AttachmentReferenceResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DentalxchangePartnerService\DeaPartnerService.wsdl" />
+    <None Include="Web References\DentalxchangePartnerService\DeaPartnerService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\DentalxchangePartnerService\DeaPartnerService0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\DentalxchangePartnerService\DeaResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DentalxchangePartnerService\ImageReferenceResponses.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DentalxchangePartnerService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\DoseSpotService\AddAllergyResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\AddDetailedSelfReportedMedicationsResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\AddSelfReportedMedicationsResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\AllergyListResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\AllergySearchResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\api.wsdl" />
+    <None Include="Web References\DoseSpotService\CheckAllergyInteractionsResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\CheckClinicianRegistrationResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\CheckClinicianRegistrationStatusDetailedResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\ClinicAddResultMessage1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\ClinicClinicianRemoveResultsMessage1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\ClinicianAddMultipleClinicsResultsMessage1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\ClinicianAddResultsMessage1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\EditAllergyResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\GetMedicationListByDateRangeResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\GetMedicationListMUResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\GetMedicationListResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\GetPrescriberNotificationCountsMUResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\GetPrescriberNotificationCountsResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\GetRefillRequestsDetailsResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\GetStandardDispenseUnitResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\ImportMedicationsResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\MedHistoryConsentResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\MedicationQuickSearchResultsMessage1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\MedicationSelectResultMessage1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\MedicationStatusUpdateResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\MedicationStrengthSearchResultsMessage1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\MedicationStrengthSearchResultsWithNDCMessage1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\MergePatientsResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\PatientUpdateFullMessageResult1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\PatientUpdateMessageMUResult1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\PatientUpdateMessageResult1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\PharmacySearchMessageDetailedResult1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\PharmacySearchMessageResult1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\PharmacyValidateMessageResult1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\customerUpdates\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\customerUpdates\Service1.wsdl" />
+    <None Include="Web References\Dentalxchange2016\ClaimPaymentListResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Dentalxchange2016\DwsService.wsdl" />
+    <None Include="Web References\Dentalxchange2016\DwsService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\Dentalxchange2016\DwsService0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\Dentalxchange2016\PayerListResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Dentalxchange2016\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\Dentalxchange2016\textResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Dentalxchange2016\UnProcessedEraResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\RefillRequestsTransmissionErrorsMessageResult1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\DoseSpotService\SelfReportedMedicationSearchResponse1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\EmdeonITS\ItsReturn1.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\EmdeonITS\ITSReturnA.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\EmdeonITS\ITSWS.wsdl" />
+    <None Include="Web References\EmdeonITS\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\localhost\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\localhost\Service1.wsdl" />
+    <None Include="Web References\PayConnectService\batchInfoResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\PayConnectService\cardType.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\PayConnectService\merchantInfoResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\PayConnectService\MerchantService.wsdl" />
+    <None Include="Web References\PayConnectService\MerchantService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\PayConnectService\MerchantService0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\PayConnectService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\PayConnectService\signatureResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\PayConnectService\transResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\SheetsSynch\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\SheetsSynch\SheetsSynch.wsdl" />
+    <None Include="Web References\WebServiceMainHQ\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\WebServiceMainHQ\WebServiceMainHQ.wsdl">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://localhost/OpenDentalServer/ServiceMain.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\OpenDentalServer\</RelPath>
+      <UpdateFromURL>http://localhost/OpenDentalServer/ServiceMain.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>OpenDentBusiness_OpenDentalServer_ServiceMain</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\WebServiceMainHQ\</RelPath>
+      <UpdateFromURL>http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>OpenDentBusiness_WebServiceMainHQ_WebServiceMainHQ</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://50.201.161.44:1942/WebServiceCustomerUpdates/Service1.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\customerUpdates\</RelPath>
+      <UpdateFromURL>http://50.201.161.44:1942/WebServiceCustomerUpdates/Service1.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>OpenDentBusiness_customerupdates_Service1</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://localhost:2923/SheetsSynch.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\SheetsSynch\</RelPath>
+      <UpdateFromURL>http://localhost:2923/SheetsSynch.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>OpenDentBusiness_SheetsSynch_SheetsSynch</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://localhost:3824/Service1.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\localhost\</RelPath>
+      <UpdateFromURL>http://localhost:3824/Service1.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>OpenDentBusiness_localhost_Service1</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://its.changehealthcare.com/ITS/ITSWS.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\EmdeonITS\</RelPath>
+      <UpdateFromURL>https://its.changehealthcare.com/ITS/ITSWS.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>OpenDentBusiness_EmdeonITS_ITSWS</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://my.dosespot.com/api/12/api.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\DoseSpotService\</RelPath>
+      <UpdateFromURL>https://my.dosespot.com/api/12/api.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>OpenDentBusiness_com_dosespot_staging_my_API</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://prelive2.dentalxchange.com/dea/DeaPartnerService%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\DentalxchangePartnerService\</RelPath>
+      <UpdateFromURL>https://prelive2.dentalxchange.com/dea/DeaPartnerService%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>OpenDentBusiness_DentalxchangePartnerService_DeaPartnerService</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://prelive2.dentalxchange.com/merchant/MerchantService%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\PayConnectService\</RelPath>
+      <UpdateFromURL>https://prelive2.dentalxchange.com/merchant/MerchantService%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>OpenDentBusiness_PayConnectService_MerchantService</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://webservices.dentalxchange.com/dws/DwsService%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\Dentalxchange2016\</RelPath>
+      <UpdateFromURL>https://webservices.dentalxchange.com/dws/DwsService%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>OpenDentBusiness_Dentalxchange2016_DwsService</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://webservices.dentalxchange.com/dws/webservice/wsdl.jsp">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\com.dentalxchange.webservices\</RelPath>
+      <UpdateFromURL>https://webservices.dentalxchange.com/dws/webservice/wsdl.jsp</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>OpenDentBusiness_com_dentalxchange_webservices_WebServiceService</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Resources\rxnorm.zip" />
+    <None Include="Web References\OpenDentalServer\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\OpenDentalServer\ServiceMain.disco" />
+    <None Include="Web References\OpenDentalServer\ServiceMain.wsdl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icd9.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ApptBackTest.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Patient Info.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\WebServiceMainHQ\WebServiceMainHQ.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\customerUpdates\Service1.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\localhost\Service1.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\COVID19.xml" />
+    <Content Include="Shared\README.txt" />
+    <Resource Include="Resources\topazPen10.gif" />
+    <None Include="Resources\RecallPastDue_R.png" />
+    <None Include="Resources\RecallPastDue_P.png" />
+    <None Include="Resources\Right.gif" />
+    <None Include="Resources\RxInstruction.xml" />
+    <None Include="Web References\SheetsSynch\SheetsSynch.disco" />
+    <None Include="Resources\Statement.xml" />
+    <None Include="Resources\Screening.xml" />
+    <None Include="Resources\RoutingSlip.xml" />
+    <None Include="Resources\ReferralSlip.xml" />
+    <None Include="Resources\ReferralLetter.xml" />
+    <None Include="Resources\Rx.xml" />
+    <None Include="Resources\DepositSlip.xml" />
+    <None Include="Resources\Consent.xml" />
+    <None Include="Resources\ExamSheet.xml" />
+    <None Include="Resources\FinancialAgreement.xml" />
+    <None Include="Resources\HIPAA.xml" />
+    <None Include="Resources\LabelAppointment.xml" />
+    <None Include="Resources\LabelCarrier.xml" />
+    <None Include="Resources\LabelPatientLFAddress.xml" />
+    <None Include="Resources\LabelPatientLFChartNumber.xml" />
+    <None Include="Resources\LabelPatientLFPatNum.xml" />
+    <None Include="Resources\LabelPatientMail.xml" />
+    <None Include="Resources\LabelPatientRadiograph.xml" />
+    <None Include="Resources\LabelReferral.xml" />
+    <None Include="Resources\LabelText.xml" />
+    <None Include="Resources\LabSlip.xml" />
+    <None Include="Resources\MedicalHistNewPat.xml" />
+    <None Include="Resources\MedicalHistSimple.xml" />
+    <None Include="Resources\MedicalHistUpdate.xml" />
+    <None Include="Resources\PatientLetter.xml" />
+    <None Include="Resources\PatientLetterTxFinder.xml" />
+    <None Include="Resources\PatientRegistration.xml" />
+    <None Include="Resources\ChartModuleStandardLayout.xml" />
+    <Content Include="Resources\ClaimForms\ClaimForm1500.xml" />
+    <Content Include="Resources\ClaimForms\ClaimForm1500_02_12.xml" />
+    <Content Include="Resources\ClaimForms\ClaimFormADA 2000.xml" />
+    <Content Include="Resources\ClaimForms\ClaimFormADA 2002.xml" />
+    <Content Include="Resources\ClaimForms\ClaimFormADA 2006.xml" />
+    <Content Include="Resources\ClaimForms\ClaimFormADA 2012.xml" />
+    <Content Include="Resources\ClaimForms\ClaimFormADA 2012_J430D.xml" />
+    <None Include="Resources\ClaimForms\ClaimFormADA 2018.xml" />
+    <Content Include="Resources\ClaimForms\ClaimFormADA 2019.xml" />
+    <Content Include="Resources\ClaimForms\ClaimFormDenti-Cal.xml" />
+    <Content Include="Resources\ClaimForms\ClaimFormHCFA-1500 preprinted.xml" />
+    <Content Include="Resources\ClaimForms\ClaimFormHCFA-1500.xml" />
+    <Content Include="Resources\ClaimForms\ClaimFormUB04.xml" />
+    <None Include="Resources\ERA.xml" />
+    <None Include="Resources\EraGridHeader.xml" />
+    <None Include="Resources\PatientTransferCEMT.xml" />
+    <None Include="Resources\Left.gif" />
+    <None Include="Resources\PatientDashboard.xml" />
+    <None Include="Resources\PatientDashboardToothChart.xml" />
+    <Resource Include="Resources\deleteX10.gif" />
+    <Resource Include="Resources\eSig.gif" />
+    <Content Include="Resources\PaymentPlan.xml" />
+    <None Include="Resources\RXMulti.xml" />
+    <None Include="Resources\TreatmentPlan.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="ADODB">
+      <Guid>{B691E011-1797-432E-907A-4D8C69339129}</Guid>
+      <VersionMajor>6</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="CDO">
+      <Guid>{CD000000-8B95-11D1-82DB-00C04FB1625D}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

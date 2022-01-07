@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SheetDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <IsNew>false</IsNew>
+  <SheetDefNum>0</SheetDefNum>
+  <Description>Label Text</Description>
+  <SheetType>LabelPatient</SheetType>
+  <FontSize>12</FontSize>
+  <FontName>Microsoft Sans Serif</FontName>
+  <Width>108</Width>
+  <Height>346</Height>
+  <IsLandscape>true</IsLandscape>
+  <PageCount>1</PageCount>
+  <IsMultiPage>false</IsMultiPage>
+  <SheetFieldDefs>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3540</SheetFieldDefNum>
+      <SheetDefNum>66</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>text</FieldName>
+      <FieldValue />
+      <FontSize>12</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>25</XPos>
+      <YPos>30</YPos>
+      <Width>300</Width>
+      <Height>315</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+  </SheetFieldDefs>
+</SheetDef>
