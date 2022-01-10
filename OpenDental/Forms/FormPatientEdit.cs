@@ -334,6 +334,9 @@ namespace OpenDental{
 			textAge.Text=PatientLogic.DateToAgeString(_patientCur.Birthdate,_patientCur.DateTimeDeceased);
 			if(PrefC.GetBool(PrefName.PatientSSNMasked)) {
 				textSSN.Text=Patients.SSNFormatHelper(_patientCur.SSN,true);//If PatCur.SSN is null or empty, returns empty string.
+				if(textSSN.Text!="") {
+					textSSN.ReadOnly=true;
+				}
 				_maskedSSNOld=textSSN.Text;
 				butViewSSN.Enabled=(Security.IsAuthorized(Permissions.PatientSSNView,true) && textSSN.Text!="");//Disable button if no SSN entered
 				butViewSSN.Visible=true;
@@ -1028,7 +1031,7 @@ namespace OpenDental{
 						break;
 					case RequiredFieldName.SocialSecurityNumber:
 						SetRequiredTextBox(labelSSN,textSSN,areConditionsMet);
-						break;
+					break;
 					case RequiredFieldName.State:
 						SetRequiredTextBox(labelST,textState,areConditionsMet);
 						if(textState.Text!=""	&& !StateAbbrs.IsValidAbbr(textState.Text)) {
@@ -1352,9 +1355,9 @@ namespace OpenDental{
 					|| (control is ODDatePicker
 						// masked dates show up as "xx/xx/xxxx" but can still be blank. If it is blank, we still want to trigger the required fields. 
 						// Birthdate field is not the only ODDatePicker field, so we have to treat it differently. GetDateTime() will return DateTime.MinValue if blank
-						&& ((_isBirthdayMasked
-							&& control.Name=="odDatePickerBirthDate"
-							&& !String.IsNullOrEmpty(((ODDatePicker)control).GetTextDate()))
+						&& ((_isBirthdayMasked	
+							&& control.Name=="odDatePickerBirthDate" 
+							&& !String.IsNullOrEmpty(((ODDatePicker)control).GetTextDate())) 
 							? false // Birthdate is masked and has a value, don't trigger required field.
 						: (((ODDatePicker)control).GetDateTime() == DateTime.MinValue))
 					)
@@ -1511,6 +1514,11 @@ namespace OpenDental{
 			if(PrefC.GetBool(PrefName.PatientSSNMasked) && textSSN.Text==_maskedSSNOld) {//If SSN hasn't changed, don't validate.  It is masked.
 				return;
 			}
+			if(!Regex.IsMatch(textSSN.Text,@"^\d{9}$") && !Regex.IsMatch(textSSN.Text,@"^\d{3}-\d{2}-\d{4}$")) {
+				MsgBox.Show("Patient's Social Security Number is invalid.");
+				_errorProvider.SetError(textSSN, "Invalid social security number.");
+				return;
+			}
 			if(textSSN.Text.Length==9){//if just numbers, try to reformat.
 				bool SSNisValid=true;
 				for(int i=0;i<textSSN.Text.Length;i++){
@@ -1561,6 +1569,7 @@ namespace OpenDental{
 			}
 			if(!IsBirthdateValid()) {
 				MsgBox.Show(this,"Patient's Birthdate is not a valid or allowed date.");
+				_errorProvider.SetError(odDatePickerBirthDate,"Valid dates between 1880 and 2100.");
 				return;
 			}
 			DateTime dateTimeBirthdate=PIn.Date(odDatePickerBirthDate.Text);
@@ -2727,6 +2736,7 @@ namespace OpenDental{
 
 		private void butViewSSN_Click(object sender,EventArgs e) {
 			textSSN.Text=Patients.SSNFormatHelper(_patientOld.SSN,false);
+			textSSN.ReadOnly=false;
 			string logtext="";
 			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
 				logtext="Social Insurance Number";
@@ -2896,6 +2906,7 @@ namespace OpenDental{
 				if(!Regex.IsMatch(textSSN.Text,@"^\d\d\d-\d\d-\d\d\d\d$")) {
 					if(MessageBox.Show("SSN not valid. Continue anyway?","",MessageBoxButtons.OKCancel)
 						!=DialogResult.OK) {
+						_errorProvider.SetError(textSSN, "Invalid social security number.");
 						return;
 					}
 				}

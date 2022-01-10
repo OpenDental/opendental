@@ -83,7 +83,7 @@ namespace OpenDental {
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(126, 293);
+			this.label2.Location = new System.Drawing.Point(126, 303);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(213, 16);
 			this.label2.TabIndex = 5;
@@ -95,15 +95,15 @@ namespace OpenDental {
 			this.listAvailable.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.listAvailable.IntegralHeight = false;
-			this.listAvailable.Location = new System.Drawing.Point(388, 312);
+			this.listAvailable.Location = new System.Drawing.Point(388, 322);
 			this.listAvailable.Name = "listAvailable";
 			this.listAvailable.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
-			this.listAvailable.Size = new System.Drawing.Size(158, 345);
+			this.listAvailable.Size = new System.Drawing.Size(158, 336);
 			this.listAvailable.TabIndex = 15;
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(385, 292);
+			this.label3.Location = new System.Drawing.Point(385, 302);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(158, 17);
 			this.label3.TabIndex = 16;
@@ -360,7 +360,7 @@ namespace OpenDental {
 			this.groupBoxProperties.Controls.Add(this.groupBox7);
 			this.groupBoxProperties.Controls.Add(this.checkNotes);
 			this.groupBoxProperties.Controls.Add(this.checkShowTeeth);
-			this.groupBoxProperties.Location = new System.Drawing.Point(27, 50);
+			this.groupBoxProperties.Location = new System.Drawing.Point(27, 60);
 			this.groupBoxProperties.Name = "groupBoxProperties";
 			this.groupBoxProperties.Size = new System.Drawing.Size(277, 228);
 			this.groupBoxProperties.TabIndex = 67;
@@ -405,7 +405,7 @@ namespace OpenDental {
 			// 
 			// listProcStatusCodes
 			// 
-			this.listProcStatusCodes.Location = new System.Drawing.Point(388, 80);
+			this.listProcStatusCodes.Location = new System.Drawing.Point(388, 90);
 			this.listProcStatusCodes.Name = "listProcStatusCodes";
 			this.listProcStatusCodes.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
 			this.listProcStatusCodes.Size = new System.Drawing.Size(158, 186);
@@ -415,7 +415,7 @@ namespace OpenDental {
 			// 
 			// labelProcStatus
 			// 
-			this.labelProcStatus.Location = new System.Drawing.Point(388, 60);
+			this.labelProcStatus.Location = new System.Drawing.Point(388, 70);
 			this.labelProcStatus.Name = "labelProcStatus";
 			this.labelProcStatus.Size = new System.Drawing.Size(158, 17);
 			this.labelProcStatus.TabIndex = 71;
@@ -465,7 +465,7 @@ namespace OpenDental {
 			// butRight
 			// 
 			this.butRight.Image = global::OpenDental.Properties.Resources.Right;
-			this.butRight.Location = new System.Drawing.Point(335, 416);
+			this.butRight.Location = new System.Drawing.Point(335, 426);
 			this.butRight.Name = "butRight";
 			this.butRight.Size = new System.Drawing.Size(35, 24);
 			this.butRight.TabIndex = 55;
@@ -475,7 +475,7 @@ namespace OpenDental {
 			// 
 			this.butLeft.AdjustImageLocation = new System.Drawing.Point(-1, 0);
 			this.butLeft.Image = global::OpenDental.Properties.Resources.Left;
-			this.butLeft.Location = new System.Drawing.Point(335, 376);
+			this.butLeft.Location = new System.Drawing.Point(335, 386);
 			this.butLeft.Name = "butLeft";
 			this.butLeft.Size = new System.Drawing.Size(35, 24);
 			this.butLeft.TabIndex = 54;
@@ -509,7 +509,7 @@ namespace OpenDental {
 			// butDefault
 			// 
 			this.butDefault.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDefault.Location = new System.Drawing.Point(27, 285);
+			this.butDefault.Location = new System.Drawing.Point(27, 295);
 			this.butDefault.Name = "butDefault";
 			this.butDefault.Size = new System.Drawing.Size(91, 24);
 			this.butDefault.TabIndex = 4;
@@ -520,10 +520,10 @@ namespace OpenDental {
 			// 
 			this.gridMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-			this.gridMain.Location = new System.Drawing.Point(27, 312);
+			this.gridMain.Location = new System.Drawing.Point(27, 322);
 			this.gridMain.Name = "gridMain";
 			this.gridMain.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridMain.Size = new System.Drawing.Size(292, 345);
+			this.gridMain.Size = new System.Drawing.Size(292, 336);
 			this.gridMain.TabIndex = 3;
 			this.gridMain.Title = "Fields Showing";
 			this.gridMain.TranslationName = "FormDisplayFields";

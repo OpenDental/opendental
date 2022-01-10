@@ -50,7 +50,7 @@ namespace OpenDentBusiness.Eclaims
 			}
 			else if(clearinghouseClin.CommBridge==EclaimsCommBridge.ClaimConnect) {
 				//creating workstation specific claim upload folders for claimconnect
-				string filePath = ODFileUtils.CombinePaths(saveFolder, ODEnvironment.MachineName);
+				string filePath = ODFileUtils.CombinePaths(saveFolder, ODEnvironment.MachineName.TrimEnd(' '));
 				if(!Directory.Exists(filePath)) {
 					try {
 						Directory.CreateDirectory(filePath);
