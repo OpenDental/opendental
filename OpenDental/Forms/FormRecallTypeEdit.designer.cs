@@ -52,8 +52,11 @@ namespace OpenDental {
 			this.label15 = new System.Windows.Forms.Label();
 			this.listProcs = new OpenDental.UI.ListBoxOD();
 			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.labelRestrictToBlockouts = new System.Windows.Forms.Label();
 			this.butRemoveProc = new OpenDental.UI.Button();
+			this.butSelectBlockouts = new OpenDental.UI.Button();
 			this.butAddProc = new OpenDental.UI.Button();
+			this.textRestrictToBlockouts = new System.Windows.Forms.TextBox();
 			this.listTriggers = new OpenDental.UI.ListBoxOD();
 			this.labelTriggers = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
@@ -104,25 +107,22 @@ namespace OpenDental {
 			this.groupInterval.Controls.Add(this.label9);
 			this.groupInterval.Controls.Add(this.textYears);
 			this.groupInterval.Controls.Add(this.label10);
-			this.groupInterval.Location = new System.Drawing.Point(55, 282);
+			this.groupInterval.Location = new System.Drawing.Point(42, 285);
 			this.groupInterval.Name = "groupInterval";
-			this.groupInterval.Size = new System.Drawing.Size(170, 115);
+			this.groupInterval.Size = new System.Drawing.Size(183, 115);
 			this.groupInterval.TabIndex = 116;
-			this.groupInterval.TabStop = false;
 			this.groupInterval.Text = "Default Interval";
 			// 
 			// textWeeks
 			// 
-			this.textWeeks.Location = new System.Drawing.Point(105, 64);
-			this.textWeeks.MaxVal = 255;
-			this.textWeeks.MinVal = 0;
+			this.textWeeks.Location = new System.Drawing.Point(118, 64);
 			this.textWeeks.Name = "textWeeks";
 			this.textWeeks.Size = new System.Drawing.Size(51, 20);
 			this.textWeeks.TabIndex = 2;
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(11, 64);
+			this.label7.Location = new System.Drawing.Point(24, 64);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(92, 19);
 			this.label7.TabIndex = 11;
@@ -131,16 +131,14 @@ namespace OpenDental {
 			// 
 			// textDays
 			// 
-			this.textDays.Location = new System.Drawing.Point(105, 86);
-			this.textDays.MaxVal = 255;
-			this.textDays.MinVal = 0;
+			this.textDays.Location = new System.Drawing.Point(118, 87);
 			this.textDays.Name = "textDays";
 			this.textDays.Size = new System.Drawing.Size(51, 20);
 			this.textDays.TabIndex = 3;
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(11, 86);
+			this.label6.Location = new System.Drawing.Point(24, 86);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(92, 19);
 			this.label6.TabIndex = 9;
@@ -149,16 +147,14 @@ namespace OpenDental {
 			// 
 			// textMonths
 			// 
-			this.textMonths.Location = new System.Drawing.Point(105, 41);
-			this.textMonths.MaxVal = 255;
-			this.textMonths.MinVal = 0;
+			this.textMonths.Location = new System.Drawing.Point(118, 41);
 			this.textMonths.Name = "textMonths";
 			this.textMonths.Size = new System.Drawing.Size(51, 20);
 			this.textMonths.TabIndex = 1;
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(11, 41);
+			this.label9.Location = new System.Drawing.Point(24, 41);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(92, 19);
 			this.label9.TabIndex = 7;
@@ -167,16 +163,15 @@ namespace OpenDental {
 			// 
 			// textYears
 			// 
-			this.textYears.Location = new System.Drawing.Point(105, 18);
+			this.textYears.Location = new System.Drawing.Point(118, 18);
 			this.textYears.MaxVal = 127;
-			this.textYears.MinVal = 0;
 			this.textYears.Name = "textYears";
 			this.textYears.Size = new System.Drawing.Size(51, 20);
 			this.textYears.TabIndex = 0;
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(11, 18);
+			this.label10.Location = new System.Drawing.Point(24, 18);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(92, 19);
 			this.label10.TabIndex = 5;
@@ -185,14 +180,14 @@ namespace OpenDental {
 			// 
 			// textPattern
 			// 
-			this.textPattern.Location = new System.Drawing.Point(105, 19);
+			this.textPattern.Location = new System.Drawing.Point(118, 16);
 			this.textPattern.Name = "textPattern";
 			this.textPattern.Size = new System.Drawing.Size(170, 20);
 			this.textPattern.TabIndex = 0;
 			// 
 			// label12
 			// 
-			this.label12.Location = new System.Drawing.Point(283, 21);
+			this.label12.Location = new System.Drawing.Point(296, 18);
 			this.label12.Name = "label12";
 			this.label12.Size = new System.Drawing.Size(117, 19);
 			this.label12.TabIndex = 121;
@@ -200,7 +195,7 @@ namespace OpenDental {
 			// 
 			// label14
 			// 
-			this.label14.Location = new System.Drawing.Point(1, 23);
+			this.label14.Location = new System.Drawing.Point(14, 20);
 			this.label14.Name = "label14";
 			this.label14.Size = new System.Drawing.Size(100, 16);
 			this.label14.TabIndex = 119;
@@ -209,7 +204,7 @@ namespace OpenDental {
 			// 
 			// label15
 			// 
-			this.label15.Location = new System.Drawing.Point(1, 45);
+			this.label15.Location = new System.Drawing.Point(14, 42);
 			this.label15.Name = "label15";
 			this.label15.Size = new System.Drawing.Size(98, 33);
 			this.label15.TabIndex = 120;
@@ -218,48 +213,77 @@ namespace OpenDental {
 			// 
 			// listProcs
 			// 
-			this.listProcs.Location = new System.Drawing.Point(105, 45);
+			this.listProcs.Location = new System.Drawing.Point(118, 42);
 			this.listProcs.Name = "listProcs";
 			this.listProcs.Size = new System.Drawing.Size(220, 108);
 			this.listProcs.TabIndex = 1;
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this.labelRestrictToBlockouts);
 			this.groupBox2.Controls.Add(this.butRemoveProc);
+			this.groupBox2.Controls.Add(this.butSelectBlockouts);
 			this.groupBox2.Controls.Add(this.butAddProc);
+			this.groupBox2.Controls.Add(this.textRestrictToBlockouts);
 			this.groupBox2.Controls.Add(this.textPattern);
 			this.groupBox2.Controls.Add(this.listProcs);
 			this.groupBox2.Controls.Add(this.label15);
 			this.groupBox2.Controls.Add(this.label14);
 			this.groupBox2.Controls.Add(this.label12);
-			this.groupBox2.Location = new System.Drawing.Point(55, 408);
+			this.groupBox2.Location = new System.Drawing.Point(42, 408);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(418, 160);
+			this.groupBox2.Size = new System.Drawing.Size(482, 193);
 			this.groupBox2.TabIndex = 123;
-			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "When automatically creating appointments";
+			// 
+			// labelRestrictToBlockouts
+			// 
+			this.labelRestrictToBlockouts.Location = new System.Drawing.Point(18, 151);
+			this.labelRestrictToBlockouts.Name = "labelRestrictToBlockouts";
+			this.labelRestrictToBlockouts.Size = new System.Drawing.Size(96, 29);
+			this.labelRestrictToBlockouts.TabIndex = 217;
+			this.labelRestrictToBlockouts.Text = "Restrict to Specific Blockouts";
+			this.labelRestrictToBlockouts.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// butRemoveProc
 			// 
 			this.butRemoveProc.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butRemoveProc.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butRemoveProc.Location = new System.Drawing.Point(331, 129);
+			this.butRemoveProc.Location = new System.Drawing.Point(344, 126);
 			this.butRemoveProc.Name = "butRemoveProc";
 			this.butRemoveProc.Size = new System.Drawing.Size(78, 24);
 			this.butRemoveProc.TabIndex = 3;
 			this.butRemoveProc.Text = "Remove";
 			this.butRemoveProc.Click += new System.EventHandler(this.butRemoveProc_Click);
 			// 
+			// butSelectBlockouts
+			// 
+			this.butSelectBlockouts.Location = new System.Drawing.Point(343, 155);
+			this.butSelectBlockouts.Name = "butSelectBlockouts";
+			this.butSelectBlockouts.Size = new System.Drawing.Size(21, 22);
+			this.butSelectBlockouts.TabIndex = 216;
+			this.butSelectBlockouts.Text = "...";
+			this.butSelectBlockouts.UseVisualStyleBackColor = true;
+			this.butSelectBlockouts.Click += new System.EventHandler(this.butSelectBlockouts_Click);
+			// 
 			// butAddProc
 			// 
 			this.butAddProc.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAddProc.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAddProc.Location = new System.Drawing.Point(331, 99);
+			this.butAddProc.Location = new System.Drawing.Point(344, 96);
 			this.butAddProc.Name = "butAddProc";
 			this.butAddProc.Size = new System.Drawing.Size(78, 24);
 			this.butAddProc.TabIndex = 2;
 			this.butAddProc.Text = "Add";
 			this.butAddProc.Click += new System.EventHandler(this.butAddProc_Click);
+			// 
+			// textRestrictToBlockouts
+			// 
+			this.textRestrictToBlockouts.Location = new System.Drawing.Point(118, 156);
+			this.textRestrictToBlockouts.Name = "textRestrictToBlockouts";
+			this.textRestrictToBlockouts.ReadOnly = true;
+			this.textRestrictToBlockouts.Size = new System.Drawing.Size(220, 20);
+			this.textRestrictToBlockouts.TabIndex = 215;
 			// 
 			// listTriggers
 			// 
@@ -392,25 +416,23 @@ namespace OpenDental {
 			this.groupAgeLimit.Controls.Add(this.label5);
 			this.groupAgeLimit.Controls.Add(this.label8);
 			this.groupAgeLimit.Controls.Add(this.label17);
-			this.groupAgeLimit.Location = new System.Drawing.Point(55, 121);
+			this.groupAgeLimit.Location = new System.Drawing.Point(42, 121);
 			this.groupAgeLimit.Name = "groupAgeLimit";
-			this.groupAgeLimit.Size = new System.Drawing.Size(448, 142);
+			this.groupAgeLimit.Size = new System.Drawing.Size(465, 142);
 			this.groupAgeLimit.TabIndex = 116;
-			this.groupAgeLimit.TabStop = false;
 			this.groupAgeLimit.Text = "Child Prophy";
 			// 
 			// textRecallAgeAdult
 			// 
-			this.textRecallAgeAdult.Location = new System.Drawing.Point(105, 80);
+			this.textRecallAgeAdult.Location = new System.Drawing.Point(118, 80);
 			this.textRecallAgeAdult.MaxVal = 127;
-			this.textRecallAgeAdult.MinVal = 0;
 			this.textRecallAgeAdult.Name = "textRecallAgeAdult";
 			this.textRecallAgeAdult.Size = new System.Drawing.Size(51, 20);
 			this.textRecallAgeAdult.TabIndex = 0;
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(162, 81);
+			this.label8.Location = new System.Drawing.Point(175, 80);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(74, 19);
 			this.label8.TabIndex = 5;
@@ -419,7 +441,7 @@ namespace OpenDental {
 			// 
 			// label17
 			// 
-			this.label17.Location = new System.Drawing.Point(11, 80);
+			this.label17.Location = new System.Drawing.Point(20, 81);
 			this.label17.Name = "label17";
 			this.label17.Size = new System.Drawing.Size(92, 19);
 			this.label17.TabIndex = 5;
@@ -527,5 +549,8 @@ namespace OpenDental {
 		private Label label17;
 		private CheckBox checkAppendToSpecial;
 		private Label label2;
+		private Label labelRestrictToBlockouts;
+		private UI.Button butSelectBlockouts;
+		private TextBox textRestrictToBlockouts;
 	}
 }

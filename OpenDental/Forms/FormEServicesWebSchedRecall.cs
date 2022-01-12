@@ -92,10 +92,10 @@ namespace OpenDental {
 				butWebSchedPickClinic.Visible=false;
 				butProvRulePickClinic.Visible=false;
 			}
-			FillListboxAllowedBlockoutTypes();
 			FillGridWebSchedRecallTypes();
 			FillGridWebSchedOperatories();
 			FillListboxWebSchedProviderRule();
+			FillBlockoutTypeListboxes();
 			checkRecallAllowProvSelection.Checked=PrefC.GetBool(PrefName.WebSchedRecallAllowProvSelection);
 			long defaultStatus=PrefC.GetLong(PrefName.WebSchedRecallConfirmStatus);
 			comboWSRConfirmStatus.Items.AddDefs(Defs.GetDefsForCategory(DefCat.ApptConfirmed,true));
@@ -249,13 +249,36 @@ namespace OpenDental {
 			FillGridWebSchedTimeSlots(listTimeSlots);
 		}
 
-		private void FillListboxAllowedBlockoutTypes() {
-			List<Def> listDefBlockoutTypes=Defs.GetDefs(DefCat.BlockoutTypes,PrefC.GetWebSchedRecallAllowedBlockouts);
-			listboxWebSchedRecallIgnoreBlockoutTypes.Items.Clear();
-			for(int i=0;i<listDefBlockoutTypes.Count;i++) {
-				listboxWebSchedRecallIgnoreBlockoutTypes.Items.Add(listDefBlockoutTypes[i].ItemName);
+		///<summary>Fills the Generally Allowed and Restricted To blockout listboxes. </summary>
+		private void FillBlockoutTypeListboxes() {
+			//Get every deflink for RecallType
+			List<DefLink> listDefLinksRecallType=DefLinks.GetDefLinksByType(DefLinkType.RecallType);
+			//Restricted-To Blockouts
+			List<long> listRestrictedToBlockoutRecallTypeNums=listDefLinksRecallType.Select(x => x.DefNum).Distinct().ToList();
+			List<long> listRestrictedToBlockoutNums=listDefLinksRecallType.Select(x => x.DefNum).Distinct().ToList();
+			List<Def> listDefsRestrictedToBlockouts=Defs.GetDefs(DefCat.BlockoutTypes,listRestrictedToBlockoutNums);
+			//Allowed Blockouts
+			List<Def> listAllowedBlockoutTypes=Defs.GetDefs(DefCat.BlockoutTypes,PrefC.GetWebSchedRecallAllowedBlockouts);
+			List<long> listAllowedBlockoutTypeNums=listAllowedBlockoutTypes.Select(x => x.DefNum).Distinct().ToList();
+			List<Def> listDefAllowedBlockouts=Defs.GetDefs(DefCat.BlockoutTypes,listAllowedBlockoutTypeNums.FindAll(x => !ListTools.In(x,listRestrictedToBlockoutRecallTypeNums)));
+			//Fill the list box for Restricted to Blockouts. "BlockoutName (RecalType1.Name,RecallType2.Name)"
+			List<long> listRecallTypeNums=new List<long>();
+			List<RecallType> listRecallTypes=new List<RecallType>();
+			List<string> listRecallTypeNames=new List<string>();
+			List<string> listBlockoutReasonAssociations=new List<string>();
+			for(int i=0;i<listDefsRestrictedToBlockouts.Count;i++) {
+				listRecallTypeNums=listDefLinksRecallType.Where(x => x.DefNum==listDefsRestrictedToBlockouts[i].DefNum).Select(x => x.FKey).ToList();
+				listRecallTypes=RecallTypes.GetWhere(x => listRecallTypeNums.Contains(x.RecallTypeNum));
+				listRecallTypeNames=listRecallTypes.Select(x => x.Description).ToList();
+				listBlockoutReasonAssociations.Add(listDefsRestrictedToBlockouts[i].ItemName+" ("+string.Join(",",listRecallTypeNames)+")"); //TODO (restrict to recall type)
 			}
+			listboxRestrictedToBlockouts.Items.Clear();
+			listboxRestrictedToBlockouts.Items.AddList(listBlockoutReasonAssociations,x => x);
+			//Fill the list box for Generally Allowed
+			listboxWebSchedRecallIgnoreBlockoutTypes.Items.Clear();
+			listboxWebSchedRecallIgnoreBlockoutTypes.Items.AddList(listDefAllowedBlockouts.Select(x => x.ItemName),x => x);
 		}
+
 
 		private void FillListboxWebSchedProviderRule() {
 			ClinicPref clinicPrefProviderRule=ClinicPrefs.GetPref(PrefName.WebSchedProviderRule,comboClinicProvRule.SelectedClinicNum,isDefaultIncluded:true);
@@ -296,6 +319,18 @@ namespace OpenDental {
 			FillGridWebSchedTimeSlots();
 			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Operatories accessed via EServices Setup window.");
 		}
+
+		private void EditRecallTypes() {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
+				return;
+			}
+			using FormRecallTypes formRecallTypes=new FormRecallTypes();
+			formRecallTypes.ShowDialog();
+			FillGridWebSchedRecallTypes();
+			FillBlockoutTypeListboxes();
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Recall Types accessed via EServices Setup window.");
+		}
+
 		#endregion Methods - Private
 
 		#region Methods - Event Handlers
@@ -304,15 +339,13 @@ namespace OpenDental {
 		}
 
 		private void butEditRecallTypes_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(Permissions.Setup)) {
-				return;
-			}
-			using FormRecallTypes FormRT=new FormRecallTypes();
-			FormRT.ShowDialog();
-			FillGridWebSchedRecallTypes();
-			FillGridWebSchedTimeSlots();
-			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Recall Types accessed via EServices Setup window.");
+			EditRecallTypes();
 		}
+
+		private void butWebSchedRecallRestrictedToBlockoutEdit_Click(object sender,EventArgs e) {
+			EditRecallTypes();
+		}
+
 
 		private void butProvRulePickClinic_Click(object sender,EventArgs e) {
 			using FormClinics FormC=new FormClinics();
@@ -372,6 +405,7 @@ namespace OpenDental {
 				string strListWebSchedRecallIgnoreBlockoutTypes=String.Join(",",FormDP.ListDefsSelected.Select(x => x.DefNum));
 				Prefs.UpdateString(PrefName.WebSchedRecallIgnoreBlockoutTypes,strListWebSchedRecallIgnoreBlockoutTypes);
 			}
+			FillBlockoutTypeListboxes();
 		}
 
 		private void butWebSchedRecallNotify_Click(object sender,EventArgs e) {

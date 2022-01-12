@@ -723,6 +723,12 @@
     <Compile Include="Forms\FormDatabaseIntegrity.Designer.cs">
       <DependentUpon>FormDatabaseIntegrity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormGmailSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormGmailSettings.Designer.cs">
+      <DependentUpon>FormGmailSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormUserQuery.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -7111,7 +7117,7 @@
     <Compile Include="UI\Voice\VoiceController.cs" />
     <Compile Include="UI\Voice\VoiceMsgBox.cs" />
     <Compile Include="UI\WarningIntegrity.cs">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UI\WarningIntegrity.Designer.cs">
       <DependentUpon>WarningIntegrity.cs</DependentUpon>
@@ -7457,6 +7463,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormDatabaseIntegrity.resx">
       <DependentUpon>FormDatabaseIntegrity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormGmailSettings.resx">
+      <DependentUpon>FormGmailSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormUserQuery.resx">
       <DependentUpon>FormUserQuery.cs</DependentUpon>

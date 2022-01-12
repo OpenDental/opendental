@@ -80,10 +80,7 @@ namespace OpenDental {
 			}
 			#endregion
 			#region Fill and Set UI Fields
-			warningIntegrity1.ObjectDesc="PayPlan";
-			if(PayPlans.IsPayPlanHashValid(_payPlanCur)) {
-			 warningIntegrity1.Visible=false;
-			}
+			warningIntegrity1.SetTypeAndVisibility(EnumWarningIntegrityType.PayPlan,PayPlans.IsPayPlanHashValid(_payPlanCur));
 			comboCategory.Items.AddDefNone();
 			comboCategory.Items.AddDefs(Defs.GetDefsForCategory(DefCat.PayPlanCategories,true));
 			comboCategory.SetSelectedDefNum(_payPlanCur.PlanCategory); 

@@ -39,6 +39,7 @@ namespace OpenDentBusiness.WebTypes.WebSched.TimeSlot {
 		///Providers passed in will be the only providers considered when looking for available time slots.
 		///Passing in a null clinic will only consider operatories with clinics set to 0 (unassigned).
 		///The timeslots on and between the Start and End dates passed in will be considered and potentially returned as available.
+		///Will consider restriction blockouts when scheduling if set up for the recall type.
 		///Optionally pass in a recall object in order to consider all other recalls due for the patient.  This will potentially affect the time pattern.
 		///Throws exceptions.</summary>
 		public static List<TimeSlot> GetAvailableWebSchedTimeSlots(RecallType recallType,List<Provider> listProviders,Clinic clinic
@@ -57,10 +58,6 @@ namespace OpenDentBusiness.WebTypes.WebSched.TimeSlot {
 			}
 			log?.WriteLine("listOperatories:\r\n\t"+string.Join(",\r\n\t",listOperatories.Select(x => x.OperatoryNum+" - "+x.Abbrev)),LogLevel.Verbose);
 			List<long> listProvNums=listProviders.Select(x => x.ProvNum).Distinct().ToList();
-			List<Schedule> listSchedules=Schedules.GetSchedulesAndBlockoutsForWebSched(listProvNums,dateStart,dateEnd,true
-				,(clinic==null) ? 0 : clinic.ClinicNum,log);
-			log?.WriteLine("listSchedules:\r\n\t"+string.Join(",\r\n\t",listSchedules.Select(x => x.ScheduleNum+" - "+x.SchedDate+" "+x.StartTime))
-				,LogLevel.Verbose);
 			string timePatternRecall=recallType.TimePattern;
 			//Apparently scheduling this one recall can potentially schedule a bunch of other recalls at the same time.
 			//We need to potentially bloat our time pattern based on the other recalls that are due for this specific patient.
@@ -70,8 +67,20 @@ namespace OpenDentBusiness.WebTypes.WebSched.TimeSlot {
 				timePatternRecall=Recalls.GetRecallTimePattern(recallCur,listRecalls,patCur,new List<string>());
 			}
 			string timePatternAppointment=RecallTypes.ConvertTimePattern(timePatternRecall);
+			//Get restriction blockouts
+			List<Schedule> listRestrictedToBlockouts=null;
+			List<DefLink> listRestrictedToBlockoutDefLinks=DefLinks.GetListByFKey(recallType.RecallTypeNum,DefLinkType.RecallType);
+			if(listRestrictedToBlockoutDefLinks.Count>0) {	
+				listRestrictedToBlockouts=Schedules.GetRestrictedToBlockoutsByRecallType(recallType.RecallTypeNum,dateStart,dateEnd,
+					listOperatories.Select(x => x.OperatoryNum).ToList(),listRestrictedBlockouts:listRestrictedToBlockoutDefLinks);
+			}
+			List<Schedule> listSchedules=Schedules.GetSchedulesAndBlockoutsForWebSched(listProvNums,dateStart,dateEnd,isRecall:true
+				,(clinic==null) ? 0 : clinic.ClinicNum,log,listRestrictedToBlockouts:listRestrictedToBlockouts);
+			log?.WriteLine("listSchedules:\r\n\t"+string.Join(",\r\n\t",listSchedules.Select(x => x.ScheduleNum+" - "+x.SchedDate+" "+x.StartTime))
+				,LogLevel.Verbose);
+
 			return GetTimeSlotsForRange(dateStart,dateEnd,timePatternAppointment,listProvNums,listOperatories,listSchedules,clinic,log:log,
-				isDoubleBookingAllowed:PrefC.GetInt(PrefName.WebSchedRecallDoubleBooking)==0);//is double booking allowed according to the preference
+				isDoubleBookingAllowed:PrefC.GetInt(PrefName.WebSchedRecallDoubleBooking)==0,listRestrictToBlockouts:listRestrictedToBlockouts);//is double booking allowed according to the preference
 		}
 
 		///<summary>Gets up to 30 days of open time slots for New Patient Appointments based on the timePattern passed in.
@@ -112,7 +121,7 @@ namespace OpenDentBusiness.WebTypes.WebSched.TimeSlot {
 				listRestrictedToBlockouts=Schedules.GetRestrictedToBlockoutsByReason(defNumApptType,dateStart,dateEnd,
 					listOperatories.Select(x => x.OperatoryNum).ToList(),listRestrictedBlockouts:listRestrictedToBlockoutDefLinks);
 			}
-			List<Schedule> listSchedules=Schedules.GetSchedulesAndBlockoutsForWebSched(listProvNums,dateStart,dateEnd,false,clinicNum,
+			List<Schedule> listSchedules=Schedules.GetSchedulesAndBlockoutsForWebSched(listProvNums,dateStart,dateEnd,isRecall:false,clinicNum,
 				listRestrictedToBlockouts:listRestrictedToBlockouts,isNewPat:isNewPat);
 			return GetTimeSlotsForRange(dateStart,dateEnd,timePattern,listProvNums,listOperatories,listSchedules,clinic,defNumApptType,
 				isDoubleBookingAllowed:PrefC.GetInt(prefName)==0,listRestrictToBlockouts:listRestrictedToBlockouts);//is double booking allowed according to the preference

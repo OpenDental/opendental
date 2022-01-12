@@ -4444,7 +4444,7 @@ namespace OpenDentBusiness {
 			//If there are duplicates in listPatNums, then they will be removed because of the IN statement in the query below.
 			string command=$@"SELECT * 
 				FROM patient
-				WHERE PatStatus IN ({POut.Enum(PatientStatus.Patient)},{POut.Enum(PatientStatus.NonPatient)})
+				WHERE PatStatus IN ({POut.Enum(PatientStatus.Patient)},{POut.Enum(PatientStatus.NonPatient)},{POut.Enum(PatientStatus.Inactive)})
 				AND PatNum IN ({string.Join(",",listPatNums)})";
 			return Crud.PatientCrud.SelectMany(command);
 		}

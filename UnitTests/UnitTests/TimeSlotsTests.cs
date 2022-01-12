@@ -1167,5 +1167,181 @@ namespace UnitTests.TimeSlots_Tests {
 				x.DateTimeStart==tomorrow.AddHours(3) 
 				&& x.DateTimeStop==tomorrow.AddHours(4)));
 		}
+
+		///<summary>Tests that a WebSched Recall appointment can only be scheduled in a certain blockout when restricted by a recall type. </summary>
+		[TestMethod]
+		public void TimeSlots_GetAvailableWebSchedTimeSlots_BlockScheduling_WebSchedRecallRestrictedToBlockouts() {
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			PrefT.UpdateInt(PrefName.AppointmentTimeIncrement,5); //Force 5-minute time pattern for this test
+			string timePattern="XXXXXXXXXXXX"; //1 hour time pattern
+			DateTime tomorrow=DateTime.Today.AddDays(1);
+			long prov=ProviderT.CreateProvider("DOC-"+suffix);
+			Clinic clinic=ClinicT.CreateClinic(description:suffix);
+			Operatory op=OperatoryT.CreateOperatory(provDentist:prov,opName:suffix,clinicNum:clinic.ClinicNum,isWebSched:true);
+			Patient pat=PatientT.CreatePatient(suffix,prov,clinic.ClinicNum,birthDate: new DateTime(1950,1,1));
+			RecallType recallType=RecallTypeT.CreateRecallType("Prophy-"+suffix,"D1110,D1330",timePattern,new Interval(1,0,6,0));
+			Recall recall=RecallT.CreateRecall(pat.PatNum,recallType.RecallTypeNum,DateTime.Today.AddDays(-1),new Interval(1,0,6,0));
+			//restrict to blockout
+			Def restrictedBlockoutRecall=DefT.CreateDefinition(DefCat.BlockoutTypes,suffix+"restrictedRecall");
+			DefLinkT.CreateDefLink(restrictedBlockoutRecall.DefNum,recallType.RecallTypeNum,DefLinkType.RecallType);
+			Schedule restrictedBlockoutSched=ScheduleT.CreateSchedule(tomorrow,
+				tomorrow.AddHours(11).TimeOfDay,
+				tomorrow.AddHours(12).TimeOfDay,
+				schedType:ScheduleType.Blockout,
+				blockoutType:restrictedBlockoutRecall.DefNum,
+				listOpNums:new List<long>(){ op.OperatoryNum });
+			//Create a provider schedule that is open 'all day'.
+			Schedule openSchedule=ScheduleT.CreateSchedule(tomorrow,
+				new TimeSpan(tomorrow.AddHours(8).Ticks),
+				new TimeSpan(tomorrow.AddHours(16).Ticks),
+				schedType:ScheduleType.Provider,
+				provNum:prov,
+				listOpNums:new List<long>(){ op.OperatoryNum });
+			//Get timeslots
+			List<TimeSlot> listAvailableWebSchedTimeslots=TimeSlots.GetAvailableWebSchedTimeSlots(recall.RecallNum,tomorrow,tomorrow.AddDays(1));
+			//Assert result is only the blocked out period
+			Assert.AreEqual(1,listAvailableWebSchedTimeslots.Count);
+			Assert.AreEqual(restrictedBlockoutSched.DateTimeStart,listAvailableWebSchedTimeslots[0].DateTimeStart);
+			Assert.AreEqual(restrictedBlockoutSched.DateTimeStop,listAvailableWebSchedTimeslots[0].DateTimeStop);
+		}
+
+		///<summary>Tests that a WebSched Recall appointment can only be scheduled in a certain blockouts when restricted by the same recall type. </summary>
+		[TestMethod]
+		public void TimeSlots_GetAvailableWebSchedTimeSlots_BlockScheduling_WebSchedRecallRestrictedToMultipleBlockouts() {
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			PrefT.UpdateInt(PrefName.AppointmentTimeIncrement,5); //Force 5-minute time pattern for this test
+			string timePattern="XXXXXXXXXXXX"; //1 hour time pattern
+			DateTime tomorrow=DateTime.Today.AddDays(1);
+			long prov=ProviderT.CreateProvider("DOC-"+suffix);
+			Clinic clinic=ClinicT.CreateClinic(description:suffix);
+			Operatory op=OperatoryT.CreateOperatory(provDentist:prov,opName:suffix,clinicNum:clinic.ClinicNum,isWebSched:true);
+			Patient pat=PatientT.CreatePatient(suffix,prov,clinic.ClinicNum,birthDate: new DateTime(1950,1,1));
+			RecallType recallType=RecallTypeT.CreateRecallType("Prophy-"+suffix,"D1110,D1330",timePattern,new Interval(1,0,6,0));
+			Recall recall=RecallT.CreateRecall(pat.PatNum,recallType.RecallTypeNum,DateTime.Today.AddDays(-1),new Interval(1,0,6,0));
+			//restrict to blockouts
+			Def restrictedBlockoutRecallOne=DefT.CreateDefinition(DefCat.BlockoutTypes,suffix+"restrictedRecallOne");
+			DefLinkT.CreateDefLink(restrictedBlockoutRecallOne.DefNum,recallType.RecallTypeNum,DefLinkType.RecallType);
+			Def restrictedBlockoutRecallTwo=DefT.CreateDefinition(DefCat.BlockoutTypes,suffix+"restrictedRecallTwo");
+			DefLinkT.CreateDefLink(restrictedBlockoutRecallTwo.DefNum,recallType.RecallTypeNum,DefLinkType.RecallType);
+			//Blockout One 9a-10a
+			Schedule restrictedBlockoutSchedOne=ScheduleT.CreateSchedule(tomorrow,
+				tomorrow.AddHours(9).TimeOfDay,
+				tomorrow.AddHours(10).TimeOfDay,
+				schedType:ScheduleType.Blockout,
+				blockoutType:restrictedBlockoutRecallOne.DefNum,
+				listOpNums:new List<long>(){ op.OperatoryNum });
+			//Blockout Two 10a-11a
+			Schedule restrictedBlockoutSchedTwo=ScheduleT.CreateSchedule(tomorrow,
+				tomorrow.AddHours(10).TimeOfDay,
+				tomorrow.AddHours(11).TimeOfDay,
+				schedType:ScheduleType.Blockout,
+				blockoutType:restrictedBlockoutRecallTwo.DefNum,
+				listOpNums:new List<long>(){ op.OperatoryNum });
+			//Create a provider schedule that is open 'all day'.
+			Schedule openSchedule=ScheduleT.CreateSchedule(tomorrow,
+				new TimeSpan(tomorrow.AddHours(9).Ticks),
+				new TimeSpan(tomorrow.AddHours(16).Ticks),
+				schedType:ScheduleType.Provider,
+				provNum:prov,
+				listOpNums:new List<long>(){ op.OperatoryNum });
+			//Get timeslots
+			List<TimeSlot> listAvailableWebSchedTimeslots=TimeSlots.GetAvailableWebSchedTimeSlots(recall.RecallNum,tomorrow,tomorrow.AddDays(1));
+			//Assert result is only the two blocked out periods (9-10a && 10-11a)
+			Assert.AreEqual(2,listAvailableWebSchedTimeslots.Count);
+			Assert.AreEqual(restrictedBlockoutSchedOne.DateTimeStart,listAvailableWebSchedTimeslots[0].DateTimeStart);
+			Assert.AreEqual(restrictedBlockoutSchedOne.DateTimeStop,listAvailableWebSchedTimeslots[0].DateTimeStop);
+			Assert.AreEqual(restrictedBlockoutSchedTwo.DateTimeStart,listAvailableWebSchedTimeslots[1].DateTimeStart);
+			Assert.AreEqual(restrictedBlockoutSchedTwo.DateTimeStop,listAvailableWebSchedTimeslots[1].DateTimeStop);
+		}
+
+		///<summary>Tests that a WebSched Recall appointment can only be scheduled in a certain blockout (and ignoring all others) when restricted by a recall type. </summary>
+		[TestMethod]
+		public void TimeSlots_GetAvailableWebSchedTimeSlots_BlockScheduling_WebSchedRecallRestrictedToBlockouts_IgnoringOtherBlockouts() {
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			PrefT.UpdateInt(PrefName.AppointmentTimeIncrement,5); //Force 5-minute time pattern for this test
+			string timePattern="XXXXXXXXXXXX"; //1 hour time pattern
+			DateTime tomorrow=DateTime.Today.AddDays(1);
+			long prov=ProviderT.CreateProvider("DOC-"+suffix);
+			Clinic clinic=ClinicT.CreateClinic(description:suffix);
+			Operatory op=OperatoryT.CreateOperatory(provDentist:prov,opName:suffix, clinicNum:clinic.ClinicNum,isWebSched:true);
+			Patient patient=PatientT.CreatePatient(suffix,prov,clinic.ClinicNum,birthDate: new DateTime(1950,1,1));
+			RecallType recallType=RecallTypeT.CreateRecallType("Prophy-"+suffix,"D1110,D1330",timePattern,new Interval(1,0,6,0));
+			Recall recall=RecallT.CreateRecall(patient.PatNum,recallType.RecallTypeNum,DateTime.Today.AddDays(-1),new Interval(1,0,6,0));
+			//Restrict to blockout 9a-10a 
+			Def restrictedBlockoutRecallOne=DefT.CreateDefinition(DefCat.BlockoutTypes,suffix+"restrictedRecall");
+			DefLinkT.CreateDefLink(restrictedBlockoutRecallOne.DefNum,recallType.RecallTypeNum,DefLinkType.RecallType);
+			Schedule restrictedBlockoutSchedOne=ScheduleT.CreateSchedule(tomorrow,
+				tomorrow.AddHours(9).TimeOfDay,
+				tomorrow.AddHours(10).TimeOfDay,
+				schedType:ScheduleType.Blockout,
+				blockoutType:restrictedBlockoutRecallOne.DefNum,
+				listOpNums:new List<long>(){ op.OperatoryNum });
+			//Non-WSRecall Blockout 10a-11a - Will be not considered for scheduling
+			Def defBlockout=DefT.CreateDefinition(DefCat.BlockoutTypes,suffix+"Not Recall");
+			Schedule restrictedBlockoutSchedTwo=ScheduleT.CreateSchedule(tomorrow,
+				tomorrow.AddHours(10).TimeOfDay,
+				tomorrow.AddHours(11).TimeOfDay,
+				schedType:ScheduleType.Blockout,
+				blockoutType:defBlockout.DefNum,
+				listOpNums:new List<long>(){ op.OperatoryNum });
+			//Create a provider schedule that is open 'all day'.
+			Schedule openSchedule=ScheduleT.CreateSchedule(tomorrow,
+				new TimeSpan(tomorrow.AddHours(9).Ticks),
+				new TimeSpan(tomorrow.AddHours(16).Ticks),
+				schedType:ScheduleType.Provider,
+				provNum:prov,
+				listOpNums:new List<long>(){ op.OperatoryNum });
+			//Get timeslots
+			List<TimeSlot> listAvailableWebSchedTimeslots=TimeSlots.GetAvailableWebSchedTimeSlots(recall.RecallNum,tomorrow,tomorrow.AddDays(1));
+			//Assert result is only the one blocked out period (9-10a)
+			Assert.AreEqual(1,listAvailableWebSchedTimeslots.Count);
+			Assert.AreEqual(restrictedBlockoutSchedOne.DateTimeStart,listAvailableWebSchedTimeslots[0].DateTimeStart);
+			Assert.AreEqual(restrictedBlockoutSchedOne.DateTimeStop,listAvailableWebSchedTimeslots[0].DateTimeStop);
+		}
+
+		///<summary>Tests that a WebSched Recall appointment can only be scheduled in a certain blockouts when restricted by the same recall type. Unrestricted recall type cannot schedule in that blockout. </summary>
+		[TestMethod]
+		public void TimeSlots_GetAvailableWebSchedTimeSlots_BlockScheduling_WebSchedRecall_UnrestrictedRecallTypesCannotScheduleOverRestrictedBlockouts() {
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			PrefT.UpdateInt(PrefName.AppointmentTimeIncrement,5); //Force 5-minute time pattern for this test
+			string timePattern="XXXXXXXXXXXX"; //1 hour time pattern
+			DateTime tomorrow=DateTime.Today.AddDays(1);
+			long prov=ProviderT.CreateProvider("DOC-"+suffix);
+			Clinic clinic=ClinicT.CreateClinic(description:suffix);
+			Operatory op=OperatoryT.CreateOperatory(provDentist:prov,opName:suffix, clinicNum:clinic.ClinicNum,isWebSched:true);
+			Patient patient=PatientT.CreatePatient(suffix,prov,clinic.ClinicNum,birthDate:new DateTime(1950,1,1));
+			//Unrestricted Recall Type
+			RecallType recallType=RecallTypeT.CreateRecallType("Prophy-"+suffix,"D1110,D1330",timePattern,new Interval(1,0,6,0));
+			Recall recall=RecallT.CreateRecall(patient.PatNum,recallType.RecallTypeNum,DateTime.Today.AddDays(-1),new Interval(1,0,6,0));
+			//Restricted Recall Type
+			RecallType recallTypeRestricted=RecallTypeT.CreateRecallType("Prophy-Restricted"+suffix,"D1110,D1330",timePattern,new Interval(1,0,6,0));
+			Recall recallRestricted=RecallT.CreateRecall(patient.PatNum,recallTypeRestricted.RecallTypeNum,DateTime.Today.AddDays(-1),new Interval(1,0,6,0));
+			Def restrictedBlockoutRecall=DefT.CreateDefinition(DefCat.BlockoutTypes,suffix+"restrictedRecallOne");
+			DefLinkT.CreateDefLink(restrictedBlockoutRecall.DefNum,recallTypeRestricted.RecallTypeNum,DefLinkType.RecallType);
+			//Restriction Blockout One 9a-10a
+			Schedule restrictedBlockoutSchedOne=ScheduleT.CreateSchedule(tomorrow,
+				tomorrow.AddHours(9).TimeOfDay,
+				tomorrow.AddHours(10).TimeOfDay,
+				schedType:ScheduleType.Blockout,
+				blockoutType:restrictedBlockoutRecall.DefNum,
+				listOpNums:new List<long>(){ op.OperatoryNum });
+			//Create a provider schedule that is open 'all day'.
+			Schedule openSchedule=ScheduleT.CreateSchedule(tomorrow,
+				new TimeSpan(tomorrow.AddHours(9).Ticks),
+				new TimeSpan(tomorrow.AddHours(16).Ticks),
+				schedType:ScheduleType.Provider,
+				provNum:prov,
+				listOpNums:new List<long>(){ op.OperatoryNum });
+			//Assert result for unrestricted recall type can schedule after, but not on, restriction blockout (10a-4p)
+			List<TimeSlot> listAvailableWebSchedTimeslots=TimeSlots.GetAvailableWebSchedTimeSlots(recall.RecallNum,tomorrow,tomorrow.AddDays(1));
+			Assert.AreEqual(6,listAvailableWebSchedTimeslots.Count);
+			Assert.AreEqual(restrictedBlockoutSchedOne.DateTimeStop,listAvailableWebSchedTimeslots.First().DateTimeStart);
+			Assert.AreEqual(tomorrow.AddHours(16),listAvailableWebSchedTimeslots.Last().DateTimeStop);
+			//Assert result for restricted recall type is only for the blockout period (9a-10p)
+			listAvailableWebSchedTimeslots=TimeSlots.GetAvailableWebSchedTimeSlots(recallRestricted.RecallNum,tomorrow,tomorrow.AddDays(1));
+			Assert.AreEqual(1,listAvailableWebSchedTimeslots.Count);
+			Assert.AreEqual(restrictedBlockoutSchedOne.DateTimeStart,listAvailableWebSchedTimeslots[0].DateTimeStart);
+			Assert.AreEqual(restrictedBlockoutSchedOne.DateTimeStop,listAvailableWebSchedTimeslots[0].DateTimeStop);
+		}
 	}
 }

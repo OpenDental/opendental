@@ -10,31 +10,74 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenDental.UI{
-	public partial class WarningIntegrity : Control{
-		///<summary>Use the human-readable version, capitalized.  Examples: Patient, Procedure, Appointment.</summary>
-		public string ObjectDesc;
-
+	public partial class WarningIntegrity : UserControl{
 		//We will scale based on size rather than LayoutManager
 		private List<Tip> _listTips;
+		///<summary></summary>
+		private bool _didShowPopup;
+		private static List<TypeAndMessage> _listTypeAndMessages;
+		private Region _regionTriangle;
 		///<summary>Usually 1, unless bigger than 18 wide.</summary>
 		private float _scale;
-		private ToolTip tooltip;
+		private Timer _timer;
+		private ToolTipOD _toolTipOD;
+		///<summary>Use the human-readable version, capitalized.  Examples: Patient, Procedure, Appointment.</summary>
+		private EnumWarningIntegrityType _warningIntegrityType;
 
 		public WarningIntegrity(){
 			InitializeComponent();
 			DoubleBuffered=true;
 			_scale=Width/18f;
-			tooltip=new ToolTip(components);
-			tooltip.InitialDelay=0;
-			tooltip.AutomaticDelay=0;
-			//This is not truly 0. It waits for hover.  I would rather do it on MouseMove, but just too much work at the moment.
-			tooltip.SetToolTip(this,Lan.g(this,"Click to learn about Database Integrity"));
+			_toolTipOD=new ToolTipOD();
+			_toolTipOD.SetControlAndAction(this,ToolTipSetString);
 		}
 
 		protected override Size DefaultSize {
 			get {
 				return new Size(18,18);
 			}
+		}	
+
+		public void SetTypeAndVisibility(EnumWarningIntegrityType warningIntegrityType,bool isHashValid){
+			_warningIntegrityType=warningIntegrityType;
+			Visible=!isHashValid;//opposite, which is why we wrapped it in this method
+		}
+
+		///<summary></summary>
+		private void ToolTipSetString(Point point) {
+			if(_regionTriangle.IsVisible(point)){
+				_toolTipOD.SetString(Lan.g(this,"Click to learn about Database Integrity"),Font);
+				return;
+			}
+			_toolTipOD.SetString("");
+		}
+
+		private void ShowPopup(){
+			//This was called from OnPaint because I simply couldn't find anything else that would show it at the right time.
+			if(_didShowPopup){
+				return;//so that we just show it once
+			}
+			_didShowPopup=true;
+			if(!Visible){
+				return;
+			}
+			//We use a timer so that the draw will finish before the popup
+			_timer=new Timer();
+			_timer.Interval=100;
+			_timer.Tick+=Timer_Tick;
+			_timer.Enabled=true;
+		}
+
+		private void Timer_Tick(object sender,EventArgs e) {
+			_timer.Enabled=false;//only happens once
+			if(_listTypeAndMessages is null){
+				//this section will later come from the OD HQ server
+				_listTypeAndMessages=new List<TypeAndMessage>();
+			}
+			//using FormDatabaseIntegrity formDatabaseIntegrity=new FormDatabaseIntegrity();
+			//formDatabaseIntegrity.ObjectDesc=_warningIntegrityType.ToString();
+			//formDatabaseIntegrity.ShowDialog();
+			//MsgBox.Show("test");//this is where future popups will happen
 		}
 
 		protected override void OnPaint(PaintEventArgs pe){
@@ -63,6 +106,7 @@ namespace OpenDental.UI{
 				//draw line between this tip and next
 				graphicsPath.AddLine(_listTips[i].PointFTipNext3,pointFArray[4]=_listTips[i].PointFNext4);
 			}
+			_regionTriangle=new Region(graphicsPath);
 			//255, 128, 0 is pure orange
 			Color colorOrange=Color.FromArgb(255, 192, 128);
 			using SolidBrush solidBrushOrange=new SolidBrush(colorOrange);
@@ -82,12 +126,16 @@ namespace OpenDental.UI{
 			g.FillEllipse(Brushes.White,rectangleFCircle);
 			//using Pen penString=new Pen(Color.FromArgb(100,50,50));
 			//g.DrawString("!",Font,Brushes.Black,LayoutManager.ScalePoint(new Point(5,2)));
+			ShowPopup();
 		}
 
 		protected override void OnMouseDown(MouseEventArgs e){
 			base.OnMouseDown(e);
+			if(_warningIntegrityType==EnumWarningIntegrityType.None){
+				throw new ApplicationException("Engineer: call SetTypeAndVisibility.");
+			}
 			using FormDatabaseIntegrity formDatabaseIntegrity=new FormDatabaseIntegrity();
-			formDatabaseIntegrity.ObjectDesc=ObjectDesc;
+			formDatabaseIntegrity.ObjectDesc=_warningIntegrityType.ToString();
 			formDatabaseIntegrity.ShowDialog();
 		}
 
@@ -181,6 +229,31 @@ namespace OpenDental.UI{
 			return new PointF(x,y);
 		}
 
+		///<summary>Nested class so that we can make a list.</summary>
+		private class TypeAndMessage{
+			public EnumWarningIntegrityType WarningIntegrityType;
+			public string Message;
+		}
 
 	}
+
+	///<summary>We use the string versions of each of these to make server calls, so don't change spelling or capitalization. Order can be alphabetical since the underlying number does not matter. For now, the strings will also show to the users, exactly as they are, without additional spaces for example.</summary>
+	public enum EnumWarningIntegrityType{
+		None,//leave this one at the top
+		Appointment,
+		Patient,
+		Payment,
+		PayPlan
+	}
 }
+
+/*
+Use it like this:
+Copy/paste the control onto the form of interest at 0,0 or at 0,0 relative to some subsection of the form.
+Size should be exactly 18x18.
+Add the following single line in the Load event:
+warningIntegrity1.SetTypeAndVisibility(EnumWarningIntegrityType.Patient,Patients.IsPatientHashValid(_patientCur));
+
+Edit from patient to the type in question.
+This will frequently include adding a new EnumWarningIntegrityType, which must involve Jordan.
+*/

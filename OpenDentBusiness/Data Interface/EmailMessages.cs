@@ -911,11 +911,7 @@ namespace OpenDentBusiness{
 					client.Connect(emailAddressInbox.Pop3ServerIncoming,emailAddressInbox.ServerPortIncoming,emailAddressInbox.UseSSL,180000,180000,null);//3 minute timeout, just as for sending emails.
 					client.Authenticate(emailAddressInbox.EmailUsername.Trim(),MiscUtils.Decrypt(emailAddressInbox.EmailPassword),OpenPop.Pop3.AuthenticationMethod.UsernameAndPassword);
 					List <string> listMsgUids=client.GetMessageUids();//Get all unique identifiers for each email in the inbox.
-					List<EmailMessageUid> listDownloadedMsgUids=EmailMessageUids.GetForRecipientAddress(emailAddressInbox.EmailUsername.Trim());
-					List<string> listDownloadedMsgUidStrs=new List<string>();
-					for(int i = 0;i<listDownloadedMsgUids.Count;i++) {
-						listDownloadedMsgUidStrs.Add(listDownloadedMsgUids[i].MsgId);
-					}
+					List<string> listDownloadedMsgUidStrs=EmailMessageUids.GetMsgIdsRecipientAddress(emailAddressInbox.EmailUsername).Select(x=>x.TrimStart("GmailId".ToCharArray())).ToList();
 					int msgDownloadedCount=0;
 					for(int i = 0;i<listMsgUids.Count;i++) {
 						int msgIndex=i+1;//The message indicies are 1-based.
@@ -1045,17 +1041,20 @@ namespace OpenDentBusiness{
 			List<EmailMessage> listEmailMessages=new List<EmailMessage>();
 			using GmailApi.GmailService gService=GoogleApiConnector.CreateGmailService(ODEmailAddressToBasic(emailAddressInbox));
 			List<GmailApi.Data.Message> listMessageIds=new List<GmailApi.Data.Message>();
-			List<EmailMessageUid> listEmailMessageUids=EmailMessageUids.GetForRecipientAddress(emailAddressInbox.EmailUsername);
+			List<string> listEmailMessageUids=EmailMessageUids.GetMsgIdsRecipientAddress(emailAddressInbox.EmailUsername).Select(x=>x.TrimStart("GmailId".ToCharArray())).ToList();
 			//This example is from: https://developers.google.com/gmail/api/v1/reference/users/messages/list
 			GmailApi.UsersResource.MessagesResource.ListRequest request=gService.Users.Messages.List(emailAddressInbox.EmailUsername);
 			//Ask for as many email message IDs as possible so that we ask the API as few times as possible.
 			request.MaxResults=500;//Maximum number of messages to return. This field defaults to 100. The maximum allowed value for this field is 500.
 			//Open Dental has no need to download messages within SPAM and TRASH.
 			request.IncludeSpamTrash=false;
+			request.Q=emailAddressInbox.QueryString;
 			do {
 				try {
 					GmailApi.Data.ListMessagesResponse response=request.Execute();
-					listMessageIds.AddRange(response.Messages);
+					if(response.Messages!=null) {
+						listMessageIds.AddRange(response.Messages);
+					}
 					request.PageToken=response.NextPageToken;
 				}
 				catch(GoogleApiException gae) {
@@ -1070,7 +1069,7 @@ namespace OpenDentBusiness{
 				}
 			} while(!request.PageToken.IsNullOrEmpty());
 			//Filter out messages that have already been received
-			listMessageIds=listMessageIds.Where(x => !ListTools.In(x.Id,listEmailMessageUids.Select(y => y.MsgId.TrimStart("GmailId".ToCharArray())))).ToList();
+			listMessageIds=listMessageIds.Where(x => !ListTools.In(x.Id,listEmailMessageUids)).ToList();
 			//After receiving all of the ID's in the inbox, perform a GET for each email message
 			foreach(GmailApi.Data.Message msg in listMessageIds) {
 				GmailApi.UsersResource.MessagesResource.GetRequest emailRequest=gService.Users.Messages.Get(emailAddressInbox.EmailUsername,msg.Id);

@@ -152,10 +152,7 @@ namespace OpenDental{
 					_appointmentTypeSelected=formApptTypes.AppointmentTypeSelected;
 				}
 			}
-			warningIntegrity1.ObjectDesc="Appointment";
-			if(Appointments.IsAppointmentHashValid(_appointment)) {
-				warningIntegrity1.Visible=false;
-			}
+			warningIntegrity1.SetTypeAndVisibility(EnumWarningIntegrityType.Appointment,Appointments.IsAppointmentHashValid(_appointment));
 			_isOnLoad=true;
 			_timerLockDelay=new Timer();
 			_timerLockDelay.Tick+=timerLockDelay_Tick;

@@ -720,11 +720,12 @@ namespace OpenDentBusiness {
 			//No need to check RemotingRole; no call to db.
 			double procFeeRet;
 			InsPlan insPlanPrimary=null;
-			if(listPatPlans.Count>0) {
-				InsSub insSubPrimary=InsSubs.GetSub(listPatPlans.Find(x => x.Ordinal==1).InsSubNum,listInsSubs);
-				if(insSubPrimary.InsSubNum!=0) {
-					insPlanPrimary=InsPlans.GetPlan(insSubPrimary.PlanNum,listInsPlans);
-				}
+			PatPlan patPlanPrimary=listPatPlans.Find(x => x.Ordinal==1);
+			if(patPlanPrimary!=null) {
+				//This will return a new InsSub if one is not found in the list or the DB.
+				InsSub insSubPrimary=InsSubs.GetSub(patPlanPrimary.InsSubNum,listInsSubs);
+				//This will be null if insSubPrimary.PlanNum is 0 due to a insSubPrimary being a new InsSub.
+				insPlanPrimary=InsPlans.GetPlan(insSubPrimary.PlanNum,listInsPlans);
 			}
 			//Get fee schedule and fee amount for medical or dental.
 			if(PrefC.GetBool(PrefName.MedicalFeeUsedForNewProcs) && !string.IsNullOrEmpty(procMedicalCode)) {

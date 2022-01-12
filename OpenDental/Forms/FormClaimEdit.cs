@@ -3718,6 +3718,13 @@ namespace OpenDental{
 						_claim.AttachedFlags="Mail";
 						Claims.Update(_claim);
 					}
+					if(validateClaimResponse!=null && validateClaimResponse.ValidationErrors.Any(x=>x.ToLower().Contains("payer does not support attachments"))) {
+						if(_claim.AttachedFlags!="") {
+							_claim.AttachedFlags+=","; //Flags exist already, so add a comma before adding "Unsup"
+						}
+						_claim.AttachedFlags+="Unsup";
+						Claims.Update(_claim);
+					}
 				}
 				//if(MsgBox.Show(this,true,"Send electronic claim immediately?")){
 				//	List<ClaimSendQueueItem> queueItems=new List<ClaimSendQueueItem>();

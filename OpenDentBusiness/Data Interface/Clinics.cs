@@ -905,6 +905,24 @@ namespace OpenDentBusiness{
 			}
 			return Patients.GetAddressFull(clinic.Address,clinic.Address2,clinic.City,clinic.State,clinic.Zip);
 		}
+		///<summary>Takes a clinicNumStr and converts it to a long and returns it. If it cannot be converted or the clinic does not exist, it returns -1. Will correctly return 0 for HQ if a "0" was given.</summary>
+		public static long GetClinicNumForApi(string clinicNumStr) {
+			long clinicNum;
+			try {
+				clinicNum=System.Convert.ToInt64(clinicNumStr);
+			}
+			catch(Exception ex) {
+				return -1;
+			}
+			if(clinicNum==0) {
+				return 0;
+			}
+			Clinic clinic=OpenDentBusiness.Clinics.GetClinic(clinicNum);
+			if(clinic is null) {
+				return -1;
+			}
+			return clinic.ClinicNum;
+		}
 	}
 	
 

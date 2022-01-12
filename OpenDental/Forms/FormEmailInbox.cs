@@ -239,14 +239,14 @@ namespace OpenDental {
 		}
 
 		///<summary>Gets new messages from email inbox, as well as older messages from the db. Also fills the grid.</summary>
-		private int GetMessages() {
+		private void GetMessages() {
 			_isRefreshInbox=true;
 			FillGridInbox();//Show what is in db.
 			if(IsWebMail()) { //WebMail is selected
-				return 0;//Webmail messages are in the database, so we will not need to receive email from the email server.
+				return;//Webmail messages are in the database, so we will not need to receive email from the email server.
 			}
 			if(AddressCur.EmailUsername=="" || AddressCur.Pop3ServerIncoming=="") {//Email address not setup.
-				return 0;
+				return;
 			}
 			Application.DoEvents();//So that something is showing while the page is loading.
 			int emailMessagesTotalCount=0;
@@ -277,7 +277,7 @@ namespace OpenDental {
 			Text="Email Client for "+AddressCur.EmailUsername+" - Resending any acknowledgments which previously failed...";
 			EmailMessages.SendOldestUnsentAck(AddressCur);
 			Text="Email Client for "+AddressCur.EmailUsername;
-			return emailMessagesTotalCount;
+			return;
 		}
 
 		///<summary>Gets new emails and also shows older emails from the database.</summary>
@@ -698,7 +698,6 @@ namespace OpenDental {
 			}
 			return true;
 		}
-
 
 		private void activeSplitContainer_SplitterMoved(object sender,EventArgs e) {
 			SplitContainerNoFlicker activeSplitContainer=(ActiveMailbox==MailboxType.Inbox)?splitContainerNoFlicker:splitContainerSent;

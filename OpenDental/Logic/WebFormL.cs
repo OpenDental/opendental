@@ -224,7 +224,6 @@ namespace OpenDental {
 			PatientImportChoice patientImportChoice=new PatientImportChoice();
 			SheetsSynchProxy.TimeoutOverride=300000;//5 minutes.  Default is 100000 (1.66667 minutes).
 			ProgressOD progressOD=new ProgressOD();
-			progressOD.TestSleep=true;
 			progressOD.ActionMain=() => listWebFormSheets=WebForms_Sheets.GetSheets(listClinicNums);
 			try {
 				progressOD.ShowDialogProgress();

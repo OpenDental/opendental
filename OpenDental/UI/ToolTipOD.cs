@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace OpenDental.UI{
-	///<summary>Kind of like the MS ToolTip, except it comes up instantly and moves with the mouse. Something similar was also done in ControlApptPanel.  In that case, a panel was sufficient, but since this needs to spill outside the control, it must be a window.</summary>
+///<summary>Kind of like the MS ToolTip, except it comes up instantly and moves with the mouse. Something similar was also done in ControlApptPanel.  In that case, a panel was sufficient, but since this needs to spill outside the control, it must be a window. See boilerplate at bottom of this file.</summary>
 	public partial class ToolTipOD : Form{
 		private Action<Point> _actionSetString;
 		private Control _controlAssigned;
@@ -112,3 +112,18 @@ namespace OpenDental.UI{
 
 	}
 }
+/*
+Use like this:
+private ToolTipOD toolTipOD;
+
+//Constructor:
+			toolTipOD=new ToolTipOD();
+			toolTipOD.SetControlAndAction(this,ToolTipSetString);
+
+		///<summary></summary>
+		private void ToolTipSetString(Point point) {
+			//In a more complex usage, you can do a hit test right here to decide what msg to show,
+			//and if you don't want to show a msg, then use toolTipOD.SetString("");
+			toolTipOD.SetString(Lan.g(this,"A message to show when hovering"),Font);
+		}
+*/

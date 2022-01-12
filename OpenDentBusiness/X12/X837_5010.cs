@@ -3117,6 +3117,12 @@ namespace OpenDentBusiness
 					warning+=",";
 				warning+="Claim has procedures with ICD-9 codes";
 			}
+			if(claim.AttachedFlags.Contains("Unsup")) {
+				if(warning!="") {
+					warning+=",";
+				}
+				warning+="Payer does not support attachments";
+			}
 			//If Attachment ID # is present but no attachment flag, then sending is blocked.
 			if(!pwkNeeded && claim.AttachmentID!="") {
 				Comma(strb);

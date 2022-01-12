@@ -60,6 +60,7 @@ namespace OpenDentBusiness.Crud{
 				emailAddress.AccessToken       = PIn.String(row["AccessToken"].ToString());
 				emailAddress.RefreshToken      = PIn.String(row["RefreshToken"].ToString());
 				emailAddress.DownloadInbox     = PIn.Bool  (row["DownloadInbox"].ToString());
+				emailAddress.QueryString       = PIn.String(row["QueryString"].ToString());
 				retVal.Add(emailAddress);
 			}
 			return retVal;
@@ -84,6 +85,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("AccessToken");
 			table.Columns.Add("RefreshToken");
 			table.Columns.Add("DownloadInbox");
+			table.Columns.Add("QueryString");
 			foreach(EmailAddress emailAddress in listEmailAddresss) {
 				table.Rows.Add(new object[] {
 					POut.Long  (emailAddress.EmailAddressNum),
@@ -99,6 +101,7 @@ namespace OpenDentBusiness.Crud{
 					            emailAddress.AccessToken,
 					            emailAddress.RefreshToken,
 					POut.Bool  (emailAddress.DownloadInbox),
+					            emailAddress.QueryString,
 				});
 			}
 			return table;
@@ -118,7 +121,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="EmailAddressNum,";
 			}
-			command+="SMTPserver,EmailUsername,EmailPassword,ServerPort,UseSSL,SenderAddress,Pop3ServerIncoming,ServerPortIncoming,UserNum,AccessToken,RefreshToken,DownloadInbox) VALUES(";
+			command+="SMTPserver,EmailUsername,EmailPassword,ServerPort,UseSSL,SenderAddress,Pop3ServerIncoming,ServerPortIncoming,UserNum,AccessToken,RefreshToken,DownloadInbox,QueryString) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(emailAddress.EmailAddressNum)+",";
 			}
@@ -134,7 +137,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Long  (emailAddress.UserNum)+","
 				+"'"+POut.String(emailAddress.AccessToken)+"',"
 				+"'"+POut.String(emailAddress.RefreshToken)+"',"
-				+    POut.Bool  (emailAddress.DownloadInbox)+")";
+				+    POut.Bool  (emailAddress.DownloadInbox)+","
+				+"'"+POut.String(emailAddress.QueryString)+"')";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -159,7 +163,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="EmailAddressNum,";
 			}
-			command+="SMTPserver,EmailUsername,EmailPassword,ServerPort,UseSSL,SenderAddress,Pop3ServerIncoming,ServerPortIncoming,UserNum,AccessToken,RefreshToken,DownloadInbox) VALUES(";
+			command+="SMTPserver,EmailUsername,EmailPassword,ServerPort,UseSSL,SenderAddress,Pop3ServerIncoming,ServerPortIncoming,UserNum,AccessToken,RefreshToken,DownloadInbox,QueryString) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(emailAddress.EmailAddressNum)+",";
 			}
@@ -175,7 +179,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Long  (emailAddress.UserNum)+","
 				+"'"+POut.String(emailAddress.AccessToken)+"',"
 				+"'"+POut.String(emailAddress.RefreshToken)+"',"
-				+    POut.Bool  (emailAddress.DownloadInbox)+")";
+				+    POut.Bool  (emailAddress.DownloadInbox)+","
+				+"'"+POut.String(emailAddress.QueryString)+"')";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -199,7 +204,8 @@ namespace OpenDentBusiness.Crud{
 				+"UserNum           =  "+POut.Long  (emailAddress.UserNum)+", "
 				+"AccessToken       = '"+POut.String(emailAddress.AccessToken)+"', "
 				+"RefreshToken      = '"+POut.String(emailAddress.RefreshToken)+"', "
-				+"DownloadInbox     =  "+POut.Bool  (emailAddress.DownloadInbox)+" "
+				+"DownloadInbox     =  "+POut.Bool  (emailAddress.DownloadInbox)+", "
+				+"QueryString       = '"+POut.String(emailAddress.QueryString)+"' "
 				+"WHERE EmailAddressNum = "+POut.Long(emailAddress.EmailAddressNum);
 			Db.NonQ(command);
 		}
@@ -255,6 +261,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="DownloadInbox = "+POut.Bool(emailAddress.DownloadInbox)+"";
 			}
+			if(emailAddress.QueryString != oldEmailAddress.QueryString) {
+				if(command!="") { command+=",";}
+				command+="QueryString = '"+POut.String(emailAddress.QueryString)+"'";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -301,6 +311,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(emailAddress.DownloadInbox != oldEmailAddress.DownloadInbox) {
+				return true;
+			}
+			if(emailAddress.QueryString != oldEmailAddress.QueryString) {
 				return true;
 			}
 			return false;

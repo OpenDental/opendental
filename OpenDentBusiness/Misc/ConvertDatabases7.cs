@@ -2244,5 +2244,10 @@ namespace OpenDentBusiness {
 			command="UPDATE displayreport SET Description='Broken Appointments' WHERE InternalName='ODBrokenAppointments' AND Description='BrokenAppointments'";
 			Db.NonQ(command);		
 		}//End of 21_4_9() method
+
+		private static void To21_4_16() {
+			Misc.SecurityHash.UpdateHashing();
+			Db.NonQ("ALTER TABLE emailaddress ADD QueryString varchar(1000) NOT NULL");
+		}//End of 21_4_16() method
 	}
 }

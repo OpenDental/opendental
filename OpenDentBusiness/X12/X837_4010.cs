@@ -1928,6 +1928,12 @@ namespace OpenDentBusiness {
 				}
 				warning+="Claim has procedures with ICD-9 codes";
 			}
+			if(claim.AttachedFlags.Contains("Unsup")) {
+				if(warning!="") {
+					warning+=",";
+				}
+				warning+="Payer does not support attachments";
+			}
 			//List<ClaimProc> claimProcList=ClaimProcs.Refresh(patient.PatNum);
 			//List<ClaimProc> claimProcs=ClaimProcs.GetForSendClaim(claimProcList,claim.ClaimNum);
 			//List<Procedure> procList=Procedures.Refresh(claim.PatNum);

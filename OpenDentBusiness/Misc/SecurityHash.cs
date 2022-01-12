@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
 		///<summary>The date Open Dental started hashing fields into paysplit.SecurityHash. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2021,12,9);
+		public static DateTime DateStart=new DateTime(2022,1,7);
 		private static bool _arePaySplitsUpdated=false;
 		private static bool _areAppointmentsUpdated=false;
 		private static bool _arePatientsUpdated=false;
@@ -39,7 +39,7 @@ namespace OpenDentBusiness.Misc {
 			string command="UPDATE paysplit SET SecurityHash=''";
 			Db.NonQ(command);
 			//Hash entries made after new date
-			command="SELECT * FROM paysplit WHERE SecDateTEdit >= "+POut.Date(DateStart);
+			command="SELECT * FROM paysplit WHERE DateEntry >= "+POut.Date(DateStart);
 			DataTable table=Db.GetTable(command);
 			long splitNum;
 			string unhashedText="";

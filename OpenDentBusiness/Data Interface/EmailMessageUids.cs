@@ -8,12 +8,12 @@ namespace OpenDentBusiness{
 	///<summary></summary>
 	public class EmailMessageUids{
 		///<summary>Gets all unique email ids for the given recipient email address.  The result is used to determine which emails to download for a particular inbox address.</summary>
-		public static List<EmailMessageUid> GetForRecipientAddress(string strRecipientAddress) {
+		public static List<string> GetMsgIdsRecipientAddress(string strRecipientAddress) {
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				return Meth.GetObject<List<EmailMessageUid>>(MethodBase.GetCurrentMethod(),strRecipientAddress);
+				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod(),strRecipientAddress);
 			}
-			string command="SELECT * FROM emailmessageuid WHERE RecipientAddress='"+POut.String(strRecipientAddress)+"'";
-			return Crud.EmailMessageUidCrud.SelectMany(command);
+			string command="SELECT DISTINCT MsgId FROM emailmessageuid WHERE RecipientAddress='"+POut.String(strRecipientAddress)+"'";
+			return Db.GetListString(command);
 		}
 
 		///<summary></summary>

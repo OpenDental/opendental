@@ -117,7 +117,7 @@ namespace OpenDental{
 			else {
 				textPeriodPayment.Text=_payPlanCur.PayAmt.ToString("f");
 			}
-			warningIntegrity1.ObjectDesc="PayPlan";
+			warningIntegrity1.SetTypeAndVisibility(EnumWarningIntegrityType.PayPlan,PayPlans.IsPayPlanHashValid(_payPlanCur));
 			if(PayPlans.IsPayPlanHashValid(_payPlanCur)) {
 			 warningIntegrity1.Visible=false;
 			}

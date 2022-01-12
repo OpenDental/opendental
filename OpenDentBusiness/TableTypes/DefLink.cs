@@ -37,6 +37,8 @@ namespace OpenDentBusiness {
 		Operatory,
 		///<summary>4. The definition is linked to another definition that is in the BlockoutType category.</summary>
 		BlockoutType,
+		///<summary>5. The definition is linked to a recall type.</summary>
+		RecallType,
 	}
 
 }

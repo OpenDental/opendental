@@ -1318,6 +1318,15 @@ namespace OpenDentBusiness{
 			if(isRecall) {
 				listBlockoutTypesToIgnore=PrefC.GetWebSchedRecallAllowedBlockouts;
 				listOperatories=Operatories.GetOpsForWebSched();
+				List<DefLink> listAllRestrictedToDefLinks=DefLinks.GetDefLinksByType(DefLinkType.RecallType);
+				//If the recall type is not associated with any Restricted-To blockout types, then remove every distinct restricted-to blockout type from
+				//the list of blockouts that can be scheduled over
+				if(listRestrictedToBlockouts.IsNullOrEmpty()) {
+					listBlockoutTypesToIgnore.RemoveAll(x => ListTools.In(x,listAllRestrictedToDefLinks.Select(y => y.DefNum).Distinct()));
+				}
+				else { //If the recall type is associated with some Restricted-To blockout types, then remove all blockouts from the list that do not match those blockouts
+					listBlockoutTypesToIgnore=listAllRestrictedToDefLinks.Select(x => x.DefNum).Distinct().ToList();
+				}
 			}
 			else {
 				listBlockoutTypesToIgnore=(isNewPat) ? PrefC.GetWebSchedNewPatAllowedBlockouts : PrefC.GetWebSchedExistingPatAllowedBlockouts;
@@ -1923,6 +1932,34 @@ namespace OpenDentBusiness{
 				AND schedule.SchedType={POut.Int((int)ScheduleType.Blockout)}";
 			return RefreshAndFill(command);
 		}
+
+		///<summary>Using the provided RecallTypeNum, gets associated blockouts and returns the schedules for those blockouts within a date range.</summary>
+		public static List<Schedule> GetRestrictedToBlockoutsByRecallType(long recallTypeNum,DateTime dateStart,DateTime dateStop,
+			List<long> listOpNums,List<DefLink> listRestrictedBlockouts=null) 
+		{
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				return Meth.GetObject<List<Schedule>>(MethodBase.GetCurrentMethod(),recallTypeNum,dateStart,dateStop,listOpNums,listRestrictedBlockouts);
+			}
+			if(listOpNums==null || listOpNums.Count<1) {
+				return new List<Schedule>();
+			}
+			if(listRestrictedBlockouts==null) {
+				listRestrictedBlockouts=DefLinks.GetListByFKey(recallTypeNum,DefLinkType.RecallType);
+			}
+			if(listRestrictedBlockouts==null || listRestrictedBlockouts.Count<1) {
+				return new List<Schedule>();
+			}
+			string command=$@"SELECT schedule.*
+				FROM schedule
+				INNER JOIN scheduleop ON schedule.ScheduleNum=scheduleop.ScheduleNum
+				WHERE schedule.SchedDate>={POut.Date(dateStart)} 
+				AND schedule.SchedDate<={POut.Date(dateStop)}
+				AND scheduleop.OperatoryNum IN ({string.Join(",",listOpNums)})
+				AND schedule.BlockoutType IN ({ string.Join(",",listRestrictedBlockouts.Select(x => POut.Long(x.DefNum)))}) 
+				AND schedule.SchedType={POut.Int((int)ScheduleType.Blockout)}";
+			return RefreshAndFill(command);
+		}
+
 	}
 }
 

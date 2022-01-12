@@ -229,6 +229,19 @@ namespace OpenDentBusiness{
 			Crud.DefLinkCrud.Delete(defLinkNum);
 		}
 
+		///<summary>Deletes all links for the specified FKey and defLink type.</summary>
+		public static void DeleteAllForFKey(long fKey,DefLinkType defType) {
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),fKey,defType);
+				return;
+			}
+			string command="DELETE FROM deflink "
+				+"WHERE LinkType="+POut.Int((int)defType)+" "
+				+"AND FKey="+POut.Long(fKey);
+			Db.NonQ(command);
+		}
+
+
 		///<summary>Deletes all links for the specified FKey and link type.</summary>
 		public static void DeleteAllForFKeys(List<long> listFKeys,DefLinkType defType) {
 			if(listFKeys==null || listFKeys.Count < 1) {

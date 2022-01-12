@@ -6,6 +6,8 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Forms;
 using OpenDentBusiness;
+using System.Linq;
+using CodeBase;
 
 namespace OpenDental{
 	/// <summary>
@@ -16,6 +18,9 @@ namespace OpenDental{
 		private List<RecallTrigger> TriggerList;
 		private Interval defaultIntervalOld;
 		private int CountForType;
+		private List<Def> _listDefsCur;
+		private List<Def> _listDefsOld;
+
 
 		///<summary></summary>
 		public FormRecallTypeEdit()
@@ -49,7 +54,12 @@ namespace OpenDental{
 			textDays.Text=RecallTypeCur.DefaultInterval.Days.ToString();
 			textPattern.Text=RecallTypeCur.TimePattern;
 			checkAppendToSpecial.Checked=RecallTypeCur.AppendToSpecial;
+			_listDefsOld=Defs.GetDefsByDefLinkFKey(DefCat.BlockoutTypes,RecallTypeCur.RecallTypeNum,DefLinkType.RecallType);
+			_listDefsCur=ListTools.DeepCopy<Def,Def>(_listDefsOld);
+			_listDefsCur.RemoveAll(x => x.IsHidden);
 			FillProcs();
+			FillBlockoutTypeValues();
+
 		}
 
 		private void SetSpecialIdx() {
@@ -222,6 +232,22 @@ namespace OpenDental{
 			FillProcs();
 		}
 
+		private void FillBlockoutTypeValues() {
+			textRestrictToBlockouts.Clear();
+			textRestrictToBlockouts.Text=string.Join(",",_listDefsCur.Select(x => x.ItemName));
+		}
+
+		private void butSelectBlockouts_Click(object sender,EventArgs e) {
+			using FormDefinitionPicker formDefinitionPicker=new FormDefinitionPicker(DefCat.BlockoutTypes,_listDefsCur);
+			formDefinitionPicker.IsMultiSelectionMode=true;
+			formDefinitionPicker.ShowDialog();
+			if(formDefinitionPicker.DialogResult!=DialogResult.OK) {
+				return;
+			}
+			_listDefsCur=ListTools.DeepCopy<Def,Def>(formDefinitionPicker.ListDefsSelected);
+			FillBlockoutTypeValues();
+		}
+
 		private void butDelete_Click(object sender, System.EventArgs e) {
 			//Before deleting the actual type, we would need to check special types.
 			/*if(RecallCur.IsNew){
@@ -387,6 +413,12 @@ namespace OpenDental{
 					+"Reset all other current patient intervals of this type?")) {
 					Recalls.UpdateDefaultIntervalForPatients(RecallTypeCur.RecallTypeNum,defaultIntervalOld,RecallTypeCur.DefaultInterval);
 				}
+			}
+			//Update DefLinks if any Restricted-To Blockouts changed
+			if(!ListTools.TryCompareList(_listDefsCur,_listDefsOld)) {
+				DefLinks.DeleteAllForFKey(RecallTypeCur.RecallTypeNum,DefLinkType.RecallType);//Remove all blockout restrictions before inserting the new set
+				List<long> listRestrictionBlockoutDefNums=_listDefsCur.Select(x => x.DefNum).ToList();
+				DefLinks.InsertDefLinksForDefs(listRestrictionBlockoutDefNums,RecallTypeCur.RecallTypeNum,DefLinkType.RecallType);//Add blockout restrictions to this recall type
 			}
 			DialogResult=DialogResult.OK;
 		}

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
-<database version="21.4.9.0">
+<database version="21.4.16.0">
     <table name="alertcategorylink">
         <summary></summary>
         <column order="2" name="AlertType" type="tinyint(4)">
@@ -75,6 +75,7 @@
             <Enumeration name="DefLinkType">
                 <summary>The manner in which a definition is linked.</summary>
                 <EnumValue name="ClinicSpecialty">0. Specialties for a clinic.</EnumValue>
+                <EnumValue name="RecallType">5. The definition is linked to a recall type.</EnumValue>
             </Enumeration>
         </column>
     </table>
@@ -93,6 +94,12 @@
             <summary>Comma delimited list of sheetdef nums to ignore.</summary>
         </column>
     </table>
+    <table name="emailaddress">
+        <summary></summary>
+        <column order="13" name="QueryString" type="varchar(1000)">
+            <summary>Allows gmail users to specify search parameters</summary>
+        </column>
+    </table>
     <table name="eservicelog">
         <summary></summary>
         <column order="4" name="EServiceAction" type="smallint(6)">
@@ -108,6 +115,9 @@
                 <EnumValue name="PPPayWithExistingFromClient">32 - Patient Portal, Patient Paid With Existing Card.</EnumValue>
                 <EnumValue name="PPPaymentCreatedByXWeb">33 - Patient Portal, Patient Submitted Payment With XWeb.</EnumValue>
                 <EnumValue name="PPPaymentCreatedByPayconnect">34 - Patient Portal, Patient Submitted Payment With PayConnect.</EnumValue>
+                <EnumValue name="PPDuplicatePaymentAlert">35 - Patient Portal, Patient Notified of Possible Duplicate Payment.</EnumValue>
+                <EnumValue name="PPDuplicatePaymentAllowed">36 - Patient Portal, Patient Allowed Submission of Duplicate Payment.</EnumValue>
+                <EnumValue name="PPDuplicatePaymentDenied">37 - Patient Portal, Patient Rejected Submission of Duplicate Payment.</EnumValue>
             </Enumeration>
         </column>
         <column order="10" name="Note" type="varchar(255)">

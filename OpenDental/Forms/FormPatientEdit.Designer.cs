@@ -271,7 +271,7 @@ namespace OpenDental{
 			// 
 			// labelBirthdate
 			// 
-			this.labelBirthdate.Location = new System.Drawing.Point(0, 266);
+			this.labelBirthdate.Location = new System.Drawing.Point(5, 269);
 			this.labelBirthdate.Name = "labelBirthdate";
 			this.labelBirthdate.Size = new System.Drawing.Size(154, 14);
 			this.labelBirthdate.TabIndex = 0;
@@ -503,7 +503,7 @@ namespace OpenDental{
 			// 
 			// label20
 			// 
-			this.label20.Location = new System.Drawing.Point(339, 266);
+			this.label20.Location = new System.Drawing.Point(354, 266);
 			this.label20.Name = "label20";
 			this.label20.Size = new System.Drawing.Size(29, 14);
 			this.label20.TabIndex = 0;
@@ -512,10 +512,10 @@ namespace OpenDental{
 			// 
 			// textAge
 			// 
-			this.textAge.Location = new System.Drawing.Point(369, 264);
+			this.textAge.Location = new System.Drawing.Point(380, 264);
 			this.textAge.Name = "textAge";
 			this.textAge.ReadOnly = true;
-			this.textAge.Size = new System.Drawing.Size(50, 20);
+			this.textAge.Size = new System.Drawing.Size(39, 20);
 			this.textAge.TabIndex = 0;
 			this.textAge.TabStop = false;
 			// 
@@ -800,15 +800,15 @@ namespace OpenDental{
 			// 
 			// label32
 			// 
-			this.label32.Location = new System.Drawing.Point(341, 307);
+			this.label32.Location = new System.Drawing.Point(354, 307);
 			this.label32.Name = "label32";
-			this.label32.Size = new System.Drawing.Size(117, 17);
+			this.label32.Size = new System.Drawing.Size(100, 17);
 			this.label32.TabIndex = 0;
 			this.label32.Text = "(if used)";
 			// 
 			// butAuto
 			// 
-			this.butAuto.Location = new System.Drawing.Point(271, 304);
+			this.butAuto.Location = new System.Drawing.Point(285, 304);
 			this.butAuto.Name = "butAuto";
 			this.butAuto.Size = new System.Drawing.Size(62, 21);
 			this.butAuto.TabIndex = 10;
@@ -1030,7 +1030,7 @@ namespace OpenDental{
 			// 
 			// labelPutInInsPlan
 			// 
-			this.labelPutInInsPlan.Location = new System.Drawing.Point(341, 284);
+			this.labelPutInInsPlan.Location = new System.Drawing.Point(354, 287);
 			this.labelPutInInsPlan.Name = "labelPutInInsPlan";
 			this.labelPutInInsPlan.Size = new System.Drawing.Size(100, 17);
 			this.labelPutInInsPlan.TabIndex = 0;
@@ -1238,9 +1238,9 @@ namespace OpenDental{
 			// checkArriveEarlySame
 			// 
 			this.checkArriveEarlySame.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkArriveEarlySame.Location = new System.Drawing.Point(270, 326);
+			this.checkArriveEarlySame.Location = new System.Drawing.Point(285, 326);
 			this.checkArriveEarlySame.Name = "checkArriveEarlySame";
-			this.checkArriveEarlySame.Size = new System.Drawing.Size(208, 17);
+			this.checkArriveEarlySame.Size = new System.Drawing.Size(184, 17);
 			this.checkArriveEarlySame.TabIndex = 0;
 			this.checkArriveEarlySame.TabStop = false;
 			this.checkArriveEarlySame.Text = "Same for entire family";
@@ -1600,10 +1600,10 @@ namespace OpenDental{
 			// 
 			// textMedicaidState
 			// 
-			this.textMedicaidState.Location = new System.Drawing.Point(271, 284);
+			this.textMedicaidState.Location = new System.Drawing.Point(285, 284);
 			this.textMedicaidState.MaxLength = 100;
 			this.textMedicaidState.Name = "textMedicaidState";
-			this.textMedicaidState.Size = new System.Drawing.Size(61, 20);
+			this.textMedicaidState.Size = new System.Drawing.Size(62, 20);
 			this.textMedicaidState.TabIndex = 8;
 			this.textMedicaidState.TextChanged += new System.EventHandler(this.textMedicaidState_TextChanged);
 			this.textMedicaidState.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textMedicaidState_KeyUp);
@@ -1845,8 +1845,7 @@ namespace OpenDental{
 			// 
 			// butViewSSN
 			// 
-			this.butViewSSN.Enabled = false;
-			this.butViewSSN.Location = new System.Drawing.Point(259, 6);
+			this.butViewSSN.Location = new System.Drawing.Point(282, 6);
 			this.butViewSSN.Name = "butViewSSN";
 			this.butViewSSN.Size = new System.Drawing.Size(56, 21);
 			this.butViewSSN.TabIndex = 40;
@@ -2009,28 +2008,28 @@ namespace OpenDental{
 			// 
 			// butViewBirthdate
 			// 
-			this.butViewBirthdate.Location = new System.Drawing.Point(271, 262);
+			this.butViewBirthdate.Location = new System.Drawing.Point(285, 263);
 			this.butViewBirthdate.Name = "butViewBirthdate";
 			this.butViewBirthdate.Size = new System.Drawing.Size(62, 21);
 			this.butViewBirthdate.TabIndex = 55;
 			this.butViewBirthdate.Text = "View";
-			this.butViewBirthdate.Visible = false;
 			this.butViewBirthdate.Click += new System.EventHandler(this.butViewBirthdate_Click);
 			// 
 			// odDatePickerBirthDate
 			// 
 			this.odDatePickerBirthDate.BackColor = System.Drawing.Color.Transparent;
-			this.odDatePickerBirthDate.Location = new System.Drawing.Point(97, 263);
+			this.odDatePickerBirthDate.Location = new System.Drawing.Point(97, 264);
 			this.odDatePickerBirthDate.Name = "odDatePickerBirthDate";
-			this.odDatePickerBirthDate.Size = new System.Drawing.Size(168, 23);
+			this.odDatePickerBirthDate.RightToLeft = System.Windows.Forms.RightToLeft.No;
+			this.odDatePickerBirthDate.Size = new System.Drawing.Size(165, 24);
 			this.odDatePickerBirthDate.TabIndex = 6;
 			this.odDatePickerBirthDate.Leave += new System.EventHandler(this.odDatePickerBirthDate_Validated);
 			// 
 			// warningIntegrity1
 			// 
-			this.warningIntegrity1.Location = new System.Drawing.Point(2, 1);
+			this.warningIntegrity1.Location = new System.Drawing.Point(0, 0);
 			this.warningIntegrity1.Name = "warningIntegrity1";
-			this.warningIntegrity1.Size = new System.Drawing.Size(22, 20);
+			this.warningIntegrity1.Size = new System.Drawing.Size(18, 18);
 			this.warningIntegrity1.TabIndex = 57;
 			this.warningIntegrity1.Text = "warningIntegrity1";
 			// 

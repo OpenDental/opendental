@@ -33,20 +33,23 @@ namespace OpenDental{
 			this.listBoxWebSchedProviderPref = new OpenDental.UI.ListBoxOD();
 			this.label21 = new System.Windows.Forms.Label();
 			this.checkWSRDoubleBooking = new System.Windows.Forms.CheckBox();
-			this.comboWSRConfirmStatus = new OpenDental.UI.ComboBoxOD();
-			this.label36 = new System.Windows.Forms.Label();
-			this.label43 = new System.Windows.Forms.Label();
-			this.label44 = new System.Windows.Forms.Label();
-			this.textWebSchedRecallApptSearchDays = new OpenDental.ValidNum();
 			this.checkRecallAllowProvSelection = new System.Windows.Forms.CheckBox();
+			this.comboWSRConfirmStatus = new OpenDental.UI.ComboBoxOD();
+			this.labelRecallConfirmStatus = new System.Windows.Forms.Label();
+			this.labelDaysFuture = new System.Windows.Forms.Label();
+			this.textWebSchedRecallApptSearchDays = new OpenDental.ValidNum();
 			this.groupWebSchedText = new OpenDental.UI.GroupBoxOD();
 			this.labelWebSchedPerBatch = new System.Windows.Forms.Label();
 			this.textWebSchedPerBatch = new OpenDental.ValidNum();
 			this.radioDoNotSendText = new System.Windows.Forms.RadioButton();
 			this.radioSendText = new System.Windows.Forms.RadioButton();
 			this.groupBox6 = new OpenDental.UI.GroupBoxOD();
+			this.label1 = new System.Windows.Forms.Label();
+			this.butWebSchedRecallRestrictedToBlockoutEdit = new OpenDental.UI.Button();
 			this.listboxWebSchedRecallIgnoreBlockoutTypes = new OpenDental.UI.ListBoxOD();
+			this.labelRestrictedToBlockouts = new System.Windows.Forms.Label();
 			this.butWebSchedRecallBlockouts = new OpenDental.UI.Button();
+			this.listboxRestrictedToBlockouts = new OpenDental.UI.ListBoxOD();
 			this.groupBoxWebSchedAutomation = new OpenDental.UI.GroupBoxOD();
 			this.radioSendToEmailNoPreferred = new System.Windows.Forms.RadioButton();
 			this.radioDoNotSend = new System.Windows.Forms.RadioButton();
@@ -68,21 +71,26 @@ namespace OpenDental{
 			this.gridWebSchedOperatories = new OpenDental.UI.GridOD();
 			this.butRecallSchedSetup = new OpenDental.UI.Button();
 			this.gridWebSchedRecallTypes = new OpenDental.UI.GridOD();
-			this.label20 = new System.Windows.Forms.Label();
+			this.labelRecallSetup = new System.Windows.Forms.Label();
 			this.butWebSchedRecallNotify = new OpenDental.UI.Button();
 			this.butEditOperatories = new OpenDental.UI.Button();
 			this.butEditRecallTypes = new OpenDental.UI.Button();
+			this.groupCustomizedMessages = new OpenDental.UI.GroupBoxOD();
+			this.labelNotificationSettings = new System.Windows.Forms.Label();
+			this.groupOtherSettings = new OpenDental.UI.GroupBoxOD();
 			this.groupWebSchedProvRule.SuspendLayout();
 			this.groupWebSchedText.SuspendLayout();
 			this.groupBox6.SuspendLayout();
 			this.groupBoxWebSchedAutomation.SuspendLayout();
 			this.groupWebSchedPreview.SuspendLayout();
+			this.groupCustomizedMessages.SuspendLayout();
+			this.groupOtherSettings.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(818, 660);
+			this.butOK.Location = new System.Drawing.Point(876, 625);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
@@ -93,7 +101,7 @@ namespace OpenDental{
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(899, 660);
+			this.butCancel.Location = new System.Drawing.Point(957, 625);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 2;
@@ -107,11 +115,10 @@ namespace OpenDental{
 			this.groupWebSchedProvRule.Controls.Add(this.comboClinicProvRule);
 			this.groupWebSchedProvRule.Controls.Add(this.listBoxWebSchedProviderPref);
 			this.groupWebSchedProvRule.Controls.Add(this.label21);
-			this.groupWebSchedProvRule.Location = new System.Drawing.Point(27, 495);
+			this.groupWebSchedProvRule.Location = new System.Drawing.Point(11, 404);
 			this.groupWebSchedProvRule.Name = "groupWebSchedProvRule";
-			this.groupWebSchedProvRule.Size = new System.Drawing.Size(439, 113);
+			this.groupWebSchedProvRule.Size = new System.Drawing.Size(439, 111);
 			this.groupWebSchedProvRule.TabIndex = 405;
-			this.groupWebSchedProvRule.TabStop = false;
 			this.groupWebSchedProvRule.Text = "Provider Rule";
 			// 
 			// butProvRulePickClinic
@@ -154,7 +161,7 @@ namespace OpenDental{
         "Primary Provider",
         "Secondary Provider",
         "Last Seen Hygienist"};
-			this.listBoxWebSchedProviderPref.Location = new System.Drawing.Point(313, 43);
+			this.listBoxWebSchedProviderPref.Location = new System.Drawing.Point(312, 43);
 			this.listBoxWebSchedProviderPref.Name = "listBoxWebSchedProviderPref";
 			this.listBoxWebSchedProviderPref.Size = new System.Drawing.Size(120, 56);
 			this.listBoxWebSchedProviderPref.TabIndex = 309;
@@ -163,7 +170,7 @@ namespace OpenDental{
 			// label21
 			// 
 			this.label21.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.label21.Location = new System.Drawing.Point(11, 45);
+			this.label21.Location = new System.Drawing.Point(9, 45);
 			this.label21.Name = "label21";
 			this.label21.Size = new System.Drawing.Size(301, 54);
 			this.label21.TabIndex = 310;
@@ -174,101 +181,87 @@ namespace OpenDental{
 			// 
 			this.checkWSRDoubleBooking.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkWSRDoubleBooking.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkWSRDoubleBooking.Location = new System.Drawing.Point(761, 351);
+			this.checkWSRDoubleBooking.Location = new System.Drawing.Point(39, 15);
 			this.checkWSRDoubleBooking.Name = "checkWSRDoubleBooking";
-			this.checkWSRDoubleBooking.Size = new System.Drawing.Size(204, 18);
+			this.checkWSRDoubleBooking.Size = new System.Drawing.Size(196, 18);
 			this.checkWSRDoubleBooking.TabIndex = 401;
 			this.checkWSRDoubleBooking.Text = "Prevent double booking";
 			this.checkWSRDoubleBooking.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// comboWSRConfirmStatus
-			// 
-			this.comboWSRConfirmStatus.Location = new System.Drawing.Point(268, 612);
-			this.comboWSRConfirmStatus.Name = "comboWSRConfirmStatus";
-			this.comboWSRConfirmStatus.Size = new System.Drawing.Size(191, 21);
-			this.comboWSRConfirmStatus.TabIndex = 400;
-			// 
-			// label36
-			// 
-			this.label36.Location = new System.Drawing.Point(41, 614);
-			this.label36.Name = "label36";
-			this.label36.Size = new System.Drawing.Size(221, 17);
-			this.label36.TabIndex = 399;
-			this.label36.Text = "Web Sched Recall Confirm Status";
-			this.label36.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// label43
-			// 
-			this.label43.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.label43.Location = new System.Drawing.Point(689, 614);
-			this.label43.Name = "label43";
-			this.label43.Size = new System.Drawing.Size(252, 17);
-			this.label43.TabIndex = 404;
-			this.label43.Text = "days.  Empty includes all possible openings.";
-			this.label43.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// label44
-			// 
-			this.label44.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.label44.Location = new System.Drawing.Point(505, 614);
-			this.label44.Name = "label44";
-			this.label44.Size = new System.Drawing.Size(137, 17);
-			this.label44.TabIndex = 402;
-			this.label44.Text = "Search for openings after";
-			this.label44.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// textWebSchedRecallApptSearchDays
-			// 
-			this.textWebSchedRecallApptSearchDays.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.textWebSchedRecallApptSearchDays.Location = new System.Drawing.Point(648, 613);
-			this.textWebSchedRecallApptSearchDays.MaxVal = 365;
-			this.textWebSchedRecallApptSearchDays.MinVal = 0;
-			this.textWebSchedRecallApptSearchDays.Name = "textWebSchedRecallApptSearchDays";
-			this.textWebSchedRecallApptSearchDays.ShowZero = false;
-			this.textWebSchedRecallApptSearchDays.Size = new System.Drawing.Size(38, 20);
-			this.textWebSchedRecallApptSearchDays.TabIndex = 403;
 			// 
 			// checkRecallAllowProvSelection
 			// 
 			this.checkRecallAllowProvSelection.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkRecallAllowProvSelection.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkRecallAllowProvSelection.Location = new System.Drawing.Point(761, 327);
+			this.checkRecallAllowProvSelection.Location = new System.Drawing.Point(241, 15);
 			this.checkRecallAllowProvSelection.Name = "checkRecallAllowProvSelection";
-			this.checkRecallAllowProvSelection.Size = new System.Drawing.Size(204, 18);
+			this.checkRecallAllowProvSelection.Size = new System.Drawing.Size(191, 18);
 			this.checkRecallAllowProvSelection.TabIndex = 398;
 			this.checkRecallAllowProvSelection.Text = "Allow patients to select provider";
 			this.checkRecallAllowProvSelection.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
+			// comboWSRConfirmStatus
+			// 
+			this.comboWSRConfirmStatus.Location = new System.Drawing.Point(241, 65);
+			this.comboWSRConfirmStatus.Name = "comboWSRConfirmStatus";
+			this.comboWSRConfirmStatus.Size = new System.Drawing.Size(191, 21);
+			this.comboWSRConfirmStatus.TabIndex = 400;
+			// 
+			// labelRecallConfirmStatus
+			// 
+			this.labelRecallConfirmStatus.Location = new System.Drawing.Point(14, 67);
+			this.labelRecallConfirmStatus.Name = "labelRecallConfirmStatus";
+			this.labelRecallConfirmStatus.Size = new System.Drawing.Size(221, 17);
+			this.labelRecallConfirmStatus.TabIndex = 399;
+			this.labelRecallConfirmStatus.Text = "Web Sched Recall Confirm Status";
+			this.labelRecallConfirmStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// labelDaysFuture
+			// 
+			this.labelDaysFuture.Anchor = System.Windows.Forms.AnchorStyles.Top;
+			this.labelDaysFuture.Location = new System.Drawing.Point(77, 38);
+			this.labelDaysFuture.Name = "labelDaysFuture";
+			this.labelDaysFuture.Size = new System.Drawing.Size(311, 19);
+			this.labelDaysFuture.TabIndex = 402;
+			this.labelDaysFuture.Text = "Number of days in the future to start searching for openings";
+			this.labelDaysFuture.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// textWebSchedRecallApptSearchDays
+			// 
+			this.textWebSchedRecallApptSearchDays.Anchor = System.Windows.Forms.AnchorStyles.Top;
+			this.textWebSchedRecallApptSearchDays.Location = new System.Drawing.Point(394, 39);
+			this.textWebSchedRecallApptSearchDays.MaxVal = 365;
+			this.textWebSchedRecallApptSearchDays.Name = "textWebSchedRecallApptSearchDays";
+			this.textWebSchedRecallApptSearchDays.ShowZero = false;
+			this.textWebSchedRecallApptSearchDays.Size = new System.Drawing.Size(38, 20);
+			this.textWebSchedRecallApptSearchDays.TabIndex = 403;
+			// 
 			// groupWebSchedText
 			// 
-			this.groupWebSchedText.Anchor = System.Windows.Forms.AnchorStyles.Top;
 			this.groupWebSchedText.Controls.Add(this.labelWebSchedPerBatch);
 			this.groupWebSchedText.Controls.Add(this.textWebSchedPerBatch);
 			this.groupWebSchedText.Controls.Add(this.radioDoNotSendText);
 			this.groupWebSchedText.Controls.Add(this.radioSendText);
-			this.groupWebSchedText.Location = new System.Drawing.Point(496, 529);
+			this.groupWebSchedText.Location = new System.Drawing.Point(457, 447);
 			this.groupWebSchedText.Name = "groupWebSchedText";
-			this.groupWebSchedText.Size = new System.Drawing.Size(484, 75);
+			this.groupWebSchedText.Size = new System.Drawing.Size(575, 68);
 			this.groupWebSchedText.TabIndex = 397;
-			this.groupWebSchedText.TabStop = false;
 			this.groupWebSchedText.Text = "Send Text Messages Automatically To";
 			// 
 			// labelWebSchedPerBatch
 			// 
-			this.labelWebSchedPerBatch.Location = new System.Drawing.Point(288, 19);
+			this.labelWebSchedPerBatch.Location = new System.Drawing.Point(357, 24);
 			this.labelWebSchedPerBatch.Name = "labelWebSchedPerBatch";
-			this.labelWebSchedPerBatch.Size = new System.Drawing.Size(136, 32);
+			this.labelWebSchedPerBatch.Size = new System.Drawing.Size(156, 32);
 			this.labelWebSchedPerBatch.TabIndex = 314;
 			this.labelWebSchedPerBatch.Text = "Max number of texts sent every 10 minutes per clinic";
 			this.labelWebSchedPerBatch.TextAlign = System.Drawing.ContentAlignment.BottomRight;
 			// 
 			// textWebSchedPerBatch
 			// 
-			this.textWebSchedPerBatch.Location = new System.Drawing.Point(426, 31);
+			this.textWebSchedPerBatch.Location = new System.Drawing.Point(515, 36);
 			this.textWebSchedPerBatch.MaxVal = 100000000;
 			this.textWebSchedPerBatch.MinVal = 1;
 			this.textWebSchedPerBatch.Name = "textWebSchedPerBatch";
-			this.textWebSchedPerBatch.ShowZero = true;
 			this.textWebSchedPerBatch.Size = new System.Drawing.Size(39, 20);
 			this.textWebSchedPerBatch.TabIndex = 242;
 			// 
@@ -294,45 +287,81 @@ namespace OpenDental{
 			// 
 			// groupBox6
 			// 
-			this.groupBox6.Anchor = System.Windows.Forms.AnchorStyles.Top;
+			this.groupBox6.Controls.Add(this.label1);
+			this.groupBox6.Controls.Add(this.butWebSchedRecallRestrictedToBlockoutEdit);
 			this.groupBox6.Controls.Add(this.listboxWebSchedRecallIgnoreBlockoutTypes);
+			this.groupBox6.Controls.Add(this.labelRestrictedToBlockouts);
 			this.groupBox6.Controls.Add(this.butWebSchedRecallBlockouts);
-			this.groupBox6.Location = new System.Drawing.Point(496, 312);
+			this.groupBox6.Controls.Add(this.listboxRestrictedToBlockouts);
+			this.groupBox6.Location = new System.Drawing.Point(457, 187);
 			this.groupBox6.Name = "groupBox6";
-			this.groupBox6.Size = new System.Drawing.Size(259, 103);
+			this.groupBox6.Size = new System.Drawing.Size(575, 151);
 			this.groupBox6.TabIndex = 396;
-			this.groupBox6.TabStop = false;
 			this.groupBox6.Text = "Allowed Blockout Types";
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(5, 16);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(179, 20);
+			this.label1.TabIndex = 412;
+			this.label1.Text = "Generally Allowed";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// butWebSchedRecallRestrictedToBlockoutEdit
+			// 
+			this.butWebSchedRecallRestrictedToBlockoutEdit.Location = new System.Drawing.Point(290, 124);
+			this.butWebSchedRecallRestrictedToBlockoutEdit.Name = "butWebSchedRecallRestrictedToBlockoutEdit";
+			this.butWebSchedRecallRestrictedToBlockoutEdit.Size = new System.Drawing.Size(68, 24);
+			this.butWebSchedRecallRestrictedToBlockoutEdit.TabIndex = 411;
+			this.butWebSchedRecallRestrictedToBlockoutEdit.Text = "Edit";
+			this.butWebSchedRecallRestrictedToBlockoutEdit.UseVisualStyleBackColor = false;
+			this.butWebSchedRecallRestrictedToBlockoutEdit.Click += new System.EventHandler(this.butWebSchedRecallRestrictedToBlockoutEdit_Click);
 			// 
 			// listboxWebSchedRecallIgnoreBlockoutTypes
 			// 
-			this.listboxWebSchedRecallIgnoreBlockoutTypes.Location = new System.Drawing.Point(125, 15);
+			this.listboxWebSchedRecallIgnoreBlockoutTypes.Location = new System.Drawing.Point(7, 39);
 			this.listboxWebSchedRecallIgnoreBlockoutTypes.Name = "listboxWebSchedRecallIgnoreBlockoutTypes";
 			this.listboxWebSchedRecallIgnoreBlockoutTypes.SelectionMode = OpenDental.UI.SelectionMode.None;
-			this.listboxWebSchedRecallIgnoreBlockoutTypes.Size = new System.Drawing.Size(120, 82);
+			this.listboxWebSchedRecallIgnoreBlockoutTypes.Size = new System.Drawing.Size(275, 82);
 			this.listboxWebSchedRecallIgnoreBlockoutTypes.TabIndex = 197;
+			// 
+			// labelRestrictedToBlockouts
+			// 
+			this.labelRestrictedToBlockouts.Location = new System.Drawing.Point(287, 16);
+			this.labelRestrictedToBlockouts.Name = "labelRestrictedToBlockouts";
+			this.labelRestrictedToBlockouts.Size = new System.Drawing.Size(179, 20);
+			this.labelRestrictedToBlockouts.TabIndex = 410;
+			this.labelRestrictedToBlockouts.Text = "Restricted to Recall Types";
+			this.labelRestrictedToBlockouts.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// butWebSchedRecallBlockouts
 			// 
-			this.butWebSchedRecallBlockouts.Location = new System.Drawing.Point(51, 73);
+			this.butWebSchedRecallBlockouts.Location = new System.Drawing.Point(7, 124);
 			this.butWebSchedRecallBlockouts.Name = "butWebSchedRecallBlockouts";
 			this.butWebSchedRecallBlockouts.Size = new System.Drawing.Size(68, 24);
 			this.butWebSchedRecallBlockouts.TabIndex = 197;
 			this.butWebSchedRecallBlockouts.Text = "Edit";
 			this.butWebSchedRecallBlockouts.Click += new System.EventHandler(this.butWebSchedRecallBlockouts_Click);
 			// 
+			// listboxRestrictedToBlockouts
+			// 
+			this.listboxRestrictedToBlockouts.Location = new System.Drawing.Point(290, 39);
+			this.listboxRestrictedToBlockouts.Name = "listboxRestrictedToBlockouts";
+			this.listboxRestrictedToBlockouts.SelectionMode = OpenDental.UI.SelectionMode.None;
+			this.listboxRestrictedToBlockouts.Size = new System.Drawing.Size(275, 82);
+			this.listboxRestrictedToBlockouts.TabIndex = 409;
+			// 
 			// groupBoxWebSchedAutomation
 			// 
-			this.groupBoxWebSchedAutomation.Anchor = System.Windows.Forms.AnchorStyles.Top;
 			this.groupBoxWebSchedAutomation.Controls.Add(this.radioSendToEmailNoPreferred);
 			this.groupBoxWebSchedAutomation.Controls.Add(this.radioDoNotSend);
 			this.groupBoxWebSchedAutomation.Controls.Add(this.radioSendToEmailOnlyPreferred);
 			this.groupBoxWebSchedAutomation.Controls.Add(this.radioSendToEmail);
-			this.groupBoxWebSchedAutomation.Location = new System.Drawing.Point(496, 426);
+			this.groupBoxWebSchedAutomation.Location = new System.Drawing.Point(457, 344);
 			this.groupBoxWebSchedAutomation.Name = "groupBoxWebSchedAutomation";
-			this.groupBoxWebSchedAutomation.Size = new System.Drawing.Size(484, 97);
+			this.groupBoxWebSchedAutomation.Size = new System.Drawing.Size(575, 97);
 			this.groupBoxWebSchedAutomation.TabIndex = 388;
-			this.groupBoxWebSchedAutomation.TabStop = false;
 			this.groupBoxWebSchedAutomation.Text = "Send Email Messages Automatically To";
 			// 
 			// radioSendToEmailNoPreferred
@@ -377,7 +406,6 @@ namespace OpenDental{
 			// 
 			// groupWebSchedPreview
 			// 
-			this.groupWebSchedPreview.Anchor = System.Windows.Forms.AnchorStyles.Top;
 			this.groupWebSchedPreview.Controls.Add(this.butRefresh);
 			this.groupWebSchedPreview.Controls.Add(this.butWebSchedPickClinic);
 			this.groupWebSchedPreview.Controls.Add(this.butWebSchedPickProv);
@@ -390,11 +418,10 @@ namespace OpenDental{
 			this.groupWebSchedPreview.Controls.Add(this.labelWebSchedRecallTypes);
 			this.groupWebSchedPreview.Controls.Add(this.comboWebSchedClinic);
 			this.groupWebSchedPreview.Controls.Add(this.comboWebSchedRecallTypes);
-			this.groupWebSchedPreview.Location = new System.Drawing.Point(27, 276);
+			this.groupWebSchedPreview.Location = new System.Drawing.Point(11, 187);
 			this.groupWebSchedPreview.Name = "groupWebSchedPreview";
 			this.groupWebSchedPreview.Size = new System.Drawing.Size(439, 210);
 			this.groupWebSchedPreview.TabIndex = 390;
-			this.groupWebSchedPreview.TabStop = false;
 			this.groupWebSchedPreview.Text = "Available Times For Patients";
 			// 
 			// butRefresh
@@ -404,7 +431,7 @@ namespace OpenDental{
 			this.butRefresh.Size = new System.Drawing.Size(66, 24);
 			this.butRefresh.TabIndex = 407;
 			this.butRefresh.Text = "Refresh";
-			this.butRefresh.Click += new System.EventHandler(butRefresh_Click);
+			this.butRefresh.Click += new System.EventHandler(this.butRefresh_Click);
 			// 
 			// butWebSchedPickClinic
 			// 
@@ -512,11 +539,10 @@ namespace OpenDental{
 			// 
 			// gridWebSchedOperatories
 			// 
-			this.gridWebSchedOperatories.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.gridWebSchedOperatories.Location = new System.Drawing.Point(27, 34);
+			this.gridWebSchedOperatories.Location = new System.Drawing.Point(457, 38);
 			this.gridWebSchedOperatories.Name = "gridWebSchedOperatories";
 			this.gridWebSchedOperatories.SelectionMode = OpenDental.UI.GridSelectionMode.None;
-			this.gridWebSchedOperatories.Size = new System.Drawing.Size(532, 225);
+			this.gridWebSchedOperatories.Size = new System.Drawing.Size(575, 142);
 			this.gridWebSchedOperatories.TabIndex = 393;
 			this.gridWebSchedOperatories.Title = "Operatories Considered";
 			this.gridWebSchedOperatories.TranslationName = "FormEServicesSetup";
@@ -525,48 +551,46 @@ namespace OpenDental{
 			// butRecallSchedSetup
 			// 
 			this.butRecallSchedSetup.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.butRecallSchedSetup.Location = new System.Drawing.Point(787, 278);
+			this.butRecallSchedSetup.Location = new System.Drawing.Point(445, 20);
 			this.butRecallSchedSetup.Name = "butRecallSchedSetup";
-			this.butRecallSchedSetup.Size = new System.Drawing.Size(103, 24);
+			this.butRecallSchedSetup.Size = new System.Drawing.Size(109, 24);
 			this.butRecallSchedSetup.TabIndex = 395;
 			this.butRecallSchedSetup.Text = "Recall Setup";
 			this.butRecallSchedSetup.Click += new System.EventHandler(this.butWebSchedSetup_Click);
 			// 
 			// gridWebSchedRecallTypes
 			// 
-			this.gridWebSchedRecallTypes.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.gridWebSchedRecallTypes.Location = new System.Drawing.Point(579, 34);
+			this.gridWebSchedRecallTypes.Location = new System.Drawing.Point(11, 38);
 			this.gridWebSchedRecallTypes.Name = "gridWebSchedRecallTypes";
 			this.gridWebSchedRecallTypes.SelectionMode = OpenDental.UI.GridSelectionMode.None;
-			this.gridWebSchedRecallTypes.Size = new System.Drawing.Size(395, 225);
+			this.gridWebSchedRecallTypes.Size = new System.Drawing.Size(439, 142);
 			this.gridWebSchedRecallTypes.TabIndex = 394;
 			this.gridWebSchedRecallTypes.Title = "Recall Types";
 			this.gridWebSchedRecallTypes.TranslationName = "FormEServicesSetup";
 			this.gridWebSchedRecallTypes.WrapText = false;
 			// 
-			// label20
+			// labelRecallSetup
 			// 
-			this.label20.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.label20.Location = new System.Drawing.Point(548, 276);
-			this.label20.Name = "label20";
-			this.label20.Size = new System.Drawing.Size(233, 28);
-			this.label20.TabIndex = 389;
-			this.label20.Text = "Customize the notification message that will be sent to the patient.";
-			this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.labelRecallSetup.Location = new System.Drawing.Point(9, 18);
+			this.labelRecallSetup.Name = "labelRecallSetup";
+			this.labelRecallSetup.Size = new System.Drawing.Size(428, 28);
+			this.labelRecallSetup.TabIndex = 389;
+			this.labelRecallSetup.Text = "Customize the recall message that will be sent to the patient";
+			this.labelRecallSetup.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// butWebSchedRecallNotify
 			// 
-			this.butWebSchedRecallNotify.Location = new System.Drawing.Point(27, 639);
+			this.butWebSchedRecallNotify.Location = new System.Drawing.Point(445, 54);
 			this.butWebSchedRecallNotify.Name = "butWebSchedRecallNotify";
 			this.butWebSchedRecallNotify.Size = new System.Drawing.Size(109, 24);
 			this.butWebSchedRecallNotify.TabIndex = 406;
 			this.butWebSchedRecallNotify.Text = "Notification Settings";
-			this.butWebSchedRecallNotify.UseVisualStyleBackColor = true;
+			this.butWebSchedRecallNotify.UseVisualStyleBackColor = false;
 			this.butWebSchedRecallNotify.Click += new System.EventHandler(this.butWebSchedRecallNotify_Click);
 			// 
 			// butEditOperatories
 			// 
-			this.butEditOperatories.Location = new System.Drawing.Point(491, 4);
+			this.butEditOperatories.Location = new System.Drawing.Point(964, 8);
 			this.butEditOperatories.Name = "butEditOperatories";
 			this.butEditOperatories.Size = new System.Drawing.Size(68, 24);
 			this.butEditOperatories.TabIndex = 407;
@@ -575,36 +599,63 @@ namespace OpenDental{
 			// 
 			// butEditRecallTypes
 			// 
-			this.butEditRecallTypes.Location = new System.Drawing.Point(906, 4);
+			this.butEditRecallTypes.Location = new System.Drawing.Point(382, 8);
 			this.butEditRecallTypes.Name = "butEditRecallTypes";
 			this.butEditRecallTypes.Size = new System.Drawing.Size(68, 24);
 			this.butEditRecallTypes.TabIndex = 408;
 			this.butEditRecallTypes.Text = "Edit";
 			this.butEditRecallTypes.Click += new System.EventHandler(this.butEditRecallTypes_Click);
 			// 
+			// groupCustomizedMessages
+			// 
+			this.groupCustomizedMessages.Controls.Add(this.labelNotificationSettings);
+			this.groupCustomizedMessages.Controls.Add(this.butWebSchedRecallNotify);
+			this.groupCustomizedMessages.Controls.Add(this.labelRecallSetup);
+			this.groupCustomizedMessages.Controls.Add(this.butRecallSchedSetup);
+			this.groupCustomizedMessages.Location = new System.Drawing.Point(457, 521);
+			this.groupCustomizedMessages.Name = "groupCustomizedMessages";
+			this.groupCustomizedMessages.Size = new System.Drawing.Size(575, 91);
+			this.groupCustomizedMessages.TabIndex = 409;
+			this.groupCustomizedMessages.Text = "Customized Messages";
+			// 
+			// labelNotificationSettings
+			// 
+			this.labelNotificationSettings.Location = new System.Drawing.Point(9, 54);
+			this.labelNotificationSettings.Name = "labelNotificationSettings";
+			this.labelNotificationSettings.Size = new System.Drawing.Size(428, 23);
+			this.labelNotificationSettings.TabIndex = 407;
+			this.labelNotificationSettings.Text = "Customize the \"appointment booked\" notification";
+			this.labelNotificationSettings.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// groupOtherSettings
+			// 
+			this.groupOtherSettings.Controls.Add(this.comboWSRConfirmStatus);
+			this.groupOtherSettings.Controls.Add(this.labelRecallConfirmStatus);
+			this.groupOtherSettings.Controls.Add(this.textWebSchedRecallApptSearchDays);
+			this.groupOtherSettings.Controls.Add(this.labelDaysFuture);
+			this.groupOtherSettings.Controls.Add(this.checkWSRDoubleBooking);
+			this.groupOtherSettings.Controls.Add(this.checkRecallAllowProvSelection);
+			this.groupOtherSettings.Location = new System.Drawing.Point(11, 521);
+			this.groupOtherSettings.Name = "groupOtherSettings";
+			this.groupOtherSettings.Size = new System.Drawing.Size(439, 91);
+			this.groupOtherSettings.TabIndex = 410;
+			this.groupOtherSettings.Text = "Other Settings";
+			// 
 			// FormEServicesWebSchedRecall
 			// 
 			this.CancelButton = this.butCancel;
-			this.ClientSize = new System.Drawing.Size(998, 696);
+			this.ClientSize = new System.Drawing.Size(1046, 661);
+			this.Controls.Add(this.groupOtherSettings);
+			this.Controls.Add(this.groupCustomizedMessages);
 			this.Controls.Add(this.butEditRecallTypes);
 			this.Controls.Add(this.butEditOperatories);
-			this.Controls.Add(this.butWebSchedRecallNotify);
 			this.Controls.Add(this.groupWebSchedProvRule);
-			this.Controls.Add(this.checkWSRDoubleBooking);
-			this.Controls.Add(this.comboWSRConfirmStatus);
-			this.Controls.Add(this.label36);
-			this.Controls.Add(this.label43);
-			this.Controls.Add(this.label44);
-			this.Controls.Add(this.textWebSchedRecallApptSearchDays);
-			this.Controls.Add(this.checkRecallAllowProvSelection);
 			this.Controls.Add(this.groupWebSchedText);
 			this.Controls.Add(this.groupBox6);
 			this.Controls.Add(this.groupBoxWebSchedAutomation);
 			this.Controls.Add(this.groupWebSchedPreview);
 			this.Controls.Add(this.gridWebSchedOperatories);
-			this.Controls.Add(this.butRecallSchedSetup);
 			this.Controls.Add(this.gridWebSchedRecallTypes);
-			this.Controls.Add(this.label20);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -618,8 +669,10 @@ namespace OpenDental{
 			this.groupBoxWebSchedAutomation.ResumeLayout(false);
 			this.groupWebSchedPreview.ResumeLayout(false);
 			this.groupWebSchedPreview.PerformLayout();
+			this.groupCustomizedMessages.ResumeLayout(false);
+			this.groupOtherSettings.ResumeLayout(false);
+			this.groupOtherSettings.PerformLayout();
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
@@ -635,9 +688,8 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label21;
 		private System.Windows.Forms.CheckBox checkWSRDoubleBooking;
 		private UI.ComboBoxOD comboWSRConfirmStatus;
-		private System.Windows.Forms.Label label36;
-		private System.Windows.Forms.Label label43;
-		private System.Windows.Forms.Label label44;
+		private System.Windows.Forms.Label labelRecallConfirmStatus;
+		private System.Windows.Forms.Label labelDaysFuture;
 		private ValidNum textWebSchedRecallApptSearchDays;
 		private System.Windows.Forms.CheckBox checkRecallAllowProvSelection;
 		private OpenDental.UI.GroupBoxOD groupWebSchedText;
@@ -668,10 +720,17 @@ namespace OpenDental{
 		private UI.GridOD gridWebSchedOperatories;
 		private UI.Button butRecallSchedSetup;
 		private UI.GridOD gridWebSchedRecallTypes;
-		private System.Windows.Forms.Label label20;
+		private System.Windows.Forms.Label labelRecallSetup;
 		private UI.Button butWebSchedRecallNotify;
 		private UI.Button butRefresh;
 		private UI.Button butEditOperatories;
 		private UI.Button butEditRecallTypes;
+		private System.Windows.Forms.Label label1;
+		private UI.Button butWebSchedRecallRestrictedToBlockoutEdit;
+		private System.Windows.Forms.Label labelRestrictedToBlockouts;
+		private UI.ListBoxOD listboxRestrictedToBlockouts;
+		private UI.GroupBoxOD groupCustomizedMessages;
+		private UI.GroupBoxOD groupOtherSettings;
+		private System.Windows.Forms.Label labelNotificationSettings;
 	}
 }

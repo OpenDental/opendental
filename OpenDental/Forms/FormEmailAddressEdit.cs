@@ -65,7 +65,6 @@ namespace OpenDental{
 				}
 				textAccessToken.Text=_emailAddress.AccessToken;
 				textRefreshToken.Text=_emailAddress.RefreshToken;
-				checkDownloadInbox.Checked=_emailAddress.DownloadInbox;
 				if(!textAccessToken.Text.IsNullOrEmpty()) {//If using Google OAuth, disable unnecessary fields
 					textPassword.Enabled=false;
 					textSMTPserver.ReadOnly=true;
@@ -76,7 +75,6 @@ namespace OpenDental{
 			}
 			groupGoogleAuth.Visible=!textAccessToken.Text.IsNullOrEmpty();
 			if(groupGoogleAuth.Visible) {
-				checkDownloadInbox.Checked=!textSMTPserverIncoming.Text.IsNullOrEmpty();
 				AdjustEmailTextFields();
 				LayoutManager.MoveLocation(groupAuthentication,new Point(_groupAuthLocationXAuthorized,groupAuthentication.Location.Y));
 			}
@@ -88,7 +86,7 @@ namespace OpenDental{
 		private void AdjustEmailTextFields(bool isEnablingEmailFields=false) {
 			textSMTPserver.Text="smtp.gmail.com";
 			textPort.Text="0";
-			if(checkDownloadInbox.Checked) {
+			if(_emailAddress.DownloadInbox) {
 				textPassword.Text="";
 				textSMTPserverIncoming.Text="pop.gmail.com";
 				textPortIncoming.Text="0";
@@ -168,13 +166,8 @@ namespace OpenDental{
 			textAccessToken.Text="";
 			textRefreshToken.Text="";
 			butClearTokens.Enabled=false;
-			checkDownloadInbox.Checked=false;
-			checkDownloadInbox.Enabled=false;
+			_emailAddress.DownloadInbox=false;
 			AdjustEmailTextFields(true);
-		}
-		
-		private void checkDownloadInbox_Click(object sender,EventArgs e) {
-			AdjustEmailTextFields();
 		}
 
 		private void butAuthGoogle_Click(object sender,EventArgs e) {
@@ -201,8 +194,6 @@ namespace OpenDental{
 				LayoutManager.MoveLocation(groupAuthentication,new Point(_groupAuthLocationXAuthorized,groupAuthentication.Location.Y));
 				groupGoogleAuth.Visible=true;
 				butClearTokens.Enabled=true;
-				checkDownloadInbox.Enabled=true;
-				checkDownloadInbox.Checked=false;
 			}
 			catch(ODException ae) {
 				MsgBox.Show(ae.Message);
@@ -210,6 +201,15 @@ namespace OpenDental{
 			catch(Exception ex) {
 				MsgBox.Show("Error: "+ex.Message);
 			}
+		}
+
+		private void butGmailSettings_Click(object sender,EventArgs e) {
+			using FormGmailSettings formGmail=new FormGmailSettings();
+			//Information gets updated on the okClick method for this form so no need to manage it out here
+			formGmail.GmailAddress=_emailAddress;
+			formGmail.IsNew=_isNew;
+			formGmail.ShowDialog();
+			AdjustEmailTextFields();
 		}
 
 		private void butAuthGoogle_MouseEnter(object sender,EventArgs e) {
@@ -267,7 +267,6 @@ namespace OpenDental{
 			_emailAddress.Pop3ServerIncoming=PIn.String(textSMTPserverIncoming.Text);
 			_emailAddress.ServerPortIncoming=PIn.Int(textPortIncoming.Text);
 			_emailAddress.UserNum=((Userod)(textUserod.Tag))?.UserNum??0;
-			_emailAddress.DownloadInbox=checkDownloadInbox.Checked;
 			if(_isNew) {
 				EmailAddresses.Insert(_emailAddress);
 			}

@@ -37,6 +37,8 @@ namespace OpenDentBusiness {
 		public string RefreshToken;
 		///<summary>When true, this will allow the user to download emails to their inbox.</summary>
 		public bool DownloadInbox;
+		///<summary>Allows gmail users to specify search parameters</summary>
+		public string QueryString;
 
     ///<summary>We assume the email settings are implicit if the server port is 465.</summary>
     public bool IsImplicitSsl {

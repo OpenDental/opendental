@@ -197,7 +197,7 @@ namespace OpenDentBusiness{
 		///<summary>FK to userod.UserNum.  Set to the user logged in when the row was inserted at SecDateEntry date and time.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.ExcludeFromUpdate)]
 		public long SecUserNumEntry;
-		///<summary>Timestamp automatically generated and user not allowed to change.  The actual date of entry.</summary>
+		///<summary>Date automatically generated and user not allowed to change.  The actual date of entry.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.DateEntry)]
 		public DateTime SecDateEntry;
 		//No SecDateTEdit, DateTStamp already exists and is the timestamp updated by MySQL when a row is added or changed

@@ -229,7 +229,7 @@ namespace OpenDental {
 				using FormQueryFavorites FormQF = new FormQueryFavorites();
 				FormQF.ShowDialog();
 				if(FormQF.DialogResult == DialogResult.OK) {
-					using FormUserQuery FormQ=new FormUserQuery(null,true);
+					using FormUserQuery FormQ=new FormUserQuery(FormQF.UserQueryCur.QueryText,true);
 					FormQ.textQuery.Text=FormQF.UserQueryCur.QueryText;
 					FormQ.textTitle.Text=FormQF.UserQueryCur.FileName;
 					SecurityLogs.MakeLogEntry(Permissions.UserQuery,0,Lan.g(this,"User query form accessed."));

@@ -62,12 +62,13 @@ namespace OpenDental {
 			this.labelAccess = new System.Windows.Forms.Label();
 			this.labelRefresh = new System.Windows.Forms.Label();
 			this.groupGoogleAuth = new OpenDental.UI.GroupBoxOD();
-			this.checkDownloadInbox = new System.Windows.Forms.CheckBox();
 			this.butClearTokens = new OpenDental.UI.Button();
 			this.butAuthGoogle = new System.Windows.Forms.Label();
 			this.groupAuthentication = new OpenDental.UI.GroupBoxOD();
 			this.label12 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
+			this.webServiceService1 = new OpenDental.com.dentalxchange.webservices.WebServiceService();
+			this.butGmailSettings = new OpenDental.UI.Button();
 			this.groupOutgoing.SuspendLayout();
 			this.groupIncoming.SuspendLayout();
 			this.groupUserod.SuspendLayout();
@@ -224,7 +225,6 @@ namespace OpenDental {
 			this.groupOutgoing.Name = "groupOutgoing";
 			this.groupOutgoing.Size = new System.Drawing.Size(719, 180);
 			this.groupOutgoing.TabIndex = 4;
-			this.groupOutgoing.TabStop = false;
 			this.groupOutgoing.Text = "Outgoing Email Settings";
 			// 
 			// label13
@@ -257,7 +257,6 @@ namespace OpenDental {
 			this.groupIncoming.Name = "groupIncoming";
 			this.groupIncoming.Size = new System.Drawing.Size(719, 116);
 			this.groupIncoming.TabIndex = 5;
-			this.groupIncoming.TabStop = false;
 			this.groupIncoming.Text = "Incoming Email Settings";
 			// 
 			// label14
@@ -328,7 +327,6 @@ namespace OpenDental {
 			this.groupUserod.Name = "groupUserod";
 			this.groupUserod.Size = new System.Drawing.Size(718, 42);
 			this.groupUserod.TabIndex = 10;
-			this.groupUserod.TabStop = false;
 			this.groupUserod.Text = "User";
 			// 
 			// butPickUserod
@@ -361,7 +359,7 @@ namespace OpenDental {
 			// 
 			// textAccessToken
 			// 
-			this.textAccessToken.Location = new System.Drawing.Point(131, 24);
+			this.textAccessToken.Location = new System.Drawing.Point(129, 17);
 			this.textAccessToken.Name = "textAccessToken";
 			this.textAccessToken.ReadOnly = true;
 			this.textAccessToken.Size = new System.Drawing.Size(115, 20);
@@ -369,7 +367,7 @@ namespace OpenDental {
 			// 
 			// textRefreshToken
 			// 
-			this.textRefreshToken.Location = new System.Drawing.Point(131, 50);
+			this.textRefreshToken.Location = new System.Drawing.Point(129, 43);
 			this.textRefreshToken.Name = "textRefreshToken";
 			this.textRefreshToken.ReadOnly = true;
 			this.textRefreshToken.Size = new System.Drawing.Size(115, 20);
@@ -377,7 +375,7 @@ namespace OpenDental {
 			// 
 			// labelAccess
 			// 
-			this.labelAccess.Location = new System.Drawing.Point(13, 21);
+			this.labelAccess.Location = new System.Drawing.Point(10, 17);
 			this.labelAccess.Name = "labelAccess";
 			this.labelAccess.Size = new System.Drawing.Size(116, 20);
 			this.labelAccess.TabIndex = 14;
@@ -386,7 +384,7 @@ namespace OpenDental {
 			// 
 			// labelRefresh
 			// 
-			this.labelRefresh.Location = new System.Drawing.Point(10, 47);
+			this.labelRefresh.Location = new System.Drawing.Point(11, 43);
 			this.labelRefresh.Name = "labelRefresh";
 			this.labelRefresh.Size = new System.Drawing.Size(115, 20);
 			this.labelRefresh.TabIndex = 15;
@@ -395,7 +393,7 @@ namespace OpenDental {
 			// 
 			// groupGoogleAuth
 			// 
-			this.groupGoogleAuth.Controls.Add(this.checkDownloadInbox);
+			this.groupGoogleAuth.Controls.Add(this.butGmailSettings);
 			this.groupGoogleAuth.Controls.Add(this.textAccessToken);
 			this.groupGoogleAuth.Controls.Add(this.butClearTokens);
 			this.groupGoogleAuth.Controls.Add(this.labelAccess);
@@ -405,24 +403,11 @@ namespace OpenDental {
 			this.groupGoogleAuth.Name = "groupGoogleAuth";
 			this.groupGoogleAuth.Size = new System.Drawing.Size(352, 128);
 			this.groupGoogleAuth.TabIndex = 16;
-			this.groupGoogleAuth.TabStop = false;
 			this.groupGoogleAuth.Text = "Gmail Authorization";
-			// 
-			// checkDownloadInbox
-			// 
-			this.checkDownloadInbox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkDownloadInbox.Location = new System.Drawing.Point(131, 102);
-			this.checkDownloadInbox.Name = "checkDownloadInbox";
-			this.checkDownloadInbox.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.checkDownloadInbox.Size = new System.Drawing.Size(198, 20);
-			this.checkDownloadInbox.TabIndex = 17;
-			this.checkDownloadInbox.Text = "Download incoming emails";
-			this.checkDownloadInbox.UseVisualStyleBackColor = true;
-			this.checkDownloadInbox.Click += new System.EventHandler(this.checkDownloadInbox_Click);
 			// 
 			// butClearTokens
 			// 
-			this.butClearTokens.Location = new System.Drawing.Point(131, 76);
+			this.butClearTokens.Location = new System.Drawing.Point(129, 72);
 			this.butClearTokens.Name = "butClearTokens";
 			this.butClearTokens.Size = new System.Drawing.Size(115, 23);
 			this.butClearTokens.TabIndex = 16;
@@ -454,7 +439,6 @@ namespace OpenDental {
 			this.groupAuthentication.Name = "groupAuthentication";
 			this.groupAuthentication.Size = new System.Drawing.Size(345, 128);
 			this.groupAuthentication.TabIndex = 19;
-			this.groupAuthentication.TabStop = false;
 			this.groupAuthentication.Text = "Email Authentication";
 			// 
 			// label12
@@ -475,6 +459,22 @@ namespace OpenDental {
 			this.label7.TabIndex = 18;
 			this.label7.Text = "or";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// webServiceService1
+			// 
+			this.webServiceService1.Credentials = null;
+			this.webServiceService1.Url = "https://webservices.dentalxchange.com/dws/services/dciservice.svl";
+			this.webServiceService1.UseDefaultCredentials = false;
+			// 
+			// butGmailSettings
+			// 
+			this.butGmailSettings.Location = new System.Drawing.Point(129, 98);
+			this.butGmailSettings.Name = "butGmailSettings";
+			this.butGmailSettings.Size = new System.Drawing.Size(115, 23);
+			this.butGmailSettings.TabIndex = 18;
+			this.butGmailSettings.Text = "Gmail Settings";
+			this.butGmailSettings.UseVisualStyleBackColor = true;
+			this.butGmailSettings.Click += new System.EventHandler(this.butGmailSettings_Click);
 			// 
 			// FormEmailAddressEdit
 			// 
@@ -556,6 +556,7 @@ namespace OpenDental {
 		private OpenDental.UI.GroupBoxOD groupAuthentication;
 		private Label label7;
 		private Label label12;
-		private CheckBox checkDownloadInbox;
+		private UI.Button butGmailSettings;
+		private com.dentalxchange.webservices.WebServiceService webServiceService1;
 	}
 }

@@ -446,7 +446,7 @@ namespace OpenDentBusiness{
 					isHashNeeded=IsPaySplitHashValid(paySplitOld);
 				}
 				//Hash splits that are either new, or rehash existing splits that are valid
-				if(isHashNeeded && listNew[i].SecDateTEdit >= dateHashStart) {
+				if(isHashNeeded) {
 					listNew[i].SecurityHash=HashFields(listNew[i]);
 				}
 			}
@@ -530,7 +530,7 @@ namespace OpenDentBusiness{
 				return true;
 			}
 			DateTime dateHashStart=Misc.SecurityHash.DateStart;
-			if(paySplit.SecDateTEdit < dateHashStart) { //old
+			if(paySplit.DateEntry < dateHashStart) { //old
 				return true;
 			}
 			if(paySplit.SecurityHash==HashFields(paySplit)) {

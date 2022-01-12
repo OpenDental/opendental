@@ -150,6 +150,12 @@ namespace OpenDentBusiness{
 			return Crud.EmailAddressCrud.SelectMany(command);
 		}
 
+		///<summary>Gets email addresses that have been set up for downloading from the service</summary>
+		public static List<EmailAddress> GetAllForDownloadFromCache() {
+			return _emailAddressCache.GetWhere(x=>!string.IsNullOrWhiteSpace(x.Pop3ServerIncoming)).ToList();
+		}
+
+
 		///<summary>Checks to make sure at least one non-user email address has a valid (not blank) SMTP server.</summary>
 		public static bool ExistsValidEmail() {
 			//No need to check RemotingRole; no call to db.

@@ -311,11 +311,7 @@ namespace OpenDental {
 			foreach(PaySplit paySplit in _listSplitsCur) {
 				_listPaySplitsOld.Add(paySplit.Copy());
 			}
-			warningIntegrity1.ObjectDesc="Payment";
-			bool arePaySplitHashesValid=Payments.ArePaySplitHashesValid(_paymentCur.PayNum,_listSplitsCur);
-			if(arePaySplitHashesValid) {
-				warningIntegrity1.Visible=false;
-			}
+			warningIntegrity1.SetTypeAndVisibility(EnumWarningIntegrityType.Payment,Payments.ArePaySplitHashesValid(_paymentCur.PayNum,_listSplitsCur));
 			if(IsNew && CompareDecimal.IsGreaterThanZero(UnearnedAmt)) {
 				_loadData.ListSplits=PaymentEdit.AllocateUnearned(_paymentCur.PayNum,UnearnedAmt,ListEntriesPayFirst,_famCur);
 				_listSplitsCur=_loadData.ListSplits;

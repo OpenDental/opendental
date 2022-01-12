@@ -172,10 +172,7 @@ namespace OpenDental{
 			checkNotesSame.Checked=true;
 			checkEmailPhoneSame.Checked=true;
 			checkArriveEarlySame.Checked=true;
-			warningIntegrity1.ObjectDesc="Patient";
-			if(Patients.IsPatientHashValid(_patientCur)) {
-				warningIntegrity1.Visible=false;
-			}
+			warningIntegrity1.SetTypeAndVisibility(EnumWarningIntegrityType.Patient,Patients.IsPatientHashValid(_patientCur));
 			bool isAuthArchivedEdit=Security.IsAuthorized(Permissions.ArchivedPatientEdit,true);
 			List<Patient> listPatientsFamily=_familyCur.ListPats.ToList();
 			if(!isAuthArchivedEdit) {
@@ -310,37 +307,42 @@ namespace OpenDental{
 			FillGuardians();
 			_listGuardiansForFamOld=_familyCur.ListPats.SelectMany(x => Guardians.Refresh(x.PatNum)).ToList();
 			if(PrefC.GetBool(PrefName.PatientDOBMasked) || !Security.IsAuthorized(Permissions.PatientDOBView,true)) {
-				//turn off validation until the user changes text, or unmasks.
+				//turn off validation until the user unmasks DOB.
 				odDatePickerBirthDate.SetMaskedDate(Patients.DOBFormatHelper(_patientCur.Birthdate,true));//If birthdate is not set this will return ""
 				_isBirthdayMasked = true;
 				_maskedDOBOld=odDatePickerBirthDate.GetTextDate();
 				if(odDatePickerBirthDate.GetTextDate()!="") {
 					odDatePickerBirthDate.ReadOnly=true;
 				}
-				butViewBirthdate.Enabled=(Security.IsAuthorized(Permissions.PatientDOBView,true) && odDatePickerBirthDate.GetTextDate()!="");//Disable if no DOB
-				butViewBirthdate.Visible=true;
+				//Disable if no DOB
+				if(!Security.IsAuthorized(Permissions.PatientDOBView,true) || odDatePickerBirthDate.GetTextDate()=="") {
+					hideButViewBirthDate();
+				}
 			}
 			else {
 				odDatePickerBirthDate.SetDateTime(_patientCur.Birthdate);
-				//butViewBirthdate is disabled and not visible from designer.
-				//Move age back over since butViewBirthdate is not showing
-				LayoutManager.MoveLocation(label20,new Point(label20.Location.X-72,label20.Location.Y));
-				LayoutManager.MoveLocation(textAge,new Point(textAge.Location.X-72,textAge.Location.Y));
+				hideButViewBirthDate();
 			}
 			if(_patientCur.DateTimeDeceased.Year > 1880) {
 				dateTimePickerDateDeceased.Value=_patientCur.DateTimeDeceased;
 			}
-            else {
+      else {
 				//if there is no datetime deceased, used to show blank instead of the default of todays date.
 				dateTimePickerDateDeceased.CustomFormat=" ";
 				dateTimePickerDateDeceased.Format=DateTimePickerFormat.Custom;
-            }
+      }
 			textAge.Text=PatientLogic.DateToAgeString(_patientCur.Birthdate,_patientCur.DateTimeDeceased);
-			if(PrefC.GetBool(PrefName.PatientSSNMasked)) {
+			if(PrefC.GetBool(PrefName.PatientSSNMasked) || !Security.IsAuthorized(Permissions.PatientSSNView,true)) {
+				//turn off validation until the user unmasks SSN.
 				textSSN.Text=Patients.SSNFormatHelper(_patientCur.SSN,true);//If PatCur.SSN is null or empty, returns empty string.
+				if(textSSN.Text!="") {
+					textSSN.ReadOnly=true;
+				}
 				_maskedSSNOld=textSSN.Text;
-				butViewSSN.Enabled=(Security.IsAuthorized(Permissions.PatientSSNView,true) && textSSN.Text!="");//Disable button if no SSN entered
-				butViewSSN.Visible=true;
+				//Hide button if no SSN entered
+				if(Security.IsAuthorized(Permissions.PatientSSNView,true) && textSSN.Text!="") {
+					butViewSSN.Visible=true;
+				}
 			}
 			else {
 				textSSN.Text=Patients.SSNFormatHelper(_patientCur.SSN,false);
@@ -649,6 +651,14 @@ namespace OpenDental{
 			_isLoad=false;
 			checkBoxSignedTil.Checked=_patientCur.HasSignedTil;
 			Plugins.HookAddCode(this,"FormPatientEdit.Load_end",_patientCur);
+		}
+
+		private void hideButViewBirthDate() {
+			butViewBirthdate.Visible=false;
+			//butViewBirthdate is not visible from designer.
+			//Move age back over since butViewBirthdate is not showing
+			LayoutManager.MoveLocation(label20,new Point(label20.Location.X-72,label20.Location.Y));
+			LayoutManager.MoveLocation(textAge,new Point(textAge.Location.X-72,textAge.Location.Y));
 		}
 
 		private void butShortCodeOptIn_Click(object sender,EventArgs e) {
@@ -1032,7 +1042,7 @@ namespace OpenDental{
 						break;
 					case RequiredFieldName.SocialSecurityNumber:
 						SetRequiredTextBox(labelSSN,textSSN,areConditionsMet);
-						break;
+					break;
 					case RequiredFieldName.State:
 						SetRequiredTextBox(labelST,textState,areConditionsMet);
 						if(textState.Text!=""	&& !StateAbbrs.IsValidAbbr(textState.Text)) {
@@ -1513,7 +1523,12 @@ namespace OpenDental{
 			if(textSSN.Text==""){
 				return;
 			}
-			if(PrefC.GetBool(PrefName.PatientSSNMasked) && textSSN.Text==_maskedSSNOld) {//If SSN hasn't changed, don't validate.  It is masked.
+			if((PrefC.GetBool(PrefName.PatientSSNMasked) || !Security.IsAuthorized(Permissions.PatientSSNView, true)) && textSSN.Text==_maskedSSNOld) {//If SSN hasn't changed, don't validate.  It is masked.
+				return;
+			}
+			if(!Regex.IsMatch(textSSN.Text,@"^\d{9}$") && !Regex.IsMatch(textSSN.Text,@"^\d{3}-\d{2}-\d{4}$")) {
+				MsgBox.Show("Patient's Social Security Number is invalid.");
+				_errorProvider.SetError(textSSN, "Invalid social security number.");
 				return;
 			}
 			if(textSSN.Text.Length==9){//if just numbers, try to reformat.
@@ -1566,6 +1581,7 @@ namespace OpenDental{
 			}
 			if(!IsBirthdateValid()) {
 				MsgBox.Show(this,"Patient's Birthdate is not a valid or allowed date.");
+				_errorProvider.SetError(odDatePickerBirthDate,"Valid dates between 1880 and 2100.");
 				return;
 			}
 			DateTime dateTimeBirthdate=PIn.Date(odDatePickerBirthDate.Text);
@@ -2736,6 +2752,7 @@ namespace OpenDental{
 				return;
 			}
 			textSSN.Text=Patients.SSNFormatHelper(_patientOld.SSN,false);
+			textSSN.ReadOnly=false;
 			string logtext="";
 			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
 				logtext="Social Insurance Number";
@@ -2902,14 +2919,14 @@ namespace OpenDental{
 					}
 				}
 			}
-			//Check SSN for US Formatting.  If SSN is masked and hasn't been changed, don't check.  Same checks from textSSN_Validating()
-			if(CultureInfo.CurrentCulture.Name=="en-US"	&& textSSN.Text!=""//Only validate if US and SSN is not blank.
-				&& ((PrefC.GetBool(PrefName.PatientSSNMasked) && textSSN.Text!=_maskedSSNOld)//If SSN masked, only validate if changed
-					|| (!PrefC.GetBool(PrefName.PatientSSNMasked) && textSSN.Text!=_patientOld.SSN)))//If SSN isn't masked only validate if changed
+			//Check SSN for US Formatting.  If SSN is masked, don't check.  Similar checks to textSSN_Validating()
+			if(CultureInfo.CurrentCulture.Name=="en-US" && textSSN.Text!=""//Only validate if US and SSN is not blank
+				&& !textSSN.ReadOnly && Patients.SSNRemoveDashes(textSSN.Text)!=_patientOld.SSN)//If SSN isn't masked, it isn't readonly, might have changed. Only validate if changed
 			{
 				if(!Regex.IsMatch(textSSN.Text,@"^\d\d\d-\d\d-\d\d\d\d$")) {
 					if(MessageBox.Show("SSN not valid. Continue anyway?","",MessageBoxButtons.OKCancel)
 						!=DialogResult.OK) {
+						_errorProvider.SetError(textSSN, "Invalid social security number.");
 						return;
 					}
 				}
@@ -2971,12 +2988,12 @@ namespace OpenDental{
 				case 3: _patientCur.Position=PatientPosition.Widowed; break;
 				case 4: _patientCur.Position=PatientPosition.Divorced; break;
 			}
-			//Only update birthdate if it was changed, might be masked.
-			if(!PrefC.GetBool(PrefName.PatientDOBMasked) || _maskedDOBOld!=odDatePickerBirthDate.GetTextDate()) {
+			//Only update birthdate if it was changed, shouldn't be masked.
+			if(!odDatePickerBirthDate.ReadOnly && _patientOld.Birthdate.ToShortDateString()!=odDatePickerBirthDate.GetTextDate()) {
 				_patientCur.Birthdate=PIn.Date(odDatePickerBirthDate.GetDateTime().ToString());
 			}
 			_patientCur.DateTimeDeceased=dateTimeDeceased;
-			if(!PrefC.GetBool(PrefName.PatientSSNMasked) || _maskedSSNOld!=textSSN.Text) {//Only update SSN if it was changed, might be masked.
+			if(!textSSN.ReadOnly && Patients.SSNRemoveDashes(textSSN.Text)!=_patientOld.SSN) { //Only update SSN if it was changed, readonly must be false to edit, meaning it is also unmasked.
 				if(CultureInfo.CurrentCulture.Name=="en-US") {
 					if(Regex.IsMatch(textSSN.Text,@"^\d\d\d-\d\d-\d\d\d\d$")) {
 						_patientCur.SSN=textSSN.Text.Substring(0,3)+textSSN.Text.Substring(4,2)
