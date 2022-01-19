@@ -258,8 +258,9 @@ namespace OpenDental {
 			_headingPrinted=false;
 			PrinterL.TryPreview(
 				pd_PrintPage,
-				Lan.g(this,$"{(String.IsNullOrEmpty(textTitle.Text) ? "User Query" : textTitle.Text)} previewed")
-			);
+				Lan.g(this,$"{(String.IsNullOrEmpty(textTitle.Text) ? "User Query" : textTitle.Text)} previewed"),
+				doCalculateTotalPages: true
+			);;
 		}
 
 		private void pd_PrintPage(object sender,System.Drawing.Printing.PrintPageEventArgs e) {
@@ -576,8 +577,11 @@ namespace OpenDental {
 
 		private void AddToColumnTotal(int index,string value) {
 			if(_listQueryColumns[index].Name[0] == '$') {
+				double parseResult=0;
 				_listQueryColumns[index].ShowTotal=true;
-				_listQueryColumns[index].Total += Double.Parse(value);
+				if(Double.TryParse(value, out parseResult)) {
+					_listQueryColumns[index].Total+=parseResult;
+				}
 			}
 		}
 

@@ -172,9 +172,6 @@ namespace OpenDentBusiness.Eclaims {
 				throw new ODException("Invalid carrier associated to insurance plan.  Please run Database Maintenance to fix this.");
 			}
 			if(claim.ClaimType=="S") {//cob
-				if(!carrier.CanadianSupportedTypes.HasFlag(CanSupTransTypes.CobClaimTransaction_07)) {
-					throw new ApplicationException(Lans.g("Canadian","This carrier does not accept electronic secondary claims (COB transactions).  Try printing and mailing the claim instead."));
-				}
 				carrierReceiver=carrier2;
 				if(carrierReceiver==null) {
 					if(planNum2==0) {
@@ -184,6 +181,9 @@ namespace OpenDentBusiness.Eclaims {
 					else {
 						throw new ODException("Invalid secondary carrier associated to Other Coverage of the primary claim.  Please run Database Maintenance to fix this.");
 					}
+				}
+				else if(!carrierReceiver.CanadianSupportedTypes.HasFlag(CanSupTransTypes.CobClaimTransaction_07)) {
+					throw new ApplicationException(Lans.g("Canadian","This carrier does not accept electronic secondary claims (COB transactions).  Try printing and mailing the claim instead."));
 				}
 			}
 			else if(claim.ClaimType=="PreAuth") {

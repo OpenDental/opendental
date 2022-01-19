@@ -958,7 +958,7 @@ namespace OpenDental {
 						}
 					}
 				}
-				ImageTools.ConvertCropIfNeeded(document,_bitmapRaw);
+				ImageHelper.ConvertCropIfNeeded(document,_bitmapRaw);
 				SetWindowingSlider();
 				EnableToolBarButtons();
 				EventSetCropPanEditAdj?.Invoke(this,EnumCropPanAdj.Pan);
@@ -1001,7 +1001,7 @@ namespace OpenDental {
 						listMissingMountNums.Add(i);
 					}
 					else{
-						ImageTools.ConvertCropIfNeeded(_arrayDocumentsShowing[i],_arrayBitmapsShowing[i]);
+						ImageHelper.ConvertCropIfNeeded(_arrayDocumentsShowing[i],_arrayBitmapsShowing[i]);
 					}
 				}
 				if(listMissingMountNums.Count>0) {//Notify user of any files that were unable to load
@@ -3545,10 +3545,10 @@ namespace OpenDental {
 			if(progressOD.IsCancelled) {
 				return;
 			}
-			document.Note=""; //if successful, remove need-to-download flag to prevent repeated downloads
-			Documents.Update(document);
-			SetDocumentShowing(0,document); //shows updated note text 
-			EventFillTree?.Invoke(this,true);//updates tree to immediately include new file
+			Documents.Delete(document);
+			EventFillTree?.Invoke(this,false);//updates tree to immediately include new file
+			NodeTypeAndKey nodeTypeAndKey2=new NodeTypeAndKey(EnumImageNodeType.Document,importedDocument.DocNum);
+			EventSelectTreeNode?.Invoke(this,nodeTypeAndKey2);
 		}
 
 		///<summary></summary>
@@ -3795,7 +3795,7 @@ namespace OpenDental {
 
 		///<summary>Gets the DefNum category of the current selection.</summary>
 		private long GetCurrentCategory() {
-			if(_nodeTypeKeyCatSelected==null || _nodeTypeKeyCatSelected.NodeType==EnumImageNodeType.None) {//No Image Category selected.
+			if(_nodeTypeKeyCatSelected==null || _nodeTypeKeyCatSelected.NodeType==EnumImageNodeType.None || _nodeTypeKeyCatSelected.DefNumCategory==0) {//No Image Category selected.
 				long defaultCategoryDefNum=PrefC.GetLong(PrefName.DefaultImageCategoryImportFolder);
 				if(defaultCategoryDefNum > 0) {
 					return defaultCategoryDefNum;

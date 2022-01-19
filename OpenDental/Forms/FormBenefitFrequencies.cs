@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CodeBase;
 using OpenDentBusiness;
+using OpenDental.UI;
 
 namespace OpenDental {
 	public partial class FormBenefitFrequencies:FormODBase {
@@ -27,7 +28,7 @@ namespace OpenDental {
 		}
 
 		private void FormBenefitFrequencies_Load(object sender,EventArgs e) {
-			List<ComboBox> listComboBoxes = UIHelper.GetAllControls(this).OfType<ComboBox>().ToList();
+			List<ComboBoxOD> listComboBoxes = UIHelper.GetAllControls(this).OfType<ComboBoxOD>().ToList();
 			for(int i=0;i<listComboBoxes.Count;++i) {
 				listComboBoxes[i].SelectedIndex=0;//Every # years
 			}
@@ -91,7 +92,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void FillBenefit(Benefit ben,ValidNum textBoxBenefit,OpenDental.UI.ComboBoxOD comboBenefit) {
+		private void FillBenefit(Benefit ben,ValidNum textBoxBenefit,ComboBoxOD comboBenefit) {
 			textBoxBenefit.Text=ben.Quantity.ToString();
 			if(ben.QuantityQualifier==BenefitQuantity.Years) {
 				comboBenefit.SelectedIndex=0;//Every # Years
@@ -134,7 +135,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void CreateFrequencyBenefit(ValidNum textBox,OpenDental.UI.ComboBoxOD comboBox,string procCodeStr) {
+		private void CreateFrequencyBenefit(ValidNum textBox,ComboBoxOD comboBox,string procCodeStr) {
 			if(PIn.Byte(textBox.Text,false)==0 || ProcedureCodes.GetCodeNum(procCodeStr)==0) {
 				return;
 			}
@@ -143,7 +144,7 @@ namespace OpenDental {
 			ListBenefits.Add(ben);
 		}
 
-		private BenefitQuantity GetQuantityQualifier(OpenDental.UI.ComboBoxOD comboBox) {
+		private BenefitQuantity GetQuantityQualifier(ComboBoxOD comboBox) {
 			switch(comboBox.SelectedIndex) {
 				case 0:
 					return BenefitQuantity.Years;

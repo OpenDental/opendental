@@ -126,7 +126,7 @@ namespace OpenDental {
 				labelJobs.Visible=true;
 				FillComboJobs();
 			}
-			FillComboAttachments();
+			FillTextAttachments();
 			if(IsNew) {
 				//butDelete.Enabled always stays true
 				//textDescript always editable
@@ -818,7 +818,6 @@ namespace OpenDental {
 					return;
 				}
 			}
-			IsTaskAttachmentsEnabled();
 			_taskCur.KeyNum=0;
 			_taskCur.ObjectType=listObjectType.GetSelected<TaskObjectType>();
 			FillObject();
@@ -997,93 +996,21 @@ namespace OpenDental {
 		}
 
 		private void butAttachmnents_Click(object sender,EventArgs e) {
-			if(!IsTaskAttachmentsEnabled(showMessage:true)) {
-				return;
-			}
 			_taskCur.IsNew=IsNew;
 			using FormTaskAttachments formTaskAttachments=new FormTaskAttachments(_taskCur);
-			formTaskAttachments.TaskAttachmentNum=comboAttachments.GetSelected<TaskAttachment>()?.TaskAttachmentNum??0;
 			formTaskAttachments.ShowDialog();
 			if(formTaskAttachments.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			FillComboAttachments();
+			FillTextAttachments();
 			long signalNum=Signalods.SetInvalid(InvalidType.Task,KeyType.Task,_taskCur.TaskNum);
 			UserControlTasks.RefillLocalTaskGrids(_taskCur,_listTaskNotes,new List<long>() { signalNum });			
 		}
 
-		private void comboAttachments_SelectionChangeCommitted(object sender,EventArgs e) {
-			IsTaskAttachmentsEnabled();
-			if(comboAttachments.SelectedIndex==0) {//If 'None' option is selected, do nothing and just return
-				return;
-			}
-			if(comboAttachments.SelectedIndex==-1) {
-				MsgBox.Show(this,"Please select an attachment to open.");
-				return;
-			}
-			TaskAttachment taskAttachment=comboAttachments.GetSelected<TaskAttachment>();
-			if(taskAttachment==null) {
-				MsgBox.Show(this,"Could not open attachment.");
-				return;
-			}
-			_taskCur.IsNew=IsNew;
-			FormTaskAttachmentEdit formTaskAttachmentEdit=new FormTaskAttachmentEdit(_taskCur);
-			formTaskAttachmentEdit.TaskAttachmentCur=taskAttachment;
-			formTaskAttachmentEdit.ShowDialog();
-			if(formTaskAttachmentEdit.DialogResult!=DialogResult.OK) {
-				return;
-			}
-			FillComboAttachments();
-			long signalNum=Signalods.SetInvalid(InvalidType.Task,KeyType.Task,_taskCur.TaskNum);
-			UserControlTasks.RefillLocalTaskGrids(_taskCur,_listTaskNotes,new List<long>() { signalNum });
-		}
-
-		private void FillComboAttachments() {
-			comboAttachments.Items.Clear();
+		private void FillTextAttachments() {
 			_listTaskAttachments=TaskAttachments.GetManyByTaskNum(_taskCur.TaskNum);
-			comboAttachments.Items.Add("None"); //'None' option used as a deselect option. Otherwise, clicking on the combobox would force users to open an attachment each time
-			if(_listTaskAttachments.IsNullOrEmpty()) {
-				comboAttachments.SelectedIndex=0;
-				comboAttachments.Enabled=false;
-				labelAttachments.Text=Lan.g(this,"Attachments (0)");
-				return;
-			}
-			for(int i=0;i<_listTaskAttachments.Count;i++) {
-				TaskAttachment taskAttachment=_listTaskAttachments[i];
-				comboAttachments.Items.Add(taskAttachment.Description,taskAttachment);
-			}
-			comboAttachments.SelectedIndex=1;//select first by default
+			textAttachments.Text=string.Join(", ",_listTaskAttachments.Select(x => x.Description));
 			labelAttachments.Text=Lan.g(this,"Attachments")+$" ({_listTaskAttachments.Count})";
-			IsTaskAttachmentsEnabled();
-		}
-
-		private bool IsTaskAttachmentsEnabled(bool showMessage=false) {
-			if(_listTaskAttachments.Count>0) { 
-				comboAttachments.Enabled=true;
-			}
-			if(_isTaskDeleted) {
-				comboAttachments.Enabled=false;
-				butAttachments.Enabled=false;
-				if(showMessage) {
-					MsgBox.Show(this,"Task has been deleted. Cannot add attachments to deleted tasks.");
-				}
-				return false;
-			}
-			StringBuilder stringBuilder=new StringBuilder();
-			if(PrefC.GetLong(PrefName.TaskAttachmentCategory)==0) {
-				stringBuilder.AppendLine("Task attachments have not been properly setup. Must have an image category with TaskAttachment usage and must set the default image category in Setup->Tasks.");
-			}
-			if(_taskCur.ObjectType!=TaskObjectType.Patient || _taskCur.ObjectType==TaskObjectType.Patient && _taskCur.KeyNum==0) {
-				stringBuilder.AppendLine("Task Object Type must be set to 'Patient' and a patient must be attached to task to add new attachments or edit existing attachments.");
-			}
-			if(!string.IsNullOrWhiteSpace(stringBuilder.ToString())){
-				stringBuilder.AppendLine("Any existing attachments are viewable only.");
-				if(showMessage) { 
-					MsgBox.Show(this,stringBuilder.ToString());
-				}
-				return false;
-			}
-			return true;
 		}
 
 		public void OnTaskEdited() {
@@ -1107,7 +1034,7 @@ namespace OpenDental {
 			FillGrid();
 			FillComboJobs();
 			FillObject();
-			FillComboAttachments();
+			FillTextAttachments();
 			Logger.LogToPath("",LogPath.Signals,LogPhase.End,"TaskNum: "+_taskCur.TaskNum.ToString());
 		}
 

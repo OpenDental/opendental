@@ -10235,16 +10235,17 @@ HAVING cnt>1";
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
 				return Meth.GetLong(MethodBase.GetCurrentMethod());
 			}
-			//only 'BASE TABLE' types to exclude views
-			string command=@"SELECT TABLE_NAME,COLUMN_NAME 
+			//information_schema.COLUMNS does not have TABLE_TYPE so we must join information_schema.TABLES
+			//and filter with DISTINCT and 'BASE TABLE' to exclude views.
+			string tableSchema=POut.String(DataConnection.GetDatabaseName());
+			string command=$@"SELECT DISTINCT information_schema.COLUMNS.TABLE_NAME,information_schema.COLUMNS.COLUMN_NAME 
 				FROM information_schema.COLUMNS 
-				WHERE TABLE_SCHEMA=(SELECT DATABASE())
-				AND TABLE_TYPE='BASE TABLE'
-				AND (DATA_TYPE='char' 
-					OR DATA_TYPE='longtext' 
-					OR DATA_TYPE='mediumtext' 
-					OR DATA_TYPE='text' 
-					OR DATA_TYPE='varchar') 
+				INNER JOIN information_schema.TABLES 
+					ON information_schema.COLUMNS.TABLE_NAME=information_schema.TABLES.TABLE_NAME 
+					AND information_schema.TABLES.TABLE_SCHEMA='{tableSchema}' 
+					AND information_schema.TABLES.TABLE_TYPE='BASE TABLE' 
+				WHERE information_schema.COLUMNS.TABLE_SCHEMA='{tableSchema}' 
+				AND DATA_TYPE IN ('char','longtext','mediumtext','text','varchar') 
 				AND IS_NULLABLE='YES'";
 			DataTable table=Db.GetTable(command);
 			long changeCount=0;

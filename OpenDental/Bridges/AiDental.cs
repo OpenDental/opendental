@@ -28,22 +28,13 @@ namespace OpenDental.Bridges{
 				}
 				return;
 			}
-			string fileText="";
-			//Patient last name.
-			fileText+=Tidy(patient.LName)+",";
-			//Patient first name.
-			fileText+=Tidy(patient.FName)+",";
-			//Patient birthdate.
-			if(patient.Birthdate.Year>1880) {
-				fileText+="Birthdate_"+patient.Birthdate.ToString("yyyyMMdd");
-			}
-			//Output filepath.
-			string filePath=ProgramProperties.GetPropVal(program.ProgramNum,"Text file path for Ai-Dental");
+			string info=program.CommandLine;
+			info=Patients.ReplacePatient(info,patient);
 			try {
-				ODFileUtils.WriteAllTextThenStart(filePath,fileText,processPath);
+				ODFileUtils.ProcessStart(processPath,info);
 			}
 			catch(Exception ex) {
-				MessageBox.Show(ex.Message);
+				MessageBox.Show(processPath+" is not available, or there is an error in the command line options.");
 			}
 		}
 

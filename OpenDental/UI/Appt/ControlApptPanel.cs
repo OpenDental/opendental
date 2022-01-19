@@ -4603,6 +4603,9 @@ namespace OpenDental.UI{
 					case "Fam Note":
 						s=dataRow["famFinUrgNote"].ToString();
 						if(s!="") {
+							if(s.Length>32000) {//GDI+ only allows 32,000 characters at a time
+								s=s.Substring(0,32000);//so it doesn't crash MeasureString
+							}
 							h=g.MeasureString(s,font,widthBubble-(int)x).Height;
 							g.DrawString(s,font,Brushes.Red,new RectangleF(x,y,widthBubble-(int)x,h));
 							y+=h;

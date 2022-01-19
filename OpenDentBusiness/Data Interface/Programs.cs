@@ -302,8 +302,7 @@ namespace OpenDentBusiness {
 			//List all program links here. If there is nothing to do for that link, then create a comment stating so.
 			string path="";
 			//Adstra: Has no file paths containing outgoing pateint data from Open Dental.
-			//AiDental:
-			ScrubFileForProperty(ProgramName.AiDental,"Text file path for Ai-Dental","",true);//C:\Ai-Dental\Ai-Dental-Client\patdata.txt
+			//AiDental: Has no file paths containing outgoing patient data from Open Dental
 			//Apixia:
 			ScrubFileForProperty(ProgramName.Apixia,"System path to Apixia Digital Imaging ini file","",true);//C:\Program Files\Digirex\Switch.ini
 			//Apteryx: Has no file paths containing outgoing patient data from Open Dental.

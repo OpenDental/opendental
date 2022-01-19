@@ -101,6 +101,9 @@ namespace OpenDental {
 		}
 
 		private bool CanEditAttachments() {
+			if(Tasks.IsTaskDeleted(_task.TaskNum)) {
+				return false;
+			}
 			if(!_task.IsNew && !TaskAttachmentCur.IsNew) {
 				if(!Security.IsAuthorized(Permissions.TaskEdit,suppressMessage:true)) {
 					return false;
@@ -144,6 +147,10 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
+			if(Tasks.IsTaskDeleted(_task.TaskNum)) {
+				MsgBox.Show(this,"The task for this attachment was deleted.");
+				return;
+			}
 			if(string.IsNullOrWhiteSpace(textDescription.Text)) {
 				MsgBox.Show(this,"Description field cannot be empty.");
 				return;

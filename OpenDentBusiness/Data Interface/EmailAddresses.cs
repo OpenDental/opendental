@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net.Mail;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace OpenDentBusiness{
@@ -199,7 +200,8 @@ namespace OpenDentBusiness{
 			try {
 				//We only want to look at the actual email address, and exclude any aliases.
 				mailAddress=new MailAddress(emailAddress);
-				return Regex.IsMatch(mailAddress.Address,
+				return HasValidChars(mailAddress.Address) &&
+					Regex.IsMatch(mailAddress.Address,
 					@"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
 					@"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-0-9a-z]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$",
 					RegexOptions.IgnoreCase,TimeSpan.FromMilliseconds(100));
@@ -207,6 +209,14 @@ namespace OpenDentBusiness{
 			catch(Exception) {
 				return false;
 			}
+		}
+
+		///<summary>Compares the email address before and after ASII encoding to make sure we don't have characters that would be considered invalid</summary>
+		public static bool HasValidChars(string emailAddress) {
+			string addressBeforeEncoding=emailAddress;
+			byte[] temp=Encoding.ASCII.GetBytes(addressBeforeEncoding);
+			string addressAfterEncoding=Encoding.ASCII.GetString(temp);
+			return string.Compare(addressBeforeEncoding,addressAfterEncoding,ignoreCase:true)==0;
 		}
 
 		///<summary></summary>

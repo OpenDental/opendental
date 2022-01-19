@@ -2249,5 +2249,18 @@ namespace OpenDentBusiness {
 			Misc.SecurityHash.UpdateHashing();
 			Db.NonQ("ALTER TABLE emailaddress ADD QueryString varchar(1000) NOT NULL");
 		}//End of 21_4_16() method
+
+		private static void To21_4_17() {
+			string command;
+			DataTable table;
+			command="SELECT ProgramNum FROM program WHERE ProgName='AiDental'";
+			long programNum=Db.GetLong(command);
+			if(programNum!=0) {
+				command="UPDATE program SET CommandLine='"+POut.String(@"[PatNum].[LName].[FName]")+"' WHERE ProgramNum='"+POut.Long(programNum)+"'";
+				Db.NonQ(command);
+				command="DELETE FROM programproperty WHERE ProgramNum='"+POut.Long(programNum)+"' AND PropertyDesc='Text file path for Ai-Dental'";
+				Db.NonQ(command);
+			}  
+		}//End of 21_4_17() method
 	}
 }

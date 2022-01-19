@@ -158,7 +158,7 @@ namespace OpenDental {
 		///<returns>Returns true if preview is shown and OK is clicked.</returns>
 		public static bool TryPreview(PrintPageEventHandler printPageHandler,string auditDescription,PrintSituation printSit=PrintSituation.Default
 			,Margins margins=null,PrintoutOrigin printoutOrigin=PrintoutOrigin.Default,PaperSize paperSize=null,PrintoutOrientation printoutOrientation=PrintoutOrientation.Default
-			,int totalPages=1)
+			,int totalPages=1,bool doCalculateTotalPages=false)
 		{
 			ODprintout printout=new ODprintout(
 				printPageHandler,
@@ -170,6 +170,10 @@ namespace OpenDental {
 				printoutOrientation:printoutOrientation,
 				totalPages:totalPages
 			);
+			if(doCalculateTotalPages) {
+				printout.TotalPages=0;
+				printout.PrintDoc.PrintPage+=(sender,e)=>printout.TotalPages++;
+			}
 			return PreviewClassic(printout);
 		}
 

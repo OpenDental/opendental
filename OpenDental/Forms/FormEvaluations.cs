@@ -9,7 +9,7 @@ using OpenDental.UI;
 
 namespace OpenDental {
 	public partial class FormEvaluations:FormODBase {
-		private Provider _userProv;
+		private Provider _provider;
 		private List<Provider> _listInstructor;
 		private List<SchoolCourse> _listSchoolCourses;
 
@@ -20,14 +20,15 @@ namespace OpenDental {
 		}
 
 		private void FormEvaluations_Load(object sender,EventArgs e) {
-			_userProv=Providers.GetProv(Security.CurUser.ProvNum);
+			_provider=Providers.GetProv(Security.CurUser.ProvNum);
 			//_userProv will only be allowed to be null if the user is an admin. Checking for null in this block is not necessary.
-			if(!Security.IsAuthorized(Permissions.AdminDentalEvaluations,true)) {
+			if(!Security.IsAuthorized(Permissions.AdminDentalEvaluations,suppressMessage:true)) {
 				//Admins are allowed to look at and edit all evaluations, but they cannot add new evaluations
 				//This could easily be added in the future if desired.
 				groupAdmin.Visible=false;
 			}
-			else {
+			if(_provider==null || !_provider.IsInstructor) {
+				//only Instructors are able to add new evaluations.
 				butAdd.Visible=false;
 			}
 			_listSchoolCourses=SchoolCourses.GetDeepCopy();
@@ -40,8 +41,17 @@ namespace OpenDental {
 			comboInstructor.Items.Add("All");
 			for(int i=0;i<_listInstructor.Count;i++) {
 				comboInstructor.Items.Add(_listInstructor[i].GetLongDesc());
+				if(_provider!=null && _provider.IsInstructor) {
+					if(_listInstructor[i].ProvNum==_provider.ProvNum) {
+						//add 1 to account for the 'all' item that is not in the list of provs but is in the combobox. If the user is not an admin then they are locked into only viewing their own evaluations.
+						comboInstructor.SelectedIndex=i+1;
+					}
+				}
 			}
-			comboInstructor.SelectedIndex=0;
+			//Not an instructor so default to having 'All' selected.
+			if(_provider==null || !_provider.IsInstructor) {
+				comboInstructor.SelectedIndex=0;
+			}
 			textDateStart.Text=DateTime.Today.ToShortDateString();
 			textDateEnd.Text=DateTime.Today.ToShortDateString();
 			FillGrid();

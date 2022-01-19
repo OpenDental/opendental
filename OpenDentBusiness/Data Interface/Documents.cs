@@ -311,7 +311,9 @@ namespace OpenDentBusiness {
 		public static Bitmap GetPatPict(long patNum,string patFolder) {
 			//No need to check RemotingRole; no call to db.
 			Document document=GetPatPictFromDb(patNum);
-			return GetPatPict(patNum,patFolder,document);
+			Bitmap bitmap=GetPatPict(patNum,patFolder,document);
+			ImageHelper.ConvertCropIfNeeded(document, bitmap);
+			return bitmap;
 		}
 
 		/// <summary>Uses the passed-in document and the patFolder to load and process the patient picture so it appears the same way it did in the image module.  It first creates a 100x100 thumbnail if needed, then it uses the thumbnail. Can return null. Assumes WithPat will always be same as patnum.</summary>
@@ -357,10 +359,10 @@ namespace OpenDentBusiness {
 			//Use the existing thumbnail if it already exists and it was created after the last document modification.
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ && File.Exists(fileNameThumb)) {
 				try {
-					DateTime thumbModifiedTime=File.GetLastWriteTime(fileNameThumb);
-					if(thumbModifiedTime>doc.DateTStamp) {
-						Bitmap bitmap=(Bitmap)Bitmap.FromFile(fileNameThumb);
-						Bitmap bitmap2=new Bitmap(bitmap);
+					DateTime thumbModifiedTime = File.GetLastWriteTime(fileNameThumb);
+					if(thumbModifiedTime>doc.DateTStamp) { //Assumes that thumbnail is a crop of the original and that it can simply be recreated. Might be the case might not, assuming is not working as expected
+						Bitmap bitmap = (Bitmap)Bitmap.FromFile(fileNameThumb);
+						Bitmap bitmap2 = new Bitmap(bitmap);
 						bitmap.Dispose();//releases the file lock
 						return bitmap2;
 					}
@@ -725,7 +727,7 @@ namespace OpenDentBusiness {
 			return tableReturn;
 		}
 
-		///<summary>Returns false if the file is a specific short file name that is not accepted or contains one of the unsupported file exentions.</summary>
+		///<summary>Returns false if the file is a specific short file name that is not accepted.</summary>
 		public static bool IsAcceptableFileName(string file) {
 			//No need to check RemotingRole; no call to db.
 			string[] specificBadFileNames=new string[] {
@@ -737,6 +739,9 @@ namespace OpenDentBusiness {
 					specificBadFileNames[i].Length).ToLower()==specificBadFileNames[i]) {
 					return false;
 				}
+			}
+			if(file.StartsWith(".")) {//Extension-only file, ignore.
+				return false;
 			}
 			return true;
 		}

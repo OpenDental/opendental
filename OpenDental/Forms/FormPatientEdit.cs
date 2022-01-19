@@ -1197,7 +1197,7 @@ namespace OpenDental{
 						areConditionsMet=ConditionComparerHelper(listGender.Items.GetTextShowingAt(listGender.SelectedIndex),i,listRequiredFieldConditions);
 						break;
 					case RequiredFieldName.Language:
-						areConditionsMet=ConditionComparerHelper(comboLanguage.Items[comboLanguage.SelectedIndex].ToString(),i,listRequiredFieldConditions);
+						areConditionsMet=ConditionComparerHelper(comboLanguage.Items.GetTextShowingAt(comboLanguage.SelectedIndex),i,listRequiredFieldConditions);
 						break;
 					case RequiredFieldName.MedicaidID:
 						if(PrefC.GetBool(PrefName.EasyHideMedicaid)) {
@@ -2780,7 +2780,7 @@ namespace OpenDental{
 
 		//used when adding a date to the date time picker, changes from blank to show a date time.
 		private void dateTimePickerDateDeceased_ValueChanged(object sender, EventArgs e) {
-			dateTimePickerDateDeceased.CustomFormat="ddddMM/dd/yyyy hh:mm tt";
+			dateTimePickerDateDeceased.CustomFormat=System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern+" hh:mm tt";
 			dateTimePickerDateDeceased.Format=DateTimePickerFormat.Custom;
 		}
 

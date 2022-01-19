@@ -108,8 +108,8 @@ namespace OpenDental {
 			this.textBoxDateTimeCreated = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.butAttachments = new OpenDental.UI.Button();
-			this.comboAttachments = new OpenDental.UI.ComboBoxOD();
 			this.labelAttachments = new System.Windows.Forms.Label();
+			this.textAttachments = new System.Windows.Forms.TextBox();
 			this.panelRepeating.SuspendLayout();
 			this.groupReminder.SuspendLayout();
 			this.panelReminderFrequency.SuspendLayout();
@@ -156,7 +156,7 @@ namespace OpenDental {
 			// labelJobs
 			// 
 			this.labelJobs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelJobs.Location = new System.Drawing.Point(380, 573);
+			this.labelJobs.Location = new System.Drawing.Point(378, 573);
 			this.labelJobs.Name = "labelJobs";
 			this.labelJobs.Size = new System.Drawing.Size(47, 19);
 			this.labelJobs.TabIndex = 162;
@@ -965,17 +965,6 @@ namespace OpenDental {
 			this.butAttachments.Text = "Attachments";
 			this.butAttachments.Click += new System.EventHandler(this.butAttachmnents_Click);
 			// 
-			// comboAttachments
-			// 
-			this.comboAttachments.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboAttachments.Enabled = false;
-			this.comboAttachments.Location = new System.Drawing.Point(431, 541);
-			this.comboAttachments.Name = "comboAttachments";
-			this.comboAttachments.Size = new System.Drawing.Size(266, 21);
-			this.comboAttachments.TabIndex = 177;
-			this.comboAttachments.SelectionChangeCommitted += new System.EventHandler(this.comboAttachments_SelectionChangeCommitted);
-			// 
 			// labelAttachments
 			// 
 			this.labelAttachments.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -986,11 +975,22 @@ namespace OpenDental {
 			this.labelAttachments.Text = "Attachments";
 			this.labelAttachments.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
+			// textAttachments
+			// 
+			this.textAttachments.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.textAttachments.Location = new System.Drawing.Point(431, 542);
+			this.textAttachments.Name = "textAttachments";
+			this.textAttachments.ReadOnly = true;
+			this.textAttachments.Size = new System.Drawing.Size(266, 20);
+			this.textAttachments.TabIndex = 179;
+			this.textAttachments.WordWrap = false;
+			// 
 			// FormTaskEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(974, 676);
+			this.Controls.Add(this.textAttachments);
 			this.Controls.Add(this.labelAttachments);
-			this.Controls.Add(this.comboAttachments);
 			this.Controls.Add(this.butAttachments);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.textBoxDateTimeCreated);
@@ -1138,7 +1138,7 @@ namespace OpenDental {
 		private DateTimePicker datePickerReminder;
 		private DateTimePicker timePickerReminder;
 		private UI.Button butAttachments;
-		private UI.ComboBoxOD comboAttachments;
 		private Label labelAttachments;
+		private TextBox textAttachments;
 	}
 }

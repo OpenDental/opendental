@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Windows.Forms;
 using OpenDental.UI;
 using OpenDentBusiness;
@@ -12,8 +13,6 @@ namespace OpenDental {
 		private List<TaskAttachment> _listTaskAttachments;
 		///<summary>Records whether a signal to refresh is required or not. Set to true if user adds or edits an attachment./summary>
 		private bool _refreshRequired;
-		///<summary>Only used to set the selected index in the main grid.</summary>
-		public long TaskAttachmentNum;
 
 		public FormTaskAttachments(Task task) {
 			InitializeComponent();
@@ -29,7 +28,6 @@ namespace OpenDental {
 
 		private void FillGrid(bool refreshCache=false) {
 			_listTaskAttachments=TaskAttachments.GetManyByTaskNum(_task.TaskNum);
-			int selectedIndex=-1;
 	    gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn col=new GridColumn(Lan.g("TableTaskAttachments","Doc"),50,HorizontalAlignment.Center);
@@ -49,17 +47,12 @@ namespace OpenDental {
 				row.Cells.Add(taskAttachment.Description);
 				row.Tag=taskAttachment;
 				gridMain.ListGridRows.Add(row);
-				if(taskAttachment.TaskAttachmentNum==TaskAttachmentNum) {
-					selectedIndex=i;
-				}
 			}
 			gridMain.EndUpdate();
-			gridMain.SetSelected(selectedIndex);
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
-			if(Tasks.IsTaskDeleted(_task.TaskNum)) {
-				MsgBox.Show(this,"The task for these attachments was deleted.");
+			if(!CanAddAttachment()) {
 				return;
 			}
 			TaskAttachment taskAttachment=new TaskAttachment();
@@ -71,8 +64,27 @@ namespace OpenDental {
 				return;
 			}
 			_refreshRequired=true;
-			TaskAttachmentNum=taskAttachment.TaskAttachmentNum;
 			FillGrid();			
+		}
+
+		private bool CanAddAttachment() {
+			if(Tasks.IsTaskDeleted(_task.TaskNum)) {
+				MsgBox.Show(this,"The task for this attachment was deleted.");
+				return false;
+			}
+			StringBuilder stringBuilder=new StringBuilder();
+			if(PrefC.GetLong(PrefName.TaskAttachmentCategory)==0) {
+				stringBuilder.AppendLine("Task attachments have not been properly setup. Must have an image category with TaskAttachment usage and must set the default image category in Setup->Tasks.");
+			}
+			if(_task.ObjectType!=TaskObjectType.Patient || (_task.ObjectType==TaskObjectType.Patient && _task.KeyNum==0)) {
+				stringBuilder.AppendLine("Task Object Type must be set to 'Patient' and a patient must be attached to task to add new attachments or edit existing attachments.");
+			}
+			if(!string.IsNullOrWhiteSpace(stringBuilder.ToString())){
+				stringBuilder.AppendLine("Any existing attachments are viewable only.");
+				MsgBox.Show(this,stringBuilder.ToString());
+				return false;
+			}
+			return true;
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {

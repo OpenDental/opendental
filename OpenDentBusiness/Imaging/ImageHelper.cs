@@ -352,6 +352,92 @@ namespace OpenDentBusiness {
 			bitmapRaw.Dispose();
 			return bitmapReturn;
 		}
+
+		///<summary>We do not dispose of the bitmap here. If crop was needed, then it saves that to the db as well as altering the document passed in.</summary>
+		public static void ConvertCropIfNeeded(Document document,Bitmap bitmap){
+			if(document is null || bitmap is null){
+				return;
+			}
+			if(!document.IsCropOld){
+				return;
+			}
+			if(document.CropW==0 || document.CropH==0){
+				document.IsCropOld=false;
+				Documents.Update(document);
+				return;
+			}
+			Size sizeBitmap=bitmap.Size;
+			if(document.DegreesRotated==0){
+				if(document.IsFlipped){
+					document.CropX=sizeBitmap.Width-document.CropX-document.CropW/2;//to center of crop
+				}
+				else{
+					document.CropX=document.CropX+document.CropW/2;//to center of crop
+				}
+				document.CropX=-sizeBitmap.Width/2+document.CropX;//it's now relative to center of image
+				document.CropY=document.CropY+document.CropH/2;//to center of crop
+				document.CropY=sizeBitmap.Height/2-document.CropY;//it's now relative to center of image and flipped coord system
+				document.IsCropOld=false;
+				Documents.Update(document);
+			}
+			if(document.DegreesRotated==90){
+				if(document.IsFlipped){
+					int x=sizeBitmap.Height/2 //from center of image to newly located UL corner of image
+						-document.CropY-document.CropH/2;//then to center of newly positioned crop
+					document.CropY=-sizeBitmap.Width/2 //from center of image to newly located UL corner of image
+						+document.CropX+document.CropW/2;//then to center of newly positioned crop
+					document.CropX=x;
+				}
+				else{
+					int x=sizeBitmap.Height/2 //from center of image to newly located UL corner of image
+						-document.CropY-document.CropH/2;//then to center of newly positioned crop
+					document.CropY=sizeBitmap.Width/2 //from center of image to newly located UL corner of image
+						-document.CropX-document.CropW/2;//then to center of newly positioned crop
+					document.CropX=x;
+				}
+				int w=document.CropW;
+				document.CropW=document.CropH;
+				document.CropH=w;
+				document.IsCropOld=false;
+				Documents.Update(document);
+			}
+			if(document.DegreesRotated==180){
+				if(document.IsFlipped){
+					document.CropX=-sizeBitmap.Width/2 //from center of image to newly located UL corner of image
+						+document.CropX+document.CropW/2;//then to center of newly positioned crop
+					
+				}
+				else{
+					document.CropX=sizeBitmap.Width/2 //from center of image to newly located UL corner of image
+						-document.CropX-document.CropW/2;//then to center of newly positioned crop
+				}
+				document.CropY=-sizeBitmap.Height/2 //from center of image to newly located UL corner of image
+					+document.CropY+document.CropH/2;//then to center of newly positioned crop
+				document.IsCropOld=false;
+				Documents.Update(document);
+			}
+			if(document.DegreesRotated==270){
+				if(document.IsFlipped){
+					int x=-sizeBitmap.Height/2 //from center of image to newly located UL corner of image
+						+document.CropY+document.CropH/2;//then to center of newly positioned crop
+					document.CropY=sizeBitmap.Width/2 //from center of image to newly located UL corner of image
+						-document.CropX-document.CropW/2;//then to center of newly positioned crop
+					document.CropX=x;
+				}
+				else{
+					int x=-sizeBitmap.Height/2 //from center of image to newly located UL corner of image
+						+document.CropY+document.CropH/2;//then to center of newly positioned crop
+					document.CropY=-sizeBitmap.Width/2 //from center of image to newly located UL corner of image
+						+document.CropX+document.CropW/2;//then to center of newly positioned crop
+					document.CropX=x;
+				}
+				int w=document.CropW;
+				document.CropW=document.CropH;
+				document.CropH=w;
+				document.IsCropOld=false;
+				Documents.Update(document);
+			}
+		}
 	}
 
 	public enum ImageSettingFlags {

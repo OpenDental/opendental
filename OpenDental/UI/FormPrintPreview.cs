@@ -32,7 +32,6 @@ namespace OpenDental.UI{
 			InitializeComponent();// Required for Windows Form Designer support
 			InitializeLayoutManager();
 			_printout=printout;
-			TotalPages=printout.TotalPages;
 		}
 
 		private void FormPrintPreview_Load(object sender, System.EventArgs e) {
@@ -60,7 +59,7 @@ namespace OpenDental.UI{
 				printdoc=_printout.PrintDoc;
 			}
 			LoadPrintDocument(printdoc);
-			SetPageNumText();
+			printdoc.EndPrint+=(sender,e)=>SetPageNumText();
 		}
 
 		private void LoadPrintDocument(PrintDocument printdoc) {
@@ -176,12 +175,12 @@ namespace OpenDental.UI{
 
 		///<summary>Sets the toolbar's pagenum text based on the total pages. If 0 total pages, only shows the current pagenum.</summary>
 		private void SetPageNumText() {
-			if(TotalPages==0) {
+			if(_printout.TotalPages==0) {
 				ToolBarMain.Buttons["PageNum"].Text=(printPreviewControl2.StartPage+1).ToString();
 			}
 			else {
 				ToolBarMain.Buttons["PageNum"].Text=(printPreviewControl2.StartPage+1).ToString()
-								+" / "+TotalPages.ToString();
+								+" / "+_printout.TotalPages.ToString();
 			}
 		}
 	

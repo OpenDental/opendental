@@ -547,7 +547,7 @@ namespace OpenDental.UI{
 									bitmapRaw=ImageStore.OpenImage(document,_patFolder);
 								}
 								catch{}
-								ImageTools.ConvertCropIfNeeded(document,bitmapRaw);
+								ImageHelper.ConvertCropIfNeeded(document,bitmapRaw);
 								bitmapRaw.Dispose();
 							}
 							_listNodeObjTags[i].Thumbnail=Documents.GetThumbnail(document,_patFolder);
