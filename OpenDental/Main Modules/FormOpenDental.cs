@@ -6008,11 +6008,15 @@ namespace OpenDental{
 		}
 
 		private void menuItemEvaluations_Click(object sender,EventArgs e) {
-			if(Security.CurUser.ProvNum==0 
-				|| !Providers.GetProv(Security.CurUser.ProvNum).IsInstructor 
-				|| !Security.IsAuthorized(Permissions.AdminDentalEvaluations,true)) 
-			{
-				MsgBox.Show(this,$"Only Instructors with the {Permissions.AdminDentalEvaluations.GetDescription()} permission may view or edit evaluations.");
+			bool isAllowed;
+			if(Security.CurUser.ProvNum==0) {
+				isAllowed=Security.IsAuthorized(Permissions.AdminDentalEvaluations,true);
+			}
+			else {
+				isAllowed=Providers.GetProv(Security.CurUser.ProvNum).IsInstructor || Security.IsAuthorized(Permissions.AdminDentalEvaluations,true);
+			}
+			if(!isAllowed){
+				MsgBox.Show(this,$"Only users with the {Permissions.AdminDentalEvaluations.GetDescription()} permission or Instructors may view or edit evaluations.");
 				return;
 			}
 			using FormEvaluations FormE=new FormEvaluations();

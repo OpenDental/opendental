@@ -44,15 +44,11 @@ namespace OpenDental {
 			if(!PrefC.GetBool(PrefName.ClaimTrackingStatusExcludesNone)) {
 				//None is allowed as an option
 				comboCustomTracking.Items.AddDefNone();
-				comboCustomTracking.SelectedIndex=0;
 			}
 			List<Def> listDefsClaimCustomTracking=Defs.GetDefsForCategory(DefCat.ClaimCustomTracking,true);
 			comboCustomTracking.Items.AddDefs(listDefsClaimCustomTracking);
 			ClaimTracking claimTracking=ListClaimTrackingsNew.FirstOrDefault();
-			if(claimTracking==null){//Creating a new ClaimTracking
-				comboCustomTracking.SelectedIndex=0;
-			}
-			else{
+			if(claimTracking!=null){//Creating a new ClaimTracking
 				comboCustomTracking.SetSelectedDefNum(claimTracking.TrackingDefNum);
 				//An existing ClaimTracking could still have a TrackingDefNum of 0='None'.
 				//Even if the new pref blocks "None" from showing.

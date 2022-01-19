@@ -1186,7 +1186,7 @@ namespace OpenDental{
 						areConditionsMet=ConditionComparerHelper(listGender.Items.GetTextShowingAt(listGender.SelectedIndex),i,listRequiredFieldConditions);
 						break;
 					case RequiredFieldName.Language:
-						areConditionsMet=ConditionComparerHelper(comboLanguage.Items[comboLanguage.SelectedIndex].ToString(),i,listRequiredFieldConditions);
+						areConditionsMet=ConditionComparerHelper(comboLanguage.Items.GetTextShowingAt(comboLanguage.SelectedIndex),i,listRequiredFieldConditions);
 						break;
 					case RequiredFieldName.MedicaidID:
 						if(PrefC.GetBool(PrefName.EasyHideMedicaid)) {

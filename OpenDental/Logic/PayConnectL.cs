@@ -13,6 +13,7 @@ namespace OpenDental {
 		/// Returns true if the transaction was successful, otherwise false.</summary
 		public static bool VoidOrRefundPayConnectPortalTransaction(PayConnectResponseWeb pcResponseWeb,Payment payment,PayConnectService.transType transType,string refNum,decimal amount) {
 			if(!ListTools.In(transType,PayConnectService.transType.RETURN,PayConnectService.transType.VOID)) {
+				MsgBox.Show("PayConnectL","Invalid transaction type. Please contact support for assistance.");
 				return false;
 			}
 			List<PaySplit> listPaySplits=PaySplits.GetForPayment(payment.PayNum);
@@ -21,6 +22,7 @@ namespace OpenDental {
 			string receiptStr="";
 			CreditCard creditCard=CreditCards.GetOneWithPayConenctToken(pcResponseWeb.PaymentToken);
 			if(creditCard==null) {
+				MsgBox.Show("PayConnectL","Patient was not logged in for this payment, you must go through your payment merchant's portal to process this request.");
 				return false;
 			}
 			_payConnectRequest=PayConnect.BuildSaleRequest(amount,creditCard.PayConnectToken,creditCard.PayConnectTokenExp.Year,
@@ -29,6 +31,12 @@ namespace OpenDental {
 			response=PayConnectREST.ToPayConnectResponse(transResponse,_payConnectRequest);
 			receiptStr=PayConnect.BuildReceiptString(_payConnectRequest,transResponse,null,payment.ClinicNum);
 			if(response==null || response.StatusCode!="0") {//error in transaction
+				if(response==null) {
+					MsgBox.Show("PayConnectL","An unexpected error occurred when attempting to process this transaction. Please try again.");
+				}
+				else {
+					MsgBox.Show(response.Description+". Error Code: "+response.StatusCode);
+				}
 				return false;
 			}
 			//Record a new payment for the voided transaction

@@ -695,7 +695,7 @@ namespace OpenDentBusiness {
 			return tableReturn;
 		}
 
-		///<summary>Returns false if the file is a specific short file name that is not accepted or contains one of the unsupported file exentions.</summary>
+		///<summary>Returns false if the file is a specific short file name that is not accepted.</summary>
 		public static bool IsAcceptableFileName(string file) {
 			//No need to check RemotingRole; no call to db.
 			string[] specificBadFileNames=new string[] {
@@ -707,6 +707,9 @@ namespace OpenDentBusiness {
 					specificBadFileNames[i].Length).ToLower()==specificBadFileNames[i]) {
 					return false;
 				}
+			}
+			if(file.StartsWith(".")) {//Extension-only file, ignore.
+				return false;
 			}
 			return true;
 		}

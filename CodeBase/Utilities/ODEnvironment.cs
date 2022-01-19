@@ -24,8 +24,10 @@ namespace CodeBase {
 		///See https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getsystemmetrics for details.
 		///Not supported in Windows CE.</summary>
 		private const int SM_TABLETPC=86;
-		///<summary>The name of the computer the client is running on.</summary>
-		private static string _machineName;
+		///<summary>This is what MachineName will return if ODBuild.IsWeb and the ODCloudClient isn't running or there's an error trying to retrieve the local computer name.</summary>
+		private const string UNKNOWN_NAME="UNKNOWN";
+		///<summary>The name of the computer the client is running on.  Start the name out as "UNKNOWN".  Gets set by the ODCloudMachineName thread if the cloud client is running.</summary>
+		private static string _machineName=UNKNOWN_NAME;
 
 		#region Tablet Mode
 		[DllImport("user32.dll",SetLastError=true,CharSet=CharSet.Auto,EntryPoint="GetSystemMetrics")]
@@ -84,46 +86,54 @@ namespace CodeBase {
 		///<summary>Always client name.  If on RDP, gets client name, never server name. If Web mode, sends a request to the browser to get the computer name.</summary>
 		public static string MachineName {
 			get {
-				if(!ODBuild.IsWeb()) {
-					if(typeof(SystemInformation).GetProperty("TerminalServerSession").GetValue(null).ToString()!="True"){
-						return Environment.MachineName;
-					}
-					//running in a remote session
-					string clientName=Environment.GetEnvironmentVariable("ClientName");
-					if(string.IsNullOrEmpty(clientName)) {
-						//clientName is null or empty, try to get from registry
-						try {
-							clientName=(string)Registry.GetValue(@"HKEY_CURRENT_USER\Volatile Environment\"+Process.GetCurrentProcess().SessionId,"CLIENTNAME","");
-						}
-						catch(Exception ex) {
-							ex.DoNothing();
-						}
-					}
-					if(!string.IsNullOrEmpty(clientName)) {
-						//if successful getting client name, either from environment variable or from registry, use it
-						return clientName;
-					}
-					//if client name is missing, treat it as local server
-					return Environment.MachineName;
-				}
-				//from here down is Web
-				string unknownName="UNKNOWN";
-				if(!_machineName.IsNullOrEmpty() && _machineName.ToUpper()!=unknownName.ToUpper()) {
+				if(ODBuild.IsWeb()) {
 					return _machineName;
 				}
-				try {
-					_machineName=ODCloudClient.SendToBrowserSynchronously("",ODCloudClient.BrowserAction.GetComputerName,doShowProgressBar:false);
+				if(typeof(SystemInformation).GetProperty("TerminalServerSession").GetValue(null).ToString()!="True"){
+					return Environment.MachineName;
 				}
-				catch(Exception ex) {
-					ex.DoNothing();
+				//running in a remote session
+				string clientName=Environment.GetEnvironmentVariable("ClientName");
+				if(string.IsNullOrEmpty(clientName)) {
+					//clientName is null or empty, try to get from registry
+					try {
+						clientName=(string)Registry.GetValue(@"HKEY_CURRENT_USER\Volatile Environment\"+Process.GetCurrentProcess().SessionId,"CLIENTNAME","");
+					}
+					catch(Exception ex) {
+						ex.DoNothing();
+					}
 				}
-				if(_machineName.IsNullOrEmpty()) {
-					_machineName=unknownName;
+				if(!string.IsNullOrEmpty(clientName)) {
+					//if successful getting client name, either from environment variable or from registry, use it
+					return clientName;
 				}
-				return _machineName;
+				//if client name is missing, treat it as local server
+				return Environment.MachineName;
 			}
 			set {
 				_machineName=value;
+			}
+		}
+
+		///<summary>Only called from FormOpenDentalThreads.ODCloudMachineName thread once per minute. Does nothing for regular (!ODBuild.IsWeb) instances. For IsWeb, this will
+		///attempt to get the local computer name from the ODCloudClient.  If ODCloudClient isn't running or we get an error, machine name will be "UNKNOWN" and this will try again
+		///the next time it's called by the ODCloudMachineName thread.  Once the machine name is retrieved from ODCloudClient successfully (_machineName!="UNKNOWN") this will not
+		///attempt to retrieve the local computer name again while this instance is running.</summary>
+		public static void SetMachineName() {
+			if(!ODBuild.IsWeb()) {//only for IsWeb
+				return;
+			}
+			if(!_machineName.IsNullOrEmpty() && _machineName.ToUpper()!=UNKNOWN_NAME.ToUpper()) {//_machineName is already set, no need to get from ODCloudClient
+				return;
+			}
+			try {
+				_machineName=ODCloudClient.SendToBrowserSynchronously("",ODCloudClient.BrowserAction.GetComputerName,doShowProgressBar:false);
+			}
+			catch(Exception ex) {
+				ex.DoNothing();
+			}
+			if(_machineName.IsNullOrEmpty()) {
+				_machineName=UNKNOWN_NAME;
 			}
 		}
 

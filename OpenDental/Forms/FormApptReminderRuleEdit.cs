@@ -413,6 +413,7 @@ namespace OpenDental {
 			if(_listApptReminderRulesClinic.FindAll(
 				x => x.TSPrior==timeSpanPrior 
 				&& x.ClinicNum==ApptReminderRuleCur.ClinicNum
+				&& x.TypeCur==ApptReminderRuleCur.TypeCur
 				&& (x.ApptReminderRuleNum!=ApptReminderRuleCur.ApptReminderRuleNum || 
 					(x.ApptReminderRuleNum==0 && ApptReminderRuleCur.ApptReminderRuleNum==0 && x!=ApptReminderRuleCur)
 				)

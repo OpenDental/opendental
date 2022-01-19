@@ -122,6 +122,8 @@ namespace OpenDental.UI {
 		private int _hoverRow=-1;
 		private bool _isMouseDown;
 		private bool _isMouseDownInHeader;
+		///<summary>Flag used for calculating the width of the last column for printing when the grid is being scaled.</summary>
+		private int _printWidth=0;
 		///<summary>True between BeginUpdate-EndUpdate.</summary>
 		private bool _isUpdating;
 		///<summary>This is an alternative to setting up all of the GridRows in advance.  The DataRows get converted to GridRows on the fly.</summary>
@@ -3243,6 +3245,12 @@ namespace OpenDental.UI {
 			//float pagescale=g.PageScale;
 			//g.PixelOffsetMode=PixelOffsetMode.HighQuality;
 			//g.
+			if(_scaleMy!=1) {
+				_printWidth=(int)(Width/_scaleMy);//calc unscaled Width
+			}
+			//Save the current scale and adjust the rows and columns temporarily for printing.  Restore the rows and column sizes at the end of the method.
+			float scaleMyCur=_scaleMy;
+			SetScaleAndFont(1);
 			if(_printedRows==0) {
 				//set row heights 4% larger when printing:
 				ComputeRows(g,doActualCalc:true);
@@ -3484,6 +3492,8 @@ namespace OpenDental.UI {
 					//Print as much as you can.
 					noteHeight=bounds.Bottom-yPos;//This is the amount of space remaining.
 					if(noteHeight<15) {
+						_printWidth=0;//Reset the flag.
+						SetScaleAndFont(scaleMyCur);//Reset rows and columns back to current scale.
 						return -1; //If noteHeight is less than this we will get a negative value for the rectangle of space remaining because we subtract 15 from this for the rectangle size when using measureString. This is because one line takes 15, and if there is 1 pixel of height available, measureString will fill it with text, which will then get partly cut off. So when we use measureString we will subtract 15 from the noteHeight.
 					}							
 					SizeF sizeF;
@@ -3546,6 +3556,8 @@ namespace OpenDental.UI {
 			}
 			#endregion Rows
 			lowerPen.Dispose();
+			_printWidth=0;//Reset the flag.
+			SetScaleAndFont(scaleMyCur);//Reset rows and columns back to current scale.
 			if(_printedRows==ListGridRows.Count) {//done printing
 				//set row heights back to screen heights.
 				using(Graphics gfx=this.CreateGraphics()) {
@@ -3745,6 +3757,9 @@ namespace OpenDental.UI {
 				//Debug.WriteLine(name);
 				if(sumDynamic>0){
 					int widthExtra=Width-2-widthFixedSum;
+					if(_printWidth>0){
+						widthExtra=_printWidth-2-widthFixedSum;
+					}
 					if(vScroll.Visible){// && vScroll.Enabled){
 						widthExtra-=vScroll.Width;
 					}
@@ -3757,6 +3772,9 @@ namespace OpenDental.UI {
 				}
 				else if(Columns.Count>0 && !IsForSheets) {//resize the last column automatically
 					int widthExtra=Width-2-widthFixedSum+ScaleI(Columns[Columns.Count-1].ColWidth);
+					if(_printWidth>0){
+						widthExtra=_printWidth-2-widthFixedSum+ScaleI(Columns[Columns.Count-1].ColWidth);
+					}
 					if(vScroll.Visible){
 						widthExtra-=vScroll.Width;
 					}

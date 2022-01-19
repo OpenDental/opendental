@@ -2956,7 +2956,7 @@ namespace OpenDental {
 
 		///<summary>Gets the DefNum category of the current selection.</summary>
 		private long GetCurrentCategory() {
-			if(_nodeTypeKeyCatSelected==null){
+			if(_nodeTypeKeyCatSelected==null|| _nodeTypeKeyCatSelected.DefNumCategory==0){
 				return Defs.GetDefsForCategory(DefCat.ImageCats,true)[0].DefNum;
 			}
 			if(_nodeTypeKeyCatSelected.NodeType==EnumImageNodeType.None){

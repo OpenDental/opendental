@@ -103,6 +103,7 @@ namespace OpenDental {
 					Logger.LogActionIfOverTimeLimit("BeginRegKeyThread",LogPath.Threads,() => BeginRegKeyThread());
 					Logger.LogActionIfOverTimeLimit("BeginRegistrationKeyIsDisabledThread",LogPath.Threads,() => BeginRegistrationKeyIsDisabledThread());
 					Logger.LogActionIfOverTimeLimit("CheckAlerts",LogPath.Threads,() => CheckAlerts(doRunOnThread: true));
+					Logger.LogActionIfOverTimeLimit("BeginODCloudMachineNameThread",LogPath.Threads,() => BeginODCloudMachineNameThread());
 					Logger.LogToPath("Started threads",LogPath.Threads,LogPhase.Unspecified);
 					return;
 				}
@@ -126,6 +127,7 @@ namespace OpenDental {
 						case FormODThreadNames.EServiceMonitoring:
 						case FormODThreadNames.HqMetrics:
 						case FormODThreadNames.LogOff:
+						case FormODThreadNames.ODCloudMachineName:
 						case FormODThreadNames.ODServiceMonitor:
 						case FormODThreadNames.Podium:
 						case FormODThreadNames.ReplicationMonitor:
@@ -709,6 +711,25 @@ namespace OpenDental {
 		}
 
 		#endregion
+		#region ODCloudSetMachineName
+		
+		///<summary>For ODBuild.IsWeb only.  Begins a thread that will run once per minute attempting to set the ODEnvironment.MachineName by making a call to the ODCloudClient.
+		///If ODCloudClient is not running or throws an exception, the machine name will be set to "UNKNOWN".  The next time this thread runs, if the machine name is "UNKNOWN" we will
+		///attempt to get the machine name from the ODCloudClient again.  If the machine name is successfully retrieved from the ODCloudClient (i.e. ODEnvironment.MachineName!="UNKNOWN") we will not attempt to get the name from the cloud client again while this session is active.</summary>
+		private void BeginODCloudMachineNameThread() {
+			if(!ODBuild.IsWeb() || IsThreadAlreadyRunning(FormODThreadNames.ODCloudMachineName)) {
+				return;
+			}
+			ODThread threadCloudMachineName=new ODThread(60000,o => {//Once a minute
+				ODException.SwallowAnyException(ODEnvironment.SetMachineName);
+			});
+			threadCloudMachineName.AddExceptionHandler((e) => e.DoNothing());
+			threadCloudMachineName.GroupName=FormODThreadNames.ODCloudMachineName.GetDescription();
+			threadCloudMachineName.Name=FormODThreadNames.ODCloudMachineName.GetDescription();
+			threadCloudMachineName.Start();
+		}
+
+		#endregion ODCloudSetMachineName
 		#region ODServiceMonitorThread
 
 		///<summary>Begins a thread that monitor's the Open Dental Service heartbeat and alerts the user if the service is not running.</summary>
@@ -1144,6 +1165,7 @@ namespace OpenDental {
 			LicenseAgreementSignature,
 			LogOff,
 			MiddleTierConnectionLost,
+			ODCloudMachineName,
 			ODServiceMonitor,
 			ODServiceStarter,
 			PhoneConference,
