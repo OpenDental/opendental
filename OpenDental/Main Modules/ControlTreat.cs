@@ -402,12 +402,17 @@ namespace OpenDental{
 		}
 
 		private void butNewTP_Click(object sender,EventArgs e) {
+			TreatPlanType treatPlanType=TreatPlanType.Insurance;
+			if(_tpModuleData.DiscountPlanSub!=null) {
+				treatPlanType=TreatPlanType.Discount;
+			}
 			using FormTreatPlanCurEdit formTreatPlanCurEdit=new FormTreatPlanCurEdit();
 			formTreatPlanCurEdit.TreatPlanCur=new TreatPlan() {
 				Heading="Inactive Treatment Plan",
 				Note=PrefC.GetString(PrefName.TreatmentPlanNote),
 				PatNum=PatientCur.PatNum,
 				TPStatus=TreatPlanStatus.Inactive,
+				TPType=treatPlanType,
 			};
 			formTreatPlanCurEdit.ShowDialog();
 			if(formTreatPlanCurEdit.DialogResult!=DialogResult.OK) {
@@ -1459,10 +1464,10 @@ namespace OpenDental{
 			long tpNum=_listTreatPlans[e.Row].TreatPlanNum;
 			TreatPlan treatPlanSelected=_listTreatPlans[e.Row];
 			if(treatPlanSelected.TPStatus==TreatPlanStatus.Saved) {
-				using FormTreatPlanEdit formTreatPlanEdit=new FormTreatPlanEdit(_listTreatPlans[e.Row]);
+				using FormTreatPlanEdit formTreatPlanEdit=new FormTreatPlanEdit(treatPlanSelected);
 				formTreatPlanEdit.ShowDialog();
 			}
-			else {
+			else {//Active or Inactive
 				using FormTreatPlanCurEdit formTreatPlanCurEdit=new FormTreatPlanCurEdit();
 				formTreatPlanCurEdit.TreatPlanCur=treatPlanSelected;
 				formTreatPlanCurEdit.ShowDialog();

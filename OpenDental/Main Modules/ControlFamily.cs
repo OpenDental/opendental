@@ -573,6 +573,9 @@ namespace OpenDental{
 				formDiscountPlanSubEdit.DiscountPlanSubCur=discountPlanSub;
 				if(formDiscountPlanSubEdit.ShowDialog()==DialogResult.OK) {
 					_discountPlanSubCur=formDiscountPlanSubEdit.DiscountPlanSubCur;
+					if(_discountPlanSubCur==null) {
+						TreatPlans.UpdateTreatmentPlanType(_patCur);
+					}
 					ModuleSelected(_patCur.PatNum);
 				}
 				return;
@@ -2706,28 +2709,32 @@ namespace OpenDental{
 				MsgBox.Show(this,"Cannot add discount plan when patient has insurance.");
 				return;
 			}
-			if(_discountPlanSubCur!=null) {
-				using FormDiscountPlanSubEdit formDiscountPlanSubEdit=new FormDiscountPlanSubEdit();
-				formDiscountPlanSubEdit.DiscountPlanSubCur=_discountPlanSubCur;
-				if(formDiscountPlanSubEdit.ShowDialog()==DialogResult.OK) {
-					_discountPlanSubCur=formDiscountPlanSubEdit.DiscountPlanSubCur;
-				}
-			}
-			else {
+			if(_discountPlanSubCur==null) {//Patient does not have a discount plan.
+				//Let the user pick which discount plan the patient should subscribe to.
 				using FormDiscountPlans formDiscountPlans=new FormDiscountPlans();
 				formDiscountPlans.IsSelectionMode=true;
 				if(formDiscountPlans.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
+				//Give the user an opportunity to edit the subscription.
 				using FormDiscountPlanSubEdit formDiscountPlanSubEdit=new FormDiscountPlanSubEdit();
 				formDiscountPlanSubEdit.DiscountPlanCur=formDiscountPlans.DiscountPlanSelected;
 				formDiscountPlanSubEdit.PatNum=_patCur.PatNum;
 				if(formDiscountPlanSubEdit.ShowDialog()!=DialogResult.OK || formDiscountPlanSubEdit.DiscountPlanSubCur==null) {
+					return;//User either clicked Cancel or Drop, nothing to do.
+				}
+				_discountPlanSubCur=formDiscountPlanSubEdit.DiscountPlanSubCur;
+			}
+			else {
+				using FormDiscountPlanSubEdit formDiscountPlanSubEdit=new FormDiscountPlanSubEdit();
+				formDiscountPlanSubEdit.DiscountPlanSubCur=_discountPlanSubCur;
+				if(formDiscountPlanSubEdit.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
 				_discountPlanSubCur=formDiscountPlanSubEdit.DiscountPlanSubCur;
-				TreatPlans.UpdateTreatmentPlanType(_patCur);
 			}
+			//Update all active and inactive treatment plans regardless if the user added or dropped a discount plan.
+			TreatPlans.UpdateTreatmentPlanType(_patCur);
 			FillInsData();
 		}
 
