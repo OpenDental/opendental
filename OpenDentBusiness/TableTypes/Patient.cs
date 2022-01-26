@@ -225,7 +225,7 @@ namespace OpenDentBusiness{
 		///Having this field around will save the main window title from running a query every second to get the patient specialty.</summary>
 		[CrudColumn(IsNotDbColumn=true)]
 		private string _specialty;
-		///<summary>Holds the salted hash of the following patient fields: Guarantor, Email, FamFinUrgNote, ApptModNote. </summary>
+		///<summary>Holds the salted hash of the PatNum. This prevents 3rd parties from inserting patients without our Db Integrity system noticing.</summary>
 		public string SecurityHash;
 
 		///<summary>Used only for serialization purposes</summary>

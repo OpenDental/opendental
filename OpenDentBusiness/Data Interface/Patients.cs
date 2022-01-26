@@ -1613,7 +1613,7 @@ namespace OpenDentBusiness {
 			regexp=SOut.String(regexp);//just escape necessary characters here one time
 			//Replaces spaces and punctation with wildcards because users should be able to type the following example and match certain addresses:
 			//Search term: "4145 S Court St" should match "4145 S. Court St." in the database.
-			string strAddress=Regex.Replace(ptSearchArgs.Address, @"[\-.,:;_""'/\\)(#\s&]","%");
+			string strAddress=Regex.Replace(ptSearchArgs.Address, @"[°\-.,:;_""'/\\)(#\s&]","%");
 			string phDigitsTrimmed=phonedigits.TrimStart('0','1');
 			//a single digit search is faster using REGEXP, so only use the phonenumber table if the pref is set and the phDigitsTrimmed length>1
 			bool usePhonenumTable=PrefC.GetYN(PrefName.PatientPhoneUsePhonenumberTable) && phDigitsTrimmed.Length>0;
@@ -1631,36 +1631,9 @@ namespace OpenDentBusiness {
 					phoneNumSearch=likeQueryString;
 				}
 			}
-			string patAndNameCheck = (string.IsNullOrEmpty(ptSearchArgs.LName) ? "" : $@"
-				AND (
-					patient.LName LIKE '{(ptSearchArgs.DoLimit ? "" : "%") + ptSearchArgs.LName}%'{(!PrefC.GetBool(PrefName.DistributorKey) ? "" : $@"
-					OR patient.Preferred LIKE '{(ptSearchArgs.DoLimit ? "" : "%") + ptSearchArgs.LName}%'")}
-				) ")
-				+ (string.IsNullOrEmpty(ptSearchArgs.FName) ? "" : $@"
-				AND (
-					patient.FName LIKE '{ptSearchArgs.FName}%'"
-					//Nathan has approved the preferred name search for first name only. It is not intended to work with last name for our customers.
-					+ $@"{((!PrefC.GetBool(PrefName.DistributorKey) && !PrefC.GetBool(PrefName.PatientSelectUseFNameForPreferred)) ? "" : $@"
-					OR patient.Preferred LIKE '{ptSearchArgs.FName}%'")}
-				)");
-			string patOrNameCheck = (string.IsNullOrEmpty(ptSearchArgs.LName) ? "" : 
-				$@"AND (
-					  (
-							patient.LName LIKE '{(ptSearchArgs.DoLimit ? "" : "%") + ptSearchArgs.LName}%'{(!PrefC.GetBool(PrefName.DistributorKey) ? "" : $@"
-							OR patient.Preferred LIKE '{(ptSearchArgs.DoLimit ? "" : "%") + ptSearchArgs.LName}%'")}
-						)
-				")
-				+ (string.IsNullOrEmpty(ptSearchArgs.FName) ? "" : $@"
-				OR (
-						patient.FName LIKE '{ptSearchArgs.FName}%'"
-						//Nathan has approved the preferred name search for first name only. It is not intended to work with last name for our customers.
-						+ $@"{((!PrefC.GetBool(PrefName.DistributorKey) && !PrefC.GetBool(PrefName.PatientSelectUseFNameForPreferred)) ? "" : $@"
-						OR patient.Preferred LIKE '{ptSearchArgs.FName}%'")}
-					)
-				)");
 			string command=$@"SELECT DISTINCT patient.PatNum,patient.LName,patient.FName,patient.MiddleI,patient.Preferred,patient.Birthdate,patient.SSN,
-				patient.HmPhone,patient.WkPhone,patient.Address,patient.Address2,patient.PatStatus,patient.BillingType,patient.ChartNumber,patient.City,patient.State,
-				patient.Zip,patient.PriProv,patient.SiteNum,patient.Email,patient.Country,patient.ClinicNum,patient.SecProv,patient.WirelessPhone,patient.TxtMsgOk,
+				patient.HmPhone,patient.WkPhone,patient.Address,patient.PatStatus,patient.BillingType,patient.ChartNumber,patient.City,patient.State,
+				patient.PriProv,patient.SiteNum,patient.Email,patient.Country,patient.ClinicNum,patient.SecProv,patient.WirelessPhone,
 				{exactMatchSnippet} isExactMatch,"
 				//using this sub-select instead of joining these two tables because the runtime is much better this way
 				//Example: large db with joins single clinic 19.8 sec, all clinics 32.484 sec; with sub-select single clinic 0.054 sec, all clinics 0.007 sec
@@ -1702,7 +1675,18 @@ namespace OpenDentBusiness {
 					WHERE pl2.PatNumTo IS NULL
 					AND pl1.LinkType={SOut.Int((int)PatientLinkType.Merge)}
 				) ")
-				+(ptSearchArgs.IsGenericNameMatch ? patOrNameCheck : patAndNameCheck)
+				+(string.IsNullOrEmpty(ptSearchArgs.LName)?"":$@"
+				AND (
+					patient.LName LIKE '{(ptSearchArgs.DoLimit?"":"%")+ptSearchArgs.LName}%'{(!PrefC.GetBool(PrefName.DistributorKey)?"":$@"
+					OR patient.Preferred LIKE '{(ptSearchArgs.DoLimit?"":"%")+ptSearchArgs.LName}%'")}
+				) ")
+				+(string.IsNullOrEmpty(ptSearchArgs.FName)?"":$@"
+				AND (
+					patient.FName LIKE '{ptSearchArgs.FName}%'"
+					//Nathan has approved the preferred name search for first name only. It is not intended to work with last name for our customers.
+					+$@"{((!PrefC.GetBool(PrefName.DistributorKey) && !PrefC.GetBool(PrefName.PatientSelectUseFNameForPreferred))?"":$@"
+					OR patient.Preferred LIKE '{ptSearchArgs.FName}%'")}
+				) ")
 				+(string.IsNullOrEmpty(regexp) || usePhonenumTable?"":$@"
 				AND (
 					patient.HmPhone REGEXP '{regexp}'
@@ -1845,13 +1829,11 @@ namespace OpenDentBusiness {
 				r["HmPhone"]=dRow["HmPhone"].ToString();
 				r["WkPhone"]=dRow["WkPhone"].ToString();
 				r["Address"]=dRow["Address"].ToString();
-				r["Address2"]=dRow["Address2"].ToString();
 				r["PatStatus"]=((PatientStatus)SIn.Int(dRow["PatStatus"].ToString())).ToString();
 				r["BillingType"]=Defs.GetName(DefCat.BillingTypes,SIn.Long(dRow["BillingType"].ToString()));
 				r["ChartNumber"]=dRow["ChartNumber"].ToString();
 				r["City"]=dRow["City"].ToString();
 				r["State"]=dRow["State"].ToString();
-				r["Zip"]=dRow["Zip"].ToString();
 				r["PriProv"]=Providers.GetAbbr(SIn.Long(dRow["PriProv"].ToString()));
 				r["site"]=Sites.GetDescription(SIn.Long(dRow["SiteNum"].ToString()));
 				r["Email"]=dRow["Email"].ToString();
@@ -1865,7 +1847,6 @@ namespace OpenDentBusiness {
 				}
 				r["StatementNum"]=dRow["StatementNum"].ToString();
 				r["WirelessPhone"]=dRow["WirelessPhone"].ToString();
-				r["TxtMsgOk"]=dRow["TxtMsgOk"].ToString();
 				r["SecProv"]=Providers.GetAbbr(SIn.Long(dRow["SecProv"].ToString()));
 				r["nextVisit"]="";
 				r["lastVisit"]="";
@@ -4852,13 +4833,7 @@ namespace OpenDentBusiness {
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),patient);
 			}
-			if(String.IsNullOrEmpty(patient.FamFinUrgNote)) {
-				patient.FamFinUrgNote="";
-			}
-			if(String.IsNullOrEmpty(patient.ApptModNote)) {
-				patient.ApptModNote="";
-			}
-			string unhashedText=patient.Guarantor.ToString()+patient.FamFinUrgNote.ToString()+patient.ApptModNote.ToString()+patient.Email;
+			string unhashedText=patient.PatNum.ToString();
 			try {
 				return CDT.Class1.CreateSaltedHash(unhashedText);
 			}
@@ -4873,10 +4848,8 @@ namespace OpenDentBusiness {
 			if(patient==null) {
 				return true;
 			}
-			DateTime dateHashStart=Misc.SecurityHash.DateStart;
-			if(patient.SecDateEntry < dateHashStart) { //old
-				return true;
-			}
+			//Do not check date, all patients are subject to validation
+			//SecDateEntry only get set on Insert, so once or never. It's useless.
 			if(patient.SecurityHash==HashFields(patient)) {
 				return true;
 			}
@@ -5260,9 +5233,7 @@ namespace OpenDentBusiness {
 		public bool HasSpecialty;
 		public bool HasNextLastVisit;
 		public List<long> ListExplicitPatNums;
-		///<summary>False by default, when true the patient first and last name check will be an OR statement. Otherwise the check is an AND statement.</summary>
-		public bool IsGenericNameMatch;
-
+		
 		///<summary></summary>
 		public PtTableSearchParams() { }
 
@@ -5270,7 +5241,7 @@ namespace OpenDentBusiness {
 		public PtTableSearchParams(bool doLimit,string lname,string fname,string phone,string address,bool hideInactive,string city,
 			string state,string ssn,string patNumStr,string chartNumber,long billingType,bool guarOnly,bool showArchived,DateTime birthdate,long siteNum,
 			string subscriberId,string email,string country,string regKey,string clinicNums,string clinicName,string invoiceNumber,List<long> listExplicitPatNums=null,
-			long initialPatNum=0,bool showMerged=false,bool hasSpecialty=false,bool hasNextLastVisit=false,bool isGenericNameMatch=false)
+			long initialPatNum=0,bool showMerged=false,bool hasSpecialty=false,bool hasNextLastVisit=false)
 		{
 			DoLimit=doLimit;//bool
 			LName=SOut.String(lname);
@@ -5300,7 +5271,6 @@ namespace OpenDentBusiness {
 			HasSpecialty=hasSpecialty;//bool
 			HasNextLastVisit=hasNextLastVisit;//bool
 			ListExplicitPatNums=(listExplicitPatNums??new List<long>());//List<long>
-			IsGenericNameMatch=isGenericNameMatch;
 		}
 
 		///<summary></summary>

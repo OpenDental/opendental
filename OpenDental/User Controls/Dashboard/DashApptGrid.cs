@@ -288,7 +288,7 @@ namespace OpenDental {
 						if(plannedAptIdx<0) {//attached to a completed appointment
 							txt+=" ("+Lan.g("enumApptStatus",ApptStatus.Complete.ToString())+")";
 						}
-						if(_listApptOthers.ToList().FindAll(x => x.NextAptNum==_listApptOthers[i].AptNum)
+						if(_listApptOthers.FindAll(x => x.NextAptNum==_listApptOthers[i].AptNum)
 							.Exists(x => x.AptStatus==ApptStatus.Scheduled)) //attached to a scheduled appointment
 						{
 							txt+=" ("+Lan.g("enumApptStatus",ApptStatus.Scheduled.ToString())+")";
@@ -329,7 +329,8 @@ namespace OpenDental {
 			}
 			gridMain.EndUpdate();
 			if(selectedIndex>-1) {
-				gridMain.SetSelected(selectedIndex,true);
+				//we will not use i as the index because there are "continue"s in this loop
+					selectedIndex=gridMain.ListGridRows.Count-1;//select the row that was just added if it matches
 			}
 		}
 

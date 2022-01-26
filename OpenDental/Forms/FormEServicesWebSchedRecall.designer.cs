@@ -78,6 +78,8 @@ namespace OpenDental{
 			this.groupCustomizedMessages = new OpenDental.UI.GroupBoxOD();
 			this.labelNotificationSettings = new System.Windows.Forms.Label();
 			this.groupOtherSettings = new OpenDental.UI.GroupBoxOD();
+			this.textNumMonthsCheck = new OpenDental.ValidNum();
+			this.labelNumMonthsCheck = new System.Windows.Forms.Label();
 			this.groupWebSchedProvRule.SuspendLayout();
 			this.groupWebSchedText.SuspendLayout();
 			this.groupBox6.SuspendLayout();
@@ -90,7 +92,7 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(876, 625);
+			this.butOK.Location = new System.Drawing.Point(876, 651);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
@@ -101,7 +103,7 @@ namespace OpenDental{
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(957, 625);
+			this.butCancel.Location = new System.Drawing.Point(957, 651);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 2;
@@ -181,7 +183,7 @@ namespace OpenDental{
 			// 
 			this.checkWSRDoubleBooking.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkWSRDoubleBooking.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkWSRDoubleBooking.Location = new System.Drawing.Point(39, 15);
+			this.checkWSRDoubleBooking.Location = new System.Drawing.Point(24, 15);
 			this.checkWSRDoubleBooking.Name = "checkWSRDoubleBooking";
 			this.checkWSRDoubleBooking.Size = new System.Drawing.Size(196, 18);
 			this.checkWSRDoubleBooking.TabIndex = 401;
@@ -192,7 +194,7 @@ namespace OpenDental{
 			// 
 			this.checkRecallAllowProvSelection.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkRecallAllowProvSelection.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkRecallAllowProvSelection.Location = new System.Drawing.Point(241, 15);
+			this.checkRecallAllowProvSelection.Location = new System.Drawing.Point(226, 15);
 			this.checkRecallAllowProvSelection.Name = "checkRecallAllowProvSelection";
 			this.checkRecallAllowProvSelection.Size = new System.Drawing.Size(191, 18);
 			this.checkRecallAllowProvSelection.TabIndex = 398;
@@ -201,16 +203,16 @@ namespace OpenDental{
 			// 
 			// comboWSRConfirmStatus
 			// 
-			this.comboWSRConfirmStatus.Location = new System.Drawing.Point(241, 65);
+			this.comboWSRConfirmStatus.Location = new System.Drawing.Point(226, 91);
 			this.comboWSRConfirmStatus.Name = "comboWSRConfirmStatus";
 			this.comboWSRConfirmStatus.Size = new System.Drawing.Size(191, 21);
 			this.comboWSRConfirmStatus.TabIndex = 400;
 			// 
 			// labelRecallConfirmStatus
 			// 
-			this.labelRecallConfirmStatus.Location = new System.Drawing.Point(14, 67);
+			this.labelRecallConfirmStatus.Location = new System.Drawing.Point(14, 93);
 			this.labelRecallConfirmStatus.Name = "labelRecallConfirmStatus";
-			this.labelRecallConfirmStatus.Size = new System.Drawing.Size(221, 17);
+			this.labelRecallConfirmStatus.Size = new System.Drawing.Size(206, 17);
 			this.labelRecallConfirmStatus.TabIndex = 399;
 			this.labelRecallConfirmStatus.Text = "Web Sched Recall Confirm Status";
 			this.labelRecallConfirmStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -218,7 +220,7 @@ namespace OpenDental{
 			// labelDaysFuture
 			// 
 			this.labelDaysFuture.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.labelDaysFuture.Location = new System.Drawing.Point(77, 38);
+			this.labelDaysFuture.Location = new System.Drawing.Point(62, 38);
 			this.labelDaysFuture.Name = "labelDaysFuture";
 			this.labelDaysFuture.Size = new System.Drawing.Size(311, 19);
 			this.labelDaysFuture.TabIndex = 402;
@@ -228,7 +230,7 @@ namespace OpenDental{
 			// textWebSchedRecallApptSearchDays
 			// 
 			this.textWebSchedRecallApptSearchDays.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.textWebSchedRecallApptSearchDays.Location = new System.Drawing.Point(394, 39);
+			this.textWebSchedRecallApptSearchDays.Location = new System.Drawing.Point(379, 39);
 			this.textWebSchedRecallApptSearchDays.MaxVal = 365;
 			this.textWebSchedRecallApptSearchDays.Name = "textWebSchedRecallApptSearchDays";
 			this.textWebSchedRecallApptSearchDays.ShowZero = false;
@@ -498,7 +500,7 @@ namespace OpenDental{
 			this.textWebSchedDateStart.Name = "textWebSchedDateStart";
 			this.textWebSchedDateStart.Size = new System.Drawing.Size(90, 20);
 			this.textWebSchedDateStart.TabIndex = 303;
-			this.textWebSchedDateStart.Text = "07/08/2015";
+			this.textWebSchedDateStart.Text = "7/8/2015";
 			// 
 			// labelWebSchedClinic
 			// 
@@ -614,7 +616,7 @@ namespace OpenDental{
 			this.groupCustomizedMessages.Controls.Add(this.butRecallSchedSetup);
 			this.groupCustomizedMessages.Location = new System.Drawing.Point(457, 521);
 			this.groupCustomizedMessages.Name = "groupCustomizedMessages";
-			this.groupCustomizedMessages.Size = new System.Drawing.Size(575, 91);
+			this.groupCustomizedMessages.Size = new System.Drawing.Size(575, 117);
 			this.groupCustomizedMessages.TabIndex = 409;
 			this.groupCustomizedMessages.Text = "Customized Messages";
 			// 
@@ -629,6 +631,8 @@ namespace OpenDental{
 			// 
 			// groupOtherSettings
 			// 
+			this.groupOtherSettings.Controls.Add(this.textNumMonthsCheck);
+			this.groupOtherSettings.Controls.Add(this.labelNumMonthsCheck);
 			this.groupOtherSettings.Controls.Add(this.comboWSRConfirmStatus);
 			this.groupOtherSettings.Controls.Add(this.labelRecallConfirmStatus);
 			this.groupOtherSettings.Controls.Add(this.textWebSchedRecallApptSearchDays);
@@ -637,14 +641,32 @@ namespace OpenDental{
 			this.groupOtherSettings.Controls.Add(this.checkRecallAllowProvSelection);
 			this.groupOtherSettings.Location = new System.Drawing.Point(11, 521);
 			this.groupOtherSettings.Name = "groupOtherSettings";
-			this.groupOtherSettings.Size = new System.Drawing.Size(439, 91);
+			this.groupOtherSettings.Size = new System.Drawing.Size(439, 117);
 			this.groupOtherSettings.TabIndex = 410;
 			this.groupOtherSettings.Text = "Other Settings";
+			// 
+			// textNumMonthsCheck
+			// 
+			this.textNumMonthsCheck.Location = new System.Drawing.Point(379, 65);
+			this.textNumMonthsCheck.MaxVal = 24;
+			this.textNumMonthsCheck.MinVal = 1;
+			this.textNumMonthsCheck.Name = "textNumMonthsCheck";
+			this.textNumMonthsCheck.Size = new System.Drawing.Size(38, 20);
+			this.textNumMonthsCheck.TabIndex = 405;
+			// 
+			// labelNumMonthsCheck
+			// 
+			this.labelNumMonthsCheck.Location = new System.Drawing.Point(62, 64);
+			this.labelNumMonthsCheck.Name = "labelNumMonthsCheck";
+			this.labelNumMonthsCheck.Size = new System.Drawing.Size(311, 19);
+			this.labelNumMonthsCheck.TabIndex = 404;
+			this.labelNumMonthsCheck.Text = "Maximum number of months to search on initial check (1-24)";
+			this.labelNumMonthsCheck.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// FormEServicesWebSchedRecall
 			// 
 			this.CancelButton = this.butCancel;
-			this.ClientSize = new System.Drawing.Size(1046, 661);
+			this.ClientSize = new System.Drawing.Size(1046, 687);
 			this.Controls.Add(this.groupOtherSettings);
 			this.Controls.Add(this.groupCustomizedMessages);
 			this.Controls.Add(this.butEditRecallTypes);
@@ -732,5 +754,7 @@ namespace OpenDental{
 		private UI.GroupBoxOD groupCustomizedMessages;
 		private UI.GroupBoxOD groupOtherSettings;
 		private System.Windows.Forms.Label labelNotificationSettings;
+		private ValidNum textNumMonthsCheck;
+		private System.Windows.Forms.Label labelNumMonthsCheck;
 	}
 }

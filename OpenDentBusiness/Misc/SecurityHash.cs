@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
 		///<summary>The date Open Dental started hashing fields into paysplit.SecurityHash. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2022,1,7);
+		public static DateTime DateStart=new DateTime(2022,1,26);
 		private static bool _arePaySplitsUpdated=false;
 		private static bool _areAppointmentsUpdated=false;
 		private static bool _arePatientsUpdated=false;
@@ -21,6 +21,11 @@ namespace OpenDentBusiness.Misc {
 			RunAppointment();
 			RunPatient();
 			RunPayPlan();
+		}
+
+		///<summary>Only used one time during a conversion script. Sets the _arePatientsUpdate boolean to false. Allows the hashing logic to run on the patient table a subsequent time during a convert script update. </summary>
+		public static void ResetPatientHashing() {
+			_arePatientsUpdated=false;
 		}
 
 		private static void RunPaysplit() {
@@ -103,35 +108,25 @@ namespace OpenDentBusiness.Misc {
 			_areAppointmentsUpdated=true;
 		}
 
+		///<summary>Hashes ALL patients with an empty SecurityHash field. Does not use the DateStart like other table hashing methods. </summary>
 		private static void RunPatient() {
 			if(_arePatientsUpdated) {
 				return;
 			}
-			//Check if columns are present
-			if(!LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"patient","SecurityHash")
-			  || !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"patient","Guarantor")
-				|| !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"patient","FamFinUrgNote")
-				|| !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"patient","ApptModNote")
-				|| !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"patient","Email"))
-			{
+			//Check if SecurityHash column is present
+			if(!LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"patient","SecurityHash")) {
 				return;
 			}
-			//Clear old hashes
-			string command="UPDATE patient SET SecurityHash=''";
-			Db.NonQ(command);
-			//Hash entries made after new date
-			command="SELECT * FROM patient WHERE SecDateEntry>= "+POut.Date(DateStart);
+			//Get all ALL unhashed patients
+			string command="SELECT PatNum FROM patient WHERE SecurityHash=''";
 			DataTable table=Db.GetTable(command);
+			//Do not clear current hashes
 			long patNum;
 			string unhashedText="";
 			string hashedText="";
 			for(int i=0;i<table.Rows.Count;i++) {
-				unhashedText="";
 				patNum=PIn.Long(table.Rows[i]["PatNum"].ToString());
-				unhashedText+=PIn.Long(table.Rows[i]["Guarantor"].ToString());
-				unhashedText+=PIn.String(table.Rows[i]["FamFinUrgNote"].ToString());
-				unhashedText+=PIn.String(table.Rows[i]["ApptModNote"].ToString());
-				unhashedText+=PIn.String(table.Rows[i]["Email"].ToString());
+				unhashedText=patNum.ToString();
 				try {
 					hashedText=CDT.Class1.CreateSaltedHash(unhashedText);
 				}

@@ -348,6 +348,7 @@ namespace OpenDentBusiness {
 					bitmapRaw=new Bitmap(1,1);
 				}
 			}
+			ImageHelper.ConvertCropIfNeeded(document, bitmapRaw);
 			Bitmap bitmapReturn=ImageHelper.ApplyDocumentSettingsToImage(document,bitmapRaw,ImageSettingFlags.ALL);
 			bitmapRaw.Dispose();
 			return bitmapReturn;

@@ -2278,6 +2278,9 @@ namespace OpenDentBusiness {
 		///<summary>Integer.  Represents the number of days into the future we will go before searching for available time slots.
 		///Empty will start looking for available time slots today.</summary>
 		WebSchedRecallApptSearchAfterDays,
+		///<summary>An integer number of months 1-24 representing how far out we will initially search for appointment openings when scheduling WebSched Recall.</summary>
+		[PrefName(ValueType=PrefValueType.INT)]
+		WebSchedRecallApptSearchMaximumMonths,
 		///<summary>DefNum for the ApptConfirm status type that will automatically be assigned to Web Sched Recall appointments.</summary>
 		WebSchedRecallConfirmStatus,
 		///<summary>Enum:EmailType 0=Regular 1=Html 2=RawHtml. Used to determine format for email for web sched recall messages</summary>

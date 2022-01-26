@@ -101,6 +101,7 @@ namespace OpenDental {
 			comboWSRConfirmStatus.Items.AddDefs(Defs.GetDefsForCategory(DefCat.ApptConfirmed,true));
 			comboWSRConfirmStatus.SetSelectedDefNum(defaultStatus);
 			checkWSRDoubleBooking.Checked=PrefC.GetInt(PrefName.WebSchedRecallDoubleBooking)>0;//0 = Allow double booking, 1 = prevent
+			textNumMonthsCheck.Text=PrefC.GetString(PrefName.WebSchedRecallApptSearchMaximumMonths);
 		}
 
 		#region Methods - Private
@@ -532,6 +533,9 @@ namespace OpenDental {
 			if(!textWebSchedRecallApptSearchDays.IsValid()) {
 				return false;
 			}
+			if(!textNumMonthsCheck.IsValid()) {
+				return false;
+			}
 			return true;
 		}
 
@@ -571,6 +575,7 @@ namespace OpenDental {
 			}
 			int isWSRDoubleBooking=checkWSRDoubleBooking.Checked ? 1 : 0;
 			Prefs.UpdateInt(PrefName.WebSchedRecallDoubleBooking,isWSRDoubleBooking);
+			Prefs.UpdateInt(PrefName.WebSchedRecallApptSearchMaximumMonths,PIn.Int(textNumMonthsCheck.Text,false));
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {

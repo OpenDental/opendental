@@ -1412,14 +1412,11 @@ namespace OpenDental.UI {
 			if(this.ContextMenu==null) {
 				this.ContextMenu=new ContextMenu();
 			}
-			this.ContextMenu.Popup+=CopyHelper;
-			if(HasLinkDetect) {//Link detect should go after Copy Helper as the "Copy Text" menu item should be above any links.
-				this.ContextMenu.Popup+=PopupHelper;
-			}
+			this.ContextMenu.Popup+=ContextMenuPopup;
 		}
 
 		///<summary>Just prior to displaying the context menu, add wiki links if neccesary.</summary>
-		private void PopupHelper(object sender, EventArgs e) {
+		private void ContextMenuPopupLinks(object sender, EventArgs e) {
 			//If multiple grids add the same instance of ConextMenu then all of them will raise this event any time any of them raise the event.
 			//Only allow the event to operate if this is the grid that actually fired the event.
 			try {
@@ -1468,7 +1465,7 @@ namespace OpenDental.UI {
 		}
 
 		///<summary>Just prior to displaying the context menu, add wiki links if neccesary.</summary>
-		protected virtual void CopyHelper(object sender,EventArgs e) {
+		protected virtual void ContextMenuPopup(object sender,EventArgs e) {
 			//If multiple grids add the same instance of ContextMenu, then all of them will raise this event any time any of them raise the event.
 			//Only allow the event to operate if this is the grid that actually fired the event.
 			try {
@@ -1486,8 +1483,8 @@ namespace OpenDental.UI {
 			//Todo: this is a bad selector:
 			MenuItem menuItemCopy = this.ContextMenu.MenuItems.OfType<MenuItem>().FirstOrDefault(x => x.Text == "Copy Cell Text");
 			List<MenuItem> listMenuItems = new List<MenuItem>();
-			if(menuItemCopy==null) {
-				menuItemCopy = new MenuItem("Copy Cell Text",OnCopyCellClick);
+			if(menuItemCopy==null) {//Add it the first time
+				menuItemCopy = new MenuItem("Copy Cell Text",CopyCellClick);
 				if(this.ContextMenu.MenuItems.Count > 0) {
 					listMenuItems.Add(new MenuItem("-"));
 				}
@@ -1503,14 +1500,56 @@ namespace OpenDental.UI {
 			else {
 				menuItemCopy.Enabled = true;
 			}
+			//Copy Rows----------------------------------------------------
+			MenuItem menuItemCopyRows=this.ContextMenu.MenuItems.OfType<MenuItem>().FirstOrDefault(x => x.Text == "Copy Rows");
+			if(menuItemCopyRows==null) {//Add it the first time
+				menuItemCopyRows=new MenuItem("Copy Rows",CopyRowsClick);
+				this.ContextMenu.MenuItems.Add(menuItemCopyRows);
+			}
+			if(!_listSelectedIndices.Contains(_mouseDownRow)//If clicked row is not selected.
+				|| !(0<=_mouseDownCol && _mouseDownCol<=ListGridRows[_mouseDownRow].Cells.Count-1))//If clicked column is not in the row's cells.
+			{
+				menuItemCopyRows.Enabled = false;
+			}
+			else {
+				menuItemCopyRows.Enabled = true;
+			}
+			//Link items----------------------------------------------------
+			if(HasLinkDetect) {//Links go below any "Copy Text" menu items.
+				ContextMenuPopupLinks(sender,e);
+			}
 		}
 
-		private void OnCopyCellClick(object sender,EventArgs e) {
+		private void CopyCellClick(object sender,EventArgs e) {
 			try {
 				string copyText = ListGridRows[_mouseDownRow].Cells[_mouseDownCol].Text;
 				ODClipboard.SetClipboard(copyText);
 			}
 			catch {
+				//show a message box?
+			}
+		}
+
+		private void CopyRowsClick(object sender,EventArgs e) {
+			List<GridRow> listGridRowsSelected=new List<GridRow>();
+			_listSelectedIndices.ForEach(x => listGridRowsSelected.Add(ListGridRows[x]));
+			StringBuilder stringBuilder=new StringBuilder();
+			for(int i=0;i<listGridRowsSelected.Count;i++) {
+				string parsedRow="";
+				for(int j=0;j<listGridRowsSelected[i].Cells.Count;j++) {
+					parsedRow+="\"";//Cell begin quote in case there are commas.
+					parsedRow+=listGridRowsSelected[i].Cells[j].Text.Replace("\"","\"\"");//Escape single double quote by using 2 double quotes.
+					parsedRow+="\"";//Cell end quote in case there are commas.
+					if(j!=listGridRowsSelected[i].Cells.Count-1) {
+						parsedRow+=",";
+					}
+				}
+				stringBuilder.AppendLine(parsedRow);
+			}
+			try {
+				ODClipboard.SetClipboard(stringBuilder.ToString());
+			}
+			catch { 
 				//show a message box?
 			}
 		}
