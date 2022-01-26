@@ -400,6 +400,30 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="RequestDbmsUpgrade">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestDbmsUpgradeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestDbmsUpgradeResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DatabaseIntegrityGetList">
+        <s:complexType />
+      </s:element>
+      <s:element name="DatabaseIntegrityGetListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DatabaseIntegrityGetListResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
     </s:schema>
   </wsdl:types>
   <wsdl:message name="EstablishConnectionSoapIn">
@@ -576,6 +600,18 @@
   <wsdl:message name="RequestIsDevKeySoapOut">
     <wsdl:part name="parameters" element="tns:RequestIsDevKeyResponse" />
   </wsdl:message>
+  <wsdl:message name="RequestDbmsUpgradeSoapIn">
+    <wsdl:part name="parameters" element="tns:RequestDbmsUpgrade" />
+  </wsdl:message>
+  <wsdl:message name="RequestDbmsUpgradeSoapOut">
+    <wsdl:part name="parameters" element="tns:RequestDbmsUpgradeResponse" />
+  </wsdl:message>
+  <wsdl:message name="DatabaseIntegrityGetListSoapIn">
+    <wsdl:part name="parameters" element="tns:DatabaseIntegrityGetList" />
+  </wsdl:message>
+  <wsdl:message name="DatabaseIntegrityGetListSoapOut">
+    <wsdl:part name="parameters" element="tns:DatabaseIntegrityGetListResponse" />
+  </wsdl:message>
   <wsdl:portType name="Service1Soap">
     <wsdl:operation name="EstablishConnection">
       <wsdl:input message="tns:EstablishConnectionSoapIn" />
@@ -692,6 +728,14 @@
     <wsdl:operation name="RequestIsDevKey">
       <wsdl:input message="tns:RequestIsDevKeySoapIn" />
       <wsdl:output message="tns:RequestIsDevKeySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestDbmsUpgrade">
+      <wsdl:input message="tns:RequestDbmsUpgradeSoapIn" />
+      <wsdl:output message="tns:RequestDbmsUpgradeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DatabaseIntegrityGetList">
+      <wsdl:input message="tns:DatabaseIntegrityGetListSoapIn" />
+      <wsdl:output message="tns:DatabaseIntegrityGetListSoapOut" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="Service1Soap" type="tns:Service1Soap">
@@ -957,6 +1001,24 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="RequestDbmsUpgrade">
+      <soap:operation soapAction="http://open-dent.com/RequestDbmsUpgrade" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DatabaseIntegrityGetList">
+      <soap:operation soapAction="http://open-dent.com/DatabaseIntegrityGetList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="Service1Soap12" type="tns:Service1Soap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
@@ -1214,6 +1276,24 @@
     </wsdl:operation>
     <wsdl:operation name="RequestIsDevKey">
       <soap12:operation soapAction="http://open-dent.com/RequestIsDevKey" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestDbmsUpgrade">
+      <soap12:operation soapAction="http://open-dent.com/RequestDbmsUpgrade" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DatabaseIntegrityGetList">
+      <soap12:operation soapAction="http://open-dent.com/DatabaseIntegrityGetList" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

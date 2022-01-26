@@ -626,13 +626,25 @@ namespace OpenDentBusiness{
 		public static string GetTermsAndConditionsString(PayPlan plan,Patient pat,Patient guar,bool isHtmlEmail=false) {
 			//replacement text fields
 			StringBuilder sb=new StringBuilder(PrefC.GetString(PrefName.PayPlanTermsAndConditions));
-			ReplaceTags.ReplaceOneTag(sb,"[APR]",plan.APR.ToString(),isHtmlEmail);
-			ReplaceTags.ReplaceOneTag(sb,"[PaymentAmt]",plan.PayAmt.ToString("C"),isHtmlEmail);
-			ReplaceTags.ReplaceOneTag(sb,"[NumOfPayments]",plan.NumberOfPayments.ToString(),isHtmlEmail);
-			string frequency=plan.ChargeFrequency.GetDescription().ToLower();
-			if(plan.ChargeFrequency==PayPlanFrequency.OrdinalWeekday) {
-				frequency="on a specific day of each month";
+			string frequency="";
+			if(plan.IsDynamic) { //If the payment plan is dynamic, it uses the PayPlanFrequency enum.
+				frequency=plan.ChargeFrequency.GetDescription().ToLower();
+				if(plan.ChargeFrequency==PayPlanFrequency.OrdinalWeekday) {
+					frequency="on a specific day of each month";
+				}
 			}
+			else { //If the payment plan is not dynamic, it uses the PaymentSchedule enum.
+				frequency=plan.PaySchedule.GetDescription().ToLower();
+				if(plan.PaySchedule==PaymentSchedule.MonthlyDayOfWeek) {
+					frequency="on a specific day of each month";
+				}
+			}
+			ReplaceTags.ReplaceOneTag(sb,"[APR]",plan.APR.ToString(),isHtmlEmail);
+			//ToString("C") formats such that 5 becomes "$5.00". We append an extra $ to escape "$" during a regex replacement, or else nonsense could happen (it'll look for grouping).
+			string strPayAmt=plan.PayAmt.ToString("C");
+			strPayAmt=strPayAmt.Replace("$","$$");
+			ReplaceTags.ReplaceOneTag(sb,"[PaymentAmt]",strPayAmt,isHtmlEmail);
+			ReplaceTags.ReplaceOneTag(sb,"[NumOfPayments]",plan.NumberOfPayments.ToString(),isHtmlEmail);
 			frequency=Lans.g("PaymentPlanTermsAndCondtions",frequency);
 			ReplaceTags.ReplaceOneTag(sb,"[ChargeFrequency]",frequency,isHtmlEmail);
 			return sb.ToString();

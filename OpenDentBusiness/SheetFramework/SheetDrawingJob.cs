@@ -434,6 +434,7 @@ namespace OpenDentBusiness {
 					case "StatementDynamicPayPlan.credits":
 					case "StatementDynamicPayPlan.balance":
 					case "StatementInvoicePayment.amt":
+					case "TreatPlanMain.Allowed":
 					case "TreatPlanMain.Fee":
 					case "TreatPlanMain.Pri Ins":
 					case "TreatPlanMain.Sec Ins":

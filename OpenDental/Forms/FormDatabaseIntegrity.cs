@@ -11,8 +11,10 @@ namespace OpenDental {
 	///<summary>Message box shown if the database was altered by a third party outside of Open Dental.
 	///Set the TextWarningMessage to describe which entries are unsafe. </summary>
 	public partial class FormDatabaseIntegrity:FormODBase {
-		///<summary>Example: Patient</summary>
-		public string ObjectDesc;
+		///<summary>This can be quite long.</summary>
+		public string MessageToShow;
+		///<summary>So that it shows a different link.</summary>
+		public bool IsPlugin;
 
 		public FormDatabaseIntegrity() {
 			InitializeComponent();
@@ -21,7 +23,10 @@ namespace OpenDental {
 		}
 
 		private void FormDatabaseIntegrity_Load(object sender,EventArgs e) {
-			labelMessage.Text="This "+ObjectDesc+" was modified outside of Open Dental.";
+			labelMessage.Text=MessageToShow;
+			if(IsPlugin){
+				linkLabel.Text="https://www.opendental.com/site/plugins.html";
+			}
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
@@ -29,7 +34,12 @@ namespace OpenDental {
 		}
 
 		private void linkLabel1_Click(object sender,EventArgs e) {
-			Process.Start("https://www.opendental.com/site/integrity.html");
+			if(IsPlugin){
+				Process.Start("https://www.opendental.com/site/plugins.html");
+			}
+			else{
+				Process.Start("https://www.opendental.com/site/integrity.html");
+			}
 		}
 	}
 }

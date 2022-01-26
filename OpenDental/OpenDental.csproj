@@ -411,6 +411,7 @@
     <Compile Include="Bridges\FormDrCeph.Designer.cs">
       <DependentUpon>FormDrCeph.cs</DependentUpon>
     </Compile>
+    <Compile Include="Bridges\PluginLoader.cs" />
     <Compile Include="Bridges\RayBridge.cs" />
     <Compile Include="Bridges\FormHouseCalls.designer.cs">
       <DependentUpon>FormHouseCalls.cs</DependentUpon>
@@ -2695,6 +2696,14 @@
       <DependentUpon>ComboBoxOD.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\BordersDpi\Dpi.cs" />
+    <Compile Include="UI\DatabaseIntegrity\DatabaseIntegrities.cs" />
+    <Compile Include="UI\DatabaseIntegrity\DatabaseIntegrity.cs" />
+    <Compile Include="UI\DatabaseIntegrity\WarningIntegrity.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\DatabaseIntegrity\WarningIntegrity.Designer.cs">
+      <DependentUpon>WarningIntegrity.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Direct2D\Direct2d.cs" />
     <Compile Include="UI\FolderBrowserDialog.cs" />
     <Compile Include="UI\ControlDoubleBuffered.cs">
@@ -7116,12 +7125,6 @@
     <Compile Include="UI\Voice\VoiceCommandList.cs" />
     <Compile Include="UI\Voice\VoiceController.cs" />
     <Compile Include="UI\Voice\VoiceMsgBox.cs" />
-    <Compile Include="UI\WarningIntegrity.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\WarningIntegrity.Designer.cs">
-      <DependentUpon>WarningIntegrity.cs</DependentUpon>
-    </Compile>
     <Compile Include="User Controls\BugSubmissionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

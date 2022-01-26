@@ -56,18 +56,18 @@ namespace OpenDental {
 					dateRangePicker.SetDateTimeTo(DateTime.Today);
 					break;
 				case FormBugSubmissionMode.ViewOnly:
-					dateRangePicker.SetDateTimeFrom(DateTime.MinValue);
+					dateRangePicker.SetDateTimeFrom(DateTime.Today.AddDays(-60));
 					dateRangePicker.SetDateTimeTo(DateTime.MaxValue.AddDays(-1));//Subtract a day for DbHelper.DateTConditionColumn(...)
 					butAddJob.Visible=false;
 					listShowHideOptions.SetSelected(1);
 					break;
 				case FormBugSubmissionMode.SelectionMode:
-					dateRangePicker.SetDateTimeFrom(DateTime.MinValue);
+					dateRangePicker.SetDateTimeFrom(DateTime.Today.AddDays(-60));
 					dateRangePicker.SetDateTimeTo(DateTime.MaxValue.AddDays(-1));//Subtract a day for DbHelper.DateTConditionColumn(...)
 					butAddJob.Text="OK";//On click the selected rows are saved and this form will close.
 					break;
 				case FormBugSubmissionMode.ValidationMode:
-					dateRangePicker.SetDateTimeFrom(DateTime.MinValue);
+					dateRangePicker.SetDateTimeFrom(DateTime.Today.AddDays(-60));
 					dateRangePicker.SetDateTimeTo(DateTime.MaxValue.AddDays(-1));//Subtract a day for DbHelper.DateTConditionColumn(...)
 					butAddJob.Text="OK";
 					listShowHideOptions.SetSelected(1);

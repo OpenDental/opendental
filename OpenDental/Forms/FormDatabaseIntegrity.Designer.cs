@@ -28,13 +28,12 @@ namespace OpenDental{
 			this.linkLabel = new System.Windows.Forms.LinkLabel();
 			this.labelMessage = new System.Windows.Forms.Label();
 			this.labelUrl = new System.Windows.Forms.Label();
-			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(362, 182);
+			this.butOK.Location = new System.Drawing.Point(387, 218);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
@@ -43,9 +42,9 @@ namespace OpenDental{
 			// 
 			// linkLabel
 			// 
-			this.linkLabel.Location = new System.Drawing.Point(139, 121);
+			this.linkLabel.Location = new System.Drawing.Point(139, 172);
 			this.linkLabel.Name = "linkLabel";
-			this.linkLabel.Size = new System.Drawing.Size(230, 13);
+			this.linkLabel.Size = new System.Drawing.Size(303, 13);
 			this.linkLabel.TabIndex = 4;
 			this.linkLabel.TabStop = true;
 			this.linkLabel.Text = "https://www.opendental.com/site/integrity.html";
@@ -53,34 +52,24 @@ namespace OpenDental{
 			// 
 			// labelMessage
 			// 
-			this.labelMessage.Location = new System.Drawing.Point(12, 21);
+			this.labelMessage.Location = new System.Drawing.Point(12, 18);
 			this.labelMessage.MaximumSize = new System.Drawing.Size(450, 0);
 			this.labelMessage.Name = "labelMessage";
-			this.labelMessage.Size = new System.Drawing.Size(368, 13);
+			this.labelMessage.Size = new System.Drawing.Size(430, 152);
 			this.labelMessage.TabIndex = 5;
-			this.labelMessage.Text = "This Object was modified outside of Open Dental.";
+			this.labelMessage.Text = "Message";
 			// 
 			// labelUrl
 			// 
-			this.labelUrl.Location = new System.Drawing.Point(12, 121);
+			this.labelUrl.Location = new System.Drawing.Point(12, 172);
 			this.labelUrl.Name = "labelUrl";
 			this.labelUrl.Size = new System.Drawing.Size(126, 13);
 			this.labelUrl.TabIndex = 6;
 			this.labelUrl.Text = "For more information visit:";
 			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(12, 50);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(405, 59);
-			this.label1.TabIndex = 8;
-			this.label1.Text = resources.GetString("label1.Text");
-			this.label1.UseMnemonic = false;
-			// 
 			// FormDatabaseIntegrity
 			// 
-			this.ClientSize = new System.Drawing.Size(448, 215);
-			this.Controls.Add(this.label1);
+			this.ClientSize = new System.Drawing.Size(473, 251);
 			this.Controls.Add(this.labelUrl);
 			this.Controls.Add(this.labelMessage);
 			this.Controls.Add(this.linkLabel);
@@ -99,6 +88,5 @@ namespace OpenDental{
 		private System.Windows.Forms.LinkLabel linkLabel;
 		private System.Windows.Forms.Label labelMessage;
 		private System.Windows.Forms.Label labelUrl;
-		private System.Windows.Forms.Label label1;
 	}
 }

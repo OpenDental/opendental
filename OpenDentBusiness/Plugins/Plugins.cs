@@ -19,7 +19,7 @@ namespace OpenDentBusiness {
 
 		///<summary>A list of all plug-ins available.  Dynamically loads in plug-ins if accessing from the middle tier.
 		///Also, the getter and setter safely lock access to _listPlugins but do not worry about returning deep copies of the contents.</summary>
-		private static List<PluginContainer> ListPlugins {
+		public static List<PluginContainer> ListPlugins {
 			get {
 				bool isListPluginsNull;
 				_lock.EnterReadLock();
@@ -64,48 +64,22 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		///<summary>If this is middle tier, pass in null.</summary>
-		public static void LoadAllPlugins(Form host) {
+		///<summary>This is only for middle tier. See the similar method OpenDental.PluginLoader.LoadAllPlugins for the normal loading. Not sure why anyone would load a plugin in MT, but left this in place until we figure it out.  This MT version does not check any sort of plugin whitelist.</summary>
+		public static void LoadAllPlugins(Form host=null) {
 			//No need to check RemotingRole; no call to db.
 			if(ODBuild.IsWeb()) {
 				return;//plugins not allowed in cloud mode
 			}
-			List<PluginContainer> listPlugins=new List<PluginContainer>();
-			List<string> listDllsNotLoaded=new List<string>();
-			bool isWhitelisted;
-			bool hasRequestedHqPrograms=false;//Only try to connect to HQ once on startup
+			List<PluginContainer> listPluginContainers=new List<PluginContainer>();
+			//List<string> listDllsNotLoaded=new List<string>();
+			//bool isWhitelisted;
+			//bool hasRequestedHqPrograms=false;//Only try to connect to HQ once on startup
 			//Loop through all programs that are enabled with a plug-in dll name set.
-			foreach(Program program in Programs.GetWhere(x => x.Enabled && !string.IsNullOrEmpty(x.PluginDllName))) {
-				string dllPath=ODFileUtils.CombinePaths(Application.StartupPath,program.PluginDllName);
+			List<Program> listPrograms=Programs.GetWhere(x => x.Enabled && !string.IsNullOrEmpty(x.PluginDllName));
+			for(int i=0;i<listPrograms.Count;i++) {
+				string dllPath=ODFileUtils.CombinePaths(Application.StartupPath,listPrograms[i].PluginDllName);
 				if(RemotingClient.RemotingRole==RemotingRole.ServerWeb) {
-					dllPath=ODFileUtils.CombinePaths(System.Web.HttpContext.Current.Server.MapPath(null),program.PluginDllName);
-				}
-				//Only whitelisted plugins will be loaded. Plugins are either whitelisted locally/at HQ (loaded) or not (not loaded).
-				isWhitelisted=false;
-				//First check local whitelist for plugin
-				try {
-					isWhitelisted=CDT.Class1.IsDllWhitelisted(program.PluginDllName);
-				}
-				catch { //Unable to access CDT.dll
-					isWhitelisted=false;
-				}
-				//If not found locally, check HQ database
-				if(!isWhitelisted) {
-					if(!hasRequestedHqPrograms) { //Make single web call to HQ to fill cache
-						try{
-							HqProgram.DownloadListHqPrograms(); //throws if unable to connect to HQ
-						}
-						catch (Exception ex) {
-							ex.DoNothing();
-						}
-						hasRequestedHqPrograms=true; //Only try to connect to HQ once on startup
-					}
-					isWhitelisted=Programs.IsDllEnabledByHq(program);
-				}
-				//If Plugin not whitelisted locally or at HQ. Do not load.
-				if(!isWhitelisted) { 
-					listDllsNotLoaded.Add(program.PluginDllName);
-					continue;
+					dllPath=ODFileUtils.CombinePaths(System.Web.HttpContext.Current.Server.MapPath(null),listPrograms[i].PluginDllName);
 				}
 				//Check for the versioning trigger.
 				//For example, the plug-in might be entered as MyPlugin[VersionMajMin].dll. The bracketed section will be removed when loading the dll.
@@ -123,7 +97,7 @@ namespace OpenDentBusiness {
 						//try the Plugins folder
 						if(PrefC.AtoZfolderUsed!=DataStorageType.InDatabase) {//must have an AtoZ folder to check
 							string dllPathVersionCentral=FileAtoZ.CombinePaths(ImageStore.GetPreferredAtoZpath(),"Plugins",
-								program.PluginDllName.Replace("[VersionMajMin]",vers.Major.ToString()+"."+vers.Minor.ToString()));
+								listPrograms[i].PluginDllName.Replace("[VersionMajMin]",vers.Major.ToString()+"."+vers.Minor.ToString()));
 							if(FileAtoZ.Exists(dllPathVersionCentral)) {
 								FileAtoZ.Copy(dllPathVersionCentral,dllPath,FileAtoZSourceDestination.AtoZToLocal,doOverwrite:true);
 							}
@@ -146,30 +120,30 @@ namespace OpenDentBusiness {
 					plugin=(PluginBase)Activator.CreateInstance(type);
 					plugin.Host=host;
 				}
-				catch(Exception ex) {
+				catch {
 					//Never try and show message boxes when on the middle tier, there is no UI.  We should instead log to a file or the event viewer.
-					if(RemotingClient.RemotingRole!=RemotingRole.ServerWeb) {
+					//if(RemotingClient.RemotingRole!=RemotingRole.ServerWeb) {
 						//Notify the user that their plug-in is not loaded.
-						MessageBox.Show("Error loading Plugin:"+program.PluginDllName+"\r\n"+ex.Message);
-					}
+					//	MessageBox.Show("Error loading Plugin:"+listPrograms[i].PluginDllName+"\r\n"+ex.Message);
+					//}
 					continue;//Don't add it to plugin list.
 				}
 				//The plug-in was successfully loaded and will start getting hook notifications.  Add it to the list of loaded plug-ins.
-				PluginContainer container=new PluginContainer();
-				container.Plugin=plugin;
-				container.ProgramNum=program.ProgramNum;
-				container.Assemb=ass;
-				container.Name=assName;
-				listPlugins.Add(container);
+				PluginContainer pluginContainer=new PluginContainer();
+				pluginContainer.Plugin=plugin;
+				pluginContainer.ProgramNum=listPrograms[i].ProgramNum;
+				pluginContainer.Assemb=ass;
+				pluginContainer.Name=assName;
+				listPluginContainers.Add(pluginContainer);
 			}
 			//Notify the user which dlls were not loaded.
-			if(listDllsNotLoaded.Count!=0 && RemotingClient.RemotingRole!=RemotingRole.ServerWeb) {
-				string dllLoadMessage="The following plugin dll(s) were not loaded: \r\n\r\n"+String.Join("\r\n",listDllsNotLoaded)
-					+"\r\n\r\nPlease see https://www.opendental.com/site/pluginwhitelisting.html for more details.";
-				using MsgBoxCopyPaste messageBox=new MsgBoxCopyPaste(dllLoadMessage);
-				messageBox.ShowDialog();
-			}
-			ListPlugins=listPlugins;
+			//if(listDllsNotLoaded.Count!=0 && RemotingClient.RemotingRole!=RemotingRole.ServerWeb) {
+			//	string dllLoadMessage="The following plugin dll(s) were not loaded: \r\n\r\n"+String.Join("\r\n",listDllsNotLoaded)
+			//		+"\r\n\r\nPlease see https://www.opendental.com/site/pluginwhitelisting.html for more details.";
+			//	using MsgBoxCopyPaste messageBox=new MsgBoxCopyPaste(dllLoadMessage);
+			//	messageBox.ShowDialog();
+			//}
+			ListPlugins=listPluginContainers;
 		}
 
 		///<summary>Returns null if no plugin assembly loaded with the given name.

@@ -502,7 +502,7 @@ namespace OpenDental{
 				Cursor=Cursors.WaitCursor;
 				try {
 					Logger.LogToPath("Plugins.LoadAllPlugins",LogPath.Startup,LogPhase.Start);
-					Plugins.LoadAllPlugins(this);//moved up from near RefreshLocalData(invalidTypes). New position might cause problems.
+					PluginLoader.LoadAllPlugins(this);//moved up from near RefreshLocalData(invalidTypes). New position might cause problems.
 				}
 				catch(Exception e){
 					//Do nothing since this will likely only fail if a column is added to the program table, 
@@ -5719,6 +5719,7 @@ namespace OpenDental{
 			if(_formQuery!=null) {
 				_formQuery.textQuery.Text=userQuery.QueryText;
 				_formQuery.textTitle.Text=userQuery.FileName;
+				_formQuery.SetQuery(userQuery.QueryText);
 				_formQuery.SubmitQueryThreaded();
 				_formQuery.BringToFront();
 				return;

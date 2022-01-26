@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Text;
 
 namespace OpenDentBusiness {
-	class PluginContainer {
+	public class PluginContainer {
 		public PluginBase Plugin;
 		public long ProgramNum;
 		///<summary>Used by reflection for "s" class calls to middle tier.</summary>

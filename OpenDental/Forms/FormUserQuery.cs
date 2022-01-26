@@ -247,6 +247,7 @@ namespace OpenDental {
 				pd_PrintPage,
 				Lan.g(this,$"{(String.IsNullOrEmpty(textTitle.Text) ? "User Query" : textTitle.Text)} printed")
 			);
+			_linesPrinted=0;
 		}
 
 		private void butPrintPreview_Click(object sender,EventArgs e) {
@@ -261,6 +262,7 @@ namespace OpenDental {
 				Lan.g(this,$"{(String.IsNullOrEmpty(textTitle.Text) ? "User Query" : textTitle.Text)} previewed"),
 				doCalculateTotalPages: true
 			);;
+			_linesPrinted=0;
 		}
 
 		private void pd_PrintPage(object sender,System.Drawing.Printing.PrintPageEventArgs e) {
@@ -960,6 +962,10 @@ namespace OpenDental {
 			foreach(DataRow row in table.AsEnumerable()) {
 				_listRawData.Add(row.ItemArray.AsEnumerable().Select(x => PIn.ByteArray(x)).ToList());
 			}
+		}
+
+		public void SetQuery(string query) {
+			_query=query;
 		}
 
 		///<summary>_userQuery exceptionHandler. Displays a messagebox or suppresses exceptions based on _exceptionStateCur.</summary>

@@ -674,10 +674,11 @@ namespace OpenDentBusiness{
 					for(int i=0;i<listEtrans.Count;i++) {
 						etrans=listEtrans[i];
 						X835 x835=list835s[i];
-						Etranss.Insert(etrans);//insert
+						x835.EtransSource.EtransNum=Etranss.Insert(etrans);//insert
 						List<long> listClaimNums=x835.ListClaimsPaid.Select(x => x.ClaimNum).Where(x => x!=0).ToList();
 						listMatchedClaimNums.AddRange(listClaimNums);
 						if(listClaimNums.Count > 0) {
+							Etrans835Attaches.CreateManyForNewEra(x835);
 							//Locate the latest etrans entries for the claim based on DateTimeTrans with EType of ClaimSent or Claim_Ren and update the AckCode and AckEtransNum.
 							//We overwrite existing acks from 997s, 999s, and 277s.
 							command="UPDATE etrans SET AckCode='A', "

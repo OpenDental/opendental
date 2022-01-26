@@ -180,7 +180,7 @@ namespace OpenDental {
 			if(formEA.DialogResult==DialogResult.OK) {
 				long emailAddressNum=formEA.EmailAddressNum;
 				long clinicNum=comboBoxClinicPicker1.SelectedClinicNum;
-				EmailAddress emailAddress=EmailAddresses.GetOne(emailAddressNum);
+				EmailAddress emailAddress=EmailAddresses.GetOneFromDb(emailAddressNum);
 				string error="";
 				ShowProgress(() => {					
 					if(emailAddress is null) {
