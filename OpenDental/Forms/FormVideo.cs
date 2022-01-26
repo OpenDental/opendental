@@ -28,6 +28,7 @@ namespace OpenDental {
 
 		#region Methods - Event Handlers
 		private void butCapture_Click(object sender,EventArgs e) {
+			//tabstop had to be set to false to prevent duplicates when using the space bar.
 			BitmapCaptured?.Invoke(this,new VideoEventArgs(){Bitmap=(Bitmap)pictureBoxCamera.Image });
 		}
 
@@ -95,8 +96,8 @@ namespace OpenDental {
 		}
 
 		private void FormVideo_KeyDown(object sender, KeyEventArgs e){
-			if(e.KeyCode==Keys.Space){
-				BitmapCaptured?.Invoke(this,new VideoEventArgs(){Bitmap=(Bitmap)pictureBoxCamera.Image });
+			if(e.KeyCode==Keys.Space && !butCapture.Focused) {//if focus is on butCapture, pressing space will be the same as clicking
+				BitmapCaptured?.Invoke(this,new VideoEventArgs() { Bitmap=(Bitmap)pictureBoxCamera.Image });
 			}
 		}
 

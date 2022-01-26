@@ -481,6 +481,7 @@ namespace OpenDental {
 						if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"Patient's status will be set to Prospective.")) {
 							Patient patOld=_patient.Copy();
 							_patient.PatStatus=PatientStatus.Prospective;
+							Patients.UpdateRecalls(_patient,patOld,"Appointment Module, Patient appointment created in prospective operatory");
 							Patients.Update(_patient,patOld);
 							string logEntry=Lan.g(this,"Patient's status changed from ")+patOld.PatStatus.GetDescription()+Lan.g(this," to ")
 								+_patient.PatStatus.GetDescription()+Lan.g(this," by making an appointment from the Other Appointments window.");
@@ -491,6 +492,7 @@ namespace OpenDental {
 						if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"Patient's status will change from Prospective to Patient.")) {
 							Patient patientOld=_patient.Copy();
 							_patient.PatStatus=PatientStatus.Patient;
+							Patients.UpdateRecalls(_patient,patientOld,"Appointment Module, Prospective Patient appointment created in non-prospective operatory");
 							Patients.Update(_patient,patientOld);
 							string logEntry=Lan.g(this,"Patient's status changed from ")+patientOld.PatStatus.GetDescription()+Lan.g(this," to ")
 								+_patient.PatStatus.GetDescription()+Lan.g(this," by making an appointment from the Other Appointments window.");

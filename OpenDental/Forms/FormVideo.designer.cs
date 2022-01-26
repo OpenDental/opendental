@@ -64,6 +64,7 @@ namespace OpenDental{
 			this.butCapture.Name = "butCapture";
 			this.butCapture.Size = new System.Drawing.Size(75, 24);
 			this.butCapture.TabIndex = 1;
+			this.butCapture.TabStop = false;
 			this.butCapture.Text = "Capture";
 			this.butCapture.Click += new System.EventHandler(this.butCapture_Click);
 			// 

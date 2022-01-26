@@ -1427,6 +1427,19 @@ namespace OpenDental{
 		private void ComboBox_SelectionChangeCommited(object sender,System.EventArgs e) {
 			SetRequiredFields();
 			if(sender==comboClinic){
+				Def selectedBillingType=comboBillType.GetSelected<Def>();
+				long clinicDefaultBillingTypeDefNum=PIn.Long(ClinicPrefs.GetPrefValue(PrefName.PracticeDefaultBillType,comboClinic.SelectedClinicNum));
+				//If patient is new and the selected billing type is not the selected clinics default billing type.
+				if(IsNew && selectedBillingType.DefNum!=clinicDefaultBillingTypeDefNum) {
+					string clinicDefaultBillingTypeName=_listBillingTypes.Find(x => x.DefNum==clinicDefaultBillingTypeDefNum)?.ItemName;
+					//Ask if the user would like to set the patients billing type to the clinics default.
+					if(!clinicDefaultBillingTypeName.IsNullOrEmpty() && MessageBox.Show(Lan.g(this,"The selected billing type does not match the selected clinic's default billing type. "+
+							"Would you like to change this patient's billing type from ")+selectedBillingType.ItemName+" to "+clinicDefaultBillingTypeName+"?","",
+							MessageBoxButtons.YesNo)==DialogResult.Yes)
+					{
+						comboBillType.SetSelectedDefNum(clinicDefaultBillingTypeDefNum); //Set to clinics default.
+					}
+				}
 				FillCombosProv();
 			}
 		}
@@ -2884,18 +2897,6 @@ namespace OpenDental{
 				if(!PrefC.GetBool(PrefName.ClinicAllowPatientsAtHeadquarters) && comboClinic.SelectedClinicNum==0) {
 					MsgBox.Show(this,"Current settings for clinics do not allow patients to be added to the 'Unassigned' clinic. Please select a clinic.");
 					return;
-				}
-				Def selectedBillingType=comboBillType.GetSelected<Def>();
-				long clinicDefaultBillingTypeDefNum=PIn.Long(ClinicPrefs.GetPrefValue(PrefName.PracticeDefaultBillType,comboClinic.SelectedClinicNum));
-				if(selectedBillingType.DefNum!=clinicDefaultBillingTypeDefNum) {//New patient's selected default billing type doesn't match the clinic's.
-					string clinicDefaultBillingTypeName=_listBillingTypes.Find(x => x.DefNum==clinicDefaultBillingTypeDefNum).ItemName;
-					//Confirm whether or not the user wants to change patient's default billing type to the clinic's default.
-					if(MessageBox.Show(Lan.g(this,"The selected billing type does not match the selected clinic's default billing type. "+
-						"Would you like to change this patient's billing type from ")+selectedBillingType.ItemName+" to "+clinicDefaultBillingTypeName+"?","",
-						MessageBoxButtons.YesNo)==DialogResult.Yes)
-					{
-						comboBillType.SetSelectedDefNum(clinicDefaultBillingTypeDefNum);
-					}
 				}
 			}
 			//Check SSN for US Formatting.  If SSN is masked and hasn't been changed, don't check.  Same checks from textSSN_Validating()

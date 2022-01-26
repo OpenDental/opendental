@@ -183,6 +183,17 @@ namespace OpenDentBusiness{
 			}
 		}
 
+		///<summary>This should only be called with an X835 for a newly imported Etrans that was just inserted into the DB.
+		///For the X835 passed in, the X835.EtransSource.EtransNum must be set with the Etrans.EtransNum. It should not be zero.</summary>
+		public static void CreateManyForNewEra(X835 x835) {
+			//No remoting role check; no call to db.
+			for(int i=0;i < x835.ListClaimsPaid.Count;i++) {
+				if(x835.ListClaimsPaid[i].ClaimNum==0) {
+					continue;//No matched claim to attach
+				}
+				CreateForClaim(x835,x835.ListClaimsPaid[i],x835.ListClaimsPaid[i].ClaimNum,isNewAttachNeeded:true,new List<Etrans835Attach>());
+			}
+		}
 
 		/*
 		Only pull out the methods below as you need them.  Otherwise, leave them commented out.

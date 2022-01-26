@@ -854,8 +854,8 @@ namespace OpenDental{
 		private void butPatPortal_Click(object sender,EventArgs e) {
 			if(!Defs.GetDefsForCategory(DefCat.ImageCats,true).Any(x => x.ItemValue.Contains(ImageCategorySpecial.L.ToString())
 				&& x.ItemValue.Contains(ImageCategorySpecial.S.ToString()))) {
-				MsgBox.Show(this,"There is no image category for Patient Portal and Statements in Setup | Definitions | Image Categories. "
-					+"There must be at least one to send portal statements.");
+				MsgBox.Show(this,"There is no image category used for both Patient Portal and Statements in Setup | Definitions | Image Categories. "
+					+"The Statements image category must have both 'Show in Patient Portal' and 'Statements' usage types selected.");
 				return;
 			}
 			if(UserWebs.GetByFKeyAndType(StmtCur.PatNum,UserWebFKeyType.PatientPortal)==null) {

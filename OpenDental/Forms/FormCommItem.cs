@@ -243,7 +243,7 @@ namespace OpenDental {
 				_commlogCur.IsNew=false;
 				_commlogOld=_commlogCur.Copy();
 				textCommlogNum.Text=_commlogCur.CommlogNum.ToString();
-				SecurityLogs.MakeLogEntry(Permissions.CommlogEdit,_commlogCur.PatNum,"Insert");
+				SecurityLogs.MakeLogEntry(Permissions.CommlogCreate,_commlogCur.PatNum,"");
 				//Post insert persistent user preferences.
 				if(_isPersistent) {
 					if(_userOdPrefClearNote==null || PIn.Bool(_userOdPrefClearNote.ValueString)) {
@@ -269,7 +269,7 @@ namespace OpenDental {
 				//Insert
 				Commlogs.Insert(_commlogCur);
 				textCommlogNum.Text=this._commlogCur.CommlogNum.ToString();
-				SecurityLogs.MakeLogEntry(Permissions.CommlogEdit,_commlogCur.PatNum,"Autosave Insert");
+				SecurityLogs.MakeLogEntry(Permissions.CommlogCreate,_commlogCur.PatNum,"Autosave");
 				_commlogCur.IsNew=false;
 			}
 			else {

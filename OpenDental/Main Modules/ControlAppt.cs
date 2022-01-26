@@ -164,6 +164,7 @@ namespace OpenDental {
 					if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"Patient's status will be set to Prospective.")) {
 						Patient patOld=_patCur.Copy();
 						_patCur.PatStatus=PatientStatus.Prospective;
+						Patients.UpdateRecalls(_patCur,patOld,"Appointment Module, New Patient appointment created in prospective operatory");
 						Patients.Update(_patCur,patOld);
 						string logEntry=Lan.g(this,"Patient's status changed from ")+patOld.PatStatus.GetDescription()+Lan.g(this," to ")
 							+_patCur.PatStatus.GetDescription()+Lan.g(this," by creating an appointment in a prospective operatory.");
@@ -1591,6 +1592,7 @@ namespace OpenDental {
 						if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"Patient's status will be set to Prospective.")) {
 							Patient patOld=_patCur.Copy();
 							_patCur.PatStatus=PatientStatus.Prospective;
+							Patients.UpdateRecalls(_patCur,patOld,"Appointment Module, Appointment moved to prospective operatory");
 							Patients.Update(_patCur,patOld);
 							string logEntry=Lan.g(this,"Patient's status changed from ")+patOld.PatStatus.GetDescription()+Lan.g(this," to ")
 								+_patCur.PatStatus.GetDescription()+Lan.g(this," by moving the patient appointment to a prospective operatory.");
@@ -1602,6 +1604,7 @@ namespace OpenDental {
 						if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"Patient's status will change from Prospective to Patient.")) {
 							Patient patOld=_patCur.Copy();
 							_patCur.PatStatus=PatientStatus.Patient;
+							Patients.UpdateRecalls(_patCur,patOld,"Appointment Module, Appointment moved from prospective operatory");
 							Patients.Update(_patCur,patOld);
 							string logEntry=Lan.g(this,"Patient's status changed from ")+patOld.PatStatus.GetDescription()+Lan.g(this," to ")
 								+_patCur.PatStatus.GetDescription()+Lan.g(this," by moving the patient appointment from a prospective operatory.");
@@ -4255,6 +4258,7 @@ namespace OpenDental {
 						if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"Patient's status will be set to Prospective.")) {
 							Patient patOld=patCur.Copy();
 							patCur.PatStatus=PatientStatus.Prospective;
+							Patients.UpdateRecalls(patCur,patOld,"Appointment Module, Appointment moved to prospective operatory");
 							Patients.Update(patCur,patOld);
 							string logEntry=Lan.g(this,"Patient's status changed from ")+patOld.PatStatus.GetDescription()+Lan.g(this," to ")
 								+patCur.PatStatus.GetDescription()+Lan.g(this," by moving the patient appointment to a prospective operatory.");
@@ -4266,6 +4270,7 @@ namespace OpenDental {
 						if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"Patient's status will change from Prospective to Patient.")) {
 							Patient patOld=patCur.Copy();
 							patCur.PatStatus=PatientStatus.Patient;
+							Patients.UpdateRecalls(patCur,patOld,"Appointment Module, Appointment moved from prospective operatory");
 							Patients.Update(patCur,patOld);
 							string logEntry=Lan.g(this,"Patient's status changed from ")+patOld.PatStatus.GetDescription()+Lan.g(this," to ")
 								+patCur.PatStatus.GetDescription()+Lan.g(this," by moving the patient appointment from a prospective operatory.");
