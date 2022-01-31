@@ -514,6 +514,9 @@ namespace OpenDental {
 
 		///<summary>Before minimizing or maximizing a window, we need to reduce height and width by 16 and 39 pixels.  This allows the subsequent restore to be the correct size.  Otherwise, window gets slightly bigger with each restore.</summary>
 		public void ShrinkWindowBeforeMinMax() {
+			if(AreBordersMS) {
+				return;//No need to shrink when we don't control the layout
+			}
 			Size=new Size(Width-16,Height-39);//these numbers are the MS border widths.
 		}
 		#endregion Methods - Public

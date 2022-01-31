@@ -238,7 +238,6 @@ namespace OpenDental {
 			this.comboStatus.Name = "comboStatus";
 			this.comboStatus.Size = new System.Drawing.Size(128, 21);
 			this.comboStatus.TabIndex = 15;
-			this.comboStatus.SelectedIndexChanged += new System.EventHandler(this.comboStatus_SelectedIndexChanged);
 			this.comboStatus.SelectionChangeCommitted += new System.EventHandler(this.comboStatus_SelectionChangeCommitted);
 			// 
 			// butPostcards

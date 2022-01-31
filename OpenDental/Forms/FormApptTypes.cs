@@ -156,7 +156,8 @@ namespace OpenDental {
 			else {
 				using FormApptTypeEdit formApptTypeEdit=new FormApptTypeEdit();
 				formApptTypeEdit.AppointmentTypeCur=_listAppointmentTypes[e.Row];
-				formApptTypeEdit.AppointmentTypeCur.IsNew=false;
+				//This could happen if we haven't saved to the database after adding a new appointment type in FormApptTypeEdit
+				formApptTypeEdit.AppointmentTypeCur.IsNew=_listAppointmentTypes[e.Row].AppointmentTypeNum==0;
 				formApptTypeEdit.ShowDialog();
 				if(formApptTypeEdit.DialogResult!=DialogResult.OK) {
 					return;

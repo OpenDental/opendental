@@ -41,8 +41,7 @@ namespace OpenDentBusiness {
 				retval=RemotingClient.ProcessGetTable(dto);
 			}
 			catch(ODException ex) {
-				if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed) {
-					CredentialsFailed();//The application pauses here in the main thread to wait for user input.
+				if(IsCredentailFailRetry(ex)) {
 					retval=GetTable(methodBase,parameters);
 				}
 				else {
@@ -71,8 +70,7 @@ namespace OpenDentBusiness {
 				retval=RemotingClient.ProcessGetTableLow(dto);
 			}
 			catch(ODException ex) {
-				if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed) {
-					CredentialsFailed();//The application pauses here in the main thread to wait for user input.
+				if(IsCredentailFailRetry(ex)) {
 					retval=GetTableLow(command);
 				}
 				else {
@@ -113,8 +111,7 @@ namespace OpenDentBusiness {
 				retval=RemotingClient.ProcessGetDS(dto);
 			}
 			catch(ODException ex) {
-				if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed) {
-					CredentialsFailed();//The application pauses here in the main thread to wait for user input.
+				if(IsCredentailFailRetry(ex)) {
 					retval=GetDS(methodBase,parameters);
 				}
 				else {
@@ -155,8 +152,7 @@ namespace OpenDentBusiness {
 				retval=RemotingClient.ProcessGetSerializableDictionary<K,V>(dto);
 			}
 			catch(ODException ex) {
-				if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed) {
-					CredentialsFailed();//The application pauses here in the main thread to wait for user input.
+				if(IsCredentailFailRetry(ex)) {
 					retval=GetSerializableDictionary<K,V>(methodBase,parameters);
 				}
 				else {
@@ -197,8 +193,7 @@ namespace OpenDentBusiness {
 				retval=RemotingClient.ProcessGetLong(dto);
 			}
 			catch(ODException ex) {
-				if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed) {
-					CredentialsFailed();//The application pauses here in the main thread to wait for user input.
+				if(IsCredentailFailRetry(ex)) {
 					retval=GetLong(methodBase,parameters);
 				}
 				else {
@@ -239,8 +234,7 @@ namespace OpenDentBusiness {
 				retval=RemotingClient.ProcessGetInt(dto);
 			}
 			catch(ODException ex) {
-				if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed) {
-					CredentialsFailed();//The application pauses here in the main thread to wait for user input.
+				if(IsCredentailFailRetry(ex)) {
 					retval=GetInt(methodBase,parameters);
 				}
 				else {
@@ -281,8 +275,7 @@ namespace OpenDentBusiness {
 				retval=RemotingClient.ProcessGetDouble(dto);
 			}
 			catch(ODException ex) {
-				if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed) {
-					CredentialsFailed();//The application pauses here in the main thread to wait for user input.
+				if(IsCredentailFailRetry(ex)) {
 					retval=GetDouble(methodBase,parameters);
 				}
 				else {
@@ -322,8 +315,7 @@ namespace OpenDentBusiness {
 				RemotingClient.ProcessGetVoid(dto);
 			}
 			catch(ODException ex) {
-				if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed) {
-					CredentialsFailed();//The application pauses here in the main thread to wait for user input.
+				if(IsCredentailFailRetry(ex)) {
 					GetVoid(methodBase,parameters);
 				}
 				else {
@@ -358,10 +350,14 @@ namespace OpenDentBusiness {
 				retval=RemotingClient.ProcessGetObject<T>(dto);
 			}
 			catch(ODException ex) {
-				if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed) {
-					if(RemotingClient.HasLoginFailed) {//login has already failed and we got another CheckUserAndPasswordFailed error, just throw
+				//GetObject does not invoke IsCredentailFailRetry() because it is used by Userods.CheckUserAndPassword() which is invoked when the user re-enters their credentials.
+				if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed && !CredentialsFailedAfterLoginEvent.IsFiredNull()) {
+					if(RemotingClient.HasLoginFailed) {
+						//Login has already failed and we got another CheckUserAndPasswordFailed error, just throw.
+						//This can happen when the user re-enters invalid credentials. They need to be made aware of this failure and we should NOT keep the thread waiting here.
 						throw;
 					}
+					//Pause the application here in the main thread and wait for user input if the credentials failed and this application is registered for CredentialsFailedAfterLoginEvents.
 					CredentialsFailed();
 					retval=GetObject<T>(methodBase,parameters);
 				}
@@ -403,8 +399,7 @@ namespace OpenDentBusiness {
 				retval=RemotingClient.ProcessGetString(dto);
 			}
 			catch(ODException ex) {
-				if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed) {
-					CredentialsFailed();//The application pauses here in the main thread to wait for user input.
+				if(IsCredentailFailRetry(ex)) {
 					retval=GetString(methodBase,parameters);
 				}
 				else {
@@ -432,8 +427,7 @@ namespace OpenDentBusiness {
 				retval=RemotingClient.ProcessGetBool(dto);
 			}
 			catch(ODException ex) {
-				if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed) {
-					CredentialsFailed();//The application pauses here in the main thread to wait for user input.
+				if(IsCredentailFailRetry(ex)) {
 					retval=GetBool(methodBase,parameters);
 				}
 				else {
@@ -468,6 +462,16 @@ namespace OpenDentBusiness {
 				}
 				return false;//Indicates to DtoProcessor.IsMiddleTierAvailable() that the Middle Tier connection has not been restored.
 			}
+		}
+
+		private static bool IsCredentailFailRetry(ODException ex) {
+			//Pause the application here in the main thread and wait for user input if the credentials failed and this application is registered for CredentialsFailedAfterLoginEvents.
+			if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed && !CredentialsFailedAfterLoginEvent.IsFiredNull()) {
+				CredentialsFailed();
+				return true;
+			}
+			//Either this is not a credential failure error or the application is not registered to prompt the user to re-enter their credentials.
+			return false;
 		}
 
 		///<summary>Fires a CredentialsFailedAfterLoginEvent to notify the main thread that the user needs to log in again.

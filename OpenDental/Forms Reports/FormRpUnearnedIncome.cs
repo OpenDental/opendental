@@ -461,9 +461,9 @@ namespace OpenDental {
 
 		#region General Form Methods
 
-		///<summary>If the "All" option is selected for a Clinics list, add hidden (but not restricted) clinics to the report</summary>
+		///<summary>If the "All" option is selected for a Clinics list, add hidden (but not restricted) clinics and those with unassigned clinics (0) to the report</summary>
 		private void AddHiddenClinicNums(ref List<long> listClinicNums) {
-			listClinicNums=listClinicNums.Union(Clinics.GetAllForUserod(Security.CurUser).Select(x => x.ClinicNum)).ToList();
+			listClinicNums=listClinicNums.Union(Clinics.GetAllForUserod(Security.CurUser).Select(x => x.ClinicNum).Append(0)).ToList();
 		}
 
 		///<summary>tabControl event handler for selected tab.</summary>

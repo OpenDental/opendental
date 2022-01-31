@@ -122,7 +122,9 @@ namespace OpenDentBusiness{
 		}
 
 		public override bool Equals(object obj) {
-			ClaimProc cp=(ClaimProc)obj;
+			if(!(obj is ClaimProc cp)) {
+				return false;
+			}
 			if(ClaimProcNum != cp.ClaimProcNum
 				|| ProcNum != cp.ProcNum
 				|| ClaimNum != cp.ClaimNum

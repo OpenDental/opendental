@@ -975,7 +975,7 @@ namespace OpenDental{
 			try {
 				if(Clipboard.ContainsText() ){
 					string txtClip="";
-					txtClip=Clipboard.GetText();
+					txtClip=Clipboard.GetText().Trim();
 					if(Regex.IsMatch(txtClip,@"^PatNum:\d+$")){//very restrictive specific match for "PatNum:##"
 						long patNum=PIn.Long(txtClip.Substring(7));
 						Patient patient=Patients.GetLim(patNum);

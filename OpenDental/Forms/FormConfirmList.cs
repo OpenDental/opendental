@@ -322,6 +322,9 @@ namespace OpenDental{
 			if(gridMain.SelectedIndices.Length==0){
 				return;//because user could never initiate this action.
 			}
+			if(comboStatus.SelectedIndex==-1) {
+				return;//User selected the comboBox but deslected after not selecting a value.
+			}
 			Appointment apt;
 			Cursor=Cursors.WaitCursor;
 			long[] selectedApts=new long[gridMain.SelectedIndices.Length];
@@ -360,10 +363,6 @@ namespace OpenDental{
 			SetFamilyColors();
 			comboStatus.SelectedIndex=-1;
 			Cursor=Cursors.Default;
-		}
-
-		private void comboStatus_SelectedIndexChanged(object sender, System.EventArgs e) {
-			//?
 		}
 
 		private void butReport_Click(object sender, System.EventArgs e) {
