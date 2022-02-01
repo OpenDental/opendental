@@ -633,7 +633,7 @@ namespace OpenDental {
 			if(PrefC.HasClinicsEnabled) {
 				colW=new int[15];
 			}
-			colW[0]=65;//Date
+			colW[0]=70;//Date
 			colW[1]=45;//Day: Column starts to wrap at 32 pixels, however added padding to 45 to allow room for language translations
 			colW[2]=60;//In/Out
 			colW[3]=60;//Out/In
@@ -646,10 +646,10 @@ namespace OpenDental {
 			colW[10]=45;//PL: Column start to wrap at 41 pixels (Ex. -10.00), buffered to 45 for font variations on different operating systems
 			colW[11]=45;//Day
 			colW[12]=50;//Week
-			colW[13]=135;//Note
+			colW[13]=130;//Note
 			if(PrefC.HasClinicsEnabled) {
 				colW[13]=50;//Clinic
-				colW[14]=85;//Note: Reduce width when Clinic column is added so that we do not exceed the margin.
+				colW[14]=80;//Note: Reduce width when Clinic column is added so that we do not exceed the margin.
 			}
 			int[] colPos=new int[colW.Length+1];
 			colPos[0]=45;

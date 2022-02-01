@@ -402,6 +402,7 @@ If you have questions, call <a href=""tel:[OfficePhone]"">[OfficePhone]</a>.",
 		public static List<string> GetAvailableTags(ApptReminderType type) {
 			List<string> retVal = new List<string>() {
 				"[NameF]",
+				"[NamePreferredOrFirst]",
 				"[ApptTime]",
 				"[ApptTimeAskedArrive]",
 				"[ApptDate]",

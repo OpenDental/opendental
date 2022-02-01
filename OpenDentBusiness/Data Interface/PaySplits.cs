@@ -436,7 +436,6 @@ namespace OpenDentBusiness{
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
 				return Meth.GetBool(MethodBase.GetCurrentMethod(),listNew,listOld);
 			}
-			DateTime dateHashStart=Misc.SecurityHash.DateStart;
 			bool isHashNeeded=true;
 			for(int i=0;i<listNew.Count;i++) {
 				isHashNeeded=true;
@@ -530,7 +529,7 @@ namespace OpenDentBusiness{
 				return true;
 			}
 			DateTime dateHashStart=Misc.SecurityHash.DateStart;
-			if(paySplit.DateEntry < dateHashStart) { //old
+			if(paySplit.DatePay < dateHashStart) { //old
 				return true;
 			}
 			if(paySplit.SecurityHash==HashFields(paySplit)) {

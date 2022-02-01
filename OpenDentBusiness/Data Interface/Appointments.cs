@@ -3732,7 +3732,6 @@ namespace OpenDentBusiness{
 			//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
 			userNum=Security.CurUser.UserNum;
 			bool isChanged=Crud.AppointmentCrud.Sync(listNew,listOld,userNum);
-			DateTime dateHashStart=Misc.SecurityHash.DateStart;
 			bool isHashNeeded=true;
 			for(int i = 0;i<listNew.Count;i++) {
 				isHashNeeded=true;
@@ -3742,7 +3741,7 @@ namespace OpenDentBusiness{
 					isHashNeeded=IsAppointmentHashValid(appointmentOld);
 				}
 				//Hash appointments that are either new, or rehash existing appointments that are valid
-				if(isHashNeeded && listNew[i].SecDateTEntry>= dateHashStart) {
+				if(isHashNeeded) {
 					listNew[i].SecurityHash=HashFields(listNew[i]);
 				}
 			}
@@ -3762,7 +3761,7 @@ namespace OpenDentBusiness{
 		///<summary>Returns the salted hash for the appointment. Will return an empty string if the calling program is unable to use CDT.dll. </summary>
 		private static string HashFields(Appointment appointment) {
 			//No need to check RemotingRole; no call to db and private method.
-			string unhashedText=appointment.AptStatus.ToString()+appointment.Confirmed.ToString()+appointment.AptDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+			string unhashedText=(int)appointment.AptStatus+appointment.Confirmed.ToString()+appointment.AptDateTime.ToString("yyyy-MM-dd HH:mm:ss");
 			try {
 				return CDT.Class1.CreateSaltedHash(unhashedText);
 			}
@@ -3778,7 +3777,7 @@ namespace OpenDentBusiness{
 				return true;
 			}
 			DateTime dateHashStart=Misc.SecurityHash.DateStart;
-			if(appointment.SecDateTEntry < dateHashStart) { //old
+			if(appointment.AptDateTime < dateHashStart) { //old
 				return true;
 			}
 			if(appointment.SecurityHash==HashFields(appointment)) {

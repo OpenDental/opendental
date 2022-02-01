@@ -42,6 +42,8 @@ namespace OpenDentBusiness.AutoComm {
 		public string EmailContact;
 		///<summary>Patient first name. This is the only identifier allowed in order to avoid HIPPA violations.</summary>
 		public string NameF;
+		///<summary>Patient preferred name, or first name if they don't have a preferred name.</summary>
+		public string NamePreferredOrFirst;
 		///<summary>The send status of the SMS.</summary>
 		public AutoCommStatus SMSSendStatus=AutoCommStatus.Undefined;
 		///<summary>The send status of the email.</summary>
@@ -73,7 +75,8 @@ namespace OpenDentBusiness.AutoComm {
 			if(patComm is null) {
 				return;
 			}
-			NameF=patComm.GetFirstOrPreferred();
+			NameF=patComm.FName;
+			NamePreferredOrFirst=patComm.GetFirstOrPreferred();
 			PhoneContact=patComm.IsSmsAnOption ? patComm.SmsPhone : "";
 			EmailContact=patComm.IsEmailAnOption ? patComm.Email : "";
 			Language=patComm.Language;

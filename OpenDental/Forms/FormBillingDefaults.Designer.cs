@@ -90,11 +90,10 @@ namespace OpenDental{
 			this.groupBox1.Controls.Add(this.textSmsTemplate);
 			this.groupBox1.Controls.Add(this.label5);
 			this.groupBox1.Controls.Add(this.label7);
-			this.groupBox1.Location = new System.Drawing.Point(25, 535);
+			this.groupBox1.Location = new System.Drawing.Point(25, 555);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(850, 123);
 			this.groupBox1.TabIndex = 250;
-			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "SMS Statements";
 			// 
 			// listModesToText
@@ -173,7 +172,7 @@ namespace OpenDental{
 			this.textInvoiceNote.BackColor = System.Drawing.SystemColors.Window;
 			this.textInvoiceNote.DetectLinksEnabled = false;
 			this.textInvoiceNote.DetectUrls = false;
-			this.textInvoiceNote.Location = new System.Drawing.Point(34, 463);
+			this.textInvoiceNote.Location = new System.Drawing.Point(34, 483);
 			this.textInvoiceNote.Name = "textInvoiceNote";
 			this.textInvoiceNote.QuickPasteType = OpenDentBusiness.QuickPasteType.Statement;
 			this.textInvoiceNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -183,7 +182,7 @@ namespace OpenDental{
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(33, 446);
+			this.label11.Location = new System.Drawing.Point(33, 466);
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(152, 16);
 			this.label11.TabIndex = 250;
@@ -201,9 +200,8 @@ namespace OpenDental{
 			this.groupBox3.Controls.Add(this.label10);
 			this.groupBox3.Location = new System.Drawing.Point(24, 281);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(850, 162);
+			this.groupBox3.Size = new System.Drawing.Size(850, 182);
 			this.groupBox3.TabIndex = 248;
-			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Email Statements";
 			// 
 			// textBillingEmailBody
@@ -214,7 +212,7 @@ namespace OpenDental{
 			this.textBillingEmailBody.BackColor = System.Drawing.SystemColors.Window;
 			this.textBillingEmailBody.DetectLinksEnabled = false;
 			this.textBillingEmailBody.DetectUrls = false;
-			this.textBillingEmailBody.Location = new System.Drawing.Point(12, 80);
+			this.textBillingEmailBody.Location = new System.Drawing.Point(12, 100);
 			this.textBillingEmailBody.Name = "textBillingEmailBody";
 			this.textBillingEmailBody.QuickPasteType = OpenDentBusiness.QuickPasteType.Statement;
 			this.textBillingEmailBody.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -224,7 +222,7 @@ namespace OpenDental{
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(11, 63);
+			this.label8.Location = new System.Drawing.Point(11, 83);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(87, 16);
 			this.label8.TabIndex = 240;
@@ -233,7 +231,7 @@ namespace OpenDental{
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(11, 25);
+			this.label9.Location = new System.Drawing.Point(11, 45);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(218, 16);
 			this.label9.TabIndex = 240;
@@ -244,7 +242,7 @@ namespace OpenDental{
 			// 
 			this.textBillingEmailSubject.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBillingEmailSubject.Location = new System.Drawing.Point(12, 42);
+			this.textBillingEmailSubject.Location = new System.Drawing.Point(12, 62);
 			this.textBillingEmailSubject.MaxLength = 200;
 			this.textBillingEmailSubject.Name = "textBillingEmailSubject";
 			this.textBillingEmailSubject.Size = new System.Drawing.Size(825, 20);
@@ -254,12 +252,13 @@ namespace OpenDental{
 			// 
 			this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.label10.Location = new System.Drawing.Point(11, 13);
+			this.label10.Location = new System.Drawing.Point(11, 15);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(823, 29);
 			this.label10.TabIndex = 249;
-			this.label10.Text = "These variables may be used in either box: [monthlyCardsOnFile], [nameF], [nameFL" +
-    "], [nameFLnoPref], [namePref], [PatNum], [currentMonth], and [StatementURL].";
+			this.label10.Text = "These variables may be used in either box: [monthlyCardsOnFile], [nameF], [nameFn" +
+    "oPref], [nameFL], [nameFLnoPref], [namePref], [PatNum], [currentMonth], and [Sta" +
+    "tementURL].";
 			// 
 			// groupBoxBilling
 			// 
@@ -291,7 +290,6 @@ namespace OpenDental{
 			this.groupBoxBilling.Name = "groupBoxBilling";
 			this.groupBoxBilling.Size = new System.Drawing.Size(850, 140);
 			this.groupBoxBilling.TabIndex = 247;
-			this.groupBoxBilling.TabStop = false;
 			this.groupBoxBilling.Text = "Electronic Billing";
 			// 
 			// checkIncludeAdjust
@@ -446,7 +444,6 @@ namespace OpenDental{
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(144, 76);
 			this.groupBox2.TabIndex = 251;
-			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Credit Card Choices";
 			// 
 			// checkAmEx
@@ -597,7 +594,7 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(719, 664);
+			this.butOK.Location = new System.Drawing.Point(719, 684);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
@@ -607,7 +604,7 @@ namespace OpenDental{
 			// butCancel
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(800, 664);
+			this.butCancel.Location = new System.Drawing.Point(800, 684);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 4;
@@ -626,7 +623,7 @@ namespace OpenDental{
 			// 
 			// FormBillingDefaults
 			// 
-			this.ClientSize = new System.Drawing.Size(877, 692);
+			this.ClientSize = new System.Drawing.Size(877, 712);
 			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.checkBoxBillShowTransSinceZero);

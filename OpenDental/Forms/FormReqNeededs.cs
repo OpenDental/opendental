@@ -147,8 +147,9 @@ namespace OpenDental{
 				}
 				else {
 					ReqNeeded reqNeeded=_listReqsAll.FirstOrDefault(x => x.ReqNeededNum==FormR.ReqCur.ReqNeededNum);
-					if(reqNeeded != null) {//This should never be null.
-						reqNeeded=FormR.ReqCur;
+					int index=_listReqsAll.FindIndex(x => x.ReqNeededNum==FormR.ReqCur.ReqNeededNum);
+					if(index!=-1) {
+						_listReqsAll[index]=FormR.ReqCur;
 					}
 				}
 				FillGrid();

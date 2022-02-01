@@ -1538,7 +1538,9 @@ namespace OpenDental.UI {
 				string parsedRow="";
 				for(int j=0;j<listGridRowsSelected[i].Cells.Count;j++) {
 					parsedRow+="\"";//Cell begin quote in case there are commas.
-					parsedRow+=listGridRowsSelected[i].Cells[j].Text.Replace("\"","\"\"");//Escape single double quote by using 2 double quotes.
+					if(!string.IsNullOrEmpty(listGridRowsSelected[i].Cells[j].Text)) {
+						parsedRow+=listGridRowsSelected[i].Cells[j].Text.Replace("\"","\"\"");//Escape single double quote by using 2 double quotes.
+					}
 					parsedRow+="\"";//Cell end quote in case there are commas.
 					if(j!=listGridRowsSelected[i].Cells.Count-1) {
 						parsedRow+=",";

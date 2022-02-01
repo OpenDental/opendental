@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CodeBase;
 using DataConnectionBase;
+using OpenDentBusiness.AutoComm;
 
 namespace OpenDentBusiness {
 	
@@ -5085,17 +5086,22 @@ namespace OpenDentBusiness {
 
 		///<summary>Builds an appointment information message string based on the given template, given patient, and given date.</summary>
 		public static string BuildAppointmentMessage(Patient pat,DateTime dateTimeAskedToArrive,DateTime apptDateTime
-			,string template="[NameF]:  [date] at [time]") {
+			,string template="[NameF]:  [date] at [time]",bool isEmail=false) {
 			DateTime dateTime=apptDateTime;
 			if(dateTimeAskedToArrive.Year>1880) {
 				dateTime=dateTimeAskedToArrive;
 			}
-			string name=Patients.GetNameFirstOrPreferred(pat?.FName,pat?.Preferred);
-			template=template.Replace("[NameF]",name);
-			//Last name should NOT be included in confirmations (HIPPA).  But, prior to B19814, [NameFL] had been an available tag, so we have to 
-			//continue to make a substitution where [NameFL] is in use.
-			template=template.Replace("[NameFL]",name);//Last name should NOT be included in confirmations.
-			template=template.Replace("[date]",dateTime.ToString(PrefC.PatientCommunicationDateFormat));
+			if(pat!=null) {
+				string name=Patients.GetNameFirstOrPreferred(pat.FName,pat.Preferred);
+				Clinic clinic=Clinics.GetClinic(pat.ClinicNum);
+				TagReplacer tagReplacer=new TagReplacer();
+				AutoCommObj autoCommObj=new AutoCommObj();
+				autoCommObj.NameF=pat.FName;
+				autoCommObj.NamePreferredOrFirst=name;
+				autoCommObj.ProvNum=pat.PriProv;
+				template=tagReplacer.ReplaceTags(template,autoCommObj,clinic,isEmail);
+			}
+			template=template.Replace("[date]",dateTime.ToString(PrefC.PatientCommunicationDateFormat)); //[date] and [time] aren't considered in ReplaceTags
 			template=template.Replace("[time]",dateTime.ToShortTimeString());
 			return template;
 		}

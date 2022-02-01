@@ -283,10 +283,10 @@ namespace OpenDentBusiness {
 				emailBody=stmt.EmailBody;
 			}
 			else {//Body was not preset, set a body text.
-				emailBody=Lans.g("Statements","Dear")+" [nameFLnoPref],\r\n\r\n"
+				emailBody=Lans.g("Statements","Dear")+" [nameFnoPref],\r\n\r\n"
 					+Lans.g("Statements","A new account statement is available.")+"\r\n\r\n"
 					+Lans.g("Statements","To view your account statement, log on to our portal by following these steps:")+"\r\n\r\n"
-					+Lans.g("Statements","1. Visit the following URL in a web browser:")+" "+PrefC.GetString(PrefName.PatientPortalURL)+".\r\n"
+					+Lans.g("Statements","1. Visit the following URL in a web browser:")+" "+PrefC.GetString(PrefName.PatientPortalURL)+"\r\n"
 					+Lans.g("Statements","2. Enter your credentials to gain access to your account.")+"\r\n"
 					+Lans.g("Statements","3. Click the Account icon on the left and select the most recent Statement to view.");
 			}
@@ -512,6 +512,7 @@ namespace OpenDentBusiness {
 			//These were not inluded in ReplaceVarsForSms because the last name is considered PHI.
 			str=str.Replace("[nameFL]",pat.GetNameFL());
 			str=str.Replace("[nameFLnoPref]",pat.GetNameFLnoPref());
+			str=str.Replace("[nameFnoPref]",pat.FName);
 			return str;
 		}
 

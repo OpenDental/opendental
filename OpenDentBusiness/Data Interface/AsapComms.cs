@@ -611,7 +611,7 @@ namespace OpenDentBusiness{
 					if(patComm==null) {
 						return;
 					}
-					PatName=patComm.LName+", "+patComm.GetFirstOrPreferred();
+					PatName=patComm.LName+", "+patComm.FName;
 					PatNum=patComm.PatNum;
 				}
 

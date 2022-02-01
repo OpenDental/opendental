@@ -82,24 +82,27 @@ namespace OpenDentBusiness{
 		}
 
 		public override bool Equals(object obj) {
-			if(TaskNum==((Task)obj).TaskNum
-				&& TaskListNum==((Task)obj).TaskListNum
-				&& DateTask==((Task)obj).DateTask
-				&& KeyNum==((Task)obj).KeyNum
-				&& Descript==((Task)obj).Descript
-				&& TaskStatus==((Task)obj).TaskStatus
-				&& IsRepeating==((Task)obj).IsRepeating
-				&& DateType==((Task)obj).DateType
-				&& FromNum==((Task)obj).FromNum
-				&& ObjectType==((Task)obj).ObjectType
-				&& DateTimeEntry==((Task)obj).DateTimeEntry
-				&& UserNum==((Task)obj).UserNum
-				&& DateTimeFinished==((Task)obj).DateTimeFinished
-				&& PriorityDefNum==((Task)obj).PriorityDefNum
-				&& ReminderGroupId==((Task)obj).ReminderGroupId
-				&& ReminderType==((Task)obj).ReminderType
-				&& ReminderFrequency==((Task)obj).ReminderFrequency
-				&& DescriptOverride==((Task)obj).DescriptOverride)
+			if(!(obj is Task taskObj)) {
+				return false;
+			}
+			if(TaskNum==taskObj.TaskNum
+				&& TaskListNum==taskObj.TaskListNum
+				&& DateTask==taskObj.DateTask
+				&& KeyNum==taskObj.KeyNum
+				&& Descript==taskObj.Descript
+				&& TaskStatus==taskObj.TaskStatus
+				&& IsRepeating==taskObj.IsRepeating
+				&& DateType==taskObj.DateType
+				&& FromNum==taskObj.FromNum
+				&& ObjectType==taskObj.ObjectType
+				&& DateTimeEntry==taskObj.DateTimeEntry
+				&& UserNum==taskObj.UserNum
+				&& DateTimeFinished==taskObj.DateTimeFinished
+				&& PriorityDefNum==taskObj.PriorityDefNum
+				&& ReminderGroupId==taskObj.ReminderGroupId
+				&& ReminderType==taskObj.ReminderType
+				&& ReminderFrequency==taskObj.ReminderFrequency
+				&& DescriptOverride==taskObj.DescriptOverride)
 			{
 				return true;
 			}

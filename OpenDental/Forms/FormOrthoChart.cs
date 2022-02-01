@@ -79,6 +79,7 @@ namespace OpenDental {
 					orthoChartRow.DateTimeService=DateTime.Today;
 					orthoChartRow.UserNum=_curUser.UserNum;
 					orthoChartRow.Signature="";
+					orthoChartRow.IsNew=true;
 					OrthoChartRows.Insert(orthoChartRow);
 					_listOrthoChartRows.Add(orthoChartRow);
 				}
@@ -381,8 +382,11 @@ namespace OpenDental {
 						row.Cells.Add(cellValue);
 					}
 				}
-				row.Tag=_listOrthoChartRows[r];
-				gridMain.ListGridRows.Add(row);
+				if(_listOrthoChartRows[r].IsNew || !row.Cells.Skip(1).All(x => string.IsNullOrWhiteSpace(x.Text))) {
+					//Skip the first cell in row(Date field) and at least one cell has a value or the row was added today.
+					row.Tag=_listOrthoChartRows[r];
+					gridMain.ListGridRows.Add(row);
+				}
 				CanEditRow(_listOrthoChartRows[r].DateTimeService);//Function uses _showSigBox, must be set prior to calling.
 			}
 			gridMain.EndUpdate();
@@ -878,6 +882,7 @@ namespace OpenDental {
 			orthoChartRow.ProvNum=formOrthoChartAdd.ProvNumSelected;
 			orthoChartRow.UserNum=_curUser.UserNum;
 			orthoChartRow.Signature="";
+			orthoChartRow.IsNew=true;
 			OrthoChartRows.Insert(orthoChartRow);
 			_listOrthoChartRows.Add(orthoChartRow);
 			_listOrthoChartRows=_listOrthoChartRows.OrderBy(x => x.DateTimeService).ToList();

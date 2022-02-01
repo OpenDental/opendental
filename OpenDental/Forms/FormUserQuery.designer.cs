@@ -357,6 +357,7 @@ namespace OpenDental {
 			this._gridResults.HScrollVisible = true;
 			this._gridResults.Location = new System.Drawing.Point(-1, 29);
 			this._gridResults.Name = "_gridResults";
+			this._gridResults.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
 			this._gridResults.Size = new System.Drawing.Size(1474, 367);
 			this._gridResults.TabIndex = 10;
 			this._gridResults.TitleVisible = false;

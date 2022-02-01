@@ -11057,6 +11057,9 @@
     <None Include="Web References\NewCrop\CheckCancelRxStatusResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
+    <None Include="Web References\NewCrop\CheckCancelRxStatusV2Result.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
     <None Include="Web References\NewCrop\CompleteBatchResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
@@ -11111,6 +11114,12 @@
     <None Include="Web References\NewCrop\GetRxChangesSummaryResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
+    <None Include="Web References\NewCrop\GetRxChangesSummaryV2Result.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\NewCrop\GetRxChangeStatusResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
     <None Include="Web References\NewCrop\GetRxFillDetailResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
@@ -11138,10 +11147,16 @@
     <None Include="Web References\NewCrop\PatientFreeFormAllergyExtendedDetailResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
+    <None Include="Web References\NewCrop\PDMPReviewDateByPatientDetailResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
     <None Include="Web References\NewCrop\PharmacyDetailResultV2.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\NewCrop\PharmacyDetailResultV4.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\NewCrop\PharmacyDetailResultV5.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\NewCrop\Reference.map">
@@ -11200,6 +11215,9 @@
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\NewCrop\SendCancelRxResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\NewCrop\StateDrugScheduleOverridesResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\NewCrop\TransmissionSummaryResult.datasource">

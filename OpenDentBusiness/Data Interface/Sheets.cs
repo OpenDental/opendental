@@ -47,7 +47,10 @@ namespace OpenDentBusiness{
 			}
 			Insert(sheet);
 			//insert 'blank' sheetfields to get sheetfieldnums assigned, then use ordered sheetfieldnums with actual field data to update 'blank' db fields
-			List<long> listSheetFieldNums=sheet.SheetFields.Select(x => SheetFields.Insert(new SheetField() { SheetNum=sheet.SheetNum }))
+			List<SheetField> listBlankSheetFields=sheet.SheetFields.Select(x => new SheetField() { SheetNum=sheet.SheetNum }).ToList();
+			SheetFields.InsertMany(listBlankSheetFields);
+			List<long> listSheetFieldNums=SheetFields.GetListForSheet(sheet.SheetNum)
+				.Select(x => x.SheetFieldNum)
 				.OrderBy(x => x)//PKs of all sheet fields that were just inserted.  Signatures require sheet fields be ordered by PK.
 				.ToList();
 			if(listSheetFieldNums.Count!=sheet.SheetFields.Count) {//shouldn't be possible, just in case

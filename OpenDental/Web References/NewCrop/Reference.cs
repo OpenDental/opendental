@@ -23,11 +23,23 @@ namespace OpenDental.NewCrop {
     
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Web.Services.WebServiceBindingAttribute(Name="Update1Soap", Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public partial class Update1 : System.Web.Services.Protocols.SoapHttpClientProtocol {
+        
+        private System.Threading.SendOrPostCallback CompleteRxChangeApprovalV2OperationCompleted;
+        
+        private System.Threading.SendOrPostCallback RollbackRxChangeApprovalOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetRxChangeStatusOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback CheckRxChangeDeliveryStatusOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetStateDrugScheduleOverridesOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetLastPDMPReviewDateByPatientOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetDailyScriptReportOperationCompleted;
         
@@ -102,6 +114,8 @@ namespace OpenDental.NewCrop {
         private System.Threading.SendOrPostCallback PharmacySearchV3OperationCompleted;
         
         private System.Threading.SendOrPostCallback PharmacySearchV4OperationCompleted;
+        
+        private System.Threading.SendOrPostCallback PharmacySearchV5OperationCompleted;
         
         private System.Threading.SendOrPostCallback GetLocationPharmaciesOperationCompleted;
         
@@ -185,6 +199,8 @@ namespace OpenDental.NewCrop {
         
         private System.Threading.SendOrPostCallback CheckCancelRxStatusOperationCompleted;
         
+        private System.Threading.SendOrPostCallback CheckCancelRxStatusV2OperationCompleted;
+        
         private System.Threading.SendOrPostCallback ConfirmCancelRxOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetAllRxFillsSummaryOperationCompleted;
@@ -195,6 +211,8 @@ namespace OpenDental.NewCrop {
         
         private System.Threading.SendOrPostCallback GetAllRxChangesSummaryOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetAllRxChangesSummaryV2OperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetRxChangeDetailOperationCompleted;
         
         private System.Threading.SendOrPostCallback ConfirmRxChangeReceiptOperationCompleted;
@@ -204,12 +222,6 @@ namespace OpenDental.NewCrop {
         private System.Threading.SendOrPostCallback CreateRxChangeApprovalResponseOperationCompleted;
         
         private System.Threading.SendOrPostCallback CompleteRxChangeApprovalOperationCompleted;
-        
-        private System.Threading.SendOrPostCallback CompleteRxChangeApprovalV2OperationCompleted;
-        
-        private System.Threading.SendOrPostCallback RollbackRxChangeApprovalOperationCompleted;
-        
-        private System.Threading.SendOrPostCallback CheckRxChangeDeliveryStatusOperationCompleted;
         
         private bool useDefaultCredentialsSetExplicitly;
         
@@ -248,6 +260,24 @@ namespace OpenDental.NewCrop {
                 this.useDefaultCredentialsSetExplicitly = true;
             }
         }
+        
+        /// <remarks/>
+        public event CompleteRxChangeApprovalV2CompletedEventHandler CompleteRxChangeApprovalV2Completed;
+        
+        /// <remarks/>
+        public event RollbackRxChangeApprovalCompletedEventHandler RollbackRxChangeApprovalCompleted;
+        
+        /// <remarks/>
+        public event GetRxChangeStatusCompletedEventHandler GetRxChangeStatusCompleted;
+        
+        /// <remarks/>
+        public event CheckRxChangeDeliveryStatusCompletedEventHandler CheckRxChangeDeliveryStatusCompleted;
+        
+        /// <remarks/>
+        public event GetStateDrugScheduleOverridesCompletedEventHandler GetStateDrugScheduleOverridesCompleted;
+        
+        /// <remarks/>
+        public event GetLastPDMPReviewDateByPatientCompletedEventHandler GetLastPDMPReviewDateByPatientCompleted;
         
         /// <remarks/>
         public event GetDailyScriptReportCompletedEventHandler GetDailyScriptReportCompleted;
@@ -359,6 +389,9 @@ namespace OpenDental.NewCrop {
         
         /// <remarks/>
         public event PharmacySearchV4CompletedEventHandler PharmacySearchV4Completed;
+        
+        /// <remarks/>
+        public event PharmacySearchV5CompletedEventHandler PharmacySearchV5Completed;
         
         /// <remarks/>
         public event GetLocationPharmaciesCompletedEventHandler GetLocationPharmaciesCompleted;
@@ -484,6 +517,9 @@ namespace OpenDental.NewCrop {
         public event CheckCancelRxStatusCompletedEventHandler CheckCancelRxStatusCompleted;
         
         /// <remarks/>
+        public event CheckCancelRxStatusV2CompletedEventHandler CheckCancelRxStatusV2Completed;
+        
+        /// <remarks/>
         public event ConfirmCancelRxCompletedEventHandler ConfirmCancelRxCompleted;
         
         /// <remarks/>
@@ -497,6 +533,9 @@ namespace OpenDental.NewCrop {
         
         /// <remarks/>
         public event GetAllRxChangesSummaryCompletedEventHandler GetAllRxChangesSummaryCompleted;
+        
+        /// <remarks/>
+        public event GetAllRxChangesSummaryV2CompletedEventHandler GetAllRxChangesSummaryV2Completed;
         
         /// <remarks/>
         public event GetRxChangeDetailCompletedEventHandler GetRxChangeDetailCompleted;
@@ -514,13 +553,214 @@ namespace OpenDental.NewCrop {
         public event CompleteRxChangeApprovalCompletedEventHandler CompleteRxChangeApprovalCompleted;
         
         /// <remarks/>
-        public event CompleteRxChangeApprovalV2CompletedEventHandler CompleteRxChangeApprovalV2Completed;
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://secure.newcropaccounts.com/V7/webservices/CompleteRxChangeApprovalV2", RequestNamespace="https://secure.newcropaccounts.com/V7/webservices", ResponseNamespace="https://secure.newcropaccounts.com/V7/webservices", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public CompleteBatchResult CompleteRxChangeApprovalV2(Credentials credentials, AccountRequest accountRequest, string rxBatchTransactionGuid, TwoFactorAuthentication twoFactorAuthentication) {
+            object[] results = this.Invoke("CompleteRxChangeApprovalV2", new object[] {
+                        credentials,
+                        accountRequest,
+                        rxBatchTransactionGuid,
+                        twoFactorAuthentication});
+            return ((CompleteBatchResult)(results[0]));
+        }
         
         /// <remarks/>
-        public event RollbackRxChangeApprovalCompletedEventHandler RollbackRxChangeApprovalCompleted;
+        public void CompleteRxChangeApprovalV2Async(Credentials credentials, AccountRequest accountRequest, string rxBatchTransactionGuid, TwoFactorAuthentication twoFactorAuthentication) {
+            this.CompleteRxChangeApprovalV2Async(credentials, accountRequest, rxBatchTransactionGuid, twoFactorAuthentication, null);
+        }
         
         /// <remarks/>
-        public event CheckRxChangeDeliveryStatusCompletedEventHandler CheckRxChangeDeliveryStatusCompleted;
+        public void CompleteRxChangeApprovalV2Async(Credentials credentials, AccountRequest accountRequest, string rxBatchTransactionGuid, TwoFactorAuthentication twoFactorAuthentication, object userState) {
+            if ((this.CompleteRxChangeApprovalV2OperationCompleted == null)) {
+                this.CompleteRxChangeApprovalV2OperationCompleted = new System.Threading.SendOrPostCallback(this.OnCompleteRxChangeApprovalV2OperationCompleted);
+            }
+            this.InvokeAsync("CompleteRxChangeApprovalV2", new object[] {
+                        credentials,
+                        accountRequest,
+                        rxBatchTransactionGuid,
+                        twoFactorAuthentication}, this.CompleteRxChangeApprovalV2OperationCompleted, userState);
+        }
+        
+        private void OnCompleteRxChangeApprovalV2OperationCompleted(object arg) {
+            if ((this.CompleteRxChangeApprovalV2Completed != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CompleteRxChangeApprovalV2Completed(this, new CompleteRxChangeApprovalV2CompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://secure.newcropaccounts.com/V7/webservices/RollbackRxChangeApproval", RequestNamespace="https://secure.newcropaccounts.com/V7/webservices", ResponseNamespace="https://secure.newcropaccounts.com/V7/webservices", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public Result RollbackRxChangeApproval(Credentials credentials, AccountRequest accountRequest, string rxChangeGuid) {
+            object[] results = this.Invoke("RollbackRxChangeApproval", new object[] {
+                        credentials,
+                        accountRequest,
+                        rxChangeGuid});
+            return ((Result)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void RollbackRxChangeApprovalAsync(Credentials credentials, AccountRequest accountRequest, string rxChangeGuid) {
+            this.RollbackRxChangeApprovalAsync(credentials, accountRequest, rxChangeGuid, null);
+        }
+        
+        /// <remarks/>
+        public void RollbackRxChangeApprovalAsync(Credentials credentials, AccountRequest accountRequest, string rxChangeGuid, object userState) {
+            if ((this.RollbackRxChangeApprovalOperationCompleted == null)) {
+                this.RollbackRxChangeApprovalOperationCompleted = new System.Threading.SendOrPostCallback(this.OnRollbackRxChangeApprovalOperationCompleted);
+            }
+            this.InvokeAsync("RollbackRxChangeApproval", new object[] {
+                        credentials,
+                        accountRequest,
+                        rxChangeGuid}, this.RollbackRxChangeApprovalOperationCompleted, userState);
+        }
+        
+        private void OnRollbackRxChangeApprovalOperationCompleted(object arg) {
+            if ((this.RollbackRxChangeApprovalCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.RollbackRxChangeApprovalCompleted(this, new RollbackRxChangeApprovalCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://secure.newcropaccounts.com/V7/webservices/GetRxChangeStatus", RequestNamespace="https://secure.newcropaccounts.com/V7/webservices", ResponseNamespace="https://secure.newcropaccounts.com/V7/webservices", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public GetRxChangeStatusResult GetRxChangeStatus(Credentials credentials, AccountRequest accountRequest, string rxBatchTransactionGuidIn) {
+            object[] results = this.Invoke("GetRxChangeStatus", new object[] {
+                        credentials,
+                        accountRequest,
+                        rxBatchTransactionGuidIn});
+            return ((GetRxChangeStatusResult)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetRxChangeStatusAsync(Credentials credentials, AccountRequest accountRequest, string rxBatchTransactionGuidIn) {
+            this.GetRxChangeStatusAsync(credentials, accountRequest, rxBatchTransactionGuidIn, null);
+        }
+        
+        /// <remarks/>
+        public void GetRxChangeStatusAsync(Credentials credentials, AccountRequest accountRequest, string rxBatchTransactionGuidIn, object userState) {
+            if ((this.GetRxChangeStatusOperationCompleted == null)) {
+                this.GetRxChangeStatusOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetRxChangeStatusOperationCompleted);
+            }
+            this.InvokeAsync("GetRxChangeStatus", new object[] {
+                        credentials,
+                        accountRequest,
+                        rxBatchTransactionGuidIn}, this.GetRxChangeStatusOperationCompleted, userState);
+        }
+        
+        private void OnGetRxChangeStatusOperationCompleted(object arg) {
+            if ((this.GetRxChangeStatusCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetRxChangeStatusCompleted(this, new GetRxChangeStatusCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://secure.newcropaccounts.com/V7/webservices/CheckRxChangeDeliveryStatus", RequestNamespace="https://secure.newcropaccounts.com/V7/webservices", ResponseNamespace="https://secure.newcropaccounts.com/V7/webservices", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public RxChangeDeliveryStatusResult CheckRxChangeDeliveryStatus(Credentials credentials, AccountRequest accountRequest, string rxChangeTransactionId) {
+            object[] results = this.Invoke("CheckRxChangeDeliveryStatus", new object[] {
+                        credentials,
+                        accountRequest,
+                        rxChangeTransactionId});
+            return ((RxChangeDeliveryStatusResult)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void CheckRxChangeDeliveryStatusAsync(Credentials credentials, AccountRequest accountRequest, string rxChangeTransactionId) {
+            this.CheckRxChangeDeliveryStatusAsync(credentials, accountRequest, rxChangeTransactionId, null);
+        }
+        
+        /// <remarks/>
+        public void CheckRxChangeDeliveryStatusAsync(Credentials credentials, AccountRequest accountRequest, string rxChangeTransactionId, object userState) {
+            if ((this.CheckRxChangeDeliveryStatusOperationCompleted == null)) {
+                this.CheckRxChangeDeliveryStatusOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckRxChangeDeliveryStatusOperationCompleted);
+            }
+            this.InvokeAsync("CheckRxChangeDeliveryStatus", new object[] {
+                        credentials,
+                        accountRequest,
+                        rxChangeTransactionId}, this.CheckRxChangeDeliveryStatusOperationCompleted, userState);
+        }
+        
+        private void OnCheckRxChangeDeliveryStatusOperationCompleted(object arg) {
+            if ((this.CheckRxChangeDeliveryStatusCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CheckRxChangeDeliveryStatusCompleted(this, new CheckRxChangeDeliveryStatusCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://secure.newcropaccounts.com/V7/webservices/GetStateDrugScheduleOverrides", RequestNamespace="https://secure.newcropaccounts.com/V7/webservices", ResponseNamespace="https://secure.newcropaccounts.com/V7/webservices", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public StateDrugScheduleOverridesResult GetStateDrugScheduleOverrides(Credentials credentials, AccountRequest accountRequest, string sourceStateAbbreviation, DrugScheduleDestinationValueType destinationValueType, string destinationValue, DrugScheduleDrugConceptType drugConceptType, string drugConcept) {
+            object[] results = this.Invoke("GetStateDrugScheduleOverrides", new object[] {
+                        credentials,
+                        accountRequest,
+                        sourceStateAbbreviation,
+                        destinationValueType,
+                        destinationValue,
+                        drugConceptType,
+                        drugConcept});
+            return ((StateDrugScheduleOverridesResult)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetStateDrugScheduleOverridesAsync(Credentials credentials, AccountRequest accountRequest, string sourceStateAbbreviation, DrugScheduleDestinationValueType destinationValueType, string destinationValue, DrugScheduleDrugConceptType drugConceptType, string drugConcept) {
+            this.GetStateDrugScheduleOverridesAsync(credentials, accountRequest, sourceStateAbbreviation, destinationValueType, destinationValue, drugConceptType, drugConcept, null);
+        }
+        
+        /// <remarks/>
+        public void GetStateDrugScheduleOverridesAsync(Credentials credentials, AccountRequest accountRequest, string sourceStateAbbreviation, DrugScheduleDestinationValueType destinationValueType, string destinationValue, DrugScheduleDrugConceptType drugConceptType, string drugConcept, object userState) {
+            if ((this.GetStateDrugScheduleOverridesOperationCompleted == null)) {
+                this.GetStateDrugScheduleOverridesOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetStateDrugScheduleOverridesOperationCompleted);
+            }
+            this.InvokeAsync("GetStateDrugScheduleOverrides", new object[] {
+                        credentials,
+                        accountRequest,
+                        sourceStateAbbreviation,
+                        destinationValueType,
+                        destinationValue,
+                        drugConceptType,
+                        drugConcept}, this.GetStateDrugScheduleOverridesOperationCompleted, userState);
+        }
+        
+        private void OnGetStateDrugScheduleOverridesOperationCompleted(object arg) {
+            if ((this.GetStateDrugScheduleOverridesCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetStateDrugScheduleOverridesCompleted(this, new GetStateDrugScheduleOverridesCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://secure.newcropaccounts.com/V7/webservices/GetLastPDMPReviewDateByPatient", RequestNamespace="https://secure.newcropaccounts.com/V7/webservices", ResponseNamespace="https://secure.newcropaccounts.com/V7/webservices", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public PDMPReviewDateByPatientDetailResult GetLastPDMPReviewDateByPatient(Credentials credentials, AccountRequest accountRequest, PatientRequest patientRequest, PatientInformationRequester patientInformationRequester) {
+            object[] results = this.Invoke("GetLastPDMPReviewDateByPatient", new object[] {
+                        credentials,
+                        accountRequest,
+                        patientRequest,
+                        patientInformationRequester});
+            return ((PDMPReviewDateByPatientDetailResult)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetLastPDMPReviewDateByPatientAsync(Credentials credentials, AccountRequest accountRequest, PatientRequest patientRequest, PatientInformationRequester patientInformationRequester) {
+            this.GetLastPDMPReviewDateByPatientAsync(credentials, accountRequest, patientRequest, patientInformationRequester, null);
+        }
+        
+        /// <remarks/>
+        public void GetLastPDMPReviewDateByPatientAsync(Credentials credentials, AccountRequest accountRequest, PatientRequest patientRequest, PatientInformationRequester patientInformationRequester, object userState) {
+            if ((this.GetLastPDMPReviewDateByPatientOperationCompleted == null)) {
+                this.GetLastPDMPReviewDateByPatientOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetLastPDMPReviewDateByPatientOperationCompleted);
+            }
+            this.InvokeAsync("GetLastPDMPReviewDateByPatient", new object[] {
+                        credentials,
+                        accountRequest,
+                        patientRequest,
+                        patientInformationRequester}, this.GetLastPDMPReviewDateByPatientOperationCompleted, userState);
+        }
+        
+        private void OnGetLastPDMPReviewDateByPatientOperationCompleted(object arg) {
+            if ((this.GetLastPDMPReviewDateByPatientCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetLastPDMPReviewDateByPatientCompleted(this, new GetLastPDMPReviewDateByPatientCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://secure.newcropaccounts.com/V7/webservices/GetDailyScriptReport", RequestNamespace="https://secure.newcropaccounts.com/V7/webservices", ResponseNamespace="https://secure.newcropaccounts.com/V7/webservices", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -2039,6 +2279,129 @@ namespace OpenDental.NewCrop {
             if ((this.PharmacySearchV4Completed != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.PharmacySearchV4Completed(this, new PharmacySearchV4CompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://secure.newcropaccounts.com/V7/webservices/PharmacySearchV5", RequestNamespace="https://secure.newcropaccounts.com/V7/webservices", ResponseNamespace="https://secure.newcropaccounts.com/V7/webservices", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public PharmacyDetailResultV5 PharmacySearchV5(
+                    Credentials credentials, 
+                    AccountRequest accountRequest, 
+                    string postalCode, 
+                    string phoneNumber, 
+                    string streetName, 
+                    string pharmacyName, 
+                    string city, 
+                    string state, 
+                    string ncpdpID, 
+                    string healthplanID, 
+                    string healthplanTypeID, 
+                    string eligibilityIndex, 
+                    string pharmacyType, 
+                    string open24Hours, 
+                    string specialtyID, 
+                    string extraQuery1, 
+                    string extraQuery2, 
+                    string extraQuery3, 
+                    string extraQuery4) {
+            object[] results = this.Invoke("PharmacySearchV5", new object[] {
+                        credentials,
+                        accountRequest,
+                        postalCode,
+                        phoneNumber,
+                        streetName,
+                        pharmacyName,
+                        city,
+                        state,
+                        ncpdpID,
+                        healthplanID,
+                        healthplanTypeID,
+                        eligibilityIndex,
+                        pharmacyType,
+                        open24Hours,
+                        specialtyID,
+                        extraQuery1,
+                        extraQuery2,
+                        extraQuery3,
+                        extraQuery4});
+            return ((PharmacyDetailResultV5)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void PharmacySearchV5Async(
+                    Credentials credentials, 
+                    AccountRequest accountRequest, 
+                    string postalCode, 
+                    string phoneNumber, 
+                    string streetName, 
+                    string pharmacyName, 
+                    string city, 
+                    string state, 
+                    string ncpdpID, 
+                    string healthplanID, 
+                    string healthplanTypeID, 
+                    string eligibilityIndex, 
+                    string pharmacyType, 
+                    string open24Hours, 
+                    string specialtyID, 
+                    string extraQuery1, 
+                    string extraQuery2, 
+                    string extraQuery3, 
+                    string extraQuery4) {
+            this.PharmacySearchV5Async(credentials, accountRequest, postalCode, phoneNumber, streetName, pharmacyName, city, state, ncpdpID, healthplanID, healthplanTypeID, eligibilityIndex, pharmacyType, open24Hours, specialtyID, extraQuery1, extraQuery2, extraQuery3, extraQuery4, null);
+        }
+        
+        /// <remarks/>
+        public void PharmacySearchV5Async(
+                    Credentials credentials, 
+                    AccountRequest accountRequest, 
+                    string postalCode, 
+                    string phoneNumber, 
+                    string streetName, 
+                    string pharmacyName, 
+                    string city, 
+                    string state, 
+                    string ncpdpID, 
+                    string healthplanID, 
+                    string healthplanTypeID, 
+                    string eligibilityIndex, 
+                    string pharmacyType, 
+                    string open24Hours, 
+                    string specialtyID, 
+                    string extraQuery1, 
+                    string extraQuery2, 
+                    string extraQuery3, 
+                    string extraQuery4, 
+                    object userState) {
+            if ((this.PharmacySearchV5OperationCompleted == null)) {
+                this.PharmacySearchV5OperationCompleted = new System.Threading.SendOrPostCallback(this.OnPharmacySearchV5OperationCompleted);
+            }
+            this.InvokeAsync("PharmacySearchV5", new object[] {
+                        credentials,
+                        accountRequest,
+                        postalCode,
+                        phoneNumber,
+                        streetName,
+                        pharmacyName,
+                        city,
+                        state,
+                        ncpdpID,
+                        healthplanID,
+                        healthplanTypeID,
+                        eligibilityIndex,
+                        pharmacyType,
+                        open24Hours,
+                        specialtyID,
+                        extraQuery1,
+                        extraQuery2,
+                        extraQuery3,
+                        extraQuery4}, this.PharmacySearchV5OperationCompleted, userState);
+        }
+        
+        private void OnPharmacySearchV5OperationCompleted(object arg) {
+            if ((this.PharmacySearchV5Completed != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.PharmacySearchV5Completed(this, new PharmacySearchV5CompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -3668,6 +4031,39 @@ namespace OpenDental.NewCrop {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://secure.newcropaccounts.com/V7/webservices/CheckCancelRxStatusV2", RequestNamespace="https://secure.newcropaccounts.com/V7/webservices", ResponseNamespace="https://secure.newcropaccounts.com/V7/webservices", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public CheckCancelRxStatusV2Result CheckCancelRxStatusV2(Credentials credentials, AccountRequest accountRequest, string transactionId) {
+            object[] results = this.Invoke("CheckCancelRxStatusV2", new object[] {
+                        credentials,
+                        accountRequest,
+                        transactionId});
+            return ((CheckCancelRxStatusV2Result)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void CheckCancelRxStatusV2Async(Credentials credentials, AccountRequest accountRequest, string transactionId) {
+            this.CheckCancelRxStatusV2Async(credentials, accountRequest, transactionId, null);
+        }
+        
+        /// <remarks/>
+        public void CheckCancelRxStatusV2Async(Credentials credentials, AccountRequest accountRequest, string transactionId, object userState) {
+            if ((this.CheckCancelRxStatusV2OperationCompleted == null)) {
+                this.CheckCancelRxStatusV2OperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckCancelRxStatusV2OperationCompleted);
+            }
+            this.InvokeAsync("CheckCancelRxStatusV2", new object[] {
+                        credentials,
+                        accountRequest,
+                        transactionId}, this.CheckCancelRxStatusV2OperationCompleted, userState);
+        }
+        
+        private void OnCheckCancelRxStatusV2OperationCompleted(object arg) {
+            if ((this.CheckCancelRxStatusV2Completed != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CheckCancelRxStatusV2Completed(this, new CheckCancelRxStatusV2CompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://secure.newcropaccounts.com/V7/webservices/ConfirmCancelRx", RequestNamespace="https://secure.newcropaccounts.com/V7/webservices", ResponseNamespace="https://secure.newcropaccounts.com/V7/webservices", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public Result ConfirmCancelRx(Credentials credentials, AccountRequest accountRequest, string transactionId) {
             object[] results = this.Invoke("ConfirmCancelRx", new object[] {
@@ -3851,6 +4247,41 @@ namespace OpenDental.NewCrop {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://secure.newcropaccounts.com/V7/webservices/GetAllRxChangesSummaryV2", RequestNamespace="https://secure.newcropaccounts.com/V7/webservices", ResponseNamespace="https://secure.newcropaccounts.com/V7/webservices", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public GetRxChangesSummaryV2Result GetAllRxChangesSummaryV2(Credentials credentials, AccountRequest accountRequest, string locationId, string licensedPrescriberId) {
+            object[] results = this.Invoke("GetAllRxChangesSummaryV2", new object[] {
+                        credentials,
+                        accountRequest,
+                        locationId,
+                        licensedPrescriberId});
+            return ((GetRxChangesSummaryV2Result)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetAllRxChangesSummaryV2Async(Credentials credentials, AccountRequest accountRequest, string locationId, string licensedPrescriberId) {
+            this.GetAllRxChangesSummaryV2Async(credentials, accountRequest, locationId, licensedPrescriberId, null);
+        }
+        
+        /// <remarks/>
+        public void GetAllRxChangesSummaryV2Async(Credentials credentials, AccountRequest accountRequest, string locationId, string licensedPrescriberId, object userState) {
+            if ((this.GetAllRxChangesSummaryV2OperationCompleted == null)) {
+                this.GetAllRxChangesSummaryV2OperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetAllRxChangesSummaryV2OperationCompleted);
+            }
+            this.InvokeAsync("GetAllRxChangesSummaryV2", new object[] {
+                        credentials,
+                        accountRequest,
+                        locationId,
+                        licensedPrescriberId}, this.GetAllRxChangesSummaryV2OperationCompleted, userState);
+        }
+        
+        private void OnGetAllRxChangesSummaryV2OperationCompleted(object arg) {
+            if ((this.GetAllRxChangesSummaryV2Completed != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetAllRxChangesSummaryV2Completed(this, new GetAllRxChangesSummaryV2CompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://secure.newcropaccounts.com/V7/webservices/GetRxChangeDetail", RequestNamespace="https://secure.newcropaccounts.com/V7/webservices", ResponseNamespace="https://secure.newcropaccounts.com/V7/webservices", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public GetRxChangeDetailResult GetRxChangeDetail(Credentials credentials, AccountRequest accountRequest, string rxChangeGuid, string returnEncodedMessage) {
             object[] results = this.Invoke("GetRxChangeDetail", new object[] {
@@ -4022,107 +4453,6 @@ namespace OpenDental.NewCrop {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://secure.newcropaccounts.com/V7/webservices/CompleteRxChangeApprovalV2", RequestNamespace="https://secure.newcropaccounts.com/V7/webservices", ResponseNamespace="https://secure.newcropaccounts.com/V7/webservices", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public CompleteBatchResult CompleteRxChangeApprovalV2(Credentials credentials, AccountRequest accountRequest, string rxBatchTransactionGuid, TwoFactorAuthentication twoFactorAuthentication) {
-            object[] results = this.Invoke("CompleteRxChangeApprovalV2", new object[] {
-                        credentials,
-                        accountRequest,
-                        rxBatchTransactionGuid,
-                        twoFactorAuthentication});
-            return ((CompleteBatchResult)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void CompleteRxChangeApprovalV2Async(Credentials credentials, AccountRequest accountRequest, string rxBatchTransactionGuid, TwoFactorAuthentication twoFactorAuthentication) {
-            this.CompleteRxChangeApprovalV2Async(credentials, accountRequest, rxBatchTransactionGuid, twoFactorAuthentication, null);
-        }
-        
-        /// <remarks/>
-        public void CompleteRxChangeApprovalV2Async(Credentials credentials, AccountRequest accountRequest, string rxBatchTransactionGuid, TwoFactorAuthentication twoFactorAuthentication, object userState) {
-            if ((this.CompleteRxChangeApprovalV2OperationCompleted == null)) {
-                this.CompleteRxChangeApprovalV2OperationCompleted = new System.Threading.SendOrPostCallback(this.OnCompleteRxChangeApprovalV2OperationCompleted);
-            }
-            this.InvokeAsync("CompleteRxChangeApprovalV2", new object[] {
-                        credentials,
-                        accountRequest,
-                        rxBatchTransactionGuid,
-                        twoFactorAuthentication}, this.CompleteRxChangeApprovalV2OperationCompleted, userState);
-        }
-        
-        private void OnCompleteRxChangeApprovalV2OperationCompleted(object arg) {
-            if ((this.CompleteRxChangeApprovalV2Completed != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.CompleteRxChangeApprovalV2Completed(this, new CompleteRxChangeApprovalV2CompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://secure.newcropaccounts.com/V7/webservices/RollbackRxChangeApproval", RequestNamespace="https://secure.newcropaccounts.com/V7/webservices", ResponseNamespace="https://secure.newcropaccounts.com/V7/webservices", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public Result RollbackRxChangeApproval(Credentials credentials, AccountRequest accountRequest, string rxChangeGuid) {
-            object[] results = this.Invoke("RollbackRxChangeApproval", new object[] {
-                        credentials,
-                        accountRequest,
-                        rxChangeGuid});
-            return ((Result)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void RollbackRxChangeApprovalAsync(Credentials credentials, AccountRequest accountRequest, string rxChangeGuid) {
-            this.RollbackRxChangeApprovalAsync(credentials, accountRequest, rxChangeGuid, null);
-        }
-        
-        /// <remarks/>
-        public void RollbackRxChangeApprovalAsync(Credentials credentials, AccountRequest accountRequest, string rxChangeGuid, object userState) {
-            if ((this.RollbackRxChangeApprovalOperationCompleted == null)) {
-                this.RollbackRxChangeApprovalOperationCompleted = new System.Threading.SendOrPostCallback(this.OnRollbackRxChangeApprovalOperationCompleted);
-            }
-            this.InvokeAsync("RollbackRxChangeApproval", new object[] {
-                        credentials,
-                        accountRequest,
-                        rxChangeGuid}, this.RollbackRxChangeApprovalOperationCompleted, userState);
-        }
-        
-        private void OnRollbackRxChangeApprovalOperationCompleted(object arg) {
-            if ((this.RollbackRxChangeApprovalCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.RollbackRxChangeApprovalCompleted(this, new RollbackRxChangeApprovalCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://secure.newcropaccounts.com/V7/webservices/CheckRxChangeDeliveryStatus", RequestNamespace="https://secure.newcropaccounts.com/V7/webservices", ResponseNamespace="https://secure.newcropaccounts.com/V7/webservices", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public RxChangeDeliveryStatusResult CheckRxChangeDeliveryStatus(Credentials credentials, AccountRequest accountRequest, string rxChangeTransactionId) {
-            object[] results = this.Invoke("CheckRxChangeDeliveryStatus", new object[] {
-                        credentials,
-                        accountRequest,
-                        rxChangeTransactionId});
-            return ((RxChangeDeliveryStatusResult)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void CheckRxChangeDeliveryStatusAsync(Credentials credentials, AccountRequest accountRequest, string rxChangeTransactionId) {
-            this.CheckRxChangeDeliveryStatusAsync(credentials, accountRequest, rxChangeTransactionId, null);
-        }
-        
-        /// <remarks/>
-        public void CheckRxChangeDeliveryStatusAsync(Credentials credentials, AccountRequest accountRequest, string rxChangeTransactionId, object userState) {
-            if ((this.CheckRxChangeDeliveryStatusOperationCompleted == null)) {
-                this.CheckRxChangeDeliveryStatusOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckRxChangeDeliveryStatusOperationCompleted);
-            }
-            this.InvokeAsync("CheckRxChangeDeliveryStatus", new object[] {
-                        credentials,
-                        accountRequest,
-                        rxChangeTransactionId}, this.CheckRxChangeDeliveryStatusOperationCompleted, userState);
-        }
-        
-        private void OnCheckRxChangeDeliveryStatusOperationCompleted(object arg) {
-            if ((this.CheckRxChangeDeliveryStatusCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.CheckRxChangeDeliveryStatusCompleted(this, new CheckRxChangeDeliveryStatusCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -4142,7 +4472,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -4187,7 +4517,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -4292,7 +4622,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -4325,7 +4655,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum RxChangeResponseDetailYesNoType {
@@ -4338,7 +4668,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum RxChangeResponseDetailSigningStatusType {
@@ -4366,7 +4696,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -4411,7 +4741,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -4480,7 +4810,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum StatusType {
@@ -4499,7 +4829,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -4616,7 +4946,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum RxBatchSummaryQueuedStatusType {
@@ -4635,7 +4965,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -4776,7 +5106,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum DigitalSigningYesNoType {
@@ -4789,7 +5119,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum DigitalSigningProviderType {
@@ -4808,7 +5138,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum SigningTransactionStatusType {
@@ -4833,153 +5163,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
-    public partial class RxChangeDeliveryStatusDetail {
-        
-        private string transactionIDField;
-        
-        private TransmissionStatusType transmissionStatusField;
-        
-        private NcpdpStatusEnum statusTypeField;
-        
-        private string referenceNumberField;
-        
-        private string noteField;
-        
-        private DateTimeCompositeType statusTimestampField;
-        
-        /// <remarks/>
-        public string TransactionID {
-            get {
-                return this.transactionIDField;
-            }
-            set {
-                this.transactionIDField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public TransmissionStatusType TransmissionStatus {
-            get {
-                return this.transmissionStatusField;
-            }
-            set {
-                this.transmissionStatusField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public NcpdpStatusEnum StatusType {
-            get {
-                return this.statusTypeField;
-            }
-            set {
-                this.statusTypeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string ReferenceNumber {
-            get {
-                return this.referenceNumberField;
-            }
-            set {
-                this.referenceNumberField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string Note {
-            get {
-                return this.noteField;
-            }
-            set {
-                this.noteField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public DateTimeCompositeType StatusTimestamp {
-            get {
-                return this.statusTimestampField;
-            }
-            set {
-                this.statusTimestampField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
-    public enum TransmissionStatusType {
-        
-        /// <remarks/>
-        NotSent,
-        
-        /// <remarks/>
-        Sent,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
-    public enum NcpdpStatusEnum {
-        
-        /// <remarks/>
-        Unknown,
-        
-        /// <remarks/>
-        Error,
-        
-        /// <remarks/>
-        Status,
-        
-        /// <remarks/>
-        Verify,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
-    public partial class RxChangeDeliveryStatusResult {
-        
-        private Result resultField;
-        
-        private RxChangeDeliveryStatusDetail rxChangeResponseStatusDetailField;
-        
-        /// <remarks/>
-        public Result result {
-            get {
-                return this.resultField;
-            }
-            set {
-                this.resultField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public RxChangeDeliveryStatusDetail rxChangeResponseStatusDetail {
-            get {
-                return this.rxChangeResponseStatusDetailField;
-            }
-            set {
-                this.rxChangeResponseStatusDetailField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -5036,7 +5220,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum RxChangeDigitalSigningYesNoType {
@@ -5049,7 +5233,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum RxChangeDigitalSigningProviderType {
@@ -5065,7 +5249,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -5110,7 +5294,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -5671,7 +5855,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum NcpdpMessageFormatType {
@@ -5687,7 +5871,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum NcpdpMessageFormatVersion {
@@ -5697,10 +5881,13 @@ namespace OpenDental.NewCrop {
         
         /// <remarks/>
         V106,
+        
+        /// <remarks/>
+        V2017071,
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum NcpdpMessageCompressionType {
@@ -5713,7 +5900,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum RxChangeTransactionType {
@@ -5729,7 +5916,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum RxChangeRequestType {
@@ -5745,10 +5932,22 @@ namespace OpenDental.NewCrop {
         
         /// <remarks/>
         PriorAuthorization,
+        
+        /// <remarks/>
+        DrugUseEvaluation,
+        
+        /// <remarks/>
+        ScriptClarification,
+        
+        /// <remarks/>
+        OutOfStock,
+        
+        /// <remarks/>
+        PrescriberAuthorizationRequired,
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -5781,7 +5980,300 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class RxChangeSummaryV2 {
+        
+        private string rxChangeGuidField;
+        
+        private string originalTransactionGuidField;
+        
+        private RxChangeV2TransactionType originalTransactionTypeField;
+        
+        private RxChangeV2RequestType rxChangeRequestField;
+        
+        private DateTimeCompositeType receivedTimestampField;
+        
+        private string externalLocationIdField;
+        
+        private string externalDoctorIdField;
+        
+        private string externalPatientIdField;
+        
+        private string externalPrescriptionIdField;
+        
+        private string ncpdpIdField;
+        
+        private string pharmacyStoreNameField;
+        
+        private string spare1Field;
+        
+        private string spare2Field;
+        
+        private string spare3Field;
+        
+        private string spare4Field;
+        
+        private string spare5Field;
+        
+        private string spare6Field;
+        
+        /// <remarks/>
+        public string RxChangeGuid {
+            get {
+                return this.rxChangeGuidField;
+            }
+            set {
+                this.rxChangeGuidField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string OriginalTransactionGuid {
+            get {
+                return this.originalTransactionGuidField;
+            }
+            set {
+                this.originalTransactionGuidField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public RxChangeV2TransactionType OriginalTransactionType {
+            get {
+                return this.originalTransactionTypeField;
+            }
+            set {
+                this.originalTransactionTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public RxChangeV2RequestType RxChangeRequest {
+            get {
+                return this.rxChangeRequestField;
+            }
+            set {
+                this.rxChangeRequestField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public DateTimeCompositeType ReceivedTimestamp {
+            get {
+                return this.receivedTimestampField;
+            }
+            set {
+                this.receivedTimestampField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string ExternalLocationId {
+            get {
+                return this.externalLocationIdField;
+            }
+            set {
+                this.externalLocationIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string ExternalDoctorId {
+            get {
+                return this.externalDoctorIdField;
+            }
+            set {
+                this.externalDoctorIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string ExternalPatientId {
+            get {
+                return this.externalPatientIdField;
+            }
+            set {
+                this.externalPatientIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string ExternalPrescriptionId {
+            get {
+                return this.externalPrescriptionIdField;
+            }
+            set {
+                this.externalPrescriptionIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string NcpdpId {
+            get {
+                return this.ncpdpIdField;
+            }
+            set {
+                this.ncpdpIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string PharmacyStoreName {
+            get {
+                return this.pharmacyStoreNameField;
+            }
+            set {
+                this.pharmacyStoreNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Spare1 {
+            get {
+                return this.spare1Field;
+            }
+            set {
+                this.spare1Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Spare2 {
+            get {
+                return this.spare2Field;
+            }
+            set {
+                this.spare2Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Spare3 {
+            get {
+                return this.spare3Field;
+            }
+            set {
+                this.spare3Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Spare4 {
+            get {
+                return this.spare4Field;
+            }
+            set {
+                this.spare4Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Spare5 {
+            get {
+                return this.spare5Field;
+            }
+            set {
+                this.spare5Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Spare6 {
+            get {
+                return this.spare6Field;
+            }
+            set {
+                this.spare6Field = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public enum RxChangeV2TransactionType {
+        
+        /// <remarks/>
+        Unknown,
+        
+        /// <remarks/>
+        NewRx,
+        
+        /// <remarks/>
+        Renewal,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public enum RxChangeV2RequestType {
+        
+        /// <remarks/>
+        Unknown,
+        
+        /// <remarks/>
+        TherapeuticInterchange,
+        
+        /// <remarks/>
+        GenericSubstitution,
+        
+        /// <remarks/>
+        PriorAuthorization,
+        
+        /// <remarks/>
+        DrugUseEvaluation,
+        
+        /// <remarks/>
+        ScriptClarification,
+        
+        /// <remarks/>
+        OutOfStock,
+        
+        /// <remarks/>
+        PrescriberAuthorizationRequired,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class GetRxChangesSummaryV2Result {
+        
+        private Result resultField;
+        
+        private RxChangeSummaryV2[] rxChangeSummaryV2ArrayField;
+        
+        /// <remarks/>
+        public Result result {
+            get {
+                return this.resultField;
+            }
+            set {
+                this.resultField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public RxChangeSummaryV2[] rxChangeSummaryV2Array {
+            get {
+                return this.rxChangeSummaryV2ArrayField;
+            }
+            set {
+                this.rxChangeSummaryV2ArrayField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -5814,7 +6306,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -5847,7 +6339,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -5952,7 +6444,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum RxFillTransactionType {
@@ -5971,7 +6463,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -6004,7 +6496,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -6037,7 +6529,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -6070,7 +6562,284 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class CheckCancelRxStatusV2Response {
+        
+        private string transactionIDField;
+        
+        private TransmissionStatusType transmissionStatusField;
+        
+        private NcpdpStatusEnum statusTypeField;
+        
+        private CancelResponseCodeV2Type responseCodeField;
+        
+        private CancelResponseCodeDetailV2Type[] responseDenyCodeArrayField;
+        
+        private CancelResponseCodeDetailV2Type[] responseApproveCodeArrayField;
+        
+        private string referenceNumberField;
+        
+        private string noteField;
+        
+        private DateTimeCompositeType statusTimestampField;
+        
+        private string spare1Field;
+        
+        private string spare2Field;
+        
+        private string spare3Field;
+        
+        private string spare4Field;
+        
+        /// <remarks/>
+        public string TransactionID {
+            get {
+                return this.transactionIDField;
+            }
+            set {
+                this.transactionIDField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public TransmissionStatusType TransmissionStatus {
+            get {
+                return this.transmissionStatusField;
+            }
+            set {
+                this.transmissionStatusField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public NcpdpStatusEnum StatusType {
+            get {
+                return this.statusTypeField;
+            }
+            set {
+                this.statusTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public CancelResponseCodeV2Type ResponseCode {
+            get {
+                return this.responseCodeField;
+            }
+            set {
+                this.responseCodeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public CancelResponseCodeDetailV2Type[] ResponseDenyCodeArray {
+            get {
+                return this.responseDenyCodeArrayField;
+            }
+            set {
+                this.responseDenyCodeArrayField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public CancelResponseCodeDetailV2Type[] ResponseApproveCodeArray {
+            get {
+                return this.responseApproveCodeArrayField;
+            }
+            set {
+                this.responseApproveCodeArrayField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string ReferenceNumber {
+            get {
+                return this.referenceNumberField;
+            }
+            set {
+                this.referenceNumberField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Note {
+            get {
+                return this.noteField;
+            }
+            set {
+                this.noteField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public DateTimeCompositeType StatusTimestamp {
+            get {
+                return this.statusTimestampField;
+            }
+            set {
+                this.statusTimestampField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Spare1 {
+            get {
+                return this.spare1Field;
+            }
+            set {
+                this.spare1Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Spare2 {
+            get {
+                return this.spare2Field;
+            }
+            set {
+                this.spare2Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Spare3 {
+            get {
+                return this.spare3Field;
+            }
+            set {
+                this.spare3Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Spare4 {
+            get {
+                return this.spare4Field;
+            }
+            set {
+                this.spare4Field = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public enum TransmissionStatusType {
+        
+        /// <remarks/>
+        NotSent,
+        
+        /// <remarks/>
+        Sent,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public enum NcpdpStatusEnum {
+        
+        /// <remarks/>
+        Unknown,
+        
+        /// <remarks/>
+        Error,
+        
+        /// <remarks/>
+        Status,
+        
+        /// <remarks/>
+        Verify,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public enum CancelResponseCodeV2Type {
+        
+        /// <remarks/>
+        Accept,
+        
+        /// <remarks/>
+        Deny,
+        
+        /// <remarks/>
+        UnableToProcess,
+        
+        /// <remarks/>
+        Undetermined,
+        
+        /// <remarks/>
+        ApprovedWithChanges,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public enum CancelResponseCodeDetailV2Type {
+        
+        /// <remarks/>
+        Unknown,
+        
+        /// <remarks/>
+        PatientUnknownToThePrescriber,
+        
+        /// <remarks/>
+        PatientNeverUnderPrescriberCare,
+        
+        /// <remarks/>
+        PatientNoLongerUnderPrescriberCare,
+        
+        /// <remarks/>
+        RequestAlreadyRespondedToByOtherMeans,
+        
+        /// <remarks/>
+        UnableToCancelPrescriptionTransferred,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class CheckCancelRxStatusV2Result {
+        
+        private Result resultField;
+        
+        private CheckCancelRxStatusV2Response cancelRxResponseField;
+        
+        /// <remarks/>
+        public Result result {
+            get {
+                return this.resultField;
+            }
+            set {
+                this.resultField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public CheckCancelRxStatusV2Response cancelRxResponse {
+            get {
+                return this.cancelRxResponseField;
+            }
+            set {
+                this.cancelRxResponseField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -6187,7 +6956,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum ResponseCodeType {
@@ -6209,7 +6978,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum CancelResponseCodeType {
@@ -6267,7 +7036,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -6300,7 +7069,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -6333,7 +7102,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -6402,7 +7171,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -6435,7 +7204,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -6528,7 +7297,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -6561,228 +7330,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
-    public partial class MessageDetail {
-        
-        private CompleteBatchStatusType completeBatchStatusField;
-        
-        private string displayMessageField;
-        
-        private string logMessageField;
-        
-        private string transactionGuidInField;
-        
-        /// <remarks/>
-        public CompleteBatchStatusType CompleteBatchStatus {
-            get {
-                return this.completeBatchStatusField;
-            }
-            set {
-                this.completeBatchStatusField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string DisplayMessage {
-            get {
-                return this.displayMessageField;
-            }
-            set {
-                this.displayMessageField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string LogMessage {
-            get {
-                return this.logMessageField;
-            }
-            set {
-                this.logMessageField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string TransactionGuidIn {
-            get {
-                return this.transactionGuidInField;
-            }
-            set {
-                this.transactionGuidInField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
-    public enum CompleteBatchStatusType {
-        
-        /// <remarks/>
-        Succeeded,
-        
-        /// <remarks/>
-        Failed,
-        
-        /// <remarks/>
-        WaitingForProviderInput,
-        
-        /// <remarks/>
-        OTPInvalid,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
-    public partial class CompleteBatchResult {
-        
-        private Result resultField;
-        
-        private MessageDetail messageDetailField;
-        
-        /// <remarks/>
-        public Result result {
-            get {
-                return this.resultField;
-            }
-            set {
-                this.resultField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public MessageDetail messageDetail {
-            get {
-                return this.messageDetailField;
-            }
-            set {
-                this.messageDetailField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
-    public partial class TwoFactorAuthentication {
-        
-        private TwoFactorAuthenticationSigningType authenticationTypeField;
-        
-        private string passcodeField;
-        
-        private string spare1Field;
-        
-        private string spare2Field;
-        
-        private string spare3Field;
-        
-        private string spare4Field;
-        
-        private string spare5Field;
-        
-        /// <remarks/>
-        public TwoFactorAuthenticationSigningType AuthenticationType {
-            get {
-                return this.authenticationTypeField;
-            }
-            set {
-                this.authenticationTypeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string Passcode {
-            get {
-                return this.passcodeField;
-            }
-            set {
-                this.passcodeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string Spare1 {
-            get {
-                return this.spare1Field;
-            }
-            set {
-                this.spare1Field = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string Spare2 {
-            get {
-                return this.spare2Field;
-            }
-            set {
-                this.spare2Field = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string Spare3 {
-            get {
-                return this.spare3Field;
-            }
-            set {
-                this.spare3Field = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string Spare4 {
-            get {
-                return this.spare4Field;
-            }
-            set {
-                this.spare4Field = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string Spare5 {
-            get {
-                return this.spare5Field;
-            }
-            set {
-                this.spare5Field = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
-    public enum TwoFactorAuthenticationSigningType {
-        
-        /// <remarks/>
-        None,
-        
-        /// <remarks/>
-        HardToken,
-        
-        /// <remarks/>
-        SoftToken,
-        
-        /// <remarks/>
-        PushNotification,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -6959,7 +7507,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum RxBatchRenewalDetailYesNoType {
@@ -6972,7 +7520,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum RxBatchRenewalDetailSigningStatusType {
@@ -7000,7 +7548,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum RenewalTransactionDetailStatusType {
@@ -7028,7 +7576,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -7073,7 +7621,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -7142,7 +7690,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -7187,7 +7735,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -7208,7 +7756,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum DigitalSigningReturnFormatType {
@@ -7224,7 +7772,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -7317,7 +7865,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum DigitalSigningDetailYesNoType {
@@ -7330,7 +7878,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum DigitalSigningDetailSigningStatusType {
@@ -7358,7 +7906,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -7403,7 +7951,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -7568,7 +8116,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum RxBatchDetailYesNoType {
@@ -7581,7 +8129,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum SigningStatusType {
@@ -7609,7 +8157,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -7702,7 +8250,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum RxTransactionDetailStatusType {
@@ -7727,7 +8275,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -7772,7 +8320,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -7841,7 +8389,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum MessagingProtocolType {
@@ -7851,7 +8399,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum MessagingNetworkType {
@@ -7861,7 +8409,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum MessagingEntityType {
@@ -7892,7 +8440,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -8177,7 +8725,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -8222,7 +8770,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -8279,7 +8827,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -8312,7 +8860,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -8441,7 +8989,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -8474,7 +9022,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -8579,7 +9127,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -8612,7 +9160,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -8729,7 +9277,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -8774,7 +9322,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -8867,7 +9415,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -8912,7 +9460,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -9041,7 +9589,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -9074,7 +9622,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -9119,7 +9667,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -9152,7 +9700,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -9221,7 +9769,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -9266,7 +9814,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -9311,7 +9859,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -9344,7 +9892,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -9581,7 +10129,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -9614,7 +10162,365 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class PharmacyDetailV5 {
+        
+        private string ncpdpIDField;
+        
+        private string nameField;
+        
+        private string address1Field;
+        
+        private string address2Field;
+        
+        private string cityField;
+        
+        private string stateField;
+        
+        private string zipField;
+        
+        private string phoneField;
+        
+        private string faxField;
+        
+        private string crossStreetField;
+        
+        private string pharmacyTypeField;
+        
+        private string pharmacyDetailTypeField;
+        
+        private string serviceLevelField;
+        
+        private string statusField;
+        
+        private string touchDateField;
+        
+        private string npiField;
+        
+        private string specialty1Field;
+        
+        private string specialty2Field;
+        
+        private string specialty3Field;
+        
+        private string specialty4Field;
+        
+        private PharmacyVersionNumberType pharmacyVersionNumberField;
+        
+        private string spare1Field;
+        
+        private string spare2Field;
+        
+        private string spare3Field;
+        
+        /// <remarks/>
+        public string ncpdpID {
+            get {
+                return this.ncpdpIDField;
+            }
+            set {
+                this.ncpdpIDField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string address1 {
+            get {
+                return this.address1Field;
+            }
+            set {
+                this.address1Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string address2 {
+            get {
+                return this.address2Field;
+            }
+            set {
+                this.address2Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string city {
+            get {
+                return this.cityField;
+            }
+            set {
+                this.cityField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string state {
+            get {
+                return this.stateField;
+            }
+            set {
+                this.stateField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string zip {
+            get {
+                return this.zipField;
+            }
+            set {
+                this.zipField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string phone {
+            get {
+                return this.phoneField;
+            }
+            set {
+                this.phoneField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string fax {
+            get {
+                return this.faxField;
+            }
+            set {
+                this.faxField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string crossStreet {
+            get {
+                return this.crossStreetField;
+            }
+            set {
+                this.crossStreetField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string pharmacyType {
+            get {
+                return this.pharmacyTypeField;
+            }
+            set {
+                this.pharmacyTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string pharmacyDetailType {
+            get {
+                return this.pharmacyDetailTypeField;
+            }
+            set {
+                this.pharmacyDetailTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string serviceLevel {
+            get {
+                return this.serviceLevelField;
+            }
+            set {
+                this.serviceLevelField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string status {
+            get {
+                return this.statusField;
+            }
+            set {
+                this.statusField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string touchDate {
+            get {
+                return this.touchDateField;
+            }
+            set {
+                this.touchDateField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string npi {
+            get {
+                return this.npiField;
+            }
+            set {
+                this.npiField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string specialty1 {
+            get {
+                return this.specialty1Field;
+            }
+            set {
+                this.specialty1Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string specialty2 {
+            get {
+                return this.specialty2Field;
+            }
+            set {
+                this.specialty2Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string specialty3 {
+            get {
+                return this.specialty3Field;
+            }
+            set {
+                this.specialty3Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string specialty4 {
+            get {
+                return this.specialty4Field;
+            }
+            set {
+                this.specialty4Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PharmacyVersionNumberType pharmacyVersionNumber {
+            get {
+                return this.pharmacyVersionNumberField;
+            }
+            set {
+                this.pharmacyVersionNumberField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string spare1 {
+            get {
+                return this.spare1Field;
+            }
+            set {
+                this.spare1Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string spare2 {
+            get {
+                return this.spare2Field;
+            }
+            set {
+                this.spare2Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string spare3 {
+            get {
+                return this.spare3Field;
+            }
+            set {
+                this.spare3Field = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public enum PharmacyVersionNumberType {
+        
+        /// <remarks/>
+        Unknown,
+        
+        /// <remarks/>
+        UnlistedVersion,
+        
+        /// <remarks/>
+        V42,
+        
+        /// <remarks/>
+        V81,
+        
+        /// <remarks/>
+        V106,
+        
+        /// <remarks/>
+        V106MU2,
+        
+        /// <remarks/>
+        V6,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class PharmacyDetailResultV5 {
+        
+        private Result resultField;
+        
+        private PharmacyDetailV5[] pharmacyDetailArrayField;
+        
+        /// <remarks/>
+        public Result result {
+            get {
+                return this.resultField;
+            }
+            set {
+                this.resultField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PharmacyDetailV5[] pharmacyDetailArray {
+            get {
+                return this.pharmacyDetailArrayField;
+            }
+            set {
+                this.pharmacyDetailArrayField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -9899,7 +10805,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -9932,7 +10838,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -10145,7 +11051,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -10178,7 +11084,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -10379,7 +11285,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -10412,7 +11318,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -10529,7 +11435,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -10562,7 +11468,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -10655,7 +11561,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -10688,7 +11594,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -11057,7 +11963,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum DrugHistorySourceType {
@@ -11073,7 +11979,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum DrugHistoryDxType {
@@ -11089,7 +11995,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -11122,7 +12028,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -11275,7 +12181,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -11308,7 +12214,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -11533,7 +12439,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -11566,7 +12472,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -11599,7 +12505,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -11656,7 +12562,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -11689,7 +12595,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -11746,7 +12652,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum RenewalDigitalSigningYesNoType {
@@ -11759,7 +12665,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum RenewalDigitalSigningProviderType {
@@ -11778,7 +12684,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -11835,7 +12741,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -11892,7 +12798,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -12813,7 +13719,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -12846,7 +13752,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -13000,7 +13906,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
     public enum DrugSubstitutionType {
@@ -13013,7 +13919,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -13094,7 +14000,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -13224,7 +14130,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
     public enum RelationshipType {
@@ -13246,7 +14152,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
     public enum PriorityType {
@@ -13262,7 +14168,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -13357,7 +14263,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
     public enum PersonNamePrefix {
@@ -13421,7 +14327,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
     public enum PersonNameSuffix {
@@ -13595,10 +14501,24 @@ namespace OpenDental.NewCrop {
         
         /// <remarks/>
         ND,
+        
+        /// <remarks/>
+        DNP,
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlEnumAttribute("FNP-BC")]
+        FNPBC,
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlEnumAttribute("PMHNP-BC")]
+        PMHNPBC,
+        
+        /// <remarks/>
+        DVM,
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -13691,7 +14611,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
     public enum GenderType {
@@ -13707,7 +14627,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -13812,7 +14732,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -13882,7 +14802,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
     public enum InsuranceServiceProviderType {
@@ -13901,7 +14821,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -13947,7 +14867,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -14041,7 +14961,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -14062,7 +14982,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -14144,7 +15064,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
     public enum DrugDatabaseType {
@@ -14169,7 +15089,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -14240,7 +15160,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
     public enum AllergySeverityType {
@@ -14259,7 +15179,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -14280,7 +15200,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -14313,7 +15233,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -14382,7 +15302,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
     public enum DiagnosisType {
@@ -14398,7 +15318,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -14443,7 +15363,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
     public enum HealthplanType {
@@ -14456,7 +15376,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -14478,6 +15398,12 @@ namespace OpenDental.NewCrop {
         private string conceptTypeField;
         
         private string onsetDateField;
+        
+        private DrugSubType allergySubTypeIDField;
+        
+        private bool allergySubTypeIDFieldSpecified;
+        
+        private string allergyNameField;
         
         /// <remarks/>
         public string allergyID {
@@ -14559,10 +15485,66 @@ namespace OpenDental.NewCrop {
                 this.onsetDateField = value;
             }
         }
+        
+        /// <remarks/>
+        public DrugSubType allergySubTypeID {
+            get {
+                return this.allergySubTypeIDField;
+            }
+            set {
+                this.allergySubTypeIDField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool allergySubTypeIDSpecified {
+            get {
+                return this.allergySubTypeIDFieldSpecified;
+            }
+            set {
+                this.allergySubTypeIDFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string allergyName {
+            get {
+                return this.allergyNameField;
+            }
+            set {
+                this.allergyNameField = value;
+            }
+        }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
+    public enum DrugSubType {
+        
+        /// <remarks/>
+        SCD,
+        
+        /// <remarks/>
+        SBD,
+        
+        /// <remarks/>
+        BPK,
+        
+        /// <remarks/>
+        GPK,
+        
+        /// <remarks/>
+        IN,
+        
+        /// <remarks/>
+        MIN,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -14588,6 +15570,18 @@ namespace OpenDental.NewCrop {
         private LanguageType languageField;
         
         private bool languageFieldSpecified;
+        
+        private HeightUnitType heightUnitsCodifiedField;
+        
+        private bool heightUnitsCodifiedFieldSpecified;
+        
+        private string heightObservedDateField;
+        
+        private string weightObservedDateField;
+        
+        private WeightUnitV2Type weightUnitsCodifiedField;
+        
+        private bool weightUnitsCodifiedFieldSpecified;
         
         /// <remarks/>
         public string dob {
@@ -14691,10 +15685,72 @@ namespace OpenDental.NewCrop {
                 this.languageFieldSpecified = value;
             }
         }
+        
+        /// <remarks/>
+        public HeightUnitType heightUnitsCodified {
+            get {
+                return this.heightUnitsCodifiedField;
+            }
+            set {
+                this.heightUnitsCodifiedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool heightUnitsCodifiedSpecified {
+            get {
+                return this.heightUnitsCodifiedFieldSpecified;
+            }
+            set {
+                this.heightUnitsCodifiedFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string heightObservedDate {
+            get {
+                return this.heightObservedDateField;
+            }
+            set {
+                this.heightObservedDateField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string weightObservedDate {
+            get {
+                return this.weightObservedDateField;
+            }
+            set {
+                this.weightObservedDateField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public WeightUnitV2Type weightUnitsCodified {
+            get {
+                return this.weightUnitsCodifiedField;
+            }
+            set {
+                this.weightUnitsCodifiedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool weightUnitsCodifiedSpecified {
+            get {
+                return this.weightUnitsCodifiedFieldSpecified;
+            }
+            set {
+                this.weightUnitsCodifiedFieldSpecified = value;
+            }
+        }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
     public enum WeightUnitType {
@@ -14745,7 +15801,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
     public enum LanguageType {
@@ -14807,7 +15863,39 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
+    public enum HeightUnitType {
+        
+        /// <remarks/>
+        IN,
+        
+        /// <remarks/>
+        IN_I,
+        
+        /// <remarks/>
+        CM,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
+    public enum WeightUnitV2Type {
+        
+        /// <remarks/>
+        LB,
+        
+        /// <remarks/>
+        LBS,
+        
+        /// <remarks/>
+        KG,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -14900,7 +15988,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -15194,7 +16282,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -15252,7 +16340,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -15456,7 +16544,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
     public enum PrescriberStatus {
@@ -15469,7 +16557,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
     public enum PrescriberNetwork {
@@ -15482,7 +16570,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -15576,7 +16664,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -15609,7 +16697,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://secure.newcropaccounts.com/interfaceV7:NCStandard")]
     public enum NotificationMessageType {
@@ -15619,7 +16707,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -15714,7 +16802,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -15783,7 +16871,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -15876,7 +16964,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -15921,7 +17009,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -15954,7 +17042,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -15987,7 +17075,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -16020,7 +17108,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -16053,7 +17141,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -16374,7 +17462,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -16407,7 +17495,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -16632,7 +17720,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -16665,7 +17753,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -16818,7 +17906,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -16947,7 +18035,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum TransmissionMethodType {
@@ -16972,7 +18060,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -17101,7 +18189,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -17578,7 +18666,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -17719,7 +18807,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -17752,7 +18840,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -17821,7 +18909,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -17854,7 +18942,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -18115,7 +19203,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -18148,7 +19236,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -18265,7 +19353,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -18298,7 +19386,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -18331,7 +19419,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -18760,7 +19848,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -18793,7 +19881,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -18862,28 +19950,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
-    public partial class PatientRequest {
-        
-        private string patientIdField;
-        
-        /// <remarks/>
-        public string PatientId {
-            get {
-                return this.patientIdField;
-            }
-            set {
-                this.patientIdField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -19132,7 +20199,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -19165,7 +20232,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -19222,7 +20289,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -19255,7 +20322,121 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class PDMPReviewDateByPatientDetail {
+        
+        private string patientIdField;
+        
+        private string userIdField;
+        
+        private string userTypeField;
+        
+        private bool haveDateField;
+        
+        private string lastDateCheckedField;
+        
+        private int pDMPProviderIdField;
+        
+        /// <remarks/>
+        public string PatientId {
+            get {
+                return this.patientIdField;
+            }
+            set {
+                this.patientIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string UserId {
+            get {
+                return this.userIdField;
+            }
+            set {
+                this.userIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string UserType {
+            get {
+                return this.userTypeField;
+            }
+            set {
+                this.userTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool HaveDate {
+            get {
+                return this.haveDateField;
+            }
+            set {
+                this.haveDateField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string LastDateChecked {
+            get {
+                return this.lastDateCheckedField;
+            }
+            set {
+                this.lastDateCheckedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int PDMPProviderId {
+            get {
+                return this.pDMPProviderIdField;
+            }
+            set {
+                this.pDMPProviderIdField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class PDMPReviewDateByPatientDetailResult {
+        
+        private Result resultField;
+        
+        private PDMPReviewDateByPatientDetail pdmpReviewDateByPatientDetailField;
+        
+        /// <remarks/>
+        public Result result {
+            get {
+                return this.resultField;
+            }
+            set {
+                this.resultField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PDMPReviewDateByPatientDetail pdmpReviewDateByPatientDetail {
+            get {
+                return this.pdmpReviewDateByPatientDetailField;
+            }
+            set {
+                this.pdmpReviewDateByPatientDetailField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -19288,7 +20469,572 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class PatientRequest {
+        
+        private string patientIdField;
+        
+        /// <remarks/>
+        public string PatientId {
+            get {
+                return this.patientIdField;
+            }
+            set {
+                this.patientIdField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class StateDrugScheduleOverrides {
+        
+        private string sourceStateAbbreviationField;
+        
+        private DrugScheduleDestinationValueType destinationValueTypeField;
+        
+        private string destinationValueField;
+        
+        private DrugScheduleDrugConceptType drugConceptTypeField;
+        
+        private string drugConceptField;
+        
+        private string deaScheduleField;
+        
+        private string sourceStateScheduleOverrideField;
+        
+        private string destinationStateScheduleOverrideField;
+        
+        /// <remarks/>
+        public string SourceStateAbbreviation {
+            get {
+                return this.sourceStateAbbreviationField;
+            }
+            set {
+                this.sourceStateAbbreviationField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public DrugScheduleDestinationValueType DestinationValueType {
+            get {
+                return this.destinationValueTypeField;
+            }
+            set {
+                this.destinationValueTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string DestinationValue {
+            get {
+                return this.destinationValueField;
+            }
+            set {
+                this.destinationValueField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public DrugScheduleDrugConceptType DrugConceptType {
+            get {
+                return this.drugConceptTypeField;
+            }
+            set {
+                this.drugConceptTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string DrugConcept {
+            get {
+                return this.drugConceptField;
+            }
+            set {
+                this.drugConceptField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string DeaSchedule {
+            get {
+                return this.deaScheduleField;
+            }
+            set {
+                this.deaScheduleField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string SourceStateScheduleOverride {
+            get {
+                return this.sourceStateScheduleOverrideField;
+            }
+            set {
+                this.sourceStateScheduleOverrideField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string DestinationStateScheduleOverride {
+            get {
+                return this.destinationStateScheduleOverrideField;
+            }
+            set {
+                this.destinationStateScheduleOverrideField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public enum DrugScheduleDestinationValueType {
+        
+        /// <remarks/>
+        None,
+        
+        /// <remarks/>
+        StateCode,
+        
+        /// <remarks/>
+        NCPDP,
+        
+        /// <remarks/>
+        NPI,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public enum DrugScheduleDrugConceptType {
+        
+        /// <remarks/>
+        None,
+        
+        /// <remarks/>
+        FDB,
+        
+        /// <remarks/>
+        Multum,
+        
+        /// <remarks/>
+        NDC,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class StateDrugScheduleOverridesResult {
+        
+        private Result resultField;
+        
+        private StateDrugScheduleOverrides stateDrugScheduleOverridesField;
+        
+        /// <remarks/>
+        public Result result {
+            get {
+                return this.resultField;
+            }
+            set {
+                this.resultField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public StateDrugScheduleOverrides stateDrugScheduleOverrides {
+            get {
+                return this.stateDrugScheduleOverridesField;
+            }
+            set {
+                this.stateDrugScheduleOverridesField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class RxChangeDeliveryStatusDetail {
+        
+        private string transactionIDField;
+        
+        private TransmissionStatusType transmissionStatusField;
+        
+        private NcpdpStatusEnum statusTypeField;
+        
+        private string referenceNumberField;
+        
+        private string noteField;
+        
+        private DateTimeCompositeType statusTimestampField;
+        
+        /// <remarks/>
+        public string TransactionID {
+            get {
+                return this.transactionIDField;
+            }
+            set {
+                this.transactionIDField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public TransmissionStatusType TransmissionStatus {
+            get {
+                return this.transmissionStatusField;
+            }
+            set {
+                this.transmissionStatusField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public NcpdpStatusEnum StatusType {
+            get {
+                return this.statusTypeField;
+            }
+            set {
+                this.statusTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string ReferenceNumber {
+            get {
+                return this.referenceNumberField;
+            }
+            set {
+                this.referenceNumberField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Note {
+            get {
+                return this.noteField;
+            }
+            set {
+                this.noteField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public DateTimeCompositeType StatusTimestamp {
+            get {
+                return this.statusTimestampField;
+            }
+            set {
+                this.statusTimestampField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class RxChangeDeliveryStatusResult {
+        
+        private Result resultField;
+        
+        private RxChangeDeliveryStatusDetail rxChangeResponseStatusDetailField;
+        
+        /// <remarks/>
+        public Result result {
+            get {
+                return this.resultField;
+            }
+            set {
+                this.resultField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public RxChangeDeliveryStatusDetail rxChangeResponseStatusDetail {
+            get {
+                return this.rxChangeResponseStatusDetailField;
+            }
+            set {
+                this.rxChangeResponseStatusDetailField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class GetRxChangeStatusResult {
+        
+        private Result resultField;
+        
+        private RxBatchSummary rxBatchSummaryField;
+        
+        /// <remarks/>
+        public Result result {
+            get {
+                return this.resultField;
+            }
+            set {
+                this.resultField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public RxBatchSummary rxBatchSummary {
+            get {
+                return this.rxBatchSummaryField;
+            }
+            set {
+                this.rxBatchSummaryField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class MessageDetail {
+        
+        private CompleteBatchStatusType completeBatchStatusField;
+        
+        private string displayMessageField;
+        
+        private string logMessageField;
+        
+        private string transactionGuidInField;
+        
+        /// <remarks/>
+        public CompleteBatchStatusType CompleteBatchStatus {
+            get {
+                return this.completeBatchStatusField;
+            }
+            set {
+                this.completeBatchStatusField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string DisplayMessage {
+            get {
+                return this.displayMessageField;
+            }
+            set {
+                this.displayMessageField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string LogMessage {
+            get {
+                return this.logMessageField;
+            }
+            set {
+                this.logMessageField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string TransactionGuidIn {
+            get {
+                return this.transactionGuidInField;
+            }
+            set {
+                this.transactionGuidInField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public enum CompleteBatchStatusType {
+        
+        /// <remarks/>
+        Succeeded,
+        
+        /// <remarks/>
+        Failed,
+        
+        /// <remarks/>
+        WaitingForProviderInput,
+        
+        /// <remarks/>
+        OTPInvalid,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class CompleteBatchResult {
+        
+        private Result resultField;
+        
+        private MessageDetail messageDetailField;
+        
+        /// <remarks/>
+        public Result result {
+            get {
+                return this.resultField;
+            }
+            set {
+                this.resultField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public MessageDetail messageDetail {
+            get {
+                return this.messageDetailField;
+            }
+            set {
+                this.messageDetailField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public partial class TwoFactorAuthentication {
+        
+        private TwoFactorAuthenticationSigningType authenticationTypeField;
+        
+        private string passcodeField;
+        
+        private string spare1Field;
+        
+        private string spare2Field;
+        
+        private string spare3Field;
+        
+        private string spare4Field;
+        
+        private string spare5Field;
+        
+        /// <remarks/>
+        public TwoFactorAuthenticationSigningType AuthenticationType {
+            get {
+                return this.authenticationTypeField;
+            }
+            set {
+                this.authenticationTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Passcode {
+            get {
+                return this.passcodeField;
+            }
+            set {
+                this.passcodeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Spare1 {
+            get {
+                return this.spare1Field;
+            }
+            set {
+                this.spare1Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Spare2 {
+            get {
+                return this.spare2Field;
+            }
+            set {
+                this.spare2Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Spare3 {
+            get {
+                return this.spare3Field;
+            }
+            set {
+                this.spare3Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Spare4 {
+            get {
+                return this.spare4Field;
+            }
+            set {
+                this.spare4Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Spare5 {
+            get {
+                return this.spare5Field;
+            }
+            set {
+                this.spare5Field = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
+    public enum TwoFactorAuthenticationSigningType {
+        
+        /// <remarks/>
+        None,
+        
+        /// <remarks/>
+        HardToken,
+        
+        /// <remarks/>
+        SoftToken,
+        
+        /// <remarks/>
+        PushNotification,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -19321,7 +21067,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum TimePeriodQueryType {
@@ -19334,7 +21080,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum PrescriptionTransmissionQueryType {
@@ -19353,7 +21099,7 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.4084.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="https://secure.newcropaccounts.com/V7/webservices")]
     public enum RxBatchCompletionStatusType {
@@ -19366,2299 +21112,11 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetDailyScriptReportCompletedEventHandler(object sender, GetDailyScriptReportCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetDailyScriptReportCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetDailyScriptReportCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetDailyScriptReportV2CompletedEventHandler(object sender, GetDailyScriptReportV2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetDailyScriptReportV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetDailyScriptReportV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetDailyScriptReportV3CompletedEventHandler(object sender, GetDailyScriptReportV3CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetDailyScriptReportV3CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetDailyScriptReportV3CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GenerateMeaningfulUseUtilizationReportCompletedEventHandler(object sender, GenerateMeaningfulUseUtilizationReportCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GenerateMeaningfulUseUtilizationReportCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GenerateMeaningfulUseUtilizationReportCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ReportDetailResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ReportDetailResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetMeaningfulUseUtilizationReportCompletedEventHandler(object sender, GetMeaningfulUseUtilizationReportCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetMeaningfulUseUtilizationReportCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetMeaningfulUseUtilizationReportCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ReportDownloadResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ReportDownloadResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetDailyMeaningfulUseReportCompletedEventHandler(object sender, GetDailyMeaningfulUseReportCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetDailyMeaningfulUseReportCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetDailyMeaningfulUseReportCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetCompleteMedicationHistoryCompletedEventHandler(object sender, GetCompleteMedicationHistoryCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetCompleteMedicationHistoryCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetCompleteMedicationHistoryCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetPatientFullMedicationHistory4CompletedEventHandler(object sender, GetPatientFullMedicationHistory4CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPatientFullMedicationHistory4CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPatientFullMedicationHistory4CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public PatientDrugDetailResult4 Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((PatientDrugDetailResult4)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetPatientFullMedicationHistory5CompletedEventHandler(object sender, GetPatientFullMedicationHistory5CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPatientFullMedicationHistory5CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPatientFullMedicationHistory5CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public PatientDrugDetailResult5 Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((PatientDrugDetailResult5)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetPatientFullMedicationHistory6CompletedEventHandler(object sender, GetPatientFullMedicationHistory6CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPatientFullMedicationHistory6CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPatientFullMedicationHistory6CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetPatientAllergyHistory2CompletedEventHandler(object sender, GetPatientAllergyHistory2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPatientAllergyHistory2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPatientAllergyHistory2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public PatientAllergyExtendedDetailResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((PatientAllergyExtendedDetailResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetPatientAllergyHistoryV3CompletedEventHandler(object sender, GetPatientAllergyHistoryV3CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPatientAllergyHistoryV3CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPatientAllergyHistoryV3CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetPatientAllergyHistoryV4CompletedEventHandler(object sender, GetPatientAllergyHistoryV4CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPatientAllergyHistoryV4CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPatientAllergyHistoryV4CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public PatientAllergyExtendedDetailV4Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((PatientAllergyExtendedDetailV4Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetPatientFreeFormAllergyHistoryCompletedEventHandler(object sender, GetPatientFreeFormAllergyHistoryCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPatientFreeFormAllergyHistoryCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPatientFreeFormAllergyHistoryCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public PatientFreeFormAllergyExtendedDetailResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((PatientFreeFormAllergyExtendedDetailResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetPrescriptionTransmissionStatusCompletedEventHandler(object sender, GetPrescriptionTransmissionStatusCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPrescriptionTransmissionStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPrescriptionTransmissionStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public TransmissionSummaryResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((TransmissionSummaryResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetPrescriptionTransmissionStatusByPatientCompletedEventHandler(object sender, GetPrescriptionTransmissionStatusByPatientCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPrescriptionTransmissionStatusByPatientCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPrescriptionTransmissionStatusByPatientCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public TransmissionSummaryResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((TransmissionSummaryResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GenerateTestRenewalRequestCompletedEventHandler(object sender, GenerateTestRenewalRequestCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GenerateTestRenewalRequestCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GenerateTestRenewalRequestCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetAllRenewalRequestsCompletedEventHandler(object sender, GetAllRenewalRequestsCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetAllRenewalRequestsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetAllRenewalRequestsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RenewalSummaryResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RenewalSummaryResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetAllRenewalRequestsV2CompletedEventHandler(object sender, GetAllRenewalRequestsV2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetAllRenewalRequestsV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetAllRenewalRequestsV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RenewalSummaryResultV2 Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RenewalSummaryResultV2)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetAllRenewalRequestsV3CompletedEventHandler(object sender, GetAllRenewalRequestsV3CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetAllRenewalRequestsV3CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetAllRenewalRequestsV3CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RenewalSummaryResultV2 Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RenewalSummaryResultV2)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetAllRenewalRequestsDetailV4CompletedEventHandler(object sender, GetAllRenewalRequestsDetailV4CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetAllRenewalRequestsDetailV4CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetAllRenewalRequestsDetailV4CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RenewalListDetailResultV4 Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RenewalListDetailResultV4)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetAllRenewalRequestsSummaryV4CompletedEventHandler(object sender, GetAllRenewalRequestsSummaryV4CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetAllRenewalRequestsSummaryV4CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetAllRenewalRequestsSummaryV4CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RenewalListSummaryResultV4 Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RenewalListSummaryResultV4)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetRenewalRequestDetailCompletedEventHandler(object sender, GetRenewalRequestDetailCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetRenewalRequestDetailCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetRenewalRequestDetailCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RenewalDetailResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RenewalDetailResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetRenewalRequestDetailV4CompletedEventHandler(object sender, GetRenewalRequestDetailV4CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetRenewalRequestDetailV4CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetRenewalRequestDetailV4CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RenewalDetailResultV4 Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RenewalDetailResultV4)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetRenewalRequestDetailV5CompletedEventHandler(object sender, GetRenewalRequestDetailV5CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetRenewalRequestDetailV5CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetRenewalRequestDetailV5CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RenewalDetailResultV5 Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RenewalDetailResultV5)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void ProcessRenewalRequestCompletedEventHandler(object sender, ProcessRenewalRequestCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class ProcessRenewalRequestCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal ProcessRenewalRequestCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetRenewalResponseTransmissionStatusCompletedEventHandler(object sender, GetRenewalResponseTransmissionStatusCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetRenewalResponseTransmissionStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetRenewalResponseTransmissionStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RenewalResponseDetailResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RenewalResponseDetailResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetRenewalResponseStatusCompletedEventHandler(object sender, GetRenewalResponseStatusCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetRenewalResponseStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetRenewalResponseStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void FormularyAlternativesWithDrugInfo2CompletedEventHandler(object sender, FormularyAlternativesWithDrugInfo2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class FormularyAlternativesWithDrugInfo2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal FormularyAlternativesWithDrugInfo2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public DrugFormularyDetailResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((DrugFormularyDetailResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void SendMissingHealthplanInformationCompletedEventHandler(object sender, SendMissingHealthplanInformationCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class SendMissingHealthplanInformationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal SendMissingHealthplanInformationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetPBMDrugHistoryV2CompletedEventHandler(object sender, GetPBMDrugHistoryV2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPBMDrugHistoryV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPBMDrugHistoryV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public DrugHistoryDetailResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((DrugHistoryDetailResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetPBMDrugHistoryV3CompletedEventHandler(object sender, GetPBMDrugHistoryV3CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPBMDrugHistoryV3CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPBMDrugHistoryV3CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public DrugHistoryDetailV3Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((DrugHistoryDetailV3Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetMostRecentDownloadUrlCompletedEventHandler(object sender, GetMostRecentDownloadUrlCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetMostRecentDownloadUrlCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetMostRecentDownloadUrlCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public DownloadDetailResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((DownloadDetailResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void DrugDiseaseInteractionCompletedEventHandler(object sender, DrugDiseaseInteractionCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DrugDiseaseInteractionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal DrugDiseaseInteractionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public DrugDiseaseDetailResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((DrugDiseaseDetailResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void DrugDiseaseInteractionV2CompletedEventHandler(object sender, DrugDiseaseInteractionV2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DrugDiseaseInteractionV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal DrugDiseaseInteractionV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public DrugDiseaseDetailResultV2 Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((DrugDiseaseDetailResultV2)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void PharmacySearchV3CompletedEventHandler(object sender, PharmacySearchV3CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class PharmacySearchV3CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal PharmacySearchV3CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public PharmacyDetailResultV2 Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((PharmacyDetailResultV2)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void PharmacySearchV4CompletedEventHandler(object sender, PharmacySearchV4CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class PharmacySearchV4CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal PharmacySearchV4CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public PharmacyDetailResultV4 Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((PharmacyDetailResultV4)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetLocationPharmaciesCompletedEventHandler(object sender, GetLocationPharmaciesCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetLocationPharmaciesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetLocationPharmaciesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public PharmacyDetailResultV4 Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((PharmacyDetailResultV4)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void DrugSearchWithFormularyWithFavoritesV2CompletedEventHandler(object sender, DrugSearchWithFormularyWithFavoritesV2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DrugSearchWithFormularyWithFavoritesV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal DrugSearchWithFormularyWithFavoritesV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public DrugFormularyFavoriteDetailResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((DrugFormularyFavoriteDetailResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void DrugSearchWithFormularyWithFavoritesV3CompletedEventHandler(object sender, DrugSearchWithFormularyWithFavoritesV3CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DrugSearchWithFormularyWithFavoritesV3CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal DrugSearchWithFormularyWithFavoritesV3CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void HealthplanSearchV2CompletedEventHandler(object sender, HealthplanSearchV2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class HealthplanSearchV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal HealthplanSearchV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public HealthplanDetailResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((HealthplanDetailResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void FormularyCoverageV3CompletedEventHandler(object sender, FormularyCoverageV3CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class FormularyCoverageV3CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal FormularyCoverageV3CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public FormularyCoverageDetailResultV3 Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((FormularyCoverageDetailResultV3)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void ReportPrescribingCountCompletedEventHandler(object sender, ReportPrescribingCountCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class ReportPrescribingCountCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal ReportPrescribingCountCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetCounselingMessagesCompletedEventHandler(object sender, GetCounselingMessagesCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetCounselingMessagesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetCounselingMessagesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public CounselingMessageDetailResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((CounselingMessageDetailResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetSideEffectsCompletedEventHandler(object sender, GetSideEffectsCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetSideEffectsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetSideEffectsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetAccountStatusV2CompletedEventHandler(object sender, GetAccountStatusV2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetAccountStatusV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetAccountStatusV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public AccountStatusDetailV2Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((AccountStatusDetailV2Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetAccountStatusDetailCompletedEventHandler(object sender, GetAccountStatusDetailCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetAccountStatusDetailCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetAccountStatusDetailCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetPBMEligibilityV2CompletedEventHandler(object sender, GetPBMEligibilityV2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPBMEligibilityV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPBMEligibilityV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public EligibilityDetailResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((EligibilityDetailResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetPBMEligibilityV3CompletedEventHandler(object sender, GetPBMEligibilityV3CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPBMEligibilityV3CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPBMEligibilityV3CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public EligibilityDetailResultV3 Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((EligibilityDetailResultV3)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetPrescriptionTransmissionStatusV2CompletedEventHandler(object sender, GetPrescriptionTransmissionStatusV2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPrescriptionTransmissionStatusV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPrescriptionTransmissionStatusV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public TransmissionSummaryResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((TransmissionSummaryResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetSubmittedMessageTransactionStatusCompletedEventHandler(object sender, GetSubmittedMessageTransactionStatusCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetSubmittedMessageTransactionStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetSubmittedMessageTransactionStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public MessageTransactionStatusResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((MessageTransactionStatusResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void DrugAllergyInteractionV2CompletedEventHandler(object sender, DrugAllergyInteractionV2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DrugAllergyInteractionV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal DrugAllergyInteractionV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public DrugAllergyDetailResultV2 Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((DrugAllergyDetailResultV2)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void ResolveFailedPrescriptionTransmissionCompletedEventHandler(object sender, ResolveFailedPrescriptionTransmissionCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class ResolveFailedPrescriptionTransmissionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal ResolveFailedPrescriptionTransmissionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetMeaningfulUsePatientEncounterInfoCompletedEventHandler(object sender, GetMeaningfulUsePatientEncounterInfoCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetMeaningfulUsePatientEncounterInfoCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetMeaningfulUsePatientEncounterInfoCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void DoseCheckCompletedEventHandler(object sender, DoseCheckCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DoseCheckCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal DoseCheckCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void SendToRegistryCompletedEventHandler(object sender, SendToRegistryCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class SendToRegistryCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal SendToRegistryCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RegistryDetailResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RegistryDetailResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void RegisterLicensedPrescriberV2CompletedEventHandler(object sender, RegisterLicensedPrescriberV2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class RegisterLicensedPrescriberV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal RegisterLicensedPrescriberV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RegisterPrescriberDetailV2Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RegisterPrescriberDetailV2Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void LicensedPrescriberStatusV2CompletedEventHandler(object sender, LicensedPrescriberStatusV2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class LicensedPrescriberStatusV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal LicensedPrescriberStatusV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RegisterPrescriberDetailV2Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RegisterPrescriberDetailV2Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void RegisterOrganizationCompletedEventHandler(object sender, RegisterOrganizationCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class RegisterOrganizationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal RegisterOrganizationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void CreatePatientPortalLoginCompletedEventHandler(object sender, CreatePatientPortalLoginCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CreatePatientPortalLoginCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CreatePatientPortalLoginCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetRxBatchStatusCompletedEventHandler(object sender, GetRxBatchStatusCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetRxBatchStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetRxBatchStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RxBatchPrescriptionResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RxBatchPrescriptionResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetDigitalSigningBatchStatusCompletedEventHandler(object sender, GetDigitalSigningBatchStatusCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetDigitalSigningBatchStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetDigitalSigningBatchStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public DigitalSigningBatchResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((DigitalSigningBatchResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetDigitallySignedMessageCompletedEventHandler(object sender, GetDigitallySignedMessageCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetDigitallySignedMessageCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetDigitallySignedMessageCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public DigitalSigningBatchResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((DigitalSigningBatchResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void CreateRxBatchCompletedEventHandler(object sender, CreateRxBatchCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CreateRxBatchCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CreateRxBatchCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RxBatchPrescriptionResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RxBatchPrescriptionResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void CreateDigitalSigningBatchCompletedEventHandler(object sender, CreateDigitalSigningBatchCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CreateDigitalSigningBatchCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CreateDigitalSigningBatchCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public DigitalSigningBatchResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((DigitalSigningBatchResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void CreateRenewalBatchCompletedEventHandler(object sender, CreateRenewalBatchCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CreateRenewalBatchCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CreateRenewalBatchCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RxBatchRenewalResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RxBatchRenewalResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetRenewalBatchStatusCompletedEventHandler(object sender, GetRenewalBatchStatusCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetRenewalBatchStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetRenewalBatchStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RxBatchRenewalResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RxBatchRenewalResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetRenewalBatchStatusV2CompletedEventHandler(object sender, GetRenewalBatchStatusV2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetRenewalBatchStatusV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetRenewalBatchStatusV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RxBatchRenewalResultV2 Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RxBatchRenewalResultV2)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void CompleteRxBatchCompletedEventHandler(object sender, CompleteRxBatchCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CompleteRxBatchCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CompleteRxBatchCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void CompleteRxBatchV2CompletedEventHandler(object sender, CompleteRxBatchV2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CompleteRxBatchV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CompleteRxBatchV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public CompleteBatchResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((CompleteBatchResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void CompleteDigitalSigningBatchCompletedEventHandler(object sender, CompleteDigitalSigningBatchCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CompleteDigitalSigningBatchCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CompleteDigitalSigningBatchCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void CompleteDigitalSigningBatchV2CompletedEventHandler(object sender, CompleteDigitalSigningBatchV2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CompleteDigitalSigningBatchV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CompleteDigitalSigningBatchV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public CompleteBatchResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((CompleteBatchResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void CompleteRenewalBatchCompletedEventHandler(object sender, CompleteRenewalBatchCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CompleteRenewalBatchCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CompleteRenewalBatchCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void CompleteRenewalBatchV2CompletedEventHandler(object sender, CompleteRenewalBatchV2CompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CompleteRenewalBatchV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CompleteRenewalBatchV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public CompleteBatchResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((CompleteBatchResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void DuplicateDrugTherapyCompletedEventHandler(object sender, DuplicateDrugTherapyCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DuplicateDrugTherapyCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal DuplicateDrugTherapyCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public DuplicateDrugTherapyResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((DuplicateDrugTherapyResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void SendCancelRxForNewRxCompletedEventHandler(object sender, SendCancelRxForNewRxCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class SendCancelRxForNewRxCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal SendCancelRxForNewRxCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public SendCancelRxResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((SendCancelRxResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void SendCancelRxForRenewalResponseCompletedEventHandler(object sender, SendCancelRxForRenewalResponseCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class SendCancelRxForRenewalResponseCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal SendCancelRxForRenewalResponseCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public SendCancelRxResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((SendCancelRxResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void CheckCancelRxStatusCompletedEventHandler(object sender, CheckCancelRxStatusCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CheckCancelRxStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CheckCancelRxStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public CheckCancelRxStatusResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((CheckCancelRxStatusResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void ConfirmCancelRxCompletedEventHandler(object sender, ConfirmCancelRxCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class ConfirmCancelRxCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal ConfirmCancelRxCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetAllRxFillsSummaryCompletedEventHandler(object sender, GetAllRxFillsSummaryCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetAllRxFillsSummaryCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetAllRxFillsSummaryCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public GetRxFillSummaryResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((GetRxFillSummaryResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetRxFillDetailCompletedEventHandler(object sender, GetRxFillDetailCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetRxFillDetailCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetRxFillDetailCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public GetRxFillDetailResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((GetRxFillDetailResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void ConfirmRxFillReceiptCompletedEventHandler(object sender, ConfirmRxFillReceiptCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class ConfirmRxFillReceiptCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal ConfirmRxFillReceiptCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetAllRxChangesSummaryCompletedEventHandler(object sender, GetAllRxChangesSummaryCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetAllRxChangesSummaryCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetAllRxChangesSummaryCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public GetRxChangesSummaryResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((GetRxChangesSummaryResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void GetRxChangeDetailCompletedEventHandler(object sender, GetRxChangeDetailCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetRxChangeDetailCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetRxChangeDetailCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public GetRxChangeDetailResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((GetRxChangeDetailResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void ConfirmRxChangeReceiptCompletedEventHandler(object sender, ConfirmRxChangeReceiptCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class ConfirmRxChangeReceiptCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal ConfirmRxChangeReceiptCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void SendRxChangeDenyResponseCompletedEventHandler(object sender, SendRxChangeDenyResponseCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class SendRxChangeDenyResponseCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal SendRxChangeDenyResponseCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public RxChangeDeliveryStatusResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((RxChangeDeliveryStatusResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void CreateRxChangeApprovalResponseCompletedEventHandler(object sender, CreateRxChangeApprovalResponseCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CreateRxChangeApprovalResponseCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CreateRxChangeApprovalResponseCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public CreateRxChangeApprovalResponseResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((CreateRxChangeApprovalResponseResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    public delegate void CompleteRxChangeApprovalCompletedEventHandler(object sender, CompleteRxChangeApprovalCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CompleteRxChangeApprovalCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CompleteRxChangeApprovalCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public Result Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((Result)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
     public delegate void CompleteRxChangeApprovalV2CompletedEventHandler(object sender, CompleteRxChangeApprovalV2CompletedEventArgs e);
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class CompleteRxChangeApprovalV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
@@ -21680,11 +21138,11 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
     public delegate void RollbackRxChangeApprovalCompletedEventHandler(object sender, RollbackRxChangeApprovalCompletedEventArgs e);
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class RollbackRxChangeApprovalCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
@@ -21706,11 +21164,37 @@ namespace OpenDental.NewCrop {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetRxChangeStatusCompletedEventHandler(object sender, GetRxChangeStatusCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRxChangeStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRxChangeStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public GetRxChangeStatusResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((GetRxChangeStatusResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
     public delegate void CheckRxChangeDeliveryStatusCompletedEventHandler(object sender, CheckRxChangeDeliveryStatusCompletedEventArgs e);
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class CheckRxChangeDeliveryStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
@@ -21727,6 +21211,2424 @@ namespace OpenDental.NewCrop {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((RxChangeDeliveryStatusResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetStateDrugScheduleOverridesCompletedEventHandler(object sender, GetStateDrugScheduleOverridesCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetStateDrugScheduleOverridesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetStateDrugScheduleOverridesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public StateDrugScheduleOverridesResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((StateDrugScheduleOverridesResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetLastPDMPReviewDateByPatientCompletedEventHandler(object sender, GetLastPDMPReviewDateByPatientCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetLastPDMPReviewDateByPatientCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetLastPDMPReviewDateByPatientCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public PDMPReviewDateByPatientDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((PDMPReviewDateByPatientDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetDailyScriptReportCompletedEventHandler(object sender, GetDailyScriptReportCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetDailyScriptReportCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetDailyScriptReportCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetDailyScriptReportV2CompletedEventHandler(object sender, GetDailyScriptReportV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetDailyScriptReportV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetDailyScriptReportV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetDailyScriptReportV3CompletedEventHandler(object sender, GetDailyScriptReportV3CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetDailyScriptReportV3CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetDailyScriptReportV3CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GenerateMeaningfulUseUtilizationReportCompletedEventHandler(object sender, GenerateMeaningfulUseUtilizationReportCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GenerateMeaningfulUseUtilizationReportCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GenerateMeaningfulUseUtilizationReportCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ReportDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ReportDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetMeaningfulUseUtilizationReportCompletedEventHandler(object sender, GetMeaningfulUseUtilizationReportCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetMeaningfulUseUtilizationReportCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetMeaningfulUseUtilizationReportCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ReportDownloadResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ReportDownloadResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetDailyMeaningfulUseReportCompletedEventHandler(object sender, GetDailyMeaningfulUseReportCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetDailyMeaningfulUseReportCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetDailyMeaningfulUseReportCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetCompleteMedicationHistoryCompletedEventHandler(object sender, GetCompleteMedicationHistoryCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetCompleteMedicationHistoryCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetCompleteMedicationHistoryCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetPatientFullMedicationHistory4CompletedEventHandler(object sender, GetPatientFullMedicationHistory4CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPatientFullMedicationHistory4CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetPatientFullMedicationHistory4CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public PatientDrugDetailResult4 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((PatientDrugDetailResult4)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetPatientFullMedicationHistory5CompletedEventHandler(object sender, GetPatientFullMedicationHistory5CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPatientFullMedicationHistory5CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetPatientFullMedicationHistory5CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public PatientDrugDetailResult5 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((PatientDrugDetailResult5)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetPatientFullMedicationHistory6CompletedEventHandler(object sender, GetPatientFullMedicationHistory6CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPatientFullMedicationHistory6CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetPatientFullMedicationHistory6CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetPatientAllergyHistory2CompletedEventHandler(object sender, GetPatientAllergyHistory2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPatientAllergyHistory2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetPatientAllergyHistory2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public PatientAllergyExtendedDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((PatientAllergyExtendedDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetPatientAllergyHistoryV3CompletedEventHandler(object sender, GetPatientAllergyHistoryV3CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPatientAllergyHistoryV3CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetPatientAllergyHistoryV3CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetPatientAllergyHistoryV4CompletedEventHandler(object sender, GetPatientAllergyHistoryV4CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPatientAllergyHistoryV4CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetPatientAllergyHistoryV4CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public PatientAllergyExtendedDetailV4Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((PatientAllergyExtendedDetailV4Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetPatientFreeFormAllergyHistoryCompletedEventHandler(object sender, GetPatientFreeFormAllergyHistoryCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPatientFreeFormAllergyHistoryCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetPatientFreeFormAllergyHistoryCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public PatientFreeFormAllergyExtendedDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((PatientFreeFormAllergyExtendedDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetPrescriptionTransmissionStatusCompletedEventHandler(object sender, GetPrescriptionTransmissionStatusCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPrescriptionTransmissionStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetPrescriptionTransmissionStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public TransmissionSummaryResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((TransmissionSummaryResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetPrescriptionTransmissionStatusByPatientCompletedEventHandler(object sender, GetPrescriptionTransmissionStatusByPatientCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPrescriptionTransmissionStatusByPatientCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetPrescriptionTransmissionStatusByPatientCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public TransmissionSummaryResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((TransmissionSummaryResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GenerateTestRenewalRequestCompletedEventHandler(object sender, GenerateTestRenewalRequestCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GenerateTestRenewalRequestCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GenerateTestRenewalRequestCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetAllRenewalRequestsCompletedEventHandler(object sender, GetAllRenewalRequestsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetAllRenewalRequestsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetAllRenewalRequestsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RenewalSummaryResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RenewalSummaryResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetAllRenewalRequestsV2CompletedEventHandler(object sender, GetAllRenewalRequestsV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetAllRenewalRequestsV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetAllRenewalRequestsV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RenewalSummaryResultV2 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RenewalSummaryResultV2)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetAllRenewalRequestsV3CompletedEventHandler(object sender, GetAllRenewalRequestsV3CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetAllRenewalRequestsV3CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetAllRenewalRequestsV3CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RenewalSummaryResultV2 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RenewalSummaryResultV2)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetAllRenewalRequestsDetailV4CompletedEventHandler(object sender, GetAllRenewalRequestsDetailV4CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetAllRenewalRequestsDetailV4CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetAllRenewalRequestsDetailV4CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RenewalListDetailResultV4 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RenewalListDetailResultV4)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetAllRenewalRequestsSummaryV4CompletedEventHandler(object sender, GetAllRenewalRequestsSummaryV4CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetAllRenewalRequestsSummaryV4CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetAllRenewalRequestsSummaryV4CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RenewalListSummaryResultV4 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RenewalListSummaryResultV4)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetRenewalRequestDetailCompletedEventHandler(object sender, GetRenewalRequestDetailCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRenewalRequestDetailCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRenewalRequestDetailCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RenewalDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RenewalDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetRenewalRequestDetailV4CompletedEventHandler(object sender, GetRenewalRequestDetailV4CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRenewalRequestDetailV4CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRenewalRequestDetailV4CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RenewalDetailResultV4 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RenewalDetailResultV4)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetRenewalRequestDetailV5CompletedEventHandler(object sender, GetRenewalRequestDetailV5CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRenewalRequestDetailV5CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRenewalRequestDetailV5CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RenewalDetailResultV5 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RenewalDetailResultV5)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void ProcessRenewalRequestCompletedEventHandler(object sender, ProcessRenewalRequestCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class ProcessRenewalRequestCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal ProcessRenewalRequestCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetRenewalResponseTransmissionStatusCompletedEventHandler(object sender, GetRenewalResponseTransmissionStatusCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRenewalResponseTransmissionStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRenewalResponseTransmissionStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RenewalResponseDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RenewalResponseDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetRenewalResponseStatusCompletedEventHandler(object sender, GetRenewalResponseStatusCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRenewalResponseStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRenewalResponseStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void FormularyAlternativesWithDrugInfo2CompletedEventHandler(object sender, FormularyAlternativesWithDrugInfo2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class FormularyAlternativesWithDrugInfo2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal FormularyAlternativesWithDrugInfo2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public DrugFormularyDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((DrugFormularyDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void SendMissingHealthplanInformationCompletedEventHandler(object sender, SendMissingHealthplanInformationCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SendMissingHealthplanInformationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SendMissingHealthplanInformationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetPBMDrugHistoryV2CompletedEventHandler(object sender, GetPBMDrugHistoryV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPBMDrugHistoryV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetPBMDrugHistoryV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public DrugHistoryDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((DrugHistoryDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetPBMDrugHistoryV3CompletedEventHandler(object sender, GetPBMDrugHistoryV3CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPBMDrugHistoryV3CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetPBMDrugHistoryV3CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public DrugHistoryDetailV3Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((DrugHistoryDetailV3Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetMostRecentDownloadUrlCompletedEventHandler(object sender, GetMostRecentDownloadUrlCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetMostRecentDownloadUrlCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetMostRecentDownloadUrlCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public DownloadDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((DownloadDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void DrugDiseaseInteractionCompletedEventHandler(object sender, DrugDiseaseInteractionCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DrugDiseaseInteractionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal DrugDiseaseInteractionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public DrugDiseaseDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((DrugDiseaseDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void DrugDiseaseInteractionV2CompletedEventHandler(object sender, DrugDiseaseInteractionV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DrugDiseaseInteractionV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal DrugDiseaseInteractionV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public DrugDiseaseDetailResultV2 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((DrugDiseaseDetailResultV2)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void PharmacySearchV3CompletedEventHandler(object sender, PharmacySearchV3CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class PharmacySearchV3CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal PharmacySearchV3CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public PharmacyDetailResultV2 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((PharmacyDetailResultV2)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void PharmacySearchV4CompletedEventHandler(object sender, PharmacySearchV4CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class PharmacySearchV4CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal PharmacySearchV4CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public PharmacyDetailResultV4 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((PharmacyDetailResultV4)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void PharmacySearchV5CompletedEventHandler(object sender, PharmacySearchV5CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class PharmacySearchV5CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal PharmacySearchV5CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public PharmacyDetailResultV5 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((PharmacyDetailResultV5)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetLocationPharmaciesCompletedEventHandler(object sender, GetLocationPharmaciesCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetLocationPharmaciesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetLocationPharmaciesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public PharmacyDetailResultV4 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((PharmacyDetailResultV4)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void DrugSearchWithFormularyWithFavoritesV2CompletedEventHandler(object sender, DrugSearchWithFormularyWithFavoritesV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DrugSearchWithFormularyWithFavoritesV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal DrugSearchWithFormularyWithFavoritesV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public DrugFormularyFavoriteDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((DrugFormularyFavoriteDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void DrugSearchWithFormularyWithFavoritesV3CompletedEventHandler(object sender, DrugSearchWithFormularyWithFavoritesV3CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DrugSearchWithFormularyWithFavoritesV3CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal DrugSearchWithFormularyWithFavoritesV3CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void HealthplanSearchV2CompletedEventHandler(object sender, HealthplanSearchV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class HealthplanSearchV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal HealthplanSearchV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public HealthplanDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((HealthplanDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void FormularyCoverageV3CompletedEventHandler(object sender, FormularyCoverageV3CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class FormularyCoverageV3CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal FormularyCoverageV3CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public FormularyCoverageDetailResultV3 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((FormularyCoverageDetailResultV3)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void ReportPrescribingCountCompletedEventHandler(object sender, ReportPrescribingCountCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class ReportPrescribingCountCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal ReportPrescribingCountCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetCounselingMessagesCompletedEventHandler(object sender, GetCounselingMessagesCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetCounselingMessagesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetCounselingMessagesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public CounselingMessageDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((CounselingMessageDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetSideEffectsCompletedEventHandler(object sender, GetSideEffectsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetSideEffectsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetSideEffectsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetAccountStatusV2CompletedEventHandler(object sender, GetAccountStatusV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetAccountStatusV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetAccountStatusV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public AccountStatusDetailV2Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((AccountStatusDetailV2Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetAccountStatusDetailCompletedEventHandler(object sender, GetAccountStatusDetailCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetAccountStatusDetailCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetAccountStatusDetailCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetPBMEligibilityV2CompletedEventHandler(object sender, GetPBMEligibilityV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPBMEligibilityV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetPBMEligibilityV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public EligibilityDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((EligibilityDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetPBMEligibilityV3CompletedEventHandler(object sender, GetPBMEligibilityV3CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPBMEligibilityV3CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetPBMEligibilityV3CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public EligibilityDetailResultV3 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((EligibilityDetailResultV3)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetPrescriptionTransmissionStatusV2CompletedEventHandler(object sender, GetPrescriptionTransmissionStatusV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPrescriptionTransmissionStatusV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetPrescriptionTransmissionStatusV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public TransmissionSummaryResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((TransmissionSummaryResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetSubmittedMessageTransactionStatusCompletedEventHandler(object sender, GetSubmittedMessageTransactionStatusCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetSubmittedMessageTransactionStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetSubmittedMessageTransactionStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public MessageTransactionStatusResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((MessageTransactionStatusResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void DrugAllergyInteractionV2CompletedEventHandler(object sender, DrugAllergyInteractionV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DrugAllergyInteractionV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal DrugAllergyInteractionV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public DrugAllergyDetailResultV2 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((DrugAllergyDetailResultV2)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void ResolveFailedPrescriptionTransmissionCompletedEventHandler(object sender, ResolveFailedPrescriptionTransmissionCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class ResolveFailedPrescriptionTransmissionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal ResolveFailedPrescriptionTransmissionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetMeaningfulUsePatientEncounterInfoCompletedEventHandler(object sender, GetMeaningfulUsePatientEncounterInfoCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetMeaningfulUsePatientEncounterInfoCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetMeaningfulUsePatientEncounterInfoCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void DoseCheckCompletedEventHandler(object sender, DoseCheckCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DoseCheckCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal DoseCheckCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void SendToRegistryCompletedEventHandler(object sender, SendToRegistryCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SendToRegistryCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SendToRegistryCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RegistryDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RegistryDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void RegisterLicensedPrescriberV2CompletedEventHandler(object sender, RegisterLicensedPrescriberV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class RegisterLicensedPrescriberV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal RegisterLicensedPrescriberV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RegisterPrescriberDetailV2Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RegisterPrescriberDetailV2Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void LicensedPrescriberStatusV2CompletedEventHandler(object sender, LicensedPrescriberStatusV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class LicensedPrescriberStatusV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal LicensedPrescriberStatusV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RegisterPrescriberDetailV2Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RegisterPrescriberDetailV2Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void RegisterOrganizationCompletedEventHandler(object sender, RegisterOrganizationCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class RegisterOrganizationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal RegisterOrganizationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void CreatePatientPortalLoginCompletedEventHandler(object sender, CreatePatientPortalLoginCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CreatePatientPortalLoginCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CreatePatientPortalLoginCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetRxBatchStatusCompletedEventHandler(object sender, GetRxBatchStatusCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRxBatchStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRxBatchStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RxBatchPrescriptionResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RxBatchPrescriptionResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetDigitalSigningBatchStatusCompletedEventHandler(object sender, GetDigitalSigningBatchStatusCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetDigitalSigningBatchStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetDigitalSigningBatchStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public DigitalSigningBatchResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((DigitalSigningBatchResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetDigitallySignedMessageCompletedEventHandler(object sender, GetDigitallySignedMessageCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetDigitallySignedMessageCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetDigitallySignedMessageCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public DigitalSigningBatchResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((DigitalSigningBatchResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void CreateRxBatchCompletedEventHandler(object sender, CreateRxBatchCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CreateRxBatchCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CreateRxBatchCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RxBatchPrescriptionResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RxBatchPrescriptionResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void CreateDigitalSigningBatchCompletedEventHandler(object sender, CreateDigitalSigningBatchCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CreateDigitalSigningBatchCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CreateDigitalSigningBatchCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public DigitalSigningBatchResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((DigitalSigningBatchResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void CreateRenewalBatchCompletedEventHandler(object sender, CreateRenewalBatchCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CreateRenewalBatchCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CreateRenewalBatchCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RxBatchRenewalResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RxBatchRenewalResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetRenewalBatchStatusCompletedEventHandler(object sender, GetRenewalBatchStatusCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRenewalBatchStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRenewalBatchStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RxBatchRenewalResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RxBatchRenewalResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetRenewalBatchStatusV2CompletedEventHandler(object sender, GetRenewalBatchStatusV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRenewalBatchStatusV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRenewalBatchStatusV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RxBatchRenewalResultV2 Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RxBatchRenewalResultV2)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void CompleteRxBatchCompletedEventHandler(object sender, CompleteRxBatchCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CompleteRxBatchCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CompleteRxBatchCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void CompleteRxBatchV2CompletedEventHandler(object sender, CompleteRxBatchV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CompleteRxBatchV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CompleteRxBatchV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public CompleteBatchResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((CompleteBatchResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void CompleteDigitalSigningBatchCompletedEventHandler(object sender, CompleteDigitalSigningBatchCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CompleteDigitalSigningBatchCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CompleteDigitalSigningBatchCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void CompleteDigitalSigningBatchV2CompletedEventHandler(object sender, CompleteDigitalSigningBatchV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CompleteDigitalSigningBatchV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CompleteDigitalSigningBatchV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public CompleteBatchResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((CompleteBatchResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void CompleteRenewalBatchCompletedEventHandler(object sender, CompleteRenewalBatchCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CompleteRenewalBatchCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CompleteRenewalBatchCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void CompleteRenewalBatchV2CompletedEventHandler(object sender, CompleteRenewalBatchV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CompleteRenewalBatchV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CompleteRenewalBatchV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public CompleteBatchResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((CompleteBatchResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void DuplicateDrugTherapyCompletedEventHandler(object sender, DuplicateDrugTherapyCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DuplicateDrugTherapyCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal DuplicateDrugTherapyCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public DuplicateDrugTherapyResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((DuplicateDrugTherapyResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void SendCancelRxForNewRxCompletedEventHandler(object sender, SendCancelRxForNewRxCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SendCancelRxForNewRxCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SendCancelRxForNewRxCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public SendCancelRxResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((SendCancelRxResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void SendCancelRxForRenewalResponseCompletedEventHandler(object sender, SendCancelRxForRenewalResponseCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SendCancelRxForRenewalResponseCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SendCancelRxForRenewalResponseCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public SendCancelRxResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((SendCancelRxResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void CheckCancelRxStatusCompletedEventHandler(object sender, CheckCancelRxStatusCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CheckCancelRxStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CheckCancelRxStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public CheckCancelRxStatusResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((CheckCancelRxStatusResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void CheckCancelRxStatusV2CompletedEventHandler(object sender, CheckCancelRxStatusV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CheckCancelRxStatusV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CheckCancelRxStatusV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public CheckCancelRxStatusV2Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((CheckCancelRxStatusV2Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void ConfirmCancelRxCompletedEventHandler(object sender, ConfirmCancelRxCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class ConfirmCancelRxCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal ConfirmCancelRxCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetAllRxFillsSummaryCompletedEventHandler(object sender, GetAllRxFillsSummaryCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetAllRxFillsSummaryCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetAllRxFillsSummaryCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public GetRxFillSummaryResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((GetRxFillSummaryResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetRxFillDetailCompletedEventHandler(object sender, GetRxFillDetailCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRxFillDetailCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRxFillDetailCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public GetRxFillDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((GetRxFillDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void ConfirmRxFillReceiptCompletedEventHandler(object sender, ConfirmRxFillReceiptCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class ConfirmRxFillReceiptCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal ConfirmRxFillReceiptCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetAllRxChangesSummaryCompletedEventHandler(object sender, GetAllRxChangesSummaryCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetAllRxChangesSummaryCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetAllRxChangesSummaryCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public GetRxChangesSummaryResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((GetRxChangesSummaryResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetAllRxChangesSummaryV2CompletedEventHandler(object sender, GetAllRxChangesSummaryV2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetAllRxChangesSummaryV2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetAllRxChangesSummaryV2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public GetRxChangesSummaryV2Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((GetRxChangesSummaryV2Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetRxChangeDetailCompletedEventHandler(object sender, GetRxChangeDetailCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRxChangeDetailCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRxChangeDetailCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public GetRxChangeDetailResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((GetRxChangeDetailResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void ConfirmRxChangeReceiptCompletedEventHandler(object sender, ConfirmRxChangeReceiptCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class ConfirmRxChangeReceiptCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal ConfirmRxChangeReceiptCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void SendRxChangeDenyResponseCompletedEventHandler(object sender, SendRxChangeDenyResponseCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SendRxChangeDenyResponseCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SendRxChangeDenyResponseCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RxChangeDeliveryStatusResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RxChangeDeliveryStatusResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void CreateRxChangeApprovalResponseCompletedEventHandler(object sender, CreateRxChangeApprovalResponseCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CreateRxChangeApprovalResponseCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CreateRxChangeApprovalResponseCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public CreateRxChangeApprovalResponseResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((CreateRxChangeApprovalResponseResult)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void CompleteRxChangeApprovalCompletedEventHandler(object sender, CompleteRxChangeApprovalCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CompleteRxChangeApprovalCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CompleteRxChangeApprovalCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Result Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Result)(this.results[0]));
             }
         }
     }

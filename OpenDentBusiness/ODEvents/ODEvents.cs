@@ -52,6 +52,7 @@ namespace OpenDentBusiness {
 	public class CredentialsFailedAfterLoginEvent {
 		public static event ODEventHandler Fired;
 		public static void Fire(ODEventType odEventType,object tag) { Fired?.Invoke(new ODEventArgs(odEventType,tag)); }
+		public static bool IsFiredNull() { return Fired==null; }
 	}
 
 	public class DatabaseMaintEvent {

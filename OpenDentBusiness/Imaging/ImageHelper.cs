@@ -177,7 +177,7 @@ namespace OpenDentBusiness {
 			}
 			//Translate from center of image to UL corner of image
 			g.TranslateTransform(-bitmapRaw.Width/2,-bitmapRaw.Height/2);
-			g.DrawImage(bitmapRaw,0,0);
+			g.DrawImage(bitmapRaw,0,0,bitmapRaw.Width,bitmapRaw.Height);
 			//DrawDrawings(g);
 			//APPLY BRIGHTNESS AND CONTRAST - 
 			//(create inputValues and outputValues from stored db function/table).

@@ -40,29 +40,31 @@ namespace OpenDentBusiness.Misc {
 			{
 				return;
 			}
-			//Clear old hashes
-			string command="UPDATE paysplit SET SecurityHash=''";
-			Db.NonQ(command);
 			//Hash entries made after new date
-			command="SELECT * FROM paysplit WHERE DateEntry >= "+POut.Date(DateStart);
+			string command="SELECT SplitNum, PatNum, SplitAmt, DatePay, SecurityHash FROM paysplit WHERE DatePay >= "+POut.Date(DateStart);
 			DataTable table=Db.GetTable(command);
 			long splitNum;
 			string unhashedText="";
-			string hashedText="";
+			string hashedTextOld="";
+			string hashedTextNew="";
 			for(int i=0;i<table.Rows.Count;i++) {
 				unhashedText="";
+				hashedTextOld=PIn.String(table.Rows[i]["SecurityHash"].ToString());
 				splitNum=PIn.Long(table.Rows[i]["SplitNum"].ToString());
 				unhashedText+=PIn.Long(table.Rows[i]["PatNum"].ToString());
 				unhashedText+=PIn.Double(table.Rows[i]["SplitAmt"].ToString()).ToString("F2");
 				unhashedText+=PIn.Date(table.Rows[i]["DatePay"].ToString()).ToString("yyyy-MM-dd");
 				try {
-					hashedText=CDT.Class1.CreateSaltedHash(unhashedText);
+					hashedTextNew=CDT.Class1.CreateSaltedHash(unhashedText);
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
-					hashedText="";
+					hashedTextNew="";
 				}
-				command=$@"UPDATE paysplit SET SecurityHash='{POut.String(hashedText)}' WHERE SplitNum={POut.Long(splitNum)}";
+				//Only update hashes that changed
+				if(hashedTextOld!=hashedTextNew) {
+					command=$@"UPDATE paysplit SET SecurityHash='{POut.String(hashedTextNew)}' WHERE SplitNum={POut.Long(splitNum)}";
+				}
 				Db.NonQ(command);
 			}
 			_arePaySplitsUpdated=true;
@@ -80,29 +82,31 @@ namespace OpenDentBusiness.Misc {
 			{
 				return;
 			}
-			//Clear old hashes
-			string command="UPDATE appointment SET SecurityHash=''";
-			Db.NonQ(command);
 			//Hash entries made after new date
-			command="SELECT * FROM appointment WHERE SecDateTEntry>= "+POut.Date(DateStart);
+			string command="SELECT AptNum, AptStatus, Confirmed, AptDateTime, SecurityHash FROM appointment WHERE AptDateTime>= "+POut.Date(DateStart);
 			DataTable table=Db.GetTable(command);
 			long aptNum;
 			string unhashedText="";
-			string hashedText="";
+			string hashedTextOld="";
+			string hashedTextNew="";
 			for(int i=0;i<table.Rows.Count;i++) {
 				unhashedText="";
+				hashedTextOld=PIn.String(table.Rows[i]["SecurityHash"].ToString());
 				aptNum=PIn.Long(table.Rows[i]["AptNum"].ToString());
 				unhashedText+=PIn.Int(table.Rows[i]["AptStatus"].ToString()).ToString();
 				unhashedText+=PIn.Long(table.Rows[i]["Confirmed"].ToString()).ToString();
-				unhashedText+=PIn.DateT(table.Rows[i]["AptDateTime"].ToString()).ToString("yyyy-MM-dd");
+				unhashedText+=PIn.DateT(table.Rows[i]["AptDateTime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
 				try {
-					hashedText=CDT.Class1.CreateSaltedHash(unhashedText);
+					hashedTextNew=CDT.Class1.CreateSaltedHash(unhashedText);
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
-					hashedText="";
+					hashedTextNew="";
 				}
-				command=$@"UPDATE appointment SET SecurityHash='{POut.String(hashedText)}' WHERE AptNum={POut.Long(aptNum)}";
+				//Only update hashes that changed
+				if(hashedTextOld!=hashedTextNew) {
+					command=$@"UPDATE appointment SET SecurityHash='{POut.String(hashedTextNew)}' WHERE AptNum={POut.Long(aptNum)}";
+				}
 				Db.NonQ(command);
 			}
 			_areAppointmentsUpdated=true;

@@ -28,8 +28,10 @@ namespace OpenDentBusiness.AutoComm {
 			}
 			StringBuilder retVal = new StringBuilder();
 			retVal.Append(template);
-			ReplaceOneTag(retVal,"[Namef]",autoCommObj.NameF,isEmailBody);//Might be preferred name.
-			ReplaceOneTag(retVal,"[ClinicName]",clinic.Description,isEmailBody);
+			ReplaceOneTag(retVal,"[NameF]",autoCommObj.NameF,isEmailBody);
+			ReplaceOneTag(retVal,"[NameFL]",autoCommObj.NameF,isEmailBody);
+			ReplaceOneTag(retVal,"[NamePreferredOrFirst]",autoCommObj.NamePreferredOrFirst,isEmailBody);
+			ReplaceOneTag(retVal,"[ClinicName]",Clinics.GetOfficeName(clinic),isEmailBody);
 			ReplaceOneTag(retVal,"[ClinicPhone]",Clinics.GetOfficePhone(clinic),isEmailBody);
 			ReplaceOneTag(retVal,"[OfficePhone]",Clinics.GetOfficePhone(clinic),isEmailBody);
 			ReplaceOneTag(retVal,"[OfficeName]",Clinics.GetOfficeName(clinic),isEmailBody);
@@ -37,7 +39,11 @@ namespace OpenDentBusiness.AutoComm {
 			ReplaceOneTag(retVal,"[PracticePhone]",Clinics.GetOfficePhone(null),isEmailBody);//passing in null will grab us the practice phone and format the phone number
 			ReplaceOneTag(retVal,"[ProvName]",OpenDentBusiness.Providers.GetFormalName(autoCommObj.ProvNum),isEmailBody);
 			ReplaceOneTag(retVal,"[ProvAbbr]",OpenDentBusiness.Providers.GetAbbr(autoCommObj.ProvNum),isEmailBody);
-			ReplaceOneTag(retVal,"[EmailDisclaimer]",OpenDentBusiness.EmailMessages.GetEmailDisclaimer(clinic.ClinicNum),isEmailBody);
+			long clinicNum=0;
+			if(clinic!=null) {
+				clinicNum=clinic.ClinicNum;
+			}
+			ReplaceOneTag(retVal,"[EmailDisclaimer]",OpenDentBusiness.EmailMessages.GetEmailDisclaimer(clinicNum),isEmailBody);
 			ReplaceTagsChild(retVal,autoCommObj,isEmailBody);
 			return retVal.ToString();
 		}

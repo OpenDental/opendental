@@ -5,14 +5,13 @@
     <s:schema elementFormDefault="qualified" targetNamespace="https://secure.newcropaccounts.com/V7/webservices">
       <s:import namespace="http://microsoft.com/wsdl/types/" />
       <s:import namespace="http://secure.newcropaccounts.com/interfaceV7" />
-      <s:element name="GetDailyScriptReport">
+      <s:element name="CompleteRxChangeApprovalV2">
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="credentials" type="tns:Credentials" />
             <s:element minOccurs="0" maxOccurs="1" name="accountRequest" type="tns:AccountRequest" />
-            <s:element minOccurs="0" maxOccurs="1" name="reportDateCCYYMMDD" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="includeSchema" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="sortOrder" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="rxBatchTransactionGuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="twoFactorAuthentication" type="tns:TwoFactorAuthentication" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -29,13 +28,38 @@
           <s:element minOccurs="0" maxOccurs="1" name="SiteId" type="s:string" />
         </s:sequence>
       </s:complexType>
-      <s:element name="GetDailyScriptReportResponse">
+      <s:complexType name="TwoFactorAuthentication">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="AuthenticationType" type="tns:TwoFactorAuthenticationSigningType" />
+          <s:element minOccurs="0" maxOccurs="1" name="Passcode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare4" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare5" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="TwoFactorAuthenticationSigningType">
+        <s:restriction base="s:string">
+          <s:enumeration value="None" />
+          <s:enumeration value="HardToken" />
+          <s:enumeration value="SoftToken" />
+          <s:enumeration value="PushNotification" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="CompleteRxChangeApprovalV2Response">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="GetDailyScriptReportResult" type="tns:Result" />
+            <s:element minOccurs="0" maxOccurs="1" name="CompleteRxChangeApprovalV2Result" type="tns:CompleteBatchResult" />
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:complexType name="CompleteBatchResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="messageDetail" type="tns:MessageDetail" />
+        </s:sequence>
+      </s:complexType>
       <s:complexType name="Result">
         <s:sequence>
           <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:StatusType" />
@@ -53,6 +77,288 @@
           <s:enumeration value="NotFound" />
         </s:restriction>
       </s:simpleType>
+      <s:complexType name="MessageDetail">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="CompleteBatchStatus" type="tns:CompleteBatchStatusType" />
+          <s:element minOccurs="0" maxOccurs="1" name="DisplayMessage" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LogMessage" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TransactionGuidIn" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="CompleteBatchStatusType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Succeeded" />
+          <s:enumeration value="Failed" />
+          <s:enumeration value="WaitingForProviderInput" />
+          <s:enumeration value="OTPInvalid" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="RollbackRxChangeApproval">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="credentials" type="tns:Credentials" />
+            <s:element minOccurs="0" maxOccurs="1" name="accountRequest" type="tns:AccountRequest" />
+            <s:element minOccurs="0" maxOccurs="1" name="rxChangeGuid" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RollbackRxChangeApprovalResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RollbackRxChangeApprovalResult" type="tns:Result" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRxChangeStatus">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="credentials" type="tns:Credentials" />
+            <s:element minOccurs="0" maxOccurs="1" name="accountRequest" type="tns:AccountRequest" />
+            <s:element minOccurs="0" maxOccurs="1" name="rxBatchTransactionGuidIn" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRxChangeStatusResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetRxChangeStatusResult" type="tns:GetRxChangeStatusResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="GetRxChangeStatusResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="rxBatchSummary" type="tns:RxBatchSummary" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="RxBatchSummary">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="RxBatchTransactionGuid" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RxBatchTransactionExternalId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BatchSummaryCreatedTimestamp" type="tns:DateTimeCompositeType" />
+          <s:element minOccurs="1" maxOccurs="1" name="RxBatchSummaryQueuedStatus" type="tns:RxBatchSummaryQueuedStatusType" />
+          <s:element minOccurs="0" maxOccurs="1" name="RxBatchSummaryStatusMessage" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DigitalSigningTransaction" type="tns:DigitalSigningTransactionType" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare3" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DateTimeCompositeType">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="StringComponent" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateTimeComponent" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="RxBatchSummaryQueuedStatusType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Unknown" />
+          <s:enumeration value="None" />
+          <s:enumeration value="Some" />
+          <s:enumeration value="All" />
+        </s:restriction>
+      </s:simpleType>
+      <s:complexType name="DigitalSigningTransactionType">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="DigitalSigningIsRequired" type="tns:DigitalSigningYesNoType" />
+          <s:element minOccurs="1" maxOccurs="1" name="DigitalSigningServiceProvider" type="tns:DigitalSigningProviderType" />
+          <s:element minOccurs="1" maxOccurs="1" name="SigningTransactionStatus" type="tns:SigningTransactionStatusType" />
+          <s:element minOccurs="0" maxOccurs="1" name="SigningTransactionMessage" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DigitalSigningUsername" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DigitalSigningServiceName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ProviderTransactionId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="InternalTransactionGuid" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare3" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="DigitalSigningYesNoType">
+        <s:restriction base="s:string">
+          <s:enumeration value="No" />
+          <s:enumeration value="Yes" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="DigitalSigningProviderType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Provider1" />
+          <s:enumeration value="Provider2" />
+          <s:enumeration value="Provider3" />
+          <s:enumeration value="Provider4" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="SigningTransactionStatusType">
+        <s:restriction base="s:string">
+          <s:enumeration value="None" />
+          <s:enumeration value="Failure" />
+          <s:enumeration value="Success" />
+          <s:enumeration value="Waiting" />
+          <s:enumeration value="Indeterminate" />
+          <s:enumeration value="ProviderDenied" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="CheckRxChangeDeliveryStatus">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="credentials" type="tns:Credentials" />
+            <s:element minOccurs="0" maxOccurs="1" name="accountRequest" type="tns:AccountRequest" />
+            <s:element minOccurs="0" maxOccurs="1" name="rxChangeTransactionId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckRxChangeDeliveryStatusResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckRxChangeDeliveryStatusResult" type="tns:RxChangeDeliveryStatusResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RxChangeDeliveryStatusResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="rxChangeResponseStatusDetail" type="tns:RxChangeDeliveryStatusDetail" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="RxChangeDeliveryStatusDetail">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="TransactionID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="TransmissionStatus" type="tns:TransmissionStatusType" />
+          <s:element minOccurs="1" maxOccurs="1" name="StatusType" type="tns:NcpdpStatusEnum" />
+          <s:element minOccurs="0" maxOccurs="1" name="ReferenceNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Note" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="StatusTimestamp" type="tns:DateTimeCompositeType" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="TransmissionStatusType">
+        <s:restriction base="s:string">
+          <s:enumeration value="NotSent" />
+          <s:enumeration value="Sent" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="NcpdpStatusEnum">
+        <s:restriction base="s:string">
+          <s:enumeration value="Unknown" />
+          <s:enumeration value="Error" />
+          <s:enumeration value="Status" />
+          <s:enumeration value="Verify" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="GetStateDrugScheduleOverrides">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="credentials" type="tns:Credentials" />
+            <s:element minOccurs="0" maxOccurs="1" name="accountRequest" type="tns:AccountRequest" />
+            <s:element minOccurs="0" maxOccurs="1" name="sourceStateAbbreviation" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="destinationValueType" type="tns:DrugScheduleDestinationValueType" />
+            <s:element minOccurs="0" maxOccurs="1" name="destinationValue" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="drugConceptType" type="tns:DrugScheduleDrugConceptType" />
+            <s:element minOccurs="0" maxOccurs="1" name="drugConcept" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:simpleType name="DrugScheduleDestinationValueType">
+        <s:restriction base="s:string">
+          <s:enumeration value="None" />
+          <s:enumeration value="StateCode" />
+          <s:enumeration value="NCPDP" />
+          <s:enumeration value="NPI" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="DrugScheduleDrugConceptType">
+        <s:restriction base="s:string">
+          <s:enumeration value="None" />
+          <s:enumeration value="FDB" />
+          <s:enumeration value="Multum" />
+          <s:enumeration value="NDC" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="GetStateDrugScheduleOverridesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetStateDrugScheduleOverridesResult" type="tns:StateDrugScheduleOverridesResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="StateDrugScheduleOverridesResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="stateDrugScheduleOverrides" type="tns:StateDrugScheduleOverrides" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="StateDrugScheduleOverrides">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SourceStateAbbreviation" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DestinationValueType" type="tns:DrugScheduleDestinationValueType" />
+          <s:element minOccurs="0" maxOccurs="1" name="DestinationValue" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DrugConceptType" type="tns:DrugScheduleDrugConceptType" />
+          <s:element minOccurs="0" maxOccurs="1" name="DrugConcept" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DeaSchedule" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SourceStateScheduleOverride" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DestinationStateScheduleOverride" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetLastPDMPReviewDateByPatient">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="credentials" type="tns:Credentials" />
+            <s:element minOccurs="0" maxOccurs="1" name="accountRequest" type="tns:AccountRequest" />
+            <s:element minOccurs="0" maxOccurs="1" name="patientRequest" type="tns:PatientRequest" />
+            <s:element minOccurs="0" maxOccurs="1" name="patientInformationRequester" type="tns:PatientInformationRequester" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="PatientRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="PatientId" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="PatientInformationRequester">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="UserType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UserId" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetLastPDMPReviewDateByPatientResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetLastPDMPReviewDateByPatientResult" type="tns:PDMPReviewDateByPatientDetailResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="PDMPReviewDateByPatientDetailResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="pdmpReviewDateByPatientDetail" type="tns:PDMPReviewDateByPatientDetail" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="PDMPReviewDateByPatientDetail">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="PatientId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UserId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="UserType" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="HaveDate" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="LastDateChecked" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="PDMPProviderId" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetDailyScriptReport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="credentials" type="tns:Credentials" />
+            <s:element minOccurs="0" maxOccurs="1" name="accountRequest" type="tns:AccountRequest" />
+            <s:element minOccurs="0" maxOccurs="1" name="reportDateCCYYMMDD" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="includeSchema" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sortOrder" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDailyScriptReportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDailyScriptReportResult" type="tns:Result" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="GetDailyScriptReportV2">
         <s:complexType>
           <s:sequence>
@@ -113,12 +419,6 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:complexType name="PatientInformationRequester">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="UserType" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="UserId" type="s:string" />
-        </s:sequence>
-      </s:complexType>
       <s:simpleType name="TimePeriodQueryType">
         <s:restriction base="s:string">
           <s:enumeration value="DateRange" />
@@ -243,11 +543,6 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:complexType name="PatientRequest">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="PatientId" type="s:string" />
-        </s:sequence>
-      </s:complexType>
       <s:complexType name="PrescriptionHistoryRequest">
         <s:sequence>
           <s:element minOccurs="1" maxOccurs="1" name="StartHistory" type="s:dateTime" />
@@ -1606,6 +1901,88 @@
           <s:element minOccurs="0" maxOccurs="1" name="spare3" type="s:string" />
         </s:sequence>
       </s:complexType>
+      <s:element name="PharmacySearchV5">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="credentials" type="tns:Credentials" />
+            <s:element minOccurs="0" maxOccurs="1" name="accountRequest" type="tns:AccountRequest" />
+            <s:element minOccurs="0" maxOccurs="1" name="postalCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="phoneNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="streetName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="pharmacyName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="city" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="state" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ncpdpID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="healthplanID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="healthplanTypeID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="eligibilityIndex" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="pharmacyType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="open24Hours" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="specialtyID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="extraQuery1" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="extraQuery2" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="extraQuery3" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="extraQuery4" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PharmacySearchV5Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PharmacySearchV5Result" type="tns:PharmacyDetailResultV5" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="PharmacyDetailResultV5">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="pharmacyDetailArray" type="tns:ArrayOfPharmacyDetailV5" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfPharmacyDetailV5">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="PharmacyDetailV5" nillable="true" type="tns:PharmacyDetailV5" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="PharmacyDetailV5">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ncpdpID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="address1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="address2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="city" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="state" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="zip" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="phone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="fax" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="crossStreet" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="pharmacyType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="pharmacyDetailType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="serviceLevel" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="status" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="touchDate" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="npi" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="specialty1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="specialty2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="specialty3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="specialty4" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="pharmacyVersionNumber" type="tns:PharmacyVersionNumberType" />
+          <s:element minOccurs="0" maxOccurs="1" name="spare1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="spare2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="spare3" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="PharmacyVersionNumberType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Unknown" />
+          <s:enumeration value="UnlistedVersion" />
+          <s:enumeration value="V42" />
+          <s:enumeration value="V81" />
+          <s:enumeration value="V106" />
+          <s:enumeration value="V106MU2" />
+          <s:enumeration value="V6" />
+        </s:restriction>
+      </s:simpleType>
       <s:element name="GetLocationPharmacies">
         <s:complexType>
           <s:sequence>
@@ -2389,72 +2766,6 @@
           <s:element minOccurs="0" maxOccurs="1" name="rxBatchPrescriptionDetail" type="tns:ArrayOfRxBatchPrescriptionDetail" />
         </s:sequence>
       </s:complexType>
-      <s:complexType name="RxBatchSummary">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="RxBatchTransactionGuid" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="RxBatchTransactionExternalId" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="BatchSummaryCreatedTimestamp" type="tns:DateTimeCompositeType" />
-          <s:element minOccurs="1" maxOccurs="1" name="RxBatchSummaryQueuedStatus" type="tns:RxBatchSummaryQueuedStatusType" />
-          <s:element minOccurs="0" maxOccurs="1" name="RxBatchSummaryStatusMessage" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="DigitalSigningTransaction" type="tns:DigitalSigningTransactionType" />
-          <s:element minOccurs="0" maxOccurs="1" name="Spare1" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Spare2" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Spare3" type="s:string" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="DateTimeCompositeType">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="StringComponent" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="DateTimeComponent" type="s:dateTime" />
-        </s:sequence>
-      </s:complexType>
-      <s:simpleType name="RxBatchSummaryQueuedStatusType">
-        <s:restriction base="s:string">
-          <s:enumeration value="Unknown" />
-          <s:enumeration value="None" />
-          <s:enumeration value="Some" />
-          <s:enumeration value="All" />
-        </s:restriction>
-      </s:simpleType>
-      <s:complexType name="DigitalSigningTransactionType">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="DigitalSigningIsRequired" type="tns:DigitalSigningYesNoType" />
-          <s:element minOccurs="1" maxOccurs="1" name="DigitalSigningServiceProvider" type="tns:DigitalSigningProviderType" />
-          <s:element minOccurs="1" maxOccurs="1" name="SigningTransactionStatus" type="tns:SigningTransactionStatusType" />
-          <s:element minOccurs="0" maxOccurs="1" name="SigningTransactionMessage" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="DigitalSigningUsername" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="DigitalSigningServiceName" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="ProviderTransactionId" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="InternalTransactionGuid" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Spare1" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Spare2" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Spare3" type="s:string" />
-        </s:sequence>
-      </s:complexType>
-      <s:simpleType name="DigitalSigningYesNoType">
-        <s:restriction base="s:string">
-          <s:enumeration value="No" />
-          <s:enumeration value="Yes" />
-        </s:restriction>
-      </s:simpleType>
-      <s:simpleType name="DigitalSigningProviderType">
-        <s:restriction base="s:string">
-          <s:enumeration value="Provider1" />
-          <s:enumeration value="Provider2" />
-          <s:enumeration value="Provider3" />
-          <s:enumeration value="Provider4" />
-        </s:restriction>
-      </s:simpleType>
-      <s:simpleType name="SigningTransactionStatusType">
-        <s:restriction base="s:string">
-          <s:enumeration value="None" />
-          <s:enumeration value="Failure" />
-          <s:enumeration value="Success" />
-          <s:enumeration value="Waiting" />
-          <s:enumeration value="Indeterminate" />
-          <s:enumeration value="ProviderDenied" />
-        </s:restriction>
-      </s:simpleType>
       <s:complexType name="ArrayOfRxBatchPrescriptionDetail">
         <s:sequence>
           <s:element minOccurs="0" maxOccurs="unbounded" name="RxBatchPrescriptionDetail" nillable="true" type="tns:RxBatchPrescriptionDetail" />
@@ -2793,25 +3104,6 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:complexType name="TwoFactorAuthentication">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="AuthenticationType" type="tns:TwoFactorAuthenticationSigningType" />
-          <s:element minOccurs="0" maxOccurs="1" name="Passcode" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Spare1" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Spare2" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Spare3" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Spare4" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Spare5" type="s:string" />
-        </s:sequence>
-      </s:complexType>
-      <s:simpleType name="TwoFactorAuthenticationSigningType">
-        <s:restriction base="s:string">
-          <s:enumeration value="None" />
-          <s:enumeration value="HardToken" />
-          <s:enumeration value="SoftToken" />
-          <s:enumeration value="PushNotification" />
-        </s:restriction>
-      </s:simpleType>
       <s:element name="CompleteRxBatchV2Response">
         <s:complexType>
           <s:sequence>
@@ -2819,28 +3111,6 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:complexType name="CompleteBatchResult">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="result" type="tns:Result" />
-          <s:element minOccurs="0" maxOccurs="1" name="messageDetail" type="tns:MessageDetail" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="MessageDetail">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="CompleteBatchStatus" type="tns:CompleteBatchStatusType" />
-          <s:element minOccurs="0" maxOccurs="1" name="DisplayMessage" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="LogMessage" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="TransactionGuidIn" type="s:string" />
-        </s:sequence>
-      </s:complexType>
-      <s:simpleType name="CompleteBatchStatusType">
-        <s:restriction base="s:string">
-          <s:enumeration value="Succeeded" />
-          <s:enumeration value="Failed" />
-          <s:enumeration value="WaitingForProviderInput" />
-          <s:enumeration value="OTPInvalid" />
-        </s:restriction>
-      </s:simpleType>
       <s:element name="CompleteDigitalSigningBatch">
         <s:complexType>
           <s:sequence>
@@ -2984,20 +3254,6 @@
           <s:element minOccurs="0" maxOccurs="1" name="StatusTimestamp" type="tns:DateTimeCompositeType" />
         </s:sequence>
       </s:complexType>
-      <s:simpleType name="NcpdpStatusEnum">
-        <s:restriction base="s:string">
-          <s:enumeration value="Unknown" />
-          <s:enumeration value="Error" />
-          <s:enumeration value="Status" />
-          <s:enumeration value="Verify" />
-        </s:restriction>
-      </s:simpleType>
-      <s:simpleType name="TransmissionStatusType">
-        <s:restriction base="s:string">
-          <s:enumeration value="NotSent" />
-          <s:enumeration value="Sent" />
-        </s:restriction>
-      </s:simpleType>
       <s:complexType name="MessageStatusDescription">
         <s:sequence>
           <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
@@ -3088,6 +3344,69 @@
           <s:enumeration value="NoAttemptWillBeMadeToObtainPriorAuthorization" />
           <s:enumeration value="DeniedNewPrescriptionToFollow" />
           <s:enumeration value="RequestAlreadyRespondedToByOtherMeans" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="CheckCancelRxStatusV2">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="credentials" type="tns:Credentials" />
+            <s:element minOccurs="0" maxOccurs="1" name="accountRequest" type="tns:AccountRequest" />
+            <s:element minOccurs="0" maxOccurs="1" name="transactionId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckCancelRxStatusV2Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckCancelRxStatusV2Result" type="tns:CheckCancelRxStatusV2Result" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="CheckCancelRxStatusV2Result">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="cancelRxResponse" type="tns:CheckCancelRxStatusV2Response" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="CheckCancelRxStatusV2Response">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="TransactionID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="TransmissionStatus" type="tns:TransmissionStatusType" />
+          <s:element minOccurs="1" maxOccurs="1" name="StatusType" type="tns:NcpdpStatusEnum" />
+          <s:element minOccurs="1" maxOccurs="1" name="ResponseCode" type="tns:CancelResponseCodeV2Type" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResponseDenyCodeArray" type="tns:ArrayOfCancelResponseCodeDetailV2Type" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResponseApproveCodeArray" type="tns:ArrayOfCancelResponseCodeDetailV2Type" />
+          <s:element minOccurs="0" maxOccurs="1" name="ReferenceNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Note" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="StatusTimestamp" type="tns:DateTimeCompositeType" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare4" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="CancelResponseCodeV2Type">
+        <s:restriction base="s:string">
+          <s:enumeration value="Accept" />
+          <s:enumeration value="Deny" />
+          <s:enumeration value="UnableToProcess" />
+          <s:enumeration value="Undetermined" />
+          <s:enumeration value="ApprovedWithChanges" />
+        </s:restriction>
+      </s:simpleType>
+      <s:complexType name="ArrayOfCancelResponseCodeDetailV2Type">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="CancelResponseCodeDetailV2Type" type="tns:CancelResponseCodeDetailV2Type" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="CancelResponseCodeDetailV2Type">
+        <s:restriction base="s:string">
+          <s:enumeration value="Unknown" />
+          <s:enumeration value="PatientUnknownToThePrescriber" />
+          <s:enumeration value="PatientNeverUnderPrescriberCare" />
+          <s:enumeration value="PatientNoLongerUnderPrescriberCare" />
+          <s:enumeration value="RequestAlreadyRespondedToByOtherMeans" />
+          <s:enumeration value="UnableToCancelPrescriptionTransferred" />
         </s:restriction>
       </s:simpleType>
       <s:element name="ConfirmCancelRx">
@@ -3188,6 +3507,7 @@
         <s:restriction base="s:string">
           <s:enumeration value="Unknown" />
           <s:enumeration value="V106" />
+          <s:enumeration value="V2017071" />
         </s:restriction>
       </s:simpleType>
       <s:simpleType name="NcpdpMessageCompressionType">
@@ -3258,6 +3578,74 @@
           <s:element minOccurs="0" maxOccurs="1" name="ReceivedTimestamp" type="tns:DateTimeCompositeType" />
         </s:sequence>
       </s:complexType>
+      <s:element name="GetAllRxChangesSummaryV2">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="credentials" type="tns:Credentials" />
+            <s:element minOccurs="0" maxOccurs="1" name="accountRequest" type="tns:AccountRequest" />
+            <s:element minOccurs="0" maxOccurs="1" name="locationId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="licensedPrescriberId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAllRxChangesSummaryV2Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetAllRxChangesSummaryV2Result" type="tns:GetRxChangesSummaryV2Result" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="GetRxChangesSummaryV2Result">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="rxChangeSummaryV2Array" type="tns:ArrayOfRxChangeSummaryV2" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfRxChangeSummaryV2">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="RxChangeSummaryV2" nillable="true" type="tns:RxChangeSummaryV2" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="RxChangeSummaryV2">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="RxChangeGuid" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="OriginalTransactionGuid" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="OriginalTransactionType" type="tns:RxChangeV2TransactionType" />
+          <s:element minOccurs="1" maxOccurs="1" name="RxChangeRequest" type="tns:RxChangeV2RequestType" />
+          <s:element minOccurs="0" maxOccurs="1" name="ReceivedTimestamp" type="tns:DateTimeCompositeType" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExternalLocationId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExternalDoctorId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExternalPatientId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ExternalPrescriptionId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="NcpdpId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacyStoreName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare4" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare5" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Spare6" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="RxChangeV2TransactionType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Unknown" />
+          <s:enumeration value="NewRx" />
+          <s:enumeration value="Renewal" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="RxChangeV2RequestType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Unknown" />
+          <s:enumeration value="TherapeuticInterchange" />
+          <s:enumeration value="GenericSubstitution" />
+          <s:enumeration value="PriorAuthorization" />
+          <s:enumeration value="DrugUseEvaluation" />
+          <s:enumeration value="ScriptClarification" />
+          <s:enumeration value="OutOfStock" />
+          <s:enumeration value="PrescriberAuthorizationRequired" />
+        </s:restriction>
+      </s:simpleType>
       <s:element name="GetRxChangeDetail">
         <s:complexType>
           <s:sequence>
@@ -3344,6 +3732,10 @@
           <s:enumeration value="TherapeuticInterchange" />
           <s:enumeration value="GenericSubstitution" />
           <s:enumeration value="PriorAuthorization" />
+          <s:enumeration value="DrugUseEvaluation" />
+          <s:enumeration value="ScriptClarification" />
+          <s:enumeration value="OutOfStock" />
+          <s:enumeration value="PrescriberAuthorizationRequired" />
         </s:restriction>
       </s:simpleType>
       <s:complexType name="ArrayOfRxChangeDerivedSchedulesType">
@@ -3418,22 +3810,6 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:complexType name="RxChangeDeliveryStatusResult">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="result" type="tns:Result" />
-          <s:element minOccurs="0" maxOccurs="1" name="rxChangeResponseStatusDetail" type="tns:RxChangeDeliveryStatusDetail" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="RxChangeDeliveryStatusDetail">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="TransactionID" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="TransmissionStatus" type="tns:TransmissionStatusType" />
-          <s:element minOccurs="1" maxOccurs="1" name="StatusType" type="tns:NcpdpStatusEnum" />
-          <s:element minOccurs="0" maxOccurs="1" name="ReferenceNumber" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Note" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="StatusTimestamp" type="tns:DateTimeCompositeType" />
-        </s:sequence>
-      </s:complexType>
       <s:element name="CreateRxChangeApprovalResponse">
         <s:complexType>
           <s:sequence>
@@ -3504,55 +3880,6 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="CompleteRxChangeApprovalResult" type="tns:Result" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="CompleteRxChangeApprovalV2">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="credentials" type="tns:Credentials" />
-            <s:element minOccurs="0" maxOccurs="1" name="accountRequest" type="tns:AccountRequest" />
-            <s:element minOccurs="0" maxOccurs="1" name="rxBatchTransactionGuid" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="twoFactorAuthentication" type="tns:TwoFactorAuthentication" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="CompleteRxChangeApprovalV2Response">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="CompleteRxChangeApprovalV2Result" type="tns:CompleteBatchResult" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="RollbackRxChangeApproval">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="credentials" type="tns:Credentials" />
-            <s:element minOccurs="0" maxOccurs="1" name="accountRequest" type="tns:AccountRequest" />
-            <s:element minOccurs="0" maxOccurs="1" name="rxChangeGuid" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="RollbackRxChangeApprovalResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="RollbackRxChangeApprovalResult" type="tns:Result" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="CheckRxChangeDeliveryStatus">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="credentials" type="tns:Credentials" />
-            <s:element minOccurs="0" maxOccurs="1" name="accountRequest" type="tns:AccountRequest" />
-            <s:element minOccurs="0" maxOccurs="1" name="rxChangeTransactionId" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="CheckRxChangeDeliveryStatusResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="CheckRxChangeDeliveryStatusResult" type="tns:RxChangeDeliveryStatusResult" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -3719,6 +4046,10 @@
           <s:element minOccurs="0" maxOccurs="1" name="weight" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="weightUnits" type="s3:WeightUnitType" />
           <s:element minOccurs="0" maxOccurs="1" name="language" type="s3:LanguageType" />
+          <s:element minOccurs="0" maxOccurs="1" name="heightUnitsCodified" type="s3:HeightUnitType" />
+          <s:element minOccurs="0" maxOccurs="1" name="heightObservedDate" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="weightObservedDate" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="weightUnitsCodified" type="s3:WeightUnitV2Type" />
         </s:sequence>
       </s:complexType>
       <s:complexType name="PatientAllergyType">
@@ -3730,6 +4061,8 @@
           <s:element minOccurs="0" maxOccurs="1" name="conceptID" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="conceptType" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="onsetDate" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="allergySubTypeID" type="s3:DrugSubType" />
+          <s:element minOccurs="0" maxOccurs="1" name="allergyName" type="s:string" />
         </s:sequence>
       </s:complexType>
       <s:complexType name="PatientHealthplanType">
@@ -3928,6 +4261,10 @@
           <s:enumeration value="VI" />
           <s:enumeration value="DMD" />
           <s:enumeration value="ND" />
+          <s:enumeration value="DNP" />
+          <s:enumeration value="FNP-BC" />
+          <s:enumeration value="PMHNP-BC" />
+          <s:enumeration value="DVM" />
         </s:restriction>
       </s:simpleType>
       <s:simpleType name="PrescriberStatus">
@@ -3988,6 +4325,20 @@
           <s:enumeration value="Vietnamese" />
         </s:restriction>
       </s:simpleType>
+      <s:simpleType name="HeightUnitType">
+        <s:restriction base="s:string">
+          <s:enumeration value="IN" />
+          <s:enumeration value="IN_I" />
+          <s:enumeration value="CM" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="WeightUnitV2Type">
+        <s:restriction base="s:string">
+          <s:enumeration value="LB" />
+          <s:enumeration value="LBS" />
+          <s:enumeration value="KG" />
+        </s:restriction>
+      </s:simpleType>
       <s:simpleType name="DrugDatabaseType">
         <s:restriction base="s:string">
           <s:enumeration value="FDA" />
@@ -4004,6 +4355,16 @@
           <s:enumeration value="Mild" />
           <s:enumeration value="Moderate" />
           <s:enumeration value="Severe" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="DrugSubType">
+        <s:restriction base="s:string">
+          <s:enumeration value="SCD" />
+          <s:enumeration value="SBD" />
+          <s:enumeration value="BPK" />
+          <s:enumeration value="GPK" />
+          <s:enumeration value="IN" />
+          <s:enumeration value="MIN" />
         </s:restriction>
       </s:simpleType>
       <s:simpleType name="HealthplanType">
@@ -4051,6 +4412,42 @@
       </s:simpleType>
     </s:schema>
   </wsdl:types>
+  <wsdl:message name="CompleteRxChangeApprovalV2SoapIn">
+    <wsdl:part name="parameters" element="tns:CompleteRxChangeApprovalV2" />
+  </wsdl:message>
+  <wsdl:message name="CompleteRxChangeApprovalV2SoapOut">
+    <wsdl:part name="parameters" element="tns:CompleteRxChangeApprovalV2Response" />
+  </wsdl:message>
+  <wsdl:message name="RollbackRxChangeApprovalSoapIn">
+    <wsdl:part name="parameters" element="tns:RollbackRxChangeApproval" />
+  </wsdl:message>
+  <wsdl:message name="RollbackRxChangeApprovalSoapOut">
+    <wsdl:part name="parameters" element="tns:RollbackRxChangeApprovalResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetRxChangeStatusSoapIn">
+    <wsdl:part name="parameters" element="tns:GetRxChangeStatus" />
+  </wsdl:message>
+  <wsdl:message name="GetRxChangeStatusSoapOut">
+    <wsdl:part name="parameters" element="tns:GetRxChangeStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckRxChangeDeliveryStatusSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckRxChangeDeliveryStatus" />
+  </wsdl:message>
+  <wsdl:message name="CheckRxChangeDeliveryStatusSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckRxChangeDeliveryStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetStateDrugScheduleOverridesSoapIn">
+    <wsdl:part name="parameters" element="tns:GetStateDrugScheduleOverrides" />
+  </wsdl:message>
+  <wsdl:message name="GetStateDrugScheduleOverridesSoapOut">
+    <wsdl:part name="parameters" element="tns:GetStateDrugScheduleOverridesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetLastPDMPReviewDateByPatientSoapIn">
+    <wsdl:part name="parameters" element="tns:GetLastPDMPReviewDateByPatient" />
+  </wsdl:message>
+  <wsdl:message name="GetLastPDMPReviewDateByPatientSoapOut">
+    <wsdl:part name="parameters" element="tns:GetLastPDMPReviewDateByPatientResponse" />
+  </wsdl:message>
   <wsdl:message name="GetDailyScriptReportSoapIn">
     <wsdl:part name="parameters" element="tns:GetDailyScriptReport" />
   </wsdl:message>
@@ -4272,6 +4669,12 @@
   </wsdl:message>
   <wsdl:message name="PharmacySearchV4SoapOut">
     <wsdl:part name="parameters" element="tns:PharmacySearchV4Response" />
+  </wsdl:message>
+  <wsdl:message name="PharmacySearchV5SoapIn">
+    <wsdl:part name="parameters" element="tns:PharmacySearchV5" />
+  </wsdl:message>
+  <wsdl:message name="PharmacySearchV5SoapOut">
+    <wsdl:part name="parameters" element="tns:PharmacySearchV5Response" />
   </wsdl:message>
   <wsdl:message name="GetLocationPharmaciesSoapIn">
     <wsdl:part name="parameters" element="tns:GetLocationPharmacies" />
@@ -4519,6 +4922,12 @@
   <wsdl:message name="CheckCancelRxStatusSoapOut">
     <wsdl:part name="parameters" element="tns:CheckCancelRxStatusResponse" />
   </wsdl:message>
+  <wsdl:message name="CheckCancelRxStatusV2SoapIn">
+    <wsdl:part name="parameters" element="tns:CheckCancelRxStatusV2" />
+  </wsdl:message>
+  <wsdl:message name="CheckCancelRxStatusV2SoapOut">
+    <wsdl:part name="parameters" element="tns:CheckCancelRxStatusV2Response" />
+  </wsdl:message>
   <wsdl:message name="ConfirmCancelRxSoapIn">
     <wsdl:part name="parameters" element="tns:ConfirmCancelRx" />
   </wsdl:message>
@@ -4548,6 +4957,12 @@
   </wsdl:message>
   <wsdl:message name="GetAllRxChangesSummarySoapOut">
     <wsdl:part name="parameters" element="tns:GetAllRxChangesSummaryResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetAllRxChangesSummaryV2SoapIn">
+    <wsdl:part name="parameters" element="tns:GetAllRxChangesSummaryV2" />
+  </wsdl:message>
+  <wsdl:message name="GetAllRxChangesSummaryV2SoapOut">
+    <wsdl:part name="parameters" element="tns:GetAllRxChangesSummaryV2Response" />
   </wsdl:message>
   <wsdl:message name="GetRxChangeDetailSoapIn">
     <wsdl:part name="parameters" element="tns:GetRxChangeDetail" />
@@ -4579,25 +4994,37 @@
   <wsdl:message name="CompleteRxChangeApprovalSoapOut">
     <wsdl:part name="parameters" element="tns:CompleteRxChangeApprovalResponse" />
   </wsdl:message>
-  <wsdl:message name="CompleteRxChangeApprovalV2SoapIn">
-    <wsdl:part name="parameters" element="tns:CompleteRxChangeApprovalV2" />
-  </wsdl:message>
-  <wsdl:message name="CompleteRxChangeApprovalV2SoapOut">
-    <wsdl:part name="parameters" element="tns:CompleteRxChangeApprovalV2Response" />
-  </wsdl:message>
-  <wsdl:message name="RollbackRxChangeApprovalSoapIn">
-    <wsdl:part name="parameters" element="tns:RollbackRxChangeApproval" />
-  </wsdl:message>
-  <wsdl:message name="RollbackRxChangeApprovalSoapOut">
-    <wsdl:part name="parameters" element="tns:RollbackRxChangeApprovalResponse" />
-  </wsdl:message>
-  <wsdl:message name="CheckRxChangeDeliveryStatusSoapIn">
-    <wsdl:part name="parameters" element="tns:CheckRxChangeDeliveryStatus" />
-  </wsdl:message>
-  <wsdl:message name="CheckRxChangeDeliveryStatusSoapOut">
-    <wsdl:part name="parameters" element="tns:CheckRxChangeDeliveryStatusResponse" />
-  </wsdl:message>
   <wsdl:portType name="Update1Soap">
+    <wsdl:operation name="CompleteRxChangeApprovalV2">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Completes an RxChange approval response - synchronous send pharmacy.</wsdl:documentation>
+      <wsdl:input message="tns:CompleteRxChangeApprovalV2SoapIn" />
+      <wsdl:output message="tns:CompleteRxChangeApprovalV2SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RollbackRxChangeApproval">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Rollback an RxChange approval response - does not send to pharmacy - must still be approved or denied.</wsdl:documentation>
+      <wsdl:input message="tns:RollbackRxChangeApprovalSoapIn" />
+      <wsdl:output message="tns:RollbackRxChangeApprovalSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRxChangeStatus">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Gets the signing status of an approved RxChange message. Also pushes the RxChange message if it has not been sent to the pharmacy.</wsdl:documentation>
+      <wsdl:input message="tns:GetRxChangeStatusSoapIn" />
+      <wsdl:output message="tns:GetRxChangeStatusSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckRxChangeDeliveryStatus">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Checks the status of a previously sent RxChange response message to the pharmacy.</wsdl:documentation>
+      <wsdl:input message="tns:CheckRxChangeDeliveryStatusSoapIn" />
+      <wsdl:output message="tns:CheckRxChangeDeliveryStatusSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStateDrugScheduleOverrides">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">GetStateDrugScheduleOverrides returns state schedule overrides if available.</wsdl:documentation>
+      <wsdl:input message="tns:GetStateDrugScheduleOverridesSoapIn" />
+      <wsdl:output message="tns:GetStateDrugScheduleOverridesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLastPDMPReviewDateByPatient">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">GetLastPDMPReviewDateByPatient returns the last date a given provider reviewed patient PDMP info.</wsdl:documentation>
+      <wsdl:input message="tns:GetLastPDMPReviewDateByPatientSoapIn" />
+      <wsdl:output message="tns:GetLastPDMPReviewDateByPatientSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="GetDailyScriptReport">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">This web method has been SUPERSEDED by a newer version.</wsdl:documentation>
       <wsdl:input message="tns:GetDailyScriptReportSoapIn" />
@@ -4782,6 +5209,11 @@
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Searches for available pharmacies based on the search criteria provided.</wsdl:documentation>
       <wsdl:input message="tns:PharmacySearchV4SoapIn" />
       <wsdl:output message="tns:PharmacySearchV4SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PharmacySearchV5">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Searches for available pharmacies based on the search criteria provided.</wsdl:documentation>
+      <wsdl:input message="tns:PharmacySearchV5SoapIn" />
+      <wsdl:output message="tns:PharmacySearchV5SoapOut" />
     </wsdl:operation>
     <wsdl:operation name="GetLocationPharmacies">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns a list of location specific pharmacies based on the location ID provided.</wsdl:documentation>
@@ -4987,6 +5419,11 @@
       <wsdl:input message="tns:CheckCancelRxStatusSoapIn" />
       <wsdl:output message="tns:CheckCancelRxStatusSoapOut" />
     </wsdl:operation>
+    <wsdl:operation name="CheckCancelRxStatusV2">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Checks the status of a previously sent CancelRx message to the pharmacy.</wsdl:documentation>
+      <wsdl:input message="tns:CheckCancelRxStatusV2SoapIn" />
+      <wsdl:output message="tns:CheckCancelRxStatusV2SoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="ConfirmCancelRx">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Confirms the CancelRx response is stored in the database. Sends a Verify message to the pharmacy.</wsdl:documentation>
       <wsdl:input message="tns:ConfirmCancelRxSoapIn" />
@@ -5011,6 +5448,11 @@
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns any outstanding pharmacy Rx Change requests with summary information only.</wsdl:documentation>
       <wsdl:input message="tns:GetAllRxChangesSummarySoapIn" />
       <wsdl:output message="tns:GetAllRxChangesSummarySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllRxChangesSummaryV2">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns any outstanding pharmacy Rx Change requests with summary V2 information only.</wsdl:documentation>
+      <wsdl:input message="tns:GetAllRxChangesSummaryV2SoapIn" />
+      <wsdl:output message="tns:GetAllRxChangesSummaryV2SoapOut" />
     </wsdl:operation>
     <wsdl:operation name="GetRxChangeDetail">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Retrieves a specific RxChange message for processing based on a unique RxChange ID.</wsdl:documentation>
@@ -5037,25 +5479,64 @@
       <wsdl:input message="tns:CompleteRxChangeApprovalSoapIn" />
       <wsdl:output message="tns:CompleteRxChangeApprovalSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="CompleteRxChangeApprovalV2">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Completes an RxChange approval response - synchronous send pharmacy.</wsdl:documentation>
-      <wsdl:input message="tns:CompleteRxChangeApprovalV2SoapIn" />
-      <wsdl:output message="tns:CompleteRxChangeApprovalV2SoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="RollbackRxChangeApproval">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Rollback an RxChange approval response - does not send to pharmacy - must still be approved or denied.</wsdl:documentation>
-      <wsdl:input message="tns:RollbackRxChangeApprovalSoapIn" />
-      <wsdl:output message="tns:RollbackRxChangeApprovalSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="CheckRxChangeDeliveryStatus">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Checks the status of a previously sent RxChange response message to the pharmacy.</wsdl:documentation>
-      <wsdl:input message="tns:CheckRxChangeDeliveryStatusSoapIn" />
-      <wsdl:output message="tns:CheckRxChangeDeliveryStatusSoapOut" />
-    </wsdl:operation>
   </wsdl:portType>
   <wsdl:portType name="Update1HttpPost" />
   <wsdl:binding name="Update1Soap" type="tns:Update1Soap">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="CompleteRxChangeApprovalV2">
+      <soap:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/CompleteRxChangeApprovalV2" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RollbackRxChangeApproval">
+      <soap:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/RollbackRxChangeApproval" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRxChangeStatus">
+      <soap:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/GetRxChangeStatus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckRxChangeDeliveryStatus">
+      <soap:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/CheckRxChangeDeliveryStatus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStateDrugScheduleOverrides">
+      <soap:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/GetStateDrugScheduleOverrides" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetLastPDMPReviewDateByPatient">
+      <soap:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/GetLastPDMPReviewDateByPatient" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetDailyScriptReport">
       <soap:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/GetDailyScriptReport" style="document" />
       <wsdl:input>
@@ -5382,6 +5863,15 @@
     </wsdl:operation>
     <wsdl:operation name="PharmacySearchV4">
       <soap:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/PharmacySearchV4" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PharmacySearchV5">
+      <soap:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/PharmacySearchV5" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -5758,6 +6248,15 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="CheckCancelRxStatusV2">
+      <soap:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/CheckCancelRxStatusV2" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="ConfirmCancelRx">
       <soap:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/ConfirmCancelRx" style="document" />
       <wsdl:input>
@@ -5796,6 +6295,15 @@
     </wsdl:operation>
     <wsdl:operation name="GetAllRxChangesSummary">
       <soap:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/GetAllRxChangesSummary" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllRxChangesSummaryV2">
+      <soap:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/GetAllRxChangesSummaryV2" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -5848,36 +6356,63 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="CompleteRxChangeApprovalV2">
-      <soap:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/CompleteRxChangeApprovalV2" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="RollbackRxChangeApproval">
-      <soap:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/RollbackRxChangeApproval" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="CheckRxChangeDeliveryStatus">
-      <soap:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/CheckRxChangeDeliveryStatus" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="Update1Soap12" type="tns:Update1Soap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="CompleteRxChangeApprovalV2">
+      <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/CompleteRxChangeApprovalV2" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RollbackRxChangeApproval">
+      <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/RollbackRxChangeApproval" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRxChangeStatus">
+      <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/GetRxChangeStatus" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckRxChangeDeliveryStatus">
+      <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/CheckRxChangeDeliveryStatus" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStateDrugScheduleOverrides">
+      <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/GetStateDrugScheduleOverrides" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetLastPDMPReviewDateByPatient">
+      <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/GetLastPDMPReviewDateByPatient" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetDailyScriptReport">
       <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/GetDailyScriptReport" style="document" />
       <wsdl:input>
@@ -6204,6 +6739,15 @@
     </wsdl:operation>
     <wsdl:operation name="PharmacySearchV4">
       <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/PharmacySearchV4" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PharmacySearchV5">
+      <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/PharmacySearchV5" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -6580,6 +7124,15 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="CheckCancelRxStatusV2">
+      <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/CheckCancelRxStatusV2" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="ConfirmCancelRx">
       <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/ConfirmCancelRx" style="document" />
       <wsdl:input>
@@ -6625,6 +7178,15 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetAllRxChangesSummaryV2">
+      <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/GetAllRxChangesSummaryV2" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetRxChangeDetail">
       <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/GetRxChangeDetail" style="document" />
       <wsdl:input>
@@ -6663,33 +7225,6 @@
     </wsdl:operation>
     <wsdl:operation name="CompleteRxChangeApproval">
       <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/CompleteRxChangeApproval" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="CompleteRxChangeApprovalV2">
-      <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/CompleteRxChangeApprovalV2" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="RollbackRxChangeApproval">
-      <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/RollbackRxChangeApproval" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="CheckRxChangeDeliveryStatus">
-      <soap12:operation soapAction="https://secure.newcropaccounts.com/V7/webservices/CheckRxChangeDeliveryStatus" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
