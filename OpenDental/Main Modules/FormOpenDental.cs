@@ -5632,11 +5632,11 @@ namespace OpenDental{
 					FormCAO.Show();
 					break;
 				case ReportNonModalSelection.IncompleteProcNotes:
-					FormRpProcNote FormPN=new FormRpProcNote();
+					FormRpProcNote FormPN=new FormRpProcNote(this);
 					FormPN.Show();
 					break;
 				case ReportNonModalSelection.ProcNotBilledIns:
-					FormRpProcNotBilledIns FormProc=new FormRpProcNotBilledIns();
+					FormRpProcNotBilledIns FormProc=new FormRpProcNotBilledIns(this);
 					//Both FormRpProcNotBilledIns and FormClaimsSend are non-modal.
 					//If both forms are open try and update FormClaimsSend to reflect any newly created claims.
 					FormProc.OnPostClaimCreation+=() => controlManage.TryRefreshFormClaimSend();

@@ -503,7 +503,7 @@ namespace OpenDental{
 					toolBarButRefresh_Click();
 					break;
 				case "ProcsNotBilled":
-					FormRpProcNotBilledIns FormProc=new FormRpProcNotBilledIns();
+					FormRpProcNotBilledIns FormProc=new FormRpProcNotBilledIns(this);
 					FormProc.OnPostClaimCreation+=() => RefreshClaimsGrid();//Refresh grid to show any newly created claims.
 					FormProc.FormClosed+=(s,ea) => { ODEvent.Fired-=formProcNotBilled_GoToChanged; };
 					ODEvent.Fired+=formProcNotBilled_GoToChanged;

@@ -478,7 +478,7 @@ namespace OpenDentBusiness {
 			///<summary>Creates and returns the EdgeExpress URL and validation OTK which can be used to make a payment for an unspecified credit card.
 			///</summary>
 			public static XWebResponse GetUrlForPaymentPage(long patNum,string payNote,double amount,bool createAlias,
-				CreditCardSource ccSource,bool isWebPayment,string alias="",bool allowDuplicates=false,string email="")
+				CreditCardSource ccSource,bool isWebPayment,string alias="",bool allowDuplicates=false,string email="",long paymentNum=0)
 			{
 				//No need to check RemotingRole;no call to db.
 				if(!ListTools.In(ccSource,CreditCardSource.XWeb,CreditCardSource.XWebPortalLogin,CreditCardSource.EdgeExpressCNP)) {
@@ -495,6 +495,7 @@ namespace OpenDentBusiness {
 					response.PayNote=payNote;
 					response.CCSource=ccSource;
 					response.EmailResponse=email;
+					response.PaymentNum=paymentNum;
 					FinishEdgeExpressUrlRequest(response);
 					return response;
 				}

@@ -88,7 +88,8 @@ namespace OpenDentBusiness{
 				+"WHERE TransactionStatus IN("+POut.Int((int)XWebTransactionStatus.HpfPending)+", "+POut.Int((int)XWebTransactionStatus.EdgeExpressPending)+") "
 				+"AND TransactionType IN('"+POut.String(XWebTransactionType.AliasCreateTransaction.ToString())+"', '"
 					+POut.String(XWebTransactionType.CreditSaleTransaction.ToString())+"','"+POut.String(XWebTransactionType.CreditSale.ToString())+"','"
-					+POut.String(XWebTransactionType.CreditAuth.ToString())+"')");
+					+POut.String(XWebTransactionType.CreditAuth.ToString())+"') "
+				+"AND PaymentNum=0");
 		}
 
 		///<summary>Gets all XWebResponse transactions that are marked as EdgeExpressMonitoringError,EdgeExpressPending, or EdgeExpressExpired.</summary>

@@ -2398,7 +2398,7 @@ namespace OpenDental {
 			switch(transType) {
 				case EdgeExpressTransType.CreditSale:
 					response=EdgeExpress.CNP.GetUrlForPaymentPage(_patCur.PatNum,textNote.Text,amt,
-						doCreateToken,CreditCardSource.EdgeExpressCNP,false,aliasToken);
+						doCreateToken,CreditCardSource.EdgeExpressCNP,false,aliasToken,paymentNum:_paymentCur.PayNum);
 					using(FormWebBrowser formWB=new FormWebBrowser(response.HpfUrl)) {//Braces required within switch statements.
 						formWB.ShowDialog();
 					}

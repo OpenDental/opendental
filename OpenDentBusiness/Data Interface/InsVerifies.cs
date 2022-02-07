@@ -228,7 +228,8 @@ namespace OpenDentBusiness{
 			}
 			bool checkBenefitYear=PrefC.GetBool(PrefName.InsVerifyFutureDateBenefitYear);
 			bool checkPatEnrollmentYear=PrefC.GetBool(PrefName.InsVerifyFutureDatePatEnrollmentYear);
-			bool checkBenefitAndPatEnrollmentYear=(checkBenefitYear && checkPatEnrollmentYear);
+			bool checkBenefitAndPatEnrollmentYearOn=(checkBenefitYear && checkPatEnrollmentYear);
+			bool checkBenefitAndPatEnrollmentYearOff=(!checkBenefitYear && !checkPatEnrollmentYear);
 			string mainQuery=@"
 				SELECT insverify.*,
 				patient.LName,patient.FName,patient.Preferred,appointment.PatNum,appointment.AptNum,appointment.AptDateTime,patplan.PatPlanNum,insplan.PlanNum,carrier.CarrierName,
@@ -308,7 +309,7 @@ namespace OpenDentBusiness{
 							&& x.PatInsVerify.Note==insVerifyCur.Note 
 							&& x.PatInsVerify.DefNum==insVerifyCur.DefNum 
 							&& x.PlanInsVerify==null);
-						if(checkBenefitAndPatEnrollmentYear && gridObjExists!=null) {
+						if((checkBenefitAndPatEnrollmentYearOn || checkBenefitAndPatEnrollmentYearOff) && gridObjExists!=null) {//Both prefs on/off means combine pat/ins rows.
 							gridObjExists.PlanInsVerify=insVerifyCur;
 						}
 						else {
@@ -324,7 +325,7 @@ namespace OpenDentBusiness{
 						&& x.PlanInsVerify.Note==insVerifyCur.Note 
 						&& x.PlanInsVerify.DefNum==insVerifyCur.DefNum 
 						&& x.PatInsVerify==null);
-						if(checkBenefitAndPatEnrollmentYear && gridObjExists!=null) {
+						if((checkBenefitAndPatEnrollmentYearOn || checkBenefitAndPatEnrollmentYearOff) && gridObjExists!=null) {//Both prefs on/off means combine pat/ins rows.
 							gridObjExists.PatInsVerify=insVerifyCur;
 						}
 						else {
