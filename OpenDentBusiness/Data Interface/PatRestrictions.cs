@@ -111,20 +111,22 @@ namespace OpenDentBusiness {
 			return Crud.PatRestrictionCrud.Insert(new PatRestriction() { PatNum=patNum,PatRestrictType=patRestrictType });
 		}
 
-		///<summary>This will only insert a new PatRestriction if there is not already an existing PatRestriction in the db for the family member and type.</summary>
-		public static void InsertForFam(Family fam,PatRestrict patRestrictType) {
+		///<summary>This will only insert a new PatRestriction if there is not already an existing PatRestriction in the db for the family member and type.
+		///Returns the list of PatNums that were restricted.</summary>
+		public static List<long> InsertForFam(Family fam,PatRestrict patRestrictType) {
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb){
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),fam,patRestrictType);
-				return;
+				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod(),fam,patRestrictType);
 			}
 			List<long> listFamPatNums=fam.ListPats.Select(x => x.PatNum).ToList();
 			string command=$@"SELECT PatNum FROM patrestriction
 				WHERE PatNum IN ({string.Join(",",listFamPatNums.Select(x => POut.Long(x)))})
 				AND PatRestrictType={POut.Enum<PatRestrict>(patRestrictType)}";
 			List<long> listPatsToSkip=Db.GetListLong(command);
-			foreach(long patNumCur in listFamPatNums.Where(x => !listPatsToSkip.Contains(x))) {
-				Crud.PatRestrictionCrud.Insert(new PatRestriction() { PatNum=patNumCur,PatRestrictType=patRestrictType });
+			List<long> listPatNumsToRestrict=listFamPatNums.FindAll(x => !listPatsToSkip.Contains(x));
+			for(int i=0;i<listPatNumsToRestrict.Count;i++) {
+				Crud.PatRestrictionCrud.Insert(new PatRestriction() { PatNum=listPatNumsToRestrict[i],PatRestrictType=patRestrictType });
 			}
+			return listPatNumsToRestrict;
 		}
 
 		///<summary>Checks for an existing patrestriction for the specified patient and PatRestrictType.
@@ -185,6 +187,14 @@ namespace OpenDentBusiness {
 			string command="DELETE FROM patrestriction WHERE PatNum="+POut.Long(patNum)+" AND PatRestrictType="+POut.Int((int)patRestrictType);
 			Db.NonQ(command);
 			return;
+		}
+
+		///<summary>Inserts a security log message when a PatRestrict.ApptSchedule value is changed.</summary>
+		public static void InsertPatRestrictApptChangeSecurityLog(long patNum,bool isPatRestrictedOld,bool isPatRestrictedNew) {
+			//No need to check RemotingRole; no call to db.
+			if(isPatRestrictedOld!=isPatRestrictedNew) {
+				SecurityLogs.MakeLogEntry(Permissions.PatientApptRestrict,patNum,"Patient restriction type changed from " +isPatRestrictedOld +" to " +isPatRestrictedNew);
+			}
 		}
 
 		//Only pull out the methods below as you need them.  Otherwise, leave them commented out.

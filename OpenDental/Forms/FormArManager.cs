@@ -1713,7 +1713,13 @@ namespace OpenDental {
 			if(outstandingFound) {
 				string message=Lan.g(this,"Would you like to restrict appointment scheduling for the patients with outstanding claims?");
 				if(MsgBox.Show(MsgBoxButtons.YesNo,message)) {
-					listFamiliesOutstanding.ForEach(x => PatRestrictions.InsertForFam(x,PatRestrict.ApptSchedule));
+					List<long> listPatNumsRestricted=new List<long>();
+					for(int i=0;i<listFamiliesOutstanding.Count;i++) { //Restrict each family member and keep track of which PatNums were restricted
+						listPatNumsRestricted.AddRange(PatRestrictions.InsertForFam(listFamiliesOutstanding[i],PatRestrict.ApptSchedule));
+					}
+					for(int i=0;i<listPatNumsRestricted.Count;i++) { //Log each restriction. Since this is after inserting, this only changes the restriction from false to true.
+						PatRestrictions.InsertPatRestrictApptChangeSecurityLog(listPatNumsRestricted[i],isPatRestrictedOld:false,isPatRestrictedNew:true);
+					}
 				}
 			}
 			#region FillGrids With Updated Info

@@ -9988,10 +9988,17 @@ HAVING cnt>1";
 					$"WHERE {POut.String(x.ColumnName)} NOT IN (SELECT PatNum FROM patient)"))
 				+"\r\n) missing ";
 			List<long> listMissingPatNums=Db.GetListLong(command);
+			int modifiedCount=0;
+			command="SELECT MAX(PatNum) FROM patient";
+			long maxPatNum=Db.GetLong(command);
 			//Fix is safe because we are not deleting data, we are just attaching abandoned objects to a dummy patient.
 			List<DbmLog> listDbmLogs=new List<DbmLog>();
 			string methodName=MethodBase.GetCurrentMethod().Name;
 			for(int i=0;i<listMissingPatNums.Count;i++) {
+				if(listMissingPatNums[i]>maxPatNum+100) {
+					continue;
+				}
+				modifiedCount++;
 				Patient tempPat=Patients.CreateNewPatient("Patient",
 					$"Missing-{listMissingPatNums[i].ToString()}",
 					DateTime.MinValue,
@@ -10020,10 +10027,10 @@ HAVING cnt>1";
 				listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,tempPat.PatNum,DbmLogFKeyType.Patient,DbmLogActionType.Insert,
 					methodName,$"Database Maintenance Tool method {methodName} created this patient due to orphaned entities."));
 			}
-			if(listMissingPatNums.Count>0) {
+			if(modifiedCount>0) {
 				Crud.DbmLogCrud.InsertMany(listDbmLogs);
 			}
-			return $"Missing patients added: {listMissingPatNums.Count}";
+			return $"Missing patients added: {modifiedCount}";
 		}
 
 		public static string OrthoChartDeleteDuplicates() {

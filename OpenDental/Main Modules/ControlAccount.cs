@@ -910,7 +910,7 @@ namespace OpenDental {
 			using FormClaimEdit formClaimEdit=new FormClaimEdit(claimCur,_patCur,_famCur);
 			formClaimEdit.IsNew=true;//this causes it to delete the claim if cancelling.
 			//If there's unallocated amounts, we want to redistribute the money to other procedures.
-			if(formClaimEdit.ShowDialog()==DialogResult.OK && PIn.Double(labelUnearnedAmt.Text)>0) {
+			if(formClaimEdit.ShowDialog()==DialogResult.OK) {
 				ClaimL.AllocateUnearnedPayment(_patCur,_famCur,PIn.Double(labelUnearnedAmt.Text),claimCur);
 			}
 			ModuleSelected(_patCur.PatNum);
@@ -932,7 +932,7 @@ namespace OpenDental {
 			//still have not saved some changes to the claim at this point
 			using FormClaimEdit formClaimEdit=new FormClaimEdit(claimCur,_patCur,_famCur);
 			formClaimEdit.IsNew=true;//this causes it to delete the claim if cancelling.
-			if(formClaimEdit.ShowDialog()==DialogResult.OK && PIn.Double(labelUnearnedAmt.Text)>0) {
+			if(formClaimEdit.ShowDialog()==DialogResult.OK) {
 				ClaimL.AllocateUnearnedPayment(_patCur,_famCur,PIn.Double(labelUnearnedAmt.Text),claimCur);
 			}
 			ModuleSelected(_patCur.PatNum);
@@ -963,7 +963,7 @@ namespace OpenDental {
 			using FormClaimEdit formClaimEdit=new FormClaimEdit(claimCur,_patCur,_famCur);
 			formClaimEdit.IsNew=true;//this causes it to delete the claim if cancelling.
 			//If there's unallocated amounts, we want to redistribute the money to other procedures.
-			if(formClaimEdit.ShowDialog()==DialogResult.OK && PIn.Double(labelUnearnedAmt.Text)>0) {
+			if(formClaimEdit.ShowDialog()==DialogResult.OK) {
 				ClaimL.AllocateUnearnedPayment(_patCur,_famCur,PIn.Double(labelUnearnedAmt.Text),claimCur);
 			}
 			ModuleSelected(_patCur.PatNum);
@@ -997,7 +997,7 @@ namespace OpenDental {
 			using FormClaimEdit formClaimEdit=new FormClaimEdit(claimCur,_patCur,_famCur);
 			formClaimEdit.IsNew=true;//this causes it to delete the claim if cancelling.
 			//If there's unallocated amounts, we want to redistribute the money to other procedures.
-			if(formClaimEdit.ShowDialog()==DialogResult.OK && PIn.Double(labelUnearnedAmt.Text)>0) {
+			if(formClaimEdit.ShowDialog()==DialogResult.OK) {
 				ClaimL.AllocateUnearnedPayment(_patCur,_famCur,PIn.Double(labelUnearnedAmt.Text),claimCur);
 			}
 			ModuleSelected(_patCur.PatNum);

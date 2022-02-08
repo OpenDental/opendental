@@ -420,7 +420,7 @@ namespace OpenDentBusiness {
 				+"claimproc.ClinicNum,"
 				+"SUM(CASE WHEN claimsnapshot.WriteOff=-1 THEN 0 ELSE claimsnapshot.WriteOff END) WriteOff "
 				+"FROM claimproc "
-				+"INNER JOIN claimsnapshot ON claimsnapshot.ClaimProcNum=claimProc.ClaimProcNum "
+				+"INNER JOIN claimsnapshot ON claimsnapshot.ClaimProcNum=claimproc.ClaimProcNum "
 				+"WHERE "+DbHelper.BetweenDates("claimsnapshot.DateTEntry",dateFrom,dateTo)+" "
 				+whereProv
 				+whereClin

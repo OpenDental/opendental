@@ -18,12 +18,15 @@ namespace OpenDental{
 		private bool _headingPrinted;
 		private int _pagesPrinted;
 		private int _headingPrintH;
+		//Used to track which window the calling form is currently displaying from, this way we know if we want to minimize this window or let it stay in view.
+		private System.Windows.Forms.Screen _screenParent;
 
 		///<summary></summary>
-		public FormRpProcNote() {
+		public FormRpProcNote(Control controlParentForm) {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
+			_screenParent=System.Windows.Forms.Screen.FromHandle(controlParentForm.Handle);
 		}
 
 		private void FormRpProcNote_Load(object sender,System.EventArgs e) {
@@ -145,7 +148,10 @@ namespace OpenDental{
 				return;
 			}
 			long goToPatNum=PIn.Long(gridMain.ListGridRows[e.Row].Tag.ToString());
-			SendToBack();
+			System.Windows.Forms.Screen screenCurrent=System.Windows.Forms.Screen.FromHandle(this.Handle);
+			if(screenCurrent.DeviceName==_screenParent.DeviceName) {//If on same screen as main OD
+				this.WindowState=FormWindowState.Minimized;//Minimize
+			}
 			GotoModule.GotoChart(goToPatNum);
 		}
 
@@ -160,7 +166,10 @@ namespace OpenDental{
 			long patNum=PIn.Long(gridMain.ListGridRows[gridMain.SelectedIndices[0]].Tag.ToString());
 			Patient pat=Patients.GetPat(patNum);
 			FormOpenDental.S_Contr_PatientSelected(pat,false);
-			SendToBack();
+			System.Windows.Forms.Screen screenCurrent=System.Windows.Forms.Screen.FromHandle(this.Handle);
+			if(screenCurrent.DeviceName==_screenParent.DeviceName) {//If on same screen as main OD
+				this.WindowState=FormWindowState.Minimized;//Minimize
+			}
 			GotoModule.GotoChart(pat.PatNum);
 		}
 

@@ -91,6 +91,8 @@ namespace OpenDental.localhost {
         
         private System.Threading.SendOrPostCallback DatabaseIntegrityGetListOperationCompleted;
         
+        private System.Threading.SendOrPostCallback DatabaseIntegrityGetList2OperationCompleted;
+        
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
@@ -221,6 +223,9 @@ namespace OpenDental.localhost {
         
         /// <remarks/>
         public event DatabaseIntegrityGetListCompletedEventHandler DatabaseIntegrityGetListCompleted;
+        
+        /// <remarks/>
+        public event DatabaseIntegrityGetList2CompletedEventHandler DatabaseIntegrityGetList2Completed;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://open-dent.com/EstablishConnection", RequestNamespace="http://open-dent.com/", ResponseNamespace="http://open-dent.com/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -1117,6 +1122,35 @@ namespace OpenDental.localhost {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://open-dent.com/DatabaseIntegrityGetList2", RequestNamespace="http://open-dent.com/", ResponseNamespace="http://open-dent.com/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string DatabaseIntegrityGetList2(string registrationKey) {
+            object[] results = this.Invoke("DatabaseIntegrityGetList2", new object[] {
+                        registrationKey});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void DatabaseIntegrityGetList2Async(string registrationKey) {
+            this.DatabaseIntegrityGetList2Async(registrationKey, null);
+        }
+        
+        /// <remarks/>
+        public void DatabaseIntegrityGetList2Async(string registrationKey, object userState) {
+            if ((this.DatabaseIntegrityGetList2OperationCompleted == null)) {
+                this.DatabaseIntegrityGetList2OperationCompleted = new System.Threading.SendOrPostCallback(this.OnDatabaseIntegrityGetList2OperationCompleted);
+            }
+            this.InvokeAsync("DatabaseIntegrityGetList2", new object[] {
+                        registrationKey}, this.DatabaseIntegrityGetList2OperationCompleted, userState);
+        }
+        
+        private void OnDatabaseIntegrityGetList2OperationCompleted(object arg) {
+            if ((this.DatabaseIntegrityGetList2Completed != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DatabaseIntegrityGetList2Completed(this, new DatabaseIntegrityGetList2CompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -1906,6 +1940,32 @@ namespace OpenDental.localhost {
         private object[] results;
         
         internal DatabaseIntegrityGetListCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void DatabaseIntegrityGetList2CompletedEventHandler(object sender, DatabaseIntegrityGetList2CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DatabaseIntegrityGetList2CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal DatabaseIntegrityGetList2CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

@@ -3546,6 +3546,10 @@ namespace OpenDental {
 				return;
 			}
 			Documents.Delete(document);
+			importedDocument.Description=document.Description;
+			importedDocument.DocCategory=document.DocCategory;
+			importedDocument.ImgType=document.ImgType;
+			Documents.Update(importedDocument);
 			EventFillTree?.Invoke(this,false);//updates tree to immediately include new file
 			NodeTypeAndKey nodeTypeAndKey2=new NodeTypeAndKey(EnumImageNodeType.Document,importedDocument.DocNum);
 			EventSelectTreeNode?.Invoke(this,nodeTypeAndKey2);

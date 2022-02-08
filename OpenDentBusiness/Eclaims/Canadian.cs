@@ -315,13 +315,8 @@ namespace OpenDentBusiness.Eclaims {
 			//User interface does not only show Canadian options, but all options are handled.
 			strb.Append(GetRelationshipCode(patRelat));
 			//C04 patient's sex 1 A
-			//validated to not include "unknown"
-			if(patient.Gender==PatientGender.Male){
-				strb.Append("M");
-			}
-			else{
-				strb.Append("F");
-			}
+			//Per CDAnet as of 2021-02-01: Gender must not use M or F anymore so as to not misrepresent non-binary genders, use single space char instead
+			strb.Append(' ');
 			//C05 patient birthday 8 N
 			strb.Append(patient.Birthdate.ToString("yyyyMMdd"));//validated
 			if(carrierReceiver.CDAnetVersion=="02") {
@@ -2431,11 +2426,6 @@ namespace OpenDentBusiness.Eclaims {
 				if(retVal!="")
 					retVal+=", ";
 				retVal+="Claim Relationship";
-			}
-			if(patient.Gender==PatientGender.Unknown) {
-				if(retVal!="")
-					retVal+=", ";
-				retVal+="Patient gender";
 			}
 			if(patient.Birthdate.Year<1880 || patient.Birthdate>DateTime.Today) {
 				if(retVal!="")

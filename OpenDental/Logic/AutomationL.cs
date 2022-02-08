@@ -45,6 +45,7 @@ namespace OpenDental {
 				Sheet sheet;
 				Appointment aptNew;
 				Appointment aptOld;
+				bool isPatApptSchedRestricted=PatRestrictions.IsRestricted(patNum,PatRestrict.ApptSchedule);
 				switch(listAutomations[i].AutoAction) {
 					case AutomationAction.CreateCommlog:
             if(Plugins.HookMethod(null,"AutomationL.Trigger_CreateCommlog_start",patNum,aptNum,listAutomations[i].CommType,
@@ -172,7 +173,9 @@ namespace OpenDental {
 							SecurityLogs.MakeLogEntry(Permissions.PatientApptRestrict,patNum,"Attempt to restrict patient scheduling was blocked due to lack of user permission.");
 							continue;
 						}
+						isPatApptSchedRestricted=PatRestrictions.IsRestricted(patNum,PatRestrict.ApptSchedule);
 						PatRestrictions.Upsert(patNum,PatRestrict.ApptSchedule);
+						PatRestrictions.InsertPatRestrictApptChangeSecurityLog(patNum,isPatApptSchedRestricted,PatRestrictions.IsRestricted(patNum,PatRestrict.ApptSchedule));
 						automationHappened=true;
 						continue;
 					case AutomationAction.PatRestrictApptSchedFalse:
@@ -180,7 +183,9 @@ namespace OpenDental {
 							SecurityLogs.MakeLogEntry(Permissions.PatientApptRestrict,patNum,"Attempt to allow patient scheduling was blocked due to lack of user permission.");
 							continue;
 						}
+						isPatApptSchedRestricted=PatRestrictions.IsRestricted(patNum,PatRestrict.ApptSchedule);
 						PatRestrictions.RemovePatRestriction(patNum,PatRestrict.ApptSchedule);
+						PatRestrictions.InsertPatRestrictApptChangeSecurityLog(patNum,isPatApptSchedRestricted,PatRestrictions.IsRestricted(patNum,PatRestrict.ApptSchedule));
 						automationHappened=true;
 						continue;
 					case AutomationAction.PrintRxInstruction:

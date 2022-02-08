@@ -27,14 +27,17 @@ namespace OpenDental{
 		private const int _colWidthClinic=75;
 		private DateTime _dateFromPrev=DateTime.MaxValue;
 		private DateTime _dateToPrev=DateTime.MaxValue;
+		//Used to track which window the calling form is currently displaying from, this way we know if we want to minimize this window or let it stay in view.
+		private System.Windows.Forms.Screen _screenParent;
 		///<summary>Called when claims are created, only executes if at least 1 claim was created.</summary>
 		public event OnPostClaimCreationHandler OnPostClaimCreation=null;
 
 		///<summary></summary>
-		public FormRpProcNotBilledIns(){
+		public FormRpProcNotBilledIns(Control controlParentForm){
 			InitializeComponent();
 			InitializeLayoutManager();
  			Lan.F(this);
+			_screenParent=System.Windows.Forms.Screen.FromHandle(controlParentForm.Handle);
 		}
 
 		private void FormProcNotAttach_Load(object sender, System.EventArgs e) {
@@ -404,8 +407,11 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please select an item with a patient.");
 				return;
 			}
+			System.Windows.Forms.Screen screen=System.Windows.Forms.Screen.FromHandle(this.Handle);
+			if(screen.DeviceName==_screenParent.DeviceName) {//If on same screen as main OD
+				this.WindowState=FormWindowState.Minimized;//Minimize
+			}
 			ODEvent.Fire(ODEventType.FormProcNotBilled_GoTo,patNum);
-			SendToBack();
 		}
 
 		private void butClose_Click(object sender,EventArgs e) {

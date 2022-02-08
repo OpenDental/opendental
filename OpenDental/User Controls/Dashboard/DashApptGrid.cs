@@ -324,13 +324,13 @@ namespace OpenDental {
 				row.Tag=_listApptOthers[i].AptNum;
 				gridMain.ListGridRows.Add(row);
 				if((long)row.Tag==selectedApptOtherNum) {
-					selectedIndex=i;
+					//we will not use i as the index because there are "continue"s in this loop
+					selectedIndex=gridMain.ListGridRows.Count-1;//select the row that was just added if it matches
 				}
 			}
 			gridMain.EndUpdate();
 			if(selectedIndex>-1) {
-				//we will not use i as the index because there are "continue"s in this loop
-					selectedIndex=gridMain.ListGridRows.Count-1;//select the row that was just added if it matches
+				gridMain.SetSelected(selectedIndex,true);
 			}
 		}
 

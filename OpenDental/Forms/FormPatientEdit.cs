@@ -3201,12 +3201,14 @@ namespace OpenDental{
 			PatientNotes.Update(_patientNoteCur,_patientCur.Guarantor);
 			string strPatPriProvDesc=Providers.GetLongDesc(_patientCur.PriProv);
 			Patients.InsertPrimaryProviderChangeSecurityLogEntry(_patientOld,_patientCur);
+			bool isApptSchedRestricted=PatRestrictions.IsRestricted(_patientCur.PatNum,PatRestrict.ApptSchedule);
 			if(checkRestrictSched.Checked) {
 				PatRestrictions.Upsert(_patientCur.PatNum,PatRestrict.ApptSchedule);//will only insert if one does not already exist in the db.
 			}
 			else {
 				PatRestrictions.RemovePatRestriction(_patientCur.PatNum,PatRestrict.ApptSchedule);
 			}
+			PatRestrictions.InsertPatRestrictApptChangeSecurityLog(_patientCur.PatNum,isApptSchedRestricted,PatRestrictions.IsRestricted(_patientCur.PatNum,PatRestrict.ApptSchedule));
 			if(_patientCur.Birthdate!=_patientOld.Birthdate || _patientCur.Gender!=_patientOld.Gender) {
 				isCDSinterventionCheckRequired=true;
 			}

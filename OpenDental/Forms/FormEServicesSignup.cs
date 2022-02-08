@@ -21,6 +21,7 @@ using System.IO;
 using WebServiceSerializer;
 using OpenDentBusiness.WebServiceMainHQ;
 using OpenDentBusiness.WebTypes.WebSched.TimeSlot;
+using Microsoft.Web.WebView2.Core;
 
 namespace OpenDental {
 
@@ -34,7 +35,15 @@ namespace OpenDental {
 			_signupOut=signupOut;
 		}
 
-		private void FormEServicesSignup_Load(object sender,EventArgs e) {
+		private async void FormEServicesSignup_Load(object sender,EventArgs e) {
+			try {
+				await webViewMain.Init();
+			}
+			catch(Exception ex) {
+				ex.DoNothing();
+				DialogResult=DialogResult.Cancel;
+				Close();
+			}
 			if(_signupOut==null){
 				_signupOut=FormEServicesSetup.GetSignupOut();
 			}
@@ -48,8 +57,19 @@ namespace OpenDental {
 			if(ODBuild.IsDebug()) {
 				_signupOut.SignupPortalUrl=_signupOut.SignupPortalUrl.Replace("https://www.patientviewer.com/SignupPortal/GWT/SignupPortal/SignupPortal.html","http://127.0.0.1:8888/SignupPortal.html");
 			}
-				webBrowserSignup.Navigate(_signupOut.SignupPortalUrl);
+				webViewMain.CoreWebView2.Navigate(_signupOut.SignupPortalUrl);
 			});
+		}
+
+		private void webViewMain_NavigationCompleted(object sender,CoreWebView2NavigationCompletedEventArgs e) {
+			SetTitle();
+		}
+
+		private void SetTitle() {
+			Text=Lan.g(this,"eServices");
+			if(webViewMain.CoreWebView2!=null && !string.IsNullOrWhiteSpace(webViewMain.CoreWebView2.DocumentTitle)) {
+				Text+=" - "+webViewMain.CoreWebView2.DocumentTitle;
+			}
 		}
 
 		private void butClose_Click(object sender,EventArgs e) {

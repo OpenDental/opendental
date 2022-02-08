@@ -1451,7 +1451,9 @@ namespace OpenDental {
 				}
 				Operatory opCur=contrApptPanel.ListOpsVisible[opIdx];
 				apptCur.Op=opCur.OperatoryNum;
-				apptCur.IsHygiene=opCur.IsHygiene;
+				if(!apptCur.IsHygiene) {//If a non-hygiene appointment is moved, update the IsHygiene value to that of the new operatory.
+					apptCur.IsHygiene=opCur.IsHygiene;
+				}
 					//opCur.OperatoryNum;
 				//Set providers----------------------Similar to UpdateAppointments()
 				long assignedDent=Schedules.GetAssignedProvNumForSpot(contrApptPanel.ListSchedules,opCur,false,apptCur.AptDateTime);
@@ -4342,9 +4344,9 @@ namespace OpenDental {
 					}
 				}
 			}
-            if(isOpChanged) { // Always set appointment Is Hygiene value to the default value of the receiving operatory when appointment is moved.
+			if(isOpChanged && !appt.IsHygiene) {//If a non-hygiene appointment is moved, update the IsHygiene value to that of the new operatory.
 				appt.IsHygiene=operatoryCur.IsHygiene;
-            }
+			}
 			#endregion Update Appt's AptStatus, ClinicNum, Confirmed
 			try {
 				//Should only need this check if changing/updating Op. Assumes we didn't previously schedule the apt somewhere it shouldn't have been.

@@ -359,7 +359,9 @@ namespace OpenDentBusiness {
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ && File.Exists(fileNameThumb)) {
 				try {
 					DateTime thumbModifiedTime = File.GetLastWriteTime(fileNameThumb);
-					if(thumbModifiedTime>doc.DateTStamp) { //Assumes that thumbnail is a crop of the original and that it can simply be recreated. Might be the case might not, assuming is not working as expected
+					if(thumbModifiedTime>doc.DateTStamp //thumbnail file is old
+						&& !doc.IsCropOld) //Prevents using the existing thumbnail file if the crop data has not yet been converted to the new style. New thumbnail will be created below.
+					{
 						Bitmap bitmap = (Bitmap)Bitmap.FromFile(fileNameThumb);
 						Bitmap bitmap2 = new Bitmap(bitmap);
 						bitmap.Dispose();//releases the file lock
