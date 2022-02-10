@@ -50,7 +50,9 @@ namespace OpenDental{
 			this.pd2 = new System.Drawing.Printing.PrintDocument();
 			this.tabControl = new System.Windows.Forms.TabControl();
 			this.tabCredit = new System.Windows.Forms.TabPage();
+			this.checkPrintReceipt = new System.Windows.Forms.CheckBox();
 			this.tabACH = new System.Windows.Forms.TabPage();
+			this.checkPrintReceiptACH = new System.Windows.Forms.CheckBox();
 			this.labelAmountACH = new System.Windows.Forms.Label();
 			this.textAmountACH = new System.Windows.Forms.TextBox();
 			this.checkOneTimePaymentACH = new System.Windows.Forms.CheckBox();
@@ -280,6 +282,7 @@ namespace OpenDental{
 			this.tabControl.Controls.Add(this.tabCredit);
 			this.tabControl.Controls.Add(this.tabACH);
 			this.tabControl.Location = new System.Drawing.Point(20, 12);
+			this.tabControl.Location = new System.Drawing.Point(24, 12);
 			this.tabControl.Name = "tabControl";
 			this.tabControl.SelectedIndex = 0;
 			this.tabControl.Size = new System.Drawing.Size(420, 315);
@@ -288,6 +291,7 @@ namespace OpenDental{
 			// tabCredit
 			// 
 			this.tabCredit.BackColor = System.Drawing.SystemColors.Control;
+			this.tabCredit.Controls.Add(this.checkPrintReceipt);
 			this.tabCredit.Controls.Add(this.groupTransType);
 			this.tabCredit.Controls.Add(this.checkOneTimePayment);
 			this.tabCredit.Controls.Add(this.labelAmount);
@@ -311,9 +315,19 @@ namespace OpenDental{
 			this.tabCredit.TabIndex = 0;
 			this.tabCredit.Text = "Credit/Debit";
 			// 
+			// checkPrintReceipt
+			// 
+			this.checkPrintReceipt.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.checkPrintReceipt.Location = new System.Drawing.Point(268, 248);
+			this.checkPrintReceipt.Name = "checkPrintReceipt";
+			this.checkPrintReceipt.Size = new System.Drawing.Size(135, 17);
+			this.checkPrintReceipt.TabIndex = 39;
+			this.checkPrintReceipt.Text = "Print Receipt";
+			// 
 			// tabACH
 			// 
 			this.tabACH.BackColor = System.Drawing.SystemColors.Control;
+			this.tabACH.Controls.Add(this.checkPrintReceiptACH);
 			this.tabACH.Controls.Add(this.labelAmountACH);
 			this.tabACH.Controls.Add(this.textAmountACH);
 			this.tabACH.Controls.Add(this.checkOneTimePaymentACH);
@@ -331,9 +345,19 @@ namespace OpenDental{
 			this.tabACH.TabIndex = 1;
 			this.tabACH.Text = "ACH";
 			// 
+			// checkPrintReceiptACH
+			// 
+			this.checkPrintReceiptACH.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.checkPrintReceiptACH.Location = new System.Drawing.Point(92, 251);
+			this.checkPrintReceiptACH.Name = "checkPrintReceiptACH";
+			this.checkPrintReceiptACH.Size = new System.Drawing.Size(135, 17);
+			this.checkPrintReceiptACH.TabIndex = 41;
+			this.checkPrintReceiptACH.Text = "Print Receipt";
+			// 
 			// labelAmountACH
 			// 
 			this.labelAmountACH.Location = new System.Drawing.Point(92, 209);
+			this.labelAmountACH.Location = new System.Drawing.Point(92, 189);
 			this.labelAmountACH.Name = "labelAmountACH";
 			this.labelAmountACH.Size = new System.Drawing.Size(117, 16);
 			this.labelAmountACH.TabIndex = 40;
@@ -343,6 +367,7 @@ namespace OpenDental{
 			// textAmountACH
 			// 
 			this.textAmountACH.Location = new System.Drawing.Point(92, 226);
+			this.textAmountACH.Location = new System.Drawing.Point(92, 206);
 			this.textAmountACH.Name = "textAmountACH";
 			this.textAmountACH.Size = new System.Drawing.Size(118, 20);
 			this.textAmountACH.TabIndex = 25;
@@ -351,6 +376,7 @@ namespace OpenDental{
 			// 
 			this.checkOneTimePaymentACH.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.checkOneTimePaymentACH.Location = new System.Drawing.Point(92, 255);
+			this.checkOneTimePaymentACH.Location = new System.Drawing.Point(92, 234);
 			this.checkOneTimePaymentACH.Name = "checkOneTimePaymentACH";
 			this.checkOneTimePaymentACH.Size = new System.Drawing.Size(150, 17);
 			this.checkOneTimePaymentACH.TabIndex = 30;
@@ -361,6 +387,7 @@ namespace OpenDental{
 			this.groupBankAccountType.Controls.Add(this.radioCheckings);
 			this.groupBankAccountType.Controls.Add(this.radioSavings);
 			this.groupBankAccountType.Location = new System.Drawing.Point(92, 15);
+			this.groupBankAccountType.Location = new System.Drawing.Point(92, 10);
 			this.groupBankAccountType.Name = "groupBankAccountType";
 			this.groupBankAccountType.Size = new System.Drawing.Size(228, 50);
 			this.groupBankAccountType.TabIndex = 5;
@@ -390,6 +417,7 @@ namespace OpenDental{
 			// label8
 			// 
 			this.label8.Location = new System.Drawing.Point(92, 72);
+			this.label8.Location = new System.Drawing.Point(92, 68);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(150, 16);
 			this.label8.TabIndex = 35;
@@ -399,6 +427,7 @@ namespace OpenDental{
 			// textRoutingNumber
 			// 
 			this.textRoutingNumber.Location = new System.Drawing.Point(92, 89);
+			this.textRoutingNumber.Location = new System.Drawing.Point(92, 85);
 			this.textRoutingNumber.Name = "textRoutingNumber";
 			this.textRoutingNumber.Size = new System.Drawing.Size(228, 20);
 			this.textRoutingNumber.TabIndex = 10;
@@ -406,6 +435,7 @@ namespace OpenDental{
 			// label2
 			// 
 			this.label2.Location = new System.Drawing.Point(92, 119);
+			this.label2.Location = new System.Drawing.Point(92, 110);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(150, 16);
 			this.label2.TabIndex = 33;
@@ -415,6 +445,7 @@ namespace OpenDental{
 			// textCheckSaveNumber
 			// 
 			this.textCheckSaveNumber.Location = new System.Drawing.Point(92, 135);
+			this.textCheckSaveNumber.Location = new System.Drawing.Point(92, 126);
 			this.textCheckSaveNumber.Name = "textCheckSaveNumber";
 			this.textCheckSaveNumber.Size = new System.Drawing.Size(228, 20);
 			this.textCheckSaveNumber.TabIndex = 15;
@@ -422,6 +453,7 @@ namespace OpenDental{
 			// label1
 			// 
 			this.label1.Location = new System.Drawing.Point(92, 163);
+			this.label1.Location = new System.Drawing.Point(92, 149);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(150, 16);
 			this.label1.TabIndex = 31;
@@ -431,6 +463,7 @@ namespace OpenDental{
 			// textBankName
 			// 
 			this.textBankName.Location = new System.Drawing.Point(92, 180);
+			this.textBankName.Location = new System.Drawing.Point(92, 166);
 			this.textBankName.Name = "textBankName";
 			this.textBankName.Size = new System.Drawing.Size(228, 20);
 			this.textBankName.TabIndex = 20;
@@ -505,5 +538,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelAmountACH;
 		private System.Windows.Forms.TextBox textAmountACH;
 		private System.Windows.Forms.Timer timerParseCardSwipe;
+		private System.Windows.Forms.CheckBox checkPrintReceipt;
+		private System.Windows.Forms.CheckBox checkPrintReceiptACH;
 	}
 }

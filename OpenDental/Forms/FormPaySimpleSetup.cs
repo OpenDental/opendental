@@ -125,6 +125,14 @@ namespace OpenDental {
 					PropertyValue=_listProgProps.FirstOrDefault(x => x.PropertyDesc==PaySimple.PropertyDescs.PaySimplePreventSavingNewCC && x.ClinicNum==0)?.PropertyValue??"0",
 				});
 			}
+			if(!_listProgProps.Any(x => x.ClinicNum==clinicNum && x.PropertyDesc==PaySimple.PropertyDescs.PaySimplePrintReceipt)) {
+				_listProgProps.Add(new ProgramProperty() {
+					ClinicNum=clinicNum,
+					PropertyDesc=PaySimple.PropertyDescs.PaySimplePrintReceipt,
+					ProgramNum=_progCur.ProgramNum,
+					PropertyValue=_listProgProps.FirstOrDefault(x => x.PropertyDesc==PaySimple.PropertyDescs.PaySimplePrintReceipt && x.ClinicNum==0).PropertyValue,
+				});
+			}
 		}
 
 		private void FillFields() {
@@ -138,6 +146,8 @@ namespace OpenDental {
 			string payTypeDefNumACH=ProgramProperties.GetPropValFromList(_listProgProps,PaySimple.PropertyDescs.PaySimplePayTypeACH,clinicNum);
 			checkPreventSavingNewCC.Checked=PIn.Bool(ProgramProperties.GetPropValFromList(_listProgProps,
 				PaySimple.PropertyDescs.PaySimplePreventSavingNewCC,clinicNum));
+			checkPrintReceipt.Checked=PIn.Bool(ProgramProperties.GetPropValFromList(_listProgProps,
+				PaySimple.PropertyDescs.PaySimplePrintReceipt,clinicNum));
 			_listPaymentTypeDefs=Defs.GetDefsForCategory(DefCat.PaymentTypes,true);
 			comboPaymentTypeCC.Items.Clear();
 			comboPaymentTypeCC.Items.AddDefs(_listPaymentTypeDefs);
@@ -329,6 +339,8 @@ namespace OpenDental {
 				.ForEach(x => x.PropertyValue=payTypeACHSelected);//always 1 item
 			_listProgProps.FindAll(x => x.ClinicNum==clinicNum && x.PropertyDesc==PaySimple.PropertyDescs.PaySimplePreventSavingNewCC)
 				.ForEach(x => x.PropertyValue=POut.Bool(checkPreventSavingNewCC.Checked));
+			_listProgProps.FindAll(x => x.ClinicNum==clinicNum && x.PropertyDesc==PaySimple.PropertyDescs.PaySimplePrintReceipt)
+				.ForEach(x => x.PropertyValue=POut.Bool(checkPrintReceipt.Checked));
 			string payTypeCC;
 			string payTypeACH;
 			//make sure any other clinics with PaySimple enabled also have a payment type selected

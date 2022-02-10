@@ -93,6 +93,10 @@ namespace OpenDental {
 				textCheckSaveNumber.ReadOnly=true;
 				textBankName.ReadOnly=true;
 			}
+			if(PIn.Bool(ProgramProperties.GetPropVal(_progCur.ProgramNum,PaySimple.PropertyDescs.PaySimplePrintReceipt,_clinicNum))) {
+				checkPrintReceipt.Checked=true;
+				checkPrintReceiptACH.Checked=true;
+			}
 		}
 
 		private void FillFieldsFromCard() {
@@ -150,6 +154,10 @@ namespace OpenDental {
 			labelRefNumber.Visible=false;
 			textAmount.Visible=true;
 			_trantype=PaySimple.TransType.SALE;
+			if(!checkPrintReceipt.Enabled) {
+				checkPrintReceipt.Enabled=true;
+				checkPrintReceipt.Checked=PIn.Bool(ProgramProperties.GetPropVal(_progCur.ProgramNum,PaySimple.PropertyDescs.PaySimplePrintReceipt,_clinicNum));
+			}
 			textCardNumber.Focus();//Usually transaction type is chosen before card number is entered, but textCardNumber box must be selected in order for card swipe to work.
 		}
 
@@ -162,6 +170,8 @@ namespace OpenDental {
 			labelRefNumber.Visible=false;
 			textAmount.Visible=false;
 			_trantype=PaySimple.TransType.AUTH;
+			checkPrintReceipt.Checked=false;
+			checkPrintReceipt.Enabled=false;
 			textCardNumber.Focus();//Usually transaction type is chosen before card number is entered, but textCardNumber box must be selected in order for card swipe to work.
 		}
 
@@ -175,6 +185,10 @@ namespace OpenDental {
 			labelRefNumber.Text=Lan.g(this,"Ref Number");
 			textAmount.Visible=false;
 			_trantype=PaySimple.TransType.VOID;
+			if(!checkPrintReceipt.Enabled) {
+				checkPrintReceipt.Enabled=true;
+				checkPrintReceipt.Checked=PIn.Bool(ProgramProperties.GetPropVal(_progCur.ProgramNum,PaySimple.PropertyDescs.PaySimplePrintReceipt,_clinicNum));
+			}
 			textCardNumber.Focus();//Usually transaction type is chosen before card number is entered, but textCardNumber box must be selected in order for card swipe to work.
 		}
 
@@ -188,6 +202,10 @@ namespace OpenDental {
 			labelRefNumber.Text=Lan.g(this,"Ref Number");
 			textAmount.Visible=false;
 			_trantype=PaySimple.TransType.RETURN;
+			if(!checkPrintReceipt.Enabled) {
+				checkPrintReceipt.Enabled=true;
+				checkPrintReceipt.Checked=PIn.Bool(ProgramProperties.GetPropVal(_progCur.ProgramNum,PaySimple.PropertyDescs.PaySimplePrintReceipt,_clinicNum));
+			}
 			textCardNumber.Focus();//Usually transaction type is chosen before card number is entered, but textCardNumber box must be selected in order for card swipe to work.
 		}
 
@@ -349,7 +367,9 @@ namespace OpenDental {
 			if(ListTools.In(_trantype,PaySimple.TransType.SALE,PaySimple.TransType.RETURN,PaySimple.TransType.VOID)) {//Only print a receipt if transaction is an approved SALE, RETURN, or VOID			
 				//The isSwiped boolean could be incorrectly set if the user swipes a card and then changes the data that was entered to a different card.
 				retVal.BuildReceiptString(cardNumber,expMonth,expYear,textNameOnCard.Text,_clinicNum,_parser!=null);
-				PrintReceipt(retVal.TransactionReceipt);
+				if(checkPrintReceipt.Checked) {
+					PrintReceipt(retVal.TransactionReceipt);
+				}
 			}
 			if(checkOneTimePayment.Checked) {//not storing the card token
 				return retVal;
@@ -413,7 +433,9 @@ namespace OpenDental {
 			}
 			if(!_isAddingCard) {
 				retVal.BuildReceiptString(accountNumber,-1,-1,_patCur?.GetNameFL(),_clinicNum,wasSwiped: false,isACH:true);
-				PrintReceipt(retVal.TransactionReceipt);
+				if(checkPrintReceiptACH.Checked) {
+					PrintReceipt(retVal.TransactionReceipt);
+				}
 			}
 			if(checkOneTimePaymentACH.Checked) {//not storing the account token
 				return retVal;

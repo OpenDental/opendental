@@ -541,6 +541,7 @@ namespace OpenDental
 				//SetZoomSlider();
 				FillSignature();
 				formImageFloat.EnableToolBarButtons();
+				EnableMenuItemTreePrintHelper(formImageFloat);
 				//}
 				return;
 			}
@@ -581,6 +582,7 @@ namespace OpenDental
 			//SetZoomSlider();
 			FillSignature();
 			formImageFloat.EnableToolBarButtons();
+			EnableMenuItemTreePrintHelper(formImageFloat);
 		}
 		#endregion Methods - Public
 
@@ -2182,7 +2184,7 @@ namespace OpenDental
 		
 		}
 
-		///<summary>If a mount is showing, and if no item is selected, then this will select the first open item. If one is already selected, but it's full, this does not check that.  There is also no guarantee that one will be selected after this because all positions could be full.</summary>
+		///<summary>If a mount is showing, and if no item is selected, then this will select the first open item. If one is already selected, but it's occupied, this does not check that.  There is also no guarantee that one will be selected after this because all positions could be full.</summary>
 		private void PreselectFirstItem(){
 			FormImageFloat formImageFloat=GetFormImageFloatSelected();
 			if(formImageFloat is null){
@@ -3002,6 +3004,20 @@ namespace OpenDental
 				rectangleWorkingArea.Bottom-_formVideo.Height);//bottom
 			LayoutControls();
 		}
+
+		/// <summary>Enables or disables menuItemTreePrint depending if the showing document is a PDF or not</summary>
+		private void EnableMenuItemTreePrintHelper(FormImageFloat formImageFloat) {
+			if(formImageFloat==null || formImageFloat.GetDocumentShowing(0)==null) {
+				return;
+			}
+			if(Path.GetExtension(GetDocumentShowing(0).FileName).ToLower()==".pdf"){ 
+				menuItemTreePrint.Enabled=false; //pdf printing is handled in Adobe, so users don't need the menu option
+			}
+			else {
+				menuItemTreePrint.Enabled=true;
+			}
+		}
+
 		#endregion Methods - Private
 
 		#region Methods - Native

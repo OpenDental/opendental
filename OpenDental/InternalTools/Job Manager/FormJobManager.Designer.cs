@@ -37,6 +37,7 @@
 			this.dateExcludeCompleteBefore = new System.Windows.Forms.DateTimePicker();
 			this.gridPatternReview = new OpenDental.UI.GridOD();
 			this.tabAction = new System.Windows.Forms.TabPage();
+			this.butExport = new OpenDental.UI.Button();
 			this.label15 = new System.Windows.Forms.Label();
 			this.comboProposedVersionNeedsAction = new OpenDental.UI.ComboBoxOD();
 			this.checkShowUnassigned = new System.Windows.Forms.CheckBox();
@@ -277,6 +278,7 @@
 			// 
 			// tabAction
 			// 
+			this.tabAction.Controls.Add(this.butExport);
 			this.tabAction.Controls.Add(this.label15);
 			this.tabAction.Controls.Add(this.comboProposedVersionNeedsAction);
 			this.tabAction.Controls.Add(this.checkShowUnassigned);
@@ -288,6 +290,16 @@
 			this.tabAction.TabIndex = 0;
 			this.tabAction.Text = "Needs Action";
 			this.tabAction.UseVisualStyleBackColor = true;
+			// 
+			// butExport
+			// 
+			this.butExport.Location = new System.Drawing.Point(3, 24);
+			this.butExport.Name = "butExport";
+			this.butExport.Size = new System.Drawing.Size(53, 18);
+			this.butExport.TabIndex = 324;
+			this.butExport.Text = "Export";
+			this.butExport.UseVisualStyleBackColor = true;
+			this.butExport.Click += new System.EventHandler(this.butExport_Click);
 			// 
 			// label15
 			// 
@@ -324,10 +336,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridAction.HasMultilineHeaders = true;
-			this.gridAction.Location = new System.Drawing.Point(3, 31);
+			this.gridAction.Location = new System.Drawing.Point(3, 48);
 			this.gridAction.Name = "gridAction";
 			this.gridAction.ShowContextMenu = false;
-			this.gridAction.Size = new System.Drawing.Size(343, 653);
+			this.gridAction.Size = new System.Drawing.Size(343, 636);
 			this.gridAction.TabIndex = 227;
 			this.gridAction.Title = "Action Items";
 			this.gridAction.TranslationName = "FormJobManager";
@@ -1363,5 +1375,6 @@
 		private UI.GridOD gridUnresolvedIssues;
 		private UI.Button butRefreshUnresolved;
 		private System.Windows.Forms.CheckBox checkIncludeCancelledUnresolved;
+		private UI.Button butExport;
 	}
 }

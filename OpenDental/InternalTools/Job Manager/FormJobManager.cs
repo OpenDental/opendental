@@ -2704,5 +2704,9 @@ namespace OpenDental {
 		private void tabControlNav_SelectedIndexChanged(object sender,EventArgs e) {
 
 		}
+
+		private void butExport_Click(object sender,EventArgs e) {
+			gridAction.Export($"JobManagerActionItems_{DateTime.Today.ToShortDateString()}");
+		}
 	}
 }

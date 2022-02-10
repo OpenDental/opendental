@@ -32,15 +32,19 @@ namespace OpenDental{
 			this.comboClinic = new OpenDental.UI.ComboBoxOD();
 			this.labelClinic = new System.Windows.Forms.Label();
 			this.groupPaySettings = new OpenDental.UI.GroupBoxOD();
+			this.comboPaymentTypeACH = new OpenDental.UI.ComboBoxOD();
+			this.label4 = new System.Windows.Forms.Label();
 			this.checkPreventSavingNewCC = new System.Windows.Forms.CheckBox();
 			this.textKey = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textUsername = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.comboPaymentTypeCC = new UI.ComboBoxOD();
+			this.comboPaymentTypeCC = new OpenDental.UI.ComboBoxOD();
 			this.label1 = new System.Windows.Forms.Label();
 			this.comboPaymentTypeACH = new UI.ComboBoxOD();
 			this.label4 = new System.Windows.Forms.Label();
+			this.checkPrintReceipt = new System.Windows.Forms.CheckBox();
 			this.groupPaySettings.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -100,6 +104,7 @@ namespace OpenDental{
 			// comboClinic
 			// 
 			this.comboClinic.Location = new System.Drawing.Point(163, 118);
+			this.comboClinic.Location = new System.Drawing.Point(163, 105);
 			this.comboClinic.Name = "comboClinic";
 			this.comboClinic.Size = new System.Drawing.Size(175, 21);
 			this.comboClinic.TabIndex = 8;
@@ -108,6 +113,7 @@ namespace OpenDental{
 			// labelClinic
 			// 
 			this.labelClinic.Location = new System.Drawing.Point(43, 120);
+			this.labelClinic.Location = new System.Drawing.Point(43, 107);
 			this.labelClinic.Name = "labelClinic";
 			this.labelClinic.Size = new System.Drawing.Size(119, 16);
 			this.labelClinic.TabIndex = 7;
@@ -116,6 +122,7 @@ namespace OpenDental{
 			// 
 			// groupPaySettings
 			// 
+			this.groupPaySettings.Controls.Add(this.checkPrintReceipt);
 			this.groupPaySettings.Controls.Add(this.comboPaymentTypeACH);
 			this.groupPaySettings.Controls.Add(this.label4);
 			this.groupPaySettings.Controls.Add(this.checkPreventSavingNewCC);
@@ -126,11 +133,29 @@ namespace OpenDental{
 			this.groupPaySettings.Controls.Add(this.comboPaymentTypeCC);
 			this.groupPaySettings.Controls.Add(this.label1);
 			this.groupPaySettings.Location = new System.Drawing.Point(12, 145);
+			this.groupPaySettings.Location = new System.Drawing.Point(12, 133);
 			this.groupPaySettings.Name = "groupPaySettings";
 			this.groupPaySettings.Size = new System.Drawing.Size(370, 155);
+			this.groupPaySettings.Size = new System.Drawing.Size(370, 167);
 			this.groupPaySettings.TabIndex = 9;
 			this.groupPaySettings.TabStop = false;
 			this.groupPaySettings.Text = "Clinic Payment Settings";
+			// 
+			// comboPaymentTypeACH
+			// 
+			this.comboPaymentTypeACH.Location = new System.Drawing.Point(151, 46);
+			this.comboPaymentTypeACH.Name = "comboPaymentTypeACH";
+			this.comboPaymentTypeACH.Size = new System.Drawing.Size(175, 21);
+			this.comboPaymentTypeACH.TabIndex = 6;
+			// 
+			// label4
+			// 
+			this.label4.Location = new System.Drawing.Point(40, 49);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(110, 16);
+			this.label4.TabIndex = 7;
+			this.label4.Text = "Payment Type ACH";
+			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkPreventSavingNewCC
 			// 
@@ -198,6 +223,7 @@ namespace OpenDental{
 			this.comboPaymentTypeACH.TabIndex = 6;
 			// 
 			// label4
+			// checkPrintReceipt
 			// 
 			this.label4.Location = new System.Drawing.Point(40, 49);
 			this.label4.Name = "label4";
@@ -205,6 +231,13 @@ namespace OpenDental{
 			this.label4.TabIndex = 7;
 			this.label4.Text = "Payment Type ACH";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkPrintReceipt.Location = new System.Drawing.Point(151, 141);
+			this.checkPrintReceipt.Name = "checkPrintReceipt";
+			this.checkPrintReceipt.Size = new System.Drawing.Size(217, 18);
+			this.checkPrintReceipt.TabIndex = 8;
+			this.checkPrintReceipt.Text = "Print receipts by default";
+			this.checkPrintReceipt.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+			this.checkPrintReceipt.UseVisualStyleBackColor = true;
 			// 
 			// FormPaySimpleSetup
 			// 
@@ -248,5 +281,6 @@ namespace OpenDental{
 		private System.Windows.Forms.CheckBox checkPreventSavingNewCC;
 		private UI.ComboBoxOD comboPaymentTypeACH;
 		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.CheckBox checkPrintReceipt;
 	}
 }

@@ -272,6 +272,35 @@ namespace OpenDentBusiness {
 						rxPat.SendStatus=RxSendStatus.Pending;
 						break;
 					case DoseSpotREST.PrescriptionStatus.Deleted:
+						if(rxPatOld==null) {
+							//DoseSpot sent a deleted medication that we don't have a record of. Skip it.
+							continue;
+						}
+						MedicationPat medicationPat=MedicationPats.GetMedicationOrderByErxIdAndPat(rxPatOld.ErxGuid,rxPatOld.PatNum);
+						RxPats.Delete(rxPatOld.RxNum);
+						SecurityLog securityLog = new SecurityLog();
+						securityLog.UserNum=0;//Don't attach to user since this is being done by DoseSpot
+						securityLog.CompName=Security.CurComputerName;
+						securityLog.PermType=Permissions.RxEdit;
+						securityLog.FKey=0;
+						securityLog.LogSource=LogSources.eRx;
+						securityLog.LogText="FROM("+rxPatOld.RxDate.ToShortDateString()+","+rxPatOld.Drug+","+rxPatOld.ProvNum+","+rxPatOld.Disp+","+rxPatOld.Refills+")"+"\r\nTO 'deleted' change made by DoseSpot eRx.";
+						securityLog.PatNum=rxPatOld.PatNum;
+						securityLog.DefNum=0;
+						securityLog.DefNumError=0;
+						securityLog.DateTPrevious=DateTime.MinValue;
+						SecurityLogs.MakeLogEntry(securityLog);
+						if(medicationPat!=null) {
+							MedicationPats.Delete(medicationPat);
+							securityLog.PermType=Permissions.PatMedicationListEdit;
+							securityLog.LogText=(medicationPat.MedicationNum==0 ? medicationPat.MedDescript : Medications.GetMedication(medicationPat.MedicationNum).MedName
+								)+" deleted by DoseSpot"+"\r\n"
+								+(String.IsNullOrEmpty(medicationPat.PatNote) ? "" : "Pat note: "+medicationPat.PatNote);
+							securityLog.PatNum=medicationPat.PatNum;//probably the same but better safe than sorry.
+							securityLog.SecurityLogNum=0;//Reset primary key to guarantee insert will work no matter what changes get made to securitylog code.
+							SecurityLogs.MakeLogEntry(securityLog);
+						}
+						break;
 					case DoseSpotREST.PrescriptionStatus.Error:
 					case DoseSpotREST.PrescriptionStatus.EpcsError:
 						continue;//Skip these medications since DoseSpot is saying that they are invalid

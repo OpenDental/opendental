@@ -2278,6 +2278,36 @@ namespace OpenDentBusiness {
 			Misc.SecurityHash.UpdateHashing();
 		}//End of 21_4_21() method
 
+		private static void To21_4_23() {
+			string command="";
+			//E34356 - Default Prexion bridge to use PatNum instead of ChartNum
+			//we don't want to alter a bridge that is currently in use
+			command="SELECT ProgramNum FROM program WHERE ProgName='PreXionViewer' AND Enabled=0";
+			long prexionViewerProgNum=Db.GetLong(command);
+			if(prexionViewerProgNum>0){
+				command="SELECT ProgramNum FROM program WHERE ProgName='PreXionAcquire'";
+				long prexionAcquireProgNum=Db.GetLong(command);
+				long usePatNum=0;
+				//If acquire is set up a specific way then we want viewer to be set up the same way
+				if(prexionAcquireProgNum>0){
+					command=$"SELECT PropertyValue from programproperty WHERE PropertyDesc='Enter 0 to use PatientNum, or 1 to use ChartNum' AND ProgramNum={POut.Long(prexionAcquireProgNum)}";
+					usePatNum=Db.GetLong(command);
+				}
+				command=$"UPDATE programproperty SET PropertyValue='{POut.Long(usePatNum)}' WHERE PropertyDesc='Enter 0 to use PatientNum, or 1 to use ChartNum' AND ProgramNum={POut.Long(prexionViewerProgNum)}";
+				Db.NonQ(command);
+			}
+			//Add the new PaySimple PaySimplePrintReceipt property------------------------------------------------------
+			command="SELECT ClinicNum FROM clinic";
+			List<long> listClinicNums=Db.GetListLong(command);
+			listClinicNums.Add(0);//Add HQ
+			command="SELECT ProgramNum FROM program WHERE ProgName='PaySimple'";
+			long progNum=PIn.Long(Db.GetScalar(command));
+			foreach(long clinicNum in listClinicNums) {
+				command="INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue,ComputerName,ClinicNum) "
+					+"VALUES ("+POut.Long(progNum)+",'PaySimplePrintReceipt','1','',"+POut.Long(clinicNum)+")";
+				Db.NonQ(command);
+			}
+		}//End of 21_4_23() method
 	}
 }
 

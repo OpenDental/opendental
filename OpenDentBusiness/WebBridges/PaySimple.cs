@@ -21,6 +21,7 @@ namespace OpenDentBusiness {
 			public const string PaySimplePayTypeCC="PaySimple Payment Type CC";
 			public const string PaySimplePayTypeACH="PaySimple Payment Type ACH";
 			public const string PaySimplePreventSavingNewCC="PaySimplePreventSavingNewCC";
+			public const string PaySimplePrintReceipt="PaySimplePrintReceipt";
 		}
 
 		///<summary>Throws exceptions.  Will purposefully throw ODExceptions that are already translated and formatted.</summary>
