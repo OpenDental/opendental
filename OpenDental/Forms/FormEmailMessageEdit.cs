@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using CodeBase;
 using OpenDental.UI;
@@ -675,13 +676,21 @@ namespace OpenDental {
       Close();//this form can be opened modelessly.
     }
 
-		private bool ValidateAddressesForSend() {
+		///<summary>Checks to make sure there's a value in the From and To address text boxes. If isSecureEmail is true, will also check if there's a value in the Subject line</summary>
+		private bool ValidateFieldsForSend(bool isSecureEmail=false) {
+			StringBuilder error=new StringBuilder();
 			if(emailPreview.FromAddress==""){ 
-				MsgBox.Show(this,"Please enter a sender address.");
-				return false;
+				error.AppendLine(Lan.g(this,"Sender address is required."));
 			}
 			if(emailPreview.ToAddress=="" && emailPreview.CcAddress=="" && emailPreview.BccAddress=="") {
-				MsgBox.Show(this,"Please enter at least one recipient.");
+				error.AppendLine(Lan.g(this,"At least one recipient is required."));
+			}
+			if(isSecureEmail && string.IsNullOrWhiteSpace(emailPreview.Subject)) {
+				error.AppendLine(Lan.g(this,"Subject line is required."));
+			}
+			string errorMsg=error.ToString();
+			if(!string.IsNullOrWhiteSpace(errorMsg)) {
+				MessageBox.Show(this,Lan.g(this,"The following error(s) need to be addressed before you can send your email")+$":\n{errorMsg}");
 				return false;
 			}
 			return true;
@@ -706,7 +715,7 @@ namespace OpenDental {
         return;
       }
       //this will not be available if already sent.
-      if(!ValidateAddressesForSend()) {
+      if(!ValidateFieldsForSend()) {
 				return;
 			}
 			if(EhrCCD.HasCcdEmailAttachment(_emailMessage)) {
@@ -765,7 +774,7 @@ namespace OpenDental {
 		}
 
 		private void SendSecure() {
-			if(!ValidateAddressesForSend()) {
+			if(!ValidateFieldsForSend(isSecureEmail:true)) {
 				return;
 			}
 			EmailAddress senderEmailAddress=GetOutgoingEmailForSending();

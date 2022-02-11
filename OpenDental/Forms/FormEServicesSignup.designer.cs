@@ -33,9 +33,11 @@ namespace OpenDental{
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.webBrowserSignup = new System.Windows.Forms.WebBrowser();
 			this.butClose = new OpenDental.UI.Button();
+			this.webViewMain = new Microsoft.Web.WebView2.WinForms.WebView2();
+			this.webServiceService1 = new OpenDental.com.dentalxchange.webservices.WebServiceService();
 			this.menuWebSchedVerifyTextTemplate.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.webViewMain)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// label37
@@ -94,17 +96,6 @@ namespace OpenDental{
 			this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
 			this.selectAllToolStripMenuItem.Text = "Select All";
 			// 
-			// webBrowserSignup
-			// 
-			this.webBrowserSignup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.webBrowserSignup.Location = new System.Drawing.Point(12, 20);
-			this.webBrowserSignup.MinimumSize = new System.Drawing.Size(20, 20);
-			this.webBrowserSignup.Name = "webBrowserSignup";
-			this.webBrowserSignup.Size = new System.Drawing.Size(1160, 621);
-			this.webBrowserSignup.TabIndex = 0;
-			// 
 			// butClose
 			// 
 			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -116,17 +107,37 @@ namespace OpenDental{
 			this.butClose.UseVisualStyleBackColor = true;
 			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
+			// webViewMain
+			// 
+			this.webViewMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.webViewMain.CreationProperties = null;
+			this.webViewMain.DefaultBackgroundColor = System.Drawing.Color.White;
+			this.webViewMain.Location = new System.Drawing.Point(12, 20);
+			this.webViewMain.Name = "webViewMain";
+			this.webViewMain.Size = new System.Drawing.Size(1160, 621);
+			this.webViewMain.TabIndex = 502;
+			this.webViewMain.ZoomFactor = 1D;
+			this.webViewMain.NavigationCompleted += new System.EventHandler<Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs>(this.webViewMain_NavigationCompleted);
+			// 
+			// webServiceService1
+			// 
+			this.webServiceService1.Credentials = null;
+			this.webServiceService1.Url = "https://webservices.dentalxchange.com/dws/services/dciservice.svl";
+			this.webServiceService1.UseDefaultCredentials = false;
+			// 
 			// FormEServicesSignup
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(1184, 692);
+			this.Controls.Add(this.webViewMain);
 			this.Controls.Add(this.butClose);
-			this.Controls.Add(this.webBrowserSignup);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEServicesSignup";
 			this.Text = "eServices Signup";
 			this.Load += new System.EventHandler(this.FormEServicesSignup_Load);
 			this.menuWebSchedVerifyTextTemplate.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.webViewMain)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -140,7 +151,8 @@ namespace OpenDental{
 		private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
-		private System.Windows.Forms.WebBrowser webBrowserSignup;
 		private UI.Button butClose;
+		public Microsoft.Web.WebView2.WinForms.WebView2 webViewMain;
+		private com.dentalxchange.webservices.WebServiceService webServiceService1;
 	}
 }

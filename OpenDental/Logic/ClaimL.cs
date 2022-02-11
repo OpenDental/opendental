@@ -225,10 +225,7 @@ namespace OpenDental {
 						return createClaimDataWrapper;
 					}
 					double unearnedAmount=(double)PaySplits.GetTotalAmountOfUnearnedForPats(createClaimDataWrapper.Fam.GetPatNums());
-					//If there's unallocated amounts, we want to redistribute the money to other procedures.
-					if(unearnedAmount>0) {
-						AllocateUnearnedPayment(createClaimDataWrapper.Pat,createClaimDataWrapper.Fam,unearnedAmount,claimCur);
-					}
+					AllocateUnearnedPayment(createClaimDataWrapper.Pat,createClaimDataWrapper.Fam,unearnedAmount,claimCur);
 				}
 				else if(claimCur.ClaimNum!=0) {//isVerbose is false, still need to log.
 					Patient patCur=createClaimDataWrapper.Pat;
@@ -257,7 +254,11 @@ namespace OpenDental {
 			return createClaimDataWrapper;
 		}
 
+		///<summary>Prompts the user to allocate unearned if necessary.</summary>
 		public static void AllocateUnearnedPayment(Patient patcur,Family famcur,double unearnedAmt,Claim ClaimCur) {
+			if(CompareDouble.IsLessThanOrEqualToZero(unearnedAmt)) {
+				return;//There is no unearned money to allocate. Nothing to do.
+			}
 			//do not try to allocate payment if preference is disabled or if there isn't a payment to allocate
 			if(!PrefC.GetBool(PrefName.ShowAllocateUnearnedPaymentPrompt) || ClaimProcs.GetPatPortionForClaim(ClaimCur)<=0) { 
 				return;

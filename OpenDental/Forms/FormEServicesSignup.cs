@@ -21,6 +21,7 @@ using System.IO;
 using WebServiceSerializer;
 using OpenDentBusiness.WebServiceMainHQ;
 using OpenDentBusiness.WebTypes.WebSched.TimeSlot;
+using Microsoft.Web.WebView2.Core;
 
 namespace OpenDental {
 
@@ -34,7 +35,15 @@ namespace OpenDental {
 			_signupOut=signupOut;
 		}
 
-		private void FormEServicesSignup_Load(object sender,EventArgs e) {
+		private async void FormEServicesSignup_Load(object sender,EventArgs e) {
+			try {
+				await Init();
+			}
+			catch(Exception ex) {
+				ex.DoNothing();
+				DialogResult=DialogResult.Cancel;
+				Close();
+			}
 			if(_signupOut==null){
 				_signupOut=FormEServicesSetup.GetSignupOut();
 			}
@@ -48,8 +57,50 @@ namespace OpenDental {
 			if(ODBuild.IsDebug()) {
 				_signupOut.SignupPortalUrl=_signupOut.SignupPortalUrl.Replace("https://www.patientviewer.com/SignupPortal/GWT/SignupPortal/SignupPortal.html","http://127.0.0.1:8888/SignupPortal.html");
 			}
-				webBrowserSignup.Navigate(_signupOut.SignupPortalUrl);
+				webViewMain.CoreWebView2.Navigate(_signupOut.SignupPortalUrl);
 			});
+		}
+
+		private async System.Threading.Tasks.Task Init() {
+			bool doShowError=false;
+			try {
+				if(CoreWebView2Environment.GetAvailableBrowserVersionString().IsNullOrEmpty()) {
+					doShowError=true;
+				}
+			}
+			catch(Exception ex) {
+				ex.DoNothing();
+				doShowError=true;
+			}
+			if(doShowError) {
+				string warning ="Microsoft WebView2 is not available on this device." +
+					"To use this feature, the MicroSoft WebView2 Runtime needs to be downloaded and installed on this machine.\r\n" +
+					"Would you like to download the WebView2 Runtime now?";
+				if(ODBuild.IsDebug()) {
+					warning+="\r\nIf you are in debug, move the \"WebView2Loader.dll\" from \"RequiredDLLs\" to \"OpenDental\\Bin\\Debug\"";
+				}
+					if(MessageBox.Show(warning,"Error",MessageBoxButtons.YesNo)==DialogResult.Yes)
+				{
+						ODException.SwallowAnyException(() => Process.Start("https://go.microsoft.com/fwlink/p/?LinkId=2124703"));
+				}
+				throw new ODException();
+			}
+			// Create the cache directory 
+			string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+			string cacheFolder = ODFileUtils.CombinePaths(localAppData, "WindowsFormsWebView2");
+			CoreWebView2Environment environment=await CoreWebView2Environment.CreateAsync(null,cacheFolder);
+			await webViewMain.EnsureCoreWebView2Async(environment);
+		}
+
+		private void webViewMain_NavigationCompleted(object sender,CoreWebView2NavigationCompletedEventArgs e) {
+			SetTitle();
+		}
+
+		private void SetTitle() {
+			Text=Lan.g(this,"eServices");
+			if(webViewMain.CoreWebView2!=null && !string.IsNullOrWhiteSpace(webViewMain.CoreWebView2.DocumentTitle)) {
+				Text+=" - "+webViewMain.CoreWebView2.DocumentTitle;
+			}
 		}
 
 		private void butClose_Click(object sender,EventArgs e) {
