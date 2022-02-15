@@ -3970,6 +3970,114 @@ If instead the preference was off for this unit test, then Writeoff2 would have 
 			Prefs.UpdateDouble(PrefName.SalesTaxPercentage,0);
 		}
 
+		///<summary>Tests to ensure the EnterpriseHygProcUsePriProvFee preference is working as intended.</summary>
+		[TestMethod]
+		public void Procedures_ComputeEstimates_HygProcUsePriProvFeeFunctionalityFullCoverage() {
+			string suffix="E30604"; //JobNum
+			//Create two providers, attach a fee schedule to each, set D1110 fees
+			long feeSchedNumPPO=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,suffix+"PPO",false);
+			long priProvNum=ProviderT.CreateProvider(suffix+"pri",feeSchedNum:feeSchedNumPPO);
+			long secProvNum=ProviderT.CreateProvider(suffix+"hyg",feeSchedNum:feeSchedNumPPO,isSecondary:true);
+			//Create D1110 and ensure it's a hygiene procedure, set fees
+			ProcedureCode procedureCodeProphy=ProcedureCodeT.CreateProcCode("D1110");
+			procedureCodeProphy.IsHygiene=true;
+			ProcedureCodeT.Update(procedureCodeProphy);
+			FeeT.CreateFee(53,procedureCodeProphy.CodeNum,150);
+			FeeT.CreateFee(feeSchedNumPPO,procedureCodeProphy.CodeNum,100,provNum:priProvNum);
+			FeeT.CreateFee(feeSchedNumPPO,procedureCodeProphy.CodeNum,80,provNum:secProvNum);
+			//Patient with primary and secondary provider, and PPO insurance plan with 80% coverage for D1110
+			Patient patient=PatientT.CreatePatient(suffix,priProvNum:priProvNum, secProvNum:secProvNum);
+			Carrier carrier=CarrierT.CreateCarrier(suffix);
+			InsPlan insPlan=InsPlanT.CreateInsPlanPPO(carrier.CarrierNum,feeSchedNumPPO);
+			InsSub insSub=InsSubT.CreateInsSub(patient.PatNum,insPlan.PlanNum);
+			PatPlanT.CreatePatPlan(1,patient.PatNum,insSub.InsSubNum);
+			BenefitT.CreatePercentForProc(insPlan.PlanNum,procedureCodeProphy.CodeNum,100);
+			//Chart a D1110, attach it to an appointment, set provider to secondary provider, set complete
+			Appointment appointment=AppointmentT.CreateAppointment(patient.PatNum,DateTime.Today,7,priProvNum,secProvNum,isHygiene:true);
+			List<long> listAptNums=new List<long>();
+			listAptNums.Add(appointment.AptNum);
+			Procedure procedure=ProcedureT.CreateProcedure(patient,"D1110",ProcStat.C,"",150,DateTime.Today,aptNum:appointment.AptNum,provNum:secProvNum);
+			PrefT.UpdateBool(PrefName.EnterpriseHygProcUsePriProvFee,false);
+			ClaimProc claimProc=ClaimProcT.CreateClaimProc(patient.PatNum,procedure.ProcNum,insPlan.PlanNum,insSub.InsSubNum);
+			//Setup & call ComputeEstimates
+			Family family=Patients.GetFamily(patient.PatNum);
+			List<InsSub> listInsSubs=InsSubs.RefreshForFam(family);
+			List<InsPlan> listInsPlans=InsPlans.RefreshForSubList(listInsSubs);
+			List<PatPlan> listPatPlans=PatPlans.Refresh(patient.PatNum);
+			List<Benefit> listBenefits=Benefits.Refresh(listPatPlans,listInsSubs);
+			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(patient.PatNum);
+			List<Procedure> listProcedures=new List<Procedure>();
+			listProcedures.Add(procedure);
+			//Test 1: 
+			PrefT.UpdateBool(PrefName.EnterpriseHygProcUsePriProvFee,false);//Set InsEstRecalcReceived preference to false
+			Procedures.ComputeEstimatesForAll(patient.PatNum,listClaimProcs,listProcedures,listInsPlans,listPatPlans,listBenefits,patient.Age,listInsSubs);
+			listClaimProcs=ClaimProcs.Refresh(patient.PatNum);
+			claimProc=ClaimProcs.GetEstimate(listClaimProcs,procedure.ProcNum,insPlan.PlanNum,insSub.InsSubNum);
+			Assert.AreEqual(80,claimProc.InsEstTotal);
+			Assert.AreEqual(70,claimProc.WriteOffEst);
+			//Test 2:
+			PrefT.UpdateBool(PrefName.EnterpriseHygProcUsePriProvFee,true);//Set InsEstRecalcReceived preference to true.
+			Procedures.ComputeEstimatesForAll(patient.PatNum,listClaimProcs,listProcedures,listInsPlans,listPatPlans,listBenefits,patient.Age,listInsSubs);
+			listClaimProcs=ClaimProcs.Refresh(patient.PatNum);
+			claimProc=ClaimProcs.GetEstimate(listClaimProcs,procedure.ProcNum,insPlan.PlanNum,insSub.InsSubNum);
+			Assert.AreEqual(100,claimProc.InsEstTotal);
+			Assert.AreEqual(50,claimProc.WriteOffEst);
+		}
+
+		///<summary>Tests to ensure the EnterpriseHygProcUsePriProvFee preference is working as intended.</summary>
+		[TestMethod]
+		public void Procedures_ComputeEstimates_HygProcUsePriProvFeeFunctionalitySomeCoverage() {
+			string suffix="E30604"; //JobNum
+			//Create two providers, attach a fee schedule to each, set D1110 fees
+			long feeSchedNumPPO=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,suffix+"PPO",false);
+			long priProvNum=ProviderT.CreateProvider(suffix+"pri",feeSchedNum:feeSchedNumPPO);
+			long secProvNum=ProviderT.CreateProvider(suffix+"hyg",feeSchedNum:feeSchedNumPPO,isSecondary:true);
+			//Create D1110 and ensure it's a hygiene procedure, set fees
+			ProcedureCode procedureCodeProphy=ProcedureCodeT.CreateProcCode("D1110");
+			procedureCodeProphy.IsHygiene=true;
+			ProcedureCodeT.Update(procedureCodeProphy);
+			FeeT.CreateFee(53,procedureCodeProphy.CodeNum,150);
+			FeeT.CreateFee(feeSchedNumPPO,procedureCodeProphy.CodeNum,100,provNum:priProvNum);
+			FeeT.CreateFee(feeSchedNumPPO,procedureCodeProphy.CodeNum,80,provNum:secProvNum);
+			//Patient with primary and secondary provider, and PPO insurance plan with 80% coverage for D1110
+			Patient patient=PatientT.CreatePatient(suffix,priProvNum:priProvNum, secProvNum:secProvNum);
+			Carrier carrier=CarrierT.CreateCarrier(suffix);
+			InsPlan insPlan=InsPlanT.CreateInsPlanPPO(carrier.CarrierNum,feeSchedNumPPO);
+			InsSub insSub=InsSubT.CreateInsSub(patient.PatNum,insPlan.PlanNum);
+			PatPlanT.CreatePatPlan(1,patient.PatNum,insSub.InsSubNum);
+			BenefitT.CreatePercentForProc(insPlan.PlanNum,procedureCodeProphy.CodeNum,80);
+			//Chart a D1110, attach it to an appointment, set provider to secondary provider, set complete
+			Appointment appointment=AppointmentT.CreateAppointment(patient.PatNum,DateTime.Today,7,priProvNum,secProvNum,isHygiene:true);
+			List<long> listAptNums=new List<long>();
+			listAptNums.Add(appointment.AptNum);
+			Procedure procedure=ProcedureT.CreateProcedure(patient,"D1110",ProcStat.C,"",150,DateTime.Today,aptNum:appointment.AptNum,provNum:secProvNum);
+			PrefT.UpdateBool(PrefName.EnterpriseHygProcUsePriProvFee,false);
+			ClaimProc claimProc=ClaimProcT.CreateClaimProc(patient.PatNum,procedure.ProcNum,insPlan.PlanNum,insSub.InsSubNum);
+			//Setup & call ComputeEstimates
+			Family family=Patients.GetFamily(patient.PatNum);
+			List<InsSub> listInsSubs=InsSubs.RefreshForFam(family);
+			List<InsPlan> listInsPlans=InsPlans.RefreshForSubList(listInsSubs);
+			List<PatPlan> listPatPlans=PatPlans.Refresh(patient.PatNum);
+			List<Benefit> listBenefits=Benefits.Refresh(listPatPlans,listInsSubs);
+			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(patient.PatNum);
+			List<Procedure> listProcedures=new List<Procedure>();
+			listProcedures.Add(procedure);
+			//Test 1: 
+			PrefT.UpdateBool(PrefName.EnterpriseHygProcUsePriProvFee,false);//Set InsEstRecalcReceived preference to false
+			Procedures.ComputeEstimatesForAll(patient.PatNum,listClaimProcs,listProcedures,listInsPlans,listPatPlans,listBenefits,patient.Age,listInsSubs);
+			listClaimProcs=ClaimProcs.Refresh(patient.PatNum);
+			claimProc=ClaimProcs.GetEstimate(listClaimProcs,procedure.ProcNum,insPlan.PlanNum,insSub.InsSubNum);
+			Assert.AreEqual(64,claimProc.InsEstTotal);
+			Assert.AreEqual(70,claimProc.WriteOffEst);
+			//Test 2:
+			PrefT.UpdateBool(PrefName.EnterpriseHygProcUsePriProvFee,true);//Set InsEstRecalcReceived preference to true.
+			Procedures.ComputeEstimatesForAll(patient.PatNum,listClaimProcs,listProcedures,listInsPlans,listPatPlans,listBenefits,patient.Age,listInsSubs);
+			listClaimProcs=ClaimProcs.Refresh(patient.PatNum);
+			claimProc=ClaimProcs.GetEstimate(listClaimProcs,procedure.ProcNum,insPlan.PlanNum,insSub.InsSubNum);
+			Assert.AreEqual(80,claimProc.InsEstTotal);
+			Assert.AreEqual(50,claimProc.WriteOffEst);
+		}
+
 		[TestMethod]
 		public void Procedures_GetDiscountAmountForDiscountPlan_AnnualMaxDoesntExceed() {
 			DiscountPlanT.ClearDiscountPlanPrefs();

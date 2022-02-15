@@ -141,6 +141,19 @@ namespace OpenDental {
 			}
 		}
 	
+		private int _minScrollable=1;
+		[Category("Behavior")]
+		[Description("Minimum number of items required to allow scrolling.")]
+		public int MinScrollable {
+			get {
+				return _minScrollable;
+			}
+			set {
+				_minScrollable=value;
+				PropertyChanged(this,new PropertyChangedEventArgs("MinScrollable"));
+			}
+		}
+
 		public EscalationViewControl() {
 			InitializeComponent();
 			PropertyChanged+=EscalationViewControl_PropertyChanged;
@@ -307,8 +320,8 @@ namespace OpenDental {
 			}
 			else {//MouseWheel down
 				indexItemStart=Math.Min(indexItemStart+1,_items.Count-1);//-1 so that there will always be 1 item drawn.
-				if(_items.Count-indexItemStart<8) {//Difference represents the number of items we are goin to draw.
-					indexItemStart=_items.Count-8;//Always keep the escalation view full, last item will be at bottom of the view.
+				if(_items.Count-indexItemStart<MinScrollable) {//Difference represents the number of items we are goin to draw.
+					indexItemStart=_items.Count-MinScrollable;//Always keep the escalation view full, last item will be at bottom of the view.
 				}
 			}
 			PropertyChanged(this,new PropertyChangedEventArgs("MouseWheel"));

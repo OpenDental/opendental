@@ -111,6 +111,7 @@ namespace OpenDental {
 			checkUseOpHygProv.Checked=PrefC.GetBool(PrefName.ApptSecondaryProviderConsiderOpOnly);
 			checkEnterpriseApptList.Checked=PrefC.GetBool(PrefName.EnterpriseApptList);
 			checkEnableNoneView.Checked=PrefC.GetBool(PrefName.EnterpriseNoneApptViewDefaultDisabled);
+			checkHygProcUsePriProvFee.Checked=PrefC.GetBool(PrefName.EnterpriseHygProcUsePriProvFee);
 			#endregion Appts Tab
 			#region Family Tab
 			checkSuperFam.Checked=PrefC.GetBool(PrefName.ShowFeatureSuperfamilies);
@@ -266,6 +267,7 @@ namespace OpenDental {
 				| Prefs.UpdateBool(PrefName.ClaimReportReceivedByService,checkReceiveReportsService.Checked)
 				| Prefs.UpdateBool(PrefName.CloneCreateSuperFamily,checkSuperFamCloneCreate.Checked)
 				| Prefs.UpdateBool(PrefName.EnterpriseApptList,checkEnterpriseApptList.Checked)
+				| Prefs.UpdateBool(PrefName.EnterpriseHygProcUsePriProvFee,checkHygProcUsePriProvFee.Checked)
 				| Prefs.UpdateBool(PrefName.PasswordsMustBeStrong,checkPasswordsMustBeStrong.Checked)
 				| Prefs.UpdateBool(PrefName.PasswordsStrongIncludeSpecial,checkPasswordsStrongIncludeSpecial.Checked)
 				| Prefs.UpdateBool(PrefName.PasswordsWeakChangeToStrong,checkPasswordForceWeakToStrong.Checked)

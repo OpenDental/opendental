@@ -2706,7 +2706,7 @@ namespace OpenDental {
 		}
 
 		private void butExport_Click(object sender,EventArgs e) {
-			gridAction.Export($"JobManagerActionItems_{DateTime.Today.ToShortDateString()}");
+			gridAction.Export($"JobManagerActionItems_{DateTime.Today.ToString("yyyy-MM-dd")}");
 		}
 	}
 }

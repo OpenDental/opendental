@@ -67,6 +67,10 @@ namespace OpenDental {
 					FillFieldsFromCard();
 				}
 			}
+			if(PIn.Bool(ProgramProperties.GetPropVal(_progCur.ProgramNum,PaySimple.PropertyDescs.PaySimplePrintReceipt,_clinicNum))) {
+				checkPrintReceipt.Checked=true;
+				checkPrintReceiptACH.Checked=true;
+			}
 			if(_isAddingCard) {
 				radioAuthorization.Checked=true;
 				_trantype=PaySimple.TransType.AUTH;
@@ -79,6 +83,16 @@ namespace OpenDental {
 				checkOneTimePayment.Enabled=false;
 				checkOneTimePaymentACH.Checked=false;
 				checkOneTimePaymentACH.Enabled=false;
+				checkPrintReceipt.Checked=false;
+				checkPrintReceipt.Enabled=false;
+				checkPrintReceiptACH.Checked=false;
+				checkPrintReceiptACH.Enabled=false;
+			}
+			if(PIn.Bool(ProgramProperties.GetPropVal(_progCur.ProgramNum,PaySimple.PropertyDescs.PaySimplePreventSavingNewCC,_clinicNum))) {
+				textCardNumber.ReadOnly=true;
+				textRoutingNumber.ReadOnly=true;
+				textCheckSaveNumber.ReadOnly=true;
+				textBankName.ReadOnly=true;
 			}
 			if(_creditCardCur==null || _creditCardCur.CCSource!=CreditCardSource.PaySimpleACH) {
 				textCardNumber.Select();
@@ -87,16 +101,7 @@ namespace OpenDental {
 				tabControl.SelectedTab=tabACH;
 				textRoutingNumber.Select();
 			}
-			if(PIn.Bool(ProgramProperties.GetPropVal(_progCur.ProgramNum,PaySimple.PropertyDescs.PaySimplePreventSavingNewCC,_clinicNum))) {
-				textCardNumber.ReadOnly=true;
-				textRoutingNumber.ReadOnly=true;
-				textCheckSaveNumber.ReadOnly=true;
-				textBankName.ReadOnly=true;
-			}
-			if(PIn.Bool(ProgramProperties.GetPropVal(_progCur.ProgramNum,PaySimple.PropertyDescs.PaySimplePrintReceipt,_clinicNum))) {
-				checkPrintReceipt.Checked=true;
-				checkPrintReceiptACH.Checked=true;
-			}
+			
 		}
 
 		private void FillFieldsFromCard() {

@@ -298,6 +298,7 @@
 			this.escalationView.LinePadding = -6;
 			this.escalationView.Location = new System.Drawing.Point(58, 252);
 			this.escalationView.MinAlpha = 60;
+			this.escalationView.MinScrollable = 8;
 			this.escalationView.Name = "escalationView";
 			this.escalationView.OuterColor = System.Drawing.Color.Black;
 			this.escalationView.Size = new System.Drawing.Size(304, 282);
@@ -730,6 +731,7 @@
 			this.officesDownView.LinePadding = -6;
 			this.officesDownView.Location = new System.Drawing.Point(4, 710);
 			this.officesDownView.MinAlpha = 60;
+			this.officesDownView.MinScrollable = 3;
 			this.officesDownView.Name = "officesDownView";
 			this.officesDownView.OuterColor = System.Drawing.Color.Black;
 			this.officesDownView.Size = new System.Drawing.Size(358, 127);

@@ -161,6 +161,7 @@ namespace OpenDentBusiness{
 				}
 				#region Get the path for the image
 				string filePathAndName="";
+				Document patDoc=new Document();
 				switch(field.FieldType) {
 					case SheetFieldType.Image:
 						filePathAndName=FileAtoZ.CombinePaths(SheetUtil.GetClinicImagePath(field.FieldName),field.FieldName);
@@ -171,7 +172,7 @@ namespace OpenDentBusiness{
 							filePathAndName="";
 							break;
 						}
-						Document patDoc=Documents.GetByNum(PIn.Long(field.FieldValue));
+						patDoc=Documents.GetByNum(PIn.Long(field.FieldValue));
 						List<string> paths=Documents.GetPaths(new List<long> { patDoc.DocNum },ImageStore.GetPreferredAtoZpath());
 						if(paths.Count < 1) {//No path was found so we cannot draw the image.
 							continue;
@@ -209,6 +210,11 @@ namespace OpenDentBusiness{
 				}
 				else {
 					continue;
+				}
+				if(field.FieldType==SheetFieldType.PatImage && patDoc.DocNum!=0) {
+					Bitmap bmpCopy = ImageHelper.ApplyDocumentSettingsToImage(patDoc,bmpOriginal,ImageSettingFlags.ALL);
+					bmpOriginal.Dispose();
+					bmpOriginal=bmpCopy;
 				}
 				#endregion
 				#region Calculate the image ratio and location, set values for imgDrawWidth and imgDrawHeight

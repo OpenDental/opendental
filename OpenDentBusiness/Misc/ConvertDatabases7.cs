@@ -1982,6 +1982,13 @@ namespace OpenDentBusiness {
 			}//end United States CDT codes update
 		}//End of 21_3_29()
 
+		private static void To21_3_50() {
+			string command;
+			//E30604 - Enterprise Pref to use PriProv's PPO fee for Hyg procs
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('EnterpriseHygProcUsePriProvFee','0')"; //Default to false
+			Db.NonQ(command);
+		}//End of 21_3_50()
+
 		private static void To21_4_1() {
 			string command;
 			DataTable table;
@@ -2308,6 +2315,16 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}
 		}//End of 21_4_23() method
+
+		private static void To21_4_24() {
+			string command;
+			//E30604 - Enterprise Pref to use PriProv's PPO fee for Hyg procs
+			command="SELECT * FROM preference WHERE PrefName='EnterpriseHygProcUsePriProvFee'";
+			if(Db.GetTable(command).Rows.Count==0) { //Check to see if it's already been added
+				command="INSERT INTO preference(PrefName,ValueString) VALUES ('EnterpriseHygProcUsePriProvFee','0')";//Default to false.
+				Db.NonQ(command);
+			}
+		}//End of 21_4_24() method
 	}
 }
 
