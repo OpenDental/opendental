@@ -45,6 +45,7 @@ namespace OpenDental{
 			// 
 			// panelMain
 			// 
+			this.panelMain.AllowDrop = true;
 			this.panelMain.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panelMain.Location = new System.Drawing.Point(0, 0);
 			this.panelMain.Name = "panelMain";

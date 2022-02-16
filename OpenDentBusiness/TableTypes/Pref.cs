@@ -921,6 +921,9 @@ namespace OpenDentBusiness {
 		///<summary>Number of digits in phone number for exact match setting in enterprise setup.</summary>
 		[PrefName(ValueType=PrefValueType.INT)]
 		EnterpriseExactMatchPhoneNumDigits,
+		///<summary>Boolean, false by default. When true, hygiene procedures will use the primary provider's PPO fee rather than the hygienist's.</summary>
+		[PrefName(ValueType=PrefValueType.BOOL)]
+		EnterpriseHygProcUsePriProvFee,
 		///<summary>Boolean, false by default. When true the Appointment 'None' View will not be selected by default when there is at least one existing 
 		///Appointment view. False preserves current behavior - ie: Appointment 'None' View displays on first load of a clinic for a brand
 		///new user in a clinic.</summary>

@@ -3117,9 +3117,30 @@ namespace OpenDentBusiness {
 			List<ClaimProc> listClaimProcsAll=null,bool isClaimProcRemoveNeeded=false,bool useProcDateOnProc=false,List<SubstitutionLink> listSubstLinks=null,bool isForOrtho=false,
 			List<Fee> listFees=null,Lookup<FeeKey2,Fee> lookupFees=null,
 			OrthoProcLink orthoProcLink=null,OrthoCase orthoCase=null,OrthoSchedule orthoSchedule=null,List<OrthoProcLink> listOrthoProcLinksForOrthoCase=null,
-			BlueBookEstimateData blueBookEstimateData=null) 
+			BlueBookEstimateData blueBookEstimateData=null,List<long> listApptNums=null) 
 		{
 			//No need to check RemotingRole; no call to db.
+			if(PrefC.GetBool(PrefName.EnterpriseHygProcUsePriProvFee) && ProcedureCodes.GetProcCode(proc.CodeNum).IsHygiene) {
+				if(listApptNums==null) {
+					listApptNums=new List<long>();
+					listApptNums.Add(proc.AptNum);
+					listApptNums.Add(proc.PlannedAptNum);
+					listApptNums=listApptNums.FindAll(x=>x!=0).Distinct().ToList();
+				}
+				proc=proc.Copy();
+				Appointment appointment=null;
+				if(listApptNums.Contains(proc.AptNum)) {
+					appointment=Appointments.GetOneApt(proc.AptNum);
+					if(appointment!=null) {
+						proc.ProvNum=appointment.ProvNum;
+					}
+				}else if(listApptNums.Contains(proc.PlannedAptNum)) {
+					appointment=Appointments.GetOneApt(proc.PlannedAptNum);
+					if(appointment!=null) {
+						proc.ProvNum=appointment.ProvNum;
+					}
+				}
+			}
 			if(blueBookEstimateData==null) {
 				blueBookEstimateData=new BlueBookEstimateData(planList,subList,patPlans,new List<Procedure>(){proc},listSubstLinks);
 			}
@@ -3811,6 +3832,15 @@ namespace OpenDentBusiness {
 		{
 			//No need to check RemotingRole; no call to db.
 			//Get data for any OrthoCases that may be linked to procs in procs list
+			List<long> listApptNums=null;
+			if(PrefC.GetBool(PrefName.EnterpriseHygProcUsePriProvFee)) {
+				listApptNums=new List<long>();
+				for(int i=0;i<procs.Count;i++) {
+					listApptNums.Add(procs[i].AptNum);
+					listApptNums.Add(procs[i].PlannedAptNum);
+				}
+				listApptNums=listApptNums.FindAll(x=>x!=0).Distinct().ToList();
+			}
 			List<OrthoProcLink> listOrthoProcLinksAll=new List<OrthoProcLink>();
 			Dictionary<long,OrthoProcLink> dictOrthoProcLinksForProcList=new Dictionary<long,OrthoProcLink>();
 			Dictionary<long,OrthoCase> dictOrthoCases=new Dictionary<long,OrthoCase>();
@@ -3833,7 +3863,7 @@ namespace OpenDentBusiness {
 					patientAge,subList,
 					listClaimProcsAll,isClaimProcRemoveNeeded,false,listSubstLinks,false,
 					listFees,null,
-					orthoProcLink,orthoCase,orthoSchedule,listOrthoProcLinksForOrthoCase,blueBookEstimateData);
+					orthoProcLink,orthoCase,orthoSchedule,listOrthoProcLinksForOrthoCase,blueBookEstimateData,listApptNums:listApptNums);
 			}
 		}
 

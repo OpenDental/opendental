@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
-<database version="21.3.29.0">
+<database version="21.3.50.0">
     <table name="apptreminderrule">
         <summary></summary>
         <column order="27" name="SendMultipleInvites" type="tinyint(4)">

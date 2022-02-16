@@ -95,6 +95,7 @@ namespace OpenDental {
 			this.labelGlobalDateLockDisabled = new System.Windows.Forms.Label();
 			this.checkEnableClinics = new System.Windows.Forms.CheckBox();
 			this.tabAppts = new System.Windows.Forms.TabPage();
+			this.checkHygProcUsePriProvFee = new System.Windows.Forms.CheckBox();
 			this.checkEnableNoneView = new System.Windows.Forms.CheckBox();
 			this.checkEnterpriseApptList = new System.Windows.Forms.CheckBox();
 			this.checkUseOpHygProv = new System.Windows.Forms.CheckBox();
@@ -928,6 +929,7 @@ namespace OpenDental {
 			// tabAppts
 			// 
 			this.tabAppts.BackColor = System.Drawing.SystemColors.Window;
+			this.tabAppts.Controls.Add(this.checkHygProcUsePriProvFee);
 			this.tabAppts.Controls.Add(this.checkEnableNoneView);
 			this.tabAppts.Controls.Add(this.checkEnterpriseApptList);
 			this.tabAppts.Controls.Add(this.checkUseOpHygProv);
@@ -938,6 +940,17 @@ namespace OpenDental {
 			this.tabAppts.Size = new System.Drawing.Size(494, 593);
 			this.tabAppts.TabIndex = 0;
 			this.tabAppts.Text = "Appts";
+			// 
+			// checkHygProcUsePriProvFee
+			// 
+			this.checkHygProcUsePriProvFee.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkHygProcUsePriProvFee.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.checkHygProcUsePriProvFee.Location = new System.Drawing.Point(153, 86);
+			this.checkHygProcUsePriProvFee.Name = "checkHygProcUsePriProvFee";
+			this.checkHygProcUsePriProvFee.Size = new System.Drawing.Size(320, 18);
+			this.checkHygProcUsePriProvFee.TabIndex = 288;
+			this.checkHygProcUsePriProvFee.Text = "Hygiene procedures use primary provider PPO fee";
+			this.checkHygProcUsePriProvFee.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkEnableNoneView
 			// 
@@ -1471,5 +1484,6 @@ namespace OpenDental {
         private System.Windows.Forms.CheckBox checkEra835sStrictClaimMatching;
         private System.Windows.Forms.CheckBox checkEra835sShowStatusAndClinic;
 		private System.Windows.Forms.CheckBox checkCaclAgingBatchClaims;
+		private System.Windows.Forms.CheckBox checkHygProcUsePriProvFee;
 	}
 }

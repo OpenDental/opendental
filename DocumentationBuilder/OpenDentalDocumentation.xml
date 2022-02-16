@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDocumentation.xsl"?>
-<database version="21.3.29.0">
+<database version="21.3.50.0">
     <table name="account">
         <summary>Used in the accounting section in chart of accounts.  Not related to patient accounts in any way.</summary>
         <column order="0" name="AccountNum" type="bigint(20)">
@@ -6597,13 +6597,13 @@
             <summary>Enum:X835Status .  Calculated status.  Only changes when ERA changes.</summary>
             <Enumeration name="X835Status">
                 <summary />
-                <EnumValue name="None">Just a place holder if there is an issue.  Should never show in UI.</EnumValue>
-                <EnumValue name="Unprocessed">There are no received claims attached to the ERA.  There can be one or more detached claims on the ERA.</EnumValue>
-                <EnumValue name="Partial">Some claims for this ERA have had financial information entered, no finalaized claim payment.</EnumValue>
-                <EnumValue name="NotFinalized">Ignores manually detached.  All claims for this ERA have had financial information entered, no finalaized claim payment.</EnumValue>
-                <EnumValue name="FinalizedSomeDetached">Some claims have been manually detached but all other claims have had financial information entered and finalaized claim payment created.</EnumValue>
-                <EnumValue name="FinalizedAllDetached">All claims have been manually detached.</EnumValue>
-                <EnumValue name="Finalized">All claims for this ERA have had financial information entered and a finalaized claim payment was created.</EnumValue>
+                <EnumValue name="None">1 - Just a place holder if there is an issue.  Should never show in UI.</EnumValue>
+                <EnumValue name="Unprocessed">2 - There are no received claims attached to the ERA.  There can be one or more detached claims on the ERA.</EnumValue>
+                <EnumValue name="Partial">3 - Some claims for this ERA have had financial information entered, no finalaized claim payment.</EnumValue>
+                <EnumValue name="NotFinalized">4 - Ignores manually detached.  All claims for this ERA have had financial information entered, no finalaized claim payment.</EnumValue>
+                <EnumValue name="FinalizedSomeDetached">5 - Some claims have been manually detached but all other claims have had financial information entered and finalaized claim payment created.</EnumValue>
+                <EnumValue name="FinalizedAllDetached">6 - All claims have been manually detached.</EnumValue>
+                <EnumValue name="Finalized">7 - All claims for this ERA have had financial information entered and a finalaized claim payment was created.</EnumValue>
             </Enumeration>
         </column>
         <column order="9" name="AutoProcessed" type="tinyint(4)">
