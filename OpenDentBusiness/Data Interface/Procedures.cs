@@ -1827,9 +1827,10 @@ namespace OpenDentBusiness {
 		///Also deletes any claimProcs, adjustments, and payplancharge credits.  
 		///This does not actually delete the procedure, but just changes the status to deleted.</summary>
 		///<param name="forceDelete">If true, forcefully deletes all objects attached to the procedure.</param>
-		public static void Delete(long procNum,bool forceDelete=false) {
+		///<param name="hideGraphics">If true, sets the procedure's "HideGraphics" db field to true so that it will not show up on the chart.</param>
+		public static void Delete(long procNum,bool forceDelete=false,bool hideGraphics=false) {
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),procNum,forceDelete);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),procNum,forceDelete,hideGraphics);
 				ProcMultiVisits.RefreshCache();//This refresh must be run on the client to be useful.
 				return;
 			}
@@ -1871,6 +1872,9 @@ namespace OpenDentBusiness {
 				+"PlannedAptNum=0";
 			if(dateComplete.Date==DateTime.Today.Date) {
 				command+=", DateComplete="+POut.Date(DateTime.MinValue);
+			}
+			if(hideGraphics) {
+				command+=", HideGraphics=1";
 			}
 			command+=" WHERE ProcNum="+POut.Long(procNum);
 			Db.NonQ(command);

@@ -1986,5 +1986,12 @@ namespace OpenDentBusiness {
 			command="INSERT INTO preference(PrefName,ValueString) VALUES('EnterpriseHygProcUsePriProvFee','0')"; //Default to false
 			Db.NonQ(command);
 		}//End of 21_3_50()
+
+		private static void To21_3_51() {
+			string command;
+			//B34518 - Preventing invalidated procedures from overwriting graphics on the chart
+			command="UPDATE procedurelog SET HideGraphics=1 WHERE ProcStatus=6 AND IsLocked=1";
+			Db.NonQ(command);
+		}
 	}
 }

@@ -2226,7 +2226,7 @@ namespace OpenDental {
 				return;
 			}
 			try {
-				Procedures.Delete(_procedure.ProcNum);//also deletes any claimprocs (other than ins payments of course).
+				Procedures.Delete(_procedure.ProcNum,hideGraphics:true);//also deletes any claimprocs (other than ins payments of course) and hides graphics.
 			}
 			catch(Exception ex) {
 				MessageBox.Show(ex.Message);
