@@ -1108,6 +1108,11 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Throws exceptions for invalid Patient data.</summary>
+		public static void ValidatePatientData(long patNum) {
+			ValidatePatientData(Patients.GetPat(patNum));
+		}
+
+		///<summary>Throws exceptions for invalid Patient data.</summary>
 		public static void ValidatePatientData(Patient patient) {
 			string primaryPhone=GetPhoneAndType(patient,0,out string phoneType);
 			StringBuilder stringBuilder=new StringBuilder();

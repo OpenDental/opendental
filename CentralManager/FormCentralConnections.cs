@@ -74,7 +74,6 @@ namespace CentralManager {
 			gridMain.Columns.Add(col);
 			gridMain.ListGridRows.Clear();
 			GridRow row;
-			int[] selectedIndices=gridMain.SelectedIndices;
 			for(int i=0;i<_listConnsShowing.Count;i++) {
 				row=new GridRow();
 				row.Cells.Add(_listConnsShowing[i].ItemOrder.ToString());
@@ -88,7 +87,6 @@ namespace CentralManager {
 				gridMain.ListGridRows.Add(row);
 			}
 			gridMain.EndUpdate();
-			gridMain.SetSelected(selectedIndices,true);
 		}
 
 		private void comboConnectionGroups_SelectionChangeCommitted(object sender,EventArgs e) {

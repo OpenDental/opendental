@@ -4461,6 +4461,7 @@ namespace OpenDentBusiness{
 			AptCur.TimeLocked=PrefC.GetBool(PrefName.AppointmentTimeIsLocked);
 			AptCur.ColorOverride=System.Drawing.Color.FromArgb(0);
 			AptCur.Pattern="/X/";
+			AptCur.SecurityHash=HashFields(AptCur);
 			return AptCur;
 		}
 

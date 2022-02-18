@@ -232,7 +232,6 @@ namespace OpenDental{
 			if(IsNew) {
 				butDelete.Visible=false;
 				butClosePlan.Visible=false;
-				butSendToDevice.Visible=false;
 			}
 			if(!Security.IsAuthorized(Permissions.PayPlanEdit)) {
 				DisableAllExcept(butGoToGuar,butGoToPat,butCancel,butPrint,checkExcludePast,butAddTxCredits,gridCharges);
@@ -1120,6 +1119,9 @@ namespace OpenDental{
 				MsgBox.Show("Please enable eClipboard for this clinic to use this feature.");
 				return;
 			}
+			if(HasErrors()) {
+				return;
+			}
 			//The sheet that the practice uses for payment plans needs to have a signature box on it, otherwise the signature won't be
 			//visible after signing. 
 			if(SheetDefs.GetInternalOrCustom(SheetInternalType.PaymentPlan).SheetFieldDefs.FirstOrDefault(
@@ -1140,6 +1142,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"This Payment Plan has already been signed.");
 				return;
 			}
+			SaveData();
 			List<MobileAppDevice> listMobileAppDevices=MobileAppDevices.GetAll();
 			MobileAppDevice device=listMobileAppDevices.Where(x => x.PatNum==PatCur.PatNum).OrderByDescending(x => x.LastCheckInActivity).FirstOrDefault();
 			if(device!=null && device.LastCheckInActivity>DateTime.Now.AddHours(-1)) {

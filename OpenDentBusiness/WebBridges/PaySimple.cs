@@ -1111,6 +1111,9 @@ namespace OpenDentBusiness {
 						return new RequestResponse<T>(JsonConvert.DeserializeAnonymousType(res,responseType),res);
 					}
 					catch(WebException wex) {
+						if(wex.Response==null) {//Operation timeouts do not give a response back. We speculate the timeouts happen when rapid-firing requests.
+							throw new Exception(wex.Message,wex);
+						}
 						string res="";
 						using(var sr=new StreamReader(((HttpWebResponse)wex.Response).GetResponseStream())) {
 							res=sr.ReadToEnd();

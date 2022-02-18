@@ -102,7 +102,6 @@ namespace OpenDental {
 				}
 				butSave.Visible=false;
 				butCancelTerms.Visible=false;
-				butSendToDevice.Visible=false;
 			}
 			else {//already saved payment plan, user needs to unlock before they can edit anything.
 				FillUiForSavedPayPlan();
@@ -1266,6 +1265,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"This Payment Plan has already been signed.");
 				return;
 			}
+			SaveData();
 			List<MobileAppDevice> listMobileAppDevices=MobileAppDevices.GetAll();
 			MobileAppDevice device=listMobileAppDevices.Where(x => x.PatNum==_patCur.PatNum).OrderByDescending(x => x.LastCheckInActivity).FirstOrDefault();
 			if(device!=null && device.LastCheckInActivity>DateTime.Now.AddHours(-1)) {

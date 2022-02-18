@@ -1989,6 +1989,13 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}//End of 21_3_50()
 
+		private static void To21_3_51() {
+			string command;
+			//B34518 - Preventing invalidated procedures from overwriting graphics on the chart
+			command="UPDATE procedurelog SET HideGraphics=1 WHERE ProcStatus=6 AND IsLocked=1";
+			Db.NonQ(command);
+		}
+
 		private static void To21_4_1() {
 			string command;
 			DataTable table;
@@ -2325,6 +2332,14 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}
 		}//End of 21_4_24() method
+
+		private static void To21_4_25() {
+			string command;
+			//B34518 - Preventing invalidated procedures from overwriting graphics on the chart
+			command="UPDATE procedurelog SET HideGraphics=1 WHERE ProcStatus=6 AND IsLocked=1";
+			Db.NonQ(command);
+			Misc.SecurityHash.UpdateHashing();
+		}
 	}
 }
 
