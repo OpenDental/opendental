@@ -1,0 +1,908 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="UnitTestsDocumentation.xsl"?>
+<members version="21.2.0.0">
+    <UnitTest Name="Procedures_ComputeEstimates_Allowed1Allowed2">
+        <TestNum>1</TestNum>
+        <VersionAdded>7.1</VersionAdded>
+        <Description>Patient has two insurance plans, both PPO, subscriber self for both. The only benefit entered for both insurance plans is 50% coverage on the crowns category. One procedure is treatment planned, a D2750 PFM crown on #8. COB is Basic; see Tests 17 and 18 for other COB types. If the three fees are entered for each scenario, then the estimates and writeoffs shown in the Treatment Plan module will be:<br/>
+        <table>
+          <tr>
+            <td>Fee</td>
+            <td>Allowed1</td>
+            <td>Allowed2</td>
+            <td>InsPay1</td>
+            <td>InsPay2</td>
+            <td>Writeoff1</td>
+            <td>Writeoff2</td>
+            <td>(implied pat port)</td>
+          </tr>
+          <tr>
+            <td>$1,200.00</td>
+            <td>$900.00</td>
+            <td>$650.00</td>
+            <td>$450.00</td>
+            <td>$200.00</td>
+            <td>$300.00</td>
+            <td>$0.00</td>
+            <td>$250.00</td>
+          </tr>
+        </table>
+</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_ZeroCoverageOverAnnualMax">
+        <TestNum>3</TestNum>
+        <VersionAdded>7.1</VersionAdded>
+        <Description>Patient has one insurance plan, category percentage, subscriber self. Benefits include annual max of 1000, crowns 100%, Diagnostic 100%, BW frequency: every 1 year. Two procedures are treatment planned: a crown for $1100, going over the annual max, and a 4BW D0274. The 4BW must show zero coverage.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_FamilyUnderAnnualMax">
+        <TestNum>4</TestNum>
+        <VersionAdded>7.1</VersionAdded>
+        <Description>2 patients in one family. Same insurance. The only benefits are: $1000 individual annual max, $2500 family annual max, and 100% crowns. Add a crown for $830. Crown should show insurance estimate of $830 with no comment about 'over annual max'.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_IndividualAndFamilyMax">
+        <TestNum>5</TestNum>
+        <VersionAdded>7.1</VersionAdded>
+        <Description>2 patients in one family. Same insurance. The only benefits are: $1000 individual annual max, $2500 family annual max, and 100% crowns. Add an insurance used amount of $2000 to one patient. Then have one TP procedure on the other patient, a crown for $830. The insurance on the second patient should show an estimate of $500 due to family max.</Description>
+    </UnitTest>
+    <UnitTest Name="InsPlan_GetInsUsedDisplay_LimitationsOverride">
+        <TestNum>6</TestNum>
+        <VersionAdded>7.1</VersionAdded>
+        <Description>Patient has one insurance plan, subscriber self. Benefits: annual max 1000, diagnostic max 1000. First completed procedure, an exam for $50, insurance paid $50.  Second procedure, a crown for $830, insurance paid $400. Ins used should show $400 and should not include the $50 because the ins used value should only be concerned with amounts that affect the annual max .</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_PreventitiveDiagnosticDeductibleOnlyOnce">
+        <TestNum>7</TestNum>
+        <VersionAdded>7.2</VersionAdded>
+        <Description>1 patient. 1 insplan, 6 benefits: 1000 annual max, 100% preventive, 100% diagnostic, $50 deduct general, $25 deduct preventive, and $25 deduct diagnostic. One TP procedure for $60, code D0120 (perExam). Second TP procedure for $70, code D1110 (prophy). Second procedure should show no deductible. This is because we need to treat the $25 deductible as a single deductible that applies to preventive/diagnostic. It's not two deductibles. This is only a temporary solution, and the better solution will be to support code ranges that include both preventive and diagnostic, and then to enter a single $25 deductible for that range.</Description>
+    </UnitTest>
+    <UnitTest Name="Claims_CalculateAndUpdate_Allowed1Allowed2CompletedProcedures">
+        <TestNum>8</TestNum>
+        <VersionAdded>7.2</VersionAdded>
+        <Description>Patient has two insurance plans, both PPO, subscriber self for both. The only benefits entered for both insurance plans are $1000 max and 50% coverage on the crowns category.  One procedure is treatment planned, a D2750 PFM crown on #8. The three fee schedules are set up as below. The procedure is completed and a primary claim is created. The claim should show a writeoff of $500.       <br/>
+				<table>
+          <tr>
+            <td>Fee</td>
+            <td>Allowed1</td>
+            <td>Allowed2</td>
+            <td>InsPay1</td>
+            <td>InsPay2</td>
+            <td>Writeoff1</td>
+            <td>Writeoff2</td>
+            <td>(implied pat port)</td>
+          </tr>
+          <tr>
+            <td>$1,200.00</td>
+            <td>$600.00</td>
+            <td>$800.00</td>
+            <td>$300.00</td>
+            <td>$400.00</td>
+            <td>$500.00</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+          </tr>
+        </table>
+			</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_LimitationsOverrideGeneralLimitations">
+        <TestNum>9</TestNum>
+        <VersionAdded>7.2.39</VersionAdded>
+        <Description> Related to #6. Patient has one insurance plan, subscriber self. Benefits: annual max $200. Other benefit added for limitation on D2161 of $2000. Restorative 80%. Two procedures are treatment planned. First is D2161 for $300, insurance estimate of $240. Second procedure is a D2160 for $300. Insurance estimate on second procedure in the TP should be $200 because the first procedure does not count towards the regular annual max. It instead has its own annual max.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_AnnualMaxReachedZeroCoverage">
+        <TestNum>10</TestNum>
+        <VersionAdded>7.2.43</VersionAdded>
+        <Description>(this tests the case where preventive frequency is causing errors in the calculation) Patient has one insurance plan, subscriber self. Benefits: annual max $400. 100% coverage on routine preventive. Limitation, preventive every 2 years. Three space maintainers (D1515) added to TP, $500 each. First proc should show $400 coverage, and second proc $0 coverage.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_FamilyMaxNoIndividualMax">
+        <TestNum>11</TestNum>
+        <VersionAdded>7.5.5</VersionAdded>
+        <Description>Patient has one insurance plan, subscriber self. Benefits: annual family max $400. No individual max. 100% coverage on restorative. Two amalgams added to TP, $500 each. First proc should show $400 coverage, and second proc $0 coverage.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_WriteoffPPOsPriSecSamePlan">
+        <TestNum>12</TestNum>
+        <VersionAdded>7.8.16</VersionAdded>
+        <Description>Patient has spouse.  Both have insurance with the same PPO plan.  The patient has secondary insurance  through the spouse.  Benefits: annual max $1200. Deductible $0.  100% coverage on a crown.  One crown added to TP for $1400.  Allowed $1100.<br/>
+				<table>
+          <tr>
+            <td>Fee</td>
+            <td>Allowed1</td>
+            <td>Allowed2</td>
+            <td>InsPay1</td>
+            <td>InsPay2</td>
+            <td>Writeoff1</td>
+            <td>Writeoff2</td>
+            <td>(implied pat port)</td>
+          </tr>
+          <tr>
+            <td>$1,400.00</td>
+            <td>$1100.00</td>
+            <td>$1100.00</td>
+            <td>$1100.00</td>
+            <td>$0.00</td>
+            <td>$300.00</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+          </tr>
+        </table>
+			</Description>
+    </UnitTest>
+    <UnitTest Name="InsPlan_GetInsUsedDisplay_OrthoProcsNotAffectInsUsed">
+        <TestNum>13</TestNum>
+        <VersionAdded>7.9.9</VersionAdded>
+        <Description>Patient has one insurance plan, subscriber self. Benefits: annual max $100, ortho max $500, 100% on diagnostic and ortho.  2 procs: D0140 (limEx) $59, and D8090 (comprehensive ortho) $348. Each sent to ins on separate claim, received, paid 100%.  Insurance used should show $59.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_PriEstNotAffectedBySecClaim">
+        <TestNum>14</TestNum>
+        <VersionAdded>11.0.27</VersionAdded>
+        <Description>Patient has 2 PPO insurance plans, subscriber self for both. Each plan has benefits: annual max $1200, 80% coverage on restorative. 1 proc: D2160 amalg on #19, $1279 status of TP. Allowed1=$1279, allowed2=$110. Proc set complete, attached to primary claim and secondary claim. Primary estimate should be $1023.20.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_DeductibleOverrides">
+        <TestNum>15</TestNum>
+        <VersionAdded>7.0</VersionAdded>
+        <Description>Not version specific; it has always worked this way. The reason for adding this unit test was to ensure that it keeps working.<br/>
+Patient has one insurance plan, subscriber self. Benefits: annual max $1000, deductible $50, 100% coverage on preventive/diagnostic/xray, $0 deductible on preventive/diagnostic/xray, 80% coverage on all 4 general categories, 1 manually entered benefit for $45 deductible on code D0330 pano. First TP proc is D0330 for $95, second TP proc is D2150 on #30 for $200. In TP module, $45 deductible shows on the D0330, and a $5 deductible shows on the D2150.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_CategoryDeductiblesShouldNotExceedRegularDeductible">
+        <TestNum>16</TestNum>
+        <VersionAdded>11.1.3</VersionAdded>
+        <Description>Patient has one insurance plan, subscriber self. Benefits: annual max $1000, deductible $50, 100% coverage on preventive/diagnostic/xray, $0 deductible on preventive/diagnostic/xray, 80% coverage on all 4 general categories, 1 manually entered benefit for $45 deductible on code D0330, $25 deductible on D0220, add treatment plannned procedure D0330 fee $100, D0220 fee $75. In TP module, $45 deductible should show on D0330, and $5 on D0220.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_COBStandardTwoPPOs">
+        <TestNum>17</TestNum>
+        <VersionAdded>12.0</VersionAdded>
+        <Description>  Patient has two insurance plans, both PPO, subscriber self for both. The only benefit entered for both insurance plans is 50% coverage on the crowns category.  One procedure is treatment planned, a D2750 PFM crown on #8. This table shows two different fee schedule scenarios.<br/>
+        <table>
+          <tr>
+            <td>#</td>
+            <td>Fee</td>
+            <td>Allowed1</td>
+            <td>Allowed2</td>
+            <td>InsPay1</td>
+            <td>InsPay2</td>
+            <td>Writeoff1</td>
+            <td>Writeoff2</td>
+            <td>(implied pat port)</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>$1,200.00</td>
+            <td>$900.00</td>
+            <td>$650.00</td>
+            <td>$450.00</td>
+            <td>$325.00</td>
+            <td>$300.00</td>
+            <td>$0.00</td>
+            <td>$125.00</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>$1,200.00</td>
+            <td>$650.00</td>
+            <td>$900.00</td>
+            <td>$325.00</td>
+            <td>$325.00</td>
+            <td>$550.00</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+          </tr>
+        </table>
+			</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_COBCarveOutCategoryPercentagePlan">
+        <TestNum>18</TestNum>
+        <VersionAdded>12.0</VersionAdded>
+        <Description>Patient has two insurance plans, subscriber self for both. Plan 1 has 50% coverage on the crowns category and plan 2 has 75% coverage. One procedure is treatment planned, a D2750 PFM crown on #8 for $1200. Primary estimate should be $600, and secondary $300.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_MultipleDeductibles">
+        <TestNum>19</TestNum>
+        <VersionAdded>12.0</VersionAdded>
+        <Description><br/>
+				<table>
+          <tr>
+            <td>Fee</td>
+            <td>Ded1</td>
+            <td>Est1</td>
+            <td>PatPort1</td>
+            <td>Ded2</td>
+            <td>Est2</td>
+            <td>patient out of pocket</td>
+          </tr>
+          <tr>
+            <td>$150.00</td>
+            <td>$50.00</td>
+            <td>$50.00</td>
+            <td>$100.00</td>
+            <td>$50.00</td>
+            <td>$50.00</td>
+            <td>$50.00</td>
+          </tr>
+        </table>
+        Patient has <br/>
+          two insurance plans, subscriber self for both. Both plans standard COB. Both plans have diagnostic 50% and a $50 general deductible. A limited exam, D0120 is treatment planned for $150. Primary estimate is calculated as (150-50) x 0.5 = $50. Secondary estimate with standard COB is the lesser of:<br/>
+          1. The amount that it would have paid in the absence of any other coverage. (150-50) x 0.5 = $50<br/>
+          2. The patient's portion under the primary plan. $100<br/>
+          So $50.  <br/>
+           Patient out of pocket = 150 - 50 - 50 = 50.</Description>
+    </UnitTest>
+    <UnitTest Name="InsPlan_GetDedRemainDisplay_IndividualAndFamilyDeductiblesInsRemaining">
+        <TestNum>20</TestNum>
+        <VersionAdded>12.1</VersionAdded>
+        <Description>Three patients, all with the same insurance plan. Guarantor is subscriber. $75 individual deductible, $150 family deductible. Patient 3 has a $75 insurance adjustment for a previously applied deductible. Patient 2 has a procedure D2750 for $1280 that has been paid, including a deductible of $50. Patient 1, the guarantor, has a procedure treatment planned, D4355 for $135. In the guarantor's TP module, at the lower right, the deductible remaining should be $25. An internal test is also performed to verify that if the family deductible were ignored, that the deductible remaining would show $75.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_DeductiblesForProcsNotCovered">
+        <TestNum>21</TestNum>
+        <Description>Patient has one insurance plan, subscriber self. Benefits: annual max $1000, deductible $50. One treatment plannned procedure D0120 fee $55. In the TP module, deductible should be $0.</Description>
+    </UnitTest>
+    <UnitTest Name="TimeCardRules_CalculateDailyOvertime_WithSplitBreak">
+        <TestNum>24</TestNum>
+        <VersionAdded>12.3</VersionAdded>
+        <Description>There is an overtime rule for the employee for  more than 10 hours per day. Option is on to adjust if breaks over 30  minutes. Push the Calc Daily button. 10:00 of regular time.<br/>
+<table>
+  <tr>
+    <td colspan='3'>Scenario</td>
+    <td colspan='2'>Results</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>TimeDisplayed1</td>
+    <td>TimeDisplayed2</td>
+    <td>ClockStatus</td>
+    <td>AdjustAuto</td>
+    <td>OtimeAuto</td>
+    <td>Calc. Len.</td>
+  </tr>
+  <tr>
+    <td>08:00:00 AM</td>
+    <td>01:00:00 PM</td>
+    <td>Lunch</td>
+    <td></td>
+    <td></td>
+    <td>5:00</td>
+  </tr>
+  <tr>
+    <td>10:00:00 AM</td>
+    <td>10:20:00 AM</td>
+    <td>break</td>
+    <td></td>
+    <td></td>
+    <td>0:20</td>
+  </tr>
+  <tr>
+    <td>02:00:00 PM</td>
+    <td>09:00:00 PM</td>
+    <td>Home</td>
+    <td>-00:10:00</td>
+    <td>01:50:00</td>
+    <td >7:00</td>
+  </tr>
+  <tr>
+    <td>04:00:00 PM</td>
+    <td>4:20:00 PM</td>
+    <td>break</td>
+    <td></td>
+    <td></td>
+    <td>0:20</td>
+  </tr>
+</table></Description>
+    </UnitTest>
+    <UnitTest Name="TimeCardRules_CalculateWeeklyOvertime_DuringNormalWorkWeek">
+        <TestNum>25</TestNum>
+        <VersionAdded>12.3</VersionAdded>
+        <Description>Work week is entirely within the same pay  period. Push the Calc Week OT button.<br/>
+<table>
+  <tr>
+    <td colspan='3'>Scenario</td>
+    <td colspan='2'>Results</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>TimeDisplayed1</td>
+    <td>TimeDisplayed2</td>
+    <td>ClockStatus</td>
+    <td>AdjustAuto</td>
+    <td>OtimeAuto</td>
+    <td>Calc. Len.</td>
+  </tr>
+  <tr>
+    <td>06:00:00 AM</td>
+    <td>05:00:00 PM</td>
+    <td>Home</td>
+    <td></td>
+    <td></td>
+    <td>11:00</td>
+  </tr>
+  <tr>
+    <td>06:00:00 AM</td>
+    <td>05:00:00 PM</td>
+    <td>Home</td>
+    <td></td>
+    <td></td>
+    <td>11:00</td>
+  </tr>
+  <tr>
+    <td>06:00:00 AM</td>
+    <td>05:00:00 PM</td>
+    <td>Home</td>
+    <td></td>
+    <td></td>
+    <td>11:00</td>
+  </tr>
+  <tr>
+    <td>06:00:00 AM</td>
+    <td>05:00:00 PM</td>
+    <td>Home</td>
+    <td></td>
+    <td></td>
+    <td>11:00</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan='4'>Results (TimeAdjust Entry)</td>
+  </tr>
+  <tr>
+    <td>TimeEntry</td>
+    <td>RegHours</td>
+    <td>OtimeHours</td>
+    <td>IsAuto</td>
+  </tr>
+  <tr>
+    <td>8:00 PM</td>
+    <td>-4:00</td>
+    <td>4:00</td>
+    <td>true</td>
+  </tr>
+</table></Description>
+    </UnitTest>
+    <UnitTest Name="TimeCardRules_CalculateWeeklyOvertime_OneWeekOverTwoPayPeriods">
+        <TestNum>26</TestNum>
+        <VersionAdded>12.3</VersionAdded>
+        <Description>Work week is split  between two pay periods<br/>
+	While viewing the first pay period, push the  Calc Week OT button. View the second pay period, and push the Calc Week OT button.<br/>
+<table>
+  <tr>
+    <td colspan='3'>Scenario</td>
+    <td colspan='2'>Results</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>TimeDisplayed1</td>
+    <td>TimeDisplayed2</td>
+    <td >ClockStatus</td>
+    <td>AdjustAuto</td>
+    <td>OtimeAuto</td>
+    <td>Calc. Len.</td>
+  </tr>
+  <tr>
+    <td>06:00:00 AM</td>
+    <td>05:00:00 PM</td>
+    <td>Home</td>
+    <td></td>
+    <td></td>
+    <td>11:00</td>
+  </tr>
+  <tr>
+    <td>06:00:00 AM</td>
+    <td>05:00:00 PM</td>
+    <td>Home</td>
+    <td></td>
+    <td></td>
+    <td>11:00</td>
+  </tr>
+  <tr>
+    <td>06:00:00 AM</td>
+    <td>05:00:00 PM</td>
+    <td>Home</td>
+    <td></td>
+    <td></td>
+    <td>11:00</td>
+  </tr>
+  <tr>
+    <td colspan='5'><strong>Start of new pay period.</strong></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>06:00:00 AM</td>
+    <td>05:00:00 PM</td>
+    <td>Home</td>
+    <td></td>
+    <td></td>
+    <td>11:00</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan='4'>Results (TimeAdjust Entry)</td>
+  </tr>
+  <tr>
+    <td>TimeEntry</td>
+    <td>RegHours</td>
+    <td>OtimeHours</td>
+    <td>IsAuto</td>
+  </tr>
+  <tr>
+    <td>8:00 PM</td>
+    <td>-4:00</td>
+    <td>4:00</td>
+    <td>true</td>
+  </tr>
+</table></Description>
+    </UnitTest>
+    <UnitTest Name="TimeCardRules_CalculateWeeklyOvertime_OneWeekWorkWeekStartsOnWednesday">
+        <TestNum>27</TestNum>
+        <VersionAdded>12.3</VersionAdded>
+        <Description>The work week starts on  Wednesday. Push the Calc Daily button, then push the Calc Week OT  button.<br/>
+<table>
+  <tr>
+    <td colspan='3'>Scenario</td>
+    <td colspan='2'>Results</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>TimeDisplayed1</td>
+    <td>TimeDisplayed2</td>
+    <td>ClockStatus</td>
+    <td>AdjustAuto</td>
+    <td>OtimeAuto</td>
+    <td>Calc. Len.</td>
+  </tr>
+  <tr>
+    <td>06:00:00 AM</td>
+    <td>05:00:00 PM</td>
+    <td>Home</td>
+    <td></td>
+    <td></td>
+    <td>11:00</td>
+  </tr>
+  <tr>
+    <td>06:00:00 AM</td>
+    <td>05:00:00 PM</td>
+    <td>Home</td>
+    <td> </td>
+    <td> </td>
+    <td>11:00</td>
+  </tr>
+  <tr>
+    <td colspan='5'>Wednesday, start of new work week.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>06:00:00 AM</td>
+    <td>05:00:00 PM</td>
+    <td>Home</td>
+    <td></td>
+    <td></td>
+    <td>11:00</td>
+  </tr>
+  <tr>
+    <td>06:00:00 AM</td>
+    <td>05:00:00 PM</td>
+    <td>Home</td>
+    <td></td>
+    <td></td>
+    <td>11:00</td>
+  </tr>
+  <tr>
+    <td>06:00:00 AM</td>
+    <td>05:00:00 PM</td>
+    <td>Home</td>
+    <td></td>
+    <td></td>
+    <td>11:00</td>
+  </tr>
+  <tr>
+    <td>06:00:00 AM</td>
+    <td>05:00:00 PM</td>
+    <td>Home</td>
+    <td></td>
+    <td></td>
+    <td>11:00</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan='4'>Results (TimeAdjust Entry)</td>
+  </tr>
+  <tr>
+    <td>TimeEntry</td>
+    <td>RegHours</td>
+    <td>OtimeHours</td>
+    <td>IsAuto</td>
+  </tr>
+  <tr>
+    <td>8:00 PM</td>
+    <td>-4:00</td>
+    <td>4:00</td>
+    <td>true</td>
+  </tr>
+</table></Description>
+    </UnitTest>
+    <UnitTest Name="ClaimProcs_FormClaimProc_TextBoxValuesFromChartModule">
+        <TestNum>28</TestNum>
+        <VersionAdded>12.3</VersionAdded>
+        <Description><table>
+  <tr>
+    <td>Proc</td>
+    <td>Fee</td>
+    <td>Ded</td>
+    <td>Est</td>
+    <td>PatPort</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>$800.00</td>
+    <td>$25.00</td>
+    <td>$387.50</td>
+    <td>$412.50</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>$800.00</td>
+    <td>$0.00</td>
+    <td>$400.00</td>
+    <td>$400.00</td>
+  </tr>
+</table>
+The patient has one insurance plan, category percentage, subscriber self. Benefits: annual max $1300, 50% coverage on crowns, and a $25 general deductible. Both TP procs are crowns, first TP proc is D2790  for $800 on #1 with priority 1, second TP proc is D2790 on #9 for $800 with priority 2. First, the estimates are pre-calculated by visiting the TP module. Then, when opening a procedure from Chart Module, followed by opening the claimproc from inside of the Edit Procedure window, the amounts must match those listed in the table above. This unit test is the first one that looks at the values showing in the claimproc window.  This catches situations where the only &quot;bug&quot; is just a display issue in that window.</Description>
+    </UnitTest>
+    <UnitTest Name="ClaimProcs_FormClaimProc_TextBoxValuesFromClaimEditWindow">
+        <TestNum>29</TestNum>
+        <VersionAdded>12.3</VersionAdded>
+        <Description><table>
+  <tr>
+    <td>Proc</td>
+    <td>Fee</td>
+    <td>Ded</td>
+    <td>Est</td>
+    <td>PatPort</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>$800.00</td>
+    <td>$25.00</td>
+    <td>$387.50</td>
+    <td>$412.50</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>$800.00</td>
+    <td>$0.00</td>
+    <td>$400.00</td>
+    <td>$400.00</td>
+  </tr>
+</table>
+The patient has one insurance plan, category percentage, subscriber self. Benefits: annual max $1300, 50% coverage on crowns and a $25 general deductible. Both complete crowns are on the same claim, first proc is D2790  for $800 on #1, second proc is D2790 on #9 for $800. The claimproc estimates are calculated when the claim is created. Then, when opening a claimproc from inside of the Edit Claim window, the amounts must match those listed in the table above.</Description>
+    </UnitTest>
+    <UnitTest Name="ClaimProcs_FormClaimProc_TextBoxValuesFromTreatPlanModule">
+        <TestNum>30</TestNum>
+        <VersionAdded>12.3</VersionAdded>
+        <Description><table>
+  <tr>
+    <td>Proc</td>
+    <td>Fee</td>
+    <td>Ded</td>
+    <td>Est</td>
+    <td>PatPort</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>$800.00</td>
+    <td>$25.00</td>
+    <td>$387.50</td>
+    <td>$412.50</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>$800.00</td>
+    <td>$0.00</td>
+    <td>$400.00</td>
+    <td>$400.00</td>
+  </tr>
+</table>
+The patient has one insurance plan, category percentage, subscriber self. Benefits: annual max $1300, 50% coverage on crowns and a $25 general deductible. <span> Both TP procs are crowns, first TP proc is D2790  for $800 on #1 with priority 1, second TP proc is D2790 on #9 for $800 with priority 2.</span> First, the estimates are pre-calculated by visiting the TP module. Then, when opening a procedure from TP Module, followed by opening the claimproc from inside of the Edit Procedure window, the amounts must match those listed in the table above.</Description>
+    </UnitTest>
+    <UnitTest Name="InsPlan_GetPendingDisplay_LimitationsOverrideGeneralLimitations">
+        <TestNum>31</TestNum>
+        <VersionAdded>12.3.45</VersionAdded>
+        <Description>Patient has one insurance plan, subscriber self.  Benefits: annual max $1000. Other benefit added for limitation on routine preventive of $1000. Routine preventive 100%. A prophy D1110 for $125 is complete, attached to a claim, with insurance estimate of $125 and a claimproc status of NotReceived. Pending insurance at the lower right of the TP module  should be $0 because the procedure does not count towards the regular annual max. It instead has its own annual max.</Description>
+    </UnitTest>
+    <UnitTest Name="TimeCardRules_CalculateDailyOvertime_ForHoursWorkedAfterACertainTime">
+        <TestNum>32</TestNum>
+        <Description>There is a special rule that allows for overtime for time worked after 4pm. This employee works from 8am-4:40pm with a 40 minute break in between. With the adjust for breaks over 30 minutes set, when calculating overtime, there is a 10 minute adjustment for the breakand 40 minutes of overtime for the time worked after 4pm. Previously called Legacy Test 32.</Description>
+    </UnitTest>
+    <UnitTest Name="TimeCardRules_CalculateDailyOvertime_ForHoursWorkedBeforeACertainTime">
+        <TestNum>33</TestNum>
+        <Description>There is a special rule that allows for overtime for time worked before 7:30am. This employee works from 6am-4pm with a 40 minute break in between. With the adjust for breaks over 30 minutes set, when calculating overtime, there is a 10 minute adjustment for the break and 90 minutes of overtime for the time worked before 7:30am. Previously called Legacy Test 33.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_GeneralDeductiblesConsideredWithProcedureSpecificDeductibles">
+        <TestNum>34</TestNum>
+        <VersionAdded>12.3.45</VersionAdded>
+        <Description>Validates that procedure specific deductibles take general deductibles into consideration.</Description>
+    </UnitTest>
+    <UnitTest Name="Benefits_GetDeductibleByCode_InsuranceAdjustmentDeductible">
+        <TestNum>35</TestNum>
+        <VersionAdded>14.3.28</VersionAdded>
+        <Description>  Patient has one insurance plan, subscriber self, category percentage.  Benefits: Diagnostic 80%, General Deductible $50.  One TP procedure: D0120 perExam $200.  InsPlan adjustment: $50 deductible.  In the TP module, the proc should show that the patient owes $0 on the deductible.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_COBStandardDualPPOWriteoffZero">
+        <TestNum>36</TestNum>
+        <VersionAdded>14.3</VersionAdded>
+        <Description>Similar to unit test 17. Ensures that the secondary writeoff is zero when the primary writeoff is zero.<br/>
+Patient has two insurance plans, both PPO with Standard COB rule, subscriber self for both.  The primary insurance covers 50% perio and secondary covers 80% perio.  One perio procedure is treatment planned, a D4341 scaling &amp; root planing, any quadrant.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_PPOProceduresMultipleUnits">
+        <TestNum>37</TestNum>
+        <VersionAdded>15.2</VersionAdded>
+        <Description>Patient has one PPO insurance plan, subscriber self.  The insurance covers 80% Diagnostic, and has a $10 individual general deductible.  The insurance plan has a copay of $5 and an allowed amount of $40 for procedure code D0270.  One procedure is complete, a D0270 single bitewing.  The procedure unit quantity is 3.  The fee for each D0270 is $50.<br/>
+<table>
+  <tr>
+    <td>Copay</td>
+    <td>Deduct</td>
+    <td>Fee</td>
+    <td>Allowed</td>
+    <td>InsEst</td>
+    <td>Writeoff</td>
+    <td>PatientPortion</td>
+  </tr>
+  <tr>
+    <td>5*3=15</td>
+    <td>10 </td>
+    <td>50*3=150</td>
+    <td>40*3=120</td>
+    <td>95*0.8=76</td>
+    <td>150-120=30</td>
+    <td>150-76-30=44</td>
+  </tr>
+</table></Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_CategoryPercentageProceduresMultipleUnits">
+        <TestNum>38</TestNum>
+        <VersionAdded>15.2</VersionAdded>
+        <Description>Patient has one Category Percentage insurance plan, subscriber self.  The insurance covers 80% Diagnostic.  One procedure is complete, a D0270 single bitewing.  The procedure unit quantity is 2.  The fee for each D0270 is $50.<br/>
+<table>
+  <tr>
+    <td>Fee</td>
+    <td>InsEst</td>
+  </tr>
+  <tr>
+    <td>50*2=100</td>
+    <td>100*0.8=80</td>
+  </tr>
+</table></Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_PPOProceduresMultipleUnitsWriteoff">
+        <TestNum>39</TestNum>
+        <VersionAdded>15.2</VersionAdded>
+        <Description>Patient has two PPO Percentage plans, both plans with subscriber self.  Both primary and secondary cover 80% Diagnostic.  The primary insurance plan has an allowed amount of $40 for a D0270 and the secondary plan has an allowed amount of $30 for a D0270.  One procedure is treatment planned, a D0270 single bitewing.  The procedure unit quantity is 4.  The fee for each D0270 is $50.<br/>
+<table>
+  <tr>
+    <td>Fee</td>
+    <td>Allowed1</td>
+    <td>Allowed2</td>
+    <td>InsPay1</td>
+    <td>InsPay2</td>
+    <td>Writeoff1</td>
+    <td>Writeoff2</td>
+  </tr>
+  <tr>
+    <td>50*4=200 </td>
+    <td>40*4=160</td>
+    <td>30*4=120</td>
+    <td>160*0.8=128</td>
+    <td>0</td>
+    <td> 200-160=40</td>
+    <td>0</td>
+  </tr>
+</table></Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_InsPPOsecWriteoffsPreference">
+        <TestNum>40</TestNum>
+        <VersionAdded>15.2</VersionAdded>
+        <Description>Patient has a Category Percentage primary insurance plan and PPO secondary plan with Basic COB rule, both plans with subscriber self.  Primary covers 80% Diagnostic, secondary covers 100% Diagnostic.  The primary insurance has a general deductible of $50 and an allowed amount of $152 for a treatment planned D0272 two bitewings procedure, and secondary has an allowed amount of $87.99 for D0272.  The fee on the treatment planned D0272 is $236.<br/>
+<table>
+  <tr>
+    <td>Fee</td>
+    <td>Deduct</td>
+    <td>Allowed1</td>
+    <td>Allowed2</td>
+    <td>InsPay1</td>
+    <td>InsPay2</td>
+    <td>Writeoff1</td>
+    <td>Writeoff2</td>
+    <td>PatPortion</td>
+  </tr>
+  <tr>
+    <td>236</td>
+    <td>50</td>
+    <td>152</td>
+    <td>87.99</td>
+    <td>(152-50)*0.8+81.6</td>
+    <td>87.99-81.6=6.39</td>
+    <td>0</td>
+    <td>236-81.60-6.39+148.01</td>
+    <td>0</td>
+  </tr>
+</table>
+The preference used in this unit test is not recommended and is rarely used.<br/>
+The preference is documented on <a href='../manual/modulesetupfamily.html'>Family Module Preferences</a>.<br/>
+If instead the preference was off for this unit test, then Writeoff2 would have been 0 and the Pat Portion would have been 148.01.<br/>
+</Description>
+    </UnitTest>
+    <UnitTest Name="PaymentEdit_Init_CorrectlyOrderedAutoSplits">
+        <TestNum>41</TestNum>
+        <Description>Make sure auto splits that are created are in the correct number and order (earliest proc paid first).</Description>
+    </UnitTest>
+    <UnitTest Name="PaymentEdit_Init_CorrectlyOrderedAutoSplitsWithExistingPayment">
+        <TestNum>42</TestNum>
+        <Description>Make sure auto splits are created in correct number and order with an existing payment already present.</Description>
+    </UnitTest>
+    <UnitTest Name="PaymentEdit_Init_AutoSplitOverAllocation">
+        <TestNum>43</TestNum>
+        <Description>Make sure if existing procedures are overpaid with an unallocated payment that an additional payment doesn't autosplit to the procs.</Description>
+    </UnitTest>
+    <UnitTest Name="PaymentEdit_Init_AutoSplitForPaymentNegativePaymentAmount">
+        <TestNum>44</TestNum>
+        <Description>Make sure if a payment is created for negative amount that it makes no auto splits.</Description>
+    </UnitTest>
+    <UnitTest Name="PaymentEdit_Init_AutoSplitWithAdjustmentAndExistingPayment">
+        <TestNum>45</TestNum>
+        <Description>Make sure auto splits take into account unallocated adjustment, an overpayment on a procedure, and are attributed correctly to the remaining procedure with an unallocated split for the rest.</Description>
+    </UnitTest>
+    <UnitTest Name="PaymentEdit_Init_AutoSplitForPaymentNegativePaymentAmountNegProcedure">
+        <TestNum>46</TestNum>
+        <Description>Make sure if there is a negative procedure and a negative payment amount that a new payment goes fully to unallocated.</Description>
+    </UnitTest>
+    <UnitTest Name="PaymentEdit_Init_AutoSplitProcedureGuarantor">
+        <TestNum>47</TestNum>
+        <Description>Make sure auto split suggestions go to the correct patients, for the correct amounts.</Description>
+    </UnitTest>
+    <UnitTest Name="PaymentEdit_Init_AutoSplitWithClaimPayments">
+        <TestNum>48</TestNum>
+        <Description>Make sure auto split suggestions take into account claim payments on procedures.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_OverrideUnderFamilyMaxEstimateNote">
+        <TestNum>49</TestNum>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_OverrideOverFamilyMaxEstimateNote">
+        <TestNum>50</TestNum>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_MedicalDeductible">
+        <TestNum>51</TestNum>
+    </UnitTest>
+    <UnitTest Name="SignatureBoxWrapper_FillSignature_GetNumberOfTabletPoints">
+        <TestNum>52</TestNum>
+    </UnitTest>
+    <UnitTest Name="Legacy_TestFiftyThree">
+        <TestNum>53</TestNum>
+        <Description>Tests that repeat charges are added correctly after the stop date.<br/>
+<br/>
+		Scenario #1: The start day is before the stop day which is before the billing day. Start 12/08/2015, Stop 12/09/2015. Add a charge on 11/11/2015 and 12/11/2015.<br/>
+<br/>
+		Scenario #2: The start day is after the billing day which is after the stop day. Start 11/25/2015, Stop 12/01/2015. Add a charge on 12/11/2015.<br/>
+<br/>
+		Scenario #3: The start day is the same as the stop day but before the billing day. Start 11/10/2015, Stop 12/10/2015. Add a charge on 11/11/2015 and 12/11/2015.<br/>
+<br/>
+		Scenario #4: The start day is the same as the stop day and the billing day. Start 10/11/2015, Stop 11/11/2015. Add a charge on 11/11/2015.<br/>
+<br/>
+		Scenario #5: The start day is after the stop day which is after the billing day. Start 10/15/2015, Stop 11/13/2015. Add a charge on 11/11/2015.<br/>
+<br/>
+		Scenario #6: The start day is before the billing day which is before the stop day. Start 10/05/2015, Stop 11/20/2015. Add a charge on 11/11/2015.</Description>
+    </UnitTest>
+    <UnitTest Name="Legacy_TestFiftyFour">
+        <TestNum>54</TestNum>
+        <Description>Tests that deleting a charge does not cause the wrong charges to be added back.<br/>
+<br/>
+		Scenario #1: Add three repeating charges with a start date of 11/01/2015 and an amount of $100 with a note of 'Charge #1','Charge #2', and 'Charge #3' respectively. Run repeating charge tool. Delete all the procedures with a date of 11/11/2015.Run repeating charge tool. Result should be a procedure with a billing note of 'Charge #1', a procedure with a billing note of 'Charge #2', a procedure note of 'Charge #3' on 11/11/2015, and a procedure with a billing note of 'Charge #1', a procedure with a billing note of 'Charge #2', and a procedure with a billing note of 'Charge #3' on 12/11/2015. <br/>
+		<br/>
+		Scenario #2: Add three repeating charges with a start date of 11/01/2015 and an amount of $100 with a note of 'Charge #1', 'Charge #2', and 'Charge #3', respectively. Run repeating charge tool. Delete all the procedures with a date of 12/11/2015. Run repeating charge tool. Result should be a procedure with a billing note of 'Charge #1', a procedure with a billing note of 'Charge #2', a procedure with a billing note of 'Charge #3' on 11/11/2015, and a procedure with a billing note of 'Charge #1', a procedure with a billing note of 'Charge #2', and a procedure with a billing note of 'Charge #3' on 12/11/2015. <br/>
+		<br/>
+		Scenario #3: Add three repeating charges with a start date of 11/01/2015 and an amount of $100 with a note of 'Charge #1', 'Charge #2', and 'Charge #3' respectively. Run repeating charge tool. Delete one procedure with a date of 11/11/2015. Run repeating charge tool. Result should be a procedure with a billing note of 'Charge #1', a procedure with a billing note of 'Charge #2', a procedure with a billing note of 'Charge #3' on 11/11/2015, and a procedure with a billing note of 'Charge #1', a procedure with a billing note of 'Charge #2', a procedure with	a billing note of 'Charge #3' on 12/11/2015</Description>
+    </UnitTest>
+    <UnitTest Name="Legacy_TestFiftyFive">
+        <TestNum>55</TestNum>
+        <Description>Tests that changing the amount or start date on a repeat charge does not cause an additional one to be added.<br/>
+<br/>
+		Scenario #1: Add a repeating charge with a start date of 11/01/2015 and an amount of $100. Run repeating charge tool. Change the amount of the repeating charge $80. Run repeating charge tool. Result should be a procedure of amount $100 on 11/11/2015 and a procedure of amount $100 on 12/11/2015.<br/>
+<br/>
+		Scenario #2: Add a repeating charge with a start date of 11/01/2015 and an amount of $100. Run repeating charge tool. Start date of the	repeating charge to 11/02/2015. Run repeating charge tool. Result should be a procedure of amount $100 on 11/11/2015 and a procedure of amount $100 on 12/11/2015.</Description>
+    </UnitTest>
+    <UnitTest Name="Legacy_TestFiftySix">
+        <TestNum>56</TestNum>
+        <Description>Tests that repeat charges are not posted before the start date.<br/>
+<br/>
+		Scenario #1: Add a repeat charge with a start date of 12/15/2015. Set the billing cycle day to 15. Run repeating charge tool. Result should be a procedure on 12/15/2015.<br/>
+<br/>
+		Scenario #2: Add a repeat charge with a start date of 12/15/2015. Set the billing cycle day to 12. Run repeating charge tool. Result should be no procedure added.<br/>
+<br/>
+		Scenario #3: Add a repeat charge with a start date of 12/18/2015. Set the billing cycle day to 15. Run repeating charge tool. Result should be no procedure added.</Description>
+    </UnitTest>
+    <UnitTest Name="Fees_GetFee_ProviderSpecificFees">
+        <TestNum>57</TestNum>
+        <Description>Fees logic: #1: For PPOInsPlan1, Dr. Jones, Dr. Smith, and Dr. Wilson have different fees.</Description>
+    </UnitTest>
+    <UnitTest Name="Fees_GetFee_ClinicSpecificFees">
+        <TestNum>58</TestNum>
+        <Description>Fees logic: #2: Clinic A, B, and C have different standard UCR fees.</Description>
+    </UnitTest>
+    <UnitTest Name="Fees_GetFee_ClinicAndProviderSpecificFees">
+        <TestNum>59</TestNum>
+        <Description>Fees logic: #3: Dr. Jane and Dr. George have different standard UCR fees. Dr. George's works in two clinics (A and B),and his standard fees are different depending on the clinic.</Description>
+    </UnitTest>
+    <UnitTest Name="Claims_CalculateAndUpdate_ProcedureCodeDowngradeBlankFee">
+        <TestNum>60</TestNum>
+        <Description>Downgrade insurance estimates #1. The PPO fee schedule has a blank fee for the downgraded code.</Description>
+    </UnitTest>
+    <UnitTest Name="Claims_CalculateAndUpdate_ProcedureCodeDowngradeHigherFee">
+        <TestNum>61</TestNum>
+        <Description>Downgrade insurance estimates #2. The PPO fee schedule has a higher fee for the downgraded code than for the original code.</Description>
+    </UnitTest>
+    <UnitTest Name="TimeCardRules_CalculateWeeklyOvertime_ForDifferentClinics">
+        <TestNum>62</TestNum>
+        <Description>Tests clinic-specific overtime hour adjustments for a single work period. Previously called Legacy Test 62.</Description>
+    </UnitTest>
+    <UnitTest Name="TimeCardRules_CalculateWeeklyOvertime_OneWeekOverTwoPayPeriodsForDifferentClinics">
+        <TestNum>63</TestNum>
+        <Description>Tests clinic-specific overtime hour adjustments for work week spanning two pay periods. Previously called Legacy Test 63.</Description>
+    </UnitTest>
+    <UnitTest Name="TimeCardRules_CalculateWeeklyOvertime_OneWeekOverTwoPayPeriodsForDifferentClinicPreferences">
+        <TestNum>64</TestNum>
+        <Description>Tests clinic-specific overtime hour adjustments for work week spanning two pay periods and expecting adjustments for multiple clinics. Previously called Legacy Test 64.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_MedicalFlatCopaySecondaryFeeSchedule">
+        <TestNum>65</TestNum>
+        <Description>A patient has Medicaid/FlatCopay as secondary insurance. It should use its own fee schedule when calculating its coverage.</Description>
+    </UnitTest>
+    <UnitTest Name="TimeCardRules_CalculateWeeklyOvertime_ForDifferentClinicsRealData">
+        <TestNum>66</TestNum>
+        <Description>Tests a normal work week with a start of the week in the previous pay period with break adjustments. Previously called Legacy Test 66.<br/>
+		Note: This unit test was based on real data from a real set of timecard entries.</Description>
+    </UnitTest>
+    <UnitTest Name="TimeCardRules_CalculateWeeklyOvertime_CalculationWithManualOvertime">
+        <TestNum>67</TestNum>
+        <Description>Test work week with manual overtime hours. Previously called Legacy Test 67.<br/>
+		Note: This unit test was based on real data from a real set of timecard entries including dates, timespans, and the like.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_CategoryPercentageCanadianLabFees">
+        <TestNum>73</TestNum>
+    </UnitTest>
+    <UnitTest Name="Benefits_GetAnnualMaxDisplay_CalendarYearBenefit">
+        <TestNum>74</TestNum>
+        <Description>This Unit Test mimics an old bug scenario</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_OrthoMaxSeparateFamilyAndIndividualMaxes">
+        <TestNum>75</TestNum>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_OrthoFamilyMaxOverLargerIndividual">
+        <TestNum>76</TestNum>
+    </UnitTest>
+    <UnitTest Name="Appointments_GetApptTimePatternFromProcPatterns_PatternLogic">
+        <TestNum>79</TestNum>
+        <Description>Testing appointment time pattern logic.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_DeductiblesDualInsuranceNotNegative">
+        <TestNum>80</TestNum>
+        <Description>Making sure that deductible estimates from both insurances are not applied to the same procedure when calculating deductibles for subsequent procedures.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_FrequencyLimitationMet">
+        <TestNum>81</TestNum>
+        <Description>Makes sure that if two claimprocs are created for the same frequency limitation group and one is marked received, the estimate claimproc will show as 0 coverage because the limitation is met.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_MultipleProceduresOneClaimExceedAnnualMax">
+        <TestNum>83</TestNum>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_COBCarveOutSecondaryInsurance">
+        <TestNum>84</TestNum>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_SalesTaxCalculation_EstimateWriteOff">
+        <TestNum>86</TestNum>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_CategoryDeductiblesShouldNotExceedRegularDeductibleClaim">
+        <TestNum>100</TestNum>
+        <VersionAdded>21.1</VersionAdded>
+        <Description>The patient has one insurance plan with general deductible of $50, 100% coverage on Diagnostic, and a $10 xray deductible. We treatment plan the patient for a cleaning (D0110) and an xray (D0220). The cleaning is estimated to take up $40 of the patient's deductible and the xray is estimated to take up $10 of the patient's deductible. We mark the cleaning complete and leave the xray treatment planned. A claim for the cleaning is submitted, and the deductible comes out to $50. This means that, even though the patient has a $10 xray deductible,they have already hit their max deductible for the year and should owe nothing. The xray deductible estimate is $0.</Description>
+    </UnitTest>
+    <UnitTest Name="Procedures_ComputeEstimates_CategoryDeductiblesDontExceedLimits">
+        <TestNum>101</TestNum>
+        <VersionAdded>21.1.8</VersionAdded>
+        <Description>The patient has one insurance plan with general deductible of $100, 100% coverage on Diagnostic, and a $50 xray deductible. We treatment plan the patient for two xrays (D0330 and D0220). The estimate is calculated and shows that we expect the patient to pay $25 for one xray and $25 for another, hitting their xray deductible. We set one xray complete and create a claim which will require  the patient pay their max xray deductible of $50. Finally, we treatment plan a cleaning procedure, complete it, and submit a claim. The deductible comes out to $50. This means that this $50 that went towards their xray deductible also goes towards their general deductible. XRay: &#x09; $50 deductible&#x09;&#x09;-&#x09; $50 patient portion paid &#x09; = &#x09; $0 owed for patient's other xray General:&#x09; $100 deductible &#x09;-&#x09; $50 xray deductible met &#x09; = &#x09; $50 owed for the patient's general deductible</Description>
+    </UnitTest>
+</members>

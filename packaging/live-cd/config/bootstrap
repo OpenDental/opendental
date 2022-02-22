@@ -1,0 +1,41 @@
+# config/bootstrap - options for live-helper(7), bootstrap stage
+
+# $LH_ARCHITECTURE: select chroot architecture
+# (Default: autodetected)
+LH_ARCHITECTURE="i386"
+
+# $LH_BOOTSTRAP_CONFIG: set distribution config directory
+# (Default: empty)
+LH_BOOTSTRAP_CONFIG=""
+
+# $LH_BOOTSTRAP_FLAVOUR: select flavour to use
+# (Default: standard)
+LH_BOOTSTRAP_FLAVOUR="standard"
+
+# $LH_BOOTSTRAP_KEYRING: set distribution keyring
+# (Default: empty)
+LH_BOOTSTRAP_KEYRING=""
+
+# $LH_DISTRIBUTION: select distribution to use
+# (Default: etch)
+LH_DISTRIBUTION="etch"
+
+# $LH_MIRROR_BOOTSTRAP: set mirror to fetch packages from
+# (Default: http://ftp.debian.org/debian/)
+LH_MIRROR_BOOTSTRAP="http://ftp.debian.org/debian/"
+
+# $LH_MIRROR_BOOTSTRAP_SECURITY: set security mirror to fetch packages from
+# (Default: http://security.debian.org/)
+LH_MIRROR_BOOTSTRAP_SECURITY="http://security.debian.org/"
+
+# $LH_MIRROR_BINARY: set mirror which ends up in the image
+# (Default: http://ftp.debian.org/debian/)
+LH_MIRROR_BINARY="http://ftp.debian.org/debian/"
+
+# $LH_MIRROR_BINARY_SECURITY: set security mirror which ends up in the image
+# (Default: http://security.debian.org/)
+LH_MIRROR_BINARY_SECURITY="http://security.debian.org/"
+
+# $LH_SECTIONS: select section(s) to use
+# (Default: main)
+LH_SECTIONS="main"

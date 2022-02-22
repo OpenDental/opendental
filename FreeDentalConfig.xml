@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<ConnectionSettings>
+	<DatabaseConnection>
+		<ComputerName>reception</ComputerName>
+		<Database>opendentaltest</Database>
+		<User>mysqluser</User>
+		<Password>abracadabra</Password>
+		<NoShowOnStartup>False</NoShowOnStartup>
+	</DatabaseConnection>
+	<ServerConnection>
+		<ComputerName>localhost</ComputerName>
+		<ServerPort>9390</ServerPort>
+		<Database>development45</Database>
+	</ServerConnection>
+</ConnectionSettings>

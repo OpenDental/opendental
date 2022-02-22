@@ -1,0 +1,95 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>DataConnectionBaseStandard</AssemblyName>
+    <RootNamespace>DataConnectionBase</RootNamespace>
+  </PropertyGroup>
+	
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DefineConstants>TRACE;DOT_NET_STANDARD</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DefineConstants>TRACE;DOT_NET_STANDARD</DefineConstants>
+		<OutputPath></OutputPath>
+	</PropertyGroup>
+	
+  <ItemGroup>
+    <ProjectReference Include="..\CodeBaseStandard\xCodeBaseStandard.csproj" />
+  </ItemGroup>
+	
+	<!--<ItemGroup>
+		<Reference Include="BouncyCastle.Crypto">
+			<HintPath>..\Required dlls\.NET Standard\BouncyCastle.Crypto.dll</HintPath>
+		</Reference>
+		<Reference Include="Google.Protobuf">
+			<HintPath>..\Required dlls\.NET Standard\Google.Protobuf.dll</HintPath>
+		</Reference>
+		<Reference Include="MySql.Data">
+			<HintPath>..\Required dlls\.NET Standard\MySql.Data.dll</HintPath>
+		</Reference>
+		<Reference Include="Renci.SshNet">
+			<HintPath>..\Required dlls\.NET Standard\Renci.SshNet.dll</HintPath>
+		</Reference>
+		<Reference Include="SshNet.Security.Cryptography">
+			<HintPath>..\Required dlls\.NET Standard\SshNet.Security.Cryptography.dll</HintPath>
+		</Reference>
+		<Reference Include="System.Configuration.ConfigurationManager">
+			<HintPath>..\Required dlls\.NET Standard\System.Configuration.ConfigurationManager.dll</HintPath>
+		</Reference>
+		<Reference Include="System.Security.Cryptography.ProtectedData">
+			<HintPath>..\Required dlls\.NET Standard\System.Security.Cryptography.ProtectedData.dll</HintPath>
+		</Reference>
+		<Reference Include="System.Xml.XPath.XmlDocument">
+			<HintPath>..\Required dlls\.NET Standard\System.Xml.XPath.XmlDocument.dll</HintPath>
+		</Reference>
+		<Reference Include="Ubiety.Dns.Core">
+			<HintPath>..\Required dlls\.NET Standard\Ubiety.Dns.Core.dll</HintPath>
+		</Reference>
+	</ItemGroup>-->
+	
+	<ItemGroup>
+		<Compile Remove="Properties\AssemblyInfo.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="BouncyCastle.Crypto">
+			<HintPath>..\Required dlls\.NET Standard\BouncyCastle.Crypto.dll</HintPath>
+		</Reference>
+		<Reference Include="CDT">
+		  <HintPath>..\Required dlls\CDT.dll</HintPath>
+		</Reference>
+		<Reference Include="Google.Protobuf">
+			<HintPath>..\Required dlls\.NET Standard\Google.Protobuf.dll</HintPath>
+		</Reference>
+		<Reference Include="MySql.Data">
+			<HintPath>..\Required dlls\.NET Standard\MySql.Data.dll</HintPath>
+		</Reference>
+		<Reference Include="Renci.SshNet">
+			<HintPath>..\Required dlls\.NET Standard\Renci.SshNet.dll</HintPath>
+		</Reference>
+		<Reference Include="SshNet.Security.Cryptography">
+			<HintPath>..\Required dlls\.NET Standard\SshNet.Security.Cryptography.dll</HintPath>
+		</Reference>
+		<Reference Include="System.Configuration.ConfigurationManager">
+			<HintPath>..\Required dlls\.NET Standard\System.Configuration.ConfigurationManager.dll</HintPath>
+		</Reference>
+		<Reference Include="System.Runtime.CompilerServices.Unsafe">
+			<HintPath>..\Required dlls\.NET Standard\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+		</Reference>
+		<Reference Include="System.Security.Cryptography.ProtectedData">
+			<HintPath>..\Required dlls\.NET Standard\System.Security.Cryptography.ProtectedData.dll</HintPath>
+		</Reference>
+		<Reference Include="System.Security.Permissions">
+			<HintPath>..\Required dlls\.NET Standard\System.Security.Permissions.dll</HintPath>
+		</Reference>
+		<Reference Include="System.Text.Encoding.CodePages">
+			<HintPath>..\Required dlls\.NET Standard\System.Text.Encoding.CodePages.dll</HintPath>
+		</Reference>
+		<Reference Include="System.Xml.XPath.XmlDocument">
+			<HintPath>..\Required dlls\.NET Standard\System.Xml.XPath.XmlDocument.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+	
+</Project>

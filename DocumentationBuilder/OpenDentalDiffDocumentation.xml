@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
+<database version="22.1.1.0">
+    <table name="alertcategorylink">
+        <summary></summary>
+        <column order="2" name="AlertType" type="tinyint(4)">
+            <summary>Enum:AlertType Identifies what types of alert this row is assocaited to.</summary>
+            <Enumeration name="AlertType">
+                <summary>Enum representing different alert types.</summary>
+                <EnumValue name="TenDlc">35 - Alert if an account using 10DLC goes over their daily max limit or if we've neglected to set up our pref correctly</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="alertitem">
+        <summary></summary>
+        <column order="3" name="Type" type="tinyint(4)">
+            <summary>Enum:AlertType Identifies what type of alert this row is.</summary>
+            <Enumeration name="AlertType">
+                <summary>Enum representing different alert types.</summary>
+                <EnumValue name="TenDlc">35 - Alert if an account using 10DLC goes over their daily max limit or if we've neglected to set up our pref correctly</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="apisubscription">
+        <summary></summary>
+        <column order="0" name="ApiSubscriptionNum" type="bigint(20)">
+            <summary>Primary key.</summary>
+        </column>
+        <column order="1" name="EndPointUrl" type="varchar(255)">
+            <summary>This is the URL endpoint to which events will be sent. </summary>
+        </column>
+        <column order="2" name="Workstation" type="varchar(255)">
+            <summary>Name of the workstation that will fire events. Blank if you want all workstations to fire events. </summary>
+        </column>
+        <column order="3" name="CustomerKey" type="varchar(255)">
+            <summary>API Key the subscribing developer gave the customer. There can be multiple 3rd parties products for one database, each with their own key.</summary>
+        </column>
+        <column order="4" name="WatchTable" type="varchar(255)">
+            <summary>Enum: EnumWatchTable, stored as string </summary>
+        </column>
+        <column order="5" name="PollingSeconds" type="int(11)">
+            <summary>Frequency of database polling, in seconds. </summary>
+        </column>
+        <column order="6" name="UiEventType" type="varchar(255)">
+            <summary>Enum: EnumApiUiEventType, stored as string.</summary>
+        </column>
+        <column order="7" name="DateTimeStart" type="datetime">
+            <summary>When the subscription started. This gets updated each time db is polled so that it represents the start of the date range for the next polling.</summary>
+        </column>
+        <column order="8" name="DateTimeStop" type="datetime">
+            <summary>When the subscription will expire. MinVal 01-01-0001 if no expiration. </summary>
+        </column>
+        <column order="9" name="Note" type="varchar(255)">
+            <summary>.</summary>
+        </column>
+    </table>
+    <table name="apptviewitem">
+        <summary></summary>
+        <column order="10" name="IsMobile" type="tinyint(4)">
+            <summary>Bool indicating if this ApptViewItem is for use in Mobile App appointment view</summary>
+        </column>
+    </table>
+    <table name="carecreditwebresponse">
+        <summary></summary>
+        <column order="6" name="ProcessingStatus" type="varchar(255)">
+            <summary>Enum:CareCreditWebStatus Used to determine if the request is pending, needs action, or is completed.</summary>
+            <Enumeration name="CareCreditWebStatus">
+                <summary />
+                <EnumValue name="MerchantClosed">17. This is manually created when we get the merchant number to create process BQS.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="clearinghouse">
+        <summary></summary>
+        <column order="12" name="CommBridge" type="tinyint">
+            <summary>Enum:EclaimsCommBridge  One of the included hard-coded communications briges.  Or none to just create the claim files without uploading.</summary>
+            <Enumeration name="EclaimsCommBridge">
+                <summary>Each clearinghouse can have a hard-coded comm bridge which handles all the communications of transfering the claim files to the clearinghouse/carrier.  Does not just include X12, but can include any format at all.</summary>
+                <EnumValue name="Lantek">20</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="deflink">
+        <summary></summary>
+        <column order="3" name="LinkType" type="tinyint(4)">
+            <summary>Enum:DefLinkType The type of link.</summary>
+            <Enumeration name="DefLinkType">
+                <summary>The manner in which a definition is linked.</summary>
+                <EnumValue name="RecallType">5. The definition is linked to a recall type.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="eclipboardsheetdef">
+        <summary></summary>
+        <column order="9" name="PrefillStatusOverride" type="bigint(20)">
+            <summary>Holds the previous revision number that marks what sheet def revision number we expect to have a submission for from the patient.
+            This value can be incremented when changes are made to a linked sheet definition, but it is not always updated. This should hold the last revision number 
+            that was updated for this eClipboardSheetDef. If a patient has a Sheet filled out that has a revision ID that matches this or is greater 
+            (this field will be 0 by default, or they filled out a more up to date form manually in the office and not through eClipboard), 
+            then this form will be filtered out if set to PrefillStatuses.Once when we determine which forms load for the patient in eClipboard. 
+            If this value is higher than the RevID of the last sheet the patient filled out, we consider this eClipboardSheetDef to be updated and the patient will need 
+            to fill out the form again when set to PrefillStatuses.Once.
+             </summary>
+        </column>
+    </table>
+    <table name="emailaddress">
+        <summary></summary>
+        <column order="13" name="QueryString" type="varchar(1000)">
+            <summary>Allows gmail users to specify search parameters</summary>
+        </column>
+    </table>
+    <table name="eservicelog">
+        <summary></summary>
+        <column order="4" name="EServiceAction" type="smallint(6)">
+            <summary>Enum:eServiceAction</summary>
+            <Enumeration name="eServiceAction">
+                <summary>List of some possible eServices.</summary>
+                <EnumValue name="PPDuplicatePaymentAlert">35 - Patient Portal, Patient Notified of Possible Duplicate Payment.</EnumValue>
+                <EnumValue name="PPDuplicatePaymentAllowed">36 - Patient Portal, Patient Allowed Submission of Duplicate Payment.</EnumValue>
+                <EnumValue name="PPDuplicatePaymentDenied">37 - Patient Portal, Patient Rejected Submission of Duplicate Payment.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="grouppermission">
+        <summary></summary>
+        <column order="4" name="PermType" type="tinyint">
+            <summary>Enum:Permissions Some permissions will treat a zero FKey differently. Some denote it as having access to everything for that PermType. I.e. Reports.</summary>
+            <Enumeration name="Permissions">
+                <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+                <EnumValue name="ApiSubscription">225 - Logs when API subscriptions are added or deleted. For audit trails only.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="insfilingcode">
+        <summary></summary>
+        <column order="5" name="ExcludeOtherCoverageOnPriClaims" type="tinyint(4)">
+            <summary>If set to true, and the patient's secondary inurance plan uses this insfilingcode, the secondary insurance plan will 
+            not be populated on primary e-claims or paper claims.</summary>
+        </column>
+    </table>
+    <table name="mountdef">
+        <summary></summary>
+        <column order="9" name="DefaultCat" type="bigint(20)" fk="definition">
+            <summary>FK to definition.DefNum. If set, a new mount will go into this category, regardless of which category is currently selected.</summary>
+        </column>
+    </table>
+    <table name="mountitem">
+        <summary></summary>
+        <column order="11" name="FlipOnAcquire" type="tinyint(4)">
+            <summary>.</summary>
+        </column>
+    </table>
+    <table name="mountitemdef">
+        <summary></summary>
+        <column order="11" name="FlipOnAcquire" type="tinyint(4)">
+            <summary>.</summary>
+        </column>
+    </table>
+    <table name="securitylog">
+        <summary></summary>
+        <column order="1" name="PermType" type="tinyint">
+            <summary>Enum:Permissions</summary>
+            <Enumeration name="Permissions">
+                <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+                <EnumValue name="ApiSubscription">225 - Logs when API subscriptions are added or deleted. For audit trails only.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="signalod">
+        <summary></summary>
+        <column order="4" name="FKeyType" type="varchar(255)">
+            <summary>Enum:KeyType Describes the type of object referenced by the FKey.</summary>
+            <Enumeration name="KeyType">
+                <summary>Do not combine with SignalType, they must be seperate. Stored as string, safe to reorder enum values.</summary>
+                <EnumValue name="EmailAddress">13 - Used to indicate that this specific email address is what this signal is for</EnumValue>
+            </Enumeration>
+        </column>
+        <column order="5" name="IType" type="tinyint(4)">
+            <summary>Enum:InvalidType Indicates what cache or entity has been changed.</summary>
+            <Enumeration name="InvalidType">
+                <summary>When the autorefresh message is sent to the other computers, this is the type.</summary>
+                <EnumValue name="EmailInboxRetrieve">105. </EnumValue>
+                <EnumValue name="ApiSubscriptions">106. Table in db is apisubscriptions. Small and changes rarely, but all workstations must know about the change.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+</database>

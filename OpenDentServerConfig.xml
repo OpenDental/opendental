@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<ConnectionSettings>
+	<ServerPort>9390</ServerPort>
+	<DatabaseConnection>
+		<ComputerName>localhost</ComputerName>
+		<Database>opendental</Database>
+		<User>root</User>
+		<Password></Password>
+		<UserLow>root</UserLow>
+		<PasswordLow />
+	</DatabaseConnection>
+	<DatabaseConnection>
+		<ComputerName>localhost</ComputerName>
+		<Database>development44</Database>
+		<User>admin</User>
+		<Password>verysecret</Password>
+		<UserLow>anyone</UserLow>
+		<PasswordLow>abracadabra</PasswordLow>
+	</DatabaseConnection>
+</ConnectionSettings>
