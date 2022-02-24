@@ -474,7 +474,7 @@ namespace OpenDentBusiness{
 				//case Permissions.InsuranceCarrierCombine:
 				case Permissions.PopupEdit://Popups are archived, so they don't need to show in the audit trail.
 				case Permissions.InsPlanPickListExisting:
-				//case Permissions.GroupNoteEditSigned:
+				case Permissions.GroupNoteEditSigned:
 				case Permissions.WikiAdmin:
 				//case Permissions.PayPlanEdit:
 				//case Permissions.ClaimEdit:

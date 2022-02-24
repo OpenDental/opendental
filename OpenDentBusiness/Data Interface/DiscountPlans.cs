@@ -170,9 +170,11 @@ namespace OpenDentBusiness{
 		///<summary>Returns a DiscountPlanProc object for every procedure passed in. It is assumed that all procedures are for the same patient. Passing in an empty list of Adjustments will assume
 		///no prior adjustments of the discountPlan.DefNum had been applied.</summary>
 		public static List<DiscountPlanProc> GetDiscountPlanProc(List<Procedure> listProcs,DiscountPlanSub discountPlanSub=null,DiscountPlan discountPlan=null,List<Adjustment> listAdjustments=null) {
-			//No remoting role check; No call to db.
 			if(listProcs.IsNullOrEmpty() || discountPlanSub==null || discountPlan==null) {
 				return new List<DiscountPlanProc>();
+			}
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {//Remoting role check here to reduce round-trips to the server.
+				return Meth.GetObject<List<DiscountPlanProc>>(MethodBase.GetCurrentMethod(),listProcs,discountPlanSub,discountPlan,listAdjustments);
 			}
 			List<DiscountPlanProc> listDiscountPlanProcs=new List<DiscountPlanProc>();
 			List<Procedure> listHistProcs=new List<Procedure>();

@@ -91,7 +91,7 @@ namespace OpenDental{
 			this.butOK.Location = new System.Drawing.Point(277, 511);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
-			this.butOK.TabIndex = 2;
+			this.butOK.TabIndex = 6;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
@@ -102,7 +102,7 @@ namespace OpenDental{
 			this.butCancel.Location = new System.Drawing.Point(358, 511);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
-			this.butCancel.TabIndex = 3;
+			this.butCancel.TabIndex = 7;
 			this.butCancel.Text = "&Cancel";
 			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
@@ -124,8 +124,7 @@ namespace OpenDental{
 			this.groupDiagnostic.Location = new System.Drawing.Point(46, 12);
 			this.groupDiagnostic.Name = "groupDiagnostic";
 			this.groupDiagnostic.Size = new System.Drawing.Size(341, 115);
-			this.groupDiagnostic.TabIndex = 4;
-			this.groupDiagnostic.TabStop = false;
+			this.groupDiagnostic.TabIndex = 0;
 			this.groupDiagnostic.Text = "Diagnostic";
 			// 
 			// comboCancerScreenings
@@ -138,7 +137,7 @@ namespace OpenDental{
 			this.comboCancerScreenings.Location = new System.Drawing.Point(197, 86);
 			this.comboCancerScreenings.Name = "comboCancerScreenings";
 			this.comboCancerScreenings.Size = new System.Drawing.Size(136, 21);
-			this.comboCancerScreenings.TabIndex = 178;
+			this.comboCancerScreenings.TabIndex = 7;
 			// 
 			// textCancerScreenings
 			// 
@@ -146,9 +145,9 @@ namespace OpenDental{
 			this.textCancerScreenings.MaxVal = 255;
 			this.textCancerScreenings.MinVal = 0;
 			this.textCancerScreenings.Name = "textCancerScreenings";
-			this.textCancerScreenings.Size = new System.Drawing.Size(39, 20);
-			this.textCancerScreenings.TabIndex = 177;
 			this.textCancerScreenings.ShowZero = false;
+			this.textCancerScreenings.Size = new System.Drawing.Size(39, 20);
+			this.textCancerScreenings.TabIndex = 6;
 			// 
 			// label1
 			// 
@@ -169,7 +168,7 @@ namespace OpenDental{
 			this.comboExams.Location = new System.Drawing.Point(197, 65);
 			this.comboExams.Name = "comboExams";
 			this.comboExams.Size = new System.Drawing.Size(136, 21);
-			this.comboExams.TabIndex = 11;
+			this.comboExams.TabIndex = 5;
 			// 
 			// textExams
 			// 
@@ -177,9 +176,9 @@ namespace OpenDental{
 			this.textExams.MaxVal = 255;
 			this.textExams.MinVal = 0;
 			this.textExams.Name = "textExams";
-			this.textExams.Size = new System.Drawing.Size(39, 20);
-			this.textExams.TabIndex = 10;
 			this.textExams.ShowZero = false;
+			this.textExams.Size = new System.Drawing.Size(39, 20);
+			this.textExams.TabIndex = 4;
 			// 
 			// label8
 			// 
@@ -200,7 +199,7 @@ namespace OpenDental{
 			this.comboPano.Location = new System.Drawing.Point(197, 44);
 			this.comboPano.Name = "comboPano";
 			this.comboPano.Size = new System.Drawing.Size(136, 21);
-			this.comboPano.TabIndex = 9;
+			this.comboPano.TabIndex = 3;
 			// 
 			// textPano
 			// 
@@ -208,9 +207,9 @@ namespace OpenDental{
 			this.textPano.MaxVal = 255;
 			this.textPano.MinVal = 0;
 			this.textPano.Name = "textPano";
-			this.textPano.Size = new System.Drawing.Size(39, 20);
-			this.textPano.TabIndex = 8;
 			this.textPano.ShowZero = false;
+			this.textPano.Size = new System.Drawing.Size(39, 20);
+			this.textPano.TabIndex = 2;
 			// 
 			// label7
 			// 
@@ -231,7 +230,7 @@ namespace OpenDental{
 			this.comboBW.Location = new System.Drawing.Point(197, 23);
 			this.comboBW.Name = "comboBW";
 			this.comboBW.Size = new System.Drawing.Size(136, 21);
-			this.comboBW.TabIndex = 7;
+			this.comboBW.TabIndex = 1;
 			// 
 			// label6
 			// 
@@ -248,9 +247,9 @@ namespace OpenDental{
 			this.textBW.MaxVal = 255;
 			this.textBW.MinVal = 0;
 			this.textBW.Name = "textBW";
-			this.textBW.Size = new System.Drawing.Size(39, 20);
-			this.textBW.TabIndex = 6;
 			this.textBW.ShowZero = false;
+			this.textBW.Size = new System.Drawing.Size(39, 20);
+			this.textBW.TabIndex = 0;
 			// 
 			// label5
 			// 
@@ -276,8 +275,7 @@ namespace OpenDental{
 			this.groupPreventive.Location = new System.Drawing.Point(46, 132);
 			this.groupPreventive.Name = "groupPreventive";
 			this.groupPreventive.Size = new System.Drawing.Size(341, 93);
-			this.groupPreventive.TabIndex = 180;
-			this.groupPreventive.TabStop = false;
+			this.groupPreventive.TabIndex = 1;
 			this.groupPreventive.Text = "Preventive";
 			// 
 			// comboSealants
@@ -290,7 +288,7 @@ namespace OpenDental{
 			this.comboSealants.Location = new System.Drawing.Point(197, 65);
 			this.comboSealants.Name = "comboSealants";
 			this.comboSealants.Size = new System.Drawing.Size(136, 21);
-			this.comboSealants.TabIndex = 178;
+			this.comboSealants.TabIndex = 5;
 			// 
 			// textSealants
 			// 
@@ -298,9 +296,9 @@ namespace OpenDental{
 			this.textSealants.MaxVal = 255;
 			this.textSealants.MinVal = 0;
 			this.textSealants.Name = "textSealants";
-			this.textSealants.Size = new System.Drawing.Size(39, 20);
-			this.textSealants.TabIndex = 177;
 			this.textSealants.ShowZero = false;
+			this.textSealants.Size = new System.Drawing.Size(39, 20);
+			this.textSealants.TabIndex = 4;
 			// 
 			// label2
 			// 
@@ -321,7 +319,7 @@ namespace OpenDental{
 			this.comboFlouride.Location = new System.Drawing.Point(197, 44);
 			this.comboFlouride.Name = "comboFlouride";
 			this.comboFlouride.Size = new System.Drawing.Size(136, 21);
-			this.comboFlouride.TabIndex = 9;
+			this.comboFlouride.TabIndex = 3;
 			// 
 			// textFlouride
 			// 
@@ -329,9 +327,9 @@ namespace OpenDental{
 			this.textFlouride.MaxVal = 255;
 			this.textFlouride.MinVal = 0;
 			this.textFlouride.Name = "textFlouride";
-			this.textFlouride.Size = new System.Drawing.Size(39, 20);
-			this.textFlouride.TabIndex = 8;
 			this.textFlouride.ShowZero = false;
+			this.textFlouride.Size = new System.Drawing.Size(39, 20);
+			this.textFlouride.TabIndex = 2;
 			// 
 			// label4
 			// 
@@ -352,7 +350,7 @@ namespace OpenDental{
 			this.comboProphy.Location = new System.Drawing.Point(197, 23);
 			this.comboProphy.Name = "comboProphy";
 			this.comboProphy.Size = new System.Drawing.Size(136, 21);
-			this.comboProphy.TabIndex = 7;
+			this.comboProphy.TabIndex = 1;
 			// 
 			// label9
 			// 
@@ -369,9 +367,9 @@ namespace OpenDental{
 			this.textProphy.MaxVal = 255;
 			this.textProphy.MinVal = 0;
 			this.textProphy.Name = "textProphy";
-			this.textProphy.Size = new System.Drawing.Size(39, 20);
-			this.textProphy.TabIndex = 6;
 			this.textProphy.ShowZero = false;
+			this.textProphy.Size = new System.Drawing.Size(39, 20);
+			this.textProphy.TabIndex = 0;
 			// 
 			// label10
 			// 
@@ -391,8 +389,7 @@ namespace OpenDental{
 			this.groupRestorative.Location = new System.Drawing.Point(46, 232);
 			this.groupRestorative.Name = "groupRestorative";
 			this.groupRestorative.Size = new System.Drawing.Size(341, 50);
-			this.groupRestorative.TabIndex = 180;
-			this.groupRestorative.TabStop = false;
+			this.groupRestorative.TabIndex = 2;
 			this.groupRestorative.Text = "Restorative";
 			// 
 			// comboCrown
@@ -405,7 +402,7 @@ namespace OpenDental{
 			this.comboCrown.Location = new System.Drawing.Point(197, 23);
 			this.comboCrown.Name = "comboCrown";
 			this.comboCrown.Size = new System.Drawing.Size(136, 21);
-			this.comboCrown.TabIndex = 7;
+			this.comboCrown.TabIndex = 1;
 			// 
 			// label14
 			// 
@@ -422,9 +419,9 @@ namespace OpenDental{
 			this.textCrown.MaxVal = 255;
 			this.textCrown.MinVal = 0;
 			this.textCrown.Name = "textCrown";
-			this.textCrown.Size = new System.Drawing.Size(39, 20);
-			this.textCrown.TabIndex = 6;
 			this.textCrown.ShowZero = false;
+			this.textCrown.Size = new System.Drawing.Size(39, 20);
+			this.textCrown.TabIndex = 0;
 			// 
 			// label15
 			// 
@@ -450,8 +447,7 @@ namespace OpenDental{
 			this.groupPerio.Location = new System.Drawing.Point(46, 289);
 			this.groupPerio.Name = "groupPerio";
 			this.groupPerio.Size = new System.Drawing.Size(341, 93);
-			this.groupPerio.TabIndex = 180;
-			this.groupPerio.TabStop = false;
+			this.groupPerio.TabIndex = 3;
 			this.groupPerio.Text = "Periodontal";
 			// 
 			// comboPerioMaint
@@ -464,7 +460,7 @@ namespace OpenDental{
 			this.comboPerioMaint.Location = new System.Drawing.Point(197, 66);
 			this.comboPerioMaint.Name = "comboPerioMaint";
 			this.comboPerioMaint.Size = new System.Drawing.Size(136, 21);
-			this.comboPerioMaint.TabIndex = 11;
+			this.comboPerioMaint.TabIndex = 5;
 			// 
 			// textPerioMaint
 			// 
@@ -472,9 +468,9 @@ namespace OpenDental{
 			this.textPerioMaint.MaxVal = 255;
 			this.textPerioMaint.MinVal = 0;
 			this.textPerioMaint.Name = "textPerioMaint";
-			this.textPerioMaint.Size = new System.Drawing.Size(39, 20);
-			this.textPerioMaint.TabIndex = 10;
 			this.textPerioMaint.ShowZero = false;
+			this.textPerioMaint.Size = new System.Drawing.Size(39, 20);
+			this.textPerioMaint.TabIndex = 4;
 			// 
 			// label17
 			// 
@@ -495,7 +491,7 @@ namespace OpenDental{
 			this.comboDebridement.Location = new System.Drawing.Point(197, 45);
 			this.comboDebridement.Name = "comboDebridement";
 			this.comboDebridement.Size = new System.Drawing.Size(136, 21);
-			this.comboDebridement.TabIndex = 9;
+			this.comboDebridement.TabIndex = 3;
 			// 
 			// textDebridement
 			// 
@@ -503,9 +499,9 @@ namespace OpenDental{
 			this.textDebridement.MaxVal = 255;
 			this.textDebridement.MinVal = 0;
 			this.textDebridement.Name = "textDebridement";
-			this.textDebridement.Size = new System.Drawing.Size(39, 20);
-			this.textDebridement.TabIndex = 8;
 			this.textDebridement.ShowZero = false;
+			this.textDebridement.Size = new System.Drawing.Size(39, 20);
+			this.textDebridement.TabIndex = 2;
 			// 
 			// label18
 			// 
@@ -526,7 +522,7 @@ namespace OpenDental{
 			this.comboSRP.Location = new System.Drawing.Point(197, 24);
 			this.comboSRP.Name = "comboSRP";
 			this.comboSRP.Size = new System.Drawing.Size(136, 21);
-			this.comboSRP.TabIndex = 7;
+			this.comboSRP.TabIndex = 1;
 			// 
 			// label19
 			// 
@@ -543,9 +539,9 @@ namespace OpenDental{
 			this.textSRP.MaxVal = 255;
 			this.textSRP.MinVal = 0;
 			this.textSRP.Name = "textSRP";
-			this.textSRP.Size = new System.Drawing.Size(39, 20);
-			this.textSRP.TabIndex = 6;
 			this.textSRP.ShowZero = false;
+			this.textSRP.Size = new System.Drawing.Size(39, 20);
+			this.textSRP.TabIndex = 0;
 			// 
 			// label20
 			// 
@@ -565,8 +561,7 @@ namespace OpenDental{
 			this.groupProsthodontics.Location = new System.Drawing.Point(46, 388);
 			this.groupProsthodontics.Name = "groupProsthodontics";
 			this.groupProsthodontics.Size = new System.Drawing.Size(341, 50);
-			this.groupProsthodontics.TabIndex = 180;
-			this.groupProsthodontics.TabStop = false;
+			this.groupProsthodontics.TabIndex = 4;
 			this.groupProsthodontics.Text = "Prosthodontics";
 			// 
 			// comboDentures
@@ -579,7 +574,7 @@ namespace OpenDental{
 			this.comboDentures.Location = new System.Drawing.Point(197, 23);
 			this.comboDentures.Name = "comboDentures";
 			this.comboDentures.Size = new System.Drawing.Size(136, 21);
-			this.comboDentures.TabIndex = 7;
+			this.comboDentures.TabIndex = 1;
 			// 
 			// label24
 			// 
@@ -596,9 +591,9 @@ namespace OpenDental{
 			this.textDentures.MaxVal = 255;
 			this.textDentures.MinVal = 0;
 			this.textDentures.Name = "textDentures";
-			this.textDentures.Size = new System.Drawing.Size(39, 20);
-			this.textDentures.TabIndex = 6;
 			this.textDentures.ShowZero = false;
+			this.textDentures.Size = new System.Drawing.Size(39, 20);
+			this.textDentures.TabIndex = 0;
 			// 
 			// label25
 			// 
@@ -618,8 +613,7 @@ namespace OpenDental{
 			this.groupImplants.Location = new System.Drawing.Point(46, 445);
 			this.groupImplants.Name = "groupImplants";
 			this.groupImplants.Size = new System.Drawing.Size(341, 50);
-			this.groupImplants.TabIndex = 180;
-			this.groupImplants.TabStop = false;
+			this.groupImplants.TabIndex = 5;
 			this.groupImplants.Text = "Implants";
 			// 
 			// comboImplant
@@ -632,7 +626,7 @@ namespace OpenDental{
 			this.comboImplant.Location = new System.Drawing.Point(197, 23);
 			this.comboImplant.Name = "comboImplant";
 			this.comboImplant.Size = new System.Drawing.Size(136, 21);
-			this.comboImplant.TabIndex = 178;
+			this.comboImplant.TabIndex = 1;
 			// 
 			// textImplant
 			// 
@@ -640,9 +634,9 @@ namespace OpenDental{
 			this.textImplant.MaxVal = 255;
 			this.textImplant.MinVal = 0;
 			this.textImplant.Name = "textImplant";
-			this.textImplant.Size = new System.Drawing.Size(39, 20);
-			this.textImplant.TabIndex = 177;
 			this.textImplant.ShowZero = false;
+			this.textImplant.Size = new System.Drawing.Size(39, 20);
+			this.textImplant.TabIndex = 0;
 			// 
 			// label26
 			// 

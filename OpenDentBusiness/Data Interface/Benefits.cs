@@ -1723,7 +1723,10 @@ namespace OpenDentBusiness {
 			//Canadian Flo
 			if(CultureInfo.CurrentCulture.Name.EndsWith("CA") &&
 				((Canadian.IsQuebec() && ben.CodeNum==ProcedureCodes.GetCodeNum("12400"))//The proc code is different for Quebec!
-				|| (!Canadian.IsQuebec() && ben.CodeNum==ProcedureCodes.GetCodeNum("12101")))//The rest of Canada conforms to a standard.
+				|| (!Canadian.IsQuebec() && ben.CodeNum==ProcedureCodes.GetCodeNum("12111"))
+				|| (!Canadian.IsQuebec() && ben.CodeNum==ProcedureCodes.GetCodeNum("12112"))
+				|| (!Canadian.IsQuebec() && ben.CodeNum==ProcedureCodes.GetCodeNum("12113"))
+				)//The rest of Canada conforms to a standard.
 				&& ben.BenefitType==InsBenefitType.Limitations
 				//&& ben.CovCatNum==CovCats.GetForEbenCat(EbenefitCategory.Db).CovCatNum//ignored
 				&& ben.MonetaryAmt==-1
