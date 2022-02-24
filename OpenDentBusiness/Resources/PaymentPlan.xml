@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SheetDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <IsNew>false</IsNew>
+  <SheetDefNum>0</SheetDefNum>
+  <Description>Payment Plan</Description>
+  <SheetType>PaymentPlan</SheetType>
+  <FontSize>9</FontSize>
+  <FontName>Arial</FontName>
+  <Width>850</Width>
+  <Height>1100</Height>
+  <IsLandscape>false</IsLandscape>
+  <PageCount>1</PageCount>
+  <IsMultiPage>false</IsMultiPage>
+  <SheetFieldDefs>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3932</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>Principal</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>475</XPos>
+      <YPos>300</YPos>
+      <Width>160</Width>
+      <Height>22</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Right</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3933</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>APR</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>475</XPos>
+      <YPos>330</YPos>
+      <Width>160</Width>
+      <Height>22</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Right</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3934</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>DateOfAgreement</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>475</XPos>
+      <YPos>270</YPos>
+      <Width>160</Width>
+      <Height>22</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Right</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3935</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>nameLF</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>475</XPos>
+      <YPos>210</YPos>
+      <Width>160</Width>
+      <Height>22</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Right</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3936</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>guarantor</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>475</XPos>
+      <YPos>240</YPos>
+      <Width>160</Width>
+      <Height>22</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Right</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3937</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>Note</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>175</XPos>
+      <YPos>525</YPos>
+      <Width>550</Width>
+      <Height>50</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3938</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Signature of Guarantor: _____________________________________________________</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>175</XPos>
+      <YPos>725</YPos>
+      <Width>550</Width>
+      <Height>20</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3939</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>Grid</FieldType>
+      <FieldName>PayPlanMain</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>80</XPos>
+      <YPos>455</YPos>
+      <Width>720</Width>
+      <Height>30</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3940</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>totalFinanceCharge</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>475</XPos>
+      <YPos>360</YPos>
+      <Width>160</Width>
+      <Height>22</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Right</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3941</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>totalCostOfLoan</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>475</XPos>
+      <YPos>390</YPos>
+      <Width>160</Width>
+      <Height>22</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Right</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3942</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Patient</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>175</XPos>
+      <YPos>210</YPos>
+      <Width>160</Width>
+      <Height>22</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3943</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Guarantor</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>175</XPos>
+      <YPos>240</YPos>
+      <Width>160</Width>
+      <Height>22</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3944</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>dateToday</FieldName>
+      <FieldValue />
+      <FontSize>10</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>true</FontIsBold>
+      <XPos>368</XPos>
+      <YPos>106</YPos>
+      <Width>100</Width>
+      <Height>15</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Center</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3945</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Payment Plan Terms</FieldValue>
+      <FontSize>17</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>true</FontIsBold>
+      <XPos>215</XPos>
+      <YPos>50</YPos>
+      <Width>400</Width>
+      <Height>30</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Center</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3946</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>PracticeTitle</FieldName>
+      <FieldValue />
+      <FontSize>10</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>true</FontIsBold>
+      <XPos>290</XPos>
+      <YPos>84</YPos>
+      <Width>250</Width>
+      <Height>20</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Center</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3947</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Total Finance Charges</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>175</XPos>
+      <YPos>360</YPos>
+      <Width>160</Width>
+      <Height>22</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3948</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Total Cost of Loan</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>175</XPos>
+      <YPos>390</YPos>
+      <Width>160</Width>
+      <Height>22</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3949</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Annual Percentage Rate</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>175</XPos>
+      <YPos>330</YPos>
+      <Width>160</Width>
+      <Height>22</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3950</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Date of Agreement</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>175</XPos>
+      <YPos>270</YPos>
+      <Width>160</Width>
+      <Height>22</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3951</SheetFieldDefNum>
+      <SheetDefNum>84</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Principal</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Tahoma</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>175</XPos>
+      <YPos>300</YPos>
+      <Width>160</Width>
+      <Height>22</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+  </SheetFieldDefs>
+</SheetDef>

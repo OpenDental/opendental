@@ -1,0 +1,275 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
+<database version="21.1.37.0">
+    <table name="alertcategorylink">
+        <summary></summary>
+        <column order="2" name="AlertType" type="tinyint(4)">
+            <summary>Enum:AlertType Identifies what types of alert this row is assocaited to.</summary>
+            <Enumeration name="AlertType">
+                <summary>Enum representing different alert types.</summary>
+                <EnumValue name="PushHubDown">31 - Alert HQ that a push hub client has reached its failure threshold or all push hub clients are failing</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="alertitem">
+        <summary></summary>
+        <column order="3" name="Type" type="tinyint(4)">
+            <summary>Enum:AlertType Identifies what type of alert this row is.</summary>
+            <Enumeration name="AlertType">
+                <summary>Enum representing different alert types.</summary>
+                <EnumValue name="PushHubDown">31 - Alert HQ that a push hub client has reached its failure threshold or all push hub clients are failing</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="apptreminderrule">
+        <summary></summary>
+        <column order="26" name="TemplateFailureAutoReply" type="text">
+            <summary>Used when auto replying to appointment confirmations that failed.</summary>
+        </column>
+    </table>
+    <table name="carrier">
+        <summary></summary>
+        <column order="25" name="EraAutomationOverride" type="tinyint(4)">
+            <summary>Enum:EraAutomationMode UseGlobal (0) by default. Determines the level of ERA processing automation for this carrier. This will override the EraAutomationBehavior preference when not set to UseGlobal.</summary>
+            <Enumeration name="EraAutomationMode">
+                <summary>The level of automation for ERA processing. This setting can be overriden for individual Carriers.</summary>
+                <EnumValue name="UseGlobal">0 - Never used for the EraAutomationBehavior preference. Only used for Carrier.EraAutomationOverride to indicate that the carrier uses the EraAutomationBehavior preference instead of an override.</EnumValue>
+                <EnumValue name="ReviewAll">1 - ERAs are manually processed.</EnumValue>
+                <EnumValue name="SemiAutomatic">2 - Allows ERAs to be processed with a single button click.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="discountplan">
+        <summary></summary>
+        <column order="5" name="PlanNote" type="text">
+            <summary>Note for this plan.</summary>
+        </column>
+        <column order="6" name="ExamFreqLimit" type="int(11)">
+            <summary>Number of Procedures allowed for a discount plans Exam category.</summary>
+        </column>
+        <column order="7" name="XrayFreqLimit" type="int(11)">
+            <summary>Number of Procedures allowed for a discount plans X-Ray category.</summary>
+        </column>
+        <column order="8" name="ProphyFreqLimit" type="int(11)">
+            <summary>Number of Procedures allowed for a discount plans Prophylaxis category.</summary>
+        </column>
+        <column order="9" name="FluorideFreqLimit" type="int(11)">
+            <summary>Number of Procedures allowed for a discount plans Fluoride category.</summary>
+        </column>
+        <column order="10" name="PerioFreqLimit" type="int(11)">
+            <summary>Number of Procedures allowed for a discount plans Periodontal category.</summary>
+        </column>
+        <column order="11" name="LimitedExamFreqLimit" type="int(11)">
+            <summary>Number of Procedures allowed for a discount plans Limited Exam category.</summary>
+        </column>
+        <column order="12" name="PAFreqLimit" type="int(11)">
+            <summary>Number of Procedures allowed for a discount plans Periapical X-Ray category.</summary>
+        </column>
+        <column order="13" name="AnnualMax" type="double">
+            <summary>Annual discount maximum for frequency limitations. -1 indicates blank or no annual max limitation.</summary>
+        </column>
+    </table>
+    <table name="discountplansub">
+        <summary></summary>
+        <column order="5" name="SubNote" type="text">
+            <summary>Note for this sub.</summary>
+        </column>
+    </table>
+    <table name="emailmessage">
+        <summary></summary>
+        <column order="7" name="SentOrReceived" type="tinyint">
+            <summary>Enum:EmailSentOrReceived Neither, Received, Read, WebMailReceived, WebMailRecdRead, WebMailSent, WebMailSentRead, SentDirect, ReceivedEncrypted, ReceivedDirect, ReadDirect, AckDirectProcessed, AckDirectNotSent</summary>
+            <Enumeration name="EmailSentOrReceived">
+                <summary>0=Neither, 1=Sent, 2=Received, 3=Read, 4=WebMailReceived, 5=WebMailRecdRead, 6=WebMailSent, 7=WebMailSentRead, 8=SentDirect, 9=ReceivedEncrypted, 10=ReceivedDirect, 11=ReadDirect, 12=AckDirectProcessed, 13=AckDirectNotSent</summary>
+                <EnumValue name="SendFailed">17 Email failed to send.</EnumValue>
+            </Enumeration>
+        </column>
+        <column order="20" name="MsgType" type="varchar(255)">
+            <summary></summary>
+        </column>
+        <column order="21" name="FailReason" type="varchar(255)">
+            <summary>Reason the message failed to send. Blank if sent successful.</summary>
+        </column>
+    </table>
+    <table name="entrylog">
+        <summary></summary>
+        <column order="4" name="LogSource" type="tinyint(4)">
+            <summary>Enum:LogSources</summary>
+            <Enumeration name="LogSources">
+                <summary>Known entities that create security logs.</summary>
+                <EnumValue name="EmployerImport834">22 - X12 834 Employer Import from the Manage Module.</EnumValue>
+                <EnumValue name="API">23 - The non-FHIR API.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="eservicelog">
+        <summary></summary>
+        <column order="3" name="EServiceType" type="tinyint(4)">
+            <summary>Enum:eServiceType</summary>
+            <Enumeration name="eServiceType">
+                <summary>List of some possible eService Actions.</summary>
+                <EnumValue name="Unknown">0. This means the action done was Unknown.</EnumValue>
+                <EnumValue name="WSRecall">1. This means the action done was a Web Sched Recall.</EnumValue>
+                <EnumValue name="WSNewPat">2. This means the action done was for a New Patient.</EnumValue>
+                <EnumValue name="WSExistingPat">3. This means the action done was for an Existing Patient.</EnumValue>
+                <EnumValue name="WSAsap">4. This means the action done was for a Web Sched ASAP.</EnumValue>
+                <EnumValue name="PatientPortal">5. This means the action done was for a Patient Portal.</EnumValue>
+                <EnumValue name="EClipboard">6. This means the action done was for a Mobile Checkin.</EnumValue>
+                <EnumValue name="ApptConfirmations">7. This means the action done was for a Appointment Confirmations.</EnumValue>
+                <EnumValue name="WebForms">8. This means the action done was for a WebForm.</EnumValue>
+                <EnumValue name="WSGeneral">9. This means the action done was for unspecified WebSched.</EnumValue>
+                <EnumValue name="Arrivals">10. This means the action done was for Arrivals.</EnumValue>
+            </Enumeration>
+        </column>
+        <column order="4" name="EServiceAction" type="smallint(6)">
+            <summary>Enum:eServiceAction</summary>
+            <Enumeration name="eServiceAction">
+                <summary>List of some possible eServices.</summary>
+                <EnumValue name="Undefined">0 - Should not be in the database.</EnumValue>
+                <EnumValue name="WSHomeView">1 - Patient arrives at home view.</EnumValue>
+                <EnumValue name="WSServiceSelect">2 - Patient chooses between new/existing/recall appointment on home view.</EnumValue>
+                <EnumValue name="WSIdentify">3 - Patient identifies themselves.</EnumValue>
+                <EnumValue name="WSScheduler">4 - Patient arrives at the scheduler page.</EnumValue>
+                <EnumValue name="WSMonthSwitch">5 - Patient switches months in the timeslot picker.</EnumValue>
+                <EnumValue name="WSTimeSlotChoose">6 - Patient selects an open timeslot.</EnumValue>
+                <EnumValue name="WSConfirmationPopup">7 - Patient recieves the confirmation popup.</EnumValue>
+                <EnumValue name="WSDateTimeYes">8 - Patient accepted the datetime.</EnumValue>
+                <EnumValue name="WSDateTimeNo">9 - Patient declines the datetime.</EnumValue>
+                <EnumValue name="WSTwoFactorSent">10 - Patient was sent a 2FA code.</EnumValue>
+                <EnumValue name="WSTwoFactorPassed">11 - Patient successfully passed 2FA.</EnumValue>
+                <EnumValue name="WSAppointmentScheduleFromClient">12 - Patient schedules appointment.</EnumValue>
+                <EnumValue name="WSAppointmentScheduledFromServer">13 - Appointment scheduled.</EnumValue>
+                <EnumValue name="CONFConfirmedAppt">14 - Appointment confirmation.</EnumValue>
+                <EnumValue name="WSMovedAppt">15 - Appointment has been moved.</EnumValue>
+                <EnumValue name="PPLoggedIn">16 - Patient logged into patient portal.</EnumValue>
+                <EnumValue name="PPMadePayment">17 - Payment was made in payment portal.</EnumValue>
+                <EnumValue name="ECAddedForm">18 - Form created.</EnumValue>
+                <EnumValue name="ECCompletedForm">19 - Form was filled out.</EnumValue>
+                <EnumValue name="ECLoggedIn">20 - EClipboard Checked In.</EnumValue>
+                <EnumValue name="WFCompletedForm">21 - Web Forms Form Completed.</EnumValue>
+                <EnumValue name="WSRecallNotFound">22 - Web Sched Recall Not Found.</EnumValue>
+                <EnumValue name="WSRecallAlreadyScheduled">23 - Web Sched Already Scheduled.</EnumValue>
+                <EnumValue name="ArrivalReceived">24 - Web Sched Already Scheduled.</EnumValue>
+            </Enumeration>
+        </column>
+        <column order="5" name="KeyType" type="smallint(6)">
+            <summary>Enum:FKeyType</summary>
+            <Enumeration name="FKeyType">
+                <summary>Type associated with FKey value.</summary>
+                <EnumValue name="Undefined">0 Undefined.</EnumValue>
+                <EnumValue name="ApptNum">1 Appointment Number.</EnumValue>
+                <EnumValue name="PayNum">2 Payment Number.</EnumValue>
+                <EnumValue name="SheetNum">3 Sheet Number.</EnumValue>
+            </Enumeration>
+        </column>
+        <column order="6" name="LogGuid" type="varchar(16)">
+            <summary>Guid for logging actions with no associated PatNum.</summary>
+        </column>
+        <column order="7" name="ClinicNum" type="bigint(20)">
+            <summary>Clinic Number.</summary>
+        </column>
+        <column order="8" name="FKey" type="bigint(20)">
+            <summary>FKey for given type.</summary>
+        </column>
+    </table>
+    <table name="eserviceshortguid">
+        <summary></summary>
+        <column order="1" name="EServiceCode" type="varchar(255)">
+            <summary>Enum:eServiceCode EService that this short GUID applies to.</summary>
+            <Enumeration name="eServiceCode">
+                <summary>Used by EServiceSignal.ServiceCode. Each service will have an entry here. Stored as an int for forward compatibility.</summary>
+                <EnumValue name="EserviceLog">39 - eServices logging service.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="grouppermission">
+        <summary></summary>
+        <column order="4" name="PermType" type="tinyint">
+            <summary>Enum:Permissions</summary>
+            <Enumeration name="Permissions">
+                <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+                <EnumValue name="EmployerCreate">205 - Permission to create Employers.</EnumValue>
+                <EnumValue name="AllowLoginFromAnyLocation">206 - Permission to allow users to login to ODCloud from any IP Address.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="payplan">
+        <summary></summary>
+        <column order="22" name="DynamicPayPlanTPOption" type="tinyint(4)">
+            <summary>Enum:DynamicPayPlanTPOptions Indicates the selected mode for how treatment planned procedures are handled by a dynamic payment plan.</summary>
+            <Enumeration name="DynamicPayPlanTPOptions">
+                <summary>Enum that changes how treatment planned procedures are handled in dynamic payment plans.</summary>
+                <EnumValue name="None">0</EnumValue>
+                <EnumValue name="AwaitComplete">1</EnumValue>
+                <EnumValue name="TreatAsComplete">2</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="securitylog">
+        <summary></summary>
+        <column order="1" name="PermType" type="tinyint">
+            <summary>Enum:Permissions</summary>
+            <Enumeration name="Permissions">
+                <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+                <EnumValue name="EmployerCreate">205 - Permission to create Employers.</EnumValue>
+                <EnumValue name="AllowLoginFromAnyLocation">206 - Permission to allow users to login to ODCloud from any IP Address.</EnumValue>
+            </Enumeration>
+        </column>
+        <column order="8" name="LogSource" type="tinyint(4)">
+            <summary>Enum:LogSources None, WebSched, InsPlanImport834, FHIR, PatientPortal.</summary>
+            <Enumeration name="LogSources">
+                <summary>Known entities that create security logs.</summary>
+                <EnumValue name="EmployerImport834">22 - X12 834 Employer Import from the Manage Module.</EnumValue>
+                <EnumValue name="API">23 - The non-FHIR API.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="tsitranslog">
+        <summary></summary>
+        <column order="5" name="ServiceType" type="tinyint(4)">
+            <summary>Enum:TsiServiceType - for placements, this is the type of collection activity that will start on the account being placed.</summary>
+            <Enumeration name="TsiServiceType">
+                <summary>Don't remove items or alter order of this enum, FKey requires this to be static.</summary>
+                <EnumValue name="Accelerator">0 - Accelerator</EnumValue>
+                <EnumValue name="ProfitRecovery">1 - Profit Recovery</EnumValue>
+                <EnumValue name="ProfessionalCollections">2 - Professional Collections</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="userodpref">
+        <summary></summary>
+        <column order="3" name="FkeyType" type="tinyint(4)">
+            <summary>Enum:UserOdFkeyType Specifies which flag is overridden for the specified definition, since an individual definition can have multiple flags.</summary>
+            <Enumeration name="UserOdFkeyType">
+                <summary>These FKey Types are to be used as an identifier for what table the Fkey column is associated to, or what type of override it is.
+            Not always associated to a database table.  Example:  TaskCollapse,SuppressLogOffMessage,AcctProcBreakdown.
+            This enum is not stored as a string so DO NOT reorder it.</summary>
+                <EnumValue name="WikiSearchIncludeContent">25 - Preference only applies to the wiki search. Set and unset only in the wiki search window. Box defaults to checked if this preference is not set.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="eservicelog">
+        <summary></summary>
+        <column order="1" name="EServiceCode" type="tinyint(4)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="2" name="EServiceOperation" type="tinyint(4)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="4" name="AptNum" type="bigint(20)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="6" name="PayNum" type="bigint(20)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="7" name="SheetNum" type="bigint(20)" deleted="true">
+            <summary></summary>
+        </column>
+    </table>
+    <table name="tsitranslog">
+        <summary></summary>
+        <column order="5" name="DemandType" type="tinyint(4)" deleted="true">
+            <summary></summary>
+        </column>
+    </table>
+</database>

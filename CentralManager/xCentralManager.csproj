@@ -1,0 +1,305 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{10BFA78E-E5FE-4209-8347-AD0EC8B3F064}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CentralManager</RootNamespace>
+    <AssemblyName>CentralManager</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+	<LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+	<LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CDT, Version=15.3.36.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\CDT.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\Required dlls\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Db\CentralConfigHelper.cs" />
+    <Compile Include="Db\CentralConnectionHelper.cs" />
+    <Compile Include="Db\CentralGroupPermissions.cs" />
+    <Compile Include="Db\CentralSyncHelper.cs" />
+    <Compile Include="Db\CentralUserGroups.cs" />
+    <Compile Include="Db\CentralUserods.cs" />
+    <Compile Include="FormCentralConnectionGroupEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralConnectionGroupEdit.Designer.cs">
+      <DependentUpon>FormCentralConnectionGroupEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralConnectionGroups.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralConnectionGroups.Designer.cs">
+      <DependentUpon>FormCentralConnectionGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralPatientTransfer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralPatientTransfer.Designer.cs">
+      <DependentUpon>FormCentralPatientTransfer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralGroupPermEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralGroupPermEdit.Designer.cs">
+      <DependentUpon>FormCentralGroupPermEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralPatientSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralPatientSearch.Designer.cs">
+      <DependentUpon>FormCentralPatientSearch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralProdInc.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralProdInc.Designer.cs">
+      <DependentUpon>FormCentralProdInc.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralPasswordCheck.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralPasswordCheck.designer.cs">
+      <DependentUpon>FormCentralPasswordCheck.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralPasswordChange.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralPasswordChange.designer.cs">
+      <DependentUpon>FormCentralPasswordChange.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralConnectionEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralConnectionEdit.designer.cs">
+      <DependentUpon>FormCentralConnectionEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralManager.Designer.cs">
+      <DependentUpon>FormCentralManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralReportSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralReportSetup.Designer.cs">
+      <DependentUpon>FormCentralReportSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralSecurity.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralSecurity.Designer.cs">
+      <DependentUpon>FormCentralSecurity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralUserEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralUserEdit.Designer.cs">
+      <DependentUpon>FormCentralUserEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralUserGroupEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralUserGroupEdit.Designer.cs">
+      <DependentUpon>FormCentralUserGroupEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralUserGroups.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralUserGroups.Designer.cs">
+      <DependentUpon>FormCentralUserGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralUserSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralUserSettings.Designer.cs">
+      <DependentUpon>FormCentralUserSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralUserPasswordEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralUserPasswordEdit.Designer.cs">
+      <DependentUpon>FormCentralUserPasswordEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralConnections.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralConnections.Designer.cs">
+      <DependentUpon>FormCentralConnections.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCentralLogOn.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCentralChooseDatabase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WindowInfo.cs" />
+    <EmbeddedResource Include="FormCentralConnectionGroupEdit.resx">
+      <DependentUpon>FormCentralConnectionGroupEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralConnectionGroups.resx">
+      <DependentUpon>FormCentralConnectionGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralPatientTransfer.resx">
+      <DependentUpon>FormCentralPatientTransfer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralGroupPermEdit.resx">
+      <DependentUpon>FormCentralGroupPermEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralPatientSearch.resx">
+      <DependentUpon>FormCentralPatientSearch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralProdInc.resx">
+      <DependentUpon>FormCentralProdInc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralPasswordCheck.resx">
+      <DependentUpon>FormCentralPasswordCheck.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralPasswordChange.resx">
+      <DependentUpon>FormCentralPasswordChange.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralConnectionEdit.resx">
+      <DependentUpon>FormCentralConnectionEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralManager.resx">
+      <DependentUpon>FormCentralManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralConnections.resx">
+      <DependentUpon>FormCentralConnections.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralReportSetup.resx">
+      <DependentUpon>FormCentralReportSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralSecurity.resx">
+      <DependentUpon>FormCentralSecurity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralUserEdit.resx">
+      <DependentUpon>FormCentralUserEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralUserGroupEdit.resx">
+      <DependentUpon>FormCentralUserGroupEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralUserGroups.resx">
+      <DependentUpon>FormCentralUserGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralUserSettings.resx">
+      <DependentUpon>FormCentralUserSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralUserPasswordEdit.resx">
+      <DependentUpon>FormCentralUserPasswordEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralLogOn.resx">
+      <DependentUpon>FormCentralLogOn.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCentralChooseDatabase.resx">
+      <DependentUpon>FormCentralChooseDatabase.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CodeBase\xCodeBase.csproj">
+      <Project>{18F7BC78-4B99-48D3-A1F1-0D13A63E3CF9}</Project>
+      <Name>xCodeBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataConnectionBase\xDataConnectionBase.csproj">
+      <Project>{29c41020-4411-41f2-9061-9b71b5b32b5d}</Project>
+      <Name>xDataConnectionBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ODR\xODR.csproj">
+      <Project>{84688345-BB6A-4F2F-8672-A82B52FD433B}</Project>
+      <Name>xODR</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenDental\OpenDental.csproj">
+      <Project>{8136317d-c936-49b6-9e31-d90f02d2f207}</Project>
+      <Name>OpenDental</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenDentBusiness\OpenDentBusiness.csproj">
+      <Project>{3D0FC76E-803C-4DE2-BDB1-47D63A4E2357}</Project>
+      <Name>OpenDentBusiness</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

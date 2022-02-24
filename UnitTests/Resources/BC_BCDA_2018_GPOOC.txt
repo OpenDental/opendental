@@ -1,0 +1,184 @@
+01103	126.00	Exam & Diag., Clinical Oral Permanent Dentition
+01202	37.10	Exam & Diag., Limited Oral Previous Patient (recall)
+01204	48.90	Exam & Diag., Limited Oral Specific
+01205	71.20	Exam & Diag., Limited Oral Emergency
+02111	22.50	Radiographs, Intraoral Periapical-1 image
+02112	30.80	Radiographs, Intraoral Periapical-2 images
+02113	39.30	Radiographs, Intraoral Periapical-3 images
+02114	47.70	Radiographs, Intraoral Periapical-4 images
+02115	56.30	Radiographs, Intraoral Periapical-5 images
+02116	64.70	Radiographs, Intraoral Periapical-6 images
+02117	72.90	Radiographs, Intraoral Periapical-7 images
+02118	81.50	Radiographs, Intraoral Periapical-8 images
+02141	22.50	Radiographs, Intraoral Bitewing-1 image
+02142	30.80	Radiographs, Intraoral Bitewing-2 images
+02143	39.30	Radiographs, Intraoral Bitewing-3 images
+02144	47.70	Radiographs, Intraoral Bitewing-4 images
+02601	85.50	Radiographs, Panoramic Single image
+04312	202.00	Tests, Histological/Soft Tiss Biopsy, by Incision L
+05201	53.90	Case Presentation/TX Planning Consultation - One Units
+05202	107.80	Case Presentation/TX Planning Consultation - Two Units
+05209	53.90	Case Presentation/TX Planning Consult - add'l unit over 2
+11101	48.80	Polishing                   
+11111	44.50	Scaling One Unit
+11112	89.00	Scaling Two Units
+11113	134.00	Scaling Three Units
+11114	178.00	Scaling Four Units
+11115	223.00	Scaling Five Units
+11116	267.00	Scaling Six Units
+11117	22.30	Scaling One half Unit
+12101	19.00	Fluoride Treatments, Whole MoutFoam, Gel or Rinse
+12103	23.00	Fluoride Treatments, Whole MoutVarnish
+12601	83.60	Fluoride, Custom Applicances Maxillary Arch
+12602	83.60	Fluoride, Custom Applicances Mandibular Arch
+12603	126.00	Fluoride, Custom Applicances Max Plus Mand Combined
+13601	32.80	Other Topical Applicants/Hard Tiss One Unit
+13602	65.60 	Other Topical Applicants/Hard Tiss Two Units
+16101  	46.10	Anatomic Mod. Finishing Restorations One Unit
+16102  	92.20	Anatomic Mod. Finishing Restorations Two Units
+16511  	79.80	Adjunctive  Occlusal Adjustment/Equilibrat One Unit
+20111  	143.00	Caries, Trauma, Pain Control First Tooth
+20119  	71.60	Caries, Trauma, Pain Control Each Addtl Tooth Same Quadrant
+20121  	199.00	Caries, Trauma, Pain Control Plus Band - First Tooth
+20129  	100.00	Caries, Trauma, Pain Control Plus Band - EA Tooth Same Quad
+20131  	44.70	Trauma Ctl, Smooth Fract Surf First Tooth
+20139  	20.50	Trauma Ctl, Smooth Fract Surf Each Addtl Tooth Same Quad
+21211  	154.00	Non Bonded, Perm Bicusp/Ants One Surface
+21212  	194.00	Non Bonded, Perm Bicusp/Ants Two Surfaces
+21213  	229.00	Non Bonded, Perm Bicusp/Ants Three Surfaces
+21214  	277.00	Non Bonded, Perm Bicusp/Ants Four Surfaces
+21215  	325.00	Non Bonded, Perm Bicusp/Ants Five Surfaces or Max per Tooth
+21221  	163.00	Non Bonded, Permanent Molars One Surface
+21222  	233.00	Non Bonded, Permanent Molars Two Surfaces
+21223  	268.00	Non Bonded, Permanent Molars Three Surfaces
+21224  	349.00	Non Bonded, Permanent Molars Four Surfaces
+21225  	402.00	Non Bonded, Permanent Molars Five Surfaces or Max per Tooth
+23111	162.00	Plastic/SilverFilling/Perm Ant Bonded 1S
+23112	195.00	Plastic/SilverFilling/Perm Ant Bonded 2SC
+23113	245.00	Plastic/SilverFilling/Perm Ant Bonded 3SC
+23114	306.00	Plastic/SilverFilling/Perm Ant Bonded 4SC
+23115	362.00	Plastic/SilverFilling/Perm Ant Bonded (max) 5SC
+23311	186.00	Plastic/SilverFilling/Perm Pos Bonded, Bicusp 1S
+23312	259.00	Plastic/SilverFilling/Perm Pos Bonded, Bicusp 2S
+23313	315.00	Plastic/SilverFilling/Perm Pos Bonded, Bicusp 3S
+23314	387.00	Plastic/SilverFilling/Perm Pos Bonded, Bicusp 4S
+23315	428.00	Plastic/SilverFilling/Perm Pos Bonded Bicusp (max) 5S 
+23321	203.00	Plastic/SilverFilling/Perm Pos Bonded Molars 1S 
+23322	310.00	Plastic/SilverFilling/Perm Pos Bonded Molars 2S 
+23323	374.00	Plastic/SilverFilling/Perm Pos Bonded Molars 3S 
+23324	448.00	Plastic/SilverFilling/Perm Pos Bonded Molars 4S 
+23325	531.00	Plastic/SilverFilling/Perm Pos Bonded Molars (max) 5S 
+28101	138.00	Direct, Nat Tooth Prep Place Pulp Chamber Rest+Fluor  
+29101	76.90	Recementation/Rebonding IN/ON/CR/VEN/Post/ToothFrag 1U 
+29102	154.00	Recementation/Rebonding IN/ON/CR/VEN/Post/ToothFrag 2U 
+29103	231.00	Recementation/Rebonding IN/ON/CR/VEN/Post/ToothFrag 3U 
+29104	308.00	Recementation/Rebonding IN/ON/CR/VEN/Post/ToothFrag 4U 
+29301	77.10	Removal Inlay/Onlay/Crown/Veneer 1U
+29302	154.00	Removal Inlay/Onlay/Crown/Veneer 2U
+32221	154.00	Permanent Teeth,SepEmergProc Anteriors and Bicuspids
+32222	154.00	Permanent Teeth,SepEmergProc Molars
+39101	137.00	Isolation for Asepsis Banding and/or Contouring
+39201	107.00	Open and Drain (Sep Proc) Anteriors and Bicuspids
+39202	107.00	Open and Drain (Sep Proc) Molars
+39211	65.80	Open and Drain (In Addition) Anteriors and Bicuspids
+39212	65.80	Open and Drain (In Addition) Molars
+41211	92.10	Non-Surgical Oral Diseases, Mucosal One Unit
+41212	184.00	Non-Surgical Oral Diseases, Mucosal Two Units
+41213	276.00	Non-Surgical Oral Diseases, Mucosal Three Units
+41214	368.00	Non-Surgical Oral Diseases, Mucosal Four Units
+41219	92.10	Non-Surgical Oral Diseases, Mucosal Each Addtl Over Four
+41221	73.30	Non-Surgical Oral Diseases, Nerv/Muscular One Unit
+41222	147.00	Non-Surgical Oral Diseases, Nerv/Muscular Two Units
+41223	220.00	Non-Surgical Oral Diseases, Nerv/Muscular Three Units
+41224	293.00	Non-Surgical Oral Diseases, Nerv/Muscular Four Units
+41229	73.30	Non-Surgical Oral Diseases, Nerv/Muscular Each Addtl Over Four
+41231	71.50	Non-surgical Oral Diseases, Systemic One Unit
+41232	143.00	Non-surgical Oral Diseases, Systemic Two Units
+41233	215.00	Non-surgical Oral Diseases, Systemic Three Units
+41234	286.00	Non-surgical Oral Diseases, Systemic Four Units
+41239	71.50	Non-surgical Oral Diseases, Systemic Each Addtl Over Four
+43111	159.00	Adjunctive  Splinting or Ligation 'A' Splint/ joint E              
+43211	128.00	Adjunctive  Splinting or Ligation Bonded Joint Restor./ joint E              
+43421	44.50	Adjunctive  Root Planing One Unit
+43422	89.00	Adjunctive  Root Planing Two Units
+43423	134.00	Adjunctive  Root Planing Three Units
+43424	178.00	Adjunctive  Root Planing Four Units
+43425	223.00	Adjunctive  Root Planing Five Units
+43426	267.00	Adjunctive  Root Planing Six Units
+43427	22.30	Adjunctive  Root Planing One half Unit
+51101	774.00	Complete Dentures, Standard Maxillary
+51102	845.00	Complete Dentures, Standard Mandibular
+51104	97.20	Complete Dentures, Standard Liners, Resilient
+51204	97.20	Complete Dentures, Complex Liners, Resilient
+52301	449.00	Dentures,Partial,Acrylic Wrought/Cast Clasps - Max
+52302	489.00	Dentures,Partial,Acrylic Wrought/Cast Clasps - Mand
+52401	504.00	Dentures,Partial,Acrylic Palatal/Lingual Bar - Max
+52402	549.00	Dentures,Partial,Acrylic Palatal/Lingual Bar - Mand
+53101	983.00	Dentures,Part,Cast/Acrylic FE Cast Frame/Connector- Max
+53102	1072.00	Dentures,Part,Cast/Acrylic FE Cast Frame/Connector- Mand
+53201	838.00	Dentures,Part,Cast/Acrylic Tooth Borne - Max
+53202	838.00	Dentures,Part,Cast/Acrylic Tooth Borne - Mand
+54201	64.40	Dentures, Adjustments Minor 1U
+54202	128.80	Dentures, Adjustments Minor 2U
+54209	64.40	Dentures, Adjustments Minor EAU
+55101	107.00	Dentures, Repairs/Add/Complete No Impression Req'd- Max
+55102	107.00	Dentures, Repairs/Add/Complete No Impression Req'd- Mand
+55201	214.00	Dentures, Repairs/Add/Complete Impression Req'd- Max
+55202	214.00	Dentures, Repairs/Add/Complete Impression Req'd- Mand
+55301	107.00	Partial Dentures, Repairs/Add No Impression Req'd- Max
+55302	107.00	Partial Dentures, Repairs/Add No Impression Req'd- Mand
+55401	214.00	Partial Dentures, Repairs/Add Impression Req'd- Max
+55402	214.00	Partial Dentures, Repairs/Add Impression Req'd- Mand
+55501	45.80	Dentures/Implant Ret.Prosth. Prophylaxis/Polishing1U
+56211	316.00	Dentures, Reline, Direct Complete Denture - Max
+56212	358.00	Dentures, Reline, Direct Complete Denture - Mand
+56221	253.00	Dentures, Reline, Direct Partial Denture  - Max
+56222	275.00	Dentures, Reline, Direct Partial Denture  - Mand
+56231	316.00	Dentures, Reline, Processed Complete Denture - Max
+56232	358.00	Dentures, Reline, Processed Complete Denture - Mand
+56241	253.00	Dentures, Reline, Processed Partial Denture  - Max
+56242	275.00	Dentures, Reline, Processed Partial Denture  - Mand
+56251	422.00	Dentures, Reline, Processed Functional,Complete - Max
+56252	463.00	Dentures, Reline, Processed Functional,Complete - Mand
+56261	358.00	Dentures, Reline, Processed Functional,Partial  - Max
+56262	379.00	Dentures, Reline, Processed Functional,Partial  - Mand
+56511	127.00	Dentures, Tissue Conditioning Complete Denture - Max
+56512	127.00	Dentures, Tissue Conditioning Complete Denture - Mand
+56521	127.00	Dentures, Tissue Conditioning Partial Denture  - Max
+56522	127.00	Dentures, Tissue Conditioning Partial Denture  - Mand
+56601	127.00	Miscellaneous Services Resilient Liner/Rebased
+63001	60.00	Recontouring of Retainers/Pont Per Tooth,Existing Bridge 1U
+63009	60.00	Recontouring of Retainers/Pont Per Tooth,Existing Bridge EAU
+66211	87.50	Repair,Remove,Recement Fixed Bridge/Prosthesis 1U
+66212	175.00	Repair,Remove,Recement Fixed Bridge/Prosthesis 2U
+66213	263.00	Repair,Remove,Recement Fixed Bridge/Prosthesis 3U
+66301	88.40	Repair,Reinsert/Recement 1U
+66302	177.00	Repair,Reinsert/Recement 2U
+71101	160.00	Removal, Extraction, Erupted Uncomplicated-Single Tooth
+71109	106.00	Removal, Extraction, Erupted Uncomplicated-EA Tooth-SQ,SA
+71201	307.00	Removal, Extraction, Erupted Complicated-Single Tooth
+71209	231.00	Removal, Extraction, Erupted Complicated-EA Tooth-SQ
+71211	480.00	Removal, Extraction, Erupted Req. Flap Elev,etc-1 Tooth
+71219	361.00	Removal, Extraction, Erupted Req.FlapElev,etc-EA Tooth-SQ
+72311	171.00	Removals,Residual Roots Erupted, First Tooth
+72319	128.00	Removals,Residual Roots Erupted, EA Tth - SQ
+72321	340.00	Removals,Residual Roots Soft Tissue - First Tooth
+72329	255.00	Removals,Residual Roots Soft Tissue - EA Tooth SQ
+72331	394.00	Removals,Residual Roots Bone Tissue - First Tooth
+72339	296.00	Removals,Residual Roots Bone Tissue -EA Tooth SQ
+74611	511.00	Surgical Excision,Cysts/Granul Enucleation - 1 cm and under
+74631	441.00	Surgical Excision,Cysts/Granul Exision of Cyst-1 cm and under
+75111	112.00	Surgical Incision/Drain,Intra Soft Tissue Exploration
+75112	112.00	Surgical Incision/Drain,Intra Soft Tissue Abscess
+76951	69.30	Fractures, Repositioning Displaced Teeth 1U
+76952	139.00	Fractures, Repositioning Displaced Teeth 2U
+76959	69.30	Fractures, Repositioning Displaced Teeth EAU
+79601	74.40	Post Surgical Care AfterInitial PostS Tx,Minor
+79602	111.00	Post Surgical Care Minor, not by Tx Dentist
+91211	53.90	Unclassified Treatments Unusual Time/Responsibility 1U
+91212	108.00	Unclassified Treatments Unusual Time/Responsibility 2U 
+91213	162.00	Unclassified Treatments Unusual Time/Responsibility 3U 
+91219	53.90	Unclassified Treatments Unusual Time/Responsibility EAU
+92101	23.00	Anesthesia, Local Regional Block
+94301	108.20	Professional Visits Office/Inst - Regular Hrs
+94302	147.00	Professional Visits Office/Inst - After Reg Hrs

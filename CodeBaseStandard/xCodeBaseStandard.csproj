@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DOT_NET_STANDARD</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE;DOT_NET_STANDARD</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\CodeBase\Utilities\DateTime_.cs" Link="DateTime_.cs" />
+    <Compile Include="..\CodeBase\Utilities\Logger.cs" Link="Logger.cs" />
+    <Compile Include="..\CodeBase\Utilities\LoggerOld.cs" Link="LoggerOld.cs" />
+    <Compile Include="..\CodeBase\Utilities\MiscUtils.cs" Link="MiscUtils.cs" />
+    <Compile Include="..\CodeBase\Utilities\ODBuild.cs" Link="ODBuild.cs" />
+    <Compile Include="..\CodeBase\Utilities\ODEvent.cs" Link="ODEvent.cs" />
+    <Compile Include="..\CodeBase\Utilities\ODException.cs" Link="ODException.cs" />
+    <Compile Include="..\CodeBase\Utilities\ODFileUtils.cs" Link="ODFileUtils.cs" />
+    <Compile Include="..\CodeBase\Utilities\ODPrimitiveExtensions.cs" Link="ODPrimitiveExtensions.cs" />
+    <Compile Include="..\CodeBase\Utilities\ODThread.cs" Link="ODThread.cs" />
+    <Compile Include="..\CodeBase\Utilities\ODTuple.cs" Link="ODTuple.cs" />
+    <Compile Include="..\UpdateFileCopier\ODCloudClient.cs" Link="ODCloudClient.cs" />
+  </ItemGroup>
+
+</Project>

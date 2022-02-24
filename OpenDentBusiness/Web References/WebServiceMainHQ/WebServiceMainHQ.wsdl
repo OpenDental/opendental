@@ -1,0 +1,4678 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="https://www.opendental.com/OpenDentalWebServiceHQ/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/">
+      <s:element name="CustomerUpdateCommitted">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CustomerUpdateCommittedResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CustomerUpdateCommittedResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="EServiceSetup">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="EServiceSetupResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="EServiceSetupResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RecordValidateDbBackupResults">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RecordValidateDbBackupResultsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RecordValidateDbBackupResultsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SupplementalBackupHandshake">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SupplementalBackupHandshakeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SupplementalBackupHandshakeResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetSupplementalBackupStatus">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetSupplementalBackupStatusResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SetSupplementalBackupStatusResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetSmsPatientPhoneOptIn">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetSmsPatientPhoneOptInResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SetSmsPatientPhoneOptInResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetMobileSettings">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetMobileSettingsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetMobileSettingsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetMobileSettings2FA">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetMobileSettings2FAResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetMobileSettings2FAResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpsertMobileSettings">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpsertMobileSettingsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UpsertMobileSettingsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PerformRefreshCache">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PerformRefreshCacheResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PerformRefreshCacheResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GenerateShortGUIDs">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GenerateShortGUIDsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GenerateShortGUIDsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GenerateWebAppUrl">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GenerateWebAppUrlResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GenerateWebAppUrlResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetIsClosedBetaParticipant">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="registrationKey" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetIsClosedBetaParticipantResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetIsClosedBetaParticipantResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidateWebAppUrl">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidateWebAppUrlResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ValidateWebAppUrlResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildWebLanderUrl">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="registrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="eService" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildWebLanderUrlResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="BuildWebLanderUrlResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildWebSchedRecallURLs">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="registrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="recallNums" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildWebSchedRecallURLsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="BuildWebSchedRecallURLsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildWebSchedNewPatApptURLs">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="registrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="clinicNums" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildWebSchedNewPatApptURLsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="BuildWebSchedNewPatApptURLsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="WebSchedRecallNotificationsSend">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="WebSchedRecallNotificationsSendResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebSchedRecallNotificationsSendResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="WebSchedAsapSend">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="WebSchedAsapSendResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WebSchedAsapSendResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildWebSchedUrl">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="shortGuid" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildWebSchedUrlResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="BuildWebSchedUrlResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildWebSchedASAPUrl">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="shortGuid" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildWebSchedASAPUrlResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="BuildWebSchedASAPUrlResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildPatientPortalStatementUrl">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="shortGuid" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildPatientPortalStatementUrlResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="BuildPatientPortalStatementUrlResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildFeaturePortalUrl">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="registrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="eService" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildFeaturePortalUrlResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="BuildFeaturePortalUrlResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildConfirmationRequestUrl">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="shortGuid" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildConfirmationRequestUrlResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="BuildConfirmationRequestUrlResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildConfirmationRequestUrlQuick">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="shortGuid" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildConfirmationRequestUrlQuickResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="BuildConfirmationRequestUrlQuickResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildOAuthUrl">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="registrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="appName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildOAuthUrlResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="BuildOAuthUrlResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCloudMaxSessions">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCloudMaxSessionsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCloudMaxSessionsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpsertCloudMaxSessions">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpsertCloudMaxSessionsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UpsertCloudMaxSessionsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RecordCloudSessionsInUse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RecordCloudSessionsInUseResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RecordCloudSessionsInUseResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RecordCloudStorageSizeUsed">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RecordCloudStorageSizeUsedResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RecordCloudStorageSizeUsedResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDropboxAuthorizationUrl">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="registrationKeyNum" type="s:long" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDropboxAuthorizationUrlResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDropboxAuthorizationUrlResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDropboxAccessToken">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="code" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDropboxAccessTokenResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDropboxAccessTokenResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetGoogleAuthorizationUrl">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="registrationKeyNum" type="s:long" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetGoogleAuthorizationUrlResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetGoogleAuthorizationUrlResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetGoogleAccessToken">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetGoogleAccessTokenResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetGoogleAccessTokenResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCareCreditOAuthToken">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCareCreditOAuthTokenResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCareCreditOAuthTokenResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCareCreditWebToken">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCareCreditWebTokenResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCareCreditWebTokenResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LogCareCreditTransaction">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LogCareCreditTransactionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LogCareCreditTransactionResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidateVersion">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidateVersionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ValidateVersionResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConfirmationRequestSend">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConfirmationRequestSendResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ConfirmationRequestSendResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="HandleConfirmationsApptChanged">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="HandleConfirmationsApptChangedResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="HandleConfirmationsApptChangedResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ThankYouSend">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ThankYouSendResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ThankYouSendResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildApptThankYouIcs">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="shortGuid" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildApptThankYouIcsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="BuildApptThankYouIcsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SmsSend">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SmsSendResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SmsSendResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestListenerProxyPrefs">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestListenerProxyPrefsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestListenerProxyPrefsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetEConnectorType">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetEConnectorTypeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetEConnectorTypeResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetEConnectorType">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="isListening" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetEConnectorTypeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SetEConnectorTypeResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetEConnectorStats">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetEConnectorStatsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SetEConnectorStatsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="InsertPaySimpleACHId">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="InsertPaySimpleACHIdResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="InsertPaySimpleACHIdResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPaySimpleWebHookUrl">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetPaySimpleWebHookUrlResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPaySimpleWebHookUrlResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidateEService">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="registrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="eService" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidateEServiceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ValidateEServiceResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsBetaAvailableForThisCustomer">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="registrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="proposedBetaVersion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsBetaAvailableForThisCustomerResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="IsBetaAvailableForThisCustomerResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="EmailHostingSignup">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="EmailHostingSignupResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="EmailHostingSignupResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="EmailHostingChangeClinicStatus">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="EmailHostingChangeClinicStatusResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="EmailHostingChangeClinicStatusResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ODXamValidateLogin">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="appDetails" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ODXamValidateLoginResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ODXamValidateLoginResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ODXamTwoFactorAuth">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="twoFactorAuthRequestJSON" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ODXamTwoFactorAuthResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ODXamTwoFactorAuthResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ODXamSubmitUnhandledException">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="bugSubmissionJSON" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ODXamSubmitUnhandledExceptionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ODXamSubmitUnhandledExceptionResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendPushNotification">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="pushPayloadJson" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendPushNotificationResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SendPushNotificationResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetFeaturesForCustomer">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="registrationKey" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetFeaturesForCustomerResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetFeaturesForCustomerResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetFeaturesForEService">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="registrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="eService" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetFeaturesForEServiceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetFeaturesForEServiceResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="EnableAdditionalFeatures">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="EnableAdditionalFeaturesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="EnableAdditionalFeaturesResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckFHIRAPIKey">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckFHIRAPIKeyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckFHIRAPIKeyResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GenerateFHIRAPIKey">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GenerateFHIRAPIKeyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GenerateFHIRAPIKeyResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AssignFHIRAPIKey">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AssignFHIRAPIKeyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AssignFHIRAPIKeyResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetFHIRAPIKeysForOffice">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetFHIRAPIKeysForOfficeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetFHIRAPIKeysForOfficeResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateFHIRKeyStatus">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateFHIRKeyStatusResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UpdateFHIRKeyStatusResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateFHIRAPIKeys">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateFHIRAPIKeysResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UpdateFHIRAPIKeysResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UploadRedactedDataPatientPortalInvites">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UploadRedactedDataPatientPortalInvitesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UploadRedactedDataPatientPortalInvitesResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UploadPatientPortalXWebResponses">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UploadPatientPortalXWebResponsesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UploadPatientPortalXWebResponsesResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProcessEConnectorFailover">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProcessEConnectorFailoverResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProcessEConnectorFailoverResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TestConnection">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TestConnectionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="TestConnectionResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TestConnectionDb">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TestConnectionDbResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="TestConnectionDbResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SubmitUnhandledException">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SubmitUnhandledExceptionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SubmitUnhandledExceptionResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateNewHelpKey">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateNewHelpKeyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CreateNewHelpKeyResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetManualPage">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="formName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="programVersion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetManualPageResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetManualPageResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetStableManualVersion">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetStableManualVersionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetStableManualVersionResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CanadaCarrierUpdate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CanadaCarrierUpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CanadaCarrierUpdateResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="string" nillable="true" type="s:string" />
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="CustomerUpdateCommittedSoapIn">
+    <wsdl:part name="parameters" element="tns:CustomerUpdateCommitted" />
+  </wsdl:message>
+  <wsdl:message name="CustomerUpdateCommittedSoapOut">
+    <wsdl:part name="parameters" element="tns:CustomerUpdateCommittedResponse" />
+  </wsdl:message>
+  <wsdl:message name="EServiceSetupSoapIn">
+    <wsdl:part name="parameters" element="tns:EServiceSetup" />
+  </wsdl:message>
+  <wsdl:message name="EServiceSetupSoapOut">
+    <wsdl:part name="parameters" element="tns:EServiceSetupResponse" />
+  </wsdl:message>
+  <wsdl:message name="RecordValidateDbBackupResultsSoapIn">
+    <wsdl:part name="parameters" element="tns:RecordValidateDbBackupResults" />
+  </wsdl:message>
+  <wsdl:message name="RecordValidateDbBackupResultsSoapOut">
+    <wsdl:part name="parameters" element="tns:RecordValidateDbBackupResultsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SupplementalBackupHandshakeSoapIn">
+    <wsdl:part name="parameters" element="tns:SupplementalBackupHandshake" />
+  </wsdl:message>
+  <wsdl:message name="SupplementalBackupHandshakeSoapOut">
+    <wsdl:part name="parameters" element="tns:SupplementalBackupHandshakeResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetSupplementalBackupStatusSoapIn">
+    <wsdl:part name="parameters" element="tns:SetSupplementalBackupStatus" />
+  </wsdl:message>
+  <wsdl:message name="SetSupplementalBackupStatusSoapOut">
+    <wsdl:part name="parameters" element="tns:SetSupplementalBackupStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetSmsPatientPhoneOptInSoapIn">
+    <wsdl:part name="parameters" element="tns:SetSmsPatientPhoneOptIn" />
+  </wsdl:message>
+  <wsdl:message name="SetSmsPatientPhoneOptInSoapOut">
+    <wsdl:part name="parameters" element="tns:SetSmsPatientPhoneOptInResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetMobileSettingsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetMobileSettings" />
+  </wsdl:message>
+  <wsdl:message name="GetMobileSettingsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetMobileSettingsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetMobileSettings2FASoapIn">
+    <wsdl:part name="parameters" element="tns:GetMobileSettings2FA" />
+  </wsdl:message>
+  <wsdl:message name="GetMobileSettings2FASoapOut">
+    <wsdl:part name="parameters" element="tns:GetMobileSettings2FAResponse" />
+  </wsdl:message>
+  <wsdl:message name="UpsertMobileSettingsSoapIn">
+    <wsdl:part name="parameters" element="tns:UpsertMobileSettings" />
+  </wsdl:message>
+  <wsdl:message name="UpsertMobileSettingsSoapOut">
+    <wsdl:part name="parameters" element="tns:UpsertMobileSettingsResponse" />
+  </wsdl:message>
+  <wsdl:message name="PerformRefreshCacheSoapIn">
+    <wsdl:part name="parameters" element="tns:PerformRefreshCache" />
+  </wsdl:message>
+  <wsdl:message name="PerformRefreshCacheSoapOut">
+    <wsdl:part name="parameters" element="tns:PerformRefreshCacheResponse" />
+  </wsdl:message>
+  <wsdl:message name="GenerateShortGUIDsSoapIn">
+    <wsdl:part name="parameters" element="tns:GenerateShortGUIDs" />
+  </wsdl:message>
+  <wsdl:message name="GenerateShortGUIDsSoapOut">
+    <wsdl:part name="parameters" element="tns:GenerateShortGUIDsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GenerateWebAppUrlSoapIn">
+    <wsdl:part name="parameters" element="tns:GenerateWebAppUrl" />
+  </wsdl:message>
+  <wsdl:message name="GenerateWebAppUrlSoapOut">
+    <wsdl:part name="parameters" element="tns:GenerateWebAppUrlResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetIsClosedBetaParticipantSoapIn">
+    <wsdl:part name="parameters" element="tns:GetIsClosedBetaParticipant" />
+  </wsdl:message>
+  <wsdl:message name="GetIsClosedBetaParticipantSoapOut">
+    <wsdl:part name="parameters" element="tns:GetIsClosedBetaParticipantResponse" />
+  </wsdl:message>
+  <wsdl:message name="ValidateWebAppUrlSoapIn">
+    <wsdl:part name="parameters" element="tns:ValidateWebAppUrl" />
+  </wsdl:message>
+  <wsdl:message name="ValidateWebAppUrlSoapOut">
+    <wsdl:part name="parameters" element="tns:ValidateWebAppUrlResponse" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebLanderUrlSoapIn">
+    <wsdl:part name="parameters" element="tns:BuildWebLanderUrl" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebLanderUrlSoapOut">
+    <wsdl:part name="parameters" element="tns:BuildWebLanderUrlResponse" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebSchedRecallURLsSoapIn">
+    <wsdl:part name="parameters" element="tns:BuildWebSchedRecallURLs" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebSchedRecallURLsSoapOut">
+    <wsdl:part name="parameters" element="tns:BuildWebSchedRecallURLsResponse" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebSchedNewPatApptURLsSoapIn">
+    <wsdl:part name="parameters" element="tns:BuildWebSchedNewPatApptURLs" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebSchedNewPatApptURLsSoapOut">
+    <wsdl:part name="parameters" element="tns:BuildWebSchedNewPatApptURLsResponse" />
+  </wsdl:message>
+  <wsdl:message name="WebSchedRecallNotificationsSendSoapIn">
+    <wsdl:part name="parameters" element="tns:WebSchedRecallNotificationsSend" />
+  </wsdl:message>
+  <wsdl:message name="WebSchedRecallNotificationsSendSoapOut">
+    <wsdl:part name="parameters" element="tns:WebSchedRecallNotificationsSendResponse" />
+  </wsdl:message>
+  <wsdl:message name="WebSchedAsapSendSoapIn">
+    <wsdl:part name="parameters" element="tns:WebSchedAsapSend" />
+  </wsdl:message>
+  <wsdl:message name="WebSchedAsapSendSoapOut">
+    <wsdl:part name="parameters" element="tns:WebSchedAsapSendResponse" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebSchedUrlSoapIn">
+    <wsdl:part name="parameters" element="tns:BuildWebSchedUrl" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebSchedUrlSoapOut">
+    <wsdl:part name="parameters" element="tns:BuildWebSchedUrlResponse" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebSchedASAPUrlSoapIn">
+    <wsdl:part name="parameters" element="tns:BuildWebSchedASAPUrl" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebSchedASAPUrlSoapOut">
+    <wsdl:part name="parameters" element="tns:BuildWebSchedASAPUrlResponse" />
+  </wsdl:message>
+  <wsdl:message name="BuildPatientPortalStatementUrlSoapIn">
+    <wsdl:part name="parameters" element="tns:BuildPatientPortalStatementUrl" />
+  </wsdl:message>
+  <wsdl:message name="BuildPatientPortalStatementUrlSoapOut">
+    <wsdl:part name="parameters" element="tns:BuildPatientPortalStatementUrlResponse" />
+  </wsdl:message>
+  <wsdl:message name="BuildFeaturePortalUrlSoapIn">
+    <wsdl:part name="parameters" element="tns:BuildFeaturePortalUrl" />
+  </wsdl:message>
+  <wsdl:message name="BuildFeaturePortalUrlSoapOut">
+    <wsdl:part name="parameters" element="tns:BuildFeaturePortalUrlResponse" />
+  </wsdl:message>
+  <wsdl:message name="BuildConfirmationRequestUrlSoapIn">
+    <wsdl:part name="parameters" element="tns:BuildConfirmationRequestUrl" />
+  </wsdl:message>
+  <wsdl:message name="BuildConfirmationRequestUrlSoapOut">
+    <wsdl:part name="parameters" element="tns:BuildConfirmationRequestUrlResponse" />
+  </wsdl:message>
+  <wsdl:message name="BuildConfirmationRequestUrlQuickSoapIn">
+    <wsdl:part name="parameters" element="tns:BuildConfirmationRequestUrlQuick" />
+  </wsdl:message>
+  <wsdl:message name="BuildConfirmationRequestUrlQuickSoapOut">
+    <wsdl:part name="parameters" element="tns:BuildConfirmationRequestUrlQuickResponse" />
+  </wsdl:message>
+  <wsdl:message name="BuildOAuthUrlSoapIn">
+    <wsdl:part name="parameters" element="tns:BuildOAuthUrl" />
+  </wsdl:message>
+  <wsdl:message name="BuildOAuthUrlSoapOut">
+    <wsdl:part name="parameters" element="tns:BuildOAuthUrlResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCloudMaxSessionsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCloudMaxSessions" />
+  </wsdl:message>
+  <wsdl:message name="GetCloudMaxSessionsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCloudMaxSessionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="UpsertCloudMaxSessionsSoapIn">
+    <wsdl:part name="parameters" element="tns:UpsertCloudMaxSessions" />
+  </wsdl:message>
+  <wsdl:message name="UpsertCloudMaxSessionsSoapOut">
+    <wsdl:part name="parameters" element="tns:UpsertCloudMaxSessionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="RecordCloudSessionsInUseSoapIn">
+    <wsdl:part name="parameters" element="tns:RecordCloudSessionsInUse" />
+  </wsdl:message>
+  <wsdl:message name="RecordCloudSessionsInUseSoapOut">
+    <wsdl:part name="parameters" element="tns:RecordCloudSessionsInUseResponse" />
+  </wsdl:message>
+  <wsdl:message name="RecordCloudStorageSizeUsedSoapIn">
+    <wsdl:part name="parameters" element="tns:RecordCloudStorageSizeUsed" />
+  </wsdl:message>
+  <wsdl:message name="RecordCloudStorageSizeUsedSoapOut">
+    <wsdl:part name="parameters" element="tns:RecordCloudStorageSizeUsedResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDropboxAuthorizationUrlSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDropboxAuthorizationUrl" />
+  </wsdl:message>
+  <wsdl:message name="GetDropboxAuthorizationUrlSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDropboxAuthorizationUrlResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDropboxAccessTokenSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDropboxAccessToken" />
+  </wsdl:message>
+  <wsdl:message name="GetDropboxAccessTokenSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDropboxAccessTokenResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetGoogleAuthorizationUrlSoapIn">
+    <wsdl:part name="parameters" element="tns:GetGoogleAuthorizationUrl" />
+  </wsdl:message>
+  <wsdl:message name="GetGoogleAuthorizationUrlSoapOut">
+    <wsdl:part name="parameters" element="tns:GetGoogleAuthorizationUrlResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetGoogleAccessTokenSoapIn">
+    <wsdl:part name="parameters" element="tns:GetGoogleAccessToken" />
+  </wsdl:message>
+  <wsdl:message name="GetGoogleAccessTokenSoapOut">
+    <wsdl:part name="parameters" element="tns:GetGoogleAccessTokenResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCareCreditOAuthTokenSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCareCreditOAuthToken" />
+  </wsdl:message>
+  <wsdl:message name="GetCareCreditOAuthTokenSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCareCreditOAuthTokenResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCareCreditWebTokenSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCareCreditWebToken" />
+  </wsdl:message>
+  <wsdl:message name="GetCareCreditWebTokenSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCareCreditWebTokenResponse" />
+  </wsdl:message>
+  <wsdl:message name="LogCareCreditTransactionSoapIn">
+    <wsdl:part name="parameters" element="tns:LogCareCreditTransaction" />
+  </wsdl:message>
+  <wsdl:message name="LogCareCreditTransactionSoapOut">
+    <wsdl:part name="parameters" element="tns:LogCareCreditTransactionResponse" />
+  </wsdl:message>
+  <wsdl:message name="ValidateVersionSoapIn">
+    <wsdl:part name="parameters" element="tns:ValidateVersion" />
+  </wsdl:message>
+  <wsdl:message name="ValidateVersionSoapOut">
+    <wsdl:part name="parameters" element="tns:ValidateVersionResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConfirmationRequestSendSoapIn">
+    <wsdl:part name="parameters" element="tns:ConfirmationRequestSend" />
+  </wsdl:message>
+  <wsdl:message name="ConfirmationRequestSendSoapOut">
+    <wsdl:part name="parameters" element="tns:ConfirmationRequestSendResponse" />
+  </wsdl:message>
+  <wsdl:message name="HandleConfirmationsApptChangedSoapIn">
+    <wsdl:part name="parameters" element="tns:HandleConfirmationsApptChanged" />
+  </wsdl:message>
+  <wsdl:message name="HandleConfirmationsApptChangedSoapOut">
+    <wsdl:part name="parameters" element="tns:HandleConfirmationsApptChangedResponse" />
+  </wsdl:message>
+  <wsdl:message name="ThankYouSendSoapIn">
+    <wsdl:part name="parameters" element="tns:ThankYouSend" />
+  </wsdl:message>
+  <wsdl:message name="ThankYouSendSoapOut">
+    <wsdl:part name="parameters" element="tns:ThankYouSendResponse" />
+  </wsdl:message>
+  <wsdl:message name="BuildApptThankYouIcsSoapIn">
+    <wsdl:part name="parameters" element="tns:BuildApptThankYouIcs" />
+  </wsdl:message>
+  <wsdl:message name="BuildApptThankYouIcsSoapOut">
+    <wsdl:part name="parameters" element="tns:BuildApptThankYouIcsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SmsSendSoapIn">
+    <wsdl:part name="parameters" element="tns:SmsSend" />
+  </wsdl:message>
+  <wsdl:message name="SmsSendSoapOut">
+    <wsdl:part name="parameters" element="tns:SmsSendResponse" />
+  </wsdl:message>
+  <wsdl:message name="RequestListenerProxyPrefsSoapIn">
+    <wsdl:part name="parameters" element="tns:RequestListenerProxyPrefs" />
+  </wsdl:message>
+  <wsdl:message name="RequestListenerProxyPrefsSoapOut">
+    <wsdl:part name="parameters" element="tns:RequestListenerProxyPrefsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetEConnectorTypeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetEConnectorType" />
+  </wsdl:message>
+  <wsdl:message name="GetEConnectorTypeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetEConnectorTypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetEConnectorTypeSoapIn">
+    <wsdl:part name="parameters" element="tns:SetEConnectorType" />
+  </wsdl:message>
+  <wsdl:message name="SetEConnectorTypeSoapOut">
+    <wsdl:part name="parameters" element="tns:SetEConnectorTypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetEConnectorStatsSoapIn">
+    <wsdl:part name="parameters" element="tns:SetEConnectorStats" />
+  </wsdl:message>
+  <wsdl:message name="SetEConnectorStatsSoapOut">
+    <wsdl:part name="parameters" element="tns:SetEConnectorStatsResponse" />
+  </wsdl:message>
+  <wsdl:message name="InsertPaySimpleACHIdSoapIn">
+    <wsdl:part name="parameters" element="tns:InsertPaySimpleACHId" />
+  </wsdl:message>
+  <wsdl:message name="InsertPaySimpleACHIdSoapOut">
+    <wsdl:part name="parameters" element="tns:InsertPaySimpleACHIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetPaySimpleWebHookUrlSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPaySimpleWebHookUrl" />
+  </wsdl:message>
+  <wsdl:message name="GetPaySimpleWebHookUrlSoapOut">
+    <wsdl:part name="parameters" element="tns:GetPaySimpleWebHookUrlResponse" />
+  </wsdl:message>
+  <wsdl:message name="ValidateEServiceSoapIn">
+    <wsdl:part name="parameters" element="tns:ValidateEService" />
+  </wsdl:message>
+  <wsdl:message name="ValidateEServiceSoapOut">
+    <wsdl:part name="parameters" element="tns:ValidateEServiceResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsBetaAvailableForThisCustomerSoapIn">
+    <wsdl:part name="parameters" element="tns:IsBetaAvailableForThisCustomer" />
+  </wsdl:message>
+  <wsdl:message name="IsBetaAvailableForThisCustomerSoapOut">
+    <wsdl:part name="parameters" element="tns:IsBetaAvailableForThisCustomerResponse" />
+  </wsdl:message>
+  <wsdl:message name="EmailHostingSignupSoapIn">
+    <wsdl:part name="parameters" element="tns:EmailHostingSignup" />
+  </wsdl:message>
+  <wsdl:message name="EmailHostingSignupSoapOut">
+    <wsdl:part name="parameters" element="tns:EmailHostingSignupResponse" />
+  </wsdl:message>
+  <wsdl:message name="EmailHostingChangeClinicStatusSoapIn">
+    <wsdl:part name="parameters" element="tns:EmailHostingChangeClinicStatus" />
+  </wsdl:message>
+  <wsdl:message name="EmailHostingChangeClinicStatusSoapOut">
+    <wsdl:part name="parameters" element="tns:EmailHostingChangeClinicStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="ODXamValidateLoginSoapIn">
+    <wsdl:part name="parameters" element="tns:ODXamValidateLogin" />
+  </wsdl:message>
+  <wsdl:message name="ODXamValidateLoginSoapOut">
+    <wsdl:part name="parameters" element="tns:ODXamValidateLoginResponse" />
+  </wsdl:message>
+  <wsdl:message name="ODXamTwoFactorAuthSoapIn">
+    <wsdl:part name="parameters" element="tns:ODXamTwoFactorAuth" />
+  </wsdl:message>
+  <wsdl:message name="ODXamTwoFactorAuthSoapOut">
+    <wsdl:part name="parameters" element="tns:ODXamTwoFactorAuthResponse" />
+  </wsdl:message>
+  <wsdl:message name="ODXamSubmitUnhandledExceptionSoapIn">
+    <wsdl:part name="parameters" element="tns:ODXamSubmitUnhandledException" />
+  </wsdl:message>
+  <wsdl:message name="ODXamSubmitUnhandledExceptionSoapOut">
+    <wsdl:part name="parameters" element="tns:ODXamSubmitUnhandledExceptionResponse" />
+  </wsdl:message>
+  <wsdl:message name="SendPushNotificationSoapIn">
+    <wsdl:part name="parameters" element="tns:SendPushNotification" />
+  </wsdl:message>
+  <wsdl:message name="SendPushNotificationSoapOut">
+    <wsdl:part name="parameters" element="tns:SendPushNotificationResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetFeaturesForCustomerSoapIn">
+    <wsdl:part name="parameters" element="tns:GetFeaturesForCustomer" />
+  </wsdl:message>
+  <wsdl:message name="GetFeaturesForCustomerSoapOut">
+    <wsdl:part name="parameters" element="tns:GetFeaturesForCustomerResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetFeaturesForEServiceSoapIn">
+    <wsdl:part name="parameters" element="tns:GetFeaturesForEService" />
+  </wsdl:message>
+  <wsdl:message name="GetFeaturesForEServiceSoapOut">
+    <wsdl:part name="parameters" element="tns:GetFeaturesForEServiceResponse" />
+  </wsdl:message>
+  <wsdl:message name="EnableAdditionalFeaturesSoapIn">
+    <wsdl:part name="parameters" element="tns:EnableAdditionalFeatures" />
+  </wsdl:message>
+  <wsdl:message name="EnableAdditionalFeaturesSoapOut">
+    <wsdl:part name="parameters" element="tns:EnableAdditionalFeaturesResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckFHIRAPIKeySoapIn">
+    <wsdl:part name="parameters" element="tns:CheckFHIRAPIKey" />
+  </wsdl:message>
+  <wsdl:message name="CheckFHIRAPIKeySoapOut">
+    <wsdl:part name="parameters" element="tns:CheckFHIRAPIKeyResponse" />
+  </wsdl:message>
+  <wsdl:message name="GenerateFHIRAPIKeySoapIn">
+    <wsdl:part name="parameters" element="tns:GenerateFHIRAPIKey" />
+  </wsdl:message>
+  <wsdl:message name="GenerateFHIRAPIKeySoapOut">
+    <wsdl:part name="parameters" element="tns:GenerateFHIRAPIKeyResponse" />
+  </wsdl:message>
+  <wsdl:message name="AssignFHIRAPIKeySoapIn">
+    <wsdl:part name="parameters" element="tns:AssignFHIRAPIKey" />
+  </wsdl:message>
+  <wsdl:message name="AssignFHIRAPIKeySoapOut">
+    <wsdl:part name="parameters" element="tns:AssignFHIRAPIKeyResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetFHIRAPIKeysForOfficeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetFHIRAPIKeysForOffice" />
+  </wsdl:message>
+  <wsdl:message name="GetFHIRAPIKeysForOfficeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetFHIRAPIKeysForOfficeResponse" />
+  </wsdl:message>
+  <wsdl:message name="UpdateFHIRKeyStatusSoapIn">
+    <wsdl:part name="parameters" element="tns:UpdateFHIRKeyStatus" />
+  </wsdl:message>
+  <wsdl:message name="UpdateFHIRKeyStatusSoapOut">
+    <wsdl:part name="parameters" element="tns:UpdateFHIRKeyStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="UpdateFHIRAPIKeysSoapIn">
+    <wsdl:part name="parameters" element="tns:UpdateFHIRAPIKeys" />
+  </wsdl:message>
+  <wsdl:message name="UpdateFHIRAPIKeysSoapOut">
+    <wsdl:part name="parameters" element="tns:UpdateFHIRAPIKeysResponse" />
+  </wsdl:message>
+  <wsdl:message name="UploadRedactedDataPatientPortalInvitesSoapIn">
+    <wsdl:part name="parameters" element="tns:UploadRedactedDataPatientPortalInvites" />
+  </wsdl:message>
+  <wsdl:message name="UploadRedactedDataPatientPortalInvitesSoapOut">
+    <wsdl:part name="parameters" element="tns:UploadRedactedDataPatientPortalInvitesResponse" />
+  </wsdl:message>
+  <wsdl:message name="UploadPatientPortalXWebResponsesSoapIn">
+    <wsdl:part name="parameters" element="tns:UploadPatientPortalXWebResponses" />
+  </wsdl:message>
+  <wsdl:message name="UploadPatientPortalXWebResponsesSoapOut">
+    <wsdl:part name="parameters" element="tns:UploadPatientPortalXWebResponsesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ProcessEConnectorFailoverSoapIn">
+    <wsdl:part name="parameters" element="tns:ProcessEConnectorFailover" />
+  </wsdl:message>
+  <wsdl:message name="ProcessEConnectorFailoverSoapOut">
+    <wsdl:part name="parameters" element="tns:ProcessEConnectorFailoverResponse" />
+  </wsdl:message>
+  <wsdl:message name="TestConnectionSoapIn">
+    <wsdl:part name="parameters" element="tns:TestConnection" />
+  </wsdl:message>
+  <wsdl:message name="TestConnectionSoapOut">
+    <wsdl:part name="parameters" element="tns:TestConnectionResponse" />
+  </wsdl:message>
+  <wsdl:message name="TestConnectionDbSoapIn">
+    <wsdl:part name="parameters" element="tns:TestConnectionDb" />
+  </wsdl:message>
+  <wsdl:message name="TestConnectionDbSoapOut">
+    <wsdl:part name="parameters" element="tns:TestConnectionDbResponse" />
+  </wsdl:message>
+  <wsdl:message name="SubmitUnhandledExceptionSoapIn">
+    <wsdl:part name="parameters" element="tns:SubmitUnhandledException" />
+  </wsdl:message>
+  <wsdl:message name="SubmitUnhandledExceptionSoapOut">
+    <wsdl:part name="parameters" element="tns:SubmitUnhandledExceptionResponse" />
+  </wsdl:message>
+  <wsdl:message name="CreateNewHelpKeySoapIn">
+    <wsdl:part name="parameters" element="tns:CreateNewHelpKey" />
+  </wsdl:message>
+  <wsdl:message name="CreateNewHelpKeySoapOut">
+    <wsdl:part name="parameters" element="tns:CreateNewHelpKeyResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetManualPageSoapIn">
+    <wsdl:part name="parameters" element="tns:GetManualPage" />
+  </wsdl:message>
+  <wsdl:message name="GetManualPageSoapOut">
+    <wsdl:part name="parameters" element="tns:GetManualPageResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetStableManualVersionSoapIn">
+    <wsdl:part name="parameters" element="tns:GetStableManualVersion" />
+  </wsdl:message>
+  <wsdl:message name="GetStableManualVersionSoapOut">
+    <wsdl:part name="parameters" element="tns:GetStableManualVersionResponse" />
+  </wsdl:message>
+  <wsdl:message name="CanadaCarrierUpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:CanadaCarrierUpdate" />
+  </wsdl:message>
+  <wsdl:message name="CanadaCarrierUpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:CanadaCarrierUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CustomerUpdateCommittedHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CustomerUpdateCommittedHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="EServiceSetupHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="EServiceSetupHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="RecordValidateDbBackupResultsHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="RecordValidateDbBackupResultsHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="SupplementalBackupHandshakeHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SupplementalBackupHandshakeHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="SetSupplementalBackupStatusHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SetSupplementalBackupStatusHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="SetSmsPatientPhoneOptInHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SetSmsPatientPhoneOptInHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetMobileSettingsHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetMobileSettingsHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetMobileSettings2FAHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetMobileSettings2FAHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="UpsertMobileSettingsHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="UpsertMobileSettingsHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="PerformRefreshCacheHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="PerformRefreshCacheHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GenerateShortGUIDsHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GenerateShortGUIDsHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GenerateWebAppUrlHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GenerateWebAppUrlHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetIsClosedBetaParticipantHttpPostIn">
+    <wsdl:part name="registrationKey" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetIsClosedBetaParticipantHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ValidateWebAppUrlHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ValidateWebAppUrlHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebLanderUrlHttpPostIn">
+    <wsdl:part name="registrationKey" type="s:string" />
+    <wsdl:part name="eService" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebLanderUrlHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebSchedRecallURLsHttpPostIn">
+    <wsdl:part name="registrationKey" type="s:string" />
+    <wsdl:part name="recallNums" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebSchedRecallURLsHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebSchedNewPatApptURLsHttpPostIn">
+    <wsdl:part name="registrationKey" type="s:string" />
+    <wsdl:part name="clinicNums" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebSchedNewPatApptURLsHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="WebSchedRecallNotificationsSendHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="WebSchedRecallNotificationsSendHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="WebSchedAsapSendHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="WebSchedAsapSendHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebSchedUrlHttpPostIn">
+    <wsdl:part name="shortGuid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebSchedUrlHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebSchedASAPUrlHttpPostIn">
+    <wsdl:part name="shortGuid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildWebSchedASAPUrlHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildPatientPortalStatementUrlHttpPostIn">
+    <wsdl:part name="shortGuid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildPatientPortalStatementUrlHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildFeaturePortalUrlHttpPostIn">
+    <wsdl:part name="registrationKey" type="s:string" />
+    <wsdl:part name="eService" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildFeaturePortalUrlHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildConfirmationRequestUrlHttpPostIn">
+    <wsdl:part name="shortGuid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildConfirmationRequestUrlHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildConfirmationRequestUrlQuickHttpPostIn">
+    <wsdl:part name="shortGuid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildConfirmationRequestUrlQuickHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildOAuthUrlHttpPostIn">
+    <wsdl:part name="registrationKey" type="s:string" />
+    <wsdl:part name="appName" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildOAuthUrlHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetCloudMaxSessionsHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetCloudMaxSessionsHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="UpsertCloudMaxSessionsHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="UpsertCloudMaxSessionsHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="RecordCloudSessionsInUseHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="RecordCloudSessionsInUseHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="RecordCloudStorageSizeUsedHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="RecordCloudStorageSizeUsedHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetDropboxAuthorizationUrlHttpPostIn">
+    <wsdl:part name="registrationKeyNum" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetDropboxAuthorizationUrlHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetDropboxAccessTokenHttpPostIn">
+    <wsdl:part name="code" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetDropboxAccessTokenHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetGoogleAuthorizationUrlHttpPostIn">
+    <wsdl:part name="registrationKeyNum" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetGoogleAuthorizationUrlHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetGoogleAccessTokenHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetGoogleAccessTokenHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetCareCreditOAuthTokenHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetCareCreditOAuthTokenHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetCareCreditWebTokenHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetCareCreditWebTokenHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="LogCareCreditTransactionHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="LogCareCreditTransactionHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ValidateVersionHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ValidateVersionHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ConfirmationRequestSendHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ConfirmationRequestSendHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="HandleConfirmationsApptChangedHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="HandleConfirmationsApptChangedHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ThankYouSendHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ThankYouSendHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildApptThankYouIcsHttpPostIn">
+    <wsdl:part name="shortGuid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildApptThankYouIcsHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="SmsSendHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SmsSendHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="RequestListenerProxyPrefsHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="RequestListenerProxyPrefsHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetEConnectorTypeHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetEConnectorTypeHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="SetEConnectorTypeHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+    <wsdl:part name="isListening" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SetEConnectorTypeHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="SetEConnectorStatsHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SetEConnectorStatsHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="InsertPaySimpleACHIdHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="InsertPaySimpleACHIdHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetPaySimpleWebHookUrlHttpPostIn" />
+  <wsdl:message name="GetPaySimpleWebHookUrlHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ValidateEServiceHttpPostIn">
+    <wsdl:part name="registrationKey" type="s:string" />
+    <wsdl:part name="eService" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ValidateEServiceHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="IsBetaAvailableForThisCustomerHttpPostIn">
+    <wsdl:part name="registrationKey" type="s:string" />
+    <wsdl:part name="proposedBetaVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="IsBetaAvailableForThisCustomerHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="EmailHostingSignupHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="EmailHostingSignupHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="EmailHostingChangeClinicStatusHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="EmailHostingChangeClinicStatusHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ODXamValidateLoginHttpPostIn">
+    <wsdl:part name="appDetails" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ODXamValidateLoginHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ODXamTwoFactorAuthHttpPostIn">
+    <wsdl:part name="twoFactorAuthRequestJSON" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ODXamTwoFactorAuthHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ODXamSubmitUnhandledExceptionHttpPostIn">
+    <wsdl:part name="bugSubmissionJSON" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ODXamSubmitUnhandledExceptionHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="SendPushNotificationHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+    <wsdl:part name="pushPayloadJson" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SendPushNotificationHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetFeaturesForCustomerHttpPostIn">
+    <wsdl:part name="registrationKey" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetFeaturesForCustomerHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetFeaturesForEServiceHttpPostIn">
+    <wsdl:part name="registrationKey" type="s:string" />
+    <wsdl:part name="eService" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetFeaturesForEServiceHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="EnableAdditionalFeaturesHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="EnableAdditionalFeaturesHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckFHIRAPIKeyHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CheckFHIRAPIKeyHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GenerateFHIRAPIKeyHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GenerateFHIRAPIKeyHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="AssignFHIRAPIKeyHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="AssignFHIRAPIKeyHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetFHIRAPIKeysForOfficeHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetFHIRAPIKeysForOfficeHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="UpdateFHIRKeyStatusHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="UpdateFHIRKeyStatusHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="UpdateFHIRAPIKeysHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="UpdateFHIRAPIKeysHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="UploadRedactedDataPatientPortalInvitesHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="UploadRedactedDataPatientPortalInvitesHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="UploadPatientPortalXWebResponsesHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="UploadPatientPortalXWebResponsesHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ProcessEConnectorFailoverHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ProcessEConnectorFailoverHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TestConnectionHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TestConnectionHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TestConnectionDbHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TestConnectionDbHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="SubmitUnhandledExceptionHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SubmitUnhandledExceptionHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="CreateNewHelpKeyHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CreateNewHelpKeyHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetManualPageHttpPostIn">
+    <wsdl:part name="formName" type="s:string" />
+    <wsdl:part name="programVersion" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetManualPageHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GetStableManualVersionHttpPostIn" />
+  <wsdl:message name="GetStableManualVersionHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="CanadaCarrierUpdateHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CanadaCarrierUpdateHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:portType name="WebServiceMainHQSoap">
+    <wsdl:operation name="CustomerUpdateCommitted">
+      <wsdl:input message="tns:CustomerUpdateCommittedSoapIn" />
+      <wsdl:output message="tns:CustomerUpdateCommittedSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="EServiceSetup">
+      <wsdl:input message="tns:EServiceSetupSoapIn" />
+      <wsdl:output message="tns:EServiceSetupSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RecordValidateDbBackupResults">
+      <wsdl:input message="tns:RecordValidateDbBackupResultsSoapIn" />
+      <wsdl:output message="tns:RecordValidateDbBackupResultsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SupplementalBackupHandshake">
+      <wsdl:input message="tns:SupplementalBackupHandshakeSoapIn" />
+      <wsdl:output message="tns:SupplementalBackupHandshakeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetSupplementalBackupStatus">
+      <wsdl:input message="tns:SetSupplementalBackupStatusSoapIn" />
+      <wsdl:output message="tns:SetSupplementalBackupStatusSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetSmsPatientPhoneOptIn">
+      <wsdl:input message="tns:SetSmsPatientPhoneOptInSoapIn" />
+      <wsdl:output message="tns:SetSmsPatientPhoneOptInSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMobileSettings">
+      <wsdl:input message="tns:GetMobileSettingsSoapIn" />
+      <wsdl:output message="tns:GetMobileSettingsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMobileSettings2FA">
+      <wsdl:input message="tns:GetMobileSettings2FASoapIn" />
+      <wsdl:output message="tns:GetMobileSettings2FASoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpsertMobileSettings">
+      <wsdl:input message="tns:UpsertMobileSettingsSoapIn" />
+      <wsdl:output message="tns:UpsertMobileSettingsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PerformRefreshCache">
+      <wsdl:input message="tns:PerformRefreshCacheSoapIn" />
+      <wsdl:output message="tns:PerformRefreshCacheSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GenerateShortGUIDs">
+      <wsdl:input message="tns:GenerateShortGUIDsSoapIn" />
+      <wsdl:output message="tns:GenerateShortGUIDsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GenerateWebAppUrl">
+      <wsdl:input message="tns:GenerateWebAppUrlSoapIn" />
+      <wsdl:output message="tns:GenerateWebAppUrlSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetIsClosedBetaParticipant">
+      <wsdl:input message="tns:GetIsClosedBetaParticipantSoapIn" />
+      <wsdl:output message="tns:GetIsClosedBetaParticipantSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ValidateWebAppUrl">
+      <wsdl:input message="tns:ValidateWebAppUrlSoapIn" />
+      <wsdl:output message="tns:ValidateWebAppUrlSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebLanderUrl">
+      <wsdl:input message="tns:BuildWebLanderUrlSoapIn" />
+      <wsdl:output message="tns:BuildWebLanderUrlSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedRecallURLs">
+      <wsdl:input message="tns:BuildWebSchedRecallURLsSoapIn" />
+      <wsdl:output message="tns:BuildWebSchedRecallURLsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedNewPatApptURLs">
+      <wsdl:input message="tns:BuildWebSchedNewPatApptURLsSoapIn" />
+      <wsdl:output message="tns:BuildWebSchedNewPatApptURLsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="WebSchedRecallNotificationsSend">
+      <wsdl:input message="tns:WebSchedRecallNotificationsSendSoapIn" />
+      <wsdl:output message="tns:WebSchedRecallNotificationsSendSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="WebSchedAsapSend">
+      <wsdl:input message="tns:WebSchedAsapSendSoapIn" />
+      <wsdl:output message="tns:WebSchedAsapSendSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedUrl">
+      <wsdl:input message="tns:BuildWebSchedUrlSoapIn" />
+      <wsdl:output message="tns:BuildWebSchedUrlSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedASAPUrl">
+      <wsdl:input message="tns:BuildWebSchedASAPUrlSoapIn" />
+      <wsdl:output message="tns:BuildWebSchedASAPUrlSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildPatientPortalStatementUrl">
+      <wsdl:input message="tns:BuildPatientPortalStatementUrlSoapIn" />
+      <wsdl:output message="tns:BuildPatientPortalStatementUrlSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildFeaturePortalUrl">
+      <wsdl:input message="tns:BuildFeaturePortalUrlSoapIn" />
+      <wsdl:output message="tns:BuildFeaturePortalUrlSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildConfirmationRequestUrl">
+      <wsdl:input message="tns:BuildConfirmationRequestUrlSoapIn" />
+      <wsdl:output message="tns:BuildConfirmationRequestUrlSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildConfirmationRequestUrlQuick">
+      <wsdl:input message="tns:BuildConfirmationRequestUrlQuickSoapIn" />
+      <wsdl:output message="tns:BuildConfirmationRequestUrlQuickSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildOAuthUrl">
+      <wsdl:input message="tns:BuildOAuthUrlSoapIn" />
+      <wsdl:output message="tns:BuildOAuthUrlSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCloudMaxSessions">
+      <wsdl:input message="tns:GetCloudMaxSessionsSoapIn" />
+      <wsdl:output message="tns:GetCloudMaxSessionsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpsertCloudMaxSessions">
+      <wsdl:input message="tns:UpsertCloudMaxSessionsSoapIn" />
+      <wsdl:output message="tns:UpsertCloudMaxSessionsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RecordCloudSessionsInUse">
+      <wsdl:input message="tns:RecordCloudSessionsInUseSoapIn" />
+      <wsdl:output message="tns:RecordCloudSessionsInUseSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RecordCloudStorageSizeUsed">
+      <wsdl:input message="tns:RecordCloudStorageSizeUsedSoapIn" />
+      <wsdl:output message="tns:RecordCloudStorageSizeUsedSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDropboxAuthorizationUrl">
+      <wsdl:input message="tns:GetDropboxAuthorizationUrlSoapIn" />
+      <wsdl:output message="tns:GetDropboxAuthorizationUrlSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDropboxAccessToken">
+      <wsdl:input message="tns:GetDropboxAccessTokenSoapIn" />
+      <wsdl:output message="tns:GetDropboxAccessTokenSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGoogleAuthorizationUrl">
+      <wsdl:input message="tns:GetGoogleAuthorizationUrlSoapIn" />
+      <wsdl:output message="tns:GetGoogleAuthorizationUrlSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGoogleAccessToken">
+      <wsdl:input message="tns:GetGoogleAccessTokenSoapIn" />
+      <wsdl:output message="tns:GetGoogleAccessTokenSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCareCreditOAuthToken">
+      <wsdl:input message="tns:GetCareCreditOAuthTokenSoapIn" />
+      <wsdl:output message="tns:GetCareCreditOAuthTokenSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCareCreditWebToken">
+      <wsdl:input message="tns:GetCareCreditWebTokenSoapIn" />
+      <wsdl:output message="tns:GetCareCreditWebTokenSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LogCareCreditTransaction">
+      <wsdl:input message="tns:LogCareCreditTransactionSoapIn" />
+      <wsdl:output message="tns:LogCareCreditTransactionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ValidateVersion">
+      <wsdl:input message="tns:ValidateVersionSoapIn" />
+      <wsdl:output message="tns:ValidateVersionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConfirmationRequestSend">
+      <wsdl:input message="tns:ConfirmationRequestSendSoapIn" />
+      <wsdl:output message="tns:ConfirmationRequestSendSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="HandleConfirmationsApptChanged">
+      <wsdl:input message="tns:HandleConfirmationsApptChangedSoapIn" />
+      <wsdl:output message="tns:HandleConfirmationsApptChangedSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ThankYouSend">
+      <wsdl:input message="tns:ThankYouSendSoapIn" />
+      <wsdl:output message="tns:ThankYouSendSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildApptThankYouIcs">
+      <wsdl:input message="tns:BuildApptThankYouIcsSoapIn" />
+      <wsdl:output message="tns:BuildApptThankYouIcsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SmsSend">
+      <wsdl:input message="tns:SmsSendSoapIn" />
+      <wsdl:output message="tns:SmsSendSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestListenerProxyPrefs">
+      <wsdl:input message="tns:RequestListenerProxyPrefsSoapIn" />
+      <wsdl:output message="tns:RequestListenerProxyPrefsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEConnectorType">
+      <wsdl:input message="tns:GetEConnectorTypeSoapIn" />
+      <wsdl:output message="tns:GetEConnectorTypeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetEConnectorType">
+      <wsdl:input message="tns:SetEConnectorTypeSoapIn" />
+      <wsdl:output message="tns:SetEConnectorTypeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetEConnectorStats">
+      <wsdl:input message="tns:SetEConnectorStatsSoapIn" />
+      <wsdl:output message="tns:SetEConnectorStatsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="InsertPaySimpleACHId">
+      <wsdl:input message="tns:InsertPaySimpleACHIdSoapIn" />
+      <wsdl:output message="tns:InsertPaySimpleACHIdSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPaySimpleWebHookUrl">
+      <wsdl:input message="tns:GetPaySimpleWebHookUrlSoapIn" />
+      <wsdl:output message="tns:GetPaySimpleWebHookUrlSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ValidateEService">
+      <wsdl:input message="tns:ValidateEServiceSoapIn" />
+      <wsdl:output message="tns:ValidateEServiceSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsBetaAvailableForThisCustomer">
+      <wsdl:input message="tns:IsBetaAvailableForThisCustomerSoapIn" />
+      <wsdl:output message="tns:IsBetaAvailableForThisCustomerSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="EmailHostingSignup">
+      <wsdl:input message="tns:EmailHostingSignupSoapIn" />
+      <wsdl:output message="tns:EmailHostingSignupSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="EmailHostingChangeClinicStatus">
+      <wsdl:input message="tns:EmailHostingChangeClinicStatusSoapIn" />
+      <wsdl:output message="tns:EmailHostingChangeClinicStatusSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ODXamValidateLogin">
+      <wsdl:input message="tns:ODXamValidateLoginSoapIn" />
+      <wsdl:output message="tns:ODXamValidateLoginSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ODXamTwoFactorAuth">
+      <wsdl:input message="tns:ODXamTwoFactorAuthSoapIn" />
+      <wsdl:output message="tns:ODXamTwoFactorAuthSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ODXamSubmitUnhandledException">
+      <wsdl:input message="tns:ODXamSubmitUnhandledExceptionSoapIn" />
+      <wsdl:output message="tns:ODXamSubmitUnhandledExceptionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendPushNotification">
+      <wsdl:input message="tns:SendPushNotificationSoapIn" />
+      <wsdl:output message="tns:SendPushNotificationSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFeaturesForCustomer">
+      <wsdl:input message="tns:GetFeaturesForCustomerSoapIn" />
+      <wsdl:output message="tns:GetFeaturesForCustomerSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFeaturesForEService">
+      <wsdl:input message="tns:GetFeaturesForEServiceSoapIn" />
+      <wsdl:output message="tns:GetFeaturesForEServiceSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="EnableAdditionalFeatures">
+      <wsdl:input message="tns:EnableAdditionalFeaturesSoapIn" />
+      <wsdl:output message="tns:EnableAdditionalFeaturesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckFHIRAPIKey">
+      <wsdl:input message="tns:CheckFHIRAPIKeySoapIn" />
+      <wsdl:output message="tns:CheckFHIRAPIKeySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GenerateFHIRAPIKey">
+      <wsdl:input message="tns:GenerateFHIRAPIKeySoapIn" />
+      <wsdl:output message="tns:GenerateFHIRAPIKeySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AssignFHIRAPIKey">
+      <wsdl:input message="tns:AssignFHIRAPIKeySoapIn" />
+      <wsdl:output message="tns:AssignFHIRAPIKeySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFHIRAPIKeysForOffice">
+      <wsdl:input message="tns:GetFHIRAPIKeysForOfficeSoapIn" />
+      <wsdl:output message="tns:GetFHIRAPIKeysForOfficeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateFHIRKeyStatus">
+      <wsdl:input message="tns:UpdateFHIRKeyStatusSoapIn" />
+      <wsdl:output message="tns:UpdateFHIRKeyStatusSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateFHIRAPIKeys">
+      <wsdl:input message="tns:UpdateFHIRAPIKeysSoapIn" />
+      <wsdl:output message="tns:UpdateFHIRAPIKeysSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
+      <wsdl:input message="tns:UploadRedactedDataPatientPortalInvitesSoapIn" />
+      <wsdl:output message="tns:UploadRedactedDataPatientPortalInvitesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UploadPatientPortalXWebResponses">
+      <wsdl:input message="tns:UploadPatientPortalXWebResponsesSoapIn" />
+      <wsdl:output message="tns:UploadPatientPortalXWebResponsesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEConnectorFailover">
+      <wsdl:input message="tns:ProcessEConnectorFailoverSoapIn" />
+      <wsdl:output message="tns:ProcessEConnectorFailoverSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TestConnection">
+      <wsdl:input message="tns:TestConnectionSoapIn" />
+      <wsdl:output message="tns:TestConnectionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TestConnectionDb">
+      <wsdl:input message="tns:TestConnectionDbSoapIn" />
+      <wsdl:output message="tns:TestConnectionDbSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SubmitUnhandledException">
+      <wsdl:input message="tns:SubmitUnhandledExceptionSoapIn" />
+      <wsdl:output message="tns:SubmitUnhandledExceptionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateNewHelpKey">
+      <wsdl:input message="tns:CreateNewHelpKeySoapIn" />
+      <wsdl:output message="tns:CreateNewHelpKeySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetManualPage">
+      <wsdl:input message="tns:GetManualPageSoapIn" />
+      <wsdl:output message="tns:GetManualPageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStableManualVersion">
+      <wsdl:input message="tns:GetStableManualVersionSoapIn" />
+      <wsdl:output message="tns:GetStableManualVersionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CanadaCarrierUpdate">
+      <wsdl:input message="tns:CanadaCarrierUpdateSoapIn" />
+      <wsdl:output message="tns:CanadaCarrierUpdateSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="WebServiceMainHQHttpPost">
+    <wsdl:operation name="CustomerUpdateCommitted">
+      <wsdl:input message="tns:CustomerUpdateCommittedHttpPostIn" />
+      <wsdl:output message="tns:CustomerUpdateCommittedHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="EServiceSetup">
+      <wsdl:input message="tns:EServiceSetupHttpPostIn" />
+      <wsdl:output message="tns:EServiceSetupHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RecordValidateDbBackupResults">
+      <wsdl:input message="tns:RecordValidateDbBackupResultsHttpPostIn" />
+      <wsdl:output message="tns:RecordValidateDbBackupResultsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SupplementalBackupHandshake">
+      <wsdl:input message="tns:SupplementalBackupHandshakeHttpPostIn" />
+      <wsdl:output message="tns:SupplementalBackupHandshakeHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetSupplementalBackupStatus">
+      <wsdl:input message="tns:SetSupplementalBackupStatusHttpPostIn" />
+      <wsdl:output message="tns:SetSupplementalBackupStatusHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetSmsPatientPhoneOptIn">
+      <wsdl:input message="tns:SetSmsPatientPhoneOptInHttpPostIn" />
+      <wsdl:output message="tns:SetSmsPatientPhoneOptInHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMobileSettings">
+      <wsdl:input message="tns:GetMobileSettingsHttpPostIn" />
+      <wsdl:output message="tns:GetMobileSettingsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMobileSettings2FA">
+      <wsdl:input message="tns:GetMobileSettings2FAHttpPostIn" />
+      <wsdl:output message="tns:GetMobileSettings2FAHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpsertMobileSettings">
+      <wsdl:input message="tns:UpsertMobileSettingsHttpPostIn" />
+      <wsdl:output message="tns:UpsertMobileSettingsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PerformRefreshCache">
+      <wsdl:input message="tns:PerformRefreshCacheHttpPostIn" />
+      <wsdl:output message="tns:PerformRefreshCacheHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GenerateShortGUIDs">
+      <wsdl:input message="tns:GenerateShortGUIDsHttpPostIn" />
+      <wsdl:output message="tns:GenerateShortGUIDsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GenerateWebAppUrl">
+      <wsdl:input message="tns:GenerateWebAppUrlHttpPostIn" />
+      <wsdl:output message="tns:GenerateWebAppUrlHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetIsClosedBetaParticipant">
+      <wsdl:input message="tns:GetIsClosedBetaParticipantHttpPostIn" />
+      <wsdl:output message="tns:GetIsClosedBetaParticipantHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ValidateWebAppUrl">
+      <wsdl:input message="tns:ValidateWebAppUrlHttpPostIn" />
+      <wsdl:output message="tns:ValidateWebAppUrlHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebLanderUrl">
+      <wsdl:input message="tns:BuildWebLanderUrlHttpPostIn" />
+      <wsdl:output message="tns:BuildWebLanderUrlHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedRecallURLs">
+      <wsdl:input message="tns:BuildWebSchedRecallURLsHttpPostIn" />
+      <wsdl:output message="tns:BuildWebSchedRecallURLsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedNewPatApptURLs">
+      <wsdl:input message="tns:BuildWebSchedNewPatApptURLsHttpPostIn" />
+      <wsdl:output message="tns:BuildWebSchedNewPatApptURLsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="WebSchedRecallNotificationsSend">
+      <wsdl:input message="tns:WebSchedRecallNotificationsSendHttpPostIn" />
+      <wsdl:output message="tns:WebSchedRecallNotificationsSendHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="WebSchedAsapSend">
+      <wsdl:input message="tns:WebSchedAsapSendHttpPostIn" />
+      <wsdl:output message="tns:WebSchedAsapSendHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedUrl">
+      <wsdl:input message="tns:BuildWebSchedUrlHttpPostIn" />
+      <wsdl:output message="tns:BuildWebSchedUrlHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedASAPUrl">
+      <wsdl:input message="tns:BuildWebSchedASAPUrlHttpPostIn" />
+      <wsdl:output message="tns:BuildWebSchedASAPUrlHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildPatientPortalStatementUrl">
+      <wsdl:input message="tns:BuildPatientPortalStatementUrlHttpPostIn" />
+      <wsdl:output message="tns:BuildPatientPortalStatementUrlHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildFeaturePortalUrl">
+      <wsdl:input message="tns:BuildFeaturePortalUrlHttpPostIn" />
+      <wsdl:output message="tns:BuildFeaturePortalUrlHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildConfirmationRequestUrl">
+      <wsdl:input message="tns:BuildConfirmationRequestUrlHttpPostIn" />
+      <wsdl:output message="tns:BuildConfirmationRequestUrlHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildConfirmationRequestUrlQuick">
+      <wsdl:input message="tns:BuildConfirmationRequestUrlQuickHttpPostIn" />
+      <wsdl:output message="tns:BuildConfirmationRequestUrlQuickHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildOAuthUrl">
+      <wsdl:input message="tns:BuildOAuthUrlHttpPostIn" />
+      <wsdl:output message="tns:BuildOAuthUrlHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCloudMaxSessions">
+      <wsdl:input message="tns:GetCloudMaxSessionsHttpPostIn" />
+      <wsdl:output message="tns:GetCloudMaxSessionsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpsertCloudMaxSessions">
+      <wsdl:input message="tns:UpsertCloudMaxSessionsHttpPostIn" />
+      <wsdl:output message="tns:UpsertCloudMaxSessionsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RecordCloudSessionsInUse">
+      <wsdl:input message="tns:RecordCloudSessionsInUseHttpPostIn" />
+      <wsdl:output message="tns:RecordCloudSessionsInUseHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RecordCloudStorageSizeUsed">
+      <wsdl:input message="tns:RecordCloudStorageSizeUsedHttpPostIn" />
+      <wsdl:output message="tns:RecordCloudStorageSizeUsedHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDropboxAuthorizationUrl">
+      <wsdl:input message="tns:GetDropboxAuthorizationUrlHttpPostIn" />
+      <wsdl:output message="tns:GetDropboxAuthorizationUrlHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDropboxAccessToken">
+      <wsdl:input message="tns:GetDropboxAccessTokenHttpPostIn" />
+      <wsdl:output message="tns:GetDropboxAccessTokenHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGoogleAuthorizationUrl">
+      <wsdl:input message="tns:GetGoogleAuthorizationUrlHttpPostIn" />
+      <wsdl:output message="tns:GetGoogleAuthorizationUrlHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGoogleAccessToken">
+      <wsdl:input message="tns:GetGoogleAccessTokenHttpPostIn" />
+      <wsdl:output message="tns:GetGoogleAccessTokenHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCareCreditOAuthToken">
+      <wsdl:input message="tns:GetCareCreditOAuthTokenHttpPostIn" />
+      <wsdl:output message="tns:GetCareCreditOAuthTokenHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCareCreditWebToken">
+      <wsdl:input message="tns:GetCareCreditWebTokenHttpPostIn" />
+      <wsdl:output message="tns:GetCareCreditWebTokenHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LogCareCreditTransaction">
+      <wsdl:input message="tns:LogCareCreditTransactionHttpPostIn" />
+      <wsdl:output message="tns:LogCareCreditTransactionHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ValidateVersion">
+      <wsdl:input message="tns:ValidateVersionHttpPostIn" />
+      <wsdl:output message="tns:ValidateVersionHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConfirmationRequestSend">
+      <wsdl:input message="tns:ConfirmationRequestSendHttpPostIn" />
+      <wsdl:output message="tns:ConfirmationRequestSendHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="HandleConfirmationsApptChanged">
+      <wsdl:input message="tns:HandleConfirmationsApptChangedHttpPostIn" />
+      <wsdl:output message="tns:HandleConfirmationsApptChangedHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ThankYouSend">
+      <wsdl:input message="tns:ThankYouSendHttpPostIn" />
+      <wsdl:output message="tns:ThankYouSendHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildApptThankYouIcs">
+      <wsdl:input message="tns:BuildApptThankYouIcsHttpPostIn" />
+      <wsdl:output message="tns:BuildApptThankYouIcsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SmsSend">
+      <wsdl:input message="tns:SmsSendHttpPostIn" />
+      <wsdl:output message="tns:SmsSendHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestListenerProxyPrefs">
+      <wsdl:input message="tns:RequestListenerProxyPrefsHttpPostIn" />
+      <wsdl:output message="tns:RequestListenerProxyPrefsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEConnectorType">
+      <wsdl:input message="tns:GetEConnectorTypeHttpPostIn" />
+      <wsdl:output message="tns:GetEConnectorTypeHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetEConnectorType">
+      <wsdl:input message="tns:SetEConnectorTypeHttpPostIn" />
+      <wsdl:output message="tns:SetEConnectorTypeHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetEConnectorStats">
+      <wsdl:input message="tns:SetEConnectorStatsHttpPostIn" />
+      <wsdl:output message="tns:SetEConnectorStatsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="InsertPaySimpleACHId">
+      <wsdl:input message="tns:InsertPaySimpleACHIdHttpPostIn" />
+      <wsdl:output message="tns:InsertPaySimpleACHIdHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPaySimpleWebHookUrl">
+      <wsdl:input message="tns:GetPaySimpleWebHookUrlHttpPostIn" />
+      <wsdl:output message="tns:GetPaySimpleWebHookUrlHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ValidateEService">
+      <wsdl:input message="tns:ValidateEServiceHttpPostIn" />
+      <wsdl:output message="tns:ValidateEServiceHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsBetaAvailableForThisCustomer">
+      <wsdl:input message="tns:IsBetaAvailableForThisCustomerHttpPostIn" />
+      <wsdl:output message="tns:IsBetaAvailableForThisCustomerHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="EmailHostingSignup">
+      <wsdl:input message="tns:EmailHostingSignupHttpPostIn" />
+      <wsdl:output message="tns:EmailHostingSignupHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="EmailHostingChangeClinicStatus">
+      <wsdl:input message="tns:EmailHostingChangeClinicStatusHttpPostIn" />
+      <wsdl:output message="tns:EmailHostingChangeClinicStatusHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ODXamValidateLogin">
+      <wsdl:input message="tns:ODXamValidateLoginHttpPostIn" />
+      <wsdl:output message="tns:ODXamValidateLoginHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ODXamTwoFactorAuth">
+      <wsdl:input message="tns:ODXamTwoFactorAuthHttpPostIn" />
+      <wsdl:output message="tns:ODXamTwoFactorAuthHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ODXamSubmitUnhandledException">
+      <wsdl:input message="tns:ODXamSubmitUnhandledExceptionHttpPostIn" />
+      <wsdl:output message="tns:ODXamSubmitUnhandledExceptionHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendPushNotification">
+      <wsdl:input message="tns:SendPushNotificationHttpPostIn" />
+      <wsdl:output message="tns:SendPushNotificationHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFeaturesForCustomer">
+      <wsdl:input message="tns:GetFeaturesForCustomerHttpPostIn" />
+      <wsdl:output message="tns:GetFeaturesForCustomerHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFeaturesForEService">
+      <wsdl:input message="tns:GetFeaturesForEServiceHttpPostIn" />
+      <wsdl:output message="tns:GetFeaturesForEServiceHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="EnableAdditionalFeatures">
+      <wsdl:input message="tns:EnableAdditionalFeaturesHttpPostIn" />
+      <wsdl:output message="tns:EnableAdditionalFeaturesHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckFHIRAPIKey">
+      <wsdl:input message="tns:CheckFHIRAPIKeyHttpPostIn" />
+      <wsdl:output message="tns:CheckFHIRAPIKeyHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GenerateFHIRAPIKey">
+      <wsdl:input message="tns:GenerateFHIRAPIKeyHttpPostIn" />
+      <wsdl:output message="tns:GenerateFHIRAPIKeyHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AssignFHIRAPIKey">
+      <wsdl:input message="tns:AssignFHIRAPIKeyHttpPostIn" />
+      <wsdl:output message="tns:AssignFHIRAPIKeyHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFHIRAPIKeysForOffice">
+      <wsdl:input message="tns:GetFHIRAPIKeysForOfficeHttpPostIn" />
+      <wsdl:output message="tns:GetFHIRAPIKeysForOfficeHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateFHIRKeyStatus">
+      <wsdl:input message="tns:UpdateFHIRKeyStatusHttpPostIn" />
+      <wsdl:output message="tns:UpdateFHIRKeyStatusHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateFHIRAPIKeys">
+      <wsdl:input message="tns:UpdateFHIRAPIKeysHttpPostIn" />
+      <wsdl:output message="tns:UpdateFHIRAPIKeysHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
+      <wsdl:input message="tns:UploadRedactedDataPatientPortalInvitesHttpPostIn" />
+      <wsdl:output message="tns:UploadRedactedDataPatientPortalInvitesHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UploadPatientPortalXWebResponses">
+      <wsdl:input message="tns:UploadPatientPortalXWebResponsesHttpPostIn" />
+      <wsdl:output message="tns:UploadPatientPortalXWebResponsesHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEConnectorFailover">
+      <wsdl:input message="tns:ProcessEConnectorFailoverHttpPostIn" />
+      <wsdl:output message="tns:ProcessEConnectorFailoverHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TestConnection">
+      <wsdl:input message="tns:TestConnectionHttpPostIn" />
+      <wsdl:output message="tns:TestConnectionHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TestConnectionDb">
+      <wsdl:input message="tns:TestConnectionDbHttpPostIn" />
+      <wsdl:output message="tns:TestConnectionDbHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SubmitUnhandledException">
+      <wsdl:input message="tns:SubmitUnhandledExceptionHttpPostIn" />
+      <wsdl:output message="tns:SubmitUnhandledExceptionHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateNewHelpKey">
+      <wsdl:input message="tns:CreateNewHelpKeyHttpPostIn" />
+      <wsdl:output message="tns:CreateNewHelpKeyHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetManualPage">
+      <wsdl:input message="tns:GetManualPageHttpPostIn" />
+      <wsdl:output message="tns:GetManualPageHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStableManualVersion">
+      <wsdl:input message="tns:GetStableManualVersionHttpPostIn" />
+      <wsdl:output message="tns:GetStableManualVersionHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CanadaCarrierUpdate">
+      <wsdl:input message="tns:CanadaCarrierUpdateHttpPostIn" />
+      <wsdl:output message="tns:CanadaCarrierUpdateHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WebServiceMainHQSoap" type="tns:WebServiceMainHQSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="CustomerUpdateCommitted">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/CustomerUpdateCommitted" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EServiceSetup">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/EServiceSetup" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RecordValidateDbBackupResults">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/RecordValidateDbBackupResults" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SupplementalBackupHandshake">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/SupplementalBackupHandshake" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetSupplementalBackupStatus">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/SetSupplementalBackupStatus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetSmsPatientPhoneOptIn">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/SetSmsPatientPhoneOptIn" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMobileSettings">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetMobileSettings" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMobileSettings2FA">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetMobileSettings2FA" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpsertMobileSettings">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UpsertMobileSettings" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PerformRefreshCache">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/PerformRefreshCache" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenerateShortGUIDs">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GenerateShortGUIDs" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenerateWebAppUrl">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GenerateWebAppUrl" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIsClosedBetaParticipant">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetIsClosedBetaParticipant" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateWebAppUrl">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ValidateWebAppUrl" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebLanderUrl">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildWebLanderUrl" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedRecallURLs">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildWebSchedRecallURLs" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedNewPatApptURLs">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildWebSchedNewPatApptURLs" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebSchedRecallNotificationsSend">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/WebSchedRecallNotificationsSend" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebSchedAsapSend">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/WebSchedAsapSend" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedUrl">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildWebSchedUrl" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedASAPUrl">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildWebSchedASAPUrl" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildPatientPortalStatementUrl">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildPatientPortalStatementUrl" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildFeaturePortalUrl">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildFeaturePortalUrl" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildConfirmationRequestUrl">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildConfirmationRequestUrl" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildConfirmationRequestUrlQuick">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildConfirmationRequestUrlQuick" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildOAuthUrl">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildOAuthUrl" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCloudMaxSessions">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetCloudMaxSessions" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpsertCloudMaxSessions">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UpsertCloudMaxSessions" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RecordCloudSessionsInUse">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/RecordCloudSessionsInUse" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RecordCloudStorageSizeUsed">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/RecordCloudStorageSizeUsed" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDropboxAuthorizationUrl">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetDropboxAuthorizationUrl" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDropboxAccessToken">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetDropboxAccessToken" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGoogleAuthorizationUrl">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetGoogleAuthorizationUrl" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGoogleAccessToken">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetGoogleAccessToken" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCareCreditOAuthToken">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetCareCreditOAuthToken" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCareCreditWebToken">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetCareCreditWebToken" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LogCareCreditTransaction">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/LogCareCreditTransaction" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateVersion">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ValidateVersion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConfirmationRequestSend">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ConfirmationRequestSend" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="HandleConfirmationsApptChanged">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/HandleConfirmationsApptChanged" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ThankYouSend">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ThankYouSend" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildApptThankYouIcs">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildApptThankYouIcs" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SmsSend">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/SmsSend" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestListenerProxyPrefs">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/RequestListenerProxyPrefs" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEConnectorType">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetEConnectorType" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetEConnectorType">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/SetEConnectorType" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetEConnectorStats">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/SetEConnectorStats" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InsertPaySimpleACHId">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/InsertPaySimpleACHId" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPaySimpleWebHookUrl">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetPaySimpleWebHookUrl" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateEService">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ValidateEService" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsBetaAvailableForThisCustomer">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/IsBetaAvailableForThisCustomer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EmailHostingSignup">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/EmailHostingSignup" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EmailHostingChangeClinicStatus">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/EmailHostingChangeClinicStatus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ODXamValidateLogin">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ODXamValidateLogin" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ODXamTwoFactorAuth">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ODXamTwoFactorAuth" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ODXamSubmitUnhandledException">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ODXamSubmitUnhandledException" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendPushNotification">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/SendPushNotification" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFeaturesForCustomer">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetFeaturesForCustomer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFeaturesForEService">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetFeaturesForEService" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EnableAdditionalFeatures">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/EnableAdditionalFeatures" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckFHIRAPIKey">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/CheckFHIRAPIKey" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenerateFHIRAPIKey">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GenerateFHIRAPIKey" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AssignFHIRAPIKey">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/AssignFHIRAPIKey" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFHIRAPIKeysForOffice">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetFHIRAPIKeysForOffice" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateFHIRKeyStatus">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UpdateFHIRKeyStatus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateFHIRAPIKeys">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UpdateFHIRAPIKeys" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UploadRedactedDataPatientPortalInvites" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UploadPatientPortalXWebResponses">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UploadPatientPortalXWebResponses" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEConnectorFailover">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ProcessEConnectorFailover" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TestConnection">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/TestConnection" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TestConnectionDb">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/TestConnectionDb" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SubmitUnhandledException">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/SubmitUnhandledException" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateNewHelpKey">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/CreateNewHelpKey" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetManualPage">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetManualPage" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStableManualVersion">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetStableManualVersion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CanadaCarrierUpdate">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/CanadaCarrierUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WebServiceMainHQSoap12" type="tns:WebServiceMainHQSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="CustomerUpdateCommitted">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/CustomerUpdateCommitted" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EServiceSetup">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/EServiceSetup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RecordValidateDbBackupResults">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/RecordValidateDbBackupResults" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SupplementalBackupHandshake">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/SupplementalBackupHandshake" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetSupplementalBackupStatus">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/SetSupplementalBackupStatus" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetSmsPatientPhoneOptIn">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/SetSmsPatientPhoneOptIn" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMobileSettings">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetMobileSettings" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMobileSettings2FA">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetMobileSettings2FA" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpsertMobileSettings">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UpsertMobileSettings" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PerformRefreshCache">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/PerformRefreshCache" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenerateShortGUIDs">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GenerateShortGUIDs" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenerateWebAppUrl">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GenerateWebAppUrl" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIsClosedBetaParticipant">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetIsClosedBetaParticipant" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateWebAppUrl">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ValidateWebAppUrl" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebLanderUrl">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildWebLanderUrl" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedRecallURLs">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildWebSchedRecallURLs" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedNewPatApptURLs">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildWebSchedNewPatApptURLs" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebSchedRecallNotificationsSend">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/WebSchedRecallNotificationsSend" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebSchedAsapSend">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/WebSchedAsapSend" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedUrl">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildWebSchedUrl" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedASAPUrl">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildWebSchedASAPUrl" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildPatientPortalStatementUrl">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildPatientPortalStatementUrl" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildFeaturePortalUrl">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildFeaturePortalUrl" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildConfirmationRequestUrl">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildConfirmationRequestUrl" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildConfirmationRequestUrlQuick">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildConfirmationRequestUrlQuick" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildOAuthUrl">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildOAuthUrl" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCloudMaxSessions">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetCloudMaxSessions" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpsertCloudMaxSessions">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UpsertCloudMaxSessions" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RecordCloudSessionsInUse">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/RecordCloudSessionsInUse" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RecordCloudStorageSizeUsed">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/RecordCloudStorageSizeUsed" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDropboxAuthorizationUrl">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetDropboxAuthorizationUrl" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDropboxAccessToken">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetDropboxAccessToken" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGoogleAuthorizationUrl">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetGoogleAuthorizationUrl" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGoogleAccessToken">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetGoogleAccessToken" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCareCreditOAuthToken">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetCareCreditOAuthToken" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCareCreditWebToken">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetCareCreditWebToken" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LogCareCreditTransaction">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/LogCareCreditTransaction" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateVersion">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ValidateVersion" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConfirmationRequestSend">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ConfirmationRequestSend" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="HandleConfirmationsApptChanged">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/HandleConfirmationsApptChanged" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ThankYouSend">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ThankYouSend" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildApptThankYouIcs">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildApptThankYouIcs" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SmsSend">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/SmsSend" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestListenerProxyPrefs">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/RequestListenerProxyPrefs" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEConnectorType">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetEConnectorType" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetEConnectorType">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/SetEConnectorType" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetEConnectorStats">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/SetEConnectorStats" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InsertPaySimpleACHId">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/InsertPaySimpleACHId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPaySimpleWebHookUrl">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetPaySimpleWebHookUrl" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateEService">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ValidateEService" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsBetaAvailableForThisCustomer">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/IsBetaAvailableForThisCustomer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EmailHostingSignup">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/EmailHostingSignup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EmailHostingChangeClinicStatus">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/EmailHostingChangeClinicStatus" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ODXamValidateLogin">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ODXamValidateLogin" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ODXamTwoFactorAuth">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ODXamTwoFactorAuth" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ODXamSubmitUnhandledException">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ODXamSubmitUnhandledException" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendPushNotification">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/SendPushNotification" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFeaturesForCustomer">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetFeaturesForCustomer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFeaturesForEService">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetFeaturesForEService" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EnableAdditionalFeatures">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/EnableAdditionalFeatures" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckFHIRAPIKey">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/CheckFHIRAPIKey" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenerateFHIRAPIKey">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GenerateFHIRAPIKey" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AssignFHIRAPIKey">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/AssignFHIRAPIKey" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFHIRAPIKeysForOffice">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetFHIRAPIKeysForOffice" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateFHIRKeyStatus">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UpdateFHIRKeyStatus" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateFHIRAPIKeys">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UpdateFHIRAPIKeys" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UploadRedactedDataPatientPortalInvites" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UploadPatientPortalXWebResponses">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UploadPatientPortalXWebResponses" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEConnectorFailover">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ProcessEConnectorFailover" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TestConnection">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/TestConnection" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TestConnectionDb">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/TestConnectionDb" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SubmitUnhandledException">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/SubmitUnhandledException" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateNewHelpKey">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/CreateNewHelpKey" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetManualPage">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetManualPage" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStableManualVersion">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetStableManualVersion" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CanadaCarrierUpdate">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/CanadaCarrierUpdate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WebServiceMainHQHttpPost" type="tns:WebServiceMainHQHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="CustomerUpdateCommitted">
+      <http:operation location="/CustomerUpdateCommitted" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EServiceSetup">
+      <http:operation location="/EServiceSetup" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RecordValidateDbBackupResults">
+      <http:operation location="/RecordValidateDbBackupResults" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SupplementalBackupHandshake">
+      <http:operation location="/SupplementalBackupHandshake" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetSupplementalBackupStatus">
+      <http:operation location="/SetSupplementalBackupStatus" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetSmsPatientPhoneOptIn">
+      <http:operation location="/SetSmsPatientPhoneOptIn" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMobileSettings">
+      <http:operation location="/GetMobileSettings" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMobileSettings2FA">
+      <http:operation location="/GetMobileSettings2FA" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpsertMobileSettings">
+      <http:operation location="/UpsertMobileSettings" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PerformRefreshCache">
+      <http:operation location="/PerformRefreshCache" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenerateShortGUIDs">
+      <http:operation location="/GenerateShortGUIDs" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenerateWebAppUrl">
+      <http:operation location="/GenerateWebAppUrl" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIsClosedBetaParticipant">
+      <http:operation location="/GetIsClosedBetaParticipant" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateWebAppUrl">
+      <http:operation location="/ValidateWebAppUrl" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebLanderUrl">
+      <http:operation location="/BuildWebLanderUrl" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedRecallURLs">
+      <http:operation location="/BuildWebSchedRecallURLs" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedNewPatApptURLs">
+      <http:operation location="/BuildWebSchedNewPatApptURLs" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebSchedRecallNotificationsSend">
+      <http:operation location="/WebSchedRecallNotificationsSend" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WebSchedAsapSend">
+      <http:operation location="/WebSchedAsapSend" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedUrl">
+      <http:operation location="/BuildWebSchedUrl" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildWebSchedASAPUrl">
+      <http:operation location="/BuildWebSchedASAPUrl" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildPatientPortalStatementUrl">
+      <http:operation location="/BuildPatientPortalStatementUrl" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildFeaturePortalUrl">
+      <http:operation location="/BuildFeaturePortalUrl" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildConfirmationRequestUrl">
+      <http:operation location="/BuildConfirmationRequestUrl" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildConfirmationRequestUrlQuick">
+      <http:operation location="/BuildConfirmationRequestUrlQuick" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildOAuthUrl">
+      <http:operation location="/BuildOAuthUrl" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCloudMaxSessions">
+      <http:operation location="/GetCloudMaxSessions" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpsertCloudMaxSessions">
+      <http:operation location="/UpsertCloudMaxSessions" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RecordCloudSessionsInUse">
+      <http:operation location="/RecordCloudSessionsInUse" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RecordCloudStorageSizeUsed">
+      <http:operation location="/RecordCloudStorageSizeUsed" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDropboxAuthorizationUrl">
+      <http:operation location="/GetDropboxAuthorizationUrl" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDropboxAccessToken">
+      <http:operation location="/GetDropboxAccessToken" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGoogleAuthorizationUrl">
+      <http:operation location="/GetGoogleAuthorizationUrl" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGoogleAccessToken">
+      <http:operation location="/GetGoogleAccessToken" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCareCreditOAuthToken">
+      <http:operation location="/GetCareCreditOAuthToken" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCareCreditWebToken">
+      <http:operation location="/GetCareCreditWebToken" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LogCareCreditTransaction">
+      <http:operation location="/LogCareCreditTransaction" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateVersion">
+      <http:operation location="/ValidateVersion" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConfirmationRequestSend">
+      <http:operation location="/ConfirmationRequestSend" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="HandleConfirmationsApptChanged">
+      <http:operation location="/HandleConfirmationsApptChanged" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ThankYouSend">
+      <http:operation location="/ThankYouSend" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildApptThankYouIcs">
+      <http:operation location="/BuildApptThankYouIcs" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SmsSend">
+      <http:operation location="/SmsSend" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestListenerProxyPrefs">
+      <http:operation location="/RequestListenerProxyPrefs" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEConnectorType">
+      <http:operation location="/GetEConnectorType" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetEConnectorType">
+      <http:operation location="/SetEConnectorType" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetEConnectorStats">
+      <http:operation location="/SetEConnectorStats" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InsertPaySimpleACHId">
+      <http:operation location="/InsertPaySimpleACHId" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPaySimpleWebHookUrl">
+      <http:operation location="/GetPaySimpleWebHookUrl" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateEService">
+      <http:operation location="/ValidateEService" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsBetaAvailableForThisCustomer">
+      <http:operation location="/IsBetaAvailableForThisCustomer" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EmailHostingSignup">
+      <http:operation location="/EmailHostingSignup" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EmailHostingChangeClinicStatus">
+      <http:operation location="/EmailHostingChangeClinicStatus" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ODXamValidateLogin">
+      <http:operation location="/ODXamValidateLogin" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ODXamTwoFactorAuth">
+      <http:operation location="/ODXamTwoFactorAuth" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ODXamSubmitUnhandledException">
+      <http:operation location="/ODXamSubmitUnhandledException" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendPushNotification">
+      <http:operation location="/SendPushNotification" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFeaturesForCustomer">
+      <http:operation location="/GetFeaturesForCustomer" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFeaturesForEService">
+      <http:operation location="/GetFeaturesForEService" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EnableAdditionalFeatures">
+      <http:operation location="/EnableAdditionalFeatures" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckFHIRAPIKey">
+      <http:operation location="/CheckFHIRAPIKey" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenerateFHIRAPIKey">
+      <http:operation location="/GenerateFHIRAPIKey" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AssignFHIRAPIKey">
+      <http:operation location="/AssignFHIRAPIKey" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFHIRAPIKeysForOffice">
+      <http:operation location="/GetFHIRAPIKeysForOffice" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateFHIRKeyStatus">
+      <http:operation location="/UpdateFHIRKeyStatus" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateFHIRAPIKeys">
+      <http:operation location="/UpdateFHIRAPIKeys" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
+      <http:operation location="/UploadRedactedDataPatientPortalInvites" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UploadPatientPortalXWebResponses">
+      <http:operation location="/UploadPatientPortalXWebResponses" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProcessEConnectorFailover">
+      <http:operation location="/ProcessEConnectorFailover" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TestConnection">
+      <http:operation location="/TestConnection" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TestConnectionDb">
+      <http:operation location="/TestConnectionDb" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SubmitUnhandledException">
+      <http:operation location="/SubmitUnhandledException" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateNewHelpKey">
+      <http:operation location="/CreateNewHelpKey" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetManualPage">
+      <http:operation location="/GetManualPage" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStableManualVersion">
+      <http:operation location="/GetStableManualVersion" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CanadaCarrierUpdate">
+      <http:operation location="/CanadaCarrierUpdate" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WebServiceMainHQ">
+    <wsdl:port name="WebServiceMainHQSoap" binding="tns:WebServiceMainHQSoap">
+      <soap:address location="http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx" />
+    </wsdl:port>
+    <wsdl:port name="WebServiceMainHQSoap12" binding="tns:WebServiceMainHQSoap12">
+      <soap12:address location="http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx" />
+    </wsdl:port>
+    <wsdl:port name="WebServiceMainHQHttpPost" binding="tns:WebServiceMainHQHttpPost">
+      <http:address location="http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

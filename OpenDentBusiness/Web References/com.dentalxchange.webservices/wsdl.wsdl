@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:intf="http://www.dentalxchange.com/webservice" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:impl="http://www.dentalxchange.com/webservice" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://www.dentalxchange.com/webservice" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.dentalxchange.com/webservice">
+      <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+      <xsd:complexType name="Credentials">
+        <xsd:sequence>
+          <xsd:element name="client" nillable="true" type="xsd:string" />
+          <xsd:element name="password" nillable="true" type="xsd:string" />
+          <xsd:element name="serviceID" nillable="true" type="xsd:string" />
+          <xsd:element name="username" nillable="true" type="xsd:string" />
+          <xsd:element name="version" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="Request">
+        <xsd:sequence>
+          <xsd:element name="content" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="Response">
+        <xsd:sequence>
+          <xsd:element name="content" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="lookupEligibilityRequest">
+    <wsdl:part name="in0" type="impl:Credentials" />
+    <wsdl:part name="in1" type="impl:Request" />
+  </wsdl:message>
+  <wsdl:message name="lookupEligibilityResponse">
+    <wsdl:part name="lookupEligibilityReturn" type="impl:Response" />
+  </wsdl:message>
+  <wsdl:message name="lookupClaimStatusRequest">
+    <wsdl:part name="in0" type="impl:Credentials" />
+    <wsdl:part name="in1" type="impl:Request" />
+  </wsdl:message>
+  <wsdl:message name="lookupClaimStatusResponse">
+    <wsdl:part name="lookupClaimStatusReturn" type="impl:Response" />
+  </wsdl:message>
+  <wsdl:message name="lookupFamilyEligibilityRequest">
+    <wsdl:part name="in0" type="impl:Credentials" />
+    <wsdl:part name="in1" type="impl:Request" />
+  </wsdl:message>
+  <wsdl:message name="lookupFamilyEligibilityResponse">
+    <wsdl:part name="lookupFamilyEligibilityReturn" type="impl:Response" />
+  </wsdl:message>
+  <wsdl:message name="lookupTerminalEligibilityRequest">
+    <wsdl:part name="in0" type="impl:Credentials" />
+    <wsdl:part name="in1" type="impl:Request" />
+  </wsdl:message>
+  <wsdl:message name="lookupTerminalEligibilityResponse">
+    <wsdl:part name="lookupTerminalEligibilityReturn" type="impl:Response" />
+  </wsdl:message>
+  <wsdl:message name="lookupTerminalClaimStatusRequest">
+    <wsdl:part name="in0" type="impl:Credentials" />
+    <wsdl:part name="in1" type="impl:Request" />
+  </wsdl:message>
+  <wsdl:message name="lookupTerminalClaimStatusResponse">
+    <wsdl:part name="lookupTerminalClaimStatusReturn" type="impl:Response" />
+  </wsdl:message>
+  <wsdl:message name="updateTerminalRequest">
+    <wsdl:part name="in0" type="impl:Credentials" />
+    <wsdl:part name="in1" type="impl:Request" />
+  </wsdl:message>
+  <wsdl:message name="updateTerminalResponse">
+    <wsdl:part name="updateTerminalReturn" type="impl:Response" />
+  </wsdl:message>
+  <wsdl:message name="lookupClaimRequest">
+    <wsdl:part name="in0" type="impl:Credentials" />
+    <wsdl:part name="in1" type="impl:Request" />
+  </wsdl:message>
+  <wsdl:message name="lookupClaimResponse">
+    <wsdl:part name="lookupClaimReturn" type="impl:Response" />
+  </wsdl:message>
+  <wsdl:portType name="WebService">
+    <wsdl:operation name="lookupEligibility" parameterOrder="in0 in1">
+      <wsdl:input name="lookupEligibilityRequest" message="impl:lookupEligibilityRequest" />
+      <wsdl:output name="lookupEligibilityResponse" message="impl:lookupEligibilityResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="lookupClaimStatus" parameterOrder="in0 in1">
+      <wsdl:input name="lookupClaimStatusRequest" message="impl:lookupClaimStatusRequest" />
+      <wsdl:output name="lookupClaimStatusResponse" message="impl:lookupClaimStatusResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="lookupFamilyEligibility" parameterOrder="in0 in1">
+      <wsdl:input name="lookupFamilyEligibilityRequest" message="impl:lookupFamilyEligibilityRequest" />
+      <wsdl:output name="lookupFamilyEligibilityResponse" message="impl:lookupFamilyEligibilityResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="lookupTerminalEligibility" parameterOrder="in0 in1">
+      <wsdl:input name="lookupTerminalEligibilityRequest" message="impl:lookupTerminalEligibilityRequest" />
+      <wsdl:output name="lookupTerminalEligibilityResponse" message="impl:lookupTerminalEligibilityResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="lookupTerminalClaimStatus" parameterOrder="in0 in1">
+      <wsdl:input name="lookupTerminalClaimStatusRequest" message="impl:lookupTerminalClaimStatusRequest" />
+      <wsdl:output name="lookupTerminalClaimStatusResponse" message="impl:lookupTerminalClaimStatusResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="updateTerminal" parameterOrder="in0 in1">
+      <wsdl:input name="updateTerminalRequest" message="impl:updateTerminalRequest" />
+      <wsdl:output name="updateTerminalResponse" message="impl:updateTerminalResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="lookupClaim" parameterOrder="in0 in1">
+      <wsdl:input name="lookupClaimRequest" message="impl:lookupClaimRequest" />
+      <wsdl:output name="lookupClaimResponse" message="impl:lookupClaimResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="dciservice.svlSoapBinding" type="impl:WebService">
+    <wsdlsoap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc" />
+    <wsdl:operation name="lookupEligibility">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="lookupEligibilityRequest">
+        <wsdlsoap:body use="encoded" namespace="http://www.dentalxchange.com/webservice" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="lookupEligibilityResponse">
+        <wsdlsoap:body use="encoded" namespace="http://www.dentalxchange.com/webservice" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="lookupClaimStatus">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="lookupClaimStatusRequest">
+        <wsdlsoap:body use="encoded" namespace="http://www.dentalxchange.com/webservice" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="lookupClaimStatusResponse">
+        <wsdlsoap:body use="encoded" namespace="http://www.dentalxchange.com/webservice" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="lookupFamilyEligibility">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="lookupFamilyEligibilityRequest">
+        <wsdlsoap:body use="encoded" namespace="http://www.dentalxchange.com/webservice" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="lookupFamilyEligibilityResponse">
+        <wsdlsoap:body use="encoded" namespace="http://www.dentalxchange.com/webservice" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="lookupTerminalEligibility">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="lookupTerminalEligibilityRequest">
+        <wsdlsoap:body use="encoded" namespace="http://www.dentalxchange.com/webservice" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="lookupTerminalEligibilityResponse">
+        <wsdlsoap:body use="encoded" namespace="http://www.dentalxchange.com/webservice" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="lookupTerminalClaimStatus">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="lookupTerminalClaimStatusRequest">
+        <wsdlsoap:body use="encoded" namespace="http://www.dentalxchange.com/webservice" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="lookupTerminalClaimStatusResponse">
+        <wsdlsoap:body use="encoded" namespace="http://www.dentalxchange.com/webservice" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateTerminal">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="updateTerminalRequest">
+        <wsdlsoap:body use="encoded" namespace="http://www.dentalxchange.com/webservice" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="updateTerminalResponse">
+        <wsdlsoap:body use="encoded" namespace="http://www.dentalxchange.com/webservice" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="lookupClaim">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="lookupClaimRequest">
+        <wsdlsoap:body use="encoded" namespace="http://www.dentalxchange.com/webservice" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="lookupClaimResponse">
+        <wsdlsoap:body use="encoded" namespace="http://www.dentalxchange.com/webservice" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WebServiceService">
+    <wsdl:port name="dciservice.svl" binding="impl:dciservice.svlSoapBinding">
+      <wsdlsoap:address location="https://webservices.dentalxchange.com/dws/services/dciservice.svl" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
