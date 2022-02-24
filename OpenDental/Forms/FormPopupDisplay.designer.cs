@@ -238,7 +238,6 @@ namespace OpenDental {
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "FormPopupDisplay";
-			this.ShowInTaskbar = false;
 			this.Text = "Popup";
 			this.Load += new System.EventHandler(this.FormPopupDisplay_Load);
 			this.groupBox1.ResumeLayout(false);
