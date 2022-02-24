@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CodeBase;
 using OpenDental.UI;
@@ -65,6 +66,14 @@ namespace OpenDental {
 				newRow.Cells.Add((transDate.Year<1880) ? "" : transDate.ToShortDateString());
 				newRow.Cells.Add(row["Patient"].ToString());
 				string strReference=row["Reference"].ToString();
+				int toothNumPref=PrefC.GetInt(PrefName.UseInternationalToothNumbers);
+				bool isProc=row["Type"].ToString().ToLower()=="proc";
+				//Replace toothNum with correct nomenclature when not using American system.
+				if(isProc && strReference.Contains('#') && toothNumPref!=0) {
+					string toothNum=strReference.Substring(strReference.IndexOf('#')+1,strReference.IndexOf('-')-strReference.IndexOf('#')-1);
+					string toothNumNom=Tooth.GetToothLabel(toothNum,(ToothNumberingNomenclature)toothNumPref);
+					strReference=strReference.Replace("#"+toothNum+"-","#"+toothNumNom+"-");
+				}
 				newRow.Cells.Add(strReference);
 				bool isUnallocated=strReference.ToLower().Contains("unallocated");
 				newRow.Cells.Add(isUnallocated ? "" : PIn.Decimal(row["Charge"].ToString()).ToString("f"));
@@ -73,9 +82,8 @@ namespace OpenDental {
 				decimal insBal=PIn.Decimal(row["InsBal"].ToString());
 				decimal acctBal=PIn.Decimal(row["AcctBal"].ToString());
 				bool isTotalsRow=row==lastRow || strReference.ToLower().Contains("Total for Date".ToLower());
-				bool isProc=row["Type"].ToString().ToLower()=="proc" && checkDetailedView.Checked;
 				//Show insBal and acctBal when not on totals row and detailed is checked and either of the amounts are not zero.
-				bool showDetailedRow=isTotalsRow || isProc
+				bool showDetailedRow=isTotalsRow || (isProc && checkDetailedView.Checked)
 					|| (checkDetailedView.Checked && (CompareDecimal.IsGreaterThanZero(Math.Abs(insBal)) || CompareDecimal.IsGreaterThanZero(Math.Abs(acctBal))));
 				newRow.Cells.Add(showDetailedRow ? insBal.ToString("f") : "");
 				newRow.Cells.Add(showDetailedRow ? acctBal.ToString("f") : "");

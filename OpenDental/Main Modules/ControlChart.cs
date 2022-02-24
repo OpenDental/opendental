@@ -1841,7 +1841,20 @@ namespace OpenDental {
 			_headingPrinted=true;
 			_headingPrintH=yPos;
 			#endregion
+			//If using zoom, we need to adjust the gridProg's size back to it's non-zoomed state before printing.
+			//This is only because we are using GridOld, which is only used in this one place.
+			//Once we refactor to move this over to GridOD, then this is not needed.
+			Size sizeGirdProg=gridProg.Size;
+			if(LayoutManager.ScaleMy()!=1) {				
+				LayoutManager.MoveSize(gridProg,new Size((int)(gridProg.Size.Width/LayoutManager.ScaleMy()),(int)(gridProg.Size.Height/LayoutManager.ScaleMy())));
+				gridProg.ScaleMy=1;
+			}
 			yPos=gridProg.PrintPage(g,_pagesPrinted,bounds,_headingPrintH,true);
+			//Restore the grid's size back to it's original state.
+			if(LayoutManager.ScaleMy()!=1) {
+				LayoutManager.MoveSize(gridProg,sizeGirdProg);
+				gridProg.ScaleMy=LayoutManager.ScaleMy();
+			}
 			_pagesPrinted++;
 			if(yPos==-1) {
 				e.HasMorePages=true;

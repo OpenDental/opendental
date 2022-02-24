@@ -1418,8 +1418,8 @@ namespace OpenDental {
 				_payConnectTransType=_payConnectResponseWeb.TransType.ToString();
 			}
 			groupXWeb.Visible=false;
-			if(isXWebCardPresent || _xWebResponse!=null 
-				|| _isPayConnectPortal || _payConnectResponseWeb!=null || _careCreditWebResponse!=null) 
+			if(!IsNew && (isXWebCardPresent || _xWebResponse!=null 
+				|| _isPayConnectPortal || _payConnectResponseWeb!=null || _careCreditWebResponse!=null))
 			{
 				groupXWeb.Visible=true;
 			}

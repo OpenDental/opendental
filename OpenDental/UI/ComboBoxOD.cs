@@ -100,6 +100,10 @@ namespace OpenDental.UI{
 					g.FillRectangle(_brushHover,rectangle);
 					g.DrawRectangle(_penHoverOutline,rectangle);
 				}
+				else if(Focused) {
+					g.FillRectangle(_brushBack,rectangle);
+					g.DrawRectangle(_penHoverOutline,rectangle);
+				}
 				else{
 					g.FillRectangle(_brushBack,rectangle);
 					g.DrawRectangle(_penOutline,rectangle);
@@ -212,6 +216,33 @@ namespace OpenDental.UI{
 			if(e.KeyCode>=Keys.F1 && e.KeyCode<=Keys.F24) {
 				return;//Ignore any F keys, so that F key behavior is perserved
 			}
+			if(e.KeyCode==Keys.Up || e.KeyCode==Keys.Down) {//Select previous or next item.
+				if(SelectionModeMulti || _listSelectedIndices.Count==0) {
+					return;
+				}
+				int index;
+				if(e.KeyCode==Keys.Up) {
+					if(_listSelectedIndices[0]==0){//if at the top
+						index=Items.Count-1;//loop back to bottom
+					}
+					else {
+						index=_listSelectedIndices[0]-1;
+					}
+				}
+				else {
+					if(_listSelectedIndices[0]==Items.Count-1){//if at the bottom
+						index=0;//loop back to top
+					}
+					else {
+						index=_listSelectedIndices[0]+1;
+					}
+				}
+				SetSelected(index);
+				SelectionChangeCommitted?.Invoke(this,new EventArgs());
+				SelectedIndexChanged?.Invoke(this,new EventArgs());
+				Invalidate();
+				return;
+			}
 			char charKey=(char)e.KeyCode;
 			if(e.KeyCode>=Keys.NumPad0 && e.KeyCode<=Keys.NumPad9) {
 				charKey=e.KeyCode.ToString().Replace("NumPad","")[0];
@@ -236,6 +267,15 @@ namespace OpenDental.UI{
 				SelectedIndexChanged?.Invoke(this,new EventArgs());
 				SelectionChangeCommitted?.Invoke(this,new EventArgs());
 			}
+			Invalidate();
+		}
+		protected override void OnLostFocus(EventArgs e) {
+			base.OnLostFocus(e);
+			Invalidate();
+		}
+
+		protected override void OnGotFocus(EventArgs e) {
+			base.OnGotFocus(e);
 			Invalidate();
 		}
 		#endregion Events - Misc
@@ -678,6 +718,14 @@ namespace OpenDental.UI{
 		#endregion Methods - Public
 
 		#region Methods - Protected
+		protected override bool IsInputKey(Keys keyData) {
+			//up and down keys should be sent to this control instead of causing jump to new control
+			if(keyData==Keys.Up || keyData==Keys.Down) {
+				return true;
+			}
+			return base.IsInputKey(keyData);
+		}
+
 		///<summary>We have to intercept the mouse scroll event, because there are no actual controls on the screen
 		///so there is no way to actually scroll as there is no content</summary>
 		protected override void WndProc(ref Message m) {

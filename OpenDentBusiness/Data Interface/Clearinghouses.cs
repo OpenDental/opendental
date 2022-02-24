@@ -645,7 +645,8 @@ namespace OpenDentBusiness {
 				ex.DoNothing();
 				return Lans.g("FormClaimReports","Access to the Report Path is denied.  Try running as administrator or contact your network administrator.");
 			}
-			List<string> listFailedFiles=new List<string>();
+			List<string> listFailedMovingFiles=new List<string>();
+			List<string> listFailedImportingFiles=new List<string>();
 			progress.UpdateProgress(Lans.g(progress.LanThis,"Files read."));
 			progress.UpdateProgress(Lans.g(progress.LanThis,"Importing files"),"reports","83%",83);
 			if(files.Length>0) {
@@ -667,7 +668,7 @@ namespace OpenDentBusiness {
 				}
 				catch(Exception ex) {
 					ex.DoNothing();//OK to continue, since ProcessIncomingReport() above saved the raw report into the etrans table.
-					listFailedFiles.Add(fileSource);
+					listFailedMovingFiles.Add(fileSource);
 					continue;//Skip current report file and leave in folder to processing later.
 				}
 				try {
@@ -679,15 +680,19 @@ namespace OpenDentBusiness {
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
-					listFailedFiles.Add(fileSource);
+					listFailedImportingFiles.Add(fileSource);
 					File.Move(fileDestination,fileSource);//Move file back so that the archived folder only contains succesfully processed reports.
 				}
+			}string retVal="";
+			if(listFailedMovingFiles.Count>0) {
+				retVal=Lans.g("FormClaimReports","Failed to move the following files to archive folder due to permission issues or duplicate file names:")
+					+"\r\n"+string.Join(",\r\n",listFailedMovingFiles);
 			}
-			if(listFailedFiles.Count>0) {
-				return Lans.g("FormClaimReports","Failed to process the following files due to permission issues or malformed data")
-					+":\r\n"+string.Join(",\r\n",listFailedFiles);
+			if(listFailedImportingFiles.Count>0) {
+				retVal+="\r\n\r\n"+Lans.g("FormClaimReports","Failed to process following files due to malformed data:")
+					+"\r\n"+string.Join(",\r\n",listFailedImportingFiles);
 			}
-			return "";
+			return retVal;
 		}
 
 		///<summary></summary>

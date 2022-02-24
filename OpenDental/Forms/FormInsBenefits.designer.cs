@@ -142,8 +142,7 @@ namespace OpenDental {
 			this.groupYear.Location = new System.Drawing.Point(141, 3);
 			this.groupYear.Name = "groupYear";
 			this.groupYear.Size = new System.Drawing.Size(181, 36);
-			this.groupYear.TabIndex = 192;
-			this.groupYear.TabStop = false;
+			this.groupYear.TabIndex = 1;
 			this.groupYear.Text = "Benefit Year";
 			// 
 			// checkCalendarYear
@@ -164,14 +163,14 @@ namespace OpenDental {
 			this.textMonth.Name = "textMonth";
 			this.textMonth.ShowZero = false;
 			this.textMonth.Size = new System.Drawing.Size(28, 20);
-			this.textMonth.TabIndex = 92;
+			this.textMonth.TabIndex = 1;
 			// 
 			// label30
 			// 
 			this.label30.Location = new System.Drawing.Point(89, 15);
 			this.label30.Name = "label30";
 			this.label30.Size = new System.Drawing.Size(56, 16);
-			this.label30.TabIndex = 190;
+			this.label30.TabIndex = 0;
 			this.label30.Text = "Month";
 			this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
@@ -182,7 +181,7 @@ namespace OpenDental {
 			this.checkSimplified.Location = new System.Drawing.Point(12, 10);
 			this.checkSimplified.Name = "checkSimplified";
 			this.checkSimplified.Size = new System.Drawing.Size(123, 17);
-			this.checkSimplified.TabIndex = 89;
+			this.checkSimplified.TabIndex = 0;
 			this.checkSimplified.Text = "Simplified View";
 			this.checkSimplified.UseVisualStyleBackColor = true;
 			this.checkSimplified.Click += new System.EventHandler(this.checkSimplified_Click);
@@ -207,7 +206,7 @@ namespace OpenDental {
 			this.panelSimple.Location = new System.Drawing.Point(-2, 26);
 			this.panelSimple.Name = "panelSimple";
 			this.panelSimple.Size = new System.Drawing.Size(804, 348);
-			this.panelSimple.TabIndex = 179;
+			this.panelSimple.TabIndex = 2;
 			// 
 			// textSealantAge
 			// 
@@ -216,7 +215,7 @@ namespace OpenDental {
 			this.textSealantAge.Name = "textSealantAge";
 			this.textSealantAge.ShowZero = false;
 			this.textSealantAge.Size = new System.Drawing.Size(39, 20);
-			this.textSealantAge.TabIndex = 6;
+			this.textSealantAge.TabIndex = 5;
 			// 
 			// label24
 			// 
@@ -243,7 +242,7 @@ namespace OpenDental {
 			this.textAnnualMaxFam.MinVal = -100000000D;
 			this.textAnnualMaxFam.Name = "textAnnualMaxFam";
 			this.textAnnualMaxFam.Size = new System.Drawing.Size(73, 20);
-			this.textAnnualMaxFam.TabIndex = 2;
+			this.textAnnualMaxFam.TabIndex = 1;
 			// 
 			// textDeductibleFam
 			// 
@@ -252,7 +251,7 @@ namespace OpenDental {
 			this.textDeductibleFam.MinVal = -100000000D;
 			this.textDeductibleFam.Name = "textDeductibleFam";
 			this.textDeductibleFam.Size = new System.Drawing.Size(73, 20);
-			this.textDeductibleFam.TabIndex = 4;
+			this.textDeductibleFam.TabIndex = 3;
 			// 
 			// label13
 			// 
@@ -270,7 +269,7 @@ namespace OpenDental {
 			this.textAnnualMax.MinVal = -100000000D;
 			this.textAnnualMax.Name = "textAnnualMax";
 			this.textAnnualMax.Size = new System.Drawing.Size(73, 20);
-			this.textAnnualMax.TabIndex = 1;
+			this.textAnnualMax.TabIndex = 0;
 			// 
 			// label1
 			// 
@@ -288,7 +287,7 @@ namespace OpenDental {
 			this.textFlo.Name = "textFlo";
 			this.textFlo.ShowZero = false;
 			this.textFlo.Size = new System.Drawing.Size(39, 20);
-			this.textFlo.TabIndex = 5;
+			this.textFlo.TabIndex = 4;
 			// 
 			// label2
 			// 
@@ -351,8 +350,7 @@ namespace OpenDental {
 			this.groupBox4.Location = new System.Drawing.Point(357, 3);
 			this.groupBox4.Name = "groupBox4";
 			this.groupBox4.Size = new System.Drawing.Size(439, 343);
-			this.groupBox4.TabIndex = 176;
-			this.groupBox4.TabStop = false;
+			this.groupBox4.TabIndex = 8;
 			this.groupBox4.Text = "Categories";
 			// 
 			// textWaitProsth
@@ -361,7 +359,7 @@ namespace OpenDental {
 			this.textWaitProsth.Name = "textWaitProsth";
 			this.textWaitProsth.ShowZero = false;
 			this.textWaitProsth.Size = new System.Drawing.Size(60, 20);
-			this.textWaitProsth.TabIndex = 76;
+			this.textWaitProsth.TabIndex = 22;
 			// 
 			// textWaitCrowns
 			// 
@@ -369,7 +367,7 @@ namespace OpenDental {
 			this.textWaitCrowns.Name = "textWaitCrowns";
 			this.textWaitCrowns.ShowZero = false;
 			this.textWaitCrowns.Size = new System.Drawing.Size(60, 20);
-			this.textWaitCrowns.TabIndex = 74;
+			this.textWaitCrowns.TabIndex = 20;
 			// 
 			// labelMonths
 			// 
@@ -387,7 +385,7 @@ namespace OpenDental {
 			this.textWaitOralSurg.Name = "textWaitOralSurg";
 			this.textWaitOralSurg.ShowZero = false;
 			this.textWaitOralSurg.Size = new System.Drawing.Size(60, 20);
-			this.textWaitOralSurg.TabIndex = 66;
+			this.textWaitOralSurg.TabIndex = 17;
 			// 
 			// textWaitPerio
 			// 
@@ -395,7 +393,7 @@ namespace OpenDental {
 			this.textWaitPerio.Name = "textWaitPerio";
 			this.textWaitPerio.ShowZero = false;
 			this.textWaitPerio.Size = new System.Drawing.Size(60, 20);
-			this.textWaitPerio.TabIndex = 64;
+			this.textWaitPerio.TabIndex = 15;
 			// 
 			// textWaitEndo
 			// 
@@ -403,7 +401,7 @@ namespace OpenDental {
 			this.textWaitEndo.Name = "textWaitEndo";
 			this.textWaitEndo.ShowZero = false;
 			this.textWaitEndo.Size = new System.Drawing.Size(60, 20);
-			this.textWaitEndo.TabIndex = 62;
+			this.textWaitEndo.TabIndex = 13;
 			// 
 			// textWaitRestorative
 			// 
@@ -411,7 +409,7 @@ namespace OpenDental {
 			this.textWaitRestorative.Name = "textWaitRestorative";
 			this.textWaitRestorative.ShowZero = false;
 			this.textWaitRestorative.Size = new System.Drawing.Size(60, 20);
-			this.textWaitRestorative.TabIndex = 60;
+			this.textWaitRestorative.TabIndex = 11;
 			// 
 			// labelWaitingPeriod
 			// 
@@ -430,7 +428,7 @@ namespace OpenDental {
 			this.textDeductDiagFam.MinVal = -100000000D;
 			this.textDeductDiagFam.Name = "textDeductDiagFam";
 			this.textDeductDiagFam.Size = new System.Drawing.Size(62, 20);
-			this.textDeductDiagFam.TabIndex = 42;
+			this.textDeductDiagFam.TabIndex = 2;
 			// 
 			// textDeductXrayFam
 			// 
@@ -439,7 +437,7 @@ namespace OpenDental {
 			this.textDeductXrayFam.MinVal = -100000000D;
 			this.textDeductXrayFam.Name = "textDeductXrayFam";
 			this.textDeductXrayFam.Size = new System.Drawing.Size(62, 20);
-			this.textDeductXrayFam.TabIndex = 44;
+			this.textDeductXrayFam.TabIndex = 5;
 			// 
 			// textDeductDiag
 			// 
@@ -448,7 +446,7 @@ namespace OpenDental {
 			this.textDeductDiag.MinVal = -100000000D;
 			this.textDeductDiag.Name = "textDeductDiag";
 			this.textDeductDiag.Size = new System.Drawing.Size(62, 20);
-			this.textDeductDiag.TabIndex = 36;
+			this.textDeductDiag.TabIndex = 1;
 			// 
 			// label3
 			// 
@@ -467,7 +465,7 @@ namespace OpenDental {
 			this.textDeductXray.MinVal = -100000000D;
 			this.textDeductXray.Name = "textDeductXray";
 			this.textDeductXray.Size = new System.Drawing.Size(62, 20);
-			this.textDeductXray.TabIndex = 38;
+			this.textDeductXray.TabIndex = 4;
 			// 
 			// label29
 			// 
@@ -506,7 +504,7 @@ namespace OpenDental {
 			this.textDeductPreventFam.MinVal = -100000000D;
 			this.textDeductPreventFam.Name = "textDeductPreventFam";
 			this.textDeductPreventFam.Size = new System.Drawing.Size(62, 20);
-			this.textDeductPreventFam.TabIndex = 46;
+			this.textDeductPreventFam.TabIndex = 8;
 			// 
 			// textXray
 			// 
@@ -515,7 +513,7 @@ namespace OpenDental {
 			this.textXray.Name = "textXray";
 			this.textXray.ShowZero = false;
 			this.textXray.Size = new System.Drawing.Size(60, 20);
-			this.textXray.TabIndex = 30;
+			this.textXray.TabIndex = 3;
 			this.textXray.Leave += new System.EventHandler(this.textXray_Leave);
 			// 
 			// label25
@@ -568,7 +566,7 @@ namespace OpenDental {
 			this.textStand4.Name = "textStand4";
 			this.textStand4.ShowZero = false;
 			this.textStand4.Size = new System.Drawing.Size(60, 20);
-			this.textStand4.TabIndex = 72;
+			this.textStand4.TabIndex = 23;
 			this.textStand4.TextChanged += new System.EventHandler(this.textStand4_TextChanged);
 			// 
 			// textAccident
@@ -578,7 +576,7 @@ namespace OpenDental {
 			this.textAccident.Name = "textAccident";
 			this.textAccident.ShowZero = false;
 			this.textAccident.Size = new System.Drawing.Size(60, 20);
-			this.textAccident.TabIndex = 80;
+			this.textAccident.TabIndex = 25;
 			// 
 			// label23
 			// 
@@ -596,7 +594,7 @@ namespace OpenDental {
 			this.textStand2.Name = "textStand2";
 			this.textStand2.ShowZero = false;
 			this.textStand2.Size = new System.Drawing.Size(60, 20);
-			this.textStand2.TabIndex = 56;
+			this.textStand2.TabIndex = 18;
 			this.textStand2.TextChanged += new System.EventHandler(this.textStand2_TextChanged);
 			// 
 			// textMaxProsth
@@ -606,7 +604,7 @@ namespace OpenDental {
 			this.textMaxProsth.Name = "textMaxProsth";
 			this.textMaxProsth.ShowZero = false;
 			this.textMaxProsth.Size = new System.Drawing.Size(60, 20);
-			this.textMaxProsth.TabIndex = 78;
+			this.textMaxProsth.TabIndex = 24;
 			// 
 			// textDeductPrevent
 			// 
@@ -615,7 +613,7 @@ namespace OpenDental {
 			this.textDeductPrevent.MinVal = -100000000D;
 			this.textDeductPrevent.Name = "textDeductPrevent";
 			this.textDeductPrevent.Size = new System.Drawing.Size(62, 20);
-			this.textDeductPrevent.TabIndex = 40;
+			this.textDeductPrevent.TabIndex = 7;
 			// 
 			// label22
 			// 
@@ -633,7 +631,7 @@ namespace OpenDental {
 			this.textStand1.Name = "textStand1";
 			this.textStand1.ShowZero = false;
 			this.textStand1.Size = new System.Drawing.Size(60, 20);
-			this.textStand1.TabIndex = 34;
+			this.textStand1.TabIndex = 9;
 			this.textStand1.TextChanged += new System.EventHandler(this.textStand1_TextChanged);
 			// 
 			// textProsth
@@ -643,7 +641,7 @@ namespace OpenDental {
 			this.textProsth.Name = "textProsth";
 			this.textProsth.ShowZero = false;
 			this.textProsth.Size = new System.Drawing.Size(60, 20);
-			this.textProsth.TabIndex = 70;
+			this.textProsth.TabIndex = 21;
 			this.textProsth.Leave += new System.EventHandler(this.textProsth_Leave);
 			// 
 			// label21
@@ -662,7 +660,7 @@ namespace OpenDental {
 			this.textOralSurg.Name = "textOralSurg";
 			this.textOralSurg.ShowZero = false;
 			this.textOralSurg.Size = new System.Drawing.Size(60, 20);
-			this.textOralSurg.TabIndex = 54;
+			this.textOralSurg.TabIndex = 16;
 			this.textOralSurg.Leave += new System.EventHandler(this.textOralSurg_Leave);
 			// 
 			// label20
@@ -681,7 +679,7 @@ namespace OpenDental {
 			this.textPerio.Name = "textPerio";
 			this.textPerio.ShowZero = false;
 			this.textPerio.Size = new System.Drawing.Size(60, 20);
-			this.textPerio.TabIndex = 52;
+			this.textPerio.TabIndex = 14;
 			this.textPerio.Leave += new System.EventHandler(this.textPerio_Leave);
 			// 
 			// label19
@@ -700,7 +698,7 @@ namespace OpenDental {
 			this.textEndo.Name = "textEndo";
 			this.textEndo.ShowZero = false;
 			this.textEndo.Size = new System.Drawing.Size(60, 20);
-			this.textEndo.TabIndex = 50;
+			this.textEndo.TabIndex = 12;
 			this.textEndo.Leave += new System.EventHandler(this.textEndo_Leave);
 			// 
 			// label18
@@ -719,7 +717,7 @@ namespace OpenDental {
 			this.textRoutinePrev.Name = "textRoutinePrev";
 			this.textRoutinePrev.ShowZero = false;
 			this.textRoutinePrev.Size = new System.Drawing.Size(60, 20);
-			this.textRoutinePrev.TabIndex = 32;
+			this.textRoutinePrev.TabIndex = 6;
 			this.textRoutinePrev.Leave += new System.EventHandler(this.textRoutinePrev_Leave);
 			// 
 			// label9
@@ -738,7 +736,7 @@ namespace OpenDental {
 			this.textCrowns.Name = "textCrowns";
 			this.textCrowns.ShowZero = false;
 			this.textCrowns.Size = new System.Drawing.Size(60, 20);
-			this.textCrowns.TabIndex = 68;
+			this.textCrowns.TabIndex = 19;
 			this.textCrowns.Leave += new System.EventHandler(this.textCrowns_Leave);
 			// 
 			// label15
@@ -757,7 +755,7 @@ namespace OpenDental {
 			this.textRestorative.Name = "textRestorative";
 			this.textRestorative.ShowZero = false;
 			this.textRestorative.Size = new System.Drawing.Size(60, 20);
-			this.textRestorative.TabIndex = 48;
+			this.textRestorative.TabIndex = 10;
 			this.textRestorative.Leave += new System.EventHandler(this.textRestorative_Leave);
 			// 
 			// label16
@@ -776,7 +774,7 @@ namespace OpenDental {
 			this.textDiagnostic.Name = "textDiagnostic";
 			this.textDiagnostic.ShowZero = false;
 			this.textDiagnostic.Size = new System.Drawing.Size(60, 20);
-			this.textDiagnostic.TabIndex = 28;
+			this.textDiagnostic.TabIndex = 0;
 			this.textDiagnostic.Leave += new System.EventHandler(this.textDiagnostic_Leave);
 			// 
 			// label17
@@ -795,7 +793,7 @@ namespace OpenDental {
 			this.textDeductible.MinVal = -100000000D;
 			this.textDeductible.Name = "textDeductible";
 			this.textDeductible.Size = new System.Drawing.Size(73, 20);
-			this.textDeductible.TabIndex = 3;
+			this.textDeductible.TabIndex = 2;
 			// 
 			// groupBox3
 			// 
@@ -808,8 +806,7 @@ namespace OpenDental {
 			this.groupBox3.Location = new System.Drawing.Point(67, 249);
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(282, 73);
-			this.groupBox3.TabIndex = 175;
-			this.groupBox3.TabStop = false;
+			this.groupBox3.TabIndex = 7;
 			this.groupBox3.Text = "Ortho";
 			// 
 			// textOrthoAge
@@ -819,7 +816,7 @@ namespace OpenDental {
 			this.textOrthoAge.Name = "textOrthoAge";
 			this.textOrthoAge.ShowZero = false;
 			this.textOrthoAge.Size = new System.Drawing.Size(39, 20);
-			this.textOrthoAge.TabIndex = 26;
+			this.textOrthoAge.TabIndex = 2;
 			// 
 			// labelOrthoThroughAge
 			// 
@@ -837,7 +834,7 @@ namespace OpenDental {
 			this.textOrthoPercent.Name = "textOrthoPercent";
 			this.textOrthoPercent.ShowZero = false;
 			this.textOrthoPercent.Size = new System.Drawing.Size(60, 20);
-			this.textOrthoPercent.TabIndex = 24;
+			this.textOrthoPercent.TabIndex = 1;
 			// 
 			// label11
 			// 
@@ -855,7 +852,7 @@ namespace OpenDental {
 			this.textOrthoMax.MinVal = -100000000D;
 			this.textOrthoMax.Name = "textOrthoMax";
 			this.textOrthoMax.Size = new System.Drawing.Size(73, 20);
-			this.textOrthoMax.TabIndex = 22;
+			this.textOrthoMax.TabIndex = 0;
 			// 
 			// label10
 			// 
@@ -882,8 +879,7 @@ namespace OpenDental {
 			this.groupBox1.Location = new System.Drawing.Point(67, 135);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(282, 115);
-			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
+			this.groupBox1.TabIndex = 6;
 			this.groupBox1.Text = "Frequencies";
 			// 
 			// butMoreFrequencies
@@ -891,7 +887,7 @@ namespace OpenDental {
 			this.butMoreFrequencies.Location = new System.Drawing.Point(142, 88);
 			this.butMoreFrequencies.Name = "butMoreFrequencies";
 			this.butMoreFrequencies.Size = new System.Drawing.Size(65, 24);
-			this.butMoreFrequencies.TabIndex = 20;
+			this.butMoreFrequencies.TabIndex = 6;
 			this.butMoreFrequencies.Text = "&More";
 			this.butMoreFrequencies.Click += new System.EventHandler(this.butMoreFrequencies_Click);
 			// 
@@ -905,7 +901,7 @@ namespace OpenDental {
 			this.comboExams.Location = new System.Drawing.Point(142, 64);
 			this.comboExams.Name = "comboExams";
 			this.comboExams.Size = new System.Drawing.Size(136, 21);
-			this.comboExams.TabIndex = 18;
+			this.comboExams.TabIndex = 5;
 			// 
 			// textExams
 			// 
@@ -913,7 +909,7 @@ namespace OpenDental {
 			this.textExams.Name = "textExams";
 			this.textExams.ShowZero = false;
 			this.textExams.Size = new System.Drawing.Size(39, 20);
-			this.textExams.TabIndex = 16;
+			this.textExams.TabIndex = 4;
 			// 
 			// label8
 			// 
@@ -934,7 +930,7 @@ namespace OpenDental {
 			this.comboPano.Location = new System.Drawing.Point(142, 43);
 			this.comboPano.Name = "comboPano";
 			this.comboPano.Size = new System.Drawing.Size(136, 21);
-			this.comboPano.TabIndex = 14;
+			this.comboPano.TabIndex = 3;
 			// 
 			// textPano
 			// 
@@ -942,7 +938,7 @@ namespace OpenDental {
 			this.textPano.Name = "textPano";
 			this.textPano.ShowZero = false;
 			this.textPano.Size = new System.Drawing.Size(39, 20);
-			this.textPano.TabIndex = 12;
+			this.textPano.TabIndex = 2;
 			// 
 			// label7
 			// 
@@ -963,7 +959,7 @@ namespace OpenDental {
 			this.comboBW.Location = new System.Drawing.Point(142, 22);
 			this.comboBW.Name = "comboBW";
 			this.comboBW.Size = new System.Drawing.Size(136, 21);
-			this.comboBW.TabIndex = 10;
+			this.comboBW.TabIndex = 1;
 			// 
 			// label6
 			// 
@@ -980,7 +976,7 @@ namespace OpenDental {
 			this.textBW.Name = "textBW";
 			this.textBW.ShowZero = false;
 			this.textBW.Size = new System.Drawing.Size(39, 20);
-			this.textBW.TabIndex = 8;
+			this.textBW.TabIndex = 0;
 			// 
 			// label5
 			// 
@@ -1011,7 +1007,7 @@ namespace OpenDental {
 			this.textSubscNote.QuickPasteType = OpenDentBusiness.QuickPasteType.InsPlan;
 			this.textSubscNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textSubscNote.Size = new System.Drawing.Size(485, 98);
-			this.textSubscNote.TabIndex = 100;
+			this.textSubscNote.TabIndex = 6;
 			this.textSubscNote.Text = "1 - Benefits\n2\n3 lines will show here in 46 vert.\n4 lines will show here in 59 ve" +
     "rt.\n5 lines in 72 vert\n6 lines in 85 vert\n7 lines in 98";
 			// 
@@ -1030,7 +1026,7 @@ namespace OpenDental {
 			this.gridBenefits.Name = "gridBenefits";
 			this.gridBenefits.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
 			this.gridBenefits.Size = new System.Drawing.Size(574, 180);
-			this.gridBenefits.TabIndex = 37;
+			this.gridBenefits.TabIndex = 3;
 			this.gridBenefits.Title = "Other Benefits";
 			this.gridBenefits.TranslationName = "TableInsBenefits";
 			this.gridBenefits.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridBenefits_CellDoubleClick);
@@ -1042,7 +1038,7 @@ namespace OpenDental {
 			this.butDelete.Location = new System.Drawing.Point(110, 582);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(78, 24);
-			this.butDelete.TabIndex = 84;
+			this.butDelete.TabIndex = 5;
 			this.butDelete.Text = "Delete";
 			this.butDelete.Click += new System.EventHandler(this.butClear_Click);
 			// 
@@ -1053,7 +1049,7 @@ namespace OpenDental {
 			this.butAdd.Location = new System.Drawing.Point(23, 582);
 			this.butAdd.Name = "butAdd";
 			this.butAdd.Size = new System.Drawing.Size(78, 24);
-			this.butAdd.TabIndex = 82;
+			this.butAdd.TabIndex = 4;
 			this.butAdd.Text = "Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
@@ -1063,7 +1059,7 @@ namespace OpenDental {
 			this.butOK.Location = new System.Drawing.Point(719, 660);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
-			this.butOK.TabIndex = 86;
+			this.butOK.TabIndex = 7;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
@@ -1073,7 +1069,7 @@ namespace OpenDental {
 			this.butCancel.Location = new System.Drawing.Point(719, 690);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
-			this.butCancel.TabIndex = 88;
+			this.butCancel.TabIndex = 8;
 			this.butCancel.Text = "&Cancel";
 			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 

@@ -562,6 +562,9 @@ namespace OpenDental
 			formImageFloat.ZoomSliderValue=zoomSlider.Value;
 			if(reuseExistingForm){
 				formImageFloat.SelectTreeNode(nodeTypeAndKey,localPathImportedCloud);
+				if(formImageFloat.IsDisposed){
+					return;
+				}
 				formImageFloat.Select();
 			}
 			else{

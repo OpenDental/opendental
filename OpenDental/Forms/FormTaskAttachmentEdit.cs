@@ -94,7 +94,13 @@ namespace OpenDental {
 				return;
 			}
 			if(Documents.DocExists(TaskAttachmentCur.DocNum)) {
-				Documents.OpenDoc(TaskAttachmentCur.DocNum);
+				try {
+					Documents.OpenDoc(TaskAttachmentCur.DocNum);
+				}
+				catch(Exception ex) {
+					string error=Lan.g(this,"Error occurred while attempting to open document. Verify a default application has been selected to open files of type: ");
+					FriendlyException.Show(error+Path.GetExtension(_document.FileName),ex);
+				}
 				return;
 			}
 			MsgBox.Show(this,"Document could not be found.");

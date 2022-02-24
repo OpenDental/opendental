@@ -13,10 +13,12 @@ namespace OpenDental {
 
 		private ODThread _odThread=null;
 		private X834 _x834;
-		private List<Patient> _listPatients=null;
+		private List<PatientFor834Import> _listPatientLimiteds=null;
 		private int _patNumCol;
 		private int _sortedByColumnIdx;
 		private bool _isSortAscending;
+		//This is used for filtering out what we are considering "active" vs "inactive" patients. 
+		private List<PatientStatus> _listPatientStatuses = new List<PatientStatus>() {PatientStatus.Patient,PatientStatus.Inactive,PatientStatus.NonPatient,PatientStatus.Prospective };
 
 		public FormEtrans834Preview(X834 x834) {
 			InitializeComponent();
@@ -89,9 +91,9 @@ namespace OpenDental {
 			gridInsPlans.ListGridRows.Clear();
 			gridInsPlans.EndUpdate();
 			Application.DoEvents();
-			if(_listPatients==null) {
-				_listPatients=Patients.GetAllPatients();//Testing this on an average sized database took about 1 second to run on a dev machine.
-				_listPatients.Sort();
+			if(_listPatientLimiteds==null) {
+				_listPatientLimiteds=Patients.GetAllPatsFor834Imports();//Testing this on an average sized database took about 1 second to run on a dev machine.
+				_listPatientLimiteds.Sort();
 			}
 			int rowCount=0;
 			for(int i=0;i<_x834.ListTransactions.Count;i++) {
@@ -154,7 +156,8 @@ namespace OpenDental {
 				row.Cells.Add("");//Birthdate
 			}
 			row.Cells.Add(member.Pat.SSN);//SSN
-			List <Patient> listPatientMatches=Patients.GetPatientsByNameAndBirthday(member.Pat,_listPatients);
+			List<PatientFor834Import> listPatientMatches=PatientFor834Import.GetPatientLimitedsByNameAndBirthday(member.Pat,_listPatientLimiteds);
+			PatientFor834Import.FilterMatchingList(ref listPatientMatches);
 			if(member.Pat.PatNum==0 && listPatientMatches.Count==1) {
 				member.Pat.PatNum=listPatientMatches[0].PatNum;
 			}
@@ -184,6 +187,24 @@ namespace OpenDental {
 			row.Cells.Add(member.GroupNum);//GroupNum
 			row.Cells.Add(member.Tran.Payer.Name);//Payer
 		}
+
+		//filters list of potential matches. First checks to see if we have any patient's with a status of Patient, Non-Patient, Inactive, or Prospective.
+		//If there are no patients with those status's, don't modify the list. 
+		//If there is at least one patient in that status, filter out Archived and Deceased patients from the list/ 
+		//We want to make sure that we still show duplicates if they are both archived and/or deceased
+		private void FilterMatchingList(ref List<Patient> listPatientMatches) {
+			if(listPatientMatches.Where(x => _listPatientStatuses.Contains(x.PatStatus)).ToList().Count == 0) {
+				return;
+			}
+			if(listPatientMatches.Count > 1) {
+				listPatientMatches = listPatientMatches
+				.Where(x =>
+					(!(x.PatStatus == PatientStatus.Archived
+					|| x.PatStatus == PatientStatus.Deceased))
+				).ToList();
+			}
+		}
+
 
 		private void gridInsPlans_CellDoubleClick(object sender,UI.ODGridClickEventArgs e) {
 			Hx834_Member member=null;
@@ -244,7 +265,7 @@ namespace OpenDental {
 			int createdPatsCount,updatedPatsCount,skippedPatsCount,createdCarrierCount,createdInsPlanCount,updatedInsPlanCount,createdInsSubCount,
 				updatedInsSubCount,createdPatPlanCount,droppedPatPlanCount,updatedPatPlanCount,createdEmployerCount;
 			StringBuilder sbErrorMessages;
-			EtransL.ImportInsurancePlans(_x834,_listPatients,checkIsPatientCreate.Checked,checkIsEmployerCreate.Checked,checkDropExistingIns.Checked,out createdPatsCount,
+			EtransL.ImportInsurancePlansUsingPatientLimited(_x834,_listPatientLimiteds,checkIsPatientCreate.Checked,checkIsEmployerCreate.Checked,checkDropExistingIns.Checked,out createdPatsCount,
 				out updatedPatsCount,out skippedPatsCount,out createdCarrierCount,out createdInsPlanCount,out updatedInsPlanCount,out createdInsSubCount,
 				out updatedInsSubCount,out createdPatPlanCount,out droppedPatPlanCount,out updatedPatPlanCount,out createdEmployerCount,out sbErrorMessages,(rowIndex,pat) => {
 				ShowStatus("Progress "+(rowIndex).ToString().PadLeft(6)+"/"+gridInsPlans.ListGridRows.Count.ToString().PadLeft(6)

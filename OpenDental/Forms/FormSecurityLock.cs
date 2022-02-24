@@ -4,6 +4,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using OpenDentBusiness;
+using System.Text;
 
 namespace OpenDental{
 	/// <summary>
@@ -67,11 +68,19 @@ namespace OpenDental{
 				}
 			}
 			DateTime date=PIn.Date(textDate.Text);
+			//Get currently stored values for audit log.
+			string textDateOld=PrefC.GetDate(PrefName.SecurityLockDate).ToShortDateString();
+			string textDaysOld=PrefC.GetInt(PrefName.SecurityLockDays).ToString();
 			if(Prefs.UpdateString(PrefName.SecurityLockDate,POut.Date(date,false))
 				| Prefs.UpdateInt(PrefName.SecurityLockDays,days)
 				| Prefs.UpdateBool(PrefName.SecurityLockIncludesAdmin,checkAdmin.Checked)  )
 			{
 				DataValid.SetInvalid(InvalidType.Prefs);
+				StringBuilder log=new StringBuilder();
+				log.AppendLine("Lock dates:");
+				log.AppendLine($"Global date lock changed from '{textDateOld}' to '{textDate.Text}'");
+				log.AppendLine($"Global days lock changed from '{textDaysOld}' to '{textDays.Text}'");
+				SecurityLogs.MakeLogEntry(Permissions.SecurityGlobal,0,log.ToString());
 			}
 			DialogResult=DialogResult.OK;
 		}

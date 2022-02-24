@@ -1997,6 +1997,26 @@ namespace OpenDentBusiness {
 			return retVal;
 		}
 
+		///<summary>Gets only PatNum, FName, LName, Birthdate, and PatStatus for use in 834 matching to reduce memory consumption compared to getting the complete patient table.</summary>
+		public static List<PatientFor834Import> GetAllPatsFor834Imports() {
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				return Meth.GetObject<List<PatientFor834Import>>(MethodBase.GetCurrentMethod());
+			}
+			List<PatientFor834Import> retVal=new List<PatientFor834Import>();
+			string command= "SELECT PatNum,LName,FName,BirthDate,PatStatus FROM patient";
+			DataTable table=Db.GetTable(command);
+			foreach(DataRow row in table.Rows) {
+				PatientFor834Import patLim=new PatientFor834Import();
+				patLim.PatNum     = PIn.Long(row["PatNum"].ToString());
+				patLim.LName      = PIn.String(row["LName"].ToString());
+				patLim.FName      = PIn.String(row["FName"].ToString());
+				patLim.Birthdate  = PIn.Date(row["Birthdate"].ToString());
+				patLim.PatStatus  = PIn.Enum<PatientStatus>(row["PatStatus"].ToString());
+				retVal.Add(patLim);
+			}
+			return retVal;
+		}
+
 		///<summary>Gets nine of the most useful fields from the db for the given PatNums, with option to include patient.ClinicNum.</summary>
 		public static List<Patient> GetLimForPats(List<long> listPatNums,bool doIncludeClinicNum=false) {
 			if(listPatNums==null || listPatNums.Count < 1) {
@@ -5339,4 +5359,95 @@ namespace OpenDentBusiness {
 		public Patient PatientCur;
 		public DateTime DateTimeServer;
 	}
+
+	public class PatientFor834Import:IComparable {
+		public long PatNum;
+		public string FName;
+		public string LName;
+		public DateTime Birthdate;
+		public PatientStatus PatStatus;
+		//This is used for filtering out what we are considering "active" vs "inactive" patients. 
+		private static List<PatientStatus> _listPatientStatuses = new List<PatientStatus>() {PatientStatus.Patient,PatientStatus.Inactive,PatientStatus.NonPatient,PatientStatus.Prospective };
+
+		public static explicit operator PatientFor834Import(Patient patient) {
+			PatientFor834Import patientLimited = new PatientFor834Import();
+			patientLimited.PatNum = patient.PatNum;
+			patientLimited.FName = patient.FName;
+			patientLimited.LName = patient.LName;
+			patientLimited.Birthdate = patient.Birthdate;
+			patientLimited.PatStatus = patient.PatStatus;
+			return patientLimited;
+		}
+
+		///<summary>Useful for sorting and binary searching.  The X12 834 implementation uses this for binary searching to improve efficiency.
+		///If this function is changed in the future, it will heavily impact our X12 834 implementation.  Be cautious.  In the end, this function
+		///will probably not need to change anyway, since it will only be used for comparing patients when the PatNums are not known.</summary>
+		public int CompareTo(object patOther) {
+			PatientFor834Import p1=this;
+			PatientFor834Import p2=(PatientFor834Import)patOther;
+			string lname1=(p1.LName==null)?"":p1.LName;
+			string lname2=(p2.LName==null)?"":p2.LName;
+			int comp=lname1.Trim().ToLower().CompareTo(lname2.Trim().ToLower());
+			if(comp!=0) {
+				return comp;
+			}
+			string fname1=(p1.FName==null)?"":p1.FName;
+			string fname2=(p2.FName==null)?"":p2.FName;
+			comp=fname1.Trim().ToLower().CompareTo(fname2.Trim().ToLower());
+			if(comp!=0) {
+				return comp;
+			}
+			return p1.Birthdate.Date.CompareTo(p2.Birthdate.Date);
+		}
+
+		///<summary>Returns a list of all patients within listSortedPatients which match the given pat.LName, pat.FName and pat.Birthdate.
+		///Ignores case and leading/trailing space.  The listSortedPatients MUST be sorted by LName, then FName, then Birthdate or else the result will be
+		///wrong.  Call listSortedPatients.Sort() before calling this function.  This function uses a binary search to much more efficiently locate
+		///matches than a linear search would be able to.</summary>
+		public static List<PatientFor834Import> GetPatientLimitedsByNameAndBirthday(Patient patient,List<PatientFor834Import> listSortedPatients) {
+			PatientFor834Import pat = (PatientFor834Import)patient;
+			if(pat.LName.Trim().ToLower().Length==0 || pat.FName.Trim().ToLower().Length==0 || pat.Birthdate.Year < 1880) {
+				//We do not allow a match unless Last Name, First Name, AND birthdate are specified.  Otherwise at match could be meaningless.
+				return new List<PatientFor834Import>();
+			}
+			int patIdx=listSortedPatients.BinarySearch(pat);//If there are multiple matches, then this will only return one of the indexes randomly.
+			if(patIdx < 0) {
+				//No matches found.
+				return new List<PatientFor834Import>();
+			}
+			//The matched indicies will all be consecutive and will include the returned index from the binary search, because the list is sorted.
+			int beginIdx=patIdx;
+			for(int i = patIdx-1;i >= 0 && pat.CompareTo(listSortedPatients[i])==0;i--) {
+				beginIdx=i;
+			}
+			int endIdx=patIdx;
+			for(int i = patIdx+1;i < listSortedPatients.Count && pat.CompareTo(listSortedPatients[i])==0;i++) {
+				endIdx=i;
+			}
+			List <PatientFor834Import> listPatientMatches=new List<PatientFor834Import>();
+			for(int i = beginIdx;i<=endIdx;i++) {
+				listPatientMatches.Add(listSortedPatients[i]);
+			}
+			return listPatientMatches;
+		}
+
+		//filters list of potential matches. First checks to see if we have any patient's with a status of Patient, Non-Patient, Inactive, or Prospective.
+		//If there are no patients with those status's, don't modify the list. 
+		//If there is at least one patient in that status, filter out Archived and Deceased patients from the list/ 
+		//We want to make sure that we still show duplicates if they are both archived and/or deceased
+		public static void FilterMatchingList(ref List<PatientFor834Import> listPatientMatches) {
+			if(listPatientMatches.Where(x => _listPatientStatuses.Contains(x.PatStatus)).ToList().Count == 0) {
+				return;
+			}
+			if(listPatientMatches.Count > 1) {
+				listPatientMatches = listPatientMatches
+				.Where(x =>
+					(!(x.PatStatus == PatientStatus.Archived
+					|| x.PatStatus == PatientStatus.Deceased))
+				).ToList();
+			}
+		}
+	}
+
+
 }

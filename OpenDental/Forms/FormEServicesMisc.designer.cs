@@ -141,7 +141,6 @@ namespace OpenDental{
 			this.groupDateFormat.Name = "groupDateFormat";
 			this.groupDateFormat.Size = new System.Drawing.Size(851, 160);
 			this.groupDateFormat.TabIndex = 251;
-			this.groupDateFormat.TabStop = false;
 			this.groupDateFormat.Text = "Date Format";
 			// 
 			// label30
@@ -171,6 +170,7 @@ namespace OpenDental{
 			this.textDateCustom.Size = new System.Drawing.Size(123, 20);
 			this.textDateCustom.TabIndex = 313;
 			this.textDateCustom.TextChanged += new System.EventHandler(this.textDateCustom_TextChanged);
+			this.textDateCustom.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textDateCustom_KeyPress);
 			// 
 			// label34
 			// 
@@ -234,7 +234,6 @@ namespace OpenDental{
 			this.groupNotUsed.Name = "groupNotUsed";
 			this.groupNotUsed.Size = new System.Drawing.Size(851, 58);
 			this.groupNotUsed.TabIndex = 250;
-			this.groupNotUsed.TabStop = false;
 			this.groupNotUsed.Text = "No Longer Used";
 			this.groupNotUsed.Visible = false;
 			// 
@@ -259,7 +258,6 @@ namespace OpenDental{
 			this.groupBox8.Name = "groupBox8";
 			this.groupBox8.Size = new System.Drawing.Size(851, 81);
 			this.groupBox8.TabIndex = 76;
-			this.groupBox8.TabStop = false;
 			this.groupBox8.Text = "Automated eServices Schedule";
 			// 
 			// dateRunEnd
@@ -325,7 +323,6 @@ namespace OpenDental{
 			// 
 			// FormEServicesMisc
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(876, 371);
 			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.groupDateFormat);
@@ -333,7 +330,6 @@ namespace OpenDental{
 			this.Controls.Add(this.groupBox8);
 			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.MinimumSize = new System.Drawing.Size(0, 0);
 			this.Name = "FormEServicesMisc";
 			this.Text = "eServices Misc";
 			this.Load += new System.EventHandler(this.FormEServicesMisc_Load);

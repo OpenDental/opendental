@@ -510,7 +510,7 @@ namespace OpenDentBusiness{
 				//case Permissions.InsuranceCarrierCombine:
 				case Permissions.PopupEdit://Popups are archived, so they don't need to show in the audit trail.
 				case Permissions.InsPlanPickListExisting:
-				//case Permissions.GroupNoteEditSigned:
+				case Permissions.GroupNoteEditSigned:
 				case Permissions.WikiAdmin:
 				//case Permissions.PayPlanEdit:
 				//case Permissions.ClaimEdit:
@@ -576,6 +576,7 @@ namespace OpenDentBusiness{
 				//case Permissions.DefEdit:
 				//case Permissions.UpdateInstall;
 				case Permissions.AdjustmentTypeDeny:
+				//case Permissions.SecurityGlobal:
 					return false;//Does not have audit Trail if uncommented.
 			}
 			if(!PrefC.IsODHQ && ListTools.In(permType,

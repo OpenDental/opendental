@@ -704,6 +704,9 @@ namespace OpenDentBusiness{
 		///that is stored in grouppermission.FKey. Pattern approved by Jordan.</summary>
 		[Description("Adjustment Type Deny")]
 		AdjustmentTypeDeny,
+		///<summary>226 - Logs changes to global lock date. For audit trails only.</summary>
+		[Description("Security Global")]
+		SecurityGlobal,
 	}
 
 	
