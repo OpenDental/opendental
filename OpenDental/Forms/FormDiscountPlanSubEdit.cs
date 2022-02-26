@@ -84,15 +84,13 @@ namespace OpenDental {
 			if(!MsgBox.Show(MsgBoxButtons.OKCancel,"Drop Discount Plan?")) {
 				return;
 			}
-			if(MsgBox.Show(MsgBoxButtons.YesNo,Lan.g("Commlogs","Save Subscriber Note to Commlog?")+"\r\n\r\n"
-				+Commlogs.GetCommlogMessageText(DiscountPlanSubCur.SubNote))) 
-			{
+			if(!string.IsNullOrWhiteSpace(textSubNote.Text) && MsgBox.Show(MsgBoxButtons.YesNo,Lan.g("Commlogs","Save Subscriber Note to Commlog?")+"\r\n\r\n")) {
 				Commlog commlog=new Commlog();
 				commlog.PatNum=DiscountPlanSubCur.PatNum;
 				commlog.CommDateTime=DateTime.Now;
 				commlog.CommType=Commlogs.GetTypeAuto(CommItemTypeAuto.MISC);
 				commlog.Note=Lans.g("Commlogs","Subscriber note from dropped discount plan, saved copy")+": ";
-				commlog.Note+=DiscountPlanSubCur.SubNote;
+				commlog.Note+=textSubNote.Text;
 				commlog.UserNum=Security.CurUser.UserNum;
 				Commlogs.Insert(commlog);
 			}

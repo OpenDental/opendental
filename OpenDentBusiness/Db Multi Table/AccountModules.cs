@@ -3436,7 +3436,10 @@ namespace OpenDentBusiness {
 						ClaimCur.PatRelat2=Relat.Self;
 					}
 					else {
-						InsFilingCode insFilingCode=InsFilingCodes.GetOne(insPlanSec.FilingCode);
+						InsFilingCode insFilingCode=null;
+						if(insPlanSec!=null){
+							insFilingCode=InsFilingCodes.GetOne(insPlanSec.FilingCode);
+						}
 						if(insFilingCode!=null && insFilingCode.ExcludeOtherCoverageOnPriClaims) {
 							ClaimCur.PlanNum2=0;//Do not populate secondary insurance as filing code of secondary insurances has been set to exclude
 							ClaimCur.InsSubNum2=0;

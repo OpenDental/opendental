@@ -81,6 +81,12 @@ namespace OpenDental {
 		private List<TaskAttachment> _listTaskAttachments=new List<TaskAttachment>();
 		///<summary></summary>
 		public LayoutManagerForms LayoutManager=new LayoutManagerForms();
+		///<summary>Makes an additional reference pointer to _listTaskLists when at the trunk of the Main or Reminder tab and manual refresh is enabled.</summary>
+		private List<TaskList> _listTaskListsCopy=new List<TaskList>();
+		///<summary>Makes an additional reference pointer to _listTasks when at the trunk of the Main or Reminder tab and manual refresh is enabled.</summary>
+		private List<Task> _listTasksCopy=new List<Task>();
+		///<summary></summary>
+		private string _previousTabName;
 
 		///<summary>Creates a thread safe copy of _listSubscribedTaskListNums.</summary>
 		private static List<long> ListSubscribedTaskListNums {
@@ -109,9 +115,9 @@ namespace OpenDental {
 
 		private void UserControlTasks_Resize(object sender,EventArgs e) {
 			//ToolBarMain is docked, h=25
-			LayoutManager.Move(taskListFilterGroupBox,new Rectangle(2,LayoutManager.Scale(27),LayoutManager.Scale(200),LayoutManager.Scale(45)));
-			LayoutManager.Move(tabContr,new Rectangle(0,LayoutManager.Scale(73),Width,LayoutManager.Scale(23)));
-			LayoutManager.Move(monthCalendar,new Rectangle(0,LayoutManager.Scale(98),LayoutManager.Scale(227),LayoutManager.Scale(162)));
+			//LayoutManager.Move(taskListFilterGroupBox,new Rectangle(2,LayoutManager.Scale(27),LayoutManager.Scale(200),LayoutManager.Scale(45)));
+			LayoutManager.Move(tabContr,new Rectangle(0,LayoutManager.Scale(49),Width,LayoutManager.Scale(23)));
+			LayoutManager.Move(monthCalendar,new Rectangle(0,LayoutManager.Scale(73),LayoutManager.Scale(227),LayoutManager.Scale(162)));
 			LayoutManager.MoveWidth(tree,Width);
 			LayoutManager.MoveWidth(gridMain,Width);
 			FillGrid(new List<Signalod>());//Sets height.  Does not run query.
@@ -198,6 +204,12 @@ namespace OpenDental {
 				//	TreeHistory.Add(((TaskList)Tasks.LastOpenList[i]).Copy());
 				//}
 				monthCalendar.SelectionStart=Tasks.LastOpenDate;
+			}
+			if(PrefC.GetBool(PrefName.EnterpriseManualRefreshMainTaskLists)) {
+				butRefresh.Visible=true;
+			}
+			else {
+				butRefresh.Visible=false;
 			}
 			if(PrefC.IsODHQ) {
 				menuNavJob.Visible=true;
@@ -763,7 +775,7 @@ namespace OpenDental {
 		///a task in _listTasks, the task is already refreshed in memory and only the one task is refreshed from the database.
 		///Otherwise, a full refresh will only be run when certain types of signals corresonding to the current selected tabs are found in listSignals.
 		///</summary>
-		private void FillGrid(List<Signalod> listSignals=null){
+		private void FillGrid(List<Signalod> listSignals=null,bool isManualRefresh=false){
 			if(Security.CurUser==null 
 				|| (RemotingClient.RemotingRole==RemotingRole.ClientWeb && !Security.IsUserLoggedIn)) 
 			{
@@ -787,7 +799,7 @@ namespace OpenDental {
 			}
 			LayoutManager.MoveHeight(gridMain,ClientSize.Height-gridMain.Top);
 			if(listSignals==null) {//Full refresh.
-				RefreshMainLists(parent,date);
+				RefreshMainLists(parent,date,isManualRefresh: isManualRefresh);
 			}
 			else {
 				//Remove any Task related signals that originated from this instance of OpenDental.
@@ -795,25 +807,25 @@ namespace OpenDental {
 					{ InvalidType.Task,InvalidType.TaskList,InvalidType.TaskAuthor,InvalidType.TaskPatient })));
 				//User is observing a task list for which a TaskList signal is specified, or TaskList from signal is a sublist of current view.
 				if(listSignals.Exists(x => x.IType==InvalidType.TaskList && (x.FKey==parent || _listTaskLists.Exists(y => y.TaskListNum==x.FKey)))) {
-					RefreshMainLists(parent,date);
+					RefreshMainLists(parent,date,isManualRefresh: isManualRefresh);
 				}
 				//User is observing the New Tasks tab and a TaskList signal is received for a TaskList the user is subscribed to.
 				else if(tabContr.SelectedTab==tabNew && listSignals.Exists(x => x.IType==InvalidType.TaskList && ListSubscribedTaskListNums.Contains(x.FKey))) {
-					RefreshMainLists(parent,date);
+					RefreshMainLists(parent,date,isManualRefresh: isManualRefresh);
 				}
 				//User is observing the Open Tasks tab and a TaskAuthor signal is received with the current user specified in the FKey.
 				else if(tabContr.SelectedTab==tabOpenTickets && listSignals.Exists(x => x.IType==InvalidType.TaskAuthor && x.FKey==Security.CurUser.UserNum)) {
-					RefreshMainLists(parent,date);
+					RefreshMainLists(parent,date,isManualRefresh: isManualRefresh);
 				}
 				//User is observing the Patient Tasks tab and a TaskPatient signal is received for the patient the user currently has selected.
 				else if(tabContr.SelectedTab==tabPatientTickets && listSignals.Exists(x => x.IType==InvalidType.TaskPatient && x.FKey==FormOpenDental.PatNumCur)) {
-					RefreshMainLists(parent,date);
+					RefreshMainLists(parent,date,isManualRefresh: isManualRefresh);
 				}
 				else {//Individual Task signals. Only refreshes if the task is in the currently displayed list of Tasks. Add/Remove is addressed with TaskList signals.
 					foreach(Signalod signal in listSignals) {
 						if(ListTools.In(signal.IType,InvalidType.Task,InvalidType.TaskPopup) && signal.FKeyType==KeyType.Task) {
 							if(_listTasks.Exists(x => x.TaskNum==signal.FKey)) {//A signal indicates that a task we are looking at has been modified.
-								RefreshMainLists(parent,date);//Full refresh.
+								RefreshMainLists(parent,date,isManualRefresh: isManualRefresh);//Full refresh.
 								break;
 							}
 						}
@@ -849,7 +861,7 @@ namespace OpenDental {
 					}
 				}
 				if(changeMade) {
-					RefreshMainLists(parent,date);
+					RefreshMainLists(parent,date,isManualRefresh: isManualRefresh);
 				}
 				//now add back any repeating lists and tasks that meet the criteria
 				//Get lists of all repeating lists and tasks of one type.  We will pick items from these two lists.
@@ -916,7 +928,7 @@ namespace OpenDental {
 					changeMade=true;
 				}
 				if(changeMade) {
-					RefreshMainLists(parent,date);
+					RefreshMainLists(parent,date,isManualRefresh: isManualRefresh);
 				}
 			}//End of dated trunk automation--------------------------------------------------------------------------
 			#endregion dated trunk automation
@@ -1306,7 +1318,7 @@ namespace OpenDental {
 		}
 
 		///<summary>If parent=0, then this is a trunk.</summary>
-		private void RefreshMainLists(long parent,DateTime date) {
+		private void RefreshMainLists(long parent,DateTime date,bool isManualRefresh=false) {
 			if(this.DesignMode){
 				_listTaskLists=new List<TaskList>();
 				_listTasks=new List<Task>();
@@ -1317,6 +1329,11 @@ namespace OpenDental {
 			TaskType taskType=TaskType.Normal;
 			if(tabContr.SelectedTab==tabReminders) {
 				taskType=TaskType.Reminder;
+			}
+			//Clear copy lists if switching between tabs.
+			if(_previousTabName!=tabContr.SelectedTab.Name) {
+				_listTaskListsCopy=new List<TaskList>();
+				_listTasksCopy=new List<Task>();
 			}
 			if(parent!=0){//not a trunk
 				//if(TreeHistory.Count>0//we already know this is true
@@ -1353,16 +1370,46 @@ namespace OpenDental {
 				}
 			}
 			else if(tabContr.SelectedTab==tabMain) {
-				_listTaskLists=TaskLists.RefreshMainTrunk(Security.CurUser.UserNum,TaskType.Normal,Clinics.ClinicNum
-					,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
-				_listTasks=Tasks.RefreshMainTrunk(_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum,TaskType.Normal,_globalFilterType
-					,_listFilterFkeys);
+				if(!PrefC.GetBool(PrefName.EnterpriseManualRefreshMainTaskLists)) {
+					_listTaskLists=TaskLists.RefreshMainTrunk(Security.CurUser.UserNum,TaskType.Normal,Clinics.ClinicNum
+						,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
+					_listTasks=Tasks.RefreshMainTrunk(_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum,TaskType.Normal,_globalFilterType
+						,_listFilterFkeys);
+				}
+				else if(isManualRefresh) {
+					_listTaskLists=TaskLists.RefreshMainTrunk(Security.CurUser.UserNum,TaskType.Normal,Clinics.ClinicNum
+						,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
+					_listTasks=Tasks.RefreshMainTrunk(_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum,TaskType.Normal,_globalFilterType
+						,_listFilterFkeys);
+					//Store references to the list of Tasks and TaskLists so they can be used when navigating from a child task list to the parent of the Main tab.
+					_listTaskListsCopy=_listTaskLists;
+					_listTasksCopy=_listTasks;
+				}
+				else {//Navigating from Main tab child task list, use the referenced lists instead of running a query.
+					_listTaskLists=_listTaskListsCopy;
+					_listTasks=_listTasksCopy;
+				}
 			}
 			else if(tabContr.SelectedTab==tabReminders) {
-				_listTaskLists=TaskLists.RefreshMainTrunk(Security.CurUser.UserNum,TaskType.Reminder,Clinics.ClinicNum
-					,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
-				_listTasks=Tasks.RefreshMainTrunk(_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum,TaskType.Reminder
-					,_globalFilterType,_listFilterFkeys);
+				if(!PrefC.GetBool(PrefName.EnterpriseManualRefreshMainTaskLists)) {
+					_listTaskLists=TaskLists.RefreshMainTrunk(Security.CurUser.UserNum,TaskType.Reminder,Clinics.ClinicNum
+						,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
+					_listTasks=Tasks.RefreshMainTrunk(_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum,TaskType.Reminder
+						,_globalFilterType,_listFilterFkeys);
+				}
+				else if(isManualRefresh) { 
+					_listTaskLists=TaskLists.RefreshMainTrunk(Security.CurUser.UserNum,TaskType.Reminder,Clinics.ClinicNum
+						,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
+					_listTasks=Tasks.RefreshMainTrunk(_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum,TaskType.Reminder
+						,_globalFilterType,_listFilterFkeys);
+					//Store references to the list of Tasks and TaskLists so they can be used when navigating from a child task list to the parent of the Reminder tab.
+					_listTaskListsCopy=_listTaskLists;
+					_listTasksCopy=_listTasks;
+				}
+				else {//Navigating from Reminder tab child task list, use the referenced lists instead of running a query.
+					_listTaskLists=_listTaskListsCopy;
+					_listTasks=_listTasksCopy;
+				}
 			}
 			else if(tabContr.SelectedTab==tabRepeating) {
 				_listTaskLists=TaskLists.RefreshRepeatingTrunk(Security.CurUser.UserNum,Clinics.ClinicNum,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
@@ -1439,6 +1486,7 @@ namespace OpenDental {
 				}
 			}
 			_listTaskNotes=TaskNotes.RefreshForTasks(taskNums);
+			_previousTabName=tabContr.SelectedTab.Name;
 		}
 
 		///<summary>Returns a list of TaskLists containing all directly and indirectly subscribed TaskLists for the current user.</summary>
@@ -2881,6 +2929,10 @@ namespace OpenDental {
 
 		private void butClearFilter_Click(object sender,EventArgs e) {
 			textListFilter.Text="";
+		}
+
+		private void butRefresh_Click(object sender,EventArgs e) {
+			FillGrid(isManualRefresh: true);
 		}
 	}
 

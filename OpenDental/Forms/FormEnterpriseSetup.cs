@@ -140,6 +140,7 @@ namespace OpenDental {
 			checkEra835sRefreshOnLoad.Checked=PrefC.GetBool(PrefName.EraRefreshOnLoad);
 			checkEra835sStrictClaimMatching.Checked=PrefC.GetBool(PrefName.EraStrictClaimMatching);
 			checkEra835sShowStatusAndClinic.Checked=PrefC.GetBool(PrefName.EraShowStatusAndClinic);
+			checkRefresh.Checked=PrefC.GetBool(PrefName.EnterpriseManualRefreshMainTaskLists);
 			#endregion Manage Tab
 		}
 
@@ -296,6 +297,7 @@ namespace OpenDental {
 				| Prefs.UpdateBool(PrefName.EraStrictClaimMatching,checkEra835sStrictClaimMatching.Checked)
 				| Prefs.UpdateBool(PrefName.EraShowStatusAndClinic,checkEra835sShowStatusAndClinic.Checked)
 				| Prefs.UpdateBool(PrefName.EnterpriseCommlogOmitDefaults,checkEnterpriseCommlogOmitDefaults.Checked)
+				| Prefs.UpdateBool(PrefName.EnterpriseManualRefreshMainTaskLists,checkRefresh.Checked)
 			)
 			{
 				hasChanges=true;

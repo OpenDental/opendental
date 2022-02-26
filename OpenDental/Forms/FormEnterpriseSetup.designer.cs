@@ -130,6 +130,7 @@ namespace OpenDental {
 			this.label11 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
 			this.tabManage = new System.Windows.Forms.TabPage();
+			this.checkRefresh = new System.Windows.Forms.CheckBox();
 			this.checkEra835sStrictClaimMatching = new System.Windows.Forms.CheckBox();
 			this.checkEra835sRefreshOnLoad = new System.Windows.Forms.CheckBox();
 			this.checkEra835sShowStatusAndClinic = new System.Windows.Forms.CheckBox();
@@ -1298,6 +1299,7 @@ namespace OpenDental {
 			// 
 			// tabManage
 			// 
+			this.tabManage.Controls.Add(this.checkRefresh);
 			this.tabManage.Controls.Add(this.checkEra835sStrictClaimMatching);
 			this.tabManage.Controls.Add(this.checkEra835sRefreshOnLoad);
 			this.tabManage.Controls.Add(this.checkEra835sShowStatusAndClinic);
@@ -1308,6 +1310,17 @@ namespace OpenDental {
 			this.tabManage.TabIndex = 8;
 			this.tabManage.Text = "Manage";
 			this.tabManage.UseVisualStyleBackColor = true;
+			// 
+			// checkRefresh
+			// 
+			this.checkRefresh.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkRefresh.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.checkRefresh.Location = new System.Drawing.Point(93, 66);
+			this.checkRefresh.Name = "checkRefresh";
+			this.checkRefresh.Size = new System.Drawing.Size(380, 18);
+			this.checkRefresh.TabIndex = 275;
+			this.checkRefresh.Text = "Tasks, \'Main\' and \'Reminders\' tabs require manual refresh";
+			this.checkRefresh.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkEra835sStrictClaimMatching
 			// 
@@ -1500,5 +1513,6 @@ namespace OpenDental {
 		private System.Windows.Forms.CheckBox checkCaclAgingBatchClaims;
 		private System.Windows.Forms.CheckBox checkEnterpriseCommlogOmitDefaults;
 		private System.Windows.Forms.CheckBox checkHygProcUsePriProvFee;
+		private System.Windows.Forms.CheckBox checkRefresh;
 	}
 }

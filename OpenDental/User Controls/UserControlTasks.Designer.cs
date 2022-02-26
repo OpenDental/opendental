@@ -68,20 +68,20 @@ namespace OpenDental {
 			this.menuItemTaskReminder = new System.Windows.Forms.MenuItem();
 			this.menuJobs = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.gridMain = new OpenDental.UI.GridOD();
 			this.menuFilter = new System.Windows.Forms.ContextMenu();
 			this.menuItemFilterDefault = new System.Windows.Forms.MenuItem();
 			this.menuItemFilterNone = new System.Windows.Forms.MenuItem();
 			this.menuItemFilterClinic = new System.Windows.Forms.MenuItem();
 			this.menuItemFilterRegion = new System.Windows.Forms.MenuItem();
-			this.ToolBarMain = new OpenDental.UI.ToolBarOD();
 			this.menuAttachments = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.taskListFilterGroupBox = new OpenDental.UI.GroupBoxOD();
-			this.butClearFilter = new System.Windows.Forms.Button();
+			this.gridMain = new OpenDental.UI.GridOD();
+			this.butRefresh = new OpenDental.UI.Button();
+			this.butClearFilter = new OpenDental.UI.Button();
 			this.textListFilter = new System.Windows.Forms.TextBox();
+			this.ToolBarMain = new OpenDental.UI.ToolBarOD();
+			this.label1 = new System.Windows.Forms.Label();
 			this.tabContr.SuspendLayout();
 			this.tabUser.SuspendLayout();
-			this.taskListFilterGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tabContr
@@ -96,7 +96,7 @@ namespace OpenDental {
 			this.tabContr.Controls.Add(this.tabDate);
 			this.tabContr.Controls.Add(this.tabWeek);
 			this.tabContr.Controls.Add(this.tabMonth);
-			this.tabContr.Location = new System.Drawing.Point(0, 70);
+			this.tabContr.Location = new System.Drawing.Point(0, 49);
 			this.tabContr.Name = "tabContr";
 			this.tabContr.SelectedIndex = 0;
 			this.tabContr.Size = new System.Drawing.Size(941, 23);
@@ -205,7 +205,7 @@ namespace OpenDental {
 			// 
 			// monthCalendar
 			// 
-			this.monthCalendar.Location = new System.Drawing.Point(2, 94);
+			this.monthCalendar.Location = new System.Drawing.Point(0, 73);
 			this.monthCalendar.MaxSelectionCount = 1;
 			this.monthCalendar.Name = "monthCalendar";
 			this.monthCalendar.TabIndex = 6;
@@ -422,20 +422,6 @@ namespace OpenDental {
 			this.contextMenuStrip1.Name = "contextMenuStrip1";
 			this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
 			// 
-			// gridMain
-			// 
-			this.gridMain.DoShowPatNumLinks = true;
-			this.gridMain.DoShowTaskNumLinks = true;
-			this.gridMain.Location = new System.Drawing.Point(0, 310);
-			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(941, 200);
-			this.gridMain.TabIndex = 9;
-			this.gridMain.Title = "Tasks";
-			this.gridMain.TranslationName = "TableTasks";
-			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
-			this.gridMain.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellClick);
-			this.gridMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gridMain_MouseDown);
-			// 
 			// menuFilter
 			// 
 			this.menuFilter.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
@@ -468,6 +454,52 @@ namespace OpenDental {
 			this.menuItemFilterRegion.Text = "Region";
 			this.menuItemFilterRegion.Click += new System.EventHandler(this.menuItemFilterRegion_Click);
 			// 
+			// menuAttachments
+			// 
+			this.menuAttachments.Name = "menuAttachments";
+			this.menuAttachments.Size = new System.Drawing.Size(61, 4);
+			// 
+			// gridMain
+			// 
+			this.gridMain.DoShowPatNumLinks = true;
+			this.gridMain.DoShowTaskNumLinks = true;
+			this.gridMain.Location = new System.Drawing.Point(0, 310);
+			this.gridMain.Name = "gridMain";
+			this.gridMain.Size = new System.Drawing.Size(941, 200);
+			this.gridMain.TabIndex = 9;
+			this.gridMain.Title = "Tasks";
+			this.gridMain.TranslationName = "TableTasks";
+			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
+			this.gridMain.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellClick);
+			this.gridMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gridMain_MouseDown);
+			// 
+			// butRefresh
+			// 
+			this.butRefresh.Location = new System.Drawing.Point(319, 26);
+			this.butRefresh.Name = "butRefresh";
+			this.butRefresh.Size = new System.Drawing.Size(67, 22);
+			this.butRefresh.TabIndex = 12;
+			this.butRefresh.Text = "&Refresh";
+			this.butRefresh.Click += new System.EventHandler(this.butRefresh_Click);
+			// 
+			// butClearFilter
+			// 
+			this.butClearFilter.Location = new System.Drawing.Point(220, 27);
+			this.butClearFilter.Name = "butClearFilter";
+			this.butClearFilter.Size = new System.Drawing.Size(50, 20);
+			this.butClearFilter.TabIndex = 12;
+			this.butClearFilter.Text = "clear";
+			this.butClearFilter.UseVisualStyleBackColor = true;
+			this.butClearFilter.Click += new System.EventHandler(this.butClearFilter_Click);
+			// 
+			// textListFilter
+			// 
+			this.textListFilter.Location = new System.Drawing.Point(86, 27);
+			this.textListFilter.Name = "textListFilter";
+			this.textListFilter.Size = new System.Drawing.Size(131, 20);
+			this.textListFilter.TabIndex = 12;
+			this.textListFilter.TextChanged += new System.EventHandler(this.textFilter_TextChanged);
+			// 
 			// ToolBarMain
 			// 
 			this.ToolBarMain.Dock = System.Windows.Forms.DockStyle.Top;
@@ -479,44 +511,23 @@ namespace OpenDental {
 			this.ToolBarMain.TabIndex = 2;
 			this.ToolBarMain.ButtonClick += new OpenDental.UI.ODToolBarButtonClickEventHandler(this.ToolBarMain_ButtonClick);
 			// 
-			// menuAttachments
+			// label1
 			// 
-			this.menuAttachments.Name = "menuAttachments";
-			this.menuAttachments.Size = new System.Drawing.Size(61, 4);
-			// 
-			// taskListFilterGroupBox
-			// 
-			this.taskListFilterGroupBox.Controls.Add(this.butClearFilter);
-			this.taskListFilterGroupBox.Controls.Add(this.textListFilter);
-			this.taskListFilterGroupBox.Location = new System.Drawing.Point(2, 27);
-			this.taskListFilterGroupBox.Name = "taskListFilterGroupBox";
-			this.taskListFilterGroupBox.Size = new System.Drawing.Size(202, 43);
-			this.taskListFilterGroupBox.TabIndex = 11;
-			this.taskListFilterGroupBox.Text = "Task List Filter";
-			// 
-			// butClearFilter
-			// 
-			this.butClearFilter.Location = new System.Drawing.Point(139, 17);
-			this.butClearFilter.Name = "butClearFilter";
-			this.butClearFilter.Size = new System.Drawing.Size(45, 20);
-			this.butClearFilter.TabIndex = 12;
-			this.butClearFilter.Text = "clear";
-			this.butClearFilter.UseVisualStyleBackColor = true;
-			this.butClearFilter.Click += new System.EventHandler(this.butClearFilter_Click);
-			// 
-			// textListFilter
-			// 
-			this.textListFilter.Location = new System.Drawing.Point(6, 17);
-			this.textListFilter.Name = "textListFilter";
-			this.textListFilter.Size = new System.Drawing.Size(131, 20);
-			this.textListFilter.TabIndex = 12;
-			this.textListFilter.TextChanged += new System.EventHandler(this.textFilter_TextChanged);
+			this.label1.Location = new System.Drawing.Point(0, 28);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(84, 18);
+			this.label1.TabIndex = 13;
+			this.label1.Text = "Task List Filter";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// UserControlTasks
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.taskListFilterGroupBox);
+			this.Controls.Add(this.butClearFilter);
+			this.Controls.Add(this.label1);
+			this.Controls.Add(this.textListFilter);
+			this.Controls.Add(this.butRefresh);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.tree);
 			this.Controls.Add(this.monthCalendar);
@@ -528,9 +539,8 @@ namespace OpenDental {
 			this.Resize += new System.EventHandler(this.UserControlTasks_Resize);
 			this.tabContr.ResumeLayout(false);
 			this.tabUser.ResumeLayout(false);
-			this.taskListFilterGroupBox.ResumeLayout(false);
-			this.taskListFilterGroupBox.PerformLayout();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -587,8 +597,9 @@ namespace OpenDental {
 		private System.Windows.Forms.ContextMenuStrip menuAttachments;
 		private System.Windows.Forms.MenuItem menuNavAttachment;
 		private UI.GroupBoxOD groupBoxOD2;
-		private UI.GroupBoxOD taskListFilterGroupBox;
-		private System.Windows.Forms.Button butClearFilter;
+		private OpenDental.UI.Button butClearFilter;
 		private System.Windows.Forms.TextBox textListFilter;
+		private UI.Button butRefresh;
+		private System.Windows.Forms.Label label1;
 	}
 }

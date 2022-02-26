@@ -4671,9 +4671,13 @@ namespace OpenDental{
 			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
+			bool isManualRefreshEnabledPreviously=PrefC.GetBool(PrefName.EnterpriseManualRefreshMainTaskLists);
 			using FormEnterpriseSetup FormES=new FormEnterpriseSetup();
 			if(FormES.ShowDialog()!=DialogResult.OK) {
 				return;
+			}
+			if(userControlTasks1.Visible && PrefC.GetBool(PrefName.EnterpriseManualRefreshMainTaskLists) != isManualRefreshEnabledPreviously) {
+				userControlTasks1.InitializeOnStartup();
 			}
 			if(PrefC.GetInt(PrefName.ProcessSigsIntervalInSecs)==0){
 				timerSignals.Enabled=false;

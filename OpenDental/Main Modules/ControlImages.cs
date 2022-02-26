@@ -2316,6 +2316,108 @@ namespace OpenDental {
 			InvalidateSettings(ImageSettingFlags.ROTATE,false);//Refresh display.
 		}
 
+		private void ToolbarScanWeb(string scanType) {
+			Bitmap bitmapScanned=null;
+			try {
+				//Ask the ODCloudClient to use a scanner on the client's computer
+				bitmapScanned=ODCloudClient.GetImageFromScanner(
+					ComputerPrefs.LocalComputer.ScanDocSelectSource,
+					ComputerPrefs.LocalComputer.ScanDocShowOptions,
+					ComputerPrefs.LocalComputer.ScanDocDuplex,
+					ComputerPrefs.LocalComputer.ScanDocGrayscale,
+					ComputerPrefs.LocalComputer.ScanDocResolution,
+					ComputerPrefs.LocalComputer.ScanDocQuality
+				);
+			}
+			catch (ODException ex) {
+				MessageBox.Show(ex.Message);
+				return;
+			}
+			catch (Exception ex) {
+				MessageBox.Show(ex.Message);
+				return;
+			}
+			if(bitmapScanned==null) {//The scan was probably cancelled.
+				return;
+			}
+			ImageType imgType;
+			if(scanType=="xray") {
+				imgType=ImageType.Radiograph;
+			}
+			else if(scanType=="photo") {
+				imgType=ImageType.Photo;
+			}
+			else {//Assume document
+				imgType=ImageType.Document;
+			}
+			bool saved=true;
+			if(_claimPaymentNum!=0) {//eob
+				EobAttach eob=null;
+				try {
+					eob=ImageStore.ImportEobAttach(bitmapScanned,_claimPaymentNum);
+				}
+				catch(Exception ex) {
+					saved=false;
+					MessageBox.Show(Lan.g(this,"Error saving eob")+": "+ex.Message);
+				}
+				if(bitmapScanned!=null) {
+					bitmapScanned.Dispose();
+					bitmapScanned=null;
+				}
+				if(saved) {
+					FillTree(false);
+					SelectTreeNode(GetTreeNode(MakeIdEob(eob.EobAttachNum)));
+				}
+			}
+			else if(_ehrAmendmentCur!=null) {
+				//We only allow users to scan in one amendment at a time.  Keep track of the old file name.
+				string fileNameOld=_ehrAmendmentCur.FileName;
+				try {
+					ImageStore.ImportAmdAttach(bitmapScanned,_ehrAmendmentCur);
+					SelectTreeNode(null);
+					ImageStore.CleanAmdAttach(fileNameOld);//Delete the old scanned document.
+				}
+				catch(Exception ex) {
+					saved=false;
+					MessageBox.Show(Lan.g(this,"Error saving amendment")+": "+ex.Message);
+				}
+				if(bitmapScanned!=null) {
+					bitmapScanned.Dispose();
+					bitmapScanned=null;
+				}
+				if(saved) {
+					FillTree(false);
+					SelectTreeNode(GetTreeNode(MakeIdAmd(_ehrAmendmentCur.EhrAmendmentNum)));
+				}
+			}
+			else {//regular Images module
+				Document doc = null;
+				try {//Create corresponding image file.
+					doc=ImageStore.Import(bitmapScanned,GetCurrentCategory(),imgType,_patCur);
+				}
+				catch(Exception ex) {
+					saved=false;
+					MessageBox.Show(Lan.g(this,"Unable to save document")+": "+ex.Message);
+				}
+				if(bitmapScanned!=null) {
+					bitmapScanned.Dispose();
+					bitmapScanned=null;
+				}
+				if(saved) {
+					FillTree(false);//Reload and keep new document selected.
+					SelectTreeNode(GetTreeNode(MakeIdDoc(doc.DocNum)));
+					using FormDocInfo formDocInfo=new FormDocInfo(_patCur,_documentShowing,GetCurrentFolderName(treeMain.SelectedNode),isDocCreate:true);
+					formDocInfo.ShowDialog(this);
+					if(formDocInfo.DialogResult!=DialogResult.OK) {
+						DeleteSelection(false,false,doc);
+					}
+					else {
+						FillTree(true);//Update tree, in case the new document's icon or category were modified in formDocInfo.
+					}
+				}
+			}
+		}
+
 		///<summary>Valid values for scanType are "doc","xray",and "photo"</summary>
 		private void ToolBarScan_Click(string scanType) {
 			if(_ehrAmendmentCur!=null) {
@@ -2324,6 +2426,10 @@ namespace OpenDental {
 						return;
 					}
 				}
+			}
+			if(ODBuild.IsWeb()) {
+				ToolbarScanWeb(scanType);
+				return;
 			}
 			Cursor=Cursors.WaitCursor;
 			Bitmap bitmapScanned=null;
@@ -2501,6 +2607,92 @@ namespace OpenDental {
 			}
 		}
 
+		private void ToolbarScanMultiWeb() {
+			//Ask the ODCloudClient to use a scanner on the client's computer
+			string tempFile=ODCloudClient.GetImageMultiFromScanner(
+				ComputerPrefs.LocalComputer.ScanDocSelectSource,
+				ComputerPrefs.LocalComputer.ScanDocShowOptions,
+				ComputerPrefs.LocalComputer.ScanDocDuplex,
+				ComputerPrefs.LocalComputer.ScanDocGrayscale,
+				ComputerPrefs.LocalComputer.ScanDocResolution,
+				ComputerPrefs.LocalComputer.ScanDocQuality
+			);
+			if(tempFile==null) {
+				return;//The scan was probably cancelled
+			}
+			NodeIdTag nodeIdTag=new NodeIdTag();
+			bool copied=true;
+			if(_claimPaymentNum!=0) {//eob
+				EobAttach eob=null;
+				try {
+					eob=ImageStore.ImportEobAttach(tempFile,_claimPaymentNum);
+				}
+				catch(Exception ex) {
+					MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ") + ex.Message + ": " + tempFile);
+					copied = false;
+				}
+				if(copied) {
+					FillTree(false);
+					SelectTreeNode(GetTreeNode(MakeIdEob(eob.EobAttachNum)));
+				}
+				ImageStore.TryDeleteFile(tempFile
+					,actInUseException:(msg) => MsgBox.Show(msg)//Informs user when a 'file is in use' exception occurs.
+				);
+			}
+			else if(_ehrAmendmentCur!=null) {//amendment
+				string fileNameOld=_ehrAmendmentCur.FileName;
+				try {
+					ImageStore.ImportAmdAttach(tempFile,_ehrAmendmentCur);
+					SelectTreeNode(null);
+					ImageStore.CleanAmdAttach(fileNameOld);
+				}
+				catch(Exception ex) {
+					MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ") + ex.Message + ": " + tempFile);
+					copied = false;
+				}
+				if(copied) {
+					FillTree(false);
+					SelectTreeNode(GetTreeNode(MakeIdAmd(_ehrAmendmentCur.EhrAmendmentNum)));
+				}
+				ImageStore.TryDeleteFile(tempFile
+					,actInUseException:(msg) => MsgBox.Show(msg)//Informs user when a 'file is in use' exception occurs.
+				);
+			}
+			else {//regular Images module
+				Document doc=null;
+				try {
+					doc=ImageStore.Import(tempFile,GetCurrentCategory(),_patCur);
+				}
+				catch(Exception ex) {
+					MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ") + ex.Message + ": " + tempFile);
+					copied = false;
+				}
+				if(copied) {
+					FillTree(false);
+					SelectTreeNode(GetTreeNode(MakeIdDoc(doc.DocNum)));
+					using FormDocInfo FormD=new FormDocInfo(_patCur,doc,GetCurrentFolderName(treeMain.SelectedNode),isDocCreate:true);
+					FormD.ShowDialog(this);//some of the fields might get changed, but not the filename 
+					//Customer complained this window was showing up behind OD.  We changed above line to add a parent form as an attempted fix.
+					//If this doesn't solve it we can also try adding FormD.BringToFront to see if it does anything.
+					if(FormD.DialogResult!=DialogResult.OK) {
+						DeleteSelection(false,false,doc);
+					}
+					else {
+						nodeIdTag=MakeIdDoc(doc.DocNum);
+						_documentShowing=doc.Copy();
+					}
+				}
+				ImageStore.TryDeleteFile(tempFile
+					,actInUseException:(msg) => MsgBox.Show(msg)//Informs user when a 'file is in use' exception occurs.
+				);
+				//Reselect the last successfully added node when necessary. js This code seems to be copied from import multi.  Simplify it.
+				if(doc!=null && !MakeIdDoc(doc.DocNum).Equals(nodeIdTag)) {
+					SelectTreeNode(GetTreeNode(MakeIdDoc(doc.DocNum)));
+				}
+				FillTree(true);
+			}
+		}
+
 		private void ToolBarScanMulti_Click() {
 			if(_ehrAmendmentCur!=null) {
 				if(_ehrAmendmentCur.FileName!=null && _ehrAmendmentCur.FileName!="") {
@@ -2508,6 +2700,10 @@ namespace OpenDental {
 						return;
 					}
 				}
+			}
+			if(ODBuild.IsWeb()) {
+				ToolbarScanMultiWeb();
+				return;
 			}
 			string tempFile=PrefC.GetRandomTempFile(".pdf");
 			try {

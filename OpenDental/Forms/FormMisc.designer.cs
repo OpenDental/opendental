@@ -79,7 +79,6 @@ namespace OpenDental {
 			this.textAlertCloudSessions = new OpenDental.ValidNum();
 			this.labelAlertCloudSessions = new System.Windows.Forms.Label();
 			this.checkAuditTrailUseReportingServer = new System.Windows.Forms.CheckBox();
-			this.label12 = new System.Windows.Forms.Label();
 			this.groupBox6.SuspendLayout();
 			this.groupSelectPatient.SuspendLayout();
 			this.SuspendLayout();
@@ -628,19 +627,9 @@ namespace OpenDental {
 			this.checkAuditTrailUseReportingServer.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkAuditTrailUseReportingServer.UseVisualStyleBackColor = false;
 			// 
-			// label12
-			// 
-			this.label12.Location = new System.Drawing.Point(266, 493);
-			this.label12.Name = "label12";
-			this.label12.Size = new System.Drawing.Size(259, 17);
-			this.label12.TabIndex = 244;
-			this.label12.Text = "Web Service Server Name";
-			this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
 			// FormMisc
 			// 
 			this.ClientSize = new System.Drawing.Size(1055, 523);
-			this.Controls.Add(this.label12);
 			this.Controls.Add(this.checkAuditTrailUseReportingServer);
 			this.Controls.Add(this.textInactiveAlert);
 			this.Controls.Add(this.label10);
@@ -754,6 +743,5 @@ namespace OpenDental {
 		private Label labelAlertCloudSessions;
 		private CheckBox checkAllowRefreshWhileTyping;
 		private CheckBox checkAuditTrailUseReportingServer;
-		private Label label12;
 	}
 }

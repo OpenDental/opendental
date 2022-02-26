@@ -125,7 +125,7 @@ namespace OpenDental{
 			else {
 				odColorPickerBack.BackgroundColor=CarrierCur.ApptTextBackColor;
 			}
-			if(!Security.IsAuthorized(Permissions.CarrierEdit,true)) {
+			if(!Security.IsAuthorized(Permissions.CarrierEdit,true) && !IsNew) {
 				TurnOffUI();
 			}
 			else if(!Security.IsAuthorized(Permissions.CarrierCreate,true) && IsNew) {

@@ -2542,6 +2542,13 @@ namespace OpenDentBusiness {
 			command="INSERT INTO definition (Category, ItemOrder, ItemName, ItemValue) VALUES (2,"+maxOrder+",'Out the Door','WebSched')";
 			Db.NonQ(command,true);
 		}//End of 22_1_1() method
+
+		private static void To22_1_4() {
+			string command;
+			DataTable table;
+			command="INSERT INTO preference (PrefName,ValueString) VALUES('EnterpriseManualRefreshMainTaskLists','0')";
+			Db.NonQ(command);
+		}//End of 22_1_4() method
 	}
 }
 

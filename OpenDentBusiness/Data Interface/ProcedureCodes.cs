@@ -281,7 +281,7 @@ namespace OpenDentBusiness{
 		public static string FlourideCode {
 			get {
 				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-					return "12101";
+					return "12111";//there are 3 Canadian flouride codes, putting one here so this still returns a legitimate code for Canada. Returning a code not in the DB causes errors in some cases
 				}
 				return "D1206";
 			}

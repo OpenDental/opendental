@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
-<database version="22.1.1.0">
+<database version="22.1.4.0">
     <table name="alertcategorylink">
         <summary></summary>
         <column order="2" name="AlertType" type="tinyint(4)">
@@ -80,16 +80,6 @@
             </Enumeration>
         </column>
     </table>
-    <table name="deflink">
-        <summary></summary>
-        <column order="3" name="LinkType" type="tinyint(4)">
-            <summary>Enum:DefLinkType The type of link.</summary>
-            <Enumeration name="DefLinkType">
-                <summary>The manner in which a definition is linked.</summary>
-                <EnumValue name="RecallType">5. The definition is linked to a recall type.</EnumValue>
-            </Enumeration>
-        </column>
-    </table>
     <table name="eclipboardsheetdef">
         <summary></summary>
         <column order="9" name="PrefillStatusOverride" type="bigint(20)">
@@ -103,24 +93,6 @@
              </summary>
         </column>
     </table>
-    <table name="emailaddress">
-        <summary></summary>
-        <column order="13" name="QueryString" type="varchar(1000)">
-            <summary>Allows gmail users to specify search parameters</summary>
-        </column>
-    </table>
-    <table name="eservicelog">
-        <summary></summary>
-        <column order="4" name="EServiceAction" type="smallint(6)">
-            <summary>Enum:eServiceAction</summary>
-            <Enumeration name="eServiceAction">
-                <summary>List of some possible eServices.</summary>
-                <EnumValue name="PPDuplicatePaymentAlert">35 - Patient Portal, Patient Notified of Possible Duplicate Payment.</EnumValue>
-                <EnumValue name="PPDuplicatePaymentAllowed">36 - Patient Portal, Patient Allowed Submission of Duplicate Payment.</EnumValue>
-                <EnumValue name="PPDuplicatePaymentDenied">37 - Patient Portal, Patient Rejected Submission of Duplicate Payment.</EnumValue>
-            </Enumeration>
-        </column>
-    </table>
     <table name="grouppermission">
         <summary></summary>
         <column order="4" name="PermType" type="tinyint">
@@ -128,6 +100,7 @@
             <Enumeration name="Permissions">
                 <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
                 <EnumValue name="ApiSubscription">225 - Logs when API subscriptions are added or deleted. For audit trails only.</EnumValue>
+                <EnumValue name="SecurityGlobal">226 - Logs changes to global lock date. For audit trails only.</EnumValue>
             </Enumeration>
         </column>
     </table>
@@ -163,6 +136,7 @@
             <Enumeration name="Permissions">
                 <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
                 <EnumValue name="ApiSubscription">225 - Logs when API subscriptions are added or deleted. For audit trails only.</EnumValue>
+                <EnumValue name="SecurityGlobal">226 - Logs changes to global lock date. For audit trails only.</EnumValue>
             </Enumeration>
         </column>
     </table>
