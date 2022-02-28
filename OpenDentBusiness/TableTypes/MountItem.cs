@@ -30,8 +30,6 @@ namespace OpenDentBusiness {
 		public string TextShowing;
 		///<summary>This could vary significantly based on the size of the mount.  It's always relative to mount pixels.</summary>
 		public float FontSize;
-		///<summary>.</summary>
-		public bool FlipOnAcquire;
 
 		///<summary></summary>
 		public MountItem Copy() {

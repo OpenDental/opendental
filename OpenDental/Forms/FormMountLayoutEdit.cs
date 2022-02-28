@@ -241,9 +241,6 @@ namespace OpenDental{
 						+"\r\nPos: "+_listMountItems[i].Xpos.ToString()+", "+_listMountItems[i].Ypos.ToString()
 						+"\r\nSize: "+_listMountItems[i].Width.ToString()+" x "+_listMountItems[i].Height.ToString()
 						+"\r\nRot: ";
-					if(_listMountItems[i].FlipOnAcquire){
-						s+="flip ";
-					}
 					s+=_listMountItems[i].RotateOnAcquire.ToString()
 						+"\r\nTeeth: "+_listMountItems[i].ToothNumbers;
 					point=new Point(
@@ -273,9 +270,6 @@ namespace OpenDental{
 					+"\r\nPos: "+_listMountItems[_selectedIndex].Xpos.ToString()+", "+_listMountItems[_selectedIndex].Ypos.ToString()
 					+"\r\nSize: "+_listMountItems[_selectedIndex].Width.ToString()+" x "+_listMountItems[_selectedIndex].Height.ToString()
 					+"\r\nRot: ";
-				if(_listMountItems[_selectedIndex].FlipOnAcquire){
-					s+="flip ";
-				}
 				s+=_listMountItems[_selectedIndex].RotateOnAcquire.ToString()
 					+"\r\nTeeth: "+_listMountItems[_selectedIndex].ToothNumbers;
 				point=new Point(

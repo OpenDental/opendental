@@ -47,14 +47,12 @@ namespace OpenDental{
 			this.label8 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
-			this.label11 = new System.Windows.Forms.Label();
-			this.checkFlip = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(469, 431);
+			this.butOK.Location = new System.Drawing.Point(469, 419);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
@@ -65,7 +63,7 @@ namespace OpenDental{
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(550, 431);
+			this.butCancel.Location = new System.Drawing.Point(550, 419);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 2;
@@ -113,7 +111,7 @@ namespace OpenDental{
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(13, 431);
+			this.butDelete.Location = new System.Drawing.Point(13, 419);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(75, 24);
 			this.butDelete.TabIndex = 34;
@@ -156,7 +154,7 @@ namespace OpenDental{
 			// 
 			// textRotate
 			// 
-			this.textRotate.Location = new System.Drawing.Point(164, 138);
+			this.textRotate.Location = new System.Drawing.Point(164, 119);
 			this.textRotate.MaxVal = 300;
 			this.textRotate.Name = "textRotate";
 			this.textRotate.ShowZero = false;
@@ -165,7 +163,7 @@ namespace OpenDental{
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(3, 138);
+			this.label5.Location = new System.Drawing.Point(3, 119);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(161, 17);
 			this.label5.TabIndex = 39;
@@ -174,7 +172,7 @@ namespace OpenDental{
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(215, 141);
+			this.label6.Location = new System.Drawing.Point(215, 122);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(193, 17);
 			this.label6.TabIndex = 41;
@@ -183,14 +181,14 @@ namespace OpenDental{
 			// 
 			// textToothNumbers
 			// 
-			this.textToothNumbers.Location = new System.Drawing.Point(164, 161);
+			this.textToothNumbers.Location = new System.Drawing.Point(164, 142);
 			this.textToothNumbers.Name = "textToothNumbers";
 			this.textToothNumbers.Size = new System.Drawing.Size(106, 20);
 			this.textToothNumbers.TabIndex = 43;
 			// 
 			// labelToothNums
 			// 
-			this.labelToothNums.Location = new System.Drawing.Point(63, 163);
+			this.labelToothNums.Location = new System.Drawing.Point(63, 144);
 			this.labelToothNums.Name = "labelToothNums";
 			this.labelToothNums.Size = new System.Drawing.Size(100, 18);
 			this.labelToothNums.TabIndex = 42;
@@ -199,7 +197,7 @@ namespace OpenDental{
 			// 
 			// textTextShowing
 			// 
-			this.textTextShowing.Location = new System.Drawing.Point(164, 184);
+			this.textTextShowing.Location = new System.Drawing.Point(164, 165);
 			this.textTextShowing.Multiline = true;
 			this.textTextShowing.Name = "textTextShowing";
 			this.textTextShowing.Size = new System.Drawing.Size(395, 179);
@@ -207,7 +205,7 @@ namespace OpenDental{
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(13, 186);
+			this.label7.Location = new System.Drawing.Point(13, 167);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(150, 47);
 			this.label7.TabIndex = 44;
@@ -216,7 +214,7 @@ namespace OpenDental{
 			// 
 			// butAddField
 			// 
-			this.butAddField.Location = new System.Drawing.Point(85, 239);
+			this.butAddField.Location = new System.Drawing.Point(85, 220);
 			this.butAddField.Name = "butAddField";
 			this.butAddField.Size = new System.Drawing.Size(74, 24);
 			this.butAddField.TabIndex = 46;
@@ -226,7 +224,7 @@ namespace OpenDental{
 			// textFontSize
 			// 
 			this.textFontSize.BackColor = System.Drawing.SystemColors.Window;
-			this.textFontSize.Location = new System.Drawing.Point(164, 369);
+			this.textFontSize.Location = new System.Drawing.Point(164, 350);
 			this.textFontSize.MaxVal = 100000000D;
 			this.textFontSize.MinVal = 0D;
 			this.textFontSize.Name = "textFontSize";
@@ -235,7 +233,7 @@ namespace OpenDental{
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(85, 369);
+			this.label8.Location = new System.Drawing.Point(85, 350);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(78, 18);
 			this.label8.TabIndex = 157;
@@ -244,7 +242,7 @@ namespace OpenDental{
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(215, 366);
+			this.label9.Location = new System.Drawing.Point(215, 347);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(222, 31);
 			this.label9.TabIndex = 158;
@@ -253,39 +251,17 @@ namespace OpenDental{
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(273, 163);
+			this.label10.Location = new System.Drawing.Point(273, 144);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(339, 17);
 			this.label10.TabIndex = 159;
 			this.label10.Text = "This is just copied to the image.  Use those tooth numbers instead.";
 			this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
-			// label11
-			// 
-			this.label11.Location = new System.Drawing.Point(184, 118);
-			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(252, 18);
-			this.label11.TabIndex = 162;
-			this.label11.Text = "(to flip vertically, combine this with a 180 rotation)";
-			this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// checkFlip
-			// 
-			this.checkFlip.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkFlip.Location = new System.Drawing.Point(-1, 119);
-			this.checkFlip.Name = "checkFlip";
-			this.checkFlip.Size = new System.Drawing.Size(179, 18);
-			this.checkFlip.TabIndex = 161;
-			this.checkFlip.Text = "Flip Horiz when Acquire";
-			this.checkFlip.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkFlip.UseVisualStyleBackColor = true;
-			// 
 			// FormMountItemEdit
 			// 
 			this.CancelButton = this.butCancel;
-			this.ClientSize = new System.Drawing.Size(637, 467);
-			this.Controls.Add(this.label11);
-			this.Controls.Add(this.checkFlip);
+			this.ClientSize = new System.Drawing.Size(637, 455);
 			this.Controls.Add(this.label10);
 			this.Controls.Add(this.label9);
 			this.Controls.Add(this.textFontSize);
@@ -343,7 +319,5 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.Label label10;
-		private System.Windows.Forms.Label label11;
-		private System.Windows.Forms.CheckBox checkFlip;
 	}
 }

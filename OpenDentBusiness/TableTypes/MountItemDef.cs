@@ -20,7 +20,7 @@ namespace OpenDentBusiness{
 		public int Width;
 		/// <summary>Height, in pixels, of the item rectangle on the mount.  Any cropping, rotating, etc, will all be defined in the original image itself.</summary>
 		public int Height;
-		/// <summary>The ordinal position of the item on the mount. 1-indexed because users see it.</summary>
+		/// <summary>The ordinal position of the item on the mount. 1-indexed because users see it. 0 if TestShowing has a value.</summary>
 		public int ItemOrder;
 		///<summary>0,90,180,or 270.</summary>
 		public int RotateOnAcquire;
@@ -31,15 +31,18 @@ namespace OpenDentBusiness{
 		public string TextShowing;
 		///<summary>This could vary significantly based on the size of the mount.  It's always relative to mount pixels.</summary>
 		public float FontSize;
-		///<summary>.</summary>
-		public bool FlipOnAcquire;
 
 		///<summary></summary>
 		public MountItemDef Copy() {
 			return (MountItemDef)this.MemberwiseClone();
 		}
 
-		
+		public override string ToString(){
+			if(TextShowing!=""){
+				return TextShowing;
+			}
+			return ItemOrder.ToString();
+		}
 	}
 
 		

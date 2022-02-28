@@ -456,7 +456,7 @@ namespace OpenDental {
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(122, 49);
 			this.label5.TabIndex = 43;
-			this.label5.Text = "Items get saved as they are added, not when clicking OK here";
+			this.label5.Text = "Items get saved as they are changed, not when clicking OK here";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelWarning

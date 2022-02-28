@@ -2350,10 +2350,6 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			command="ALTER TABLE eclipboardsheetdef ADD INDEX (PrefillStatusOverride)";
 			Db.NonQ(command);
-			command="ALTER TABLE mountitem ADD FlipOnAcquire tinyint NOT NULL";
-			Db.NonQ(command);
-			command="ALTER TABLE mountitemdef ADD FlipOnAcquire tinyint NOT NULL";
-			Db.NonQ(command);
 			command="ALTER TABLE mountdef ADD DefaultCat bigint NOT NULL";
 			Db.NonQ(command);
 			//Lantek clearinghouse.

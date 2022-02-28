@@ -58,7 +58,6 @@ namespace OpenDentBusiness.Crud{
 				mountItem.ToothNumbers   = PIn.String(row["ToothNumbers"].ToString());
 				mountItem.TextShowing    = PIn.String(row["TextShowing"].ToString());
 				mountItem.FontSize       = PIn.Float (row["FontSize"].ToString());
-				mountItem.FlipOnAcquire  = PIn.Bool  (row["FlipOnAcquire"].ToString());
 				retVal.Add(mountItem);
 			}
 			return retVal;
@@ -81,7 +80,6 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("ToothNumbers");
 			table.Columns.Add("TextShowing");
 			table.Columns.Add("FontSize");
-			table.Columns.Add("FlipOnAcquire");
 			foreach(MountItem mountItem in listMountItems) {
 				table.Rows.Add(new object[] {
 					POut.Long  (mountItem.MountItemNum),
@@ -95,7 +93,6 @@ namespace OpenDentBusiness.Crud{
 					            mountItem.ToothNumbers,
 					            mountItem.TextShowing,
 					POut.Float (mountItem.FontSize),
-					POut.Bool  (mountItem.FlipOnAcquire),
 				});
 			}
 			return table;
@@ -115,7 +112,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="MountItemNum,";
 			}
-			command+="MountNum,Xpos,Ypos,ItemOrder,Width,Height,RotateOnAcquire,ToothNumbers,TextShowing,FontSize,FlipOnAcquire) VALUES(";
+			command+="MountNum,Xpos,Ypos,ItemOrder,Width,Height,RotateOnAcquire,ToothNumbers,TextShowing,FontSize) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(mountItem.MountItemNum)+",";
 			}
@@ -129,8 +126,7 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   (mountItem.RotateOnAcquire)+","
 				+"'"+POut.String(mountItem.ToothNumbers)+"',"
 				+    DbHelper.ParamChar+"paramTextShowing,"
-				+    POut.Float (mountItem.FontSize)+","
-				+    POut.Bool  (mountItem.FlipOnAcquire)+")";
+				+    POut.Float (mountItem.FontSize)+")";
 			if(mountItem.TextShowing==null) {
 				mountItem.TextShowing="";
 			}
@@ -159,7 +155,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="MountItemNum,";
 			}
-			command+="MountNum,Xpos,Ypos,ItemOrder,Width,Height,RotateOnAcquire,ToothNumbers,TextShowing,FontSize,FlipOnAcquire) VALUES(";
+			command+="MountNum,Xpos,Ypos,ItemOrder,Width,Height,RotateOnAcquire,ToothNumbers,TextShowing,FontSize) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(mountItem.MountItemNum)+",";
 			}
@@ -173,8 +169,7 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   (mountItem.RotateOnAcquire)+","
 				+"'"+POut.String(mountItem.ToothNumbers)+"',"
 				+    DbHelper.ParamChar+"paramTextShowing,"
-				+    POut.Float (mountItem.FontSize)+","
-				+    POut.Bool  (mountItem.FlipOnAcquire)+")";
+				+    POut.Float (mountItem.FontSize)+")";
 			if(mountItem.TextShowing==null) {
 				mountItem.TextShowing="";
 			}
@@ -200,8 +195,7 @@ namespace OpenDentBusiness.Crud{
 				+"RotateOnAcquire=  "+POut.Int   (mountItem.RotateOnAcquire)+", "
 				+"ToothNumbers   = '"+POut.String(mountItem.ToothNumbers)+"', "
 				+"TextShowing    =  "+DbHelper.ParamChar+"paramTextShowing, "
-				+"FontSize       =  "+POut.Float (mountItem.FontSize)+", "
-				+"FlipOnAcquire  =  "+POut.Bool  (mountItem.FlipOnAcquire)+" "
+				+"FontSize       =  "+POut.Float (mountItem.FontSize)+" "
 				+"WHERE MountItemNum = "+POut.Long(mountItem.MountItemNum);
 			if(mountItem.TextShowing==null) {
 				mountItem.TextShowing="";
@@ -253,10 +247,6 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="FontSize = "+POut.Float(mountItem.FontSize)+"";
 			}
-			if(mountItem.FlipOnAcquire != oldMountItem.FlipOnAcquire) {
-				if(command!="") { command+=",";}
-				command+="FlipOnAcquire = "+POut.Bool(mountItem.FlipOnAcquire)+"";
-			}
 			if(command=="") {
 				return false;
 			}
@@ -301,9 +291,6 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(mountItem.FontSize != oldMountItem.FontSize) {
-				return true;
-			}
-			if(mountItem.FlipOnAcquire != oldMountItem.FlipOnAcquire) {
 				return true;
 			}
 			return false;

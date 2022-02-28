@@ -106,7 +106,6 @@ namespace OpenDentBusiness {
 				mountItem.ItemOrder=listMountItemDefs[i].ItemOrder;
 				mountItem.Width=listMountItemDefs[i].Width;
 				mountItem.Height=listMountItemDefs[i].Height;
-				mountItem.FlipOnAcquire=listMountItemDefs[i].FlipOnAcquire;
 				mountItem.RotateOnAcquire=listMountItemDefs[i].RotateOnAcquire;
 				mountItem.ToothNumbers=listMountItemDefs[i].ToothNumbers;
 				mountItem.TextShowing=listMountItemDefs[i].TextShowing;

@@ -862,16 +862,27 @@ namespace OpenDental{
 				}
 			}
 			_httpListenerApi=new HttpListener();
-			_httpListenerApi.Prefixes.Add("http://*:30222/");//Any domain on port 30222, must end in /
+			_httpListenerApi.Prefixes.Add("http://127.0.0.1:30222/");//must end in /
+				//127.0.0.1 should support both that IP and localhost. Might possibly require host header if using "localhost".
 				//Port 30222 was chosen as very likely to be unused. Plan to add port choice later.
-				//the wildcard lets us support a variety of scenarios:
+				//_httpListenerApi.Prefixes.Add("http://*:30222/");//didn't work because:
+				//MS requires running in admin for anything but localhost. Or, add something similar to this:
+				//netsh http add urlacl url=http://+:80/MyUri user=DOMAIN\user
+				//This means that we will need to include instructions to users for additional config if they want to uses this other than localhost.
+				//the wildcard was supposed to let us support a variety of scenarios:
 				//http://localhost:30222/api/v1/
 				//http://192.168.1.12:30222/api/v1/
 				//http://api.opendental.com:30222/api/v1/");
+				//But that also clearly won't work, so we'll also need to let them specify the host somewhere in OD setup.
 			if(ApiMain.IsAllowedToOpenPort()){
 				//Remember that this block won't run unless your VS is in Admin mode.
-				_httpListenerApi.Start();
-				IAsyncResult iAsyncResult=_httpListenerApi.BeginGetContext(new AsyncCallback(HttpListenerApiCallback),_httpListenerApi);
+				try{
+					_httpListenerApi.Start();
+					IAsyncResult iAsyncResult=_httpListenerApi.BeginGetContext(new AsyncCallback(HttpListenerApiCallback),_httpListenerApi);
+				}
+				catch{
+					//port is already in use
+				}
 			}
 			Plugins.HookAddCode(this,"FormOpenDental.Load_end");
 		}

@@ -4125,6 +4125,7 @@ namespace OpenDental{
 			this.groupBoxOD2.Size = new System.Drawing.Size(241, 119);
 			this.groupBoxOD2.TabIndex = 51;
 			this.groupBoxOD2.Text = "";
+			this.groupBoxOD2.Visible = false;
 			// 
 			// label40
 			// 

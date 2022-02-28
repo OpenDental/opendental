@@ -58,7 +58,6 @@ namespace OpenDentBusiness.Crud{
 				mountItemDef.ToothNumbers   = PIn.String(row["ToothNumbers"].ToString());
 				mountItemDef.TextShowing    = PIn.String(row["TextShowing"].ToString());
 				mountItemDef.FontSize       = PIn.Float (row["FontSize"].ToString());
-				mountItemDef.FlipOnAcquire  = PIn.Bool  (row["FlipOnAcquire"].ToString());
 				retVal.Add(mountItemDef);
 			}
 			return retVal;
@@ -81,7 +80,6 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("ToothNumbers");
 			table.Columns.Add("TextShowing");
 			table.Columns.Add("FontSize");
-			table.Columns.Add("FlipOnAcquire");
 			foreach(MountItemDef mountItemDef in listMountItemDefs) {
 				table.Rows.Add(new object[] {
 					POut.Long  (mountItemDef.MountItemDefNum),
@@ -95,7 +93,6 @@ namespace OpenDentBusiness.Crud{
 					            mountItemDef.ToothNumbers,
 					            mountItemDef.TextShowing,
 					POut.Float (mountItemDef.FontSize),
-					POut.Bool  (mountItemDef.FlipOnAcquire),
 				});
 			}
 			return table;
@@ -115,7 +112,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="MountItemDefNum,";
 			}
-			command+="MountDefNum,Xpos,Ypos,Width,Height,ItemOrder,RotateOnAcquire,ToothNumbers,TextShowing,FontSize,FlipOnAcquire) VALUES(";
+			command+="MountDefNum,Xpos,Ypos,Width,Height,ItemOrder,RotateOnAcquire,ToothNumbers,TextShowing,FontSize) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(mountItemDef.MountItemDefNum)+",";
 			}
@@ -129,8 +126,7 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   (mountItemDef.RotateOnAcquire)+","
 				+"'"+POut.String(mountItemDef.ToothNumbers)+"',"
 				+    DbHelper.ParamChar+"paramTextShowing,"
-				+    POut.Float (mountItemDef.FontSize)+","
-				+    POut.Bool  (mountItemDef.FlipOnAcquire)+")";
+				+    POut.Float (mountItemDef.FontSize)+")";
 			if(mountItemDef.TextShowing==null) {
 				mountItemDef.TextShowing="";
 			}
@@ -159,7 +155,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="MountItemDefNum,";
 			}
-			command+="MountDefNum,Xpos,Ypos,Width,Height,ItemOrder,RotateOnAcquire,ToothNumbers,TextShowing,FontSize,FlipOnAcquire) VALUES(";
+			command+="MountDefNum,Xpos,Ypos,Width,Height,ItemOrder,RotateOnAcquire,ToothNumbers,TextShowing,FontSize) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(mountItemDef.MountItemDefNum)+",";
 			}
@@ -173,8 +169,7 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   (mountItemDef.RotateOnAcquire)+","
 				+"'"+POut.String(mountItemDef.ToothNumbers)+"',"
 				+    DbHelper.ParamChar+"paramTextShowing,"
-				+    POut.Float (mountItemDef.FontSize)+","
-				+    POut.Bool  (mountItemDef.FlipOnAcquire)+")";
+				+    POut.Float (mountItemDef.FontSize)+")";
 			if(mountItemDef.TextShowing==null) {
 				mountItemDef.TextShowing="";
 			}
@@ -200,8 +195,7 @@ namespace OpenDentBusiness.Crud{
 				+"RotateOnAcquire=  "+POut.Int   (mountItemDef.RotateOnAcquire)+", "
 				+"ToothNumbers   = '"+POut.String(mountItemDef.ToothNumbers)+"', "
 				+"TextShowing    =  "+DbHelper.ParamChar+"paramTextShowing, "
-				+"FontSize       =  "+POut.Float (mountItemDef.FontSize)+", "
-				+"FlipOnAcquire  =  "+POut.Bool  (mountItemDef.FlipOnAcquire)+" "
+				+"FontSize       =  "+POut.Float (mountItemDef.FontSize)+" "
 				+"WHERE MountItemDefNum = "+POut.Long(mountItemDef.MountItemDefNum);
 			if(mountItemDef.TextShowing==null) {
 				mountItemDef.TextShowing="";
@@ -253,10 +247,6 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="FontSize = "+POut.Float(mountItemDef.FontSize)+"";
 			}
-			if(mountItemDef.FlipOnAcquire != oldMountItemDef.FlipOnAcquire) {
-				if(command!="") { command+=",";}
-				command+="FlipOnAcquire = "+POut.Bool(mountItemDef.FlipOnAcquire)+"";
-			}
 			if(command=="") {
 				return false;
 			}
@@ -301,9 +291,6 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(mountItemDef.FontSize != oldMountItemDef.FontSize) {
-				return true;
-			}
-			if(mountItemDef.FlipOnAcquire != oldMountItemDef.FlipOnAcquire) {
 				return true;
 			}
 			return false;

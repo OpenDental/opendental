@@ -22,7 +22,6 @@ namespace OpenDental {
 			textYpos.Text=MountItemDefCur.Ypos.ToString();
 			textWidth.Text=MountItemDefCur.Width.ToString();
 			textHeight.Text=MountItemDefCur.Height.ToString();
-			checkFlip.Checked=MountItemDefCur.FlipOnAcquire;
 			textRotate.Value=MountItemDefCur.RotateOnAcquire;
 			textToothNumbers.Text=Tooth.FormatRangeForDisplay(MountItemDefCur.ToothNumbers);
 			textTextShowing.Text=MountItemDefCur.TextShowing;
@@ -85,7 +84,6 @@ namespace OpenDental {
 			MountItemDefCur.Ypos=PIn.Int(textYpos.Text);
 			MountItemDefCur.Width=PIn.Int(textWidth.Text);
 			MountItemDefCur.Height=PIn.Int(textHeight.Text);
-			MountItemDefCur.FlipOnAcquire=checkFlip.Checked;
 			MountItemDefCur.RotateOnAcquire=textRotate.Value;
 			MountItemDefCur.TextShowing=textTextShowing.Text;
 			MountItemDefCur.FontSize=(float)textFontSize.Value;

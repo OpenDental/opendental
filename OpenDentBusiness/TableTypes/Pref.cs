@@ -1044,7 +1044,7 @@ namespace OpenDentBusiness {
 		ImagesModuleUsesOld2020,
 		ImageWindowingMax,
 		ImageWindowingMin,
-		///<summary>Only for documents (images), not mounts.  MountDefs have their own place for defaults.  Scale, decimal places, and units, separated by spaces.  Example: "123.4 0 mm". The first two are required; units is optional. Converted into an ImageDraw of type ScaleValue in a lazy manner. Not created unless needed.</summary>
+		///<summary>Not yet implemented. Only for documents (images), not mounts.  MountDefs have their own place for defaults.  Scale, decimal places, and units, separated by spaces.  Example: "123.4 0 mm". The first two are required; units is optional. Converted into an ImageDraw of type ScaleValue in a lazy manner. Not created unless needed.</summary>
 		ImagingDefaultScaleValue,
 		///<summary>Boolean.  False by default.  When enabled a fix is enabled within ODTextBox (RichTextBox) for foreign users that use 
 		///a different language input methodology that requires the composition of symbols in order to display their language correctly.

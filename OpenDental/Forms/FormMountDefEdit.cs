@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Forms;
 using OpenDentBusiness;
 using CodeBase;
@@ -31,6 +32,7 @@ namespace OpenDental{
 		private int _reorderIndex;
 		/// <summary>This is the outline of the mount.</summary>
 		private Rectangle _rectangleMount;
+		///<summary>Within the list _listMountItemDefs. Completely unrelated to ItemOrders.</summary>
 		private int _selectedIndex=-1;
 		#endregion Fields - Private
 
@@ -184,26 +186,27 @@ namespace OpenDental{
 		}
 
 		private void butReorder_Click(object sender,EventArgs e) {
+			if(_isReordering){
+				_isReordering=false;
+				FillItems();
+				_selectedIndex=-1;
+				butReorder.Text="Reorder All";
+				labelReorder.Text="This lets you reorder all items by clicking through them in sequence";
+				return;
+			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"All orders will now be cleared.")){
 				return;
 			}
-			if(_isReordering){
-				_isReordering=false;
-				butReorder.Text="Reorder All";
-				labelReorder.Text="This lets you reorder all items by clicking through them in sequence";
+			_selectedIndex=-1;
+			for(int i=0;i<_listMountItemDefs.Count;i++){
+				_listMountItemDefs[i].ItemOrder=0;
+				MountItemDefs.Update(_listMountItemDefs[i]);
 			}
-			else{//start reordering
-				_selectedIndex=-1;
-				for(int i=0;i<_listMountItemDefs.Count;i++){
-					_listMountItemDefs[i].ItemOrder=0;
-					MountItemDefs.Update(_listMountItemDefs[i]);
-				}
-				controlDrawing.Invalidate();
-				_isReordering=true;
-				butReorder.Text="Stop";
-				_reorderIndex=1;
-				labelReorder.Text="Click the button again to stop reordering";
-			}
+			controlDrawing.Invalidate();
+			_isReordering=true;
+			butReorder.Text="Stop";
+			_reorderIndex=1;
+			labelReorder.Text="Click the button again to stop reordering";
 		}
 
 		private void butUp_Click(object sender, EventArgs e){
@@ -320,9 +323,6 @@ namespace OpenDental{
 						+"\r\nPos: "+_listMountItemDefs[i].Xpos.ToString()+", "+_listMountItemDefs[i].Ypos.ToString()
 						+"\r\nSize: "+_listMountItemDefs[i].Width.ToString()+" x "+_listMountItemDefs[i].Height.ToString()
 						+"\r\nRot: ";
-					if(_listMountItemDefs[i].FlipOnAcquire){
-						s+="flip ";
-					}
 					s+=_listMountItemDefs[i].RotateOnAcquire.ToString()
 						+"\r\nTeeth: "+_listMountItemDefs[i].ToothNumbers;
 					point=new Point(
@@ -352,9 +352,6 @@ namespace OpenDental{
 					+"\r\nPos: "+_listMountItemDefs[_selectedIndex].Xpos.ToString()+", "+_listMountItemDefs[_selectedIndex].Ypos.ToString()
 					+"\r\nSize: "+_listMountItemDefs[_selectedIndex].Width.ToString()+" x "+_listMountItemDefs[_selectedIndex].Height.ToString()
 					+"\r\nRot: ";
-				if(_listMountItemDefs[_selectedIndex].FlipOnAcquire){
-					s+="flip ";
-				}
 				s+=_listMountItemDefs[_selectedIndex].RotateOnAcquire.ToString()
 					+"\r\nTeeth: "+_listMountItemDefs[_selectedIndex].ToothNumbers;
 				point=new Point(
@@ -388,9 +385,12 @@ namespace OpenDental{
 				MountItemDefs.Update(_listMountItemDefs[idxClicked]);
 				_reorderIndex++;
 				controlDrawing.Invalidate();
-				if(_reorderIndex==_listMountItemDefs.Count+1){//example 5==5
+				int countNumbered=_listMountItemDefs.Count(x=>x.TextShowing=="");
+				if(_reorderIndex==countNumbered+1){//example 5==5
 					//automatically stops after last one, although user could stop in the middle manually.
 					_isReordering=false;
+					FillItems();
+					_selectedIndex=-1;
 					butReorder.Text="Reorder All";
 					labelReorder.Text="This lets you reorder all items by clicking through them in sequence";
 				}
@@ -444,7 +444,7 @@ namespace OpenDental{
 			}
 			if(_isMouseDown && _selectedIndex!=-1){
 				//save any movement
-				MountItemDefs.Update(_listMountItemDefs[_selectedIndex]);
+				MountItemDefs.Update(_listMountItemDefs[_selectedIndex]);//this technically saves even on simple clicks, but that's harmless.
 				FillItems();
 				//_selectedIndex remains same
 			}
@@ -558,24 +558,30 @@ namespace OpenDental{
 
 		private void FillItems(){
 			_listMountItemDefs=MountItemDefs.GetForMountDef(MountDefCur.MountDefNum);
-			int idx=1;
-			//Fix orders. They get messed up quite a bit, like when a user deletes an item.
+			int idx=1;//1-based
+			bool isChanged=false;
+			//Fix ItemOrders. They get messed up quite a bit, like when a user deletes an item.
 			for(int i=0;i<_listMountItemDefs.Count;i++){
 				if(_listMountItemDefs[i].TextShowing!=""){
 					if(_listMountItemDefs[i].ItemOrder!=0){
 						_listMountItemDefs[i].ItemOrder=0;
+						isChanged=true;
 						MountItemDefs.Update(_listMountItemDefs[i]);
 					}
 					continue;
 				}
 				if(_listMountItemDefs[i].ItemOrder!=idx){
 					_listMountItemDefs[i].ItemOrder=idx;
+					isChanged=true;
 					MountItemDefs.Update(_listMountItemDefs[i]);
 				}
 				idx++;
 				//string s="#"+_listMountItemDefs[i].ItemOrder.ToString()+": X:"+_listMountItemDefs[i].Xpos.ToString()+", Y:"+_listMountItemDefs[i].Ypos.ToString()
 				//	+": W:"+_listMountItemDefs[i].Width.ToString()+", H:"+_listMountItemDefs[i].Height.ToString();
 				//listBoxItems.Items.Add(s);
+			}
+			if(isChanged){
+				_listMountItemDefs=_listMountItemDefs.OrderBy(x=>x.ItemOrder).ToList();
 			}
 			controlDrawing.Invalidate();
 		}

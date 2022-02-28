@@ -334,7 +334,6 @@ namespace OpenDental {
 			//_bitmapDicomRaw=bitmapDicom;
 			Document documentOld=document.Copy();
 			document.MountItemNum=mountItem.MountItemNum;
-			document.IsFlipped=mountItem.FlipOnAcquire;
 			document.DegreesRotated=mountItem.RotateOnAcquire;
 			document.ToothNumbers=mountItem.ToothNumbers;
 			Documents.Update(document,documentOld);
@@ -417,7 +416,6 @@ namespace OpenDental {
 			}
 			Document documentOld=document.Copy();
 			document.MountItemNum=_listMountItems[_idxSelectedInMount].MountItemNum;
-			document.IsFlipped=_listMountItems[_idxSelectedInMount].FlipOnAcquire;
 			document.DegreesRotated=_listMountItems[_idxSelectedInMount].RotateOnAcquire;
 			document.ToothNumbers=_listMountItems[_idxSelectedInMount].ToothNumbers;
 			Documents.Update(document,documentOld);
