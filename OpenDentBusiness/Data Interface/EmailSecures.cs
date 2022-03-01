@@ -199,7 +199,7 @@ namespace OpenDentBusiness{
 			string notificationSummary="";
 			pat??=EmailMessages.GetPatient(messageDb);
 			if(pat!=null) {
-				notificationSummary=Lans.g("EmailSecure","Regarding: ")+pat.GetNameFirstOrPreferred();
+				notificationSummary=pat.GetNameFirstOrPreferred();
 			}
 			return notificationSummary;
 		}

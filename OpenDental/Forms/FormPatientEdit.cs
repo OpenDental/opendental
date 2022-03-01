@@ -243,6 +243,9 @@ namespace OpenDental{
 				checkAddressSameForSuperFam.Checked=Patients.SuperFamHasSameAddrPhone(_patientCur,isAuthArchivedEdit);
 			}
 			#endregion SameForFamily
+			if(IsNew) {
+				_patientCur.PatStatus=PatientStatus.Patient;
+			}
 			checkRestrictSched.Checked=PatRestrictionL.IsRestricted(_patientCur.PatNum,PatRestrict.ApptSchedule,true);
 			textPatNum.Text=_patientCur.PatNum.ToString();
 			textLName.Text=_patientCur.LName;
@@ -581,7 +584,6 @@ namespace OpenDental{
 				//textAdmitDate.Visible=false;
 				//labelAdmitDate.Visible=false;
 			}
-			textWard.Text=_patientCur.Ward;
 			for(int i=0;i<Enum.GetNames(typeof(ContactMethod)).Length;i++){
 				comboContact.Items.Add(Lan.g("enumContactMethod",Enum.GetNames(typeof(ContactMethod))[i]));
 				comboConfirm.Items.Add(Lan.g("enumContactMethod",Enum.GetNames(typeof(ContactMethod))[i]));
@@ -603,8 +605,9 @@ namespace OpenDental{
 			if(comboExcludeECR.SelectedIndices.Count==0) {
 				comboExcludeECR.SetSelected(0);
 			}
-			if(_patientCur.AdmitDate.Year>1880){
+			if(!PrefC.GetBool(PrefName.EasyHideHospitals)) {
 				odDatePickerAdmitDate.SetDateTime(_patientCur.AdmitDate);
+				textWard.Text=_patientCur.Ward;
 			}
 			FillReferrals();
 			if(HL7Defs.IsExistingHL7Enabled()) {
@@ -2820,7 +2823,8 @@ namespace OpenDental{
 				MsgBox.Show(this,"Patient's Birthdate is not a valid or allowed date.");
 				return;
 			}
-			if(!odDatePickerDateFirstVisit.IsValid() || !odDatePickerAdmitDate.IsValid()) {
+			//Only validate admitDate when Hosptals is turned on. User has no way to correct errors otherwise.
+			if(!odDatePickerDateFirstVisit.IsValid() || (!PrefC.GetBool(PrefName.EasyHideHospitals) && !odDatePickerAdmitDate.IsValid())) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
 			}
@@ -3172,7 +3176,6 @@ namespace OpenDental{
 			if(Programs.IsEnabled(ProgramName.TrophyEnhanced)) {
 				_patientCur.TrophyFolder=textTrophyFolder.Text;
 			}
-			_patientCur.Ward=textWard.Text;
 			_patientCur.PreferContactMethod=(ContactMethod)comboContact.SelectedIndex;
 			_patientCur.PreferConfirmMethod=(ContactMethod)comboConfirm.SelectedIndex;
 			_patientCur.PreferRecallMethod=(ContactMethod)comboRecall.SelectedIndex;
@@ -3187,7 +3190,10 @@ namespace OpenDental{
 				_commOptOut.OptOutEmail=listCommOptOutMode.Any(x => x==CommOptOutMode.Email) ? CommOptOutType.All : 0;
 			}
 			CommOptOuts.Upsert(_commOptOut);
-			_patientCur.AdmitDate=PIn.Date(odDatePickerAdmitDate.GetDateTime().ToString());
+			if(!PrefC.GetBool(PrefName.EasyHideHospitals)) { //Only update if Hospital tab is showing
+				_patientCur.AdmitDate=PIn.Date(odDatePickerAdmitDate.GetDateTime().ToString());
+				_patientCur.Ward=textWard.Text;
+			}
 			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
 				_patientCur.CanadianEligibilityCode=(byte)comboCanadianEligibilityCode.SelectedIndex;
 			}

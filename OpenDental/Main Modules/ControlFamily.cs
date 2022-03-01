@@ -1444,7 +1444,7 @@ namespace OpenDental{
 			//These accounts are acceptable to add because HQ understands they are not accounts designed to be managed by the Reseller Portal.
 			Patient patTemp=new Patient();
 			patTemp.LName         =_patCur.LName;
-			patTemp.PatStatus     =PatientStatus.Patient;
+			patTemp.PatStatus     =PatientStatus.Deleted;
 			patTemp.Gender        =PatientGender.Unknown;
 			patTemp.Address       =_patCur.Address;
 			patTemp.Address2      =_patCur.Address2;

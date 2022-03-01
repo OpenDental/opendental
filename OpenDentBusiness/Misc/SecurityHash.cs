@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
 		///<summary>The date Open Dental started hashing fields into paysplit.SecurityHash. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2022,2,17);
+		public static DateTime DateStart=new DateTime(2022,2,28);
 		private static bool _arePaySplitsUpdated=false;
 		private static bool _areAppointmentsUpdated=false;
 		private static bool _arePatientsUpdated=false;
@@ -121,6 +122,14 @@ namespace OpenDentBusiness.Misc {
 			if(!LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"patient","SecurityHash")) {
 				return;
 			}
+			_arePatientsUpdated=true;
+			ThreadStart threadStart=new ThreadStart(PatientWorker);
+			Thread thread=new Thread(threadStart);
+			thread.IsBackground=true;
+			thread.Start();
+		}
+
+		private static void PatientWorker() {
 			//Get all ALL unhashed patients
 			string command="SELECT PatNum FROM patient WHERE SecurityHash=''";
 			DataTable table=Db.GetTable(command);
@@ -138,10 +147,10 @@ namespace OpenDentBusiness.Misc {
 					ex.DoNothing();
 					hashedText="";
 				}
+				//This loop takes 7 minutes for 1M patients when run locally, but it's taking too long for customers.
 				command=$@"UPDATE patient SET SecurityHash='{POut.String(hashedText)}' WHERE PatNum={POut.Long(patNum)}";
 				Db.NonQ(command);
 			}
-			_arePatientsUpdated=true;
 		}
 
 		private static void RunPayPlan() {

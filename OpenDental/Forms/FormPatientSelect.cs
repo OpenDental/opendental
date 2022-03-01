@@ -690,7 +690,7 @@ namespace OpenDental{
 				}
 			}
 			Patient PatCur=Patients.CreateNewPatient(textLName.Text,textFName.Text,PIn.Date(textBirthdate.Text),priProv,Clinics.ClinicNum
-				,Lan.g(this,"Created from Select Patient window."));
+				,Lan.g(this,"Created from Select Patient window."),patStatus:PatientStatus.Deleted);
 			Family FamCur=Patients.GetFamily(PatCur.PatNum);
 			if(Plugins.HookMethod(this,"FormPatientSelect.butAddPt_Click_showForm",PatCur,FamCur)) {
 				return;

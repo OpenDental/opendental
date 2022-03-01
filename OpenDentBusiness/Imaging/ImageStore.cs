@@ -914,21 +914,24 @@ namespace OpenDentBusiness {
 		///If not using AtoZ folder, this uploads to Cloud or fills the doc.RawBase64 which must then be updated to db.  
 		///The image format can be bmp, jpg, etc, but this overload does not allow specifying jpg compression quality.</summary>
 		public static void SaveDocument(Document doc,Bitmap image,ImageFormat format,string patFolder) {
-			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
-				string pathFileOut = ODFileUtils.CombinePaths(patFolder,doc.FileName);
-				image.Save(pathFileOut);
-			}
-			else if(CloudStorage.IsCloudStorage) {
-				using(MemoryStream stream=new MemoryStream()) {
-					image.Save(stream,format);
-					CloudStorage.Upload(patFolder,doc.FileName,stream.ToArray());
+			//Had to reassign image to new bitmap due to a possible C# bug. Would sometimes cause UE: "A generic error occurred in GDI+."
+			using(Bitmap bitmap=new Bitmap(image)) {
+				if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
+					string pathFileOut = ODFileUtils.CombinePaths(patFolder,doc.FileName);
+					bitmap.Save(pathFileOut);
 				}
-			}
-			else {//saving to db
-				using(MemoryStream stream=new MemoryStream()) {
-					image.Save(stream,format);
-					byte[] rawData=stream.ToArray();
-					doc.RawBase64=Convert.ToBase64String(rawData);
+				else if(CloudStorage.IsCloudStorage) {
+					using(MemoryStream stream=new MemoryStream()) {
+						bitmap.Save(stream,format);
+						CloudStorage.Upload(patFolder,doc.FileName,stream.ToArray());
+					}
+				}
+				else {//saving to db
+					using(MemoryStream stream=new MemoryStream()) {
+						bitmap.Save(stream,format);
+						byte[] rawData=stream.ToArray();
+						doc.RawBase64=Convert.ToBase64String(rawData);
+					}
 				}
 			}
 			LogDocument(Lans.g("ContrImages","Document Created")+": ",Permissions.ImageEdit,doc,DateTime.MinValue); //a brand new document is always passed-in
@@ -989,20 +992,23 @@ namespace OpenDentBusiness {
 
 		///<summary>If using AtoZfolder, then patFolder must be fully qualified and valid.  If not using AtoZfolder, this fills the eob.RawBase64 which must then be updated to db.</summary>
 		public static void SaveEobAttach(EobAttach eob,Bitmap image,ImageCodecInfo codec,EncoderParameters encoderParameters,string eobFolder) {
-			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
-				image.Save(ODFileUtils.CombinePaths(eobFolder,eob.FileName),codec,encoderParameters);
-			}
-			else if(CloudStorage.IsCloudStorage) {
-				using(MemoryStream stream=new MemoryStream()) {
-					image.Save(stream,codec,encoderParameters);
-					CloudStorage.Upload(eobFolder,eob.FileName,stream.ToArray());
+			//Had to reassign image to new bitmap due to a possible C# bug. Would sometimes cause UE: "A generic error occurred in GDI+."
+			using(Bitmap bitmap=new Bitmap(image)) {
+				if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
+					bitmap.Save(ODFileUtils.CombinePaths(eobFolder,eob.FileName),codec,encoderParameters);
 				}
-			}
-			else {//saving to db
-				using(MemoryStream stream=new MemoryStream()) {
-					image.Save(stream,codec,encoderParameters);
-					byte[] rawData=stream.ToArray();
-					eob.RawBase64=Convert.ToBase64String(rawData);
+				else if(CloudStorage.IsCloudStorage) {
+					using(MemoryStream stream=new MemoryStream()) {
+						bitmap.Save(stream,codec,encoderParameters);
+						CloudStorage.Upload(eobFolder,eob.FileName,stream.ToArray());
+					}
+				}
+				else {//saving to db
+					using(MemoryStream stream=new MemoryStream()) {
+						bitmap.Save(stream,codec,encoderParameters);
+						byte[] rawData=stream.ToArray();
+						eob.RawBase64=Convert.ToBase64String(rawData);
+					}
 				}
 			}
 			//No security log for creation of EOB because they don't show up in the images module.
@@ -1010,21 +1016,24 @@ namespace OpenDentBusiness {
 
 		///<summary>If using AtoZfolder, then patFolder must be fully qualified and valid.  If not using AtoZfolder, this fills the eob.RawBase64 which must then be updated to db.</summary>
 		public static void SaveAmdAttach(EhrAmendment amd,Bitmap image,ImageCodecInfo codec,EncoderParameters encoderParameters,string amdFolder) {
-			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
-				image.Save(ODFileUtils.CombinePaths(amdFolder,amd.FileName),codec,encoderParameters);
-			}
-			else if(CloudStorage.IsCloudStorage) {
-				using(MemoryStream stream=new MemoryStream()) {
-					image.Save(stream,codec,encoderParameters);
-					CloudStorage.Upload(amdFolder,amd.FileName,stream.ToArray());
+			//Had to reassign image to new bitmap due to a possible C# bug. Would sometimes cause UE: "A generic error occurred in GDI+."
+			using(Bitmap bitmap=new Bitmap(image)) {
+				if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
+					bitmap.Save(ODFileUtils.CombinePaths(amdFolder,amd.FileName),codec,encoderParameters);
 				}
-			}
-			else {//saving to db
-				using(MemoryStream stream=new MemoryStream()) {
-					image.Save(stream,codec,encoderParameters);
-					byte[] rawData=stream.ToArray();
-					amd.RawBase64=Convert.ToBase64String(rawData);
-					EhrAmendments.Update(amd);
+				else if(CloudStorage.IsCloudStorage) {
+					using(MemoryStream stream=new MemoryStream()) {
+						bitmap.Save(stream,codec,encoderParameters);
+						CloudStorage.Upload(amdFolder,amd.FileName,stream.ToArray());
+					}
+				}
+				else {//saving to db
+					using(MemoryStream stream=new MemoryStream()) {
+						bitmap.Save(stream,codec,encoderParameters);
+						byte[] rawData=stream.ToArray();
+						amd.RawBase64=Convert.ToBase64String(rawData);
+						EhrAmendments.Update(amd);
+					}
 				}
 			}
 			//No security log for creation of AMD Attaches because they don't show up in the images module

@@ -904,6 +904,9 @@ namespace OpenDental {
 				butAddSpecial.Visible=true;
 				//_imageToothChart=GetToothChartImage();
 			}
+			if(_sheetDefCur.SheetType==SheetTypeEnum.Statement) {
+				butAddSigBox.Visible=false;
+			}
 			SetPanelMainSize();
 			//panelMain.Height=_sheetDefCur.HeightTotal;
 			//if(_sheetDefCur.PageCount>1){
