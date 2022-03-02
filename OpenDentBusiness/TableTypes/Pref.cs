@@ -821,7 +821,7 @@ namespace OpenDentBusiness {
 		///<summary>Defaults to false. When true, displays check-in questions on separate pages rather than all on the same page.</summary>
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		EClipboardHasMultiPageCheckIn,
-		///<summary>Comma deliminated list of DefNums related to DefCat.EClipboardImageCapture</summary>
+		///<summary>Deprecated. As of 22.1, we store defs in own table, EClipboardImageCaptureDef. Comma deliminated list of DefNums related to DefCat.EClipboardImageCapture</summary>
 		[PrefName(ValueType=PrefValueType.STRING)]
 		EClipboardImageCaptureDefs,
 		///<summary>Plain text, this is the message we want to show users after they have used the self check-in feature.</summary>

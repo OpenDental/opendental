@@ -2340,6 +2340,10 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			Misc.SecurityHash.UpdateHashing();
 		}
+		
+		private static void To21_4_27() {
+			Misc.SecurityHash.UpdateHashing();
+		}
 
 		private static void To22_1_1() {
 			string command;
@@ -2473,7 +2477,7 @@ namespace OpenDentBusiness {
 			command="INSERT INTO program (ProgName,ProgDesc,Enabled,Path,CommandLine,Note" 
 				 +") VALUES(" 
 				 +"'MeditLink', " 
-				 +"'MeditLink from www.meditlink.com', " 
+				 +"'Medit Link from www.meditlink.com', " 
 				 +"'0', " 
 				 +"'"+POut.String(@"C:\Program Files\Medit\Medit Link\Medit Link\Medit_Link.exe")+"', " 
 				 +"'"+POut.String(@"{"+"\"NameFL\": \"[NameFL]\", \"PatNum\": \"[PatNum]\", \"PatientGenderMF\": \"[PatientGenderMF]\", \"Birthdate_yyyyMMdd\": \"[Birthdate_yyyyMMdd]\"}")+"', "//leave blank if none 
@@ -2483,7 +2487,7 @@ namespace OpenDentBusiness {
 				 +"VALUES (" 
 				 +"'"+POut.Long(programNum)+"', " 
 				 +"'2', "//ToolBarsAvail.ChartModule 
-				 +"'MedLink')"; 
+				 +"'MeditLink')"; 
 			Db.NonQ(command); 
 			//end MedLink bridge 
 			//E32326 - Adjustments offsetting each other
@@ -2545,6 +2549,85 @@ namespace OpenDentBusiness {
 			command="INSERT INTO preference (PrefName,ValueString) VALUES('EnterpriseManualRefreshMainTaskLists','0')";
 			Db.NonQ(command);
 		}//End of 22_1_4() method
+
+		private static void To22_1_6() {
+			string command;
+			DataTable table;
+			command="DROP TABLE IF EXISTS eclipboardimagecapturedef";
+			Db.NonQ(command);
+			command=@"CREATE TABLE eclipboardimagecapturedef (
+				EClipboardImageCaptureDefNum bigint NOT NULL auto_increment PRIMARY KEY,
+				DefNum bigint NOT NULL,
+				IsSelfPortrait tinyint NOT NULL,
+				FrequencyDays int NOT NULL,
+				ClinicNum bigint NOT NULL,
+				INDEX(DefNum),
+				INDEX(ClinicNum)
+				) DEFAULT CHARSET=utf8";
+			Db.NonQ(command);
+			command="DROP TABLE IF EXISTS eclipboardimagecapture";
+			Db.NonQ(command);
+			command=@"CREATE TABLE eclipboardimagecapture (
+				EClipboardImageCaptureNum bigint NOT NULL auto_increment PRIMARY KEY,
+				PatNum bigint NOT NULL,
+				DefNum bigint NOT NULL,
+				IsSelfPortrait tinyint NOT NULL,
+				DateTimeUpserted datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+				DocNum bigint NOT NULL,
+				INDEX(PatNum),
+				INDEX(DefNum),
+				INDEX(DocNum)
+				) DEFAULT CHARSET=utf8";
+			Db.NonQ(command);
+			//Converting the default clinic preference to records inside the new eclipboardimagecapturedef table.
+			//This pref is now deprecated. 
+			command="SELECT ValueString FROM preference where PrefName='EClipboardImageCaptureDefs'";
+			string eClipboardImageCaptureDefsPref=Db.GetScalar(command);
+			List<string> listDefNums=new List<string>();
+			if(!string.IsNullOrWhiteSpace(eClipboardImageCaptureDefsPref)){
+				listDefNums=eClipboardImageCaptureDefsPref.Split(',').ToList();
+			}
+			for(int i=0;i<listDefNums.Count;i++) { 
+				command=$@"INSERT INTO eclipboardimagecapturedef (DefNum,IsSelfPortrait,FrequencyDays,ClinicNum) 
+					VALUES ({POut.String(listDefNums[i])},{POut.Bool(false)},{POut.Int(0)},{POut.Long(0)})";
+				Db.NonQ(command);
+			}
+			//Converting the default self portrait pref into a record in the new eclipboardimagecapturedef table.
+			command="SELECT ValueString FROM preference WHERE PrefName='EClipboardAllowSelfPortraitOnCheckIn'";
+			bool allowSelfPortrait=PIn.Bool(Db.GetScalar(command));
+			//Category 18 is the DefCat 'Image Categories. 'P' is the Patient Pictures usage, where we store selfies.
+			command="SELECT DefNum FROM definition WHERE Category=18 AND ItemValue LIKE '%P%'";
+			long patientPicturesImageCatDefNum=Db.GetLong(command);
+			if(allowSelfPortrait) {
+				command=$@"INSERT INTO eclipboardimagecapturedef (DefNum,IsSelfPortrait,FrequencyDays,ClinicNum) 
+					VALUES ({POut.Long(patientPicturesImageCatDefNum)},{POut.Bool(true)},{POut.Int(0)},{POut.Long(0)})";
+				Db.NonQ(command);
+			}
+			//Now convert the EClipboardImageCaptureDefs pref for clinics, if any. 
+			command="SELECT * FROM clinicpref WHERE PrefName='EClipboardImageCaptureDefs'";
+			table=Db.GetTable(command);
+			for(int i=0;i<table.Rows.Count;i++) {
+				DataRow dataRow=table.Rows[i];
+				eClipboardImageCaptureDefsPref=dataRow["ValueString"].ToString();
+				listDefNums=new List<string>();
+				if(!string.IsNullOrWhiteSpace(eClipboardImageCaptureDefsPref)){
+					listDefNums=eClipboardImageCaptureDefsPref.Split(',').ToList();
+				}
+				long clinicNum=PIn.Long(dataRow["ClinicNum"].ToString());
+				for(int j=0;j<listDefNums.Count;j++) { 
+					command=$@"INSERT INTO eclipboardimagecapturedef (DefNum,IsSelfPortrait,FrequencyDays,ClinicNum) 
+						VALUES ({POut.String(listDefNums[j])},{POut.Bool(false)},{POut.Int(0)},{POut.Long(clinicNum)})";
+					Db.NonQ(command);
+				}
+				command=$"SELECT ValueString FROM clinicpref WHERE ClinicNum={POut.Long(clinicNum)} AND PrefName='EClipboardAllowSelfPortraitOnCheckIn'";
+				allowSelfPortrait=PIn.Bool(Db.GetScalar(command));
+				if(allowSelfPortrait) {
+					command=$@"INSERT INTO eclipboardimagecapturedef (DefNum,IsSelfPortrait,FrequencyDays,ClinicNum) 
+						VALUES ({POut.Long(patientPicturesImageCatDefNum)},{POut.Bool(true)},{POut.Int(0)},{POut.Long(clinicNum)})";
+					Db.NonQ(command);
+				}
+			}
+		}//End of 22_1_6() method
 	}
 }
 

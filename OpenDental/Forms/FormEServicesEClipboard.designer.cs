@@ -48,7 +48,6 @@ namespace OpenDental{
 			this.checkAppendByodToArrivalResponseSms = new System.Windows.Forms.CheckBox();
 			this.checkEnableByodSms = new System.Windows.Forms.CheckBox();
 			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
-			this.checkEClipboardAllowSelfPortrait = new System.Windows.Forms.CheckBox();
 			this.checkEClipboardCreateMissingForms = new System.Windows.Forms.CheckBox();
 			this.labelEClipboardMessage = new System.Windows.Forms.Label();
 			this.textEClipboardMessage = new System.Windows.Forms.TextBox();
@@ -161,7 +160,6 @@ namespace OpenDental{
 			this.groupEClipboardRules.Controls.Add(this.checkRequire2FA);
 			this.groupEClipboardRules.Controls.Add(this.groupBox2);
 			this.groupEClipboardRules.Controls.Add(this.groupBox1);
-			this.groupEClipboardRules.Controls.Add(this.checkEClipboardAllowSelfPortrait);
 			this.groupEClipboardRules.Controls.Add(this.checkEClipboardCreateMissingForms);
 			this.groupEClipboardRules.Controls.Add(this.labelEClipboardMessage);
 			this.groupEClipboardRules.Controls.Add(this.textEClipboardMessage);
@@ -177,7 +175,7 @@ namespace OpenDental{
 			// checkEClipboardAllowPaymentCheckIn
 			// 
 			this.checkEClipboardAllowPaymentCheckIn.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkEClipboardAllowPaymentCheckIn.Location = new System.Drawing.Point(19, 67);
+			this.checkEClipboardAllowPaymentCheckIn.Location = new System.Drawing.Point(19, 50);
 			this.checkEClipboardAllowPaymentCheckIn.Name = "checkEClipboardAllowPaymentCheckIn";
 			this.checkEClipboardAllowPaymentCheckIn.Size = new System.Drawing.Size(458, 17);
 			this.checkEClipboardAllowPaymentCheckIn.TabIndex = 504;
@@ -216,7 +214,7 @@ namespace OpenDental{
 			// checkDisplayIndividually
 			// 
 			this.checkDisplayIndividually.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkDisplayIndividually.Location = new System.Drawing.Point(19, 139);
+			this.checkDisplayIndividually.Location = new System.Drawing.Point(19, 122);
 			this.checkDisplayIndividually.Name = "checkDisplayIndividually";
 			this.checkDisplayIndividually.Size = new System.Drawing.Size(458, 17);
 			this.checkDisplayIndividually.TabIndex = 503;
@@ -227,7 +225,7 @@ namespace OpenDental{
 			// checkRequire2FA
 			// 
 			this.checkRequire2FA.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkRequire2FA.Location = new System.Drawing.Point(19, 121);
+			this.checkRequire2FA.Location = new System.Drawing.Point(19, 104);
 			this.checkRequire2FA.Name = "checkRequire2FA";
 			this.checkRequire2FA.Size = new System.Drawing.Size(458, 17);
 			this.checkRequire2FA.TabIndex = 502;
@@ -294,21 +292,10 @@ namespace OpenDental{
 			this.groupBox1.TabIndex = 271;
 			this.groupBox1.Text = "groupBox1";
 			// 
-			// checkEClipboardAllowSelfPortrait
-			// 
-			this.checkEClipboardAllowSelfPortrait.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkEClipboardAllowSelfPortrait.Location = new System.Drawing.Point(19, 31);
-			this.checkEClipboardAllowSelfPortrait.Name = "checkEClipboardAllowSelfPortrait";
-			this.checkEClipboardAllowSelfPortrait.Size = new System.Drawing.Size(458, 17);
-			this.checkEClipboardAllowSelfPortrait.TabIndex = 268;
-			this.checkEClipboardAllowSelfPortrait.Text = "Allow patients to take self-portrait in mobile app";
-			this.checkEClipboardAllowSelfPortrait.UseVisualStyleBackColor = true;
-			this.checkEClipboardAllowSelfPortrait.Click += new System.EventHandler(this.CheckEClipboardAllowSelfPortrait_Click);
-			// 
 			// checkEClipboardCreateMissingForms
 			// 
 			this.checkEClipboardCreateMissingForms.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkEClipboardCreateMissingForms.Location = new System.Drawing.Point(19, 85);
+			this.checkEClipboardCreateMissingForms.Location = new System.Drawing.Point(19, 68);
 			this.checkEClipboardCreateMissingForms.Name = "checkEClipboardCreateMissingForms";
 			this.checkEClipboardCreateMissingForms.Size = new System.Drawing.Size(458, 17);
 			this.checkEClipboardCreateMissingForms.TabIndex = 267;
@@ -337,7 +324,7 @@ namespace OpenDental{
 			// checkEClipboardAllowSheets
 			// 
 			this.checkEClipboardAllowSheets.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkEClipboardAllowSheets.Location = new System.Drawing.Point(19, 49);
+			this.checkEClipboardAllowSheets.Location = new System.Drawing.Point(19, 32);
 			this.checkEClipboardAllowSheets.Name = "checkEClipboardAllowSheets";
 			this.checkEClipboardAllowSheets.Size = new System.Drawing.Size(458, 17);
 			this.checkEClipboardAllowSheets.TabIndex = 2;
@@ -359,7 +346,7 @@ namespace OpenDental{
 			// checkEClipboardPopupKiosk
 			// 
 			this.checkEClipboardPopupKiosk.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkEClipboardPopupKiosk.Location = new System.Drawing.Point(19, 103);
+			this.checkEClipboardPopupKiosk.Location = new System.Drawing.Point(19, 86);
 			this.checkEClipboardPopupKiosk.Name = "checkEClipboardPopupKiosk";
 			this.checkEClipboardPopupKiosk.Size = new System.Drawing.Size(458, 17);
 			this.checkEClipboardPopupKiosk.TabIndex = 0;
@@ -560,7 +547,6 @@ namespace OpenDental{
 		private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
 		private System.Windows.Forms.CheckBox checkEClipboardUseDefaults;
 		private OpenDental.UI.GroupBoxOD groupEClipboardRules;
-		private System.Windows.Forms.CheckBox checkEClipboardAllowSelfPortrait;
 		private System.Windows.Forms.CheckBox checkEClipboardCreateMissingForms;
 		private System.Windows.Forms.Label labelEClipboardMessage;
 		private System.Windows.Forms.TextBox textEClipboardMessage;

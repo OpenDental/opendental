@@ -48,7 +48,7 @@ namespace OpenDental {
 			}
 			if(billingUseElectronicIdx==2) {
 				listElectBilling.SelectedIndex=2;
-				checkIncludeClinicNum.Visible=true;
+				checkIncludeClinicNum.Visible=PrefC.HasClinicsEnabled;
 			}
 			if(billingUseElectronicIdx==3) {
 				checkCreatePDF.Enabled=true;
@@ -312,12 +312,7 @@ namespace OpenDental {
 			else {
 				checkCreatePDF.Enabled=false;
 			}
-			if(listElectBilling.SelectedIndex==2) {
-				checkIncludeClinicNum.Visible=true;
-			}
-			else {
-				checkIncludeClinicNum.Visible=false;
-			}
+			checkIncludeClinicNum.Visible=PrefC.HasClinicsEnabled && listElectBilling.SelectedIndex==2;
 		}
 
 		private void comboClinic_SelectionChangeCommitted(object sender,EventArgs e) {

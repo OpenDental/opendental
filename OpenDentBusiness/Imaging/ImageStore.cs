@@ -827,7 +827,7 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Saves image obtained from eClipboard as well as inserting it into the database. Call ImageCaptureXs.SaveImageCaptureXs() to properly set up parameters</summary>
-		public static void ImportImage(byte[] imageBytes,string header,Patient pat,long defNum,EncoderParameters encoderParams,ImageCodecInfo imgCodecInfo) {
+		public static Document ImportImage(byte[] imageBytes,string header,Patient pat,long defNum,EncoderParameters encoderParams,ImageCodecInfo imgCodecInfo) {
 			//Format the description and part of the file name to be used when saving the image. Appends a number at the end if the file name already exists
 			string getDocDescription(string header,string fileFolderPath,long patNum,string date) {
 				string cleanFileName=ODFileUtils.CleanFileName($@"{patNum}_{header}_{date}.bmp");
@@ -859,6 +859,7 @@ namespace OpenDentBusiness {
 			using (Bitmap bp=new Bitmap(mStream)) {
 				SaveDocument(doc,bp,imgCodecInfo,encoderParams,patFolder);
 			}
+			return doc;
 		}
 
 		///<summary> Save a Document to another location on the disk (outside of Open Dental). </summary>
@@ -1104,6 +1105,7 @@ namespace OpenDentBusiness {
 				}
 				//Row from db.  This deletes the "image file" also if it's stored in db.
 				Documents.Delete(documents[i]);
+				EClipboardImageCaptures.DeleteByDocNum(documents[i].DocNum);
 			}//end documents
 		}
 

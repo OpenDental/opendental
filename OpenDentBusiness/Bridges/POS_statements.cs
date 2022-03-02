@@ -216,7 +216,7 @@ namespace OpenDentBusiness.Bridges {
 						writer.WriteElementString("Charges",tableAccount.Rows[i]["charges"].ToString());
 						writer.WriteElementString("Credits",tableAccount.Rows[i]["credits"].ToString());
 						writer.WriteElementString("Balance",tableAccount.Rows[i]["balance"].ToString());
-						if(PrefC.GetBool(PrefName.BillingElectIncludeClinicNums)) {
+						if(PrefC.GetBool(PrefName.BillingElectIncludeClinicNums) && PrefC.HasClinicsEnabled) {
 							writer.WriteElementString("LocationID",tableAccount.Rows[i]["ClinicNum"].ToString());
 						}
 					}
@@ -224,7 +224,7 @@ namespace OpenDentBusiness.Bridges {
 						writer.WriteElementString("Charges","");
 						writer.WriteElementString("Credits","");
 						writer.WriteElementString("Balance","");
-						if(PrefC.GetBool(PrefName.BillingElectIncludeClinicNums)) {
+						if(PrefC.GetBool(PrefName.BillingElectIncludeClinicNums) && PrefC.HasClinicsEnabled) {
 							writer.WriteElementString("LocationID","");
 						}
 					}

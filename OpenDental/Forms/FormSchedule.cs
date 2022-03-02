@@ -817,6 +817,10 @@ namespace OpenDental{
 				MsgBox.Show(this,"Provider or Employee selection has been changed.  Please refresh first.");
 				return;
 			}
+			if(repeatCount<=0) {
+				MsgBox.Show(this,"Please enter a repeat number greater than 0.");
+				return;
+			}
 			Action actionCloseScheduleProgress=ODProgress.Show(ODEventType.Schedule,typeof(ScheduleEvent));
 			Logger.LogToPath("",LogPath.Signals,LogPhase.Start);
 			//calculate which day or week is currently selected.
@@ -1062,10 +1066,10 @@ namespace OpenDental{
 			}
 			int totalDays=0;
 			if(isWeekCopied) {
-				totalDays=repeatCount*7;//Copy whole weeks since the schedule will be filtered later
+				totalDays=(repeatCount-1)*7;//Copy whole weeks since the schedule will be filtered later
 			}
 			else {
-				for(int i=0;i<repeatCount;i++) {
+				for(int i=0;i<repeatCount-1;i++) {
 					totalDays+=CalculateNextDay(dateTimeEnd.AddDays(totalDays));
 				}
 			}

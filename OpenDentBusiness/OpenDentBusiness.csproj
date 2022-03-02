@@ -78,7 +78,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <LangVersion>8.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>  
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Avalara.AvaTax.RestClient.net45">
       <HintPath>..\Required dlls\Avalara.AvaTax.RestClient.net45.dll</HintPath>
@@ -229,6 +229,8 @@
     <Compile Include="Crud\CertEmployeeCrud.cs" />
     <Compile Include="Crud\CloudAddressCrud.cs" />
     <Compile Include="Crud\DiscountPlanSubCrud.cs" />
+    <Compile Include="Crud\EClipboardImageCaptureCrud.cs" />
+    <Compile Include="Crud\EClipboardImageCaptureDefCrud.cs" />
     <Compile Include="Crud\EmailHostingTemplateCrud.cs" />
     <Compile Include="Crud\CareCreditWebResponseCrud.cs" />
     <Compile Include="Crud\EmailSecureAttachCrud.cs" />
@@ -319,6 +321,8 @@
     <Compile Include="Data Interface\CareCreditWebResponses.cs" />
     <Compile Include="Data Interface\AdvertisingPostcards.cs" />
     <Compile Include="Data Interface\CloudAddresses.cs" />
+    <Compile Include="Data Interface\EClipboardImageCaptureDefs.cs" />
+    <Compile Include="Data Interface\EClipboardImageCaptures.cs" />
     <Compile Include="Data Interface\Etrans835s.cs" />
     <Compile Include="Data Interface\ImageDraws.cs" />
     <Compile Include="Data Interface\InsPlanPreferences.cs" />
@@ -580,6 +584,8 @@
     <Compile Include="TableTypes\Address.cs" />
     <Compile Include="TableTypes\CloudAddress.cs" />
     <Compile Include="TableTypes\DiscountPlanSub.cs" />
+    <Compile Include="TableTypes\EClipboardImageCapture.cs" />
+    <Compile Include="TableTypes\EClipboardImageCaptureDef.cs" />
     <Compile Include="TableTypes\EmailSecureAttach.cs" />
     <Compile Include="TableTypes\EmailSecure.cs" />
     <Compile Include="TableTypes\EServiceLog.cs" />

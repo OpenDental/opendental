@@ -1547,8 +1547,9 @@ namespace OpenDentBusiness {
 			}
 			//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
 			pat.SecUserNumEntry=Security.CurUser.UserNum;
-			pat.SecurityHash=HashFields(pat);
 			pat.PatNum=Crud.PatientCrud.Insert(pat,useExistingPK);
+			pat.SecurityHash=HashFields(pat);
+			Crud.PatientCrud.Update(pat);
 			if(PrefC.GetYN(PrefName.PatientPhoneUsePhonenumberTable)) {
 				PhoneNumbers.SyncPat(pat);
 			}

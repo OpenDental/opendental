@@ -674,6 +674,12 @@
     <Compile Include="Forms Reports\FormSearchPatNotes.designer.cs">
       <DependentUpon>FormSearchPatNotes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormEClipboardImageCaptureDefs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormEClipboardImageCaptureDefs.Designer.cs">
+		<DependentUpon>FormEClipboardImageCaptureDefs.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormWebFormNextForms.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -7386,6 +7392,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms Reports\FormRpServiceDateView.resx">
       <DependentUpon>FormRpServiceDateView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormEClipboardImageCaptureDefs.resx">
+	  <DependentUpon>FormEClipboardImageCaptureDefs.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormWebFormNextForms.resx">
       <DependentUpon>FormWebFormNextForms.cs</DependentUpon>

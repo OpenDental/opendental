@@ -33,6 +33,8 @@ namespace OpenDental {
 		///<summary>A list of all eclipboard sheet defs that are edited in this window. Synced with the database list on the ok click.</summary>
 		private List<EClipboardSheetDef> _listEClipboardSheetDefs;
 		private string _enabledColumnText="Enabled";
+		///<summary>A list of all eclipboard image capture defs that are edited in this window. Synced with the database list on the ok click.</summary>
+		private List<EClipboardImageCaptureDef> _listEClipboardImageCaptureDefs;
 		#endregion Fields - Private
 
 		///<summary>The current clinic num for this tab, handles whether or not the practice has clinics.</summary>
@@ -58,6 +60,8 @@ namespace OpenDental {
 		private void FormEServicesEClipboard_Load(object sender,EventArgs e) {
 			//Fill the list of sheets
 			_listEClipboardSheetDefs=EClipboardSheetDefs.Refresh();
+			//Fill the list of eclipboard image capture defs from the db.
+			_listEClipboardImageCaptureDefs=EClipboardImageCaptureDefs.Refresh();
 			//Set Clinics or No
 			if(!PrefC.HasClinicsEnabled) {
 				checkEClipboardUseDefaults.Visible=false;
@@ -71,6 +75,7 @@ namespace OpenDental {
 			_canEditEClipboard=Security.IsAuthorized(Permissions.EServicesSetup,true);
 			FillGridMobileAppDevices();
 			FillGridEClipboardSheetInUse();
+			FillImageCaptureFrequencyUI();
 			SetUIEClipboardEnabled();
 			textByodSmsTemplate.MouseHover+=new EventHandler((sender,e) => {
 				string availableTags=Lans.g(this,"Available Tags:\n")+OpenDentBusiness.AutoComm.ByodTagReplacer.BYOD_TAG+Lans.g(this,"(required)\n")
@@ -86,6 +91,7 @@ namespace OpenDental {
 			}
 			EClipboardPushPrefs();
 			EClipboardSheetDefs.Sync(_listEClipboardSheetDefs,EClipboardSheetDefs.Refresh());
+			EClipboardImageCaptureDefs.Sync(_listEClipboardImageCaptureDefs,EClipboardImageCaptureDefs.Refresh());
 			EClipboardEvent.Fired-=eClipboardChangedEvent_Fired;
 			DialogResult=DialogResult.OK;
 		}
@@ -150,6 +156,7 @@ namespace OpenDental {
 			EClipboardSetControlsForClinicPrefs();
 			FillGridMobileAppDevices();
 			FillGridEClipboardSheetInUse();
+			FillImageCaptureFrequencyUI();
 			SetUIEClipboardEnabled();
 		}
 
@@ -189,18 +196,18 @@ namespace OpenDental {
 		}
 
 		private void butImageOptions_Click(object sender,EventArgs e) {
-			List<string> listImagePrefNames=textEclipboardImageDefs.Text.Split(new char[] {','},StringSplitOptions.RemoveEmptyEntries).ToList();
-			List<Def> listDefs=new List<Def>();
-			for(int i=0;i<listImagePrefNames.Count();i++) {
-				listDefs.Add(Defs.GetDefByExactName(DefCat.EClipboardImageCapture,listImagePrefNames[i]));
-			}
-			using FormDefinitionPicker formDefinitionPicker=new FormDefinitionPicker(DefCat.EClipboardImageCapture,listDefs);
-			formDefinitionPicker.IsMultiSelectionMode=true;
-			formDefinitionPicker.ShowDialog();
-			if(formDefinitionPicker.DialogResult==DialogResult.OK) {
-				string defsForPref=string.Join(",",formDefinitionPicker.ListDefsSelected.Select(x=>x.DefNum));
-				textEclipboardImageDefs.Text=EClipboardGetImageDefsFromPref(defsForPref);
-				_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardImageCaptureDefs,clinicPickerEClipboard.SelectedClinicNum,defsForPref);
+			FormEClipboardImageCaptureDefs formEClipboardImageCaptureDefs=new FormEClipboardImageCaptureDefs(GetClinicNumEClipboardTab());
+			//This creates a copy of the list, and a shallow copy of the objects in the list. This is needed to avoid bugs where changes made to 'ListEClipboardImageCaptureDefs'
+			//inside of formEClipboardImageCaptureDefs are still kept even if the user clicks cancel in that form.
+			formEClipboardImageCaptureDefs.ListEClipboardImageCaptureDefs=_listEClipboardImageCaptureDefs.Select(x => x.Copy()).ToList();
+			formEClipboardImageCaptureDefs.ShowDialog();
+			if(formEClipboardImageCaptureDefs.DialogResult==DialogResult.OK) {
+				//On OK click, update the list of eclipboard image capture defs to reflect any changes the user made to which images user are allowed to take and their frequencies
+				_listEClipboardImageCaptureDefs=formEClipboardImageCaptureDefs.ListEClipboardImageCaptureDefs.Select(x => x.Copy()).ToList();
+				//Need to update the 'EClipboardAllowSelfPortraitOnCheckIn' pref in the clinicprefhelper since that pref is toggled in the previously opened form.
+				UpdateAllowSelfPortraitPref();
+				//Update the UI to reflect the new changes
+				FillImageCaptureFrequencyUI();
 			}
 		}
 		#endregion Methods - Event Handlers Main
@@ -212,12 +219,14 @@ namespace OpenDental {
 			if(checkEClipboardUseDefaults.Checked) {//If set to true, set the behavior rules and sheets to the default
 				EClipboardSetControlsToPrefDefaults();
 				_listEClipboardSheetDefs.RemoveAll(x => GetClinicNumEClipboardTab()!=0 && x.ClinicNum==GetClinicNumEClipboardTab());
+				_listEClipboardImageCaptureDefs.RemoveAll(x => GetClinicNumEClipboardTab()!=0 && x.ClinicNum==GetClinicNumEClipboardTab());
 			}
 			else{
 				//user unchecked the box, but nothing should change.  Other 5 checkboxes just stay with the old default values.  They can edit from here, which would override the defaults.
 			}
 			//disable the ability to edit rules if applicable
 			FillGridEClipboardSheetInUse();
+			FillImageCaptureFrequencyUI();
 			SetUIEClipboardEnabled();
 		}
 
@@ -231,12 +240,6 @@ namespace OpenDental {
 			string strAllowPayments=POut.Bool(checkEClipboardAllowPaymentCheckIn.Checked);
 			_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardAllowPaymentOnCheckin,clinicPickerEClipboard.SelectedClinicNum,strAllowPayments);
 			UpdateEClipboardDefaultsIfNeeded(PrefName.EClipboardAllowPaymentOnCheckin,strAllowPayments);
-		}
-
-		private void CheckEClipboardAllowSelfPortrait_Click(object sender, EventArgs e){
-			string strAllowSelfPortrait=POut.Bool(checkEClipboardAllowSelfPortrait.Checked);
-			_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardAllowSelfPortraitOnCheckIn,clinicPickerEClipboard.SelectedClinicNum,strAllowSelfPortrait);
-			UpdateEClipboardDefaultsIfNeeded(PrefName.EClipboardAllowSelfPortraitOnCheckIn,strAllowSelfPortrait);
 		}
 
 		private void CheckEClipboardAllowSheets_Click(object sender, EventArgs e){
@@ -331,15 +334,30 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>This method expects a string that will need to be parsed into a human readable list of eClipboardImageCapture prefs.</summary>
-		private string EClipboardGetImageDefsFromPref(string eClipboardImagePrefValue) {
-			if(string.IsNullOrWhiteSpace(eClipboardImagePrefValue)) {
-				return "";
+		///<summary>Updates the eclipboard image defs textbox to show which eclipboard images users are allowed to submit and the frequenicies at
+		///which they should submit images.</summary>
+		private void FillImageCaptureFrequencyUI() {
+			long clinicNum=0;
+			if(!checkEClipboardUseDefaults.Checked) { 
+				clinicNum=GetClinicNumEClipboardTab();
 			}
-			List<string> listPrefVals=eClipboardImagePrefValue.Split(new char[] {','},StringSplitOptions.RemoveEmptyEntries).ToList();
-			List<Def> listDefs=Defs.GetDefs(DefCat.EClipboardImageCapture,listPrefVals.Select(x=>PIn.Long(x)).ToList());
-			return string.Join(",",listDefs.Select(x=>x.ItemName));
+			//Separate the EClipboard Images defcat capturedefs from the self portrait capturedef and store each in their respective variables.
+			List<EClipboardImageCaptureDef> listEClipboardImageCaptureDefs=_listEClipboardImageCaptureDefs.FindAll(x => !x.IsSelfPortrait && x.ClinicNum==clinicNum);
+			EClipboardImageCaptureDef eClipboardImageCaptureDefSelfPortrait=_listEClipboardImageCaptureDefs.Find(x => x.IsSelfPortrait && x.ClinicNum==clinicNum);
+			List<string> listImageCaptureDefs=new List<string>();
+			//If patient is allowed to submit self portrait, indicated by the self portrait having an eclipboardimagecapturedef record for this clinic, then we add it to
+			//our list of strings that will be displayed in the UI.
+			if(eClipboardImageCaptureDefSelfPortrait!=null) {
+				listImageCaptureDefs.Add("Self Portrait ("+eClipboardImageCaptureDefSelfPortrait.FrequencyDays+")");
+			}
+			//From the list of EClipboardImageCaptureDef objects for the EClipboard Images patients are allowed to take, create a list of strings indicating the name of the
+			//def (def in Eclipboard Images DefCat) and the frequency at which the patient will be prompted to submit the image
+			for(int i=0;i<listEClipboardImageCaptureDefs.Count;i++) {
+				listImageCaptureDefs.Add(Defs.GetDef(DefCat.EClipboardImageCapture,listEClipboardImageCaptureDefs[i].DefNum).ItemName+" ("+listEClipboardImageCaptureDefs[i].FrequencyDays+")");
+			}
+			textEclipboardImageDefs.Text=string.Join(", ",listImageCaptureDefs);
 		}
+
 
 		///<summary>Converts information in textEclipboardImageDefs.Text to string comma deliminated DefNums</summary>
 		private string EClipboardImagePrefsFromText() {
@@ -359,7 +377,6 @@ namespace OpenDental {
 			//EClipboardUseDefaults not included here
 			checkEClipboardAllowCheckIn.Checked=_clinicPrefHelper.GetDefaultBoolVal(PrefName.EClipboardAllowSelfCheckIn);
 			checkEClipboardAllowPaymentCheckIn.Checked=_clinicPrefHelper.GetDefaultBoolVal(PrefName.EClipboardAllowPaymentOnCheckin);
-			checkEClipboardAllowSelfPortrait.Checked=_clinicPrefHelper.GetDefaultBoolVal(PrefName.EClipboardAllowSelfPortraitOnCheckIn);
 			checkEClipboardAllowSheets.Checked=_clinicPrefHelper.GetDefaultBoolVal(PrefName.EClipboardPresentAvailableFormsOnCheckIn);
 			checkEClipboardCreateMissingForms.Checked=_clinicPrefHelper.GetDefaultBoolVal(PrefName.EClipboardCreateMissingFormsOnCheckIn);
 			checkEClipboardPopupKiosk.Checked=_clinicPrefHelper.GetDefaultBoolVal(PrefName.EClipboardPopupKioskOnCheckIn);
@@ -369,13 +386,10 @@ namespace OpenDental {
 			checkRequire2FA.Checked=_clinicPrefHelper.GetDefaultBoolVal(PrefName.EClipboardDoTwoFactorAuth);
 			textByodSmsTemplate.Text=_clinicPrefHelper.GetDefaultStringVal(PrefName.EClipboardByodSmsTemplate);
 			textEClipboardMessage.Text=_clinicPrefHelper.GetDefaultStringVal(PrefName.EClipboardMessageComplete);
-			textEclipboardImageDefs.Text=EClipboardGetImageDefsFromPref(_clinicPrefHelper.GetDefaultStringVal(PrefName.EClipboardImageCaptureDefs));
 			_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardAllowSelfCheckIn,clinicPickerEClipboard.SelectedClinicNum,
 				POut.Bool(checkEClipboardAllowCheckIn.Checked));
 			_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardAllowPaymentOnCheckin,clinicPickerEClipboard.SelectedClinicNum,
 				POut.Bool(checkEClipboardAllowPaymentCheckIn.Checked));
-			_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardAllowSelfPortraitOnCheckIn,clinicPickerEClipboard.SelectedClinicNum,
-				POut.Bool(checkEClipboardAllowSelfPortrait.Checked));
 			_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardPresentAvailableFormsOnCheckIn,clinicPickerEClipboard.SelectedClinicNum,
 				POut.Bool(checkEClipboardAllowSheets.Checked));
 			_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardCreateMissingFormsOnCheckIn,clinicPickerEClipboard.SelectedClinicNum,
@@ -392,9 +406,8 @@ namespace OpenDental {
 				textEClipboardMessage.Text);
 			_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardDoTwoFactorAuth,clinicPickerEClipboard.SelectedClinicNum,
 				POut.Bool(checkRequire2FA.Checked));
-			_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardImageCaptureDefs,clinicPickerEClipboard.SelectedClinicNum,
-				EClipboardImagePrefsFromText());
 			_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardHasMultiPageCheckIn,clinicPickerEClipboard.SelectedClinicNum,POut.Bool(checkDisplayIndividually.Checked));
+			UpdateAllowSelfPortraitPref();
 		}
 
 		///<summary>Sets the Defaults checkbox itself.  Then sets the 5 other checkboxes and the textbox that are involved in prefs.  Sets them based on the values in the local clinicpref list.  Does not change any of those values.  Called only on startup.</summary>
@@ -407,7 +420,6 @@ namespace OpenDental {
 			else {
 				checkEClipboardAllowCheckIn.Checked=_clinicPrefHelper.GetBoolVal(PrefName.EClipboardAllowSelfCheckIn,clinicNum);
 				checkEClipboardAllowPaymentCheckIn.Checked=_clinicPrefHelper.GetBoolVal(PrefName.EClipboardAllowPaymentOnCheckin,clinicNum);
-				checkEClipboardAllowSelfPortrait.Checked=_clinicPrefHelper.GetBoolVal(PrefName.EClipboardAllowSelfPortraitOnCheckIn,clinicNum);
 				checkEClipboardAllowSheets.Checked=_clinicPrefHelper.GetBoolVal(PrefName.EClipboardPresentAvailableFormsOnCheckIn,clinicNum);
 				checkEClipboardCreateMissingForms.Checked=_clinicPrefHelper.GetBoolVal(PrefName.EClipboardCreateMissingFormsOnCheckIn,clinicNum);
 				checkEClipboardPopupKiosk.Checked=_clinicPrefHelper.GetBoolVal(PrefName.EClipboardPopupKioskOnCheckIn,clinicNum);
@@ -418,7 +430,6 @@ namespace OpenDental {
 				checkDisplayIndividually.Checked=_clinicPrefHelper.GetBoolVal(PrefName.EClipboardHasMultiPageCheckIn,clinicNum);
 				textByodSmsTemplate.Text=_clinicPrefHelper.GetStringVal(PrefName.EClipboardByodSmsTemplate,clinicNum);
 				textEClipboardMessage.Text=_clinicPrefHelper.GetStringVal(PrefName.EClipboardMessageComplete,clinicNum);
-				textEclipboardImageDefs.Text=EClipboardGetImageDefsFromPref(_clinicPrefHelper.GetStringVal(PrefName.EClipboardImageCaptureDefs,clinicNum));
 			}
 		}
 
@@ -628,6 +639,15 @@ namespace OpenDental {
 					_clinicPrefHelper.ValChangedByUser(prefName,listClinicPrefs[i].ClinicNum,newVal);
 				}
 			}
+		}
+
+		private void UpdateAllowSelfPortraitPref() {
+			long clinicNum=0;
+			if(!checkEClipboardUseDefaults.Checked) {
+				clinicNum=GetClinicNumEClipboardTab();
+			}
+			bool isSelfPortraitAllowed=_listEClipboardImageCaptureDefs.Any(x => x.IsSelfPortrait && x.ClinicNum==clinicNum);
+			_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardAllowSelfPortraitOnCheckIn,clinicPickerEClipboard.SelectedClinicNum,POut.Bool(isSelfPortraitAllowed));
 		}
 		#endregion Methods - Private
 	}

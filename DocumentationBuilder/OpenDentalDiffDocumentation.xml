@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
-<database version="22.1.4.0">
+<database version="22.1.6.0">
     <table name="alertcategorylink">
         <summary></summary>
         <column order="2" name="AlertType" type="tinyint(4)">
@@ -80,6 +80,49 @@
             </Enumeration>
         </column>
     </table>
+    <table name="eclipboardimagecapture">
+        <summary></summary>
+        <column order="0" name="EClipboardImageCaptureNum" type="bigint(20)">
+            <summary>Primary key.</summary>
+        </column>
+        <column order="1" name="PatNum" type="bigint(20)" fk="patient">
+            <summary>FK to patient.PatNum.</summary>
+        </column>
+        <column order="2" name="DefNum" type="bigint(20)" fk="def">
+            <summary>FK to def.DefNum. Should match a DefNum that that is in the in 'EClipboard Images' defcat or has (or had) the 'P' (Patient Pictures)  
+            usage in the 'Image Categories' defcat.</summary>
+        </column>
+        <column order="3" name="IsSelfPortrait" type="tinyint(4)">
+            <summary>Using DefNum to identify the self portrait is unreliable as the image category that is used to store self portraits may change. Instead, set this field to
+            true for any image capture that is a self portrait. Only for self-portraits tied to the pref 'EClipboardAllowSelfPortraitOnCheckIn', not 'eClipboard Images' defcat.</summary>
+        </column>
+        <column order="4" name="DateTimeUpserted" type="datetime">
+            <summary>Records the date and time the patient took the image. If patient has submitted this eclipboard image before, then we simply update the
+            DateUpserted field and DocNum field. We do not insert an entirely new record.</summary>
+        </column>
+        <column order="5" name="DocNum" type="bigint(20)" fk="document">
+            <summary>FK to document.DocNum. If a document is deleted, need to also delete any record from this table with the same DocNum.</summary>
+        </column>
+    </table>
+    <table name="eclipboardimagecapturedef">
+        <summary></summary>
+        <column order="0" name="EClipboardImageCaptureDefNum" type="bigint(20)">
+            <summary>Primary key.</summary>
+        </column>
+        <column order="1" name="DefNum" type="bigint(20)" fk="def">
+            <summary>FK to def.DefNum. Should match a DefNum that is in the in 'EClipboard Images' defcat or has (or had) the 'P' (Patient Pictures)  
+            usage in the 'Image Categories' defcat.</summary>
+        </column>
+        <column order="2" name="IsSelfPortrait" type="tinyint(4)">
+            <summary>True if the rule pertains to the patient self portrait. False if the rule is for an 'Eclipboard images' defcat definition.</summary>
+        </column>
+        <column order="3" name="FrequencyDays" type="int(11)">
+            <summary>Frequency at which the patient should update the image, in days. If frequency is 0, patient will be prompted to submit image at each checkin.</summary>
+        </column>
+        <column order="4" name="ClinicNum" type="bigint(20)" fk="clinic">
+            <summary>FK to clinic.ClinicNum. Clinic the rule pertains to.</summary>
+        </column>
+    </table>
     <table name="eclipboardsheetdef">
         <summary></summary>
         <column order="9" name="PrefillStatusOverride" type="bigint(20)">
@@ -115,18 +158,6 @@
         <summary></summary>
         <column order="9" name="DefaultCat" type="bigint(20)" fk="definition">
             <summary>FK to definition.DefNum. If set, a new mount will go into this category, regardless of which category is currently selected.</summary>
-        </column>
-    </table>
-    <table name="mountitem">
-        <summary></summary>
-        <column order="11" name="FlipOnAcquire" type="tinyint(4)">
-            <summary>.</summary>
-        </column>
-    </table>
-    <table name="mountitemdef">
-        <summary></summary>
-        <column order="11" name="FlipOnAcquire" type="tinyint(4)">
-            <summary>.</summary>
         </column>
     </table>
     <table name="securitylog">

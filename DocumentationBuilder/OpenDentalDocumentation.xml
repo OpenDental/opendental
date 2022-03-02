@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDocumentation.xsl"?>
-<database version="22.1.4.0">
+<database version="22.1.6.0">
     <table name="account">
         <summary>Used in the accounting section in chart of accounts.  Not related to patient accounts in any way.</summary>
         <column order="0" name="AccountNum" type="bigint(20)">
@@ -4658,6 +4658,51 @@
                 <EnumValue name="ClinicBilling">4</EnumValue>
                 <EnumValue name="ClinicPayTo">5</EnumValue>
             </Enumeration>
+        </column>
+    </table>
+    <table name="eclipboardimagecapture">
+        <summary>Linker table between patients and the images they have submitted to the office via eClipboard. Lets office know when a patient last submitted
+            a certain image. Is used in conjuction with EClipboardImageCaptureDef table to allow offices to set frequencies for how often patients should 
+            submit certain images, similar to sheets.</summary>
+        <column order="0" name="EClipboardImageCaptureNum" type="bigint(20)">
+            <summary>Primary key.</summary>
+        </column>
+        <column order="1" name="PatNum" type="bigint(20)" fk="patient">
+            <summary>FK to patient.PatNum.</summary>
+        </column>
+        <column order="2" name="DefNum" type="bigint(20)" fk="def">
+            <summary>FK to def.DefNum. Should match a DefNum that that is in the in 'EClipboard Images' defcat or has (or had) the 'P' (Patient Pictures)  
+            usage in the 'Image Categories' defcat.</summary>
+        </column>
+        <column order="3" name="IsSelfPortrait" type="tinyint(4)">
+            <summary>Using DefNum to identify the self portrait is unreliable as the image category that is used to store self portraits may change. Instead, set this field to
+            true for any image capture that is a self portrait. Only for self-portraits tied to the pref 'EClipboardAllowSelfPortraitOnCheckIn', not 'eClipboard Images' defcat.</summary>
+        </column>
+        <column order="4" name="DateTimeUpserted" type="datetime">
+            <summary>Records the date and time the patient took the image. If patient has submitted this eclipboard image before, then we simply update the
+            DateUpserted field and DocNum field. We do not insert an entirely new record.</summary>
+        </column>
+        <column order="5" name="DocNum" type="bigint(20)" fk="document">
+            <summary>FK to document.DocNum. If a document is deleted, need to also delete any record from this table with the same DocNum.</summary>
+        </column>
+    </table>
+    <table name="eclipboardimagecapturedef">
+        <summary>Used to set rules for how often a patient should submit an image when checking in for their appointment via eClipboard.</summary>
+        <column order="0" name="EClipboardImageCaptureDefNum" type="bigint(20)">
+            <summary>Primary key.</summary>
+        </column>
+        <column order="1" name="DefNum" type="bigint(20)" fk="def">
+            <summary>FK to def.DefNum. Should match a DefNum that is in the in 'EClipboard Images' defcat or has (or had) the 'P' (Patient Pictures)  
+            usage in the 'Image Categories' defcat.</summary>
+        </column>
+        <column order="2" name="IsSelfPortrait" type="tinyint(4)">
+            <summary>True if the rule pertains to the patient self portrait. False if the rule is for an 'Eclipboard images' defcat definition.</summary>
+        </column>
+        <column order="3" name="FrequencyDays" type="int(11)">
+            <summary>Frequency at which the patient should update the image, in days. If frequency is 0, patient will be prompted to submit image at each checkin.</summary>
+        </column>
+        <column order="4" name="ClinicNum" type="bigint(20)" fk="clinic">
+            <summary>FK to clinic.ClinicNum. Clinic the rule pertains to.</summary>
         </column>
     </table>
     <table name="eclipboardsheetdef">
@@ -9709,9 +9754,6 @@
         <column order="10" name="FontSize" type="float">
             <summary>This could vary significantly based on the size of the mount.  It's always relative to mount pixels.</summary>
         </column>
-        <column order="11" name="FlipOnAcquire" type="tinyint(4)">
-            <summary>.</summary>
-        </column>
     </table>
     <table name="mountitemdef">
         <summary>These are always attached to mountdefs.  Can be deleted without any problems.</summary>
@@ -9734,7 +9776,7 @@
             <summary>Height, in pixels, of the item rectangle on the mount.  Any cropping, rotating, etc, will all be defined in the original image itself.</summary>
         </column>
         <column order="6" name="ItemOrder" type="int(11)">
-            <summary>The ordinal position of the item on the mount. 1-indexed because users see it.</summary>
+            <summary>The ordinal position of the item on the mount. 1-indexed because users see it. 0 if TestShowing has a value.</summary>
         </column>
         <column order="7" name="RotateOnAcquire" type="int(11)">
             <summary>0,90,180,or 270.</summary>
@@ -9747,9 +9789,6 @@
         </column>
         <column order="10" name="FontSize" type="float">
             <summary>This could vary significantly based on the size of the mount.  It's always relative to mount pixels.</summary>
-        </column>
-        <column order="11" name="FlipOnAcquire" type="tinyint(4)">
-            <summary>.</summary>
         </column>
     </table>
     <table name="oidexternal">

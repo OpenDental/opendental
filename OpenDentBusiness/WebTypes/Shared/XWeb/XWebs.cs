@@ -53,7 +53,7 @@ namespace OpenDentBusiness.WebTypes.Shared.XWeb {
 		///<summary>Delete a credit card from the database and delete it from XWeb repository using DTG directly.  Throws exceptions.</summary>
 		public static XWebResponse DeleteCreditCard(long patNum,long creditCardNum) {
 			//No need to check RemotingRole;no call to db.
-			return new XWebInputDTGDeleteAlias(patNum,creditCardNum).GenerateOutput();
+			return new XWebInputDTGDeleteAlias(patNum,creditCardNum).GenerateOutput(doThrowWhenOnlinePaymentsDisabled:false);//Allow the card to be deleted even if online payments are turned off.
 		}
 
 		#endregion
@@ -170,8 +170,8 @@ namespace OpenDentBusiness.WebTypes.Shared.XWeb {
 			public virtual bool WakeupMonitorThread { get { return true; } }
 			///<summary>Inidicates that calling GenerateOutput should in-turn cause new row to be added to XWebResponse.</summary>
 			public virtual bool InsertResponseIntoDb { get { return true; } }
-			///<summary>Interface the XWeb Gateway and return an instance of XWebResponse. Goes to db and/or cache to get patient info and ProgramProperties for XWeb.</summary>
-			public XWebResponse GenerateOutput(string email="",string logGuid="") {
+			///<summary>Interface the XWeb Gateway and return an instance of XWebResponse. Goes to db and/or cache to get patient info and ProgramProperties for XWeb. bool doThrowWhenOnlinePaymentsDisabled=true</summary>
+			public XWebResponse GenerateOutput(string email="",string logGuid="",bool doThrowWhenOnlinePaymentsDisabled=true) {
 				Patient pat=OpenDentBusiness.Patients.GetPat(_patNum);
 				if(pat==null) {
 					throw new ODException("Patient not found for PatNum: "+_patNum.ToString(),ODException.ErrorCodes.XWebProgramProperties);
@@ -190,7 +190,9 @@ namespace OpenDentBusiness.WebTypes.Shared.XWeb {
 				OpenDentBusiness.WebTypes.Shared.XWeb.WebPaymentProperties xwebProperties;
 				ProgramProperties.GetXWebCreds(_clinicNum,out xwebProperties);
 				if(ChargeSource==ChargeSource.PatientPortal && !xwebProperties.IsPaymentsAllowed) {
-					throw new ODException("Clinic or Practice has online payments disabled",ODException.ErrorCodes.XWebProgramProperties);
+					if(doThrowWhenOnlinePaymentsDisabled) {
+						throw new ODException("Clinic or Practice has online payments disabled",ODException.ErrorCodes.XWebProgramProperties);
+					}
 				}
 				_xWebID=xwebProperties.XWebID;
 				_authKey=xwebProperties.AuthKey;

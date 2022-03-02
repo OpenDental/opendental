@@ -16,16 +16,16 @@
       <IsNew>false</IsNew>
       <SheetFieldDefNum>3540</SheetFieldDefNum>
       <SheetDefNum>66</SheetDefNum>
-      <FieldType>OutputText</FieldType>
-      <FieldName>text</FieldName>
-      <FieldValue />
+      <FieldType>StaticText</FieldType>
+      <FieldName/>
+      <FieldValue/>
       <FontSize>12</FontSize>
       <FontName>Microsoft Sans Serif</FontName>
       <FontIsBold>false</FontIsBold>
       <XPos>25</XPos>
       <YPos>30</YPos>
       <Width>300</Width>
-      <Height>315</Height>
+      <Height>60</Height>
       <GrowthBehavior>None</GrowthBehavior>
       <RadioButtonValue />
       <RadioButtonGroup />
