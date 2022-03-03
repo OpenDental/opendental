@@ -68,11 +68,14 @@ namespace OpenDentBusiness{
 			return Crud.UserWebCrud.SelectOne(command);
 		}
 
-		public static UserWeb GetByFKeyAndType(long fkey,UserWebFKeyType fkeyType) {
+		public static UserWeb GetByFKeyAndType(long fkey,UserWebFKeyType fkeyType,bool doCheckOnlineStatus=false) {
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb){
-				return Meth.GetObject<UserWeb>(MethodBase.GetCurrentMethod(),fkey,fkeyType);
+				return Meth.GetObject<UserWeb>(MethodBase.GetCurrentMethod(),fkey,fkeyType,doCheckOnlineStatus);
 			}
 			string command="SELECT * FROM userweb WHERE FKey="+POut.Long(fkey)+" AND FKeyType="+POut.Int((int)fkeyType)+" ";
+			if(doCheckOnlineStatus) {//Check to see if the user no longer has Patient Portal access.  Only the PW salt will remain as the PW.
+				command+="AND Password!='None$$'";
+			}
 			return Crud.UserWebCrud.SelectOne(command);
 		}
 		

@@ -1749,20 +1749,27 @@ namespace OpenDental.UI {
 				//If new edit box location is above the display screen
 				ScrollToIndex(_selectedCell.Y);//Scrolling up
 			}
+			bool hasVscroll=false;
+			if(ListGridRows[_selectedCell.Y].State.HeightMain > DisplayRectangle.Height-OriginY()-hScrollBarHeight){
+				hasVscroll=true;
+			}
 			if(EditableUsesRTF) {
 				RichTextBox editRichBox=new RichTextBox();
 				editRichBox.Multiline=true;
 				editRichBox.BorderStyle=BorderStyle.FixedSingle;
 				editRichBox.ScrollBars=RichTextBoxScrollBars.None;
-				
 				if(Columns[_selectedCell.X].TextAlign==HorizontalAlignment.Right) {
 					editRichBox.SelectionAlignment=HorizontalAlignment.Right;
 				}
-
 				//Rich text boxes have strange borders (3D looking) and so we have to manipulate the size and location differently.
 				editRichBox.Size=new Size(Columns[_selectedCell.X].State.Width-1,ListGridRows[_selectedCell.Y].State.HeightMain-1);
 				editRichBox.Location=new Point(-hScroll.Value+Columns[_selectedCell.X].State.XPos+1,
 					-vScroll.Value+OriginY()+ListGridRows[_selectedCell.Y].State.YPos+1);
+				if(hasVscroll){
+					editRichBox.ScrollBars=RichTextBoxScrollBars.Vertical;
+					editRichBox.Height=DisplayRectangle.Height-OriginY()-hScrollBarHeight-1;
+					editRichBox.Top=OriginY();
+				}
 				textEdit=editRichBox;
 			}
 			else {
@@ -1774,6 +1781,11 @@ namespace OpenDental.UI {
 				editTextBox.Size=new Size(Columns[_selectedCell.X].State.Width+1,ListGridRows[_selectedCell.Y].State.HeightMain+1);
 				editTextBox.Location=new Point(-hScroll.Value+Columns[_selectedCell.X].State.XPos,
 					-vScroll.Value+OriginY()+ListGridRows[_selectedCell.Y].State.YPos);
+				if(hasVscroll){
+					editTextBox.ScrollBars=ScrollBars.Vertical;
+					editTextBox.Height=DisplayRectangle.Height-OriginY()-hScrollBarHeight;
+					editTextBox.Top=OriginY();
+				}
 				textEdit=editTextBox;
 			}
 			//If the cell's color is set manually, that color will also show up for this EditBox.
@@ -1918,6 +1930,16 @@ namespace OpenDental.UI {
 			if(textEdit.Text=="") {
 				return;
 			}
+			if(textEdit is RichTextBox richTextBox){
+				if(richTextBox.ScrollBars==RichTextBoxScrollBars.Vertical){
+					return;
+				}
+			}
+			else{
+				if(((TextBox)textEdit).ScrollBars==ScrollBars.Vertical){
+					return;
+				}
+			}
 			Graphics g=CreateGraphics();
 			int heightText=(int)(1.03f*g.MeasureString(textEdit.Text+"\r\n",_fontCell,textEdit.Width).Height);
 			g.Dispose();
@@ -1999,6 +2021,10 @@ namespace OpenDental.UI {
 		private void ParentForm_KeyDown(Object sender,KeyEventArgs e) {
 			if(this.Focused){
 				return;//avoid double call
+			}
+			if(!ClientRectangle.Contains(PointToClient(Cursor.Position))){
+				//the cursor is not hovering over this control, so we should not react to keystrokes
+				return;
 			}
 			OnKeyDown(e);
 		}

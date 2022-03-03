@@ -781,8 +781,11 @@ namespace OpenDental{
 			comboLateChargeAdjType.SetSelectedDefNum(PrefC.GetLong(PrefName.LateChargeAdjustmentType));
 			comboSalesTaxAdjType.Items.AddDefs(_listDefsPosAdjTypes);
 			comboSalesTaxAdjType.SetSelectedDefNum(PrefC.GetLong(PrefName.SalesTaxAdjustmentType));
-			comboRefundAdjustmentType.Items.AddDefs(_listDefsNegAdjTypes);
-			comboRefundAdjustmentType.SetSelectedDefNum(PrefC.GetLong(PrefName.RefundAdjustmentType));
+			//hide the UI for this feature until it is fully implemented.
+			comboRefundAdjustmentType.Visible=false; 
+			labelRefundAdjustmentType.Visible=false;
+			//comboRefundAdjustmentType.Items.AddDefs(_listDefsNegAdjTypes);
+			//comboRefundAdjustmentType.SetSelectedDefNum(PrefC.GetLong(PrefName.RefundAdjustmentType));
 			textTaxPercent.Text=PrefC.GetDouble(PrefName.SalesTaxPercentage).ToString();
 			string[] arrayDefNums=PrefC.GetString(PrefName.BadDebtAdjustmentTypes).Split(new char[] {','}); //comma-delimited list.
 			List<long> listBadAdjDefNums = new List<long>();
@@ -975,7 +978,7 @@ namespace OpenDental{
 			_changed|=Prefs.UpdateYN(PrefName.ClaimEditShowPatResponsibility,checkShowClaimPatResp.CheckState);
 			_changed|=Prefs.UpdateLong(PrefName.SalesTaxDefaultProvider,comboSalesTaxDefaultProvider.GetSelectedProvNum());
 			_changed|=Prefs.UpdateBool(PrefName.SalesTaxDoAutomate,checkAutomateSalesTax.Checked);
-			_changed|=Prefs.UpdateLong(PrefName.RefundAdjustmentType,comboRefundAdjustmentType.GetSelectedDefNum());
+			//_changed|=Prefs.UpdateLong(PrefName.RefundAdjustmentType,comboRefundAdjustmentType.GetSelectedDefNum());
 			_changed|=Prefs.UpdateLong(PrefName.DynamicPayPlanPrepaymentUnearnedType,comboDppUnearnedType.GetSelectedDefNum());
 			_changed|=Prefs.UpdateBool(PrefName.PayPlanSaveSignedToPdf,checkPayPlanSaveSignedPdf.Checked);
 			_changed|=Prefs.UpdateString(PrefName.PayPlanTermsAndConditions,_payPlanTermsAndConditions);
