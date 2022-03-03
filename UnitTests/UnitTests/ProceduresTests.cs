@@ -924,14 +924,12 @@ namespace UnitTests.Procedures_Test {
 			);
 		}
 
-		///<summary>This test creates a benefit with a patPlanNum rather than a planNum to test for patient override has met frequency limitations.</summary>
 		[TestMethod]
-		public void Procedures_HasMetFrequencyLimitation_PatientOverride() {
+		public void Procedures_HasMetFrequencyLimitation_PatientOverride_OverrideFirst() {
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			PrefT.UpdateBool(PrefName.ClaimProcsAllowedToBackdate,true);
 			Patient pat=PatientT.CreatePatient(suffix);
 			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,suffix);
-			insInfo.ListBenefits.Add(BenefitT.CreateForCategoryWithPatPlanNum(insInfo.PriPatPlan.PatPlanNum,EbenefitCategory.RoutinePreventive,100));
 			//add override frequency limit of 2 for procedure D0274
 			insInfo.ListBenefits.Add(
 				BenefitT.CreateFrequencyLimitation("D0274",2,BenefitQuantity.NumberOfServices,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.CalendarYear,insInfo.PriPatPlan.PatPlanNum)
@@ -940,6 +938,91 @@ namespace UnitTests.Procedures_Test {
 			insInfo.ListBenefits.Add(
 				BenefitT.CreateFrequencyLimitation("D0274",1,BenefitQuantity.NumberOfServices,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.CalendarYear)
 			);
+			insInfo.ListBenefits=Benefits.RefreshForPlan(insInfo.PriInsPlan.PlanNum,insInfo.PriPatPlan.PatPlanNum);
+			Assert.AreNotEqual(0,insInfo.ListBenefits[0].PatPlanNum);
+			DateTime proc1Date=new DateTime(2019,2,24);
+			Procedure proc1=ProcedureT.CreateProcedure(pat,"D0274",ProcStat.C,"",88,proc1Date);
+			insInfo.ListAllProcs.Add(proc1);
+			//Creates a cp with status of NotReceived
+			Claim claim=ClaimT.CreateClaim(new List<Procedure> { proc1 },insInfo);
+			//This will compute estimates.
+			List<ClaimProc> listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
+			List<ClaimProcHist> listHistList=ClaimProcs.GetHistList(
+				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc1.ProcDate,insInfo.ListInsSubs
+			);
+			//Override test with 1 claim, expect false since limit is 2
+			Assert.IsFalse(Procedures.HasMetFrequencyLimitation(
+				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc1.ProcNum),listHistList,insInfo.ListBenefits,proc1,
+				ProcedureCodes.GetProcCode(proc1.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan)
+			);
+			//Regular test with 1 claim, expect false since limit is 1
+			Assert.IsFalse(Procedures.HasMetFrequencyLimitation(
+				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc1.ProcNum),listHistList,insInfo.ListBenefits,proc1,
+				ProcedureCodes.GetProcCode(proc1.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans)
+			);
+			ClaimT.ReceiveClaim(claim,listClaimProcs);
+			//Treatment plan another D0274 code for insInfo.
+			DateTime proc2Date=new DateTime(2019,2,25);
+			Procedure proc2=ProcedureT.CreateProcedure(pat,"D0274",ProcStat.TP,"",77,proc2Date);
+			insInfo.ListAllProcs.Add(proc2);
+			//Creates a cp with status of NotReceived
+			Claim claim2=ClaimT.CreateClaim(new List<Procedure> { proc2 },insInfo);
+			//This will compute estimates.
+			listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
+			listHistList=ClaimProcs.GetHistList(
+				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc2.ProcDate,insInfo.ListInsSubs
+			);
+			//Override test with 2 claims, expect false since limit is 2
+			Assert.IsFalse(Procedures.HasMetFrequencyLimitation(
+				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc2.ProcNum),listHistList,insInfo.ListBenefits,proc2,
+				ProcedureCodes.GetProcCode(proc2.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan)
+			);
+			//Regular test with 2 claims, expect true since limit is 1
+			Assert.IsTrue(Procedures.HasMetFrequencyLimitation(
+				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc2.ProcNum),listHistList,insInfo.ListBenefits,proc2,
+				ProcedureCodes.GetProcCode(proc2.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans)
+			);
+			ClaimT.ReceiveClaim(claim2,listClaimProcs);
+			//Treatment plan a third D0274 code for insInfo.
+			DateTime proc3Date=new DateTime(2019,2,26);
+			Procedure proc3=ProcedureT.CreateProcedure(pat,"D0274",ProcStat.TP,"",66,proc3Date);
+			insInfo.ListAllProcs.Add(proc3);
+			//Creates a cp with status of NotReceived
+			Claim claim3=ClaimT.CreateClaim(new List<Procedure> { proc3 },insInfo);
+			//This will compute estimates.
+			listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
+			listHistList=ClaimProcs.GetHistList(
+				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc3.ProcDate,insInfo.ListInsSubs
+			);
+			//Override test with 3 claims, expect true since limit is 2
+			Assert.IsTrue(Procedures.HasMetFrequencyLimitation(
+				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc3.ProcNum),listHistList,insInfo.ListBenefits,proc3,
+				ProcedureCodes.GetProcCode(proc3.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan)
+			);
+			//Regular test with 3 claims, expect true since limit is 1
+			Assert.IsTrue(Procedures.HasMetFrequencyLimitation(
+				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc3.ProcNum),listHistList,insInfo.ListBenefits,proc3,
+				ProcedureCodes.GetProcCode(proc3.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans)
+			);
+		}
+
+		///<summary>This test creates a benefit with a patPlanNum rather than a planNum to test for patient override has met frequency limitations.</summary>
+		[TestMethod]
+		public void Procedures_HasMetFrequencyLimitation_PatientOverride_PlanFirst() {
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			PrefT.UpdateBool(PrefName.ClaimProcsAllowedToBackdate,true);
+			Patient pat=PatientT.CreatePatient(suffix);
+			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,suffix);
+			//add a frequency limit of 1 for procedure D0274
+			insInfo.ListBenefits.Add(
+				BenefitT.CreateFrequencyLimitation("D0274",1,BenefitQuantity.NumberOfServices,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.CalendarYear)
+			);
+			//add override frequency limit of 2 for procedure D0274
+			insInfo.ListBenefits.Add(
+				BenefitT.CreateFrequencyLimitation("D0274",2,BenefitQuantity.NumberOfServices,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.CalendarYear,insInfo.PriPatPlan.PatPlanNum)
+			);
+			insInfo.ListBenefits=Benefits.RefreshForPlan(insInfo.PriInsPlan.PlanNum,insInfo.PriPatPlan.PatPlanNum);
+			Assert.AreNotEqual(0,insInfo.ListBenefits[0].PatPlanNum);
 			DateTime proc1Date=new DateTime(2019,2,24);
 			Procedure proc1=ProcedureT.CreateProcedure(pat,"D0274",ProcStat.C,"",88,proc1Date);
 			insInfo.ListAllProcs.Add(proc1);

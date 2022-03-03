@@ -828,5 +828,54 @@ namespace UnitTests.Benefits_Test {
 			}
 		}
 
+		///<summary>Adds patient level override limitation before the plan level limitation. Sorting will prioritize patient level overrides.</summary>
+		[TestMethod]
+		public void Benefits_CompareTo_PrioritizePatientLevelOverrides_OverrideFirst() {
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			PrefT.UpdateBool(PrefName.ClaimProcsAllowedToBackdate,true);
+			Patient pat=PatientT.CreatePatient(suffix);
+			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,suffix);
+			//add override frequency limit of 2 for procedure D0274
+			insInfo.ListBenefits.Add(
+				BenefitT.CreateFrequencyLimitation("D0274",2,BenefitQuantity.NumberOfServices,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.CalendarYear,insInfo.PriPatPlan.PatPlanNum)
+			);
+			//add a frequency limit of 1 for procedure D0274
+			insInfo.ListBenefits.Add(
+				BenefitT.CreateFrequencyLimitation("D0274",1,BenefitQuantity.NumberOfServices,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.CalendarYear)
+			);
+			//No sorting has occurred, first item will have a PlanNum and no PatPlanNum since it is a plan level limitation.
+			Assert.AreNotEqual(0,insInfo.ListBenefits.First().PatPlanNum);
+			Assert.AreEqual(0,insInfo.ListBenefits.First().PlanNum);
+			//Sorts list, prioritizes patient level overrides over plan level limitations.
+			insInfo.ListBenefits=Benefits.RefreshForPlan(insInfo.PriInsPlan.PlanNum,insInfo.PriPatPlan.PatPlanNum);
+			//Sorting has occurred, first item will have a PatPlanNum and no PlanNum since it is a patient level override.
+			Assert.AreNotEqual(0,insInfo.ListBenefits.First().PatPlanNum);
+			Assert.AreEqual(0,insInfo.ListBenefits.First().PlanNum);
+		}
+		
+		///<summary>Adds patient level override limitation after the plan level limitation. Sorting will prioritize patient level overrides.</summary>
+		[TestMethod]
+		public void Benefits_CompareTo_PrioritizePatientLevelOverrides_PlanFirst() {
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			PrefT.UpdateBool(PrefName.ClaimProcsAllowedToBackdate,true);
+			Patient pat=PatientT.CreatePatient(suffix);
+			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,suffix);
+			//add a frequency limit of 1 for procedure D0274
+			insInfo.ListBenefits.Add(
+				BenefitT.CreateFrequencyLimitation("D0274",1,BenefitQuantity.NumberOfServices,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.CalendarYear)
+			);
+			//add override frequency limit of 2 for procedure D0274
+			insInfo.ListBenefits.Add(
+				BenefitT.CreateFrequencyLimitation("D0274",2,BenefitQuantity.NumberOfServices,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.CalendarYear,insInfo.PriPatPlan.PatPlanNum)
+			);
+			//No sorting has occurred, first item will have a PlanNum and no PatPlanNum since it is a plan level limitation.
+			Assert.AreEqual(0,insInfo.ListBenefits.First().PatPlanNum);
+			Assert.AreNotEqual(0,insInfo.ListBenefits.First().PlanNum);
+			//Sorts list, prioritizes patient level overrides over plan level limitations.
+			insInfo.ListBenefits=Benefits.RefreshForPlan(insInfo.PriInsPlan.PlanNum,insInfo.PriPatPlan.PatPlanNum);
+			//Sorting has occurred, first item will have a PatPlanNum and no PlanNum since it is a patient level override.
+			Assert.AreNotEqual(0,insInfo.ListBenefits.First().PatPlanNum);
+			Assert.AreEqual(0,insInfo.ListBenefits.First().PlanNum);
+		}
 	}
 }

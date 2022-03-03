@@ -180,10 +180,10 @@ namespace OpenDentBusiness{
 			}
 			//always different if plan vs. pat override
 			if(PatPlanNum==0 && ben.PatPlanNum!=0) {
-				return -1;
+				return 1;
 			}
 			if(PlanNum==0 && ben.PlanNum!=0) {
-				return 1;
+				return -1;
 			}
 			if(Benefits.GetCategoryString(this)!=Benefits.GetCategoryString(ben)) {
 				return Benefits.GetCategoryString(this).CompareTo(Benefits.GetCategoryString(ben));

@@ -41,7 +41,7 @@ namespace OpenDentBusiness{
 		}
 
 		public static InsFilingCode GetOne(long insFilingCodeNum) {
-			return _insFilingCodeCache.GetFirst(x => x.InsFilingCodeNum==insFilingCodeNum);
+			return _insFilingCodeCache.GetFirstOrDefault(x => x.InsFilingCodeNum==insFilingCodeNum);
 		}
 
 		///<summary>Refreshes the cache and returns it as a DataTable. This will refresh the ClientWeb's cache and the ServerWeb's cache.</summary>
