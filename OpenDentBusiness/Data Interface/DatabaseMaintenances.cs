@@ -6796,6 +6796,7 @@ namespace OpenDentBusiness {
 							payment.SecUserNumEntry=Security.CurUser.UserNum;
 							payment.PaymentSource=CreditCardSource.None;
 							payment.ProcessStatus=ProcessStat.OfficeProcessed;
+							payment.IsCcCompleted=true;
 							Payments.Insert(payment,true);
 							listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,payment.PayNum,DbmLogFKeyType.Payment,
 								DbmLogActionType.Insert,methodName,"Inserted payment from PaySplitWithInvalidPayNum."));
@@ -6826,6 +6827,7 @@ namespace OpenDentBusiness {
 							payment.SecUserNumEntry=Security.CurUser.UserNum;
 							payment.PaymentSource=CreditCardSource.None;
 							payment.ProcessStatus=ProcessStat.OfficeProcessed;
+							payment.IsCcCompleted=true;
 							Payments.Insert(payment);
 							listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,payment.PayNum,DbmLogFKeyType.Payment,
 								DbmLogActionType.Insert,methodName,"Inserted payment from PaySplitWithInvalidPayNum."));

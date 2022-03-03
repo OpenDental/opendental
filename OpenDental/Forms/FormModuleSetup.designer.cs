@@ -414,6 +414,7 @@ namespace OpenDental{
 			this.checkRxSendNewToQueue = new System.Windows.Forms.CheckBox();
 			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
+			this.checkPaymentCompletedDisableMerchantButtons = new System.Windows.Forms.CheckBox();
 			this.tabControlMain.SuspendLayout();
 			this.tabAppts.SuspendLayout();
 			this.groupBox8.SuspendLayout();
@@ -1601,7 +1602,7 @@ namespace OpenDental{
 			// label62
 			// 
 			this.label62.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.label62.Location = new System.Drawing.Point(12, 478);
+			this.label62.Location = new System.Drawing.Point(11, 498);
 			this.label62.Name = "label62";
 			this.label62.Size = new System.Drawing.Size(288, 48);
 			this.label62.TabIndex = 305;
@@ -1624,7 +1625,7 @@ namespace OpenDental{
 			this.groupBox10.Controls.Add(this.label4);
 			this.groupBox10.Controls.Add(this.label12);
 			this.groupBox10.Controls.Add(this.groupBox4);
-			this.groupBox10.Location = new System.Drawing.Point(7, 180);
+			this.groupBox10.Location = new System.Drawing.Point(7, 202);
 			this.groupBox10.Name = "groupBox10";
 			this.groupBox10.Size = new System.Drawing.Size(399, 284);
 			this.groupBox10.TabIndex = 1;
@@ -1856,6 +1857,7 @@ namespace OpenDental{
 			// groupBox9
 			// 
 			this.groupBox9.BackColor = System.Drawing.Color.White;
+			this.groupBox9.Controls.Add(this.checkPaymentCompletedDisableMerchantButtons);
 			this.groupBox9.Controls.Add(this.checkIncTxfrTreatNegProdAsIncome);
 			this.groupBox9.Controls.Add(this.checkStoreCCTokens);
 			this.groupBox9.Controls.Add(this.comboPaymentClinicSetting);
@@ -1868,7 +1870,7 @@ namespace OpenDental{
 			this.groupBox9.Controls.Add(this.checkAllowEmailCCReceipt);
 			this.groupBox9.Location = new System.Drawing.Point(7, 8);
 			this.groupBox9.Name = "groupBox9";
-			this.groupBox9.Size = new System.Drawing.Size(399, 168);
+			this.groupBox9.Size = new System.Drawing.Size(399, 190);
 			this.groupBox9.TabIndex = 0;
 			this.groupBox9.Text = "Payments";
 			// 
@@ -4707,6 +4709,18 @@ namespace OpenDental{
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
+			// checkPaymentCompletedDisableMerchantButtons
+			// 
+			this.checkPaymentCompletedDisableMerchantButtons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.checkPaymentCompletedDisableMerchantButtons.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkPaymentCompletedDisableMerchantButtons.Location = new System.Drawing.Point(50, 165);
+			this.checkPaymentCompletedDisableMerchantButtons.Name = "checkPaymentCompletedDisableMerchantButtons";
+			this.checkPaymentCompletedDisableMerchantButtons.Size = new System.Drawing.Size(344, 17);
+			this.checkPaymentCompletedDisableMerchantButtons.TabIndex = 306;
+			this.checkPaymentCompletedDisableMerchantButtons.Text = "Disable merchant buttons for completed payments";
+			this.checkPaymentCompletedDisableMerchantButtons.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkPaymentCompletedDisableMerchantButtons.UseVisualStyleBackColor = true;
+			// 
 			// FormModuleSetup
 			// 
 			this.ClientSize = new System.Drawing.Size(1230, 696);
@@ -5160,5 +5174,6 @@ namespace OpenDental{
 		private Label label35;
 		private Label label36;
 		private CheckBox checkClaimPrimaryRecievedForceSecondaryStatus;
+		private CheckBox checkPaymentCompletedDisableMerchantButtons;
 	}
 }

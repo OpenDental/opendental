@@ -85,6 +85,10 @@ namespace ServiceManager {
 				MessageBox.Show("Select a valid service path");
 				return;
 			}
+			if(ServicesHelper.IsMySQLService(textPathToExe.Text)) {
+				MessageBox.Show("MySQL Windows Service cannot be installed, please contact support.");
+				return;
+			}
 			string serviceName=textName.Text;
 			if(serviceName.Length<8 || serviceName.Substring(0,8)!="OpenDent") {
 				MessageBox.Show("Error.  Service name must begin with \"OpenDent\".");

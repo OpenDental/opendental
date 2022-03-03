@@ -157,7 +157,7 @@ namespace OpenDental{
 							comboActionObject.Items.Add(listSheetDefs[i].Description,listSheetDefs[i].SheetDefNum);
 						}
 					}
-					comboActionObject.SelectedIndex=listSheetDefs.FindIndex(x => _automation.SheetDefNum==x.SheetDefNum);//can be -1
+					comboActionObject.SetSelectedKey<long>(_automation.SheetDefNum,x => x);//can be -1
 					return;
 				case AutomationAction.ChangePatStatus:
 					labelActionObject.Visible=true;

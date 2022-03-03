@@ -2628,7 +2628,14 @@ namespace OpenDentBusiness {
 				}
 			}
 		}//End of 22_1_6() method
+
+		private static void To22_1_7() {
+			string command;
+			//I6045 - New pref to prevent processing transactions from an existing payment
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('PaymentsCompletedDisableMerchantButtons','1')"; //Default to true
+			Db.NonQ(command);
+			command="ALTER TABLE payment ADD IsCcCompleted tinyint NOT NULL";
+			Db.NonQ(command);
+		}//End of 22_1_7() method
 	}
 }
-
-

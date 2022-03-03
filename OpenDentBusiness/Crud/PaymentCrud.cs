@@ -69,6 +69,7 @@ namespace OpenDentBusiness.Crud{
 				payment.RecurringChargeDate= PIn.Date  (row["RecurringChargeDate"].ToString());
 				payment.ExternalId         = PIn.String(row["ExternalId"].ToString());
 				payment.PaymentStatus      = (OpenDentBusiness.PaymentStatus)PIn.Int(row["PaymentStatus"].ToString());
+				payment.IsCcCompleted        = PIn.Bool  (row["IsCcCompleted"].ToString());
 				retVal.Add(payment);
 			}
 			return retVal;
@@ -101,6 +102,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("RecurringChargeDate");
 			table.Columns.Add("ExternalId");
 			table.Columns.Add("PaymentStatus");
+			table.Columns.Add("IsCcCompleted");
 			foreach(Payment payment in listPayments) {
 				table.Rows.Add(new object[] {
 					POut.Long  (payment.PayNum),
@@ -124,6 +126,7 @@ namespace OpenDentBusiness.Crud{
 					POut.DateT (payment.RecurringChargeDate,false),
 					            payment.ExternalId,
 					POut.Int   ((int)payment.PaymentStatus),
+					POut.Bool  (payment.IsCcCompleted),
 				});
 			}
 			return table;
@@ -143,7 +146,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="PayNum,";
 			}
-			command+="PayType,PayDate,PayAmt,CheckNum,BankBranch,PayNote,IsSplit,PatNum,ClinicNum,DateEntry,DepositNum,Receipt,IsRecurringCC,SecUserNumEntry,PaymentSource,ProcessStatus,RecurringChargeDate,ExternalId,PaymentStatus) VALUES(";
+			command+="PayType,PayDate,PayAmt,CheckNum,BankBranch,PayNote,IsSplit,PatNum,ClinicNum,DateEntry,DepositNum,Receipt,IsRecurringCC,SecUserNumEntry,PaymentSource,ProcessStatus,RecurringChargeDate,ExternalId,PaymentStatus,IsCcCompleted) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(payment.PayNum)+",";
 			}
@@ -167,7 +170,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   ((int)payment.ProcessStatus)+","
 				+    POut.Date  (payment.RecurringChargeDate)+","
 				+"'"+POut.String(payment.ExternalId)+"',"
-				+    POut.Int   ((int)payment.PaymentStatus)+")";
+				+    POut.Int   ((int)payment.PaymentStatus)+","
+				+    POut.Bool  (payment.IsCcCompleted)+")";
 			if(payment.PayNote==null) {
 				payment.PayNote="";
 			}
@@ -211,7 +215,7 @@ namespace OpenDentBusiness.Crud{
 						if(useExistingPK) {
 							sbCommands.Append("PayNum,");
 						}
-						sbCommands.Append("PayType,PayDate,PayAmt,CheckNum,BankBranch,PayNote,IsSplit,PatNum,ClinicNum,DateEntry,DepositNum,Receipt,IsRecurringCC,SecUserNumEntry,PaymentSource,ProcessStatus,RecurringChargeDate,ExternalId,PaymentStatus) VALUES ");
+						sbCommands.Append("PayType,PayDate,PayAmt,CheckNum,BankBranch,PayNote,IsSplit,PatNum,ClinicNum,DateEntry,DepositNum,Receipt,IsRecurringCC,SecUserNumEntry,PaymentSource,ProcessStatus,RecurringChargeDate,ExternalId,PaymentStatus,IsCcCompleted) VALUES ");
 						countRows=0;
 					}
 					else {
@@ -239,7 +243,8 @@ namespace OpenDentBusiness.Crud{
 					sbRow.Append(POut.Int((int)payment.ProcessStatus)); sbRow.Append(",");
 					sbRow.Append(POut.Date(payment.RecurringChargeDate)); sbRow.Append(",");
 					sbRow.Append("'"+POut.String(payment.ExternalId)+"'"); sbRow.Append(",");
-					sbRow.Append(POut.Int((int)payment.PaymentStatus)); sbRow.Append(")");
+					sbRow.Append(POut.Int((int)payment.PaymentStatus)); sbRow.Append(",");
+					sbRow.Append(POut.Bool(payment.IsCcCompleted)); sbRow.Append(")");
 					if(sbCommands.Length+sbRow.Length+1 > TableBase.MaxAllowedPacketCount && countRows > 0) {
 						Db.NonQ(sbCommands.ToString());
 						sbCommands=null;
@@ -274,7 +279,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="PayNum,";
 			}
-			command+="PayType,PayDate,PayAmt,CheckNum,BankBranch,PayNote,IsSplit,PatNum,ClinicNum,DateEntry,DepositNum,Receipt,IsRecurringCC,SecUserNumEntry,PaymentSource,ProcessStatus,RecurringChargeDate,ExternalId,PaymentStatus) VALUES(";
+			command+="PayType,PayDate,PayAmt,CheckNum,BankBranch,PayNote,IsSplit,PatNum,ClinicNum,DateEntry,DepositNum,Receipt,IsRecurringCC,SecUserNumEntry,PaymentSource,ProcessStatus,RecurringChargeDate,ExternalId,PaymentStatus,IsCcCompleted) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(payment.PayNum)+",";
 			}
@@ -298,7 +303,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   ((int)payment.ProcessStatus)+","
 				+    POut.Date  (payment.RecurringChargeDate)+","
 				+"'"+POut.String(payment.ExternalId)+"',"
-				+    POut.Int   ((int)payment.PaymentStatus)+")";
+				+    POut.Int   ((int)payment.PaymentStatus)+","
+				+    POut.Bool  (payment.IsCcCompleted)+")";
 			if(payment.PayNote==null) {
 				payment.PayNote="";
 			}
@@ -338,7 +344,8 @@ namespace OpenDentBusiness.Crud{
 				+"ProcessStatus      =  "+POut.Int   ((int)payment.ProcessStatus)+", "
 				+"RecurringChargeDate=  "+POut.Date  (payment.RecurringChargeDate)+", "
 				+"ExternalId         = '"+POut.String(payment.ExternalId)+"', "
-				+"PaymentStatus      =  "+POut.Int   ((int)payment.PaymentStatus)+" "
+				+"PaymentStatus      =  "+POut.Int   ((int)payment.PaymentStatus)+", "
+				+"IsCcCompleted        =  "+POut.Bool  (payment.IsCcCompleted)+" "
 				+"WHERE PayNum = "+POut.Long(payment.PayNum);
 			if(payment.PayNote==null) {
 				payment.PayNote="";
@@ -422,6 +429,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="PaymentStatus = "+POut.Int   ((int)payment.PaymentStatus)+"";
 			}
+			if(payment.IsCcCompleted != oldPayment.IsCcCompleted) {
+				if(command!="") { command+=",";}
+				command+="IsCcCompleted = "+POut.Bool(payment.IsCcCompleted)+"";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -492,6 +503,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(payment.PaymentStatus != oldPayment.PaymentStatus) {
+				return true;
+			}
+			if(payment.IsCcCompleted != oldPayment.IsCcCompleted) {
 				return true;
 			}
 			return false;

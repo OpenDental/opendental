@@ -800,6 +800,7 @@ namespace OpenDental{
 			checkAllowFutureDebits.Checked=PrefC.GetBool(PrefName.AccountAllowFutureDebits);
 			checkAllowEmailCCReceipt.Checked=PrefC.GetBool(PrefName.AllowEmailCCReceipt);
 			checkIncTxfrTreatNegProdAsIncome.Checked=PrefC.GetBool(PrefName.IncomeTransfersTreatNegativeProductionAsIncome);
+			checkPaymentCompletedDisableMerchantButtons.Checked=PrefC.GetBool(PrefName.PaymentsCompletedDisableMerchantButtons);
 			checkAllowPrepayProvider.Checked=PrefC.GetBool(PrefName.AllowPrepayProvider);
 			comboRecurringChargePayType.Items.AddDefNone("("+Lan.g(this,"default")+")");
 			comboRecurringChargePayType.Items.AddDefs(Defs.GetDefsForCategory(DefCat.PaymentTypes,true));
@@ -958,6 +959,7 @@ namespace OpenDental{
 			_changed|=Prefs.UpdateString(PrefName.BadDebtAdjustmentTypes,strListBadDebtAdjTypes);
 			_changed|=Prefs.UpdateBool(PrefName.AllowFutureInsPayments,checkAllowFuturePayments.Checked);
 			_changed|=Prefs.UpdateBool(PrefName.IncomeTransfersTreatNegativeProductionAsIncome,checkIncTxfrTreatNegProdAsIncome.Checked);
+			_changed|=Prefs.UpdateBool(PrefName.PaymentsCompletedDisableMerchantButtons,checkPaymentCompletedDisableMerchantButtons.Checked);
 			_changed|=Prefs.UpdateBool(PrefName.ShowAllocateUnearnedPaymentPrompt,checkShowAllocateUnearnedPaymentPrompt.Checked);
 			_changed|=Prefs.UpdateBool(PrefName.FutureTransDatesAllowed,checkAllowFutureTrans.Checked);
 			_changed|=Prefs.UpdateYN(PrefName.AgingProcLifo,checkAgingProcLifo.CheckState);

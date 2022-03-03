@@ -52,7 +52,6 @@ namespace OpenDental{
 			this.checkIncludeAck = new System.Windows.Forms.CheckBox();
 			this.labelStatus = new System.Windows.Forms.Label();
 			this.comboStatuses = new OpenDental.UI.ComboBoxOD();
-			this.labelMerchantClosedDescription = new System.Windows.Forms.Label();
 			this.contextMenu.SuspendLayout();
 			this.tabControl.SuspendLayout();
 			this.tabTrans.SuspendLayout();
@@ -342,22 +341,9 @@ namespace OpenDental{
 			this.comboStatuses.Size = new System.Drawing.Size(160, 21);
 			this.comboStatuses.TabIndex = 40;
 			// 
-			// labelMerchantClosedDescription
-			// 
-			this.labelMerchantClosedDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelMerchantClosedDescription.ForeColor = System.Drawing.Color.Red;
-			this.labelMerchantClosedDescription.Location = new System.Drawing.Point(9, 545);
-			this.labelMerchantClosedDescription.Name = "labelMerchantClosedDescription";
-			this.labelMerchantClosedDescription.Size = new System.Drawing.Size(483, 31);
-			this.labelMerchantClosedDescription.TabIndex = 42;
-			this.labelMerchantClosedDescription.Text = "Transactions associated to closed merchants will be expired when acknowledged.\r\nP" +
-    "lease refer to the manual on how to change your settings.";
-			this.labelMerchantClosedDescription.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// FormCareCreditTransactions
 			// 
 			this.ClientSize = new System.Drawing.Size(990, 584);
-			this.Controls.Add(this.labelMerchantClosedDescription);
 			this.Controls.Add(this.labelStatus);
 			this.Controls.Add(this.comboStatuses);
 			this.Controls.Add(this.checkIncludeAck);
@@ -408,6 +394,5 @@ namespace OpenDental{
 		private System.Windows.Forms.ToolStripMenuItem viewErrorMessageMenuItem;
 		private UI.Button butNoneQSBatch;
 		private UI.Button butButAllQSTrans;
-		private System.Windows.Forms.Label labelMerchantClosedDescription;
 	}
 }

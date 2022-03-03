@@ -618,9 +618,7 @@ namespace OpenDental{
 		private void menuItemRemoveDiscount_Click(object sender,EventArgs e) {
 			if(_discountPlanSubCur!=null) {
 				DiscountPlanSubs.UpdateAssociatedDiscountPlanAmts(new List<DiscountPlanSub>{ _discountPlanSubCur },true);
-				if(MsgBox.Show(MsgBoxButtons.YesNo,Lan.g("Commlogs","Save Subscriber Note to Commlog?")+"\r\n\r\n"
-					+Commlogs.GetCommlogMessageText(_discountPlanSubCur.SubNote))) 
-				{
+				if(!string.IsNullOrWhiteSpace(_discountPlanSubCur.SubNote) && MsgBox.Show(MsgBoxButtons.YesNo,Lan.g("Commlogs","Save Subscriber Note to Commlog?"))) {
 					Commlog commlog=new Commlog();
 					commlog.PatNum=_discountPlanSubCur.PatNum;
 					commlog.CommDateTime=DateTime.Now;

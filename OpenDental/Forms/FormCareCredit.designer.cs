@@ -152,8 +152,8 @@ namespace OpenDental {
 			this.labelMerchantClosedDescription.Name = "labelMerchantClosedDescription";
 			this.labelMerchantClosedDescription.Size = new System.Drawing.Size(352, 39);
 			this.labelMerchantClosedDescription.TabIndex = 274;
-			this.labelMerchantClosedDescription.Text = "The Merchant ID you are using has been closed.\r\nPlease refer to the manual on how" +
-    " to change your settings.";
+			this.labelMerchantClosedDescription.Text = "The Merchant Number you are using has been closed.\r\nPlease refer to the manual on" +
+    " how to change your settings.";
 			this.labelMerchantClosedDescription.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// FormCareCredit

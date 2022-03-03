@@ -338,6 +338,7 @@ namespace OpenDentBusiness{
 				PayType=PIn.Long(ProgramProperties.GetPropVal(Programs.GetCur(ProgramName.CareCredit).ProgramNum,
 					ProgramProperties.PropertyDescs.CareCredit.CareCreditPaymentType,clinicNum)),ProcessStatus=ProcessStat.OnlinePending,
 				PayNote=payNote,
+				IsCcCompleted=true,
 			});;
 			PaySplits.Insert(new PaySplit() {
 				ClinicNum=clinicNum,

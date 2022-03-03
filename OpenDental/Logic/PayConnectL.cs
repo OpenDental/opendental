@@ -51,6 +51,7 @@ namespace OpenDental {
 				+Lan.g("PayConnectL","Ref Number")+": "+response.RefNumber;
 			clonePayment.PaymentSource=pcResponseWeb.CCSource;
 			clonePayment.ProcessStatus=ProcessStat.OfficeProcessed;
+			clonePayment.IsCcCompleted=true;
 			clonePayment.PayNum=Payments.Insert(clonePayment);
 			List<PaySplit> listClonedPaySplits=new List<PaySplit>();
 			foreach(PaySplit paySplit in listPaySplits) {

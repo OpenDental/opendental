@@ -257,26 +257,20 @@ namespace OpenDental {
 					}
 				}
 			}
+			if(_paymentCur.IsCcCompleted) {
+				DisablePaymentControls();
+			}
 			List<ProgramProperty> listProgramProperties=ProgramProperties.GetForProgram(Programs.GetProgramNum(ProgramName.CareCredit));
 			string careCreditMerchantNum=PIn.String(ProgramProperties.GetPropValFromList(listProgramProperties,
 				ProgramProperties.PropertyDescs.CareCredit.CareCreditMerchantNumber,0));//Practice merchant num
 			if(PrefC.HasClinicsEnabled) {
 				comboClinic.SelectedClinicNum=_paymentCur.ClinicNum;
 				_listClinics=Clinics.GetDeepCopy();
-				careCreditMerchantNum=PIn.String(ProgramProperties.GetPropValFromList(listProgramProperties,
-					ProgramProperties.PropertyDescs.CareCredit.CareCreditMerchantNumber,_paymentCur.ClinicNum));//Clinic merchant num
-				if(PIn.Bool(ProgramProperties.GetPropValFromList(listProgramProperties,ProgramProperties.PropertyDescs.CareCredit.CareCreditIsMerchantNumberByProv))) {
-					long provNum=GetProvNum();
-					if(provNum!=-1) {
-						careCreditMerchantNum=ProviderClinics.GetOneOrDefault(provNum,_paymentCur.ClinicNum).CareCreditMerchantId;//Provider merchant num
-					}
-				}
 			}
 			else {//clinics not enabled
 				comboClinicFilter.Visible=false;
 				labelClinicFilter.Visible=false;
 			}
-			butCareCredit.Enabled=!CareCredit.IsMerchantNumClosed(careCreditMerchantNum);
 			if(_paymentCur.ProcessStatus==ProcessStat.OfficeProcessed) {
 				checkProcessed.Visible=false;//This checkbox will only show if the payment originated online.
 			}
@@ -461,8 +455,18 @@ namespace OpenDental {
 				MsgBox.Show(this,"Amount must be greater than zero.");
 				return;
 			}
-			long provNum=GetProvNum();
+			long provNum=0;
+			if(CareCredit.IsMerchantNumberByProv) {
+				provNum=GetProvNum();
+			}
 			if(provNum==-1) {
+				return;
+			}
+			try {
+				CareCredit.GetMerchantNumber(_paymentCur.ClinicNum,provNum,CareCredit.IsMerchantNumberByProv);
+			}
+			catch(ODException ex) {
+				MessageBox.Show(ex.Message);
 				return;
 			}
 			//Enforce Latest IE Version Available.
@@ -507,7 +511,9 @@ namespace OpenDental {
 				if(careCreditWebResponse.TransType==CareCreditTransType.Purchase) {
 					_paymentCur.PayNote=_paymentCur.PayNote+"\r\n"+CareCredit.GetFormattedNote(careCreditWebResponse);
 					_paymentCur.PaymentSource=CreditCardSource.CareCredit;
+					_paymentCur.IsCcCompleted=true;
 					Payments.Update(_paymentCur,true);
+					DisablePaymentControls();
 				}
 			}
 			else {
@@ -635,6 +641,9 @@ namespace OpenDental {
 				}
 			}
 			MakePayConnectTransaction();
+			if(_paymentCur.IsCcCompleted) {
+				DisablePaymentControls();
+			}
 		}
 
 		private void butPaySimple_Click(object sender,MouseEventArgs e) {
@@ -645,6 +654,9 @@ namespace OpenDental {
 				return;
 			}
 			MakePaySimpleTransaction();
+			if(_paymentCur.IsCcCompleted) {
+				DisablePaymentControls();
+			}
 		}
 
 		private void butPrePay_Click(object sender,EventArgs e) {
@@ -878,6 +890,9 @@ namespace OpenDental {
 					//The rest of the message is not translated on purpose because we here at HQ need to always be able to quickly read this part.
 					+"\r\nLast valid milestone reached: "+_xChargeMilestone,ex);
 			}
+			if(_paymentCur.IsCcCompleted) {
+				DisablePaymentControls();
+			}
 		}
 
 		private void panelEdgeExpress_MouseClick(object sender,MouseEventArgs e) {
@@ -894,6 +909,9 @@ namespace OpenDental {
 				FriendlyException.Show(Lan.g(this,"Error processing transaction.\r\n\r\nPlease contact support with the details of this error:")+"\r\n"+ex.Message,ex);
 			}
 			//Either cancel was clicked or the window was closed.
+			if(_paymentCur.IsCcCompleted) {
+				DisablePaymentControls();
+			}
 		}
 
 		#endregion
@@ -1345,6 +1363,17 @@ namespace OpenDental {
 				}
 			}
 			Reinitialize(doRefreshConstructData:true);
+		}
+
+		///<summary>Disables merchant buttons if the PaymentsCompletedDisableMerchantButtons pref is true.</summary>
+		private void DisablePaymentControls() {
+			if(PrefC.GetBool(PrefName.PaymentsCompletedDisableMerchantButtons)) {
+				labelTransactionCompleted.Visible=true;
+				panelEdgeExpress.Enabled=false;
+				panelXcharge.Enabled=false;
+				butPaySimple.Enabled=false;
+				butPayConnect.Enabled=false;
+			}
 		}
 
 		///<summary>Returns true if the AccountEntry matches the currently selected filters.</summary>
@@ -2109,6 +2138,7 @@ namespace OpenDental {
 				}
 				voidPayment.PaymentSource=ccSource;
 				voidPayment.ProcessStatus=ProcessStat.OfficeProcessed;
+				voidPayment.IsCcCompleted=true;
 				voidPayment.PayNum=Payments.Insert(voidPayment);
 				foreach(PaySplit splitCur in _listSplitsCur) {//Modify the paysplits for the original transaction to work for the void transaction
 					PaySplit split=splitCur.Copy();
@@ -2146,6 +2176,7 @@ namespace OpenDental {
 			}
 			voidPayment.PaymentSource=ccSource;
 			voidPayment.ProcessStatus=ProcessStat.OfficeProcessed;
+			voidPayment.IsCcCompleted=true;
 			voidPayment.PayNum=Payments.Insert(voidPayment);
 			foreach(PaySplit splitCur in _listSplitsCur) {//Modify the paysplits for the original transaction to work for the void transaction
 				PaySplit split=splitCur.Copy();
@@ -2423,6 +2454,7 @@ namespace OpenDental {
 					_xWebResponse=xWebResponseProcessed;
 					_paymentCur.Receipt=EdgeExpress.CNP.BuildReceiptString(xWebResponseProcessed,false);
 					if(xWebResponseProcessed.XWebResponseCode==XWebResponseCodes.Approval) {
+						_paymentCur.IsCcCompleted=true;
 						textNote.Text+=payNote;
 						if(_printReceipt) {
 							PrintReceipt(_paymentCur.Receipt,Lan.g(this,"EdgeExpress receipt printed"));
@@ -2438,6 +2470,7 @@ namespace OpenDental {
 					payNote=xWebResponseProcessed.GetFormattedNote(true,false);
 					_paymentCur.Receipt=EdgeExpress.CNP.BuildReceiptString(xWebResponseProcessed,false);
 					if(xWebResponseProcessed.XWebResponseCode==XWebResponseCodes.Approval) {// only print receipt if its an approved transaction
+						_paymentCur.IsCcCompleted=true;
 						textNote.Text+=payNote;
 						if(_printReceipt) {
 							PrintReceipt(_paymentCur.Receipt,Lan.g(this,"EdgeExpress receipt printed"));
@@ -2451,6 +2484,7 @@ namespace OpenDental {
 					_xWebResponse=xWebResponseProcessed;
 					_paymentCur.Receipt=EdgeExpress.CNP.BuildReceiptString(xWebResponseProcessed,false);
 					if(xWebResponseProcessed.XWebResponseCode==XWebResponseCodes.Approval) {// only print receipt if its an approved transaction
+						_paymentCur.IsCcCompleted=true;
 						textNote.Text+=payNote;
 						if(_printReceipt) {
 							PrintReceipt(_paymentCur.Receipt,Lan.g(this,"EdgeExpress receipt printed"));
@@ -2465,6 +2499,7 @@ namespace OpenDental {
 						if(prepaidAmount!=0) {
 							return payNote;
 						}
+						_paymentCur.IsCcCompleted=true;
 						textNote.Text+=payNote;
 						HandleVoidPayment(response.GetFormattedNote(false,true),response.Amount,EdgeExpress.CNP.BuildReceiptString(response,false),CreditCardSource.EdgeExpressCNP);
 					}
@@ -2484,6 +2519,7 @@ namespace OpenDental {
 						_wasCreditCardSuccessful=true;//void payment on cancel.
 					}
 					if(xWebResponseProcessed.XWebResponseCode==XWebResponseCodes.Approval) {// only print receipt if its an approved transaction
+						_paymentCur.IsCcCompleted=true;
 						textNote.Text+=payNote;
 						if(_printReceipt) {
 							PrintReceipt(_paymentCur.Receipt,Lan.g(this,"EdgeExpress receipt printed"));
@@ -3073,6 +3109,7 @@ namespace OpenDental {
 					+Lan.g(this,"Ref Number")+": "+payConnectResponse.RefNumber;
 				voidPayment.PaymentSource=CreditCardSource.PayConnect;
 				voidPayment.ProcessStatus=ProcessStat.OfficeProcessed;
+				voidPayment.IsCcCompleted=true;
 				voidPayment.PayNum=Payments.Insert(voidPayment);
 				foreach(PaySplit splitCur in _listSplitsCur) {//Modify the paysplits for the original transaction to work for the void transaction
 					PaySplit split=splitCur.Copy();
@@ -3140,6 +3177,7 @@ namespace OpenDental {
 			voidPayment.PayNote=response.ToNoteString();
 			voidPayment.PaymentSource=CreditCardSource.PaySimple;
 			voidPayment.ProcessStatus=ProcessStat.OfficeProcessed;
+			voidPayment.IsCcCompleted=true;
 			voidPayment.PayNum=Payments.Insert(voidPayment);
 			foreach(PaySplit splitCur in _listSplitsCur) {//Modify the paysplits for the original transaction to work for the void transaction
 				PaySplit split=splitCur.Copy();
@@ -3373,12 +3411,14 @@ namespace OpenDental {
 			}
 			if(prepaidAmt!=0) {
 				if(FormP.Response!=null && FormP.Response.StatusCode=="0") { //The transaction succeeded.
+					_paymentCur.IsCcCompleted=true;
 					return resultNote;
 				}
 				return null;
 			}
 			if(FormP.Response!=null) {
 				if(FormP.Response.StatusCode=="0") { //The transaction succeeded.
+					_paymentCur.IsCcCompleted=true;
 					_isCCDeclined=false;
 					if(FormP.TranType==PayConnectService.transType.RETURN) {
 						textAmount.Text="-"+FormP.AmountCharged;
@@ -3423,6 +3463,7 @@ namespace OpenDental {
 							voidPayment.Receipt=FormP.ReceiptStr;
 							voidPayment.PaymentSource=CreditCardSource.PayConnect;
 							voidPayment.ProcessStatus=ProcessStat.OfficeProcessed;
+							voidPayment.IsCcCompleted=true;
 							voidPayment.PayNum=Payments.Insert(voidPayment);
 							foreach(PaySplit splitCur in _listSplitsCur) {//Modify the paysplits for the original transaction to work for the void transaction
 								PaySplit split=splitCur.Copy();
@@ -3507,6 +3548,7 @@ namespace OpenDental {
 			}
 			if(prepaidAmt!=0) {
 				if(form.ApiResponseOut!=null) { //The transaction succeeded.
+					_paymentCur.IsCcCompleted=true;
 					if(form.ApiResponseOut.CCSource==CreditCardSource.PaySimpleACH) {
 						_paymentCur.PaymentStatus=PaymentStatus.PaySimpleAchPosted;
 						_paymentCur.ExternalId=form.ApiResponseOut.RefNumber;
@@ -3517,6 +3559,7 @@ namespace OpenDental {
 			}
 			string resultNote=null;
 			if(form.ApiResponseOut!=null) { //The transaction succeeded.
+				_paymentCur.IsCcCompleted=true;
 				_isCCDeclined=false;
 				resultNote=form.ApiResponseOut.ToNoteString();
 				_paymentCur.PaymentSource=form.ApiResponseOut.CCSource;
@@ -3574,6 +3617,7 @@ namespace OpenDental {
 						voidPayment.Receipt=form.ApiResponseOut.TransactionReceipt;
 						voidPayment.PaymentSource=CreditCardSource.PaySimple;
 						voidPayment.ProcessStatus=ProcessStat.OfficeProcessed;
+						voidPayment.IsCcCompleted=true;
 						voidPayment.PayNum=Payments.Insert(voidPayment);
 						foreach(PaySplit splitCur in _listSplitsCur) {//Modify the paysplits for the original transaction to work for the void transaction
 							PaySplit split=splitCur.Copy();
@@ -3986,6 +4030,7 @@ namespace OpenDental {
 			}
 			_xChargeMilestone="Check Additional Funds";
 			_wasCreditCardSuccessful=!_isCCDeclined;//If the transaction is not a void transaction, we will void this transaction if the user hits Cancel
+			_paymentCur.IsCcCompleted=_wasCreditCardSuccessful;
 			if(additionalFunds>0) {
 				MessageBox.Show(Lan.g(this,"Additional funds required")+": "+additionalFunds.ToString("C"));
 			}

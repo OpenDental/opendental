@@ -475,9 +475,6 @@ namespace CentralManager {
 
 		#region Events - Menu Reports
 		private void menuProdInc_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(Permissions.Reports)) {
-				return;
-			}
 			long displayReportNum=0;
 			DisplayReport displayReport=_listDisplayReports_ProdInc.FirstOrDefault(y => y.InternalName==DisplayReports.ReportNames.ODMoreOptions);
 			if(displayReport!=null) {

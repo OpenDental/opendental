@@ -897,7 +897,7 @@ namespace OpenDental{
 					+"The Statements image category must have both 'Show in Patient Portal' and 'Statements' usage types selected.");
 				return;
 			}
-			if(UserWebs.GetByFKeyAndType(StmtCur.PatNum,UserWebFKeyType.PatientPortal)==null) {
+			if(UserWebs.GetByFKeyAndType(StmtCur.PatNum,UserWebFKeyType.PatientPortal,true)==null) {
 				MsgBox.Show(this,"This patient does not have Online Access to the Patient Portal.");
 				return;
 			}

@@ -575,9 +575,7 @@ namespace OpenDental{
 				comboClaimStatus.SelectedIndex=_listClaimStatuses.IndexOf(claimStatus);
 			}
 			else {//This should never happen.
-				MsgBox.Show("There was an error setting the claim status.");
-				this.DialogResult=DialogResult.Cancel;
-				this.Close();
+				comboClaimStatus.SetSelectedKey<ClaimStatus>(-1,x => _listClaimStatuses.IndexOf(claimStatus),x => Lan.g(this,"Not Set"));
 			}
 			switch(_claim.ClaimType){
 				case "P":
@@ -2975,6 +2973,10 @@ namespace OpenDental{
 			catch(Exception ex) {
 				ex.DoNothing();
 				MsgBox.Show(this,"Please enter a valid value for Ortho Months Remaining.");
+				return false;
+			}
+			if(comboClaimStatus.SelectedIndex==-1) {
+				MsgBox.Show(this,"Please select a valid Claim Status.");
 				return false;
 			}
 			bool isSentOrReceived=ListTools.In(comboClaimStatus.SelectedIndex,_listClaimStatuses.IndexOf(ClaimStatus.Sent),_listClaimStatuses.IndexOf(ClaimStatus.Received));

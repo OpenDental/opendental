@@ -31,6 +31,10 @@ namespace OpenDentBusiness{
 		///<summary>The object that accesses the cache in a thread-safe manner.</summary>
 		private static ApptFieldDefCache _apptFieldDefCache=new ApptFieldDefCache();
 
+		public static int GetCount(bool isShort = false) {
+			return _apptFieldDefCache.GetCount(isShort);
+		}
+
 		public static bool GetExists(Predicate<ApptFieldDef> match,bool isShort=false) {
 			return _apptFieldDefCache.GetExists(match,isShort);
 		}
@@ -180,5 +184,16 @@ namespace OpenDentBusiness{
 			//No need to check RemotingRole; no call to db.
 			return GetFirstOrDefault(x => x.FieldName==fieldName);
 		}
+
+		///<summary>Used by API. Returns a single apptFieldDef with FieldName matching the supplied string, or null if no match found. Matches without case sensitivity.</summary>
+		public static ApptFieldDef GetByFieldNameForApi(string fieldName) {
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				return Meth.GetObject<ApptFieldDef>(MethodBase.GetCurrentMethod(),fieldName);
+			}
+			string command="SELECT * FROM apptfielddef WHERE FieldName LIKE '"+POut.String(fieldName)+"'";//matches regardless of case 
+			return Crud.ApptFieldDefCrud.SelectOne(command);
+		}
+
+
 	}
 }

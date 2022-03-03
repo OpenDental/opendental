@@ -1445,6 +1445,9 @@ namespace OpenDentBusiness {
 		PaymentsTransferPatientIncomeOnly,
 		///<summary>PayClinicSetting enum. 0 by default. 0=SelectedClinic, 1=PatientDefaultClinic, 2=SelectedExceptHQ</summary>
 		PaymentClinicSetting,
+		///<summary>Boolean, true by default. When true, merchant buttons are disabled for an already complete cc payment entry.</summary>
+		[PrefName(ValueType=PrefValueType.BOOL)]
+		PaymentsCompletedDisableMerchantButtons,
 		///<summary>When true, the payment window does not show paysplits by default.</summary>
 		PaymentWindowDefaultHideSplits,
 		///<summary>Int.  Represents PayPeriodInterval enum (Weekly, Bi-Weekly, Monthly). </summary>

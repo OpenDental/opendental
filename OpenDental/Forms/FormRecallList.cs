@@ -521,7 +521,9 @@ namespace OpenDental {
 					return new List<Appointment>();
 				}
 				Recall recall=Recalls.GetRecall(recallNum);
-				Appointment apt=AppointmentL.CreateRecallApt(pat,planList,recallNum,subList,aptDateTime:recall.DateDue);
+				Appointment apt=AppointmentL.CreateRecallApt(pat,planList,recallNum,subList);
+				//The appointment got saved with min date. We need the object to have the actual appointment date so we can jump to the appointment date.
+				apt.AptDateTime=recall.DateDue;
 				return new List<Appointment>() { apt };
 			}
 			catch(Exception ex){
@@ -554,7 +556,9 @@ namespace OpenDental {
 				}
 				try{
 					//Passes in -1 as the RecallNum. This will create an appointment for either a Perio or Prophy recall type only.
-					apt=AppointmentL.CreateRecallApt(fam.ListPats[i],planList,-1,subList,recall.DateDue);
+					apt=AppointmentL.CreateRecallApt(fam.ListPats[i],planList,-1,subList);
+					//The appointment got saved with min date. We need the object to have the actual appointment date so we can jump to the appointment date.
+					apt.AptDateTime=recall.DateDue;
 				}
 				catch(Exception ex) {
 					ex.DoNothing();

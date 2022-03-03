@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDocumentation.xsl"?>
-<database version="22.1.6.0">
+<database version="22.1.7.0">
     <table name="account">
         <summary>Used in the accounting section in chart of accounts.  Not related to patient accounts in any way.</summary>
         <column order="0" name="AccountNum" type="bigint(20)">
@@ -11051,6 +11051,9 @@
                 <EnumValue name="PaySimpleAchSettled">2 - PaySimpleAchSettled</EnumValue>
                 <EnumValue name="PaySimpleAchFailed">3 - PaySimpleAchFailed</EnumValue>
             </Enumeration>
+        </column>
+        <column order="21" name="IsCcCompleted" type="tinyint(4)">
+            <summary>A credit card transaction has been completed. This disables the CC buttons at the top of payment edit window to prevent duplicates.</summary>
         </column>
     </table>
     <table name="payortype">

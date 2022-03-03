@@ -283,6 +283,12 @@ namespace OpenDental {
 		}
 		
 		private void butClear_Click(object sender,EventArgs e) {
+			if(gridFeed.ListGridRows.IsNullOrEmpty()) {
+				MsgBox.Show(this,"There are no items in the feed to clear.");
+				return;
+			}
+			//Clear out the query feed dictionary and grid control.
+			_dictQueries.Clear();
 			gridFeed.BeginUpdate();
 			gridFeed.ListGridRows.Clear();
 			gridFeed.EndUpdate();

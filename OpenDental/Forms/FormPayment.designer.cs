@@ -208,6 +208,7 @@
 			this.panelSplits = new System.Windows.Forms.Panel();
 			this.labelRecurringChargeWarning = new System.Windows.Forms.Label();
 			this.warningIntegrity1 = new OpenDental.UI.WarningIntegrity();
+			this.labelTransactionCompleted = new System.Windows.Forms.Label();
 			this.groupXWeb.SuspendLayout();
 			this.tabProcCharges.SuspendLayout();
 			this.tabPageCharges.SuspendLayout();
@@ -1212,9 +1213,22 @@
 			this.warningIntegrity1.TabIndex = 1001;
 			this.warningIntegrity1.Text = "warningIntegrity1";
 			// 
+			// labelTransactionCompleted
+			// 
+			this.labelTransactionCompleted.ForeColor = System.Drawing.Color.Firebrick;
+			this.labelTransactionCompleted.Location = new System.Drawing.Point(271, 76);
+			this.labelTransactionCompleted.Name = "labelTransactionCompleted";
+			this.labelTransactionCompleted.Size = new System.Drawing.Size(190, 57);
+			this.labelTransactionCompleted.TabIndex = 1002;
+			this.labelTransactionCompleted.Text = "This transaction is already complete, you must make a new payment to process a ne" +
+    "w transaction.";
+			this.labelTransactionCompleted.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.labelTransactionCompleted.Visible = false;
+			// 
 			// FormPayment
 			// 
 			this.ClientSize = new System.Drawing.Size(1111, 696);
+			this.Controls.Add(this.labelTransactionCompleted);
 			this.Controls.Add(this.warningIntegrity1);
 			this.Controls.Add(this.labelRecurringChargeWarning);
 			this.Controls.Add(this.panelSplits);
@@ -1290,5 +1304,6 @@
 		private System.Windows.Forms.Panel panelSplits;
 		private System.Windows.Forms.Label labelRecurringChargeWarning;
 		private UI.WarningIntegrity warningIntegrity1;
+		private System.Windows.Forms.Label labelTransactionCompleted;
 	}
 }

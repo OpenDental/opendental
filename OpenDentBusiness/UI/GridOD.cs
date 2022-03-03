@@ -2063,6 +2063,10 @@ namespace OpenDental.UI {
 			if(this.Focused){
 				return;//avoid double call
 			}
+			if(!ClientRectangle.Contains(PointToClient(Cursor.Position))){
+				//the cursor is not hovering over this control, so we should not react to keystrokes
+				return;
+			}
 			OnKeyDown(e);
 		}
 		#endregion Methods - Event Handlers - Key

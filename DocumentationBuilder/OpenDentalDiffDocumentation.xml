@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
-<database version="22.1.6.0">
+<database version="22.1.7.0">
     <table name="alertcategorylink">
         <summary></summary>
         <column order="2" name="AlertType" type="tinyint(4)">
@@ -158,6 +158,12 @@
         <summary></summary>
         <column order="9" name="DefaultCat" type="bigint(20)" fk="definition">
             <summary>FK to definition.DefNum. If set, a new mount will go into this category, regardless of which category is currently selected.</summary>
+        </column>
+    </table>
+    <table name="payment">
+        <summary></summary>
+        <column order="21" name="IsCcCompleted" type="tinyint(4)">
+            <summary>A credit card transaction has been completed. This disables the CC buttons at the top of payment edit window to prevent duplicates.</summary>
         </column>
     </table>
     <table name="securitylog">

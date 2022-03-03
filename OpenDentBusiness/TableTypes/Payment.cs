@@ -59,6 +59,8 @@ namespace OpenDentBusiness{
 		public string ExternalId;
 		///<summary>Enum:PaymentStatus </summary>
 		public PaymentStatus PaymentStatus;
+		///<summary>A credit card transaction has been completed. This disables the CC buttons at the top of payment edit window to prevent duplicates.</summary>
+		public bool IsCcCompleted;
 
 		public Payment Clone() {
 			return (Payment)this.MemberwiseClone();
