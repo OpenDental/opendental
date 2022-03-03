@@ -94,7 +94,7 @@ namespace OpenDental{
 			textDate.Text=_document.DateCreated.ToShortDateString();
 			textTime.Text=_document.DateCreated.ToLongTimeString();
 			comboProv.Items.AddProvNone();
-			comboProv.Items.AddProvsAbbr(Providers.GetDeepCopy());
+			comboProv.Items.AddProvsAbbr(Providers.GetDeepCopy(true));
 			comboProv.SetSelectedProvNum(_document.ProvNum);
 			listType.Items.Clear();
 			listType.Items.AddEnums<ImageType>();

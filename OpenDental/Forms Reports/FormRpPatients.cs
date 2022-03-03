@@ -122,7 +122,6 @@ namespace OpenDental {
 			_listPatFilter.Add("Salutation");
 			//_listPatFilter.Add("Secondary Carrier");
 			_listPatFilter.Add("SecProv");
-			_listPatFilter.Add("SecRelationship");
 			_listPatFilter.Add("SchoolName");
 			_listPatFilter.Add("SSN");
 			_listPatFilter.Add("State");

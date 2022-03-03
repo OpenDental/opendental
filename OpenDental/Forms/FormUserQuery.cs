@@ -60,6 +60,7 @@ namespace OpenDental {
 		private static List<string> _listRightAlignColumns = new List<string>{"adjamt", "monthbalance", "claimfee", "inspayest", "inspayamt", "dedapplied", "amount", "payamt", "splitamt", "balance", "procfee", "overridepri", "overridesec", "priestim", "secestim", "procfees", "claimpays", "insest", "paysplits", "adjustments", "bal_0_30", "bal_31_60", "bal_61_90", "balover90", "baltotal", "inswoest" };
 		private int _pagesPrinted;
 		private bool _headingPrinted;
+		private int _headingPrintH;
 		private bool _headerPrinted;
 		private int _linesPrinted;
 		private bool _tablePrinted;
@@ -243,7 +244,7 @@ namespace OpenDental {
 			}
 			_pagesPrinted=0;
 			_headingPrinted=false;
-			PrinterL.TryPrint(
+			PrinterL.TryPrintOrDebugRpPreview(
 				pd_PrintPage,
 				Lan.g(this,$"{(String.IsNullOrEmpty(textTitle.Text) ? "User Query" : textTitle.Text)} printed")
 			);
@@ -261,125 +262,41 @@ namespace OpenDental {
 				pd_PrintPage,
 				Lan.g(this,$"{(String.IsNullOrEmpty(textTitle.Text) ? "User Query" : textTitle.Text)} previewed"),
 				doCalculateTotalPages: true
-			);;
+			);
 			_linesPrinted=0;
 		}
 
 		private void pd_PrintPage(object sender,System.Drawing.Printing.PrintPageEventArgs e) {
-			do {
-				PrintPage(e);
-			} while(e.PageSettings.PrinterSettings.PrintRange!=PrintRange.AllPages && e.PageSettings.PrinterSettings.FromPage>=_currentPage);
-			//if the reportfooter or the last configured print page has printed, then there are no more pages to print.
-			if(_tablePrinted || (e.PageSettings.PrinterSettings.PrintRange!=PrintRange.AllPages
-				&& e.PageSettings.PrinterSettings.ToPage<_currentPage)) {
-				e.HasMorePages=false;
-				_tablePrinted=false;
+			Rectangle bounds=e.MarginBounds;
+			//new Rectangle(50,40,800,1035);//Some printers can handle up to 1042
+			Graphics g=e.Graphics;
+			string text;
+			Font headingFont=new Font("Arial",13,FontStyle.Bold);
+			Font subHeadingFont=new Font("Arial",10,FontStyle.Bold);
+			int yPos=bounds.Top;
+			int center=bounds.X+bounds.Width/2;
+			#region printHeading
+			if(!_headingPrinted) {
+				text=Lan.g(this,textTitle.Text);
+				g.DrawString(text,headingFont,Brushes.Black,center-g.MeasureString(text,headingFont).Width/2,yPos);
+				yPos+=(int)g.MeasureString(text,headingFont).Height;
+				//print today's date
+				text = Lan.g(this,"Run On:")+" "+DateTime.Today.ToShortDateString();
+				g.DrawString(text,subHeadingFont,Brushes.Black,center-g.MeasureString(text,subHeadingFont).Width/2,yPos);
+				yPos+=20;
+				_headingPrinted=true;
+				_headingPrintH=yPos;
 			}
-			else {//If we reach the end of the document, OR the end of the specificed range, stop printed. Otherwise, continue.
+			#endregion
+			yPos=_gridResults.PrintPage(g,_pagesPrinted,bounds,_headingPrintH);
+			_pagesPrinted++;
+			if(yPos==-1) {
 				e.HasMorePages=true;
 			}
-		}
-
-		private void PrintPage(PrintPageEventArgs ev) {
-			//We use this boolean for determining if the current page is requested in a print operation, if not then we skip all draw statements
-			bool isPrintablePage=ev.PageSettings.PrinterSettings.PrintRange==PrintRange.AllPages
-				|| (ev.PageSettings.PrinterSettings.FromPage<=_currentPage && ev.PageSettings.PrinterSettings.ToPage>=_currentPage);
-			Font titleFont = new Font("Tahoma",10f);
-			Font bodyFont = new Font("Tahoma",8.5f);
-			Font colCaptFont = new Font("Tahoma",9f,FontStyle.Bold);
-			Rectangle bounds=ev.PageSettings.Bounds;
-			float yPos = bounds.Top;
-			if(!_headerPrinted) {
-				if(isPrintablePage) {
-					ev.Graphics.DrawString(textTitle.Text
-						,titleFont,Brushes.Black
-						,bounds.Width/2
-						-ev.Graphics.MeasureString(textTitle.Text,titleFont).Width/2,yPos);
-				}
-				yPos+=titleFont.GetHeight(ev.Graphics);
-				_headerPrinted=true;
+			else {
+				e.HasMorePages=false;
 			}
-			yPos+=10;
-			if(isPrintablePage) {
-				ev.Graphics.DrawString(Lan.g(this,"Date:")+" "+DateTime.Today.ToString("d")
-					,bodyFont,Brushes.Black,bounds.Left,yPos);
-				ev.Graphics.DrawString(Lan.g(this,"Page:")+" "+(_currentPage).ToString()
-					,bodyFont,Brushes.Black
-					,bounds.Right
-					-ev.Graphics.MeasureString(Lan.g(this,"Page:")+" "+(_currentPage).ToString()
-					,bodyFont).Width,yPos);
-			}
-			yPos+=bodyFont.GetHeight(ev.Graphics)+10;
-			if(isPrintablePage) {
-				ev.Graphics.DrawLine(new Pen(Color.Black),bounds.Left,yPos-5,bounds.Right,yPos-5);
-			}
-			//column captions:
-			if(isPrintablePage) {
-				for(int i = 0;i<_gridResults.Columns.Count;i++) {
-					ev.Graphics.DrawString(_gridResults.Columns[i].Heading,colCaptFont,Brushes.Black,
-					bounds.Left+_gridResults.Columns[i].State.XPos + _gridResults.Columns[i].State.Width /2- ev.Graphics.MeasureString(_gridResults.Columns[i].Heading,colCaptFont).Width/2,
-					yPos);
-				}
-			}
-			yPos+=bodyFont.GetHeight(ev.Graphics)+5;
-			float fontHeight=bodyFont.GetHeight(ev.Graphics);
-			float yPosTableTop=yPos;
-			//table: each loop iteration prints one row in the grid.
-			while(yPos<bounds.Top+bounds.Height-18//The 18 is minimum allowance for the line about to print. 
-				&& _linesPrinted < _gridResults.ListGridRows.Count)//Page might finish early on the last page.
-			{
-				bool isColWrap=PrefC.GetBool(PrefName.ReportsWrapColumns);
-				if(isColWrap && yPos > yPosTableTop) {//First row always prints.  Otherwise the row might be pushed to next page if too tall.
-					int cellWidth;//Width to be adjusted and used to calculate row height.
-					bool isRowTooTall=false;//Bool to indicate if a row we are about to print is too tall for the avaible space on page.
-					for(int iCol2 = 0;iCol2<_gridResults.Columns.Count;iCol2++) {
-						cellWidth=_gridResults.Columns[iCol2].ColWidth;
-						//Current height of the string with given width.
-						string cellText=_gridResults.ListGridRows[_linesPrinted].Cells[iCol2].Text;
-						float rectHeight=ev.Graphics.MeasureString(cellText,bodyFont,cellWidth).Height;
-						if(yPos+rectHeight > bounds.Bottom) {//Check for if we have enough height to print on current page.
-							isRowTooTall=true;
-							break;
-						}
-					}
-					if(isRowTooTall) {
-						break;//Break so current row goes to next page.
-					}
-				}
-				float rowHeight=fontHeight;//When wrapping, we get the hight of the tallest cell in the row and increase yPos by it.
-				for(int iCol = 0;iCol<_gridResults.Columns.Count;iCol++) {//For each cell in the row, print the cell contents.
-					float cellHeight=rowHeight;
-					if(isColWrap) {
-						cellHeight=0;//Infinate height.
-					}
-					int cellWidth=0;
-					string cellText=_gridResults.ListGridRows[_linesPrinted].Cells[iCol].Text;
-					cellWidth=_gridResults.Columns[iCol].ColWidth;
-					if(isPrintablePage) {
-						ev.Graphics.DrawString(cellText
-							,bodyFont,Brushes.Black,new RectangleF(
-							bounds.Left+_gridResults.Columns[iCol].State.XPos + _gridResults.Columns[iCol].State.Width /2- ev.Graphics.MeasureString(_gridResults.Columns[iCol].Heading,bodyFont).Width/2,
-							yPos
-							,cellWidth
-							,cellHeight));
-					}
-					if(isColWrap) {
-						rowHeight=Math.Max(rowHeight,ev.Graphics.MeasureString(cellText,bodyFont,cellWidth).Height);
-					}
-				}
-				yPos+=rowHeight;
-				_linesPrinted++;
-				if(_linesPrinted==_gridResults.ListGridRows.Count) {
-					_tablePrinted=true;
-				}
-			}
-			if(_linesPrinted==_gridResults.ListGridRows.Count) {
-				_tablePrinted=true;
-			}
-			if(_gridResults.ListGridRows.Count==0) {
-				_tablePrinted=true;
-			}
-			_pagesPrinted++;
+			g.Dispose();
 		}
 
 		private void butExport_Click(object sender,System.EventArgs e) {

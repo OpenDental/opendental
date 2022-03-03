@@ -42,6 +42,24 @@ namespace OpenDental{
 			textDate.Validate();
 		}
 
+		private string createSecurityLog(string textDateOld,string textDaysOld,int days,bool checkAdminOld) {
+			StringBuilder stringBuilder=new StringBuilder();
+			string textDateOldCopy=textDateOld;
+			if(textDateOld=="01/01/0001") {
+				textDateOldCopy="";
+			}
+			if(textDateOldCopy!=textDate.Text) {
+				stringBuilder.AppendLine($"Global Lock Date changed from '{textDateOldCopy}' to '{textDate.Text}'");
+			}
+			if(textDaysOld!=days.ToString()) {
+				stringBuilder.AppendLine($"Global Lock Days changed from '{textDaysOld}' to '{days}'");
+			}
+			if(checkAdminOld!=checkAdmin.Checked) {
+				stringBuilder.AppendLine($"Lock includes administrators changed from '{checkAdminOld}' to '{checkAdmin.Checked}'");
+			}
+			return stringBuilder.ToString();
+		}
+
 		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textDate.IsValid()) {
 				MsgBox.Show(this,"Please fix error first.");
@@ -71,15 +89,13 @@ namespace OpenDental{
 			//Get currently stored values for audit log.
 			string textDateOld=PrefC.GetDate(PrefName.SecurityLockDate).ToShortDateString();
 			string textDaysOld=PrefC.GetInt(PrefName.SecurityLockDays).ToString();
+			bool checkAdminOld=PrefC.GetBool(PrefName.SecurityLockIncludesAdmin);
 			if(Prefs.UpdateString(PrefName.SecurityLockDate,POut.Date(date,false))
 				| Prefs.UpdateInt(PrefName.SecurityLockDays,days)
 				| Prefs.UpdateBool(PrefName.SecurityLockIncludesAdmin,checkAdmin.Checked)  )
 			{
 				DataValid.SetInvalid(InvalidType.Prefs);
-				StringBuilder log=new StringBuilder();
-				log.AppendLine("Lock dates:");
-				log.AppendLine($"Global date lock changed from '{textDateOld}' to '{textDate.Text}'");
-				log.AppendLine($"Global days lock changed from '{textDaysOld}' to '{textDays.Text}'");
+				string log=createSecurityLog(textDateOld,textDaysOld,days,checkAdminOld);
 				SecurityLogs.MakeLogEntry(Permissions.SecurityGlobal,0,log.ToString());
 			}
 			DialogResult=DialogResult.OK;
