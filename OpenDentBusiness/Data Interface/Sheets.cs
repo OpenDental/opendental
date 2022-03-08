@@ -342,15 +342,15 @@ namespace OpenDentBusiness{
 			List<Sheet> listNewSheets=new List<Sheet>();
 			foreach(EClipboardSheetDef sheetInsert in listSheetsToCreate.OrderBy(x => x.ItemOrder)) {
 				//First check if we've already completed this form against our resubmission interval rules
-				DateTime lastCompleted=listAlreadyCompleted
+				Sheet lastCompleted=listAlreadyCompleted
 					.Where(x => x.SheetDefNum==sheetInsert.SheetDefNum)
 					.OrderBy(x => x.DateTimeSheet)
-					.LastOrDefault()?.DateTimeSheet??DateTime.MinValue;
-				if(lastCompleted > DateTime.MinValue) {
-					if(sheetInsert.ResubmitInterval.Days==0) {//Once should always equal 0 but in case check both
+					.LastOrDefault()??new Sheet();
+				if(lastCompleted.DateTimeSheet > DateTime.MinValue) {
+					if(sheetInsert.ResubmitInterval.Days==0 && lastCompleted.RevID >= sheetInsert.PrefillStatusOverride) {//Once should always equal 0 but in case check both
 						continue; //If this interval is set to 0 and they've already completed this form once, we never want to create it automatically again
 					}
-					int elapsed=(DateTime.Today - lastCompleted.Date).Days;
+					int elapsed=(DateTime.Today - lastCompleted.DateTimeSheet.Date).Days;
 					if(elapsed < sheetInsert.ResubmitInterval.Days) {
 						continue; //The interval hasn't elapsed yet so we don't want to create this sheet
 					}

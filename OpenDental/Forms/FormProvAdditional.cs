@@ -73,6 +73,11 @@ namespace OpenDental {
 			row.Cells.Add(_provClinicDefault.StateWhereLicensed);
 			row.Cells.Add(_provClinicDefault.CareCreditMerchantId);
 			row.Tag=_provClinicDefault;
+			//This must be checked right after adding CareCreditMerchantId cell.
+			if(CareCredit.IsMerchantNumClosed(_provClinicDefault.CareCreditMerchantId)) {
+				row.Cells.Last().ColorText=Color.Red;
+				labelMerchantClosedDescription.Visible=true;
+			}
 			gridProvProperties.ListGridRows.Add(row);
 			if(PrefC.HasClinicsEnabled) {
 				foreach(Clinic clinicCur in Clinics.GetForUserod(Security.CurUser)) {

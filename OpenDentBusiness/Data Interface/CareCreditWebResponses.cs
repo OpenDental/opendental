@@ -196,7 +196,7 @@ namespace OpenDentBusiness{
 					continue;
 				}
 				if(careCreditQSBatch.IsInvalidInput 
-					|| CareCredit.IsMerchantNumClosed(careCreditQSBatch.MerchantNumber,listMerchantNumsAllDb))
+					|| CareCredit.IsMerchantNumClosed(listBatchErrors[i].MerchantNumber,listMerchantNumsAllDb))
 				{
 					listPatNumsToExclude.Add(listBatchErrors[i].PatNum);
 				}

@@ -1646,6 +1646,7 @@ namespace OpenDentBusiness {
 					WHERE deflink.LinkType={SOut.Int((int)DefLinkType.Patient)}
 					AND deflink.FKey=patient.PatNum
 					AND definition.Category={SOut.Int((int)DefCat.ClinicSpecialty)}
+					LIMIT 1
 				)")+$@" Specialty,"//always include Specialty column, only populate if displaying specialty field
 			+(!PrefC.GetBool(PrefName.DistributorKey)?"":$@"
 				GROUP_CONCAT(DISTINCT phonenumber.PhoneNumberVal) AS OtherPhone,registrationkey.RegKey,")

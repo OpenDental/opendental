@@ -268,7 +268,12 @@ namespace OpenDental{
 			}
 			else {
 				try {
-					_clockEvent.Rate2Hours=TimeSpan.FromHours(Double.Parse(textRate2Hours.Text));
+					if(textRate2Hours.Text.Contains(":")) {
+						_clockEvent.Rate2Hours=ClockEvents.ParseHours(textRate2Hours.Text);
+					}
+					else {
+						_clockEvent.Rate2Hours=TimeSpan.FromHours(Double.Parse(textRate2Hours.Text));
+					}
 				} 
 				catch {
 					return;
@@ -288,7 +293,12 @@ namespace OpenDental{
 			}
 			else {
 				try {
-					_clockEvent.Rate3Hours=TimeSpan.FromHours(Double.Parse(textRate3Hours.Text));
+					if(textRate3Hours.Text.Contains(":")) {
+						_clockEvent.Rate3Hours=ClockEvents.ParseHours(textRate3Hours.Text);
+					}
+					else {
+						_clockEvent.Rate3Hours=TimeSpan.FromHours(Double.Parse(textRate3Hours.Text));
+					}
 				}
 				catch {
 					return;

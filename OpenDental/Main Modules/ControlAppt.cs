@@ -559,34 +559,15 @@ namespace OpenDental {
 						break;
 					}
 				}
-				bool isMerchantClosed=false;
-				List<ProgramProperty> listProgramProperties=ProgramProperties.GetForProgram(Programs.GetProgramNum(ProgramName.CareCredit));
-				Appointment appt=Appointments.GetOneApt(contrApptPanel.SelectedAptNum);
-				string careCreditMerchantNum=PIn.String(ProgramProperties.GetPropValFromList(listProgramProperties,
-						ProgramProperties.PropertyDescs.CareCredit.CareCreditMerchantNumber,0));//Practice merchant num
-				if(PrefC.HasClinicsEnabled && PIn.Bool(ProgramProperties.GetPropValFromList(listProgramProperties,
-					ProgramProperties.PropertyDescs.CareCredit.CareCreditIsMerchantNumberByProv)))
-				{//Provider merchant num
-					if(!ApptIsNull(appt)) {
-						careCreditMerchantNum=ProviderClinics.GetOneOrDefault(appt.ProvNum,appt.ClinicNum).CareCreditMerchantId;
-					}
-				}
-				if(PrefC.HasClinicsEnabled) {//Clinic merchant num
-					careCreditMerchantNum=PIn.String(ProgramProperties.GetPropValFromList(listProgramProperties,
-						ProgramProperties.PropertyDescs.CareCredit.CareCreditMerchantNumber,appt.ClinicNum));
-				}
-				isMerchantClosed|=CareCredit.IsMerchantNumClosed(careCreditMerchantNum);
 				if(ListTools.In(careCreditStatus.ToLower(),CareCreditWebStatus.PreApproved.GetDescription().ToLower(),
 					CareCreditWebStatus.DupQS.GetDescription().ToLower())) 
 				{
 					menuApt.Items.Add(new ToolStripSeparator() { Name=MenuItemNames.CareCreditDiv });
 					menuApt.Items.Add(new ToolStripMenuItem(Lan.g(this,MenuItemNames.CareCreditAcceptDeclineOffer),null,menuApt_Click,MenuItemNames.CareCreditAcceptDeclineOffer));
-					menuApt.Items.Find(MenuItemNames.CareCreditAcceptDeclineOffer,false).First().Enabled=!isMerchantClosed;
 				}
 				if(careCreditStatus.ToLower()==CareCreditWebStatus.Declined.GetDescription().ToLower()) {
 					menuApt.Items.Add(new ToolStripSeparator() { Name=MenuItemNames.CareCreditDiv });
 					menuApt.Items.Add(new ToolStripMenuItem(Lan.g(this,MenuItemNames.CareCreditApplicationNeeded),null,menuApt_Click,MenuItemNames.CareCreditApplicationNeeded));
-					menuApt.Items.Find(MenuItemNames.CareCreditApplicationNeeded,false).First().Enabled=!isMerchantClosed;
 				}
 			}
 			else {

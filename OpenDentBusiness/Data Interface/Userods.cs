@@ -947,13 +947,17 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Returns empty string if password is strong enough.  Otherwise, returns explanation of why it's not strong enough.</summary>
-		public static string IsPasswordStrong(string pass) {
+		public static string IsPasswordStrong(string pass,bool requireStrong=false) {
 			//No need to check RemotingRole; no call to db.
+			string strongPasswordMsg=" when the strong password feature is turned on";
+			if(requireStrong) {//Just used by the API, which always requires strong pw
+				strongPasswordMsg="";
+			}
 			if(pass=="") {
-				return Lans.g("FormUserPassword","Password may not be blank when the strong password feature is turned on.");
+				return Lans.g("FormUserPassword","Password may not be blank"+strongPasswordMsg+".");
 			}
 			if(pass.Length<8) {
-				return Lans.g("FormUserPassword","Password must be at least eight characters long when the strong password feature is turned on.");
+				return Lans.g("FormUserPassword","Password must be at least eight characters long"+strongPasswordMsg+".");
 			}
 			bool containsCap=false;
 			for(int i=0;i<pass.Length;i++) {
@@ -962,7 +966,7 @@ namespace OpenDentBusiness {
 				}
 			}
 			if(!containsCap) {
-				return Lans.g("FormUserPassword","Password must contain at least one capital letter when the strong password feature is turned on.");
+				return Lans.g("FormUserPassword","Password must contain at least one capital letter"+strongPasswordMsg+".");
 			}
 			bool containsLower=false;
 			for(int i=0;i<pass.Length;i++) {
@@ -971,7 +975,7 @@ namespace OpenDentBusiness {
 				}
 			}
 			if(!containsLower) {
-				return Lans.g("FormUserPassword","Password must contain at least one lower case letter when the strong password feature is turned on.");
+				return Lans.g("FormUserPassword","Password must contain at least one lower case letter"+strongPasswordMsg+".");
 			}
 			if(PrefC.GetBool(PrefName.PasswordsStrongIncludeSpecial)) {
 				bool hasSpecial=false;
@@ -992,7 +996,7 @@ namespace OpenDentBusiness {
 				}
 			}
 			if(!containsNum) {
-				return Lans.g("FormUserPassword","Password must contain at least one number when the strong password feature is turned on.");
+				return Lans.g("FormUserPassword","Password must contain at least one number"+strongPasswordMsg+".");
 			}
 			return "";
 		}

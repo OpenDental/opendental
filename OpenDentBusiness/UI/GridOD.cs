@@ -1530,6 +1530,7 @@ namespace OpenDental.UI {
 			}
 		}
 
+		/// <summary>Copies selected rows to clipboard in tab-delimited format</summary>
 		private void CopyRowsClick(object sender,EventArgs e) {
 			List<GridRow> listGridRowsSelected=new List<GridRow>();
 			_listSelectedIndices.ForEach(x => listGridRowsSelected.Add(ListGridRows[x]));
@@ -1537,13 +1538,11 @@ namespace OpenDental.UI {
 			for(int i=0;i<listGridRowsSelected.Count;i++) {
 				string parsedRow="";
 				for(int j=0;j<listGridRowsSelected[i].Cells.Count;j++) {
-					parsedRow+="\"";//Cell begin quote in case there are commas.
 					if(!string.IsNullOrEmpty(listGridRowsSelected[i].Cells[j].Text)) {
-						parsedRow+=listGridRowsSelected[i].Cells[j].Text.Replace("\"","\"\"");//Escape single double quote by using 2 double quotes.
+						parsedRow+=listGridRowsSelected[i].Cells[j].Text.Replace("\t","    "); //remove tabs in string so we keep each column separated by tabs
 					}
-					parsedRow+="\"";//Cell end quote in case there are commas.
 					if(j!=listGridRowsSelected[i].Cells.Count-1) {
-						parsedRow+=",";
+						parsedRow+="\t";
 					}
 				}
 				stringBuilder.AppendLine(parsedRow);
