@@ -110,7 +110,7 @@ namespace OpenDental {
 			this.tabUser.Name = "tabUser";
 			this.tabUser.Size = new System.Drawing.Size(933, 0);
 			this.tabUser.TabIndex = 5;
-			this.tabUser.Text = "for User";
+			this.tabUser.Text = "For User";
 			this.tabUser.UseVisualStyleBackColor = true;
 			// 
 			// groupBoxOD2
@@ -488,7 +488,7 @@ namespace OpenDental {
 			this.butClearFilter.Name = "butClearFilter";
 			this.butClearFilter.Size = new System.Drawing.Size(50, 20);
 			this.butClearFilter.TabIndex = 12;
-			this.butClearFilter.Text = "clear";
+			this.butClearFilter.Text = "Clear";
 			this.butClearFilter.UseVisualStyleBackColor = true;
 			this.butClearFilter.Click += new System.EventHandler(this.butClearFilter_Click);
 			// 

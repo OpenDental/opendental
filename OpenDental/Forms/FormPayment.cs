@@ -2408,6 +2408,7 @@ namespace OpenDental {
 				_isCCDeclined=rcmResponse.RESULT!="0";
 				textNote.AppendText(rcmResponse.GetPayNote());
 				_paymentCur.Receipt=receipt;
+				_paymentCur.IsCcCompleted=_wasCreditCardSuccessful;
 				if(!string.IsNullOrEmpty(receipt)) {
 					butPrintReceipt.Visible=true;
 					if(PrefC.GetBool(PrefName.AllowEmailCCReceipt)) {

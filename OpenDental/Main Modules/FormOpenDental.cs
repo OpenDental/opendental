@@ -4307,7 +4307,13 @@ namespace OpenDental{
 				phoneSmall.SetTeamAssist();
 			}
 			if(_formVoiceMails==null || _formVoiceMails.IsDisposed) {
-				_formVoiceMails=new FormVoiceMails();
+				try {
+					_formVoiceMails=new FormVoiceMails();
+				}
+				catch {
+					MessageBox.Show(this,"You need Windows Media Player to use this feature. Ensure that it is installed and enabled properly.");
+					return;
+				}
 				_formVoiceMails.FormClosed+=new FormClosedEventHandler((o,e1) => { _formVoiceMails=null; });
 				_formVoiceMails.Show();
 			}

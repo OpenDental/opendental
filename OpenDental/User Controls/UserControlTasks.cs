@@ -152,7 +152,7 @@ namespace OpenDental {
 			if(Security.CurUser==null) {
 				return;
 			}
-			tabUser.Text=Lan.g(this,"for ")+Security.CurUser.UserName;
+			tabUser.Text=Lan.g(this,"For ")+Security.CurUser.UserName;
 			tabNew.Text=Lan.g(this,"New for ")+Security.CurUser.UserName;
 			if(PrefC.GetBool(PrefName.TasksShowOpenTickets)) {
 				if(!tabContr.TabPages.Contains(tabOpenTickets)) {

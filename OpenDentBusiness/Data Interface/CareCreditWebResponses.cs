@@ -66,6 +66,18 @@ namespace OpenDentBusiness{
 				+$"WHERE ProcessingStatus IN ('{CareCreditWebStatus.Pending}','{CareCreditWebStatus.Created}')");
 		}
 
+		///<summary>Sets all expired batch requests to a pending status.</summary>
+		public static void SetAllExpiredBatchesToPending() {
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod());
+				return;
+			}
+			string command=$"UPDATE carecreditwebresponse SET ProcessingStatus='{CareCreditWebStatus.Pending}' "
+				+$"WHERE ProcessingStatus='{CareCreditWebStatus.ExpiredBatch}' " +
+				$"AND ServiceType='{CareCreditServiceType.Batch}'";
+			Db.NonQ(command);
+		}
+
 		///<summary>Returns all responses with completed ProcessingStatus.</summary>
 		public static List<CareCreditWebResponse> GetApprovedTransactions(List<long> listClinicNums,DateTime dateFrom,DateTime dateTo,long patNum) {
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
@@ -214,17 +226,14 @@ namespace OpenDentBusiness{
 				//If the patient is a minor, look for the guarantor. 
 				patNum=pat.Guarantor;
 			}
-			DateTime dateStart=DateTime_.Now.AddDays(-CareCredit.CareCreditBatchQSExpireDay);
-			DateTime dateEnd=DateTime_.Now;
 			List<CareCreditWebStatus> listCompletedStatuses=ListWebStatusCompleted;
 			listCompletedStatuses.RemoveAll(x => x==CareCreditWebStatus.DupQS);
 			listCompletedStatuses.Add(CareCreditWebStatus.ExpiredBatch);
 			string command="SELECT * FROM carecreditwebresponse "
-				+$"WHERE {DbHelper.BetweenDates("DateTimeEntry",dateStart,dateEnd)} "
-				+$"AND PatNum={POut.Long(patNum)} "
+				+$"WHERE PatNum={POut.Long(patNum)} "
 				+$"AND ServiceType='{CareCreditServiceType.Batch}' "
 				+$"AND ProcessingStatus IN({string.Join(",",listCompletedStatuses.Select(x => $"'{x}'"))}) "
-				+"ORDER BY DateTimeEntry "
+				+"ORDER BY DateTimeEntry DESC "
 				+"LIMIT 1" ;
 			return Crud.CareCreditWebResponseCrud.SelectOne(command);
 		}

@@ -39,8 +39,6 @@ namespace OpenDental {
 		private bool _isCtrlDown;
 		private static Font _fontTabOrder = new Font("Times New Roman",12f,FontStyle.Regular,GraphicsUnit.Pixel);
 		private Graphics _graphicsBackground;
-		private bool _hasChartSealantComplete;
-		private bool _hasChartSealantTreatment;
 		///<summary>This stores the previous calculations so that we don't have to recal unless certain things have changed.  The key is the index of the sheetfield.  The data is an array of objects of different types as seen in the code.</summary>
 		private Hashtable _hashTableRtfStringCache=new Hashtable();
 		///<summary>Set to true if the web forms have been downloaded or if an error occurred.</summary>
@@ -126,6 +124,14 @@ namespace OpenDental {
 		///<summary>Returns a list of all translations that are currently being used in memory. If user selects a translation but it isn't in the DB yet it will be included in this list.</summary>
 		private List<string> GetListUsedTranslations() {
 			return _sheetDefCur.SheetFieldDefs.Select(x => x.Language).Distinct().ToList();
+		}
+
+		private bool HasChartSealantComplete() {
+			return HasScreeningChart(isTreatmentChart: false);
+		}
+
+		private bool HasChartSealantTreatment() {
+			return HasScreeningChart(isTreatmentChart: true);
 		}
 		#endregion Properties
 
@@ -639,10 +645,10 @@ namespace OpenDental {
 
 		private void butScreenChart_Click(object sender,EventArgs e) {
 			string fieldValue="0;d,m,ling;d,m,ling;,,;,,;,,;,,;m,d,ling;m,d,ling;m,d,buc;m,d,buc;,,;,,;,,;,,;d,m,buc;d,m,buc";
-			if(!_hasChartSealantComplete) {
+			if(!HasChartSealantComplete()) {
 				AddNewSheetFieldDef(SheetFieldDef.NewScreenChart("ChartSealantComplete",fieldValue,0,0));
 			}
-			else if(!_hasChartSealantTreatment) {
+			else if(!HasChartSealantTreatment()) {
 				AddNewSheetFieldDef(SheetFieldDef.NewScreenChart("ChartSealantTreatment",fieldValue,0,0));
 			}
 			else {
@@ -757,14 +763,6 @@ namespace OpenDental {
 					{
 						MsgBox.Show(this,"Cannot delete the last main grid from treatment plan.");
 						continue;//skip this one.
-					}
-					if(sheetFieldDef.FieldType==SheetFieldType.ScreenChart) {
-						if(sheetFieldDef.FieldName=="ChartSealantComplete") {
-							_hasChartSealantComplete=false;
-						}
-						if(sheetFieldDef.FieldName=="ChartSealantTreatment") {
-							_hasChartSealantTreatment=false;
-						}
 					}
 					_sheetDefCur.SheetFieldDefs.Remove(sheetFieldDef);
 				}
@@ -1575,6 +1573,24 @@ namespace OpenDental {
 				sheetDef=_sheetDefCur;
 			}
 			return sheetDef.SheetFieldDefs.FindAll(x => x.LayoutMode==_sheetFieldLayoutModeCur && x.Language==GetSelectedLanguageThreeLetters());
+		}
+
+		private bool HasScreeningChart(bool isTreatmentChart) {
+			if(_sheetDefCur.SheetType!=SheetTypeEnum.Screening) {
+				return false;
+			}
+			List<SheetFieldDef> listSheetFieldDefs=GetPertinentSheetFieldDefs();
+			if(listSheetFieldDefs.Count==0) {
+				return false;
+			}
+			string chartName;
+			if(isTreatmentChart) {
+				chartName="ChartSealantTreatment";
+			}
+			else {
+				chartName="ChartSealantComplete";
+			}
+			return listSheetFieldDefs.Any(x => x.FieldType==SheetFieldType.ScreenChart && x.FieldName==chartName);
 		}
 
 		///<summary>Returns true if given def has equivilant translated values in _sheetDefCur.SheetFieldDefs, otherwise false.</summary>
@@ -2659,13 +2675,7 @@ namespace OpenDental {
 				richTextBox.Height=field.Height;
 				richTextBox.Font=font;
 				richTextBox.ForeColor=((SolidBrush)brush).Color;
-				//Same logic as GraphicsHelper.CreateTextBoxForSheetDisplay().
-				if(field.FieldType==SheetFieldType.InputField && field.Height<richTextBox.Font.Height+2) { 
-					richTextBox.Multiline=false;
-				}
-				else {
-					richTextBox.Multiline=true;
-				}
+				richTextBox.Multiline=GraphicsHelper.IsTextBoxMultiline(richTextBox,sheetFieldDef:field);
 				richTextBox.Text=str;
 				Point[] pointArrayPositions=new Point[str.Length];
 				for(int j=0;j<str.Length;j++) {
@@ -2964,12 +2974,6 @@ namespace OpenDental {
 			}
 			toothChart+=")";
 			g.DrawString(toothChart,Font,_drawFieldArgs.brush,sheetFieldDef.XPos,sheetFieldDef.YPos);
-			if(sheetFieldDef.FieldName=="ChartSealantTreatment") {
-				_hasChartSealantTreatment=true;
-			}
-			if(sheetFieldDef.FieldName=="ChartSealantComplete") {
-				_hasChartSealantComplete=true;
-			}
 		}
 
 		///<summary>Returns a pen to be used when we want to consider the defs language value.</summary>

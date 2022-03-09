@@ -93,6 +93,11 @@ namespace OpenDentBusiness {
 			CreatePdf(sheet,fullFileName,stmt,dataSet,medLab);
 		}
 
+		///<summary>Used for API. Creates a file where the fullFileName is a local path.</summary>
+		public void CreatePdfForApi(Sheet sheet,string fullFileName) {
+			CreatePdf(sheet:sheet,fullFileName:fullFileName,stmt:null,dataSet:null,medLab:null);
+		}
+
 		///<summary>Creates a file where fullFileName is a local path. If fullFileName is in the A to Z folder, pass in fullFileName as a temp file and then upload that file to the cloud.</summary>
 		public PdfDocument CreatePdf(Sheet sheet,string fullFileName,Statement stmt,DataSet dataSet,MedLab medLab,Patient pat=null,Patient patGuar=null,bool doSave=true) {
 			Sheets.SetPageMargin(sheet,_printMargin);
