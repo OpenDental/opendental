@@ -1484,6 +1484,7 @@ namespace OpenDental {
 			//Images------------------------------------------------------
 				//Images can't be changed in this UI
 			//RichTextBoxes-----------------------------------------------
+			using RichTextBox formattedTextBox=new RichTextBox(); //Used to compare text and only update when the user has changed something.
 			foreach(Control control in panelMain.Controls) {
 				//We use ElementHost for WPF RichTextBoxes.
 				if(control.GetType()!=typeof(RichTextBox) && control.GetType()!=typeof(System.Windows.Forms.Integration.ElementHost)) {
@@ -1493,7 +1494,11 @@ namespace OpenDental {
 					continue;
 				}
 				if(control.GetType()==typeof(RichTextBox)) {//WinForms
-					((SheetField)control.Tag).FieldValue=control.Text;
+					//RichTextBox can alter the string being passed in. This compairison will ensure we are only updating the sheet value when the user has changed something.
+					GraphicsHelper.CreateTextBoxForSheetDisplay((SheetField)control.Tag,false,formattedTextBox);
+					if(control.Text!=formattedTextBox.Text) {
+						((SheetField)control.Tag).FieldValue=control.Text;
+					}
 				}
 				else if(control.GetType()==typeof(System.Windows.Forms.Integration.ElementHost)) {//WPF
 					System.Windows.Forms.Integration.ElementHost elementHost=(System.Windows.Forms.Integration.ElementHost)control;

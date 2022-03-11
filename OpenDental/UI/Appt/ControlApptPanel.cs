@@ -2252,8 +2252,7 @@ namespace OpenDental.UI{
 				CareCreditWebStatus.AccountFound.GetDescription().ToLower(),
 				CareCreditWebStatus.CallForAuth.GetDescription().ToLower(),
 				CareCreditWebStatus.Declined.GetDescription().ToLower(),
-				CareCreditWebStatus.PreApproved.GetDescription().ToLower(),
-				CareCreditWebStatus.DupQS.GetDescription().ToLower()
+				CareCreditWebStatus.PreApproved.GetDescription().ToLower()
 			});
 		}
 
@@ -4091,8 +4090,7 @@ namespace OpenDental.UI{
 			Color color=Defs.GetColor(DefCat.ApptConfirmed,PIn.Long(dataRow["Confirmed"].ToString()));
 			Pen penOutline=new Pen(Color.FromArgb(00,00,00));//Black
 			string careCreditStatesLower=careCreditStatus.ToLower();
-			if(ListTools.In(careCreditStatesLower.ToLower(),CareCreditWebStatus.PreApproved.GetDescription().ToLower(),
-				CareCreditWebStatus.DupQS.GetDescription().ToLower())) 
+			if(ListTools.In(careCreditStatesLower.ToLower(),CareCreditWebStatus.PreApproved.GetDescription().ToLower())) 
 			{ //example value: "Pre-Approved"
 				color=Color.FromArgb(00,170,00);
 				penOutline=new Pen(Color.FromArgb(00,24,00));//Dark Green;

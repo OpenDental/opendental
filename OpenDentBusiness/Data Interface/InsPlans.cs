@@ -1100,7 +1100,7 @@ namespace OpenDentBusiness {
 		}
 
 		public static decimal GetAllowedForProc(Procedure proc,ClaimProc claimProc,List<InsPlan> listInsPlans,List<SubstitutionLink> listSubLinks
-			,Lookup<FeeKey2,Fee> lookupFees,BlueBookEstimateData blueBookEstimateData=null) 
+			,Lookup<FeeKey2,Fee> lookupFees,BlueBookEstimateData blueBookEstimateData=null,Appointment appointment=null) 
 		{
 			//List<Fee> listFees=null) {
 			//No need to check RemotingRole; no call to db.
@@ -1111,8 +1111,12 @@ namespace OpenDentBusiness {
 				carrierAllowedAmount=(decimal)blueBookEstimateData.GetAllowed(proc,lookupFees,codeSubstNone,listSubLinks);
 			}
 			else {
+				long provNum=proc.ProvNum;
+				if(plan.PlanType=="p" && appointment!=null && PrefC.GetBool(PrefName.EnterpriseHygProcUsePriProvFee) && ProcedureCodes.GetProcCode(proc.CodeNum).IsHygiene) { 
+					provNum=appointment.ProvNum; //If the previous conditions are met, we want to pull the fee from the primary provider instead of the hygienist.
+				}
 				carrierAllowedAmount=(decimal)GetAllowed(ProcedureCodes.GetStringProcCode(proc.CodeNum),plan.FeeSched,plan.AllowedFeeSched,
-					codeSubstNone,plan.PlanType,proc.ToothNum,proc.ProvNum,proc.ClinicNum,plan.PlanNum,listSubLinks,lookupFees);
+					codeSubstNone,plan.PlanType,proc.ToothNum,provNum,proc.ClinicNum,plan.PlanNum,listSubLinks,lookupFees);
 			}
 			if(carrierAllowedAmount==-1) {
 				return -1;

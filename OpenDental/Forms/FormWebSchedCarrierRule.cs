@@ -210,7 +210,7 @@ namespace OpenDental {
 			}
 			WebSchedCarrierRules.InsertMany(listWebSchedCarrierRulesAdded);
 			_listWebSchedCarrierRules.AddRange(listWebSchedCarrierRulesAdded);
-			FillGridWebSchedCarrierRules();
+			FillGridWebSchedCarrierRules(true);
 			FillListBoxCarrierNames();
 		}
 
@@ -269,7 +269,7 @@ namespace OpenDental {
 			}
 			WebSchedCarrierRules.InsertMany(listWebSchedCarrierRulesAdded);
 			_listWebSchedCarrierRules.AddRange(listWebSchedCarrierRulesAdded);
-			FillGridWebSchedCarrierRules();
+			FillGridWebSchedCarrierRules(true);
 			FillListBoxCarrierNames();
 		}
 

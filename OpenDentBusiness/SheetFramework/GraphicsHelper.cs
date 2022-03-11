@@ -12,8 +12,10 @@ using Google.Apis.Util;
 namespace OpenDentBusiness {
 	public class GraphicsHelper {
 		///<summary>Creates a textbox from the text sheetfield provided.  Used for display and for text wrapping calculations. Calling methods are responsible for explicitly disposing of the returned text box itself and it's Font property.</summary>
-		public static RichTextBox CreateTextBoxForSheetDisplay(SheetField sheetField,bool isClipText=true) {
-			RichTextBox textbox=new RichTextBox();
+		public static RichTextBox CreateTextBoxForSheetDisplay(SheetField sheetField,bool isClipText=true,RichTextBox textbox=null) {
+			if(textbox==null) {
+				textbox=new RichTextBox();
+			}
 			textbox.BorderStyle=BorderStyle.None;
 			textbox.TabStop=false;//Only input fields allow tab stop (set below for input text).
 			//Input fields need to have a yellow background so that they stand out to the user.
@@ -35,26 +37,13 @@ namespace OpenDentBusiness {
 				style=FontStyle.Bold;
 			}
 			textbox.Font=new Font(sheetField.FontName,sheetField.FontSize,style);
-			bool isSingleLineTextBox=(sheetField.Height < textbox.Font.Height+2);
-			//There is a chance that data can get truncated when loading text into a text box that has Multiline set to false.
-			//E.g. the text "line 1\r\nline 2\r\nline 3" will get truncated to be "line 1"
-			//This causes a nasty bug where the user could have filled out the sheet as a Web Form (which does not truncate the text) and signed the sheet.
-			//The signature would invalidate if the office were to open the downloaded web form within Open Dental proper and simply click OK.
-			//Therefore, only allow InputField text boxes to have Multiline set to false (which will stop users from making newlines).
-			if(sheetField.FieldType==SheetFieldType.InputField && isSingleLineTextBox) {
-				textbox.Multiline=false;
-			}
-			else {//InputField that is too tall to be considered a "single line" text box or not an InputField.
-				//An office can set up a sheet def with a static text field that has newlines but is only sized (height) for a single line of text.
-				//Always display output to the user in a text box that has the capabilities of preserving anything the user wants to display.
-				textbox.Multiline=true;
-			}
+			textbox.Multiline=IsTextBoxMultiline(textbox,sheetField:sheetField);
 			textbox.Height=sheetField.Height;
 			textbox.ScrollBars=RichTextBoxScrollBars.None;
 			textbox.Tag=sheetField;
 			#region Text Clipping
 			//For multi-line textboxes, clip vertically to remove lines which extend beyond the bottom of the field.
-			if(isClipText && textbox.Text.Length > 0 && !isSingleLineTextBox) {
+			if(isClipText && textbox.Text.Length > 0 && textbox.Multiline) {
 				List <RichTextLineInfo> listLines=GetTextSheetDisplayLines(textbox);
 				int fitLineIndex=listLines.Count-1;//Line numbers are zero-based.
 				while(fitLineIndex >= 0	&& listLines[fitLineIndex].Top+textbox.Font.Height-1 > textbox.Height) {//if bottom of line is past bottom of textbox
@@ -65,7 +54,7 @@ namespace OpenDentBusiness {
 				}
 			}
 			//For single-line textboxes, clip the text to the width of the textbox.  This forces the display to look the same on screen as when printed.
-			if(isClipText && textbox.Text.Length > 0 && isSingleLineTextBox) {
+			if(isClipText && textbox.Text.Length > 0 && !textbox.Multiline) {
 				int indexRight=textbox.GetCharIndexFromPosition(new Point(textbox.Width,0));
 				if(indexRight < textbox.Text.Length-1) {//If the string is too wide for the textbox.
 					textbox.Text=textbox.Text.Substring(0,indexRight+1);//Truncate the text to fit the textbox width.
@@ -385,6 +374,40 @@ namespace OpenDentBusiness {
 			textbox.Font.Dispose();//This font was dynamically created when the textbox was created.
 			textbox.Dispose();
 			return h;
+		}
+
+		/// <summary>Returns whether a given RichTextBox is multiline or not. Considers single line textBoxes with GrowthBehavior to be multiline. Expects either a SheetField or a SheetDef, not both. </summary>
+		public static bool IsTextBoxMultiline(RichTextBox richTextBox,SheetField sheetField=null,SheetFieldDef sheetFieldDef=null) {
+			if((sheetField==null && sheetFieldDef==null) || richTextBox==null || (sheetField != null && sheetFieldDef != null)) {
+				return false;
+			}
+			bool isSingleLineTextBox;
+			if(sheetField==null) {
+				isSingleLineTextBox=(sheetFieldDef.Height<=richTextBox.Font.Height+2);
+				if(sheetFieldDef.FieldType==SheetFieldType.InputField && isSingleLineTextBox && sheetFieldDef.GrowthBehavior==GrowthBehaviorEnum.None) {
+					//There is a chance that data can get truncated when loading text into a text box that has Multiline set to false.
+					//E.g. the text "line 1\r\nline 2\r\nline 3" will get truncated to be "line 1"
+					//This causes a nasty bug where the user could have filled out the sheet as a Web Form (which does not truncate the text) and signed the sheet.
+					//The signature would invalidate if the office were to open the downloaded web form within Open Dental proper and simply click OK.
+					//Therefore, only allow InputField text boxes to have Multiline set to false (which will stop users from making newlines) when they also do not
+					//have any GrowthBehavior specified.
+					return false;
+				}
+				else {//InputField that is too tall to be considered a "single line" text box or not an InputField or has some GrowthBehavior set.
+					//An office can set up a sheet def with a static text field that has newlines but is only sized (height) for a single line of text.
+					//Always display output to the user in a text box that has the capabilities of preserving anything the user wants to display.
+					return true;
+				}
+			}
+			else {
+				isSingleLineTextBox=(sheetField.Height<=richTextBox.Font.Height+2);
+				if(sheetField.FieldType==SheetFieldType.InputField && isSingleLineTextBox && sheetField.GrowthBehavior==GrowthBehaviorEnum.None) {
+					return false;
+				}
+				else {
+					return true;
+				}
+			}
 		}
 
 		#region Methods - Scaling DPI

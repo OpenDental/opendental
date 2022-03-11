@@ -1144,7 +1144,7 @@ namespace OpenDental {
 			DataSet dataSet=Documents.RefreshForPatient(new string[] { _patCur.PatNum.ToString() });
 			DataRowCollection rows=dataSet.Tables["DocumentList"].Rows;
 			for(int i=0;i<rows.Count;i++) {
-				TreeNode treeNode=new TreeNode(rows[i]["description"].ToString());
+				TreeNode treeNode=new TreeNode(PIn.Date(rows[i]["DateCreated"].ToString()).ToString("d")+": "+rows[i]["description"].ToString());
 				int idxParentFolder=PIn.Int(rows[i]["idxCategory"].ToString());
 				treeMain.Nodes[idxParentFolder].Nodes.Add(treeNode);
 				if(rows[i]["DocNum"].ToString()=="0") {//must be a mount

@@ -1119,8 +1119,11 @@ namespace OpenDental{
 				MsgBox.Show("Please enable eClipboard for this clinic to use this feature.");
 				return;
 			}
-			if(HasErrors()) {
-				return;
+			if(IsNew) {
+				//Performs the same steps as if user had clicked 'Ok'. 
+				if(!Save()) {
+					return;
+				}
 			}
 			//The sheet that the practice uses for payment plans needs to have a signature box on it, otherwise the signature won't be
 			//visible after signing. 
@@ -1142,7 +1145,6 @@ namespace OpenDental{
 				MsgBox.Show(this,"This Payment Plan has already been signed.");
 				return;
 			}
-			SaveData();
 			List<MobileAppDevice> listMobileAppDevices=MobileAppDevices.GetAll();
 			MobileAppDevice device=listMobileAppDevices.Where(x => x.PatNum==PatCur.PatNum).OrderByDescending(x => x.LastCheckInActivity).FirstOrDefault();
 			if(device!=null && device.LastCheckInActivity>DateTime.Now.AddHours(-1)) {
@@ -1151,6 +1153,7 @@ namespace OpenDental{
 			else {
 				OpenUnlockCodeForPayPlan();
 			}
+			DialogResult=DialogResult.OK;
 			//The form needs to close, because if a patient signs a payment plan while FormPayPlan is open, and then someone in OD
 			//clicks OK, then the signature gets blown away. 
 			Close();
@@ -1216,6 +1219,51 @@ namespace OpenDental{
 				}
 			}
 		}
+
+		///<summary>Performs validation on payplan and then calls SaveData() to save payplan if the payplan was valid. Sets DialogResult to OK</summary>
+		private bool Save() {
+			if(_payPlanCur.IsClosed) {
+				butOK.Text="OK";
+				butDelete.Enabled=true;
+				butClosePlan.Enabled=true;
+				labelClosed.Visible=false;
+				_payPlanCur.IsClosed=false;
+				return false;
+			}
+			if(HasErrors()) {
+				return false;
+			}
+			if(IsInsPayPlan && _payPlanCur.PlanNum==0) {
+				MsgBox.Show(this,"An insurance plan must be selected.");
+				return false;
+			}
+			if(PrefC.GetInt(PrefName.RigorousAccounting)==(int)RigorousAccounting.EnforceFully) {
+				//If there are tx credits, and it's a patient pay plan with no procs attached, and not an adjustment with a negative amount
+				if(!CompareDouble.IsZero(PIn.Double(textTotalTxAmt.Text)) && _payPlanCur.PlanNum==0
+					&& _listPayPlanCharges.Where(x=> x.ChargeType==PayPlanChargeType.Credit).Any(x => x.ProcNum==0 && !x.IsCreditAdjustment)) 
+				{
+					MsgBox.Show(this,"All treatment credits (excluding adjustments) must have a procedure.");
+					return false;
+				}
+			}
+			//insurance payment plans use the CompletedAmt text box, regular payment plans use totalTxAmt text box for validation.
+			if(IsInsPayPlan && PIn.Double(textCompletedAmt.Text)!=PIn.Double(textAmount.Text)) {
+				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Tx Completed Amt and Total Amount do not match, continue?")) {
+					return false;
+				}
+			}
+			else if(!IsInsPayPlan && PIn.Double(textTotalTxAmt.Text)!=PIn.Double(textAmount.Text) 
+				&& PrefC.GetInt(PrefName.PayPlansVersion)!=(int)PayPlanVersions.NoCharges) //Credits do not matter in ppv4
+			{
+				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Total Tx Amt and Total Amount do not match, continue?")) {
+					return false;
+				}
+			}
+			SaveData();
+			Plugins.HookAddCode(this,"FormPaymentPlan.butOK_Click_end",PatCur,_payPlanCur,IsNew);
+			return true;
+		}
+
 
 		///<summary></summary>
 		private void SaveData(bool isPrinting=false) {
@@ -1295,46 +1343,10 @@ namespace OpenDental{
 		}
 
 		private void butOK_Click(object sender,System.EventArgs e) {
-			if(_payPlanCur.IsClosed) {
-				butOK.Text="OK";
-				butDelete.Enabled=true;
-				butClosePlan.Enabled=true;
-				labelClosed.Visible=false;
-				_payPlanCur.IsClosed=false;
+			if(!Save()) {
 				return;
 			}
-			if(HasErrors()) {
-				return;
-			}
-			if(IsInsPayPlan && _payPlanCur.PlanNum==0) {
-				MsgBox.Show(this,"An insurance plan must be selected.");
-				return;
-			}
-			if(PrefC.GetInt(PrefName.RigorousAccounting)==(int)RigorousAccounting.EnforceFully) {
-				//If there are tx credits, and it's a patient pay plan with no procs attached, and not an adjustment with a negative amount
-				if(!CompareDouble.IsZero(PIn.Double(textTotalTxAmt.Text)) && _payPlanCur.PlanNum==0
-					&& _listPayPlanCharges.Where(x=> x.ChargeType==PayPlanChargeType.Credit).Any(x => x.ProcNum==0 && !x.IsCreditAdjustment)) 
-				{
-					MsgBox.Show(this,"All treatment credits (excluding adjustments) must have a procedure.");
-					return;
-				}
-			}
-			//insurance payment plans use the CompletedAmt text box, regular payment plans use totalTxAmt text box for validation.
-			if(IsInsPayPlan && PIn.Double(textCompletedAmt.Text)!=PIn.Double(textAmount.Text)) {
-				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Tx Completed Amt and Total Amount do not match, continue?")) {
-					return;
-				}
-			}
-			else if(!IsInsPayPlan && PIn.Double(textTotalTxAmt.Text)!=PIn.Double(textAmount.Text) 
-				&& PrefC.GetInt(PrefName.PayPlansVersion)!=(int)PayPlanVersions.NoCharges) //Credits do not matter in ppv4
-			{
-				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Total Tx Amt and Total Amount do not match, continue?")) {
-					return;
-				}
-			}
-			SaveData();
 			DialogResult=DialogResult.OK;
-			Plugins.HookAddCode(this,"FormPaymentPlan.butOK_Click_end",PatCur,_payPlanCur,IsNew);
 		}
 
 		private void butCancel_Click(object sender,System.EventArgs e) {

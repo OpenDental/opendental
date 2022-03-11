@@ -1646,6 +1646,7 @@ namespace OpenDentBusiness {
 					WHERE deflink.LinkType={SOut.Int((int)DefLinkType.Patient)}
 					AND deflink.FKey=patient.PatNum
 					AND definition.Category={SOut.Int((int)DefCat.ClinicSpecialty)}
+					LIMIT 1
 				)")+$@" Specialty,"//always include Specialty column, only populate if displaying specialty field
 			+(!PrefC.GetBool(PrefName.DistributorKey)?"":$@"
 				GROUP_CONCAT(DISTINCT phonenumber.PhoneNumberVal) AS OtherPhone,registrationkey.RegKey,")
@@ -4868,6 +4869,9 @@ namespace OpenDentBusiness {
 		public static bool IsPatientHashValid(Patient patient) {
 			//No need to check RemotingRole; no call to db.
 			if(patient==null) {
+				return true;
+			}
+			if(patient.SecurityHash==null) {//When a patient is first created through middle tier and not yet refreshed from db, this can be null and should not show a warning triangle.
 				return true;
 			}
 			//Do not check date, all patients are subject to validation

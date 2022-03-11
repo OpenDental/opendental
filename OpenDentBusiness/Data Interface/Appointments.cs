@@ -4807,8 +4807,9 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>If this method doesn't throw, then the appointment is considered valid.</summary>
-		public static void ValidateApptForWeb(Appointment appt,bool allowDoubleBooking=false) {
+		public static void ValidateApptForWeb(Appointment appt) {
 			bool isPatternChanged;
+			bool allowDoubleBooking=PrefC.GetYN(PrefName.ApptsAllowOverlap);
 			if(Patients.GetPat(appt.PatNum)==null) {
 				//I don't suggest selecting a patient here because you can only change a patient for new appointments.
 				throw new ODException("Patient selected is not valid.");
@@ -4819,7 +4820,7 @@ namespace OpenDentBusiness{
 			if(Providers.GetProv(appt.ProvNum).IsHidden) {
 				throw new ODException("Provider selected is marked hidden.  Please select a new provider.");
 			}
-			if(!allowDoubleBooking && Appointments.TryAdjustAppointmentInCurrentOp(appt,false,true,out isPatternChanged)) {
+			if(Appointments.CheckForBlockoutOverlap(appt) || (!allowDoubleBooking && Appointments.TryAdjustAppointmentInCurrentOp(appt,false,true,out isPatternChanged))) {
 				throw new ODException("Appointment overlaps existing appointment or blockout. Please change the appointment length.");
 			}
 			//Throws Exception if Warn/Block, returns false if DontEnforce or no conflict.

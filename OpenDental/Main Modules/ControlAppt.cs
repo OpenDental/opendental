@@ -559,8 +559,7 @@ namespace OpenDental {
 						break;
 					}
 				}
-				if(ListTools.In(careCreditStatus.ToLower(),CareCreditWebStatus.PreApproved.GetDescription().ToLower(),
-					CareCreditWebStatus.DupQS.GetDescription().ToLower())) 
+				if(ListTools.In(careCreditStatus.ToLower(),CareCreditWebStatus.PreApproved.GetDescription().ToLower())) 
 				{
 					menuApt.Items.Add(new ToolStripSeparator() { Name=MenuItemNames.CareCreditDiv });
 					menuApt.Items.Add(new ToolStripMenuItem(Lan.g(this,MenuItemNames.CareCreditAcceptDeclineOffer),null,menuApt_Click,MenuItemNames.CareCreditAcceptDeclineOffer));

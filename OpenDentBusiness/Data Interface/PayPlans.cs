@@ -749,6 +749,9 @@ namespace OpenDentBusiness{
 			if(payPlan==null) {
 				return true;
 			}
+			if(payPlan.SecurityHash==null) {//When a payplan is first created through middle tier and not yet refreshed from db, this can be null and should not show a warning triangle.
+				return true;
+			}
 			DateTime dateHashStart=Misc.SecurityHash.DateStart;
 			if(payPlan.PayPlanDate < dateHashStart) { //old
 				return true;

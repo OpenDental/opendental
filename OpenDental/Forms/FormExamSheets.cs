@@ -99,6 +99,9 @@ namespace OpenDental {
 				List<SheetField> listSheetFieldsForSheet=listSheetFields.FindAll(x => x.SheetNum==listSheets[i].SheetNum);
 				listSheetFieldsForSheet.Sort(SheetFields.SortDrawingOrderLayers);
 				SheetFields.GetFieldsAndParameters(listSheets[i],listSheetFieldsForSheet);
+				foreach(SheetField field in listSheets[i].SheetFields.FindAll(x => x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice))) {
+					field.SigKey=Sheets.GetSignatureKey(listSheets[i]);
+				}
 			}
 		}
 
