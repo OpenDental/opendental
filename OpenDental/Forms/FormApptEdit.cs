@@ -1750,7 +1750,13 @@ namespace OpenDental{
 							if(isMedical) {
 								continue;
 							}
-							String displaySurf=Tooth.SurfTidyFromDbToDisplay(listProcedures[i].Surf,listProcedures[i].ToothNum);//Fixes surface display for Canadian users
+							string displaySurf;
+							if(ProcedureCodes.GetProcCode(listProcedures[i].CodeNum).TreatArea==TreatmentArea.Sextant) {
+								displaySurf=Tooth.GetSextant(listProcedures[i].Surf,(ToothNumberingNomenclature)PrefC.GetInt(PrefName.UseInternationalToothNumbers));
+							}
+							else {
+								displaySurf=Tooth.SurfTidyFromDbToDisplay(listProcedures[i].Surf,listProcedures[i].ToothNum);
+							}
 							row.Cells.Add(displaySurf);
 							break;
 						case "Description":

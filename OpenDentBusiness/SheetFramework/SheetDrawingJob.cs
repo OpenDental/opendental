@@ -1162,13 +1162,21 @@ namespace OpenDentBusiness {
 					//There are some fonts that PdfSharp does not support.  Instead of showing an error, use our default font.
 					xfont=new XFont("Courier New",field.FontSize,xfontstyle);
 				}
+				#region SheetDef.DateTCreated Bug Fix 16020
+				//-------------------------------------------------------------------------------------------------------
+				//This region was commented out while fixing a PDF text field issue for JobNum:34170.
+				//The real fix for this issue was correcting a drawing problem with the YPos for text fields within DrawStringX().
+				//Below is the original block of code from JobNum:16020.
+				//They went to the legnths of adding a new column for that fix which makes us feel it might be more important than we're giving it credit.
+				//-------------------------------------------------------------------------------------------------------
 				//Subtract 5 from YPos to compensate for downward shift of text fields that occurs when creating a PDF from sheet. We don't want to shift
 				//sheetdefs created before this bug fix. They will have a DateTCreated of 0001-01-01 by default. Internal sheets and deleted sheetdefs will
 				//return null. We still want to shift text fields in these cases.
-				SheetDef sheetDef=SheetDefs.GetSheetDef(sheet.SheetDefNum,false);
-				if(sheetDef==null || sheetDef.DateTCreated.Year > 1880) {
-					field.YPos-=5;
-				}
+				//SheetDef sheetDef=SheetDefs.GetSheetDef(sheet.SheetDefNum,false);
+				//if(sheetDef==null || sheetDef.DateTCreated.Year > 1880) {
+				//	field.YPos-=5;
+				//}
+				#endregion
 				RectangleF rect=new RectangleF(field.XPos,field.YPos-yPosPrint,field.Width,field.Height);
 				boundsActual=GraphicsHelper.DrawStringX(gx,field.FieldValue,xfont,
 					field.ItemColor.ToArgb()==Color.FromArgb(0).ToArgb() ? XBrushes.Black : new XSolidBrush(field.ItemColor),
@@ -1654,12 +1662,20 @@ namespace OpenDentBusiness {
 		#endregion Private Methods - Draw
 
 		#region Private Methods 
-		public static bool FieldOnCurPageHelper(SheetField field,Sheet sheet,Margins printMargin,int yPosPrint,int pagesPrinted) {
+		public static bool FieldOnCurPageHelper(SheetField field,Sheet sheet,Margins margins,int topOfPrintableArea,int pagesPrinted) {
 			//Even though _printMargins and _yPosPrint are available in this context they are passed in so for future compatibility with webforms.
-			if(field.YPos>(yPosPrint+sheet.HeightPage-printMargin.Bottom)){
-				return false;//field is entirely on one of the next pages.
+			int pageCount=Sheets.CalculatePageCount(sheet,margins);
+			int bottomOfPrintableArea=topOfPrintableArea+sheet.HeightPage;
+			if(pagesPrinted==0) {//since the first page ignores the top margin
+				bottomOfPrintableArea-=margins.Bottom;
 			}
-			if(field.Bounds.Bottom<yPosPrint && pagesPrinted>0) {
+			else {
+				bottomOfPrintableArea-=(margins.Bottom+margins.Top);//otherwise account for both margins
+			}
+			if(field.YPos>bottomOfPrintableArea && pagesPrinted<pageCount-1){
+				return false;//field is entirely on one of the next pages. Unless we are on the first or last page, then it could be in the bottom margin.
+			}
+			if(field.Bounds.Bottom<topOfPrintableArea && pagesPrinted>0) {
 				return false;//field is entirely on one of the previous pages. Unless we are on the first page, then it is in the top margin.
 			}
 			return true;//field is all or partially on current page.

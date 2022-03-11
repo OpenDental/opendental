@@ -303,11 +303,32 @@ namespace OpenDental {
 			if(ControlPreviewOverride!=null) {
 				return IsControlPreviewOverrideValid(printout);
 			}
+			MakeMarginsFitWithinHardMargins(printout.PrintDoc);
 			using FormPrintPreview formPreview=new FormPrintPreview(printout);//This form is self validating.
 			formPreview.ShowDialog();
 			formPreview.BringToFront();
 			return (formPreview.DialogResult==DialogResult.OK);
 		}
 
+		///<summary>Ensures that the margins set on the current printdoc are within the hard margin values.
+		///The hard margin represents the physical margin set by the printer.</summary>
+		private static void MakeMarginsFitWithinHardMargins(PrintDocument printDoc) {
+			Margins marginsDefault = printDoc.DefaultPageSettings.Margins;
+			int hardMarginX = (int)printDoc.DefaultPageSettings.HardMarginX;
+			int hardMarginY = (int)printDoc.DefaultPageSettings.HardMarginY;
+			Margins marginsHard=new Margins(hardMarginX,hardMarginX,hardMarginY,hardMarginY);
+			if(marginsDefault.Bottom < marginsHard.Bottom) {
+				marginsDefault.Bottom=marginsHard.Bottom;
+			}
+			if(marginsDefault.Top < marginsHard.Top) {
+				marginsDefault.Top=marginsHard.Top;
+			}
+			if(marginsDefault.Left < marginsHard.Left) {
+				marginsDefault.Left=marginsHard.Left;
+			}
+			if(marginsDefault.Right < marginsHard.Right) {
+				marginsDefault.Right=marginsHard.Right;
+			}
+		}
 	}
 }

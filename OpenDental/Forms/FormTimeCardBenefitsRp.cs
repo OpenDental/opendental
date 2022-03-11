@@ -74,7 +74,7 @@ namespace OpenDental{
 				ts2=ts2.Add(TimeSpan.FromTicks(listTimeAdjustAll.FindAll(x => x.EmployeeNum==empCur.EmployeeNum
 						&& x.TimeEntry.Year==_monthT2.Year
 						&& x.TimeEntry.Month==_monthT2.Month)
-						.Sum(x => x.RegHours.Ticks+x.PtoHours.Ticks)));
+						.Sum(x => x.RegHours.Ticks+x.PtoHours.Ticks+x.OTimeHours.Ticks)));
 				row.Cells.Add(new GridCell(string.Format("{0:0.00}",Math.Round(ts2.TotalHours,2,MidpointRounding.AwayFromZero))) { ColorBackG=(ts2.TotalHours<125 ? lightRed : Color.Empty) });
 				//Month T-1
 				TimeSpan ts1 = TimeSpan.FromTicks(listClockEventsAll
@@ -86,7 +86,7 @@ namespace OpenDental{
 				ts1=ts1.Add(TimeSpan.FromTicks(listTimeAdjustAll.FindAll(x => x.EmployeeNum==empCur.EmployeeNum
 						&& x.TimeEntry.Year==_monthT1.Year
 						&& x.TimeEntry.Month==_monthT1.Month)
-						.Sum(x => x.RegHours.Ticks+x.PtoHours.Ticks)));
+						.Sum(x => x.RegHours.Ticks+x.PtoHours.Ticks+x.OTimeHours.Ticks)));
 				row.Cells.Add(new GridCell(string.Format("{0:0.00}",Math.Round(ts1.TotalHours,2,MidpointRounding.AwayFromZero))) { ColorBackG=(ts1.TotalHours<125 ? lightRed : Color.Empty) });
 				//Month T-0
 				TimeSpan ts0 = TimeSpan.FromTicks(listClockEventsAll
@@ -98,7 +98,7 @@ namespace OpenDental{
 				ts0=ts0.Add(TimeSpan.FromTicks(listTimeAdjustAll.FindAll(x => x.EmployeeNum==empCur.EmployeeNum
 						&& x.TimeEntry.Year==_monthT0.Year
 						&& x.TimeEntry.Month==_monthT0.Month)
-						.Sum(x => x.RegHours.Ticks+x.PtoHours.Ticks)));
+						.Sum(x => x.RegHours.Ticks+x.PtoHours.Ticks+x.OTimeHours.Ticks)));
 				if(!checkIgnore.Checked) {
 					row.Cells.Add(new GridCell(string.Format("{0:0.00}",Math.Round(ts0.TotalHours,2,MidpointRounding.AwayFromZero))) { ColorBackG=(ts0.TotalHours<125 ? lightRed : Color.Empty) });
 				}

@@ -73,31 +73,69 @@ namespace OpenDentBusiness {
 					+"ORDER BY claimproc.ProcDate,claimproc.PatNum";
 			}
 			else {//writeoffPayType==PPOWriteoffDateCalc.ClaimPayDate
-				query+="SELECT "+DbHelper.DtimeToDate("claimsnapshot.DateTEntry")+" date, "
-					+DbHelper.Concat("patient.LName","', '","patient.FName","' '","patient.MiddleI")+", "
-					+"carrier.CarrierName, "
-					+"provider.Abbr,";
-				if(hasClinicsEnabled) {
-					query+="IF(clinic.IsHidden,CONCAT(clinic.Abbr,'("+POut.String(Lans.g("FormRpWriteoffSheet","hidden"))+")'),clinic.Abbr) Clinic,";
-				}
-				query+="SUM("+DbHelper.IfNull("NULLIF(claimsnapshot.WriteOff, -1)","0",false)+"), "
-					+"-SUM(IF(claimproc.Status="+(int)ClaimProcStatus.NotReceived+",0,"+DbHelper.IfNull("NULLIF(claimsnapshot.WriteOff, -1)","0",false)+"-claimproc.WriteOff)), "
-					+"SUM(claimproc.WriteOff) $writeoff "
-					+"FROM claimproc "
-					+"LEFT JOIN insplan ON claimproc.PlanNum = insplan.PlanNum "
-					+"LEFT JOIN patient ON claimproc.PatNum = patient.PatNum "
-					+"LEFT JOIN carrier ON carrier.CarrierNum = insplan.CarrierNum "
-					+"LEFT JOIN provider ON provider.ProvNum = claimproc.ProvNum "
-					+"LEFT JOIN clinic ON clinic.ClinicNum=claimproc.ClinicNum "
-					+"INNER JOIN claimsnapshot on claimsnapshot.ClaimProcNum=claimproc.ClaimProcNum "	//use claimsnapshot DateTEntry instead of claimproc
-					+"WHERE claimproc.Status IN ("+(int)ClaimProcStatus.Received+","+(int)ClaimProcStatus.Supplemental+","+(int)ClaimProcStatus.NotReceived+") "
-					+whereProv
-					+whereClin
-					+"AND "+DbHelper.DtimeToDate("claimsnapshot.DateTEntry")+" >= @FromDate "
-					+"AND "+DbHelper.DtimeToDate("claimsnapshot.DateTEntry")+" <= @ToDate "
-					+"AND claimsnapshot.WriteOff > 0 "
-					+"GROUP BY claimproc.ProvNum,claimsnapshot.DateTEntry,claimproc.ClinicNum,claimproc.PatNum "
-					+"ORDER BY claimsnapshot.DateTEntry,claimproc.PatNum";
+				query+=$@"SELECT
+									writeoff.date,
+									writeoff.patient,
+									writeoff.CarrierName,
+									writeoff.Abbr,
+									{(hasClinicsEnabled? "writeoff.Clinic,":"" )}
+									writeoff.Estimate,
+									writeoff.Adjustment,
+									writeoff.Estimate + writeoff.Adjustment $writeoff
+									FROM(
+										SELECT -- estimates
+											DATE(claimsnapshot.DateTEntry) 'date',
+											CONCAT(patient.LName,', ',patient.FName,' ',patient.MiddleI) patient,
+											carrier.CarrierName,
+											provider.Abbr,
+											IF(clinic.IsHidden,CONCAT(clinic.Abbr,'({POut.String(Lans.g("FormRpWriteoffSheet","hidden"))})'),clinic.Abbr) Clinic,		
+											SUM(COALESCE(NULLIF(claimsnapshot.WriteOff,-1),0)) 'Estimate',
+											0 'Adjustment',
+											claimproc.ProvNum,
+											claimproc.ClinicNum,
+											claimproc.PatNum
+										FROM claimproc
+										INNER JOIN claimsnapshot ON claimsnapshot.ClaimProcNum=claimproc.ClaimProcNum
+										LEFT JOIN insplan ON claimproc.PlanNum = insplan.PlanNum
+										LEFT JOIN patient ON claimproc.PatNum = patient.PatNum
+										LEFT JOIN carrier ON carrier.CarrierNum = insplan.CarrierNum
+										LEFT JOIN provider ON provider.ProvNum = claimproc.ProvNum
+										LEFT JOIN clinic ON clinic.ClinicNum=claimproc.ClinicNum
+										WHERE claimproc.Status IN({(int)ClaimProcStatus.Received},{(int)ClaimProcStatus.Supplemental},{(int)ClaimProcStatus.NotReceived}) -- not recieved, receieved, supplemental
+										{whereProv}
+										{whereClin}
+										AND claimsnapshot.DateTEntry BETWEEN @FromDate AND @ToDate + INTERVAL 1 DAY
+										AND claimsnapshot.WriteOff > 0
+										GROUP BY claimproc.ProvNum,claimsnapshot.DateTEntry,claimproc.ClinicNum,claimproc.PatNum
+									
+										UNION ALL
+									
+										SELECT -- adjustments
+											claimproc.DateCP as 'date',
+											CONCAT(patient.LName,', ',patient.FName,' ',patient.MiddleI) patient,
+											carrier.CarrierName,
+											provider.Abbr,
+											IF(clinic.IsHidden,CONCAT(clinic.Abbr,'({POut.String(Lans.g("FormRpWriteoffSheet","hidden"))})'),clinic.Abbr) Clinic,
+											0 'Estimate',
+											SUM(COALESCE(NULLIF(claimproc.WriteOff,-1),0)-COALESCE(NULLIF(claimsnapshot.WriteOff,-1),0)) 'Adjustment',
+											claimproc.ProvNum,
+											claimproc.ClinicNum,
+											claimproc.PatNum
+										FROM claimproc
+										LEFT JOIN claimsnapshot ON claimsnapshot.ClaimProcNum=claimproc.ClaimProcNum
+										LEFT JOIN insplan ON claimproc.PlanNum = insplan.PlanNum
+										LEFT JOIN patient ON claimproc.PatNum = patient.PatNum
+										LEFT JOIN carrier ON carrier.CarrierNum = insplan.CarrierNum
+										LEFT JOIN provider ON provider.ProvNum = claimproc.ProvNum
+										LEFT JOIN clinic ON clinic.ClinicNum=claimproc.ClinicNum
+										WHERE claimproc.Status IN({(int)ClaimProcStatus.Received},{(int)ClaimProcStatus.Supplemental}) -- received, supplemental
+										{whereProv}
+										{whereClin}
+										AND claimproc.DateCP BETWEEN @FromDate AND @ToDate
+										AND ABS(COALESCE(NULLIF(claimproc.WriteOff,-1),0)-COALESCE(NULLIF(claimsnapshot.WriteOff,-1),0)) > 0.005
+										GROUP BY claimproc.ProvNum,claimproc.ProcDate,claimproc.ClinicNum,claimproc.PatNum
+										ORDER BY date,PatNum
+									) writeoff";
 			}
 			return ReportsComplex.RunFuncOnReportServer(() => ReportsComplex.GetTable(query));
 		}	

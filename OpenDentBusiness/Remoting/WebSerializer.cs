@@ -316,12 +316,15 @@ namespace WebServiceSerializer {
 		
 		///<summary>Searches through resultXml for the given tagName and returns a deserialized object.
 		///Specifically looks for an Error node and throws an exception with the InnerText of said node if found.</summary>
-		public static T DeserializeTag<T>(string resultXml,string tagName) {
+		public static T DeserializeTag<T>(string resultXml,string tagName,bool doThrowOdExceptionOnErrorNode=false) {
 			XmlDocument doc=new XmlDocument();
 			doc.LoadXml(resultXml);
 			//Validate output.
 			XmlNode node=doc.SelectSingleNode("//Error");
 			if(node!=null) {
+				if(doThrowOdExceptionOnErrorNode) {
+					throw new ODException(node.InnerText);
+				}
 				throw new Exception(node.InnerText);
 			}
 			node=doc.SelectSingleNode("//"+tagName);
