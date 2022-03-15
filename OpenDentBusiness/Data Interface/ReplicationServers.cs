@@ -263,6 +263,10 @@ namespace OpenDentBusiness{
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
 				return Meth.GetBool(MethodBase.GetCurrentMethod());
 			}
+			//ODCloud does not use replication
+			if(ODBuild.IsWeb()) {
+				return false;
+			}
 			//First ask OD
 			if(ReplicationServers.GetCount() > 0) {
 				return true;

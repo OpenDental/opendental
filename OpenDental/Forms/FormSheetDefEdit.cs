@@ -127,11 +127,11 @@ namespace OpenDental {
 		}
 
 		private bool HasChartSealantComplete() {
-			return HasScreeningChart(isTreatmentChart: false);
+			return HasScreeningChart(isTreatmentChart:false);
 		}
 
 		private bool HasChartSealantTreatment() {
-			return HasScreeningChart(isTreatmentChart: true);
+			return HasScreeningChart(isTreatmentChart:true);
 		}
 		#endregion Properties
 
@@ -1302,6 +1302,10 @@ namespace OpenDental {
 				if(language.IsNullOrEmpty()){//Ignore 'Default' 
 					continue;
 				}
+				int countScreenChartsForLanguage=_sheetDefCur.SheetFieldDefs.FindAll(x=>x.Language==language && x.FieldType==SheetFieldType.ScreenChart).Count();
+				if(sheetFieldDefDefault.FieldType==SheetFieldType.ScreenChart && countScreenChartsForLanguage==2) {
+					continue;//only 2 screencharts are allowed per translation
+				}
 				SheetFieldDef sheetFieldDefCopy=sheetFieldDefDefault.Copy();
 				sheetFieldDefCopy.Language=language;
 				AddNewSheetFieldDef(sheetFieldDefCopy);
@@ -2189,7 +2193,8 @@ namespace OpenDental {
 				if(sheetFieldDef.FieldType==SheetFieldType.CheckBox && (sheetFieldDef.FieldName.StartsWith("allergy:")) || sheetFieldDef.FieldName.StartsWith("problem:")) {
 					foreach(SheetFieldDef sheetFieldDefMedCheckBox in listSheetFieldDefMedCheckBox) { //Check for duplicates.
 						if(sheetFieldDefMedCheckBox.FieldName==sheetFieldDef.FieldName && sheetFieldDefMedCheckBox.RadioButtonValue==sheetFieldDef.RadioButtonValue && sheetFieldDefMedCheckBox.Language==sheetFieldDef.Language) {
-							MessageBox.Show(Lan.g(this,"Duplicate check box found")+": '"+sheetFieldDef.FieldName+" "+sheetFieldDef.RadioButtonValue+"'. "+Lan.g(this,"Only one of each type is allowed."));
+							string message=GetDuplicateSheetFieldDefErrorMessage(sheetFieldDef);
+							MessageBox.Show(message);
 							return false;
 						}
 					}
@@ -2199,7 +2204,8 @@ namespace OpenDental {
 				else if(sheetFieldDef.FieldType==SheetFieldType.InputField && sheetFieldDef.FieldName.StartsWith("inputMed")) {
 					foreach(SheetFieldDef sheetFieldDef2 in listSheetFieldDefInputMedList) {
 						if(sheetFieldDef2.FieldName==sheetFieldDef.FieldName && sheetFieldDef2.Language==sheetFieldDef.Language) {
-							MessageBox.Show(Lan.g(this,"Duplicate inputMed boxes found")+": '"+sheetFieldDef.FieldName+"'. "+Lan.g(this,"Only one of each is allowed."));
+							string message=GetDuplicateSheetFieldDefErrorMessage(sheetFieldDef);
+							MessageBox.Show(message);
 							return false;
 						}
 					}
@@ -2208,7 +2214,8 @@ namespace OpenDental {
 				else if(sheetFieldDef.FieldType==SheetFieldType.CheckBox && sheetFieldDef.FieldName.StartsWith("checkMed")) {
 					foreach(SheetFieldDef sheetFieldDefMedCheckBox in listSheetFieldDefCheckMedList) { //Check for duplicates.
 						if(sheetFieldDefMedCheckBox.FieldName==sheetFieldDef.FieldName && sheetFieldDefMedCheckBox.Language==sheetFieldDef.Language) {
-							MessageBox.Show(Lan.g(this,"Duplicate check box found")+": '"+sheetFieldDef.FieldName+" "+sheetFieldDef.RadioButtonValue+"'. "+Lan.g(this,"Only one of each type is allowed."));
+							string message=GetDuplicateSheetFieldDefErrorMessage(sheetFieldDef);
+							MessageBox.Show(message);
 							return false;
 						}
 					}
@@ -2237,6 +2244,17 @@ namespace OpenDental {
 					break;
 			}
 			return true;
+		}
+
+		private string GetDuplicateSheetFieldDefErrorMessage(SheetFieldDef sheetFieldDef) {
+			string message=Lan.g(this,"Duplicate")+" "+sheetFieldDef.FieldType.GetDescription()+" "+Lan.g(this,"found")+": '"+sheetFieldDef.FieldName+"'. "+Lan.g(this,"Only one of each is allowed. ");
+			//If this error occured in a language other than the default.
+			if(!string.IsNullOrWhiteSpace(sheetFieldDef.Language)) {
+				string language=_listSheetDefLanguagesUsed.FirstOrDefault(x=>x.ThreeLetters==sheetFieldDef.Language)?.Display;
+				language=string.IsNullOrWhiteSpace(language) ? sheetFieldDef.Language : language;
+				message+=Lan.g(this,$"Error occured in {language} variant of this sheet.");
+			}
+			return message;
 		}
 		#endregion Methods - Private
 

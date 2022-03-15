@@ -28,7 +28,12 @@ namespace OpenDental{
 
 		private void FormDunningEdit_Load(object sender, System.EventArgs e) {
 			if(PrefC.HasClinicsEnabled) {
-				comboClinics.SelectedClinicNum=_dunning.ClinicNum;
+				if(_dunning.ClinicNum==-2) {
+					comboClinics.IsAllSelected=true;
+				}
+				else {
+					comboClinics.SelectedClinicNum=_dunning.ClinicNum;
+				}
 			}
 			if(PrefC.GetBool(PrefName.ShowFeatureSuperfamilies)) {
 				checkSuperFamily.Visible=true;

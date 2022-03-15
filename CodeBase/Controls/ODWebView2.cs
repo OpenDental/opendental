@@ -50,6 +50,17 @@ namespace CodeBase.Controls {
 			await this.EnsureCoreWebView2Async(environment);
 		}
 
+		public void ClearCache(bool doDisplayError = true) {
+			//Fire and forget.
+			_=ClearCache();
+			if(doDisplayError) {
+				MessageBox.Show("Browser cache cleared. You may need to close or refresh this window. If you are still experiencing problems, run the program as an Admin and try again.");
+			}
+		}
 
+		///<summary>Makes a call to dev tools to clear WebView2 browser cache. Use a fire and forget pattern as you shouldn't care about the result of this method.</summary>
+		private async Task ClearCache() {
+			await this.CoreWebView2.CallDevToolsProtocolMethodAsync("Network.clearBrowserCache","{}");
+		}
 	}
 }

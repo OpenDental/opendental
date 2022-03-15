@@ -12,7 +12,7 @@ namespace CodeBase {
 		public delegate void SendDataToBrowserDelegate(string data,int browserAction,Action<string> onReceivedResponse = null);
 
 		public static void LaunchFileWithODCloudClient(string exePath="",string extraArgs="",string extraFilePath="",string extraFileData="",
-			string extraFileType="",bool doWaitForResponse=false,string createDirIfNeeded="",bool tryLaunch=false) 
+			string extraFileType="",bool doWaitForResponse=false,string createDirIfNeeded="",bool tryLaunch=false,bool doStartWithoutExtraFile=false) 
 		{
 
 		}

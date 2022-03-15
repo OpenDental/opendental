@@ -357,6 +357,10 @@ namespace OpenDental {
 					node3=SetNode(Permissions.AdjustmentTypeDeny);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
+				node2=SetNode("Statement");
+					node3=SetNode(Permissions.StatementCSV);
+					node2.Nodes.Add(node3);
+				node.Nodes.Add(node2);
 			treePermissions.Nodes.Add(node);
 			#endregion
 			#region Treat Plan Module
@@ -501,8 +505,6 @@ namespace OpenDental {
 					node2=SetNode(Permissions.FAQEdit);
 					node.Nodes.Add(node2);
 					node2=SetNode(Permissions.FeatureRequestEdit);
-					node.Nodes.Add(node2);
-					node2=SetNode(Permissions.StatementCSV);
 					node.Nodes.Add(node2);
 				treePermissions.Nodes.Add(node);
 			}

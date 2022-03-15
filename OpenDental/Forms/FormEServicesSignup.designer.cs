@@ -35,6 +35,7 @@ namespace OpenDental{
 			this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.butClose = new OpenDental.UI.Button();
 			this.webViewMain = new CodeBase.Controls.ODWebView2();
+			this.menuMain = new OpenDental.UI.MenuOD();
 			this.menuWebSchedVerifyTextTemplate.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.webViewMain)).BeginInit();
 			this.SuspendLayout();
@@ -117,9 +118,18 @@ namespace OpenDental{
 			this.webViewMain.ZoomFactor = 1D;
 			this.webViewMain.NavigationCompleted += new System.EventHandler<Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs>(this.webViewMain_NavigationCompleted);
 			// 
+			// menuMain
+			// 
+			this.menuMain.Dock = System.Windows.Forms.DockStyle.Top;
+			this.menuMain.Location = new System.Drawing.Point(0, 0);
+			this.menuMain.Name = "menuMain";
+			this.menuMain.Size = new System.Drawing.Size(1209, 24);
+			this.menuMain.TabIndex = 504;
+			// 
 			// FormEServicesSignup
 			// 
 			this.ClientSize = new System.Drawing.Size(1209, 692);
+			this.Controls.Add(this.menuMain);
 			this.Controls.Add(this.webViewMain);
 			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -143,5 +153,6 @@ namespace OpenDental{
 		private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
 		private UI.Button butClose;
 		private CodeBase.Controls.ODWebView2 webViewMain;
+		private UI.MenuOD menuMain;
 	}
 }

@@ -97,6 +97,16 @@ namespace OpenDental {
 		///<summary></summary>
 		public void LayoutToolBars() {
 			ToolBarMain.Buttons.Clear();
+			ContextMenu contextMenuSettings = new ContextMenu();
+			MenuItem menuItemClearCache = new MenuItem();
+			menuItemClearCache.Name="ClearCache";
+			menuItemClearCache.Text="Clear Browser Cache";
+			menuItemClearCache.Click+=new System.EventHandler(this.menuItemClearCache_Click);
+			contextMenuSettings.MenuItems.Add(menuItemClearCache);
+			ODToolBarButton buttonSettings = new ODToolBarButton(Lan.g(this,"Settings"),-1,"","Settings");
+			buttonSettings.Style=ODToolBarButtonStyle.DropDownButton;
+			buttonSettings.DropDownMenu=contextMenuSettings;
+			ToolBarMain.Buttons.Add(buttonSettings);
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Back"),0,"","Back"));
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Forward"),1,"","Forward"));
 			if(!IsUrlSingleUse) {
@@ -145,6 +155,10 @@ namespace OpenDental {
 					Close();//For when we launch the window in a non-modal manner.
 					break;
 			}
+		}
+
+		private void menuItemClearCache_Click(object sender,EventArgs e) {
+			webViewMain.ClearCache();
 		}
 	}
 }

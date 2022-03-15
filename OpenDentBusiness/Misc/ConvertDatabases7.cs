@@ -2637,5 +2637,9 @@ namespace OpenDentBusiness {
 			command="ALTER TABLE payment ADD IsCcCompleted tinyint NOT NULL";
 			Db.NonQ(command);
 		}//End of 22_1_7() method
+
+		private static void To22_1_12() {
+			Misc.SecurityHash.UpdateHashing();
+		}//End of 22_1_12() method
 	}
 }

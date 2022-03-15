@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
-		///<summary>The date Open Dental started hashing fields into paysplit.SecurityHash. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2022,2,28);
+		///<summary>The date Open Dental started hashing fields. Used to determine if hashing is required. </summary>
+		public static DateTime DateStart=new DateTime(2022,3,14);
 		private static bool _arePaySplitsUpdated=false;
 		private static bool _areAppointmentsUpdated=false;
 		private static bool _arePatientsUpdated=false;
@@ -22,6 +22,8 @@ namespace OpenDentBusiness.Misc {
 			RunAppointment();
 			RunPatient();
 			RunPayPlan();
+			string updating="Updating database.";
+			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
 		}
 
 		///<summary>Only used one time during a conversion script. Sets the _arePatientsUpdate boolean to false. Allows the hashing logic to run on the patient table a subsequent time during a convert script update. </summary>
@@ -41,6 +43,16 @@ namespace OpenDentBusiness.Misc {
 			{
 				return;
 			}
+			string updating="Hashing paysplits.";
+			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
+			_arePaySplitsUpdated=true;
+			ThreadStart threadStart=new ThreadStart(PaysplitWorker);
+			Thread thread=new Thread(threadStart);
+			thread.IsBackground=true;
+			thread.Start();
+		}
+
+		private static void PaysplitWorker() {
 			//Hash entries made after new date
 			string command="SELECT SplitNum, PatNum, SplitAmt, DatePay, SecurityHash FROM paysplit WHERE DatePay >= "+POut.Date(DateStart);
 			DataTable table=Db.GetTable(command);
@@ -65,10 +77,9 @@ namespace OpenDentBusiness.Misc {
 				//Only update hashes that changed
 				if(hashedTextOld!=hashedTextNew) {
 					command=$@"UPDATE paysplit SET SecurityHash='{POut.String(hashedTextNew)}' WHERE SplitNum={POut.Long(splitNum)}";
+					Db.NonQ(command);
 				}
-				Db.NonQ(command);
 			}
-			_arePaySplitsUpdated=true;
 		}
 
 		private static void RunAppointment() {
@@ -83,6 +94,8 @@ namespace OpenDentBusiness.Misc {
 			{
 				return;
 			}
+			string updating="Hashing appointments.";
+			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
 			//Hash entries made after new date
 			string command="SELECT AptNum, AptStatus, Confirmed, AptDateTime, SecurityHash FROM appointment WHERE AptDateTime>= "+POut.Date(DateStart);
 			DataTable table=Db.GetTable(command);
@@ -107,8 +120,8 @@ namespace OpenDentBusiness.Misc {
 				//Only update hashes that changed
 				if(hashedTextOld!=hashedTextNew) {
 					command=$@"UPDATE appointment SET SecurityHash='{POut.String(hashedTextNew)}' WHERE AptNum={POut.Long(aptNum)}";
+					Db.NonQ(command);
 				}
-				Db.NonQ(command);
 			}
 			_areAppointmentsUpdated=true;
 		}
@@ -122,6 +135,8 @@ namespace OpenDentBusiness.Misc {
 			if(!LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"patient","SecurityHash")) {
 				return;
 			}
+			string updating="Hashing patients.";
+			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
 			_arePatientsUpdated=true;
 			ThreadStart threadStart=new ThreadStart(PatientWorker);
 			Thread thread=new Thread(threadStart);
@@ -166,6 +181,8 @@ namespace OpenDentBusiness.Misc {
 			{
 				return;
 			}
+			string updating="Hashing payplans.";
+			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
 			//Clear old hashes
 			string command="UPDATE payplan SET SecurityHash=''";
 			Db.NonQ(command);

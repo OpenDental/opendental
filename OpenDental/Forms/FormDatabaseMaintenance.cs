@@ -45,6 +45,8 @@ namespace OpenDental {
 		private bool _isReplicationPasswordEntered=false;
 		///<summary>Set on load, true if we detect the office is using replication. Otherwise false.</summary>
 		private bool _isUsingReplication=false;
+		///<summary>True if the MySQL user has the privileges necessary to determine if the database is using replication (REPLICATION CLIENT and SUPER). Otherwise, false.</summary>
+		private bool _hasReplicationPermission=true;
 
 		///<summary></summary>
 		public FormDatabaseMaintenance() {
@@ -74,7 +76,12 @@ namespace OpenDental {
 			if(string.IsNullOrWhiteSpace(textBoxUpdateInProg.Text)) {
 				butClearUpdateInProgress.Enabled=false;
 			}
-			_isUsingReplication=ReplicationServers.IsUsingReplication();
+			try {
+				_isUsingReplication=ReplicationServers.IsUsingReplication();
+			}
+			catch {
+				_hasReplicationPermission=false;
+			}
 		}
 
 		private void FillGrid() {
@@ -720,8 +727,13 @@ namespace OpenDental {
 		private string RunMethod(MethodInfo methodInfo,DbmMode dbmModeCur) {
 			if(dbmModeCur==DbmMode.Fix) {
 				DbmMethodAttr dbmMethodAttr=(DbmMethodAttr)Attribute.GetCustomAttribute(methodInfo,typeof(DbmMethodAttr));
-				if(dbmMethodAttr!=null && dbmMethodAttr.IsReplicationUnsafe && _isUsingReplication && !_isReplicationPasswordEntered) {
-					return "Replication unsafe method, unable to run without authorization.";
+				if(dbmMethodAttr!=null && dbmMethodAttr.IsReplicationUnsafe) {
+					if(!_hasReplicationPermission){
+						return "Replication unsafe method, requires MySQL privilege REPLICATION CLIENT or SUPER";
+					}
+					if(_isUsingReplication && !_isReplicationPasswordEntered) {
+						return "Replication unsafe method, unable to run without authorization.";
+					}
 				}
 			}
 			List<object> listObjectsParameters=GetParametersForMethod(methodInfo,dbmModeCur);
@@ -756,7 +768,7 @@ namespace OpenDental {
 			List<MethodInfo> listGridRowTags=grid.SelectedTags<MethodInfo>();
 			for(int i=0;i<listGridRowTags.Count;i++) {
 				DbmMethodAttr dbmMethodAttr=(DbmMethodAttr)Attribute.GetCustomAttribute(listGridRowTags[i],typeof(DbmMethodAttr));
-				if(dbmMethodAttr!=null && dbmMethodAttr.IsReplicationUnsafe && _isUsingReplication) {
+				if(dbmMethodAttr!=null && dbmMethodAttr.IsReplicationUnsafe && (_isUsingReplication || !_hasReplicationPermission)) {
 					return true;
 				}
 			}
@@ -765,6 +777,11 @@ namespace OpenDental {
 
 		private void VerifyPermissionToRunReplicationUnsafeMethods() {
 			if(_isReplicationPasswordEntered) {
+				return;
+			}
+			if(!_hasReplicationPermission) {
+				MsgBox.Show(this,"Unable to determine if replication is enabled without the MySQL privileges REPLICATION CLIENT or SUPER." +
+					" At least one dbm method is not safe to run when replication is enabled. Unsafe methods will be skipped.");
 				return;
 			}
 			if(!MsgBox.Show(MsgBoxButtons.YesNo,"At least one dbm method is not safe to run when replication is enabled. Would you like to continue?")) {

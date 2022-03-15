@@ -44,6 +44,7 @@ namespace OpenDental {
 				DialogResult=DialogResult.Cancel;
 				Close();
 			}
+			FillMenu();
 			Text=Lan.g(this,"Loading")+"...";
 			if(_signupOut==null){
 				_signupOut=FormEServicesSetup.GetSignupOut();
@@ -62,6 +63,12 @@ namespace OpenDental {
 			});
 		}
 
+		private void FillMenu() {
+			MenuItemOD menuItemSettings = new MenuItemOD("Settings");
+			menuMain.Add(menuItemSettings);
+			menuItemSettings.Add("Clear Browser Cache",clearCacheToolStripMenuItem_Click);
+		}
+
 		private void webViewMain_NavigationCompleted(object sender,CoreWebView2NavigationCompletedEventArgs e) {
 			SetTitle();
 		}
@@ -71,6 +78,10 @@ namespace OpenDental {
 			if(webViewMain.CoreWebView2!=null && !string.IsNullOrWhiteSpace(webViewMain.CoreWebView2.DocumentTitle)) {
 				Text+=" - "+webViewMain.CoreWebView2.DocumentTitle;
 			}
+		}
+
+		private void clearCacheToolStripMenuItem_Click(object sender,EventArgs e) {
+			webViewMain.ClearCache();
 		}
 
 		private void butClose_Click(object sender,EventArgs e) {

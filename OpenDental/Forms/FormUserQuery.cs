@@ -258,10 +258,10 @@ namespace OpenDental {
 			}
 			_pagesPrinted=0;
 			_headingPrinted=false;
-			PrinterL.TryPreview(
+			PrinterL.TryPrintOrDebugRpPreview(
 				pd_PrintPage,
 				Lan.g(this,$"{(String.IsNullOrEmpty(textTitle.Text) ? "User Query" : textTitle.Text)} previewed"),
-				doCalculateTotalPages: true
+				isForcedPreview:true
 			);
 			_linesPrinted=0;
 		}

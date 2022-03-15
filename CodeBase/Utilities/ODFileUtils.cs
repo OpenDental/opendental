@@ -208,15 +208,15 @@ namespace CodeBase {
 		
 		///<summary>Write the given text to the given file, then start a new process with the given path.  
 		///If using a WEB compiled version of Open Dental, pass through to the odcloud client for File IO and to start the process locally.</summary>
-		public static Process WriteAllTextThenStart(string filePath,string fileText,string processPath) {
-			return WriteAllTextThenStart(filePath,fileText,processPath,"");
+		public static Process WriteAllTextThenStart(string filePath,string fileText,string processPath,bool doStartWithoutExtraFile=false) {
+			return WriteAllTextThenStart(filePath,fileText,processPath,"",doStartWithoutExtraFile:doStartWithoutExtraFile);
 		}
 		
 		///<summary>Write the given text to the given file, then start a new process with the given path.  
 		///If using a WEB compiled version of Open Dental, pass through to the odcloud client for File IO and to start the process locally.</summary>
-		public static Process WriteAllTextThenStart(string filePath,string fileText,string processPath,string commandLineArgs) {
+		public static Process WriteAllTextThenStart(string filePath,string fileText,string processPath,string commandLineArgs,bool doStartWithoutExtraFile=false) {
 			if(ODBuild.IsWeb()) {
-				ODCloudClient.LaunchFileWithODCloudClient(processPath,commandLineArgs,filePath,fileText);
+				ODCloudClient.LaunchFileWithODCloudClient(processPath,commandLineArgs,filePath,fileText,doWaitForResponse:true,doStartWithoutExtraFile:doStartWithoutExtraFile);
 				return null;
 			}
 			else {

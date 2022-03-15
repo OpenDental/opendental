@@ -799,24 +799,13 @@ namespace OpenDentBusiness{
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
 				return Meth.GetObject<List<Provider>>(MethodBase.GetCurrentMethod(),provNums);
 			}
-			string strProvNums="";
-			DataTable table;
-			if(provNums.Count>0) {
-				for(int i=0;i<provNums.Count;i++) {
-					if(i>0) {
-						strProvNums+="OR ";
-					}
-					strProvNums+="ProvNum='"+provNums[i].ToString()+"' ";
-				}
-				string command="SELECT * FROM provider WHERE "+strProvNums;
-				table=Db.GetTable(command);
+			List<long>provNumsDistinct=provNums.Distinct().ToList();
+			if(provNumsDistinct.Count<1) {
+				return new List<Provider>();
 			}
-			else {
-				table=new DataTable();
-			}
-			Provider[] multProviders=Crud.ProviderCrud.TableToList(table).ToArray();
-			List<Provider> providerList=new List<Provider>(multProviders);
-			return providerList;
+			string command="";
+			command="SELECT * FROM provider WHERE ProvNum IN ("+string.Join(",",provNumsDistinct)+")";
+			return Crud.ProviderCrud.SelectMany(command);
 		}
 
 		/// <summary>Currently only used for Dental Schools and will only return Providers.ListShort if Dental Schools is not active.  Otherwise this will return a filtered provider list.</summary>
