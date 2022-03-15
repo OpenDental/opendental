@@ -1197,24 +1197,24 @@ namespace OpenDental {
 			if(contrApptPanel.SelectedAptNum==-1) {
 				return;
 			}
-			Appointment aptOld=Appointments.GetOneApt(contrApptPanel.SelectedAptNum);
-			if(aptOld==null) {
+			Appointment aptCur=Appointments.GetOneApt(contrApptPanel.SelectedAptNum);
+			if(aptCur==null) {
 				MsgBox.Show(this,"Patient appointment was removed.");
 				contrApptPanel.SelectedAptNum=-1;
 				ModuleSelected(_patCur.PatNum);//keep same pat
 				return;
 			}
-			DateTime datePrevious=aptOld.DateTStamp;
+			Appointment aptOld=aptCur.Copy();
 			long newStatus=Defs.GetDefsForCategory(DefCat.ApptConfirmed,true)[listConfirmed.IndexFromPoint(e.X,e.Y)].DefNum;
-			long oldStatus=aptOld.Confirmed;
-			Appointments.SetConfirmed(aptOld,newStatus);//Appointments S-Class handles Signalods
-			if(newStatus!=oldStatus) {
+			Appointments.SetConfirmed(aptCur,newStatus);//Appointments S-Class handles Signalods
+			if(newStatus!=aptOld.Confirmed) {
 				//Log confirmation status changes.
-				SecurityLogs.MakeLogEntry(Permissions.ApptConfirmStatusEdit,aptOld.PatNum,Lan.g(this,"Appointment confirmation status changed from")+" "
-					+Defs.GetName(DefCat.ApptConfirmed,oldStatus)+" "+Lan.g(this,"to")+" "+Defs.GetName(DefCat.ApptConfirmed,newStatus)
-					+" "+Lans.g(this,"from the appointment module")+".",contrApptPanel.SelectedAptNum,datePrevious);
+				SecurityLogs.MakeLogEntry(Permissions.ApptConfirmStatusEdit,aptCur.PatNum,Lan.g(this,"Appointment confirmation status changed from")+" "
+					+Defs.GetName(DefCat.ApptConfirmed,aptOld.Confirmed)+" "+Lan.g(this,"to")+" "+Defs.GetName(DefCat.ApptConfirmed,newStatus)
+					+" "+Lans.g(this,"from the appointment module")+".",contrApptPanel.SelectedAptNum,aptOld.DateTStamp);
 			}
 			RefreshPeriod();
+			//Need to pass in aptOld since we compare the appointment's old confirmed status to the new confirmed status to help determine if the kiosk manager should be shown.
 			AppointmentL.ShowKioskManagerIfNeeded(aptOld,newStatus);
 		}
 

@@ -162,6 +162,7 @@ namespace OpenDentBusiness.UI {
 				if(listStringMatches[i].StartsWith("(") && listStringMatches[i].EndsWith(")")) {
 					listStringMatches[i]=listStringMatches[i].Substring(1,listStringMatches[i].Length-2);
 				}
+				listStringMatches[i]=listStringMatches[i].TrimEnd('.');
 				Regex rgx=new Regex(@"[\\]{1}");
 				if(rgx.IsMatch(listStringMatches[i])) {
 					listStringMatches.RemoveAt(i);

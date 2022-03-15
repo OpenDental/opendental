@@ -203,6 +203,7 @@ namespace OpenDental {
 				string defsForPref=string.Join(",",formDefPicker.ListDefsSelected.Select(x=>x.DefNum));
 				textEclipboardImageDefs.Text=EClipboardGetImageDefsFromPref(defsForPref);
 				_clinicPrefHelperEClipboard.ValChangedByUser(PrefName.EClipboardImageCaptureDefs,clinicPickerEClipboard.SelectedClinicNum,defsForPref);
+				UpdateEClipboardDefaultsIfNeeded(PrefName.EClipboardImageCaptureDefs,defsForPref);
 			}
 		}
 		#endregion Methods - Event Handlers Main

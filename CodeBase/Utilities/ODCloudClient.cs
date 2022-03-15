@@ -38,7 +38,7 @@ namespace CodeBase {
 		/// <param name="createDirIfNeeded"></param>
 		/// <param name="tryLaunch">Setting this to true will have the client check and see if the process is already running before attempting to launch it</param>
 		public static void LaunchFileWithODCloudClient(string exePath="",string extraArgs="",string extraFilePath="",string extraFileData="",
-			string extraFileType="",bool doWaitForResponse=false,string createDirIfNeeded="",bool tryLaunch=false) 
+			string extraFileType="",bool doWaitForResponse=false,string createDirIfNeeded="",bool tryLaunch=false,bool doStartWithoutExtraFile=false) 
 		{
 			if(exePath.StartsWith("http://") || exePath.StartsWith("https://")) {
 				Process.Start(exePath);//No need to go to ODCloudClient if we can simply launch a browser tab.
@@ -58,6 +58,7 @@ namespace CodeBase {
 				FileType=extraFileType,
 				CreateDirIfNeeded=createDirIfNeeded,
 				ProcessName=processName,
+				DoStartWithoutExtraFile=doStartWithoutExtraFile,
 			};
 			if(doWaitForResponse) {
 				SendToODCloudClientSynchronously(cloudClientData,action);
@@ -116,7 +117,7 @@ namespace CodeBase {
 				ScanDocSelectSource=selectSource,
 				ScanDocShowOptions=showOptions,
 				ScanDocDuplex=isDuplex,
-				scanDocGrayscale=isGrayscale,
+				ScanDocGrayscale=isGrayscale,
 				ScanDocResolution=resolution,
 				ScanDocQuality=quality,
 			};
@@ -146,7 +147,7 @@ namespace CodeBase {
 				ScanDocSelectSource=selectSource,
 				ScanDocShowOptions=showOptions,
 				ScanDocDuplex=isDuplex,
-				scanDocGrayscale=isGrayscale,
+				ScanDocGrayscale=isGrayscale,
 				ScanDocResolution=resolution,
 				ScanDocQuality=quality,
 			};
@@ -422,6 +423,8 @@ namespace CodeBase {
 			public string FileData;
 			///<summary>Options are "binary" or "text".</summary>
 			public string FileType;
+			///<summary>Defaults to false. Whether to start start the process if the extra file can't be created. If false and the extra file can't be created, throws an exception.</summary>
+			public bool DoStartWithoutExtraFile=false;
 			///<summary>Defaults to true. Whether to overwrite FilePath. If false and FilePath exists, throws an exception.</summary>
 			public bool DoOverwriteFile=true;
 			///<summary>If included, will create the directory if it doesn't exist.</summary>
@@ -433,7 +436,7 @@ namespace CodeBase {
 			///<summary>Defaults to false. Whether the scaner should use duplex mode.</summary>
 			public bool ScanDocDuplex=false;
 			///<summary>Defaults to false. Whether the scaner should scan in grayscale if scanDocShowOptions is false.</summary>
-			public bool scanDocGrayscale=false;
+			public bool ScanDocGrayscale=false;
 			///<summary>The resolution the scanner should use if scanDocShowOptions is false.</summary>
 			public int ScanDocResolution;
 			///<summary>The JPEG compression quality the scanner should use if scanDocShowOptions is false.</summary>

@@ -9,19 +9,21 @@ using System.Threading.Tasks;
 
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
-		///<summary>The date Open Dental started hashing fields into paysplit.SecurityHash. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2022,2,28);
+		///<summary>The date Open Dental started hashing fields. Used to determine if hashing is required. </summary>
+		public static DateTime DateStart=new DateTime(2022,3,14);
 		private static bool _arePaySplitsUpdated=false;
 		private static bool _areAppointmentsUpdated=false;
 		private static bool _arePatientsUpdated=false;
 		private static bool _arePayPlansUpdated=false;
 
-		///<summary>This method is allowed anywhere in the ConvertDatabase scripts.  It's specially written to never crash. It does not affect the schema. It can be called multiple times and will only run once.  Updates the SecurityHash field of the tables for which Open Dental is enforcing database integrity. First clears out all existing SecurityHashes, then creates new ones. </summary>
+		///<summary>This method is allowed anywhere in the ConvertDatabase scripts.  It's specially written to never crash. It does not affect the schema. It can be called multiple times during a conversion and will only run once.  Updates the SecurityHash fields of all tables for which Open Dental is enforcing database integrity. First clears out all existing SecurityHashes, then creates new ones for recent entries. </summary>
 		public static void UpdateHashing() {
 			RunPaysplit();
 			RunAppointment();
 			RunPatient();
 			RunPayPlan();
+			string updating="Updating database.";
+			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
 		}
 
 		///<summary>Only used one time during a conversion script. Sets the _arePatientsUpdate boolean to false. Allows the hashing logic to run on the patient table a subsequent time during a convert script update. </summary>
@@ -41,6 +43,20 @@ namespace OpenDentBusiness.Misc {
 			{
 				return;
 			}
+			string updating="Hashing paysplits.";
+			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
+			_arePaySplitsUpdated=true;
+			//Threading because it can take too long and it doesn't matter if user starts working while it's still in progress.
+			//They might see integrity triangles until this completes.
+			//If they shut down before it completes, then those won't be fixed until the next time they run the hashing (their next update).
+			//This is only a problem for a recent db conversion, where there are thousands of splits with the same date.  Otherwise, it's really fast.
+			ThreadStart threadStart=new ThreadStart(PaysplitWorker);
+			Thread thread=new Thread(threadStart);
+			thread.IsBackground=true;
+			thread.Start();
+		}
+
+		private static void PaysplitWorker() {
 			//Hash entries made after new date
 			string command="SELECT SplitNum, PatNum, SplitAmt, DatePay, SecurityHash FROM paysplit WHERE DatePay >= "+POut.Date(DateStart);
 			DataTable table=Db.GetTable(command);
@@ -65,10 +81,9 @@ namespace OpenDentBusiness.Misc {
 				//Only update hashes that changed
 				if(hashedTextOld!=hashedTextNew) {
 					command=$@"UPDATE paysplit SET SecurityHash='{POut.String(hashedTextNew)}' WHERE SplitNum={POut.Long(splitNum)}";
+					Db.NonQ(command);
 				}
-				Db.NonQ(command);
 			}
-			_arePaySplitsUpdated=true;
 		}
 
 		private static void RunAppointment() {
@@ -83,6 +98,8 @@ namespace OpenDentBusiness.Misc {
 			{
 				return;
 			}
+			string updating="Hashing appointments.";
+			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
 			//Hash entries made after new date
 			string command="SELECT AptNum, AptStatus, Confirmed, AptDateTime, SecurityHash FROM appointment WHERE AptDateTime>= "+POut.Date(DateStart);
 			DataTable table=Db.GetTable(command);
@@ -107,8 +124,8 @@ namespace OpenDentBusiness.Misc {
 				//Only update hashes that changed
 				if(hashedTextOld!=hashedTextNew) {
 					command=$@"UPDATE appointment SET SecurityHash='{POut.String(hashedTextNew)}' WHERE AptNum={POut.Long(aptNum)}";
+					Db.NonQ(command);
 				}
-				Db.NonQ(command);
 			}
 			_areAppointmentsUpdated=true;
 		}
@@ -122,7 +139,12 @@ namespace OpenDentBusiness.Misc {
 			if(!LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"patient","SecurityHash")) {
 				return;
 			}
+			string updating="Hashing patients.";
+			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
 			_arePatientsUpdated=true;
+			//Threading because it can take too long and it doesn't matter if user starts working while it's still in progress.
+			//They might see integrity triangles until this completes.
+			//If they shut down before it completes, then those won't be fixed until the next time they run the hashing (their next update)
 			ThreadStart threadStart=new ThreadStart(PatientWorker);
 			Thread thread=new Thread(threadStart);
 			thread.IsBackground=true;
@@ -166,6 +188,8 @@ namespace OpenDentBusiness.Misc {
 			{
 				return;
 			}
+			string updating="Hashing payplans.";
+			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
 			//Clear old hashes
 			string command="UPDATE payplan SET SecurityHash=''";
 			Db.NonQ(command);

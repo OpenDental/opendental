@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace OpenDental {
 	///<summary></summary>
 	public partial class FormRpPatients:FormODBase {
-		private FormQuery FormQuery2;
+		private FormUserQuery FormUserQuery2;
 		private string SQLselect;
 		private string SQLfrom;
 		private string SQLwhereComparison;
@@ -1069,14 +1069,11 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender,System.EventArgs e) {
-			ReportSimpleGrid report=new ReportSimpleGrid();
-			report.Query=TextSQL.Text;
-			FormQuery2=new FormQuery(report);
-			FormQuery2.IsReport=false;
-			FormQuery2.SubmitQuery();
-			FormQuery2.textQuery.Text=report.Query;
-			FormQuery2.ShowDialog();
-			FormQuery2.Dispose();
+			FormUserQuery2=new FormUserQuery(TextSQL.Text);
+			FormUserQuery2.textTitle.Text="Patients Raw Report";
+			FormUserQuery2.SubmitQueryThreaded();
+			FormUserQuery2.ShowDialog();
+			FormUserQuery2.Dispose();
 		}
 
 		#endregion

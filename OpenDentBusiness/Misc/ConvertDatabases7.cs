@@ -2345,6 +2345,10 @@ namespace OpenDentBusiness {
 			Misc.SecurityHash.UpdateHashing();
 		}
 
+		private static void To21_4_30() {
+			Misc.SecurityHash.UpdateHashing();
+		}
+
 	}
 }
 

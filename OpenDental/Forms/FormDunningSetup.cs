@@ -30,7 +30,12 @@ namespace OpenDental {
 
 		private void FillGrids(bool doRefreshList=false) {
 			if(doRefreshList) {
-				_listDunningsAll=Dunnings.Refresh(Clinics.GetForUserod(Security.CurUser,true).Select(x => x.ClinicNum).ToList());
+				List<long> listClinicNums=new List<long>();//Empty list to allow query to run for all clinics.
+				if(Security.CurUser.ClinicIsRestricted) {
+					listClinicNums=Clinics.GetForUserod(Security.CurUser,true).Select(x => x.ClinicNum).ToList();
+					listClinicNums.Add(-2);
+				}
+				_listDunningsAll=Dunnings.Refresh(listClinicNums);
 			}
 			List<Dunning> listDunningsSubs=_listDunningsAll.FindAll(x => ValidateDunningFilters(x));
 			if(!PrefC.GetBool(PrefName.ShowFeatureSuperfamilies)) {
@@ -85,7 +90,12 @@ namespace OpenDental {
 					row.Cells.Add(listDunningsSubs[i].IsSuperFamily?"X":"");
 				}
 				if(PrefC.HasClinicsEnabled) {
-					row.Cells.Add(Clinics.GetAbbr(listDunningsSubs[i].ClinicNum));
+					if(listDunningsSubs[i].ClinicNum==-2) {
+						row.Cells.Add("All Clinics");
+					}
+					else {
+						row.Cells.Add(Clinics.GetAbbr(listDunningsSubs[i].ClinicNum));
+					}
 				}
 				row.Tag=listDunningsSubs[i];
 				gridDunning.ListGridRows.Add(row);
@@ -125,6 +135,10 @@ namespace OpenDental {
 			long clinicNum=0;
 			if(!comboClinics.IsAllSelected) {
 				clinicNum=comboClinics.SelectedClinicNum;
+			}
+			if(Security.CurUser.ClinicIsRestricted) {
+				long UserClinicNum=Clinics.GetForUserod(Security.CurUser,true).Select(x => x.ClinicNum).FirstOrDefault();
+				clinicNum=UserClinicNum;
 			}
 			dunning.ClinicNum=clinicNum;
 			using FormDunningEdit formDunningEdit=new FormDunningEdit(dunning);
