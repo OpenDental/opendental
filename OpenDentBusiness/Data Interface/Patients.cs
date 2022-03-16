@@ -3760,7 +3760,7 @@ namespace OpenDentBusiness {
 			long newGuarantor=patFrom==patientTo.Guarantor ? patientTo.PatNum : patientTo.Guarantor;
 			List<Patient> listPatients=GetAllPatientsForGuarantor(patFrom);
 			for(int i=0;i<listPatients.Count;i++) {
-				Patient patientNew=listPatients[i];
+				Patient patientNew=listPatients[i].Copy();
 				patientNew.Guarantor=newGuarantor; //Changing guarantor requires rehashing
 				Update(patientNew,listPatients[i]);
 			}

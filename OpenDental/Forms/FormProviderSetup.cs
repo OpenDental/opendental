@@ -406,6 +406,9 @@ namespace OpenDental{
 				}
 			}
 			else {//No Dental Schools or provider is not attached to a user
+				if(!Security.IsAuthorized(Permissions.Providers)) {
+					return;
+				}
 				using FormProvEdit FormPE=new FormProvEdit();
 				FormPE.ProvCur=(Provider)gridMain.ListGridRows[e.Row].Tag;
 				FormPE.ShowDialog();

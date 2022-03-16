@@ -281,17 +281,13 @@ namespace OpenDentBusiness{
 			if(dictAllProps.Count==0) {
 				return false;
 			}
-			List<long> listDisabledClinicNums=new List<long>();
-			if(!PrefC.HasClinicsEnabled) {
+			if(PrefC.HasClinicsEnabled && dictAllProps.ContainsKey(clinicNum)) {
+				return TsiTransLogs.ValidateClinicSftpDetails(dictAllProps[clinicNum],false);
+			}
+			else if(dictAllProps.ContainsKey(0)) {
 				return TsiTransLogs.ValidateClinicSftpDetails(dictAllProps[0],false);
 			}
-			List<Clinic> listAllClinics=Clinics.GetDeepCopy();
-			listDisabledClinicNums.AddRange(dictAllProps.Where(x => !TsiTransLogs.ValidateClinicSftpDetails(x.Value,false)).Select(x => x.Key));
-			listDisabledClinicNums.AddRange(listAllClinics
-				.FindAll(x => x.IsHidden || (listDisabledClinicNums.Contains(0) && !dictAllProps.ContainsKey(x.ClinicNum)))//if no props for HQ, skip other clinics without props
-				.Select(x => x.ClinicNum)
-			);
-			return !listDisabledClinicNums.Contains(clinicNum);
+			return false;
 		}
 
 		///<summary>Sends an SFTP message to TSI to suspend the account for the guarantor passed in.  Returns empty string if successful.

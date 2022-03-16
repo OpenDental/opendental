@@ -2220,7 +2220,13 @@ namespace OpenDentBusiness{
 				if(!string.IsNullOrEmpty(apt.ProcDescript)) {
 					apt.ProcDescript+=", ";
 				}
-				string displaySurf=Tooth.SurfTidyFromDbToDisplay(proc.Surf,proc.ToothNum);//Fixes surface display for Canadian users
+				string displaySurf;
+				if(ProcedureCodes.GetProcCode(proc.CodeNum).TreatArea==TreatmentArea.Sextant) {
+					displaySurf=Tooth.GetSextant(proc.Surf,(ToothNumberingNomenclature)PrefC.GetInt(PrefName.UseInternationalToothNumbers));
+				}
+				else {
+					displaySurf=Tooth.SurfTidyFromDbToDisplay(proc.Surf,proc.ToothNum);//Fixes surface display for Canadian users
+				}
 				switch(procCode.TreatArea) {
 					case TreatmentArea.Surf:
 						procDescOne+="#"+Tooth.GetToothLabel(proc.ToothNum)+"-"+displaySurf+"-";//""#12-MOD-"

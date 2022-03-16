@@ -5443,14 +5443,15 @@ namespace OpenDental{
 		}
 
 		private void menuItemProviders_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(Permissions.Providers,true) && !Security.IsAuthorized(Permissions.AdminDentalStudents,true)) {
-				MessageBox.Show(Lans.g("Security","Not authorized for")+"\r\n"
-					+GroupPermissions.GetDesc(Permissions.Providers)+" "+Lans.g("Security","or")+" "+GroupPermissions.GetDesc(Permissions.AdminDentalStudents));
+			if(Security.IsAuthorized(Permissions.Providers,true) || Security.IsAuthorized(Permissions.AdminDentalStudents,true) || Security.IsAuthorized(Permissions.AdminDentalInstructors,true)) {
+				using FormProviderSetup FormPS=new FormProviderSetup();
+				FormPS.ShowDialog();
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Providers");
 				return;
 			}
-			using FormProviderSetup FormPS=new FormProviderSetup();
-			FormPS.ShowDialog();
-			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Providers");		
+			MessageBox.Show(Lans.g("Security","Not authorized for")+"\r\n" +GroupPermissions.GetDesc(Permissions.Providers)
+				+" "+Lans.g("Security","or")+" "+GroupPermissions.GetDesc(Permissions.AdminDentalStudents)
+				+" "+Lans.g("Security","or")+" "+GroupPermissions.GetDesc(Permissions.AdminDentalInstructors));
 		}
 
 		private void menuItemPrescriptions_Click(object sender, System.EventArgs e) {

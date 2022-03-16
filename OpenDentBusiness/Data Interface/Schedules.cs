@@ -1910,6 +1910,76 @@ namespace OpenDentBusiness{
 			return table;
 		}
 
+		///<summary>Gets schedule info that's filtered to match the criteria of any passed in arguments.</summary>
+		public static DataTable GetPeriodScheduleForApi(DateTime dateStart,DateTime dateEnd,long schedType,long blockoutDefNum,long provNum,long employeeNum,int limit,int offset,List<long> listOpNums=null) {
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),dateStart,dateEnd,schedType,blockoutDefNum,provNum,employeeNum,listOpNums);
+			}
+			DataTable tableReturn=new DataTable("Schedule");
+			tableReturn.Columns.Add("ScheduleNum");
+			tableReturn.Columns.Add("SchedDate");
+			tableReturn.Columns.Add("StartTime");
+			tableReturn.Columns.Add("StopTime");
+			tableReturn.Columns.Add("SchedType");
+			tableReturn.Columns.Add("ProvNum");
+			tableReturn.Columns.Add("BlockoutType");
+			tableReturn.Columns.Add("blockoutType");
+			tableReturn.Columns.Add("Note");
+			tableReturn.Columns.Add("operatories");
+			tableReturn.Columns.Add("EmployeeNum");
+			//Go get every schedule for the date range passed in.
+			//Left join on the scheduleop table as to get the necessary information needed to fill the custom "ops" column (above).
+			string command="SELECT schedule.ScheduleNum,SchedDate,StartTime,StopTime,SchedType,ProvNum,BlockoutType,Note,"
+				+"Status,EmployeeNum,schedule.ClinicNum,scheduleop.OperatoryNum "
+				+"FROM schedule "
+				+"LEFT JOIN scheduleop ON schedule.ScheduleNum=scheduleop.ScheduleNum "
+				+"WHERE SchedDate BETWEEN "+POut.Date(dateStart)+" AND "+POut.Date(dateEnd)+" ";
+			if(schedType > -1) { //0 is included when looking for a change in schedType, since it's an Enum that starts at 0.
+				command+="AND SchedType="+POut.Long(schedType)+" ";
+			}
+			if(blockoutDefNum > 0) {
+				command+="AND BlockoutType="+POut.Long(blockoutDefNum)+" ";
+			}
+			if(provNum > 0) {
+				command+="AND ProvNum="+POut.Long(provNum)+" ";
+			}
+			if(employeeNum > 0) {
+				command+="AND EmployeeNum="+POut.Long(employeeNum)+" ";
+			}
+			if(listOpNums!=null && listOpNums.Count > 0) {
+				command+="AND (scheduleop.OperatoryNum IN ("+string.Join(",",listOpNums.Select(x => POut.Long(x)))+") OR scheduleop.OperatoryNum IS NULL) ";
+			}
+			command+="ORDER BY StartTime";
+			DataTable tableRaw=Db.GetTable(command);
+			List<DataRow> listRowsRaw=tableRaw.Rows.OfType<DataRow>().ToList(); //Each row that exists in the raw table returned by the query. Some rows may share the same ScheduleNum.
+			List<DataRow> listRowsDistinct=listRowsRaw.DistinctBy(x => x["ScheduleNum"]).ToList(); //In the table we return, we don't want duplicate ScheduleNum results.
+			for(int i=offset;i<listRowsDistinct.Count;i++) {
+				if(i>=offset+limit) { //Paging.
+					break;
+				}
+				DataRow rowCur=listRowsDistinct[i];
+				List<DataRow> listRowsSameScheduleNum=listRowsRaw.FindAll(x => x["ScheduleNum"].ToString()==rowCur["ScheduleNum"].ToString()); //Get each row with the current's ScheduleNum.
+				List<string> listOps=new List<string>(); //List of OperatoryNum strings.
+				for(int j=0;j<listRowsSameScheduleNum.Count;j++) { //If a schedule entry is in multiple operatories, scheduleop will have 1 row for each operatory a ScheduleNum is in.
+					listOps.Add(listRowsSameScheduleNum[j]["OperatoryNum"].ToString()); //Grab the OperatoryNum from each row with the same ScheduleNum and add to listOps.
+				}
+				DataRow row=tableReturn.NewRow();
+				row["ScheduleNum"]=rowCur["ScheduleNum"].ToString();
+				row["SchedDate"]=OpenDentBusiness.PIn.Date(rowCur["SchedDate"].ToString()).ToString("yyyy-MM-dd");
+				row["StartTime"]=rowCur["StartTime"].ToString();
+				row["StopTime"]=rowCur["StopTime"].ToString();
+				row["SchedType"]=Enum.GetName(typeof(OpenDentBusiness.ScheduleType),OpenDentBusiness.PIn.Long(rowCur["SchedType"].ToString()));
+				row["ProvNum"]=rowCur["ProvNum"].ToString();
+				row["BlockoutType"]=rowCur["BlockoutType"].ToString();
+				row["blockoutType"]=OpenDentBusiness.Defs.GetName(OpenDentBusiness.DefCat.BlockoutTypes,OpenDentBusiness.PIn.Long(rowCur["BlockoutType"].ToString()));
+				row["Note"]=rowCur["Note"].ToString();
+				row["operatories"]=string.Join(",",listOps);
+				row["EmployeeNum"]=rowCur["EmployeeNum"].ToString();
+				tableReturn.Rows.Add(row);
+			}
+			return tableReturn;
+		}
+
 		///<summary>True if this blockout is not marked 'Do not schedule'.</summary>
 		public static bool CanScheduleInBlockout(long blockoutType,List<Def> listDefs=null) {
 			Def defBlockoutType=Defs.GetDef(DefCat.BlockoutTypes,blockoutType,listDefs);
