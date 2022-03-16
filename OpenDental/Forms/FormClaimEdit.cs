@@ -1422,7 +1422,7 @@ namespace OpenDental{
 			//List of child procedures associated to the passed in procNumParent belonging to this claim.
 			List<Procedure> listProceduresLab=_listProcedures.FindAll(x => x.ProcNumLab==procNumParent);
 			for(int i=0;i<listProceduresLab.Count;i++){//For each lab proc associated to the passed in procNumParent, add it to the list
-				listClaimProcsForLabOnClaim.AddRange(_listClaimProcs.FindAll(x => x.ProcNum==listProceduresLab[i].ProcNum));
+				listClaimProcsForLabOnClaim.AddRange(_listClaimProcs.FindAll(x => x.ProcNum==listProceduresLab[i].ProcNum && x.ClaimNum==_claim.ClaimNum));
 			}
 			return listClaimProcsForLabOnClaim;
 		}
