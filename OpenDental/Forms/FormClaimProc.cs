@@ -632,7 +632,14 @@ namespace OpenDental {
 		///<summary>Fills the carrier allowed amount.  Called from FillInitialAmounts and from butUpdateAllowed_Click</summary>
 		private void FillAllowed(BlueBookEstimateData blueBookEstimateData=null){
 			if(IsProc){
-				decimal allowed=InsPlans.GetAllowedForProc(proc,ClaimProcCur,PlanList,ListSubLinks,null,blueBookEstimateData);
+				Appointment appointment=null;
+				if(proc.AptNum!=0) {
+					appointment=Appointments.GetOneApt(proc.AptNum);
+				}
+				else if(proc.PlannedAptNum!=0) {
+					appointment=Appointments.GetOneApt(proc.PlannedAptNum); //If a scheduled appointment doesn't exist, grab the planned one.
+				}
+				decimal allowed=InsPlans.GetAllowedForProc(proc,ClaimProcCur,PlanList,ListSubLinks,null,blueBookEstimateData,appointment);
 				if(allowed==-1){
 					textCarrierAllowed.Text="";
 				}

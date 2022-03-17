@@ -104,7 +104,7 @@ namespace OpenDental {
 			if(clinicAlwaysAssignBenToPatient!=null) {
 				checkAlwaysAssignBenToPatient.Checked=true;
 			}
-			EmailAddress emailAddress=EmailAddresses.GetOne(ClinicCur.EmailAddressNum);
+			EmailAddress emailAddress=EmailAddresses.GetOneFromDb(ClinicCur.EmailAddressNum);
 			if(emailAddress!=null) {
 				textEmail.Text=emailAddress.GetFrom();
 				butEmailNone.Enabled=true;
@@ -218,7 +218,7 @@ namespace OpenDental {
 				return;
 			}
 			ClinicCur.EmailAddressNum=FormEA.EmailAddressNum;
-			textEmail.Text=EmailAddresses.GetOne(FormEA.EmailAddressNum).GetFrom();
+			textEmail.Text=EmailAddresses.GetOneFromDb(FormEA.EmailAddressNum).GetFrom();
 			butEmailNone.Enabled=true;
 		}
 

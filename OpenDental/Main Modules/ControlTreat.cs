@@ -2717,7 +2717,11 @@ namespace OpenDental{
 						allowed=-1;
 					}
 					else {
-						allowed=ComputeAllowedAmount(listProcForTP[i],claimproc,this._listSubstLinks,lookupFees,_loadActiveData.BlueBookEstimateData);
+						Appointment appointmentForProc=listAppts.Find(x=>x.AptNum==listProcForTP[i].AptNum);
+						if(appointmentForProc==null) {
+							appointmentForProc=listAppts.Find(x=>x.AptNum==listProcForTP[i].PlannedAptNum); //If a scheduled appt doesn't exist, check for a planned one.
+						}
+						allowed=ComputeAllowedAmount(listProcForTP[i],claimproc,this._listSubstLinks,lookupFees,_loadActiveData.BlueBookEstimateData,appointmentForProc);
 					}
 				}
 				if(PatPlanList.Count>1) { //Secondary
@@ -3364,17 +3368,17 @@ namespace OpenDental{
 			return xIdx.CompareTo(yIdx);
 		}
 
-		private decimal ComputeAllowedAmount(Procedure proc,ClaimProc claimProcCur,List<SubstitutionLink> listSubLinks,Lookup<FeeKey2,Fee> lookupFees
-			,BlueBookEstimateData blueBookEstimateData)
+		private decimal ComputeAllowedAmount(Procedure procedure,ClaimProc claimProc,List<SubstitutionLink> listSubstitutionLinks,Lookup<FeeKey2,Fee> lookupFees
+			,BlueBookEstimateData blueBookEstimateData,Appointment appointment=null)
 		{
 			//List<Fee> listFees) {
 			decimal allowed=0;
-			if(claimProcCur!=null) {				
-				if(claimProcCur.AllowedOverride!=-1) {//check for allowed override
-					allowed=(decimal)claimProcCur.AllowedOverride;
+			if(claimProc!=null) {				
+				if(claimProc.AllowedOverride!=-1) {//check for allowed override
+					allowed=(decimal)claimProc.AllowedOverride;
 				}
 				else {
-					allowed=InsPlans.GetAllowedForProc(proc,claimProcCur,InsPlanList,listSubLinks,lookupFees,blueBookEstimateData);
+					allowed=InsPlans.GetAllowedForProc(procedure,claimProc,InsPlanList,listSubstitutionLinks,lookupFees,blueBookEstimateData,appointment);
 					if(allowed==-1) {//Carrier does not have an allowed fee entered
 						allowed=0;
 					}

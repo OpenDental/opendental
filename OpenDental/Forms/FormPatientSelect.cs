@@ -378,7 +378,6 @@ namespace OpenDental{
 
 		private void textbox_KeyDown(object sender,KeyEventArgs e) {
 			if(e.KeyCode==Keys.Up || e.KeyCode==Keys.Down) {
-				gridMain.Invalidate();
 				e.Handled=true;
 			}
 		}
