@@ -249,14 +249,14 @@ namespace OpenDental {
 			string aToZDirectory=aToZFullPath.Substring(aToZFullPath.LastIndexOf(Path.DirectorySeparatorChar)+1);
 			double aToZSize=GetFileSizes(ODFileUtils.CombinePaths(aToZFullPath,""),
 				ODFileUtils.CombinePaths(new string[] { textBackupToPath.Text,aToZDirectory,"" }))/1024;
-			if(!hasDriveSpace(textBackupToPath.Text,aToZSize)) {
-				MsgBox.Show(this,Lan.g(this,"Not enough free disk space available on the destination drive to backup the A to Z folder."));
-				return;
-			}
-			//there is enough space, show progress bar and make backup
 			progressOD=new ProgressOD();
 			progressOD.ProgStyle=ProgressBarStyle.Blocks;
-			progressOD.ActionMain=() => InstanceMethodAtoZBackup(textBackupToPath.Text,aToZDirectory,aToZFullPath,aToZSize);
+			progressOD.ActionMain=() => {
+				if(!hasDriveSpace(textBackupToPath.Text,aToZSize)) {
+					throw new Exception(Lan.g(this,"Not enough free disk space available on the destination drive to backup the A to Z folder."));
+				}
+				InstanceMethodAtoZBackup(textBackupToPath.Text,aToZDirectory,aToZFullPath,aToZSize);
+			};
 			progressOD.StartingMessage=Lan.g(this,"Backing up A to Z Folder");
 			try {
 				progressOD.ShowDialogProgress();

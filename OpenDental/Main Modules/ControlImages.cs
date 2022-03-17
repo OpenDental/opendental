@@ -50,6 +50,8 @@ namespace OpenDental {
 		private bool[] _arrayBoolIdxsFlaggedForUpdate=null;
 		///<summary>If this is not zero, then this indicates a different mode special for claimpayment.</summary>
 		private long _claimPaymentNum;
+		///<summary>Tracker to keep track of how many pages are loaded on our webBrowser object.</summary>
+		private int _countWebBrowserLoads=0;
 		DateTime _dateTimeMouseMoved=new DateTime(1,1,1);
 		//private List<Def> DefListExpandedCats=new List<Def>();
 		///<summary>List of documents within the currently selected mount (if any).</summary>
@@ -273,13 +275,15 @@ namespace OpenDental {
 				return;
 			}
 			if(_webBrowser!=null) {
+				//This releases control of the current PDF. It was not possible to save in an external PDF viewer unless we clicked on another PDF that would release
+				//_webBrowser and control a different PDF. Use in conjunction _webBrowser.Visible=false to not allow the user to click anything on the browser just to be safe.
+				_webBrowser.Navigate("about:blank");
 				//This prevents users from previewing the PDF in OD at the same time they have it open in an external PDF viewer.
 				//There was a strange graphical bug that occurred when the PDF was previewed at the same time the PDF was open in the Adobe Acrobat Reader DC
 				//if the Adobe "Enable Protected Mode" option was disabled.  The graphical bug caused many ODButtons and ODGrids to disappear even though their
 				//Visible flags were set to true.  Somehow the WndProc() for the form which owned these controls was not calling the OnPaint() method.
 				//Thus the bug affected many custom drawn controls.
-				_webBrowser.Dispose();
-				_webBrowser=null;
+				_webBrowser.Visible=false;
 			}
 			if(PrefC.AtoZfolderUsed==DataStorageType.InDatabase) {
 				MsgBox.Show(this,"Images stored directly in database. Export file in order to open with external program.");
@@ -1273,6 +1277,10 @@ namespace OpenDental {
 				//this.button1,
 			});
 			LayoutToolBar();
+			_webBrowser=new WebBrowser();//Include a webBrowser object for loading .pdf files.
+			_webBrowser.Visible=false;
+			_webBrowser.Bounds=pictureBoxMain.Bounds;
+			LayoutManager.Add(_webBrowser,this);
 			contextTree.MenuItems.Clear();
 			contextTree.MenuItems.Add("Print",new System.EventHandler(menuTree_Click));
 			contextTree.MenuItems.Add("Delete",new System.EventHandler(menuTree_Click));
@@ -1500,12 +1508,12 @@ namespace OpenDental {
 		///<summary></summary>
 		public void ModuleUnselected() {
 			_familyCur=null;
-			foreach(Control c in this.Controls) {
-				if(c.GetType()==typeof(WebBrowser)) {//_webBrowserDocument
-					Controls.Remove(c);
-					c.Dispose();
-				}
-			}
+			//foreach(Control c in this.Controls) {
+			//	if(c.GetType()==typeof(WebBrowser)) {//_webBrowserDocument
+			//		Controls.Remove(c);
+			//		c.Dispose();
+			//	}
+			//}
 			//Cancel current image capture.
 			_suniDeviceControl.KillXRayThread();
 			_patNumLastSecurityLog=0;//Clear out the last pat num so that a security log gets entered that the module was "visited" or "refreshed".
@@ -1529,8 +1537,7 @@ namespace OpenDental {
 			}
 			pictureBoxMain.Visible=true;
 			if(_webBrowser!=null) {
-				_webBrowser.Dispose();//Clear any previously loaded Acrobat .pdf file.
-				_webBrowser=null;
+				_webBrowser.Visible=false;//Clear any previously loaded Acrobat .pdf file.
 			}
 			_documentShowing=new Document();
 			bool isNodeOldDoc=(_nodeIdTagOld.NodeType==EnumNodeType.Doc);
@@ -2911,7 +2918,7 @@ namespace OpenDental {
 				Height-panelNoteHeight-(ToolBarPaint.Bottom+4)));
 			LayoutManager.Move(panelNote,new Rectangle(pictureBoxMain.Left,Height-panelNoteHeight-1,pictureBoxMain.Width,
 				(int)Math.Min(114,Height-pictureBoxMain.Location.Y)));
-			if(_webBrowser!=null) {
+			if(_webBrowser!=null && _webBrowser.Visible) {
 				LayoutManager.Move(_webBrowser,pictureBoxMain.Bounds);
 			}
 			LayoutManager.Move(panelUnderline,new Rectangle(treeMain.Right+6,ToolBarPaint.Bottom-1,Width-(treeMain.Width+6),2));
@@ -3070,11 +3077,7 @@ namespace OpenDental {
 		///<summary>Displays the PDF in a web browser. Downloads the PDF file from the cloud if necessary.</summary>
 		private void LoadPdf(string atoZFolder,string atoZFileName,string localPath,ref bool isExportable,string downloadMessage) {
 			try {
-				_webBrowser=new WebBrowser();
-				LayoutManager.Add(_webBrowser,this);
 				_webBrowser.Visible=true;
-				LayoutManager.MoveSize(_webBrowser,pictureBoxMain.Size);
-				LayoutManager.MoveLocation(_webBrowser,pictureBoxMain.Location);
 				string pdfFilePath="";
 				if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
 					pdfFilePath=ODFileUtils.CombinePaths(atoZFolder,atoZFileName);
@@ -3097,14 +3100,35 @@ namespace OpenDental {
 					MessageBox.Show(Lan.g(this,"File not found")+": " + atoZFileName);
 				}
 				else {
-					Application.DoEvents();//Show the browser control before loading, in case loading a large PDF, so the user can see the preview has started without waiting.
-					_webBrowser.Navigate(pdfFilePath);//The return status of this function doesn't seem to be helpful.
+					if(_countWebBrowserLoads==8) {
+						//The webbrowser seems to develop a memory leak if reused many times.
+						//We didn't notices this in 20.2 and earlier because we disposed of it each time.
+						//But disposing each time can increase chance of crash as described a few lines down.
+						//The compromise is to dispose every 8 times.
+						_countWebBrowserLoads=0;
+						_webBrowser.Dispose();//Release of reference to previous browser happens in background thread in the browser
+						_webBrowser=null;
+						Thread.Sleep(500);//Gives a little time for reference to previous browser to be released.
+						//The bigger the pdf, the longer the dispose seems to take.
+						//If clicking very quickly between large pdfs, we can be creating new webBrowser before previous is disposed.
+						//This can cause a crash: OD will shut without any warning or message.
+						_webBrowser=new WebBrowser();
+						_webBrowser.Bounds=pictureBoxMain.Bounds;
+						LayoutManager.Add(_webBrowser,this);
+					}
+					Application.DoEvents();//Show the browser control before loading, in case loading a large PDF, so the user can see the preview has started without 			
+					//Adobe task pane on right will pop up after first reuse of browser (varies depending on pdf), 
+					//but Adobe has a setting to remember to hide that.
+					//Adobe toolbar on top will need to be manually shown after disposing of browser.
+					//Adobe nav pane at left will also pop up after first reuse of browser.
+					//The top toolbar and left nav pane issues are so annoying that we must set them here.
+					//The downside seems to be that some users need to update to a newer version of Adobe Reader.
+					string args="#toolbar=1&navpanes=0";//Show toolbar at top.  Hide nav panes at left. 
+					_webBrowser.Navigate(pdfFilePath+args);//The return status of this function doesn't seem to be helpful.
 					_webBrowserFilePath=pdfFilePath;
 					pictureBoxMain.Visible=false;
 					isExportable=true;
-					//We used to delete the pdf as it was no longer needed.  
-					//The web browser can take time to load and requires the file to be present when it finishes loading, 
-					//so it will get deleted later (either when switching preview images or closing Open Dental
+					_countWebBrowserLoads++;
 				}
 			}
 			catch(Exception ex) {
