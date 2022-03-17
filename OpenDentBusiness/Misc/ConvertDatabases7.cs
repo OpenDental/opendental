@@ -1275,49 +1275,56 @@ namespace OpenDentBusiness {
 					INDEX(ProvNum)
 					) DEFAULT CHARSET=utf8";
 			Db.NonQ(command);
-			command=@"SELECT * FROM orthochart ORDER BY OrthoChartNum";
-			DataTable table=Db.GetTable(command);
+			command="SELECT DISTINCT(PatNum) FROM orthochart";
+			List<long> listPatNums=Db.GetListLong(command);
 			command="SELECT Description,(CASE WHEN InternalName='Signature' THEN 1 ELSE 0 END) isSignature "
 				+"FROM displayfield WHERE Category=8 AND InternalName!='Provider'";
 			DataTable tableDisplayFields=Db.GetTable(command);
 			string fieldNameSig=tableDisplayFields.Select().Where(x => PIn.Bool(x["isSignature"].ToString())).Select(x => PIn.String(x["Description"].ToString())).FirstOrDefault();
-			//Group orthocharts into groups of PatNum,Prov, and DateService
-			List<OrthoObj> listOrthoObjs=table.Select().GroupBy(x => new {
-				patnum=PIn.Long(x["PatNum"].ToString()),
-				dateservice=PIn.Date(x["DateService"].ToString()),
-				provNum=PIn.Long(x["ProvNum"].ToString()),
-				FieldName=PIn.String(x["FieldName"].ToString())
-			}).GroupBy(x => new {
-				patnum=x.Key.patnum,
-				dateservice=x.Key.dateservice,
-				provnum=x.Key.provNum
-			}).Select(x => new OrthoObj() {
-				PatNum=x.Key.patnum,
-				ProvNum=x.Key.provnum,
-				DateTService=x.Key.dateservice,
-				ListDataRows=x.Select(y => new OrthoDataRows() {
-					FieldName=y.Key.FieldName,
-					listRows=y.ToList()
-				}).ToList()
-			}).ToList();
-			for(int i=0;i<listOrthoObjs.Count;i++) {
-				OrthoObj orthoObj=listOrthoObjs[i];
-				List<DataRow> listDataRowsForOrthoChartRow;
-				for(int j=0;j<orthoObj.ListDataRows.Max(x => x.listRows.Count);j++) {
-					listDataRowsForOrthoChartRow=new List<DataRow>();
-					listDataRowsForOrthoChartRow.AddRange(orthoObj.ListDataRows.Where(x => x.listRows.Count>j).Select(x => x.listRows[j]));
-					string sigVal="";
-					if(!string.IsNullOrEmpty(fieldNameSig)) { 
-						DataRow dataRowSig=listDataRowsForOrthoChartRow.FirstOrDefault(x => PIn.String(x["FieldName"].ToString())==fieldNameSig);
-						if(dataRowSig!=null) {
-							sigVal=dataRowSig["FieldValue"].ToString();
+			for(int i=0;i<listPatNums.Count;i++) {
+				command=$@"SELECT * 
+				FROM orthochart
+				WHERE PatNum={listPatNums[i]}
+				ORDER BY OrthoChartNum";
+				DataTable table=Db.GetTable(command);
+				//Group orthocharts into groups of PatNum,Prov, and DateService
+				List<OrthoObj> listOrthoObjs=table.Select().GroupBy(x => new {
+					patnum=PIn.Long(x["PatNum"].ToString()),
+					dateservice=PIn.Date(x["DateService"].ToString()),
+					provNum=PIn.Long(x["ProvNum"].ToString()),
+					FieldName=PIn.String(x["FieldName"].ToString())
+				}).GroupBy(x => new {
+					patnum=x.Key.patnum,
+					dateservice=x.Key.dateservice,
+					provnum=x.Key.provNum
+				}).Select(x => new OrthoObj() {
+					PatNum=x.Key.patnum,
+					ProvNum=x.Key.provnum,
+					DateTService=x.Key.dateservice,
+					ListDataRows=x.Select(y => new OrthoDataRows() {
+						FieldName=y.Key.FieldName,
+						listRows=y.ToList()
+					}).ToList()
+				}).ToList();
+				for(int j=0;j<listOrthoObjs.Count;j++) {
+					OrthoObj orthoObj=listOrthoObjs[j];
+					List<DataRow> listDataRowsForOrthoChartRow;
+					for(int k=0;k<orthoObj.ListDataRows.Max(x => x.listRows.Count);k++) {
+						listDataRowsForOrthoChartRow=new List<DataRow>();
+						listDataRowsForOrthoChartRow.AddRange(orthoObj.ListDataRows.Where(x => x.listRows.Count>k).Select(x => x.listRows[k]));
+						string sigVal="";
+						if(!string.IsNullOrEmpty(fieldNameSig)) {
+							DataRow dataRowSig=listDataRowsForOrthoChartRow.FirstOrDefault(x => PIn.String(x["FieldName"].ToString())==fieldNameSig);
+							if(dataRowSig!=null) {
+								sigVal=dataRowSig["FieldValue"].ToString();
+							}
 						}
-					}
-					command=$@"INSERT INTO orthochartrow(PatNum,DateTimeService,UserNum,ProvNum,Signature)
+						command=$@"INSERT INTO orthochartrow(PatNum,DateTimeService,UserNum,ProvNum,Signature)
 						VALUES({POut.Long(orthoObj.PatNum)},{POut.DateT(orthoObj.DateTService)},{listDataRowsForOrthoChartRow.First()["UserNum"].ToString()},{POut.Long(orthoObj.ProvNum)},'{sigVal}')";
-					long orthoChartRowNum=Db.NonQ(command,true);
-					command=$@"UPDATE orthochart SET OrthoChartRowNum={POut.Long(orthoChartRowNum)} WHERE OrthoChartNum IN ({string.Join(",",listDataRowsForOrthoChartRow.Select(x => x["OrthoChartNum"].ToString()))})";
-					Db.NonQ(command);
+						long orthoChartRowNum=Db.NonQ(command,true);
+						command=$@"UPDATE orthochart SET OrthoChartRowNum={POut.Long(orthoChartRowNum)} WHERE OrthoChartNum IN ({string.Join(",",listDataRowsForOrthoChartRow.Select(x => x["OrthoChartNum"].ToString()))})";
+						Db.NonQ(command);
+					}
 				}
 			}
 		}//End of 21_2_8() method
