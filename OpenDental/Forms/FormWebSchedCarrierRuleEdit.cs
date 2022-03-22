@@ -50,7 +50,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Display Name can not be blank.");
 				return;
 			}
-			WebSchedCarrierRule.DisplayName=POut.String(textDisplayName.Text);
+			WebSchedCarrierRule.DisplayName=PIn.String(textDisplayName.Text);
 			if(radioAllow.Checked) {
 				WebSchedCarrierRule.Rule=RuleType.Allow;
 			}
@@ -63,7 +63,7 @@ namespace OpenDental {
 			else {
 				WebSchedCarrierRule.Rule=RuleType.Block;
 			}
-			WebSchedCarrierRule.Message=POut.String(textMessage.Text);
+			WebSchedCarrierRule.Message=PIn.String(textMessage.Text);
 			WebSchedCarrierRules.Update(WebSchedCarrierRule);
 			DialogResult=DialogResult.OK;
 		}

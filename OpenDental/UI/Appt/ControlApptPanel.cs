@@ -4360,7 +4360,9 @@ namespace OpenDental.UI{
 								imageFolder.Substring(0,1).ToUpper(),
 								imageFolder,""));
 					}
-					catch(ApplicationException) { }  //Folder access might be denied
+					catch(Exception ex) { 
+						ex.DoNothing();
+					}  //Folder access might be denied
 				}
 			}
 			float imageOffset=LayoutManager.Scale(17);//use this to change the y location of the pat image if the pat name wraps
