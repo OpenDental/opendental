@@ -188,6 +188,7 @@ namespace OpenDental{
 			this.checkSynchMatchedFields.TabIndex = 3;
 			this.checkSynchMatchedFields.Text = "Synch matched fields";
 			this.checkSynchMatchedFields.UseVisualStyleBackColor = true;
+			this.checkSynchMatchedFields.CheckedChanged += new System.EventHandler(this.checkSynchMatchedFields_CheckedChanged);
 			// 
 			// comboLanguages
 			// 

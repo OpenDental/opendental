@@ -70,6 +70,8 @@ namespace OpenDental {
 			_listFeeScheds=FeeScheds.GetDeepCopy();
 			_listBillingTypeDefs=Defs.GetDefsForCategory(DefCat.BillingTypes);
 			_listRecallUnschedStatusDefs=Defs.GetDefsForCategory(DefCat.RecallUnschedStatus);
+			listBoxRefType.Items.AddEnums<ReferralType>();
+			listBoxRefType.SetSelected(0); // make sure an item is selected so the control is not blank
 			Lan.F(this);
 		}
 
@@ -77,8 +79,7 @@ namespace OpenDental {
 
 		private void Fill() {
 			FillPatFilterList();
-			FillRefToSelectList();
-			FillRefFromSelectList();
+			FillRefSelectList();
 			FillPatientSelectList();
 			FillFilterDropList();
 		}
@@ -217,7 +218,7 @@ namespace OpenDental {
 			SQLselect="";
 		}
 
-		private void FillRefToSelectList() {
+		private void FillRefSelectList() {
 			listReferredToSelect.Items.Clear();
 			listReferredToSelect.Items.Add("LName");
 			listReferredToSelect.Items.Add("FName");
@@ -239,31 +240,6 @@ namespace OpenDental {
 			listReferredToSelect.Items.Add("SSN");
 			listReferredToSelect.Items.Add("UsingTIN");
 			listReferredToSelect.Items.Add("Note");
-			SQLselect="";
-		}
-
-		private void FillRefFromSelectList() {
-			listReferredFromSelect.Items.Clear();
-			listReferredFromSelect.Items.Add("LName");
-			listReferredFromSelect.Items.Add("FName");
-			listReferredFromSelect.Items.Add("MName");
-			listReferredFromSelect.Items.Add("Title");
-			listReferredFromSelect.Items.Add("Address");
-			listReferredFromSelect.Items.Add("Address2");
-			listReferredFromSelect.Items.Add("City");
-			listReferredFromSelect.Items.Add("ST");
-			listReferredFromSelect.Items.Add("Zip");
-			listReferredFromSelect.Items.Add("Telephone");
-			listReferredFromSelect.Items.Add("Phone2");
-			listReferredFromSelect.Items.Add("Email");
-			listReferredFromSelect.Items.Add("IsHidden");
-			listReferredFromSelect.Items.Add("NotPerson");
-			listReferredFromSelect.Items.Add("PatNum");
-			listReferredFromSelect.Items.Add("ReferralNum");
-			listReferredFromSelect.Items.Add("Specialty");
-			listReferredFromSelect.Items.Add("SSN");
-			listReferredFromSelect.Items.Add("UsingTIN");
-			listReferredFromSelect.Items.Add("Note");
 			SQLselect="";
 		}
 
@@ -378,24 +354,6 @@ namespace OpenDental {
 				SQLselect+=" ";
 				butOK.Enabled=true;
 			}
-			if(listReferredFromSelect.SelectedIndices.Count>0) {
-				RefFromSel=true;
-				if(PatSel==false && RefToSel==false) {
-					SQLselect="SELECT ";
-				}
-				else {
-					SQLselect+=",";
-				}
-				for(int i = 0;i<listReferredFromSelect.SelectedIndices.Count;i++) {
-					field=(string)listReferredFromSelect.Items.GetObjectAt(listReferredFromSelect.SelectedIndices[i]);
-					if(i>0) {
-						SQLselect+=",";
-					}
-					SQLselect+="referral."+field+" "+field+"_2";
-				}
-				SQLselect+=" ";
-				butOK.Enabled=true;
-			}
 		}
 
 		private void CreateSQLfrom() {
@@ -421,7 +379,7 @@ namespace OpenDental {
 				listWhereClauses.Add("patient.patnum=refattach.patnum");
 				listWhereClauses.Add("referral.referralnum=refattach.referralnum");
 				if(RefToSel || RefFromSel) {
-					listWhereClauses.Add("refattach.RefType="+POut.Int((int)(RefToSel ? ReferralType.RefTo : ReferralType.RefFrom)));
+					listWhereClauses.Add("refattach.RefType="+POut.Int((int)listBoxRefType.SelectedItem));
 				}
 			}
 			if(NeedInsPlan) {
@@ -736,6 +694,10 @@ namespace OpenDental {
 		}
 
 		private void listReferredFromSelect_SelectedIndexChanged(object sender,System.EventArgs e) {
+			CreateSQL();
+		}
+
+		private void listBoxRefType_SelectionChangeCommitted(object sender,EventArgs e) {
 			CreateSQL();
 		}
 

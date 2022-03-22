@@ -134,10 +134,12 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
 			}
-			long userNum=0;
 			//User filter
-			if(comboUser.SelectedIndex>1) { //Greater than 1 to accomodate for "None" and "All"
-				userNum=_listUserods[comboUser.SelectedIndex-2].UserNum; //Subtract 2 to accomodate for "None" and "All"
+			long userNum=0; //In securitylog, UserNum of 0 is "None". This will be changed below to a valid userNum or -1 if "None" is not selected.
+			if(comboUser.SelectedIndex==0) { //"All" is currently manually added the combobox, so we can't use IsAllSelected.
+				userNum=-1; //We don't want to filter by userNum at all, so set it to -1.
+			}else if(comboUser.SelectedIndex>1) {
+				userNum=_listUserods[comboUser.SelectedIndex-2].UserNum; //Subtract 2 to accomodate for "None" and "All", since they dont exist in _listUserods.
 			}
 			SecurityLog[] securityLogArray=null;
 			DateTime datePreviousFrom=PIn.Date(textDateEditedFrom.Text);
@@ -145,29 +147,26 @@ namespace OpenDental{
 			if(textDateEditedTo.Text!="") { 
 				datePreviousTo=PIn.Date(textDateEditedTo.Text);
 			}
+			//LogSource filter
+			int logSource=-1;
+			if(!comboLogSource.IsAllSelected) {
+				logSource=(int)comboLogSource.GetSelected<LogSources>();
+			}
 			try {
 				//Permission filter
 				if(comboPermission.SelectedIndex==0) {
 					securityLogArray=ReportsComplex.RunFuncOnReportServer(() => SecurityLogs.Refresh(PIn.Date(textDateFrom.Text),PIn.Date(textDateTo.Text),
-						Permissions.None,_patNum,userNum,datePreviousFrom,datePreviousTo,PIn.Int(textRows.Text)), Prefs.GetBoolNoCache(PrefName.AuditTrailUseReportingServer));
+						Permissions.None,_patNum,datePreviousFrom,datePreviousTo,PIn.Int(textRows.Text),userNum,logSource), Prefs.GetBoolNoCache(PrefName.AuditTrailUseReportingServer));
 				}
 				else {
 					securityLogArray=ReportsComplex.RunFuncOnReportServer(() => SecurityLogs.Refresh(PIn.Date(textDateFrom.Text),PIn.Date(textDateTo.Text),
-						(Permissions)Enum.Parse(typeof(Permissions),comboPermission.SelectedItem.ToString()),_patNum,userNum,
-						datePreviousFrom,datePreviousTo,PIn.Int(textRows.Text)), Prefs.GetBoolNoCache(PrefName.AuditTrailUseReportingServer));
+						(Permissions)Enum.Parse(typeof(Permissions),comboPermission.SelectedItem.ToString()),_patNum,
+						datePreviousFrom,datePreviousTo,PIn.Int(textRows.Text),userNum,logSource), Prefs.GetBoolNoCache(PrefName.AuditTrailUseReportingServer));
 				}
 			}
 			catch(Exception ex) {
 				FriendlyException.Show(Lan.g(this,"There was a problem refreshing the Audit Trail with the current filters."),ex);
 				securityLogArray=new SecurityLog[0];
-			}
-			//LogSource filter
-			if(!comboLogSource.IsAllSelected) {
-				LogSources logSource=comboLogSource.GetSelected<LogSources>();
-				securityLogArray=Array.FindAll<SecurityLog>(securityLogArray,x=>x.LogSource==logSource);
-			}
-			if(comboUser.SelectedIndex==1) { //Entries with a UserNum of 0 are created by automation.
-				securityLogArray=Array.FindAll<SecurityLog>(securityLogArray,x=>x.UserNum==0);
 			}
 			grid.BeginUpdate();
 			grid.Columns.Clear();

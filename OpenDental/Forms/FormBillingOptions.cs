@@ -1053,7 +1053,7 @@ namespace OpenDental{
 					ageAccount=(dateAsOf-dateBalBeganCur).Days;
 				}
 				List<Dunning> listDunningsForPat=_listDunnings.FindAll(x => (x.BillingType==0 || x.BillingType==listPatAgings[i].BillingType) //same billing type
-					&& x.ClinicNum==listPatAgings[i].ClinicNum
+					&& x.ClinicNum==listPatAgings[i].ClinicNum | x.ClinicNum==-2 //matches a specific clinic or unassigned clinic, or "All" Clinics
 					&& ageAccount>=x.AgeAccount-x.DaysInAdvance //old enough to qualify for this dunning message, taking into account DaysInAdvance
 					&& (x.InsIsPending==YN.Unknown || x.InsIsPending==(listPatAgings[i].InsEst>0?YN.Yes:YN.No)));//dunning msg ins pending=unkown or matches this acct
 				Dunning dunning=listDunningsForPat.LastOrDefault(x => !x.IsSuperFamily);

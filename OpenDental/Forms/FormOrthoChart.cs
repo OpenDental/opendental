@@ -509,6 +509,9 @@ namespace OpenDental {
 
 
 		private void menuItemSetup_Click(object sender,EventArgs e) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
+				return;
+			}
 			using FormDisplayFieldsOrthoChart form=new FormDisplayFieldsOrthoChart();
 			if(form.ShowDialog()==DialogResult.OK) {
 				FillTabs();
@@ -982,7 +985,7 @@ namespace OpenDental {
 			SecurityLog[] patientFieldLogs;
 			try {
 				orthoChartLogs=SecurityLogs.Refresh(_patCur.PatNum,new List<Permissions> { Permissions.OrthoChartEditFull },null);
-				patientFieldLogs=SecurityLogs.Refresh(new DateTime(1,1,1),DateTime.Today,Permissions.PatientFieldEdit,_patCur.PatNum,0,
+				patientFieldLogs=SecurityLogs.Refresh(new DateTime(1,1,1),DateTime.Today,Permissions.PatientFieldEdit,_patCur.PatNum,
 					DateTime.MinValue,DateTime.Today);
 			}
 			catch(Exception ex) {

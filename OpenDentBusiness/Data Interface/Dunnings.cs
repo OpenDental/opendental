@@ -18,7 +18,8 @@ namespace OpenDentBusiness{
 				command+=" WHERE ClinicNum IN ("+string.Join(",",listClinicNums)+")";
 			}
 			return Crud.DunningCrud.SelectMany(command)
-				.OrderBy(x => x.BillingType)
+				.OrderBy(x => x.ClinicNum) //ensures that the highest precedence is Specific Clinics > Unassigned > All Clinics
+				.ThenBy(x => x.BillingType)
 				.ThenBy(x => x.AgeAccount-x.DaysInAdvance)
 				.ThenBy(x => x.InsIsPending)
 				.ThenBy(x => x.DunningNum).ToList();//PK allows the retval to be predictable.  Works for random PKs.

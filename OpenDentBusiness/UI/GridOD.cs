@@ -313,6 +313,12 @@ namespace OpenDental.UI {
 			return base.IsInputKey(keyData);
 		}
 
+		///<summary></summary>
+		[Category("OD")]
+		[Description("Set true if you want the up and down arrows to work even when the grid does not have focus.")]
+		[DefaultValue(false)]
+		public bool ArrowsWhenNoFocus { get; set; }=false;
+
 		///<summary>The background color that is used for selected rows.</summary>
 		[Category("OD")]
 		[Description("The background color that is used for selected rows.")]
@@ -2062,11 +2068,16 @@ namespace OpenDental.UI {
 			if(this.Focused){
 				return;//avoid double call
 			}
-			if(!ClientRectangle.Contains(PointToClient(Cursor.Position))){
-				//the cursor is not hovering over this control, so we should not react to keystrokes
+			if(ClientRectangle.Contains(PointToClient(Cursor.Position))){
+				//the cursor is hovering over the grid, so it should respond to the up and down arrows
+				OnKeyDown(e);
 				return;
 			}
-			OnKeyDown(e);
+			if(ArrowsWhenNoFocus){
+				//Example, in FormPatientSelect, arrows will still work when focus is on the input boxes.
+				OnKeyDown(e);
+				return;
+			}
 		}
 		#endregion Methods - Event Handlers - Key
 

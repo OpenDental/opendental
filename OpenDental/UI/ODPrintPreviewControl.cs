@@ -34,14 +34,26 @@ namespace OpenDental.UI {
 		private const int SB_VERT=1;
 		private const int SIF_RANGE=0x0001;
 		private const int SIF_PAGE=0x0002;
+		private const int SIF_TRACKPOS=0x0010;
+		private const int WM_HSCROLL=276;//0x114
 		private const int WM_VSCROLL=277;//0x115
+		private const int SB_LINEUP=0;
+		private const int SB_LINEDOWN=1;
 		private const int SB_PAGEUP=2;
 		private const int SB_PAGEDOWN=3;
+		private const int SB_THUMBPOSITION=4;
+		private const int SB_THUMBTRACK=5;
+		private const int SCROLL_LINE=5;
+		private const int SCROLL_PAGE=100;
 		#endregion
 		#region DLL import methods
 		[DllImport("user32.dll",ExactSpelling=true,CharSet=CharSet.Auto)]
 		[ResourceExposure(ResourceScope.None)]
 		private static extern int SetScrollInfo(HandleRef hWnd,int fnBar,SCROLLINFO si,bool redraw);
+
+		[DllImport("user32.dll",ExactSpelling=true,CharSet=CharSet.Auto)]
+    [ResourceExposure(ResourceScope.None)]
+    private static extern bool GetScrollInfo(HandleRef hWnd, int fnBar, [In, Out] SCROLLINFO si);
 
 		[DllImport("user32.dll",ExactSpelling=true,CharSet=System.Runtime.InteropServices.CharSet.Auto)]
 		[ResourceExposure(ResourceScope.None)]
@@ -65,6 +77,20 @@ namespace OpenDental.UI {
 		///<summary></summary>
 		private bool isExceptionPrinting=false;
 		#endregion
+
+		public new double Zoom {
+			get {
+				return base.Zoom;
+			}
+			set {
+				if(ODBuild.IsWeb()) {
+					autoZoom = false;
+					zoom = value;
+					_isLayoutOk = false;
+				}
+				base.Zoom = value;
+			}
+		}
 
 		protected override void OnMouseWheel(MouseEventArgs e) {
 			base.OnMouseWheel(e);
@@ -326,6 +352,131 @@ namespace OpenDental.UI {
 				OnStartPageChanged(EventArgs.Empty);
 			}
 		}
+
+		public static int HIWORD(int n) {
+      return (n >> 16) & 0xffff;
+    }
+    
+    public static int HIWORD(IntPtr n) {
+      return HIWORD( unchecked((int)(long)n) );
+    }
+    
+    public static int LOWORD(int n) {
+      return n & 0xffff;
+    }
+    
+    public static int LOWORD(IntPtr n) {
+      return LOWORD( unchecked((int)(long)n) );
+    }
+
+		private int AdjustScroll(Message m, int pos, int maxPos, bool horizontal) {
+      switch(LOWORD(m.WParam)) {
+				case SB_THUMBPOSITION:
+				case SB_THUMBTRACK:
+					SCROLLINFO si = new SCROLLINFO();
+					si.cbSize = Marshal.SizeOf(typeof(SCROLLINFO));
+					si.fMask = SIF_TRACKPOS;
+					int direction = horizontal ? SB_HORZ : SB_VERT;
+					if (GetScrollInfo(new HandleRef(this, m.HWnd), direction, si)) {
+						pos = si.nTrackPos;
+					}
+					else
+					{
+						pos = HIWORD(m.WParam);
+					}
+					break;
+				case SB_LINEUP:
+					if (pos > SCROLL_LINE) {
+						pos-=SCROLL_LINE;
+					}
+					else {
+						pos = 0;
+					}
+					break;
+				case SB_LINEDOWN:
+					if (pos < maxPos-SCROLL_LINE) {
+							pos+=SCROLL_LINE;
+					}
+					else {
+							pos = maxPos;
+					}
+					break;
+        case SB_PAGEUP:
+            if (pos > SCROLL_PAGE) {
+                pos-=SCROLL_PAGE;
+            }
+            else {
+                pos = 0;
+            }
+            break;
+        case SB_PAGEDOWN:
+            if (pos < maxPos-SCROLL_PAGE) {
+                pos+=SCROLL_PAGE;
+            }
+            else {
+                pos = maxPos;
+            }
+            break;
+      }
+      return pos;
+    }
+
+		//Overrides the WndProc event handler for OD Cloud only
+    protected override void WndProc(ref Message m) {
+			if(!ODBuild.IsWeb()) {
+				base.WndProc(ref m);
+				return;
+			}
+      switch (m.Msg) {
+        case WM_VSCROLL:
+          WmVScroll(ref m);
+          break;
+				case WM_HSCROLL:
+					WmHScroll(ref m);
+					break;
+        default:
+          base.WndProc(ref m);
+          break;
+      }
+    }
+
+		//WM_VSCROLL handler
+    private void WmVScroll(ref Message m) {
+ 
+      // The lparam is handle of the sending scrollbar, or NULL when
+      // the scrollbar sending the message is the "form" scrollbar...
+      //
+      if (m.LParam != IntPtr.Zero) {
+          base.WndProc(ref m);
+          return;
+      }
+ 
+      Point locPos = position;
+      int pos = locPos.Y;
+      int maxPos = Math.Max(Height, _virtualSize.Height/* - Height*/);
+ 
+      locPos.Y = AdjustScroll(m, pos, maxPos, false);
+      SetPositionNoInvalidate(locPos);
+    }
+
+		//WM_HSCROLL handler
+    private void WmHScroll(ref Message m) {
+ 
+      // The lparam is handle of the sending scrollbar, or NULL when
+      // the scrollbar sending the message is the "form" scrollbar...
+      //
+      if (m.LParam != IntPtr.Zero) {
+          base.WndProc(ref m);
+          return;
+      }
+ 
+      Point locPos = position;
+      int pos = locPos.X;
+      int maxPos = Math.Max(Width, _virtualSize.Width /*- Width*/);
+ 
+      locPos.X = AdjustScroll(m, pos, maxPos, true);
+			SetPositionNoInvalidate(locPos);
+    }
 
 		private int PhysicalToPixels(int physicalSize,int dpi) {
 			return (int)(physicalSize*dpi/100.0);

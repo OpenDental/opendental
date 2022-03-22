@@ -1214,7 +1214,7 @@ namespace OpenDental {
 				{
 					//normal images and dicom will have the bitmap and filedrop pulled from the screen
 					nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Document,_documentArrayShowing[_idxSelectedInMount].DocNum);
-					bitmapCopy=ImageHelper.CopyWithCropRotate(_documentArrayShowing[_idxSelectedInMount],GetBitmapShowing(_idxSelectedInMount));
+					bitmapCopy=new Bitmap(_listMountItems[_idxSelectedInMount].Width,_listMountItems[_idxSelectedInMount].Height);
 					using Graphics g=Graphics.FromImage(bitmapCopy);
 					//translate to center of drawing area (and center of mount item)
 					g.TranslateTransform(bitmapCopy.Width/2,bitmapCopy.Height/2);
@@ -1393,13 +1393,35 @@ namespace OpenDental {
 				if(saveFileDialog.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
-				try {
-					ImageStore.Export(saveFileDialog.FileName,GetDocumentShowing(0),PatientCur);
+				if(ImageHelper.HasImageExtension(GetDocumentShowing(0).FileName) || GetDocumentShowing(0).FileName.EndsWith(".dcm")){
+					//normal images and dicom will have the bitmap and filedrop pulled from the screen
+					using Bitmap bitmapCopy=ImageHelper.CopyWithCropRotate(GetDocumentShowing(0),GetBitmapShowing(0));
+					using Graphics g=Graphics.FromImage(bitmapCopy);	
+					//Rectangle rectangleAvail=new Rectangle(e.MarginBounds.X,yTitle,e.MarginBounds.Width,e.MarginBounds.Height-yTitle);
+					//translate to center of drawing area (and center of crop area)
+					g.TranslateTransform(bitmapCopy.Width/2,bitmapCopy.Height/2);				
+					float scaleFactor;
+					if(GetDocumentShowing(0).CropW==0){//no crop
+						scaleFactor=ImageTools.CalcScaleFit(bitmapCopy.Size,GetBitmapShowing(0).Size,GetDocumentShowing(0).DegreesRotated);
+					}
+					else{
+						scaleFactor=ImageTools.CalcScaleFit(bitmapCopy.Size,new Size(GetDocumentShowing(0).CropW,GetDocumentShowing(0).CropH),GetDocumentShowing(0).DegreesRotated);
+					}
+					g.ScaleTransform(scaleFactor,scaleFactor);
+					//We are now at center of page and crop area, and working in image coords
+					DrawDocument(g);//including drawings
+					bitmapCopy.Save(saveFileDialog.FileName);
 				}
-				catch(Exception ex) {
-					MessageBox.Show(Lan.g(this,"Unable to export file, May be in use")+": " + ex.Message);
-					return;
-				}
+				else{
+					//other files such as pdf will lack a bitmapCopy
+					try {
+						ImageStore.Export(saveFileDialog.FileName,GetDocumentShowing(0),PatientCur);
+					}
+					catch(Exception ex) {
+						MessageBox.Show(Lan.g(this,"Unable to export file, May be in use")+": " + ex.Message);
+						return;
+					}
+				}		
 				MsgBox.Show(this,"Done.");
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
 				string logText="Document Exported: "+GetDocumentShowing(0).FileName+" with catgegory "
@@ -1418,12 +1440,38 @@ namespace OpenDental {
 				if(saveFileDialog.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
-				try {
-					ImageStore.Export(saveFileDialog.FileName,_documentArrayShowing[_idxSelectedInMount],PatientCur);
+				if(ImageHelper.HasImageExtension(GetDocumentShowing(_idxSelectedInMount).FileName) || GetDocumentShowing(_idxSelectedInMount).FileName.EndsWith(".dcm"))
+				{
+					//normal images and dicom will have the bitmap pulled from the screen
+					using Bitmap bitmapCopy=new Bitmap(_listMountItems[_idxSelectedInMount].Width,_listMountItems[_idxSelectedInMount].Height);
+					using Graphics g=Graphics.FromImage(bitmapCopy);
+					//translate to center of drawing area (and center of mount item)
+					g.TranslateTransform(bitmapCopy.Width/2,bitmapCopy.Height/2);
+					float scaleMount=ImageTools.CalcScaleFit(
+						sizeCanvas: bitmapCopy.Size,
+						sizeImage: new Size(_listMountItems[_idxSelectedInMount].Width,_listMountItems[_idxSelectedInMount].Height),
+						degreesRotated: 0);//the mount item itself is not rotated
+					g.ScaleTransform(scaleMount,scaleMount);
+					//we are now at center of page/mount item and in mount scale 
+					//Move from center of mount item to UL of mount item
+					g.TranslateTransform(-_listMountItems[_idxSelectedInMount].Width/2,-_listMountItems[_idxSelectedInMount].Height/2);
+					DrawMountOne(g,_idxSelectedInMount,translateToItemPos:false);
+					g.SetClip(new Rectangle(0,0,_listMountItems[_idxSelectedInMount].Width,_listMountItems[_idxSelectedInMount].Height));
+					//translate from UL of mount item to UL of mount
+					g.TranslateTransform(-_listMountItems[_idxSelectedInMount].Xpos,-_listMountItems[_idxSelectedInMount].Ypos);
+					DrawDrawings(g,0);
+					//file is always copy of image instead of original file, even for dicom.  NodeTypeAndKey still allows true dicom copy/paste.
+					bitmapCopy.Save(saveFileDialog.FileName);
 				}
-				catch(Exception ex) {
-					MessageBox.Show(Lan.g(this,"Unable to export file, May be in use")+": " + ex.Message);
-					return;
+				else{
+					//shouldn't be pdfs, etc in mounts, but just in case:
+					try {
+						ImageStore.Export(saveFileDialog.FileName,_documentArrayShowing[_idxSelectedInMount],PatientCur);
+					}
+					catch(Exception ex) {
+						MessageBox.Show(Lan.g(this,"Unable to export file, May be in use")+": " + ex.Message);
+						return;
+					}
 				}
 				MsgBox.Show(this,"Done.");
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
@@ -1439,7 +1487,7 @@ namespace OpenDental {
 				}
 				SaveFileDialog saveFileDialog=new SaveFileDialog();
 				saveFileDialog.Title="Export Mount";
-				saveFileDialog.FileName=".jpg";//_documentShowing.FileName;
+				saveFileDialog.FileName=PatientCur.GetNameLF()+".jpg";//_documentShowing.FileName;
 				saveFileDialog.DefaultExt=".jpg";
 				if(saveFileDialog.ShowDialog()!=DialogResult.OK) {
 					return;

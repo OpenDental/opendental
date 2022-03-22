@@ -255,6 +255,7 @@ namespace OpenDental{
 				//This gives the user the option to remove the field before it ever reaches the database.
 				DisplayField displayFieldNew=new DisplayField("",100,DisplayFieldCategory.OrthoChart);
 				displayFieldNew.Description=textCustomField.Text;
+				displayFieldNew.PickList="";//to indicate text
 				displayFieldNew.IsNew=true;
 				orthoChartTabFields.ListDisplayFields.Add(displayFieldNew);
 				textCustomField.Text="";

@@ -116,7 +116,6 @@ namespace OpenDental{
 			// 
 			// FormOrthoChartSetup
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(368, 324);
 			this.Controls.Add(this.labelAvailable);
 			this.Controls.Add(this.butUp);
@@ -127,7 +126,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormOrthoChartSetup";
-			this.Text = "Ortho Chart Setup";
+			this.Text = "Ortho Chart Tabs";
 			this.Load += new System.EventHandler(this.FormOrthoChartSetup_Load);
 			this.ResumeLayout(false);
 

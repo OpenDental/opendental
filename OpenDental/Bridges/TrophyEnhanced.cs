@@ -23,6 +23,10 @@ namespace OpenDental.Bridges{
 		public static void SendData(Program ProgramCur, Patient pat){
 			string path=Programs.GetProgramPath(ProgramCur);
 			//ArrayList ForProgram=ProgramProperties.GetForProgram(ProgramCur.ProgramNum);;
+			if(!Directory.Exists(path)) {
+				MessageBox.Show(path+" is not available.");
+				return;
+			}
 			if(pat==null){
 				try{
 					ODFileUtils.ProcessStart(path);//should start Trophy without bringing up at pt.

@@ -695,6 +695,10 @@ namespace OpenDental {
 			panelMain.Refresh();
 		}
 
+		private void checkSynchMatchedFields_CheckedChanged(object sender,EventArgs e) {
+			_sheetEditMobileCtrl.SyncSheetFieldsWithDefualt=checkSynchMatchedFields.Checked;
+		}
+
 		private void comboLanguages_SelectionChangeCommitted(object sender,EventArgs e) {
 			string selectedThreeLetterLanguage=GetSelectedLanguageThreeLetters();
 			bool wasTranslationAdded=false;
@@ -938,6 +942,7 @@ namespace OpenDental {
 			threadGetWebSheetId.Name="GetWebSheetIdThread";
 			threadGetWebSheetId.Start(true);
 			this.Text="Sheet Def Edit - Revision "+_sheetDefCur.RevID.ToString();
+			_sheetEditMobileCtrl.SyncSheetFieldsWithDefualt=checkSynchMatchedFields.Checked;
 			//textDescription.Focus();
 		}
 

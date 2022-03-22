@@ -226,7 +226,11 @@ namespace OpenDental {
 				}
 				CareCreditWebResponses.UpdateProcessingWebStatus(listCareCreditWebResponses[i],CareCreditWebStatus.ErrorAcknowledged);
 			}
-			MessageBox.Show(this,$"{Lan.g(this,"Errors acknowledged")}. {countMerchantClosed} {Lan.g(this,"transactions not allowed to retry due to merchant closed")}.");
+			string merchantClosedError="";
+			if(countMerchantClosed > 0) {
+				merchantClosedError=$" {countMerchantClosed} {Lan.g(this,"transactions not allowed to retry due to merchant closed")}.";
+			}
+			MessageBox.Show(this,$"{Lan.g(this,"Errors acknowledged")}.{merchantClosedError}");
 			FillGrids();
 		}
 

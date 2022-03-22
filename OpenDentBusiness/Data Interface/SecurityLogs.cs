@@ -89,11 +89,11 @@ namespace OpenDentBusiness{
 
 		///<summary>Used when viewing securityLog from the security admin window.  PermTypes can be length 0 to get all types.
 		///Throws exceptions.</summary>
-		public static SecurityLog[] Refresh(DateTime dateFrom,DateTime dateTo,Permissions permType,long patNum,long userNum,
-			DateTime datePreviousFrom,DateTime datePreviousTo,int limit=0) 
+		public static SecurityLog[] Refresh(DateTime dateFrom,DateTime dateTo,Permissions permType,long patNum,
+			DateTime datePreviousFrom,DateTime datePreviousTo,int limit=0,long userNum=-1,int logSource=-1) 
 		{
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				return Meth.GetObject<SecurityLog[]>(MethodBase.GetCurrentMethod(),dateFrom,dateTo,permType,patNum,userNum,datePreviousFrom,datePreviousTo,limit);
+				return Meth.GetObject<SecurityLog[]>(MethodBase.GetCurrentMethod(),dateFrom,dateTo,permType,patNum,datePreviousFrom,datePreviousTo,limit,userNum,logSource);
 			}
 			string command="SELECT securitylog.*,LName,FName,Preferred,MiddleI,LogHash FROM securitylog "
 				+"LEFT JOIN patient ON patient.PatNum=securitylog.PatNum "
@@ -109,8 +109,11 @@ namespace OpenDentBusiness{
 			if(permType!=Permissions.None) {
 				command+=" AND PermType="+POut.Long((int)permType);
 			}
-			if(userNum!=0) {
+			if(userNum>=0) { //Greater than or equal to 0, since 0 is no/unknown user, and we want to be able to filter by that option in some cases.
 				command+=" AND UserNum="+POut.Long(userNum);
+			}
+			if(logSource>=0) { //Greater than or equal to 0, since 0 is Automation/unknown, and we want to be able to filter by that option in some cases.
+				command+=" AND LogSource="+POut.Long(logSource);
 			}
 			command+=" ORDER BY LogDateTime DESC";//Using DESC so that the most recent ones appear in the list
 			if(limit>0) {

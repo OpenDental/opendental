@@ -1116,11 +1116,9 @@ namespace OpenDental{
 				MsgBox.Show("Please enable eClipboard for this clinic to use this feature.");
 				return;
 			}
-			if(IsNew) {
-				//Performs the same steps as if user had clicked 'Ok'. 
-				if(!Save()) {
-					return;
-				}
+			//Performs the same steps as if user had clicked 'Ok'. 
+			if(!Save()) {
+				return;
 			}
 			//The sheet that the practice uses for payment plans needs to have a signature box on it, otherwise the signature won't be
 			//visible after signing. 

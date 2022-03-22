@@ -93,8 +93,8 @@ namespace OpenDental {
 			gridHidden.BeginUpdate();
 			gridHidden.Columns.Clear();
 			GridColumn col=new GridColumn("",20);
-			col.IsWidthDynamic=true; 
-			gridDisplayed.Columns.Add(col);
+			col.IsWidthDynamic=true;
+			gridHidden.Columns.Add(col);
 			gridHidden.ListGridRows.Clear();
 			GridRow row;
 			List<FieldDefLink> listFieldDefLinksForLoc=_listFieldDefLinks.FindAll(x => x.FieldLocation==(FieldLocations)comboFieldLocation.SelectedIndex);

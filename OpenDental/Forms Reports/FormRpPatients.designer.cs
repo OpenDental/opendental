@@ -27,9 +27,8 @@ namespace OpenDental {
 			this.butOK = new OpenDental.UI.Button();
 			this.tabPatients = new System.Windows.Forms.TabControl();
 			this.tabData = new System.Windows.Forms.TabPage();
+			this.label1 = new System.Windows.Forms.Label();
 			this.textBox1 = new System.Windows.Forms.TextBox();
-			this.labelReferredFrom = new System.Windows.Forms.Label();
-			this.listReferredFromSelect = new OpenDental.UI.ListBoxOD();
 			this.labelReferredTo = new System.Windows.Forms.Label();
 			this.listReferredToSelect = new OpenDental.UI.ListBoxOD();
 			this.labelPatient = new System.Windows.Forms.Label();
@@ -46,6 +45,7 @@ namespace OpenDental {
 			this.TextBox = new System.Windows.Forms.TextBox();
 			this.DropListFilter = new System.Windows.Forms.ComboBox();
 			this.TextSQL = new System.Windows.Forms.TextBox();
+			this.listBoxRefType = new OpenDental.UI.ListBoxOD();
 			this.tabPatients.SuspendLayout();
 			this.tabData.SuspendLayout();
 			this.tabFilters.SuspendLayout();
@@ -87,9 +87,9 @@ namespace OpenDental {
 			// 
 			// tabData
 			// 
+			this.tabData.Controls.Add(this.listBoxRefType);
+			this.tabData.Controls.Add(this.label1);
 			this.tabData.Controls.Add(this.textBox1);
-			this.tabData.Controls.Add(this.labelReferredFrom);
-			this.tabData.Controls.Add(this.listReferredFromSelect);
 			this.tabData.Controls.Add(this.labelReferredTo);
 			this.tabData.Controls.Add(this.listReferredToSelect);
 			this.tabData.Controls.Add(this.labelPatient);
@@ -99,6 +99,15 @@ namespace OpenDental {
 			this.tabData.Size = new System.Drawing.Size(832, 518);
 			this.tabData.TabIndex = 1;
 			this.tabData.Text = "SELECT";
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(196, 73);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(168, 14);
+			this.label1.TabIndex = 15;
+			this.label1.Text = "Referral Type";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// textBox1
 			// 
@@ -111,36 +120,18 @@ namespace OpenDental {
 			this.textBox1.TabIndex = 13;
 			this.textBox1.Text = resources.GetString("textBox1.Text");
 			// 
-			// labelReferredFrom
-			// 
-			this.labelReferredFrom.Location = new System.Drawing.Point(438, 72);
-			this.labelReferredFrom.Name = "labelReferredFrom";
-			this.labelReferredFrom.Size = new System.Drawing.Size(170, 14);
-			this.labelReferredFrom.TabIndex = 12;
-			this.labelReferredFrom.Text = "Referred From";
-			this.labelReferredFrom.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-			// 
-			// listReferredFromSelect
-			// 
-			this.listReferredFromSelect.Location = new System.Drawing.Point(438, 86);
-			this.listReferredFromSelect.Name = "listReferredFromSelect";
-			this.listReferredFromSelect.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
-			this.listReferredFromSelect.Size = new System.Drawing.Size(170, 420);
-			this.listReferredFromSelect.TabIndex = 11;
-			this.listReferredFromSelect.SelectedIndexChanged += new System.EventHandler(this.listReferredFromSelect_SelectedIndexChanged);
-			// 
 			// labelReferredTo
 			// 
-			this.labelReferredTo.Location = new System.Drawing.Point(220, 72);
+			this.labelReferredTo.Location = new System.Drawing.Point(347, 73);
 			this.labelReferredTo.Name = "labelReferredTo";
 			this.labelReferredTo.Size = new System.Drawing.Size(168, 14);
 			this.labelReferredTo.TabIndex = 8;
-			this.labelReferredTo.Text = "Referred To";
+			this.labelReferredTo.Text = "Referred";
 			this.labelReferredTo.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// listReferredToSelect
 			// 
-			this.listReferredToSelect.Location = new System.Drawing.Point(220, 86);
+			this.listReferredToSelect.Location = new System.Drawing.Point(347, 87);
 			this.listReferredToSelect.Name = "listReferredToSelect";
 			this.listReferredToSelect.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
 			this.listReferredToSelect.Size = new System.Drawing.Size(168, 420);
@@ -293,6 +284,15 @@ namespace OpenDental {
 			this.TextSQL.Size = new System.Drawing.Size(840, 128);
 			this.TextSQL.TabIndex = 38;
 			// 
+			// listBoxRefType
+			// 
+			this.listBoxRefType.Location = new System.Drawing.Point(221, 87);
+			this.listBoxRefType.Name = "listBoxRefType";
+			this.listBoxRefType.Size = new System.Drawing.Size(120, 95);
+			this.listBoxRefType.TabIndex = 16;
+			this.listBoxRefType.Text = "listBoxOD1";
+			this.listBoxRefType.SelectionChangeCommitted += new System.EventHandler(listBoxRefType_SelectionChangeCommitted);
+			// 
 			// FormRpPatients
 			// 
 			this.AcceptButton = this.butOK;
@@ -325,7 +325,6 @@ namespace OpenDental {
 		private OpenDental.UI.ListBoxOD listBoxColumns;
 		private OpenDental.UI.ListBoxOD listPatientSelect;
 		private OpenDental.UI.ListBoxOD listPrerequisites;
-		private OpenDental.UI.ListBoxOD listReferredFromSelect;
 		private OpenDental.UI.ListBoxOD listReferredToSelect;
 		private OpenDental.UI.ListBoxOD listConditions;
 		private System.Windows.Forms.ComboBox DropListFilter;
@@ -339,8 +338,9 @@ namespace OpenDental {
 		private OpenDental.ValidDate TextDate;
 		private System.Windows.Forms.Label labelPatient;
 		private System.Windows.Forms.Label labelReferredTo;
-		private System.Windows.Forms.Label labelReferredFrom;
 		private System.Windows.Forms.Label labelHelp;  //fields used in SELECT
 		private System.Windows.Forms.TextBox textBox1;
+		private Label label1;
+		private UI.ListBoxOD listBoxRefType;
 	}
 }
