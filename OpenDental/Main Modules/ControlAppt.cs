@@ -3172,13 +3172,13 @@ namespace OpenDental {
 				}
 				listProvNums=ApptViewItems.GetProvsForView(apptViewNum);
 			}
-			RefreshAppointmentsIfNeeded(contrApptPanel.DateStart,contrApptPanel.DateEnd,listPinApptNums,listOpNums,listProvNums,forceRefresh:forceRefreshAppointments);
 			RefreshSchedulesIfNeeded(contrApptPanel.DateStart,contrApptPanel.DateEnd,listOpNums,forceRefreshSchedules);
 			RefreshWaitingRoomTable();
 			_dateTimeWaitingRmRefreshed=DateTime.Now;
 			//SchedListPeriod=Schedules.ConvertTableToList(_dtSchedule);//happens internally in contrApptPanel when setting TableSchedul
 			ApptView viewCur=GetApptViewCur(apptViewNumOverride:apptViewNum);
 			GetForCurView(viewCur,contrApptPanel.IsWeeklyView,contrApptPanel.ListSchedules);
+			RefreshAppointmentsIfNeeded(contrApptPanel.DateStart,contrApptPanel.DateEnd,listPinApptNums,listOpNums,listProvNums,forceRefresh:forceRefreshAppointments);
 		}
 
 		/// <summary>If needed, refreshes TableSchedule, TableEmpSched, and TableProvSched tables.</summary>
