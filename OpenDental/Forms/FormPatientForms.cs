@@ -85,6 +85,9 @@ namespace OpenDental {
 			//Hold onto docNum so Image module refresh persists selection when closing FormPatientForms.
 			DocNum=PIn.Long(table.Rows[e.Row]["DocNum"].ToString());//Set to 0 if not a Document, i.e. a Sheet.
 			if(DocNum!=0) {
+				if(!Security.IsAuthorized(Permissions.ImagingModule)) {
+					return;
+				}
 				GotoModule.GotoImage(PatNum,DocNum); 
 				return;
 			}

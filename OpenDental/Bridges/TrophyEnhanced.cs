@@ -23,7 +23,7 @@ namespace OpenDental.Bridges{
 		public static void SendData(Program ProgramCur, Patient pat){
 			string path=Programs.GetProgramPath(ProgramCur);
 			//ArrayList ForProgram=ProgramProperties.GetForProgram(ProgramCur.ProgramNum);;
-			if(!Directory.Exists(path)) {
+			if(!File.Exists(path)) {
 				MessageBox.Show(path+" is not available.");
 				return;
 			}
