@@ -32,6 +32,8 @@ namespace OpenDentBusiness {
 		///has just been claimed by another tech.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
 		public DateTime DateClaimed;
+		///<summary>FK to tasklist.TaskListNum  The task list that should be used when creating a task from this voice mail.</summary>
+		public long TaskListNum;
 
 		///<summary>The user name of the tech who has claimed this voicemail.</summary>
 		[CrudColumn(IsNotDbColumn=true)]
@@ -77,4 +79,8 @@ INSERT INTO preference (PrefName,ValueString) VALUES("VoiceMailDeleteAfterDays",
 ALTER TABLE voicemail ADD Note VARCHAR(4000) NOT NULL;
 
 ALTER TABLE voicemail ADD DateClaimed datetime NOT NULL DEFAULT '0001-01-01 00:00:00';
+
+ALTER TABLE voicemail ADD TaskListNum bigint NOT NULL;
+
+ALTER TABLE voicemail ADD INDEX (TaskListNum);
 */

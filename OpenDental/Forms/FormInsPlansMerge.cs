@@ -98,7 +98,7 @@ namespace OpenDental{
 		}
 
 		private void butOK_Click(object sender, System.EventArgs e) {
-			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Once insurance plans have been merged, it is not possible to unmerge them.")) {
+			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Once insurance plans have been merged, it is not possible to unmerge them. Do not merge insurance plans from multiple copies of the program at the same time. Continue?")) {
 				return;
 			}
 			PlanToMergeTo=ListAll[gridMain.GetSelectedIndex()].Copy();

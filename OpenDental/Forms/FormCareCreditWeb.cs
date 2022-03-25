@@ -40,6 +40,7 @@ namespace OpenDental {
 			}
 			catch(Exception ex){
 				FriendlyException.Show("Error loading window.",ex);
+				Close();
 				return;
 			}
 			Text=Lan.g(this,"Loading")+"...";

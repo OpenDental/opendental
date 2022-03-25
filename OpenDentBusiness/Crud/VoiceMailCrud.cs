@@ -57,6 +57,7 @@ namespace OpenDentBusiness.Crud{
 				voiceMail.StatusVM    = (OpenDentBusiness.VoiceMailStatus)PIn.Int(row["StatusVM"].ToString());
 				voiceMail.Note        = PIn.String(row["Note"].ToString());
 				voiceMail.DateClaimed = PIn.DateT (row["DateClaimed"].ToString());
+				voiceMail.TaskListNum = PIn.Long  (row["TaskListNum"].ToString());
 				retVal.Add(voiceMail);
 			}
 			return retVal;
@@ -78,6 +79,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("StatusVM");
 			table.Columns.Add("Note");
 			table.Columns.Add("DateClaimed");
+			table.Columns.Add("TaskListNum");
 			foreach(VoiceMail voiceMail in listVoiceMails) {
 				table.Rows.Add(new object[] {
 					POut.Long  (voiceMail.VoiceMailNum),
@@ -90,6 +92,7 @@ namespace OpenDentBusiness.Crud{
 					POut.Int   ((int)voiceMail.StatusVM),
 					            voiceMail.Note,
 					POut.DateT (voiceMail.DateClaimed,false),
+					POut.Long  (voiceMail.TaskListNum),
 				});
 			}
 			return table;
@@ -109,7 +112,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="VoiceMailNum,";
 			}
-			command+="UserNum,PatNum,DateCreated,Duration,FileName,PhoneNumber,StatusVM,Note,DateClaimed) VALUES(";
+			command+="UserNum,PatNum,DateCreated,Duration,FileName,PhoneNumber,StatusVM,Note,DateClaimed,TaskListNum) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(voiceMail.VoiceMailNum)+",";
 			}
@@ -122,7 +125,8 @@ namespace OpenDentBusiness.Crud{
 				+"'"+POut.String(voiceMail.PhoneNumber)+"',"
 				+    POut.Int   ((int)voiceMail.StatusVM)+","
 				+"'"+POut.String(voiceMail.Note)+"',"
-				+    POut.DateT (voiceMail.DateClaimed)+")";
+				+    POut.DateT (voiceMail.DateClaimed)+","
+				+    POut.Long  (voiceMail.TaskListNum)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -147,7 +151,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="VoiceMailNum,";
 			}
-			command+="UserNum,PatNum,DateCreated,Duration,FileName,PhoneNumber,StatusVM,Note,DateClaimed) VALUES(";
+			command+="UserNum,PatNum,DateCreated,Duration,FileName,PhoneNumber,StatusVM,Note,DateClaimed,TaskListNum) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(voiceMail.VoiceMailNum)+",";
 			}
@@ -160,7 +164,8 @@ namespace OpenDentBusiness.Crud{
 				+"'"+POut.String(voiceMail.PhoneNumber)+"',"
 				+    POut.Int   ((int)voiceMail.StatusVM)+","
 				+"'"+POut.String(voiceMail.Note)+"',"
-				+    POut.DateT (voiceMail.DateClaimed)+")";
+				+    POut.DateT (voiceMail.DateClaimed)+","
+				+    POut.Long  (voiceMail.TaskListNum)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -181,7 +186,8 @@ namespace OpenDentBusiness.Crud{
 				+"PhoneNumber = '"+POut.String(voiceMail.PhoneNumber)+"', "
 				+"StatusVM    =  "+POut.Int   ((int)voiceMail.StatusVM)+", "
 				+"Note        = '"+POut.String(voiceMail.Note)+"', "
-				+"DateClaimed =  "+POut.DateT (voiceMail.DateClaimed)+" "
+				+"DateClaimed =  "+POut.DateT (voiceMail.DateClaimed)+", "
+				+"TaskListNum =  "+POut.Long  (voiceMail.TaskListNum)+" "
 				+"WHERE VoiceMailNum = "+POut.Long(voiceMail.VoiceMailNum);
 			Db.NonQ(command);
 		}
@@ -225,6 +231,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="DateClaimed = "+POut.DateT(voiceMail.DateClaimed)+"";
 			}
+			if(voiceMail.TaskListNum != oldVoiceMail.TaskListNum) {
+				if(command!="") { command+=",";}
+				command+="TaskListNum = "+POut.Long(voiceMail.TaskListNum)+"";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -262,6 +272,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(voiceMail.DateClaimed != oldVoiceMail.DateClaimed) {
+				return true;
+			}
+			if(voiceMail.TaskListNum != oldVoiceMail.TaskListNum) {
 				return true;
 			}
 			return false;

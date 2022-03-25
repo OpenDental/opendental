@@ -370,6 +370,8 @@ namespace CentralManager {
 				Application.Exit();
 				return;
 			}
+			//'refresh' local list of report permissions in case they were modified
+			_listGroupPermissions_Reports=GroupPermissions.GetPermsForReports(Security.CurUser);
 			this.Text="Central Manager - "+Security.CurUser.UserName;
 		}
 		
@@ -447,6 +449,8 @@ namespace CentralManager {
 			}
 			using FormCentralReportSetup FormCRS=new FormCentralReportSetup(Security.CurUser.UserNum,true);
 			FormCRS.ShowDialog();
+			//'refresh' local list of report permissions in case they were modified
+			_listGroupPermissions_Reports=GroupPermissions.GetPermsForReports(Security.CurUser);
 		}
 
 		private void menuItemSecurity_Click(object sender,EventArgs e) {

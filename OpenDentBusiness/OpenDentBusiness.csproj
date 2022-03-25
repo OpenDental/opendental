@@ -530,6 +530,7 @@
     <Compile Include="InternalTools\Job Manager\TableTypes\MobileRelease.cs" />
     <Compile Include="InternalTools\Job Manager\TableTypes\MobileReleaseBuild.cs" />
     <Compile Include="InternalTools\Job Manager\TableTypes\JobTeam.cs" />
+    <Compile Include="InternalTools\Phones\TableTypes\VoiceMailPath.cs" />
     <Compile Include="InternalTools\RemoteSupport\PeerInfos.cs" />
     <Compile Include="InternalTools\RemoteSupport\TableTypes\PeerInfo.cs" />
     <Compile Include="InternalTools\WebChat\TableTypes\WebChatSurvey.cs" />

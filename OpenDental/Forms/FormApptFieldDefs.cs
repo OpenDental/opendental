@@ -43,7 +43,7 @@ namespace OpenDental{
 			_listApptFieldDefs.Sort(CompareItemOrder);
 			bool needsUpdate=false;
 			for(int i=0;i<_listApptFieldDefs.Count;i++) {
-				if(_listFieldDefLinks.Exists(x => x.FieldDefNum==_listApptFieldDefs[i].ApptFieldDefNum)) {
+				if(_listFieldDefLinks.Exists(x => x.FieldDefType==FieldDefTypes.Appointment && x.FieldDefNum==_listApptFieldDefs[i].ApptFieldDefNum)) {
 					listMain.Items.Add(_listApptFieldDefs[i].FieldName+" (Hidden)");
 				}
 				else {

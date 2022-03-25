@@ -11,6 +11,9 @@ using OpenDentBusiness;
 
 namespace OpenDental {
 	public partial class FormVoiceMails:FormODBase {
+		///<summary>Grid themes are gone.  This static color gets reused here, as needed.</summary>
+		private static Color _colorGridHeaderBack=Color.FromArgb(223,234,245);
+		private List<TaskList> _listTaskLists;
 
 		public FormVoiceMails() {
 			InitializeComponent();
@@ -19,6 +22,7 @@ namespace OpenDental {
 		}
 		
 		private void FormVoiceMails_Load(object sender,EventArgs e) {
+			_listTaskLists=TaskLists.GetAll();
 			FillGrid();
 			gridVoiceMails.ContextMenu=menuVoiceMailsRightClick;
 			axWindowsMediaPlayer.settings.volume=100;//Max volume. Voicemails are generally pretty quiet.
@@ -26,8 +30,17 @@ namespace OpenDental {
 
 		private void FillGrid() {
 			labelError.Visible=false;
-			List<VoiceMail> listVoiceMails=VoiceMails.GetAll(includeDeleted:checkShowDeleted.Checked).OrderBy(x => x.UserNum>0)//Show unclaimed VMs first
-				.ThenBy(x => x.DateCreated).ToList();//Show oldest VMs on top
+			List<VoiceMail> listVoiceMails=VoiceMails.GetAll(includeDeleted:checkShowDeleted.Checked)
+				.OrderBy(x => x.TaskListNum > 0)//Show uncategorized VMs first.
+				.ThenBy(x => x.UserNum > 0)//Show unclaimed VMs towards the top
+				.ThenBy(x => x.DateCreated)//Show oldest VMs towards the top
+				.ToList();
+			//Group up the voice mails by task list nums.
+			List<VoiceMailGroup> listVoiceMailGroups=listVoiceMails.GroupBy(x => x.TaskListNum)
+				.ToDictionary(x => x.Key,x => x.ToList())
+				.Select(x => new VoiceMailGroup() { TaskListNum=x.Key,ListVoiceMails=x.Value,TaskListPath=TaskLists.GetFullPath(x.Key,_listTaskLists) })
+				.OrderBy(x => x.TaskListPath)
+				.ToList();
 			VoiceMail voiceMailSelected=null;
 			int selectedCellX=gridVoiceMails.SelectedCell.X;
 			string changedNoteText=null;//If this value is null, then the note has not been changed by the user.
@@ -60,32 +73,47 @@ namespace OpenDental {
 			gridVoiceMails.Columns.Add(col);
 			gridVoiceMails.ListGridRows.Clear();
 			GridRow row;
-			foreach(VoiceMail voiceMail in listVoiceMails) {
-				row=new GridRow();
-				row.Cells.Add(voiceMail.DateCreated.ToShortDateString()+" "+voiceMail.DateCreated.ToShortTimeString());
-				string phoneField=TelephoneNumbers.AutoFormat(voiceMail.PhoneNumber);
-				if(string.IsNullOrEmpty(phoneField)) {
-					phoneField=Lan.g(this,"Unknown");
+			for(int i=0;i<listVoiceMailGroups.Count;i++) {
+				if(listVoiceMailGroups[i].TaskListNum > 0) {//Add a title row if this voice mail belongs to a specific task list.
+					row=new GridRow() { ColorBackG=_colorGridHeaderBack, Bold=true };
+					for(int j=0;j<gridVoiceMails.Columns.Count;j++) {
+						if(j==0) {
+							row.Cells.Add(listVoiceMailGroups[i].TaskListPath);
+						}
+						else {
+							row.Cells.Add("");
+						}
+					}
+					gridVoiceMails.ListGridRows.Add(row);
 				}
-				row.Cells.Add(phoneField);
-				row.Cells.Add(voiceMail.PatientName);
-				row.Cells.Add(voiceMail.UserName);
-				if(checkShowDeleted.Checked) {
-					row.Cells.Add(voiceMail.StatusVM==VoiceMailStatus.Deleted ? "X" : "");
+				foreach(VoiceMail voiceMail in listVoiceMailGroups[i].ListVoiceMails) {
+					row=new GridRow();
+					row.Cells.Add(voiceMail.DateCreated.ToShortDateString()+" "+voiceMail.DateCreated.ToShortTimeString());
+					string phoneField=TelephoneNumbers.AutoFormat(voiceMail.PhoneNumber);
+					if(string.IsNullOrEmpty(phoneField)) {
+						phoneField=Lan.g(this,"Unknown");
+					}
+					row.Cells.Add(phoneField);
+					row.Cells.Add(voiceMail.PatientName);
+					row.Cells.Add(voiceMail.UserName);
+					if(checkShowDeleted.Checked) {
+						row.Cells.Add(voiceMail.StatusVM==VoiceMailStatus.Deleted ? "X" : "");
+					}
+					row.Cells.Add(voiceMail.Note);
+					row.Tag=voiceMail;
+					gridVoiceMails.ListGridRows.Add(row);
 				}
-				row.Cells.Add(voiceMail.Note);
-				row.Tag=voiceMail;
-				gridVoiceMails.ListGridRows.Add(row);
 			}
 			gridVoiceMails.EndUpdate();
 			//Reselect the selected row if necessary
 			if(voiceMailSelected!=null) {
 				for(int i=0;i<gridVoiceMails.ListGridRows.Count;i++) {
-					if(((VoiceMail)gridVoiceMails.ListGridRows[i].Tag).VoiceMailNum==voiceMailSelected.VoiceMailNum) {
-						gridVoiceMails.SetSelected(new Point(selectedCellX,i));
-						if(changedNoteText != null) {//The user has changed the note.
-							gridVoiceMails.ListGridRows[i].Cells[gridVoiceMails.Columns.GetIndex(Lan.g(this,"Note"))].Text=changedNoteText;
-						}
+					if(!(gridVoiceMails.ListGridRows[i].Tag is VoiceMail voiceMail) || voiceMail.VoiceMailNum!=voiceMailSelected.VoiceMailNum) {
+						continue;
+					}
+					gridVoiceMails.SetSelected(new Point(selectedCellX,i));
+					if(changedNoteText!=null) {//The user has changed the note.
+						gridVoiceMails.ListGridRows[i].Cells[gridVoiceMails.Columns.GetIndex(Lan.g(this,"Note"))].Text=changedNoteText;
 					}
 				}
 			}
@@ -172,8 +200,6 @@ namespace OpenDental {
 			labelError.Visible=false;
 			VoiceMail voiceMailCur=gridVoiceMails.SelectedTag<VoiceMail>();
 			if(voiceMailCur==null) {
-				MsgBox.Show(this,"No voice mail selected or there was an issue fetching it");
-				FillGrid();
 				return;
 			}
 			labelDuration.Text=Lan.g(this,"Duration:");
@@ -221,8 +247,6 @@ namespace OpenDental {
 			}
 			VoiceMail voiceMailCur=gridVoiceMails.SelectedTag<VoiceMail>();
 			if(voiceMailCur==null) {
-				MsgBox.Show(this,"No voice mail selected or there was an issue fetching it");
-				FillGrid();
 				return;
 			}
 			VoiceMail voiceMailOld=voiceMailCur.Copy();
@@ -310,7 +334,12 @@ namespace OpenDental {
 			Tasks.Insert(task);
 			Task taskOld=task.Copy();
 			task.UserNum=Security.CurUser.UserNum;
-			task.TaskListNum=Tasks.TriageTaskListNum;
+			if(voiceMailCur.TaskListNum > 0) {
+				task.TaskListNum=voiceMailCur.TaskListNum;
+			}
+			else {
+				task.TaskListNum=Tasks.TriageTaskListNum;
+			}
 			task.DateTimeEntry=voiceMailCur.DateCreated;
 			task.PriorityDefNum=Tasks.TriageBlueNum;
 			task.ObjectType=TaskObjectType.Patient;
@@ -375,6 +404,12 @@ namespace OpenDental {
 			{
 				FormOpenDental.S_SetPhoneStatusAvailable();
 			}
+		}
+
+		private class VoiceMailGroup {
+			public long TaskListNum;
+			public string TaskListPath;
+			public List<VoiceMail> ListVoiceMails;
 		}
 	}
 }

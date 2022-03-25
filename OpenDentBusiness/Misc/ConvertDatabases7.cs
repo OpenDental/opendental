@@ -2648,5 +2648,15 @@ namespace OpenDentBusiness {
 		private static void To22_1_12() {
 			Misc.SecurityHash.UpdateHashing();
 		}//End of 22_1_12() method
+
+		private static void To22_1_16() {
+			string command;
+			//B35292 - Update Lantek's phone number field to be empty if it's still the originally inserted value from 22.1.0.0 conversion.
+			command=@"UPDATE clearinghouse SET 
+				SenderTelephone='' 
+				WHERE Description='Lantek Networks Transmission Service' 
+				AND SenderTelephone='7877877878'";
+			Db.NonQ(command);
+		}//End of 22_1_16() method
 	}
 }

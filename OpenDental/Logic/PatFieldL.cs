@@ -16,7 +16,7 @@ namespace OpenDental {
 				.FindAll(x => x.FieldDefType==FieldDefTypes.Patient);
 			//Add a row for each existing PatFieldDef 
 			foreach(PatFieldDef patFieldDef in listPatFieldDefs) {
-				if(listFieldDefLinks.Exists(x => x.FieldDefNum==patFieldDef.PatFieldDefNum)) {
+				if(listFieldDefLinks.Exists(x => x.FieldDefNum==patFieldDef.PatFieldDefNum && x.FieldDefType==FieldDefTypes.Patient)) {
 					continue;
 				}
 				GridRow row=new GridRow();

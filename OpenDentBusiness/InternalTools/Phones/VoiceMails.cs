@@ -101,53 +101,46 @@ namespace OpenDentBusiness{
 			return listPatNums[0];
 		}
 
-		///<summary>Gets the Voice Mail Origination path for this current computer.</summary>
-		public static string GetVoiceMailOriginationPath() {
+		///<summary>Gets the Voice Mail Origination paths for this current computer.</summary>
+		public static List<VoiceMailPath> GetVoiceMailOriginationPaths(bool hasAll=false) {
+			//No remoting role check; no db call.
+			List<VoiceMailPath> listVoiceMailPaths=new List<VoiceMailPath>();
 			try {
-				//The VoiceMailOriginationPath preference stores a list of KeyValuePairs where the key is the name of the computer and the value
-				//is the path. When JSON-serialized it looks like this:
-				//[{"Key":"SERVER153","Value":"\\\\110.10.6.249\\Voicemail\\default\\998\\INBOX"},{"Key":"CHRISM","Value":"C:\\development"}]
-				List<KeyValuePair<string,string>> listPaths=JsonConvert.DeserializeObject<List<KeyValuePair<string,string>>>
-					(PrefC.GetString(PrefName.VoiceMailOriginationPath));
-				foreach(KeyValuePair<string,string> kvp in listPaths) {
-					if(kvp.Key==Environment.MachineName) {
-						return kvp.Value;
-					}
+				//The VoiceMailOriginationPath preference stores a list of JSON serialized VoiceMailPath objects.
+				listVoiceMailPaths=JsonConvert.DeserializeObject<List<VoiceMailPath>>(PrefC.GetString(PrefName.VoiceMailOriginationPath));
+				if(!hasAll) {
+					listVoiceMailPaths.RemoveAll(x => x.ComputerName!=Environment.MachineName);
 				}
-				return listPaths[0].Value;//Return the first one in the list.
 			}
 			catch(Exception ex) {
 				ex.DoNothing();
-				return Phones.PathPhoneMsg;//If all else fails, return a hard-coded path.
 			}
+			return listVoiceMailPaths;
 		}
 
 		///<summary>Updates the Voice Mail Origination path for this current computer. Returns true if the preference was changed.
 		///This is the ONLY PLACE where the VoiceMailOriginationPath preference should be modified.</summary>
-		public static bool UpdateVoiceMailOriginationPath(string path) {
-			List<KeyValuePair<string,string>> listPaths;
+		public static bool UpdateVoiceMailOriginationPath(List<VoiceMailPath> listVoiceMailPaths,bool hasAll=false) {
+			if(listVoiceMailPaths==null) {
+				return false;
+			}
+			if(hasAll) {
+				//Completely take over the entire preference value if the calling method indicates that they have all voice mail paths.
+				return Prefs.UpdateString(PrefName.VoiceMailOriginationPath,JsonConvert.SerializeObject(listVoiceMailPaths));
+			}
+			//Only update the voice mail paths for the current computer.
+			List<VoiceMailPath> listVoiceMailOriginationPaths;
 			try {
-				//The VoiceMailOriginationPath preference stores a list of KeyValuePairs where the key is the name of the computer and the value
-				//is the path. When JSON-serialized it looks like this:
-				//[{"Key":"SERVER153","Value":"\\\\110.10.6.249\\Voicemail\\default\\998\\INBOX"},{"Key":"CHRISM","Value":"C:\\development"}]
-				listPaths=JsonConvert.DeserializeObject<List<KeyValuePair<string,string>>>
-					(PrefC.GetString(PrefName.VoiceMailOriginationPath));
+				//The VoiceMailOriginationPath preference stores a list of JSON serialized VoiceMailPath objects.
+				listVoiceMailOriginationPaths=JsonConvert.DeserializeObject<List<VoiceMailPath>>(PrefC.GetString(PrefName.VoiceMailOriginationPath));
 			}
 			catch(Exception ex) {//If the preference value was not a well formed JSON list, start over with a new list.
 				ex.DoNothing();
-				listPaths=new List<KeyValuePair<string,string>>();
+				listVoiceMailOriginationPaths=new List<VoiceMailPath>();
 			}
-			bool didUpdatePath=false;
-			for(int i=0;i<listPaths.Count;i++) {
-				if(listPaths[i].Key==Environment.MachineName) {
-					listPaths[i]=new KeyValuePair<string,string>(listPaths[i].Key,path);
-					didUpdatePath=true;
-				}
-			}
-			if(!didUpdatePath) {
-				listPaths.Add(new KeyValuePair<string,string>(Environment.MachineName,path));
-			}
-			return Prefs.UpdateString(PrefName.VoiceMailOriginationPath,JsonConvert.SerializeObject(listPaths));
+			listVoiceMailOriginationPaths.RemoveAll(x => x.ComputerName==Environment.MachineName);
+			listVoiceMailOriginationPaths.AddRange(listVoiceMailPaths);
+			return Prefs.UpdateString(PrefName.VoiceMailOriginationPath,JsonConvert.SerializeObject(listVoiceMailOriginationPaths));
 		}
 
 		///<summary>Deletes all the voice mails and their corresponding files that have a status of Deleted and a DateCreated that is before the passed 

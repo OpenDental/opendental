@@ -575,7 +575,7 @@ namespace OpenDental{
 
 		///<summary>Returns the ApptFieldDef.FieldName with the tag (hidden) if the ApptFieldDef is hidden. Otherwise return the FieldName.</summary>
 		private string MarkFieldNameIfHidden(long apptFieldDefNum) {
-			if(_listFieldDefLinks.Exists(x => x.FieldDefNum==apptFieldDefNum)) {
+			if(_listFieldDefLinks.Exists(x => x.FieldDefNum==apptFieldDefNum && x.FieldDefType==FieldDefTypes.Appointment)) {
 				return ApptFieldDefs.GetFieldName(apptFieldDefNum)+" (Hidden)";
 			}
 			return ApptFieldDefs.GetFieldName(apptFieldDefNum);

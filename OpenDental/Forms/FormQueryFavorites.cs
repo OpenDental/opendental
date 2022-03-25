@@ -44,6 +44,7 @@ namespace OpenDental{
 			if(refreshList) {
 				_listQueries=UserQueries.GetDeepCopy();
 			}
+			bool isAuthorized=Security.IsAuthorized(Permissions.UserQueryAdmin,true);
 			string[] strSearchTerms = Regex.Split(textSearch.Text,@"\W");//matches any non-word character
 			//get all queries that contain ALL of the search terms entered, either in the query text or the query description.
 			List<UserQuery> listDisplayQueries = _listQueries
@@ -58,12 +59,12 @@ namespace OpenDental{
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			gridMain.Columns.Add(new GridColumn(Lan.g(gridMain.TranslationName,"Query"),350));
-			if(Security.IsAuthorized(Permissions.UserQueryAdmin,true)) {
+			if(isAuthorized) {
 				gridMain.Columns.Add(new GridColumn(Lan.g(gridMain.TranslationName,"Released"),55,HorizontalAlignment.Center));
 			}
 			gridMain.ListGridRows.Clear();
 			foreach(UserQuery queryCur in listDisplayQueries) {
-				if(!Security.IsAuthorized(Permissions.UserQueryAdmin,true) && !queryCur.IsReleased) {//not released for reg users
+				if(!isAuthorized && !queryCur.IsReleased) {//not released for reg users
 					continue;
 				}
 				if(!IsQueryAllowed(queryCur)) {
@@ -72,7 +73,7 @@ namespace OpenDental{
 				}
 				GridRow row = new GridRow();
 				row.Cells.Add(queryCur.Description);
-				if(Security.IsAuthorized(Permissions.UserQueryAdmin,true)) {
+				if(isAuthorized) {
 					row.Cells.Add(queryCur.IsReleased ? "X" : "");
 				}
 				row.Tag = queryCur;

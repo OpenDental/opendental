@@ -43,6 +43,7 @@ namespace OpenDental {
 				ex.DoNothing();
 				DialogResult=DialogResult.Cancel;
 				Close();
+				return;
 			}
 			FillMenu();
 			Text=Lan.g(this,"Loading")+"...";

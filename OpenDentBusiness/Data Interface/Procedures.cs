@@ -2469,7 +2469,7 @@ namespace OpenDentBusiness {
 					strLine+=surf+"-";//"UL-"
 					break;
 				case TreatmentArea.Sextant:
-					strLine+="S"+surf+"-";//"S2-"
+					strLine+="S"+Tooth.GetSextant(surf,(ToothNumberingNomenclature)PrefC.GetInt(PrefName.UseInternationalToothNumbers))+"-";//"S2-"
 					break;
 				case TreatmentArea.Arch:
 					strLine+=surf+"-";//"U-"

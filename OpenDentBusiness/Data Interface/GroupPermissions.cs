@@ -638,6 +638,12 @@ namespace OpenDentBusiness{
 			//Remove all permissions for the user group and perm type.
 			string command=$"DELETE FROM grouppermission WHERE UserGroupNum={POut.Long(userGroupNum)} AND PermType={POut.Enum(permType)}";
 			Db.NonQ(command);
+			//AdjustmentTypeDeny is a permission that denies access to a usergroup when they have this permission. When a user clicks 'Set All', they want the user group to have every permission.
+			//This means they want the user group to have access to every adjustment type. So we need to delete all adjustment type deny permissions for this user group, which we do above. 
+			//But we do NOT want to create a 0 FKey perm because that will indicate the user group does not have access to any adjusment type, so we return early.
+			if(permType==Permissions.AdjustmentTypeDeny) {
+				return;
+			}
 			//Insert a new permission with a zero FKey.
 			GroupPermission groupPermission=new GroupPermission();
 			groupPermission.NewerDate=DateTime.MinValue;

@@ -2177,8 +2177,8 @@ namespace OpenDentBusiness {
 		VoiceMailDeleteAfterDays,
 		///<summary>Used by OD HQ. Not added to db convert script. The last time that the voice mail monitoring thread started its monitoring.</summary>
 		VoiceMailMonitorHeartBeat,
-		///<summary>Used by OD HQ. Not added to db convert script. The path where the phone tracking server looks for newly created voice mails
-		///This preference stores a JSON-serialized list of KeyValuePairs holding a path for each computer name.</summary>
+		///<summary>Used by OD HQ. Not added to db convert script. The paths where the phone tracking server looks for newly created voice mails.
+		///This preference stores a JSON-serialized list of VoiceMailPath objects that hold paths for each computer that runs the Phone Tracking Server (PTS) application.</summary>
 		VoiceMailOriginationPath,
 		///<summary>Used by OD HQ.  Not added to db convert script.  Boolean. True if we are using SMB2 and false if we are using SMB1.</summary>
 		VoiceMailSMB2Enabled,

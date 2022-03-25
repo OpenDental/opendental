@@ -687,6 +687,20 @@ namespace OpenDental {
 					continue;
 				}
 				GroupPermissions.DeleteForPermTypeAndUserGroup(permType,userGroupNum);
+				//AdjustmentTypeDeny is a permission that denies access to a usergroup when they have this permission, unlike other permissions which grant access when given to a usergroup.
+				//When a user clicks 'Set None', they do not want the user group to have any permissions, they want to restrict all access. For AdjustmentTypeDeny permission, this means they
+				//do NOT want the user group to have access to any adjustment type. So we need to delete all existing adjustment type deny permissions for this user group, which we do above. 
+				//And we want to create a 0 FKey AdjustmentTypeDeny perm because that will indicate the user group does not have access to any adjusment type.
+				if(permType==Permissions.AdjustmentTypeDeny) {
+					//Insert a new permission with a zero FKey.
+					GroupPermission groupPermission=new GroupPermission();
+					groupPermission.NewerDate=DateTime.MinValue;
+					groupPermission.NewerDays=0;
+					groupPermission.PermType=permType;
+					groupPermission.UserGroupNum=userGroupNum;
+					groupPermission.FKey=0;
+					GroupPermissions.Insert(groupPermission);
+				}
 			}
 			FillTreePerm();
 		}
