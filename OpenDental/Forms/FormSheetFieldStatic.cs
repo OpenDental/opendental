@@ -59,6 +59,11 @@ namespace OpenDental {
 					comboFontName.SetSelected(i);
 				}
 			}
+			if(comboFontName.SelectedIndex==-1) { //The sheetfield's current font is not in the list of installed fonts on this machine
+				//Add the font to the combobox and mark it as missing. That way office can decided to either keep or change the missing font used for this field
+				comboFontName.Items.Add(SheetFieldDefCur.FontName+" (missing)",SheetFieldDefCur.FontName);
+				comboFontName.SetSelected(comboFontName.Items.Count-1);
+			}
 			numFontSize.Value=(decimal)SheetFieldDefCur.FontSize;
 			checkFontIsBold.Checked=SheetFieldDefCur.FontIsBold;
 			SheetUtilL.FillComboGrowthBehavior(comboGrowthBehavior,SheetFieldDefCur.GrowthBehavior);
@@ -176,7 +181,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please set a field value first.");
 				return;
 			}
-			if(comboFontName.GetSelected<string>()==""){
+			if(comboFontName.GetSelected<string>()=="" || comboFontName.GetSelected<string>()==null){
 				//not going to bother testing for validity unless it will cause a crash.
 				MsgBox.Show(this,"Please select a font name first.");
 				return;

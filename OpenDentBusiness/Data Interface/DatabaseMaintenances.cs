@@ -4246,14 +4246,16 @@ namespace OpenDentBusiness {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
 			}
 			string log="";
-			string command;
+			string command="SELECT DISTINCT(FeeSched) FROM patient WHERE patient.PatStatus!="+POut.Int((int)PatientStatus.Deleted);
+			List<long> listPatFeeSchedNums=Db.GetListLong(command);
+			List<long> listFeeSchedNums=new List<long>();
+			if(listPatFeeSchedNums.Count>0) {
+				command="SELECT DISTINCT(FeeSchedNum) FROM feesched WHERE IsHidden=1 AND FeeSchedNum IN ("+string.Join(",",listPatFeeSchedNums)+");";
+				listFeeSchedNums=Db.GetListLong(command);
+			}
 			switch(modeCur) {
 				case DbmMode.Check:
-					command="SELECT COUNT(DISTINCT(FeeSchedNum)) FROM patient "
-						+"INNER JOIN feesched ON patient.FeeSched=feesched.FeeSchedNum "
-						+"WHERE feesched.IsHidden=1 "
-						+"AND patient.PatStatus!="+POut.Int((int)PatientStatus.Deleted)+";";
-					int numFound=PIn.Int(Db.GetCount(command));
+					int numFound=listFeeSchedNums.Count;
 					if(numFound>0 || verbose) {
 						log+=Lans.g("FormDatabaseMaintenance","Hidden Fee Schedules associated to patients: ")+numFound.ToString()+"\r\n";
 					}
@@ -4261,13 +4263,13 @@ namespace OpenDentBusiness {
 				case DbmMode.Fix:
 					List<DbmLog> listDbmLogs=new List<DbmLog>();
 					string methodName=MethodBase.GetCurrentMethod().Name;
-					command="SELECT FeeSchedNum FROM feesched WHERE IsHidden=1 AND FeeSchedNum IN (SELECT FeeSched FROM patient WHERE patient.PatStatus!="+POut.Int((int)PatientStatus.Deleted)+");";
-					List<long> listFeeSchedNums=Db.GetListLong(command);
-					command="UPDATE feesched SET IsHidden=0 "
-						+"WHERE IsHidden=1 AND FeeSchedNum IN (SELECT FeeSched FROM patient WHERE patient.PatStatus!="+POut.Int((int)PatientStatus.Deleted)+");";
-					long numfixed=Db.NonQ(command);
-					listFeeSchedNums.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x,DbmLogFKeyType.FeeSched,
-						DbmLogActionType.Update,methodName,"Updated IsHidden from 1 to 0 from FeeScheduleHiddenWithPatient.")));
+					long numfixed=0;
+					if(listFeeSchedNums.Count>0) {
+						command="UPDATE feesched SET IsHidden=0 WHERE FeeSchedNum IN ("+string.Join(",",listFeeSchedNums)+");";
+						numfixed=Db.NonQ(command);
+						listFeeSchedNums.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x,DbmLogFKeyType.FeeSched,
+							DbmLogActionType.Update,methodName,"Updated IsHidden from 1 to 0 from FeeScheduleHiddenWithPatient.")));
+					}
 					if(numfixed>0 || verbose) {
 						log+=Lans.g("FormDatabaseMaintenance","Hidden Fee Schedules associated to patients unhidden: ")+numfixed.ToString()+"\r\n";
 						Crud.DbmLogCrud.InsertMany(listDbmLogs);

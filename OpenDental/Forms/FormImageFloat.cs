@@ -710,18 +710,20 @@ namespace OpenDental {
 				Document document=GetDocumentShowing(0);
 				xTitle=e.MarginBounds.X+e.MarginBounds.Width/2;
 				yTitle=e.MarginBounds.Top;
-				str=PatientCur.GetNameLF();
-				widthStr=(int)g.MeasureString(str,fontTitle).Width;
-				g.DrawString(str,fontTitle,Brushes.Black,xTitle-widthStr/2,yTitle);
-				yTitle+=fontTitle.Height+4;
-				str="DOB: "+PatientCur.Birthdate.ToShortDateString();
-				widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
-				g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
-				yTitle+=fontSubTitles.Height;
-				str=document.DateCreated.ToShortDateString();
-				widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
-				g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
-				yTitle+=fontSubTitles.Height;
+				if(document.ImgType==ImageType.Radiograph) {
+					str=PatientCur.GetNameLF();
+					widthStr=(int)g.MeasureString(str,fontTitle).Width;
+					g.DrawString(str,fontTitle,Brushes.Black,xTitle-widthStr/2,yTitle);
+					yTitle+=fontTitle.Height+4;
+					str="DOB: "+PatientCur.Birthdate.ToShortDateString();
+					widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
+					g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
+					yTitle+=fontSubTitles.Height;
+					str=document.DateCreated.ToShortDateString();
+					widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
+					g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
+					yTitle+=fontSubTitles.Height;
+				}
 				if(document.ProvNum!=0){
 					str=Providers.GetFormalName(document.ProvNum);
 					widthStr=(int)g.MeasureString(str,fontSubTitles).Width;

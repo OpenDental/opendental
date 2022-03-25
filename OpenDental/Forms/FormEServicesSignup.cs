@@ -43,6 +43,7 @@ namespace OpenDental {
 				ex.DoNothing();
 				DialogResult=DialogResult.Cancel;
 				Close();
+				return;
 			}
 			if(_signupOut==null){
 				_signupOut=FormEServicesSetup.GetSignupOut();

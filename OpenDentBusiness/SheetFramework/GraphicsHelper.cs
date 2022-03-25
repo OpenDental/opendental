@@ -44,13 +44,21 @@ namespace OpenDentBusiness {
 			#region Text Clipping
 			//For multi-line textboxes, clip vertically to remove lines which extend beyond the bottom of the field.
 			if(isClipText && textbox.Text.Length > 0 && textbox.Multiline) {
-				List <RichTextLineInfo> listLines=GetTextSheetDisplayLines(textbox);
-				int fitLineIndex=listLines.Count-1;//Line numbers are zero-based.
-				while(fitLineIndex >= 0	&& listLines[fitLineIndex].Top+textbox.Font.Height-1 > textbox.Height) {//if bottom of line is past bottom of textbox
-					fitLineIndex--;
-				}
-				if(fitLineIndex < listLines.Count-1) {//If at least one line was truncated from the bottom.
-					textbox.Text=textbox.Text.Substring(0,listLines[fitLineIndex+1].FirstCharIndex);//Truncate text to the end of the fit line.
+				List<RichTextLineInfo> listLines=GetTextSheetDisplayLines(textbox);
+				//Only clip text from a multiline text box when there is more than one line of text.
+				if(listLines.Count > 1) {
+					int fitLineIndex=listLines.Count-1;//Line numbers are zero-based.
+					while(fitLineIndex >= 0	&& listLines[fitLineIndex].Top+textbox.Font.Height-1 > textbox.Height) {//if bottom of line is past bottom of textbox
+						fitLineIndex--;
+					}
+					if(fitLineIndex < 0) {//Every single line of text falls below the bottom of the field (the sheet field is too small for the font).
+						//Always show the first line of text regardless of the bounds of the control. A user will never purposefully make a sheet def with an invisible text box.
+						//Also, we know that there are at least 2 lines of text in the text box so hard code the Text property to the very first line of text.
+						textbox.Text=textbox.Text.Substring(0,listLines[1].FirstCharIndex);//Truncate text after the very first line of text.
+					}
+					else if(fitLineIndex < listLines.Count-1) {//If at least one line was truncated from the bottom.
+						textbox.Text=textbox.Text.Substring(0,listLines[fitLineIndex+1].FirstCharIndex);//Truncate text to the end of the fit line.
+					}
 				}
 			}
 			//For single-line textboxes, clip the text to the width of the textbox.  This forces the display to look the same on screen as when printed.

@@ -71,12 +71,8 @@ namespace OpenDental{
 			}
 			//An appointment view is selected, so add provs and ops from the view to our lists of indexes.
 			else {
-				List<FieldDefLink> listFieldDefLinks=FieldDefLinks.GetAll();
 				List<ApptViewItem> listApptViewItems=ApptViewItems.GetWhere(x => x.ApptViewNum==apptViewCur.ApptViewNum);
 				for(int i=0;i<listApptViewItems.Count;i++) {
-					if(listFieldDefLinks.Exists(x => x.FieldDefNum==listApptViewItems[i].ApptFieldDefNum)) {
-						continue;//Don't show hidden ApptFieldDef items
-					}
 					forCurView.Add(listApptViewItems[i]);
 					if(listApptViewItems[i].OpNum>0) {//op
 						if(apptViewCur.OnlyScheduledProvs && !isWeekly) {

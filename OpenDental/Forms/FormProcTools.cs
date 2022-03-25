@@ -165,7 +165,7 @@ namespace OpenDental{
 					rowsInserted+=FormProcCodes.ImportProcCodes("",_codeList,"");
 					Changed=true;
 					int procCodesFixed=ProcedureCodes.ResetADAdescriptionsAndAbbrs();
-					MessageBox.Show(Lan.g(this,"Procedures codes with descriptions or abbreviations updated:")+" "+procCodesFixed.ToString());
+					MessageBox.Show(Lan.g(this,"Procedure codes with descriptions or abbreviations updated:")+" "+procCodesFixed.ToString());
 				}
 				catch(ApplicationException ex) {
 					MessageBox.Show(ex.Message);
