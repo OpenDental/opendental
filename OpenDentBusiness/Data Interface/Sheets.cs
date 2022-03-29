@@ -32,6 +32,18 @@ namespace OpenDentBusiness{
 			return sheet;
 		}
 
+		///<summary>Gets a list of Sheets from the database. The sheets returned will not have SheetFields.</summary>
+		public static List<Sheet> GetSheets(List<long> listSheetNums) {
+			if(listSheetNums.IsNullOrEmpty()) {
+				return new List<Sheet>();
+			}
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				return Meth.GetObject<List<Sheet>>(MethodBase.GetCurrentMethod(),listSheetNums);
+			}
+			string command="SELECT * FROM sheet WHERE SheetNum IN ("+string.Join(",",listSheetNums.Select(x => POut.Long(x)))+")";
+			return Crud.SheetCrud.SelectMany(command);
+		}
+
 		///<Summary>This is normally done in FormSheetFillEdit, but if we bypass that window for some reason, we can also save a new sheet here. Signature
 		///fields are inserted as they are, so they must be keyed to the field values already. Saves the sheet and sheetfields exactly as they are. Used by
 		///webforms, for example, when a sheet is retrieved from the web server and the sheet signatures have already been keyed to the field values and

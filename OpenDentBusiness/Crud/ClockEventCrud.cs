@@ -65,6 +65,7 @@ namespace OpenDentBusiness.Crud{
 				clockEvent.ClinicNum         = PIn.Long  (row["ClinicNum"].ToString());
 				clockEvent.Rate3Hours        = PIn.TSpan (row["Rate3Hours"].ToString());
 				clockEvent.Rate3Auto         = PIn.TSpan (row["Rate3Auto"].ToString());
+				clockEvent.IsWorkingHome     = PIn.Bool  (row["IsWorkingHome"].ToString());
 				retVal.Add(clockEvent);
 			}
 			return retVal;
@@ -94,6 +95,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("ClinicNum");
 			table.Columns.Add("Rate3Hours");
 			table.Columns.Add("Rate3Auto");
+			table.Columns.Add("IsWorkingHome");
 			foreach(ClockEvent clockEvent in listClockEvents) {
 				table.Rows.Add(new object[] {
 					POut.Long  (clockEvent.ClockEventNum),
@@ -114,6 +116,7 @@ namespace OpenDentBusiness.Crud{
 					POut.Long  (clockEvent.ClinicNum),
 					POut.Time  (clockEvent.Rate3Hours,false),
 					POut.Time  (clockEvent.Rate3Auto,false),
+					POut.Bool  (clockEvent.IsWorkingHome),
 				});
 			}
 			return table;
@@ -133,7 +136,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="ClockEventNum,";
 			}
-			command+="EmployeeNum,TimeEntered1,TimeDisplayed1,ClockStatus,Note,TimeEntered2,TimeDisplayed2,OTimeHours,OTimeAuto,Adjust,AdjustAuto,AdjustIsOverridden,Rate2Hours,Rate2Auto,ClinicNum,Rate3Hours,Rate3Auto) VALUES(";
+			command+="EmployeeNum,TimeEntered1,TimeDisplayed1,ClockStatus,Note,TimeEntered2,TimeDisplayed2,OTimeHours,OTimeAuto,Adjust,AdjustAuto,AdjustIsOverridden,Rate2Hours,Rate2Auto,ClinicNum,Rate3Hours,Rate3Auto,IsWorkingHome) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(clockEvent.ClockEventNum)+",";
 			}
@@ -154,7 +157,8 @@ namespace OpenDentBusiness.Crud{
 				+"'"+POut.TSpan (clockEvent.Rate2Auto)+"',"
 				+    POut.Long  (clockEvent.ClinicNum)+","
 				+"'"+POut.TSpan (clockEvent.Rate3Hours)+"',"
-				+"'"+POut.TSpan (clockEvent.Rate3Auto)+"')";
+				+"'"+POut.TSpan (clockEvent.Rate3Auto)+"',"
+				+    POut.Bool  (clockEvent.IsWorkingHome)+")";
 			if(clockEvent.Note==null) {
 				clockEvent.Note="";
 			}
@@ -183,7 +187,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="ClockEventNum,";
 			}
-			command+="EmployeeNum,TimeEntered1,TimeDisplayed1,ClockStatus,Note,TimeEntered2,TimeDisplayed2,OTimeHours,OTimeAuto,Adjust,AdjustAuto,AdjustIsOverridden,Rate2Hours,Rate2Auto,ClinicNum,Rate3Hours,Rate3Auto) VALUES(";
+			command+="EmployeeNum,TimeEntered1,TimeDisplayed1,ClockStatus,Note,TimeEntered2,TimeDisplayed2,OTimeHours,OTimeAuto,Adjust,AdjustAuto,AdjustIsOverridden,Rate2Hours,Rate2Auto,ClinicNum,Rate3Hours,Rate3Auto,IsWorkingHome) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(clockEvent.ClockEventNum)+",";
 			}
@@ -204,7 +208,8 @@ namespace OpenDentBusiness.Crud{
 				+"'"+POut.TSpan (clockEvent.Rate2Auto)+"',"
 				+    POut.Long  (clockEvent.ClinicNum)+","
 				+"'"+POut.TSpan (clockEvent.Rate3Hours)+"',"
-				+"'"+POut.TSpan (clockEvent.Rate3Auto)+"')";
+				+"'"+POut.TSpan (clockEvent.Rate3Auto)+"',"
+				+    POut.Bool  (clockEvent.IsWorkingHome)+")";
 			if(clockEvent.Note==null) {
 				clockEvent.Note="";
 			}
@@ -237,7 +242,8 @@ namespace OpenDentBusiness.Crud{
 				+"Rate2Auto         = '"+POut.TSpan (clockEvent.Rate2Auto)+"', "
 				+"ClinicNum         =  "+POut.Long  (clockEvent.ClinicNum)+", "
 				+"Rate3Hours        = '"+POut.TSpan (clockEvent.Rate3Hours)+"', "
-				+"Rate3Auto         = '"+POut.TSpan (clockEvent.Rate3Auto)+"' "
+				+"Rate3Auto         = '"+POut.TSpan (clockEvent.Rate3Auto)+"', "
+				+"IsWorkingHome     =  "+POut.Bool  (clockEvent.IsWorkingHome)+" "
 				+"WHERE ClockEventNum = "+POut.Long(clockEvent.ClockEventNum);
 			if(clockEvent.Note==null) {
 				clockEvent.Note="";
@@ -314,6 +320,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="Rate3Auto = '"+POut.TSpan (clockEvent.Rate3Auto)+"'";
 			}
+			if(clockEvent.IsWorkingHome != oldClockEvent.IsWorkingHome) {
+				if(command!="") { command+=",";}
+				command+="IsWorkingHome = "+POut.Bool(clockEvent.IsWorkingHome)+"";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -377,6 +387,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(clockEvent.Rate3Auto != oldClockEvent.Rate3Auto) {
+				return true;
+			}
+			if(clockEvent.IsWorkingHome != oldClockEvent.IsWorkingHome) {
 				return true;
 			}
 			return false;

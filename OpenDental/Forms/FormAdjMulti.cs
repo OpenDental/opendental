@@ -278,7 +278,8 @@ namespace OpenDental {
 			PaymentEdit.ConstructResults constructResults=PaymentEdit.ConstructAndLinkChargeCredits(_patient.PatNum,
 				listPatNums:ListTools.FromSingle(_patient.PatNum),
 				isIncomeTxfr:!radioIncludeAll.Checked,
-				loadData:_loadData);
+				loadData:_loadData,
+				hasInsOverpay:true);
 			//Manually add the adjustments that were added within this window to the list of account entries.
 			constructResults.ListAccountEntries.AddRange(_listAdjustments.Select(x => new AccountEntry(x)));
 			//Project the list of account entries into helper objects after grouping them up by procedures. Unassigned adjustments should show last.

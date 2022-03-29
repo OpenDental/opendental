@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -49,7 +49,6 @@ namespace OpenDental {
 			this.butRefresh = new OpenDental.UI.Button();
 			this.groupItrans = new OpenDental.UI.GroupBoxOD();
 			this.checkItransMissing = new System.Windows.Forms.CheckBox();
-			this.checkItransName = new System.Windows.Forms.CheckBox();
 			this.checkItransAddress = new System.Windows.Forms.CheckBox();
 			this.checkITransPhone = new System.Windows.Forms.CheckBox();
 			this.textElectId = new System.Windows.Forms.TextBox();
@@ -62,9 +61,9 @@ namespace OpenDental {
 			this.butAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butAdd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAdd.Location = new System.Drawing.Point(830, 435);
+			this.butAdd.Location = new System.Drawing.Point(820, 435);
 			this.butAdd.Name = "butAdd";
-			this.butAdd.Size = new System.Drawing.Size(90, 26);
+			this.butAdd.Size = new System.Drawing.Size(80, 24);
 			this.butAdd.TabIndex = 7;
 			this.butAdd.Text = "&Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
@@ -72,9 +71,9 @@ namespace OpenDental {
 			// butCombine
 			// 
 			this.butCombine.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCombine.Location = new System.Drawing.Point(830, 471);
+			this.butCombine.Location = new System.Drawing.Point(820, 471);
 			this.butCombine.Name = "butCombine";
-			this.butCombine.Size = new System.Drawing.Size(90, 26);
+			this.butCombine.Size = new System.Drawing.Size(80, 24);
 			this.butCombine.TabIndex = 8;
 			this.butCombine.Text = "Co&mbine";
 			this.toolTip1.SetToolTip(this.butCombine, "Combines multiple Employers");
@@ -82,9 +81,9 @@ namespace OpenDental {
 			// 
 			// butItransUpdateCarriers
 			// 
-			this.butItransUpdateCarriers.Location = new System.Drawing.Point(8, 94);
+			this.butItransUpdateCarriers.Location = new System.Drawing.Point(8, 76);
 			this.butItransUpdateCarriers.Name = "butItransUpdateCarriers";
-			this.butItransUpdateCarriers.Size = new System.Drawing.Size(90, 26);
+			this.butItransUpdateCarriers.Size = new System.Drawing.Size(90, 24);
 			this.butItransUpdateCarriers.TabIndex = 4;
 			this.butItransUpdateCarriers.Text = "Update Carriers";
 			this.toolTip1.SetToolTip(this.butItransUpdateCarriers, "Updates carriers using iTrans 2.0");
@@ -93,9 +92,9 @@ namespace OpenDental {
 			// butCancel
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(830, 623);
+			this.butCancel.Location = new System.Drawing.Point(820, 623);
 			this.butCancel.Name = "butCancel";
-			this.butCancel.Size = new System.Drawing.Size(90, 26);
+			this.butCancel.Size = new System.Drawing.Size(80, 24);
 			this.butCancel.TabIndex = 11;
 			this.butCancel.Text = "Close";
 			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
@@ -157,9 +156,9 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(830, 587);
+			this.butOK.Location = new System.Drawing.Point(820, 587);
 			this.butOK.Name = "butOK";
-			this.butOK.Size = new System.Drawing.Size(90, 26);
+			this.butOK.Size = new System.Drawing.Size(80, 24);
 			this.butOK.TabIndex = 10;
 			this.butOK.Text = "OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
@@ -196,39 +195,28 @@ namespace OpenDental {
 			// 
 			this.groupItrans.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.groupItrans.Controls.Add(this.checkItransMissing);
-			this.groupItrans.Controls.Add(this.checkItransName);
 			this.groupItrans.Controls.Add(this.checkItransAddress);
 			this.groupItrans.Controls.Add(this.checkITransPhone);
 			this.groupItrans.Controls.Add(this.butItransUpdateCarriers);
 			this.groupItrans.Location = new System.Drawing.Point(812, 29);
 			this.groupItrans.Name = "groupItrans";
-			this.groupItrans.Size = new System.Drawing.Size(106, 125);
+			this.groupItrans.Size = new System.Drawing.Size(106, 105);
 			this.groupItrans.TabIndex = 6;
-			this.groupItrans.TabStop = false;
-			this.groupItrans.Text = "Web Import";
+			this.groupItrans.Text = "Itrans Web Import";
 			this.groupItrans.Visible = false;
 			// 
 			// checkItransMissing
 			// 
-			this.checkItransMissing.Location = new System.Drawing.Point(8, 73);
+			this.checkItransMissing.Location = new System.Drawing.Point(8, 55);
 			this.checkItransMissing.Name = "checkItransMissing";
 			this.checkItransMissing.Size = new System.Drawing.Size(90, 17);
 			this.checkItransMissing.TabIndex = 3;
 			this.checkItransMissing.Text = "Add Missing";
 			this.checkItransMissing.UseVisualStyleBackColor = true;
 			// 
-			// checkItransName
-			// 
-			this.checkItransName.Location = new System.Drawing.Point(8, 19);
-			this.checkItransName.Name = "checkItransName";
-			this.checkItransName.Size = new System.Drawing.Size(90, 17);
-			this.checkItransName.TabIndex = 0;
-			this.checkItransName.Text = "Name";
-			this.checkItransName.UseVisualStyleBackColor = true;
-			// 
 			// checkItransAddress
 			// 
-			this.checkItransAddress.Location = new System.Drawing.Point(8, 37);
+			this.checkItransAddress.Location = new System.Drawing.Point(8, 19);
 			this.checkItransAddress.Name = "checkItransAddress";
 			this.checkItransAddress.Size = new System.Drawing.Size(90, 16);
 			this.checkItransAddress.TabIndex = 1;
@@ -237,7 +225,7 @@ namespace OpenDental {
 			// 
 			// checkITransPhone
 			// 
-			this.checkITransPhone.Location = new System.Drawing.Point(8, 55);
+			this.checkITransPhone.Location = new System.Drawing.Point(8, 37);
 			this.checkITransPhone.Name = "checkITransPhone";
 			this.checkITransPhone.Size = new System.Drawing.Size(90, 17);
 			this.checkITransPhone.TabIndex = 2;
@@ -310,7 +298,6 @@ namespace OpenDental {
 		private UI.Button butItransUpdateCarriers;
 		private OpenDental.UI.GroupBoxOD groupItrans;
 		private CheckBox checkITransPhone;
-		private CheckBox checkItransName;
 		private CheckBox checkItransAddress;
 		private CheckBox checkItransMissing;
 		public TextBox textElectId;

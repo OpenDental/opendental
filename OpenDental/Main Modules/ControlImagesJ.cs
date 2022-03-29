@@ -2314,7 +2314,6 @@ namespace OpenDental
 				if(!IsMountShowing()){//single
 					break;
 				}
-				SetCropPanAdj(EnumCropPanAdj.Adj);
 			}
 		}
 

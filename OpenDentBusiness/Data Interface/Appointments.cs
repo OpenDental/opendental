@@ -2459,17 +2459,17 @@ namespace OpenDentBusiness{
 			return Crud.AppointmentCrud.SelectMany(command);
 		}
 
-		///<summary>Used by API.</summary>
+		///<summary>Used by API. Gets appointments in a date range based on ProvNum or ProvHyg.</summary>
 		public static List<Appointment> GetForProv(DateTime startDate,DateTime endDate,long provNum) {
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
 				return Meth.GetObject<List<Appointment>>(MethodBase.GetCurrentMethod(),startDate,endDate,provNum);
 			}
 			string command=
 				"SELECT * FROM appointment "
-				+"WHERE AptDateTime BETWEEN "+POut.Date(startDate)+" AND "+POut.Date(endDate.AddDays(1))+" "//between is inclusive. Midnight to midnight
+				+"WHERE AptDateTime BETWEEN "+POut.Date(startDate)+" AND "+POut.Date(endDate.AddDays(1))+" "//Between is inclusive. Midnight to midnight.
 				+"AND AptStatus != '"+(int)ApptStatus.UnschedList+"' "
 				+"AND AptStatus != '"+(int)ApptStatus.Planned+"' "
-				+"AND ProvNum="+POut.Long(provNum);
+				+"AND (ProvNum="+POut.Long(provNum)+" OR ProvHyg="+POut.Long(provNum)+")";
 			return Crud.AppointmentCrud.SelectMany(command);
 		}
 

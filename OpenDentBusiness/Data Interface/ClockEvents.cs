@@ -255,7 +255,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Will throw an exception if already clocked in.</summary>
-		public static void ClockIn(long employeeNum) {
+		public static void ClockIn(long employeeNum,bool isAtHome) {
 			TimeSpan minClockInTime=TimeCardRules.GetWhere(x => ListTools.In(x.EmployeeNum,0,employeeNum) && x.MinClockInTime!=TimeSpan.Zero)
 				.OrderBy(x => x.MinClockInTime).FirstOrDefault()?.MinClockInTime??TimeSpan.Zero;
 			if(DateTime.Now.TimeOfDay<minClockInTime) {
@@ -268,6 +268,7 @@ namespace OpenDentBusiness{
 				clockEvent.EmployeeNum=employeeNum;
 				clockEvent.ClockStatus=TimeClockStatus.Home;
 				clockEvent.ClinicNum=Clinics.ClinicNum;
+				clockEvent.IsWorkingHome=isAtHome;
 				ClockEvents.Insert(clockEvent);//times handled
 			}
 			else if(clockEvent.ClockStatus==TimeClockStatus.Break) {//only incomplete breaks will have been returned.
@@ -280,6 +281,13 @@ namespace OpenDentBusiness{
         }
 				clockEvent.TimeDisplayed2=clockEvent.TimeEntered2;
 				ClockEvents.Update(clockEvent);
+				if(clockEvent.IsWorkingHome != isAtHome) { //If coming back from break, and switching locations between home / office
+					System.Threading.Thread.Sleep(1000); // Needed to maintain that the end of a break, and the clock out doesnt happen at the same second, and break the calc daily functionality.
+					ClockOut(employeeNum,TimeClockStatus.Home); //Home means not lunch or break is being counted.
+					ClockIn(employeeNum,isAtHome);//Clock in to start new clockEvent from new location.
+					return; // ensure we dont make 2 security logs for clocking in by hitting the end of this method twice.
+				}
+
       }
 			else {//normal clock in/out
 				if(clockEvent.TimeDisplayed2.Year<1880) {//already clocked in
@@ -291,6 +299,7 @@ namespace OpenDentBusiness{
 					clockEvent.EmployeeNum=employeeNum;
 					clockEvent.ClockStatus=tcs;
 					clockEvent.ClinicNum=Clinics.ClinicNum;
+					clockEvent.IsWorkingHome=isAtHome;
 					ClockEvents.Insert(clockEvent);//times handled
 				}
 			}
@@ -315,10 +324,12 @@ namespace OpenDentBusiness{
 			if(clockStatus==TimeClockStatus.Break) {//clocking out on break
 				//leave the half-finished event alone and start a new one
 				long clinicNum=clockEvent.ClinicNum;
+				bool isWorkingHome=clockEvent.IsWorkingHome;
 				clockEvent=new ClockEvent();
 				clockEvent.EmployeeNum=employeeNum;
 				clockEvent.ClockStatus=TimeClockStatus.Break;
 				clockEvent.ClinicNum=clinicNum;
+				clockEvent.IsWorkingHome=isWorkingHome;
 				ClockEvents.Insert(clockEvent);//times handled
 			}
 			else {//finish the existing event

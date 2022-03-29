@@ -2795,6 +2795,20 @@ namespace OpenDentBusiness{
 			return ClaimProcCrud.SelectMany(command);
 		}
 
+		///<summary>Returns true if the entire list of ProcNums are attached to the claim, otherwise returns false.</summary>
+		public static bool AreAllAttachedToClaim(long claimNum,List<long> listProcNums) {
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				return Meth.GetObject<bool>(MethodBase.GetCurrentMethod(),claimNum,listProcNums);
+			}
+			string command="SELECT COUNT(*) FROM claimproc WHERE ClaimNum ="+POut.Long(claimNum)
+				+" AND ProcNum IN("+string.Join(",",listProcNums.Select(x => POut.Long(x)))+") ";
+			long numClaimProcsAttached=PIn.Long(Db.GetCount(command));
+			if(numClaimProcsAttached!=listProcNums.Count()) {
+				return false;
+			}
+			return true;
+		}
+
 		///<summary>Attempts to set ProvNum on each supplied ClaimProc to the ProvNum on the supplied Procedure. Does not update database.
 		///Returns true if all ClaimProcs are set to the ProvNum. Returns false if at least one ClaimProc was not set, due to the Procedure being 
 		///attached to a Claim and PrefName.ProcProvChangesClaimProcWithClaim being false.</summary>

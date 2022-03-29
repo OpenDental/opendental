@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDocumentation.xsl"?>
-<database version="22.1.16.0">
+<database version="22.1.17.0">
     <table name="account">
         <summary>Used in the accounting section in chart of accounts.  Not related to patient accounts in any way.</summary>
         <column order="0" name="AccountNum" type="bigint(20)">
@@ -3127,6 +3127,9 @@
         </column>
         <column order="17" name="Rate3Auto" type="time">
             <summary>Automatically calculated Rate3 pay.  Will be zero if none.</summary>
+        </column>
+        <column order="18" name="IsWorkingHome" type="tinyint(4)">
+            <summary>True if the Clock Event is made by choosing "Available at Home" when clocking in. Will be false if "Available At Office" is selected instead.</summary>
         </column>
     </table>
     <table name="cloudaddress">

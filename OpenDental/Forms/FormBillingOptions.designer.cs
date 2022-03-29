@@ -304,6 +304,7 @@ namespace OpenDental {
 			this.checkExcludeInsPending.TabIndex = 5;
 			this.checkExcludeInsPending.Text = "Exclude if insurance pending";
 			this.checkExcludeInsPending.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkExcludeInsPending.Click += new System.EventHandler(this.checkExcludeInsPending_Click);
 			// 
 			// checkIncludeChanged
 			// 

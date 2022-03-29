@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using System.Reflection;
 
 namespace OpenDentBusiness{
@@ -153,6 +154,69 @@ namespace OpenDentBusiness{
 			return f1.YPos.CompareTo(f2.YPos);
 			//return f1.SheetFieldNum.CompareTo(f2.SheetFieldNum);
 		}
+
+		public static List<SheetFieldDef> GetRadioGroupForSheetFieldDef(SheetFieldDef sheetFieldDef,List<SheetFieldDef> listSheetFields){
+			List<SheetFieldDef> retVal=new List<SheetFieldDef>();
+			//Each SheetFieldDef item goes into the panel of available fields.
+			//Only mobile-friendly fields.
+			List<SheetFieldDef> mobileFields=listSheetFields.Where(x => SheetFieldDefs.IsMobileFieldType(x.FieldType,x.TabOrderMobile,x.FieldName)).ToList();
+			//2 different ways that fields can be grouped for radio groups so make a super-set of both styles.
+			Func<SheetFieldDef,bool> criteria1=new Func<SheetFieldDef, bool>((x) => {
+				//Misc and it has a RadioButtonGroup.						
+				return x.FieldName=="misc" && !string.IsNullOrEmpty(x.RadioButtonGroup);
+			});
+			Func<SheetFieldDef,bool> criteria2=new Func<SheetFieldDef, bool>((x) => {
+				//Not misc but it has a RadioButtonValue.						
+				return x.FieldName!="misc" && !x.FieldName.Contains("checkMed") && !string.IsNullOrEmpty(x.RadioButtonValue);
+			});
+			List<SheetFieldDef> radioGroupsSuperSet=mobileFields
+				.Where(x => x.FieldType==SheetFieldType.CheckBox)
+				.Where(x => criteria1(x) || criteria2(x))
+				//Sort each group by TabOrderMobile.
+				.OrderBy(x => x.TabOrderMobile)
+				.ToList();
+			//The first way.
+			List<SheetFieldDef> radioFields1=radioGroupsSuperSet
+				.Where(x => criteria1(x))
+				.ToList();
+			//The second way.
+			List<SheetFieldDef> radioFields2=radioGroupsSuperSet
+				//Don't include any fields that have already been handled above.
+				.Where(x => criteria2(x))
+				.ToList();
+			List<SheetFieldDef> checkboxGroups=mobileFields
+				.Except(radioFields1.Union(radioFields2))
+				.Where(x=> x.FieldName=="misc" && x.FieldType==SheetFieldType.CheckBox && !string.IsNullOrEmpty(x.UiLabelMobile) && string.IsNullOrEmpty(x.RadioButtonGroup))
+				.ToList();
+			if(radioFields1.Any(x => CompareSheetFieldDefsByValueForMobileLayout(x,sheetFieldDef))) {
+				retVal=radioFields1.GroupBy(x => x.RadioButtonGroup).Where(x=>x.Key==sheetFieldDef.RadioButtonGroup).SelectMany(x=>x).ToList();
+			}
+			else if(radioFields2.Any(x => CompareSheetFieldDefsByValueForMobileLayout(x,sheetFieldDef))) {
+				retVal=radioFields2.GroupBy(x => x.FieldName).Where(x=>x.Key==sheetFieldDef.FieldName).SelectMany(x=>x).ToList();
+			}
+			else if(checkboxGroups.Any(x => CompareSheetFieldDefsByValueForMobileLayout(x,sheetFieldDef))) {
+				retVal=checkboxGroups.GroupBy(x => x.UiLabelMobile).Where(x=>x.Key==sheetFieldDef.UiLabelMobile).SelectMany(x=>x).ToList();
+			}
+			if(retVal.Count<=1) {
+				retVal=new List<SheetFieldDef>();
+			}
+			return retVal;
+		}
+
+		/// <summary>Compares sheet fields by value. Returns true if properties are the same, false otherwise. Omits compairing tab ordering, and location.</summary>
+		public static bool CompareSheetFieldDefsByValueForMobileLayout(SheetFieldDef sheetFieldDefA, SheetFieldDef sheetFieldDefB,bool ignoreLanguage=false) {
+			return (ignoreLanguage || sheetFieldDefA.SheetDefNum==sheetFieldDefB.SheetDefNum)
+				&& (ignoreLanguage || sheetFieldDefA.SheetFieldDefNum==sheetFieldDefB.SheetFieldDefNum) //For new sheet fields this will be 0, hence needing to compare all other fields.
+				&& sheetFieldDefA.FieldName==sheetFieldDefB.FieldName
+				&& sheetFieldDefA.FieldType==sheetFieldDefB.FieldType
+				&& sheetFieldDefA.FieldValue==sheetFieldDefB.FieldValue
+				&& sheetFieldDefA.RadioButtonGroup==sheetFieldDefB.RadioButtonGroup
+				&& sheetFieldDefA.RadioButtonValue==sheetFieldDefB.RadioButtonValue
+				&& (ignoreLanguage || sheetFieldDefA.Language==sheetFieldDefB.Language)
+				&& sheetFieldDefA.UiLabelMobile==sheetFieldDefB.UiLabelMobile
+				&& sheetFieldDefA.UiLabelMobileRadioButton==sheetFieldDefB.UiLabelMobileRadioButton;
+		}
+
 
 		///<summary>This is a comparator function used by List&lt;T&gt;.Sort() 
 		///When compairing SheetFieldDef.TabOrder it returns a negative number if def1&lt;def2, 0 if def1==def2, and a positive number if def1&gt;def2.

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
+using CodeBase;
 
 namespace OpenDentBusiness{
   ///<summary></summary>
@@ -403,6 +404,19 @@ namespace OpenDentBusiness{
 				return;
 			}
 			string command="DELETE FROM screen WHERE SheetNum="+POut.Long(sheetNum);
+			Db.NonQ(command);
+		}
+
+		/// <summary>Deletes a list of Screens.</summary>
+		public static void DeleteScreens(List<long> listScreenNums) {
+			if(listScreenNums.IsNullOrEmpty()) {
+				return;
+			}
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(), listScreenNums);
+				return;
+			}
+			string command="DELETE FROM screen WHERE ScreenNum IN ("+string.Join(",",listScreenNums.Select(x => POut.Long(x)))+")";
 			Db.NonQ(command);
 		}
 	}

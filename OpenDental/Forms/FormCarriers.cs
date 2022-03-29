@@ -65,7 +65,6 @@ namespace OpenDental{
 				ItransImportFields itransImportFields=(ItransImportFields)PrefC.GetInt(PrefName.ItransImportFields);
 				checkITransPhone.Checked=(itransImportFields.HasFlag(ItransImportFields.Phone));
 				checkItransAddress.Checked=(itransImportFields.HasFlag(ItransImportFields.Address));
-				checkItransName.Checked=(itransImportFields.HasFlag(ItransImportFields.Name));
 				checkItransMissing.Checked=(itransImportFields.HasFlag(ItransImportFields.AddMissing));
 			}
 			Carriers.RefreshCache();
@@ -245,13 +244,9 @@ namespace OpenDental{
 				itransImportFields=(itransImportFields|ItransImportFields.Address);
 				listFields.Add(Lans.g(this,"Address"));
 			}
-			if(checkItransName.Checked) {
-				itransImportFields=(itransImportFields|ItransImportFields.Name);
-				listFields.Add(Lans.g(this,"Name"));
-			}
 			StringBuilder stringBuilder=new StringBuilder();
 			if(listFields.Count>0) {
-				stringBuilder.Insert(0,Lans.g(this,"The following carrier fields will be updated and overwritten for carriers matched by their Electronic IDs:")
+				stringBuilder.Insert(0,Lans.g(this,"The following carrier fields will be imported when missing for carriers matched by their Electronic IDs:")
 				+" "+string.Join(", ",listFields)
 				+"\r\n");
 			}

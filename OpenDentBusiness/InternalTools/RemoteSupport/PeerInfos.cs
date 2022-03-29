@@ -45,12 +45,10 @@ namespace OpenDentBusiness {
 				return;
 			}
 			//Set the EmployeeNum field for every peer that represents an employee. Employees use work email addresses as user names.
-			Dictionary<string,Employee> dictEmailWorkEmployees=Employees.GetDeepCopy(true)
-				.Where(x => !string.IsNullOrWhiteSpace(x.EmailWork))
-				.GroupBy(x => x.EmailWork)
-				.ToDictionary(x => x.Key.Trim().ToLower(),x => x.First());
 			for(int i=0;i<listPeerInfos.Count;i++) {
-				if(dictEmailWorkEmployees.TryGetValue(listPeerInfos[i].UserName.Trim().ToLower(),out Employee employee)) {
+				string userName=listPeerInfos[i].UserName.Trim().ToLower();
+				Employee employee=Employees.GetFirstOrDefault(x => x.EmailWork.Trim().ToLower()==userName);
+				if(employee!=null) {
 					listPeerInfos[i].EmployeeNum=employee.EmployeeNum;
 				}
 			}

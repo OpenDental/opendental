@@ -2658,5 +2658,14 @@ namespace OpenDentBusiness {
 				AND SenderTelephone='7877877878'";
 			Db.NonQ(command);
 		}//End of 22_1_16() method
+
+		private static void To22_1_17() {
+			string command;
+			//H35078 - WFH ClockEvents
+			command="ALTER TABLE clockevent ADD IsWorkingHome tinyint NOT NULL";
+			Db.NonQ(command);
+		}//End of 22_1_17() method
+
 	}
 }
+

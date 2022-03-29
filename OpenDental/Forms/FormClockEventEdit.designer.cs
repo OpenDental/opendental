@@ -82,6 +82,7 @@ namespace OpenDental {
 			this.label18 = new System.Windows.Forms.Label();
 			this.textNote = new OpenDental.ODtextBox();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
+			this.checkIsWorkingHome = new System.Windows.Forms.CheckBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupTimeSpans.SuspendLayout();
@@ -177,7 +178,7 @@ namespace OpenDental {
 			this.groupBox2.Controls.Add(this.label6);
 			this.groupBox2.Controls.Add(this.butNow2);
 			this.groupBox2.Controls.Add(this.textTimeDisplayed2);
-			this.groupBox2.Location = new System.Drawing.Point(363, 29);
+			this.groupBox2.Location = new System.Drawing.Point(352, 29);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(267, 100);
 			this.groupBox2.TabIndex = 14;
@@ -550,9 +551,22 @@ namespace OpenDental {
 			this.comboClinic.Size = new System.Drawing.Size(203, 21);
 			this.comboClinic.TabIndex = 124;
 			// 
+			// checkIsWorkingHome
+			// 
+			this.checkIsWorkingHome.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkIsWorkingHome.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.checkIsWorkingHome.Location = new System.Drawing.Point(337, 145);
+			this.checkIsWorkingHome.Name = "checkIsWorkingHome";
+			this.checkIsWorkingHome.Size = new System.Drawing.Size(130, 18);
+			this.checkIsWorkingHome.TabIndex = 125;
+			this.checkIsWorkingHome.Text = "Working From Home";
+			this.checkIsWorkingHome.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkIsWorkingHome.UseVisualStyleBackColor = true;
+			// 
 			// FormClockEventEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(669, 485);
+			this.Controls.Add(this.checkIsWorkingHome);
 			this.Controls.Add(this.textNote);
 			this.Controls.Add(this.comboClinic);
 			this.Controls.Add(this.groupRate2orRate3);
@@ -632,5 +646,6 @@ namespace OpenDental {
 		private TextBox textRate3Hours;
 		private Label labelRate3;
 		private TextBox textRate3Auto;
+		private CheckBox checkIsWorkingHome;
 	}
 }

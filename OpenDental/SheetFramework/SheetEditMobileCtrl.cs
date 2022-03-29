@@ -34,8 +34,8 @@ namespace OpenDental {
 		///<summary>Event thrown when edit is requested. Normally only one item in the list which is the SheetDefNum of the SheetDef to be edited. 
 		///If this is a radio group then the list will include all SheetDefNums in the group.</summary>
 		public event EventHandler<SheetFieldDefEditArgs> SheetFieldDefEdit;
-		///<summary>When true, synchs field ordering with the default language.</summary>
-		public bool SyncSheetFieldsWithDefualt=false;
+		///<summary>When true, synchs field ordering with the default language. True by default due to FomSheetDefEdit being true by defualt.</summary>
+		public bool SyncSheetFieldsWithDefualt=true;
 
 		public class SheetFieldDefEditArgs:EventArgs {
 			public List<long> SheetFieldDefNums { get; private set; }
@@ -727,18 +727,21 @@ namespace OpenDental {
 				}
 				//Re-arrange the TabOrderMobile. 1 based. For the default language.
 				int tabOrderMobile=1;
+				List<SheetFieldDef> listMobileSheetDefsAlreadyOrdered=new List<SheetFieldDef>();
 				foreach(SheetFieldDef sheetField in listMobileSheetDefs.Where(x=>string.IsNullOrWhiteSpace(x.Language))) {
+					if(listMobileSheetDefsAlreadyOrdered.Any(x=>OpenDentBusiness.SheetFieldDefs.CompareSheetFieldDefsByValueForMobileLayout(x,sheetField))) {
+						continue;
+					}
 					sheetField.TabOrderMobile=tabOrderMobile++;
 					//We need to ensure any new SFD checkboxs in a group have the mobile tab order set. Even if they are 'new'.
-					if(sheetField.FieldType==SheetFieldType.CheckBox && !string.IsNullOrWhiteSpace(sheetField.RadioButtonGroup)) {
-						List<SheetFieldDef> listSheetFieldDefNew=sheetDef.SheetFieldDefs
-						.Where(x=>x.FieldType==SheetFieldType.CheckBox 
-							&& x.RadioButtonGroup==sheetField.RadioButtonGroup 
-							&& string.IsNullOrWhiteSpace(x.Language)
-							&& !listMobileSheetDefs.Any(y=>y.FieldName==x.FieldName && y.RadioButtonGroup==x.RadioButtonGroup && y.UiLabelMobile==x.UiLabelMobile))
-						.ToList();
+					if(sheetField.FieldType==SheetFieldType.CheckBox) {
+						List<SheetFieldDef> listSheetFieldDefNew=OpenDentBusiness.SheetFieldDefs.GetRadioGroupForSheetFieldDef(sheetField,listMobileSheetDefs.FindAll(x=>string.IsNullOrWhiteSpace(x.Language)));
 						foreach(SheetFieldDef newSFDCheckboxInGroup in listSheetFieldDefNew ) {
+							if(OpenDentBusiness.SheetFieldDefs.CompareSheetFieldDefsByValueForMobileLayout(newSFDCheckboxInGroup,sheetField)) {
+								continue;
+							}
 							newSFDCheckboxInGroup.TabOrderMobile=tabOrderMobile++;
+							listMobileSheetDefsAlreadyOrdered.Add(newSFDCheckboxInGroup);
 						}
 					}
 				}
@@ -747,12 +750,7 @@ namespace OpenDental {
 					//Re-arrange the TabOrderMobile. 1 based. For other languages.
 					foreach(SheetFieldDef sheetFieldNonDefLang in sheetDef.SheetFieldDefs.Where(x=>!string.IsNullOrWhiteSpace(x.Language))) {
 						//Since we cannot rely on sheetfielddefnum to be set, we need to mix in all the other fields to find the appropriate SFD.
-						SheetFieldDef sheetFieldDef=listMobileSheetDefs.FirstOrDefault(x=>x.FieldName==sheetFieldNonDefLang.FieldName 
-						&& x.RadioButtonGroup==sheetFieldNonDefLang.RadioButtonGroup 
-						&& x.UiLabelMobile==sheetFieldNonDefLang.UiLabelMobile
-						&& x.FieldType==sheetFieldNonDefLang.FieldType
-						&& x.FieldValue==sheetFieldNonDefLang.FieldValue
-						&& string.IsNullOrEmpty(x.Language));
+						SheetFieldDef sheetFieldDef=listMobileSheetDefs.FirstOrDefault(x=>OpenDentBusiness.SheetFieldDefs.CompareSheetFieldDefsByValueForMobileLayout(x,sheetFieldNonDefLang,true) && string.IsNullOrEmpty(x.Language));
 						if(sheetFieldDef!=null) {
 							sheetFieldNonDefLang.TabOrderMobile=sheetFieldDef.TabOrderMobile;
 						}

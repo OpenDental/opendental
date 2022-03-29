@@ -25,6 +25,7 @@ namespace OpenDental{
 		///<summary>A local list of ApptViewItems which are displayed in all three lists on the right.  Not updated to db until the form is closed.</summary>
 		private List<ApptViewItem> _listApptViewItemsDisplayedAll;
 		private List<ApptViewItem> _listApptViewItemsDisplayedMain;
+		private List<ApptViewItem> _listMobileApptViewItems;
 		private List<ApptViewItem> _listApptViewItemsDisplayedUR;
 		private List<ApptViewItem> _listApptViewItemsDisplayedLR;
 		///<summary>Set this value before opening the form.</summary>
@@ -40,6 +41,7 @@ namespace OpenDental{
 		private List<Provider> _listProviders;
 		///<summary>This list is used to check the ApptFieldDefs if they are hidden. That way they won't be added to the grids.</summary>
 		private List<FieldDefLink> _listFieldDefLinks;
+		private bool _isMobileViewUpdated;
 
 		///<summary></summary>
 		public FormApptViewEdit()
@@ -78,6 +80,7 @@ namespace OpenDental{
 			comboClinic.SelectedClinicNum=ClinicNumInitial;
 			UpdateDisplayFilterGroup();
 			_listApptViewItems=ApptViewItems.GetWhere(x => x.ApptViewNum==ApptViewCur.ApptViewNum && !x.IsMobile);
+			_listMobileApptViewItems=ApptViewItems.GetWhere(x => x.ApptViewNum==ApptViewCur.ApptViewNum && x.IsMobile);
 			_listApptViewItemsDef=_listApptViewItems.FindAll(x => x.OpNum==0 && x.ProvNum==0);
 			FillOperatories();
 			_listProviders=Providers.GetDeepCopy(true);
@@ -752,6 +755,17 @@ namespace OpenDental{
 				apptViewItem.IsMobile=false;
 				ApptViewItems.Insert(apptViewItem);
 			}
+			if(_isMobileViewUpdated) {
+				ApptViewItems.DeleteAllForView(ApptViewCur,isMobile: true);//start with a clean slate
+				ApptViewItem apptViewItemMobile;
+				for(int i = 0;i<_listMobileApptViewItems.Count;i++) {
+					apptViewItemMobile=_listMobileApptViewItems[i];
+					apptViewItemMobile.ApptViewNum=ApptViewCur.ApptViewNum;
+					apptViewItemMobile.ElementOrder=(byte)i;
+					apptViewItemMobile.IsMobile=true;
+					ApptViewItems.Insert(apptViewItemMobile);
+				}
+			}
 			ApptViewCur.WaitingRmName=listWaitingRmNameFormat.GetSelected<EnumWaitingRmName>();
 			ApptViewCur.Description=textDescription.Text;
 			ApptViewCur.RowsPerIncr=PIn.Byte(textRowsPerIncr.Text);//already validated
@@ -788,8 +802,13 @@ namespace OpenDental{
 		}
 
 		private void butMobileView_Click(object sender,EventArgs e) {
-			using FormMobileApptViewEdit formMobileApptViewEdit = new FormMobileApptViewEdit(ApptViewCur,comboClinic.SelectedClinicNum);
+			using FormMobileApptViewEdit formMobileApptViewEdit = new FormMobileApptViewEdit(ApptViewCur,_listMobileApptViewItems, this);
 			formMobileApptViewEdit.ShowDialog();
+		}
+
+		public void UpdateMobileViewList(List<ApptViewItem> listUpdatedItems) {
+			_listMobileApptViewItems=listUpdatedItems;
+			_isMobileViewUpdated=true;
 		}
 
 

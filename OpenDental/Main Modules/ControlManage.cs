@@ -822,7 +822,7 @@ namespace OpenDental{
 						throw new Exception(Lans.g(this,"You need to authenticate to clock-in"));
 					}
 				}
-				ClockEvents.ClockIn(_employeeCur.EmployeeNum);
+				ClockEvents.ClockIn(_employeeCur.EmployeeNum,isAtHome:false);
 			}
 			catch(Exception ex){
 				MessageBox.Show(ex.Message);
@@ -938,7 +938,7 @@ namespace OpenDental{
 			}
 			if(!Programs.IsEnabled(ProgramName.Transworld)) {
 				try {
-					Process.Start("http://www.opendental.com/manual/transworldsystems.html");
+					Process.Start("https://opendental.com/resources/redirects/redirecttransworldsystems.html");
 				}
 				catch(Exception ex) {
 					ex.DoNothing();

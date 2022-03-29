@@ -40,6 +40,7 @@ namespace OpenDental{
 				groupBox2.Text=Lan.g(this,"Clock In Date and Time");
 				groupTimeSpans.Visible=false;
 				groupRate2orRate3.Visible=false;
+				checkIsWorkingHome.Visible=false;
 			}
 			if(PrefC.HasClinicsEnabled) {
 				comboClinic.SelectedClinicNum=_clockEvent.ClinicNum;
@@ -153,6 +154,9 @@ namespace OpenDental{
 			}
 			//notes ------------------------------------------------------------------------------------
 			textNote.Text=_clockEvent.Note;
+			//checkIsWorkingHome-----------------------------------------------------------------------
+			checkIsWorkingHome.Checked=_clockEvent.IsWorkingHome;
+
 		}
 
 		///<summary>Fills all controls based on the values of ClockEventCur, which is a copy of the object from the DB.</summary>
@@ -501,6 +505,7 @@ namespace OpenDental{
 			}
 			//The two auto fields are only set externally.
 			_clockEvent.Note=textNote.Text;
+			_clockEvent.IsWorkingHome=checkIsWorkingHome.Checked;
 			if(PrefC.HasClinicsEnabled) {
 				_clockEvent.ClinicNum=comboClinic.SelectedClinicNum;
 			}

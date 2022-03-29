@@ -211,9 +211,11 @@ namespace OpenDental{
 				}
 				if(checkExcludeInsPending.Checked) {
 					textDaysInsPendingExclude.Value=PrefC.GetInt(PrefName.BillingDaysExcludeInsPending);
+					textDaysInsPendingExclude.Enabled=true;
 				}
 				else {
 					textDaysInsPendingExclude.Value=0;
+					textDaysInsPendingExclude.Enabled=false;
 				}
 				return;
 			}
@@ -294,9 +296,11 @@ namespace OpenDental{
 				}
 				if(checkExcludeInsPending.Checked) {
 					textDaysInsPendingExclude.Value=PIn.Int(listClinicPrefs.First(x => x.PrefName==PrefName.BillingDaysExcludeInsPending).ValueString);
+					textDaysInsPendingExclude.Enabled=true;
 				}
 				else {
 					textDaysInsPendingExclude.Value=0;
+					textDaysInsPendingExclude.Enabled=false;
 				}
 			}
 		}
@@ -535,6 +539,16 @@ namespace OpenDental{
 				for(int i = 0;i<stringArrayBillingDefaultsModesToText.Length;++i) {
 					listModeToText.SetSelected(PIn.Int(stringArrayBillingDefaultsModesToText[i]),true);
 				}
+			}
+		}
+
+		private void checkExcludeInsPending_Click(object sender,EventArgs e) {
+			if(checkExcludeInsPending.Checked) {
+				textDaysInsPendingExclude.Enabled=true;
+			}
+			else {
+				textDaysInsPendingExclude.Value=0;
+				textDaysInsPendingExclude.Enabled=false;	
 			}
 		}
 

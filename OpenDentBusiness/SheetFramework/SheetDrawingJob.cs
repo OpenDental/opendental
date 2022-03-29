@@ -1665,13 +1665,7 @@ namespace OpenDentBusiness {
 		public static bool FieldOnCurPageHelper(SheetField field,Sheet sheet,Margins margins,int topOfPrintableArea,int pagesPrinted) {
 			//Even though _printMargins and _yPosPrint are available in this context they are passed in so for future compatibility with webforms.
 			int pageCount=Sheets.CalculatePageCount(sheet,margins);
-			int bottomOfPrintableArea=topOfPrintableArea+sheet.HeightPage;
-			if(pagesPrinted==0) {//since the first page ignores the top margin
-				bottomOfPrintableArea-=margins.Bottom;
-			}
-			else {
-				bottomOfPrintableArea-=(margins.Bottom+margins.Top);//otherwise account for both margins
-			}
+			int bottomOfPrintableArea=topOfPrintableArea+sheet.HeightPage-margins.Bottom;
 			if(field.YPos>bottomOfPrintableArea && pagesPrinted<pageCount-1){
 				return false;//field is entirely on one of the next pages. Unless we are on the first or last page, then it could be in the bottom margin.
 			}

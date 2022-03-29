@@ -64,6 +64,8 @@ namespace OpenDentBusiness{
 		[CrudColumn(SpecialType=CrudSpecialColType.TimeSpanNeg)]
 		[XmlIgnore]
 		public TimeSpan Rate3Auto;
+		///<summary>True if the Clock Event is made by choosing "Available at Home" when clocking in. Will be false if "Available At Office" is selected instead.</summary>
+		public bool IsWorkingHome;
 
 		///<summary>Used only for serialization purposes</summary>
 		[XmlElement("OTimeHours",typeof(long))]

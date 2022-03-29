@@ -403,25 +403,39 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		public static List<ApiAppointmentSlot> GetApiSlots(long provNum,DateTime dateStart,DateTime dateEnd,long lengthMinutes){
-			//some comments before we get started:
+		///<summary>Returns a list of ApiAppointmentSlots. Can return an empty list. Does not consider blockouts.</summary>
+		public static List<ApiAppointmentSlot> GetApiSlots(long provNum,DateTime dateStart,DateTime dateEnd,long lengthMinutes,long operatoryNum){
+			//Some comments before we get started: (If the user does not provide an operatoryNum.)
 			//We don't care which operatories current appointments are in.
 			//We don't care which operatories the schedules are assigned to.
 			//The only reason we consider ops at all is because our return value has to include an op, but any op for that provider will do.
-			//Get all appointments for these providers for the date range 
-			List<Appointment> listAppointments=Appointments.GetForProv(dateStart,dateEnd,provNum);
-			//Get all schedules for these providers and date range: SchedType=1(prov), ProvNums, SchedDate
-			List<Schedule> listSchedules=Schedules.GetForProv(dateStart,dateEnd,provNum);
-			//Get associated scheduleops: ScheduleOps.GetForSchedList()//each scheduleop is a 1:1 link between ScheduleNum and OperatoryNum
-			List<ScheduleOp> listScheduleOps=ScheduleOps.GetForSchedList(listSchedules);
 			List<ApiAppointmentSlot> listApiAppointmentSlots=new List<ApiAppointmentSlot>();
+			//1. Get all appointments for these providers for the date range.
+			List<Appointment> listAppointments=Appointments.GetForProv(dateStart,dateEnd,provNum);
+			//2. Get all schedules for the provider and date range: SchedType=1(prov), ProvNum, SchedDate.
+			List<Schedule> listSchedules=Schedules.GetForProv(dateStart,dateEnd,provNum);
+			//3. Get associated scheduleops. Each scheduleop is a 1:1 link between ScheduleNum and OperatoryNum.
+			List<ScheduleOp> listScheduleOps=ScheduleOps.GetForSchedList(listSchedules);
+			//4. User provided an operatoryNum. Remove what we don't want from the lists.
+			if(operatoryNum!=0) {
+				//Only list appointments for the operatory that the user asked about.
+				listAppointments.RemoveAll(x => x.Op!=operatoryNum);
+				//Only list scheduleOps for the operatory that the user asked about.
+				listScheduleOps.RemoveAll(x => x.OperatoryNum!=operatoryNum);
+				//Only list the schedules for the operatory that the user asked about.
+				listSchedules=listSchedules.Where(x => listScheduleOps.Any(y => y.ScheduleNum==x.ScheduleNum)).ToList();
+				//5. The user provided an operatoryNum that the provider is not assigned to. Return an empty list.
+				if(listScheduleOps.Count==0) {
+					return listApiAppointmentSlots;
+				}
+			}
 			int dayCount=(dateEnd-dateStart).Days;
-			for(int i=0;i<dayCount;i++) { //Loop through each day{
+			for(int i=0;i<dayCount;i++) {//Loop through each day.
 				DateTime date=dateStart.AddDays(i);
-				bool[] bool5=new bool[60*24/5];//represents the entire 24 hr day in 5 minute blocks
-				//they all start out false
+				bool[] bool5=new bool[60*24/5];//Represents the entire 24 hr day in 5 minute blocks.
+				//All blocks start out false.
 				for(int j=0;j<listSchedules.Count;j++) { 
-					//mark certain blocks true
+					//Mark certain blocks true.
 					if(listSchedules[j].SchedDate!=date) {
 						continue;
 					}
@@ -432,7 +446,7 @@ namespace OpenDentBusiness {
 					}
 				}
 				for(int j=0;j<listAppointments.Count;j++) {
-					//mark certain blocks false
+					//Mark certain blocks false.
 					if(listAppointments[j].AptDateTime.Date!=date) {
 						continue;
 					}
@@ -445,46 +459,51 @@ namespace OpenDentBusiness {
 				int blockStart=-1;
 				int blockEnd=0;
 				for(int j=0;j < bool5.Length;j++) {
-					if(bool5[j] && blockStart==-1) { //beginning of true blocks
+					if(bool5[j] && blockStart==-1) {//Beginning of true blocks.
 						blockStart=j;
 					}
-					if(bool5[j]) { //running endpoint of true blocks
+					if(bool5[j]) {//Running endpoint of true blocks.
 						blockEnd=j;
-						continue; //keep counting
+						continue;//Keep counting.
 					}
-					if(blockEnd==0) { //false blocks
+					if(blockEnd==0) {//False blocks.
 						continue;
 					}
-					//final endpoint of true blocks
-					int appointmentLength=(blockEnd+1-blockStart)*5; //includes the 5 minutes in the last block
-					//eliminate any slots that are too short
-					//add remaining slots to final result list.
+					//Final endpoint of true blocks.
+					int appointmentLength=(blockEnd+1-blockStart)*5;//Includes the 5 minutes in the last block.
+					//Eliminate any slots that are too short.
+					//Add remaining slots to final result list.
 					if(appointmentLength>=lengthMinutes) { 
 						ApiAppointmentSlot apiAppointmentSlot=new ApiAppointmentSlot();
 						apiAppointmentSlot.DateTimeStart=date.AddMinutes(blockStart*5);
-						apiAppointmentSlot.DateTimeEnd=date.AddMinutes((blockEnd+1)*5);	//includes the 5 minutes in the last block
+						apiAppointmentSlot.DateTimeEnd=date.AddMinutes((blockEnd+1)*5);//Includes the 5 minutes in the last block.
 						apiAppointmentSlot.ProvNum=provNum;
 						listApiAppointmentSlots.Add(apiAppointmentSlot);
 					}
-					blockStart=-1; //reset endpoint markers for searching remainder of array
+					blockStart=-1;//Reset endpoint markers for searching remainder of array.
 					blockEnd=0;
 				}
-				//Pick an op to assign to each slot
-				//first, look for an operatory that this provider is assigned to
-				long operatoryNum;
-				if(listApiAppointmentSlots.Exists(x => x.DateTimeStart.Date==date)) { //slots were added today
-					Operatory operatory=Operatories.GetWhere(x => x.ProvDentist==provNum || x.ProvHygienist==provNum).FirstOrDefault();
-					if(operatory is null) { //if that fails, then look through list of scheduleops to see if one of the schedules for today is linked to an op.		
-						//This can't ever be null. If slots were added for this day, then it guarentees a non-empty list of schedules (and therefore ScheduleOps, too).
-						operatoryNum=listScheduleOps.FindAll(x => listSchedules.Exists(y => y.ScheduleNum==x.ScheduleNum && y.SchedDate==date)).FirstOrDefault().OperatoryNum;
+				//Pick an op to assign to each slot.
+				//First, look for an operatory that this provider is assigned to.
+				if(listApiAppointmentSlots.Exists(x => x.DateTimeStart.Date==date)) {//Slots were added today.
+					//User provided an operatoryNum, use that.
+					if(operatoryNum!=0) {
+						listApiAppointmentSlots.Where(x => x.DateTimeStart.Date==date).ForEach(x => x.OpNum=operatoryNum);
 					}
 					else {
-						operatoryNum=operatory.OperatoryNum;
+						Operatory operatory=Operatories.GetWhere(x => x.ProvDentist==provNum || x.ProvHygienist==provNum).FirstOrDefault();
+						if(operatory is null) { //If that fails, then look through list of scheduleops to see if one of the schedules for today is linked to an op.		
+							//This can't ever be null. If slots were added for this day, then it guarentees a non-empty list of schedules (and therefore ScheduleOps, too).
+							operatoryNum=listScheduleOps.FindAll(x => listSchedules.Exists(y => y.ScheduleNum==x.ScheduleNum && y.SchedDate==date)).FirstOrDefault().OperatoryNum;
+						}
+						else {
+							operatoryNum=operatory.OperatoryNum;
+						}
+						//Assign all slots for today the above operatoryNum.
+						listApiAppointmentSlots.Where(x => x.DateTimeStart.Date==date).ForEach(x => x.OpNum=operatoryNum);
 					}
-					//assign all slots for today the above operatoryNum
-					listApiAppointmentSlots.Where(x => x.DateTimeStart.Date==date).ForEach(x => x.OpNum=operatoryNum);
 				}
-			}//day		
+			}//Day		
 			return listApiAppointmentSlots;
 		}
 

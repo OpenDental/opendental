@@ -103,16 +103,12 @@ namespace OpenDentBusiness {
 		///</summary>
 		public static void UpdateCarriersFromJsonList(ItransNCpl iTransNCpl,bool isAutomatic=true,ItransImportFields fieldsToImport=ItransImportFields.None) {
 			List<CanadianNetwork> listCanadianNetworks=CanadianNetworks.GetDeepCopy();
-			//This list is used to check if an office had added a custom carrier and wanted to update CA network num, CA version, and CA supported types
-			List<long> unmatchedDbCarrierNums=Carriers.GetWhere(x=>x.IsCDA).Select(x=>x.CarrierNum).ToList();
+			//Loop through all of the carriers present within the n-cpl.json file.
 			foreach(ItransNCpl.Carrier jsonCarrier in iTransNCpl.ListCarriers) {//Update carriers.
 				string jsonCarrierPhone=GetPhoneNumberFromJsonCarrier(jsonCarrier);//Will be empty string if not found.
-				List<OpenDentBusiness.Carrier> listDbCarriers=Carriers.GetAllByElectId(jsonCarrier.Bin).FindAll(
-					x => x.IsCDA && (x.CarrierName.ToLower()==jsonCarrier.Name.En.ToLower() || x.CarrierName.ToLower()==jsonCarrier.Name.Fr.ToLower())
-				);
-				//At this point listDbCarriers should either be empty or contain a single OD carrier.
-				OpenDentBusiness.Carrier carrierInDb=listDbCarriers.FirstOrDefault();//Null if list is empty.
-				if(carrierInDb==null) {//Carrier can not be matched to internal Carrier based on ElectID.
+				//Find all of the carriers in the database that have a matching ElectID and are flagged as IsCDA.
+				List<OpenDentBusiness.Carrier> listDbCarriers=Carriers.GetAllByElectId(jsonCarrier.Bin).FindAll(x => x.IsCDA);
+				if(listDbCarriers.IsNullOrEmpty()) {//There are no carriers with this ElectID in the database.
 					#region Insert new carrier
 					if(!fieldsToImport.HasFlag(ItransImportFields.AddMissing)) {
 						continue;
@@ -145,21 +141,15 @@ namespace OpenDentBusiness {
 					#endregion
 					continue;
 				}
-				UpdateCarrierInDb(carrierInDb,jsonCarrier,listCanadianNetworks,fieldsToImport,jsonCarrierPhone,isAutomatic);
-				unmatchedDbCarrierNums.Remove(carrierInDb.CarrierNum);
-			}
-			foreach(long carrierNum in unmatchedDbCarrierNums) {
-				OpenDentBusiness.Carrier unmatchedCarrier=Carriers.GetCarrier(carrierNum);
-				Carrier jsonCarrier=GetJsonCarrierForUpdate(iTransNCpl,unmatchedCarrier);
-				if(jsonCarrier is null) {
-					continue;
-				}
-				string jsonCarrierPhone=GetPhoneNumberFromJsonCarrier(jsonCarrier);
-				UpdateCarrierInDb(unmatchedCarrier,jsonCarrier,listCanadianNetworks,ItransImportFields.None,jsonCarrierPhone,isAutomatic);
+				//Update the carrier information within the database with the carrier information provided by the n-cpl.json file.
+				//Carrier address and phone number will be preserved since customers can create custom carriers.
+				//The user will need to blank out the address or phone number in order to have the information updated with the information provided by the n-cpl.json file.
+				listDbCarriers.ForEach(x => UpdateCarrierInDb(x,jsonCarrier,listCanadianNetworks,fieldsToImport,jsonCarrierPhone,isAutomatic));
 			}
 		} 
 
-		///<summary>Loops through Itrans carriers to find the best match for updating CA network and flags for user created carriers. Can return null</summary>
+		///<summary>Loops through Itrans carriers to find the best match for updating CA network and flags for user created carriers. Can return null.
+		///Not used as of E31972.</summary>
 		private static ItransNCpl.Carrier GetJsonCarrierForUpdate(ItransNCpl iTransNCpl,OpenDentBusiness.Carrier carrierOD) {
 			List<Carrier> listJsonCarrierByElectID=iTransNCpl.ListCarriers.Where(x=>x.Bin==carrierOD.ElectID).ToList();
 			//Find claims processor as that is who is processing our claim, regardless of reseller information
@@ -204,10 +194,12 @@ namespace OpenDentBusiness {
 				}
 				switch(field) {
 					case ItransImportFields.Phone:
-						odCarrier.Phone=TelephoneNumbers.AutoFormat(jsonCarrierPhone);
+						if(string.IsNullOrEmpty(odCarrier.Phone)) {
+							odCarrier.Phone=TelephoneNumbers.AutoFormat(jsonCarrierPhone);
+						}
 						break;
 					case ItransImportFields.Address:
-						if(jsonCarrier.Address.Count()>0) {
+						if(jsonCarrier.Address.Count()>0 && string.IsNullOrEmpty(odCarrier.Address)) {
 							Address add=jsonCarrier.Address.First();
 							odCarrier.Address=add.Street1;
 							odCarrier.Address2=add.Street2;

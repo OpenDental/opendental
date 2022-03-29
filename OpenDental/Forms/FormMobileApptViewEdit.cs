@@ -25,27 +25,23 @@ namespace OpenDental{
 		///<summary>A local list of ApptViewItems which are displayed in all three lists on the right.  Not updated to db until the form is closed.</summary>
 		private List<ApptViewItem> _listApptViewItemsDisplayedAll;
 		private List<ApptViewItem> _listApptViewItemsDisplayedMain;
-		private List<ApptViewItem> _listApptViewItemsDisplayedUR;
-		private List<ApptViewItem> _listApptViewItemsDisplayedLR;
 		///<summary>Set this value before opening the form.</summary>
 		private ApptView _apptViewCur;
 		///<summary>Set this value with the clinic selected in FormApptViews. Only to be used to set comboClinic.SelectedClinicNum.</summary>
-		private long _clinicNumInitial;
 		///<summary>List of all ApptViewItems for this view.  All 5 types.</summary>
 		private List<ApptViewItem> _listApptViewItems;
 		///<summary>List of ApptViewItems that does not include OpNum or ProvNum. This includes ElementDesc, ApptFieldDefNum, and PatFieldDefNum.</summary>
 		private List<ApptViewItem> _listApptViewItemsDef;
-		///<summary>This is a list of all operatories available to add to this view based on AssignedClinicNum and the clinic the ops are assigned to.  If the clinics show feature is turned off (EasyNoClinics=true) or if the view is not assigned to a clinic, all unhidden ops will be available.  If an op is not assigned to a clinic, it will only be available to add to views also not assigned to a clinic.  If the view is assigned to a clinic, ops assigned to the same clinic will be available to add to the view.</summary>
-		private List<long> _listOpNums;
-		private List<Provider> _listProviders;
 		///<summary>This list is used to check the ApptFieldDefs if they are hidden. That way they won't be added to the grids.</summary>
 		private List<FieldDefLink> _listFieldDefLinks;
+		private FormApptViewEdit _parentForm;
 
 		///<summary></summary>
-		public FormMobileApptViewEdit(ApptView apptView, long clinicNum)
+		public FormMobileApptViewEdit(ApptView apptView,List<ApptViewItem> apptMobileViewItems, FormApptViewEdit parentForm)
 		{
 			_apptViewCur=apptView;
-			_clinicNumInitial=clinicNum;
+			_listApptViewItems=apptMobileViewItems;
+			_parentForm=parentForm;
 			//
 			// Required for Windows Form Designer support
 			//
@@ -55,7 +51,6 @@ namespace OpenDental{
 		}
 
 		private void FormApptViewEdit_Load(object sender, System.EventArgs e) {
-			_listApptViewItems=ApptViewItems.GetWhere(x => x.ApptViewNum==_apptViewCur.ApptViewNum && x.IsMobile);
 			_listApptViewItemsDef=_listApptViewItems.FindAll(x => x.OpNum==0 && x.ProvNum==0);
 			_listApptViewItemsDisplayedAll=new List<ApptViewItem>(_listApptViewItemsDef);
 			_listFieldDefLinks=FieldDefLinks.GetAll();
@@ -356,7 +351,7 @@ namespace OpenDental{
 				!=DialogResult.OK){
 				return;
 			}
-			ApptViewItems.DeleteAllForView(_apptViewCur);
+			ApptViewItems.DeleteAllForView(_apptViewCur,isMobile:true) ;
 			DialogResult=DialogResult.OK;
 		}
 
@@ -365,15 +360,7 @@ namespace OpenDental{
 				MessageBox.Show(Lan.g(this,"At least one row type must be displayed."));
 				return;
 			}
-			ApptViewItems.DeleteAllForView(_apptViewCur,isMobile:true);//start with a clean slate
-			ApptViewItem apptViewItem;
-			for(int i=0;i<_listApptViewItemsDisplayedMain.Count;i++){
-				apptViewItem=_listApptViewItemsDisplayedMain[i];
-				apptViewItem.ApptViewNum=_apptViewCur.ApptViewNum;
-				apptViewItem.ElementOrder=(byte)i;
-				apptViewItem.IsMobile=true;
-				ApptViewItems.Insert(apptViewItem);
-			}
+			_parentForm.UpdateMobileViewList(_listApptViewItemsDisplayedMain);
 			DialogResult=DialogResult.OK;
 		}
 

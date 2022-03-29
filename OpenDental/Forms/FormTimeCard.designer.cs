@@ -126,6 +126,8 @@ namespace OpenDental {
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      | System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBox1.Controls.Add(this.labelNote);
 			this.groupBox1.Controls.Add(this.textNote);
 			this.groupBox1.Controls.Add(this.textDatePaycheck);
@@ -138,7 +140,7 @@ namespace OpenDental {
 			this.groupBox1.Controls.Add(this.label3);
 			this.groupBox1.Location = new System.Drawing.Point(18, 3);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(611, 71);
+			this.groupBox1.Size = new System.Drawing.Size(646, 71);
 			this.groupBox1.TabIndex = 14;
 			this.groupBox1.Text = "Pay Period";
 			// 
@@ -153,16 +155,19 @@ namespace OpenDental {
 			// 
 			// textNote
 			// 
+			this.textNote.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      | System.Windows.Forms.AnchorStyles.Right)));
 			this.textNote.Location = new System.Drawing.Point(331, 28);
 			this.textNote.Multiline = true;
 			this.textNote.Name = "textNote";
 			this.textNote.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.textNote.Size = new System.Drawing.Size(274, 40);
+			this.textNote.Size = new System.Drawing.Size(309, 40);
 			this.textNote.TabIndex = 15;
 			// 
 			// textDatePaycheck
 			// 
-			this.textDatePaycheck.Location = new System.Drawing.Point(505, 8);
+			this.textDatePaycheck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.textDatePaycheck.Location = new System.Drawing.Point(540, 8);
 			this.textDatePaycheck.Name = "textDatePaycheck";
 			this.textDatePaycheck.ReadOnly = true;
 			this.textDatePaycheck.Size = new System.Drawing.Size(100, 20);
@@ -204,7 +209,8 @@ namespace OpenDental {
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(387, 8);
+			this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.label4.Location = new System.Drawing.Point(422, 8);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(117, 18);
 			this.label4.TabIndex = 9;
@@ -236,7 +242,7 @@ namespace OpenDental {
 			this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBox2.Controls.Add(this.radioBreaks);
 			this.groupBox2.Controls.Add(this.radioTimeCard);
-			this.groupBox2.Location = new System.Drawing.Point(781, 3);
+			this.groupBox2.Location = new System.Drawing.Point(816, 3);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(140, 71);
 			this.groupBox2.TabIndex = 20;
@@ -288,7 +294,7 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.Location = new System.Drawing.Point(18, 80);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(904, 515);
+			this.gridMain.Size = new System.Drawing.Size(939, 515);
 			this.gridMain.TabIndex = 13;
 			this.gridMain.Title = "Time Card";
 			this.gridMain.TranslationName = "TableTimeCard";
@@ -339,7 +345,7 @@ namespace OpenDental {
 			this.butPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butPrint.Image = ((System.Drawing.Image)(resources.GetObject("butPrint.Image")));
 			this.butPrint.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPrint.Location = new System.Drawing.Point(744, 681);
+			this.butPrint.Location = new System.Drawing.Point(779, 681);
 			this.butPrint.Name = "butPrint";
 			this.butPrint.Size = new System.Drawing.Size(86, 24);
 			this.butPrint.TabIndex = 19;
@@ -373,7 +379,7 @@ namespace OpenDental {
 			// 
 			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butClose.Location = new System.Drawing.Point(847, 681);
+			this.butClose.Location = new System.Drawing.Point(882, 681);
 			this.butClose.Name = "butClose";
 			this.butClose.Size = new System.Drawing.Size(75, 24);
 			this.butClose.TabIndex = 0;
@@ -382,9 +388,10 @@ namespace OpenDental {
 			// 
 			// groupEmployee
 			// 
+			this.groupEmployee.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.groupEmployee.Controls.Add(this.butPrevEmp);
 			this.groupEmployee.Controls.Add(this.butNextEmp);
-			this.groupEmployee.Location = new System.Drawing.Point(635, 3);
+			this.groupEmployee.Location = new System.Drawing.Point(670, 3);
 			this.groupEmployee.Name = "groupEmployee";
 			this.groupEmployee.Size = new System.Drawing.Size(140, 71);
 			this.groupEmployee.TabIndex = 121;
@@ -499,7 +506,7 @@ namespace OpenDental {
 			// FormTimeCard
 			// 
 			this.CancelButton = this.butClose;
-			this.ClientSize = new System.Drawing.Size(944, 723);
+			this.ClientSize = new System.Drawing.Size(979, 723);
 			this.Controls.Add(this.textRateThree2);
 			this.Controls.Add(this.labelRateThree);
 			this.Controls.Add(this.textRateThree);

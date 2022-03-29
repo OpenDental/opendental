@@ -137,7 +137,7 @@ namespace OpenDental {
 		private void toggleHelp_Click(object sender,EventArgs e) {
 			if(phoneTile.PhoneCur.ClockStatus == ClockStatusEnum.NeedsHelp
 				|| phoneTile.PhoneCur.ClockStatus == ClockStatusEnum.HelpOnTheWay) {
-				PhoneUI.Available(phoneTile);
+				PhoneUI.Available(phoneTile,false);
 			}
 			else {
 				PhoneUI.NeedsHelp(phoneTile);
@@ -175,7 +175,7 @@ namespace OpenDental {
 					Employees.UpdateChanged(employee,employeeOld,true);
 				}
 			}
-			PhoneUI.Available(phoneTile);
+			PhoneUI.Available(phoneTile,isAtHome);
 			FillTile();
 		}
 

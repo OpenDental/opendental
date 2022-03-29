@@ -66,11 +66,11 @@ namespace OpenDental {
 		}
 
 		///<summary>If this is Security.CurUser's tile then ClockIn. If it is someone else's tile then allow the single case of switching from NeedsHelp to Available.</summary>
-		public static void Available(PhoneTile tile) {
-			Available(tile.PhoneCur);
+		public static void Available(PhoneTile tile,bool isAtHome) {
+			Available(tile.PhoneCur,isAtHome);
 		}
 
-		public static void Available(Phone phone) {
+		public static void Available(Phone phone,bool isAtHome=false) {
 			long employeeNum=Security.CurUser.EmployeeNum;
 			if(Security.CurUser.EmployeeNum!=phone.EmployeeNum) { //We are on someone else's tile. So Let's do some checks before we assume we can take over this extension.
 				if(phone.ClockStatus==ClockStatusEnum.NeedsHelp) { 
@@ -102,7 +102,7 @@ namespace OpenDental {
 				//We got this far so fall through and allow user to clock in.
 			}
 			//We go here so all of our checks passed and we may login at this extension
-			if(!ClockIn()) { //Clock in on behalf of yourself
+			if(!ClockIn(isAtHome)) { //Clock in on behalf of yourself
 				return;
 			}
 			//Update the Phone tables accordingly.
@@ -423,15 +423,22 @@ namespace OpenDental {
 			}			
 		}
 
-		///<summary>If already clocked in, this does nothing.  Returns false if not able to clock in due to security, or true if successful.
+		///<summary>If already clocked in, this does nothing unless you are clocking in to a different location, home/office. Returns false if not able to clock in due to security, or true if successful.
 		///This method used to take a PhoneTile, but it wasn't being used so it was removed.  If this is needed again someone can bring it back.</summary>
-		private static bool ClockIn() {
+		private static bool ClockIn(bool isAtHome) {
 			long employeeNum=Security.CurUser.EmployeeNum;//tile.PhoneCur.EmployeeNum;
 			if(employeeNum==0) {//Can happen if logged in as 'admin' user (employeeNum==0). Otherwise should not happen, means the employee trying to clock doesn't exist in the employee table.
 				MsgBox.Show(langThis,"Invalid OD User: "+Security.CurUser.UserName);
 				return false;
 			}
-			if(ClockEvents.IsClockedIn(employeeNum)) {
+			ClockEvent clockEventLast=ClockEvents.GetLastEvent(employeeNum);
+			//If already clocked in, but switching locations between, available at home / available at office, To create a new clock event.
+			if(ClockEvents.IsClockedIn(employeeNum) && clockEventLast.IsWorkingHome != isAtHome) {
+				System.Threading.Thread.Sleep(1000); // Needed to maintain that the end of a break, and the clock out doesnt happen at the same second, and break the calc daily functionality.
+				ClockEvents.ClockOut(employeeNum,TimeClockStatus.Home); // clocking out for home to complete clock event.	
+			}
+			//If already clocked in and not switching locations.
+			else if(ClockEvents.IsClockedIn(employeeNum)) {
 			  return true;
 			}
 			//We no longer need to check passwords here because the user HAS to be logged in and physically sitting at the computer.
@@ -443,7 +450,7 @@ namespace OpenDental {
 				}
 			}*/
 			try {
-				ClockEvents.ClockIn(employeeNum);
+				ClockEvents.ClockIn(employeeNum,isAtHome);
 			}
 			catch (Exception ex) {
 				if(ex.Message.Contains("Already clocked in")) {

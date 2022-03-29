@@ -140,10 +140,17 @@ namespace OpenDental{
 			gridMain.Columns.Add(col);
 			gridMain.ListGridRows.Clear();
 			GridRow row;
+			List<OpenDentBusiness.Screen> listScreensToDelete=new List<OpenDentBusiness.Screen>();
+			List<Sheet> listSheets=Sheets.GetSheets(_listScreens.Select(x=>x.SheetNum).ToList());
 			foreach(OpenDentBusiness.Screen screen in _listScreens) {
 				row=new GridRow();
-				row.Cells.Add(screen.ScreenGroupOrder.ToString());
 				ScreenPat screenPat=_listScreenPats.FirstOrDefault(x => x.ScreenPatNum==screen.ScreenPatNum);
+				Sheet sheet=listSheets.FirstOrDefault(x=>x.SheetNum==screen.SheetNum);
+				if(screenPat!=null && sheet!=null && sheet.PatNum!=screenPat.PatNum) {
+					listScreensToDelete.Add(screen);
+					continue;
+				}
+				row.Cells.Add(screen.ScreenGroupOrder.ToString());
 				row.Cells.Add((screenPat==null)?"Anonymous":Patients.GetLim(screenPat.PatNum).GetNameLF());
 				row.Cells.Add(screen.GradeLevel.ToString());
 				row.Cells.Add(screen.Age.ToString());
@@ -160,6 +167,26 @@ namespace OpenDental{
 				}
 				row.Cells.Add(screen.Comments);
 				gridMain.ListGridRows.Add(row);
+			}
+			if(listScreensToDelete.Count>0) {
+				List<long> listScreenPatNumsToShow=listScreensToDelete.Select(y=>y.ScreenPatNum).ToList();
+				//Get the PatNum from the list of ScreenPat objects.
+				List<long> listPatNumsToShow=_listScreenPats.FindAll(x=>listScreenPatNumsToShow.Contains(x.ScreenPatNum)).Select(x=>x.PatNum).ToList();
+				List<Patient> listPatients=Patients.GetLimForPats(listPatNumsToShow);
+				string removedSheetPatientNames="";
+				for(int i=0;i<listPatients.Count();i++) {
+					if(i > 0) {
+						removedSheetPatientNames+=", ";
+					}
+					if(i==listPatients.Count-1) {
+						removedSheetPatientNames+=" and ";
+					}
+					removedSheetPatientNames+=listPatients[i].GetNameLF();
+				}
+				MsgBox.Show($"Screening sheet mismatch(es) encountered, removing the sheet(s) for {removedSheetPatientNames} from the screening group." );
+				List<long> listScreenNumsToRemove=listScreensToDelete.Select(x=>x.ScreenNum).ToList();
+				Screens.DeleteScreens(listScreenNumsToRemove);
+				_listScreens.RemoveAll(x=>listScreenNumsToRemove.Contains(x.ScreenNum));
 			}
 			gridMain.Title=Lan.g(this,"Screenings")+" - "+_listScreens.Count;
 			gridMain.EndUpdate();

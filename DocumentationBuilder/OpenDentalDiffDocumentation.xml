@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
-<database version="22.1.16.0">
+<database version="22.1.17.0">
     <table name="alertcategorylink">
         <summary></summary>
         <column order="2" name="AlertType" type="tinyint(4)">
@@ -78,6 +78,12 @@
                 <summary>Each clearinghouse can have a hard-coded comm bridge which handles all the communications of transfering the claim files to the clearinghouse/carrier.  Does not just include X12, but can include any format at all.</summary>
                 <EnumValue name="Lantek">20</EnumValue>
             </Enumeration>
+        </column>
+    </table>
+    <table name="clockevent">
+        <summary></summary>
+        <column order="18" name="IsWorkingHome" type="tinyint(4)">
+            <summary>True if the Clock Event is made by choosing "Available at Home" when clocking in. Will be false if "Available At Office" is selected instead.</summary>
         </column>
     </table>
     <table name="eclipboardimagecapture">
