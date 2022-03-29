@@ -376,7 +376,11 @@ namespace OpenDental {
 			comboClinicFilter.IncludeAll=true;
 			comboPatientFilter.IncludeAll=true;
 			comboTypeFilter.IncludeAll=true;
-			Init(doAutoSplit:true,doPayFirstAcctEntries:true,doPreserveValues:false);
+			bool doAutoSplit=false;
+			if(IsNew) {
+				doAutoSplit=true;//Only perform auto-split logic when this is a new payment.
+			}
+			Init(doAutoSplit:doAutoSplit,doPayFirstAcctEntries:true,doPreserveValues:false);
 			if(InitialPaySplitNum!=0) {
 				gridSplits.SetAll(false);
 				PaySplit paySplitInit=_listSplitsCur.FirstOrDefault(x => x.SplitNum==InitialPaySplitNum);

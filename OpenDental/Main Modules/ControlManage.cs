@@ -938,7 +938,7 @@ namespace OpenDental{
 			}
 			if(!Programs.IsEnabled(ProgramName.Transworld)) {
 				try {
-					Process.Start("http://www.opendental.com/manual/transworldsystems.html");
+					Process.Start("https://opendental.com/resources/redirects/redirecttransworldsystems.html");
 				}
 				catch(Exception ex) {
 					ex.DoNothing();

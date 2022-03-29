@@ -286,7 +286,7 @@ namespace OpenDental {
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormDocInfo";
-            this.ShowInTaskbar = false;
+            this.ShowInTaskbar = true;
             this.Text = "Item Info";
             this.Load += new System.EventHandler(this.FormDocInfo_Load);
             this.ResumeLayout(false);
