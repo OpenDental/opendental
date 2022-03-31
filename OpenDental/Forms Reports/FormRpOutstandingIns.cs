@@ -168,7 +168,10 @@ namespace OpenDental {
 			RpOutstandingIns.DateFilterBy comboFilterBy=comboDateFilterBy.GetSelected<RpOutstandingIns.DateFilterBy>();
 			bool isIgnoreCustomChecked=checkIgnoreCustom.Checked;
 			List<long> listClinicNums=comboClinics.ListSelectedClinicNums;//Includes all clinics in combobox if 'All' is selected.
-			List<long> listSelectedUserNums=comboUserAssigned.GetListSelected<Userod>().Select(x => x.UserNum).ToList();
+			List<long> listSelectedUserNums=new List<long>();
+			if(!comboUserAssigned.IsAllSelected) { //If we have all selected, we don't want to filter by UserNum at all.
+				listSelectedUserNums=comboUserAssigned.GetListSelected<Userod>().Select(x => x.UserNum).ToList();
+			}
 			List<GridRow> listRows=null;
 			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => { 
@@ -268,7 +271,15 @@ namespace OpenDental {
 							row.Cells.Add(Lan.g(this,type));
 							break;
 						case "User":
-							row.Cells.Add(Userods.GetName(claimCur.UserNum));
+							string username="";
+							Userod userod=Userods.GetUser(claimCur.UserNum);
+							if(userod!=null) {
+								username=userod.UserName;
+								if(userod.IsHidden) {
+									username+="(hidden)";
+								}
+							}
+							row.Cells.Add(username);
 							break;
 						case "PatName":
 							string patName=claimCur.PatLName+", "+claimCur.PatFName+" "+claimCur.PatMiddleI;

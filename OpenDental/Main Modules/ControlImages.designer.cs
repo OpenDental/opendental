@@ -162,7 +162,7 @@
 			// 
 			this.menuMountItem.Name = "MountMenu";
 			this.menuMountItem.Size = new System.Drawing.Size(61, 4);
-			this.menuMountItem.Opening += new System.ComponentModel.CancelEventHandler(this.menuMountItem_Opening);
+			//this.menuMountItem.Opening += new System.ComponentModel.CancelEventHandler(this.menuMountItem_Opening);
 			// 
 			// mainMenu1
 			// 

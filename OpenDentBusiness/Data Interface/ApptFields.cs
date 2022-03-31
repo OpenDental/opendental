@@ -24,6 +24,15 @@ namespace OpenDentBusiness {
 			string command="SELECT * FROM apptfield WHERE AptNum = "+POut.Long(aptNum);
 			return Crud.ApptFieldCrud.SelectMany(command);
 		}
+
+		///<summary>Returns whether there are more than 0 apptFields with the given field name.</summary>
+		public static bool IsFieldNameInUse(string fieldName) {
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),fieldName);
+			}
+			string command="SELECT COUNT(*) FROM apptfield WHERE FieldName='"+POut.String(fieldName)+"'";
+			return Db.GetCount(command)!="0";
+		}
 		#endregion
 
 		#region Insert

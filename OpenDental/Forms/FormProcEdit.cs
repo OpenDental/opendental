@@ -2573,31 +2573,30 @@ namespace OpenDental {
 					"Detach the procedure from the ortho case or delete the ortho case first.");
 				return false;
 			}
-			//Customers have been complaining about procedurelog entries changing their CodeNum column to 0.
-			//Based on a security log provided by a customer, we were able to determine that this is one of two potential violators.
-			//The following code is here simply to try and get the user to call us so that we can have proof and hopefully find the core of the issue.
-			long verifyCode=ProcedureCodes.GetProcCode(textProc.Text).CodeNum;
+			//Once upon a time we used to use the textProc.Text field to validate that the procedure was valid. Sometimes, that text field would not have a value, or have some strange messed up value that did not coorespond to a procedure code. We no longer need to check that, so we are checking the procedure object itself. All this to say, this check will likely never return false, but just in case, here it is. 
 			try {
-				if(verifyCode < 1) {
-					throw new ApplicationException("Invalid Procedure Text");
-				}
+				ProcedureCodes.GetStringProcCode(_procedure.CodeNum,doThrowIfMissing: true);
 			}
 			catch(ApplicationException ae) {
-				string error="Please notify support with the following information.\r\n"
-					+"Error: "+ae.Message+"\r\n"
-					+"verifyCode: "+verifyCode.ToString()+"\r\n"
-					+"textProc.Text: "+textProc.Text+"\r\n"
-					+"ProcOld.CodeNum: "+(_procedureOld==null ? "NULL" : _procedureOld.CodeNum.ToString())+"\r\n"
-					+"ProcCur.CodeNum: "+(_procedure==null ? "NULL" : _procedure.CodeNum.ToString())+"\r\n"
-					+"ProcedureCode2.CodeNum: "+(_procedureCode==null ? "NULL" : _procedureCode.CodeNum.ToString())+"\r\n"
-					+"\r\n"
-					+"StackTrace:\r\n"+ae.StackTrace;
+				string error="The procedure code you were trying to chart appears not to exist any more. Please use the change button to select a new procedure code.";
 				MsgBoxCopyPaste MsgBCP=new MsgBoxCopyPaste(error);
-				MsgBCP.Text="Fatal Error!!!";
+				MsgBCP.Text="Error: Procedure Code Invalid";
 				MsgBCP.Show();//Use .Show() to make it easy for the user to keep this window open while they call in.
 				return false;
 			}
-			return true;
+			//double check that nothing has happed with the _procedureCode object and that it still reflects a valid code. If it doesn't use the CodeNum from _procedure to get a valid procedureCode object.
+			try {
+				ProcedureCodes.GetStringProcCode(_procedureCode.CodeNum,doThrowIfMissing: true);
+				if(_procedure.CodeNum != _procedureCode.CodeNum) {
+					_procedureCode=ProcedureCodes.GetProcCode(_procedure.CodeNum); //_procedureCode is valid, but for some reason has fallen out of sync with the _procedure object. Force them back in sync before saving.
+				}
+			}
+			catch(Exception e) {
+				e.DoNothing();
+				_procedureCode=ProcedureCodes.GetProcCode(_procedure.CodeNum);
+				//no need to return false here since we fixed the issue.
+			}
+				return true;
 		}
 
 		///<summary>MUST call EntriesAreValid first.  Used from OK_Click and from butSetComplete_Click</summary>
@@ -2607,8 +2606,6 @@ namespace OpenDental {
 			}
 			_procedure.PatNum=_patient.PatNum;
 			//ProcCur.Code=this.textProc.Text;
-			_procedureCode=ProcedureCodes.GetProcCode(textProc.Text);
-			_procedure.CodeNum=_procedureCode.CodeNum;
 			_procedure.MedicalCode=textMedicalCode.Text;
 			_procedure.Discount=PIn.Double(textDiscount.Text);
 			if(_snomedBodySite==null) {

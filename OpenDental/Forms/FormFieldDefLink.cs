@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using OpenDentBusiness;
 using OpenDental.UI;
+using System.Linq;
+using System.Text;
 
 namespace OpenDental {
 	public partial class FormFieldDefLink:FormODBase {
@@ -149,6 +151,9 @@ namespace OpenDental {
 					fieldDefLink.FieldDefNum=patFieldDef.PatFieldDefNum;
 					fieldDefLink.FieldDefType=FieldDefTypes.Patient;
 					fieldDefLink.FieldLocation=(FieldLocations)comboFieldLocation.SelectedIndex;
+					if(DefInUse(fieldDefLink)) {
+						return; 
+					}
 					_listFieldDefLinks.Add(fieldDefLink);
 					break;
 				case FieldLocations.AppointmentEdit://AppointmentEdit is the only place where ApptFields are used.
@@ -157,11 +162,58 @@ namespace OpenDental {
 					fieldDefLink.FieldDefNum=apptFieldDef.ApptFieldDefNum;
 					fieldDefLink.FieldDefType=FieldDefTypes.Appointment;
 					fieldDefLink.FieldLocation=(FieldLocations)comboFieldLocation.SelectedIndex;
+					if(DefInUse(fieldDefLink)) {
+						return;
+					}
 					_listFieldDefLinks.Add(fieldDefLink);
 					break;
 			}
 			FillGridDisplayed();
 			FillGridHidden();
+		}
+
+		private bool DefInUse(FieldDefLink fieldDefLink) {
+			string fieldName;
+			switch(fieldDefLink.FieldDefType) {
+				case FieldDefTypes.Patient:
+					fieldName = PatFieldDefs.GetFieldName(fieldDefLink.FieldDefNum);
+					if(PatFields.IsFieldNameInUse(fieldName)) {
+						ShowInUseWarning(fieldDefLink,fieldName);
+						return true;
+					}
+					return false;
+				case FieldDefTypes.Appointment:
+					fieldName = ApptFieldDefs.GetFieldName(fieldDefLink.FieldDefNum);
+					if(ApptFields.IsFieldNameInUse(fieldName)) {
+						ShowInUseWarning(fieldDefLink,fieldName);
+						return true;
+					}
+					return false;
+				default:
+					return false;
+			}
+		}
+
+		private void ShowInUseWarning(FieldDefLink fieldDefLink,string fieldName) {
+			StringBuilder message = new StringBuilder();
+			List<long> listApptViewNums = ApptViewItems.GetWhere(x => 
+				(x.PatFieldDefNum == fieldDefLink.FieldDefNum && fieldDefLink.FieldDefType == FieldDefTypes.Patient)
+				|| (x.ApptFieldDefNum == fieldDefLink.FieldDefNum && fieldDefLink.FieldDefType == FieldDefTypes.Appointment))
+				.Select(x => x.ApptViewNum)
+				.Distinct()
+				.ToList();
+			List<ApptView> listApptViews = ApptViews.GetWhere(x =>  listApptViewNums.Contains(x.ApptViewNum));
+			message.Append(Lan.g(this,"Unable to hide field"));
+			message.AppendLine($" \"{fieldName}\".");
+			message.AppendLine(Lan.g(this,"It is currently in use in the following places:"));
+			if(listApptViews.Count > 0) {
+				message.AppendLine(Lan.g(this,"-Appointment Views:"));
+			}
+			listApptViews.ForEach(x => message.AppendLine($" *{x.Description}"));
+			if(fieldDefLink.FieldDefType == FieldDefTypes.Patient) {
+				message.AppendLine("\n"+Lan.g(this,"Patient Fields may also be in use on one or more patients."));
+			}
+			MsgBox.Show(message.ToString());
 		}
 
 		private void butLeft_Click(object sender,EventArgs e) {

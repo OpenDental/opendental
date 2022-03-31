@@ -520,7 +520,7 @@ namespace OpenDental
 				imageSelector.SetSelected(nodeTypeAndKey.NodeType,nodeTypeAndKey.PriKey);//this is redundant when user is clicking, but harmless 
 			}
 			FormImageFloat formImageFloat=_listFormImageFloats.FirstOrDefault(x=>x.GetNodeTypeAndKey().IsMatching(nodeTypeAndKey));
-			if(formImageFloat!=null){//found the doc/mount we're after already showing in a floater.
+			if(formImageFloat!=null && !formImageFloat.IsDisposed){//found the doc/mount we're after already showing in a floater.
 				formImageFloat.Select();
 				//This triggers FormImageFloat_Activated which enables toolbar buttons, etc
 				if(formImageFloat.WindowState==FormWindowState.Minimized){
@@ -546,7 +546,7 @@ namespace OpenDental
 				return;
 			}
 			bool reuseExistingForm=false;
-			if(_listFormImageFloats.Count>0 && _listFormImageFloats[0].IsImageFloatDocked){
+			if(_listFormImageFloats.Count>0 && _listFormImageFloats[0].IsImageFloatDocked && !_listFormImageFloats[0].IsDisposed){
 				reuseExistingForm=true;
 				formImageFloat=_listFormImageFloats[0];
 				//close the draw panel because we are going to change to a different image in the window
@@ -562,9 +562,6 @@ namespace OpenDental
 			formImageFloat.ZoomSliderValue=zoomSlider.Value;
 			if(reuseExistingForm){
 				formImageFloat.SelectTreeNode(nodeTypeAndKey,localPathImportedCloud);
-				if(formImageFloat.IsDisposed){
-					return;
-				}
 				formImageFloat.Select();
 			}
 			else{

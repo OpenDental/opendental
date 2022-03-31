@@ -77,7 +77,7 @@ namespace OpenDental {
 				groupBoxEClipboard.Visible=false;
 			}
 			if(ListTools.In(_def.DefNum,PrefC.GetLong(PrefName.AppointmentTimeArrivedTrigger),PrefC.GetLong(PrefName.AppointmentTimeDismissedTrigger),
-				PrefC.GetLong(PrefName.AppointmentTimeSeatedTrigger))) 
+				PrefC.GetLong(PrefName.AppointmentTimeSeatedTrigger)) && _def.DefNum!=0) 
 			{
 				//We never want to send confirmation or reminders to an appointment when it is in a triggered confirm status.
 				checkIncludeConfirm.Enabled=false;
@@ -433,6 +433,8 @@ namespace OpenDental {
 			else {
 				listExcludeNums.Add(def.DefNum);
 			}
+			//Do not want to insert 0 into db. If included we won't send autocomm for status 0.
+			listExcludeNums.Remove(0);
 			string toString=string.Join(",",listExcludeNums.Distinct().OrderBy(x => x));
 			Prefs.UpdateString(prefName,toString);
 		}
@@ -444,6 +446,8 @@ namespace OpenDental {
 			else {
 				listExcludeNums.RemoveAll(x => x==def.DefNum);
 			}
+			//Do not want to insert 0 into db. If included we won't send autocomm for status 0.
+			listExcludeNums.Remove(0);
 			string strExcludeNums=string.Join(",",listExcludeNums.Distinct().OrderBy(x => x));
 			Prefs.UpdateString(prefName,strExcludeNums);
 		}
