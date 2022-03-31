@@ -54,6 +54,7 @@ namespace OpenDental{
 			rightClickMenu.Popup+=new EventHandler((o,ea) => {
 				rightClickMenu.MenuItems[0].Visible=(gridMain.SelectedIndices.Count()==1);//Only show 'Go to Account' when there is exactly 1 row selected.
 			});
+			FillGrid();
 		}
 
 		///<summary>Gets all unsent claims in the database between the user entered date range and with the appropriate user selected filters.</summary>

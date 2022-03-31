@@ -726,7 +726,6 @@ namespace OpenDentBusiness {
 			foreach(long payNum in listPayNums) {
 				Payment payment=Payments.GetPayment(payNum);
 				PaySplits.GetForPayment(payNum)
-						.FindAll(x => x.PatNum==payment.PatNum && x.ClinicNum==payment.ClinicNum)
 						.ForEach(x => StmtLinks.Insert(new StmtLink() { FKey=x.SplitNum,StatementNum=stmt.StatementNum,StmtLinkType=StmtLinkTypes.PaySplit }));
 			}
 			foreach(long procNum in listProcedures) {
@@ -1010,7 +1009,7 @@ namespace OpenDentBusiness {
 			exportCSV.AppendLine("Invoice/Statement Number," 
 				+"Date Created," 
 				+"Procedure Total," 
-				+"Adjustment Total," 
+				+"Ins Estimate," 
 				+"Total Amount,");
 			exportCSV.AppendLine($"\"{stateNum}\"," 
 				+$"\"{statement.DateSent.ToShortDateString()}\"," 

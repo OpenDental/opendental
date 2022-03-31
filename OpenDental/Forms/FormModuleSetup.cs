@@ -597,6 +597,8 @@ namespace OpenDental{
 				List<string> listExcludeEclipboard=UpdateDefNumsList(PrefName.ApptConfirmExcludeEclipboard,listTriggerNewNums);
 				List<string> listArrivalSMS=UpdateDefNumsList(PrefName.ApptConfirmExcludeArrivalSend,listTriggerNewNums);
 				List<string> listArrivalResponse=UpdateDefNumsList(PrefName.ApptConfirmExcludeArrivalResponse,listTriggerNewNums);
+				List<string> listGeneralMessage=UpdateDefNumsList(PrefName.ApptConfirmExcludeGeneralMessage,listTriggerNewNums);
+				List<string> listByod=UpdateDefNumsList(PrefName.ApptConfirmByodEnabled,new List<string> { timeArrivedTrigger.ToString() });
 				//Update new Value strings in database.  We don't remove the old ones.
 				Prefs.UpdateString(PrefName.ApptConfirmExcludeEConfirm,string.Join(",",listEConfirm));
 				Prefs.UpdateString(PrefName.ApptConfirmExcludeESend,string.Join(",",listESend));
@@ -605,9 +607,11 @@ namespace OpenDental{
 				Prefs.UpdateString(PrefName.ApptConfirmExcludeEclipboard,string.Join(",",listExcludeEclipboard));
 				Prefs.UpdateString(PrefName.ApptConfirmExcludeArrivalSend,string.Join(",",listArrivalSMS));
 				Prefs.UpdateString(PrefName.ApptConfirmExcludeArrivalResponse,string.Join(",",listArrivalResponse));
+				//Don't include dismissed trigger.
+				listGeneralMessage=listGeneralMessage.Where(x => x!=timeDismissedTrigger.ToString()).ToList();
+				Prefs.UpdateString(PrefName.ApptConfirmExcludeGeneralMessage,string.Join(",",listGeneralMessage));
 				//Only needs to be updated with the arrival trigger
-				Prefs.UpdateString(PrefName.ApptConfirmByodEnabled,string.Join(",",PrefC.GetString(PrefName.ApptConfirmByodEnabled),
-					timeArrivedTrigger));
+				Prefs.UpdateString(PrefName.ApptConfirmByodEnabled,string.Join(",",listByod));
 			}
 			return true;
 		}
@@ -1495,8 +1499,9 @@ namespace OpenDental{
 		}
 
 		private List<string> UpdateDefNumsList(PrefName pref, List<string> listAppend) {
+			listAppend.Remove("0");
 			return PrefC.GetString(pref).Split(',')
-				.Where(x => !string.IsNullOrWhiteSpace(x))
+				.Where(x => !string.IsNullOrWhiteSpace(x) && x!="0")
 				.Union(listAppend).ToList();
 		}
 		#endregion

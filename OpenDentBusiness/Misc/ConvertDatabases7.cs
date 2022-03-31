@@ -2666,6 +2666,22 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}//End of 22_1_17() method
 
+		private static void To22_1_18() {
+			string command=@"UPDATE definition SET
+			ItemValue='OutTheDoor'
+			WHERE ItemName='Out the Door' 
+			AND ItemValue='WebSched'";
+			Db.NonQ(command);
+			command="SELECT ValueString FROM preference WHERE PrefName='ApptConfirmExcludeGeneralMessage'";
+			List<string> defNums=Db.GetScalar(command).Split(',').ToList();
+			command="SELECT ValueString FROM preference WHERE PrefName='AppointmentTimeDismissedTrigger'";
+			string defNumDismissed=Db.GetScalar(command);
+			if(defNums.Contains(defNumDismissed)) {
+				defNums.Remove(defNumDismissed);
+				command="UPDATE preference SET ValueString='" +string.Join(",",defNums)+"' WHERE PrefName='ApptConfirmExcludeGeneralMessage'";
+				Db.NonQ(command);
+			}
+		}//End of 22_1_18() method
 	}
 }
 

@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -54,11 +54,14 @@ namespace OpenDental {
 			this.groupBoxEClipboard = new OpenDental.UI.GroupBoxOD();
 			this.checkIncludeEClipboard = new System.Windows.Forms.CheckBox();
 			this.checkByod = new System.Windows.Forms.CheckBox();
+			this.groupBoxGeneralMessages = new OpenDental.UI.GroupBoxOD();
+			this.checkIncludeGeneralSend = new System.Windows.Forms.CheckBox();
 			this.groupEConfirm.SuspendLayout();
 			this.groupBoxEReminders.SuspendLayout();
 			this.groupBoxEThanks.SuspendLayout();
 			this.groupBoxArrivals.SuspendLayout();
 			this.groupBoxEClipboard.SuspendLayout();
+			this.groupBoxGeneralMessages.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// labelName
@@ -299,7 +302,7 @@ namespace OpenDental {
 			// 
 			this.groupBoxEClipboard.Controls.Add(this.checkIncludeEClipboard);
 			this.groupBoxEClipboard.Controls.Add(this.checkByod);
-			this.groupBoxEClipboard.Location = new System.Drawing.Point(13, 246);
+			this.groupBoxEClipboard.Location = new System.Drawing.Point(12, 246);
 			this.groupBoxEClipboard.Name = "groupBoxEClipboard";
 			this.groupBoxEClipboard.Size = new System.Drawing.Size(177, 64);
 			this.groupBoxEClipboard.TabIndex = 205;
@@ -325,11 +328,31 @@ namespace OpenDental {
 			this.checkByod.Text = "Enable BYOD";
 			this.checkByod.UseVisualStyleBackColor = true;
 			// 
+			// groupBoxGeneralMessages
+			// 
+			this.groupBoxGeneralMessages.Controls.Add(this.checkIncludeGeneralSend);
+			this.groupBoxGeneralMessages.Location = new System.Drawing.Point(191, 246);
+			this.groupBoxGeneralMessages.Name = "groupBoxGeneralMessages";
+			this.groupBoxGeneralMessages.Size = new System.Drawing.Size(177, 46);
+			this.groupBoxGeneralMessages.TabIndex = 206;
+			this.groupBoxGeneralMessages.Text = "General Messages";
+			// 
+			// checkIncludeGeneralSend
+			// 
+			this.checkIncludeGeneralSend.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.checkIncludeGeneralSend.Location = new System.Drawing.Point(5, 19);
+			this.checkIncludeGeneralSend.Name = "checkIncludeGeneralSend";
+			this.checkIncludeGeneralSend.Size = new System.Drawing.Size(165, 18);
+			this.checkIncludeGeneralSend.TabIndex = 1;
+			this.checkIncludeGeneralSend.Text = "Send";
+			this.checkIncludeGeneralSend.UseVisualStyleBackColor = true;
+			// 
 			// FormDefEdit
 			// 
 			this.AcceptButton = this.butOK;
 			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(423, 352);
+			this.Controls.Add(this.groupBoxGeneralMessages);
 			this.Controls.Add(this.groupBoxEClipboard);
 			this.Controls.Add(this.groupBoxArrivals);
 			this.Controls.Add(this.groupBoxEThanks);
@@ -360,6 +383,7 @@ namespace OpenDental {
 			this.groupBoxEThanks.ResumeLayout(false);
 			this.groupBoxArrivals.ResumeLayout(false);
 			this.groupBoxEClipboard.ResumeLayout(false);
+			this.groupBoxGeneralMessages.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -393,5 +417,7 @@ namespace OpenDental {
 		private OpenDental.UI.GroupBoxOD groupBoxEClipboard;
 		private CheckBox checkIncludeEClipboard;
 		private CheckBox checkByod;
+		private UI.GroupBoxOD groupBoxGeneralMessages;
+		private CheckBox checkIncludeGeneralSend;
 	}
 }

@@ -1766,6 +1766,286 @@ namespace OpenDentBusiness {
 			return table;
 		}
 
+		///<summary>Creates a DataTable for Patient Info similar to ControlChart.FillPtGrid(). Uses the default fields.</summary>
+		public static DataTable GetPtInfoForApi(Patient patient) {
+			DataTable tableRetVal=new DataTable(); //Table creation & structure
+			DataColumn col=new DataColumn("Field");
+			tableRetVal.Columns.Add(col);
+			col=new DataColumn("Contents");
+			tableRetVal.Columns.Add(col);
+			DataRow row; //Initialize our row
+			PatientNote patientNote=PatientNotes.Refresh(patient.PatNum,patient.Guarantor); //Manually gathering local variables, as using LoadData will gather a lot of unneeded data.
+			List<PatPlan> listPatPlans=PatPlans.Refresh(patient.PatNum);
+			List<InsSub> listInsSubs=InsSubs.RefreshForFam(Patients.GetFamily(patient.PatNum));
+			List<InsPlan> listInsPlans=InsPlans.RefreshForSubList(listInsSubs);
+			int ordinal=0;
+			List<DisplayField> listDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.ChartPatientInformation); //Each field we're going to get data for
+			DisplayField fieldCur;
+			for(int f=0;f<listDisplayFields.Count;f++) { //For each field, make a new row with its name as Field, then fill Contents on a case-by-case basis.
+				fieldCur=listDisplayFields[f];
+				row=tableRetVal.NewRow();
+				//Depending on the case, the Field of a row can change later.
+				if(fieldCur.Description=="") {
+					row["Field"]=fieldCur.InternalName;
+				}
+				else { 
+					row["Field"]=fieldCur.Description;
+				}
+				switch(fieldCur.InternalName) {
+					#region ABC0
+					case "ABC0": //Patient's credit rating or other personal attributes
+						row["Contents"]=patient.CreditType;
+						tableRetVal.Rows.Add(row);
+						break;
+					#endregion ABC0
+					#region Age
+					case "Age": 
+						row["Contents"]=PatientLogic.DateToAgeString(patient.Birthdate,patient.DateTimeDeceased);
+						tableRetVal.Rows.Add(row);
+						break;
+					#endregion Age
+					#region Allergies
+					case "Allergies": //There can be multiple allergies, so we may need to make multiple rows.
+						List<Allergy> listAllergies=Allergies.GetAll(patient.PatNum,showInactive:false);
+						if(listAllergies.Count==0) { //If we don't have any entries, make it known that there are none, then add this row.
+							row["Contents"]="None";
+							tableRetVal.Rows.Add(row); //Only add the header row if no sub-rows will exist.
+						}
+						for(int i=0;i<listAllergies.Count;i++) { //Make a new row for each allergy in the list
+							row=tableRetVal.NewRow();
+							AllergyDef allergyDef=AllergyDefs.GetOne(listAllergies[i].AllergyDefNum);
+							if(allergyDef==null) {
+								row["Field"]="Allergy - Missing";
+							}
+							else {
+								row["Field"]="Allergy - "+allergyDef.Description;
+							}
+							row["Contents"]=listAllergies[i].Reaction;
+							tableRetVal.Rows.Add(row);
+						}
+						break;
+					#endregion Allergies
+					#region Billing Type
+					case "Billing Type":
+						row["Contents"]=Defs.GetName(DefCat.BillingTypes,patient.BillingType);
+						tableRetVal.Rows.Add(row);
+						break;
+					#endregion Billing Type
+					#region Birthdate
+					case "Birthdate":
+						row["Contents"]=Patients.DOBFormatHelper(patient.Birthdate,doMask:false);
+						tableRetVal.Rows.Add(row);
+						break;
+					#endregion Birthdate
+					#region Date First Visit
+					case "Date First Visit":
+						if(patient.DateFirstVisit.Year<1880) {
+							row["Contents"]="Invalid Date";
+						}
+						else if(patient.DateFirstVisit==DateTime.Today) {
+							row["Contents"]="New Patient";
+						}
+						else {
+							row["Contents"]=patient.DateFirstVisit.ToShortDateString();
+						}
+						tableRetVal.Rows.Add(row);
+						break;
+					#endregion Date First Visit
+					#region Med Urgent
+					case "Med Urgent":
+						row["Contents"]=patient.MedUrgNote;
+						tableRetVal.Rows.Add(row);
+						break;
+					#endregion Med Urgent
+					#region Medical Summary
+					case "Medical Summary":
+						row["Contents"]=patientNote.Medical;
+						tableRetVal.Rows.Add(row);
+						break;
+					#endregion Medical Summary
+					#region Medications
+					case "Medications": //There can be multiple medications, so we may need to make multiple rows.
+						Medications.RefreshCache();
+						List<MedicationPat> listMedicationPats=MedicationPats.Refresh(patient.PatNum,includeDiscontinued:false);
+						if(listMedicationPats.Count==0) {
+							row["Contents"]="None";
+							tableRetVal.Rows.Add(row); //Only add this row if we'll have no sub-rows.
+						}
+						string text;
+						Medication medication;
+						for(int i=0;i<listMedicationPats.Count;i++) { //Create a new row for each medication.
+							row=tableRetVal.NewRow();
+							if(listMedicationPats[i].MedicationNum==0) { //If MedicationNum is 0, we need to use MedDescript for eRx reasons.
+								row["Field"]="Medication - "+listMedicationPats[i].MedDescript;
+							}
+							else { //Get the correct name for this medication.
+								medication=Medications.GetMedication(listMedicationPats[i].MedicationNum);
+								text=medication.MedName;
+								if(medication.MedicationNum != medication.GenericNum) {
+									text+="("+Medications.GetMedication(medication.GenericNum).MedName+")";
+								}
+								row["Field"]="Medication - "+text;
+							}
+							text=listMedicationPats[i].PatNote; //Formatting our field for Contents
+							string noteMedGeneric="";
+							if(listMedicationPats[i].MedicationNum!=0) {
+								noteMedGeneric=Medications.GetGeneric(listMedicationPats[i].MedicationNum).Notes;
+							}
+							if(!string.IsNullOrWhiteSpace(noteMedGeneric)) {
+								text+="("+noteMedGeneric+")";
+							}
+							row["Contents"]=text;
+							tableRetVal.Rows.Add(row);
+						}
+						break;
+					#endregion Medications
+					#region Pat Restrictions
+					case "Pat Restrictions": //There can be multiple Pat Restrictions, so we may need multiple rows.
+						List<PatRestriction> listPatRestricts=PatRestrictions.GetAllForPat(patient.PatNum);
+						if(listPatRestricts.Count==0) {
+							row["Contents"]="None";
+							tableRetVal.Rows.Add(row);
+						}
+						for(int i=0;i<listPatRestricts.Count;i++) { //Create a new row for each patient restriction.
+							row=tableRetVal.NewRow();
+							if(string.IsNullOrWhiteSpace(fieldCur.Description)) {
+								row["Field"]="Pat Restriction - "+fieldCur.InternalName;
+							}
+							else {
+								row["Field"]="Pat Restriction - "+fieldCur.Description;
+							}
+							row["Contents"]=PatRestrictions.GetPatRestrictDesc(listPatRestricts[i].PatRestrictType);
+							tableRetVal.Rows.Add(row);
+						}
+						break;
+					#endregion Pat Restrictions
+					#region Payor Types
+					case "Payor Types":
+						row["Contents"]=PayorTypes.GetCurrentDescription(patient.PatNum);
+						tableRetVal.Rows.Add(row);
+						break;
+					#endregion Payor Types
+					#region Premedicate
+					case "Premedicate":
+						if(patient.Premed) { //Only create & add this row if patient.Premed is true.
+							row["Field"]="";
+							if(string.IsNullOrWhiteSpace(fieldCur.Description)) {
+								row["Contents"]=fieldCur.InternalName;
+							}
+							else {
+								row["Contents"]=fieldCur.Description;
+							}
+							tableRetVal.Rows.Add(row);
+						}
+						break;
+					#endregion Premedicate
+					#region Pri Ins
+					case "Pri Ins":
+						string name;
+						ordinal=PatPlans.GetOrdinal(PriSecMed.Primary,listPatPlans,listInsPlans,listInsSubs);
+						if(ordinal>0) {
+							InsSub insSub=InsSubs.GetSub(PatPlans.GetInsSubNum(listPatPlans,ordinal),listInsSubs);
+							name=InsPlans.GetCarrierName(insSub.PlanNum,listInsPlans);
+							if(listPatPlans[0].IsPending) {
+								name+=" (pending)";
+							}
+							row["Contents"]=name;
+						}
+						else {
+							row["Contents"]="";
+						}
+						tableRetVal.Rows.Add(row);
+						break;
+					#endregion Pri Ins
+					#region Problems
+					case "Problems":
+						List<Disease> listDiseases=Diseases.Refresh(patient.PatNum,true);
+						if(string.IsNullOrWhiteSpace(fieldCur.Description)) { //Use an alternate description if one exists.
+							row["Field"]=fieldCur.InternalName;
+						}
+						else {
+							row["Field"]=fieldCur.Description;
+						}
+						if(listDiseases.Count==0) {
+							row["Contents"]="None";
+							tableRetVal.Rows.Add(row); //Only add this row if we'll have no sub-rows.
+						}
+						for(int i=0;i<listDiseases.Count;i++) { //Add a new row for each problem/disease.
+							row=tableRetVal.NewRow();
+							if(listDiseases[i].DiseaseDefNum!=0) {
+								row["Field"]="Problem - "+DiseaseDefs.GetName(listDiseases[i].DiseaseDefNum);
+								row["Contents"]=listDiseases[i].PatNote;
+							}
+							else {
+								row["Field"]="Problem - Missing";
+								row["Contents"]=DiseaseDefs.GetItem(listDiseases[i].DiseaseDefNum)?.DiseaseName??"Invalid Problem";
+							}
+							tableRetVal.Rows.Add(row);
+						}
+						break;
+					#endregion Problems
+					#region Prov. (Pri, Sec)
+					case "Prov. (Pri, Sec)":
+						string provText="";
+						if(patient.PriProv!=0) {
+							provText+=Providers.GetAbbr(patient.PriProv)+", ";							
+						}
+						else {
+							provText+="None, ";
+						}
+						if(patient.SecProv!=0) {
+							provText+=Providers.GetAbbr(patient.SecProv);
+						}
+						else {
+							provText+="None";
+						}
+						row["Contents"]=provText;
+						tableRetVal.Rows.Add(row);
+						break;
+					#endregion Prov. (Pri, Sec)
+					#region Referred From
+					case "Referred From":
+						List<RefAttach> listRefAttach=RefAttaches.Refresh(patient.PatNum).DistinctBy(x => x.ReferralNum).ToList();
+						string referral="";
+						for(int i=0;i<listRefAttach.Count;i++) {
+							if(listRefAttach[i].RefType==ReferralType.RefFrom) {
+								referral=Referrals.GetNameLF(listRefAttach[i].ReferralNum);
+								break;
+							}
+						}
+						row["Contents"]=referral;
+						tableRetVal.Rows.Add(row);
+						break;
+					#endregion Referred From
+					#region Sec Ins
+					case "Sec Ins":
+						ordinal=PatPlans.GetOrdinal(PriSecMed.Secondary,listPatPlans,listInsPlans,listInsSubs);
+						if(ordinal>0) {
+							InsSub insSub=InsSubs.GetSub(PatPlans.GetInsSubNum(listPatPlans,ordinal),listInsSubs);
+							name=InsPlans.GetCarrierName(insSub.PlanNum,listInsPlans);
+							if(listPatPlans[1].IsPending) {
+								name+=" (pending)";
+							}
+							row["Contents"]=name;
+						}
+						else {
+							row["Contents"]="";
+						}
+						tableRetVal.Rows.Add(row);
+						break;
+					#endregion Sec Ins
+					#region Service Notes
+					case "Service Notes":
+						row["Contents"]=patientNote.Service;
+						tableRetVal.Rows.Add(row);
+						break;
+					#endregion Service Notes
+				}
+			}
+			return tableRetVal;
+		}
+
+
 		///<summary>The supplied DataRows must include the following columns: ProcNum,ProcDate,Priority,ToothRange,ToothNum,ProcCode. This sorts all objects in Chart module based on their dates, times, priority, and toothnum.  For time comparisons, procs are not included.  But if other types such as comm have a time component in ProcDate, then they will be sorted by time as well.</summary>
 		public static int CompareChartRows(DataRow x,DataRow y) {
 			//if dates are different, then sort by date

@@ -207,14 +207,16 @@ namespace OpenDentBusiness{
 		public static bool CompareSheetFieldDefsByValueForMobileLayout(SheetFieldDef sheetFieldDefA, SheetFieldDef sheetFieldDefB,bool ignoreLanguage=false) {
 			return (ignoreLanguage || sheetFieldDefA.SheetDefNum==sheetFieldDefB.SheetDefNum)
 				&& (ignoreLanguage || sheetFieldDefA.SheetFieldDefNum==sheetFieldDefB.SheetFieldDefNum) //For new sheet fields this will be 0, hence needing to compare all other fields.
+				&& (ignoreLanguage || sheetFieldDefA.Language==sheetFieldDefB.Language)
 				&& sheetFieldDefA.FieldName==sheetFieldDefB.FieldName
 				&& sheetFieldDefA.FieldType==sheetFieldDefB.FieldType
 				&& sheetFieldDefA.FieldValue==sheetFieldDefB.FieldValue
 				&& sheetFieldDefA.RadioButtonGroup==sheetFieldDefB.RadioButtonGroup
 				&& sheetFieldDefA.RadioButtonValue==sheetFieldDefB.RadioButtonValue
-				&& (ignoreLanguage || sheetFieldDefA.Language==sheetFieldDefB.Language)
 				&& sheetFieldDefA.UiLabelMobile==sheetFieldDefB.UiLabelMobile
-				&& sheetFieldDefA.UiLabelMobileRadioButton==sheetFieldDefB.UiLabelMobileRadioButton;
+				&& sheetFieldDefA.UiLabelMobileRadioButton==sheetFieldDefB.UiLabelMobileRadioButton
+				&& sheetFieldDefA.XPos==sheetFieldDefB.XPos 
+				&& sheetFieldDefA.YPos==sheetFieldDefB.YPos;
 		}
 
 

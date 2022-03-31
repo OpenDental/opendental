@@ -27,6 +27,7 @@ namespace OpenDental {
 		private List<long> _listExcludeArrivalResponseNums;
 		private List<long> _listExcludeEClipboardNums;
 		private List<long> _listByodEnabled;
+		private List<long> _listExcludeGeneralMessageSendNums;
 		private DefCatOptions _defCatOptions;
 		private string _strSelectedValue;
 		public bool IsDeleted=false;
@@ -53,6 +54,7 @@ namespace OpenDental {
 				_listExcludeArrivalResponseNums=PrefC.GetString(PrefName.ApptConfirmExcludeArrivalResponse).Split(',').Select(x => PIn.Long(x)).ToList();
 				_listExcludeEClipboardNums=PrefC.GetString(PrefName.ApptConfirmExcludeEclipboard).Split(',').ToList().Select(x => PIn.Long(x)).ToList();
 				_listByodEnabled=PrefC.GetString(PrefName.ApptConfirmByodEnabled).Split(',').ToList().Select(x => PIn.Long(x)).ToList();
+				_listExcludeGeneralMessageSendNums=PrefC.GetString(PrefName.ApptConfirmExcludeGeneralMessage).Split(',').ToList().Select(x => PIn.Long(x)).ToList();
 				//0 will get automatically added to the list when this is the first of its kind.  We never want 0 inserted.
 				_listExcludeSendNums.Remove(0);
 				_listExcludeConfirmNums.Remove(0);
@@ -60,6 +62,7 @@ namespace OpenDental {
 				_listExcludeThanksNums.Remove(0);
 				_listExcludeArrivalSendNums.Remove(0);
 				_listExcludeArrivalSendNums.Remove(0);
+				_listExcludeGeneralMessageSendNums.Remove(0);
 				checkIncludeSend.Checked=!_listExcludeSendNums.Contains(_def.DefNum);
 				checkIncludeConfirm.Checked=!_listExcludeConfirmNums.Contains(_def.DefNum);
 				checkIncludeRemind.Checked=!_listExcludeRemindNums.Contains(_def.DefNum);
@@ -68,6 +71,7 @@ namespace OpenDental {
 				checkIncludeArrivalResponse.Checked=!_listExcludeArrivalResponseNums.Contains(_def.DefNum);
 				checkIncludeEClipboard.Checked=!_listExcludeEClipboardNums.Contains(_def.DefNum);
 				checkByod.Checked=_listByodEnabled.Contains(_def.DefNum);
+				checkIncludeGeneralSend.Checked=!_listExcludeGeneralMessageSendNums.Contains(_def.DefNum);
 			}
 			else {
 				groupEConfirm.Visible=false;
@@ -77,7 +81,7 @@ namespace OpenDental {
 				groupBoxEClipboard.Visible=false;
 			}
 			if(ListTools.In(_def.DefNum,PrefC.GetLong(PrefName.AppointmentTimeArrivedTrigger),PrefC.GetLong(PrefName.AppointmentTimeDismissedTrigger),
-				PrefC.GetLong(PrefName.AppointmentTimeSeatedTrigger))) 
+				PrefC.GetLong(PrefName.AppointmentTimeSeatedTrigger)) && _def.DefNum!=0)
 			{
 				//We never want to send confirmation or reminders to an appointment when it is in a triggered confirm status.
 				checkIncludeConfirm.Enabled=false;
@@ -94,6 +98,11 @@ namespace OpenDental {
 				checkIncludeArrivalSend.Checked=false;
 				checkIncludeArrivalResponse.Checked=false;
 				checkIncludeEClipboard.Checked=false;
+				//General messages are able to send for the dismissed status
+				if(_def.DefNum!=PrefC.GetLong(PrefName.AppointmentTimeDismissedTrigger)) {
+					checkIncludeGeneralSend.Enabled=false;
+					checkIncludeGeneralSend.Checked=false;
+				}
 			}
 			if(ListTools.In(_def.DefNum,PrefC.GetLong(PrefName.AppointmentTimeArrivedTrigger))) {
 				//There always has to be one status that automatically defaults to true for BYOD, which is the time arrived trigger confirm status
@@ -408,6 +417,8 @@ namespace OpenDental {
 				UpdateAutoCommExcludes(checkIncludeArrivalResponse,_listExcludeArrivalResponseNums,_def,PrefName.ApptConfirmExcludeArrivalResponse);
 				//==================== EXCLUDE ECLIPBOARD CHECKIN ======================
 				UpdateAutoCommExcludes(checkIncludeEClipboard,_listExcludeEClipboardNums,_def,PrefName.ApptConfirmExcludeEclipboard);
+				//==================== EXLCUDE GENERAL MESSAGE ======================
+				UpdateAutoCommExcludes(checkIncludeGeneralSend,_listExcludeGeneralMessageSendNums,_def,PrefName.ApptConfirmExcludeGeneralMessage);
 				//==================== ENABLED BYOD FOR DEF ====================
 				UpdateByod(checkByod,_listByodEnabled,_def,PrefName.ApptConfirmByodEnabled);
 				DataValid.SetInvalid(InvalidType.Prefs);
@@ -433,6 +444,8 @@ namespace OpenDental {
 			else {
 				listExcludeNums.Add(def.DefNum);
 			}
+			//Do not want to insert 0 into db. If included we won't send autocomm for status 0.
+			listExcludeNums.Remove(0);
 			string toString=string.Join(",",listExcludeNums.Distinct().OrderBy(x => x));
 			Prefs.UpdateString(prefName,toString);
 		}
@@ -444,6 +457,8 @@ namespace OpenDental {
 			else {
 				listExcludeNums.RemoveAll(x => x==def.DefNum);
 			}
+			//Do not want to insert 0 into db. If included we won't send autocomm for status 0.
+			listExcludeNums.Remove(0);
 			string strExcludeNums=string.Join(",",listExcludeNums.Distinct().OrderBy(x => x));
 			Prefs.UpdateString(prefName,strExcludeNums);
 		}

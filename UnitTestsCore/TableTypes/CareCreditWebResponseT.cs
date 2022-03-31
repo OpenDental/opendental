@@ -7,12 +7,13 @@ namespace UnitTestsCore {
 		///<summary></summary>
 		public static CareCreditWebResponse CreateCareCreditWebResponse(long patNum,long clinicNum,long payNum=0,double amt=0,
 			CareCreditWebStatus processingStatus=CareCreditWebStatus.Pending,DateTime dateTimeStatus=default(DateTime),string lastResponseError="",
-			CareCreditServiceType serviceType=CareCreditServiceType.Prefill,CareCreditTransType transType=CareCreditTransType.None,DateTime dateTimeEntry=default(DateTime),string merchantNumber="")
+			CareCreditServiceType serviceType=CareCreditServiceType.Prefill,CareCreditTransType transType=CareCreditTransType.None,DateTime dateTimeEntry=default(DateTime),
+			string merchantNumber="",string refNumber="")
 		{
 			CareCreditWebResponse ccWebResponse=new CareCreditWebResponse();
 			ccWebResponse.PatNum=patNum;
 			ccWebResponse.PayNum=payNum;
-			ccWebResponse.RefNumber="";
+			ccWebResponse.RefNumber=refNumber;
 			ccWebResponse.Amount=amt;
 			ccWebResponse.MerchantNumber=merchantNumber;
 			ccWebResponse.WebToken="";

@@ -222,7 +222,8 @@ namespace OpenDental {
 			if(formSheetFieldImage.DialogResult!=DialogResult.OK  || formSheetFieldImage.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
 				return;
 			}
-			_sheetDefCur.SheetFieldDefs.Insert(0,formSheetFieldImage.SheetFieldDefCur);
+			//_sheetDefCur.SheetFieldDefs.Insert(0,formSheetFieldImage.SheetFieldDefCur);
+			AddNewSheetFieldDef(formSheetFieldImage.SheetFieldDefCur);
 			FillFieldList();
 			RefreshDoubleBuffer();
 			panelMain.Refresh();
@@ -317,7 +318,8 @@ namespace OpenDental {
 			if(formSheetFieldPatImage.DialogResult!=DialogResult.OK  || formSheetFieldPatImage.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
 				return;
 			}
-			_sheetDefCur.SheetFieldDefs.Insert(0,formSheetFieldPatImage.SheetFieldDefCur);
+			//_sheetDefCur.SheetFieldDefs.Insert(0,formSheetFieldPatImage.SheetFieldDefCur);
+			AddNewSheetFieldDef(formSheetFieldPatImage.SheetFieldDefCur);
 			FillFieldList();
 			panelMain.Refresh();
 		}

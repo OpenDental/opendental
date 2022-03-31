@@ -725,23 +725,25 @@ namespace OpenDental {
 					return;
 				}
 				if(nodeIdTag.NodeType==EnumNodeType.Mount) {//The user may be trying to select an individual image within the current mount.
-					_idxSelectedInMount=GetIdxAtMountLocation(_pointMouseDown);
-					//Assume no item will be selected and enable tools again if an item was actually selected.
-					EnableToolBarButtons(true,true,true,true,false,false,false,true,true,true,false,false,false,true);
-					for(int j=0;j<_listMountItems.Count;j++) {
-						if(_listMountItems[j].ItemOrder==_idxSelectedInMount) {
-							if(_arrayDocumentsInMount[j]!=null) {
-								_documentShowing=_arrayDocumentsInMount[j];
-								SetWindowingSlider();
-								EnableToolBarButtons(true,true,false,true,false,true,false,true,true,true,true,true,true,true);
-							}
-						}
-					}
-					ToolBarPaint.Invalidate();
-					if(_idxSelectedInMount<0) {//The current selection was unselected.
-						_suniDeviceControl.KillXRayThread();//Stop xray capture, because it relies on the current selection to place images.
-					}
-					InvalidateSettings(ImageSettingFlags.ALL,false);
+					//Do nothing, mounts are no longer supported in this module.
+					return;
+				//	_idxSelectedInMount=GetIdxAtMountLocation(_pointMouseDown);
+				//	//Assume no item will be selected and enable tools again if an item was actually selected.
+				//	EnableToolBarButtons(true,true,true,true,false,false,false,true,true,true,false,false,false,true);
+				//	for(int j=0;j<_listMountItems.Count;j++) {
+				//		if(_listMountItems[j].ItemOrder==_idxSelectedInMount) {
+				//			if(_arrayDocumentsInMount[j]!=null) {
+				//				_documentShowing=_arrayDocumentsInMount[j];
+				//				SetWindowingSlider();
+				//				EnableToolBarButtons(true,true,false,true,false,true,false,true,true,true,true,true,true,true);
+				//			}
+				//		}
+				//	}
+				//	ToolBarPaint.Invalidate();
+				//	if(_idxSelectedInMount<0) {//The current selection was unselected.
+				//		_suniDeviceControl.KillXRayThread();//Stop xray capture, because it relies on the current selection to place images.
+				//	}
+				//	InvalidateSettings(ImageSettingFlags.ALL,false);
 				}
 			}
 			else {//crop mode
@@ -1687,10 +1689,11 @@ namespace OpenDental {
 				FillSignature();
 			}
 			if(nodeIdTag.NodeType==EnumNodeType.Mount) {
-				ResetZoomTrans(_bitmapShowing.Width,_bitmapShowing.Height,new Document(),
-					new Rectangle(0,0,pictureBoxMain.Width,pictureBoxMain.Height),out _zoomImage,
-					out _zoomLevel,out _zoomOverall,out _pointTranslation);
-				RenderCurrentImage(new Document(),_bitmapShowing.Width,_bitmapShowing.Height,_zoomImage,_pointTranslation);
+				//Do nothing, mounts are no longer supported in this module.
+				//ResetZoomTrans(_bitmapShowing.Width,_bitmapShowing.Height,new Document(),
+				//	new Rectangle(0,0,pictureBoxMain.Width,pictureBoxMain.Height),out _zoomImage,
+				//	out _zoomLevel,out _zoomOverall,out _pointTranslation);
+				//RenderCurrentImage(new Document(),_bitmapShowing.Width,_bitmapShowing.Height,_zoomImage,_pointTranslation);
 			}
 			if(ListTools.In(nodeIdTag.NodeType,EnumNodeType.Doc,EnumNodeType.Eob,EnumNodeType.EhrAmend,EnumNodeType.ApteryxImage)) {
 				//Render the initial image within the current bounds of the picturebox (if the document is an image).
@@ -2106,10 +2109,12 @@ namespace OpenDental {
 				return;
 			}
 			if(nodeIdTag.NodeType==EnumNodeType.Mount) {
-				using FormMountEdit formMountEdit=new FormMountEdit();
-				formMountEdit.MountCur=_mountShowing;
-				formMountEdit.ShowDialog();//Edits the MountSelected object directly and updates and changes to the database as well.
-				FillTree(true);//Refresh tree in case description for the mount changed.}
+				//Do nothing, mounts are not supported in this module so we shouldn't be making edits to the mount object.
+				return;
+				//using FormMountEdit formMountEdit=new FormMountEdit();
+				//formMountEdit.MountCur=_mountShowing;
+				//formMountEdit.ShowDialog();//Edits the MountSelected object directly and updates and changes to the database as well.
+				//FillTree(true);//Refresh tree in case description for the mount changed.}
 			}
 			if(nodeIdTag.NodeType==EnumNodeType.ApteryxImage) {
 				Document doc=new Document();
@@ -2248,6 +2253,10 @@ namespace OpenDental {
 					EhrAmendment ehrAmendment=EhrAmendments.GetOne(nodeIdTag.PriKey);
 					fileName=ehrAmendment.FileName;
 					description=ehrAmendment.Description;
+				}
+				else if(nodeIdTag.NodeType==EnumNodeType.Mount) {
+					//Do nothing, mounts are no longer supported in this module.
+					return;
 				}
 				else {
 					fileName=_documentShowing.FileName;
@@ -3652,6 +3661,10 @@ namespace OpenDental {
 				}
 				if(nodeIdTag.NodeType==EnumNodeType.Category) {
 					MsgBox.Show(this,"Cannot delete folders");
+					return;
+				}
+				if(nodeIdTag.NodeType==EnumNodeType.Mount) {
+					//Do nothing, mounts are no longer supported in this module.
 					return;
 				}
 			}

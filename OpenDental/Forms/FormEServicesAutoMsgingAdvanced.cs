@@ -124,7 +124,9 @@ namespace OpenDental {
 				AddToList(_listDefNumsUneditable[i],_listDefNumsExcludeArrivalSend);
 				AddToList(_listDefNumsUneditable[i],_listDefNumsExcludeArrivalResponse);
 				AddToList(_listDefNumsUneditable[i],_listDefNumsExcludeEclipboard);
-				AddToList(_listDefNumsUneditable[i],_listDefNumsExcludeGeneralMessage);
+				if(_listDefNumsUneditable[i]!=PrefC.GetLong(PrefName.AppointmentTimeDismissedTrigger)) {
+					AddToList(_listDefNumsUneditable[i],_listDefNumsExcludeGeneralMessage);
+				}
 			}
 			AddToList(_defNumTimeArrived,_listDefNumsByodEnabled);
 			FillGrid();
@@ -186,7 +188,7 @@ namespace OpenDental {
 				gridCell.ColorBackG=_listDefNumsUneditable.Contains(_listDefs[i].DefNum)?_color:Color.Empty;
 				row.Cells.Add(gridCell);
 				gridCell=new GridCell(_listDefNumsExcludeGeneralMessage.Contains(_listDefs[i].DefNum)?"":"X");
-				gridCell.ColorBackG=_listDefNumsUneditable.Contains(_listDefs[i].DefNum)?_color:Color.Empty;
+				gridCell.ColorBackG=_listDefNumsUneditable.Except(new List<long> { PrefC.GetLong(PrefName.AppointmentTimeDismissedTrigger) }).Contains(_listDefs[i].DefNum)?_color:Color.Empty;
 				row.Cells.Add(gridCell);
 				gridCell=new GridCell(_listDefNumsExcludeArrivalResponse.Contains(_listDefs[i].DefNum)?"":"X");
 				gridCell.ColorBackG=_listDefNumsUneditable.Contains(_listDefs[i].DefNum)?_color:Color.Empty;

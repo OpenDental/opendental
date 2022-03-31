@@ -3711,53 +3711,22 @@ namespace OpenDentBusiness {
 						PayType=defNumPayType,
 						PayNote=$"Created via Family Balancer Tool in order to convert insurance overpayment from ClaimNum {listClaimGroups[i].ClaimNum} into patient payment."
 					};
-					List<PaySplit> listPaySplits=new List<PaySplit>();
-					//Make a paysplit for every single ClaimProcGroup that is overpaid.
-					//PayAsTotal overpayments will be treated as if the first claimproc associated to a procedure was overpaid.
-					List<ClaimProc> listClaimProcsOverpaid=listClaimProcSupplementals.FindAll(x => (x.InsPayAmt + x.WriteOff) < 0);
-					List<ClaimProc> listClaimProcsUnderpaid=listClaimProcSupplementals.FindAll(x => (x.InsPayAmt + x.WriteOff) > 0);
-					//Start with overpaid groups that are associated to procedures since their values should always be honored.
-					List<ClaimProc> listClaimProcsOverpaidWithProcs=listClaimProcsOverpaid.FindAll(x => x.ProcNum > 0);
-					for(int k=0;k<listClaimProcsOverpaidWithProcs.Count;k++) {
-						//Make a payment split that exactly counteracts the supplemental claimproc suggested.
-						double splitAmt=(listClaimProcsOverpaidWithProcs[k].InsPayAmt + listClaimProcsOverpaidWithProcs[k].WriteOff) * -1;
-						//Do not copy this pattern of manually making a payment split. You should be invoking CreatePaySplitHelper() instead.
-						//However, this payment split is unique in that it is not counteracting a specific account entry and is instead a standalone unearned payment.
-						listPaySplits.Add(new PaySplit() {
+					//Do not copy this pattern of manually making a payment split. You should be invoking CreatePaySplitHelper() instead.
+					//However, this payment split is unique in that it is not counteracting a specific account entry and is instead a standalone unearned payment.
+					List<PaySplit> listPaySplits=new List<PaySplit>() {
+						new PaySplit() {
 							AdjNum=0,
-							ClinicNum=listClaimProcsOverpaidWithProcs[k].ClinicNum,
+							ClinicNum=0,
 							DatePay=payDate,
 							IsNew=true,
-							PatNum=listClaimProcsOverpaidWithProcs[k].PatNum,
+							PatNum=guarantor,
 							PayNum=0,//This will be set by consuming methods if they decide to insert these suggested payments into the database.
-							ProvNum=listClaimProcsOverpaidWithProcs[k].ProvNum,
-							SplitAmt=splitAmt,
+							ProcNum=0,
+							ProvNum=0,
+							SplitAmt=totalInsPay,
 							UnearnedType=defNumUnearnedType,
-						});
-					}
-					//Allow underpaid claimprocs to be covered by the PayAsTotal claimproc.
-					//Sum up the total amount of underpaid claimprocs (regardless of ProcNum).
-					double amtUnderpaid=listClaimProcsUnderpaid.Sum(x => (x.InsPayAmt + x.WriteOff));
-					//Sum up the total of overpaid PayAsTotal claimprocs.
-					double amtPayAsTotal=listClaimProcsOverpaid.Where(x => x.ProcNum==0).Sum(x => (x.InsPayAmt + x.WriteOff));
-					//Take the negative value of amtPayAsTotal and add the positive amtUnderpaid which will yield the exact amount that the PayAsTotal has overpaid the claim.
-					double amtPaySplit=(amtPayAsTotal + amtUnderpaid);
-					//A single unearned payment split utilizing the first non-zero claimproc on the claim should be made when the PayAsTotal has overpaid the claim.
-					if(CompareDouble.IsLessThanZero(amtPaySplit)) {
-						//It has already been verified above that there is at least one ClaimProcGroup with a valid ProcNum.
-						ClaimProc claimProc=listClaimGroups[i].ListClaimProcGroups.First(x => x.ProcNum > 0).ListClaimProcs.First();
-						listPaySplits.Add(new PaySplit() {
-							AdjNum=0,
-							ClinicNum=claimProc.ClinicNum,
-							DatePay=payDate,
-							IsNew=true,
-							PatNum=claimProc.PatNum,
-							PayNum=0,//This will be set by consuming methods if they decide to insert these suggested payments into the database.
-							ProvNum=claimProc.ProvNum,
-							SplitAmt=amtPaySplit*=-1,//Payment splits are stored in the database in reverse.
-							UnearnedType=defNumUnearnedType,
-						});
-					}
+						}
+					};
 					insOverpayResult.StringBuilderVerbose.AppendLine($"ClaimNum {listClaimGroups[i].ClaimNum} has been overpaid by {totalInsPay:C}");
 					insOverpayResult.StringBuilderVerbose.AppendLine($"  ^Created {listClaimProcSupplementals.Count} new supplemental claimproc(s).");
 					insOverpayResult.StringBuilderVerbose.AppendLine($"  ^Created {listPaySplits.Count} unearned payment split(s).");

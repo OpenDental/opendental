@@ -14092,11 +14092,11 @@ namespace UnitTests.PaymentEdit_Tests {
 				&& x.InsPayAmt==-50
 				&& x.WriteOff==0
 				&& x.IsTransfer==false));
-			//Assert that the payment splits are exactly as anticipated.
-			Assert.AreEqual(1,listPaySplits.Count(x => x.PatNum==claimProc.PatNum
+			//Assert that there is a singular payment split for the amount that the claim was overpaid.
+			Assert.AreEqual(1,listPaySplits.Count(x => x.PatNum==patient.PatNum
 				&& x.ProcNum==0
-				&& x.ProvNum==claimProc.ProvNum
-				&& x.SplitAmt==50
+				&& x.ProvNum==0
+				&& x.SplitAmt==50//The entire claim was only overpaid by $50
 				&& x.UnearnedType > 0));
 			//Insert the suggested supplemental claimprocs and unearned payments.
 			PaymentEdit.InsertInsOverpayResult(insOverpayResult);
@@ -14208,16 +14208,11 @@ namespace UnitTests.PaymentEdit_Tests {
 				&& x.InsPayAmt==-30
 				&& x.WriteOff==0
 				&& x.IsTransfer==false));
-			//Assert that the payment splits are exactly as anticipated.
-			Assert.AreEqual(1,listPaySplits.Count(x => x.PatNum==claimProc1.PatNum
+			//Assert that there is a singular payment split for the amount that the claim was overpaid.
+			Assert.AreEqual(1,listPaySplits.Count(x => x.PatNum==patient.PatNum
 				&& x.ProcNum==0
-				&& x.ProvNum==claimProc1.ProvNum
-				&& x.SplitAmt==20
-				&& x.UnearnedType > 0));
-			Assert.AreEqual(1,listPaySplits.Count(x => x.PatNum==claimProc2.PatNum
-				&& x.ProcNum==0
-				&& x.ProvNum==claimProc2.ProvNum
-				&& x.SplitAmt==30
+				&& x.ProvNum==0
+				&& x.SplitAmt==50//The entire claim was only overpaid by $50
 				&& x.UnearnedType > 0));
 			//Insert the suggested supplemental claimprocs and unearned payments.
 			PaymentEdit.InsertInsOverpayResult(insOverpayResult);
@@ -14291,6 +14286,72 @@ namespace UnitTests.PaymentEdit_Tests {
 		}
 
 		[TestMethod]
+		public void PaymentEdit_TransferInsuranceOverpaymentsForFamily_MultipleClaimProcsBothOverpaidAndUnderpaid() {
+			//Have insurance underpay one procedure but overpay another procedure enough to where the entire claim is overpaid.
+			/*****************************************************
+				Create Provider: provNum1
+				Create Patient: pat
+				Create procedure1:  Today-1M  provNum1  pat  $50
+				Create procedure2:  Today-1M  provNum1  pat  $100
+				Create claimproc1:  Today     provNum1  pat  $40
+					^InsPayAmt pays procedure1 less than is owed
+				Create claimproc2:  Today     provNum1  pat  $130
+					^InsPayAmt pays procedure2 more than is owed for both the procedure and the entire claim.
+			******************************************************/
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			Patient patient=PatientT.CreatePatient(suffix);
+			Family family=Patients.GetFamily(patient.PatNum);
+			long provNum1=ProviderT.CreateProvider($"1-{suffix}");
+			InsuranceInfo insuranceInfo=InsuranceT.AddInsurance(patient,suffix);
+			ProcedureCode procedureCode1=ProcedureCodeT.CreateProcCode("MCPBOAU1");
+			ProcedureCode procedureCode2=ProcedureCodeT.CreateProcCode("MCPBOAU2");
+			Benefit benefit1=BenefitT.CreatePercentForProc(insuranceInfo.PriInsPlan.PlanNum,procedureCode1.CodeNum,100);
+			Benefit benefit2=BenefitT.CreatePercentForProc(insuranceInfo.PriInsPlan.PlanNum,procedureCode2.CodeNum,100);
+			Procedure procedure1=ProcedureT.CreateProcedure(patient,procedureCode1.ProcCode,ProcStat.TP,"",50,procDate:DateTime.Now.AddMonths(-1),provNum:provNum1);
+			Procedure procedure2=ProcedureT.CreateProcedure(patient,procedureCode2.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddMonths(-1),provNum:provNum1);
+			insuranceInfo.ComputeEstimatesForProcs(new List<Procedure>() { procedure1,procedure2 });
+			insuranceInfo.CreateClaim();
+			//Have insurance underpay the procedures.
+			insuranceInfo.ListAllClaimProcs.First(x => x.ProcNum==procedure1.ProcNum).InsPayAmt=40;
+			insuranceInfo.ListAllClaimProcs.First(x => x.ProcNum==procedure2.ProcNum).InsPayAmt=130;
+			insuranceInfo.ReceiveClaims();
+			InsOverpayResult insOverpayResult=PaymentEdit.TransferInsuranceOverpaymentsForFamily(family);
+			//Assert that the insurance overpayment has been distributed correctly (fills up what is owed on procedure1) along with moving the overpayment to unearned.
+			//Assert that the insurance overpayment was converted into unearned patient income.
+			Assert.AreEqual(insOverpayResult.ListPayNumPaySplitsGroups.Count,1);
+			List<PaySplit> listPaySplits=insOverpayResult.ListPayNumPaySplitsGroups[0].ListPaySplits;
+			//Assert that the supplemental claimprocs are exactly as anticipated.
+			ClaimProc claimProc1=insuranceInfo.ListAllClaimProcs.First(x => x.ProcNum==procedure1.ProcNum);
+			Assert.AreEqual(1,insOverpayResult.ListClaimProcSupplementals.Count(x => x.PatNum==claimProc1.PatNum
+				&& x.ClinicNum==claimProc1.ClinicNum
+				&& x.ProcNum==claimProc1.ProcNum
+				&& x.ProvNum==claimProc1.ProvNum
+				&& x.Status==ClaimProcStatus.Supplemental
+				&& x.InsPayAmt==10//Procedure1 was underpaid by $10
+				&& x.WriteOff==0
+				&& x.IsTransfer==false));
+			ClaimProc claimProc2=insuranceInfo.ListAllClaimProcs.First(x => x.ProcNum==procedure2.ProcNum);
+			Assert.AreEqual(1,insOverpayResult.ListClaimProcSupplementals.Count(x => x.PatNum==claimProc2.PatNum
+				&& x.ClinicNum==claimProc2.ClinicNum
+				&& x.ProcNum==claimProc2.ProcNum
+				&& x.ProvNum==claimProc2.ProvNum
+				&& x.Status==ClaimProcStatus.Supplemental
+				&& x.InsPayAmt==-30//Procedure2 was overpaid by $30
+				&& x.WriteOff==0
+				&& x.IsTransfer==false));
+			//Assert that there is a singular payment split for the amount that the claim was overpaid.
+			Assert.AreEqual(1,listPaySplits.Count(x => x.PatNum==patient.PatNum
+				&& x.ProcNum==0
+				&& x.ProvNum==0
+				&& x.SplitAmt==20//The entire claim was only overpaid by $20
+				&& x.UnearnedType > 0));
+			//Insert the suggested supplemental claimprocs and unearned payments.
+			PaymentEdit.InsertInsOverpayResult(insOverpayResult);
+			//Execute TransferInsuranceOverpaymentsForFamily again and assert that it did not suggest to do something yet again.
+			AssertEmptyInsOverpayResult(PaymentEdit.TransferInsuranceOverpaymentsForFamily(family));
+		}
+
+		[TestMethod]
 		public void PaymentEdit_TransferInsuranceOverpaymentsForFamily_SingleProcPayAsTotalOverpaid() {
 			/*****************************************************
 				Create Provider: provNum1
@@ -14336,13 +14397,11 @@ namespace UnitTests.PaymentEdit_Tests {
 				&& x.InsPayAmt==100
 				&& x.WriteOff==0
 				&& x.IsTransfer==false));
-			//Assert that the payment splits are exactly as anticipated.
-			//PayAsTotal claimprocs that completely overpay the claim will arbitrarily utilize the information on the first claimproc on the claim that is associated to a procedure.
-			Assert.AreEqual(1,listPaySplits.Count(x => x.PatNum==claimProc1.PatNum
+			//Assert that there is a singular payment split for the amount that the claim was overpaid.
+			Assert.AreEqual(1,listPaySplits.Count(x => x.PatNum==patient.PatNum
 				&& x.ProcNum==0
-				&& x.ProvNum==claimProc1.ProvNum
-				&& x.ClinicNum==claimProc1.ClinicNum
-				&& x.SplitAmt==50
+				&& x.ProvNum==0
+				&& x.SplitAmt==50//The entire claim was only overpaid by $50
 				&& x.UnearnedType > 0));
 			//Insert the suggested supplemental claimprocs and unearned payments.
 			PaymentEdit.InsertInsOverpayResult(insOverpayResult);
@@ -14446,12 +14505,11 @@ namespace UnitTests.PaymentEdit_Tests {
 				&& x.InsPayAmt==500
 				&& x.WriteOff==0
 				&& x.IsTransfer==false));
-			//Assert that the payment splits are exactly as anticipated.
-			//PayAsTotals are treated like the first claim procedure was overpaid.
-			Assert.AreEqual(1,listPaySplits.Count(x => x.PatNum==claimProc1.PatNum
+			//Assert that there is a singular payment split for the amount that the claim was overpaid.
+			Assert.AreEqual(1,listPaySplits.Count(x => x.PatNum==patient.PatNum
 				&& x.ProcNum==0
-				&& x.ProvNum==claimProc1.ProvNum
-				&& x.SplitAmt==500
+				&& x.ProvNum==0
+				&& x.SplitAmt==500//The entire claim was only overpaid by $500
 				&& x.UnearnedType > 0));
 			//Insert the suggested supplemental claimprocs and unearned payments.
 			PaymentEdit.InsertInsOverpayResult(insOverpayResult);
@@ -14560,17 +14618,11 @@ namespace UnitTests.PaymentEdit_Tests {
 				&& x.InsPayAmt==500
 				&& x.WriteOff==0
 				&& x.IsTransfer==false));
-			//Assert that the payment splits are exactly as anticipated.
-			Assert.AreEqual(1,listPaySplits.Count(x => x.PatNum==claimProc3.PatNum
+			//Assert that there is a singular payment split for the amount that the claim was overpaid.
+			Assert.AreEqual(1,listPaySplits.Count(x => x.PatNum==patient.PatNum
 				&& x.ProcNum==0
-				&& x.ProvNum==claimProc3.ProvNum
-				&& x.SplitAmt==50
-				&& x.UnearnedType > 0));
-			//PayAsTotals are treated like the first claim procedure was overpaid.
-			Assert.AreEqual(1,listPaySplits.Count(x => x.PatNum==claimProc1.PatNum
-				&& x.ProcNum==0
-				&& x.ProvNum==claimProc1.ProvNum
-				&& x.SplitAmt==450
+				&& x.ProvNum==0
+				&& x.SplitAmt==500//The entire claim was only overpaid by $500
 				&& x.UnearnedType > 0));
 			//Insert the suggested supplemental claimprocs and unearned payments.
 			PaymentEdit.InsertInsOverpayResult(insOverpayResult);

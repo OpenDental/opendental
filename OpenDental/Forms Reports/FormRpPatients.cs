@@ -71,7 +71,6 @@ namespace OpenDental {
 			_listBillingTypeDefs=Defs.GetDefsForCategory(DefCat.BillingTypes);
 			_listRecallUnschedStatusDefs=Defs.GetDefsForCategory(DefCat.RecallUnschedStatus);
 			listBoxRefType.Items.AddEnums<ReferralType>();
-			listBoxRefType.SetSelected(0); // make sure an item is selected so the control is not blank
 			Lan.F(this);
 		}
 
@@ -783,12 +782,11 @@ namespace OpenDental {
 			#region Age
 			else if(DropListFilter.SelectedItem.ToString()=="Age") {
 				if(listConditions.SelectedIndex==0) {
-					listPrerequisites.Items.Add("patient.BirthDate LIKE '%"
-					 +DateTime.Now.AddYears(-Convert.ToInt32(TextValidAge.Text)).ToString("yyyy-MM-dd")+"%'");
+					listPrerequisites.Items.Add($"IF(patient.Birthdate > DATE('0001-01-01'),TIMESTAMPDIFF(YEAR, patient.Birthdate,CURDATE()) LIKE '%{Convert.ToInt32(TextValidAge.Text)}%' ,false)");
 				}
 				else {
-					listPrerequisites.Items.Add("patient.Birthdate "+listConditions.SelectedItem.ToString()+" '"
-						+DateTime.Now.AddYears(-Convert.ToInt32(TextValidAge.Text)).ToString("yyyy-MM-dd")+"'");
+
+					listPrerequisites.Items.Add($"IF(patient.Birthdate > DATE('0001-01-01'),TIMESTAMPDIFF(YEAR, patient.Birthdate,CURDATE()) {listConditions.SelectedItem} {Convert.ToInt32(TextValidAge.Text)} ,false)");
 				}
 			}
 			#endregion Age
