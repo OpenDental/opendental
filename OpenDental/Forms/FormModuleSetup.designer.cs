@@ -157,6 +157,7 @@ namespace OpenDental{
 			this.label29 = new System.Windows.Forms.Label();
 			this.butBadDebt = new OpenDental.UI.Button();
 			this.groupBox9 = new OpenDental.UI.GroupBoxOD();
+			this.checkPaymentCompletedDisableMerchantButtons = new System.Windows.Forms.CheckBox();
 			this.checkIncTxfrTreatNegProdAsIncome = new System.Windows.Forms.CheckBox();
 			this.checkStoreCCTokens = new System.Windows.Forms.CheckBox();
 			this.comboPaymentClinicSetting = new OpenDental.UI.ComboBoxOD();
@@ -414,7 +415,8 @@ namespace OpenDental{
 			this.checkRxSendNewToQueue = new System.Windows.Forms.CheckBox();
 			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
-			this.checkPaymentCompletedDisableMerchantButtons = new System.Windows.Forms.CheckBox();
+			this.label47 = new System.Windows.Forms.Label();
+			this.checkImagesModuleUsesOld2020 = new System.Windows.Forms.CheckBox();
 			this.tabControlMain.SuspendLayout();
 			this.tabAppts.SuspendLayout();
 			this.groupBox8.SuspendLayout();
@@ -1873,6 +1875,18 @@ namespace OpenDental{
 			this.groupBox9.Size = new System.Drawing.Size(399, 190);
 			this.groupBox9.TabIndex = 0;
 			this.groupBox9.Text = "Payments";
+			// 
+			// checkPaymentCompletedDisableMerchantButtons
+			// 
+			this.checkPaymentCompletedDisableMerchantButtons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.checkPaymentCompletedDisableMerchantButtons.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkPaymentCompletedDisableMerchantButtons.Location = new System.Drawing.Point(50, 165);
+			this.checkPaymentCompletedDisableMerchantButtons.Name = "checkPaymentCompletedDisableMerchantButtons";
+			this.checkPaymentCompletedDisableMerchantButtons.Size = new System.Drawing.Size(344, 17);
+			this.checkPaymentCompletedDisableMerchantButtons.TabIndex = 306;
+			this.checkPaymentCompletedDisableMerchantButtons.Text = "Disable merchant buttons for completed payments";
+			this.checkPaymentCompletedDisableMerchantButtons.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkPaymentCompletedDisableMerchantButtons.UseVisualStyleBackColor = true;
 			// 
 			// checkIncTxfrTreatNegProdAsIncome
 			// 
@@ -4095,6 +4109,8 @@ namespace OpenDental{
 			// tabImages
 			// 
 			this.tabImages.BackColor = System.Drawing.Color.White;
+			this.tabImages.Controls.Add(this.label47);
+			this.tabImages.Controls.Add(this.checkImagesModuleUsesOld2020);
 			this.tabImages.Controls.Add(this.groupBoxOD2);
 			this.tabImages.Controls.Add(this.butBrowseImageCategory);
 			this.tabImages.Controls.Add(this.labelDefaultImageCategory);
@@ -4122,7 +4138,7 @@ namespace OpenDental{
 			this.groupBoxOD2.Controls.Add(this.label34);
 			this.groupBoxOD2.Controls.Add(this.label35);
 			this.groupBoxOD2.Controls.Add(this.label36);
-			this.groupBoxOD2.Location = new System.Drawing.Point(141, 159);
+			this.groupBoxOD2.Location = new System.Drawing.Point(283, 165);
 			this.groupBoxOD2.Name = "groupBoxOD2";
 			this.groupBoxOD2.Size = new System.Drawing.Size(241, 119);
 			this.groupBoxOD2.TabIndex = 51;
@@ -4245,7 +4261,7 @@ namespace OpenDental{
 			// 
 			this.checkPDFLaunchWindow.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkPDFLaunchWindow.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkPDFLaunchWindow.Location = new System.Drawing.Point(15, 116);
+			this.checkPDFLaunchWindow.Location = new System.Drawing.Point(74, 116);
 			this.checkPDFLaunchWindow.Name = "checkPDFLaunchWindow";
 			this.checkPDFLaunchWindow.Size = new System.Drawing.Size(440, 15);
 			this.checkPDFLaunchWindow.TabIndex = 6;
@@ -4709,17 +4725,28 @@ namespace OpenDental{
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
-			// checkPaymentCompletedDisableMerchantButtons
+			// label47
 			// 
-			this.checkPaymentCompletedDisableMerchantButtons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.checkPaymentCompletedDisableMerchantButtons.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkPaymentCompletedDisableMerchantButtons.Location = new System.Drawing.Point(50, 165);
-			this.checkPaymentCompletedDisableMerchantButtons.Name = "checkPaymentCompletedDisableMerchantButtons";
-			this.checkPaymentCompletedDisableMerchantButtons.Size = new System.Drawing.Size(344, 17);
-			this.checkPaymentCompletedDisableMerchantButtons.TabIndex = 306;
-			this.checkPaymentCompletedDisableMerchantButtons.Text = "Disable merchant buttons for completed payments";
-			this.checkPaymentCompletedDisableMerchantButtons.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkPaymentCompletedDisableMerchantButtons.UseVisualStyleBackColor = true;
+			this.label47.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.label47.Location = new System.Drawing.Point(520, 138);
+			this.label47.Name = "label47";
+			this.label47.Size = new System.Drawing.Size(245, 18);
+			this.label47.TabIndex = 301;
+			this.label47.Text = "might be useful for XVWeb, but probably not";
+			this.label47.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// checkImagesModuleUsesOld2020
+			// 
+			this.checkImagesModuleUsesOld2020.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkImagesModuleUsesOld2020.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.checkImagesModuleUsesOld2020.Location = new System.Drawing.Point(74, 137);
+			this.checkImagesModuleUsesOld2020.Name = "checkImagesModuleUsesOld2020";
+			this.checkImagesModuleUsesOld2020.Size = new System.Drawing.Size(440, 15);
+			this.checkImagesModuleUsesOld2020.TabIndex = 300;
+			this.checkImagesModuleUsesOld2020.Text = "Use old Imaging module interface, pre 2020";
+			this.checkImagesModuleUsesOld2020.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkImagesModuleUsesOld2020.UseVisualStyleBackColor = true;
+			this.checkImagesModuleUsesOld2020.Click += new System.EventHandler(this.checkImagesModuleUsesOld2020_Click);
 			// 
 			// FormModuleSetup
 			// 
@@ -5175,5 +5202,7 @@ namespace OpenDental{
 		private Label label36;
 		private CheckBox checkClaimPrimaryRecievedForceSecondaryStatus;
 		private CheckBox checkPaymentCompletedDisableMerchantButtons;
+		private Label label47;
+		private CheckBox checkImagesModuleUsesOld2020;
 	}
 }

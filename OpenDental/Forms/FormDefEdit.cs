@@ -79,6 +79,7 @@ namespace OpenDental {
 				groupBoxEThanks.Visible=false;
 				groupBoxArrivals.Visible=false;
 				groupBoxEClipboard.Visible=false;
+				groupBoxGeneralMessages.Visible=false;
 			}
 			if(ListTools.In(_def.DefNum,PrefC.GetLong(PrefName.AppointmentTimeArrivedTrigger),PrefC.GetLong(PrefName.AppointmentTimeDismissedTrigger),
 				PrefC.GetLong(PrefName.AppointmentTimeSeatedTrigger)) && _def.DefNum!=0)

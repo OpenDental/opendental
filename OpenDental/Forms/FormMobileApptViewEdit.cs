@@ -351,7 +351,8 @@ namespace OpenDental{
 				!=DialogResult.OK){
 				return;
 			}
-			ApptViewItems.DeleteAllForView(_apptViewCur,isMobile:true) ;
+			ApptViewItems.DeleteAllForView(_apptViewCur,isMobile:true);
+			_parentForm.UpdateMobileViewList(new List<ApptViewItem>()); // clear out the in memory list that lives on the parent view.
 			DialogResult=DialogResult.OK;
 		}
 

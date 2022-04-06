@@ -377,7 +377,7 @@ namespace OpenDental {
 			if(RefToSel || RefFromSel || NeedRefPat || NeedRefDent) {
 				listWhereClauses.Add("patient.patnum=refattach.patnum");
 				listWhereClauses.Add("referral.referralnum=refattach.referralnum");
-				if(RefToSel || RefFromSel) {
+				if(listBoxRefType.SelectedItem != null) {
 					listWhereClauses.Add("refattach.RefType="+POut.Int((int)listBoxRefType.SelectedItem));
 				}
 			}
@@ -1029,9 +1029,8 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender,System.EventArgs e) {
-			FormUserQuery2=new FormUserQuery(TextSQL.Text);
+			FormUserQuery2=new FormUserQuery(TextSQL.Text, submitQueryOnLoad: true);
 			FormUserQuery2.textTitle.Text="Patients Raw Report";
-			FormUserQuery2.SubmitQueryThreaded();
 			FormUserQuery2.ShowDialog();
 			FormUserQuery2.Dispose();
 		}

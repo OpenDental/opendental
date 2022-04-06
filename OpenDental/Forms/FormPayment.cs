@@ -2307,6 +2307,7 @@ namespace OpenDental {
 		}
 
 		private bool HasEdgeExpress() {
+			_listPaymentTypeDefs=_listPaymentTypeDefs??Defs.GetDefsForCategory(DefCat.PaymentTypes,true);
 			Program progCur=Programs.GetCur(ProgramName.EdgeExpress);
 			if(!progCur.Enabled) {
 				ODException.SwallowAnyException(() =>
@@ -3104,12 +3105,16 @@ namespace OpenDental {
 				return;
 			}
 			else {//Record a new payment for the voided transaction
+				double amountCharged=PIn.Double(textAmount.Text);
+				if(amountCharged>0) {
+					amountCharged*=-1;
+				}
 				Payment voidPayment=_paymentCur.Clone();
-				voidPayment.PayAmt*=-1; //The negated amount of the original payment
+				voidPayment.PayAmt=amountCharged; 
 				voidPayment.Receipt=receiptStr;
 				voidPayment.PayNote=Lan.g(this,"Transaction Type")+": "+Enum.GetName(typeof(PayConnectService.transType),PayConnectService.transType.VOID)
 					+Environment.NewLine+Lan.g(this,"Status")+": "+payConnectResponse.Description+Environment.NewLine
-					+Lan.g(this,"Amount")+": "+voidPayment.PayAmt+Environment.NewLine
+					+Lan.g(this,"Amount")+": "+amountCharged.ToString("C")+Environment.NewLine
 					+Lan.g(this,"Auth Code")+": "+payConnectResponse.AuthCode+Environment.NewLine
 					+Lan.g(this,"Ref Number")+": "+payConnectResponse.RefNumber;
 				voidPayment.PaymentSource=CreditCardSource.PayConnect;
@@ -3405,10 +3410,14 @@ namespace OpenDental {
 				SetComboDepositAccounts();
 			}
 			string resultNote=null;
+			double amountCharged=PIn.Double(textAmount.Text);
+			if(amountCharged>0 && FormP.TranType==PayConnectService.transType.VOID) {
+				amountCharged*=-1;
+			}
 			if(FormP.Response!=null) {
 				resultNote=Lan.g(this,"Transaction Type")+": "+Enum.GetName(typeof(PayConnectService.transType),FormP.TranType)+Environment.NewLine+
 					Lan.g(this,"Status")+": "+FormP.Response.Description+Environment.NewLine+
-					Lan.g(this,"Amount")+": "+FormP.AmountCharged+Environment.NewLine+
+					Lan.g(this,"Amount")+": "+amountCharged.ToString("C")+Environment.NewLine+
 					Lan.g(this,"Card Type")+": "+FormP.Response.CardType+Environment.NewLine+
 					Lan.g(this,"Account")+": "+StringTools.TruncateBeginning(FormP.CardNumber,4).PadLeft(FormP.CardNumber.Length,'X')+Environment.NewLine+
 					Lan.g(this,"Auth Code")+": "+FormP.Response.AuthCode+Environment.NewLine+
@@ -3463,7 +3472,7 @@ namespace OpenDental {
 							}
 							_paymentCur.IsSplit=_listSplitsCur.Count>1;
 							Payment voidPayment=_paymentCur.Clone();
-							voidPayment.PayAmt*=-1;//the negation of the original amount
+							voidPayment.PayAmt=amountCharged;
 							voidPayment.PayNote=resultNote;
 							voidPayment.Receipt=FormP.ReceiptStr;
 							voidPayment.PaymentSource=CreditCardSource.PayConnect;
@@ -4079,6 +4088,11 @@ namespace OpenDental {
 			formEdgeExpressTrans.ShowDialog();
 			if(formEdgeExpressTrans.DialogResult!=DialogResult.OK) {
 				return null;
+			}
+			if(prepaidAmt==0) {
+				Program prog=Programs.GetCur(ProgramName.EdgeExpress);
+				string payType=ProgramProperties.GetPropVal(prog.ProgramNum,ProgramProperties.PropertyDescs.EdgeExpress.PaymentType,_paymentCur.ClinicNum);//payType could be an empty string
+				listPayType.SelectedIndex=Defs.GetOrder(DefCat.PaymentTypes,PIn.Long(payType));
 			}
 			_paymentCur.ProcessStatus=ProcessStat.OfficeProcessed;
 			EdgeExpressTransType transType=formEdgeExpressTrans.EdgeExpressTransTypeCur;

@@ -374,18 +374,6 @@ namespace OpenDental{
 					return;
 				}
 			}
-			bool enabledChanged=false;//just for XVWeb and Suni
-			if(ProgramCur.Enabled!=checkEnabled.Checked){
-				enabledChanged=true;
-			}
-			if(enabledChanged 
-				&& (ProgramCur.ProgName==ProgramName.XVWeb.ToString()
-				|| textProgDesc.Text=="Suni"))//not a built-in bridge.  Instructions in manual to manually add this bridge.
-			{
-				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"The entire program will now need to close to reset imaging.")){
-					return;
-				}
-			}
 			ProgramCur.ProgName=textProgName.Text;
 			ProgramCur.ProgDesc=textProgDesc.Text;
 			ProgramCur.Enabled=checkEnabled.Checked;
@@ -416,15 +404,6 @@ namespace OpenDental{
 				ToolButItems.Insert(ToolButItemCur);
 			}
 			DialogResult=DialogResult.OK;
-			if(enabledChanged
-				&& (ProgramCur.ProgName==ProgramName.XVWeb.ToString()
-				|| ProgramCur.ProgDesc=="Suni"))
-			{
-				//if using XVWeb or Suni, then also use the old images module
-				Prefs.UpdateBool(PrefName.ImagesModuleUsesOld2020,checkEnabled.Checked);
-				Cursor=Cursors.WaitCursor;
-				FormOpenDental.S_ProcessKillCommand();//just no possible way to elegantly keep it from crashing
-			}
 		}
 
 		private void butCancel_Click(object sender, System.EventArgs e) {

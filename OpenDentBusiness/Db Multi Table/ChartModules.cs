@@ -1908,11 +1908,11 @@ namespace OpenDentBusiness {
 						}
 						for(int i=0;i<listPatRestricts.Count;i++) { //Create a new row for each patient restriction.
 							row=tableRetVal.NewRow();
-							if(string.IsNullOrWhiteSpace(fieldCur.Description)) {
-								row["Field"]="Pat Restriction - "+fieldCur.InternalName;
+							if(fieldCur.Description=="") {
+								row["Field"]=fieldCur.InternalName;
 							}
 							else {
-								row["Field"]="Pat Restriction - "+fieldCur.Description;
+								row["Field"]=fieldCur.Description;
 							}
 							row["Contents"]=PatRestrictions.GetPatRestrictDesc(listPatRestricts[i].PatRestrictType);
 							tableRetVal.Rows.Add(row);

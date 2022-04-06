@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDocumentation.xsl"?>
-<database version="22.1.18.0">
+<database version="22.1.19.0">
     <table name="account">
         <summary>Used in the accounting section in chart of accounts.  Not related to patient accounts in any way.</summary>
         <column order="0" name="AccountNum" type="bigint(20)">
@@ -1546,7 +1546,6 @@
                 <EnumValue name="UnknownError">14.</EnumValue>
                 <EnumValue name="ErrorAcknowledged">15.</EnumValue>
                 <EnumValue name="ExpiredBatch">16.</EnumValue>
-                <EnumValue name="MerchantClosed">17. This is manually created when we get the merchant number to create process BQS.</EnumValue>
             </Enumeration>
         </column>
         <column order="7" name="DateTimeEntry" type="datetime">

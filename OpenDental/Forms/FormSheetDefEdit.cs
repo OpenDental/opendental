@@ -2179,6 +2179,7 @@ namespace OpenDental {
 			List<SheetFieldDef> listSheetFieldDefMedCheckBox=new List<SheetFieldDef>();
 			List<SheetFieldDef> listSheetFieldDefInputMedList=new List<SheetFieldDef>();
 			List<SheetFieldDef> listSheetFieldDefCheckMedList=new List<SheetFieldDef>();
+			List<SheetFieldDef> listSheetFieldDefErroneousDuplicates=new List<SheetFieldDef>();
 			//Verify radio button groups.
 			for(int i=0;i<_sheetDefCur.SheetFieldDefs.Count;i++) {
 				SheetFieldDef sheetFieldDef=_sheetDefCur.SheetFieldDefs[i];
@@ -2200,35 +2201,41 @@ namespace OpenDental {
 				if(sheetFieldDef.FieldType==SheetFieldType.CheckBox && (sheetFieldDef.FieldName.StartsWith("allergy:")) || sheetFieldDef.FieldName.StartsWith("problem:")) {
 					foreach(SheetFieldDef sheetFieldDefMedCheckBox in listSheetFieldDefMedCheckBox) { //Check for duplicates.
 						if(sheetFieldDefMedCheckBox.FieldName==sheetFieldDef.FieldName && sheetFieldDefMedCheckBox.RadioButtonValue==sheetFieldDef.RadioButtonValue && sheetFieldDefMedCheckBox.Language==sheetFieldDef.Language) {
-							string message=GetDuplicateSheetFieldDefErrorMessage(sheetFieldDef);
-							MessageBox.Show(message);
-							return false;
+							listSheetFieldDefErroneousDuplicates.Add(sheetFieldDef);
+							continue;
 						}
 					}
 					//Not a duplicate so add it to the med chk box list.
 					listSheetFieldDefMedCheckBox.Add(sheetFieldDef);
 				}
 				else if(sheetFieldDef.FieldType==SheetFieldType.InputField && sheetFieldDef.FieldName.StartsWith("inputMed")) {
-					foreach(SheetFieldDef sheetFieldDef2 in listSheetFieldDefInputMedList) {
+					foreach(SheetFieldDef sheetFieldDef2 in listSheetFieldDefInputMedList) { //Check for duplicates.
 						if(sheetFieldDef2.FieldName==sheetFieldDef.FieldName && sheetFieldDef2.Language==sheetFieldDef.Language) {
-							string message=GetDuplicateSheetFieldDefErrorMessage(sheetFieldDef);
-							MessageBox.Show(message);
-							return false;
+							listSheetFieldDefErroneousDuplicates.Add(sheetFieldDef);
+							continue;
 						}
 					}
+					//Not a duplicate so add it to the input med list.
 					listSheetFieldDefInputMedList.Add(sheetFieldDef);
 				}
 				else if(sheetFieldDef.FieldType==SheetFieldType.CheckBox && sheetFieldDef.FieldName.StartsWith("checkMed")) {
 					foreach(SheetFieldDef sheetFieldDefMedCheckBox in listSheetFieldDefCheckMedList) { //Check for duplicates.
 						if(sheetFieldDefMedCheckBox.FieldName==sheetFieldDef.FieldName && sheetFieldDefMedCheckBox.Language==sheetFieldDef.Language) {
-							string message=GetDuplicateSheetFieldDefErrorMessage(sheetFieldDef);
-							MessageBox.Show(message);
-							return false;
+							listSheetFieldDefErroneousDuplicates.Add(sheetFieldDef);
+							continue;
 						}
 					}
+					//Not a duplicate so add it to the check med list.
 					listSheetFieldDefCheckMedList.Add(sheetFieldDef);
 				}
 			}
+			//If any duplicates are found in a language, show a message to the user for all duplicates.
+			if(listSheetFieldDefErroneousDuplicates.Count>0) {
+				string errorMessage=GetDuplicateSheetFieldDefErrorMessage(listSheetFieldDefErroneousDuplicates);
+				MessageBox.Show(errorMessage);
+				return false;
+			}
+			//Check that each check med has a matching med input.
 			if(listSheetFieldDefCheckMedList.Count!=0 && listSheetFieldDefInputMedList.Any(x => !listSheetFieldDefCheckMedList.Exists(y => y.FieldName==x.FieldName.Replace("inputMed","checkMed")))) {
 				string inputMedMissingCheckBox=listSheetFieldDefInputMedList.Select(x=>x.FieldName).Where(x=>!listSheetFieldDefCheckMedList.Exists(y => y.FieldName==x.Replace("inputMed","checkMed"))).FirstOrDefault();
 				MessageBox.Show(Lan.g(this,"Missing checkMed boxes found")+": '"+inputMedMissingCheckBox.Replace("inputMed","checkMed")+"'. "+Lan.g(this,"All inputMed should have a corresponding checkMed, or all checkMeds should be excluded."));
@@ -2253,15 +2260,25 @@ namespace OpenDental {
 			return true;
 		}
 
-		private string GetDuplicateSheetFieldDefErrorMessage(SheetFieldDef sheetFieldDef) {
-			string message=Lan.g(this,"Duplicate")+" "+sheetFieldDef.FieldType.GetDescription()+" "+Lan.g(this,"found")+": '"+sheetFieldDef.FieldName+"'. "+Lan.g(this,"Only one of each is allowed. ");
+		private string GetDuplicateSheetFieldDefErrorMessage(List<SheetFieldDef> listSheetFieldDefs) {
+			List<SheetFieldDef> listSheetFieldDefsCopy=new List<SheetFieldDef>(listSheetFieldDefs);
+			//Since the list will contain duplicates, filter out the duplicate so we don't get two messages for the same error.
+			listSheetFieldDefsCopy=listSheetFieldDefsCopy.GroupBy(x=>new {x.FieldName, x.FieldType, x.Language }).Select(x=> x.First()).ToList();
+			listSheetFieldDefsCopy.OrderBy(x=>x.Language);
+			StringBuilder message=new StringBuilder(Lan.g(this,"Duplicate fields found. Only one of the following fields is allowed per language")+":\r\n");
 			//If this error occured in a language other than the default.
-			if(!string.IsNullOrWhiteSpace(sheetFieldDef.Language)) {
-				string language=_listSheetDefLanguagesUsed.FirstOrDefault(x=>x.ThreeLetters==sheetFieldDef.Language)?.Display;
-				language=string.IsNullOrWhiteSpace(language) ? sheetFieldDef.Language : language;
-				message+=Lan.g(this,$"Error occured in {language} variant of this sheet.");
+			for(int i=0;i<listSheetFieldDefsCopy.Count;i++) {
+				SheetFieldDef sheetFieldDef=listSheetFieldDefsCopy[i];
+				string fieldName=sheetFieldDef.FieldName;
+				string fieldType=sheetFieldDef.FieldType.GetDescription();
+				string language="";
+				if(!string.IsNullOrWhiteSpace(sheetFieldDef.Language)) {
+					language=_listSheetDefLanguagesUsed.FirstOrDefault(x=>x.ThreeLetters==sheetFieldDef.Language)?.Display;
+					language=string.IsNullOrWhiteSpace(language) ? sheetFieldDef.Language : language;
+				}
+				message.AppendLine("Field: "+fieldName + "; Type: " + fieldType + (string.IsNullOrWhiteSpace(language)? "" :  "; Language: " + language));
 			}
-			return message;
+			return message.ToString();
 		}
 		#endregion Methods - Private
 

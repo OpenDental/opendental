@@ -410,11 +410,13 @@ namespace OpenDental{
 			string domainUser=CommandLineArgs.DomainUser??"";
 			string webServiceUri=CommandLineArgs.WebServiceUri??"";
 			YN webServiceIsEcw=YN.Unknown;
-			if(!CommandLineArgs.WebServiceIsEcw.IsNullOrEmpty() && CommandLineArgs.WebServiceIsEcw=="true") {
-				webServiceIsEcw=YN.Yes;
-			}
-			else {
-				webServiceIsEcw=YN.No;
+			if(!CommandLineArgs.WebServiceIsEcw.IsNullOrEmpty()) {
+				if(CommandLineArgs.WebServiceIsEcw=="true") {
+					webServiceIsEcw=YN.Yes;
+				}
+				else {
+					webServiceIsEcw=YN.No;
+				}
 			}
 			YN noShow=YN.Unknown;
 			if(webServiceUri!="") {//a web service was specified

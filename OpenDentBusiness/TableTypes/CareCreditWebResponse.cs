@@ -125,8 +125,6 @@ namespace OpenDentBusiness {
 		ErrorAcknowledged,
 		///<summary>16.</summary>
 		ExpiredBatch,
-		///<summary>17. This is manually created when we get the merchant number to create process BQS.</summary>
-		MerchantClosed,
 	}
 
 	public enum CareCreditServiceType {

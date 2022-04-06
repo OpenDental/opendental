@@ -1142,6 +1142,7 @@ namespace OpenDental {
 		}
 
 		private void menuItemGroupMultiVisit_Click(object sender,EventArgs e) {
+			FillProgNotes(retainToothSelection:true);//Refresh to ensure data is not stale before grouping.
 			if(gridProg.SelectedIndices.Length==0) {
 				return;
 			}
@@ -4814,9 +4815,11 @@ namespace OpenDental {
 			if(UsingEcwTight()) {//button will show in this toolbar instead of the usual one.
 				ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Commlog"),4,Lan.g(this,"New Commlog Entry"),"Commlog"));
 			}
-			button=new ODToolBarButton(Lan.g(this,"CCD"),-1,"","CCD");
-			button.Style=ODToolBarButtonStyle.PushButton;
-			ToolBarMain.Buttons.Add(button);
+			if(CultureInfo.CurrentCulture.Name=="en-US") {
+				button=new ODToolBarButton(Lan.g(this,"CCD"),-1,"","CCD");
+				button.Style=ODToolBarButtonStyle.PushButton;
+				ToolBarMain.Buttons.Add(button);
+			}
 			if(PrefC.GetBool(PrefName.ShowFeatureEhr)) {
 				ToolBarMain.Buttons.Add(new ODToolBarButton("EHR",-1,"","EHR"));
 			}
@@ -4962,7 +4965,9 @@ namespace OpenDental {
 					ToolBarMain.Buttons["Commlog"].Enabled=false;
 					webBrowserEcw.Url=null;
 				}
-				ToolBarMain.Buttons["CCD"].Enabled=false;
+				if(ToolBarMain.Buttons["CCD"]!=null) {
+					ToolBarMain.Buttons["CCD"].Enabled=false;
+				}
 				//if(FormOpenDental.ObjSomeEhrSuperClass!=null) {//didn't work
 				if(ToolBarMain.Buttons["EHR"]!=null) {
 					ToolBarMain.Buttons["EHR"].Enabled=false;
@@ -5094,7 +5099,9 @@ namespace OpenDental {
 						labelECWerror.Visible=true;
 					}
 				}
-				ToolBarMain.Buttons["CCD"].Enabled=true;
+				if(ToolBarMain.Buttons["CCD"]!=null) {
+					ToolBarMain.Buttons["CCD"].Enabled=true;
+				}
 				if(PrefC.GetBool(PrefName.ShowFeatureEhr)) { //didn't work either
 				//if(ToolBarMain.Buttons["EHR"]!=null) {
 					ToolBarMain.Buttons["EHR"].Enabled=true;

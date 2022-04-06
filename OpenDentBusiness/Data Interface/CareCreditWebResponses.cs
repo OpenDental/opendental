@@ -374,7 +374,7 @@ namespace OpenDentBusiness{
 
 		///<summary>Returns a list of CareCreditWebStatuses that we consider quickscreen batch transactions (with the exception of MerchantClosed). We updated their DateTimePending field.</summary>
 		public static List<CareCreditWebStatus> ListQSBatchTransactions => new List<CareCreditWebStatus>() { CareCreditWebStatus.Created,
-			CareCreditWebStatus.Pending,CareCreditWebStatus.AccountFound,CareCreditWebStatus.PreApproved,CareCreditWebStatus.Declined,CareCreditWebStatus.ExpiredBatch,CareCreditWebStatus.MerchantClosed };
+			CareCreditWebStatus.Pending,CareCreditWebStatus.AccountFound,CareCreditWebStatus.PreApproved,CareCreditWebStatus.Declined,CareCreditWebStatus.ExpiredBatch, };
 
 		///<summary></summary>
 		public static List<CareCreditWebStatus> GetExclusionStatuses() {

@@ -1465,8 +1465,9 @@ namespace OpenDentBusiness.Eclaims {
 			}
 			bool isItrans=(clearinghouseClin.CommBridge==EclaimsCommBridge.ITRANS);
 			bool isClaimstream=(clearinghouseClin.CommBridge==EclaimsCommBridge.Claimstream);
+			bool canCreateCert=(isClaimstream || network.Abbrev.In("ABC","TELUS A","TELUS B"));
 			string saveFolder=clearinghouseClin.ExportPath;
-			if(isClaimstream) {
+			if(canCreateCert) {
 				DirectoryInfo dirInfo=new DirectoryInfo(saveFolder);
 				if(dirInfo.Name=="abc") {//Is pointing to the "abc" sub-folder.
 					//For backwards compatibility, if the export path is pointing to the "abc" sub-folder,
@@ -1493,7 +1494,7 @@ namespace OpenDentBusiness.Eclaims {
 				errorMsg=saveFolder+" "+Lans.g("Canadian","not found.");
 				return "";//Return empty response, since we never received one.
 			}
-			if(isClaimstream) {
+			if(canCreateCert) {
 				string certFileName="";
 				if(network.Abbrev=="ABC") {//Alberta Blue Cross
 					certFileName="OPENDENTAL.pem";

@@ -2351,6 +2351,13 @@ namespace OpenDentBusiness {
 		private static void To21_4_27() {
 			Misc.SecurityHash.UpdateHashing();
 		}
+		
+		private static void To21_4_38() {
+			string command;
+			//B35468 - Default to using new Image module for everyone.
+			command="UPDATE preference SET ValueString='0' WHERE PrefName='ImagesModuleUsesOld2020'";
+			Db.NonQ(command);
+		}//End of 21_4_38() method
 
 		private static void To22_1_1() {
 			string command;
@@ -2682,6 +2689,13 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}
 		}//End of 22_1_18() method
+		
+		private static void To22_1_19() {
+			string command;
+			//B35468 - Default to using new Image module for everyone.
+			command="UPDATE preference SET ValueString='0' WHERE PrefName='ImagesModuleUsesOld2020'";
+			Db.NonQ(command);
+		}//End of 22_1_19() method
 	}
 }
 

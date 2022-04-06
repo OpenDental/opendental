@@ -3523,7 +3523,7 @@ namespace OpenDentBusiness {
 					||claimProcs[i].Status==ClaimProcStatus.CapEstimate) {
 					claimProcs[i].ProvNum=proc.ProvNum;
 				}
-				if(HasMetFrequencyLimitation(claimProcs[i],histList,benefitList,proc,procCode,PlanCur,planList,patplan,loopList) && hasEstimateCalculation) {
+				if(HasMetFrequencyLimitation(claimProcs[i],histList,benefitList,proc,procCode,PlanCur,planList,patplan,loopList,listInsSubs:listInsSubs) && hasEstimateCalculation) {
 					claimProcs[i].BaseEst=0;
 					claimProcs[i].InsEstTotal=0;
 					claimProcs[i].DedEst=0;
@@ -3645,7 +3645,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns true if a frequency benefit has been met this time period.</summary>
 		public static bool HasMetFrequencyLimitation(ClaimProc claimProc,List<ClaimProcHist> histList,List<Benefit> benefitList,Procedure proc,
-			ProcedureCode procCode,InsPlan planCur,List<InsPlan> listInsPlans,PatPlan patPlan=null,List<ClaimProcHist> loopList=null) 
+			ProcedureCode procCode,InsPlan planCur,List<InsPlan> listInsPlans,PatPlan patPlan=null,List<ClaimProcHist> loopList=null,List<InsSub> listInsSubs=null) 
 		{
 			//No need to check RemotingRole; no call to db.
 			if(histList==null || benefitList==null || !PrefC.GetBool(PrefName.InsChecksFrequency) || proc.ProcDate.Year<1880) {
@@ -3715,6 +3715,17 @@ namespace OpenDentBusiness {
 						}
 						else if(ben.TimePeriod==BenefitTimePeriod.ServiceYear) {
 							InsPlan insPlan=listInsPlans.Find(x => x.PlanNum==ben.PlanNum);
+							//If benefit is an override, use PatPlanNum to get the PlanNum to match to.
+							if(ben.PatPlanNum==patPlanNum && patPlanNum!=0 && !listInsSubs.IsNullOrEmpty()) {
+								if(!listInsSubs.Exists(x => x.InsSubNum==patPlan.InsSubNum)) {
+									continue;
+								}
+								InsSub insSub=listInsSubs.Find(x => x.InsSubNum==patPlan.InsSubNum);
+								insPlan=listInsPlans.Find(x => x.PlanNum==insSub.PlanNum);
+							}
+							if(insPlan==null) {
+								continue;
+							}
 							datePast=new DateTime(proc.ProcDate.Year,Math.Max(insPlan.MonthRenew,(byte)1),1);
 							if(proc.ProcDate.Date<=datePast && datePast>DateTime.Today) {
 								datePast=datePast.AddYears(-1);

@@ -964,7 +964,7 @@ namespace OpenDental {
 					gridMain.Columns.Add(col);
 				}
 			}
-			col=new GridColumn(Lan.g("TableTasks","Att"),45,HorizontalAlignment.Center);//Attachment(s)
+			col=new GridColumn(Lan.g("TableTasks","Att"),30,HorizontalAlignment.Center);//Attachment(s)
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lan.g("TableTasks","Description"),200);//any width
 			gridMain.Columns.Add(col);

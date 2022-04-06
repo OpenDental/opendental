@@ -172,8 +172,6 @@ namespace OpenDentBusiness{
 			List<SheetFieldDef> radioGroupsSuperSet=mobileFields
 				.Where(x => x.FieldType==SheetFieldType.CheckBox)
 				.Where(x => criteria1(x) || criteria2(x))
-				//Sort each group by TabOrderMobile.
-				.OrderBy(x => x.TabOrderMobile)
 				.ToList();
 			//The first way.
 			List<SheetFieldDef> radioFields1=radioGroupsSuperSet

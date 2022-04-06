@@ -1911,7 +1911,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Gets schedule info that's filtered to match the criteria of any passed in arguments.</summary>
-		public static DataTable GetPeriodScheduleForApi(DateTime dateStart,DateTime dateEnd,long schedType,long blockoutDefNum,long provNum,long employeeNum,int limit,int offset,List<long> listOpNums=null) {
+		public static DataTable GetPeriodScheduleForApi(DateTime dateStart,DateTime dateEnd,long schedType,long blockoutDefNum,long provNum,long employeeNum,long scheduleNum,int limit,int offset,List<long> listOpNums=null) {
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
 				return Meth.GetTable(MethodBase.GetCurrentMethod(),dateStart,dateEnd,schedType,blockoutDefNum,provNum,employeeNum,listOpNums);
 			}
@@ -1932,8 +1932,13 @@ namespace OpenDentBusiness{
 			string command="SELECT schedule.ScheduleNum,SchedDate,StartTime,StopTime,SchedType,ProvNum,BlockoutType,Note,"
 				+"Status,EmployeeNum,schedule.ClinicNum,scheduleop.OperatoryNum "
 				+"FROM schedule "
-				+"LEFT JOIN scheduleop ON schedule.ScheduleNum=scheduleop.ScheduleNum "
-				+"WHERE SchedDate BETWEEN "+POut.Date(dateStart)+" AND "+POut.Date(dateEnd)+" ";
+				+"LEFT JOIN scheduleop ON schedule.ScheduleNum=scheduleop.ScheduleNum ";
+			if(scheduleNum>0) {
+				command+="WHERE schedule.ScheduleNum="+POut.Long(scheduleNum)+" "; //Getting one
+			}
+			else {
+				command+="WHERE SchedDate BETWEEN "+POut.Date(dateStart)+" AND "+POut.Date(dateEnd)+" "; //Getting many
+			}
 			if(schedType > -1) { //0 is included when looking for a change in schedType, since it's an Enum that starts at 0.
 				command+="AND SchedType="+POut.Long(schedType)+" ";
 			}

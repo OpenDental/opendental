@@ -23,7 +23,7 @@ namespace OpenDental {
 				//so just let them use the plugin
 				return true;
 			}
-			DatabaseIntegrity databaseIntegrity=_listDatabaseIntegrities.Find(x=>x.PluginName==pluginName && x.WarningIntegrityType==EnumWarningIntegrityType.PluginOverride);
+			DatabaseIntegrity databaseIntegrity=_listDatabaseIntegrities.Find(x=>x.PluginName.ToLower()==pluginName.ToLower() && x.WarningIntegrityType==EnumWarningIntegrityType.PluginOverride);
 			if(databaseIntegrity!=null){
 				if(databaseIntegrity.Behavior==EnumIntegrityBehavior.PluginAllow){
 					return true;
@@ -50,7 +50,7 @@ namespace OpenDental {
 				//must have had trouble connecting to HQ,
 				return null;
 			}
-			DatabaseIntegrity databaseIntegrity=_listDatabaseIntegrities.Find(x=>x.PluginName==pluginName && x.WarningIntegrityType==EnumWarningIntegrityType.PluginOverride);
+			DatabaseIntegrity databaseIntegrity=_listDatabaseIntegrities.Find(x=>x.PluginName.ToLower()==pluginName.ToLower() && x.WarningIntegrityType==EnumWarningIntegrityType.PluginOverride);
 			if(databaseIntegrity!=null){
 				return databaseIntegrity;
 			}

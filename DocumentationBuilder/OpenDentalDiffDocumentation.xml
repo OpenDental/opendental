@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
-<database version="22.1.18.0">
+<database version="22.1.19.0">
     <table name="alertcategorylink">
         <summary></summary>
         <column order="2" name="AlertType" type="tinyint(4)">
@@ -58,16 +58,6 @@
         <summary></summary>
         <column order="10" name="IsMobile" type="tinyint(4)">
             <summary>Bool indicating if this ApptViewItem is for use in Mobile App appointment view</summary>
-        </column>
-    </table>
-    <table name="carecreditwebresponse">
-        <summary></summary>
-        <column order="6" name="ProcessingStatus" type="varchar(255)">
-            <summary>Enum:CareCreditWebStatus Used to determine if the request is pending, needs action, or is completed.</summary>
-            <Enumeration name="CareCreditWebStatus">
-                <summary />
-                <EnumValue name="MerchantClosed">17. This is manually created when we get the merchant number to create process BQS.</EnumValue>
-            </Enumeration>
         </column>
     </table>
     <table name="clearinghouse">

@@ -55,7 +55,8 @@ namespace OpenDentBusiness{
 		///<summary>Always refreshes the ClientWeb's cache.</summary>
 		public static DataTable GetTableFromCache(bool doRefreshCache) {
 			//It is important to call EnsureComputerInDB prior to the remoting role check.
-			EnsureComputerInDB(ODEnvironment.MachineName);
+			//Get MachineName before the remoting role check so Environment.MachineName is not the middle tier server.
+			EnsureComputerInDB(ODEnvironment.MachineName,Environment.MachineName);//ODEnvironment.MachineName and Environment.MachineName are different in RDP and ODCloud.
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
 				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),doRefreshCache);
 				_computerCache.FillCacheFromTable(table);
@@ -66,20 +67,44 @@ namespace OpenDentBusiness{
 
 		#endregion
 
-		public static void EnsureComputerInDB(string computerName){
+		public static void EnsureComputerInDB(string clientComputerName,string hostComputerName){
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),computerName);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),clientComputerName,hostComputerName);
 				return;
 			}
-			string command=
-				"SELECT * from computer "
-				+"WHERE compname = '"+computerName+"'";
-			DataTable table=Db.GetTable(command);
-			if(table.Rows.Count==0) {
+			string command=$"SELECT COUNT(*) FROM computer WHERE CompName ='{clientComputerName}'";
+			long count=Db.GetLong(command);
+			if(count == 0) {
 				Computer Cur=new Computer();
-				Cur.CompName=computerName;
-				Computers.Insert(Cur);
+				Cur.CompName=clientComputerName;
+				long computerNum = Computers.Insert(Cur);
+				//Never copy the printer rows for ODCloud
+				if(!ODBuild.IsWeb() && clientComputerName.ToLower() != hostComputerName.ToLower()) {
+					CopyPrinterRowsForComputer(computerNum,hostComputerName);//This computer is an RDP remote client. Copy the host computer's printer settings for the new computer.
+				}
 			}
+		}
+
+		///<summary>
+		///Called when a new computer is added and OD is running on a remote application server. 
+		///This copies any printer settings associated with the application server's computer and applies them to the new computer.
+		///21.3 introduces per-client-computer printer settings for RDP app servers and this prevents printer settings from being reset for client computers when updating to 21.3.
+		///</summary>
+		public static void CopyPrinterRowsForComputer(long computerNum,string hostComputerName) {
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),computerNum,hostComputerName);
+				return;
+			}
+			//computerName is the client computer of a remote connection.
+			string command=$"SELECT ComputerNum FROM computer WHERE CompName='{hostComputerName}'";
+			long hostComputerNum=Db.GetLong(command);
+			if(hostComputerNum == 0) {
+				return;//Could not find the host computer in the database, no printer settings to copy.
+			}
+			//Copy the host computer's printer settings for the client computer.
+			command="INSERT INTO printer (ComputerNum,PrintSit,PrinterName,DisplayPrompt) " +
+				$"SELECT {POut.Long(computerNum)},PrintSit,PrinterName,DisplayPrompt FROM printer WHERE ComputerNum={POut.Long(hostComputerNum)}";
+			Db.NonQ(command);
 		}
 
 		///<summary>ONLY use this if compname is not already present</summary>
@@ -109,7 +134,10 @@ namespace OpenDentBusiness{
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),comp);
 				return;
 			}
-			string command= "DELETE FROM computer WHERE computernum = '"+comp.ComputerNum.ToString()+"'";
+			//Delete any accociated printer settings from the printer table
+			string command=$"DELETE FROM printer WHERE ComputerNum={comp.ComputerNum}";
+ 			Db.NonQ(command);
+			command=$"DELETE FROM computer WHERE ComputerNum={comp.ComputerNum}";
  			Db.NonQ(command);
 		}
 

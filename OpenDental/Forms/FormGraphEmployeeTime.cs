@@ -772,6 +772,9 @@ namespace OpenDental
 				text = Lan.g(this,"Run On:")+" "+DateTime.Today.ToShortDateString();
 				g.DrawString(text,subHeadingFont,Brushes.Black,center-g.MeasureString(text,subHeadingFont).Width/2,yPos);
 				yPos+=20;
+				text=Lan.g(this,"Selected Date:")+" "+_dateShowing.ToShortDateString();
+				g.DrawString(text,subHeadingFont,Brushes.Black,center-g.MeasureString(text,subHeadingFont).Width/2,yPos);
+				yPos+=20;
 				_headingPrinted=true;
 				_headingPrintH=yPos;
 			}
