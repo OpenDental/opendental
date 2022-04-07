@@ -1995,6 +1995,8 @@ namespace OpenDental {
 				.Where(x => listSheetFieldDefsNew.Any(y => y.SheetFieldDefNum==x.Item.SheetFieldDefNum))
 				.ForEach(x => { listFields.SetSelected(x.Index,true); });
 			panelMain.Refresh();
+			//Focus on main form. This ensures that if/when the alt key is released, the proper handler will execute. Fixes bug where user becomes stuck in paste mode.
+			this.Focus();
 		}
 
 		///<summary>Whenever a user might have edited or moved a background image, this gets called.</summary>

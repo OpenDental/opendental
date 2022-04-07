@@ -65,6 +65,7 @@ namespace OpenDental {
 		private int _linesPrinted;
 		private bool _tablePrinted;
 		private HorizontalAlignment _alignmentCur;
+		private MenuItem _menuItemGoToPatient;
 
 		private int _currentPage {
 			get {
@@ -114,6 +115,12 @@ namespace OpenDental {
 			else {//default to report server when one is set up.
 				checkReportServer.Visible=true;
 				checkReportServer.Checked=true;
+			}
+			_menuItemGoToPatient=new MenuItem();
+			_menuItemGoToPatient.Text="Go To Patient";
+			_menuItemGoToPatient.Click+=new EventHandler(MenuItemGoToPatient_Click);
+			if(_gridResults.ContextMenu==null) {
+				_gridResults.ContextMenu=new ContextMenu();
 			}
 			//essentially filling a cache for the "MakeReadable" method, instead of doing this inside a loop that could take longer. Getting these on-load will not take long and will speed up query processing. 
 			_listRawData = new List<List<string>>();
@@ -884,13 +891,12 @@ namespace OpenDental {
 				}
 			}
 			if(hasPatNum) {
-				MenuItem menuItem = new MenuItem();
-				menuItem.Text="Go To Patient";
-				menuItem.Click += new EventHandler(MenuItemGoToPatient_Click);
-				if(_gridResults.ContextMenu == null) {
-					_gridResults.ContextMenu = new ContextMenu();
+				if(!_gridResults.ContextMenu.MenuItems.Contains(_menuItemGoToPatient)) {
+					_gridResults.ContextMenu.MenuItems.Add(_menuItemGoToPatient);
 				}
-				_gridResults.ContextMenu.MenuItems.Add(menuItem);
+			}
+			else {
+				_gridResults.ContextMenu.MenuItems.Remove(_menuItemGoToPatient);
 			}
 			foreach(DataRow row in table.AsEnumerable()) {
 				_listRawData.Add(row.ItemArray.AsEnumerable().Select(x => PIn.ByteArray(x)).ToList());

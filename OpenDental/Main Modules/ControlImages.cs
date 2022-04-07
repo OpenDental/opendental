@@ -91,7 +91,7 @@ namespace OpenDental {
 		/// <summary>Copy of the image information that was recieved. Needed so we can refresh the image module and not have to query again.</summary>
 		private List<ApteryxImage>_listApteryxImageDownload;
 		//<summary>A list of primary keys (defNums) of the ImageNodeIds that should be expanded when the image module is loaded.</summary>
-		//private List<long> _listExpandedCats=new List<long>();
+		private List<long> _listExpandedCats=new List<long>();
 		///<summary>If a mount is currently selected, this is the list of the mount items on it.</summary>
 		private List<MountItem> _listMountItems=null;
 		///<summary>Keeps track of the currently selected mount object (only when a mount is selected).</summary>
@@ -200,17 +200,17 @@ namespace OpenDental {
 
 		#region Methods - Events Handlers - TreeDocuments
 		private void TreeDocuments_AfterCollapse(object sender,TreeViewEventArgs e) {
-			//NodeIdTag nodeIdTag=(NodeIdTag)e.Node.Tag;
-			//_listExpandedCats.RemoveAll(x => x==nodeIdTag.PriKey);
+			NodeIdTag nodeIdTag=(NodeIdTag)e.Node.Tag;
+			_listExpandedCats.RemoveAll(x => x==nodeIdTag.PriKey);
 			//UpdateUserOdPrefForImageCat(nodeIdTag.PriKey,false);
 		}
 
 		private void TreeDocuments_AfterExpand(object sender,TreeViewEventArgs e) {
-			/*NodeIdTag nodeIdTag=(NodeIdTag)e.Node.Tag;
+			NodeIdTag nodeIdTag=(NodeIdTag)e.Node.Tag;
 			if(!_listExpandedCats.Contains(nodeIdTag.PriKey)) {
 				_listExpandedCats.Add(nodeIdTag.PriKey);
 			}
-			UpdateUserOdPrefForImageCat(nodeIdTag.PriKey,true);*/
+			//UpdateUserOdPrefForImageCat(nodeIdTag.PriKey,true);
 		}
 
 		private void treeDocuments_DragDrop(object sender,DragEventArgs e) {
@@ -1170,21 +1170,21 @@ namespace OpenDental {
 			if(PrefC.GetInt(PrefName.ImagesModuleTreeIsCollapsed)==0) {//Expand the document tree each time the Images module is visited
 					treeMain.ExpandAll();//Invalidates tree too.
 			}
-			else if(PrefC.GetInt(PrefName.ImagesModuleTreeIsCollapsed)==1) {//Document tree collapses when patient changes
-				TreeNode treeNodeSelected=treeMain.SelectedNode;//Save the selection so we can reselect after collapsing.
-				treeMain.CollapseAll();//Invalidates tree and clears selection too.
-				treeMain.SelectedNode=treeNodeSelected;//This will expand any category/folder nodes necessary to show the selection.
-				if(_patNumPrev==_patCur.PatNum) {//Maintain previously expanded nodes when patient not changed.
-					for(int i=0;i<_listExpandedCats.Count;i++) {
-						for(int j=0;j<treeMain.Nodes.Count;j++) {//Enumerate the image categories.
-							if(_listExpandedCats[i]==((NodeIdTag)treeMain.Nodes[j].Tag).PriKey) {
-								treeMain.Nodes[j].Expand();
-								break;
-							}
-						}
+			else if(PrefC.GetInt(PrefName.ImagesModuleTreeIsCollapsed)==1) {//Document tree collapses when patient changes*/
+			TreeNode treeNodeSelected=treeMain.SelectedNode;//Save the selection so we can reselect after collapsing.
+			treeMain.CollapseAll();//Invalidates tree and clears selection too.
+			treeMain.SelectedNode=treeNodeSelected;//This will expand any category/folder nodes necessary to show the selection.
+			//if(_patNumPrev==_patCur.PatNum) {//Maintain previously expanded nodes when patient not changed.
+			for(int i=0;i<_listExpandedCats.Count;i++) {
+				for(int j=0;j<treeMain.Nodes.Count;j++) {//Enumerate the image categories.
+					if(_listExpandedCats[i]==((NodeIdTag)treeMain.Nodes[j].Tag).PriKey) {
+						treeMain.Nodes[j].Expand();
+						break;
 					}
 				}
-				else {//Patient changed.
+			}
+				//}
+				/*else {//Patient changed.
 					_listExpandedCats.Clear();
 				}
 				_patNumPrev=_patCur.PatNum;

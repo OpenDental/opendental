@@ -5998,7 +5998,9 @@ namespace OpenDentBusiness {
 			string command;
 			switch(modeCur) {
 				case DbmMode.Check:
-					command=@"SELECT COUNT(*) FROM patient WHERE PriProv=0";
+					command=$@"SELECT COUNT(*) FROM patient 
+						WHERE PriProv=0
+						AND PatStatus!={POut.Int((int)PatientStatus.Deleted)}";
 					int numFound=PIn.Int(Db.GetCount(command));
 					if(numFound>0 || verbose) {
 						log+=Lans.g("FormDatabaseMaintenance","Patient pri provs not set: ")+numFound+"\r\n";
@@ -6007,11 +6009,16 @@ namespace OpenDentBusiness {
 				case DbmMode.Fix:
 					List<DbmLog> listDbmLogs=new List<DbmLog>();
 					string methodName=MethodBase.GetCurrentMethod().Name;
-					command="SELECT PatNum FROM patient WHERE PriProv=0";
+					command=$@"SELECT PatNum FROM patient 
+                        WHERE PriProv=0 
+                        AND PatStatus!={POut.Int((int)PatientStatus.Deleted)}";
 					List<long> listPatNums=Db.GetListLong(command);
 					//previous versions of the program just dealt gracefully with missing provnum.
 					//From now on, we can assum priprov is not missing, making coding easier.
-					command=@"UPDATE patient SET PriProv="+PrefC.GetString(PrefName.PracticeDefaultProv)+" WHERE PriProv=0";
+					command=$@"UPDATE patient 
+                        SET PriProv={PrefC.GetString(PrefName.PracticeDefaultProv)} 
+                        WHERE PriProv=0 
+                        AND PatStatus!={POut.Int((int)PatientStatus.Deleted)}";
 					long numberFixed=Db.NonQ(command);
 					listPatNums.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x,DbmLogFKeyType.Patient,DbmLogActionType.Update,
 						methodName,"Updated PriProv from 0 to "+PrefC.GetString(PrefName.PracticeDefaultProv))));
