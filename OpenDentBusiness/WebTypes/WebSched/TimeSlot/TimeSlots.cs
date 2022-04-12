@@ -24,6 +24,9 @@ namespace OpenDentBusiness.WebTypes.WebSched.TimeSlot {
 				throw new ODException(Lans.g("WebSched","The recall appointment you are trying to schedule is no longer available.")+"\r\n"
 					+Lans.g("WebSched","Please call us to schedule your appointment."));
 			}
+			if(Recalls.IsChildRecall(Patients.GetPat(recall.PatNum),dateStart)) {
+				recall.RecallTypeNum=RecallTypes.ChildProphyType;
+			}
 			List<Provider> listProviders=Providers.GetProvidersForWebSched(recall.PatNum,clinic?.ClinicNum??0);
 			if(provNum > 0 && !allowOtherProv) {
 				listProviders=listProviders.FindAll(x => x.ProvNum==provNum);

@@ -303,7 +303,7 @@ namespace OpenDental {
 			this.groupBox1.Controls.Add(this.labelHmPhone);
 			this.groupBox1.Controls.Add(this.textCity);
 			this.groupBox1.Controls.Add(this.labelAddress);
-			this.groupBox1.Location = new System.Drawing.Point(29, 376);
+			this.groupBox1.Location = new System.Drawing.Point(29, 377);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(420, 167);
 			this.groupBox1.TabIndex = 11;
@@ -719,7 +719,7 @@ namespace OpenDental {
 			// 
 			// labelAddrNotes
 			// 
-			this.labelAddrNotes.Location = new System.Drawing.Point(3, 552);
+			this.labelAddrNotes.Location = new System.Drawing.Point(3, 553);
 			this.labelAddrNotes.Name = "labelAddrNotes";
 			this.labelAddrNotes.Size = new System.Drawing.Size(153, 58);
 			this.labelAddrNotes.TabIndex = 69;
@@ -783,7 +783,7 @@ namespace OpenDental {
 			this.groupIns1.Controls.Add(this.labelCarrier1);
 			this.groupIns1.Controls.Add(this.labelPhone1);
 			this.groupIns1.Controls.Add(this.textCarrier1);
-			this.groupIns1.Location = new System.Drawing.Point(455, 376);
+			this.groupIns1.Location = new System.Drawing.Point(455, 377);
 			this.groupIns1.Name = "groupIns1";
 			this.groupIns1.Size = new System.Drawing.Size(427, 167);
 			this.groupIns1.TabIndex = 15;
@@ -934,7 +934,7 @@ namespace OpenDental {
 			this.groupIns2.Controls.Add(this.label28);
 			this.groupIns2.Controls.Add(this.label29);
 			this.groupIns2.Controls.Add(this.textCarrier2);
-			this.groupIns2.Location = new System.Drawing.Point(455, 549);
+			this.groupIns2.Location = new System.Drawing.Point(455, 550);
 			this.groupIns2.Name = "groupIns2";
 			this.groupIns2.Size = new System.Drawing.Size(427, 167);
 			this.groupIns2.TabIndex = 16;
@@ -1185,7 +1185,7 @@ namespace OpenDental {
 			// 
 			// labelReferred
 			// 
-			this.labelReferred.Location = new System.Drawing.Point(3, 622);
+			this.labelReferred.Location = new System.Drawing.Point(3, 623);
 			this.labelReferred.Name = "labelReferred";
 			this.labelReferred.Size = new System.Drawing.Size(153, 14);
 			this.labelReferred.TabIndex = 183;
@@ -1194,7 +1194,7 @@ namespace OpenDental {
 			// 
 			// textReferredFrom
 			// 
-			this.textReferredFrom.Location = new System.Drawing.Point(157, 618);
+			this.textReferredFrom.Location = new System.Drawing.Point(157, 619);
 			this.textReferredFrom.MaxLength = 30;
 			this.textReferredFrom.Multiline = true;
 			this.textReferredFrom.Name = "textReferredFrom";
@@ -1219,7 +1219,7 @@ namespace OpenDental {
 			// 
 			this.butClearReferralSource.AdjustImageLocation = new System.Drawing.Point(1, 1);
 			this.butClearReferralSource.Image = global::OpenDental.Properties.Resources.deleteX18;
-			this.butClearReferralSource.Location = new System.Drawing.Point(411, 618);
+			this.butClearReferralSource.Location = new System.Drawing.Point(411, 619);
 			this.butClearReferralSource.Name = "butClearReferralSource";
 			this.butClearReferralSource.Size = new System.Drawing.Size(21, 20);
 			this.butClearReferralSource.TabIndex = 184;
@@ -1228,7 +1228,7 @@ namespace OpenDental {
 			// 
 			// butReferredFrom
 			// 
-			this.butReferredFrom.Location = new System.Drawing.Point(390, 618);
+			this.butReferredFrom.Location = new System.Drawing.Point(390, 619);
 			this.butReferredFrom.Name = "butReferredFrom";
 			this.butReferredFrom.Size = new System.Drawing.Size(21, 20);
 			this.butReferredFrom.TabIndex = 182;
@@ -1241,7 +1241,7 @@ namespace OpenDental {
 			this.textAddrNotes.BackColor = System.Drawing.SystemColors.Window;
 			this.textAddrNotes.DetectLinksEnabled = false;
 			this.textAddrNotes.DetectUrls = false;
-			this.textAddrNotes.Location = new System.Drawing.Point(157, 551);
+			this.textAddrNotes.Location = new System.Drawing.Point(157, 552);
 			this.textAddrNotes.Name = "textAddrNotes";
 			this.textAddrNotes.QuickPasteType = OpenDentBusiness.QuickPasteType.PatAddressNote;
 			this.textAddrNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -1439,7 +1439,7 @@ namespace OpenDental {
 			// 
 			// comboBillType1
 			// 
-			this.comboBillType1.Location = new System.Drawing.Point(121, 334);
+			this.comboBillType1.Location = new System.Drawing.Point(121, 333);
 			this.comboBillType1.Name = "comboBillType1";
 			this.comboBillType1.Size = new System.Drawing.Size(149, 21);
 			this.comboBillType1.TabIndex = 210;
@@ -1447,28 +1447,28 @@ namespace OpenDental {
 			// 
 			// comboBillType2
 			// 
-			this.comboBillType2.Location = new System.Drawing.Point(274, 334);
+			this.comboBillType2.Location = new System.Drawing.Point(274, 333);
 			this.comboBillType2.Name = "comboBillType2";
 			this.comboBillType2.Size = new System.Drawing.Size(149, 21);
 			this.comboBillType2.TabIndex = 211;
 			// 
 			// comboBillType3
 			// 
-			this.comboBillType3.Location = new System.Drawing.Point(427, 334);
+			this.comboBillType3.Location = new System.Drawing.Point(427, 333);
 			this.comboBillType3.Name = "comboBillType3";
 			this.comboBillType3.Size = new System.Drawing.Size(149, 21);
 			this.comboBillType3.TabIndex = 212;
 			// 
 			// comboBillType4
 			// 
-			this.comboBillType4.Location = new System.Drawing.Point(580, 334);
+			this.comboBillType4.Location = new System.Drawing.Point(580, 333);
 			this.comboBillType4.Name = "comboBillType4";
 			this.comboBillType4.Size = new System.Drawing.Size(149, 21);
 			this.comboBillType4.TabIndex = 213;
 			// 
 			// comboBillType5
 			// 
-			this.comboBillType5.Location = new System.Drawing.Point(733, 334);
+			this.comboBillType5.Location = new System.Drawing.Point(733, 333);
 			this.comboBillType5.Name = "comboBillType5";
 			this.comboBillType5.Size = new System.Drawing.Size(149, 21);
 			this.comboBillType5.TabIndex = 214;
@@ -1502,7 +1502,7 @@ namespace OpenDental {
 			// 
 			// labelBillType
 			// 
-			this.labelBillType.Location = new System.Drawing.Point(2, 335);
+			this.labelBillType.Location = new System.Drawing.Point(2, 334);
 			this.labelBillType.Name = "labelBillType";
 			this.labelBillType.Size = new System.Drawing.Size(118, 16);
 			this.labelBillType.TabIndex = 208;
@@ -1513,7 +1513,7 @@ namespace OpenDental {
 			// 
 			this.butAddComm.Icon = OpenDental.UI.EnumIcons.CommLog;
 			this.butAddComm.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAddComm.Location = new System.Drawing.Point(340, 647);
+			this.butAddComm.Location = new System.Drawing.Point(340, 648);
 			this.butAddComm.Name = "butAddComm";
 			this.butAddComm.Size = new System.Drawing.Size(92, 24);
 			this.butAddComm.TabIndex = 209;
@@ -1522,7 +1522,7 @@ namespace OpenDental {
 			// 
 			// comboClinic5
 			// 
-			this.comboClinic5.Location = new System.Drawing.Point(733, 356);
+			this.comboClinic5.Location = new System.Drawing.Point(733, 355);
 			this.comboClinic5.Name = "comboClinic5";
 			this.comboClinic5.ShowLabel = false;
 			this.comboClinic5.Size = new System.Drawing.Size(149, 21);
@@ -1531,7 +1531,7 @@ namespace OpenDental {
 			// 
 			// comboClinic4
 			// 
-			this.comboClinic4.Location = new System.Drawing.Point(580, 356);
+			this.comboClinic4.Location = new System.Drawing.Point(580, 355);
 			this.comboClinic4.Name = "comboClinic4";
 			this.comboClinic4.ShowLabel = false;
 			this.comboClinic4.Size = new System.Drawing.Size(149, 21);
@@ -1540,7 +1540,7 @@ namespace OpenDental {
 			// 
 			// comboClinic3
 			// 
-			this.comboClinic3.Location = new System.Drawing.Point(427, 356);
+			this.comboClinic3.Location = new System.Drawing.Point(427, 355);
 			this.comboClinic3.Name = "comboClinic3";
 			this.comboClinic3.ShowLabel = false;
 			this.comboClinic3.Size = new System.Drawing.Size(149, 21);
@@ -1549,7 +1549,7 @@ namespace OpenDental {
 			// 
 			// comboClinic2
 			// 
-			this.comboClinic2.Location = new System.Drawing.Point(274, 356);
+			this.comboClinic2.Location = new System.Drawing.Point(274, 355);
 			this.comboClinic2.Name = "comboClinic2";
 			this.comboClinic2.ShowLabel = false;
 			this.comboClinic2.Size = new System.Drawing.Size(149, 21);
@@ -1558,7 +1558,7 @@ namespace OpenDental {
 			// 
 			// comboClinic1
 			// 
-			this.comboClinic1.Location = new System.Drawing.Point(121, 356);
+			this.comboClinic1.Location = new System.Drawing.Point(121, 355);
 			this.comboClinic1.Name = "comboClinic1";
 			this.comboClinic1.ShowLabel = false;
 			this.comboClinic1.Size = new System.Drawing.Size(149, 21);
@@ -1693,7 +1693,7 @@ namespace OpenDental {
 			// 
 			// labelClinic
 			// 
-			this.labelClinic.Location = new System.Drawing.Point(28, 357);
+			this.labelClinic.Location = new System.Drawing.Point(28, 356);
 			this.labelClinic.Name = "labelClinic";
 			this.labelClinic.Size = new System.Drawing.Size(92, 16);
 			this.labelClinic.TabIndex = 220;
