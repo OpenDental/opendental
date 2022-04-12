@@ -856,7 +856,7 @@ namespace OpenDental
 				|| document.ImgType==ImageType.Radiograph || document.ImgType==ImageType.Photo) 
 			{
 				using FormDocInfo formDocInfo=new FormDocInfo(_patCur,GetDocumentShowing(0));
-				formDocInfo.ShowDialog();
+				formDocInfo.ShowDialog(formImageFloat);
 				if(formDocInfo.DialogResult!=DialogResult.OK) {
 					return;
 				}
@@ -1179,8 +1179,9 @@ namespace OpenDental
 			}
 			FillTree(false);
 			SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
+			FormImageFloat formImageFloat=GetFormImageFloatSelected();
 			using FormDocInfo FormD=new FormDocInfo(_patCur,doc,isDocCreate:true);
-			FormD.ShowDialog(this);//some of the fields might get changed, but not the filename
+			FormD.ShowDialog(formImageFloat);//some of the fields might get changed, but not the filename
 			if(FormD.DialogResult!=DialogResult.OK) {
 				DeleteDocument(false,false,doc);
 			}
@@ -2343,8 +2344,9 @@ namespace OpenDental
 			if(saved) {
 				FillTree(false);//Reload and keep new document selected.
 				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
+				FormImageFloat formImageFloat=GetFormImageFloatSelected();
 				using FormDocInfo formDocInfo=new FormDocInfo(_patCur,GetDocumentShowing(0),isDocCreate:true);
-				formDocInfo.ShowDialog(this);
+				formDocInfo.ShowDialog(formImageFloat);
 				if(formDocInfo.DialogResult!=DialogResult.OK) {
 					DeleteDocument(false,false,doc);
 				}
@@ -2480,8 +2482,9 @@ namespace OpenDental
 			if(saved) {
 				FillTree(false);//Reload and keep new document selected.
 				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
+				FormImageFloat formImageFloat=GetFormImageFloatSelected();
 				using FormDocInfo formDocInfo=new FormDocInfo(_patCur,GetDocumentShowing(0),isDocCreate:true);
-				formDocInfo.ShowDialog(this);
+				formDocInfo.ShowDialog(formImageFloat);
 				if(formDocInfo.DialogResult!=DialogResult.OK) {
 					DeleteDocument(false,false,doc);
 				}
@@ -2518,8 +2521,9 @@ namespace OpenDental
 			if(copied) {
 				FillTree(false);
 				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
+				FormImageFloat formImageFloat=GetFormImageFloatSelected();
 				using FormDocInfo FormD=new FormDocInfo(_patCur,doc,isDocCreate:true);
-				FormD.ShowDialog(this);//some of the fields might get changed, but not the filename 
+				FormD.ShowDialog(formImageFloat);//some of the fields might get changed, but not the filename 
 				//Customer complained this window was showing up behind OD.  We changed above line to add a parent form as an attempted fix.
 				//If this doesn't solve it we can also try adding FormD.BringToFront to see if it does anything.
 				if(FormD.DialogResult!=DialogResult.OK) {
@@ -2624,8 +2628,9 @@ namespace OpenDental
 			if(copied) {
 				FillTree(false);
 				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
+				FormImageFloat formImageFloat=GetFormImageFloatSelected();
 				using FormDocInfo FormD=new FormDocInfo(_patCur,doc,isDocCreate:true);
-				FormD.ShowDialog(this);//some of the fields might get changed, but not the filename 
+				FormD.ShowDialog(formImageFloat);//some of the fields might get changed, but not the filename 
 				//Customer complained this window was showing up behind OD.  We changed above line to add a parent form as an attempted fix.
 				//If this doesn't solve it we can also try adding FormD.BringToFront to see if it does anything.
 				if(FormD.DialogResult!=DialogResult.OK) {
