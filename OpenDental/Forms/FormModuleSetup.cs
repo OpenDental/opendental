@@ -84,8 +84,8 @@ namespace OpenDental{
 				|| !SaveAccount()
 				|| !SaveTreatPlan()
 				|| !SaveChart()
-				|| !SaveImages()
-				|| !SaveManage()				
+				|| !SaveManage()
+				|| !SaveImages()//Out of order because we want to save all prefs before potentially closing program for image module swap.
 			){
 				return;
 			}
@@ -1305,6 +1305,7 @@ namespace OpenDental{
 			textDefaultImageImportFolder.Text=PrefC.GetString(PrefName.DefaultImageImportFolder);
 			textAutoImportFolder.Text=PrefC.GetString(PrefName.AutoImportFolder);
 			checkPDFLaunchWindow.Checked=PrefC.GetBool(PrefName.PdfLaunchWindow);
+			checkImagesModuleUsesOld2020.Checked=PrefC.GetBool(PrefName.ImagesModuleUsesOld2020);
 			_defNumDefaultImageCategory=PrefC.GetLong(PrefName.DefaultImageCategoryImportFolder);
 			textDefaultImageCategory.Text=Defs.GetName(DefCat.ImageCats,_defNumDefaultImageCategory);
 		}
@@ -1327,6 +1328,12 @@ namespace OpenDental{
 			_changed|=Prefs.UpdateString(PrefName.AutoImportFolder,textAutoImportFolder.Text);
 			_changed|=Prefs.UpdateBool(PrefName.PdfLaunchWindow,checkPDFLaunchWindow.Checked);
 			_changed|=Prefs.UpdateLong(PrefName.DefaultImageCategoryImportFolder,_defNumDefaultImageCategory);
+			//Special case. If image module needs to be swapped, force close the program.
+			if(Prefs.UpdateBool(PrefName.ImagesModuleUsesOld2020,checkImagesModuleUsesOld2020.Checked)) {
+				_changed=true;
+				Cursor=Cursors.WaitCursor;
+				FormOpenDental.S_ProcessKillCommand();
+			}
 			return true;
 		}
 
@@ -1363,6 +1370,12 @@ namespace OpenDental{
 			Def defSelected=formDefinitionPicker.ListDefsSelected.First();//Guaranteed user selected a Def.
 			_defNumDefaultImageCategory=defSelected.DefNum;
 			textDefaultImageCategory.Text=defSelected.ItemName;
+		}
+		private void checkImagesModuleUsesOld2020_Click(object sender,EventArgs e) {
+			bool isImageModuleSettingChanged=(PrefC.GetBool(PrefName.ImagesModuleUsesOld2020)!=checkImagesModuleUsesOld2020.Checked);
+			if(isImageModuleSettingChanged) {
+				MsgBox.Show(this,"The entire program will need to close to reset imaging. All other instances connected to this database should be manually closed before changing this setting.");
+			}
 		}
 
 		#endregion Methods - Images

@@ -40,7 +40,7 @@ namespace OpenDentBusiness {
 		None=0,
 		[EServiceFeatureStatus(isFinished:false)]
 		EClipPerio=1,
-		[EServiceFeatureStatus(isFinished:false)]
+		[EServiceFeatureStatus(isFinished:true)]
 		SecureEmail=2,
 	}
 

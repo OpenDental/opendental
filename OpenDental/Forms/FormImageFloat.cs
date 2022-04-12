@@ -548,13 +548,22 @@ namespace OpenDental {
 			return listUnmountedObjects;
 		}
 
-		public void HideWebBrowser(){
+		///<summary>Returns true if the web browser was hidden. Otherwise; false.</summary>
+		public bool HideWebBrowser(){
 			if(_webBrowser==null) {
-				return;
+				return true;
 			}
 			//This releases control of the current PDF. It was not possible to save in an external PDF viewer unless we clicked on another PDF that would release
 			//_webBrowser and control a different PDF. Use in conjunction _webBrowser.Visible=false to not allow the user to click anything on the browser just to be safe.
-			_webBrowser.Navigate("about:blank");
+			try {
+				_webBrowser.Navigate("about:blank");
+			}
+			catch(Exception ex) {
+				ex.DoNothing();
+				//The web browser control is still loading the PDF document and is in use (IsBusy=true).
+				//We cannot release control (navigate away) of the current PDF until this has finished.
+				return false;
+			}
 			//This prevents users from previewing the PDF in OD at the same time they have it open in an external PDF viewer.
 			//There was a strange graphical bug that occurred when the PDF was previewed at the same time the PDF was open in the Adobe Acrobat Reader DC
 			//if the Adobe "Enable Protected Mode" option was disabled.  The graphical bug caused many ODButtons and ODGrids to disappear even though their
@@ -562,6 +571,7 @@ namespace OpenDental {
 			//Thus the bug affected many custom drawn controls.
 			_webBrowser.Visible=false;
 			IsImageFloatLocked=false;
+			return true;
 		}
 
 		///<summary>Invalidates the color image setting and recalculates.  This is not on a separate thread.  Instead, it's just designed to run no more than about every 300ms, which completely avoids any lockup.</summary>

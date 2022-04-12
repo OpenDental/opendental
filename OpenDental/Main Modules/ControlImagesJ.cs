@@ -945,7 +945,10 @@ namespace OpenDental
 
 		private void imageSelector_ItemDoubleClick(object sender,EventArgs e) {
 			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			formImageFloat.HideWebBrowser();
+			if(!formImageFloat.HideWebBrowser()) {
+				MsgBox.Show(this,"The PDF viewer is busy loading the document and cannot be opened in its default program yet. Please try again.");
+				return;
+			}
 			if(imageSelector.GetSelectedType()==EnumImageNodeType.None
 				|| imageSelector.GetSelectedType()==EnumImageNodeType.Category)
 			{

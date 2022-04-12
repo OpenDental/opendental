@@ -368,6 +368,7 @@ namespace OpenDental{
 			this.label15 = new System.Windows.Forms.Label();
 			this.textAutoImportFolder = new System.Windows.Forms.TextBox();
 			this.tabManage = new System.Windows.Forms.TabPage();
+			this.checkRxHideProvsWithoutDEA = new System.Windows.Forms.CheckBox();
 			this.comboEraAutomation = new OpenDental.UI.ComboBoxOD();
 			this.labelEraAutomation = new System.Windows.Forms.Label();
 			this.comboDepositSoftware = new OpenDental.UI.ComboBoxOD();
@@ -404,7 +405,8 @@ namespace OpenDental{
 			this.checkRxSendNewToQueue = new System.Windows.Forms.CheckBox();
 			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
-			this.checkRxHideProvsWithoutDEA = new System.Windows.Forms.CheckBox();
+			this.label47 = new System.Windows.Forms.Label();
+			this.checkImagesModuleUsesOld2020 = new System.Windows.Forms.CheckBox();
 			this.tabControlMain.SuspendLayout();
 			this.tabAppts.SuspendLayout();
 			this.groupBox8.SuspendLayout();
@@ -4069,6 +4071,8 @@ namespace OpenDental{
 			// tabImages
 			// 
 			this.tabImages.BackColor = System.Drawing.Color.White;
+			this.tabImages.Controls.Add(this.label47);
+			this.tabImages.Controls.Add(this.checkImagesModuleUsesOld2020);
 			this.tabImages.Controls.Add(this.butBrowseImageCategory);
 			this.tabImages.Controls.Add(this.labelDefaultImageCategory);
 			this.tabImages.Controls.Add(this.textDefaultImageCategory);
@@ -4142,7 +4146,7 @@ namespace OpenDental{
 			// 
 			this.checkPDFLaunchWindow.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkPDFLaunchWindow.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkPDFLaunchWindow.Location = new System.Drawing.Point(15, 116);
+			this.checkPDFLaunchWindow.Location = new System.Drawing.Point(74, 116);
 			this.checkPDFLaunchWindow.Name = "checkPDFLaunchWindow";
 			this.checkPDFLaunchWindow.Size = new System.Drawing.Size(440, 15);
 			this.checkPDFLaunchWindow.TabIndex = 6;
@@ -4217,6 +4221,17 @@ namespace OpenDental{
 			this.tabManage.Size = new System.Drawing.Size(1227, 640);
 			this.tabManage.TabIndex = 6;
 			this.tabManage.Text = "Manage";
+			// 
+			// checkRxHideProvsWithoutDEA
+			// 
+			this.checkRxHideProvsWithoutDEA.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkRxHideProvsWithoutDEA.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.checkRxHideProvsWithoutDEA.Location = new System.Drawing.Point(24, 592);
+			this.checkRxHideProvsWithoutDEA.Name = "checkRxHideProvsWithoutDEA";
+			this.checkRxHideProvsWithoutDEA.Size = new System.Drawing.Size(486, 17);
+			this.checkRxHideProvsWithoutDEA.TabIndex = 289;
+			this.checkRxHideProvsWithoutDEA.Text = "Hide providers without DEA number from making (non electronic)  prescriptions";
+			this.checkRxHideProvsWithoutDEA.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// comboEraAutomation
 			// 
@@ -4595,16 +4610,28 @@ namespace OpenDental{
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
-			// checkRxHideProvsWithoutDEA
+			// label47
 			// 
-			this.checkRxHideProvsWithoutDEA.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkRxHideProvsWithoutDEA.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkRxHideProvsWithoutDEA.Location = new System.Drawing.Point(24, 592);
-			this.checkRxHideProvsWithoutDEA.Name = "checkRxHideProvsWithoutDEA";
-			this.checkRxHideProvsWithoutDEA.Size = new System.Drawing.Size(486, 17);
-			this.checkRxHideProvsWithoutDEA.TabIndex = 289;
-			this.checkRxHideProvsWithoutDEA.Text = "Hide providers without DEA number from making (non electronic)  prescriptions";
-			this.checkRxHideProvsWithoutDEA.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.label47.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.label47.Location = new System.Drawing.Point(520, 138);
+			this.label47.Name = "label47";
+			this.label47.Size = new System.Drawing.Size(245, 18);
+			this.label47.TabIndex = 301;
+			this.label47.Text = "might be useful for XVWeb, but probably not";
+			this.label47.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// checkImagesModuleUsesOld2020
+			// 
+			this.checkImagesModuleUsesOld2020.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkImagesModuleUsesOld2020.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.checkImagesModuleUsesOld2020.Location = new System.Drawing.Point(74, 137);
+			this.checkImagesModuleUsesOld2020.Name = "checkImagesModuleUsesOld2020";
+			this.checkImagesModuleUsesOld2020.Size = new System.Drawing.Size(440, 15);
+			this.checkImagesModuleUsesOld2020.TabIndex = 300;
+			this.checkImagesModuleUsesOld2020.Text = "Use old Imaging module interface, pre 2020";
+			this.checkImagesModuleUsesOld2020.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkImagesModuleUsesOld2020.UseVisualStyleBackColor = true;
+			this.checkImagesModuleUsesOld2020.Click += new System.EventHandler(this.checkImagesModuleUsesOld2020_Click);
 			// 
 			// FormModuleSetup
 			// 
@@ -5048,5 +5075,7 @@ namespace OpenDental{
 		private UI.Button butPayPlanTermsAndConditions;
 		private Label labelTermsAndConditions;
 		private CheckBox checkRxHideProvsWithoutDEA;
+		private Label label47;
+		private CheckBox checkImagesModuleUsesOld2020;
 	}
 }

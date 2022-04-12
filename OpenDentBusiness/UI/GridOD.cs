@@ -100,6 +100,7 @@ namespace OpenDental.UI {
 		private string _title="";
 		private bool _titleVisible=true;
 		private bool _vScrollVisible=true;
+		private bool _wrapText=true;
 		#endregion Fields - Private for Properties
 
 		#region Fields - Private
@@ -572,7 +573,20 @@ namespace OpenDental.UI {
 		[Category("OD")]
 		[Description("Text within each cell will wrap, making some rows taller.")]
 		[DefaultValue(true)]
-		public bool WrapText { get; set; } = true;
+		public bool WrapText { 
+			get {
+				return _wrapText;
+			}
+			set{ 
+				_wrapText=value;
+				if(value) {
+					_stringFormat.FormatFlags = 0;
+				}
+				else {
+					_stringFormat.FormatFlags = StringFormatFlags.NoWrap;
+				}
+			}
+		}
 		#endregion Properties - Public
 
 		#region Properties - Not Browsable
@@ -694,6 +708,7 @@ namespace OpenDental.UI {
 					vScroll.Value=vScroll.Minimum;
 				}
 				textEdit?.Dispose();
+				comboBox.Visible=false;
 				Invalidate();
 			}
 		}
@@ -976,12 +991,6 @@ namespace OpenDental.UI {
 				if(gridRow.ColorLborder!=Color.Empty) {
 					penLower=new Pen(gridRow.ColorLborder);
 				}
-			}
-			if(WrapText){
-				_stringFormat.FormatFlags=0;
-			}
-			else{
-				_stringFormat.FormatFlags=StringFormatFlags.NoWrap;
 			}
 			for(int i=0;i<Columns.Count;i++) {
 				//vertical line on right of cell
@@ -4176,8 +4185,12 @@ namespace OpenDental.UI {
 			}
 			//int colWidth=(odGridColumn.DropDownWidth > 0) ? odGridColumn.DropDownWidth+1 : ListGridColumns[selectedCell.X].ColWidth+1;
 			comboBox.Size=new Size(colWidth,ListGridRows[_selectedCell.Y].State.HeightMain+1);
-			comboBox.Location=new Point(-hScroll.Value+1+Columns[_selectedCell.X].State.XPos,
-				-vScroll.Value+1+OriginY()+ListGridRows[_selectedCell.Y].State.YPos+((ListGridRows[_selectedCell.Y].State.HeightMain-comboBox.Size.Height)/2));//Centers the combo box vertically.
+			if(ListGridRows[_selectedCell.Y].State.YPos>=vScroll.Value) {//Top of row is showing. Put comboBox at top of row.
+				comboBox.Location=new Point(-hScroll.Value+1+Columns[_selectedCell.X].State.XPos,-vScroll.Value+1+OriginY()+ListGridRows[_selectedCell.Y].State.YPos);
+			}
+			else {//The top of the row is up out of view. Put comboBox at top of grid, below header.
+				comboBox.Location=new Point(-hScroll.Value+1+Columns[_selectedCell.X].State.XPos,1+OriginY());
+			}
 			comboBox.Items.Clear();
 			for(int i=0;i<gridColumn.ListDisplayStrings.Count;i++) {
 				comboBox.Items.Add(gridColumn.ListDisplayStrings[i]);

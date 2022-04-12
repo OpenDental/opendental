@@ -292,7 +292,15 @@ namespace OpenDental {
 				//we have to this whether we just made this the active or it was already active, otherwise any procs we move off of the active plan will
 				//retain the TP status and AuditPlans will throw them back on this TP.
 				//Changing the status to TPi of any procs that are not on this plan prevents that from happening.
+				List<long> listProcNumsActive=listNew.Select(x=>x.ProcNum).ToList();
+				List<TreatPlanAttach> listTreatPlanAttachesInactive=_listTpAttachesAll.FindAll(x=>!listProcNumsActive.Contains(x.ProcNum));
 				Procedures.SetTPActive(TreatPlanCur.PatNum,listNew.Select(x => x.ProcNum).ToList());
+				for(int i=0;i<listNew.Count;i++) {
+					ProcMultiVisits.UpdateGroupForProc(listNew[i].ProcNum,ProcStat.TP);
+				}
+				for(int i=0;i<listTreatPlanAttachesInactive.Count;i++) {
+					ProcMultiVisits.UpdateGroupForProc(listTreatPlanAttachesInactive[i].ProcNum,ProcStat.TPi);
+				}
 			}
 			DialogResult=DialogResult.OK;
 		}
