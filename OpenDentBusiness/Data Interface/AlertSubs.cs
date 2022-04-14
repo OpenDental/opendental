@@ -89,5 +89,16 @@ namespace OpenDentBusiness{
 			}
 			return Crud.AlertSubCrud.Sync(listNew,listOld);
 		}
+
+		///<summary>Gets all of the distinct AlertTypes across all of a user's AlertSubs.</summary>
+		public static List<AlertType> GetAllAlertTypesForUser(long userNum) {
+			//No need to check MiddleTierRole; no call to db.
+			//Get all AlertCategoryNums for the user's AlertSubs.
+			List<long> listAlertCatNums=GetAllForUser(userNum).Select(x => x.AlertCategoryNum).ToList();
+			//Get all links between the AlertCategories and AlertTypes.
+			List<AlertCategoryLink> listAlertCategoryLinks=AlertCategoryLinks.GetWhere(x => listAlertCatNums.Contains(x.AlertCategoryNum));
+			//Return all distinct AlertTypes associated to links.
+			return listAlertCategoryLinks.Select(x => x.AlertType).Distinct().ToList();
+		}
 	}
 }

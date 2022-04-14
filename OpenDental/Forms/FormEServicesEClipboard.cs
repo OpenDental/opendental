@@ -179,6 +179,11 @@ namespace OpenDental {
 				return;
 			}
 			if(mobileAppDevice.IsAllowed){
+				if(mobileAppDevice.PatNum>0) {
+					MsgBox.Show("A patient is currently using this device. Please clear the patient from the device using the Kiosk Manager" +
+						" or wait until the patient is no longer using the device.");
+					return;
+				}
 				if(!MsgBox.Show(MsgBoxButtons.YesNo,"This will immediately make the device unavailable to all other workstations. Continue?")) {
 					return;
 				}
