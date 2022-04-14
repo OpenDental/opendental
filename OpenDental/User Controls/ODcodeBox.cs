@@ -168,7 +168,7 @@ namespace OpenDental {
 		private Point GetPosFromCharIndex(int index) {
 			int rawPointSize=Marshal.SizeOf(typeof(Point));
 			IntPtr wParam=Marshal.AllocHGlobal(rawPointSize);
-			WindowsApiWrapper.SendMessage(this.Handle,(int)WindowsApiWrapper.EM_Rich.EM_POSFROMCHAR,(int)wParam,index);
+			WindowsApiWrapper.SendMessage(this.Handle,(int)WindowsApiWrapper.EM_Rich.EM_POSFROMCHAR,wParam,index);
 			Point point=(Point)Marshal.PtrToStructure(wParam,typeof(Point));
 			Marshal.FreeHGlobal(wParam);
 			return point;

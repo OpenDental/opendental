@@ -6,6 +6,8 @@ using System.Windows.Forms;
 using System.IO;
 using OpenDentBusiness;
 using System.Collections.Generic;
+using System.Linq;
+using CodeBase;
 
 namespace OpenDental {
 	///<summary></summary>
@@ -377,8 +379,8 @@ namespace OpenDental {
 			if(RefToSel || RefFromSel || NeedRefPat || NeedRefDent) {
 				listWhereClauses.Add("patient.patnum=refattach.patnum");
 				listWhereClauses.Add("referral.referralnum=refattach.referralnum");
-				if(listBoxRefType.SelectedItem != null) {
-					listWhereClauses.Add("refattach.RefType="+POut.Int((int)listBoxRefType.SelectedItem));
+				if(!listBoxRefType.GetListSelected<ReferralType>().IsNullOrEmpty()) {
+					listWhereClauses.Add("refattach.RefType IN ("+String.Join(",",listBoxRefType.GetListSelected<ReferralType>().Select(x => POut.Int((int)x))) + ") ");
 				}
 			}
 			if(NeedInsPlan) {

@@ -369,7 +369,7 @@ namespace OpenDentBusiness {
 		///<summary>Returns all users selectable for the insurance verification list.  
 		///Pass in an empty list to not filter by clinic.  
 		///Set isAssigning to false to return only users who have an insurance already assigned.</summary>
-		public static List<Userod> GetUsersForVerifyList(List<long> listClinicNums,bool isAssigning) {
+		public static List<Userod> GetUsersForVerifyList(List<long> listClinicNums,bool isAssigning,bool includeHiddenUsers=false) {
 			//No need to check RemotingRole; no explicit call to db.
 			List<long> listUserNumsInInsVerify=InsVerifies.GetAllInsVerifyUserNums();
 			List<long> listUserNumsInClinic=new List<long>();
@@ -386,7 +386,7 @@ namespace OpenDentBusiness {
 				listUserNumsInInsVerify.AddRange(GetUsers(listUserNumsInInsVerify).FindAll(x => !x.ClinicIsRestricted).Select(x => x.UserNum).Distinct().ToList());//Always add unrestricted users into the list.
 				listUserNumsInInsVerify=listUserNumsInInsVerify.Distinct().ToList();
 			}
-			List<Userod> listUsersWithPerm=GetUsersByPermission(Permissions.InsPlanVerifyList,false);
+			List<Userod> listUsersWithPerm=GetUsersByPermission(Permissions.InsPlanVerifyList,includeHiddenUsers);
 			if(isAssigning) {
 				if(listClinicNums.Count==0) {
 					return listUsersWithPerm;//Return unfiltered list of users with permission
@@ -505,7 +505,7 @@ namespace OpenDentBusiness {
 		///is set and the Application Virtual Path for the web service is not the same as the node value, throws an exception, which keeps the IIS service
 		///from accessing the wrong database.</summary>
 		public static void LoadDatabaseInfoFromFile(string configFilePath){
-			//No need to check RemotingRole; no call to db.
+			//No need to check MiddleTierRole; no call to db.
 			if(!File.Exists(configFilePath)){
 				throw new Exception("Could not find "+configFilePath+" on the web server.");
 			}

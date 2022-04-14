@@ -3638,6 +3638,7 @@ namespace OpenDental {
 			documentImported.Description=document.Description;
 			documentImported.DocCategory=document.DocCategory;
 			documentImported.ImgType=document.ImgType;
+			documentImported.DateCreated=document.DateCreated;
 			Documents.Update(documentImported);
 			EventFillTree?.Invoke(this,false);//updates tree to immediately include new file
 			NodeTypeAndKey nodeTypeAndKey2=new NodeTypeAndKey(EnumImageNodeType.Document,documentImported.DocNum);
@@ -4158,7 +4159,13 @@ namespace OpenDental {
 						_webBrowser.Bounds=panelMain.Bounds;
 						LayoutManager.Add(_webBrowser,this);
 					}
-					Application.DoEvents();//Show the browser control before loading, in case loading a large PDF, so the user can see the preview has started without waiting.
+					/************************************************************************************************************************************************************************
+					 * It is no longer okay to allow Windows to process the message queue with Application.DoEvents() to update / repaint the UI so that users know a PDF is loading.
+					 * The user could have clicked on another main module button which would put the MouseUp event onto the message queue.
+					 * The Imaging module would be unselected and thus all of these floating image windows would be destroyed and disposed if the message queue was allowed to process.
+					 * This was causing bug submissions from various places throughout the Imaging module (e.g. multi-page scanning, importing multiple PDFs, loading large PDFs, etc).
+					 * Application.DoEvents();//Show the browser control before loading, in case loading a large PDF, so the user can see the preview has started without waiting.
+					************************************************************************************************************************************************************************/
 					//Adobe task pane on right will pop up after first reuse of browser (varies depending on pdf), 
 					//but Adobe has a setting to remember to hide that.
 					//Adobe toolbar on top will need to be manually shown after disposing of browser.

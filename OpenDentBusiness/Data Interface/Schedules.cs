@@ -1913,7 +1913,7 @@ namespace OpenDentBusiness{
 		///<summary>Gets schedule info that's filtered to match the criteria of any passed in arguments.</summary>
 		public static DataTable GetPeriodScheduleForApi(DateTime dateStart,DateTime dateEnd,long schedType,long blockoutDefNum,long provNum,long employeeNum,long scheduleNum,int limit,int offset,List<long> listOpNums=null) {
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				return Meth.GetTable(MethodBase.GetCurrentMethod(),dateStart,dateEnd,schedType,blockoutDefNum,provNum,employeeNum,listOpNums);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),dateStart,dateEnd,schedType,blockoutDefNum,provNum,employeeNum,scheduleNum,limit,offset,listOpNums);
 			}
 			DataTable tableReturn=new DataTable("Schedule");
 			tableReturn.Columns.Add("ScheduleNum");

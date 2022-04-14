@@ -472,7 +472,6 @@ namespace OpenDental{
 				}
 				else {
 					_doseSpotUserPrefDefault.ValueString=textDoseSpotUserID.Text.Trim();
-					UserOdPrefs.Upsert(_doseSpotUserPrefDefault);
 				}
 				isUserOdPrefCacheInvalid=true;
 			}

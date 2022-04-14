@@ -864,7 +864,12 @@ namespace OpenDental{
 				}
 			}
 			_httpListenerApi=new HttpListener();
-			_httpListenerApi.Prefixes.Add("http://127.0.0.1:30222/");//must end in /
+			if(ODBuild.IsDebug()) {
+				_httpListenerApi.Prefixes.Add("http://127.0.0.1:30555/");//30555 was chosen arbitrarily for local API debugging.
+			}
+			else {
+				_httpListenerApi.Prefixes.Add("http://127.0.0.1:30222/");//must end in /
+			}
 				//127.0.0.1 should support both that IP and localhost. Might possibly require host header if using "localhost".
 				//Port 30222 was chosen as very likely to be unused. Plan to add port choice later.
 				//_httpListenerApi.Prefixes.Add("http://*:30222/");//didn't work because:
@@ -4160,7 +4165,7 @@ namespace OpenDental{
 			}
 			ApiReturnResult apiReturnResult;
 			if(apiRequest is null){
-				apiReturnResult=new ApiReturnResult(ReturnStatusCode.BadRequest);
+				apiReturnResult=new ApiReturnResult(ReturnStatusCode.BadRequest,"Local API. Unable to convert request.");
 			}
 			else{
 				apiReturnResult=ApiMain.PassRequestToODApi(apiRequest,registrationKey);

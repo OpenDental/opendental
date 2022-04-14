@@ -1768,6 +1768,9 @@ namespace OpenDentBusiness {
 
 		///<summary>Creates a DataTable for Patient Info similar to ControlChart.FillPtGrid(). Uses the default fields.</summary>
 		public static DataTable GetPtInfoForApi(Patient patient) {
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),patient);
+			}
 			DataTable tableRetVal=new DataTable(); //Table creation & structure
 			DataColumn col=new DataColumn("Field");
 			tableRetVal.Columns.Add(col);

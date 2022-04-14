@@ -111,6 +111,9 @@ namespace OpenDentBusiness{
 					AlertItem alertForUser=listOldAlerts.FirstOrDefault(x => x.UserNum==usernum);
 					//If an alert doesn't exist for the user, we'll create it.
 					if(alertForUser==null) {
+						if(!AlertSubs.GetAllAlertTypesForUser(usernum).Contains(AlertType.WebMailRecieved)) {
+							continue;//Don't create alert if user has no AlertSubs that include the WebMailRecieved AlertType.
+						}
 						alertForUser=new AlertItem();
 						alertForUser.Type=AlertType.WebMailRecieved;
 						alertForUser.FormToOpen=FormType.FormEmailInbox;
@@ -172,6 +175,7 @@ namespace OpenDentBusiness{
 			List<List<AlertItem>> listUniqueAlerts=new List<List<AlertItem>>();
 			RefreshForClinicAndTypes(clinicNumCur,listUserAlertLinks)//Get alert items for the current clinic
 				.Union(RefreshForClinicAndTypes(-1,listAllUserAlertLinks))//Get alert items that are for all clinics
+				.Union(GetAllForUserNum(userNumCur))//Get alert items for the current user
 				.DistinctBy(x => x.AlertItemNum)
 				.ForEach(x => {
 					foreach(List<AlertItem> listDuplicates in listUniqueAlerts) {
@@ -245,6 +249,15 @@ namespace OpenDentBusiness{
 				return Meth.GetObject<List<AlertItem>>(MethodBase.GetCurrentMethod(),alertType);
 			}
 			string command="SELECT * FROM alertitem WHERE Type="+POut.Int((int)alertType)+";";
+			return Crud.AlertItemCrud.SelectMany(command);
+		}
+
+		///<summary>Get all AlertItems for the passed in UserNum.</summary>
+		public static List<AlertItem> GetAllForUserNum(long userNum) {
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				return Meth.GetObject<List<AlertItem>>(MethodBase.GetCurrentMethod(),userNum);
+			}
+			string command="SELECT * FROM alertitem WHERE UserNum="+POut.Long(userNum);
 			return Crud.AlertItemCrud.SelectMany(command);
 		}
 

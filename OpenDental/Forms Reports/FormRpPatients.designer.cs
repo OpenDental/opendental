@@ -27,6 +27,7 @@ namespace OpenDental {
 			this.butOK = new OpenDental.UI.Button();
 			this.tabPatients = new System.Windows.Forms.TabControl();
 			this.tabData = new System.Windows.Forms.TabPage();
+			this.listBoxRefType = new OpenDental.UI.ListBoxOD();
 			this.label1 = new System.Windows.Forms.Label();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.labelReferredTo = new System.Windows.Forms.Label();
@@ -45,7 +46,6 @@ namespace OpenDental {
 			this.TextBox = new System.Windows.Forms.TextBox();
 			this.DropListFilter = new System.Windows.Forms.ComboBox();
 			this.TextSQL = new System.Windows.Forms.TextBox();
-			this.listBoxRefType = new OpenDental.UI.ListBoxOD();
 			this.tabPatients.SuspendLayout();
 			this.tabData.SuspendLayout();
 			this.tabFilters.SuspendLayout();
@@ -99,6 +99,16 @@ namespace OpenDental {
 			this.tabData.Size = new System.Drawing.Size(832, 518);
 			this.tabData.TabIndex = 1;
 			this.tabData.Text = "SELECT";
+			// 
+			// listBoxRefType
+			// 
+			this.listBoxRefType.Location = new System.Drawing.Point(221, 87);
+			this.listBoxRefType.Name = "listBoxRefType";
+			this.listBoxRefType.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
+			this.listBoxRefType.Size = new System.Drawing.Size(120, 95);
+			this.listBoxRefType.TabIndex = 16;
+			this.listBoxRefType.Text = "listBoxOD1";
+			this.listBoxRefType.SelectionChangeCommitted += new System.EventHandler(this.listBoxRefType_SelectionChangeCommitted);
 			// 
 			// label1
 			// 
@@ -283,15 +293,6 @@ namespace OpenDental {
 			this.TextSQL.ReadOnly = true;
 			this.TextSQL.Size = new System.Drawing.Size(840, 128);
 			this.TextSQL.TabIndex = 38;
-			// 
-			// listBoxRefType
-			// 
-			this.listBoxRefType.Location = new System.Drawing.Point(221, 87);
-			this.listBoxRefType.Name = "listBoxRefType";
-			this.listBoxRefType.Size = new System.Drawing.Size(120, 95);
-			this.listBoxRefType.TabIndex = 16;
-			this.listBoxRefType.Text = "listBoxOD1";
-			this.listBoxRefType.SelectionChangeCommitted += new System.EventHandler(listBoxRefType_SelectionChangeCommitted);
 			// 
 			// FormRpPatients
 			// 

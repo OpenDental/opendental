@@ -262,6 +262,11 @@ namespace OpenDentBusiness.Eclaims {
 				readStream.Close();
 				XmlDocument xmlDoc=new XmlDocument();
 				xmlDoc.LoadXml(responseXml);
+				XmlNode nodeErrorCode=xmlDoc.SelectSingleNode(@"content/error");
+				if(nodeErrorCode!=null) {
+					ErrorMessage="Error Code: "+nodeErrorCode.SelectSingleNode("code").InnerText+" - "+nodeErrorCode.SelectSingleNode("description").InnerText;
+					return false;
+				}
 				string eraBatchId=xmlDoc.SelectSingleNode(@"content/body/eraBatchId").InnerText;
 				string data835=xmlDoc.SelectSingleNode(@"content/body/eraData").InnerText;
 				string exportFilePath=CodeBase.ODFileUtils.CombinePaths(clearinghouseClin.ResponsePath,DateTime.Now.ToString("yyyyMMddhhmmss")+"-"+eraBatchId+".txt");

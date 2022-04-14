@@ -281,15 +281,14 @@ namespace OpenDentBusiness{
         }
 				clockEvent.TimeDisplayed2=clockEvent.TimeEntered2;
 				ClockEvents.Update(clockEvent);
-				if(clockEvent.IsWorkingHome != isAtHome) { //If coming back from break, and switching locations between home / office
-					System.Threading.Thread.Sleep(1000); // Needed to maintain that the end of a break, and the clock out doesnt happen at the same second, and break the calc daily functionality.
+				if(clockEvent.IsWorkingHome!=isAtHome) { //If coming back from break, and switching locations between home / office
+					System.Threading.Thread.Sleep(1000); //Needed to maintain that the end of a break, and the clock out doesnt happen at the same second, and break the calc daily functionality.
 					ClockOut(employeeNum,TimeClockStatus.Home); //Home means not lunch or break is being counted.
 					ClockIn(employeeNum,isAtHome);//Clock in to start new clockEvent from new location.
-					return; // ensure we dont make 2 security logs for clocking in by hitting the end of this method twice.
+					return; //ensure we dont make 2 security logs for clocking in by hitting the end of this method twice.
 				}
-
       }
-			else {//normal clock in/out
+			else {//normal clock in/out (Includes the changing of 'Available at Office' to/from 'Available at Home'.)
 				if(clockEvent.TimeDisplayed2.Year<1880) {//already clocked in
 					throw new Exception(Lans.g("ClockEvents","Error.  Already clocked in."));
 				}
@@ -300,6 +299,7 @@ namespace OpenDentBusiness{
 					clockEvent.ClockStatus=tcs;
 					clockEvent.ClinicNum=Clinics.ClinicNum;
 					clockEvent.IsWorkingHome=isAtHome;
+					System.Threading.Thread.Sleep(1000); //Needed to maintain a time difference between clocking out and clocking in when switching locations so that Employees.UpdateClockStatus() doesn't have a race condition between a 2 clock events TimeDisplayed2 and TimeDisplayed1 having the same value.
 					ClockEvents.Insert(clockEvent);//times handled
 				}
 			}

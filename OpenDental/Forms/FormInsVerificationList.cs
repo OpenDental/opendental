@@ -22,6 +22,7 @@ namespace OpenDental {
 		///<summary>This will only have a selection if selecting from gridMain.</summary>
 		private InsVerifyGridObject _gridRowSelected;
 		private List<Userod> _listUsersInRegionWithAssignedIns=new List<Userod>();
+		/// <summary>This will contain all (including hidden) users with the InsPlanVerify permission</summary>
 		private List<Userod> _listUsersInRegion=new List<Userod>();
 		private List<Def> _listVerifyStatuses=new List<Def>();
 		private long _userNumVerifyGrid=0;
@@ -256,9 +257,12 @@ namespace OpenDental {
 				//This will get every clinic associated to any of the currently selected regions.
 				listClinicNums=Clinics.GetListByRegion(_listDefNumsVerifyRegionsFilter);
 			}
-			_listUsersInRegion=Userods.GetUsersForVerifyList(listClinicNums,true);
-			_listUsersInRegionWithAssignedIns=Userods.GetUsersForVerifyList(listClinicNums,false);
+			_listUsersInRegion=Userods.GetUsersForVerifyList(listClinicNums,isAssigning:true,includeHiddenUsers:true);
+			_listUsersInRegionWithAssignedIns=Userods.GetUsersForVerifyList(listClinicNums,isAssigning:false);
 			for(int i=0;i<_listUsersInRegionWithAssignedIns.Count;i++) {
+				if(_listUsersInRegionWithAssignedIns[i].IsHidden) {
+					continue;
+				}
 				comboVerifyUser.Items.Add(_listUsersInRegionWithAssignedIns[i].UserName);
 				if(_verifyUserNum==_listUsersInRegionWithAssignedIns[i].UserNum) {
 					comboVerifyUser.SelectedIndex=i+2;//Add 2 because of the "All Users" and "Unassigned" combo items.
@@ -283,7 +287,8 @@ namespace OpenDental {
 		private void PickUser(bool isAssigning) {
 			using FormUserPick FormUP=new FormUserPick();
 			FormUP.IsSelectionmode=true;
-			FormUP.ListUserodsFiltered=_listUsersInRegion;
+			//The list has hidden and visible users. Don't allow the user to pick a hidden user.
+			FormUP.ListUserodsFiltered=_listUsersInRegion.FindAll(x => x.IsHidden==false); 
 			if(!isAssigning) {
 				FormUP.IsPickAllAllowed=true;
 			}
@@ -516,6 +521,9 @@ namespace OpenDental {
 			menuRightClick.MenuItems.Add(new MenuItem(verifyDescription,gridMainRight_click));
 			MenuItem assignUserToolItem=new MenuItem(Lan.g(this,"Assign to User"));
 			foreach(Userod user in _listUsersInRegion) {
+				if(user.IsHidden) {
+					continue;
+				}
 				MenuItem assignUserDropDownCur=new MenuItem(user.UserName);
 				assignUserDropDownCur.Tag=user;
 				assignUserDropDownCur.Click+=new EventHandler(assignUserToolItemDropDown_Click);
@@ -705,6 +713,9 @@ namespace OpenDental {
 		private void gridAssign_Popup(object sender,EventArgs e) {
 			MenuItem assignUserToolItem=new MenuItem(Lan.g(this,"Assign to User"));
 			foreach(Userod user in _listUsersInRegion) {
+				if(user.IsHidden) {
+					continue;
+				}
 				MenuItem assignUserDropDownCur=new MenuItem(user.UserName);
 				assignUserDropDownCur.Tag=user;
 				assignUserDropDownCur.Click+=new EventHandler(assignUserToolItemDropDown_Click);
@@ -839,7 +850,8 @@ namespace OpenDental {
 				_verifyUserNum=-1;
 			}
 			else {//Selected a real User.
-				_verifyUserNum=_listUsersInRegionWithAssignedIns[comboVerifyUser.SelectedIndex-2].UserNum;
+				Userod userod=_listUsersInRegionWithAssignedIns.FirstOrDefault(x => x.UserName==comboVerifyUser.GetSelected<string>());
+				_verifyUserNum=userod.UserNum;
 			}
 			FillGrids();
 		}
@@ -1017,18 +1029,7 @@ namespace OpenDental {
 					DateLastAssigned=(isPatLastAssignedNewer ? 
 						gridObj.PatInsVerify.DateLastAssigned : 
 						gridObj.PlanInsVerify.DateLastAssigned);
-					if(isPatLastAssignedNewer) {
-						Userod userCur=listUsers.FirstOrDefault(x => x.UserNum==gridObj.PatInsVerify.UserNum);
-						if(userCur!=null) {
-							AssignedTo=userCur.UserName;
-						}
-					}
-					else {
-						Userod userCur=listUsers.FirstOrDefault(x => x.UserNum==gridObj.PlanInsVerify.UserNum);
-						if(userCur!=null) {
-							AssignedTo=userCur.UserName;
-						}
-					}
+					SetAssignedTo(listUsers,gridObj,isPatRow:true);
 					Tag=gridObj;
 				}
 				else if(gridObj.IsOnlyPatRow()) {
@@ -1042,10 +1043,7 @@ namespace OpenDental {
 						VerifyStatus=dictStatusDefs[gridObj.PatInsVerify.DefNum].ItemName;
 					}
 					DateLastAssigned=gridObj.PatInsVerify.DateLastAssigned;
-					Userod userCur=listUsers.FirstOrDefault(x => x.UserNum==gridObj.PatInsVerify.UserNum);
-					if(userCur!=null) {
-						AssignedTo=userCur.UserName;
-					}
+					SetAssignedTo(listUsers,gridObj,isPatRow:true);
 					Tag=gridObj;
 				}
 				else if(gridObj.IsOnlyInsRow()) {
@@ -1059,14 +1057,27 @@ namespace OpenDental {
 						VerifyStatus=dictStatusDefs[gridObj.PlanInsVerify.DefNum].ItemName;
 					}
 					DateLastAssigned=gridObj.PlanInsVerify.DateLastAssigned;
-					Userod userCur=listUsers.FirstOrDefault(x => x.UserNum==gridObj.PlanInsVerify.UserNum);
-					if(userCur!=null) {
-						AssignedTo=userCur.UserName;
-					}
+					SetAssignedTo(listUsers,gridObj,isInsPlanRow:true);
 					Tag=gridObj;
 				}
 			}
-		}
 
+			/// <summary>Sets the AssignedTo property to the current username, or the current username+(hidden) if the current user is hidden</summary>
+			private void SetAssignedTo(List<Userod> listUserods,InsVerifyGridObject insVerifyGridObject,bool isPatRow=false,bool isInsPlanRow=false) {
+				Userod userodCur=new Userod();
+				if(isPatRow || (isPatRow && isInsPlanRow)) {//Pat only row or pat/ins plan row
+					userodCur=listUserods.FirstOrDefault(x => x.UserNum==insVerifyGridObject.PatInsVerify.UserNum);
+				}
+				if(isInsPlanRow) {//plan only row
+					userodCur=listUserods.FirstOrDefault(x => x.UserNum==insVerifyGridObject.PlanInsVerify.UserNum);
+				}
+				if(userodCur!=null) {
+					AssignedTo=userodCur.UserName;
+					if(userodCur.IsHidden) {
+							AssignedTo+=" (hidden)";
+					}
+				}
+			}
+		}
 	}
 }
