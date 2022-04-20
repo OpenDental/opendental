@@ -252,9 +252,6 @@ namespace OpenDentBusiness {
 							if(propertyItem.Value[0]==8) {
 								degreesRotated=270;
 							}
-							//The width and height need to swap due to this rotation.
-							height=image.Width;
-							width=image.Height;
 							//Internet Explorer's CSS for transform:rotate will rotate at the center, so if it's a non-square image it has the potential to overlap other content.
 							//Need to do the math to find the difference in the dimensions and then shift the image so it will be at it's original location.
 							//Positive imageShiftPx means we are rotating a "long" image to a "wide" image, negative means "wide" image to a "long" image.
@@ -280,9 +277,7 @@ namespace OpenDentBusiness {
 						imgStyle+="\"";
 					}
 					//Need a parent container so a rotated image can have its new dimensions specified. Any potential HTML that comes after will not be overlapped.
-					string newHtmlValue=$"<div style=\"height:{height}px;width:{width}px;\">";
-					newHtmlValue+=$"<img src=\"file:///{fullPath.Replace("\\","/")}\" {imgStyle}></img>";
-					newHtmlValue+="</div>";
+					string newHtmlValue=$"<img src=\"file:///{fullPath.Replace("\\","/")}\" height=\"{height}px\" width=\"{width}px\" {imgStyle}></img>";
 					s=s.Replace(match.Value,newHtmlValue);
 					if(image!=null) {//Dispose
 						image.Dispose();
@@ -573,7 +568,12 @@ namespace OpenDentBusiness {
 						int iScanSibling=s.IndexOf("</"+tagName+">")+3+tagName.Length;
 						//tags without a closing tag were caught above.
 						//move the non-paragraph content over to s new.
-						strbSnew.Append(s.Substring(0,iScanSibling));
+						if(tagName=="img") {//wrap in <p> tags so IE prints properly and rotated images do not overlap other content
+							strbSnew.Append(ProcessParagraph(s.Substring(0,iScanSibling),startsWithCR));
+						}
+						else {
+							strbSnew.Append(s.Substring(0,iScanSibling));
+						}
 						s=s.Substring(iScanSibling);
 						//scanning will start a totally new paragraph
 						break;
@@ -809,12 +809,34 @@ namespace OpenDentBusiness {
 			if(paragraph.EndsWith("\n")) {//trailing CR remove
 				paragraph=paragraph.Substring(0,paragraph.Length-1);
 			}
+			string strP="";
+			//images rotated 90 and 270 degrees need their paragraph to be sized correctly
+			if(paragraph.StartsWith("<img") && (paragraph.Contains("transform:rotate(90") || paragraph.Contains("transform:rotate(270"))) {
+				strP+="<p";
+				strP+=" style=\"";
+				List<string> listHeightAndWidth=paragraph.Split(' ').Where(x=>x.StartsWith("height") || x.StartsWith("width")).ToList();
+				for(int i=0;i<listHeightAndWidth.Count;i++) {
+					listHeightAndWidth[i]=listHeightAndWidth[i].Replace('=',':').Replace("\"","");
+					//width and height will swap so paragraph is the right dimensions to hold the rotated image
+					if(listHeightAndWidth[i].StartsWith("height")) {
+						listHeightAndWidth[i]=listHeightAndWidth[i].Replace("height","width");
+					}
+					else {
+						listHeightAndWidth[i]=listHeightAndWidth[i].Replace("width","height");
+					}
+					strP+=listHeightAndWidth[i]+";";
+				}
+				strP+="\">";
+			}
+			else{
+				strP+="<p>";
+			}
 			//if the paragraph starts with any number of spaces followed by a tag such as <b> or <span>, then we need to force those spaces to show.
 			if(paragraph.StartsWith(" ") && paragraph.TrimStart(' ').StartsWith("<")) {
 				paragraph="{{nbsp}}"+paragraph.Substring(1);//this will later be converted to &nbsp;
 			}
 			paragraph=paragraph.Replace("\n","<br/>");//We tried </p><p>, but that didn't allow bold, italic, or color to span lines.
-			paragraph="<p>"+paragraph+"</p>";//surround paragraph with tags
+			paragraph=strP+paragraph+"</p>";//surround paragraph with tags
 			paragraph=paragraph.Replace("<p> ","<p>{{nbsp}}");//spaces at the beginnings of paragraphs
 			paragraph=paragraph.Replace("<br/> ","<br/>{{nbsp}}");//spaces at beginnings of lines
 			paragraph=paragraph.Replace("<br/></p>","<br/>{{nbsp}}</p>");//have a cr show if it's at the end of a paragraph

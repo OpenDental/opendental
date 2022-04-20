@@ -2712,12 +2712,6 @@ namespace OpenDentBusiness.Eclaims {
 						}
 					}
 				}
-				if(claimProcsClaim[i].ProvNum!=claim.ProvTreat) {
-					if(!string.IsNullOrWhiteSpace(queueItem.Warnings)) {
-						queueItem.Warnings+=",";
-					}
-					queueItem.Warnings+=$"proc {procCode.ProcCode} treat prov mismatch";
-				}
 				for(int j=0;j<labFeesForProc.Count;j++) {
 					if(labFeesForProc[j].ProvNum!=claim.ProvTreat) {
 						if(!string.IsNullOrWhiteSpace(queueItem.Warnings)) {

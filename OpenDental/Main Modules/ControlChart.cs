@@ -1000,22 +1000,24 @@ namespace OpenDental {
 				return;
 			}*/
 			ImageInfo imageInfo=_listImageInfos[listViewImages.SelectedIndices[0]];
+			if(imageInfo.MountNum==0) {//Not a mount
+				Document document=_listDocuments.Find(x=>x.DocNum==imageInfo.DocNum);
+				if(document is null) {
+					return;
+				}
+				if(!ImageHelper.HasImageExtension(document.FileName)) {//Not a picture file, try to launch the process
+					try {
+						FileAtoZ.StartProcess(ODFileUtils.CombinePaths(_patFolder,document.FileName));
+					}
+					catch(Exception ex) {
+						MessageBox.Show(ex.Message);
+					}
+					return;
+				}
+			}
 			EventImageClick?.Invoke(this,new EventArgsImageClick(_patCur.PatNum,imageInfo.MountNum,imageInfo.DocNum));
 			/*
-			Document document=_listDocuments.Find(x=>x.DocNum==imageInfo.DocNum);
-			if(document is null){
-				return;
-			}
-			//[(int)_arrayListVisImages[listViewImages.SelectedIndices[0]]];
-			if(!ImageHelper.HasImageExtension(document.FileName)) {
-				try {
-					FileAtoZ.StartProcess(ODFileUtils.CombinePaths(_patFolder,document.FileName));
-				}
-				catch(Exception ex) {
-					MessageBox.Show(ex.Message);
-				}
-				return;
-			}
+			[(int)_arrayListVisImages[listViewImages.SelectedIndices[0]]];
 			if(_formImageViewer==null || !_formImageViewer.Visible) {
 				_formImageViewer=new FormImageViewer();
 				_formImageViewer.Show();
