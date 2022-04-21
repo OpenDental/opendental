@@ -1382,7 +1382,7 @@ namespace OpenDental{
 		private void checkImagesModuleUsesOld2020_Click(object sender,EventArgs e) {
 			bool isImageModuleSettingChanged=(PrefC.GetBool(PrefName.ImagesModuleUsesOld2020)!=checkImagesModuleUsesOld2020.Checked);
 			if(isImageModuleSettingChanged) {
-				MsgBox.Show(this,"The entire program will need to close to reset imaging. All other instances connected to this database should be manually closed before changing this setting.");
+				MsgBox.Show(this,"All instances of the program connected to this database will need to close to reset imaging.");
 			}
 		}
 

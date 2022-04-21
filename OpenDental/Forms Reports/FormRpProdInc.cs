@@ -1034,7 +1034,7 @@ namespace OpenDental {
 			}
 			List<Provider> listProvs=new List<Provider>();
 			if(checkAllProv.Checked) {
-				listProvs=_listProviders;
+				listProvs=Providers.GetAll();
 			}
 			else {
 				for(int i=0;i<listProv.SelectedIndices.Count;i++) {

@@ -544,7 +544,8 @@ namespace OpenDental{
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(724, 9);
+			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.label1.Location = new System.Drawing.Point(715, 9);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(65, 14);
 			this.label1.TabIndex = 245;
@@ -553,7 +554,8 @@ namespace OpenDental{
 			// 
 			// textDays
 			// 
-			this.textDays.Location = new System.Drawing.Point(678, 7);
+			this.textDays.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.textDays.Location = new System.Drawing.Point(669, 7);
 			this.textDays.Name = "textDays";
 			this.textDays.Size = new System.Drawing.Size(44, 20);
 			this.textDays.TabIndex = 0;
@@ -569,7 +571,8 @@ namespace OpenDental{
 			// 
 			// labelStartDate
 			// 
-			this.labelStartDate.Location = new System.Drawing.Point(529, 9);
+			this.labelStartDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelStartDate.Location = new System.Drawing.Point(520, 9);
 			this.labelStartDate.Name = "labelStartDate";
 			this.labelStartDate.Size = new System.Drawing.Size(147, 14);
 			this.labelStartDate.TabIndex = 221;
@@ -627,11 +630,11 @@ namespace OpenDental{
 			// 
 			this.checkBoxBillShowTransSinceZero.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkBoxBillShowTransSinceZero.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkBoxBillShowTransSinceZero.Location = new System.Drawing.Point(602, 32);
+			this.checkBoxBillShowTransSinceZero.Location = new System.Drawing.Point(592, 32);
 			this.checkBoxBillShowTransSinceZero.Name = "checkBoxBillShowTransSinceZero";
-			this.checkBoxBillShowTransSinceZero.Size = new System.Drawing.Size(274, 18);
+			this.checkBoxBillShowTransSinceZero.Size = new System.Drawing.Size(284, 18);
 			this.checkBoxBillShowTransSinceZero.TabIndex = 253;
-			this.checkBoxBillShowTransSinceZero.Text = "Show all transactions since zero balance";
+			this.checkBoxBillShowTransSinceZero.Text = "Show all transactions since zero or negative balance";
 			// 
 			// FormBillingDefaults
 			// 

@@ -148,17 +148,21 @@ namespace OpenDental {
 		}
 
 		private void timerOutput_Tick(object sender,EventArgs e) {
+			StringBuilder stringBuilderOutput=new StringBuilder();
 			while(_concurrentQueueOutputMessages.TryDequeue(out OutputMessage outputMessage)) {
 				if(!checkOutputVerbose.Checked && outputMessage.LogLevel!=LogLevel.Error) {
 					continue;
 				}
-				if(textOutput.TextLength > 0) {
-					textOutput.AppendText("\r\n");
-					_stringBuilderLog.Append("\r\n");
-				}
-				textOutput.AppendText(outputMessage.Text);
-				_stringBuilderLog.Append(outputMessage.Text);
+				stringBuilderOutput.AppendLine(outputMessage.Text);
+				_stringBuilderLog.AppendLine(outputMessage.Text);
 			}
+			if(stringBuilderOutput.Length<=0) {
+				return;//No new output messages were in the queue.
+			}
+			if(textOutput.TextLength > 0) {
+				textOutput.AppendText("\r\n");
+			}
+			textOutput.AppendText(stringBuilderOutput.ToString().Trim());
 			//Trim the text box content when it gets too long (the UI will start slowing down).
 			int lineCount=textOutput.Lines.Length;
 			int lineLimit=1000;
@@ -166,9 +170,10 @@ namespace OpenDental {
 				string[] stringArrayNewLines=new string[lineLimit];
 				Array.Copy(textOutput.Lines,lineCount-lineLimit,stringArrayNewLines,0,lineLimit);
 				textOutput.Lines=stringArrayNewLines;
-				textOutput.SelectionStart=textOutput.Text.Length-1;
-				textOutput.SelectionLength=0;
 			}
+			//Automatically put the cursor at the end of the text box which will automatically scroll the most recent content into view.
+			textOutput.SelectionStart=textOutput.Text.Length-1;
+			textOutput.SelectionLength=0;
 		}
 
 		///<summary>Returns true if claim pay as totals were transferred or if there were none to process. Returns false if there was an error.</summary>

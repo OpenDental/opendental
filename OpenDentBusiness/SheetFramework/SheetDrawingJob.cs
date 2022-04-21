@@ -1188,13 +1188,15 @@ namespace OpenDentBusiness {
 				switch(sheet.SheetType.ToString()+"."+field.FieldName) {
 					case "TreatmentPlan.Note":
 						//Add plus 4 to width and height to allow for border thickness.
+						int width=Math.Max(field.Width,(int)Math.Ceiling(boundsActual.Width+4));
+						int height=(int)Math.Ceiling(boundsActual.Height+4);
 						if(gx==null) {
 							g.DrawRectangle(Pens.DarkGray,
-								new Rectangle((int)boundsActual.X,(int)boundsActual.Y,(int)Math.Ceiling(boundsActual.Width+4),(int)Math.Ceiling(boundsActual.Height+4)));
+								new Rectangle((int)boundsActual.X,(int)boundsActual.Y,width,height));
 						}
 						else {
 							gx.DrawRectangle(XPens.DarkGray,
-								new XRect(p(boundsActual.X),p(boundsActual.Y),p(boundsActual.Width+4),p(boundsActual.Height+4)));
+								new XRect(p(boundsActual.X),p(boundsActual.Y),p(width),p(height)));
 						}
 						break;
 				}

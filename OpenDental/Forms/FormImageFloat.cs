@@ -1340,7 +1340,7 @@ namespace OpenDental {
 		}
 
 		public void ToolBarDelete_Click(){
-			if(GetSelectedType()==EnumImageNodeType.None){
+			if(GetSelectedType()==EnumImageNodeType.None || ImageSelector_.GetSelectedType()==EnumImageNodeType.None) {
 				MsgBox.Show(this,"No item is currently selected");
 				return;
 			}
@@ -4321,7 +4321,7 @@ namespace OpenDental {
 				}	
 				string tempFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),GetDocumentShowing(0).FileName);
 				string docPath=FileAtoZ.CombinePaths(ImageStore.GetPatientFolder(PatientCur,ImageStore.GetPreferredAtoZpath()),GetDocumentShowing(0).FileName);
-				FileAtoZ.Copy(docPath,tempFilePath,FileAtoZSourceDestination.AtoZToLocal,"Exporting file...");
+				FileAtoZ.Copy(docPath,tempFilePath,FileAtoZSourceDestination.AtoZToLocal,"Exporting file...",doOverwrite:true);
 				ThinfinityUtils.ExportForDownload(tempFilePath);
 				MsgBox.Show(this,"Done.");
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
@@ -4336,7 +4336,7 @@ namespace OpenDental {
 				}	
 				string tempFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),_documentArrayShowing[_idxSelectedInMount].FileName);
 				string docPath=FileAtoZ.CombinePaths(ImageStore.GetPatientFolder(PatientCur,ImageStore.GetPreferredAtoZpath()),_documentArrayShowing[_idxSelectedInMount].FileName);
-				FileAtoZ.Copy(docPath,tempFilePath,FileAtoZSourceDestination.AtoZToLocal,"Exporting file...");
+				FileAtoZ.Copy(docPath,tempFilePath,FileAtoZSourceDestination.AtoZToLocal,"Exporting file...",doOverwrite:true);
 				ThinfinityUtils.ExportForDownload(tempFilePath);
 				MsgBox.Show(this,"Done.");
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);

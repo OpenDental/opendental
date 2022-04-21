@@ -149,7 +149,7 @@ namespace OpenDental {
 			col=new GridColumn(Lan.g(this,"PL Hrs"),60);
 			col.TextAlign=HorizontalAlignment.Right;
 			grid.Columns.Add(col);
-			col=new GridColumn(Lan.g(this,"Notes"),140);
+			col=new GridColumn(Lan.g(this,"Notes"),100);
 			if(!isForGridPrint) {
 				col.IsWidthDynamic=true;//Dynamic width messes up printed grid.
 			}
@@ -271,6 +271,8 @@ namespace OpenDental {
 			col=new GridColumn(Lan.g(this,"OT"),45,HorizontalAlignment.Right);
 			gridTimeCard.Columns.Add(col);
 			col=new GridColumn(Lan.g(this,"PL"),45,HorizontalAlignment.Right);
+			gridTimeCard.Columns.Add(col);
+			col=new GridColumn(Lan.g(this,"WFH"),50,HorizontalAlignment.Right);
 			gridTimeCard.Columns.Add(col);
 			col=new GridColumn(Lan.g(this,"Day"),50,HorizontalAlignment.Right);
 			gridTimeCard.Columns.Add(col);
@@ -407,7 +409,14 @@ namespace OpenDental {
 					}
 				//Column 11 - PL (Unpaid Protected Leave)--------------
 					row.Cells.Add("");//No PL should exist, leave blank
-				//Column 12 - Day (daily total)------------------------
+				//Column 12 - WFH Working From Home -------------------
+					if(clock.IsWorkingHome){
+						row.Cells.Add("X");//Working from home, fill with X
+					}
+					else {
+						row.Cells.Add("");//Not Working from home, leave blank
+					}
+				//Column 13 - Day (daily total)------------------------
 					//if this is the last entry for a given date
 					if(i==mergedAL.Count-1//if this is the last row
 						|| GetDateForRow(i+1,mergedAL) != curDate)//or the next row is a different date
@@ -418,7 +427,7 @@ namespace OpenDental {
 					else{//not the last entry for the day
 						row.Cells.Add("");
 					}
-				//Column 13 - Week (weekly total)----------------------
+				//Column 14 - Week (weekly total)----------------------
 					weeklyTotals[i]=weekSpan;
 					//if this is the last entry for a given week
 					if(i==mergedAL.Count-1//if this is the last row 
@@ -431,11 +440,11 @@ namespace OpenDental {
 					else {
 						row.Cells.Add("");
 					}
-				//Column 14 - Clinic-----------------------------------
+				//Column 15 - Clinic-----------------------------------
 					if(PrefC.HasClinicsEnabled) {
 						row.Cells.Add(Clinics.GetAbbr(clock.ClinicNum));
 					}
-				//Column 15 (or 14 if no clinics) - Note---------------
+				//Column 16 (or 15 if no clinics) - Note---------------
 					row.Cells.Add(clock.Note);
 				}
 				#endregion
@@ -495,7 +504,9 @@ namespace OpenDental {
 					else {
 						row.Cells.Add("");
 					}
-				//Column 12 - Day (daily total)------------------------
+				//Column 12 - WFH Working From Home -------------------
+					row.Cells.Add("");//Not Working from home, leave blank
+				//Column 13 - Day (daily total)------------------------
 					//if this is the last entry for a given date
 					if(i==mergedAL.Count-1//if this is the last row
 						|| GetDateForRow(i+1,mergedAL) != curDate)//or the next row is a different date
@@ -506,7 +517,7 @@ namespace OpenDental {
 					else{
 						row.Cells.Add("");
 					}
-				//Column 13 - Week (weekly total)----------------------
+				//Column 14 - Week (weekly total)----------------------
 					weeklyTotals[i]=weekSpan;
 					//if this is the last entry for a given week
 					if(i==mergedAL.Count-1//if this is the last row 
@@ -521,11 +532,11 @@ namespace OpenDental {
 					else {
 						row.Cells.Add("");
 					}
-				//Column 14 - Clinic-----------------------------------
+				//Column 15 - Clinic-----------------------------------
 					if(PrefC.HasClinicsEnabled) {
 						row.Cells.Add(Clinics.GetAbbr(adjust.ClinicNum));
 					}
-				//Column 15 (or 14 if no clinics) - Note---------------
+				//Column 16 (or 15 if no clinics) - Note---------------
 					row.Cells.Add(adjust.Note);
 					row.Cells[row.Cells.Count-1].ColorText=Color.Red;
 				}
@@ -567,6 +578,7 @@ namespace OpenDental {
 			_pagesPrinted=0;
 			PrinterL.TryPreview(pd2_PrintPage,
 				Lan.g(this,Lans.g(this,"Employee time cards printed")),
+				printoutOrientation:PrintoutOrientation.Landscape,
 				totalPages:gridMain.ListGridRows.Count
 			);
 		}
@@ -590,6 +602,7 @@ namespace OpenDental {
 			_pagesPrinted=0;
 			PrinterL.TryPreview(pd2_PrintPageSelective,
 				Lan.g(this,"Employee time cards printed"),
+				printoutOrientation:PrintoutOrientation.Landscape,
 				totalPages:gridMain.SelectedIndices.Length
 			);
 		}
@@ -629,9 +642,9 @@ namespace OpenDental {
 			g.DrawString(str,fontTitle,brush,new RectangleF(xPos,yPos,e.PageBounds.Width-marginBothSides,rectHeight),noteStringFormat);
 			yPos+=rectHeight+5;//+5 pixels for a small space between columns and title area.
 			//define columns
-			int[] colW=new int[14];
+			int[] colW=new int[15];
 			if(PrefC.HasClinicsEnabled) {
-				colW=new int[15];
+				colW=new int[16];
 			}
 			colW[0]=70;//Date
 			colW[1]=45;//Day: Column starts to wrap at 32 pixels, however added padding to 45 to allow room for language translations
@@ -644,21 +657,22 @@ namespace OpenDental {
 			colW[8]=45;//PTO: Column starts to wrap at 41 pixels (Ex. -10.00), buffered to 45 for font variations on different operating systems
 			colW[9]=45;//OT: Column starts to wrap at 41 pixels (Ex. -10.00), buffered to 45 for font variations on different operating systems
 			colW[10]=45;//PL: Column start to wrap at 41 pixels (Ex. -10.00), buffered to 45 for font variations on different operating systems
-			colW[11]=45;//Day
-			colW[12]=50;//Week
-			colW[13]=130;//Note
+			colW[11]=45;//WFH
+			colW[12]=45;//Day
+			colW[13]=50;//Week
+			colW[14]=300;//Note
 			if(PrefC.HasClinicsEnabled) {
-				colW[13]=50;//Clinic
-				colW[14]=80;//Note: Reduce width when Clinic column is added so that we do not exceed the margin.
+				colW[14]=100;//Clinic
+				colW[15]=200;//Note: Reduce width when Clinic column is added so that we do not exceed the margin.
 			}
 			int[] colPos=new int[colW.Length+1];
 			colPos[0]=45;
 			for(int i=1;i<colPos.Length;i++) {
 				colPos[i]=colPos[i-1]+colW[i-1];
 			}
-			string[] ColCaption=new string[14];
+			string[] ColCaption=new string[15];
 			if(PrefC.HasClinicsEnabled) {
-				ColCaption=new string[15];
+				ColCaption=new string[16];
 			}
 			ColCaption[0]=Lan.g(this,"Date");
 			ColCaption[1]=Lan.g(this,"Day");
@@ -671,12 +685,13 @@ namespace OpenDental {
 			ColCaption[8]=Lan.g(this,"PTO");
 			ColCaption[9]=Lan.g(this,"OT");
 			ColCaption[10]=Lan.g(this,"PL");
-			ColCaption[11]=Lan.g(this,"Day");
-			ColCaption[12]=Lan.g(this,"Week");
-			ColCaption[13]=Lan.g(this,"Note");
+			ColCaption[11]=Lan.g(this,"WFH");
+			ColCaption[12]=Lan.g(this,"Day");
+			ColCaption[13]=Lan.g(this,"Week");
+			ColCaption[14]=Lan.g(this,"Note");
 			if(PrefC.HasClinicsEnabled) {
-				ColCaption[13]=Lan.g(this,"Clinic");
-				ColCaption[14]=Lan.g(this,"Note");
+				ColCaption[15]=Lan.g(this,"Clinic");
+				ColCaption[16]=Lan.g(this,"Note");
 			}
 			//column headers-----------------------------------------------------------------------------------------
 			e.Graphics.FillRectangle(Brushes.LightGray,colPos[0],yPos,colPos[colPos.Length-1]-colPos[0],18);

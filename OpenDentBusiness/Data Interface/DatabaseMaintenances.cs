@@ -834,7 +834,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -1087,7 +1087,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -1392,7 +1392,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -2036,7 +2036,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {//Does not make any DB changes, see breakdown for manual fix.
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -2167,7 +2167,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -2214,7 +2214,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+=Lans.g("FormDatabaseMaintenance","Manual fix needed. Double click to see a break down.")+"\r\n";
 					}
@@ -2797,7 +2797,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -2844,7 +2844,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -3242,7 +3242,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -3333,7 +3333,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(numFound>0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.");
 					}
@@ -3374,7 +3374,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(numFound>0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.");
 					}
@@ -3601,7 +3601,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -5958,7 +5958,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -6174,7 +6174,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -6293,7 +6293,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -6462,7 +6462,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -6575,7 +6575,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -6615,7 +6615,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+=Lans.g("FormDatabaseMaintenance","Manual fix needed. Double click to see a break down.")+"\r\n";
 					}
@@ -6957,7 +6957,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -8576,7 +8576,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count > 0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -8735,7 +8735,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}
@@ -9758,7 +9758,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-                    log+="\r\n";
+					log+="\r\n";
 					if(table.Rows.Count!=0) {
 						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
 					}

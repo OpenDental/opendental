@@ -129,13 +129,13 @@ namespace OpenDentBusiness {
 			}
 
 			///<summary>Sends the request to EdgeExpress RCM and returns the response.</summary>
-			public static RcmResponse SendEdgeExpressRequest(long patNum,long clinicNum,EdgeExpressTransType edgeExpressTransactionType,bool isWebPayment,double amount = 0,
+			public static RcmResponse SendEdgeExpressRequest(Patient patient,long clinicNum,EdgeExpressTransType edgeExpressTransactionType,bool isWebPayment,double amount = 0,
 				bool doPromptForSignature = false,bool doCreateToken = false,string aliasToken = "",string transactionId = "",decimal cashBackAmt = 0,string expDate = "") {
 				RcmResponse rcmResponse=null;
 				StringBuilder strBldXml=new StringBuilder();
 				XmlWriter xmlWriter=XmlWriter.Create(strBldXml);
 				WriteEdgeExpressBaseRequest(clinicNum,edgeExpressTransactionType,xmlWriter,isWebPayment);
-				AddOtherParamsEdgeExpress(xmlWriter,edgeExpressTransactionType,patNum,amount,doPromptForSignature,doCreateToken,aliasToken,transactionId,
+				AddOtherParamsEdgeExpress(xmlWriter,edgeExpressTransactionType,patient,amount,doPromptForSignature,doCreateToken,aliasToken,transactionId,
 					cashBackAmt,expDate);
 				string url=$"{_edgeExpressRCMURL}?xl2Parameters={strBldXml}";
 				string response;
@@ -169,14 +169,14 @@ namespace OpenDentBusiness {
 			}
 
 			///<summary>Adds additional parameters to the specified transaction type. For EdgeExpress RCM only.</summary>
-			private static void AddOtherParamsEdgeExpress(XmlWriter xmlWriter,EdgeExpressTransType edgeExpressTransactionType,long patNum,
+			private static void AddOtherParamsEdgeExpress(XmlWriter xmlWriter,EdgeExpressTransType edgeExpressTransactionType,Patient patient,
 				double amount,bool doPromptForSignature,bool doCreateToken,string aliasToken,string transactionId,decimal cashBackAmt,string expDate) {
 				if(ListTools.In(edgeExpressTransactionType,EdgeExpressTransType.CreditSale,EdgeExpressTransType.CreditReturn,EdgeExpressTransType.CreditAuth,
 					EdgeExpressTransType.CreditOnlineCapture,EdgeExpressTransType.DebitSale,EdgeExpressTransType.DebitReturn)) {
 					xmlWriter.WriteElementString("AMOUNT",amount.ToString());
 				}
 				if(ListTools.In(edgeExpressTransactionType,EdgeExpressTransType.CreditSale,EdgeExpressTransType.CreditReturn,EdgeExpressTransType.CreditAuth)) {
-					xmlWriter.WriteElementString("RECEIPTLINEITEMS","Pat"+patNum);
+					xmlWriter.WriteElementString("RECEIPTLINEITEMS","Pat"+patient.PatNum);
 					xmlWriter.WriteElementString("PROMPTSIGNATURE",doPromptForSignature ? "True" : "False");
 					xmlWriter.WriteElementString("CREATEALIAS",doCreateToken ? "TRUE" : "FALSE");
 					if(!string.IsNullOrEmpty(aliasToken)) {
@@ -195,28 +195,35 @@ namespace OpenDentBusiness {
 				if(ListTools.In(edgeExpressTransactionType,EdgeExpressTransType.DebitSale)) {
 					xmlWriter.WriteElementString("CASHBACKAMOUNT",cashBackAmt.ToString());
 				}
+				//Include the patient first and last name with every transaction type if they are available.
+				if(!string.IsNullOrWhiteSpace(patient.FName)) {
+					xmlWriter.WriteElementString("CUSTOMERFIRSTNAME",patient.FName);
+				}
+				if(!string.IsNullOrWhiteSpace(patient.LName)) {
+					xmlWriter.WriteElementString("CUSTOMERLASTNAME",patient.LName);
+				}
 				xmlWriter.WriteEndElement();//REQUEST
 				xmlWriter.Flush();
 			}
 
 			///<summary>Creates a credit card alias.</summary>
-			public static RcmResponse CreateAlias(long patNum,long clinicNum,bool isWebPayment) {
-				return SendEdgeExpressRequest(patNum,clinicNum,EdgeExpressTransType.AliasCreate,isWebPayment,doCreateToken: true);
+			public static RcmResponse CreateAlias(Patient patient,long clinicNum,bool isWebPayment) {
+				return SendEdgeExpressRequest(patient,clinicNum,EdgeExpressTransType.AliasCreate,isWebPayment,doCreateToken: true);
 			}
 
 			///<summary>Updates the expiration date for the alias.</summary>
-			public static RcmResponse UpdateAlias(long patNum,long clinicNum,string aliasToken,DateTime expDate,bool isWebPayment) {
-				return SendEdgeExpressRequest(patNum,clinicNum,EdgeExpressTransType.AliasUpdate,isWebPayment,aliasToken: aliasToken,expDate: expDate.ToString("MMyy"));
+			public static RcmResponse UpdateAlias(Patient patient,long clinicNum,string aliasToken,DateTime expDate,bool isWebPayment) {
+				return SendEdgeExpressRequest(patient,clinicNum,EdgeExpressTransType.AliasUpdate,isWebPayment,aliasToken: aliasToken,expDate: expDate.ToString("MMyy"));
 			}
 
 			///<summary>Deletes the alias.</summary>
-			public static RcmResponse DeleteAlias(long patNum,long clinicNum,string aliasToken,bool isWebPayment) {
-				return SendEdgeExpressRequest(patNum,clinicNum,EdgeExpressTransType.AliasDelete,isWebPayment,aliasToken: aliasToken);
+			public static RcmResponse DeleteAlias(Patient patient,long clinicNum,string aliasToken,bool isWebPayment) {
+				return SendEdgeExpressRequest(patient,clinicNum,EdgeExpressTransType.AliasDelete,isWebPayment,aliasToken: aliasToken);
 			}
 
 			///<summary>For credit only, not debit. Voids the transaction.</summary>
-			public static RcmResponse VoidTransaction(long patNum,long clinicNum,string transactionId,bool isWebPayment) {
-				return SendEdgeExpressRequest(patNum,clinicNum,EdgeExpressTransType.CreditVoid,isWebPayment,transactionId: transactionId);
+			public static RcmResponse VoidTransaction(Patient patient,long clinicNum,string transactionId,bool isWebPayment) {
+				return SendEdgeExpressRequest(patient,clinicNum,EdgeExpressTransType.CreditVoid,isWebPayment,transactionId: transactionId);
 			}
 		}
 		#endregion RCM Methods

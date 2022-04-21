@@ -407,7 +407,7 @@ namespace OpenDental {
 				else if(CreditCardCur.CCSource==CreditCardSource.EdgeExpressRCM || CreditCardCur.CCSource==CreditCardSource.EdgeExpressCNP) {
 					Cursor=Cursors.WaitCursor;
 					try {
-						EdgeExpress.RcmResponse rcmResponse=EdgeExpress.RCM.DeleteAlias(_patient.PatNum,Clinics.ClinicNum,CreditCardCur.XChargeToken,isWebPayment:false);
+						EdgeExpress.RcmResponse rcmResponse=EdgeExpress.RCM.DeleteAlias(_patient,Clinics.ClinicNum,CreditCardCur.XChargeToken,isWebPayment:false);
 						Cursor=Cursors.Default;
 						if(!rcmResponse.IsSuccess) {
 							throw new ODException(Lans.g(this,"Error from EdgeExpress:")+" "+rcmResponse.RESULTMSG);
@@ -594,7 +594,7 @@ namespace OpenDental {
 				{
 					Cursor=Cursors.WaitCursor;
 					try {
-						EdgeExpress.RcmResponse rcmResponse=EdgeExpress.RCM.UpdateAlias(_patient.PatNum,Clinics.ClinicNum,CreditCardCur.XChargeToken,
+						EdgeExpress.RcmResponse rcmResponse=EdgeExpress.RCM.UpdateAlias(_patient,Clinics.ClinicNum,CreditCardCur.XChargeToken,
 							CreditCardCur.CCExpiration,isWebPayment:false);
 						Cursor=Cursors.Default;
 						if(!rcmResponse.IsSuccess) {

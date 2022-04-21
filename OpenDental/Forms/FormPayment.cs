@@ -2382,7 +2382,7 @@ namespace OpenDental {
 		{
 			string payNote="";
 			try {
-				EdgeExpress.RcmResponse rcmResponse=EdgeExpress.RCM.SendEdgeExpressRequest(_paymentCur.PatNum,_paymentCur.ClinicNum,transType,false,amt,
+				EdgeExpress.RcmResponse rcmResponse=EdgeExpress.RCM.SendEdgeExpressRequest(_patCur,_paymentCur.ClinicNum,transType,false,amt,
 					_promptSignature,doCreateToken,aliasToken,transactionId,cashBackAmt);
 				if(cc==null && doCreateToken) {
 					if(!string.IsNullOrEmpty(rcmResponse.ALIAS)) {
@@ -3020,7 +3020,7 @@ namespace OpenDental {
 			bool hasVoided=false;
 			if(EdgeExpress.RCM.IsRCMRunning) {
 				try {
-					EdgeExpress.RcmResponse response=EdgeExpress.RCM.VoidTransaction(_patCur.PatNum,_paymentCur.ClinicNum,transactionId,false);
+					EdgeExpress.RcmResponse response=EdgeExpress.RCM.VoidTransaction(_patCur,_paymentCur.ClinicNum,transactionId,false);
 					Cursor=Cursors.Default;
 					if(!response.IsSuccess) {
 						throw new ODException(Lans.g(this,"Error from EdgeExpress:")+" "+response.RESULTMSG);
@@ -3313,15 +3313,20 @@ namespace OpenDental {
 			using FormXWeb FormXW=new FormXWeb(_patCur.PatNum,cc,XWebTransactionType.CreditReturnTransaction,createPayment:false);
 			FormXW.LockCardInfo=true;
 			if(FormXW.ShowDialog()==DialogResult.OK) {
-				if(FormXW.ResponseResult!=null) {
-					textNote.Text=FormXW.ResponseResult.GetFormattedNote(false);
-					textAmount.Text=(-FormXW.ResponseResult.Amount).ToString();//XWeb amounts are always positive even for returns and voids.
-					_xWebResponse=FormXW.ResponseResult;
-					_xWebResponse.PaymentNum=_paymentCur.PayNum;
-					XWebResponses.Update(_xWebResponse);
-					butVoid.Visible=true;
-					LayoutManager.MoveHeight(groupXWeb,85);
+				if(FormXW.ResponseResult==null) {
+					MsgBox.Show(this,"Return failed.");
+					return;
 				}
+				if(textNote.Text!="") {
+					textNote.AppendText(Environment.NewLine);
+				}
+				textNote.AppendText(FormXW.ResponseResult.GetFormattedNote(false));
+				textAmount.Text=(-FormXW.ResponseResult.Amount).ToString();//XWeb amounts are always positive even for returns and voids.
+				_xWebResponse=FormXW.ResponseResult;
+				_xWebResponse.PaymentNum=_paymentCur.PayNum;
+				XWebResponses.Update(_xWebResponse);
+				butVoid.Visible=true;
+				LayoutManager.MoveHeight(groupXWeb,85);
 				MsgBox.Show(this,"Return successful.");
 			}
 		}

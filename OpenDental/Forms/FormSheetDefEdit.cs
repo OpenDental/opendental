@@ -775,45 +775,48 @@ namespace OpenDental {
 				FillFieldList();
 			}
 			foreach(SheetFieldDef sheetFieldDef in listSheetFieldDefs) {
+				int newX=sheetFieldDef.XPos;
+				int newY=sheetFieldDef.YPos;
 				if(sheetFieldDef.FieldType==SheetFieldType.Image) {
 					doRefreshBuffer=true;
 				}
 				switch(e.KeyCode) {
 					case Keys.Up:
 						if(e.Shift) {
-							sheetFieldDef.YPos-=7;
+							newY-=7;
 						}
 						else {
-							sheetFieldDef.YPos--;
+							newY--;
 						}
 						break;
 					case Keys.Down:
 						if(e.Shift) {
-							sheetFieldDef.YPos+=7;
+							newY+=7;
 						}
 						else {
-							sheetFieldDef.YPos++;
+							newY++;
 						}
 						break;
 					case Keys.Left:
 						if(e.Shift) {
-							sheetFieldDef.XPos-=7;
+							newX-=7;
 						}
 						else {
-							sheetFieldDef.XPos--;
+							newX--;
 						}
 						break;
 					case Keys.Right:
 						if(e.Shift) {
-							sheetFieldDef.XPos+=7;
+							newX+=7;
 						}
 						else {
-							sheetFieldDef.XPos++;
+							newX++;
 						}
 						break;
 					default:
 						break;
 				}
+				MoveSheetFieldDefs(sheetFieldDef,newX,newY);
 			}
 			panelMain.Refresh();
 		}
@@ -889,6 +892,9 @@ namespace OpenDental {
 				butAddSigBox.Visible=false;
 				butAddCombo.Visible=false;
 				butAddPatImage.Visible=false;
+			}
+			if(_sheetDefCur.SheetType==SheetTypeEnum.ERA){
+				butAddGrid.Visible=true;
 			}
 			if(_sheetDefCur.SheetType!=SheetTypeEnum.TreatmentPlan) {
 				butAddSigBoxPractice.Visible=false;//only show button if sheet is a treatment plan type.
@@ -1148,14 +1154,7 @@ namespace OpenDental {
 				int newX=pointOriginalLocaiton.X+e.X-_pointMouseOriginalPos.X;
 				int newY=pointOriginalLocaiton.Y+e.Y-_pointMouseOriginalPos.Y;
 				//Move equivilant translated fields that have not changed.
-				if(checkSynchMatchedFields.Checked && HasTranslatedSheetDefS(sheetFieldDef,out List<SheetFieldDef> listMatchedDefs)){
-					listMatchedDefs.ForEach(x => { 
-						x.XPos=newX;
-						x.YPos=newY;
-					});
-				}
-				sheetFieldDef.XPos=newX;
-				sheetFieldDef.YPos=newY;
+				MoveSheetFieldDefs(sheetFieldDef,newX,newY);
 			}
 			RefreshDoubleBuffer();
 			panelMain.Refresh();
@@ -1317,6 +1316,19 @@ namespace OpenDental {
 				sheetFieldDefCopy.Language=language;
 				AddNewSheetFieldDef(sheetFieldDefCopy);
 			}
+		}
+
+		///<summary>Moves a SheetFieldDef to a specified position, as well as any matching translated SheetFieldDefs if Sync is enabled.
+		///Moves translated fields first.</summary>
+		private void MoveSheetFieldDefs(SheetFieldDef sheetFieldDef,int newX,int newY) {
+			if(checkSynchMatchedFields.Checked && HasTranslatedSheetDefS(sheetFieldDef,out List<SheetFieldDef> listMatchedDefs)) {
+				listMatchedDefs.ForEach(x => {
+					x.XPos=newX;
+					x.YPos=newY;
+				});
+			}
+			sheetFieldDef.XPos=newX;
+			sheetFieldDef.YPos=newY;
 		}
 
 		private void CopyControlsToMemory() {

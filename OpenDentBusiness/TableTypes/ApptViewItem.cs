@@ -71,10 +71,9 @@ namespace OpenDentBusiness {
 			if(ElementDesc==""){
 				return EnumApptViewElement.None;
 			}
-			try{
-				return (EnumApptViewElement)Enum.Parse(typeof(EnumApptViewElement),ElementDesc);
+			if(Enum.TryParse(ElementDesc,out EnumApptViewElement element)) {
+				return element;
 			}
-			catch{ }
 			for(int i=0;i<Enum.GetValues(typeof(EnumApptViewElement)).Length;i++){
 				if(((EnumApptViewElement)i).GetDescription()==ElementDesc){
 					return (EnumApptViewElement)i;

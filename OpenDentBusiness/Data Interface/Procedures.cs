@@ -3787,14 +3787,14 @@ namespace OpenDentBusiness {
 			if(listBensForGroup.Count==0) {
 				listBensForGroup=benefitList.FindAll(x => x.BenefitType==InsBenefitType.Limitations
 					&& (procCode==null || x.CodeNum==procCode.CodeNum)
-					&& x.PlanNum==plan.PlanNum
+					&& ((x.PatPlanNum==patPlanNum && patPlanNum!=0) || x.PlanNum==plan.PlanNum)
 					&& (panoBenefit==null || x.BenefitNum!=panoBenefit.BenefitNum)
 					&& (bwBenefit==null || x.BenefitNum!=bwBenefit.BenefitNum));//Takes care of Canadian codes (should only find one benefit generally)
 			}
 			if(listBensForGroup.Count==0) {//Benefit not found for above categories, look to see if it's covered by a span
 				listBensForGroup=benefitList.FindAll(x => x.BenefitType==InsBenefitType.Limitations
 					&& x.CovCatNum!=0
-					&& x.PlanNum==plan.PlanNum
+					&& ((x.PatPlanNum==patPlanNum && patPlanNum!=0) || x.PlanNum==plan.PlanNum)
 					&& (examBenefit==null || x.BenefitNum!=examBenefit.BenefitNum)
 					&& CovSpans.IsCodeInSpans(procCode.ProcCode,CovSpans.GetForCat(x.CovCatNum)));
 			}

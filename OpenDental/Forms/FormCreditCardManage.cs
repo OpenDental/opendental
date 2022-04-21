@@ -272,7 +272,7 @@ namespace OpenDental {
 				Cursor=Cursors.WaitCursor;
 				try {
 					if(doUseRCM) {
-						EdgeExpress.RcmResponse rcmResponse=EdgeExpress.RCM.CreateAlias(_patient.PatNum,Clinics.ClinicNum,isWebPayment:false);
+						EdgeExpress.RcmResponse rcmResponse=EdgeExpress.RCM.CreateAlias(_patient,Clinics.ClinicNum,isWebPayment:false);
 						Cursor=Cursors.Default;
 						if(rcmResponse.ALIAS.IsNullOrEmpty()) {
 							throw new ODException("Alias from EdgeExpress is empty.");

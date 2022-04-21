@@ -479,7 +479,7 @@ namespace OpenDental {
 			// 
 			this.label7.Location = new System.Drawing.Point(429, 1);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(150, 18);
+			this.label7.Size = new System.Drawing.Size(148, 18);
 			this.label7.TabIndex = 140;
 			this.label7.Text = "Waiting Room Name Format";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.BottomLeft;

@@ -754,6 +754,10 @@ namespace OpenDental {
 				return;
 			}
 			//double clicked anywhere else:
+			if(this is FormImageFloat && IsImageFloatLocked){
+				MsgBox.Show(this,"PDFs cannot be undocked.  Double click to open in PDF viewer.");
+				return;
+			}
 			//Windows will not reliably restore the size after maximize.  It gets bigger each time.  We need to trick it by resizing the window before maximizing.
 			//This does not cause any flicker
 			ShrinkWindowBeforeMinMax();
