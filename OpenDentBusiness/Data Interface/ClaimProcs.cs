@@ -2660,7 +2660,6 @@ namespace OpenDentBusiness{
 					}
 					if(benList[i].BenefitType==InsBenefitType.Limitations //BW, Pano/FW, Exam, and Custom category frequency limitations
 						&& benList[i].MonetaryAmt==-1
-						&& benList[i].PatPlanNum==0
 						&& benList[i].Percent==-1
 						&& (benList[i].QuantityQualifier==BenefitQuantity.Months
 						|| benList[i].QuantityQualifier==BenefitQuantity.Years

@@ -17,7 +17,8 @@ namespace OpenDentBusiness {
 		///<summary>This is the raw bitmap in 16 bit, prior to windowing.  Displays only support 8 bits, so conversion must still be performed.</summary>
 		public ushort[] ArrayDataRaw;
 		public int Width;
-		public int Height;
+		public int Height; 
+		public ushort BitsAllocated;
 		///<summary>Usually empty. Only used to temporarily store on import.</summary>
 		public int WindowingMin;
 		///<summary>Usually empty. Only used to temporarily store on import.</summary>
@@ -34,25 +35,34 @@ namespace OpenDentBusiness {
 			//255 x 16 = 4080, which is the max value we will support for windowing for now.
 			unsafe {
 				//rawData count should be same as pixels.  4 bytes per pixel
-				byte* pBytes = (byte*)bitmapData.Scan0.ToPointer();
+				byte* pBytes=(byte*)bitmapData.Scan0.ToPointer();
 				for(int i=0;i<bitmapDicom.ArrayDataRaw.Length;i++) {
 					byte byteVal=0;
-					if(bitmapDicom.ArrayDataRaw[i]/16f <= windowingMin) {
-						byteVal = 0;//black
+					float floatDataRaw=bitmapDicom.ArrayDataRaw[i];
+					if(bitmapDicom.BitsAllocated==16) {//12 bits stored
+						floatDataRaw=floatDataRaw/16f;
 					}
-					else if(bitmapDicom.ArrayDataRaw[i]/16f >= windowingMax) {
-						byteVal = 255;//white
+					if(floatDataRaw<=windowingMin) {
+						byteVal=0;//black
 					}
-					else {							
-						byteVal = (byte)Math.Round( 255f*(bitmapDicom.ArrayDataRaw[i]/16f - windowingMin) / (windowingMax -windowingMin));
-						//Examples using bytes/255: if window is .3 to .5 
-						//.301->.005, .4->.5, .499->.995,  
+					else if(floatDataRaw>=windowingMax) {
+						byteVal=255;//white
+					}
+					else {
+						if(bitmapDicom.BitsAllocated==8) {
+							byteVal=(byte)floatDataRaw;
+						}
+						else {//16 bit
+							byteVal=(byte)Math.Round(255f * (floatDataRaw - windowingMin) / (windowingMax - windowingMin));
+							//Examples using bytes/255: if window is .3 to .5 
+							//.301->.005, .4->.5, .499->.995,
+						}
 					}
 					//ARGB is stored as BGRA on little-endian machine. Alpha most significant, blue least.  Pointer to integer is stored the same.
-					pBytes[i*4] =byteVal;//B
-					pBytes[i*4+1] =byteVal;//G
-					pBytes[i*4+2] =byteVal;//R
-					pBytes[i*4+3] =255;//A
+					pBytes[i*4]=byteVal;//B
+					pBytes[i*4+1]=byteVal;//G
+					pBytes[i*4+2]=byteVal;//R
+					pBytes[i*4+3]=255;//A
 				}
 			}
 			//Marshal.Copy(byteArray, 0, bitmapData.Scan0, byteArray.Length);// Bulk copy pixel data from a byte array
@@ -62,6 +72,10 @@ namespace OpenDentBusiness {
 		}
 
 		public static void CalculateWindowingOnImport(BitmapDicom bitmapDicom){
+			if(bitmapDicom.BitsAllocated==8) {
+				bitmapDicom.WindowingMax=255;
+				return;
+			}
 			int[] histogram=new int[4096];
 			for(int i=0;i<bitmapDicom.ArrayDataRaw.Length;i++){
 				histogram[bitmapDicom.ArrayDataRaw[i]]++;
@@ -121,12 +135,12 @@ namespace OpenDentBusiness {
 			if(stringPhotometricInterp!="MONOCHROME2"){
 				return null;
 			}
-			ushort bitsAllocated=dicomDataset.GetSingleValueOrDefault<ushort>(new DicomTag(0x0028,0x0100),0);
-			if(bitsAllocated!=16){
+			bitmapDicom.BitsAllocated=dicomDataset.GetSingleValueOrDefault<ushort>(new DicomTag(0x0028,0x0100),0);
+			if(bitmapDicom.BitsAllocated!=16 && bitmapDicom.BitsAllocated!=8){
 				return null;
 			}
 			ushort bitsStored=dicomDataset.GetSingleValueOrDefault<ushort>(new DicomTag(0x0028,0x0101),0);
-			if(bitsStored!=12){
+			if(bitsStored!=12 && bitsStored!=8){
 				return null;
 			}
 			bitmapDicom.Height=dicomDataset.GetSingleValueOrDefault(new DicomTag(0x0028,0x0010),0);//rows
@@ -140,7 +154,7 @@ namespace OpenDentBusiness {
 			DicomDataset dicomDatasetDecoded=dicomDataset.Clone(DicomTransferSyntax.ExplicitVRLittleEndian);//uses codec to decompress
 			DicomPixelData dicomPixelDataDecoded=DicomPixelData.Create(dicomDatasetDecoded,false);
 			IPixelData iPixelData=PixelDataFactory.Create(dicomPixelDataDecoded,0);
-			if(!(iPixelData is GrayscalePixelDataU16)){
+			if(!(iPixelData is GrayscalePixelDataU16) && !(iPixelData is GrayscalePixelDataU8)){
 				return null;//we cannot read other formats yet
 			}
 			bitmapDicom.ArrayDataRaw=new ushort[bitmapDicom.Height*bitmapDicom.Width];

@@ -4184,10 +4184,11 @@ namespace OpenDental{
 			}
 			HttpListenerResponse httpListenerResponse=httpListenerContext.Response;
 			httpListenerResponse.StatusCode=(int)apiReturnResult.GetHttpStatusCode();//example 201 Created
-			string responseBody =apiReturnResult.ResourceSerialized;
-			byte[] byteArray = Encoding.UTF8.GetBytes(responseBody);
-			httpListenerResponse.ContentLength64 = byteArray.Length;
-			Stream streamOutput = httpListenerResponse.OutputStream;
+			string responseBody=apiReturnResult.ResourceSerialized;
+			byte[] byteArray=Encoding.UTF8.GetBytes(responseBody);
+			httpListenerResponse.ContentLength64=byteArray.Length;
+			httpListenerResponse.ContentType="application/json";
+			Stream streamOutput=httpListenerResponse.OutputStream;
 			streamOutput.Write(byteArray,0,byteArray.Length);
 			streamOutput.Close();
 			//Listen for next message. 

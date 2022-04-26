@@ -382,6 +382,10 @@ namespace OpenDental{
 			}
 			textTotalCost.Text=TotPrincIntAdj.ToString("f");
 			List<PayPlanCharge> listDebits = _listPayPlanCharges.FindAll(x => x.ChargeType == PayPlanChargeType.Debit).OrderBy(x => x.ChargeDate).ToList();
+			//If the payment plan consists of more than 1 payment, remove any downpayments from listDebits so it's ChargeDate is not used when refilling the "textDateFirstPay.Text". 
+			if(listDebits.Count>1) {
+				listDebits.RemoveAll(x => x.Note.Contains("Down payment"));
+			}
 			if(listDebits.Count>0) {
 				textDateFirstPay.Text=listDebits[0].ChargeDate.ToShortDateString();
 			}

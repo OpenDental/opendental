@@ -58,5 +58,11 @@ namespace OpenDentBusiness {
 		public GetHealthResponse GetHealth(GetHealthRequest request) {
 			throw new NotImplementedException();
 		}
+
+		public ResetAccountPasswordResponse ResetAccountPassword(ResetAccountPasswordRequest request) {
+			return new ResetAccountPasswordResponse() {
+				AccountSecret="LADEEDA",
+			};	
+		}
 	}
 }

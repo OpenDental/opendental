@@ -24,7 +24,7 @@ namespace OpenDentBusiness.WebTypes.Shared.XWeb {
 		public static bool UseTestAccountOD=false;
 		///<summary>Only used for testing. Should always be false otherwise.</summary>
 		public static bool UseTestAccountLoopback=false;
-		///<summary>USED BY DEBUGGING ONLY!!! Points the eConnector at XWeb test URLs.</summary>
+		///<summary>Only used for testing. Points the eConnector at XWeb test URLs. Gets set to the value of the 'UseXWebTestGateway' node in the config file when present.</summary>
 		public static bool UseXWebTestGateway=false;
 		#region Public Interface
 
@@ -122,14 +122,11 @@ namespace OpenDentBusiness.WebTypes.Shared.XWeb {
 			///<summary>Returns the test or production URL for the XWeb gateway based on if the solution is configured for debugging.</summary>
 			private string _gatewayUrl {
 				get {
-					if(UseXWebTestGateway || ODBuild.IsDebug()) {
-						//X-Charge Test Gateway URL 
-						return "https://test.t3secure.net/x-chargeweb.dll";
+					string xWebGatewayUrl="https://gw.t3secure.net/x-chargeweb.dll";
+					if(ODBuild.IsDebug() || UseXWebTestGateway) {
+						xWebGatewayUrl="https://test.t3secure.net/x-chargeweb.dll";
 					}
-					else {
-						//X-Charge Production Gateway URL : 
-						return "https://gw.t3secure.net/x-chargeweb.dll";
-					}
+					return Introspection.GetOverride(Introspection.IntrospectionEntity.XWebGatewayURL,xWebGatewayUrl);
 				}
 			}
 			///<summary>Provide key/value pairs for the XWeb transmission. X-Web program properties should be validated before calling this method.</summary>

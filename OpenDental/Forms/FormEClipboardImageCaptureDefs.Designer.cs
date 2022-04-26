@@ -93,7 +93,7 @@ namespace OpenDental{
 			this.gridEClipboardImagesInUse.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
 			this.gridEClipboardImagesInUse.Size = new System.Drawing.Size(495, 457);
 			this.gridEClipboardImagesInUse.TabIndex = 5;
-			this.gridEClipboardImagesInUse.Title = "Eclipboard Images In Use";
+			this.gridEClipboardImagesInUse.Title = "eClipboard Images In Use";
 			this.gridEClipboardImagesInUse.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridEClipboardImagesInUse_CellDoubleClick);
 			// 
 			// gridAvailableEClipboardImages
@@ -105,7 +105,7 @@ namespace OpenDental{
 			this.gridAvailableEClipboardImages.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
 			this.gridAvailableEClipboardImages.Size = new System.Drawing.Size(371, 457);
 			this.gridAvailableEClipboardImages.TabIndex = 0;
-			this.gridAvailableEClipboardImages.Title = "Available Eclipboard Images";
+			this.gridAvailableEClipboardImages.Title = "Available eClipboard Images";
 			// 
 			// FormEClipboardImageCaptureDefs
 			// 

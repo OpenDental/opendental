@@ -1,4 +1,5 @@
-﻿using CodeBase;
+﻿/*Any changes to this file should be also done in the SecurityHashingTool solution, including changing DateStart.*/
+using CodeBase;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,7 +11,9 @@ using System.Threading.Tasks;
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
 		///<summary>The date Open Dental started hashing fields. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2022,3,14);
+		public static DateTime DateStart=new DateTime(2022,4,22);
+		///<summary>Only set to false for standalone hashing tool. </summary>
+		public static bool IsThreaded=true;
 		private static bool _arePaySplitsUpdated=false;
 		private static bool _areAppointmentsUpdated=false;
 		private static bool _arePatientsUpdated=false;
@@ -46,10 +49,15 @@ namespace OpenDentBusiness.Misc {
 			string updating="Hashing paysplits.";
 			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
 			_arePaySplitsUpdated=true;
-			ThreadStart threadStart=new ThreadStart(PaysplitWorker);
-			Thread thread=new Thread(threadStart);
-			thread.IsBackground=true;
-			thread.Start();
+			if(IsThreaded){
+				ThreadStart threadStart = new ThreadStart(PaysplitWorker);
+				Thread thread = new Thread(threadStart);
+				thread.IsBackground = true;
+				thread.Start();
+			}
+			else{
+				PaysplitWorker();
+			}
 		}
 
 		private static void PaysplitWorker() {
@@ -138,10 +146,15 @@ namespace OpenDentBusiness.Misc {
 			string updating="Hashing patients.";
 			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
 			_arePatientsUpdated=true;
-			ThreadStart threadStart=new ThreadStart(PatientWorker);
-			Thread thread=new Thread(threadStart);
-			thread.IsBackground=true;
-			thread.Start();
+			if(IsThreaded){
+				ThreadStart threadStart = new ThreadStart(PatientWorker);
+				Thread thread = new Thread(threadStart);
+				thread.IsBackground = true;
+				thread.Start();
+			}
+			else {
+				PatientWorker();
+			}
 		}
 
 		private static void PatientWorker() {

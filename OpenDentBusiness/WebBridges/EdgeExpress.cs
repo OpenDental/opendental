@@ -234,20 +234,23 @@ namespace OpenDentBusiness {
 			///<summary>Url to setup a payment page and get a OTK.</summary>
 			private static string _edgeExpressHostPayUrl {
 				get {
+					string edgeExpressHostPayUrl="https://ee.paygateway.com/HostPayService/v1/hostpay/transactions/";
 					if(ODBuild.IsDebug() || XWebs.UseXWebTestGateway) {
-						return "https://ee.test.paygateway.com/HostPayService/v1/hostpay/transactions";
+						edgeExpressHostPayUrl="https://ee.test.paygateway.com/HostPayService/v1/hostpay/transactions";
 					}
-					return Introspection.GetOverride(Introspection.IntrospectionEntity.EdgeExpressHostPay,"https://ee.paygateway.com/HostPayService/v1/hostpay/transactions/");
+					return Introspection.GetOverride(Introspection.IntrospectionEntity.EdgeExpressHostPay,edgeExpressHostPayUrl);
 				}
 			}
 
 			///<summary>Url for transactions that do not require a payment page.</summary>
 			private static string _edgeExpressDirectPayUrl {
 				get {
+					string edgeExpressDirectPayUrl="https://ee.paygateway.com/HostPayService/v1/directpay/express";
 					if(ODBuild.IsDebug() || XWebs.UseXWebTestGateway) {
-						return "https://ee.test.paygateway.com/HostPayService/v1/directpay/express";
+						edgeExpressDirectPayUrl="https://ee.test.paygateway.com/HostPayService/v1/directpay/express";
 					}
-					return Introspection.GetOverride(Introspection.IntrospectionEntity.EdgeExpressDirectPay,"https://ee.paygateway.com/HostPayService/v1/directpay/express");
+					return Introspection.GetOverride(Introspection.IntrospectionEntity.EdgeExpressDirectPay,edgeExpressDirectPayUrl);
+
 				}
 			}
 

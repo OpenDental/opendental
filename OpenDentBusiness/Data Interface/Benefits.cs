@@ -1757,7 +1757,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns true if this benefit is for bitewing frequency. Checks for US and Canada.</summary>
 		public static bool IsBitewingFrequency(Benefit ben,long patPlanNum=0) {
-			if(ben.CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.BitewingCode)
+			if(ProcedureCodes.ListBWCodeNums.Contains(ben.CodeNum)
 				&& ben.BenefitType==InsBenefitType.Limitations
 				//&& ben.CovCatNum==CovCats.GetForEbenCat(EbenefitCategory.Db).CovCatNum//ignored
 				&& ben.MonetaryAmt==-1
@@ -1798,7 +1798,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns true if this benefit is for pano frequency. Checks for US and Canada.</summary>
 		public static bool IsPanoFrequency(Benefit ben,long patPlanNum=0) {
-			if(ben.CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.PanoCode)
+			if(ProcedureCodes.ListPanoFMXCodeNums.Contains(ben.CodeNum)
 				&& ben.BenefitType==InsBenefitType.Limitations
 				//&& ben.CovCatNum==CovCats.GetForEbenCat(EbenefitCategory.Db).CovCatNum//ignored
 				&& ben.MonetaryAmt==-1
@@ -1841,9 +1841,11 @@ namespace OpenDentBusiness {
 		///<summary>Returns true if this benefit is for exam frequency.</summary>
 		public static bool IsExamFrequency(Benefit ben,long patPlanNum=0) {
 			if(ben.BenefitType==InsBenefitType.Limitations
-				&& CovCats.GetForEbenCat(EbenefitCategory.RoutinePreventive)!=null
-				&& ben.CovCatNum==CovCats.GetForEbenCat(EbenefitCategory.RoutinePreventive).CovCatNum 
-				&& ben.CodeNum==0
+				//Checking coverage categories and Exam codeNums.
+				&& ((CovCats.GetForEbenCat(EbenefitCategory.RoutinePreventive)!=null 
+					&& ben.CovCatNum==CovCats.GetForEbenCat(EbenefitCategory.RoutinePreventive).CovCatNum 
+					&& ben.CodeNum==0)  
+					|| ProcedureCodes.ListExamCodeNums.Contains(ben.CodeNum))
 				&& ben.MonetaryAmt==-1
 				&& (ben.PatPlanNum==patPlanNum || ben.PatPlanNum==0)
 				&& ben.Percent==-1
@@ -1863,7 +1865,7 @@ namespace OpenDentBusiness {
 		
 		///<summary>Returns true if this benefit is for cancer screening frequency.</summary>
 		public static bool IsCancerScreeningFrequency(Benefit ben,long patPlanNum=0) {
-			if(ben.CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.CancerScreeningCode)
+			if(ProcedureCodes.ListCancerScreeningCodeNums.Contains(ben.CodeNum)
 				&& ben.BenefitType==InsBenefitType.Limitations
 				&& ben.CovCatNum==0
 				&& ben.MonetaryAmt==-1
@@ -1886,7 +1888,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns true if this benefit is for prophy frequency.</summary>
 		public static bool IsProphyFrequency(Benefit ben,long patPlanNum=0) {
-			if(ben.CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.ProphyCode)
+			if(ProcedureCodes.ListProphyCodeNums.Contains(ben.CodeNum)
 				&& ben.BenefitType==InsBenefitType.Limitations
 				&& ben.CovCatNum==0
 				&& ben.MonetaryAmt==-1
@@ -1909,7 +1911,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns true if this benefit is for flouride frequency.</summary>
 		public static bool IsFlourideFrequency(Benefit ben,long patPlanNum=0) {
-			if(ben.CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.FlourideCode)
+			if(ProcedureCodes.ListFlourideCodeNums.Contains(ben.CodeNum)
 				&& ben.BenefitType==InsBenefitType.Limitations
 				&& ben.CovCatNum==0
 				&& ben.MonetaryAmt==-1
@@ -1932,7 +1934,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns true if this benefit is for sealant frequency.</summary>
 		public static bool IsSealantFrequency(Benefit ben,long patPlanNum=0) {
-			if(ben.CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.SealantCode)
+			if(ProcedureCodes.ListSealantCodeNums.Contains(ben.CodeNum)
 				&& ben.BenefitType==InsBenefitType.Limitations
 				&& ben.CovCatNum==0
 				&& ben.MonetaryAmt==-1
@@ -1955,7 +1957,7 @@ namespace OpenDentBusiness {
 		
 		///<summary>Returns true if this benefit is for crown frequency.</summary>
 		public static bool IsCrownFrequency(Benefit ben,long patPlanNum=0) {
-			if(ben.CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.CrownCode)
+			if(ProcedureCodes.ListCrownCodeNums.Contains(ben.CodeNum)
 				&& ben.BenefitType==InsBenefitType.Limitations
 				&& ben.CovCatNum==0
 				&& ben.MonetaryAmt==-1
@@ -1978,7 +1980,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns true if this benefit is for SRP frequency.</summary>
 		public static bool IsSRPFrequency(Benefit ben,long patPlanNum=0) {
-			if(ben.CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.SRPCode)
+			if(ProcedureCodes.ListSRPCodeNums.Contains(ben.CodeNum)
 				&& ben.BenefitType==InsBenefitType.Limitations
 				&& ben.CovCatNum==0
 				&& ben.MonetaryAmt==-1
@@ -2001,7 +2003,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns true if this benefit is for full mouth debridement frequency.</summary>
 		public static bool IsFullDebridementFrequency(Benefit ben,long patPlanNum=0) {
-			if(ben.CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.FullDebridementCode)
+			if(ProcedureCodes.ListFullDebridementCodeNums.Contains(ben.CodeNum)
 				&& ben.BenefitType==InsBenefitType.Limitations
 				&& ben.CovCatNum==0
 				&& ben.MonetaryAmt==-1
@@ -2024,7 +2026,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns true if this benefit is for perio maintenance frequency.</summary>
 		public static bool IsPerioMaintFrequency(Benefit ben,long patPlanNum=0) {
-			if(ben.CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.PerioMaintCode)
+			if(ProcedureCodes.ListPerioMaintCodeNums.Contains(ben.CodeNum)
 				&& ben.BenefitType==InsBenefitType.Limitations
 				&& ben.CovCatNum==0
 				&& ben.MonetaryAmt==-1
@@ -2047,7 +2049,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns true if this benefit is for dentures frequency.</summary>
 		public static bool IsDenturesFrequency(Benefit ben,long patPlanNum=0) {
-			if(ben.CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.DenturesCode)
+			if(ProcedureCodes.ListDenturesCodeNums.Contains(ben.CodeNum)
 				&& ben.BenefitType==InsBenefitType.Limitations
 				&& ben.CovCatNum==0
 				&& ben.MonetaryAmt==-1
@@ -2070,7 +2072,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns true if this benefit is for implant frequency.</summary>
 		public static bool IsImplantFrequency(Benefit ben,long patPlanNum=0) {
-			if(ben.CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.ImplantCode)
+			if(ProcedureCodes.ListImplantCodeNums.Contains(ben.CodeNum)
 				&& ben.BenefitType==InsBenefitType.Limitations
 				&& ben.CovCatNum==0
 				&& ben.MonetaryAmt==-1

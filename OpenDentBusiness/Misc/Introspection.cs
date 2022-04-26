@@ -198,6 +198,8 @@ namespace OpenDentBusiness {
 			EdgeExpressDirectPay,
 			///<summary>Override for IHS endpoint.</summary>
 			CareCreditIHSApiURL,
+			///<summary></summary>
+			XWebGatewayURL,
 		}
 	}
 }

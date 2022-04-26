@@ -8,6 +8,9 @@ namespace OpenDentBusiness {
 		///<summary>Gets an AccountGuarantor for the given primary key.</summary>
 		GetAccountResponse GetAccount(GetAccountRequest request);
 
+		///<summary>Resets a password. ExternalID must be unique for this account guarantor.</summary>
+		ResetAccountPasswordResponse ResetAccountPassword(ResetAccountPasswordRequest request);
+
 		///<summary>Updates the status for the given account.</summary>
 		UpdateAccountStatusResponse UpdateAccountStatus(UpdateAccountStatusRequest request);
 

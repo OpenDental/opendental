@@ -2359,6 +2359,10 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}//End of 21_4_38() method
 
+		private static void To21_4_41()	{
+			Misc.SecurityHash.UpdateHashing();
+		}
+
 		private static void To22_1_1() {
 			string command;
 			DataTable table;
@@ -2696,6 +2700,11 @@ namespace OpenDentBusiness {
 			command="UPDATE preference SET ValueString='0' WHERE PrefName='ImagesModuleUsesOld2020'";
 			Db.NonQ(command);
 		}//End of 22_1_19() method
+
+		private static void To22_1_24(){
+			Misc.SecurityHash.UpdateHashing();
+		}//End of 22_1_24() method
+
 	}
 }
 

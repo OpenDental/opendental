@@ -32,6 +32,11 @@ namespace OpenDentBusiness {
 			return RunApiCall<GetAccountResponse>(request,"GET",$"v1/account/{request.AccountNum.ToString()}");
 		}
 
+		///<summary>Resets a password. ExternalID must be unique for this account guarantor.</summary>
+		public ResetAccountPasswordResponse ResetAccountPassword(ResetAccountPasswordRequest request) {
+			return RunApiCall<ResetAccountPasswordResponse>(request,"POST",$"v1/account/reset");
+		}
+
 		///<summary>Updates the status for the given account.</summary>
 		public UpdateAccountStatusResponse UpdateAccountStatus(UpdateAccountStatusRequest request) {
 			return RunApiCall<UpdateAccountStatusResponse>(request,"POST",$"v1/account/status");
