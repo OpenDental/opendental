@@ -2362,6 +2362,11 @@ namespace OpenDentBusiness {
 			command="UPDATE preference SET ValueString='0' WHERE PrefName='ImagesModuleUsesOld2020'";
 			Db.NonQ(command);
 		}//End of 21_4_38() method
+
+		private static void To21_4_41() {
+			Misc.SecurityHash.UpdateHashing();
+		}//End of 21_4_41() method
+
 	}
 }
 

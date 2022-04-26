@@ -102,6 +102,10 @@ namespace OpenDentBusiness{
 			public long PatNum;
 			public DateTime DateTime;
 
+			///<summary>Parameterless constructor for middle tier. Use parametered constructor instead</summary>
+			public MostRecent() { }
+
+
 			public MostRecent(long patNum,DateTime dateTime) {
 				PatNum=patNum;
 				DateTime=dateTime;

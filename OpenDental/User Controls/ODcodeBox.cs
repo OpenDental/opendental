@@ -24,8 +24,11 @@ namespace OpenDental {
 		private Font _lineNumberFont=new Font("Courier New",9F,FontStyle.Regular);
 		private Brush _brushOlive=new SolidBrush(Color.Olive);
 
-		public ODcodeBox(bool isQueryText=false) {
-			this.
+		public ODcodeBox() : this(false) {
+			//Parameterless constructor is required for controls that can display within the Visual Studio designer.
+		}
+
+		public ODcodeBox(bool isQueryText) {
 			_stringFormatForDrawingNumbers=new StringFormat();
 			//Center the text horizontally
 			_stringFormatForDrawingNumbers.Alignment=StringAlignment.Center;
