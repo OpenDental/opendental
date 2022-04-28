@@ -3048,7 +3048,9 @@ namespace OpenDental{
 						if(ProcedureCodes.GetProcCode(procedure.CodeNum).TreatArea==TreatmentArea.Tooth && procedure.ToothNum!=""){
 							_toothChartRelay.SetSpaceMaintainer(procedure.ToothNum,cDark);
 						}
-						else if(ProcedureCodes.GetProcCode(procedure.CodeNum).TreatArea==TreatmentArea.ToothRange && procedure.ToothRange!=""){
+						else if((ProcedureCodes.GetProcCode(procedure.CodeNum).TreatArea==TreatmentArea.ToothRange && procedure.ToothRange!="") 
+							|| (ProcedureCodes.GetProcCode(procedure.CodeNum).AreaAlsoToothRange && procedure.ToothRange!=""))
+						{
 							stringArrayTeeth=procedure.ToothRange.Split(',');
 							for(int t=0;t<stringArrayTeeth.Length;t++) {
 								_toothChartRelay.SetSpaceMaintainer(stringArrayTeeth[t],cDark);

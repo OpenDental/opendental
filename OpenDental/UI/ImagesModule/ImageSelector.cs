@@ -27,6 +27,8 @@ namespace OpenDental.UI{
 		///<summary>The index which is lit up by the hover effect.</summary>
 		private int _hoverIndex=-1;
 		private bool _isDragPendingMsgBox;
+		///<summary>If user drags outside the tree and then back in, Windows fires the DragDrop event which we don't want. This variable handles this edge case.</summary>
+		private bool _hasDraggedOutsideTheTree;
 		///<summary>The only reason we care about mouseDown is for initiating a drag.  Right mouse cannot initiate a drag.</summary>
 		private bool _isLeftMouseDownDragging;
 		///<summary>Gets set to true while data is being added and organized to prevent extra painting.</summary>
@@ -620,6 +622,11 @@ namespace OpenDental.UI{
 
 		///<summary>When someone drags files into the image selector from a Windows folder.</summary>
 		protected override void OnDragDrop(DragEventArgs e) {
+			if(_hasDraggedOutsideTheTree) {
+				//Ignore the edge case where the drag started here in the image selector.
+				_hasDraggedOutsideTheTree=false;
+				return;
+			}
 			int idxItem=HitTest(PointToClient(new Point(e.X,e.Y)));
 			if(idxItem==-1){
 				return;
@@ -669,6 +676,7 @@ namespace OpenDental.UI{
 		}
 
 		protected override void OnMouseDown(MouseEventArgs e) {
+			_hasDraggedOutsideTheTree=false;
 			base.OnMouseDown(e);
 			if(_isLeftMouseDownDragging){//already dragging before this click
 				//Ignore this second one.  It could be right click or anything else. 
@@ -812,6 +820,7 @@ namespace OpenDental.UI{
 			//Moved outside of bounds while dragging==========================================================================
 			Cursor=Cursors.Default;
 			_isLeftMouseDownDragging=false;
+			_hasDraggedOutsideTheTree=true;
 			if(PrefC.AtoZfolderUsed!=DataStorageType.LocalAtoZ) {
 				return;
 			}

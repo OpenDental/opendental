@@ -3751,48 +3751,49 @@ namespace OpenDentBusiness {
 		///for D0274 and another benefit for D0272.</summary>
 		///<param name="procCode">Include a procedure code to limit the benefits returned to only procedures in the group.</param>
 		public static List<Benefit> GetAllLimitationsForGroups(List<Benefit> benefitList,InsPlan plan,long patPlanNum=0,ProcedureCode procCode=null) {
+			List<Benefit> listBenefits=new List<Benefit>(benefitList).OrderByDescending(x => x.PatPlanNum).ToList();
 			List<Benefit> listBensForGroup=new List<Benefit>();
-			Benefit bwBenefit=benefitList.Find(x => Benefits.IsBitewingFrequency(x,patPlanNum));
-			Benefit panoBenefit=benefitList.Find(x => Benefits.IsPanoFrequency(x,patPlanNum));
-			Benefit examBenefit=benefitList.Find(x => Benefits.IsExamFrequency(x,patPlanNum));
+			Benefit bwBenefit=listBenefits.Find(x => Benefits.IsBitewingFrequency(x,patPlanNum));
+			Benefit panoBenefit=listBenefits.Find(x => Benefits.IsPanoFrequency(x,patPlanNum));
+			Benefit examBenefit=listBenefits.Find(x => Benefits.IsExamFrequency(x,patPlanNum));
 			listBensForGroup.AddRange(GetBenefitsForGroup(bwBenefit,
 				ProcedureCodes.ListBWCodeNums.Union(ProcedureCodes.GetCodeNumsForPref(PrefName.InsHistBWCodes)).ToList(),procCode));
 			listBensForGroup.AddRange(GetBenefitsForGroup(panoBenefit,
 				ProcedureCodes.ListPanoFMXCodeNums.Union(ProcedureCodes.GetCodeNumsForPref(PrefName.InsHistPanoCodes)).ToList(),procCode));
 			listBensForGroup.AddRange(GetBenefitsForGroup(examBenefit,
 				ProcedureCodes.ListExamCodeNums.Union(ProcedureCodes.GetCodeNumsForPref(PrefName.InsHistExamCodes)).ToList(),procCode));
-			listBensForGroup.AddRange(GetBenefitsForGroup(benefitList.Find(x => Benefits.IsCancerScreeningFrequency(x,patPlanNum)),
+			listBensForGroup.AddRange(GetBenefitsForGroup(listBenefits.Find(x => Benefits.IsCancerScreeningFrequency(x,patPlanNum)),
 				ProcedureCodes.ListCancerScreeningCodeNums,procCode));
-			listBensForGroup.AddRange(GetBenefitsForGroup(benefitList.Find(x => Benefits.IsProphyFrequency(x,patPlanNum)),
+			listBensForGroup.AddRange(GetBenefitsForGroup(listBenefits.Find(x => Benefits.IsProphyFrequency(x,patPlanNum)),
 				ProcedureCodes.ListProphyCodeNums.Union(ProcedureCodes.GetCodeNumsForPref(PrefName.InsHistProphyCodes)).ToList(),procCode));
-			listBensForGroup.AddRange(GetBenefitsForGroup(benefitList.Find(x => Benefits.IsFlourideFrequency(x,patPlanNum)),
+			listBensForGroup.AddRange(GetBenefitsForGroup(listBenefits.Find(x => Benefits.IsFlourideFrequency(x,patPlanNum)),
 				ProcedureCodes.ListFlourideCodeNums,procCode));
-			listBensForGroup.AddRange(GetBenefitsForGroup(benefitList.Find(x => Benefits.IsSealantFrequency(x,patPlanNum)),
+			listBensForGroup.AddRange(GetBenefitsForGroup(listBenefits.Find(x => Benefits.IsSealantFrequency(x,patPlanNum)),
 				ProcedureCodes.ListSealantCodeNums,procCode));
-			listBensForGroup.AddRange(GetBenefitsForGroup(benefitList.Find(x => Benefits.IsCrownFrequency(x,patPlanNum)),
+			listBensForGroup.AddRange(GetBenefitsForGroup(listBenefits.Find(x => Benefits.IsCrownFrequency(x,patPlanNum)),
 				ProcedureCodes.ListCrownCodeNums,procCode));
-			listBensForGroup.AddRange(GetBenefitsForGroup(benefitList.Find(x => Benefits.IsSRPFrequency(x,patPlanNum)),
+			listBensForGroup.AddRange(GetBenefitsForGroup(listBenefits.Find(x => Benefits.IsSRPFrequency(x,patPlanNum)),
 				ProcedureCodes.ListSRPCodeNums.Union(ProcedureCodes.GetCodeNumsForPref(PrefName.InsHistPerioLLCodes))
 					.Union(ProcedureCodes.GetCodeNumsForPref(PrefName.InsHistPerioLRCodes))
 					.Union(ProcedureCodes.GetCodeNumsForPref(PrefName.InsHistPerioULCodes))
 					.Union(ProcedureCodes.GetCodeNumsForPref(PrefName.InsHistPerioURCodes)).ToList(),procCode));
-			listBensForGroup.AddRange(GetBenefitsForGroup(benefitList.Find(x => Benefits.IsFullDebridementFrequency(x,patPlanNum)),
+			listBensForGroup.AddRange(GetBenefitsForGroup(listBenefits.Find(x => Benefits.IsFullDebridementFrequency(x,patPlanNum)),
 				ProcedureCodes.ListFullDebridementCodeNums.Union(ProcedureCodes.ListFullDebridementCodeNums).ToList(),procCode));
-			listBensForGroup.AddRange(GetBenefitsForGroup(benefitList.Find(x => Benefits.IsPerioMaintFrequency(x,patPlanNum)),
+			listBensForGroup.AddRange(GetBenefitsForGroup(listBenefits.Find(x => Benefits.IsPerioMaintFrequency(x,patPlanNum)),
 				ProcedureCodes.ListPerioMaintCodeNums.Union(ProcedureCodes.GetCodeNumsForPref(PrefName.InsHistPerioMaintCodes)).ToList(),procCode));
-			listBensForGroup.AddRange(GetBenefitsForGroup(benefitList.Find(x => Benefits.IsDenturesFrequency(x,patPlanNum)),
+			listBensForGroup.AddRange(GetBenefitsForGroup(listBenefits.Find(x => Benefits.IsDenturesFrequency(x,patPlanNum)),
 				ProcedureCodes.ListDenturesCodeNums,procCode));
-			listBensForGroup.AddRange(GetBenefitsForGroup(benefitList.Find(x => Benefits.IsImplantFrequency(x,patPlanNum)),
+			listBensForGroup.AddRange(GetBenefitsForGroup(listBenefits.Find(x => Benefits.IsImplantFrequency(x,patPlanNum)),
 				ProcedureCodes.ListImplantCodeNums,procCode));
 			if(listBensForGroup.Count==0) {
-				listBensForGroup=benefitList.FindAll(x => x.BenefitType==InsBenefitType.Limitations
+				listBensForGroup=listBenefits.FindAll(x => x.BenefitType==InsBenefitType.Limitations
 					&& (procCode==null || x.CodeNum==procCode.CodeNum)
 					&& ((x.PatPlanNum==patPlanNum && patPlanNum!=0) || x.PlanNum==plan.PlanNum)
 					&& (panoBenefit==null || x.BenefitNum!=panoBenefit.BenefitNum)
 					&& (bwBenefit==null || x.BenefitNum!=bwBenefit.BenefitNum));//Takes care of Canadian codes (should only find one benefit generally)
 			}
 			if(listBensForGroup.Count==0) {//Benefit not found for above categories, look to see if it's covered by a span
-				listBensForGroup=benefitList.FindAll(x => x.BenefitType==InsBenefitType.Limitations
+				listBensForGroup=listBenefits.FindAll(x => x.BenefitType==InsBenefitType.Limitations
 					&& x.CovCatNum!=0
 					&& ((x.PatPlanNum==patPlanNum && patPlanNum!=0) || x.PlanNum==plan.PlanNum)
 					&& (examBenefit==null || x.BenefitNum!=examBenefit.BenefitNum)

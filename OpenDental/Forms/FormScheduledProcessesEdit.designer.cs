@@ -135,7 +135,7 @@ namespace OpenDental{
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "FormScheduledProcessesEdit";
-			this.Text = "Scheduled Proccesses Edit";
+			this.Text = "Scheduled Processes Edit";
 			this.Load += new System.EventHandler(this.FormScheduledProcessesEdit_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();

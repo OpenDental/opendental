@@ -16,7 +16,7 @@ namespace OpenDentBusiness{
 		public int ItemOrder;
 		///<summary>FK to definition.DefNum.  Reporting Group.</summary>
 		public long GroupType;
-		///<summary>If set to true, and the patient's secondary inurance plan uses this insfilingcode, the secondary insurance plan will 
+		///<summary>If set to true, and the patient's secondary insurance plan uses this insfilingcode, the secondary insurance plan will 
 		///not be populated on primary e-claims or paper claims.</summary>
 		public bool ExcludeOtherCoverageOnPriClaims;
 

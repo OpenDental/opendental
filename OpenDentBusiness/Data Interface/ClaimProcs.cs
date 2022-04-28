@@ -458,11 +458,11 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>This method is specifically aimed at fixing claims that were created with no claim procedures, only as totals. 
-		///The fix is to create a dummy procedure and claimproc for each as total on the claim for the matching pat/prov/clinic group.</summary>
-		public static void FixClaimsNoProcedures(List<long> listFamilyPatNums) {
+		///The fix is to create a dummy procedure and claimproc for each as total on the claim for the matching pat/prov/clinic group.
+		///Returns true if a fix was needed and applied, otherwise false.</summary>
+		public static bool FixClaimsNoProcedures(List<long> listFamilyPatNums) {
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listFamilyPatNums);
-				return;
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),listFamilyPatNums);
 			}
 			List<long> listClaimNumsNoProcedures=new List<long>();
 			//Get all ClaimNums for claims that have no claimprocs associated to procedures, regardless of claim status.
@@ -473,7 +473,7 @@ namespace OpenDentBusiness{
 												HAVING SUM(claimproc.ProcNum)=0 ";
 			listClaimNumsNoProcedures=Db.GetListLong(command);
 			if(listClaimNumsNoProcedures.Count==0) {
-				return;
+				return false;
 			}
 			//Get all of the claimprocs for the claims that have no procedures and group them up by ClaimNum.
 			Dictionary<long,List<ClaimProc>> dictClaimProcsByClaim=RefreshForClaims(listClaimNumsNoProcedures)
@@ -489,7 +489,9 @@ namespace OpenDentBusiness{
 			}
 			if(listClaimProcsInserting.Count>0) {
 				InsertMany(listClaimProcsInserting);
+				return true;
 			}
+			return false;
 		}
 
 		///<summary>Helper method for fixing claims without any claim procedures with proc nums (claims having only as total payments).
