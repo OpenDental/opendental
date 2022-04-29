@@ -2274,8 +2274,8 @@ namespace OpenDentBusiness {
 
 		///<summary>Throws exceptions.</summary>
 		public static void TransferClaimsPayAsTotal(long patNum,List<long> listFamPatNums,string logText) {
-			ClaimProcs.FixClaimsNoProcedures(listFamPatNums);
-			if(!ProcedureCodes.GetContainsKey("ZZZFIX")) {
+			bool didFix=ClaimProcs.FixClaimsNoProcedures(listFamPatNums);
+			if(didFix && !ProcedureCodes.GetContainsKey("ZZZFIX")) {
 				Cache.Refresh(InvalidType.ProcCodes);//Refresh local cache only because middle tier has already inserted the signal.
 			}
 			ClaimTransferResult claimTransferResult=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamPatNums);

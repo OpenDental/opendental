@@ -140,6 +140,10 @@ namespace OpenDentBusiness{
 		public static bool IsAuthorized(Permissions perm,DateTime date,long procCodeNum,double procCodeFee) {
 			return IsAuthorized(perm,date,false,false,procCodeNum,procCodeFee,0,0);
 		}
+
+		public static bool IsAuthorized(Permissions perm,DateTime date,bool suppressMessage,bool suppressLockDateMessage,Userod curUser) {
+			return IsAuthorized(perm,date,suppressMessage,suppressLockDateMessage,curUser,0,-1,0,0);
+		}
 		
 		///<summary>Checks to see if current user is authorized.  It also checks any date restrictions.  If not authorized, it gives a Message box saying so and returns false.</summary>
 		public static bool IsAuthorized(Permissions perm,DateTime date,bool suppressMessage,bool suppressLockDateMessage,long procCodeNum,

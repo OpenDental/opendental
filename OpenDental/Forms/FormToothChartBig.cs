@@ -272,7 +272,9 @@ namespace OpenDental {
 						if(procCode.TreatArea==TreatmentArea.Tooth && ProcList[i]["ToothNum"].ToString()!=""){
 							_toothChartRelay.SetSpaceMaintainer(ProcList[i]["ToothNum"].ToString(),cDark);
 						}
-						else if(procCode.TreatArea==TreatmentArea.ToothRange && ProcList[i]["ToothRange"].ToString()!=""){
+						else if((procCode.TreatArea==TreatmentArea.ToothRange && ProcList[i]["ToothRange"].ToString()!="") 
+							|| (procCode.AreaAlsoToothRange==true && ProcList[i]["ToothRange"].ToString()!=""))
+						{
 							teeth=ProcList[i]["ToothRange"].ToString().Split(',');
 							for(int t=0;t<teeth.Length;t++) {
 								_toothChartRelay.SetSpaceMaintainer(teeth[t],cDark);

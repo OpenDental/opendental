@@ -37,7 +37,7 @@ namespace OpenDentBusiness{
 		///<summary>The path that all incoming response files will be saved to. \ is now optional.
 		///Can be overridden by clinic-level clearinghouses.</summary>
 		public string ResponsePath;
-		///<summary>Enum:EclaimsCommBridge  One of the included hard-coded communications briges.  Or none to just create the claim files without uploading.</summary>
+		///<summary>Enum:EclaimsCommBridge  One of the included hard-coded communications bridges.  Or none to just create the claim files without uploading.</summary>
 		public EclaimsCommBridge CommBridge;
 		///<summary>If applicable, this is the name of the client program to launch.  It is even used by the hard-coded comm bridges,
 		///because the user may have changed the installation directory or exe name.  Can be overridden by clinic-level clearinghouses.</summary>

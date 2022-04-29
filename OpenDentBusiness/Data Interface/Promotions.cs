@@ -80,6 +80,30 @@ namespace OpenDentBusiness{
 			return listSeparatedDestinations;
 		}
 
+		///<summary>Takes in the list of destinations and sees if we're sending multiple emails to the same email (i.e if a family shares an email and they're all on the list to 
+		///get sent this mass email). Prioritizes the guarantor, then the one with the lowest PatNum. </summary>
+		public static List<MassEmailDestination> FilterForDuplicates(List<MassEmailDestination> massEmailDestinations,Dictionary<long,Patient> dictGuarantors,PromotionType promotionType) {
+			//If we have a birthday email going out, we have already filtered for this.
+			if(promotionType==PromotionType.Birthday) {
+				return massEmailDestinations;
+			}
+			List<MassEmailDestination> itemsToRemove = new List<MassEmailDestination>();
+			//Grab all duplicates in listMassEmailDestinations to minimize looping. If there are no duplicates then we don't need to do any of the following logic
+			Dictionary<long,List<MassEmailDestination>> dictDuplicateAddresses = massEmailDestinations
+				.GroupBy(x => x.ToAddress) //group by address to get duplicate addresses
+				.Where(x => x.Count()>1) //only worry about ones where duplicates exist
+				.ToDictionary(x => x.FirstOrDefault().PatNum,x => x.ToList());//use the patnum as the key so we can find the guarantor
+			foreach(long patNum in dictDuplicateAddresses.Keys) {
+				List<MassEmailDestination> listDestsForAddress = dictDuplicateAddresses[patNum];
+				//if we have an entry in the guarantor dictionary for this patient, we'll default to sending an email to them
+				//otherwise use first one entered into database
+				long patNumToKeep=listDestsForAddress.Where(x => dictGuarantors.TryGetValue(x.PatNum,out _)).FirstOrDefault()?.PatNum??listDestsForAddress.Min(x => x.PatNum);
+				itemsToRemove.AddRange(listDestsForAddress.Where(x => x.PatNum!=patNumToKeep));
+			}
+			return massEmailDestinations.Except(itemsToRemove).ToList();
+		}
+
+
 		///<summary>Takes an email hosting template and a list of patients and sends the given email to them. If something goes wrong, returns false and
 		///returns an error message. This potentially could take a long time. Handles filling replacements as well.</summary>
 		public static string SendEmails(EmailHostingTemplate templateCur,List<MassEmailDestination> listDestinations,string senderName,string replyToAddress,
@@ -140,6 +164,9 @@ namespace OpenDentBusiness{
 			List<string> listSubjectReplacements=EmailHostingTemplates.GetListReplacements(templateCur.Subject).Distinct().ToList();
 			List<string> listBodyReplacements=EmailHostingTemplates.GetListReplacements(templateCur.BodyHTML).Distinct().ToList();
 			List<TemplateDestination> listTemplateDestinations=new List<TemplateDestination>();
+			int countDestinationsBeforeFiltering = listDestinations.Count;
+			listDestinations=FilterForDuplicates(listDestinations,dictGuarantors,type);
+			int countDestinationsAfterFiltering = listDestinations.Count;
 			//Dictionary of patnum -> the replaced subject and body. Used afterwords to save the emails as EmailMessages.
 			Dictionary<long,(string subject,string body)> dictReplaced=new Dictionary<long,(string,string)>();
 			//if there are multiple patients with the same email address, last in will win.
@@ -258,7 +285,11 @@ namespace OpenDentBusiness{
 				});
 			}
 			PromotionLogs.InsertMany(listLogs);
-			return "";
+			string resultDesc="";
+			if(countDestinationsAfterFiltering!=countDestinationsBeforeFiltering) {
+				resultDesc=POut.Int(Math.Max(0,countDestinationsBeforeFiltering-countDestinationsAfterFiltering));
+			}
+			return resultDesc;	
 		}
 
 		public static long Insert(Promotion promotion) {

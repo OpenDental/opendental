@@ -458,11 +458,11 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>This method is specifically aimed at fixing claims that were created with no claim procedures, only as totals. 
-		///The fix is to create a dummy procedure and claimproc for each as total on the claim for the matching pat/prov/clinic group.</summary>
-		public static void FixClaimsNoProcedures(List<long> listFamilyPatNums) {
+		///The fix is to create a dummy procedure and claimproc for each as total on the claim for the matching pat/prov/clinic group.
+		///Returns true if a fix was needed and applied, otherwise false.</summary>
+		public static bool FixClaimsNoProcedures(List<long> listFamilyPatNums) {
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listFamilyPatNums);
-				return;
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),listFamilyPatNums);
 			}
 			List<long> listClaimNumsNoProcedures=new List<long>();
 			//Get all ClaimNums for claims that have no claimprocs associated to procedures, regardless of claim status.
@@ -473,7 +473,7 @@ namespace OpenDentBusiness{
 												HAVING SUM(claimproc.ProcNum)=0 ";
 			listClaimNumsNoProcedures=Db.GetListLong(command);
 			if(listClaimNumsNoProcedures.Count==0) {
-				return;
+				return false;
 			}
 			//Get all of the claimprocs for the claims that have no procedures and group them up by ClaimNum.
 			Dictionary<long,List<ClaimProc>> dictClaimProcsByClaim=RefreshForClaims(listClaimNumsNoProcedures)
@@ -489,7 +489,9 @@ namespace OpenDentBusiness{
 			}
 			if(listClaimProcsInserting.Count>0) {
 				InsertMany(listClaimProcsInserting);
+				return true;
 			}
+			return false;
 		}
 
 		///<summary>Helper method for fixing claims without any claim procedures with proc nums (claims having only as total payments).
@@ -645,10 +647,8 @@ namespace OpenDentBusiness{
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
 				return Meth.GetObject<List<ClaimProc>>(MethodBase.GetCurrentMethod(),patNum);
 			}
-			string command=
-				"SELECT * from claimproc "
-				+"WHERE PatNum = '"+patNum.ToString()+"' ORDER BY LineNumber";
-			return Crud.ClaimProcCrud.SelectMany(command);
+			string command="SELECT * FROM claimproc WHERE PatNum = "+POut.Long(patNum)+" ORDER BY LineNumber";
+			return Db.GetList(command,ClaimProcCrud.RowToObj);
 		}
 
 		///<summary>Gets the ClaimProcs for a list of patients.</summary>
@@ -662,7 +662,7 @@ namespace OpenDentBusiness{
 			string command=
 				"SELECT * FROM claimproc "
 				+"WHERE PatNum IN("+string.Join(",",listPatNums.Select(x => POut.Long(x)))+")";
-			return Crud.ClaimProcCrud.SelectMany(command);
+			return Db.GetList(command,ClaimProcCrud.RowToObj);
 		}
 
 		///<summary>For a given PayPlan, returns a list of Claimprocs associated to that PayPlan. Pass in claim proc status for filtering.</summary>

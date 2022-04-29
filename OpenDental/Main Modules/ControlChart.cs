@@ -2069,6 +2069,19 @@ namespace OpenDental {
 					&& n>0) {//the only two left are tooth and surf
 					continue;//only entered if n=0, so they don't get entered more than once.
 				}
+				else if(procedureCode.AreaAlsoToothRange) { // if AreaAlsoToothRange==true and procedureCode set for Quad or Arch
+					if(_toothChartRelay.SelectedTeeth.Count==0) {
+						AddProcedure(procCur,listFees);
+					}
+					else { 
+						if(treatmentArea==TreatmentArea.Arch) { 
+							AddArchProcsWithToothRange(procCur,listFees);
+						}
+						else if(treatmentArea==TreatmentArea.Quad) {
+							AddQuadProcsWithToothRange(procCur,listFees);
+						}
+					}
+				}
 				else if(treatmentArea==TreatmentArea.Quad) {
 					AddQuadProcs(procCur,listFees);
 				}
@@ -6254,7 +6267,9 @@ namespace OpenDental {
 						if(procCode.TreatArea==TreatmentArea.Tooth && _listRowsProcForGraphical[i]["ToothNum"].ToString()!=""){
 							_toothChartRelay.SetSpaceMaintainer(_listRowsProcForGraphical[i]["ToothNum"].ToString(),cDark);
 						}
-						else if(procCode.TreatArea==TreatmentArea.ToothRange && _listRowsProcForGraphical[i]["ToothRange"].ToString()!=""){
+						else if((procCode.TreatArea==TreatmentArea.ToothRange && _listRowsProcForGraphical[i]["ToothRange"].ToString()!="") 
+							|| (procCode.AreaAlsoToothRange==true && _listRowsProcForGraphical[i]["ToothRange"].ToString()!=""))
+						{
 							arrayTeeth=_listRowsProcForGraphical[i]["ToothRange"].ToString().Split(',');
 							for(int t=0;t<arrayTeeth.Length;t++) {
 								_toothChartRelay.SetSpaceMaintainer(arrayTeeth[t],cDark);
@@ -9582,6 +9597,80 @@ namespace OpenDental {
 			}
 		}
 
+		///<summary>Add a procedure for all selected quadrants and maintains the selected tooth range for each quadrant.</summary>
+		private void AddQuadProcsWithToothRange(Procedure procCur,List<Fee> listFees) {
+			if(_toothChartRelay.SelectedTeeth.Count>0) {
+				List<string> listSelectedQuads=Tooth.GetQuadsForTeeth(_toothChartRelay.SelectedTeeth);
+				List<string> listTeethSelected=_toothChartRelay.SelectedTeeth;
+				List<string> listQuadTeeth;
+				List<string> listFinalToothRange=new List<string>();
+				for(int i=0;i<listSelectedQuads.Count();i++) {
+					Procedure proc=procCur.Copy();
+					proc.Surf=listSelectedQuads[i];
+					if(listSelectedQuads[i]=="UR") {
+						listQuadTeeth=new List<string>{"1","2","3","4","5","6","7","8"};
+						listFinalToothRange=listTeethSelected.Intersect(listQuadTeeth).ToList();
+					}
+					if(listSelectedQuads[i]=="UL") {
+						listQuadTeeth=new List<string>{"9","10","11","12","13","14","15","16"};
+						listFinalToothRange=listTeethSelected.Intersect(listQuadTeeth).ToList();
+					}
+					if(listSelectedQuads[i]=="LL") {
+						listQuadTeeth=new List<string>{"17","18","19","20","21","22","23","24"};
+						listFinalToothRange=listTeethSelected.Intersect(listQuadTeeth).ToList();
+					}
+					if(listSelectedQuads[i]=="LR") {
+						listQuadTeeth=new List<string>{"25","26","27","28","29","30","31","32"};
+						listFinalToothRange=listTeethSelected.Intersect(listQuadTeeth).ToList();
+					}
+					proc.ToothRange="";
+					for(int b=0;b<listFinalToothRange.Count;b++) {
+						if(b!=0) {
+							proc.ToothRange+=",";
+						}
+						proc.ToothRange+=listFinalToothRange[b];
+					}
+					AddQuick(proc,listFees);
+				}
+			}
+			else {
+				AddProcedure(procCur,listFees); //Don't know what to set the surface to, so we have the user enter it.
+			}
+		}
+
+		///<summary>Add a procedure for all selected arches and maintains the selected tooth range for each arch.</summary>
+		private void AddArchProcsWithToothRange(Procedure procCur,List<Fee> listFees) {
+			if(_toothChartRelay.SelectedTeeth.Count>0) {
+				List<string> listSelectedArches=Tooth.GetArchesForTeeth(_toothChartRelay.SelectedTeeth);
+				List<string> listTeethSelected=_toothChartRelay.SelectedTeeth;
+				List<string> listArchTeeth;
+				List<string> listFinalToothRange=new List<string>();
+				for(int i=0;i<listSelectedArches.Count;i++) {
+					Procedure proc=procCur.Copy();
+					proc.Surf=listSelectedArches[i];
+					if(listSelectedArches[i]=="U") {
+						listArchTeeth=new List<string>{"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"};
+						listFinalToothRange=listTeethSelected.Intersect(listArchTeeth).ToList();
+					}
+					if(listSelectedArches[i]=="L") {
+						listArchTeeth=new List<string>{"17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32"};
+						listFinalToothRange=listTeethSelected.Intersect(listArchTeeth).ToList();
+					}
+					proc.ToothRange="";
+					for(int b=0;b<listFinalToothRange.Count;b++) {
+						if(b!=0) {
+							proc.ToothRange+=",";
+						}
+						proc.ToothRange+=listFinalToothRange[b];
+					}
+					AddQuick(proc,listFees);
+				}
+			}
+			else {
+				AddProcedure(procCur,listFees); //Don't know what to set the surface to, so we have the user enter it.
+			}
+		}
+
 		///<summary>No user dialog is shown.  This only works for some kinds of procedures.  Set the codeNum first. AddProcedure and AddQuick both call AddProcHelper, where most of the logic for setting the fields for a new procedure is located. No validation is done before adding the procedure so check all permissions and such prior to calling this method.</summary>
 		private void AddQuick(Procedure ProcCur,List<Fee> listFees) {
 			Plugins.HookAddCode(this,"ContrChart.AddQuick_begin",ProcCur,listFees);
@@ -9769,6 +9858,19 @@ namespace OpenDental {
 					|| tArea==TreatmentArea.ToothRange)
 					&& n>0) {//the only two left are tooth and surf
 					continue;//only entered if n=0, so they don't get entered more than once.
+				}
+				else if(procedureCode.AreaAlsoToothRange) { // if AreaAlsoToothRange==true and procedureCode set for Quad or Arch
+					if(_toothChartRelay.SelectedTeeth.Count==0) {
+						AddProcedure(ProcCur,listFees);
+					}
+					else { 
+						if(tArea==TreatmentArea.Arch) { 
+							AddArchProcsWithToothRange(ProcCur,listFees);
+						}
+						else if(tArea==TreatmentArea.Quad) {
+							AddQuadProcsWithToothRange(ProcCur,listFees);
+						}
+					}
 				}
 				else if(tArea==TreatmentArea.Quad) {
 					AddQuadProcs(ProcCur,listFees);
@@ -9982,6 +10084,19 @@ namespace OpenDental {
 						&& n>0) 
 					{//the only two left are tooth and surf
 						continue;//only entered if n=0, so they don't get entered more than once.
+					}
+					else if(ProcedureCodes.GetProcCode(procCur.CodeNum).AreaAlsoToothRange) { // if AreaAlsoToothRange==true and procedureCode set for Quad or Arch
+						if(_toothChartRelay.SelectedTeeth.Count==0) {
+							AddProcedure(procCur,listFees);
+						}
+						else { 
+							if(tArea==TreatmentArea.Arch) { 
+								AddArchProcsWithToothRange(procCur,listFees);
+							}
+							else if(tArea==TreatmentArea.Quad) {
+								AddQuadProcsWithToothRange(procCur,listFees);
+							}
+						}
 					}
 					else if(tArea==TreatmentArea.Quad) {
 						if(_toothChartRelay.SelectedTeeth.Count==0) {

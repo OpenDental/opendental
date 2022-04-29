@@ -227,6 +227,7 @@ namespace OpenDentBusiness {
 			if(oIDExternal==null) {
 				return false;//We don't have a PatID from DoseSpot for this patient.  Therefore there is nothing to sync with.
 			}
+			bool hasChangedPrescriptions=false;
 			Patient patient=Patients.GetPat(patNum);
 			List<long> listMedicationPatNumsActive=new List<long>();
 			Dictionary<int,string> dictPharmacyIdToPharmacyName=new Dictionary<int,string>();
@@ -278,6 +279,7 @@ namespace OpenDentBusiness {
 						}
 						MedicationPat medicationPat=MedicationPats.GetMedicationOrderByErxIdAndPat(rxPatOld.ErxGuid,rxPatOld.PatNum);
 						RxPats.Delete(rxPatOld.RxNum);
+						hasChangedPrescriptions=true;
 						SecurityLog securityLog = new SecurityLog();
 						securityLog.UserNum=0;//Don't attach to user since this is being done by DoseSpot
 						securityLog.CompName=Security.CurComputerName;
@@ -398,6 +400,7 @@ namespace OpenDentBusiness {
 					}
 				}
 				long medicationPatNum=0;
+				hasChangedPrescriptions|=RxPats.UpdateComparison(rxPat,rxPatOld);
 				if(Erx.IsDoseSpotPatReported(rxPat.ErxGuid) || Erx.IsTwoWayIntegrated(rxPat.ErxGuid)) {//For DoseSpot self reported, do not insert a prescription.
 					medicationPatNum=Erx.InsertOrUpdateErxMedication(rxPatOld,rxPat,rxCui,doseSpotMedicationWrapper.DisplayName,doseSpotMedicationWrapper.GenericProductName,isProvider,false);
 				}
@@ -451,7 +454,7 @@ namespace OpenDentBusiness {
 			if(onRxAdd!=null && listRxPats.Count!=0) {
 				onRxAdd(listRxPats);
 			}
-			return true;
+			return hasChangedPrescriptions;
 		}
 
 		///<summary></summary>
