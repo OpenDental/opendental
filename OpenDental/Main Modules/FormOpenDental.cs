@@ -1230,6 +1230,18 @@ namespace OpenDental{
 			}
 		}
 
+		///<summary>Returns true if the old Images module control should be used, false otherwise. Use this method instead of the ImagesModuleUsesOld2020 preference.</summary>
+		private bool ImagesModuleUsesOld2020() {
+			//This form only looks at the value of the ImagesModuleUsesOld2020 preference during startup for instantiating either the old Images module control or the new Imaging module control.
+			//Other workstations have the ability to manipulate ImagesModuleUsesOld2020 at any time which is a problem if the corresponding module control hasn't been instantiated yet.
+			//This instance of the program will always use the module that was instantiated during startup instead of what the preference is set to.
+			//The user will have to manually restart the program in order to use the other module control.
+			if(controlImages!=null) {
+				return true;
+			}
+			return false;
+		}
+
 		private bool PrefsStartup() {
 			//Default usePreviousVersions to false as this is only called after Open Dental is already fully functional. No versions will have changed
 			//by the time this is called.
@@ -1540,7 +1552,7 @@ namespace OpenDental{
 				else {
 					controlChart.LayoutToolBar();
 				}
-				if(PrefC.GetBoolSilent(PrefName.ImagesModuleUsesOld2020,false)){
+				if(ImagesModuleUsesOld2020()){
 					if(controlImages!=null){//can be null on startup
 						controlImages.LayoutToolBar();
 					}
@@ -2064,7 +2076,7 @@ namespace OpenDental{
 			if(controlChart.Visible) {
 				TryNonPatientPopup();
 			}
-			if(!PrefC.GetBoolSilent(PrefName.ImagesModuleUsesOld2020,false)){
+			if(!ImagesModuleUsesOld2020()){
 				controlImagesJ.CloseFloaters();
 			}
 			//New patient selected.  Everything below here is for popups.
@@ -3735,7 +3747,7 @@ namespace OpenDental{
 				controlAppt.ModuleSelectedGoToAppt(e.SelectedAptNum,e.DateSelected);
 			}
 			else if(e.DocNum>0) {
-				if(PrefC.GetBoolSilent(PrefName.ImagesModuleUsesOld2020,false)){
+				if(ImagesModuleUsesOld2020()){
 					moduleBar.SelectedModule=e.ModuleType;
 					controlImages.InitializeOnStartup();
 					controlImages.Visible=true;
@@ -3898,7 +3910,7 @@ namespace OpenDental{
 					TryNonPatientPopup();
 					break;
 				case EnumModuleType.Imaging:
-					if(PrefC.GetBoolSilent(PrefName.ImagesModuleUsesOld2020,false)){
+					if(ImagesModuleUsesOld2020()){
 						controlImages.InitializeOnStartup();
 						controlImages.Visible=true;
 						this.ActiveControl=this.controlImages;
@@ -3927,7 +3939,7 @@ namespace OpenDental{
 			controlAccount.Visible=false;
 			controlTreat.Visible=false;
 			controlChart.Visible=false;
-			if(PrefC.GetBoolSilent(PrefName.ImagesModuleUsesOld2020,false)){
+			if(ImagesModuleUsesOld2020()){
 				controlImages.Visible=false;
 			}
 			else{
@@ -3957,7 +3969,7 @@ namespace OpenDental{
 			if(controlChart.Visible){
 				controlChart.ModuleUnselected(isLoggingOff);
 			}
-			if(PrefC.GetBoolSilent(PrefName.ImagesModuleUsesOld2020,false)){
+			if(ImagesModuleUsesOld2020()){
 				if(controlImages.Visible){
 					controlImages.ModuleUnselected();
 				}
@@ -3997,7 +4009,7 @@ namespace OpenDental{
 			if(controlChart.Visible){
 				controlChart.ModuleSelected(PatNumCur,isClinicRefresh);
 			}
-			if(PrefC.GetBoolSilent(PrefName.ImagesModuleUsesOld2020,false)){
+			if(ImagesModuleUsesOld2020()){
 				if(controlImages.Visible){
 					controlImages.ModuleSelected(PatNumCur,docNum);
 				}
