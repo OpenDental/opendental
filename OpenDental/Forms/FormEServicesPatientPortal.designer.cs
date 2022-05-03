@@ -46,6 +46,7 @@ namespace OpenDental{
 			this.label6 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.butUseHosted = new OpenDental.UI.Button();
 			this.butCustomUrl = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
@@ -76,9 +77,9 @@ namespace OpenDental{
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(12,591);
+			this.label5.Location = new System.Drawing.Point(12, 591);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(536,32);
+			this.label5.Size = new System.Drawing.Size(536, 32);
 			this.label5.TabIndex = 502;
 			this.label5.Text = "All setup for Patient Portal Invites is now done in eServices Automated Messaging" +
     ".";
@@ -272,6 +273,7 @@ namespace OpenDental{
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.butUseHosted);
 			this.groupBox1.Controls.Add(this.butCustomUrl);
 			this.groupBox1.Controls.Add(this.label1);
 			this.groupBox1.Controls.Add(this.label8);
@@ -283,6 +285,17 @@ namespace OpenDental{
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Patient Facing URL";
 			// 
+			// butUseHosted
+			// 
+			this.butUseHosted.Location = new System.Drawing.Point(112, 79);
+			this.butUseHosted.Name = "butUseHosted";
+			this.butUseHosted.Size = new System.Drawing.Size(88, 24);
+			this.butUseHosted.TabIndex = 55;
+			this.butUseHosted.Text = "Use Hosted";
+			this.butUseHosted.UseVisualStyleBackColor = true;
+			this.butUseHosted.Click += new System.EventHandler(this.butUpdateURL_Click);
+			// 
+
 			// butCustomUrl
 			// 
 			this.butCustomUrl.Location = new System.Drawing.Point(18, 79);
@@ -325,7 +338,7 @@ namespace OpenDental{
 			// butCancel
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(473,625);
+			this.butCancel.Location = new System.Drawing.Point(473, 625);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 501;
@@ -384,5 +397,6 @@ namespace OpenDental{
 		private UI.Button butCancel;
 		private UI.Button butCustomUrl;
 		private System.Windows.Forms.Label label5;
+		private UI.Button butUseHosted;
 	}
 }

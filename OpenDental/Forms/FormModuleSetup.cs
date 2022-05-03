@@ -1444,6 +1444,7 @@ namespace OpenDental{
 			comboDepositSoftware.Items.AddEnums<AccountingSoftware>();
 			comboDepositSoftware.SetSelectedEnum(PrefC.GetEnum<AccountingSoftware>(PrefName.AccountingSoftware));
 			checkRxHideProvsWithoutDEA.Checked=PrefC.GetBool(PrefName.RxHideProvsWithoutDEA);
+			checkAccountingInvoiceAttachmentsSaveInDatabase.Checked=PrefC.GetBool(PrefName.AccountingInvoiceAttachmentsSaveInDatabase);
 		}
 
 		///<summary>Fills ComboEraAutomation with EraAutomationMode enum values. Excludes EraAutomationMode.UseGlobal because that value only applies to Carrier.EraAutomationOverride.</summary>
@@ -1493,6 +1494,7 @@ namespace OpenDental{
 			_changed|=Prefs.UpdateInt(PrefName.EraAutomationBehavior,(int)comboEraAutomation.GetSelected<EraAutomationMode>());
 			_changed|=Prefs.UpdateInt(PrefName.AccountingSoftware,(int)comboDepositSoftware.GetSelected<AccountingSoftware>());
 			_changed|=Prefs.UpdateBool(PrefName.RxHideProvsWithoutDEA,checkRxHideProvsWithoutDEA.Checked);
+			_changed|=Prefs.UpdateBool(PrefName.AccountingInvoiceAttachmentsSaveInDatabase,checkAccountingInvoiceAttachmentsSaveInDatabase.Checked);
 			if(textStatementsCalcDueDate.Text==""){
 				if(Prefs.UpdateLong(PrefName.StatementsCalcDueDate,-1)){
 					_changed=true;

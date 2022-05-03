@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDocumentation.xsl"?>
-<database version="22.1.24.0">
+<database version="22.1.26.0">
     <table name="account">
         <summary>Used in the accounting section in chart of accounts.  Not related to patient accounts in any way.</summary>
         <column order="0" name="AccountNum" type="bigint(20)">
@@ -146,7 +146,7 @@
             <summary>FK to AlertCategory.AlertCategoryNum.</summary>
         </column>
         <column order="2" name="AlertType" type="tinyint(4)">
-            <summary>Enum:AlertType Identifies what types of alert this row is assocaited to.</summary>
+            <summary>Enum:AlertType Identifies what types of alert this row is associated to.</summary>
             <Enumeration name="AlertType">
                 <summary>Enum representing different alert types.</summary>
                 <EnumValue name="Generic">0 - Generic. Informational, has no action associated with it</EnumValue>
@@ -2767,7 +2767,7 @@
             Can be overridden by clinic-level clearinghouses.</summary>
         </column>
         <column order="12" name="CommBridge" type="tinyint">
-            <summary>Enum:EclaimsCommBridge  One of the included hard-coded communications briges.  Or none to just create the claim files without uploading.</summary>
+            <summary>Enum:EclaimsCommBridge  One of the included hard-coded communications bridges.  Or none to just create the claim files without uploading.</summary>
             <Enumeration name="EclaimsCommBridge">
                 <summary>Each clearinghouse can have a hard-coded comm bridge which handles all the communications of transfering the claim files to the clearinghouse/carrier.  Does not just include X12, but can include any format at all.</summary>
                 <EnumValue name="None">0-No comm bridge will be activated. The claim files will be created to the specified path, but they will not be uploaded.</EnumValue>
@@ -8329,7 +8329,7 @@
             <summary>FK to definition.DefNum.  Reporting Group.</summary>
         </column>
         <column order="5" name="ExcludeOtherCoverageOnPriClaims" type="tinyint(4)">
-            <summary>If set to true, and the patient's secondary inurance plan uses this insfilingcode, the secondary insurance plan will 
+            <summary>If set to true, and the patient's secondary insurance plan uses this insfilingcode, the secondary insurance plan will 
             not be populated on primary e-claims or paper claims.</summary>
         </column>
     </table>
@@ -16511,7 +16511,10 @@
             <summary>File name including the extension.</summary>
         </column>
         <column order="2" name="InvoiceData" type="mediumtext">
-            <summary>The raw file data converted to base64.</summary>
+            <summary>The raw file data converted to base64. Will be blank when using FilePath.</summary>
+        </column>
+        <column order="3" name="FilePath" type="varchar(255)">
+            <summary>Full file path. Will be blank when using InvoiceData.</summary>
         </column>
     </table>
     <table name="treatplan">

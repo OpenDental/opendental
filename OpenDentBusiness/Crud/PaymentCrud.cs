@@ -69,7 +69,7 @@ namespace OpenDentBusiness.Crud{
 				payment.RecurringChargeDate= PIn.Date  (row["RecurringChargeDate"].ToString());
 				payment.ExternalId         = PIn.String(row["ExternalId"].ToString());
 				payment.PaymentStatus      = (OpenDentBusiness.PaymentStatus)PIn.Int(row["PaymentStatus"].ToString());
-				payment.IsCcCompleted        = PIn.Bool  (row["IsCcCompleted"].ToString());
+				payment.IsCcCompleted      = PIn.Bool  (row["IsCcCompleted"].ToString());
 				retVal.Add(payment);
 			}
 			return retVal;
@@ -345,7 +345,7 @@ namespace OpenDentBusiness.Crud{
 				+"RecurringChargeDate=  "+POut.Date  (payment.RecurringChargeDate)+", "
 				+"ExternalId         = '"+POut.String(payment.ExternalId)+"', "
 				+"PaymentStatus      =  "+POut.Int   ((int)payment.PaymentStatus)+", "
-				+"IsCcCompleted        =  "+POut.Bool  (payment.IsCcCompleted)+" "
+				+"IsCcCompleted      =  "+POut.Bool  (payment.IsCcCompleted)+" "
 				+"WHERE PayNum = "+POut.Long(payment.PayNum);
 			if(payment.PayNote==null) {
 				payment.PayNote="";

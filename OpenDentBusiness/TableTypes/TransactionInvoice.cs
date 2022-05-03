@@ -13,9 +13,11 @@ namespace OpenDentBusiness {
 		public long TransactionInvoiceNum;
 		///<summary>File name including the extension.</summary>
 		public string FileName;
-		///<summary>The raw file data converted to base64.</summary>
+		///<summary>The raw file data converted to base64. Will be blank when using FilePath.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string InvoiceData;
+		///<summary>Full file path. Will be blank when using InvoiceData.</summary>
+		public string FilePath;
 
 		///<summary></summary>
 		public TransactionInvoice Copy() {

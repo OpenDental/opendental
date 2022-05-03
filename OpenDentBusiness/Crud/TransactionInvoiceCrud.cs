@@ -50,6 +50,7 @@ namespace OpenDentBusiness.Crud{
 				transactionInvoice.TransactionInvoiceNum= PIn.Long  (row["TransactionInvoiceNum"].ToString());
 				transactionInvoice.FileName             = PIn.String(row["FileName"].ToString());
 				transactionInvoice.InvoiceData          = PIn.String(row["InvoiceData"].ToString());
+				transactionInvoice.FilePath             = PIn.String(row["FilePath"].ToString());
 				retVal.Add(transactionInvoice);
 			}
 			return retVal;
@@ -64,11 +65,13 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("TransactionInvoiceNum");
 			table.Columns.Add("FileName");
 			table.Columns.Add("InvoiceData");
+			table.Columns.Add("FilePath");
 			foreach(TransactionInvoice transactionInvoice in listTransactionInvoices) {
 				table.Rows.Add(new object[] {
 					POut.Long  (transactionInvoice.TransactionInvoiceNum),
 					            transactionInvoice.FileName,
 					            transactionInvoice.InvoiceData,
+					            transactionInvoice.FilePath,
 				});
 			}
 			return table;
@@ -88,13 +91,14 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="TransactionInvoiceNum,";
 			}
-			command+="FileName,InvoiceData) VALUES(";
+			command+="FileName,InvoiceData,FilePath) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(transactionInvoice.TransactionInvoiceNum)+",";
 			}
 			command+=
 				 "'"+POut.String(transactionInvoice.FileName)+"',"
-				+    DbHelper.ParamChar+"paramInvoiceData)";
+				+    DbHelper.ParamChar+"paramInvoiceData,"
+				+"'"+POut.String(transactionInvoice.FilePath)+"')";
 			if(transactionInvoice.InvoiceData==null) {
 				transactionInvoice.InvoiceData="";
 			}
@@ -123,13 +127,14 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="TransactionInvoiceNum,";
 			}
-			command+="FileName,InvoiceData) VALUES(";
+			command+="FileName,InvoiceData,FilePath) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(transactionInvoice.TransactionInvoiceNum)+",";
 			}
 			command+=
 				 "'"+POut.String(transactionInvoice.FileName)+"',"
-				+    DbHelper.ParamChar+"paramInvoiceData)";
+				+    DbHelper.ParamChar+"paramInvoiceData,"
+				+"'"+POut.String(transactionInvoice.FilePath)+"')";
 			if(transactionInvoice.InvoiceData==null) {
 				transactionInvoice.InvoiceData="";
 			}
@@ -147,7 +152,8 @@ namespace OpenDentBusiness.Crud{
 		public static void Update(TransactionInvoice transactionInvoice) {
 			string command="UPDATE transactioninvoice SET "
 				+"FileName             = '"+POut.String(transactionInvoice.FileName)+"', "
-				+"InvoiceData          =  "+DbHelper.ParamChar+"paramInvoiceData "
+				+"InvoiceData          =  "+DbHelper.ParamChar+"paramInvoiceData, "
+				+"FilePath             = '"+POut.String(transactionInvoice.FilePath)+"' "
 				+"WHERE TransactionInvoiceNum = "+POut.Long(transactionInvoice.TransactionInvoiceNum);
 			if(transactionInvoice.InvoiceData==null) {
 				transactionInvoice.InvoiceData="";
@@ -166,6 +172,10 @@ namespace OpenDentBusiness.Crud{
 			if(transactionInvoice.InvoiceData != oldTransactionInvoice.InvoiceData) {
 				if(command!="") { command+=",";}
 				command+="InvoiceData = "+DbHelper.ParamChar+"paramInvoiceData";
+			}
+			if(transactionInvoice.FilePath != oldTransactionInvoice.FilePath) {
+				if(command!="") { command+=",";}
+				command+="FilePath = '"+POut.String(transactionInvoice.FilePath)+"'";
 			}
 			if(command=="") {
 				return false;
@@ -187,6 +197,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(transactionInvoice.InvoiceData != oldTransactionInvoice.InvoiceData) {
+				return true;
+			}
+			if(transactionInvoice.FilePath != oldTransactionInvoice.FilePath) {
 				return true;
 			}
 			return false;

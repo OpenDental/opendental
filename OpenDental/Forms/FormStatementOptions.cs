@@ -426,9 +426,15 @@ namespace OpenDental{
 			}
 			butPrintSheets();
 			if(checkExportCSV.Checked) {
-				Patient patient=Patients.GetPat(StmtCur.PatNum);
+				long statementCategory = Defs.GetImageCat(ImageCategorySpecial.S);
+				string prependCategoryNum = "";
+				if(statementCategory > 0) {
+					//Files that start with "_###_" will automatically have Document entries created for them when the Imaging module loads.
+					prependCategoryNum="_" + statementCategory + "_";
+				}
+				Patient patient =Patients.GetPat(StmtCur.PatNum);
 				string patFolder=ImageStore.GetPatientFolder(patient,ImageStore.GetPreferredAtoZpath());
-				string fileName=patient.LName+patient.FName+StmtCur.DocNum.ToString()+".csv";
+				string fileName= prependCategoryNum+patient.LName+patient.FName+StmtCur.DocNum.ToString()+".csv";
 				Statements.WriteStatementToCSV(StmtCur,fileName,patFolder);
 			}
 		}
@@ -604,9 +610,15 @@ namespace OpenDental{
 				string patFolder="";
 				string fileName="";
 				if(checkExportCSV.Checked) {
+					long statementCategory = Defs.GetImageCat(ImageCategorySpecial.S);
+					string prependCategoryNum = "";
+					if(statementCategory > 0) {
+						//Files that start with "_###_" will automatically have Document entries created for them when the Imaging module loads.
+						prependCategoryNum="_" + statementCategory + "_";
+					}
 					Patient patient=Patients.GetPat(StmtCur.PatNum);
 					patFolder=ImageStore.GetPatientFolder(patient,ImageStore.GetPreferredAtoZpath());
-					fileName=patient.LName+patient.FName+StmtCur.DocNum.ToString()+".csv";
+					fileName=prependCategoryNum+patient.LName+patient.FName+StmtCur.DocNum.ToString()+".csv";
 					Statements.WriteStatementToCSV(StmtCur,fileName,patFolder);
 				}
 				if(!CreateEmailMessage(patFolder,fileName)) {

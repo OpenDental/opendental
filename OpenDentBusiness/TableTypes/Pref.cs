@@ -40,6 +40,8 @@ namespace OpenDentBusiness {
 		AccountingCashPaymentType,
 		AccountingDepositAccounts,
 		AccountingIncomeAccount,
+		///<summary>Boolean, true by defualt. When true, accounting invoice attachments are saved in the database.</summary>
+		AccountingInvoiceAttachmentsSaveInDatabase,
 		AccountingLockDate,
 		///<summary>Enum:AccountingSoftware 0=OpenDental, 1=QuickBooks, 2=QuickBooksOnline</summary>
 		AccountingSoftware,

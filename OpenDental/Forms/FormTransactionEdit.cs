@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+
 using System.IO;
 using System.Windows.Forms;
 using CodeBase;
@@ -442,20 +443,27 @@ namespace OpenDental{
 				return;
 			}
 			TransactionInvoice transactionInvoice=new TransactionInvoice();
-			transactionInvoice.FileName=Path.GetFileName(openFileDialog.FileName);
-			byte[] arrayDocumentBytes;
-			try {
-				arrayDocumentBytes=File.ReadAllBytes(path);
-				transactionInvoice.InvoiceData=Convert.ToBase64String(arrayDocumentBytes);
-				if(transactionInvoice.InvoiceData.Length>16777215) {
-					MsgBox.Show("Invoice cannot be greater than about 12MB.");
+			if(PrefC.GetBool(PrefName.AccountingInvoiceAttachmentsSaveInDatabase)) {
+				transactionInvoice.FileName=Path.GetFileName(openFileDialog.FileName);
+				byte[] arrayDocumentBytes;
+				try {
+					arrayDocumentBytes=File.ReadAllBytes(path);
+					transactionInvoice.InvoiceData=Convert.ToBase64String(arrayDocumentBytes);
+					if(transactionInvoice.InvoiceData.Length>16777215) {
+						MsgBox.Show("Invoice cannot be greater than about 12MB.");
+						return;
+					}
+					TransactionInvoices.Insert(transactionInvoice);
+				}
+				catch(Exception ex) {
+					FriendlyException.Show(ex.Message,ex);
 					return;
 				}
-				TransactionInvoices.Insert(transactionInvoice);
 			}
-			catch(Exception ex) {
-				FriendlyException.Show(ex.Message,ex);
-				return;
+      else {
+				transactionInvoice.FileName=Path.GetFileName(openFileDialog.FileName);
+				transactionInvoice.FilePath=path;
+				TransactionInvoices.Insert(transactionInvoice);
 			}
 			TransCur.TransactionInvoiceNum=transactionInvoice.TransactionInvoiceNum;
 			Transactions.UpdateInvoiceNum(TransCur.TransactionNum,transactionInvoice.TransactionInvoiceNum);
@@ -466,16 +474,26 @@ namespace OpenDental{
 
 		private void butOpenInvoice_Click(object sender,EventArgs e) {
 			TransactionInvoice transactionInvoice=TransactionInvoices.GetOne(TransCur.TransactionInvoiceNum);
-			try {
-				string fileExt=Path.GetExtension(transactionInvoice.FileName);
-				string prefix=transactionInvoice.FileName.Substring(0,transactionInvoice.FileName.Length-fileExt.Length);
-				string filePath=ODFileUtils.CreateRandomFile(PrefC.GetTempFolderPath(),fileExt,prefix);
-				byte[] arrayDocumentBytes=Convert.FromBase64String(transactionInvoice.InvoiceData);
-				ODFileUtils.WriteAllBytesThenStart(filePath,arrayDocumentBytes,null);
+			if(String.IsNullOrEmpty(transactionInvoice.FilePath)) {//FilePath is empty when Invoice contains base64 data.
+				try {
+					string fileExt=Path.GetExtension(transactionInvoice.FileName);
+					string prefix=transactionInvoice.FileName.Substring(0,transactionInvoice.FileName.Length-fileExt.Length);
+					string filePath=ODFileUtils.CreateRandomFile(PrefC.GetTempFolderPath(),fileExt,prefix);
+					byte[] arrayDocumentBytes=Convert.FromBase64String(transactionInvoice.InvoiceData);
+					ODFileUtils.WriteAllBytesThenStart(filePath,arrayDocumentBytes,null);
+				}
+				catch(Exception ex) {
+					FriendlyException.Show(ex.Message,ex);
+					return;
+				}
 			}
-			catch(Exception ex) {
-				FriendlyException.Show(ex.Message,ex);
-				return;
+      else {
+				try {
+					ODFileUtils.ProcessStart(transactionInvoice.FilePath);
+				}
+				catch {
+					MsgBox.Show(transactionInvoice.FilePath+" cannot be found.");//Previously attached invoice was likely deleted, moved, or renamed.
+				}
 			}
 		}
 

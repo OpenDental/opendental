@@ -157,24 +157,14 @@ namespace OpenDentBusiness {
 					strQueryFilter+=$" OR procedurelog.ProcNum IN({string.Join(",",listProcNums)})";
 				}
 			}
-			command=$@" SELECT procedurelog.*, procedurecode.ProcCode 
-				FROM procedurelog 
-				INNER JOIN procedurecode ON procedurecode.CodeNum = procedurelog.CodeNum 
+			command=$@" SELECT procedurelog.*
+				FROM procedurelog
 				WHERE ProcStatus = {POut.Int((int)stat)}
 				AND ({strQueryFilter})
 				ORDER BY ProcDate ";
-			DataTable table=Db.GetTable(command);
-			List<DataRow> listSortedRows=new List<DataRow>();
-			for(int i=0;i<table.Rows.Count;i++) {//need to make new copy of each row so they don't belong to the old table any more.  Or make a fresh list of datarows.
-				listSortedRows.Add(table.Rows[i]);
-			}
-			listSortedRows.Sort(ProcedureComparer); 
-			DataTable tableSorted=table.Clone();
-			tableSorted.Rows.Clear();
-			for(int i=0;i<listSortedRows.Count;i++) {
-				tableSorted.Rows.Add(listSortedRows[i].ItemArray);
-			}
-			return Crud.ProcedureCrud.TableToList(tableSorted);
+			List<Procedure> listProcedures=Db.GetList(command,Crud.ProcedureCrud.RowToObj);
+			listProcedures.Sort(ProcedureLogic.CompareProcedures);
+			return listProcedures;
 		}
 
 		///<summary>Gets a limited procedure list.</summary>

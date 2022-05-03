@@ -2705,6 +2705,14 @@ namespace OpenDentBusiness {
 			Misc.SecurityHash.UpdateHashing();
 		}//End of 22_1_24() method
 
+		private static void To22_1_26() {
+			string command;
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('AccountingInvoiceAttachmentsSaveInDatabase','1')";//true to preserve existing behavior.
+			Db.NonQ(command);
+			command="ALTER TABLE transactioninvoice ADD FilePath varchar(255) NOT NULL";
+			Db.NonQ(command);
+		}//End of 22_1_26() method
+
 	}
 }
 

@@ -95,31 +95,32 @@ namespace OpenDental.UI{
 			Graphics g=e.Graphics;
 			g.SmoothingMode=SmoothingMode.AntiAlias;
 			Rectangle rectangle=new Rectangle(0,0,Width-1,Height-1);
+			Brush brush;//don't dispose of aliases
+			Pen pen;
 			if(Enabled){
 				if(_isMouseOver){
-					g.FillRectangle(_brushHover,rectangle);
-					g.DrawRectangle(_penHoverOutline,rectangle);
+					brush=_brushHover;
+					pen=_penHoverOutline;
 				}
 				else if(Focused) {
-					g.FillRectangle(_brushBack,rectangle);
-					g.DrawRectangle(_penHoverOutline,rectangle);
+					brush=_brushBack;
+					pen=_penHoverOutline;
 				}
 				else{
-					g.FillRectangle(_brushBack,rectangle);
-					g.DrawRectangle(_penOutline,rectangle);
+					brush=_brushBack;
+					pen=_penOutline;
 				}
 			}
 			else{
-				g.FillRectangle(_brushDisabledBack,rectangle);
-				g.DrawRectangle(_penOutline,rectangle);
+				brush=_brushDisabledBack;
+				pen=_penOutline;
 			}
-			//the dropdown arrow, starting at the left
-			g.DrawLine(_penArrow,Width-LayoutManager.ScaleF(13),LayoutManager.ScaleF(9),Width-LayoutManager.ScaleF(9.5f),LayoutManager.ScaleF(12));
-			g.DrawLine(_penArrow,Width-LayoutManager.ScaleF(9.5f),LayoutManager.ScaleF(12),Width-LayoutManager.ScaleF(6),LayoutManager.ScaleF(9));
+			g.FillRectangle(brush,rectangle);
+			g.DrawRectangle(pen,rectangle);
 			RectangleF rectangleFString=new RectangleF();
 			rectangleFString.X=rectangle.X+2;
 			rectangleFString.Y=rectangle.Y+4;
-			rectangleFString.Width=rectangle.Width-2;
+			rectangleFString.Width=rectangle.Width-3;
 			rectangleFString.Height=rectangle.Height-4;
 			int widthMax=rectangle.Width-15;
 			StringFormat stringFormat=new StringFormat(StringFormatFlags.NoWrap);
@@ -130,6 +131,12 @@ namespace OpenDental.UI{
 			else{
 				g.DrawString(GetDisplayText(widthMax),this.Font,_brushDisabledText,rectangleFString,stringFormat);
 			}
+			//the text is intentionally a bit long. Now, we need to cover the part that spills into the arrow.
+			Rectangle rectangleMask=new Rectangle(Width-1-LayoutManager.Scale(15),rectangle.Y+4,LayoutManager.Scale(15)-1,rectangle.Height-5);
+			g.FillRectangle(brush,rectangleMask);
+			//the dropdown arrow, starting at the left
+			g.DrawLine(_penArrow,Width-LayoutManager.ScaleF(13),LayoutManager.ScaleF(9),Width-LayoutManager.ScaleF(9.5f),LayoutManager.ScaleF(12));
+			g.DrawLine(_penArrow,Width-LayoutManager.ScaleF(9.5f),LayoutManager.ScaleF(12),Width-LayoutManager.ScaleF(6),LayoutManager.ScaleF(9));
 		}
 		#endregion Event - OnPaint
 

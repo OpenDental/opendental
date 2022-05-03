@@ -647,10 +647,8 @@ namespace OpenDentBusiness{
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
 				return Meth.GetObject<List<ClaimProc>>(MethodBase.GetCurrentMethod(),patNum);
 			}
-			string command=
-				"SELECT * from claimproc "
-				+"WHERE PatNum = '"+patNum.ToString()+"' ORDER BY LineNumber";
-			return Crud.ClaimProcCrud.SelectMany(command);
+			string command="SELECT * FROM claimproc WHERE PatNum = "+POut.Long(patNum)+" ORDER BY LineNumber";
+			return Db.GetList(command,ClaimProcCrud.RowToObj);
 		}
 
 		///<summary>Gets the ClaimProcs for a list of patients.</summary>
@@ -664,7 +662,7 @@ namespace OpenDentBusiness{
 			string command=
 				"SELECT * FROM claimproc "
 				+"WHERE PatNum IN("+string.Join(",",listPatNums.Select(x => POut.Long(x)))+")";
-			return Crud.ClaimProcCrud.SelectMany(command);
+			return Db.GetList(command,ClaimProcCrud.RowToObj);
 		}
 
 		///<summary>For a given PayPlan, returns a list of Claimprocs associated to that PayPlan. Pass in claim proc status for filtering.</summary>

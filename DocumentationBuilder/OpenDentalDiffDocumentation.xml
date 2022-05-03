@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
-<database version="22.1.24.0">
+<database version="22.1.26.0">
     <table name="alertcategorylink">
         <summary></summary>
         <column order="2" name="AlertType" type="tinyint(4)">
-            <summary>Enum:AlertType Identifies what types of alert this row is assocaited to.</summary>
+            <summary>Enum:AlertType Identifies what types of alert this row is associated to.</summary>
             <Enumeration name="AlertType">
                 <summary>Enum representing different alert types.</summary>
                 <EnumValue name="TenDlc">35 - Alert if an account using 10DLC goes over their daily max limit or if we've neglected to set up our pref correctly</EnumValue>
@@ -63,7 +63,7 @@
     <table name="clearinghouse">
         <summary></summary>
         <column order="12" name="CommBridge" type="tinyint">
-            <summary>Enum:EclaimsCommBridge  One of the included hard-coded communications briges.  Or none to just create the claim files without uploading.</summary>
+            <summary>Enum:EclaimsCommBridge  One of the included hard-coded communications bridges.  Or none to just create the claim files without uploading.</summary>
             <Enumeration name="EclaimsCommBridge">
                 <summary>Each clearinghouse can have a hard-coded comm bridge which handles all the communications of transfering the claim files to the clearinghouse/carrier.  Does not just include X12, but can include any format at all.</summary>
                 <EnumValue name="Lantek">20</EnumValue>
@@ -146,7 +146,7 @@
     <table name="insfilingcode">
         <summary></summary>
         <column order="5" name="ExcludeOtherCoverageOnPriClaims" type="tinyint(4)">
-            <summary>If set to true, and the patient's secondary inurance plan uses this insfilingcode, the secondary insurance plan will 
+            <summary>If set to true, and the patient's secondary insurance plan uses this insfilingcode, the secondary insurance plan will 
             not be populated on primary e-claims or paper claims.</summary>
         </column>
     </table>
@@ -189,6 +189,12 @@
                 <EnumValue name="EmailInboxRetrieve">105. </EnumValue>
                 <EnumValue name="ApiSubscriptions">106. Table in db is apisubscriptions. Small and changes rarely, but all workstations must know about the change.</EnumValue>
             </Enumeration>
+        </column>
+    </table>
+    <table name="transactioninvoice">
+        <summary></summary>
+        <column order="3" name="FilePath" type="varchar(255)">
+            <summary>Full file path. Will be blank when using InvoiceData.</summary>
         </column>
     </table>
 </database>

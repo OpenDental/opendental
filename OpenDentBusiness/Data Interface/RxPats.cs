@@ -170,6 +170,21 @@ namespace OpenDentBusiness{
 			}
 			Insert(rxPat);
 		}
+
+		///<summary>Returns true if RxPatNew differs from RxPatOld</summary>
+		public static bool UpdateComparison(RxPat rxPatNew, RxPat rxPatOld) {
+			//No need for remoting role check. No call to DB.
+			if(rxPatNew==null && rxPatOld==null) {
+				return false;
+			}
+			if(rxPatNew!=null && rxPatOld==null) {
+				return true;
+			}
+			if(rxPatNew==null && rxPatOld!=null) {
+				return true;
+			}
+			return Crud.RxPatCrud.UpdateComparison(rxPatNew,rxPatOld);
+		}
 	}
 
 }

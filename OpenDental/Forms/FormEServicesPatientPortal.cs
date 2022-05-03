@@ -55,6 +55,16 @@ namespace OpenDental {
 			}
 		}
 
+		private void butUpdateURL_Click(object sender,EventArgs e) {
+			if(!MsgBox.Show(MsgBoxButtons.YesNo,"This will update your Patient Facing URL to match your Hosted URL. " +
+				"This will remove any customization to your URL. Do you want to proceed?"))
+			{
+				return;
+			}
+			Prefs.UpdateString(PrefName.PatientPortalURL,_signupOutEServiceHQUrls.HostedUrl);
+			textPatientFacingUrlPortal.Text=_signupOutEServiceHQUrls.HostedUrl;
+		}
+
 		#region ConstructURLS
 		private void comboPPClinicUrl_SelectedIndexChanged(object sender,EventArgs e) {
 			ConstructURL();

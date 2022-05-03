@@ -319,7 +319,7 @@ namespace OpenDental {
 				return;
 			}
 			//Send to self first to confirm that everything looks apropriate.
-			string error=null;
+			string response=null;
 			PatientInfo patientInfo=_listPatientsSelected[0];
 			List<MassEmailDestination> listDestinations=new List<MassEmailDestination>() {
 				new MassEmailDestination { 
@@ -336,8 +336,14 @@ namespace OpenDental {
 				senderAddress=replyToAddress.Address;
 			}
 			UI.ProgressOD progressOD=new UI.ProgressOD();
+			Func<string,bool> isErrorMsg=new Func<string,bool>((errorMsg) => { 
+				if(!string.IsNullOrWhiteSpace(errorMsg) && !long.TryParse(errorMsg,out long num)) {
+					return true;
+				}
+				return false;
+			});
 			progressOD.ActionMain=() => {
-				error=Promotions.SendEmails(template,
+				response=Promotions.SendEmails(template,
 					listDestinations,//This is just one email, the sender.
 					alias,replyToAddress.Address,promotionName,PromotionType.Manual,template.ClinicNum,senderAddress,isVerificationBatch:true);
 			};
@@ -346,8 +352,8 @@ namespace OpenDental {
 			if(progressOD.IsCancelled){
 				return;
 			}
-			if(!string.IsNullOrWhiteSpace(error)) {
-				MsgBox.Show(error);
+			if(isErrorMsg(response)) {
+				MsgBox.Show(response);
 				return;
 			}
 			message=$"A test email was sent to {replyToAddress.Address}.\r\n"
@@ -359,7 +365,7 @@ namespace OpenDental {
 			//Now send out the mass email to all of the recipients.
 			progressOD=new UI.ProgressOD();
 			progressOD.ActionMain=() => {
-				error=Promotions.SendEmails(template,
+				response=Promotions.SendEmails(template,
 					_listPatientsSelected.Select(x => new MassEmailDestination { PatNum=x.PatNum,AptNum=x.NextAptNum,ToAddress=x.Email}).ToList(),
 					alias,replyToAddress.Address,promotionName,PromotionType.Manual,template.ClinicNum,senderAddress);
 			};
@@ -368,19 +374,24 @@ namespace OpenDental {
 			if(progressOD.IsCancelled){
 				return;
 			}
-			if(!string.IsNullOrWhiteSpace(error)) {
-				MsgBox.Show(error);
+			if(isErrorMsg(response)) {
+				MsgBox.Show(response);
 				return;
 			}
 			long numberSent=_listPatientsSelected.Count;
+			string alteredCountMsg="";
 			string templateName=template.TemplateName;
+			if(!string.IsNullOrWhiteSpace(response) && long.TryParse(response,out long numRemoved)) {
+				numberSent-=numRemoved;
+				alteredCountMsg+=$"{Lan.g(this,"Prevented")} {numRemoved} {Lan.g(this,"duplicate email(s) from sending to the same email address")}.\n";
+			}
 			if(template.ClinicNum==0) {
 				Prefs.UpdateString(PrefName.EmailHostingAlias,textboxAlias.Text);
 			}
 			else {
 				ClinicPrefs.Upsert(PrefName.EmailHostingAlias,template.ClinicNum,textboxAlias.Text);
 			}
-			message=$"{Lan.g(this,"Sent to")} {numberSent} {Lan.g(this,"patients with template:")} \"{templateName}\" {Lan.g(this,"for group:")} \"{promotionName}\".";
+			message=$"{alteredCountMsg}{Lan.g(this,"Sent to")} {numberSent} {Lan.g(this,"patients with template:")} \"{templateName}\" {Lan.g(this,"for group:")} \"{promotionName}\".";
 			MsgBox.Show(this,message);
 			DialogResult=DialogResult.OK;
 		}
