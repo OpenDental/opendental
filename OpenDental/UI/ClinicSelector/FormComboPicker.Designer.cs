@@ -38,6 +38,7 @@
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Form1";
+			this.TopMost = true;
 			this.Deactivate += new System.EventHandler(this.FormComboPicker_Deactivate);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormComboPicker_FormClosing);
 			this.Load += new System.EventHandler(this.FormComboPicker_Load);
