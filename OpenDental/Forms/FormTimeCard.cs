@@ -741,6 +741,14 @@ namespace OpenDental{
 		}
 
 		private void butCalcWeekOT_Click(object sender,EventArgs e) {
+			if(_cannotEditOwnTimecard) { 
+				MsgBox.Show("You do not have permission to modify your time card.");
+				return;
+			}
+			if(_cannotEditSelectedPayPeriod) {
+				MsgBox.Show("You do not have permission to modify your past pay periods.");
+				return;
+			}			
 			if(!Security.IsAuthorized(Permissions.TimecardsEditAll)) {
 				return;
 			}
@@ -767,6 +775,7 @@ namespace OpenDental{
 			}
 			if(_cannotEditSelectedPayPeriod) {
 				MsgBox.Show("You do not have permission to modify your past pay periods.");
+				return;
 			}
 			else if(!PrefC.GetBool(PrefName.TimecardSecurityEnabled) && !Security.IsAuthorized(Permissions.TimecardsEditAll)) {
 				//Security.IsAuthorized() shows the error to the user already.

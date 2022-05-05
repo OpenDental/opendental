@@ -123,6 +123,17 @@ namespace OpenDentBusiness{
 			TaskUnreads.SetRead(userNum,listUnSubTasksForUser.ToArray());
 		}
 
+		///<summary>Removes all the subscribers from a given tasklist</summary>
+		public static void RemoveAllSubscribers(long taskListNum) {
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),taskListNum);
+				return;
+			}
+			string command="DELETE FROM tasksubscription "
+				+"WHERE TaskListNum="+POut.Long(taskListNum);
+			Db.NonQ(command);
+		}
+
 		///<summary>Moves all subscriptions from taskListOld to taskListNew. Used when cutting and pasting a tasklist. Can also be used when deleting a tasklist to remove all subscriptions from the tasklist by sending in 0 as taskListNumNew.</summary>
 		public static void UpdateTaskListSubs(long taskListNumOld,long taskListNumNew) {
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {

@@ -932,6 +932,10 @@ namespace OpenDental {
 				RefreshLanguages();//Fill list
 				InitTranslations();//Enable and update UI
 			}
+			else {
+				//If we ARE associated to a SheetType that uses the above layoutmode logic then hide translations UI.
+				groupBoxSubViews.Visible=false;
+			}
 			FillFieldList();
 			panelMain.Refresh();
 			panelMain.Focus();

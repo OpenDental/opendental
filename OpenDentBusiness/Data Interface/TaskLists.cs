@@ -586,6 +586,8 @@ namespace OpenDentBusiness{
 			TaskList taskListOld=taskList.Copy();
 			taskList.TaskListStatus=TaskListStatusEnum.Archived;
 			Update(taskList,taskListOld);
+			Tasks.DisableRemindersFromTasklist(taskList.TaskListNum);
+			TaskSubscriptions.RemoveAllSubscribers(taskList.TaskListNum);
 			Userods.DisassociateTaskListInBox(taskList.TaskListNum);
 			Signalods.SetInvalid(InvalidType.Security);//Send a signal in case any userod was associated to the task list.
 		}

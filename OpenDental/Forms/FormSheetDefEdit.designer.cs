@@ -180,8 +180,6 @@ namespace OpenDental{
 			// 
 			// checkSynchMatchedFields
 			// 
-			this.checkSynchMatchedFields.Checked = true;
-			this.checkSynchMatchedFields.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.checkSynchMatchedFields.Location = new System.Drawing.Point(6, 15);
 			this.checkSynchMatchedFields.Name = "checkSynchMatchedFields";
 			this.checkSynchMatchedFields.Size = new System.Drawing.Size(130, 18);

@@ -413,6 +413,16 @@ namespace OpenDentBusiness{
 				task.ReminderGroupId=CodeBase.MiscUtils.CreateRandomAlphaNumericString(20);
 			}
 		}
+		/// <summary>Sets ReminderType to NoReminder for all tasks in a task list </summary>
+		public static void DisableRemindersFromTasklist(long taskListNum) {
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),taskListNum);
+				return;
+			}
+			string command="UPDATE task SET ReminderType="+POut.Long((long)TaskReminderType.NoReminder)+" "
+				+"WHERE TaskListNum="+POut.Long(taskListNum);
+			Db.NonQ(command);
+		}
 
 		///<summary>Gets all tasks for the main trunk.</summary>
 		public static List<Task> RefreshMainTrunk(bool showDone,DateTime startDate,long currentUserNum,TaskType taskType
