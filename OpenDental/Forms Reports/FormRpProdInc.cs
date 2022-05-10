@@ -39,7 +39,7 @@ namespace OpenDental {
 		}
 
 		private void FormProduction_Load(object sender, System.EventArgs e) {
-			_listProviders=Providers.GetListReports();
+			_listProviders=Providers.GetWhere(x => x.ProvStatus!=ProviderStatus.Deleted);
 			_listProviders.Insert(0,Providers.GetUnearnedProv());
 			_listFilteredProviders=new List<Provider>();
 			textToday.Text=DateTime.Today.ToShortDateString();
@@ -1034,7 +1034,7 @@ namespace OpenDental {
 			}
 			List<Provider> listProvs=new List<Provider>();
 			if(checkAllProv.Checked) {
-				listProvs=Providers.GetAll();
+				listProvs=_listProviders;
 			}
 			else {
 				for(int i=0;i<listProv.SelectedIndices.Count;i++) {

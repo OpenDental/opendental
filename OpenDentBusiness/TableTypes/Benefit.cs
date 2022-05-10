@@ -138,13 +138,13 @@ namespace OpenDentBusiness{
 				throw new ArgumentException("object is not a Benefit");
 			}
 			Benefit ben=(Benefit)obj;
-			//first by type
-			if(BenefitType!=ben.BenefitType) {//if types are different
-				return BenefitType.CompareTo(ben.BenefitType);
-			}
-			//then by fam
+			//first by fam
 			if(CoverageLevel!=ben.CoverageLevel) {
 				return CoverageLevel.CompareTo(ben.CoverageLevel);
+			}
+			//then by type
+			if(BenefitType!=ben.BenefitType) {//if types are different
+				return BenefitType.CompareTo(ben.BenefitType);
 			}
 			//types are the same, so check covCat. This is a loose comparison, ignored if either is 0.
 			if(CovCatNum!=0 && ben.CovCatNum!=0//if both covcats have values
@@ -185,34 +185,31 @@ namespace OpenDentBusiness{
 			if(PlanNum==0 && ben.PlanNum!=0) {
 				return 1;
 			}
-			if(Benefits.GetCategoryString(this)!=Benefits.GetCategoryString(ben)) {
-				return Benefits.GetCategoryString(this).CompareTo(Benefits.GetCategoryString(ben));
-			}
 			//Last resort.  Can't find any significant differences in the type, so:
 			return 0;//then values are the same.
 		}
 
 		///<summary></summary>
 		private int GetFrequencyGroupNum() {
-			if(ProcedureCodes.ListFlourideCodeNums.Contains(CodeNum)) {
+			if(ProcedureCodes.ListBWCodeNums.Contains(CodeNum)) {
 				return 1;
 			}
-			if(ProcedureCodes.ListSealantCodeNums.Contains(CodeNum)) {
+			if(ProcedureCodes.ListExamCodeNums.Contains(CodeNum)) {
 				return 2;
 			}
-			if(ProcedureCodes.ListBWCodeNums.Contains(CodeNum)) {
+			if(ProcedureCodes.ListPanoFMXCodeNums.Contains(CodeNum)) {
 				return 3;
 			}
-			if(ProcedureCodes.ListPanoFMXCodeNums.Contains(CodeNum)) {
+			if(ProcedureCodes.ListCancerScreeningCodeNums.Contains(CodeNum)) {
 				return 4;
 			}
-			if(ProcedureCodes.ListExamCodeNums.Contains(CodeNum)) {
+			if(ProcedureCodes.ListProphyCodeNums.Contains(CodeNum)) {
 				return 5;
 			}
-			if(ProcedureCodes.ListCancerScreeningCodeNums.Contains(CodeNum)) {
+			if(ProcedureCodes.ListFlourideCodeNums.Contains(CodeNum)) {
 				return 6;
 			}
-			if(ProcedureCodes.ListProphyCodeNums.Contains(CodeNum)) {
+			if(ProcedureCodes.ListSealantCodeNums.Contains(CodeNum)) {
 				return 7;
 			}
 			if(ProcedureCodes.ListCrownCodeNums.Contains(CodeNum)) {
@@ -233,7 +230,7 @@ namespace OpenDentBusiness{
 			if(ProcedureCodes.ListImplantCodeNums.Contains(CodeNum)) {
 				return 13;
 			}
-			return 14;
+			return 0;
 		}
 
 		///<summary></summary>

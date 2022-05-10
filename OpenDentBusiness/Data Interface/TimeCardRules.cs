@@ -596,7 +596,7 @@ namespace OpenDentBusiness{
 					if(listClockEvent[i].TimeDisplayed1.TimeOfDay<tsRate2AMRule) {//clocked in before Rate2 AM rule
 						tsDailyRate2Total+=tsRate2AMRule-listClockEvent[i].TimeDisplayed1.TimeOfDay;
 						if(listClockEvent[i].TimeDisplayed2.TimeOfDay<tsRate2AMRule) {//clocked out before Rate2 AM rule also
-							tsDailyRate2Total+=listClockEvent[i].TimeDisplayed1.TimeOfDay-tsRate2AMRule;//add a negative timespan
+							tsDailyRate2Total+=listClockEvent[i].TimeDisplayed2.TimeOfDay-tsRate2AMRule;//add a negative timespan
 						}
 						//Adjust Rate2 AM by overbreaks-----
 						TimeSpan tsAMBreakTimeCounter=new TimeSpan();//tracks all break time for use in calculating overages.

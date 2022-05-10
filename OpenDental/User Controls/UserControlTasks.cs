@@ -1520,6 +1520,10 @@ namespace OpenDental {
 				MsgBox.Show(this,"Not allowed to add a task list to the 'Patient Tasks' tab.");
 				return;
 			}
+			if(tabContr.SelectedTab==tabDate || tabContr.SelectedTab==tabMonth || tabContr.SelectedTab==tabWeek) {
+				MsgBox.Show(this,"Not allowed to add a recurring task list here. Changes to recurring task lists can only be made in the Repeating(setup) tab.");
+				return;
+			}
 			TaskList taskList=new TaskList();
 			//if this is a child of any other taskList
 			if(_listTaskListTreeHistory.Count>0) {
@@ -1553,6 +1557,10 @@ namespace OpenDental {
 		}
 
 		private void AddTask(bool isReminder) {
+			if(tabContr.SelectedTab==tabDate || tabContr.SelectedTab==tabMonth || tabContr.SelectedTab==tabWeek) {
+				MsgBox.Show(this,"Not allowed to add a recurring task here. Changes to recurring task lists can only be made in the Repeating(setup) tab.");
+				return;
+			}
 			if(Plugins.HookMethod(this,"UserControlTasks.AddTask_Clicked")) {
 				return;
 			}

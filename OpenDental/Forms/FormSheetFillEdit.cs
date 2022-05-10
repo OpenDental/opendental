@@ -1494,7 +1494,8 @@ namespace OpenDental {
 					continue;
 				}
 				if(control.GetType()==typeof(RichTextBox)) {//WinForms
-					//RichTextBox can alter the string being passed in. This compairison will ensure we are only updating the sheet value when the user has changed something.
+					formattedTextBox.Text="";
+					//RichTextBox can alter the string being passed in. This compairison will ensure we are only updating the sheet value when the user has changes something.
 					GraphicsHelper.CreateTextBoxForSheetDisplay((SheetField)control.Tag,false,formattedTextBox);
 					if(control.Text!=formattedTextBox.Text) {
 						((SheetField)control.Tag).FieldValue=control.Text;
