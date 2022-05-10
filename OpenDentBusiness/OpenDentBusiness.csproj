@@ -350,6 +350,8 @@
     <Compile Include="Email\EmailHosting\Provider\Models\GetHealthResponse.cs" />
     <Compile Include="Email\EmailHosting\Provider\Models\ResetAccountPasswordRequest.cs" />
     <Compile Include="Email\EmailHosting\Provider\Models\ResetAccountPasswordResponse.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\ValidateAccountRequest.cs" />
+    <Compile Include="Email\EmailHosting\Provider\Models\ValidateAccountResponse.cs" />
     <Compile Include="InternalTools\Cloud\CloudBillings.cs" />
     <Compile Include="Data Interface\DiscountPlanSubs.cs" />
     <Compile Include="Data Interface\CertEmployees.cs" />

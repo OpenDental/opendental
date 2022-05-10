@@ -142,7 +142,7 @@ namespace OpenDental{
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(521, 14);
 			this.label1.TabIndex = 239;
-			this.label1.Text = "All retrieved forms are automatically attached to the correct patient.";
+			this.label1.Text = "Retrieved forms are automatically attached to the correct patient if they are a match.";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// butRetrieve

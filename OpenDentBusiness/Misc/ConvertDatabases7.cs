@@ -2713,6 +2713,12 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}//End of 22_1_26() method
 
+		private static void To22_1_28() {
+			string command;
+			//I35616 - Enhance Plugin Whitelisting Verification.
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('DatabaseIntegritiesWhiteList','')"; 
+			Db.NonQ(command);
+		}//End of 22_1_28() method
 	}
 }
 

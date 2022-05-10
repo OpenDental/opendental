@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
-<database version="22.1.26.0">
+<database version="22.1.28.0">
     <table name="alertcategorylink">
         <summary></summary>
         <column order="2" name="AlertType" type="tinyint(4)">

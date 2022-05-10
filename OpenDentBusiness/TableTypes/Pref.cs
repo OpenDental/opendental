@@ -697,6 +697,9 @@ namespace OpenDentBusiness {
 		CustomersHQServer,
 		CustomizedForPracticeWeb,
 		DatabaseConvertedForMySql41,
+		///<summary>String. Stores the obfuscated DatabaseIntegrites whitelist from the last successful call to HQ.</summary>
+		[PrefName(ValueType=PrefValueType.STRING)]
+		DatabaseIntegritiesWhiteList, 
 		///<summary>bool. Set to false by default. If true, the optimize database maintenance tool will be disabled.</summary>
 		DatabaseMaintenanceDisableOptimize,
 		///<summary>bool. Set to false by default. If true, database maintenance will skip table checks.</summary>

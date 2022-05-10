@@ -14,6 +14,9 @@ namespace OpenDentBusiness {
 		///<summary>Updates the status for the given account.</summary>
 		UpdateAccountStatusResponse UpdateAccountStatus(UpdateAccountStatusRequest request);
 
+		///<summary>Compares the passed in AccountGUID and Secret to what is stored on account.</summary>
+		ValidateAccountResponse ValidateAccount(ValidateAccountRequest request);
+
 		///<summary>Creates a new account guarantor. ExternalID must be unique for this provider.</summary>
 		CreateAccountGuarantorResponse CreateAccountGuarantor(CreateAccountGuarantorRequest request);
 

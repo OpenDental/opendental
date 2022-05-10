@@ -927,13 +927,13 @@ namespace OpenDental {
 			//}
 			EnableDashboardWidgetOptions(_sheetDefCur.SheetType==SheetTypeEnum.PatientDashboardWidget);
 			textDescription.Text=_sheetDefCur.Description;
-			if(!TryInitLayoutModes()) {//TryInitLayoutModes() must be called before initial FillFieldList().
+			if(!TryInitLayoutModes() && _sheetDefCur.SheetType!=SheetTypeEnum.PatientDashboardWidget) {//TryInitLayoutModes() must be called before initial FillFieldList().
 				//If we are not associated to a SheetType that uses the above layoutmode logic then setup translations UI.
 				RefreshLanguages();//Fill list
 				InitTranslations();//Enable and update UI
 			}
 			else {
-				//If we ARE associated to a SheetType that uses the above layoutmode logic then hide translations UI.
+				//If we ARE associated to a SheetType that uses the above layoutmode logic or it is a Patient Dashboard, then hide translations UI.
 				groupBoxSubViews.Visible=false;
 			}
 			FillFieldList();

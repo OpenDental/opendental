@@ -64,5 +64,10 @@ namespace OpenDentBusiness {
 				AccountSecret="LADEEDA",
 			};	
 		}
+
+		public ValidateAccountResponse ValidateAccount(ValidateAccountRequest request) {
+			return new ValidateAccountResponse() {
+			};
+		}
 	}
 }

@@ -42,6 +42,11 @@ namespace OpenDentBusiness {
 			return RunApiCall<UpdateAccountStatusResponse>(request,"POST",$"v1/account/status");
 		}
 
+		///<summary>Compares the passed in AccountGUID and Secret to what is stored on account.</summary>
+		public ValidateAccountResponse ValidateAccount(ValidateAccountRequest request) {
+			return RunApiCall<ValidateAccountResponse>(request,"POST",$"v1/account/validate");
+		}
+
 		///<summary>Creates a new account guarantor. ExternalID must be unique for this provider.</summary>
 		public CreateAccountGuarantorResponse CreateAccountGuarantor(CreateAccountGuarantorRequest request) {
 			return RunApiCall<CreateAccountGuarantorResponse>(request,"POST",$"v1/accountguarantor/");

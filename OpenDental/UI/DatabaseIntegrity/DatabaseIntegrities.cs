@@ -19,6 +19,9 @@ namespace OpenDental {
 				RefreshFromHQ();
 			}
 			if(_listDatabaseIntegrities.Count==0){
+				RefreshCacheFromPref(); 
+			}
+			if(_listDatabaseIntegrities.Count==0){
 				//must have had trouble connecting to HQ,
 				//so just let them use the plugin
 				return true;
@@ -47,6 +50,9 @@ namespace OpenDental {
 				RefreshFromHQ();
 			}
 			if(_listDatabaseIntegrities.Count==0){
+				RefreshCacheFromPref();
+			}
+			if(_listDatabaseIntegrities.Count==0){
 				//must have had trouble connecting to HQ,
 				return null;
 			}
@@ -58,10 +64,13 @@ namespace OpenDental {
 			return databaseIntegrityDefault;//shouldn't be null unless something is wrong with db
 		}
 
-		///<summary>Can return null. Will return for a specific class type. If none, then Default. Can return null if couldn't connect to HQ.</summary>
+		///<summary>Can return null. Will return for a specific class type. If none, then Default. Can return null if couldn't connect to HQ or load preference.</summary>
 		public static DatabaseIntegrity GetOneClass(EnumWarningIntegrityType warningIntegrityType){
 			if(_listDatabaseIntegrities is null){
 				RefreshFromHQ();
+			}
+			if(_listDatabaseIntegrities.Count==0){
+				RefreshCacheFromPref();
 			}
 			if(_listDatabaseIntegrities.Count==0){
 				//must have had trouble connecting to HQ,
@@ -75,6 +84,7 @@ namespace OpenDental {
 			return databaseIntegrityDefault;//shouldn't be null here unless something is wrong with db
 		}
 
+		///<summary>Attempts to get the Whitelist from HQ. Saves to preference if successful, else fails silently.</summary>
 		private static void RefreshFromHQ(){
 			_listDatabaseIntegrities=new List<DatabaseIntegrity>();
 			#if DEBUG
@@ -101,7 +111,25 @@ namespace OpenDental {
 				return;
 			}
 			xmlNode=xmlDocument.SelectSingleNode("//ResultTable");
-			ODDataTable table=new ODDataTable(xmlNode.InnerXml);
+			string innerXml=xmlNode.InnerXml.ToString();
+			FillCache(innerXml);
+			if(_listDatabaseIntegrities.Count==0) {
+				return;
+			}
+			string whiteListObfuscated;
+			whiteListObfuscated=CDT.Class1.TryEncrypt(innerXml);
+			if(whiteListObfuscated!=null) {
+				bool changed=false;
+				changed |= Prefs.UpdateString(PrefName.DatabaseIntegritiesWhiteList,whiteListObfuscated);
+				if(changed) {
+					DataValid.SetInvalid(InvalidType.Prefs);
+				}
+			}
+		}
+
+		///<summary>Loads the whitelisted DatabaseIntegrity objects into cache. </summary>
+		private static void FillCache(string xmlString){
+			ODDataTable table=new ODDataTable(xmlString);
 			for(int i=0;i<table.Rows.Count;i++) {
 				DatabaseIntegrity databaseIntegrity=new DatabaseIntegrity();
 				databaseIntegrity.DatabaseIntegrityNum=PIn.Long(table.Rows[i]["DatabaseIntegrityNum"]);
@@ -125,6 +153,15 @@ namespace OpenDental {
 			}
 		}
 
+		///<summary>Attempts to load databaseIntegrities whitelist from preference into cache.</summary>
+		private static void RefreshCacheFromPref() {
+			string whiteListObfuscated=Prefs.GetOne(PrefName.DatabaseIntegritiesWhiteList).ValueString;
+			string whiteListPlainText="";
+			if(whiteListObfuscated!="") {
+				whiteListPlainText=CDT.Class1.TryDecrypt(whiteListObfuscated);
+				FillCache(whiteListPlainText);
+			}
+		}
 
 	}
 }
