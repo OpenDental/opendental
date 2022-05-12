@@ -198,6 +198,7 @@ namespace OpenDentBusiness{
 			tableReturn.Columns.Add("DateTStamp");
 			tableReturn.Columns.Add("serverDateTime");
 			tableReturn.Columns.Add("eServiceLogType");
+			tableReturn.Columns.Add("AppointmentType",typeof(long));
 			//Run Query
 			List<eServiceType> listEserviceTypes=new List<eServiceType>{eServiceType.WSRecall,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSAsap};
 			string command="SELECT appointment.*, eservicelog.EServiceType FROM appointment ";
@@ -236,6 +237,7 @@ namespace OpenDentBusiness{
 				row["DateTStamp"]=PIn.DateT(tableAppointments.Rows[i]["DateTStamp"].ToString());
 				row["serverDateTime"]=dateTimeServer;
 				row["eServiceLogType"]=(ApiEServiceLogType)PIn.Int(tableAppointments.Rows[i]["EServiceType"].ToString());
+				row["AppointmentType"]=PIn.Long(tableAppointments.Rows[i]["AppointmentTypeNum"].ToString());
 				tableReturn.Rows.Add(row);
 			}
 			return tableReturn;

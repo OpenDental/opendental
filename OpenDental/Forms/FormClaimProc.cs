@@ -1191,73 +1191,31 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private List<ClaimProc> GetListCliamProcHypothetical() {
+			List<ClaimProc> listClaimProcHypothetical=new List<ClaimProc>();
+			ClaimProc claimProcHypothetical=_claimProc.Copy();
+			claimProcHypothetical.InsPayAmt=PIn.Double(textInsPayAmt.Text);
+			claimProcHypothetical.WriteOff=PIn.Double(textWriteOff.Text);
+			claimProcHypothetical.FeeBilled=_procedure.ProcFeeTotal;
+			listClaimProcHypothetical.Add(claimProcHypothetical);
+			return listClaimProcHypothetical;
+        }
+
 		/// <summary>Returns true if ClaimProcAllowCreditsGreaterThanProcFee preference allows the user to add credits greater than the proc fee. Otherwise returns false </summary>
 		private bool IsClaimProcGreaterThanProcFee() {
 			if(!IsProc) {
-				return true;
-			}
-			ClaimProcCreditsGreaterThanProcFee claimProcCreditsGreaterThanProcFee=(ClaimProcCreditsGreaterThanProcFee)PrefC.GetInt(PrefName.ClaimProcAllowCreditsGreaterThanProcFee);
-			if(claimProcCreditsGreaterThanProcFee==ClaimProcCreditsGreaterThanProcFee.Allow) {
-				return true;
-			}
-			List<ClaimProc> listClaimProcsForPats=ClaimProcs.Refresh(_patient.PatNum);
-			List<PaySplit> listPaySplitsForSelectedCPs= PaySplits.GetPaySplitsFromProcs(new List<long> { _procedure.ProcNum });
-			List<Adjustment> listAdjustmentsForSelectedCPs=Adjustments.GetForProcs(new List<long> { _procedure.ProcNum });
-			decimal insPayAmt=(decimal)ClaimProcs.ProcInsPay(listClaimProcsForPats.FindAll(x => x.ClaimProcNum!=_claimProc.ClaimProcNum),_procedure.ProcNum)
-				+PIn.Decimal(textInsPayAmt.Text);
-			decimal writeOff=(decimal)ClaimProcs.ProcWriteoff(listClaimProcsForPats.FindAll(x => x.ClaimProcNum!=_claimProc.ClaimProcNum),_procedure.ProcNum)
-				+PIn.Decimal(textWriteOff.Text);
-			decimal feeAcct=(decimal)_procedure.ProcFeeTotal;
-			decimal creditRem=0;
-			decimal adj=listAdjustmentsForSelectedCPs.Select(x => (decimal)x.AdjAmt).Sum();
-			decimal patPayAmt=listPaySplitsForSelectedCPs.Select(x => (decimal)x.SplitAmt).Sum();
-			//Any changes to this calculation should also consider FormClaimPayTotal.IsClaimProcGreaterThanProcFee().
-			creditRem=feeAcct-patPayAmt-insPayAmt-writeOff+adj;
-			bool isCreditGreater=CompareDecimal.IsLessThanZero(creditRem);
-			string procDescript=ProcedureCodes.GetProcCode(_procedure.CodeNum).ProcCode
-				+"\t"+Lan.g(this,"Fee")+": "+feeAcct.ToString("F")
-				+"\t"+Lan.g(this,"Credits")+": "+Math.Abs((-patPayAmt-insPayAmt-writeOff+adj)).ToString("F")
-				+"\t"+Lan.g(this,"Remaining")+": ("+Math.Abs(creditRem).ToString("F")+")";
-			if(!isCreditGreater) {
-				return true;
-			}
-			if(claimProcCreditsGreaterThanProcFee==ClaimProcCreditsGreaterThanProcFee.Block) {
-				MessageBox.Show(this,Lan.g(this,"Remaining amount is negative")+":\r\n"+procDescript+"\r\n"+Lan.g(this,"Not allowed to continue."),
-					Lan.g(this,"Overpaid Procedure Warning"));
 				return false;
 			}
-			if(claimProcCreditsGreaterThanProcFee==ClaimProcCreditsGreaterThanProcFee.Warn) {
-				return MessageBox.Show(this,Lan.g(this,"Remaining amount is negative")+":\r\n"+procDescript+"\r\n"+Lan.g(this,"Continue?"),
-					Lan.g(this,"Overpaid Procedure Warning"),MessageBoxButtons.YesNo)==DialogResult.Yes;
-			}
-			return true;//should never get to this line, only possible if another enum value is added to allow, warn, and block
+			return ClaimL.IsClaimProcGreaterThanProcFee(_patient.PatNum,GetListCliamProcHypothetical());
 		}
 
 		///<summary>Returns true if InsPayNoWriteoffMoreThanProc preference is turned on and the sum of write off amount is greater than the proc fee.
 		///Otherwise returns false </summary>
 		private bool IsWriteOffGreaterThanProcFee() {
-			if(!IsProc || !PrefC.GetBool(PrefName.InsPayNoWriteoffMoreThanProc)) {
+			if(!IsProc) {
 				return false;
 			}
-			List<ClaimProc> listClaimProcsForPats=ClaimProcs.Refresh(_patient.PatNum);
-			decimal writeoff=(decimal)ClaimProcs.ProcWriteoff(listClaimProcsForPats.FindAll(x => x.ClaimProcNum!=_claimProc.ClaimProcNum),_procedure.ProcNum)
-				+PIn.Decimal(textWriteOff.Text);
-			decimal feeAcct=(decimal)_procedure.ProcFeeTotal;
-			decimal adjAcct=Adjustments.GetForProcs(new List<long> { _procedure.ProcNum }).Sum(x => (decimal)x.AdjAmt);
-			decimal writeoffRem=0;
-			//Any changes to this calculation should also consider FormClaimPayTotal.IsWriteoffGreaterThanProcFee().
-			writeoffRem=feeAcct-writeoff+adjAcct;
-			bool isWriteoffGreater=CompareDecimal.IsLessThanZero(writeoffRem) && CompareDecimal.IsGreaterThanZero(writeoff);
-			string procDescript=Lan.g(this,"Fee")+": "+feeAcct.ToString("F")
-				+"\t"+Lan.g(this,"Adjustments")+": "+adjAcct.ToString("F")
-				+"\t"+Lan.g(this,"Write-off")+": "+Math.Abs((-writeoff)).ToString("F")
-				+"\t"+Lan.g(this,"Remaining")+": ("+Math.Abs(writeoffRem).ToString("F")+")";
-			if(isWriteoffGreater) {
-				MessageBox.Show(this,Lan.g(this,"Write-off amount is greater than the adjusted procedure fee")+":\r\n"+procDescript+"\r\n"
-					+Lan.g(this,"Not allowed to continue."),Lan.g(this,"Excessive Write-off"));
-				return true;
-			}
-			return false;
+			return ClaimL.IsWriteOffGreaterThanProcFee(_patient.PatNum,GetListCliamProcHypothetical());
 		}
 
 		private bool AllAreValid(){
@@ -1320,10 +1278,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"The current writeoff value will cause the procedure's total writeoff to be negative.  Please change it to at least "+(_claimProc.WriteOff-(claimWriteoffTotal+_claimProc.WriteOff)).ToString()+" to continue.");
 				return;
 			}
-			if(IsWriteOffGreaterThanProcFee()) {
-				return;
-			}
-			if(!IsClaimProcGreaterThanProcFee()) {
+			if(IsWriteOffGreaterThanProcFee() || IsClaimProcGreaterThanProcFee()) {
 				return;
 			}
 			if(ListTools.In(_claimProc.Status,ClaimProcStatus.Received,ClaimProcStatus.Supplemental)

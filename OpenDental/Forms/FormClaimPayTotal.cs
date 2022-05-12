@@ -345,10 +345,7 @@ namespace OpenDental {
 				}
 			}
 			if(!skipChecks) {
-				if(IsWriteOffGreaterThanProcFee()) {
-					return false;
-				}
-				if(!isClaimProcGreaterThanProcFee()) {
+				if(WillClaimProcRecievedWriteoffExceedProcFee() || WillClaimProcRecievedExceedProcFee()) {
 					return false;
 				}
 			}
@@ -382,105 +379,31 @@ namespace OpenDental {
 			return false;
 		}
 
-		/// <summary>Returns true if ClaimProcAllowCreditsGreaterThanProcFee preference allows the user to add credits greater than the proc fee. Otherwise returns false </summary>
-		private bool isClaimProcGreaterThanProcFee() {
-			ClaimProcCreditsGreaterThanProcFee claimProcCreditsGreaterThanProcFee=(ClaimProcCreditsGreaterThanProcFee)PrefC.GetInt(PrefName.ClaimProcAllowCreditsGreaterThanProcFee);
-			if(claimProcCreditsGreaterThanProcFee==ClaimProcCreditsGreaterThanProcFee.Allow) {
-				return true;
-			}
-			List<Procedure> listProcedures=Procedures.GetManyProc(ClaimProcArray.Select(x=>x.ProcNum).ToList(),false);
-			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(_patient.PatNum);
-			List<PaySplit> listPaySplitsForSelectedCP= PaySplits.GetPaySplitsFromProcs(ClaimProcArray.Select(x=>x.ProcNum).ToList());
-			List<Adjustment> listAdjustmentsForSelectedCP=Adjustments.GetForProcs(ClaimProcArray.Select(x=>x.ProcNum).ToList());
-			bool isCreditGreater=false;
-			List<string> listProcDescripts=new List<string>();
+		///<summary>Translates the grid into claimprocs, with edits applied.</summary>
+		private List<ClaimProc> GetListCliamProcHypothetical() {
+			List<ClaimProc> listClaimProcsHypothetical=new List<ClaimProc>();
 			for(int i=0;i<ClaimProcArray.Length;i++) {
-				ClaimProc claimProc=ClaimProcArray[i];
+				ClaimProc claimProc=ClaimProcArray[i].Copy();
 				int idxInsPay=gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Ins Pay"));
 				int idxWriteOff=gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Writeoff"));
 				int idxFeeAcct=gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Fee"));
-				decimal insPayAmt=(decimal)ClaimProcs.ProcInsPay(listClaimProcs.FindAll(x => x.ClaimProcNum!=claimProc.ClaimProcNum),claimProc.ProcNum)
-					+PIn.Decimal(gridMain.ListGridRows[i].Cells[idxInsPay].Text);
-				decimal writeOff=(decimal)ClaimProcs.ProcWriteoff(listClaimProcs.FindAll(x => x.ClaimProcNum!=claimProc.ClaimProcNum),claimProc.ProcNum)
-					+PIn.Decimal(gridMain.ListGridRows[i].Cells[idxWriteOff].Text);
-				decimal feeAcct=PIn.Decimal(gridMain.ListGridRows[i].Cells[idxFeeAcct].Text);
-				decimal adjAmt=listAdjustmentsForSelectedCP.Where(x=>x.ProcNum==claimProc.ProcNum).Select(x=>(decimal)x.AdjAmt).Sum();
-				decimal patPayAmt=listPaySplitsForSelectedCP.Where(x=>x.ProcNum==claimProc.ProcNum).Select(x=>(decimal)x.SplitAmt).Sum();
-				//Any changes to this calculation should also consider FormClaimProc.IsClaimProcGreaterThanProcFee().
-				decimal creditTotal=feeAcct-patPayAmt-insPayAmt-writeOff+adjAmt;
-				isCreditGreater|=(CompareDecimal.IsLessThanZero(creditTotal));
-				if(CompareDecimal.IsLessThanZero(creditTotal)) {
-					Procedure procedure=listProcedures.FirstOrDefault(x=>x.ProcNum==claimProc.ProcNum);
-					listProcDescripts.Add((procedure==null ? "" : ProcedureCodes.GetProcCode(procedure.CodeNum).ProcCode)
-						+"\t"+Lan.g(this,"Fee")+": "+feeAcct.ToString("F")
-						+"\t"+Lan.g(this,"Credits")+": "+(Math.Abs(-patPayAmt-insPayAmt-writeOff+adjAmt)).ToString("F")
-						+"\t"+Lan.g(this,"Remaining")+": ("+Math.Abs(creditTotal).ToString("F")+")");
-				}
+				claimProc.InsPayAmt=PIn.Double(gridMain.ListGridRows[i].Cells[idxInsPay].Text);
+				claimProc.WriteOff=PIn.Double(gridMain.ListGridRows[i].Cells[idxWriteOff].Text); 
+				claimProc.FeeBilled=PIn.Double(gridMain.ListGridRows[i].Cells[idxFeeAcct].Text); //Since this column is editable, we need to override the hypothetical claimProcs feebilled.
+				listClaimProcsHypothetical.Add(claimProc);
 			}
-			if(!isCreditGreater) {
-				return true;
-			}
-			if(claimProcCreditsGreaterThanProcFee==ClaimProcCreditsGreaterThanProcFee.Block) {
-				using MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(Lan.g(this,"Remaining amount is negative for the following procedures")+":\r\n"
-					+string.Join("\r\n",listProcDescripts)+"\r\n"+Lan.g(this,"Not allowed to continue."));
-				msgBoxCopyPaste.Text=Lan.g(this,"Overpaid Procedure Warning");
-				msgBoxCopyPaste.ShowDialog();
-				return false;
-			}
-			if(claimProcCreditsGreaterThanProcFee==ClaimProcCreditsGreaterThanProcFee.Warn) {
-				return MessageBox.Show(Lan.g(this,"Remaining amount is negative for the following procedures")+":\r\n"
-					+string.Join("\r\n",listProcDescripts.Take(10))+"\r\n"+(listProcDescripts.Count>10?"...\r\n":"")+Lan.g(this,"Continue?")
-					,Lan.g(this,"Overpaid Procedure Warning"),MessageBoxButtons.OKCancel)==DialogResult.OK;
-			} 
-			return true;//should never get to this line, only possible if another enum value is added to allow, warn, and block
+			return listClaimProcsHypothetical;
+        }
+
+		/// <summary>Returns true if ClaimProcAllowCreditsGreaterThanProcFee preference allows the user to add credits greater than the proc fee. Otherwise returns false </summary>
+		private bool WillClaimProcRecievedExceedProcFee() {
+			return ClaimL.IsClaimProcGreaterThanProcFee(_patient.PatNum,GetListCliamProcHypothetical());
 		}
 
 		///<summary>Returns true if InsPayNoWriteoffMoreThanProc preference is turned on and the sum of write off amount is greater than the proc fee.
 		///Otherwise returns false </summary>
-		private bool IsWriteOffGreaterThanProcFee() {
-			if(!PrefC.GetBool(PrefName.InsPayNoWriteoffMoreThanProc)) {
-				return false;//InsPayNoWriteoffMoreThanProc preference is off. No need to check.
-			}
-			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(_patient.PatNum);
-			List<Adjustment> listAdjustments=Adjustments.GetForProcs(ClaimProcArray.Select(x => x.ProcNum).Where(x => x!=0).ToList());
-			bool isWriteoffGreater=false;
-			List<string> listProcDescripts=new List<string>();
-			for(int i=0;i<ClaimProcArray.Length;i++) {
-				ClaimProc claimProc=ClaimProcArray[i];
-				//Fetch all adjustments for the given procedure.
-				List<Adjustment> listAdjustmentsClaimProcs=listAdjustments.Where(x => x.ProcNum==claimProc.ProcNum).ToList();
-				int idxWriteoff=gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Writeoff"));
-				int idxFeeAcct=gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Fee"));
-				decimal writeOff=(decimal)ClaimProcs.ProcWriteoff(listClaimProcs.FindAll(x => x.ClaimProcNum!=claimProc.ClaimProcNum),claimProc.ProcNum)
-					+PIn.Decimal(gridMain.ListGridRows[i].Cells[idxWriteoff].Text);
-				decimal feeAcct=PIn.Decimal(gridMain.ListGridRows[i].Cells[idxFeeAcct].Text);
-				decimal adjAcct=listAdjustmentsClaimProcs.Sum(x => (decimal)x.AdjAmt);
-				//Any changes to this calculation should also consider FormClaimProc.IsWriteOffGreaterThanProc().
-				decimal writeoffTotal=feeAcct-writeOff+adjAcct;
-				isWriteoffGreater|=(CompareDecimal.IsLessThanZero(writeoffTotal) && CompareDecimal.IsGreaterThanZero(writeOff));
-				if(!CompareDecimal.IsLessThanZero(writeoffTotal) || !CompareDecimal.IsGreaterThanZero(writeOff)) {
-					continue;
-				}
-				Procedure procedure=Procedures.GetProcFromList(_listProcedures,claimProc.ProcNum);//will return a new procedure if none found.
-				if(procedure==null) {
-					listProcDescripts.Add("");
-				}
-				else {
-					listProcDescripts.Add((ProcedureCodes.GetProcCode(procedure.CodeNum).ProcCode)
-						+"\t"+Lan.g(this,"Fee")+": "+feeAcct.ToString("F")
-						+"\t"+Lan.g(this,"Adjustments")+": "+adjAcct.ToString("F")
-						+"\t"+Lan.g(this,"Write-off")+": "+(Math.Abs(-writeOff)).ToString("F")
-						+"\t"+Lan.g(this,"Remaining")+": ("+Math.Abs(writeoffTotal).ToString("F")+")");
-				}
-			}
-			if(isWriteoffGreater) {
-				using MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(Lan.g(this,"Write-off amount is greater than the adjusted procedure fee for the following "
-					+"procedure(s)")+":\r\n"+string.Join("\r\n",listProcDescripts)+"\r\n"+Lan.g(this,"Not allowed to continue."));
-				msgBoxCopyPaste.Text=Lan.g(this,"Excessive Write-off");
-				msgBoxCopyPaste.ShowDialog();
-				return true;
-			}
-			return false;
+		private bool WillClaimProcRecievedWriteoffExceedProcFee() {
+			return ClaimL.IsWriteOffGreaterThanProcFee(_patient.PatNum,GetListCliamProcHypothetical());
 		}
 
 		private void butDeductible_Click(object sender,EventArgs e) {

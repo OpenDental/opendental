@@ -110,6 +110,7 @@ namespace OpenDental {
 			}
 			using FormWebView fweb=new FormWebView(url);
 			fweb.Title=Lan.g(this,"Advertising - Postcards");
+			fweb.IsUrlSingleUse=true;
 			fweb.ShowDialog();
 		}
 

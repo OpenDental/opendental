@@ -1591,7 +1591,7 @@ namespace OpenDental {
 				return;
 			}
 			if(tabContr.SelectedTab==tabDate || tabContr.SelectedTab==tabMonth || tabContr.SelectedTab==tabWeek) {
-				MsgBox.Show(this,"Not allowed to add a recurring task list here. Changes to recurring task lists can only be made in the Repeating(setup) tab.");
+				MsgBox.Show(this,"Not allowed to add a repeating task list here. Changes to repeating task lists can only be made in the Repeating(setup) tab.");
 				return;
 			}
 			TaskList taskList=new TaskList();
@@ -1628,7 +1628,7 @@ namespace OpenDental {
 
 		private void AddTask(bool isReminder) {
 			if(tabContr.SelectedTab==tabDate || tabContr.SelectedTab==tabMonth || tabContr.SelectedTab==tabWeek) {
-				MsgBox.Show(this,"Not allowed to add a recurring task here. Changes to recurring task lists can only be made in the Repeating(setup) tab.");
+				MsgBox.Show(this,"Not allowed to add a repeating task here. Changes to repeating task lists can only be made in the Repeating(setup) tab.");
 				return;
 			}
 			if(Plugins.HookMethod(this,"UserControlTasks.AddTask_Clicked")) {

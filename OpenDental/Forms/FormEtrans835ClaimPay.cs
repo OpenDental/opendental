@@ -481,9 +481,36 @@ namespace OpenDental {
 			textWriteOff.Text=writeOff.ToString("F");
 		}
 
+		private List<ClaimProc> GetListCliamProcHypothetical() {
+			List<ClaimProc> listClaimProcsHypothetical=new List<ClaimProc>();
+			for(int i=0;i<gridPayments.ListGridRows.Count;i++) {
+				ClaimProc claimProc=((ClaimProc)gridPayments.ListGridRows[i].Tag).Copy();
+				string insPay=_hx835_Claim.IsPreauth ? "InsEst" : "InsPay";
+				int idxInsPay=gridPayments.Columns.GetIndex(Lan.g("TableClaimProc",insPay));
+				int idxWriteOff=gridPayments.Columns.GetIndex(Lan.g("TableClaimProc","Writeoff"));
+				int idxFeeAcct=gridPayments.Columns.GetIndex(Lan.g("TableClaimProc","Fee Billed"));
+				claimProc.InsPayAmt=PIn.Double(gridPayments.ListGridRows[i].Cells[idxInsPay].Text);
+				claimProc.WriteOff=PIn.Double(gridPayments.ListGridRows[i].Cells[idxWriteOff].Text);
+				claimProc.FeeBilled=PIn.Double(gridPayments.ListGridRows[i].Cells[idxFeeAcct].Text);
+				listClaimProcsHypothetical.Add(claimProc);
+			}
+			return listClaimProcsHypothetical;
+		}
+
+		private bool IsClaimProcGreaterThanProcFee() {
+			return ClaimL.IsClaimProcGreaterThanProcFee(_patient.PatNum,GetListCliamProcHypothetical());
+		}
+
+		private bool IsWriteOffGreaterThanProcFee() {
+			return ClaimL.IsClaimProcGreaterThanProcFee(_patient.PatNum,GetListCliamProcHypothetical());
+		}
+
 		///<Summary>Surround with try-catch.</Summary>
 		private void SaveGridChanges(){
-			//validate all grid cells
+            //validate all grid cells
+            if(IsClaimProcGreaterThanProcFee() || IsWriteOffGreaterThanProcFee()) {
+				return;
+            }
 			double dbl;
 			for(int i=0;i<gridPayments.ListGridRows.Count;i++){
 				if(gridPayments.ListGridRows[i].Cells[_idxDeduct].Text!=""){//deduct

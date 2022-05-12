@@ -381,5 +381,143 @@ namespace UnitTests.Claims_Tests {
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			Assert.AreEqual(0,listClaimProcs.Count);
 		}
+
+		[TestMethod]
+		public void Claims_GetClaimProcGreaterThanProcFee_ProcOverpaid() {
+			//Build Account
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			Patient pat=PatientT.CreatePatient(suffix);
+			Carrier carrier=CarrierT.CreateCarrier(suffix);
+			InsPlan plan=InsPlanT.CreateInsPlan(carrier.CarrierNum);
+			InsSub sub=InsSubT.CreateInsSub(pat.PatNum,plan.PlanNum);
+			long subNum=sub.InsSubNum;
+			PatPlanT.CreatePatPlan(1,pat.PatNum,subNum);
+			ProcedureCode originalProcCode=ProcedureCodeT.CreateProcCode("D2391");
+			//Chart procedure for $140.00, with insurance covering %80. Results in $28.00 of patient portion.
+			long ucrFeeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"UCR Fees"+suffix);
+			BenefitT.CreatePercentForProc(plan.PlanNum,originalProcCode.CodeNum,80);
+			FeeT.CreateFee(ucrFeeSchedNum,originalProcCode.CodeNum,140);
+			Procedure proc=ProcedureT.CreateProcedure(pat,originalProcCode.ProcCode,ProcStat.C,"1",140);//Tooth 1
+			//Creates the claim in the same manner as the account module, including estimates.
+			Family fam=Patients.GetFamily(pat.PatNum);
+			List<InsSub> listInsSubs=InsSubs.RefreshForFam(fam);
+			List<InsPlan> listInsPlans=InsPlans.RefreshForSubList(listInsSubs);
+			List<PatPlan> listPatPlans=PatPlans.Refresh(pat.PatNum);
+			List<Benefit> listBenefits=Benefits.Refresh(listPatPlans,listInsSubs);
+			List<Procedure> listProcs=Procedures.Refresh(pat.PatNum);
+			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
+			Claim claim=ClaimT.CreateClaim("P",listPatPlans,listInsPlans,listClaimProcs,listProcs,pat,listProcs,listBenefits,listInsSubs);
+			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
+			ClaimT.ReceiveClaim(claim,listClaimProcs,true);
+			//Create Adjustment that covers a little more than $28.00 of the patient portion. Say, $28.01?
+			AdjustmentT.MakeAdjustment(pat.PatNum,-28.01,procNum:proc.ProcNum);
+			//Test
+			List<string> listResults=Claims.GetClaimProcGreaterThanProcFee(pat.PatNum,listClaimProcs);
+			Assert.IsTrue(listResults.Count==1);
+        }
+
+		[TestMethod]
+		public void Claims_GetClaimProcGreaterThanProcFee_NoneOverPaid() {
+			//Build Account
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			Patient pat=PatientT.CreatePatient(suffix);
+			Carrier carrier=CarrierT.CreateCarrier(suffix);
+			InsPlan plan=InsPlanT.CreateInsPlan(carrier.CarrierNum);
+			InsSub sub=InsSubT.CreateInsSub(pat.PatNum,plan.PlanNum);
+			long subNum=sub.InsSubNum;
+			PatPlanT.CreatePatPlan(1,pat.PatNum,subNum);
+			ProcedureCode originalProcCode=ProcedureCodeT.CreateProcCode("D2391");
+			//Chart procedure for $140.00, with insurance covering %80. Results in $28.00 of patient portion.
+			long ucrFeeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"UCR Fees"+suffix);
+			BenefitT.CreatePercentForProc(plan.PlanNum,originalProcCode.CodeNum,80);
+			FeeT.CreateFee(ucrFeeSchedNum,originalProcCode.CodeNum,140);
+			Procedure proc=ProcedureT.CreateProcedure(pat,originalProcCode.ProcCode,ProcStat.C,"1",140);//Tooth 1
+			//Creates the claim in the same manner as the account module, including estimates.
+			Family fam=Patients.GetFamily(pat.PatNum);
+			List<InsSub> listInsSubs=InsSubs.RefreshForFam(fam);
+			List<InsPlan> listInsPlans=InsPlans.RefreshForSubList(listInsSubs);
+			List<PatPlan> listPatPlans=PatPlans.Refresh(pat.PatNum);
+			List<Benefit> listBenefits=Benefits.Refresh(listPatPlans,listInsSubs);
+			List<Procedure> listProcs=Procedures.Refresh(pat.PatNum);
+			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
+			Claim claim=ClaimT.CreateClaim("P",listPatPlans,listInsPlans,listClaimProcs,listProcs,pat,listProcs,listBenefits,listInsSubs);
+			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
+			ClaimT.ReceiveClaim(claim,listClaimProcs,true);
+			//Test
+			List<string> listResults=Claims.GetClaimProcGreaterThanProcFee(pat.PatNum,listClaimProcs);
+			Assert.IsTrue(listResults.Count==0);
+        }
+
+		[TestMethod]
+		public void Claims_GetWriteOffGreaterThanProcFee_ProcOverpaid() {
+			//Build Account
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			Patient pat=PatientT.CreatePatient(suffix);
+			Carrier carrier=CarrierT.CreateCarrier(suffix);
+			InsPlan plan=InsPlanT.CreateInsPlan(carrier.CarrierNum);
+			InsSub sub=InsSubT.CreateInsSub(pat.PatNum,plan.PlanNum);
+			long subNum=sub.InsSubNum;
+			PatPlanT.CreatePatPlan(1,pat.PatNum,subNum);
+			ProcedureCode originalProcCode=ProcedureCodeT.CreateProcCode("D2391");
+			//Chart procedure for $140.00, with insurance covering %80. Results in $28.00 of patient portion.
+			long ucrFeeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"UCR Fees"+suffix);
+			BenefitT.CreatePercentForProc(plan.PlanNum,originalProcCode.CodeNum,80);
+			FeeT.CreateFee(ucrFeeSchedNum,originalProcCode.CodeNum,140);
+			Procedure proc=ProcedureT.CreateProcedure(pat,originalProcCode.ProcCode,ProcStat.C,"1",140);//Tooth 1
+			//Creates the claim in the same manner as the account module, including estimates.
+			Family fam=Patients.GetFamily(pat.PatNum);
+			List<InsSub> listInsSubs=InsSubs.RefreshForFam(fam);
+			List<InsPlan> listInsPlans=InsPlans.RefreshForSubList(listInsSubs);
+			List<PatPlan> listPatPlans=PatPlans.Refresh(pat.PatNum);
+			List<Benefit> listBenefits=Benefits.Refresh(listPatPlans,listInsSubs);
+			List<Procedure> listProcs=Procedures.Refresh(pat.PatNum);
+			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
+			Claim claim=ClaimT.CreateClaim("P",listPatPlans,listInsPlans,listClaimProcs,listProcs,pat,listProcs,listBenefits,listInsSubs);
+			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
+			ClaimT.ReceiveClaim(claim,listClaimProcs,true);
+			//Create Adjustment that covers a little more than $28.00 of the patient portion. Say, $28.01?
+			ClaimProc claimProc=listClaimProcs.FirstOrDefault(x=>x.ProcNum==proc.ProcNum);
+			claimProc.WriteOff=140.01;
+			ClaimProcs.Update(claimProc);
+			//Test
+			List<string> listResults=Claims.GetWriteOffGreaterThanProcFee(pat.PatNum,listClaimProcs);
+			Assert.IsTrue(listResults.Count==1);
+        }
+
+		[TestMethod]
+		public void Claims_GetWriteOffGreaterThanProcFee_NoneOverPaid() {
+			//Build Account
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			Patient pat=PatientT.CreatePatient(suffix);
+			Carrier carrier=CarrierT.CreateCarrier(suffix);
+			InsPlan plan=InsPlanT.CreateInsPlan(carrier.CarrierNum);
+			InsSub sub=InsSubT.CreateInsSub(pat.PatNum,plan.PlanNum);
+			long subNum=sub.InsSubNum;
+			PatPlanT.CreatePatPlan(1,pat.PatNum,subNum);
+			ProcedureCode originalProcCode=ProcedureCodeT.CreateProcCode("D2391");
+			//Chart procedure for $140.00, with insurance covering %80. Results in $28.00 of patient portion.
+			long ucrFeeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"UCR Fees"+suffix);
+			BenefitT.CreatePercentForProc(plan.PlanNum,originalProcCode.CodeNum,80);
+			FeeT.CreateFee(ucrFeeSchedNum,originalProcCode.CodeNum,140);
+			Procedure proc=ProcedureT.CreateProcedure(pat,originalProcCode.ProcCode,ProcStat.C,"1",140);//Tooth 1
+			//Creates the claim in the same manner as the account module, including estimates.
+			Family fam=Patients.GetFamily(pat.PatNum);
+			List<InsSub> listInsSubs=InsSubs.RefreshForFam(fam);
+			List<InsPlan> listInsPlans=InsPlans.RefreshForSubList(listInsSubs);
+			List<PatPlan> listPatPlans=PatPlans.Refresh(pat.PatNum);
+			List<Benefit> listBenefits=Benefits.Refresh(listPatPlans,listInsSubs);
+			List<Procedure> listProcs=Procedures.Refresh(pat.PatNum);
+			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
+			Claim claim=ClaimT.CreateClaim("P",listPatPlans,listInsPlans,listClaimProcs,listProcs,pat,listProcs,listBenefits,listInsSubs);
+			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
+			ClaimT.ReceiveClaim(claim,listClaimProcs,true);
+			//Create Adjustment that covers a little more than $28.00 of the patient portion. Say, $28.01?
+			ClaimProc claimProc=listClaimProcs.FirstOrDefault(x=>x.ProcNum==proc.ProcNum);
+			claimProc.WriteOff=140.00;
+			ClaimProcs.Update(claimProc);
+			//Test
+			List<string> listResults=Claims.GetWriteOffGreaterThanProcFee(pat.PatNum,listClaimProcs);
+			Assert.IsTrue(listResults.Count==0);
+        }
 	}
 }

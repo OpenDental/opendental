@@ -371,17 +371,23 @@ namespace OpenDentBusiness{
 			if(table.Rows.Count<1) {
 				return listChargeData;
 			}
-			command="SELECT PatNum,MAX(CASE WHEN "+DbHelper.Year("RecurringChargeDate")+" > 1880 "
-				+"THEN RecurringChargeDate ELSE PayDate END) RecurringChargeDate "
-				+"FROM payment "
-				+"WHERE IsRecurringCC=1 AND PayAmt > 0 "
-				+"AND PatNum IN ("+string.Join(",",table.Select().Select(x => POut.String(x["PatNum"].ToString())))+") "//table has at least 1 row
-				+"GROUP BY PatNum";
-			//dictionary is key=PatNum, value=LatestPayment which will be the lastest date a recurring charge payment was made
-			Dictionary<long,DateTime> dictPatNumDate=Db.GetTable(command).Select()
-				.ToDictionary(x => PIn.Long(x["PatNum"].ToString()),x =>	PIn.Date(x["RecurringChargeDate"].ToString()));
-			table.Select().Where(x => dictPatNumDate.ContainsKey(PIn.Long(x["PatNum"].ToString()))).ToList()
-				.ForEach(x => x["LatestPayment"]=dictPatNumDate[PIn.Long(x["PatNum"].ToString())]);
+			List<string> listStrCreditCardNums=table.Rows.AsEnumerable<DataRow>().Select(x=>POut.String(x["CreditCardNum"].ToString())).ToList();
+			command="SELECT cc.PatNum,cc.CreditCardNum,MAX(CASE WHEN "+DbHelper.Year("p.RecurringChargeDate")+" > 1880 "
+				+"THEN p.RecurringChargeDate ELSE p.PayDate END) RecurringChargeDate " +
+				"FROM creditcard cc " +
+				"INNER JOIN recurringcharge rc ON cc.creditcardnum=rc.creditcardnum "+
+				"INNER JOIN payment p ON p.paynum=rc.paynum AND p.IsRecurringCC=1 AND p.PayAmt > 0 " +
+				"WHERE cc.CreditCardNum IN ("+string.Join(",", listStrCreditCardNums)+") " +
+				"GROUP BY cc.CreditCardNum";
+			List<DataRow> listDataRowLatestPayments=Db.GetTable(command).Rows.AsEnumerable<DataRow>().ToList();
+			for(int i=0;i<table.Rows.Count;i++) {
+				string strCreditCardNum=table.Rows[i]["CreditCardNum"].ToString();
+				DataRow dataRowCreditCard=listDataRowLatestPayments.FirstOrDefault(x => x["CreditCardNum"].ToString()==strCreditCardNum);
+				if(dataRowCreditCard==null) {
+					continue;
+				}
+				table.Rows[i]["LatestPayment"]=dataRowCreditCard["RecurringChargeDate"].ToString();
+			}
 			table.Columns.Add("RecurringChargeDate",typeof(DateTime));//Will get set in FilterRecurringChargeList
 			FilterRecurringChargeList(table,curDate);
 			foreach(DataRow row in table.Rows) {
@@ -629,7 +635,7 @@ namespace OpenDentBusiness{
 				//checked. The every other cycle will be reset if it is not clear what week rotation is being charge on based 
 				//on the latestpayment
 				//Get the most recent date for the day of the week in the every other cycle
-				DateTime recentDateToCharge=latestPayment;
+				DateTime recentDateToCharge=latestPayment; //new DateTime(2022,4,6); //
 				if(latestPayment.Year > 1880) {//if a payment has occurred
 					//if it was last paid on a day that is not the designated day of the week, find the closest.
 					if(latestPayment.DayOfWeek!=day) {
