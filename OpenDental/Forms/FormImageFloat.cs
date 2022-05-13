@@ -24,6 +24,8 @@ namespace OpenDental {
 		public Color ColorFore;
 		///<summary>Color for background of text. Can be transparent.</summary>
 		public Color ColorTextBack;
+		///<summary>Tracks when this form was launched from the Chart Module to prevent specific behavior when deleted.</summary>
+		public bool DidLaunchFromChartModule;
 		public Patient PatientCur=null;
 		///<summary></summary>
 		public string PatFolder="";
@@ -2475,7 +2477,13 @@ namespace OpenDental {
 			for(int i=0;i<menuPanelMain.MenuItems.Count;i++) {
 				//If no document or mount selected, context menu will not be visible
 				if(IsDocumentShowing() || IsMountShowing()) {
-					menuPanelMain.MenuItems[i].Visible=true;
+					//Disable these context menu items when opening this from the chart module
+					if(DidLaunchFromChartModule && ListTools.In(menuPanelMain.MenuItems[i],menuItemDelete,menuItemPaste)) {
+						menuPanelMain.MenuItems[i].Visible=false;
+					}
+					else {
+						menuPanelMain.MenuItems[i].Visible=true;
+					}
 				}
 				else{ 
 					menuPanelMain.MenuItems[i].Visible=false;//if no menu items visible, menu won't even show
@@ -2799,12 +2807,15 @@ namespace OpenDental {
 				//Info
 			}
 			else {
-				menuItemPaste.Visible=true;
+				//Disable these context menu items when opening this from the chart module
+				if(!DidLaunchFromChartModule) {
+					menuItemPaste.Visible=true;
+					menuItemDelete.Visible=true;
+				}
 				menuItemFlipHoriz.Visible=true;
 				menuItemRotateLeft.Visible=true;
 				menuItemRotateRight.Visible=true;
 				menuItemRotate180.Visible=true;
-				menuItemDelete.Visible=true;
 			}
 			//if(_panCropMount==EnumPanCropMount.Pan/Adj){
 				//handled on mouse up

@@ -470,6 +470,7 @@ namespace OpenDental
 			formImageFloat.PatFolder=_patFolder;
 			formImageFloat.ZoomSliderValue=zoomSlider.Value;
 			formImageFloat.IsImageFloatDocked=false;
+			formImageFloat.DidLaunchFromChartModule=true;
 			_listFormImageFloats.Add(formImageFloat);
 			System.Windows.Forms.Screen[] screenArray=System.Windows.Forms.Screen.AllScreens;
 			Size size=new Size();
@@ -532,6 +533,10 @@ namespace OpenDental
 				SetDrawMode(EnumDrawMode.None);
 				panelDraw.Visible=false;
 				formImageFloat.SelectTreeNode(nodeTypeAndKey,localPathImportedCloud);
+				if(formImageFloat.IsDisposed){
+					//see note 35 lines down
+					return;
+				}
 				formImageFloat.Select();
 				if(IsMountShowing()){
 					unmountedBar.SetObjects(formImageFloat.GetUmountedObjects());
@@ -565,6 +570,12 @@ namespace OpenDental
 			formImageFloat.ZoomSliderValue=zoomSlider.Value;
 			if(reuseExistingForm){
 				formImageFloat.SelectTreeNode(nodeTypeAndKey,localPathImportedCloud);
+				if(formImageFloat.IsDisposed){
+					//We have reports of many UEs here and a few lines down.
+					//These are two completely different impossible ways to end up with a disposed form.
+					//Unclear how the form is disposed, but we must handle it.
+					return;
+				}
 				formImageFloat.Select();
 			}
 			else{
@@ -572,6 +583,10 @@ namespace OpenDental
 				//SelectTreeNode must come before show, because that will trigger Activated, then imageSelector.SetSelected
 				//But it must come after bounds are set for the zoom to be correct.
 				formImageFloat.SelectTreeNode(nodeTypeAndKey,localPathImportedCloud);
+				if(formImageFloat.IsDisposed){
+					//See the comments 13 lines up
+					return;
+				}
 				formImageFloat.Show(this);
 				formImageFloat.Bounds=new Rectangle(PointToScreen(panelMain.Location),panelMain.Size);
 			}

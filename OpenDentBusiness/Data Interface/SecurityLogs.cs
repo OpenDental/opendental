@@ -328,8 +328,8 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Used when making a security log from a remote server, possibly with multithreaded connections.</summary>
-		public static void MakeLogEntryNoCache(Permissions permType,long patnum,string logText) {
-			MakeLogEntryNoCache(permType,patnum,logText,0,LogSource);
+		public static void MakeLogEntryNoCache(Permissions permType,long patnum,string logText,long userNum=0) {
+			MakeLogEntryNoCache(permType,patnum,logText,userNum,LogSource);
 		}
 
 		///<summary>Used when making a security log from a remote server, possibly with multithreaded connections.</summary>
