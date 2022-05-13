@@ -229,8 +229,8 @@ namespace OpenDentBusiness{
 						if(Security.CurUser==null) {
 							Security.CurUser=new Userod();
 						}
-						//Utilize the custom eCW MD5 hashing algorithm if no password hash was passed in via command line arguments.
-						if(string.IsNullOrEmpty(centralConnection.OdPassHash)) {
+						//Utilize the custom eCW MD5 hashing algorithm if a password was typed into the choose db window or no password hash was passed in via command line arguments.
+						if(!string.IsNullOrEmpty(password) || string.IsNullOrEmpty(centralConnection.OdPassHash)) {
 							password=Authentication.HashPasswordMD5(password,true);
 						}
 						else {//eCW gave us the password already hashed via command line arguments, simply use it.
