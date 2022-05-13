@@ -97,6 +97,7 @@ namespace OpenDental {
 
 		private void FillProvs() {
 			comboBoxMultiProv.Items.Clear();
+			comboBoxMultiProv.IncludeAll=true;
 			comboBoxMultiProv.Items.AddProvsFull(Providers.GetListReports());
 			comboBoxMultiProv.IsAllSelected=true;
 		}
