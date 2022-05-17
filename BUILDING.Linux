@@ -1,0 +1,24 @@
+Building Open Dental on Linux
+=============================
+
+To build Open Dental on Linux, you'll need a recent version of Mono (> 1.2.5). To obtain such a version, currently (Sep 28, 2007), you will need to use the SVN version of Mono and build Mono yourself.
+For more information on this subject, see http://lists.ximian.com/pipermail/mono-devel-list/2007-March/022784.html .
+
+Building Open Dental requires you to have a recent version of NAnt as well. You can download NAnt at http://nant.sourceforge.net. 
+
+Then, building is quite easy: just type 
+    make
+
+and you should be set!
+
+Build Flags
+===========
+
+The build of Open Dental supports the following flags:
+
+- LINUX: Some Linux-specific optimizations;
+- MONO: Some Mono-specific optimizations;
+- DISABLE_MICROSOFT_OFFICE: Do not provide support for Mail Merge using Microsoft Word;
+- DISABLE_WINDOWS_BRIDGES: Do not support bridges to Windows-programs using NDDe or VBBridges;
+
+The purpose of these flags are to provide an optimal version of Open Dental for Linux. Removing support for features that are not available on Linux (Windows-specific software), reduces the size of the application.

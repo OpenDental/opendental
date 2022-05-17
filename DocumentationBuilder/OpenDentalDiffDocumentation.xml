@@ -1,0 +1,636 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
+<database version="22.2.1.0">
+    <table name="apptgeneralmessagesent">
+        <summary></summary>
+        <column order="7" name="SendStatus" type="tinyint(4)">
+            <summary></summary>
+        </column>
+        <column order="8" name="ApptDateTime" type="datetime">
+            <summary></summary>
+        </column>
+        <column order="9" name="MessageType" type="tinyint(4)">
+            <summary></summary>
+        </column>
+        <column order="10" name="MessageFk" type="bigint(20)">
+            <summary></summary>
+        </column>
+        <column order="11" name="DateTimeSent" type="datetime">
+            <summary></summary>
+        </column>
+        <column order="12" name="ResponseDescript" type="text">
+            <summary></summary>
+        </column>
+    </table>
+    <table name="apptreminderrule">
+        <summary></summary>
+        <column order="1" name="TypeCur" type="tinyint(4)">
+            <summary>Enum:ApptReminderType </summary>
+            <Enumeration name="ApptReminderType">
+                <summary />
+                <EnumValue name="WebSchedRecall">8 - WebSchedRecall. (Note, not yet used in db, but could be if we ever want clinic specific templates) Defines rules for sending out automated messages for Recalls.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="apptremindersent">
+        <summary></summary>
+        <column order="6" name="PatNum" type="bigint(20)">
+            <summary></summary>
+        </column>
+        <column order="7" name="ClinicNum" type="bigint(20)">
+            <summary></summary>
+        </column>
+        <column order="8" name="SendStatus" type="tinyint(4)">
+            <summary></summary>
+        </column>
+        <column order="9" name="MessageType" type="tinyint(4)">
+            <summary></summary>
+        </column>
+        <column order="10" name="MessageFk" type="bigint(20)">
+            <summary></summary>
+        </column>
+        <column order="11" name="DateTimeEntry" type="datetime">
+            <summary></summary>
+        </column>
+        <column order="12" name="ResponseDescript" type="text">
+            <summary></summary>
+        </column>
+    </table>
+    <table name="apptthankyousent">
+        <summary></summary>
+        <column order="11" name="SendStatus" type="tinyint(4)">
+            <summary></summary>
+        </column>
+        <column order="13" name="MessageType" type="tinyint(4)">
+            <summary></summary>
+        </column>
+        <column order="14" name="MessageFk" type="bigint(20)">
+            <summary></summary>
+        </column>
+        <column order="15" name="DateTimeEntry" type="datetime">
+            <summary></summary>
+        </column>
+        <column order="16" name="DateTimeSent" type="datetime">
+            <summary></summary>
+        </column>
+    </table>
+    <table name="clinic">
+        <summary></summary>
+        <column order="41" name="EmailAliasOverride" type="varchar(255)">
+            <summary>Overrides the SenderAddress (aka Alias) for emails sent from this clinic. </summary>
+        </column>
+    </table>
+    <table name="commlog">
+        <summary></summary>
+        <column order="14" name="DateTEntry" type="datetime">
+            <summary>Track Date Created for commlogs. Value for existing commlogs show as blank in the UI. Not editable by user.</summary>
+        </column>
+    </table>
+    <table name="computerpref">
+        <summary></summary>
+        <column order="32" name="VideoRectangle" type="varchar(255)">
+            <summary>This is x,y,w,h format for the desktop location of the Video window. This is saved each time the Video window closes. If the Video window is maximized, then the form will instead be like this: "100,120,600,800,Max". The rectangle here defines the RestoreBounds when user unmaximizes.</summary>
+        </column>
+    </table>
+    <table name="confirmationrequest">
+        <summary></summary>
+        <column order="13" name="ApptDateTime" type="datetime">
+            <summary></summary>
+        </column>
+        <column order="16" name="SendStatus" type="tinyint(4)">
+            <summary></summary>
+        </column>
+        <column order="18" name="MessageType" type="tinyint(4)">
+            <summary></summary>
+        </column>
+        <column order="19" name="MessageFk" type="bigint(20)">
+            <summary></summary>
+        </column>
+        <column order="20" name="DateTimeSent" type="datetime">
+            <summary></summary>
+        </column>
+    </table>
+    <table name="definition">
+        <summary></summary>
+        <column order="1" name="Category" type="tinyint">
+            <summary>Enum:DefCat</summary>
+            <Enumeration name="DefCat">
+                <summary>Definition Category. Go to the definition setup window (FormDefinitions) in the program to see how each of these categories is used.
+             If you add a category, make sure to add it to the switch statement in DefL so the user can edit it.
+             Add a "NotUsed" description attribute to defs that shouldn't show up in FormDefinitions.</summary>
+                <EnumValue name="TaskCategories">54 - HQ Only task categories.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="eservicelog">
+        <summary></summary>
+        <column order="4" name="EServiceAction" type="smallint(6)">
+            <summary>Enum:eServiceAction</summary>
+            <Enumeration name="eServiceAction">
+                <summary>List of some possible eServices.</summary>
+                <EnumValue name="ECCheckInBYOD">38 - EClipboard - Check In for patients bringing their own device</EnumValue>
+                <EnumValue name="ECCheckInStarted">39 - EClipboard - Check In process started</EnumValue>
+                <EnumValue name="ECCheckInArrived">40 - EClipboard - Check In Arrived</EnumValue>
+                <EnumValue name="ECCheckInSubmitted">40 - EClipboard - Check In Submitted</EnumValue>
+                <EnumValue name="ECCheckInErrorApptNotFound">41 - EClipboard - Check In Error: Appt Not Found</EnumValue>
+                <EnumValue name="ECCheckInErrorPatNumNotLinkedToAppt">42 - EClipboard - Check In Error: PatNum Not Linked To Appt</EnumValue>
+                <EnumValue name="ECCheckInErrorDeviceSetupForOtherClinic">43 - EClipboard - Error: Device Setup for Other Clinic</EnumValue>
+                <EnumValue name="ECCheckInErrorDeviceNotAllowedForCheckin">44 - EClipboard - Check In Error: Device Not Allowed for Checkin</EnumValue>
+                <EnumValue name="ECCheckInErrorOfficeDeviceUsedAsBYOD">45 - EClipboard - Check In Error: Office Device used as BYOD</EnumValue>
+                <EnumValue name="ECCheckInErrorNoApptFoundBYOD">45 - EClipboard - Check In Error: No Appointment Found BYOD</EnumValue>
+                <EnumValue name="ECCheckInErrorNoApptFound">48 - EClipboard - Check In Error: No Appt Found</EnumValue>
+                <EnumValue name="ECCheckInErrorMultiplePatsFound">49 - EClipboard - Check In Error: Multiple Pats Found</EnumValue>
+                <EnumValue name="ECCheckInErrorSignatureError">50 - EClipboard - Check In Error: Signature Error</EnumValue>
+                <EnumValue name="ECCheckInErrorDeprecatedMethod">51 - EClipboard - Check In Error: Deprecated Method</EnumValue>
+                <EnumValue name="ECCheckInConfirmedApptWithProvYes">52 - EClipboard - Check In Confirmed Appt With Prov - Yes</EnumValue>
+                <EnumValue name="ECCheckInConfirmedApptWithProvNo">53 - EClipboard - Check In Confirmed Appt With Prov - No</EnumValue>
+                <EnumValue name="ECCheckInListSubmittedWithPicture">54 - EClipboard - Check In Took selfie before submitting</EnumValue>
+                <EnumValue name="ECCheckInListSubmittedWithOutPicture">55 - EClipboard - Check In List Did not take selfie before submitting</EnumValue>
+                <EnumValue name="ECCheckInListErrorSubmittedWithoutAllItems">56 - EClipboard - Check In List Error, submitted without all items</EnumValue>
+                <EnumValue name="ECCheckInListXamSubmitError">57 - EClipboard - Check In List Submit Xamarin Error</EnumValue>
+                <EnumValue name="ECCheckInListSumbitSuccess">59 - EClipboard - Check In Submit Success</EnumValue>
+                <EnumValue name="ECCheckInListSumbitSuccessBYOD">60 - EClipboard - Check In Submit Success BYOD</EnumValue>
+                <EnumValue name="ECCheckInListSelectedItem">60 - EClipboard - Check In List Selected Item</EnumValue>
+                <EnumValue name="ECCheckInListSheetNextTapped">61 - EClipboard - Check In List Sheet Next Tapped</EnumValue>
+                <EnumValue name="ECCheckInListSheetPrevTapped">61 - EClipboard - Check In List Sheet Prev Tapped</EnumValue>
+                <EnumValue name="ECCheckInListSheetOfficeSignedTreatPlan">61 - EClipboard - Check In List Sheet Office signed Treatment Plan</EnumValue>
+                <EnumValue name="ECCheckInListSheetPatientSignedTreatPlan">61 - EClipboard - Check In List Sheet Patient signed treatment plan</EnumValue>
+                <EnumValue name="ECCheckInListSheetPatientSignedPaymentPlan">61 - EClipboard - Check In List Sheet Patient signed Payment Plan</EnumValue>
+                <EnumValue name="ECPatientDirectedToMakePayment">62 - EClipboard - Check In List Sheet Patient signed Payment Plan</EnumValue>
+                <EnumValue name="DoNotLog"> - Used in Xam Exeptions. If this is sent back, error will not be logged. Default eServiceAction for XamException.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="grouppermission">
+        <summary></summary>
+        <column order="4" name="PermType" type="tinyint">
+            <summary>Enum:Permissions Some permissions will treat a zero FKey differently. Some denote it as having access to everything for that PermType. I.e. Reports.</summary>
+            <Enumeration name="Permissions">
+                <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+                <EnumValue name="ProviderEdit">51- Allows user to edit all providers. This is not fine-grained enough for extremely large organizations such as dental schools, so other permissions are being added as well.</EnumValue>
+                <EnumValue name="TaskDelete">228 - Allows user to delete tasks.</EnumValue>
+                <EnumValue name="SetupWizard">229 - Allows user to use setup wizard.</EnumValue>
+                <EnumValue name="ShowFeatures">230 - Allows user to use show features.</EnumValue>
+                <EnumValue name="PrinterSetup">231 - Allows user to setup printer.</EnumValue>
+                <EnumValue name="ProviderAdd">232 - Allows user to add provider.</EnumValue>
+                <EnumValue name="ClinicEdit">233 - Allows user to edit clinic.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="mount">
+        <summary></summary>
+        <column order="12" name="FlipOnAcquire" type="tinyint(4)">
+            <summary>If true, each image will be flipped as it's acquired. Because ScanX images are backwards.</summary>
+        </column>
+        <column order="13" name="AdjModeAfterSeries" type="tinyint(4)">
+            <summary>If true, then it will switch to Adj mode instead of the usual Pan mode.</summary>
+        </column>
+    </table>
+    <table name="mountdef">
+        <summary></summary>
+        <column order="10" name="FlipOnAcquire" type="tinyint(4)">
+            <summary>If true, each image will be flipped as it's acquired. Because ScanX images are backwards.</summary>
+        </column>
+        <column order="11" name="AdjModeAfterSeries" type="tinyint(4)">
+            <summary>If true, then it will switch to Adj mode instead of the usual Pan mode.</summary>
+        </column>
+    </table>
+    <table name="orthohardware">
+        <summary></summary>
+        <column order="0" name="OrthoHardwareNum" type="bigint(20)">
+            <summary>Primary key.</summary>
+        </column>
+        <column order="1" name="PatNum" type="bigint(20)" fk="patient">
+            <summary>FK to patient.PatNum.</summary>
+        </column>
+        <column order="2" name="DateExam" type="date">
+            <summary>Every hardware entry is tied to a single date. At each exam, a copy can be made of the hardware from the previous exam, and then it can be edited. It normally shows the most recent exam, and the hardware items showing in the ortho grid only include the most recent exam. Not sure yet how we will show hardware for previous exams/dates.</summary>
+        </column>
+        <column order="3" name="OrthoHardwareType" type="tinyint(4)">
+            <summary>Enum:EnumOrthoHardwareType Bracket, Wire, or Elastic.</summary>
+            <Enumeration name="EnumOrthoHardwareType">
+                <summary />
+                <EnumValue name="Bracket">0</EnumValue>
+                <EnumValue name="Wire">1</EnumValue>
+                <EnumValue name="Elastic">2</EnumValue>
+            </Enumeration>
+        </column>
+        <column order="4" name="OrthoHardwareSpecNum" type="bigint(20)" fk="orthohardwarespec">
+            <summary>FK to orthohardwarespec.OrthoHardwareSpecNum. This is where the description and color come from.</summary>
+        </column>
+        <column order="5" name="ToothRange" type="varchar(255)">
+            <summary>Tooth numbers stored here are always stored in Universal (1-32) notation. They are displayed to the user as Palmer notation. For brackets, always use single tooth numbers, like 8. For wires, must use a range like 2-15. For elastics, typically use 2 teeth separated with commas, but more are allowed.</summary>
+        </column>
+        <column order="6" name="Note" type="varchar(255)">
+            <summary></summary>
+        </column>
+    </table>
+    <table name="orthohardwarespec">
+        <summary></summary>
+        <column order="0" name="OrthoHardwareSpecNum" type="bigint(20)">
+            <summary>Primary key.</summary>
+        </column>
+        <column order="1" name="OrthoHardwareType" type="tinyint(4)">
+            <summary>Enum:EnumOrthoHardwareType Bracket, Wire, or Elastic.</summary>
+            <Enumeration name="EnumOrthoHardwareType">
+                <summary />
+                <EnumValue name="Bracket">0</EnumValue>
+                <EnumValue name="Wire">1</EnumValue>
+                <EnumValue name="Elastic">2</EnumValue>
+            </Enumeration>
+        </column>
+        <column order="2" name="Description" type="varchar(255)">
+            <summary>Example NITI 16x25</summary>
+        </column>
+        <column order="3" name="ItemColor" type="int(11)">
+            <summary></summary>
+        </column>
+        <column order="4" name="IsHidden" type="tinyint(4)">
+            <summary></summary>
+        </column>
+        <column order="5" name="ItemOrder" type="int(11)">
+            <summary>0 indexed. User controls it with arrows.</summary>
+        </column>
+    </table>
+    <table name="orthorx">
+        <summary></summary>
+        <column order="0" name="OrthoRxNum" type="bigint(20)">
+            <summary>Primary key.</summary>
+        </column>
+        <column order="1" name="OrthoHardwareSpecNum" type="bigint(20)" fk="orthohardwarespec">
+            <summary>FK to orthohardwarespec.OrthoHardwareSpecNum. Description comes from here.</summary>
+        </column>
+        <column order="2" name="ToothRange" type="varchar(255)">
+            <summary>Tooth numbers stored here are always stored in Universal (1-32) notation. They are displayed to the user as Palmer notation. For brackets, always use tooth numbers separated by commas, like 2,3,4,5,6. For wires, must use a range like 2-15. For elastics, typically use 2 teeth separated with commas, but more are allowed.</summary>
+        </column>
+        <column order="3" name="ItemOrder" type="int(11)">
+            <summary>0 indexed. User controls it with arrows.</summary>
+        </column>
+    </table>
+    <table name="patientnote">
+        <summary></summary>
+        <column order="15" name="Pronoun" type="tinyint(4)">
+            <summary>Enum: PronounPreferred Patient Pronoun override. None indicates no override.</summary>
+        </column>
+    </table>
+    <table name="patientportalinvite">
+        <summary></summary>
+        <column order="2" name="ApptNum" type="bigint(20)">
+            <summary></summary>
+        </column>
+        <column order="6" name="SendStatus" type="tinyint(4)">
+            <summary></summary>
+        </column>
+        <column order="7" name="MessageFk" type="bigint(20)">
+            <summary></summary>
+        </column>
+        <column order="8" name="ResponseDescript" type="text">
+            <summary></summary>
+        </column>
+        <column order="9" name="MessageType" type="tinyint(4)">
+            <summary></summary>
+        </column>
+        <column order="10" name="DateTimeSent" type="datetime">
+            <summary></summary>
+        </column>
+        <column order="11" name="ApptReminderRuleNum" type="bigint(20)">
+            <summary></summary>
+        </column>
+        <column order="12" name="ApptDateTime" type="datetime">
+            <summary></summary>
+        </column>
+    </table>
+    <table name="popup">
+        <summary></summary>
+        <column order="9" name="DateTimeDisabled" type="datetime">
+            <summary>The DateTime at which this popup will be disabled. If this is DateTime.MinValue, then it will never be disabled.</summary>
+        </column>
+    </table>
+    <table name="procmultivisit">
+        <summary></summary>
+        <column order="7" name="PatNum" type="bigint(20)" fk="patient">
+            <summary>FK to patient.PatNum.</summary>
+        </column>
+    </table>
+    <table name="promotionlog">
+        <summary></summary>
+        <column order="3" name="MessageFk" type="bigint(20)">
+            <summary></summary>
+        </column>
+        <column order="7" name="ClinicNum" type="bigint(20)">
+            <summary></summary>
+        </column>
+        <column order="8" name="SendStatus" type="tinyint(4)">
+            <summary></summary>
+        </column>
+        <column order="9" name="MessageType" type="tinyint(4)">
+            <summary></summary>
+        </column>
+        <column order="10" name="DateTimeEntry" type="datetime">
+            <summary></summary>
+        </column>
+        <column order="11" name="ResponseDescript" type="text">
+            <summary></summary>
+        </column>
+        <column order="12" name="ApptReminderRuleNum" type="bigint(20)">
+            <summary></summary>
+        </column>
+    </table>
+    <table name="securitylog">
+        <summary></summary>
+        <column order="1" name="PermType" type="tinyint">
+            <summary>Enum:Permissions</summary>
+            <Enumeration name="Permissions">
+                <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+                <EnumValue name="ProviderEdit">51- Allows user to edit all providers. This is not fine-grained enough for extremely large organizations such as dental schools, so other permissions are being added as well.</EnumValue>
+                <EnumValue name="TaskDelete">228 - Allows user to delete tasks.</EnumValue>
+                <EnumValue name="SetupWizard">229 - Allows user to use setup wizard.</EnumValue>
+                <EnumValue name="ShowFeatures">230 - Allows user to use show features.</EnumValue>
+                <EnumValue name="PrinterSetup">231 - Allows user to setup printer.</EnumValue>
+                <EnumValue name="ProviderAdd">232 - Allows user to add provider.</EnumValue>
+                <EnumValue name="ClinicEdit">233 - Allows user to edit clinic.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="sheetfield">
+        <summary></summary>
+        <column order="25" name="SheetFieldDefNum" type="bigint(20)" fk="sheetfielddef">
+            <summary>FK to sheetfielddef.SheetFieldDefNum. Only used in the Patient Forms window when the Prefill button is clicked.</summary>
+        </column>
+    </table>
+    <table name="signalod">
+        <summary></summary>
+        <column order="6" name="RemoteRole" type="tinyint(4)">
+            <summary>Enum:MiddleTierRole The MiddleTierRole of the instance that created this signal.</summary>
+            <Enumeration name="MiddleTierRole">
+                <summary />
+                <EnumValue name="ClientMT">Workstation that is getting its data from the Middle Tier web service on the server.</EnumValue>
+                <EnumValue name="ServerMT">This dll is part of the Middle Tier web server that is providing data via web services.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="task">
+        <summary></summary>
+        <column order="20" name="IsReadOnly" type="tinyint(1)">
+            <summary>Determines if this task can be edited by most users</summary>
+        </column>
+        <column order="21" name="TriageCategory" type="bigint(20)" fk="definition">
+            <summary>FK to definition.DefNum. The category for this task. Currently only used at HQ.</summary>
+        </column>
+    </table>
+    <table name="taskhist">
+        <summary></summary>
+        <column order="24" name="IsReadOnly" type="tinyint(1)">
+            <summary>Copied from Task.</summary>
+        </column>
+        <column order="25" name="TriageCategory" type="bigint(20)">
+            <summary>Copied from Task.</summary>
+        </column>
+    </table>
+    <table name="webschedrecall">
+        <summary></summary>
+        <column order="5" name="DateDue" type="datetime">
+            <summary>The date that the recall is due.</summary>
+        </column>
+        <column order="7" name="DateTimeSent" type="datetime">
+            <summary></summary>
+        </column>
+        <column order="9" name="SendStatus" type="tinyint(4)">
+            <summary></summary>
+        </column>
+        <column order="10" name="ShortGUID" type="varchar(255)">
+            <summary></summary>
+        </column>
+        <column order="13" name="CommlogNum" type="bigint(20)" fk="commlog associated to this webschedrecall">
+            <summary>FK to commlog associated to this WebSchedRecall.</summary>
+        </column>
+        <column order="14" name="MessageType" type="tinyint(4)">
+            <summary></summary>
+        </column>
+        <column order="15" name="MessageFk" type="bigint(20)">
+            <summary></summary>
+        </column>
+        <column order="16" name="ApptReminderRuleNum" type="bigint(20)">
+            <summary></summary>
+        </column>
+    </table>
+    <table name="apptgeneralmessagesent">
+        <summary></summary>
+        <column order="7" name="SmsSendStatus" type="tinyint(4)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="8" name="EmailSendStatus" type="tinyint(4)" deleted="true">
+            <summary></summary>
+        </column>
+    </table>
+    <table name="apptremindersent">
+        <summary></summary>
+        <column order="6" name="IsSmsSent" type="tinyint(4)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="7" name="IsEmailSent" type="tinyint(4)" deleted="true">
+            <summary></summary>
+        </column>
+    </table>
+    <table name="apptthankyousent">
+        <summary></summary>
+        <column order="6" name="IsForSms" type="tinyint(4)" deleted="true">
+            <summary>Deprecated.Generated by OD. If true then generate and send sms.</summary>
+        </column>
+        <column order="7" name="IsForEmail" type="tinyint(4)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="10" name="PhonePat" type="varchar(255)" deleted="true">
+            <summary>Deprecated.Generated by OD.  Wireless phone number of the corresponding patient.</summary>
+        </column>
+        <column order="12" name="GuidMessageToMobile" type="text" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="13" name="MsgTextToMobileTemplate" type="text" deleted="true">
+            <summary>Deprecated.Generated by OD. OD proper can construct this to be any length. Will be converted to final MsgText and sent to patient once tags are 
+            replaced with real values.</summary>
+        </column>
+        <column order="14" name="MsgTextToMobile" type="text" deleted="true">
+            <summary>Deprecated.Generated by HQ. Applied real text to tags from MsgTextTemplate.</summary>
+        </column>
+        <column order="15" name="EmailSubjTemplate" type="text" deleted="true">
+            <summary>Deprecated.</summary>
+        </column>
+        <column order="16" name="EmailSubj" type="text" deleted="true">
+            <summary>Deprecated.</summary>
+        </column>
+        <column order="17" name="EmailTextTemplate" type="text" deleted="true">
+            <summary>Deprecated.Generated by OD. Includes [ConfirmCode] replacement tag and (optionally) [URL] replacement tag. OD proper can construct this to be any length.
+            Will be converted to final EmailText and emailed to patient once tags are replaced with real values.</summary>
+        </column>
+        <column order="18" name="EmailText" type="text" deleted="true">
+            <summary>Deprecated.Generated by HQ. Applied real text to tags from EmailTextTemplate.</summary>
+        </column>
+        <column order="20" name="ShortGuidEmail" type="varchar(255)" deleted="true">
+            <summary>Deprecated.Generated by HQ. Identifies this ApptThankYouSent in future transactions between HQ and OD. Will be used for email thankyous only.</summary>
+        </column>
+        <column order="22" name="SmsSentStatus" type="tinyint(4)" deleted="true">
+            <summary>Deprecated.Enum:AutoCommStatus Generated by HQ. Indicates whether or not we were able to send the text message.</summary>
+        </column>
+        <column order="23" name="EmailSentStatus" type="tinyint(4)" deleted="true">
+            <summary>Deprecated.Enum:AutoCommStatus Generated by HQ. Indicates whether or not we were able to send the e-mail.</summary>
+        </column>
+    </table>
+    <table name="confirmationrequest">
+        <summary></summary>
+        <column order="2" name="IsForSms" type="tinyint(4)" deleted="true">
+            <summary>Deprecated. Generated by OD. If true then generate and send MT text message. 
+            If false then OD proper is probably panning on emailing the message/GUID so just enter into ConfirmPending and return.</summary>
+        </column>
+        <column order="3" name="IsForEmail" type="tinyint(4)" deleted="true">
+            <summary>Deprecated. Generated by OD. If true then generate and send email.</summary>
+        </column>
+        <column order="6" name="PhonePat" type="varchar(255)" deleted="true">
+            <summary>Deprecated. Use Contact instead. Generated by OD. Only allowed to be empty is IsForSms==true. In that case then it is assumed that OD proper will probably be emailing confirmation and does not want a text message sent.</summary>
+        </column>
+        <column order="8" name="SecondsFromEntryToExpire" type="int(11)" deleted="true">
+            <summary>Generated by OD. HQ and OD proper are in different timezones. This is used to tell HQ how far in advance to set the DateTimeExpire when entering the row into HQ db. This is a work-around for timezone offset.</summary>
+        </column>
+        <column order="11" name="MsgTextToMobileTemplate" type="text" deleted="true">
+            <summary>Deprecated. Generated by OD. Includes [ConfirmCode] replacement tag and (optionally) [URL] replacement tag. OD proper can construct this to be any length.
+            Will be converted to final MsgText and sent to patient once tags are replaced with real values.</summary>
+        </column>
+        <column order="12" name="MsgTextToMobile" type="text" deleted="true">
+            <summary>Deprecated. Generated by HQ. Applied real text to tags from MsgTextTemplate.</summary>
+        </column>
+        <column order="13" name="EmailSubjTemplate" type="text" deleted="true">
+            <summary>Deprecated. </summary>
+        </column>
+        <column order="14" name="EmailSubj" type="text" deleted="true">
+            <summary>Deprecated. </summary>
+        </column>
+        <column order="15" name="EmailTextTemplate" type="text" deleted="true">
+            <summary>Deprecated. Generated by OD. Includes [ConfirmCode] replacement tag and (optionally) [URL] replacement tag. OD proper can construct this to be any length.
+            Will be converted to final EmailText and emailed to patient once tags are replaced with real values.</summary>
+        </column>
+        <column order="16" name="EmailText" type="text" deleted="true">
+            <summary>Deprecated. Generated by HQ. Applied real text to tags from EmailTextTemplate.</summary>
+        </column>
+        <column order="22" name="GuidMessageToMobile" type="text" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="24" name="ShortGuidEmail" type="varchar(255)" deleted="true">
+            <summary>Deprecated. Generated by HQ. Identifies this ConfirmationRequest in future transactions between HQ and OD. Will be used for email confirmations only.</summary>
+        </column>
+        <column order="25" name="AptDateTimeOrig" type="datetime" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="28" name="SmsSentOk" type="tinyint(4)" deleted="true">
+            <summary>Deprecated. Generated by HQ. Indicates whether or not we were able to send the text message.</summary>
+        </column>
+        <column order="29" name="EmailSentOk" type="tinyint(4)" deleted="true">
+            <summary>Deprecated. Generated by HQ. Indicates whether or not we were able to send the e-mail.</summary>
+        </column>
+    </table>
+    <table name="grouppermission">
+        <summary></summary>
+        <column order="4" name="PermType" type="tinyint">
+            <summary>Enum:Permissions Some permissions will treat a zero FKey differently. Some denote it as having access to everything for that PermType. I.e. Reports.</summary>
+            <Enumeration name="Permissions">
+                <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="patientportalinvite">
+        <summary></summary>
+        <column order="2" name="AptNum" type="bigint(20)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="6" name="EmailSendStatus" type="tinyint(4)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="7" name="EmailMessageNum" type="bigint(20)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="8" name="TemplateEmail" type="text" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="9" name="TemplateEmailSubj" type="varchar(255)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="10" name="Note" type="text" deleted="true">
+            <summary></summary>
+        </column>
+    </table>
+    <table name="promotionlog">
+        <summary></summary>
+        <column order="3" name="EmailMessageNum" type="bigint(20)" deleted="true">
+            <summary>Deprecated. Included for backward compatibility (even though we were never passing PromotionLogs via DTO). FK to emailmessage.EmailMessageNum
+            The email that was sent for this promotion.</summary>
+        </column>
+    </table>
+    <table name="securitylog">
+        <summary></summary>
+        <column order="1" name="PermType" type="tinyint">
+            <summary>Enum:Permissions</summary>
+            <Enumeration name="Permissions">
+                <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="signalod">
+        <summary></summary>
+        <column order="6" name="RemoteRole" type="tinyint(4)">
+            <summary>Enum:MiddleTierRole The MiddleTierRole of the instance that created this signal.</summary>
+            <Enumeration name="MiddleTierRole">
+                <summary />
+            </Enumeration>
+        </column>
+    </table>
+    <table name="webschedrecall">
+        <summary></summary>
+        <column order="5" name="DateDue" type="date">
+            <summary>The date that the recall is due.</summary>
+        </column>
+        <column order="7" name="PreferRecallMethod" type="tinyint(4)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="8" name="DateTimeReminderSent" type="datetime" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="10" name="EmailSendStatus" type="tinyint(4)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="11" name="SmsSendStatus" type="tinyint(4)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="12" name="PhonePat" type="varchar(255)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="13" name="EmailPat" type="varchar(255)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="14" name="MsgTextToMobileTemplate" type="text" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="15" name="MsgTextToMobile" type="text" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="16" name="EmailSubjTemplate" type="text" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="17" name="EmailSubj" type="text" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="18" name="EmailTextTemplate" type="text" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="19" name="EmailText" type="text" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="20" name="GuidMessageToMobile" type="text" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="21" name="ShortGUIDSms" type="varchar(255)" deleted="true">
+            <summary></summary>
+        </column>
+        <column order="22" name="ShortGUIDEmail" type="varchar(255)" deleted="true">
+            <summary></summary>
+        </column>
+    </table>
+</database>

@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SheetDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <IsNew>false</IsNew>
+  <SheetDefNum>0</SheetDefNum>
+  <Description>Extraction Consent</Description>
+  <SheetType>Consent</SheetType>
+  <FontSize>11</FontSize>
+  <FontName>Microsoft Sans Serif</FontName>
+  <Width>850</Width>
+  <Height>1100</Height>
+  <IsLandscape>false</IsLandscape>
+  <PageCount>1</PageCount>
+  <IsMultiPage>false</IsMultiPage>
+  <HasMobileLayout>true</HasMobileLayout>
+  <SheetFieldDefs>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>4056</SheetFieldDefNum>
+      <SheetDefNum>114</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Extraction Consent</FieldValue>
+      <FontSize>12</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>true</FontIsBold>
+      <XPos>200</XPos>
+      <YPos>40</YPos>
+      <Width>170</Width>
+      <Height>20</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>4057</SheetFieldDefNum>
+      <SheetDefNum>114</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>dateTime.Today</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>50</XPos>
+      <YPos>75</YPos>
+      <Width>120</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>1</TabOrderMobile>
+      <UiLabelMobile>Date</UiLabelMobile>
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>4058</SheetFieldDefNum>
+      <SheetDefNum>114</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>patient.nameFL</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>50</XPos>
+      <YPos>94</YPos>
+      <Width>220</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>2</TabOrderMobile>
+      <UiLabelMobile>Full Name</UiLabelMobile>
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>4059</SheetFieldDefNum>
+      <SheetDefNum>114</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Tooth number(s): </FieldValue>
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>50</XPos>
+      <YPos>113</YPos>
+      <Width>120</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>4060</SheetFieldDefNum>
+      <SheetDefNum>114</SheetDefNum>
+      <FieldType>InputField</FieldType>
+      <FieldName>toothNum</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>170</XPos>
+      <YPos>113</YPos>
+      <Width>100</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>1</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>3</TabOrderMobile>
+      <UiLabelMobile>Tooth Number(s)</UiLabelMobile>
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>4061</SheetFieldDefNum>
+      <SheetDefNum>114</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Extraction(s) are to be performed on the tooth/teeth listed above.  While we expect no complications, there are some risks involved with this procedure.  The more common complications are:
+
+        Pain, infection, swelling, bruising, and discoloration.  Adjacent teeth may be chipped or damaged during the extraction.
+
+        Nerves that run near the area of extraction may be bruised or damaged.  You may experience some temporary numbness and tingling of the lip and chin, or in rare cases, the tongue.  In some extremely rare instances, the lack of sensation could be permanent.
+
+        In the upper arch, sinus complications can occur because the roots of some upper teeth extend near or into the sinuses.  After extraction, a hole may be present between the sinus and the mouth.  If this happens, you will be informed and the area repaired.
+
+        By signing below you acknowledge that you understand the information presented, have had all your questions answered satisfactorily, and give consent to perform this procedure.</FieldValue>
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>50</XPos>
+      <YPos>152</YPos>
+      <Width>500</Width>
+      <Height>360</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>4</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>4062</SheetFieldDefNum>
+      <SheetDefNum>114</SheetDefNum>
+      <FieldType>SigBox</FieldType>
+      <FieldName />
+      <FieldValue />
+      <FontSize>0</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>50</XPos>
+      <YPos>532</YPos>
+      <Width>364</Width>
+      <Height>81</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>5</TabOrderMobile>
+      <UiLabelMobile>Signature</UiLabelMobile>
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>4063</SheetFieldDefNum>
+      <SheetDefNum>114</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Signature</FieldValue>
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>50</XPos>
+      <YPos>614</YPos>
+      <Width>90</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+  </SheetFieldDefs>
+</SheetDef>

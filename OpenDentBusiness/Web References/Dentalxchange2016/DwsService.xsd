@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="dxci.dws" xmlns:ns1="dxci.common" targetNamespace="dxci.dws" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="https://webservices.dentalxchange.com:443/dws/DwsService?xsd=2" namespace="dxci.common" />
+  <xs:element name="ClaimPayment" type="tns:serviceClaimPayment" />
+  <xs:element name="ClaimPaymentAdvice" type="tns:claimPaymentAdvice" />
+  <xs:element name="ClaimPaymentListRequest" type="tns:claimPaymentListRequest" />
+  <xs:element name="ClaimStatusRequest" nillable="true" type="xs:anyType" />
+  <xs:element name="DwsRequest" type="tns:dwsRequest" />
+  <xs:element name="DwsResponse" type="tns:dwsResponse" />
+  <xs:element name="Payer" nillable="true" type="xs:anyType" />
+  <xs:element name="PayerListInfoRequest" type="tns:payerListInfoRequest" />
+  <xs:element name="PayerListRequest" type="tns:payerListRequest" />
+  <xs:element name="TextRequest" type="tns:textRequest" />
+  <xs:element name="TextResponse" type="tns:textResponse" />
+  <xs:element name="UnProcessedEraRequest" type="tns:unProcessedEraRequest" />
+  <xs:element name="claimPaymentListResponse" type="tns:ClaimPaymentListResponse" />
+  <xs:element name="getClaimPaymentList" type="tns:getClaimPaymentList" />
+  <xs:element name="getClaimPaymentListResponse" type="tns:getClaimPaymentListResponse" />
+  <xs:element name="getClaimStatus" type="tns:getClaimStatus" />
+  <xs:element name="getClaimStatusResponse" type="tns:getClaimStatusResponse" />
+  <xs:element name="getEligibility" type="tns:getEligibility" />
+  <xs:element name="getEligibilityResponse" type="tns:getEligibilityResponse" />
+  <xs:element name="getPayerList" type="tns:getPayerList" />
+  <xs:element name="getPayerListResponse" type="tns:getPayerListResponse" />
+  <xs:element name="getPayerListService" type="tns:getPayerListService" />
+  <xs:element name="getPayerListServiceResponse" type="tns:getPayerListServiceResponse" />
+  <xs:element name="getUnProcessedEra" type="tns:getUnProcessedEra" />
+  <xs:element name="getUnProcessedEraResponse" type="tns:getUnProcessedEraResponse" />
+  <xs:element name="lookupClaimStatus" type="tns:lookupClaimStatus" />
+  <xs:element name="lookupClaimStatusResponse" type="tns:lookupClaimStatusResponse" />
+  <xs:element name="lookupEligibility" type="tns:lookupEligibility" />
+  <xs:element name="lookupEligibilityResponse" type="tns:lookupEligibilityResponse" />
+  <xs:element name="lookupFamilyEligibility" type="tns:lookupFamilyEligibility" />
+  <xs:element name="lookupFamilyEligibilityResponse" type="tns:lookupFamilyEligibilityResponse" />
+  <xs:element name="lookupTerminalClaimStatus" type="tns:lookupTerminalClaimStatus" />
+  <xs:element name="lookupTerminalClaimStatusResponse" type="tns:lookupTerminalClaimStatusResponse" />
+  <xs:element name="lookupTerminalEligibility" type="tns:lookupTerminalEligibility" />
+  <xs:element name="lookupTerminalEligibilityResponse" type="tns:lookupTerminalEligibilityResponse" />
+  <xs:element name="payerListInfoResponse" type="tns:PayerListInfoResponse" />
+  <xs:element name="payerListResponse" type="tns:PayerListResponse" />
+  <xs:element name="requireBean" type="tns:requireBean" />
+  <xs:element name="submitClaim" type="tns:submitClaim" />
+  <xs:element name="submitClaimResponse" type="tns:submitClaimResponse" />
+  <xs:element name="unProcessedEraResponse" type="tns:UnProcessedEraResponse" />
+  <xs:element name="updateTerminal" type="tns:updateTerminal" />
+  <xs:element name="updateTerminalResponse" type="tns:updateTerminalResponse" />
+  <xs:element name="validateClaim" type="tns:validateClaim" />
+  <xs:element name="validateClaimResponse" type="tns:validateClaimResponse" />
+  <xs:complexType name="getPayerListService">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" name="request" type="tns:payerListInfoRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="payerListInfoRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:dwsRequest">
+        <xs:sequence />
+        <xs:attribute name="transaction" type="xs:string" />
+        <xs:attribute name="payerIDCode" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="dwsRequest" abstract="true">
+    <xs:sequence />
+    <xs:attribute name="outputFormat" type="tns:Format" />
+  </xs:complexType>
+  <xs:complexType name="getPayerListServiceResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:PayerListInfoResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PayerListInfoResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:dwsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Payers">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="Payer" type="tns:supportedTransPayer" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="dwsResponse" abstract="true">
+    <xs:complexContent mixed="false">
+      <xs:extension base="ns1:Response">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="supportedTransPayer">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="PayerIDCode" type="xs:string" />
+      <xs:element minOccurs="0" name="Name" type="xs:string" />
+      <xs:element minOccurs="0" name="Claim" type="tns:supportedTransBean" />
+      <xs:element minOccurs="0" name="Eligibility" type="tns:supportedTransBean" />
+      <xs:element minOccurs="0" name="Benefits" type="tns:supportedTransBean" />
+      <xs:element minOccurs="0" name="ClaimStatus" type="tns:supportedTransBean" />
+      <xs:element minOccurs="0" name="ERA" type="tns:supportedTransBean" />
+      <xs:element minOccurs="0" name="RTClaim" type="tns:supportedTransBean" />
+      <xs:element minOccurs="0" name="DXCAttachment" type="tns:supportedTransBean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="supportedTransBean">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Requirements">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Requirement" type="tns:requireBean" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="isSupported" type="xs:boolean" />
+  </xs:complexType>
+  <xs:complexType name="requireBean" final="extension restriction">
+    <xs:sequence />
+    <xs:attribute name="name" type="xs:string" />
+    <xs:attribute name="value" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="getPayerList">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" name="request" type="tns:payerListRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="payerListRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:dwsRequest">
+        <xs:sequence />
+        <xs:attribute name="service" type="tns:Service" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="getPayerListResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:PayerListResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PayerListResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:dwsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Payers">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="Payer" type="tns:simplePayer" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="simplePayer">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element name="Code" type="xs:string" />
+      <xs:element name="PatientAndSubscriberReqdForElig" type="xs:boolean" />
+      <xs:element name="PatientReqdForElig" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="lookupFamilyEligibility">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" name="request" type="tns:textRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="textRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:dwsRequest">
+        <xs:sequence>
+          <xs:element name="Content" type="xs:string" />
+        </xs:sequence>
+        <xs:attribute name="validateForAttachment" type="xs:boolean" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="lookupFamilyEligibilityResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:textResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="textResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:dwsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Content" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="lookupClaimStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" name="request" type="tns:textRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="lookupClaimStatusResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:textResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getUnProcessedEra">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" name="request" type="tns:unProcessedEraRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="unProcessedEraRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:dwsRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ClaimPaymentId" type="xs:int" />
+          <xs:element minOccurs="0" name="PaymentTraceNumber" type="xs:string" />
+          <xs:element minOccurs="0" name="ReceivedDateStart" type="xs:date" />
+          <xs:element minOccurs="0" name="ReceivedDateEnd" type="xs:date" />
+          <xs:element minOccurs="0" name="PaymentEffectiveDateStart" type="xs:date" />
+          <xs:element minOccurs="0" name="PaymentEffectiveDateEnd" type="xs:date" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="getUnProcessedEraResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:UnProcessedEraResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="UnProcessedEraResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:dwsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ClaimPaymentAdvice" type="tns:claimPaymentAdvice" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="claimPaymentAdvice">
+    <xs:sequence>
+      <xs:element name="AdditionalEraExists" type="xs:boolean" />
+      <xs:element minOccurs="0" name="EdiContent" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getClaimStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" name="request" type="tns:dwsClaimStatusRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="dwsClaimStatusRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:dwsRequest">
+        <xs:sequence>
+          <xs:element name="Payer" type="tns:simplePayer" />
+          <xs:element name="Provider" type="ns1:Provider" />
+          <xs:element name="SubscriberID" type="xs:string" />
+          <xs:element name="SubscriberLastName" type="xs:string" />
+          <xs:element name="Relationship" type="tns:relationship" />
+          <xs:element name="PatientLastName" type="xs:string" />
+          <xs:element name="PatientDOB" type="xs:dateTime" />
+          <xs:element name="PatientGender" type="ns1:gender" />
+          <xs:element name="ServiceDateFrom" type="xs:dateTime" />
+          <xs:element name="ServiceDateTo" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="SubscriberFirstName" type="xs:string" />
+          <xs:element minOccurs="0" name="PatientFirstName" type="xs:string" />
+          <xs:element minOccurs="0" name="PayerClaimID" type="xs:string" />
+          <xs:element minOccurs="0" name="ClaimAmount" type="xs:decimal" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="getClaimStatusResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:textResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="lookupTerminalEligibility">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" name="request" type="tns:textRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="lookupTerminalEligibilityResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:textResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="lookupTerminalClaimStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" name="request" type="tns:textRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="lookupTerminalClaimStatusResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:textResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="submitClaim">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" name="request" type="tns:textRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="submitClaimResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:textResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getClaimPaymentList">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" name="request" type="tns:claimPaymentListRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="claimPaymentListRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:dwsRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ClaimPaymentId" type="xs:int" />
+          <xs:element minOccurs="0" name="PaymentTraceNumber" type="xs:string" />
+          <xs:element minOccurs="0" name="ProcessStatus" type="tns:processStatus" />
+          <xs:element minOccurs="0" name="PaymentEffectiveDateStart" type="xs:date" />
+          <xs:element minOccurs="0" name="PaymentEffectiveDateEnd" type="xs:date" />
+          <xs:element minOccurs="0" name="ReceivedDateStart" type="xs:date" />
+          <xs:element minOccurs="0" name="ReceivedDateEnd" type="xs:date" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="getClaimPaymentListResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:ClaimPaymentListResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ClaimPaymentListResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:dwsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ClaimPayments">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="ClaimPayment" type="tns:serviceClaimPayment" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="serviceClaimPayment">
+    <xs:sequence>
+      <xs:element name="ClaimPaymentId" type="xs:int" />
+      <xs:element name="ClaimCount" type="xs:int" />
+      <xs:element minOccurs="0" name="PayerName" type="xs:string" />
+      <xs:element minOccurs="0" name="ReceivedDate" type="xs:date" />
+      <xs:element minOccurs="0" name="PaymentEffectiveDate" type="xs:date" />
+      <xs:element minOccurs="0" name="PaymentAmt" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PrimaryId" type="xs:string" />
+      <xs:element minOccurs="0" name="SecondaryId" type="xs:string" />
+      <xs:element minOccurs="0" name="PaymentTraceNumber" type="xs:string" />
+      <xs:element minOccurs="0" name="ProcessStatus" type="tns:processStatus" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="updateTerminal">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" name="request" type="tns:textRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="updateTerminalResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:textResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="lookupEligibility">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" name="request" type="tns:textRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="lookupEligibilityResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:textResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="validateClaim">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" name="request" type="tns:textRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="validateClaimResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:textResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getEligibility">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" name="request" type="tns:dwsEligRequest" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="dwsEligRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:dwsRequest">
+        <xs:sequence>
+          <xs:element name="Payer" type="tns:simplePayer" />
+          <xs:element name="Provider" type="ns1:Provider" />
+          <xs:element name="SubscriberID" type="xs:string" />
+          <xs:element name="PatientDOB" type="xs:dateTime" />
+          <xs:element name="Relationship" type="tns:relationship" />
+          <xs:element minOccurs="0" name="PatientLastName" type="xs:string" />
+          <xs:element minOccurs="0" name="PatientFirstName" type="xs:string" />
+          <xs:element minOccurs="0" name="SubscriberLastName" type="xs:string" />
+          <xs:element minOccurs="0" name="SubscriberFirstName" type="xs:string" />
+          <xs:element minOccurs="0" name="SubscriberDOB" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="GroupNumber" type="xs:string" />
+          <xs:element minOccurs="0" name="ProcedureCode" type="xs:string" />
+          <xs:element minOccurs="0" name="Category" type="tns:Category" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="getEligibilityResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:textResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="Format">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="EDI" />
+      <xs:enumeration value="XML" />
+      <xs:enumeration value="HTML" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="Service">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ELIGIBILITY" />
+      <xs:enumeration value="CLAIM_STATUS" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="relationship">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SPOUSE" />
+      <xs:enumeration value="SELF" />
+      <xs:enumeration value="CHILD" />
+      <xs:enumeration value="EMPLOYEE" />
+      <xs:enumeration value="UNKNOWN" />
+      <xs:enumeration value="HANDICAPPED_DEPENDENT" />
+      <xs:enumeration value="SIGNIFICANT_OTHER" />
+      <xs:enumeration value="OTHER_ADULT" />
+      <xs:enumeration value="INJURED_PLAINTIFF" />
+      <xs:enumeration value="LIFE_PARTNER" />
+      <xs:enumeration value="DEPENDENT" />
+      <xs:enumeration value="OTHER" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="processStatus">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ALL" />
+      <xs:enumeration value="PROCESSED" />
+      <xs:enumeration value="UNPROCESSED" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="Category">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="DIAGNOSTIC_DENTAL" />
+      <xs:enumeration value="PERIODONTICS" />
+      <xs:enumeration value="RESTORATIVE" />
+      <xs:enumeration value="ENDODONTICS" />
+      <xs:enumeration value="MAXILLOFACIAL_PROSTHETICS" />
+      <xs:enumeration value="ADJUNCTIVE_DENTAL_SERVICES" />
+      <xs:enumeration value="HEALTH_BENEFIT_PLAN_COVERAGE" />
+      <xs:enumeration value="PLAN_WAITING_PERIOD" />
+      <xs:enumeration value="DENTAL_CARE" />
+      <xs:enumeration value="DENTAL_CROWNS" />
+      <xs:enumeration value="DENTAL_ACCIDENT" />
+      <xs:enumeration value="ORTHODONTICS" />
+      <xs:enumeration value="PROSTHODONTICS" />
+      <xs:enumeration value="ORAL_SURGERY" />
+      <xs:enumeration value="ROUTINE_PREVENTIVE_DENTAL" />
+      <xs:enumeration value="GENERAL_BENEFITS" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

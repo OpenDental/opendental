@@ -1,0 +1,109 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Drawing.Text;
+using System.IO;
+using System.Text;
+using System.Windows.Forms;
+using OpenDentBusiness;
+using CodeBase;
+
+namespace OpenDental {
+	public partial class FormSheetFieldEditPatImage:FormODBase {
+		///<summary>This is the object we are editing.</summary>
+		public SheetField SheetFieldCur;
+		public Sheet SheetCur;
+
+		public FormSheetFieldEditPatImage() {
+			InitializeComponent();
+			InitializeLayoutManager();
+			Lan.F(this);
+		}
+
+		private void FormSheetFieldPatImage_Load(object sender,EventArgs e) {
+			FillFields();
+		}
+
+		private void FillFields(){
+			textYPos.MaxVal=SheetCur.Height-1;//The maximum y-value of the sheet field must be within the page vertically.
+			textFieldValueDoc.Text="";
+			textFieldValueMount.Text="";
+			if(SheetFieldCur.FieldValue.StartsWith("MountNum:")){
+				long mountNum=PIn.Long(SheetFieldCur.FieldValue.Substring(9));
+				Mount mount=Mounts.GetByNum(mountNum);
+				textFieldValueDoc.Text=mount.DateCreated.ToShortDateString()+" "+mount.Description;
+			}
+			else if(SheetFieldCur.FieldValue!=""){
+				long docNum=PIn.Long(SheetFieldCur.FieldValue);
+				Document document=Documents.GetByNum(docNum);
+				textFieldValueDoc.Text=document.DateCreated.ToShortDateString()+" "+document.Description;
+			}
+			textXPos.Text=SheetFieldCur.XPos.ToString();
+			textYPos.Text=SheetFieldCur.YPos.ToString();
+			textWidth.Text=SheetFieldCur.Width.ToString();
+			textHeight.Text=SheetFieldCur.Height.ToString();
+		}
+
+		private void butChange_Click(object sender, EventArgs e){
+			//MsgBox.Show(sheetField.FieldValue);
+			using FormImagePickerPatient formImagePickerPatient=new FormImagePickerPatient();
+			Patient patient=Patients.GetPat(SheetCur.PatNum);
+			formImagePickerPatient.PatientCur=patient;
+			if(SheetFieldCur.FieldValue.StartsWith("MountNum:")){
+				long mountNum=PIn.Long(SheetFieldCur.FieldValue.Substring(9));
+				formImagePickerPatient.MountNumSelected=mountNum;
+			}
+			else if(SheetFieldCur.FieldValue!=""){
+				long docNum=PIn.Long(SheetFieldCur.FieldValue);
+				formImagePickerPatient.DocNumSelected=docNum;
+			}
+			formImagePickerPatient.ShowDialog();
+			if(formImagePickerPatient.DialogResult!=DialogResult.OK){
+				return;
+			}
+			if(formImagePickerPatient.DocNumSelected>0){
+				long docNumSelected=formImagePickerPatient.DocNumSelected;
+				SheetFieldCur.FieldValue=docNumSelected.ToString();
+			}
+			if(formImagePickerPatient.MountNumSelected>0){
+				long mountNumSelected=formImagePickerPatient.MountNumSelected;
+				SheetFieldCur.FieldValue="MountNum:"+mountNumSelected.ToString();
+			}
+			FillFields();
+		}
+
+		private void butDelete_Click(object sender,EventArgs e) {
+			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete?")){
+				return;
+			}
+			SheetFieldCur=null;
+			DialogResult=DialogResult.OK;
+		}
+
+		private void butOK_Click(object sender,EventArgs e) {
+			if(!textXPos.IsValid()
+				|| !textYPos.IsValid()
+				|| !textWidth.IsValid()
+				|| !textHeight.IsValid())
+			{
+				MsgBox.Show(this,"Please fix data entry errors first.");
+				return;
+			}
+			SheetFieldCur.XPos=PIn.Int(textXPos.Text);
+			SheetFieldCur.YPos=PIn.Int(textYPos.Text);
+			SheetFieldCur.Width=PIn.Int(textWidth.Text);
+			SheetFieldCur.Height=PIn.Int(textHeight.Text);
+			//don't save to database here.
+			SheetFieldCur.IsNew=false;
+			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+	}
+}

@@ -1,0 +1,770 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="https://ITSWebService.changehealthcare.com/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="https://ITSWebService.changehealthcare.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="https://ITSWebService.changehealthcare.com/">
+      <s:element name="Authenticate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sUserID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AuthenticateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AuthenticateResult" type="tns:ItsReturn" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ItsReturn">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="ErrorCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Response" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ChangePassword">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sUserID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sNewPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChangePasswordResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ChangePasswordResult" type="tns:ItsReturn" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendRequest">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sUserID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sMessageType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sEncodedRequest" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendRequestResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SendRequestResult" type="tns:ItsReturn" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendRequestA">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sUserID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sMessageType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sEncodedRequest" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendRequestAResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SendRequestAResult" type="tns:ITSReturnA" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ITSReturnA">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="ErrorCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Response" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ServerCode" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="PutFileExt">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sUserID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sMessageType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sFileName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sEncodedPutFile" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PutFileExtResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PutFileExtResult" type="tns:ItsReturn" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PutFile">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sUserID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sMessageType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sEncodedPutFile" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PutFileResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PutFileResult" type="tns:ItsReturn" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetFile">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sUserID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sMessageType" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetFileResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetFileResult" type="tns:ItsReturn" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsAlive">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsAliveResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="IsAliveResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ItsReturn" nillable="true" type="tns:ItsReturn" />
+      <s:element name="ITSReturnA" nillable="true" type="tns:ITSReturnA" />
+      <s:element name="string" nillable="true" type="s:string" />
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="AuthenticateSoapIn">
+    <wsdl:part name="parameters" element="tns:Authenticate" />
+  </wsdl:message>
+  <wsdl:message name="AuthenticateSoapOut">
+    <wsdl:part name="parameters" element="tns:AuthenticateResponse" />
+  </wsdl:message>
+  <wsdl:message name="ChangePasswordSoapIn">
+    <wsdl:part name="parameters" element="tns:ChangePassword" />
+  </wsdl:message>
+  <wsdl:message name="ChangePasswordSoapOut">
+    <wsdl:part name="parameters" element="tns:ChangePasswordResponse" />
+  </wsdl:message>
+  <wsdl:message name="SendRequestSoapIn">
+    <wsdl:part name="parameters" element="tns:SendRequest" />
+  </wsdl:message>
+  <wsdl:message name="SendRequestSoapOut">
+    <wsdl:part name="parameters" element="tns:SendRequestResponse" />
+  </wsdl:message>
+  <wsdl:message name="SendRequestASoapIn">
+    <wsdl:part name="parameters" element="tns:SendRequestA" />
+  </wsdl:message>
+  <wsdl:message name="SendRequestASoapOut">
+    <wsdl:part name="parameters" element="tns:SendRequestAResponse" />
+  </wsdl:message>
+  <wsdl:message name="PutFileExtSoapIn">
+    <wsdl:part name="parameters" element="tns:PutFileExt" />
+  </wsdl:message>
+  <wsdl:message name="PutFileExtSoapOut">
+    <wsdl:part name="parameters" element="tns:PutFileExtResponse" />
+  </wsdl:message>
+  <wsdl:message name="PutFileSoapIn">
+    <wsdl:part name="parameters" element="tns:PutFile" />
+  </wsdl:message>
+  <wsdl:message name="PutFileSoapOut">
+    <wsdl:part name="parameters" element="tns:PutFileResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetFileSoapIn">
+    <wsdl:part name="parameters" element="tns:GetFile" />
+  </wsdl:message>
+  <wsdl:message name="GetFileSoapOut">
+    <wsdl:part name="parameters" element="tns:GetFileResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsAliveSoapIn">
+    <wsdl:part name="parameters" element="tns:IsAlive" />
+  </wsdl:message>
+  <wsdl:message name="IsAliveSoapOut">
+    <wsdl:part name="parameters" element="tns:IsAliveResponse" />
+  </wsdl:message>
+  <wsdl:message name="AuthenticateHttpGetIn">
+    <wsdl:part name="sUserID" type="s:string" />
+    <wsdl:part name="sPassword" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="AuthenticateHttpGetOut">
+    <wsdl:part name="Body" element="tns:ItsReturn" />
+  </wsdl:message>
+  <wsdl:message name="ChangePasswordHttpGetIn">
+    <wsdl:part name="sUserID" type="s:string" />
+    <wsdl:part name="sPassword" type="s:string" />
+    <wsdl:part name="sNewPassword" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ChangePasswordHttpGetOut">
+    <wsdl:part name="Body" element="tns:ItsReturn" />
+  </wsdl:message>
+  <wsdl:message name="SendRequestHttpGetIn">
+    <wsdl:part name="sUserID" type="s:string" />
+    <wsdl:part name="sPassword" type="s:string" />
+    <wsdl:part name="sMessageType" type="s:string" />
+    <wsdl:part name="sEncodedRequest" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SendRequestHttpGetOut">
+    <wsdl:part name="Body" element="tns:ItsReturn" />
+  </wsdl:message>
+  <wsdl:message name="SendRequestAHttpGetIn">
+    <wsdl:part name="sUserID" type="s:string" />
+    <wsdl:part name="sPassword" type="s:string" />
+    <wsdl:part name="sMessageType" type="s:string" />
+    <wsdl:part name="sEncodedRequest" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SendRequestAHttpGetOut">
+    <wsdl:part name="Body" element="tns:ITSReturnA" />
+  </wsdl:message>
+  <wsdl:message name="PutFileExtHttpGetIn">
+    <wsdl:part name="sUserID" type="s:string" />
+    <wsdl:part name="sPassword" type="s:string" />
+    <wsdl:part name="sMessageType" type="s:string" />
+    <wsdl:part name="sFileName" type="s:string" />
+    <wsdl:part name="sEncodedPutFile" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="PutFileExtHttpGetOut">
+    <wsdl:part name="Body" element="tns:ItsReturn" />
+  </wsdl:message>
+  <wsdl:message name="PutFileHttpGetIn">
+    <wsdl:part name="sUserID" type="s:string" />
+    <wsdl:part name="sPassword" type="s:string" />
+    <wsdl:part name="sMessageType" type="s:string" />
+    <wsdl:part name="sEncodedPutFile" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="PutFileHttpGetOut">
+    <wsdl:part name="Body" element="tns:ItsReturn" />
+  </wsdl:message>
+  <wsdl:message name="GetFileHttpGetIn">
+    <wsdl:part name="sUserID" type="s:string" />
+    <wsdl:part name="sPassword" type="s:string" />
+    <wsdl:part name="sMessageType" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetFileHttpGetOut">
+    <wsdl:part name="Body" element="tns:ItsReturn" />
+  </wsdl:message>
+  <wsdl:message name="IsAliveHttpGetIn">
+    <wsdl:part name="s" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="IsAliveHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="AuthenticateHttpPostIn">
+    <wsdl:part name="sUserID" type="s:string" />
+    <wsdl:part name="sPassword" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="AuthenticateHttpPostOut">
+    <wsdl:part name="Body" element="tns:ItsReturn" />
+  </wsdl:message>
+  <wsdl:message name="ChangePasswordHttpPostIn">
+    <wsdl:part name="sUserID" type="s:string" />
+    <wsdl:part name="sPassword" type="s:string" />
+    <wsdl:part name="sNewPassword" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ChangePasswordHttpPostOut">
+    <wsdl:part name="Body" element="tns:ItsReturn" />
+  </wsdl:message>
+  <wsdl:message name="SendRequestHttpPostIn">
+    <wsdl:part name="sUserID" type="s:string" />
+    <wsdl:part name="sPassword" type="s:string" />
+    <wsdl:part name="sMessageType" type="s:string" />
+    <wsdl:part name="sEncodedRequest" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SendRequestHttpPostOut">
+    <wsdl:part name="Body" element="tns:ItsReturn" />
+  </wsdl:message>
+  <wsdl:message name="SendRequestAHttpPostIn">
+    <wsdl:part name="sUserID" type="s:string" />
+    <wsdl:part name="sPassword" type="s:string" />
+    <wsdl:part name="sMessageType" type="s:string" />
+    <wsdl:part name="sEncodedRequest" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SendRequestAHttpPostOut">
+    <wsdl:part name="Body" element="tns:ITSReturnA" />
+  </wsdl:message>
+  <wsdl:message name="PutFileExtHttpPostIn">
+    <wsdl:part name="sUserID" type="s:string" />
+    <wsdl:part name="sPassword" type="s:string" />
+    <wsdl:part name="sMessageType" type="s:string" />
+    <wsdl:part name="sFileName" type="s:string" />
+    <wsdl:part name="sEncodedPutFile" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="PutFileExtHttpPostOut">
+    <wsdl:part name="Body" element="tns:ItsReturn" />
+  </wsdl:message>
+  <wsdl:message name="PutFileHttpPostIn">
+    <wsdl:part name="sUserID" type="s:string" />
+    <wsdl:part name="sPassword" type="s:string" />
+    <wsdl:part name="sMessageType" type="s:string" />
+    <wsdl:part name="sEncodedPutFile" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="PutFileHttpPostOut">
+    <wsdl:part name="Body" element="tns:ItsReturn" />
+  </wsdl:message>
+  <wsdl:message name="GetFileHttpPostIn">
+    <wsdl:part name="sUserID" type="s:string" />
+    <wsdl:part name="sPassword" type="s:string" />
+    <wsdl:part name="sMessageType" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetFileHttpPostOut">
+    <wsdl:part name="Body" element="tns:ItsReturn" />
+  </wsdl:message>
+  <wsdl:message name="IsAliveHttpPostIn">
+    <wsdl:part name="s" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="IsAliveHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:portType name="ITSWSSoap">
+    <wsdl:operation name="Authenticate">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Authenticate User</wsdl:documentation>
+      <wsdl:input message="tns:AuthenticateSoapIn" />
+      <wsdl:output message="tns:AuthenticateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChangePassword">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Change User Password</wsdl:documentation>
+      <wsdl:input message="tns:ChangePasswordSoapIn" />
+      <wsdl:output message="tns:ChangePasswordSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendRequest">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Send a Realtime Request</wsdl:documentation>
+      <wsdl:input message="tns:SendRequestSoapIn" />
+      <wsdl:output message="tns:SendRequestSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendRequestA">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Send a Realtime Request</wsdl:documentation>
+      <wsdl:input message="tns:SendRequestASoapIn" />
+      <wsdl:output message="tns:SendRequestASoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PutFileExt">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Upload a Batch File with filename</wsdl:documentation>
+      <wsdl:input message="tns:PutFileExtSoapIn" />
+      <wsdl:output message="tns:PutFileExtSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PutFile">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Upload a Batch File</wsdl:documentation>
+      <wsdl:input message="tns:PutFileSoapIn" />
+      <wsdl:output message="tns:PutFileSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFile">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Download a Batch File</wsdl:documentation>
+      <wsdl:input message="tns:GetFileSoapIn" />
+      <wsdl:output message="tns:GetFileSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsAlive">
+      <wsdl:input message="tns:IsAliveSoapIn" />
+      <wsdl:output message="tns:IsAliveSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="ITSWSHttpGet">
+    <wsdl:operation name="Authenticate">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Authenticate User</wsdl:documentation>
+      <wsdl:input message="tns:AuthenticateHttpGetIn" />
+      <wsdl:output message="tns:AuthenticateHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChangePassword">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Change User Password</wsdl:documentation>
+      <wsdl:input message="tns:ChangePasswordHttpGetIn" />
+      <wsdl:output message="tns:ChangePasswordHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendRequest">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Send a Realtime Request</wsdl:documentation>
+      <wsdl:input message="tns:SendRequestHttpGetIn" />
+      <wsdl:output message="tns:SendRequestHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendRequestA">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Send a Realtime Request</wsdl:documentation>
+      <wsdl:input message="tns:SendRequestAHttpGetIn" />
+      <wsdl:output message="tns:SendRequestAHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PutFileExt">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Upload a Batch File with filename</wsdl:documentation>
+      <wsdl:input message="tns:PutFileExtHttpGetIn" />
+      <wsdl:output message="tns:PutFileExtHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PutFile">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Upload a Batch File</wsdl:documentation>
+      <wsdl:input message="tns:PutFileHttpGetIn" />
+      <wsdl:output message="tns:PutFileHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFile">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Download a Batch File</wsdl:documentation>
+      <wsdl:input message="tns:GetFileHttpGetIn" />
+      <wsdl:output message="tns:GetFileHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsAlive">
+      <wsdl:input message="tns:IsAliveHttpGetIn" />
+      <wsdl:output message="tns:IsAliveHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="ITSWSHttpPost">
+    <wsdl:operation name="Authenticate">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Authenticate User</wsdl:documentation>
+      <wsdl:input message="tns:AuthenticateHttpPostIn" />
+      <wsdl:output message="tns:AuthenticateHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChangePassword">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Change User Password</wsdl:documentation>
+      <wsdl:input message="tns:ChangePasswordHttpPostIn" />
+      <wsdl:output message="tns:ChangePasswordHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendRequest">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Send a Realtime Request</wsdl:documentation>
+      <wsdl:input message="tns:SendRequestHttpPostIn" />
+      <wsdl:output message="tns:SendRequestHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendRequestA">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Send a Realtime Request</wsdl:documentation>
+      <wsdl:input message="tns:SendRequestAHttpPostIn" />
+      <wsdl:output message="tns:SendRequestAHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PutFileExt">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Upload a Batch File with filename</wsdl:documentation>
+      <wsdl:input message="tns:PutFileExtHttpPostIn" />
+      <wsdl:output message="tns:PutFileExtHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PutFile">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Upload a Batch File</wsdl:documentation>
+      <wsdl:input message="tns:PutFileHttpPostIn" />
+      <wsdl:output message="tns:PutFileHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFile">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Download a Batch File</wsdl:documentation>
+      <wsdl:input message="tns:GetFileHttpPostIn" />
+      <wsdl:output message="tns:GetFileHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsAlive">
+      <wsdl:input message="tns:IsAliveHttpPostIn" />
+      <wsdl:output message="tns:IsAliveHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ITSWSSoap" type="tns:ITSWSSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Authenticate">
+      <soap:operation soapAction="https://ITSWebService.changehealthcare.com/Authenticate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangePassword">
+      <soap:operation soapAction="https://ITSWebService.changehealthcare.com/ChangePassword" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendRequest">
+      <soap:operation soapAction="https://ITSWebService.changehealthcare.com/SendRequest" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendRequestA">
+      <soap:operation soapAction="https://ITSWebService.changehealthcare.com/SendRequestA" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PutFileExt">
+      <soap:operation soapAction="https://ITSWebService.changehealthcare.com/PutFileExt" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PutFile">
+      <soap:operation soapAction="https://ITSWebService.changehealthcare.com/PutFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFile">
+      <soap:operation soapAction="https://ITSWebService.changehealthcare.com/GetFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsAlive">
+      <soap:operation soapAction="https://ITSWebService.changehealthcare.com/IsAlive" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ITSWSSoap12" type="tns:ITSWSSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Authenticate">
+      <soap12:operation soapAction="https://ITSWebService.changehealthcare.com/Authenticate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangePassword">
+      <soap12:operation soapAction="https://ITSWebService.changehealthcare.com/ChangePassword" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendRequest">
+      <soap12:operation soapAction="https://ITSWebService.changehealthcare.com/SendRequest" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendRequestA">
+      <soap12:operation soapAction="https://ITSWebService.changehealthcare.com/SendRequestA" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PutFileExt">
+      <soap12:operation soapAction="https://ITSWebService.changehealthcare.com/PutFileExt" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PutFile">
+      <soap12:operation soapAction="https://ITSWebService.changehealthcare.com/PutFile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFile">
+      <soap12:operation soapAction="https://ITSWebService.changehealthcare.com/GetFile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsAlive">
+      <soap12:operation soapAction="https://ITSWebService.changehealthcare.com/IsAlive" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ITSWSHttpGet" type="tns:ITSWSHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="Authenticate">
+      <http:operation location="/Authenticate" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangePassword">
+      <http:operation location="/ChangePassword" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendRequest">
+      <http:operation location="/SendRequest" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendRequestA">
+      <http:operation location="/SendRequestA" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PutFileExt">
+      <http:operation location="/PutFileExt" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PutFile">
+      <http:operation location="/PutFile" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFile">
+      <http:operation location="/GetFile" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsAlive">
+      <http:operation location="/IsAlive" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ITSWSHttpPost" type="tns:ITSWSHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="Authenticate">
+      <http:operation location="/Authenticate" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangePassword">
+      <http:operation location="/ChangePassword" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendRequest">
+      <http:operation location="/SendRequest" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendRequestA">
+      <http:operation location="/SendRequestA" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PutFileExt">
+      <http:operation location="/PutFileExt" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PutFile">
+      <http:operation location="/PutFile" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFile">
+      <http:operation location="/GetFile" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsAlive">
+      <http:operation location="/IsAlive" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ITSWS">
+    <wsdl:port name="ITSWSSoap" binding="tns:ITSWSSoap">
+      <soap:address location="https://its.changehealthcare.com/ITS/ITSWS.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ITSWSSoap12" binding="tns:ITSWSSoap12">
+      <soap12:address location="https://its.changehealthcare.com/ITS/ITSWS.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ITSWSHttpGet" binding="tns:ITSWSHttpGet">
+      <http:address location="https://its.changehealthcare.com/ITS/ITSWS.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ITSWSHttpPost" binding="tns:ITSWSHttpPost">
+      <http:address location="https://its.changehealthcare.com/ITS/ITSWS.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
