@@ -1358,6 +1358,10 @@ namespace OpenDental {
 				}
 			}
 			Mounts.Delete(_mountShowing);
+			Def defDocCategory = Defs.GetDef(DefCat.ImageCats,_mountShowing.DocCategory);
+			string logText = "Mount Deleted: "+_mountShowing.Description+" with category "
+				+defDocCategory.ItemName;
+			SecurityLogs.MakeLogEntry(Permissions.ImageDelete,PatientCur.PatNum,logText);
 			EventFillTree?.Invoke(this,false);
 			EventSelectTreeNode?.Invoke(this,nodeTypeAndKeyAbove);
 		}

@@ -242,6 +242,8 @@ namespace OpenDental {
 				labelSSN.Text=Lan.g(this,"SIN");
 				labelZip.Text=Lan.g(this,"Postal Code");
 				labelST.Text=Lan.g(this,"Province");
+				labelGroupNum1.Text=Lan.g(this,"Plan Number");
+				labelGroupNum2.Text=Lan.g(this,"Plan Number");
 			}
 			if(CultureInfo.CurrentCulture.Name.EndsWith("GB")) {//en-GB
 				labelZip.Text=Lan.g(this,"Postcode");
