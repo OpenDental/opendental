@@ -2719,6 +2719,13 @@ namespace OpenDentBusiness {
 			command="INSERT INTO preference(PrefName,ValueString) VALUES('DatabaseIntegritiesWhiteList','')"; 
 			Db.NonQ(command);
 		}//End of 22_1_28() method
+
+		private static void To22_1_31() {
+			string command;
+			//I35616 - Enhance Plugin Whitelisting Verification.
+			command = "ALTER TABLE clinic ADD EmailAliasOverride varchar(255) NOT NULL";
+			Db.NonQ(command);
+		}//End of 22_1_31() method
 	}
 }
 

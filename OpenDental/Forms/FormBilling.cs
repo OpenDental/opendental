@@ -561,6 +561,7 @@ namespace OpenDental {
 				else {
 					emailAddress=comboEmailFrom.GetSelected<EmailAddress>();
 				}
+				emailAddress = EmailAddresses.OverrideSenderAddressClinical(emailAddress, patient.ClinicNum); //Use clinic's Email Sender Address Override, if present
 				_progExtended.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper(Lan.g(this,"Statement")+"\r\n"+curStatementIdx+" / "+gridBill.SelectedIndices.Length,"10%",10,100,ProgBarStyle.Blocks,"3")));
 				if(statement.Mode_==StatementMode.Email) {
 					if(emailAddress.SMTPserver=="") {

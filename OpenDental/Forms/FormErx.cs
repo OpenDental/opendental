@@ -34,15 +34,39 @@ namespace OpenDental {
 		}
 
 		private async void FormErx_Load(object sender,EventArgs e) {
+			//Attempted fix for an issue that some workstations are having where the WebView2 will hang on webViewMain.CoreWebView2.Navigate(doseSpotUrl).
+			//Pulled the code out of ODWebView2.Init() and put it back in the form load method they way it used to be. 
+			//https://github.com/MicrosoftEdge/WebView2Feedback/issues/1778#issuecomment-934806081
+			//await webViewMain.Init();
+			bool doShowError=false;
 			try {
-				await webViewMain.Init();
+				if (CoreWebView2Environment.GetAvailableBrowserVersionString().IsNullOrEmpty()) {
+					doShowError=true;
+				}
 			}
-			catch(Exception ex) {
+			catch (Exception ex) {
 				ex.DoNothing();
+				doShowError=true;
+			}
+			if (doShowError) {
+				string warning="Microsoft WebView2 is not available on this device." +
+					"To use this feature, the MicroSoft WebView2 Runtime needs to be downloaded and installed on this machine.\r\n" +
+					"Would you like to download the WebView2 Runtime now?";
+				if (ODBuild.IsDebug()) {
+					warning+="\r\nIf you are in debug, move the \"WebView2Loader.dll\" from \"RequiredDLLs\" to \"OpenDental\\Bin\\Debug\"";
+				}
+				if (MessageBox.Show(warning, "Error", MessageBoxButtons.YesNo)==DialogResult.Yes) {
+					ODException.SwallowAnyException(() => Process.Start("https://go.microsoft.com/fwlink/p/?LinkId=2124703"));
+				}
 				DialogResult=DialogResult.Cancel;
 				Close();
 				return;
 			}
+			// Create the cache directory 
+			string localAppData=Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+			string cacheFolder=ODFileUtils.CombinePaths(localAppData,"WindowsFormsWebView2");
+			CoreWebView2Environment environment=await CoreWebView2Environment.CreateAsync(null,cacheFolder);
+			await webViewMain.EnsureCoreWebView2Async(environment);
 			Text=Lan.g(this,"Loading")+"...";
 			LayoutToolBars();
 			if(ErxOptionCur==ErxOption.Legacy) {

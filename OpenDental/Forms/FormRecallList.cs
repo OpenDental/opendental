@@ -1151,6 +1151,7 @@ namespace OpenDental {
 					clinicNumEmail=PIn.Long(addrTable.Rows[i]["ClinicNum"].ToString());
 					emailAddress=EmailAddresses.GetByClinic(clinicNumEmail);
 				}
+				emailAddress=EmailAddresses.OverrideSenderAddressClinical(emailAddress,clinicNumEmail); //Use clinic's Email Sender Address Override, if present
 				message.FromAddress=emailAddress.GetFrom();
 				if(addrTable.Rows[i]["numberOfReminders"].ToString()=="0") {
 					message.Subject=PrefC.GetString(isRecallGridSelected? PrefName.RecallEmailSubject:PrefName.ReactivationEmailSubject);

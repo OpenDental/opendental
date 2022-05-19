@@ -97,7 +97,9 @@ namespace OpenDentBusiness{
 		public bool HasProcOnRx;
 		///<summary>Allows adding timezone info to FHIR datetimes.  This does not actually change the datetime of any field.</summary>
 		public string TimeZone;
-		
+		///<summary>Overrides the SenderAddress (aka Alias) for emails sent from this clinic. </summary>
+		public string EmailAliasOverride;
+
 		///<summary>Returns a copy of this Clinic and the associated list of specialty DefLinks.</summary>
 		public Clinic Copy(){
 			Clinic retval=(Clinic)this.MemberwiseClone();

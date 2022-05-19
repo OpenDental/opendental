@@ -239,115 +239,86 @@ namespace OpenDentBusiness{
 
 		public static string BitewingCode {
 			get {
-				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
-					return "02144";//4BW The same code for Quebec as well as the rest of Canada.
-				}
-				return "D0274";
+				return GetProcCodeForCodeNum(ListBWCodeNums,"D0274","02144");
 			}
 		}
 
 		public static string PanoCode {
 			get {
-				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-					if(Canadian.IsQuebec()) {//Quebec
-						return "02600";
-					}
-					else {//The rest of Canada use the same procedure codes.
-						return "02601";
-					}
-				}
-				return "D0330";
+				string procCodeCA=Canadian.IsQuebec() ? "02600":"02601";
+				return GetProcCodeForCodeNum(ListPanoFMXCodeNums,"D0330",procCodeCA);
 			}
 		}
 
 		public static string CancerScreeningCode {
 			get {
-				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-					return "01401";//Just a diagnostic code that doesn't look like it's very common.
-				}
-				return "D0431";
+				return GetProcCodeForCodeNum(ListCancerScreeningCodeNums,"D0431","01401");
 			}
 		}
 
 		public static string ProphyCode {
 			get {
-				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-					return "11101";
-				}
-				return "D1110";
+				return GetProcCodeForCodeNum(ListProphyCodeNums,"D1110","11101");
 			}
 		}
 
 		public static string FlourideCode {
 			get {
-				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-					return "12111";//there are 3 Canadian flouride codes, putting one here so this still returns a legitimate code for Canada. Returning a code not in the DB causes errors in some cases
-				}
-				return "D1206";
+				return GetProcCodeForCodeNum(ListFlourideCodeNums,"D1206","12111");
 			}
 		}
 
 		public static string SealantCode {
 			get {
-				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-					return "13401";
-				}
-				return "D1351";
+				return GetProcCodeForCodeNum(ListSealantCodeNums,"D1351","13401");
 			}
 		}
 
 		public static string CrownCode {
 			get {
-				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-					return "27201";
-				}
-				return "D2740";
+				return GetProcCodeForCodeNum(ListCrownCodeNums,"D2740","27201");
 			}
 		}
 
 		public static string SRPCode {
 			get {
-				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-					return "43421";
-				}
-				return "D4341";
+				return GetProcCodeForCodeNum(ListSRPCodeNums,"D4341","43421");
 			}
 		}
 
 		public static string FullDebridementCode {
 			get {
-				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-					return "42121";
-				}
-				return "D4355";
+				return GetProcCodeForCodeNum(ListFullDebridementCodeNums,"D4355","42121");
 			}
 		}
 
 		public static string PerioMaintCode {
 			get {
-				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-					return "49101";
-				}
-				return "D4910";
+				return GetProcCodeForCodeNum(ListPerioMaintCodeNums,"D4910","49101");
 			}
 		}
 
 		public static string DenturesCode {
 			get {
-				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-					return "51711";
-				}
-				return "D5110";
+				return GetProcCodeForCodeNum(ListDenturesCodeNums,"D5110","51711");
 			}
 		}
 
 		public static string ImplantCode {
 			get {
-				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-					return "79921";
-				}
-				return "D6010";
+				return GetProcCodeForCodeNum(ListImplantCodeNums,"D6010","79921");
 			}
+		}
+
+		private static string GetProcCodeForCodeNum(List<long> listCodeNums,string procCode,string procCodeCA) {
+			string strProcCode=GetStringProcCode(listCodeNums.FirstOrDefault(),doThrowIfMissing:false);
+			if(string.IsNullOrEmpty(strProcCode)) {
+				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
+					return procCodeCA;
+				}
+				return procCode;
+			}
+			return strProcCode;
 		}
 
 		///<summary>Hard-coded dictionary of eService codes and their corresponding ProcCode within the database at HQ.</summary>

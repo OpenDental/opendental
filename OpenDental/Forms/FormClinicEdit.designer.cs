@@ -121,6 +121,9 @@ namespace OpenDental {
 			this.labelDefaultBillingType = new System.Windows.Forms.Label();
 			this.checkAlwaysAssignBenToPatient = new System.Windows.Forms.CheckBox();
 			this.label25 = new System.Windows.Forms.Label();
+			this.textClinicEmailAliasOverride = new System.Windows.Forms.TextBox();
+			this.labelClinicEmailAliasOverride = new System.Windows.Forms.Label();
+			this.labelEmailAliasExample = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.PhysicalAddress.SuspendLayout();
 			this.BillingAddress.SuspendLayout();
@@ -133,6 +136,7 @@ namespace OpenDental {
 			// 
 			this.checkHidden.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkHidden.Location = new System.Drawing.Point(76, 392);
+			this.checkHidden.Location = new System.Drawing.Point(76, 413);
 			this.checkHidden.Name = "checkHidden";
 			this.checkHidden.Size = new System.Drawing.Size(163, 16);
 			this.checkHidden.TabIndex = 17;
@@ -143,6 +147,7 @@ namespace OpenDental {
 			// textMedLabAcctNum
 			// 
 			this.textMedLabAcctNum.Location = new System.Drawing.Point(225, 272);
+			this.textMedLabAcctNum.Location = new System.Drawing.Point(225, 293);
 			this.textMedLabAcctNum.MaxLength = 255;
 			this.textMedLabAcctNum.Name = "textMedLabAcctNum";
 			this.textMedLabAcctNum.Size = new System.Drawing.Size(216, 20);
@@ -152,6 +157,7 @@ namespace OpenDental {
 			// labelMedLabAcctNum
 			// 
 			this.labelMedLabAcctNum.Location = new System.Drawing.Point(26, 273);
+			this.labelMedLabAcctNum.Location = new System.Drawing.Point(26, 294);
 			this.labelMedLabAcctNum.Name = "labelMedLabAcctNum";
 			this.labelMedLabAcctNum.Size = new System.Drawing.Size(198, 17);
 			this.labelMedLabAcctNum.TabIndex = 26;
@@ -524,6 +530,7 @@ namespace OpenDental {
 			// labelTimeZone
 			// 
 			this.labelTimeZone.Location = new System.Drawing.Point(17, 356);
+			this.labelTimeZone.Location = new System.Drawing.Point(17, 377);
 			this.labelTimeZone.Name = "labelTimeZone";
 			this.labelTimeZone.Size = new System.Drawing.Size(207, 17);
 			this.labelTimeZone.TabIndex = 21;
@@ -533,6 +540,7 @@ namespace OpenDental {
 			// comboBoxTimeZone
 			// 
 			this.comboBoxTimeZone.Location = new System.Drawing.Point(225, 362);
+			this.comboBoxTimeZone.Location = new System.Drawing.Point(225, 383);
 			this.comboBoxTimeZone.Name = "comboBoxTimeZone";
 			this.comboBoxTimeZone.Size = new System.Drawing.Size(260, 21);
 			this.comboBoxTimeZone.TabIndex = 16;
@@ -728,17 +736,19 @@ namespace OpenDental {
 			// 
 			// textEmail
 			// 
-			this.textEmail.BackColor = System.Drawing.SystemColors.Window;
+			this.textEmail.BackColor = System.Drawing.SystemColors.Control;
 			this.textEmail.Location = new System.Drawing.Point(225, 230);
 			this.textEmail.MaxLength = 255;
 			this.textEmail.Name = "textEmail";
 			this.textEmail.ReadOnly = true;
 			this.textEmail.Size = new System.Drawing.Size(266, 20);
 			this.textEmail.TabIndex = 10;
+			this.textEmail.TabStop = false;
 			// 
 			// textBankNumber
 			// 
 			this.textBankNumber.Location = new System.Drawing.Point(225, 251);
+			this.textBankNumber.Location = new System.Drawing.Point(225, 272);
 			this.textBankNumber.MaxLength = 255;
 			this.textBankNumber.Name = "textBankNumber";
 			this.textBankNumber.Size = new System.Drawing.Size(291, 20);
@@ -747,6 +757,7 @@ namespace OpenDental {
 			// label5
 			// 
 			this.label5.Location = new System.Drawing.Point(73, 252);
+			this.label5.Location = new System.Drawing.Point(73, 273);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(151, 17);
 			this.label5.TabIndex = 0;
@@ -854,6 +865,7 @@ namespace OpenDental {
 			// textSchedRules
 			// 
 			this.textSchedRules.Location = new System.Drawing.Point(225, 293);
+			this.textSchedRules.Location = new System.Drawing.Point(225, 314);
 			this.textSchedRules.MaxLength = 255;
 			this.textSchedRules.Multiline = true;
 			this.textSchedRules.Name = "textSchedRules";
@@ -863,6 +875,7 @@ namespace OpenDental {
 			// labelSchedRules
 			// 
 			this.labelSchedRules.Location = new System.Drawing.Point(26, 295);
+			this.labelSchedRules.Location = new System.Drawing.Point(26, 316);
 			this.labelSchedRules.Name = "labelSchedRules";
 			this.labelSchedRules.Size = new System.Drawing.Size(198, 14);
 			this.labelSchedRules.TabIndex = 266;
@@ -883,6 +896,7 @@ namespace OpenDental {
 			// label24
 			// 
 			this.label24.Location = new System.Drawing.Point(17, 371);
+			this.label24.Location = new System.Drawing.Point(17, 392);
 			this.label24.Name = "label24";
 			this.label24.Size = new System.Drawing.Size(207, 19);
 			this.label24.TabIndex = 267;
@@ -924,9 +938,38 @@ namespace OpenDental {
 			this.label25.Text = "(ignore the Ins Plan setting)";
 			this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
+			// textClinicEmailAliasOverride
+			// 
+			this.textClinicEmailAliasOverride.Location = new System.Drawing.Point(225, 251);
+			this.textClinicEmailAliasOverride.MaxLength = 255;
+			this.textClinicEmailAliasOverride.Name = "textClinicEmailAliasOverride";
+			this.textClinicEmailAliasOverride.Size = new System.Drawing.Size(157, 20);
+			this.textClinicEmailAliasOverride.TabIndex = 274;
+			// 
+			// labelClinicEmailAliasOverride
+			// 
+			this.labelClinicEmailAliasOverride.Location = new System.Drawing.Point(26, 252);
+			this.labelClinicEmailAliasOverride.Name = "labelClinicEmailAliasOverride";
+			this.labelClinicEmailAliasOverride.Size = new System.Drawing.Size(198, 17);
+			this.labelClinicEmailAliasOverride.TabIndex = 275;
+			this.labelClinicEmailAliasOverride.Text = "Email Sender Alias Override";
+			this.labelClinicEmailAliasOverride.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// labelEmailAliasExample
+			// 
+			this.labelEmailAliasExample.Location = new System.Drawing.Point(385, 251);
+			this.labelEmailAliasExample.Name = "labelEmailAliasExample";
+			this.labelEmailAliasExample.Size = new System.Drawing.Size(144, 18);
+			this.labelEmailAliasExample.TabIndex = 276;
+			this.labelEmailAliasExample.Text = "Alias <name@email.com>";
+			this.labelEmailAliasExample.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// FormClinicEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(1071, 453);
+			this.Controls.Add(this.labelEmailAliasExample);
+			this.Controls.Add(this.textClinicEmailAliasOverride);
+			this.Controls.Add(this.labelClinicEmailAliasOverride);
 			this.Controls.Add(this.checkAlwaysAssignBenToPatient);
 			this.Controls.Add(this.labelDefaultBillingType);
 			this.Controls.Add(this.comboDefaultBillingType);
@@ -1082,5 +1125,8 @@ namespace OpenDental {
 		private Label labelDefaultBillingType;
 		private CheckBox checkAlwaysAssignBenToPatient;
 		private Label label25;
+		private TextBox textClinicEmailAliasOverride;
+		private Label labelClinicEmailAliasOverride;
+		private Label labelEmailAliasExample;
 	}
 }

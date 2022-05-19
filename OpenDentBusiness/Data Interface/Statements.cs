@@ -241,7 +241,8 @@ namespace OpenDentBusiness {
 			EmailMessage message=new EmailMessage();
 			message.PatNum=pat.PatNum;
 			message.ToAddress=pat.Email;
-			message.FromAddress=EmailAddresses.GetByClinic(pat.ClinicNum).GetFrom();
+			EmailAddress emailAddress=EmailAddresses.GetByClinic(pat.ClinicNum);
+			message.FromAddress=EmailAddresses.OverrideSenderAddressClinical(emailAddress,pat.ClinicNum).GetFrom();
 			string str;
 			if(stmt.EmailSubject!=null && stmt.EmailSubject!="") {
 				str=stmt.EmailSubject;//Set str to the email subject if one was already set.
@@ -272,7 +273,8 @@ namespace OpenDentBusiness {
 			EmailMessage message=new EmailMessage();
 			message.PatNum=pat.PatNum;
 			message.ToAddress=pat.Email;
-			message.FromAddress=EmailAddresses.GetByClinic(pat.ClinicNum).GetFrom();
+			EmailAddress emailAddress=EmailAddresses.GetByClinic(pat.ClinicNum);
+			message.FromAddress=EmailAddresses.OverrideSenderAddressClinical(emailAddress,pat.ClinicNum).GetFrom();
 			string emailBody;
 			if(stmt.EmailSubject!=null && stmt.EmailSubject!="") {
 				message.Subject=stmt.EmailSubject;
@@ -605,6 +607,7 @@ namespace OpenDentBusiness {
 					throw new ODException("Thank you for your recent payment. An error occurred when attempting to email your receipt," 
 						+" please contact your provider.");
 				}
+				fromAddress=EmailAddresses.OverrideSenderAddressClinical(fromAddress,patCur.ClinicNum); //Use clinic's Email Sender Address Override, if present
 				try {
 					EmailMessages.SendEmail(emailMessageError,fromAddress);
 				}

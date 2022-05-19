@@ -79,8 +79,8 @@ namespace OpenDentBusiness {
 		///updates.  Not user editable with the UI.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.TimeStamp)]
 		public DateTime SecDateTEdit;
-		[CrudColumn(SpecialType=CrudSpecialColType.EnumAsString)]
 		///<summary>Enum:EmailMessageSource  This is used to identify where in the program this message originated from. This is used for sent email messages.</summary>
+		[CrudColumn(SpecialType=CrudSpecialColType.EnumAsString)]
 		public EmailMessageSource MsgType;
 		///<summary>Reason the message failed to send. Blank if sent successful.</summary>
 		public string FailReason;

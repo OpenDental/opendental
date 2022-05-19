@@ -99,7 +99,7 @@ namespace OpenDental {
 			this.groupIns2 = new OpenDental.UI.GroupBoxOD();
 			this.butPick2 = new OpenDental.UI.Button();
 			this.textGroupNum2 = new System.Windows.Forms.TextBox();
-			this.label23 = new System.Windows.Forms.Label();
+			this.labelGroupNum2 = new System.Windows.Forms.Label();
 			this.label24 = new System.Windows.Forms.Label();
 			this.textGroupName2 = new System.Windows.Forms.TextBox();
 			this.textEmployer2 = new System.Windows.Forms.TextBox();
@@ -921,7 +921,7 @@ namespace OpenDental {
 			this.groupIns2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
 			this.groupIns2.Controls.Add(this.butPick2);
 			this.groupIns2.Controls.Add(this.textGroupNum2);
-			this.groupIns2.Controls.Add(this.label23);
+			this.groupIns2.Controls.Add(this.labelGroupNum2);
 			this.groupIns2.Controls.Add(this.label24);
 			this.groupIns2.Controls.Add(this.textGroupName2);
 			this.groupIns2.Controls.Add(this.textEmployer2);
@@ -960,12 +960,12 @@ namespace OpenDental {
 			// 
 			// label23
 			// 
-			this.label23.Location = new System.Drawing.Point(6, 138);
-			this.label23.Name = "label23";
-			this.label23.Size = new System.Drawing.Size(113, 15);
-			this.label23.TabIndex = 167;
-			this.label23.Text = "Group Num";
-			this.label23.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			this.labelGroupNum2.Location = new System.Drawing.Point(6, 138);
+			this.labelGroupNum2.Name = "label23";
+			this.labelGroupNum2.Size = new System.Drawing.Size(113, 15);
+			this.labelGroupNum2.TabIndex = 167;
+			this.labelGroupNum2.Text = "Group Num";
+			this.labelGroupNum2.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// label24
 			// 
@@ -1913,7 +1913,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label22;
 		private OpenDental.UI.GroupBoxOD groupIns2;
 		private System.Windows.Forms.TextBox textGroupNum2;
-		private System.Windows.Forms.Label label23;
+		private System.Windows.Forms.Label labelGroupNum2;
 		private System.Windows.Forms.Label label24;
 		private System.Windows.Forms.TextBox textGroupName2;
 		private System.Windows.Forms.TextBox textEmployer2;

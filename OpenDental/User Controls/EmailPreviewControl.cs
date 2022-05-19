@@ -316,6 +316,7 @@ namespace OpenDental {
       //Instantiate classwide list to just include current user, and all non user emails
 			long curUserNum=Security.CurUser.UserNum;
 			EmailAddress emailAddressDefault=EmailAddresses.GetByClinic(clinicNum);
+			emailAddressDefault=EmailAddresses.OverrideSenderAddressClinical(emailAddressDefault,clinicNum); //Use clinic's Email Sender Address Override, if present
 			_listEmailAddresses=EmailAddresses
 				.GetWhere(x=>x.UserNum==0 || x.UserNum==curUserNum)
 				.OrderByDescending(x=>x.EmailAddressNum==emailAddressDefault.EmailAddressNum)
@@ -722,6 +723,7 @@ namespace OpenDental {
 			if(formEA.DialogResult==DialogResult.OK) {
 				EmailAddress emailAccountSelected=EmailAddresses.GetFirstOrDefault(x => x.EmailAddressNum==formEA.EmailAddressNum);
 				if(emailAccountSelected!=null) {
+					emailAccountSelected=EmailAddresses.OverrideSenderAddressClinical(emailAccountSelected,ClinicNum); //Use clinic's Email Sender Address Override, if present
 					EmailAddressPreview=emailAccountSelected;
 				}
 				else {

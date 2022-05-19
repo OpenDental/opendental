@@ -134,7 +134,19 @@ namespace OpenDentBusiness{
 			}
 			return Crud.EmailAddressCrud.SelectOne(emailAddressNum);
 		}
-		
+
+		///<summary>Overrides the emailAddress.SenderAddress with the EmailAliasOverride of the passed in clinic, if present. Only overrides for clinics
+		///with the EmailAliasOverride field set. Overridden SenderAddress is in "Alias <name@email.com>" format. 
+		///Will not override blank SenderAddress fields or those already using an alias. </summary>
+		public static EmailAddress OverrideSenderAddressClinical(EmailAddress emailAddress, long clinicNum) {
+			//No need to check RemotingRole; no call to db.
+			Clinic clinic=Clinics.GetClinic(clinicNum);
+			if(clinic!=null && clinic.EmailAliasOverride!="" && Regex.IsMatch(emailAddress.SenderAddress, "^[^<>]+$")) { //Does not contain '<' or '>', and is not blank
+				emailAddress.SenderAddress = clinic.EmailAliasOverride + " <" + emailAddress.SenderAddress + ">";
+			}
+			return emailAddress;
+		}
+
 		///<summary>Returns true if the passed-in email username already exists in the cached list of non-user email addresses.</summary>
 		public static bool AddressExists(string emailUserName,long skipEmailAddressNum=0) {
 			//No need to check RemotingRole; no call to db.

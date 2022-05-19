@@ -4973,6 +4973,7 @@ namespace OpenDentBusiness{
 					if(commOptOut.IsOptedOut(CommOptOutMode.Email,CommOptOutType.Verify)) {
 						throw new ODException("Patient has opted out of email automated messaging.");
 					}
+					addr=EmailAddresses.OverrideSenderAddressClinical(addr,pat.ClinicNum); //Use clinic's Email Sender Address Override, if present
 					EmailMessage msg=new EmailMessage()
 					{
 						PatNum=pat.PatNum,

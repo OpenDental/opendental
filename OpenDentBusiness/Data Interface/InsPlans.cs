@@ -860,10 +860,7 @@ namespace OpenDentBusiness {
 			}
 			else if(feeSchedType==FeeScheduleType.CoPay || feeSchedType==FeeScheduleType.FixedBenefit) {
 				command+="insplan.CopayFeeSched ="+POut.Long(feeSchedNum);
-				if(feeSchedType==FeeScheduleType.CoPay) {
-					command+=",insplan.PlanType=''";
-				}
-				else {
+				if(feeSchedType==FeeScheduleType.FixedBenefit) {
 					command+=",insplan.PlanType='f'";
 				}
 				command+=" WHERE insplan.CopayFeeSched !="+POut.Long(feeSchedNum);

@@ -31,7 +31,8 @@ namespace OpenDental {
 			if(_webChatSession.DateTend.Year > 1880) {//Session has ended?
 				DisableAllExcept(textOwner,textWebChatSessionNum,textName,textEmail,textPractice,textPhone,webChatThread,butClose,butAttachSuggestion,butSearchAndAttach,textCustomer
 					,tabControlMain);
-				//tabControlMain needs to be enabled to view notes, but these options still need to be disabled. 
+				//tabControlMain needs to be enabled to view notes, but these options still need to be disabled. textNote needs to be set to readOnly so that notes cannot be edited.
+				textNote.ReadOnly=true;
 				butSend.Enabled=false;
 				textChatMessage.Enabled=false;
 			}

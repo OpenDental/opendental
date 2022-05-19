@@ -2190,7 +2190,8 @@ namespace OpenDental{
 			message.PatNum=PatNumCur;
 			Patient pat=Patients.GetPat(PatNumCur);
 			message.ToAddress=pat.Email;
-			EmailAddress selectedAddress = EmailAddresses.GetNewEmailDefault(Security.CurUser.UserNum,pat.ClinicNum);
+			EmailAddress selectedAddress=EmailAddresses.GetNewEmailDefault(Security.CurUser.UserNum,pat.ClinicNum);
+			selectedAddress=EmailAddresses.OverrideSenderAddressClinical(selectedAddress,pat.ClinicNum);
 			message.FromAddress=selectedAddress.GetFrom();
 			message.MsgType=EmailMessageSource.Manual;
 			using FormEmailMessageEdit FormE=new FormEmailMessageEdit(message,selectedAddress);

@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using CodeBase;
 using OpenDentBusiness;
 using OpenDental.UI;
+using System.Text.RegularExpressions;
 
 namespace OpenDental {
 	/// <summary>
@@ -111,6 +112,7 @@ namespace OpenDental {
 				textEmail.Text=emailAddress.GetFrom();
 				butEmailNone.Enabled=true;
 			}
+			textClinicEmailAliasOverride.Text=ClinicCur.EmailAliasOverride;
 			_isMedLabHL7DefEnabled=HL7Defs.IsExistingHL7Enabled(0,true);
 			if(_isMedLabHL7DefEnabled) {
 				textMedLabAcctNum.Visible=true;
@@ -293,6 +295,10 @@ namespace OpenDental {
 					return;
 				}
 			}
+			if(!Regex.IsMatch(textClinicEmailAliasOverride.Text, "^[A-Za-z0-9]*$")) {
+				MsgBox.Show(this, "The Email Alias Override can only contain letters and numbers.");
+				return;
+			}
 			#endregion Validation
 			#region Set Values
 			ClinicCur.IsMedicalOnly=checkIsMedicalOnly.Checked;
@@ -322,6 +328,7 @@ namespace OpenDental {
 			ClinicCur.UseBillAddrOnClaims=checkUseBillingAddressOnClaims.Checked;
 			ClinicCur.IsHidden=checkHidden.Checked;
 			ClinicCur.ExternalID=externalID;
+			ClinicCur.EmailAliasOverride=textClinicEmailAliasOverride.Text.Trim();
 			long defNumRegion=0;
 			if(comboRegion.SelectedIndex>0){
 				defNumRegion=_listDefsRegions[comboRegion.SelectedIndex-1].DefNum;

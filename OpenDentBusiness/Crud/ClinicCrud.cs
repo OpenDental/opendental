@@ -88,6 +88,7 @@ namespace OpenDentBusiness.Crud{
 				clinic.SchedNote           = PIn.String(row["SchedNote"].ToString());
 				clinic.HasProcOnRx         = PIn.Bool  (row["HasProcOnRx"].ToString());
 				clinic.TimeZone            = PIn.String(row["TimeZone"].ToString());
+				clinic.EmailAliasOverride  = PIn.String(row["EmailAliasOverride"].ToString());
 				retVal.Add(clinic);
 			}
 			return retVal;
@@ -140,6 +141,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("SchedNote");
 			table.Columns.Add("HasProcOnRx");
 			table.Columns.Add("TimeZone");
+			table.Columns.Add("EmailAliasOverride");
 			foreach(Clinic clinic in listClinics) {
 				table.Rows.Add(new object[] {
 					POut.Long  (clinic.ClinicNum),
@@ -183,6 +185,7 @@ namespace OpenDentBusiness.Crud{
 					            clinic.SchedNote,
 					POut.Bool  (clinic.HasProcOnRx),
 					            clinic.TimeZone,
+					            clinic.EmailAliasOverride,
 				});
 			}
 			return table;
@@ -202,7 +205,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="ClinicNum,";
 			}
-			command+="Description,Address,Address2,City,State,Zip,BillingAddress,BillingAddress2,BillingCity,BillingState,BillingZip,PayToAddress,PayToAddress2,PayToCity,PayToState,PayToZip,Phone,BankNumber,DefaultPlaceService,InsBillingProv,Fax,EmailAddressNum,DefaultProv,SmsContractDate,SmsMonthlyLimit,IsMedicalOnly,UseBillAddrOnClaims,Region,ItemOrder,IsInsVerifyExcluded,Abbr,MedLabAccountNum,IsConfirmEnabled,IsConfirmDefault,IsNewPatApptExcluded,IsHidden,ExternalID,SchedNote,HasProcOnRx,TimeZone) VALUES(";
+			command+="Description,Address,Address2,City,State,Zip,BillingAddress,BillingAddress2,BillingCity,BillingState,BillingZip,PayToAddress,PayToAddress2,PayToCity,PayToState,PayToZip,Phone,BankNumber,DefaultPlaceService,InsBillingProv,Fax,EmailAddressNum,DefaultProv,SmsContractDate,SmsMonthlyLimit,IsMedicalOnly,UseBillAddrOnClaims,Region,ItemOrder,IsInsVerifyExcluded,Abbr,MedLabAccountNum,IsConfirmEnabled,IsConfirmDefault,IsNewPatApptExcluded,IsHidden,ExternalID,SchedNote,HasProcOnRx,TimeZone,EmailAliasOverride) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(clinic.ClinicNum)+",";
 			}
@@ -246,7 +249,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Long  (clinic.ExternalID)+","
 				+"'"+POut.String(clinic.SchedNote)+"',"
 				+    POut.Bool  (clinic.HasProcOnRx)+","
-				+"'"+POut.String(clinic.TimeZone)+"')";
+				+"'"+POut.String(clinic.TimeZone)+"',"
+				+"'"+POut.String(clinic.EmailAliasOverride)+"')";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -271,7 +275,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="ClinicNum,";
 			}
-			command+="Description,Address,Address2,City,State,Zip,BillingAddress,BillingAddress2,BillingCity,BillingState,BillingZip,PayToAddress,PayToAddress2,PayToCity,PayToState,PayToZip,Phone,BankNumber,DefaultPlaceService,InsBillingProv,Fax,EmailAddressNum,DefaultProv,SmsContractDate,SmsMonthlyLimit,IsMedicalOnly,UseBillAddrOnClaims,Region,ItemOrder,IsInsVerifyExcluded,Abbr,MedLabAccountNum,IsConfirmEnabled,IsConfirmDefault,IsNewPatApptExcluded,IsHidden,ExternalID,SchedNote,HasProcOnRx,TimeZone) VALUES(";
+			command+="Description,Address,Address2,City,State,Zip,BillingAddress,BillingAddress2,BillingCity,BillingState,BillingZip,PayToAddress,PayToAddress2,PayToCity,PayToState,PayToZip,Phone,BankNumber,DefaultPlaceService,InsBillingProv,Fax,EmailAddressNum,DefaultProv,SmsContractDate,SmsMonthlyLimit,IsMedicalOnly,UseBillAddrOnClaims,Region,ItemOrder,IsInsVerifyExcluded,Abbr,MedLabAccountNum,IsConfirmEnabled,IsConfirmDefault,IsNewPatApptExcluded,IsHidden,ExternalID,SchedNote,HasProcOnRx,TimeZone,EmailAliasOverride) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(clinic.ClinicNum)+",";
 			}
@@ -315,7 +319,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Long  (clinic.ExternalID)+","
 				+"'"+POut.String(clinic.SchedNote)+"',"
 				+    POut.Bool  (clinic.HasProcOnRx)+","
-				+"'"+POut.String(clinic.TimeZone)+"')";
+				+"'"+POut.String(clinic.TimeZone)+"',"
+				+"'"+POut.String(clinic.EmailAliasOverride)+"')";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -367,7 +372,8 @@ namespace OpenDentBusiness.Crud{
 				+"ExternalID          =  "+POut.Long  (clinic.ExternalID)+", "
 				+"SchedNote           = '"+POut.String(clinic.SchedNote)+"', "
 				+"HasProcOnRx         =  "+POut.Bool  (clinic.HasProcOnRx)+", "
-				+"TimeZone            = '"+POut.String(clinic.TimeZone)+"' "
+				+"TimeZone            = '"+POut.String(clinic.TimeZone)+"', "
+				+"EmailAliasOverride  = '"+POut.String(clinic.EmailAliasOverride)+"' "
 				+"WHERE ClinicNum = "+POut.Long(clinic.ClinicNum);
 			Db.NonQ(command);
 		}
@@ -535,6 +541,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="TimeZone = '"+POut.String(clinic.TimeZone)+"'";
 			}
+			if(clinic.EmailAliasOverride != oldClinic.EmailAliasOverride) {
+				if(command!="") { command+=",";}
+				command+="EmailAliasOverride = '"+POut.String(clinic.EmailAliasOverride)+"'";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -665,6 +675,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(clinic.TimeZone != oldClinic.TimeZone) {
+				return true;
+			}
+			if(clinic.EmailAliasOverride != oldClinic.EmailAliasOverride) {
 				return true;
 			}
 			return false;

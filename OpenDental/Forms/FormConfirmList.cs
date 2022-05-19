@@ -766,6 +766,7 @@ namespace OpenDental{
 					clinicNum=PIn.Long(_tableAppointments.Rows[gridMain.SelectedIndices[i]][checkGroupFamilies.Checked?"guarClinicNum":"ClinicNum"].ToString());
 					emailAddress=EmailAddresses.GetByClinic(clinicNum);
 				}
+				emailAddress=EmailAddresses.OverrideSenderAddressClinical(emailAddress,clinicNum); //Use clinic's Email Sender Address Override, if present
 				emailMessage.FromAddress=emailAddress.GetFrom();				
 				emailMessage.Subject=PrefC.GetString(PrefName.ConfirmEmailSubject);
 				listPatNumsSelected.Add(emailMessage.PatNum);

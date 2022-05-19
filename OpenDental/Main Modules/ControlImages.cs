@@ -3732,6 +3732,10 @@ namespace OpenDental {
 					}
 					docs=_arrayDocumentsInMount;
 					Mounts.Delete(mount);
+					Def defDocCategory = Defs.GetDef(DefCat.ImageCats,mount.DocCategory);
+					string logText = "Mount Deleted: "+mount.Description+" with category "
+						+defDocCategory.ItemName;
+					SecurityLogs.MakeLogEntry(Permissions.ImageDelete,_patCur.PatNum,logText);
 					for(int i=0;i<mountItems.Count;i++) {
 						MountItems.Delete(mountItems[i]);
 					}
