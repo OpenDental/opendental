@@ -56,6 +56,19 @@ namespace OpenDentBusiness{
 		///<summary>Automatically updated by MySQL every time a row is added or changed.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.TimeStamp)]
 		public DateTime SecDateTEdit;
+		///<summary>Not stored in the database. Local copy of the FrequencyGroupNum for this benefit in order to drastically improve the sort time for a list of benefits.
+		///Value will be set the first time the FrequencyGroupNum property is accessed during sorting.</summary>
+		[CrudColumn(IsNotDbColumn=true)]
+		private int _frequencyGroupNum=-1;
+
+		public int FrequencyGroupNum {
+			get {
+				if(_frequencyGroupNum==-1) {
+					_frequencyGroupNum=GetFrequencyGroupNum();
+				}
+				return _frequencyGroupNum;
+			}
+		}
 
 		public Benefit() {
 			Percent=-1;
@@ -155,16 +168,13 @@ namespace OpenDentBusiness{
 			}
 			//ProcCode
 			if(CodeNum!=ben.CodeNum) {
-				if(CovCatNum!=0 && CovCatNum==ben.CovCatNum) {//Both benefits are for same custom frequency group or the exam group.
+				if(CovCatNum!=0 && CovCatNum==ben.CovCatNum) {//Both benefits are for same exam group.
 					return ProcedureCodes.GetStringProcCode(CodeNum).CompareTo(ProcedureCodes.GetStringProcCode(ben.CodeNum));
 				}
-				int frequencyGroup1=GetFrequencyGroupNum();
-				int frequencyGroup2=ben.GetFrequencyGroupNum();
-				if(frequencyGroup1==frequencyGroup2) {
-					return ProcedureCodes.GetStringProcCode(CodeNum)
-						.CompareTo(ProcedureCodes.GetStringProcCode(ben.CodeNum));
+				if(FrequencyGroupNum==ben.FrequencyGroupNum) {//Both benefits are for same custom frequency group
+					return ProcedureCodes.GetStringProcCode(CodeNum).CompareTo(ProcedureCodes.GetStringProcCode(ben.CodeNum));
 				}
-				return frequencyGroup1.CompareTo(frequencyGroup2);
+				return FrequencyGroupNum.CompareTo(ben.FrequencyGroupNum);
 			}
 			//TimePeriod-ServiceYear and CalendarYear are treated as the same.
 			//if either are not serviceYear or CalendarYear

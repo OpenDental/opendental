@@ -265,9 +265,6 @@ namespace OpenDental{
 				MsgBox.Show(this,"No patients for screening.");
 				return;
 			}
-			using FormScreenEdit FormSE=new FormScreenEdit();
-			FormSE.ScreenGroupCur=_screenGroup;
-			FormSE.IsNew=true;
 			int selectedIdx=gridScreenPats.GetSelectedIndex();
 			int i=selectedIdx;
 			if(i==-1) {
@@ -295,6 +292,9 @@ namespace OpenDental{
 					}
 					continue;//If they already have a screen, don't make a new one.  We might think about opening up their old one for editing at this point.
 				}
+				using FormScreenEdit FormSE=new FormScreenEdit();
+				FormSE.ScreenGroupCur=_screenGroup;
+				FormSE.IsNew=true;
 				FormSE.ScreenPatCur=screenPat;
 				if(_listScreens.Count==0) {
 					FormSE.ScreenCur=new OpenDentBusiness.Screen();
