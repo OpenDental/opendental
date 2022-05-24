@@ -516,6 +516,7 @@ namespace OpenDental {
 				if(listRadio.SelectedIndex>=0) {
 					SheetFieldDefCur.RadioButtonValue=radioButtonValues[listRadio.SelectedIndex];
 				}
+				SheetFieldDefCur.UiLabelMobileRadioButton=SheetFieldDefs.GetUiLabelMobileRadioButton(SheetFieldDefCur);
 			}
 			else if(groupRadioMisc.Visible){
 				SheetFieldDefCur.RadioButtonGroup=comboRadioGroupNameMisc.Text;

@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Microsoft.Web.WebView2.Core;
 using Bridges;
 using OpenDentBusiness;
+using CodeBase;
 
 namespace OpenDental {
 	///<summary>Internet browser window for CareCredit. This is essentially a Microsoft Internet Explorer control embedded into our form.</summary>
@@ -25,6 +26,9 @@ namespace OpenDental {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
+			if(ODBuild.IsWeb()) {
+				cloudIframe.Initialize(url);
+			}
 			_urlBrowseTo=url;
 			_patient=patient;
 			SessionId=CareCredit.GetSessionIDFromUrl(url);
@@ -34,6 +38,9 @@ namespace OpenDental {
 			if(string.IsNullOrEmpty(_urlBrowseTo) || string.IsNullOrEmpty(SessionId)) {
 				DialogResult=DialogResult.Cancel;
 				return;
+			}
+			if(ODBuild.IsWeb()) {
+				return;//Don't use WebView2 or the toolbar in cloud
 			}
 			try {
 				await webViewMain.Init();

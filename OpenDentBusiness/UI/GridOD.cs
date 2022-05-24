@@ -3034,8 +3034,8 @@ namespace OpenDental.UI {
 		}
 
 		private int SortStringCompare(GridRow row1,GridRow row2) {
-			string textRow1=row1.Cells[SortedByColumnIdx].Text??"";
-			return (SortedIsAscending?1:-1)*textRow1.CompareTo(row2.Cells[SortedByColumnIdx].Text);
+			string textRow1=row1?.Cells[SortedByColumnIdx].Text??"";
+			return (SortedIsAscending?1:-1)*textRow1.CompareTo(row2?.Cells[SortedByColumnIdx].Text??"");
 		}
 
 		private int SortDateParse(GridRow row1,GridRow row2) {

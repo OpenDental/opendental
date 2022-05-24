@@ -9,13 +9,19 @@ namespace OpenDental.UI {
 		public CloudIframe() {
 			InitializeComponent();
 			this.Visible=false;
-			if(!ODBuild.IsWeb()) {
-				return;
-			}
-			_frameId=Browser.InsertIframe(this.Handle);
 		}
 
+		///<summary>Inserts the iFrame into the DOM and initializes it.</summary>
+		public void Initialize(string url="") {
+			_frameId=Browser.InsertIframe(this.Handle,url);
+        }
+
+		///<summary>Navigates the iFrame to the url.</summary>
 		public void Navigate(string url) {
+			if(_frameId.IsNullOrEmpty()) {
+				Initialize(url);
+				return;
+			}
 			ODCloudClient.ODBrowserData odBrowserData=new ODCloudClient.ODBrowserData {
 				ElementId=_frameId,
 				Url=url
@@ -23,12 +29,18 @@ namespace OpenDental.UI {
 			ODCloudClient.SendToBrowser(odBrowserData,ODCloudClient.BrowserAction.NavigateIframe);
 		}
 
+		///<summary>Displays a file in the iFrame.</summary>
 		public void DisplayFile(string filepath) {
 			string url=Browser.GetSafeUrl(filepath);
 			Navigate(url);
 		}
 
+		///<summary>Makes the iFrame visible.</summary>
 		public void ShowIframe() {
+			if(_frameId.IsNullOrEmpty()) {
+				Initialize();
+				return;
+			}
 			ODCloudClient.ODBrowserData odBrowserData=new ODCloudClient.ODBrowserData {
 				ElementId=_frameId,
 				IsVisible=true
@@ -36,7 +48,11 @@ namespace OpenDental.UI {
 			ODCloudClient.SendToBrowser(odBrowserData,ODCloudClient.BrowserAction.SetIframeVisible);
 		}
 
+		///<summary>Hides the iFrame.</summary>
 		public void HideIframe() {
+			if(_frameId.IsNullOrEmpty()) {
+				return;
+			}
 			ODCloudClient.ODBrowserData odBrowserData=new ODCloudClient.ODBrowserData {
 				ElementId=_frameId,
 				IsVisible=false

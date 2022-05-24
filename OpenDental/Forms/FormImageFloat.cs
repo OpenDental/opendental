@@ -138,6 +138,7 @@ namespace OpenDental {
 			LayoutManager.Add(_webBrowser,this);
 			if(ODBuild.IsWeb()) {
 				_cloudIframe=new CloudIframe();
+				_cloudIframe.Initialize();
 				_cloudIframe.HideIframe();
 				_cloudIframe.Dock=DockStyle.Fill;
 				LayoutManager.Add(_cloudIframe,this);

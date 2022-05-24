@@ -273,7 +273,7 @@ namespace OpenDentBusiness {
 			return Crud.RecallCrud.SelectMany(command);
 		}
 
-		///<summary>Used by FromRecallList, FormASAP, AutoComm to get list of patients with outstanding recalls.
+		///<summary>Used by FromRecallList, FormASAP, AutoComm, and ODAPI to get list of patients with outstanding recalls.
 		///Leave provNum or siteNum = 0 in order to avoid filtering on those columns.
 		///If provNum > 0 then looks for both provider match in either PriProv or SecProv.
 		///If clinicNum is less than 0, will get all clinics. 

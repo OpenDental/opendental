@@ -470,9 +470,9 @@ namespace OpenDental{
 			//Hook up MT connection lost event. Nothing prior to this point fires LostConnection events.
 			MiddleTierConnectionEvent.Fired+=MiddleTierConnection_ConnectionLost;
 			FormSplash formSplash=new FormSplash();
-			using FormChooseDatabase FormCD=new FormChooseDatabase(chooseDatabaseInfo);
 			ChooseDatabaseInfo modelFromForm=null;
 			while(true) {//Most users will loop through once.  If user tries to connect to a db with replication failure, they will loop through again.
+				using FormChooseDatabase FormCD=new FormChooseDatabase(chooseDatabaseInfo);
 				if(chooseDatabaseInfo.NoShow==YN.Yes) {
 					try {
 						Logger.LogToPath("CentralConnections.TryToConnect",LogPath.Startup,LogPhase.Start);
