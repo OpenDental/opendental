@@ -366,17 +366,11 @@ namespace OpenDental.UI {
 			}
 		}
 
-		///<summary>Set to true to enable context menu to detect PatNum links. This should be set false for grids in modal windows because it can select a different patient, resulting in a potentially unsafe state.</summary>
+		///<summary>If right click, and there is 'PatNum:##', 'TaskNum:##', or 'JobNum:##', then the context menu will show a clickable link. Only used task edit, task list, and account commlog.</summary>
 		[Category("OD")]
-		[Description("Set to true to enable context menu to detect PatNum links. This should be set to false for grids in modal windows.")]
+		[Description("If right click, and there is 'PatNum:##', 'TaskNum:##', or 'JobNum:##', then the context menu will show a clickable link. Only used task edit, task list, and account commlog.")]
 		[DefaultValue(false)]
-		public bool DoShowPatNumLinks { get; set; }=false;
-
-		///<summary>Set to true to enable context menu to detect TaskNum links. This should be set false for grids in modal windows because it will allow the user to interact with the Task window and select a different patient via the "Go To" button, resulting in a potentially unsafe state.</summary>
-		[Category("OD")]
-		[Description("Set to true to enable context menu to detect TaskNum links. This should be set to false for grids in modal windows.")]
-		[DefaultValue(false)]
-		public bool DoShowTaskNumLinks { get; set; }=false;
+		public bool DoShowRightClickLinks  { get; set; }=false;
 
 		///<summary>Only affects grids with editable columns. True allows carriage returns within cells. False causes carriage returns to go to the next editable cell.</summary>
 		[Category("OD")]
@@ -1518,7 +1512,7 @@ namespace OpenDental.UI {
 				StringBuilder sb = new StringBuilder();
 				row.Cells.OfType<GridCell>().ToList().ForEach(x => sb.AppendLine(x.Text));
 				sb.AppendLine(row.Note);
-				_listMenuItemLinks.AddRange(OpenDentBusiness.UI.PopupHelper.GetContextMenuItemLinks(sb.ToString(),DoShowPatNumLinks,DoShowTaskNumLinks));
+				_listMenuItemLinks.AddRange(OpenDentBusiness.UI.PopupHelper.GetContextMenuItemLinks(sb.ToString(),DoShowRightClickLinks));
 				if(_listMenuItemLinks.Any(x=>x.Text!="-")) {//at least one REAL menu item that is not the divider.
 					_listMenuItemLinks.ForEach(x => this.ContextMenu.MenuItems.Add(x));
 				}

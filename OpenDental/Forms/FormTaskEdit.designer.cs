@@ -870,8 +870,7 @@ namespace OpenDental {
 			this.textDescript.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.textDescript.DetectLinksEnabled = false;
 			this.textDescript.DetectUrls = false;
-			this.textDescript.DoShowPatNumLinks = true;
-			this.textDescript.DoShowTaskNumLinks = true;
+			this.textDescript.DoShowRightClickLinks  = true;
 			this.textDescript.HasAutoNotes = true;
 			this.textDescript.Location = new System.Drawing.Point(92, 5);
 			this.textDescript.Name = "textDescript";
@@ -896,8 +895,7 @@ namespace OpenDental {
 			this.gridMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.gridMain.DoShowPatNumLinks = true;
-			this.gridMain.DoShowTaskNumLinks = true;
+			this.gridMain.DoShowRightClickLinks  = true;
 			this.gridMain.Location = new System.Drawing.Point(0, 3);
 			this.gridMain.Name = "gridMain";
 			this.gridMain.Size = new System.Drawing.Size(981, 284);

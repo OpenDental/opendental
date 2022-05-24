@@ -66,6 +66,7 @@ namespace OpenDental {
 			if(formOrthoHardwareSpecEdit.DialogResult!=DialogResult.OK){
 				return;
 			}
+			_changed=true;
 			FillGrid();
 		}
 
@@ -80,6 +81,7 @@ namespace OpenDental {
 			if(formOrthoHardwareSpecEdit.DialogResult!=DialogResult.OK){
 				return;
 			}
+			_changed=true;
 			FillGrid();
 		}
 

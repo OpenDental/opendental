@@ -68,8 +68,8 @@ namespace OpenDental {
 			this.labelIncTxfrTreatNegProdAsIncomeDetails.Name = "labelIncTxfrTreatNegProdAsIncomeDetails";
 			this.labelIncTxfrTreatNegProdAsIncomeDetails.Size = new System.Drawing.Size(498, 29);
 			this.labelIncTxfrTreatNegProdAsIncomeDetails.TabIndex = 329;
-			this.labelIncTxfrTreatNegProdAsIncomeDetails.Text = "Income Transfer Manager will reallocate overpayments. Not recommended for offices" +
-    " that pay providers based on collections.";
+			this.labelIncTxfrTreatNegProdAsIncomeDetails.Text = "Income Transfer Manager will also reallocate overpayments. Not recommended for of" +
+    "fices that pay providers based on collections.";
 			this.labelIncTxfrTreatNegProdAsIncomeDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelPayPlansUseSheetsDetails

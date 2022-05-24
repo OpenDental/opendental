@@ -75,6 +75,7 @@ namespace OpenDental {
 			comboProcFeeUpdatePrompt.Items.Add(Lan.g(this,"Prompt, always"));
 			comboProcFeeUpdatePrompt.SelectedIndex=PrefC.GetInt(PrefName.ProcFeeUpdatePrompt);
 			checkProcProvChangesCp.Checked=PrefC.GetBool(PrefName.ProcProvChangesClaimProcWithClaim);
+			checkProcNoteSigsBlocked.Checked=PrefC.GetBool(PrefName.ProcNoteSigsBlockedAutoNoteIncomplete);
 		}
 
 		public bool SaveChartProcedures() {
@@ -89,6 +90,7 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateBool(PrefName.ClaimProcsAllowedToBackdate,checkClaimProcsAllowEstimatesOnCompl.Checked);
 			Changed|=Prefs.UpdateLong(PrefName.ProcFeeUpdatePrompt,comboProcFeeUpdatePrompt.SelectedIndex);
 			Changed|=Prefs.UpdateBool(PrefName.ProcProvChangesClaimProcWithClaim,checkProcProvChangesCp.Checked);
+			Changed|=Prefs.UpdateBool(PrefName.ProcNoteSigsBlockedAutoNoteIncomplete,checkProcNoteSigsBlocked.Checked);
 			return true;
 		}
 		#endregion Methods - Public

@@ -63,6 +63,11 @@ namespace OpenDental {
 			formOrthoHardwareSpecs.ShowDialog();
 		}
 
+		private void butOrthoPrescriptions_Click(object sender, EventArgs e){
+			using FormOrthoRxSetup formOrthoRxSetup=new FormOrthoRxSetup();
+			formOrthoRxSetup.ShowDialog();
+		}
+
 		private void butPickOrthoProc_Click(object sender,EventArgs e) {
 			using FormProcCodes FormPC = new FormProcCodes();
 			FormPC.IsSelectionMode=true;

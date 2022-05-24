@@ -24,6 +24,9 @@ namespace OpenDental {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+			this.labelApptAutoRefreshRangeDetails = new System.Windows.Forms.Label();
+			this.labelApptModuleAdjInProdDetails = new System.Windows.Forms.Label();
+			this.labelApptModuleProductionUsesOpsDetails = new System.Windows.Forms.Label();
 			this.groupBoxProduction = new OpenDental.UI.GroupBoxOD();
 			this.checkApptModuleAdjInProd = new System.Windows.Forms.CheckBox();
 			this.checkApptModuleProductionUsesOps = new System.Windows.Forms.CheckBox();
@@ -56,6 +59,40 @@ namespace OpenDental {
 			this.groupBoxCalendarBehavior.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// labelApptAutoRefreshRangeDetails
+			// 
+			this.labelApptAutoRefreshRangeDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelApptAutoRefreshRangeDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelApptAutoRefreshRangeDetails.Location = new System.Drawing.Point(476, 187);
+			this.labelApptAutoRefreshRangeDetails.Name = "labelApptAutoRefreshRangeDetails";
+			this.labelApptAutoRefreshRangeDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelApptAutoRefreshRangeDetails.TabIndex = 344;
+			this.labelApptAutoRefreshRangeDetails.Text = "-1 for all, only for large offices experiencing slowness";
+			this.labelApptAutoRefreshRangeDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelApptModuleAdjInProdDetails
+			// 
+			this.labelApptModuleAdjInProdDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelApptModuleAdjInProdDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelApptModuleAdjInProdDetails.Location = new System.Drawing.Point(476, 417);
+			this.labelApptModuleAdjInProdDetails.Name = "labelApptModuleAdjInProdDetails";
+			this.labelApptModuleAdjInProdDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelApptModuleAdjInProdDetails.TabIndex = 345;
+			this.labelApptModuleAdjInProdDetails.Text = "adjustments, discount plan adjustments, and TP procedure discounts will be includ" +
+    "ed";
+			this.labelApptModuleAdjInProdDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelApptModuleProductionUsesOpsDetails
+			// 
+			this.labelApptModuleProductionUsesOpsDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelApptModuleProductionUsesOpsDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelApptModuleProductionUsesOpsDetails.Location = new System.Drawing.Point(476, 436);
+			this.labelApptModuleProductionUsesOpsDetails.Name = "labelApptModuleProductionUsesOpsDetails";
+			this.labelApptModuleProductionUsesOpsDetails.Size = new System.Drawing.Size(498, 18);
+			this.labelApptModuleProductionUsesOpsDetails.TabIndex = 346;
+			this.labelApptModuleProductionUsesOpsDetails.Text = "uses operatories showing instead of provider bars at left";
+			this.labelApptModuleProductionUsesOpsDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// groupBoxProduction
 			// 
@@ -234,11 +271,11 @@ namespace OpenDental {
 			// labelApptAutoRefreshRange
 			// 
 			this.labelApptAutoRefreshRange.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelApptAutoRefreshRange.Location = new System.Drawing.Point(34, 36);
+			this.labelApptAutoRefreshRange.Location = new System.Drawing.Point(34, 43);
 			this.labelApptAutoRefreshRange.Name = "labelApptAutoRefreshRange";
-			this.labelApptAutoRefreshRange.Size = new System.Drawing.Size(333, 28);
+			this.labelApptAutoRefreshRange.Size = new System.Drawing.Size(333, 18);
 			this.labelApptAutoRefreshRange.TabIndex = 319;
-			this.labelApptAutoRefreshRange.Text = "Number of days out to automatically refresh Appointments Module\r\n(-1 for all)";
+			this.labelApptAutoRefreshRange.Text = "Number of days out to automatically refresh Appointments Module";
 			this.labelApptAutoRefreshRange.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// comboSearchBehavior
@@ -362,6 +399,9 @@ namespace OpenDental {
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.labelApptModuleProductionUsesOpsDetails);
+			this.Controls.Add(this.labelApptModuleAdjInProdDetails);
+			this.Controls.Add(this.labelApptAutoRefreshRangeDetails);
 			this.Controls.Add(this.groupBoxProduction);
 			this.Controls.Add(this.groupBoxOD2);
 			this.Controls.Add(this.groupBoxCalendarBehavior);
@@ -407,5 +447,8 @@ namespace OpenDental {
 		private UI.GroupBoxOD groupBoxCalendarBehavior;
 		private UI.GroupBoxOD groupBoxOD2;
 		private UI.GroupBoxOD groupBoxProduction;
+		private System.Windows.Forms.Label labelApptAutoRefreshRangeDetails;
+		private System.Windows.Forms.Label labelApptModuleAdjInProdDetails;
+		private System.Windows.Forms.Label labelApptModuleProductionUsesOpsDetails;
 	}
 }

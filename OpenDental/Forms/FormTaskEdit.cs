@@ -1517,7 +1517,7 @@ namespace OpenDental {
 			butChange.Enabled=!doSetReadOnly;
 			butEditAutoNote.Enabled=!doSetReadOnly;
 			butCreateJob.Enabled=!doSetReadOnly;
-			comboReminderRepeat.Enabled=!doSetReadOnly;
+			groupReminder.Enabled=!doSetReadOnly;
 			long taskListNum= Security.CurUser.TaskListInBox;
 			//If this task is in the current users task list, or they created it, or they have permission, allow them to mark it done. 
 			if((_taskCur.TaskListNum==taskListNum && taskListNum!=0) || Tasks.IsAuthorizedOrOwner(_taskCur)) {

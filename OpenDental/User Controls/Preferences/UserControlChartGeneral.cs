@@ -135,7 +135,6 @@ namespace OpenDental {
 				comboProcCodeListSort.Items.Add(Enum.GetNames(typeof(ProcCodeListSort))[i]);
 			}
 			comboProcCodeListSort.SelectedIndex=PrefC.GetInt(PrefName.ProcCodeListSortOrder);
-			checkProcNoteSigsBlocked.Checked=PrefC.GetBool(PrefName.ProcNoteSigsBlockedAutoNoteIncomplete);
 			checkBoxRxClinicUseSelected.Checked=PrefC.GetBool(PrefName.ElectronicRxClinicUseSelected);
 			if(!PrefC.HasClinicsEnabled) {
 				checkBoxRxClinicUseSelected.Visible=false;
@@ -173,7 +172,6 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateBool(PrefName.ElectronicRxClinicUseSelected,checkBoxRxClinicUseSelected.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.IsAlertRadiologyProcsEnabled,checkIsAlertRadiologyProcsEnabled.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.ShowPlannedAppointmentPrompt,checkShowPlannedApptPrompt.Checked);
-			Changed|=Prefs.UpdateBool(PrefName.ProcNoteSigsBlockedAutoNoteIncomplete,checkProcNoteSigsBlocked.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.ChartOrthoTabAutomaticCheckboxes,checkChartOrthoTabAutomaticCheckboxes.Checked);
 			return true;
 		}

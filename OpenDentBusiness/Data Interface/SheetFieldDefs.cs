@@ -144,6 +144,14 @@ namespace OpenDentBusiness{
 			return retVal;
 		}
 
+		///<summary>Returns the UI Label text for a radiobutton. Misc will use UiLabelMobileRadioButton text, pre-defined will use RadioButtonValue</summary>
+		public static string GetUiLabelMobileRadioButton(SheetFieldDef sheetFieldDef) {
+			if(sheetFieldDef==null || sheetFieldDef.FieldType!=SheetFieldType.CheckBox) {
+				return "";
+			}
+			return string.IsNullOrEmpty(sheetFieldDef.UiLabelMobileRadioButton) ? sheetFieldDef.RadioButtonValue : sheetFieldDef.UiLabelMobileRadioButton;
+		}
+
 		/// <summary>Compares sheet fields by value. Returns true if properties are the same, false otherwise. Omits compairing tab ordering, and location.</summary>
 		public static bool CompareSheetFieldDefsByValueForMobileLayout(SheetFieldDef sheetFieldDefA, SheetFieldDef sheetFieldDefB,bool ignoreLanguage=false) {
 			return (ignoreLanguage || sheetFieldDefA.SheetDefNum==sheetFieldDefB.SheetDefNum)

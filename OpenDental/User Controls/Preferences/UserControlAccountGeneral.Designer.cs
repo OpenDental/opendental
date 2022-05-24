@@ -92,7 +92,7 @@ namespace OpenDental {
 			// 
 			// butClearAgingBeginDateT
 			// 
-			this.butClearAgingBeginDateT.Location = new System.Drawing.Point(479, 321);
+			this.butClearAgingBeginDateT.Location = new System.Drawing.Point(397, 198);
 			this.butClearAgingBeginDateT.Name = "butClearAgingBeginDateT";
 			this.butClearAgingBeginDateT.Size = new System.Drawing.Size(43, 21);
 			this.butClearAgingBeginDateT.TabIndex = 328;
@@ -101,6 +101,7 @@ namespace OpenDental {
 			// 
 			// groupBoxFunctionality
 			// 
+			this.groupBoxFunctionality.Controls.Add(this.butClearAgingBeginDateT);
 			this.groupBoxFunctionality.Controls.Add(this.labelAgingBeginDateT);
 			this.groupBoxFunctionality.Controls.Add(this.textAgingBeginDateT);
 			this.groupBoxFunctionality.Controls.Add(this.labelAutoAgingRunTime);
@@ -118,16 +119,16 @@ namespace OpenDental {
 			// 
 			// labelAgingBeginDateT
 			// 
-			this.labelAgingBeginDateT.Location = new System.Drawing.Point(13, 196);
+			this.labelAgingBeginDateT.Location = new System.Drawing.Point(6, 196);
 			this.labelAgingBeginDateT.Name = "labelAgingBeginDateT";
-			this.labelAgingBeginDateT.Size = new System.Drawing.Size(274, 27);
+			this.labelAgingBeginDateT.Size = new System.Drawing.Size(230, 27);
 			this.labelAgingBeginDateT.TabIndex = 314;
 			this.labelAgingBeginDateT.Text = "DateTime the currently running aging started\r\nUsually blank";
 			this.labelAgingBeginDateT.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textAgingBeginDateT
 			// 
-			this.textAgingBeginDateT.Location = new System.Drawing.Point(290, 199);
+			this.textAgingBeginDateT.Location = new System.Drawing.Point(239, 199);
 			this.textAgingBeginDateT.Name = "textAgingBeginDateT";
 			this.textAgingBeginDateT.ReadOnly = true;
 			this.textAgingBeginDateT.Size = new System.Drawing.Size(150, 20);
@@ -248,7 +249,6 @@ namespace OpenDental {
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
-			this.Controls.Add(this.butClearAgingBeginDateT);
 			this.Controls.Add(this.labelAgingProcLifoDetails);
 			this.Controls.Add(this.labelAccountShowPaymentNumsDetails);
 			this.Controls.Add(this.labelCommLogAutoSaveDetails);

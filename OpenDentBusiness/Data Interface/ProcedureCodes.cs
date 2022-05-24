@@ -665,6 +665,54 @@ namespace OpenDentBusiness{
 			return _procedureCodeCache.GetContainsKey(myCode);
 		}
 
+		/// <summary>Throws exceptions. Validates ProcCodes and ToothNums.</summary>
+		public static void ValidateProcedureCodeEntry(string[] stringArrayProcCodes,bool doAllowToothNum=false) {
+			//No need to check MiddleTierRole; no call to db.
+			if(stringArrayProcCodes.IsNullOrEmpty()) {
+				throw new Exception(Lans.g("FormDefEdit","Definition contains no valid code(s)"));
+			}
+			int countToothNumProcs=0;
+			for(int i=0;i<stringArrayProcCodes.Length;i++) {
+				//Validate ToothNum
+				string[] stringArrayProcCodeAndToothNum=null;
+				string stringToothNum="";
+				if(doAllowToothNum) {
+					stringArrayProcCodeAndToothNum=stringArrayProcCodes[i].Split('#');//0: ProcCode, 1: ToothNum (if present)
+					if(countToothNumProcs>0) {
+						throw new Exception(Lans.g("FormDefEdit","Definition contains multiple procedure codes and default tooth number(s). For a procedure code to have a default tooth number it must be the only procedure code for this Appt Proc Quick Add."));
+					}
+					if(stringArrayProcCodeAndToothNum.Length>2) {
+							throw new Exception(Lans.g("FormDefEdit", "Definition contains multiple tooth numbers. Only 1 default tooth number per procedure code is allowed."));
+					}
+					if(stringArrayProcCodeAndToothNum.Length==2) {
+						if(!Tooth.IsValidEntry(stringArrayProcCodeAndToothNum[1])) {
+							throw new Exception(Lans.g("FormDefEdit","Definition contains invalid tooth number: ")+stringArrayProcCodeAndToothNum[1]);
+						}
+						stringToothNum=stringArrayProcCodeAndToothNum[1];
+						countToothNumProcs++;
+					}
+				}
+				//Validate ProcCode
+				if(stringArrayProcCodeAndToothNum!=null) {
+					stringArrayProcCodes[i]=stringArrayProcCodeAndToothNum[0];
+				}
+				ProcedureCode procedureCode=GetProcCode(stringArrayProcCodes[i]);
+				if(procedureCode.CodeNum==0) {
+					//Now check to see if the trimmed version of the code does not exist either.
+					procedureCode=GetProcCode(stringArrayProcCodes[i].Trim());
+					if(procedureCode.CodeNum==0) { 
+						throw new Exception(Lans.g("FormDefEdit","Definition contains invalid procedure code: ")+stringArrayProcCodes[i]);
+					}
+				}
+				if(stringArrayProcCodeAndToothNum!=null && stringArrayProcCodeAndToothNum.Length==2 && procedureCode.TreatArea!=TreatmentArea.Tooth) {
+					throw new Exception(Lans.g("FormDefEdit", "Definition contains treatment area mismatch. If adding a tooth number, the treatment area for the procedure code must be tooth."));
+				}
+				if(stringToothNum!="") {
+					stringArrayProcCodes[i]+="#"+stringToothNum;//put the code and toothnum back together
+				}
+			}
+		}
+
 		///<summary>Grouped by Category.  Used only in FormRpProcCodes.</summary>
 		public static ProcedureCode[] GetProcList(Def[][] arrayDefs=null) {
 			//No need to check MiddleTierRole; no call to db.

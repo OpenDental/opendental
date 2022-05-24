@@ -222,6 +222,7 @@
 			this.gridCustomerViews = new OpenDental.UI.GridOD();
 			this.listCommonProcs = new OpenDental.UI.ListBoxOD();
 			this.tabOrtho = new System.Windows.Forms.TabPage();
+			this.checkOrthoGraphics = new System.Windows.Forms.CheckBox();
 			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
 			this.label27 = new System.Windows.Forms.Label();
 			this.label26 = new System.Windows.Forms.Label();
@@ -272,7 +273,7 @@
 			this.button1 = new OpenDental.UI.Button();
 			this.textTreatmentNotes = new OpenDental.ODtextBox();
 			this.odInternalCustomerGrids = new OpenDental.UI.ODInternalCustomerGrids();
-			this.checkOrthoGraphics = new System.Windows.Forms.CheckBox();
+			this.butOrthoRx = new OpenDental.UI.Button();
 			this.tabControlImages.SuspendLayout();
 			this.panelImages.SuspendLayout();
 			this.tabProc.SuspendLayout();
@@ -2396,16 +2397,29 @@
 			this.tabOrtho.Text = "Ortho";
 			this.tabOrtho.UseVisualStyleBackColor = true;
 			// 
+			// checkOrthoGraphics
+			// 
+			this.checkOrthoGraphics.Checked = true;
+			this.checkOrthoGraphics.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkOrthoGraphics.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.checkOrthoGraphics.Location = new System.Drawing.Point(27, 98);
+			this.checkOrthoGraphics.Name = "checkOrthoGraphics";
+			this.checkOrthoGraphics.Size = new System.Drawing.Size(191, 18);
+			this.checkOrthoGraphics.TabIndex = 206;
+			this.checkOrthoGraphics.Text = "Show Graphics";
+			this.checkOrthoGraphics.Click += new System.EventHandler(this.checkOrthoGraphics_Click);
+			// 
 			// groupBoxOD1
 			// 
+			this.groupBoxOD1.Controls.Add(this.butOrthoRx);
 			this.groupBoxOD1.Controls.Add(this.label27);
 			this.groupBoxOD1.Controls.Add(this.label26);
 			this.groupBoxOD1.Controls.Add(this.butOrthoAdd);
 			this.groupBoxOD1.Controls.Add(this.butOrthoCopy);
 			this.groupBoxOD1.Controls.Add(this.butOrthoDelete);
-			this.groupBoxOD1.Location = new System.Drawing.Point(285, 38);
+			this.groupBoxOD1.Location = new System.Drawing.Point(267, 38);
 			this.groupBoxOD1.Name = "groupBoxOD1";
-			this.groupBoxOD1.Size = new System.Drawing.Size(191, 130);
+			this.groupBoxOD1.Size = new System.Drawing.Size(209, 154);
 			this.groupBoxOD1.TabIndex = 205;
 			this.groupBoxOD1.Text = "Hardware";
 			// 
@@ -2420,7 +2434,7 @@
 			// 
 			// label26
 			// 
-			this.label26.Location = new System.Drawing.Point(84, 102);
+			this.label26.Location = new System.Drawing.Point(94, 124);
 			this.label26.Name = "label26";
 			this.label26.Size = new System.Drawing.Size(104, 17);
 			this.label26.TabIndex = 206;
@@ -2429,27 +2443,27 @@
 			// 
 			// butOrthoAdd
 			// 
-			this.butOrthoAdd.Location = new System.Drawing.Point(11, 44);
+			this.butOrthoAdd.Location = new System.Drawing.Point(11, 66);
 			this.butOrthoAdd.Name = "butOrthoAdd";
-			this.butOrthoAdd.Size = new System.Drawing.Size(70, 23);
+			this.butOrthoAdd.Size = new System.Drawing.Size(77, 23);
 			this.butOrthoAdd.TabIndex = 60;
-			this.butOrthoAdd.Text = "Add";
+			this.butOrthoAdd.Text = "Add Single";
 			this.butOrthoAdd.Click += new System.EventHandler(this.butOrthoAdd_Click);
 			// 
 			// butOrthoCopy
 			// 
-			this.butOrthoCopy.Location = new System.Drawing.Point(11, 98);
+			this.butOrthoCopy.Location = new System.Drawing.Point(11, 120);
 			this.butOrthoCopy.Name = "butOrthoCopy";
-			this.butOrthoCopy.Size = new System.Drawing.Size(70, 23);
+			this.butOrthoCopy.Size = new System.Drawing.Size(77, 23);
 			this.butOrthoCopy.TabIndex = 203;
 			this.butOrthoCopy.Text = "Copy";
 			this.butOrthoCopy.Click += new System.EventHandler(this.butOrthoCopy_Click);
 			// 
 			// butOrthoDelete
 			// 
-			this.butOrthoDelete.Location = new System.Drawing.Point(11, 71);
+			this.butOrthoDelete.Location = new System.Drawing.Point(11, 93);
 			this.butOrthoDelete.Name = "butOrthoDelete";
-			this.butOrthoDelete.Size = new System.Drawing.Size(70, 23);
+			this.butOrthoDelete.Size = new System.Drawing.Size(77, 23);
 			this.butOrthoDelete.TabIndex = 204;
 			this.butOrthoDelete.Text = "Delete";
 			this.butOrthoDelete.Click += new System.EventHandler(this.butOrthoDelete_Click);
@@ -2673,8 +2687,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridProg.ContextMenu = this.menuProgRight;
-			this.gridProg.DoShowPatNumLinks = true;
-			this.gridProg.DoShowTaskNumLinks = true;
+			this.gridProg.DoShowRightClickLinks  = true;
 			this.gridProg.Location = new System.Drawing.Point(0, 0);
 			this.gridProg.MaxPageRows = 500;
 			this.gridProg.Name = "gridProg";
@@ -2885,17 +2898,14 @@
 			this.odInternalCustomerGrids.TabIndex = 213;
 			this.odInternalCustomerGrids.Visible = false;
 			// 
-			// checkOrthoGraphics
+			// butOrthoRx
 			// 
-			this.checkOrthoGraphics.Checked = true;
-			this.checkOrthoGraphics.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkOrthoGraphics.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkOrthoGraphics.Location = new System.Drawing.Point(27, 98);
-			this.checkOrthoGraphics.Name = "checkOrthoGraphics";
-			this.checkOrthoGraphics.Size = new System.Drawing.Size(191, 18);
-			this.checkOrthoGraphics.TabIndex = 206;
-			this.checkOrthoGraphics.Text = "Show Graphics";
-			this.checkOrthoGraphics.Click += new System.EventHandler(this.checkOrthoGraphics_Click);
+			this.butOrthoRx.Location = new System.Drawing.Point(11, 39);
+			this.butOrthoRx.Name = "butOrthoRx";
+			this.butOrthoRx.Size = new System.Drawing.Size(77, 23);
+			this.butOrthoRx.TabIndex = 209;
+			this.butOrthoRx.Text = "Prescriptions";
+			this.butOrthoRx.Click += new System.EventHandler(this.butOrthoRx_Click);
 			// 
 			// ControlChart
 			// 
@@ -3213,5 +3223,6 @@
 		private System.Windows.Forms.Label label26;
 		private System.Windows.Forms.Label label27;
 		private System.Windows.Forms.CheckBox checkOrthoGraphics;
+		private UI.Button butOrthoRx;
 	}
 }

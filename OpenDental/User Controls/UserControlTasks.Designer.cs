@@ -461,8 +461,7 @@ namespace OpenDental {
 			// 
 			// gridMain
 			// 
-			this.gridMain.DoShowPatNumLinks = true;
-			this.gridMain.DoShowTaskNumLinks = true;
+			this.gridMain.DoShowRightClickLinks  = true;
 			this.gridMain.Location = new System.Drawing.Point(0, 310);
 			this.gridMain.Name = "gridMain";
 			this.gridMain.Size = new System.Drawing.Size(941, 200);

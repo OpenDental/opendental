@@ -90,17 +90,11 @@ namespace OpenDental {
 		[DefaultValue(true)]
 		public bool AllowsCarriageReturns { get; set; }=true;
 
-		///<summary>Set to true to enable context menu to detect PatNum links. This should not be set true for text boxes in modal windows because it can select a different patient, resulting in a potentially unsafe state.</summary>
+		///<summary>If right click, and there is 'PatNum:##', 'TaskNum:##', or 'JobNum:##', then the context menu will show a clickable link. Only used task edit window.</summary>
 		[Category("OD")]
-		[Description("Set to true to enable context menu to detect PatNum links. This should not be set true for text boxes in modal windows.")]
+		[Description("If right click, and there is 'PatNum:##', 'TaskNum:##', or 'JobNum:##', then the context menu will show a clickable link. Only used task edit window.")]
 		[DefaultValue(false)]
-		public bool DoShowPatNumLinks { get; set; }=false;
-
-		///<summary>Set to true to enable context menu to detect TaskNum links. This should not be set true for modal windows because it will allow the user to interact with the Task window and select a different patient via the "Go To" button, resulting in a potentially unsafe state.</summary>
-		[Category("OD")]
-		[Description("Set to true to enable context menu to detect TaskNum links. This should not be set true for text boxes in modal windows.")]
-		[DefaultValue(false)]
-		public bool DoShowTaskNumLinks { get; set; }=false;
+		public bool DoShowRightClickLinks  { get; set; }=false;
 
 		///<summary>Set true to enable spell checking in this control.</summary>
 		[Category("OD"),Description("Set true to enable spell checking.")]
@@ -467,7 +461,7 @@ namespace OpenDental {
 			_listMenuItemLinks.ForEach(x => contextMenu.MenuItems.Remove(x));//remove items from previous pass.
 			_listMenuItemLinks.Clear();
 			_listMenuItemLinks.Add(new MenuItem("-"));
-			_listMenuItemLinks.AddRange(PopupHelper.GetContextMenuItemLinks(Text,DoShowPatNumLinks,DoShowTaskNumLinks));
+			_listMenuItemLinks.AddRange(PopupHelper.GetContextMenuItemLinks(Text,DoShowRightClickLinks));
 			if(_listMenuItemLinks.Any(x => x.Text!="-")) {//at least one REAL menu item that is not the divider.
 				_listMenuItemLinks.ForEach(x => contextMenu.MenuItems.Add(x));
 			}

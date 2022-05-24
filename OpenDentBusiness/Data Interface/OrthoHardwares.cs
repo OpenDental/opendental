@@ -140,6 +140,12 @@ namespace OpenDentBusiness{
 				if(int1>=int2){
 					return listOrthoWires;
 				}
+				if(int1>int2){
+					//flip them
+					int temp=int1;
+					int1=int2;
+					int2=temp;
+				}
 				//They will all be in one arch
 				for(int i=int1;i<=int2;i++){
 					OrthoWire orthoWire=new OrthoWire();

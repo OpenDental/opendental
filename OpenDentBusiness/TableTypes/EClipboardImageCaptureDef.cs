@@ -1,15 +1,14 @@
 ﻿using System;
 
 namespace OpenDentBusiness{
-  ///<summary>Used to set rules for how often a patient should submit an image when checking in for their appointment via eClipboard.</summary>
+  ///<summary>Used to set rules for how often a patient should submit an image when checking in for their appointment via eClipboard. This is the grid on the right in eClipboard Images window.</summary>
   [Serializable]
   [CrudTable(IsSynchable=true)]
   public class EClipboardImageCaptureDef:TableBase{
     ///<summary>Primary key.</summary>
     [CrudColumn(IsPriKey=true)]
     public long EClipboardImageCaptureDefNum;
-     ///<summary>FK to def.DefNum. Should match a DefNum that is in the in 'EClipboard Images' defcat or has (or had) the 'P' (Patient Pictures)  
-    ///usage in the 'Image Categories' defcat.</summary>
+     ///<summary>FK to def.DefNum. Should match a DefNum that is in the in 'EClipboard Images' defcat or has (or had) the 'P' (Patient Pictures) usage in the 'Image Categories' defcat.</summary>
     public long DefNum;
     ///<summary>True if the rule pertains to the patient self portrait. False if the rule is for an 'Eclipboard images' defcat definition.</summary>
     public bool IsSelfPortrait;

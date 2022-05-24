@@ -57,6 +57,8 @@ namespace OpenDental{
 			this.checkOrthoShowInChart = new System.Windows.Forms.CheckBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.butOrthoHardwareSpecs = new OpenDental.UI.Button();
+			this.label5 = new System.Windows.Forms.Label();
+			this.butOrthoPrescriptions = new OpenDental.UI.Button();
 			this.groupBox4.SuspendLayout();
 			this.groupOrthoCaseProcedures.SuspendLayout();
 			this.SuspendLayout();
@@ -64,7 +66,7 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(213, 570);
+			this.butOK.Location = new System.Drawing.Point(213, 588);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 11;
@@ -74,7 +76,7 @@ namespace OpenDental{
 			// butCancel
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(294, 570);
+			this.butCancel.Location = new System.Drawing.Point(294, 588);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 12;
@@ -105,7 +107,7 @@ namespace OpenDental{
 			// 
 			// butOrthoDisplayFields
 			// 
-			this.butOrthoDisplayFields.Location = new System.Drawing.Point(258, 275);
+			this.butOrthoDisplayFields.Location = new System.Drawing.Point(258, 273);
 			this.butOrthoDisplayFields.Name = "butOrthoDisplayFields";
 			this.butOrthoDisplayFields.Size = new System.Drawing.Size(75, 24);
 			this.butOrthoDisplayFields.TabIndex = 11;
@@ -167,7 +169,7 @@ namespace OpenDental{
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(12, 279);
+			this.label2.Location = new System.Drawing.Point(12, 277);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(245, 17);
 			this.label2.TabIndex = 237;
@@ -225,7 +227,7 @@ namespace OpenDental{
 			this.groupBox4.Controls.Add(this.listboxOrthoPlacementProcs);
 			this.groupBox4.Controls.Add(this.label29);
 			this.groupBox4.Controls.Add(this.butPlacementProcsEdit);
-			this.groupBox4.Location = new System.Drawing.Point(19, 335);
+			this.groupBox4.Location = new System.Drawing.Point(19, 353);
 			this.groupBox4.Name = "groupBox4";
 			this.groupBox4.Size = new System.Drawing.Size(314, 104);
 			this.groupBox4.TabIndex = 240;
@@ -280,7 +282,7 @@ namespace OpenDental{
 			this.groupOrthoCaseProcedures.Controls.Add(this.labelDebondCodes);
 			this.groupOrthoCaseProcedures.Controls.Add(this.textVisitCodes);
 			this.groupOrthoCaseProcedures.Controls.Add(this.labelBandingCodes);
-			this.groupOrthoCaseProcedures.Location = new System.Drawing.Point(19, 443);
+			this.groupOrthoCaseProcedures.Location = new System.Drawing.Point(19, 461);
 			this.groupOrthoCaseProcedures.Name = "groupOrthoCaseProcedures";
 			this.groupOrthoCaseProcedures.Size = new System.Drawing.Size(314, 109);
 			this.groupOrthoCaseProcedures.TabIndex = 241;
@@ -374,7 +376,7 @@ namespace OpenDental{
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(43, 307);
+			this.label4.Location = new System.Drawing.Point(43, 302);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(214, 17);
 			this.label4.TabIndex = 244;
@@ -383,16 +385,36 @@ namespace OpenDental{
 			// 
 			// butOrthoHardwareSpecs
 			// 
-			this.butOrthoHardwareSpecs.Location = new System.Drawing.Point(258, 303);
+			this.butOrthoHardwareSpecs.Location = new System.Drawing.Point(258, 298);
 			this.butOrthoHardwareSpecs.Name = "butOrthoHardwareSpecs";
 			this.butOrthoHardwareSpecs.Size = new System.Drawing.Size(75, 24);
 			this.butOrthoHardwareSpecs.TabIndex = 243;
 			this.butOrthoHardwareSpecs.Text = "Setup";
 			this.butOrthoHardwareSpecs.Click += new System.EventHandler(this.butOrthoHardwareSpecs_Click);
 			// 
+			// label5
+			// 
+			this.label5.Location = new System.Drawing.Point(43, 327);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(214, 17);
+			this.label5.TabIndex = 248;
+			this.label5.Text = "Ortho Prescriptions";
+			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// butOrthoPrescriptions
+			// 
+			this.butOrthoPrescriptions.Location = new System.Drawing.Point(258, 323);
+			this.butOrthoPrescriptions.Name = "butOrthoPrescriptions";
+			this.butOrthoPrescriptions.Size = new System.Drawing.Size(75, 24);
+			this.butOrthoPrescriptions.TabIndex = 247;
+			this.butOrthoPrescriptions.Text = "Setup";
+			this.butOrthoPrescriptions.Click += new System.EventHandler(this.butOrthoPrescriptions_Click);
+			// 
 			// FormOrthoSetup
 			// 
-			this.ClientSize = new System.Drawing.Size(381, 606);
+			this.ClientSize = new System.Drawing.Size(381, 624);
+			this.Controls.Add(this.label5);
+			this.Controls.Add(this.butOrthoPrescriptions);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.butOrthoHardwareSpecs);
 			this.Controls.Add(this.checkOrthoShowInChart);
@@ -463,5 +485,7 @@ namespace OpenDental{
 		private System.Windows.Forms.CheckBox checkOrthoShowInChart;
 		private System.Windows.Forms.Label label4;
 		private UI.Button butOrthoHardwareSpecs;
+		private System.Windows.Forms.Label label5;
+		private UI.Button butOrthoPrescriptions;
 	}
 }

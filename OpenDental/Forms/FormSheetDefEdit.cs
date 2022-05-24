@@ -31,12 +31,17 @@ namespace OpenDental {
 		#region Fields - Private
 		///<summary>Disposed. A single bitmap that is a composite of all image fields, usually 0 or 1. A bit more efficient than redrawing the actual image fields each time.</summary>
 		private Bitmap _bitmapBackground;
-		private Color _colorGray=ColorOD.Gray(10);//Almost black  //Color.FromArgb(0,30,150);
+		//private Color _colorBlue=Color.FromArgb(0,30,150);
+		private Color _colorBlue=Color.FromArgb(0,30,150);
+		private Color _colorGray=ColorOD.Gray(10);//Almost black 
 		///<summary>Faded out</summary>
-		private Color _colorGrayOutline=ColorOD.Gray(235);//Color.FromArgb(200,230,255);
+		private Color _colorGrayOutline=ColorOD.Gray(235);
+		//private Color _colorBlueOutline=Color.FromArgb(200,230,255);
+		private Color _colorBlueOutline=Color.FromArgb(50,60,255);
 		private Color _colorRed=Color.FromArgb(150,0,10);
-		///<summary>Faded out</summary>
-		private Color _colorRedOutline=Color.FromArgb(255,200,210);
+		//<summary>Faded out</summary>
+		//private Color _colorRedOutline=Color.FromArgb(255,200,210);
+		private Color _colorRedOutline=Color.FromArgb(255,50,60);
 		private static Font _fontTabOrder = new Font("Times New Roman",12f,FontStyle.Regular,GraphicsUnit.Pixel);
 		///<summary>Disposed</summary>
 		private Graphics _graphicsBackground;
@@ -58,9 +63,9 @@ namespace OpenDental {
 		private bool _isMouseDown;
 		private bool _isResizing;
 		private bool _isTabMode;
+		private List<Point> _listPointsOfOriginalControls;
 		///<summary>List of static image SheetFieldDefs.  Used to track when images change, thus requiring redrawing the images.</summary>
 		private List<SheetFieldDef> _listSheetFieldDefsDisplayedImages=new List<SheetFieldDef>();
-		private List<Point> _listPointsOfOriginalControls;
 		///<summary>This is our 'clipboard' for copy/paste of fields.</summary>
 		private List<SheetFieldDef> _listSheetFieldDefsCopyPaste;
 		private List<SheetFieldDef> _listSheetFieldDefsTabOrder;
@@ -112,7 +117,7 @@ namespace OpenDental {
 		#endregion Constructor
 
 		#region Properties
-		///<summary>The currently selected languages three letter abbr from comboLanguages. When 'Default' is selected an empty string is returned. When 'Add New' is selected NULL is returned.</summary>
+		///<summary>The currently selected languages three letter abbr from comboLanguages. When 'Default' is selected an empty string is returned. When 'Add Ne' is selected NULL is returned.</summary>
 		private string GetSelectedLanguageThreeLetters() {
 			if(comboLanguages.SelectedIndex<0) {
 				//Selection is forced to 1 in InitTranslations(...). Only not set for internal sheet defs or dynamic layout defs.
@@ -163,6 +168,7 @@ namespace OpenDental {
 		}
 
 		private void butAddField_Click(object sender,EventArgs e) {
+			/*
 			using FormSheetFieldDefAdd formSheetFieldDefAdd=new FormSheetFieldDefAdd();
 			formSheetFieldDefAdd.SheetDefCur=_sheetDef;
 			formSheetFieldDefAdd.SelectedLanguageThreeLetters=GetSelectedLanguageThreeLetters();
@@ -176,17 +182,17 @@ namespace OpenDental {
 			if(formSheetFieldDefAdd.DoRefreshDoubleBuffer){
 				RefreshBitmapBackground();
 			}
-			panelMain.Invalidate();
+			panelMain.Invalidate();*/
 		}
 
 		private void butAlignCenterH_Click(object sender,EventArgs e) {
-			if(listFields.SelectedIndices.Count<2) {
+			if(listBoxFields.SelectedIndices.Count<2) {
 				return;
 			}
-			List<SheetFieldDef> listSheetFieldDefs=GetPertinentSheetFieldDefs();
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
 			List<SheetFieldDef> listSheetFieldDefsSelected=new List<SheetFieldDef>();
-			for(int i=0;i<listFields.SelectedIndices.Count;i++) {
-				listSheetFieldDefsSelected.Add(listSheetFieldDefs[listFields.SelectedIndices[i]]);
+			for(int i=0;i<listBoxFields.SelectedIndices.Count;i++) {
+				listSheetFieldDefsSelected.Add(listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]]);
 			}
 			if(listSheetFieldDefsSelected.Exists(f1 => listSheetFieldDefsSelected.Exists(f2 => f1.YPos==f2.YPos && f1!=f2))) {
 				MsgBox.Show(this,"Cannot align controls. Two or more selected controls will overlap.");
@@ -201,13 +207,13 @@ namespace OpenDental {
 		}
 
 		private void butAlignLeft_Click(object sender,EventArgs e) {
-			if(listFields.SelectedIndices.Count<2) {
+			if(listBoxFields.SelectedIndices.Count<2) {
 				return;
 			}
-			List<SheetFieldDef> listSheetFieldDefs=GetPertinentSheetFieldDefs();
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
 			List<SheetFieldDef> listSheetFieldDefsSelected=new List<SheetFieldDef>();
-			for(int i=0;i<listFields.SelectedIndices.Count;i++) {
-				listSheetFieldDefsSelected.Add(listSheetFieldDefs[listFields.SelectedIndices[i]]);
+			for(int i=0;i<listBoxFields.SelectedIndices.Count;i++) {
+				listSheetFieldDefsSelected.Add(listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]]);
 			}
 			if(listSheetFieldDefsSelected.Exists(f1 => listSheetFieldDefsSelected.Exists(f2 => f1.YPos==f2.YPos && f1!=f2))) {
 				MsgBox.Show(this,"Cannot align controls. Two or more selected controls will overlap.");
@@ -220,13 +226,13 @@ namespace OpenDental {
 		}
 
 		private void butAlignRight_Click(object sender,EventArgs e) {
-			if(listFields.SelectedIndices.Count<2) {
+			if(listBoxFields.SelectedIndices.Count<2) {
 				return;
 			}
-			List<SheetFieldDef> listSheetFieldDefs=GetPertinentSheetFieldDefs();
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
 			List<SheetFieldDef> listSheetFieldDefsSelected=new List<SheetFieldDef>();
-			for(int i=0;i<listFields.SelectedIndices.Count;i++) {
-				listSheetFieldDefsSelected.Add(listSheetFieldDefs[listFields.SelectedIndices[i]]);
+			for(int i=0;i<listBoxFields.SelectedIndices.Count;i++) {
+				listSheetFieldDefsSelected.Add(listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]]);
 			}
 			if(listSheetFieldDefsSelected.Exists(f1 => listSheetFieldDefsSelected.Exists(f2 => f1.YPos==f2.YPos && f1!=f2))) {
 				MsgBox.Show(this,"Cannot align controls. Two or more selected controls will overlap.");
@@ -240,13 +246,13 @@ namespace OpenDental {
 
 		/// <summary>When clicked it will set all selected elements' Y coordinates to the smallest Y coordinate in the group, unless two controls have the same X coordinate.</summary>
 		private void butAlignTop_Click(object sender,EventArgs e) {
-			if(listFields.SelectedIndices.Count<2) {
+			if(listBoxFields.SelectedIndices.Count<2) {
 				return;
 			}
-			List<SheetFieldDef> listSheetFieldDefs=GetPertinentSheetFieldDefs();
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
 			List<SheetFieldDef> listSheetFieldDefsSelected=new List<SheetFieldDef>();
-			for(int i=0;i<listFields.SelectedIndices.Count;i++) {
-				listSheetFieldDefsSelected.Add(listSheetFieldDefs[listFields.SelectedIndices[i]]);
+			for(int i=0;i<listBoxFields.SelectedIndices.Count;i++) {
+				listSheetFieldDefsSelected.Add(listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]]);
 			}
 			if(listSheetFieldDefsSelected.Exists(f1 => listSheetFieldDefsSelected.Exists(f2 => f1.XPos==f2.XPos && f1!=f2))) {
 				MsgBox.Show(this,"Cannot align controls. Two or more selected controls will overlap.");
@@ -469,9 +475,12 @@ namespace OpenDental {
 				butOK.Enabled=false;
 				butCancel.Enabled=false;
 				butDelete.Enabled=false;
-				butAddField.Enabled=false;
+				groupAddField.Enabled=false;
+				groupShowField.Enabled=false;
 				butCopy.Enabled=false;
 				butPaste.Enabled=false;
+				butUndo.Enabled=false;
+				butRedo.Enabled=false;
 				groupAlignH.Enabled=false;
 				butAlignTop.Enabled=false;
 				butEdit.Enabled=false;
@@ -483,9 +492,12 @@ namespace OpenDental {
 				butOK.Enabled=true;
 				butCancel.Enabled=true;
 				butDelete.Enabled=true;
-				butAddField.Enabled=true;
+				groupAddField.Enabled=true;
+				groupShowField.Enabled=true;
 				butCopy.Enabled=true;
 				butPaste.Enabled=true;
+				butUndo.Enabled=true;
+				butRedo.Enabled=true;
 				groupAlignH.Enabled=true;
 				butAlignTop.Enabled=true;
 				butEdit.Enabled=true;
@@ -503,6 +515,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"No more undo levels available.");
 				return;
 			}
+			List<long> listSheetFieldDefNumsSelected=listBoxFields.GetListSelected<SheetFieldDef>().Select(x=>x.SheetFieldDefNum).ToList();
 			int idxTarget=_listUndoLevels.Count-2-_undoLevel;
 			//example count=5, _undoLevel=0, so target is second from end, or 5-2-0=3
 			//example count=5, _undoLevel=1, so target is third from end, or 5-2-1=2
@@ -511,8 +524,19 @@ namespace OpenDental {
 			//but we leave it on the list in case they want to redo
 			_undoLevel++;
 			FillFieldList();
+			for(int i=0;i<listBoxFields.Items.Count;i++){
+				//they are copies, so we must compare PKs
+				SheetFieldDef sheetFieldDef=(SheetFieldDef)listBoxFields.Items.GetObjectAt(i);
+				if(listSheetFieldDefNumsSelected.Contains(sheetFieldDef.SheetFieldDefNum)){
+					listBoxFields.SetSelected(i);
+				}
+			}
 			textDescription.Text=_sheetDef.Description;
 			SetPanelMainSize();
+			panelMain.Invalidate();
+		}
+
+		private void checkBlue_Click(object sender,EventArgs e) {
 			panelMain.Invalidate();
 		}
 
@@ -553,7 +577,7 @@ namespace OpenDental {
 		}
 
 		private void FormSheetDefEdit_KeyDown(object sender,KeyEventArgs e) {
-			List<SheetFieldDef> listSheetFieldDefs=listFields.GetListSelected<SheetFieldDef>();
+			List<SheetFieldDef> listSheetFieldDefs=listBoxFields.GetListSelected<SheetFieldDef>();
 			bool doRefreshBuffer=false;
 			e.Handled=true;
 			if(e.KeyCode==Keys.ControlKey && _isCtrlDown) {
@@ -582,12 +606,12 @@ namespace OpenDental {
 				return;
 			}
 			if(e.Alt) {
-				Cursor=Cursors.Cross; //change cursor to rubber stamp cursor
+				Cursor=Cursors.Cross; //rubber stamp cursor
 				_isAltDown=true;
 				return;
 			}
 			if(e.KeyCode==Keys.Delete || e.KeyCode==Keys.Back) {
-				if(listFields.SelectedIndices.Count==0) {
+				if(listBoxFields.SelectedIndices.Count==0) {
 					return;
 				}
 				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete selected fields?")) {
@@ -673,11 +697,11 @@ namespace OpenDental {
 
 		private void FormSheetDefEdit_Load(object sender,EventArgs e) {
 			if(_sheetDef.IsLandscape){
-				Width=LayoutManager.Scale(_sheetDef.Height+190);
+				Width=LayoutManager.Scale(_sheetDef.Height+315);
 				Height=LayoutManager.Scale(_sheetDef.Width+65);
 			}
 			else{
-				Width=LayoutManager.Scale(_sheetDef.Width+190);
+				Width=LayoutManager.Scale(_sheetDef.Width+315);
 				Height=LayoutManager.Scale(_sheetDef.Height+65);
 			}
 			if(Width<LayoutManager.Scale(600)){
@@ -688,29 +712,61 @@ namespace OpenDental {
 			}
 			System.Windows.Forms.Screen screen=System.Windows.Forms.Screen.FromHandle(this.Handle);
 			if(Width>screen.WorkingArea.Width){
-				Width=screen.WorkingArea.Width;
+				Width=screen.WorkingArea.Width-4;
 			}
 			if(Height>screen.WorkingArea.Height){
-				Height=screen.WorkingArea.Height;
+				Height=screen.WorkingArea.Height-4;
 			}
-			CenterFormOnMonitor();
+			base.CenterFormOnMonitor();
 			_imageToothChart=null;
 			if(IsInternal) {
 				butDelete.Visible=false;
 				butOK.Visible=false;
 				butCancel.Text=Lan.g(this,"Close");
-				butAddField.Visible=false;
+				groupAddField.Visible=false;
+				groupShowField.Visible=false;
 				groupPage.Visible=false;
 				groupAlignH.Visible=false;
 				butAlignTop.Visible=false;
 				linkLabelTips.Visible=false;
 				butCopy.Visible=false;
 				butPaste.Visible=false;
+				butUndo.Visible=false;
+				butRedo.Visible=false;
 				butTabOrder.Visible=false;
 			}
 			else {
 				labelInternal.Visible=false;
 			}
+			List<SheetFieldType> listSheetFieldTypes=SheetDefs.GetVisibleButtons(_sheetDef.SheetType);
+			butOutputText.Visible=listSheetFieldTypes.Contains(SheetFieldType.OutputText);
+			butInputField.Visible=listSheetFieldTypes.Contains(SheetFieldType.InputField);
+			butStaticText.Visible=listSheetFieldTypes.Contains(SheetFieldType.StaticText);
+			butCheckBox.Visible=listSheetFieldTypes.Contains(SheetFieldType.CheckBox);
+			butComboBox.Visible=listSheetFieldTypes.Contains(SheetFieldType.ComboBox);
+			butImage.Visible=listSheetFieldTypes.Contains(SheetFieldType.Image);
+			butPatImage.Visible=listSheetFieldTypes.Contains(SheetFieldType.PatImage);
+			butLine.Visible=listSheetFieldTypes.Contains(SheetFieldType.Line);
+			butRectangle.Visible=listSheetFieldTypes.Contains(SheetFieldType.Rectangle);
+			butSigBox.Visible=listSheetFieldTypes.Contains(SheetFieldType.SigBox);
+			butSigBoxPractice.Visible=listSheetFieldTypes.Contains(SheetFieldType.SigBoxPractice);
+			butSpecial.Visible=listSheetFieldTypes.Contains(SheetFieldType.Special);
+			butGrid.Visible=listSheetFieldTypes.Contains(SheetFieldType.Grid);
+			butScreenChart.Visible=listSheetFieldTypes.Contains(SheetFieldType.ScreenChart);
+			checkShowOutputText.Visible=listSheetFieldTypes.Contains(SheetFieldType.OutputText);
+			checkShowInputField.Visible=listSheetFieldTypes.Contains(SheetFieldType.InputField);
+			checkShowStaticText.Visible=listSheetFieldTypes.Contains(SheetFieldType.StaticText);
+			checkShowCheckBox.Visible=listSheetFieldTypes.Contains(SheetFieldType.CheckBox);
+			checkShowComboBox.Visible=listSheetFieldTypes.Contains(SheetFieldType.ComboBox);
+			checkShowImage.Visible=listSheetFieldTypes.Contains(SheetFieldType.Image);
+			checkShowPatImage.Visible=listSheetFieldTypes.Contains(SheetFieldType.PatImage);
+			checkShowLine.Visible=listSheetFieldTypes.Contains(SheetFieldType.Line);
+			checkShowRectangle.Visible=listSheetFieldTypes.Contains(SheetFieldType.Rectangle);
+			checkShowSigBox.Visible=listSheetFieldTypes.Contains(SheetFieldType.SigBox);
+			checkShowSigBoxPractice.Visible=listSheetFieldTypes.Contains(SheetFieldType.SigBoxPractice);
+			checkShowSpecial.Visible=listSheetFieldTypes.Contains(SheetFieldType.Special);
+			checkShowGrid.Visible=listSheetFieldTypes.Contains(SheetFieldType.Grid);
+			checkShowScreenChart.Visible=listSheetFieldTypes.Contains(SheetFieldType.ScreenChart);
 			_sheetEditMobileCtrl.IsReadOnly=IsInternal;
 			butMobile.Visible=SheetDefs.IsMobileAllowed(_sheetDef.SheetType);
 			if(Sheets.SheetTypeIsSinglePage(_sheetDef.SheetType)) {
@@ -724,7 +780,7 @@ namespace OpenDental {
 			//if(_sheetDefCur.PageCount>1){
 			//	panelMain.Height-=_sheetDefCur.PageCount*100-40;
 			//}
-			EnableDashboardWidgetOptions(_sheetDef.SheetType==SheetTypeEnum.PatientDashboardWidget);
+			EnableDashboardWidgetOptions();
 			textDescription.Text=_sheetDef.Description;
 			if(!TryInitLayoutModes() && _sheetDef.SheetType!=SheetTypeEnum.PatientDashboardWidget) {//TryInitLayoutModes() must be called before initial FillFieldList().
 				//If we are not associated to a SheetType that uses the above layoutmode logic then setup translations UI.
@@ -803,12 +859,12 @@ namespace OpenDental {
 				return;
 			}
 			string tips="";
-			tips+="The following shortcuts and hotkeys are supported:\r\n";
+			tips+="The following additional shortcuts and hotkeys are supported:\r\n";
 			tips+="\r\n";
-			tips+="CTRL + C : Copy selected field(s).\r\n";
-			tips+="\r\n";
-			tips+="CTRL + V : Paste.\r\n";
-			tips+="\r\n";
+			//tips+="CTRL + C : Copy selected field(s).\r\n";
+			//tips+="\r\n";
+			//tips+="CTRL + V : Paste.\r\n";
+			//tips+="\r\n";
 			tips+="ALT + Click : 'Rubber stamp' paste to the cursor position.\r\n";
 			tips+="\r\n";
 			tips+="Click + Drag : Click on a blank space and then drag to group select.\r\n";
@@ -820,26 +876,27 @@ namespace OpenDental {
 		}
 
 		private void listFields_MouseDoubleClick(object sender,MouseEventArgs e) {
-			int idx=listFields.IndexFromPoint(e.Location);
+			int idx=listBoxFields.IndexFromPoint(e.Location);
 			if(idx==-1) {
 				return;
 			}
-			listFields.SelectedIndices.Clear();
-			listFields.SetSelected(idx,true);
+			listBoxFields.SelectedIndices.Clear();
+			listBoxFields.SetSelected(idx,true);
 			panelMain.Invalidate();
-			SheetFieldDef sheetFieldDef=GetPertinentSheetFieldDefs()[idx];
+			SheetFieldDef sheetFieldDef=listBoxFields.GetSelected<SheetFieldDef>();
 			SheetFieldDef SheetFieldDefOld=sheetFieldDef.Copy();
 			LaunchEditWindow(sheetFieldDef,isEditMobile:false);
 			if(sheetFieldDef.TabOrder!=SheetFieldDefOld.TabOrder) { //otherwise a different control will be selected.
-				listFields.SelectedIndices.Clear();
+				listBoxFields.SelectedIndices.Clear();
 			}
 		}
 		
 		private void listFields_SelectionChangeCommitted(object sender,EventArgs e) {
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
 			_sheetEditMobileCtrl.SetHighlightedFieldDefs(
-				GetPertinentSheetFieldDefs()
+				listSheetFieldDefsShowing
 				.Select((x,y) => new { sheetFieldDef = x,index = y })
-				.Where(x => listFields.SelectedIndices.Contains(x.index))
+				.Where(x => listBoxFields.SelectedIndices.Contains(x.index))
 				.Select(x => x.sheetFieldDef.SheetFieldDefNum).ToList());
 			panelMain.Invalidate();
 		}
@@ -886,33 +943,33 @@ namespace OpenDental {
 				if(_isCtrlDown) {
 					return; //so that you can add more to the previous selection
 				}
-				listFields.ClearSelected(); //clear the existing selection
+				listBoxFields.ClearSelected(); //clear the existing selection
 				panelMain.Invalidate();
 				return;
 			}
-			List<SheetFieldDef> listSheetFieldDefs=GetPertinentSheetFieldDefs();
-			int idx=listSheetFieldDefs.IndexOf(sheetFieldDef);
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
+			int idx=listSheetFieldDefsShowing.IndexOf(sheetFieldDef);
 			if(_isCtrlDown) {
-				if(listFields.SelectedIndices.Contains(idx)) {
-					listFields.SetSelected(idx,false);
+				if(listBoxFields.SelectedIndices.Contains(idx)) {
+					listBoxFields.SetSelected(idx,false);
 				}
 				else {
-					listFields.SetSelected(idx);
+					listBoxFields.SetSelected(idx);
 				}
 			}
 			else { //Ctrl not down
-				if(listFields.SelectedIndices.Contains(idx)) {
+				if(listBoxFields.SelectedIndices.Contains(idx)) {
 					//clicking on the group, probably to start a drag.
 				}
 				else {
-					listFields.SelectedIndices.Clear();
-					listFields.SetSelected(idx);
+					listBoxFields.SelectedIndices.Clear();
+					listBoxFields.SetSelected(idx);
 				}
 			}
 			_listPointsOfOriginalControls=new List<Point>();
 			Point point;
-			for(int i=0;i<listFields.SelectedIndices.Count;i++) {
-				point=new Point(listSheetFieldDefs[listFields.SelectedIndices[i]].XPos,listSheetFieldDefs[listFields.SelectedIndices[i]].YPos);
+			for(int i=0;i<listBoxFields.SelectedIndices.Count;i++) {
+				point=new Point(listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]].XPos,listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]].YPos);
 				_listPointsOfOriginalControls.Add(point);
 			}			
 			panelMain.Invalidate();
@@ -926,7 +983,7 @@ namespace OpenDental {
 			if(sheetFieldDef==null) {
 				return;
 			}
-			SheetFieldDef fieldold=sheetFieldDef.Copy();
+			//SheetFieldDef fieldold=sheetFieldDef.Copy();
 			LaunchEditWindow(sheetFieldDef,isEditMobile:false);
 			//if(field.TabOrder!=fieldold.TabOrder) {
 			//  listFields.SelectedIndices.Clear();
@@ -943,7 +1000,7 @@ namespace OpenDental {
 		}
 
 		private void panelMain_MouseMove(object sender,MouseEventArgs e) {
-			List<SheetFieldDef> listSheetFieldDefs=GetPertinentSheetFieldDefs();
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
 			if(_isResizing){
 				int width=_sizeResizeOriginal.Width+e.X-_pointMouseOriginalPos.X;
 				int height=_sizeResizeOriginal.Height+e.Y-_pointMouseOriginalPos.Y;
@@ -960,8 +1017,11 @@ namespace OpenDental {
 				panelMain.Invalidate();
 				return;
 			}
-			SheetFieldDef sheetFieldDefHover=HitTest(e.X,e.Y);
-			if(_isMouseDown && _hasClickedOnBlankSpace){
+			//SheetFieldDef sheetFieldDefHover=HitTest(e.X,e.Y);
+			if(_isAltDown){
+				Cursor=Cursors.Cross; //rubber stamp cursor
+			}
+			else if(_isMouseDown && _hasClickedOnBlankSpace){
 				//dragging selection rectangle, so no hover or resize
 				Cursor=Cursors.Default;
 			}
@@ -969,9 +1029,9 @@ namespace OpenDental {
 				//no hover or resize
 				Cursor=Cursors.Default;
 			}
-			else if(sheetFieldDefHover!=null){
-				Cursor=Cursors.SizeAll;
-			}
+			//else if(sheetFieldDefHover!=null){//we could enhance this to only show hover when selected, but it's too annoying like this
+			//	Cursor=Cursors.SizeAll;
+			//}
 			else if(HitTestResize(e.X,e.Y)!=null){
 				Cursor=Cursors.SizeNWSE;
 			}
@@ -998,8 +1058,8 @@ namespace OpenDental {
 				//we wait until they actually start dragging before setting this flag
 				_isDragging=true;
 			}
-			for(int i=0;i<listFields.SelectedIndices.Count;i++) {
-				SheetFieldDef sheetFieldDef=listSheetFieldDefs[listFields.SelectedIndices[i]];
+			for(int i=0;i<listBoxFields.SelectedIndices.Count;i++) {
+				SheetFieldDef sheetFieldDef=listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]];
 				Point pointOriginalLocation=_listPointsOfOriginalControls[i];
 				int newX=pointOriginalLocation.X+e.X-_pointMouseOriginalPos.X;
 				int newY=pointOriginalLocation.Y+e.Y-_pointMouseOriginalPos.Y;
@@ -1012,17 +1072,16 @@ namespace OpenDental {
 
 		private void panelMain_MouseUp(object sender,MouseEventArgs e) {
 			_isMouseDown=false;
-			_isResizing=false;
 			_listPointsOfOriginalControls=null;
-			List<SheetFieldDef> listSheetFieldDefs=GetPertinentSheetFieldDefs();
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
 			if(_hasClickedOnBlankSpace) { //if initial mouse down was not on a control.  ie, if we are dragging to select.
 				Rectangle rectangleSelectionBounds=new Rectangle(
 					x:Math.Min(_pointMouseOriginalPos.X,_pointMouseCurrentPos.X), 
 					y:Math.Min(_pointMouseOriginalPos.Y,_pointMouseCurrentPos.Y), 
 					width:Math.Abs(_pointMouseCurrentPos.X-_pointMouseOriginalPos.X), 
 					height:Math.Abs(_pointMouseCurrentPos.Y-_pointMouseOriginalPos.Y)); 
-				for(int i=0;i<listSheetFieldDefs.Count;i++) {
-					SheetFieldDef sheetFieldDef=listSheetFieldDefs[i]; //to speed this process up instead of referencing the array every time.
+				for(int i=0;i<listSheetFieldDefsShowing.Count;i++) {
+					SheetFieldDef sheetFieldDef=listSheetFieldDefsShowing[i]; //to speed this process up instead of referencing the array every time.
 					if(sheetFieldDef.FieldType==SheetFieldType.Line || sheetFieldDef.FieldType==SheetFieldType.Image || sheetFieldDef.FieldType==SheetFieldType.MobileHeader) {
 						//lines and images are currently not selectable by drag and drop. will require lots of calculations, completely possible, but complex.
 						//Mobile headers should not be selectable on the main panel. Must use other window.
@@ -1036,34 +1095,38 @@ namespace OpenDental {
 						}
 					}
 					if(sheetFieldDef.BoundsF.IntersectsWith(rectangleSelectionBounds)) {
-						listFields.SetSelected(i,true); //Add to selected indicies
+						listBoxFields.SetSelected(i,true); //Add to selected indicies
 					}
 				}
 			}
 			else if(_gridSnapDistance>0){//Attempt to autosnap field to nearest cell top left corner.
-				for(int i=0;i<listFields.SelectedIndices.Count;i++) {
-					SheetFieldDef sheetFieldDef=listSheetFieldDefs[listFields.SelectedIndices[i]];
+				for(int i=0;i<listBoxFields.SelectedIndices.Count;i++) {
+					SheetFieldDef sheetFieldDef=listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]];
 					sheetFieldDef.XPos=_listSnapXVals.LastOrDefault(x => x<=sheetFieldDef.XPos);
 					sheetFieldDef.YPos=_listSnapYVals.LastOrDefault(y => y<=sheetFieldDef.YPos);
 				}
 			}
-			//done dragging
-			if(_isDragging){
+			if(_isResizing){
+				string description="Resize "+listBoxFields.GetStringSelectedItems();//just one item	
+				AddUndoLevel(description);
+				_isResizing=false;
+			}
+			if(_isDragging){//done dragging
 				string description="Drag ";
-				if(listFields.SelectedIndices.Count==1){
-					description+=listFields.GetStringSelectedItems();//just one item	
+				if(listBoxFields.SelectedIndices.Count==1){
+					description+=listBoxFields.GetStringSelectedItems();//just one item	
 				}
 				else{
-					description+=listFields.SelectedIndices.Count.ToString()+" items";
+					description+=listBoxFields.SelectedIndices.Count.ToString()+" items";
 				}
 				AddUndoLevel(description);
 				_isDragging=false;
 			}
 			_hasClickedOnBlankSpace=false;
 			_sheetEditMobileCtrl.SetHighlightedFieldDefs(
-				GetPertinentSheetFieldDefs()
+				listSheetFieldDefsShowing
 				.Select((x,y) => new { sheetFieldDef = x,index = y })
-				.Where(x => listFields.SelectedIndices.Contains(x.index))
+				.Where(x => listBoxFields.SelectedIndices.Contains(x.index))
 				.Select(x => x.sheetFieldDef.SheetFieldDefNum).ToList());
 			//RefreshBitmapBackground();
 			panelMain.Invalidate();
@@ -1072,8 +1135,9 @@ namespace OpenDental {
 		private void panelMain_Paint(object sender,PaintEventArgs e) {
 			using Bitmap bitmapDoubleBuffer=new Bitmap(panelMain.Width,panelMain.Height);
 			using Graphics g=Graphics.FromImage(bitmapDoubleBuffer);
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
 			if(DoRefreshImages()) {
-				_listSheetFieldDefsDisplayedImages=GetPertinentSheetFieldDefs().FindAll(x => x.FieldType==SheetFieldType.Image)
+				_listSheetFieldDefsDisplayedImages=listSheetFieldDefsShowing.FindAll(x => x.FieldType==SheetFieldType.Image)
 					.Select(x => x.Copy())//Doesn't actually deep copy ImageField, which will be disposed in FormClosing.
 					.ToList();
 				RefreshBitmapBackground();
@@ -1083,6 +1147,20 @@ namespace OpenDental {
 				DrawAutoSnapLines(g);
 			}
 			DrawFields(_sheetDef,g,onlyDrawImages:false);
+			DrawSelectionRectangle(g);
+			DrawAlignmentLines(g);
+			//Draw pagebreak
+			Pen penDashPage=new Pen(Color.Green);
+			penDashPage.DashPattern=new float[] {4.0F,3.0F,2.0F,3.0F};
+			Pen penDashMargin=new Pen(Color.Green);
+			penDashMargin.DashPattern=new float[] {1.0F,5.0F};
+			int margins=(_margins.Top+_margins.Bottom);
+			for(int i=1;i<_sheetDef.PageCount;i++) {
+				//g.DrawLine(pDashMargin,0,i*SheetDefCur.HeightPage-_printMargin.Bottom,SheetDefCur.WidthPage,i*SheetDefCur.HeightPage-_printMargin.Bottom);
+				g.DrawLine(penDashPage,0,i*(_sheetDef.HeightPage-margins)+_margins.Top,_sheetDef.WidthPage,i*(_sheetDef.HeightPage-margins)+_margins.Top);
+				//g.DrawLine(pDashMargin,0,i*SheetDefCur.HeightPage+_printMargin.Top,SheetDefCur.WidthPage,i*SheetDefCur.HeightPage+_printMargin.Top);
+			}
+			//End Draw Page Break
 			e.Graphics.DrawImage(bitmapDoubleBuffer,0,0);
 		}
 
@@ -1108,29 +1186,17 @@ namespace OpenDental {
 			//return base.ProcessCmdKey(ref msg,keyData);//We don't need this right now, because no textboxes, for example.
 		}
 
-		/*
-		private void radioLayoutDefault_CheckedChanged(object sender,EventArgs e) {
-			if(radioLayoutDefault.Checked) {
-				_sheetFieldLayoutMode=((SheetFieldLayoutMode)radioLayoutDefault.Tag);//Set in InitLayoutModes()
-			}
-			else {//radioLayoutTP
-				_sheetFieldLayoutMode=((SheetFieldLayoutMode)radioLayoutTP.Tag);//Set in InitLayoutModes()
-			}
-			FillFieldList();
-			panelMain.Invalidate();
-		}*/
-
 		private void sheetEditMobile_SheetDefSelected(object sender,long sheetFieldDefNum) {
-			listFields.ClearSelected();
-			List<SheetFieldDef> listPertSheetFields=GetPertinentSheetFieldDefs();
-			listPertSheetFields
+			listBoxFields.ClearSelected();
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
+			listSheetFieldDefsShowing
 				.Select((x,y) => new { sfd = x,index = y,})
 				.Where(x => x.sfd.SheetFieldDefNum==sheetFieldDefNum)
-				.ForEach(x => listFields.SetSelected(x.index,true));
+				.ForEach(x => listBoxFields.SetSelected(x.index,true));
 			_sheetEditMobileCtrl.SetHighlightedFieldDefs(
-				listPertSheetFields
+				listSheetFieldDefsShowing
 				.Select((x,y) => new { sheetFieldDef = x,index = y })
-				.Where(x => listFields.SelectedIndices.Contains(x.index))
+				.Where(x => listBoxFields.SelectedIndices.Contains(x.index))
 				.Select(x => x.sheetFieldDef.SheetFieldDefNum).ToList());
 			panelMain.Invalidate();
 		}
@@ -1139,6 +1205,358 @@ namespace OpenDental {
 			//LayoutManager.LayoutControlBoundsAndFonts(splitContainer1);
 		}
 		#endregion Methods - Event Handlers
+
+		#region Methods - Event Handlers - Add Buttons
+		private void butOutputText_Click(object sender,EventArgs e) {
+			if(SheetFieldsAvailable.GetList(_sheetDef.SheetType,OutInCheck.Out).Count==0) {
+				MsgBox.Show(this,"There are no output fields available for this type of sheet.");
+				return;
+			}
+			Font font=new Font(_sheetDef.FontName,_sheetDef.FontSize);
+			using FormSheetFieldOutput formSheetFieldOutput=new FormSheetFieldOutput();
+			formSheetFieldOutput.IsNew=true;
+			formSheetFieldOutput.SheetDefCur=_sheetDef;
+			formSheetFieldOutput.SheetFieldDefCur=SheetFieldDef.NewOutput("",_sheetDef.FontSize,_sheetDef.FontName,false,0,0,100,font.Height);
+			formSheetFieldOutput.ShowDialog();
+			if(formSheetFieldOutput.DialogResult!=DialogResult.OK  || formSheetFieldOutput.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
+				return;
+			}
+			AddNewSheetFieldDef(formSheetFieldOutput.SheetFieldDefCur);
+			FillFieldList();
+			panelMain.Invalidate();
+		}
+
+		private void butInputField_Click(object sender,EventArgs e) {
+			if(SheetFieldsAvailable.GetList(_sheetDef.SheetType,OutInCheck.In).Count==0) {
+				MsgBox.Show(this,"There are no input fields available for this type of sheet.");
+				return;
+			}
+			Font font=new Font(_sheetDef.FontName,_sheetDef.FontSize);
+			using FormSheetFieldInput formSheetFieldInput=new FormSheetFieldInput();
+			formSheetFieldInput.SheetDefCur=_sheetDef;
+			formSheetFieldInput.SheetFieldDefCur=SheetFieldDef.NewInput("",_sheetDef.FontSize,_sheetDef.FontName,false,0,0,100,font.Height);
+			formSheetFieldInput.ShowDialog();
+			if(formSheetFieldInput.DialogResult!=DialogResult.OK  || formSheetFieldInput.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
+				return;
+			}
+			AddNewSheetFieldDef(formSheetFieldInput.SheetFieldDefCur);
+			FillFieldList();
+			panelMain.Invalidate();
+		}
+
+		private void butStaticText_Click(object sender,EventArgs e) {
+			Font font=new Font(_sheetDef.FontName,_sheetDef.FontSize);
+			using FormSheetFieldStatic formSheetFieldStatic=new FormSheetFieldStatic();
+			formSheetFieldStatic.SheetDefCur=_sheetDef;
+			formSheetFieldStatic.SheetFieldDefCur=SheetFieldDef.NewStaticText("",_sheetDef.FontSize,_sheetDef.FontName,false,0,0,100,font.Height);
+			formSheetFieldStatic.ShowDialog();
+			if(formSheetFieldStatic.DialogResult!=DialogResult.OK  || formSheetFieldStatic.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
+				return;
+			}
+			AddNewSheetFieldDef(formSheetFieldStatic.SheetFieldDefCur);
+			FillFieldList();
+			panelMain.Invalidate();
+		}
+
+		private void butCheckBox_Click(object sender,EventArgs e) {
+			if(SheetFieldsAvailable.GetList(_sheetDef.SheetType,OutInCheck.Check).Count==0) {
+				MsgBox.Show(this,"There are no checkbox fields available for this type of sheet.");
+				return;
+			}
+			using FormSheetFieldCheckBox formSheetFieldCheckBox=new FormSheetFieldCheckBox();
+			formSheetFieldCheckBox.SheetFieldDefCur=SheetFieldDef.NewCheckBox("",0,0,11,11);
+			formSheetFieldCheckBox.SheetFieldDefCur.Language=GetSelectedLanguageThreeLetters();
+			formSheetFieldCheckBox.SheetDefCur=_sheetDef;
+			formSheetFieldCheckBox.ShowDialog();
+			if(formSheetFieldCheckBox.DialogResult!=DialogResult.OK  || formSheetFieldCheckBox.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
+				return;
+			}
+			AddNewSheetFieldDef(formSheetFieldCheckBox.SheetFieldDefCur);
+			FillFieldList();
+			panelMain.Invalidate();
+		}
+
+		private void butComboBox_Click(object sender,EventArgs e) {
+			using FormSheetFieldComboBox formSheetFieldComboBox=new FormSheetFieldComboBox();
+			formSheetFieldComboBox.SheetDefCur=_sheetDef;
+			formSheetFieldComboBox.SheetFieldDefCur=SheetFieldDef.NewComboBox("","",0,0);
+			formSheetFieldComboBox.ShowDialog();
+			if(formSheetFieldComboBox.DialogResult!=DialogResult.OK || formSheetFieldComboBox.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
+				return;
+			}
+			AddNewSheetFieldDef(formSheetFieldComboBox.SheetFieldDefCur);
+			FillFieldList();
+			panelMain.Invalidate();
+		}
+
+		private void butImage_Click(object sender,EventArgs e) {
+			if(PrefC.AtoZfolderUsed==DataStorageType.InDatabase) {
+				MsgBox.Show(this,"Not allowed because not using AtoZ folder");
+				return;
+			}
+			//Font font=new Font(SheetDefCur.FontName,SheetDefCur.FontSize);
+			using FormSheetFieldImage formSheetFieldImage=new FormSheetFieldImage();
+			formSheetFieldImage.SheetDefCur=_sheetDef;
+			formSheetFieldImage.SheetFieldDefCur=SheetFieldDef.NewImage("",0,0,100,100);
+			formSheetFieldImage.SheetFieldDefCur.Language=GetSelectedLanguageThreeLetters();
+			formSheetFieldImage.ShowDialog();
+			if(formSheetFieldImage.DialogResult!=DialogResult.OK  || formSheetFieldImage.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
+				return;
+			}
+			AddNewSheetFieldDef(formSheetFieldImage.SheetFieldDefCur);
+			FillFieldList();
+			RefreshBitmapBackground();
+			panelMain.Invalidate();
+		}
+
+		private void butPatImage_Click(object sender,EventArgs e) {
+			if(PrefC.AtoZfolderUsed==DataStorageType.InDatabase) {
+				MsgBox.Show(this,"Not allowed because not using AtoZ folder");
+				return;
+			}
+			//Font font=new Font(SheetDefCur.FontName,SheetDefCur.FontSize);
+			using FormSheetFieldPatImage formSheetFieldPatImage=new FormSheetFieldPatImage();
+			formSheetFieldPatImage.SheetDefCur=_sheetDef;
+			formSheetFieldPatImage.SheetFieldDefCur=SheetFieldDef.NewPatImage(0,0,100,100);
+			formSheetFieldPatImage.SheetFieldDefCur.FieldType=SheetFieldType.PatImage;
+			formSheetFieldPatImage.ShowDialog();
+			if(formSheetFieldPatImage.DialogResult!=DialogResult.OK  || formSheetFieldPatImage.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
+				return;
+			}
+			AddNewSheetFieldDef(formSheetFieldPatImage.SheetFieldDefCur);
+			FillFieldList();
+			panelMain.Invalidate();
+		}
+
+		private void butLine_Click(object sender,EventArgs e) {
+			using FormSheetFieldLine formSheetFieldLine=new FormSheetFieldLine();
+			formSheetFieldLine.SheetDefCur=_sheetDef;
+			formSheetFieldLine.SheetFieldDefCur=SheetFieldDef.NewLine(0,0,0,0);
+			formSheetFieldLine.ShowDialog();
+			if(formSheetFieldLine.DialogResult!=DialogResult.OK  || formSheetFieldLine.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
+				return;
+			}
+			AddNewSheetFieldDef(formSheetFieldLine.SheetFieldDefCur);
+			FillFieldList();
+			panelMain.Invalidate();
+		}
+
+		private void butRectangle_Click(object sender,EventArgs e) {
+			using FormSheetFieldRect formSheetFieldRect=new FormSheetFieldRect();
+			formSheetFieldRect.SheetDefCur=_sheetDef;
+			formSheetFieldRect.SheetFieldDefCur=SheetFieldDef.NewRect(0,0,0,0);
+			formSheetFieldRect.ShowDialog();
+			if(formSheetFieldRect.DialogResult!=DialogResult.OK  || formSheetFieldRect.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
+				return;
+			}
+			AddNewSheetFieldDef(formSheetFieldRect.SheetFieldDefCur);
+			FillFieldList();
+			panelMain.Invalidate();
+		}
+
+		private void butSigBox_Click(object sender,EventArgs e) {
+			AddSignatureBox(SheetFieldType.SigBox);
+		}
+
+		private void butSigBoxPractice_Click(object sender,EventArgs e) {
+			AddSignatureBox(SheetFieldType.SigBoxPractice);
+		}
+
+		private void AddSignatureBox(SheetFieldType sheetFieldType) {
+			using FormSheetFieldSigBox formSheetFieldSigBox=new FormSheetFieldSigBox();
+			formSheetFieldSigBox.SheetDefCur=_sheetDef;
+			formSheetFieldSigBox.SheetFieldDefCur=SheetFieldDef.NewSigBox(0,0,364,81,sigBox:sheetFieldType);
+			formSheetFieldSigBox.ShowDialog();
+			if(formSheetFieldSigBox.DialogResult!=DialogResult.OK  || formSheetFieldSigBox.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
+				return;
+			}
+			AddNewSheetFieldDef(formSheetFieldSigBox.SheetFieldDefCur);
+			FillFieldList();
+			panelMain.Invalidate();
+		}
+
+		private void butSpecial_Click(object sender,EventArgs e) {
+			using FormSheetFieldSpecial formSheetFieldSpecial=new FormSheetFieldSpecial();
+			formSheetFieldSpecial.SheetDefCur=_sheetDef;
+			formSheetFieldSpecial.SheetFieldDefCur=new SheetFieldDef(){IsNew=true };
+			formSheetFieldSpecial.LayoutMode=_sheetFieldLayoutMode;
+			formSheetFieldSpecial.ShowDialog();
+			if(formSheetFieldSpecial.DialogResult!=DialogResult.OK) {
+				return;
+			}
+			bool isDynamicSheetType=EnumTools.GetAttributeOrDefault<SheetLayoutAttribute>(_sheetDef.SheetType).IsDynamic;
+			List<SheetFieldDef> listSheetFieldDefsPertinent=_sheetDef.SheetFieldDefs.FindAll(x => x.LayoutMode==_sheetFieldLayoutMode && x.Language==GetSelectedLanguageThreeLetters());
+			if(isDynamicSheetType && listSheetFieldDefsPertinent.Any(x => x.FieldName==formSheetFieldSpecial.SheetFieldDefCur.FieldName)) {
+				MsgBox.Show(this,"Field already exists.");
+				return;
+			}
+			AddNewSheetFieldDef(formSheetFieldSpecial.SheetFieldDefCur);
+			FillFieldList();
+			panelMain.Invalidate();
+		}
+
+		private void butGrid_Click(object sender,EventArgs e) {
+			bool isDynamicSheetType=EnumTools.GetAttributeOrDefault<SheetLayoutAttribute>(_sheetDef.SheetType).IsDynamic;
+			using FormSheetFieldGrid formSheetFieldGrid=new FormSheetFieldGrid();
+			formSheetFieldGrid.SheetDefCur=_sheetDef;
+			if(SheetDefs.IsDashboardType(_sheetDef)) {
+				//is resized from dialog window.
+				formSheetFieldGrid.SheetFieldDefCur=SheetFieldDef.NewGrid(DashApptGrid.SheetFieldName,0,0,100,150,growthBehavior:GrowthBehaviorEnum.None); 
+			}
+			else {
+				using FormSheetFieldGridType formSheetFieldGridType=new FormSheetFieldGridType();
+				formSheetFieldGridType.SheetDefCur=_sheetDef;
+				formSheetFieldGridType.LayoutMode=_sheetFieldLayoutMode;
+				formSheetFieldGridType.ShowDialog();
+				if(formSheetFieldGridType.DialogResult!=DialogResult.OK) {
+					return;
+				}
+				formSheetFieldGrid.SheetFieldDefCur=SheetFieldDef.NewGrid(formSheetFieldGridType.SelectedSheetGridType,0,0,100,100); //is resized from dialog window.
+				if(isDynamicSheetType) {
+					//Grid dimensions in dynamic sheetDefs should be static by default because easiest to understand.
+					formSheetFieldGrid.SheetFieldDefCur.GrowthBehavior=GrowthBehaviorEnum.None;
+				}
+			}
+			formSheetFieldGrid.ShowDialog();
+			if(formSheetFieldGrid.DialogResult!=DialogResult.OK  || formSheetFieldGrid.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
+				return;
+			}
+			List<SheetFieldDef> listSheetFieldDefsPertinent=_sheetDef.SheetFieldDefs.FindAll(x => x.LayoutMode==_sheetFieldLayoutMode && x.Language==GetSelectedLanguageThreeLetters());
+			if(isDynamicSheetType && listSheetFieldDefsPertinent.Any(x => x.FieldName==formSheetFieldGrid.SheetFieldDefCur.FieldName)) {
+				MsgBox.Show(this,"Grid already exists.");
+				return;
+			}
+			AddNewSheetFieldDef(formSheetFieldGrid.SheetFieldDefCur);
+			FillFieldList();
+			panelMain.Invalidate();
+		}
+
+		private void butScreenChart_Click(object sender,EventArgs e) {
+			string fieldValue="0;d,m,ling;d,m,ling;,,;,,;,,;,,;m,d,ling;m,d,ling;m,d,buc;m,d,buc;,,;,,;,,;,,;d,m,buc;d,m,buc";
+			SheetFieldDef sheetFieldDef=null;
+			if(!HasChartSealantComplete()) {
+				sheetFieldDef=SheetFieldDef.NewScreenChart("ChartSealantComplete",fieldValue,0,0);
+			}
+			else if(!HasChartSealantTreatment()) {
+				sheetFieldDef=SheetFieldDef.NewScreenChart("ChartSealantTreatment",fieldValue,0,0);
+			}
+			else {
+				MsgBox.Show(this,"Only two charts are allowed per screening sheet.");
+				return;
+			}
+			AddNewSheetFieldDef(sheetFieldDef);
+			FillFieldList();
+			panelMain.Invalidate();
+		}
+
+		#endregion Methods - Event Handlers - Add Buttons
+
+		#region Methods - Event Handlers - Show
+		private void butShowAll_Click(object sender,EventArgs e) {
+			checkShowOutputText.Checked=true;
+			checkShowInputField.Checked=true;
+			checkShowStaticText.Checked=true;
+			checkShowCheckBox.Checked=true;
+			checkShowComboBox.Checked=true;
+			checkShowImage.Checked=true;
+			checkShowPatImage.Checked=true;
+			checkShowLine.Checked=true;
+			checkShowRectangle.Checked=true;
+			checkShowSigBox.Checked=true;
+			checkShowSigBoxPractice.Checked=true;
+			checkShowSpecial.Checked=true;
+			checkShowGrid.Checked=true;
+			checkShowScreenChart.Checked=true;
+			FillFieldList();
+			panelMain.Invalidate();
+		}
+
+		private void butShowNone_Click(object sender,EventArgs e) {
+			checkShowOutputText.Checked=false;
+			checkShowInputField.Checked=false;
+			checkShowStaticText.Checked=false;
+			checkShowCheckBox.Checked=false;
+			checkShowComboBox.Checked=false;
+			checkShowImage.Checked=false;
+			checkShowPatImage.Checked=false;
+			checkShowLine.Checked=false;
+			checkShowRectangle.Checked=false;
+			checkShowSigBox.Checked=false;
+			checkShowSigBoxPractice.Checked=false;
+			checkShowSpecial.Checked=false;
+			checkShowGrid.Checked=false;
+			checkShowScreenChart.Checked=false;
+			FillFieldList();
+			panelMain.Invalidate();
+		}
+
+		private void CheckShowChecked(){
+			List<SheetFieldDef> listSheetFieldDefsSelected=listBoxFields.GetListSelected<SheetFieldDef>();
+			FillFieldList();
+			for(int i=0;i<listBoxFields.Items.Count;i++){
+				if(listSheetFieldDefsSelected.Contains(listBoxFields.Items.GetObjectAt(i))){
+					listBoxFields.SetSelected(i);
+				}
+			}
+			panelMain.Invalidate();
+		}
+
+		private void checkShowOutputText_Click(object sender,EventArgs e) {
+			CheckShowChecked();
+		}
+
+		private void checkShowInputField_Click(object sender,EventArgs e) {
+			CheckShowChecked();
+		}
+
+		private void checkShowStaticText_Click(object sender,EventArgs e) {
+			CheckShowChecked();
+		}
+
+		private void checkShowCheckBox_Click(object sender,EventArgs e) {
+			CheckShowChecked();
+		}
+
+		private void checkShowComboBox_Click(object sender,EventArgs e) {
+			CheckShowChecked();
+		}
+
+		private void checkShowImage_Click(object sender,EventArgs e) {
+			CheckShowChecked();
+		}
+
+		private void checkShowPatImage_Click(object sender,EventArgs e) {
+			CheckShowChecked();
+		}
+
+		private void checkShowLine_Click(object sender,EventArgs e) {
+			CheckShowChecked();
+		}
+
+		private void checkShowRectangle_Click(object sender,EventArgs e) {
+			CheckShowChecked();
+		}
+
+		private void checkShowSigBox_Click(object sender,EventArgs e) {
+			CheckShowChecked();
+		}
+
+		private void checkShowSigBoxPractice_Click(object sender,EventArgs e) {
+			CheckShowChecked();
+		}
+
+		private void checkShowSpecial_Click(object sender,EventArgs e) {
+			CheckShowChecked();
+		}
+
+		private void checkShowGrid_Click(object sender,EventArgs e) {
+			CheckShowChecked();
+		}
+
+		private void checkShowScreenChart_Click(object sender,EventArgs e) {
+			CheckShowChecked();
+		}
+		#endregion Methods - Event Handlers - Show
 
 		#region Methods - Private
 		///<summary>Use this to add a new item to SheetDefCur.SheetFieldDefs. The new item will be given a random primary key so it can be distinguished from other items.</summary>
@@ -1211,7 +1629,6 @@ namespace OpenDental {
 
 		///<summary>Moves a SheetFieldDef to a specified position, as well as any matching translated SheetFieldDefs if Sync is enabled. Moves translated fields first.</summary>
 		private void MoveSheetFieldDefs(SheetFieldDef sheetFieldDef,int newX,int newY) {
-
 			if(checkSynchMatchedFields.Checked){
 				if(HasTranslatedSheetDefS(sheetFieldDef,out List<SheetFieldDef> listSheetFieldDefs)){
 					for(int i=0;i<listSheetFieldDefs.Count;i++){
@@ -1241,14 +1658,14 @@ namespace OpenDental {
 			if(_isTabMode) {
 				return;
 			}
-			if(listFields.SelectedIndices.Count==0) {
+			if(listBoxFields.SelectedIndices.Count==0) {
 				return;
 			}
-			List<SheetFieldDef> listSheetFieldDefs=GetPertinentSheetFieldDefs();
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
 			string strPrompt=Lan.g(this,"The following selected fields can cause conflicts if they are copied:\r\n");
 			bool isConflictingfield=false;
-			for(int i=0;i<listFields.SelectedIndices.Count;i++) {
-				SheetFieldDef sheetFieldDef=listSheetFieldDefs[listFields.SelectedIndices[i]];
+			for(int i=0;i<listBoxFields.SelectedIndices.Count;i++) {
+				SheetFieldDef sheetFieldDef=listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]];
 				switch(sheetFieldDef.FieldType) {
 					case SheetFieldType.Drawing:
 					case SheetFieldType.Image:
@@ -1283,8 +1700,8 @@ namespace OpenDental {
 				return;
 			}
 			_listSheetFieldDefsCopyPaste=new List<SheetFieldDef>(); //empty the remembered field list
-			for(int i=0;i<listFields.SelectedIndices.Count;i++) {
-				_listSheetFieldDefsCopyPaste.Add(listSheetFieldDefs[listFields.SelectedIndices[i]].Copy()); //fill clipboard with copies of the controls. 
+			for(int i=0;i<listBoxFields.SelectedIndices.Count;i++) {
+				_listSheetFieldDefsCopyPaste.Add(listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]].Copy()); //fill clipboard with copies of the controls. 
 				//It would probably be safe to fill the clipboard with the originals. but it is safer to fill it with copies.
 			}
 			_pasteOffset=0;
@@ -1319,9 +1736,13 @@ namespace OpenDental {
 			g.CompositingQuality=CompositingQuality.HighQuality; //This has to be here or the line thicknesses are wrong.
 			List<SheetFieldDef> listSheetFieldDefs=GetPertinentSheetFieldDefs(sheetDef);
 			string selectedLangauge=GetSelectedLanguageThreeLetters();
+			List<SheetFieldDef> listSheetFieldDefsSelected=listBoxFields.GetListSelected<SheetFieldDef>();
 			for(int i=0;i<listSheetFieldDefs.Count;i++) {
 				SheetFieldDef sheetFieldDef=listSheetFieldDefs[i];
 				if(sheetFieldDef.LayoutMode!=_sheetFieldLayoutMode || sheetFieldDef.Language!=selectedLangauge) {
+					continue;
+				}
+				if(!IsTypeShowing(sheetFieldDef.FieldType)){
 					continue;
 				}
 				if(onlyDrawImages) {
@@ -1330,7 +1751,8 @@ namespace OpenDental {
 					}
 					continue;
 				} //end onlyDrawImages
-				bool isSelected=listFields.SelectedIndices.Contains(i);
+				bool isSelected=listSheetFieldDefsSelected.Contains(sheetFieldDef);
+					//listFields.SelectedIndices.Contains(i);
 				bool isFieldSelected=(isHighlightEligible && isSelected);
 				switch(sheetFieldDef.FieldType) {
 					case SheetFieldType.Parameter: //Skip
@@ -1375,26 +1797,13 @@ namespace OpenDental {
 						continue;
 				} //end switch
 			}
-			DrawSelectionRectangle(g);
-			DrawAlignmentLines(g);
-			//Draw pagebreak
-			Pen penDashPage=new Pen(Color.Green);
-			penDashPage.DashPattern=new float[] {4.0F,3.0F,2.0F,3.0F};
-			Pen penDashMargin=new Pen(Color.Green);
-			penDashMargin.DashPattern=new float[] {1.0F,5.0F};
-			int margins=(_margins.Top+_margins.Bottom);
-			for(int i=1;i<sheetDef.PageCount;i++) {
-				//g.DrawLine(pDashMargin,0,i*SheetDefCur.HeightPage-_printMargin.Bottom,SheetDefCur.WidthPage,i*SheetDefCur.HeightPage-_printMargin.Bottom);
-				g.DrawLine(penDashPage,0,i*(sheetDef.HeightPage-margins)+_margins.Top,sheetDef.WidthPage,i*(sheetDef.HeightPage-margins)+_margins.Top);
-				//g.DrawLine(pDashMargin,0,i*SheetDefCur.HeightPage+_printMargin.Top,SheetDefCur.WidthPage,i*SheetDefCur.HeightPage+_printMargin.Top);
-			}
-			//End Draw Page Break
 		}
 
 		///<summary>Returns true if _listDisplayedImages is different than _sheetDefCurs image SheetFieldDefs, otherwise false. </summary>
 		private bool DoRefreshImages() {
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
 			//Get the Image fields that will be drawn by DrawFields()->DrawImagesHelper()
-			List<SheetFieldDef> listSheetFieldDefs=GetPertinentSheetFieldDefs().FindAll(x => x.FieldType==SheetFieldType.Image);
+			List<SheetFieldDef> listSheetFieldDefs=listSheetFieldDefsShowing.FindAll(x => x.FieldType==SheetFieldType.Image);
 			if(listSheetFieldDefs.Select(x => x.SheetFieldDefNum).Except(_listSheetFieldDefsDisplayedImages.Select(x => x.SheetFieldDefNum)).Count()>0) {
 				//A field was added.
 				return true;
@@ -1416,24 +1825,16 @@ namespace OpenDental {
 		}
 
 		///<summary>If areDashboardWidgetOptionsEnabled, only certain buttons will show, including DashboardWidget specific buttons.  Otherwise, DashboardWidget specific buttons will be hidden.</summary>
-		private void EnableDashboardWidgetOptions(bool areDashboardWidgetOptionsEnabled) {
-			List<UI.Button> listButtons=UIHelper.GetAllControls(this).OfType<UI.Button>().ToList();
-			List<UI.Button> listButtonsDashboard;
-			if(areDashboardWidgetOptionsEnabled) {
-				//List of the only buttons that should be visible if in DashboardWidget edit mode.
-				listButtonsDashboard=new List<UI.Button>() { butEdit,butAlignTop,butAlignLeft,butAlignCenterH,butAlignRight,butCancel };
-				if(!IsInternal) {
-					listButtonsDashboard.AddRange(new List<UI.Button>() { butOK,butDelete,butCopy,butPaste,butAddField });
-				}
-				foreach(UI.Button but in listButtons) {
-					if(listButtonsDashboard.Contains(but)) {//In DashboardWidget mode, so only show these buttons.
-						but.Visible=true;
-						continue;
-					}
-					but.Visible=false;
-				}
-				//_imageToothChart=GetToothChartImage();//onShown, not Load
+		private void EnableDashboardWidgetOptions() {
+			if(_sheetDef.SheetType!=SheetTypeEnum.PatientDashboardWidget){
+				return;
 			}
+			butEdit.Visible=false;
+			butAlignTop.Visible=false;
+			butAlignLeft.Visible=false;
+			butAlignCenterH.Visible=false;
+			butAlignRight.Visible=false;
+			butCancel.Visible=false;
 		}
 
 		private void FillComboUndo(){
@@ -1449,7 +1850,7 @@ namespace OpenDental {
 		}
 
 		private void FillFieldList() {
-			listFields.Items.Clear();
+			listBoxFields.Items.Clear();
 			string txt;
 			if(GetIsDynamicSheetType()) {
 				_sheetDef.SheetFieldDefs=_sheetDef.SheetFieldDefs
@@ -1462,6 +1863,9 @@ namespace OpenDental {
 			string selectedLanguage=GetSelectedLanguageThreeLetters();
 			foreach(SheetFieldDef sheetFieldDef in _sheetDef.SheetFieldDefs) {
 				if(sheetFieldDef.LayoutMode!=_sheetFieldLayoutMode || sheetFieldDef.Language!=selectedLanguage) {//Currently both of these can not be set at the same time.
+					continue;
+				}
+				if(!IsTypeShowing(sheetFieldDef.FieldType)){
 					continue;
 				}
 				switch(sheetFieldDef.FieldType) {
@@ -1521,7 +1925,7 @@ namespace OpenDental {
 						txt=sheetFieldDef.FieldName;
 						break;
 				} //end switch
-				listFields.Items.Add(txt,sheetFieldDef);
+				listBoxFields.Items.Add(txt,sheetFieldDef);
 			}
 			_sheetEditMobileCtrl.UpdateLanguage(selectedLanguage);//This must be called before sheetEditMobile.SheetDef
 			_sheetEditMobileCtrl.SheetDef=_sheetDef;
@@ -1536,7 +1940,21 @@ namespace OpenDental {
 			if(sheetDef==null) {
 				sheetDef=_sheetDef;
 			}
-			return sheetDef.SheetFieldDefs.FindAll(x => x.LayoutMode==_sheetFieldLayoutMode && x.Language==GetSelectedLanguageThreeLetters());
+			string selectedLanguage=GetSelectedLanguageThreeLetters();
+			List<SheetFieldDef> listSheetFieldDefs=new List<SheetFieldDef>();
+			for(int i=0;i<sheetDef.SheetFieldDefs.Count;i++){
+				if(sheetDef.SheetFieldDefs[i].LayoutMode!=_sheetFieldLayoutMode){
+					continue;
+				}
+				if(sheetDef.SheetFieldDefs[i].Language!=selectedLanguage) {//Currently both of these can not be set at the same time.
+					continue;
+				}
+				if(!IsTypeShowing(sheetDef.SheetFieldDefs[i].FieldType)){
+					continue;
+				}
+				listSheetFieldDefs.Add(sheetDef.SheetFieldDefs[i]);
+			}
+			return listSheetFieldDefs;
 		}
 
 		///<summary>Fills _listWebSheetIds with any webforms_sheetdefs that have the same SheetDefNum of the current SheetDef.</summary>
@@ -1553,6 +1971,33 @@ namespace OpenDental {
 			}
 		}
 
+		private bool HasScreeningChart(bool isTreatmentChart) {
+			if(_sheetDef.SheetType!=SheetTypeEnum.Screening) {
+				return false;
+			}
+			List<SheetFieldDef> listSheetFieldDefsPertinent=_sheetDef.SheetFieldDefs.FindAll( x => x.LayoutMode==_sheetFieldLayoutMode && x.Language==GetSelectedLanguageThreeLetters());
+			List<SheetFieldDef> listSheetFieldDefs=listSheetFieldDefsPertinent;
+			if(listSheetFieldDefs.Count==0) {
+				return false;
+			}
+			string chartName;
+			if(isTreatmentChart) {
+				chartName="ChartSealantTreatment";
+			}
+			else {
+				chartName="ChartSealantComplete";
+			}
+			return listSheetFieldDefs.Any(x => x.FieldType==SheetFieldType.ScreenChart && x.FieldName==chartName);
+		}
+
+		private bool HasChartSealantComplete() {
+			return HasScreeningChart(isTreatmentChart:false);
+		}
+
+		private bool HasChartSealantTreatment() {
+			return HasScreeningChart(isTreatmentChart:true);
+		}
+
 		///<summary>Returns true if given def has equivilant translated values in _sheetDefCur.SheetFieldDefs, otherwise false.</summary>
 		private bool HasTranslatedSheetDefS(SheetFieldDef sheetFieldDef,out List<SheetFieldDef> listSheetFieldDefsMatched){
 			listSheetFieldDefsMatched=null;
@@ -1564,33 +2009,33 @@ namespace OpenDental {
 
 		///<summary>Images will be ignored in the hit test since they frequently fill the entire background.  Diagonal Lines will also be ignored.</summary>
 		private SheetFieldDef HitTest(int x,int y) {
-			List<SheetFieldDef> listSheetFieldDefs=GetPertinentSheetFieldDefs();
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
 			//Loop from the back of the list since those sheetfielddefs were added last, so they show on top of items at beginning of list.
-			for(int i=listSheetFieldDefs.Count-1;i>=0;i--) {
-				if(listSheetFieldDefs[i].FieldType==SheetFieldType.Image) {
+			for(int i=listSheetFieldDefsShowing.Count-1;i>=0;i--) {
+				if(listSheetFieldDefsShowing[i].FieldType==SheetFieldType.Image) {
 					continue;
 				}
-				if(listSheetFieldDefs[i].FieldType==SheetFieldType.Line) {
-					if(Math.Abs(listSheetFieldDefs[i].Width)<2){
-						if(Math.Abs(x-listSheetFieldDefs[i].XPos)<2){
-							return listSheetFieldDefs[i];
+				if(listSheetFieldDefsShowing[i].FieldType==SheetFieldType.Line) {
+					if(Math.Abs(listSheetFieldDefsShowing[i].Width)<2){
+						if(Math.Abs(x-listSheetFieldDefsShowing[i].XPos)<2){
+							return listSheetFieldDefsShowing[i];
 						}
 					}
-					if(Math.Abs(listSheetFieldDefs[i].Height)<2){
-						if(Math.Abs(y-listSheetFieldDefs[i].YPos)<2){
-							return listSheetFieldDefs[i];
+					if(Math.Abs(listSheetFieldDefsShowing[i].Height)<2){
+						if(Math.Abs(y-listSheetFieldDefsShowing[i].YPos)<2){
+							return listSheetFieldDefsShowing[i];
 						}
 					}
 				}	
-				Rectangle rectangleFieldDefBounds=listSheetFieldDefs[i].Bounds;
+				Rectangle rectangleFieldDefBounds=listSheetFieldDefsShowing[i].Bounds;
 				if(rectangleFieldDefBounds.Contains(x,y)) {
 					//Center of a SheetFieldType.Rectangle will not be considered a hit.
-					if(listSheetFieldDefs[i].FieldType==SheetFieldType.Rectangle){
+					if(listSheetFieldDefsShowing[i].FieldType==SheetFieldType.Rectangle){
 						if(new Rectangle(rectangleFieldDefBounds.X+4,rectangleFieldDefBounds.Y+4,rectangleFieldDefBounds.Width-8,rectangleFieldDefBounds.Height-8).Contains(x,y)) {
 							continue;
 						}
 					}
-					return listSheetFieldDefs[i];
+					return listSheetFieldDefsShowing[i];
 				}
 			}
 			return null;
@@ -1598,11 +2043,11 @@ namespace OpenDental {
 
 		///<summary>Returns a field if the cursor is in the lower right "resize drag" area of a single selected field.</summary>
 		private SheetFieldDef HitTestResize(int x,int y) {
-			if(listFields.SelectedIndices.Count!=1){
+			if(listBoxFields.SelectedIndices.Count!=1){
 				return null;
 			}
-			List<SheetFieldDef> listSheetFieldDefs=GetPertinentSheetFieldDefs();
-			SheetFieldDef sheetFieldDef=listSheetFieldDefs[listFields.SelectedIndices[0]];
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
+			SheetFieldDef sheetFieldDef=listSheetFieldDefsShowing[listBoxFields.SelectedIndices[0]];
 			if(sheetFieldDef.FieldType==SheetFieldType.Image) {
 				return null;
 			}
@@ -1679,6 +2124,52 @@ namespace OpenDental {
 			return (sheetFieldDefOne.FieldName==sheetFieldDefTwo.FieldName 
 				&& sheetFieldDefOne.Bounds==sheetFieldDefTwo.Bounds
 				&& (sheetFieldDefOne.FieldType==SheetFieldType.Image ? sheetFieldDefOne.ImageField==sheetFieldDefTwo.ImageField : sheetFieldDefOne.FieldValue==sheetFieldDefTwo.FieldValue));
+		}
+
+		private bool IsTypeShowing(SheetFieldType sheetFieldType){
+			if(sheetFieldType==SheetFieldType.OutputText){
+				return checkShowOutputText.Checked;
+			}
+			if(sheetFieldType==SheetFieldType.InputField){
+				return checkShowInputField.Checked;
+			}
+			if(sheetFieldType==SheetFieldType.StaticText){
+				return checkShowStaticText.Checked;
+			}
+			if(sheetFieldType==SheetFieldType.CheckBox){
+				return checkShowCheckBox.Checked;
+			}
+			if(sheetFieldType==SheetFieldType.ComboBox){
+				return checkShowComboBox.Checked;
+			}
+			if(sheetFieldType==SheetFieldType.Image){
+				return checkShowImage.Checked;
+			}
+			if(sheetFieldType==SheetFieldType.PatImage){
+				return checkShowPatImage.Checked;
+			}
+			if(sheetFieldType==SheetFieldType.Line){
+				return checkShowLine.Checked;
+			}
+			if(sheetFieldType==SheetFieldType.Rectangle){
+				return checkShowRectangle.Checked;
+			}
+			if(sheetFieldType==SheetFieldType.SigBox){
+				return checkShowSigBox.Checked;
+			}
+			if(sheetFieldType==SheetFieldType.SigBoxPractice){
+				return checkShowSigBoxPractice.Checked;
+			}
+			if(sheetFieldType==SheetFieldType.Special){
+				return checkShowSpecial.Checked;
+			}
+			if(sheetFieldType==SheetFieldType.Grid){
+				return checkShowGrid.Checked;
+			}
+			if(sheetFieldType==SheetFieldType.ScreenChart){
+				return checkShowScreenChart.Checked;
+			}
+			return false;//shouldn't happen
 		}
 
 		///<summary>Only for editing fields that already exist.</summary>
@@ -1917,7 +2408,7 @@ namespace OpenDental {
 			//if(refreshBuffer) { //Only when image was edited.
 			//	RefreshDoubleBuffer();
 			//}
-			listFields.SetSelectedKey<SheetFieldDef>(sheetFieldDef.SheetFieldDefNum,x => x.SheetFieldDefNum);//ensures selection is still held after edit
+			listBoxFields.SetSelectedKey<SheetFieldDef>(sheetFieldDef.SheetFieldDefNum,x => x.SheetFieldDefNum);//ensures selection is still held after edit
 			panelMain.Invalidate();
 		}
 
@@ -1925,13 +2416,13 @@ namespace OpenDental {
 			if(_isTabMode) {
 				return;
 			}
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
 			if(GetIsDynamicSheetType() && _listSheetFieldDefsCopyPaste!=null) {
 				//Only paste controls that are valid for _sheetFieldLayoutMode
-				List<SheetFieldDef> listSheetFieldDefs=GetPertinentSheetFieldDefs();
 				List<string> listGridNames=SheetUtil.GetGridsAvailable(_sheetDef.SheetType,_sheetFieldLayoutMode);
 				List<SheetFieldDef> listSheetFieldDefsSpecial=SheetFieldsAvailable.GetSpecial(_sheetDef.SheetType,_sheetFieldLayoutMode);
 				_listSheetFieldDefsCopyPaste.RemoveAll(
-					x =>  listSheetFieldDefs.Any(y => y.FieldName==x.FieldName) //Remove duplicates
+					x =>  listSheetFieldDefsShowing.Any(y => y.FieldName==x.FieldName) //Remove duplicates
 					|| (x.FieldType==SheetFieldType.Grid && !listGridNames.Any(y => y==x.FieldName))//Remove invalid grid from paste logic
 					|| (x.FieldType==SheetFieldType.Special && !listSheetFieldDefsSpecial.Any(y => y.FieldName==x.FieldName))//Remove invalid special fields from paste logic.
 				);
@@ -1953,7 +2444,7 @@ namespace OpenDental {
 				pointOrigin.X+=_pasteOffset;
 				pointOrigin.Y+=_pasteOffset+_pasteOffsetY;
 			}
-			listFields.ClearSelected();
+			listBoxFields.ClearSelected();
 			int minX=int.MaxValue;
 			int minY=int.MaxValue;
 			for(int i=0;i<_listSheetFieldDefsCopyPaste.Count;i++) { //calculate offset
@@ -1975,10 +2466,16 @@ namespace OpenDental {
 			AddUndoLevel("Paste");
 			FillFieldList();
 			//Select newly pasted controls.
-			GetPertinentSheetFieldDefs()
+			for(int i=0;i<listBoxFields.Items.Count;i++){
+				if(listSheetFieldDefsNew.Contains(listBoxFields.Items.GetObjectAt(i))){
+					listBoxFields.SetSelected(i);
+				}
+			}
+			/*
+			listSheetFieldDefsShowing
 				.Select((Item,Index) => new { Item,Index })
 				.Where(x => listSheetFieldDefsNew.Any(y => y.SheetFieldDefNum==x.Item.SheetFieldDefNum))
-				.ForEach(x => { listFields.SetSelected(x.Index,true); });
+				.ForEach(x => { listBoxFields.SetSelected(x.Index,true); });*/
 			panelMain.Invalidate();
 			//Focus on main form. This ensures that if/when the alt key is released, the proper handler will execute. Fixes bug where user becomes stuck in paste mode.
 			this.Focus();
@@ -2302,7 +2799,7 @@ namespace OpenDental {
 			return odGrid;
 		}
 
-		private GridOD CreateGridHelper(List<DisplayField> columns) {
+		private GridOD CreateGrid(List<DisplayField> columns) {
 			GridOD odGrid=new GridOD();
 			odGrid.Width=0;
 			odGrid.TranslationName="";
@@ -2379,8 +2876,9 @@ namespace OpenDental {
 				SheetUtil.SetControlSizeAndAnchors(sheetFieldDef,grid,panelMain);
 			}
 			else {
-				grid=CreateGridHelper(listDisplayFieldColumns);
+				grid=CreateGrid(listDisplayFieldColumns);
 			}
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
 			int yPosGrid=sheetFieldDef.YPos;
 			SizeF sizeStr;
 			bool drawHeaders=true;
@@ -2425,19 +2923,19 @@ namespace OpenDental {
 				#region EraClaimsPaid
 				case "EraClaimsPaid":
 					int xPosGrid=sheetFieldDef.XPos;
-					SheetDef sheetDefGridHeader;
+					SheetDef sheetDefERAGridHeader;
 					if(IsInternal) {
-						sheetDefGridHeader=SheetsInternal.GetSheetDef(SheetTypeEnum.ERAGridHeader);
+						sheetDefERAGridHeader=SheetsInternal.GetSheetDef(SheetTypeEnum.ERAGridHeader);
 					}
 					else {
-						sheetDefGridHeader=SheetDefs.GetInternalOrCustom(SheetInternalType.ERAGridHeader);
+						sheetDefERAGridHeader=SheetDefs.GetInternalOrCustom(SheetInternalType.ERAGridHeader);
 					}
-					sheetDefGridHeader.SheetFieldDefs.ForEach(x => {
+					sheetDefERAGridHeader.SheetFieldDefs.ForEach(x => {
 						x.XPos+=(xPosGrid);
 						x.YPos+=(yPosGrid);//-gridHeaderSheetDef.Height);
 					});//Make positions relative to this sheet
-					DrawFields(sheetDefGridHeader,g,onlyDrawImages:false,isHighlightEligible:false);
-					yPosGrid+=sheetDefGridHeader.Height;
+					DrawFields(sheetDefERAGridHeader,g,onlyDrawImages:false,isHighlightEligible:false);
+					yPosGrid+=sheetDefERAGridHeader.Height;
 					/*---------------------------------------------------------------------------------------------*/
 					sizeStr=g.MeasureString("ERA Claims Paid",new Font(FontFamily.GenericSansSerif,10,FontStyle.Bold));
 					g.FillRectangle(Brushes.White,xPosGrid,yPosGrid,grid.Width,heightGridTitle);
@@ -2450,7 +2948,7 @@ namespace OpenDental {
 					yPosGrid+=heightGridRow;
 					/*---------------------------------------------------------------------------------------------*/
 					List<DisplayField> listDisplayField=SheetUtil.GetGridColumnsAvailable("EraClaimsPaidCodes");
-					GridOD gridCode=CreateGridHelper(listDisplayField);
+					GridOD gridCode=CreateGrid(listDisplayField);
 					gridCode.SheetDrawHeader(g,sheetFieldDef.XPos,yPosGrid+1);
 					yPosGrid+=heightGridHeader;
 					gridCode.SheetDrawRow(0,g,sheetFieldDef.XPos,yPosGrid,false,true); //a single dummy row.
@@ -2470,7 +2968,7 @@ namespace OpenDental {
 						switch(sheetFieldDef.GrowthBehavior) {
 							case GrowthBehaviorEnum.FillDownFitColumns:
 								int minY=0;//Mimics height logic in SheetUserControl.IsControlAbove(...)
-								List<SheetFieldDef> listSheetFieldDefAboveControls=GetPertinentSheetFieldDefs().FindAll(x => IsSheetFieldDefAbove(sheetFieldDef,x));
+								List<SheetFieldDef> listSheetFieldDefAboveControls=listSheetFieldDefsShowing.FindAll(x => IsSheetFieldDefAbove(sheetFieldDef,x));
 								if(listSheetFieldDefAboveControls.Count>0) {
 									minY=listSheetFieldDefAboveControls.Max(x => (x.YPos+x.Height))+1;
 								}
@@ -2478,7 +2976,7 @@ namespace OpenDental {
 								yPosGrid=minY;
 								break;
 							case GrowthBehaviorEnum.FillDown:
-								List<SheetFieldDef> listSheetFieldDefsBelowControls=GetPertinentSheetFieldDefs().FindAll(x => IsSheetFieldDefBelow(sheetFieldDef, x));
+								List<SheetFieldDef> listSheetFieldDefsBelowControls=listSheetFieldDefsShowing.FindAll(x => IsSheetFieldDefBelow(sheetFieldDef, x));
 								if(listSheetFieldDefsBelowControls.Count>0) {
 									lowerBoundary=(panelMain.Height-listSheetFieldDefsBelowControls.Min(x => x.YPos)-1);
 								}
@@ -2666,7 +3164,7 @@ namespace OpenDental {
 			using Pen pen=new Pen(colorPen);
 			using SolidBrush solidBrush=new SolidBrush(colorBrush);
 			g.DrawRectangle(pen,sheetFieldDef.XPos,sheetFieldDef.YPos,sheetFieldDef.Width,sheetFieldDef.Height);
-			if(isSelected && listFields.SelectedIndices.Count==1){
+			if(isSelected && listBoxFields.SelectedIndices.Count==1){
 				Rectangle rectangleHandleLR=new Rectangle(sheetFieldDef.Bounds.Right-2,sheetFieldDef.Bounds.Bottom-2,
 					_sizeResizeGrabHandle,_sizeResizeGrabHandle);
 				using Pen pen2=new Pen(ColorOD.Gray(10));
@@ -2766,31 +3264,35 @@ namespace OpenDental {
 			if(_isTabMode) {
 				return;
 			}
-			List<SheetFieldDef> listSheetFieldDefs=GetPertinentSheetFieldDefs();
-			for(int i=0;i<listFields.SelectedIndices.Count;i++) {
-				for(int j=0;j<listSheetFieldDefs.Count;j++) {
-					if(listFields.SelectedIndices[i]==j){
-						continue;
+			if(!_isDragging){
+				return;
+			}
+			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
+			List<SheetFieldDef> listSheetFieldDefsSelected=listBoxFields.GetListSelected<SheetFieldDef>();
+			for(int i=0;i<listBoxFields.SelectedIndices.Count;i++) {
+				for(int j=0;j<listSheetFieldDefsShowing.Count;j++) {
+					if(listSheetFieldDefsSelected.Contains(listSheetFieldDefsShowing[j])){
+						continue;//ignore all the other selected group items, including self
 					}
 					//left:
-					if(listSheetFieldDefs[j].XPos==listSheetFieldDefs[listFields.SelectedIndices[i]].XPos){
-						g.DrawLine(Pens.Blue,listSheetFieldDefs[j].XPos,0,listSheetFieldDefs[j].XPos,_sheetDef.Height);
+					if(listSheetFieldDefsShowing[j].XPos==listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]].XPos){
+						g.DrawLine(Pens.Blue,listSheetFieldDefsShowing[j].XPos,0,listSheetFieldDefsShowing[j].XPos,_sheetDef.Height*_sheetDef.PageCount);
 					}
 					//right:
-					if(listSheetFieldDefs[j].XPos+listSheetFieldDefs[j].Width
-						==listSheetFieldDefs[listFields.SelectedIndices[i]].XPos+listSheetFieldDefs[listFields.SelectedIndices[i]].Width)
+					if(listSheetFieldDefsShowing[j].XPos+listSheetFieldDefsShowing[j].Width
+						==listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]].XPos+listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]].Width)
 					{
-						g.DrawLine(Pens.Blue,listSheetFieldDefs[j].XPos+listSheetFieldDefs[j].Width,0,listSheetFieldDefs[j].XPos+listSheetFieldDefs[j].Width,_sheetDef.Height);
+						g.DrawLine(Pens.Blue,listSheetFieldDefsShowing[j].XPos+listSheetFieldDefsShowing[j].Width,0,listSheetFieldDefsShowing[j].XPos+listSheetFieldDefsShowing[j].Width,_sheetDef.Height*_sheetDef.PageCount);
 					}
 					//top:
-					if(listSheetFieldDefs[j].YPos==listSheetFieldDefs[listFields.SelectedIndices[i]].YPos){
-						g.DrawLine(Pens.Blue,0,listSheetFieldDefs[j].YPos,_sheetDef.Width,listSheetFieldDefs[j].YPos);
+					if(listSheetFieldDefsShowing[j].YPos==listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]].YPos){
+						g.DrawLine(Pens.Blue,0,listSheetFieldDefsShowing[j].YPos,_sheetDef.Width,listSheetFieldDefsShowing[j].YPos);
 					}
 					//bottom:
-					if(listSheetFieldDefs[j].YPos+listSheetFieldDefs[j].Height
-						==listSheetFieldDefs[listFields.SelectedIndices[i]].YPos+listSheetFieldDefs[listFields.SelectedIndices[i]].Height)
+					if(listSheetFieldDefsShowing[j].YPos+listSheetFieldDefsShowing[j].Height
+						==listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]].YPos+listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]].Height)
 					{
-						g.DrawLine(Pens.Blue,0,listSheetFieldDefs[j].YPos+listSheetFieldDefs[j].Height,_sheetDef.Width,listSheetFieldDefs[j].YPos+listSheetFieldDefs[j].Height);
+						g.DrawLine(Pens.Blue,0,listSheetFieldDefsShowing[j].YPos+listSheetFieldDefsShowing[j].Height,_sheetDef.Width,listSheetFieldDefsShowing[j].YPos+listSheetFieldDefsShowing[j].Height);
 					}
 				}
 			}
@@ -2984,19 +3486,23 @@ namespace OpenDental {
 			using Font font=new Font(sheetFieldDef.FontName,sheetFieldDef.FontSize,fontStyle,GraphicsUnit.Point);
 			Color colorBrush;
 			if(isSelected) {
-				Color color=GetOutlineColorForSheetFieldDef(sheetFieldDef,_colorRedOutline,true);
+				Color color=GetOutlineColorForSheetFieldDef(sheetFieldDef,_colorRedOutline,isSelected:true);
+				colorBrush=_colorRed;
 				using Pen pen=new Pen(color);
 				g.DrawRectangle(pen,sheetFieldDef.Bounds);
-				colorBrush=_colorRed;
 			}
 			else {
-				Color color = GetOutlineColorForSheetFieldDef(sheetFieldDef,_colorGrayOutline,true);
+				Color color = GetOutlineColorForSheetFieldDef(sheetFieldDef,_colorGrayOutline);
+				colorBrush=_colorGray;
+				if(checkBlue.Checked){
+					color = GetOutlineColorForSheetFieldDef(sheetFieldDef,_colorBlueOutline);
+					colorBrush=_colorBlue;
+				}
 				using Pen pen = new Pen(color);
 				g.DrawRectangle(pen,sheetFieldDef.Bounds);
-				colorBrush=_colorGray;
 			}
 			using SolidBrush solidBrush=new SolidBrush(colorBrush);
-			if(isSelected && listFields.SelectedIndices.Count==1){
+			if(isSelected && listBoxFields.SelectedIndices.Count==1){
 				Rectangle rectangleHandleLR=new Rectangle(sheetFieldDef.Bounds.Right-2,sheetFieldDef.Bounds.Bottom-2,
 					_sizeResizeGrabHandle,_sizeResizeGrabHandle);
 				using Pen pen=new Pen(ColorOD.Gray(10));
@@ -3205,9 +3711,11 @@ namespace OpenDental {
 			}
 		}
 
+
+
 		#endregion Classes - Nested
 
-	
+		
 	}
 
 	#region Classes

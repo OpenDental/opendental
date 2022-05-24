@@ -12,7 +12,7 @@ namespace OpenDental {
 		///<summay>Currently selected clinic for which we are editing the eclipboard image capture defs.</summay>
 		private long _clinicNum;
 		///<summary>List of all definitions in 'EClipboardImageCapture' defcat. </summary>
-		private List<Def> _listAllEClipboardImages;
+		private List<Def> _listDefsAllEClipboardImages;
 		///<summary>The corresponding EClipboardImageCaptureDef objects for the list of EClipboard Images patients are allowed to take. Must be
 		///set before opening this form.</summary>
 		public List<EClipboardImageCaptureDef> ListEClipboardImageCaptureDefs;	
@@ -27,7 +27,7 @@ namespace OpenDental {
 
 		private void FormEClipboardImageCaptureDefs_Load(object sender,EventArgs e) { 
 			//Get all 'EClipboardImageCapture' defcat definitions. These are the images that patients may be prompted to submit when checking in via eClipboard.
-			_listAllEClipboardImages=Defs.GetDefsForCategory(DefCat.EClipboardImageCapture);
+			_listDefsAllEClipboardImages=Defs.GetDefsForCategory(DefCat.EClipboardImageCapture);
 			FillGrids();
 		}
 
@@ -36,22 +36,22 @@ namespace OpenDental {
 			//Since 'EClipboardAllowSelfPortraitOnCheckIn' pref is now edited in this form, we have to treat the self-portrait as a def so that it behaves like the other
 			//'eClipboard Images' definitions in the form. So we create this mock def for the self-portrait. This def should NOT be inserted inserted into the DB.
 			//By defaul, this Def's DefNum will be 0. This will indicate this is the self-portrait def since it is not in the DB and does not have a primary key.
-			Def selfPortraitDef=new Def();
+			Def defSelfPortrait=new Def();
 			//Set the name and the description of the self-portrait.
-			selfPortraitDef.ItemName="Self Portrait";
-			selfPortraitDef.ItemValue="Allows patient to submit a self-portrait upon checkin";
+			defSelfPortrait.ItemName="Self Portrait";
+			defSelfPortrait.ItemValue="Allows patient to submit a self-portrait upon checkin";
 			//If the eClipboard image def has a corresponding EClipboardImageCaptureDef, users are allowed to submit that image, so we add these defs to the 'In Use' list.
-			List<Def> listEClipboardImagesInUse=_listAllEClipboardImages.FindAll(x => ListEClipboardImageCaptureDefs.Any(y => y.ClinicNum==_clinicNum && y.DefNum==x.DefNum));
+			List<Def> listDefsEClipboardImagesInUse=_listDefsAllEClipboardImages.FindAll(x => ListEClipboardImageCaptureDefs.Any(y => y.ClinicNum==_clinicNum && y.DefNum==x.DefNum));
 			//If the eClipboard image def does not have a corresponding EClipboardImageCaptureDef, users are not allowed to submit that image, so we add these defs to
 			//the 'available' list.
-			List<Def> listAvailableEClipboardImages=_listAllEClipboardImages.FindAll(x => !listEClipboardImagesInUse.Any(y => y.DefNum==x.DefNum));
-			bool selfPortraitIsAllowed=ListEClipboardImageCaptureDefs.Any(x => x.IsSelfPortrait && x.ClinicNum==_clinicNum);
+			List<Def> listDefsAvailableEClipboardImages=_listDefsAllEClipboardImages.FindAll(x => !listDefsEClipboardImagesInUse.Any(y => y.DefNum==x.DefNum));
+			bool isSelfPortraitAllowed=ListEClipboardImageCaptureDefs.Any(x => x.IsSelfPortrait && x.ClinicNum==_clinicNum);
 			//If the self portrait has a correspoding EClipboardImageCaptureDef, then we add it the 'In Use' list, since users are able to submit self portraits.
-			if(selfPortraitIsAllowed) { 
-				listEClipboardImagesInUse.Add(selfPortraitDef);
+			if(isSelfPortraitAllowed) { 
+				listDefsEClipboardImagesInUse.Add(defSelfPortrait);
 			}
 			else { //Otherwise we add it to the available list since patients are not currently allowed to submit self-portraits. 
-				listAvailableEClipboardImages.Add(selfPortraitDef);
+				listDefsAvailableEClipboardImages.Add(defSelfPortrait);
 			}
 			#region Filling available EclipboardImageCaptureDef (left grid)
 			gridAvailableEClipboardImages.BeginUpdate();
@@ -63,8 +63,8 @@ namespace OpenDental {
       gridAvailableEClipboardImages.Columns.Add(col);
       gridAvailableEClipboardImages.ListGridRows.Clear();
       GridRow row;
-      for(int i=0;i<listAvailableEClipboardImages.Count;i++) {
-				Def def=listAvailableEClipboardImages[i];
+      for(int i=0;i<listDefsAvailableEClipboardImages.Count;i++) {
+				Def def=listDefsAvailableEClipboardImages[i];
         row=new GridRow();
 				row.Cells.Add(def.ItemName);
 				row.Cells.Add(def.ItemValue);
@@ -83,8 +83,8 @@ namespace OpenDental {
 			col=new GridColumn(Lan.g(this,"Frequency(Days)"),120);
       gridEClipboardImagesInUse.Columns.Add(col);
       gridEClipboardImagesInUse.ListGridRows.Clear();
-      for(int i=0;i<listEClipboardImagesInUse.Count;i++) {
-				Def def=listEClipboardImagesInUse[i];
+      for(int i=0;i<listDefsEClipboardImagesInUse.Count;i++) {
+				Def def=listDefsEClipboardImagesInUse[i];
 				EClipboardImageCaptureDef eClipboardImageCaptureDef=new EClipboardImageCaptureDef();
 				if(def.DefNum==0) {
 					//This is the self portrait since the defNum is 0. So we search in our list of eclipboardimagecapturedefs for the one that marked as being the self portrait capture def
@@ -135,12 +135,11 @@ namespace OpenDental {
 					//We will also set the defnum to the image category that has the patient pictures usage, if any. 
 					listDefsSelected[i].DefNum=OpenDentBusiness.Defs.GetDefsForCategory(OpenDentBusiness.DefCat.ImageCats,true).FirstOrDefault(x => x.ItemValue.Contains("P"))?.DefNum??0;
 				}
-				EClipboardImageCaptureDef eClipboardImageCaptureDef=new EClipboardImageCaptureDef() { 
-					DefNum=listDefsSelected[i].DefNum,
-					IsSelfPortrait=isSelfPortrait,
-					FrequencyDays=0,
-					ClinicNum=_clinicNum,
-				};
+				EClipboardImageCaptureDef eClipboardImageCaptureDef=new EClipboardImageCaptureDef();
+				eClipboardImageCaptureDef.DefNum=listDefsSelected[i].DefNum;
+				eClipboardImageCaptureDef.IsSelfPortrait=isSelfPortrait;
+				eClipboardImageCaptureDef.FrequencyDays=0;
+				eClipboardImageCaptureDef.ClinicNum=_clinicNum;
 				ListEClipboardImageCaptureDefs.Add(eClipboardImageCaptureDef);
 			}
 			FillGrids();
@@ -162,7 +161,7 @@ namespace OpenDental {
 				try {
 					frequency=PIn.Int(text);
 				}
-				catch(Exception ex) {
+				catch {
 					MsgBox.Show(this, "Frequency (days) must be a valid whole number, 0 or greater.");
 					return false;
 				}
@@ -179,7 +178,7 @@ namespace OpenDental {
 				return;
 			}
 			//Update the frequency for the EClipboardImageCaptureDef the user selected.
-			EClipboardImageCaptureDef eClipboardImageCaptureDef=ListEClipboardImageCaptureDefs.FirstOrDefault(x => x.ClinicNum==_clinicNum && x.DefNum==eClipboardImageCaptureDefSelected.DefNum);
+			EClipboardImageCaptureDef eClipboardImageCaptureDef=ListEClipboardImageCaptureDefs.Find(x => x.ClinicNum==_clinicNum && x.DefNum==eClipboardImageCaptureDefSelected.DefNum);
 			if(eClipboardImageCaptureDef!=null) { 
 				eClipboardImageCaptureDef.FrequencyDays=PIn.Int(inputBox.textResult.Text);
 			}

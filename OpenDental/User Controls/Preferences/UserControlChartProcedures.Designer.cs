@@ -36,8 +36,14 @@ namespace OpenDental {
 			this.checkProcGroupNoteDoesAggregate = new System.Windows.Forms.CheckBox();
 			this.checkProcsPromptForAutoNote = new System.Windows.Forms.CheckBox();
 			this.groupProcNotes = new OpenDental.UI.GroupBoxOD();
+			this.checkProcNoteSigsBlocked = new System.Windows.Forms.CheckBox();
 			this.groupBoxProcedures = new OpenDental.UI.GroupBoxOD();
 			this.checkProcProvChangesCp = new System.Windows.Forms.CheckBox();
+			this.labelAllowSettingProcsCompleteDetails = new System.Windows.Forms.Label();
+			this.labelProcProvChangesCpDetails = new System.Windows.Forms.Label();
+			this.labelProcEditRequireAutoCodeDetails = new System.Windows.Forms.Label();
+			this.labelProcFeeUpdatePromptDetails = new System.Windows.Forms.Label();
+			this.labelProcsPromptForAutoNoteDetails = new System.Windows.Forms.Label();
 			this.groupProcNotes.SuspendLayout();
 			this.groupBoxProcedures.SuspendLayout();
 			this.SuspendLayout();
@@ -50,8 +56,7 @@ namespace OpenDental {
 			this.checkAllowSettingProcsComplete.Name = "checkAllowSettingProcsComplete";
 			this.checkAllowSettingProcsComplete.Size = new System.Drawing.Size(425, 17);
 			this.checkAllowSettingProcsComplete.TabIndex = 75;
-			this.checkAllowSettingProcsComplete.Text = "Allow setting procedures complete.  (It\'s better to only set appointments complet" +
-    "e)";
+			this.checkAllowSettingProcsComplete.Text = "Allow setting procedures complete";
 			this.checkAllowSettingProcsComplete.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkAllowSettingProcsComplete.UseVisualStyleBackColor = true;
 			// 
@@ -159,7 +164,7 @@ namespace OpenDental {
 			this.checkProcGroupNoteDoesAggregate.Name = "checkProcGroupNoteDoesAggregate";
 			this.checkProcGroupNoteDoesAggregate.Size = new System.Drawing.Size(425, 17);
 			this.checkProcGroupNoteDoesAggregate.TabIndex = 235;
-			this.checkProcGroupNoteDoesAggregate.Text = "Procedure Group Notes aggregate";
+			this.checkProcGroupNoteDoesAggregate.Text = "When creating a Group Note, aggregate procedure notes";
 			this.checkProcGroupNoteDoesAggregate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkProcGroupNoteDoesAggregate.UseVisualStyleBackColor = true;
 			// 
@@ -178,6 +183,7 @@ namespace OpenDental {
 			// groupProcNotes
 			// 
 			this.groupProcNotes.BackColor = System.Drawing.Color.White;
+			this.groupProcNotes.Controls.Add(this.checkProcNoteSigsBlocked);
 			this.groupProcNotes.Controls.Add(this.checkProcsPromptForAutoNote);
 			this.groupProcNotes.Controls.Add(this.checkSignatureAllowDigital);
 			this.groupProcNotes.Controls.Add(this.checkProcGroupNoteDoesAggregate);
@@ -185,9 +191,20 @@ namespace OpenDental {
 			this.groupProcNotes.Controls.Add(this.checkProcNoteConcurrencyMerge);
 			this.groupProcNotes.Location = new System.Drawing.Point(20, 256);
 			this.groupProcNotes.Name = "groupProcNotes";
-			this.groupProcNotes.Size = new System.Drawing.Size(450, 162);
+			this.groupProcNotes.Size = new System.Drawing.Size(450, 191);
 			this.groupProcNotes.TabIndex = 239;
 			this.groupProcNotes.Text = "Procedure Notes";
+			// 
+			// checkProcNoteSigsBlocked
+			// 
+			this.checkProcNoteSigsBlocked.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkProcNoteSigsBlocked.Location = new System.Drawing.Point(15, 164);
+			this.checkProcNoteSigsBlocked.Name = "checkProcNoteSigsBlocked";
+			this.checkProcNoteSigsBlocked.Size = new System.Drawing.Size(425, 17);
+			this.checkProcNoteSigsBlocked.TabIndex = 249;
+			this.checkProcNoteSigsBlocked.Text = "Block procedure note signatures when there are uncompleted auto note prompts";
+			this.checkProcNoteSigsBlocked.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkProcNoteSigsBlocked.UseVisualStyleBackColor = true;
 			// 
 			// groupBoxProcedures
 			// 
@@ -212,16 +229,76 @@ namespace OpenDental {
 			this.checkProcProvChangesCp.Name = "checkProcProvChangesCp";
 			this.checkProcProvChangesCp.Size = new System.Drawing.Size(435, 17);
 			this.checkProcProvChangesCp.TabIndex = 241;
-			this.checkProcProvChangesCp.Text = "Do not allow different procedure and claim procedure providers when attached to c" +
-    "laim";
+			this.checkProcProvChangesCp.Text = "Procedures on claims must use the treating provider";
 			this.checkProcProvChangesCp.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkProcProvChangesCp.UseVisualStyleBackColor = true;
+			// 
+			// labelAllowSettingProcsCompleteDetails
+			// 
+			this.labelAllowSettingProcsCompleteDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelAllowSettingProcsCompleteDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelAllowSettingProcsCompleteDetails.Location = new System.Drawing.Point(476, 54);
+			this.labelAllowSettingProcsCompleteDetails.Name = "labelAllowSettingProcsCompleteDetails";
+			this.labelAllowSettingProcsCompleteDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelAllowSettingProcsCompleteDetails.TabIndex = 349;
+			this.labelAllowSettingProcsCompleteDetails.Text = "not usually recommended, it\'s better to only set appointments complete";
+			this.labelAllowSettingProcsCompleteDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelProcProvChangesCpDetails
+			// 
+			this.labelProcProvChangesCpDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelProcProvChangesCpDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelProcProvChangesCpDetails.Location = new System.Drawing.Point(476, 214);
+			this.labelProcProvChangesCpDetails.Name = "labelProcProvChangesCpDetails";
+			this.labelProcProvChangesCpDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelProcProvChangesCpDetails.TabIndex = 350;
+			this.labelProcProvChangesCpDetails.Text = "normally checked";
+			this.labelProcProvChangesCpDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelProcEditRequireAutoCodeDetails
+			// 
+			this.labelProcEditRequireAutoCodeDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelProcEditRequireAutoCodeDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelProcEditRequireAutoCodeDetails.Location = new System.Drawing.Point(476, 116);
+			this.labelProcEditRequireAutoCodeDetails.Name = "labelProcEditRequireAutoCodeDetails";
+			this.labelProcEditRequireAutoCodeDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelProcEditRequireAutoCodeDetails.TabIndex = 354;
+			this.labelProcEditRequireAutoCodeDetails.Text = "otherwise a user is allowed to chart the mismatched code";
+			this.labelProcEditRequireAutoCodeDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelProcFeeUpdatePromptDetails
+			// 
+			this.labelProcFeeUpdatePromptDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelProcFeeUpdatePromptDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelProcFeeUpdatePromptDetails.Location = new System.Drawing.Point(476, 182);
+			this.labelProcFeeUpdatePromptDetails.Name = "labelProcFeeUpdatePromptDetails";
+			this.labelProcFeeUpdatePromptDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelProcFeeUpdatePromptDetails.TabIndex = 355;
+			this.labelProcFeeUpdatePromptDetails.Text = "when changing the provider";
+			this.labelProcFeeUpdatePromptDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelProcsPromptForAutoNoteDetails
+			// 
+			this.labelProcsPromptForAutoNoteDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelProcsPromptForAutoNoteDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelProcsPromptForAutoNoteDetails.Location = new System.Drawing.Point(476, 270);
+			this.labelProcsPromptForAutoNoteDetails.Name = "labelProcsPromptForAutoNoteDetails";
+			this.labelProcsPromptForAutoNoteDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelProcsPromptForAutoNoteDetails.TabIndex = 356;
+			this.labelProcsPromptForAutoNoteDetails.Text = "if auto note prompts were not completed, be prompted when the procedure is next o" +
+    "pened";
+			this.labelProcsPromptForAutoNoteDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// UserControlChartProcedures
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.labelProcsPromptForAutoNoteDetails);
+			this.Controls.Add(this.labelProcFeeUpdatePromptDetails);
+			this.Controls.Add(this.labelProcEditRequireAutoCodeDetails);
+			this.Controls.Add(this.labelProcProvChangesCpDetails);
+			this.Controls.Add(this.labelAllowSettingProcsCompleteDetails);
 			this.Controls.Add(this.groupBoxProcedures);
 			this.Controls.Add(this.groupProcNotes);
 			this.Name = "UserControlChartProcedures";
@@ -248,5 +325,11 @@ namespace OpenDental {
 		private UI.GroupBoxOD groupProcNotes;
 		private UI.GroupBoxOD groupBoxProcedures;
 		private System.Windows.Forms.CheckBox checkProcProvChangesCp;
+		private System.Windows.Forms.Label labelAllowSettingProcsCompleteDetails;
+		private System.Windows.Forms.Label labelProcProvChangesCpDetails;
+		private System.Windows.Forms.Label labelProcEditRequireAutoCodeDetails;
+		private System.Windows.Forms.Label labelProcFeeUpdatePromptDetails;
+		private System.Windows.Forms.Label labelProcsPromptForAutoNoteDetails;
+		private System.Windows.Forms.CheckBox checkProcNoteSigsBlocked;
 	}
 }

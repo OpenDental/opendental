@@ -33,8 +33,8 @@ namespace OpenDental{
 			_listSchoolClasses=SchoolClasses.GetDeepCopy();
 			_listSchoolCourses=SchoolCourses.GetDeepCopy();
 			for(int i=0;i<_listSchoolClasses.Count;i++) {
-				comboClassFrom.Items.Add(_listSchoolClasses[i].Descript);
-				comboClassTo.Items.Add(_listSchoolClasses[i].Descript);
+				comboClassFrom.Items.Add(SchoolClasses.GetDescript(_listSchoolClasses[i]));
+				comboClassTo.Items.Add(SchoolClasses.GetDescript(_listSchoolClasses[i]));
 			}
 			for(int i=0;i<_listSchoolCourses.Count;i++) {
 				comboCourseFrom.Items.Add(_listSchoolCourses[i].Descript);

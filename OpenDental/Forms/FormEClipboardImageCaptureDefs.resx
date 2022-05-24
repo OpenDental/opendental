@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="labelHelp.Text" xml:space="preserve">
-    <value>To prompt users to submit images when checking in via eClipboard, move the image from the 'Available' grid to the 'In Use' grid. To set the frequency at which patients are asked to re-submit images, double click on an image in the 'In Use' grid.</value>
+    <value>When checking in via eClipboard, users will be prompted to submit images.  The 'In Use' grid on the right determines the prompts and frequencies.  Add new items to the Available grid on the left in Setup, Definitions, eClipboard Images. Then, move items from the 'Available' grid to the 'In Use' grid to make them visible to patients.</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

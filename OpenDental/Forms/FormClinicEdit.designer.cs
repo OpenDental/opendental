@@ -730,13 +730,14 @@ namespace OpenDental {
 			// 
 			// textEmail
 			// 
-			this.textEmail.BackColor = System.Drawing.SystemColors.Window;
+			this.textEmail.BackColor = System.Drawing.SystemColors.Control;
 			this.textEmail.Location = new System.Drawing.Point(225, 230);
 			this.textEmail.MaxLength = 255;
 			this.textEmail.Name = "textEmail";
 			this.textEmail.ReadOnly = true;
 			this.textEmail.Size = new System.Drawing.Size(266, 20);
 			this.textEmail.TabIndex = 10;
+			this.textEmail.TabStop = false;
 			// 
 			// textBankNumber
 			// 

@@ -1689,8 +1689,7 @@
 			// gridComm
 			// 
 			this.gridComm.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.gridComm.DoShowPatNumLinks = true;
-			this.gridComm.DoShowTaskNumLinks = true;
+			this.gridComm.DoShowRightClickLinks  = true;
 			this.gridComm.Location = new System.Drawing.Point(0, 0);
 			this.gridComm.Name = "gridComm";
 			this.gridComm.Size = new System.Drawing.Size(749, 267);

@@ -8,7 +8,7 @@ namespace OpenDentBusiness{
 	///<summary></summary>
 	public class OrthoRxs{
 		//If this table type will exist as cached data, uncomment the Cache Pattern region below and edit.
-		/*
+		
 		#region Cache Pattern
 		//This region can be eliminated if this is not a table type with cached data.
 		//If leaving this region in place, be sure to add GetTableFromCache and FillCacheFromTable to the Cache.cs file with all the other Cache types.
@@ -16,7 +16,7 @@ namespace OpenDentBusiness{
 
 		private class OrthoRxCache : CacheListAbs<OrthoRx> {
 			protected override List<OrthoRx> GetCacheFromDb() {
-				string command="SELECT * FROM orthorx";
+				string command="SELECT * FROM orthorx ORDER BY ItemOrder";
 				return Crud.OrthoRxCrud.SelectMany(command);
 			}
 			protected override List<OrthoRx> TableToList(DataTable table) {
@@ -96,9 +96,8 @@ namespace OpenDentBusiness{
 			return _orthoRxCache.GetTableFromCache(doRefreshCache);
 		}
 		#endregion Cache Pattern
-		*/
+		
 		/*
-		Only pull out the methods below as you need them.  Otherwise, leave them commented out.
 		#region Methods - Get
 		///<summary></summary>
 		public static List<OrthoRx> Refresh(long patNum){
@@ -116,7 +115,7 @@ namespace OpenDentBusiness{
 			}
 			return Crud.OrthoRxCrud.SelectOne(orthoRxNum);
 		}
-		#endregion Methods - Get
+		#endregion Methods - Get*/
 		#region Methods - Modify
 		///<summary></summary>
 		public static long Insert(OrthoRx orthoRx){
@@ -148,7 +147,7 @@ namespace OpenDentBusiness{
 
 		
 		#endregion Methods - Misc
-		*/
+		
 
 
 

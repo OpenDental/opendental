@@ -154,7 +154,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Responsible for updating procedures in the group to "In Process" or "Not In Process", depending on the stat passed in.
-		///Also sends signal to cause cache refresh.  Refreshes local cache for clients directly connected.</summary>
+		///Also sends signal to cause cache refresh.  Refreshes cache.</summary>
 		public static void UpdateGroupForProc(long procNum,ProcStat stat) {
 			//No need to check MiddleTierRole; no call to db.
 			List<ProcMultiVisit> listPmvs=GetGroupsForProcsFromDb(procNum);
@@ -186,9 +186,7 @@ namespace OpenDentBusiness{
 			}
 			//Always send a signal and refresh the cache in case someone else is going to edit the group soon.
 			Signalods.SetInvalid(InvalidType.ProcMultiVisits);
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientDirect) {
-				RefreshCache();
-			}
+			RefreshCache();
 			//Use ProcNum to get associated ClaimProc (if any)
 			List<ClaimProc> listClaimProcsForProcMultiVisit=ClaimProcs.GetForProcs(listPmvs.Select(x=>x.ProcNum).ToList());
 			//Use claimProc.ClaimNum to determine if a claim is attached to the given In Process proc (ClaimNum!=0)

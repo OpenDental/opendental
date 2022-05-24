@@ -262,22 +262,24 @@ namespace OpenDental {
 			}
 			switch(_def.Category){
 				case DefCat.AccountQuickCharge:
-				case DefCat.ApptProcsQuickAdd:
-					string[] stringArrayProcCodes=textValue.Text.Split(',');
-					List<string> listStrProcCodes=new List<string>();
-					for(int i=0;i<stringArrayProcCodes.Length;i++) {
-						ProcedureCode procedureCode=ProcedureCodes.GetProcCode(stringArrayProcCodes[i]);
-						if(procedureCode.CodeNum==0) {
-							//Now check to see if the trimmed version of the code does not exist either.
-							procedureCode=ProcedureCodes.GetProcCode(stringArrayProcCodes[i].Trim());
-							if(procedureCode.CodeNum==0) {
-								MessageBox.Show(Lan.g(this,"Invalid procedure code entered")+": "+stringArrayProcCodes[i]);
-								return;
-							}
-						}
-						listStrProcCodes.Add(procedureCode.ProcCode);
+					string[] stringArrayProcCodesAccountQuickCharge=textValue.Text.Split(',');
+					try {
+						ProcedureCodes.ValidateProcedureCodeEntry(stringArrayProcCodesAccountQuickCharge);
 					}
-					textValue.Text=String.Join(",",listStrProcCodes);
+					catch(Exception ex) {
+							MessageBox.Show(ex.Message);
+							return;
+					}
+					break;
+				case DefCat.ApptProcsQuickAdd:
+					string[] stringArrayProcCodesApptProcsQuickAdd=textValue.Text.Split(',');
+					try {
+						ProcedureCodes.ValidateProcedureCodeEntry(stringArrayProcCodesApptProcsQuickAdd,doAllowToothNum:true);
+					}
+					catch(Exception ex) {
+							MessageBox.Show(ex.Message);
+							return;
+					}
 					break;
 				case DefCat.AdjTypes:
 					if(textValue.Text!="+" && textValue.Text!="-" && textValue.Text!="dp"){

@@ -191,24 +191,25 @@ namespace OpenDental{
 			this.groupBoxImage.Name = "groupBoxImage";
 			this.groupBoxImage.Size = new System.Drawing.Size(458, 73);
 			this.groupBoxImage.TabIndex = 503;
-			this.groupBoxImage.Text = "Allow Image Captures";
+			this.groupBoxImage.Text = "Prompt for Image Capture";
 			// 
 			// butImageOptions
 			// 
-			this.butImageOptions.Location = new System.Drawing.Point(427, 26);
+			this.butImageOptions.Location = new System.Drawing.Point(398, 26);
 			this.butImageOptions.Name = "butImageOptions";
-			this.butImageOptions.Size = new System.Drawing.Size(24, 20);
+			this.butImageOptions.Size = new System.Drawing.Size(53, 24);
 			this.butImageOptions.TabIndex = 1;
-			this.butImageOptions.Text = "...";
+			this.butImageOptions.Text = "Edit";
 			this.butImageOptions.UseVisualStyleBackColor = true;
 			this.butImageOptions.Click += new System.EventHandler(this.butImageOptions_Click);
 			// 
 			// textEclipboardImageDefs
 			// 
 			this.textEclipboardImageDefs.Location = new System.Drawing.Point(6, 26);
+			this.textEclipboardImageDefs.Multiline = true;
 			this.textEclipboardImageDefs.Name = "textEclipboardImageDefs";
 			this.textEclipboardImageDefs.ReadOnly = true;
-			this.textEclipboardImageDefs.Size = new System.Drawing.Size(410, 20);
+			this.textEclipboardImageDefs.Size = new System.Drawing.Size(386, 34);
 			this.textEclipboardImageDefs.TabIndex = 0;
 			// 
 			// checkDisplayIndividually

@@ -362,10 +362,8 @@ namespace OpenDental {
 						Action<SheetFieldDef> addRadioOption=new Action<SheetFieldDef>((sheetFieldRadioItem) => {
 							#region addRadioOption
 							SheetEditMobileRadioButton radioItem=addCheckBox(sheetFieldRadioItem);
-							//Misc will use UiLabelMobileRadioButton, pre-defined will use RadioButtonValue.
-							sheetFieldRadioItem.UiLabelMobileRadioButton=string.IsNullOrEmpty(sheetFieldRadioItem.UiLabelMobileRadioButton) ?
-								sheetFieldRadioItem.RadioButtonValue : sheetFieldRadioItem.UiLabelMobileRadioButton ;
-							radioItem.Text=sheetFieldRadioItem.UiLabelMobileRadioButton;							
+							sheetFieldRadioItem.UiLabelMobileRadioButton=OpenDentBusiness.SheetFieldDefs.GetUiLabelMobileRadioButton(sheetFieldRadioItem);
+							radioItem.Text=sheetFieldRadioItem.UiLabelMobileRadioButton;
 							if(SheetFieldDefEdit==null) {
 								radioItem.TextClick+=new EventHandler((sender,e) => {
 									using InputBox input=new InputBox(GetTranslation("Edit label for radio item"),sheetFieldRadioItem.UiLabelMobileRadioButton);

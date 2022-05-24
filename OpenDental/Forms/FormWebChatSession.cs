@@ -31,9 +31,13 @@ namespace OpenDental {
 			if(_webChatSession.DateTend.Year > 1880) {//Session has ended?
 				DisableAllExcept(textOwner,textWebChatSessionNum,textName,textEmail,textPractice,textPhone,webChatThread,butClose,butAttachSuggestion,butSearchAndAttach,textCustomer
 					,tabControlMain);
-				//tabControlMain needs to be enabled to view notes, but these options still need to be disabled. 
+				//tabControlMain needs to be enabled to view notes, but these options still need to be disabled.
 				butSend.Enabled=false;
 				textChatMessage.Enabled=false;
+				//Webchat ended more than a day ago, make textbox for note read-only so that it cannot be edited.
+				if(_webChatSession.DateTend.AddDays(1)<DateTime.Now) {
+					textNote.ReadOnly=true;
+				}
 			}
 			try {
 				//auto-suggest patient based on supplied phone number if a patient is not yet associated with the session

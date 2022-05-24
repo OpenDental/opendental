@@ -38,19 +38,21 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Returns a list of selected procedures from the QuickAdd list that are being added to the appointment.</summary>
-		public static List<Procedure> QuickAddProcs(Appointment appointment,Patient patient,List<string> listProcCodesToAdd,long provNum,
+		public static List<Procedure> QuickAddProcs(Appointment appointment,Patient patient,List<string> listProcedureCodesAndToothNumstoAdd,long provNum,
 			long provHyg,List<InsSub> listInsSubs,List<InsPlan> listInsPlans,List<PatPlan> listPatPlans,List<Benefit> listBenefits) 
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Procedure>>(MethodBase.GetCurrentMethod(),appointment,patient,listProcCodesToAdd,provNum,
+				return Meth.GetObject<List<Procedure>>(MethodBase.GetCurrentMethod(),appointment,patient,listProcedureCodesAndToothNumstoAdd,provNum,
 					provHyg,listInsSubs,listInsPlans,listPatPlans,listBenefits);
 			}
 			Procedures.SetDateFirstVisit(appointment.AptDateTime.Date,1,patient);
 			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(appointment.PatNum);
-			List<ProcedureCode> listProcedureCodes=new List<ProcedureCode>();
-			for(int i=0;i<listProcCodesToAdd.Count;i++) {
-				listProcedureCodes.Add(ProcedureCodes.GetProcCode(listProcCodesToAdd[i]));
+			List<string> listStringProcCodes=new List<string>();
+			for(int i = 0;i<listProcedureCodesAndToothNumstoAdd.Count;i++) {
+				string[] stringArrayProcedureCodeAndToothNum=listProcedureCodesAndToothNumstoAdd[i].Split('#');//Example D2102#8 (tooth is in international format)
+				listStringProcCodes.Add(stringArrayProcedureCodeAndToothNum[0]);//ProcCode is first item
 			}
+			List<ProcedureCode> listProcedureCodes=ProcedureCodes.GetProcCodes(listStringProcCodes);
 			List<long> listProvNumsTreat=new List<long>();
 			listProvNumsTreat.Add(provNum);
 			listProvNumsTreat.Add(provHyg);//these were both passed in
@@ -68,9 +70,20 @@ namespace OpenDentBusiness {
 			Appointment appointmentCur=appointment.Copy();
 			appointmentCur.ProvNum=provNum;
 			appointmentCur.ProvHyg=provHyg;
-			for(int i=0;i<listProcCodesToAdd.Count;i++) {
-				ProcedureCode procedureCode=ProcedureCodes.GetProcCode(listProcCodesToAdd[i]);
-				Procedure procedure=Procedures.ConstructProcedureForAppt(procedureCode.CodeNum,appointmentCur,patient,listPatPlans,listInsPlans,listInsSubs,listFees);
+			for(int i=0;i<listProcedureCodesAndToothNumstoAdd.Count;i++) {
+				string[] stringArrayProcCodeAndTooth = listProcedureCodesAndToothNumstoAdd[i].Split('#');//0: ProcCode, 1: ToothNum(if present)
+				ProcedureCode procedureCode=listProcedureCodes.Find(x=>x.ProcCode==stringArrayProcCodeAndTooth[0]);
+				if(procedureCode==null) {
+					continue;//Bad ProcCode, do not insert.
+				}
+				Procedure procedure=Procedures.ConstructProcedureForAppt
+					(procedureCode.CodeNum,appointmentCur,patient,listPatPlans,listInsPlans,listInsSubs,listFees);
+				if(stringArrayProcCodeAndTooth.Length==2) {
+					if(!Tooth.IsValidEntry(stringArrayProcCodeAndTooth[1])) {//in db in international format
+						continue;//Bad ToothNum, do not insert.
+					}
+					procedure.ToothNum=Tooth.Parse(stringArrayProcCodeAndTooth[1]);
+				}
 				Procedures.Insert(procedure);//recall synch not required
 				Procedures.ComputeEstimates(procedure,patient.PatNum,ref listClaimProcs,isInitialEntry: true,listInsPlans,listPatPlans,listBenefits,
 					histList: null,loopList: null,saveToDb: true,patient.Age,listInsSubs,listClaimProcsAll: null,isClaimProcRemoveNeeded: false,

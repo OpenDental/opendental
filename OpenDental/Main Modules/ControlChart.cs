@@ -6865,12 +6865,18 @@ namespace OpenDental {
 			Cursor=Cursors.WaitCursor;
 			_toothChartRelay.BeginUpdate();
 			_toothChartRelay.SetOrthoMode(checkOrthoMode.Checked);
+			ToothNumberingNomenclature toothNumberingNomenclature=(ToothNumberingNomenclature)PrefC.GetInt(PrefName.UseInternationalToothNumbers);
+			if(checkOrthoMode.Checked && toothNumberingNomenclature==ToothNumberingNomenclature.Universal){
+				_toothChartRelay.SetToothNumberingNomenclature(ToothNumberingNomenclature.Palmer);
+			}
+			else{
+				_toothChartRelay.SetToothNumberingNomenclature(toothNumberingNomenclature);
+			}
 			List<Def> listChartGraphicColorDefs=Defs.GetDefsForCategory(DefCat.ChartGraphicColors);
 			_toothChartRelay.ColorBackgroundMain=listChartGraphicColorDefs[10].ItemColor;
 			_toothChartRelay.ColorText=listChartGraphicColorDefs[11].ItemColor;
 			_toothChartRelay.ColorTextHighlightFore=listChartGraphicColorDefs[12].ItemColor;
 			_toothChartRelay.ColorTextHighlightBack=listChartGraphicColorDefs[13].ItemColor;
-			_toothChartRelay.SetToothNumberingNomenclature((ToothNumberingNomenclature)PrefC.GetInt(PrefName.UseInternationalToothNumbers));
 			//remember which teeth were selected
 			List<string> selectedTeeth=new List<string>(_toothChartRelay.SelectedTeeth);
 			_toothChartRelay.ResetTeeth();
@@ -11175,6 +11181,68 @@ namespace OpenDental {
 				OrthoHardwares.Delete(orthoHardware.OrthoHardwareNum);
 			}
 			ModuleSelected(Pd.PatNum);
+		}
+
+		private void butOrthoRx_Click(object sender,EventArgs e) {
+			List<OrthoHardware> listOrthoHardwaresToday=Pd.ListOrthoHardwares.FindAll(x=>x.DateExam==DateTime.Today);
+			if(Pd.ListOrthoHardwares.Count>0 && listOrthoHardwaresToday.Count==0) {
+				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Normally, you would make a copy of a previous exam date before adding more hardware. Continue anyway?")){
+					return;
+				}
+			}
+			if(listOrthoHardwaresToday.Count>0 && comboOrthoDate.GetSelected<DateTime>() !=DateTime.Today) {
+				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Normally, you would show today's exam date before adding more hardware. Continue anyway?")){
+					return;
+				}
+			}
+			FormOrthoRxSelect formOrthoRxSelect=new FormOrthoRxSelect();
+			formOrthoRxSelect.ShowDialog();
+			if(formOrthoRxSelect.DialogResult!=DialogResult.OK){
+				return;
+			}
+			for(int i=0;i<formOrthoRxSelect.ListOrthoRxsSelected.Count;i++){
+				OrthoHardwareSpec orthoHardwareSpec=OrthoHardwareSpecs.GetFirstOrDefault(x=>x.OrthoHardwareSpecNum==formOrthoRxSelect.ListOrthoRxsSelected[i].OrthoHardwareSpecNum);
+				if(orthoHardwareSpec is null){
+					continue;
+				}
+				if(orthoHardwareSpec.OrthoHardwareType==EnumOrthoHardwareType.Bracket){
+					string[] stringArrayTeeth=formOrthoRxSelect.ListOrthoRxsSelected[i].ToothRange.Split(',');
+					for(int t=0;t<stringArrayTeeth.Length;t++){
+						if(!Tooth.IsValidDB(stringArrayTeeth[t])){
+							MsgBox.Show(this,"");
+							break;
+						}
+						OrthoHardware orthoHardware=new OrthoHardware();
+						orthoHardware.PatNum=Pd.PatNum;
+						orthoHardware.OrthoHardwareType=EnumOrthoHardwareType.Bracket;
+						orthoHardware.DateExam=DateTime.Today;
+						orthoHardware.OrthoHardwareSpecNum=formOrthoRxSelect.ListOrthoRxsSelected[i].OrthoHardwareSpecNum;
+						orthoHardware.ToothRange=stringArrayTeeth[t];
+						OrthoHardwares.Insert(orthoHardware);
+					}
+				}
+				if(orthoHardwareSpec.OrthoHardwareType==EnumOrthoHardwareType.Elastic){
+					OrthoHardware orthoHardware=new OrthoHardware();
+					orthoHardware.PatNum=Pd.PatNum;
+					orthoHardware.OrthoHardwareType=orthoHardwareSpec.OrthoHardwareType;
+					orthoHardware.DateExam=DateTime.Today;
+					orthoHardware.OrthoHardwareSpecNum=formOrthoRxSelect.ListOrthoRxsSelected[i].OrthoHardwareSpecNum;
+					orthoHardware.ToothRange=formOrthoRxSelect.ListOrthoRxsSelected[i].ToothRange;//already in correct format with commas
+					OrthoHardwares.Insert(orthoHardware);
+				}
+				if(orthoHardwareSpec.OrthoHardwareType==EnumOrthoHardwareType.Wire){
+					OrthoHardware orthoHardware=new OrthoHardware();
+					orthoHardware.PatNum=Pd.PatNum;
+					orthoHardware.OrthoHardwareType=EnumOrthoHardwareType.Wire;
+					orthoHardware.DateExam=DateTime.Today;
+					orthoHardware.OrthoHardwareSpecNum=formOrthoRxSelect.ListOrthoRxsSelected[i].OrthoHardwareSpecNum;
+					orthoHardware.ToothRange=formOrthoRxSelect.ListOrthoRxsSelected[i].ToothRange;//already in correct format with hypen
+					OrthoHardwares.Insert(orthoHardware);
+				}
+			}
+			Pd.ClearAndFill(EnumPdTable.OrthoHardware);
+			FillToothChart(false);
+			FillGridOrtho();
 		}
 
 		private void checkOrthoMode_Click(object sender,EventArgs e) {

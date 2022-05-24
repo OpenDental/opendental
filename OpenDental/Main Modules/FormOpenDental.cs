@@ -474,9 +474,9 @@ namespace OpenDental{
 			//Hook up MT connection lost event. Nothing prior to this point fires LostConnection events.
 			MiddleTierConnectionEvent.Fired+=MiddleTierConnection_ConnectionLost;
 			FormSplash formSplash=new FormSplash();
-			using FormChooseDatabase formChooseDatabase=new FormChooseDatabase(chooseDatabaseInfo);
 			ChooseDatabaseInfo chooseDatabaseInfo2=null;
 			while(true) {//Most users will loop through once.  If user tries to connect to a db with replication failure, they will loop through again.
+				using FormChooseDatabase formChooseDatabase=new FormChooseDatabase(chooseDatabaseInfo);
 				if(chooseDatabaseInfo.NoShow==YN.Yes) {
 					try {
 						Logger.LogToPath("CentralConnections.TryToConnect",LogPath.Startup,LogPhase.Start);
@@ -821,6 +821,7 @@ namespace OpenDental{
 			WikiPages.NavPageDelegate=S_WikiLoadPage;
 			Patients.NavPatDelegate=S_Contr_PatientSelected;
 			Tasks.NavTaskDelegate=S_TaskNumLoad;
+			Jobs.NavJobDelegate=S_GoToJob;
 			Logger.LogToPath("SignalLastRefreshed",LogPath.Startup,LogPhase.Unspecified);
 			//We are about to start signal processing for the first time so set the initial refresh timestamp.
 			Signalods.SignalLastRefreshed=MiscData.GetNowDateTime();

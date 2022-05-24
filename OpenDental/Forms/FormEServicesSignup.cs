@@ -36,6 +36,15 @@ namespace OpenDental {
 		}
 
 		private async void FormEServicesSignup_Load(object sender,EventArgs e) {
+			if(ODBuild.IsWeb()) {
+				if(_signupOut==null){
+					_signupOut=FormEServicesSetup.GetSignupOut();
+				}
+				UIHelper.ForceBringToFront(this);
+				Process.Start(_signupOut.SignupPortalUrl);
+				DialogResult=DialogResult.Abort;
+				return;
+			}
 			try {
 				await webViewMain.Init();
 			}
@@ -49,12 +58,6 @@ namespace OpenDental {
 			Text=Lan.g(this,"Loading")+"...";
 			if(_signupOut==null){
 				_signupOut=FormEServicesSetup.GetSignupOut();
-			}
-			if(ODBuild.IsWeb()) {
-				UIHelper.ForceBringToFront(this);
-				Process.Start(_signupOut.SignupPortalUrl);
-				DialogResult=DialogResult.Abort;
-				return;
 			}
 			ODException.SwallowAnyException(() => {
 			if(ODBuild.IsDebug()) {

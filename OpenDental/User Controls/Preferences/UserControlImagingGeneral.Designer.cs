@@ -139,7 +139,7 @@ namespace OpenDental {
 			// textDecimals
 			// 
 			this.textDecimals.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.textDecimals.Location = new System.Drawing.Point(392, 67);
+			this.textDecimals.Location = new System.Drawing.Point(387, 67);
 			this.textDecimals.MaxVal = 20;
 			this.textDecimals.Name = "textDecimals";
 			this.textDecimals.Size = new System.Drawing.Size(48, 20);
@@ -148,7 +148,7 @@ namespace OpenDental {
 			// textScale
 			// 
 			this.textScale.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.textScale.Location = new System.Drawing.Point(392, 41);
+			this.textScale.Location = new System.Drawing.Point(387, 41);
 			this.textScale.MaxVal = 100000000D;
 			this.textScale.MinVal = -100000000D;
 			this.textScale.Name = "textScale";
@@ -158,7 +158,7 @@ namespace OpenDental {
 			// textUnits
 			// 
 			this.textUnits.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.textUnits.Location = new System.Drawing.Point(392, 15);
+			this.textUnits.Location = new System.Drawing.Point(387, 15);
 			this.textUnits.Name = "textUnits";
 			this.textUnits.Size = new System.Drawing.Size(48, 20);
 			this.textUnits.TabIndex = 0;
@@ -167,7 +167,7 @@ namespace OpenDental {
 			// label34
 			// 
 			this.label34.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.label34.Location = new System.Drawing.Point(265, 44);
+			this.label34.Location = new System.Drawing.Point(260, 44);
 			this.label34.Name = "label34";
 			this.label34.Size = new System.Drawing.Size(124, 17);
 			this.label34.TabIndex = 46;
@@ -177,7 +177,7 @@ namespace OpenDental {
 			// label35
 			// 
 			this.label35.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.label35.Location = new System.Drawing.Point(271, 18);
+			this.label35.Location = new System.Drawing.Point(266, 18);
 			this.label35.Name = "label35";
 			this.label35.Size = new System.Drawing.Size(118, 17);
 			this.label35.TabIndex = 45;
@@ -187,7 +187,7 @@ namespace OpenDental {
 			// label36
 			// 
 			this.label36.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.label36.Location = new System.Drawing.Point(289, 70);
+			this.label36.Location = new System.Drawing.Point(284, 70);
 			this.label36.Name = "label36";
 			this.label36.Size = new System.Drawing.Size(100, 17);
 			this.label36.TabIndex = 44;

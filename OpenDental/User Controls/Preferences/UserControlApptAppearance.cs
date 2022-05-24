@@ -103,6 +103,7 @@ namespace OpenDental {
 			if(!PrefC.HasClinicsEnabled) {
 				comboApptSchedEnforceSpecialty.Visible=false;
 				labelApptSchedEnforceSpecialty.Visible=false;
+				labelApptSchedEnforceSpecialtyDetails.Visible=false;
 			}
 			checkReplaceBlockouts.Checked=PrefC.GetBool(PrefName.ReplaceExistingBlockout);
 		}

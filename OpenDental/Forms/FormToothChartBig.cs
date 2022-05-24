@@ -80,7 +80,13 @@ namespace OpenDental {
 			Cursor=Cursors.WaitCursor;
 			_toothChartRelay.BeginUpdate();
 			_toothChartRelay.SetOrthoMode(IsOrthoMode);
-			_toothChartRelay.SetToothNumberingNomenclature((ToothNumberingNomenclature)PrefC.GetInt(PrefName.UseInternationalToothNumbers));
+			ToothNumberingNomenclature toothNumberingNomenclature=(ToothNumberingNomenclature)PrefC.GetInt(PrefName.UseInternationalToothNumbers);
+			if(IsOrthoMode && toothNumberingNomenclature==ToothNumberingNomenclature.Universal){
+				_toothChartRelay.SetToothNumberingNomenclature(ToothNumberingNomenclature.Palmer);
+			}
+			else{
+				_toothChartRelay.SetToothNumberingNomenclature(toothNumberingNomenclature);
+			}
 			List<Def> listDefs=Defs.GetDefsForCategory(DefCat.ChartGraphicColors);
 			_toothChartRelay.ColorBackgroundMain=listDefs[10].ItemColor;
 			_toothChartRelay.ColorText=listDefs[11].ItemColor;

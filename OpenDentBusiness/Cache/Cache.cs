@@ -254,6 +254,7 @@ namespace OpenDentBusiness {
 				ds.Tables.Add(OrthoChartTabs.GetTableFromCache(doRefreshServerCache));
 				ds.Tables.Add(OrthoChartTabLinks.GetTableFromCache(doRefreshServerCache));
 				ds.Tables.Add(OrthoHardwareSpecs.GetTableFromCache(doRefreshServerCache));
+				ds.Tables.Add(OrthoRxs.GetTableFromCache(doRefreshServerCache));
 			}
 			if(listITypes.Contains(InvalidType.PatFields) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.PatFields.ToString());
@@ -614,6 +615,7 @@ namespace OpenDentBusiness {
 				OrthoChartTabs.FillCacheFromTable(ds.Tables["OrthoChartTab"]);
 				OrthoChartTabLinks.FillCacheFromTable(ds.Tables["OrthoChartTabLink"]);
 				OrthoHardwareSpecs.FillCacheFromTable(ds.Tables["OrthoHardwareSpec"]);
+				OrthoRxs.FillCacheFromTable(ds.Tables["OrthoRx"]);
 			}
 			if(listITypes.Contains(InvalidType.PatFields) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.PatFields.ToString());

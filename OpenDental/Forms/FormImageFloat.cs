@@ -138,6 +138,7 @@ namespace OpenDental {
 			LayoutManager.Add(_webBrowser,this);
 			if(ODBuild.IsWeb()) {
 				_cloudIframe=new CloudIframe();
+				_cloudIframe.Initialize();
 				_cloudIframe.HideIframe();
 				_cloudIframe.Dock=DockStyle.Fill;
 				LayoutManager.Add(_cloudIframe,this);
@@ -774,24 +775,24 @@ namespace OpenDental {
 					widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
 					g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
 					yTitle+=fontSubTitles.Height;
-				}
-				if(document.ProvNum!=0){
-					str=Providers.GetFormalName(document.ProvNum);
-					widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
-					g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
-					yTitle+=fontSubTitles.Height;
-				}
-				if(document.Description!=""){
-					str=document.Description;
-					widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
-					g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
-					yTitle+=fontSubTitles.Height;
-				}
-				if(document.ToothNumbers!=""){
-					str=Lan.g(this,"Tooth numbers: ") +document.ToothNumbers;
-					widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
-					g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
-					yTitle+=fontSubTitles.Height;
+					if(document.ProvNum!=0) {
+						str=Providers.GetFormalName(document.ProvNum);
+						widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
+						g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
+						yTitle+=fontSubTitles.Height;
+					}
+					if(document.Description!="") {
+						str=document.Description;
+						widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
+						g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
+						yTitle+=fontSubTitles.Height;
+					}
+					if(document.ToothNumbers!="") {
+						str=Lan.g(this,"Tooth numbers: ") +document.ToothNumbers;
+						widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
+						g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
+						yTitle+=fontSubTitles.Height;
+					}
 				}
 				yTitle+=20;
 				Rectangle rectangleAvail=new Rectangle(e.MarginBounds.X,yTitle,e.MarginBounds.Width,e.MarginBounds.Height-yTitle);

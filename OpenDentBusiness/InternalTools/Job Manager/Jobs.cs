@@ -10,7 +10,10 @@ using System.Windows.Forms;
 namespace OpenDentBusiness {
 	///<summary></summary>
 	public class Jobs {
-
+		///<summary>Defines delegate signature to be used for Jobs.NavTaskDelegate.</summary>
+		public delegate void NavToJobDelegate(long JobNum);
+		///<summary>Sent in from FormOpenDental. Allows static method for business layer to cause Job navigation in FormOpenDental.</summary>
+		public static NavToJobDelegate NavJobDelegate;
 		///<summary>Gets one Job from the db.</summary>
 		public static Job GetOne(long jobNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

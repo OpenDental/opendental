@@ -184,7 +184,7 @@ namespace OpenDental{
 			}
 			long clinicNum=GetClinicNumSelected();
 			List<Def> listDefs=Defs.GetDefsForCategory(DefCat.PaymentTypes,isShort:true);
-			//Show if enabled.  User could have all enabled.
+			//Users can have mutiple CC processing programs, so we will show every program they have enabled (and have set up).
 			if(progPayConnect.Enabled 
 				&& !PIn.Bool(ProgramProperties.GetPropVal(progPayConnect.ProgramNum,PayConnect.ProgramProperties.PayConnectPreventSavingNewCC,clinicNum))) 
 			{
@@ -199,15 +199,14 @@ namespace OpenDental{
 						butPayConnect.Visible=true;
 					}
 				}
-				else {//if clinics are disabled, PayConnect is enabled if marked enabled
+				else {//if clinics are disabled, PayConnect button will be visible if PayConnect has been enabled in program links
 					butPayConnect.Visible=true;
 				}
 			}
-			//show if enabled.  User could have both enabled.
 			if(progXcharge.Enabled
 				&& !PIn.Bool(ProgramProperties.GetPropVal(progXcharge.ProgramNum,ProgramProperties.PropertyDescs.XCharge.XChargePreventSavingNewCC,clinicNum)))
 			{
-				if(!PrefC.HasClinicsEnabled) {//if clinics are enabled, X-Charge is enabled if the PaymentType is valid and the Username and Password are not blank
+				if(PrefC.HasClinicsEnabled) {//if clinics are enabled, X-Charge is enabled if the PaymentType is valid and the Username and Password are not blank
 					string paymentType=ProgramProperties.GetPropVal(progXcharge.ProgramNum,"PaymentType",clinicNum);
 					if(!string.IsNullOrEmpty(ProgramProperties.GetPropVal(progXcharge.ProgramNum,"Username",clinicNum))
 						&& !string.IsNullOrEmpty(ProgramProperties.GetPropVal(progXcharge.ProgramNum,"Password",clinicNum))
@@ -216,14 +215,14 @@ namespace OpenDental{
 						panelXcharge.Visible=true;
 					}
 				}
-				else {//if clinics are disabled, X-Charge is enabled if marked enabled
+				else {//if clinics are disabled, X-Charge button will be visible if X-Charge has been enabled in program links
 					panelXcharge.Visible=true;
 				}
 			}
 			if(progPaySimple.Enabled
 				&& !PIn.Bool(ProgramProperties.GetPropVal(progPaySimple.ProgramNum,PaySimple.PropertyDescs.PaySimplePreventSavingNewCC,clinicNum)))
 			{
-				if(PrefC.HasClinicsEnabled) {//if clinics are enabled, PayConnect is enabled if the PaymentType is valid and the Username and Password are not blank
+				if(PrefC.HasClinicsEnabled) {//if clinics are enabled, PaySimple is enabled if the PaymentType is valid and the Username and Password are not blank
 					string paymentType=ProgramProperties.GetPropValForClinicOrDefault(progPaySimple.ProgramNum,PaySimple.PropertyDescs.PaySimplePayTypeCC,clinicNum);
 					if(!string.IsNullOrEmpty(ProgramProperties.GetPropValForClinicOrDefault(progPaySimple.ProgramNum,PaySimple.PropertyDescs.PaySimpleApiUserName,clinicNum))
 						&& !string.IsNullOrEmpty(ProgramProperties.GetPropValForClinicOrDefault(progPaySimple.ProgramNum,PaySimple.PropertyDescs.PaySimpleApiKey,clinicNum))
@@ -231,9 +230,9 @@ namespace OpenDental{
 					{
 						butPaySimple.Visible=true;
 					}
-					else {//if clinics are disabled, PayConnect is enabled if marked enabled
-						butPaySimple.Visible=true;
-					}
+				}
+				else {//if clinics are disabled, PaySimple button will be visible if PaySimple has been enabled in program links
+					butPaySimple.Visible=true;
 				}
 			}
 			if(progEdgeExpress.Enabled
@@ -246,7 +245,7 @@ namespace OpenDental{
 						panelEdgeExpress.Visible=true;
 					}
 				}
-				else {//if clinics are disabled, X-Charge is enabled if marked enabled
+				else {//if clinics are disabled, EdgeExpress button will be visible if EdgeExpress has been enabled in program links
 					panelEdgeExpress.Visible=true;
 				}
 			}

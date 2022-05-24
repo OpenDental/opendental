@@ -28,6 +28,18 @@ namespace OpenDental {
 			List<SheetFieldType> listSheetFieldTypes=SheetDefs.GetVisibleButtons(SheetDefCur.SheetType);
 			butOutputText.Visible=listSheetFieldTypes.Contains(SheetFieldType.OutputText);
 			butInputField.Visible=listSheetFieldTypes.Contains(SheetFieldType.InputField);
+			butStaticText.Visible=listSheetFieldTypes.Contains(SheetFieldType.StaticText);
+			butCheckBox.Visible=listSheetFieldTypes.Contains(SheetFieldType.CheckBox);
+			butComboBox.Visible=listSheetFieldTypes.Contains(SheetFieldType.ComboBox);
+			butImage.Visible=listSheetFieldTypes.Contains(SheetFieldType.Image);
+			butPatImage.Visible=listSheetFieldTypes.Contains(SheetFieldType.PatImage);
+			butLine.Visible=listSheetFieldTypes.Contains(SheetFieldType.Line);
+			butRectangle.Visible=listSheetFieldTypes.Contains(SheetFieldType.Rectangle);
+			butSigBox.Visible=listSheetFieldTypes.Contains(SheetFieldType.SigBox);
+			butSigBoxPractice.Visible=listSheetFieldTypes.Contains(SheetFieldType.SigBoxPractice);
+			butSpecial.Visible=listSheetFieldTypes.Contains(SheetFieldType.Special);
+			butGrid.Visible=listSheetFieldTypes.Contains(SheetFieldType.Grid);
+			butScreenChart.Visible=listSheetFieldTypes.Contains(SheetFieldType.ScreenChart);
 		}
 
 		private void butOutputText_Click(object sender,EventArgs e) {

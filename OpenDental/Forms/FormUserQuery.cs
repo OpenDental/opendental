@@ -245,7 +245,7 @@ namespace OpenDental {
 		}
 
 		private void butPrint_Click(object sender,EventArgs e) {
-			if(_gridResults.ListGridRows.Count == 0) {
+			if(_gridResults.ListGridRows.Count == 0 && _gridResults.Columns.Count == 0) {
 				MsgBox.Show(MessageBoxButtons.OK,Lan.g(this,"No report to print. Please run a query."));
 				return;
 			}
@@ -259,7 +259,7 @@ namespace OpenDental {
 		}
 
 		private void butPrintPreview_Click(object sender,EventArgs e) {
-			if(_gridResults.ListGridRows.Count == 0) {
+			if(_gridResults.ListGridRows.Count == 0 && _gridResults.Columns.Count == 0) {
 				MsgBox.Show(MessageBoxButtons.OK,Lan.g(this,"No report to preview. Please run a query."));
 				return;
 			}
@@ -307,7 +307,7 @@ namespace OpenDental {
 		}
 
 		private void butExport_Click(object sender,System.EventArgs e) {
-			if(_gridResults.ListGridRows.Count==0) {
+			if(_gridResults.ListGridRows.Count==0 && _gridResults.Columns.Count == 0) {
 				MessageBox.Show(Lan.g(this,"Please run query first"));
 				return;
 			}

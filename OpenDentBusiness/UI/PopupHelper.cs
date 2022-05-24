@@ -39,6 +39,13 @@ namespace OpenDentBusiness.UI {
 			}
 		}
 
+		private static void OpenJobNum(long jobNum) {
+			if(Jobs.NavJobDelegate!=null) {
+				Jobs.NavJobDelegate.Invoke(jobNum);
+			}
+		}
+
+
 		private static void OpenWebPage(string url) {
 			try {
 				if(!url.ToLower().StartsWith("http")) {
@@ -81,8 +88,8 @@ namespace OpenDentBusiness.UI {
 		#endregion Methods - Private
 
 		#region Methods - Public
-		///<summary>For a given context menu item, returns a sorted list of menu item links. This supports wiki, patient, task, URL, web, and file explorer.</summary>
-		public static List<MenuItem> GetContextMenuItemLinks(string contextMenuItemText,bool doShowPatNumLinks,bool doShowTaskNumLinks) {
+		///<summary>For a given context menu item, returns a sorted list of menu item links. This supports wiki, patient, task, job, URL, web, and file explorer.</summary>
+		public static List<MenuItem> GetContextMenuItemLinks(string contextMenuItemText,bool DoShowRightClickLinks) {
 			List<MenuItem> listMenuItemLinks=new List<MenuItem>();
 			List<string> listStringMatches=new List<string>();
 			List<long> listNumMatches=new List<long>();
@@ -130,20 +137,26 @@ namespace OpenDentBusiness.UI {
 				EventHandler onClick=(s,eArg) => { OpenUNCPath(curMatch); };
 				listMenuItemLinks.Add(new MenuItem("File Explorer - "+listStringMatches[i],onClick));
 			}
-			if(doShowPatNumLinks) {
+			if(DoShowRightClickLinks) {
 				listNumMatches=GetPatNumsFromText(contextMenuItemText);
 				for(int i=0;i<listNumMatches.Count;i++) {
 					long curMatch=listNumMatches[i];
 					EventHandler onClick=(s,eArg) => { OpenPatNum(curMatch); };
 					listMenuItemLinks.Add(new MenuItem("PatNum - "+listNumMatches[i],onClick));
 				}
-			}
-			if(doShowTaskNumLinks) {
 				listNumMatches=GetTaskNumsFromText(contextMenuItemText);
 				for(int i=0;i<listNumMatches.Count;i++) {
 					long curMatch=listNumMatches[i];
 					EventHandler onClick=(s,eArg) => { OpenTaskNum(curMatch); };
 					listMenuItemLinks.Add(new MenuItem("TaskNum - "+listNumMatches[i],onClick));
+				}
+				if(PrefC.IsODHQ) {
+					listNumMatches=GetJobNumsFromText(contextMenuItemText);
+					for(int i = 0;i<listNumMatches.Count;i++) {
+						long curMatch = listNumMatches[i];
+						EventHandler onClick = (s,eArg) => { OpenJobNum(curMatch); };
+						listMenuItemLinks.Add(new MenuItem("JobNum - "+listNumMatches[i],onClick));
+					}
 				}
 			}
 			listMenuItemLinks=listMenuItemLinks.OrderByDescending(x => x.Text=="-").ThenBy(x => x.Text).ToList();//alphabetize the link items.
@@ -188,6 +201,17 @@ namespace OpenDentBusiness.UI {
 			List<long> listNumMatches=Regex.Matches(text,$@"{strTaskNum}\d+",RegexOptions.IgnoreCase)
 				.OfType<Match>()
 				.Select(x => PIn.Long(x.Groups[0].Value.Substring(strTaskNum.Length),false))//Get task num out of text.
+				.Distinct()
+				.ToList();
+			return listNumMatches;
+		}
+
+		public static List<long> GetJobNumsFromText(string text) {
+			//If this Regex pattern is ever changed, we may need to change the Select statement below.
+			string strJobNum = "jobnum:";
+			List<long> listNumMatches = Regex.Matches(text,$@"{strJobNum}\d+",RegexOptions.IgnoreCase)
+				.OfType<Match>()
+				.Select(x => PIn.Long(x.Groups[0].Value.Substring(strJobNum.Length),false))//Get Job num out of text.
 				.Distinct()
 				.ToList();
 			return listNumMatches;

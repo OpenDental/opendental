@@ -613,14 +613,16 @@ namespace OpenDental{
 					return;
 				}
 			}
-			string[] codes=_listDefsApptProcsQuickAdd[listQuickAdd.IndexFromPoint(e.Location)].ItemValue.Split(',');
-			for(int i = 0;i<codes.Length;i++) {
-				if(!ProcedureCodes.GetContainsKey(codes[i])) {//these are D codes, not codeNums.
-					MsgBox.Show(this,"Definition contains invalid code.");
-					return;
-				}
+			string[] stringArrayProcCodes=_listDefsApptProcsQuickAdd[listQuickAdd.IndexFromPoint(e.Location)].ItemValue.Split(',');
+			try {
+				//This is the only place where a toothnum is stored in the db in international format
+				ProcedureCodes.ValidateProcedureCodeEntry(stringArrayProcCodes,doAllowToothNum: true);
 			}
-			List<Procedure> listProceduresAdded=ApptEdit.QuickAddProcs(_appointment,_patient,codes.ToList(),comboProv.GetSelectedProvNum(),comboProvHyg.GetSelectedProvNum(),_listInsSubs,_listInsPlans,_listPatPlans,_listBenefits);
+			catch(Exception ex) {
+				MessageBox.Show(ex.Message);
+				return;
+			}
+			List<Procedure> listProceduresAdded=ApptEdit.QuickAddProcs(_appointment,_patient,stringArrayProcCodes.ToList(),comboProv.GetSelectedProvNum(),comboProvHyg.GetSelectedProvNum(),_listInsSubs,_listInsPlans,_listPatPlans,_listBenefits);
 			_listProceduresForAppointment=Procedures.GetProcsForApptEdit(_appointment);
 			listQuickAdd.SelectedIndex=-1;
 			FillProcedures();

@@ -49,6 +49,7 @@ namespace OpenDentBusiness.Crud{
 				orthoRx=new OrthoRx();
 				orthoRx.OrthoRxNum          = PIn.Long  (row["OrthoRxNum"].ToString());
 				orthoRx.OrthoHardwareSpecNum= PIn.Long  (row["OrthoHardwareSpecNum"].ToString());
+				orthoRx.Description         = PIn.String(row["Description"].ToString());
 				orthoRx.ToothRange          = PIn.String(row["ToothRange"].ToString());
 				orthoRx.ItemOrder           = PIn.Int   (row["ItemOrder"].ToString());
 				retVal.Add(orthoRx);
@@ -64,12 +65,14 @@ namespace OpenDentBusiness.Crud{
 			DataTable table=new DataTable(tableName);
 			table.Columns.Add("OrthoRxNum");
 			table.Columns.Add("OrthoHardwareSpecNum");
+			table.Columns.Add("Description");
 			table.Columns.Add("ToothRange");
 			table.Columns.Add("ItemOrder");
 			foreach(OrthoRx orthoRx in listOrthoRxs) {
 				table.Rows.Add(new object[] {
 					POut.Long  (orthoRx.OrthoRxNum),
 					POut.Long  (orthoRx.OrthoHardwareSpecNum),
+					            orthoRx.Description,
 					            orthoRx.ToothRange,
 					POut.Int   (orthoRx.ItemOrder),
 				});
@@ -91,12 +94,13 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="OrthoRxNum,";
 			}
-			command+="OrthoHardwareSpecNum,ToothRange,ItemOrder) VALUES(";
+			command+="OrthoHardwareSpecNum,Description,ToothRange,ItemOrder) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(orthoRx.OrthoRxNum)+",";
 			}
 			command+=
 				     POut.Long  (orthoRx.OrthoHardwareSpecNum)+","
+				+"'"+POut.String(orthoRx.Description)+"',"
 				+"'"+POut.String(orthoRx.ToothRange)+"',"
 				+    POut.Int   (orthoRx.ItemOrder)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
@@ -123,12 +127,13 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="OrthoRxNum,";
 			}
-			command+="OrthoHardwareSpecNum,ToothRange,ItemOrder) VALUES(";
+			command+="OrthoHardwareSpecNum,Description,ToothRange,ItemOrder) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(orthoRx.OrthoRxNum)+",";
 			}
 			command+=
 				     POut.Long  (orthoRx.OrthoHardwareSpecNum)+","
+				+"'"+POut.String(orthoRx.Description)+"',"
 				+"'"+POut.String(orthoRx.ToothRange)+"',"
 				+    POut.Int   (orthoRx.ItemOrder)+")";
 			if(useExistingPK || isRandomKeys) {
@@ -144,6 +149,7 @@ namespace OpenDentBusiness.Crud{
 		public static void Update(OrthoRx orthoRx) {
 			string command="UPDATE orthorx SET "
 				+"OrthoHardwareSpecNum=  "+POut.Long  (orthoRx.OrthoHardwareSpecNum)+", "
+				+"Description         = '"+POut.String(orthoRx.Description)+"', "
 				+"ToothRange          = '"+POut.String(orthoRx.ToothRange)+"', "
 				+"ItemOrder           =  "+POut.Int   (orthoRx.ItemOrder)+" "
 				+"WHERE OrthoRxNum = "+POut.Long(orthoRx.OrthoRxNum);
@@ -156,6 +162,10 @@ namespace OpenDentBusiness.Crud{
 			if(orthoRx.OrthoHardwareSpecNum != oldOrthoRx.OrthoHardwareSpecNum) {
 				if(command!="") { command+=",";}
 				command+="OrthoHardwareSpecNum = "+POut.Long(orthoRx.OrthoHardwareSpecNum)+"";
+			}
+			if(orthoRx.Description != oldOrthoRx.Description) {
+				if(command!="") { command+=",";}
+				command+="Description = '"+POut.String(orthoRx.Description)+"'";
 			}
 			if(orthoRx.ToothRange != oldOrthoRx.ToothRange) {
 				if(command!="") { command+=",";}
@@ -178,6 +188,9 @@ namespace OpenDentBusiness.Crud{
 		///Does not make any changes to the database and can be called before remoting role is checked.</summary>
 		public static bool UpdateComparison(OrthoRx orthoRx,OrthoRx oldOrthoRx) {
 			if(orthoRx.OrthoHardwareSpecNum != oldOrthoRx.OrthoHardwareSpecNum) {
+				return true;
+			}
+			if(orthoRx.Description != oldOrthoRx.Description) {
 				return true;
 			}
 			if(orthoRx.ToothRange != oldOrthoRx.ToothRange) {

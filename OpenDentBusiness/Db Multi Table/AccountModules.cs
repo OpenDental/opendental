@@ -1694,6 +1694,9 @@ namespace OpenDentBusiness {
 				else if(claimStatus=="S"){
 					row["description"]+="\r\n"+Lans.g("ContrAccount","Sent");
 				}
+				else if(claimStatus=="I"){
+					row["description"]+="\r\n"+Lans.g("ContrAccount","Hold for In Process");
+				}
 				decimal claimLabFeeTotalAmt=0;
 				//For Canada, add lab fee amounts into total claim amount.
 				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {

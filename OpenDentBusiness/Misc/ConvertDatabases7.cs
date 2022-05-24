@@ -3277,6 +3277,7 @@ namespace OpenDentBusiness {
 			command=@"CREATE TABLE orthorx (
 				OrthoRxNum bigint NOT NULL auto_increment PRIMARY KEY,
 				OrthoHardwareSpecNum bigint NOT NULL,
+				Description varchar(255) NOT NULL,
 				ToothRange varchar(255) NOT NULL,
 				ItemOrder int NOT NULL,
 				INDEX(OrthoHardwareSpecNum)
