@@ -1053,7 +1053,6 @@ namespace OpenDental{
 			}
 			FillPatientButton(patient2);
 			Plugins.HookAddCode(this,"FormOpenDental.OnPatient_Click_end"); //historical name 
-			ApiEvents.FireUiEvent(EnumApiUiEventType.PatientSelected,patient2);
 		}
 		#endregion Methods - Event Handlers - Misc
 
@@ -2046,6 +2045,7 @@ namespace OpenDental{
 			Text=PatientL.GetMainTitle(patient, Clinics.ClinicNum);
 			bool patChanged=PatientL.AddPatsToMenu(menuPatient,new EventHandler(menuPatient_Click),patient.GetNameLF(),patient.PatNum);
 			if(patChanged){
+				ApiEvents.FireUiEvent(EnumApiUiEventType.PatientSelected,patient);
 				if(AutomationL.Trigger(AutomationTrigger.OpenPatient,null,patient.PatNum)) {//if a trigger happened
 					if(controlAppt.Visible) {
 						controlAppt.MouseUpForced();
@@ -5454,15 +5454,22 @@ namespace OpenDental{
 		}
 
 		private void menuItemProviders_Click(object sender, System.EventArgs e) {
-			if(Security.IsAuthorized(Permissions.ProviderEdit,true) || Security.IsAuthorized(Permissions.AdminDentalStudents,true) || Security.IsAuthorized(Permissions.AdminDentalInstructors,true)) {
-				using FormProviderSetup formProviderSetup=new FormProviderSetup();
-				formProviderSetup.ShowDialog();
-				SecurityLogs.MakeLogEntry(Permissions.ProviderEdit,0,"Providers");
-				return;
+			if(!Security.IsAuthorized(Permissions.ProviderEdit,true)){
+				if(PrefC.GetBool(PrefName.EasyHideDentalSchools)) {
+					MessageBox.Show(Lans.g("Security","Not authorized for")+"\r\n" +GroupPermissions.GetDesc(Permissions.ProviderEdit) +" "+Lans.g("Security","and")+"\r\n"
+						+ Lans.g("Security","Dental Schools is not enabled in 'Setup' > 'Advanced Setup' > 'Show Features'"));
+					return;
+				}
+				else if(!Security.IsAuthorized(Permissions.AdminDentalStudents,true) && !Security.IsAuthorized(Permissions.AdminDentalInstructors,true)) {
+					MessageBox.Show(Lans.g("Security","Not authorized for")+"\r\n" +GroupPermissions.GetDesc(Permissions.ProviderEdit)
+						+" "+Lans.g("Security","or")+" "+GroupPermissions.GetDesc(Permissions.AdminDentalStudents)
+						+" "+Lans.g("Security","or")+" "+GroupPermissions.GetDesc(Permissions.AdminDentalInstructors));
+					return;
+				}
 			}
-			MessageBox.Show(Lans.g("Security","Not authorized for")+"\r\n" +GroupPermissions.GetDesc(Permissions.ProviderEdit)
-				+" "+Lans.g("Security","or")+" "+GroupPermissions.GetDesc(Permissions.AdminDentalStudents)
-				+" "+Lans.g("Security","or")+" "+GroupPermissions.GetDesc(Permissions.AdminDentalInstructors));
+			using FormProviderSetup formProviderSetup = new FormProviderSetup();
+			formProviderSetup.ShowDialog();
+			SecurityLogs.MakeLogEntry(Permissions.ProviderEdit,0,"Providers");
 		}
 
 		private void menuItemPrescriptions_Click(object sender, System.EventArgs e) {

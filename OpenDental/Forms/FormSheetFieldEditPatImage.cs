@@ -66,10 +66,12 @@ namespace OpenDental {
 			if(formImagePickerPatient.DocNumSelected>0){
 				long docNumSelected=formImagePickerPatient.DocNumSelected;
 				SheetFieldCur.FieldValue=docNumSelected.ToString();
+				SheetFieldCur.FieldName=Documents.GetByNum(docNumSelected).DocCategory.ToString();//Returns new document if docnum is not found, so no need to check for null
 			}
 			if(formImagePickerPatient.MountNumSelected>0){
 				long mountNumSelected=formImagePickerPatient.MountNumSelected;
 				SheetFieldCur.FieldValue="MountNum:"+mountNumSelected.ToString();
+				SheetFieldCur.FieldName=Mounts.GetByNum(mountNumSelected).DocCategory.ToString();//Returns new mount if mountnum is not found so no need to check for null
 			}
 			FillFields();
 		}

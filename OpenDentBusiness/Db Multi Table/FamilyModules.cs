@@ -44,9 +44,6 @@ namespace OpenDentBusiness {
 					case "Payor Types":
 						data.PayorTypeDesc=PayorTypes.GetCurrentDescription(patNum);
 						break;
-					case "PatFields":
-						data.ListPatFieldDefLinks=FieldDefLinks.GetForLocation(FieldLocations.Family);
-						break;
 					case "References":
 						data.ListCustRefEntries=CustRefEntries.GetEntryListForCustomer(patNum);
 						break;
@@ -100,7 +97,6 @@ namespace OpenDentBusiness {
 			public List<Guardian> ListGuardians;
 			public List<CustRefEntry> ListCustRefEntries;
 			public List<PatRestriction> ListPatRestricts;
-			public List<FieldDefLink> ListPatFieldDefLinks;
 			public DiscountPlan DiscountPlan;
 			///<summary>Only has the fields from Patients.GetLim.</summary>
 			public Patient ResponsibleParty;

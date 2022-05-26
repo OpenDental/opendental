@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Text;
 using System.Windows.Forms;
+using CodeBase;
 using OpenDentBusiness;
 
 namespace OpenDental {
@@ -52,6 +53,16 @@ namespace OpenDental {
 					listboxComboOptions.Items.Add(option);
 				}
 			}
+			//Public Health is Hidden or no Snomed Codes downloaded
+			if(PrefC.GetBool(PrefName.EasyHidePublicHealth) || Snomeds.GetCodeCount()==0) {
+				for(int i=listComboType.Items.Count-1;i>=0;i--) {
+					if(listComboType.Items.GetListBoxItemAt(i).Text.In("Gender Identity","Sexual Orientation")) {
+						listComboType.Items.RemoveAt(i);
+					}
+				}
+			}
+			listComboType.SelectedIndex=0;
+			butAdd.Enabled=IsAddButtonEnabledForIndex();
 		}
 
 		private void textOption_KeyDown(object sender,KeyEventArgs e) {
@@ -64,22 +75,31 @@ namespace OpenDental {
 
 		private void listComboType_SelectionChangeCommitted(object sender,EventArgs e) {
 			listboxComboOptions.Items.Clear();
-			if(listComboType.SelectedIndex==0) {//General
+			if(listComboType.SelectedItem.ToString()=="General") {//General
 				listboxComboOptions.Enabled=true;
 				butRemove.Enabled=true;
 				butUp.Enabled=true;
 				butDown.Enabled=true;
+				butAdd.Enabled=true;
 			}
 			else {
-				if(listComboType.SelectedIndex==1) {//Patient Race
+				if(listComboType.SelectedItem.ToString()=="Gender Identity") {//Gender Identity
+					string[] enumVals=Enum.GetNames(typeof(GenderId));
+					listboxComboOptions.Items.AddList(enumVals,x => x.ToString());
+				}
+				else if(listComboType.SelectedItem.ToString()=="Sexual Orientation") {//Sexual Orientation
+					string[] enumVals=Enum.GetNames(typeof(SexOrientation));
+					listboxComboOptions.Items.AddList(enumVals,x => x.ToString());
+				}
+				else if(listComboType.SelectedItem.ToString()=="Patient Race") {//Patient Race
 					string[] enumVals=Enum.GetNames(typeof(PatientRaceOld));
 					listboxComboOptions.Items.AddList(enumVals,x => x.ToString());
 				}
-				else if(listComboType.SelectedIndex==2) {//Patient Grade
+				else if(listComboType.SelectedItem.ToString()=="Patient Grade") {//Patient Grade
 					string[] enumVals=Enum.GetNames(typeof(PatientGrade));
 					listboxComboOptions.Items.AddList(enumVals,x => x.ToString());
 				}
-				else if(listComboType.SelectedIndex==3) {//Urgency
+				else if(listComboType.SelectedItem.ToString()=="Urgency") {//Urgency
 					string[] enumVals=Enum.GetNames(typeof(TreatmentUrgency));
 					listboxComboOptions.Items.AddList(enumVals,x => x.ToString());
 				}
@@ -87,7 +107,14 @@ namespace OpenDental {
 				butRemove.Enabled=false;
 				butUp.Enabled=false;
 				butDown.Enabled=false;
+				//Disable Add button if Gender Identity or Sexual Orientation is selected, otherwise enable.
+				butAdd.Enabled=IsAddButtonEnabledForIndex();
 			}
+		}
+
+		private bool IsAddButtonEnabledForIndex() {
+			//Add button is disabled for the following items.
+			return !listComboType.SelectedItem.ToString().In("Gender Identity","Sexual Orientation");
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
@@ -145,6 +172,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
 			}
+			SheetFieldDefCur.FieldName=listComboType.SelectedItem.ToString();
 			SheetFieldDefCur.XPos=PIn.Int(textXPos.Text);
 			SheetFieldDefCur.YPos=PIn.Int(textYPos.Text);
 			SheetFieldDefCur.Width=PIn.Int(textWidth.Text);

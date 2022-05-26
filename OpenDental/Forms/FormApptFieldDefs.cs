@@ -12,7 +12,6 @@ namespace OpenDental{
 	/// </summary>
 	public partial class FormApptFieldDefs:FormODBase {
 		private List<ApptFieldDef> _listApptFieldDefs;
-		private List<FieldDefLink> _listFieldDefLinks;
 		///<summary></summary>
 		public FormApptFieldDefs()
 		{
@@ -28,7 +27,6 @@ namespace OpenDental{
 			LayoutMenu();
 			ApptFieldDefs.RefreshCache();
 			_listApptFieldDefs=ApptFieldDefs.GetDeepCopy();
-			_listFieldDefLinks=FieldDefLinks.GetAll();
 			FillListMain();
 		}
 
@@ -43,7 +41,7 @@ namespace OpenDental{
 			_listApptFieldDefs.Sort(CompareItemOrder);
 			bool needsUpdate=false;
 			for(int i=0;i<_listApptFieldDefs.Count;i++) {
-				if(_listFieldDefLinks.Exists(x => x.FieldDefType==FieldDefTypes.Appointment && x.FieldDefNum==_listApptFieldDefs[i].ApptFieldDefNum)) {
+				if(FieldDefLinks.GetExists(x => x.FieldDefType==FieldDefTypes.Appointment && x.FieldDefNum==_listApptFieldDefs[i].ApptFieldDefNum)) {
 					listMain.Items.Add(_listApptFieldDefs[i].FieldName+" (Hidden)");
 				}
 				else {
@@ -64,7 +62,6 @@ namespace OpenDental{
 			ApptFieldDefs.RefreshCache();
 			using FormFieldDefLink formFieldDefLink=new FormFieldDefLink(FieldLocations.AppointmentEdit);
 			formFieldDefLink.ShowDialog();
-			_listFieldDefLinks=FieldDefLinks.GetAll();//Must refresh this list because some FieldDefs may have been hidden or unhidden.
 			FillListMain();
 		}
 

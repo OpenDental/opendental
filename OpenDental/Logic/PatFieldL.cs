@@ -7,16 +7,11 @@ using OpenDentBusiness;
 namespace OpenDental {
 	public class PatFieldL {
 		///<summary>Adds the passed-in pat fields to the grid. Adds any fields that have been renamed at the end of the grid if the preference is enabled. The tag on the row will be the PatFieldDef or the PatField if the PatFieldDef has been renamed.</summary>
-		public static void AddPatFieldsToGrid(GridOD grid,List<PatField> listPatFields,FieldLocations fieldLocation,
-			List<FieldDefLink> listFieldDefLinks=null) 
-		{
+		public static void AddPatFieldsToGrid(GridOD grid,List<PatField> listPatFields,FieldLocations fieldLocation) {
 			List<PatFieldDef> listPatFieldDefs=PatFieldDefs.GetDeepCopy(true);
-			if(listFieldDefLinks is null){
-				listFieldDefLinks=FieldDefLinks.GetForLocation(fieldLocation).FindAll(x => x.FieldDefType==FieldDefTypes.Patient);
-			}
 			//Add a row for each existing PatFieldDef 
 			foreach(PatFieldDef patFieldDef in listPatFieldDefs) {
-				if(listFieldDefLinks.Exists(x => x.FieldDefNum==patFieldDef.PatFieldDefNum && x.FieldDefType==FieldDefTypes.Patient)) {
+				if(FieldDefLinks.GetExists(x => x.FieldDefNum==patFieldDef.PatFieldDefNum && x.FieldDefType==FieldDefTypes.Patient && x.FieldLocation==fieldLocation)) {
 					continue;
 				}
 				GridRow row=new GridRow();

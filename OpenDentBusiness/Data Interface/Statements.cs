@@ -1000,9 +1000,24 @@ namespace OpenDentBusiness {
 			return tempPath;
 		}
 
-		public static void WriteStatementToCSV(Statement statement,string fileName,string filePath) {
+		///<summary></summary>
+		public static string SaveStatementAsCSV(Statement statement) {
+			long statementCategory = Defs.GetImageCat(ImageCategorySpecial.S);
+			string prependCategoryNum = "";
+			if(statementCategory > 0) {
+				//Files that start with "_###_" will automatically have Document entries created for them when the Imaging module loads.
+				prependCategoryNum="_" + statementCategory + "_";
+			}
+			Patient patient=Patients.GetPat(statement.PatNum);
+			string patFolder=ImageStore.GetPatientFolder(patient,ImageStore.GetPreferredAtoZpath());
+			string fileName=prependCategoryNum+patient.LName+patient.FName+statement.DocNum.ToString()+".csv";
+			return WriteStatementToCSV(statement,fileName,patFolder);
+    }
+
+		///<summary></summary>
+		private static string WriteStatementToCSV(Statement statement,string fileName,string filePath) {
 			if(statement==null) {
-				return;
+				return "";
 			}
 			string path=FileAtoZ.CombinePaths(filePath,fileName); 
 			DataSet dataSet=AccountModules.GetStatementDataSet(statement,true,doIncludePatLName:PrefC.IsODHQ);
@@ -1041,6 +1056,7 @@ namespace OpenDentBusiness {
 					+$"\"{dataTable.Rows[i]["balance"].ToString()}\",");
 			}
 			File.WriteAllText(path,exportCSV.ToString());
+			return path;
 		}
 		#endregion
 	}

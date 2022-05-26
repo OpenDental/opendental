@@ -883,7 +883,12 @@ namespace OpenDental {
 			listBoxFields.SelectedIndices.Clear();
 			listBoxFields.SetSelected(idx,true);
 			panelMain.Invalidate();
-			SheetFieldDef sheetFieldDef=listBoxFields.GetSelected<SheetFieldDef>();
+			//ListBox is multi-extended so we have to use GetListSelected. Because this is double-click, user should only be able to select a single item anyways, so retrieve first item in list.
+			List<SheetFieldDef> listSheetFieldDefs=listBoxFields.GetListSelected<SheetFieldDef>();
+			if(listSheetFieldDefs.Count==0) {
+				return;
+			}
+			SheetFieldDef sheetFieldDef=listSheetFieldDefs[0];
 			SheetFieldDef SheetFieldDefOld=sheetFieldDef.Copy();
 			LaunchEditWindow(sheetFieldDef,isEditMobile:false);
 			if(sheetFieldDef.TabOrder!=SheetFieldDefOld.TabOrder) { //otherwise a different control will be selected.
@@ -2673,9 +2678,16 @@ namespace OpenDental {
 			List<SheetFieldDef> listSheetFieldDefInputMedList=new List<SheetFieldDef>();
 			List<SheetFieldDef> listSheetFieldDefCheckMedList=new List<SheetFieldDef>();
 			List<SheetFieldDef> listSheetFieldDefErroneousDuplicates=new List<SheetFieldDef>();
+			List<SheetFieldDef> listSheetFieldDefToDelete=new List<SheetFieldDef>();
 			//Verify radio button groups.
 			for(int i=0;i<_sheetDef.SheetFieldDefs.Count;i++) {
 				SheetFieldDef sheetFieldDef=_sheetDef.SheetFieldDefs[i];
+				if(PrefC.GetBool(PrefName.EasyHidePublicHealth) //Public health disabled
+					&& _sheetDef.SheetType==SheetTypeEnum.PatientForm //Is Patient Form
+					&& sheetFieldDef.FieldName.In("Sexual Orientation","Gender Identity")) //Contains public health fields
+				{
+					listSheetFieldDefToDelete.Add(sheetFieldDef);
+				}
 				if(sheetFieldDef.FieldType==SheetFieldType.CheckBox && sheetFieldDef.IsRequired && (sheetFieldDef.RadioButtonGroup!="" //for misc radio groups
 				                                                                    || sheetFieldDef.RadioButtonValue!="")) //for built-in radio groups
 				{
@@ -2727,6 +2739,15 @@ namespace OpenDental {
 				string errorMessage=GetDuplicateSheetFieldDefErrorMessage(listSheetFieldDefErroneousDuplicates);
 				MessageBox.Show(errorMessage);
 				return false;
+			}
+			if(listSheetFieldDefToDelete.Count>0) {
+				StringBuilder fieldsDeletedMessage=new StringBuilder();
+				fieldsDeletedMessage.AppendLine("Public Health is no longer enabled. The following fields have been deleted:");
+				listSheetFieldDefToDelete.ForEach(x => { 
+					fieldsDeletedMessage.AppendLine(x.FieldName);
+					_sheetDef.SheetFieldDefs.Remove(x);
+				});
+				MessageBox.Show(fieldsDeletedMessage.ToString());
 			}
 			//Check that each check med has a matching med input.
 			if(listSheetFieldDefCheckMedList.Count!=0 && listSheetFieldDefInputMedList.Any(x => !listSheetFieldDefCheckMedList.Exists(y => y.FieldName==x.FieldName.Replace("inputMed","checkMed")))) {

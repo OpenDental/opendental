@@ -230,11 +230,18 @@ namespace OpenDental{
 				return;
 			}
 			string insPlanMergeComputerName=PrefC.GetStringNoCache(PrefName.InsPlanMergeInProgress);
-			//If accessing from the computer that is 'merging' the user will be able to merge again.  
-			//This allow the user to set the insPlanMergeInProgress to "" should it be corrupted somehow
-			if(insPlanMergeComputerName!="" && insPlanMergeComputerName != ODEnvironment.MachineName) {
-				MsgBox.Show($"Merging is already in progress from workstation {insPlanMergeComputerName}. Please wait for them to complete and try again.");
-				return;
+			if(insPlanMergeComputerName!="") {
+				if(insPlanMergeComputerName==ODEnvironment.MachineName){
+					if(!MsgBox.Show(MsgBoxButtons.YesNo,$"A merge is already in progress on this workstation. Please wait for the merge to complete before beginning a new merge." +
+						$" Only begin a new merge if you have verified there is no instance of Open Dental on this machine with a merge in progess. Beginning a new merge while another" +
+						$" merge is in progress could cause errors. Continue?")){
+						return;
+					}
+				}
+				else {
+					MsgBox.Show($"Merging is already in progress from workstation {insPlanMergeComputerName}. Please wait for them to complete and try again.");
+					return;
+				}
 			}
 			if(gridMain.SelectedIndices.Length<2) {
 				MessageBox.Show(Lan.g(this,"Please select at least two items first."));

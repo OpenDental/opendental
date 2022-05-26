@@ -207,9 +207,10 @@ namespace OpenDental{
 					//...
 					case "PatFields":
 						PatField field;
-						List<FieldDefLink> listFieldDefLinks=FieldDefLinks.GetForLocation(FieldLocations.GroupNote);
 						for(int i=0;i<_listPatFieldDefs.Count;i++) {
-							if(listFieldDefLinks.Exists(x => x.FieldDefNum==_listPatFieldDefs[i].PatFieldDefNum && x.FieldDefType==FieldDefTypes.Patient)) {
+							if(FieldDefLinks.GetExists(x => x.FieldDefNum==_listPatFieldDefs[i].PatFieldDefNum && x.FieldDefType==FieldDefTypes.Patient 
+								&& x.FieldLocation==FieldLocations.GroupNote)) 
+							{
 								continue;
 							}
 							if(i>0){

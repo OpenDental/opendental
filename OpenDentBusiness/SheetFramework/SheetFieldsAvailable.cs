@@ -183,7 +183,6 @@ namespace OpenDentBusiness{
 
 		private static SheetFieldDef NewSpecial(string fieldName) {
 			return SheetFieldDef.NewSpecial(fieldName,0,0,0,0);
-
 		}
 
 		private static List<SheetFieldDef> GetLabelPatient(OutInCheck outInCheck) {

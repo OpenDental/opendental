@@ -39,8 +39,6 @@ namespace OpenDental{
 		///<summary>This is a list of all operatories available to add to this view based on AssignedClinicNum and the clinic the ops are assigned to.  If the clinics show feature is turned off (EasyNoClinics=true) or if the view is not assigned to a clinic, all unhidden ops will be available.  If an op is not assigned to a clinic, it will only be available to add to views also not assigned to a clinic.  If the view is assigned to a clinic, ops assigned to the same clinic will be available to add to the view.</summary>
 		private List<long> _listOpNums;
 		private List<Provider> _listProviders;
-		///<summary>This list is used to check the ApptFieldDefs if they are hidden. That way they won't be added to the grids.</summary>
-		private List<FieldDefLink> _listFieldDefLinks;
 		private bool _isMobileViewUpdated;
 
 		///<summary></summary>
@@ -99,7 +97,6 @@ namespace OpenDental{
 			listStackUR.SelectedIndex=(int)ApptViewCur.StackBehavUR;
 			listStackLR.SelectedIndex=(int)ApptViewCur.StackBehavLR;
 			_listApptViewItemsDisplayedAll=new List<ApptViewItem>(_listApptViewItemsDef);
-			_listFieldDefLinks=FieldDefLinks.GetAll();
 			FillElements();
 		}
 
@@ -578,7 +575,7 @@ namespace OpenDental{
 
 		///<summary>Returns the ApptFieldDef.FieldName with the tag (hidden) if the ApptFieldDef is hidden. Otherwise return the FieldName.</summary>
 		private string MarkFieldNameIfHidden(long apptFieldDefNum) {
-			if(_listFieldDefLinks.Exists(x => x.FieldDefNum==apptFieldDefNum && x.FieldDefType==FieldDefTypes.Appointment)) {
+			if(FieldDefLinks.GetExists(x => x.FieldDefNum==apptFieldDefNum && x.FieldDefType==FieldDefTypes.Appointment)) {
 				return ApptFieldDefs.GetFieldName(apptFieldDefNum)+" (Hidden)";
 			}
 			return ApptFieldDefs.GetFieldName(apptFieldDefNum);

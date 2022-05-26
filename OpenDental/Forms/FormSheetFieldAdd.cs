@@ -33,6 +33,7 @@ namespace OpenDental {
 			SheetField sheetField=new SheetField();
 			sheetField.IsNew=true;
 			sheetField.FieldType=SheetFieldType.PatImage;
+			sheetField.FieldName="";
 			sheetField.FieldValue="";
 			sheetField.SheetNum=SheetCur.SheetNum;
 			sheetField.XPos=0;

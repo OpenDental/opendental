@@ -55,6 +55,9 @@ namespace OpenDental {
 			this.checkPreferredPronouns = new System.Windows.Forms.CheckBox();
 			this.groupBoxPatientEdit = new OpenDental.UI.GroupBoxOD();
 			this.groupBoxHIPAA = new OpenDental.UI.GroupBoxOD();
+			this.labelUsePhoneNumTableDetails = new System.Windows.Forms.Label();
+			this.labelSelectProvDetails = new System.Windows.Forms.Label();
+			this.labelCobSendPaidByInsAtDetails = new System.Windows.Forms.Label();
 			this.groupBoxCOB.SuspendLayout();
 			this.groupBoxClaimSnapshot.SuspendLayout();
 			this.groupBoxSuperFamily.SuspendLayout();
@@ -119,7 +122,7 @@ namespace OpenDental {
 			this.groupBoxClaimSnapshot.Controls.Add(this.textClaimSnapshotRunTime);
 			this.groupBoxClaimSnapshot.Controls.Add(this.label30);
 			this.groupBoxClaimSnapshot.Controls.Add(this.label31);
-			this.groupBoxClaimSnapshot.Location = new System.Drawing.Point(20, 468);
+			this.groupBoxClaimSnapshot.Location = new System.Drawing.Point(20, 472);
 			this.groupBoxClaimSnapshot.Name = "groupBoxClaimSnapshot";
 			this.groupBoxClaimSnapshot.Size = new System.Drawing.Size(450, 65);
 			this.groupBoxClaimSnapshot.TabIndex = 284;
@@ -169,7 +172,7 @@ namespace OpenDental {
 			this.groupBoxSuperFamily.Controls.Add(this.checkSuperFamSync);
 			this.groupBoxSuperFamily.Controls.Add(this.checkSuperFamAddIns);
 			this.groupBoxSuperFamily.Controls.Add(this.checkSuperFamCloneCreate);
-			this.groupBoxSuperFamily.Location = new System.Drawing.Point(20, 364);
+			this.groupBoxSuperFamily.Location = new System.Drawing.Point(20, 368);
 			this.groupBoxSuperFamily.Name = "groupBoxSuperFamily";
 			this.groupBoxSuperFamily.Size = new System.Drawing.Size(450, 101);
 			this.groupBoxSuperFamily.TabIndex = 283;
@@ -228,7 +231,7 @@ namespace OpenDental {
 			// 
 			// butSyncPhNums
 			// 
-			this.butSyncPhNums.Location = new System.Drawing.Point(476, 251);
+			this.butSyncPhNums.Location = new System.Drawing.Point(391, 170);
 			this.butSyncPhNums.Name = "butSyncPhNums";
 			this.butSyncPhNums.Size = new System.Drawing.Size(49, 21);
 			this.butSyncPhNums.TabIndex = 307;
@@ -241,9 +244,9 @@ namespace OpenDental {
 			this.checkUsePhoneNumTable.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkUsePhoneNumTable.Checked = true;
 			this.checkUsePhoneNumTable.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-			this.checkUsePhoneNumTable.Location = new System.Drawing.Point(34, 170);
+			this.checkUsePhoneNumTable.Location = new System.Drawing.Point(25, 173);
 			this.checkUsePhoneNumTable.Name = "checkUsePhoneNumTable";
-			this.checkUsePhoneNumTable.Size = new System.Drawing.Size(406, 17);
+			this.checkUsePhoneNumTable.Size = new System.Drawing.Size(360, 17);
 			this.checkUsePhoneNumTable.TabIndex = 306;
 			this.checkUsePhoneNumTable.Text = "Store patient phone numbers in a separate table for patient search";
 			this.checkUsePhoneNumTable.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -378,13 +381,14 @@ namespace OpenDental {
 			this.groupBoxPatientEdit.Controls.Add(this.checkPreferredPronouns);
 			this.groupBoxPatientEdit.Controls.Add(this.checkSameForFamily);
 			this.groupBoxPatientEdit.Controls.Add(this.checkUsePhoneNumTable);
+			this.groupBoxPatientEdit.Controls.Add(this.butSyncPhNums);
 			this.groupBoxPatientEdit.Controls.Add(this.checkPreferredReferrals);
 			this.groupBoxPatientEdit.Controls.Add(this.checkAllowPatsAtHQ);
 			this.groupBoxPatientEdit.Controls.Add(this.checkSelectProv);
 			this.groupBoxPatientEdit.Controls.Add(this.checkGoogleAddress);
 			this.groupBoxPatientEdit.Location = new System.Drawing.Point(20, 84);
 			this.groupBoxPatientEdit.Name = "groupBoxPatientEdit";
-			this.groupBoxPatientEdit.Size = new System.Drawing.Size(450, 197);
+			this.groupBoxPatientEdit.Size = new System.Drawing.Size(450, 201);
 			this.groupBoxPatientEdit.TabIndex = 309;
 			this.groupBoxPatientEdit.Text = "Patient Edit";
 			// 
@@ -393,20 +397,57 @@ namespace OpenDental {
 			this.groupBoxHIPAA.Controls.Add(this.checkFamPhiAccess);
 			this.groupBoxHIPAA.Controls.Add(this.checkPatientSSNMasked);
 			this.groupBoxHIPAA.Controls.Add(this.checkPatientDOBMasked);
-			this.groupBoxHIPAA.Location = new System.Drawing.Point(20, 284);
+			this.groupBoxHIPAA.Location = new System.Drawing.Point(20, 288);
 			this.groupBoxHIPAA.Name = "groupBoxHIPAA";
 			this.groupBoxHIPAA.Size = new System.Drawing.Size(450, 77);
 			this.groupBoxHIPAA.TabIndex = 310;
 			this.groupBoxHIPAA.Text = "HIPAA";
+			// 
+			// labelUsePhoneNumTableDetails
+			// 
+			this.labelUsePhoneNumTableDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelUsePhoneNumTableDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelUsePhoneNumTableDetails.Location = new System.Drawing.Point(476, 256);
+			this.labelUsePhoneNumTableDetails.Name = "labelUsePhoneNumTableDetails";
+			this.labelUsePhoneNumTableDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelUsePhoneNumTableDetails.TabIndex = 355;
+			this.labelUsePhoneNumTableDetails.Text = "strips out non-digit characters, useful to speed up the search in large databases" +
+    "";
+			this.labelUsePhoneNumTableDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelSelectProvDetails
+			// 
+			this.labelSelectProvDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelSelectProvDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelSelectProvDetails.Location = new System.Drawing.Point(476, 133);
+			this.labelSelectProvDetails.Name = "labelSelectProvDetails";
+			this.labelSelectProvDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelSelectProvDetails.TabIndex = 356;
+			this.labelSelectProvDetails.Text = "require user to select a provider";
+			this.labelSelectProvDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelCobSendPaidByInsAtDetails
+			// 
+			this.labelCobSendPaidByInsAtDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelCobSendPaidByInsAtDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelCobSendPaidByInsAtDetails.Location = new System.Drawing.Point(476, 52);
+			this.labelCobSendPaidByInsAtDetails.Name = "labelCobSendPaidByInsAtDetails";
+			this.labelCobSendPaidByInsAtDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelCobSendPaidByInsAtDetails.TabIndex = 357;
+			this.labelCobSendPaidByInsAtDetails.Text = "Claim Level means just the total for the claim, Procedure Level means the amount " +
+    "for each procedure";
+			this.labelCobSendPaidByInsAtDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// UserControlFamilyGeneral
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.labelCobSendPaidByInsAtDetails);
+			this.Controls.Add(this.labelSelectProvDetails);
+			this.Controls.Add(this.labelUsePhoneNumTableDetails);
 			this.Controls.Add(this.groupBoxHIPAA);
 			this.Controls.Add(this.groupBoxPatientEdit);
-			this.Controls.Add(this.butSyncPhNums);
 			this.Controls.Add(this.groupBoxCOB);
 			this.Controls.Add(this.groupBoxClaimSnapshot);
 			this.Controls.Add(this.groupBoxSuperFamily);
@@ -455,5 +496,8 @@ namespace OpenDental {
 		private System.Windows.Forms.CheckBox checkPreferredPronouns;
 		private UI.GroupBoxOD groupBoxPatientEdit;
 		private UI.GroupBoxOD groupBoxHIPAA;
+		private System.Windows.Forms.Label labelUsePhoneNumTableDetails;
+		private System.Windows.Forms.Label labelSelectProvDetails;
+		private System.Windows.Forms.Label labelCobSendPaidByInsAtDetails;
 	}
 }

@@ -675,7 +675,6 @@ namespace OpenDentBusiness{
 			for(int i=0;i<stringArrayProcCodes.Length;i++) {
 				//Validate ToothNum
 				string[] stringArrayProcCodeAndToothNum=null;
-				string stringToothNum="";
 				if(doAllowToothNum) {
 					stringArrayProcCodeAndToothNum=stringArrayProcCodes[i].Split('#');//0: ProcCode, 1: ToothNum (if present)
 					if(countToothNumProcs>0) {
@@ -688,27 +687,27 @@ namespace OpenDentBusiness{
 						if(!Tooth.IsValidEntry(stringArrayProcCodeAndToothNum[1])) {
 							throw new Exception(Lans.g("FormDefEdit","Definition contains invalid tooth number: ")+stringArrayProcCodeAndToothNum[1]);
 						}
-						stringToothNum=stringArrayProcCodeAndToothNum[1];
 						countToothNumProcs++;
 					}
 				}
 				//Validate ProcCode
-				if(stringArrayProcCodeAndToothNum!=null) {
-					stringArrayProcCodes[i]=stringArrayProcCodeAndToothNum[0];
+				string stringProcCode;
+				if(doAllowToothNum) {
+					stringProcCode=stringArrayProcCodeAndToothNum[0];	
 				}
-				ProcedureCode procedureCode=GetProcCode(stringArrayProcCodes[i]);
+				else{
+					stringProcCode=stringArrayProcCodes[i];
+				}
+				ProcedureCode procedureCode=GetProcCode(stringProcCode);
 				if(procedureCode.CodeNum==0) {
 					//Now check to see if the trimmed version of the code does not exist either.
-					procedureCode=GetProcCode(stringArrayProcCodes[i].Trim());
+					procedureCode=GetProcCode(stringProcCode.Trim());
 					if(procedureCode.CodeNum==0) { 
-						throw new Exception(Lans.g("FormDefEdit","Definition contains invalid procedure code: ")+stringArrayProcCodes[i]);
+						throw new Exception(Lans.g("FormDefEdit","Definition contains invalid procedure code: ")+stringProcCode);
 					}
 				}
 				if(stringArrayProcCodeAndToothNum!=null && stringArrayProcCodeAndToothNum.Length==2 && procedureCode.TreatArea!=TreatmentArea.Tooth) {
 					throw new Exception(Lans.g("FormDefEdit", "Definition contains treatment area mismatch. If adding a tooth number, the treatment area for the procedure code must be tooth."));
-				}
-				if(stringToothNum!="") {
-					stringArrayProcCodes[i]+="#"+stringToothNum;//put the code and toothnum back together
 				}
 			}
 		}

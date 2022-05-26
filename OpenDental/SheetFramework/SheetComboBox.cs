@@ -45,7 +45,13 @@ namespace OpenDental {
 				_arrayComboOptions=arrayValues[0].Split('|');//Will be an empty string if no '|' is present.
 			}
 			foreach(string option in _arrayComboOptions) {
-				_contextMenu.MenuItems.Add(new MenuItem(option,menuItemContext_Click));
+				//'&' is a special character in System.Windows.Forms.ContextMenu. We need to escapte all ampersands so that they are displayed correctly in the fill sheet window.
+				string escapedOption=option.Replace("&","&&");
+				//'-' by itself is a special character in System.Windows.Forms.ContextMenu. We need to escapte it so that it is displayed correctly in the fill sheet window.
+				if(escapedOption=="-") {
+					escapedOption="&-";
+				}
+				_contextMenu.MenuItems.Add(new MenuItem(escapedOption,menuItemContext_Click));
 			}
 		}
 

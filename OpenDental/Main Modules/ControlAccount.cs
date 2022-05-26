@@ -3276,7 +3276,7 @@ namespace OpenDental {
 						row.Cells.Add(Defs.GetName(DefCat.BillingTypes,_patCur.BillingType));
 						break;
 					case "PatFields":
-						PatFieldL.AddPatFieldsToGrid(gridPatInfo,_listPatField.ToList(),FieldLocations.Account,_loadData.ListFieldDefLinksAcct);
+						PatFieldL.AddPatFieldsToGrid(gridPatInfo,_listPatField.ToList(),FieldLocations.Account);
 						break;
 				}
 				if(_listPatInfoDisplayFields[f].InternalName=="PatFields") {

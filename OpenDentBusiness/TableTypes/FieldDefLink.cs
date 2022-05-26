@@ -15,6 +15,10 @@ namespace OpenDentBusiness{
 		///<summary>Enum:FieldLocations Defines where this particular field def needs to be hidden.</summary>
 		public FieldLocations FieldLocation;
 
+		///<summary></summary>
+		public FieldDefLink Clone() {
+			return (FieldDefLink)this.MemberwiseClone();
+		}
 	}
 
 	///<summary>Enum representing different types of field defs.</summary>

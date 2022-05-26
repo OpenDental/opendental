@@ -35,7 +35,6 @@ namespace OpenDentBusiness {
 			///<summary>Key: PatPlanNum, Value: The date of the last ortho claim for this plan.</summary>
 			public SerializableDictionary<long,DateTime> DictDateLastOrthoClaims;
 			public DateTime FirstOrthoProcDate;
-			public List<FieldDefLink> ListFieldDefLinksAcct;
 			public List<PatientLink> ListMergeLinks;
 			public DiscountPlan DiscountPlan;
 			public DiscountPlanSub DiscountPlanSub;
@@ -157,9 +156,6 @@ namespace OpenDentBusiness {
 					}
 				});
 			});//PatPlans.Refresh
-			Action getFieldDefLinksForLocation=new Action(() => {
-				Logger.LogAction("FieldDefLinks.GetForLocation",LogPath.AccountModule,() => retVal.ListFieldDefLinksAcct=FieldDefLinks.GetForLocation(FieldLocations.Account));
-			});//FieldDefLinks.GetForLocation
 			Action getDiscountPlan=new Action(() => {
 				Logger.LogAction("DiscountPlans.GetForPats",LogPath.AccountModule,() => retVal.DiscountPlan=DiscountPlans.GetForPats(ListTools.FromSingle(patNum)).FirstOrDefault());
 			});
@@ -187,7 +183,6 @@ namespace OpenDentBusiness {
 				refreshClaims();
 				getPrePayForFam();
 				getMergeLinks();
-				getFieldDefLinksForLocation();
 				getDiscountPlan();
 				getDiscountPlanSub();
 				if(doMakeSecLog) {

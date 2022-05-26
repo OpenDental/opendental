@@ -28,7 +28,7 @@ namespace OpenDental {
 					comboFieldLocation.SelectedIndex=i;
 				}
 			}
-			_listFieldDefLinks=FieldDefLinks.GetAll();
+			_listFieldDefLinks=FieldDefLinks.GetDeepCopy();
 			_listApptFieldDefs=ApptFieldDefs.GetDeepCopy();
 			_listPatFieldDefs=PatFieldDefs.GetDeepCopy(true);
 			FillGridDisplayed();
@@ -214,6 +214,7 @@ namespace OpenDental {
 
 		private void butOK_Click(object sender,EventArgs e) {
 			FieldDefLinks.Sync(_listFieldDefLinks);
+			DataValid.SetInvalid(InvalidType.PatFields);
 			DialogResult=DialogResult.OK;
 		}
 

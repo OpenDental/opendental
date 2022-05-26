@@ -426,16 +426,7 @@ namespace OpenDental{
 			}
 			butPrintSheets();
 			if(checkExportCSV.Checked) {
-				long statementCategory = Defs.GetImageCat(ImageCategorySpecial.S);
-				string prependCategoryNum="";
-				if(statementCategory > 0) {
-					//Files that start with "_###_" will automatically have Document entries created for them when the Imaging module loads.
-					prependCategoryNum="_" + statementCategory + "_";
-				}
-				Patient patient=Patients.GetPat(StmtCur.PatNum);
-				string patFolder=ImageStore.GetPatientFolder(patient,ImageStore.GetPreferredAtoZpath());
-				string fileName=prependCategoryNum+patient.LName+patient.FName+StmtCur.DocNum.ToString()+".csv";
-				Statements.WriteStatementToCSV(StmtCur,fileName,patFolder);
+				Statements.SaveStatementAsCSV(StmtCur);
 			}
 		}
 
@@ -607,21 +598,7 @@ namespace OpenDental{
 					checkIsSent.Checked=false;
 					return;
 				}
-				string patFolder="";
-				string fileName="";
-				if(checkExportCSV.Checked) {
-					long statementCategory = Defs.GetImageCat(ImageCategorySpecial.S);
-					string prependCategoryNum = "";
-					if(statementCategory > 0) {
-						//Files that start with "_###_" will automatically have Document entries created for them when the Imaging module loads.
-						prependCategoryNum="_" + statementCategory + "_";
-					}
-					Patient patient=Patients.GetPat(StmtCur.PatNum);
-					patFolder=ImageStore.GetPatientFolder(patient,ImageStore.GetPreferredAtoZpath());
-					fileName=prependCategoryNum+patient.LName+patient.FName+StmtCur.DocNum.ToString()+".csv";
-					Statements.WriteStatementToCSV(StmtCur,fileName,patFolder);
-				}
-				if(!CreateEmailMessage(patFolder,fileName)) {
+				if(!CreateEmailMessage()) {
 					Cursor=Cursors.Default;
 					checkIsSent.Checked=false;
 					return;
@@ -723,7 +700,7 @@ namespace OpenDental{
 		}
 
 		/// <summary>Also displays the dialog for the email.  Must have already created and attached the pdf.  Returns false if it could not create the email.</summary>
-		private bool CreateEmailMessage(string csvPath=null,string csvName=null){
+		private bool CreateEmailMessage(){
 			string attachPath=EmailAttaches.GetAttachPath();
 			Random rnd=new Random();
 			string fileName=DateTime.Now.ToString("yyyyMMdd")+"_"+DateTime.Now.TimeOfDay.Ticks.ToString()+rnd.Next(1000).ToString()+".pdf";
@@ -778,17 +755,17 @@ namespace OpenDental{
 			attach.DisplayedFileName="Statement.pdf";
 			attach.ActualFileName=fileName;
 			message.Attachments.Add(attach);
-			if(!csvName.IsNullOrEmpty() && !csvPath.IsNullOrEmpty() && checkExportCSV.Checked) {
+			if(checkExportCSV.Checked) {
 				rnd=new Random();
 				string csvFileName=DateTime.Now.ToString("yyyyMMdd")+"_"+DateTime.Now.TimeOfDay.Ticks.ToString()+rnd.Next(1000).ToString()+".csv";
 				string csvPathAndName=ODFileUtils.CombinePaths(attachPath,csvFileName);
+				string csvFilePath=Statements.SaveStatementAsCSV(StmtCur);
 				if(PrefC.AtoZfolderUsed==DataStorageType.InDatabase){
 					MsgBox.Show(this,"Could not create email because no AtoZ folder.");
 					return false;
 				}
 				if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
-					string oldCSVPath=ODFileUtils.CombinePaths(csvPath,csvName);
-					File.Copy(oldCSVPath,csvPathAndName);
+					File.Copy(csvFilePath,csvPathAndName);
 				}
 				EmailAttach csvAttach=new EmailAttach();
 				csvAttach.DisplayedFileName="Statement.csv";
@@ -865,7 +842,7 @@ namespace OpenDental{
 				SheetUtil.CalculateHeights(sheet,dataSet,StmtCur,true);
 				Cursor=Cursors.Default;
 				//print directly to PDF here, and save it.
-				using FormSheetFillEdit FormSFE=new FormSheetFillEdit(sheet,dataSet);
+				using FormSheetFillEdit FormSFE=new FormSheetFillEdit(sheet,dataSet,checkExportCSV.Checked);
 				FormSFE.Stmt=StmtCur;
 				FormSFE.IsStatement=true;
 				FormSFE.SaveStatementToDocDelegate=SaveStatementAsDocument;

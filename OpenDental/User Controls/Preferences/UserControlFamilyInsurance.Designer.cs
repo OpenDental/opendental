@@ -39,6 +39,12 @@ namespace OpenDental {
 			this.checkPatInitBillingTypeFromPriInsPlan = new System.Windows.Forms.CheckBox();
 			this.groupBoxOtherInsInfo = new OpenDental.UI.GroupBoxOD();
 			this.groupBoxClaims = new OpenDental.UI.GroupBoxOD();
+			this.labelPPOpercentageDetails = new System.Windows.Forms.Label();
+			this.labelPatInitBillingTypeFromPriInsPlanDetails = new System.Windows.Forms.Label();
+			this.labelInsPlanExclusionsMarkDoNotBillDetails = new System.Windows.Forms.Label();
+			this.butCoPayFeeScheduleBlankLikeZero = new OpenDental.UI.Button();
+			this.butFixedBenefitBlankLikeZero = new OpenDental.UI.Button();
+			this.butInsPlanExclusionsUseUCR = new OpenDental.UI.Button();
 			this.groupBoxInsuranceGeneral.SuspendLayout();
 			this.groupBoxOtherInsInfo.SuspendLayout();
 			this.groupBoxClaims.SuspendLayout();
@@ -215,11 +221,81 @@ namespace OpenDental {
 			this.groupBoxClaims.TabIndex = 280;
 			this.groupBoxClaims.Text = "Claims";
 			// 
+			// labelPPOpercentageDetails
+			// 
+			this.labelPPOpercentageDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelPPOpercentageDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelPPOpercentageDetails.Location = new System.Drawing.Point(476, 77);
+			this.labelPPOpercentageDetails.Name = "labelPPOpercentageDetails";
+			this.labelPPOpercentageDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelPPOpercentageDetails.TabIndex = 358;
+			this.labelPPOpercentageDetails.Text = "otherwise default to \'Category Percentage\'";
+			this.labelPPOpercentageDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelPatInitBillingTypeFromPriInsPlanDetails
+			// 
+			this.labelPatInitBillingTypeFromPriInsPlanDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelPatInitBillingTypeFromPriInsPlanDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelPatInitBillingTypeFromPriInsPlanDetails.Location = new System.Drawing.Point(476, 191);
+			this.labelPatInitBillingTypeFromPriInsPlanDetails.Name = "labelPatInitBillingTypeFromPriInsPlanDetails";
+			this.labelPatInitBillingTypeFromPriInsPlanDetails.Size = new System.Drawing.Size(498, 18);
+			this.labelPatInitBillingTypeFromPriInsPlanDetails.TabIndex = 361;
+			this.labelPatInitBillingTypeFromPriInsPlanDetails.Text = "but changing an insurance plan\'s billing type will not change the patient\'s billi" +
+    "ng type";
+			this.labelPatInitBillingTypeFromPriInsPlanDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelInsPlanExclusionsMarkDoNotBillDetails
+			// 
+			this.labelInsPlanExclusionsMarkDoNotBillDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelInsPlanExclusionsMarkDoNotBillDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelInsPlanExclusionsMarkDoNotBillDetails.Location = new System.Drawing.Point(476, 294);
+			this.labelInsPlanExclusionsMarkDoNotBillDetails.Name = "labelInsPlanExclusionsMarkDoNotBillDetails";
+			this.labelInsPlanExclusionsMarkDoNotBillDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelInsPlanExclusionsMarkDoNotBillDetails.TabIndex = 362;
+			this.labelInsPlanExclusionsMarkDoNotBillDetails.Text = "only used when \"exclusions use UCR fee\" above is checked";
+			this.labelInsPlanExclusionsMarkDoNotBillDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// butCoPayFeeScheduleBlankLikeZero
+			// 
+			this.butCoPayFeeScheduleBlankLikeZero.ForeColor = System.Drawing.Color.Black;
+			this.butCoPayFeeScheduleBlankLikeZero.Location = new System.Drawing.Point(479, 98);
+			this.butCoPayFeeScheduleBlankLikeZero.Name = "butCoPayFeeScheduleBlankLikeZero";
+			this.butCoPayFeeScheduleBlankLikeZero.Size = new System.Drawing.Size(64, 21);
+			this.butCoPayFeeScheduleBlankLikeZero.TabIndex = 364;
+			this.butCoPayFeeScheduleBlankLikeZero.Text = "Examples";
+			this.butCoPayFeeScheduleBlankLikeZero.Click += new System.EventHandler(this.butCoPayFeeScheduleBlankLikeZero_Click);
+			// 
+			// butFixedBenefitBlankLikeZero
+			// 
+			this.butFixedBenefitBlankLikeZero.ForeColor = System.Drawing.Color.Black;
+			this.butFixedBenefitBlankLikeZero.Location = new System.Drawing.Point(479, 121);
+			this.butFixedBenefitBlankLikeZero.Name = "butFixedBenefitBlankLikeZero";
+			this.butFixedBenefitBlankLikeZero.Size = new System.Drawing.Size(64, 21);
+			this.butFixedBenefitBlankLikeZero.TabIndex = 365;
+			this.butFixedBenefitBlankLikeZero.Text = "Examples";
+			this.butFixedBenefitBlankLikeZero.Click += new System.EventHandler(this.butFixedBenefitBlankLikeZero_Click);
+			// 
+			// butInsPlanExclusionsUseUCR
+			// 
+			this.butInsPlanExclusionsUseUCR.ForeColor = System.Drawing.Color.Black;
+			this.butInsPlanExclusionsUseUCR.Location = new System.Drawing.Point(479, 269);
+			this.butInsPlanExclusionsUseUCR.Name = "butInsPlanExclusionsUseUCR";
+			this.butInsPlanExclusionsUseUCR.Size = new System.Drawing.Size(64, 21);
+			this.butInsPlanExclusionsUseUCR.TabIndex = 366;
+			this.butInsPlanExclusionsUseUCR.Text = "Details";
+			this.butInsPlanExclusionsUseUCR.Click += new System.EventHandler(this.butInsPlanExclusionsUseUCR_Click);
+			// 
 			// UserControlFamilyInsurance
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.butInsPlanExclusionsUseUCR);
+			this.Controls.Add(this.butFixedBenefitBlankLikeZero);
+			this.Controls.Add(this.butCoPayFeeScheduleBlankLikeZero);
+			this.Controls.Add(this.labelInsPlanExclusionsMarkDoNotBillDetails);
+			this.Controls.Add(this.labelPatInitBillingTypeFromPriInsPlanDetails);
+			this.Controls.Add(this.labelPPOpercentageDetails);
 			this.Controls.Add(this.groupBoxClaims);
 			this.Controls.Add(this.groupBoxOtherInsInfo);
 			this.Controls.Add(this.groupBoxInsuranceGeneral);
@@ -248,5 +324,11 @@ namespace OpenDental {
 		private System.Windows.Forms.CheckBox checkPatInitBillingTypeFromPriInsPlan;
 		private UI.GroupBoxOD groupBoxOtherInsInfo;
 		private UI.GroupBoxOD groupBoxClaims;
+		private System.Windows.Forms.Label labelPPOpercentageDetails;
+		private System.Windows.Forms.Label labelPatInitBillingTypeFromPriInsPlanDetails;
+		private System.Windows.Forms.Label labelInsPlanExclusionsMarkDoNotBillDetails;
+		private UI.Button butCoPayFeeScheduleBlankLikeZero;
+		private UI.Button butFixedBenefitBlankLikeZero;
+		private UI.Button butInsPlanExclusionsUseUCR;
 	}
 }

@@ -32,8 +32,6 @@ namespace OpenDental{
 		private List<ApptViewItem> _listApptViewItems;
 		///<summary>List of ApptViewItems that does not include OpNum or ProvNum. This includes ElementDesc, ApptFieldDefNum, and PatFieldDefNum.</summary>
 		private List<ApptViewItem> _listApptViewItemsDef;
-		///<summary>This list is used to check the ApptFieldDefs if they are hidden. That way they won't be added to the grids.</summary>
-		private List<FieldDefLink> _listFieldDefLinks;
 		private FormApptViewEdit _parentForm;
 
 		///<summary></summary>
@@ -53,7 +51,6 @@ namespace OpenDental{
 		private void FormApptViewEdit_Load(object sender, System.EventArgs e) {
 			_listApptViewItemsDef=_listApptViewItems.FindAll(x => x.OpNum==0 && x.ProvNum==0);
 			_listApptViewItemsDisplayedAll=new List<ApptViewItem>(_listApptViewItemsDef);
-			_listFieldDefLinks=FieldDefLinks.GetAll();
 			FillElements();
 		}
 
@@ -328,7 +325,7 @@ namespace OpenDental{
 
 		///<summary>Returns the ApptFieldDef.FieldName with the tag (hidden) if the ApptFieldDef is hidden. Otherwise return the FieldName.</summary>
 		private string MarkFieldNameIfHidden(long apptFieldDefNum) {
-			if(_listFieldDefLinks.Exists(x => x.FieldDefNum==apptFieldDefNum && x.FieldDefType==FieldDefTypes.Appointment)) {
+			if(FieldDefLinks.GetExists(x => x.FieldDefNum==apptFieldDefNum && x.FieldDefType==FieldDefTypes.Appointment)) {
 				return ApptFieldDefs.GetFieldName(apptFieldDefNum)+" (Hidden)";
 			}
 			return ApptFieldDefs.GetFieldName(apptFieldDefNum);

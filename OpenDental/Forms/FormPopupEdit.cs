@@ -86,19 +86,10 @@ namespace OpenDental{
 			if(!PopupCur.IsNew && PopupCur.UserNum != Security.CurUser.UserNum 
 				&& !Security.IsAuthorized(Permissions.PopupEdit,true)) 
 			{
-				butDelete.Enabled=false;
-				comboPopupLevel.Enabled=false;
-				textDescription.ReadOnly=true;
-				textPatient.ReadOnly=true;
-				labelNoPerms.Visible=true;
+				DisableAllExcept(butCancel,butAudit);
 			}
 			if(PopupCur.IsArchived) {
-				butDelete.Enabled=false;
-				butOK.Enabled=false;
-				comboPopupLevel.Enabled=false;
-				//checkIsDisabled.Enabled=false;
-				textDescription.ReadOnly=true;
-				textPatient.ReadOnly=true;
+				DisableAllExcept(butCancel);
 			}
 			if(PopupCur.PopupNumArchive!=0) {
 				butAudit.Visible=false;

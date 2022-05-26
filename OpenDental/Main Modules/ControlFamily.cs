@@ -1097,7 +1097,7 @@ namespace OpenDental{
 					#endregion Middle
 					#region PatFields
 					case "PatFields":
-						PatFieldL.AddPatFieldsToGrid(_gridPat,_arrayPatFields.ToList(),FieldLocations.Family,_loadData.ListPatFieldDefLinks);
+						PatFieldL.AddPatFieldsToGrid(_gridPat,_arrayPatFields.ToList(),FieldLocations.Family);
 						break;
 					#endregion PatFields
 					#region Pat Restrictions

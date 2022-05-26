@@ -91,8 +91,8 @@ namespace OpenDental {
 			this.labelPayPlansVersionDetails.Name = "labelPayPlansVersionDetails";
 			this.labelPayPlansVersionDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelPayPlansVersionDetails.TabIndex = 331;
-			this.labelPayPlansVersionDetails.Text = "if Do Not Age, then Payment Plan numbers will not show in the main Account grid o" +
-    "r in reports";
+			this.labelPayPlansVersionDetails.Text = "if Do Not Age, then Payment Plan debits will not show in the main Account grid or" +
+    " in reports";
 			this.labelPayPlansVersionDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelDppUnearnedTypeDetails

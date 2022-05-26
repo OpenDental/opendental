@@ -260,6 +260,7 @@ namespace OpenDentBusiness {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.PatFields.ToString());
 				ds.Tables.Add(PatFieldDefs.GetTableFromCache(doRefreshServerCache));
 				ds.Tables.Add(ApptFieldDefs.GetTableFromCache(doRefreshServerCache));
+				ds.Tables.Add(FieldDefLinks.GetTableFromCache(doRefreshServerCache));
 			}
 			if(listITypes.Contains(InvalidType.Pharmacies) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.Pharmacies.ToString());
@@ -621,6 +622,7 @@ namespace OpenDentBusiness {
 				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.PatFields.ToString());
 				PatFieldDefs.FillCacheFromTable(ds.Tables["PatFieldDef"]);
 				ApptFieldDefs.FillCacheFromTable(ds.Tables["ApptFieldDef"]);
+				FieldDefLinks.FillCacheFromTable(ds.Tables["FieldDefLink"]); 
 			}
 			if(listITypes.Contains(InvalidType.Pharmacies) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.Pharmacies.ToString());
