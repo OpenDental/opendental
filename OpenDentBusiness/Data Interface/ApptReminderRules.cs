@@ -257,11 +257,11 @@ Click <a href=""[ConfirmURL]"">[ConfirmURL]</a> to confirm or call <a href=""tel
 							TimeSpanMultipleInvites=TimeSpan.FromDays(30),
 							TemplateEmail=@"[NameF],
 			
-In preparation for your upcoming dental appointment at [OfficeName], we invite you to log in to our Patient Portal. "+@"
+In preparation for your upcoming dental appointment at [OfficeName], we invite you to visit our <a href=""[PatientPortalURL]"">Patient Portal</a> to see your health information. "+@"
 There you can view your scheduled appointments, view your treatment plan, send a message to your provider, and view your account balance. "+@"
-Visit our <a href=""[PatientPortalURL]"">Patient Portal</a> and use this temporary user name and password to log in:
+If this is your first time using Patient Portal, use the temporary username and password below to log in:
 
-User name: [UserName]
+Username: [UserName]
 Password: [Password]
 
 If you have any questions, please give us a call at <a href=""tel:[OfficePhone]"">[OfficePhone]</a>, and we would be happy to answer any of your questions.",
@@ -269,9 +269,9 @@ If you have any questions, please give us a call at <a href=""tel:[OfficePhone]"
 							TemplateEmailSubjAggShared="Patient Portal Invitation",
 							TemplateEmailAggShared=@"[NameF],
 			
-In preparation for your upcoming dental appointments at [OfficeName], we invite you to log in to our Patient Portal. "+@"
+In preparation for your upcoming dental appointments at [OfficeName], we invite you to visit our <a href=""[PatientPortalURL]"">Patient Portal</a> to see your health information. "+@"
 There you can view your scheduled appointments, view your treatment plan, send a message to your provider, and view your account balance. "+@"
-Visit our <a href=""[PatientPortalURL]"">Patient Portal</a> and use these temporary user names and passwords to log in:
+If this is your first time using Patient Portal, use these temporary usernames and passwords below to log in:
 
 [Credentials]
 If you have any questions, please give us a call at <a href=""tel:[OfficePhone]"">[OfficePhone]</a>, and we would be happy to answer any of your questions.",
@@ -291,11 +291,11 @@ Password: [Password]
 							TimeSpanMultipleInvites=TimeSpan.FromDays(30),
 							TemplateEmail=@"[NameF],
 			
-Thank you for coming in to visit [OfficeName] today. As a follow up to your appointment, we invite you to log in to our Patient Portal. "+@"
+Thank you for coming in to visit [OfficeName] today. As a follow up to your appointment, we invite you to visit our <a href=""[PatientPortalURL]"">Patient Portal</a> to see your health information. "+@"
 There you can view your scheduled appointments, view your treatment plan, send a message to your provider, and view your account balance. "+@"
-Visit <a href=""[PatientPortalURL]"">Patient Portal</a> and use this temporary user name and password to log in:
+If this is your first time using Patient Portal, use this temporary username and password to log in:
 
-User name: [UserName]
+Username: [UserName]
 Password: [Password]
 
 If you have any questions, please give us a call at <a href=""tel:[OfficePhone]"">[OfficePhone]</a>, and we would be happy to answer any of your questions.",
@@ -303,9 +303,10 @@ If you have any questions, please give us a call at <a href=""tel:[OfficePhone]"
 							TemplateEmailSubjAggShared="Patient Portal Invitation",
 							TemplateEmailAggShared=@"[NameF],
 			
-Thank you for coming in to visit [OfficeName] today. As a follow up to your appointment, we invite you to log in to our Patient Portal. "+@"
+Thank you for coming in to visit [OfficeName] today. As a follow up to your appointment, we invite you to visit our <a href=""[PatientPortalURL]"">Patient Portal</a> to see your health information. "+@"
 There you can view your scheduled appointments, view your treatment plan, send a message to your provider, and view your account balance. "+@"
-Visit <a href=""[PatientPortalURL]"">Patient Portal</a> and use these temporary user names and passwords to log in:
+Visit <a href=""[PatientPortalURL]"">Patient Portal</a> to see your health information.
+If this is your first time using Patient Portal, use these temporary usernames and passwords to log in:
 
 [Credentials]
 If you have any questions, please give us a call at <a href=""tel:[OfficePhone]"">[OfficePhone]</a>, and we would be happy to answer any of your questions.",

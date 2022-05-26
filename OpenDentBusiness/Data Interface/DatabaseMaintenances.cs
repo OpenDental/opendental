@@ -9381,6 +9381,37 @@ namespace OpenDentBusiness {
 
 		#endregion Signal, SigMessage, Statement, SummaryOfCare-----------------------------------------------------------------------------------------
 		#region Task, TaskList, TimeCardRule, TreatPlan-------------------------------------------------------------------------------------------------
+		[DbmMethodAttr]
+		public static string TaskListsAbandonedRepeating(bool verbose,DbmMode modeCur) {
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
+			}
+			string log="";
+			string command="SELECT TaskListNum FROM tasklist";
+			List<string> listAllTaskListNums=Db.GetListLong(command).Select(x=>POut.Long(x)).ToList();
+			string taskListNumsAll=string.Join(",",listAllTaskListNums);
+			switch(modeCur) {
+				case DbmMode.Check:
+					command="SELECT COUNT(*) FROM tasklist "+
+						"WHERE Parent=0 AND FromNum!=0 AND "+ //Parent repeating tasklist whose FromNum is no longer valid
+						"FromNum NOT IN ("+taskListNumsAll+")";
+					int numFound=PIn.Int(Db.GetCount(command));
+					if(numFound>0 || verbose) {
+						log+=Lans.g("FormDatabaseMaintenance","Abandoned repeating tasklist(s) found")+": "+numFound.ToString()+"\r\n";
+					}
+					break;
+				case DbmMode.Fix:
+					command="UPDATE tasklist SET Parent=0,FromNum=0,DateTL=DATE('0001-01-01') "+ //Move to main list so user can delete manually
+						"WHERE Parent=0 AND FromNum!=0 AND "+ //Parent repeating tasklist whose FromNum is no longer valid
+						"FromNum NOT IN ("+taskListNumsAll+")";
+					long numFixed=Db.NonQ(command);
+					if(numFixed>0 || verbose) {
+						log+=Lans.g("FormDatabaseMaintenance","Abandoned repeating tasklist(s) moved to the 'Main' task tab")+": "+numFixed.ToString()+"\r\n";
+					}
+					break;
+			}
+			return log;
+		}
 
 		[DbmMethodAttr(IsReplicationUnsafe=true)]
 		public static string TaskListsWithCircularParentChild(bool verbose,DbmMode modeCur) {

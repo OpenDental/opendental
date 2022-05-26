@@ -267,13 +267,13 @@ namespace OpenDentBusiness {
 			SetOrder(GetForEbenCat(EbenefitCategory.Adjunctive),13);
 			//now set the remaining categories to come after the ebens.
 			byte idx=14;
-			List<CovCat> listCovCatsShort=CovCats.GetWhere(x => x.EbenefitCat!=EbenefitCategory.None,true);
+			List<CovCat> listCovCatsShort=CovCats.GetWhere(x => x.EbenefitCat==EbenefitCategory.None,true);
 			for(int i=0;i<listCovCatsShort.Count;i++) {
 				SetOrder(listCovCatsShort[i],idx);
 				idx++;
 			}
 			//finally, the hidden categories
-			List<CovCat> listCovCats=CovCats.GetWhere(x => !x.IsHidden);
+			List<CovCat> listCovCats=CovCats.GetWhere(x => x.EbenefitCat==EbenefitCategory.None && x.IsHidden);
 			for(int i=0;i<listCovCats.Count;i++) {
 				SetOrder(listCovCats[i],idx);
 				idx++;

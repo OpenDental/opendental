@@ -50,6 +50,8 @@ namespace OpenDental {
 		private string _uniqueFormIdentifier;
 		///<summary>True if the user is auto-saving a patient form.</summary>
 		private bool _isAutoSave;
+		///<summary>True if export as CSV was checked in FormStatementOptions.cs</summary>
+		private bool _doExportCSV;
 		///<summary>Indicates to the calling form that the sheet was inserted/updated.</summary>
 		public bool DidChangeSheet {
 			get;
@@ -77,13 +79,14 @@ namespace OpenDental {
 		}
 
 		///<summary>Use this constructor when displaying a statement.  dataSet should be filled with the data set from AccountModules.GetAccount()</summary>
-		public FormSheetFillEdit(Sheet sheet, DataSet dataSet=null){
+		public FormSheetFillEdit(Sheet sheet,DataSet dataSet=null,bool doExportCSV=false){
 			InitializeComponent();
 			InitializeLayoutManager();
 			MouseWheel+=FormSheetFillEdit_MouseWheelScroll;
 			Lan.F(this);
 			SheetCur=sheet;
 			_dataSet=dataSet;
+			_doExportCSV=doExportCSV;
 		}
 
 		private void FormSheetFillEdit_Load(object sender,EventArgs e) {
@@ -1082,6 +1085,9 @@ namespace OpenDental {
 			if(_isAutoSave && checkSaveToImages.Checked) {
 				SaveAsDocument('U',"PatientForm");
 			}
+			if(_doExportCSV) {
+				Statements.SaveStatementAsCSV(Stmt);
+			}
 			OkClose();
 		}
 
@@ -1191,6 +1197,22 @@ namespace OpenDental {
 			attach.ActualFileName=fileName;
 			message.Attachments.Add(attach);
 			message.MsgType=emailMessageSource;
+			if(_doExportCSV) {
+				rnd=new Random();
+				string csvFileName=DateTime.Now.ToString("yyyyMMdd")+"_"+DateTime.Now.TimeOfDay.Ticks.ToString()+rnd.Next(1000).ToString()+".csv";
+				string csvPathAndName=ODFileUtils.CombinePaths(attachPath,csvFileName);
+				string csvFilePath=Statements.SaveStatementAsCSV(Stmt);
+				if(PrefC.AtoZfolderUsed==DataStorageType.InDatabase){
+					MsgBox.Show(this,"Could not create email because no AtoZ folder.");
+				}
+				if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
+					File.Copy(csvFilePath,csvPathAndName);
+				}
+				EmailAttach csvAttach=new EmailAttach();
+				csvAttach.DisplayedFileName="Statement.csv";
+				csvAttach.ActualFileName=csvFileName;
+				message.Attachments.Add(csvAttach);
+			}
 			using FormEmailMessageEdit FormE=new FormEmailMessageEdit(message,emailAddress);
 			FormE.IsNew=true;
 			if(FormE.ShowDialog()==DialogResult.OK) {
