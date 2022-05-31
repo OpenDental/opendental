@@ -606,11 +606,11 @@ namespace OpenDental {
 
 		///<summary>Pastes the content of the clipboard excluding the formatting.</summary>
 		private void PastePlainText() {
+			base.Paste(DataFormats.GetFormat("Text"));
 			SelectionFont=Font;
 			SelectionColor=ForeColor;
 			SelectionBackColor=Color.Transparent;
 			SelectionBullet=false;
-			base.Paste(DataFormats.GetFormat("Text"));
 		}
 
 		///<summary></summary>

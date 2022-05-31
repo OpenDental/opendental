@@ -2248,53 +2248,38 @@ namespace OpenDental{
 			//When _isInsertRequired is true _appointment.AptNum=0.
 			//The below logic works when 0 due to _appointment.[Planned]AptNum!=0 checks.
 			bool hasProcsConcurrent=false;
-			//This list holds the original AptNum for a previously attached procedure. 
-			//The aptNumCountProcs.CountProcs is the count of procedures being moved from the associated AptNum.
-			//We will use this to determine if the procedure's original appointment needs to be deleted (if all procedures are moved to another appointment).
-			List<Appointments.AptNum_CountProcs> listAptNum_CountProcssBeingMoved=new List<Appointments.AptNum_CountProcs>();
-			for(int i=0;i<gridProc.ListGridRows.Count;i++) {
-				Procedure procedure=(Procedure)gridProc.ListGridRows[i].Tag;
-				bool isAttaching=gridProc.SelectedIndices.Contains(i);
-				bool isAttachedStart=_listProcNumsAttachedStart.Contains(procedure.ProcNum);
-				if(!isAttachedStart && isAttaching && _isPlanned) {//Attaching to this planned appointment.
-					if(procedure.PlannedAptNum != 0 && procedure.PlannedAptNum != _appointment.AptNum) {//However, the procedure is attached to another planned appointment.
+			bool isPlanned=_appointment.AptStatus == ApptStatus.Planned;
+			List<long> listAptNumsToDelete=new List<long>();
+			List<Procedure> listProceduresBeingMoved=new List<Procedure>();
+			List<Procedure> listProceduresAll=Procedures.Refresh(_appointment.PatNum);
+			List<Procedure> listProceduresInGrid = gridProc.ListGridRows.Select(x => x.Tag as Procedure).ToList();
+			List<long> listProcNumsCurrentlySelected = gridProc.SelectedIndices.Select(x => (gridProc.ListGridRows[x].Tag as Procedure).ProcNum).ToList();
+			for(int i=0;i<listProceduresInGrid.Count;i++) {
+				bool isAttaching=listProcNumsCurrentlySelected.Contains(listProceduresInGrid[i].ProcNum);
+				bool isAttachedStart=_listProcNumsAttachedStart.Contains(listProceduresInGrid[i].ProcNum);
+				if(!isAttachedStart && isAttaching && isPlanned) {//Attaching to this planned appointment.
+					if(listProceduresInGrid[i].PlannedAptNum != 0 && listProceduresInGrid[i].PlannedAptNum != _appointment.AptNum) {//However, the procedure is attached to another planned appointment.
 						hasProcsConcurrent=true;
-						//Make note of the appointment the procedure will be moved off of.
-						Appointments.AptNum_CountProcs aptNum_CountProcs=listAptNum_CountProcssBeingMoved.Find(x => x.AptNum==procedure.PlannedAptNum);
-						if(aptNum_CountProcs==null) {
-							aptNum_CountProcs=new Appointments.AptNum_CountProcs();
-							aptNum_CountProcs.AptNum=procedure.PlannedAptNum;
-							aptNum_CountProcs.CountProcs=0;
-							listAptNum_CountProcssBeingMoved.Add(aptNum_CountProcs);
-						}
-						aptNum_CountProcs.CountProcs++;
+						listProceduresBeingMoved.Add(listProceduresInGrid[i]);
 					}
 				}
-				else if(!isAttachedStart && isAttaching && !_isPlanned) {//Attaching to this appointment.
-					if(procedure.AptNum!=0 && procedure.AptNum!=_appointment.AptNum) {//However, the procedure is attached to another appointment.
+				else if(!isAttachedStart && isAttaching && !isPlanned) {//Attaching to this appointment.
+					if(listProceduresInGrid[i].AptNum != 0 && listProceduresInGrid[i].AptNum != _appointment.AptNum) {//However, the procedure is attached to another appointment.
 						hasProcsConcurrent=true;
-						//Make note of the appointment the procedure will be moved off of.
-						Appointments.AptNum_CountProcs aptNum_CountProcs=listAptNum_CountProcssBeingMoved.Find(x => x.AptNum==procedure.AptNum);
-						if(aptNum_CountProcs==null) {
-							aptNum_CountProcs=new Appointments.AptNum_CountProcs();
-							aptNum_CountProcs.AptNum=procedure.AptNum;
-							aptNum_CountProcs.CountProcs=0;
-							listAptNum_CountProcssBeingMoved.Add(aptNum_CountProcs);
-						}
-						aptNum_CountProcs.CountProcs++;
+						listProceduresBeingMoved.Add(listProceduresInGrid[i]);
 					}
 				}
 			}
-			if(PrefC.GetBool(PrefName.ApptsRequireProc) && listAptNum_CountProcssBeingMoved.Count>0) {//Only check if we are actually moving procedures.
-				List<Appointments.AptNum_CountProcs> listAptNum_CountProcss=Appointments.GetProcCountForUnscheduledApts(listAptNum_CountProcssBeingMoved.Select(x=>x.AptNum).ToList());
+			if(PrefC.GetBool(PrefName.ApptsRequireProc) && listProceduresBeingMoved.Count>0) {//Only check if we are actually moving procedures.
 				//Check to see if the number of procedures we are stealing from the original appointment is the same
 				//as the total number of procedures on the appointment. If this is the case the appointment must be deleted.
 				//Per the job for this feature we will only delete unscheduled appointments that become empty.
-				for(int i=0;i<listAptNum_CountProcss.Count;i++) {
-					long aptNum=listAptNum_CountProcss[i].AptNum;
-					int countMoved=listAptNum_CountProcssBeingMoved.Find(x=>x.AptNum==aptNum).CountProcs;
-					if(countMoved==listAptNum_CountProcss[i].CountProcs) {
-						listAptsToDelete.Add(aptNum);
+				for(int i=0;i<listProceduresBeingMoved.Count;i++) {
+					int countProceduresBeingMoved=listProceduresBeingMoved.Count(x=>x.AptNum==listProceduresBeingMoved[i].AptNum);
+					int countProceduresTotal=listProceduresAll.Count(x=>x.AptNum==listProceduresBeingMoved[i].AptNum);
+					//All the procedures are being moved off appointment, so mark old AptNum for deletion
+					if(countProceduresBeingMoved>0 && countProceduresTotal>0 && countProceduresBeingMoved==countProceduresTotal) {
+						listAptNumsToDelete.Add(listProceduresBeingMoved[i].AptNum);
 					}
 				}
 			}
@@ -2322,6 +2307,24 @@ namespace OpenDental{
 					+"Continue?")) {
 					return false;
 				}
+			}
+			bool areCompletedProceduresBeingMoved=false;
+			//Refreshing here in case msgboxes above had been up for a while
+			List<Appointment> listAppointmentsAll=Appointments.GetAppointmentsForPat(_appointment.PatNum);//Refresh AptStatuses
+			if(listProceduresBeingMoved!=null) {
+				for(int i=0;i<listProceduresBeingMoved.Count;i++) {
+					Appointment appointmentFrom=listAppointmentsAll.Find(x=>x.AptNum==listProceduresBeingMoved[i].AptNum);
+					if(appointmentFrom!=null && appointmentFrom.AptStatus==ApptStatus.Complete){
+						areCompletedProceduresBeingMoved=true;
+						break;
+					}
+				}
+			}
+			if(areCompletedProceduresBeingMoved) {
+				MsgBox.Show(this,"Cannot attach procedures to this appointment that were set complete by another user. Please try again.");
+				_listProceduresForAppointment=Procedures.GetProcsForApptEdit(_appointment);//Refresh so user can see which procedures weren't added
+				FillProcedures();
+				return false;
 			}
 			#endregion Check for Procs Attached to Another Appt
 			#region Validate Form Data

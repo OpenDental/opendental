@@ -1129,6 +1129,9 @@ namespace OpenDental {
 			if(_isAutoSave && checkSaveToImages.Checked) {
 				SaveAsDocument('U',"PatientForm");
 			}
+			if(_doExportCSV) {
+				Statements.SaveStatementAsCSV(Stmt);
+			}
 			OkClose();
 		}
 

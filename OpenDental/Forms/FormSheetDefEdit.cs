@@ -927,14 +927,10 @@ namespace OpenDental {
 			//}
 			EnableDashboardWidgetOptions(_sheetDefCur.SheetType==SheetTypeEnum.PatientDashboardWidget);
 			textDescription.Text=_sheetDefCur.Description;
-			if(!TryInitLayoutModes() && _sheetDefCur.SheetType!=SheetTypeEnum.PatientDashboardWidget) {//TryInitLayoutModes() must be called before initial FillFieldList().
+			if(!TryInitLayoutModes()) {//TryInitLayoutModes() must be called before initial FillFieldList().
 				//If we are not associated to a SheetType that uses the above layoutmode logic then setup translations UI.
 				RefreshLanguages();//Fill list
 				InitTranslations();//Enable and update UI
-			}
-			else {
-				//If we ARE associated to a SheetType that uses the above layoutmode logic or it is a Patient Dashboard, then hide translations UI.
-				groupBoxSubViews.Visible=false;
 			}
 			FillFieldList();
 			panelMain.Refresh();
@@ -2100,6 +2096,11 @@ namespace OpenDental {
 			//Eventually we might introduce sheet layouts to other modules.
 			//For now it is only implemented in the Chart Module.
 			switch(_sheetDefCur.SheetType) {
+				case SheetTypeEnum.PatientDashboardWidget:
+					comboLanguages.Visible=false;
+					checkSynchMatchedFields.Visible=false;
+					groupBoxSubViews.Visible=false;
+					return true;
 				case SheetTypeEnum.ChartModule:
 					if(Programs.UsingEcwTightOrFullMode()) {
 						_sheetFieldLayoutModeCur=SheetFieldLayoutMode.Ecw;
@@ -2124,6 +2125,7 @@ namespace OpenDental {
 					radioLayoutTP.Tag=sheetFieldLayoutModeTreatPlan;//Used in radioLayoutDefault_CheckedChanged()
 					groupBoxSubViews.Text=Lan.g(this,"Layout Modes");//group box defaults to 'Language'
 					comboLanguages.Visible=false;
+					checkSynchMatchedFields.Visible=false;
 					radioLayoutDefault.Checked=true;
 					return true;
 				default:

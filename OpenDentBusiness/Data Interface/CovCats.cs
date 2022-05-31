@@ -157,8 +157,8 @@ namespace OpenDentBusiness {
 			if(oldOrder==0 || oldOrder==-1) {
 				return;
 			}
-			SetOrder(listCovCats[oldOrder],(byte)(oldOrder-1));
-			SetOrder(listCovCats[oldOrder-1],(byte)oldOrder);
+			SetOrder(listCovCats[oldOrder],oldOrder-1);
+			SetOrder(listCovCats[oldOrder-1],oldOrder);
 		}
 
 		///<summary>Does not update the cache.  The cache must be manually refreshed after using this method beccause it only updates the database.</summary>
@@ -169,12 +169,12 @@ namespace OpenDentBusiness {
 			if(oldOrder==listCovCats.Count-1 || oldOrder==-1) {
 				return;
 			}
-			SetOrder(listCovCats[oldOrder],(byte)(oldOrder+1));
-			SetOrder(listCovCats[oldOrder+1],(byte)oldOrder);
+			SetOrder(listCovCats[oldOrder],oldOrder+1);
+			SetOrder(listCovCats[oldOrder+1],oldOrder);
 		}
 
 		///<summary></summary>
-		private static void SetOrder(CovCat covcat, byte newOrder) {
+		private static void SetOrder(CovCat covcat, int newOrder) {
 			//No need to check RemotingRole; no call to db.
 			covcat.CovOrder=newOrder;
 			Update(covcat);

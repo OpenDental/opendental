@@ -55,6 +55,10 @@ namespace OpenDental.UI{
 
 		///<summary></summary>
 		private void ToolTipSetString(Point point) {
+			if(_regionTriangle is null) {
+				_toolTipOD.SetString("");
+				return;
+			}
 			if(_regionTriangle.IsVisible(point)){
 				_toolTipOD.SetString(Lan.g(this,"Click to learn about Database Integrity"),Font);
 				return;

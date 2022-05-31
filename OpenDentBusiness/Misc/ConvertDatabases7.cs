@@ -2726,6 +2726,12 @@ namespace OpenDentBusiness {
 			command = "ALTER TABLE clinic ADD EmailAliasOverride varchar(255) NOT NULL";
 			Db.NonQ(command);
 		}//End of 22_1_31() method
+
+		private static void To22_1_34() {
+			string command;
+			command="ALTER TABLE CovCat MODIFY CovOrder INT NOT NULL";
+			Db.NonQ(command);
+		}//End of 22_1_34() method
 	}
 }
 

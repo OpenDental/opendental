@@ -2853,36 +2853,6 @@ namespace OpenDentBusiness{
 			return Crud.AppointmentCrud.SelectMany(command);
 		}
 
-		///<summary>Gets the number of procedures on each appointment. Returns a list of aptNum and its procedure count. Only considers unscheduled appointments.</summary>
-		public static List<AptNum_CountProcs> GetProcCountForUnscheduledApts(List<long> listAptNums) {
-			if(listAptNums==null || listAptNums.Count<1) {
-				return new List<AptNum_CountProcs>();
-			}
-			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				return Meth.GetObject<List<AptNum_CountProcs>>(MethodBase.GetCurrentMethod(),listAptNums);
-			}
-			string command="SELECT appointment.AptNum, COUNT(procedurelog.AptNum) ProcCount "
-					+"FROM appointment "
-					+"INNER JOIN procedurelog ON appointment.AptNum=procedurelog.AptNum "
-					+"WHERE appointment.AptNum IN("+String.Join(",",listAptNums)+") "
-					+"AND AptStatus="+POut.Int((int)ApptStatus.UnschedList)+" "
-					+"GROUP BY appointment.AptNum";
-			DataTable table=Db.GetTable(command);
-			List<AptNum_CountProcs> listAptNum_CountProcss=new List<AptNum_CountProcs>();
-			for(int i = 0;i<table.Rows.Count;i++) {
-				AptNum_CountProcs aptNum_CountProcs=new AptNum_CountProcs();
-				aptNum_CountProcs.AptNum    = PIn.Long(table.Rows[i]["AptNum"].ToString());
-				aptNum_CountProcs.CountProcs= PIn.Int(table.Rows[i]["ProcCount"].ToString());
-				listAptNum_CountProcss.Add(aptNum_CountProcs);
-			}
-			return listAptNum_CountProcss;
-		}
-
-		public class AptNum_CountProcs {
-			public long AptNum;
-			public int CountProcs;
-		}
-
 		///<summary>Tests to see if this appointment will create a double booking. Returns arrayList with no items in it if no double bookings for 
 		///this appt.  But if double booking, then it returns an arrayList of codes which would be double booked.  You must supply the appointment being 
 		///scheduled as well as a list of all appointments for that day.  The list can include the appointment being tested if user is moving it to a 
