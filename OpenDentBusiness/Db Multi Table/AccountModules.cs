@@ -3365,6 +3365,7 @@ namespace OpenDentBusiness {
 			List<ProcMultiVisit> listClaimPmvs=ProcMultiVisits.GetGroupsForProcsFromDb(claimProcs.Select(x => x.ProcNum).ToArray());
 			List<Procedure> listPatProcs=Procedures.Refresh(pat.PatNum);//We need a fresh list of procs so we can get current ProcDates.			
 			ClaimCur.ClinicNum=clinicNum;
+			ClaimCur.DateService = listProcs?.Last().ProcDate ?? DateTime.MinValue;
 			ClaimCur.PlaceService=proc.PlaceService;
 			ClaimCur.AttachedFlags="Mail";
 			ClaimCur.ClaimIdentifier=string.IsNullOrWhiteSpace(ClaimCur.ClaimIdentifier) ? Claims.ConvertClaimId(ClaimCur,pat) : ClaimCur.ClaimIdentifier;
