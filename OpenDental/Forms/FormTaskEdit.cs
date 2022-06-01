@@ -697,6 +697,7 @@ namespace OpenDental {
 		}
 
 		private void FillListCategory() {
+			listCategory.Items.Clear();
 			List<Def> listCategories=Defs.GetDefsForCategory(DefCat.TaskCategories);
 			listCategory.Items.AddNone<Def>();
 			listCategory.Items.AddList(listCategories,x => x.ItemName);
@@ -1518,6 +1519,7 @@ namespace OpenDental {
 			butEditAutoNote.Enabled=!doSetReadOnly;
 			butCreateJob.Enabled=!doSetReadOnly;
 			groupReminder.Enabled=!doSetReadOnly;
+			listCategory.Enabled=!doSetReadOnly;
 			long taskListNum= Security.CurUser.TaskListInBox;
 			//If this task is in the current users task list, or they created it, or they have permission, allow them to mark it done. 
 			if((_taskCur.TaskListNum==taskListNum && taskListNum!=0) || Tasks.IsAuthorizedOrOwner(_taskCur)) {

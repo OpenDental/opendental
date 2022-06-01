@@ -1778,11 +1778,11 @@ namespace OpenDentBusiness {
 				recall.DateDue,(CASE WHEN recallreminder.ClinicNum=-1 THEN patient.ClinicNum ELSE recallreminder.ClinicNum END) ClinicNum,recall.RecallNum,
 				COALESCE(recallreminder.CommSource,'') CommSource
 				FROM (
-					SELECT webschedrecall.DateTimeReminderSent DateSent,webschedrecall.PatNum,webschedrecall.RecallNum,
+					SELECT webschedrecall.DateTimeSent DateSent,webschedrecall.PatNum,webschedrecall.RecallNum,
 					(CASE WHEN webschedrecall.Source=1 THEN -1 ELSE -2 END) CommMode,webschedrecall.ClinicNum,"
 						+@$"'{POut.Long((long)CommItemSource.WebSched)}'as CommSource 
 					FROM webschedrecall
-					WHERE "+DbHelper.BetweenDates("webschedrecall.DateTimeReminderSent",dateTimeFrom,dateTimeTo)+@"
+					WHERE "+DbHelper.BetweenDates("webschedrecall.DateTimeSent",dateTimeFrom,dateTimeTo)+@"
 					UNION ALL
 					SELECT commlog.CommDateTime DateSent,commlog.PatNum,0 RecallNum,commlog.Mode_ CommMode,-1 ClinicNum,commlog.CommSource
 					FROM commlog

@@ -75,7 +75,7 @@ namespace OpenDental {
 				gridMain.Columns.Add(new GridColumn(Lan.g(gridMain.TranslationName,"InsOnly"),15){ IsWidthDynamic=true });
 			}
 			//Add all substitution codes for procedure code level
-			List<InsPlanSubstitution> listInsPlanSubstitution = (List<InsPlanSubstitution>)_listInsPlanSubstitution.OrderBy(x => x.ProcCode.ProcCode);
+			List<InsPlanSubstitution> listInsPlanSubstitution=_listInsPlanSubstitution.OrderBy(x => x.ProcCode.ProcCode).ToList();
 			for(int i=0;i<listInsPlanSubstitution.Count;i++) {
 				//If the current insPlanSub is a global substitute, don't add it to the grid if there are insurance plan level substitutes
 				if(listInsPlanSubstitution[i].SubLink==null && _listInsPlanSubstitution.Where(x=>x.SubLink!=null).Any(x=>x.ProcCode.CodeNum==listInsPlanSubstitution[i].ProcCode.CodeNum)) {

@@ -5218,8 +5218,8 @@ namespace OpenDentBusiness{
 
 		///<summary>Verifies various appointment procedure states. Calls given funcs as validation from the user is needed.</summary>
 		public static bool ProcsAttachedToOtherAptsHelper(List<Procedure> listProceduresInGrid,Appointment appointment, 
-			List<long> listProcNumsCurrentlySelected,List<long> listProcNumsOriginallyAttached,List<Procedure> listProceduresAll,Func<List<long>,bool> funcListAptsToDelete,Func<bool> funcProcsConcurrentAndPlanned,
-			Func<bool> funcProcsConcurrentAndNotPlanned,Action actionCompletedProceduresBeingMoved)
+			List<long> listProcNumsCurrentlySelected,List<long> listProcNumsOriginallyAttached,Func<List<long>,bool> funcListAptsToDelete,Func<bool> funcProcsConcurrentAndPlanned,
+			Func<bool> funcProcsConcurrentAndNotPlanned,List<Procedure> listProceduresAll,Action actionCompletedProceduresBeingMoved)
 		{
 			bool isPlanned=appointment.AptStatus == ApptStatus.Planned;
 			List<long> listAptNumsToDelete=new List<long>();
@@ -5241,7 +5241,7 @@ namespace OpenDentBusiness{
 					}
 				}
 			}
-			if(PrefC.GetBool(PrefName.ApptsRequireProc) && listProceduresBeingMoved.Count>0) {//Only check if we are actually moving procedures.
+			if(PrefC.GetBool(PrefName.ApptsRequireProc) && listProceduresBeingMoved.Count>0 && listProceduresAll!=null) {//Only check if we are actually moving procedures.
 				//Check to see if the number of procedures we are stealing from the original appointment is the same
 				//as the total number of procedures on the appointment. If this is the case the appointment must be deleted.
 				//Per the job for this feature we will only delete unscheduled appointments that become empty.
@@ -5268,6 +5268,9 @@ namespace OpenDentBusiness{
 				if(!funcProcsConcurrentAndNotPlanned()) {
 					return false;
 				}
+			}
+			if(listProceduresAll==null || actionCompletedProceduresBeingMoved==null) {
+				return false;//Note: both will be null when used in the web app
 			}
 			bool areCompletedProceduresBeingMoved=false;
 			//Refreshing here in case msgboxes above had been up for a while

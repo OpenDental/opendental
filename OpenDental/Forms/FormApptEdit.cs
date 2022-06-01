@@ -2264,8 +2264,8 @@ namespace OpenDental{
 			List<Procedure> listProceduresInGrid = gridProc.ListGridRows.Select(x => x.Tag as Procedure).ToList();
 			List<long> listProcNumsSelected = gridProc.SelectedIndices.Select(x => (gridProc.ListGridRows[x].Tag as Procedure).ProcNum).ToList();
 			bool isValid=Appointments.ProcsAttachedToOtherAptsHelper(
-				listProceduresInGrid, _appointment, listProcNumsSelected, _listProcNumsAttachedStart, listProceduresAll,
-				funcListAptsToDelete, funcProcsConcurrentAndPlanned, funcProcsConcurrentAndNotPlanned, actionCompletedProceduresBeingMoved
+				listProceduresInGrid, _appointment, listProcNumsSelected, _listProcNumsAttachedStart,
+				funcListAptsToDelete, funcProcsConcurrentAndPlanned, funcProcsConcurrentAndNotPlanned, listProceduresAll,actionCompletedProceduresBeingMoved
 			);
 			if(!isValid) {
 				_listProceduresForAppointment=Procedures.GetProcsForApptEdit(_appointment);//Refresh so user can see which procedures weren't added
