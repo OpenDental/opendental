@@ -2252,18 +2252,24 @@ namespace OpenDental{
 				return MsgBox.Show(this, MsgBoxButtons.YesNo,Appointments.PROMPT_ListAptsToDelete);
 			};
 			Func<bool> funcProcsConcurrentAndPlanned = () => {
-				return MsgBox.Show(this, MsgBoxButtons.OKCancel,Appointments.PRMOPT_PlannedProcsConcurrent);
+				return MsgBox.Show(this, MsgBoxButtons.OKCancel,Appointments.PROMPT_PlannedProcsConcurrent);
 			};
 			Func<bool> funcProcsConcurrentAndNotPlanned = () => {
 				return MsgBox.Show(this, MsgBoxButtons.OKCancel,Appointments.PROMPT_NotPlannedProcsConcurrent);
 			};
+			Action actionCompletedProceduresBeingMoved = () => {
+				MsgBox.Show(this,MsgBoxButtons.OKCancel,Appointments.PROMPT_CompletedProceduresBeingMoved);
+			};
+			List<Procedure> listProceduresAll=Procedures.GetPatientData(_appointment.PatNum);
 			List<Procedure> listProceduresInGrid = gridProc.ListGridRows.Select(x => x.Tag as Procedure).ToList();
 			List<long> listProcNumsSelected = gridProc.SelectedIndices.Select(x => (gridProc.ListGridRows[x].Tag as Procedure).ProcNum).ToList();
 			bool isValid=Appointments.ProcsAttachedToOtherAptsHelper(
-				listProceduresInGrid, _appointment, listProcNumsSelected, _listProcNumsAttachedStart,
-				funcListAptsToDelete, funcProcsConcurrentAndPlanned, funcProcsConcurrentAndNotPlanned
+				listProceduresInGrid, _appointment, listProcNumsSelected, _listProcNumsAttachedStart, listProceduresAll,
+				funcListAptsToDelete, funcProcsConcurrentAndPlanned, funcProcsConcurrentAndNotPlanned, actionCompletedProceduresBeingMoved
 			);
 			if(!isValid) {
+				_listProceduresForAppointment=Procedures.GetProcsForApptEdit(_appointment);//Refresh so user can see which procedures weren't added
+				FillProcedures();
 				return false;
 			}
 			#endregion Check for Procs Attached to Another Appt

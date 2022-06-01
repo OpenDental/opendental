@@ -412,7 +412,7 @@ namespace UnitTests.Claims_Tests {
 			//Create Adjustment that covers a little more than $28.00 of the patient portion. Say, $28.01?
 			AdjustmentT.MakeAdjustment(pat.PatNum,-28.01,procNum:proc.ProcNum);
 			//Test
-			List<string> listResults=Claims.GetClaimProcGreaterThanProcFee(pat.PatNum,listClaimProcs);
+			List<string> listResults=Claims.GetAllCreditsGreaterThanProcFees(pat.PatNum,listClaimProcs);
 			Assert.IsTrue(listResults.Count==1);
         }
 
@@ -444,7 +444,7 @@ namespace UnitTests.Claims_Tests {
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			ClaimT.ReceiveClaim(claim,listClaimProcs,true);
 			//Test
-			List<string> listResults=Claims.GetClaimProcGreaterThanProcFee(pat.PatNum,listClaimProcs);
+			List<string> listResults=Claims.GetAllCreditsGreaterThanProcFees(pat.PatNum,listClaimProcs);
 			Assert.IsTrue(listResults.Count==0);
         }
 
@@ -480,7 +480,7 @@ namespace UnitTests.Claims_Tests {
 			claimProc.WriteOff=140.01;
 			ClaimProcs.Update(claimProc);
 			//Test
-			List<string> listResults=Claims.GetWriteOffGreaterThanProcFee(pat.PatNum,listClaimProcs);
+			List<string> listResults=Claims.GetWriteOffsGreaterThanProcFees(pat.PatNum,listClaimProcs);
 			Assert.IsTrue(listResults.Count==1);
         }
 
@@ -516,7 +516,7 @@ namespace UnitTests.Claims_Tests {
 			claimProc.WriteOff=140.00;
 			ClaimProcs.Update(claimProc);
 			//Test
-			List<string> listResults=Claims.GetWriteOffGreaterThanProcFee(pat.PatNum,listClaimProcs);
+			List<string> listResults=Claims.GetWriteOffsGreaterThanProcFees(pat.PatNum,listClaimProcs);
 			Assert.IsTrue(listResults.Count==0);
         }
 	}

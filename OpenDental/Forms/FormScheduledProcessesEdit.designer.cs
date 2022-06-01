@@ -39,7 +39,7 @@ namespace OpenDental{
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(268, 111);
+			this.butCancel.Location = new System.Drawing.Point(307, 169);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 4;
@@ -51,9 +51,9 @@ namespace OpenDental{
 			this.butDeleteSchedProc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDeleteSchedProc.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDeleteSchedProc.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDeleteSchedProc.Location = new System.Drawing.Point(43, 112);
+			this.butDeleteSchedProc.Location = new System.Drawing.Point(20, 169);
 			this.butDeleteSchedProc.Name = "butDeleteSchedProc";
-			this.butDeleteSchedProc.Size = new System.Drawing.Size(75, 23);
+			this.butDeleteSchedProc.Size = new System.Drawing.Size(75, 24);
 			this.butDeleteSchedProc.TabIndex = 5;
 			this.butDeleteSchedProc.Text = "Delete";
 			this.butDeleteSchedProc.UseVisualStyleBackColor = true;
@@ -62,14 +62,14 @@ namespace OpenDental{
 			// textTimeToRun
 			// 
 			this.textTimeToRun.IsShortTimeString = true;
-			this.textTimeToRun.Location = new System.Drawing.Point(118, 76);
+			this.textTimeToRun.Location = new System.Drawing.Point(130, 98);
 			this.textTimeToRun.Name = "textTimeToRun";
 			this.textTimeToRun.Size = new System.Drawing.Size(120, 20);
 			this.textTimeToRun.TabIndex = 2;
 			// 
 			// labelTimeToRun
 			// 
-			this.labelTimeToRun.Location = new System.Drawing.Point(18, 76);
+			this.labelTimeToRun.Location = new System.Drawing.Point(30, 98);
 			this.labelTimeToRun.Name = "labelTimeToRun";
 			this.labelTimeToRun.Size = new System.Drawing.Size(101, 20);
 			this.labelTimeToRun.TabIndex = 6;
@@ -78,7 +78,7 @@ namespace OpenDental{
 			// 
 			// labelFrequencyToRun
 			// 
-			this.labelFrequencyToRun.Location = new System.Drawing.Point(8, 40);
+			this.labelFrequencyToRun.Location = new System.Drawing.Point(20, 62);
 			this.labelFrequencyToRun.Name = "labelFrequencyToRun";
 			this.labelFrequencyToRun.Size = new System.Drawing.Size(110, 20);
 			this.labelFrequencyToRun.TabIndex = 7;
@@ -87,7 +87,7 @@ namespace OpenDental{
 			// 
 			// labelScheduledAction
 			// 
-			this.labelScheduledAction.Location = new System.Drawing.Point(5, 6);
+			this.labelScheduledAction.Location = new System.Drawing.Point(17, 28);
 			this.labelScheduledAction.Name = "labelScheduledAction";
 			this.labelScheduledAction.Size = new System.Drawing.Size(113, 20);
 			this.labelScheduledAction.TabIndex = 8;
@@ -96,14 +96,14 @@ namespace OpenDental{
 			// 
 			// comboFrequency
 			// 
-			this.comboFrequency.Location = new System.Drawing.Point(118, 40);
+			this.comboFrequency.Location = new System.Drawing.Point(130, 62);
 			this.comboFrequency.Name = "comboFrequency";
 			this.comboFrequency.Size = new System.Drawing.Size(121, 21);
 			this.comboFrequency.TabIndex = 1;
 			// 
 			// comboScheduledAction
 			// 
-			this.comboScheduledAction.Location = new System.Drawing.Point(118, 6);
+			this.comboScheduledAction.Location = new System.Drawing.Point(130, 28);
 			this.comboScheduledAction.Name = "comboScheduledAction";
 			this.comboScheduledAction.Size = new System.Drawing.Size(121, 21);
 			this.comboScheduledAction.TabIndex = 0;
@@ -111,7 +111,7 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(268, 81);
+			this.butOK.Location = new System.Drawing.Point(307, 139);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
@@ -121,7 +121,7 @@ namespace OpenDental{
 			// FormScheduledProcessesEdit
 			// 
 			this.CancelButton = this.butCancel;
-			this.ClientSize = new System.Drawing.Size(355, 147);
+			this.ClientSize = new System.Drawing.Size(394, 205);
 			this.Controls.Add(this.butDeleteSchedProc);
 			this.Controls.Add(this.textTimeToRun);
 			this.Controls.Add(this.labelTimeToRun);

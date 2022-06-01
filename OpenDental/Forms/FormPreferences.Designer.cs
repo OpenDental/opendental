@@ -28,6 +28,7 @@ namespace OpenDental{
 			this.butCancel = new OpenDental.UI.Button();
 			this.treeMain = new System.Windows.Forms.TreeView();
 			this.panelMain = new OpenDental.UI.PanelOD();
+			this.labelCategories = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// butOK
@@ -56,10 +57,10 @@ namespace OpenDental{
 			this.treeMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.treeMain.HideSelection = false;
-			this.treeMain.Location = new System.Drawing.Point(12, 13);
+			this.treeMain.Location = new System.Drawing.Point(12, 30);
 			this.treeMain.Name = "treeMain";
 			this.treeMain.ShowPlusMinus = false;
-			this.treeMain.Size = new System.Drawing.Size(225, 641);
+			this.treeMain.Size = new System.Drawing.Size(225, 624);
 			this.treeMain.TabIndex = 0;
 			this.treeMain.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeMain_BeforeCollapse);
 			this.treeMain.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeMain_AfterSelect);
@@ -74,10 +75,20 @@ namespace OpenDental{
 			this.panelMain.Size = new System.Drawing.Size(974, 641);
 			this.panelMain.TabIndex = 5;
 			// 
+			// labelCategories
+			// 
+			this.labelCategories.Location = new System.Drawing.Point(12, 9);
+			this.labelCategories.Name = "labelCategories";
+			this.labelCategories.Size = new System.Drawing.Size(225, 18);
+			this.labelCategories.TabIndex = 236;
+			this.labelCategories.Text = "Categories";
+			this.labelCategories.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// FormPreferences
 			// 
 			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(1230, 696);
+			this.Controls.Add(this.labelCategories);
 			this.Controls.Add(this.panelMain);
 			this.Controls.Add(this.treeMain);
 			this.Controls.Add(this.butOK);
@@ -97,5 +108,6 @@ namespace OpenDental{
 		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.TreeView treeMain;
 		private UI.PanelOD panelMain;
+		private System.Windows.Forms.Label labelCategories;
 	}
 }

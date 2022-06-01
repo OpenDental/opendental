@@ -1084,6 +1084,21 @@ namespace OpenDentBusiness {
 		Ins834IsEmployerCreate,
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		Ins834IsPatientCreate,
+		/// <summary>Boolean. False by default. Controls automated InsVerify behavior. Determines if annual max is checked.</summary>
+		[PrefName(ValueType=PrefValueType.BOOL)]
+		InsBatchVerifyCheckAnnualMax,
+		/// <summary>Boolean. False by default. Controls automated InsVerify behavior.  Determines if deductible is checked.</summary>
+		[PrefName(ValueType=PrefValueType.BOOL)]
+		InsBatchVerifyCheckDeductible,
+		/// <summary>Boolean. False by default. Controls automated InsVerify behavior.  Determines if adjustments can be created.</summary>
+		[PrefName(ValueType=PrefValueType.BOOL)]
+		InsBatchVerifyCreateAdjustments,
+		/// <summary>Boolean. False by default. Controls automated InsVerify behavior.  Determines if ins history can be changed.</summary>
+		[PrefName(ValueType=PrefValueType.BOOL)]
+		InsBatchVerifyChangeInsHist,
+		/// <summary>Boolean. False by default. Controls automated InsVerify behavior.  Determines if ins effective dates can be changed.</summary>
+		[PrefName(ValueType=PrefValueType.BOOL)]
+		InsBatchVerifyChangeEffectiveDates,
 		///<summary>Comma delimited list of procedure codes that represent bitewing codes.  Defaults to D codes for all users.</summary>
 		InsBenBWCodes,
 		///<summary>Comma delimited list of procedure codes that represent exam codes.  Defaults to D codes for all users.</summary>
@@ -1172,6 +1187,9 @@ namespace OpenDentBusiness {
 		///Defaults to InsBenProphyCodes codes.</summary>
 		[Description("Prophy Ins Hist Codes")]
 		InsHistProphyCodes,
+		///<summary>Prevents users from creating initial primary insurance payments where the sum of the payment and write-off exceed the adjusted procedure fee.</summary>
+		[PrefName(ValueType=PrefValueType.BOOL)]
+		InsPayNoInitialPrimaryMoreThanProc,
 		///<summary>Boolean. True by default. When enabled, disallow writeoffs amount greater than procedure fee.</summary>
 		InsPayNoWriteoffMoreThanProc,
 		///<summary>0=unknown, user did not make a selection.  1=Yes, 2=No.</summary>

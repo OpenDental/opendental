@@ -123,12 +123,12 @@ namespace OpenDental{
 			// 
 			// butAlignTop
 			// 
-			this.butAlignTop.Location = new System.Drawing.Point(160, 122);
+			this.butAlignTop.Location = new System.Drawing.Point(149, 18);
 			this.butAlignTop.Name = "butAlignTop";
-			this.butAlignTop.Size = new System.Drawing.Size(66, 24);
+			this.butAlignTop.Size = new System.Drawing.Size(46, 24);
 			this.butAlignTop.TabIndex = 88;
 			this.butAlignTop.TabStop = false;
-			this.butAlignTop.Text = "Align Tops";
+			this.butAlignTop.Text = "Top";
 			this.butAlignTop.Click += new System.EventHandler(this.butAlignTop_Click);
 			// 
 			// butCancel
@@ -207,11 +207,12 @@ namespace OpenDental{
 			this.groupAlignH.Controls.Add(this.butAlignRight);
 			this.groupAlignH.Controls.Add(this.butAlignCenterH);
 			this.groupAlignH.Controls.Add(this.butAlignLeft);
+			this.groupAlignH.Controls.Add(this.butAlignTop);
 			this.groupAlignH.Location = new System.Drawing.Point(4, 104);
 			this.groupAlignH.Name = "groupAlignH";
-			this.groupAlignH.Size = new System.Drawing.Size(151, 46);
+			this.groupAlignH.Size = new System.Drawing.Size(200, 46);
 			this.groupAlignH.TabIndex = 96;
-			this.groupAlignH.Text = "Horizontal Align";
+			this.groupAlignH.Text = "Align";
 			// 
 			// butAlignRight
 			// 
@@ -406,7 +407,6 @@ namespace OpenDental{
 			this.panelRight.Controls.Add(this.butRedo);
 			this.panelRight.Controls.Add(this.groupPage);
 			this.panelRight.Controls.Add(this.butUndo);
-			this.panelRight.Controls.Add(this.butAlignTop);
 			this.panelRight.Controls.Add(this.butCancel);
 			this.panelRight.Controls.Add(this.butOK);
 			this.panelRight.Controls.Add(this.groupBoxSubViews);

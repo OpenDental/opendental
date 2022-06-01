@@ -481,7 +481,7 @@ namespace OpenDental {
 			textWriteOff.Text=writeOff.ToString("F");
 		}
 
-		private List<ClaimProc> GetListCliamProcHypothetical() {
+		private List<ClaimProc> GetListClaimProcHypothetical() {
 			List<ClaimProc> listClaimProcsHypothetical=new List<ClaimProc>();
 			for(int i=0;i<gridPayments.ListGridRows.Count;i++) {
 				ClaimProc claimProc=((ClaimProc)gridPayments.ListGridRows[i].Tag).Copy();
@@ -497,20 +497,12 @@ namespace OpenDental {
 			return listClaimProcsHypothetical;
 		}
 
-		private bool IsClaimProcGreaterThanProcFee() {
-			return ClaimL.IsClaimProcGreaterThanProcFee(_patient.PatNum,GetListCliamProcHypothetical());
-		}
-
-		private bool IsWriteOffGreaterThanProcFee() {
-			return ClaimL.IsClaimProcGreaterThanProcFee(_patient.PatNum,GetListCliamProcHypothetical());
-		}
-
 		///<Summary>Surround with try-catch.</Summary>
 		private void SaveGridChanges(){
-            //validate all grid cells
-            if(IsClaimProcGreaterThanProcFee() || IsWriteOffGreaterThanProcFee()) {
+			//validate all grid cells
+			if(ClaimL.AreCreditsGreaterThanProcFee(_patient.PatNum,GetListClaimProcHypothetical())) {
 				return;
-            }
+      }
 			double dbl;
 			for(int i=0;i<gridPayments.ListGridRows.Count;i++){
 				if(gridPayments.ListGridRows[i].Cells[_idxDeduct].Text!=""){//deduct

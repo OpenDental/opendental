@@ -63,7 +63,7 @@ namespace OpenDental {
 			comboRigorousAdjustments.SelectedIndex=PrefC.GetInt(PrefName.RigorousAdjustments);
 			checkHidePaysplits.Checked=PrefC.GetBool(PrefName.PaymentWindowDefaultHideSplits);
 			comboPayPlansVersion.Items.AddEnums<PayPlanVersions>();
-			comboPayPlansVersion.SetSelectedEnum(PrefName.PayPlansVersion);
+			comboPayPlansVersion.SetSelectedEnum(PrefC.GetInt(PrefName.PayPlansVersion));
 			textBillingElectBatchMax.Text=PrefC.GetInt(PrefName.BillingElectBatchMax).ToString();
 			checkBillingShowProgress.Checked=PrefC.GetBool(PrefName.BillingShowSendProgress);
 			#endregion Account Tab

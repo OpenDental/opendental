@@ -41,6 +41,8 @@ namespace OpenDental {
 			this.textPayPlansBillInAdvanceDays = new OpenDental.ValidNum();
 			this.groupBoxBilling = new OpenDental.UI.GroupBoxOD();
 			this.groupBoxStatements = new OpenDental.UI.GroupBoxOD();
+			this.labelStatementShowProcBreakdownDetails = new System.Windows.Forms.Label();
+			this.labelPayPlansBillInAdvanceDaysDetails = new System.Windows.Forms.Label();
 			this.groupBoxBilling.SuspendLayout();
 			this.groupBoxStatements.SuspendLayout();
 			this.SuspendLayout();
@@ -230,11 +232,37 @@ namespace OpenDental {
 			this.groupBoxStatements.TabIndex = 219;
 			this.groupBoxStatements.Text = "Statements";
 			// 
+			// labelStatementShowProcBreakdownDetails
+			// 
+			this.labelStatementShowProcBreakdownDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelStatementShowProcBreakdownDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelStatementShowProcBreakdownDetails.Location = new System.Drawing.Point(476, 142);
+			this.labelStatementShowProcBreakdownDetails.Name = "labelStatementShowProcBreakdownDetails";
+			this.labelStatementShowProcBreakdownDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelStatementShowProcBreakdownDetails.TabIndex = 364;
+			this.labelStatementShowProcBreakdownDetails.Text = "shows in the Description column as patient portion, insurance paid, write-off, ad" +
+    "justment, etc.";
+			this.labelStatementShowProcBreakdownDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelPayPlansBillInAdvanceDaysDetails
+			// 
+			this.labelPayPlansBillInAdvanceDaysDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelPayPlansBillInAdvanceDaysDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelPayPlansBillInAdvanceDaysDetails.Location = new System.Drawing.Point(476, 246);
+			this.labelPayPlansBillInAdvanceDaysDetails.Name = "labelPayPlansBillInAdvanceDaysDetails";
+			this.labelPayPlansBillInAdvanceDaysDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelPayPlansBillInAdvanceDaysDetails.TabIndex = 365;
+			this.labelPayPlansBillInAdvanceDaysDetails.Text = "causes statements to be triggered to print, cannot be used with Dynamic Payment P" +
+    "lans";
+			this.labelPayPlansBillInAdvanceDaysDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// UserControlManageBillingStatements
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.labelPayPlansBillInAdvanceDaysDetails);
+			this.Controls.Add(this.labelStatementShowProcBreakdownDetails);
 			this.Controls.Add(this.groupBoxStatements);
 			this.Controls.Add(this.groupBoxBilling);
 			this.Name = "UserControlManageBillingStatements";
@@ -265,5 +293,7 @@ namespace OpenDental {
 		private ValidNum textPayPlansBillInAdvanceDays;
 		private UI.GroupBoxOD groupBoxBilling;
 		private UI.GroupBoxOD groupBoxStatements;
+		private System.Windows.Forms.Label labelStatementShowProcBreakdownDetails;
+		private System.Windows.Forms.Label labelPayPlansBillInAdvanceDaysDetails;
 	}
 }

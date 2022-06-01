@@ -333,11 +333,11 @@ namespace OpenDentBusiness{
 			}
 			string command="DELETE FROM recalltype WHERE RecallTypeNum >= 1 AND RecallTypeNum <= 5";//Don't delete manually added recall types
 			Db.NonQ(command);
-			command="INSERT INTO recalltype (RecallTypeNum,Description,DefaultInterval,TimePattern,Procedures,AppendToSpecial) VALUES (1,'Root Planing',196609,'XXXX','49101',1)";
+			command="INSERT INTO recalltype (RecallTypeNum,Description,DefaultInterval,TimePattern,Procedures,AppendToSpecial) VALUES (1,'Scaling',196609,'XXXX','11113',1)";
 			Db.NonQ(command);
-			command="INSERT INTO recalltype (RecallTypeNum,Description,DefaultInterval,TimePattern,Procedures,AppendToSpecial) VALUES (2,'Scaling',196609,'XXXX','11113',1)";
+			command="INSERT INTO recalltype (RecallTypeNum,Description,DefaultInterval,TimePattern,Procedures,AppendToSpecial) VALUES (2,'Scaling (Child)',0,'XX','11111,11117',1)";
 			Db.NonQ(command);
-			command="INSERT INTO recalltype (RecallTypeNum,Description,DefaultInterval,TimePattern,Procedures,AppendToSpecial) VALUES (3,'Scaling (Child)',0,'XX','11111,11117',1)";
+			command="INSERT INTO recalltype (RecallTypeNum,Description,DefaultInterval,TimePattern,Procedures,AppendToSpecial) VALUES (3,'Root Planing',196609,'XXXX','49101',1)";
 			Db.NonQ(command);
 			command="INSERT INTO recalltype (RecallTypeNum,Description,DefaultInterval,Procedures,AppendToSpecial) VALUES (4,'Pan',50331648,'02601',1)";
 			Db.NonQ(command);
@@ -376,11 +376,11 @@ namespace OpenDentBusiness{
 			command="INSERT INTO recalltrigger (RecallTriggerNum,RecallTypeNum,CodeNum) VALUES (14,5,"+ProcedureCodes.GetCodeNum("01103")+")";
 			Db.NonQ(command);
 			//Update the special types in preference table.
-			command="UPDATE preference SET ValueString='1' WHERE PrefName='RecallTypeSpecialPerio'";
+			command="UPDATE preference SET ValueString='1' WHERE PrefName='RecallTypeSpecialProphy'";
 			Db.NonQ(command);
-			command="UPDATE preference SET ValueString='2' WHERE PrefName='RecallTypeSpecialProphy'";
+			command="UPDATE preference SET ValueString='2' WHERE PrefName='RecallTypeSpecialChildProphy'";
 			Db.NonQ(command);
-			command="UPDATE preference SET ValueString='3' WHERE PrefName='RecallTypeSpecialChildProphy'";
+			command="UPDATE preference SET ValueString='3' WHERE PrefName='RecallTypeSpecialPerio'";
 			Db.NonQ(command);
 			command="UPDATE preference SET ValueString='1,2,3' WHERE PrefName='RecallTypesShowingInList'";
 			Db.NonQ(command);

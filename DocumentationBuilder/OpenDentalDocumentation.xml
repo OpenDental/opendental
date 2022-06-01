@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDocumentation.xsl"?>
-<database version="22.2.1.0">
+<database version="22.2.4.0">
     <table name="account">
         <summary>Used in the accounting section in chart of accounts.  Not related to patient accounts in any way.</summary>
         <column order="0" name="AccountNum" type="bigint(20)">
@@ -3549,7 +3549,7 @@
         <column order="2" name="DefaultPercent" type="smallint(6)">
             <summary>Default percent for this category. -1 to skip this category and not apply a percentage.</summary>
         </column>
-        <column order="3" name="CovOrder" type="tinyint">
+        <column order="3" name="CovOrder" type="int(11)">
             <summary>The order in which the categories are displayed.  Includes hidden categories. 0-based.</summary>
         </column>
         <column order="4" name="IsHidden" type="tinyint">
@@ -3947,7 +3947,7 @@
                 <EnumValue name="AccountColors">0- Colors to display in Account module.</EnumValue>
                 <EnumValue name="AdjTypes">1- Adjustment types.</EnumValue>
                 <EnumValue name="ApptConfirmed">2- Appointment confirmed types.</EnumValue>
-                <EnumValue name="ApptProcsQuickAdd">3- Procedure quick add list for appointments.</EnumValue>
+                <EnumValue name="ApptProcsQuickAdd">3- Procedure quick add list for appointments. Example: D1023,D1024. Single tooth numbers are allowed for single codes, example D1151#8. This is really only useful for PAs. Tooth number is stored in user's nomenclature, not American numbering.</EnumValue>
                 <EnumValue name="BillingTypes">4- Billing types.</EnumValue>
                 <EnumValue name="ClaimFormats">5- Not used.</EnumValue>
                 <EnumValue name="DunningMessages">6- Not used.</EnumValue>
@@ -3962,7 +3962,7 @@
                 <EnumValue name="DiscountTypes">15- Not used.</EnumValue>
                 <EnumValue name="Diagnosis">16- Diagnosis types.</EnumValue>
                 <EnumValue name="AppointmentColors">17- Colors to display in the Appointments module.</EnumValue>
-                <EnumValue name="ImageCats">18- Image categories. X = Show in Chart Module, M=Show Thumbnails, F = Show in Patient Forms, L = Show in Patient Portal, P = Show in Patient Pictures, S = Statements, T = Graphical Tooth Charts, R = Treatment Plans, E = Expanded, A = Payment Plans, C = Claim Attachments, B = Lab Cases, U = Autosave Forms, Y = Task Attachments.</EnumValue>
+                <EnumValue name="ImageCats">18- Image categories. ItemValue can be one or more of the following, no delimiters. X = Show in Chart Module, M=Show Thumbnails, F = Show in Patient Forms, L = Show in Patient Portal, P = Show in Patient Pictures, S = Statements, T = Graphical Tooth Charts, R = Treatment Plans, E = Expanded, A = Payment Plans, C = Claim Attachments, B = Lab Cases, U = Autosave Forms, Y = Task Attachments.</EnumValue>
                 <EnumValue name="ApptPhoneNotes">19- Not used.</EnumValue>
                 <EnumValue name="TxPriorities">20- Treatment plan priority names.</EnumValue>
                 <EnumValue name="MiscColors">21- Miscellaneous color options. See enum DefCatMisColors.</EnumValue>
@@ -4627,13 +4627,12 @@
         </column>
     </table>
     <table name="eclipboardimagecapturedef">
-        <summary>Used to set rules for how often a patient should submit an image when checking in for their appointment via eClipboard.</summary>
+        <summary>Used to set rules for how often a patient should submit an image when checking in for their appointment via eClipboard. This is the grid on the right in eClipboard Images window.</summary>
         <column order="0" name="EClipboardImageCaptureDefNum" type="bigint(20)">
             <summary>Primary key.</summary>
         </column>
         <column order="1" name="DefNum" type="bigint(20)" fk="def">
-            <summary>FK to def.DefNum. Should match a DefNum that is in the in 'EClipboard Images' defcat or has (or had) the 'P' (Patient Pictures)  
-            usage in the 'Image Categories' defcat.</summary>
+            <summary>FK to def.DefNum. Should match a DefNum that is in the in 'EClipboard Images' defcat or has (or had) the 'P' (Patient Pictures) usage in the 'Image Categories' defcat.</summary>
         </column>
         <column order="2" name="IsSelfPortrait" type="tinyint(4)">
             <summary>True if the rule pertains to the patient self portrait. False if the rule is for an 'Eclipboard images' defcat definition.</summary>
@@ -5977,7 +5976,36 @@
             updates.  Not user editable with the UI.</summary>
         </column>
         <column order="20" name="MsgType" type="varchar(255)">
-            <summary></summary>
+            <summary>Enum:EmailMessageSource  This is used to identify where in the program this message originated from. This is used for sent email messages.</summary>
+            <Enumeration name="EmailMessageSource">
+                <summary>The different parts in the program that send an email message.</summary>
+                <EnumValue name="Undefined">Should not be used.</EnumValue>
+                <EnumValue name="Legacy">This is used for all existing messages prior to v21.1.6.0.</EnumValue>
+                <EnumValue name="Confirmation">Confirmation messages.</EnumValue>
+                <EnumValue name="Cryo">Oregon Cryonics.</EnumValue>
+                <EnumValue name="EConfirmation">Auto eConfirmation messages.</EnumValue>
+                <EnumValue name="EHR">EHR messages.</EnumValue>
+                <EnumValue name="EReminder">Auto eReminder messages.</EnumValue>
+                <EnumValue name="Forward">Forward messages.</EnumValue>
+                <EnumValue name="Hosting">Generated by Open Dental email hosting.</EnumValue>
+                <EnumValue name="JobManager">Jobmanager messages.</EnumValue>
+                <EnumValue name="Manual">Manual messages by office.</EnumValue>
+                <EnumValue name="PatPortalInvite">Auto Patient portal invites.</EnumValue>
+                <EnumValue name="PatPortalReset">Auto Patient portal pass code reset.</EnumValue>
+                <EnumValue name="PaymentReceipt">Payment receipt.</EnumValue>
+                <EnumValue name="Promotion">Auto Promotion messages.</EnumValue>
+                <EnumValue name="Recall">Recall messages.</EnumValue>
+                <EnumValue name="Reply">Reply messages.</EnumValue>
+                <EnumValue name="Sheet">Sheet messages.</EnumValue>
+                <EnumValue name="Statement">Statement messages.</EnumValue>
+                <EnumValue name="ThankYou">Auto Thankyou messages.</EnumValue>
+                <EnumValue name="TreatmentPlan">Treatment plan messages.</EnumValue>
+                <EnumValue name="Verification">Auto verification messages.</EnumValue>
+                <EnumValue name="WebMail">Webmail messages.</EnumValue>
+                <EnumValue name="WebSchedASAP">Auto websched ASAP messages.</EnumValue>
+                <EnumValue name="WebSchedRecall">Auto websched recall messages.</EnumValue>
+                <EnumValue name="GeneralMessage">Appointment General Message.</EnumValue>
+            </Enumeration>
         </column>
         <column order="21" name="FailReason" type="varchar(255)">
             <summary>Reason the message failed to send. Blank if sent successful.</summary>
@@ -10208,10 +10236,13 @@
         <column order="1" name="OrthoHardwareSpecNum" type="bigint(20)" fk="orthohardwarespec">
             <summary>FK to orthohardwarespec.OrthoHardwareSpecNum. Description comes from here.</summary>
         </column>
-        <column order="2" name="ToothRange" type="varchar(255)">
-            <summary>Tooth numbers stored here are always stored in Universal (1-32) notation. They are displayed to the user as Palmer notation. For brackets, always use tooth numbers separated by commas, like 2,3,4,5,6. For wires, must use a range like 2-15. For elastics, typically use 2 teeth separated with commas, but more are allowed.</summary>
+        <column order="2" name="Description" type="varchar(255)">
+            <summary>The description used for picking the prescription from a list.</summary>
         </column>
-        <column order="3" name="ItemOrder" type="int(11)">
+        <column order="3" name="ToothRange" type="varchar(255)">
+            <summary>Tooth numbers stored here are always stored in Universal (1-32) notation. They are displayed to the user as Palmer notation. For brackets and elastics, always use tooth numbers separated by commas, like 2,3,4,5,6. For wires, must use a range like 2-15.</summary>
+        </column>
+        <column order="4" name="ItemOrder" type="int(11)">
             <summary>0 indexed. User controls it with arrows.</summary>
         </column>
     </table>

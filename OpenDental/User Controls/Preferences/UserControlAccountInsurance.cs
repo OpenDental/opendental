@@ -68,6 +68,7 @@ namespace OpenDental {
 			comboZeroDollarProcClaimBehavior.SelectedIndex=PrefC.GetInt(PrefName.ClaimZeroDollarProcBehavior);
 			checkClaimTrackingExcludeNone.Checked=PrefC.GetBool(PrefName.ClaimTrackingStatusExcludesNone);
 			checkInsPayNoWriteoffMoreThanProc.Checked=PrefC.GetBool(PrefName.InsPayNoWriteoffMoreThanProc);
+			checkNoInitialPrimaryInsMoreThanProc.Checked=PrefC.GetBool(PrefName.InsPayNoInitialPrimaryMoreThanProc);
 			checkPromptForSecondaryClaim.Checked=PrefC.GetBool(PrefName.PromptForSecondaryClaim);
 			checkInsEstRecalcReceived.Checked=PrefC.GetBool(PrefName.InsEstRecalcReceived);
 			checkPriClaimAllowSetToHoldUntilPriReceived.Checked=PrefC.GetBool(PrefName.PriClaimAllowSetToHoldUntilPriReceived);
@@ -97,6 +98,7 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateInt(PrefName.ClaimZeroDollarProcBehavior,comboZeroDollarProcClaimBehavior.SelectedIndex);
 			Changed|=Prefs.UpdateBool(PrefName.ClaimTrackingStatusExcludesNone,checkClaimTrackingExcludeNone.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.InsPayNoWriteoffMoreThanProc,checkInsPayNoWriteoffMoreThanProc.Checked);
+			Changed|=Prefs.UpdateBool(PrefName.InsPayNoInitialPrimaryMoreThanProc,checkNoInitialPrimaryInsMoreThanProc.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.PromptForSecondaryClaim,checkPromptForSecondaryClaim.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.InsEstRecalcReceived,checkInsEstRecalcReceived.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.CanadaCreatePpoLabEst,checkCanadianPpoLabEst.Checked);

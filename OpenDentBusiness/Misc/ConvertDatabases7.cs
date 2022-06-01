@@ -2733,414 +2733,455 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}//End of 22_1_31() method
 
+		private static void To22_1_34() {
+			string command;
+			command="ALTER TABLE CovCat MODIFY CovOrder INT NOT NULL";
+			Db.NonQ(command);
+		}//End of 22_1_34() method
+
+		private static void To22_1_35() {
+			#region InsVerifyChecks
+			string command;
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('InsBatchVerifyCreateAdjustments','0')"; //Default to false
+			Db.NonQ(command);
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('InsBatchVerifyCheckDeductible','0')"; //Default to false
+			Db.NonQ(command);
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('InsBatchVerifyCheckAnnualMax','0')"; //Default to false
+			Db.NonQ(command);
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('InsBatchVerifyChangeInsHist','0')";//Default to false
+			Db.NonQ(command);
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('InsBatchVerifyChangeEffectiveDates','0')";//Default to false 
+			Db.NonQ(command);
+			//We are changing default behavior of automated Insurance verification to be controlled by preferences.
+			//We must determine if this is pertinent to the customer, and if it is, display a notification to each of their administrators upon updating.
+			DataTable tableScheduledProcessesInsVerify=Db.GetTable("SELECT * FROM scheduledprocess WHERE ScheduledAction='InsVerifyBatch'");//ScheduledActionEnum.InsVerifyBatch=1
+			if(tableScheduledProcessesInsVerify.Rows.Count>0) {
+				//If they do, find their admin users.
+				DataTable tableUserOdAdmins=Db.GetTable("SELECT UserNum FROM usergroupattach " +
+					"WHERE usergroupattach.UserGroupNum IN (SELECT UserGroupNum FROM grouppermission WHERE PermType=24)");//Permissions.SecurityAdmin=24
+				if(tableUserOdAdmins!=null && tableUserOdAdmins.Rows.Count>0) {
+					//If we found their admin users, create an alert for each one, notifying them of the changed behavior.
+					string description= "Your office has batch insurance verification scheduled. By default, batch insurance verification no longer checks deductibles or annual maximums, and it does not make changes to plan effective dates, insurance adjustments, or insurance history. These settings can be changed on the Scheduled Processes window (See documentation for Scheduled Processes for details).";
+					for(int i =0;i<tableUserOdAdmins.Rows.Count;i++) {
+						long userNum=PIn.Long(tableUserOdAdmins.Rows[i]["usernum"].ToString());
+						command=$"INSERT INTO alertitem (ClinicNum,Description,Type,Severity,Actions,FormToOpen,FKey,ItemValue,UserNum) VALUES (" +
+							//AlertType.Generic=0, SeverityType.Medium, ActionType.Delete|ActionType.MarkAsRead=5, FormToOpen.None=0, Fkey=0
+							$"-1, '{POut.String(description)}', 0, 2, 5, 0, 0, '', {POut.Long(userNum)})";
+						Db.NonQ(command);
+					}
+				}
+			}	
+			#endregion
+		}//End of 22_1_35() method
+
 		private static void To22_2_1() {
 			DataTable table;
-			string upgrading="Upgrading database to version: 22.2.0. ";
+			string upgrading = "Upgrading database to version: 22.2.0. ";
 			ODEvent.Fire(ODEventType.ConvertDatabases,upgrading);//No translation in convert script.
 			string command;
 			#region ApptGeneralMessageSent
-			string tableName=POut.String("apptgeneralmessagesent");
+			string tableName = POut.String("apptgeneralmessagesent");
 			ODEvent.Fire(ODEventType.ConvertDatabases,$"{upgrading} Altering {tableName}.");//No translation in convert script.
-			command=$"ALTER TABLE {tableName} " +
-				"CHANGE SmsSendStatus SendStatus tinyint NOT NULL," +
-				"ADD ApptDateTime datetime NOT NULL DEFAULT '0001-01-01 00:00:00'," +
-				"ADD MessageType tinyint NOT NULL," +
-				"ADD MessageFk bigint NOT NULL," +
-				"ADD DateTimeSent datetime NOT NULL DEFAULT '0001-01-01 00:00:00'," +
-				"ADD ResponseDescript text NOT NULL," +
-				"ADD INDEX (MessageFk)";			
+			command=$"ALTER TABLE {tableName} "+
+				"CHANGE SmsSendStatus SendStatus tinyint NOT NULL,"+
+				"ADD ApptDateTime datetime NOT NULL DEFAULT '0001-01-01 00:00:00',"+
+				"ADD MessageType tinyint NOT NULL,"+
+				"ADD MessageFk bigint NOT NULL,"+
+				"ADD DateTimeSent datetime NOT NULL DEFAULT '0001-01-01 00:00:00',"+
+				"ADD ResponseDescript text NOT NULL,"+
+				"ADD INDEX (MessageFk)";
 			Db.NonQ(command);
 			//Original rows become TEXT rows.
-			command=$"UPDATE {tableName} SET " +
+			command=$"UPDATE {tableName} SET "+
 				"MessageType=1"; //TEXT
 			Db.NonQ(command);
 			//Duplicate original rows as EMAIL rows.
-			command=$"INSERT INTO {tableName} " +
-				"(" +
-					"ApptNum," +
-					"PatNum," +
-					"ClinicNum," +
-					"DateTimeEntry," +
-					"TSPrior," +
-					"ApptReminderRuleNum," +
-					"EmailSendStatus," +
-					"SendStatus," +
-					"MessageType," +
-					"MessageFk," +
-					"DateTimeSent," +
-					"ResponseDescript" +
-				") " +
-				"SELECT " +
-					"ApptNum," +
-					"PatNum," +
-					"ClinicNum," +
-					"DateTimeEntry," +
-					"TSPrior," +
-					"ApptReminderRuleNum," +
-					"0," +
-					"EmailSendStatus," +
-					"2," +//Email
-					"0," +
-					"DateTimeSent," +
-					"ResponseDescript " +
+			command=$"INSERT INTO {tableName} "+
+				"("+
+					"ApptNum,"+
+					"PatNum,"+
+					"ClinicNum,"+
+					"DateTimeEntry,"+
+					"TSPrior,"+
+					"ApptReminderRuleNum,"+
+					"EmailSendStatus,"+
+					"SendStatus,"+
+					"MessageType,"+
+					"MessageFk,"+
+					"DateTimeSent,"+
+					"ResponseDescript"+
+				") "+
+				"SELECT "+
+					"ApptNum,"+
+					"PatNum,"+
+					"ClinicNum,"+
+					"DateTimeEntry,"+
+					"TSPrior,"+
+					"ApptReminderRuleNum,"+
+					"0,"+
+					"EmailSendStatus,"+
+					"2,"+//Email
+					"0,"+
+					"DateTimeSent,"+
+					"ResponseDescript "+
 				$"FROM {tableName}";
 			Db.NonQ(command);
-			command=$"ALTER TABLE {tableName} " +
+			command=$"ALTER TABLE {tableName} "+
 				"DROP COLUMN EmailSendStatus";
 			Db.NonQ(command);
 			#endregion
 			#region ApptReminderSent
 			tableName=POut.String("apptremindersent");
 			ODEvent.Fire(ODEventType.ConvertDatabases,$"{upgrading} Altering {tableName}.");//No translation in convert script.
-			command=$"ALTER TABLE {tableName} " +
-				"ADD PatNum bigint NOT NULL," +
-				"ADD ClinicNum bigint NOT NULL," +
-				"ADD SendStatus tinyint NOT NULL," +
-				"ADD MessageType tinyint NOT NULL," +
-				"ADD MessageFk bigint NOT NULL," +
-				"ADD DateTimeEntry datetime NOT NULL DEFAULT '0001-01-01 00:00:00'," +
-				"ADD ResponseDescript text NOT NULL," +
-				"ADD INDEX (PatNum)," +
-				"ADD INDEX (ClinicNum)," +
+			command=$"ALTER TABLE {tableName} "+
+				"ADD PatNum bigint NOT NULL,"+
+				"ADD ClinicNum bigint NOT NULL,"+
+				"ADD SendStatus tinyint NOT NULL,"+
+				"ADD MessageType tinyint NOT NULL,"+
+				"ADD MessageFk bigint NOT NULL,"+
+				"ADD DateTimeEntry datetime NOT NULL DEFAULT '0001-01-01 00:00:00',"+
+				"ADD ResponseDescript text NOT NULL,"+
+				"ADD INDEX (PatNum),"+
+				"ADD INDEX (ClinicNum),"+
 				"ADD INDEX (MessageFk)";
 			Db.NonQ(command);
 			//Original rows become TEXT rows.
-			command=$"UPDATE {tableName} SET " +
-				"SendStatus=IF(IsSmsSent,3,4)," +//SendSuccessful or SendFailed
+			command=$"UPDATE {tableName} SET "+
+				"SendStatus=IF(IsSmsSent,3,4),"+//SendSuccessful or SendFailed
 				"MessageType=1"; //TEXT
 			Db.NonQ(command);
 			//Duplicate original rows as EMAIL rows.
-			command=$"INSERT INTO {tableName} " +
-				"(" +
-					"ApptNum," +
-					"ApptDateTime," +
-					"TSPrior," +
-					"PatNum," +
-					"ClinicNum," +
-					"DateTimeEntry," +
-					"ApptReminderRuleNum," +
-					"IsSmsSent," +
-					"IsEmailSent," +
-					"SendStatus," +
-					"MessageType," +
-					"MessageFk," +
-					"DateTimeSent," +
-					"ResponseDescript" +
-				") " +
-				"SELECT " +
-					"ApptNum," +
-					"ApptDateTime," +
-					"TSPrior," +
-					"PatNum," +
-					"ClinicNum," +
-					"DateTimeEntry," +
-					"ApptReminderRuleNum," +
-					"0," +
-					"0," +
-					"IF(IsEmailSent,3,4)," +//SendSuccessful or SendFailed
-					"2," +//Email
-					"0," +
-					"DateTimeSent," +
-					"ResponseDescript " +
+			command=$"INSERT INTO {tableName} "+
+				"("+
+					"ApptNum,"+
+					"ApptDateTime,"+
+					"TSPrior,"+
+					"PatNum,"+
+					"ClinicNum,"+
+					"DateTimeEntry,"+
+					"ApptReminderRuleNum,"+
+					"IsSmsSent,"+
+					"IsEmailSent,"+
+					"SendStatus,"+
+					"MessageType,"+
+					"MessageFk,"+
+					"DateTimeSent,"+
+					"ResponseDescript"+
+				") "+
+				"SELECT "+
+					"ApptNum,"+
+					"ApptDateTime,"+
+					"TSPrior,"+
+					"PatNum,"+
+					"ClinicNum,"+
+					"DateTimeEntry,"+
+					"ApptReminderRuleNum,"+
+					"0,"+
+					"0,"+
+					"IF(IsEmailSent,3,4),"+//SendSuccessful or SendFailed
+					"2,"+//Email
+					"0,"+
+					"DateTimeSent,"+
+					"ResponseDescript "+
 				$"FROM {tableName}";
 			Db.NonQ(command);
-			command=$"ALTER TABLE {tableName} " +
-				"DROP COLUMN IsSmsSent," +
+			command=$"ALTER TABLE {tableName} "+
+				"DROP COLUMN IsSmsSent,"+
 				"DROP COLUMN IsEmailSent";
 			Db.NonQ(command);
 			#endregion
 			#region ApptThankYouSent
 			tableName=POut.String("apptthankyousent");
 			ODEvent.Fire(ODEventType.ConvertDatabases,$"{upgrading} Altering {tableName}.");//No translation in convert script.
-			command=$"ALTER TABLE {tableName} " +
-				"CHANGE SmsSentStatus SendStatus tinyint NOT NULL," +
-				"ADD MessageType tinyint NOT NULL," +
-				"ADD MessageFk bigint NOT NULL," +
-				"ADD DateTimeEntry datetime NOT NULL DEFAULT '0001-01-01 00:00:00'," +
-				"ADD DateTimeSent datetime NOT NULL DEFAULT '0001-01-01 00:00:00'," +
+			command=$"ALTER TABLE {tableName} "+
+				"CHANGE SmsSentStatus SendStatus tinyint NOT NULL,"+
+				"ADD MessageType tinyint NOT NULL,"+
+				"ADD MessageFk bigint NOT NULL,"+
+				"ADD DateTimeEntry datetime NOT NULL DEFAULT '0001-01-01 00:00:00',"+
+				"ADD DateTimeSent datetime NOT NULL DEFAULT '0001-01-01 00:00:00',"+
 				"ADD INDEX (MessageFk)";
 			Db.NonQ(command);
 			//Original rows become TEXT rows.
-			command=$"UPDATE {tableName} SET " +
+			command=$"UPDATE {tableName} SET "+
 				"MessageType=1"; //TEXT
 			Db.NonQ(command);
 			//Duplicate original rows as EMAIL rows.
-			command=$"INSERT INTO {tableName} " +
-				"(" +
-					"ApptNum," +
-					"PatNum," +
-					"ClinicNum," +
-					"DateTimeEntry," +
-					"TSPrior," +
-					"ApptReminderRuleNum," +
-					"EmailSentStatus," +
-					"SendStatus," +
-					"MessageType," +
-					"MessageFk," +
-					"DateTimeSent," +
-					"ResponseDescript," +
-					"GuidMessageToMobile," +
-					"ApptDateTime," +
-					"ApptSecDateTEntry," +
-					"DateTimeThankYouTransmit," +
-					"DoNotResend," +
-					"ShortGUID" +
-				") " +
-				"SELECT " +
-					"ApptNum," +
-					"PatNum," +
-					"ClinicNum," +
-					"DateTimeEntry," +
-					"TSPrior," +
-					"ApptReminderRuleNum," +
-					"0," +
-					"EmailSentStatus," +
-					"2," +//Email
-					"0," +
-					"DateTimeSent," +
-					"ResponseDescript," +
-					"''," +
-					"ApptDateTime," +
-					"ApptSecDateTEntry," +
-					"DateTimeThankYouTransmit," +
-					"DoNotResend," +
-					"ShortGUID " +
+			command=$"INSERT INTO {tableName} "+
+				"("+
+					"ApptNum,"+
+					"PatNum,"+
+					"ClinicNum,"+
+					"DateTimeEntry,"+
+					"TSPrior,"+
+					"ApptReminderRuleNum,"+
+					"EmailSentStatus,"+
+					"SendStatus,"+
+					"MessageType,"+
+					"MessageFk,"+
+					"DateTimeSent,"+
+					"ResponseDescript,"+
+					"GuidMessageToMobile,"+
+					"ApptDateTime,"+
+					"ApptSecDateTEntry,"+
+					"DateTimeThankYouTransmit,"+
+					"DoNotResend,"+
+					"ShortGUID"+
+				") "+
+				"SELECT "+
+					"ApptNum,"+
+					"PatNum,"+
+					"ClinicNum,"+
+					"DateTimeEntry,"+
+					"TSPrior,"+
+					"ApptReminderRuleNum,"+
+					"0,"+
+					"EmailSentStatus,"+
+					"2,"+//Email
+					"0,"+
+					"DateTimeSent,"+
+					"ResponseDescript,"+
+					"'',"+
+					"ApptDateTime,"+
+					"ApptSecDateTEntry,"+
+					"DateTimeThankYouTransmit,"+
+					"DoNotResend,"+
+					"ShortGUID "+
 				$"FROM {tableName}";
 			Db.NonQ(command);
-			command=$"ALTER TABLE {tableName} " +
-				"DROP COLUMN EmailSentStatus," +
-				"DROP COLUMN IsForSms," +
-				"DROP COLUMN IsForEmail," +
-				"DROP COLUMN PhonePat," +
-				"DROP COLUMN GuidMessageToMobile," +
-				"DROP COLUMN MsgTextToMobileTemplate," +
-				"DROP COLUMN MsgTextToMobile," +
-				"DROP COLUMN EmailSubjTemplate," +
-				"DROP COLUMN EmailSubj," +
-				"DROP COLUMN EmailTextTemplate," +
-				"DROP COLUMN EmailText," +
+			command=$"ALTER TABLE {tableName} "+
+				"DROP COLUMN EmailSentStatus,"+
+				"DROP COLUMN IsForSms,"+
+				"DROP COLUMN IsForEmail,"+
+				"DROP COLUMN PhonePat,"+
+				"DROP COLUMN GuidMessageToMobile,"+
+				"DROP COLUMN MsgTextToMobileTemplate,"+
+				"DROP COLUMN MsgTextToMobile,"+
+				"DROP COLUMN EmailSubjTemplate,"+
+				"DROP COLUMN EmailSubj,"+
+				"DROP COLUMN EmailTextTemplate,"+
+				"DROP COLUMN EmailText,"+
 				"DROP COLUMN ShortGuidEmail";
 			Db.NonQ(command);
 			#endregion
 			#region ConfirmationRequest
 			tableName=POut.String("confirmationrequest");
 			ODEvent.Fire(ODEventType.ConvertDatabases,$"{upgrading} Altering {tableName}.");//No translation in convert script.
-			command=$"ALTER TABLE {tableName} " +
-				"CHANGE SmsSentOk SendStatus tinyint NOT NULL," +
-				"CHANGE AptDateTimeOrig ApptDateTime datetime NOT NULL DEFAULT '0001-01-01 00:00:00'," +
-				"ADD MessageType tinyint NOT NULL," +
-				"ADD MessageFk bigint NOT NULL," +
-				"ADD DateTimeSent datetime NOT NULL DEFAULT '0001-01-01 00:00:00'," +
+			command=$"ALTER TABLE {tableName} "+
+				"CHANGE SmsSentOk SendStatus tinyint NOT NULL,"+
+				"CHANGE AptDateTimeOrig ApptDateTime datetime NOT NULL DEFAULT '0001-01-01 00:00:00',"+
+				"ADD MessageType tinyint NOT NULL,"+
+				"ADD MessageFk bigint NOT NULL,"+
+				"ADD DateTimeSent datetime NOT NULL DEFAULT '0001-01-01 00:00:00',"+
 				"ADD INDEX (MessageFk)";
 			Db.NonQ(command);
 			//Original rows become TEXT rows.
-			command=$"UPDATE {tableName} SET " +
-				"SendStatus=IF(SendStatus,3,4)," +//SendSuccessful or SendFailed
+			command=$"UPDATE {tableName} SET "+
+				"SendStatus=IF(SendStatus,3,4),"+//SendSuccessful or SendFailed
 				"MessageFk=(SELECT SmsToMobileNum FROM smstomobile WHERE smstomobile.GuidMessage=GuidMessageToMobile LIMIT 1),"+//Must retain FK relationship to smstomobile
 				"MessageType=1"; //TEXT
 			Db.NonQ(command);
 			//Duplicate original rows as EMAIL rows.
-			command=$"INSERT INTO {tableName} " +
-				"(" +
-					"ApptNum," +
-					"PatNum," +
-					"ClinicNum," +
-					"DateTimeEntry," +
-					"TSPrior," +
-					"ApptReminderRuleNum," +
-					"EmailSentOk," +
-					"SendStatus," +
-					"MessageType," +
-					"MessageFk," +
-					"DateTimeSent," +
-					"ResponseDescript," +
-					"DateTimeConfirmExpire," +
-					"ConfirmCode," +
-					"DateTimeConfirmTransmit," +
-					"DateTimeRSVP," +
-					"RSVPStatus," +
-					"GuidMessageFromMobile," +
-					"ApptDateTime," +
-					"DoNotResend," +
-					"ShortGUID" +
-				") " +
-				"SELECT " +
-					"ApptNum," +
-					"PatNum," +
-					"ClinicNum," +
-					"DateTimeEntry," +
-					"TSPrior," +
-					"ApptReminderRuleNum," +
-					"0," +
-					"IF(EmailSentOk,3,4)," +//SendSuccessful or SendFailed
-					"2," +//Email
-					"0," +
-					"DateTimeSent," +
-					"ResponseDescript," +
-					"DateTimeConfirmExpire," +
-					"ConfirmCode," +
-					"DateTimeConfirmTransmit," +
-					"DateTimeRSVP," +
-					"RSVPStatus," +
-					"GuidMessageFromMobile," +
-					"ApptDateTime," +
-					"DoNotResend," +
-					"ShortGuidEmail " +
+			command=$"INSERT INTO {tableName} "+
+				"("+
+					"ApptNum,"+
+					"PatNum,"+
+					"ClinicNum,"+
+					"DateTimeEntry,"+
+					"TSPrior,"+
+					"ApptReminderRuleNum,"+
+					"EmailSentOk,"+
+					"SendStatus,"+
+					"MessageType,"+
+					"MessageFk,"+
+					"DateTimeSent,"+
+					"ResponseDescript,"+
+					"DateTimeConfirmExpire,"+
+					"ConfirmCode,"+
+					"DateTimeConfirmTransmit,"+
+					"DateTimeRSVP,"+
+					"RSVPStatus,"+
+					"GuidMessageFromMobile,"+
+					"ApptDateTime,"+
+					"DoNotResend,"+
+					"ShortGUID"+
+				") "+
+				"SELECT "+
+					"ApptNum,"+
+					"PatNum,"+
+					"ClinicNum,"+
+					"DateTimeEntry,"+
+					"TSPrior,"+
+					"ApptReminderRuleNum,"+
+					"0,"+
+					"IF(EmailSentOk,3,4),"+//SendSuccessful or SendFailed
+					"2,"+//Email
+					"0,"+
+					"DateTimeSent,"+
+					"ResponseDescript,"+
+					"DateTimeConfirmExpire,"+
+					"ConfirmCode,"+
+					"DateTimeConfirmTransmit,"+
+					"DateTimeRSVP,"+
+					"RSVPStatus,"+
+					"GuidMessageFromMobile,"+
+					"ApptDateTime,"+
+					"DoNotResend,"+
+					"ShortGuidEmail "+
 				$"FROM {tableName}";
 			Db.NonQ(command);
-			command=$"ALTER TABLE {tableName} " +
-				"DROP COLUMN IsForSms," +
-				"DROP COLUMN IsForEmail," +
-				"DROP COLUMN PhonePat," +
-				"DROP COLUMN EmailSentOk," +
-				"DROP COLUMN GuidMessageToMobile," +
-				"DROP COLUMN MsgTextToMobileTemplate," +
-				"DROP COLUMN MsgTextToMobile," +
-				"DROP COLUMN EmailSubjTemplate," +
-				"DROP COLUMN EmailSubj," +
-				"DROP COLUMN EmailTextTemplate," +
-				"DROP COLUMN EmailText," +
-				"DROP COLUMN SecondsFromEntryToExpire," +
+			command=$"ALTER TABLE {tableName} "+
+				"DROP COLUMN IsForSms,"+
+				"DROP COLUMN IsForEmail,"+
+				"DROP COLUMN PhonePat,"+
+				"DROP COLUMN EmailSentOk,"+
+				"DROP COLUMN GuidMessageToMobile,"+
+				"DROP COLUMN MsgTextToMobileTemplate,"+
+				"DROP COLUMN MsgTextToMobile,"+
+				"DROP COLUMN EmailSubjTemplate,"+
+				"DROP COLUMN EmailSubj,"+
+				"DROP COLUMN EmailTextTemplate,"+
+				"DROP COLUMN EmailText,"+
+				"DROP COLUMN SecondsFromEntryToExpire,"+
 				"DROP COLUMN ShortGuidEmail";
 			Db.NonQ(command);
 			#endregion
 			#region PatientPortalInvite
 			tableName=POut.String("patientportalinvite");
 			ODEvent.Fire(ODEventType.ConvertDatabases,$"{upgrading} Altering {tableName}.");//No translation in convert script.
-			command=$"ALTER TABLE {tableName} " +
-				"CHANGE AptNum ApptNum bigint NOT NULL," +
-				"CHANGE EmailSendStatus SendStatus tinyint NOT NULL," +
-				"ADD MessageType tinyint NOT NULL," +
-				"CHANGE EmailMessageNum MessageFk bigint NOT NULL," +
-				"ADD DateTimeSent datetime NOT NULL DEFAULT '0001-01-01 00:00:00'," +
-				"CHANGE Note ResponseDescript text NOT NULL," +
-				"ADD ApptReminderRuleNum bigint NOT NULL," +
-				"ADD ApptDateTime datetime NOT NULL DEFAULT '0001-01-01 00:00:00'," +
-				"ADD INDEX (MessageFk)," +
+			command=$"ALTER TABLE {tableName} "+
+				"CHANGE AptNum ApptNum bigint NOT NULL,"+
+				"CHANGE EmailSendStatus SendStatus tinyint NOT NULL,"+
+				"ADD MessageType tinyint NOT NULL,"+
+				"CHANGE EmailMessageNum MessageFk bigint NOT NULL,"+
+				"ADD DateTimeSent datetime NOT NULL DEFAULT '0001-01-01 00:00:00',"+
+				"CHANGE Note ResponseDescript text NOT NULL,"+
+				"ADD ApptReminderRuleNum bigint NOT NULL,"+
+				"ADD ApptDateTime datetime NOT NULL DEFAULT '0001-01-01 00:00:00',"+
+				"ADD INDEX (MessageFk),"+
 				"ADD INDEX (ApptReminderRuleNum)";
 			Db.NonQ(command);
 			//Original rows become EMAIL rows.
-			command=$"UPDATE {tableName} SET " +
+			command=$"UPDATE {tableName} SET "+
 				"MessageType=2"; //EMAIL
 			Db.NonQ(command);
 			//No row duplication because PatientPortalInvites have only been Email up to this point.
-			command=$"ALTER TABLE {tableName} " +
-				"DROP COLUMN TemplateEmail," +
+			command=$"ALTER TABLE {tableName} "+
+				"DROP COLUMN TemplateEmail,"+
 				"DROP COLUMN TemplateEmailSubj";
 			Db.NonQ(command);
 			#endregion
 			#region PromotionLog
 			tableName=POut.String("promotionlog");
 			ODEvent.Fire(ODEventType.ConvertDatabases,$"{upgrading} Altering {tableName}.");//No translation in convert script.
-			command=$"ALTER TABLE {tableName} " +
-				"ADD ClinicNum bigint NOT NULL," +
-				"ADD SendStatus tinyint NOT NULL," +
-				"ADD MessageType tinyint NOT NULL," +
-				"CHANGE EmailMessageNum MessageFk bigint NOT NULL," +
-				"ADD DateTimeEntry datetime NOT NULL DEFAULT '0001-01-01 00:00:00'," +
-				"ADD ResponseDescript text NOT NULL," +
-				"ADD ApptReminderRuleNum bigint NOT NULL," +
-				"ADD INDEX (ClinicNum)," +
-				"ADD INDEX (MessageFk)," +
+			command=$"ALTER TABLE {tableName} "+
+				"ADD ClinicNum bigint NOT NULL,"+
+				"ADD SendStatus tinyint NOT NULL,"+
+				"ADD MessageType tinyint NOT NULL,"+
+				"CHANGE EmailMessageNum MessageFk bigint NOT NULL,"+
+				"ADD DateTimeEntry datetime NOT NULL DEFAULT '0001-01-01 00:00:00',"+
+				"ADD ResponseDescript text NOT NULL,"+
+				"ADD ApptReminderRuleNum bigint NOT NULL,"+
+				"ADD INDEX (ClinicNum),"+
+				"ADD INDEX (MessageFk),"+
 				"ADD INDEX (ApptReminderRuleNum)";
 			Db.NonQ(command);
-			command=$"UPDATE {tableName} SET " +
+			command=$"UPDATE {tableName} SET "+
 				//PromotionLogStatus => 0=Unknown,1=Pending,2=Bounced,3=Unsubscribed,4,Complaint,5=Delivered,6=Failed,7=Opened
 				//AutoCommStatus => 0=Undefined,1=DoNotSend,2=SendNotAttempted,3=SendSuccessful,4=SendFailed,5=SentAwaitingReceipt
-				"SendStatus=CASE PromotionStatus " +
-					"WHEN 0 THEN 0 " + //Unknown => Undefined
-					"WHEN 1 THEN 5 " + //Pending => SentAwaitingReceipt
-					"WHEN 5 THEN 3 " + //Delivered => SendSuccessful
-					"WHEN 6 THEN 4 " + //Failed => SendFailed
-					"WHEN 7 THEN 3 " + //Delivered => SendSuccessful
-					"ELSE 4 " + //Bounced/Unsubscribed/Complaint => SendFailed
-					"END, " +
+				"SendStatus=CASE PromotionStatus "+
+					"WHEN 0 THEN 0 "+ //Unknown => Undefined
+					"WHEN 1 THEN 5 "+ //Pending => SentAwaitingReceipt
+					"WHEN 5 THEN 3 "+ //Delivered => SendSuccessful
+					"WHEN 6 THEN 4 "+ //Failed => SendFailed
+					"WHEN 7 THEN 3 "+ //Delivered => SendSuccessful
+					"ELSE 4 "+ //Bounced/Unsubscribed/Complaint => SendFailed
+					"END, "+
 				"MessageType=2"; //EMAIL
 			Db.NonQ(command);
 			#endregion
 			#region WebSchedRecall
 			tableName=POut.String("webschedrecall");
 			ODEvent.Fire(ODEventType.ConvertDatabases,$"{upgrading} Altering {tableName}.");//No translation in convert script.	
-			command=$"ALTER TABLE {tableName} " +
-				"ADD CommlogNum bigint NOT NULL," +
-				"CHANGE ShortGUIDSms ShortGUID varchar(255) NOT NULL," +
-				"CHANGE SmsSendStatus SendStatus tinyint NOT NULL," +
-				"ADD MessageType tinyint NOT NULL," +
-				"ADD MessageFk bigint NOT NULL," +
-				"CHANGE DateTimeReminderSent DateTimeSent datetime NOT NULL DEFAULT '0001-01-01 00:00:00'," +
-				"CHANGE DateDue DateDue datetime NOT NULL DEFAULT '0001-01-01 00:00:00'," +
-				"ADD ApptReminderRuleNum bigint NOT NULL," +
-				"ADD INDEX (CommlogNum)," +
-				"ADD INDEX (MessageFk)," +
-				"ADD INDEX (ApptReminderRuleNum)," +
+			command=$"ALTER TABLE {tableName} "+
+				"ADD CommlogNum bigint NOT NULL,"+
+				"CHANGE ShortGUIDSms ShortGUID varchar(255) NOT NULL,"+
+				"CHANGE SmsSendStatus SendStatus tinyint NOT NULL,"+
+				"ADD MessageType tinyint NOT NULL,"+
+				"ADD MessageFk bigint NOT NULL,"+
+				"CHANGE DateTimeReminderSent DateTimeSent datetime NOT NULL DEFAULT '0001-01-01 00:00:00',"+
+				"CHANGE DateDue DateDue datetime NOT NULL DEFAULT '0001-01-01 00:00:00',"+
+				"ADD ApptReminderRuleNum bigint NOT NULL,"+
+				"ADD INDEX (CommlogNum),"+
+				"ADD INDEX (MessageFk),"+
+				"ADD INDEX (ApptReminderRuleNum),"+
 				"ADD INDEX (DateTimeEntry)";
-			Db.NonQ(command);		
+			Db.NonQ(command);
 			//Special case:  We are adding a Cleanup query to AutoCommWebSchedRecall.  Better to run a potentially long delete here as opposed to tying up
 			//the Recall thread's first run and/or causing slowness during workstation runtime.
 			command="SELECT ValueString FROM preference WHERE PrefName='RecallDaysPast' LIMIT 1";
-			string recallDaysPastString=Db.GetScalar(command);
+			string recallDaysPastString = Db.GetScalar(command);
 			if(recallDaysPastString!="-1") {
 				//We only perform the cleanup if the office has a lower bound configured for Recall date range.
-				DateTime dateWebSchedRecallCleanup=DateTime.Today.AddDays(-PIn.Int(recallDaysPastString)).AddYears(-1);
+				DateTime dateWebSchedRecallCleanup = DateTime.Today.AddDays(-PIn.Int(recallDaysPastString)).AddYears(-1);
 				command=$"DELETE FROM {tableName} WHERE DateTimeEntry<{POut.Date(dateWebSchedRecallCleanup)}";
 				Db.NonQ(command);
-			}			
+			}
 			//Original rows become TEXT rows.
-			command=$"UPDATE {tableName} SET " +
-				"MessageFk=(SELECT SmsToMobileNum FROM smstomobile WHERE smstomobile.GuidMessage=GuidMessageToMobile LIMIT 1)," +
+			command=$"UPDATE {tableName} SET "+
+				"MessageFk=(SELECT SmsToMobileNum FROM smstomobile WHERE smstomobile.GuidMessage=GuidMessageToMobile LIMIT 1),"+
 				"MessageType=1"; //TEXT
 			Db.NonQ(command);
 			//Duplicate original rows as EMAIL rows.
-			command=$"INSERT INTO {tableName} " +
-				"(" +
-					"PatNum," +
-					"ClinicNum," +
-					"DateTimeEntry," +
-					"ApptReminderRuleNum," +
-					"EmailSendStatus," +
-					"SendStatus," +
-					"MessageType," +
-					"MessageFk," +
-					"DateTimeSent," +
-					"ResponseDescript," +
-					"RecallNum," +
-					"DateDue," +
-					"ReminderCount," +
-					"PreferRecallMethod," +
-					"DateTimeSendFailed," +
-					"Source" +
-				") " +
-				"SELECT " +
-					"PatNum," +
-					"ClinicNum," +
-					"DateTimeEntry," +
-					"ApptReminderRuleNum," +
-					"0," +
-					"EmailSendStatus," +
-					"2," +//Email
-					"0," +
-					"DateTimeSent," +
-					"ResponseDescript," +
-					"RecallNum," +
-					"DateDue," +
-					"ReminderCount," +
-					"PreferRecallMethod," +
-					"DateTimeSendFailed," +
-					"Source " +
+			command=$"INSERT INTO {tableName} "+
+				"("+
+					"PatNum,"+
+					"ClinicNum,"+
+					"DateTimeEntry,"+
+					"ApptReminderRuleNum,"+
+					"EmailSendStatus,"+
+					"SendStatus,"+
+					"MessageType,"+
+					"MessageFk,"+
+					"DateTimeSent,"+
+					"ResponseDescript,"+
+					"RecallNum,"+
+					"DateDue,"+
+					"ReminderCount,"+
+					"PreferRecallMethod,"+
+					"DateTimeSendFailed,"+
+					"Source"+
+				") "+
+				"SELECT "+
+					"PatNum,"+
+					"ClinicNum,"+
+					"DateTimeEntry,"+
+					"ApptReminderRuleNum,"+
+					"0,"+
+					"EmailSendStatus,"+
+					"2,"+//Email
+					"0,"+
+					"DateTimeSent,"+
+					"ResponseDescript,"+
+					"RecallNum,"+
+					"DateDue,"+
+					"ReminderCount,"+
+					"PreferRecallMethod,"+
+					"DateTimeSendFailed,"+
+					"Source "+
 				$"FROM {tableName}";
 			Db.NonQ(command);
-			command=$"ALTER TABLE {tableName} " +
-				"DROP COLUMN EmailSendStatus," +
-				"DROP COLUMN PhonePat," +
-				"DROP COLUMN EmailPat," +
-				"DROP COLUMN MsgTextToMobileTemplate," +
-				"DROP COLUMN MsgTextToMobile," +
-				"DROP COLUMN EmailSubjTemplate," +
-				"DROP COLUMN EmailSubj," +
-				"DROP COLUMN EmailTextTemplate," +
-				"DROP COLUMN EmailText," +
-				"DROP COLUMN GuidMessageToMobile," +
-				"DROP COLUMN ShortGUIDEmail," +
+			command=$"ALTER TABLE {tableName} "+
+				"DROP COLUMN EmailSendStatus,"+
+				"DROP COLUMN PhonePat,"+
+				"DROP COLUMN EmailPat,"+
+				"DROP COLUMN MsgTextToMobileTemplate,"+
+				"DROP COLUMN MsgTextToMobile,"+
+				"DROP COLUMN EmailSubjTemplate,"+
+				"DROP COLUMN EmailSubj,"+
+				"DROP COLUMN EmailTextTemplate,"+
+				"DROP COLUMN EmailText,"+
+				"DROP COLUMN GuidMessageToMobile,"+
+				"DROP COLUMN ShortGUIDEmail,"+
 				"DROP COLUMN PreferRecallMethod";
 			Db.NonQ(command);
 			#endregion
@@ -3159,7 +3200,7 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			command="ALTER TABLE mountdef ADD AdjModeAfterSeries tinyint NOT NULL";
 			Db.NonQ(command);
-			command="INSERT INTO preference(PrefName,ValueString) VALUES('VideoImageCategoryDefault','0')"; 
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('VideoImageCategoryDefault','0')";
 			Db.NonQ(command);
 			//jordan We rarely do this, but it's worth it here. Pref not hit when starting up.
 			command="UPDATE preference SET PrefName='ImageCategoryDefault' WHERE PrefName='DefaultImageCategoryImportFolder'";
@@ -3168,7 +3209,7 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			command="UPDATE definition SET ItemValue= REPLACE(ItemValue,'X','XM') WHERE Category=18;";//imageCats
 			Db.NonQ(command);
-			command="INSERT INTO preference(PrefName,ValueString) VALUES('ApptWeekViewStartDay','0')"; 
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('ApptWeekViewStartDay','0')";
 			Db.NonQ(command);
 			command="UPDATE displayreport SET Description='Write-offs' WHERE InternalName='ODWriteoffs' AND Description='Writeoffs'";
 			Db.NonQ(command);
@@ -3239,7 +3280,7 @@ namespace OpenDentBusiness {
 			command=$@"UPDATE preference SET ValueString={POut.Bool(false)} WHERE PrefName='AgingCalculatedMonthlyInsteadOfDaily'";
 			Db.NonQ(command);
 			command="SELECT ValueString from preference WHERE PrefName='AgingServiceTimeDue'";
-			DateTime dateAgingServiceTimeDue=PIn.DateT(Db.GetScalar(command));
+			DateTime dateAgingServiceTimeDue = PIn.DateT(Db.GetScalar(command));
 			if(dateAgingServiceTimeDue.Year<1880) {
 				//Set the preference value to 2am.
 				command=$@"UPDATE preference SET ValueString={POut.DateT(DateTime.Today.AddHours(2))} WHERE PrefName='AgingServiceTimeDue'";
@@ -3299,6 +3340,12 @@ namespace OpenDentBusiness {
 			command="ALTER TABLE taskhist ADD INDEX (TriageCategory)";
 			Db.NonQ(command);
 		}//End of 22_2_1() method
+
+		private static void To22_2_4() {
+			string command;
+			command="INSERT INTO preference(PrefName,ValueString) VALUES ('InsPayNoInitialPrimaryMoreThanProc','0')";//Default to false.
+			Db.NonQ(command);
+		}//End of 22_2_4() method
 	}
 }
 

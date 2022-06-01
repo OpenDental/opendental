@@ -19,12 +19,13 @@ namespace OpenDentBusiness{
 		public const string PROMPT_ListAptsToDelete = "One or more procedures are attached to another appointment.\r\n"
 					+ "All selected procedures will be detached from the other appointment which will result in its deletion.\r\n"
 					+ "Continue?";
-		public const string PRMOPT_PlannedProcsConcurrent = "One or more procedures are attached to another planned appointment.\r\n"
+		public const string PROMPT_PlannedProcsConcurrent = "One or more procedures are attached to another planned appointment.\r\n"
 					+ "All selected procedures will be detached from the other planned appointment.\r\n"
 					+ "Continue?";
 		public const string PROMPT_NotPlannedProcsConcurrent = "One or more procedures are attached to another appointment.\r\n"
 					+ "All selected procedures will be detached from the other appointment.\r\n"
 					+ "Continue?";
+		public const string PROMPT_CompletedProceduresBeingMoved = "Cannot attach procedures to this appointment that were set complete by another user. Please try again.";
 		#endregion Prompt constant strings
 
 		#region Get Methods
@@ -211,6 +212,9 @@ namespace OpenDentBusiness{
 			tableReturn.Columns.Add("serverDateTime");
 			tableReturn.Columns.Add("eServiceLogType");
 			tableReturn.Columns.Add("AppointmentTypeNum",typeof(long));
+			tableReturn.Columns.Add("DateTimeArrived");
+			tableReturn.Columns.Add("DateTimeSeated");
+			tableReturn.Columns.Add("DateTimeDismissed");
 			//Run Query
 			List<eServiceType> listEserviceTypes=new List<eServiceType>{eServiceType.WSRecall,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSAsap};
 			string command="SELECT appointment.*, eservicelog.EServiceType FROM appointment ";
@@ -250,6 +254,9 @@ namespace OpenDentBusiness{
 				row["serverDateTime"]=dateTimeServer;
 				row["eServiceLogType"]=(ApiEServiceLogType)PIn.Int(tableAppointments.Rows[i]["EServiceType"].ToString());
 				row["AppointmentTypeNum"]=PIn.Long(tableAppointments.Rows[i]["AppointmentTypeNum"].ToString());
+				row["DateTimeArrived"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeArrived"].ToString());
+				row["DateTimeSeated"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeSeated"].ToString());
+				row["DateTimeDismissed"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeDismissed"].ToString());
 				tableReturn.Rows.Add(row);
 			}
 			return tableReturn;
@@ -2867,36 +2874,6 @@ namespace OpenDentBusiness{
 			return Crud.AppointmentCrud.SelectMany(command);
 		}
 
-		///<summary>Gets the number of procedures on each appointment. Returns a list of aptNum and its procedure count. Only considers unscheduled appointments.</summary>
-		public static List<AptNum_CountProcs> GetProcCountForUnscheduledApts(List<long> listAptNums) {
-			if(listAptNums==null || listAptNums.Count<1) {
-				return new List<AptNum_CountProcs>();
-			}
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<AptNum_CountProcs>>(MethodBase.GetCurrentMethod(),listAptNums);
-			}
-			string command="SELECT appointment.AptNum, COUNT(procedurelog.AptNum) ProcCount "
-					+"FROM appointment "
-					+"INNER JOIN procedurelog ON appointment.AptNum=procedurelog.AptNum "
-					+"WHERE appointment.AptNum IN("+String.Join(",",listAptNums)+") "
-					+"AND AptStatus="+POut.Int((int)ApptStatus.UnschedList)+" "
-					+"GROUP BY appointment.AptNum";
-			DataTable table=Db.GetTable(command);
-			List<AptNum_CountProcs> listAptNum_CountProcss=new List<AptNum_CountProcs>();
-			for(int i = 0;i<table.Rows.Count;i++) {
-				AptNum_CountProcs aptNum_CountProcs=new AptNum_CountProcs();
-				aptNum_CountProcs.AptNum    = PIn.Long(table.Rows[i]["AptNum"].ToString());
-				aptNum_CountProcs.CountProcs= PIn.Int(table.Rows[i]["ProcCount"].ToString());
-				listAptNum_CountProcss.Add(aptNum_CountProcs);
-			}
-			return listAptNum_CountProcss;
-		}
-
-		public class AptNum_CountProcs {
-			public long AptNum;
-			public int CountProcs;
-		}
-
 		///<summary>Tests to see if this appointment will create a double booking. Returns arrayList with no items in it if no double bookings for 
 		///this appt.  But if double booking, then it returns an arrayList of codes which would be double booked.  You must supply the appointment being 
 		///scheduled as well as a list of all appointments for that day.  The list can include the appointment being tested if user is moving it to a 
@@ -5240,59 +5217,40 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Verifies various appointment procedure states. Calls given funcs as validation from the user is needed.</summary>
-		public static bool ProcsAttachedToOtherAptsHelper(List<Procedure> listProcedures,Appointment appointment, List<long> listProcNumsCurrentlySelected, List<long> listProcNumsOriginallyAttached,
-				Func<List<long>,bool> funcListAptsToDelete, Func<bool> funcProcsConcurrentAndPlanned, Func<bool> funcProcsConcurrentAndNotPlanned)
+		public static bool ProcsAttachedToOtherAptsHelper(List<Procedure> listProceduresInGrid,Appointment appointment, 
+			List<long> listProcNumsCurrentlySelected,List<long> listProcNumsOriginallyAttached,List<Procedure> listProceduresAll,Func<List<long>,bool> funcListAptsToDelete,Func<bool> funcProcsConcurrentAndPlanned,
+			Func<bool> funcProcsConcurrentAndNotPlanned,Action actionCompletedProceduresBeingMoved)
 		{
 			bool isPlanned=appointment.AptStatus == ApptStatus.Planned;
 			List<long> listAptNumsToDelete=new List<long>();
+			List<Procedure> listProceduresBeingMoved=new List<Procedure>();
 			bool hasProcsConcurrent=false;
-			//This list holds the original AptNum for a previously attached procedure. 
-			//The aptNumCountProcs.CountProcs is the count of procedures being moved from the associated AptNum.
-			//We will use this to determine if the procedure's original appointment needs to be deleted (if all procedures are moved to another appointment).
-			List<AptNum_CountProcs> listAptNum_CountProcssBeingMoved=new List<AptNum_CountProcs>();
-			for(int i=0; i<listProcedures.Count; i++) {
-				Procedure procedure=listProcedures[i];
-				bool isAttaching=listProcNumsCurrentlySelected.Contains(procedure.ProcNum);
-				bool isAttachedStart=listProcNumsOriginallyAttached.Contains(procedure.ProcNum);
+			for(int i=0;i<listProceduresInGrid.Count;i++) {
+				bool isAttaching=listProcNumsCurrentlySelected.Contains(listProceduresInGrid[i].ProcNum);
+				bool isAttachedStart=listProcNumsOriginallyAttached.Contains(listProceduresInGrid[i].ProcNum);
 				if(!isAttachedStart && isAttaching && isPlanned) {//Attaching to this planned appointment.
-					if(procedure.PlannedAptNum != 0 && procedure.PlannedAptNum != appointment.AptNum) {//However, the procedure is attached to another planned appointment.
+					if(listProceduresInGrid[i].PlannedAptNum != 0 && listProceduresInGrid[i].PlannedAptNum != appointment.AptNum) {//However, the procedure is attached to another planned appointment.
 						hasProcsConcurrent=true;
-						//Make note of the appointment the procedure will be moved off of.
-						AptNum_CountProcs aptNum_CountProcs=listAptNum_CountProcssBeingMoved.Find(x => x.AptNum == procedure.PlannedAptNum);
-						if(aptNum_CountProcs == null) {
-							aptNum_CountProcs=new AptNum_CountProcs();
-							aptNum_CountProcs.AptNum=procedure.PlannedAptNum;
-							aptNum_CountProcs.CountProcs=0;
-							listAptNum_CountProcssBeingMoved.Add(aptNum_CountProcs);
-						}
-						aptNum_CountProcs.CountProcs++;
+						listProceduresBeingMoved.Add(listProceduresInGrid[i]);
 					}
 				}
 				else if(!isAttachedStart && isAttaching && !isPlanned) {//Attaching to this appointment.
-					if(procedure.AptNum != 0 && procedure.AptNum != appointment.AptNum) {//However, the procedure is attached to another appointment.
+					if(listProceduresInGrid[i].AptNum != 0 && listProceduresInGrid[i].AptNum != appointment.AptNum) {//However, the procedure is attached to another appointment.
 						hasProcsConcurrent=true;
-						//Make note of the appointment the procedure will be moved off of.
-						AptNum_CountProcs aptNum_CountProcs=listAptNum_CountProcssBeingMoved.Find(x => x.AptNum == procedure.AptNum);
-						if(aptNum_CountProcs == null) {
-							aptNum_CountProcs=new AptNum_CountProcs();
-							aptNum_CountProcs.AptNum=procedure.AptNum;
-							aptNum_CountProcs.CountProcs=0;
-							listAptNum_CountProcssBeingMoved.Add(aptNum_CountProcs);
-						}
-						aptNum_CountProcs.CountProcs++;
+						listProceduresBeingMoved.Add(listProceduresInGrid[i]);
 					}
 				}
 			}
-			if(PrefC.GetBool(PrefName.ApptsRequireProc) && listAptNum_CountProcssBeingMoved.Count>0) {//Only check if we are actually moving procedures.
-				List<AptNum_CountProcs> listAptNum_CountProcss=GetProcCountForUnscheduledApts(listAptNum_CountProcssBeingMoved.Select(x => x.AptNum).ToList());
+			if(PrefC.GetBool(PrefName.ApptsRequireProc) && listProceduresBeingMoved.Count>0) {//Only check if we are actually moving procedures.
 				//Check to see if the number of procedures we are stealing from the original appointment is the same
 				//as the total number of procedures on the appointment. If this is the case the appointment must be deleted.
 				//Per the job for this feature we will only delete unscheduled appointments that become empty.
-				for(int i=0;i<listAptNum_CountProcss.Count;i++) {
-					long aptNum=listAptNum_CountProcss[i].AptNum;
-					int countMoved=listAptNum_CountProcssBeingMoved.Find(x => x.AptNum == aptNum).CountProcs;
-					if(countMoved==listAptNum_CountProcss[i].CountProcs) {
-						listAptNumsToDelete.Add(aptNum);
+				for(int i=0;i<listProceduresBeingMoved.Count;i++) {
+					int countProceduresBeingMoved=listProceduresBeingMoved.Count(x=>x.AptNum==listProceduresBeingMoved[i].AptNum);
+					int countProceduresTotal=listProceduresAll.Count(x=>x.AptNum==listProceduresBeingMoved[i].AptNum);
+					//All the procedures are being moved off appointment, so mark old AptNum for deletion
+					if(countProceduresBeingMoved>0 && countProceduresTotal>0 && countProceduresBeingMoved==countProceduresTotal) {
+						listAptNumsToDelete.Add(listProceduresBeingMoved[i].AptNum);
 					}
 				}
 			}
@@ -5310,6 +5268,22 @@ namespace OpenDentBusiness{
 				if(!funcProcsConcurrentAndNotPlanned()) {
 					return false;
 				}
+			}
+			bool areCompletedProceduresBeingMoved=false;
+			//Refreshing here in case msgboxes above had been up for a while
+			List<Appointment> listAppointmentsAll=Appointments.GetAppointmentsForPat(appointment.PatNum);//Refresh AptStatuses
+			if(listProceduresBeingMoved!=null) {
+				for(int i=0;i<listProceduresBeingMoved.Count;i++) {
+					Appointment appointmentFrom=listAppointmentsAll.Find(x=>x.AptNum==listProceduresBeingMoved[i].AptNum);
+					if(appointmentFrom!=null && appointmentFrom.AptStatus==ApptStatus.Complete){
+						areCompletedProceduresBeingMoved=true;
+						break;
+					}
+				}
+			}
+			if(areCompletedProceduresBeingMoved) {
+				actionCompletedProceduresBeingMoved();
+				return false;
 			}
 			return true;
 		}

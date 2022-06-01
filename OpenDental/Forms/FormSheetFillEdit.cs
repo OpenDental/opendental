@@ -134,6 +134,7 @@ namespace OpenDental {
 				butChangePat.Visible=false;
 				butSimplePrint.Visible=false;
 				butEmail.Visible=false;
+				butAddField.Visible=false;
 				MinimizeBox=false;
 				MaximizeBox=false;
 				this.TopMost=true;
@@ -164,6 +165,7 @@ namespace OpenDental {
 				butOK.Visible=false;
 				butChangePat.Visible=false;
 				checkErase.Visible=false;
+				butAddField.Visible=false;
 				butCancel.Text="Close";
 			}
 			if(SheetCur.SheetType==SheetTypeEnum.PaymentPlan) {//hide buttons if PP sheet type
@@ -176,6 +178,7 @@ namespace OpenDental {
 				butDelete.Visible=false;
 				butChangePat.Visible=false;
 				butSave.Visible=true;
+				butAddField.Visible=false;
 			}
 			//Some controls may be on subsequent pages if the SheetFieldDef is multipage.
 			LayoutManager.MoveHeight(panelMain,Math.Max(SheetCur.HeightPage,SheetCur.HeightLastField+20));//+20 for Hscrollbar
@@ -217,6 +220,7 @@ namespace OpenDental {
 				butSimplePrint.Enabled=false;
 				butEmail.Enabled=false;
 				butToKiosk.Enabled=false;
+				butAddField.Enabled=false;
 			}
 			if(IsStatement) {
 				SelectFirstOptionComboBoxes();
@@ -236,7 +240,9 @@ namespace OpenDental {
 			}
 			List<SheetFieldType> listSheetFieldTypes=SheetDefs.GetVisibleButtons(SheetCur.SheetType);
 			//This is just temporary. We can currently only add PatImages in that window, but we plan to add more types later
-			butAddField.Visible=listSheetFieldTypes.Contains(SheetFieldType.PatImage);
+			if(!listSheetFieldTypes.Contains(SheetFieldType.PatImage)) {
+				butAddField.Visible=false;
+			}
 			//from here on, only applies to existing sheets.
 			if(!Security.IsAuthorized(Permissions.SheetEdit,SheetCur.DateTimeSheet,false,false,0,-1,SheetCur.SheetDefNum,0)) {
 				butSave.Visible=false;

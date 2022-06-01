@@ -722,7 +722,7 @@ namespace OpenDentBusiness{
 		///balance.  PatNum and ClinicNum are for the guarantor of the family or superhead.</summary>
 		public static DataTable GetDateBalanceBegan(List<PatAging> listGuarantors,bool isSuperBills,List<long> listClinicNums=null) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetTable(MethodBase.GetCurrentMethod(),listGuarantors,DateTime.Today,isSuperBills,listClinicNums);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),listGuarantors,isSuperBills,listClinicNums);
 			}
 			DataTable retval=new DataTable();
 			retval.Columns.Add("PatNum");

@@ -23,6 +23,11 @@ namespace UnitTests.IntegrationTests {
 		public void SetupTest() {
 			ClaimProcT.ClearClaimProcTable();
 			ProcedureT.ClearProcedureTable();
+			Prefs.UpdateBool(PrefName.InsBatchVerifyCreateAdjustments,true);
+			Prefs.UpdateBool(PrefName.InsBatchVerifyCheckAnnualMax,true);
+			Prefs.UpdateBool(PrefName.InsBatchVerifyCheckDeductible,true);
+			Prefs.UpdateBool(PrefName.InsBatchVerifyChangeInsHist, true);
+			Prefs.UpdateBool(PrefName.InsBatchVerifyChangeEffectiveDates, true);
 		}
 
 		[TestMethod]

@@ -58,6 +58,7 @@ namespace OpenDental {
 			this.groupBoxClaimsMedical = new OpenDental.UI.GroupBoxOD();
 			this.groupBoxClaimsPayments = new OpenDental.UI.GroupBoxOD();
 			this.labelClaimIdPrefixDetails = new System.Windows.Forms.Label();
+			this.checkNoInitialPrimaryInsMoreThanProc = new System.Windows.Forms.CheckBox();
 			this.groupBoxClaimIdPrefix.SuspendLayout();
 			this.groupBoxOD1.SuspendLayout();
 			this.groupBoxOD2.SuspendLayout();
@@ -110,7 +111,7 @@ namespace OpenDental {
 			// checkCanadianPpoLabEst
 			// 
 			this.checkCanadianPpoLabEst.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkCanadianPpoLabEst.Location = new System.Drawing.Point(93, 540);
+			this.checkCanadianPpoLabEst.Location = new System.Drawing.Point(93,559);
 			this.checkCanadianPpoLabEst.Name = "checkCanadianPpoLabEst";
 			this.checkCanadianPpoLabEst.Size = new System.Drawing.Size(367, 17);
 			this.checkCanadianPpoLabEst.TabIndex = 300;
@@ -325,14 +326,14 @@ namespace OpenDental {
 			// 
 			// textInsWriteoffDescript
 			// 
-			this.textInsWriteoffDescript.Location = new System.Drawing.Point(330, 518);
+			this.textInsWriteoffDescript.Location = new System.Drawing.Point(330,537);
 			this.textInsWriteoffDescript.Name = "textInsWriteoffDescript";
 			this.textInsWriteoffDescript.Size = new System.Drawing.Size(130, 20);
 			this.textInsWriteoffDescript.TabIndex = 283;
 			// 
 			// label17
 			// 
-			this.label17.Location = new System.Drawing.Point(73, 521);
+			this.label17.Location = new System.Drawing.Point(73,540);
 			this.label17.Name = "label17";
 			this.label17.Size = new System.Drawing.Size(254, 17);
 			this.label17.TabIndex = 284;
@@ -387,7 +388,7 @@ namespace OpenDental {
 			// 
 			this.groupBoxClaimsMedical.Controls.Add(this.checkClaimMedTypeIsInstWhenInsPlanIsMedical);
 			this.groupBoxClaimsMedical.Controls.Add(this.checkEclaimsMedicalProvTreatmentAsOrdering);
-			this.groupBoxClaimsMedical.Location = new System.Drawing.Point(20, 465);
+			this.groupBoxClaimsMedical.Location = new System.Drawing.Point(20,484);
 			this.groupBoxClaimsMedical.Name = "groupBoxClaimsMedical";
 			this.groupBoxClaimsMedical.Size = new System.Drawing.Size(450, 51);
 			this.groupBoxClaimsMedical.TabIndex = 304;
@@ -395,6 +396,7 @@ namespace OpenDental {
 			// 
 			// groupBoxClaimsPayments
 			// 
+			this.groupBoxClaimsPayments.Controls.Add(this.checkNoInitialPrimaryInsMoreThanProc);
 			this.groupBoxClaimsPayments.Controls.Add(this.checkAllowProcAdjFromClaim);
 			this.groupBoxClaimsPayments.Controls.Add(this.checkInsPayNoWriteoffMoreThanProc);
 			this.groupBoxClaimsPayments.Controls.Add(this.comboClaimCredit);
@@ -402,7 +404,7 @@ namespace OpenDental {
 			this.groupBoxClaimsPayments.Controls.Add(this.checkAllowFuturePayments);
 			this.groupBoxClaimsPayments.Location = new System.Drawing.Point(20, 370);
 			this.groupBoxClaimsPayments.Name = "groupBoxClaimsPayments";
-			this.groupBoxClaimsPayments.Size = new System.Drawing.Size(450, 93);
+			this.groupBoxClaimsPayments.Size = new System.Drawing.Size(450,112);
 			this.groupBoxClaimsPayments.TabIndex = 305;
 			this.groupBoxClaimsPayments.Text = "Claims Payments";
 			// 
@@ -417,6 +419,17 @@ namespace OpenDental {
 			this.labelClaimIdPrefixDetails.Text = "Default is [PatNum]/. This prefix is followed by an auto-generated claim number. " +
     "Useful for internal tracking of claims.\r\n";
 			this.labelClaimIdPrefixDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			//
+			// checkNoInitialPrimaryInsMoreThanProc
+			// 
+			this.checkNoInitialPrimaryInsMoreThanProc.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkNoInitialPrimaryInsMoreThanProc.Location = new System.Drawing.Point(3,90);
+			this.checkNoInitialPrimaryInsMoreThanProc.Name = "checkNoInitialPrimaryInsMoreThanProc";
+			this.checkNoInitialPrimaryInsMoreThanProc.Size = new System.Drawing.Size(437,17);
+			this.checkNoInitialPrimaryInsMoreThanProc.TabIndex = 295;
+			this.checkNoInitialPrimaryInsMoreThanProc.Text = "Initial primary insurance payment and write-off cannot exceed adjusted procedure " +
+		"fee";
+			this.checkNoInitialPrimaryInsMoreThanProc.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// UserControlAccountInsurance
 			// 
@@ -480,5 +493,6 @@ namespace OpenDental {
 		private UI.GroupBoxOD groupBoxClaimsMedical;
 		private UI.GroupBoxOD groupBoxClaimsPayments;
 		private System.Windows.Forms.Label labelClaimIdPrefixDetails;
+		private System.Windows.Forms.CheckBox checkNoInitialPrimaryInsMoreThanProc;
 	}
 }

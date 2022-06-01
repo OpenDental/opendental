@@ -344,10 +344,8 @@ namespace OpenDental {
 					}	
 				}
 			}
-			if(!skipChecks) {
-				if(WillClaimProcRecievedWriteoffExceedProcFee() || WillClaimProcRecievedExceedProcFee()) {
-					return false;
-				}
+			if(!skipChecks && ClaimL.AreCreditsGreaterThanProcFee(_patient.PatNum,GetListClaimProcHypothetical())) {
+				return false;
 			}
 			for(int i=0;i<ClaimProcArray.Length;i++) {
 				ClaimProcArray[i].DedApplied=PIn.Double(gridMain.ListGridRows[i].Cells[idxDeduct].Text);
@@ -380,7 +378,7 @@ namespace OpenDental {
 		}
 
 		///<summary>Translates the grid into claimprocs, with edits applied.</summary>
-		private List<ClaimProc> GetListCliamProcHypothetical() {
+		private List<ClaimProc> GetListClaimProcHypothetical() {
 			List<ClaimProc> listClaimProcsHypothetical=new List<ClaimProc>();
 			for(int i=0;i<ClaimProcArray.Length;i++) {
 				ClaimProc claimProc=ClaimProcArray[i].Copy();
@@ -393,18 +391,7 @@ namespace OpenDental {
 				listClaimProcsHypothetical.Add(claimProc);
 			}
 			return listClaimProcsHypothetical;
-        }
-
-		/// <summary>Returns true if ClaimProcAllowCreditsGreaterThanProcFee preference allows the user to add credits greater than the proc fee. Otherwise returns false </summary>
-		private bool WillClaimProcRecievedExceedProcFee() {
-			return ClaimL.IsClaimProcGreaterThanProcFee(_patient.PatNum,GetListCliamProcHypothetical());
-		}
-
-		///<summary>Returns true if InsPayNoWriteoffMoreThanProc preference is turned on and the sum of write off amount is greater than the proc fee.
-		///Otherwise returns false </summary>
-		private bool WillClaimProcRecievedWriteoffExceedProcFee() {
-			return ClaimL.IsWriteOffGreaterThanProcFee(_patient.PatNum,GetListCliamProcHypothetical());
-		}
+    }
 
 		private void butDeductible_Click(object sender,EventArgs e) {
 			if(gridMain.SelectedCell.X==-1){

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
-<database version="22.2.1.0">
+<database version="22.2.4.0">
     <table name="apptgeneralmessagesent">
         <summary></summary>
         <column order="7" name="SendStatus" type="tinyint(4)">
@@ -72,12 +72,6 @@
         </column>
         <column order="16" name="DateTimeSent" type="datetime">
             <summary></summary>
-        </column>
-    </table>
-    <table name="clinic">
-        <summary></summary>
-        <column order="41" name="EmailAliasOverride" type="varchar(255)">
-            <summary>Overrides the SenderAddress (aka Alias) for emails sent from this clinic. </summary>
         </column>
     </table>
     <table name="commlog">
@@ -260,10 +254,13 @@
         <column order="1" name="OrthoHardwareSpecNum" type="bigint(20)" fk="orthohardwarespec">
             <summary>FK to orthohardwarespec.OrthoHardwareSpecNum. Description comes from here.</summary>
         </column>
-        <column order="2" name="ToothRange" type="varchar(255)">
-            <summary>Tooth numbers stored here are always stored in Universal (1-32) notation. They are displayed to the user as Palmer notation. For brackets, always use tooth numbers separated by commas, like 2,3,4,5,6. For wires, must use a range like 2-15. For elastics, typically use 2 teeth separated with commas, but more are allowed.</summary>
+        <column order="2" name="Description" type="varchar(255)">
+            <summary>The description used for picking the prescription from a list.</summary>
         </column>
-        <column order="3" name="ItemOrder" type="int(11)">
+        <column order="3" name="ToothRange" type="varchar(255)">
+            <summary>Tooth numbers stored here are always stored in Universal (1-32) notation. They are displayed to the user as Palmer notation. For brackets and elastics, always use tooth numbers separated by commas, like 2,3,4,5,6. For wires, must use a range like 2-15.</summary>
+        </column>
+        <column order="4" name="ItemOrder" type="int(11)">
             <summary>0 indexed. User controls it with arrows.</summary>
         </column>
     </table>

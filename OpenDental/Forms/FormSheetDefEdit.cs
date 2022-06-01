@@ -31,17 +31,16 @@ namespace OpenDental {
 		#region Fields - Private
 		///<summary>Disposed. A single bitmap that is a composite of all image fields, usually 0 or 1. A bit more efficient than redrawing the actual image fields each time.</summary>
 		private Bitmap _bitmapBackground;
-		//private Color _colorBlue=Color.FromArgb(0,30,150);
-		private Color _colorBlue=Color.FromArgb(0,30,150);
+		private Color _colorBlue=Color.Blue;//FromArgb(0,30,150);
 		private Color _colorGray=ColorOD.Gray(10);//Almost black 
 		///<summary>Faded out</summary>
 		private Color _colorGrayOutline=ColorOD.Gray(235);
 		//private Color _colorBlueOutline=Color.FromArgb(200,230,255);
-		private Color _colorBlueOutline=Color.FromArgb(50,60,255);
-		private Color _colorRed=Color.FromArgb(150,0,10);
+		private Color _colorBlueOutline=Color.Blue;//FromArgb(50,60,255);
+		private Color _colorRed=Color.Red;//FromArgb(150,0,10);
 		//<summary>Faded out</summary>
 		//private Color _colorRedOutline=Color.FromArgb(255,200,210);
-		private Color _colorRedOutline=Color.FromArgb(255,50,60);
+		private Color _colorRedOutline=Color.Red;//FromArgb(255,50,60);
 		private static Font _fontTabOrder = new Font("Times New Roman",12f,FontStyle.Regular,GraphicsUnit.Pixel);
 		///<summary>Disposed</summary>
 		private Graphics _graphicsBackground;
@@ -782,14 +781,10 @@ namespace OpenDental {
 			//}
 			EnableDashboardWidgetOptions();
 			textDescription.Text=_sheetDef.Description;
-			if(!TryInitLayoutModes() && _sheetDef.SheetType!=SheetTypeEnum.PatientDashboardWidget) {//TryInitLayoutModes() must be called before initial FillFieldList().
+			if(!TryInitLayoutModes()) {//TryInitLayoutModes() must be called before initial FillFieldList().
 				//If we are not associated to a SheetType that uses the above layoutmode logic then setup translations UI.
 				RefreshLanguages();//Fill list
 				InitTranslations();//Enable and update UI
-			}
-			else {
-				//If we ARE associated to a SheetType that uses the above layoutmode logic or it is a Patient Dashboard, then hide translations UI.
-				groupBoxSubViews.Visible=false;
 			}
 			FillFieldList();
 			panelMain.Invalidate();
@@ -1087,8 +1082,31 @@ namespace OpenDental {
 					height:Math.Abs(_pointMouseCurrentPos.Y-_pointMouseOriginalPos.Y)); 
 				for(int i=0;i<listSheetFieldDefsShowing.Count;i++) {
 					SheetFieldDef sheetFieldDef=listSheetFieldDefsShowing[i]; //to speed this process up instead of referencing the array every time.
-					if(sheetFieldDef.FieldType==SheetFieldType.Line || sheetFieldDef.FieldType==SheetFieldType.Image || sheetFieldDef.FieldType==SheetFieldType.MobileHeader) {
-						//lines and images are currently not selectable by drag and drop. will require lots of calculations, completely possible, but complex.
+					if(sheetFieldDef.FieldType==SheetFieldType.Line){
+						if(Math.Abs(listSheetFieldDefsShowing[i].Width)<2){
+							//vertical line
+							Rectangle rectangleTempDefBounds=new Rectangle(sheetFieldDef.Bounds.X-1,sheetFieldDef.Bounds.Y,2,sheetFieldDef.Bounds.Height);
+							if(sheetFieldDef.Bounds.Height<0){
+								rectangleTempDefBounds=new Rectangle(sheetFieldDef.Bounds.X,sheetFieldDef.Bounds.Y+sheetFieldDef.Bounds.Height,2,-sheetFieldDef.Bounds.Height);
+							}
+							if(rectangleTempDefBounds.IntersectsWith(rectangleSelectionBounds)) {
+								listBoxFields.SetSelected(i,true); 
+							}
+						}
+						if(Math.Abs(listSheetFieldDefsShowing[i].Height)<2){
+							//horiz line
+							Rectangle rectangleTempDefBounds=new Rectangle(sheetFieldDef.Bounds.X,sheetFieldDef.Bounds.Y-1,sheetFieldDef.Bounds.Width,2);
+							if(sheetFieldDef.Bounds.Width<0){
+								rectangleTempDefBounds=new Rectangle(sheetFieldDef.Bounds.X+sheetFieldDef.Bounds.Width,sheetFieldDef.Bounds.Y-1,-sheetFieldDef.Bounds.Width,2);
+							}
+							if(rectangleTempDefBounds.IntersectsWith(rectangleSelectionBounds)) {
+								listBoxFields.SetSelected(i,true); 
+							}
+						}
+						//no math for diagonal lines yet
+						continue;
+					}
+					if(sheetFieldDef.FieldType==SheetFieldType.Image || sheetFieldDef.FieldType==SheetFieldType.MobileHeader) {
 						//Mobile headers should not be selectable on the main panel. Must use other window.
 						continue;
 					}
@@ -1100,7 +1118,7 @@ namespace OpenDental {
 						}
 					}
 					if(sheetFieldDef.BoundsF.IntersectsWith(rectangleSelectionBounds)) {
-						listBoxFields.SetSelected(i,true); //Add to selected indicies
+						listBoxFields.SetSelected(i,true); 
 					}
 				}
 			}
@@ -2022,13 +2040,33 @@ namespace OpenDental {
 				}
 				if(listSheetFieldDefsShowing[i].FieldType==SheetFieldType.Line) {
 					if(Math.Abs(listSheetFieldDefsShowing[i].Width)<2){
+						//vertical line
 						if(Math.Abs(x-listSheetFieldDefsShowing[i].XPos)<2){
-							return listSheetFieldDefsShowing[i];
+							if(listSheetFieldDefsShowing[i].Height<0){
+								if(y>listSheetFieldDefsShowing[i].YPos+listSheetFieldDefsShowing[i].Height && y<listSheetFieldDefsShowing[i].YPos){
+									return listSheetFieldDefsShowing[i];
+								}
+							}
+							else{
+								if(y>listSheetFieldDefsShowing[i].YPos && y<listSheetFieldDefsShowing[i].YPos+listSheetFieldDefsShowing[i].Height){
+									return listSheetFieldDefsShowing[i];
+								}
+							}
 						}
 					}
 					if(Math.Abs(listSheetFieldDefsShowing[i].Height)<2){
+						//horiz line
 						if(Math.Abs(y-listSheetFieldDefsShowing[i].YPos)<2){
-							return listSheetFieldDefsShowing[i];
+							if(listSheetFieldDefsShowing[i].Width<0){
+								if(x>listSheetFieldDefsShowing[i].XPos+listSheetFieldDefsShowing[i].Width && x<listSheetFieldDefsShowing[i].XPos){
+									return listSheetFieldDefsShowing[i];
+								}
+							}
+							else{
+								if(x>listSheetFieldDefsShowing[i].XPos && x<listSheetFieldDefsShowing[i].XPos+listSheetFieldDefsShowing[i].Width){
+									return listSheetFieldDefsShowing[i];
+								}
+							}
 						}
 					}
 				}	
@@ -2608,6 +2646,11 @@ namespace OpenDental {
 		private bool TryInitLayoutModes() {
 			_sheetFieldLayoutMode=SheetFieldLayoutMode.Default;
 			switch(_sheetDef.SheetType) {
+				case SheetTypeEnum.PatientDashboardWidget:
+					groupBoxSubViews.Visible=false;
+					comboLanguages.Visible=false;
+					checkSynchMatchedFields.Visible=false;
+					return true;
 				//the intent was to eventually support other modules.
 				case SheetTypeEnum.ChartModule:
 					if(Programs.UsingEcwTightOrFullMode()) {
@@ -2633,6 +2676,7 @@ namespace OpenDental {
 					radioLayoutTP.Tag=sheetFieldLayoutModeTreatPlan;//Used in radioLayoutDefault_CheckedChanged()
 					groupBoxSubViews.Text=Lan.g(this,"Layout Modes");//group box defaults to 'Language'
 					comboLanguages.Visible=false;
+					checkSynchMatchedFields.Visible=false;
 					radioLayoutDefault.Checked=true;*/
 					return true;
 				default:
@@ -2845,6 +2889,9 @@ namespace OpenDental {
 
 		private void DrawCheckBox(SheetFieldDef sheetFieldDef,Graphics g,bool isSelected) {
 			Color color=_colorGray;
+			if(checkBlue.Checked){
+				color=_colorBlue;
+			}
 			if(isSelected){
 				color=_colorRed;
 			}
@@ -2870,6 +2917,9 @@ namespace OpenDental {
 
 		private void DrawComboBox(SheetFieldDef sheetFieldDef,Graphics g,bool isSelected) {
 			Color color=_colorGray;
+			if(checkBlue.Checked){
+				color=_colorBlue;
+			}
 			if(isSelected) {
 				color=_colorRed;
 			}
@@ -3071,7 +3121,11 @@ namespace OpenDental {
 				g.DrawRectangle(pen,sheetFieldDef.XPos,sheetFieldDef.YPos,sheetFieldDef.Width,sheetFieldDef.Height);//hightlight selected
 			}
 			else if(GetIsDynamicSheetType()) {//Always highlight dynamic module grid defs so user can see min height and width.
-				using Pen pen=new Pen(_colorGray);
+				Color color=_colorGray;
+				if(checkBlue.Checked){
+					color=_colorBlue;
+				}
+				using Pen pen=new Pen(color);
 				g.DrawRectangle(pen,sheetFieldDef.XPos,sheetFieldDef.YPos,sheetFieldDef.Width,sheetFieldDef.Height);//hightlight all dynamic
 			}
 		}
@@ -3178,6 +3232,10 @@ namespace OpenDental {
 		private void DrawPatImage(SheetFieldDef sheetFieldDef,Graphics g,bool isSelected) {
 			Color colorPen=GetOutlineColorForSheetFieldDef(sheetFieldDef,Color.Black);
 			Color colorBrush=_colorGray;
+			if(checkBlue.Checked){
+				colorPen=GetOutlineColorForSheetFieldDef(sheetFieldDef,_colorBlue);
+				colorBrush=_colorBlue;
+			}
 			if(isSelected) {
 				colorPen=GetOutlineColorForSheetFieldDef(sheetFieldDef,_colorRed,true);
 				colorBrush=_colorRed;
@@ -3522,7 +3580,6 @@ namespace OpenDental {
 				using Pen pen = new Pen(color);
 				g.DrawRectangle(pen,sheetFieldDef.Bounds);
 			}
-			using SolidBrush solidBrush=new SolidBrush(colorBrush);
 			if(isSelected && listBoxFields.SelectedIndices.Count==1){
 				Rectangle rectangleHandleLR=new Rectangle(sheetFieldDef.Bounds.Right-2,sheetFieldDef.Bounds.Bottom-2,
 					_sizeResizeGrabHandle,_sizeResizeGrabHandle);
@@ -3541,6 +3598,7 @@ namespace OpenDental {
 			else {
 				str=sheetFieldDef.FieldName;
 			}
+			using SolidBrush solidBrush=new SolidBrush(colorBrush);
 			DrawRTFstring(sheetFieldDef,str,font,solidBrush,g);
 		}
 
@@ -3599,7 +3657,7 @@ namespace OpenDental {
 			g.DrawString(toothChart,Font,solidBrush,sheetFieldDef.XPos,sheetFieldDef.YPos);
 		}
 
-		///<summary>Returns a pen to be used when we want to consider the defs language value.</summary>
+		///<summary>Returns a color to be used when we want to consider the defs language value.</summary>
 		private Color GetOutlineColorForSheetFieldDef(SheetFieldDef sheetFieldDef,Color colorDefault,bool isSelected=false){
 			if(sheetFieldDef.Language.IsNullOrEmpty()){//Always use defaultPen when working with a non-translated def.
 				return colorDefault;

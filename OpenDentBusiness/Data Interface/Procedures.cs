@@ -2518,7 +2518,7 @@ namespace OpenDentBusiness {
 				proc.ProvNum=GetProvNumFromAppointment(apt,proc,procCode);
 			}
 			proc.ClinicNum=apt.ClinicNum;
-			if(proc.ProcStatus==ProcStat.TP) {
+			if(proc.ProcStatus==ProcStat.TP  && apt.AptDateTime!=DateTime.MinValue) {
 				proc.ProcDate=apt.AptDateTime;
 			}
 			return proc;
