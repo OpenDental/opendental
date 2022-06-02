@@ -2367,6 +2367,38 @@ namespace OpenDentBusiness {
 			Misc.SecurityHash.UpdateHashing();
 		}//End of 21_4_41() method
 
+		private static void To21_4_49() {
+			string command;
+			command="ALTER TABLE CovCat MODIFY CovOrder INT NOT NULL";
+			Db.NonQ(command);
+		}//End of 21_4_49() method
 	}
 }
 
+
+
+				/*
+				command="ALTER TABLE alertitem ADD SecDateTEntry datetime NOT NULL DEFAULT '0001-01-01 00:00:00'";
+				Db.NonQ(command);
+				*/
+
+				/*
+
+				command="DROP TABLE IF EXISTS apikey";
+				Db.NonQ(command);
+				command=@"CREATE TABLE apikey (
+					APIKeyNum bigint NOT NULL auto_increment PRIMARY KEY,
+					CustApiKey varchar(255) NOT NULL,
+					DevName varchar(255) NOT NULL
+					) DEFAULT CHARSET=utf8";
+				Db.NonQ(command);
+				*/
+
+				/*
+				LargeTableHelper.AlterTable("appointment","AptNum",new ColNameAndDef("SecurityHash","varchar(255) NOT NULL"));
+				*/
+
+				/*
+				command="ALTER TABLE apptfielddef ADD ItemOrder int NOT NULL";
+				Db.NonQ(command);
+				*/
