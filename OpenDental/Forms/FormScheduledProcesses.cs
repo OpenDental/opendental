@@ -15,6 +15,11 @@ namespace OpenDental {
 		}
 		private void FormScheduledProcesses_Load(object sender,EventArgs e) {
 			FillGrid();
+			checkCheckAnnualMax.Checked=PrefC.GetBool(PrefName.InsBatchVerifyCheckAnnualMax);
+			checkCheckDeductable.Checked=PrefC.GetBool(PrefName.InsBatchVerifyCheckDeductible);
+			checkCreateAdjustments.Checked=PrefC.GetBool(PrefName.InsBatchVerifyCreateAdjustments);
+			checkChangeInsHist.Checked=PrefC.GetBool(PrefName.InsBatchVerifyChangeInsHist);
+			checkChangeEffectiveDates.Checked=PrefC.GetBool(PrefName.InsBatchVerifyChangeEffectiveDates);
 		}
 
 		private void FillGrid() {
@@ -72,5 +77,16 @@ namespace OpenDental {
 			Close();
 		}
 
+		private void FormScheduledProcesses_FormClosing(object sender,FormClosingEventArgs e) {
+			bool changed=false;
+			changed |=Prefs.UpdateBool(PrefName.InsBatchVerifyCheckAnnualMax, checkCheckAnnualMax.Checked);
+			changed |=Prefs.UpdateBool(PrefName.InsBatchVerifyCheckDeductible, checkCheckDeductable.Checked);
+			changed |=Prefs.UpdateBool(PrefName.InsBatchVerifyCreateAdjustments, checkCreateAdjustments.Checked);
+			changed |=Prefs.UpdateBool(PrefName.InsBatchVerifyChangeInsHist, checkChangeInsHist.Checked);
+			changed |=Prefs.UpdateBool(PrefName.InsBatchVerifyChangeEffectiveDates, checkChangeEffectiveDates.Checked);
+			if(changed) {
+				DataValid.SetInvalid(InvalidType.Prefs);
+			}
+		}
 	}
 }

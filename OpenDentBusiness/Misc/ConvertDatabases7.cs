@@ -2732,6 +2732,41 @@ namespace OpenDentBusiness {
 			command="ALTER TABLE CovCat MODIFY CovOrder INT NOT NULL";
 			Db.NonQ(command);
 		}//End of 22_1_34() method
+
+		private static void To22_1_35() {
+			string command;
+			#region InsVerifyChecks
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('InsBatchVerifyCreateAdjustments','0')"; //Default to false
+			Db.NonQ(command);
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('InsBatchVerifyCheckDeductible','0')"; //Default to false
+			Db.NonQ(command);
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('InsBatchVerifyCheckAnnualMax','0')"; //Default to false
+			Db.NonQ(command);
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('InsBatchVerifyChangeInsHist','0')";//Default to false
+			Db.NonQ(command);
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('InsBatchVerifyChangeEffectiveDates','0')";//Default to false 
+			Db.NonQ(command);
+			//We are changing default behavior of automated Insurance verification to be controlled by preferences.
+			//We must determine if this is pertinent to the customer, and if it is, display a notification to each of their administrators upon updating.
+			DataTable tableScheduledProcessesInsVerify=Db.GetTable("SELECT * FROM scheduledprocess WHERE ScheduledAction='InsVerifyBatch'");//ScheduledActionEnum.InsVerifyBatch=1
+			if(tableScheduledProcessesInsVerify.Rows.Count>0) {
+				//If they do, find their admin users.
+				DataTable tableUserOdAdmins=Db.GetTable("SELECT UserNum FROM usergroupattach " +
+					"WHERE usergroupattach.UserGroupNum IN (SELECT UserGroupNum FROM grouppermission WHERE PermType=24)");//Permissions.SecurityAdmin=24
+				if(tableUserOdAdmins!=null && tableUserOdAdmins.Rows.Count>0) {
+					//If we found their admin users, create an alert for each one, notifying them of the changed behavior.
+					string description= "Your office has batch insurance verification scheduled. By default, batch insurance verification no longer checks deductibles or annual maximums, and it does not make changes to plan effective dates, insurance adjustments, or insurance history. These settings can be changed on the Scheduled Processes window (See documentation for Scheduled Processes for details).";
+					for(int i =0;i<tableUserOdAdmins.Rows.Count;i++) {
+						long userNum=PIn.Long(tableUserOdAdmins.Rows[i]["usernum"].ToString());
+						command=$"INSERT INTO alertitem (ClinicNum,Description,Type,Severity,Actions,FormToOpen,FKey,ItemValue,UserNum) VALUES (" +
+							//AlertType.Generic=0, SeverityType.Medium, ActionType.Delete|ActionType.MarkAsRead=5, FormToOpen.None=0, Fkey=0
+							$"-1, '{POut.String(description)}', 0, 2, 5, 0, 0, '', {POut.Long(userNum)})";
+						Db.NonQ(command);
+					}
+				}
+			}	
+		#endregion
+		}//End of 22_1_35() method
 	}
 }
 

@@ -482,9 +482,15 @@ namespace OpenDentBusiness{
 								//The age old classic of short and sweet or long and descriptive.
 								errorStatus+=ValidateAnnualMaxAndGeneralDeductible(listBensForPat,listEb271.Select(x=>x.Benefitt).ToList());
 								if(string.IsNullOrWhiteSpace(errorStatus)) {
-									CreateInsuranceAdjustmentIfNeeded(insVerifyObj.PatInsVerify.PatNum,insVerifyObj.PatInsVerify.PlanNum,
-										insVerifyObj.PatInsVerify.InsSubNum,listBensForPat,listEb271);
-									EB271.SetInsuranceHistoryDates(listEb271,insVerifyObj.GetPatNum(),InsSubs.GetOne(insVerifyObj.PatInsVerify.InsSubNum));
+									bool doCreateAdjustments=PrefC.GetBool(PrefName.InsBatchVerifyCreateAdjustments);
+									if(doCreateAdjustments) {
+										CreateInsuranceAdjustmentIfNeeded(insVerifyObj.PatInsVerify.PatNum,insVerifyObj.PatInsVerify.PlanNum,
+											insVerifyObj.PatInsVerify.InsSubNum,listBensForPat,listEb271); 	
+									}
+									bool doSetInsuranceHistoryDates=PrefC.GetBool(PrefName.InsBatchVerifyChangeInsHist);
+									if(doSetInsuranceHistoryDates) {
+										EB271.SetInsuranceHistoryDates(listEb271,insVerifyObj.GetPatNum(),InsSubs.GetOne(insVerifyObj.PatInsVerify.InsSubNum));
+									}
 								}
 							}
 						}
@@ -560,13 +566,16 @@ namespace OpenDentBusiness{
 			if(datePolicyStart.Year<=1880 && datePolicyEnd.Year<=1880) {
 				return "";
 			}
+			bool doChangeEffectiveDates=PrefC.GetBool(PrefName.InsBatchVerifyChangeEffectiveDates);
 			//Only update the policy start date if we get a valid value.
-			if(datePolicyStart.Year>=1880) {
+			if(datePolicyStart.Year>=1880 && doChangeEffectiveDates) {
 				insSub.DateEffective=datePolicyStart;
 			}
 			//If we are sent an invalid start date, but a valid end date, we will update just the end date. Verified with NADG.
-			insSub.DateTerm=datePolicyEnd;
-			InsSubs.Update(insSub);
+			if(doChangeEffectiveDates) {
+				insSub.DateTerm=datePolicyEnd;
+				InsSubs.Update(insSub);
+			}
 			DateTime aptDate=Appointments.GetOneApt(aptNum).AptDateTime.Date;
 			if(datePolicyEnd.Year<=1880 && datePolicyStart>aptDate) {//No end date, but we have a start date, and plan starts in the future
 				return Lans.g("InsVerifyService",$"Policy does not start until {datePolicyStart.ToShortDateString()} ");
@@ -631,22 +640,24 @@ namespace OpenDentBusiness{
 			//However, if the current benefit amount in OD is 0, and the 271 specifies an additional non-zero amount (for the same benefit),
 			//we will flag this patient as needing manual correction.
 			StringBuilder strBuildErrorStatus=new StringBuilder();
-			if(listAnnualMaxInd271.Count>0) {
+			bool doCheckAnnualMax=PrefC.GetBool(PrefName.InsBatchVerifyCheckAnnualMax);
+			if(listAnnualMaxInd271.Count>0 && doCheckAnnualMax) {
 				if(annualMaxInd==null || ListTools.In(annualMaxInd.MonetaryAmt,0,-1) || !listAnnualMaxInd271.Any(x=>x.MonetaryAmt==annualMaxInd.MonetaryAmt)) {
 					strBuildErrorStatus.AppendLine(Lans.g("InsVerifyService","Individual annual max mismatch. "));
 				}
 			}
-			if(listAnnualMaxFam271.Count>0) {
+			if(listAnnualMaxFam271.Count>0 && doCheckAnnualMax) {
 				if(annualMaxFam==null || ListTools.In(annualMaxFam.MonetaryAmt,0,-1) || !listAnnualMaxFam271.Any(x=>x.MonetaryAmt==annualMaxFam.MonetaryAmt)) {
 					strBuildErrorStatus.AppendLine(Lans.g("InsVerifyService","Family annual max mismatch. "));
 				}
 			}
-			if(listGeneralDeductInd271.Count>0) {
+			bool doCheckDeductible=PrefC.GetBool(PrefName.InsBatchVerifyCheckDeductible);
+			if(listGeneralDeductInd271.Count>0 && doCheckDeductible) {
 				if(generalDeductInd==null || ListTools.In(generalDeductInd.MonetaryAmt,0,-1) || !listGeneralDeductInd271.Any(x=>x.MonetaryAmt==generalDeductInd.MonetaryAmt)) {
 					strBuildErrorStatus.AppendLine(Lans.g("InsVerifyService","Individual general deductible mismatch. "));
 				}
 			}
-			if(listGeneralDeductFam271.Count>0) {
+			if(listGeneralDeductFam271.Count>0 && doCheckDeductible) {
 				if(generalDeductFam==null || ListTools.In(generalDeductFam.MonetaryAmt,0,-1) || !listGeneralDeductFam271.Any(x=>x.MonetaryAmt==generalDeductFam.MonetaryAmt)) {
 					strBuildErrorStatus.AppendLine(Lans.g("InsVerifyService","Family general deductible mismatch. "));
 				}

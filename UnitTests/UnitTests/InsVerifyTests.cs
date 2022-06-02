@@ -27,6 +27,11 @@ namespace UnitTests.InsVerify_Tests {
 			_patNumNotTrusted=PatientT.CreatePatient().PatNum;
 			CreateNewCarrierAndPatPlan(_patNumNotTrusted,false);
 			AppointmentT.CreateAppointment(_patNumNotTrusted,DateTime.Now.AddDays(4),0,0);//Causes patient patplan to show in insurance verification list.
+			Prefs.UpdateBool(PrefName.InsBatchVerifyCreateAdjustments,true);
+			Prefs.UpdateBool(PrefName.InsBatchVerifyCheckAnnualMax,true);
+			Prefs.UpdateBool(PrefName.InsBatchVerifyCheckDeductible,true);
+			Prefs.UpdateBool(PrefName.InsBatchVerifyChangeInsHist, true);
+			Prefs.UpdateBool(PrefName.InsBatchVerifyChangeEffectiveDates, true);
 		}
 
 		[TestMethod]

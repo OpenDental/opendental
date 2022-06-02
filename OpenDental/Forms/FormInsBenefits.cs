@@ -81,8 +81,8 @@ namespace OpenDental{
 				dontAllowSimplified=true;
 				checkSimplified.Checked=false;
 				panelSimple.Visible=false;
-				gridBenefits.Location=new Point(gridBenefits.Left,groupYear.Bottom+3);
-				gridBenefits.Height=butAdd.Top-gridBenefits.Top-5;
+				LayoutManager.MoveLocation(gridBenefits,new Point(gridBenefits.Left,groupYear.Bottom+3));
+				LayoutManager.MoveHeight(gridBenefits,butAdd.Top-gridBenefits.Top-5);
 			}
 			FillCalendarYear();
 			FillSimple();
@@ -107,8 +107,8 @@ namespace OpenDental{
 				}
 				gridBenefits.Title=Lan.g(this,"Other Benefits");
 				panelSimple.Visible=true;
-				gridBenefits.Location=new Point(gridBenefits.Left,panelSimple.Bottom+4);
-				gridBenefits.Height=butAdd.Top-gridBenefits.Top-5;
+				LayoutManager.MoveLocation(gridBenefits,new Point(gridBenefits.Left,panelSimple.Bottom+4));
+				LayoutManager.MoveHeight(gridBenefits,butAdd.Top-gridBenefits.Top-5);
 				//FillSimple handles all further logic.
 			}
 			else{
@@ -118,8 +118,8 @@ namespace OpenDental{
 				}
 				gridBenefits.Title=Lan.g(this,"Benefits");
 				panelSimple.Visible=false;
-				gridBenefits.Location=new Point(gridBenefits.Left,groupYear.Bottom+3);
-				gridBenefits.Height=butAdd.Top-gridBenefits.Top-5;
+				LayoutManager.MoveLocation(gridBenefits,new Point(gridBenefits.Left,groupYear.Bottom+3));
+				LayoutManager.MoveHeight(gridBenefits,butAdd.Top-gridBenefits.Top-5);
 			}
 			FillSimple();
 			FillGrid();
