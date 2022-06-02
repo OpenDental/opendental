@@ -193,8 +193,8 @@ namespace OpenDentBusiness{
 			List<long> listClaimNums=listClaimProcsForProcMultiVisit.Select(x=>x.ClaimNum).Distinct().ToList();
 			List<Claim> listClaims=Claims.GetClaimsFromClaimNums(listClaimNums);
 			for(int i=0;i<listClaims.Count;i++) {
-				//If a claim is not attached or the ClaimStatus is not "U", "W", or "I", kick out.
-				if(!listClaims[i].ClaimStatus.In("U","W","I")) {
+				//If a claim is not attached or the ClaimStatus is not "U", "W", "I", or "H", kick out.
+				if(!listClaims[i].ClaimStatus.In("U","W","I","H")) {
 					return;
 				}
 				Claim claimOld=listClaims[i].Copy();
@@ -209,6 +209,14 @@ namespace OpenDentBusiness{
 				}
 				else {
 					listClaims[i].ClaimStatus="W";
+					if(listClaims[i].ClaimType!="P") { //If the current claim isn't primary, we need to check if we should set the status to Hold Until Pri Received instead of Waiting to Send.
+						List<long> listProcNums=listClaimProcsForClaim.Select(x=>x.ProcNum).ToList();
+						List<ClaimProc> listClaimProcsForProcs=ClaimProcs.GetForProcs(listProcNums);
+						List<Claim> listClaimsForClaimProcs=Claims.GetClaimsFromClaimNums(listClaimProcsForProcs.Select(x=>x.ClaimNum).Distinct().ToList());
+						if(listClaimsForClaimProcs.Exists(x => x.ClaimType=="P")) { //Check if a primary claim is attached to one of the same procedures that this non-primary claim is attached to
+							listClaims[i].ClaimStatus="H"; //Set the status to Hold Until Pri Received instead of Waiting to Send
+						}
+					}
 					List<ProcMultiVisit> listProcMultiVisitsForClaims=GetGroupsForProcsFromDb(listClaimProcsForClaim.Select(x=>x.ProcNum).ToArray());
 					//Set the ClaimProc.ProcDate and Claim.DateService as used to be done in AccountModules.CreateClaim()
 					List<Procedure> listPatProcs=Procedures.Refresh(pmv.PatNum);

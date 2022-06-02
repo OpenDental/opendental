@@ -27,24 +27,15 @@ namespace OpenDental {
 			textNote.Text=TaskNoteCur.Note;
 			textNote.Select(TaskNoteCur.Note.Length,0);
 			this.Top+=150;
-			StringBuilder str=new StringBuilder();
 			if(TaskNoteCur.IsNew) {
 				textDateTime.ReadOnly=true;
 				butOK.Enabled=true;
 			}
-			else if(!Security.IsAuthorized(Permissions.TaskNoteEdit,true)) {//Tasknotes are not editable unless user has TaskNoteEdit permission.
+			else if(!Security.IsAuthorized(Permissions.TaskNoteEdit)) {//Tasknotes are not editable unless user has TaskNoteEdit permission.
 				butOK.Enabled=false;
-				str.AppendLine(GroupPermissions.GetDesc(Permissions.TaskNoteEdit));
 			}
 			if(!Security.IsAuthorized(Permissions.TaskDelete,true)) {//Tasknotes are not deletable unless user has TaskDelete  permission.
 				butDelete.Enabled=false;
-				if(!TaskNoteCur.IsNew) {// only show message if user is editing an existing note
-					str.AppendLine(GroupPermissions.GetDesc(Permissions.TaskDelete));
-				}
-			}
-			//show users message of missing permissions if applicable
-			if(!string.IsNullOrWhiteSpace(str.ToString())) {
-				MsgBox.Show(Lans.g("Security","Not authorized for")+"\r\n"+str.ToString());
 			}
 		}
 

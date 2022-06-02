@@ -367,7 +367,7 @@ namespace OpenDentBusiness{
 			Db.NonQ(command);
 			command="INSERT INTO recalltrigger (RecallTriggerNum,RecallTypeNum,CodeNum) VALUES (15,4,"+ProcedureCodes.GetCodeNum("02601")+")";
 			Db.NonQ(command);
-			command="INSERT INTO recalltrigger (RecallTriggerNum,RecallTypeNum,CodeNum) VALUES (11,5,"+ProcedureCodes.GetCodeNum("01201")+")";
+			command="INSERT INTO recalltrigger (RecallTriggerNum,RecallTypeNum,CodeNum) VALUES (11,5,"+ProcedureCodes.GetCodeNum("01202")+")";
 			Db.NonQ(command);
 			command="INSERT INTO recalltrigger (RecallTriggerNum,RecallTypeNum,CodeNum) VALUES (12,5,"+ProcedureCodes.GetCodeNum("01101")+")";
 			Db.NonQ(command);

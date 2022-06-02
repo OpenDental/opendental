@@ -88,6 +88,32 @@ namespace OpenDental {
 				Signalods.SetInvalid(InvalidType.ProcMultiVisits);
 			}
 			ProcMultiVisits.RefreshCache();
+			//Change status of claims if necessary
+			List<ClaimProc> listClaimProcs=ClaimProcs.GetForProcs(arraySelectedProcNums.ToList());
+			List<Claim> listClaims=Claims.GetClaimsFromClaimNums(listClaimProcs.Select(x=>x.ClaimNum).ToList());
+			for(int i=0;i<listClaims.Count;i++) {
+				Claim claimOld=listClaims[i].Copy();
+				List<ClaimProc> listClaimProcsForClaim=ClaimProcs.RefreshForClaim(listClaims[i].ClaimNum);
+				if(listClaimProcsForClaim.Count==0) {//This is rare but still happens.  See DBM. 
+					break;
+				}
+				bool isProcsInProcess=listClaimProcsForClaim.Exists(x=>ProcMultiVisits.IsProcInProcess(x.ProcNum));
+				if(isProcsInProcess) {
+					listClaims[i].ClaimStatus="I";
+				}
+				else {
+					listClaims[i].ClaimStatus="W";
+					if(listClaims[i].ClaimType!="P") { //If this claim isn't primary, we need to see if a primary one is also attached to this procedure
+						List<long> listProcNums=listClaimProcsForClaim.Select(x=>x.ProcNum).ToList();
+						List<ClaimProc> listClaimProcsForProc=ClaimProcs.GetForProcs(listProcNums);
+						List<Claim> listClaimsForClaimProcs=Claims.GetClaimsFromClaimNums(listClaimProcsForProc.Select(x=>x.ClaimNum).Distinct().ToList());
+						if(listClaimsForClaimProcs.Exists(x=>x.ClaimType=="P")) { //If a primary claim is also attached
+							listClaims[i].ClaimStatus="H"; //Set the status to Hold Until Pri Received instead of Waiting to Send
+						}
+					}
+				}
+				Claims.Update(listClaims[i],claimOld);
+			}
 			if(ListDataRows.Count==0) {
 				MsgBox.Show(this,"All procedures removed from group.");
 				Close();

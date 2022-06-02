@@ -141,8 +141,7 @@ namespace OpenDental {
 			this.labelAutoAgingRunTime.Name = "labelAutoAgingRunTime";
 			this.labelAutoAgingRunTime.Size = new System.Drawing.Size(350, 27);
 			this.labelAutoAgingRunTime.TabIndex = 312;
-			this.labelAutoAgingRunTime.Text = "Automated aging run time, only applies if using Daily aging \r\nLeave blank to disa" +
-    "ble";
+			this.labelAutoAgingRunTime.Text = "Automated aging run time, Leave blank to disable";
 			this.labelAutoAgingRunTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textAutoAgingRunTime
