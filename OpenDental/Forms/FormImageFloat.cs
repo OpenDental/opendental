@@ -987,6 +987,7 @@ namespace OpenDental {
 				DownloadDocumentNoteFile(nodeTypeAndKey);
 				_isExportable=panelMain.Visible;
 				if(_bitmapRaw==null) {
+					panelMain.Visible=false;
 					if(ImageHelper.HasImageExtension(document.FileName)) {
 						string srcFileName = ODFileUtils.CombinePaths(PatFolder,document.FileName);
 						if(File.Exists(srcFileName)) {
@@ -4190,7 +4191,6 @@ namespace OpenDental {
 					//The downside seems to be that some users need to update to a newer version of Adobe Reader.
 					string args="#toolbar=1&navpanes=0";//Show toolbar at top.  Hide nav panes at left. 
 					_webBrowser.Navigate(_webBrowserFilePath+args);//The return status of this function doesn't seem to be helpful.
-					panelMain.Visible=false;
 					_isExportable=true;
 					_countWebBrowserLoads++;
 					IsImageFloatLocked=true;

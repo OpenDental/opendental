@@ -151,39 +151,48 @@ namespace OpenDentBusiness {
 			if(str.Trim()=="") {
 				return bounds;//Nothing to draw.
 			}
-			StringFormat sf=StringFormat.GenericTypographic;
+			StringFormat stringFormat=StringFormat.GenericTypographic;
 			//The overload for DrawString that takes a StringFormat will cause the tabs '\t' to be ignored.
 			//In order for the tabs to not get ignored, we have to tell StringFormat how many pixels each tab should be.  
 			//50.0f is the closest to our Fill Sheet Edit preview.
-			sf.SetTabStops(0.0f,new float[1] { 50.0f });
+			stringFormat.SetTabStops(0.0f,new float[1] { 50.0f });
 			RichTextBox textbox=CreateTextBoxForSheetDisplay(str,font,bounds.Width,bounds.Height,align);
+			//This can sometimes return a line that's wider than the bounds passed in:
 			List<RichTextLineInfo> listTextLines=GetTextSheetDisplayLines(textbox);
-			float deviceLineHeight=g.MeasureString(str.Replace("\r","").Replace("\n",""),font,int.MaxValue,sf).Height;
+			float deviceLineHeight=g.MeasureString(str.Replace("\r","").Replace("\n",""),font,int.MaxValue,stringFormat).Height;
 			float scale=deviceLineHeight/textbox.Font.Height;//(size when printed)/(size on screen)
 			font=new Font(font.FontFamily,font.Size*scale,font.Style);
 			float maxLineWidth=0;
+			List<float>listTextWidths=new List<float>();
 			for(int i=0;i<listTextLines.Count;i++) {
 				string line=RichTextLineInfo.GetTextForLine(textbox.Text,listTextLines,i);
 				if(line.Trim().Length > 0) {
-					float textWidth=g.MeasureString(line,font,int.MaxValue,sf).Width;
+					float textWidth=g.MeasureString(line,font,int.MaxValue,stringFormat).Width;
+					listTextWidths.Add(textWidth);
+					maxLineWidth=Math.Max(maxLineWidth,textWidth+4);
+				}
+			}
+			float maxRectangleWidth=Math.Max(maxLineWidth,bounds.Width);
+			for(int i=0;i<listTextLines.Count;i++) {
+				string line=RichTextLineInfo.GetTextForLine(textbox.Text,listTextLines,i);
+				if(line.Trim().Length > 0) {
 					float x;
 					if(align==HorizontalAlignment.Left) {
 						x=bounds.X + listTextLines[i].Left * scale;
 					}
 					else if(align==HorizontalAlignment.Center) {
-						x=bounds.X + ((bounds.Width - (textWidth * scale)) / 2);
+						x=bounds.X + ((maxRectangleWidth - listTextWidths[i]) / 2);
 					}
 					else {//Right
-						x=bounds.X + bounds.Width - (textWidth * scale);
+						x=bounds.X + maxRectangleWidth - listTextWidths[i];
 					}
 					float y=bounds.Y+listTextLines[i].Top*scale;
-					g.DrawString(line,font,brush,x,y,sf);
-					maxLineWidth=Math.Max(maxLineWidth,(listTextLines[i].Left*scale)+textWidth);
+					g.DrawString(line,font,brush,x,y,stringFormat);
 				}
 			}
 			textbox.Font.Dispose();//This font was dynamically created when the textbox was created.
 			textbox.Dispose();
-			sf.Dispose();
+			stringFormat.Dispose();
 			font.Dispose();
 			return new RectangleF(bounds.X,bounds.Y,maxLineWidth,bounds.Height);
 		}

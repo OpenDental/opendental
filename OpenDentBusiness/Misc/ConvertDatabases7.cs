@@ -2363,6 +2363,12 @@ namespace OpenDentBusiness {
 			Misc.SecurityHash.UpdateHashing();
 		}
 
+		private static void To21_4_49() {
+			string command;
+			command="ALTER TABLE covcat MODIFY CovOrder INT NOT NULL";
+			Db.NonQ(command);
+		}//End of 21_4_49() method
+
 		private static void To22_1_1() {
 			string command;
 			DataTable table;
@@ -2729,7 +2735,7 @@ namespace OpenDentBusiness {
 
 		private static void To22_1_34() {
 			string command;
-			command="ALTER TABLE CovCat MODIFY CovOrder INT NOT NULL";
+			command="ALTER TABLE covcat MODIFY CovOrder INT NOT NULL";
 			Db.NonQ(command);
 		}//End of 22_1_34() method
 

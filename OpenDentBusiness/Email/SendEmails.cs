@@ -231,11 +231,14 @@ namespace OpenDentBusiness.Email {
 			else {
 				body.TextBody=emailMessage.BodyText;
 			}
-			foreach(MimePart attachment in body.Attachments) {
+			for(int i=0;i<body.Attachments.Count();i++) {
+				MimePart attachment=(MimePart)body.Attachments[i];
 				//Can break PDFs otherwise, since the file's 0A (/r) bytes are treated as line endings when getting encoded
 				if(attachment.ContentTransferEncoding==ContentEncoding.QuotedPrintable) {
 					attachment.ContentTransferEncoding=ContentEncoding.Base64;
 				}
+				//Set the email attachments FileName to be the DisplayedFilename
+				attachment.FileName=emailMessage.ListAttachments[i].DisplayedFilename;
 			}
 			mimeMsg.Body=body.ToMessageBody();
 			return mimeMsg;

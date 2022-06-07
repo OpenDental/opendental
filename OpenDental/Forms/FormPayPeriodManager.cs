@@ -515,7 +515,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Pay periods must be generated first.");
 				return;
 			}
-			if(!textDaysAfterPayPeriod.IsValid()) {
+			if(textDaysAfterPayPeriod.Enabled==true && !textDaysAfterPayPeriod.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
 			}

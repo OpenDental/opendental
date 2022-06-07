@@ -3344,6 +3344,10 @@ namespace OpenDental{
 				for(int i=0;i<listRefAttaches.Count;i++) {
 					RefAttaches.Delete(listRefAttaches[i]);
 				}
+				if(_patientCur.SuperFamily!=0) {
+					_patientCur.SuperFamily=0;
+					Patients.Update(_patientCur,_patientOld);
+				}
 				Patients.Delete(_patientCur);
 				SecurityLogs.MakeLogEntry(Permissions.PatientEdit,_patientCur.PatNum,Lan.g(this,"Canceled creating new patient. Deleting patient record."));
 			}
