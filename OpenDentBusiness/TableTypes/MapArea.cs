@@ -20,7 +20,7 @@ namespace OpenDentBusiness {
 		public double Height;
 		///<summary>Any text that the user types in.  Only used when ItemType is set to DisplayLabel.  Limit 255 char.</summary>
 		public string Description;
-		///<summary>Enum:MapItemType 0-Room,1-DisplayLabel</summary>
+		///<summary>Enum:MapItemType 0-Cubicle,1-Label</summary>
 		public MapItemType ItemType;
 		///<summary>The room that this map is in. This is not currently a table. Stored as a JSON serialized list in HQ only pref, HQSerializedMapContainers.</summary>
 		public long MapAreaContainerNum;
@@ -32,9 +32,9 @@ namespace OpenDentBusiness {
 
 	/// <summary>Indicate which type of MapArea we are dealing with.</summary>
 	public enum MapItemType {
-		///<summary>0 - A MapAreaRoomControl object.</summary>
-		Room,
-		///<summary>1 - A MapAreaDisplayLabelControl object.</summary>
-		DisplayLabel
+		///<summary>0 - A MapCubicle object.</summary>
+		Cubicle,
+		///<summary>1 - A MapLabel object.</summary>
+		Label
 	}
 }

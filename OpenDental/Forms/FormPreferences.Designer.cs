@@ -70,9 +70,9 @@ namespace OpenDental{
 			this.panelMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.panelMain.Location = new System.Drawing.Point(244, 13);
+			this.panelMain.Location = new System.Drawing.Point(244, 30);
 			this.panelMain.Name = "panelMain";
-			this.panelMain.Size = new System.Drawing.Size(974, 641);
+			this.panelMain.Size = new System.Drawing.Size(974, 624);
 			this.panelMain.TabIndex = 5;
 			// 
 			// labelCategories

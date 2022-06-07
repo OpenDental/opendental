@@ -59,19 +59,24 @@ namespace OpenDental {
 			this.textInsHistFMX = new System.Windows.Forms.TextBox();
 			this.groupBoxInsuranceHistory = new OpenDental.UI.GroupBoxOD();
 			this.groupBoxDiscounts = new OpenDental.UI.GroupBoxOD();
+			this.labelPromptSaveTPDetails = new System.Windows.Forms.Label();
+			this.groupTreatPlan = new OpenDental.UI.GroupBoxOD();
+			this.linkLabelProcDiscountTypeDetails1 = new System.Windows.Forms.LinkLabel();
+			this.linkLabelProcDiscountTypeDetails2 = new System.Windows.Forms.LinkLabel();
 			this.groupTreatPlanSort.SuspendLayout();
 			this.groupBoxInsuranceHistory.SuspendLayout();
 			this.groupBoxDiscounts.SuspendLayout();
+			this.groupTreatPlan.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// checkPromptSaveTP
 			// 
 			this.checkPromptSaveTP.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkPromptSaveTP.Location = new System.Drawing.Point(158, 143);
+			this.checkPromptSaveTP.Location = new System.Drawing.Point(62, 67);
 			this.checkPromptSaveTP.Name = "checkPromptSaveTP";
-			this.checkPromptSaveTP.Size = new System.Drawing.Size(302, 17);
+			this.checkPromptSaveTP.Size = new System.Drawing.Size(378, 17);
 			this.checkPromptSaveTP.TabIndex = 252;
-			this.checkPromptSaveTP.Text = "Prompt to save Treatment Plans";
+			this.checkPromptSaveTP.Text = "When saving Treatment Plans, prompt for name change";
 			this.checkPromptSaveTP.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkPromptSaveTP.UseVisualStyleBackColor = false;
 			// 
@@ -83,7 +88,7 @@ namespace OpenDental {
 			this.labelDiscountPercentage.Name = "labelDiscountPercentage";
 			this.labelDiscountPercentage.Size = new System.Drawing.Size(246, 17);
 			this.labelDiscountPercentage.TabIndex = 251;
-			this.labelDiscountPercentage.Text = "Procedure discount percentage";
+			this.labelDiscountPercentage.Text = "Default Procedure discount percentage";
 			this.labelDiscountPercentage.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// label19
@@ -111,7 +116,7 @@ namespace OpenDental {
 			this.groupTreatPlanSort.BackColor = System.Drawing.Color.White;
 			this.groupTreatPlanSort.Controls.Add(this.radioTreatPlanSortTooth);
 			this.groupTreatPlanSort.Controls.Add(this.radioTreatPlanSortOrder);
-			this.groupTreatPlanSort.Location = new System.Drawing.Point(20, 164);
+			this.groupTreatPlanSort.Location = new System.Drawing.Point(20, 178);
 			this.groupTreatPlanSort.Name = "groupTreatPlanSort";
 			this.groupTreatPlanSort.Size = new System.Drawing.Size(450, 52);
 			this.groupTreatPlanSort.TabIndex = 249;
@@ -161,7 +166,7 @@ namespace OpenDental {
 			// checkTPSaveSigned
 			// 
 			this.checkTPSaveSigned.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkTPSaveSigned.Location = new System.Drawing.Point(158, 122);
+			this.checkTPSaveSigned.Location = new System.Drawing.Point(138, 48);
 			this.checkTPSaveSigned.Name = "checkTPSaveSigned";
 			this.checkTPSaveSigned.Size = new System.Drawing.Size(302, 17);
 			this.checkTPSaveSigned.TabIndex = 247;
@@ -180,9 +185,9 @@ namespace OpenDental {
 			// checkTreatPlanShowCompleted
 			// 
 			this.checkTreatPlanShowCompleted.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkTreatPlanShowCompleted.Location = new System.Drawing.Point(60, 80);
+			this.checkTreatPlanShowCompleted.Location = new System.Drawing.Point(90, 10);
 			this.checkTreatPlanShowCompleted.Name = "checkTreatPlanShowCompleted";
-			this.checkTreatPlanShowCompleted.Size = new System.Drawing.Size(400, 17);
+			this.checkTreatPlanShowCompleted.Size = new System.Drawing.Size(350, 17);
 			this.checkTreatPlanShowCompleted.TabIndex = 243;
 			this.checkTreatPlanShowCompleted.Text = "Show completed work on graphical tooth chart";
 			this.checkTreatPlanShowCompleted.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -198,7 +203,7 @@ namespace OpenDental {
 			// checkTreatPlanItemized
 			// 
 			this.checkTreatPlanItemized.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkTreatPlanItemized.Location = new System.Drawing.Point(320, 101);
+			this.checkTreatPlanItemized.Location = new System.Drawing.Point(300, 29);
 			this.checkTreatPlanItemized.Name = "checkTreatPlanItemized";
 			this.checkTreatPlanItemized.Size = new System.Drawing.Size(140, 17);
 			this.checkTreatPlanItemized.TabIndex = 246;
@@ -408,7 +413,7 @@ namespace OpenDental {
 			this.groupBoxInsuranceHistory.Controls.Add(this.labelInsHistFMX);
 			this.groupBoxInsuranceHistory.Controls.Add(this.textInsHistPerioLL);
 			this.groupBoxInsuranceHistory.Controls.Add(this.textInsHistPerioUR);
-			this.groupBoxInsuranceHistory.Location = new System.Drawing.Point(20, 289);
+			this.groupBoxInsuranceHistory.Location = new System.Drawing.Point(20, 303);
 			this.groupBoxInsuranceHistory.Name = "groupBoxInsuranceHistory";
 			this.groupBoxInsuranceHistory.Size = new System.Drawing.Size(450, 256);
 			this.groupBoxInsuranceHistory.TabIndex = 273;
@@ -420,34 +425,86 @@ namespace OpenDental {
 			this.groupBoxDiscounts.Controls.Add(this.label19);
 			this.groupBoxDiscounts.Controls.Add(this.textDiscountPercentage);
 			this.groupBoxDiscounts.Controls.Add(this.labelDiscountPercentage);
-			this.groupBoxDiscounts.Location = new System.Drawing.Point(20, 220);
+			this.groupBoxDiscounts.Location = new System.Drawing.Point(20, 234);
 			this.groupBoxDiscounts.Name = "groupBoxDiscounts";
 			this.groupBoxDiscounts.Size = new System.Drawing.Size(450, 65);
 			this.groupBoxDiscounts.TabIndex = 274;
 			this.groupBoxDiscounts.Text = "Discounts";
+			// 
+			// labelPromptSaveTPDetails
+			// 
+			this.labelPromptSaveTPDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelPromptSaveTPDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelPromptSaveTPDetails.Location = new System.Drawing.Point(476, 146);
+			this.labelPromptSaveTPDetails.Name = "labelPromptSaveTPDetails";
+			this.labelPromptSaveTPDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelPromptSaveTPDetails.TabIndex = 366;
+			this.labelPromptSaveTPDetails.Text = "otherwise, it uses a default name";
+			this.labelPromptSaveTPDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// groupTreatPlan
+			// 
+			this.groupTreatPlan.Controls.Add(this.checkTreatPlanShowCompleted);
+			this.groupTreatPlan.Controls.Add(this.checkTreatPlanItemized);
+			this.groupTreatPlan.Controls.Add(this.checkTPSaveSigned);
+			this.groupTreatPlan.Controls.Add(this.checkPromptSaveTP);
+			this.groupTreatPlan.Location = new System.Drawing.Point(20, 80);
+			this.groupTreatPlan.Name = "groupTreatPlan";
+			this.groupTreatPlan.Size = new System.Drawing.Size(450, 94);
+			this.groupTreatPlan.TabIndex = 367;
+			this.groupTreatPlan.Text = "Treatment Plan";
+			// 
+			// linkLabelProcDiscountTypeDetails1
+			// 
+			this.linkLabelProcDiscountTypeDetails1.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.linkLabelProcDiscountTypeDetails1.LinkArea = new System.Windows.Forms.LinkArea(24, 8);
+			this.linkLabelProcDiscountTypeDetails1.Location = new System.Drawing.Point(476, 248);
+			this.linkLabelProcDiscountTypeDetails1.Name = "linkLabelProcDiscountTypeDetails1";
+			this.linkLabelProcDiscountTypeDetails1.Size = new System.Drawing.Size(306, 15);
+			this.linkLabelProcDiscountTypeDetails1.TabIndex = 368;
+			this.linkLabelProcDiscountTypeDetails1.TabStop = true;
+			this.linkLabelProcDiscountTypeDetails1.Text = "when a procedure with a Discount attached is set complete";
+			this.linkLabelProcDiscountTypeDetails1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.linkLabelProcDiscountTypeDetails1.UseCompatibleTextRendering = true;
+			this.linkLabelProcDiscountTypeDetails1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelProcDiscountTypeDetails_LinkClicked);
+			// 
+			// linkLabelProcDiscountTypeDetails2
+			// 
+			this.linkLabelProcDiscountTypeDetails2.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.linkLabelProcDiscountTypeDetails2.LinkArea = new System.Windows.Forms.LinkArea(7, 22);
+			this.linkLabelProcDiscountTypeDetails2.Location = new System.Drawing.Point(788, 247);
+			this.linkLabelProcDiscountTypeDetails2.Name = "linkLabelProcDiscountTypeDetails2";
+			this.linkLabelProcDiscountTypeDetails2.Size = new System.Drawing.Size(186, 17);
+			this.linkLabelProcDiscountTypeDetails2.TabIndex = 369;
+			this.linkLabelProcDiscountTypeDetails2.TabStop = true;
+			this.linkLabelProcDiscountTypeDetails2.Text = "set in Definitions: Adj Types";
+			this.linkLabelProcDiscountTypeDetails2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.linkLabelProcDiscountTypeDetails2.UseCompatibleTextRendering = true;
+			this.linkLabelProcDiscountTypeDetails2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelProcDiscountTypeDetails2_LinkClicked);
 			// 
 			// UserControlTreatPlanGeneral
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.linkLabelProcDiscountTypeDetails2);
+			this.Controls.Add(this.linkLabelProcDiscountTypeDetails1);
+			this.Controls.Add(this.groupTreatPlan);
+			this.Controls.Add(this.labelPromptSaveTPDetails);
 			this.Controls.Add(this.groupBoxDiscounts);
 			this.Controls.Add(this.groupBoxInsuranceHistory);
-			this.Controls.Add(this.checkPromptSaveTP);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.groupTreatPlanSort);
 			this.Controls.Add(this.textTreatNote);
-			this.Controls.Add(this.checkTPSaveSigned);
-			this.Controls.Add(this.checkTreatPlanShowCompleted);
-			this.Controls.Add(this.checkTreatPlanItemized);
 			this.Name = "UserControlTreatPlanGeneral";
-			this.Size = new System.Drawing.Size(974, 641);
+			this.Size = new System.Drawing.Size(974, 624);
 			this.Load += new System.EventHandler(this.UserControlTreatPlanGeneral_Load);
 			this.groupTreatPlanSort.ResumeLayout(false);
 			this.groupBoxInsuranceHistory.ResumeLayout(false);
 			this.groupBoxInsuranceHistory.PerformLayout();
 			this.groupBoxDiscounts.ResumeLayout(false);
 			this.groupBoxDiscounts.PerformLayout();
+			this.groupTreatPlan.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -489,5 +546,9 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textInsHistFMX;
 		private UI.GroupBoxOD groupBoxInsuranceHistory;
 		private UI.GroupBoxOD groupBoxDiscounts;
+		private System.Windows.Forms.Label labelPromptSaveTPDetails;
+		private UI.GroupBoxOD groupTreatPlan;
+		private System.Windows.Forms.LinkLabel linkLabelProcDiscountTypeDetails1;
+		private System.Windows.Forms.LinkLabel linkLabelProcDiscountTypeDetails2;
 	}
 }

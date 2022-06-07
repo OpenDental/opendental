@@ -82,17 +82,17 @@ namespace OpenDental {
 				if(listMapAreasClinicItems[i].MapAreaContainerNum!=_mapAreaContainer.MapAreaContainerNum) {
 					continue;
 				}
-				if(listMapAreasClinicItems[i].ItemType==MapItemType.Room) {
+				if(listMapAreasClinicItems[i].ItemType==MapItemType.Cubicle) {
 					mapAreaPanel.AddCubicle(listMapAreasClinicItems[i],false);
 				}
-				else if(listMapAreasClinicItems[i].ItemType==MapItemType.DisplayLabel) {
+				else if(listMapAreasClinicItems[i].ItemType==MapItemType.Label) {
 					mapAreaPanel.AddDisplayLabel(listMapAreasClinicItems[i]);
 				}
 			}
 			mapAreaPanel.ShowGrid=_mapAreaContainer.ShowGrid;
 			mapAreaPanel.ShowOutline=_mapAreaContainer.ShowOutline;
-			mapAreaPanel.FloorWidthFeet=_mapAreaContainer.FloorWidthFeet;
-			mapAreaPanel.FloorHeightFeet=_mapAreaContainer.FloorHeightFeet;
+			mapAreaPanel.WidthFloorFeet=_mapAreaContainer.FloorWidthFeet;
+			mapAreaPanel.HeightFloorFeet=_mapAreaContainer.FloorHeightFeet;
 			mapAreaPanel.PixelsPerFoot=LayoutManager.Scale(_mapAreaContainer.PixelsPerFoot);//_mapCur.PixelsPerFoot;
 			textDescription.Text=_mapAreaContainer.Description;
 			mapAreaPanel.Invalidate();
@@ -153,7 +153,7 @@ namespace OpenDental {
 			formMapAreaEdit.MapAreaItem.IsNew=true;
 			formMapAreaEdit.MapAreaItem.Width=6;
 			formMapAreaEdit.MapAreaItem.Height=6;
-			formMapAreaEdit.MapAreaItem.ItemType=MapItemType.Room;
+			formMapAreaEdit.MapAreaItem.ItemType=MapItemType.Cubicle;
 			PointF pointFXY=GetXYFromMenuLocation(sender);
 			formMapAreaEdit.MapAreaItem.XPos=Math.Round(pointFXY.X,3);
 			formMapAreaEdit.MapAreaItem.YPos=Math.Round(pointFXY.Y,3);
@@ -170,7 +170,7 @@ namespace OpenDental {
 			formMapAreaEdit.MapAreaItem.IsNew=true;
 			formMapAreaEdit.MapAreaItem.Width=6;
 			formMapAreaEdit.MapAreaItem.Height=6;
-			formMapAreaEdit.MapAreaItem.ItemType=MapItemType.DisplayLabel;
+			formMapAreaEdit.MapAreaItem.ItemType=MapItemType.Label;
 			PointF pointFXY=GetXYFromMenuLocation(sender);
 			formMapAreaEdit.MapAreaItem.XPos=Math.Round(pointFXY.X,3);
 			formMapAreaEdit.MapAreaItem.YPos=Math.Round(pointFXY.Y,3);
@@ -289,7 +289,7 @@ namespace OpenDental {
 			formMapAreaEdit.MapAreaItem.IsNew=true;
 			formMapAreaEdit.MapAreaItem.Width=6;
 			formMapAreaEdit.MapAreaItem.Height=6;
-			formMapAreaEdit.MapAreaItem.ItemType=MapItemType.Room;
+			formMapAreaEdit.MapAreaItem.ItemType=MapItemType.Cubicle;
 			formMapAreaEdit.MapAreaItem.Extension=employee.PhoneExt;
 			formMapAreaEdit.MapAreaItem.Description="";
 			formMapAreaEdit.MapAreaItem.MapAreaContainerNum=_mapAreaContainer.MapAreaContainerNum;
@@ -314,7 +314,7 @@ namespace OpenDental {
 				IsNew=true,
 				Width=3,
 				Height=3,
-				ItemType=MapItemType.Room,
+				ItemType=MapItemType.Cubicle,
 				Extension=employee.PhoneExt,
 				Description="",
 				MapAreaContainerNum=_mapAreaContainer.MapAreaContainerNum

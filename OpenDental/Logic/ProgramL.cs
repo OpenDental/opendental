@@ -342,6 +342,10 @@ namespace OpenDental{
 			else if(prog.ProgName==ProgramName.Pixel.ToString()) {
 				//Pixel is treated like a generic program link which gets handled down below.
 			}
+			else if(prog.ProgName==ProgramName.PORTRAY.ToString()) {
+				PORTRAY.SendData(prog,pat);
+				return;
+			}
 			else if(prog.ProgName==ProgramName.PracticeByNumbers.ToString()) {
 				PracticeByNumbers.ShowPage();
 				return;

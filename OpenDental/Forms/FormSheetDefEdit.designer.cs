@@ -94,6 +94,8 @@ namespace OpenDental{
 			this.butOutputText = new OpenDental.UI.Button();
 			this.butRedo = new OpenDental.UI.Button();
 			this.butUndo = new OpenDental.UI.Button();
+			this.label1 = new System.Windows.Forms.Label();
+			this.checkShowMobileHeader = new System.Windows.Forms.CheckBox();
 			this.groupBoxSubViews.SuspendLayout();
 			this.groupAlignH.SuspendLayout();
 			this.groupPage.SuspendLayout();
@@ -430,6 +432,7 @@ namespace OpenDental{
 			// 
 			// groupShowField
 			// 
+			this.groupShowField.Controls.Add(this.checkShowMobileHeader);
 			this.groupShowField.Controls.Add(this.checkShowScreenChart);
 			this.groupShowField.Controls.Add(this.checkShowGrid);
 			this.groupShowField.Controls.Add(this.checkShowSpecial);
@@ -448,7 +451,7 @@ namespace OpenDental{
 			this.groupShowField.Controls.Add(this.checkShowOutputText);
 			this.groupShowField.Location = new System.Drawing.Point(240, 96);
 			this.groupShowField.Name = "groupShowField";
-			this.groupShowField.Size = new System.Drawing.Size(40, 461);
+			this.groupShowField.Size = new System.Drawing.Size(40, 482);
 			this.groupShowField.TabIndex = 97;
 			this.groupShowField.Text = "Show";
 			// 
@@ -652,6 +655,7 @@ namespace OpenDental{
 			// 
 			// groupAddField
 			// 
+			this.groupAddField.Controls.Add(this.label1);
 			this.groupAddField.Controls.Add(this.butScreenChart);
 			this.groupAddField.Controls.Add(this.butSpecial);
 			this.groupAddField.Controls.Add(this.butGrid);
@@ -668,7 +672,7 @@ namespace OpenDental{
 			this.groupAddField.Controls.Add(this.butOutputText);
 			this.groupAddField.Location = new System.Drawing.Point(158, 151);
 			this.groupAddField.Name = "groupAddField";
-			this.groupAddField.Size = new System.Drawing.Size(79, 406);
+			this.groupAddField.Size = new System.Drawing.Size(79, 427);
 			this.groupAddField.TabIndex = 97;
 			this.groupAddField.Text = "Add Field";
 			// 
@@ -846,6 +850,27 @@ namespace OpenDental{
 			this.butUndo.Text = "Undo Ctrl-Z";
 			this.butUndo.Click += new System.EventHandler(this.butUndo_Click);
 			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(1, 405);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(77, 18);
+			this.label1.TabIndex = 125;
+			this.label1.Text = "MobileHeader";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// checkShowMobileHeader
+			// 
+			this.checkShowMobileHeader.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.checkShowMobileHeader.Checked = true;
+			this.checkShowMobileHeader.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkShowMobileHeader.Location = new System.Drawing.Point(9, 461);
+			this.checkShowMobileHeader.Name = "checkShowMobileHeader";
+			this.checkShowMobileHeader.Size = new System.Drawing.Size(20, 18);
+			this.checkShowMobileHeader.TabIndex = 119;
+			this.checkShowMobileHeader.UseVisualStyleBackColor = true;
+			this.checkShowMobileHeader.Click += new System.EventHandler(this.checkShowMobileHeader_Click);
+			// 
 			// FormSheetDefEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(828, 696);
@@ -937,5 +962,7 @@ namespace OpenDental{
 		private System.Windows.Forms.CheckBox checkShowStaticText;
 		private System.Windows.Forms.CheckBox checkShowInputField;
 		private System.Windows.Forms.CheckBox checkShowOutputText;
+		private System.Windows.Forms.CheckBox checkShowMobileHeader;
+		private System.Windows.Forms.Label label1;
 	}
 }

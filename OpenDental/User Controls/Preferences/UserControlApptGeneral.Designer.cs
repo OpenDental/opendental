@@ -54,6 +54,7 @@ namespace OpenDental {
 			this.checkBrokenApptAdjustment = new System.Windows.Forms.CheckBox();
 			this.comboBrokenApptAdjType = new OpenDental.UI.ComboBoxOD();
 			this.label7 = new System.Windows.Forms.Label();
+			this.labelSearchBehaviorDetails = new System.Windows.Forms.Label();
 			this.groupBoxProduction.SuspendLayout();
 			this.groupBoxOD2.SuspendLayout();
 			this.groupBoxCalendarBehavior.SuspendLayout();
@@ -394,11 +395,24 @@ namespace OpenDental {
 			this.label7.Text = "Broken appt default adj type";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
+			// labelSearchBehaviorDetails
+			// 
+			this.labelSearchBehaviorDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelSearchBehaviorDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelSearchBehaviorDetails.Location = new System.Drawing.Point(476, 157);
+			this.labelSearchBehaviorDetails.Name = "labelSearchBehaviorDetails";
+			this.labelSearchBehaviorDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelSearchBehaviorDetails.TabIndex = 347;
+			this.labelSearchBehaviorDetails.Text = "ProviderTimeOperatory will prevent overlap (but it only works if you assign ops i" +
+    "n the prov schedules)";
+			this.labelSearchBehaviorDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// UserControlApptGeneral
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.labelSearchBehaviorDetails);
 			this.Controls.Add(this.labelApptModuleProductionUsesOpsDetails);
 			this.Controls.Add(this.labelApptModuleAdjInProdDetails);
 			this.Controls.Add(this.labelApptAutoRefreshRangeDetails);
@@ -407,7 +421,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxCalendarBehavior);
 			this.Controls.Add(this.groupBox2);
 			this.Name = "UserControlApptGeneral";
-			this.Size = new System.Drawing.Size(974, 641);
+			this.Size = new System.Drawing.Size(974, 624);
 			this.groupBoxProduction.ResumeLayout(false);
 			this.groupBoxOD2.ResumeLayout(false);
 			this.groupBoxOD2.PerformLayout();
@@ -450,5 +464,6 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelApptAutoRefreshRangeDetails;
 		private System.Windows.Forms.Label labelApptModuleAdjInProdDetails;
 		private System.Windows.Forms.Label labelApptModuleProductionUsesOpsDetails;
+		private System.Windows.Forms.Label labelSearchBehaviorDetails;
 	}
 }

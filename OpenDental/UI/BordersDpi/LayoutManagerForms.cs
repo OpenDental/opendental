@@ -1048,7 +1048,7 @@ namespace OpenDental{
 				mapAreaPanel.LayoutManager=this;
 				return;
 			}
-			if(control is MapAreaRoomControl mapAreaRoomControl){
+			if(control is MapCubicle mapAreaRoomControl){
 				mapAreaRoomControl.LayoutManager=this;
 				return;
 			}

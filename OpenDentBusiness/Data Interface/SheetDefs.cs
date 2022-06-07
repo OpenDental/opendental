@@ -427,6 +427,9 @@ namespace OpenDentBusiness{
 			if(sheetType==SheetTypeEnum.Statement) {
 				listSheetFieldTypes.Remove(SheetFieldType.SigBox);
 			}
+			if(SheetDefs.IsMobileAllowed(sheetType)){
+				listSheetFieldTypes.Add(SheetFieldType.MobileHeader);
+			}
 			return listSheetFieldTypes;
 		}
 	}

@@ -15,7 +15,7 @@ namespace OpenDental {
 
 		private void FormMapAreaEdit_Load(object sender,EventArgs e) {
 			//show/hide fields according to MaptItemType
-			if(MapAreaItem.ItemType==MapItemType.Room) {
+			if(MapAreaItem.ItemType==MapItemType.Cubicle) {
 				textBoxExtension.Visible=true;
 				labelExtension.Visible=true;
 				textBoxHeightFeet.Visible=true;
@@ -69,7 +69,7 @@ namespace OpenDental {
 					MessageBox.Show(Lan.g(this,"Invalid Extension"));
 					return;
 				}
-				if(MapAreaItem.ItemType==MapItemType.DisplayLabel && PIn.String(textBoxDescription.Text)=="") {
+				if(MapAreaItem.ItemType==MapItemType.Label && PIn.String(textBoxDescription.Text)=="") {
 					textBoxDescription.Focus();
 					MessageBox.Show(Lan.g(this,"Invalid Text"));
 					return;

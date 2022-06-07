@@ -12,47 +12,13 @@ namespace OpenDental {
 	public partial class FormAdvertisingPatientList:FormODBase {
 		private const string COLUMN_SEND="Send";
 		public List<PatientInfo> ListPatientInfos=new List<PatientInfo>();
-		private PatientHasNecessaryData _patientHasNecessaryData;
+		private AdvertisingType FormAdvertisingType;
 
-		public FormAdvertisingPatientList(PatientHasNecessaryData hasNecessaryData,params Control[] controlArrayAdditionalFilters) {
+		public FormAdvertisingPatientList(AdvertisingType advertisingType) {
 			InitializeComponent();
-			_patientHasNecessaryData=hasNecessaryData;
-			AddAdditionalFilters(controlArrayAdditionalFilters);
+			FormAdvertisingType=advertisingType;
 			InitializeLayoutManager();
 			Lan.F(this);
-		}
-
-		private void AddAdditionalFilters(Control[] controlArrayAdditionalFilters) {
-			//Locate and add additional filter controls
-			int paddingBetweenControls=2;//padding between addtional filter controls
-			int controlRowHeight=0;
-			int controlRowFloorYCoordinate=panelAdditionalFilters.Height;
-			Control controlFilterPrevious=null;
-			//Tallest to shortest. Layout filters left to right, starting from bottom left corner, wrapping upward to next row.
-			controlArrayAdditionalFilters=controlArrayAdditionalFilters.OrderByDescending(x => x.Height).ToArray();
-			for(int i=0;i<controlArrayAdditionalFilters.Length;i++) {
-				Control controlFilter=controlArrayAdditionalFilters[i];
-				int nextControlFilterXCoordinate=(controlFilterPrevious?.Location.X??0)+(controlFilterPrevious?.Width??0)+paddingBetweenControls;
-				if(nextControlFilterXCoordinate+controlFilter.Width>panelAdditionalFilters.Width) {
-					if(i==0) {
-						throw new Exception("Additional filter control is too wide for panel.");
-					}
-					//This filter would overlap the right hand side of the panel.  Wrap to next row.
-					nextControlFilterXCoordinate=paddingBetweenControls;
-					controlRowFloorYCoordinate-=(controlRowHeight+paddingBetweenControls);
-					if(controlRowFloorYCoordinate<=0) {
-						throw new Exception("Additional filter control will not fit in the panel.");
-					}
-					controlRowHeight=0;
-					controlFilterPrevious=null;
-				}
-				int nextControlFilterYCoordinate=controlRowFloorYCoordinate-controlFilter.Height;
-				controlFilter.Location=new Point(nextControlFilterXCoordinate,nextControlFilterYCoordinate);
-				controlFilter.Anchor=AnchorStyles.Bottom | AnchorStyles.Left;
-				controlFilterPrevious=controlFilter;
-				controlRowHeight=Math.Max(controlFilter.Height,controlRowHeight);
-			}
-			panelAdditionalFilters.Controls.AddRange(controlArrayAdditionalFilters);
 		}
 
 		private void FormMassPostcardList_Load(object sender,EventArgs e) {
@@ -196,7 +162,18 @@ namespace OpenDental {
 			if(tablePatientInfoRaw!=null) {
 				listPatientInfos=PatientInfo.GetListPatientInfos(tablePatientInfoRaw);
 			}
-			return listPatientInfos.Where(x=>_patientHasNecessaryData(x)).ToList();
+			if(FormAdvertisingType==AdvertisingType.MassEmail) {
+				//Only show patients with a valid email address.
+				return listPatientInfos.Where(x=>EmailAddresses.IsValidEmail(x.Email,out _)).ToList();
+			}
+			else if(FormAdvertisingType==AdvertisingType.Postcards){
+				//Only show patients with a valid address.
+				return listPatientInfos.Where(x=>(!x.Address.IsNullOrEmpty() || !x.Address2.IsNullOrEmpty())
+					&& !x.City.IsNullOrEmpty() 
+					&& !x.State.IsNullOrEmpty() 
+					&& !x.Zip.IsNullOrEmpty()).ToList();
+			}
+			return listPatientInfos.ToList();
 		}
 
 		private DataTable GetPatientDataTable() {
@@ -370,7 +347,10 @@ namespace OpenDental {
 		private void butCancel_Click(object sender,EventArgs e) {
 			DialogResult=DialogResult.Cancel;
 		}
+	}
 
-		public delegate bool PatientHasNecessaryData(PatientInfo pat);
+	public enum AdvertisingType {
+		MassEmail,
+		Postcards,
 	}
 }

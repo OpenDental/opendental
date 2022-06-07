@@ -11,118 +11,119 @@ namespace OpenDental {
 		public LayoutManagerForms LayoutManager=new LayoutManagerForms();
 		#endregion Fields - Public
 
-		#region Properties available in designer.
-
-		[Category("Cubicle Farm")]
+		#region Properties
+		[Category("OD")]
 		[Description("Turn dragging on or off")]
 		public bool AllowDragging { get; set; }
 
-		[Category("Cubicle Farm")]
+		[Category("OD")]
 		[Description("Turn editing on or off")]
 		public bool AllowEditing { get; set; }
 
-		private Font fontLabel=SystemFonts.DefaultFont;
-		[Category("Cubicle Farm")]
+		private Font _fontLabel=SystemFonts.DefaultFont;
+		[Category("OD")]
 		[Description("Font sized used for labels")]
 		public Font FontLabel {
 			get {
-				return fontLabel;
+				return _fontLabel;
 			}
 			set {
-				fontLabel=value;
+				_fontLabel=value;
 				ResizeScrollbarsToFitContents();
 				Invalidate(true);
 			}
 		}
 
-		private Font fontCubicle=SystemFonts.DefaultFont;
-		[Category("Cubicle Farm")]
+		private Font _fontCubicle=SystemFonts.DefaultFont;
+		[Category("OD")]
 		[Description("Font sized used for individual cubicles")]
 		public Font FontCubicle {
 			get {
-				return fontCubicle;
+				return _fontCubicle;
 			}
 			set {
-				fontCubicle=value;
+				_fontCubicle=value;
 				ResizeScrollbarsToFitContents();
 				Invalidate(true);
 			}
 		}
 
-		private Font fontCubicleHeader=SystemFonts.DefaultFont;
-		[Category("Cubicle Farm")]
+		private Font _fontCubicleHeader=SystemFonts.DefaultFont;
+		[Category("OD")]
 		[Description("Font sized used for first row header in the cubicle")]
 		public Font FontCubicleHeader {
 			get {
-				return fontCubicleHeader;
+				return _fontCubicleHeader;
 			}
 			set {
-				fontCubicleHeader=value;
+				_fontCubicleHeader=value;
 				ResizeScrollbarsToFitContents();
 				Invalidate(true);
 			}
 		}
 
-		private int floorWidthFeet=80;
-		[Category("Cubicle Farm")]
+		private int _widthFloorFeet=80;
+		[Category("OD")]
 		[Description("Number of feet left to right")]
-		public int FloorWidthFeet {
+		[DefaultValue(80)]
+		public int WidthFloorFeet {
 			get {
-				return floorWidthFeet;
+				return _widthFloorFeet;
 			}
 			set {
-				floorWidthFeet=value;
+				_widthFloorFeet=value;
 				ResizeScrollbarsToFitContents();
 				ResizeCubicles();
 				Invalidate(true);
 			}
 		}
 
-		private int floorHeightFeet=80;
-		[Category("Cubicle Farm")]
+		private int _heightFloorFeet=80;
+		[Category("OD")]
 		[Description("Number of feet top to bottom")]
-		public int FloorHeightFeet {
+		[DefaultValue(80)]
+		public int HeightFloorFeet {
 			get {
-				return floorHeightFeet;
+				return _heightFloorFeet;
 			}
 			set {
-				floorHeightFeet=value;
+				_heightFloorFeet=value;
 				ResizeScrollbarsToFitContents();
 				ResizeCubicles();
 				Invalidate(true);
 			}
 		}
 
-		private int pixelsPerFoot=10;
-		[Category("Cubicle Farm")]
+		private int _pixelsPerFoot=10;
+		[Category("OD")]
 		[Description("Number of pixels used per each foot. Change this to scale the drawing.")]
 		public int PixelsPerFoot {
 			get {
-				return pixelsPerFoot;
+				return _pixelsPerFoot;
 			}
 			set {
-				pixelsPerFoot=value;
+				_pixelsPerFoot=value;
 				ResizeScrollbarsToFitContents();
 				ResizeCubicles();
 				Invalidate(true);
 			}
 		}
 
-		private bool showGrid=false;
-		[Category("Cubicle Farm")]
+		private bool _showGrid=false;
+		[Category("OD")]
 		[Description("Draws the overlay grid underneath the cubicles")]
 		public bool ShowGrid {
 			get {
-				return showGrid;
+				return _showGrid;
 			}
 			set {
-				showGrid=value;
+				_showGrid=value;
 				Invalidate();
 			}
 		}
 
 		private bool showOutline=false;
-		[Category("Cubicle Farm")]
+		[Category("OD")]
 		[Description("Draws outline around the control")]
 		public bool ShowOutline {
 			get {
@@ -135,7 +136,7 @@ namespace OpenDental {
 		}
 
 		private Color gridColor=Color.DarkGray;
-		[Category("Cubicle Farm")]
+		[Category("OD")]
 		[Description("Color used to draw the grid lines")]
 		public Color GridColor {
 			get {
@@ -148,7 +149,7 @@ namespace OpenDental {
 		}
 
 		private Color floorColor=Color.White;
-		[Category("Cubicle Farm")]
+		[Category("OD")]
 		[Description("Color used to draw the floor")]
 		public Color FloorColor {
 			get {
@@ -164,17 +165,18 @@ namespace OpenDental {
 			}
 		}
 
-		#endregion
+		#endregion Properties
 
-		#region Events
+		#region Events - Raise
 
 		public event EventHandler MapAreaChanged;
 		public event EventHandler RoomControlClicked;
 		///<summary></summary>
-		[Category("Property Changed"),Description("Event raised when user wants to go to a patient or related object.")]
+		[Category("Property Changed")]
+		[Description("Event raised when user wants to go to a patient or related object.")]
 		public event EventHandler GoToChanged=null;
 
-		#endregion
+		#endregion Events - Raise
 
 		#region Used for testing.
 
@@ -185,11 +187,11 @@ namespace OpenDental {
 		}
 
 		public int GetRandomXPos(int cubicleWidth) {
-			return Rand.Next(0,FloorWidthFeet-cubicleWidth);
+			return Rand.Next(0,WidthFloorFeet-cubicleWidth);
 		}
 
 		public int GetRandomYPos(int cubicleHeight) {
-			return Rand.Next(0,FloorHeightFeet-cubicleHeight);
+			return Rand.Next(0,HeightFloorFeet-cubicleHeight);
 		}
 
 		public MapAreaPanel() {
@@ -201,15 +203,14 @@ namespace OpenDental {
 		#endregion
 		
 		#region Manage cubicle controls.
-				
 		///<summary>Clear the form. Optionally delete the records from the database. Use this option sparingly (if ever).</summary>
 		public void Clear(bool deleteFromDatabase) {
 			if(deleteFromDatabase) {
 				for(int i=0;i<this.Controls.Count;i++) {
-					if(!(this.Controls[i] is MapAreaRoomControl)) {
+					if(!(this.Controls[i] is MapCubicle)) {
 						return;
 					}
-					MapAreas.Delete(((MapAreaRoomControl)this.Controls[i]).MapAreaItem.MapAreaNum);
+					MapAreas.Delete(((MapCubicle)this.Controls[i]).MapAreaCur.MapAreaNum);
 				}			
 			}
 			for(int i=0;i<this.Controls.Count;i++) {
@@ -236,45 +237,48 @@ namespace OpenDental {
 
 		///<summary>Add a cubicle to the panel.</summary>
 		public void AddCubicle(MapArea mapArea,bool allowRightClickOptions=true) {
-			MapAreaRoomControl mapAreaRoomControl=new MapAreaRoomControl(
-				mapArea,
-				TimeSpan.FromSeconds(Rand.Next(60,1200)),
-				"Emp: "+this.Controls.Count.ToString(),
-				this.Controls.Count,
-				mapArea.Extension.ToString(),
-				"Status",
-				this.FontCubicle,//these two fonts seem to already scale with the control, somehow
-				this.FontCubicleHeader,
-				Color.FromArgb(40,Color.Red),
-				Color.Red,
-				this.FloorColor,
-				GetScreenLocation(mapArea.XPos,mapArea.YPos,this.PixelsPerFoot),
-				GetScreenSize(mapArea.Width,mapArea.Height,this.PixelsPerFoot),
-				Properties.Resources.phoneInUse,
-				Properties.Resources.gtaicon3,
-				Properties.Resources.WebChatIcon,
-				Properties.Resources.remoteSupportIcon,
-				this.AllowDragging,
-				this.AllowEditing,
-				allowRightClickOptions);
-			mapAreaRoomControl.DragDone+=mapAreaControl_DragDone;
-			mapAreaRoomControl.MapAreaRoomChanged+=mapAreaControl_Changed;
-			mapAreaRoomControl.RoomControlClicked+=roomControl_Clicked;
-			mapAreaRoomControl.GoToChanged+=GoTo_Changed;
+			mapArea.ItemType=MapItemType.Cubicle;
+			MapCubicle mapCubicle=new MapCubicle();
+			mapCubicle.MapAreaCur=mapArea;
+			mapCubicle.Elapsed = TimeSpan.FromSeconds(Rand.Next(60,1200));
+			mapCubicle.EmployeeName = "Emp: "+this.Controls.Count.ToString();
+			mapCubicle.EmployeeNum = this.Controls.Count;
+			mapCubicle.Extension = mapArea.Extension.ToString();
+			mapCubicle.Status = "Status";
+			mapCubicle.Font = this.FontCubicle;//these two fonts seem to already scale with the control somehow
+			mapCubicle.FontHeader=this.FontCubicleHeader;
+			mapCubicle.Location = GetScreenLocation(mapArea.XPos,mapArea.YPos,this.PixelsPerFoot);
+			mapCubicle.Size=GetScreenSize(mapArea.Width,mapArea.Height,this.PixelsPerFoot);
+			mapCubicle.InnerColor = Color.FromArgb(40,Color.Red);
+			mapCubicle.OuterColor = Color.Red;
+			mapCubicle.BackColor=this.FloorColor;
+			mapCubicle.PhoneImage = Properties.Resources.phoneInUse;
+			mapCubicle.ChatImage = Properties.Resources.gtaicon3;
+			mapCubicle.WebChatImage=Properties.Resources.WebChatIcon;
+			mapCubicle.RemoteSupportImage=Properties.Resources.remoteSupportIcon;
+			mapCubicle.AllowDragging=AllowDragging;
+			mapCubicle.AllowEdit=AllowEditing;
+			mapCubicle.Name=mapArea.MapAreaNum.ToString();
+			mapCubicle.PhoneCur=Phones.GetPhoneForExtensionDB(PIn.Int(mapCubicle.Extension));
+			mapCubicle.AllowRightClick=allowRightClickOptions;
+			mapCubicle.DragDone+=mapAreaControl_DragDone;
+			mapCubicle.MapAreaRoomChanged+=mapAreaControl_Changed;
+			mapCubicle.RoomControlClicked+=roomControl_Clicked;
+			mapCubicle.GoToChanged+=GoTo_Changed;
 			try{
-				if(mapAreaRoomControl.Handle==IntPtr.Zero){
+				if(mapCubicle.Handle==IntPtr.Zero){
 					return;
 				}
 			}
 			catch{
 				return;
 			}
-			LayoutManager.Add(mapAreaRoomControl,this);
+			LayoutManager.Add(mapCubicle,this);
 		}
 
 		///<summary>Add a display label to the panel.</summary>
 		public void AddDisplayLabel(MapArea mapArea) {
-			MapAreaDisplayLabelControl label=new MapAreaDisplayLabelControl(
+			MapLabel label=new MapLabel(
 				mapArea,
 				new Font("Calibri",LayoutManager.ScaleF(14),FontStyle.Bold),//this.FontLabel,
 				this.ForeColor,
@@ -297,21 +301,22 @@ namespace OpenDental {
 		}
 
 		///<summary>Alert parent that something has changed</summary>
-		void mapAreaControl_Changed(object sender,EventArgs e) {
+		private void mapAreaControl_Changed(object sender,EventArgs e) {
 			if(MapAreaChanged!=null) {
 				MapAreaChanged(sender,new EventArgs());
 			}
 		}
 
 
-		void roomControl_Clicked(object sender,EventArgs e) {
+		private void roomControl_Clicked(object sender,EventArgs e) {
 			RoomControlClicked?.Invoke(sender,new EventArgs());
 		}
 
 		///<summary>Alert parent that something has changed</summary>
-		void GoTo_Changed(object sender,EventArgs e) {
+		private void GoTo_Changed(object sender,EventArgs e) {
 			GoToChanged?.Invoke(sender,new EventArgs());
 		}
+
 		///<summary>Handle the Cubicle.DragDone event</summary>
 		void mapAreaControl_DragDone(object sender,EventArgs e) {
 			if(sender==null) {
@@ -319,13 +324,13 @@ namespace OpenDental {
 			}
 			Control asControl=null;
 			MapArea clinicMapItem=null;
-			if(sender is MapAreaRoomControl) {
+			if(sender is MapCubicle) {
 				asControl=(Control)sender;
-				clinicMapItem=((MapAreaRoomControl)sender).MapAreaItem;			
+				clinicMapItem=((MapCubicle)sender).MapAreaCur;			
 			}
-			else if(sender is MapAreaDisplayLabelControl) {
+			else if(sender is MapLabel) {
 				asControl=(Control)sender;
-				clinicMapItem=((MapAreaDisplayLabelControl)sender).MapAreaItem;
+				clinicMapItem=((MapLabel)sender).MapAreaCur;
 			}
 			else {
 				return;
@@ -342,7 +347,7 @@ namespace OpenDental {
 
 		///<summary>Call this BEFORE calling ResizeCubicles.</summary>
 		public void ResizeScrollbarsToFitContents() {
-			Size sizeControl=new Size(this.FloorWidthFeet*this.PixelsPerFoot,this.FloorHeightFeet*this.PixelsPerFoot);
+			Size sizeControl=new Size(this.WidthFloorFeet*this.PixelsPerFoot,this.HeightFloorFeet*this.PixelsPerFoot);
 			if(this.AutoScrollMinSize!=sizeControl) {
 				//todo: removed scrolling for now. It was causing more problems than it was worth.
 				//this.AutoScrollMinSize=sizeControl;
@@ -359,15 +364,15 @@ namespace OpenDental {
 				if(this.Controls[i]==null) {
 					continue;
 				}
-				else if(this.Controls[i] is MapAreaRoomControl) {
-					MapAreaRoomControl cubicle=(MapAreaRoomControl)this.Controls[i];
-					cubicle.Location=GetScreenLocation(cubicle.MapAreaItem.XPos,cubicle.MapAreaItem.YPos,this.PixelsPerFoot);
-					cubicle.Size=GetScreenSize(cubicle.MapAreaItem.Width,cubicle.MapAreaItem.Height,this.PixelsPerFoot);
+				else if(this.Controls[i] is MapCubicle) {
+					MapCubicle cubicle=(MapCubicle)this.Controls[i];
+					cubicle.Location=GetScreenLocation(cubicle.MapAreaCur.XPos,cubicle.MapAreaCur.YPos,this.PixelsPerFoot);
+					cubicle.Size=GetScreenSize(cubicle.MapAreaCur.Width,cubicle.MapAreaCur.Height,this.PixelsPerFoot);
 				}
-				else if(this.Controls[i] is MapAreaDisplayLabelControl) {
-					MapAreaDisplayLabelControl displayLabel=(MapAreaDisplayLabelControl)this.Controls[i];
-					displayLabel.Location=GetScreenLocation(displayLabel.MapAreaItem.XPos,displayLabel.MapAreaItem.YPos,this.PixelsPerFoot);
-					displayLabel.Size=MapAreaDisplayLabelControl.GetDrawingSize(displayLabel,this.PixelsPerFoot);
+				else if(this.Controls[i] is MapLabel) {
+					MapLabel displayLabel=(MapLabel)this.Controls[i];
+					displayLabel.Location=GetScreenLocation(displayLabel.MapAreaCur.XPos,displayLabel.MapAreaCur.YPos,this.PixelsPerFoot);
+					displayLabel.Size=MapLabel.GetDrawingSize(displayLabel,this.PixelsPerFoot);
 					//draw labels on top of all other controls
 					displayLabel.BringToFront();
 				}
@@ -377,11 +382,10 @@ namespace OpenDental {
 		#endregion
 
 		#region Drawing
-
 		private void MapAreaPanel_Paint(object sender,PaintEventArgs e) {
 			//draw the floor color as the background
 			using(Brush brushFloor=new SolidBrush(this.FloorColor)) {
-				e.Graphics.FillRectangle(brushFloor,0,0,(this.FloorWidthFeet*this.PixelsPerFoot),(this.FloorHeightFeet*this.PixelsPerFoot));
+				e.Graphics.FillRectangle(brushFloor,0,0,(this.WidthFloorFeet*this.PixelsPerFoot),(this.HeightFloorFeet*this.PixelsPerFoot));
 			}
 			if(ShowGrid) {
 				DrawGrid(e.Graphics);
@@ -392,30 +396,27 @@ namespace OpenDental {
 		}
 
 		private void DrawGrid(Graphics graphics) {
-			Pen pen=new Pen(this.GridColor,1F);
+			using Pen pen=new Pen(this.GridColor,1F);
 			try {
 				graphics.TranslateTransform(this.AutoScrollPosition.X,this.AutoScrollPosition.Y);
 				//draw vertical vertical lines
 				int x=0;
-				while(x<=this.FloorWidthFeet) {
+				while(x<=this.WidthFloorFeet) {
 					Point top=new Point(x*PixelsPerFoot,0);
-					Point bottom=new Point(x*PixelsPerFoot,this.FloorHeightFeet*PixelsPerFoot);
+					Point bottom=new Point(x*PixelsPerFoot,this.HeightFloorFeet*PixelsPerFoot);
 					graphics.DrawLine(pen,top,bottom);
 					x++;
 				}
 				//draw horizontal lines
 				int y=0;
-				while(y<=this.FloorHeightFeet) {
+				while(y<=this.HeightFloorFeet) {
 					Point left=new Point(0,y*PixelsPerFoot);
-					Point right=new Point(this.FloorWidthFeet*PixelsPerFoot,y*PixelsPerFoot);
+					Point right=new Point(this.WidthFloorFeet*PixelsPerFoot,y*PixelsPerFoot);
 					graphics.DrawLine(pen,left,right);
 					y++;
 				}
 			}
 			catch {
-			}
-			finally {
-				pen.Dispose();
 			}
 		}
 
@@ -423,7 +424,7 @@ namespace OpenDental {
 			//draw the oultine around the entire panel
 			using(Pen penOutline=new Pen(Color.FromArgb(128,Color.Black),3)) {
 				float halfPenWidth=(float)penOutline.Width/2;
-				graphics.DrawRectangle(penOutline,halfPenWidth,halfPenWidth,(this.FloorWidthFeet*this.PixelsPerFoot)-halfPenWidth,(this.FloorHeightFeet*this.PixelsPerFoot)-halfPenWidth);
+				graphics.DrawRectangle(penOutline,halfPenWidth,halfPenWidth,(this.WidthFloorFeet*this.PixelsPerFoot)-halfPenWidth,(this.HeightFloorFeet*this.PixelsPerFoot)-halfPenWidth);
 			}
 		}
 

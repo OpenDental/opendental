@@ -13,45 +13,34 @@ namespace OpenDentBusiness.AutoComm {
 		public int NumReminders;
 		[XmlIgnore]
 		public long WebSchedRecallNum;
-		[Obsolete]
+#region Deprecated as of 22.2. Must remain defined for back-compatibility deserialization and handling at HQ for versions older than 22.2.
 		///<summary>Deprecated.</summary>
 		public string EmailSubjTemplate="";
-		[Obsolete]
 		///<summary>Deprecated.</summary>
 		public string EmailTextTemplate="";
-		[Obsolete]
 		///<summary>Deprecated.</summary>
 		public string MsgTextToMobile="";
-		[Obsolete]
 		///<summary>Deprecated.</summary>
 		public string MsgTextToMobileTemplate="";
-		[Obsolete]
 		///<summary>Deprecated.</summary>
 		public string EmailSubj="";
-		[Obsolete]
 		///<summary>Deprecated.</summary>
 		public string EmailText="";
 		///<summary>Deprecated.The recipient SMS phone number. If non-blank then assume this number can be texted.</summary>
-		[Obsolete]
 		public string PhoneContact;
 		///<summary>Deprecated.The recipient email. If non-blank then assume this email can be sent.</summary>
-		[Obsolete]
 		public string EmailContact;
 		///<summary>Deprecated.Indicates that an SMS should be attempted for this patient.</summary>
-		[Obsolete]
 		public bool TrySendSMS;
 		///<summary>Deprecated.Indicates that an email should be attempted for this patient.</summary>
-		[Obsolete]
 		public bool TrySendEmail;
 		///<summary>Deprecated.he send status of the SMS.</summary>
-		[Obsolete]
 		public AutoCommStatus SMSSendStatus=AutoCommStatus.Undefined;
 		///<summary>Deprecated.The send status of the email.</summary>
-		[Obsolete]
 		public AutoCommStatus EmailSendStatus=AutoCommStatus.Undefined;
 		///<summary>Deprecated.</summary>
-		[Obsolete]
 		public RSVPStatusCodes RSVPStatus;
+#endregion
 		public string GuidMessageToMobile="";
 		public string ResponseDescript="";
 		public WebSchedRecallSource Source=WebSchedRecallSource.Undefined;

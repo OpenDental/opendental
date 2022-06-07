@@ -119,45 +119,45 @@ namespace UnitTests.MassEmail_Tests {
 			Assert.IsTrue(listPatInfo.All(x => x.DateTimeNextAppt==DateTime.MinValue));
 		}
 
-		[TestMethod]
-		public void PromotionLogs_DoIncludePatient_InvalidEmail() {
-			PatientInfo patInfo=new PatientInfo {
-				Email="invalidemail",//Invalid email
-			};
-			TimeSpan timeSpan=TimeSpan.FromDays(-1);
-			DateTime dateTimeMostRecent=DateTime_.Now;
-			Assert.IsFalse(PromotionLogs.DoIncludePatient(patInfo,timeSpan,dateTimeMostRecent));
-		}
-
-		[TestMethod]
-		public void PromotionLogs_DoIncludePatient_ValidEmail() {
-			PatientInfo patInfo=new PatientInfo {
-				Email="valid@email.com",//Valid email
-			};
-			TimeSpan timeSpan=TimeSpan.FromDays(-1);
-			DateTime dateTimeMostRecent=DateTime_.Now;
-			Assert.IsTrue(PromotionLogs.DoIncludePatient(patInfo,timeSpan,dateTimeMostRecent));
-		}
-
-		[TestMethod]
-		public void PromotionLogs_DoIncludePatient_DateTimeMinVal() {
-			PatientInfo patInfo=new PatientInfo {
-				Email="valid@email.com",//Valid email
-			};
-			TimeSpan timeSpan=TimeSpan.FromDays(100);
-			DateTime dateTimeMostRecent=DateTime.MinValue;
-			Assert.IsTrue(PromotionLogs.DoIncludePatient(patInfo,timeSpan,dateTimeMostRecent));
-		}
-
-		[TestMethod]
-		public void PromotionLogs_DoIncludePatient_DateTimeYesterday() {
-			PatientInfo patInfo=new PatientInfo {
-				Email="valid@email.com",//Valid email
-			};
-			TimeSpan timeSpan=TimeSpan.FromDays(1);
-			DateTime dateTimeMostRecent=DateTime_.Now.AddDays(-1).AddSeconds(1);//yesterday (one second for buffer)
-			Assert.IsFalse(PromotionLogs.DoIncludePatient(patInfo,timeSpan,dateTimeMostRecent));
-		}
+		//[TestMethod]
+		//public void PromotionLogs_DoIncludePatient_InvalidEmail() {
+		//	PatientInfo patInfo=new PatientInfo {
+		//		Email="invalidemail",//Invalid email
+		//	};
+		//	TimeSpan timeSpan=TimeSpan.FromDays(-1);
+		//	DateTime dateTimeMostRecent=DateTime_.Now;
+		//	Assert.IsFalse(PromotionLogs.DoIncludePatient(patInfo,timeSpan,dateTimeMostRecent));
+		//}
+		//
+		//[TestMethod]
+		//public void PromotionLogs_DoIncludePatient_ValidEmail() {
+		//	PatientInfo patInfo=new PatientInfo {
+		//		Email="valid@email.com",//Valid email
+		//	};
+		//	TimeSpan timeSpan=TimeSpan.FromDays(-1);
+		//	DateTime dateTimeMostRecent=DateTime_.Now;
+		//	Assert.IsTrue(PromotionLogs.DoIncludePatient(patInfo,timeSpan,dateTimeMostRecent));
+		//}
+		//
+		//[TestMethod]
+		//public void PromotionLogs_DoIncludePatient_DateTimeMinVal() {
+		//	PatientInfo patInfo=new PatientInfo {
+		//		Email="valid@email.com",//Valid email
+		//	};
+		//	TimeSpan timeSpan=TimeSpan.FromDays(100);
+		//	DateTime dateTimeMostRecent=DateTime.MinValue;
+		//	Assert.IsTrue(PromotionLogs.DoIncludePatient(patInfo,timeSpan,dateTimeMostRecent));
+		//}
+		//
+		//[TestMethod]
+		//public void PromotionLogs_DoIncludePatient_DateTimeYesterday() {
+		//	PatientInfo patInfo=new PatientInfo {
+		//		Email="valid@email.com",//Valid email
+		//	};
+		//	TimeSpan timeSpan=TimeSpan.FromDays(1);
+		//	DateTime dateTimeMostRecent=DateTime_.Now.AddDays(-1).AddSeconds(1);//yesterday (one second for buffer)
+		//	Assert.IsFalse(PromotionLogs.DoIncludePatient(patInfo,timeSpan,dateTimeMostRecent));
+		//}
 
 		///<summary>Patient's last appointment was exactly one year ago.  Exclude patients seen since one year ago.</summary>
 		[TestMethod]

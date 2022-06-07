@@ -27,34 +27,32 @@
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMapHQ));
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
-			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.comboRoom = new System.Windows.Forms.ComboBox();
-			this.labelCurrentTime = new OpenDental.MapAreaRoomControl();
+			this.labelCurrentTime = new OpenDental.MapCubicle();
 			this.labelTriageCoordinator = new System.Windows.Forms.Label();
 			this.menuMain = new OpenDental.UI.MenuOD();
-			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
 			this.userControlMapDetails1 = new OpenDental.InternalTools.Phones.UserControlMapDetails();
-			this.labelCustDownTime = new OpenDental.MapAreaRoomControl();
-			this.labelCustDownCount = new OpenDental.MapAreaRoomControl();
-			this.labelTriageOpsCountTotal = new OpenDental.MapAreaRoomControl();
+			this.labelCustDownTime = new OpenDental.MapCubicle();
+			this.labelCustDownCount = new OpenDental.MapCubicle();
+			this.labelTriageOpsCountTotal = new OpenDental.MapCubicle();
 			this.escalationView = new OpenDental.EscalationViewControl();
 			this.eServiceMetricsControl = new OpenDental.EServiceMetricsControl();
 			this.label3 = new System.Windows.Forms.Label();
-			this.labelTriageOpsCountLocal = new OpenDental.MapAreaRoomControl();
+			this.labelTriageOpsCountLocal = new OpenDental.MapCubicle();
 			this.groupPhoneMetrics = new OpenDental.UI.GroupBoxOD();
-			this.labelChatTimeSpan = new OpenDental.MapAreaRoomControl();
-			this.labelChatCount = new OpenDental.MapAreaRoomControl();
+			this.labelChatTimeSpan = new OpenDental.MapCubicle();
+			this.labelChatCount = new OpenDental.MapCubicle();
 			this.label2 = new System.Windows.Forms.Label();
-			this.labelTriageTimeSpan = new OpenDental.MapAreaRoomControl();
-			this.labelTriageRedCalls = new OpenDental.MapAreaRoomControl();
+			this.labelTriageTimeSpan = new OpenDental.MapCubicle();
+			this.labelTriageRedCalls = new OpenDental.MapCubicle();
 			this.label1 = new System.Windows.Forms.Label();
-			this.labelTriageRedTimeSpan = new OpenDental.MapAreaRoomControl();
+			this.labelTriageRedTimeSpan = new OpenDental.MapCubicle();
 			this.label4 = new System.Windows.Forms.Label();
-			this.labelVoicemailTimeSpan = new OpenDental.MapAreaRoomControl();
+			this.labelVoicemailTimeSpan = new OpenDental.MapCubicle();
 			this.label11 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
-			this.labelTriageCalls = new OpenDental.MapAreaRoomControl();
-			this.labelVoicemailCalls = new OpenDental.MapAreaRoomControl();
+			this.labelTriageCalls = new OpenDental.MapCubicle();
+			this.labelVoicemailCalls = new OpenDental.MapCubicle();
 			this.label6 = new System.Windows.Forms.Label();
 			this.label14 = new System.Windows.Forms.Label();
 			this.tabMain = new System.Windows.Forms.TabControl();
@@ -67,15 +65,8 @@
 			this.labelTirageOpTotal = new System.Windows.Forms.Label();
 			this.labelTirageOpLocal = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
-			this.mapAreaPanelHQ = new OpenDental.MapAreaPanel();
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-			this.splitContainer1.Panel1.SuspendLayout();
-			this.splitContainer1.Panel2.SuspendLayout();
-			this.splitContainer1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
-			this.splitContainer2.Panel1.SuspendLayout();
-			this.splitContainer2.Panel2.SuspendLayout();
-			this.splitContainer2.SuspendLayout();
+			this.mapAreaPanel = new OpenDental.MapAreaPanel();
+			this.timerWebCam = new System.Windows.Forms.Timer(this.components);
 			this.groupPhoneMetrics.SuspendLayout();
 			this.tabMain.SuspendLayout();
 			this.SuspendLayout();
@@ -85,36 +76,13 @@
 			this.timer1.Interval = 250;
 			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			// 
-			// splitContainer1
-			// 
-			this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-			this.splitContainer1.IsSplitterFixed = true;
-			this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-			this.splitContainer1.Name = "splitContainer1";
-			this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-			// 
-			// splitContainer1.Panel1
-			// 
-			this.splitContainer1.Panel1.Controls.Add(this.comboRoom);
-			this.splitContainer1.Panel1.Controls.Add(this.labelCurrentTime);
-			this.splitContainer1.Panel1.Controls.Add(this.labelTriageCoordinator);
-			this.splitContainer1.Panel1.Controls.Add(this.menuMain);
-			// 
-			// splitContainer1.Panel2
-			// 
-			this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-			this.splitContainer1.Size = new System.Drawing.Size(1884, 1042);
-			this.splitContainer1.SplitterDistance = 84;
-			this.splitContainer1.TabIndex = 0;
-			// 
 			// comboRoom
 			// 
 			this.comboRoom.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.comboRoom.Font = new System.Drawing.Font("Microsoft Sans Serif", 27F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.comboRoom.ForeColor = System.Drawing.Color.Blue;
 			this.comboRoom.ItemHeight = 40;
-			this.comboRoom.Location = new System.Drawing.Point(6, 33);
+			this.comboRoom.Location = new System.Drawing.Point(0, 25);
 			this.comboRoom.MaxDropDownItems = 30;
 			this.comboRoom.Name = "comboRoom";
 			this.comboRoom.Size = new System.Drawing.Size(359, 48);
@@ -137,12 +105,12 @@
 			this.labelCurrentTime.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelCurrentTime.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.labelCurrentTime.InnerColor = System.Drawing.SystemColors.Control;
-			this.labelCurrentTime.Location = new System.Drawing.Point(1690, 12);
+			this.labelCurrentTime.Location = new System.Drawing.Point(1692, 5);
 			this.labelCurrentTime.Name = "labelCurrentTime";
 			this.labelCurrentTime.OuterColor = System.Drawing.SystemColors.Control;
-			this.labelCurrentTime.PhoneCur = null;
 			this.labelCurrentTime.PhoneImage = null;
 			this.labelCurrentTime.ProxImage = null;
+			this.labelCurrentTime.RemoteSupportImage = null;
 			this.labelCurrentTime.Size = new System.Drawing.Size(182, 61);
 			this.labelCurrentTime.Status = null;
 			this.labelCurrentTime.TabIndex = 66;
@@ -154,58 +122,24 @@
 			this.labelTriageCoordinator.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.labelTriageCoordinator.Font = new System.Drawing.Font("Calibri", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelTriageCoordinator.Location = new System.Drawing.Point(517, 1);
+			this.labelTriageCoordinator.Location = new System.Drawing.Point(406, 3);
 			this.labelTriageCoordinator.Name = "labelTriageCoordinator";
-			this.labelTriageCoordinator.Size = new System.Drawing.Size(1194, 72);
+			this.labelTriageCoordinator.Size = new System.Drawing.Size(1280, 72);
 			this.labelTriageCoordinator.TabIndex = 65;
 			this.labelTriageCoordinator.Text = "Call Center Map - Triage Coord - Jim Smith";
-			this.labelTriageCoordinator.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.labelTriageCoordinator.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// menuMain
 			// 
-			this.menuMain.Dock = System.Windows.Forms.DockStyle.Top;
 			this.menuMain.Location = new System.Drawing.Point(0, 0);
 			this.menuMain.Name = "menuMain";
-			this.menuMain.Size = new System.Drawing.Size(1884, 24);
+			this.menuMain.Size = new System.Drawing.Size(400, 24);
 			this.menuMain.TabIndex = 71;
-			// 
-			// splitContainer2
-			// 
-			this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-			this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-			this.splitContainer2.Name = "splitContainer2";
-			// 
-			// splitContainer2.Panel1
-			// 
-			this.splitContainer2.Panel1.Controls.Add(this.userControlMapDetails1);
-			this.splitContainer2.Panel1.Controls.Add(this.labelCustDownTime);
-			this.splitContainer2.Panel1.Controls.Add(this.labelCustDownCount);
-			this.splitContainer2.Panel1.Controls.Add(this.labelTriageOpsCountTotal);
-			this.splitContainer2.Panel1.Controls.Add(this.escalationView);
-			this.splitContainer2.Panel1.Controls.Add(this.eServiceMetricsControl);
-			this.splitContainer2.Panel1.Controls.Add(this.label3);
-			this.splitContainer2.Panel1.Controls.Add(this.labelTriageOpsCountLocal);
-			this.splitContainer2.Panel1.Controls.Add(this.groupPhoneMetrics);
-			this.splitContainer2.Panel1.Controls.Add(this.label14);
-			this.splitContainer2.Panel1.Controls.Add(this.tabMain);
-			this.splitContainer2.Panel1.Controls.Add(this.label7);
-			this.splitContainer2.Panel1.Controls.Add(this.officesDownView);
-			this.splitContainer2.Panel1.Controls.Add(this.labelTirageOpTotal);
-			this.splitContainer2.Panel1.Controls.Add(this.labelTirageOpLocal);
-			this.splitContainer2.Panel1.Controls.Add(this.label5);
-			// 
-			// splitContainer2.Panel2
-			// 
-			this.splitContainer2.Panel2.Controls.Add(this.mapAreaPanelHQ);
-			this.splitContainer2.Size = new System.Drawing.Size(1884, 954);
-			this.splitContainer2.SplitterDistance = 363;
-			this.splitContainer2.TabIndex = 34;
 			// 
 			// userControlMapDetails1
 			// 
 			this.userControlMapDetails1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.userControlMapDetails1.Location = new System.Drawing.Point(4, 577);
+			this.userControlMapDetails1.Location = new System.Drawing.Point(4, 656);
 			this.userControlMapDetails1.Name = "userControlMapDetails1";
 			this.userControlMapDetails1.Size = new System.Drawing.Size(358, 130);
 			this.userControlMapDetails1.TabIndex = 1;
@@ -217,19 +151,19 @@
 			this.labelCustDownTime.BorderThickness = 1;
 			this.labelCustDownTime.ChatImage = null;
 			this.labelCustDownTime.Elapsed = System.TimeSpan.Parse("00:00:00");
-			this.labelCustDownTime.EmployeeName = null;
+			this.labelCustDownTime.EmployeeName = "";
 			this.labelCustDownTime.EmployeeNum = ((long)(0));
 			this.labelCustDownTime.Empty = false;
 			this.labelCustDownTime.Extension = null;
 			this.labelCustDownTime.Font = new System.Drawing.Font("Calibri", 40F);
 			this.labelCustDownTime.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelCustDownTime.InnerColor = System.Drawing.Color.LightCyan;
-			this.labelCustDownTime.Location = new System.Drawing.Point(305, 839);
+			this.labelCustDownTime.Location = new System.Drawing.Point(305, 918);
 			this.labelCustDownTime.Name = "labelCustDownTime";
 			this.labelCustDownTime.OuterColor = System.Drawing.Color.Blue;
-			this.labelCustDownTime.PhoneCur = null;
 			this.labelCustDownTime.PhoneImage = null;
 			this.labelCustDownTime.ProxImage = null;
+			this.labelCustDownTime.RemoteSupportImage = null;
 			this.labelCustDownTime.Size = new System.Drawing.Size(57, 39);
 			this.labelCustDownTime.Status = null;
 			this.labelCustDownTime.TabIndex = 94;
@@ -243,19 +177,19 @@
 			this.labelCustDownCount.BorderThickness = 1;
 			this.labelCustDownCount.ChatImage = null;
 			this.labelCustDownCount.Elapsed = System.TimeSpan.Parse("00:00:00");
-			this.labelCustDownCount.EmployeeName = null;
+			this.labelCustDownCount.EmployeeName = "";
 			this.labelCustDownCount.EmployeeNum = ((long)(0));
 			this.labelCustDownCount.Empty = false;
 			this.labelCustDownCount.Extension = null;
 			this.labelCustDownCount.Font = new System.Drawing.Font("Calibri", 40F);
 			this.labelCustDownCount.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelCustDownCount.InnerColor = System.Drawing.Color.LightCyan;
-			this.labelCustDownCount.Location = new System.Drawing.Point(184, 839);
+			this.labelCustDownCount.Location = new System.Drawing.Point(184, 918);
 			this.labelCustDownCount.Name = "labelCustDownCount";
 			this.labelCustDownCount.OuterColor = System.Drawing.Color.Blue;
-			this.labelCustDownCount.PhoneCur = null;
 			this.labelCustDownCount.PhoneImage = null;
 			this.labelCustDownCount.ProxImage = null;
+			this.labelCustDownCount.RemoteSupportImage = null;
 			this.labelCustDownCount.Size = new System.Drawing.Size(57, 39);
 			this.labelCustDownCount.Status = null;
 			this.labelCustDownCount.TabIndex = 93;
@@ -269,19 +203,19 @@
 			this.labelTriageOpsCountTotal.BorderThickness = 1;
 			this.labelTriageOpsCountTotal.ChatImage = null;
 			this.labelTriageOpsCountTotal.Elapsed = System.TimeSpan.Parse("00:00:00");
-			this.labelTriageOpsCountTotal.EmployeeName = null;
+			this.labelTriageOpsCountTotal.EmployeeName = "";
 			this.labelTriageOpsCountTotal.EmployeeNum = ((long)(0));
 			this.labelTriageOpsCountTotal.Empty = false;
 			this.labelTriageOpsCountTotal.Extension = null;
 			this.labelTriageOpsCountTotal.Font = new System.Drawing.Font("Calibri", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelTriageOpsCountTotal.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelTriageOpsCountTotal.InnerColor = System.Drawing.Color.LightCyan;
-			this.labelTriageOpsCountTotal.Location = new System.Drawing.Point(305, 536);
+			this.labelTriageOpsCountTotal.Location = new System.Drawing.Point(305, 615);
 			this.labelTriageOpsCountTotal.Name = "labelTriageOpsCountTotal";
 			this.labelTriageOpsCountTotal.OuterColor = System.Drawing.Color.Blue;
-			this.labelTriageOpsCountTotal.PhoneCur = null;
 			this.labelTriageOpsCountTotal.PhoneImage = null;
 			this.labelTriageOpsCountTotal.ProxImage = null;
+			this.labelTriageOpsCountTotal.RemoteSupportImage = null;
 			this.labelTriageOpsCountTotal.Size = new System.Drawing.Size(57, 39);
 			this.labelTriageOpsCountTotal.Status = null;
 			this.labelTriageOpsCountTotal.TabIndex = 90;
@@ -296,7 +230,7 @@
 			this.escalationView.Font = new System.Drawing.Font("Calibri", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.escalationView.Items = ((System.ComponentModel.BindingList<string>)(resources.GetObject("escalationView.Items")));
 			this.escalationView.LinePadding = -6;
-			this.escalationView.Location = new System.Drawing.Point(58, 252);
+			this.escalationView.Location = new System.Drawing.Point(58, 331);
 			this.escalationView.MinAlpha = 60;
 			this.escalationView.MinScrollable = 8;
 			this.escalationView.Name = "escalationView";
@@ -310,7 +244,7 @@
 			this.eServiceMetricsControl.AccountBalance = 562F;
 			this.eServiceMetricsControl.AlertColor = System.Drawing.Color.Blue;
 			this.eServiceMetricsControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.eServiceMetricsControl.Location = new System.Drawing.Point(76, 880);
+			this.eServiceMetricsControl.Location = new System.Drawing.Point(76, 959);
 			this.eServiceMetricsControl.Name = "eServiceMetricsControl";
 			this.eServiceMetricsControl.Size = new System.Drawing.Size(286, 62);
 			this.eServiceMetricsControl.TabIndex = 88;
@@ -318,7 +252,7 @@
 			// label3
 			// 
 			this.label3.Font = new System.Drawing.Font("Calibri", 16F);
-			this.label3.Location = new System.Drawing.Point(1, 845);
+			this.label3.Location = new System.Drawing.Point(1, 924);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(116, 30);
 			this.label3.TabIndex = 86;
@@ -331,19 +265,19 @@
 			this.labelTriageOpsCountLocal.BorderThickness = 1;
 			this.labelTriageOpsCountLocal.ChatImage = null;
 			this.labelTriageOpsCountLocal.Elapsed = System.TimeSpan.Parse("00:00:00");
-			this.labelTriageOpsCountLocal.EmployeeName = null;
+			this.labelTriageOpsCountLocal.EmployeeName = "";
 			this.labelTriageOpsCountLocal.EmployeeNum = ((long)(0));
 			this.labelTriageOpsCountLocal.Empty = false;
 			this.labelTriageOpsCountLocal.Extension = null;
 			this.labelTriageOpsCountLocal.Font = new System.Drawing.Font("Calibri", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelTriageOpsCountLocal.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelTriageOpsCountLocal.InnerColor = System.Drawing.Color.LightCyan;
-			this.labelTriageOpsCountLocal.Location = new System.Drawing.Point(184, 536);
+			this.labelTriageOpsCountLocal.Location = new System.Drawing.Point(184, 615);
 			this.labelTriageOpsCountLocal.Name = "labelTriageOpsCountLocal";
 			this.labelTriageOpsCountLocal.OuterColor = System.Drawing.Color.Blue;
-			this.labelTriageOpsCountLocal.PhoneCur = null;
 			this.labelTriageOpsCountLocal.PhoneImage = null;
 			this.labelTriageOpsCountLocal.ProxImage = null;
+			this.labelTriageOpsCountLocal.RemoteSupportImage = null;
 			this.labelTriageOpsCountLocal.Size = new System.Drawing.Size(57, 39);
 			this.labelTriageOpsCountLocal.Status = null;
 			this.labelTriageOpsCountLocal.TabIndex = 83;
@@ -366,11 +300,10 @@
 			this.groupPhoneMetrics.Controls.Add(this.labelTriageCalls);
 			this.groupPhoneMetrics.Controls.Add(this.labelVoicemailCalls);
 			this.groupPhoneMetrics.Controls.Add(this.label6);
-			this.groupPhoneMetrics.Location = new System.Drawing.Point(4, 0);
+			this.groupPhoneMetrics.Location = new System.Drawing.Point(4, 79);
 			this.groupPhoneMetrics.Name = "groupPhoneMetrics";
 			this.groupPhoneMetrics.Size = new System.Drawing.Size(357, 251);
 			this.groupPhoneMetrics.TabIndex = 82;
-			this.groupPhoneMetrics.TabStop = false;
 			// 
 			// labelChatTimeSpan
 			// 
@@ -389,9 +322,9 @@
 			this.labelChatTimeSpan.Location = new System.Drawing.Point(206, 140);
 			this.labelChatTimeSpan.Name = "labelChatTimeSpan";
 			this.labelChatTimeSpan.OuterColor = System.Drawing.Color.Black;
-			this.labelChatTimeSpan.PhoneCur = null;
 			this.labelChatTimeSpan.PhoneImage = null;
 			this.labelChatTimeSpan.ProxImage = null;
+			this.labelChatTimeSpan.RemoteSupportImage = null;
 			this.labelChatTimeSpan.Size = new System.Drawing.Size(120, 44);
 			this.labelChatTimeSpan.Status = null;
 			this.labelChatTimeSpan.TabIndex = 36;
@@ -406,7 +339,7 @@
 			this.labelChatCount.BorderThickness = 1;
 			this.labelChatCount.ChatImage = null;
 			this.labelChatCount.Elapsed = System.TimeSpan.Parse("00:00:00");
-			this.labelChatCount.EmployeeName = null;
+			this.labelChatCount.EmployeeName = "";
 			this.labelChatCount.EmployeeNum = ((long)(0));
 			this.labelChatCount.Empty = false;
 			this.labelChatCount.Extension = null;
@@ -416,9 +349,9 @@
 			this.labelChatCount.Location = new System.Drawing.Point(105, 140);
 			this.labelChatCount.Name = "labelChatCount";
 			this.labelChatCount.OuterColor = System.Drawing.Color.Black;
-			this.labelChatCount.PhoneCur = null;
 			this.labelChatCount.PhoneImage = null;
 			this.labelChatCount.ProxImage = null;
+			this.labelChatCount.RemoteSupportImage = null;
 			this.labelChatCount.Size = new System.Drawing.Size(81, 44);
 			this.labelChatCount.Status = null;
 			this.labelChatCount.TabIndex = 35;
@@ -452,9 +385,9 @@
 			this.labelTriageTimeSpan.Location = new System.Drawing.Point(206, 187);
 			this.labelTriageTimeSpan.Name = "labelTriageTimeSpan";
 			this.labelTriageTimeSpan.OuterColor = System.Drawing.Color.Black;
-			this.labelTriageTimeSpan.PhoneCur = null;
 			this.labelTriageTimeSpan.PhoneImage = null;
 			this.labelTriageTimeSpan.ProxImage = null;
+			this.labelTriageTimeSpan.RemoteSupportImage = null;
 			this.labelTriageTimeSpan.Size = new System.Drawing.Size(120, 58);
 			this.labelTriageTimeSpan.Status = null;
 			this.labelTriageTimeSpan.TabIndex = 33;
@@ -469,7 +402,7 @@
 			this.labelTriageRedCalls.BorderThickness = 1;
 			this.labelTriageRedCalls.ChatImage = null;
 			this.labelTriageRedCalls.Elapsed = System.TimeSpan.Parse("00:00:00");
-			this.labelTriageRedCalls.EmployeeName = null;
+			this.labelTriageRedCalls.EmployeeName = "";
 			this.labelTriageRedCalls.EmployeeNum = ((long)(0));
 			this.labelTriageRedCalls.Empty = false;
 			this.labelTriageRedCalls.Extension = null;
@@ -479,9 +412,9 @@
 			this.labelTriageRedCalls.Location = new System.Drawing.Point(105, 48);
 			this.labelTriageRedCalls.Name = "labelTriageRedCalls";
 			this.labelTriageRedCalls.OuterColor = System.Drawing.Color.Black;
-			this.labelTriageRedCalls.PhoneCur = null;
 			this.labelTriageRedCalls.PhoneImage = null;
 			this.labelTriageRedCalls.ProxImage = null;
+			this.labelTriageRedCalls.RemoteSupportImage = null;
 			this.labelTriageRedCalls.Size = new System.Drawing.Size(81, 44);
 			this.labelTriageRedCalls.Status = null;
 			this.labelTriageRedCalls.TabIndex = 12;
@@ -516,9 +449,9 @@
 			this.labelTriageRedTimeSpan.Location = new System.Drawing.Point(206, 48);
 			this.labelTriageRedTimeSpan.Name = "labelTriageRedTimeSpan";
 			this.labelTriageRedTimeSpan.OuterColor = System.Drawing.Color.Black;
-			this.labelTriageRedTimeSpan.PhoneCur = null;
 			this.labelTriageRedTimeSpan.PhoneImage = null;
 			this.labelTriageRedTimeSpan.ProxImage = null;
+			this.labelTriageRedTimeSpan.RemoteSupportImage = null;
 			this.labelTriageRedTimeSpan.Size = new System.Drawing.Size(120, 44);
 			this.labelTriageRedTimeSpan.Status = null;
 			this.labelTriageRedTimeSpan.TabIndex = 7;
@@ -553,9 +486,9 @@
 			this.labelVoicemailTimeSpan.Location = new System.Drawing.Point(206, 94);
 			this.labelVoicemailTimeSpan.Name = "labelVoicemailTimeSpan";
 			this.labelVoicemailTimeSpan.OuterColor = System.Drawing.Color.Black;
-			this.labelVoicemailTimeSpan.PhoneCur = null;
 			this.labelVoicemailTimeSpan.PhoneImage = null;
 			this.labelVoicemailTimeSpan.ProxImage = null;
+			this.labelVoicemailTimeSpan.RemoteSupportImage = null;
 			this.labelVoicemailTimeSpan.Size = new System.Drawing.Size(120, 44);
 			this.labelVoicemailTimeSpan.Status = null;
 			this.labelVoicemailTimeSpan.TabIndex = 9;
@@ -588,7 +521,7 @@
 			this.labelTriageCalls.BorderThickness = 1;
 			this.labelTriageCalls.ChatImage = null;
 			this.labelTriageCalls.Elapsed = System.TimeSpan.Parse("00:00:00");
-			this.labelTriageCalls.EmployeeName = null;
+			this.labelTriageCalls.EmployeeName = "";
 			this.labelTriageCalls.EmployeeNum = ((long)(0));
 			this.labelTriageCalls.Empty = false;
 			this.labelTriageCalls.Extension = null;
@@ -598,9 +531,9 @@
 			this.labelTriageCalls.Location = new System.Drawing.Point(104, 187);
 			this.labelTriageCalls.Name = "labelTriageCalls";
 			this.labelTriageCalls.OuterColor = System.Drawing.Color.Black;
-			this.labelTriageCalls.PhoneCur = null;
 			this.labelTriageCalls.PhoneImage = null;
 			this.labelTriageCalls.ProxImage = null;
+			this.labelTriageCalls.RemoteSupportImage = null;
 			this.labelTriageCalls.Size = new System.Drawing.Size(82, 58);
 			this.labelTriageCalls.Status = null;
 			this.labelTriageCalls.TabIndex = 14;
@@ -615,7 +548,7 @@
 			this.labelVoicemailCalls.BorderThickness = 1;
 			this.labelVoicemailCalls.ChatImage = null;
 			this.labelVoicemailCalls.Elapsed = System.TimeSpan.Parse("00:00:00");
-			this.labelVoicemailCalls.EmployeeName = null;
+			this.labelVoicemailCalls.EmployeeName = "";
 			this.labelVoicemailCalls.EmployeeNum = ((long)(0));
 			this.labelVoicemailCalls.Empty = false;
 			this.labelVoicemailCalls.Extension = null;
@@ -625,9 +558,9 @@
 			this.labelVoicemailCalls.Location = new System.Drawing.Point(105, 94);
 			this.labelVoicemailCalls.Name = "labelVoicemailCalls";
 			this.labelVoicemailCalls.OuterColor = System.Drawing.Color.Black;
-			this.labelVoicemailCalls.PhoneCur = null;
 			this.labelVoicemailCalls.PhoneImage = null;
 			this.labelVoicemailCalls.ProxImage = null;
+			this.labelVoicemailCalls.RemoteSupportImage = null;
 			this.labelVoicemailCalls.Size = new System.Drawing.Size(81, 44);
 			this.labelVoicemailCalls.Status = null;
 			this.labelVoicemailCalls.TabIndex = 13;
@@ -647,7 +580,7 @@
 			// label14
 			// 
 			this.label14.Font = new System.Drawing.Font("Calibri", 16F);
-			this.label14.Location = new System.Drawing.Point(1, 543);
+			this.label14.Location = new System.Drawing.Point(1, 622);
 			this.label14.Name = "label14";
 			this.label14.Size = new System.Drawing.Size(116, 32);
 			this.label14.TabIndex = 81;
@@ -663,7 +596,7 @@
 			this.tabMain.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
 			this.tabMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.tabMain.ItemSize = new System.Drawing.Size(28, 150);
-			this.tabMain.Location = new System.Drawing.Point(0, 252);
+			this.tabMain.Location = new System.Drawing.Point(0, 331);
 			this.tabMain.Multiline = true;
 			this.tabMain.Name = "tabMain";
 			this.tabMain.SelectedIndex = 0;
@@ -714,7 +647,7 @@
 			// label7
 			// 
 			this.label7.Font = new System.Drawing.Font("Calibri", 16F);
-			this.label7.Location = new System.Drawing.Point(247, 845);
+			this.label7.Location = new System.Drawing.Point(247, 924);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(62, 30);
 			this.label7.TabIndex = 96;
@@ -729,7 +662,7 @@
 			this.officesDownView.Font = new System.Drawing.Font("Calibri", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.officesDownView.Items = ((System.ComponentModel.BindingList<string>)(resources.GetObject("officesDownView.Items")));
 			this.officesDownView.LinePadding = -6;
-			this.officesDownView.Location = new System.Drawing.Point(4, 710);
+			this.officesDownView.Location = new System.Drawing.Point(4, 789);
 			this.officesDownView.MinAlpha = 60;
 			this.officesDownView.MinScrollable = 3;
 			this.officesDownView.Name = "officesDownView";
@@ -741,7 +674,7 @@
 			// labelTirageOpTotal
 			// 
 			this.labelTirageOpTotal.Font = new System.Drawing.Font("Calibri", 16F);
-			this.labelTirageOpTotal.Location = new System.Drawing.Point(253, 543);
+			this.labelTirageOpTotal.Location = new System.Drawing.Point(253, 622);
 			this.labelTirageOpTotal.Name = "labelTirageOpTotal";
 			this.labelTirageOpTotal.Size = new System.Drawing.Size(56, 28);
 			this.labelTirageOpTotal.TabIndex = 92;
@@ -751,7 +684,7 @@
 			// labelTirageOpLocal
 			// 
 			this.labelTirageOpLocal.Font = new System.Drawing.Font("Calibri", 16F);
-			this.labelTirageOpLocal.Location = new System.Drawing.Point(123, 543);
+			this.labelTirageOpLocal.Location = new System.Drawing.Point(123, 622);
 			this.labelTirageOpLocal.Name = "labelTirageOpLocal";
 			this.labelTirageOpLocal.Size = new System.Drawing.Size(66, 32);
 			this.labelTirageOpLocal.TabIndex = 91;
@@ -761,52 +694,72 @@
 			// label5
 			// 
 			this.label5.Font = new System.Drawing.Font("Calibri", 16F);
-			this.label5.Location = new System.Drawing.Point(112, 845);
+			this.label5.Location = new System.Drawing.Point(112, 924);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(77, 30);
 			this.label5.TabIndex = 95;
 			this.label5.Text = "Count";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
-			// mapAreaPanelHQ
+			// mapAreaPanel
 			// 
-			this.mapAreaPanelHQ.AllowDragging = false;
-			this.mapAreaPanelHQ.AllowEditing = false;
-			this.mapAreaPanelHQ.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.mapAreaPanelHQ.FloorColor = System.Drawing.Color.White;
-			this.mapAreaPanelHQ.FloorHeightFeet = 55;
-			this.mapAreaPanelHQ.FloorWidthFeet = 89;
-			this.mapAreaPanelHQ.Font = new System.Drawing.Font("Calibri", 25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.mapAreaPanelHQ.FontCubicle = new System.Drawing.Font("Calibri", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.mapAreaPanelHQ.FontCubicleHeader = new System.Drawing.Font("Calibri", 19F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.mapAreaPanelHQ.FontLabel = new System.Drawing.Font("Calibri", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.mapAreaPanelHQ.GridColor = System.Drawing.Color.LightGray;
-			this.mapAreaPanelHQ.Location = new System.Drawing.Point(0, 0);
-			this.mapAreaPanelHQ.Name = "mapAreaPanelHQ";
-			this.mapAreaPanelHQ.PixelsPerFoot = 17;
-			this.mapAreaPanelHQ.ShowGrid = false;
-			this.mapAreaPanelHQ.ShowOutline = true;
-			this.mapAreaPanelHQ.Size = new System.Drawing.Size(1517, 954);
-			this.mapAreaPanelHQ.TabIndex = 71;
+			this.mapAreaPanel.AllowDragging = false;
+			this.mapAreaPanel.AllowEditing = false;
+			this.mapAreaPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.mapAreaPanel.FloorColor = System.Drawing.Color.White;
+			this.mapAreaPanel.Font = new System.Drawing.Font("Calibri", 25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.mapAreaPanel.FontCubicle = new System.Drawing.Font("Calibri", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.mapAreaPanel.FontCubicleHeader = new System.Drawing.Font("Calibri", 19F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.mapAreaPanel.FontLabel = new System.Drawing.Font("Calibri", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.mapAreaPanel.GridColor = System.Drawing.Color.LightGray;
+			this.mapAreaPanel.HeightFloorFeet = 55;
+			this.mapAreaPanel.Location = new System.Drawing.Point(365, 78);
+			this.mapAreaPanel.Name = "mapAreaPanel";
+			this.mapAreaPanel.PixelsPerFoot = 17;
+			this.mapAreaPanel.ShowGrid = false;
+			this.mapAreaPanel.ShowOutline = true;
+			this.mapAreaPanel.Size = new System.Drawing.Size(1518, 960);
+			this.mapAreaPanel.TabIndex = 71;
+			this.mapAreaPanel.WidthFloorFeet = 89;
+			// 
+			// timerWebCam
+			// 
+			this.timerWebCam.Enabled = true;
+			this.timerWebCam.Interval = 250;
+			this.timerWebCam.Tick += new System.EventHandler(this.timerWebCam_Tick);
 			// 
 			// FormMapHQ
 			// 
 			this.ClientSize = new System.Drawing.Size(1884, 1042);
-			this.Controls.Add(this.splitContainer1);
+			this.Controls.Add(this.mapAreaPanel);
+			this.Controls.Add(this.userControlMapDetails1);
+			this.Controls.Add(this.labelCustDownTime);
+			this.Controls.Add(this.labelCurrentTime);
+			this.Controls.Add(this.labelCustDownCount);
+			this.Controls.Add(this.menuMain);
+			this.Controls.Add(this.labelTriageOpsCountTotal);
+			this.Controls.Add(this.labelTriageCoordinator);
+			this.Controls.Add(this.escalationView);
+			this.Controls.Add(this.comboRoom);
+			this.Controls.Add(this.eServiceMetricsControl);
+			this.Controls.Add(this.label3);
+			this.Controls.Add(this.groupPhoneMetrics);
+			this.Controls.Add(this.labelTriageOpsCountLocal);
+			this.Controls.Add(this.label5);
+			this.Controls.Add(this.labelTirageOpLocal);
+			this.Controls.Add(this.label14);
+			this.Controls.Add(this.labelTirageOpTotal);
+			this.Controls.Add(this.tabMain);
+			this.Controls.Add(this.officesDownView);
+			this.Controls.Add(this.label7);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMapHQ";
 			this.Text = "Call Center Status Map";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMapHQ_FormClosed);
 			this.Load += new System.EventHandler(this.FormMapHQ_Load);
 			this.ResizeEnd += new System.EventHandler(this.FormMapHQ_ResizeEnd);
-			this.splitContainer1.Panel1.ResumeLayout(false);
-			this.splitContainer1.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-			this.splitContainer1.ResumeLayout(false);
-			this.splitContainer2.Panel1.ResumeLayout(false);
-			this.splitContainer2.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-			this.splitContainer2.ResumeLayout(false);
 			this.groupPhoneMetrics.ResumeLayout(false);
 			this.groupPhoneMetrics.PerformLayout();
 			this.tabMain.ResumeLayout(false);
@@ -815,31 +768,28 @@
 		}
 
 		#endregion
-
-		private System.Windows.Forms.SplitContainer splitContainer1;
 		private System.Windows.Forms.ComboBox comboRoom;
-		private MapAreaRoomControl labelCurrentTime;
+		private MapCubicle labelCurrentTime;
 		private System.Windows.Forms.Label labelTriageCoordinator;
 		private System.Windows.Forms.Timer timer1;
-		private System.Windows.Forms.SplitContainer splitContainer2;
 		private EServiceMetricsControl eServiceMetricsControl;
 		private System.Windows.Forms.Label label3;
 		private EscalationViewControl escalationView;
-		private MapAreaRoomControl labelTriageOpsCountLocal;
+		private MapCubicle labelTriageOpsCountLocal;
 		private OpenDental.UI.GroupBoxOD groupPhoneMetrics;
-		private MapAreaRoomControl labelTriageTimeSpan;
-		private MapAreaRoomControl labelTriageRedCalls;
+		private MapCubicle labelTriageTimeSpan;
+		private MapCubicle labelTriageRedCalls;
 		private System.Windows.Forms.Label label1;
-		private MapAreaRoomControl labelTriageRedTimeSpan;
+		private MapCubicle labelTriageRedTimeSpan;
 		private System.Windows.Forms.Label label4;
-		private MapAreaRoomControl labelVoicemailTimeSpan;
+		private MapCubicle labelVoicemailTimeSpan;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label label10;
-		private MapAreaRoomControl labelTriageCalls;
-		private MapAreaRoomControl labelVoicemailCalls;
+		private MapCubicle labelTriageCalls;
+		private MapCubicle labelVoicemailCalls;
 		private System.Windows.Forms.Label label14;
-		private MapAreaPanel mapAreaPanelHQ;
+		private MapAreaPanel mapAreaPanel;
 		private System.Windows.Forms.TabControl tabMain;
 		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.TabPage tabPage2;
@@ -847,16 +797,17 @@
 		private System.Windows.Forms.TabPage tabPage4;
 		private System.Windows.Forms.Label labelTirageOpTotal;
 		private System.Windows.Forms.Label labelTirageOpLocal;
-		private MapAreaRoomControl labelTriageOpsCountTotal;
-		private MapAreaRoomControl labelChatTimeSpan;
-		private MapAreaRoomControl labelChatCount;
+		private MapCubicle labelTriageOpsCountTotal;
+		private MapCubicle labelChatTimeSpan;
+		private MapCubicle labelChatCount;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label5;
-		private MapAreaRoomControl labelCustDownTime;
-		private MapAreaRoomControl labelCustDownCount;
+		private MapCubicle labelCustDownTime;
+		private MapCubicle labelCustDownCount;
 		private EscalationViewControl officesDownView;
 		private InternalTools.Phones.UserControlMapDetails userControlMapDetails1;
 		private UI.MenuOD menuMain;
+		private System.Windows.Forms.Timer timerWebCam;
 	}
 }

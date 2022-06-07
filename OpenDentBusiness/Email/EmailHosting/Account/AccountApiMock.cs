@@ -162,6 +162,7 @@ namespace OpenDentBusiness {
 			SimulateApiCall();
 			return new SendMassEmailResponse {
 				DictionaryUniqueIDToHostingID=request.ListDestinations.ToDictionary(x => x.UniqueID,x => (long)0),
+				ListTemplateDestinationsRemoved=new List<TemplateDestination>()
 			};
 		}
 

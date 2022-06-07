@@ -133,6 +133,15 @@ namespace OpenDentBusiness{
 					procMultiVisit.GroupProcMultiVisitNum=groupProcMultiVisitNum;
 					Insert(procMultiVisit);
 				}
+				List<ClaimProc> listClaimProcs=ClaimProcs.GetForProcs(new List<long>{procMultiVisit.ProcNum});
+				List<Claim> listClaims=Claims.GetClaimsFromClaimNums(listClaimProcs.Select(x=>x.ClaimNum).ToList());
+				for(int j = 0;j<listClaims.Count;j++) {
+					if(listClaims[j].ClaimStatus.In("U","W","H")) {
+						Claim claimOld=listClaims[j].Copy();
+						listClaims[j].ClaimStatus="I";
+						Claims.Update(listClaims[j],claimOld);
+					}
+				}
 			}
 			Signalods.SetInvalid(InvalidType.ProcMultiVisits);
 			RefreshCache();

@@ -4367,7 +4367,7 @@ namespace OpenDental{
 		}
 
 		private void MapAreaRoomControl_GoToChanged(object sender,EventArgs e) {
-			MapAreaRoomControl mapAreaRoomControl=(MapAreaRoomControl)sender;
+			MapCubicle mapAreaRoomControl=(MapCubicle)sender;
 			PatNumCur=mapAreaRoomControl.PhoneCur.PatNum;
 			Patient patient=Patients.GetPat(PatNumCur);
 			RefreshCurrentModule();
@@ -6837,17 +6837,17 @@ namespace OpenDental{
 
 		#region HQ-only metrics
 
-		///<summary>Filtered all the way up from MapAreaRoomControl.</summary>
+		///<summary>Bubbled all the way up from MapCubicle.</summary>
 		private void FormMapHQ_RoomControlClicked(object sender,EventArgs e) {
-			MapAreaRoomControl mapAreaRoomControlClickedPhone=(MapAreaRoomControl)sender;
-			if(mapAreaRoomControlClickedPhone==null) {
+			MapCubicle mapCubicle=(MapCubicle)sender;
+			if(mapCubicle==null) {
 				return;
 			}
-			if(!mapAreaRoomControlClickedPhone.IsFlashing && mapAreaRoomControlClickedPhone.Status!="OnWay") { //If OnWay we're setting them to available, dont return.
+			if(!mapCubicle.IsFlashing() && mapCubicle.Status!="OnWay") { //If OnWay we're setting them to available, don't return.
 				return;
 			}
 			//all we need to do is the Database and let ProcessHQMetrics handle the rest.
-			Phones.SetPhoneStatus(ClockStatusEnum.HelpOnTheWay,PIn.Int(mapAreaRoomControlClickedPhone.Extension));
+			Phones.SetPhoneStatus(ClockStatusEnum.HelpOnTheWay,PIn.Int(mapCubicle.Extension));
 			ODThread.WakeUpThreadsByGroupName(FormODThreadNames.HqMetrics.GetDescription());
 		}
 

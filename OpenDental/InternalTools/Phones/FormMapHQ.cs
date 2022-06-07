@@ -1,34 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Text;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using OpenDental.UI;
 using OpenDentBusiness;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using CodeBase;
-using System.ComponentModel;
-using System.IO;
-using System.Text.RegularExpressions;
 
 namespace OpenDental {
+	//
+	//
+	//
+	//Jordan 6/5/2022. WARNING! Please nobody else touch this or related Map files.  I'm currently in the middle of an overhaul
+	//
+	//
+	//
+	//
+	///<summary>Jordan 6/5/2022. WARNING! Please nobody else touch this or related Map files.  I'm currently in the middle of an overhaul.</summary>
 	public partial class FormMapHQ:FormODBase {
 		#region Events
 		public event EventHandler RoomControlClicked;
 		public event EventHandler ExtraMapClicked;
-		[Category("Property Changed"),Description("Event raised when user wants to go to a patient or related object.")]
+		[Category("OD")]
+		[Description("Event raised when user wants to go to a patient or related object.")]
 		public event EventHandler GoToChanged=null;
 		#endregion
 
 		#region Private Members
-		//<summary>Keep track of full screen state</summary>
-		//private bool _isFullScreen;
 		///<summary>This is the difference between server time and local computer time.  Used to ensure that times displayed are accurate to the second.  This value is usally just a few seconds, but possibly a few minutes.</summary>
-		private TimeSpan _timeDelta;
-		private List<MapAreaContainer> _listMaps;
-		private MapAreaContainer _mapCur;
+		private TimeSpan _timeSpanDelta;
+		private List<MapAreaContainer> _listMapAreaContainers;
+		private MapAreaContainer _mapAreaContainer;
 		///<summary>The site that is associated to the first three octets of the computer that has launched this map.</summary>
-		private Site _siteCur;
+		private Site _site;
 		//preferences for setting triage alert colors
 		private int _triageRedCalls,_triageRedTime,_voicemailCalls,_voicemailTime,_triageCalls,_triageTime,_triageTimeWarning,_triageCallsWarning;
 		///<summary>Tracks when chat boxes for map need to be set red.</summary>
@@ -38,21 +46,18 @@ namespace OpenDental {
 		///<summary>can be null. Will be set and re-set whenever SetPhoneList is called/refreshed.</summary>
 		private List<WebChatSession> _listWebChatSessions;
 		///<summary>can be null. Will be set and re-set whenever SetPhoneList is called/refreshed.</summary>
-		private List<PeerInfo> _listRemoteSupportSessions;
+		private List<PeerInfo> _listPeerInfosRemoteSupportSessions;
 		///<summary>can be null. Will be set and re-set whenever SetPhoneList is called/refreshed.</summary>
 		private List<ChatUser> _listChatUsers;
 		///<summary>Used for the main menu and updates when the user is or is not in full screen mode.</summary>
 		private MenuItemOD _menuItemSettings;
-		private MenuItemOD _menuItemFullScreen;
-		private MapAreaRoomControl _selectedCube;
+		private MapCubicle _mapCubicleSelected;
 
-		private PhoneEmpSubGroupType _curSubGroupType {
-			get {
-					if(!tabMain.TabPages.ContainsKey(PhoneEmpSubGroupType.Escal.ToString())) {//Control has not been initialized.
-						return PhoneEmpSubGroupType.Escal;
-					}
-					return (PhoneEmpSubGroupType)(tabMain.SelectedTab.Tag??PhoneEmpSubGroupType.Escal);
+		private PhoneEmpSubGroupType GetCurSubGroupType() {
+			if(!tabMain.TabPages.ContainsKey(PhoneEmpSubGroupType.Escal.ToString())) {//Control has not been initialized.
+				return PhoneEmpSubGroupType.Escal;
 			}
+			return (PhoneEmpSubGroupType)(tabMain.SelectedTab.Tag??PhoneEmpSubGroupType.Escal);
 		}
 		#endregion Private Members
 
@@ -64,26 +69,26 @@ namespace OpenDental {
 			InitializeLayoutManager(isLayoutMS:true);
 			//Do not do anything to do with database or control init here. We will be using this ctor later in order to create a temporary object so we can figure out what size the form should be when the user comes back from full screen mode. Wait until FormMapHQ_Load to do anything meaningful.
 			//_isFullScreen=false;
-			_timeDelta=MiscData.GetNowDateTime()-DateTime.Now;
+			_timeSpanDelta=MiscData.GetNowDateTime()-DateTime.Now;
 			//Add the mousewheel event to allow mousewheel scrolling to repaint the grid as well.
-			mapAreaPanelHQ.MouseWheel+=new MouseEventHandler(mapAreaPanelHQ_Scroll);
-			mapAreaPanelHQ.RoomControlClicked+=MapAreaPanelHQ_RoomControlClicked;
-			mapAreaPanelHQ.GoToChanged+=new System.EventHandler(this.MapAreaRoomControl_GoToChanged);
+			mapAreaPanel.MouseWheel+=new MouseEventHandler(mapAreaPanelHQ_Scroll);
+			mapAreaPanel.RoomControlClicked+=MapAreaPanelHQ_RoomControlClicked;
+			mapAreaPanel.GoToChanged+=(sender,e)=>GoToChanged?.Invoke(this,new EventArgs());//just bubble up
 		}
 
 		public void MapAreaPanelHQ_RoomControlClicked(object sender,EventArgs e) {
-			MapAreaRoomControl clickedPhone=(MapAreaRoomControl)sender;
-			if(clickedPhone==null) {
+			MapCubicle mapCubicle=(MapCubicle)sender;
+			if(mapCubicle==null) {
 				return;
 			}
-			FillDetails(clickedPhone);
+			FillDetails(mapCubicle);
 			RoomControlClicked?.Invoke(sender,e);
 		}
 
 		private void FormMapHQ_Load(object sender,EventArgs e) {
 			LayoutControls();
-			_siteCur=SiteLinks.GetSiteByGateway();
-			if(_siteCur==null) {
+			_site=SiteLinks.GetSiteByGateway();
+			if(_site==null) {
 				MessageBox.Show("Error.  No sites found in the cache.");
 				DialogResult=DialogResult.Abort;
 				Close();
@@ -101,39 +106,39 @@ namespace OpenDental {
 
 		private void FillMaps() {
 			//Get the list of maps from our JSON preference.
-			_listMaps=PhoneMapJSON.GetFromDb();
+			_listMapAreaContainers=PhoneMapJSON.GetFromDb();
 			//Add a custom order to this map list which will prefer maps that are associated to the local computer's site.
-			_listMaps=_listMaps.OrderBy(x => x.SiteNum!=_siteCur.SiteNum)
+			_listMapAreaContainers=_listMapAreaContainers.OrderBy(x => x.SiteNum!=_site.SiteNum)
 				.ThenBy(x => x.Description).ToList();
 			//Select the first map in our list that matches the site associated to the current computer.
-			_mapCur=_listMaps[0];
+			_mapAreaContainer=_listMapAreaContainers[0];
 		}
 
 		private void FillTriageLabelColors() {
-			labelTriageOpsCountLocal.SetTriageColors(_mapCur.SiteNum);
+			labelTriageOpsCountLocal.SetTriageColors(_mapAreaContainer.SiteNum);
 			labelTriageOpsCountTotal.SetTriageColors();
 		}
 
 		private void FillTabs() {
-			TabPage tabPage;
+			//jordan: this should be failing. Not allowed. Revisit.
 			foreach(TabPage tab in tabMain.TabPages) {
 				LayoutManager.Remove(tab);
 				//tabMain.TabPages.Remove(tab);
 				tab.Dispose();
 			}
-			tabPage=new TabPage(PhoneEmpSubGroupType.Avail.ToString());
+			TabPage tabPage=new TabPage(PhoneEmpSubGroupType.Avail.ToString());
 			tabPage.Name=PhoneEmpSubGroupType.Avail.ToString();
 			tabPage.Tag=PhoneEmpSubGroupType.Avail;
 			LayoutManager.Add(tabPage,tabMain);
 			//tabMain.TabPages.Add(tabPage);
-			List<PhoneEmpSubGroupType> eVals=Enum.GetValues(typeof(PhoneEmpSubGroupType)).Cast<PhoneEmpSubGroupType>().ToList();
-			foreach(PhoneEmpSubGroupType e in eVals) {
-				if(e==PhoneEmpSubGroupType.Avail) {
+			List<PhoneEmpSubGroupType> listPhoneempSubGroupTypes=Enum.GetValues(typeof(PhoneEmpSubGroupType)).Cast<PhoneEmpSubGroupType>().ToList();
+			foreach(PhoneEmpSubGroupType phoneEmpSubGroupType in listPhoneempSubGroupTypes) {
+				if(phoneEmpSubGroupType==PhoneEmpSubGroupType.Avail) {
 					continue;//Already added above
 				}
-				tabPage=new TabPage(e.ToString());
-				tabPage.Name=e.ToString();
-				tabPage.Tag=e;
+				tabPage=new TabPage(phoneEmpSubGroupType.ToString());
+				tabPage.Name=phoneEmpSubGroupType.ToString();
+				tabPage.Tag=phoneEmpSubGroupType;
 				LayoutManager.Add(tabPage,tabMain);
 				//tabMain.TabPages.Add(tabPage);
 			}
@@ -141,35 +146,35 @@ namespace OpenDental {
 
 		private void FillCombo() {
 			comboRoom.Items.Clear();
-			foreach(MapAreaContainer mapCur in _listMaps) {
+			foreach(MapAreaContainer mapCur in _listMapAreaContainers) {
 				comboRoom.Items.Add(mapCur.Description);
 			}
 			int selectedIndex=0;
-			if(_mapCur!=null) {
-				_listMaps.FindIndex(x => x.MapAreaContainerNum==_mapCur.MapAreaContainerNum);
+			if(_mapAreaContainer!=null) {
+				_listMapAreaContainers.FindIndex(x => x.MapAreaContainerNum==_mapAreaContainer.MapAreaContainerNum);
 			}
 			comboRoom.SelectedIndex=(selectedIndex==-1 ? 0 : selectedIndex);
-			this.Text="Call Center Status Map - "+_listMaps[comboRoom.SelectedIndex].Description;
+			this.Text="Call Center Status Map - "+_listMapAreaContainers[comboRoom.SelectedIndex].Description;
 		}
 
 		///<summary>Setup the map panel with the cubicles and labels before filling with real-time data. Call this on load or anytime the cubicle layout has changed.</summary>
 		private void FillMapAreaPanel() {
-			mapAreaPanelHQ.PixelsPerFoot=LayoutManager.Scale(17);
-			mapAreaPanelHQ.Clear(false);
-			mapAreaPanelHQ.FloorHeightFeet=Math.Max(_mapCur.FloorHeightFeet,55);//Should at least fill the space set in the designer.
-			mapAreaPanelHQ.FloorWidthFeet=Math.Max(_mapCur.FloorWidthFeet,89);//Should at least fill the space set in the designer.
+			mapAreaPanel.PixelsPerFoot=LayoutManager.Scale(17);
+			mapAreaPanel.Clear(false);
+			mapAreaPanel.HeightFloorFeet=Math.Max(_mapAreaContainer.FloorHeightFeet,55);//Should at least fill the space set in the designer.
+			mapAreaPanel.WidthFloorFeet=Math.Max(_mapAreaContainer.FloorWidthFeet,89);//Should at least fill the space set in the designer.
 																			  //fill the panel
-			List<MapArea> clinicMapItems=MapAreas.Refresh(_listMaps[comboRoom.SelectedIndex].MapAreaContainerNum);
-			clinicMapItems=clinicMapItems.OrderByDescending(x => (int)(x.ItemType)).ToList();
-			for(int i=0;i<clinicMapItems.Count;i++) {
-				if(clinicMapItems[i].MapAreaContainerNum!=_listMaps[comboRoom.SelectedIndex].MapAreaContainerNum) {
+			List<MapArea> listMapAreas=MapAreas.Refresh(_listMapAreaContainers[comboRoom.SelectedIndex].MapAreaContainerNum);
+			listMapAreas=listMapAreas.OrderByDescending(x => (int)(x.ItemType)).ToList();
+			for(int i=0;i<listMapAreas.Count;i++) {
+				if(listMapAreas[i].MapAreaContainerNum!=_listMapAreaContainers[comboRoom.SelectedIndex].MapAreaContainerNum) {
 					continue;
 				}
-				if(clinicMapItems[i].ItemType==MapItemType.Room) {
-					mapAreaPanelHQ.AddCubicle(clinicMapItems[i]);
+				if(listMapAreas[i].ItemType==MapItemType.Cubicle) {
+					mapAreaPanel.AddCubicle(listMapAreas[i]);
 				}
-				else if(clinicMapItems[i].ItemType==MapItemType.DisplayLabel) {
-					mapAreaPanelHQ.AddDisplayLabel(clinicMapItems[i]);
+				else if(listMapAreas[i].ItemType==MapItemType.Label) {
+					mapAreaPanel.AddDisplayLabel(listMapAreas[i]);
 				}
 			}
 		}
@@ -191,6 +196,11 @@ namespace OpenDental {
 		#region Set label text and colors
 
 		public void SetEServiceMetrics(EServiceMetrics metricsToday) {
+			if(ODBuild.IsDebug()) {
+				if(Environment.MachineName.ToLower()=="jordanhome"){
+					return;
+				}
+			}
 			eServiceMetricsControl.AccountBalance=metricsToday.AccountBalanceEuro;
 			if(metricsToday.Severity==eServiceSignalSeverity.Critical) {
 				eServiceMetricsControl.StartFlashing(metricsToday.CriticalStatus);
@@ -214,19 +224,18 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Refresh the phone panel every X seconds after it has already been setup.  Make sure to call FillMapAreaPanel before calling 
-		///this the first time.</summary>
+		///<summary>Refresh the phone panel every X seconds after it has already been setup.  Make sure to call FillMapAreaPanel before calling this the first time.</summary>
 		public void SetPhoneList(List<Phone> phones,List<PhoneEmpSubGroup> listSubGroups,List<ChatUser> listChatUsers,
 			List<WebChatSession> listWebChatSessions,List<PeerInfo> listRemoteSupportSessions)
 		{
 			//refresh our lists to minimize trips to the database.
 			_listWebChatSessions=listWebChatSessions;
-			_listRemoteSupportSessions=listRemoteSupportSessions;
+			_listPeerInfosRemoteSupportSessions=listRemoteSupportSessions;
 			_listChatUsers=listChatUsers;
-			try {
+			//try {
 				string title="Call Center Map - Triage Coord. - ";
 				try { //get the triage coord label but don't fail just because we can't find it
-					SiteLink siteLink=SiteLinks.GetFirstOrDefault(x => x.SiteNum==_mapCur.SiteNum);
+					SiteLink siteLink=SiteLinks.GetFirstOrDefault(x => x.SiteNum==_mapAreaContainer.SiteNum);
 					title+=Employees.GetNameFL(Employees.GetEmp(siteLink.EmployeeNum));
 				}
 				catch {
@@ -254,7 +263,7 @@ namespace OpenDental {
 						continue;
 					}
 					//This is a triage operator who is currently here and on the clock.
-					if(listPhoneEmpDefaultsTriage[i].SiteNum==_mapCur.SiteNum) {
+					if(listPhoneEmpDefaultsTriage[i].SiteNum==_mapAreaContainer.SiteNum) {
 						triageStaffCountLocal++;
 					}
 					triageStaffCountTotal++;
@@ -263,19 +272,19 @@ namespace OpenDental {
 				labelTriageOpsCountTotal.Text=triageStaffCountTotal.ToString();
 				#endregion
 				List<Control> listMapAreaRoomControls = new List<Control>();
-				listMapAreaRoomControls.AddRange(this.mapAreaPanelHQ.Controls.OfType<Control>());
-				listMapAreaRoomControls.Add(_selectedCube);
+				listMapAreaRoomControls.AddRange(this.mapAreaPanel.Controls.OfType<Control>());
+				listMapAreaRoomControls.Add(_mapCubicleSelected);
 				for(int i=0;i<listMapAreaRoomControls.Count;i++) { //loop through all of our cubicles and labels and find the matches
-					try {
-						if(!(listMapAreaRoomControls[i] is MapAreaRoomControl)) {
+					//try {
+						if(!(listMapAreaRoomControls[i] is MapCubicle)) {
 							continue;
 						}
-						MapAreaRoomControl mapAreaRoomControl=(MapAreaRoomControl)listMapAreaRoomControls[i];
-						if(mapAreaRoomControl.MapAreaItem.Extension==0) { //This cubicle has not been given an extension yet.
+						MapCubicle mapAreaRoomControl=(MapCubicle)listMapAreaRoomControls[i];
+						if(mapAreaRoomControl.MapAreaCur.Extension==0) { //This cubicle has not been given an extension yet.
 							mapAreaRoomControl.Empty=true;
 							continue;
 						}
-						Phone phone=Phones.GetPhoneForExtension(phones,mapAreaRoomControl.MapAreaItem.Extension);
+						Phone phone=Phones.GetPhoneForExtension(phones,mapAreaRoomControl.MapAreaCur.Extension);
 						if(phone==null) {//We have a cubicle with no corresponding phone entry.
 							mapAreaRoomControl.Empty=true;
 							continue;
@@ -293,21 +302,21 @@ namespace OpenDental {
 						WebChatSession webChatSession=listWebChatSessions.FirstOrDefault(x => x.TechName==phone.EmployeeName);
 						PeerInfo remoteSupportSession=listRemoteSupportSessions.FirstOrDefault(x => x.EmployeeNum==phone.EmployeeNum);
 						if(phone.DateTimeNeedsHelpStart.Date==DateTime.Today) { //if they need help, use that time.
-							TimeSpan span=DateTime.Now-phone.DateTimeNeedsHelpStart+_timeDelta;
+							TimeSpan span=DateTime.Now-phone.DateTimeNeedsHelpStart+_timeSpanDelta;
 							DateTime timeOfDay=DateTime.Today+span;
 							mapAreaRoomControl.Elapsed=span;
 						}
 						else if(phone.DateTimeStart.Date==DateTime.Today && phone.Description != "") { //else if in a call, use call time.
-							TimeSpan span=DateTime.Now-phone.DateTimeStart+_timeDelta;
+							TimeSpan span=DateTime.Now-phone.DateTimeStart+_timeSpanDelta;
 							DateTime timeOfDay=DateTime.Today+span;
 							mapAreaRoomControl.Elapsed=span;
 						}
 						else if(phone.Description=="" && webChatSession!=null ) {//else if in a web chat session, use web chat session time
-							TimeSpan span=DateTime.Now-webChatSession.DateTcreated+_timeDelta;
+							TimeSpan span=DateTime.Now-webChatSession.DateTcreated+_timeSpanDelta;
 							mapAreaRoomControl.Elapsed=span;	
 						}
 						else if(phone.Description=="" && chatuser!=null && chatuser.CurrentSessions>0) { //else if in a chat, use chat time.
-						  TimeSpan span=TimeSpan.FromMilliseconds(chatuser.SessionTime)+_timeDelta;
+						  TimeSpan span=TimeSpan.FromMilliseconds(chatuser.SessionTime)+_timeSpanDelta;
 						  mapAreaRoomControl.Elapsed=span;
 						}
 						else if(phone.Description=="" && remoteSupportSession!=null) {
@@ -315,7 +324,7 @@ namespace OpenDental {
 							mapAreaRoomControl.Elapsed=remoteSupportSession.SessionTime;
 						}
 						else if(phone.DateTimeStart.Date==DateTime.Today) { //else available, use that time.
-						  TimeSpan span = DateTime.Now-phone.DateTimeStart+_timeDelta;
+						  TimeSpan span = DateTime.Now-phone.DateTimeStart+_timeSpanDelta;
 						  DateTime timeOfDay = DateTime.Today+span;
 						  mapAreaRoomControl.Elapsed=span;
 						}
@@ -363,7 +372,7 @@ namespace OpenDental {
 						bool isTriageOperatorOnTheClock;
 						//get the cubicle color and triage status
 						Phones.GetPhoneColor(phone,phoneEmpDefault,true,out outerColor,out innerColor,out fontColor,out isTriageOperatorOnTheClock);
-						if(!mapAreaRoomControl.IsFlashing) { //if the control is already flashing then don't overwrite the colors. this would cause a "spastic" flash effect.
+						if(!mapAreaRoomControl.IsFlashing()) { //if the control is already flashing then don't overwrite the colors. this would cause a "spastic" flash effect.
 							mapAreaRoomControl.OuterColor=outerColor;
 							mapAreaRoomControl.InnerColor=innerColor;
 						}
@@ -385,56 +394,106 @@ namespace OpenDental {
 							//plan to use this to show extra employee fields, like cellphone
 						}
 						mapAreaRoomControl.Invalidate(true);
-					}
-					catch(Exception e) {
-						e.DoNothing();
-					}
+					//}
+					//catch(Exception e) {
+					//	e.DoNothing();
+					//}
 				}
 				refreshCurrentTabHelper(listPhoneEmpDefaults,phones,listSubGroups);
-			}
-			catch {
+			//}
+			//catch {
 				//something failed unexpectedly
-			}
+			//}
 		}
 
 		///<summary>Sets the detail control to the clicked on cubicle as long as there is an associated phone.</summary>
-		private void FillDetails(MapAreaRoomControl cubeClicked=null) {
-			if(cubeClicked.PhoneCur!=null) {
-				_selectedCube=cubeClicked;
-				//set the text before the image, because it was taking too long to load
-				userControlMapDetails1.SetEmployee(cubeClicked,null);
-				userControlMapDetails1.Visible=true;
-				Application.DoEvents();//process the events first so the text on the control will be set
-				Image empImage=GetEmployeePicture(cubeClicked.PhoneCur);
-				if(empImage!=null) {
-					userControlMapDetails1.SetEmployee(cubeClicked,empImage);
-				}
+		private void FillDetails(MapCubicle cubeClicked=null) {
+			if(cubeClicked.PhoneCur is null) {
+				return;
 			}
+			_mapCubicleSelected=cubeClicked;
+			//set the text before the image, because it was taking too long to load
+			userControlMapDetails1.SetEmployee(cubeClicked);
+			userControlMapDetails1.Visible=true;
+			Application.DoEvents();//process the events first so the text on the control will be set
+			FillDetailImage(cubeClicked.PhoneCur.EmployeeNum);
 		}
 
-		///<summary>Attempts to get Employee photos from the server with a hardcoded filepath. Returns null if the desired picture could not be found or accessed.</summary>
-		private Image GetEmployeePicture(Phone phoneEmployee) {
-			Employee emp=Employees.GetEmp(phoneEmployee.EmployeeNum);
-			if(emp==null) {
+		private void FillDetailImage(long employeeNum){
+			//First, look for webcam image
+			Bitmap bitmap=GetWebCamImage(employeeNum);
+			if(bitmap!=null) {
+				userControlMapDetails1.SetBitmap(bitmap,isStock:false);
+				return;
+			}
+			//Then, look for a stock image
+			if(userControlMapDetails1.IsStock){//already showing stock
+				return;
+			}
+			bitmap=GetEmployeePicture(employeeNum);
+			//set, whether it's null or not
+			userControlMapDetails1.SetBitmap(bitmap,isStock:true);
+		}
+
+		///<summary>This timer is always running.  4 times per second.</summary>
+		private void timerWebCam_Tick(object sender,EventArgs e) {
+			if(userControlMapDetails1.EmployeeNumCur<0){
+				return;
+			}
+			FillDetailImage(userControlMapDetails1.EmployeeNumCur);
+		}
+
+		///<summary>Returns null if not found</summary>
+		private Bitmap GetWebCamImage(long employeeNum) {
+			Employee employee=Employees.GetEmp(employeeNum);
+			if(employee==null) {
 				return null;
 			}
-			try {
-				//Only grab the first part of the FName if there are multiple uppercased parts (ie. StevenS should be Steven).
-				string fname=Regex.Split(emp.FName,@"(?<!^)(?=[A-Z])")[0];
-				string employeeName=fname+" "+emp.LName;
-				List<string> files=Directory.GetFiles(@"\\opendental.od\SERVERFILES\Storage\OPEN DENTAL\Staff\Staff Photos").ToList().FindAll(x => x.ToLower().EndsWith(employeeName.ToLower()+".jpg"));
-				foreach(string fileSource in files) {
-					using(Bitmap original=(Bitmap)System.Drawing.Image.FromFile(fileSource)) {
-						Bitmap resized=new Bitmap(original,new System.Drawing.Size(original.Width/8,original.Height/8));
-							return resized;
-					}
+			//employee.FName should look like FirstL
+			string filePathWebCam=@"\\10.10.11.126\HQVideo\"+employee.FName+@"\webcam.jpg";
+			if(ODBuild.IsDebug()) {
+				if(Environment.MachineName.ToLower()=="jordanhome"){
+					filePathWebCam=@"C:\HQVideo\"+employee.FName+@"\webcam.jpg";
 				}
 			}
-			catch(Exception ex) {
-				//Don't really care if it fails so swallow everything.
-				ex.DoNothing();
+			if(!File.Exists(filePathWebCam)){
+				return null;
 			}
-			return null;
+			Bitmap bitmap=null;
+			try{
+				bitmap=(Bitmap)Image.FromFile(filePathWebCam);
+			}
+			catch{ }
+			Bitmap bitmapResized=null;
+			if(bitmap!=null){
+				bitmapResized=new Bitmap(bitmap);
+			}
+			bitmap?.Dispose();//to release file lock
+			return bitmapResized;
+		}
+			
+		private Bitmap GetEmployeePicture(long employeeNum){
+			Employee employee=Employees.GetEmp(employeeNum);
+			if(employee==null) {
+				return null;
+			}
+			//Only grab the first part of the FName if there are multiple uppercased parts (ie. StevenS should be Steven).
+			string fname=Regex.Split(employee.FName,@"(?<!^)(?=[A-Z])")[0];
+			string employeeName=fname+" "+employee.LName;
+			string dir=@"\\opendental.od\SERVERFILES\Storage\OPEN DENTAL\Staff\Staff Photos";
+			if(ODBuild.IsDebug()) {
+				if(Environment.MachineName.ToLower()=="jordanhome"){
+					dir=@"E:\Documents\Open Dental\Photos Staff";
+				}
+			}
+			List<string> listFiles=Directory.GetFiles(dir).ToList().FindAll(x => x.ToLower().EndsWith(employeeName.ToLower()+".jpg"));
+			if(listFiles.Count==0){
+				return null;
+			}
+			using Bitmap bitmapOrig=(Bitmap)Image.FromFile(listFiles[0]);
+			//to release file lock as well as resize
+			Bitmap bitmap2=new Bitmap(bitmapOrig,new System.Drawing.Size(bitmapOrig.Width/8,bitmapOrig.Height/8));
+			return bitmap2;
 		}
 
 		private void tabMain_SelectedIndexChanged(object sender,EventArgs e) {
@@ -443,7 +502,7 @@ namespace OpenDental {
 		}
 
 		private void refreshCurrentTabHelper(List<PhoneEmpDefault> phoneEmpDefaultsIn,List<Phone> phonesIn,List<PhoneEmpSubGroup> subGroupsIn) {
-			List<PhoneEmpSubGroup> subGroups=subGroupsIn.FindAll(x => x.SubGroupType==_curSubGroupType);
+			List<PhoneEmpSubGroup> subGroups=subGroupsIn.FindAll(x => x.SubGroupType==GetCurSubGroupType());
 			//List of EmployeeNums to show for current tab.
 			List<long> empNums=subGroups.Select(y => y.EmployeeNum).ToList();
 			List<PhoneEmpDefault> phoneEmpDefaults=phoneEmpDefaultsIn.FindAll(x => empNums.Contains(x.EmployeeNum));//Employees who belong to this sub group.
@@ -475,19 +534,19 @@ namespace OpenDental {
 				if(_listWebChatSessions==null) {
 					_listWebChatSessions=WebChatSessions.GetActiveSessions();
 				}
-				if(_listRemoteSupportSessions==null) {
-					_listRemoteSupportSessions=PeerInfos.GetActiveSessions(false,true);
+				if(_listPeerInfosRemoteSupportSessions==null) {
+					_listPeerInfosRemoteSupportSessions=PeerInfos.GetActiveSessions(false,true);
 				}
 				for(int i=0;i<listSorted.Count;i++) {
 					PhoneEmpDefault ped=listSorted[i];
 					Phone phone=ODMethodsT.Coalesce(Phones.GetPhoneForEmployeeNum(phones,ped.EmployeeNum));
 					escalationView.Items.Add(ped.EmpName);
 					//Only show the proximity icon if the phone.IsProxVisible AND the employee is at the same site as our currently selected room.
-					escalationView.DictProximity.Add(ped.EmpName,(_mapCur.SiteNum==ped.SiteNum && phone.IsProxVisible));
-					PeerInfo remoteSupportSession=_listRemoteSupportSessions.FirstOrDefault(x => x.EmployeeNum==phone.EmployeeNum);
+					escalationView.DictProximity.Add(ped.EmpName,(_mapAreaContainer.SiteNum==ped.SiteNum && phone.IsProxVisible));
+					PeerInfo remoteSupportSession=_listPeerInfosRemoteSupportSessions.FirstOrDefault(x => x.EmployeeNum==phone.EmployeeNum);
 					escalationView.DictWebChat.Add(ped.EmpName,_listWebChatSessions.Any(x => x.TechName==phone.EmployeeName));
 					escalationView.DictGTAChat.Add(ped.EmpName,_listChatUsers.Any(x => x.Extension==ped.PhoneExt && x.CurrentSessions>0));
-					escalationView.DictRemoteSupport.Add(ped.EmpName,_listRemoteSupportSessions.Any(x => x.EmployeeNum==phone.EmployeeNum));
+					escalationView.DictRemoteSupport.Add(ped.EmpName,_listPeerInfosRemoteSupportSessions.Any(x => x.EmployeeNum==phone.EmployeeNum));
 					//Extensions will always show if they are working from home or for both locations unless the employee is not proximal. 
 					if(Employees.GetEmp(ped.EmployeeNum).IsWorkingHome) {
 						escalationView.DictShowExtension.Add(ped.EmpName,true);
@@ -507,7 +566,7 @@ namespace OpenDental {
 
 		///<summary>Sorts the list of PhoneEmpDefaults in the appropriate way for the selected escalation view.</summary>
 		private List<PhoneEmpDefault> SortForEscalationView(List<PhoneEmpDefault> peds,List<Phone> phones) {
-			if(_curSubGroupType==PhoneEmpSubGroupType.Avail) {
+			if(GetCurSubGroupType()==PhoneEmpSubGroupType.Avail) {
 				Func<PhoneEmpDefault,Phone> getPhone=new Func<PhoneEmpDefault,Phone>((phoneEmpDef) => {
 					return ODMethodsT.Coalesce(Phones.GetPhoneForEmployeeNum(phones,phoneEmpDef.EmployeeNum));
 				});
@@ -535,7 +594,7 @@ namespace OpenDental {
 			if(phone==null || phone.Description!="") { //Filter out invalid employees or employees that are already on the phone.
 				return false;
 			}
-			if(_curSubGroupType==PhoneEmpSubGroupType.Avail) {//Special rules for the Avail escalation view
+			if(GetCurSubGroupType()==PhoneEmpSubGroupType.Avail) {//Special rules for the Avail escalation view
 				if(!phone.IsProxVisible && !Employees.GetEmp(ped.EmployeeNum).IsWorkingHome) {
 					return false;
 				}
@@ -554,7 +613,7 @@ namespace OpenDental {
 		///<summary>Returns true if the employee for the PhoneEmpDefault is at the current location. An employee is considered to be at the same location
 		///as a room if the employee's site is the same for the current room.</summary>
 		private bool IsAtCurrentLocation(PhoneEmpDefault ped) {
-			return ped.SiteNum==_mapCur.SiteNum;
+			return ped.SiteNum==_mapAreaContainer.SiteNum;
 		}
 
 		public void SetOfficesDownList(List<Task> listOfficesDown) {
@@ -707,8 +766,8 @@ namespace OpenDental {
 		#endregion Set label text and colors
 
 		private void comboRoom_SelectionChangeCommitted(object sender,EventArgs e) {
-			_mapCur=_listMaps[comboRoom.SelectedIndex];
-			this.Text="Call Center Status Map - "+_listMaps[comboRoom.SelectedIndex].Description;
+			_mapAreaContainer=_listMapAreaContainers[comboRoom.SelectedIndex];
+			this.Text="Call Center Status Map - "+_listMapAreaContainers[comboRoom.SelectedIndex].Description;
 			FillMapAreaPanel();
 			FillTriageLabelColors();
 		}
@@ -740,8 +799,8 @@ namespace OpenDental {
 			if(FormMS.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			_listMaps=FormMS.ListMapAreaContainers;
-			_mapCur=_listMaps[comboRoom.SelectedIndex];
+			_listMapAreaContainers=FormMS.ListMapAreaContainers;
+			_mapAreaContainer=_listMapAreaContainers[comboRoom.SelectedIndex];
 			FillCombo();
 			FillMapAreaPanel();
 			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"MapHQ layout changed");
@@ -778,26 +837,26 @@ namespace OpenDental {
 		}
 
 		private void timer1_Tick(object sender,EventArgs e) {
-			mapAreaPanelHQ.Refresh();
+			mapAreaPanel.Refresh();
 			timer1.Stop();
 		}
 		
 		private void tabMain_DrawItem(object sender,DrawItemEventArgs e) {
 			Graphics g=e.Graphics;
-			Brush _textBrush=new SolidBrush(Color.Black);
-			TabPage _tabPage=tabMain.TabPages[e.Index];
-			Rectangle _tabBounds=tabMain.GetTabRect(e.Index);
+			g.TextRenderingHint=TextRenderingHint.AntiAlias;
+			Brush brush=new SolidBrush(Color.Black);
+			TabPage tabPage=tabMain.TabPages[e.Index];
+			Rectangle rectangle=tabMain.GetTabRect(e.Index);
 			if(e.State==DrawItemState.Selected) {
 				g.FillRectangle(Brushes.White,e.Bounds);
 			}
 			else {
 				g.FillRectangle(Brushes.LightGray,e.Bounds);
 			}
-			// Draw string. Center the text.
-			StringFormat _stringFlags=new StringFormat();
-			_stringFlags.Alignment=StringAlignment.Near;
-			_stringFlags.LineAlignment=StringAlignment.Near;
-			g.DrawString(_tabPage.Text,tabMain.Font,_textBrush,_tabBounds,new StringFormat(_stringFlags));
+			StringFormat stringFormat=new StringFormat();
+			stringFormat.Alignment=StringAlignment.Near;
+			stringFormat.LineAlignment=StringAlignment.Center;
+			g.DrawString(tabPage.Text,tabMain.Font,brush,rectangle,stringFormat);
 		}
 
 		private void FormMapHQ_ResizeEnd(object sender,EventArgs e) {
@@ -805,14 +864,20 @@ namespace OpenDental {
 		}
 
 		private void LayoutControls(){
-			splitContainer1.SplitterDistance=LayoutManager.Scale(84);
-			splitContainer2.SplitterDistance=LayoutManager.Scale(363);
 			tabMain.ItemSize=new Size(LayoutManager.Scale(28),LayoutManager.Scale(150));
-			mapAreaPanelHQ.PixelsPerFoot=LayoutManager.Scale(17);
+			mapAreaPanel.PixelsPerFoot=LayoutManager.Scale(17);
 		}
 
 		private void toggleTriageToolStripMenuItem_Click(object sender,EventArgs e) {
-			splitContainer2.Panel1Collapsed=!splitContainer2.Panel1Collapsed;
+			if(mapAreaPanel.Left==0){
+				Point point=LayoutManager.ScalePoint(new Point(365,78));
+				mapAreaPanel.Bounds=new Rectangle(point.X,point.Y,ClientSize.Width-point.X,ClientSize.Height-point.Y);
+			}
+			else{
+				//Expand mapAreaPanel to the left, covering up the other controls.
+				Point point=LayoutManager.ScalePoint(new Point(0,78));
+				mapAreaPanel.Bounds=new Rectangle(point.X,point.Y,ClientSize.Width-point.X,ClientSize.Height-point.Y);
+			}
 		}
 
 		private void openNewMapToolStripMenuItem_Click(object sender,EventArgs e) {
@@ -833,10 +898,6 @@ namespace OpenDental {
 		private void phonesToolStripMenuItem_Click(object sender,EventArgs e) {
 			using FormPhoneEmpDefaults formPED=new FormPhoneEmpDefaults();
 			formPED.ShowDialog();
-		}
-
-		private void MapAreaRoomControl_GoToChanged(object sender,EventArgs e) {
-			GoToChanged?.Invoke(sender,new EventArgs());
 		}
 
 		///<summary>If the phone map has been changed, update all phone maps.</summary>

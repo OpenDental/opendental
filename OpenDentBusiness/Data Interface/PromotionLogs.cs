@@ -88,8 +88,8 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns true if the patient's email is valid and has not received a Mass Email more recently than the given TimeSpan.</summary>
-		public static bool DoIncludePatient(PatientInfo patient,TimeSpan timeSpanExcludeMoreRecentThan,DateTime dateMostRecentPromotionLog) {
-			return EmailAddresses.IsValidEmail(patient.Email,out _)	&& DateTools.IsOlderThan(dateMostRecentPromotionLog,timeSpanExcludeMoreRecentThan);
+		public static bool DoIncludePatient(PatientInfo patient) {
+			return EmailAddresses.IsValidEmail(patient.Email,out _);
 		}
 
 		public static bool Update(PromotionLog promotionLog,PromotionLog promotionLogOld=null) {

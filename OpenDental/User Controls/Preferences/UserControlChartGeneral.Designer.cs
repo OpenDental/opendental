@@ -493,51 +493,6 @@ namespace OpenDental {
 			this.butDiagnosisCode.Text = "...";
 			this.butDiagnosisCode.Click += new System.EventHandler(this.butDiagnosisCode_Click);
 			// 
-			// labelChartNonPatientWarnDetails
-			// 
-			this.labelChartNonPatientWarnDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelChartNonPatientWarnDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelChartNonPatientWarnDetails.Location = new System.Drawing.Point(476, 202);
-			this.labelChartNonPatientWarnDetails.Name = "labelChartNonPatientWarnDetails";
-			this.labelChartNonPatientWarnDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelChartNonPatientWarnDetails.TabIndex = 346;
-			this.labelChartNonPatientWarnDetails.Text = "when opened from the Chart Module";
-			this.labelChartNonPatientWarnDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelShowPlannedApptPromptDetails
-			// 
-			this.labelShowPlannedApptPromptDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelShowPlannedApptPromptDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelShowPlannedApptPromptDetails.Location = new System.Drawing.Point(476, 223);
-			this.labelShowPlannedApptPromptDetails.Name = "labelShowPlannedApptPromptDetails";
-			this.labelShowPlannedApptPromptDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelShowPlannedApptPromptDetails.TabIndex = 347;
-			this.labelShowPlannedApptPromptDetails.Text = "when leaving the chart module and a patient has procedures that were treatment pl" +
-    "anned today";
-			this.labelShowPlannedApptPromptDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelProvColorChartDetails
-			// 
-			this.labelProvColorChartDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelProvColorChartDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelProvColorChartDetails.Location = new System.Drawing.Point(476, 432);
-			this.labelProvColorChartDetails.Name = "labelProvColorChartDetails";
-			this.labelProvColorChartDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelProvColorChartDetails.TabIndex = 348;
-			this.labelProvColorChartDetails.Text = "background color in grid for completed procedures";
-			this.labelProvColorChartDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelDxIcdVersionDetails
-			// 
-			this.labelDxIcdVersionDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelDxIcdVersionDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelDxIcdVersionDetails.Location = new System.Drawing.Point(476, 137);
-			this.labelDxIcdVersionDetails.Name = "labelDxIcdVersionDetails";
-			this.labelDxIcdVersionDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelDxIcdVersionDetails.TabIndex = 349;
-			this.labelDxIcdVersionDetails.Text = " uncheck for ICD-9";
-			this.labelDxIcdVersionDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// UserControlChartGeneral
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -555,7 +510,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxMedicalCodes);
 			this.Controls.Add(this.checkBoxRxClinicUseSelected);
 			this.Name = "UserControlChartGeneral";
-			this.Size = new System.Drawing.Size(974, 641);
+			this.Size = new System.Drawing.Size(974, 624);
 			this.groupBoxFunctionality.ResumeLayout(false);
 			this.groupBoxFunctionality.PerformLayout();
 			this.groupBoxPerio.ResumeLayout(false);

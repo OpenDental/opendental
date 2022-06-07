@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -32,6 +33,14 @@ namespace OpenDental {
 			if(PrefC.RandomKeys) {
 				groupTreatPlanSort.Visible=false;
 			}
+		}
+
+		private void linkLabelProcDiscountTypeDetails_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {
+			Process.Start("https://www.opendental.com/manual221/treatmentplandiscounts.html");
+		}
+
+		private void linkLabelProcDiscountTypeDetails2_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {
+			Process.Start("https://opendental.com/manual/definitionsadjtypes.html");
 		}
 
 		private void radioTreatPlanSortOrder_Click(object sender,EventArgs e) {

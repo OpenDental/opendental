@@ -250,7 +250,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupRepeatingCharges);
 			this.Controls.Add(this.groupRecurringCharges);
 			this.Name = "UserControlAccountRecAndRepCharges";
-			this.Size = new System.Drawing.Size(974, 641);
+			this.Size = new System.Drawing.Size(974, 624);
 			this.groupRecurringCharges.ResumeLayout(false);
 			this.groupRecurringCharges.PerformLayout();
 			this.groupRepeatingCharges.ResumeLayout(false);

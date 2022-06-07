@@ -103,7 +103,7 @@ namespace OpenDentBusiness {
 				//GetEServiceForCode(eServiceCode.HQProxyService,clinicNum),
 
 				//If you need to test texting signup, uncomment the following lines. Note: this will modify your db (clinics and texting prefs).
-				//GetEServiceForCode(eServiceCode.IntegratedTexting,clinicNum),
+				GetEServiceForCode(eServiceCode.IntegratedTexting,clinicNum),
 				//GetEServiceForCode(eServiceCode.IntegratedTextingUsage,clinicNum),
 
 				//GetEServiceForCode(eServiceCode.ListenerService,clinicNum),

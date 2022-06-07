@@ -1110,17 +1110,12 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Change the show/hide state of the modeless popup. If forceOpen is true then always opens. If false then opens if currently closed or closes if currently open.</summary>
-		public void ShowHideModeless(bool forceOpen,string title,Form owner,Rectangle bounds) {
+		///<summary>Show the modeless popup.</summary>
+		public void ShowModeless(string title,Form owner,Rectangle bounds) {
 			string finalTitle=GetTranslation("Mobile Preview")+" - "+title;
-			if(_formFloat!=null) { //Already floating so just close.
-				if(forceOpen) {
-					_formFloat.Text=title;
-					_formFloat.BringToFront();
-				}
-				else {
-					_formFloat.Close();
-				}
+			if(_formFloat!=null) { 
+				_formFloat.Text=title;
+				_formFloat.BringToFront();
 				return;
 			}
 			_formFloat=new Form() {
@@ -1144,6 +1139,11 @@ namespace OpenDental {
 			_formFloat.Bounds=bounds;
 			_formFloat.Show();//this makes it move, so set bounds again
 			_formFloat.Bounds=bounds;
+		}
+
+		///<summary>Hides the modeless popup.</summary>
+		public void HideModeless() {
+			_formFloat.Close();
 		}
 		#endregion
 

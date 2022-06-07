@@ -556,9 +556,6 @@ namespace OpenDental.UI{
 				return _isWeeklyView;
 			}
 			set{
-				if(value==_isWeeklyView){
-					return;
-				}
 				_isWeeklyView=value;
 				//the logic below was formerly in ContrAppt.SetWeekDates
 				if(_isWeeklyView){//if changing to weekly view
@@ -1947,7 +1944,7 @@ namespace OpenDental.UI{
 					listApptLayoutInfos.Add(apptLayoutInfo);
 					continue;
 				}
-				apptLayoutInfo.DayOfWeek=(int)PIn.DateT(dataRow["AptDateTime"].ToString()).DayOfWeek-1;
+				apptLayoutInfo.DayOfWeek=(int)PIn.DateT(dataRow["AptDateTime"].ToString()).DayOfWeek-PrefC.GetInt(PrefName.ApptWeekViewStartDay);
 				if(apptLayoutInfo.DayOfWeek==-1) {
 					apptLayoutInfo.DayOfWeek=6;
 				}

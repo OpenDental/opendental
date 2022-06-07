@@ -506,7 +506,7 @@ namespace OpenDental{
 					+_tableAddresses.Rows[_patientsPrinted]["Zip"].ToString()+"\r\n";
 				Rectangle rectangle=new Rectangle((int)xPos,(int)yPos,275,100);
 				using Font font=new Font(FontFamily.GenericSansSerif,11);
-				MapAreaRoomControl.FitText(text,font,Brushes.Black,rectangle,new StringFormat(),g);
+				MapCubicle.FitText(text,font,Brushes.Black,rectangle,new StringFormat(),g);
 				//reposition for next label
 				xPos+=275;
 				if(xPos>850){//drop a line

@@ -29,7 +29,7 @@ namespace OpenDental {
 			FillGrid();
 		}
 
-		private void FillGrid(){
+		private void FillGrid(int selectedIndex=-1){
 			OrthoHardwareSpecs.RefreshCache();
 			_listOrthoHardwareSpecsAll=OrthoHardwareSpecs.GetDeepCopy();
 			_listOrthoHardwareSpecsOneType=_listOrthoHardwareSpecsAll.FindAll(x=>x.OrthoHardwareType==(EnumOrthoHardwareType)listType.SelectedIndex);
@@ -57,6 +57,7 @@ namespace OpenDental {
 				gridMain.ListGridRows.Add(row);
 			}
 			gridMain.EndUpdate();
+			gridMain.SetSelected(selectedIndex);
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
@@ -67,7 +68,7 @@ namespace OpenDental {
 				return;
 			}
 			_changed=true;
-			FillGrid();
+			FillGrid(formOrthoHardwareSpecEdit.OrthoHardwareSpecCur.ItemOrder);
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
@@ -82,7 +83,7 @@ namespace OpenDental {
 				return;
 			}
 			_changed=true;
-			FillGrid();
+			FillGrid(formOrthoHardwareSpecEdit.OrthoHardwareSpecCur.ItemOrder);
 		}
 
 		private void butUp_Click(object sender, System.EventArgs e) {
@@ -101,7 +102,7 @@ namespace OpenDental {
 			orthoHardwareSpecAbove.ItemOrder++;
 			OrthoHardwareSpecs.Update(orthoHardwareSpecAbove);
 			_changed=true;
-			FillGrid();
+			FillGrid(orthoHardwareSpecSelected.ItemOrder);
 		}
 
 		
@@ -121,7 +122,7 @@ namespace OpenDental {
 			orthoHardwareSpecBelow.ItemOrder--;
 			OrthoHardwareSpecs.Update(orthoHardwareSpecBelow);
 			_changed=true;
-			FillGrid();
+			FillGrid(orthoHardwareSpecSelected.ItemOrder);
 		}
 
 		private void butClose_Click(object sender,EventArgs e) {
@@ -133,7 +134,5 @@ namespace OpenDental {
 				DataValid.SetInvalid(InvalidType.OrthoChartTabs);
 			}
 		}
-
-		
 	}
 }

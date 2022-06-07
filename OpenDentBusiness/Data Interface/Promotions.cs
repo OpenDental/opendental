@@ -105,10 +105,10 @@ namespace OpenDentBusiness{
 			string promotionName,PromotionType type,long clinicNum=-1,string senderAddress="",bool isVerificationBatch=false) 
 		{
 			if(string.IsNullOrWhiteSpace(promotionName)) {
-				return new MassEmailSendResult(false,"A promotion name is required.",null,null);
+				return new MassEmailSendResult(false,"A promotion name is required.",null,null,null);
 			}
 			if(listDestinations.IsNullOrEmpty()) {
-				return new MassEmailSendResult(true,"",null,null);;
+				return new MassEmailSendResult(true,"",null,null,null);
 			}
 			if(clinicNum==-1) {
 				clinicNum=Clinics.ClinicNum;
@@ -160,7 +160,9 @@ namespace OpenDentBusiness{
 			List<string> listBodyReplacements=EmailHostingTemplates.GetListReplacements(templateCur.BodyHTML).Distinct().ToList();
 			List<TemplateDestination> listTemplateDestinations=new List<TemplateDestination>();
 			int countDestinationsBeforeFiltering=listDestinations.Count;
+			List<MassEmailDestination> listFilteredOutDestinations=listDestinations;
 			listDestinations=FilterForDuplicates(listDestinations,dictGuarantors,type);
+			listFilteredOutDestinations=listFilteredOutDestinations.FindAll(x=>!listDestinations.Contains(x));
 			int countDestinationsAfterFiltering=listDestinations.Count;
 			//Dictionary of patnum -> the replaced subject and body. Used afterwords to save the emails as EmailMessages.
 			Dictionary<long,(string subject,string body)> dictReplaced=new Dictionary<long,(string,string)>();
@@ -234,7 +236,7 @@ namespace OpenDentBusiness{
 				});
 			}
 			catch(Exception e) {
-				return new MassEmailSendResult(false,e.Message,null,null);
+				return new MassEmailSendResult(false,e.Message,null,null,null);
 			}
 			if(isVerificationBatch) {
 				promotionName=Lans.g("Promotions","VERIFICATION")+'-'+promotionName;
@@ -287,7 +289,9 @@ namespace OpenDentBusiness{
 			if(countDestinationsAfterFiltering!=countDestinationsBeforeFiltering) {
 				resultDesc=POut.Int(Math.Max(0,countDestinationsBeforeFiltering-countDestinationsAfterFiltering));
 			}
-			return new MassEmailSendResult(true,resultDesc,promotion,listLogs);
+			List<MassEmailDestinationFailed> listMassEmailDestinationFaileds=response.ListTemplateDestinationsRemoved.Select(x=>new MassEmailDestinationFailed() { PatNum=listDestinations.FirstOrDefault(y=>y.ToAddress==x.Destination)?.PatNum??-1,ToAddress=x.Destination,Description="Email Freq. Lim."}).ToList();
+			listMassEmailDestinationFaileds.AddRange(listFilteredOutDestinations.Select(x=>new MassEmailDestinationFailed(){ PatNum=x.PatNum,ToAddress=x.ToAddress,Description="Duplicate email address."}));
+			return new MassEmailSendResult(true,resultDesc,promotion,listLogs,listMassEmailDestinationFaileds);
 		}
 
 		public static long Insert(Promotion promotion) {
@@ -304,12 +308,14 @@ namespace OpenDentBusiness{
 		public string ResultDescription;
 		public Promotion Promotion;
 		public List<PromotionLog> ListPromotionLogs;
+		public List<MassEmailDestinationFailed> ListTemplateDestinationsUnableToSend;
 
-		public MassEmailSendResult(bool isSuccess,string resultDesc,Promotion promotion,List<PromotionLog> listPromotionLogs) {
+		public MassEmailSendResult(bool isSuccess,string resultDesc,Promotion promotion,List<PromotionLog> listPromotionLogs,List<MassEmailDestinationFailed> listTemplateDestinationsUnableToSend) {
 			IsSuccess=isSuccess;
 			ResultDescription=resultDesc;
 			Promotion=promotion;
 			ListPromotionLogs=listPromotionLogs;
+			ListTemplateDestinationsUnableToSend=listTemplateDestinationsUnableToSend;
 		}
 	}
 
@@ -329,5 +335,11 @@ namespace OpenDentBusiness{
 		public long AptNum { get; set; }
 		/// <summary>Email address that we are sending the message to. </summary>
 		public string ToAddress { get; set; }
+	}
+
+	public class MassEmailDestinationFailed {
+		public long PatNum;
+		public string ToAddress;
+		public string Description;
 	}
  }

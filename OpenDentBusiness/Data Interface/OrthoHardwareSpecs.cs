@@ -143,7 +143,7 @@ namespace OpenDentBusiness{
 			Crud.OrthoHardwareSpecCrud.Update(orthoHardwareSpec);
 		}
 
-		///<summary>Throws exception if in use by a patient.</summary>
+		///<summary>Throws exception if in use by a patient or ortho prescription.</summary>
 		public static void Delete(long orthoHardwareSpecNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),orthoHardwareSpecNum);
@@ -153,6 +153,11 @@ namespace OpenDentBusiness{
 			string count=Db.GetCount(command);
 			if(count!="0"){
 				throw new Exception("Already in use by patients. Hide instead of Deleting.");
+			}
+			command="SELECT COUNT(*) FROM orthorx WHERE OrthoHardwareSpecNum="+POut.Long(orthoHardwareSpecNum);
+			count=Db.GetCount(command);
+			if(count!="0"){
+				throw new Exception("Already in use by Ortho Prescription. Hide instead of Deleting or unlink this Hardware Spec from Ortho Prescriptions.");
 			}
 			Crud.OrthoHardwareSpecCrud.Delete(orthoHardwareSpecNum);
 		}

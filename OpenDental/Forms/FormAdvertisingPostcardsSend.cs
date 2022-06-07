@@ -118,15 +118,8 @@ namespace OpenDental {
 			FillUI();
 		}
 
-		private bool PatientHasNeededData(PatientInfo patientInfo) {
-			return (!patientInfo.Address.IsNullOrEmpty() || !patientInfo.Address2.IsNullOrEmpty())
-				&& !patientInfo.City.IsNullOrEmpty() 
-				&& !patientInfo.State.IsNullOrEmpty() 
-				&& !patientInfo.Zip.IsNullOrEmpty();
-		}
-
 		private void butSelectPatients_Click(object sender,EventArgs e) {
-			using FormAdvertisingPatientList formMassPostcardList=new FormAdvertisingPatientList(PatientHasNeededData);
+			using FormAdvertisingPatientList formMassPostcardList=new FormAdvertisingPatientList(AdvertisingType.Postcards);
 			formMassPostcardList.ListPatientInfos=_listPatientInfo;
 			formMassPostcardList.ShowDialog();
 			if(formMassPostcardList.DialogResult==DialogResult.OK) {

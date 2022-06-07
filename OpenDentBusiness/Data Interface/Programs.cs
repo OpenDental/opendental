@@ -375,6 +375,7 @@ namespace OpenDentBusiness {
 			ScrubFileForProperty(ProgramName.Patterson,"System path to Patterson Imaging ini","",true);//C:\Program Files\PDI\Shared files\Imaging.ini
 			//PerioPal: Has no file paths containing outgoing patient data from Open Dental.
 			//Planmeca: Has no file paths containing outgoing patient data from Open Dental.
+			//PORTRAY: Has no file paths containing outgoing patient data from Open Dental.
 			//PracticeWebReports: Has no file paths containing outgoing patient data from Open Dental.
 			//PreXionAcquire: Has no file paths containing outgoing patient data from Open Dental.
 			//PreXionViewer: Has no file paths containing outgoing patient data from Open Dental.

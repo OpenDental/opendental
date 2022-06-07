@@ -2368,6 +2368,12 @@ namespace OpenDentBusiness {
 			Misc.SecurityHash.UpdateHashing();
 		}//End of 21_4_41() method
 
+		private static void To21_4_49() {
+			string command;
+			command="ALTER TABLE covcat MODIFY CovOrder INT NOT NULL";
+			Db.NonQ(command);
+		}//End of 21_4_49() method
+
 		private static void To22_1_1() {
 			string command;
 			DataTable table;
@@ -2735,7 +2741,7 @@ namespace OpenDentBusiness {
 
 		private static void To22_1_34() {
 			string command;
-			command="ALTER TABLE CovCat MODIFY CovOrder INT NOT NULL";
+			command="ALTER TABLE covcat MODIFY CovOrder INT NOT NULL";
 			Db.NonQ(command);
 		}//End of 22_1_34() method
 
@@ -3346,6 +3352,33 @@ namespace OpenDentBusiness {
 			command="INSERT INTO preference(PrefName,ValueString) VALUES ('InsPayNoInitialPrimaryMoreThanProc','0')";//Default to false.
 			Db.NonQ(command);
 		}//End of 22_2_4() method
+
+		private static void To22_2_8() {
+			string command;
+			//Insert PORTRAY bridge----------------------------------------------------------------- 
+			command="INSERT INTO program (ProgName,ProgDesc,Enabled,Path,CommandLine,Note"
+				 +") VALUES("
+				 +"'PORTRAY', "
+				 +"'PORTRAY from Surround Medical Systems', "
+				 +"'0', "
+				 +"'"+POut.String(@"C:\Program Files\Surround Medical\PORTRAY\Application\PORTRAY.exe")+"', "
+				 +"'"+POut.String(@"<[PatNum]> <[FName]> <[PatientMiddleInitial]> <[LName]> <[NamePreferredOrFirst]> <[Birthdate]> <[PatientGenderMF]>")+"', "//leave blank if none 
+				 +"'')";
+			long programNum=Db.NonQ(command,true);
+			command="INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue"
+				 +") VALUES("
+				 +"'"+POut.Long(programNum)+"', "
+				 +"'Enter 0 to use PatientNum, or 1 to use ChartNum', "
+				 +"'0')";
+			Db.NonQ(command);
+			command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
+				 +"VALUES ("
+				 +"'"+POut.Long(programNum)+"', "
+				 +"'7', "//ToolBarsAvail.MainToolbar
+				 +"'PORTRAY')";
+			Db.NonQ(command);
+			//end PORTRAY bridge
+		}//End of 22_2_8() method
 	}
 }
 

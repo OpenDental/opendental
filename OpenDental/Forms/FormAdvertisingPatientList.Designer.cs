@@ -48,8 +48,6 @@ namespace OpenDental{
 			this.textPatientAgeFrom = new OpenDental.ValidNum();
 			this.listBoxPatientStatuses = new OpenDental.UI.ListBoxOD();
 			this.listBoxContactMethods = new OpenDental.UI.ListBoxOD();
-			this.panelRefresh = new OpenDental.UI.PanelOD();
-			this.panelAdditionalFilters = new OpenDental.UI.PanelOD();
 			this.panelUserQuery = new OpenDental.UI.PanelOD();
 			this.butFavorite = new OpenDental.UI.Button();
 			this.labelUserQuery = new System.Windows.Forms.Label();
@@ -63,7 +61,6 @@ namespace OpenDental{
 			this.panelFilterControls.SuspendLayout();
 			this.groupAppt.SuspendLayout();
 			this.groupBox1.SuspendLayout();
-			this.panelRefresh.SuspendLayout();
 			this.panelUserQuery.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -104,7 +101,7 @@ namespace OpenDental{
 			// butRefreshPatientFilters
 			// 
 			this.butRefreshPatientFilters.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butRefreshPatientFilters.Location = new System.Drawing.Point(639, 191);
+			this.butRefreshPatientFilters.Location = new System.Drawing.Point(504, 212);
 			this.butRefreshPatientFilters.Name = "butRefreshPatientFilters";
 			this.butRefreshPatientFilters.Size = new System.Drawing.Size(85, 24);
 			this.butRefreshPatientFilters.TabIndex = 235;
@@ -306,26 +303,6 @@ namespace OpenDental{
 			this.listBoxContactMethods.Size = new System.Drawing.Size(161, 82);
 			this.listBoxContactMethods.TabIndex = 208;
 			// 
-			// panelRefresh
-			// 
-			this.panelRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.panelRefresh.Controls.Add(this.panelAdditionalFilters);
-			this.panelRefresh.Controls.Add(this.butRefreshPatientFilters);
-			this.panelRefresh.Location = new System.Drawing.Point(500, 18);
-			this.panelRefresh.Name = "panelRefresh";
-			this.panelRefresh.Size = new System.Drawing.Size(727, 218);
-			this.panelRefresh.TabIndex = 242;
-			// 
-			// panelAdditionalFilters
-			// 
-			this.panelAdditionalFilters.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.panelAdditionalFilters.Location = new System.Drawing.Point(0, 0);
-			this.panelAdditionalFilters.Name = "panelAdditionalFilters";
-			this.panelAdditionalFilters.Size = new System.Drawing.Size(638, 218);
-			this.panelAdditionalFilters.TabIndex = 243;
-			// 
 			// panelUserQuery
 			// 
 			this.panelUserQuery.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
@@ -450,7 +427,7 @@ namespace OpenDental{
 			// 
 			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(1230, 707);
-			this.Controls.Add(this.panelRefresh);
+			this.Controls.Add(this.butRefreshPatientFilters);
 			this.Controls.Add(this.butCommitList);
 			this.Controls.Add(this.checkUserQuery);
 			this.Controls.Add(this.butClearAll);
@@ -471,7 +448,6 @@ namespace OpenDental{
 			this.groupAppt.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
-			this.panelRefresh.ResumeLayout(false);
 			this.panelUserQuery.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -511,8 +487,6 @@ namespace OpenDental{
 		private UI.Button butSelectAll;
 		private UI.Button butCommitList;
 		private UI.GroupBoxOD groupAppt;
-		private UI.PanelOD panelRefresh;
-		private UI.PanelOD panelAdditionalFilters;
 		private UI.Button butFavorite;
 	}
 }

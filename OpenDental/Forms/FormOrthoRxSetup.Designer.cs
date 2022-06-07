@@ -113,7 +113,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormOrthoRxSetup";
-			this.Text = "Ortho Prescrcriptions Setup";
+			this.Text = "Ortho Prescriptions Setup";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormOrthoHardwareSpecs_FormClosing);
 			this.Load += new System.EventHandler(this.FormOrthoRxSetup_Load);
 			this.ResumeLayout(false);

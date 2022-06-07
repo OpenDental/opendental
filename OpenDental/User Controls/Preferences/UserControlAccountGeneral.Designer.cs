@@ -255,7 +255,7 @@ namespace OpenDental {
 			this.Controls.Add(this.label62);
 			this.Controls.Add(this.groupCommLogs);
 			this.Name = "UserControlAccountGeneral";
-			this.Size = new System.Drawing.Size(974, 641);
+			this.Size = new System.Drawing.Size(974, 624);
 			this.groupBoxFunctionality.ResumeLayout(false);
 			this.groupBoxFunctionality.PerformLayout();
 			this.groupCommLogs.ResumeLayout(false);

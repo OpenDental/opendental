@@ -367,6 +367,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bridges\PORTRAY.cs" />
     <Compile Include="Bridges\MeditLink.cs" />
     <Compile Include="Bridges\AiDental.cs" />
     <Compile Include="Bridges\FormDrCeph.cs">
@@ -676,6 +677,12 @@
     <Compile Include="Forms Reports\FormSearchPatNotes.designer.cs">
       <DependentUpon>FormSearchPatNotes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormMassEmailSendResults.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormMassEmailSendResults.Designer.cs">
+      <DependentUpon>FormMassEmailSendResults.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormImagePickerPatient.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -753,6 +760,12 @@
     </Compile>
     <Compile Include="Forms\FormPreferences.Designer.cs">
       <DependentUpon>FormPreferences.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormWebBrowserPrefs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormWebBrowserPrefs.designer.cs">
+      <DependentUpon>FormWebBrowserPrefs.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormWebFormNextForms.cs">
       <SubType>Form</SubType>
@@ -7161,12 +7174,6 @@
     <Compile Include="User Controls\Dashboard\DashIndividualDiscount.Designer.cs">
       <DependentUpon>DashIndividualDiscount.cs</DependentUpon>
     </Compile>
-    <Compile Include="User Controls\MassEmailFilter.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="User Controls\MassEmailFilter.Designer.cs">
-      <DependentUpon>MassEmailFilter.cs</DependentUpon>
-    </Compile>
     <Compile Include="User Controls\Preferences\UserControlAccountAdjustments.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -7313,11 +7320,11 @@
     <Compile Include="User Controls\GraphScheduleDay.Designer.cs">
       <DependentUpon>GraphScheduleDay.cs</DependentUpon>
     </Compile>
-    <Compile Include="User Controls\MapAreaDisplayLabelControl.cs">
+    <Compile Include="User Controls\MapLabel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="User Controls\MapAreaDisplayLabelControl.Designer.cs">
-      <DependentUpon>MapAreaDisplayLabelControl.cs</DependentUpon>
+    <Compile Include="User Controls\MapLabel.Designer.cs">
+      <DependentUpon>MapLabel.cs</DependentUpon>
     </Compile>
     <Compile Include="User Controls\MapAreaPanel.cs">
       <SubType>Component</SubType>
@@ -7325,11 +7332,11 @@
     <Compile Include="User Controls\MapAreaPanel.Designer.cs">
       <DependentUpon>MapAreaPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="User Controls\MapAreaRoomControl.cs">
+    <Compile Include="User Controls\MapCubicle.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="User Controls\MapAreaRoomControl.Designer.cs">
-      <DependentUpon>MapAreaRoomControl.cs</DependentUpon>
+    <Compile Include="User Controls\MapCubicle.Designer.cs">
+      <DependentUpon>MapCubicle.cs</DependentUpon>
     </Compile>
     <Compile Include="User Controls\Dashboard\DashApptGrid.cs">
       <SubType>UserControl</SubType>
@@ -7569,6 +7576,9 @@
     <EmbeddedResource Include="Forms Reports\FormRpServiceDateView.resx">
       <DependentUpon>FormRpServiceDateView.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormMassEmailSendResults.resx">
+      <DependentUpon>FormMassEmailSendResults.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormImagePickerPatient.resx">
       <DependentUpon>FormImagePickerPatient.cs</DependentUpon>
     </EmbeddedResource>
@@ -7610,6 +7620,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormPreferences.resx">
       <DependentUpon>FormPreferences.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormWebBrowserPrefs.resx">
+      <DependentUpon>FormWebBrowserPrefs.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormWebFormNextForms.resx">
       <DependentUpon>FormWebFormNextForms.cs</DependentUpon>
@@ -10925,9 +10938,6 @@
     <EmbeddedResource Include="User Controls\Dashboard\DashIndividualDiscount.resx">
       <DependentUpon>DashIndividualDiscount.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="User Controls\MassEmailFilter.resx">
-      <DependentUpon>MassEmailFilter.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="User Controls\Preferences\UserControlAccountAdjustments.resx">
       <DependentUpon>UserControlAccountAdjustments.cs</DependentUpon>
     </EmbeddedResource>
@@ -10996,8 +11006,8 @@
     <EmbeddedResource Include="User Controls\GraphScheduleDay.resx">
       <DependentUpon>GraphScheduleDay.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="User Controls\MapAreaRoomControl.resx">
-      <DependentUpon>MapAreaRoomControl.cs</DependentUpon>
+    <EmbeddedResource Include="User Controls\MapCubicle.resx">
+      <DependentUpon>MapCubicle.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="User Controls\Dashboard\DashApptGrid.resx">
       <DependentUpon>DashApptGrid.cs</DependentUpon>

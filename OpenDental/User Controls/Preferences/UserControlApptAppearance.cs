@@ -43,6 +43,17 @@ namespace OpenDental {
 			}
 			_colorDialog.Dispose();
 		}
+
+		private void butTimeArrivedTriggerDetails_Click(object sender,EventArgs e) {
+			string html=@"Select the confirmed status that will trigger an automatic time entry in the Time Arrived field on the 
+				<a href='https://www.opendental.com/manual221/aptedit.html' target='_blank' rel='noopener noreferrer'>Edit Appointment</a>, and add the patient to the 
+				<a href='https://www.opendental.com/manual221/waitingroom.html' target='_blank' rel='noopener noreferrer'>Waiting Room</a>. Customize options in Definitions, 
+				Appt Confirmed (see <a href='https://www.opendental.com/manual221/confirmationstatus.html' target='_blank' rel='noopener noreferrer'>Confirmation Status</a>).";
+			using FormWebBrowserPrefs formWebBrowserPrefs=new FormWebBrowserPrefs();
+			formWebBrowserPrefs.HtmlContent=html;
+			formWebBrowserPrefs.PointStart=PointToScreen(butTimeArrivedTriggerDetails.Location);
+			formWebBrowserPrefs.ShowDialog();
+		}
 		#endregion Methods - Event Handlers
 
 		#region Methods - Private

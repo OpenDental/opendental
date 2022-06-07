@@ -45,7 +45,7 @@ namespace OpenDental {
 			this.butChangeColorOuter = new OpenDental.UI.Button();
 			this.panelOuterColor = new System.Windows.Forms.Panel();
 			this.textSite = new System.Windows.Forms.TextBox();
-			this.labelOpsCountPreview = new OpenDental.MapAreaRoomControl();
+			this.labelOpsCountPreview = new OpenDental.MapCubicle();
 			this.butChangeForeColor = new OpenDental.UI.Button();
 			this.panelForeColor = new System.Windows.Forms.Panel();
 			this.label10 = new System.Windows.Forms.Label();
@@ -448,7 +448,7 @@ namespace OpenDental {
 		private UI.Button butChangeColorOuter;
 		private System.Windows.Forms.Panel panelOuterColor;
 		private System.Windows.Forms.TextBox textSite;
-		private MapAreaRoomControl labelOpsCountPreview;
+		private MapCubicle labelOpsCountPreview;
 		private UI.Button butChangeForeColor;
 		private System.Windows.Forms.Panel panelForeColor;
 		private System.Windows.Forms.Label label10;

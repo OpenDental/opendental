@@ -83,6 +83,7 @@ namespace OpenDental{
 			this.butDown.Size = new System.Drawing.Size(79, 24);
 			this.butDown.TabIndex = 35;
 			this.butDown.Text = "&Down";
+			this.butDown.Click += new System.EventHandler(this.butDown_Click);
 			// 
 			// butUp
 			// 
@@ -94,6 +95,7 @@ namespace OpenDental{
 			this.butUp.Size = new System.Drawing.Size(79, 24);
 			this.butUp.TabIndex = 34;
 			this.butUp.Text = "&Up";
+			this.butUp.Click += new System.EventHandler(this.butUp_Click);
 			// 
 			// butAdd
 			// 

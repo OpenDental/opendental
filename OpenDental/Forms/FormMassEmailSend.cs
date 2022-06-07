@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Net.Mail;
+using System.Text;
 using System.Windows.Forms;
 using CodeBase;
 using OpenDental.UI;
@@ -257,8 +258,7 @@ namespace OpenDental {
 		}
 
 		private void butSelectPatients_Click(object sender,EventArgs e) {
-			MassEmailFilter massEmailFilter=new MassEmailFilter();
-			using FormAdvertisingPatientList formPatientList=new FormAdvertisingPatientList(massEmailFilter.DoIncludePatient,massEmailFilter);
+			using FormAdvertisingPatientList formPatientList=new FormAdvertisingPatientList(AdvertisingType.MassEmail);
 			if(formPatientList.ShowDialog()==DialogResult.OK) {
 				_listPatientsSelected=formPatientList.ListPatientInfos;
 			}
@@ -371,23 +371,14 @@ namespace OpenDental {
 				MsgBox.Show(result?.ResultDescription??"An unexpected error occurred.");
 				return;
 			}
-			long numberSent=_listPatientsSelected.Count;
-			string templateName=template.TemplateName;
 			if(template.ClinicNum==0) {
 				Prefs.UpdateString(PrefName.EmailHostingAlias,textboxAlias.Text);
 			}
 			else {
 				ClinicPrefs.Upsert(PrefName.EmailHostingAlias,template.ClinicNum,textboxAlias.Text);
 			}
-			string alteredCountMsg="";
-			//Promotions.SendEmails will filter out duplicate messages and add the count removed to the result description.
-			if(!result.ResultDescription.IsNullOrEmpty()) {
-				long numRemoved=PIn.Long(result.ResultDescription);
-				numberSent-=numRemoved;
-				alteredCountMsg+=$"{Lan.g(this,"Prevented")} {numRemoved} {Lan.g(this,"duplicate email(s) from sending to the same email address")}.\n";
-			}
-			message=$"{alteredCountMsg}{Lan.g(this,"Sent to")} {numberSent} {Lan.g(this,"patients with template:")} \"{templateName}\" {Lan.g(this,"for group:")} \"{promotionName}\".";
-			MsgBox.Show(this,message);
+			using FormMassEmailSendResults formMassEmailSendResults=new FormMassEmailSendResults(_listPatientsSelected,result);
+			formMassEmailSendResults.ShowDialog();
 			DialogResult=DialogResult.OK;
 		}
 

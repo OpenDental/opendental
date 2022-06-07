@@ -254,8 +254,8 @@
 			this.mapAreaPanel.AutoScrollMinSize = new System.Drawing.Size(1326, 935);
 			this.mapAreaPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.mapAreaPanel.FloorColor = System.Drawing.Color.White;
-			this.mapAreaPanel.FloorHeightFeet = 55;
-			this.mapAreaPanel.FloorWidthFeet = 78;
+			this.mapAreaPanel.HeightFloorFeet = 55;
+			this.mapAreaPanel.WidthFloorFeet = 78;
 			this.mapAreaPanel.Font = new System.Drawing.Font("Calibri", 25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.mapAreaPanel.FontCubicle = new System.Drawing.Font("Calibri", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.mapAreaPanel.FontCubicleHeader = new System.Drawing.Font("Calibri", 19F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));

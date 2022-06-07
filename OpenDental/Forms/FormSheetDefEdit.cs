@@ -344,35 +344,40 @@ namespace OpenDental {
 			FillFieldList();
 			panelMain.Invalidate();
 			if(_sheetDef.HasMobileLayout) { //Always open the mobile editor since they want to use the mobile layout.
-				ShowHideMobile(forceOpen:true);
+				ShowMobile();
 			}
 			AddUndoLevel("Edit Properties");
 		}
 
 		///<summary>Change the show/hide state of the mobile designer. Open if it is currently closed or close if it is currently open.</summary>
 		private void butMobile_Click(object sender,EventArgs e) {
-			ShowHideMobile(forceOpen:false);
+			if(_sheetEditMobileCtrl.IsFormOpen()){
+				HideMobile();
+			}
+			else{
+				ShowMobile();
+			}
 		}
 
-		private void ShowHideMobile(bool forceOpen){
+		private void ShowMobile(){
 			Rectangle rectangleWorkingArea=System.Windows.Forms.Screen.FromControl(this).WorkingArea;
-			if(_sheetEditMobileCtrl.IsFormOpen()){//close it
-				Bounds=new Rectangle(rectangleWorkingArea.Left+rectangleWorkingArea.Width/2-Width/2,rectangleWorkingArea.Top,Width,rectangleWorkingArea.Height);
-				_sheetEditMobileCtrl.ShowHideModeless(forceOpen,_sheetDef.Description,this,new Rectangle());
-				butMobile.Text=Lan.g(this,"Show Mobile");
-			}
-			else{//open it
-				int widthBoth=Width+_sheetEditMobileCtrl.Width;
-				Rectangle rectangleBoth=new Rectangle(
-					x:rectangleWorkingArea.Left+rectangleWorkingArea.Width/2-widthBoth/2,
-					y:rectangleWorkingArea.Top,
-					width:widthBoth,
-					height:rectangleWorkingArea.Height);
-				Bounds=new Rectangle(rectangleBoth.Left,rectangleBoth.Top,Width,rectangleBoth.Height);
-				Rectangle rectangleFloat=new Rectangle(Right,rectangleWorkingArea.Top,_sheetEditMobileCtrl.Width,rectangleWorkingArea.Height);
-				_sheetEditMobileCtrl.ShowHideModeless(forceOpen,_sheetDef.Description,this,rectangleFloat);
-				butMobile.Text=Lan.g(this,"Hide Mobile");				
-			}
+			int widthBoth=Width+_sheetEditMobileCtrl.Width;
+			Rectangle rectangleBoth=new Rectangle(
+				x:rectangleWorkingArea.Left+rectangleWorkingArea.Width/2-widthBoth/2,
+				y:rectangleWorkingArea.Top,
+				width:widthBoth,
+				height:rectangleWorkingArea.Height);
+			Bounds=new Rectangle(rectangleBoth.Left,rectangleBoth.Top,Width,rectangleBoth.Height);
+			Rectangle rectangleFloat=new Rectangle(Right,rectangleWorkingArea.Top,_sheetEditMobileCtrl.Width,rectangleWorkingArea.Height);
+			_sheetEditMobileCtrl.ShowModeless(_sheetDef.Description,this,rectangleFloat);
+			butMobile.Text=Lan.g(this,"Hide Mobile");				
+		}
+
+		private void HideMobile(){
+			Rectangle rectangleWorkingArea=System.Windows.Forms.Screen.FromControl(this).WorkingArea;
+			Bounds=new Rectangle(rectangleWorkingArea.Left+rectangleWorkingArea.Width/2-Width/2,rectangleWorkingArea.Top,Width,rectangleWorkingArea.Height);
+			_sheetEditMobileCtrl.HideModeless();
+			butMobile.Text=Lan.g(this,"Show Mobile");
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
@@ -766,6 +771,7 @@ namespace OpenDental {
 			checkShowSpecial.Visible=listSheetFieldTypes.Contains(SheetFieldType.Special);
 			checkShowGrid.Visible=listSheetFieldTypes.Contains(SheetFieldType.Grid);
 			checkShowScreenChart.Visible=listSheetFieldTypes.Contains(SheetFieldType.ScreenChart);
+			checkShowMobileHeader.Visible=listSheetFieldTypes.Contains(SheetFieldType.MobileHeader);
 			_sheetEditMobileCtrl.IsReadOnly=IsInternal;
 			butMobile.Visible=SheetDefs.IsMobileAllowed(_sheetDef.SheetType);
 			if(Sheets.SheetTypeIsSinglePage(_sheetDef.SheetType)) {
@@ -790,7 +796,7 @@ namespace OpenDental {
 			panelMain.Invalidate();
 			panelMain.Focus();
 			if(_sheetDef.HasMobileLayout) { //Always open the mobile editor since they want to use the mobile layout.
-				ShowHideMobile(forceOpen:true);
+				ShowMobile();
 			}
 			ODThread threadGetWebSheetId=new ODThread(GetWebSheetDefs);
 			threadGetWebSheetId.AddExceptionHandler(new ODThread.ExceptionDelegate((Exception ex) => {
@@ -1490,6 +1496,7 @@ namespace OpenDental {
 			checkShowSpecial.Checked=true;
 			checkShowGrid.Checked=true;
 			checkShowScreenChart.Checked=true;
+			checkShowMobileHeader.Checked=true;
 			FillFieldList();
 			panelMain.Invalidate();
 		}
@@ -1509,6 +1516,7 @@ namespace OpenDental {
 			checkShowSpecial.Checked=false;
 			checkShowGrid.Checked=false;
 			checkShowScreenChart.Checked=false;
+			checkShowMobileHeader.Checked=false;
 			FillFieldList();
 			panelMain.Invalidate();
 		}
@@ -1577,6 +1585,10 @@ namespace OpenDental {
 		}
 
 		private void checkShowScreenChart_Click(object sender,EventArgs e) {
+			CheckShowChecked();
+		}
+
+		private void checkShowMobileHeader_Click(object sender,EventArgs e){
 			CheckShowChecked();
 		}
 		#endregion Methods - Event Handlers - Show
@@ -1716,11 +1728,13 @@ namespace OpenDental {
 						break;
 				}
 			}
-			strPrompt+=Lan.g(this,"Would you like to continue anyways?");
-			if(isConflictingfield && MessageBox.Show(strPrompt,Lan.g(this,"Warning"),MessageBoxButtons.OKCancel)!=DialogResult.OK) {
-				//splitContainer1.Panel1.Select();
-				_isCtrlDown=false;
-				return;
+			strPrompt+=Lan.g(this,"Would you like to continue anyway?");
+			if(isConflictingfield){
+				if(!MsgBox.Show(MsgBoxButtons.OKCancel,strPrompt)){
+					//This prompt can be too tall, but only solution would be to build our own MessageBox from scratch.
+					_isCtrlDown=false;
+					return;
+				}
 			}
 			_listSheetFieldDefsCopyPaste=new List<SheetFieldDef>(); //empty the remembered field list
 			for(int i=0;i<listBoxFields.SelectedIndices.Count;i++) {
@@ -2211,6 +2225,9 @@ namespace OpenDental {
 			}
 			if(sheetFieldType==SheetFieldType.ScreenChart){
 				return checkShowScreenChart.Checked;
+			}
+			if(sheetFieldType==SheetFieldType.MobileHeader){
+				return checkShowMobileHeader.Checked;
 			}
 			return false;//shouldn't happen
 		}
@@ -2731,7 +2748,7 @@ namespace OpenDental {
 					&& sheetFieldDef.FieldName.In("Sexual Orientation","Gender Identity")) //Contains public health fields
 				{
 					listSheetFieldDefToDelete.Add(sheetFieldDef);
-				}
+        }
 				if(sheetFieldDef.FieldType==SheetFieldType.CheckBox && sheetFieldDef.IsRequired && (sheetFieldDef.RadioButtonGroup!="" //for misc radio groups
 				                                                                    || sheetFieldDef.RadioButtonValue!="")) //for built-in radio groups
 				{
@@ -3789,6 +3806,7 @@ namespace OpenDental {
 				return Description;
 			}
 		}
+
 
 
 

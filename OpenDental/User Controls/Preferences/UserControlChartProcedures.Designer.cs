@@ -302,7 +302,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxProcedures);
 			this.Controls.Add(this.groupProcNotes);
 			this.Name = "UserControlChartProcedures";
-			this.Size = new System.Drawing.Size(974, 641);
+			this.Size = new System.Drawing.Size(974, 624);
 			this.groupProcNotes.ResumeLayout(false);
 			this.groupBoxProcedures.ResumeLayout(false);
 			this.ResumeLayout(false);

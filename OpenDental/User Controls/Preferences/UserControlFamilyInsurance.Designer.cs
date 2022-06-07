@@ -300,7 +300,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxOtherInsInfo);
 			this.Controls.Add(this.groupBoxInsuranceGeneral);
 			this.Name = "UserControlFamilyInsurance";
-			this.Size = new System.Drawing.Size(974, 641);
+			this.Size = new System.Drawing.Size(974, 624);
 			this.groupBoxInsuranceGeneral.ResumeLayout(false);
 			this.groupBoxOtherInsInfo.ResumeLayout(false);
 			this.groupBoxClaims.ResumeLayout(false);

@@ -67,6 +67,7 @@ namespace OpenDental {
 			this.labelApptProvbarWidthDetails = new System.Windows.Forms.Label();
 			this.labelApptClickDelayDetails = new System.Windows.Forms.Label();
 			this.labelApptSchedEnforceSpecialtyDetails = new System.Windows.Forms.Label();
+			this.butTimeArrivedTriggerDetails = new OpenDental.UI.Button();
 			this.groupBoxWaitingRoom.SuspendLayout();
 			this.groupBoxAppearance.SuspendLayout();
 			this.groupBoxApptBubble.SuspendLayout();
@@ -529,11 +530,22 @@ namespace OpenDental {
 			this.labelApptSchedEnforceSpecialtyDetails.Text = "when the patient’s specialty does not match the clinic’s";
 			this.labelApptSchedEnforceSpecialtyDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
+			// butTimeArrivedTriggerDetails
+			// 
+			this.butTimeArrivedTriggerDetails.ForeColor = System.Drawing.Color.Black;
+			this.butTimeArrivedTriggerDetails.Location = new System.Drawing.Point(479, 248);
+			this.butTimeArrivedTriggerDetails.Name = "butTimeArrivedTriggerDetails";
+			this.butTimeArrivedTriggerDetails.Size = new System.Drawing.Size(64, 21);
+			this.butTimeArrivedTriggerDetails.TabIndex = 367;
+			this.butTimeArrivedTriggerDetails.Text = "Details";
+			this.butTimeArrivedTriggerDetails.Click += new System.EventHandler(this.butTimeArrivedTriggerDetails_Click);
+			// 
 			// UserControlApptAppearance
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.butTimeArrivedTriggerDetails);
 			this.Controls.Add(this.labelApptSchedEnforceSpecialtyDetails);
 			this.Controls.Add(this.labelApptClickDelayDetails);
 			this.Controls.Add(this.labelApptProvbarWidthDetails);
@@ -544,7 +556,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxAppearance);
 			this.Controls.Add(this.groupBoxWaitingRoom);
 			this.Name = "UserControlApptAppearance";
-			this.Size = new System.Drawing.Size(974, 641);
+			this.Size = new System.Drawing.Size(974, 624);
 			this.groupBoxWaitingRoom.ResumeLayout(false);
 			this.groupBoxWaitingRoom.PerformLayout();
 			this.groupBoxAppearance.ResumeLayout(false);
@@ -601,5 +613,6 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelApptProvbarWidthDetails;
 		private System.Windows.Forms.Label labelApptClickDelayDetails;
 		private System.Windows.Forms.Label labelApptSchedEnforceSpecialtyDetails;
+		private UI.Button butTimeArrivedTriggerDetails;
 	}
 }

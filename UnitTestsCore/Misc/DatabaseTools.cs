@@ -98,6 +98,7 @@ namespace UnitTestsCore {
 					DELETE FROM provider WHERE ProvNum>2;
 					DELETE FROM recall;
 					DELETE FROM schedule;
+					DELETE FROM scheduleop;
 					DELETE FROM sheet;
 					DELETE FROM sheetdef;
 					DELETE FROM sheetfield;

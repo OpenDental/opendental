@@ -133,6 +133,7 @@ namespace OpenDentBusiness{
 		PDMP,
 		Pixel,
 		Podium,
+		PORTRAY,
 		PracticeByNumbers,
 		PracticeWebReports,
 		PreXionAcquire,

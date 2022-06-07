@@ -2872,6 +2872,7 @@ namespace OpenDental {
 			contrApptPanel.SetColors(colorOpen,colorClosed,colorHoliday,colorBlockText,colorTimeLine);
 			contrApptPanel.SizeFont=float.Parse(PrefC.GetString(PrefName.ApptFontSize));
 			contrApptPanel.WidthProvOnAppt=float.Parse(PrefC.GetString(PrefName.ApptProvbarWidth));
+			SetWeeklyView(contrApptPanel.IsWeeklyView,skipModuleSelection:true);//in case they changed the pref for start day of week
 			RefreshModuleDataPatient(patNum);
 			if(_patCur!=null && _patCur.PatStatus==PatientStatus.Deleted) {
 				MsgBox.Show("Selected patient has been deleted by another workstation.");
@@ -4845,7 +4846,7 @@ namespace OpenDental {
 		}
 
 		///<summary>Switches between weekly view and daily view.   Calls either RefreshPeriod or ModuleSelected.</summary>
-		private void SetWeeklyView(bool isWeeklyView) {
+		private void SetWeeklyView(bool isWeeklyView,bool skipModuleSelection=false) {
 			//Completely independent from and does not affect contrApptPanel.DateSelected.
 			//if the weekly view doesn't change, then use SetDateSelected or RefreshPeriod
 			if(isWeeklyView) {
@@ -4861,6 +4862,9 @@ namespace OpenDental {
 			contrApptPanel.IsWeeklyView=isWeeklyView;
 			if(!_hasInitializedOnStartup) {
 				return;//prevent refreshing repeatedly on startup
+			}
+			if(skipModuleSelection) {
+				return;//to prevent infinite loop. SetWeeklyView must be called to refresh day headers after changing pref start day.
 			}
 			long apptViewNum=contrApptPanel.ApptViewCur?.ApptViewNum??ApptViews.APPTVIEWNUM_NONE;
 			if(isWeeklyView) {

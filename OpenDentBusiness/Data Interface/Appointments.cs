@@ -237,7 +237,7 @@ namespace OpenDentBusiness{
 				row=tableReturn.NewRow();
 				row["AptNum"]=PIn.Long(tableAppointments.Rows[i]["AptNum"].ToString());
 				row["PatNum"]=PIn.Long(tableAppointments.Rows[i]["PatNum"].ToString());
-				row["AptStatus"]=(ApptStatus)PIn.Int(row["AptStatus"].ToString());
+				row["AptStatus"]=(ApptStatus)PIn.Int(tableAppointments.Rows[i]["AptStatus"].ToString());
 				row["Pattern"]=tableAppointments.Rows[i]["Pattern"].ToString();
 				row["Confirmed"]=tableAppointments.Rows[i]["Confirmed"];
 				row["confirmed"]=OpenDentBusiness.Defs.GetName(OpenDentBusiness.DefCat.ApptConfirmed,PIn.Long(tableAppointments.Rows[i]["Confirmed"].ToString()));
@@ -246,17 +246,17 @@ namespace OpenDentBusiness{
 				row["ProvNum"]=PIn.Long(tableAppointments.Rows[i]["ProvNum"].ToString());
 				row["provAbbr"]=Providers.GetAbbr(PIn.Long(tableAppointments.Rows[i]["ProvNum"].ToString()));
 				row["ProvHyg"]=tableAppointments.Rows[i]["ProvHyg"].ToString();
-				row["AptDateTime"]=PIn.DateT(tableAppointments.Rows[i]["AptDateTime"].ToString());
+				row["AptDateTime"]=PIn.DateT(tableAppointments.Rows[i]["AptDateTime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
 				row["ProcDescript"]=tableAppointments.Rows[i]["ProcDescript"].ToString();
 				row["ClinicNum"]=PIn.Long(tableAppointments.Rows[i]["ClinicNum"].ToString());
 				row["IsHygiene"]=PIn.Bool(tableAppointments.Rows[i]["IsHygiene"].ToString()).ToString();
-				row["DateTStamp"]=PIn.DateT(tableAppointments.Rows[i]["DateTStamp"].ToString());
-				row["serverDateTime"]=dateTimeServer;
+				row["DateTStamp"]=PIn.DateT(tableAppointments.Rows[i]["DateTStamp"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
+				row["serverDateTime"]=dateTimeServer.ToString("yyyy-MM-dd HH:mm:ss");
 				row["eServiceLogType"]=(ApiEServiceLogType)PIn.Int(tableAppointments.Rows[i]["EServiceType"].ToString());
 				row["AppointmentTypeNum"]=PIn.Long(tableAppointments.Rows[i]["AppointmentTypeNum"].ToString());
-				row["DateTimeArrived"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeArrived"].ToString());
-				row["DateTimeSeated"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeSeated"].ToString());
-				row["DateTimeDismissed"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeDismissed"].ToString());
+				row["DateTimeArrived"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeArrived"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
+				row["DateTimeSeated"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeSeated"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
+				row["DateTimeDismissed"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeDismissed"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
 				tableReturn.Rows.Add(row);
 			}
 			return tableReturn;

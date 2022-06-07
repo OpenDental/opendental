@@ -69,6 +69,7 @@ namespace OpenDental {
 			this.textInsPano = new System.Windows.Forms.TextBox();
 			this.labelInsBW = new System.Windows.Forms.Label();
 			this.checkFrequency = new System.Windows.Forms.CheckBox();
+			this.labelFrequencyDetails = new System.Windows.Forms.Label();
 			this.groupBoxDiscountPlanFreqLimit.SuspendLayout();
 			this.groupBoxFrequencyLimit.SuspendLayout();
 			this.SuspendLayout();
@@ -312,7 +313,7 @@ namespace OpenDental {
 			this.labelInsDentures.Name = "labelInsDentures";
 			this.labelInsDentures.Size = new System.Drawing.Size(135, 17);
 			this.labelInsDentures.TabIndex = 247;
-			this.labelInsDentures.Text = "Dentures Codes";
+			this.labelInsDentures.Text = "Denture Codes";
 			this.labelInsDentures.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textInsPerioMaint
@@ -525,16 +526,28 @@ namespace OpenDental {
 			this.checkFrequency.UseVisualStyleBackColor = false;
 			this.checkFrequency.Click += new System.EventHandler(this.checkFrequency_Click);
 			// 
+			// labelFrequencyDetails
+			// 
+			this.labelFrequencyDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelFrequencyDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelFrequencyDetails.Location = new System.Drawing.Point(476, 9);
+			this.labelFrequencyDetails.Name = "labelFrequencyDetails";
+			this.labelFrequencyDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelFrequencyDetails.TabIndex = 364;
+			this.labelFrequencyDetails.Text = "when calculating insurance estimates";
+			this.labelFrequencyDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// UserControlTreatPlanFreqLimit
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.labelFrequencyDetails);
 			this.Controls.Add(this.groupBoxDiscountPlanFreqLimit);
 			this.Controls.Add(this.groupBoxFrequencyLimit);
 			this.Controls.Add(this.checkFrequency);
 			this.Name = "UserControlTreatPlanFreqLimit";
-			this.Size = new System.Drawing.Size(974, 641);
+			this.Size = new System.Drawing.Size(974, 624);
 			this.groupBoxDiscountPlanFreqLimit.ResumeLayout(false);
 			this.groupBoxDiscountPlanFreqLimit.PerformLayout();
 			this.groupBoxFrequencyLimit.ResumeLayout(false);
@@ -590,5 +603,6 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textInsPano;
 		private System.Windows.Forms.Label labelInsBW;
 		private System.Windows.Forms.CheckBox checkFrequency;
+		private System.Windows.Forms.Label labelFrequencyDetails;
 	}
 }
