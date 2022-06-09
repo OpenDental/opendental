@@ -171,6 +171,9 @@ namespace OpenDentBusiness {
 					listTextWidths.Add(textWidth);
 					maxLineWidth=Math.Max(maxLineWidth,textWidth+4);
 				}
+				else {
+					listTextWidths.Add(0);
+				}
 			}
 			float maxRectangleWidth=Math.Max(maxLineWidth,bounds.Width);
 			for(int i=0;i<listTextLines.Count;i++) {

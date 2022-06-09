@@ -348,7 +348,7 @@ namespace OpenDental {
 		private void Autograph_Click() {
 			using FormEmailAutographEdit formEmailAutographEdit=new FormEmailAutographEdit(new EmailAutograph(),isNew:true);
 			if(formEmailAutographEdit.ShowDialog()==DialogResult.OK) {
-				EmailAutographs.RefreshCache();
+				DataValid.SetInvalid(InvalidType.Email);
 				FillAutographDropdown();
 				InsertAutograph(formEmailAutographEdit.EmailAutographCur);
 			}

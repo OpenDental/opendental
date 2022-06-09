@@ -1103,18 +1103,13 @@ namespace OpenDental {
 			return true;
 		}
 
-		///<summary>Creates paysplits associated to the patient passed in for the current payment until the payAmt has been met.  
-		///Returns the list of new paysplits that have been created.  PaymentAmt will attempt to move toward 0 as paysplits are created.</summary>
-		private List<PaySplit> AutoSplitForPayment(DateTime date,PaymentEdit.LoadData loadData=null) {
+		///<summary>Executes auto-split logic for the current state of the window and returns the suggested payment splits.</summary>
+		private List<PaySplit> GetSuggestedAutoSplits() {
+			//Construct and link charges as if this payment window was loaded (but using the current state).
 			PaymentEdit.ConstructResults constructResults=PaymentEdit.ConstructAndLinkChargeCredits(_listPatNums,_patCur.PatNum,_listSplitsCur,_paymentCur
-				,ListEntriesPayFirst,checkPayTypeNone.Checked,_preferCurrentPat,loadData);
-			//Create Auto-splits for the current payment to any remaining non-zero charges FIFO by date.
-			//At this point we have a list of procs, positive adjustments, and payplancharges that require payment if the Amount>0.   
-			//Create and associate new paysplits to their respective charge items.
-			PaymentEdit.AutoSplit autoSplit=PaymentEdit.AutoSplitForPayment(constructResults);
-			_listAccountCharges=autoSplit.ListAccountEntries;
-			_listSplitsCur=autoSplit.ListPaySplitsForPayment;
-			return autoSplit.ListPaySplitsSuggested;
+				,ListEntriesPayFirst,checkPayTypeNone.Checked,_preferCurrentPat,_loadData);
+			//Execute auto-split logic and return the suggested splits.
+			return PaymentEdit.AutoSplitForPayment(constructResults).ListPaySplitsSuggested;
 		}
 
 		///<summary>Returns true if the user can add a new credit card.</summary>
@@ -2765,8 +2760,7 @@ namespace OpenDental {
 			}
 			if(_listSplitsCur.Count==0) {//Existing payment with no splits.
 				if(!_isCCDeclined && _rigorousAccounting!=RigorousAccounting.DontEnforce) {
-					_listSplitsCur.AddRange(AutoSplitForPayment(_paymentCur.PayDate,_loadData));
-					_paymentCur.PayAmt=PIn.Double(textAmount.Text);//AutoSplitForPayment reduces PayAmt - Set it back to what it should be.
+					_listSplitsCur=GetSuggestedAutoSplits();//PayAmt needs to be set first
 				}
 				else if(!_isCCDeclined
 					&& Payments.AllocationRequired(_paymentCur.PayAmt,_paymentCur.PatNum)

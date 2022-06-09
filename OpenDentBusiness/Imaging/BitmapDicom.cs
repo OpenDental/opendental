@@ -42,10 +42,10 @@ namespace OpenDentBusiness {
 					if(bitmapDicom.BitsAllocated==16) {//12 bits stored
 						floatDataRaw=floatDataRaw/16f;
 					}
-					if(floatDataRaw<=windowingMin) {
+					if(floatDataRaw<windowingMin) {
 						byteVal=0;//black
 					}
-					else if(floatDataRaw>=windowingMax) {
+					else if(floatDataRaw>windowingMax) {
 						byteVal=255;//white
 					}
 					else {
@@ -132,7 +132,7 @@ namespace OpenDentBusiness {
 			BitmapDicom bitmapDicom=new BitmapDicom();
 			DicomDataset dicomDataset=dicomFile.Dataset;
 			string stringPhotometricInterp=dicomDataset.GetSingleValueOrDefault(new DicomTag(0x0028,0x0004),"");
-			if(stringPhotometricInterp!="MONOCHROME2"){
+			if(stringPhotometricInterp!="MONOCHROME2" && stringPhotometricInterp!="RGB"){
 				return null;
 			}
 			bitmapDicom.BitsAllocated=dicomDataset.GetSingleValueOrDefault<ushort>(new DicomTag(0x0028,0x0100),0);
@@ -154,13 +154,22 @@ namespace OpenDentBusiness {
 			DicomDataset dicomDatasetDecoded=dicomDataset.Clone(DicomTransferSyntax.ExplicitVRLittleEndian);//uses codec to decompress
 			DicomPixelData dicomPixelDataDecoded=DicomPixelData.Create(dicomDatasetDecoded,false);
 			IPixelData iPixelData=PixelDataFactory.Create(dicomPixelDataDecoded,0);
-			if(!(iPixelData is GrayscalePixelDataU16) && !(iPixelData is GrayscalePixelDataU8)){
+			if(!(iPixelData is GrayscalePixelDataU16) && !(iPixelData is GrayscalePixelDataU8) && !(iPixelData is ColorPixelData24)) {
 				return null;//we cannot read other formats yet
 			}
 			bitmapDicom.ArrayDataRaw=new ushort[bitmapDicom.Height*bitmapDicom.Width];
 			for(int r=0;r<bitmapDicom.Height;r++){
 				for(int c=0;c<bitmapDicom.Width;c++){
-					ushort pixelVal=(ushort)iPixelData.GetPixel(c,r);
+					ushort pixelVal;
+					if(iPixelData is ColorPixelData24) {
+						Color colorCur=Color.FromArgb((int)iPixelData.GetPixel(c,r));
+						//Get the average RGB to convert to gray scale.
+						int intGrayScaleAverage=(colorCur.R+colorCur.G+colorCur.B)/3;
+						pixelVal=(ushort)intGrayScaleAverage;
+					}
+					else {
+						pixelVal=(ushort)iPixelData.GetPixel(c,r);
+					}
 					bitmapDicom.ArrayDataRaw[r*bitmapDicom.Width+c]=pixelVal;
 				}
 			}  

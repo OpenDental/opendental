@@ -2773,6 +2773,12 @@ namespace OpenDentBusiness {
 			}	
 		#endregion
 		}//End of 22_1_35() method
+
+		private static void To22_1_37() {
+			string command;
+			command="UPDATE preference SET ValueString='https://www.patientviewer.com' WHERE PrefName='PatientPortalURL' AND ValueString LIKE 'System.Linq%'";
+			Db.NonQ(command);
+		}//End of 22_1_37() method
 	}
 }
 

@@ -277,8 +277,9 @@ namespace OpenDentBusiness {
 			#endregion WebSchedASAP
 			#region PatientPortalURL
 			string patientPortalURL=PrefC.GetString(PrefName.PatientPortalURL);
-			string hostedURL=signupOut.EServices.Select(x => x.HostedUrl).ToString();
-			if(patientPortalURL.Length>29
+			string hostedURL=signupOut.EServices.FirstOrDefault(x => x.EService==eServiceCode.PatientPortal && x.ClinicNum==0)?.HostedUrl ?? "";
+			if(!string.IsNullOrEmpty(hostedURL)
+				&& patientPortalURL.Length>29
 				&& patientPortalURL.Substring(0,29).ToLower()=="https://www.patientviewer.com"
 				&& patientPortalURL.ToLower()!=hostedURL.ToLower())
 			{
