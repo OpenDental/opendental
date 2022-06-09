@@ -2369,7 +2369,7 @@ namespace OpenDentBusiness {
 
 		private static void To21_4_49() {
 			string command;
-			command="ALTER TABLE CovCat MODIFY CovOrder INT NOT NULL";
+			command="ALTER TABLE covcat MODIFY CovOrder INT NOT NULL";
 			Db.NonQ(command);
 		}//End of 21_4_49() method
 	}
