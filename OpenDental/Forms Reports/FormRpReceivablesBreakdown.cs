@@ -349,8 +349,8 @@ namespace OpenDental {
 					}
 					query.AddColumn("Adjustment",80,FieldValueType.Number);
 					query.GetColumnDetail("Adjustment").ContentAlignment=ContentAlignment.MiddleRight;
-					query.AddColumn("Writeoff",80,FieldValueType.Number);
-					query.GetColumnDetail("Writeoff").ContentAlignment=ContentAlignment.MiddleRight;
+					query.AddColumn("Write-off",80,FieldValueType.Number);
+					query.GetColumnDetail("Write-off").ContentAlignment=ContentAlignment.MiddleRight;
 					query.AddColumn("Payment",80,FieldValueType.Number);
 					query.GetColumnDetail("Payment").ContentAlignment=ContentAlignment.MiddleRight;
 					query.AddColumn("InsPayment",80,FieldValueType.Number);
@@ -361,11 +361,11 @@ namespace OpenDental {
 					query.GetColumnDetail("Ending A/R").ContentAlignment=ContentAlignment.MiddleRight;
 					query.GetColumnDetail("Ending A/R").Font=boldFont;
 					if(isPayPlan2) {
-						report.AddFooterText("Desc","Receivables Calculation: (Production - PayPlanCredits + PayPlanCharges + Adjustments - Writeoffs) "
+						report.AddFooterText("Desc","Receivables Calculation: (Production - PayPlanCredits + PayPlanCharges + Adjustments - Write-offs) "
 							+"- (Payments + Insurance Payments)",font,0,ContentAlignment.MiddleCenter);
 					}
 					else {
-						report.AddFooterText("Desc","Receivables Calculation: (Production + Adjustments - Writeoffs) - (Payments + Insurance Payments)",font,0,ContentAlignment.MiddleCenter);
+						report.AddFooterText("Desc","Receivables Calculation: (Production + Adjustments - Write-offs) - (Payments + Insurance Payments)",font,0,ContentAlignment.MiddleCenter);
 					}
 					//report.AddText("EndingAR","Final Ending A/R: "+runningRcv.ToString(),boldFont,0,ContentAlignment.MiddleLeft);
 					report.AddPageNum(font);

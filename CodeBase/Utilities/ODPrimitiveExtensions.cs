@@ -169,6 +169,14 @@ namespace CodeBase {
 			return new string(Array.FindAll(value.ToCharArray(),y => char.IsDigit(y)));
 		}
 
+		///<summary>Removes all characters from the string that are not letters or digits.</summary>
+		public static string StripSpecialChars(string value) {
+			if(string.IsNullOrEmpty(value)) {
+				return value;
+            }
+			return new string(Array.FindAll(value.ToCharArray(),y => char.IsLetterOrDigit(y)));
+        }
+
 		///<summary>Adds a new line if the string is not empty and appends the addition.</summary>
 		public static string AppendLine(string orig,string addition) {
 			if(string.IsNullOrEmpty(orig)){

@@ -81,7 +81,7 @@ namespace CentralManager {
 			this.groupBox3.Size = new System.Drawing.Size(281, 79);
 			this.groupBox3.TabIndex = 51;
 			this.groupBox3.TabStop = false;
-			this.groupBox3.Text = "Show Insurance Writeoffs";
+			this.groupBox3.Text = "Show Insurance Write-offs";
 			// 
 			// label5
 			// 

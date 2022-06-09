@@ -2780,6 +2780,12 @@ namespace OpenDentBusiness {
 			#endregion
 		}//End of 22_1_35() method
 
+		private static void To22_1_37() {
+			string command;
+			command="UPDATE preference SET ValueString='https://www.patientviewer.com' WHERE PrefName='PatientPortalURL' AND ValueString LIKE 'System.Linq%'";
+			Db.NonQ(command);
+		}//End of 22_1_37() method
+
 		private static void To22_2_1() {
 			DataTable table;
 			string upgrading = "Upgrading database to version: 22.2.0. ";
@@ -3379,6 +3385,12 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			//end PORTRAY bridge
 		}//End of 22_2_8() method
+
+		private static void To22_2_9() {
+			string command;
+			command="UPDATE preference SET ValueString='https://www.patientviewer.com' WHERE PrefName='PatientPortalURL' AND ValueString LIKE 'System.Linq%'";
+			Db.NonQ(command);
+		}//End of 22_2_9() method
 	}
 }
 

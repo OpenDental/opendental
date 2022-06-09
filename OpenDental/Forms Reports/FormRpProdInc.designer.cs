@@ -114,8 +114,7 @@ namespace OpenDental {
 			this.groupShowInsWriteoffs.Name = "groupShowInsWriteoffs";
 			this.groupShowInsWriteoffs.Size = new System.Drawing.Size(281, 139);
 			this.groupShowInsWriteoffs.TabIndex = 7;
-			this.groupShowInsWriteoffs.TabStop = false;
-			this.groupShowInsWriteoffs.Text = "Show Insurance Writeoffs";
+			this.groupShowInsWriteoffs.Text = "Show Insurance Write-offs";
 			// 
 			// radioWriteoffBoth
 			// 
@@ -192,7 +191,6 @@ namespace OpenDental {
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(281, 144);
 			this.groupBox2.TabIndex = 2;
-			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Date Range";
 			// 
 			// butRight
@@ -281,7 +279,6 @@ namespace OpenDental {
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(154, 103);
 			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Report Type";
 			// 
 			// radioProvider

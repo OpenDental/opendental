@@ -384,7 +384,7 @@ namespace OpenDental {
 			using FormEmailAutographEdit formEmailAutographEdit=new FormEmailAutographEdit(listAutographs.GetSelected<EmailAutograph>());
 			formEmailAutographEdit.ShowDialog();
 			if(formEmailAutographEdit.DialogResult==DialogResult.OK) {
-				EmailAutographs.RefreshCache();
+				DataValid.SetInvalid(InvalidType.Email);
 				FillAutographs();
 			}
 		}
@@ -395,7 +395,7 @@ namespace OpenDental {
 			formEmailAutographEdit.IsNew=true;
 			formEmailAutographEdit.ShowDialog();
 			if(formEmailAutographEdit.DialogResult==DialogResult.OK) {
-				EmailAutographs.RefreshCache();
+				DataValid.SetInvalid(InvalidType.Email);
 				FillAutographs();
 			}
 		}
@@ -426,7 +426,7 @@ namespace OpenDental {
 				return;
 			}
 			EmailAutographs.Delete(listAutographs.GetSelected<EmailAutograph>().EmailAutographNum);
-			EmailAutographs.RefreshCache();
+			DataValid.SetInvalid(InvalidType.Email);
 			FillAutographs();
 		}
 
@@ -438,7 +438,7 @@ namespace OpenDental {
 			using FormEmailAutographEdit formEmailAutographEdit=new FormEmailAutographEdit(listAutographs.GetSelected<EmailAutograph>());
 			formEmailAutographEdit.ShowDialog();
 			if(formEmailAutographEdit.DialogResult==DialogResult.OK) {
-				EmailAutographs.RefreshCache();
+				DataValid.SetInvalid(InvalidType.Email);
 				FillAutographs();
 			}
 		}

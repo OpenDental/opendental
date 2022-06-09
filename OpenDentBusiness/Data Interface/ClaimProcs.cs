@@ -42,7 +42,7 @@ namespace OpenDentBusiness{
 			return Math.Round(patPort,2);
 		}
 
-		///<summary>Returns the sum of what insurance paid, including write offs, based off of each claimproc status. Optionally ignore estimates.</summary>
+		///<summary>Returns the sum of what insurance paid, including write-offs, based off of each claimproc status. Optionally ignore estimates.</summary>
 		public static decimal GetInsPay(List<ClaimProc> listClaimProcs,bool includeEstimates=true) {
 			//No need to check MiddleTierRole; no call to db.
 			decimal insPay=0;

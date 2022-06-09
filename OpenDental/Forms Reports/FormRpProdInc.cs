@@ -502,11 +502,11 @@ namespace OpenDental {
 			query.AddColumn("Production",prodWidth,FieldValueType.Number,font);
 			query.AddColumn("Adjust",adjustWidth,FieldValueType.Number,font);
 			if(radioWriteoffBoth.Checked) {
-				query.AddColumn("Writeoff Est",writeoffEstWidth,FieldValueType.Number,font);
-				query.AddColumn("Writeoff Adj",writeoffAdjWidth,FieldValueType.Number,font);
+				query.AddColumn("Write-off Est",writeoffEstWidth,FieldValueType.Number,font);
+				query.AddColumn("Write-off Adj",writeoffAdjWidth,FieldValueType.Number,font);
 			}
 			else {
-				query.AddColumn("Writeoff",writeoffWidth,FieldValueType.Number,font);
+				query.AddColumn("Write-off",writeoffWidth,FieldValueType.Number,font);
 			}
 			query.AddColumn("Pt Income",ptIncWidth,FieldValueType.Number,font);
 			query.AddColumn("Ins Income",insIncWidth,FieldValueType.Number,font);
@@ -519,11 +519,11 @@ namespace OpenDental {
 				query.AddColumn("Production",75,FieldValueType.Number,font);
 				query.AddColumn("Adjust",75,FieldValueType.Number,font);
 				if(radioWriteoffBoth.Checked) {
-					query.AddColumn("Writeoff Est",writeoffEstWidth,FieldValueType.Number,font);
-					query.AddColumn("Writeoff Adj",writeoffAdjWidth,FieldValueType.Number,font);
+					query.AddColumn("Write-off Est",writeoffEstWidth,FieldValueType.Number,font);
+					query.AddColumn("Write-off Adj",writeoffAdjWidth,FieldValueType.Number,font);
 				}
 				else {
-					query.AddColumn("Writeoff",75,FieldValueType.Number,font);
+					query.AddColumn("Write-off",75,FieldValueType.Number,font);
 				}
 				query.AddColumn("Pt Income",75,FieldValueType.Number,font);
 				query.AddColumn("Ins Income",75,FieldValueType.Number,font);
@@ -554,10 +554,10 @@ namespace OpenDental {
 				tableTotals.Columns.Add("Summary");
 				string prodLabel;
 				if(radioWriteoffBoth.Checked) {
-					prodLabel="Total Production (Production + Adjustments - Writeoff Ests - WriteOff Adjs)";
+					prodLabel="Total Production (Production + Adjustments - Write-off Ests - WriteOff Adjs)";
 				}
 				else {
-					prodLabel="Total Production (Production + Adjustments - Writeoffs)";
+					prodLabel="Total Production (Production + Adjustments - Write-offs)";
 				}
 				tableTotals.Rows.Add(Lan.g(this,prodLabel)+" "+totalProduction.ToString("c"));
 				tableTotals.Rows.Add(Lan.g(this,"Total Income (Pt Income + Ins Income):")+" "+totalIncome.ToString("c"));
@@ -754,11 +754,11 @@ namespace OpenDental {
 			query.AddColumn("Sched",schedwidth,FieldValueType.Number,font);
 			query.AddColumn("Adj",adjwidth,FieldValueType.Number,font);
 			if(radioWriteoffBoth.Checked) {
-				query.AddColumn("Writeoff Est",writeoffestwidth,FieldValueType.Number,font);
-				query.AddColumn("Writeoff Adj",writeoffadjwidth,FieldValueType.Number,font);
+				query.AddColumn("Write-off Est",writeoffestwidth,FieldValueType.Number,font);
+				query.AddColumn("Write-off Adj",writeoffadjwidth,FieldValueType.Number,font);
 			}
 			else {
-				query.AddColumn("Writeoff",writeoffwidth,FieldValueType.Number,font);
+				query.AddColumn("Write-off",writeoffwidth,FieldValueType.Number,font);
 			}
 			query.AddColumn("Tot Prod",totprodwidth,FieldValueType.Number,font);
 			query.AddColumn("Pt Income",ptincomewidth,FieldValueType.Number,font);
@@ -776,11 +776,11 @@ namespace OpenDental {
 				query.AddColumn("Sched",schedwidth,FieldValueType.Number,font);
 				query.AddColumn("Adj",adjwidth,FieldValueType.Number,font);
 				if(radioWriteoffBoth.Checked) {
-					query.AddColumn("Writeoff Est",writeoffestwidth,FieldValueType.Number,font);
-					query.AddColumn("Writeoff Adj",writeoffadjwidth,FieldValueType.Number,font);
+					query.AddColumn("Write-off Est",writeoffestwidth,FieldValueType.Number,font);
+					query.AddColumn("Write-off Adj",writeoffadjwidth,FieldValueType.Number,font);
 				}
 				else {
-					query.AddColumn("Writeoff",writeoffwidth,FieldValueType.Number,font);
+					query.AddColumn("Write-off",writeoffwidth,FieldValueType.Number,font);
 				}
 				query.AddColumn("Tot Prod",totprodwidth,FieldValueType.Number,font);
 				query.AddColumn("Pt Income",ptincomewidth,FieldValueType.Number,font);
@@ -790,13 +790,13 @@ namespace OpenDental {
 				query.AddColumn("Ins Income",insincomewidth,FieldValueType.Number,font);
 				query.AddColumn("Tot Income",totincomewidth,FieldValueType.Number,font);
 				//Column used to align the summary fields.
-				string columnNameAlign =radioWriteoffBoth.Checked ? "Tot Prod": "Writeoff";
+				string columnNameAlign =radioWriteoffBoth.Checked ? "Tot Prod": "Write-off";
 				if(radioWriteoffBoth.Checked) {
-					query.AddGroupSummaryField("Total Production (Production + Scheduled + Adjustments - Writeoff Ests - Writeoff Adjs): ",
+					query.AddGroupSummaryField("Total Production (Production + Scheduled + Adjustments - Write-off Ests - Write-off Adjs): ",
 						columnNameAlign,"Tot Prod",SummaryOperation.Sum,new List<int>() { 2 },Color.Black,new Font("Tahoma",9,FontStyle.Bold),75,summaryOffSetY);
 				}
 				else {
-					query.AddGroupSummaryField("Total Production (Production + Scheduled + Adjustments - Writeoffs): ",columnNameAlign,
+					query.AddGroupSummaryField("Total Production (Production + Scheduled + Adjustments - Write-offs): ",columnNameAlign,
 						"Tot Prod",SummaryOperation.Sum,new List<int>() { 2 },Color.Black,new Font("Tahoma",9,FontStyle.Bold),75,summaryOffSetY);
 				}
 				if(checkUnearned.Checked) {//if unearned check, add summaries.
@@ -807,13 +807,13 @@ namespace OpenDental {
 					new List<int>() { 2 },Color.Black,new Font("Tahoma",9,FontStyle.Bold),75,summaryIncomeOffSetY);
 			}
 			else {
-				string columnNameAlign=radioWriteoffBoth.Checked ? "Tot Prod" : "Writeoff";//column used to align the summary fields
+				string columnNameAlign=radioWriteoffBoth.Checked ? "Tot Prod" : "Write-off";//column used to align the summary fields
 				if(radioWriteoffBoth.Checked) {
-					query.AddGroupSummaryField("Total Production (Production + Scheduled + Adjustments - Writeoff Ests - Writeoff Adjs): ",
+					query.AddGroupSummaryField("Total Production (Production + Scheduled + Adjustments - Write-off Ests - Write-off Adjs): ",
 						columnNameAlign,"Tot Prod",SummaryOperation.Sum,new List<int>() { 1 },Color.Black,new Font("Tahoma",9,FontStyle.Bold),75,summaryOffSetY);
 				}
 				else {
-					query.AddGroupSummaryField("Total Production (Production + Scheduled + Adjustments - Writeoffs): ",columnNameAlign,
+					query.AddGroupSummaryField("Total Production (Production + Scheduled + Adjustments - Write-offs): ",columnNameAlign,
 						"Tot Prod",SummaryOperation.Sum,new List<int>() { 1 },Color.Black,new Font("Tahoma",9,FontStyle.Bold),75,summaryOffSetY);
 				}
 				if(checkUnearned.Checked) {//if unearned check, add summaries.
@@ -942,11 +942,11 @@ namespace OpenDental {
 			query.AddColumn("Production",productionwidth,FieldValueType.Number);
 			query.AddColumn("Adjustments",adjwidth,FieldValueType.Number);
 			if(radioWriteoffBoth.Checked) {
-				query.AddColumn("Writeoff Est",writeoffestwidth,FieldValueType.Number);
-				query.AddColumn("Writeoff Adj",writeoffadjwidth,FieldValueType.Number);
+				query.AddColumn("Write-off Est",writeoffestwidth,FieldValueType.Number);
+				query.AddColumn("Write-off Adj",writeoffadjwidth,FieldValueType.Number);
 			}
 			else {
-				query.AddColumn("Writeoff",writeoffwidth,FieldValueType.Number);
+				query.AddColumn("Write-off",writeoffwidth,FieldValueType.Number);
 			}
 			query.AddColumn("Tot Prod",totprodwidth,FieldValueType.Number);
 			query.AddColumn("Pt Income",ptincomewidth,FieldValueType.Number);
@@ -962,11 +962,11 @@ namespace OpenDental {
 				query.AddColumn("Production",productionwidth,FieldValueType.Number);
 				query.AddColumn("Adjustments",adjwidth,FieldValueType.Number);
 				if(radioWriteoffBoth.Checked) {
-					query.AddColumn("Writeoff Est",writeoffestwidth,FieldValueType.Number);
-					query.AddColumn("Writeoff Adj",writeoffadjwidth,FieldValueType.Number);
+					query.AddColumn("Write-off Est",writeoffestwidth,FieldValueType.Number);
+					query.AddColumn("Write-off Adj",writeoffadjwidth,FieldValueType.Number);
 				}				
 				else {
-					query.AddColumn("Writeoff",writeoffwidth,FieldValueType.Number);
+					query.AddColumn("Write-off",writeoffwidth,FieldValueType.Number);
 				}
 				query.AddColumn("Tot Prod",totprodwidth,FieldValueType.Number);
 				query.AddColumn("Pt Income",ptincomewidth,FieldValueType.Number);
@@ -976,11 +976,11 @@ namespace OpenDental {
 				query.AddColumn("Ins Income",insincomewidth,FieldValueType.Number);
 				query.AddColumn("Total Income",totincomewidth,FieldValueType.Number);
 				if(radioWriteoffBoth.Checked) {
-					query.AddGroupSummaryField("Total Production (Production + Adjustments - Writeoff Ests - Writeoff Adjs): ",
+					query.AddGroupSummaryField("Total Production (Production + Adjustments - Write-off Ests - Write-off Adjs): ",
 						"Tot Prod","Tot Prod",SummaryOperation.Sum,new List<int>() { 2 },Color.Black,new Font("Tahoma",9,FontStyle.Bold),75,summaryOffSetY);
 				}
 				else {
-					query.AddGroupSummaryField("Total Production (Production + Adjustments - Writeoffs): ","Tot Prod",
+					query.AddGroupSummaryField("Total Production (Production + Adjustments - Write-offs): ","Tot Prod",
 						"Tot Prod",SummaryOperation.Sum,new List<int>() { 2 },Color.Black,new Font("Tahoma",9,FontStyle.Bold),75,summaryOffSetY);
 				}
 				if(checkUnearned.Checked) {//if unearned check, add summaries.
@@ -992,11 +992,11 @@ namespace OpenDental {
 			}
 			else {
 				if(radioWriteoffBoth.Checked) {
-					query.AddGroupSummaryField("Total Production (Production + Adjustments - Writeoff Ests - Writeoff Adjs): ",
+					query.AddGroupSummaryField("Total Production (Production + Adjustments - Write-off Ests - Write-off Adjs): ",
 						"Tot Prod","Tot Prod",SummaryOperation.Sum,new List<int>() { 1 },Color.Black,new Font("Tahoma",9,FontStyle.Bold),75,summaryOffSetY);
 				}
 				else {
-					query.AddGroupSummaryField("Total Production (Production + Adjustments - Writeoffs): ","Tot Prod",
+					query.AddGroupSummaryField("Total Production (Production + Adjustments - Write-offs): ","Tot Prod",
 						"Tot Prod",SummaryOperation.Sum,new List<int>() { 1 },Color.Black,new Font("Tahoma",9,FontStyle.Bold),75,summaryOffSetY);
 				}
 				if(checkUnearned.Checked) {//if unearned check, add summaries.
@@ -1116,11 +1116,11 @@ namespace OpenDental {
 			query.AddColumn("Production",productionwidth,FieldValueType.Number);
 			query.AddColumn("Adjustments",adjwidth,FieldValueType.Number);
 			if(radioWriteoffBoth.Checked) {
-				query.AddColumn("Writeoff Est",writeoffestwidth,FieldValueType.Number);
-				query.AddColumn("Writeoff Adj",writeoffadjwidth,FieldValueType.Number);
+				query.AddColumn("Write-off Est",writeoffestwidth,FieldValueType.Number);
+				query.AddColumn("Write-off Adj",writeoffadjwidth,FieldValueType.Number);
 			}
 			else {
-				query.AddColumn("Writeoff",writeoffwidth,FieldValueType.Number);
+				query.AddColumn("Write-off",writeoffwidth,FieldValueType.Number);
 			}
 			query.AddColumn("Tot Prod",totprodwidth,FieldValueType.Number);
 			query.AddColumn("Pt Income",ptincomewidth,FieldValueType.Number);
@@ -1136,11 +1136,11 @@ namespace OpenDental {
 				query.AddColumn("Production",productionwidth,FieldValueType.Number);
 				query.AddColumn("Adjustments",adjwidth,FieldValueType.Number);
 				if(radioWriteoffBoth.Checked) {
-					query.AddColumn("Writeoff Est",writeoffestwidth,FieldValueType.Number);
-					query.AddColumn("Writeoff Adj",writeoffadjwidth,FieldValueType.Number);
+					query.AddColumn("Write-off Est",writeoffestwidth,FieldValueType.Number);
+					query.AddColumn("Write-off Adj",writeoffadjwidth,FieldValueType.Number);
 				}
 				else {
-					query.AddColumn("Writeoff",writeoffwidth,FieldValueType.Number);
+					query.AddColumn("Write-off",writeoffwidth,FieldValueType.Number);
 				}
 				query.AddColumn("Tot Prod",totprodwidth,FieldValueType.Number);
 				query.AddColumn("Pt Income",ptincomewidth,FieldValueType.Number);

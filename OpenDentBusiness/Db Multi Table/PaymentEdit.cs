@@ -1589,9 +1589,7 @@ namespace OpenDentBusiness {
 						continue;//we do not implicitly link to TP procedures
 					}
 					double amt=Math.Min((double)accountEntry.AmountEnd,split.SplitAmt);
-					PaySplit splitCopy=split.Copy();
-					splitCopy.SplitAmt=amt;
-					accountEntry.SplitCollection.Add(splitCopy);
+					//Manipulate the amounts but do not officially link this split to the accountEntry (via SplitCollection) since it is not explicitly linked.
 					accountEntry.AmountEnd-=(decimal)amt;
 					split.SplitAmt-=amt;
 				}
@@ -1631,9 +1629,7 @@ namespace OpenDentBusiness {
 						continue;//we do not implicitly link to TP procedures
 					}
 					double amt=Math.Min((double)accountEntry.AmountEnd,split.SplitAmt);
-					PaySplit splitCopy=split.Copy();
-					splitCopy.SplitAmt=amt;
-					accountEntry.SplitCollection.Add(splitCopy);
+					//Manipulate the amounts but do not officially link this split to the accountEntry (via SplitCollection) since it is not explicitly linked.
 					accountEntry.AmountEnd-=(decimal)amt;
 					split.SplitAmt-=amt;
 				}
@@ -1658,9 +1654,7 @@ namespace OpenDentBusiness {
 						continue;
 					}
 					double amt=Math.Max((double)accountEntryNeg.AmountEnd,splitNeg.SplitAmt);
-					PaySplit splitNegCopy=splitNeg.Copy();
-					splitNegCopy.SplitAmt=amt;
-					accountEntryNeg.SplitCollection.Add(splitNegCopy);
+					//Manipulate the amounts but do not officially link this split to the accountEntry (via SplitCollection) since it is not explicitly linked.
 					accountEntryNeg.AmountEnd-=(decimal)amt;
 					splitNeg.SplitAmt-=amt;
 				}
@@ -3811,7 +3805,7 @@ namespace OpenDentBusiness {
 			public List<Adjustment> ListAdjustments=new List<Adjustment>();
 			///<summary>Current list of all splits from database</summary>
 			public List<PaySplit> ListPaySplits=new List<PaySplit>();
-			///<summary>Stores the summed outstanding ins pay as totals (amounts and write offs) for the list of patnums</summary>
+			///<summary>Stores the summed outstanding ins pay as totals (amounts and write-offs) for the list of patnums</summary>
 			public List<PayAsTotal> ListInsPayAsTotal=new List<PayAsTotal>();
 			public List<PayPlan> ListPayPlans=new List<PayPlan>();
 			public List<PaySplit> ListPayPlanSplits=new List<PaySplit>();
@@ -4092,9 +4086,9 @@ namespace OpenDentBusiness {
 			public double InsPayAmt => ListClaimProcs.Sum(x => x.InsPayAmt);
 			///<summary>The sum of InsPayEst for all claimprocs in this grouping.</summary>
 			public double InsPayEst => ListClaimProcs.Sum(x => x.InsPayEst);
-			///<summary>The sum of WriteOff for all claimprocs in this grouping.</summary>
+			///<summary>The sum of write-off for all claimprocs in this grouping.</summary>
 			public double WriteOff => ListClaimProcs.Sum(x => x.WriteOff);
-			///<summary>The sum of write off estimate for all claimprocs in this grouping.</summary>
+			///<summary>The sum of write-off estimate for all claimprocs in this grouping.</summary>
 			public double WriteOffEstimate => ListClaimProcs.Sum(x => ClaimProcs.GetWriteOffEstimate(x));
 
 			public ClaimProcGroup(List<ClaimProc> listClaimProcs,Procedure procedure) {

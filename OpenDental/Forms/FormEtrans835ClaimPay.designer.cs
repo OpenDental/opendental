@@ -247,7 +247,7 @@ namespace OpenDental {
 			this.butWriteOff.Name = "butWriteOff";
 			this.butWriteOff.Size = new System.Drawing.Size(90, 25);
 			this.butWriteOff.TabIndex = 121;
-			this.butWriteOff.Text = "&Write Off";
+			this.butWriteOff.Text = "&Write-off";
 			this.butWriteOff.Click += new System.EventHandler(this.butWriteOff_Click);
 			// 
 			// butDeductible
@@ -299,7 +299,7 @@ namespace OpenDental {
 			this.checkIncludeWOPercCoPay.Name = "checkIncludeWOPercCoPay";
 			this.checkIncludeWOPercCoPay.Size = new System.Drawing.Size(570, 19);
 			this.checkIncludeWOPercCoPay.TabIndex = 210;
-			this.checkIncludeWOPercCoPay.Text = "Include WriteOffs for Category Percentage and Medicaid/Flat CoPay plans";
+			this.checkIncludeWOPercCoPay.Text = "Include Write-offs for Category Percentage and Medicaid/Flat CoPay plans";
 			this.checkIncludeWOPercCoPay.UseVisualStyleBackColor = true;
 			this.checkIncludeWOPercCoPay.CheckedChanged += new System.EventHandler(this.checkIncludeWOPercCoPay_CheckedChanged);
 			// 

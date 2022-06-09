@@ -53,16 +53,6 @@ namespace OpenDental {
 					listboxComboOptions.Items.Add(option);
 				}
 			}
-			//Public Health is Hidden or no Snomed Codes downloaded
-			if(PrefC.GetBool(PrefName.EasyHidePublicHealth) || Snomeds.GetCodeCount()==0) {
-				for(int i=listComboType.Items.Count-1;i>=0;i--) {
-					if(listComboType.Items.GetListBoxItemAt(i).Text.In("Gender Identity","Sexual Orientation")) {
-						listComboType.Items.RemoveAt(i);
-					}
-				}
-			}
-			listComboType.SelectedIndex=0;
-			butAdd.Enabled=IsAddButtonEnabledForIndex();
 		}
 
 		private void textOption_KeyDown(object sender,KeyEventArgs e) {
@@ -75,6 +65,12 @@ namespace OpenDental {
 
 		private void listComboType_SelectionChangeCommitted(object sender,EventArgs e) {
 			listboxComboOptions.Items.Clear();
+			if(listComboType.SelectedItem.ToString().In("Gender Identity","Sexual Orientation")) {
+				if(!IsPublicHealthAvailable()) {
+					listComboType.ClearSelected();
+					return;
+				}
+			}
 			if(listComboType.SelectedItem.ToString()=="General") {//General
 				listboxComboOptions.Enabled=true;
 				butRemove.Enabled=true;
@@ -110,6 +106,18 @@ namespace OpenDental {
 				//Disable Add button if Gender Identity or Sexual Orientation is selected, otherwise enable.
 				butAdd.Enabled=IsAddButtonEnabledForIndex();
 			}
+		}
+
+		private bool IsPublicHealthAvailable() {
+			if(PrefC.GetBool(PrefName.EasyHidePublicHealth)) {
+				MsgBox.Show(Lan.g(this,$"Public Health is required to use {listComboType.SelectedItem.ToString()}. Turn on Public Health in the Show Features window"));
+				return false;
+			}
+			else if(Snomeds.GetCodeCount()==0) {
+				MsgBox.Show(Lan.g(this,$"SNOMEDCT codes must be downloaded to use {listComboType.SelectedItem.ToString()}. SNOMEDCT codes can be imported from the Code Systems Importer window"));
+				return false;
+			}
+			return true;
 		}
 
 		private bool IsAddButtonEnabledForIndex() {
@@ -172,7 +180,10 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
 			}
-			SheetFieldDefCur.FieldName=listComboType.SelectedItem.ToString();
+			SheetFieldDefCur.FieldName="";
+			if(listComboType.SelectedIndex!=-1) {
+				SheetFieldDefCur.FieldName=listComboType.SelectedItem.ToString();
+			}
 			SheetFieldDefCur.XPos=PIn.Int(textXPos.Text);
 			SheetFieldDefCur.YPos=PIn.Int(textYPos.Text);
 			SheetFieldDefCur.Width=PIn.Int(textWidth.Text);

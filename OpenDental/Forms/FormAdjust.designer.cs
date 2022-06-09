@@ -302,7 +302,6 @@
 			this.groupProcedure.Name = "groupProcedure";
 			this.groupProcedure.Size = new System.Drawing.Size(615, 192);
 			this.groupProcedure.TabIndex = 166;
-			this.groupProcedure.TabStop = false;
 			this.groupProcedure.Text = "Procedure";
 			// 
 			// labelProcDisabled
@@ -352,7 +351,7 @@
 			this.label16.Name = "label16";
 			this.label16.Size = new System.Drawing.Size(104, 16);
 			this.label16.TabIndex = 49;
-			this.label16.Text = "Writeoffs";
+			this.label16.Text = "Write-offs";
 			this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textProcTooth

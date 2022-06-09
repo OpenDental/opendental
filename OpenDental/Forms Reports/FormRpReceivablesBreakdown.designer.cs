@@ -118,8 +118,7 @@ namespace OpenDental {
 			this.groupInsBox.Name = "groupInsBox";
 			this.groupInsBox.Size = new System.Drawing.Size(270, 66);
 			this.groupInsBox.TabIndex = 33;
-			this.groupInsBox.TabStop = false;
-			this.groupInsBox.Text = "Show Insurance Writeoffs";
+			this.groupInsBox.Text = "Show Insurance Write-offs";
 			// 
 			// radioWriteoffProc
 			// 

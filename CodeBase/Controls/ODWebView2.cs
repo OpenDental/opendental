@@ -31,8 +31,8 @@ namespace CodeBase.Controls {
 				doShowError=true;
 			}
 			if(doShowError) {
-				string warning ="Microsoft WebView2 is not available on this device." +
-					"To use this feature, the MicroSoft WebView2 Runtime needs to be downloaded and installed on this machine.\r\n" +
+				string warning ="Microsoft WebView2 is not available on this device. " +
+					"To use this feature, the Microsoft WebView2 Runtime needs to be downloaded and installed on this machine.\r\n" +
 					"Would you like to download the WebView2 Runtime now?";
 				if(ODBuild.IsDebug()) {
 					warning+="\r\nIf you are in debug, move the \"WebView2Loader.dll\" from \"RequiredDLLs\" to \"OpenDental\\Bin\\Debug\"";

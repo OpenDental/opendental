@@ -1820,11 +1820,24 @@ namespace OpenDental {
 				MsgBox.Show("Please select a patient first.");
 				return;
 			}
-			if(!IsWebPaymentsEnabled() 
-				&& !PrefC.HasOnlinePaymentEnabled(out ProgramName progName) 
-				&& !MobileAppDevices.IsClinicSignedUpForEClipboard(Clinics.ClinicNum)) 
-			{
-				MsgBox.Show("Please enable payments for eClipboard to use this feature.");
+			if(!MobileAppDevices.IsClinicSignedUpForEClipboard(Clinics.ClinicNum)) {
+				if(PrefC.HasClinicsEnabled) {
+					MsgBox.Show(this,"Please enable eClipboard for the current clinic to use this feature.");
+				}
+				else {
+					MsgBox.Show(this,"Please enable eClipboard to use this feature.");
+				}
+				return;
+			}
+			string error="";
+			if(!PrefC.HasOnlinePaymentEnabled(out ProgramName progName)) {
+				error+="Please enable online payments.\n";
+			}
+			if(!IsWebPaymentsEnabled()) {
+				error+="Please enable payments for eClipboard to use this feature.\n";
+			}
+			if(!error.IsNullOrEmpty()) {
+				MsgBox.Show(error);
 				return;
 			}
 			List<MobileAppDevice> listMobileAppDevices=MobileAppDevices.GetAll();

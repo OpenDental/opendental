@@ -856,7 +856,6 @@ namespace OpenDental {
 					}
 					if(_listTasks[i].TaskStatus==TaskStatusEnum.New) {
 						Tasks.Delete(_listTasks[i].TaskNum);
-						SecurityLogs.MakeLogEntry(Permissions.TaskDelete,0,"Task "+POut.Long(_listTasks[i].TaskNum)+" deleted",0);
 						changeMade=true;
 					}
 				}
@@ -933,6 +932,7 @@ namespace OpenDental {
 			}//End of dated trunk automation--------------------------------------------------------------------------
 			#endregion dated trunk automation
 			//bool isTaskSelectedVisible=gridMain.IsTagVisible(_clickedTask);
+			bool isHqAndTriageList=PrefC.GetBool(PrefName.DockPhonePanelShow) && parent==_TriageListNum;//True if HQ and looking at 'Triage' task list
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn col=new GridColumn("",17);
@@ -964,12 +964,12 @@ namespace OpenDental {
 					gridMain.Columns.Add(col);
 				}
 			}
-			col=new GridColumn(Lan.g("TableTasks","Att"),30,HorizontalAlignment.Center);//Attachment(s)
-			gridMain.Columns.Add(col);
-			if(PrefC.GetBool(PrefName.DockPhonePanelShow) && parent==_TriageListNum){//HQ and triage list only
-				col=new GridColumn(Lan.g("TableTasks","Category"),120,HorizontalAlignment.Center);//Category
+			if(!isHqAndTriageList) {//Everything that is not HQ's triage task list will have the attachments column
+				col=new GridColumn(Lan.g("TableTasks","Att"),30,HorizontalAlignment.Center);//Attachment(s)
 				gridMain.Columns.Add(col);
-				col=new GridColumn(Lan.g("TableTasks","Priority"),60,HorizontalAlignment.Center);//Priority
+			}
+			if(isHqAndTriageList){//HQ and triage list only
+				col=new GridColumn(Lan.g("TableTasks","Category"),70,HorizontalAlignment.Center);//Category
 				gridMain.Columns.Add(col);
 			}
 			col=new GridColumn(Lan.g("TableTasks","Description"),80);//any width
@@ -984,7 +984,6 @@ namespace OpenDental {
  			string jobNumString="";
 			string attStr="";
 			string categoryStr="";
-			string priorityStr="";
 			int imageindex;
 			List<Def> listTaskCategories=Defs.GetDefsForCategory(DefCat.TaskCategories);
 			List<Def> listTaskPriorities=Defs.GetDefsForCategory(DefCat.TaskPriorities);
@@ -1022,10 +1021,11 @@ namespace OpenDental {
 						row.Cells.Add("");//Job
 					}
 				}
-				row.Cells.Add("");//Att
-				if(PrefC.GetBool(PrefName.DockPhonePanelShow) && parent==_TriageListNum){//HQ and triage list only
+				if(!isHqAndTriageList) {//Everything that is not HQ's triage task list will have the attachments column
+					row.Cells.Add("");//Att
+				}
+				if(isHqAndTriageList){//HQ and triage list only
 					row.Cells.Add("");//Category
-					row.Cells.Add("");//Priority
 				}
 				row.Cells.Add(dateStr+objDesc+tasklistdescript);
 				row.Tag=_listTaskLists[i];
@@ -1040,7 +1040,6 @@ namespace OpenDental {
 				string stateString="";
 				attStr="";
 				categoryStr="";
-				priorityStr="";
 				Color taskCategoryColor=Defs.GetColor(DefCat.TaskCategories,_listTasks[i].TriageCategory,listTaskCategories);
 				Color taskPriorityColor=Defs.GetColor(DefCat.TaskPriorities,_listTasks[i].PriorityDefNum,listTaskPriorities);
 				if(PrefC.GetBool(PrefName.DockPhonePanelShow)) {//HQ
@@ -1056,9 +1055,8 @@ namespace OpenDental {
 				if(_listTaskAttachments.Any(x => x.TaskNum==_listTasks[i].TaskNum)) {
 					attStr="X";//Has attachments
 				}
-				if(PrefC.GetBool(PrefName.DockPhonePanelShow) && parent==_TriageListNum){//HQ and triage list only
+				if(isHqAndTriageList){//HQ and triage list only
 					categoryStr=Defs.GetName(DefCat.TaskCategories,_listTasks[i].TriageCategory,listTaskCategories);
-					priorityStr=Defs.GetName(DefCat.TaskPriorities,_listTasks[i].PriorityDefNum,listTaskPriorities);
 				}
 				if(tabContr.SelectedTab==tabUser || tabContr.SelectedTab==tabNew
 					|| tabContr.SelectedTab==tabOpenTickets || tabContr.SelectedTab==tabMain 
@@ -1163,14 +1161,17 @@ namespace OpenDental {
 							row.Cells.Add(jobNumString);//Job
 						}
 					}
-					row.Cells.Add(attStr);//Att
-					if(PrefC.GetBool(PrefName.DockPhonePanelShow) && parent==_TriageListNum){//HQ and triage list only
+					if(!isHqAndTriageList) {//Everything that is not HQ's triage task list will have the attachments column
+						row.Cells.Add(attStr);//Att
+					}
+					if(isHqAndTriageList){//HQ and triage list only
 						row.Cells.Add(categoryStr);//Category
 						row.Cells.Last().ColorBackG=taskCategoryColor;
-						row.Cells.Add(priorityStr);//Priority
-						row.Cells.Last().ColorBackG=taskPriorityColor;
 					}
 					row.Cells.Add(dateStr+objDesc+_listTasks[i].DescriptOverride);
+					if(isHqAndTriageList) {//HQ and triage list only
+						row.Cells.Last().ColorBackG=taskPriorityColor;
+					}
 				}
 				else if(_listExpandedTaskNums.Contains(_listTasks[i].TaskNum)) {//Expanded
 					if(_listTasks[i].Descript.Length>250 || listNotesForTask.Count>1 || (listNotesForTask.Count==1 && notes.Length>250)) {
@@ -1185,14 +1186,17 @@ namespace OpenDental {
 							row.Cells.Add(jobNumString);//Job
 						}
 					}
-					row.Cells.Add(attStr);//Att
-					if(PrefC.GetBool(PrefName.DockPhonePanelShow) && parent==_TriageListNum){//HQ and triage list only
+					if(!isHqAndTriageList) {//Everything that is not HQ's triage task list will have the attachments column
+						row.Cells.Add(attStr);//Att
+					}
+					if(isHqAndTriageList){//HQ and triage list only
 						row.Cells.Add(categoryStr);//Category
 						row.Cells.Last().ColorBackG=taskCategoryColor;
-						row.Cells.Add(priorityStr);//Priority
-						row.Cells.Last().ColorBackG=taskPriorityColor;
 					}
 					row.Cells.Add(dateStr+objDesc+_listTasks[i].Descript+notes);
+					if(isHqAndTriageList) {//HQ and triage list only
+						row.Cells.Last().ColorBackG=taskPriorityColor;
+					}
 				}
 				else {//not expanded
 					//Conditions for giving collapse option: Descript is long, there is more than one note, or there is one note and it's long.
@@ -1204,12 +1208,12 @@ namespace OpenDental {
 								row.Cells.Add(jobNumString);//Job
 							}
 						}
-						row.Cells.Add(attStr);//Att
-						if(PrefC.GetBool(PrefName.DockPhonePanelShow) && parent==_TriageListNum){//HQ and triage list only
+						if(!isHqAndTriageList) {//Everything that is not HQ's triage task list will have the attachments column
+							row.Cells.Add(attStr);//Att
+						}
+						if(isHqAndTriageList){//HQ and triage list only
 							row.Cells.Add(categoryStr);//Category
 							row.Cells.Last().ColorBackG=taskCategoryColor;
-							row.Cells.Add(priorityStr);//Priority
-							row.Cells.Last().ColorBackG=taskPriorityColor;
 						}
 						string rowString=dateStr+objDesc;
 						if(_listTasks[i].Descript.Length>250) {
@@ -1234,17 +1238,20 @@ namespace OpenDental {
 								row.Cells.Add(jobNumString);//Job
 							}
 						}
-						row.Cells.Add(attStr);//Att
-						if(PrefC.GetBool(PrefName.DockPhonePanelShow) && parent==_TriageListNum){//HQ and triage list only
+						if(!isHqAndTriageList) {//Everything that is not HQ's triage task list will have the attachments column
+							row.Cells.Add(attStr);//Att
+						}
+						if(isHqAndTriageList){//HQ and triage list only
 							row.Cells.Add(categoryStr);//Category
 							row.Cells.Last().ColorBackG=taskCategoryColor;
-							row.Cells.Add(priorityStr);//Priority
-							row.Cells.Last().ColorBackG=taskPriorityColor;
 						}
 						row.Cells.Add(dateStr+objDesc+_listTasks[i].Descript+notes);
+						if(isHqAndTriageList) {//HQ and triage list only
+							row.Cells.Last().ColorBackG=taskPriorityColor;
+						}
 					}
 				}
-				if(!PrefC.GetBool(PrefName.DockPhonePanelShow) || parent!=_TriageListNum){//HQ's triage list should not have color coded row as that task list is treated differently
+				if(!isHqAndTriageList){//HQ's triage list should not have color coded row as that task list is treated differently
 					row.ColorBackG=Defs.GetColor(DefCat.TaskPriorities,_listTasks[i].PriorityDefNum);//No need to do any text detection for triage priorities, we'll just use the task priority colors.
 				}
 				row.Tag=_listTasks[i];
@@ -2447,7 +2454,6 @@ namespace OpenDental {
 			}
 			for(int i=0;i<childTasks.Count;i++) {
 				Tasks.Delete(childTasks[i].TaskNum);
-				SecurityLogs.MakeLogEntry(Permissions.TaskDelete,0,"Task "+POut.Long(childTasks[i].TaskNum)+" deleted",0);
 			}
 			try {
 				TaskLists.Delete(list);

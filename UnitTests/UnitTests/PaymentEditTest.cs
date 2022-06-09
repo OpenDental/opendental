@@ -8330,7 +8330,7 @@ namespace UnitTests.PaymentEdit_Tests {
 			Assert.AreEqual(1,results.ListAccountEntries.Count);
 			Assert.AreEqual(1,results.ListAccountEntries.Count(x => x.GetType()==typeof(Procedure)
 				&& x.AdjNum==0
-				&& x.AmountAvailable==0
+				&& x.AmountAvailable==50
 				&& x.AmountOriginal==50
 				&& x.AmountEnd==0
 				&& x.ProvNum==provNum1

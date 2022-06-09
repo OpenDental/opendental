@@ -103,7 +103,14 @@ namespace OpenDental {
 				}
 				row.Cells.Add(proc.ProcStatus.ToString());
 				row.Cells.Add(Tooth.Display(proc.ToothNum));
-				row.Cells.Add(proc.Surf);
+				string displaySurf;
+				if(proccode.TreatArea==TreatmentArea.Sextant) {
+					displaySurf=Tooth.GetSextant(proc.Surf,(ToothNumberingNomenclature)PrefC.GetInt(PrefName.UseInternationalToothNumbers));
+				}
+				else {
+					displaySurf=Tooth.SurfTidyFromDbToDisplay(proc.Surf,proc.ToothNum);
+				}
+				row.Cells.Add(displaySurf);
 				row.Cells.Add(proccode.ProcCode);
 				row.Cells.Add(description);
 				row.Cells.Add(_listTpAttachesAll.FindAll(x => x.ProcNum==proc.ProcNum && x.TreatPlanNum!=_treatPlanUnassigned.TreatPlanNum).Count.ToString());

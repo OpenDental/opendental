@@ -395,10 +395,10 @@ namespace OpenDentBusiness{
 		///(Sent, Waiting to Send, Received, etc).</summary>
 		[Description("Claim Delete")]
 		ClaimDelete,
-		///<summary>119 - Covers editing the Write Off and Write Off Override fields for claimprocs as well as deleting/creating claimprocs.
+		///<summary>119 - Covers editing the Write-off and Write-off Override fields for claimprocs as well as deleting/creating claimprocs.
 		///<para>Uses date/days restriction based on the attached proc.DateEntryC; unless it's a total payment, then uses claimproc.SecDateEntry.</para>
 		///<para>Applies to all plan types (i.e. PPO, Category%, Capitation, etc).</para></summary>
-		[Description("Insurance Write Off Edit")]
+		[Description("Insurance Write-off Edit")]
 		InsWriteOffEdit,
 		///<summary>120 - Allows users to change appointment confirmation status.</summary>
 		[Description("Appointment Confirmation Status Edit")]

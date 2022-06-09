@@ -3256,10 +3256,14 @@ namespace OpenDental{
 					procTP.Priority=treatPlanAttach.Priority;
 				}
 				procTP.ToothNumTP=Tooth.Display(procedure.ToothNum);
-				if(ProcedureCodes.GetProcCode(procedure.CodeNum).TreatArea==TreatmentArea.Surf){
+				ProcedureCode procCode=ProcedureCodes.GetProcCode(procedure.CodeNum);
+				if(procCode.TreatArea==TreatmentArea.Surf) {
 					procTP.Surf=Tooth.SurfTidyFromDbToDisplay(procedure.Surf,procedure.ToothNum);
 				}
-				else{
+				else if(procCode.TreatArea==TreatmentArea.Sextant) {
+					procTP.Surf=Tooth.GetSextant(procedure.Surf,(ToothNumberingNomenclature)PrefC.GetInt(PrefName.UseInternationalToothNumbers));
+				}
+				else {
 					procTP.Surf=procedure.Surf;//for UR, L, etc.
 				}
 				procTP.ProcCode=ProcedureCodes.GetStringProcCode(procedure.CodeNum);

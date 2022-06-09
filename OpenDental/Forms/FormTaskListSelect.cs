@@ -170,6 +170,7 @@ namespace OpenDental {
 				taskListCur.TagOD=sbSubListPath.ToString();
 				listFilteredTaskLists.Add(taskListCur);//Store task list with extended name in our final list of tasklists
 			}
+			listFilteredTaskLists.RemoveAll(x=>listFilteredTaskLists.Any(y=>y.IsRepeating && y.DateType==x.DateType && y.Descript==x.Descript && y.TaskListStatus==x.TaskListStatus && y!=x));
 			//We wait to filter until the entire description is created because one task might be filtered, but it's parent isn't
 			if(!string.IsNullOrWhiteSpace(textFilter.Text)) {
 				//Odering will be:

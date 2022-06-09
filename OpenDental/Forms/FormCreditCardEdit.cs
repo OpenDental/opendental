@@ -75,7 +75,12 @@ namespace OpenDental {
 					this.ClientSize=new System.Drawing.Size(this.ClientSize.Width,this.ClientSize.Height-115);
 				}
 				UpdateFrequencyText();
-				EnableFrequencyControls();
+				if(_creditCard.ChargeFrequency.IsNullOrEmpty()) {
+					EnableFrequencyControls();
+				}
+				else {
+					DisableFrequencyControls();
+				}
 			}
 			else {//This will hide the recurring section and change the window size.
 				groupRecurringCharges.Visible=false;
@@ -242,6 +247,16 @@ namespace OpenDental {
 			textDayOfMonth.Enabled=radioDayOfMonth.Checked;
 			butAddDay.Enabled=radioDayOfMonth.Checked;
 			butClearDayOfMonth.Enabled=radioDayOfMonth.Checked;
+		}
+
+		private void DisableFrequencyControls() {
+			comboDays.Enabled=false;
+			comboFrequency.Enabled=false;
+			textDayOfMonth.Enabled=false;
+			butAddDay.Enabled=false;
+			butClearDayOfMonth.Enabled=false;
+			radioDayOfMonth.Enabled=false;
+			radioWeekDay.Enabled=false;
 		}
 
 		private void UpdateFrequencyText() {

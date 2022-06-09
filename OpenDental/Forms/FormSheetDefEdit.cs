@@ -2748,7 +2748,7 @@ namespace OpenDental {
 					&& sheetFieldDef.FieldName.In("Sexual Orientation","Gender Identity")) //Contains public health fields
 				{
 					listSheetFieldDefToDelete.Add(sheetFieldDef);
-        }
+				}
 				if(sheetFieldDef.FieldType==SheetFieldType.CheckBox && sheetFieldDef.IsRequired && (sheetFieldDef.RadioButtonGroup!="" //for misc radio groups
 				                                                                    || sheetFieldDef.RadioButtonValue!="")) //for built-in radio groups
 				{

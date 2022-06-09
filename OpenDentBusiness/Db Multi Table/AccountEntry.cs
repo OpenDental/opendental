@@ -31,7 +31,7 @@ namespace OpenDentBusiness {
 		public decimal AmountAvailable;
 		///<summary>The amount used to indicate to the user what the account entry will end up at if they perform a certain action. E.g. This amount field is used to show what the entry will be at after an income transfer, or after a specific payment is made, etc. This amount changes often.</summary>
 		public decimal AmountEnd;
-		///<summary>The total of InsPayEst, InsPayAmt, and write offs for associated claimprocs (respectively based on claimproc status).</summary>
+		///<summary>The total of InsPayEst, InsPayAmt, and write-offs for associated claimprocs (respectively based on claimproc status).</summary>
 		public decimal InsPayAmt;
 		///<summary>The total of SplitAmt for associated paysplits just after explicit and implicit linking logic has executed. This is the amount of money that can be transferred away from this entry. This field is designed to be manipulated after money is transferred away.</summary>
 		public decimal IncomeAmt;

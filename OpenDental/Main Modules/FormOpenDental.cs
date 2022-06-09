@@ -5454,10 +5454,16 @@ namespace OpenDental{
 		}
 
 		private void menuItemProviders_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(Permissions.ProviderEdit,true)){
+			if(!Security.IsAuthorized(Permissions.ProviderEdit, true) && !Security.IsAuthorized(Permissions.ProviderAdd, true)) {
 				if(PrefC.GetBool(PrefName.EasyHideDentalSchools)) {
-					MessageBox.Show(Lans.g("Security","Not authorized for")+"\r\n" +GroupPermissions.GetDesc(Permissions.ProviderEdit) +" "+Lans.g("Security","and")+"\r\n"
-						+ Lans.g("Security","Dental Schools is not enabled in 'Setup' > 'Advanced Setup' > 'Show Features'"));
+					MessageBox.Show(Lans.g("Security", "Not authorized for") + "\r\n"
+						+ GroupPermissions.GetDesc(Permissions.ProviderEdit)
+						+ " or "
+						+ GroupPermissions.GetDesc(Permissions.ProviderAdd)
+						+ " "
+						+ Lans.g("Security", "and")
+						+ "\r\n"
+						+ Lans.g("Security", "Dental Schools is not enabled in 'Setup' > 'Advanced Setup' > 'Show Features'"));
 					return;
 				}
 				else if(!Security.IsAuthorized(Permissions.AdminDentalStudents,true) && !Security.IsAuthorized(Permissions.AdminDentalInstructors,true)) {

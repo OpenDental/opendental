@@ -62,9 +62,9 @@ namespace OpenDental {
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(501, 38);
 			this.label1.TabIndex = 20;
-			this.label1.Text = "Helps find situations where the insurance payment plus any writeoff exceeds the f" +
-    "ee for procedures in the date range.  See the manual for suggestions on how to h" +
-    "andle the results.";
+			this.label1.Text = "Helps find situations where the insurance payment plus any write-off exceeds the " +
+			"fee for procedures in the date range.  See the manual for suggestions on how to " +
+			"handle the results.";
 			// 
 			// radioGroupByProc
 			// 
@@ -132,9 +132,9 @@ namespace OpenDental {
 			this.labelDisclaimer.Name = "labelDisclaimer";
 			this.labelDisclaimer.Size = new System.Drawing.Size(248, 52);
 			this.labelDisclaimer.TabIndex = 60;
-			this.labelDisclaimer.Text = "This report only considers insurance payments and \r\nwriteoffs, not patient paymen" +
-    "ts and adjustments. \r\nUse the Procedures Overpaid Report to include \r\npatient pa" +
-    "yments and adjustments.";
+			this.labelDisclaimer.Text = "This report only considers insurance payments and \r\nwrite-offs, not patient payme" +
+			"nts and adjustments. \r\nUse the Procedures Overpaid Report to include \r\npatient p" +
+			"ayments and adjustments.";
 			// 
 			// FormRpInsOverpaid
 			// 

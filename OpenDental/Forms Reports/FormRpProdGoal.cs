@@ -281,17 +281,17 @@ namespace OpenDental {
 					query.AddColumn("Scheduled",schedWidth,FieldValueType.Number,font);
 					query.AddColumn("Adjusts",adjWidth,FieldValueType.Number,font);
 					if(GetWriteoffType()==PPOWriteoffDateCalc.ClaimPayDate) {
-						query.AddColumn("Writeoff Est",writeoffestwidth,FieldValueType.Number,font);
-						query.AddColumn("Writeoff Adj",writeoffadjwidth,FieldValueType.Number,font);
+						query.AddColumn("Write-off Est",writeoffestwidth,FieldValueType.Number,font);
+						query.AddColumn("Write-off Adj",writeoffadjwidth,FieldValueType.Number,font);
 					}
 					else {
-						query.AddColumn("Writeoff",writeoffWidth,FieldValueType.Number,font);
+						query.AddColumn("Write-off",writeoffWidth,FieldValueType.Number,font);
 					}
 					query.AddColumn("Tot Prod",totProdWidth,FieldValueType.Number,font);
 				}
-				string colNameAlign="Writeoff"+(GetWriteoffType()==PPOWriteoffDateCalc.ClaimPayDate?" Est":"");//Column used to align the summary fields.
-				string summaryText="Total Production (Production + Scheduled + Adjustments - Writeoff"
-					+(GetWriteoffType()==PPOWriteoffDateCalc.ClaimPayDate?" Ests - Writeoff Adjs":"s")+"): ";
+				string colNameAlign="Write-off"+(GetWriteoffType()==PPOWriteoffDateCalc.ClaimPayDate?" Est":"");//Column used to align the summary fields.
+				string summaryText="Total Production (Production + Scheduled + Adjustments - Write-off"
+					+(GetWriteoffType()==PPOWriteoffDateCalc.ClaimPayDate?" Ests - Write-off Adjs":"s")+"): ";
 				query.AddGroupSummaryField(summaryText,colNameAlign,"Tot Prod",SummaryOperation.Sum,new List<int> { groups },Color.Black,
 					new Font("Tahoma",9,FontStyle.Bold),75,summaryOffSetY);
 				report.AddPageNum();

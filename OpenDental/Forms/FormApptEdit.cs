@@ -2258,7 +2258,7 @@ namespace OpenDental{
 				return MsgBox.Show(this, MsgBoxButtons.OKCancel,Appointments.PROMPT_NotPlannedProcsConcurrent);
 			};
 			Action actionCompletedProceduresBeingMoved = () => {
-				MsgBox.Show(this,MsgBoxButtons.OKCancel,Appointments.PROMPT_CompletedProceduresBeingMoved);
+				MsgBox.Show(this,Appointments.PROMPT_CompletedProceduresBeingMoved);
 			};
 			List<Procedure> listProceduresAll=Procedures.GetPatientData(_appointment.PatNum);
 			List<Procedure> listProceduresInGrid = gridProc.ListGridRows.Select(x => x.Tag as Procedure).ToList();

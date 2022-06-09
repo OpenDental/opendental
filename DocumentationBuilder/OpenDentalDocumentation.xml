@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDocumentation.xsl"?>
-<database version="22.2.8.0">
+<database version="22.2.9.0">
     <table name="account">
         <summary>Used in the accounting section in chart of accounts.  Not related to patient accounts in any way.</summary>
         <column order="0" name="AccountNum" type="bigint(20)">
@@ -7383,7 +7383,7 @@
                 <EnumValue name="ProcComplEditLimited">117 - DEPRECATED - Uses date restrictions.  Covers editing some fields of completed procs. </EnumValue>
                 <EnumValue name="ClaimDelete">118 - Uses date restrictions based on the SecDateEntry field as the claim date.  Covers deleting a claim of any status
             (Sent, Waiting to Send, Received, etc).</EnumValue>
-                <EnumValue name="InsWriteOffEdit">119 - Covers editing the Write Off and Write Off Override fields for claimprocs as well as deleting/creating claimprocs.
+                <EnumValue name="InsWriteOffEdit">119 - Covers editing the Write-off and Write-off Override fields for claimprocs as well as deleting/creating claimprocs.
             Uses date/days restriction based on the attached proc.DateEntryC; unless it's a total payment, then uses claimproc.SecDateEntry.Applies to all plan types (i.e. PPO, Category%, Capitation, etc).</EnumValue>
                 <EnumValue name="ApptConfirmStatusEdit">120 - Allows users to change appointment confirmation status.</EnumValue>
                 <EnumValue name="GraphicsRemoteEdit">121 - Audit trail for when users change graphical settings for another workstation in FormGraphics.cs.</EnumValue>
@@ -14401,7 +14401,7 @@
                 <EnumValue name="ProcComplEditLimited">117 - DEPRECATED - Uses date restrictions.  Covers editing some fields of completed procs. </EnumValue>
                 <EnumValue name="ClaimDelete">118 - Uses date restrictions based on the SecDateEntry field as the claim date.  Covers deleting a claim of any status
             (Sent, Waiting to Send, Received, etc).</EnumValue>
-                <EnumValue name="InsWriteOffEdit">119 - Covers editing the Write Off and Write Off Override fields for claimprocs as well as deleting/creating claimprocs.
+                <EnumValue name="InsWriteOffEdit">119 - Covers editing the Write-off and Write-off Override fields for claimprocs as well as deleting/creating claimprocs.
             Uses date/days restriction based on the attached proc.DateEntryC; unless it's a total payment, then uses claimproc.SecDateEntry.Applies to all plan types (i.e. PPO, Category%, Capitation, etc).</EnumValue>
                 <EnumValue name="ApptConfirmStatusEdit">120 - Allows users to change appointment confirmation status.</EnumValue>
                 <EnumValue name="GraphicsRemoteEdit">121 - Audit trail for when users change graphical settings for another workstation in FormGraphics.cs.</EnumValue>
