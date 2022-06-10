@@ -215,6 +215,8 @@ namespace OpenDentBusiness{
 			tableReturn.Columns.Add("DateTimeArrived");
 			tableReturn.Columns.Add("DateTimeSeated");
 			tableReturn.Columns.Add("DateTimeDismissed");
+			tableReturn.Columns.Add("UnschedStatus",typeof(long));
+			tableReturn.Columns.Add("unschedStatus");
 			//Run Query
 			List<eServiceType> listEserviceTypes=new List<eServiceType>{eServiceType.WSRecall,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSAsap};
 			string command="SELECT appointment.*, eservicelog.EServiceType FROM appointment ";
@@ -239,7 +241,7 @@ namespace OpenDentBusiness{
 				row["PatNum"]=PIn.Long(tableAppointments.Rows[i]["PatNum"].ToString());
 				row["AptStatus"]=(ApptStatus)PIn.Int(tableAppointments.Rows[i]["AptStatus"].ToString());
 				row["Pattern"]=tableAppointments.Rows[i]["Pattern"].ToString();
-				row["Confirmed"]=tableAppointments.Rows[i]["Confirmed"];
+				row["Confirmed"]=PIn.Long(tableAppointments.Rows[i]["Confirmed"].ToString());
 				row["confirmed"]=OpenDentBusiness.Defs.GetName(OpenDentBusiness.DefCat.ApptConfirmed,PIn.Long(tableAppointments.Rows[i]["Confirmed"].ToString()));
 				row["Op"]=PIn.Long(tableAppointments.Rows[i]["Op"].ToString());
 				row["Note"]=tableAppointments.Rows[i]["Note"].ToString();
@@ -257,6 +259,8 @@ namespace OpenDentBusiness{
 				row["DateTimeArrived"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeArrived"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
 				row["DateTimeSeated"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeSeated"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
 				row["DateTimeDismissed"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeDismissed"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
+				row["UnschedStatus"]=PIn.Long(tableAppointments.Rows[i]["UnschedStatus"].ToString());
+				row["unschedStatus"]=OpenDentBusiness.Defs.GetName(OpenDentBusiness.DefCat.RecallUnschedStatus,PIn.Long(tableAppointments.Rows[i]["UnschedStatus"].ToString()));
 				tableReturn.Rows.Add(row);
 			}
 			return tableReturn;

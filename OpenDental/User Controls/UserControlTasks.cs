@@ -1229,6 +1229,9 @@ namespace OpenDental {
 							rowString+=notes;
 						}
 						row.Cells.Add(rowString);
+						if(isHqAndTriageList) {//HQ and triage list only
+							row.Cells.Last().ColorBackG=taskPriorityColor;
+						}
 					}
 					else {//Descript length <= 250 and notes <=1 and note length is <= 250.  No collapse option.
 						row.Cells.Add("");
