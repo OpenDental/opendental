@@ -525,7 +525,7 @@ namespace OpenDental{
 			cDark=Color.White;
 			cLight=Color.White;
 			List<Def> listDefsToothColors=Defs.GetDefsForCategory(DefCat.ChartGraphicColors,true);
-			if(curProc.GraphicColor!=Color.FromArgb(0)) {
+			if(curProc.GraphicColor!=Color.FromArgb(0) && procStatus!=ProcStat.TPi) {
 				cDark=curProc.GraphicColor;
 				cLight=curProc.GraphicColor;
 				return true;

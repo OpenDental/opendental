@@ -912,6 +912,7 @@ namespace OpenDentBusiness.Eclaims {
 				//Called after new CCDFieldInputter(...) so that we know the response is valid response format, would throw exception otherwise (try/catch?).
 				Claims.SetClaimSent(queueItem.ClaimNum);//No error, safe to set sent.
 				claim.DateSent=MiscData.GetNowDateTime();
+				claim.DateSentOrig=claim.DateSent;
 				claim.ClaimStatus="S";//Reflect changes in cached object.
 			}
 			bool canCreateSecClaim=(claim.ClaimType!="PreAuth" && claim.ClaimType!="S" && etransAck.Etype==EtransType.ClaimEOB_CA && planNum2>0);
@@ -1052,6 +1053,8 @@ namespace OpenDentBusiness.Eclaims {
 						//embedded response occurs when patient has the same carrier for primary and secondary so an embedded response is a COB by default
 						etransAck2.Etype=EtransType.ClaimCOB_CA;
 						Claims.SetClaimSent(queueItem2.ClaimNum);//No error, safe to set sent.
+						claim2.DateSent=MiscData.GetNowDateTime();
+						claim2.DateSentOrig=claim2.DateSent;
 						claim2.ClaimStatus="S";//Reflect changes in cached object.
 						CCDField embeddedFieldG05=fieldInputter2.GetFieldById("G05");
 						if(embeddedFieldG05!=null) {

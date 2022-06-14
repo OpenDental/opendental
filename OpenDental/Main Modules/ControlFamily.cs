@@ -1542,14 +1542,10 @@ namespace OpenDental{
 			bool hasClaimProcs=listClaimProcs.Count>0;
 			bool hasComm=listCommlogs.Count>0;
 			bool hasPayPlans=countPayPlans>0;
-			bool hasInsPlans=false;
+			//Has patplan or is a subscriber to an insplan
+			bool hasInsPlans=_listPatPlans.Count>0 || listInsSubs.Any(x => x.Subscriber==_patCur.PatNum);
 			bool hasMeds=listMedicationPats.Count>0;
 			bool isSuperFamilyHead=_patCur.PatNum==_patCur.SuperFamily;
-			for(int i=0;i<listInsSubs.Count;i++) {
-				if(listInsSubs[i].Subscriber==_patCur.PatNum) {
-					hasInsPlans=true;
-				}
-			}
 			bool hasRef=listRefAttaches.Count>0;
 			bool hasSheets=listSheets.Count>0;
 			bool hasRepeat=arrayRepeatCharges.Length>0;
