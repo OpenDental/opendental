@@ -388,7 +388,7 @@ namespace OpenDental {
 		}
 
 		private void menuItemEmployeeSettings_Click(object sender,EventArgs e) {
-			PhoneUI.EmployeeSettings(_phoneSelected);
+			PhoneUI.ShowEmployeeSettings(_phoneSelected);
 			FillTiles(true);
 		}
 

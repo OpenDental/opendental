@@ -551,6 +551,7 @@ namespace OpenDental.UI{
 
 		///<summary>WeekStartDate and WeekEndDate were also in ContrAppt, but aren't needed.</summary>
 		[Browsable(false)]
+		[DefaultValue(false)]
 		public bool IsWeeklyView{
 			get{
 				return _isWeeklyView;

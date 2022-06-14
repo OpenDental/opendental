@@ -288,10 +288,10 @@
 			this.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Name = "MapAreaRoomControl";
 			this.Size = new System.Drawing.Size(180, 163);
-			this.Click += new System.EventHandler(this.MapAreaRoomControl_Click);
-			this.Paint += new System.Windows.Forms.PaintEventHandler(this.MapAreaRoomControl_Paint);
-			this.DoubleClick += new System.EventHandler(this.MapAreaRoomControl_DoubleClick);
-			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MapAreaRoomControl_MouseDown);
+			this.Click += new System.EventHandler(this.MapCubicle_Click);
+			this.Paint += new System.Windows.Forms.PaintEventHandler(this.MapCubicle_Paint);
+			this.DoubleClick += new System.EventHandler(this.MapCubicle_DoubleClick);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MapCubicle_MouseDown);
 			this.menuStatus.ResumeLayout(false);
 			this.ResumeLayout(false);
 

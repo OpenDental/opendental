@@ -72,11 +72,11 @@ namespace OpenDental {
 			_timeSpanDelta=MiscData.GetNowDateTime()-DateTime.Now;
 			//Add the mousewheel event to allow mousewheel scrolling to repaint the grid as well.
 			mapAreaPanel.MouseWheel+=new MouseEventHandler(mapAreaPanelHQ_Scroll);
-			mapAreaPanel.RoomControlClicked+=MapAreaPanelHQ_RoomControlClicked;
-			mapAreaPanel.GoToChanged+=(sender,e)=>GoToChanged?.Invoke(this,new EventArgs());//just bubble up
+			mapAreaPanel.MapCubicleClicked+=MapAreaPanel_CubicleClicked;
+			mapAreaPanel.ClickedGoTo+=(sender,e)=>GoToChanged?.Invoke(sender,new EventArgs());//just bubble up
 		}
 
-		public void MapAreaPanelHQ_RoomControlClicked(object sender,EventArgs e) {
+		public void MapAreaPanel_CubicleClicked(object sender,EventArgs e) {
 			MapCubicle mapCubicle=(MapCubicle)sender;
 			if(mapCubicle==null) {
 				return;
@@ -232,182 +232,174 @@ namespace OpenDental {
 			_listWebChatSessions=listWebChatSessions;
 			_listPeerInfosRemoteSupportSessions=listRemoteSupportSessions;
 			_listChatUsers=listChatUsers;
-			//try {
-				string title="Call Center Map - Triage Coord. - ";
-				try { //get the triage coord label but don't fail just because we can't find it
-					SiteLink siteLink=SiteLinks.GetFirstOrDefault(x => x.SiteNum==_mapAreaContainer.SiteNum);
-					title+=Employees.GetNameFL(Employees.GetEmp(siteLink.EmployeeNum));
+			string title="Call Center Map - Triage Coord. - ";
+			try { //get the triage coord label but don't fail just because we can't find it
+				SiteLink siteLink=SiteLinks.GetFirstOrDefault(x => x.SiteNum==_mapAreaContainer.SiteNum);
+				title+=Employees.GetNameFL(Employees.GetEmp(siteLink.EmployeeNum));
+			}
+			catch {
+				title+="Not Set";
+			}
+			labelTriageCoordinator.Text=title;
+			labelCurrentTime.Text=DateTime.Now.ToShortTimeString();
+			using Bitmap bitmapHouse=PhoneTile.GetHouse16();
+			#region Triage Counts
+			//The triage count used to only count up the triage operators within the currently selected room.
+			//Now we want to count all operators at the selected site (local) and then all operators across all sites (total).
+			int triageStaffCountLocal=0;
+			int triageStaffCountTotal=0;
+			List<PhoneEmpDefault> listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
+			List<PhoneEmpDefault> listPhoneEmpDefaultsTriage=listPhoneEmpDefaults.FindAll(x => x.IsTriageOperator && x.HasColor);
+			for(int i=0;i<listPhoneEmpDefaultsTriage.Count;i++){
+				Phone phone=phones.FirstOrDefault(x => x.Extension==listPhoneEmpDefaultsTriage[i].PhoneExt);
+				if(phone==null) {
+					continue;
 				}
-				catch {
-					title+="Not Set";
+				if(phone.ClockStatus.In(ClockStatusEnum.None,ClockStatusEnum.Home,ClockStatusEnum.Lunch,ClockStatusEnum.Break,ClockStatusEnum.Off
+					,ClockStatusEnum.Unavailable,ClockStatusEnum.NeedsHelp,ClockStatusEnum.HelpOnTheWay))
+				{
+					continue;
 				}
-				labelTriageCoordinator.Text=title;
-				labelCurrentTime.Text=DateTime.Now.ToShortTimeString();
-				Bitmap bitmapHouse=PhoneTile.GetHouse16();
-				#region Triage Counts
-				//The triage count used to only count up the triage operators within the currently selected room.
-				//Now we want to count all operators at the selected site (local) and then all operators across all sites (total).
-				int triageStaffCountLocal=0;
-				int triageStaffCountTotal=0;
-				List<PhoneEmpDefault> listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
-				List<PhoneEmpDefault> listPhoneEmpDefaultsTriage=listPhoneEmpDefaults.FindAll(x => x.IsTriageOperator && x.HasColor);
-				for(int i=0;i<listPhoneEmpDefaultsTriage.Count;i++){
-				//foreach(PhoneEmpDefault phoneEmpDefault in peds.FindAll(x => x.IsTriageOperator && x.HasColor)) {
-					Phone phone=phones.FirstOrDefault(x => x.Extension==listPhoneEmpDefaultsTriage[i].PhoneExt);
-					if(phone==null) {
-						continue;
+				//This is a triage operator who is currently here and on the clock.
+				if(listPhoneEmpDefaultsTriage[i].SiteNum==_mapAreaContainer.SiteNum) {
+					triageStaffCountLocal++;
+				}
+				triageStaffCountTotal++;
+			}
+			labelTriageOpsCountLocal.Text=triageStaffCountLocal.ToString();
+			labelTriageOpsCountTotal.Text=triageStaffCountTotal.ToString();
+			#endregion
+			List<Control> listAreaPanelControls = new List<Control>();
+			listAreaPanelControls.AddRange(this.mapAreaPanel.Controls.OfType<Control>());
+			//listMapAreaRoomControls.Add(_mapCubicleSelected);
+			for(int i=0;i<listAreaPanelControls.Count;i++) { //loop through all of our cubicles and labels and find the matches
+				if(!(listAreaPanelControls[i] is MapCubicle)) {
+					continue;
+				}
+				MapCubicle mapCubicle=(MapCubicle)listAreaPanelControls[i];
+				if(mapCubicle.MapAreaCur.Extension==0) { //This cubicle has not been given an extension yet.
+					mapCubicle.Empty=true;
+					continue;
+				}
+				Phone phone=Phones.GetPhoneForExtension(phones,mapCubicle.MapAreaCur.Extension);
+				if(phone==null) {//We have a cubicle with no corresponding phone entry.
+					mapCubicle.Empty=true;
+					continue;
+				}
+				mapCubicle.PhoneCur=phone;//Refresh PhoneCur so that it has up to date customer information.
+				ChatUser chatuser=listChatUsers.Where(x => x.Extension == phone.Extension).FirstOrDefault();
+				PhoneEmpDefault phoneEmpDefault=PhoneEmpDefaults.GetEmpDefaultFromList(phone.EmployeeNum,listPhoneEmpDefaults);
+				if(phoneEmpDefault==null) {//We have a cubicle with no corresponding phone emp default entry.
+					mapCubicle.Empty=true;
+					continue;
+				}
+				//we got this far so we found a corresponding cubicle for this phone entry
+				mapCubicle.EmployeeNum=phone.EmployeeNum;
+				mapCubicle.EmployeeName=phone.EmployeeName;
+				WebChatSession webChatSession=listWebChatSessions.FirstOrDefault(x => x.TechName==phone.EmployeeName);
+				PeerInfo remoteSupportSession=listRemoteSupportSessions.FirstOrDefault(x => x.EmployeeNum==phone.EmployeeNum);
+				if(phone.DateTimeNeedsHelpStart.Date==DateTime.Today) { //if they need help, use that time.
+					TimeSpan span=DateTime.Now-phone.DateTimeNeedsHelpStart+_timeSpanDelta;
+					DateTime timeOfDay=DateTime.Today+span;
+					mapCubicle.Elapsed=span;
+				}
+				else if(phone.DateTimeStart.Date==DateTime.Today && phone.Description != "") { //else if in a call, use call time.
+					TimeSpan span=DateTime.Now-phone.DateTimeStart+_timeSpanDelta;
+					DateTime timeOfDay=DateTime.Today+span;
+					mapCubicle.Elapsed=span;
+				}
+				else if(phone.Description=="" && webChatSession!=null ) {//else if in a web chat session, use web chat session time
+					TimeSpan span=DateTime.Now-webChatSession.DateTcreated+_timeSpanDelta;
+					mapCubicle.Elapsed=span;	
+				}
+				else if(phone.Description=="" && chatuser!=null && chatuser.CurrentSessions>0) { //else if in a chat, use chat time.
+					TimeSpan span=TimeSpan.FromMilliseconds(chatuser.SessionTime)+_timeSpanDelta;
+					mapCubicle.Elapsed=span;
+				}
+				else if(phone.Description=="" && remoteSupportSession!=null) {
+					//Might need to enhance later to get a 'timeDelta' for the Remote Support server.
+					mapCubicle.Elapsed=remoteSupportSession.SessionTime;
+				}
+				else if(phone.DateTimeStart.Date==DateTime.Today) { //else available, use that time.
+					TimeSpan span = DateTime.Now-phone.DateTimeStart+_timeSpanDelta;
+					DateTime timeOfDay = DateTime.Today+span;
+					mapCubicle.Elapsed=span;
+				}
+				else { //else, whatever.
+					mapCubicle.Elapsed=TimeSpan.Zero;
+				}
+				if(phone.IsProxVisible) {
+					mapCubicle.ProxImage=Properties.Resources.Figure;
+				}
+				else if(phone.DateTProximal.AddHours(8)>DateTime.Now) {
+					mapCubicle.ProxImage=Properties.Resources.NoFigure;//TODO: replace image with one from Nathan
+				}
+				else {
+					mapCubicle.ProxImage=null;
+				}
+				mapCubicle.IsAtDesk=phone.IsProxVisible;
+				string status=Phones.ConvertClockStatusToString(phone.ClockStatus);
+				//Check if the user is logged in.
+				if(phone.ClockStatus==ClockStatusEnum.None
+					||phone.ClockStatus==ClockStatusEnum.Home) {
+					status="Home";
+				}
+				mapCubicle.Status=status;
+				if(phone.Description=="") {
+					mapCubicle.PhoneImage=null;
+					mapCubicle.WebChatImage=null;
+					mapCubicle.ChatImage=null;
+					mapCubicle.RemoteSupportImage=null;
+					if(webChatSession!=null) {//active web chat session
+						mapCubicle.WebChatImage=Properties.Resources.WebChatIcon;
 					}
-					if(phone.ClockStatus.In(ClockStatusEnum.None,ClockStatusEnum.Home,ClockStatusEnum.Lunch,ClockStatusEnum.Break,ClockStatusEnum.Off
-						,ClockStatusEnum.Unavailable,ClockStatusEnum.NeedsHelp,ClockStatusEnum.HelpOnTheWay))
-					{
-						continue;
+					else if(chatuser!=null && chatuser.CurrentSessions!=0) {//check for GTA sessions if no web chats
+						mapCubicle.ChatImage=Properties.Resources.WebChatIcon;
 					}
-					//This is a triage operator who is currently here and on the clock.
-					if(listPhoneEmpDefaultsTriage[i].SiteNum==_mapAreaContainer.SiteNum) {
-						triageStaffCountLocal++;
+					else if(remoteSupportSession!=null) {
+						mapCubicle.RemoteSupportImage=Properties.Resources.remoteSupportIcon;
 					}
-					triageStaffCountTotal++;
 				}
-				labelTriageOpsCountLocal.Text=triageStaffCountLocal.ToString();
-				labelTriageOpsCountTotal.Text=triageStaffCountTotal.ToString();
-				#endregion
-				List<Control> listMapAreaRoomControls = new List<Control>();
-				listMapAreaRoomControls.AddRange(this.mapAreaPanel.Controls.OfType<Control>());
-				listMapAreaRoomControls.Add(_mapCubicleSelected);
-				for(int i=0;i<listMapAreaRoomControls.Count;i++) { //loop through all of our cubicles and labels and find the matches
-					//try {
-						if(!(listMapAreaRoomControls[i] is MapCubicle)) {
-							continue;
-						}
-						MapCubicle mapAreaRoomControl=(MapCubicle)listMapAreaRoomControls[i];
-						if(mapAreaRoomControl.MapAreaCur.Extension==0) { //This cubicle has not been given an extension yet.
-							mapAreaRoomControl.Empty=true;
-							continue;
-						}
-						Phone phone=Phones.GetPhoneForExtension(phones,mapAreaRoomControl.MapAreaCur.Extension);
-						if(phone==null) {//We have a cubicle with no corresponding phone entry.
-							mapAreaRoomControl.Empty=true;
-							continue;
-						}
-						mapAreaRoomControl.PhoneCur=phone;//Refresh PhoneCur so that it has up to date customer information.
-						ChatUser chatuser=listChatUsers.Where(x => x.Extension == phone.Extension).FirstOrDefault();
-						PhoneEmpDefault phoneEmpDefault=PhoneEmpDefaults.GetEmpDefaultFromList(phone.EmployeeNum,listPhoneEmpDefaults);
-						if(phoneEmpDefault==null) {//We have a cubicle with no corresponding phone emp default entry.
-							mapAreaRoomControl.Empty=true;
-							continue;
-						}
-						//we got this far so we found a corresponding cubicle for this phone entry
-						mapAreaRoomControl.EmployeeNum=phone.EmployeeNum;
-						mapAreaRoomControl.EmployeeName=phone.EmployeeName;
-						WebChatSession webChatSession=listWebChatSessions.FirstOrDefault(x => x.TechName==phone.EmployeeName);
-						PeerInfo remoteSupportSession=listRemoteSupportSessions.FirstOrDefault(x => x.EmployeeNum==phone.EmployeeNum);
-						if(phone.DateTimeNeedsHelpStart.Date==DateTime.Today) { //if they need help, use that time.
-							TimeSpan span=DateTime.Now-phone.DateTimeNeedsHelpStart+_timeSpanDelta;
-							DateTime timeOfDay=DateTime.Today+span;
-							mapAreaRoomControl.Elapsed=span;
-						}
-						else if(phone.DateTimeStart.Date==DateTime.Today && phone.Description != "") { //else if in a call, use call time.
-							TimeSpan span=DateTime.Now-phone.DateTimeStart+_timeSpanDelta;
-							DateTime timeOfDay=DateTime.Today+span;
-							mapAreaRoomControl.Elapsed=span;
-						}
-						else if(phone.Description=="" && webChatSession!=null ) {//else if in a web chat session, use web chat session time
-							TimeSpan span=DateTime.Now-webChatSession.DateTcreated+_timeSpanDelta;
-							mapAreaRoomControl.Elapsed=span;	
-						}
-						else if(phone.Description=="" && chatuser!=null && chatuser.CurrentSessions>0) { //else if in a chat, use chat time.
-						  TimeSpan span=TimeSpan.FromMilliseconds(chatuser.SessionTime)+_timeSpanDelta;
-						  mapAreaRoomControl.Elapsed=span;
-						}
-						else if(phone.Description=="" && remoteSupportSession!=null) {
-							//Might need to enhance later to get a 'timeDelta' for the Remote Support server.
-							mapAreaRoomControl.Elapsed=remoteSupportSession.SessionTime;
-						}
-						else if(phone.DateTimeStart.Date==DateTime.Today) { //else available, use that time.
-						  TimeSpan span = DateTime.Now-phone.DateTimeStart+_timeSpanDelta;
-						  DateTime timeOfDay = DateTime.Today+span;
-						  mapAreaRoomControl.Elapsed=span;
-						}
-						else { //else, whatever.
-							mapAreaRoomControl.Elapsed=TimeSpan.Zero;
-						}
-						if(phone.IsProxVisible) {
-							mapAreaRoomControl.ProxImage=Properties.Resources.Figure;
-						}
-						else if(phone.DateTProximal.AddHours(8)>DateTime.Now) {
-							mapAreaRoomControl.ProxImage=Properties.Resources.NoFigure;//TODO: replace image with one from Nathan
-						}
-						else {
-							mapAreaRoomControl.ProxImage=null;
-						}
-						mapAreaRoomControl.IsAtDesk=phone.IsProxVisible;
-						string status=Phones.ConvertClockStatusToString(phone.ClockStatus);
-						//Check if the user is logged in.
-						if(phone.ClockStatus==ClockStatusEnum.None
-							||phone.ClockStatus==ClockStatusEnum.Home) {
-							status="Home";
-						}
-						mapAreaRoomControl.Status=status;
-						if(phone.Description=="") {
-							mapAreaRoomControl.PhoneImage=null;
-							mapAreaRoomControl.WebChatImage=null;
-							mapAreaRoomControl.ChatImage=null;
-							mapAreaRoomControl.RemoteSupportImage=null;
-							if(webChatSession!=null) {//active web chat session
-								mapAreaRoomControl.WebChatImage=Properties.Resources.WebChatIcon;
-							}
-							else if(chatuser!=null && chatuser.CurrentSessions!=0) {//check for GTA sessions if no web chats
-								mapAreaRoomControl.ChatImage=Properties.Resources.WebChatIcon;
-							}
-							else if(remoteSupportSession!=null) {
-								mapAreaRoomControl.RemoteSupportImage=Properties.Resources.remoteSupportIcon;
-							}
-						}
-						else {
-							mapAreaRoomControl.PhoneImage=Properties.Resources.phoneInUse;
-						}
-						Color outerColor;
-						Color innerColor;
-						Color fontColor;
-						bool isTriageOperatorOnTheClock;
-						//get the cubicle color and triage status
-						Phones.GetPhoneColor(phone,phoneEmpDefault,true,out outerColor,out innerColor,out fontColor,out isTriageOperatorOnTheClock);
-						if(!mapAreaRoomControl.IsFlashing()) { //if the control is already flashing then don't overwrite the colors. this would cause a "spastic" flash effect.
-							mapAreaRoomControl.OuterColor=outerColor;
-							mapAreaRoomControl.InnerColor=innerColor;
-						}
-						mapAreaRoomControl.ForeColor=fontColor;
-						if(phone.ClockStatus==ClockStatusEnum.NeedsHelp) { //turn on flashing
-							mapAreaRoomControl.StartFlashing();
-						}
-						else { //turn off flashing
-							mapAreaRoomControl.StopFlashing();
-						}
-						if(phone.EmployeeNum>0 && phone.EmployeeNum==userControlMapDetails1.EmployeeNumCur) {
-							userControlMapDetails1.UpdateControl(mapAreaRoomControl);
-						}
-						Employee employee=Employees.GetEmp(phone.EmployeeNum);//from cache
-						if(employee!=null){
-							if(employee.IsWorkingHome) {
-								mapAreaRoomControl.ProxImage=bitmapHouse;
-							}
-							//plan to use this to show extra employee fields, like cellphone
-						}
-						mapAreaRoomControl.Invalidate(true);
-					//}
-					//catch(Exception e) {
-					//	e.DoNothing();
-					//}
+				else {
+					mapCubicle.PhoneImage=Properties.Resources.phoneInUse;
 				}
-				refreshCurrentTabHelper(listPhoneEmpDefaults,phones,listSubGroups);
-			//}
-			//catch {
-				//something failed unexpectedly
-			//}
+				Color outerColor;
+				Color innerColor;
+				Color fontColor;
+				bool isTriageOperatorOnTheClock;
+				//get the cubicle color and triage status
+				Phones.GetPhoneColor(phone,phoneEmpDefault,true,out outerColor,out innerColor,out fontColor,out isTriageOperatorOnTheClock);
+				if(!mapCubicle.IsFlashing()) { //if the control is already flashing then don't overwrite the colors. this would cause a "spastic" flash effect.
+					mapCubicle.OuterColor=outerColor;
+					mapCubicle.InnerColor=innerColor;
+				}
+				mapCubicle.ForeColor=fontColor;
+				if(phone.ClockStatus==ClockStatusEnum.NeedsHelp) { //turn on flashing
+					mapCubicle.StartFlashing();
+				}
+				else { //turn off flashing
+					mapCubicle.StopFlashing();
+				}
+				if(phone.EmployeeNum>0 && phone.EmployeeNum==userControlMapDetails1.EmployeeNumCur) {
+					userControlMapDetails1.UpdateControl(mapCubicle);
+				}
+				Employee employee=Employees.GetEmp(phone.EmployeeNum);//from cache
+				if(employee!=null){
+					if(employee.IsWorkingHome) {
+						mapCubicle.ProxImage=bitmapHouse;
+					}
+					//plan to use this to show extra employee fields, like cellphone
+				}
+				mapCubicle.Invalidate(true);
+			}
+			refreshCurrentTabHelper(listPhoneEmpDefaults,phones,listSubGroups);
 		}
 
 		///<summary>Sets the detail control to the clicked on cubicle as long as there is an associated phone.</summary>
 		private void FillDetails(MapCubicle cubeClicked=null) {
+			if(cubeClicked is null){
+
+			}
 			if(cubeClicked.PhoneCur is null) {
 				return;
 			}
@@ -423,16 +415,21 @@ namespace OpenDental {
 			//First, look for webcam image
 			Bitmap bitmap=GetWebCamImage(employeeNum);
 			if(bitmap!=null) {
-				userControlMapDetails1.SetBitmap(bitmap,isStock:false);
+				userControlMapDetails1.SetBitmap(bitmap,mapImageDisplayStatus:InternalTools.Phones.EnumMapImageDisplayStatus.WebCam,employeeNum);
 				return;
 			}
 			//Then, look for a stock image
-			if(userControlMapDetails1.IsStock){//already showing stock
+			if(userControlMapDetails1.MapImageDisplayStatus==InternalTools.Phones.EnumMapImageDisplayStatus.Stock//already showing stock
+				&& userControlMapDetails1.EmployeeNumImage==employeeNum)//for this employee
+			{
 				return;
 			}
 			bitmap=GetEmployeePicture(employeeNum);
-			//set, whether it's null or not
-			userControlMapDetails1.SetBitmap(bitmap,isStock:true);
+			if(bitmap!=null){
+				userControlMapDetails1.SetBitmap(bitmap,mapImageDisplayStatus:InternalTools.Phones.EnumMapImageDisplayStatus.Stock,employeeNum);
+				return;
+			}
+			userControlMapDetails1.SetBitmap(null,mapImageDisplayStatus:InternalTools.Phones.EnumMapImageDisplayStatus.Empty,employeeNum);
 		}
 
 		///<summary>This timer is always running.  4 times per second.</summary>
@@ -788,6 +785,10 @@ namespace OpenDental {
 			//Conf Rooms--------------------------------------------------------------------------------------------------
 			menuMain.Add(new MenuItemOD("Conf Rooms",confRoomsToolStripMenuItem_Click));
 			menuMain.EndUpdate();
+		}
+
+		private void mapAreaPanel_Click(object sender,EventArgs e) {
+
 		}
 
 		private void mapToolStripMenuItem_Click(object sender,EventArgs e) {

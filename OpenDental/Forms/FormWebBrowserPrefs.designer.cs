@@ -37,10 +37,10 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.browser.IsWebBrowserContextMenuEnabled = false;
-			this.browser.Location = new System.Drawing.Point(12, 1);
+			this.browser.Location = new System.Drawing.Point(20, 20);
 			this.browser.Name = "browser";
 			this.browser.ScriptErrorsSuppressed = true;
-			this.browser.Size = new System.Drawing.Size(360, 168);
+			this.browser.Size = new System.Drawing.Size(345, 149);
 			this.browser.TabIndex = 1;
 			// 
 			// imageList1

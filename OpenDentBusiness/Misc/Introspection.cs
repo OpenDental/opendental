@@ -200,6 +200,8 @@ namespace OpenDentBusiness {
 			CareCreditIHSApiURL,
 			///<summary></summary>
 			XWebGatewayURL,
+			///<summary></summary>
+			NewCropUpdate1URL,
 		}
 	}
 }

@@ -23,9 +23,9 @@ namespace OpenDental {
 		///<summary>Indicates if we came from the map setup window, will disable right click functionality if false.</summary>
 		public bool AllowRightClick;
 		/// <summary>Area of the cubicle where the employee name is drawn.</summary>
-		private RectangleF _rectName;
+		private RectangleF _rectangleName;
 		/// <summary>Area of the cubicle where the phone icon is drawn.</summary>
-		private RectangleF _rectPhone;
+		private RectangleF _rectanglePhone;
 
 		#endregion
 
@@ -176,10 +176,10 @@ namespace OpenDental {
 
 		#region Events
 
-		public event EventHandler MapAreaRoomChanged;
+		public event EventHandler MapCubicleEdited;
 		public event EventHandler RoomControlClicked;
-		[Category("Property Changed"),Description("Event raised when user wants to go to a patient or related object.")]
-		public event EventHandler GoToChanged=null;
+		[Category("OD"),Description("Event raised when user wants to go to a patient or related object.")]
+		public event EventHandler ClickedGoTo=null;
 
 		#endregion
 
@@ -249,7 +249,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void MapAreaRoomControl_Paint(object sender,PaintEventArgs e) {
+		private void MapCubicle_Paint(object sender,PaintEventArgs e) {
 			//use the width of the cubicle to determine which paint method we should use.
 			if(this.Size.Width<LayoutManager.Scale(102)) {
 				PaintSmall(e);
@@ -266,8 +266,8 @@ namespace OpenDental {
 			using Brush brushInner=new SolidBrush(Empty?Color.FromArgb(20,Color.Gray):InnerColor);
 			using Brush brushText=new SolidBrush(Empty?Color.FromArgb(128,Color.Gray):ForeColor);
 			using Pen penOuter=new Pen(Empty?Color.FromArgb(128,Color.Gray):OuterColor,BorderThickness);
-			_rectPhone=RectangleF.Empty;
-			_rectName=RectangleF.Empty;
+			_rectanglePhone=RectangleF.Empty;
+			_rectangleName=RectangleF.Empty;
 			string timeElapsed=TimeSpanToStringHelper(Elapsed);
 			try {
 				RectangleF rcOuter=this.ClientRectangle;
@@ -298,8 +298,8 @@ namespace OpenDental {
 				float typicalRowHeight=rcOuter.Height/(float)rowsLowestCommonDenominator;
 				//==================== row 1 - EMPLOYEE NAME ====================
 				float rowHeight=typicalRowHeight*2; //row 1 is 2/6 tall
-				_rectName=new RectangleF(rcOuter.X,rcOuter.Y-2,rcOuter.Width,rowHeight);
-				FitText(EmployeeName,FontHeader,brushText,_rectName,stringFormat,g);
+				_rectangleName=new RectangleF(rcOuter.X,rcOuter.Y-2,rcOuter.Width,rowHeight);
+				FitText(EmployeeName,FontHeader,brushText,_rectangleName,stringFormat,g);
 				float yPosBottom=rowHeight;
 				//g.DrawRectangle(Pens.LimeGreen,rcOuter.X,rcOuter.Y,rcOuter.Width,rowHeight);
 				//==================== row 2 - ELAPSED TIME ====================
@@ -357,10 +357,10 @@ namespace OpenDental {
 						rect.X-=(rect.Width-PhoneImage.Width)/2;
 						rect.Width=PhoneImage.Width;
 					}
-					_rectPhone=rect;
+					_rectanglePhone=rect;
 					g.DrawImage(
 						PhoneImage,
-						_rectPhone,
+						_rectanglePhone,
 						new RectangleF(0,0,PhoneImage.Width,PhoneImage.Height),
 						GraphicsUnit.Pixel);
 						//g.DrawRectangle(Pens.Orange,rectImage.X,rectImage.Y,rectImage.Width,rectImage.Height);
@@ -392,8 +392,8 @@ namespace OpenDental {
 			using Brush brushText=new SolidBrush(Empty?Color.FromArgb(128,Color.Gray):ForeColor);
 			float halfPenThickness=BorderThickness/(float)2;
 			using Pen penOuter=new Pen(Empty?Color.FromArgb(128,Color.Gray):OuterColor,halfPenThickness);
-			_rectPhone=RectangleF.Empty;
-			_rectName=RectangleF.Empty;
+			_rectanglePhone=RectangleF.Empty;
+			_rectangleName=RectangleF.Empty;
 			string timeElapsed=TimeSpanToStringHelper(Elapsed,true);
 			EmployeeName=ShortenEmployeeNameHelper(EmployeeName);
 			try {
@@ -424,8 +424,8 @@ namespace OpenDental {
 				float typicalRowHeight=rcOuter.Height/(float)rowsLowestCommonDenominator;
 				//==================== row 1 - EMPLOYEE NAME ====================
 				float rowHeight=typicalRowHeight*2; //row 1 is 2/6 tall
-				_rectName=new RectangleF(rcOuter.X,rcOuter.Y,rcOuter.Width,rowHeight);
-				FitText(EmployeeName,FontHeader,brushText,_rectName,stringFormat,g);
+				_rectangleName=new RectangleF(rcOuter.X,rcOuter.Y,rcOuter.Width,rowHeight);
+				FitText(EmployeeName,FontHeader,brushText,_rectangleName,stringFormat,g);
 				float yPosBottom=rowHeight;
 				//g.DrawRectangle(Pens.LimeGreen,rcOuter.X,rcOuter.Y,rcOuter.Width,rowHeight);
 				//==================== row 2 - ELAPSED TIME ====================
@@ -464,10 +464,10 @@ namespace OpenDental {
 						rectImage.Height=sizeNew.Height;
 						rectImage.Width=sizeNew.Width;
 					}
-					_rectPhone=rectImage;
+					_rectanglePhone=rectImage;
 					g.DrawImage(
 						PhoneImage,
-						_rectPhone,
+						_rectanglePhone,
 						new RectangleF(0,0,sizeNew.Width+3,sizeNew.Height),
 						GraphicsUnit.Pixel);
 					if(ODBuild.IsDebug()) {
@@ -564,7 +564,7 @@ namespace OpenDental {
 
 		#region Mouse events
 
-		private void MapAreaRoomControl_DoubleClick(object sender,EventArgs e) {
+		private void MapCubicle_DoubleClick(object sender,EventArgs e) {
 			if(!AllowEdit) {
 				return;
 			}
@@ -574,12 +574,12 @@ namespace OpenDental {
 			if(FormEP.ShowDialog(this)!=DialogResult.OK) {
 				return;
 			}
-			if(MapAreaRoomChanged!=null) { //let anyone interested know that this cubicle was edited
-				MapAreaRoomChanged(this,new EventArgs());
+			if(MapCubicleEdited!=null) { //let anyone interested know that this cubicle was edited
+				MapCubicleEdited(this,new EventArgs());
 			}
 		}
 
-		private void MapAreaRoomControl_Click(object sender,EventArgs e) {
+		private void MapCubicle_Click(object sender,EventArgs e) {
 			if(AllowEdit) {
 				return; //they're editing the room, don't change anyone's statuses.
 			}
@@ -587,18 +587,18 @@ namespace OpenDental {
 			RoomControlClicked?.Invoke(this, e);
 		}
 
-		private void MapAreaRoomControl_MouseDown(object sender,MouseEventArgs e) {
+		private void MapCubicle_MouseDown(object sender,MouseEventArgs e) {
 			if(!AllowRightClick || PhoneCur==null) {
 				return;//disable click options in setup window.
 			}
 			if(e==null || e.Button!=MouseButtons.Right) {
 				if(e.Button==MouseButtons.Left && !IsFlashing() && Status!="OnWay") {
-					if(_rectName.Contains(e.Location)) {
-						PhoneUI.EmployeeSettings(PhoneCur);
+					if(_rectangleName.Contains(e.Location)) {
+						PhoneUI.ShowEmployeeSettings(PhoneCur);
 						return;
 					}
-					if(_rectPhone.Contains(e.Location) && PhoneCur.PatNum!=0) {
-						GoToChanged?.Invoke(this,new EventArgs());
+					if(_rectanglePhone.Contains(e.Location) && PhoneCur.PatNum!=0) {
+						ClickedGoTo?.Invoke(this,new EventArgs());
 					}	
 				}
 				return;
@@ -712,11 +712,11 @@ namespace OpenDental {
 		}
 
 		private void menuItemGoTo_Click(object sender,EventArgs e) {
-			GoToChanged?.Invoke(this,new EventArgs());
+			ClickedGoTo?.Invoke(this,new EventArgs());
 		}
 
 		private void menuItemEmployeeSettings_Click(object sender,EventArgs e) {
-			PhoneUI.EmployeeSettings(PhoneCur);
+			PhoneUI.ShowEmployeeSettings(PhoneCur);
 		}
 		#endregion
 

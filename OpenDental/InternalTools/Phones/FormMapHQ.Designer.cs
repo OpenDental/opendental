@@ -723,10 +723,10 @@
 			this.mapAreaPanel.Size = new System.Drawing.Size(1518, 960);
 			this.mapAreaPanel.TabIndex = 71;
 			this.mapAreaPanel.WidthFloorFeet = 89;
+			this.mapAreaPanel.Click += new System.EventHandler(this.mapAreaPanel_Click);
 			// 
 			// timerWebCam
 			// 
-			this.timerWebCam.Enabled = true;
 			this.timerWebCam.Interval = 250;
 			this.timerWebCam.Tick += new System.EventHandler(this.timerWebCam_Tick);
 			// 

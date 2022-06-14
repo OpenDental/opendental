@@ -351,6 +351,7 @@
 			// 
 			this.linkLabelClaimsReceivedDaysDetails.ForeColor = System.Drawing.Color.MidnightBlue;
 			this.linkLabelClaimsReceivedDaysDetails.LinkArea = new System.Windows.Forms.LinkArea(93, 23);
+			this.linkLabelClaimsReceivedDaysDetails.LinkColor = System.Drawing.Color.MidnightBlue;
 			this.linkLabelClaimsReceivedDaysDetails.Location = new System.Drawing.Point(476, 154);
 			this.linkLabelClaimsReceivedDaysDetails.Name = "linkLabelClaimsReceivedDaysDetails";
 			this.linkLabelClaimsReceivedDaysDetails.Size = new System.Drawing.Size(498, 29);
@@ -366,6 +367,7 @@
 			// 
 			this.linkLabelClaimPaymentBatchOnly.ForeColor = System.Drawing.Color.MidnightBlue;
 			this.linkLabelClaimPaymentBatchOnly.LinkArea = new System.Windows.Forms.LinkArea(52, 10);
+			this.linkLabelClaimPaymentBatchOnly.LinkColor = System.Drawing.Color.MidnightBlue;
 			this.linkLabelClaimPaymentBatchOnly.Location = new System.Drawing.Point(476, 184);
 			this.linkLabelClaimPaymentBatchOnly.Name = "linkLabelClaimPaymentBatchOnly";
 			this.linkLabelClaimPaymentBatchOnly.Size = new System.Drawing.Size(498, 17);
@@ -380,6 +382,7 @@
 			// 
 			this.linkLabelShowAutoDepositDetails.ForeColor = System.Drawing.Color.MidnightBlue;
 			this.linkLabelShowAutoDepositDetails.LinkArea = new System.Windows.Forms.LinkArea(5, 31);
+			this.linkLabelShowAutoDepositDetails.LinkColor = System.Drawing.Color.MidnightBlue;
 			this.linkLabelShowAutoDepositDetails.Location = new System.Drawing.Point(476, 293);
 			this.linkLabelShowAutoDepositDetails.Name = "linkLabelShowAutoDepositDetails";
 			this.linkLabelShowAutoDepositDetails.Size = new System.Drawing.Size(498, 17);

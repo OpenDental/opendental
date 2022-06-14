@@ -401,9 +401,11 @@ namespace OpenDentBusiness{
 			listSheetFieldTypes.Add(SheetFieldType.Line);
 			listSheetFieldTypes.Add(SheetFieldType.Rectangle);
 			listSheetFieldTypes.Add(SheetFieldType.CheckBox);
-			listSheetFieldTypes.Add(SheetFieldType.SigBox);
-			listSheetFieldTypes.Add(SheetFieldType.PatImage);
-			listSheetFieldTypes.Add(SheetFieldType.ComboBox);
+			if(!sheetType.In(SheetTypeEnum.DepositSlip)) {
+				listSheetFieldTypes.Add(SheetFieldType.SigBox);
+				listSheetFieldTypes.Add(SheetFieldType.PatImage);
+				listSheetFieldTypes.Add(SheetFieldType.ComboBox);
+			}
 			if(sheetType==SheetTypeEnum.TreatmentPlan) {
 				listSheetFieldTypes.Add(SheetFieldType.SigBoxPractice);
 			}

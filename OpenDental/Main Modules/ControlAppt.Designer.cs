@@ -924,7 +924,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.contrApptPanel.DateSelected = new System.DateTime(((long)(0)));
-			this.contrApptPanel.IsWeeklyView = false;
 			this.contrApptPanel.Location = new System.Drawing.Point(0, 38);
 			this.contrApptPanel.Name = "contrApptPanel";
 			this.contrApptPanel.Size = new System.Drawing.Size(594, 703);

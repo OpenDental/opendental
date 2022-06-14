@@ -169,12 +169,12 @@ namespace OpenDental {
 
 		#region Events - Raise
 
-		public event EventHandler MapAreaChanged;
-		public event EventHandler RoomControlClicked;
+		public event EventHandler MapCubicleEdited;
+		public event EventHandler MapCubicleClicked;
 		///<summary></summary>
 		[Category("Property Changed")]
 		[Description("Event raised when user wants to go to a patient or related object.")]
-		public event EventHandler GoToChanged=null;
+		public event EventHandler ClickedGoTo=null;
 
 		#endregion Events - Raise
 
@@ -201,8 +201,56 @@ namespace OpenDental {
 		}
 
 		#endregion
-		
-		#region Manage cubicle controls.
+
+		#region Methods - Event Handlers
+		protected override void OnClick(EventArgs e) {
+			
+		}
+
+		private void mapCubicle_Clicked(object sender,EventArgs e) {
+			MapCubicleClicked?.Invoke(sender,new EventArgs());
+		}
+
+		///<summary>Alert parent that something has changed</summary>
+		private void mapCubicle_ClickedGoTo(object sender,EventArgs e) {
+			ClickedGoTo?.Invoke(sender,new EventArgs());
+		}
+
+		///<summary>Alert parent that something has changed</summary>
+		private void mapCubicle_Edited(object sender,EventArgs e) {
+			MapCubicleEdited?.Invoke(sender,new EventArgs());
+		}
+
+		///<summary>Handle the Cubicle.DragDone event</summary>
+		void mapCubicle_DragDone(object sender,EventArgs e) {
+			if(sender==null) {
+				return;
+			}
+			Control asControl=null;
+			MapArea clinicMapItem=null;
+			if(sender is MapCubicle) {
+				asControl=(Control)sender;
+				clinicMapItem=((MapCubicle)sender).MapAreaCur;			
+			}
+			else if(sender is MapLabel) {
+				asControl=(Control)sender;
+				clinicMapItem=((MapLabel)sender).MapAreaCur;
+			}
+			else {
+				return;
+			}
+			//recalculate XPos and YPos based on new location in the panel
+			PointF xy=ConvertScreenLocationToXY(asControl.Location,PixelsPerFoot);
+			clinicMapItem.XPos=Math.Round(xy.X,3);
+			clinicMapItem.YPos=Math.Round(xy.Y,3);
+			//save new cubicle location to db
+			MapAreas.Update(clinicMapItem);
+			//alert the parent
+			mapCubicle_Edited(sender,new EventArgs());
+		}
+		#endregion Methods - Event Handlers
+
+		#region Methods
 		///<summary>Clear the form. Optionally delete the records from the database. Use this option sparingly (if ever).</summary>
 		public void Clear(bool deleteFromDatabase) {
 			if(deleteFromDatabase) {
@@ -261,10 +309,10 @@ namespace OpenDental {
 			mapCubicle.Name=mapArea.MapAreaNum.ToString();
 			mapCubicle.PhoneCur=Phones.GetPhoneForExtensionDB(PIn.Int(mapCubicle.Extension));
 			mapCubicle.AllowRightClick=allowRightClickOptions;
-			mapCubicle.DragDone+=mapAreaControl_DragDone;
-			mapCubicle.MapAreaRoomChanged+=mapAreaControl_Changed;
-			mapCubicle.RoomControlClicked+=roomControl_Clicked;
-			mapCubicle.GoToChanged+=GoTo_Changed;
+			mapCubicle.DragDone+=mapCubicle_DragDone;
+			mapCubicle.MapCubicleEdited+=mapCubicle_Edited;
+			mapCubicle.RoomControlClicked+=mapCubicle_Clicked;
+			mapCubicle.ClickedGoTo+=mapCubicle_ClickedGoTo;
 			try{
 				if(mapCubicle.Handle==IntPtr.Zero){
 					return;
@@ -287,8 +335,8 @@ namespace OpenDental {
 				this.PixelsPerFoot,
 				this.AllowDragging,
 				this.AllowEditing);
-			label.DragDone+=mapAreaControl_DragDone;
-			label.MapAreaDisplayLabelChanged+=mapAreaControl_Changed;
+			label.DragDone+=mapCubicle_DragDone;
+			label.MapAreaDisplayLabelChanged+=mapCubicle_Edited;
 			try{
 				if(label.Handle==IntPtr.Zero){
 					return;
@@ -298,51 +346,6 @@ namespace OpenDental {
 				return;
 			}
 			LayoutManager.Add(label,this);
-		}
-
-		///<summary>Alert parent that something has changed</summary>
-		private void mapAreaControl_Changed(object sender,EventArgs e) {
-			if(MapAreaChanged!=null) {
-				MapAreaChanged(sender,new EventArgs());
-			}
-		}
-
-
-		private void roomControl_Clicked(object sender,EventArgs e) {
-			RoomControlClicked?.Invoke(sender,new EventArgs());
-		}
-
-		///<summary>Alert parent that something has changed</summary>
-		private void GoTo_Changed(object sender,EventArgs e) {
-			GoToChanged?.Invoke(sender,new EventArgs());
-		}
-
-		///<summary>Handle the Cubicle.DragDone event</summary>
-		void mapAreaControl_DragDone(object sender,EventArgs e) {
-			if(sender==null) {
-				return;
-			}
-			Control asControl=null;
-			MapArea clinicMapItem=null;
-			if(sender is MapCubicle) {
-				asControl=(Control)sender;
-				clinicMapItem=((MapCubicle)sender).MapAreaCur;			
-			}
-			else if(sender is MapLabel) {
-				asControl=(Control)sender;
-				clinicMapItem=((MapLabel)sender).MapAreaCur;
-			}
-			else {
-				return;
-			}
-			//recalculate XPos and YPos based on new location in the panel
-			PointF xy=ConvertScreenLocationToXY(asControl.Location,PixelsPerFoot);
-			clinicMapItem.XPos=Math.Round(xy.X,3);
-			clinicMapItem.YPos=Math.Round(xy.Y,3);
-			//save new cubicle location to db
-			MapAreas.Update(clinicMapItem);
-			//alert the parent
-			mapAreaControl_Changed(sender,new EventArgs());
 		}
 
 		///<summary>Call this BEFORE calling ResizeCubicles.</summary>
@@ -379,7 +382,7 @@ namespace OpenDental {
 			}
 		}
 
-		#endregion
+		#endregion Methods
 
 		#region Drawing
 		private void MapAreaPanel_Paint(object sender,PaintEventArgs e) {

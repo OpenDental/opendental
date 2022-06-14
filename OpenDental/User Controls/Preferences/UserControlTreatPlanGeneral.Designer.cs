@@ -458,6 +458,7 @@ namespace OpenDental {
 			// 
 			this.linkLabelProcDiscountTypeDetails1.ForeColor = System.Drawing.Color.MidnightBlue;
 			this.linkLabelProcDiscountTypeDetails1.LinkArea = new System.Windows.Forms.LinkArea(24, 8);
+			this.linkLabelProcDiscountTypeDetails1.LinkColor = System.Drawing.Color.MidnightBlue;
 			this.linkLabelProcDiscountTypeDetails1.Location = new System.Drawing.Point(476, 248);
 			this.linkLabelProcDiscountTypeDetails1.Name = "linkLabelProcDiscountTypeDetails1";
 			this.linkLabelProcDiscountTypeDetails1.Size = new System.Drawing.Size(306, 15);
@@ -472,6 +473,7 @@ namespace OpenDental {
 			// 
 			this.linkLabelProcDiscountTypeDetails2.ForeColor = System.Drawing.Color.MidnightBlue;
 			this.linkLabelProcDiscountTypeDetails2.LinkArea = new System.Windows.Forms.LinkArea(7, 22);
+			this.linkLabelProcDiscountTypeDetails2.LinkColor = System.Drawing.Color.MidnightBlue;
 			this.linkLabelProcDiscountTypeDetails2.Location = new System.Drawing.Point(788, 247);
 			this.linkLabelProcDiscountTypeDetails2.Name = "linkLabelProcDiscountTypeDetails2";
 			this.linkLabelProcDiscountTypeDetails2.Size = new System.Drawing.Size(186, 17);

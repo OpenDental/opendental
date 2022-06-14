@@ -773,12 +773,19 @@ namespace OpenDental{
 			ApptViewCur.OnlyScheduledProvs=checkOnlyScheduledProvs.Checked;
 			ApptViewCur.OnlySchedBeforeTime=timeBefore.TimeOfDay;
 			ApptViewCur.OnlySchedAfterTime=timeAfter.TimeOfDay;
+			long clinicOld=ApptViewCur.ClinicNum;
 			ApptViewCur.ClinicNum=0;//Default is all clinics
 			if(PrefC.HasClinicsEnabled) {
 				//_listUserClinicNums will contain only a 0 if the clinics show feature is disabled.
 				//If the user is not restricted to a clinic, the list will contain 0 in the first position since comboClinic will contain 'All' as the first option.
 				//Restricted users (Security.CurUser.ClinicsIsRestricted=true && Security.CurUser.ClinicNum>0) won't have access to the unassigned views (AssignedClinic=0)
 				ApptViewCur.ClinicNum=comboClinic.SelectedClinicNum;
+			}
+			//User just moved this appointment view to a different clinic and this view was associated to the current Computer. Clear it out.
+			if(ApptViewCur.ClinicNum!=clinicOld && ComputerPrefs.LocalComputer.ApptViewNum==ApptViewCur.ApptViewNum) {
+				ComputerPrefs.LocalComputer.ApptViewNum=0;
+				ComputerPrefs.Update(ComputerPrefs.LocalComputer);
+				UserodApptViews.InsertOrUpdate(Security.CurUser.UserNum,clinicOld,0);
 			}
 			ApptViews.Update(ApptViewCur);//same whether isnew or not
 			DialogResult=DialogResult.OK;

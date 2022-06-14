@@ -212,22 +212,22 @@ namespace OpenDental {
 			PhoneAsterisks.SetQueueForExtension(phone.Extension,AsteriskQueues.Backup);
 		}
 
-		public static void EmployeeSettings(PhoneTile tile) {
-			EmployeeSettings(tile.PhoneCur);
+		public static void ShowEmployeeSettings(PhoneTile tile) {
+			ShowEmployeeSettings(tile.PhoneCur);
 		}
 
-		public static void EmployeeSettings(Phone phone) {
+		public static void ShowEmployeeSettings(Phone phone) {
 			if(phone==null || phone.EmployeeNum < 1) {
 				return;
 			}
-			PhoneEmpDefault ped=PhoneEmpDefaults.GetByExtAndEmp(phone.Extension,phone.EmployeeNum);
-			if(ped==null) {
+			PhoneEmpDefault phoneEmpDefault=PhoneEmpDefaults.GetByExtAndEmp(phone.Extension,phone.EmployeeNum);
+			if(phoneEmpDefault==null) {
 				MsgBox.Show("Could not find the selected EmployeeNum/Extension pair in database. Please verify that the correct extension is listed for this user in map setup.");
 				return;
 			}
-			using FormPhoneEmpDefaultEdit form=new FormPhoneEmpDefaultEdit();
-			form.PedCur=ped;
-			form.ShowDialog();
+			using FormPhoneEmpDefaultEdit formPhoneEmpDefaultEdit=new FormPhoneEmpDefaultEdit();
+			formPhoneEmpDefaultEdit.PedCur=phoneEmpDefault;
+			formPhoneEmpDefaultEdit.ShowDialog();
 		}
 
 		//Queues---------------------------------------------------

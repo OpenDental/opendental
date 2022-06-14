@@ -3666,6 +3666,7 @@ namespace OpenDentBusiness {
 						//Set the InsPayAmt and WriteOff accordingly.
 						claimProcSupplemental.InsPayAmt=listClaimGroups[i].ListClaimProcsFake[k].InsPayAmt - claimProcGroup.InsPayAmt;
 						claimProcSupplemental.WriteOff=listClaimGroups[i].ListClaimProcsFake[k].WriteOff - claimProcGroup.WriteOff;
+						claimProcSupplemental.Remarks="Conv Ins Overpayment";
 						listClaimProcSupplementals.Add(claimProcSupplemental);
 					}
 				}
@@ -3735,8 +3736,34 @@ namespace OpenDentBusiness {
 		///<summary>Makes the InsOverpayResults official by inserting all suggested supplemental claimprocs and patient payments into the database.</summary>
 		public static void InsertInsOverpayResult(InsOverpayResult insOverpayResult,string logText="") {
 			//No need to check MiddleTierRole; no call to db.
-			//Insert the supplemental claimprocs.
-			ClaimProcs.InsertMany(insOverpayResult.ListClaimProcSupplementals);
+			if(insOverpayResult.ListClaimProcSupplementals.IsNullOrEmpty()) {
+				return;
+			}
+			//Insert the supplemental claimprocs. This InsertMany method invokes the Insert method for each claimproc instead of invoking the CRUD.InsertMany method.
+			//This means that the list that is returned will have the PKs set correctly.
+			insOverpayResult.ListClaimProcSupplementals=ClaimProcs.InsertMany(insOverpayResult.ListClaimProcSupplementals);
+			//Group up the claimprocs by ClaimNum in order to make an insurance check per claim.
+			List<ClaimGroup> listClaimGroups=insOverpayResult.ListClaimProcSupplementals
+				.GroupBy(x => x.ClaimNum)
+				.ToDictionary(x => x.Key,x => x.ToList())
+				.Select(x => new ClaimGroup(x.Key,x.Value))
+				.ToList();
+			//Create and insert insurance checks for the supplemental claimprocs that were just inserted.
+			for(int i=0;i<listClaimGroups.Count;i++) {
+				ClaimPayment claimPayment=new ClaimPayment();
+				claimPayment.CheckDate=listClaimGroups[i].ListClaimProcs.First().DateCP;
+				claimPayment.CheckAmt=listClaimGroups[i].ListClaimProcs.Sum(x => x.InsPayAmt);
+				claimPayment.ClinicNum=listClaimGroups[i].ListClaimProcs.First().ClinicNum;
+				//Use a dummy carrier name so that it doesn't look like the carrier actually refunded the overpayment.
+				claimPayment.CarrierName="Family Balancer";
+				claimPayment.PayType=Defs.GetFirstForCategory(DefCat.InsurancePaymentType,true).DefNum;
+				claimPayment.Note="Conv Ins Overpayment";
+				ClaimPayments.Insert(claimPayment);
+				for(int j=0;j<listClaimGroups[i].ListClaimProcs.Count;j++) {
+					listClaimGroups[i].ListClaimProcs[j].ClaimPaymentNum=claimPayment.ClaimPaymentNum;
+					ClaimProcs.Update(listClaimGroups[i].ListClaimProcs[j]);
+				}
+			}
 			//Insert the unearned payments.
 			for(int i=0;i<insOverpayResult.ListPayNumPaySplitsGroups.Count;i++) {
 				Payments.Insert(insOverpayResult.ListPayNumPaySplitsGroups[i].Payment,insOverpayResult.ListPayNumPaySplitsGroups[i].ListPaySplits);
@@ -4060,13 +4087,19 @@ namespace OpenDentBusiness {
 		///<summary>A claim and its associated claimprocs.</summary>
 		private class ClaimGroup {
 			public long ClaimNum;
+			///<summary>A shallow, read only list of all claim procedures associated to this claim. Not designed to be manipulated.</summary>
+			public List<ClaimProc> ListClaimProcs;
 			///<summary>A shallow, read only list of all claim procedures associated to this claim grouped up by ProcNum. Not designed to be manipulated.</summary>
 			public List<ClaimProcGroup> ListClaimProcGroups;
 			///<summary>A list of fake claimprocs created by filling up the claim in a specific FIFO manner.</summary>
 			public List<ClaimProc> ListClaimProcsFake=new List<ClaimProc>();
 
-			public ClaimGroup(long claimNum,List<ClaimProc> listClaimProcs,List<Procedure> listProcedures) {
+			public ClaimGroup(long claimNum,List<ClaimProc> listClaimProcs,List<Procedure> listProcedures=null) {
 				ClaimNum=claimNum;
+				ListClaimProcs=new List<ClaimProc>(listClaimProcs);
+				if(listProcedures==null) {
+					listProcedures=new List<Procedure>();
+				}
 				ListClaimProcGroups=listClaimProcs.OrderBy(y => y.LineNumber)
 					.GroupBy(x => x.ProcNum)
 					.Select(x => new ClaimProcGroup(x.ToList(),listProcedures.FirstOrDefault(y => y.ProcNum==x.Key)))

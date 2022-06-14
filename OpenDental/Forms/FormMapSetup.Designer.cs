@@ -268,7 +268,7 @@
 			this.mapAreaPanel.ShowOutline = true;
 			this.mapAreaPanel.Size = new System.Drawing.Size(1374, 969);
 			this.mapAreaPanel.TabIndex = 4;
-			this.mapAreaPanel.MapAreaChanged += new System.EventHandler(this.mapAreaPanel_MapAreaChanged);
+			this.mapAreaPanel.MapCubicleEdited += new System.EventHandler(this.mapAreaPanel_MapCubicleEdited);
 			this.mapAreaPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mapAreaPanel_MouseUp);
 			// 
 			// butCancel

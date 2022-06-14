@@ -7629,9 +7629,11 @@ namespace OpenDental {
 			NewCrop.PrescriptionHistoryRequest prescriptionHistoryRequest=new NewCrop.PrescriptionHistoryRequest();
 			NewCrop.PatientInformationRequester patientInfoRequester=new NewCrop.PatientInformationRequester();
 			NewCrop.Result response=new NewCrop.Result();
+			string newCropURL=Introspection.GetOverride(Introspection.IntrospectionEntity.NewCropUpdate1URL,"https://secure.newcropaccounts.com/v7/WebServices/Update1.asmx");
 			if(ODBuild.IsDebug()) {
-				wsNewCrop.Url="https://preproduction.newcropaccounts.com/v7/WebServices/Update1.asmx";
+				newCropURL="https://preproduction.newcropaccounts.com/v7/WebServices/Update1.asmx";
 			}
+			wsNewCrop.Url=newCropURL;
 			credentials.PartnerName=OpenDentBusiness.NewCrop.NewCropPartnerName;
 			credentials.Name=OpenDentBusiness.NewCrop.NewCropAccountName;
 			credentials.Password=OpenDentBusiness.NewCrop.NewCropAccountPasssword;
@@ -11100,6 +11102,7 @@ namespace OpenDental {
 				}
 			}
 			Pd.ClearAndFill(EnumPdTable.OrthoHardware);
+			FillOrthoDateIfNeeded(true);
 			FillToothChart(false);
 			FillGridOrtho();
 		}

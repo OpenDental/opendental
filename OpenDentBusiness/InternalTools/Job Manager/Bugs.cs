@@ -310,6 +310,9 @@ namespace OpenDentBusiness{
 				case "REGGIEJ":
 					bugUser=97;
 					break;
+				case "EZEQUIELS":
+					bugUser=99;
+					break;				
 				default:
 					bugUser=2;//Tech Support
 					break;

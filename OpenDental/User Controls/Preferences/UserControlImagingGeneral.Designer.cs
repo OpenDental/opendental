@@ -31,7 +31,6 @@ namespace OpenDental {
 			this.label41 = new System.Windows.Forms.Label();
 			this.textVideoImageCategoryDefault = new System.Windows.Forms.TextBox();
 			this.groupBoxOD2 = new OpenDental.UI.GroupBoxOD();
-			this.label40 = new System.Windows.Forms.Label();
 			this.textDecimals = new OpenDental.ValidNum();
 			this.textScale = new OpenDental.ValidDouble();
 			this.textUnits = new System.Windows.Forms.TextBox();
@@ -52,6 +51,7 @@ namespace OpenDental {
 			this.labelPDFLaunchWindowDetails = new System.Windows.Forms.Label();
 			this.groupImport = new OpenDental.UI.GroupBoxOD();
 			this.groupBoxFunctionality = new OpenDental.UI.GroupBoxOD();
+			this.labelDefaultMeasurementScaleDetails = new System.Windows.Forms.Label();
 			this.groupBoxOD2.SuspendLayout();
 			this.groupImport.SuspendLayout();
 			this.groupBoxFunctionality.SuspendLayout();
@@ -119,7 +119,6 @@ namespace OpenDental {
 			// groupBoxOD2
 			// 
 			this.groupBoxOD2.BackColor = System.Drawing.Color.White;
-			this.groupBoxOD2.Controls.Add(this.label40);
 			this.groupBoxOD2.Controls.Add(this.textDecimals);
 			this.groupBoxOD2.Controls.Add(this.textScale);
 			this.groupBoxOD2.Controls.Add(this.textUnits);
@@ -130,15 +129,7 @@ namespace OpenDental {
 			this.groupBoxOD2.Name = "groupBoxOD2";
 			this.groupBoxOD2.Size = new System.Drawing.Size(450, 98);
 			this.groupBoxOD2.TabIndex = 307;
-			this.groupBoxOD2.Text = "";
-			// 
-			// label40
-			// 
-			this.label40.Location = new System.Drawing.Point(5, 5);
-			this.label40.Name = "label40";
-			this.label40.Size = new System.Drawing.Size(217, 36);
-			this.label40.TabIndex = 47;
-			this.label40.Text = "Default Measurement Scale for new single images. Does not apply to mounts.";
+			this.groupBoxOD2.Text = "Default Measurement Scale";
 			// 
 			// textDecimals
 			// 
@@ -340,11 +331,22 @@ namespace OpenDental {
 			this.groupBoxFunctionality.TabIndex = 320;
 			this.groupBoxFunctionality.Text = "Functionality";
 			// 
+			// labelDefaultMeasurementScaleDetails
+			// 
+			this.labelDefaultMeasurementScaleDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelDefaultMeasurementScaleDetails.Location = new System.Drawing.Point(476, 278);
+			this.labelDefaultMeasurementScaleDetails.Name = "labelDefaultMeasurementScaleDetails";
+			this.labelDefaultMeasurementScaleDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelDefaultMeasurementScaleDetails.TabIndex = 321;
+			this.labelDefaultMeasurementScaleDetails.Text = "for new single images, does not apply to mounts";
+			this.labelDefaultMeasurementScaleDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// UserControlImagingGeneral
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.labelDefaultMeasurementScaleDetails);
 			this.Controls.Add(this.groupBoxFunctionality);
 			this.Controls.Add(this.groupImport);
 			this.Controls.Add(this.labelPDFLaunchWindowDetails);
@@ -371,7 +373,6 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label41;
 		private System.Windows.Forms.TextBox textVideoImageCategoryDefault;
 		private UI.GroupBoxOD groupBoxOD2;
-		private System.Windows.Forms.Label label40;
 		private ValidNum textDecimals;
 		private ValidDouble textScale;
 		private System.Windows.Forms.TextBox textUnits;
@@ -392,5 +393,6 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelPDFLaunchWindowDetails;
 		private UI.GroupBoxOD groupImport;
 		private UI.GroupBoxOD groupBoxFunctionality;
+		private System.Windows.Forms.Label labelDefaultMeasurementScaleDetails;
 	}
 }

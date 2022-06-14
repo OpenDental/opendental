@@ -74,6 +74,7 @@
 			this.textSupplementalBackupDateLastComplete = new OpenDental.ODtextBox();
 			this.checkSupplementalBackupEnabled = new System.Windows.Forms.CheckBox();
 			this.labelExplanation = new System.Windows.Forms.Label();
+			this.folderBrowserSupplementalCopyNetworkPath = new OpenDental.FolderBrowserDialog();
 			this.labelSelectTables = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.tabPageBackup.SuspendLayout();

@@ -46,7 +46,14 @@ namespace OpenDental {
 			List<PatientLink> listLinks=PatientLinks.GetLinks(_famCur.ListPats.Select(x => x.PatNum).ToList(),PatientLinkType.Merge);
 			List<Patient> listNonMergedPats=_famCur.ListPats.Where(x => !PatientLinks.WasPatientMerged(x.PatNum,listLinks)).ToList();
 			//New object to break reference to famCur in calling method/class; avoids removing merged patients from original object.
+			if(listNonMergedPats.Count>0) {
 			_famCur=new Family(listNonMergedPats);
+			}
+			else {
+				List<Patient>listPatientsOnlyGuarantor=new List<Patient>();
+				listPatientsOnlyGuarantor.Add(_famCur.Guarantor);
+				_famCur=new Family(listPatientsOnlyGuarantor);
+			}
 			_paySplitCopy=PaySplitCur.Copy();
 			textDateEntry.Text=PaySplitCur.DateEntry.ToShortDateString();
 			textDatePay.Text=PaySplitCur.DatePay.ToShortDateString();

@@ -562,6 +562,7 @@ namespace OpenDental {
 			this.checkIsWorkingHome.Text = "Working From Home";
 			this.checkIsWorkingHome.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkIsWorkingHome.UseVisualStyleBackColor = true;
+			this.checkIsWorkingHome.Visible = false;
 			// 
 			// FormClockEventEdit
 			// 

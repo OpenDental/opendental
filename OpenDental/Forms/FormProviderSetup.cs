@@ -385,10 +385,10 @@ namespace OpenDental{
 			Provider provSelected=(Provider)gridMain.ListGridRows[e.Row].Tag;
 			if(!PrefC.GetBool(PrefName.EasyHideDentalSchools) && Providers.IsAttachedToUser(provSelected.ProvNum)) {//Dental schools is turned on and the provider selected is attached to a user.
 				//provSelected could be a provider or a student at this point.
-				if(!provSelected.IsInstructor && !Security.IsAuthorized(Permissions.AdminDentalStudents)) {
+				if(!provSelected.IsInstructor && provSelected.SchoolClassNum!=0 && !Security.IsAuthorized(Permissions.AdminDentalStudents)) {//student
 					return;
 				}
-				if(provSelected.IsInstructor && !Security.IsAuthorized(Permissions.AdminDentalInstructors)) {
+				if(provSelected.IsInstructor && !Security.IsAuthorized(Permissions.AdminDentalInstructors)) {//instructor
 					return;
 				}
 				if(!radioStudents.Checked) {

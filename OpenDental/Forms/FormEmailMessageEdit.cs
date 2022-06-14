@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CodeBase;
 using OpenDental.UI;
@@ -345,15 +346,10 @@ namespace OpenDental {
 			listAutographs.Items.AddList(EmailAutographs.GetDeepCopy(),x => x.Description);
 		}
 
-		///<summary>Sets the default autograph that shows in the message body. 
-		///The default autograph is determined to be the first autograph with an email that matches the email address of the sender.</summary>
-		private void SetDefaultAutograph() {
-			if(!emailPreview.IsComposing || !IsNew) {
-				return;
-			}
-			EmailAddress emailAddressOutgoing=null;
-			if(emailPreview.TryGetFromEmailAddress(out emailAddressOutgoing)==FromAddressMatchResult.Failed) {
-				return;
+		/// <summary>Searches the list of EmailAutographs and returns the first match, otherwise null</summary>
+		private EmailAutograph FindDefaultEmailAutograph() {
+			if(emailPreview.TryGetFromEmailAddress(out EmailAddress emailAddressOutgoing)==FromAddressMatchResult.Failed) {
+				return null;
 			}
 			string emailUsername=EmailMessages.GetAddressSimple(emailAddressOutgoing.EmailUsername);
 			string emailSender=EmailMessages.GetAddressSimple(emailAddressOutgoing.SenderAddress);
@@ -364,9 +360,24 @@ namespace OpenDental {
 				if((!string.IsNullOrWhiteSpace(emailUsername) && autographEmail.Contains(emailUsername)) 
 					|| (!string.IsNullOrWhiteSpace(emailSender) && autographEmail.Contains(emailSender)))
 				{
-					InsertAutograph((EmailAutograph)listAutographs.Items.GetObjectAt(i));
-					break;
+					return (EmailAutograph)listAutographs.Items.GetObjectAt(i);
 				}
+			}
+			return null;
+		}
+
+		///<summary>Sets the default autograph that shows in the message body. 
+		///The default autograph is determined to be the first autograph with an email that matches the email address of the sender.</summary>
+		private void SetDefaultAutograph() {
+			if(!emailPreview.IsComposing || !IsNew) {
+				return;
+			}
+			EmailAutograph emailAutograph=FindDefaultEmailAutograph();
+			if(emailAutograph==null) {
+				return;
+			}
+			if(!IsAutographHTML(emailAutograph)) {//HTML autographs will be appended automatically on send.
+				InsertAutograph(emailAutograph);
 			}
 		}
 		
@@ -375,6 +386,13 @@ namespace OpenDental {
 		///history.</summary>
 		private void InsertAutograph(EmailAutograph emailAutograph) {
 			emailPreview.BodyText+="\r\n\r\n"+emailAutograph.AutographText;
+		}
+
+		/// <summary>Returns true if the given EmailAutograph contains HTML tags, false otherwise. </summary>
+		private bool IsAutographHTML(EmailAutograph emailAutograph) {
+			string allTagsPattern = "<(?:\"[^\"]*\"|'[^']*'|[^'\">])+>"; //Matches all HTML tags including inline css with double or single quotations.
+			bool doesContainHtml = Regex.IsMatch(emailAutograph.AutographText,allTagsPattern); 
+			return doesContainHtml;
 		}
 		
 		private void listAutographs_DoubleClick(object sender,EventArgs e) { //edit an autograph
@@ -405,7 +423,7 @@ namespace OpenDental {
 				MessageBox.Show(Lan.g(this,"Please select an autograph before inserting."));
 				return;
 			}
-			if(emailPreview.IsHtml) {
+			if(emailPreview.IsHtml || IsAutographHTML(listAutographs.GetSelected<EmailAutograph>())) {
 				if(MsgBox.Show(MsgBoxButtons.YesNo,"Autographs must be inserted from the Edit HTML window using the autograph dropdown in the toolbar."
 					+"\r\n\r\nWould you like to open the Edit HTML window?")) 
 				{
@@ -730,6 +748,26 @@ namespace OpenDental {
 			if(emailAddress.SMTPserver==""){
 				MsgBox.Show(this,"The email address in email setup must have an SMTP server.");
 				return;
+			}
+			//If default autograph is HTML send the whole email as HTML.
+			EmailAutograph emailAutograph=FindDefaultEmailAutograph();
+			if(emailAutograph!=null && IsAutographHTML(emailAutograph) && _emailMessage.HtmlType==EmailType.Regular) {
+				bool hasValidHTML=false;
+				try {
+					string markupText=emailPreview.BodyText+"\r\n\r\n"+emailAutograph.AutographText;
+					emailPreview.HtmlText=MarkupEdit.TranslateToXhtml(markupText,true,isEmail:true);
+					hasValidHTML=true;
+				}
+				catch(Exception ex) {
+					ex.DoNothing();
+					if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"There was a problem automatically appending the HTML autograph. Continue without an autograph?")) {
+						return;//User wants to manually fix the HTML autograph and try again.
+					}
+				}
+				if(hasValidHTML) {
+					InsertAutograph(emailAutograph);
+					ChangeViewToHtml(isRaw:false);//can't be raw HTML since EmailType is regular above
+				}
 			}
 			Cursor=Cursors.WaitCursor;
 			SaveMsg();

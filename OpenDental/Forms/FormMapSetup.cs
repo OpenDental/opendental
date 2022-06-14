@@ -28,7 +28,7 @@ namespace OpenDental {
 			FillEmployees();
 			FillSettings();
 			//map panel
-			mapAreaPanel_MapAreaChanged(this,new EventArgs());
+			mapAreaPanel_MapCubicleEdited(this,new EventArgs());
 		}
 
 		private void FillCombo() {
@@ -98,7 +98,7 @@ namespace OpenDental {
 			mapAreaPanel.Invalidate();
 		}
 
-		private void mapAreaPanel_MapAreaChanged(object sender,EventArgs e) {
+		private void mapAreaPanel_MapCubicleEdited(object sender,EventArgs e) {
 			FillMap();
 		}
 

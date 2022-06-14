@@ -5588,58 +5588,58 @@ namespace OpenDentBusiness {
 			//This code is only needed for older db's. New DB's created after 12.2.30 and 12.3.2 shouldn't need this.
 			string command=@"DROP TABLE IF EXISTS tempduplicatepatfields";
 			Db.NonQ(command);
-			string tableName="tempduplicatepatfields"+MiscUtils.CreateRandomAlphaNumericString(8);//max size for a table name in oracle is 30 chars.
-																																														//This query run very fast on a db with no corruption.
-			command=@"CREATE TABLE "+tableName+@"
-								SELECT *
-								FROM patfield
-								GROUP BY PatNum,FieldName
-								HAVING COUNT(*)>1";
-			Db.NonQ(command);
-			command=@"SELECT patient.PatNum,LName,FName
-								FROM patient 
-								INNER JOIN "+tableName+@" t ON t.PatNum=patient.PatNum
-								GROUP BY patient.PatNum";
-			DataTable table=Db.GetTable(command);
+			command="SELECT PatFieldNum,PatNum,FieldName " +
+							"FROM patfield " +
+							"GROUP BY PatNum,FieldName " +
+							"HAVING COUNT(*)>1";
+			DataTable dataTableDuplicatePatfields=Db.GetTable(command);
+			List<PatField> listPatFieldLims=dataTableDuplicatePatfields.Select()
+				.Select(x => new PatField() { 
+						PatFieldNum=PIn.Long(x["PatFieldNum"].ToString()),
+						PatNum=PIn.Long(x["PatNum"].ToString()),
+						FieldName=PIn.String(x["FieldName"].ToString())
+					}).ToList();
+			DataTable dataTablePatientsWithDuplicates=new DataTable();
+			if(listPatFieldLims.Count>0) {
+				command="SELECT PatNum,LName,FName "+
+								"FROM patient WHERE PatNum IN ("+string.Join(",",listPatFieldLims.Select(x=>POut.Long(x.PatNum)))+") "+
+								"GROUP BY PatNum";
+				dataTablePatientsWithDuplicates=Db.GetTable(command);
+			}
 			string log="";
 			switch(modeCur) {
 				case DbmMode.Check:
-					if(table.Rows.Count>0 || verbose) {
-						log+=Lans.g("FormDatabaseMaintenance","Patients with duplicate field entries found:")+" "+table.Rows.Count+".\r\n";
+					if(dataTablePatientsWithDuplicates.Rows.Count>0 || verbose) {
+						log+=Lans.g("FormDatabaseMaintenance","Patients with duplicate field entries found:")+" "+dataTablePatientsWithDuplicates.Rows.Count+".\r\n";
 						log+="   "+Lans.g("FormDatabaseMaintenance","Double click to see a break down.")+"\r\n";
 					}
 					break;
 				case DbmMode.Breakdown:
-					if(table.Rows.Count>0 || verbose) {
+					if(dataTablePatientsWithDuplicates.Rows.Count>0 || verbose) {
 						StringBuilder strBuild=new StringBuilder();
 						strBuild.AppendLine(Lans.g("FormDatabaseMaintenance","The following patients had corrupt Patient Fields.  "
 							+"Please verify the Patient Fields of these patients:"));
-						foreach(DataRow row in table.Rows) {
+						foreach(DataRow row in dataTablePatientsWithDuplicates.Rows) {
 							strBuild.AppendLine("#"+row["PatNum"].ToString()+" "+row["LName"]+", "+row["FName"]);
 						}
-						strBuild.AppendLine(Lans.g("FormDatabaseMaintenance","Patients with duplicate field entries found:")+" "+table.Rows.Count);
+						strBuild.AppendLine(Lans.g("FormDatabaseMaintenance","Patients with duplicate field entries found:")+" "+dataTablePatientsWithDuplicates.Rows.Count);
 						log+=strBuild.ToString();
 					}
 					break;
 				case DbmMode.Fix:
-					if(table.Rows.Count>0) {
-						//Without this index the delete process takes too long.
-						command="ALTER TABLE "+tableName+" ADD INDEX(PatNum)";
-						Db.NonQ(command);
-						command="ALTER TABLE "+tableName+" ADD INDEX(FieldName)";
-						Db.NonQ(command);
-						command="DELETE FROM patfield WHERE ((PatNum, FieldName) IN (SELECT PatNum, FieldName FROM "+tableName+"))";
-						Db.NonQ(command);
-						command="INSERT INTO patfield SELECT * FROM "+tableName;
-						Db.NonQ(command);
+					if(dataTablePatientsWithDuplicates.Rows.Count>0) {
+						for(int i=0;i<listPatFieldLims.Count;i++) {
+							command="DELETE FROM patfield WHERE PatNum="+POut.Long(listPatFieldLims[i].PatNum)+" " +
+							"AND FieldName='"+POut.String(listPatFieldLims[i].FieldName)+"' " +
+							"AND PatFieldNum!="+POut.Long(listPatFieldLims[i].PatFieldNum);
+							Db.NonQ(command);
+						}
 					}
-					if(table.Rows.Count>0 || verbose) {
-						log+=Lans.g("FormDatabaseMaintenance","Patients with duplicate field entries removed:")+" "+table.Rows.Count+"\r\n";
+					if(dataTablePatientsWithDuplicates.Rows.Count>0 || verbose) {
+						log+=Lans.g("FormDatabaseMaintenance","Patients with duplicate field entries removed:")+" "+dataTablePatientsWithDuplicates.Rows.Count+"\r\n";
 					}
 					break;
 			}
-			command=@"DROP TABLE IF EXISTS "+tableName;
-			Db.NonQ(command);
 			return log;
 		}
 

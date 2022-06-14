@@ -39,7 +39,6 @@ namespace OpenDentBusiness.WebTypes.AutoComm {
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string ResponseDescript;
 		///<summary>FK to apptreminderrule.ApptReminderRuleNum. Allows us to look up the rules to determine how to send this apptcomm out.</summary>
-		[XmlIgnore]
 		public long ApptReminderRuleNum;
 
 		#region Obsolete

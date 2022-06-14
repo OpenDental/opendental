@@ -272,8 +272,10 @@ namespace OpenDental {
 			gridTimeCard.Columns.Add(col);
 			col=new GridColumn(Lan.g(this,"PL"),45,HorizontalAlignment.Right);
 			gridTimeCard.Columns.Add(col);
-			col=new GridColumn(Lan.g(this,"WFH"),45,HorizontalAlignment.Right);
-			gridTimeCard.Columns.Add(col);
+			if(PrefC.IsODHQ) {
+				col=new GridColumn(Lan.g(this,"WFH"),45,HorizontalAlignment.Right);
+				gridTimeCard.Columns.Add(col);
+			}
 			col=new GridColumn(Lan.g(this,"Day"),50,HorizontalAlignment.Right);
 			gridTimeCard.Columns.Add(col);
 			col=new GridColumn(Lan.g(this,"Week"),50,HorizontalAlignment.Right);
@@ -318,7 +320,7 @@ namespace OpenDental {
 				if(type==typeof(ClockEvent)){
 					clock=(ClockEvent)mergedAL[i];
 					curDate=clock.TimeDisplayed1.Date;
-				//Columns 1 and 2 - Date and Day-----------------------
+				//Columns 1 and 2 - Date and Day----------------------------------
 					if(curDate==previousDate){
 						row.Cells.Add("");
 						row.Cells.Add("");
@@ -327,12 +329,12 @@ namespace OpenDental {
 						row.Cells.Add(curDate.ToShortDateString());
 						row.Cells.Add(curDate.ToString("ddd"));//Abbreviated name of day
 					}
-				//Column 3 - In (or Out if break)----------------------
+				//Column 3 - In (or Out if break)---------------------------------
 					row.Cells.Add(clock.TimeDisplayed1.ToShortTimeString());
 					if(clock.TimeEntered1!=clock.TimeDisplayed1){
 						row.Cells[row.Cells.Count-1].ColorText = Color.Red;
 					}
-				//Column 4 - Out (or In if break)----------------------
+				//Column 4 - Out (or In if break)---------------------------------
 					if(clock.TimeDisplayed2.Year<1880){
 						row.Cells.Add("");//not clocked out yet
 					}
@@ -343,7 +345,7 @@ namespace OpenDental {
 							row.Cells[row.Cells.Count-1].ColorText = Color.Red;
 						}
 					}
-				//Column 5 - Total-------------------------------------
+				//Column 5 - Total------------------------------------------------
 					if(clock.TimeDisplayed2.Year<1880){
 						row.Cells.Add("");
 					}
@@ -354,7 +356,7 @@ namespace OpenDental {
 						weekSpan+=oneSpan;
 						periodSpan+=oneSpan;
 					}
-				//Column 6 - Adjust------------------------------------
+				//Column 6 - Adjust-----------------------------------------------
 					oneAdj=TimeSpan.Zero;
 					if(clock.AdjustIsOverridden) {
 						oneAdj+=clock.Adjust;
@@ -369,7 +371,7 @@ namespace OpenDental {
 					if(clock.AdjustIsOverridden) {
 						row.Cells[row.Cells.Count-1].ColorText = Color.Red;
 					}
-				//Column 7 - Rate2-------------------------------------
+				//Column 7 - Rate2------------------------------------------------
 					if(clock.Rate2Hours!=TimeSpan.FromHours(-1)) {
 						rate2span+=clock.Rate2Hours;
 						row.Cells.Add(ClockEvents.Format(clock.Rate2Hours));
@@ -379,7 +381,7 @@ namespace OpenDental {
 						rate2span+=clock.Rate2Auto;
 						row.Cells.Add(ClockEvents.Format(clock.Rate2Auto));
 					}
-				//Column 8 - Rate3-------------------------------------
+				//Column 8 - Rate3------------------------------------------------
 					if(clock.Rate3Hours!=TimeSpan.FromHours(-1)) {
 						rate3span+=clock.Rate3Hours;
 						row.Cells.Add(ClockEvents.Format(clock.Rate3Hours));
@@ -389,9 +391,9 @@ namespace OpenDental {
 						rate3span+=clock.Rate3Auto;
 						row.Cells.Add(ClockEvents.Format(clock.Rate3Auto));
 					}
-				//Column 9 - PTO---------------------------------------
+				//Column 9 - PTO--------------------------------------------------
 					row.Cells.Add("");//No PTO should exist, leave blank
-				//Column 10 - OT---------------------------------------
+				//Column 10 - OT--------------------------------------------------
 					oneOT=TimeSpan.Zero;
 					if(clock.OTimeHours!=TimeSpan.FromHours(-1)) {//overridden
 						oneOT=clock.OTimeHours;
@@ -407,16 +409,18 @@ namespace OpenDental {
 					if(clock.OTimeHours!=TimeSpan.FromHours(-1)) {//overridden
 						row.Cells[row.Cells.Count-1].ColorText = Color.Red;
 					}
-				//Column 11 - PL (Unpaid Protected Leave)--------------
+				//Column 11 - PL (Unpaid Protected Leave)-------------------------
 					row.Cells.Add("");//No PL should exist, leave blank
-				//Column 12 - WFH Working From Home -------------------
-					if(clock.IsWorkingHome){
-						row.Cells.Add("X");//Working from home, fill with X
+				//Column 12 - WFH Working From Home ------------------------------
+					if(PrefC.IsODHQ) {
+						if(clock.IsWorkingHome){
+							row.Cells.Add("X");//Working from home, fill with X
+						}
+						else {
+							row.Cells.Add("");//Not Working from home, leave blank
+						}
 					}
-					else {
-						row.Cells.Add("");//Not Working from home, leave blank
-					}
-				//Column 13 - Day (daily total)------------------------
+				//Column 13 (or 12 if no WFH) - Day (daily total)-----------------
 					//if this is the last entry for a given date
 					if(i==mergedAL.Count-1//if this is the last row
 						|| GetDateForRow(i+1,mergedAL) != curDate)//or the next row is a different date
@@ -427,7 +431,7 @@ namespace OpenDental {
 					else{//not the last entry for the day
 						row.Cells.Add("");
 					}
-				//Column 14 - Week (weekly total)----------------------
+				//Column 14 (or 13 if no WFH) - Week (weekly total)---------------
 					weeklyTotals[i]=weekSpan;
 					//if this is the last entry for a given week
 					if(i==mergedAL.Count-1//if this is the last row 
@@ -440,11 +444,11 @@ namespace OpenDental {
 					else {
 						row.Cells.Add("");
 					}
-				//Column 15 - Clinic-----------------------------------
+				//Column 15 (or 14 if no WFH) - Clinic----------------------------
 					if(PrefC.HasClinicsEnabled) {
 						row.Cells.Add(Clinics.GetAbbr(clock.ClinicNum));
 					}
-				//Column 16 (or 15 if no clinics) - Note---------------
+				//Column 16 (or 15 if no clinics and 14 if also no WFH) - Note----
 					row.Cells.Add(clock.Note);
 				}
 				#endregion
@@ -452,7 +456,7 @@ namespace OpenDental {
 				else if(type==typeof(TimeAdjust)){
 					adjust=(TimeAdjust)mergedAL[i];
 					curDate=adjust.TimeEntry.Date;
-				//Columns 1 and 2 - Date and Day-----------------------
+				//Columns 1 and 2 - Date and Day----------------------------------
 					if(curDate==previousDate){
 						row.Cells.Add("");
 						row.Cells.Add("");
@@ -461,9 +465,9 @@ namespace OpenDental {
 						row.Cells.Add(curDate.ToShortDateString());
 						row.Cells.Add(curDate.ToString("ddd"));//Abbreviated name of day
 					}
-				//Column 3 - In (or Out if break)----------------------
+				//Column 3 - In (or Out if break)---------------------------------
 					row.Cells.Add("");
-				//Column 4 - Out (or In if break)----------------------
+				//Column 4 - Out (or In if break)---------------------------------
 					if(adjust.PtoDefNum==0) {
 						row.Cells.Add("(Adjust)");
 					}
@@ -471,9 +475,9 @@ namespace OpenDental {
 						row.Cells.Add(Defs.GetDef(DefCat.TimeCardAdjTypes,adjust.PtoDefNum).ItemName);
 					}
 					row.Cells[row.Cells.Count-1].ColorText=Color.Red;
-				//Column 5 - Total-------------------------------------
+				//Column 5 - Total------------------------------------------------
 					row.Cells.Add("");
-				//Column 6 - Adjust------------------------------------
+				//Column 6 - Adjust-----------------------------------------------
 					if(adjust.IsUnpaidProtectedLeave) {
 						row.Cells.Add("");
 					}
@@ -487,16 +491,16 @@ namespace OpenDental {
 						ptoSpan+=adjust.PtoHours;
 						row.Cells.Add("");
 					}
-				//Column 7 - Rate2-------------------------------------
+				//Column 7 - Rate2------------------------------------------------
 					row.Cells.Add("");
-				//Column 8 - Rate3-------------------------------------
+				//Column 8 - Rate3------------------------------------------------
 					row.Cells.Add("");
-				//Column 9 - PTO---------------------------------------
+				//Column 9 - PTO--------------------------------------------------
 					row.Cells.Add(ClockEvents.Format(adjust.PtoHours));
-				//Column 10 - OT---------------------------------------
+				//Column 10 - OT--------------------------------------------------
 					otspan+=adjust.OTimeHours;
 					row.Cells.Add(ClockEvents.Format(adjust.OTimeHours));//10
-				//Column 11 - PL (Unpaid Protected Leave)--------------
+				//Column 11 - PL (Unpaid Protected Leave)-------------------------
 					if(adjust.IsUnpaidProtectedLeave) {
 						row.Cells.Add(ClockEvents.Format(adjust.RegHours));
 						unpaidProtectedLeaveSpan+=adjust.RegHours;
@@ -504,9 +508,11 @@ namespace OpenDental {
 					else {
 						row.Cells.Add("");
 					}
-				//Column 12 - WFH Working From Home -------------------
-					row.Cells.Add("");//Not Working from home, leave blank
-				//Column 13 - Day (daily total)------------------------
+				//Column 12 - WFH Working From Home ------------------------------
+					if(PrefC.IsODHQ) {
+						row.Cells.Add("");//Not Working from home, leave blank
+					}
+				//Column 13 (or 12 if no WFH) - Day (daily total)-----------------
 					//if this is the last entry for a given date
 					if(i==mergedAL.Count-1//if this is the last row
 						|| GetDateForRow(i+1,mergedAL) != curDate)//or the next row is a different date
@@ -517,7 +523,7 @@ namespace OpenDental {
 					else{
 						row.Cells.Add("");
 					}
-				//Column 14 - Week (weekly total)----------------------
+				//Column 14 (or 13 if no WFH) - Week (weekly total)---------------
 					weeklyTotals[i]=weekSpan;
 					//if this is the last entry for a given week
 					if(i==mergedAL.Count-1//if this is the last row 
@@ -532,11 +538,11 @@ namespace OpenDental {
 					else {
 						row.Cells.Add("");
 					}
-				//Column 15 - Clinic-----------------------------------
+				//Column 15 (or 14 if no WFH) - Clinic----------------------------
 					if(PrefC.HasClinicsEnabled) {
 						row.Cells.Add(Clinics.GetAbbr(adjust.ClinicNum));
 					}
-				//Column 16 (or 15 if no clinics) - Note---------------
+				//Column 16 (or 15 if no clinics and 14 if also no WFH) - Note----
 					row.Cells.Add(adjust.Note);
 					row.Cells[row.Cells.Count-1].ColorText=Color.Red;
 				}
@@ -642,8 +648,11 @@ namespace OpenDental {
 			g.DrawString(str,fontTitle,brush,new RectangleF(xPos,yPos,e.PageBounds.Width-marginBothSides,rectHeight),noteStringFormat);
 			yPos+=rectHeight+5;//+5 pixels for a small space between columns and title area.
 			//define columns
-			int[] colW=new int[15];
-			if(PrefC.HasClinicsEnabled) {
+			int[] colW=new int[14];
+			if(PrefC.HasClinicsEnabled || PrefC.IsODHQ) {
+				colW=new int[15];
+			}
+			if(PrefC.HasClinicsEnabled && PrefC.IsODHQ) {
 				colW=new int[16];
 			}
 			colW[0]=70;//Date
@@ -657,11 +666,20 @@ namespace OpenDental {
 			colW[8]=45;//PTO: Column starts to wrap at 41 pixels (Ex. -10.00), buffered to 45 for font variations on different operating systems
 			colW[9]=45;//OT: Column starts to wrap at 41 pixels (Ex. -10.00), buffered to 45 for font variations on different operating systems
 			colW[10]=45;//PL: Column start to wrap at 41 pixels (Ex. -10.00), buffered to 45 for font variations on different operating systems
-			colW[11]=45;//WFH
-			colW[12]=45;//Day
-			colW[13]=50;//Week
-			colW[14]=300;//Note
-			if(PrefC.HasClinicsEnabled) {
+			colW[11]=45;//Day
+			colW[12]=50;//Week
+			colW[13]=300;//Note
+			if(PrefC.IsODHQ) {
+				colW[11]=45;//WFH
+				colW[12]=45;//Day
+				colW[13]=50;//Week
+				colW[14]=300;//Note
+			}
+			else if(PrefC.HasClinicsEnabled) {
+				colW[13]=100;//Clinic
+				colW[14]=200;//Note: Reduce width when Clinic column is added so that we do not exceed the margin.
+			}
+			if(PrefC.HasClinicsEnabled && PrefC.IsODHQ) {
 				colW[14]=100;//Clinic
 				colW[15]=200;//Note: Reduce width when Clinic column is added so that we do not exceed the margin.
 			}
@@ -670,8 +688,11 @@ namespace OpenDental {
 			for(int i=1;i<colPos.Length;i++) {
 				colPos[i]=colPos[i-1]+colW[i-1];
 			}
-			string[] ColCaption=new string[15];
-			if(PrefC.HasClinicsEnabled) {
+			string[] ColCaption=new string[14];
+			if(PrefC.HasClinicsEnabled || PrefC.IsODHQ) {
+				ColCaption=new string[15];
+			}
+			if(PrefC.HasClinicsEnabled && PrefC.IsODHQ) {
 				ColCaption=new string[16];
 			}
 			ColCaption[0]=Lan.g(this,"Date");
@@ -685,11 +706,20 @@ namespace OpenDental {
 			ColCaption[8]=Lan.g(this,"PTO");
 			ColCaption[9]=Lan.g(this,"OT");
 			ColCaption[10]=Lan.g(this,"PL");
-			ColCaption[11]=Lan.g(this,"WFH");
-			ColCaption[12]=Lan.g(this,"Day");
-			ColCaption[13]=Lan.g(this,"Week");
-			ColCaption[14]=Lan.g(this,"Note");
-			if(PrefC.HasClinicsEnabled) {
+			ColCaption[11]=Lan.g(this,"Day");
+			ColCaption[12]=Lan.g(this,"Week");
+			ColCaption[13]=Lan.g(this,"Note");
+			if(PrefC.IsODHQ) {
+				ColCaption[11]=Lan.g(this,"WFH");
+				ColCaption[12]=Lan.g(this,"Day");
+				ColCaption[13]=Lan.g(this,"Week");
+				ColCaption[14]=Lan.g(this,"Note");
+			}
+			else if(PrefC.HasClinicsEnabled) {
+				ColCaption[13]=Lan.g(this,"Clinic");
+				ColCaption[14]=Lan.g(this,"Note");
+			}
+			if(PrefC.HasClinicsEnabled && PrefC.IsODHQ) {
 				ColCaption[14]=Lan.g(this,"Clinic");
 				ColCaption[15]=Lan.g(this,"Note");
 			}

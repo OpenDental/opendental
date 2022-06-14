@@ -13,8 +13,10 @@ namespace OpenDental.InternalTools.Phones {
 	public partial class UserControlMapDetails:UserControl {
 		///<summary>Allows for checking the employee currently in the details page when updating elapsed time.</summary>
 		public long EmployeeNumCur {get; private set;}
-		///<summary>True when a stock photo is showing. That's so that we can avoid getting it repeatedly.</summary>
-		public bool IsStock;
+		///<summary>This is so that we can avoid getting the same image repeatedly.</summary>
+		public EnumMapImageDisplayStatus MapImageDisplayStatus;
+		///<summary>The image refresh lags a bit behind the other details, so we need to track it separately.</summary>
+		public long EmployeeNumImage;
 
 
 		public UserControlMapDetails() {
@@ -51,10 +53,11 @@ namespace OpenDental.InternalTools.Phones {
 		}
 
 		///<summary>Works for null</summary>
-		public void SetBitmap(Bitmap bitmap,bool isStock){
+		public void SetBitmap(Bitmap bitmap,EnumMapImageDisplayStatus mapImageDisplayStatus,long employeeNum){
 			odPictureBoxEmployee.Image?.Dispose();
 			odPictureBoxEmployee.Image=bitmap;
-			IsStock=isStock;
+			MapImageDisplayStatus=mapImageDisplayStatus;
+			EmployeeNumImage=employeeNum;
 		}
 
 		///<summary>Should be called from FormMapHQ.SetPhoneList to refresh the currently displayed employeee on signal.</summary>
@@ -63,5 +66,14 @@ namespace OpenDental.InternalTools.Phones {
 			labelCustomer.Text=clickedPhone.PhoneCur.CustomerNumber;
 			labelStatusTime.Text=clickedPhone.Status+"   "+clickedPhone.Elapsed.ToStringHmmss();
 		}
+	}
+
+	public enum EnumMapImageDisplayStatus{
+		///<summary>No image. Null.</summary>
+		Empty,
+		///<summary></summary>
+		Stock,
+		///<summary></summary>
+		WebCam
 	}
 }
