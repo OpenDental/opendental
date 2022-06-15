@@ -1668,7 +1668,13 @@ namespace OpenDentBusiness.Eclaims {
 					}
 					errorMsg+="\r\n"+Lans.g("Canadian","Please see http://www.goitrans.com/itrans-support-error-codes/ for more details.")+"\r\n";
 					string dirClientProgram="";
-					ODException.SwallowAnyException(() => dirClientProgram=Path.GetDirectoryName(clearinghouseClin.ClientProgram));
+					//If clientProgram is empty, (it usually is for canadian customers,) use ResponsePath instead.
+					if(clearinghouseClin.ClientProgram.IsNullOrEmpty()) {
+						ODException.SwallowAnyException(() => dirClientProgram=Path.GetDirectoryName(clearinghouseClin.ResponsePath));
+					}
+					else {
+						ODException.SwallowAnyException(() => dirClientProgram=Path.GetDirectoryName(clearinghouseClin.ClientProgram));
+					}
 					string errorFile=ODFileUtils.CombinePaths(dirClientProgram,"ica.log");
 					string errorlog="";
 					if(File.Exists(errorFile)) {

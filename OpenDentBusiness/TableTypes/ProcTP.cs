@@ -14,7 +14,7 @@ namespace OpenDentBusiness{
 		public long TreatPlanNum;
 		///<summary>FK to patient.PatNum.</summary>
 		public long PatNum;
-		///<summary>FK to procedurelog.ProcNum.  It is very common for the referenced procedure to be missing.  This procNum is only here to compare and test the existence of the referenced procedure.  If present, it will check to see whether the procedure is still status TP.</summary>
+		///<summary>FK to procedurelog.ProcNum. This procNum is only here to compare and test the existence of the referenced procedure.  If present, it will check to see whether the procedure is still status TP.</summary>
 		public long ProcNumOrig;
 		///<summary>The order of this proc within its tp.  This is set when the tp is first created and can't be changed.  Drastically simplifies loading the tp.</summary>
 		public int ItemOrder;

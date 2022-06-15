@@ -144,6 +144,8 @@ namespace OpenDentBusiness{
 		ServiceMainHQ,
 		///<summary>Used by the OpenDentalService. Not a eService but we need the "phantom" user to behave like eService users.</summary>
 		OpenDentalService,
+		///<summary>Used by the Open Dental API Service.</summary>
+		OpenDentalAPIService,
 	}
 
 	//public class DtoUserodRefresh:DtoQueryBase {

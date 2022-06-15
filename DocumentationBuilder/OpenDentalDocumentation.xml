@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDocumentation.xsl"?>
-<database version="22.2.9.0">
+<database version="22.2.12.0">
     <table name="account">
         <summary>Used in the accounting section in chart of accounts.  Not related to patient accounts in any way.</summary>
         <column order="0" name="AccountNum" type="bigint(20)">
@@ -7634,6 +7634,7 @@
                 <EnumValue name="BroadcastMonitor"></EnumValue>
                 <EnumValue name="ServiceMainHQ"></EnumValue>
                 <EnumValue name="OpenDentalService">Used by the OpenDentalService. Not a eService but we need the "phantom" user to behave like eService users.</EnumValue>
+                <EnumValue name="OpenDentalAPIService">Used by the Open Dental API Service.</EnumValue>
             </Enumeration>
         </column>
         <column order="5" name="AptNum" type="bigint(20)">
@@ -12342,7 +12343,7 @@
             <summary>FK to patient.PatNum.</summary>
         </column>
         <column order="3" name="ProcNumOrig" type="bigint(20)" fk="procedurelog">
-            <summary>FK to procedurelog.ProcNum.  It is very common for the referenced procedure to be missing.  This procNum is only here to compare and test the existence of the referenced procedure.  If present, it will check to see whether the procedure is still status TP.</summary>
+            <summary>FK to procedurelog.ProcNum. This procNum is only here to compare and test the existence of the referenced procedure.  If present, it will check to see whether the procedure is still status TP.</summary>
         </column>
         <column order="4" name="ItemOrder" type="smallint">
             <summary>The order of this proc within its tp.  This is set when the tp is first created and can't be changed.  Drastically simplifies loading the tp.</summary>

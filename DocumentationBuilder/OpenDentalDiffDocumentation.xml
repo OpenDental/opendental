@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
-<database version="22.2.9.0">
+<database version="22.2.12.0">
     <table name="apptgeneralmessagesent">
         <summary></summary>
         <column order="7" name="SendStatus" type="tinyint(4)">
@@ -168,6 +168,16 @@
                 <EnumValue name="PrinterSetup">231 - Allows user to setup printer.</EnumValue>
                 <EnumValue name="ProviderAdd">232 - Allows user to add provider.</EnumValue>
                 <EnumValue name="ClinicEdit">233 - Allows user to edit clinic.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="histappointment">
+        <summary></summary>
+        <column order="4" name="ApptSource" type="tinyint(4)">
+            <summary>Enum:EServiceTypes .</summary>
+            <Enumeration name="EServiceTypes">
+                <summary />
+                <EnumValue name="OpenDentalAPIService">Used by the Open Dental API Service.</EnumValue>
             </Enumeration>
         </column>
     </table>
