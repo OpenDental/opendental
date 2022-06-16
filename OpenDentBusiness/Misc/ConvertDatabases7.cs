@@ -2779,6 +2779,18 @@ namespace OpenDentBusiness {
 			command="UPDATE preference SET ValueString='https://www.patientviewer.com' WHERE PrefName='PatientPortalURL' AND ValueString LIKE 'System.Linq%'";
 			Db.NonQ(command);
 		}//End of 22_1_37() method
+
+		private static void To22_1_39() {
+			string command;
+			DataTable table;
+			command="SELECT DocNum FROM document WHERE MountItemNum NOT IN(SELECT MountItemNum FROM mountitem) AND MountItemNum!=0";
+			table=Db.GetTable(command);
+			for(int i=0;i<table.Rows.Count;i++) {
+				long docNum=PIn.Long(table.Rows[i]["DocNum"].ToString());
+				command="UPDATE document SET MountItemNum=0 WHERE DocNum="+POut.Long(docNum);
+				Db.NonQ(command);
+			}
+		}//End of 22_1_39() method
 	}
 }
 

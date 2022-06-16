@@ -1363,10 +1363,20 @@ namespace OpenDental {
 				return;
 			}
 			bool isEmpty=true;
-			for(int i=0;i<_documentArrayShowing.Length;i++){
-				if(_documentArrayShowing[i]!=null){
-					isEmpty=false;
+			List<MountItem> listMountItems=MountItems.GetItemsForMount(_mountShowing.MountNum);
+			List<Document> listDocumentsShowing=_documentArrayShowing.Where(x => x!=null).ToList();
+			Document[] documentArrayInMountDb=Documents.GetDocumentsForMountItems(listMountItems);
+			for(int i=0;i<documentArrayInMountDb.Length;i++) {
+				if(documentArrayInMountDb[i]==null){
+					continue;
 				}
+				isEmpty=false;
+				Document document=listDocumentsShowing.Find(x=> x.DocNum==documentArrayInMountDb[i].DocNum);
+				if(document!=null){//this document from db is showing to user, so no concurrency issue.
+					continue;
+				}
+				MsgBox.Show(this,"This mount is currently open on another workstation.  Please refresh the Imaging Module and try again.");
+				return;
 			}
 			if(!isEmpty){
 				if(!Security.IsAuthorized(Permissions.ImageDelete,_mountShowing.DateCreated)) {

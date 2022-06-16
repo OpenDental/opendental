@@ -220,7 +220,7 @@ namespace OpenDentBusiness{
 				&& sheetFieldDefA.RadioButtonGroup==sheetFieldDefB.RadioButtonGroup
 				&& sheetFieldDefA.RadioButtonValue==sheetFieldDefB.RadioButtonValue
 				&& sheetFieldDefA.UiLabelMobile==sheetFieldDefB.UiLabelMobile
-				&& sheetFieldDefA.UiLabelMobileRadioButton==sheetFieldDefB.UiLabelMobileRadioButton
+				&& GetUiLabelMobileRadioButton(sheetFieldDefA)==GetUiLabelMobileRadioButton(sheetFieldDefB)
 				&& sheetFieldDefA.XPos==sheetFieldDefB.XPos 
 				&& sheetFieldDefA.YPos==sheetFieldDefB.YPos;
 		}
