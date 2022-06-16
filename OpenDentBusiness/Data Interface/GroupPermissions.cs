@@ -333,10 +333,10 @@ namespace OpenDentBusiness{
 		public static bool HasPermission(Userod user,Permissions permType,long fKey,List<GroupPermission> listGroupPermissions=null) {
 			//No need to check MiddleTierRole; no call to db.
 			if(listGroupPermissions==null) {
-				listGroupPermissions=GetWhere(x => user.IsInUserGroup(x.UserGroupNum) && x.PermType==permType);
+				listGroupPermissions=GetWhere(x => x.PermType==permType && user.IsInUserGroup(x.UserGroupNum));
 			}
 			else {
-				listGroupPermissions.RemoveAll(x => !user.IsInUserGroup(x.UserGroupNum) && x.PermType!=permType);
+				listGroupPermissions.RemoveAll(x => x.PermType!=permType && !user.IsInUserGroup(x.UserGroupNum));
 			}
 			if(DoesPermissionTreatZeroFKeyAsAll(permType) && listGroupPermissions.Any(x => x.FKey==0)) {//Access to everything.
 				return true;
