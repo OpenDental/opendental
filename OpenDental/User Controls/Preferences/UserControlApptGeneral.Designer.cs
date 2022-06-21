@@ -27,6 +27,9 @@ namespace OpenDental {
 			this.labelApptAutoRefreshRangeDetails = new System.Windows.Forms.Label();
 			this.labelApptModuleAdjInProdDetails = new System.Windows.Forms.Label();
 			this.labelApptModuleProductionUsesOpsDetails = new System.Windows.Forms.Label();
+			this.labelBrokenApptRequiredOnMoveDetails = new System.Windows.Forms.Label();
+			this.butSearchBehaviorDetails = new OpenDental.UI.Button();
+			this.butBrokenApptProcDetails = new OpenDental.UI.Button();
 			this.groupBoxProduction = new OpenDental.UI.GroupBoxOD();
 			this.checkApptModuleAdjInProd = new System.Windows.Forms.CheckBox();
 			this.checkApptModuleProductionUsesOps = new System.Windows.Forms.CheckBox();
@@ -54,7 +57,6 @@ namespace OpenDental {
 			this.checkBrokenApptAdjustment = new System.Windows.Forms.CheckBox();
 			this.comboBrokenApptAdjType = new OpenDental.UI.ComboBoxOD();
 			this.label7 = new System.Windows.Forms.Label();
-			this.labelSearchBehaviorDetails = new System.Windows.Forms.Label();
 			this.groupBoxProduction.SuspendLayout();
 			this.groupBoxOD2.SuspendLayout();
 			this.groupBoxCalendarBehavior.SuspendLayout();
@@ -94,6 +96,37 @@ namespace OpenDental {
 			this.labelApptModuleProductionUsesOpsDetails.TabIndex = 346;
 			this.labelApptModuleProductionUsesOpsDetails.Text = "uses operatories showing instead of provider bars at left";
 			this.labelApptModuleProductionUsesOpsDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelBrokenApptRequiredOnMoveDetails
+			// 
+			this.labelBrokenApptRequiredOnMoveDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelBrokenApptRequiredOnMoveDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelBrokenApptRequiredOnMoveDetails.Location = new System.Drawing.Point(476, 112);
+			this.labelBrokenApptRequiredOnMoveDetails.Name = "labelBrokenApptRequiredOnMoveDetails";
+			this.labelBrokenApptRequiredOnMoveDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelBrokenApptRequiredOnMoveDetails.TabIndex = 368;
+			this.labelBrokenApptRequiredOnMoveDetails.Text = "even if Broken appointment procedure type is set to \"None\"";
+			this.labelBrokenApptRequiredOnMoveDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// butSearchBehaviorDetails
+			// 
+			this.butSearchBehaviorDetails.ForeColor = System.Drawing.Color.Black;
+			this.butSearchBehaviorDetails.Location = new System.Drawing.Point(479, 156);
+			this.butSearchBehaviorDetails.Name = "butSearchBehaviorDetails";
+			this.butSearchBehaviorDetails.Size = new System.Drawing.Size(64, 21);
+			this.butSearchBehaviorDetails.TabIndex = 369;
+			this.butSearchBehaviorDetails.Text = "Details";
+			this.butSearchBehaviorDetails.Click += new System.EventHandler(this.butSearchBehaviorDetails_Click);
+			// 
+			// butBrokenApptProcDetails
+			// 
+			this.butBrokenApptProcDetails.ForeColor = System.Drawing.Color.Black;
+			this.butBrokenApptProcDetails.Location = new System.Drawing.Point(479, 25);
+			this.butBrokenApptProcDetails.Name = "butBrokenApptProcDetails";
+			this.butBrokenApptProcDetails.Size = new System.Drawing.Size(64, 21);
+			this.butBrokenApptProcDetails.TabIndex = 367;
+			this.butBrokenApptProcDetails.Text = "Details";
+			this.butBrokenApptProcDetails.Click += new System.EventHandler(this.butBrokenApptProcDetails_Click);
 			// 
 			// groupBoxProduction
 			// 
@@ -395,24 +428,14 @@ namespace OpenDental {
 			this.label7.Text = "Broken appt default adj type";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
-			// labelSearchBehaviorDetails
-			// 
-			this.labelSearchBehaviorDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelSearchBehaviorDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelSearchBehaviorDetails.Location = new System.Drawing.Point(476, 157);
-			this.labelSearchBehaviorDetails.Name = "labelSearchBehaviorDetails";
-			this.labelSearchBehaviorDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelSearchBehaviorDetails.TabIndex = 347;
-			this.labelSearchBehaviorDetails.Text = "ProviderTimeOperatory will prevent overlap (but it only works if you assign ops i" +
-    "n the prov schedules)";
-			this.labelSearchBehaviorDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// UserControlApptGeneral
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
-			this.Controls.Add(this.labelSearchBehaviorDetails);
+			this.Controls.Add(this.butSearchBehaviorDetails);
+			this.Controls.Add(this.labelBrokenApptRequiredOnMoveDetails);
+			this.Controls.Add(this.butBrokenApptProcDetails);
 			this.Controls.Add(this.labelApptModuleProductionUsesOpsDetails);
 			this.Controls.Add(this.labelApptModuleAdjInProdDetails);
 			this.Controls.Add(this.labelApptAutoRefreshRangeDetails);
@@ -464,6 +487,8 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelApptAutoRefreshRangeDetails;
 		private System.Windows.Forms.Label labelApptModuleAdjInProdDetails;
 		private System.Windows.Forms.Label labelApptModuleProductionUsesOpsDetails;
-		private System.Windows.Forms.Label labelSearchBehaviorDetails;
+		private UI.Button butBrokenApptProcDetails;
+		private System.Windows.Forms.Label labelBrokenApptRequiredOnMoveDetails;
+		private UI.Button butSearchBehaviorDetails;
 	}
 }

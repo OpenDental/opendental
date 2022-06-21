@@ -60,6 +60,7 @@ namespace OpenDental{
 			this.panelLeft = new System.Windows.Forms.Panel();
 			this.panelRight = new System.Windows.Forms.Panel();
 			this.groupShowField = new OpenDental.UI.GroupBoxOD();
+			this.checkShowMobileHeader = new System.Windows.Forms.CheckBox();
 			this.checkShowScreenChart = new System.Windows.Forms.CheckBox();
 			this.checkShowGrid = new System.Windows.Forms.CheckBox();
 			this.checkShowSpecial = new System.Windows.Forms.CheckBox();
@@ -78,6 +79,7 @@ namespace OpenDental{
 			this.checkShowOutputText = new System.Windows.Forms.CheckBox();
 			this.checkBlue = new System.Windows.Forms.CheckBox();
 			this.groupAddField = new OpenDental.UI.GroupBoxOD();
+			this.labelMobileHeader = new System.Windows.Forms.Label();
 			this.butScreenChart = new OpenDental.UI.Button();
 			this.butSpecial = new OpenDental.UI.Button();
 			this.butGrid = new OpenDental.UI.Button();
@@ -94,8 +96,6 @@ namespace OpenDental{
 			this.butOutputText = new OpenDental.UI.Button();
 			this.butRedo = new OpenDental.UI.Button();
 			this.butUndo = new OpenDental.UI.Button();
-			this.label1 = new System.Windows.Forms.Label();
-			this.checkShowMobileHeader = new System.Windows.Forms.CheckBox();
 			this.groupBoxSubViews.SuspendLayout();
 			this.groupAlignH.SuspendLayout();
 			this.groupPage.SuspendLayout();
@@ -455,6 +455,18 @@ namespace OpenDental{
 			this.groupShowField.TabIndex = 97;
 			this.groupShowField.Text = "Show";
 			// 
+			// checkShowMobileHeader
+			// 
+			this.checkShowMobileHeader.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.checkShowMobileHeader.Checked = true;
+			this.checkShowMobileHeader.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkShowMobileHeader.Location = new System.Drawing.Point(9, 461);
+			this.checkShowMobileHeader.Name = "checkShowMobileHeader";
+			this.checkShowMobileHeader.Size = new System.Drawing.Size(20, 18);
+			this.checkShowMobileHeader.TabIndex = 119;
+			this.checkShowMobileHeader.UseVisualStyleBackColor = true;
+			this.checkShowMobileHeader.Click += new System.EventHandler(this.checkShowMobileHeader_Click);
+			// 
 			// checkShowScreenChart
 			// 
 			this.checkShowScreenChart.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -655,7 +667,7 @@ namespace OpenDental{
 			// 
 			// groupAddField
 			// 
-			this.groupAddField.Controls.Add(this.label1);
+			this.groupAddField.Controls.Add(this.labelMobileHeader);
 			this.groupAddField.Controls.Add(this.butScreenChart);
 			this.groupAddField.Controls.Add(this.butSpecial);
 			this.groupAddField.Controls.Add(this.butGrid);
@@ -675,6 +687,15 @@ namespace OpenDental{
 			this.groupAddField.Size = new System.Drawing.Size(79, 427);
 			this.groupAddField.TabIndex = 97;
 			this.groupAddField.Text = "Add Field";
+			// 
+			// labelMobileHeader
+			// 
+			this.labelMobileHeader.Location = new System.Drawing.Point(1, 405);
+			this.labelMobileHeader.Name = "labelMobileHeader";
+			this.labelMobileHeader.Size = new System.Drawing.Size(77, 18);
+			this.labelMobileHeader.TabIndex = 125;
+			this.labelMobileHeader.Text = "MobileHeader";
+			this.labelMobileHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// butScreenChart
 			// 
@@ -850,27 +871,6 @@ namespace OpenDental{
 			this.butUndo.Text = "Undo Ctrl-Z";
 			this.butUndo.Click += new System.EventHandler(this.butUndo_Click);
 			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(1, 405);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(77, 18);
-			this.label1.TabIndex = 125;
-			this.label1.Text = "MobileHeader";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// checkShowMobileHeader
-			// 
-			this.checkShowMobileHeader.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.checkShowMobileHeader.Checked = true;
-			this.checkShowMobileHeader.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkShowMobileHeader.Location = new System.Drawing.Point(9, 461);
-			this.checkShowMobileHeader.Name = "checkShowMobileHeader";
-			this.checkShowMobileHeader.Size = new System.Drawing.Size(20, 18);
-			this.checkShowMobileHeader.TabIndex = 119;
-			this.checkShowMobileHeader.UseVisualStyleBackColor = true;
-			this.checkShowMobileHeader.Click += new System.EventHandler(this.checkShowMobileHeader_Click);
-			// 
 			// FormSheetDefEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(828, 696);
@@ -963,6 +963,6 @@ namespace OpenDental{
 		private System.Windows.Forms.CheckBox checkShowInputField;
 		private System.Windows.Forms.CheckBox checkShowOutputText;
 		private System.Windows.Forms.CheckBox checkShowMobileHeader;
-		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label labelMobileHeader;
 	}
 }

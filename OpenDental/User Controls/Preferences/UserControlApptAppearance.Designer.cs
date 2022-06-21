@@ -68,6 +68,11 @@ namespace OpenDental {
 			this.labelApptClickDelayDetails = new System.Windows.Forms.Label();
 			this.labelApptSchedEnforceSpecialtyDetails = new System.Windows.Forms.Label();
 			this.butTimeArrivedTriggerDetails = new OpenDental.UI.Button();
+			this.labelApptFontSizeDetails = new System.Windows.Forms.Label();
+			this.labelApptBubNoteLengthDetails = new System.Windows.Forms.Label();
+			this.labelWaitRoomWarnDetails = new System.Windows.Forms.Label();
+			this.butUseOpHygProvDetails = new OpenDental.UI.Button();
+			this.labelApptRefreshEveryMinuteDetails = new System.Windows.Forms.Label();
 			this.groupBoxWaitingRoom.SuspendLayout();
 			this.groupBoxAppearance.SuspendLayout();
 			this.groupBoxApptBubble.SuspendLayout();
@@ -248,7 +253,7 @@ namespace OpenDental {
 			this.checkApptRefreshEveryMinute.Name = "checkApptRefreshEveryMinute";
 			this.checkApptRefreshEveryMinute.Size = new System.Drawing.Size(406, 17);
 			this.checkApptRefreshEveryMinute.TabIndex = 235;
-			this.checkApptRefreshEveryMinute.Text = "Refresh every 60 seconds, keeps waiting room times refreshed";
+			this.checkApptRefreshEveryMinute.Text = "Refresh every 60 seconds";
 			this.checkApptRefreshEveryMinute.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// apptClickDelay
@@ -268,7 +273,7 @@ namespace OpenDental {
 			this.label54.Name = "label54";
 			this.label54.Size = new System.Drawing.Size(373, 17);
 			this.label54.TabIndex = 251;
-			this.label54.Text = "Appointment font size. Default is 8. Decimals allowed. In addition to Zoom";
+			this.label54.Text = "Appointment font size";
 			this.label54.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// groupBoxWaitingRoom
@@ -359,7 +364,7 @@ namespace OpenDental {
 			this.label22.Name = "label22";
 			this.label22.Size = new System.Drawing.Size(246, 17);
 			this.label22.TabIndex = 303;
-			this.label22.Text = "Waiting room alert time in minutes (0 to disable)";
+			this.label22.Text = "Waiting room alert time";
 			this.label22.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// checkWaitingRoomFilterByView
@@ -411,11 +416,11 @@ namespace OpenDental {
 			// label21
 			// 
 			this.label21.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.label21.Location = new System.Drawing.Point(108, 14);
+			this.label21.Location = new System.Drawing.Point(108, 13);
 			this.label21.Name = "label21";
 			this.label21.Size = new System.Drawing.Size(246, 17);
 			this.label21.TabIndex = 303;
-			this.label21.Text = "Appointment bubble max note length (0 for no limit)";
+			this.label21.Text = "Appointment bubble max note length";
 			this.label21.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// groupBoxBlockouts
@@ -493,7 +498,7 @@ namespace OpenDental {
 			this.labelApptLineColorDetails.Name = "labelApptLineColorDetails";
 			this.labelApptLineColorDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelApptLineColorDetails.TabIndex = 339;
-			this.labelApptLineColorDetails.Text = "horizontal red line that indicates current time";
+			this.labelApptLineColorDetails.Text = "horizontal line that indicates current time";
 			this.labelApptLineColorDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelApptProvbarWidthDetails
@@ -516,7 +521,7 @@ namespace OpenDental {
 			this.labelApptClickDelayDetails.Name = "labelApptClickDelayDetails";
 			this.labelApptClickDelayDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelApptClickDelayDetails.TabIndex = 343;
-			this.labelApptClickDelayDetails.Text = "or a triple click could add a proc to an appt";
+			this.labelApptClickDelayDetails.Text = "or a triple click could accidentally cause a procedure to be added";
 			this.labelApptClickDelayDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelApptSchedEnforceSpecialtyDetails
@@ -540,11 +545,70 @@ namespace OpenDental {
 			this.butTimeArrivedTriggerDetails.Text = "Details";
 			this.butTimeArrivedTriggerDetails.Click += new System.EventHandler(this.butTimeArrivedTriggerDetails_Click);
 			// 
+			// labelApptFontSizeDetails
+			// 
+			this.labelApptFontSizeDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelApptFontSizeDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelApptFontSizeDetails.Location = new System.Drawing.Point(476, 44);
+			this.labelApptFontSizeDetails.Name = "labelApptFontSizeDetails";
+			this.labelApptFontSizeDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelApptFontSizeDetails.TabIndex = 369;
+			this.labelApptFontSizeDetails.Text = "default is 8, decimals allowed, in addition to Zoom";
+			this.labelApptFontSizeDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelApptBubNoteLengthDetails
+			// 
+			this.labelApptBubNoteLengthDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelApptBubNoteLengthDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelApptBubNoteLengthDetails.Location = new System.Drawing.Point(476, 122);
+			this.labelApptBubNoteLengthDetails.Name = "labelApptBubNoteLengthDetails";
+			this.labelApptBubNoteLengthDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelApptBubNoteLengthDetails.TabIndex = 370;
+			this.labelApptBubNoteLengthDetails.Text = "in characters, 0 for no limit";
+			this.labelApptBubNoteLengthDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelWaitRoomWarnDetails
+			// 
+			this.labelWaitRoomWarnDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelWaitRoomWarnDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelWaitRoomWarnDetails.Location = new System.Drawing.Point(476, 338);
+			this.labelWaitRoomWarnDetails.Name = "labelWaitRoomWarnDetails";
+			this.labelWaitRoomWarnDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelWaitRoomWarnDetails.TabIndex = 371;
+			this.labelWaitRoomWarnDetails.Text = "in minutes, 0 to disable";
+			this.labelWaitRoomWarnDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// butUseOpHygProvDetails
+			// 
+			this.butUseOpHygProvDetails.ForeColor = System.Drawing.Color.Black;
+			this.butUseOpHygProvDetails.Location = new System.Drawing.Point(479, 393);
+			this.butUseOpHygProvDetails.Name = "butUseOpHygProvDetails";
+			this.butUseOpHygProvDetails.Size = new System.Drawing.Size(64, 21);
+			this.butUseOpHygProvDetails.TabIndex = 372;
+			this.butUseOpHygProvDetails.Text = "Details";
+			this.butUseOpHygProvDetails.Click += new System.EventHandler(this.butUseOpHygProvDetails_Click);
+			// 
+			// labelApptRefreshEveryMinuteDetails
+			// 
+			this.labelApptRefreshEveryMinuteDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelApptRefreshEveryMinuteDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelApptRefreshEveryMinuteDetails.Location = new System.Drawing.Point(476, 499);
+			this.labelApptRefreshEveryMinuteDetails.Name = "labelApptRefreshEveryMinuteDetails";
+			this.labelApptRefreshEveryMinuteDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelApptRefreshEveryMinuteDetails.TabIndex = 373;
+			this.labelApptRefreshEveryMinuteDetails.Text = "keeps waiting room times refreshed";
+			this.labelApptRefreshEveryMinuteDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// UserControlApptAppearance
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.labelApptRefreshEveryMinuteDetails);
+			this.Controls.Add(this.butUseOpHygProvDetails);
+			this.Controls.Add(this.labelWaitRoomWarnDetails);
+			this.Controls.Add(this.labelApptBubNoteLengthDetails);
+			this.Controls.Add(this.labelApptFontSizeDetails);
 			this.Controls.Add(this.butTimeArrivedTriggerDetails);
 			this.Controls.Add(this.labelApptSchedEnforceSpecialtyDetails);
 			this.Controls.Add(this.labelApptClickDelayDetails);
@@ -614,5 +678,10 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelApptClickDelayDetails;
 		private System.Windows.Forms.Label labelApptSchedEnforceSpecialtyDetails;
 		private UI.Button butTimeArrivedTriggerDetails;
+		private System.Windows.Forms.Label labelApptFontSizeDetails;
+		private System.Windows.Forms.Label labelApptBubNoteLengthDetails;
+		private System.Windows.Forms.Label labelWaitRoomWarnDetails;
+		private UI.Button butUseOpHygProvDetails;
+		private System.Windows.Forms.Label labelApptRefreshEveryMinuteDetails;
 	}
 }

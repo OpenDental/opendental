@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml.Serialization;
+using CodeBase;
 using OpenDentBusiness.AutoComm;
 
 namespace OpenDentBusiness.WebTypes.AutoComm {
@@ -40,6 +41,10 @@ namespace OpenDentBusiness.WebTypes.AutoComm {
 		public string ResponseDescript;
 		///<summary>FK to apptreminderrule.ApptReminderRuleNum. Allows us to look up the rules to determine how to send this apptcomm out.</summary>
 		public long ApptReminderRuleNum;
+		///<summary>If true then we need to consider the subject in an autocomm object</summary>
+		[XmlIgnore]
+		public bool HasSubject => MessageType.In(CommType.Email);
+
 
 		#region Obsolete
 		//These fields exist for the sole purpose of backward compatibility, as some of the classes derived from AutoCommSent have previously been serialized

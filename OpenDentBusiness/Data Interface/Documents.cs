@@ -665,7 +665,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Gets the documents and mounts for a patient, mimicking the tree list in the Images Module. The table returned contains all mounts and all the documents not associated with mounts.
 		///Results are ordered by DateCreated and are paginated for the API.</summary>
-		public static DataTable GetTreeListTableForPatientForApi(long patNum,string filePath,int limit,int offset) {
+		public static DataTable GetTreeListTableForPatientForApi(long patNum,string filePath,int limit,int offset,string dateTimeFormatString) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetTable(MethodBase.GetCurrentMethod(),patNum,filePath,limit,offset);
 			}
@@ -702,13 +702,13 @@ namespace OpenDentBusiness {
 				row["filePath"]=filePath+tableDocuments.Rows[i]["FileName"].ToString();
 				row["Description"]=PIn.Date(tableDocuments.Rows[i]["DateCreated"].ToString()).ToString("d")+": "+tableDocuments.Rows[i]["Description"];
 				row["Note"]=tableDocuments.Rows[i]["Note"].ToString();
-				row["DateCreated"]=PIn.Date(tableDocuments.Rows[i]["DateCreated"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");//because API is expecting this format
+				row["DateCreated"]=PIn.Date(tableDocuments.Rows[i]["DateCreated"].ToString()).ToString(dateTimeFormatString);//because API is expecting this format
 				long docCategoryDefNum=PIn.Long(tableDocuments.Rows[i]["DocCategory"].ToString());
 				string defName=Defs.GetName(DefCat.ImageCats,docCategoryDefNum,listDefsForCategory);
 				row["docCategory"]=defName;
 				row["DocCategory"]=docCategoryDefNum;
-				row["DateTStamp"]=PIn.Date(tableDocuments.Rows[i]["DateTStamp"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
-				row["serverDateTime"]=dateTimeServer.ToString("yyyy-MM-dd HH:mm:ss");
+				row["DateTStamp"]=PIn.Date(tableDocuments.Rows[i]["DateTStamp"].ToString()).ToString(dateTimeFormatString);
+				row["serverDateTime"]=dateTimeServer.ToString(dateTimeFormatString);
 				listDataRows.Add(row);
 			}
 			//Add mounts to results list
@@ -719,13 +719,13 @@ namespace OpenDentBusiness {
 				row["filePath"]=""; //not a field for Mounts
 				row["Description"]=PIn.Date(tableMounts.Rows[i]["DateCreated"].ToString()).ToShortDateString()+": "+PIn.String(tableMounts.Rows[i]["Description"].ToString());
 				row["Note"]=tableMounts.Rows[i]["Note"].ToString();
-				row["DateCreated"]=PIn.Date(tableMounts.Rows[i]["DateCreated"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
+				row["DateCreated"]=PIn.Date(tableMounts.Rows[i]["DateCreated"].ToString()).ToString(dateTimeFormatString);
 				long docCategoryDefNum=PIn.Long(tableMounts.Rows[i]["DocCategory"].ToString());
 				string defName=Defs.GetName(DefCat.ImageCats,docCategoryDefNum,listDefsForCategory);
 				row["docCategory"]=defName;
 				row["DocCategory"]=docCategoryDefNum;
 				row["DateTStamp"]=""; //not a field for Mounts
-				row["serverDateTime"]=dateTimeServer.ToString("yyyy-MM-dd HH:mm:ss");
+				row["serverDateTime"]=dateTimeServer.ToString(dateTimeFormatString);
 				listDataRows.Add(row);
 			}
 			listDataRows=listDataRows.OrderBy(x => x["DateCreated"]).ToList();

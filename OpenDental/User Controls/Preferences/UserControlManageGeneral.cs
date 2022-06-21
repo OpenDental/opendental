@@ -59,7 +59,7 @@ namespace OpenDental {
 		}
 
 		private void linkLabelClaimsReceivedDaysDetails_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {
-			Process.Start("https://www.opendental.com/manual221/claimpaymentbatch.html");
+			Process.Start("https://www.opendental.com/manual/claimpaymentbatch.html");
 		}
 
 		private void linkLabelShowAutoDepositDetails_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {

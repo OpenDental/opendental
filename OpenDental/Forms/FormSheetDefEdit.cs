@@ -200,7 +200,7 @@ namespace OpenDental {
 			float minX=listSheetFieldDefsSelected.Min(d => d.BoundsF.Left);
 			float maxX=listSheetFieldDefsSelected.Max(d => d.BoundsF.Right);
 			int avgX=(int)((minX+maxX)/2);
-			listSheetFieldDefsSelected.ForEach(x => x.XPos=avgX-x.Width/2);
+			listSheetFieldDefsSelected.ForEach(field => MoveSheetFieldDefs(field,avgX-field.Width/2,field.YPos));
 			AddUndoLevel("Align Center");
 			panelMain.Invalidate();
 		}
@@ -219,7 +219,7 @@ namespace OpenDental {
 				return;
 			}
 			int minX=(int)listSheetFieldDefsSelected.Min(d => d.BoundsF.Left);
-			listSheetFieldDefsSelected.ForEach(field => field.XPos=minX);
+			listSheetFieldDefsSelected.ForEach(field => MoveSheetFieldDefs(field,minX,field.YPos));
 			AddUndoLevel("Align Left");
 			panelMain.Invalidate();
 		}
@@ -238,7 +238,7 @@ namespace OpenDental {
 				return;
 			}
 			int maxX=(int)listSheetFieldDefsSelected.Max(d => d.BoundsF.Right);
-			listSheetFieldDefsSelected.ForEach(field => field.XPos=maxX-field.Width);
+			listSheetFieldDefsSelected.ForEach(field => MoveSheetFieldDefs(field,maxX-field.Width,field.YPos));
 			AddUndoLevel("Align Right");
 			panelMain.Invalidate();
 		}
@@ -258,7 +258,7 @@ namespace OpenDental {
 				return;
 			}
 			int minY=(int)listSheetFieldDefsSelected.Min(d => d.BoundsF.Top);
-			listSheetFieldDefsSelected.ForEach(field => field.YPos=minY);
+			listSheetFieldDefsSelected.ForEach(field => MoveSheetFieldDefs(field,field.XPos,minY));
 			AddUndoLevel("Align Tops");
 			panelMain.Invalidate();
 		}
@@ -757,6 +757,7 @@ namespace OpenDental {
 			butSpecial.Visible=listSheetFieldTypes.Contains(SheetFieldType.Special);
 			butGrid.Visible=listSheetFieldTypes.Contains(SheetFieldType.Grid);
 			butScreenChart.Visible=listSheetFieldTypes.Contains(SheetFieldType.ScreenChart);
+			labelMobileHeader.Visible=listSheetFieldTypes.Contains(SheetFieldType.MobileHeader);
 			checkShowOutputText.Visible=listSheetFieldTypes.Contains(SheetFieldType.OutputText);
 			checkShowInputField.Visible=listSheetFieldTypes.Contains(SheetFieldType.InputField);
 			checkShowStaticText.Visible=listSheetFieldTypes.Contains(SheetFieldType.StaticText);

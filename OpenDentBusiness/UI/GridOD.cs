@@ -889,7 +889,7 @@ namespace OpenDental.UI {
 				if(i>Columns.Count) {
 					break;
 				}
-				if(gridRow.Cells[i].ColorBackG==Color.Empty && !gridRow.Cells[i].IsButton) {
+				if(gridRow.Cells[i].ColorBackG.ToArgb()==Color.Empty.ToArgb() && !gridRow.Cells[i].IsButton) {
 					continue;
 				}
 				//Blend with row background colors. Cell color= Avg(CellColor+RowColor)

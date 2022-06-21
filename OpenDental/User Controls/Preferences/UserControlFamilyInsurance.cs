@@ -45,7 +45,7 @@ namespace OpenDental {
 		}
 
 		private void butInsPlanExclusionsUseUCR_Click(object sender,EventArgs e) {
-			MsgBox.Show(this,"For use with PPO plans where certain excluded procedures are allowed to be billed using UCR fee rather than a negotiated rate.\r\n" +
+			MsgBox.Show(this,"For use with PPO plans where certain excluded procedures are allowed to be billed using UCR fee rather than a negotiated rate.\r\n\r\n" +
 				"Exclusions are defined using an Other Benefits exclusion rule, or for any benefit set to a 0% coverage level.");
 		}
 

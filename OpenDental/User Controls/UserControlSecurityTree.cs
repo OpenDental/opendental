@@ -177,8 +177,10 @@ namespace OpenDental {
 					node2.Nodes.Add(node3);
 					node3=SetNode(Permissions.UserQueryAdmin);
 					node2.Nodes.Add(node3);
-					node3=SetNode(Permissions.CommandQuery);
-					node2.Nodes.Add(node3);
+					if(!ODBuild.IsWeb()) {
+						node3=SetNode(Permissions.CommandQuery);
+						node2.Nodes.Add(node3);
+					}
 					node3=SetNode(Permissions.NewClaimsProcNotBilled);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);

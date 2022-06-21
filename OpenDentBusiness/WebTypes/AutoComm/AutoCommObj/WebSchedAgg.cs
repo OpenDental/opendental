@@ -122,6 +122,7 @@ namespace OpenDentBusiness.AutoComm {
 		public WebSchedAgg(WebSchedRecall wsRecall,DateTime dtSend) {
 			PrimaryKey=wsRecall.RecallNum;
 			PatNum=wsRecall.PatNum;
+			DtSend=dtSend;
 			DateTimeEvent=wsRecall.DateDue.Date.AddHours(dtSend.Hour);
 			IsDtSendFinal=true;
 			ClinicNum=wsRecall.ClinicNum;

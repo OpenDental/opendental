@@ -42,6 +42,9 @@ namespace OpenDental{
 			if(!Security.IsAuthorized(Permissions.ProviderAlphabetize,true)) {
 				butAlphabetize.Enabled=false;
 			}
+			if(!Security.IsAuthorized(Permissions.ProviderAdd,suppressMessage:true)) {
+				butAdd.Enabled=false;
+			}
 			_listProvs=Providers.GetDeepCopy();
 			if(Security.IsAuthorized(Permissions.SecurityAdmin,true)){
 				_listUserGroups=UserGroups.GetList();
@@ -232,7 +235,7 @@ namespace OpenDental{
 
 		private void butAdd_Click(object sender, System.EventArgs e) {
 			if(!Security.IsAuthorized(Permissions.ProviderAdd)) {
-				return;
+				return;//Should not be possible, button should be disabled. This is just in case.
 			}
 			using FormProvEdit FormPE=new FormProvEdit();
 			FormPE.ProvCur=new Provider();

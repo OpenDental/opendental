@@ -1335,16 +1335,15 @@ namespace OpenDental.InternalTools.Job_Manager {
 					comboPatternStatus.Enabled=JobPermissions.IsAuthorized(JobPerm.PatternReview,true);
 				}
 			}
-			//Disable description, documentation, and title if "Checked out"
+			//Set description, documentation, and title to readonly if "Checked out"
 			textJobEditor.Enabled=true;//might still be read only.
-			textEditorDocumentation.Enabled=true;
+			textEditorDocumentation.ReadOnly=false;
 			if(_jobCur.UserNumCheckout!=0 && _jobCur.UserNumCheckout!=Security.CurUser.UserNum) {
 				textTitle.ReadOnly=true;
 				textJobEditor.ReadOnlyConcept=true;
 				textJobEditor.ReadOnlyWriteup=true;
 				textJobEditor.ReadOnlyRequirementsGrid=true;
-				textJobEditor.Enabled=false;
-				textEditorDocumentation.Enabled=false;
+				textEditorDocumentation.ReadOnly=true;
 			}
 			if(_isOverride) {//Enable everything and make everything visible
 				textTitle.ReadOnly=false;
@@ -1363,7 +1362,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 					textJobEditor.ReadOnlyRequirementsGrid=false;
 				}
 				textJobEditor.Enabled=true;
-				textEditorDocumentation.Enabled=true;
+				textEditorDocumentation.ReadOnly=false;
 				if(JobPermissions.IsAuthorized(JobPerm.Approval,true)) {
 					comboPatternStatus.Enabled=true;
 					comboProject.Enabled=true;

@@ -36,7 +36,7 @@ namespace OpenDental {
 		}
 
 		private void linkLabelProcDiscountTypeDetails_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {
-			Process.Start("https://www.opendental.com/manual221/treatmentplandiscounts.html");
+			Process.Start("https://www.opendental.com/manual/treatmentplandiscounts.html");
 		}
 
 		private void linkLabelProcDiscountTypeDetails2_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {

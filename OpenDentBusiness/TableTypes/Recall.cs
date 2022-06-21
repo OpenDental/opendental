@@ -78,9 +78,9 @@ namespace OpenDentBusiness{
 		SendToEmailOnlyPreferred,
 		///<summary>4 - Send to all patients with wireless phone and texting OK.</summary>
 		SendToText,
-		///<summary>5 - Send to patients with email address and no other preferred recall method is selected.</summary>
+		///<summary>5 - Send to patients with text and no other preferred recall method is selected.</summary>
 		SendToTextNoPreferred,
-		///<summary>6 - Send to patients with email address and email is selected as their preferred recall method.</summary>
+		///<summary>6 - Send to patients with text and text is selected as their preferred recall method.</summary>
 		SendToTextOnlyPreferred,
 	}	
 }

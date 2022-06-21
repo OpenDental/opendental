@@ -549,7 +549,7 @@ namespace CodeBase {
 		}
 
 		[ThreadStatic]
-		protected long _clinicNum;
+		protected static long _clinicNum;
 		public long ClinicNum { 
 			get {
 				return _clinicNum;

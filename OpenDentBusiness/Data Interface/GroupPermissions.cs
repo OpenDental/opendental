@@ -445,7 +445,7 @@ namespace OpenDentBusiness{
 				case Permissions.EhrEmergencyAccess:
 				//case Permissions.ProcDelete:
 				case Permissions.EhrKeyAdd:
-				case Permissions.ProviderEdit:
+				//case Permissions.ProviderEdit:
 				case Permissions.EcwAppointmentRevise:
 				case Permissions.ProcedureNoteFull:
 				case Permissions.ProcedureNoteUser:
@@ -619,7 +619,7 @@ namespace OpenDentBusiness{
 				case Permissions.SetupWizard:
 				//case Permissions.ShowFeatures:
 				//case Permissions.PrinterSetup:
-				case Permissions.ProviderAdd:
+				//case Permissions.ProviderAdd:
 				case Permissions.ClinicEdit:
 				    return false;//Does not have audit Trail if uncommented.
 			}

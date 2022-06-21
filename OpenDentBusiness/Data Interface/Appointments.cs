@@ -185,7 +185,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Gets appointments made through WebSched for the API. The type of appointment is indicated by the eServiceType which can be NewPat, ExistingPat, Recall, or ASAP. </summary>
-		public static DataTable GetWebSchedAppointmentsForApi(int limit,int offset,DateTime dateStart,DateTime dateEnd,DateTime dateTStamp,long clinicNum) {
+		public static DataTable GetWebSchedAppointmentsForApi(int limit,int offset,DateTime dateStart,DateTime dateEnd,DateTime dateTStamp,long clinicNum,string dateTimeFormatString) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<DataTable>(MethodBase.GetCurrentMethod(),limit,offset,dateStart,dateEnd,dateTStamp,clinicNum);
 			}
@@ -248,17 +248,17 @@ namespace OpenDentBusiness{
 				row["ProvNum"]=PIn.Long(tableAppointments.Rows[i]["ProvNum"].ToString());
 				row["provAbbr"]=Providers.GetAbbr(PIn.Long(tableAppointments.Rows[i]["ProvNum"].ToString()));
 				row["ProvHyg"]=tableAppointments.Rows[i]["ProvHyg"].ToString();
-				row["AptDateTime"]=PIn.DateT(tableAppointments.Rows[i]["AptDateTime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
+				row["AptDateTime"]=PIn.DateT(tableAppointments.Rows[i]["AptDateTime"].ToString()).ToString(dateTimeFormatString);
 				row["ProcDescript"]=tableAppointments.Rows[i]["ProcDescript"].ToString();
 				row["ClinicNum"]=PIn.Long(tableAppointments.Rows[i]["ClinicNum"].ToString());
 				row["IsHygiene"]=PIn.Bool(tableAppointments.Rows[i]["IsHygiene"].ToString()).ToString();
-				row["DateTStamp"]=PIn.DateT(tableAppointments.Rows[i]["DateTStamp"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
-				row["serverDateTime"]=dateTimeServer.ToString("yyyy-MM-dd HH:mm:ss");
+				row["DateTStamp"]=PIn.DateT(tableAppointments.Rows[i]["DateTStamp"].ToString()).ToString(dateTimeFormatString);
+				row["serverDateTime"]=dateTimeServer.ToString(dateTimeFormatString);
 				row["eServiceLogType"]=(ApiEServiceLogType)PIn.Int(tableAppointments.Rows[i]["EServiceType"].ToString());
 				row["AppointmentTypeNum"]=PIn.Long(tableAppointments.Rows[i]["AppointmentTypeNum"].ToString());
-				row["DateTimeArrived"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeArrived"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
-				row["DateTimeSeated"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeSeated"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
-				row["DateTimeDismissed"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeDismissed"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
+				row["DateTimeArrived"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeArrived"].ToString()).ToString(dateTimeFormatString);
+				row["DateTimeSeated"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeSeated"].ToString()).ToString(dateTimeFormatString);
+				row["DateTimeDismissed"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeDismissed"].ToString()).ToString(dateTimeFormatString);
 				row["UnschedStatus"]=PIn.Long(tableAppointments.Rows[i]["UnschedStatus"].ToString());
 				row["unschedStatus"]=OpenDentBusiness.Defs.GetName(OpenDentBusiness.DefCat.RecallUnschedStatus,PIn.Long(tableAppointments.Rows[i]["UnschedStatus"].ToString()));
 				tableReturn.Rows.Add(row);
