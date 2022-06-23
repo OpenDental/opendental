@@ -307,6 +307,9 @@ namespace OpenDentBusiness{
 				case "DEREKR":
 					bugUser=95;
 					break;
+				case "YOON-ORNC":
+					bugUser=105;
+					break;
 				default:
 					bugUser=2;//Tech Support
 					break;

@@ -96,7 +96,7 @@ namespace OpenDental {
 			query.AddColumn(Lan.g(this,"Presenter"),100,FieldValueType.String);
 			query.AddColumn(Lan.g(this,"# of Procs"),70,FieldValueType.Integer);
 			query.AddColumn(Lan.g(this,"GrossProd"),100,FieldValueType.Number);
-			query.AddColumn(Lan.g(this,"WriteOffs"),100,FieldValueType.Number);
+			query.AddColumn(Lan.g(this,"Write-offs"),100,FieldValueType.Number);
 			query.AddColumn(Lan.g(this,"Adjustments"),100,FieldValueType.Number);
 			query.AddColumn(Lan.g(this,"NetProduction"),100,FieldValueType.Number);
 			if(!report.SubmitQueries()) {
@@ -162,7 +162,7 @@ namespace OpenDental {
 			query.AddColumn(Lan.g(this,"Date")+"\r\n"+Lan.g(this,"Completed"),75,FieldValueType.Date);
 			query.AddColumn("\r\n"+Lan.g(this,"Descript"),200,FieldValueType.String);
 			query.AddColumn("\r\n"+Lan.g(this,"GrossProd"),90,FieldValueType.Number);
-			query.AddColumn("\r\n"+Lan.g(this,"WriteOffs"),90,FieldValueType.Number);
+			query.AddColumn("\r\n"+Lan.g(this,"Write-offs"),90,FieldValueType.Number);
 			query.AddColumn("\r\n"+Lan.g(this,"Adjustments"),90,FieldValueType.Number);
 			query.AddColumn("\r\n"+Lan.g(this,"NetProduction"),90,FieldValueType.Number);
 			if(!report.SubmitQueries()) {

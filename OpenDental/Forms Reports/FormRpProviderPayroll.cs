@@ -312,9 +312,9 @@ namespace OpenDental{
 				query.AddColumn("Day",70,FieldValueType.String,font);
 			}
 			query.AddColumn("UCR Production",90,FieldValueType.Number,font);
-			query.AddColumn("Est Writeoff",80,FieldValueType.Number,font);
+			query.AddColumn("Est Write-off",80,FieldValueType.Number,font);
 			query.AddColumn("Prod Adj",80,FieldValueType.Number,font);
-			query.AddColumn("Change in Writeoff",100,FieldValueType.Number,font);
+			query.AddColumn("Change in Write-off",110,FieldValueType.Number,font);
 			query.AddColumn("Net Prod(NPR)",80,FieldValueType.Number,font);
 			query.AddColumn("Pat Inc Alloc",80,FieldValueType.Number,font);
 			query.AddColumn("Pat Inc Unalloc",80,FieldValueType.Number,font);

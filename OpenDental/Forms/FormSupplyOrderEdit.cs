@@ -63,7 +63,7 @@ namespace OpenDental {
 				return;
 			}
 			if(textDatePlaced.Text==""){
-				SupplyOrderCur.DatePlaced=new DateTime(2500,1,1);
+				SupplyOrderCur.DatePlaced=new DateTime(2300,1,1);
 				SupplyOrderCur.UserNum=0;//even if they had set a user, set it back because the order hasn't been placed. 
 			}
 			else{

@@ -766,10 +766,13 @@ namespace OpenDental {
 				MessageBox.Show(ex.Message);
 				return;
 			}
-			if(!PrefC.GetBool(PrefName.EraAllowTotalPayments)
-				&& gridPayments.ListGridRows.Select(x => (x.Tag as ClaimProc)).Any(x => x.ProcNum==0 && !CompareDouble.IsZero(x.InsPayAmt))) {
-				MsgBox.Show("Please allocate all InsPay amounts from Total Payment rows to a procedure before continuing.");
-				return;
+			List<ClaimProc> listClaimProcsInGrid=gridPayments.ListGridRows.Select(x=>x.Tag as ClaimProc).ToList();
+			listClaimProcsInGrid.ForEach(x=>x.ProcNum=0);
+			if(!PrefC.GetBool(PrefName.EraAllowTotalPayments)) {
+				if(listClaimProcsInGrid.Any(x=>x.ProcNum==0 && (!CompareDouble.IsZero(x.InsPayAmt) || !CompareDouble.IsZero(x.DedApplied) || !CompareDouble.IsZero(x.WriteOff)))) {
+					MsgBox.Show("Please allocate all InsPay, Deductible, and Writeoff amounts from Total Payment rows to a procedure before continuing.");
+					return;
+				} 
 			}
 			bool isPromptNeeded=false;
 			if(_hx835_Claim.IsSplitClaim) {

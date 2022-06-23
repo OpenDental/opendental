@@ -102,6 +102,7 @@ namespace OpenDental{
 			MountCur.ColorFore=butColorFore.BackColor;
 			MountCur.ColorTextBack=butColorTextBack.BackColor;
 			Mounts.Update(MountCur);
+			Documents.UpdateDocCategoryForMountItems(MountCur.MountNum,MountCur.DocCategory);
 			//new mounts are never added here, so it's never an insert
 			DialogResult=DialogResult.OK;
 		}

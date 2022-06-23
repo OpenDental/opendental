@@ -72,7 +72,9 @@ namespace OpenDentBusiness{
 				return _curComputerName;
 			}
 			set {
-				_curComputerNameT=value;
+				if(!ODBuild.IsWeb()) { 
+					_curComputerNameT=value; 
+				}
 				_curComputerName=value;
 			}
 		}

@@ -10,7 +10,7 @@ namespace OpenDentBusiness{
 				return DateTime.MinValue;
 			}
 			int year=PIn.Int(element.Substring(0,4));
-			if(year < 1880) {
+			if(year < 1880 || year>=DateTime.MaxValue.Year) {
 				return DateTime.MinValue;
 			}
 			int month=PIn.Int(element.Substring(4,2));
