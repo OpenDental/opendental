@@ -3444,6 +3444,11 @@ namespace OpenDentBusiness{
 			}
 			else {
 				Appointments.Update(aptCur,aptOld);
+				//If we are on middle tier, the reference to aptCur will not be in the listAppointments anymore.
+				//If not on middle tier, the reference to aptCur will be the same as what's in the list, so we don't need to add again.
+				if(listAppointments.RemoveAll(x => x.AptNum==aptCur.AptNum)>0) {
+					listAppointments.Add(aptCur);
+				}
 			}
 			Procedures.ProcsAptNumHelper(listProcsForAppt,aptCur,listAppointments,listSelectedIndices,listProcNumsAttachedStart,isPlanned);			
 			retVal.DoRunAutomation=Procedures.UpdateProcsInApptHelper(listProcsForAppt,pat,aptCur,aptOld,listInsPlans,listInsSubs,listSelectedIndices,
