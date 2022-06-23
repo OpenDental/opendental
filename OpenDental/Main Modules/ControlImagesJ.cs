@@ -783,6 +783,7 @@ namespace OpenDental
 					+Lan.g(this,"to")+" "+mountNewCat);
 				mountShowing.DocCategory=e.DefNumNew;
 				Mounts.Update(mountShowing);
+				Documents.UpdateDocCategoryForMountItems(mountShowing.MountNum,mountShowing.DocCategory);
 			}
 			FillTree(true);
 		}

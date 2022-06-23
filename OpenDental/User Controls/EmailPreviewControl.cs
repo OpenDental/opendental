@@ -20,6 +20,7 @@ namespace OpenDental {
 		private bool _isSigningEnabled=true;
 		private bool _isLoading=false;
 		private bool _isComposing=false;
+		private bool _isSecureEmailReply=false;
 		private EmailMessage _emailMessage=null;		
 		private X509Certificate2 _certSig=null;
 		private List<EmailAttach> _listEmailAttachDisplayed=null;
@@ -153,12 +154,16 @@ namespace OpenDental {
 
 		///<summary>Loads the given emailMessage into the control.
 		///Set listEmailMessages to messages to be considered for the auto complete contacts pop up.  When null will query.</summary>
-    public void LoadEmailMessage(EmailMessage emailMessage,List<EmailMessage> listHistoricEmailMessages=null) {
+		public void LoadEmailMessage(EmailMessage emailMessage,List<EmailMessage> listHistoricEmailMessages=null,bool isSecureEmailReply=false) {
 			Cursor=Cursors.WaitCursor;
 			_emailMessage=emailMessage;
+			_isSecureEmailReply=isSecureEmailReply;
 			_patCur=Patients.GetPat(_emailMessage.PatNum);//we could just as easily pass this in.
 			if(EmailMessages.IsUnsent(_emailMessage.SentOrReceived)) {//Composing a message
 				_isComposing=true;
+				if(_isSecureEmailReply) {
+					SetFieldsForSecureEmailReply();
+				}
 				if(_isSigningEnabled) {
 					SetSig(EmailMessages.GetCertFromPrivateStore(_emailMessage.FromAddress));
 				}
@@ -185,7 +190,7 @@ namespace OpenDental {
 			}
 			DisplayEmail();
 			FillAttachments();
-			if(IsComposing) {
+			if(_isComposing) {
 				LoadEmailAddresses(ClinicNum);
 				LoadSig();
 				if(PrefC.GetBool(PrefName.EnableEmailAddressAutoComplete)) {
@@ -201,6 +206,17 @@ namespace OpenDental {
 				InitEmailShowInListBox();
 				RefreshShowIn();
 			}	
+		}
+
+		///<summary>The addresses participating on a secure email chain are locked once the chain is started,
+		///so we disable all address fields when composing a reply to a secure email.</summary>
+		private void SetFieldsForSecureEmailReply() {
+			textFromAddress.ReadOnly=true;
+			textToAddress.ReadOnly=true;
+			textCcAddress.ReadOnly=true;
+			textBccAddress.ReadOnly=true;
+			butAccountPicker.Visible=false;
+			LayoutManager.MoveWidth(textFromAddress,textCcAddress.Width);//Match the size of Cc Address.
 		}
 
 		///<summary>Parses the EmailMessage for MIME encoding and performs necessary adjustments.</summary>
@@ -570,7 +586,9 @@ namespace OpenDental {
 			textSignedBy.Visible=false;
 			textSignedBy.Text="";
 			butSig.Visible=false;
-			textFromAddress.ReadOnly=false;
+			if(!_isSecureEmailReply) {
+				textFromAddress.ReadOnly=false;
+			}
 			if(certSig!=null) {
 				labelSignedBy.Visible=true;
 				textSignedBy.Visible=true;

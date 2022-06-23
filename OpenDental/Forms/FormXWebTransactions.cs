@@ -296,6 +296,7 @@ namespace OpenDental {
 			if(gridMain.SelectedIndices.Length<1) {
 				return;
 			}
+			Payment payment=Payments.GetPayment(PIn.Long(_tableTrans.Rows[gridMain.SelectedIndices[0]]["PaymentNum"].ToString()));
 			if(IsXWebTransaction(gridMain.SelectedIndices[0])) {
 				long patNum=PIn.Long(_tableTrans.Rows[gridMain.SelectedIndices[0]]["PatNum"].ToString());
 				string alias=_tableTrans.Rows[gridMain.SelectedIndices[0]]["Alias"].ToString();
@@ -311,14 +312,18 @@ namespace OpenDental {
 					return;
 				}
 				double amt=PIn.Double(_tableTrans.Rows[gridMain.SelectedIndices[0]]["Amount"].ToString());
-				using FormXWeb FormXW=new FormXWeb(patNum,listCards.FirstOrDefault(),XWebTransactionType.CreditReturnTransaction,createPayment:true,amt);
+				using FormXWeb FormXW=new FormXWeb(patNum,listCards.FirstOrDefault(),XWebTransactionType.CreditReturnTransaction,createPayment:false,amt);
 				FormXW.LockCardInfo=true;
 				if(FormXW.ShowDialog()==DialogResult.OK) {
+					Payment paymentReturn=Payments.InsertReturnXWebPayment(payment,FormXW.ResponseResult.GetFormattedNote(false),(-FormXW.ResponseResult.Amount));
+					FormXW.ResponseResult.PaymentNum=paymentReturn.PayNum;
+					XWebResponses.Update(FormXW.ResponseResult);
+					SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,paymentReturn.PatNum,
+						Patients.GetLim(paymentReturn.PatNum).GetNameLF() + ", " + paymentReturn.PayAmt.ToString("c"));
 					FillGrid();
 				}
 			}
 			else {
-				Payment payment=Payments.GetPayment(PIn.Long(_tableTrans.Rows[gridMain.SelectedIndices[0]]["PaymentNum"].ToString()));
 				PayConnectResponseWeb pcResponseWeb=PayConnectResponseWebs.GetOne(PIn.Long(_tableTrans.Rows[gridMain.SelectedIndices[0]]["ResponseNum"].ToString()));
 				decimal amt=PIn.Decimal(_tableTrans.Rows[gridMain.SelectedIndices[0]]["Amount"].ToString());
 				string refNum=_tableTrans.Rows[gridMain.SelectedIndices[0]]["TransactionID"].ToString(); //This is actually PayConnectResponseWeb.RefNumber, it's just stored in the TransactionID column

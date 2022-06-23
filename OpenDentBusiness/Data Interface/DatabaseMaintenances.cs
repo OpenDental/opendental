@@ -6524,7 +6524,7 @@ namespace OpenDentBusiness {
 			return log;
 		}
 
-		[DbmMethodAttr(HasBreakDown = true)]
+		[DbmMethodAttr]
 		public static string PaySplitAttachedToDeletedProc(bool verbose,DbmMode modeCur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
@@ -6532,43 +6532,32 @@ namespace OpenDentBusiness {
 			if(DataConnection.DBtype==DatabaseType.Oracle) {
 				return Lans.g("FormDatabaseMaintenance","Currently not Oracle compatible.  Please call support.");
 			}
-			string command="SELECT CONCAT(pat.LName,' ',pat.FName) AS 'PatientName', payment.PatNum, payment.PayDate, payment.PayAmt, "
-				+"paysplit.DatePay, procedurecode.AbbrDesc, CONCAT(splitpat.FName,' ',splitpat.LName) AS 'SplitPatientName', paysplit.SplitAmt "
+			string command="SELECT paysplit.SplitNum "
 				+"FROM paysplit "
-				+"INNER JOIN payment ON payment.PayNum=paysplit.PayNum "
-				+"INNER JOIN procedurelog ON paysplit.ProcNum=procedurelog.ProcNum AND procedurelog.ProcStatus="+POut.Int((int)ProcStat.D)+" "
-				+"INNER JOIN procedurecode ON procedurelog.CodeNum=procedurecode.CodeNum "
-				+"INNER JOIN patient pat ON pat.PatNum=payment.PatNum "
-				+"INNER JOIN patient splitpat ON splitpat.PatNum=paysplit.PatNum "
-				+"ORDER BY pat.LName, pat.FName, payment.PayDate, paysplit.DatePay, procedurecode.AbbrDesc";
-			DataTable table=Db.GetTable(command);
-			if(table.Rows.Count==0 && !verbose) {
+				+"INNER JOIN procedurelog ON paysplit.ProcNum=procedurelog.ProcNum AND procedurelog.ProcStatus="+POut.Int((int)ProcStat.D)+" ";
+			List<long> listSplitNums=Db.GetListLong(command);
+			if(listSplitNums.Count==0 && !verbose) {
 				return "";
 			}
-			string log=Lans.g("FormDatabaseMaintenance","Paysplits attached to deleted procedures")+": "+table.Rows.Count;
+			string log="";
 			switch(modeCur) {
 				case DbmMode.Check:
-				case DbmMode.Fix:
-					log+="\r\n";
-					if(table.Rows.Count!=0) {
-						log+="   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
-					}
+					log+=Lans.g("FormDatabaseMaintenance","Payment splits attached to deleted procedures")+": "+listSplitNums.Count;
 					break;
-				case DbmMode.Breakdown:
-					if(table.Rows.Count>0) {
-						log+=", "+Lans.g("FormDatabaseMaintenance","including")+":\r\n";
-						for(int i = 0;i<table.Rows.Count;i++) {
-							log+="   "+Lans.g("FormDatabaseMaintenance","Payment")+": #"+table.Rows[i]["PatNum"].ToString();
-							log+=" "+table.Rows[i]["PatientName"].ToString();
-							log+=" "+PIn.DateT(table.Rows[i]["PayDate"].ToString()).ToShortDateString();
-							log+=" "+PIn.Double(table.Rows[i]["PayAmt"].ToString()).ToString("c");
-							log+="\r\n      "+Lans.g("FormDatabaseMaintenance","Split")+": "+PIn.DateT(table.Rows[i]["DatePay"].ToString()).ToShortDateString();
-							log+=" "+table.Rows[i]["SplitPatientName"].ToString();
-							log+=" "+table.Rows[i]["AbbrDesc"].ToString();
-							log+=" "+PIn.Double(table.Rows[i]["SplitAmt"].ToString()).ToString("c");
-							log+="\r\n";
-						}
-						log+="   "+Lans.g("FormDatabaseMaintenance","They need to be fixed manually.")+"\r\n";
+				case DbmMode.Fix:
+					string methodName=MethodBase.GetCurrentMethod().Name;
+					List<DbmLog> listDbmLogs=new List<DbmLog>();
+					if(!listSplitNums.IsNullOrEmpty()) {
+						command=$"UPDATE paysplit SET paysplit.ProcNum=0 WHERE paysplit.SplitNum IN({string.Join(",",listSplitNums)})";
+						Db.NonQ(command);
+					}
+					for(int i=0;i<listSplitNums.Count;i++) {
+						listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,listSplitNums[i],DbmLogFKeyType.PaySplit,
+							DbmLogActionType.Update,methodName,$"Updated ProcNum to 0 from {methodName}."));
+					}
+					log+=Lans.g("FormDatabaseMaintenance","Payment splits with deleted procedures detached")+": "+listSplitNums.Count;
+					if(!listDbmLogs.IsNullOrEmpty()) {
+						DbmLogs.InsertMany(listDbmLogs);
 					}
 					break;
 			}

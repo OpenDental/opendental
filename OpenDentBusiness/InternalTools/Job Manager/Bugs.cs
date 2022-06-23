@@ -312,7 +312,10 @@ namespace OpenDentBusiness{
 					break;
 				case "EZEQUIELS":
 					bugUser=99;
-					break;				
+					break;
+				case "YOON-ORNC":
+					bugUser=105;
+					break;
 				default:
 					bugUser=2;//Tech Support
 					break;

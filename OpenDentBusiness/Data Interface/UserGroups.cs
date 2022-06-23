@@ -200,6 +200,16 @@ namespace OpenDentBusiness{
 			return retVal;
 		}
 
+		///<summary>Returns a list of UserGroups that are associated to the permission passed in.</summary>
+		public static List<UserGroup> GetForPermission(Permissions permission) {
+			//No need to check MiddleTierRole; no call to db.
+			List<long> listUserGroupNums=GroupPermissions.GetWhere(x => x.PermType==permission)
+				.Select(x => x.UserGroupNum)
+				.Distinct()
+				.ToList();
+			return GetWhere(x => listUserGroupNums.Contains(x.UserGroupNum));
+    }
+
 		///<summary>Returns a list of usergroups for a given user. 
 		///Returns an empty list if the user is not associated to any user groups. (should never happen)</summary>
 		public static List<UserGroup> GetForUser(long userNum, bool includeCEMT) {

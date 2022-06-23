@@ -150,6 +150,11 @@ namespace OpenDental {
 			for(int i=0;i<listMenuItems.Count;i++) {
 				listMenuItems[i].Index=i;
 			}
+			//If we are replying to a secure email, the only option should be to reply with a secure email.
+			//Users should start a new email if they want to send a different type.
+			if(IsReplyingToSecureEmail()) {
+				listMenuItems=new List<MenuItem>() { menuItemSendSecure };
+			}
 			contextMenu.MenuItems.AddRange(listMenuItems.ToArray());
 			return contextMenu;
 		}
@@ -191,7 +196,7 @@ namespace OpenDental {
 
 		private void RefreshAll() {
 			_emailMessage.IsNew=IsNew;
-			emailPreview.LoadEmailMessage(_emailMessage,_listEmailMessages);
+			emailPreview.LoadEmailMessage(_emailMessage,_listEmailMessages,IsReplyingToSecureEmail());
 			if(!emailPreview.IsComposing) {
 				panelTemplates.Visible=false;
 				panelAutographs.Visible=false;
@@ -217,6 +222,11 @@ namespace OpenDental {
 				butDecrypt.Visible=true;
 				butRefresh.Visible=false;
 			}
+		}
+
+		///<summary>Returns true if this message is a reply to a Secure Email.</summary>
+		private bool IsReplyingToSecureEmail() {
+			return _emailMessageReplyingTo!=null && EmailMessages.IsSecureEmail(_emailMessageReplyingTo.SentOrReceived);
 		}
 
 		#region Templates
@@ -817,19 +827,20 @@ namespace OpenDental {
 			if(!ValidateFieldsForSend(isSecureEmail:true)) {
 				return;
 			}
+			if(!IsValidSecureEmail()) {
+				return;
+			}
 			EmailAddress emailAddressSender=GetOutgoingEmailForSending();
 			if(emailAddressSender==null) {
 				return;
 			}
 			SaveMsg();//wires UI into _emailMessage and inserts/updates db.			
 			string toAddress=emailPreview.ToAddress;
-			string ccAddress=emailPreview.CcAddress;
-			string bccAddress=emailPreview.BccAddress;
 			ProgressOD progressOD=new ProgressOD();
 			//Send the Email
 			progressOD.ActionMain=() => {
 				_patient??=EmailMessages.GetPatient(_emailMessage);
-				EmailSecures.SendSecureEmail(_emailMessage,emailAddressSender,toAddress,ccAddress,bccAddress,_clinicNum,_emailMessageReplyingTo,_patient);
+				EmailSecures.SendSecureEmail(_emailMessage,emailAddressSender,toAddress,_clinicNum,_emailMessageReplyingTo,_patient);
 			};
 			try {
 				progressOD.ShowDialogProgress();
@@ -845,6 +856,35 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 			Close();//this form can be opened modelessly.
 		}
+
+		#region Secure Email Validation
+		///<summary>Returns true if fields are valid for sending a Secure Email. CC and BCC fields must be blank.</summary>
+		private bool IsValidSecureEmail() {
+			//Secure emails only have From and To addresses.
+			if((emailPreview.CcAddress==string.Empty && emailPreview.BccAddress==string.Empty)
+				|| MsgBox.Show(this,MsgBoxButtons.YesNo,"CC and BCC fields must be blank for Secure Emails." +
+			" Would you like to move the addresses in those fields to the To field and continue sending?"))
+			{
+				MoveCCandBCCIntoToField();
+				return true;
+			}
+			return false;
+		}
+
+		///<summary>Moves the addresses in the CC and BCC fields into the To field.</summary>
+		private void MoveCCandBCCIntoToField() {
+			List<string> listAddressesToMove=emailPreview.CcAddress.Split(",",StringSplitOptions.RemoveEmptyEntries).ToList();
+			listAddressesToMove.AddRange(emailPreview.BccAddress.Split(",",StringSplitOptions.RemoveEmptyEntries).ToList());
+			for(int i=0;i<listAddressesToMove.Count;i++) {
+				if(emailPreview.ToAddress!="") {
+					emailPreview.ToAddress+=",";
+				}
+				emailPreview.ToAddress+=listAddressesToMove[i];
+			}
+			emailPreview.CcAddress="";
+			emailPreview.BccAddress="";
+		}
+		#endregion Secure Email Validation
 
 		private void butCancel_Click(object sender, System.EventArgs e) {
 			if(!emailPreview.IsComposing) {//Use clicked the 'Close' button.  This is a 'read' email, so only changeable property is HideInFlags.

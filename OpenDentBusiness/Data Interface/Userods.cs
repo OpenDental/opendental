@@ -332,14 +332,9 @@ namespace OpenDentBusiness {
 		///<summary>Returns all users that are associated to the permission passed in.  Returns empty list if no matches found.</summary>
 		public static List<Userod> GetUsersByPermission(Permissions permission,bool showHidden) {
 			//No need to check MiddleTierRole; no call to db.
-			List<Userod> listAllUsers=Userods.GetDeepCopy(!showHidden);
-			List<Userod> listUserods=new List<Userod>();
-			for(int i=0;i<listAllUsers.Count;i++) {
-				if(GroupPermissions.HasPermission(listAllUsers[i],permission,0)) {
-					listUserods.Add(listAllUsers[i]);
-				}
-			}
-			return listUserods;
+			List<UserGroup> listUserGroups=UserGroups.GetForPermission(permission);
+			List<long> listUserNums=UserGroupAttaches.GetUserNumsForUserGroups(listUserGroups);
+			return Userods.GetWhere(x => listUserNums.Contains(x.UserNum),!showHidden);
 		}
 
 		///<summary>Returns all users that are associated to the permission passed in.  Returns empty list if no matches found.</summary>

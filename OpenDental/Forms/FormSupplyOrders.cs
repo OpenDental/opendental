@@ -45,6 +45,7 @@ namespace OpenDental {
 				checkShowReceived.Checked=false;
 			}
 			FillGridOrders();
+			FillGridOrderItem(refresh:true);
 			gridOrders.ScrollToEnd();
 		}
 

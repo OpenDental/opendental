@@ -130,6 +130,7 @@ namespace OpenDental{
 			MountCur.FlipOnAcquire=checkFlipOnAcquire.Checked;
 			MountCur.AdjModeAfterSeries=checkAdjModeAfterSeries.Checked;
 			Mounts.Update(MountCur);
+			Documents.UpdateDocCategoryForMountItems(MountCur.MountNum,MountCur.DocCategory);
 			//new mounts are never added here, so it's never an insert
 			DialogResult=DialogResult.OK;
 		}

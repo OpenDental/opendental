@@ -111,6 +111,18 @@ namespace OpenDentBusiness{
 			return retVal;
 		}
 
+		///<summary>Pass in a list of UserGroups and return a distinct list of longs for the UserNums</summary>
+		public static List<long> GetUserNumsForUserGroups(List<UserGroup> listUserGroups) {
+			//No need to check MiddleTierRole; no call to db.
+			return GetUserNumsForUserGroups(listUserGroups.Select(x => x.UserGroupNum).ToList());
+    }
+
+		///<summary>Pass in a list of UserGroupNums and return a distinct list of longs for the UserNums</summary>
+		public static List<long> GetUserNumsForUserGroups(List<long> listUserGroupNums) {
+			//No need to check MiddleTierRole; no call to db.
+			return GetWhere(x => listUserGroupNums.Contains(x.UserGroupNum)).Select(x => x.UserNum).Distinct().ToList();
+    }
+
 		#endregion
 
 		#region Insert

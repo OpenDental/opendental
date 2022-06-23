@@ -1587,7 +1587,6 @@ namespace OpenDental {
 				xPrevious=formMultiVisitGroup.Location.X;
 				yPrevious=formMultiVisitGroup.Location.Y;
 			}
-			Pd.ClearAndFill(EnumPdTable.ProcMultiVisit);
 		}
 
 		private void FormMultiVisitGroup_FormClosing(object sender,FormClosingEventArgs e) {
@@ -1596,6 +1595,7 @@ namespace OpenDental {
 			if(form.Changed) {
 				Pd.TableProgNotes=ChartModules.GetProgNotes(Pd.PatNum,checkAudit.Checked);
 				FillProgNotes(retainToothSelection:true,doRefreshData:true);
+				Pd.ClearAndFill(EnumPdTable.ProcMultiVisit);
 			}
 		}
 

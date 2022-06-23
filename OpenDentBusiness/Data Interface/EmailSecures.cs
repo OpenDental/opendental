@@ -114,84 +114,47 @@ namespace OpenDentBusiness{
 			Crud.EmailSecureCrud.Update(emailSecure);
 		}		
 
-		///<summary>Sends a Secure Email.  Determines if the email is a reply, a new email, or if recipients have been added.  Creates copies of the email
-		///if recipients have changed.  Updates EmailMessage rows appropriately.  Inserts EmailSecure rows as needed.</summary>
-		public static void SendSecureEmail(EmailMessage messageDb,EmailAddress senderAddress,string toAddress,string ccAddress,string bccAddress
-			,long clinicNum,EmailMessage messageReplyingTo=null,Patient pat=null) 
-		{			
+		///<summary>Throws Exceptions. Sends a Secure Email. Determines if the email is a reply or a new email.
+		///Updates EmailMessage row appropriately. Inserts EmailSecure row as needed.</summary>
+		public static void SendSecureEmail(EmailMessage emailMessageDb,EmailAddress emailAddressSender,string stringToAddresses
+			,long clinicNum,EmailMessage emailMessageReplyingTo=null,Patient patient=null) 
+		{
+			//Work with a copy of messageDb.
+			//Otherwise, changes would persist in calling method after an exception is thrown, and user may change sending method.
+			EmailMessage messageDbCopy=emailMessageDb.Copy();
 			IAccountApi api=EmailHostingTemplates.GetAccountApi(clinicNum);
-			messageDb.MsgType=EmailMessageSource.Hosting;
-			EmailResource email=ToEmailResource(messageDb,senderAddress);
-			//Addresses from the message we are replying to, if applicable.
-			List<EmailAddressResource> listReplyingToOriginal=new List<EmailAddressResource>();
-			if(messageReplyingTo!=null) {
-				EmailMessage reply=new EmailMessage();
-				EmailMessages.FillEmailAddressesForReply(reply,messageReplyingTo,senderAddress,isReplyAll:true);//Secure Email is ALWAYS 'Reply All'
-				//These are the email addresses included on the email message we are replying to.
-				listReplyingToOriginal.AddRange(ToEmailAddressResources(reply.ToAddress));
-				listReplyingToOriginal.AddRange(ToEmailAddressResources(reply.CcAddress));
+			List<EmailAddressResource> listEmailAddressResourcesTo=ToEmailAddressResources(stringToAddresses);
+			messageDbCopy.MsgType=EmailMessageSource.Hosting;
+			EmailResource emailResource=ToEmailResource(messageDbCopy,emailAddressSender);
+			emailResource.ListAttachments=UploadSecureAttachments(api,messageDbCopy.Attachments);
+			long emailChainFk=GetEmailChainFkFromEmailMessage(emailMessageReplyingTo);
+			if(emailMessageReplyingTo!=null && EmailMessages.IsSecureEmail(emailMessageReplyingTo.SentOrReceived) && emailChainFk==0) {
+				throw new ODException("The Secure Email you are replying to could not be found.");
 			}
-			//Addresses parsed from the UI.  The user may have added addresses that were not in the original email.
-			List<EmailAddressResource> listToAddresses=ToEmailAddressResources(toAddress);
-			List<EmailAddressResource> listCcAddresses=ToEmailAddressResources(ccAddress);
-			List<EmailAddressResource> listBccAddresses=ToEmailAddressResources(bccAddress);
-			#region Upload attachments
-			email.ListAttachments=UploadSecureAttachments(api,messageDb.Attachments);
-			#endregion
-			List<EmailSecure> listEmailSecures=new List<EmailSecure>();
-			List<Action> listSendEmailActions=new List<Action>();
-			//Determine if this is a reply email
-			EmailSecure replyingToEmailSecure=GetByEmailMessageNum(messageReplyingTo?.EmailMessageNum??0);//Returns null if not found.
-			long emailChainFk=replyingToEmailSecure?.EmailChainFK??0;
-			//We know this SecureEmail is a reply to a previous SecureEmail if the previous email is linked to an EmailChain.
-			bool isReply=emailChainFk!=0;
-			#region Send Reply
-			//Send a reply to all of the original recipients.  Allows original email chain to be preserved.
-			if(isReply) {
-				//Ensure this EmailMessage is addressed to only the email addresses that are being replied to.
-				messageDb.ToAddress=string.Join(";",listReplyingToOriginal.Select(x => x.Address));
-				listSendEmailActions.Add(new Action(() => listEmailSecures.Add(SendReplySecureEmail(api,email,emailChainFk,messageDb,clinicNum))));
+			//If emailChainFk is not zero, we are replying on an existing secure email chain.
+			EmailSecure emailSecure;
+			if(emailChainFk!=0) {
+				emailSecure=SendReplySecureEmail(api,emailResource,emailChainFk,messageDbCopy,clinicNum);
 			}
-			#endregion
-			#region Send New Emails
-			//Send a new email to all of the To and CC recipients if user added anyone new.  This is a new email chain.
-			List<EmailAddressResource> listVisibleEmailAddresses=listToAddresses.Concat(listCcAddresses).ToList();
-			//An unsecure/no-PHI-allowed summary of the email that will be included in the notification email sent to the recipient.
-			string notificationSummary=GetNotificationSummary(pat,messageDb);			
-			//This is a brand new email.
-			if(!isReply) {
-				//Ensure this EmailMessage is addressed to the correct email addresses in the database.
-				messageDb.ToAddress=string.Join(";",listToAddresses.Select(x => x.Address));
-				messageDb.CcAddress=string.Join(";",listCcAddresses.Select(x => x.Address));
-				//Send a single new Secure Email to the To and CC addresses
-				listSendEmailActions.Add(() => listEmailSecures.Add(SendNewSecureEmail(api,email,listVisibleEmailAddresses,messageDb,clinicNum,notificationSummary)));
+			else {//Otherwise, we send a message on a new secure email chain. This happens if not replying or replying to a regular email.
+				string notificationSummary=GetNotificationSummary(patient,messageDbCopy);
+				emailSecure=SendNewSecureEmail(api,emailResource,listEmailAddressResourcesTo,messageDbCopy,clinicNum,notificationSummary);
 			}
-			//This was a reply, but the user added to or removed from the original list of recipients on the email chain.  We must also start a new email chain.
-			else if(
-				//The user added a new recipient
-				listVisibleEmailAddresses.Select(x => x.Address).Except(listReplyingToOriginal.Select(y => y.Address)).Count()!=0 ||
-				//The user removed an original recipient
-				listReplyingToOriginal.Select(x => x.Address).Except(listVisibleEmailAddresses.Select(y => y.Address)).Count()!=0) 
-			{
-				EmailMessage messageNewDb=messageDb.Copy();
-				messageNewDb.ToAddress=string.Join(";",listToAddresses.Select(x => x.Address));
-				messageNewDb.CcAddress=string.Join(";",listCcAddresses.Select(x => x.Address));
-				EmailMessages.Insert(messageNewDb);
-				//Send a single new Secure Email to the To and CC addresses
-				listSendEmailActions.Add(() => listEmailSecures.Add(SendNewSecureEmail(api,email,listVisibleEmailAddresses,messageNewDb,clinicNum,notificationSummary)));
+			Insert(emailSecure);
+		}
+
+		///<summary>Returns the EmailChainFK of the EmailSecure associated to the passed in EmailMessage.
+		///returns 0 if emailMessage is null or no EmailSecure could be found for the EmailMessage.</summary>
+
+		public static long GetEmailChainFkFromEmailMessage(EmailMessage emailMessage) {
+			if(emailMessage==null) {
+				return 0;
 			}
-			//Send a single new Secure Email to each of the Bcc addresses.  This is a new email chain.
-			foreach(EmailAddressResource bcc in listBccAddresses) {
-				EmailMessage messageNewDb=messageDb.Copy();
-				messageNewDb.ToAddress=bcc.Address;
-				messageNewDb.CcAddress="";
-				EmailMessages.Insert(messageNewDb);
-				listSendEmailActions.Add(() => listEmailSecures.Add(SendNewSecureEmail(api,email,new List<EmailAddressResource> { bcc },messageNewDb,clinicNum,notificationSummary)));
+			EmailSecure emailSecure=GetByEmailMessageNum(emailMessage.EmailMessageNum);//Returns null if not found.
+			if(emailSecure==null) {
+				return 0;
 			}
-			#endregion
-			//Send all the emails.
-			RunWebCalls(listSendEmailActions);
-			InsertMany(listEmailSecures);
+			return emailSecure.EmailChainFK;
 		}
 
 		///<summary>An unsecure/no-PHI-allowed summary of the email that will be included in the notification email sent to the recipient.</summary>

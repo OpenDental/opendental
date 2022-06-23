@@ -3266,7 +3266,7 @@ namespace OpenDental {
 				}
 				Payment paymentReturn=Payments.InsertReturnXWebPayment(_paymentCur,FormXW.ResponseResult.GetFormattedNote(false),(-FormXW.ResponseResult.Amount));
 				FormXW.ResponseResult.PaymentNum=paymentReturn.PayNum;
-				XWebResponses.Insert(FormXW.ResponseResult);
+				XWebResponses.Update(FormXW.ResponseResult);
 				SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,paymentReturn.PatNum,
 					Patients.GetLim(paymentReturn.PatNum).GetNameLF() + ", " + paymentReturn.PayAmt.ToString("c"));
 				butVoid.Visible=true;

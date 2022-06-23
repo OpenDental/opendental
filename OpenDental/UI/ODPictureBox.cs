@@ -57,6 +57,10 @@ namespace OpenDental.UI
 		[DefaultValue(null)]
 		public Image Image{
 			set{
+				//Return early if same image, otherwise when we dispose of 'image', 'value' will also be disposed of as well.
+				if(image==value) {
+					return;
+				}
 				image?.Dispose();
 				image=value;
 				Invalidate();

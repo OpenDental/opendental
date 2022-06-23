@@ -555,6 +555,7 @@ namespace OpenDentBusiness {
 				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.Email.ToString());
 				EmailAddresses.FillCacheFromTable(ds.Tables["EmailAddress"]);
 				EmailTemplates.FillCacheFromTable(ds.Tables["EmailTemplate"]);
+				EmailAutographs.FillCacheFromTable(ds.Tables["EmailAutograph"]);
 			}
 			if(listITypes.Contains(InvalidType.Employees) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.Employees.ToString());

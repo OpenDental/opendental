@@ -669,17 +669,16 @@ namespace OpenDentBusiness{
 				return Meth.GetLong(MethodBase.GetCurrentMethod());
 			}
 			ODEvent.Fire(ODEventType.HideUnusedFeeSchedules,Lans.g("FormFeeScheds","Finding unused fee schedules..."));
-			string command=@"SELECT feesched.FeeSchedNum 
-				FROM feesched
-				LEFT JOIN provider ON provider.FeeSched=feesched.FeeSchedNum
-				LEFT JOIN patient ON patient.FeeSched=feesched.FeeSchedNum
-				LEFT JOIN insplan ON insplan.FeeSched=feesched.FeeSchedNum
-					OR insplan.AllowedFeeSched=feesched.FeeSchedNum
-					OR insplan.CopayFeeSched=feesched.FeeSchedNum
-					OR insplan.ManualFeeSchedNum=feesched.FeeSchedNum
-				LEFT JOIN discountplan ON discountplan.FeeSchedNum=feesched.FeeSchedNum
-				WHERE COALESCE(provider.FeeSched,patient.FeeSched,insplan.FeeSched,discountplan.FeeSchedNum) IS NULL
-				AND feesched.IsHidden=0";
+			string command = @"SELECT feesched.FeeSchedNum 
+								FROM feesched
+								WHERE feesched.IsHidden=0
+								AND NOT EXISTS (SELECT FeeSched FROM insplan WHERE insplan.FeeSched = feesched.FeeSchedNum)
+								AND NOT EXISTS (SELECT FeeSched FROM provider WHERE provider.FeeSched = feesched.FeeSchedNum)
+								AND NOT EXISTS (SELECT AllowedFeeSched FROM insplan WHERE insplan.AllowedFeeSched = feesched.FeeSchedNum)
+								AND NOT EXISTS (SELECT CopayFeeSched FROM insplan WHERE insplan.CopayFeeSched = feesched.FeeSchedNum)
+								AND NOT EXISTS (SELECT ManualFeeSchedNum FROM insplan WHERE insplan.ManualFeeSchedNum = feesched.FeeSchedNum)
+								AND NOT EXISTS (SELECT FeeSchedNum FROM discountplan WHERE discountplan.FeeSchedNum = feesched.FeeSchedNum)
+								AND NOT EXISTS (SELECT FeeSched FROM patient WHERE patient.FeeSched = feesched.FeeSchedNum)";
 			List<long> listFeeScheds=Db.GetListLong(command);
 			if(listFeeScheds.Count==0) {
 				return 0;

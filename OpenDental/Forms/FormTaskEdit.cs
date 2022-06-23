@@ -699,6 +699,7 @@ namespace OpenDental {
 		private void FillListCategory() {
 			listCategory.Items.Clear();
 			List<Def> listCategories=Defs.GetDefsForCategory(DefCat.TaskCategories);
+			listCategories=listCategories.FindAll(x => !x.IsHidden || x.DefNum==_taskCur.TriageCategory);
 			listCategory.Items.AddNone<Def>();
 			listCategory.Items.AddList(listCategories,x => x.ItemName);
 			listCategory.SetSelectedKey<Def>(_taskCur.TriageCategory,x => x.DefNum);

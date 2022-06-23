@@ -732,7 +732,8 @@ namespace OpenDental {
 				bool hasTimeSlots=false;
 				try {
 					if(needsToBeSignedUp) {
-						hasTimeSlots=TimeSlots.GetAvailableWebSchedTimeSlots(rowTag.PriKeyNum,dateDue,dateDue.AddMonths(2)).Count>0;
+						hasTimeSlots=TimeSlots.GetAvailableWebSchedTimeSlots(rowTag.PriKeyNum,dateDue,
+							dateDue.AddMonths(PrefC.GetInt(PrefName.WebSchedRecallApptSearchMaximumMonths))).Count>0;
 					}
 					else {
 						hasTimeSlots=true;

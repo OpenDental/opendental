@@ -3417,6 +3417,11 @@ namespace OpenDentBusiness {
 			}
 		}//End of 22_2_12() method
 
+		private static void To22_2_15() {
+			string command = "ALTER TABLE insplan ADD INDEX(AllowedFeeSched)";
+			Db.NonQ(command);
+		}//End of 22_2_15() method
+
 	}
 }
 

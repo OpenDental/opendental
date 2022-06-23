@@ -182,6 +182,23 @@ namespace OpenDentBusiness {
 			return Crud.DocumentCrud.Update(doc,docOld);
 		}
 
+		///<summary>Updates all of the mount's Document.DocCategory information when moving a mount.</summary>
+		public static void UpdateDocCategoryForMountItems(long mountNum,long docCategory) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),mountNum,docCategory);
+				return;
+			}
+			List<MountItem> listMountItems=MountItems.GetItemsForMount(mountNum);
+			List<Document> listDocumentsInMountDb=GetDocumentsForMountItems(listMountItems).Where(x => x!=null).ToList();
+			if(listDocumentsInMountDb.Count>0) {
+				for(int i=0;i<listDocumentsInMountDb.Count;i++) {
+					Document docOld=listDocumentsInMountDb[i].Copy();
+					listDocumentsInMountDb[i].DocCategory=docCategory;
+					Update(listDocumentsInMountDb[i],docOld);
+				}
+			}
+		}
+
 		///<summary></summary>
 		public static void Delete(Document doc){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
