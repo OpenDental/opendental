@@ -893,6 +893,31 @@ namespace OpenDentBusiness {
 				retVal.ListProcs.Add(proc);
 				segNum+=proc.SegmentCount;
 			}
+			bool areIdentifiersValid=true;
+			for(int i=0;i<retVal.ListProcs.Count;i++) {
+				//If any proc has same procnum as any other proc AND a different ProcCodeBilled
+				if(retVal.ListProcs.Any(x=>x.ProcNum==retVal.ListProcs[i].ProcNum && x.ProcCodeBilled!=retVal.ListProcs[i].ProcCodeBilled)) {
+					areIdentifiersValid=false;
+					break;
+				}
+				//If any proc shares the same planordinal as any other proc AND has a different PlanNum Or PartialPlanNum
+				if(retVal.ListProcs.Any(x=>x.PlanOrdinal==retVal.ListProcs[i].PlanOrdinal && 
+					(x.PlanNum!=retVal.ListProcs[i].PlanNum || x.PartialPlanNum!=retVal.ListProcs[i].PartialPlanNum)))
+				{
+					areIdentifiersValid=false;
+					break;
+				}
+			}
+			if(!areIdentifiersValid) {
+				//If any procedure identifiers are invalid, we can't trust the format used by the carrier, so we zero the ProcNum
+				//and insurance plan information. Secondary matching logic will be used when payment is proceseed.
+				for(int i=0;i<retVal.ListProcs.Count;i++) {
+					retVal.ListProcs[i].ProcNum=0;
+					retVal.ListProcs[i].PlanOrdinal=0;
+					retVal.ListProcs[i].PartialPlanNum=0;
+					retVal.ListProcs[i].PlanNum=0;
+				}
+			}
 			retVal.PatientDeductAmt=0;
 			retVal.PatientPortionAmt=0;
 			retVal.WriteoffAmt=0;

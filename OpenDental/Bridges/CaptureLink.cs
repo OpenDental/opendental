@@ -36,7 +36,7 @@ namespace OpenDental.Bridges{
 				}
 				info+=Tidy(pat.ChartNumber);
 			}
-			Clipboard.Clear();
+			ODClipboard.Clear();
 			ODClipboard.SetClipboard(info);
 			try {
 				ODFileUtils.ProcessStart(path);

@@ -43,8 +43,8 @@ namespace OpenDental {
 			//If the eClipboard image def has a corresponding EClipboardImageCaptureDef, users are allowed to submit that image, so we add these defs to the 'In Use' list.
 			List<Def> listEClipboardImagesInUse=_listAllEClipboardImages.FindAll(x => ListEClipboardImageCaptureDefs.Any(y => y.ClinicNum==_clinicNum && y.DefNum==x.DefNum));
 			//If the eClipboard image def does not have a corresponding EClipboardImageCaptureDef, users are not allowed to submit that image, so we add these defs to
-			//the 'available' list.
-			List<Def> listAvailableEClipboardImages=_listAllEClipboardImages.FindAll(x => !listEClipboardImagesInUse.Any(y => y.DefNum==x.DefNum));
+			//the 'available' list as long the def is not marked as 'hidden'.
+			List<Def> listAvailableEClipboardImages=_listAllEClipboardImages.FindAll(x => !listEClipboardImagesInUse.Any(y => y.DefNum==x.DefNum) && !x.IsHidden);
 			bool selfPortraitIsAllowed=ListEClipboardImageCaptureDefs.Any(x => x.IsSelfPortrait && x.ClinicNum==_clinicNum);
 			//If the self portrait has a correspoding EClipboardImageCaptureDef, then we add it the 'In Use' list, since users are able to submit self portraits.
 			if(selfPortraitIsAllowed) { 

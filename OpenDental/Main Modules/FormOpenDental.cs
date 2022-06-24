@@ -1013,14 +1013,14 @@ namespace OpenDental{
 		private void toolButPatient_Click() {
 			bool isClipMatch=false;
 			try {
-				if(Clipboard.ContainsText() ){
+				if(System.Windows.Clipboard.ContainsText() ){//System.Windows.Forms.Clipboard fails for Thinfinity
 					string txtClip="";
-					txtClip=Clipboard.GetText().Trim();
+					txtClip=System.Windows.Clipboard.GetText().Trim();
 					if(Regex.IsMatch(txtClip,@"^PatNum:\d+$")){//very restrictive specific match for "PatNum:##"
 						long patNum=PIn.Long(txtClip.Substring(7));
 						Patient patient=Patients.GetLim(patNum);
 						if(patient.PatNum!=0){
-							Clipboard.Clear();//so if they click it again, the can select a patient
+							ODClipboard.Clear();//so if they click it again, the can select a patient
 							PatNumCur=patNum;
 							isClipMatch=true;
 						}

@@ -74,7 +74,7 @@ namespace OpenDentBusiness {
 				//Two different ways to paste are "Ctrl + V" and "Shift + Insert".
 				if((e.Control && e.KeyCode==Keys.V) || (e.Shift && e.KeyCode==Keys.Insert)) {
 					try {
-						if(Clipboard.ContainsText()) {
+						if(System.Windows.Clipboard.ContainsText()) {//System.Windows.Forms.Clipboard fails for Thinfinity
 							//Paste just the plain text value from the clipboard.
 							textbox.Paste(DataFormats.GetFormat(DataFormats.Text));
 						}

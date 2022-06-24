@@ -1304,7 +1304,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Error.");
 				return;
 			}
-			DataObject dataObject=new DataObject();
+			System.Windows.DataObject dataObject=new System.Windows.DataObject();
 			if(nodeTypeAndKey!=null){
 				dataObject.SetData(nodeTypeAndKey);
 			}
@@ -1317,7 +1317,7 @@ namespace OpenDental {
 				dataObject.SetData(DataFormats.FileDrop,stringArray);
 			}
 			try {
-				Clipboard.SetDataObject(dataObject);
+				System.Windows.Clipboard.SetDataObject(dataObject);//System.Windows.Forms.Clipboard fails for Thinfinity
 			}
 			catch(Exception ex) {
 				MsgBox.Show(this,"Could not copy contents to the clipboard.  Please try again.");

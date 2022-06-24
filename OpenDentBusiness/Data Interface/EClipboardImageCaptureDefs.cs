@@ -69,7 +69,17 @@ namespace OpenDentBusiness{
 			return Crud.EClipboardImageCaptureDefCrud.Sync(listNew,listOld);
 		}
 
-
+		///<summary>Returns true if eClipboard Image definition is currently being used.</summary>
+		public static bool IsEClipboardImageDefInUse(long defNum) {
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),defNum);
+			}
+			string command=$"SELECT COUNT(*) FROM eclipboardimagecapturedef WHERE DefNum="+POut.Long(defNum);
+			if(Db.GetCount(command)=="0") {
+				return false;
+			}
+			return true;
+		}
 		#endregion Methods - Misc
 	}
 }

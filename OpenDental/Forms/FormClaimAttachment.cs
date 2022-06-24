@@ -275,7 +275,7 @@ namespace OpenDental {
 		}
 
 		private void StartSnipping() {
-			Clipboard.Clear();
+			ODClipboard.Clear();
 			//If we're in the middle of trying to kill Snip Tool processes, stop for now.
 			timerKillSnipToolProcesses.Stop();
 			_stopwatchKillSnipToolProcesses.Reset();
