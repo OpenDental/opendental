@@ -235,7 +235,7 @@ namespace OpenDental {
 				if(text.Length==0) {
 					return;
 				}
-				menuItem.Click+=(o,e) => Clipboard.SetText(text);
+				menuItem.Click+=(o,e) => ODClipboard.SetClipboard(text);
 				contextMenu.MenuItems.Add(menuItem);
 				richTextBox.ContextMenu=contextMenu;
 			}

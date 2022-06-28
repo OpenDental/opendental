@@ -359,7 +359,7 @@ namespace OpenDental {
 			this.checkAgeWriteoffs.Name = "checkAgeWriteoffs";
 			this.checkAgeWriteoffs.Size = new System.Drawing.Size(203, 18);
 			this.checkAgeWriteoffs.TabIndex = 4;
-			this.checkAgeWriteoffs.Text = "Age writeoff estimates";
+			this.checkAgeWriteoffs.Text = "Age write-off estimates";
 			// 
 			// checkExcludeArchive
 			// 

@@ -1018,14 +1018,14 @@ namespace OpenDental{
 		private void toolButPatient_Click() {
 			bool isClipMatch=false;
 			try {
-				if(Clipboard.ContainsText() ){
+				if(System.Windows.Clipboard.ContainsText() ){//System.Windows.Forms.Clipboard fails for Thinfinity
 					string txtClip="";
-					txtClip=Clipboard.GetText().Trim();
+					txtClip=System.Windows.Clipboard.GetText().Trim();
 					if(Regex.IsMatch(txtClip,@"^PatNum:\d+$")){//very restrictive specific match for "PatNum:##"
 						long patNum=PIn.Long(txtClip.Substring(7));
 						Patient patient=Patients.GetLim(patNum);
 						if(patient.PatNum!=0){
-							Clipboard.Clear();//so if they click it again, the can select a patient
+							ODClipboard.Clear();//so if they click it again, the can select a patient
 							PatNumCur=patNum;
 							isClipMatch=true;
 						}
@@ -5454,28 +5454,34 @@ namespace OpenDental{
 		}
 
 		private void menuItemProviders_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(Permissions.ProviderEdit, true) && !Security.IsAuthorized(Permissions.ProviderAdd, true)) {
-				if(PrefC.GetBool(PrefName.EasyHideDentalSchools)) {
-					MessageBox.Show(Lans.g("Security", "Not authorized for") + "\r\n"
-						+ GroupPermissions.GetDesc(Permissions.ProviderEdit)
-						+ " or "
-						+ GroupPermissions.GetDesc(Permissions.ProviderAdd)
-						+ " "
-						+ Lans.g("Security", "and")
-						+ "\r\n"
-						+ Lans.g("Security", "Dental Schools is not enabled in 'Setup' > 'Advanced Setup' > 'Show Features'"));
-					return;
+			//If any of the provider related permissions are true, open form. FormProviderSetup handles ability, including Dental Schools.
+			if(!Security.IsAuthorized(Permissions.ProviderAdd,suppressMessage:true)
+				&&!Security.IsAuthorized(Permissions.ProviderEdit,suppressMessage:true)
+				&&!Security.IsAuthorized(Permissions.ProviderAlphabetize,suppressMessage:true)) {
+				//If none of the provider related permissions are true and Dental Schools is turned on, check Dental School related permissions.
+				if(!PrefC.GetBool(PrefName.EasyHideDentalSchools)) {
+					if(!Security.IsAuthorized(Permissions.AdminDentalInstructors,suppressMessage:true)
+						&&!Security.IsAuthorized(Permissions.AdminDentalStudents,suppressMessage:true)) {
+						//If none of the provider related permissions are true and Dental Schools is turned on, display a single message.
+						MsgBox.Show(Lans.g("Security","Not authorized.")+"\r\n"
+							+Lans.g("Security","A user with the SecurityAdmin permission must grant you access for")+":\r\n"
+							+GroupPermissions.GetDesc(Permissions.AdminDentalInstructors)+" or "
+							+GroupPermissions.GetDesc(Permissions.AdminDentalStudents));
+						return;
+					}
 				}
-				else if(!Security.IsAuthorized(Permissions.AdminDentalStudents,true) && !Security.IsAuthorized(Permissions.AdminDentalInstructors,true)) {
-					MessageBox.Show(Lans.g("Security","Not authorized for")+"\r\n" +GroupPermissions.GetDesc(Permissions.ProviderEdit)
-						+" "+Lans.g("Security","or")+" "+GroupPermissions.GetDesc(Permissions.AdminDentalStudents)
-						+" "+Lans.g("Security","or")+" "+GroupPermissions.GetDesc(Permissions.AdminDentalInstructors));
+				else {//If none of the provider related permissions are true and Dental Schools is turned off, display a single message.
+					MsgBox.Show(Lans.g("Security","Not authorized.")+"\r\n"
+						+Lans.g("Security","A user with the SecurityAdmin permission must grant you access for")+":\r\n"
+						+GroupPermissions.GetDesc(Permissions.ProviderAdd)+" or "
+						+GroupPermissions.GetDesc(Permissions.ProviderEdit)+" or "
+						+GroupPermissions.GetDesc(Permissions.ProviderAlphabetize));
 					return;
 				}
 			}
-			using FormProviderSetup formProviderSetup = new FormProviderSetup();
+			using FormProviderSetup formProviderSetup=new FormProviderSetup();
 			formProviderSetup.ShowDialog();
-			SecurityLogs.MakeLogEntry(Permissions.ProviderEdit,0,"Providers");
+			SecurityLogs.MakeLogEntry(Permissions.ProviderEdit,0,"Provider Setup");
 		}
 
 		private void menuItemPrescriptions_Click(object sender, System.EventArgs e) {

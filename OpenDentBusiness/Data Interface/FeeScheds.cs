@@ -292,7 +292,7 @@ namespace OpenDentBusiness{
 			Db.NonQ(command);
 		}
 
-		///<summary>Updates writeoff estimated for claimprocs for the passed in clinics. Called only in FormFeeSchedTools, located here to allow unit
+		///<summary>Updates write-off estimated for claimprocs for the passed in clinics. Called only in FormFeeSchedTools, located here to allow unit
 		///testing. Requires an ODProgressExtended to display UI updates.  If clinics are enabled and the user is not clinic restricted and chooses to run
 		///for all clinics, set doUpdatePrevClinicPref to true so that the ClinicNums will be stored in the preference table as they are finished to allow
 		///for pausing/resuming the process.</summary>
@@ -398,7 +398,7 @@ namespace OpenDentBusiness{
 					break;
 				}
 				#endregion Has Paused or Cancelled
-				progress.Fire(ODEventType.FeeSched,new ProgressBarHelper(Lans.g("FeeSchedEvent","Updating writeoff estimates for patients..."),
+				progress.Fire(ODEventType.FeeSched,new ProgressBarHelper(Lans.g("FeeSchedEvent","Updating write-off estimates for patients..."),
 						progressBarEventType: ProgBarEventType.TextMsg));
 				listActions=listFamProcs.Select(x => new Action(() => {
 					#region Has Cancelled

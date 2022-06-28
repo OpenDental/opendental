@@ -34,7 +34,7 @@ namespace OpenDental {
 		}
 
 		private void butCopy_Click(object sender,EventArgs e) {
-			Clipboard.SetText(this.textLog.Text);
+			ODClipboard.SetClipboard(textLog.Text);
 		}
 
 		private void butRun_Click(object sender,EventArgs e) {

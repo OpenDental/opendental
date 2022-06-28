@@ -158,7 +158,7 @@ namespace OpenDentBusiness {
 				default:
 					throw new Exception("DataStorageType: "+PrefC.AtoZfolderUsed.ToString()+" not implemented.");
 			}
-			state.Execute(progressHandler!=null);
+			state.Execute(progressHandler!=null, fileName);
 			return state;
 		}
 		#endregion

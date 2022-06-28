@@ -215,7 +215,7 @@ namespace OpenDental{
 			query.AddColumn("Write-off",70,FieldValueType.Number);
 			query.GetColumnDetail("Write-off").ContentAlignment=ContentAlignment.MiddleRight;
 			if(writeoffType==PPOWriteoffDateCalc.ClaimPayDate) {
-				query.AddGroupSummaryField("Write-off (Writeoff Estimate + Write-off Adjustment)","Provider","$writeoff",SummaryOperation.Sum,new List<int>(){0},Color.Black,new Font("Tahoma",9,FontStyle.Bold),0,50);
+				query.AddGroupSummaryField("Write-off (Write-off Estimate + Write-off Adjustment)","Provider","$writeoff",SummaryOperation.Sum,new List<int>(){0},Color.Black,new Font("Tahoma",9,FontStyle.Bold),0,50);
 			}
 			report.AddPageNum(font);
 			if(!report.SubmitQueries()) {

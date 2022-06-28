@@ -630,6 +630,10 @@ namespace OpenDental {
 					return false;
 				}
 			}
+			if(def.Category==DefCat.EClipboardImageCapture && EClipboardImageCaptureDefs.IsEClipboardImageDefInUse(def.DefNum)) {
+				MsgBox.Show(_lanThis,"You cannot hide an eClipboard Image Capture definition that is in use in 'eClipboard Setup'.");
+					return false;
+			}
 			return true;
 		}
 

@@ -1758,13 +1758,13 @@ namespace OpenDental {
 			bool isClipMatch=false;
 			string taskNum="";
 			try {
-				if(Clipboard.ContainsText()) {
+				if(System.Windows.Clipboard.ContainsText()) {//System.Windows.Forms.Clipboard fails for Thinfinity
 					string txtClip="";
-					txtClip=Clipboard.GetText();
+					txtClip=System.Windows.Clipboard.GetText();
 					if(Regex.IsMatch(txtClip,@"^TaskNum:\d+$")){//very restrictive specific match for "TaskNum:##"
 						taskNum=txtClip.Substring(8);
 						if(!taskNum.IsNullOrEmpty()) {
-							Clipboard.Clear();
+							ODClipboard.Clear();//so if they click it again, the can search for a task
 							isClipMatch=true;
 						}
 					}

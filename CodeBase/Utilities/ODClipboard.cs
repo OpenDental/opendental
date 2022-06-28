@@ -1,20 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CodeBase {
+
+	///<summary></summary>
 	public class ODClipboard {
-		///<summary>Writes the text to the user's clipboard.</summary>
+
+		///<summary>Clears the clipboard.  For ODCloud this will set the clipboard to an empty string instead, since the clear function doesn't work for ODCloud.  Also, for ODCloud
+		///this will use System.Windows.Clipboard since System.Windows.Forms.Clipboard causes heap corruption and crashes OD with ntdll.dll errors in ODCloud.</summary>
+		public static void Clear() {
+			if(ODBuild.IsWeb()) {
+				System.Windows.Clipboard.SetText(string.Empty);//setting text so that the browser clipboard will match the local workstation clipboard
+				ODCloudClient.SendDataToBrowser(string.Empty,(int)ODCloudClient.BrowserAction.SetClipboard);
+			}
+			else {
+				Clipboard.Clear();
+			}
+		}
+
+		///<summary>Writes the text to the user's clipboard.  For ODCloud this will use System.Windows.Clipboard since System.Windows.Forms.Clipboard causes heap corruption and
+		///crashes OD with ntdll.dll errors in ODCloud.</summary>
 		public static void SetClipboard(string text) {
 			if(string.IsNullOrEmpty(text)) {
 				return;
 			}
 			if(ODBuild.IsWeb()) {
+				System.Windows.Clipboard.SetText(text);//setting text so that the browser clipboard will match the local workstation clipboard.
 				ODCloudClient.SendDataToBrowser(text,(int)ODCloudClient.BrowserAction.SetClipboard);
 			}
 			else {

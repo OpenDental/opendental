@@ -554,7 +554,7 @@ namespace OpenDental {
 				tableTotals.Columns.Add("Summary");
 				string prodLabel;
 				if(radioWriteoffBoth.Checked) {
-					prodLabel="Total Production (Production + Adjustments - Write-off Ests - WriteOff Adjs)";
+					prodLabel="Total Production (Production + Adjustments - Write-off Ests - Write-off Adjs)";
 				}
 				else {
 					prodLabel="Total Production (Production + Adjustments - Write-offs)";
@@ -595,11 +595,11 @@ namespace OpenDental {
 			tableClinicTotals.Columns.Add(new DataColumn("Production"));
 			tableClinicTotals.Columns.Add(new DataColumn("Adjust"));
 			if(radioWriteoffBoth.Checked) {
-				tableClinicTotals.Columns.Add(new DataColumn("Writeoff Est"));
-				tableClinicTotals.Columns.Add(new DataColumn("Writeoff Adj"));
+				tableClinicTotals.Columns.Add(new DataColumn("Write-off Est"));
+				tableClinicTotals.Columns.Add(new DataColumn("Write-off Adj"));
 			}
 			else {
-				tableClinicTotals.Columns.Add(new DataColumn("Writeoff"));
+				tableClinicTotals.Columns.Add(new DataColumn("Write-off"));
 			}
 			tableClinicTotals.Columns.Add(new DataColumn("Pt Income"));
 			tableClinicTotals.Columns.Add(new DataColumn("Ins Income"));

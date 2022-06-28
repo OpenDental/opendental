@@ -381,7 +381,7 @@ namespace CodeBase {
 		///<summary>Creates a default ServiceConfig file at the full file path provided.
 		///The config contains the current connection settings in DataConnection and defaults LogLevelOfApplication to 'Error'.</summary>
 		public static bool CreateServiceConfigFile(string filePath,string serverName,string databaseName,string mySqlUser,string mySqlPass
-			,string mySqlPassHash,string mySqlUserLow="",string mySqlUserPassLow="") 
+			,string mySqlPassHash,string mySqlUserLow="",string mySqlUserPassLow="",string note=null) 
 		{
 			XmlDocument document=new XmlDocument();
 			//Creating Nodes
@@ -414,6 +414,11 @@ namespace CodeBase {
 			nodeDbeConn.AppendChild(nodeUserLow);
 			nodeDbeConn.AppendChild(nodePasswordLow);
 			nodeDbeConn.AppendChild(nodeDbType);
+			if(note!=null) {
+				XmlNode nodeNote=document.CreateNode(XmlNodeType.Element,"Note","");
+				nodeNote.InnerText=note;
+				nodeDbeConn.AppendChild(nodeNote);
+			}
 			nodeConnSettings.AppendChild(nodeDbeConn);
 			nodeConnSettings.AppendChild(nodeLogLevelOfApp);
 			document.AppendChild(nodeConnSettings);

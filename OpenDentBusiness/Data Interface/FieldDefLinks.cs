@@ -10,7 +10,7 @@ namespace OpenDentBusiness{
 		#region CachePattern
 		private class FieldDefLinkCache:CacheListAbs<FieldDefLink> {
 			protected override List<FieldDefLink> GetCacheFromDb() {
-				string command="SELECT * FROM fieldDefLink";
+				string command="SELECT * FROM fielddeflink";
 				return Crud.FieldDefLinkCrud.SelectMany(command);
 			}
 			protected override List<FieldDefLink> TableToList(DataTable table) {
@@ -82,7 +82,7 @@ namespace OpenDentBusiness{
 					return;
 			}
 			//Only delete records of the correct fieldDefType (Pat vs Appt)
-			Db.NonQ("DELETE FROM fieldDefLink WHERE FieldDefNum="+POut.Long(fieldDefNum)+" AND FieldDefType="+POut.Int((int)fieldDefType));
+			Db.NonQ("DELETE FROM fielddeflink WHERE FieldDefNum="+POut.Long(fieldDefNum)+" AND FieldDefType="+POut.Int((int)fieldDefType));
 		}
 	}
 }

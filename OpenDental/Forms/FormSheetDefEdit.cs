@@ -101,9 +101,10 @@ namespace OpenDental {
 		private Size _sizeResizeOriginal;
 		///<summary>0-indexed, starting from the end of the list. 0 represents the last item in the undo list. Since it matches what the viewer sees, we are 0 levels deep. An undo will move us to position 1, which is the second from the end in the list. When we are at level 1, we have 1 redo available.</summary>
 		private int _undoLevel;
-		#endregion Fields - Private
-
 		private int counterTemp;
+		///<summary>If using cloud storage, this keeps track of images that we have already attempted to download so we don't try to download them again when the sheet resizes (Sheets resize several times on load). This prevents OD from trying to download the same SheetFieldDef's image mulitple times when the image is missing from the SheetImages folder.</summary>
+		private List<long> _listSheetFieldDefNums = new List<long>();
+		#endregion Fields - Private
 
 		#region Constructor
 		public FormSheetDefEdit(SheetDef sheetDef) {
@@ -711,8 +712,8 @@ namespace OpenDental {
 			if(Width<LayoutManager.Scale(600)){
 				Width=LayoutManager.Scale(600);
 			}
-			if(Height<LayoutManager.Scale(600)){
-				Height=LayoutManager.Scale(600);
+			if(Height<LayoutManager.Scale(750)){
+				Height=LayoutManager.Scale(750);
 			}
 			System.Windows.Forms.Screen screen=System.Windows.Forms.Screen.FromHandle(this.Handle);
 			if(Width>screen.WorkingArea.Width){
@@ -3169,14 +3170,19 @@ namespace OpenDental {
 				sheetFieldDef.ImageField=new Bitmap(image,sheetFieldDef.Width,sheetFieldDef.Height);
 			}
 			else if(CloudStorage.IsCloudStorage) {
+				if(_listSheetFieldDefNums.Contains(sheetFieldDef.SheetFieldDefNum)) {
+					//we've attempted to get this image already, do nothing, move along nothing to see here
+					return;
+				}
 				using FormProgress formProgress=new FormProgress();
-				formProgress.DisplayText=Lan.g(CloudStorage.LanThis,"Downloading...");
+				formProgress.DisplayText=Lan.g(CloudStorage.LanThis,"Downloading" + sheetFieldDef.FieldName + "...");
 				formProgress.NumberFormat="F";
 				formProgress.NumberMultiplication=1;
 				formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
 				formProgress.TickMS=1000;
 				OpenDentalCloud.Core.TaskStateDownload taskStateDownload=CloudStorage.DownloadAsync(SheetUtil.GetImagePath(),sheetFieldDef.FieldName,
 					new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+				_listSheetFieldDefNums.Add(sheetFieldDef.SheetFieldDefNum);
 				if(formProgress.ShowDialog()==DialogResult.Cancel) {
 					taskStateDownload.DoCancel=true;
 					return;

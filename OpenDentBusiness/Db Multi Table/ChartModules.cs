@@ -1820,6 +1820,99 @@ namespace OpenDentBusiness {
 			return tableRetVal;
 		}
 
+		///<summary>Creates a DataTable for Planned Appts for a patient, similar to GetPlannedApt().</summary>
+		public static DataTable GetPlannedApptsForApi(long patNum,int offset,int limit,string dateTimeFormatString) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),patNum,dateTimeFormatString);
+			}
+			DataConnection dcon=new DataConnection();
+			DataTable table=new DataTable();
+			DataRow row;
+			table.Columns.Add("AptNum");  //The AptNum of the appointment (scheduled or not) that is attached to the planned appointment.
+			table.Columns.Add("ProvNum");
+			table.Columns.Add("ItemOrder");
+			table.Columns.Add("minutes");
+			table.Columns.Add("ProcDescript");
+			table.Columns.Add("Note");
+			table.Columns.Add("dateSched");
+			table.Columns.Add("AptStatus");
+			List<DataRow> rows=new List<DataRow>();
+			string command="SELECT plannedappt.AptNum,ItemOrder,PlannedApptNum,appointment.AptDateTime,"
+				+"appointment.Pattern,appointment.AptStatus,"
+				+"COUNT(DISTINCT procedurelog.ProcNum) someAreComplete, "
+				+"appointment.AptNum AS schedAptNum "
+				+"FROM plannedappt "
+				+"LEFT JOIN appointment ON appointment.NextAptNum=plannedappt.AptNum AND appointment.NextAptNum!=0 "
+				+"LEFT JOIN procedurelog ON procedurelog.PlannedAptNum=plannedappt.AptNum	AND procedurelog.ProcStatus="+POut.Int((int)ProcStat.C)+" "
+				+"WHERE plannedappt.PatNum="+POut.Long(patNum)+" ";
+			if(DataConnection.DBtype==DatabaseType.MySql) {
+				command+="GROUP BY plannedappt.AptNum ";
+			}
+			else {
+				command+="GROUP BY plannedappt.AptNum,ItemOrder,PlannedApptNum,appointment.AptDateTime,"
+				+"appointment.Pattern,appointment.AptStatus,appointment.AptNum ";
+			}
+			command+="ORDER BY ItemOrder";
+			//plannedappt.AptNum does refer to the planned appt, but the other fields in the result are for the linked scheduled appt.
+			DataTable rawPlannedAppts=dcon.GetTable(command);
+			DataRow aptRow;
+			int itemOrder=1;
+			DateTime dateSched;
+			ApptStatus aptStatus;
+			for(int i=0;i<rawPlannedAppts.Rows.Count;i++) {
+				aptRow=null;
+				for(int a=0;a<rawApt.Rows.Count;a++) {
+					if(rawApt.Rows[a]["AptNum"].ToString()==rawPlannedAppts.Rows[i]["AptNum"].ToString()) {
+						aptRow=rawApt.Rows[a];
+						break;
+					}
+				}
+				if(aptRow==null) {
+					continue;//this will have to be fixed in dbmaint.
+				}
+				//repair any item orders here rather than in dbmaint. It's really fast.
+				if(itemOrder.ToString()!=rawPlannedAppts.Rows[i]["ItemOrder"].ToString()) {
+					command="UPDATE plannedappt SET ItemOrder="+POut.Long(itemOrder)
+						+" WHERE PlannedApptNum="+rawPlannedAppts.Rows[i]["PlannedApptNum"].ToString();
+					dcon.NonQ(command);
+				}
+				//end of repair
+				row=table.NewRow();
+				row["AptNum"]=aptRow["AptNum"].ToString();
+				dateSched=PIn.Date(aptRow["AptDateTime"].ToString());
+				aptStatus=(ApptStatus)PIn.Long(aptRow["AptStatus"].ToString());
+				row["AptStatus"]=aptStatus.ToString();
+				if(dateSched.Year<1880) {
+					row["dateSched"]="";
+				}
+				else {
+					row["dateSched"]=dateSched.ToString(dateTimeFormatString);
+				}
+				row["ProvNum"]=PIn.Long(aptRow["ProvNum"].ToString());
+				row["ItemOrder"]=itemOrder.ToString();
+				row["minutes"]=(aptRow["Pattern"].ToString().Length*5).ToString();
+				row["Note"]=aptRow["Note"].ToString();
+				row["ProcDescript"]=aptRow["ProcDescript"].ToString();
+				if(aptStatus==ApptStatus.Complete) {
+					row["ProcDescript"]=Lans.g("ContrChart","(Completed) ")+row["ProcDescript"];
+				}
+				else if(dateSched==DateTime.Today.Date) {
+					row["ProcDescript"]=Lans.g("ContrChart","(Today's) ")+row["ProcDescript"];
+				}
+				else if(rawPlannedAppts.Rows[i]["someAreComplete"].ToString()!="0"){
+					row["ProcDescript"]=Lans.g("ContrChart","(Some procs complete) ")+row["ProcDescript"];
+				}
+				rows.Add(row);
+				itemOrder++;
+			}
+			for(int i=offset;i<rows.Count;i++) {
+				if(i>=offset+limit) {
+					break;
+				}
+				table.Rows.Add(rows[i]);
+			}
+			return table;
+		}
 
 		///<summary>The supplied DataRows must include the following columns: ProcNum,ProcDate,Priority,ToothRange,ToothNum,ProcCode. This sorts all objects in Chart module based on their dates, times, priority, and toothnum.  For time comparisons, procs are not included.  But if other types such as comm have a time component in ProcDate, then they will be sorted by time as well.</summary>
 		public static int CompareChartRows(DataRow x,DataRow y) {

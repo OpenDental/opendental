@@ -576,7 +576,7 @@ namespace OpenDental {
 				,(s,e) => {
 					try {
 						//Grab any text from the clipboard in order to programmatically paste it with no formatting.
-						object clipboardContent=Clipboard.GetData("Text");
+						object clipboardContent=System.Windows.Clipboard.GetData(DataFormats.Text);//System.Windows.Forms.Clipboard fails for Thinfinity
 						if(clipboardContent!=null) {//Can be null if the clipboard has non-text.  E.g. the user copied a picture.
 							richTextBox.Selection.Text=clipboardContent.ToString();
 							//Now that the text has been pasted in, the WPF RTB will automatically highlight the new text.

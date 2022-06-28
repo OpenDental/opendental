@@ -542,6 +542,7 @@ namespace OpenDental {
 				//The config data is defaulted to the current connection settings in DataConnection. 
 				TryInstallOpenDentalService(isSilent);
 				UpgradeOrInstallEConnector(true,updateServerName:updateServerName,doOverrideBlankUpdateServerName:true);
+				TryInstallOpenDentalApiService(isSilent);
 			}
 			if(currentVersion < dbVersion) {
 				//This could happen if a previous update was partially successful.
@@ -1290,6 +1291,70 @@ namespace OpenDental {
 			}
 		}
 
+		///<summary>Returns true if the API service is already installed or was successfully installed. Otherwise; false.
+		///Set isSilent to false to show meaningful error messages, otherwise fails silently.</summary>
+		public static bool TryInstallOpenDentalApiService(bool isSilent,string updateServerName=null) {
+			if(updateServerName==null) {
+				updateServerName=PrefC.GetString(PrefName.WebServiceServerName);
+			}
+			//Create a function that will display an error message if not in silent mode and then always returns false.
+			Func<string,bool> funcDisplayError=(error) => {
+				if(!isSilent) {
+					MessageBox.Show(error);
+				}
+				return false;
+			};
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return funcDisplayError(Lans.g("ServicesHelper","Not allowed to install services when using the middle tier."));
+			}
+			if(ODEnvironment.IsCloudServer) {//We do not want to install in case this is a pre-test cloud database.
+				return funcDisplayError(Lans.g("ServicesHelper","Not allowed to install the OpenDentalAPIService in cloud mode."));
+			}
+			if(string.IsNullOrWhiteSpace(updateServerName)) {
+				return funcDisplayError(Lans.g("ServicesHelper","The 'Update Server (pref.WebServiceServerName): Version updates can only be performed from this computer, and the eConnector can only be installed on this computer' preference is not set."));
+			}
+			if(!ODEnvironment.IdIsThisComputer(updateServerName)) {
+				return false;//This is not an error and is simply not the correct computer that should have the API service installed on it.
+			}
+			if(!Programs.IsEnabledNoCache(ProgramName.FHIR)) {
+				return funcDisplayError(Lans.g("ServicesHelper","The API (FHIR) program link is not enabled."));
+			}
+			try {
+				//Check to see if the API service is already installed on this machine.
+				List<ServiceController> listServiceControllersAPI=ServicesHelper.GetServicesByExe("OpenDentalAPIService.exe");
+				if(listServiceControllersAPI.Count > 0) {
+					return true;//The API service is already installed.
+				}
+				string pathApiServiceExe=ODFileUtils.CombinePaths(Directory.GetCurrentDirectory(),"OpenDentalAPIService","OpenDentalAPIService.exe");
+				FileInfo fileInfoApiExe=new FileInfo(pathApiServiceExe);
+				if(!fileInfoApiExe.Exists) {
+					return funcDisplayError(Lans.g("ServicesHelper","Unable to install the OpenDentalAPIService; Cannot find")+$" '{pathApiServiceExe}'");
+				}
+				if(!ServicesHelper.Install("OpenDentalAPIService",fileInfoApiExe)) {
+					return funcDisplayError(Lans.g("ServicesHelper","Unable to install the OpenDentalAPIService."));
+				}
+				//Create a new OpenDentalWebConfig.xml file for the API service if one is not already present.
+				if(!CreateConfigForApi()) {
+					return funcDisplayError(Lans.g("ServicesHelper","The config file for the OpenDentalAPIService could not be created."));
+				}
+				//Now that the service has finally installed we need to try and start it.
+				listServiceControllersAPI=ServicesHelper.GetServicesByExe("OpenDentalAPIService.exe");
+				if(listServiceControllersAPI.Count < 1) {
+					return funcDisplayError(Lans.g("ServicesHelper","OpenDentalAPIService could not be found in order to automatically start it."));
+				}
+				string apiStartingErrors=ServicesHelper.StartServices(listServiceControllersAPI);
+				if(!string.IsNullOrEmpty(apiStartingErrors)) {
+					return funcDisplayError(Lans.g("ServicesHelper","Unable to start the following OpenDentalAPIServices:")+"\r\n"+apiStartingErrors);
+				}
+				return true;
+			}
+			catch(Exception ex) {
+				return funcDisplayError(Lans.g("ServicesHelper","Failed installing the OpenDentalAPIService:")
+					+"\r\n"+ex.Message
+					+"\r\n\r\n"+Lans.g("ServicesHelper","Try running as Administrator."));
+			}
+		}
+
 		///<summary>Tries to install the OpenDentalService if needed.  Returns false if failed.
 		///Set isSilent to false to show meaningful error messages, otherwise fails silently.</summary>
 		public static bool TryInstallOpenDentalService(bool isSilent) {
@@ -1395,6 +1460,28 @@ namespace OpenDental {
 				,DataConnection.GetMysqlPassLow());
 		}
 
+		///<summary>Creates a default OpenDentalWebConfig.xml file for the API service if one is not already present.
+		///Uses the current connection settings in DataConnection.  This method does NOT work if called via middle tier.
+		///Users should not be installing the services via the middle tier.</summary>
+		private static bool CreateConfigForApi() {
+			string apiConfigPath=ODFileUtils.CombinePaths(Directory.GetCurrentDirectory(),"OpenDentalAPIService","OpenDentalWebConfig.xml");
+			//Check to see if there is already a config file present.
+			if(File.Exists(apiConfigPath)) {
+				return true;//Nothing to do.
+			}
+			if(!CDT.Class1.Encrypt(DataConnection.GetMysqlPass(),out string mySqlPassHash)) {
+				return false;
+			}
+			return ServicesHelper.CreateServiceConfigFile(apiConfigPath
+				,DataConnection.GetServerName()
+				,DataConnection.GetDatabaseName()
+				,DataConnection.GetMysqlUser()
+				,DataConnection.GetMysqlPass()
+				,mySqlPassHash
+				,DataConnection.GetMysqlUserLow()
+				,DataConnection.GetMysqlPassLow()
+				,note:ConnectionNames.DentalOffice.ToString());
+		}
 
 		///<summary>Performs both upgrades and downgrades by recopying update files from DB to temp folder, then from temp folder to the path specified.
 		///Returns whether the whole process from downloading the files to copying them was successful.</summary>

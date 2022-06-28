@@ -35,7 +35,7 @@ namespace OpenDentalCloud {
 		protected abstract Task PerformIO();
 
 		///<summary>Runs PerformIO logic behind a synchronous or asynchronous task.  See implemented class for PerformIO logic.</summary>
-		public void Execute(bool isAsync) {
+		public void Execute(bool isAsync, string filename = "") {
 			if(isAsync) {
 				new Task(async () => {
 					try {
@@ -45,7 +45,7 @@ namespace OpenDentalCloud {
 					}
 					catch(Exception e) {
 						Error=e;
-						OnProgress(0,"",100,e.Message);
+						OnProgress(0,"",100,e.Message + " " + filename);
 					}
 					finally {
 						IsDone=true;

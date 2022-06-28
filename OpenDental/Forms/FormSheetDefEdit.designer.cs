@@ -403,14 +403,14 @@ namespace OpenDental{
 			// 
 			this.panelRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.panelRight.Controls.Add(this.butCancel);
+			this.panelRight.Controls.Add(this.butOK);
 			this.panelRight.Controls.Add(this.groupShowField);
 			this.panelRight.Controls.Add(this.checkBlue);
 			this.panelRight.Controls.Add(this.groupAddField);
 			this.panelRight.Controls.Add(this.butRedo);
 			this.panelRight.Controls.Add(this.groupPage);
 			this.panelRight.Controls.Add(this.butUndo);
-			this.panelRight.Controls.Add(this.butCancel);
-			this.panelRight.Controls.Add(this.butOK);
 			this.panelRight.Controls.Add(this.groupBoxSubViews);
 			this.panelRight.Controls.Add(this.butAutoSnap);
 			this.panelRight.Controls.Add(this.butMobile);

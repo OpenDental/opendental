@@ -287,6 +287,7 @@ namespace OpenDental{
 					return;
 				}
 				provCur=FormPE.ProvCur;
+				SecurityLogs.MakeLogEntry(Permissions.ProviderAdd,0,"Provider: "+FormPE.ProvCur.Abbr+" added.");
 			}
 			else {
 				if(radioStudents.Checked && PrefC.GetLong(PrefName.SecurityGroupForStudents)==0) {
@@ -387,11 +388,14 @@ namespace OpenDental{
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			Provider provSelected=(Provider)gridMain.ListGridRows[e.Row].Tag;
 			if(!PrefC.GetBool(PrefName.EasyHideDentalSchools) && Providers.IsAttachedToUser(provSelected.ProvNum)) {//Dental schools is turned on and the provider selected is attached to a user.
-				//provSelected could be a provider or a student at this point.
+				//provSelected could be a student, an instructor, or other provider at this point.
 				if(!provSelected.IsInstructor && provSelected.SchoolClassNum!=0 && !Security.IsAuthorized(Permissions.AdminDentalStudents)) {//student
 					return;
 				}
 				if(provSelected.IsInstructor && !Security.IsAuthorized(Permissions.AdminDentalInstructors)) {//instructor
+					return;
+				}
+				if(!provSelected.IsInstructor && provSelected.SchoolClassNum==0 && !Security.IsAuthorized(Permissions.ProviderEdit)) {//other provider
 					return;
 				}
 				if(!radioStudents.Checked) {
@@ -421,6 +425,7 @@ namespace OpenDental{
 				if(FormPE.DialogResult!=DialogResult.OK) {
 					return;
 				}
+				SecurityLogs.MakeLogEntry(Permissions.ProviderEdit,0,"Provider: "+FormPE.ProvCur.Abbr+" edited.");
 			}
 			_hasChanged=true;
 			Cache.Refresh(InvalidType.Providers);

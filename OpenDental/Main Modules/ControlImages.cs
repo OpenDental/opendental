@@ -886,9 +886,9 @@ namespace OpenDental {
 				e.Cancel=true;
 				return;//No mount item was clicked on, so cancel the menu.
 			}
-			IDataObject clipboard=null;
+			System.Windows.IDataObject clipboard=null;
 			try {
-				clipboard=Clipboard.GetDataObject();
+				clipboard=System.Windows.Clipboard.GetDataObject();//System.Windows.Forms.Clipboard fails for Thinfinity
 			}
 			catch(Exception ex) {
 				clipboard=null;
@@ -1804,7 +1804,7 @@ namespace OpenDental {
 			}
 			if(bitmapCopy!=null) {
 				try {
-					Clipboard.SetDataObject(bitmapCopy);
+					System.Windows.Clipboard.SetDataObject(bitmapCopy);//System.Windows.Forms.Clipboard fails for Thinfinity
 				}
 				catch(Exception ex) {
 					MsgBox.Show(this,"Could not copy contents to the clipboard.  Please try again.");
@@ -2139,20 +2139,19 @@ namespace OpenDental {
 		}
 
 		private void ToolBarPaste_Click() {
-			IDataObject iDataObject;
+			Bitmap bitmapPaste;
 			try {
-				iDataObject=Clipboard.GetDataObject();
+				bitmapPaste=ODClipboard.GetImage();
 			}
 			catch(Exception ex) {
 				MsgBox.Show(this,"Could not paste contents from the clipboard.  Please try again.");
 				ex.DoNothing();
 				return;
 			}
-			if(!iDataObject.GetDataPresent(DataFormats.Bitmap)) {
+			if(bitmapPaste==null) {
 				MessageBox.Show(Lan.g(this,"No bitmap present on clipboard"));
 				return;
 			}
-			Bitmap bitmapPaste=(Bitmap)iDataObject.GetData(DataFormats.Bitmap);
 			Document doc;
 			NodeIdTag nodeIdTag=new NodeIdTag();
 			if(treeMain.SelectedNode!=null && treeMain.SelectedNode.Tag!=null) {

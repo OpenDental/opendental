@@ -187,6 +187,20 @@ namespace OpenDentBusiness {
 			return (program==null ? false : program.Enabled);
 		}
 
+		///<summary>Returns true if a Program link with the given name exists and is enabled.</summary>
+		public static bool IsEnabledNoCache(ProgramName programName) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),programName);
+			}
+			string command=$"SELECT Enabled FROM program WHERE ProgName = '{POut.String(programName.ToString())}'";
+			DataTable table=Db.GetTable(command);
+			bool isEnabled=false;
+			if(table.Rows.Count > 0) {
+				isEnabled=PIn.Bool(table.Rows[0]["Enabled"].ToString());
+			}
+			return isEnabled;
+		}
+
 		///<summary>Returns the Program of the passed in ProgramNum.  Will be null if a Program is not found.</summary>
 		public static Program GetProgram(long programNum) {
 			//No need to check MiddleTierRole; no call to db.
