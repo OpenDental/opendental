@@ -2489,7 +2489,7 @@ namespace OpenDentBusiness{
 			return 0;
 		}
 
-		///<summary>Gets either the override or the calculated writeoff estimate.  Or zero if neither.</summary>
+		///<summary>Gets either the override or the calculated write-off estimate.  Or zero if neither.</summary>
 		public static double GetWriteOffEstimate(ClaimProc cp) {
 			//No need to check RemotingRole; no call to db.
 			if(cp.WriteOffEstOverride!=-1) {

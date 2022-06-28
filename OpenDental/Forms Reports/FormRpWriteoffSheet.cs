@@ -164,8 +164,8 @@ namespace OpenDental{
 			Font font=new Font("Tahoma",9);
 			Font fontTitle=new Font("Tahoma",17,FontStyle.Bold);
 			Font fontSubTitle=new Font("Tahoma",10,FontStyle.Bold);
-			report.ReportName=Lan.g(this,"Daily Writeoffs");
-			report.AddTitle("Title",Lan.g(this,"Daily Writeoffs"),fontTitle);
+			report.ReportName=Lan.g(this,"Daily Write-offs");
+			report.AddTitle("Title",Lan.g(this,"Daily Write-offs"),fontTitle);
 			report.AddSubTitle("PracticeTitle",PrefC.GetString(PrefName.PracticeTitle),fontSubTitle);
 			report.AddSubTitle("Date SubTitle",date1.SelectionStart.ToString("d")+" - "+date2.SelectionStart.ToString("d"),fontSubTitle);
 			if(checkAllProv.Checked) {
@@ -209,13 +209,13 @@ namespace OpenDental{
 				
 			}
 			if(writeoffType==PPOWriteoffDateCalc.ClaimPayDate) {
-				query.AddColumn("Writeoff Estimate",70,FieldValueType.Number,font);
-				query.AddColumn("Writeoff Adjustment",80,FieldValueType.Number,font);
+				query.AddColumn("Write-off Estimate",70,FieldValueType.Number,font);
+				query.AddColumn("Write-off Adjustment",80,FieldValueType.Number,font);
 			}
-			query.AddColumn("Writeoff",70,FieldValueType.Number);
-			query.GetColumnDetail("Writeoff").ContentAlignment=ContentAlignment.MiddleRight;
+			query.AddColumn("Write-off",70,FieldValueType.Number);
+			query.GetColumnDetail("Write-off").ContentAlignment=ContentAlignment.MiddleRight;
 			if(writeoffType==PPOWriteoffDateCalc.ClaimPayDate) {
-				query.AddGroupSummaryField("Writeoff (Writeoff Estimate + Writeoff Adjustment)","Provider","$writeoff",SummaryOperation.Sum,new List<int>(){0},Color.Black,new Font("Tahoma",9,FontStyle.Bold),0,50);
+				query.AddGroupSummaryField("Write-off (Write-off Estimate + Write-off Adjustment)","Provider","$writeoff",SummaryOperation.Sum,new List<int>(){0},Color.Black,new Font("Tahoma",9,FontStyle.Bold),0,50);
 			}
 			report.AddPageNum(font);
 			if(!report.SubmitQueries()) {

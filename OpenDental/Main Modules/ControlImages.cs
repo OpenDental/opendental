@@ -2139,20 +2139,19 @@ namespace OpenDental {
 		}
 
 		private void ToolBarPaste_Click() {
-			System.Windows.IDataObject iDataObject;
+			Bitmap bitmapPaste;
 			try {
-				iDataObject=System.Windows.Clipboard.GetDataObject();//System.Windows.Forms.Clipboard fails for Thinfinity
+				bitmapPaste=ODClipboard.GetImage();
 			}
 			catch(Exception ex) {
 				MsgBox.Show(this,"Could not paste contents from the clipboard.  Please try again.");
 				ex.DoNothing();
 				return;
 			}
-			if(!iDataObject.GetDataPresent(DataFormats.Bitmap)) {
+			if(bitmapPaste==null) {
 				MessageBox.Show(Lan.g(this,"No bitmap present on clipboard"));
 				return;
 			}
-			Bitmap bitmapPaste=(Bitmap)iDataObject.GetData(DataFormats.Bitmap);
 			Document doc;
 			NodeIdTag nodeIdTag=new NodeIdTag();
 			if(treeMain.SelectedNode!=null && treeMain.SelectedNode.Tag!=null) {

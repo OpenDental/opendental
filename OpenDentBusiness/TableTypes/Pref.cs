@@ -2582,13 +2582,13 @@ namespace OpenDentBusiness {
 	}
 
 	public enum PPOWriteoffDateCalc {
-		/// <summary>0 - Use the insurance payment date when dating writeoff estimates and adjustments in reports. </summary>
+		/// <summary>0 - Use the insurance payment date when dating write-off estimates and adjustments in reports. </summary>
 		[Description("Insurance Pay Date")]
 		InsPayDate,
-		/// <summary>1 - Use the date of the procedure when dating writeoff estimates and adjustments in reports.</summary>
+		/// <summary>1 - Use the date of the procedure when dating write-off estimates and adjustments in reports.</summary>
 		[Description("Procedure Date")]
 		ProcDate,
-		/// <summary>2 - Uses initial claim date for writeoff estimates and insurance payment date for writeoff adjustments in reports.</summary>
+		/// <summary>2 - Uses initial claim date for write-off estimates and insurance payment date for writeoff adjustments in reports.</summary>
 		[Description("Initial Claim Date/Ins Pay Date")]
 		ClaimPayDate
 	}
