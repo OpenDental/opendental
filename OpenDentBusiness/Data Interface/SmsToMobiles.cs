@@ -45,6 +45,17 @@ namespace OpenDentBusiness{
 			return Crud.SmsToMobileCrud.SelectOne(command);
 		}
 
+		public static List<SmsToMobile> GetMessagesByPk(List<long> listSmsToMobileNums) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<SmsToMobile>>(MethodBase.GetCurrentMethod(),listSmsToMobileNums);
+			}
+			if(listSmsToMobileNums.IsNullOrEmpty()) {
+				return new List<SmsToMobile>();
+			}
+			string command=$"SELECT * FROM smstomobile WHERE SmsToMobileNum IN ({string.Join(",",listSmsToMobileNums.Select(x=>POut.Long(x)))})";
+			return Crud.SmsToMobileCrud.SelectMany(command);
+		}
+
 		///<summary></summary>
 		public static long Insert(SmsToMobile smsToMobile) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

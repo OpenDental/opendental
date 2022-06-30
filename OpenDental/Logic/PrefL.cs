@@ -542,7 +542,7 @@ namespace OpenDental {
 				//The config data is defaulted to the current connection settings in DataConnection. 
 				TryInstallOpenDentalService(isSilent);
 				UpgradeOrInstallEConnector(true,updateServerName:updateServerName,doOverrideBlankUpdateServerName:true);
-				TryInstallOpenDentalApiService(isSilent);
+				TryInstallOpenDentalApiService(true);
 			}
 			if(currentVersion < dbVersion) {
 				//This could happen if a previous update was partially successful.

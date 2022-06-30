@@ -945,6 +945,11 @@ namespace OpenDentBusiness.Eclaims {
 					etransAck.PlanNum=etranOriginal.PlanNum;
 					etransAck.InsSubNum=etranOriginal.InsSubNum;
 					etransAck.ClaimNum=etranOriginal.ClaimNum;
+					CCDField fieldA05=fieldInputter.GetFieldById("A05");//CarrierID, exists in all formats but 24-Email, and 16-Payment Reconciliation Response
+					if(fieldA05!=null) {
+						Carrier carrierA05=Carriers.GetAllByElectId(fieldA05.valuestr).FirstOrDefault(x => x.IsCDA && !x.IsHidden);//Get Carrier from ElectID
+						etransAck.CarrierNum=carrierA05.CarrierNum;
+					}
 					Etranss.Update(etransAck);
 					if(!exit) {
 						Claim claim=null;

@@ -52,6 +52,8 @@ namespace OpenDental {
 		///<summary>Used for the main menu and updates when the user is or is not in full screen mode.</summary>
 		private MenuItemOD _menuItemSettings;
 		private MapCubicle _mapCubicleSelected;
+		///<summary>Used to store the house icon that is displayed on cubicles if the employee is working from home.</summary>
+		private Bitmap _bitmapHouse;
 
 		private PhoneEmpSubGroupType GetCurSubGroupType() {
 			if(!tabMain.TabPages.ContainsKey(PhoneEmpSubGroupType.Escal.ToString())) {//Control has not been initialized.
@@ -164,6 +166,8 @@ namespace OpenDental {
 			mapAreaPanel.HeightFloorFeet=Math.Max(_mapAreaContainer.FloorHeightFeet,55);//Should at least fill the space set in the designer.
 			mapAreaPanel.WidthFloorFeet=Math.Max(_mapAreaContainer.FloorWidthFeet,89);//Should at least fill the space set in the designer.
 																			  //fill the panel
+			_bitmapHouse?.Dispose();//We do not know if the bitmap was disposed of by MapCubicle.Dispose() method, so manually dispose to be safe
+			_bitmapHouse=PhoneTile.GetHouse16();//Since we disposed above, we need to recreate the house bitmap
 			List<MapArea> listMapAreas=MapAreas.Refresh(_listMapAreaContainers[comboRoom.SelectedIndex].MapAreaContainerNum);
 			listMapAreas=listMapAreas.OrderByDescending(x => (int)(x.ItemType)).ToList();
 			for(int i=0;i<listMapAreas.Count;i++) {
@@ -242,7 +246,6 @@ namespace OpenDental {
 			}
 			labelTriageCoordinator.Text=title;
 			labelCurrentTime.Text=DateTime.Now.ToShortTimeString();
-			using Bitmap bitmapHouse=PhoneTile.GetHouse16();
 			#region Triage Counts
 			//The triage count used to only count up the triage operators within the currently selected room.
 			//Now we want to count all operators at the selected site (local) and then all operators across all sites (total).
@@ -386,7 +389,7 @@ namespace OpenDental {
 				Employee employee=Employees.GetEmp(phone.EmployeeNum);//from cache
 				if(employee!=null){
 					if(employee.IsWorkingHome) {
-						mapCubicle.ProxImage=bitmapHouse;
+						mapCubicle.ProxImage=_bitmapHouse;
 					}
 					//plan to use this to show extra employee fields, like cellphone
 				}
@@ -888,6 +891,7 @@ namespace OpenDental {
 		}
 
 		private void FormMapHQ_FormClosed(object sender,FormClosedEventArgs e) {
+			_bitmapHouse?.Dispose();//We do not know if the bitmap was disposed of by MapCubicle.Dispose() method, so manually dispose to be safe
 			FormOpenDental.RemoveMapFromList(this);
 		}
 

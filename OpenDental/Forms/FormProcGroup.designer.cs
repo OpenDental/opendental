@@ -532,9 +532,9 @@ namespace OpenDental {
 			// 
 			// butEditAutoNote
 			// 
-			this.butEditAutoNote.Location = new System.Drawing.Point(245, 51);
+			this.butEditAutoNote.Location = new System.Drawing.Point(245, 50);
 			this.butEditAutoNote.Name = "butEditAutoNote";
-			this.butEditAutoNote.Size = new System.Drawing.Size(82, 21);
+			this.butEditAutoNote.Size = new System.Drawing.Size(82, 22);
 			this.butEditAutoNote.TabIndex = 210;
 			this.butEditAutoNote.Text = "Edit Auto Note";
 			this.butEditAutoNote.Click += new System.EventHandler(this.ButEditAutoNote_Click);

@@ -323,7 +323,8 @@ namespace OpenDental{
 				listGroupedProcs.Add(listProcs);
 			}
 			if(claimCreatedCount<=0 && listProcNumsPastLockDate.Count>0) {//No claims can be created because of the lock date.
-				MsgBox.Show(this,"No claims can be created because all procedure dates extend past the lock date for this report.");
+				MsgBox.Show(this,"No claims can be created because all procedure dates extend past the lock date for this report.\n" +
+					"To set a new lock date for this report, go to Setup | Security | User Groups | Reports | Procedures Not Billed to Insurance, New Claims button.");
 				return;
 			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Clicking OK will create up to "+POut.Int(claimCreatedCount)

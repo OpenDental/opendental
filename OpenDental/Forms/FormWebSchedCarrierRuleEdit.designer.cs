@@ -37,6 +37,7 @@ namespace OpenDental {
 			this.radioAllow = new System.Windows.Forms.RadioButton();
 			this.radioAllowWithMessage = new System.Windows.Forms.RadioButton();
 			this.radioBlock = new System.Windows.Forms.RadioButton();
+			this.labelCount = new System.Windows.Forms.Label();
 			this.groupRuleType.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -44,7 +45,7 @@ namespace OpenDental {
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(212, 330);
+			this.butCancel.Location = new System.Drawing.Point(212, 350);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 9;
@@ -54,7 +55,7 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(131, 330);
+			this.butOK.Location = new System.Drawing.Point(131, 350);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 8;
@@ -103,10 +104,12 @@ namespace OpenDental {
 			// textMessage
 			// 
 			this.textMessage.Location = new System.Drawing.Point(19, 213);
+			this.textMessage.MaxLength = 100;
 			this.textMessage.Multiline = true;
 			this.textMessage.Name = "textMessage";
 			this.textMessage.Size = new System.Drawing.Size(268, 108);
 			this.textMessage.TabIndex = 7;
+			this.textMessage.TextChanged += new System.EventHandler(this.textMessage_TextChanged);
 			// 
 			// groupRuleType
 			// 
@@ -161,10 +164,21 @@ namespace OpenDental {
 			this.radioBlock.Text = "Block";
 			this.radioBlock.UseVisualStyleBackColor = true;
 			// 
+			// labelCount
+			// 
+			this.labelCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelCount.Location = new System.Drawing.Point(212, 324);
+			this.labelCount.Name = "labelCount";
+			this.labelCount.Size = new System.Drawing.Size(75, 17);
+			this.labelCount.TabIndex = 16;
+			this.labelCount.Text = "0 / 100";
+			this.labelCount.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			// 
 			// FormWebSchedCarrierRuleEdit
 			// 
 			this.CancelButton = this.butCancel;
-			this.ClientSize = new System.Drawing.Size(306, 366);
+			this.ClientSize = new System.Drawing.Size(306, 386);
+			this.Controls.Add(this.labelCount);
 			this.Controls.Add(this.groupRuleType);
 			this.Controls.Add(this.textMessage);
 			this.Controls.Add(this.labelMessage);
@@ -198,5 +212,6 @@ namespace OpenDental {
 		private System.Windows.Forms.RadioButton radioAllowWithMessage;
 		private System.Windows.Forms.RadioButton radioBlock;
 		private System.Windows.Forms.RadioButton radioAllowWithInput;
+		private System.Windows.Forms.Label labelCount;
 	}
 }

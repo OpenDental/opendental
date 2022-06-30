@@ -483,7 +483,7 @@ namespace OpenDentBusiness {
 					}
 					break;
 				case DefCat.PaymentTypes:
-					if(def.DefNum.In(PrefC.GetLong(PrefName.RecurringChargesPayTypeCC),PrefC.GetLong(PrefName.AccountingCashPaymentType))) {
+					if(def.DefNum.In(PrefC.GetLong(PrefName.RecurringChargesPayTypeCC),PrefC.GetLong(PrefName.AccountingCashPaymentType)) || Defs.IsPaymentTypeInUse(def)) {
 						return true;
 					}
 					listStrCommands.Add("SELECT COUNT(*) FROM payment WHERE PayType="+POut.Long(def.DefNum));
@@ -647,6 +647,17 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		/// <summary>Returns true if the defPaymentType is the default payment type for any of the payment programs, false otherwise </summary>
+		public static bool IsPaymentTypeInUse(Def defPaymentType) {
+			if(defPaymentType.Category!=DefCat.PaymentTypes) {
+				return false;
+			}
+			List<ProgramProperty> listProgramPropertyPayTypes=ProgramProperties.GetWhere(x=>x.PropertyDesc.In("PaymentType","PaySimple Payment Type CC","PaySimple Payment Type ACH","EdgeExpressPaymentType"));
+			if(listProgramPropertyPayTypes.Any(x=>x.PropertyValue==defPaymentType.DefNum.ToString())) {
+				return true;
+			}
+			return false;
+		}
 		#endregion
 
 		#region CachePattern

@@ -37,6 +37,11 @@ namespace OpenDental {
 			if(IsOtherDefaultCarrier) {
 				radioAllowWithInput.Enabled=true;
 			}
+			labelCount.Text=textMessage.Text.Length.ToString()+"/100";
+		}
+
+		private void textMessage_TextChanged(object sender,EventArgs e) {
+			labelCount.Text=textMessage.Text.Length.ToString()+"/100";
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {

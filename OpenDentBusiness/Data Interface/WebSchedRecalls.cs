@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using CodeBase;
 using Newtonsoft.Json;
 using OpenDentBusiness.AutoComm;
+using OpenDentBusiness.WebTypes.AutoComm;
 
 namespace OpenDentBusiness{
 	///<summary></summary>
@@ -35,6 +36,17 @@ namespace OpenDentBusiness{
 			return Crud.WebSchedRecallCrud.SelectMany(command);
 		}
 
+		///<summary>Returns a webschedrecall for the passed in recallNum. Prioritizes email with http in the body. </summary>
+		public static WebSchedRecall GetRecallsForPatientPortalWithMessage(long recallNum) {
+			List<WebSchedRecall> listWebSchedRecalls=GetLastForRecalls(ListTools.FromSingle(recallNum));
+			AutoCommSents.SetMessageBody(listWebSchedRecalls);
+			WebSchedRecall wsRecall=listWebSchedRecalls.FirstOrDefault(x=>x.MessageType==CommType.Email && x.Message.Contains("http"));
+			if(wsRecall==null) {
+				wsRecall=listWebSchedRecalls.FirstOrDefault(x=>x.Message.Contains("http"));
+			}
+			//Ideally we want the email with http, if not we'll settle for a text with http, otherwise we'll just take what we can get
+			return wsRecall!=null ? wsRecall : listWebSchedRecalls.FirstOrDefault();
+		}
 		#endregion
 
 		///<summary>Gets all WebSchedRecalls for which a reminder has not been sent. To get for all clinics, don't include the listClinicNums or pass

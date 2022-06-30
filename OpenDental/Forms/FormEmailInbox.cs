@@ -974,7 +974,8 @@ namespace OpenDental {
 			}
 			EmailMessage emailMessageSelected=EmailMessages.GetOne(((EmailMessage)gridInbox
 			  .ListGridRows[gridInbox.GetSelectedIndex()].Tag).EmailMessageNum);//Refresh from the database to get the full body text.
-			isReplyAll|=EmailMessages.IsSecureEmail(emailMessageSelected.SentOrReceived);//Secure Email is ALWAYS 'Reply All'
+			bool isSecureEmail=EmailMessages.IsSecureEmail(emailMessageSelected.SentOrReceived);
+			isReplyAll|=isSecureEmail;//Secure Email is ALWAYS 'Reply All'
 			FormEmailMessageEdit formEmailMessageEdit=new FormEmailMessageEdit(EmailMessages.CreateReply(emailMessageSelected,GetSelectedAddress(),isReplyAll)
 				,GetSelectedAddress(),true,emailMessageSelected,_listEmailMessagesInbox,_listEmailMessagesSent);
 			formEmailMessageEdit.IsNew=true;

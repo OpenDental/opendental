@@ -65,6 +65,17 @@ namespace OpenDentBusiness{
 			return emailMessage;
 		}
 
+		public static List<EmailMessage> GetMessgesByPk(List<long> listEmailMessageNums) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<EmailMessage>>(MethodBase.GetCurrentMethod(),listEmailMessageNums);
+			}
+			if(listEmailMessageNums.IsNullOrEmpty()) {
+				return new List<EmailMessage>();
+			}
+			string command=$"SELECT * FROM emailmessage WHERE EmailMessageNum IN({string.Join(",",listEmailMessageNums.Select(x=>POut.Long(x)))})";
+			return Crud.EmailMessageCrud.SelectMany(command);
+		}
+
 		///<summary>Gets all inbox email messages where EmailMessage.RecipientAddress==emailAddressInbox, or returns webmail messages instead.  
 		///Pass in 0 for provNum to get email messages, pass in the current user's provNum to get webmail messages.</summary>
 		public static List<EmailMessage> GetMailboxForAddress(EmailAddress emailAddress,DateTime dateFrom,DateTime dateTo,params MailboxType[] arrayMailBoxTypes) {
@@ -2629,11 +2640,15 @@ namespace OpenDentBusiness{
 			//No need to check MiddleTierRole; no call to db.
       EmailMessage replyMessage=new EmailMessage();
 			replyMessage.PatNum=emailReceived.PatNum;
+			bool isSecureEmail=EmailMessages.IsSecureEmail(emailReceived.SentOrReceived);
       FillEmailAddressesForReply(replyMessage,emailReceived,emailAddress,isReplyAll);
+			if(!isSecureEmail && isReplyAll) {
+			  FillCCAddressesForReply(replyMessage,emailReceived,emailAddress);
+			}
 			string subject=ProcessInlineEncodedText(emailReceived.Subject);
-       if(subject.Trim().Length >=3 && subject.Trim().Substring(0,3).ToString().ToLower()=="re:") { //already contains a "re:"
-        replyMessage.Subject=subject;
-      }
+      if(subject.Trim().Length >=3 && subject.Trim().Substring(0,3).ToString().ToLower()=="re:") { //already contains a "re:"
+				replyMessage.Subject=subject;
+			}
       else { //doesn't contain a "re:"
         replyMessage.Subject="RE: " + subject;
       }
@@ -2667,11 +2682,36 @@ namespace OpenDentBusiness{
       emailReply.ToAddress=ProcessInlineEncodedText(emailReceived.FromAddress);
 			if(isReplyAll) {
 				emailReceived.ToAddress.Split(',')//email@od.com,email2@od.com,...
-					.Select(x => ProcessInlineEncodedText(x))//Decode any UTF-8 or otherwise
+					.Select(x => ProcessInlineEncodedText(x).Trim())//Decode any UTF-8 or otherwise
 					.Where(x => x!=emailAddressSender.EmailUsername && x!=emailAddressSender.SenderAddress)//Since we are replying, remove our current email from list
 					.ForEach(x => emailReply.ToAddress+=","+x);
 			}
       emailReply.FromAddress=ProcessInlineEncodedText(emailReceived.RecipientAddress);
+		}
+
+		//Copies CC addresses from  received email into reply email, and removes the users email address from CC.
+		public static void FillCCAddressesForReply(EmailMessage emailReply,EmailMessage emailReceived,EmailAddress emailAddressSender) {
+			if(emailReceived.CcAddress.IsNullOrEmpty()) {
+				return;
+			}
+			emailReply.CcAddress="";
+			//email@od.com,email2@od.com,...
+			//Since we are replying, remove our current email from list. Also decode any UTF-8 or otherwise
+			List<string> temp=emailReceived.CcAddress.Split(',')
+				.Select(x => ProcessInlineEncodedText(x).Trim())
+				.ToList()
+				.FindAll(x=>x!=emailAddressSender.EmailUsername && x!=emailAddressSender.SenderAddress);
+			//Loop through the email addresses, combining them into a comma separated list string.
+			for(int i=0; i<temp.Count;i++){
+				//First address
+				if(i==0) {
+					emailReply.CcAddress+=temp[i];
+				}
+				//All other addresses
+				else {
+					emailReply.CcAddress+=","+temp[i];
+				}
+			}
 		}
 
 		public static EmailMessage CreateForward(EmailMessage emailReceived,EmailAddress emailAddress) {

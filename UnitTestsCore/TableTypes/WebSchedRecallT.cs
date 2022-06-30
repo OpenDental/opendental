@@ -22,13 +22,14 @@ namespace UnitTestsCore {
 			return OpenDentBusiness.Crud.WebSchedRecallCrud.SelectMany(command);
 		}
 
-		public static List<WebSchedRecall> CreateWebSchedRecall(long patNum,long recallNum,long clinicNum) {
+		public static List<WebSchedRecall> CreateWebSchedRecall(long patNum,long recallNum,long clinicNum,long emailFk=0,long smsFk=0) {
 			WebSchedRecall wsRecallSms=new WebSchedRecall {
 				ClinicNum=clinicNum,
 				SendStatus=AutoCommStatus.SendNotAttempted,
-				MessageType=CommType.Email,
+				MessageType=CommType.Text,
 				PatNum=patNum,
 				RecallNum=recallNum,
+				MessageFk=smsFk
 			};
 			WebSchedRecalls.Insert(wsRecallSms);
 			WebSchedRecall wsRecallEmail=new WebSchedRecall {
@@ -37,6 +38,7 @@ namespace UnitTestsCore {
 				MessageType=CommType.Email,
 				PatNum=patNum,
 				RecallNum=recallNum,
+				MessageFk=emailFk
 			};
 			WebSchedRecalls.Insert(wsRecallEmail);
 			return new List<WebSchedRecall> { wsRecallSms,wsRecallEmail };

@@ -245,7 +245,7 @@ namespace OpenDental {
 			this.label27.Name = "label27";
 			this.label27.Size = new System.Drawing.Size(238, 18);
 			this.label27.TabIndex = 257;
-			this.label27.Text = "Pay Plan Charge Logic";
+			this.label27.Text = "Pay Plan charge logic";
 			this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkAgingShowPayplanPayments

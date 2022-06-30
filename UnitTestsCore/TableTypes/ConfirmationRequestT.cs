@@ -14,15 +14,15 @@ namespace UnitTestsCore {
 		}
 
 		///<summary>Create a confirmation request. If isEmail is false, it will be marked as an SMS</summary>
-		public static ConfirmationRequest CreateConfirmationRequest(Appointment appt,Patient pat) {
+		public static ConfirmationRequest CreateConfirmationRequest(Appointment appt,Patient pat,long msgFk=0) {
 			bool isEmail=pat.PreferContactMethod==ContactMethod.Email;
 			ConfirmationRequest request=new ConfirmationRequest {
 				ApptNum=appt.AptNum,
 				ApptDateTime=appt.AptDateTime,
 				ClinicNum=appt.ClinicNum, //use appt clinic; not prov clinic, pat clinic, or operatory clinic.
 				DateTimeConfirmExpire=DateTime.Now.AddDays(1),
-				IsForSms=!isEmail,
-				IsForEmail=isEmail,
+				MessageType= isEmail ? CommType.Email : CommType.Text,
+				MessageFk=msgFk,
 				MsgTextToMobileTemplate="",
 				MsgTextToMobile="",
 				GuidMessageToMobile=Guid.NewGuid().ToString(),

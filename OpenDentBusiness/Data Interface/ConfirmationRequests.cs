@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using CodeBase;
+using OpenDentBusiness.WebTypes.AutoComm;
 
 namespace OpenDentBusiness{
 	///<summary></summary>
@@ -17,6 +18,12 @@ namespace OpenDentBusiness{
 			}
 			string command="SELECT * FROM confirmationrequest WHERE PatNum="+POut.Long(patNum)+" AND RSVPStatus="+POut.Int((int)RSVPStatusCodes.PendingRsvp);
 			return Crud.ConfirmationRequestCrud.SelectMany(command);
+		}
+
+		public static List<ConfirmationRequest> GetPendingForPatNumWithMessage(long patNum) {
+			List<ConfirmationRequest> listConfRequests=GetPendingForPatNum(patNum);
+			AutoCommSents.SetMessageBody(listConfRequests);
+			return listConfRequests;
 		}
 
 		///<summary>Get the list of ConfirmationRequests for confirmation requests where the appointment was rescheduled or deleted after sending the 

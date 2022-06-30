@@ -1028,6 +1028,9 @@ namespace OpenDentBusiness {
 			if(recCharge.PaymentType!=0) {
 				paymentCur.PayType=recCharge.PaymentType;//Set the payment type to the recurring charges payment type override.
 			}
+			if(paymentCur.PayType==0) {	//Payment type should never be 0 for recurring charges so this is the last line of defense.
+				paymentCur.PayType=Defs.GetByExactNameNeverZero(DefCat.PaymentTypes,"Credit Card");
+			}
 			if(recCharge.RecurringCharge.ChargeStatus==RecurringChargeStatus.ChargeSuccessful) {
 				paymentCur.IsCcCompleted=true;
 			}

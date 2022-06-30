@@ -72,7 +72,8 @@ namespace OpenDentBusiness{
 			else {//The employee has not clocked out yet.
 				employee.ClockStatus=Lans.g("ContrStaff","Working");
 			}
-			Crud.EmployeeCrud.Update(employee,employeeOld);
+			UpdateChanged(employee,employeeOld,true);
+			RefreshCache(); //Need to refresh manually since the employee could potentially edit their clock events faster then the cache refresh in UpdateChaged().
 		}
 		#endregion
 

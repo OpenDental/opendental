@@ -9,7 +9,7 @@ using OpenDentBusiness;
 namespace UnitTestsCore {
 	public class SmsToMobileT {
 
-		public static SmsToMobile CreateSmsToMobile(Patient pat,string guidMessage,SmsMessageSource source,long clinicNum=0) {
+		public static SmsToMobile CreateSmsToMobile(Patient pat,string guidMessage,SmsMessageSource source,long clinicNum=0,string msgText="") {
 			string guidBatch=Guid.NewGuid().ToString();
 			SmsToMobile smsToMobile=new SmsToMobile() {
 				GuidBatch=guidBatch,
@@ -17,7 +17,8 @@ namespace UnitTestsCore {
 				MsgType=source,
 				PatNum=pat.PatNum,
 				ClinicNum=clinicNum,
-				MobilePhoneNumber=pat.WirelessPhone
+				MobilePhoneNumber=pat.WirelessPhone,
+				MsgText=msgText,
 			};
 			smsToMobile.SmsToMobileNum=SmsToMobiles.Insert(smsToMobile);
 			return smsToMobile;

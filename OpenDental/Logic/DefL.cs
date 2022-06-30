@@ -610,6 +610,10 @@ namespace OpenDental {
 					MsgBox.Show(_lanThis,"You cannot hide a billing type when it is selected as a clinic's default billing type.");
 					return false;
 				}
+				else if(Defs.IsPaymentTypeInUse(def)) {
+					MsgBox.Show(_lanThis,"You cannot hide a payment type when it is the default payment type for PayConnect, PaySimple, EdgeExpress, or XCharge.");
+					return false;
+				}
 				else {
 					if(!MsgBox.Show(_lanThis,MsgBoxButtons.OKCancel,"Warning: This definition is currently in use within the program.")) {
 						return false;

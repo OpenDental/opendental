@@ -1150,7 +1150,7 @@ namespace OpenDental {
 
 		private void menuItemGroupSelected_Click(object sender,EventArgs e) {
 			List<Procedure> listProcs=new List<Procedure>();
-			if(!CanAddGroupNote(doCheckDb:true,isSilent:false,listProcs)) {
+			if(!CanAddGroupNote(doGetProcNote:true,isSilent:false,listProcs)) {
 				return;
 			}
 			DateTime procDate=listProcs[0].ProcDate;
@@ -1661,7 +1661,7 @@ namespace OpenDental {
 			ShowMenuItemHelper(menuItemSetEC,x => CanChangeProcsStatus(ProcStat.EC,x.Row,doCheckDb:false,isSilent:true));
 			ShowMenuItemHelper(menuItemSetComplete,x => CanChangeProcsStatus(ProcStat.C,x.Row,doCheckDb:false,isSilent:true));
 			ShowMenuItemHelper(menuItemEditSelected,x => CanEditRow(x.Row,doCheckDb:false,isSilent:true,new List<Procedure> { }));
-			ShowMenuItemHelper(menuItemGroupSelected,x => CanGroupRow(x.Row,doCheckDb:false,isSilent:true,new List<Procedure> { }));
+			ShowMenuItemHelper(menuItemGroupSelected,x => CanGroupRow(x.Row,doGetProcNote:false,isSilent:true,new List<Procedure> { }));
 			ShowMenuItemHelper(menuItemPrintDay,x => CanPrintDay(x.Row,x.Index));
 			ShowMenuItemHelper(menuItemLabFeeDetach,x => CanDetachLabFee(x.Row,isSilent:true));
 			ShowMenuItemHelper(menuItemLabFee,x => CanAttachLabFee(isSilent:true,new List<long> { },new List<long> { }));
@@ -1672,7 +1672,7 @@ namespace OpenDental {
 			else {
 				menuItemPrintRouteSlip.Visible=false;
 			}
-			menuItemGroupSelected.Enabled=CanAddGroupNote(doCheckDb:false,isSilent:true,new List<Procedure>());
+			menuItemGroupSelected.Enabled=CanAddGroupNote(doGetProcNote:false,isSilent:true,new List<Procedure>());
 			if(CanDisplayAppointment() || CanDisplayTask()) {
 				menuItemSetComplete.Visible=true;
 				menuItemSetComplete.Enabled=(CanCompleteAppointment(doCheckDb:false,isSilent:true) || CanCompleteTask(doCheckDb:false,isSilent:true));
@@ -5312,7 +5312,7 @@ namespace OpenDental {
 			Procedures.ComputeEstimates(procParent,Pd.PatNum,ClaimProcs.RefreshForProc(procParent.ProcNum),false,Pd.ListInsPlans,Pd.ListPatPlans,Pd.ListBenefits,Pd.Patient.Age,Pd.ListInsSubs);
 		}
 
-		private bool CanAddGroupNote(bool doCheckDb,bool isSilent,List<Procedure> listProcs) {
+		private bool CanAddGroupNote(bool doGetProcNote,bool isSilent,List<Procedure> listProcs) {
 			DataRow row;
 			if(gridProg.SelectedIndices.Length==0) {
 				if(!isSilent) {
@@ -5322,7 +5322,7 @@ namespace OpenDental {
 			}
 			for(int i=0;i<gridProg.SelectedIndices.Length;i++) {
 				row=(DataRow)gridProg.ListGridRows[gridProg.SelectedIndices[i]].Tag;
-				if(!CanGroupRow(row,doCheckDb:doCheckDb,isSilent:isSilent,listProcs)) {
+				if(!CanGroupRow(row,doGetProcNote:doGetProcNote,isSilent:isSilent,listProcs)) {
 					return false;
 				}
 			}
@@ -5898,7 +5898,7 @@ namespace OpenDental {
 		}		
 		
 		///<summary>Returns true if the row can be put into a group note. Adds procedure to listProcsToGroup if it can be.</summary>
-		private bool CanGroupRow(DataRow row,bool doCheckDb,bool isSilent,List<Procedure> listProcsToGroup) {
+		private bool CanGroupRow(DataRow row,bool doGetProcNote,bool isSilent,List<Procedure> listProcsToGroup) {
 			long procNum=PIn.Long(row["ProcNum"].ToString());
 			if(procNum==0) { //This is not a procedure.
 				if(!isSilent) {
@@ -5906,11 +5906,13 @@ namespace OpenDental {
 				}
 				return false;
 			}
-			if(doCheckDb){
-				Pd.Clear(EnumPdTable.Procedure);
+			Procedure procedure=new Procedure();
+			if(doGetProcNote) {//When true, we need to get the most recent procNote for the proc row.  The main list Pd.ListProcedures does not include procNotes.
+				procedure=Procedures.GetOneProc(procNum,true);
 			}
-			Pd.FillIfNeeded(EnumPdTable.Procedure);
-			Procedure procedure=Pd.ListProcedures.Find(x => x.ProcNum==procNum);
+			else {
+				procedure=Pd.ListProcedures.Find(x => x.ProcNum==procNum);
+			}
 			if(procedure==null) {
 				return false;
 			}
