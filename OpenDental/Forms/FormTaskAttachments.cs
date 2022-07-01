@@ -74,7 +74,8 @@ namespace OpenDental {
 			}
 			StringBuilder stringBuilder=new StringBuilder();
 			if(PrefC.GetLong(PrefName.TaskAttachmentCategory)==0) {
-				stringBuilder.AppendLine("Task attachments have not been properly setup. Must have an image category with TaskAttachment usage and must set the default image category in Setup->Tasks.");
+				stringBuilder.AppendLine("Task attachments have not been set up. Set an Image Category with a usage of TaskAttachment in Setup>Definitions>Image Categories. " +
+                    "Set the Image Category folder for attachments in Setup>Tasks.");
 			}
 			if(_task.ObjectType!=TaskObjectType.Patient || (_task.ObjectType==TaskObjectType.Patient && _task.KeyNum==0)) {
 				stringBuilder.AppendLine("Task Object Type must be set to 'Patient' and a patient must be attached to task to add new attachments or edit existing attachments.");

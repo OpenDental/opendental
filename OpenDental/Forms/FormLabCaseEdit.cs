@@ -43,13 +43,15 @@ namespace OpenDental{
 				return;
 			}
 			Patient pat=Patients.GetPat(CaseCur.PatNum);
-			//If pat is null, this can trickle down and allow the user to create a lab sheet with a FK to an invalid Patient.
+			//If pat is null, this can trickle down and allow the user to create a lab sheet with a FK to an invalid Patient. Only allow user to delete or view lab case.
 			if(pat==null) {
-				MsgBox.Show(this,"There is no valid Patient attached to this Labcase.");
-				DialogResult=DialogResult.Abort;//Results in form closing logic
-				return;
+				MsgBox.Show(this,"There is no valid Patient attached to this Labcase. Labcase can only be viewed or deleted.");
+				DisableAllExcept(butDelete,butCancel,textInstructions);
+				textInstructions.ReadOnly=true;//Allows user to scroll and see entire instructions instead of disabling the control which doesn't allow user to scroll.
 			}
-			textPatient.Text=pat.GetNameFL();
+			else {
+				textPatient.Text=pat.GetNameFL();
+			}
 			ListLabs=Laboratories.Refresh();
 			//Include the current lab, even if it is hidden.
 			ListLabs=ListLabs.Where(x => x.LaboratoryNum==CaseCur.LaboratoryNum || !x.IsHidden).ToList();

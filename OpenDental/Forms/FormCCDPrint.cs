@@ -120,13 +120,13 @@ namespace OpenDental {
 				_patient=Patients.GetPat(_etrans.PatNum);
 				_listPatPlansForPat=PatPlans.Refresh(_etrans.PatNum);
 				_claim=Claims.GetClaim(_etrans.ClaimNum);
-				_carrier=Carriers.GetCarrier(_etrans.CarrierNum);
 				if(_claim==null) {//for eligibility or when the claim was deleted by the customer before receiving the response from the mailbox.
 					//Get primary info
 					_insSub=InsSubs.GetSub(_etrans.InsSubNum,new List<InsSub>());
 					_patientSubscriber=Patients.GetPat(_insSub.Subscriber);
 					_insplan=InsPlans.GetPlan(_etrans.PlanNum,new List<InsPlan>());
 					_patPlanPri=PatPlans.GetFromList(_listPatPlansForPat,_insSub.InsSubNum);
+					_carrier=Carriers.GetCarrier(_insplan.CarrierNum);
 				}
 				else {
 					//Get primary info
@@ -134,6 +134,7 @@ namespace OpenDental {
 					_patientSubscriber=Patients.GetPat(_insSub.Subscriber);
 					_insplan=InsPlans.GetPlan(_claim.PlanNum,new List<InsPlan>());
 					_patPlanPri=PatPlans.GetFromList(_listPatPlansForPat,_insSub.InsSubNum);
+					_carrier=Carriers.GetCarrier(_insplan.CarrierNum);
 					//Get secondary info
 					if(_claim.InsSubNum2!=0) {
 						_patPlanSec=PatPlans.GetFromList(_listPatPlansForPat,_claim.InsSubNum2);
