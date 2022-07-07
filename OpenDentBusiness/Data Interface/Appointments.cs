@@ -187,7 +187,7 @@ namespace OpenDentBusiness{
 		///<summary>Gets appointments made through WebSched for the API. The type of appointment is indicated by the eServiceType which can be NewPat, ExistingPat, Recall, or ASAP. </summary>
 		public static DataTable GetWebSchedAppointmentsForApi(int limit,int offset,DateTime dateStart,DateTime dateEnd,DateTime dateTStamp,long clinicNum,string dateTimeFormatString) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<DataTable>(MethodBase.GetCurrentMethod(),limit,offset,dateStart,dateEnd,dateTStamp,clinicNum);
+				return Meth.GetObject<DataTable>(MethodBase.GetCurrentMethod(),limit,offset,dateStart,dateEnd,dateTStamp,clinicNum,dateTimeFormatString);
 			}
 			DataTable tableReturn=new DataTable("AppointmentsListForApi");
 			DataTable tableAppointments;
@@ -4092,7 +4092,7 @@ namespace OpenDentBusiness{
 		//private static FilterBlockouts(Appointment )
 		/// <summary>Called to move existing appointments from the web.
 		/// Will only attempt to move to given operatory.</summary>
-		public static void TryMoveApptWebHelper(Appointment appt,DateTime apptDateTimeNew,long opNumNew,LogSources secLogSource=LogSources.MobileWeb) {
+		public static void TryMoveApptWebHelper(Appointment appt,DateTime apptDateTimeNew,long opNumNew,LogSources secLogSource=LogSources.MobileWeb, long userNum=0) {
 			Appointment apptOld=GetOneApt(appt.AptNum);//Will always exist since you can not move a non inserted appointment.
 			Patient pat=Patients.GetPat(appt.PatNum);
 			Operatory op=Operatories.GetOperatory(opNumNew);
@@ -4102,7 +4102,7 @@ namespace OpenDentBusiness{
 			bool hygChangedNotUsed=false;//Since we are not skipping validation, let function identify hyg change itself.
 			TryMoveAppointment(appt,apptOld,pat,op,listSchedules,listOps,apptDateTimeNew,
 				doValidation:true,doSetArriveEarly:true,doProvChange:true,doUpdatePattern:false,doAllowFreqConflicts:true,doResetConfirmationStatus:true,doUpdatePatStatus:true,
-				provChanged:provChangedNotUsed,hygChanged:hygChangedNotUsed,timeWasMoved:(appt.AptDateTime!=apptDateTimeNew),isOpChanged:(appt.Op!=opNumNew),secLogSource:secLogSource);
+				provChanged:provChangedNotUsed,hygChanged:hygChangedNotUsed,timeWasMoved:(appt.AptDateTime!=apptDateTimeNew),isOpChanged:(appt.Op!=opNumNew),secLogSource:secLogSource, userNum:userNum);
 		}
 		
 		///<summary>Throws exception. Called when moving an appt in the appt module on mouse up after validation and user input.</summary>
@@ -4118,7 +4118,7 @@ namespace OpenDentBusiness{
 		///<summary>Throws exception. When doSkipValidation is false all 'do' bools need to be set and considered.</summary>
 		public static void TryMoveAppointment(Appointment apt,Appointment aptOld,Patient patCur,Operatory curOp,List<Schedule> schedListPeriod,
 			List<Operatory> listOps,DateTime newAptDateTime,bool doValidation,bool doSetArriveEarly,bool doProvChange,bool doUpdatePattern,
-			bool doAllowFreqConflicts,bool doResetConfirmationStatus,bool doUpdatePatStatus,bool provChanged,bool hygChanged,bool timeWasMoved,bool isOpChanged,bool isOpUpdate=false,LogSources secLogSource=LogSources.None) 
+			bool doAllowFreqConflicts,bool doResetConfirmationStatus,bool doUpdatePatStatus,bool provChanged,bool hygChanged,bool timeWasMoved,bool isOpChanged,bool isOpUpdate=false,LogSources secLogSource=LogSources.None, long userNum=0) 
 		{
 			if(newAptDateTime!=DateTime.MinValue) {
 				apt.AptDateTime=newAptDateTime;//The time we are attempting to move the appt to.
@@ -4320,19 +4320,19 @@ namespace OpenDentBusiness{
 				}
 				if(logtext!="") {
 					SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,apt.PatNum,
-						Lans.g("MoveAppointment","Appointment on")+" "+apt.AptDateTime.ToString()+logtext,apt.AptNum,secLogSource,apt.DateTStamp);
+						Lans.g("MoveAppointment","Appointment on")+" "+apt.AptDateTime.ToString()+logtext,apt.AptNum,secLogSource,apt.DateTStamp, userNum);
 				}
 			}
 			else { 
 				if(apt.AptStatus==ApptStatus.Complete) { //separate log entry for editing completed appointments
 					SecurityLogs.MakeLogEntry(Permissions.AppointmentCompleteEdit,apt.PatNum,
 						Lans.g("MoveAppointment","moved")+" "+apt.ProcDescript+" "+Lans.g("MoveAppointment","from")+" "+aptOld.AptDateTime.ToString()+", "+Lans.g("MoveAppointment","to")+" "+apt.AptDateTime.ToString(),
-						apt.AptNum,secLogSource,aptOld.DateTStamp);
+						apt.AptNum,secLogSource,aptOld.DateTStamp, userNum);
 				}
 				else {
 					SecurityLogs.MakeLogEntry(Permissions.AppointmentMove,apt.PatNum,
 						apt.ProcDescript+" "+Lans.g("MoveAppointment","from")+" "+aptOld.AptDateTime.ToString()+", "+Lans.g("MoveAppointment","to")+" "+apt.AptDateTime.ToString(),
-						apt.AptNum,secLogSource,aptOld.DateTStamp);
+						apt.AptNum,secLogSource,aptOld.DateTStamp,userNum);
 				}
 			}
 			#endregion SecurityLog
@@ -4798,10 +4798,10 @@ namespace OpenDentBusiness{
 					PermType=Permissions.AppointmentEdit,
 					UserNum=appt.SecUserNumEntry,
 					LogDateTime=DateTime.Now,
-					LogText="Appointment updated from MobileWeb by "+Userods.GetUser(appt.SecUserNumEntry)?.UserName,
+					LogText=$"Appointment updated from {secLogSource.GetDescription()} by "+Userods.GetUser(appt.SecUserNumEntry)?.UserName,
 					PatNum=appt.PatNum,
 					FKey=appt.AptNum,
-					LogSource=LogSources.MobileWeb,
+					LogSource= secLogSource,
 					DateTPrevious=appt.SecDateTEntry,
 					CompName=Security.CurComputerName,
 				});

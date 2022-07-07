@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -29,6 +30,14 @@ namespace OpenDental {
 		#endregion Constructors
 
 		#region Methods - Event Handlers
+		private void butSuperFamSortDetails_Click(object sender,EventArgs e) {
+			MsgBox.Show(this,"Determines the order of super family names as they appear in the Family Module.\r\n\r\n" +
+				"NameAsc: Sort by last names in ascending alphabetical order (A-Z).\r\n\r\n" +
+				"NameDesc: Sort by last names in descending alphabetical order (Z-A).\r\n\r\n" +
+				"PatNumAsc: Sort by patient numbers in ascending order. The patient with the lowest number will be first, followed by patients with higher numbers.\r\n\r\n" +
+				"PatNumDesc: Sort by patient numbers in descending order. The patient with the highest number will be first, followed by patients with lower numbers.");
+		}
+
 		private void butSyncPhNums_Click(object sender,EventArgs e) {
 			if(SyncPhoneNums()) {
 				MsgBox.Show(this,"Done");
@@ -39,6 +48,10 @@ namespace OpenDental {
 			if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Would you like to change the COB rule for all existing insurance plans?")) {
 				InsPlans.UpdateCobRuleForAll((EnumCobRule)comboCobRule.SelectedIndex);
 			}
+		}
+
+		private void linkLabelCobRuleDetails_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {
+			Process.Start("https://www.opendental.com/manual/cob.html");
 		}
 		#endregion Methods - Event Handlers
 
@@ -80,6 +93,8 @@ namespace OpenDental {
 			checkSelectProv.Checked=PrefC.GetBool(PrefName.PriProvDefaultToSelectProv);
 			if(!PrefC.GetBool(PrefName.ShowFeatureSuperfamilies)) {
 				groupBoxSuperFamily.Visible=false;
+				butSuperFamSortDetails.Visible=false;
+				labelSuperFamSyncDetails.Visible=false;
 			}
 			else {
 				foreach(SortStrategy option in Enum.GetValues(typeof(SortStrategy))) {

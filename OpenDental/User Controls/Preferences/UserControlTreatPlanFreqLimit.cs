@@ -108,7 +108,32 @@ namespace OpenDental {
 			#endregion
 		}
 
+		private List<string> GetDuplicateFrequencyLimitationCodes() {
+			List<string> listProcCodes=textInsBW.Text.Split(",",StringSplitOptions.RemoveEmptyEntries).Concat(
+				textInsPano.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsExam.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsCancerScreen.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsProphy.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsFlouride.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsSealant.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsCrown.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsSRP.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsDebridement.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsPerioMaint.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsDentures.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsImplant.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).ToList();
+			return listProcCodes.GroupBy(x => x).Where(x => x.Count()>1).Select(x => x.Key).ToList();
+		}
+
 		public bool SaveTreatPlanFreqLimit() {
+			List<string> listProcCodesDuplicate=GetDuplicateFrequencyLimitationCodes();
+			if(!listProcCodesDuplicate.IsNullOrEmpty()) {
+				StringBuilder stringBuilder=new StringBuilder();
+				stringBuilder.AppendLine(Lan.g(this,"Frequency Limitation preferences are invalid. The following codes are present multiple times:"));
+				stringBuilder.AppendLine(string.Join(",",listProcCodesDuplicate));
+				MsgBox.Show(stringBuilder.ToString());
+				return false;
+			}
 			string errorMessage="";
 			//Should we somehow be returning false once all are updated and there were code errors so the window doesn't close and they can edit the errors? Or do we not care enough?
 			Changed|=Prefs.UpdateBool(PrefName.InsChecksFrequency,checkFrequency.Checked);

@@ -233,5 +233,23 @@ namespace UnitTestsCore {
 			PatientT.InsertMany(listPatients);
 			return listPatients;
 		}
+
+		public static void SetAllContactMethodsForPat(Patient pat,ContactMethod method,YN textOk) {
+			pat.PreferConfirmMethod=method;
+			pat.PreferContactConfidential=method;
+			pat.PreferRecallMethod=method;
+			pat.PreferContactMethod=method;
+			pat.TxtMsgOk=textOk;
+		} 
+
+		public static void Upsert(Patient pat) {
+			if(pat.PatNum==0) {
+				Patients.Insert(pat,false);
+			}
+			else {
+				Patient fakePat=new Patient();
+				DataAction.RunPractice(() => Patients.Update(pat,fakePat));
+			}
+		}
 	}
 }

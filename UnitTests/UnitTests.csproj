@@ -387,6 +387,7 @@
     <Compile Include="UnitTests\UserodsTests.cs" />
     <Compile Include="UnitTests\UserQueriesTests.cs" />
     <Compile Include="UnitTests\WebForms_SheetsTests.cs" />
+    <Compile Include="UnitTests\WebSchedRecallTests.cs" />
     <Compile Include="UnitTests\XmlConverterTests.cs" />
     <Compile Include="UnitTests\ProvidersTests.cs" />
     <Compile Include="UnitTests\ClaimProcsTests.cs" />

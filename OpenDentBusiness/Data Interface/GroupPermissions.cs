@@ -301,9 +301,6 @@ namespace OpenDentBusiness{
 		///<summary>Used to check if user has permission to access the report. Pass in a list of DisplayReports to avoid a call to the db.</summary>
 		public static bool HasReportPermission(string reportName,Userod user,List<DisplayReport> listReports=null) {
 			//No need to check MiddleTierRole; no call to db.
-			if(!Security.IsAuthorized(Permissions.Reports,true)) {
-				return false;
-			}
 			DisplayReport report=(listReports??DisplayReports.GetAll(false)).FirstOrDefault(x=>x.InternalName==reportName);
 			if(report==null) {//Report is probably hidden.
 				return false;

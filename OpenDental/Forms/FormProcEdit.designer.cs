@@ -2051,7 +2051,7 @@
 			// 
 			// buttonUseAutoNote
 			// 
-			this.buttonUseAutoNote.Location = new System.Drawing.Point(663, 135);
+			this.buttonUseAutoNote.Location = new System.Drawing.Point(760, 135);
 			this.buttonUseAutoNote.Name = "buttonUseAutoNote";
 			this.buttonUseAutoNote.Size = new System.Drawing.Size(80, 22);
 			this.buttonUseAutoNote.TabIndex = 106;
@@ -2161,7 +2161,7 @@
 			// 
 			// butEditAutoNote
 			// 
-			this.butEditAutoNote.Location = new System.Drawing.Point(749, 135);
+			this.butEditAutoNote.Location = new System.Drawing.Point(660, 135);
 			this.butEditAutoNote.Name = "butEditAutoNote";
 			this.butEditAutoNote.Size = new System.Drawing.Size(93, 22);
 			this.butEditAutoNote.TabIndex = 211;

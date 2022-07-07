@@ -191,6 +191,9 @@ namespace OpenDentBusiness{
 			long commType=Commlogs.GetTypeAuto(type);
 			string command;
 			string datesql="CURDATE()";
+			if(ODInitialize.IsRunningInUnitTest) {
+				datesql=POut.Date(DateTime_.Today,true);
+			}
 			if(commType==0) {
 				return null;
 			}

@@ -1694,8 +1694,8 @@ namespace OpenDental {
 			if(comboProcStatus.GetSelected<ProcStat>()==ProcStat.C) {
 				bool isAllowedToCompl=true;
 				if(!PrefC.GetBool(PrefName.AllowSettingProcsComplete)) {
-					MsgBox.Show(this,"Set the procedure complete by setting the appointment complete.  "
-						+"If you want to be able to set procedures complete, you must turn on that option in Setup | Chart | Chart Preferences.");
+					MsgBox.Show(this,"Set the procedure complete by setting the appointment complete. "
+						+"If you want to be able to set procedures complete, you must turn on that option in Setup | Preferences | Chart - Procedures.");
 					isAllowedToCompl=false;
 				}
 				//else if so that we don't give multiple notifications to the user.
@@ -1765,8 +1765,8 @@ namespace OpenDental {
 				return;
 			}
 			if(!PrefC.GetBool(PrefName.AllowSettingProcsComplete)) {
-				MsgBox.Show(this,"Set the procedure complete by setting the appointment complete.  "
-					+"If you want to be able to set procedures complete, you must turn on that option in Setup | Chart | Chart Preferences.");
+				MsgBox.Show(this,"Set the procedure complete by setting the appointment complete. "
+					+"If you want to be able to set procedures complete, you must turn on that option in Setup | Preferences | Chart - Procedures.");
 				return;
 			}
 			//If user is trying to change status to complete and using eCW.

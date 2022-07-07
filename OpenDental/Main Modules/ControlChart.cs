@@ -2036,8 +2036,8 @@ namespace OpenDental {
 		private void butAddProc_Click(object sender,EventArgs e) {
 			if(_procStatusNew==ProcStat.C) {
 				if(!PrefC.GetBool(PrefName.AllowSettingProcsComplete)) {
-					MsgBox.Show("Set the procedure complete by setting the appointment complete.  "
-						+"If you want to be able to set procedures complete, you must turn on that option in Setup | Chart | Chart Preferences.");
+					MsgBox.Show("Set the procedure complete by setting the appointment complete. "
+						+"If you want to be able to set procedures complete, you must turn on that option in Setup | Preferences | Chart - Procedures.");
 					return;
 				}
 				//We will call Security.IsAuthorized again once we know the ProcCode and the ProcFee.
@@ -2475,8 +2475,8 @@ namespace OpenDental {
 		private void listViewButtons_Click(object sender,EventArgs e) {
 			if(_procStatusNew==ProcStat.C) {
 				if(!PrefC.GetBool(PrefName.AllowSettingProcsComplete)) {
-					MsgBox.Show(this,"Set the procedure complete by setting the appointment complete.  "
-						+"If you want to be able to set procedures complete, you must turn on that option in Setup | Chart | Chart Preferences.");
+					MsgBox.Show(this,"Set the procedure complete by setting the appointment complete. "
+						+"If you want to be able to set procedures complete, you must turn on that option in Setup | Preferences | Chart - Procedures.");
 					return;
 				}
 				if(!Security.IsAuthorized(Permissions.ProcComplCreate,PIn.Date(textDate.Text))) {
@@ -5422,8 +5422,8 @@ namespace OpenDental {
 			}
 			if(newProcStatus==ProcStat.C && !PrefC.GetBool(PrefName.AllowSettingProcsComplete)) {
 				if(!isSilent) {
-					MsgBox.Show(this,"Only single appointments and tasks may be set complete.  If you want to be able to set procedures complete, you must turn "
-						+"on that option in Setup | Chart | Chart Preferences.");
+					MsgBox.Show(this,"Only single appointments and tasks may be set complete. If you want to be able to set procedures complete, you must turn "
+						+"on that option in Setup | Preferences | Chart - Procedures.");
 				}
 				return false;
 			}
@@ -9975,8 +9975,8 @@ namespace OpenDental {
 			//orionProcNum=0;
 			if(_procStatusNew==ProcStat.C) {
 				if(!PrefC.GetBool(PrefName.AllowSettingProcsComplete)) {
-					MsgBox.Show(this,"Set the procedure complete by setting the appointment complete.  "
-						+"If you want to be able to set procedures complete, you must turn on that option in Setup | Chart | Chart Preferences.");
+					MsgBox.Show(this,"Set the procedure complete by setting the appointment complete. "
+						+"If you want to be able to set procedures complete, you must turn on that option in Setup | Preferences | Chart - Procedures.");
 					return;
 				}
 				//We will call this method again with the real ProcFee once we know it.
@@ -10148,8 +10148,8 @@ namespace OpenDental {
 		private void ProcButtonClicked(ProcButton procButton,ProcButtonQuick procButtonQuick=null) {
 			if(_procStatusNew==ProcStat.C) {
 				if(!PrefC.GetBool(PrefName.AllowSettingProcsComplete)) {
-					MsgBox.Show(this,"Set the procedure complete by setting the appointment complete.  "
-						+"If you want to be able to set procedures complete, you must turn on that option in Setup | Chart | Chart Preferences.");
+					MsgBox.Show(this,"Set the procedure complete by setting the appointment complete. "
+						+"If you want to be able to set procedures complete, you must turn on that option in Setup | Preferences | Chart - Procedures.");
 					return;
 				}
 				if(!Security.IsAuthorized(Permissions.ProcComplCreate,PIn.Date(textDate.Text))) {

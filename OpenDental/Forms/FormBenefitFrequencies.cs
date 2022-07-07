@@ -46,48 +46,87 @@ namespace OpenDental {
 			for(int i = 0;i<ListBenefits.Count;++i) {
 				bool isFrequencyBen=true;
 				//Diagnostic group
-				if(Benefits.IsBitewingFrequency(ListBenefits[i])) {
+				if(string.IsNullOrWhiteSpace(textBW.Text)
+					&& ProcedureCodes.GetCodeNum(ProcedureCodes.BitewingCode)==ListBenefits[i].CodeNum 
+					&& Benefits.IsBitewingFrequency(ListBenefits[i]))
+				{
 					FillBenefit(ListBenefits[i],textBW,comboBW);
 				}
-				else if(Benefits.IsPanoFrequency(ListBenefits[i])) {
+				else if(string.IsNullOrWhiteSpace(textPano.Text)
+					&& ProcedureCodes.GetCodeNum(ProcedureCodes.PanoCode)==ListBenefits[i].CodeNum 
+					&& Benefits.IsPanoFrequency(ListBenefits[i])) 
+				{
 					FillBenefit(ListBenefits[i],textPano,comboPano);
 				}
-				else if(Benefits.IsExamFrequency(ListBenefits[i])) {
+				//Exam frequency limitations have codeNum 0. Distinguished by covcat.
+				else if(string.IsNullOrWhiteSpace(textExams.Text)
+					&& Benefits.IsExamFrequency(ListBenefits[i])) 
+				{
 					FillBenefit(ListBenefits[i],textExams,comboExams);
 				}
-				else if(Benefits.IsCancerScreeningFrequency(ListBenefits[i])) {
+				else if(string.IsNullOrWhiteSpace(textCancerScreenings.Text)
+					&& ProcedureCodes.GetCodeNum(ProcedureCodes.CancerScreeningCode)==ListBenefits[i].CodeNum 
+					&& Benefits.IsCancerScreeningFrequency(ListBenefits[i])) 
+				{
 					FillBenefit(ListBenefits[i],textCancerScreenings,comboCancerScreenings);
 				}
 				//Preventive group
-				else if(Benefits.IsProphyFrequency(ListBenefits[i])) {
+				else if(string.IsNullOrWhiteSpace(textProphy.Text)
+					&& ProcedureCodes.GetCodeNum(ProcedureCodes.ProphyCode)==ListBenefits[i].CodeNum 
+					&& Benefits.IsProphyFrequency(ListBenefits[i])) 
+				{
 					FillBenefit(ListBenefits[i],textProphy,comboProphy);
 				}
-				else if(Benefits.IsFlourideFrequency(ListBenefits[i])) {
+				else if(string.IsNullOrWhiteSpace(textFlouride.Text)
+					&& ProcedureCodes.GetCodeNum(ProcedureCodes.FlourideCode)==ListBenefits[i].CodeNum 
+					&& Benefits.IsFlourideFrequency(ListBenefits[i])) 
+				{
 					FillBenefit(ListBenefits[i],textFlouride,comboFlouride);
 				}
-				else if(Benefits.IsSealantFrequency(ListBenefits[i])) {
+				else if(string.IsNullOrWhiteSpace(textSealants.Text)
+					&& ProcedureCodes.GetCodeNum(ProcedureCodes.SealantCode)==ListBenefits[i].CodeNum 
+					&& Benefits.IsSealantFrequency(ListBenefits[i])) 
+				{
 					FillBenefit(ListBenefits[i],textSealants,comboSealants);
 				}
 				//Restorative group
-				else if(Benefits.IsCrownFrequency(ListBenefits[i])) {
+				else if(string.IsNullOrWhiteSpace(textCrown.Text)
+					&& ProcedureCodes.GetCodeNum(ProcedureCodes.CrownCode)==ListBenefits[i].CodeNum 
+					&& Benefits.IsCrownFrequency(ListBenefits[i])) 
+				{
 					FillBenefit(ListBenefits[i],textCrown,comboCrown);
 				}
 				//Periodontal group
-				else if(Benefits.IsSRPFrequency(ListBenefits[i])) {
+				else if(string.IsNullOrWhiteSpace(textSRP.Text)
+					&& ProcedureCodes.GetCodeNum(ProcedureCodes.SRPCode)==ListBenefits[i].CodeNum 
+					&& Benefits.IsSRPFrequency(ListBenefits[i])) 
+				{
 					FillBenefit(ListBenefits[i],textSRP,comboSRP);
 				}
-				else if(Benefits.IsFullDebridementFrequency(ListBenefits[i])) {
+				else if(string.IsNullOrWhiteSpace(textDebridement.Text)
+					&& ProcedureCodes.GetCodeNum(ProcedureCodes.FullDebridementCode)==ListBenefits[i].CodeNum 
+					&& Benefits.IsFullDebridementFrequency(ListBenefits[i])) 
+				{
 					FillBenefit(ListBenefits[i],textDebridement,comboDebridement);
 				}
-				else if(Benefits.IsPerioMaintFrequency(ListBenefits[i])) {
+				else if(string.IsNullOrWhiteSpace(textPerioMaint.Text)
+					&& ProcedureCodes.GetCodeNum(ProcedureCodes.PerioMaintCode)==ListBenefits[i].CodeNum 
+					&& Benefits.IsPerioMaintFrequency(ListBenefits[i])) 
+				{
 					FillBenefit(ListBenefits[i],textPerioMaint,comboPerioMaint);
 				}
 				//Prosthodontics group
-				else if(Benefits.IsDenturesFrequency(ListBenefits[i])) {
+				else if(string.IsNullOrWhiteSpace(textDentures.Text)
+					&& ProcedureCodes.GetCodeNum(ProcedureCodes.DenturesCode)==ListBenefits[i].CodeNum 
+					&& Benefits.IsDenturesFrequency(ListBenefits[i])) 
+				{
 					FillBenefit(ListBenefits[i],textDentures,comboDentures);
 				}
 				//Implants group
-				else if(Benefits.IsImplantFrequency(ListBenefits[i])) {
+				else if(string.IsNullOrWhiteSpace(textImplant.Text)
+					&& ProcedureCodes.GetCodeNum(ProcedureCodes.ImplantCode)==ListBenefits[i].CodeNum 
+					&& Benefits.IsImplantFrequency(ListBenefits[i])) 
+				{
 					FillBenefit(ListBenefits[i],textImplant,comboImplant);
 				}
 				else {
@@ -95,6 +134,84 @@ namespace OpenDental {
 				}
 				if(isFrequencyBen) {
 					_listFrequencyBenefits.Add(ListBenefits[i]);
+				}
+			}
+			Benefit benefit;
+			if(string.IsNullOrWhiteSpace(textBW.Text)) {
+				benefit=ListBenefits.FirstOrDefault(x => Benefits.IsBitewingFrequency(x));
+				if(benefit!=null) {
+					FillBenefit(benefit,textBW,comboBW);
+					_listFrequencyBenefits.Add(benefit);
+				}
+			}
+			if(string.IsNullOrWhiteSpace(textPano.Text)) {
+				benefit=ListBenefits.FirstOrDefault(x => Benefits.IsPanoFrequency(x));
+				if(benefit!=null) {
+					FillBenefit(benefit,textPano,comboPano);
+					_listFrequencyBenefits.Add(benefit);
+				}
+			}
+			if(string.IsNullOrWhiteSpace(textCancerScreenings.Text)) {
+				benefit=ListBenefits.FirstOrDefault(x => Benefits.IsCancerScreeningFrequency(x));
+				if(benefit!=null) {
+					FillBenefit(benefit,textCancerScreenings,comboCancerScreenings);
+					_listFrequencyBenefits.Add(benefit);
+				}
+			}
+			if(string.IsNullOrWhiteSpace(textProphy.Text)) {
+				benefit=ListBenefits.FirstOrDefault(x => Benefits.IsProphyFrequency(x));
+				if(benefit!=null) {
+					FillBenefit(benefit,textProphy,comboProphy);
+					_listFrequencyBenefits.Add(benefit);
+				}
+			}
+			if(string.IsNullOrWhiteSpace(textFlouride.Text)) {
+				benefit=ListBenefits.FirstOrDefault(x => Benefits.IsFlourideFrequency(x));
+				if(benefit!=null) {
+					FillBenefit(benefit,textFlouride,comboFlouride);
+					_listFrequencyBenefits.Add(benefit);
+				}
+			}
+			if(string.IsNullOrWhiteSpace(textSealants.Text)) {
+				benefit=ListBenefits.FirstOrDefault(x => Benefits.IsSealantFrequency(x));
+				if(benefit!=null) {
+					FillBenefit(benefit,textSealants,comboSealants);
+					_listFrequencyBenefits.Add(benefit);
+				}
+			}
+			if(string.IsNullOrWhiteSpace(textCrown.Text)) {
+				benefit=ListBenefits.FirstOrDefault(x => Benefits.IsCrownFrequency(x));
+				if(benefit!=null) {
+					FillBenefit(benefit,textCrown,comboCrown);
+					_listFrequencyBenefits.Add(benefit);
+				}
+			}
+			if(string.IsNullOrWhiteSpace(textSRP.Text)) {
+				benefit=ListBenefits.FirstOrDefault(x => Benefits.IsSRPFrequency(x));
+				if(benefit!=null) {
+					FillBenefit(benefit,textSRP,comboSRP);
+					_listFrequencyBenefits.Add(benefit);
+				}
+			}
+			if(string.IsNullOrWhiteSpace(textDebridement.Text)) {
+				benefit=ListBenefits.FirstOrDefault(x => Benefits.IsFullDebridementFrequency(x));
+				if(benefit!=null) {
+					FillBenefit(benefit,textDebridement,comboDebridement);
+					_listFrequencyBenefits.Add(benefit);
+				}
+			}
+			if(string.IsNullOrWhiteSpace(textDentures.Text)) {
+				benefit=ListBenefits.FirstOrDefault(x => Benefits.IsDenturesFrequency(x));
+				if(benefit!=null) {
+					FillBenefit(benefit,textDentures,comboDentures);
+					_listFrequencyBenefits.Add(benefit);
+				}
+			}
+			if(string.IsNullOrWhiteSpace(textImplant.Text)) {
+				benefit=ListBenefits.FirstOrDefault(x => Benefits.IsImplantFrequency(x));
+				if(benefit!=null) {
+					FillBenefit(benefit,textImplant,comboImplant);
+					_listFrequencyBenefits.Add(benefit);
 				}
 			}
 		}

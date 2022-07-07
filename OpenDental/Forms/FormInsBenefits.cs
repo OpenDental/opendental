@@ -213,26 +213,12 @@ namespace OpenDental{
 				{
 					textFlo.Text=benefit.Quantity.ToString();
 				}
-				//BWs group
-				else if(Benefits.IsBitewingFrequency(benefit)) {
-					textBW.Text=benefit.Quantity.ToString();
-					if(benefit.QuantityQualifier==BenefitQuantity.Months){
-						comboBW.SelectedIndex=2;
-					}
-					else if(benefit.QuantityQualifier==BenefitQuantity.Years){
-						comboBW.SelectedIndex=0;
-					}
-					else{
-						if(benefit.TimePeriod==BenefitTimePeriod.NumberInLast12Months) {
-							comboBW.SelectedIndex=3;//# in last 12 months
-						}
-						else {
-							comboBW.SelectedIndex=1;//# per year
-						}
-					}
-				}
+				//Checks if benefit codenum is the first codenum in limitation preference, then checks if benefit is a frequency limitation.
+				#region frequency limitations
 				//Canadian BWs
-				else if(CultureInfo.CurrentCulture.Name.EndsWith("CA")//All of Canada, including Quebec (the proc codes are the same in this instance).
+				else if(Benefits.IsBitewingFrequency(benefit)
+					&& CultureInfo.CurrentCulture.Name.EndsWith("CA")//All of Canada, including Quebec (the proc codes are the same in this instance).
+					&& textBW.Text==""
 					&& ProcedureCodes.GetStringProcCode(benefit.CodeNum)=="02144"//4BW
 					&& benefit.BenefitType==InsBenefitType.Limitations
 					//&& ben.CovCatNum==CovCats.GetForEbenCat(EbenefitCategory.Db).CovCatNum//ignored
@@ -259,8 +245,32 @@ namespace OpenDental{
 						}
 					}
 				}
+				//BWs group
+				else if(textBW.Text=="" 
+					&& ProcedureCodes.GetStringProcCode(benefit.CodeNum)==ProcedureCodes.BitewingCode 
+					&& Benefits.IsBitewingFrequency(benefit))
+				{
+					textBW.Text=benefit.Quantity.ToString();
+					if(benefit.QuantityQualifier==BenefitQuantity.Months){
+						comboBW.SelectedIndex=2;
+					}
+					else if(benefit.QuantityQualifier==BenefitQuantity.Years){
+						comboBW.SelectedIndex=0;
+					}
+					else{
+						if(benefit.TimePeriod==BenefitTimePeriod.NumberInLast12Months) {
+							comboBW.SelectedIndex=3;//# in last 12 months
+						}
+						else {
+							comboBW.SelectedIndex=1;//# per year
+						}
+					}
+				}
 				//Pano
-				else if(Benefits.IsPanoFrequency(benefit)) {
+				else if(Benefits.IsPanoFrequency(benefit)
+					&& ProcedureCodes.GetStringProcCode(benefit.CodeNum)==ProcedureCodes.PanoCode 
+					&& textPano.Text=="") 
+				{
 					textPano.Text=benefit.Quantity.ToString();
 					if(benefit.QuantityQualifier==BenefitQuantity.Months) {
 						comboPano.SelectedIndex=2;
@@ -278,7 +288,7 @@ namespace OpenDental{
 					}
 				}
 				//Exam group
-				else if(Benefits.IsExamFrequency(benefit)) {
+				else if(Benefits.IsExamFrequency(benefit) && textExams.Text=="") {
 					textExams.Text=benefit.Quantity.ToString();
 					if(benefit.QuantityQualifier==BenefitQuantity.Months) {
 						comboExams.SelectedIndex=2;
@@ -295,6 +305,7 @@ namespace OpenDental{
 						}
 					}
 				}
+				#endregion
 				//Ortho Age
 				else if(benefit.BenefitType==InsBenefitType.Limitations
 					&& benefit.CovCatNum==CovCats.GetForEbenCat(EbenefitCategory.Orthodontics).CovCatNum
@@ -608,6 +619,99 @@ namespace OpenDental{
 					_listBenefits.Add(benefit);
 				}
 				#endregion Loop
+			}
+			//Canadian BWs
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")//All of Canada, including Quebec (the proc codes are the same in this instance).
+				&& string.IsNullOrWhiteSpace(textBW.Text)) 
+			{ 
+				Benefit benefitBW=_listBenefits.FirstOrDefault(x => Benefits.IsBitewingFrequency(x)
+					&& ProcedureCodes.GetStringProcCode(x.CodeNum)=="02144"//4BW
+					&& x.BenefitType==InsBenefitType.Limitations
+					//&& ben.CovCatNum==CovCats.GetForEbenCat(EbenefitCategory.Db).CovCatNum//ignored
+					&& x.MonetaryAmt==-1
+					&& x.PatPlanNum==0
+					&& x.Percent==-1
+					&& (x.QuantityQualifier==BenefitQuantity.Months
+						|| x.QuantityQualifier==BenefitQuantity.Years
+						|| x.QuantityQualifier==BenefitQuantity.NumberOfServices));
+				if(benefitBW!=null) {
+					if(benefitBW.QuantityQualifier==BenefitQuantity.Months) {
+						comboBW.SelectedIndex=2;
+					}
+					else if(benefitBW.QuantityQualifier==BenefitQuantity.Years) {
+						comboBW.SelectedIndex=0;
+					}
+					else {
+						if(benefitBW.TimePeriod==BenefitTimePeriod.NumberInLast12Months) {
+							comboBW.SelectedIndex=3;//# in last 12 months
+						}
+						else {
+							comboBW.SelectedIndex=1;//# per year
+						}
+					}
+					_listBenefits.Remove(benefitBW);
+				}
+			}
+			else if(string.IsNullOrWhiteSpace(textBW.Text)) {
+				Benefit benefitBW=_listBenefits.FirstOrDefault(x => Benefits.IsBitewingFrequency(x));
+				if(benefitBW!=null) {
+					textBW.Text=benefitBW.Quantity.ToString();
+					if(benefitBW.QuantityQualifier==BenefitQuantity.Months){
+						comboBW.SelectedIndex=2;
+					}
+					else if(benefitBW.QuantityQualifier==BenefitQuantity.Years){
+						comboBW.SelectedIndex=0;
+					}
+					else{
+						if(benefitBW.TimePeriod==BenefitTimePeriod.NumberInLast12Months) {
+							comboBW.SelectedIndex=3;//# in last 12 months
+						}
+						else {
+							comboBW.SelectedIndex=1;//# per year
+						}
+					}
+					_listBenefits.Remove(benefitBW);
+				}
+			}
+			if(string.IsNullOrWhiteSpace(textPano.Text)) {
+				Benefit benefitPano=_listBenefits.FirstOrDefault(x => Benefits.IsPanoFrequency(x));
+				if(benefitPano!=null) {
+					textPano.Text=benefitPano.Quantity.ToString();
+					if(benefitPano.QuantityQualifier==BenefitQuantity.Months){
+						comboPano.SelectedIndex=2;
+					}
+					else if(benefitPano.QuantityQualifier==BenefitQuantity.Years){
+						comboPano.SelectedIndex=0;
+					}
+					else{
+						if(benefitPano.TimePeriod==BenefitTimePeriod.NumberInLast12Months) {
+							comboPano.SelectedIndex=3;//# in last 12 months
+						}
+						else {
+							comboPano.SelectedIndex=1;//# per year
+						}
+					}
+					_listBenefits.Remove(benefitPano);
+				}
+			}
+			else if(string.IsNullOrWhiteSpace(textExams.Text)) {
+				Benefit benefitExam=_listBenefits.FirstOrDefault(x => Benefits.IsExamFrequency(x));
+				textExams.Text=benefitExam.Quantity.ToString();
+				if(benefitExam.QuantityQualifier==BenefitQuantity.Months) {
+					comboExams.SelectedIndex=2;
+				}
+				else if(benefitExam.QuantityQualifier==BenefitQuantity.Years) {
+					comboExams.SelectedIndex=0;
+				}
+				else {
+					if(benefitExam.TimePeriod==BenefitTimePeriod.NumberInLast12Months) {
+						comboExams.SelectedIndex=3;//# in last 12 months
+					}
+					else {
+						comboExams.SelectedIndex=1;//# per year
+					}
+				}
+				_listBenefits.Remove(benefitExam);
 			}
 			if(textDiagnostic.Text !="" && textDiagnostic.Text==textRoutinePrev.Text
 				&& textDiagnostic.Text==textXray.Text)

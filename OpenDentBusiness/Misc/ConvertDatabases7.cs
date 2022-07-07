@@ -46,6 +46,379 @@ namespace OpenDentBusiness {
 			}
 			return false;
 		}
+
+		///<summary>Removing duplicate proc codes from frequency limitation preferences.
+		///B36962 - We are removing duplicate procCodes from frequency limitation preferences.
+		///Codes that were in more than one category was causing bugs in ControlFamily.cs, FormInsBenefits.cs, and FormBenefitFrequencies.cs where the 
+		///forms would be filled incorrectly because of overlapping benefits in a category or if a benefit was already found in a previous category, 
+		///it would be entirely ignored in the other categories. Benefits also get saved to the db based on what is populated in the two forms 
+		///since they are textboxes/comboboxes that are not associated with a benefit and only populated by the benefit last in. 
+		///Removing duplicate procCodes helps eliminate this issue and code has been written as part of this job in UserControlTreatPlanFreqLimit.cs 
+		///that blocks users from entering a procCode more than once.</summary>
+		private static void RemoveDuplicateProcCodesFromFrequencyLimitationPreferences() {
+			string command;
+			//Grab all frequency limitation preferences and split them into a list of procCodes. 
+			command="SELECT ValueString FROM preference WHERE PrefName='InsBenBWCodes'";
+			List<string> listInsBenBWCodes=Db.GetScalar(command).Split(',').ToList();
+			command="SELECT ValueString FROM preference WHERE PrefName='InsBenPanoCodes'";
+			List<string> listInsBenPanoCodes=Db.GetScalar(command).Split(',').ToList();
+			command="SELECT ValueString FROM preference WHERE PrefName='InsBenExamCodes'";
+			List<string> listInsBenExamCodes=Db.GetScalar(command).Split(',').ToList();
+			command="SELECT ValueString FROM preference WHERE PrefName='InsBenCancerScreeningCodes'";
+			List<string> listInsBenCancerScreeningCodes=Db.GetScalar(command).Split(',').ToList();
+			command="SELECT ValueString FROM preference WHERE PrefName='InsBenProphyCodes'";
+			List<string> listInsBenProphyCodes=Db.GetScalar(command).Split(',').ToList();
+			command="SELECT ValueString FROM preference WHERE PrefName='InsBenFlourideCodes'";
+			List<string> listInsBenFlourideCodes=Db.GetScalar(command).Split(',').ToList();
+			command="SELECT ValueString FROM preference WHERE PrefName='InsBenSealantCodes'";
+			List<string> listInsBenSealantCodes=Db.GetScalar(command).Split(',').ToList();
+			command="SELECT ValueString FROM preference WHERE PrefName='InsBenCrownCodes'";
+			List<string> listInsBenCrownCodes=Db.GetScalar(command).Split(',').ToList();
+			command="SELECT ValueString FROM preference WHERE PrefName='InsBenSRPCodes'";
+			List<string> listInsBenSRPCodes=Db.GetScalar(command).Split(',').ToList();
+			command="SELECT ValueString FROM preference WHERE PrefName='InsBenFullDebridementCodes'";
+			List<string> listInsBenFullDebridementCodes=Db.GetScalar(command).Split(',').ToList();
+			command="SELECT ValueString FROM preference WHERE PrefName='InsBenPerioMaintCodes'";
+			List<string> listInsBenPerioMaintCodes=Db.GetScalar(command).Split(',').ToList();
+			command="SELECT ValueString FROM preference WHERE PrefName='InsBenDenturesCodes'";
+			List<string> listInsBenDenturesCodes=Db.GetScalar(command).Split(',').ToList();
+			command="SELECT ValueString FROM preference WHERE PrefName='InsBenImplantCodes'";
+			List<string> listInsBenImplantCodes=Db.GetScalar(command).Split(',').ToList();
+			List<string> listProcCodes=listInsBenBWCodes
+				.Concat(listInsBenPanoCodes)
+				.Concat(listInsBenExamCodes)
+				.Concat(listInsBenCancerScreeningCodes)
+				.Concat(listInsBenProphyCodes)
+				.Concat(listInsBenFlourideCodes)
+				.Concat(listInsBenSealantCodes)
+				.Concat(listInsBenCrownCodes)
+				.Concat(listInsBenSRPCodes)
+				.Concat(listInsBenFullDebridementCodes)
+				.Concat(listInsBenPerioMaintCodes)
+				.Concat(listInsBenDenturesCodes)
+				.Concat(listInsBenImplantCodes)
+				.ToList();
+			//GroupBy procCode, if any group has more than 1 code then it is currently in multiple preferences.
+			List<string> listProcCodesDuplicates=listProcCodes.GroupBy(x => x).Where(x => x.Count()>1).Select(x => x.Key).ToList();
+			if(listProcCodesDuplicates.IsNullOrEmpty()) {//No duplicates found, kick out
+				return;
+			}
+			List<string> listPreferenceCategories=new List<string>();//These are all prefnames in the db.
+			//Loop through every duplicate procCode, for any preference it is currently in add that PrefName to listPreferencesCategories.
+			//We only need to consider preferences with the codes from listProcCodeDuplicates.
+			for(int i=0;i<listProcCodesDuplicates.Count;i++) {
+				string procCode=listProcCodesDuplicates[i];
+				if(listInsBenBWCodes.Contains(procCode)) {
+					listPreferenceCategories.Add("InsBenBWCodes");
+				}
+				if(listInsBenPanoCodes.Contains(procCode)) {
+					listPreferenceCategories.Add("InsBenPanoCodes");
+				}
+				if(listInsBenExamCodes.Contains(procCode)) {
+					listPreferenceCategories.Add("InsBenExamCodes");
+				}
+				if(listInsBenCancerScreeningCodes.Contains(procCode)) {
+					listPreferenceCategories.Add("InsBenCancerScreeningCodes");
+				}
+				if(listInsBenProphyCodes.Contains(procCode)) {
+					listPreferenceCategories.Add("InsBenProphyCodes");
+				}
+				if(listInsBenFlourideCodes.Contains(procCode)) {
+					listPreferenceCategories.Add("InsBenFlourideCodes");
+				}
+				if(listInsBenSealantCodes.Contains(procCode)) {
+					listPreferenceCategories.Add("InsBenSealantCodes");
+				}
+				if(listInsBenCrownCodes.Contains(procCode)) {
+					listPreferenceCategories.Add("InsBenCrownCodes");
+				}
+				if(listInsBenSRPCodes.Contains(procCode)) {
+					listPreferenceCategories.Add("InsBenSRPCodes");
+				}
+				if(listInsBenFullDebridementCodes.Contains(procCode)) {
+					listPreferenceCategories.Add("InsBenFullDebridementCodes");
+				}
+				if(listInsBenPerioMaintCodes.Contains(procCode)) {
+					listPreferenceCategories.Add("InsBenPerioMaintCodes");
+				}
+				if(listInsBenDenturesCodes.Contains(procCode)) {
+					listPreferenceCategories.Add("InsBenDenturesCodes");
+				}
+				if(listInsBenImplantCodes.Contains(procCode)) {
+					listPreferenceCategories.Add("InsBenImplantCodes");
+				}
+			}
+			//Distinct the category list, only need PrefNames once to loop through.
+			listPreferenceCategories=listPreferenceCategories.Distinct().ToList();
+			List<string> listDefaultCodes=new List<string>();
+			//Loop through all the preferences we found. This loop grabs the default codes for the current preference. 
+			//If a code is found to be part of a default list of procCodes for a given preference, we will prefer to leave that procCode in the default and remove it from
+			//the other preferences.
+			for(int i=0;i<listPreferenceCategories.Count;i++) {
+				//Default codes were found via previous convert scripts. 
+				switch(listPreferenceCategories[i]) {
+					case "InsBenBWCodes":
+						listDefaultCodes=new List<string> { "D0272","D0274" };//Found in To16_4_19()
+						break;
+					case "InsBenPanoCodes":
+						listDefaultCodes=new List<string> { "D0210","D0330" };//Found in To16_4_19()
+						break;
+					case "InsBenExamCodes":
+						listDefaultCodes=new List<string> { "D0120","D0150" };//Found in To16_4_19()
+						break;
+					case "InsBenCancerScreeningCodes":
+						listDefaultCodes=new List<string> { "D0431" };//Found in To18_2_0()
+						break;
+					case "InsBenProphyCodes":
+						listDefaultCodes=new List<string> { "D1110","D1120" };//Found in To18_2_0()
+						break;
+					case "InsBenFlourideCodes":
+						listDefaultCodes=new List<string> { "D1206","D1208" };//Found in To18_2_0()
+						break;
+					case "InsBenSealantCodes":
+						listDefaultCodes=new List<string> { "D1351" };//Found in To18_2_0()
+						break;
+					case "InsBenCrownCodes":
+						listDefaultCodes=new List<string> { "D2740","D2750","D2751","D2752","D2780","D2781","D2782","D2783","D2790","D2791","D2792","D2794" };//Found in To18_2_0()
+						break;
+					case "InsBenSRPCodes":
+						listDefaultCodes=new List<string> { "D4341","D4342" };//Found in To18_2_0()
+						break;
+					case "InsBenFullDebridementCodes":
+						listDefaultCodes=new List<string> { "D4355" };//Found in To18_2_0()
+						break;
+					case "InsBenPerioMaintCodes":
+						listDefaultCodes=new List<string> { "D4910" };//Found in To18_2_0()
+						break;
+					case "InsBenDenturesCodes":
+						listDefaultCodes=new List<string> { "D5110","D5120","D5130","D5140","D5211","D5212","D5213","D5214","D5221","D5222","D5223","D5224","D5225","D5226" };//Found in To18_2_0()
+						break;
+					case "InsBenImplantCodes":
+						listDefaultCodes=new List<string> { "D6010" };//Found in To18_2_0()
+						break;
+					default:
+						break;
+				}
+				//Loop through the list of duplicate procCodes. Looping backwards so we can remove at the current index.
+				//Removing procCodes here means the procCode was contained in the default code and has been removed from all other preferences.
+				for(int j=listProcCodesDuplicates.Count()-1;j>=0;j--) {
+					//Current procCode is contained in the current preference's default list.
+					if(listDefaultCodes.Contains(listProcCodesDuplicates[j])) {
+						//Loop through the list of preference names again. Inside this loop we are removing the current procCode from all lists.
+						for(int k=0;k<listPreferenceCategories.Count();k++) {
+							//If these are equal, the inner loop of preference names is currently on the preference where the code was found as a default.
+							//We don't want to remove the procCode from the current preference, continue to next preference.
+							if(listPreferenceCategories[i]==listPreferenceCategories[k]) {
+								continue;
+							}
+							//Remove code from list for the current preference.
+							switch(listPreferenceCategories[k]) {
+								case "InsBenBWCodes":
+									listInsBenBWCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenPanoCodes":
+									listInsBenPanoCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenExamCodes":
+									listInsBenExamCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenCancerScreeningCodes":
+									listInsBenCancerScreeningCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenProphyCodes":
+									listInsBenProphyCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenFlourideCodes":
+									listInsBenFlourideCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenSealantCodes":
+									listInsBenSealantCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenCrownCodes":
+									listInsBenCrownCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenSRPCodes":
+									listInsBenSRPCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenFullDebridementCodes":
+									listInsBenFullDebridementCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenPerioMaintCodes":
+									listInsBenPerioMaintCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenDenturesCodes":
+									listInsBenDenturesCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenImplantCodes":
+									listInsBenImplantCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								default:
+									break;
+							}
+						}
+						//ProcCode has been processed, remove from list so we don't process it again later.
+						listProcCodesDuplicates.RemoveAt(j);
+					}
+				}
+			}
+			//Loop through all remaining procCodes. These codes are not contained in any duplicate code so we will leave the procCode in the first preference we see.
+			//Loop through the preference categories again. Grab the list of procCodes for the current preference.
+			//These lists may have been modified from the previous loop.
+			for(int i=0;i<listPreferenceCategories.Count;i++) {
+				List<string> listProcCodesForPrefCur=new List<string>();
+				switch(listPreferenceCategories[i]) {
+					case "InsBenBWCodes":
+						listProcCodesForPrefCur=listInsBenBWCodes;
+						break;
+					case "InsBenPanoCodes":
+						listProcCodesForPrefCur=listInsBenPanoCodes;
+						break;
+					case "InsBenExamCodes":
+						listProcCodesForPrefCur=listInsBenExamCodes;
+						break;
+					case "InsBenCancerScreeningCodes":
+						listProcCodesForPrefCur=listInsBenCancerScreeningCodes;
+						break;
+					case "InsBenProphyCodes":
+						listProcCodesForPrefCur=listInsBenProphyCodes;
+						break;
+					case "InsBenFlourideCodes":
+						listProcCodesForPrefCur=listInsBenFlourideCodes;
+						break;
+					case "InsBenSealantCodes":
+						listProcCodesForPrefCur=listInsBenSealantCodes;
+						break;
+					case "InsBenCrownCodes":
+						listProcCodesForPrefCur=listInsBenCrownCodes;
+						break;
+					case "InsBenSRPCodes":
+						listProcCodesForPrefCur=listInsBenSRPCodes;
+						break;
+					case "InsBenFullDebridementCodes":
+						listProcCodesForPrefCur=listInsBenFullDebridementCodes;
+						break;
+					case "InsBenPerioMaintCodes":
+						listProcCodesForPrefCur=listInsBenPerioMaintCodes;
+						break;
+					case "InsBenDenturesCodes":
+						listProcCodesForPrefCur=listInsBenDenturesCodes;
+						break;
+					case "InsBenImplantCodes":
+						listProcCodesForPrefCur=listInsBenImplantCodes;
+						break;
+					default:
+						break;
+				}
+				//Loop through remaining duplicate procedure codes.
+				for(int j=listProcCodesDuplicates.Count()-1;j>=0;j--) {
+					//If the current preference contains the current procCode, remove the procCode from all other preferences.
+					if(listProcCodesForPrefCur.Contains(listProcCodesDuplicates[j])) {
+						//Loop through the list of preference names again. Inside this loop we are removing the current procCode from all lists.
+						for(int k=0;k<listPreferenceCategories.Count();k++) {
+							//If these are equal, the inner loop of preference names is currently on the preference where the code was found as a default.
+							//We don't want to remove the procCode from the current preference, continue to next preference.
+							if(listPreferenceCategories[i]==listPreferenceCategories[k]) {
+								continue;
+							}
+							switch(listPreferenceCategories[k]) {
+								case "InsBenBWCodes":
+									listInsBenBWCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenPanoCodes":
+									listInsBenPanoCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenExamCodes":
+									listInsBenExamCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenCancerScreeningCodes":
+									listInsBenCancerScreeningCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenProphyCodes":
+									listInsBenProphyCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenFlourideCodes":
+									listInsBenFlourideCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenSealantCodes":
+									listInsBenSealantCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenCrownCodes":
+									listInsBenCrownCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenSRPCodes":
+									listInsBenSRPCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenFullDebridementCodes":
+									listInsBenFullDebridementCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenPerioMaintCodes":
+									listInsBenPerioMaintCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenDenturesCodes":
+									listInsBenDenturesCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								case "InsBenImplantCodes":
+									listInsBenImplantCodes.Remove(listProcCodesDuplicates[j]);
+									break;
+								default:
+									break;
+							}
+						}
+					}
+				}
+			}
+			//Looping through each preference one more time, this time to update the database with the modified preferences.
+			for(int i=0;i<listPreferenceCategories.Count();i++) {
+				//Get the list of procCodes we are updating for the current preference.
+				List<string> listToUpdate=new List<string>();
+				switch(listPreferenceCategories[i]) {
+					case "InsBenBWCodes":
+						listToUpdate=listInsBenBWCodes;
+						break;
+					case "InsBenPanoCodes":
+						listToUpdate=listInsBenPanoCodes;
+						break;
+					case "InsBenExamCodes":
+						listToUpdate=listInsBenExamCodes;
+						break;
+					case "InsBenCancerScreeningCodes":
+						listToUpdate=listInsBenCancerScreeningCodes;
+						break;
+					case "InsBenProphyCodes":
+						listToUpdate=listInsBenProphyCodes;
+						break;
+					case "InsBenFlourideCodes":
+						listToUpdate=listInsBenFlourideCodes;
+						break;
+					case "InsBenSealantCodes":
+						listToUpdate=listInsBenSealantCodes;
+						break;
+					case "InsBenCrownCodes":
+						listToUpdate=listInsBenCrownCodes;
+						break;
+					case "InsBenSRPCodes":
+						listToUpdate=listInsBenSRPCodes;
+						break;
+					case "InsBenFullDebridementCodes":
+						listToUpdate=listInsBenFullDebridementCodes;
+						break;
+					case "InsBenPerioMaintCodes":
+						listToUpdate=listInsBenPerioMaintCodes;
+						break;
+					case "InsBenDenturesCodes":
+						listToUpdate=listInsBenDenturesCodes;
+						break;
+					case "InsBenImplantCodes":
+						listToUpdate=listInsBenImplantCodes;
+						break;
+					default:
+						break;
+				}
+				//Update preference.
+				command="UPDATE preference SET ValueString='"+POut.String(String.Join(",",listToUpdate))+"' WHERE PrefName='"+POut.String(listPreferenceCategories[i])+"'";
+				Db.NonQ(command);
+			}
+		}
 		#endregion
 
 		private static void To20_5_1() {
@@ -2798,6 +3171,10 @@ namespace OpenDentBusiness {
 			}
 		}//End of 22_1_39() method
 
+		private static void To22_1_44() {
+			RemoveDuplicateProcCodesFromFrequencyLimitationPreferences();
+		}//End of 22_1_44() method
+
 
 		private static void To22_2_1() {
 			DataTable table;
@@ -3422,6 +3799,9 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}//End of 22_2_15() method
 
+		private static void To22_2_18() {
+			RemoveDuplicateProcCodesFromFrequencyLimitationPreferences();
+		}//End of 22_2_18() method
 	}
 }
 

@@ -1612,10 +1612,10 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary></summary>
-		public static DataTable GetAddrTableForWebSched(List<long> recallNums,bool groupByFamily,RecallListSort sortBy) {
+		public static DataTable GetAddrTableForWebSched(List<long> recallNums,bool groupByFamily,RecallListSort sortBy,List<CommType> listCommTypes=null) {
 			//No need to check MiddleTierRole; no call to db.
 			DataTable rawTable=GetAddrTableRaw(recallNums);
-			HashSet<long> hashRecallNumsUnsent=WebSchedRecalls.GetAllUnsent().Select(x => x.RecallNum).Distinct().ToHashSet();
+			HashSet<long> hashRecallNumsUnsent=WebSchedRecalls.GetAllUnsent(listCommTypes).Select(x => x.RecallNum).Distinct().ToHashSet();
 			//Only return rows where there isn't already a pending WebSchedRecall.
 			List<DataRow> rawRows=rawTable.Rows.AsEnumerable<DataRow>().Where(x => !hashRecallNumsUnsent.Contains(PIn.Long(x["RecallNum"].ToString()))).ToList();
 			RecallComparer comparer=new RecallComparer();
