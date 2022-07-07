@@ -4224,7 +4224,7 @@ namespace OpenDental{
 			if(Security.IsAuthorized(Permissions.UnrestrictedSearch,suppressMessage:true)){
 				return false;
 			}
-			List<long> listUserClinicNums = Clinics.GetAllForUserod(Security.CurUser).Select(x => x.ClinicNum).ToList();
+			List<long> listUserClinicNums=Clinics.GetForUserod(Security.CurUser,!Security.CurUser.ClinicIsRestricted).Select(x=>x.ClinicNum).ToList();
 			Patient patient = Patients.GetLim(patNum);
 			if(ListTools.In(patient.ClinicNum,listUserClinicNums) 
 				|| Appointments.GetAppointmentsForPat(patNum).Select(x => x.ClinicNum).Any(x => ListTools.In(x,listUserClinicNums))) {

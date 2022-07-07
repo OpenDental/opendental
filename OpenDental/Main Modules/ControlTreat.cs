@@ -1844,6 +1844,7 @@ namespace OpenDental{
 				}
 				Sheet sheetTP=TreatPlanToSheet(treatPlan);
 				SheetPrinting.CreatePdf(sheetTP,filePathAndName,null);
+				SaveTPAsDocument(isSigSave:false,sheetTP);
 			}
 			else{//generate and save a new document from scratch
 				MigraDoc.Rendering.PdfDocumentRenderer pdfRenderer=new MigraDoc.Rendering.PdfDocumentRenderer(true,PdfFontEmbedding.Always);

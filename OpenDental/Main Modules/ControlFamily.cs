@@ -2497,27 +2497,47 @@ namespace OpenDental{
 					{
 						strDesc+=Lan.g(this,"Ortho Max")+" ";
 					}
-					else if(Benefits.IsExamFrequency(benefitMatrix[x,y])) {
+					else if(Benefits.IsExamFrequency(benefitMatrix[x,y]) && !_gridIns.ListGridRows.Any(x => x.Cells[0].Text.Contains(Lan.g(this,"Exam frequency")+" "))) {
 						strDesc+=Lan.g(this,"Exam frequency")+" ";
 						hasSpecialFreqAdded=true;
 					}
-					else if(Benefits.IsBitewingFrequency(benefitMatrix[x,y])) {
+					else if(Benefits.IsBitewingFrequency(benefitMatrix[x,y]) 
+						&& !_gridIns.ListGridRows.Any(x => x.Cells[0].Text.Contains(Lan.g(this,"BW frequency")+" "))
+						&& (benefitMatrix[x,y].CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.BitewingCode) 
+							|| listBensForPat.FirstOrDefault(x => ProcedureCodes.GetCodeNum(ProcedureCodes.BitewingCode)==x.CodeNum)==null)) 
+					{
 						strDesc+=Lan.g(this,"BW frequency")+" ";
 						hasSpecialFreqAdded=true;
 					}
-					else if(Benefits.IsPanoFrequency(benefitMatrix[x,y])) {
+					else if(Benefits.IsPanoFrequency(benefitMatrix[x,y]) 
+						&& !_gridIns.ListGridRows.Any(x => x.Cells[0].Text.Contains(Lan.g(this,"Pano/FMX frequency")+" "))
+						&& (benefitMatrix[x,y].CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.PanoCode) 
+							|| listBensForPat.FirstOrDefault(x => ProcedureCodes.GetCodeNum(ProcedureCodes.PanoCode)==x.CodeNum)==null)) 
+					{
 						strDesc+=Lan.g(this,"Pano/FMX frequency")+" ";
 						hasSpecialFreqAdded=true;
 					}
-					else if(Benefits.IsCancerScreeningFrequency(benefitMatrix[x,y])) {
+					else if(Benefits.IsCancerScreeningFrequency(benefitMatrix[x,y]) 
+						&& !_gridIns.ListGridRows.Any(x => x.Cells[0].Text.Contains(Lan.g(this,"Cancer Screening frequency")+" "))
+						&& (benefitMatrix[x,y].CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.CancerScreeningCode) 
+							|| listBensForPat.FirstOrDefault(x => ProcedureCodes.GetCodeNum(ProcedureCodes.CancerScreeningCode)==x.CodeNum)==null)) 
+					{
 						strDesc+=Lan.g(this,"Cancer Screening frequency")+" ";
 						hasSpecialFreqAdded=true;
 					}
-					else if(Benefits.IsProphyFrequency(benefitMatrix[x,y])) {
+					else if(Benefits.IsProphyFrequency(benefitMatrix[x,y]) 
+						&& !_gridIns.ListGridRows.Any(x => x.Cells[0].Text.Contains(Lan.g(this,"Prophy frequency")+" "))
+						&& (benefitMatrix[x,y].CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.ProphyCode) 
+							|| listBensForPat.FirstOrDefault(x => ProcedureCodes.GetCodeNum(ProcedureCodes.ProphyCode)==x.CodeNum)==null)) 
+					{
 						strDesc+=Lan.g(this,"Prophy frequency")+" ";
 						hasSpecialFreqAdded=true;
 					}
-					else if(Benefits.IsFlourideFrequency(benefitMatrix[x,y])) {
+					else if(Benefits.IsFlourideFrequency(benefitMatrix[x,y]) 
+						&& !_gridIns.ListGridRows.Any(x => x.Cells[0].Text.Contains(Lan.g(this,"Fluoride frequency")+" "))
+						&& (benefitMatrix[x,y].CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.FlourideCode) 
+							|| listBensForPat.FirstOrDefault(x => ProcedureCodes.GetCodeNum(ProcedureCodes.FlourideCode)==x.CodeNum)==null)) 
+					{
 						strDesc+=Lan.g(this,"Fluoride frequency")+" ";
 						hasSpecialFreqAdded=true;
 					}
@@ -2525,7 +2545,11 @@ namespace OpenDental{
 						strDesc+=Lan.g(this,"Fluoride age limit")+" ";
 						hasSpecialAgeLimitAdded=true;
 					}
-					else if(Benefits.IsSealantFrequency(benefitMatrix[x,y])) {
+					else if(Benefits.IsSealantFrequency(benefitMatrix[x,y]) 
+						&& !_gridIns.ListGridRows.Any(x => x.Cells[0].Text.Contains(Lan.g(this,"Sealant frequency")+" "))
+						&& (benefitMatrix[x,y].CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.SealantCode) 
+							|| listBensForPat.FirstOrDefault(x => ProcedureCodes.GetCodeNum(ProcedureCodes.SealantCode)==x.CodeNum)==null)) 
+					{
 						strDesc+=Lan.g(this,"Sealant frequency")+" ";
 						hasSpecialFreqAdded=true;
 					}
@@ -2533,27 +2557,51 @@ namespace OpenDental{
 						strDesc+=Lan.g(this,"Sealant age limit")+" ";
 						hasSpecialAgeLimitAdded=true;
 					}
-					else if(Benefits.IsCrownFrequency(benefitMatrix[x,y])) {
+					else if(Benefits.IsCrownFrequency(benefitMatrix[x,y]) 
+						&& !_gridIns.ListGridRows.Any(x => x.Cells[0].Text.Contains(Lan.g(this,"Crown frequency")+" "))
+						&& (benefitMatrix[x,y].CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.CrownCode) 
+							|| listBensForPat.FirstOrDefault(x => ProcedureCodes.GetCodeNum(ProcedureCodes.CrownCode)==x.CodeNum)==null)) 
+					{
 						strDesc+=Lan.g(this,"Crown frequency")+" ";
 						hasSpecialFreqAdded=true;
 					}
-					else if(Benefits.IsSRPFrequency(benefitMatrix[x,y])) {
+					else if(Benefits.IsSRPFrequency(benefitMatrix[x,y]) 
+						&& !_gridIns.ListGridRows.Any(x => x.Cells[0].Text.Contains(Lan.g(this,"SRP frequency")+" "))
+						&& (benefitMatrix[x,y].CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.SRPCode) 
+							|| listBensForPat.FirstOrDefault(x => ProcedureCodes.GetCodeNum(ProcedureCodes.SRPCode)==x.CodeNum)==null)) 
+					{
 						strDesc+=Lan.g(this,"SRP frequency")+" ";
 						hasSpecialFreqAdded=true;
 					}
-					else if(Benefits.IsFullDebridementFrequency(benefitMatrix[x,y])) {
+					else if(Benefits.IsFullDebridementFrequency(benefitMatrix[x,y]) 
+						&& !_gridIns.ListGridRows.Any(x => x.Cells[0].Text.Contains(Lan.g(this,"Full Debridement frequency")+" "))
+						&& (benefitMatrix[x,y].CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.FullDebridementCode) 
+							|| listBensForPat.FirstOrDefault(x => ProcedureCodes.GetCodeNum(ProcedureCodes.FullDebridementCode)==x.CodeNum)==null)) 
+					{
 						strDesc+=Lan.g(this,"Full Debridement frequency")+" ";
 						hasSpecialFreqAdded=true;
 					}
-					else if(Benefits.IsPerioMaintFrequency(benefitMatrix[x,y])) {
+					else if(Benefits.IsPerioMaintFrequency(benefitMatrix[x,y]) 
+						&& !_gridIns.ListGridRows.Any(x => x.Cells[0].Text.Contains(Lan.g(this,"Perio Maint frequency")+" "))
+						&& (benefitMatrix[x,y].CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.PerioMaintCode) 
+							|| listBensForPat.FirstOrDefault(x => ProcedureCodes.GetCodeNum(ProcedureCodes.PerioMaintCode)==x.CodeNum)==null)) 
+					{
 						strDesc+=Lan.g(this,"Perio Maint frequency")+" ";
 						hasSpecialFreqAdded=true;
 					}
-					else if(Benefits.IsDenturesFrequency(benefitMatrix[x,y])) {
+					else if(Benefits.IsDenturesFrequency(benefitMatrix[x,y]) 
+						&& !_gridIns.ListGridRows.Any(x => x.Cells[0].Text.Contains(Lan.g(this,"Dentures frequency")+" "))
+						&& (benefitMatrix[x,y].CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.DenturesCode) 
+							|| listBensForPat.FirstOrDefault(x => ProcedureCodes.GetCodeNum(ProcedureCodes.DenturesCode)==x.CodeNum)==null)) 
+					{
 						strDesc+=Lan.g(this,"Dentures frequency")+" ";
 						hasSpecialFreqAdded=true;
 					}
-					else if(Benefits.IsImplantFrequency(benefitMatrix[x,y])) {
+					else if(Benefits.IsImplantFrequency(benefitMatrix[x,y]) 
+						&& !_gridIns.ListGridRows.Any(x => x.Cells[0].Text.Contains(Lan.g(this,"Implants frequency")+" "))
+						&& (benefitMatrix[x,y].CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.ImplantCode) 
+							|| listBensForPat.FirstOrDefault(x => ProcedureCodes.GetCodeNum(ProcedureCodes.ImplantCode)==x.CodeNum)==null)) 
+					{
 						strDesc+=Lan.g(this,"Implants frequency")+" ";
 						hasSpecialFreqAdded=true;
 					}

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using OpenDentBusiness;
 using CodeBase;
+using System.Text;
 
 namespace OpenDental{
 	public partial class FormModuleSetup:FormODBase {
@@ -1104,7 +1105,32 @@ namespace OpenDental{
 		}
 
 		///<summary>Returns false if validation fails.</summary>
+		private List<string> GetDuplicateFrequencyLimitationCodes() {
+			List<string> listProcCodes=textInsBW.Text.Split(",",StringSplitOptions.RemoveEmptyEntries).Concat(
+				textInsPano.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsExam.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsCancerScreen.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsProphy.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsFlouride.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsSealant.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsCrown.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsSRP.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsDebridement.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsPerioMaint.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsDentures.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).Concat(
+				textInsImplant.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)).ToList();
+			return listProcCodes.GroupBy(x => x).Where(x => x.Count()>1).Select(x => x.Key).ToList();
+		}
+
 		private bool SaveTreatPlan(){
+			List<string> listProcCodesDuplicate=GetDuplicateFrequencyLimitationCodes();
+			if(!listProcCodesDuplicate.IsNullOrEmpty()) {
+				StringBuilder stringBuilder=new StringBuilder();
+				stringBuilder.AppendLine(Lan.g(this,"Frequency Limitation preferences are invalid. The following codes are present multiple times:"));
+				stringBuilder.AppendLine(string.Join(",",listProcCodesDuplicate));
+				MsgBox.Show(stringBuilder.ToString());
+				return false;
+			}
 			float percent=0;
 			if(!float.TryParse(textDiscountPercentage.Text,out percent)) {
 				MsgBox.Show(this,"Procedure discount percent is invalid. Please enter a valid number to continue.");

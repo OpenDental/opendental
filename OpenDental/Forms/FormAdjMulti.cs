@@ -459,7 +459,7 @@ namespace OpenDental {
 			if(hasNegAmt && !MsgBox.Show(this,MsgBoxButtons.YesNo,"Remaining amount on a procedure is negative. Continue?","Overpaid Procedure Warning")) {
 				return;
 			}
-			if(!Security.IsAuthorized(Permissions.AdjustmentCreate,true)) {//User does not have full edit permission.
+			if(!Security.IsAuthorized(Permissions.AdjustmentCreate,PIn.Date(dateAdjustment.Text),true)) {//User does not have full edit permission.
 				//Therefore the user only has the ability to edit $0 adjustments (see Load()).
 				if(_listAdjustments.Any(x => !CompareDouble.IsZero(x.AdjAmt))) {
 					MsgBox.Show(this,"Amount has to be 0.00 due to security permission.");

@@ -1314,7 +1314,7 @@ namespace OpenDentBusiness{
 			ClaimProc claimProc,Procedure proc, double feeBilled, DateTime dateBanding, int totalMonths, int monthsRem) {
 			//No remoting role check; no call to db
 			ClaimProc claimProcCur=Procedures.GetClaimProcEstimate(proc.ProcNum,new List<ClaimProc> { claimProc },insPlanCur,inssubCur.InsSubNum);
-			List<PatPlan> listPatPlansForPat = PatPlans.GetPatPlansForPat(patPlanCur.PatNum);
+			List<PatPlan> listPatPlansForPat = PatPlans.Refresh(patPlanCur.PatNum);
 			List<InsPlan> listInsPlansForPat = InsPlans.GetByInsSubs(listPatPlansForPat.Select(x => x.InsSubNum).ToList());
 			List<InsSub> listInsSubsForPat = InsSubs.GetMany(listPatPlansForPat.Select(x => x.InsSubNum).ToList());
 			if(claimProcCur==null) {

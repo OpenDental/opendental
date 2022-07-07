@@ -243,6 +243,13 @@ namespace OpenDentBusiness{
 			MakeLogEntry(permType,patNum,logText,fKey,logSource,0,0,DateTPrevious);
 		}
 
+		///<summary>Takes a foreign key to a table associated with that PermType.  PatNum can be 0. Allows user to be specified. </summary>
+		public static void MakeLogEntry(Permissions permType, long patNum, string logText, long fKey, LogSources logSource, DateTime DateTPrevious, long userNum) {
+			//No need to check MiddleTierRole; no call to db.
+			SecurityLog securityLog = MakeLogEntryNoInsert(permType, patNum, logText, fKey, logSource, 0, 0, DateTPrevious, userNum);
+			MakeLogEntry(securityLog);
+		}
+
 		///<summary>Takes a foreign key to a table associated with that PermType.  PatNum can be 0.</summary>
 		public static void MakeLogEntry(Permissions permType,long patNum,string logText,long fKey,LogSources logSource,long defNum,long defNumError,
 			DateTime DateTPrevious) 
@@ -310,12 +317,12 @@ namespace OpenDentBusiness{
 
 		///<summary>Takes a foreign key to a table associated with that PermType.  PatNum can be 0.  Returns the created SecurityLog object.  Does not perform an insert.</summary>
 		public static SecurityLog MakeLogEntryNoInsert(Permissions permType,long patNum,string logText,long fKey,LogSources logSource,long defNum=0,
-			long defNumError=0,DateTime DateTPrevious=default(DateTime)) 
+			long defNumError=0,DateTime DateTPrevious=default(DateTime), long userNum=0) 
 		{
 			//No need to check RemotingRole; no call to db.
 			SecurityLog securityLog=new SecurityLog();
 			securityLog.PermType=permType;
-			securityLog.UserNum=Security.CurUser.UserNum;
+			securityLog.UserNum= userNum == 0 ? Security.CurUser.UserNum : userNum;//need to be able to pass in UserNum from mobile app user
 			securityLog.LogText=logText;
 			securityLog.CompName=Security.CurComputerName;
 			securityLog.PatNum=patNum;
