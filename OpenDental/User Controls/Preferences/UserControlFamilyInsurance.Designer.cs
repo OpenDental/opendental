@@ -45,6 +45,8 @@ namespace OpenDental {
 			this.butCoPayFeeScheduleBlankLikeZero = new OpenDental.UI.Button();
 			this.butFixedBenefitBlankLikeZero = new OpenDental.UI.Button();
 			this.butInsPlanExclusionsUseUCR = new OpenDental.UI.Button();
+			this.labelInsPPOsecWriteoffsDetails = new System.Windows.Forms.Label();
+			this.labelClaimUseOverrideProcDescriptDetails = new System.Windows.Forms.Label();
 			this.groupBoxInsuranceGeneral.SuspendLayout();
 			this.groupBoxOtherInsInfo.SuspendLayout();
 			this.groupBoxClaims.SuspendLayout();
@@ -92,7 +94,7 @@ namespace OpenDental {
 			this.checkInsPPOsecWriteoffs.Name = "checkInsPPOsecWriteoffs";
 			this.checkInsPPOsecWriteoffs.Size = new System.Drawing.Size(425, 17);
 			this.checkInsPPOsecWriteoffs.TabIndex = 270;
-			this.checkInsPPOsecWriteoffs.Text = "Calculate secondary insurance PPO write-offs (not recommended, see manual)";
+			this.checkInsPPOsecWriteoffs.Text = "Calculate secondary insurance PPO write-offs";
 			this.checkInsPPOsecWriteoffs.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkInsPPOsecWriteoffs.UseVisualStyleBackColor = true;
 			// 
@@ -197,7 +199,7 @@ namespace OpenDental {
 			this.checkPatInitBillingTypeFromPriInsPlan.Name = "checkPatInitBillingTypeFromPriInsPlan";
 			this.checkPatInitBillingTypeFromPriInsPlan.Size = new System.Drawing.Size(400, 17);
 			this.checkPatInitBillingTypeFromPriInsPlan.TabIndex = 298;
-			this.checkPatInitBillingTypeFromPriInsPlan.Text = "New patient primary insurance plan sets patient billing type";
+			this.checkPatInitBillingTypeFromPriInsPlan.Text = "Adding new primary insurance plan to patient sets billing type";
 			this.checkPatInitBillingTypeFromPriInsPlan.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// groupBoxOtherInsInfo
@@ -240,8 +242,8 @@ namespace OpenDental {
 			this.labelPatInitBillingTypeFromPriInsPlanDetails.Name = "labelPatInitBillingTypeFromPriInsPlanDetails";
 			this.labelPatInitBillingTypeFromPriInsPlanDetails.Size = new System.Drawing.Size(498, 18);
 			this.labelPatInitBillingTypeFromPriInsPlanDetails.TabIndex = 361;
-			this.labelPatInitBillingTypeFromPriInsPlanDetails.Text = "but changing an insurance plan\'s billing type will not change the patient\'s billi" +
-    "ng type";
+			this.labelPatInitBillingTypeFromPriInsPlanDetails.Text = "but changing an existing insurance plan\'s billing type will not change the patien" +
+    "t\'s billing type";
 			this.labelPatInitBillingTypeFromPriInsPlanDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelInsPlanExclusionsMarkDoNotBillDetails
@@ -285,11 +287,36 @@ namespace OpenDental {
 			this.butInsPlanExclusionsUseUCR.Text = "Details";
 			this.butInsPlanExclusionsUseUCR.Click += new System.EventHandler(this.butInsPlanExclusionsUseUCR_Click);
 			// 
+			// labelInsPPOsecWriteoffsDetails
+			// 
+			this.labelInsPPOsecWriteoffsDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelInsPPOsecWriteoffsDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelInsPPOsecWriteoffsDetails.Location = new System.Drawing.Point(476, 168);
+			this.labelInsPPOsecWriteoffsDetails.Name = "labelInsPPOsecWriteoffsDetails";
+			this.labelInsPPOsecWriteoffsDetails.Size = new System.Drawing.Size(498, 18);
+			this.labelInsPPOsecWriteoffsDetails.TabIndex = 367;
+			this.labelInsPPOsecWriteoffsDetails.Text = "not recommended";
+			this.labelInsPPOsecWriteoffsDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelClaimUseOverrideProcDescriptDetails
+			// 
+			this.labelClaimUseOverrideProcDescriptDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelClaimUseOverrideProcDescriptDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelClaimUseOverrideProcDescriptDetails.Location = new System.Drawing.Point(476, 349);
+			this.labelClaimUseOverrideProcDescriptDetails.Name = "labelClaimUseOverrideProcDescriptDetails";
+			this.labelClaimUseOverrideProcDescriptDetails.Size = new System.Drawing.Size(498, 18);
+			this.labelClaimUseOverrideProcDescriptDetails.TabIndex = 368;
+			this.labelClaimUseOverrideProcDescriptDetails.Text = "useful when charting custom procedures, otherwise uses base procedure code descri" +
+    "ption";
+			this.labelClaimUseOverrideProcDescriptDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// UserControlFamilyInsurance
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.labelClaimUseOverrideProcDescriptDetails);
+			this.Controls.Add(this.labelInsPPOsecWriteoffsDetails);
 			this.Controls.Add(this.butInsPlanExclusionsUseUCR);
 			this.Controls.Add(this.butFixedBenefitBlankLikeZero);
 			this.Controls.Add(this.butCoPayFeeScheduleBlankLikeZero);
@@ -330,5 +357,7 @@ namespace OpenDental {
 		private UI.Button butCoPayFeeScheduleBlankLikeZero;
 		private UI.Button butFixedBenefitBlankLikeZero;
 		private UI.Button butInsPlanExclusionsUseUCR;
+		private System.Windows.Forms.Label labelInsPPOsecWriteoffsDetails;
+		private System.Windows.Forms.Label labelClaimUseOverrideProcDescriptDetails;
 	}
 }

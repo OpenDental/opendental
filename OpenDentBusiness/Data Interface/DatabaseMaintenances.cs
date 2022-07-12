@@ -10075,7 +10075,7 @@ HAVING cnt>1";
 										 FROM (
 												SELECT COUNT(*)-1 CountDup 
 												FROM orthochart 
-												GROUP BY PatNum,DateService,BINARY FieldName,BINARY FieldValue 
+												GROUP BY PatNum,ProvNum,DateService,BINARY FieldName,BINARY FieldValue 
 												HAVING COUNT(*) > 1
 											) duplicates";
 			long numFound=PIn.Long(Db.GetCount(command));
@@ -10089,7 +10089,7 @@ HAVING cnt>1";
 								JOIN (
 									SELECT MAX(OrthoChartNum) maxNum
 									FROM orthochartbak
-									GROUP BY PatNum,DateService,BINARY FieldName,BINARY FieldValue
+									GROUP BY PatNum,ProvNum,DateService,BINARY FieldName,BINARY FieldValue
 									ORDER BY NULL
 								) o2
 								WHERE orthochartbak.OrthoChartNum=o2.maxNum";
@@ -10104,7 +10104,7 @@ HAVING cnt>1";
 			//The manual fix would be something along the lines of manually going each ortho chart, removing duplicate values by opening and closing
 			//the ortho chart several times until the field that had duplicates loads with no data.  At that point all duplicates should have been
 			//removed and the new / correct value can be entered by the user.
-			command="SELECT * FROM orthochart GROUP BY PatNum,DateService,BINARY FieldName HAVING COUNT(*) > 1";
+			command="SELECT * FROM orthochart GROUP BY PatNum,OrthoChartRowNum,ProvNum,DateService,BINARY FieldName HAVING COUNT(*) > 1";
 			DataTable table=Db.GetTable(command);
 			if(table.Rows.Count>0) {
 				log+=Lans.g("FormDatabaseMaintenance","Potential duplicate entries could not be deleted for all ortho charts. "+table.Rows.Count

@@ -1196,7 +1196,6 @@ namespace OpenDental {
 			ClaimProc claimProcHypothetical=_claimProc.Copy();
 			claimProcHypothetical.InsPayAmt=PIn.Double(textInsPayAmt.Text);
 			claimProcHypothetical.WriteOff=PIn.Double(textWriteOff.Text);
-			claimProcHypothetical.FeeBilled=_procedure.ProcFeeTotal;
 			listClaimProcHypothetical.Add(claimProcHypothetical);
 			return listClaimProcHypothetical;
     }
@@ -1261,7 +1260,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"The current write-off value will cause the procedure's total write-off to be negative.  Please change it to at least "+(_claimProc.WriteOff-(claimWriteoffTotal+_claimProc.WriteOff)).ToString()+" to continue.");
 				return;
 			}
-			if(IsProc && ClaimL.AreCreditsGreaterThanProcFee(_patient.PatNum,GetListClaimProcHypothetical())) {
+			if(IsProc && ClaimL.AreCreditsGreaterThanProcFee(GetListClaimProcHypothetical())) {
 				return;
 			}
 			if(_claimProc.Status.In(ClaimProcStatus.Received,ClaimProcStatus.Supplemental)

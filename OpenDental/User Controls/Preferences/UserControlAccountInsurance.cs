@@ -49,6 +49,7 @@ namespace OpenDental {
 
 		#region Methods - Public
 		public void FillAccountInsurance() {
+			checkPpoUseUcr.Checked=PrefC.GetBool(PrefName.InsPpoAlwaysUseUcrFee);
 			checkProviderIncomeShows.Checked=PrefC.GetBool(PrefName.ProviderIncomeTransferShows);
 			checkClaimMedTypeIsInstWhenInsPlanIsMedical.Checked=PrefC.GetBool(PrefName.ClaimMedTypeIsInstWhenInsPlanIsMedical);
 			checkClaimFormTreatDentSaysSigOnFile.Checked=PrefC.GetBool(PrefName.ClaimFormTreatDentSaysSigOnFile);
@@ -76,13 +77,13 @@ namespace OpenDental {
 			checkShowClaimPatResp.CheckState=PrefC.GetYNCheckState(PrefName.ClaimEditShowPatResponsibility);
 			checkCanadianPpoLabEst.Checked=PrefC.GetBool(PrefName.CanadaCreatePpoLabEst);
 			checkClaimPrimaryRecievedForceSecondaryStatus.Checked=PrefC.GetBool(PrefName.ClaimPrimaryRecievedForceSecondaryStatus);
-			checkPpoUseUcr.Checked=PrefC.GetBool(PrefName.InsPpoAlwaysUseUcrFee);
 			if(!CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
 				checkCanadianPpoLabEst.Visible=false;
 			}
 		}
 
 		public bool SaveAccountInsurance() {
+			Changed|=Prefs.UpdateBool(PrefName.InsPpoAlwaysUseUcrFee,checkPpoUseUcr.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.ProviderIncomeTransferShows,checkProviderIncomeShows.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.ClaimFormTreatDentSaysSigOnFile,checkClaimFormTreatDentSaysSigOnFile.Checked);
 			Changed|=Prefs.UpdateString(PrefName.ClaimAttachExportPath,textClaimAttachPath.Text);
@@ -106,7 +107,6 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateYN(PrefName.ClaimEditShowPayTracking,checkShowClaimPayTracking.CheckState);
 			Changed|=Prefs.UpdateYN(PrefName.ClaimEditShowPatResponsibility,checkShowClaimPatResp.CheckState);
 			Changed|=Prefs.UpdateBool(PrefName.ClaimPrimaryRecievedForceSecondaryStatus,checkClaimPrimaryRecievedForceSecondaryStatus.Checked);
-			Changed|=Prefs.UpdateBool(PrefName.InsPpoAlwaysUseUcrFee,checkPpoUseUcr.Checked);
 			return true;
 		}
 		#endregion Methods - Public

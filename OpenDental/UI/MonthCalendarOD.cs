@@ -34,6 +34,7 @@ namespace OpenDental.UI{
 		///<summary>Identifies the hot hover cell.  Row 0 is never used because that's the days of week. 0,0 indicates no hot.</summary>
 		private Point _pointHotHover;
 		private Rectangle _rectangleLeftArrow;
+		private Rectangle _rectangleMonthYear;
 		private Rectangle _rectangleRightArrow;
 		private Rectangle _rectangleTodayHover;
 		///<summary>x Position of left of each cell.  Always 7 columns</summary>
@@ -82,6 +83,21 @@ namespace OpenDental.UI{
 					_monthShowing=new DateTime(_dateSelected.Year,_dateSelected.Month,1);
 				}
 				Invalidate();
+			}
+			if(_rectangleMonthYear.Contains(e.Location)) {
+				FormDatePicker formDatePicker=new FormDatePicker();
+				formDatePicker.DateEntered=_dateSelected;
+				formDatePicker.PointStartLocation=PointToScreen(Location);
+				formDatePicker.WidthForm=Width;
+				formDatePicker.ShowDialog();
+				if(formDatePicker.DialogResult==DialogResult.OK) {
+					_dateSelected=formDatePicker.DateEntered;
+					if(_dateSelected.Month!=_monthShowing.Month){
+						_monthShowing=new DateTime(_dateSelected.Year,_dateSelected.Month,1);
+					}
+					DateChanged?.Invoke(this,new EventArgs());
+					Invalidate();
+				}
 			}
 			if(_rectangleLeftArrow.Contains(e.Location)){
 				_monthShowing=_monthShowing.AddMonths(-1);
@@ -247,7 +263,17 @@ namespace OpenDental.UI{
 			int topCellBuffer=(int)((_heightCell-Font.Height)/2f);
 			string strMonth=_monthShowing.ToString("MMMM yyyy");
 			rectangle=new Rectangle(0,topCellBuffer+LayoutManager.Scale(11),Width,LayoutManager.Scale(_heightHeader96));
-			g.DrawString(strMonth,Font,Brushes.Black,rectangle,stringFormat);
+			//Hover Month/Year text=======================================================================================
+			SizeF strMonthSize=g.MeasureString(strMonth,Font);
+			//Draw the rectangle based on the text size and location with some buffer around the text
+			_rectangleMonthYear=new Rectangle((Width/2-(int)strMonthSize.Width/2)-LayoutManager.Scale(10),(LayoutManager.Scale(33)/2-(int)strMonthSize.Height/2)
+				-LayoutManager.Scale(5),(int)strMonthSize.Width+LayoutManager.Scale(20),(int)strMonthSize.Height+LayoutManager.Scale(10));
+			if(_rectangleMonthYear.Contains(pointMouse)){
+				g.DrawString(strMonth,Font,Brushes.Blue,rectangle,stringFormat);
+			}
+			else {
+				g.DrawString(strMonth,Font,Brushes.Black,rectangle,stringFormat);
+			}
 			//Days of week================================================================================================
 			for(int i=0;i<7;i++){
 				rectangle=new Rectangle((int)_xPos[i],(int)_yPos[0]+topCellBuffer,(int)widthCell,(int)_heightCell);

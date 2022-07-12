@@ -465,7 +465,7 @@ namespace OpenDentBusiness {
 					break;
 				case DefCat.BillingTypes:
 					bool isClinicDefaultBillingType=ClinicPrefs.GetPrefAllClinics(PrefName.PracticeDefaultBillType).Any(x => x.ValueString==def.DefNum.ToString());
-					if(isClinicDefaultBillingType) {
+					if(isClinicDefaultBillingType || PrefC.GetLong(PrefName.PracticeDefaultBillType)>0) { //If practice default billing type is greater than 0, then in use.
 						return true;
 					}
 					break;

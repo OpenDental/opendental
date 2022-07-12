@@ -58,7 +58,7 @@ namespace OpenDental{
 			this.butPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butPrint.Image = global::OpenDental.Properties.Resources.butPrintSmall;
 			this.butPrint.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPrint.Location = new System.Drawing.Point(725, 653);
+			this.butPrint.Location = new System.Drawing.Point(725, 654);
 			this.butPrint.Name = "butPrint";
 			this.butPrint.Size = new System.Drawing.Size(85, 25);
 			this.butPrint.TabIndex = 118;
@@ -274,7 +274,7 @@ namespace OpenDental{
 			this.labelLocked.ForeColor = System.Drawing.Color.DarkRed;
 			this.labelLocked.Location = new System.Drawing.Point(285, 660);
 			this.labelLocked.Name = "labelLocked";
-			this.labelLocked.Size = new System.Drawing.Size(182, 20);
+			this.labelLocked.Size = new System.Drawing.Size(142, 20);
 			this.labelLocked.TabIndex = 214;
 			this.labelLocked.Text = "Locked by UserName";
 			// 

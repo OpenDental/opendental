@@ -221,15 +221,18 @@ namespace OpenDental{
 
 		private void radioAll_Click(object sender,EventArgs e) {
 			comboClass.SelectedIndex=0;//Only students are attached to classes
+			comboClass.Enabled=true;//Re-enable classes when all is selected
 			FillGrid();
 		}
 
 		private void radioStudents_Click(object sender,EventArgs e) {
+			comboClass.Enabled=true;//Re-enable classes when students are selected
 			FillGrid();
 		}
 
 		private void radioInstructors_Click(object sender,EventArgs e) {
 			comboClass.SelectedIndex=0;//Only students are attached to classes
+			comboClass.Enabled=false;//Disable classes when instructors are selected
 			FillGrid();
 		}
 

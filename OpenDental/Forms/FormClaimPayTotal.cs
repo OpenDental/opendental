@@ -344,7 +344,7 @@ namespace OpenDental {
 					}	
 				}
 			}
-			if(!skipChecks && ClaimL.AreCreditsGreaterThanProcFee(_patient.PatNum,GetListClaimProcHypothetical())) {
+			if(!skipChecks && ClaimL.AreCreditsGreaterThanProcFee(GetListClaimProcHypothetical())) {
 				return false;
 			}
 			for(int i=0;i<ClaimProcArray.Length;i++) {
@@ -384,10 +384,8 @@ namespace OpenDental {
 				ClaimProc claimProc=ClaimProcArray[i].Copy();
 				int idxInsPay=gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Ins Pay"));
 				int idxWriteOff=gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Write-off"));
-				int idxFeeAcct=gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Fee"));
 				claimProc.InsPayAmt=PIn.Double(gridMain.ListGridRows[i].Cells[idxInsPay].Text);
 				claimProc.WriteOff=PIn.Double(gridMain.ListGridRows[i].Cells[idxWriteOff].Text); 
-				claimProc.FeeBilled=PIn.Double(gridMain.ListGridRows[i].Cells[idxFeeAcct].Text); //Since this column is editable, we need to override the hypothetical claimProcs feebilled.
 				listClaimProcsHypothetical.Add(claimProc);
 			}
 			return listClaimProcsHypothetical;

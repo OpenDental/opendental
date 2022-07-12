@@ -114,7 +114,6 @@ namespace OpenDental {
 			// 
 			// odDateRangePicker
 			// 
-			this.odDateRangePicker.BackColor = System.Drawing.SystemColors.Control;
 			this.odDateRangePicker.Location = new System.Drawing.Point(6, 13);
 			this.odDateRangePicker.MaximumSize = new System.Drawing.Size(0, 185);
 			this.odDateRangePicker.MinimumSize = new System.Drawing.Size(0, 24);

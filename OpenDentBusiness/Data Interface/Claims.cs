@@ -1618,22 +1618,27 @@ namespace OpenDentBusiness{
 		///<summary>Returns a list of strings detailing how procedures are over-credited and what their remaining balances would be.
 		///Considers patient payments, insurance payments, write-offs, and adjustments.
 		///Returns an empty list if no procedures are over-credited.</summary>
-    public static List<string> GetAllCreditsGreaterThanProcFees(long patNum,List<ClaimProc> listClaimProcsHypothetical) {
+    public static List<string> GetAllCreditsGreaterThanProcFees(List<ClaimProc> listClaimProcsHypothetical) {
 			List<string> listProcDescripts=new List<string>();
-			List<ClaimProc> listClaimProcsDB=ClaimProcs.Refresh(patNum);
 			List<Procedure> listProceduresForClaimProcsDB=Procedures.GetManyProc(listClaimProcsHypothetical.Select(x=>x.ProcNum).ToList(),false);
-			List<PaySplit> listPaySplitsForClaimProcsDB=PaySplits.GetPaySplitsFromProcs(listClaimProcsHypothetical.Select(x=>x.ProcNum).ToList());
-			List<Adjustment> listAdjustmentsForClaimProcsDB=Adjustments.GetForProcs(listClaimProcsHypothetical.Select(x=>x.ProcNum).ToList());
+			//We want to use the ProcNums from the list of Procedures to get our other data so that we don't get splits and adjs for ProcNum 0.
+			List<long> listProcNums=listProceduresForClaimProcsDB.Select(x => x.ProcNum).ToList();
+			List<ClaimProc> listClaimProcsDB=ClaimProcs.GetForProcs(listProcNums);
+			List<PaySplit> listPaySplitsForClaimProcsDB=PaySplits.GetPaySplitsFromProcs(listProcNums);
+			List<Adjustment> listAdjustmentsForClaimProcsDB=Adjustments.GetForProcs(listProcNums);
 			for(int i=0;i<listClaimProcsHypothetical.Count;i++) {
 				ClaimProc claimProc=listClaimProcsHypothetical[i];
+				Procedure procedure=listProceduresForClaimProcsDB.FirstOrDefault(x=>x.ProcNum==claimProc.ProcNum);
+				if(procedure==null) {
+					continue;//If ClaimProc is not associated to a procedure, it can't be directly overpaying one.
+				}
 				//Get the sum of all insurance payments on this procedure. Add the InsPayAmt from the current claimproc separately because it may not be in DB yet.
 				decimal insPaySum=(decimal)ClaimProcs.ProcInsPay(listClaimProcsDB.FindAll(x => x.ClaimProcNum!=claimProc.ClaimProcNum),claimProc.ProcNum)
 					+(decimal)claimProc.InsPayAmt;
 				//Get the sum of all write offs on this procedure. Add the Write-off from the current claimproc separately because it may not be in DB yet.
 				decimal writeOffSum=(decimal)ClaimProcs.ProcWriteoff(listClaimProcsDB.FindAll(x => x.ClaimProcNum!=claimProc.ClaimProcNum),claimProc.ProcNum)
 					+(decimal)claimProc.WriteOff;
-				//FeeBilled may have been filled with the procedure's ProcFeeTotal if listClaimProcsHypothetical was created with UI grid values.
-				decimal fee=(decimal)claimProc.FeeBilled;
+				decimal fee=(decimal)procedure.ProcFeeTotal;
 				//Get the sum of all adjustments made on this procedure.
 				decimal adjAmtSum=listAdjustmentsForClaimProcsDB.Where(x=>x.ProcNum==claimProc.ProcNum).Select(x=>(decimal)x.AdjAmt).Sum();
 				//Get the sum of all patient payments made on this procedure.
@@ -1641,9 +1646,11 @@ namespace OpenDentBusiness{
 				//Any changes to this calculation should also consider Claims.GetWriteOffGreaterThanProcFees() and Claims.GetWriteOffsAndInsPaymentsGreaterThanProcFees().
 				//Calculate the remaining fee on the procedure after considering all patient payments, insurance payments, writeoffs, and adjustments.
 				decimal feeRemaining=fee-patPaySum-insPaySum-writeOffSum+adjAmtSum;
+				//In GetWriteOffGreaterThanProcFee() we check if the writeoff is > 0. We may want to check if insPayAmt+writeoff > 0 here.
+				//Or we may only care if InsPayAmt+Writeoff is > 0 zero for the current claimproc. Should a user be blocked if a proc is overpaid,
+				//but no value comes from the claimproc or claim we are evaluating?
 				if(CompareDecimal.IsLessThanZero(feeRemaining)) {
-					Procedure procedure=listProceduresForClaimProcsDB.FirstOrDefault(x=>x.ProcNum==claimProc.ProcNum);
-					listProcDescripts.Add((procedure==null ? "" : ProcedureCodes.GetProcCode(procedure.CodeNum).ProcCode)
+					listProcDescripts.Add(ProcedureCodes.GetProcCode(procedure.CodeNum).ProcCode
 						+"\t"+Lans.g("ClaimS","Fee")+": "+fee.ToString("F")
 						+"\t"+Lans.g("ClaimS","Credits")+": "+(Math.Abs(-patPaySum-insPaySum-writeOffSum+adjAmtSum)).ToString("F")
 						+"\t"+Lans.g("ClaimS","Remaining")+": ("+Math.Abs(feeRemaining).ToString("F")+")");
@@ -1655,19 +1662,23 @@ namespace OpenDentBusiness{
 		///<summary>Returns a list of strings detailing how write-offs over-credit the procedures and what their remaining balances would be.
 		///Considers write-offs and adjustments.
 		///Returns an empty list if no write-offs over-credit the procedures.</summary>
-		public static List<string> GetWriteOffsGreaterThanProcFees(long patNum,List<ClaimProc> listClaimProcsHypothetical) {
+		public static List<string> GetWriteOffsGreaterThanProcFees(List<ClaimProc> listClaimProcsHypothetical) {
 			List<string> listProcDescripts=new List<string>();
-			List<ClaimProc> listClaimProcsDB=ClaimProcs.Refresh(patNum);
 			List<Procedure> listProceduresForClaimProcsDB=Procedures.GetManyProc(listClaimProcsHypothetical.Select(x=>x.ProcNum).ToList(),false);
-			List<PaySplit> listPaySplitsForClaimProcsDB=PaySplits.GetPaySplitsFromProcs(listClaimProcsHypothetical.Select(x=>x.ProcNum).ToList());
-			List<Adjustment> listAdjustmentsForClaimProcsDB=Adjustments.GetForProcs(listClaimProcsHypothetical.Select(x=>x.ProcNum).ToList());
+			//We want to use the ProcNums from the list of Procedures to get our other data so that we don't get splits and adjs for ProcNum 0.
+			List<long> listProcNums=listProceduresForClaimProcsDB.Select(x=>x.ProcNum).ToList();
+			List<ClaimProc> listClaimProcsDB=ClaimProcs.GetForProcs(listProcNums);
+			List<Adjustment> listAdjustmentsForClaimProcsDB=Adjustments.GetForProcs(listProcNums);
 			for(int i=0;i<listClaimProcsHypothetical.Count;i++) {
 				ClaimProc claimProc=listClaimProcsHypothetical[i];
+				Procedure procedure=listProceduresForClaimProcsDB.FirstOrDefault(x=>x.ProcNum==claimProc.ProcNum);
+				if(procedure==null) {
+					continue;//If ClaimProc is not associated to a procedure, it can't be directly overpaying one.
+				}
 				//Get the sum of all write offs on this procedure. Add the Write-off from the current claimproc separately because it may not be in DB yet.
 				decimal writeoffSum=(decimal)ClaimProcs.ProcWriteoff(listClaimProcsDB.FindAll(x => x.ClaimProcNum!=claimProc.ClaimProcNum),claimProc.ProcNum)
 					+(decimal)claimProc.WriteOff;
-				//FeeBilled may have been filled with the procedure's ProcFeeTotal if listClaimProcsHypothetical was created with UI grid values.
-				decimal fee=(decimal)claimProc.FeeBilled;
+				decimal fee=(decimal)procedure.ProcFeeTotal;
 				//Get the sum of all adjustments made on this procedure.
 				decimal adjAmtSum=listAdjustmentsForClaimProcsDB.Where(x=>x.ProcNum==claimProc.ProcNum).Select(x=>(decimal)x.AdjAmt).Sum();
 				//Any changes to this calculation should also consider Claims.GetAllCreditsGreaterThanProcFees() and Claims.GetWriteOffsAndInsPaymentsGreaterThanProcFees().
@@ -1675,8 +1686,7 @@ namespace OpenDentBusiness{
 				decimal feeRemaining=fee-writeoffSum+adjAmtSum;
 				//We need to consider if the writeoff even has any value.
 				if(CompareDecimal.IsLessThanZero(feeRemaining) && CompareDecimal.IsGreaterThanZero(writeoffSum)) {
-					Procedure procedure=Procedures.GetProcFromList(listProceduresForClaimProcsDB,claimProc.ProcNum);//will return a new procedure if none found.
-					listProcDescripts.Add((procedure==null ? "" : ProcedureCodes.GetProcCode(procedure.CodeNum).ProcCode)
+					listProcDescripts.Add(ProcedureCodes.GetProcCode(procedure.CodeNum).ProcCode
 						+"\t"+Lans.g("Claims","Fee")+": "+fee.ToString("F")
 						+"\t"+Lans.g("Claims","Adjustments")+": "+adjAmtSum.ToString("F")
 						+"\t"+Lans.g("Claims","Write-off")+": "+(Math.Abs(writeoffSum)).ToString("F")
@@ -1692,27 +1702,27 @@ namespace OpenDentBusiness{
 		public static List<string> GetInitialPrimaryInsGreaterThanProcFees(List<ClaimProc> listClaimProcsHypothetical) {
 			List<string> listProcDescripts=new List<string>();
 			List<Procedure> listProceduresForClaimProcsDB=Procedures.GetManyProc(listClaimProcsHypothetical.Select(x=>x.ProcNum).ToList(),false);
-			List<Adjustment> listAdjustmentsForClaimProcsDB=Adjustments.GetForProcs(listClaimProcsHypothetical.Select(x=>x.ProcNum).ToList());
+			List<Adjustment> listAdjustmentsForClaimProcsDB=Adjustments.GetForProcs(listProceduresForClaimProcsDB.Select(x=>x.ProcNum).ToList());
 			List<Claim> listPrimaryClaimsForClaimProcsDB=GetClaimsFromClaimNums(listClaimProcsHypothetical.Select(x => x.ClaimNum).ToList())
 				.FindAll(x => x.ClaimType=="P");
 			for(int i=0;i<listClaimProcsHypothetical.Count;i++) {
 				ClaimProc claimProc=listClaimProcsHypothetical[i];
+				Procedure procedure=listProceduresForClaimProcsDB.FirstOrDefault(x=>x.ProcNum==claimProc.ProcNum);
 				Claim claim=listPrimaryClaimsForClaimProcsDB.FirstOrDefault(x => x.ClaimNum==claimProc.ClaimNum);
 				//Only consider claimprocs on primary insurance claims that are not supplemental payments and associated to a procedure.
-				if(claim==null || claimProc.ProcNum==0 || claimProc.Status!=ClaimProcStatus.Received) {
+				if(claim==null || procedure==null || claimProc.Status!=ClaimProcStatus.Received) {
 					continue;
 				}
 				//FeeBilled may have been filled with the procedure's ProcFeeTotal if listClaimProcsHypothetical was created with UI grid values.
-				decimal fee=(decimal)claimProc.FeeBilled;
+				decimal fee=(decimal)procedure.ProcFeeTotal;
 				//Get the sum of all adjustments made on this procedure.
 				decimal adjAmtSum=listAdjustmentsForClaimProcsDB.Where(x=>x.ProcNum==claimProc.ProcNum).Select(x=>(decimal)x.AdjAmt).Sum();
-				Procedure procedure=Procedures.GetProcFromList(listProceduresForClaimProcsDB,claimProc.ProcNum);//will return a new procedure if none found.
 				decimal initialPrimaryInsCredits=(decimal)(claimProc.WriteOff+claimProc.InsPayAmt);
 				//Any changes to this calculation should also consider Claims.GetAllCreditsGreaterThanProcFees() and Claims.GetWriteOffsGreaterThanProcFees().
 				//Calculate the remaining fee on the procedure after considering writeoffs and pay amounts from primary insurance's initial payment and adjustments.
 				decimal feeRemaining=fee-initialPrimaryInsCredits+adjAmtSum;
 				if(CompareDecimal.IsLessThanZero(feeRemaining) && CompareDecimal.IsGreaterThanZero(initialPrimaryInsCredits)) {
-					listProcDescripts.Add((procedure==null ? "" : ProcedureCodes.GetProcCode(procedure.CodeNum).ProcCode)
+					listProcDescripts.Add(ProcedureCodes.GetProcCode(procedure.CodeNum).ProcCode
 						+"\t"+Lans.g("Claims","Fee")+": "+fee.ToString("F")
 						+"\t"+Lans.g("Claims","Adjustments")+": "+adjAmtSum.ToString("F")
 						+"\t"+Lans.g("Claims","Initial Primary Ins Credits")+": "+Math.Abs(initialPrimaryInsCredits).ToString("F")

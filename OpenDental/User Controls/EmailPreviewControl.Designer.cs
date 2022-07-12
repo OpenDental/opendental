@@ -72,7 +72,7 @@
 			// 
 			// textMsgDateTime
 			// 
-			this.textMsgDateTime.BackColor = System.Drawing.SystemColors.Control;
+			this.textMsgDateTime.BackColor = System.Drawing.SystemColors.Window;
 			this.textMsgDateTime.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.textMsgDateTime.ForeColor = System.Drawing.Color.Red;
 			this.textMsgDateTime.Location = new System.Drawing.Point(89, 35);
@@ -149,7 +149,7 @@
 			// 
 			this.textSentOrReceived.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textSentOrReceived.BackColor = System.Drawing.SystemColors.Control;
+			this.textSentOrReceived.BackColor = System.Drawing.SystemColors.Window;
 			this.textSentOrReceived.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.textSentOrReceived.Location = new System.Drawing.Point(89, 18);
 			this.textSentOrReceived.Name = "textSentOrReceived";
@@ -198,7 +198,7 @@
 			// 
 			this.textUserName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textUserName.BackColor = System.Drawing.SystemColors.Control;
+			this.textUserName.BackColor = System.Drawing.SystemColors.Window;
 			this.textUserName.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.textUserName.Location = new System.Drawing.Point(89, 3);
 			this.textUserName.Name = "textUserName";

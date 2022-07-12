@@ -632,20 +632,20 @@ namespace OpenDental {
 
 		///<summary>Returns true if a procedure is over-credited in a way that violates one of the preferences that blocks insurance overpayment.
 		///This is in ClaimL because the methods called will show message boxes.</summary>
-		public static bool AreCreditsGreaterThanProcFee(long patNum,List<ClaimProc> listClaimProcsHypothetical) {
+		public static bool AreCreditsGreaterThanProcFee(List<ClaimProc> listClaimProcsHypothetical) {
 			return IsInitialPrimaryInsGreaterThanProcFees(listClaimProcsHypothetical)
-				|| AreWriteOffsGreaterThanProcFees(patNum,listClaimProcsHypothetical)
-				|| AreAllCreditsGreaterThanProcFees(patNum,listClaimProcsHypothetical);
+				|| AreWriteOffsGreaterThanProcFees(listClaimProcsHypothetical)
+				|| AreAllCreditsGreaterThanProcFees(listClaimProcsHypothetical);
 		}
 
 		///<summary>Returns true if the sum of all credits are not allowed to exceed adjusted procedure fees and one or more procedures are over-credited.
 		///Displays a message detailing how the procedures are over-credited, and what the remaining balances would be.</summary>
-		public static bool AreAllCreditsGreaterThanProcFees(long patNum,List<ClaimProc> listClaimProcsHypothetical) {
+		public static bool AreAllCreditsGreaterThanProcFees(List<ClaimProc> listClaimProcsHypothetical) {
 			ClaimProcCreditsGreaterThanProcFee claimProcCreditsGreaterThanProcFee=PrefC.GetEnum<ClaimProcCreditsGreaterThanProcFee>(PrefName.ClaimProcAllowCreditsGreaterThanProcFee);
 			if(claimProcCreditsGreaterThanProcFee==ClaimProcCreditsGreaterThanProcFee.Allow) {
 				return false;
       }
-			List<string> listProcDescripts=Claims.GetAllCreditsGreaterThanProcFees(patNum,listClaimProcsHypothetical);
+			List<string> listProcDescripts=Claims.GetAllCreditsGreaterThanProcFees(listClaimProcsHypothetical);
 			//list will be empty if there are no claimprocs greater than procedure fee, or if the procedure
 			if(listProcDescripts.IsNullOrEmpty()) {
 				return false;
@@ -667,11 +667,11 @@ namespace OpenDental {
 
 		///<summary>Returns true if write-offs are not allowed to exceed adjusted procedure fees, and one or more procedures are over-credited by write-offs.
 		///Displays a message detailing how the procedures are over-credited, and what the remaining balances would be.</summary>
-		public static bool AreWriteOffsGreaterThanProcFees(long patNum,List<ClaimProc> listClaimProcsHypothetical) {
+		public static bool AreWriteOffsGreaterThanProcFees(List<ClaimProc> listClaimProcsHypothetical) {
 			if(!PrefC.GetBool(PrefName.InsPayNoWriteoffMoreThanProc)) {
 				return false;//InsPayNoWriteoffMoreThanProc preference is off. No need to check.
 			}
-			List<string> listProcDescripts=Claims.GetWriteOffsGreaterThanProcFees(patNum,listClaimProcsHypothetical);
+			List<string> listProcDescripts=Claims.GetWriteOffsGreaterThanProcFees(listClaimProcsHypothetical);
 			if(!listProcDescripts.IsNullOrEmpty()) {
 				using MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(Lan.g("FormClaimPayTotal","Write-off amount is greater than the adjusted procedure fee for the following "
 					+"procedure(s)")+":\r\n"+string.Join("\r\n",listProcDescripts)+"\r\n"+Lan.g("FormClaimPayTotal","Not allowed to continue."));

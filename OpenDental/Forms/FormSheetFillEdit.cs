@@ -1954,6 +1954,7 @@ namespace OpenDental {
 			if(formSheetFieldAdd.DialogResult!=DialogResult.OK){
 				return;
 			}
+			FillFieldsFromControls();
 			FieldValueChanged(sender);//the sender doesn't matter
 			LayoutFields();
 		}

@@ -377,7 +377,7 @@ namespace OpenDental {
 			// 
 			// tabPageAppts
 			// 
-			this.tabPageAppts.BackColor = System.Drawing.Color.Transparent;
+			this.tabPageAppts.BackColor = System.Drawing.SystemColors.Window;
 			this.tabPageAppts.Controls.Add(this.label5);
 			this.tabPageAppts.Controls.Add(this.comboShowHygiene);
 			this.tabPageAppts.Controls.Add(this.comboAptStatus);
@@ -444,7 +444,7 @@ namespace OpenDental {
 			// 
 			// tabPageRecalls
 			// 
-			this.tabPageRecalls.BackColor = System.Drawing.Color.Transparent;
+			this.tabPageRecalls.BackColor = System.Drawing.SystemColors.Window;
 			this.tabPageRecalls.Controls.Add(this.gridRecalls);
 			this.tabPageRecalls.Controls.Add(this.textDateStart);
 			this.tabPageRecalls.Controls.Add(this.label1);

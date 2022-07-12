@@ -396,7 +396,10 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,OpenDental.UI.ODGridClickEventArgs e) {
-			try{
+			if(ClaimL.AreCreditsGreaterThanProcFee(GetListClaimProcHypothetical())) {
+				return;
+			}
+			try {
 				SaveGridChanges();
 			}
 			catch(ApplicationException ex){
@@ -485,13 +488,12 @@ namespace OpenDental {
 			List<ClaimProc> listClaimProcsHypothetical=new List<ClaimProc>();
 			for(int i=0;i<gridPayments.ListGridRows.Count;i++) {
 				ClaimProc claimProc=((ClaimProc)gridPayments.ListGridRows[i].Tag).Copy();
-				string insPay=_hx835_Claim.IsPreauth ? "InsEst" : "InsPay";
-				int idxInsPay=gridPayments.Columns.GetIndex(Lan.g("TableClaimProc",insPay));
+				int idxInsPay=gridPayments.Columns.GetIndex(Lan.g("TableClaimProc","InsPay"));
 				int idxWriteOff=gridPayments.Columns.GetIndex(Lan.g("TableClaimProc","Writeoff"));
-				int idxFeeAcct=gridPayments.Columns.GetIndex(Lan.g("TableClaimProc","Fee Billed"));
-				claimProc.InsPayAmt=PIn.Double(gridPayments.ListGridRows[i].Cells[idxInsPay].Text);
+				if(idxInsPay!=-1) {
+					claimProc.InsPayAmt=PIn.Double(gridPayments.ListGridRows[i].Cells[idxInsPay].Text);
+				}
 				claimProc.WriteOff=PIn.Double(gridPayments.ListGridRows[i].Cells[idxWriteOff].Text);
-				claimProc.FeeBilled=PIn.Double(gridPayments.ListGridRows[i].Cells[idxFeeAcct].Text);
 				listClaimProcsHypothetical.Add(claimProc);
 			}
 			return listClaimProcsHypothetical;
@@ -500,9 +502,6 @@ namespace OpenDental {
 		///<Summary>Surround with try-catch.</Summary>
 		private void SaveGridChanges(){
 			//validate all grid cells
-			if(ClaimL.AreCreditsGreaterThanProcFee(_patient.PatNum,GetListClaimProcHypothetical())) {
-				return;
-      }
 			double dbl;
 			for(int i=0;i<gridPayments.ListGridRows.Count;i++){
 				if(gridPayments.ListGridRows[i].Cells[_idxDeduct].Text!=""){//deduct
@@ -573,6 +572,9 @@ namespace OpenDental {
 				MessageBox.Show(Lan.g(this,"Please select one payment line.  Then click this button to assign the deductible to that line."));
 				return;
 			}
+			if(ClaimL.AreCreditsGreaterThanProcFee(GetListClaimProcHypothetical())) {
+				return;
+			}
 			try {
 				SaveGridChanges();
 			}
@@ -609,6 +611,10 @@ namespace OpenDental {
 				!=DialogResult.OK){
 				return;
 			}
+			//We don't check these preferences when taking this same action in FormClaimPayTotal.
+			//if(ClaimL.AreCreditsGreaterThanProcFee(GetListClaimProcHypothetical())) {
+			//	return;
+			//}
 			try {
 				SaveGridChanges();
 			}
@@ -694,7 +700,10 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please use the Split column to select at least one procedure.");
 				return;
 			}
-			try{
+			if(ClaimL.AreCreditsGreaterThanProcFee(GetListClaimProcHypothetical())) {
+				return;
+			}
+			try {
 				SaveGridChanges();//User must zero out the inspay column to allow them to split.  Save changes to claimProcs.
 			}
 			catch(ApplicationException ex){
@@ -751,6 +760,9 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender,System.EventArgs e) {
+			if(ClaimL.AreCreditsGreaterThanProcFee(GetListClaimProcHypothetical())) {
+				return;
+			}
 			try {
 				SaveGridChanges();
 			}
@@ -759,7 +771,6 @@ namespace OpenDental {
 				return;
 			}
 			List<ClaimProc> listClaimProcsInGrid=gridPayments.ListGridRows.Select(x=>x.Tag as ClaimProc).ToList();
-			listClaimProcsInGrid.ForEach(x=>x.ProcNum=0);
 			if(!PrefC.GetBool(PrefName.EraAllowTotalPayments)) {
 				if(listClaimProcsInGrid.Any(x=>x.ProcNum==0 && (!CompareDouble.IsZero(x.InsPayAmt) || !CompareDouble.IsZero(x.DedApplied) || !CompareDouble.IsZero(x.WriteOff)))) {
 					MsgBox.Show("Please allocate all InsPay, Deductible, and Writeoff amounts from Total Payment rows to a procedure before continuing.");
