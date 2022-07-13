@@ -4210,8 +4210,12 @@ namespace OpenDental {
 						MsgBox.Show(this,"Procedures linked to ortho cases cannot be adjusted.");
 						return;
 					}
-					adjustmentCur.ProcNum=PIn.Long(tableAcct.Rows[gridAccount.SelectedIndices[0]]["ProcNum"].ToString());
-					Procedure proc=Procedures.GetOneProc(adjustmentCur.ProcNum,false);
+					long procNum=PIn.Long(tableAcct.Rows[gridAccount.SelectedIndices[0]]["ProcNum"].ToString());
+					Procedure proc=Procedures.GetOneProc(procNum,false);
+					if(!Security.IsAuthorized(Permissions.ProcCompleteAddAdj,Procedures.GetDateForPermCheck(proc))) {
+						return;
+					}
+					adjustmentCur.ProcNum=procNum;
 					if(proc!=null) {
 						adjustmentCur.ProvNum=proc.ProvNum;
 						adjustmentCur.ClinicNum=proc.ClinicNum;

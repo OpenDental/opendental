@@ -232,7 +232,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"The "+DisplayReports.ReportNames.EraAutoProcessed+" report could not be found.");
 				return;
 			}
-			if(!Security.IsAuthorized(Permissions.Reports) || !Security.IsAuthorized(Permissions.Reports,displayReportEraAutoProcessed.DisplayReportNum,suppressMessage:false)) {
+			if(!Security.IsAuthorized(Permissions.Reports,displayReportEraAutoProcessed.DisplayReportNum,suppressMessage:false)) {
 				return;
 			}
 			FormRpEraAutoProcessed formRpEraAutoProcessed=new FormRpEraAutoProcessed();

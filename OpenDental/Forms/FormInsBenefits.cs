@@ -696,22 +696,24 @@ namespace OpenDental{
 			}
 			else if(string.IsNullOrWhiteSpace(textExams.Text)) {
 				Benefit benefitExam=benefitList.FirstOrDefault(x => Benefits.IsExamFrequency(x));
+				if(benefitExam!=null) {
 				textExams.Text=benefitExam.Quantity.ToString();
-				if(benefitExam.QuantityQualifier==BenefitQuantity.Months) {
-					comboExams.SelectedIndex=2;
-				}
-				else if(benefitExam.QuantityQualifier==BenefitQuantity.Years) {
-					comboExams.SelectedIndex=0;
-				}
-				else {
-					if(benefitExam.TimePeriod==BenefitTimePeriod.NumberInLast12Months) {
-						comboExams.SelectedIndex=3;//# in last 12 months
+					if(benefitExam.QuantityQualifier==BenefitQuantity.Months) {
+						comboExams.SelectedIndex=2;
+					}
+					else if(benefitExam.QuantityQualifier==BenefitQuantity.Years) {
+						comboExams.SelectedIndex=0;
 					}
 					else {
-						comboExams.SelectedIndex=1;//# per year
+						if(benefitExam.TimePeriod==BenefitTimePeriod.NumberInLast12Months) {
+							comboExams.SelectedIndex=3;//# in last 12 months
+						}
+						else {
+							comboExams.SelectedIndex=1;//# per year
+						}
 					}
+					benefitList.Remove(benefitExam);
 				}
-				benefitList.Remove(benefitExam);
 			}
 			if(textDiagnostic.Text !="" && textDiagnostic.Text==textRoutinePrev.Text
 				&& textDiagnostic.Text==textXray.Text)

@@ -45,6 +45,8 @@ namespace OpenDental {
 		private bool _isLockedByMe;
 		///<summary>True if user has been changed locally on this form. Used for signature box.</summary>
 		private bool _changedUser;
+		///<summary>True if user that opened the form does not have OrthoChartEditFull and OrthoChartEditUser permissions. Form is read only so ignore locking logic.</summary>
+		private bool _isReadOnly;
 
 		public FormOrthoChart(Patient patCur) : this(patCur,0) {
 		}
@@ -61,6 +63,26 @@ namespace OpenDental {
 		}
 
 		private void FormOrthoChart_Load(object sender,EventArgs e) {
+			//These two permissions require a date parameter. During setup, one can specifiy date or days or neither.
+			//Date = Specified date and prior are not editable.
+			//Days = Changes are allowed from ortho entry date + specified days.
+			//Neither = Date is MinValue. (Clicked OK and didn't specify either Date or Days.) Permission is enabled and user group can edit any date.
+			//We are only checking if these preference are enabled or not, not a date range. If these preferences are not enabled, this form is in read only mode.
+			DateTime dateTime=DateTime.Today.AddDays(GroupPermissions.NewerDaysMax);
+			if(!Security.IsAuthorized(Permissions.OrthoChartEditFull,date:dateTime,suppressMessage:true)
+				&& !Security.IsAuthorized(Permissions.OrthoChartEditUser,date:dateTime,suppressMessage:true)){
+				butChangeUser.Enabled=false;
+				butAdd.Enabled=false;
+				butUseAutoNote.Enabled=false;
+				butDelete.Enabled=false;
+				labelLocked.Visible=false;
+				buttonTakeControl.Visible=false;
+				butOK.Enabled=false;
+				gridPat.Enabled=false;
+				gridOrtho.Enabled=false;
+				gridMain.AllowSelection=false;
+				_isReadOnly=true;
+			}
 			FillLockedInitial();
 			signatureBoxWrapper.SetAllowDigitalSig(true);
 			_listOrthoChartTabs=OrthoChartTabs.GetDeepCopy(true);
@@ -110,6 +132,9 @@ namespace OpenDental {
 
 		#region Methods - Lock
 		private void FillLockedInitial(){
+			if(_isReadOnly){//Don't bother using locking logic, locking ability has been disabled.
+				return;
+			}
 			_userNumLocked=PatientNotes.GetUserNumOrthoLocked(_patCur.PatNum);
 			if(_userNumLocked==0){
 				//Nobody else has control, so we will take control.
@@ -141,6 +166,9 @@ namespace OpenDental {
 		/// Note: userNum is set to -1 when another user with the same username took control. This is handled the same as userNum = anything else.</summary>
 		private void timerLocked_Tick(object sender, EventArgs e){
 			//Every 4 seconds.
+			if(_isReadOnly){//Don't bother using timer logic, locking ability has been disabled.
+				return;
+			}
 			long userNum=PatientNotes.GetUserNumOrthoLocked(_patCur.PatNum);
 			if(userNum==-5){//-5 indicates that an instance of OD changed users locally to that form.
 				return;
@@ -188,8 +216,8 @@ namespace OpenDental {
 
 		private void LockControls(){
 			gridMain.AllowSelection=false;
-			gridPat.AllowSelection=false;
-			gridOrtho.AllowSelection=false;
+			gridPat.Enabled=false;
+			gridOrtho.Enabled=false;
 			butAdd.Visible=false;
 			butUseAutoNote.Visible=false;
 			butDelete.Visible=false;
@@ -199,8 +227,8 @@ namespace OpenDental {
 
 		private void UnlockControls(){
 			gridMain.AllowSelection=true;
-			gridPat.AllowSelection=true;
-			gridOrtho.AllowSelection=true;
+			gridPat.Enabled=true;
+			gridOrtho.Enabled=true;
 			butAdd.Visible=true;
 			butUseAutoNote.Visible=true;
 			butDelete.Visible=true;
@@ -1192,6 +1220,10 @@ namespace OpenDental {
 		}
 
 		private void FormOrthoChart_CloseXClicked(object sender, CancelEventArgs e){
+			if(_isReadOnly){//Form was opened in read only mode so don't warn about unsaved changes.
+				DialogResult=DialogResult.Cancel;
+				return;
+			}
 			if(_hasChanged || signatureBoxWrapper.SigChanged){
 				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Unsaved changes will be lost.")) {
 					e.Cancel=true;
@@ -1213,6 +1245,10 @@ namespace OpenDental {
 			//Must be closing automatically without user input. Example: auto shutdown.
 			if(!_isLockedByMe) {
 				//this user does not have a lock, so nothing to save.
+			}
+			//Form was opened in read only mode so we don't want to SaveToDb or unlock.
+			if(_isReadOnly){//Clicking cancel or [X] sets DialogResult.Cancel so we shouldn't get here, but just in case.
+				return;
 			}
 			SaveToDb();//There may be nothing to save, but this also gets rid of extra empty row.
 			PatientNotes.SetUserNumOrthoLocked(_patCur.PatNum,0);//Unlock

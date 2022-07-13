@@ -380,30 +380,28 @@ namespace OpenDental {
 		}
 
 		///<summary>Translates the grid into claimprocs, with edits applied.</summary>
-		private List<ClaimProc> GetListCliamProcHypothetical() {
+		private List<ClaimProc> GetListClaimProcHypothetical() {
 			List<ClaimProc> listClaimProcsHypothetical=new List<ClaimProc>();
 			for(int i=0;i<ClaimProcArray.Length;i++) {
 				ClaimProc claimProc=ClaimProcArray[i].Copy();
 				int idxInsPay=gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Ins Pay"));
 				int idxWriteOff=gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Writeoff"));
-				int idxFeeAcct=gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Fee"));
 				claimProc.InsPayAmt=PIn.Double(gridMain.ListGridRows[i].Cells[idxInsPay].Text);
-				claimProc.WriteOff=PIn.Double(gridMain.ListGridRows[i].Cells[idxWriteOff].Text); 
-				claimProc.FeeBilled=PIn.Double(gridMain.ListGridRows[i].Cells[idxFeeAcct].Text); //Since this column is editable, we need to override the hypothetical claimProcs feebilled.
+				claimProc.WriteOff=PIn.Double(gridMain.ListGridRows[i].Cells[idxWriteOff].Text);
 				listClaimProcsHypothetical.Add(claimProc);
 			}
 			return listClaimProcsHypothetical;
-        }
+    }
 
 		/// <summary>Returns true if ClaimProcAllowCreditsGreaterThanProcFee preference allows the user to add credits greater than the proc fee. Otherwise returns false </summary>
 		private bool WillClaimProcRecievedExceedProcFee() {
-			return ClaimL.IsClaimProcGreaterThanProcFee(_patient.PatNum,GetListCliamProcHypothetical());
+			return ClaimL.IsClaimProcGreaterThanProcFee(GetListClaimProcHypothetical());
 		}
 
 		///<summary>Returns true if InsPayNoWriteoffMoreThanProc preference is turned on and the sum of write off amount is greater than the proc fee.
 		///Otherwise returns false </summary>
 		private bool WillClaimProcRecievedWriteoffExceedProcFee() {
-			return ClaimL.IsWriteOffGreaterThanProcFee(_patient.PatNum,GetListCliamProcHypothetical());
+			return ClaimL.IsWriteOffGreaterThanProcFee(GetListClaimProcHypothetical());
 		}
 
 		private void butDeductible_Click(object sender,EventArgs e) {

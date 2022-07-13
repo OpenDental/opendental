@@ -240,6 +240,10 @@ namespace OpenDental {
 				MsgBox.Show(this,"Adjustments cannot be attached to a procedure that is linked to an ortho case.");
 				return;
 			}
+			//No need to check for completed status. Only allowed to select completed procedures.
+			if(!Security.IsAuthorized(Permissions.ProcCompleteAddAdj,Procedures.GetDateForPermCheck(formProcSelect.ListSelectedProcs[0]))) {
+				return;
+			}
 			if(PrefC.GetInt(PrefName.RigorousAdjustments)<2) {//Enforce Linking
 				//_selectedProvNum=FormPS.ListSelectedProcs[0].ProvNum;
 				comboClinic.SelectedClinicNum=formProcSelect.ListSelectedProcs[0].ClinicNum;

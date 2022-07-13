@@ -87,6 +87,7 @@ namespace OpenDental {
 			// 
 			// tabData
 			// 
+			this.tabData.BackColor = System.Drawing.SystemColors.Window;
 			this.tabData.Controls.Add(this.listBoxRefType);
 			this.tabData.Controls.Add(this.label1);
 			this.tabData.Controls.Add(this.textBox1);
@@ -121,7 +122,6 @@ namespace OpenDental {
 			// 
 			// textBox1
 			// 
-			this.textBox1.BackColor = System.Drawing.SystemColors.Control;
 			this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.textBox1.Location = new System.Drawing.Point(220, 20);
 			this.textBox1.Multiline = true;
@@ -168,6 +168,7 @@ namespace OpenDental {
 			// 
 			// tabFilters
 			// 
+			this.tabFilters.BackColor = System.Drawing.SystemColors.Window;
 			this.tabFilters.Controls.Add(this.labelHelp);
 			this.tabFilters.Controls.Add(this.listBoxColumns);
 			this.tabFilters.Controls.Add(this.TextDate);

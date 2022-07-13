@@ -7361,8 +7361,8 @@ namespace OpenDental {
 			List<Procedure> listProceduresSetComplete=new List<Procedure>();
 			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(_patCur.PatNum) ;
 			OrthoCaseProcLinkingData orthoCaseProcLinkingData=new OrthoCaseProcLinkingData(_patCur.PatNum);
-			foreach(DataRow row in listSelectedRows) {
-				Procedure procOld=Procedures.GetOneProc(PIn.Long(row["ProcNum"].ToString()),true);
+			List<Procedure> listProcsSelected=Procedures.GetManyProc(listSelectedRows.Select(x => PIn.Long(x["ProcNum"].ToString())).ToList(),true);
+			foreach(Procedure procOld in listProcsSelected) {
 				if(procOld.ProcStatus==newProcStatus) {
 					continue;
 				}

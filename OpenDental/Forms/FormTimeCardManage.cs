@@ -690,8 +690,8 @@ namespace OpenDental {
 			ColCaption[13]=Lan.g(this,"Week");
 			ColCaption[14]=Lan.g(this,"Note");
 			if(PrefC.HasClinicsEnabled) {
-				ColCaption[15]=Lan.g(this,"Clinic");
-				ColCaption[16]=Lan.g(this,"Note");
+				ColCaption[14]=Lan.g(this,"Clinic");
+				ColCaption[15]=Lan.g(this,"Note");
 			}
 			//column headers-----------------------------------------------------------------------------------------
 			e.Graphics.FillRectangle(Brushes.LightGray,colPos[0],yPos,colPos[colPos.Length-1]-colPos[0],18);

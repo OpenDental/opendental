@@ -488,6 +488,8 @@ namespace OpenDental {
 			}
 			listPayType.SelectedIndex=defCareCredit;
 			SetComboDepositAccounts();
+			//Prevent SavePaymentToDb() from setting textAmount.Text to zero. _isCCDeclined is irrelevant here.
+			_isCCDeclined=false;
 			if(!SavePaymentToDb()) {
 				return;
 			}

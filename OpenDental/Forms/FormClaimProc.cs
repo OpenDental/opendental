@@ -1191,22 +1191,21 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private List<ClaimProc> GetListCliamProcHypothetical() {
+		private List<ClaimProc> GetListClaimProcHypothetical() {
 			List<ClaimProc> listClaimProcHypothetical=new List<ClaimProc>();
 			ClaimProc claimProcHypothetical=_claimProc.Copy();
 			claimProcHypothetical.InsPayAmt=PIn.Double(textInsPayAmt.Text);
 			claimProcHypothetical.WriteOff=PIn.Double(textWriteOff.Text);
-			claimProcHypothetical.FeeBilled=_procedure.ProcFeeTotal;
 			listClaimProcHypothetical.Add(claimProcHypothetical);
 			return listClaimProcHypothetical;
-        }
+    }
 
 		/// <summary>Returns true if ClaimProcAllowCreditsGreaterThanProcFee preference allows the user to add credits greater than the proc fee. Otherwise returns false </summary>
 		private bool IsClaimProcGreaterThanProcFee() {
 			if(!IsProc) {
 				return false;
 			}
-			return ClaimL.IsClaimProcGreaterThanProcFee(_patient.PatNum,GetListCliamProcHypothetical());
+			return ClaimL.IsClaimProcGreaterThanProcFee(GetListClaimProcHypothetical());
 		}
 
 		///<summary>Returns true if InsPayNoWriteoffMoreThanProc preference is turned on and the sum of write off amount is greater than the proc fee.
@@ -1215,7 +1214,7 @@ namespace OpenDental {
 			if(!IsProc) {
 				return false;
 			}
-			return ClaimL.IsWriteOffGreaterThanProcFee(_patient.PatNum,GetListCliamProcHypothetical());
+			return ClaimL.IsWriteOffGreaterThanProcFee(GetListClaimProcHypothetical());
 		}
 
 		private bool AllAreValid(){

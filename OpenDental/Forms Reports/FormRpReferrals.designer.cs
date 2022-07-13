@@ -60,6 +60,7 @@ namespace OpenDental {
 			// 
 			// tabData
 			// 
+			this.tabData.BackColor = System.Drawing.SystemColors.Window;
 			this.tabData.Controls.Add(this.listSelect);
 			this.tabData.Controls.Add(this.butCheckAll);
 			this.tabData.Controls.Add(this.butClear);
@@ -98,6 +99,7 @@ namespace OpenDental {
 			// 
 			// tabFilters
 			// 
+			this.tabFilters.BackColor = System.Drawing.SystemColors.Window;
 			this.tabFilters.Controls.Add(this.butDeleteFilter);
 			this.tabFilters.Controls.Add(this.listOptions);
 			this.tabFilters.Controls.Add(this.listPrerequisites);

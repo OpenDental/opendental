@@ -633,12 +633,12 @@ namespace OpenDental {
 		///<summary>Returns a list of strings, detailing how the claim over pays the procedure, and what the remaining credits would be. 
 		///Returns an empty list if Claims are allowed to overpay procedures, or no procedures are overpaid.
 		///If useFeeBilled is true, the Procedure fee will be set to the ClaimProcs 'feeBilled' field. Otherwise the ProcFeeTotal on the associated procedure will be used during calculation.</summary>
-        public static bool IsClaimProcGreaterThanProcFee(long patNum,List<ClaimProc> listClaimProcsHypothetical) {
+    public static bool IsClaimProcGreaterThanProcFee(List<ClaimProc> listClaimProcsHypothetical) {
 			ClaimProcCreditsGreaterThanProcFee claimProcCreditsGreaterThanProcFee=(ClaimProcCreditsGreaterThanProcFee)PrefC.GetInt(PrefName.ClaimProcAllowCreditsGreaterThanProcFee);
-            if(claimProcCreditsGreaterThanProcFee==ClaimProcCreditsGreaterThanProcFee.Allow) {
+      if(claimProcCreditsGreaterThanProcFee==ClaimProcCreditsGreaterThanProcFee.Allow) {
 				return false;
-            }
-			List<string> listProcDescripts=Claims.GetClaimProcGreaterThanProcFee(patNum,listClaimProcsHypothetical);
+      }
+			List<string> listProcDescripts=Claims.GetClaimProcGreaterThanProcFee(listClaimProcsHypothetical);
 			//list will be empty if there are no claimprocs greater than procedure fee, or if the procedure
 			if(listProcDescripts.IsNullOrEmpty()) {
 				return false;
@@ -656,15 +656,15 @@ namespace OpenDental {
 					,Lan.g("FormClaimPayTotal","Overpaid Procedure Warning"),MessageBoxButtons.OKCancel)==DialogResult.Cancel;
 			} 
 			return true;//should never get to this line, only possible if another enum value is added to allow, warn, and block
-        }
+    }
 
 		///<summary>Returns true if InsPayNoWriteoffMoreThanProc preference is turned on and the sum of write off amount is greater than the proc fee.
 		///Otherwise returns false </summary>
-		public static bool IsWriteOffGreaterThanProcFee(long patNum,List<ClaimProc> listClaimProcsHypothetical) {
+		public static bool IsWriteOffGreaterThanProcFee(List<ClaimProc> listClaimProcsHypothetical) {
 			if(!PrefC.GetBool(PrefName.InsPayNoWriteoffMoreThanProc)) {
 				return false;//InsPayNoWriteoffMoreThanProc preference is off. No need to check.
 			}
-			List<string> listProcDescripts=Claims.GetWriteOffGreaterThanProcFee(patNum,listClaimProcsHypothetical);
+			List<string> listProcDescripts=Claims.GetWriteOffGreaterThanProcFee(listClaimProcsHypothetical);
 			if(!listProcDescripts.IsNullOrEmpty()) {
 				using MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(Lan.g("ClaimL","Write-off amount is greater than the adjusted procedure fee for the following "
 					+"procedure(s)")+":\r\n"+string.Join("\r\n",listProcDescripts)+"\r\n"+Lan.g("ClaimL","Not allowed to continue."));

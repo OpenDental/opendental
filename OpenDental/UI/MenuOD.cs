@@ -35,6 +35,7 @@ namespace OpenDental.UI{
 			//_menuStripOD.Height=12;//gets ignored. Set in MenuItem instead.
 			//_menuStripOD.Width gets set during LayoutItems, when it sets the bounds of each menuItem.
 			_menuStripOD.Name="menuStripOD1";
+			_menuStripOD.BackColor=SystemColors.Window;
 			_menuStripOD.Renderer=new MenuRenderer();
 			Controls.Add(_menuStripOD);
 		}

@@ -1387,6 +1387,9 @@ namespace OpenDental {
 				MsgBox.Show(this,"Adjustments may only be added to completed procedures.");
 				return;
 			}
+			if(!Security.IsAuthorized(Permissions.ProcCompleteAddAdj)) {
+				return;
+			}
 			using FormAdjustmentPicker FormAP=new FormAdjustmentPicker(_patient.PatNum,true,clinicNum:_procedure.ClinicNum, provNum: _procedure.ProvNum);
 			if(FormAP.ShowDialog()!=DialogResult.OK) {
 				return;
