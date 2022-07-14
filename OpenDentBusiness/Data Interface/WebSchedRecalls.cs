@@ -79,13 +79,8 @@ namespace OpenDentBusiness{
 			}
 			//Loop through the selected patients and insert WebSchedRecalls so that the Auto Comm Web Sched thread can aggregate the recalls and send
 			//messages.
-			List<CommType> listCommTypes=null;
-			if(source==WebSchedRecallSource.FormRecallList) {
-				//When we're coming from the recall list, we're trying to insert first an email row and then a text. Without filtering on messagetype for this in
-				//Recalls.GetAddrTAbleForWebSched the last entry will be blocked from getting inserted. 
-				listCommTypes=ListTools.FromSingle(messageType);
-			}
-			DataTable addrTable=Recalls.GetAddrTableForWebSched(listRecallNums,isGroupFamily,sortBy,listCommTypes);
+			//Without filtering on messagetype for this in Recalls.GetAddrTAbleForWebSched the last entry will be blocked from getting inserted. 
+			DataTable addrTable=Recalls.GetAddrTableForWebSched(listRecallNums,isGroupFamily,sortBy,ListTools.FromSingle(messageType));
 			List<WebSchedRecall> listWebSchedRecalls=new List<WebSchedRecall>();
 			for(int i=0;i<addrTable.Rows.Count;i++) {
 				DataRow row=addrTable.Rows[i];

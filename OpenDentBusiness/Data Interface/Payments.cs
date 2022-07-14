@@ -863,12 +863,12 @@ namespace OpenDentBusiness{
 			paySplit.ClinicNum=odbPayment.ClinicNum;
 			paySplit.SplitAmt=paymentAmount;
 			RigorousAccounting rigorousAccounting=PrefC.GetEnum<RigorousAccounting>(PrefName.RigorousAccounting);
-			if(rigorousAccounting==RigorousAccounting.EnforceFully) {
-				paySplit.ProvNum=Patients.GetProvNum(odbPatient.PatNum);
+			if(rigorousAccounting==RigorousAccounting.DontEnforce) {
+				paySplit.ProvNum=Patients.GetProvNum(odbPatient);
 			}
 			else {
 				paySplit.ProvNum=0;
-				paySplit.UnearnedType=PrefC.GetLong(PrefName.PrepaymentUnearnedType);
+				paySplit.UnearnedType=PrefC.GetLong(PrefName.PrepaymentUnearnedType);//Use default unallocated type
 			}
 			return paySplit;
 		}

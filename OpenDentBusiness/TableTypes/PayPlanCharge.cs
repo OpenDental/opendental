@@ -60,9 +60,9 @@ namespace OpenDentBusiness{
 		[XmlIgnore,JsonIgnore]
 		public bool IsCreditAdjustment {
 			get {
-				//Any patient payment plan credit that is negative and not attached to anything is considered an adjustment.
+				//Any patient payment plan credit that is negative is considered an adjustment.
 				//Any dynamic payment plan credit with a LinkType of Adjustment is obviously an adjustment as well.
-				if((ChargeType==PayPlanChargeType.Credit && LinkType==PayPlanLinkType.None && ProcNum==0 && CompareDouble.IsLessThanZero(Principal))
+				if((ChargeType==PayPlanChargeType.Credit && LinkType==PayPlanLinkType.None && CompareDouble.IsLessThanZero(Principal))
 					|| (ChargeType==PayPlanChargeType.Credit && LinkType==PayPlanLinkType.Adjustment))
 				{
 					return true;

@@ -6662,6 +6662,119 @@ namespace UnitTests.PaymentEdit_Tests {
 		}
 
 		[TestMethod]
+		public void PaymentEdit_ConstructAndLinkChargeCredits_PayPlanProcedureWithAdjustmentWithInsOverpay() {
+			/*****************************************************
+				Create Provider: provNum1
+
+				Create Patient:  pat1
+				Create Patient:  pat2
+
+				Create procedure1:   Today-4M  provNum1  pat1   $100.00
+				Create procedure2:   Today-3M  provNum1  pat2   $33.32
+
+				Create claim:        Today-4M  provNum1  pat1   $100 (billed)
+				Create claimProc1:    Today    provNum1  pat1   $33.32 (ins pay amt)
+				Create claimProc2:    Today    provNum1  pat2   $33.32 (ins pay amt)
+
+				Create payPlan1:     Today-4M  provNum1  pat1   $100.00
+					^payPlanCharge1:   Today-4M  provNum1  pat1   $100.00 (credit - procedure)
+					^payPlanCharge2:   Today-4M  provNum1  pat1   $33.34  (debit - charge 1)
+					^payPlanCharge3:   Today-3M  provNum1  pat1   $33.34  (debit - charge 2)
+					^payPlanCharge4:   Today-2M  provNum1  pat1   $33.32  (debit - charge 3)
+					^payPlanCharge5:   Today-1M  provNum1  pat1   $0      (debit - close out charge)
+					^payPlanCharge6:   Today-1M  provNum1  pat1  -$33.32  (debit - neg adjustment)
+					^payPlanCharge7:   Today-1M  provNum1  pat1  -$33.32  (credit - neg adjustment)
+			******************************************************/
+			long unearnedType=PrefC.GetLong(PrefName.PrepaymentUnearnedType);
+			List<Def> listNegAdjTypes=Defs.GetDefsForCategory(DefCat.AdjTypes,true).FindAll(x => x.ItemValue=="-");
+			Def adjustmentTypeNeg=listNegAdjTypes.FirstOrDefault();
+			if(adjustmentTypeNeg==null) {
+				adjustmentTypeNeg=DefT.CreateDefinition(DefCat.AdjTypes,"PPPWAWIO_NegAdj","-");
+			}
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			//Create provider, patients, and a procedure for patient 1.
+			long provNum=ProviderT.CreateProvider($"{suffix}-1");
+			Patient patient1=PatientT.CreatePatient($"{suffix}-1");
+			Patient patient2=PatientT.CreatePatient($"{suffix}-1",guarantor:patient1.PatNum);
+			Procedure procedure1=ProcedureT.CreateProcedure(patient1,"PPPWAWIO",ProcStat.C,"",100.00,procDate:DateTime.Today.AddMonths(-4),provNum:provNum);
+			//Create a PayPlan for patient 1's procedure.
+			PayPlan payPlan1=PayPlanT.CreatePayPlanNoCharges(patient1.PatNum,100.00,DateTime.Today.AddMonths(-4));
+			payPlan1.NumberOfPayments=3;
+			payPlan1.CompletedAmt=100;
+			//Create PayPlanCharges, one credit worth the value of the procedure, and three debits each worth ~1/3.
+			PayPlanCharge payPlanChargeProc=PayPlanChargeT.CreateOne(payPlan1.PayPlanNum,patient1.Guarantor,patient1.PatNum,DateTime.Today.AddMonths(-4),100.00,
+				note:"Proc",chargeType:PayPlanChargeType.Credit,procNum:procedure1.ProcNum,provNum:provNum);
+			PayPlanCharge payPlanCharge1=PayPlanChargeT.CreateOne(payPlan1.PayPlanNum,patient1.Guarantor,patient1.PatNum,DateTime.Today.AddMonths(-4),33.34,
+				note:"PayPlan Charge 1",chargeType:PayPlanChargeType.Debit,provNum:provNum);
+			PayPlanCharge payPlanCharge2=PayPlanChargeT.CreateOne(payPlan1.PayPlanNum,patient1.Guarantor,patient1.PatNum,DateTime.Today.AddMonths(-3),33.34,
+				note:"PayPlan Charge 2",chargeType:PayPlanChargeType.Debit,provNum:provNum);
+			PayPlanCharge payPlanCharge3=PayPlanChargeT.CreateOne(payPlan1.PayPlanNum,patient1.Guarantor,patient1.PatNum,DateTime.Today.AddMonths(-2),33.32,
+				note:"PayPlan Charge 3",chargeType:PayPlanChargeType.Debit,provNum:provNum);
+			//Create the close out charge & the negative credit/debit adjustments.
+			PayPlanCharge payPlanChargeCloseOut=PayPlanChargeT.CreateOne(payPlan1.PayPlanNum,patient1.Guarantor,patient1.PatNum,DateTime.Today.AddMonths(-1),0.00,
+				note:"Close Out Charge",chargeType:PayPlanChargeType.Debit,provNum:provNum);
+			PayPlanCharge payPlanChargeNegAdj=PayPlanChargeT.CreateOne(payPlan1.PayPlanNum,patient1.Guarantor,patient1.PatNum,DateTime.Today.AddMonths(-1),-33.32,
+				note:"PayPlan Neg Adj",chargeType:PayPlanChargeType.Debit,provNum:provNum);
+			PayPlanCharge payPlanChargeNegCred=PayPlanChargeT.CreateOne(payPlan1.PayPlanNum,patient1.Guarantor,patient1.PatNum,DateTime.Today.AddMonths(-1),-33.32,
+				note:"PayPlan Neg Credit",chargeType:PayPlanChargeType.Credit,provNum:provNum,procNum:procedure1.ProcNum);
+			PayPlans.Update(payPlan1);
+			//Add insurance to patient 1.
+			InsuranceInfo insInfo1=InsuranceT.AddInsurance(patient1,suffix);
+			//Create a claim for patient 1's procedure.
+			Claim claim=new Claim();
+			claim.PatNum=patient1.PatNum;
+			claim.ClaimStatus="U";
+			claim.ProvBill=provNum;
+			claim.ProvTreat=provNum;
+			long claimNum=Claims.Insert(claim);
+			ClaimProc claimProc=ClaimProcT.CreateClaimProc(patient1.PatNum,procedure1.ProcNum,insInfo1.PriInsPlan.PlanNum,insInfo1.PriInsSub.InsSubNum,
+				insPayEst:33.32,feeBilled:100,claimNum:claimNum);
+			ClaimT.ReceiveClaim(claim,new List<ClaimProc> { claimProc },true);
+			//We now have an insurance overpayment.
+			PaymentEdit.ConstructResults results=PaymentEdit.ConstructAndLinkChargeCredits(patient1.PatNum);
+			Assert.AreEqual(5,results.ListAccountEntries.Count);
+			Assert.AreEqual(1,results.ListAccountEntries.Count(x => x.GetType()==typeof(Procedure)
+				&& x.PatNum==patient1.PatNum
+				&& x.AmountOriginal==100
+				&& x.InsPayAmt==33.32M
+				&& x.AmountEnd==0 //Procedure is attached to a payment plan, and said payplan has a $100 credit.
+				&& x.ProcNum==procedure1.ProcNum
+				&& x.PayPlanNum==0));
+			Assert.AreEqual(1,results.ListAccountEntries.Count(x => x.GetType()==typeof(FauxAccountEntry)
+				&& x.PatNum==patient1.PatNum
+				&& ((FauxAccountEntry)x).IsAdjustment==false
+				&& ((FauxAccountEntry)x).ChargeType==PayPlanChargeType.Debit
+				&& ((FauxAccountEntry)x).AmountOriginal==33.34M
+				&& ((FauxAccountEntry)x).Principal==0.02M //Due to the negative adjustment, this debit is worth 33.32 less.
+				&& x.AmountEnd==0.02M
+				&& x.ProcNum==procedure1.ProcNum
+				&& x.PayPlanNum==payPlan1.PayPlanNum));
+			Assert.AreEqual(1,results.ListAccountEntries.Count(x => x.GetType()==typeof(FauxAccountEntry)
+				&& x.PatNum==patient1.PatNum
+				&& ((FauxAccountEntry)x).IsAdjustment==false
+				&& ((FauxAccountEntry)x).ChargeType==PayPlanChargeType.Debit
+				&& ((FauxAccountEntry)x).Principal==33.34M
+				&& x.AmountEnd==33.34M
+				&& x.ProcNum==procedure1.ProcNum
+				&& x.PayPlanNum==payPlan1.PayPlanNum));
+			Assert.AreEqual(1,results.ListAccountEntries.Count(x => x.GetType()==typeof(FauxAccountEntry)
+				&& x.PatNum==patient1.PatNum
+				&& ((FauxAccountEntry)x).IsAdjustment==false
+				&& ((FauxAccountEntry)x).ChargeType==PayPlanChargeType.Debit
+				&& ((FauxAccountEntry)x).Principal==33.32M
+				&& x.AmountEnd==33.32M
+				&& x.ProcNum==procedure1.ProcNum
+				&& x.PayPlanNum==payPlan1.PayPlanNum));
+			Assert.AreEqual(1,results.ListAccountEntries.Count(x => x.GetType()==typeof(FauxAccountEntry)
+				&& x.PatNum==patient1.PatNum
+				&& ((FauxAccountEntry)x).IsAdjustment==true
+				&& ((FauxAccountEntry)x).ChargeType==PayPlanChargeType.Debit
+				&& ((FauxAccountEntry)x).Principal==-33.32M
+				&& x.AmountEnd==0 //The adjustment has been applied.
+				&& x.PayPlanNum==payPlan1.PayPlanNum));
+		}
+
+		[TestMethod]
 		public void PaymentEdit_ConstructAndLinkChargeCredits_PayPlanProcedureWithAdjustmentDynamic() {
 			/*****************************************************
 				Create Patient:  pat
@@ -13006,6 +13119,132 @@ namespace UnitTests.PaymentEdit_Tests {
 				hasError=true;
 			}
 			Assert.IsTrue(hasError);
+		}
+
+		[TestMethod]
+		public void PaymentEdit_BalanceAndIncomeTransfer_PayPlanWithInsOverpay() {
+			/*****************************************************
+				Create Provider: provNum1
+
+				Create Patient:  pat1
+				Create Patient:  pat2
+
+				Create procedure1:   Today-4M  provNum1  pat1   $100.00
+				Create procedure2:   Today-3M  provNum1  pat2   $33.32
+
+				Create claim:        Today-4M  provNum1  pat1   $100 (billed)
+				Create claimProc1:    Today    provNum1  pat1   $33.32 (ins pay amt)
+				Create claimProc2:    Today    provNum1  pat2   $33.32 (ins pay amt)
+
+				Create payPlan1:     Today-4M  provNum1  pat1   $100.00
+					^payPlanCharge1:   Today-4M  provNum1  pat1   $100.00 (credit - procedure)
+					^payPlanCharge2:   Today-4M  provNum1  pat1   $33.34  (debit - charge 1)
+					^payPlanCharge3:   Today-3M  provNum1  pat1   $33.34  (debit - charge 2)
+					^payPlanCharge4:   Today-2M  provNum1  pat1   $33.32  (debit - charge 3)
+					^payPlanCharge5:   Today-1M  provNum1  pat1   $0      (debit - close out charge)
+					^payPlanCharge6:   Today-1M  provNum1  pat1  -$33.32  (debit - neg adjustment)
+					^payPlanCharge7:   Today-1M  provNum1  pat1  -$33.32  (credit - neg adjustment)
+
+				Create payment1:     Today-4M  provNum1  pat1   $33.34
+					^paySplit1:        Today-4M  provNum1  pat1   $33.34  (Attached to payment1 & payplan1)
+						^Attached to procedure1
+				Create payment2:     Today-3M  provNum1  pat1   $33.34
+					^paySplit2:        Today-3M  provNum1  pat1   $33.34  (Attached to payment2 & payplan1)
+						^Attached to procedure1
+				Create payment3:     Today-2M  provNum1  pat1   $33.32
+					^paySplit3:        Today-2M  provNum1  pat1   $33.32  (Attached to payment3 & payplan1)
+						^Attached to procedure1
+				Create payment4:     Today-1M  provNum1  pat1   $0
+					^paySplit4:        Today-1M  provNum1  pat1   $-33.32 (Attached to payment4 & payplan1)
+						^Attached to procedure1
+					^paySplit5:        Today-1M  provNum1  pat1   $33.32  (Attached to payment4)
+			******************************************************/
+			long unearnedType=PrefC.GetLong(PrefName.PrepaymentUnearnedType);
+			List<Def> listNegAdjTypes=Defs.GetDefsForCategory(DefCat.AdjTypes,true).FindAll(x => x.ItemValue=="-");
+			Def adjustmentTypeNeg=listNegAdjTypes.FirstOrDefault();
+			if(adjustmentTypeNeg==null) {
+				adjustmentTypeNeg=DefT.CreateDefinition(DefCat.AdjTypes,"PPWIO_NegAdj","-");
+			}
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			//Create provider and patients.
+			long provNum=ProviderT.CreateProvider($"{suffix}-1");
+			Patient patient1=PatientT.CreatePatient($"{suffix}-1");
+			Patient patient2=PatientT.CreatePatient($"{suffix}-1",guarantor:patient1.PatNum);
+			//Create procedures. One for patient 1, and one for patient 2.
+			Procedure procedure1=ProcedureT.CreateProcedure(patient1,"PPWIO1",ProcStat.C,"",100.00,procDate:DateTime.Today.AddMonths(-4),provNum:provNum);
+			Procedure procedure2=ProcedureT.CreateProcedure(patient2,"PPWIO2",ProcStat.C,"",33.32,procDate:DateTime.Today.AddMonths(-4),provNum:provNum);
+			//Create a Patient PayPlan for patient 1's procedure.
+			PayPlan payPlan1=PayPlanT.CreatePayPlanNoCharges(patient1.PatNum,100.00,DateTime.Today.AddMonths(-4));
+			payPlan1.NumberOfPayments=3;
+			payPlan1.CompletedAmt=100;
+			//Add insurance to patient 1.
+			InsuranceInfo insInfo1=InsuranceT.AddInsurance(patient1,suffix);
+			//Create a claim for patient 1's procedure.
+			Claim claim=new Claim();
+			claim.PatNum=patient1.PatNum;
+			claim.ClaimStatus="U";
+			claim.ProvBill=provNum;
+			claim.ProvTreat=provNum;
+			long claimNum=Claims.Insert(claim);
+			ClaimProc claimProc=ClaimProcT.CreateClaimProc(patient1.PatNum,procedure1.ProcNum,insInfo1.PriInsPlan.PlanNum,insInfo1.PriInsSub.InsSubNum,
+				insPayEst:33.32,feeBilled:100,claimNum:claimNum);
+			ClaimProcT.CreateClaimProc(patient2.PatNum,procedure2.ProcNum,insInfo1.PriInsPlan.PlanNum,insInfo1.PriInsSub.InsSubNum,cps:ClaimProcStatus.Estimate);
+			//Create PayPlanCharges for the PayPlan. The first one is a credit for the total cost of the procedure, while the rest are debits.
+			PayPlanCharge payPlanChargeProc=PayPlanChargeT.CreateOne(payPlan1.PayPlanNum,patient1.Guarantor,patient1.PatNum,DateTime.Today.AddMonths(-4),100.00,
+				note:"Proc",chargeType:PayPlanChargeType.Credit,procNum:procedure1.ProcNum,provNum:provNum);
+			PayPlanCharge payPlanCharge1=PayPlanChargeT.CreateOne(payPlan1.PayPlanNum,patient1.Guarantor,patient1.PatNum,DateTime.Today.AddMonths(-4),33.34,
+				note:"PayPlan Charge 1",chargeType:PayPlanChargeType.Debit,provNum:provNum);
+			PayPlanCharge payPlanCharge2=PayPlanChargeT.CreateOne(payPlan1.PayPlanNum,patient1.Guarantor,patient1.PatNum,DateTime.Today.AddMonths(-3),33.34,
+				note:"PayPlan Charge 2",chargeType:PayPlanChargeType.Debit,provNum:provNum);
+			PayPlanCharge payPlanCharge3=PayPlanChargeT.CreateOne(payPlan1.PayPlanNum,patient1.Guarantor,patient1.PatNum,DateTime.Today.AddMonths(-2),33.32,
+				note:"PayPlan Charge 3",chargeType:PayPlanChargeType.Debit,provNum:provNum);
+			PayPlanCharge payPlanChargeCloseOut=PayPlanChargeT.CreateOne(payPlan1.PayPlanNum,patient1.Guarantor,patient1.PatNum,DateTime.Today.AddMonths(-1),0.00,
+				note:"Close Out Charge",chargeType:PayPlanChargeType.Debit,provNum:provNum);
+			//Create a negative credit and a negative adjustment.
+			PayPlanCharge payPlanChargeNegAdj=PayPlanChargeT.CreateOne(payPlan1.PayPlanNum,patient1.Guarantor,patient1.PatNum,DateTime.Today.AddMonths(-1),-33.32,
+				note:"PayPlan Neg Adj",chargeType:PayPlanChargeType.Debit,provNum:provNum);
+			PayPlanCharge payPlanChargeNegCred=PayPlanChargeT.CreateOne(payPlan1.PayPlanNum,patient1.Guarantor,patient1.PatNum,DateTime.Today.AddMonths(-1),-33.32,
+				note:"PayPlan Neg Credit",chargeType:PayPlanChargeType.Credit,provNum:provNum,procNum:procedure1.ProcNum);
+			//Create payments for each PayPlanCharge debit.
+			Payment payment1=PaymentT.MakePaymentNoSplits(patient1.PatNum,33.34,payDate:DateTime.Today.AddMonths(-4),payType:71);
+			PaySplit paySplit1=PaySplitT.CreateOne(patient1.PatNum,33.34,payment1.PayNum,provNum,procNum:procedure1.ProcNum,
+				payPlanNum:payPlan1.PayPlanNum,payPlanChargeNum:payPlanCharge1.PayPlanChargeNum,datePay:DateTime.Today.AddMonths(-4));
+			Payment payment2=PaymentT.MakePaymentNoSplits(patient1.PatNum,33.34,payDate:DateTime.Today.AddMonths(-3),payType:71);
+			PaySplit paySplit2=PaySplitT.CreateOne(patient1.PatNum,33.34,payment2.PayNum,provNum,procNum:procedure1.ProcNum,
+				payPlanNum:payPlan1.PayPlanNum,payPlanChargeNum:payPlanCharge2.PayPlanChargeNum,datePay:DateTime.Today.AddMonths(-3));
+			Payment payment3=PaymentT.MakePaymentNoSplits(patient1.PatNum,33.32,payDate:DateTime.Today.AddMonths(-2),payType:71);
+			PaySplit paySplit3=PaySplitT.CreateOne(patient1.PatNum,33.32,payment3.PayNum,provNum,procNum:procedure1.ProcNum,
+				payPlanNum:payPlan1.PayPlanNum,payPlanChargeNum:payPlanCharge3.PayPlanChargeNum,datePay:DateTime.Today.AddMonths(-2));
+			//Create a PaySplit for a manual transfer from PayPlan to Unearned. Update and close PayPlan
+			Payment payment4=PaymentT.MakePaymentNoSplits(patient1.PatNum,0,payDate:DateTime.Today.AddMonths(-1));
+			payment4.IsSplit=true;
+			Payments.Update(payment4,false);
+			PaySplit paySplit4=PaySplitT.CreateOne(patient1.PatNum,33.32,payment4.PayNum,provNum,unearnedType:unearnedType,datePay:DateTime.Today.AddMonths(-1));
+			PaySplit paySplit5=PaySplitT.CreateOne(patient1.PatNum,-33.32,payment4.PayNum,provNum,procNum:procedure1.ProcNum,
+				payPlanNum:payPlan1.PayPlanNum,payPlanChargeNum:payPlanCharge1.PayPlanChargeNum,datePay:DateTime.Today.AddMonths(-1));
+			payPlan1.IsClosed=true;
+			PayPlans.Update(payPlan1);
+			//Recieve the claim from earlier
+			ClaimT.ReceiveClaim(claim,new List<ClaimProc> { claimProc },true);
+			//uh oh, we overpaid now boys. Time to try an income transfer out.
+			PaymentEdit.ConstructResults results=PaymentEdit.ConstructAndLinkChargeCredits(patient1.PatNum,new List<long>{patient1.PatNum,patient2.PatNum},new List<PaySplit>(),0,
+				new List<AccountEntry>(),true,false,null,false,false,DateTime.Now,false,0,0,DateTime.MinValue,false);
+			//begin transfer loops - Does not insert objects into database from this method. Testing method needs to insert.
+			if(!PaymentEdit.TryCreateIncomeTransfer(results.ListAccountEntries,DateTime.Today,out PaymentEdit.IncomeTransferData incomeTransferData)) {
+				throw new ODException(incomeTransferData.StringBuilderErrors.ToString().TrimEnd());
+			}
+			//Make sure we have 2 splits: One that takes value out of patient 1's unearned, and one that puts the value into patient 2.
+			Assert.AreEqual(2,incomeTransferData.ListSplitsCur.Count);
+			Assert.AreEqual(1,incomeTransferData.ListSplitsCur.Count(x => x.ProvNum==provNum
+				&& x.PatNum==patient1.PatNum
+				&& x.ProcNum==0
+				&& x.SplitAmt==-33.32
+				&& x.UnearnedType==unearnedType));
+			Assert.AreEqual(1,incomeTransferData.ListSplitsCur.Count(x => x.ProvNum==provNum
+				&& x.PatNum==patient2.PatNum
+				&& x.ProcNum==procedure2.ProcNum
+				&& x.SplitAmt==33.32
+				&& x.UnearnedType==0));
 		}
 
 		[TestMethod]

@@ -10082,21 +10082,23 @@ HAVING cnt>1";
 			if(numFound>0) {
 				//Holds the unique row that we will be keeping. All other rows like this one will be deleted (not copied to the renamed table) below.
 				//The group by clause must use the keyword BINARY because the ortho chart within Open Dental is case sensitive.
-				command=@"RENAME TABLE orthochart TO orthochartbak;
-								CREATE TABLE orthochart LIKE orthochartbak;
-								INSERT INTO orthochart
-								SELECT orthochartbak.* FROM orthochartbak
-								JOIN (
-									SELECT MAX(OrthoChartNum) maxNum
-									FROM orthochartbak
-									GROUP BY PatNum,ProvNum,DateService,BINARY FieldName,BINARY FieldValue
-									ORDER BY NULL
-								) o2
-								WHERE orthochartbak.OrthoChartNum=o2.maxNum";
-				Db.NonQ(command);
-				command="DROP TABLE IF EXISTS orthochartbak";
-				Db.NonQ(command);
-				log+=Lans.g("FormDatabaseMaintenance","All exact duplicate entries have been removed ");
+				//command=@"RENAME TABLE orthochart TO orthochartbak;
+				//				CREATE TABLE orthochart LIKE orthochartbak;
+				//				INSERT INTO orthochart
+				//				SELECT orthochartbak.* FROM orthochartbak
+				//				JOIN (
+				//					SELECT MAX(OrthoChartNum) maxNum
+				//					FROM orthochartbak
+				//					GROUP BY PatNum,ProvNum,DateService,BINARY FieldName,BINARY FieldValue
+				//					ORDER BY NULL
+				//				) o2
+				//				WHERE orthochartbak.OrthoChartNum=o2.maxNum";
+				//Db.NonQ(command);
+				//command="DROP TABLE IF EXISTS orthochartbak";
+				//Db.NonQ(command);
+				//log+=Lans.g("FormDatabaseMaintenance","All exact duplicate entries have been removed ");
+				log+=Lans.g("FormDatabaseMaintenance","Duplicate orthochart(s) found: ")+numFound+"\r\n";
+				log+=Lans.g("FormDatabaseMaintenance","   A safe fix is under development.")+"\r\n";
 			}
 			//check to see if there are duplicate date entries,fieldnames which aren't supposed to occur. This means there is conflict one needs to be chosen.
 			//If a user calls in due to the following message, an engineer should run the following query and help the user address each chart.
@@ -10104,12 +10106,12 @@ HAVING cnt>1";
 			//The manual fix would be something along the lines of manually going each ortho chart, removing duplicate values by opening and closing
 			//the ortho chart several times until the field that had duplicates loads with no data.  At that point all duplicates should have been
 			//removed and the new / correct value can be entered by the user.
-			command="SELECT * FROM orthochart GROUP BY PatNum,OrthoChartRowNum,ProvNum,DateService,BINARY FieldName HAVING COUNT(*) > 1";
-			DataTable table=Db.GetTable(command);
-			if(table.Rows.Count>0) {
-				log+=Lans.g("FormDatabaseMaintenance","Potential duplicate entries could not be deleted for all ortho charts. "+table.Rows.Count
-					+" possible duplicates remaining. Please call support and escalate to an engineer to confirm and remove entries.");
-			}
+			//command="SELECT * FROM orthochart GROUP BY PatNum,OrthoChartRowNum,ProvNum,DateService,BINARY FieldName HAVING COUNT(*) > 1";
+			//DataTable table=Db.GetTable(command);
+			//if(table.Rows.Count>0) {
+			//	log+=Lans.g("FormDatabaseMaintenance","Potential duplicate entries could not be deleted for all ortho charts. "+table.Rows.Count
+			//		+" possible duplicates remaining. Please call support and escalate to an engineer to confirm and remove entries.");
+			//}
 			return log;
 		}
 

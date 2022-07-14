@@ -451,11 +451,15 @@ namespace OpenDental {
 				listPatNums:ListTools.FromSingle(_patient.PatNum),
 				isIncomeTxfr:!radioIncludeAll.Checked,
 				loadData:loadData);
-			//See if the adjustments added by the user will cause any procedures to go into the negative.
-			bool hasNegAmt=constructResults.ListAccountEntries.Any(x => x.PatNum==_patient.PatNum
+			List<AccountEntry> listAccountEntriesCompletedProcs=constructResults.ListAccountEntries.FindAll(x => x.PatNum==_patient.PatNum
 					&& x.GetType()==typeof(Procedure)
-					&& ((Procedure)x.Tag).ProcStatus==ProcStat.C
-					&& CompareDecimal.IsLessThanZero(x.AmountEnd));
+					&& ((Procedure)x.Tag).ProcStatus==ProcStat.C);
+			List<Procedure> listCompletedProcedures=listAccountEntriesCompletedProcs.Select(x => (Procedure)x.Tag).ToList();
+			if(listCompletedProcedures.Any(x => !Security.IsAuthorized(Permissions.ProcCompleteAddAdj,Procedures.GetDateForPermCheck(x)))) {
+				return;
+			}
+			//See if the adjustments added by the user will cause any procedures to go into the negative.
+			bool hasNegAmt=listAccountEntriesCompletedProcs.Any(x => CompareDecimal.IsLessThanZero(x.AmountEnd));
 			if(hasNegAmt && !MsgBox.Show(this,MsgBoxButtons.YesNo,"Remaining amount on a procedure is negative. Continue?","Overpaid Procedure Warning")) {
 				return;
 			}

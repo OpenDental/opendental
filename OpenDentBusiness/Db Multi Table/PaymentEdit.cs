@@ -275,7 +275,8 @@ namespace OpenDentBusiness {
 				constructChargesData.ListPayPlanLinks,
 				isIncomeTxfr,
 				constructChargesData.ListClaimProcsFiltered,
-				constructChargesData.ListPayPlans.FindAll(x => x.PlanNum > 0));
+				constructChargesData.ListPayPlans.FindAll(x => x.PlanNum > 0),
+				constructChargesData.ListPayPlans.FindAll(x => x.PlanNum==0));
 			constructResults.ListAccountEntries.Sort(AccountEntrySort);
 			if(dateAsOf.Year > 1880) {
 				//Remove all account entries that fall after the 'as of date' passed in.
@@ -286,7 +287,7 @@ namespace OpenDentBusiness {
 
 		public static List<AccountEntry> ConstructListCharges(List<long> listPatNums,List<Procedure> listProcs,List<Adjustment> listAdjustments,List<PaySplit> listPaySplits,
 			List<PayAsTotal> listInsPayAsTotal,List<PayPlanCharge> listPayPlanCharges,List<PayPlanLink> listPayPlanLinks,bool isIncomeTxfr,
-			List<ClaimProc> listClaimProcs,List<PayPlan> listInsPayPlans=null)
+			List<ClaimProc> listClaimProcs,List<PayPlan> listInsPayPlans=null,List<PayPlan> listPayPlans=null)
 		{
 			//No remoting role check; no call to db
 			List<AccountEntry> listCharges=new List<AccountEntry>();
@@ -378,7 +379,7 @@ namespace OpenDentBusiness {
 					listInsPayPlanNums=listInsPayPlans.Select(x => x.PayPlanNum).ToList();
 				}
 				listCharges.AddRange(
-					GetFauxEntriesForPayPlans(listPayPlanCharges.FindAll(x => !listInsPayPlanNums.Contains(x.PayPlanNum)),listPayPlanLinks,listCharges)
+					GetFauxEntriesForPayPlans(listPayPlanCharges.FindAll(x => !listInsPayPlanNums.Contains(x.PayPlanNum)),listPayPlanLinks,listCharges,listPayPlans)
 				);
 			}
 			//======================================================Insurance Payment Plans================================================================
@@ -661,8 +662,11 @@ namespace OpenDentBusiness {
 		}
 
 		private static List<FauxAccountEntry> GetFauxEntriesForPayPlans(List<PayPlanCharge> listPayPlanCharges,List<PayPlanLink> listPayPlanLinks,
-			List<AccountEntry> listCharges)
+			List<AccountEntry> listCharges,List<PayPlan> listPayPlans)
 		{
+			if(listPayPlans==null) {
+				listPayPlans=new List<PayPlan>();
+			}
 			List<FauxAccountEntry> listPayPlanAccountEntries=new List<FauxAccountEntry>();
 			List<PayPlanCharge> listPayPlanChargeCredits=listPayPlanCharges.FindAll(x => x.ChargeType==PayPlanChargeType.Credit);
 			List<PayPlanCharge> listPayPlanChargeDebits=listPayPlanCharges.FindAll(x => x.ChargeType==PayPlanChargeType.Debit);
@@ -671,29 +675,32 @@ namespace OpenDentBusiness {
 			//Create faux account entries for all credits associated to a payment plan.
 			foreach(PayPlanCharge payPlanChargeCredit in listPayPlanChargeCredits) {
 				FauxAccountEntry fauxAccountEntry=new FauxAccountEntry(payPlanChargeCredit,true);
-				if(!fauxAccountEntry.IsAdjustment) {
-					//We don't technically know how much this faux procedure account entry is worth until we consider the debits that are due.  That is later.
-					fauxAccountEntry.AmountEnd=0;
-					//Prefer the patient, provider, and clinic combo from the procedure if present.
-					if(payPlanChargeCredit.ProcNum > 0) {
-						AccountEntry accountEntryProc=listCharges.FirstOrDefault(x => x.ProcNum > 0 && x.ProcNum==payPlanChargeCredit.ProcNum);
-						if(accountEntryProc==null) {
-							continue;//Do NOT add this FauxAccountEntry to the list of payment plan account entries because the associated proc was not found.
-						}
-						ExplicitlyLinkPositiveAdjustmentsToProcedure(accountEntryProc,listCharges);
-						fauxAccountEntry.AccountEntryProc=accountEntryProc;
-						fauxAccountEntry.PatNum=accountEntryProc.PatNum;
-						fauxAccountEntry.ProvNum=accountEntryProc.ProvNum;
-						fauxAccountEntry.ClinicNum=accountEntryProc.ClinicNum;
-						//Take as much value away from the procedure as possible if principal is positive because a payplan might only cover part of a procedure.
-						//Only do this for positive credits because negative procedure credits should not give value back to the procedure.
-						if(CompareDecimal.IsGreaterThanZero(fauxAccountEntry.Principal)) {
-							//Do not allow the procedure to go into the negative which would only happen if the payment plan has more principal than the procedure's value.
-							decimal principalAmt=Math.Min(accountEntryProc.AmountEnd,fauxAccountEntry.Principal);
-							accountEntryProc.AmountEnd-=principalAmt;
-							accountEntryProc.ListPayPlanPrincipalApplieds.Add(new PayPlanPrincipalApplied(fauxAccountEntry.PayPlanNum,principalAmt));
-						}
+				//Prefer the patient, provider, and clinic combo from the procedure if present.
+				if(payPlanChargeCredit.ProcNum > 0) {
+					if(!payPlanChargeCredit.IsCreditAdjustment) {
+						//We don't technically know how much this faux procedure account entry is worth until we consider the debits that are due.  That is later.
+						fauxAccountEntry.AmountEnd=0;
 					}
+					AccountEntry accountEntryProc=listCharges.FirstOrDefault(x => x.ProcNum > 0 && x.ProcNum==payPlanChargeCredit.ProcNum);
+					if(accountEntryProc==null) {
+						continue;//Do NOT add this FauxAccountEntry to the list of payment plan account entries because the associated proc was not found.
+					}
+					ExplicitlyLinkPositiveAdjustmentsToProcedure(accountEntryProc,listCharges);
+					fauxAccountEntry.AccountEntryProc=accountEntryProc;
+					fauxAccountEntry.PatNum=accountEntryProc.PatNum;
+					fauxAccountEntry.ProvNum=accountEntryProc.ProvNum;
+					fauxAccountEntry.ClinicNum=accountEntryProc.ClinicNum;
+					decimal principalAmt=fauxAccountEntry.Principal;
+					//Take as much value away from the procedure as possible if principal is positive because a payplan might only cover part of a procedure.
+					if(CompareDecimal.IsGreaterThanZero(fauxAccountEntry.Principal)) {
+						principalAmt=Math.Min(accountEntryProc.AmountEnd,fauxAccountEntry.Principal);
+					}
+					//If the current credit is a negative adjustment, we want to reduce the AmountEnd, so set the principal to be positive.
+					if(payPlanChargeCredit.IsCreditAdjustment) {
+						principalAmt=Math.Abs(fauxAccountEntry.Principal);
+					}
+					accountEntryProc.AmountEnd-=principalAmt;
+					accountEntryProc.ListPayPlanPrincipalApplieds.Add(new PayPlanPrincipalApplied(fauxAccountEntry.PayPlanNum,principalAmt));
 				}
 				listPayPlanAccountEntries.Add(fauxAccountEntry);
 			}
@@ -781,21 +788,22 @@ namespace OpenDentBusiness {
 				.ToDictionary(x => x.Key,x => x.ToList());
 			List<FauxAccountEntry> listAllocatedDebits=new List<FauxAccountEntry>();
 			foreach(long payPlanNum in dictPayPlanEntries.Keys) {
+				PayPlan payPlan=listPayPlans.FirstOrDefault(x=>x.PayPlanNum==payPlanNum);
 				List<FauxAccountEntry> listDebits=dictPayPlanEntries[payPlanNum].FindAll(x => x.ChargeType==PayPlanChargeType.Debit);
 				//Dynamic payment plans are strange in the sense that they utilize the PayPlanCharge FKey column to directly link DEBITS to procedures.
 				//There is a report that breaks down 'overpaid payment plans' to a procedure level to help the user know exactly which procedures are wrong.
 				//Therefore, loop through each faux credit entry one at a time and apply any matching due debits (via FKey) first. Starting with adjustments.
 				foreach(FauxAccountEntry creditEntry in dictPayPlanEntries[payPlanNum].Where(x => x.AdjNum > 0)) {
 					List<FauxAccountEntry> listAdjDebits=listDebits.FindAll(x => x.IsAdjustment && x.AdjNum==creditEntry.AdjNum);
-					listAllocatedDebits.AddRange(AllocatePayPlanDebitsToCredit(creditEntry,listAdjDebits));
+					listAllocatedDebits.AddRange(AllocatePayPlanDebitsToCredit(creditEntry,listAdjDebits,payPlan));
 				}
 				foreach(FauxAccountEntry fauxEntry in dictPayPlanEntries[payPlanNum].Where(x => x.ProcNum > 0)) {
 					List<FauxAccountEntry> listProcDebits=listDebits.FindAll(x => !x.IsAdjustment && x.ProcNum==fauxEntry.ProcNum);
-					listAllocatedDebits.AddRange(AllocatePayPlanDebitsToCredit(fauxEntry,listProcDebits));
+					listAllocatedDebits.AddRange(AllocatePayPlanDebitsToCredit(fauxEntry,listProcDebits,payPlan));
 				}
 				//Same goes for adjustments.
 				//Now that the dynamic payment plan credits have been handled to the best of our ability, blindly apply any leftover debits to credits.
-				listAllocatedDebits.AddRange(AllocatePayPlanDebitsToCredits(dictPayPlanEntries[payPlanNum],listDebits));
+				listAllocatedDebits.AddRange(AllocatePayPlanDebitsToCredits(dictPayPlanEntries[payPlanNum],listDebits,payPlan));
 			}
 			#endregion
 			//Only return debit faux account entries because the credits were only used to figure out where value was distributed.
@@ -828,11 +836,11 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		private static List<FauxAccountEntry> AllocatePayPlanDebitsToCredit(FauxAccountEntry fauxCredit,List<FauxAccountEntry> listDebits) {
-			return AllocatePayPlanDebitsToCredits(new List<FauxAccountEntry>() { fauxCredit },listDebits);
+		private static List<FauxAccountEntry> AllocatePayPlanDebitsToCredit(FauxAccountEntry fauxCredit,List<FauxAccountEntry> listDebits,PayPlan payPlan) {
+			return AllocatePayPlanDebitsToCredits(new List<FauxAccountEntry>() { fauxCredit },listDebits,payPlan);
 		}
 
-		private static List<FauxAccountEntry> AllocatePayPlanDebitsToCredits(List<FauxAccountEntry> listFauxEntries,List<FauxAccountEntry> listDebits) {
+		private static List<FauxAccountEntry> AllocatePayPlanDebitsToCredits(List<FauxAccountEntry> listFauxEntries,List<FauxAccountEntry> listDebits,PayPlan payPlan) {
 			List<FauxAccountEntry> listAllocatedDebits=new List<FauxAccountEntry>();
 			#region Adjustments (for non-dynamic payment plans)
 			//Adjustments for patient payment plans will have a negative debit AND a negative credit.
@@ -926,9 +934,11 @@ namespace OpenDentBusiness {
 			#endregion
 			#region Credits (non-adjustments)
 			//Loop through each faux credit and apply as many debits as possible.
-			List<FauxAccountEntry> listFauxNonAdjCredits=listFauxEntries.FindAll(x => !x.IsAdjustment);
-			//Never allow FauxAccountEntries associated to TP procedures to get value.
-			listFauxNonAdjCredits.RemoveAll(x => x.AccountEntryProc!=null && ((Procedure)x.AccountEntryProc.Tag).ProcStatus==ProcStat.TP);
+			List<FauxAccountEntry> listFauxNonAdjCredits=listFauxEntries.FindAll(x => !x.IsAdjustment && x.ChargeType==PayPlanChargeType.Credit);
+			//Only allow FauxAccountEntries associated to TP procedures to get value if they are on a Dynamic plan that treat TP procedures as complete.
+			if(payPlan==null || !payPlan.IsDynamic || payPlan.DynamicPayPlanTPOption!=DynamicPayPlanTPOptions.TreatAsComplete) { 
+				listFauxNonAdjCredits.RemoveAll(x => x.AccountEntryProc!=null && ((Procedure)x.AccountEntryProc.Tag).ProcStatus==ProcStat.TP);
+			}
 			foreach(FauxAccountEntry fauxNonAdjCredit in listFauxNonAdjCredits) {
 				//Use PrincipalAdjusted instead of AmountEnd (which could include interest) or Principal (has not been adjusted).
 				decimal amtCreditRemaining=fauxNonAdjCredit.PrincipalAdjusted;
@@ -1116,6 +1126,7 @@ namespace OpenDentBusiness {
 						.OrderByDescending(x => x.PayPlanChargeNum==listPayPlanChargeSplitsNegative[i].PayPlanChargeNum)
 						.ThenByDescending(x => x.PayPlanDebitType==listPayPlanChargeSplitsNegative[i].PayPlanDebitType)
 						.ThenByDescending(x => x.PayPlanDebitType==PayPlanDebitTypes.Principal)
+						.ThenByDescending(x => x.DatePay)
 						.ThenByDescending(x => Math.Abs(x.SplitAmt)==Math.Abs(listPayPlanChargeSplitsNegative[i].SplitAmt))
 						.ToList();
 					//Offset the payment splits as much as possible.
@@ -2320,10 +2331,7 @@ namespace OpenDentBusiness {
 					if(!CompareDouble.IsEqual(txTotalAmt,totalCost)) {
 						listInvalidTotalPayPlanNums.Add(payPlanNum);
 					}
-					//There isn't a reliable way to discern negative credits from adjustment credits.
-					//Negative non-adjustment credits don't make sense (at least to me) so we are not going to allow income transfer to be made if these exist.
-					//However, it is still allowed to have negative adjustment credits.
-					//The key to negative adjustment credits is that they have corresponding negative adjustment debits (to bring the value of the plan down).
+					//Negative adjustment credits have corresponding negative adjustment debits (to bring the value of the plan down).
 					//Therefore, there must be an equal ratio of negative debits and negative credits present.
 					double totalNegDebits=dictPayPlanCharges[payPlanNum]
 						.FindAll(x => x.ChargeType==PayPlanChargeType.Debit && CompareDouble.IsLessThanZero(x.Principal))

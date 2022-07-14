@@ -352,7 +352,7 @@ namespace OpenDental {
 			//calculate column widths
 			int widthColSent=180;
 			int widthColDateSent=120;
-			int widthColMsg=90;
+			int widthColMsg=95;
 			int widthColAutomatedSig=40;
 			int widthColPatient=140;
 			gridSent.BeginUpdate();
