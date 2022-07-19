@@ -30,7 +30,7 @@ namespace OpenDental {
 		private Phone _phoneSelected;
 		private Phones.PhoneComparer.SortBy _sortBy=Phones.PhoneComparer.SortBy.name;
 		private int _tileHeight=35;
-		private int _tileWidth=142;
+		private int _tileWidth=130;
 		/// <summary>This is where the tiles need to start (under the existing controls) in the y axis in order to be drawn correctly.</summary>
 		private int _tileStart;
 		///<summary>How many phone tiles should show up in each column before creating a new column.</summary>
@@ -152,26 +152,26 @@ namespace OpenDental {
 			int controlHeight=16;
 			int controlMargin=3;
 			int customerWidth=80;
-			int customerX=60;
 			int customerY=18;
 			int extensionWidth=100;
 			int statusWidth=62;
 			int statusX=0;
 			int statusY=20;
-			int imageLocationX=99;
-			int proxLocationX=126;
+			int imageLocationX=97;
+			int proxLocationX=116;
 			int timeBoxLocationX=3;
 			int timeBoxLocationY=17;
-			int timeBoxWidth=56;
-			int timeLocationX=11;
+			int timeBoxWidth=39;
+			int timeLocationX=3;
 			int yTop=_tileStart;//the offset of the phone tile taking the other controls of the form into account
 			int x=0;//x axis location
 			int y=0;//y axis location
 			int numColumns=(int)Math.Ceiling((double)_listPhones.Count/_tilesPerColumn);
-			int webChatHeightWidth=17;//Used for the rectangle that houses the web chat icon to prevent it from breaking the box boundary.
+			int webChatHeightWidth=14;//Used for the rectangle that houses the web chat icon to prevent it from breaking the box boundary.
 			//i starts at 1, because it determines the number of columns with modulo division on line if(i%_tilesPerColumn==0)
 			List<PhoneEmpDefault> listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
 			for(int i=1;i<_listPhones.Count+1;i++) {
+				int customerX = 42;
 				int numCur=i-1;
 				employee=Employees.GetEmp(_listPhones[numCur].EmployeeNum);
 				bool isWorkingHome=false;
@@ -201,9 +201,11 @@ namespace OpenDental {
 					|| _listPhones[numCur].ClockStatus==ClockStatusEnum.None
 					|| _listPhones[numCur].ClockStatus==ClockStatusEnum.Off) {
 					statusAndNote="Clock In";
+					customerX = 44; //move the customer string over to have a bit more space 
 				}
 				if(_listPhones[numCur].ClockStatus==ClockStatusEnum.Unavailable) {
 					statusAndNote="Unavailable";
+					customerX = 58; //move the customer string over to prevent overlapping of the "Unavailable" text
 				}
 				//get the customer number
 				string customer=_listPhones[numCur].CustomerNumber;
@@ -246,26 +248,26 @@ namespace OpenDental {
 					}
 					//draw either the figure or circle depending on if they are proxmial 
 					if(_listPhones[numCur].IsProxVisible && !isWorkingHome && _listPhones[numCur].ClockStatus!=ClockStatusEnum.Unavailable) {
-						g.DrawImage(Properties.Resources.Figure,(x*_tileWidth)+proxLocationX,(y*_tileHeight)+yTop+controlMargin);
+						g.DrawImage(Properties.Resources.Figure,(x*_tileWidth)+proxLocationX,(y*_tileHeight)+yTop+controlMargin,12,14);
 					}
 					else if(_listPhones[numCur].DateTProximal.AddHours(8)>DateTime.Now && !isWorkingHome && _listPhones[numCur].ClockStatus!=ClockStatusEnum.Unavailable) {
 						g.DrawImage(Properties.Resources.NoFigure,(x*_tileWidth)+proxLocationX,(y*_tileHeight)+yTop+controlMargin);
 					}
 					//draw the phone image if it is in use
 					if(_listPhones[numCur].Description!="") {
-						g.DrawImage(Properties.Resources.phoneInUse,(x*_tileWidth)+imageLocationX,(y*_tileHeight)+yTop+controlMargin);
+						g.DrawImage(Properties.Resources.phoneInUse,(x*_tileWidth)+imageLocationX,(y*_tileHeight)+yTop+controlMargin+1,17,13);
 					}
 					else if(webChatSession!=null) {
 						g.DrawImage(Properties.Resources.WebChatIcon,
-							new Rectangle((x*_tileWidth)+imageLocationX,(y*_tileHeight)+yTop+controlMargin,webChatHeightWidth,webChatHeightWidth));
+							new Rectangle((x*_tileWidth)+imageLocationX,(y*_tileHeight)+yTop+controlMargin+1,webChatHeightWidth,webChatHeightWidth));
 						time=(DateTime.Now-webChatSession.DateTcreated).ToStringHmmss();
 					}
 					else if(chatUser!=null && chatUser.CurrentSessions!=0) {
-						g.DrawImage(Properties.Resources.gtaicon3,(x*_tileWidth)+imageLocationX,(y*_tileHeight)+yTop+controlMargin);
+						g.DrawImage(Properties.Resources.gtaicon3,(x*_tileWidth)+imageLocationX,(y*_tileHeight)+yTop+controlMargin+1,14,14);
 						time=TimeSpan.FromMilliseconds(chatUser.SessionTime).ToStringHmmss();
 					}
 					else if(remoteSupportSession!=null) {
-						g.DrawImage(Properties.Resources.remoteSupportIcon,(x*_tileWidth)+imageLocationX,(y*_tileHeight)+yTop+controlMargin);
+						g.DrawImage(Properties.Resources.remoteSupportIcon,(x*_tileWidth)+imageLocationX,(y*_tileHeight)+yTop+controlMargin+1,14,14);
 						time=remoteSupportSession.SessionTime.ToStringHmmss();
 					}
 					//draw the time on call or what ever activity they are doing
@@ -276,7 +278,7 @@ namespace OpenDental {
 				if(isWorkingHome) {//draw the home icon regardless if they are clocked in or out
 					try {
 						g.DrawImage(_bitmapHouse,
-							new Rectangle((x*_tileWidth)+proxLocationX-2,(y*_tileHeight)+yTop+controlMargin+2,16,16));
+							new Rectangle((x*_tileWidth)+proxLocationX-2,(y*_tileHeight)+yTop+controlMargin,16,16));
 					}
 					catch {
 						//Do nothing. It will be redrawn again after 300ms.

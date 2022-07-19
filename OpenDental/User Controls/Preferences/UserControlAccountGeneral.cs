@@ -27,6 +27,12 @@ namespace OpenDental {
 		#endregion Constructors
 
 		#region Methods - Event Handlers
+		private void butAgingProcLifoDetails_Click(object sender,EventArgs e) {
+			MsgBox.Show(this,"3 state checkbox. When indeterminate (filled), it behaves as unchecked. Recommended is checked. Adjustment and payment plan credits attached to a procedure "
+			+"are summed by date. If the sum of the attached charges and credits results in a credit, the credit is applied to the balance of the procedure's aging category. Any remaining "
+			+"credit is aged normally. This is a LIFO strategy.");
+		}
+
 		private void checkShowFamilyCommByDefault_Click(object sender,EventArgs e) {
 			MsgBox.Show(this,"You will need to restart the program for the change to take effect.");
 		}

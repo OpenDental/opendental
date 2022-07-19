@@ -408,6 +408,9 @@ namespace OpenDental{
 					if(FormPE.DialogResult!=DialogResult.OK) {
 						return;
 					}
+					if(Security.IsAuthorized(Permissions.ProviderEdit,suppressMessage:true)) {//Other provider. Dental schools specific permissions do not log.
+						SecurityLogs.MakeLogEntry(Permissions.ProviderEdit,0,"Provider: "+FormPE.ProvCur.Abbr+" edited.");
+					}
 				}
 				else {
 					using FormProvStudentEdit FormPSE=new FormProvStudentEdit();

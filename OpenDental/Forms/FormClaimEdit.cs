@@ -3438,6 +3438,9 @@ namespace OpenDental{
 			for(int i=0;i<listProceduresToUpdatePlaceOfService.Count;i++) {
 				listProceduresToUpdatePlaceOfService[i].PlaceService=_claim.PlaceService;
 			}
+			if(_listClaimProcsForClaim.Any(x => x.ClinicNum!=_claim.ClinicNum)) {
+				ClaimProcs.UpdateClinicNumForClaim(_claim.ClaimNum,_claim.ClinicNum);
+			}
 			return updateData;
 		}
 

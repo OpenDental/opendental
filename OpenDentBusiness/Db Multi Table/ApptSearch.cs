@@ -313,14 +313,21 @@ namespace OpenDentBusiness {
 				}
 			}
 			//Set each listOpScheds.ProviderNums to the corresponding providers via operatory OR schedules.
+			SearchBehaviorCriteria searchBehaviorCriteria=(SearchBehaviorCriteria)PrefC.GetInt(PrefName.AppointmentSearchBehavior);
 			foreach(Operatory op in listOps) {
 				//If blockoutType is not 0 and 0 is only provNum in listProvNums, we are just looking for blockout schedules in ops.
 				//Add zero to ProviderNums list for op if op has any blockout for the date we are searching. Unwanted blockouts are filtered out below.
 				if(blockoutType>0 && listProvNums.Max()==0 && dictProvNumsInOpsBySched[op.OperatoryNum].Contains(0)) {
 					listOpScheds.First(x => x.OperatoryNum==op.OperatoryNum).ProviderNums.Add(0);
 				}
-				//If the operatory does not have a primary and secondary provider use all providers from the schedules.
+				//If the operatory does not have a primary and secondary provider, use all providers from the schedules.
 				else if(dictProvNumsInOpsByOp[op.OperatoryNum][0]==0 && dictProvNumsInOpsByOp[op.OperatoryNum][1]==0) {
+					if(searchBehaviorCriteria==SearchBehaviorCriteria.ProviderTimeOperatory && listSchedOps.Count==0) {
+						//We are using ProviderTimeOp search logic and the providers are only assigned to their ops directly, NOT in their schedules.
+						//In this case, an op with no primary or secondary provider means the op is unassigned, so we don't want to assign it.
+						//This effectively excludes unassigned ops from ProviderTimeOp search logic for this specific case.
+						continue;
+					}
 					listOpScheds.First(x => x.OperatoryNum==op.OperatoryNum).ProviderNums=dictProvNumsInOpsBySched[op.OperatoryNum];
 				}
 				else {//Otherwise; only add providers that intersect between schedules and being explicitly assigned to an operatory.

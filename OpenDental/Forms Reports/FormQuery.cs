@@ -1125,7 +1125,7 @@ namespace OpenDental{
 			bool hasStackTrace = UserHasStackTracePref();
 			_serverThreadID=DataConnectionCancelable.GetServerThread(checkReportServer.Checked);
 			_reportSimpleGrid.TableQ=DataConnectionCancelable.GetTableConAlreadyOpen(_serverThreadID,_reportSimpleGrid.Query
-				,_reportSimpleGrid.IsSqlValidated,checkReportServer.Checked,hasStackTrace);
+				,_reportSimpleGrid.IsSqlValidated,checkReportServer.Checked,hasStackTrace, suppressMessage: true);
 			_reportSimpleGrid.InitializeColumns();
 			_reportSimpleGrid.FixColumnNames();
 		}

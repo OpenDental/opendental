@@ -428,27 +428,28 @@ namespace OpenDental {
 					field.FontSize=SheetCur.FontSize;//Use a best guess so the user does not completely lose this Sheet's data.
 					strErr=$"A text field was found with an invalid FontSize.  Default size of {SheetCur.FontSize} has been used instead.";
 				}
-				if(IsInTerminal && ODEnvironment.IsTabletMode) {
+				//WPF RichTextBoxes are no longer being used for kiosk mode, because of indeterminate behavior where selecting textbox input fields would not cause the On-Screen keyboard to
+				//pop up when using touch devices such as tablets. Switching back to only using System.Windows.Forms.RichTextBox as they always cause the keyboard to appear. 
+				//WPF RichTextBoxes were first introduced here because WinForm RichTextBoxes wouldn't cause the keyboard to appear.
+				/*if(IsInTerminal && ODEnvironment.IsTabletMode) {
 					#region WPF RichTextBox
 					elementHost=CreateWpfRichTextBoxForSheetDisplay(field);
 					((System.Windows.Controls.RichTextBox)elementHost.Child).TextChanged+=new System.Windows.Controls.TextChangedEventHandler(text_TextChanged);
 					LayoutManager.Add(elementHost,panelMain);
 					elementHost.BringToFront();
 					#endregion
-				}
-				else {
-					#region WinForm RichTextBox
-					//Note: Pasting with a WinForms RTB is not overridden and so the user can paste formatted text (even images) into the box.
-					//When filling the textbox here, we cannot clip the text in the textbox or else existing signatures will break.
-					//The side affect of not clipping is that the edit window will look different if the text is larger than the textbox.
-					//However, if the text is bigger than the textbox, the user can see the issue easily by editing the sheet def.
-					textbox=GraphicsHelper.CreateTextBoxForSheetDisplay(field,false);
-					textbox.TextChanged+=new EventHandler(text_TextChanged);
-					LayoutManager.Add(textbox,panelMain);
-					textbox.BringToFront();
-					textbox.ReadOnly=field.IsLocked;
-					#endregion
-				}
+				}*/
+				#region WinForm RichTextBox
+				//Note: Pasting with a WinForms RTB is not overridden and so the user can paste formatted text (even images) into the box.
+				//When filling the textbox here, we cannot clip the text in the textbox or else existing signatures will break.
+				//The side affect of not clipping is that the edit window will look different if the text is larger than the textbox.
+				//However, if the text is bigger than the textbox, the user can see the issue easily by editing the sheet def.
+				textbox=GraphicsHelper.CreateTextBoxForSheetDisplay(field,false);
+				textbox.TextChanged+=new EventHandler(text_TextChanged);
+				LayoutManager.Add(textbox,panelMain);
+				textbox.BringToFront();
+				textbox.ReadOnly=field.IsLocked;
+				#endregion
 			}
 			//draw checkboxes----------------------------------------------------------------------------------------------
 			foreach(SheetField field in SheetCur.SheetFields) {
@@ -560,10 +561,11 @@ namespace OpenDental {
 			return strErr;
 		}
 
+		////WPF RichTextBox is no longer in use, we are only using WinForm RichTextBox. Refer to comment in LayoutFields() when drawing textboxes. Leaving for documentation.
 		///<summary>Returns an ElementHost which has it's Child property set to a WPF RichTextBox that is styled specifically for filling out sheets.
 		///This is necessary when utilizing tablets so that the "On Screen Keyboard" will automatically pop up when input fields gain focus.
 		///Printing and PDF creation will continue to use the WinForm RichTextBox to minimize potential bugs that the WPF control introduces.</summary>
-		private System.Windows.Forms.Integration.ElementHost CreateWpfRichTextBoxForSheetDisplay(SheetField field) {
+		/*private System.Windows.Forms.Integration.ElementHost CreateWpfRichTextBoxForSheetDisplay(SheetField field) {
 			//The WinForm RichTextBox has a bug in it where the on screen keyboard doesn't show when focus has been set to a WinForm RichTextBox.
 			//Therefore we need to use the WPF RichTextBox which doesn't have this issue.  An ElementHost is required to use WPF controls in WinForms.
 			System.Windows.Forms.Integration.ElementHost elementHost=new System.Windows.Forms.Integration.ElementHost();
@@ -660,7 +662,7 @@ namespace OpenDental {
 			elementHost.Width=field.Width;
 			elementHost.Height=field.Height;
 			return elementHost;
-		}
+		}*/
 
 		///<summary>For all the combo boxes on the form, selects the first option if nothing is already selected.</summary>
 		private void SelectFirstOptionComboBoxes() {
@@ -823,7 +825,7 @@ namespace OpenDental {
 			LayoutFields();
 			//find the original textbox, and put the cursor back where it belongs
 			foreach(Control control in panelMain.Controls) {
-				//We use ElementHost for WPF RichTextBoxes.
+				//We no longer use ElementHost for WPF RichTextBoxes, only WinForm RichTextBox
 				if(control.GetType()!=typeof(RichTextBox) && control.GetType()!=typeof(System.Windows.Forms.Integration.ElementHost)) {
 					continue;
 				}
@@ -834,7 +836,7 @@ namespace OpenDental {
 							((RichTextBox)control).Focus();
 						}
 					}
-					else if(control.GetType()==typeof(System.Windows.Forms.Integration.ElementHost)) {//WPF
+					else if(control.GetType()==typeof(System.Windows.Forms.Integration.ElementHost)) {//This will never be hit, since we are no longer using WPF RichTextBox. Leaving for documentation
 						System.Windows.Forms.Integration.ElementHost elementHost=(System.Windows.Forms.Integration.ElementHost)control;
 						if(elementHost.Child==null || elementHost.Child.GetType()!=typeof(System.Windows.Controls.RichTextBox)) {
 							return;//Not sure how this could happen.  Nothing to paste into.
@@ -1588,7 +1590,7 @@ namespace OpenDental {
 			//RichTextBoxes-----------------------------------------------
 			using RichTextBox formattedTextBox=new RichTextBox(); //Used to compare text and only update when the user has changed something.
 			foreach(Control control in panelMain.Controls) {
-				//We use ElementHost for WPF RichTextBoxes.
+				//We no longer use ElementHost for WPF RichTextBoxes, only WinForm RichTextBox
 				if(control.GetType()!=typeof(RichTextBox) && control.GetType()!=typeof(System.Windows.Forms.Integration.ElementHost)) {
 					continue;
 				}
@@ -1603,7 +1605,7 @@ namespace OpenDental {
 						((SheetField)control.Tag).FieldValue=control.Text;
 					}
 				}
-				else if(control.GetType()==typeof(System.Windows.Forms.Integration.ElementHost)) {//WPF
+				else if(control.GetType()==typeof(System.Windows.Forms.Integration.ElementHost)) {//This will never be hit, since we are no longer using WPF RichTextBox. Leaving for documentation
 					System.Windows.Forms.Integration.ElementHost elementHost=(System.Windows.Forms.Integration.ElementHost)control;
 					if(elementHost.Child==null || elementHost.Child.GetType()!=typeof(System.Windows.Controls.RichTextBox)) {
 						continue;
@@ -1707,7 +1709,7 @@ namespace OpenDental {
 						return false;			
 					}	
 				}
-				else if(control.GetType()==typeof(System.Windows.Forms.Integration.ElementHost)) {//We use ElementHost for WPF RichTextBoxes.
+				else if(control.GetType()==typeof(System.Windows.Forms.Integration.ElementHost)) {//This will never be hit, since we are no longer using WPF RichTextBox. Leaving for documentation
 					SheetField field=(SheetField)control.Tag;
 					if(field.FieldType!=SheetFieldType.InputField) {
 						continue;

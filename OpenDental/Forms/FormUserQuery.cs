@@ -1029,7 +1029,7 @@ namespace OpenDental {
 			bool hasStackTrace = UserHasStackTracePref();
 			_serverThreadID=DataConnectionCancelable.GetServerThread(checkReportServer.Checked);
 			FillDataFromQuery(DataConnectionCancelable.GetTableConAlreadyOpen(_serverThreadID,_query
-				,false,checkReportServer.Checked,hasStackTrace));
+				,false,checkReportServer.Checked,hasStackTrace, suppressMessage:true));
 		}
 
 		private bool UserHasStackTracePref() {

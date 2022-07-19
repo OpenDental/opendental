@@ -20,12 +20,13 @@ namespace OpenDental.Bridges {
 
 		///<summary></summary>
 		public static void SendData(Program program,Patient patient) {
-			string commandArgs="--commandUuid \""+UUID+"\"";
+			//Purposefully surround all command... argument identifiers sent to MeditLink in double quotes.
+			string commandArgs="\"--commandUuid\" \""+UUID+"\"";
 			string path=Programs.GetProgramPath(program);
 			if(patient!=null) {
 				string optionalParameters=program.CommandLine;
 				optionalParameters=Patients.ReplacePatient(optionalParameters, patient);
-				commandArgs+=" --commandParam \""+optionalParameters+"\"";
+				commandArgs+=" \"--commandParam\" \""+optionalParameters+"\"";
 			}
 			try {
 				Process.Start(path,commandArgs);

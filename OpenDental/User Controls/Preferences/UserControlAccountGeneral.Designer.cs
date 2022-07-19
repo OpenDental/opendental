@@ -27,7 +27,6 @@ namespace OpenDental {
 			this.label62 = new System.Windows.Forms.Label();
 			this.labelCommLogAutoSaveDetails = new System.Windows.Forms.Label();
 			this.labelAccountShowPaymentNumsDetails = new System.Windows.Forms.Label();
-			this.labelAgingProcLifoDetails = new System.Windows.Forms.Label();
 			this.butClearAgingBeginDateT = new OpenDental.UI.Button();
 			this.groupBoxFunctionality = new OpenDental.UI.GroupBoxOD();
 			this.labelAgingBeginDateT = new System.Windows.Forms.Label();
@@ -42,6 +41,7 @@ namespace OpenDental {
 			this.groupCommLogs = new OpenDental.UI.GroupBoxOD();
 			this.checkCommLogAutoSave = new System.Windows.Forms.CheckBox();
 			this.checkShowFamilyCommByDefault = new System.Windows.Forms.CheckBox();
+			this.butAgingProcLifoDetails = new OpenDental.UI.Button();
 			this.groupBoxFunctionality.SuspendLayout();
 			this.groupCommLogs.SuspendLayout();
 			this.SuspendLayout();
@@ -78,17 +78,6 @@ namespace OpenDental {
 			this.labelAccountShowPaymentNumsDetails.TabIndex = 325;
 			this.labelAccountShowPaymentNumsDetails.Text = "in the payment description, useful for foreign offices";
 			this.labelAccountShowPaymentNumsDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelAgingProcLifoDetails
-			// 
-			this.labelAgingProcLifoDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelAgingProcLifoDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelAgingProcLifoDetails.Location = new System.Drawing.Point(476, 255);
-			this.labelAgingProcLifoDetails.Name = "labelAgingProcLifoDetails";
-			this.labelAgingProcLifoDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelAgingProcLifoDetails.TabIndex = 327;
-			this.labelAgingProcLifoDetails.Text = "3 states. If filled, behaves as unchecked. Recommend checked.";
-			this.labelAgingProcLifoDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// butClearAgingBeginDateT
 			// 
@@ -171,7 +160,7 @@ namespace OpenDental {
 			this.checkAgingProcLifo.Name = "checkAgingProcLifo";
 			this.checkAgingProcLifo.Size = new System.Drawing.Size(435, 17);
 			this.checkAgingProcLifo.TabIndex = 19;
-			this.checkAgingProcLifo.Text = "LIFO: Transactions attached to a procedure offset each other before aging";
+			this.checkAgingProcLifo.Text = "Transactions attached to a procedure offset each other before aging";
 			this.checkAgingProcLifo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkAgingProcLifo.ThreeState = true;
 			// 
@@ -243,12 +232,22 @@ namespace OpenDental {
 			this.checkShowFamilyCommByDefault.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkShowFamilyCommByDefault.Click += new System.EventHandler(this.checkShowFamilyCommByDefault_Click);
 			// 
+			// butAgingProcLifoDetails
+			// 
+			this.butAgingProcLifoDetails.ForeColor = System.Drawing.Color.Black;
+			this.butAgingProcLifoDetails.Location = new System.Drawing.Point(476, 253);
+			this.butAgingProcLifoDetails.Name = "butAgingProcLifoDetails";
+			this.butAgingProcLifoDetails.Size = new System.Drawing.Size(64, 21);
+			this.butAgingProcLifoDetails.TabIndex = 370;
+			this.butAgingProcLifoDetails.Text = "Details";
+			this.butAgingProcLifoDetails.Click += new System.EventHandler(this.butAgingProcLifoDetails_Click);
+			// 
 			// UserControlAccountGeneral
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
-			this.Controls.Add(this.labelAgingProcLifoDetails);
+			this.Controls.Add(this.butAgingProcLifoDetails);
 			this.Controls.Add(this.labelAccountShowPaymentNumsDetails);
 			this.Controls.Add(this.labelCommLogAutoSaveDetails);
 			this.Controls.Add(this.groupBoxFunctionality);
@@ -277,11 +276,11 @@ namespace OpenDental {
 		private UI.GroupBoxOD groupBoxFunctionality;
 		private System.Windows.Forms.Label labelCommLogAutoSaveDetails;
 		private System.Windows.Forms.Label labelAccountShowPaymentNumsDetails;
-		private System.Windows.Forms.Label labelAgingProcLifoDetails;
 		private System.Windows.Forms.Label labelAgingBeginDateT;
 		private System.Windows.Forms.TextBox textAgingBeginDateT;
 		private System.Windows.Forms.Label labelAutoAgingRunTime;
 		private System.Windows.Forms.TextBox textAutoAgingRunTime;
 		private UI.Button butClearAgingBeginDateT;
+		private UI.Button butAgingProcLifoDetails;
 	}
 }

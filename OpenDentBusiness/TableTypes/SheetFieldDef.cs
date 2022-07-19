@@ -83,7 +83,7 @@ namespace OpenDentBusiness{
 		public Color ItemColor;
 		///<summary>Tab stop order for all fields of a mobile sheet. One-based.  Only mobile fields can have values other than 0. If all SheetFieldDefs for a given SheetField are 0 then assume that this sheet has no mobile-specific view.</summary>
 		public int TabOrderMobile;
-		///<summary>Each input field for a mobile will need a corresponding UI label. This is what the user sees as the label describing what this input is for. EG "First Name:, Last Name:, Address, etc."</summary>
+		///<summary>Each input field for a mobile will need a corresponding UI label. This is what the user sees as the label describing what this input is for. EG "First Name:, Last Name:, Address, etc." For check boxes, this field should be blank otherwise a group box will be displayed to the user with this text. For radio buttons, this field should be set to the text of the group caption.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string UiLabelMobile;
 		///<summary>Human readable label that will be displayed for radio button or checkbox item in mobile mode.  Cannot use UiLabelMobile for this purpose as it is already dedicated to the radio group header that groups radio button items together.</summary>

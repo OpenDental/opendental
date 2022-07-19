@@ -1509,7 +1509,8 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<PatientWithServerDT>>(MethodBase.GetCurrentMethod(),limit,offset,lName,fName,birthdate,patStatus,clinicNum,dateTStamp,priProv);
 			}
-			string command="SELECT * FROM patient WHERE DateTStamp >= "+POut.DateT(dateTStamp)+" ";
+			string command="SELECT * FROM patient WHERE DateTStamp >= "+POut.DateT(dateTStamp)+" "
+				+"AND PatStatus != "+POut.Int((int)PatientStatus.Deleted)+" ";//Do not return Deleted patients.
 			if(!lName.IsNullOrEmpty()) {
 				command+="AND LName LIKE '%"+POut.String(lName)+"%' ";
 			}

@@ -89,7 +89,7 @@ namespace OpenDental {
 			textUiLabelMobileMisc.Text=SheetFieldDefCur.UiLabelMobile;
 			textUiLabelMobileRadioButtonMisc.Text=SheetFieldDefCur.UiLabelMobileRadioButton;
 			textUiLabelMobile.Text=SheetFieldDefCur.UiLabelMobile;
-			textUiLabelMobileCheckBoxNonMisc.Text=SheetFieldDefCur.UiLabelMobile;
+			textUiLabelMobileCheckBoxNonMisc.Text=SheetFieldDefCur.UiLabelMobileRadioButton;
 			textMobileMedicalNameOverride.Text=SheetFieldDefCur.UiLabelMobile;
 			textMobileMedicalNameOverride.Text=SheetFieldDefCur.UiLabelMobile;
 			textItemOverride.Text=SheetFieldDefCur.UiLabelMobileRadioButton;
@@ -541,8 +541,7 @@ namespace OpenDental {
 				SheetFieldDefCur.UiLabelMobileRadioButton=radioItemValue;
 			}
 			else if(labelUiLabelMobileCheckBoxNonMisc.Visible) { 
-				//All items with this group name get this UiLabelMobile.
-				updateGroupCaptionForFieldName(textUiLabelMobileCheckBoxNonMisc.Text);
+				//There is no radio button UI displaying to the user so do not set a 'group caption' by invoking updateGroupCaptionForFieldName.
 				SheetFieldDefCur.UiLabelMobileRadioButton=string.IsNullOrEmpty(radioItemValue) ? textUiLabelMobileCheckBoxNonMisc.Text : radioItemValue;
 			}			
 			SheetFieldDefCur.IsRequired=checkRequired.Checked;

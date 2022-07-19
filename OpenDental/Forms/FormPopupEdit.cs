@@ -77,9 +77,12 @@ namespace OpenDental{
 				comboPopupLevel.Items.Add(Lan.g("enumEnumPopupFamily",Enum.GetNames(typeof(EnumPopupLevel))[2]));//SuperFamily
 			}
 			comboPopupLevel.SelectedIndex=(int)PopupCur.PopupLevel;
-			if(PopupCur.IsNew) {//Set default selected level to Family for popups.
+			if(PopupCur.IsNew) {//Set default selected level to Patient for popups.
 				//If no index is found nothing is set, this shouldn't happen.
-				comboPopupLevel.SelectedIndex=comboPopupLevel.Items.GetAll<string>().IndexOf(Enum.GetNames(typeof(EnumPopupLevel))[1]);//Family
+				comboPopupLevel.SelectedIndex=comboPopupLevel.Items.GetAll<string>().IndexOf(Enum.GetNames(typeof(EnumPopupLevel))[0]);//Patient - E37468
+				if(PrefC.IsODHQ) {//Use Family for HQ
+					comboPopupLevel.SelectedIndex=comboPopupLevel.Items.GetAll<string>().IndexOf(Enum.GetNames(typeof(EnumPopupLevel))[1]);//Family
+				}
 			}
 			//checkIsDisabled.Checked=PopupCur.IsDisabled;
 			textDescription.Text=PopupCur.Description;

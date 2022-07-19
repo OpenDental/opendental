@@ -919,7 +919,7 @@ namespace OpenDentBusiness{
 			if(clinicNum==0) {
 				return 0;
 			}
-			Clinic clinic=OpenDentBusiness.Clinics.GetClinic(clinicNum);
+			Clinic clinic=OpenDentBusiness.Clinics.GetClinicNoCache(clinicNum);
 			if(clinic is null) {
 				return -1;
 			}

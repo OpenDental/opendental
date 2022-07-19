@@ -1193,17 +1193,15 @@ namespace OpenDental {
 				return true;
 			}
 			if(sheetFieldCur.FieldName.Contains("checkMed")) {
-				return false; //checkMeds UiLabel is their corrisponding medInputField
+				return false; //checkMeds UiLabel is their corresponding medInputField
 			}
-			if(sheetFieldCur.FieldName!="misc") {
-				if(
-					//Has a group.
-					!string.IsNullOrEmpty(sheetFieldCur.FieldName) &&
-					//Has not group caption.
-					string.IsNullOrEmpty(sheetFieldCur.UiLabelMobile)) 
-				{
-					return true;
-				}
+			//Return erroneous if this is a non-misc radio button group with no group caption set.
+			if(!string.IsNullOrEmpty(sheetFieldCur.FieldName)
+				&& sheetFieldCur.FieldName!="misc" 
+				&& SheetFieldsAvailable.GetRadio(sheetFieldCur.FieldName).Any()
+				&& string.IsNullOrEmpty(sheetFieldCur.UiLabelMobile))
+			{
+				return true;
 			}
 			return false;
 		}

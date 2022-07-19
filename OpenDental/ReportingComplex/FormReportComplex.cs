@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CodeBase;
@@ -1025,34 +1026,42 @@ namespace OpenDental.ReportingComplex {
 
 		private void OnExport_Click(){
 			string filePath;
+			SaveFileDialog saveFileDialog = new SaveFileDialog();
+			saveFileDialog.Filter="Text files(*.txt)|*.txt|Excel Files(*.xls)|*.xls|All files(*.*)|*.*";
+			saveFileDialog.DefaultExt="txt";
+			saveFileDialog.FileName=_myReport.ReportName;
 			if(ODBuild.IsWeb()) {
-				string fileName=_myReport.ReportName+".txt";
-				filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
+				if(saveFileDialog.ShowDialog()!=DialogResult.OK) { 
+					return;
+				}
+				if(saveFileDialog.FileName.IsNullOrEmpty()) {
+					MsgBox.Show("Failed to save the file.");
+					return;
+				}
+				filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),saveFileDialog.FileName.Split('\\').Last());
 			}
 			else {
-				SaveFileDialog saveFileDialog2=new SaveFileDialog();
-				saveFileDialog2.AddExtension=true;
 				//saveFileDialog2.Title=Lan.g(this,"Select Folder to Save File To");
-				saveFileDialog2.FileName=_myReport.ReportName+".txt";
 				if(!Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
 					try {
 						Directory.CreateDirectory(PrefC.GetString(PrefName.ExportPath));
-						saveFileDialog2.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
+						saveFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
 					}
 					catch {
 						//initialDirectory will be blank
 					}
 				}
 				else {
-					saveFileDialog2.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
+					saveFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
 				}
-				//saveFileDialog2.DefaultExt="txt";
-				saveFileDialog2.Filter="Text files(*.txt)|*.txt|Excel Files(*.xls)|*.xls|All files(*.*)|*.*";
-				saveFileDialog2.FilterIndex=0;
-				if(saveFileDialog2.ShowDialog()!=DialogResult.OK) {
+				if(saveFileDialog.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
-				filePath=saveFileDialog2.FileName;
+				if(saveFileDialog.FileName.IsNullOrEmpty()) {
+					MsgBox.Show("Failed to save the file.");
+					return;
+				}
+				filePath=saveFileDialog.FileName;
 			}
 			try {
 				using(StreamWriter sw=new StreamWriter(filePath,false)) {

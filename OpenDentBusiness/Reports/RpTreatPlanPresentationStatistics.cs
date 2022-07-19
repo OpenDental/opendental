@@ -55,8 +55,8 @@ namespace OpenDentBusiness {
 				listProcsForTreatPlans=
 					listProcsForTreatPlans.FindAll(x => listClinicNums.Contains(x.ClinicNum));
 			}
-			List<ClaimProc> listClaimProcs=ReportsComplex.RunFuncOnReportServer(() => ClaimProcs.GetForProcsLimited(listProcsForTreatPlans.Select(x => x.ProcNum).ToList(),
-				ClaimProcStatus.CapComplete,ClaimProcStatus.NotReceived,ClaimProcStatus.Received,ClaimProcStatus.Supplemental,ClaimProcStatus.Estimate));
+			List<ClaimProc> listClaimProcs=ReportsComplex.RunFuncOnReportServer(() => ClaimProcs.GetForProcs(listProcsForTreatPlans.Select(x => x.ProcNum).ToList(),
+				new List<ClaimProcStatus> { ClaimProcStatus.CapComplete, ClaimProcStatus.NotReceived, ClaimProcStatus.Received, ClaimProcStatus.Supplemental, ClaimProcStatus.Estimate }));
 			List<Adjustment> listAdjustments=ReportsComplex.RunFuncOnReportServer(() => Adjustments.GetForProcs(listProcsForTreatPlans.Select(x => x.ProcNum).ToList()));
 			List<Userod> listUserods=ReportsComplex.RunFuncOnReportServer(() => Userods.GetAll());
 			List<TreatPlanPresenterEntry> listTreatPlanPresenterEntries=new List<TreatPlanPresenterEntry>();
