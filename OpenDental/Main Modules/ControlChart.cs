@@ -775,6 +775,8 @@ namespace OpenDental {
 			formProcEdit.ListClaimProcHists=_listClaimProcHists;
 			formProcEdit.ShowDialog();
 			List<long> listSelectedTpNums=gridTreatPlans.SelectedIndices.Select(x => _listTreatPlans[x].TreatPlanNum).ToList();
+			TreatPlanType tpTypeCur=(DiscountPlanSubs.HasDiscountPlan(_patCur.PatNum) ? TreatPlanType.Discount:TreatPlanType.Insurance);
+			TreatPlans.AuditPlans(_patCur.PatNum,tpTypeCur);
 			RefreshModuleData(_patCur.PatNum,true);
 			FillProgNotes();
 			gridTreatPlans.SetAll(false);

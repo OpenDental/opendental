@@ -8,7 +8,7 @@ using PdfSharp.Drawing;
 
 namespace OpenDental {
 	public partial class FormSheetDef:FormODBase {
-		///<summary></summary>
+		///<summary>This holds the default values of the sheet dimensions, but once we click ok the users settings will override.</summary>
 		public SheetDef SheetDefCur;
 		//private List<SheetFieldDef> AvailFields;
 		public bool IsReadOnly;
@@ -166,8 +166,8 @@ namespace OpenDental {
 					textHeight.Text=sheetdef.Height.ToString();
 					checkIsLandscape.Checked=sheetdef.IsLandscape;
 					break;
-				case SheetTypeEnum.PatientForm:
-				case SheetTypeEnum.MedicalHistory:
+				default://All other sheet types use default values
+					ReloadDefaultValues();
 					break;
 			}
 			if(!checkHasMobileLayout.Enabled) { //Only change the check state if the selected form does not allow mobile sheet layout
@@ -181,6 +181,16 @@ namespace OpenDental {
 					"You must remove this form from eClipboard rules before you can remove the mobile layout for this sheet.");
 				checkHasMobileLayout.Checked=true;
 			}
+		}
+
+		private void ReloadDefaultValues() {
+			if(textDescription.Text==""){
+				textDescription.Text=_sheetTypeSelected.GetDescription();
+			}
+			textFontSize.Text=SheetDefCur.FontSize.ToString();
+			textWidth.Text=SheetDefCur.Width.ToString();
+			textHeight.Text=SheetDefCur.Height.ToString();
+			checkIsLandscape.Checked=SheetDefCur.IsLandscape;
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {

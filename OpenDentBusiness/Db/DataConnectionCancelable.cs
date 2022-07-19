@@ -69,9 +69,9 @@ namespace OpenDentBusiness {
 		///<summary>Currently only for user queries.  The connection must already be opened before calling this method.
 		///Fills and returns a DataTable from the database.  Use isRunningOnReportServer to indicate if the connection is made directly to the Report
 		///Server.  Throws an exception if a connection could not be found via the passed in server thread.</summary>
-		public static DataTable GetTableConAlreadyOpen(int serverThread,string command,bool isSqlValidated,bool isRunningOnReportServer=false,bool hasStackTrace=false) {
+		public static DataTable GetTableConAlreadyOpen(int serverThread, string command, bool isSqlValidated, bool isRunningOnReportServer = false, bool hasStackTrace = false, bool suppressMessage = false) {
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				return Meth.GetTable(MethodBase.GetCurrentMethod(),serverThread,command,isSqlValidated,isRunningOnReportServer,hasStackTrace);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),serverThread,command,isSqlValidated,isRunningOnReportServer,hasStackTrace, suppressMessage);
 			}
 			//If the dictionary does not contain the ServerThread key, then something went wrong. Just stop and throw.
 			MySqlConnection con;
@@ -79,7 +79,7 @@ namespace OpenDentBusiness {
 				throw new ApplicationException("Critical error in GetTableConAlreadyOpen: A connection could not be found via the given server thread ID.");
 			}
 			//Throws Exception if Sql is not allowed, which is handled by the ExceptionThreadHandler and output in a MsgBox
-			if(!isSqlValidated && !Db.IsSqlAllowed(command,isRunningOnReportServer:isRunningOnReportServer)) {
+			if(!isSqlValidated && !Db.IsSqlAllowed(command, suppressMessage: suppressMessage, isRunningOnReportServer:isRunningOnReportServer)) {
 				throw new ApplicationException("Error: Command is either not safe or user does not have permission.");
 			}
 			//At this point, we know that _dictCons contains the current connection's ServerThread ID.

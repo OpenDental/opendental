@@ -302,6 +302,19 @@ namespace OpenDentBusiness{
 		#endregion
 
 		#region Update
+		/// <summary>Set all ClaimProcs attached to the claim to have the same clinic num.</summary>
+		public static void UpdateClinicNumForClaim(long claimNum,long clinicNum) {
+			if(claimNum<=0) {
+				return;
+			}
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),claimNum,clinicNum);
+				return;
+			}
+			string command=$"UPDATE claimproc SET ClinicNum={POut.Long(clinicNum)} WHERE ClaimNum={POut.Long(claimNum)}";
+			Db.NonQ(command);
+		}
+
 		///<summary>Updates the ClaimProcs passed in.</summary>
 		public static void UpdateMany(List<ClaimProc> listUpdate) {
 			if(listUpdate.Count==0) {

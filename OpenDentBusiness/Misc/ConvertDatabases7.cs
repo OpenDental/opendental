@@ -2871,13 +2871,16 @@ namespace OpenDentBusiness {
 			command="INSERT INTO preference(PrefName,ValueString) VALUES('ClaimPrimaryRecievedForceSecondaryStatus','0')";//Default false
 			Db.NonQ(command);
 			//Insert MedLink bridge----------------------------------------------------------------- 
+			//MeditLink has a very specific pattern that they require which is backslash, double quote, left bracket, content, right bracket, backslash, doublequote.
+			//This command needs to be passed through POut.String() so that the backslash and double quotes are preserved within the database.
+			string strCommandLine=@"{\""NameFL\"": \""[NameFL]\"", \""PatNum\"": \""[PatNum]\"", \""PatientGenderMF\"": \""[PatientGenderMF]\"", \""Birthdate_yyyyMMdd\"": \""[Birthdate_yyyyMMdd]\""}";
 			command="INSERT INTO program (ProgName,ProgDesc,Enabled,Path,CommandLine,Note" 
 				 +") VALUES(" 
 				 +"'MeditLink', " 
 				 +"'Medit Link from www.meditlink.com', " 
 				 +"'0', " 
-				 +"'"+POut.String(@"C:\Program Files\Medit\Medit Link\Medit Link\Medit_Link.exe")+"', " 
-				 +"'"+POut.String(@"{"+"\"NameFL\": \"[NameFL]\", \"PatNum\": \"[PatNum]\", \"PatientGenderMF\": \"[PatientGenderMF]\", \"Birthdate_yyyyMMdd\": \"[Birthdate_yyyyMMdd]\"}")+"', "//leave blank if none 
+				 +"'"+POut.String(@"C:\Program Files\Medit\Medit Link\Medit Link\Medit_Link.exe")+"', " //Expects values surrounded by \". To escape for cmd line we need \\\".
+				 +"'"+POut.String(strCommandLine)+"', "//leave blank if none
 				 +"'')";
 			long programNum=Db.NonQ(command,true);
 			command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) " 
@@ -3168,6 +3171,15 @@ namespace OpenDentBusiness {
 		private static void To22_1_44() {
 			RemoveDuplicateProcCodesFromFrequencyLimitationPreferences();
 		}
+
+		private static void To22_1_46() {
+			string command;
+			//MeditLink has a very specific pattern that they require which is backslash, double quote, left bracket, content, right bracket, backslash, doublequote.
+			//This command needs to be passed through POut.String() so that the backslash and double quotes are preserved within the database.
+			string strCommandLine=@"{\""NameFL\"": \""[NameFL]\"", \""PatNum\"": \""[PatNum]\"", \""PatientGenderMF\"": \""[PatientGenderMF]\"", \""Birthdate_yyyyMMdd\"": \""[Birthdate_yyyyMMdd]\""}";
+			command=$"UPDATE program SET CommandLine='{POut.String(strCommandLine)}' WHERE ProgName='MeditLink'";
+			Db.NonQ(command);
+		}//End of 21_1_46() method
 	}
 }
 

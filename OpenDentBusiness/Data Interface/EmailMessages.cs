@@ -2124,9 +2124,9 @@ namespace OpenDentBusiness{
 				emailMessage.MsgDateTime=DateTime_.Now;
 			}
 			emailMessage.Subject=SubjectTidy(ProcessInlineEncodedText(message.SubjectValue));
-			emailMessage.ToAddress=ProcessInlineEncodedText(POut.String(message.ToValue).Trim());//ToValue can be null if recipients were CC or BCC only.
-			emailMessage.CcAddress=ProcessInlineEncodedText(POut.String(message.CcValue).Trim());
-			emailMessage.BccAddress=ProcessInlineEncodedText(POut.String(message.BccValue).Trim());
+			emailMessage.ToAddress=ProcessInlineEncodedText(POut.String(message.ToValue).Trim()).Replace(@"\","");//ToValue can be null if recipients were CC or BCC only.
+			emailMessage.CcAddress=ProcessInlineEncodedText(POut.String(message.CcValue).Trim()).Replace(@"\","");
+			emailMessage.BccAddress=ProcessInlineEncodedText(POut.String(message.BccValue).Trim()).Replace(@"\","");
 			//Think of the mime structure as a tree.
 			//We want to treat one part and multi-part emails the same way below, so we make our own list of leaf node mime parts (mime parts which have no children, also know as single part).
 			List<Health.Direct.Common.Mime.MimeEntity> listMimePartLeafNodes=GetMimeLeafNodes(message);
