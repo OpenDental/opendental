@@ -986,7 +986,7 @@ namespace OpenDental {
 				);
 				DownloadDocumentNoteFile(nodeTypeAndKey);
 				_isExportable=panelMain.Visible;
-				if(_bitmapRaw==null) {
+				if(_bitmapRaw==null && _bitmapDicomRaw==null) {
 					panelMain.Visible=false;
 					if(ImageHelper.HasImageExtension(document.FileName)) {
 						string srcFileName = ODFileUtils.CombinePaths(PatFolder,document.FileName);

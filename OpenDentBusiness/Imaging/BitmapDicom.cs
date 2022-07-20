@@ -80,15 +80,11 @@ namespace OpenDentBusiness {
 			for(int i=0;i<bitmapDicom.ArrayDataRaw.Length;i++){
 				histogram[bitmapDicom.ArrayDataRaw[i]]++;
 			}
-			histogram[0]=0;//throw out the large number of black pixels
-			int max=histogram.Max();
-			int idxPeak=0;
-			for(int i=0;i<histogram.Length;i++){
-				if(histogram[i]==max){
-					idxPeak=i;
-					break;
-				}
+			int idxBlackPixels=GetIndexForValue(histogram,histogram.Max());//max value will hopefully be the black pixels.
+			if(idxBlackPixels < 100) { //it's at the left, so it's almost certainly black
+				histogram[idxBlackPixels]=0;//throw out the large number of black pixels
 			}
+			int idxPeak=GetIndexForValue(histogram,histogram.Max());
 			int threshold=150;
 			bitmapDicom.WindowingMin=0;
 			for(int i=idxPeak;i>=0;i--){//hunt down
@@ -174,6 +170,21 @@ namespace OpenDentBusiness {
 				}
 			}  
 			return bitmapDicom;
+		}
+
+		///<summary>Returns the index of the value passed in. Return 0 if it cannot find the value.</summary>
+		public static int GetIndexForValue(int[] histogram,int value) {
+			if(histogram==null) {
+				return 0;
+			}
+			int idxOfValue=0;
+			for(int i=0;i<histogram.Length;i++){
+				if(histogram[i]==value){
+					idxOfValue=i;
+					break;
+				}
+			}
+			return idxOfValue;
 		}
 
 		/*
