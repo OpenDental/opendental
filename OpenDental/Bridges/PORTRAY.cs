@@ -28,10 +28,10 @@ namespace OpenDental.Bridges {
 				return;
 			}
 			//The path is available in the registry, but we'll just make the user enter it.
-			if(!File.Exists(path)) {
+			/*if(!File.Exists(path)) {
 				MessageBox.Show("Could not find "+path);
 				return;
-			}
+			}*/
 			//ProgramProperties.GetPropVal() is the way to get program properties.
 			if(ProgramProperties.GetPropVal(programCur.ProgramNum,"Enter 0 to use PatientNum, or 1 to use ChartNum")=="1") {
 				programCur.CommandLine=programCur.CommandLine.Replace("[PatNum]","[ChartNumber]");
@@ -39,8 +39,10 @@ namespace OpenDental.Bridges {
 			else {
 				programCur.CommandLine=programCur.CommandLine.Replace("[ChartNumber]","[PatNum]");
 			}
-			string str = Patients.ReplacePatient(programCur.CommandLine,pat);
-			str=str.Replace("<>","<__ignore__>");
+			string str=Patients.ReplacePatient(programCur.CommandLine,pat);
+			str=str.Replace("<>","__ignore__");
+			str=str.Replace("<","");
+			str=str.Replace(">","");
 			try {
 				ODFileUtils.ProcessStart(path,str);
 			}

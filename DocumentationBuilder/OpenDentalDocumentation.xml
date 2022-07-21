@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDocumentation.xsl"?>
-<database version="22.2.18.0">
+<database version="22.2.21.0">
     <table name="account">
         <summary>Used in the accounting section in chart of accounts.  Not related to patient accounts in any way.</summary>
         <column order="0" name="AccountNum" type="bigint(20)">
@@ -14934,7 +14934,7 @@
             If all SheetFieldDefs for a given SheetField are 0 then assume that this sheet has no mobile-specific view.</summary>
         </column>
         <column order="23" name="UiLabelMobile" type="text">
-            <summary>Each input field for a mobile will need a corresponding UI label. This is what the user sees as the label describing what this input is for. EG "First Name:, Last Name:, Address, etc."</summary>
+            <summary>Each input field for a mobile will need a corresponding UI label. This is what the user sees as the label describing what this input is for. EG "First Name:, Last Name:, Address, etc." For check boxes, this field should be blank otherwise a group box will be displayed to the user with this text. For radio buttons, this field should be set to the text of the group caption.</summary>
         </column>
         <column order="24" name="UiLabelMobileRadioButton" type="text">
             <summary>Human readable label that will be displayed for radio button item in mobile mode. 
@@ -15054,7 +15054,7 @@
             <summary>Tab stop order for all fields of a mobile sheet. One-based.  Only mobile fields can have values other than 0. If all SheetFieldDefs for a given SheetField are 0 then assume that this sheet has no mobile-specific view.</summary>
         </column>
         <column order="23" name="UiLabelMobile" type="text">
-            <summary>Each input field for a mobile will need a corresponding UI label. This is what the user sees as the label describing what this input is for. EG "First Name:, Last Name:, Address, etc."</summary>
+            <summary>Each input field for a mobile will need a corresponding UI label. This is what the user sees as the label describing what this input is for. EG "First Name:, Last Name:, Address, etc." For check boxes, this field should be blank otherwise a group box will be displayed to the user with this text. For radio buttons, this field should be set to the text of the group caption.</summary>
         </column>
         <column order="24" name="UiLabelMobileRadioButton" type="text">
             <summary>Human readable label that will be displayed for radio button or checkbox item in mobile mode.  Cannot use UiLabelMobile for this purpose as it is already dedicated to the radio group header that groups radio button items together.</summary>

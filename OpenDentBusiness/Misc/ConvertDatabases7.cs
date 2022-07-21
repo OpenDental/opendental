@@ -3823,6 +3823,11 @@ namespace OpenDentBusiness {
 			command=$"UPDATE program SET CommandLine='{POut.String(strCommandLine)}' WHERE ProgName='MeditLink'";
 			Db.NonQ(command);
 		}//End of 22_2_21() method
+
+		private static void To22_2_22() {
+			string command = "UPDATE program SET CommandLine='Launch <[PatNum]> <[FName]> <[PatientMiddleInitial]> <[LName]> <[NamePreferredOrFirst]> <[Birthdate]> <[PatientGenderMF]>' WHERE ProgName='PORTRAY'";
+			Db.NonQ(command);
+		}//End of 22_2_22() method
 	}
 }
 

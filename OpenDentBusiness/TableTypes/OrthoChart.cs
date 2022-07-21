@@ -9,7 +9,7 @@ namespace OpenDentBusiness {
 		///<summary>Primary key.</summary>
 		[CrudColumn(IsPriKey=true)]
 		public long OrthoChartNum;
-		///<summary>FK to patient.PatNum.</summary>
+		///<summary>Deprecated, FK to patient.PatNum.</summary>
 		public long PatNum;
 		///<summary>Deprecated, use orthochartrow table instead.  Date of service.</summary>
 		public DateTime DateService;

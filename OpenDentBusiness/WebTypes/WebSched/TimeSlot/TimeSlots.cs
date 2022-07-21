@@ -119,9 +119,16 @@ namespace OpenDentBusiness.WebTypes.WebSched.TimeSlot {
 			List<long> listProvNums=listProviders.Select(x => x.ProvNum).Distinct().ToList();
 			List<Schedule> listRestrictedToBlockouts=null;
 			List<DefLink> listRestrictedToBlockoutDefLinks=DefLinks.GetDefLinksByType(DefLinkType.BlockoutType,defNumApptType);
-			if(listRestrictedToBlockoutDefLinks.Count>0) {	
+			if(listRestrictedToBlockoutDefLinks.Count>0) {
+				List<long> listOperatoryNums=new List<long>();
+				if(PrefC.HasClinicsEnabled && clinicNum!=0) {
+					listOperatoryNums=listOperatories.Where(x => x.ClinicNum==clinicNum).Select(x => x.OperatoryNum).ToList();
+				}
+				else {
+					listOperatoryNums=listOperatories.Select(x => x.OperatoryNum).ToList();
+				}
 				listRestrictedToBlockouts=Schedules.GetRestrictedToBlockoutsByReason(defNumApptType,dateStart,dateEnd,
-					listOperatories.Select(x => x.OperatoryNum).ToList(),listRestrictedBlockouts:listRestrictedToBlockoutDefLinks);
+					listOperatoryNums,listRestrictedBlockouts:listRestrictedToBlockoutDefLinks);
 			}
 			List<Schedule> listSchedules=Schedules.GetSchedulesAndBlockoutsForWebSched(listProvNums,dateStart,dateEnd,isRecall:false,clinicNum,
 				listRestrictedToBlockouts:listRestrictedToBlockouts,isNewPat:isNewPat);

@@ -1863,17 +1863,15 @@ namespace OpenDental {
 			return false;
 		}
 
-		///<summary>If areDashboardWidgetOptionsEnabled, only certain buttons will show, including DashboardWidget specific buttons.  Otherwise, DashboardWidget specific buttons will be hidden.</summary>
+		///<summary>If is PatientDashboardWidget, only certain buttons will show, including DashboardWidget specific buttons.  Otherwise, DashboardWidget specific buttons will be hidden.</summary>
 		private void EnableDashboardWidgetOptions() {
 			if(_sheetDef.SheetType!=SheetTypeEnum.PatientDashboardWidget){
 				return;
 			}
-			butEdit.Visible=false;
-			butAlignTop.Visible=false;
-			butAlignLeft.Visible=false;
-			butAlignCenterH.Visible=false;
-			butAlignRight.Visible=false;
-			butCancel.Visible=false;
+			groupPage.Visible=false;
+			butAutoSnap.Visible=false;
+			butTabOrder.Visible=false;
+			butMobile.Visible=false;
 		}
 
 		private void FillComboUndo(){
