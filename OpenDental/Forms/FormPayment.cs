@@ -1597,7 +1597,7 @@ namespace OpenDental {
 			bool wasAllSelected=comboTypeFilter.IsAllSelected;
 			List<string> listSelectedTypes=_listFilteredType;
 			comboTypeFilter.Items.Clear();
-			comboTypeFilter.Items.AddList(_listAccountCharges.Select(x => x.GetType().Name).Distinct().ToList(),x => x);
+			comboTypeFilter.Items.AddList(_listAccountCharges.Select(x => x.GetType().Name).Distinct().ToList(),x=>GetDisplayStringForType(x));
 			if(!wasAllSelected && doPreserveValues) {
 				//Reselect providers that were selected before refilling the combo box.
 				for(int i=0;i<=comboTypeFilter.Items.Count;i++) {
@@ -2833,6 +2833,13 @@ namespace OpenDental {
 				}
 			}
 			return true;
+		}
+
+		private string GetDisplayStringForType(string name) {
+			if(name==nameof(FauxAccountEntry)) {
+				return Lans.g(this,"PayPlanCharge");
+			}
+			return name;
 		}
 
 		private string SecurityLogEntryHelper(string oldVal,string newVal,string textInLog) {

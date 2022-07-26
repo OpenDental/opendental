@@ -24,10 +24,9 @@ namespace OpenDental {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.labelIncTxfrTreatNegProdAsIncomeDetails = new System.Windows.Forms.Label();
 			this.labelPayPlansUseSheetsDetails = new System.Windows.Forms.Label();
-			this.labelPayPlansVersionDetails = new System.Windows.Forms.Label();
 			this.labelDppUnearnedTypeDetails = new System.Windows.Forms.Label();
+			this.labelStoreCCTokensDetails = new System.Windows.Forms.Label();
 			this.groupBoxUnearnedIncome = new OpenDental.UI.GroupBoxOD();
 			this.checkShowAllocateUnearnedPaymentPrompt = new System.Windows.Forms.CheckBox();
 			this.checkAllowPrepayProvider = new System.Windows.Forms.CheckBox();
@@ -55,22 +54,12 @@ namespace OpenDental {
 			this.checkAllowEmailCCReceipt = new System.Windows.Forms.CheckBox();
 			this.checkPaymentsPromptForPayType = new System.Windows.Forms.CheckBox();
 			this.checkAllowFutureDebits = new System.Windows.Forms.CheckBox();
+			this.butIncTxfrTreatNegProdAsIncomeDetails = new OpenDental.UI.Button();
+			this.butPayPlansVersionDetails = new OpenDental.UI.Button();
 			this.groupBoxUnearnedIncome.SuspendLayout();
 			this.groupBoxPayPlans.SuspendLayout();
 			this.groupBoxPayments.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// labelIncTxfrTreatNegProdAsIncomeDetails
-			// 
-			this.labelIncTxfrTreatNegProdAsIncomeDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelIncTxfrTreatNegProdAsIncomeDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelIncTxfrTreatNegProdAsIncomeDetails.Location = new System.Drawing.Point(473, 142);
-			this.labelIncTxfrTreatNegProdAsIncomeDetails.Name = "labelIncTxfrTreatNegProdAsIncomeDetails";
-			this.labelIncTxfrTreatNegProdAsIncomeDetails.Size = new System.Drawing.Size(498, 29);
-			this.labelIncTxfrTreatNegProdAsIncomeDetails.TabIndex = 329;
-			this.labelIncTxfrTreatNegProdAsIncomeDetails.Text = "Income Transfer Manager will also reallocate overpayments. Not recommended for of" +
-    "fices that pay providers based on collections.";
-			this.labelIncTxfrTreatNegProdAsIncomeDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelPayPlansUseSheetsDetails
 			// 
@@ -83,18 +72,6 @@ namespace OpenDental {
 			this.labelPayPlansUseSheetsDetails.Text = "See Setup, Sheets";
 			this.labelPayPlansUseSheetsDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
-			// labelPayPlansVersionDetails
-			// 
-			this.labelPayPlansVersionDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelPayPlansVersionDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelPayPlansVersionDetails.Location = new System.Drawing.Point(476, 287);
-			this.labelPayPlansVersionDetails.Name = "labelPayPlansVersionDetails";
-			this.labelPayPlansVersionDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelPayPlansVersionDetails.TabIndex = 331;
-			this.labelPayPlansVersionDetails.Text = "if Do Not Age, then Payment Plan debits will not show in the main Account grid or" +
-    " in reports";
-			this.labelPayPlansVersionDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// labelDppUnearnedTypeDetails
 			// 
 			this.labelDppUnearnedTypeDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -106,6 +83,17 @@ namespace OpenDental {
 			this.labelDppUnearnedTypeDetails.Text = "Hides prepayments from income transfer system. Only PaySplit unearned types marke" +
     "d as Do Not Show on Account are listed here.";
 			this.labelDppUnearnedTypeDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelStoreCCTokensDetails
+			// 
+			this.labelStoreCCTokensDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelStoreCCTokensDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelStoreCCTokensDetails.Location = new System.Drawing.Point(476, 29);
+			this.labelStoreCCTokensDetails.Name = "labelStoreCCTokensDetails";
+			this.labelStoreCCTokensDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelStoreCCTokensDetails.TabIndex = 334;
+			this.labelStoreCCTokensDetails.Text = "for use with XCharge and PayConnect";
+			this.labelStoreCCTokensDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// groupBoxUnearnedIncome
 			// 
@@ -123,9 +111,9 @@ namespace OpenDental {
 			// 
 			this.checkShowAllocateUnearnedPaymentPrompt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkShowAllocateUnearnedPaymentPrompt.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkShowAllocateUnearnedPaymentPrompt.Location = new System.Drawing.Point(89, 60);
+			this.checkShowAllocateUnearnedPaymentPrompt.Location = new System.Drawing.Point(80, 60);
 			this.checkShowAllocateUnearnedPaymentPrompt.Name = "checkShowAllocateUnearnedPaymentPrompt";
-			this.checkShowAllocateUnearnedPaymentPrompt.Size = new System.Drawing.Size(351, 17);
+			this.checkShowAllocateUnearnedPaymentPrompt.Size = new System.Drawing.Size(360, 17);
 			this.checkShowAllocateUnearnedPaymentPrompt.TabIndex = 307;
 			this.checkShowAllocateUnearnedPaymentPrompt.Text = "Prompt user to allocate unearned income after creating a claim";
 			this.checkShowAllocateUnearnedPaymentPrompt.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -138,7 +126,7 @@ namespace OpenDental {
 			this.checkAllowPrepayProvider.Name = "checkAllowPrepayProvider";
 			this.checkAllowPrepayProvider.Size = new System.Drawing.Size(305, 17);
 			this.checkAllowPrepayProvider.TabIndex = 303;
-			this.checkAllowPrepayProvider.Text = "Allow assigning prepayments to providers";
+			this.checkAllowPrepayProvider.Text = "Allow assigning unearned income to providers";
 			this.checkAllowPrepayProvider.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkAllowPrepayProvider.UseVisualStyleBackColor = true;
 			// 
@@ -237,11 +225,11 @@ namespace OpenDental {
 			// label39
 			// 
 			this.label39.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.label39.Location = new System.Drawing.Point(48, 158);
+			this.label39.Location = new System.Drawing.Point(28, 158);
 			this.label39.Name = "label39";
-			this.label39.Size = new System.Drawing.Size(195, 17);
+			this.label39.Size = new System.Drawing.Size(215, 17);
 			this.label39.TabIndex = 320;
-			this.label39.Text = "Dynamic payment plan prepayment type";
+			this.label39.Text = "Dynamic payment plan unearned type";
 			this.label39.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// comboPayPlansVersion
@@ -276,9 +264,9 @@ namespace OpenDental {
 			// label59
 			// 
 			this.label59.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.label59.Location = new System.Drawing.Point(215, 132);
+			this.label59.Location = new System.Drawing.Point(199, 132);
 			this.label59.Name = "label59";
-			this.label59.Size = new System.Drawing.Size(154, 17);
+			this.label59.Size = new System.Drawing.Size(170, 17);
 			this.label59.TabIndex = 319;
 			this.label59.Text = "Dynamic Pay Plan run time";
 			this.label59.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -286,11 +274,11 @@ namespace OpenDental {
 			// label27
 			// 
 			this.label27.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.label27.Location = new System.Drawing.Point(120, 82);
+			this.label27.Location = new System.Drawing.Point(93, 82);
 			this.label27.Name = "label27";
-			this.label27.Size = new System.Drawing.Size(123, 17);
+			this.label27.Size = new System.Drawing.Size(150, 17);
 			this.label27.TabIndex = 318;
-			this.label27.Text = "Pay Plan charge logic:";
+			this.label27.Text = "Pay Plan charge logic";
 			this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textDynamicPayPlan
@@ -321,9 +309,9 @@ namespace OpenDental {
 			// 
 			this.checkStoreCCTokens.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkStoreCCTokens.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkStoreCCTokens.Location = new System.Drawing.Point(227, 10);
+			this.checkStoreCCTokens.Location = new System.Drawing.Point(210, 10);
 			this.checkStoreCCTokens.Name = "checkStoreCCTokens";
-			this.checkStoreCCTokens.Size = new System.Drawing.Size(213, 17);
+			this.checkStoreCCTokens.Size = new System.Drawing.Size(230, 17);
 			this.checkStoreCCTokens.TabIndex = 280;
 			this.checkStoreCCTokens.Text = "Automatically store credit card tokens";
 			this.checkStoreCCTokens.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -369,7 +357,7 @@ namespace OpenDental {
 			this.label38.Name = "label38";
 			this.label38.Size = new System.Drawing.Size(201, 17);
 			this.label38.TabIndex = 291;
-			this.label38.Text = "Patient Payment Clinic";
+			this.label38.Text = "Default Clinic for patient payments";
 			this.label38.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkAllowEmailCCReceipt
@@ -399,23 +387,44 @@ namespace OpenDental {
 			// 
 			this.checkAllowFutureDebits.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkAllowFutureDebits.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkAllowFutureDebits.Location = new System.Drawing.Point(113, 83);
+			this.checkAllowFutureDebits.Location = new System.Drawing.Point(100, 83);
 			this.checkAllowFutureDebits.Name = "checkAllowFutureDebits";
-			this.checkAllowFutureDebits.Size = new System.Drawing.Size(327, 17);
+			this.checkAllowFutureDebits.Size = new System.Drawing.Size(340, 17);
 			this.checkAllowFutureDebits.TabIndex = 289;
 			this.checkAllowFutureDebits.Text = "Allow future dated payments (not recommended, see manual)";
 			this.checkAllowFutureDebits.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkAllowFutureDebits.UseVisualStyleBackColor = true;
+			// 
+			// butIncTxfrTreatNegProdAsIncomeDetails
+			// 
+			this.butIncTxfrTreatNegProdAsIncomeDetails.ForeColor = System.Drawing.Color.Black;
+			this.butIncTxfrTreatNegProdAsIncomeDetails.Location = new System.Drawing.Point(479, 146);
+			this.butIncTxfrTreatNegProdAsIncomeDetails.Name = "butIncTxfrTreatNegProdAsIncomeDetails";
+			this.butIncTxfrTreatNegProdAsIncomeDetails.Size = new System.Drawing.Size(64, 21);
+			this.butIncTxfrTreatNegProdAsIncomeDetails.TabIndex = 371;
+			this.butIncTxfrTreatNegProdAsIncomeDetails.Text = "Details";
+			this.butIncTxfrTreatNegProdAsIncomeDetails.Click += new System.EventHandler(this.butIncTxfrTreatNegProdAsIncomeDetails_Click);
+			// 
+			// butPayPlansVersionDetails
+			// 
+			this.butPayPlansVersionDetails.ForeColor = System.Drawing.Color.Black;
+			this.butPayPlansVersionDetails.Location = new System.Drawing.Point(479, 284);
+			this.butPayPlansVersionDetails.Name = "butPayPlansVersionDetails";
+			this.butPayPlansVersionDetails.Size = new System.Drawing.Size(64, 21);
+			this.butPayPlansVersionDetails.TabIndex = 372;
+			this.butPayPlansVersionDetails.Text = "Details";
+			this.butPayPlansVersionDetails.Click += new System.EventHandler(this.butPayPlansVersionDetails_Click);
 			// 
 			// UserControlAccountPayments
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.butPayPlansVersionDetails);
+			this.Controls.Add(this.butIncTxfrTreatNegProdAsIncomeDetails);
+			this.Controls.Add(this.labelStoreCCTokensDetails);
 			this.Controls.Add(this.labelDppUnearnedTypeDetails);
-			this.Controls.Add(this.labelPayPlansVersionDetails);
 			this.Controls.Add(this.labelPayPlansUseSheetsDetails);
-			this.Controls.Add(this.labelIncTxfrTreatNegProdAsIncomeDetails);
 			this.Controls.Add(this.groupBoxUnearnedIncome);
 			this.Controls.Add(this.groupBoxPayPlans);
 			this.Controls.Add(this.groupBoxPayments);
@@ -457,9 +466,10 @@ namespace OpenDental {
 		private UI.GroupBoxOD groupBoxPayPlans;
 		private System.Windows.Forms.CheckBox checkShowAllocateUnearnedPaymentPrompt;
 		private UI.GroupBoxOD groupBoxUnearnedIncome;
-		private System.Windows.Forms.Label labelIncTxfrTreatNegProdAsIncomeDetails;
 		private System.Windows.Forms.Label labelPayPlansUseSheetsDetails;
-		private System.Windows.Forms.Label labelPayPlansVersionDetails;
 		private System.Windows.Forms.Label labelDppUnearnedTypeDetails;
+		private System.Windows.Forms.Label labelStoreCCTokensDetails;
+		private UI.Button butIncTxfrTreatNegProdAsIncomeDetails;
+		private UI.Button butPayPlansVersionDetails;
 	}
 }

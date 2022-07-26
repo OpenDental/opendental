@@ -255,29 +255,8 @@ namespace OpenDentBusiness{
 			}
 		}
 
-		/// <summary>Checks if the last clock event was less than 3 seconds ago. If it was, delays for 3 seconds, and clocks in. If not, immediately clocks in. Will throw an exception if already clocked in.</summary>
-		public static void ClockIn(long employeeNum,bool isAtHome) {
-			ClockEvent clockEvent=ClockEvents.GetLastEvent(employeeNum);
-			DateTime dateTimeNow=MiscData.GetNowDateTime();  
-			if(PrefC.GetBool(PrefName.LocalTimeOverridesServerTime)) {
-				dateTimeNow=DateTime.Now;
-      }
-			if(clockEvent!=null && (dateTimeNow-clockEvent.TimeDisplayed2).TotalSeconds<=3) {
-				//Set up a timer for 3 seconds. When it elapses resume clocking in. This does not block the main thread.
-				Timer timer = new Timer(3000);
-				timer.Elapsed+= (sender, e)=>ClockInHelper(employeeNum,isAtHome);
-				//Only run once
-				timer.AutoReset=false;
-				timer.Start();
-			}
-			//There is no previous clock event or it was over 3 seconds ago, clock in without delay.
-			else {
-				ClockInHelper(employeeNum,isAtHome);
-			}
-		}
-
 		///<summary>Will throw an exception if already clocked in.</summary>
-		public static void ClockInHelper(long employeeNum,bool isAtHome) {
+		public static void ClockIn(long employeeNum,bool isAtHome) {
 			TimeSpan minClockInTime=TimeCardRules.GetWhere(x => x.EmployeeNum.In(0,employeeNum) && x.MinClockInTime!=TimeSpan.Zero)
 				.OrderBy(x => x.MinClockInTime).FirstOrDefault()?.MinClockInTime??TimeSpan.Zero;
 			if(DateTime.Now.TimeOfDay<minClockInTime) {
@@ -304,17 +283,17 @@ namespace OpenDentBusiness{
 				clockEvent.TimeDisplayed2=clockEvent.TimeEntered2;
 				ClockEvents.Update(clockEvent);
 				if(clockEvent.IsWorkingHome != isAtHome) { //If coming back from break, and switching locations between home / office
-					System.Threading.Thread.Sleep(1000); // Needed to maintain that the end of a break, and the clock out doesnt happen at the same second, and break the calc daily functionality.
+					System.Threading.Thread.Sleep(1000); //Needed to maintain that the end of a break, and the clock out doesnt happen at the same second, and break the calc daily functionality.
 					ClockOut(employeeNum,TimeClockStatus.Home); //Home means not lunch or break is being counted.
 					ClockIn(employeeNum,isAtHome);//Clock in to start new clockEvent from new location.
-					return; // ensure we dont make 2 security logs for clocking in by hitting the end of this method twice.
+					return; //ensure we dont make 2 security logs for clocking in by hitting the end of this method twice.
 				}
       }
 			else {//normal clock in/out
 				if(clockEvent.TimeDisplayed2.Year<1880) {//already clocked in
 					throw new Exception(Lans.g("ClockEvents","Error.  Already clocked in."));
 				}
-				else {//clocked out for home or lunch.  Need to clock back in by starting a new row.
+				else {//clocked out for home or lunch. Need to clock back in by starting a new row.
 					TimeClockStatus tcs=clockEvent.ClockStatus;
 					clockEvent=new ClockEvent();
 					clockEvent.EmployeeNum=employeeNum;
@@ -328,29 +307,8 @@ namespace OpenDentBusiness{
 			SecurityLogs.MakeLogEntry(Permissions.UserLogOnOff,0,emp.FName+" "+emp.LName+" "+"clocked in from "+clockEvent.ClockStatus.ToString()+".");
 		}
 
-		/// <summary>Checks if the last clock event was less than 3 seconds ago. If it was, delays for 3 seconds, and clocks in. If not, immediately clocks in. Will throw an exception if already clocked in.</summary>
-		public static void ClockOut(long employeeNum,TimeClockStatus clockStatus) {
-			ClockEvent clockEvent=ClockEvents.GetLastEvent(employeeNum);
-			DateTime dateTimeNow=MiscData.GetNowDateTime();  
-			if(PrefC.GetBool(PrefName.LocalTimeOverridesServerTime)) {
-				dateTimeNow=DateTime.Now;
-      }
-			if(clockEvent!=null && (dateTimeNow-clockEvent.TimeDisplayed1).TotalSeconds<=3) {
-				//Set up a timer for 3 seconds. When it elapses resume clocking in. This does not block the main thread.
-				Timer timer=new Timer(3000);
-				timer.Elapsed+=(sender, e) => ClockOutHelper(employeeNum, clockStatus);
-				//Only run once.
-				timer.AutoReset=false;
-				timer.Start();
-			}
-			//There is no previous clock event or it was over 3 seconds ago, clock in without delay.
-			else {
-				ClockOutHelper(employeeNum, clockStatus);
-			}
-		}
-
 		///<summary>Will throw an exception if already clocked out.</summary>
-		public static void ClockOutHelper(long employeeNum,TimeClockStatus clockStatus) {
+		public static void ClockOut(long employeeNum,TimeClockStatus clockStatus) {
 			ClockEvent clockEvent=ClockEvents.GetLastEvent(employeeNum);
 			if(clockEvent==null) {//new employee never clocked in
 				throw new Exception(Lans.g("ClockEvents","Error.  New employee never clocked in."));

@@ -290,8 +290,15 @@ namespace OpenDental {
 			if(!CheckUserCanChangeStatus(phone)) {
 				return;
 			}
-			try {
+			UI.ProgressOD progressOD=new UI.ProgressOD();
+			progressOD.ShowCancelButton=false;//safe because this is guaranteed to be only one second, more like a fancy wait cursor
+			progressOD.ActionMain=() => {
 				ClockEvents.ClockOut(employeeNum,TimeClockStatus.Lunch);
+				System.Threading.Thread.Sleep(1000);//Wait one second so that if they quickly clock in again, the timestamps will be far enough apart.
+			};
+			progressOD.StartingMessage=Lan.g(langThis,"Processing clock event...");
+			try {
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				MessageBox.Show(ex.Message);//This message will tell user that they are already clocked out.
@@ -299,7 +306,7 @@ namespace OpenDental {
 			}
 			PhoneEmpDefaults.SetAvailable(extension,employeeNum);
 			DataValid.SetInvalid(InvalidType.PhoneEmpDefaults);
-			Employee EmpCur=Employees.GetEmp(employeeNum);
+			Employee EmpCur=Employees.GetEmpFromDB(employeeNum);
 			Employee EmpOld=EmpCur.Copy();
 			EmpCur.ClockStatus=Lan.g("enumTimeClockStatus",TimeClockStatus.Lunch.ToString());
 			Employees.UpdateChanged(EmpCur,EmpOld, true);
@@ -318,15 +325,22 @@ namespace OpenDental {
 			if(!CheckUserCanChangeStatus(phone)) {
 				return;
 			}
-			try { //Update the clock event, phone (HQ only), and phone emp default (HQ only).
-				ClockEvents.ClockOut(employeeNum,TimeClockStatus.Home);
+			UI.ProgressOD progressOD=new UI.ProgressOD();
+			progressOD.ShowCancelButton=false;//safe because this is guaranteed to be only one second, more like a fancy wait cursor
+			progressOD.ActionMain=() => {
+				ClockEvents.ClockOut(employeeNum,TimeClockStatus.Home);//Update the clock event, phone (HQ only), and phone emp default (HQ only).
+				System.Threading.Thread.Sleep(1000);//Wait one second so that if they quickly clock in again, the timestamps will be far enough apart.
+			};
+			progressOD.StartingMessage=Lan.g(langThis,"Processing clock event...");
+			try {
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				MessageBox.Show(ex.Message);//This message will tell user that they are already clocked out.
 				return;
 			}
 			DataValid.SetInvalid(InvalidType.PhoneEmpDefaults);
-			Employee EmpCur=Employees.GetEmp(employeeNum);
+			Employee EmpCur=Employees.GetEmpFromDB(employeeNum);
 			Employee EmpOld=EmpCur.Copy();
 			EmpCur.ClockStatus=Lan.g("enumTimeClockStatus",TimeClockStatus.Home.ToString());
 			Employees.UpdateChanged(EmpCur,EmpOld, true);
@@ -344,8 +358,15 @@ namespace OpenDental {
 			if(!CheckUserCanChangeStatus(phone)) {
 				return;
 			}
-			try {
+			UI.ProgressOD progressOD=new UI.ProgressOD();
+			progressOD.ShowCancelButton=false;//safe because this is guaranteed to be only one second, more like a fancy wait cursor
+			progressOD.ActionMain=() => {
 				ClockEvents.ClockOut(employeeNum,TimeClockStatus.Break);
+				System.Threading.Thread.Sleep(1000);//Wait one second so that if they quickly clock in again, the timestamps will be far enough apart.
+			};
+			progressOD.StartingMessage=Lan.g(langThis,"Processing clock event...");
+			try {
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				MessageBox.Show(ex.Message);//This message will tell user that they are already clocked out.
@@ -353,7 +374,7 @@ namespace OpenDental {
 			}
 			PhoneEmpDefaults.SetAvailable(extension,employeeNum);
 			DataValid.SetInvalid(InvalidType.PhoneEmpDefaults);
-			Employee EmpCur=Employees.GetEmp(employeeNum);
+			Employee EmpCur=Employees.GetEmpFromDB(employeeNum);
 			Employee EmpOld=EmpCur.Copy();
 			EmpCur.ClockStatus=Lan.g("enumTimeClockStatus",TimeClockStatus.Break.ToString());
 			Employees.UpdateChanged(EmpCur,EmpOld, true);
@@ -449,16 +470,24 @@ namespace OpenDental {
 					}
 				}
 			}*/
-			try {
+			UI.ProgressOD progressOD=new UI.ProgressOD();
+			progressOD.ShowCancelButton=false;//safe because this is guaranteed to be only one second, more like a fancy wait cursor
+			progressOD.ActionMain=() => {
 				ClockEvents.ClockIn(employeeNum,isAtHome);
+				System.Threading.Thread.Sleep(1000);//Wait one second so that if they quickly clock out again, the timestamps will be far enough apart.
+			};
+			progressOD.StartingMessage=Lan.g(langThis,"Processing clock event...");
+			try {
+				progressOD.ShowDialogProgress();
 			}
-			catch (Exception ex) {
+			catch(Exception ex) {
 				if(ex.Message.Contains("Already clocked in")) {
 					return true;
 				}
+				MessageBox.Show(ex.Message);
 				return false;
 			}
-			Employee EmpCur=Employees.GetEmp(employeeNum);
+			Employee EmpCur=Employees.GetEmpFromDB(employeeNum);
 			Employee EmpOld=EmpCur.Copy();
 			EmpCur.ClockStatus="Working";
 			Employees.UpdateChanged(EmpCur,EmpOld, true);

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDocumentation.xsl"?>
-<database version="22.2.21.0">
+<database version="22.2.22.0">
     <table name="account">
         <summary>Used in the accounting section in chart of accounts.  Not related to patient accounts in any way.</summary>
         <column order="0" name="AccountNum" type="bigint(20)">
@@ -10039,8 +10039,8 @@
         <column order="0" name="OrthoChartNum" type="bigint(20)">
             <summary>Primary key.</summary>
         </column>
-        <column order="1" name="PatNum" type="bigint(20)" fk="patient">
-            <summary>FK to patient.PatNum.</summary>
+        <column order="1" name="PatNum" type="bigint(20)">
+            <summary>Deprecated, FK to patient.PatNum.</summary>
         </column>
         <column order="2" name="DateService" type="date">
             <summary>Deprecated, use orthochartrow table instead.  Date of service.</summary>

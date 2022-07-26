@@ -246,9 +246,9 @@ namespace OpenDental {
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(6, 10);
+			this.label3.Location = new System.Drawing.Point(41, 10);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(130, 16);
+			this.label3.Size = new System.Drawing.Size(95, 16);
 			this.label3.TabIndex = 37;
 			this.label3.Text = "Ins Month Start";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;

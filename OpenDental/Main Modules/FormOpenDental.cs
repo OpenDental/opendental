@@ -1057,6 +1057,30 @@ namespace OpenDental{
 		#endregion Methods - Event Handlers - Misc
 
 		#region Methods - Private
+		///<summary>Opens maps with descriptions matching the passed in parameters.</summary>
+		private void OpenMapsFromCommandLine(List<string> listMapDescriptions) {
+			for(int i=0;i<listMapDescriptions.Count;i++) {
+				if(listMapDescriptions[i].IsNullOrEmpty()) {
+					continue;
+				}
+				OpenMapHQ(listMapDescriptions[i]);
+			}
+		}
+		
+		///<summary>Opens a call center map which matches the passed in description.</summary>
+		private void OpenMapHQ(string mapDescription=null) {
+			FormMapHQ formMapHQ;
+			formMapHQ=new FormMapHQ();
+			formMapHQ.RoomControlClicked+=FormMapHQ_RoomControlClicked;
+			formMapHQ.ExtraMapClicked+=FormMapHQ_ExtraMapClicked;
+			formMapHQ.GoToChanged+=MapAreaRoomControl_GoToChanged;
+			if(!mapDescription.IsNullOrEmpty()) {
+				formMapHQ.MapDescription=mapDescription;
+			}
+			formMapHQ.Show();
+			formMapHQ.BringToFront();
+		}
+
 		///<summary></summary>
 		private void ProcessCommandLine() {
 			//if(!Programs.UsingEcwTight() && args.Length==0){
@@ -1250,6 +1274,11 @@ namespace OpenDental{
 			else {
 				FillPatientButton(null);
 			}
+			#region HQ Call Center Map
+			if(PrefC.IsODHQ && !CommandLineArgs_.MapNames.IsNullOrEmpty()) {
+				OpenMapsFromCommandLine(CommandLineArgs_.MapNames.Split(";",StringSplitOptions.RemoveEmptyEntries).ToList());
+			}
+			#endregion
 		}
 
 		protected override string GetHelpOverride() {
@@ -6313,15 +6342,6 @@ namespace OpenDental{
 			}
 			_formWebChatSurveys.BringToFront();
 		}
-
-		private void menuItemMassEmails_Click(object sender,EventArgs e) {
-			if(!Clinics.IsMassEmailSignedUp(Clinics.ClinicNum)) {
-				using FormMassEmailSetup formMassEmailSetup=new FormMassEmailSetup();
-				formMassEmailSetup.ShowDialog();
-			}
-			using FormMassEmailSend formMassEmailSend=new FormMassEmailSend();
-			formMassEmailSend.ShowDialog();
-		}
 		#endregion Menu - Tools
 
 		#region Menu - Clinics
@@ -6864,13 +6884,7 @@ namespace OpenDental{
 		}
 
 		private void FormMapHQ_ExtraMapClicked(object sender,EventArgs e) {
-			FormMapHQ formMapHQ;
-			formMapHQ=new FormMapHQ();
-			formMapHQ.RoomControlClicked+=FormMapHQ_RoomControlClicked;
-			formMapHQ.ExtraMapClicked+=FormMapHQ_ExtraMapClicked;
-			formMapHQ.GoToChanged+=MapAreaRoomControl_GoToChanged;
-			formMapHQ.Show();
-			formMapHQ.BringToFront();
+			OpenMapHQ();
 		}
 
 		/// <summary>HQ Only. ProcessOfficeDowns must be invoked from a worker thread. These are the arguments necessary.</summary>
@@ -7849,6 +7863,8 @@ namespace OpenDental{
 		///<summary>Not in manual</summary>
 		public string LBSESSIONID;
 		public string IsSilentUpdate;
+		/// <summary>HQ only, semicolon separated list of map names that will open on start up.</summary>
+		public string MapNames;
 		public string Module;
 		public string MySqlUser;
 		public string MySqlPassHash;
@@ -7890,6 +7906,7 @@ namespace OpenDental{
 			if(!isSilentUpdateValue.IsNullOrEmpty()) {
 				IsSilentUpdate=isSilentUpdateValue.ToLower();
 			}
+			MapNames=GetArgFromCommandLineArgs("MapNames=",arrayCommandLineArgs);
 			string moduleValue=GetArgFromCommandLineArgs("module=",arrayCommandLineArgs);
 			if(!moduleValue.IsNullOrEmpty()) {
 				Module=moduleValue.ToLower();
@@ -7963,6 +7980,9 @@ namespace OpenDental{
 			}
 			if(Module!=null) { 
 				arguments+="Module=\""+Module+"\" ";
+			}			
+			if(MapNames!=null) { 
+				arguments+="MapNames=\""+MapNames+"\" ";
 			}
 			if(MySqlUser!=null) {
 				arguments+="MySqlUser=\""+MySqlUser+"\" ";

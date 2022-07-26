@@ -30,7 +30,7 @@ namespace OpenDental.UI{
 		public ODEventType ODEventType=ODEventType.ProgressBar;
 		///<summary>The only two options are Marquee and Blocks.  Continuous is an older option not supported by Window when visual styles are not enabled.</summary>
 		public ProgressBarStyle ProgStyle=ProgressBarStyle.Marquee;
-		///<summary>Always true except in four places: db update and terminal transaction processing via PayConnect and EServicesSetup validation progress (approved by Jordan).  Do not set to false anywhere else.</summary>
+		///<summary>Always true except in 5 places: db update, PayConnect, EServicesSetup, and clock in/out. (Jordan-I don't remember approving phone number synch)  Do not set to false anywhere else.</summary>
 		public bool ShowCancelButton=true;
 		public string StartingMessage="Please Wait...";
 		public string StopNotAllowedMessage="Not allowed to stop because it would corrupt the database.";

@@ -117,12 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="labelExplanation.Text" xml:space="preserve">
+    <value>Supplemental backups only include critical data from your database. They are not to be used as replacements for your current backup method, and instead should only be used if your current backup method fails. Supplemental backups are not verified and should not be relied upon. If a local backup is not available, contact support.
+</value>
+  </data>
   <data name="label7.Text" xml:space="preserve">
     <value>This process will remove data entries in the SecurityLog, SecurityLogHash, and EmailMessage tables.  
 Using the displayed server settings, a backup will be made to that server. Then all rows with log date on or before the date selected will be deleted.</value>
-  </data>
-  <data name="labelExplanation.Text" xml:space="preserve">
-    <value>Supplemental backups only include critical data from your database. They are not to be used as replacements for your current backup method, and instead should only be used if your current backup method fails. Supplemental backups are not verified and should not be relied upon.</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

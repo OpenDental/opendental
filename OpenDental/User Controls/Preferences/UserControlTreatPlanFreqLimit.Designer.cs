@@ -70,6 +70,7 @@ namespace OpenDental {
 			this.labelInsBW = new System.Windows.Forms.Label();
 			this.checkFrequency = new System.Windows.Forms.CheckBox();
 			this.labelFrequencyDetails = new System.Windows.Forms.Label();
+			this.butFrequencyLimitationsDetails = new OpenDental.UI.Button();
 			this.groupBoxDiscountPlanFreqLimit.SuspendLayout();
 			this.groupBoxFrequencyLimit.SuspendLayout();
 			this.SuspendLayout();
@@ -537,11 +538,22 @@ namespace OpenDental {
 			this.labelFrequencyDetails.Text = "when calculating insurance estimates";
 			this.labelFrequencyDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
+			// butFrequencyLimitationsDetails
+			// 
+			this.butFrequencyLimitationsDetails.ForeColor = System.Drawing.Color.Black;
+			this.butFrequencyLimitationsDetails.Location = new System.Drawing.Point(479, 44);
+			this.butFrequencyLimitationsDetails.Name = "butFrequencyLimitationsDetails";
+			this.butFrequencyLimitationsDetails.Size = new System.Drawing.Size(76, 21);
+			this.butFrequencyLimitationsDetails.TabIndex = 373;
+			this.butFrequencyLimitationsDetails.Text = "Default Info";
+			this.butFrequencyLimitationsDetails.Click += new System.EventHandler(this.butFrequencyLimitationsDetails_Click);
+			// 
 			// UserControlTreatPlanFreqLimit
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.butFrequencyLimitationsDetails);
 			this.Controls.Add(this.labelFrequencyDetails);
 			this.Controls.Add(this.groupBoxDiscountPlanFreqLimit);
 			this.Controls.Add(this.groupBoxFrequencyLimit);
@@ -604,5 +616,6 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelInsBW;
 		private System.Windows.Forms.CheckBox checkFrequency;
 		private System.Windows.Forms.Label labelFrequencyDetails;
+		private UI.Button butFrequencyLimitationsDetails;
 	}
 }

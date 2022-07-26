@@ -27,6 +27,28 @@ namespace OpenDental {
 		#endregion Constructors
 
 		#region Methods - Event Handlers
+		private void butFrequencyLimitationsDetails_Click(object sender,EventArgs e) {
+			string html=@"See <a href='https://www.opendental.com/manual/insfrequencylimitations.html' target='_blank' rel='noopener noreferrer'>Frequency Limitations.</a> 
+				The default codes are:
+				<br><br>-BWs: D0272, D0274
+				<br>-Pano/FMX: D0210, D0330
+				<br>-Exams: D0120, D0150
+				<br>-Cancer Screening: D0431
+				<br>-Prophylaxis: D1110, D1120
+				<br>-Fluoride: D1206, D1208
+				<br>-Sealant: D1351
+				<br>-Crown: D2740,D2750,D2751,D2752,D2780,D2781,D2782,D2783,D2790,D2791,D2792,D2794
+				<br>-SRP: D4341,D4342
+				<br>-Full Debridement: D4355
+				<br>-Perio Maintenance: D4910
+				<br>-Dentures: D5110,D5120,D5130,D5140,D5211,D5212,D5213,D5214,D5221,D5222,D5223,D5224,D5225,D5226
+				<br>-Implant: D6010";
+			using FormWebBrowserPrefs formWebBrowserPrefs=new FormWebBrowserPrefs();
+			formWebBrowserPrefs.HtmlContent=html;
+			formWebBrowserPrefs.SizeWindow=new Size(625,325);
+			formWebBrowserPrefs.ShowDialog();
+		}
+
 		private void checkFrequency_Click(object sender,EventArgs e) {
 			textInsBW.Enabled=checkFrequency.Checked;
 			textInsPano.Enabled=checkFrequency.Checked;

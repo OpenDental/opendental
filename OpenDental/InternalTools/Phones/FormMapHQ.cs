@@ -12,15 +12,6 @@ using OpenDentBusiness;
 using CodeBase;
 
 namespace OpenDental {
-	//
-	//
-	//
-	//Jordan 6/5/2022. WARNING! Please nobody else touch this or related Map files.  I'm currently in the middle of an overhaul
-	//
-	//
-	//
-	//
-	///<summary>Jordan 6/5/2022. WARNING! Please nobody else touch this or related Map files.  I'm currently in the middle of an overhaul.</summary>
 	public partial class FormMapHQ:FormODBase {
 		#region Events
 		public event EventHandler RoomControlClicked;
@@ -29,7 +20,9 @@ namespace OpenDental {
 		[Description("Event raised when user wants to go to a patient or related object.")]
 		public event EventHandler GoToChanged=null;
 		#endregion
-
+		#region Public Members
+		public string MapDescription=null;
+		#endregion
 		#region Private Members
 		///<summary>This is the difference between server time and local computer time.  Used to ensure that times displayed are accurate to the second.  This value is usally just a few seconds, but possibly a few minutes.</summary>
 		private TimeSpan _timeSpanDelta;
@@ -113,7 +106,17 @@ namespace OpenDental {
 			_listMapAreaContainers=_listMapAreaContainers.OrderBy(x => x.SiteNum!=_site.SiteNum)
 				.ThenBy(x => x.Description).ToList();
 			//Select the first map in our list that matches the site associated to the current computer.
-			_mapAreaContainer=_listMapAreaContainers[0];
+			if(MapDescription.IsNullOrEmpty()) {
+				_mapAreaContainer=_listMapAreaContainers[0];
+			}
+			else {
+				//Or find the desired Maps passed in from MapDescription.
+				_mapAreaContainer=_listMapAreaContainers.FirstOrDefault(x => x.Description.ToLower()==MapDescription.ToLower());
+				if(_mapAreaContainer==null) {
+					//Default if MapDescription not found.
+					_mapAreaContainer=_listMapAreaContainers[0];
+				}
+			}
 		}
 
 		private void FillTriageLabelColors() {
@@ -153,7 +156,7 @@ namespace OpenDental {
 			}
 			int selectedIndex=0;
 			if(_mapAreaContainer!=null) {
-				_listMapAreaContainers.FindIndex(x => x.MapAreaContainerNum==_mapAreaContainer.MapAreaContainerNum);
+				selectedIndex=_listMapAreaContainers.FindIndex(x => x.MapAreaContainerNum==_mapAreaContainer.MapAreaContainerNum);
 			}
 			comboRoom.SelectedIndex=(selectedIndex==-1 ? 0 : selectedIndex);
 			this.Text="Call Center Status Map - "+_listMapAreaContainers[comboRoom.SelectedIndex].Description;

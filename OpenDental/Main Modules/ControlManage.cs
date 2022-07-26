@@ -815,7 +815,9 @@ namespace OpenDental{
 					return;
 				}
 			}
-			try{
+			ProgressOD progressOD=new ProgressOD();
+			progressOD.ShowCancelButton=false;//safe because this is guaranteed to be only one second, more like a fancy wait cursor
+			progressOD.ActionMain=() => {
 				bool[] isAuthorized=new bool[1] { false };
 				if(Plugins.HookMethod(this,"ContrStaff.butClockIn_Click_ClockIn",isAuthorized,_employeeCur)) {
 					if(!isAuthorized[0]) {
@@ -823,8 +825,13 @@ namespace OpenDental{
 					}
 				}
 				ClockEvents.ClockIn(_employeeCur.EmployeeNum,isAtHome:false);
+				System.Threading.Thread.Sleep(1000);//Wait one second so that if they quickly clock out again, the timestamps will be far enough apart.
+			};
+			progressOD.StartingMessage=Lan.g(this,"Processing clock event...");
+			try {
+				progressOD.ShowDialogProgress();
 			}
-			catch(Exception ex){
+			catch(Exception ex) {
 				MessageBox.Show(ex.Message);
 				return;
 			}
@@ -856,18 +863,23 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please select a status first.");
 				return;
 			}
-			try{
+			ProgressOD progressOD=new ProgressOD();
+			progressOD.ShowCancelButton=false;//safe because this is guaranteed to be only one second, more like a fancy wait cursor
+			progressOD.ActionMain=() => {
 				bool[] isAuthorized=new bool[1] { false };
-				if(Plugins.HookMethod(this,"ContrStaff.butClockOut_Click_ClockOut",isAuthorized,_employeeCur,
-					_listShownTimeClockStatuses[listBoxStatus.SelectedIndex])) 
-				{
+				if(Plugins.HookMethod(this,"ContrStaff.butClockOut_Click_ClockOut",isAuthorized,_employeeCur,_listShownTimeClockStatuses[listBoxStatus.SelectedIndex])) {
 					if(!isAuthorized[0]) {
 						throw new Exception(Lans.g(this,"You need to authenticate to clock-out"));
 					}
 				}
 				ClockEvents.ClockOut(_employeeCur.EmployeeNum,_listShownTimeClockStatuses[listBoxStatus.SelectedIndex]);
+				System.Threading.Thread.Sleep(1000);//Wait one second so that if they quickly clock in again, the timestamps will be far enough apart.
+			};
+			progressOD.StartingMessage=Lan.g(this,"Processing clock event...");
+			try {
+				progressOD.ShowDialogProgress();
 			}
-			catch(Exception ex){
+			catch(Exception ex) {
 				MessageBox.Show(ex.Message);
 				return;
 			}

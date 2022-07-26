@@ -50,7 +50,7 @@ namespace OpenDentBusiness{
 				ORDER BY IF(YEAR(TimeDisplayed2) < 1880,TimeDisplayed1,TimeDisplayed2) DESC";
 			command=DbHelper.LimitOrderBy(command,1);
 			ClockEvent clockEvent=Crud.ClockEventCrud.SelectOne(command);
-			Employee employee=GetEmp(employeeNum);
+			Employee employee=GetEmpFromDB(employeeNum);
 			Employee employeeOld=employee.Copy();
 			if(clockEvent!=null && clockEvent.TimeDisplayed2>DateTime.Now) {//Future time manual clock out.
 				employee.ClockStatus=Lans.g("ContrStaff","Manual Entry");
@@ -275,6 +275,17 @@ namespace OpenDentBusiness{
 			}
 			return retVal;
 		}
+
+		///<summary>Get a single employee from the database. Will return null if not found.</summary>
+		public static Employee GetEmpFromDB(long employeeNum) {
+      if(employeeNum==0) {
+				return null;
+      }
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<Employee>(MethodBase.GetCurrentMethod(),employeeNum);
+			} 
+			return Crud.EmployeeCrud.SelectOne(employeeNum); //might return null
+    }
 
 		///<summary>From cache</summary>
 		public static Employee GetEmp(long employeeNum) {

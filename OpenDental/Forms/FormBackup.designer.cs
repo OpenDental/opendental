@@ -49,6 +49,7 @@
 			this.butBrowseTo = new OpenDental.UI.Button();
 			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
 			this.tabPageArchive = new System.Windows.Forms.TabPage();
+			this.labelSelectTables = new System.Windows.Forms.Label();
 			this.checkEmailMessage = new System.Windows.Forms.CheckBox();
 			this.checkSecurityLog = new System.Windows.Forms.CheckBox();
 			this.checkArchiveDoBackupFirst = new System.Windows.Forms.CheckBox();
@@ -74,8 +75,6 @@
 			this.textSupplementalBackupDateLastComplete = new OpenDental.ODtextBox();
 			this.checkSupplementalBackupEnabled = new System.Windows.Forms.CheckBox();
 			this.labelExplanation = new System.Windows.Forms.Label();
-			this.folderBrowserSupplementalCopyNetworkPath = new OpenDental.FolderBrowserDialog();
-			this.labelSelectTables = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.tabPageBackup.SuspendLayout();
 			this.groupManagedBackups.SuspendLayout();
@@ -390,6 +389,16 @@
 			this.tabPageArchive.TabIndex = 1;
 			this.tabPageArchive.Text = "Remove Old Data";
 			// 
+			// labelSelectTables
+			// 
+			this.labelSelectTables.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelSelectTables.Location = new System.Drawing.Point(135, 59);
+			this.labelSelectTables.Name = "labelSelectTables";
+			this.labelSelectTables.Size = new System.Drawing.Size(337, 18);
+			this.labelSelectTables.TabIndex = 17;
+			this.labelSelectTables.Text = "Select the table(s) to remove data from:";
+			// 
 			// checkEmailMessage
 			// 
 			this.checkEmailMessage.Location = new System.Drawing.Point(138, 103);
@@ -612,7 +621,7 @@
 			this.labelLastSupplementalBackupDateTime.Name = "labelLastSupplementalBackupDateTime";
 			this.labelLastSupplementalBackupDateTime.Size = new System.Drawing.Size(180, 20);
 			this.labelLastSupplementalBackupDateTime.TabIndex = 16;
-			this.labelLastSupplementalBackupDateTime.Text = "Last Backup Date Time";
+			this.labelLastSupplementalBackupDateTime.Text = "Date/Time Last Local Supplemental Backup";
 			this.labelLastSupplementalBackupDateTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textSupplementalBackupDateLastComplete
@@ -651,16 +660,6 @@
 			this.labelExplanation.TabIndex = 13;
 			this.labelExplanation.Text = resources.GetString("labelExplanation.Text");
 			this.labelExplanation.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-			// 
-			// labelSelectTables
-			// 
-			this.labelSelectTables.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelSelectTables.Location = new System.Drawing.Point(135, 59);
-			this.labelSelectTables.Name = "labelSelectTables";
-			this.labelSelectTables.Size = new System.Drawing.Size(337, 18);
-			this.labelSelectTables.TabIndex = 17;
-			this.labelSelectTables.Text = "Select the table(s) to remove data from:";
 			// 
 			// FormBackup
 			// 

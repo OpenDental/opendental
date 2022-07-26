@@ -326,6 +326,11 @@ namespace OpenDental {
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
+			if(ListMapAreaContainers.Any(x => x.Description.Contains(';'))) {
+				string listOffendingMaps=String.Join(", ", ListMapAreaContainers.FindAll(x=>x.Description.Contains(';')).Select(x=>x.Description));
+				MsgBox.Show("Map descriptions may not contain semicolons.\nOffending maps:\n"+listOffendingMaps);
+				return;
+			}
 			PhoneMapJSON.SaveToDb(ListMapAreaContainers);
 			DataValid.SetInvalid(InvalidType.PhoneMap);
 			DialogResult=DialogResult.OK;

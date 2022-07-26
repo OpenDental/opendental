@@ -169,7 +169,7 @@ namespace OpenDental {
 		public void SetAvailable(bool isAtHome=false) {
 			if(Security.CurUser.EmployeeNum==phoneTile.PhoneCur.EmployeeNum){
 				long employeeNum=Security.CurUser.EmployeeNum;
-				Employee employee=Employees.GetEmp(employeeNum);
+				Employee employee=Employees.GetEmpFromDB(employeeNum);
 				if(employee.IsWorkingHome!=isAtHome){
 					Employee employeeOld=employee.Copy();
 					employee.IsWorkingHome=isAtHome;

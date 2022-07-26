@@ -10,8 +10,9 @@ using System.Text;
 namespace OpenDental {
 
 	public partial class FormWebBrowserPrefs:FormODBase {
+		public LayoutManagerForms LayoutManager=new LayoutManagerForms();
 		public string HtmlContent;
-		public Point PointStart;
+		public Point PointStart=new Point(0,0);
 		public Size SizeWindow=new Size(0,0);
 
 		///<summary>Used when opening additional details within FormPreferences.  This form will also allow links clicked and opened within this form.</summary>
@@ -33,9 +34,14 @@ namespace OpenDental {
 				browser.DocumentText=documentText;
 			}
 			if(SizeWindow!=new Size(0,0)) {
-				Size=SizeWindow;
+				Size=new Size(LayoutManager.Scale(SizeWindow.Width),LayoutManager.Scale(SizeWindow.Height));
 			}
-			Location=PointStart;
+			if(PointStart==new Point(0,0)) {
+				CenterToScreen();
+			}
+			else {
+				Location=PointStart;
+			}
 		}
 	}
 }

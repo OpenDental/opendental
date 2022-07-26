@@ -1281,24 +1281,21 @@ namespace OpenDental {
 			else if(IsDocumentShowing()){
 				nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Document,GetDocumentShowing(0).DocNum);
 				if(ImageHelper.HasImageExtension(GetDocumentShowing(0).FileName) || GetDocumentShowing(0).FileName.EndsWith(".dcm")){
-					//normal images and dicom will have the bitmap and filedrop pulled from the screen
-					bitmapCopy=ImageHelper.CopyWithCropRotate(GetDocumentShowing(0),GetBitmapShowing(0));
-					using Graphics g=Graphics.FromImage(bitmapCopy);	
-					//Rectangle rectangleAvail=new Rectangle(e.MarginBounds.X,yTitle,e.MarginBounds.Width,e.MarginBounds.Height-yTitle);
-					//translate to center of drawing area (and center of crop area)
-					g.TranslateTransform(bitmapCopy.Width/2,bitmapCopy.Height/2);				
-					float scaleFactor;
-					if(GetDocumentShowing(0).CropW==0){//no crop
-						scaleFactor=ImageTools.CalcScaleFit(bitmapCopy.Size,GetBitmapShowing(0).Size,GetDocumentShowing(0).DegreesRotated);
+				fileName=Path.GetTempPath()+GetDocumentShowing(0).FileName;
+					if(!ImageHelper.HasImageBeenEdited(GetDocumentShowing(0))) {//Do a file copy since no changes were made
+						string filePathSource=Documents.GetPath(GetDocumentShowing(0).DocNum);
+						File.Copy(filePathSource,fileName, overwrite:true);
 					}
-					else{
-						scaleFactor=ImageTools.CalcScaleFit(bitmapCopy.Size,new Size(GetDocumentShowing(0).CropW,GetDocumentShowing(0).CropH),GetDocumentShowing(0).DegreesRotated);
+					else {
+						bitmapCopy = ImageHelper.CopyWithCropRotate(GetDocumentShowing(0),GetBitmapShowing(0));
+						using Graphics g = Graphics.FromImage(bitmapCopy);
+						//Rectangle rectangleAvail=new Rectangle(e.MarginBounds.X,yTitle,e.MarginBounds.Width,e.MarginBounds.Height-yTitle);
+						//translate to center of drawing area (and center of crop area)
+						g.TranslateTransform(bitmapCopy.Width/2,bitmapCopy.Height/2);
+						//We are now at center of page and crop area, and working in image coords
+						DrawDocument(g);//including drawings
+						ImageHelper.SaveAndCompress(bitmapCopy,fileName,quality:40);//60% compression
 					}
-					g.ScaleTransform(scaleFactor,scaleFactor);
-					//We are now at center of page and crop area, and working in image coords
-					DrawDocument(g);//including drawings
-					fileName=Path.GetTempPath()+GetDocumentShowing(0).FileName;
-					bitmapCopy.Save(fileName);
 				}
 				else{
 					//other files such as pdf will lack a bitmapCopy
@@ -1435,23 +1432,21 @@ namespace OpenDental {
 					return;
 				}
 				if(ImageHelper.HasImageExtension(GetDocumentShowing(0).FileName) || GetDocumentShowing(0).FileName.EndsWith(".dcm")){
-					//normal images and dicom will have the bitmap and filedrop pulled from the screen
-					using Bitmap bitmapCopy=ImageHelper.CopyWithCropRotate(GetDocumentShowing(0),GetBitmapShowing(0));
-					using Graphics g=Graphics.FromImage(bitmapCopy);	
-					//Rectangle rectangleAvail=new Rectangle(e.MarginBounds.X,yTitle,e.MarginBounds.Width,e.MarginBounds.Height-yTitle);
-					//translate to center of drawing area (and center of crop area)
-					g.TranslateTransform(bitmapCopy.Width/2,bitmapCopy.Height/2);				
-					float scaleFactor;
-					if(GetDocumentShowing(0).CropW==0){//no crop
-						scaleFactor=ImageTools.CalcScaleFit(bitmapCopy.Size,GetBitmapShowing(0).Size,GetDocumentShowing(0).DegreesRotated);
+					if(!ImageHelper.HasImageBeenEdited(GetDocumentShowing(0))) {//Do a file copy since no changes were made
+						string filePathSource=Documents.GetPath(GetDocumentShowing(0).DocNum);
+						//savefileDialog makes sure user is okay with overriding files with the same name
+						File.Copy(filePathSource,saveFileDialog.FileName, overwrite:true);
 					}
-					else{
-						scaleFactor=ImageTools.CalcScaleFit(bitmapCopy.Size,new Size(GetDocumentShowing(0).CropW,GetDocumentShowing(0).CropH),GetDocumentShowing(0).DegreesRotated);
+					else {
+						using Bitmap bitmapCopy=ImageHelper.CopyWithCropRotate(GetDocumentShowing(0),GetBitmapShowing(0));
+						using Graphics g=Graphics.FromImage(bitmapCopy);
+						//Rectangle rectangleAvail=new Rectangle(e.MarginBounds.X,yTitle,e.MarginBounds.Width,e.MarginBounds.Height-yTitle);
+						//translate to center of drawing area (and center of crop area)
+						g.TranslateTransform(bitmapCopy.Width/2,bitmapCopy.Height/2);
+						//We are now at center of page and crop area, and working in image coords
+						DrawDocument(g);//including drawings
+						ImageHelper.SaveAndCompress(bitmapCopy,saveFileDialog.FileName,quality:40);//60% compression
 					}
-					g.ScaleTransform(scaleFactor,scaleFactor);
-					//We are now at center of page and crop area, and working in image coords
-					DrawDocument(g);//including drawings
-					bitmapCopy.Save(saveFileDialog.FileName);
 				}
 				else{
 					//other files such as pdf will lack a bitmapCopy

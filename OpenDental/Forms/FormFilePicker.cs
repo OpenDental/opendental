@@ -149,7 +149,7 @@ namespace OpenDental {
 				odPictureBox.Visible=true;
 				using MemoryStream memoryStream=new MemoryStream(taskStateThumbnail.FileContent);
 				_bitmapThumbnail=new Bitmap(Image.FromStream(memoryStream));
-				odPictureBox.Image.Dispose();
+				odPictureBox.Image?.Dispose();
 				odPictureBox.Image=_bitmapThumbnail;
 				odPictureBox.Invalidate();
 			}
