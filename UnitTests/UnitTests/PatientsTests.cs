@@ -1218,6 +1218,62 @@ namespace UnitTests.Patients_Tests {
 		}
 		#endregion
 
+
+		///<summary>Tests that foreign keys were added to the method after adding a new patnum field.</summary>
+		[TestMethod]
+		public void Patient_MergeTwoPatientPointOfNoReturn_ForeignKeyCheck() {
+			//This array contains commented out tables from Patients.StringArrayPatNumForeignKeys array.
+			string[] stringArrayPatNumForeignKeysToExclude=new string[] {
+				"custreference.PatNum",
+				"discountplansub.PatNum",
+				"document.PatNum",
+				"ehrpatient.PatNum",
+				"famaging.PatNum",
+				"formpat.FormPatNum",
+				"medicationpat.MedicationPatNum",
+				"oidexternal.IDInternal",
+				"orthochart.PatNum",
+				"patfield.PatNum",
+				"patient.PatNum",
+				"patient.Guarantor",
+				"patient.PatNumCloneFrom",
+				"patientlink.PatNumFrom",
+				"patientlink.PatNumTo",
+				"patientnote.PatNum",
+				"patientrace.PatNum",
+				"procmultivisit.PatNum",
+				"question.FormPatNum",
+				"recall.PatNum",
+				"referral.PatNum",
+				"screenpat.ScreenPatNum",
+				"screen.ScreenPatNum",
+				"securitylog.FKey",
+				"securitylog.PatNum",
+				"task.KeyNum",
+				"taskhist.KeyNum",
+				"tsitranslog.PatNum",
+				"vaccineobs.VaccinePatNum",
+				"vaccinepat.VaccinePatNum",
+			};
+			string dbName=LargeTableHelper.GetCurrentDatabase();
+			string command="SELECT CONCAT(TABLE_NAME,'.',COLUMN_NAME) "
+				+"FROM INFORMATION_SCHEMA.columns "
+				+$"WHERE table_schema='{dbName}' AND COLUMN_NAME LIKE '%patnum%' "
+				+"ORDER BY TABLE_NAME";
+			List<string> listTablePatNumFromDb=DataCore.GetList<string>(command,(x) => x.GetString(0));
+			List<string> listTablePatNumMissing=new List<string>();
+			for(int i=0;i<listTablePatNumFromDb.Count;i++) {
+				string tablePatNumCur=listTablePatNumFromDb[i];
+				if(Patients.StringArrayPatNumForeignKeys.Contains(tablePatNumCur)
+					|| stringArrayPatNumForeignKeysToExclude.Contains(tablePatNumCur)) {
+					continue;
+				}
+				listTablePatNumMissing.Add(tablePatNumCur);
+			}
+			//string output=string.Join($",\r\n",listTablePatNumMissing);
+			Assert.AreEqual(0,listTablePatNumMissing.Count);
+		}
+
 		#region HelperMethods
 
 		///<summary>Calls the Patient S class method.</summary>

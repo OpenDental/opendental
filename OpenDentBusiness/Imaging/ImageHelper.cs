@@ -6,6 +6,7 @@ using System.IO;
 using CodeBase;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
+using System.Linq;
 
 namespace OpenDentBusiness {
 	public static class ImageHelper {
@@ -439,6 +440,35 @@ namespace OpenDentBusiness {
 				document.IsCropOld=false;
 				Documents.Update(document);
 			}
+		}
+
+		///<summary>Saves the image to the given fileName. Quality is 0 to 100.  0 is most compression, lowest quality.</summary>
+		public static void SaveAndCompress(Bitmap bitmap, string fileName, long quality) {
+			if(bitmap==null) {
+				return;
+			}
+			EncoderParameter encoderParameter = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality,quality);
+			ImageCodecInfo ImageCodecInfo = ImageCodecInfo.GetImageEncoders().First(x => x.MimeType=="image/jpeg");
+			EncoderParameters encoderParameters = new EncoderParameters(1);
+			encoderParameters.Param[0] = encoderParameter;
+			bitmap.Save(fileName,ImageCodecInfo,encoderParameters);
+		}
+
+		/// <summary>Returns true if the document is an image that has been cropped, rotated, drawn on, or if the image has any windowing applied (brightness and contrast). Otherwise returns false.</summary>
+		public static bool HasImageBeenEdited(Document document) {
+			if(document==null || (!HasImageExtension(document.FileName) && !document.FileName.EndsWith(".dcm"))) {//not an image
+				return false;
+			}
+			if(document.CropH!=0 || document.CropW!=0 || document.CropX!=0 || document.CropY!=0 || document.DegreesRotated!=0 || document.IsFlipped==true) {	
+				return true;
+			}
+			if(document.WindowingMin != 0 || (document.WindowingMax != 255 && document.WindowingMax != 0)) {
+				return true;
+			}
+			if(ImageDraws.RefreshForDoc(document.DocNum).Count>0) {
+				return true;
+			}
+			return false;
 		}
 	}
 

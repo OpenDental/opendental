@@ -667,8 +667,8 @@ namespace OpenDental {
 				//Revert this emailmessage because it didn't get saved to the database.
 				_emailMessage.SentOrReceived=emailMessageOld;
 				Cursor=Cursors.Default;
-				using MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(ex.Message);
-				msgBoxCopyPaste.ShowDialog();
+				string errMsg=Lan.g(this,"Failed to send email.")+"\r\n"+Lan.g(this, "Click Details to see the error message from the Email Client.");
+				FriendlyException.Show(errMsg, ex);
 				return;
 			}
 			MsgBox.Show(this,"Sent");
@@ -744,9 +744,8 @@ namespace OpenDental {
 			}
 			catch(Exception ex){
 				Cursor=Cursors.Default;
-				string errMsg=Lan.g(this,"Failed to send email.")+"\r\n\r\n"+Lan.g(this,"Error message from the email client was")+":\r\n  "+ex.Message;
-				using MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(errMsg);
-				msgBoxCopyPaste.ShowDialog();
+				string errMsg=Lan.g(this,"Failed to send email.")+"\r\n"+Lan.g(this, "Click Details to see the error message from the Email Client.");
+				FriendlyException.Show(errMsg, ex);
 				return;
 			}
 			Cursor=Cursors.Default;

@@ -365,6 +365,18 @@ namespace OpenDentBusiness{
 			}
 		}
 
+		///<summary>Takes in a claim, checks to see if there's any differences, and then updates the database if necessary.</summary>
+		public static void Update(Claim claim, Claim claimOld) {
+			if(!Crud.ClaimCrud.UpdateComparison(claim,claimOld)) {
+				return;
+			}
+			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),claim,claimOld);
+				return;
+			}
+			Crud.ClaimCrud.Update(claim,claimOld);
+		}
+
 		///<summary>Deletes the claim and also deletes any Etrans835Attaches when specified.</summary>
 		public static void Delete(Claim claim,List<long> listEtrans835AttachNums=null){
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {

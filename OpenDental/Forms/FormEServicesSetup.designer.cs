@@ -26,7 +26,6 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEServicesSetup));
 			this.butCancel = new OpenDental.UI.Button();
 			this.butTextingServices = new OpenDental.UI.Button();
-			this.butMassEmail = new OpenDental.UI.Button();
 			this.butPatPortal = new OpenDental.UI.Button();
 			this.butMobileWeb = new OpenDental.UI.Button();
 			this.butMisc = new OpenDental.UI.Button();
@@ -53,7 +52,7 @@ namespace OpenDental{
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(407, 552);
+			this.butCancel.Location = new System.Drawing.Point(407, 521);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 12;
@@ -69,16 +68,6 @@ namespace OpenDental{
 			this.butTextingServices.Text = "Texting Services";
 			this.butTextingServices.UseVisualStyleBackColor = true;
 			this.butTextingServices.Click += new System.EventHandler(this.butTextingServices_Click);
-			// 
-			// butMassEmail
-			// 
-			this.butMassEmail.Location = new System.Drawing.Point(26, 337);
-			this.butMassEmail.Name = "butMassEmail";
-			this.butMassEmail.Size = new System.Drawing.Size(120, 24);
-			this.butMassEmail.TabIndex = 10;
-			this.butMassEmail.Text = "Mass Email";
-			this.butMassEmail.UseVisualStyleBackColor = true;
-			this.butMassEmail.Click += new System.EventHandler(this.butMassEmail_Click);
 			// 
 			// butPatPortal
 			// 
@@ -186,7 +175,7 @@ namespace OpenDental{
 			this.groupboxWebSched.Controls.Add(this.butAdvanced);
 			this.groupboxWebSched.Controls.Add(this.butNewPatient);
 			this.groupboxWebSched.Controls.Add(this.butRecall);
-			this.groupboxWebSched.Location = new System.Drawing.Point(19, 430);
+			this.groupboxWebSched.Location = new System.Drawing.Point(19, 399);
 			this.groupboxWebSched.Name = "groupboxWebSched";
 			this.groupboxWebSched.Size = new System.Drawing.Size(134, 147);
 			this.groupboxWebSched.TabIndex = 248;
@@ -234,7 +223,7 @@ namespace OpenDental{
 			// 
 			// butMobileSettings
 			// 
-			this.butMobileSettings.Location = new System.Drawing.Point(26, 399);
+			this.butMobileSettings.Location = new System.Drawing.Point(26, 368);
 			this.butMobileSettings.Name = "butMobileSettings";
 			this.butMobileSettings.Size = new System.Drawing.Size(120, 24);
 			this.butMobileSettings.TabIndex = 250;
@@ -265,7 +254,7 @@ namespace OpenDental{
 			// 
 			// butSecureEmail
 			// 
-			this.butSecureEmail.Location = new System.Drawing.Point(26, 368);
+			this.butSecureEmail.Location = new System.Drawing.Point(26, 337);
 			this.butSecureEmail.Name = "butSecureEmail";
 			this.butSecureEmail.Size = new System.Drawing.Size(120, 24);
 			this.butSecureEmail.TabIndex = 253;
@@ -276,7 +265,7 @@ namespace OpenDental{
 			// FormEServicesSetup
 			// 
 			this.CancelButton = this.butCancel;
-			this.ClientSize = new System.Drawing.Size(494, 588);
+			this.ClientSize = new System.Drawing.Size(494, 557);
 			this.Controls.Add(this.butSecureEmail);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.butSMSTemplateSetup);
@@ -287,7 +276,6 @@ namespace OpenDental{
 			this.Controls.Add(this.butSignup);
 			this.Controls.Add(this.label23);
 			this.Controls.Add(this.butTextingServices);
-			this.Controls.Add(this.butMassEmail);
 			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butPatPortal);
 			this.Controls.Add(this.butEConnector);
@@ -312,7 +300,6 @@ namespace OpenDental{
 		private UI.Button butMobileWeb;
 		private UI.Button butEConnector;
 		private UI.Button butSignup;
-		private UI.Button butMassEmail;
 		private UI.Button butMisc;
 		private UI.Button butEClipboard;
 		private UI.Button butECR;

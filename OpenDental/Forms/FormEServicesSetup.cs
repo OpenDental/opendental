@@ -154,11 +154,6 @@ namespace OpenDental {
 			formEServicesMisc.ShowDialog();
 		}
 
-		private void butMassEmail_Click(object sender,EventArgs e) {
-			using FormMassEmailSetup formMassEmailSetup=new FormMassEmailSetup(_signupOut);
-			formMassEmailSetup.ShowDialog();
-		}
-
 		private void butSecureEmail_Click(object sender,EventArgs e) {
 			using FormSecureEmailSetup formSecureEmailSetup=new FormSecureEmailSetup(_signupOut);
 			formSecureEmailSetup.ShowDialog();

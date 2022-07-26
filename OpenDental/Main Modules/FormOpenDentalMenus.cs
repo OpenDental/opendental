@@ -432,7 +432,6 @@ namespace OpenDental{
 
 		/// <summary>Tools: Advertising</summary>
 		private void LayoutSubMenuAdvertising(MenuItemOD menuItemAdvertisingTools) {
-			menuItemAdvertisingTools.Add("Mass Email",menuItemMassEmails_Click);
 			menuItemAdvertisingTools.Add("Postcards",menuItemAdvertisingPostcards_Click);
 		}
 

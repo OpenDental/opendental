@@ -6319,15 +6319,6 @@ namespace OpenDental{
 			}
 			_formWebChatSurveys.BringToFront();
 		}
-
-		private void menuItemMassEmails_Click(object sender,EventArgs e) {
-			if(!Clinics.IsMassEmailSignedUp(Clinics.ClinicNum)) {
-				using FormMassEmailSetup formMassEmailsSetup=new FormMassEmailSetup();
-				formMassEmailsSetup.ShowDialog();
-			}
-			using FormMassEmailSend formMassEmailSend=new FormMassEmailSend();
-			formMassEmailSend.ShowDialog();
-		}
 		#endregion Menu - Tools
 
 		#region Menu - Clinics

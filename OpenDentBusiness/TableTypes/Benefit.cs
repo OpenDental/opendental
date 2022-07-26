@@ -35,7 +35,7 @@ namespace OpenDentBusiness{
 		public long CovCatNum;
 		///<summary>Enum:InsBenefitType Corresponds to X12 EB01. Examples: 0=ActiveCoverage, 1=CoInsurance, 2=Deductible, 3=CoPayment, 4=Exclusions, 5=Limitations. ActiveCoverage doesn't really provide meaningful information.</summary>
 		public InsBenefitType BenefitType;
-		///<summary>Only used if BenefitType=CoInsurance.  Valid values are 0 to 100.  -1 indicates empty, which is almost always true if not CoInsurance.  The percentage that insurance will pay on the procedure.  Note that benefits coming from carriers are usually backwards, indicating the percetage that the patient is responsible for.</summary>
+		///<summary>Only used if BenefitType=CoInsurance.  Valid values are 0 to 100.  -1 indicates empty, which is almost always true if not CoInsurance.  The percentage that insurance will pay on the procedure.  Note that benefits coming from carriers are usually backwards, indicating the percentage that the patient is responsible for.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.TinyIntSigned)]
 		public int Percent;
 		///<summary>Used for CoPayment, Limitations, and Deductible.  -1 indicates empty</summary>

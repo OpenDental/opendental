@@ -23,6 +23,148 @@ namespace OpenDentBusiness {
 		///<summary>Sent in from FormOpenDental. Allows static method for business layer to cause patient navigation in FormOpenDental.</summary>
 		public static NavToPatDelegate NavPatDelegate;
 
+		///<summary>This is the array used in the MergeTwoPatientPointOfNoReturn method. Add new Table.PatNum combos whenever a table has a new PatNum field.</summary>
+		public static string[] StringArrayPatNumForeignKeys {
+			get {
+				string[] stringArrayPatNumForeignKeys=new string[]{
+					"adjustment.PatNum",
+					"allergy.PatNum",
+					"anestheticrecord.PatNum",
+					"anesthvsdata.PatNum",
+					"appointment.PatNum",
+					"apptgeneralmessagesent.PatNum",
+					"apptthankyousent.PatNum",
+					"asapcomm.PatNum",
+					"carecreditwebresponse.PatNum",
+					"claim.PatNum",
+					"claimproc.PatNum",
+					"clinicerx.PatNum",
+					"commlog.PatNum",
+					"commoptout.PatNum",
+					"confirmationrequest.PatNum",
+					"creditcard.PatNum",
+					"custrefentry.PatNumCust",
+					"custrefentry.PatNumRef",
+					//"custreference.PatNum",  //This is handled below.  We do not want to change patnum, the references form only shows entries for active patients.
+					//"discountplansub.PatNum", //This is handled below. We want patients to keep their original discount plans if they have them, and only add under certain conditions.
+					"disease.PatNum",
+					//"document.PatNum",  //This is handled below when images are stored in the database and on the client side for images stored in the AtoZ folder due to the middle tier.
+					"eclipboardimagecapture.PatNum",
+					"ehramendment.PatNum",
+					"ehrcareplan.PatNum",
+					"ehrlab.PatNum",
+					"ehrmeasureevent.PatNum",
+					"ehrnotperformed.PatNum",				
+					//"ehrpatient.PatNum",  //This is handled below.  We do not want to change patnum here because there can only be one entry per patient.
+					"ehrprovkey.PatNum",
+					"ehrquarterlykey.PatNum",
+					"ehrsummaryccd.PatNum",
+					"emailmessage.PatNum",
+					"emailmessage.PatNumSubj",
+					"emailsecure.PatNum",
+					"encounter.PatNum",
+					"erxlog.PatNum",
+					"eservicelog.PatNum",
+					"etrans.PatNum",
+					//"famaging.PatNum", //Taken care of down below as this should be the guarantor of the patient being merged into
+					"familyhealth.PatNum",
+					//formpat.FormPatNum IS NOT a PatNum so it is should not be merged.  It is the primary key.
+					"formpat.PatNum",
+					"guardian.PatNumChild",  //This may create duplicate entries for a single patient and guardian
+					"guardian.PatNumGuardian",  //This may create duplicate entries for a single patient and guardian
+					"hiequeue.PatNum",
+					"histappointment.PatNum",
+					"hl7msg.PatNum",
+					"inssub.Subscriber",
+					"installmentplan.PatNum",
+					"intervention.PatNum",
+					"labcase.PatNum",
+					"labpanel.PatNum",
+					"medicalorder.PatNum",
+					//medicationpat.MedicationPatNum IS NOT a PatNum so it is should not be merged.  It is the primary key.
+					"medicationpat.PatNum",
+					"medlab.PatNum",
+					"mount.PatNum",
+					"mobileappdevice.PatNum",
+					"mobiledatabyte.PatNum",
+					"orthocase.PatNum",
+					//"orthochart.PatNum",//Taken care of by orthochartrow
+					"orthochartrow.PatNum",
+					//"oidexternal.IDInternal",  //TODO:  Deal with these elegantly below, not always a patnum
+					//"patfield.PatNum", //Taken care of below
+					"patrestriction.PatNum",
+					"patient.ResponsParty",
+					//"patient.PatNum"  //We do not want to change patnum
+					//"patient.Guarantor"  //This is taken care of below
+					//"patient.PatNumCloneFrom", //We do not want to change this for historical purposes
+					"patient.SuperFamily",  //The patfrom guarantor was changed, so this should be updated
+					//"patientlink.PatNumFrom",//We want to leave the link history unchanged so that audit entries display correctly. If we start using this table for other types of linkage besides merges, then we might need to include this column.
+					//"patientlink.PatNumTo",//^^Ditto
+					//"patientnote.PatNum"	//The patientnote table is ignored because only one record can exist for each patient.  The record in 'patFrom' remains so it can be accessed again if needed.
+					"patientportalinvite.PatNum",
+					//"patientrace.PatNum", //The patientrace table is ignored because we don't want duplicate races.  We could merge them but we would have to add specific code to stop duplicate races being inserted.
+					"patplan.PatNum",
+					"payconnectresponseweb.PatNum",
+					"payment.PatNum",
+					"payortype.PatNum",
+					"payplan.Guarantor",//Treated as a patnum, because it is actually a guarantor for the payment plan, and not a patient guarantor.
+					"payplan.PatNum",
+					"payplancharge.Guarantor",//Treated as a patnum, because it is actually a guarantor for the payment plan, and not a patient guarantor.
+					"payplancharge.PatNum",
+					"paysplit.PatNum",
+					"perioexam.PatNum",
+					"phonenumber.PatNum",
+					"plannedappt.PatNum",
+					"popup.PatNum",
+					"procedurelog.PatNum",
+					//"procmultivisit.PatNum",
+					"procnote.PatNum",
+					"proctp.PatNum",
+					"promotionlog.PatNum",
+					"providererx.PatNum",  //For non-HQ this should always be 0.
+					//question.FormPatNum IS NOT a PatNum so it is should not be merged.  It is a FKey to FormPat.FormPatNum
+					"question.PatNum",
+					"reactivation.PatNum",
+					//"recall.PatNum",  //We do not merge recall entries because it would cause duplicate recall entries.  Instead, update current recall entries.
+					"recurringcharge.PatNum",
+					"refattach.PatNum",
+					//"referral.PatNum",  //This is synched with the new information below.
+					"registrationkey.PatNum",
+					"repeatcharge.PatNum",
+					"reqstudent.PatNum",
+					"reseller.PatNum",
+					"rxpat.PatNum",
+					//"screen.ScreenPatNum", //IS NOT a PatNum so it is should not be merged.  FKey to screenpat.ScreenPatNum.
+					"screenpat.PatNum",
+					//screenpat.ScreenPatNum IS NOT a PatNum so it is should not be merged.  It is a primary key.
+					//"securitylog.FKey",  //This would only matter when the FKey pointed to a PatNum.  Currently this is only for the PatientPortal permission
+					//  which per Allen is not needed to be merged. 11/06/2015.
+					//"securitylog.PatNum",//Changing the PatNum of a securitylog record will cause it to show a red (untrusted) in the audit trail.
+					//  Best to preserve history in the securitylog and leave the corresponding PatNums static.
+					"sheet.PatNum",
+					"smsfrommobile.PatNum",
+					"smstomobile.PatNum",
+					"statement.PatNum",
+					//task.KeyNum,  //Taken care of in a seperate step, because it is not always a patnum.
+					//taskhist.KeyNum,  //Taken care of in a seperate step, because it is not always a patnum.
+					"terminalactive.PatNum",
+					"toothinitial.PatNum",
+					"treatplan.PatNum",
+					"treatplan.ResponsParty",
+					"treatplanparam.PatNum",
+					//"tsitranslog.PatNum", //Taken care of down below as this should be the guarantor of the patient being merged into
+					//vaccineobs.VaccinePatNum IS NOT a PatNum so it is should not be merged. It is the FK to the vaccinepat.VaccinePatNum.
+					"vaccinepat.PatNum",
+					//vaccinepat.VaccinePatNum IS NOT a PatNum so it is should not be merged. It is the primary key.
+					"vitalsign.PatNum",
+					"webschedrecall.PatNum",
+					"xchargetransaction.PatNum",
+					"xwebresponse.PatNum",
+				};
+				return stringArrayPatNumForeignKeys;
+			}
+		}
+
 		#region Get Methods
 		///<summary>Returns a list of all potential clones for the patient passed in.  The list returned will always contain the patNum passed in.
 		///It is okay for patNum passed in to be a clone, a master, or even a patient that is not even related to clones at all.</summary>
@@ -3576,122 +3718,6 @@ namespace OpenDentBusiness {
 			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
 				return Meth.GetBool(MethodBase.GetCurrentMethod(),patTo,patFrom,patFieldsToDelete,patFieldsToUpdate);
 			}
-			string[] patNumForeignKeys=new string[]{
-				"adjustment.PatNum",
-				"allergy.PatNum",
-				"anestheticrecord.PatNum",
-				"anesthvsdata.PatNum",
-				"appointment.PatNum",
-				"asapcomm.PatNum",
-				"claim.PatNum",
-				"claimproc.PatNum",
-				"clinicerx.PatNum",
-				"commlog.PatNum",
-				"confirmationrequest.PatNum",
-				"creditcard.PatNum",
-				"custrefentry.PatNumCust",
-				"custrefentry.PatNumRef",
-				//"custreference.PatNum",  //This is handled below.  We do not want to change patnum, the references form only shows entries for active patients.
-				//"discountplansub.PatNum", //This is handled below. We want patients to keep their original discount plans if they have them, and only add under certain conditions.
-				"disease.PatNum",
-				//"document.PatNum",  //This is handled below when images are stored in the database and on the client side for images stored in the AtoZ folder due to the middle tier.
-				"ehramendment.PatNum",
-				"ehrcareplan.PatNum",
-				"ehrlab.PatNum",
-				"ehrmeasureevent.PatNum",
-				"ehrnotperformed.PatNum",				
-				//"ehrpatient.PatNum",  //This is handled below.  We do not want to change patnum here because there can only be one entry per patient.
-				"ehrprovkey.PatNum",
-				"ehrquarterlykey.PatNum",
-				"ehrsummaryccd.PatNum",
-				"emailmessage.PatNum",
-				"emailmessage.PatNumSubj",
-				"encounter.PatNum",
-				"erxlog.PatNum",
-				"etrans.PatNum",
-				//"famaging.PatNum", //Taken care of down below as this should be the guarantor of the patient being merged into
-				"familyhealth.PatNum",
-				//formpat.FormPatNum IS NOT a PatNum so it is should not be merged.  It is the primary key.
-				"formpat.PatNum",
-				"guardian.PatNumChild",  //This may create duplicate entries for a single patient and guardian
-				"guardian.PatNumGuardian",  //This may create duplicate entries for a single patient and guardian
-				"histappointment.PatNum",
-				"hl7msg.PatNum",
-				"inssub.Subscriber",
-				"installmentplan.PatNum",
-				"intervention.PatNum",
-				"labcase.PatNum",
-				"labpanel.PatNum",
-				"medicalorder.PatNum",
-				//medicationpat.MedicationPatNum IS NOT a PatNum so it is should not be merged.  It is the primary key.
-				"medicationpat.PatNum",
-				"medlab.PatNum",
-				"mount.PatNum",
-				"orthocase.PatNum",
-				"orthochart.PatNum",
-				//"oidexternal.IDInternal",  //TODO:  Deal with these elegantly below, not always a patnum
-				//"patfield.PatNum", //Taken care of below
-				"patient.ResponsParty",
-				//"patient.PatNum"  //We do not want to change patnum
-				//"patient.Guarantor"  //This is taken care of below
-				"patient.SuperFamily",  //The patfrom guarantor was changed, so this should be updated
-				//"patientlink.PatNumFrom",//We want to leave the link history unchanged so that audit entries display correctly. If we start using this table for other types of linkage besides merges, then we might need to include this column.
-				//"patientlink.PatNumTo",//^^Ditto
-				//"patientnote.PatNum"	//The patientnote table is ignored because only one record can exist for each patient.  The record in 'patFrom' remains so it can be accessed again if needed.
-				"patientportalinvite.PatNum",
-				//"patientrace.PatNum", //The patientrace table is ignored because we don't want duplicate races.  We could merge them but we would have to add specific code to stop duplicate races being inserted.
-				"patplan.PatNum",
-				"payment.PatNum",
-				"payortype.PatNum",
-				"payplan.Guarantor",//Treated as a patnum, because it is actually a guarantor for the payment plan, and not a patient guarantor.
-				"payplan.PatNum",				
-				"payplancharge.Guarantor",//Treated as a patnum, because it is actually a guarantor for the payment plan, and not a patient guarantor.
-				"payplancharge.PatNum",
-				"paysplit.PatNum",
-				"perioexam.PatNum",
-				"phonenumber.PatNum",
-				"plannedappt.PatNum",
-				"popup.PatNum",
-				"procedurelog.PatNum",
-				"procnote.PatNum",
-				"proctp.PatNum",
-				"providererx.PatNum",  //For non-HQ this should always be 0.
-				//question.FormPatNum IS NOT a PatNum so it is should not be merged.  It is a FKey to FormPat.FormPatNum
-				"question.PatNum",
-				//"recall.PatNum",  //We do not merge recall entries because it would cause duplicate recall entries.  Instead, update current recall entries.
-				"recurringcharge.PatNum",
-				"refattach.PatNum",
-				//"referral.PatNum",  //This is synched with the new information below.
-				"registrationkey.PatNum",
-				"repeatcharge.PatNum",
-				"reqstudent.PatNum",
-				"reseller.PatNum",
-				"rxpat.PatNum",
-				"screenpat.PatNum",
-				//screenpat.ScreenPatNum IS NOT a PatNum so it is should not be merged.  It is a primary key.
-				//"securitylog.FKey",  //This would only matter when the FKey pointed to a PatNum.  Currently this is only for the PatientPortal permission
-				//  which per Allen is not needed to be merged. 11/06/2015.
-				//"securitylog.PatNum",//Changing the PatNum of a securitylog record will cause it to show a red (untrusted) in the audit trail.
-				//  Best to preserve history in the securitylog and leave the corresponding PatNums static.
-				"sheet.PatNum",
-				"smsfrommobile.PatNum",
-				"smstomobile.PatNum",
-				"statement.PatNum",
-				//task.KeyNum,  //Taken care of in a seperate step, because it is not always a patnum.
-				//taskhist.KeyNum,  //Taken care of in a seperate step, because it is not always a patnum.
-				"terminalactive.PatNum",
-				"toothinitial.PatNum",
-				"treatplan.PatNum",
-				"treatplan.ResponsParty",
-				//"tsitranslog.PatNum", //Taken care of down below as this should be the guarantor of the patient being merged into
-				//vaccineobs.VaccinePatNum IS NOT a PatNum so it is should not be merged. It is the FK to the vaccinepat.VaccinePatNum.
-				"vaccinepat.PatNum",
-				//vaccinepat.VaccinePatNum IS NOT a PatNum so it is should not be merged. It is the primary key.
-				"vitalsign.PatNum",
-				"webschedrecall.PatNum",
-				"xchargetransaction.PatNum",
-				"xwebresponse.PatNum",
-			};
 			string command="";
 			//Update and remove all patfields that were added to the list above.
 			for(int i=0;i<patFieldsToDelete.Count;i++) {
@@ -3777,13 +3803,13 @@ namespace OpenDentBusiness {
 			//At this point, the 'patFrom' is a regular patient and is absoloutely not a guarantor.
 			//Now modify all PatNum foreign keys from 'patFrom' to 'patTo' to complete the majority of the
 			//merge of the records between the two accounts.			
-			for(int i=0;i<patNumForeignKeys.Length;i++) {
+			for(int i=0;i<StringArrayPatNumForeignKeys.Length;i++) {
 				if(DataConnection.DBtype==DatabaseType.Oracle 
-					&& patNumForeignKeys[i]=="ehrlab.PatNum") //Oracle does not currently support EHR labs.
+					&& StringArrayPatNumForeignKeys[i]=="ehrlab.PatNum") //Oracle does not currently support EHR labs.
 				{
 					continue;
 				}
-				string[] tableAndKeyName=patNumForeignKeys[i].Split(new char[] {'.'});
+				string[] tableAndKeyName=StringArrayPatNumForeignKeys[i].Split(new char[] {'.'});
 				command="UPDATE "+tableAndKeyName[0]
 					+" SET "+tableAndKeyName[1]+"="+POut.Long(patTo)
 					+" WHERE "+tableAndKeyName[1]+"="+POut.Long(patFrom);

@@ -183,7 +183,7 @@ namespace OpenDentBusiness{
 			//This query builds the data table that will be filled from several other queries, instead of writing one large complex query.
 			//It is written this way so that the queries are simple to write and understand, and makes Oracle compatibility easier to maintain.
 			string command=@"SELECT 
-							  0 ClinicNum,
+							  CAST(0 AS DECIMAL(25,0)) ClinicNum,
 							  ' ' PhoneNumber,
 							  ' ' CountryCode,
 							  0 SentMonth,

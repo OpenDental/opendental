@@ -3180,6 +3180,43 @@ namespace OpenDentBusiness {
 			command=$"UPDATE program SET CommandLine='{POut.String(strCommandLine)}' WHERE ProgName='MeditLink'";
 			Db.NonQ(command);
 		}//End of 21_1_46() method
+
+		private static void To22_1_48() {
+			//This list of table names were not added the the Patients.MergeTwoPatientPointOfNoReturn(). This will move any data that was not moved during the merge. 
+			List<string> listTablesThatNeedMerged=new List<string>(){
+				"apptgeneralmessagesent",
+				"apptthankyousent",
+				"carecreditwebresponse",
+				"commoptout",
+				"eclipboardimagecapture",
+				"emailsecure",
+				"eservicelog",
+				"hiequeue",
+				"mobileappdevice",
+				"mobiledatabyte",
+				"orthochartrow",
+				"patrestriction",
+				"payconnectresponseweb",
+				"promotionlog",
+				"reactivation",
+				"treatplanparam",
+			};
+			StringBuilder sbCommandUpdate=new StringBuilder();
+			for(int i=0;i<listTablesThatNeedMerged.Count;i++) {
+				sbCommandUpdate.AppendLine($"UPDATE {listTablesThatNeedMerged[i]} SET PatNum=[PatNumTo] WHERE PatNum=[PatNumFrom];");
+			}
+			//create a template so that I can use string.Replace to create the update statements
+			string commandTemplate=sbCommandUpdate.ToString();
+			//Order is important so we can get any recursive pat merges.
+			string command="SELECT * FROM patientlink WHERE LinkType=1 ORDER By DateTimeLink";//Merge
+			DataTable table=Db.GetTable(command);
+			for(int i=0;i<table.Rows.Count;i++) {
+				long patNumFrom=PIn.Long(table.Rows[i]["PatNumFrom"].ToString());
+				long patNumTo=PIn.Long(table.Rows[i]["PatNumTo"].ToString());
+				string commandCur=commandTemplate.Replace("[PatNumTo]",POut.Long(patNumTo)).Replace("[PatNumFrom]",POut.Long(patNumFrom));
+				Db.NonQ(commandCur);
+			}
+		}
 	}
 }
 
