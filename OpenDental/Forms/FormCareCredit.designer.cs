@@ -33,7 +33,6 @@ namespace OpenDental {
 			this.butTransactions = new OpenDental.UI.Button();
 			this.butReport = new OpenDental.UI.Button();
 			this.butPromotions = new OpenDental.UI.Button();
-			this.butQuickScreen = new OpenDental.UI.Button();
 			this.labelMerchantClosedDescription = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -133,22 +132,11 @@ namespace OpenDental {
 			this.butPromotions.Text = "Manage";
 			this.butPromotions.Click += new System.EventHandler(this.butPromotions_Click);
 			// 
-			// butQuickScreen
-			// 
-			this.butQuickScreen.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.butQuickScreen.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butQuickScreen.Location = new System.Drawing.Point(100, 182);
-			this.butQuickScreen.Name = "butQuickScreen";
-			this.butQuickScreen.Size = new System.Drawing.Size(75, 24);
-			this.butQuickScreen.TabIndex = 4;
-			this.butQuickScreen.Text = "Quickscreen";
-			this.butQuickScreen.Click += new System.EventHandler(this.butQuickScreen_Click);
-			// 
 			// labelMerchantClosedDescription
 			// 
 			this.labelMerchantClosedDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelMerchantClosedDescription.ForeColor = System.Drawing.Color.Red;
-			this.labelMerchantClosedDescription.Location = new System.Drawing.Point(69, 209);
+			this.labelMerchantClosedDescription.Location = new System.Drawing.Point(69, 193);
 			this.labelMerchantClosedDescription.Name = "labelMerchantClosedDescription";
 			this.labelMerchantClosedDescription.Size = new System.Drawing.Size(352, 39);
 			this.labelMerchantClosedDescription.TabIndex = 274;
@@ -162,7 +150,6 @@ namespace OpenDental {
 			this.ClientSize = new System.Drawing.Size(433, 297);
 			this.Controls.Add(this.labelMerchantClosedDescription);
 			this.Controls.Add(this.butClose);
-			this.Controls.Add(this.butQuickScreen);
 			this.Controls.Add(this.butPromotions);
 			this.Controls.Add(this.butLookup);
 			this.Controls.Add(this.butApply);
@@ -189,7 +176,6 @@ namespace OpenDental {
 		private UI.Button butTransactions;
 		private UI.Button butReport;
 		private UI.Button butPromotions;
-		private UI.Button butQuickScreen;
 		private System.Windows.Forms.Label labelMerchantClosedDescription;
 	}
 }

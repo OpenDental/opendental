@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDocumentation.xsl"?>
-<database version="22.1.46.0">
+<database version="22.1.48.0">
     <table name="account">
         <summary>Used in the accounting section in chart of accounts.  Not related to patient accounts in any way.</summary>
         <column order="0" name="AccountNum" type="bigint(20)">
@@ -1435,7 +1435,7 @@
             </Enumeration>
         </column>
         <column order="5" name="Percent" type="tinyint(4)">
-            <summary>Only used if BenefitType=CoInsurance.  Valid values are 0 to 100.  -1 indicates empty, which is almost always true if not CoInsurance.  The percentage that insurance will pay on the procedure.  Note that benefits coming from carriers are usually backwards, indicating the percetage that the patient is responsible for.</summary>
+            <summary>Only used if BenefitType=CoInsurance.  Valid values are 0 to 100.  -1 indicates empty, which is almost always true if not CoInsurance.  The percentage that insurance will pay on the procedure.  Note that benefits coming from carriers are usually backwards, indicating the percentage that the patient is responsible for.</summary>
         </column>
         <column order="6" name="MonetaryAmt" type="double">
             <summary>Used for CoPayment, Limitations, and Deductible.  -1 indicates empty</summary>

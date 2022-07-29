@@ -10108,48 +10108,54 @@ HAVING cnt>1";
 				return Meth.GetString(MethodBase.GetCurrentMethod());
 			}
 			string log="";
-			string command=@"SELECT SUM(duplicates.CountDup) 
-										 FROM (
-												SELECT COUNT(*)-1 CountDup 
-												FROM orthochart 
-												GROUP BY PatNum,ProvNum,DateService,BINARY FieldName,BINARY FieldValue 
-												HAVING COUNT(*) > 1
-											) duplicates";
-			long numFound=PIn.Long(Db.GetCount(command));
-			if(numFound>0) {
-				//Holds the unique row that we will be keeping. All other rows like this one will be deleted (not copied to the renamed table) below.
-				//The group by clause must use the keyword BINARY because the ortho chart within Open Dental is case sensitive.
-				//command=@"RENAME TABLE orthochart TO orthochartbak;
-				//				CREATE TABLE orthochart LIKE orthochartbak;
-				//				INSERT INTO orthochart
-				//				SELECT orthochartbak.* FROM orthochartbak
-				//				JOIN (
-				//					SELECT MAX(OrthoChartNum) maxNum
-				//					FROM orthochartbak
-				//					GROUP BY PatNum,ProvNum,DateService,BINARY FieldName,BINARY FieldValue
-				//					ORDER BY NULL
-				//				) o2
-				//				WHERE orthochartbak.OrthoChartNum=o2.maxNum";
-				//Db.NonQ(command);
-				//command="DROP TABLE IF EXISTS orthochartbak";
-				//Db.NonQ(command);
-				//log+=Lans.g("FormDatabaseMaintenance","All exact duplicate entries have been removed ");
-				log+=Lans.g("FormDatabaseMaintenance","Duplicate orthochart(s) found: ")+numFound+"\r\n";
-				log+=Lans.g("FormDatabaseMaintenance","   A safe fix is under development.")+"\r\n";
+			//Check for duplicates while considering the orthochartrow table. This check will need to also consider the ProvNum since a user can insert more than 
+			//one orthochart per day per provider.
+			//The group by clause must use the keyword BINARY because the ortho chart within Open Dental is case sensitive.
+			string command=@"
+				SELECT GROUP_CONCAT(orthochart.OrthoChartNum) groupOrthoChartNums
+				FROM orthochart
+				INNER JOIN orthochartrow ON orthochartrow.OrthoChartRowNum=orthochart.OrthoChartRowNum
+				GROUP BY orthochartrow.PatNum,orthochartrow.ProvNum,DATE(orthochartrow.DateTimeService),orthochart.OrthoChartRowNum,BINARY orthochart.FieldName,BINARY orthochart.FieldValue
+				HAVING COUNT(*)>1";
+			//This table shows the duplicate orthochartrows that should be considered.
+			//The table will contain a group of all of the OrthoChartRowNums that each duplicate
+			//orthochart contains. We will keep the Max(OrthoChartNum) and remove the rest. Signatures are still probably going to get invalidated.
+			DataTable tableOrthoChartsDuplicates=Db.GetTable(command);
+			List<long> listOrthoChartNumsToDelete=GetDuplicateOrthoChartNumsToDelete(tableOrthoChartsDuplicates);
+			if(listOrthoChartNumsToDelete.Count==0) {
+				log+=Lans.g("FormDatabaseMaintenance","Zero exact duplicate entries were found. No changes were made ");
 			}
-			//check to see if there are duplicate date entries,fieldnames which aren't supposed to occur. This means there is conflict one needs to be chosen.
-			//If a user calls in due to the following message, an engineer should run the following query and help the user address each chart.
-			//If the duplicate count is unreasonable (20+) then we should make a job for creating a tool for the user to use in order to "combine" them.
-			//The manual fix would be something along the lines of manually going each ortho chart, removing duplicate values by opening and closing
-			//the ortho chart several times until the field that had duplicates loads with no data.  At that point all duplicates should have been
-			//removed and the new / correct value can be entered by the user.
-			//command="SELECT * FROM orthochart GROUP BY PatNum,OrthoChartRowNum,ProvNum,DateService,BINARY FieldName HAVING COUNT(*) > 1";
-			//DataTable table=Db.GetTable(command);
-			//if(table.Rows.Count>0) {
-			//	log+=Lans.g("FormDatabaseMaintenance","Potential duplicate entries could not be deleted for all ortho charts. "+table.Rows.Count
-			//		+" possible duplicates remaining. Please call support and escalate to an engineer to confirm and remove entries.");
-			//}
+			else {
+				command=$@"DELETE FROM orthochart 
+					WHERE OrthoChartNum IN({string.Join(",",listOrthoChartNumsToDelete.Distinct())})";
+				Db.NonQ(command);
+				log+=Lans.g("FormDatabaseMaintenance","All exact duplicate entries have been removed ");
+			}
 			return log;
+		}
+
+		///<summary>Loops through the DataTable and returns a list of OrthChartNums to be deleted. DataTable passed in must contain the column 'groupOrthoChartNums' which contain duplicate orthochartnums. </summary>
+		private static List<long> GetDuplicateOrthoChartNumsToDelete(DataTable tableOrthoChartsDuplicates) {
+			//No remoting role check; This is a private static method and those cannot be called from the middle tier.
+			List<long> listOrthoChartNumsToDelete=new List<long>();
+			if(tableOrthoChartsDuplicates==null || tableOrthoChartsDuplicates.Rows.Count==0 || !tableOrthoChartsDuplicates.Columns.Contains("groupOrthoChartNums")) {
+				return listOrthoChartNumsToDelete;
+			}
+			//Loop through list and keep one. Select the MAX(OrthoChartNum). The rest will get added to a list of orthochartnums to delete
+			for(int i=0;i<tableOrthoChartsDuplicates.Rows.Count;i++) {
+				//list will contain a comma delimited string with all of the duplicate orthochartnums. Split them out and create a list of longs.
+				List<long> listOrthoChartNumsDups=tableOrthoChartsDuplicates.Rows[i]["groupOrthoChartNums"].ToString()
+					.Split(",",StringSplitOptions.RemoveEmptyEntries)
+					.Select(x => PIn.Long(x)).ToList();
+				//Select the max Orthochartnum. This is the one we will keep.
+				long maxOrthoChartNumToKeep=listOrthoChartNumsDups.Max();
+				//Get the rest of the duplicate orthochartrows that will get deleted.
+				listOrthoChartNumsToDelete
+					.AddRange(listOrthoChartNumsDups
+						.Where(x => x!=maxOrthoChartNumToKeep).ToList()
+					);
+			}
+			return listOrthoChartNumsToDelete;
 		}
 
 		//public static bool DatabaseIsOlderThanMarchSeventeenth(string olddb) {

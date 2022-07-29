@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using OpenDental.UI;
 using OpenDentBusiness;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OpenDental{
 	/// <summary>
@@ -55,7 +56,7 @@ namespace OpenDental{
 				}
 			}
 			if(needsUpdate) {
-				ApptFieldDefs.Sync(_listApptFieldDefs);//Some of the ItemOrders were incorrect.
+				ApptFieldDefs.Sync(_listApptFieldDefs.ToList());//Some of the ItemOrders were incorrect. Creating shallow copy of list because Sync() reorders list on primary key.
 			}
 		}
 

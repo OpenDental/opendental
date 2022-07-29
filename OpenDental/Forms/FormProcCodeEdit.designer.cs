@@ -190,7 +190,7 @@ namespace OpenDental {
 			// textAbbrev
 			// 
 			this.textAbbrev.Location = new System.Drawing.Point(205, 101);
-			this.textAbbrev.MaxLength = 20;
+			this.textAbbrev.MaxLength = 50;
 			this.textAbbrev.Name = "textAbbrev";
 			this.textAbbrev.Size = new System.Drawing.Size(100, 20);
 			this.textAbbrev.TabIndex = 6;
