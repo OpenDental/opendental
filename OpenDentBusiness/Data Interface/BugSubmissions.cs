@@ -396,19 +396,23 @@ namespace OpenDentBusiness {
 			}
 			return (pertinentFixedVersion!=null);
 		}
-		
+
 		public static string GetSubmissionDescription(Patient patCur,BugSubmission sub) {
-			return "Caller Name and #: "+patCur.GetNameLF() +" (work) "+patCur.WkPhone+"\r\n"
-				+"Quick desc: "+sub.ExceptionMessageText+"\r\n"
-				+"OD version: "+sub.TryGetPrefValue(PrefName.ProgramVersion,"0.0.0.0")+"\r\n"
-				+"Windows version: "+sub.Info.WindowsVersion+"\r\n"
-				+"Comps affected: "+sub.Info.CompName+"\r\n"
-				+"Database name: "+sub.Info.DatabaseName+"\r\n"
-				+"Example PatNum: " +sub.Info.PatientNumCur+"\r\n"
-				+"Details: "+"\r\n"
-				+"Duplicable?: "+"\r\n"
-				+"Steps to duplicate: "+"\r\n"
-				+"Exception:  "+sub.ExceptionStackTrace;
+			string retVal="";
+			ODException.SwallowAnyException(() => {
+				retVal="Caller Name and #: "+patCur.GetNameLF() +" (work) "+patCur.WkPhone+"\r\n"
+					+"Quick desc: "+sub.ExceptionMessageText+"\r\n"
+					+"OD version: "+sub.TryGetPrefValue(PrefName.ProgramVersion,"0.0.0.0")+"\r\n"
+					+"Windows version: "+sub.Info.WindowsVersion+"\r\n"
+					+"Comps affected: "+sub.Info.CompName+"\r\n"
+					+"Database name: "+sub.Info.DatabaseName+"\r\n"
+					+"Example PatNum: " +sub.Info.PatientNumCur+"\r\n"
+					+"Details: "+"\r\n"
+					+"Duplicable?: "+"\r\n"
+					+"Steps to duplicate: "+"\r\n"
+					+"Exception:  "+sub.ExceptionStackTrace;
+			});
+			return retVal;
 		}
 
 		///<summary></summary>

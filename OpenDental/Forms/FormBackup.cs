@@ -700,8 +700,10 @@ namespace OpenDental {
 		}
 
 		private void ButSupplementalBrowse_Click(object sender,EventArgs e) {
-			if(folderBrowserSupplementalCopyNetworkPath.ShowDialog()==DialogResult.OK) {
-				textSupplementalBackupCopyNetworkPath.Text=folderBrowserSupplementalCopyNetworkPath.SelectedPath;
+			using FolderBrowserDialog folderBrowserDialog=new FolderBrowserDialog();
+			folderBrowserDialog.SelectedPath=textSupplementalBackupCopyNetworkPath.Text;
+			if(folderBrowserDialog.ShowDialog()==DialogResult.OK) {
+				textSupplementalBackupCopyNetworkPath.Text=folderBrowserDialog.SelectedPath;
 			}
 		}
 

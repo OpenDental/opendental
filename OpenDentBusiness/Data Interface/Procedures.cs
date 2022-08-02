@@ -1132,15 +1132,12 @@ namespace OpenDentBusiness {
 				return Meth.GetObject<List<ProcedureForApi>>(MethodBase.GetCurrentMethod(),patNum,dateTStamp);
 			}
 			List<ProcedureForApi> listProcedureForApis=new List<ProcedureForApi>();
-			string command="SELECT * FROM procedurelog ";
+			string command="SELECT * FROM procedurelog "
+				+"WHERE DateTStamp>="+POut.DateT(dateTStamp)+" ";
 			if(patNum!=0) {
-				command+="WHERE PatNum = '"+POut.Long(patNum)+"'"
-				+"AND DateTStamp>='"+dateTStamp+"'";
+				command+="AND PatNum='"+POut.Long(patNum)+"'";
 			}
-			else {
-				command+="WHERE DateTStamp>='"+dateTStamp+"'";
-			}
-			string commandDatetime ="SELECT "+DbHelper.Now();
+			string commandDatetime="SELECT "+DbHelper.Now();
 			DateTime dateTimeServer=PIn.DateT(OpenDentBusiness.Db.GetScalar(commandDatetime));//run before procedures for rigorous inclusion of procedures
 			List<Procedure> listProcedures=Crud.ProcedureCrud.SelectMany(command);
 			for(int i=0;i<listProcedures.Count;i++) {
@@ -1150,6 +1147,30 @@ namespace OpenDentBusiness {
 				listProcedureForApis.Add(procedureForApi);
 			}
 			return listProcedureForApis;
+		}
+
+		///<summary>Gets a list of a patient's procedures (including notes). Filters by ProcStatus of (C), (EC), or (EO).</summary>
+		public static List<Procedure> GetProceduresWithNotesForApi(long patNum,List<long> listProcNums) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Procedure>>(MethodBase.GetCurrentMethod(),patNum,listProcNums);
+			}
+			string command="SELECT * FROM procedurelog "
+				+$"WHERE PatNum="+POut.Long(patNum)+" "
+				+$"AND ProcNum IN ({string.Join(",",listProcNums)}) "
+				+$"AND (ProcStatus="+POut.Int((int)ProcStat.C)+//Group Notes can only be ProcStatus of (C), (EC), or (EO).
+					" OR ProcStatus="+POut.Int((int)ProcStat.EC)+
+					" OR ProcStatus="+POut.Int((int)ProcStat.EO)+")";
+			List<Procedure> listProcedures=Crud.ProcedureCrud.SelectMany(command);
+			for(int i=0;i<listProcedures.Count;i++) {
+				command="SELECT * FROM procnote WHERE ProcNum="+POut.Long(listProcedures[i].ProcNum)+" ORDER BY EntryDateTime DESC";
+				command=DbHelper.LimitOrderBy(command,1);//Get the most recent procnote.
+				DataTable dataTable=Db.GetTable(command);
+				if(dataTable.Rows.Count==0) {
+					continue;
+				}
+				listProcedures[i].Note=PIn.String(dataTable.Rows[0]["Note"].ToString());
+			}
+			return listProcedures;
 		}
 		#endregion
 

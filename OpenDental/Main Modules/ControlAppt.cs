@@ -1507,7 +1507,7 @@ namespace OpenDental {
 								codeNums.Add(procsForSingleApt[p].CodeNum);
 							}
 							string calcPattern=Appointments.CalculatePattern(apptCur.ProvNum,apptCur.ProvHyg,codeNums,true);
-							if(apptCur.Pattern!=calcPattern && !PrefC.GetBool(PrefName.AppointmentTimeIsLocked)) {
+							if(apptCur.Pattern!=calcPattern) {
 								if(apptCur.TimeLocked) {
 									if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Appointment length is locked.  Change length for new provider anyway?")) {
 										apptCur.Pattern=calcPattern;
@@ -4174,7 +4174,7 @@ namespace OpenDental {
 						}
 						if(!isOpUpdate) { 
 							string calcPattern=Appointments.CalculatePattern(appt.ProvNum,appt.ProvHyg,codeNums,true);
-							if(appt.Pattern!=calcPattern && !PrefC.GetBool(PrefName.AppointmentTimeIsLocked)) {//Updating op provs will not change apt lengths.
+							if(appt.Pattern!=calcPattern) {//Updating op provs will not change apt lengths.
 								if(appt.TimeLocked) {
 									if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Appointment length is locked.  Change length for new provider anyway?")) {
 										appt.Pattern=calcPattern;

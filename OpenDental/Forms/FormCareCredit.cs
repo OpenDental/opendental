@@ -93,7 +93,6 @@ namespace OpenDental {
 			butReport.Enabled=false;
 			butLookup.Enabled=false;
 			butPromotions.Enabled=false;
-			butQuickScreen.Enabled=false;
 			labelMerchantClosedDescription.Visible=true;
 		}
 
@@ -135,40 +134,6 @@ namespace OpenDental {
 				return;
 			}
 			CareCreditL.LaunchAdminPage(comboProviders.GetSelectedProvNum(),comboClinics.SelectedClinicNum,CareCredit.IsMerchantNumberByProv);
-			DialogResult=DialogResult.None;//Don't close the form yet.
-		}
-
-		private void butQuickScreen_Click(object sender,EventArgs e) {
-			if(!IsValid()) {
-				return;
-			}
-			double inputAmount=GetAmountInput();
-			if(inputAmount < 0) {// input box was cancelled/closed
-				return;
-			}
-			//NOTE: uncomment and delete code after launching page when CareCredit fixes non-null QuickScreen details object.
-			//CareCreditL.LaunchQuickScreenIndividualPage(_patient,comboProviders.GetSelectedProvNum(),comboClinics.SelectedClinicNum,
-			//	estimatedFeeAmt:inputAmount);
-
-			string urlQuickScreenPage=CareCreditL.GetQSPageUrl(_patient,comboProviders.GetSelectedProvNum(),comboClinics.SelectedClinicNum,estimatedFeeAmt:inputAmount);
-			if(string.IsNullOrEmpty(urlQuickScreenPage)) {
-				//Error occurred when trying to get url. Message already displayed to the user. Return
-				return;
-			}
-			using FormCareCreditWeb formCareCreditWeb=new FormCareCreditWeb(urlQuickScreenPage,_patient);
-			formCareCreditWeb.ShowDialog();
-			if(string.IsNullOrEmpty(formCareCreditWeb.SessionId)) {
-				MsgBox.Show("Error retrieving CareCredit web page.");
-				return;
-			}
-			CareCreditWebResponse careCreditWebResponse=CareCreditWebResponses.GetBySessionId(formCareCreditWeb.SessionId);
-			if(careCreditWebResponse==null) {
-				//This shouldn't happen
-				MsgBox.Show("CareCredit web response no longer exist.");
-				return;
-			}
-			UpdateCareCreditQuickScreen(careCreditWebResponse);
-			//NOTE: do not delete this, this is part of old code.
 			DialogResult=DialogResult.None;//Don't close the form yet.
 		}
 

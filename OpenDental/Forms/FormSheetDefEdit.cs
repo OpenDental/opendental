@@ -19,6 +19,8 @@ using OpenDentBusiness.WebTypes.WebForms;
 using System.Net;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
+using System.Xml;
 
 namespace OpenDental {
 	///<summary>This is one of the very few forms that must run at 96 dpi for now, regardless of the monitor resolution.  This is accomplished with Dpi.SetUnaware() just prior to instantiation.  It gets bitmap scaled by Windows.  Layout Manager is still responsible for layout.</summary>
@@ -2831,6 +2833,23 @@ namespace OpenDental {
 						return false;
 					}
 					break;
+			}
+			//Verify that the current SheetDef can be serialized and deserialized correctly (valid XML).
+			try {
+				//Make sure that C# can serialize the SheetDef object.
+				XmlSerializer xmlSerializer=new XmlSerializer(typeof(SheetDef));
+				StringBuilder stringBuilder=new StringBuilder();
+				using(XmlWriter xmlWriter=XmlWriter.Create(stringBuilder)) {
+					xmlSerializer.Serialize(xmlWriter,_sheetDef);
+				}
+				//Make sure that C# can deserialize the string representation of the SheetDef object.
+				using(TextReader textReader=new StringReader(stringBuilder.ToString())) {
+					SheetDef sheetDef=(SheetDef)xmlSerializer.Deserialize(textReader);
+				}
+			}
+			catch(Exception ex) {
+				//Warn the user of any problems but let them continue since it is not a guarantee that they will Export / Import this def, use it as a Web Form, etc.
+				FriendlyException.Show("There will be a problem with exporting or importing this Sheet Def.",ex);
 			}
 			return true;
 		}

@@ -427,19 +427,8 @@ namespace OpenDental {
 			return claimCur;
 		}
 
-		public static void PromptForSecondaryClaim(List<ClaimProc> _listClaimProcsForClaim) {
-			//Get a list of ProcNums from the primary claim.
-			List<long> listProcNumsOnPriClaim=_listClaimProcsForClaim.Where(x => x.ProcNum>0).Select(x => x.ProcNum).ToList();
-			//Get list of ClaimProcs for the list of ProcNums on Primary claim. Make sure the claim procs are not received and are attached to a claim.
-			List<ClaimProc> listClaimProcsForPriProcsNotReceived=ClaimProcs.GetForProcs(listProcNumsOnPriClaim)
-				.Where(x=>x.Status==ClaimProcStatus.NotReceived && x.ClaimNum!=0).ToList();
-			if(listClaimProcsForPriProcsNotReceived.Count==0) {
-				return;//No unreceived claimprocs for procs on pri claim.
-			}
-			//We have unreceived claimprocs for the ProcNums that are attached to the primary claim. We need to find out if the claim procs 
-			//are attached to a secondary claim with status of 'Sent' or 'Hold Until Pri Received'
-			List<Claim> listSecondaryClaims=Claims.GetClaimsFromClaimNums(listClaimProcsForPriProcsNotReceived.Select(x => x.ClaimNum).ToList())
-				.Where(x=> x.ClaimStatus.In("U","H") && x.ClaimType=="S").ToList();
+		public static void PromptForSecondaryClaim(List<ClaimProc> listClaimProcsForClaim) {
+			List<Claim> listSecondaryClaims=Claims.GetSecondaryClaimsNotReceived(listClaimProcsForClaim);
 			if(listSecondaryClaims.Count==0) {
 				return;//No secondary claims for the procedures attached to the primary.
 			}

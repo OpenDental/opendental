@@ -2295,6 +2295,9 @@ namespace OpenDental{
 		}
 
 		private void listMedicaidStates_Click(object sender,System.EventArgs e) {
+			if(listBoxMedicaidStates.SelectedItem==null) {
+				return;
+			}
 			textMedicaidState.Text=listBoxMedicaidStates.SelectedItem.ToString();
 			textMedicaidState.Focus();
 			textMedicaidState.SelectionStart=textMedicaidState.Text.Length;

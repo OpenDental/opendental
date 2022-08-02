@@ -207,6 +207,25 @@ namespace OpenDentBusiness{
 			return secondaryClaims;
 		}
 
+		///<summary>Returns secondary claims attached to the same procedures as the given list of claimprocs for the primary claim.
+		///Ignores claimprocs which are any status other than NotReceived.
+		///Only returns secondary claims with status 'U' or 'H'.</summary>
+		public static List<Claim> GetSecondaryClaimsNotReceived(List<ClaimProc> listClaimProcsForPriClaims) {
+			//No remoting role check; no call to db
+			//Get a list of ProcNums from the primary claim.
+			List<long> listProcNumsOnPriClaims=listClaimProcsForPriClaims.Where(x => x.ProcNum>0).Select(x => x.ProcNum).ToList();
+			//Get list of ClaimProcs for the list of ProcNums on Primary claim. Make sure the claim procs are not received and are attached to a claim.
+			List<ClaimProc> listClaimProcsForPriProcsNotReceived=ClaimProcs.GetForProcs(listProcNumsOnPriClaims)
+				.Where(x=>x.Status==ClaimProcStatus.NotReceived && x.ClaimNum!=0).ToList();
+			if(listClaimProcsForPriProcsNotReceived.Count==0) {
+				return new List<Claim>();//No unreceived claimprocs for procs on pri claims.
+			}
+			//We have unreceived claimprocs for the ProcNums that are attached to the primary claim(s). We need to find out if the claim procs 
+			//are attached to a secondary claim with status of 'Sent' or 'Hold Until Pri Received'
+			return GetClaimsFromClaimNums(listClaimProcsForPriProcsNotReceived.Select(x => x.ClaimNum).ToList())
+				.Where(x=> x.ClaimStatus.In("U","H") && x.ClaimType=="S").ToList();
+		}
+
 		///<summary></summary>
 		public static List<ClaimPaySplit> GetInsPayNotAttachedForFixTool() {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

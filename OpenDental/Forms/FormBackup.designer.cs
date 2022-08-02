@@ -697,7 +697,6 @@
 		private ODtextBox textSupplementalBackupDateLastComplete;
 		private System.Windows.Forms.CheckBox checkSupplementalBackupEnabled;
 		private System.Windows.Forms.Label labelExplanation;
-		private OpenDental.FolderBrowserDialog folderBrowserSupplementalCopyNetworkPath;
 		private UI.Button butSupplementalSaveDefaults;
 		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label1;

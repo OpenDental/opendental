@@ -60,7 +60,12 @@ namespace OpenDentBusiness.AutoComm {
 			AptStatus=(ApptStatus)PIn.Int(row["AptStatus"].ToString());
 			ClinicNum=PIn.Long(row["ClinicNum"].ToString());
 			PatNum=PIn.Long(row["PatNum"].ToString());
-			ProvNum=PIn.Long(row["ProvNum"].ToString());
+			if(PIn.Bool(row["IsHygiene"].ToString()) && PIn.Long(row["ProvHyg"].ToString())>0) {
+				ProvNum=PIn.Long(row["ProvHyg"].ToString());
+			}
+			else {
+				ProvNum=PIn.Long(row["ProvNum"].ToString());
+			}
 			Clinic clinic=(ClinicNum==0) ? Clinics.GetPracticeAsClinicZero() : Clinics.GetClinic(ClinicNum);
 			OfficeName=OpenDentBusiness.Clinics.GetOfficeName(clinic);
 			OfficePhone=OpenDentBusiness.Clinics.GetOfficePhone(clinic);

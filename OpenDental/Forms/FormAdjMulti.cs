@@ -451,9 +451,12 @@ namespace OpenDental {
 				listPatNums:ListTools.FromSingle(_patient.PatNum),
 				isIncomeTxfr:!radioIncludeAll.Checked,
 				loadData:loadData);
+			//Verify that the user has permission to add adjustments to completed procedures if such adjustments were created.
+			List<long> listProcNums=_listAdjustments.Select(x => x.ProcNum).ToList();
 			List<AccountEntry> listAccountEntriesCompletedProcs=constructResults.ListAccountEntries.FindAll(x => x.PatNum==_patient.PatNum
 					&& x.GetType()==typeof(Procedure)
-					&& ((Procedure)x.Tag).ProcStatus==ProcStat.C);
+					&& ((Procedure)x.Tag).ProcStatus==ProcStat.C
+					&& listProcNums.Contains(x.ProcNum));
 			List<Procedure> listCompletedProcedures=listAccountEntriesCompletedProcs.Select(x => (Procedure)x.Tag).ToList();
 			if(listCompletedProcedures.Any(x => !Security.IsAuthorized(Permissions.ProcCompleteAddAdj,Procedures.GetDateForPermCheck(x)))) {
 				return;

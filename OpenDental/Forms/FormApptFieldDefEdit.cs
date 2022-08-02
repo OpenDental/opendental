@@ -56,6 +56,7 @@ namespace OpenDental{
 				ApptFieldDefs.Delete(ApptFieldDef);//Throws if in use.
 				FieldDefLinks.DeleteForFieldDefNum(ApptFieldDef.ApptFieldDefNum,FieldDefTypes.Appointment);//Delete any FieldDefLinks to this ApptFieldDef
 				ApptFieldDef=null;
+				ApptFieldDefs.RefreshCache();
 				DialogResult=DialogResult.OK;
 			}
 			catch(ApplicationException ex){
@@ -85,6 +86,7 @@ namespace OpenDental{
 			else {
 			  ApptFieldDefs.Update(ApptFieldDef,_fieldNameOld);
 			}
+			ApptFieldDefs.RefreshCache();
 			DialogResult=DialogResult.OK;
 		}
 

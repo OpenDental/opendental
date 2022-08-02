@@ -50,7 +50,7 @@ namespace OpenDental{
 			this.butOK.Location = new System.Drawing.Point(252, 551);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
-			this.butOK.TabIndex = 5;
+			this.butOK.TabIndex = 7;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
@@ -60,7 +60,7 @@ namespace OpenDental{
 			this.butCancel.Location = new System.Drawing.Point(333, 551);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
-			this.butCancel.TabIndex = 4;
+			this.butCancel.TabIndex = 8;
 			this.butCancel.Text = "&Cancel";
 			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
@@ -78,7 +78,7 @@ namespace OpenDental{
 			this.butColorClear.Location = new System.Drawing.Point(155, 63);
 			this.butColorClear.Name = "butColorClear";
 			this.butColorClear.Size = new System.Drawing.Size(39, 24);
-			this.butColorClear.TabIndex = 181;
+			this.butColorClear.TabIndex = 2;
 			this.butColorClear.Text = "none";
 			this.butColorClear.Click += new System.EventHandler(this.butColorClear_Click);
 			// 
@@ -88,7 +88,7 @@ namespace OpenDental{
 			this.butColor.Location = new System.Drawing.Point(129, 66);
 			this.butColor.Name = "butColor";
 			this.butColor.Size = new System.Drawing.Size(20, 20);
-			this.butColor.TabIndex = 180;
+			this.butColor.TabIndex = 1;
 			this.butColor.Click += new System.EventHandler(this.butColor_Click);
 			// 
 			// label2
@@ -105,7 +105,7 @@ namespace OpenDental{
 			this.textName.Location = new System.Drawing.Point(129, 36);
 			this.textName.Name = "textName";
 			this.textName.Size = new System.Drawing.Size(272, 20);
-			this.textName.TabIndex = 183;
+			this.textName.TabIndex = 0;
 			// 
 			// checkIsHidden
 			// 
@@ -115,7 +115,7 @@ namespace OpenDental{
 			this.checkIsHidden.Name = "checkIsHidden";
 			this.checkIsHidden.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.checkIsHidden.Size = new System.Drawing.Size(113, 24);
-			this.checkIsHidden.TabIndex = 185;
+			this.checkIsHidden.TabIndex = 6;
 			this.checkIsHidden.Text = "Hidden";
 			this.checkIsHidden.UseVisualStyleBackColor = true;
 			// 
@@ -127,7 +127,7 @@ namespace OpenDental{
 			this.butDelete.Location = new System.Drawing.Point(28, 551);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(75, 24);
-			this.butDelete.TabIndex = 186;
+			this.butDelete.TabIndex = 9;
 			this.butDelete.Text = "&Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
@@ -138,6 +138,7 @@ namespace OpenDental{
 			this.butSlider.Name = "butSlider";
 			this.butSlider.Size = new System.Drawing.Size(12, 15);
 			this.butSlider.TabIndex = 188;
+			this.butSlider.TabStop = false;
 			this.butSlider.UseVisualStyleBackColor = false;
 			this.butSlider.MouseDown += new System.Windows.Forms.MouseEventHandler(this.butSlider_MouseDown);
 			this.butSlider.MouseMove += new System.Windows.Forms.MouseEventHandler(this.butSlider_MouseMove);
@@ -153,6 +154,7 @@ namespace OpenDental{
 			this.tbTime.SelectionMode = System.Windows.Forms.SelectionMode.None;
 			this.tbTime.Size = new System.Drawing.Size(15, 561);
 			this.tbTime.TabIndex = 187;
+			this.tbTime.TabStop = false;
 			this.tbTime.CellClicked += new OpenDental.ContrTable.CellEventHandler(this.tbTime_CellClicked);
 			// 
 			// labelTime
@@ -170,14 +172,15 @@ namespace OpenDental{
 			this.listBoxProcCodes.Name = "listBoxProcCodes";
 			this.listBoxProcCodes.SelectionMode = UI.SelectionMode.MultiExtended;
 			this.listBoxProcCodes.Size = new System.Drawing.Size(120, 147);
-			this.listBoxProcCodes.TabIndex = 192;
+			this.listBoxProcCodes.TabIndex = 11;
+			this.listBoxProcCodes.TabStop = false;
 			// 
 			// butAdd
 			// 
 			this.butAdd.Location = new System.Drawing.Point(252, 126);
 			this.butAdd.Name = "butAdd";
 			this.butAdd.Size = new System.Drawing.Size(65, 24);
-			this.butAdd.TabIndex = 194;
+			this.butAdd.TabIndex = 4;
 			this.butAdd.Text = "Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
@@ -186,7 +189,7 @@ namespace OpenDental{
 			this.butRemove.Location = new System.Drawing.Point(252, 154);
 			this.butRemove.Name = "butRemove";
 			this.butRemove.Size = new System.Drawing.Size(65, 24);
-			this.butRemove.TabIndex = 193;
+			this.butRemove.TabIndex = 5;
 			this.butRemove.Text = "Remove";
 			this.butRemove.Click += new System.EventHandler(this.butRemove_Click);
 			// 
@@ -204,7 +207,7 @@ namespace OpenDental{
 			this.butClear.Location = new System.Drawing.Point(282, 93);
 			this.butClear.Name = "butClear";
 			this.butClear.Size = new System.Drawing.Size(65, 24);
-			this.butClear.TabIndex = 198;
+			this.butClear.TabIndex = 3;
 			this.butClear.Text = "Clear";
 			this.butClear.Click += new System.EventHandler(this.butClear_Click);
 			// 
@@ -215,12 +218,13 @@ namespace OpenDental{
 			this.textTime.ReadOnly = true;
 			this.textTime.Size = new System.Drawing.Size(147, 20);
 			this.textTime.TabIndex = 197;
+			this.textTime.TabStop = false;
 			// 
 			// FormApptTypeEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(420, 587);
-			this.Controls.Add(this.butClear);
 			this.Controls.Add(this.textTime);
+			this.Controls.Add(this.butClear);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.butRemove);

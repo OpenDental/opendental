@@ -857,9 +857,6 @@ namespace OpenDentBusiness{
 		///A deposit will be made if the ShowAutoDeposit pref is on.</summary>
 		public static EraAutomationResult TryAutoProcessEraEob(X835 x835,List<Etrans835Attach> listAttaches,bool isFullyAutomatic) {
 			//No need to check MiddleTierRole; no call to db.
-			//Find claims for manually detached 835 claims. Then, refresh claims.
-			List<Hx835_Claim>listDetachedPaidClaims=x835.ListClaimsPaid.FindAll(x => x.ClaimNum==0 && x.IsAttachedToClaim);
-			x835.SetClaimNumsForUnattached(null,listDetachedPaidClaims);
 			List<Claim> listMatchedClaims=x835.RefreshClaims();
 			List<Hx835_Claim> listSplitClaimsToSkip=new List<Hx835_Claim>();
 			List<Hx835_Claim> listClaimsPaidToProcess=new List<Hx835_Claim>();
@@ -868,6 +865,10 @@ namespace OpenDentBusiness{
 			automationResult.X835Cur=x835;
 			//Find matching claims and make sure they are attached and that split claims are attached.
 			for(int i=0;i<x835.ListClaimsPaid.Count;i++) {
+				//These two conditions together indicate that the claim was manually detached by a user.
+				if(x835.ListClaimsPaid[i].ClaimNum==0 && x835.ListClaimsPaid[i].IsAttachedToClaim) {
+					continue;
+				}
 				if(listSplitClaimsToSkip.Any(x => x.ClpSegmentIndex==x835.ListClaimsPaid[i].ClpSegmentIndex)) {
 					//Any Hx835_Claims in listSplitClaimsToSkip already have attaches and will be processed with the first split claim identified for a claim.
 					continue;
@@ -909,6 +910,7 @@ namespace OpenDentBusiness{
 			List<Patient> listPatients=Patients.GetMultPats(listPatNumsForClaims).ToList();
 			List<InsPlan> listInsPlans=InsPlans.GetPlans(listPlanNums);
 			List<PayPlan> listValidInsPayPlansForClaims=PayPlans.GetAllValidInsPayPlansForClaims(listClaimsToProcess);
+			List<ClaimProc> listReceivedClaimProcs=new List<ClaimProc>();
 			for(int i=0;i<listClaimsPaidToProcess.Count;i++) {
 				//Need to refresh this list in each loop iteration because listClaimProcsAll may have changed.
 				listShortClaimProcsAll=listClaimProcsAll.Select(x => new Hx835_ShortClaimProc(x)).ToList();
@@ -941,6 +943,15 @@ namespace OpenDentBusiness{
 				if(isClaimRecieved) {//If claim was received, claimprocs must have been modified and updated to DB, so update the claimprocs for the claim in our list.
 					listClaimProcsAll.RemoveAll(x => x.ClaimNum==listClaimsToProcess[i].ClaimNum);
 					listClaimProcsAll.AddRange(listClaimProcsForClaimCopy);
+					listReceivedClaimProcs.AddRange(listClaimProcsForClaimCopy);
+				}
+			}
+			if(listReceivedClaimProcs.Count > 0) {
+				List<Claim> listSecondaryClaims=Claims.GetSecondaryClaimsNotReceived(listReceivedClaimProcs);
+				for(int i=0;i<listSecondaryClaims.Count;i++) {
+					Claim claimOld=listSecondaryClaims[i].Copy();
+					listSecondaryClaims[i].ClaimStatus="W";//Waiting to send.
+					Claims.Update(listSecondaryClaims[i],claimOld);
 				}
 			}
 			if(automationResult.AreAllClaimsReceived()) {//Only attempt to finalize the payment if automation has processed all of the claims.
