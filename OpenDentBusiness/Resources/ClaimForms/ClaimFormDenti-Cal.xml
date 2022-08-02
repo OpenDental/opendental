@@ -341,7 +341,7 @@
 			<ClaimFormNum>7</ClaimFormNum>
 			<ImageFileName/>
 			<FieldName>PatientDOB</FieldName>
-			<FormatString>MM dd yy</FormatString>
+			<FormatString>MM          dd      yy</FormatString>
 			<XPos>472</XPos>
 			<YPos>94</YPos>
 			<Width>113</Width>
