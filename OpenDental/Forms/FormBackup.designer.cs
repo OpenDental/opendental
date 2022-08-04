@@ -49,6 +49,7 @@
 			this.butBrowseTo = new OpenDental.UI.Button();
 			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
 			this.tabPageArchive = new System.Windows.Forms.TabPage();
+			this.labelSelectTables = new System.Windows.Forms.Label();
 			this.checkEmailMessage = new System.Windows.Forms.CheckBox();
 			this.checkSecurityLog = new System.Windows.Forms.CheckBox();
 			this.checkArchiveDoBackupFirst = new System.Windows.Forms.CheckBox();
@@ -74,7 +75,6 @@
 			this.textSupplementalBackupDateLastComplete = new OpenDental.ODtextBox();
 			this.checkSupplementalBackupEnabled = new System.Windows.Forms.CheckBox();
 			this.labelExplanation = new System.Windows.Forms.Label();
-			this.labelSelectTables = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.tabPageBackup.SuspendLayout();
 			this.groupManagedBackups.SuspendLayout();
@@ -132,10 +132,10 @@
 			// pictureCDS
 			// 
 			this.pictureCDS.HasBorder = false;
-			this.pictureCDS.Image = global::OpenDental.Properties.Resources.CDS_Button_green;
-			this.pictureCDS.Location = new System.Drawing.Point(10, 22);
+			this.pictureCDS.Image = global::OpenDental.Properties.Resources.Unison_BDR_Logo;
+			this.pictureCDS.Location = new System.Drawing.Point(6, 15);
 			this.pictureCDS.Name = "pictureCDS";
-			this.pictureCDS.Size = new System.Drawing.Size(83, 24);
+			this.pictureCDS.Size = new System.Drawing.Size(101, 39);
 			this.pictureCDS.TabIndex = 16;
 			this.pictureCDS.TextNullImage = null;
 			this.pictureCDS.Click += new System.EventHandler(this.pictureCDS_Click);
@@ -388,6 +388,16 @@
 			this.tabPageArchive.Size = new System.Drawing.Size(772, 553);
 			this.tabPageArchive.TabIndex = 1;
 			this.tabPageArchive.Text = "Remove Old Data";
+			// 
+			// labelSelectTables
+			// 
+			this.labelSelectTables.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelSelectTables.Location = new System.Drawing.Point(135, 59);
+			this.labelSelectTables.Name = "labelSelectTables";
+			this.labelSelectTables.Size = new System.Drawing.Size(337, 18);
+			this.labelSelectTables.TabIndex = 17;
+			this.labelSelectTables.Text = "Select the table(s) to remove data from:";
 			// 
 			// checkEmailMessage
 			// 
@@ -650,16 +660,6 @@
 			this.labelExplanation.TabIndex = 13;
 			this.labelExplanation.Text = resources.GetString("labelExplanation.Text");
 			this.labelExplanation.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-			// 
-			// labelSelectTables
-			// 
-			this.labelSelectTables.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelSelectTables.Location = new System.Drawing.Point(135, 59);
-			this.labelSelectTables.Name = "labelSelectTables";
-			this.labelSelectTables.Size = new System.Drawing.Size(337, 18);
-			this.labelSelectTables.TabIndex = 17;
-			this.labelSelectTables.Text = "Select the table(s) to remove data from:";
 			// 
 			// FormBackup
 			// 

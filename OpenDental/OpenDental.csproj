@@ -11185,6 +11185,7 @@
     <None Include="Web References\NewCrop\Update1.wsdl" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Unison_BDR_Logo.png" />
     <None Include="Resources\Pen.cur" />
     <None Include="Resources\EraseCircle.cur" />
     <None Include="Resources\ColorChanger.cur" />
@@ -11257,7 +11258,7 @@
     <None Include="Resources\Paste_24x24.png" />
     <None Include="Resources\Copy_24x24.png" />
     <None Include="Resources\Cut_24x24.png" />
-    <None Include="Resources\CDS_Button_green.png" />
+    <None Include="Resources\CDS_Button_green_obsolete.png" />
     <None Include="Resources\Podium_Button_100x24.png" />
     <None Include="Resources\DI_Button_100x24.png" />
     <None Include="Resources\deleteX18.gif" />

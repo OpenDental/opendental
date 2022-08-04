@@ -328,7 +328,7 @@ namespace OpenDentBusiness {
 			command="SELECT procedurelog.*"
 					+",procnoterow.UserNum NoteUserNum,procnoterow.Note NoteNote,procnoterow.SigIsTopaz NoteSigIsTopaz,procnoterow.Signature NoteSignature "
 				+"FROM procedurelog "
-				+"LEFT JOIN (SELECT ProcNum,MAX(EntryDateTime) EntryDateTime FROM procnote GROUP BY ProcNum) procnotemax ON procnotemax.ProcNum=procedurelog.ProcNum "
+				+"LEFT JOIN (SELECT ProcNum,MAX(EntryDateTime) EntryDateTime FROM procnote WHERE procnote.ProcNum IN ("+string.Join(",",listProcNums)+") GROUP BY ProcNum) procnotemax ON procnotemax.ProcNum=procedurelog.ProcNum "
 				+"LEFT JOIN procnote procnoterow ON procnoterow.ProcNum=procedurelog.ProcNum AND procnoterow.EntryDateTime=procnotemax.EntryDateTime "
 				+"WHERE procedurelog.ProcNum IN ("+string.Join(",",listProcNums)+")";
 			//ProcNote stuff

@@ -100,8 +100,8 @@
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.Controls.Add(this.webBrowserFAQ);
-			this.splitContainer1.Size = new System.Drawing.Size(1096, 827);
-			this.splitContainer1.SplitterDistance = 531;
+			this.splitContainer1.Size = new System.Drawing.Size(1096, 672);
+			this.splitContainer1.SplitterDistance = 431;
 			this.splitContainer1.SplitterWidth = 6;
 			this.splitContainer1.TabIndex = 1;
 			// 
@@ -111,7 +111,7 @@
 			this.webBrowserManual.Location = new System.Drawing.Point(0, 0);
 			this.webBrowserManual.MinimumSize = new System.Drawing.Size(20, 20);
 			this.webBrowserManual.Name = "webBrowserManual";
-			this.webBrowserManual.Size = new System.Drawing.Size(1096, 531);
+			this.webBrowserManual.Size = new System.Drawing.Size(1096, 431);
 			this.webBrowserManual.TabIndex = 0;
 			this.webBrowserManual.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.WebBrowserManual_Navigated);
 			// 
@@ -121,7 +121,7 @@
 			this.webBrowserFAQ.Location = new System.Drawing.Point(0, 0);
 			this.webBrowserFAQ.MinimumSize = new System.Drawing.Size(20, 20);
 			this.webBrowserFAQ.Name = "webBrowserFAQ";
-			this.webBrowserFAQ.Size = new System.Drawing.Size(1096, 290);
+			this.webBrowserFAQ.Size = new System.Drawing.Size(1096, 235);
 			this.webBrowserFAQ.TabIndex = 1;
 			this.webBrowserFAQ.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.WebBrowserFAQ_Navigated);
 			// 
@@ -143,7 +143,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1096, 851);
+			this.ClientSize = new System.Drawing.Size(1096, 696);
 			this.Controls.Add(this.splitContainer1);
 			this.Controls.Add(this.menuStrip1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
