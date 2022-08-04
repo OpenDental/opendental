@@ -34,6 +34,7 @@ namespace OpenDental {
 			this.checkUnsignedNote = new System.Windows.Forms.CheckBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.groupFilter = new OpenDental.UI.GroupBoxOD();
+			this.checkShowExcludedCodes = new System.Windows.Forms.CheckBox();
 			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
 			this.radioProcDate = new System.Windows.Forms.RadioButton();
 			this.radioPatient = new System.Windows.Forms.RadioButton();
@@ -47,7 +48,6 @@ namespace OpenDental {
 			this.butExport = new OpenDental.UI.Button();
 			this.butPrint = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.checkShowExcludedCodes = new System.Windows.Forms.CheckBox();
 			this.groupFilter.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.contextMenuStrip.SuspendLayout();
@@ -112,6 +112,17 @@ namespace OpenDental {
 			this.groupFilter.TabIndex = 0;
 			this.groupFilter.Text = "Filters";
 			// 
+			// checkShowExcludedCodes
+			// 
+			this.checkShowExcludedCodes.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkShowExcludedCodes.Location = new System.Drawing.Point(6, 59);
+			this.checkShowExcludedCodes.Name = "checkShowExcludedCodes";
+			this.checkShowExcludedCodes.Size = new System.Drawing.Size(350, 21);
+			this.checkShowExcludedCodes.TabIndex = 53;
+			this.checkShowExcludedCodes.Text = "Show Excluded Codes";
+			this.checkShowExcludedCodes.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkShowExcludedCodes.UseVisualStyleBackColor = true;
+			// 
 			// groupBox1
 			// 
 			this.groupBox1.Controls.Add(this.radioProcDate);
@@ -165,6 +176,7 @@ namespace OpenDental {
 			this.comboClinics.SelectionModeMulti = true;
 			this.comboClinics.Size = new System.Drawing.Size(197, 21);
 			this.comboClinics.TabIndex = 3;
+			this.comboClinics.SelectionChangeCommitted += new System.EventHandler(this.comboClinics_SelectionChangeCommitted);
 			// 
 			// comboProvs
 			// 
@@ -177,6 +189,7 @@ namespace OpenDental {
 			// 
 			// dateRangePicker
 			// 
+			this.dateRangePicker.BackColor = System.Drawing.Color.Transparent;
 			this.dateRangePicker.EnableWeekButtons = false;
 			this.dateRangePicker.Location = new System.Drawing.Point(169, 85);
 			this.dateRangePicker.MaximumSize = new System.Drawing.Size(0, 185);
@@ -246,17 +259,6 @@ namespace OpenDental {
 			this.gridMain.Title = "Incomplete Procedure Notes";
 			this.gridMain.TranslationName = "TableIncompleteProcNotes";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
-			// 
-			// checkShowExcludedCodes
-			// 
-			this.checkShowExcludedCodes.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkShowExcludedCodes.Location = new System.Drawing.Point(6, 59);
-			this.checkShowExcludedCodes.Name = "checkShowExcludedCodes";
-			this.checkShowExcludedCodes.Size = new System.Drawing.Size(350, 21);
-			this.checkShowExcludedCodes.TabIndex = 53;
-			this.checkShowExcludedCodes.Text = "Show Excluded Codes";
-			this.checkShowExcludedCodes.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkShowExcludedCodes.UseVisualStyleBackColor = true;
 			// 
 			// FormRpProcNote
 			// 

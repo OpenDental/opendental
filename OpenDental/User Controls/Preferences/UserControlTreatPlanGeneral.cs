@@ -36,11 +36,23 @@ namespace OpenDental {
 		}
 
 		private void linkLabelProcDiscountTypeDetails_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {
-			Process.Start("https://www.opendental.com/manual/treatmentplandiscounts.html");
+			try {
+				Process.Start("https://www.opendental.com/manual/treatmentplandiscounts.html");
+			}
+			catch(Exception ex) {
+				MessageBox.Show(Lan.g(this,"Could not find")+" "+"https://www.opendental.com/manual/treatmentplandiscounts.html"+"\r\n"
+					+Lan.g(this,"Please set up a default web browser."));
+			}
 		}
 
 		private void linkLabelProcDiscountTypeDetails2_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {
-			Process.Start("https://opendental.com/manual/definitionsadjtypes.html");
+			try {
+				Process.Start("https://opendental.com/manual/definitionsadjtypes.html");
+			}
+			catch(Exception ex) {
+				MessageBox.Show(Lan.g(this,"Could not find")+" "+"https://opendental.com/manual/definitionsadjtypes.html"+"\r\n"
+					+Lan.g(this,"Please set up a default web browser."));
+			}
 		}
 
 		private void radioTreatPlanSortOrder_Click(object sender,EventArgs e) {

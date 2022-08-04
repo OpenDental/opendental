@@ -153,6 +153,7 @@ namespace OpenDental {
 			int controlMargin=3;
 			int customerWidth=80;
 			int customerY=18;
+			int customerX=44;
 			int extensionWidth=100;
 			int statusWidth=62;
 			int statusX=0;
@@ -171,7 +172,6 @@ namespace OpenDental {
 			//i starts at 1, because it determines the number of columns with modulo division on line if(i%_tilesPerColumn==0)
 			List<PhoneEmpDefault> listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
 			for(int i=1;i<_listPhones.Count+1;i++) {
-				int customerX = 42;
 				int numCur=i-1;
 				employee=Employees.GetEmp(_listPhones[numCur].EmployeeNum);
 				bool isWorkingHome=false;
@@ -201,11 +201,9 @@ namespace OpenDental {
 					|| _listPhones[numCur].ClockStatus==ClockStatusEnum.None
 					|| _listPhones[numCur].ClockStatus==ClockStatusEnum.Off) {
 					statusAndNote="Clock In";
-					customerX = 44; //move the customer string over to have a bit more space 
 				}
 				if(_listPhones[numCur].ClockStatus==ClockStatusEnum.Unavailable) {
-					statusAndNote="Unavailable";
-					customerX = 58; //move the customer string over to prevent overlapping of the "Unavailable" text
+					statusAndNote="Unavbl.";
 				}
 				//get the customer number
 				string customer=_listPhones[numCur].CustomerNumber;
@@ -446,12 +444,12 @@ namespace OpenDental {
 
 		private void panelMain_MouseClick(object sender,MouseEventArgs e) {
 			int statusStartX=3;
-			int statusFinalX=59;
+			int statusFinalX=44;
 			int timeStartY=17;
 			int startY=20;
 			int finalY=34;
-			int customerStartX=60;
-			int customerFinalX=140;
+			int customerStartX=44;
+			int customerFinalX=128;
 			Point location=FindPhoneAndLocation(e,out int x,out int y);
 			if(_phoneSelected==null) {
 				return;

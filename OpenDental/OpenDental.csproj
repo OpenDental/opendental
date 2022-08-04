@@ -2724,6 +2724,11 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Misc\WebServiceRequest.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ReportingComplex\FormReportComplex.designer.cs">
       <DependentUpon>FormReportComplex.cs</DependentUpon>
     </Compile>
@@ -7047,11 +7052,6 @@
     <Compile Include="Misc\MigraDocHelper.cs" />
     <Compile Include="ReportingComplex\ParameterField.cs" />
     <Compile Include="ReportingComplex\ParameterFieldCollection.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="ReportingComplex\QueryObject.cs" />
     <Compile Include="ReportingComplex\ReportComplex.cs" />
     <Compile Include="ReportingComplex\ReportObject.cs" />
@@ -11458,6 +11458,7 @@
     <None Include="Web References\NewCrop\Update1.wsdl" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Unison_BDR_Logo.png" />
     <None Include="Resources\Pen.cur" />
     <None Include="Resources\EraseCircle.cur" />
     <None Include="Resources\ColorChanger.cur" />
@@ -11530,7 +11531,7 @@
     <None Include="Resources\Paste_24x24.png" />
     <None Include="Resources\Copy_24x24.png" />
     <None Include="Resources\Cut_24x24.png" />
-    <None Include="Resources\CDS_Button_green.png" />
+    <None Include="Resources\CDS_Button_green_obsolete.png" />
     <None Include="Resources\Podium_Button_100x24.png" />
     <None Include="Resources\DI_Button_100x24.png" />
     <None Include="Resources\deleteX18.gif" />

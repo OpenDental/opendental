@@ -1789,19 +1789,17 @@ namespace OpenDental {
 			gridSplits.Columns.Clear();
 			_dictGridSplitsPaySplitIndices.Clear();
 			GridColumn col;
-			col=new GridColumn(Lan.g(this,"Date"),65,HorizontalAlignment.Center,GridSortingStrategy.DateParse);
-			gridSplits.Columns.Add(col);
-			col=new GridColumn(Lan.g(this,"Prov"),40, GridSortingStrategy.StringCompare);
+			col=new GridColumn(Lan.g(this,"Prov"),0,GridSortingStrategy.StringCompare) { IsWidthDynamic=true, DynamicWeight=1 };
 			gridSplits.Columns.Add(col);
 			if(PrefC.HasClinicsEnabled) {//Clinics
-				col=new GridColumn(Lan.g(this,"Clinic"),40, GridSortingStrategy.StringCompare);
+				col=new GridColumn(Lan.g(this,"Clinic"),0,GridSortingStrategy.StringCompare) { IsWidthDynamic=true,DynamicWeight=1 };
 				gridSplits.Columns.Add(col);
 			}
-			col=new GridColumn(Lan.g(this,"Patient"),100,GridSortingStrategy.StringCompare);
+			col=new GridColumn(Lan.g(this,"Patient"),0,GridSortingStrategy.StringCompare) { IsWidthDynamic=true,DynamicWeight=2 };
 			gridSplits.Columns.Add(col);
 			col=new GridColumn(Lan.g(this,"Code"),60, GridSortingStrategy.StringCompare);
 			gridSplits.Columns.Add(col);
-			col=new GridColumn(Lan.g(this,"Type"),100, GridSortingStrategy.StringCompare);
+			col=new GridColumn(Lan.g(this,"Type"),0, GridSortingStrategy.StringCompare) { IsWidthDynamic=true,DynamicWeight=2 };
 			gridSplits.Columns.Add(col);
 			col=new GridColumn(Lan.g(this,"Amount"),55,HorizontalAlignment.Right, GridSortingStrategy.AmountParse);
 			gridSplits.Columns.Add(col);
@@ -1815,7 +1813,6 @@ namespace OpenDental {
 				row=new GridRow();
 				row.Tag=splitCur;
 				_dictGridSplitsPaySplitIndices[paySplitHelper]=new List<int>() { index };
-				row.Cells.Add(splitCur.DatePay.ToShortDateString());//Date
 				row.Cells.Add(Providers.GetAbbr(splitCur.ProvNum));//Prov
 				if(PrefC.HasClinicsEnabled) {//Clinics
 					if(splitCur.ClinicNum!=0) {

@@ -19,7 +19,7 @@ namespace OpenDental.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -385,9 +385,9 @@ namespace OpenDental.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap CDS_Button_green {
+        public static System.Drawing.Bitmap CDS_Button_green_obsolete {
             get {
-                object obj = ResourceManager.GetObject("CDS_Button_green", resourceCulture);
+                object obj = ResourceManager.GetObject("CDS_Button_green_obsolete", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1144,7 +1144,7 @@ namespace OpenDental.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open Dental, Copyright 2003-2019, Jordan S. Sparks, DMD.
+        ///   Looks up a localized string similar to Open Dental, Copyright 2003-2022, Jordan S. Sparks, DMD.
         ///
         ///Open Dental Software, Inc distributes and supports this software through authorized purchase.  A Registration Key is provided to purchaser at time of sale and is valid for exactly one physical location where patients are treated.  Each separate physical location where patients are treated requires a separate purchase and Registration Key.  Mobile treatment units are each treated as one physical location.  Purchaser may install this software on any  [rest of string was truncated]&quot;;.
         /// </summary>
@@ -1677,6 +1677,16 @@ namespace OpenDental.Properties {
         public static System.Drawing.Bitmap Undo_24x24 {
             get {
                 object obj = ResourceManager.GetObject("Undo_24x24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Unison_BDR_Logo {
+            get {
+                object obj = ResourceManager.GetObject("Unison_BDR_Logo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

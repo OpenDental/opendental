@@ -590,6 +590,7 @@ namespace OpenDentBusiness{
 				//case Permissions.RepeatChargeDelete:
 				case Permissions.WebFormAccess:
 				//case Permissions.CloseOtherSessions:
+				case Permissions.Zoom:
 				//case Permissions.ImageExport:
 				//case Permissions.ImageCreate:
 				case Permissions.CertificationEmployee:

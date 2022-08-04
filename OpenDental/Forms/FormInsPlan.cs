@@ -1036,6 +1036,9 @@ namespace OpenDental{
 
 		private void listBoxEmps_DoubleClick(object sender,System.EventArgs e) {
 			//no longer used
+			if(_listBoxEmps.SelectedIndex==-1) {
+				return;
+			}
 			textEmployer.Text=_listBoxEmps.SelectedItem.ToString();
 			textEmployer.Focus();
 			textEmployer.SelectionStart=textEmployer.Text.Length;

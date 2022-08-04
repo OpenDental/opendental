@@ -175,7 +175,10 @@ namespace OpenDental {
 			AppointmentTypeCur.AppointmentTypeName=textName.Text;
 			if(AppointmentTypeCur.AppointmentTypeColor!=butColor.BackColor) {
 				AppointmentTypeCur.AppointmentTypeColor=butColor.BackColor;
-				if(!AppointmentTypeCur.IsNew && MsgBox.Show(this,MsgBoxButtons.YesNo,"Would you like to update all future appointments of this type to the new color?")) {
+				if(AppointmentTypeCur.AppointmentTypeNum != 0 
+					&& !AppointmentTypeCur.IsNew 
+					&& MsgBox.Show(this,MsgBoxButtons.YesNo,"Would you like to update all future appointments of this type to the new color?")) 
+				{
 					Appointments.UpdateFutureApptColorForApptType(AppointmentTypeCur);
 				}
 			}
@@ -187,6 +190,7 @@ namespace OpenDental {
 			else{
 				AppointmentTypeCur.Pattern="";
 			}
+			AppointmentTypeCur.IsNew=false;
 			DialogResult=DialogResult.OK;
 		}
 

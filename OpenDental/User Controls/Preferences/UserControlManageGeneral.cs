@@ -55,15 +55,33 @@ namespace OpenDental {
 		}
 
 		private void linkLabelClaimPaymentBatchOnly_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {
-			Process.Start("https://opendental.com/manual/claimedit.html");
+			try {
+				Process.Start("https://opendental.com/manual/claimedit.html");
+			}
+			catch(Exception ex) {
+				MessageBox.Show(Lan.g(this,"Could not find")+" "+"https://opendental.com/manual/claimedit.html"+"\r\n"
+					+Lan.g(this,"Please set up a default web browser."));
+			}
 		}
 
 		private void linkLabelClaimsReceivedDaysDetails_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {
-			Process.Start("https://www.opendental.com/manual/claimpaymentbatch.html");
+			try {
+				Process.Start("https://www.opendental.com/manual/claimpaymentbatch.html");
+			}
+			catch(Exception ex) {
+				MessageBox.Show(Lan.g(this,"Could not find")+" "+"https://www.opendental.com/manual/claimpaymentbatch.html"+"\r\n"
+					+Lan.g(this,"Please set up a default web browser."));
+			}
 		}
 
 		private void linkLabelShowAutoDepositDetails_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {
-			Process.Start("https://opendental.com/manual/claimpayfinalize.html");
+			try {
+				Process.Start("https://opendental.com/manual/claimpayfinalize.html");
+			}
+			catch(Exception ex) {
+				MessageBox.Show(Lan.g(this,"Could not find")+" "+"https://opendental.com/manual/claimpayfinalize.html"+"\r\n"
+					+Lan.g(this,"Please set up a default web browser."));
+			}
 		}
 		#endregion Methods - Event Handlers
 

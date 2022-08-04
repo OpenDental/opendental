@@ -32,15 +32,17 @@ namespace OpenDental{
 		private void FormRpProcNote_Load(object sender,System.EventArgs e) {
 			checkNoNotes.Checked=PrefC.GetBool(PrefName.ReportsIncompleteProcsNoNotes);
 			checkUnsignedNote.Checked=PrefC.GetBool(PrefName.ReportsIncompleteProcsUnsigned);
-			FillProvs();
+			List<Provider> listProviders=Providers.GetListReportsForClinic(comboClinics.SelectedClinicNum);
+			FillProvs(listProviders);
 			dateRangePicker.SetDateTimeFrom(DateTime.Today);
 			dateRangePicker.SetDateTimeTo(DateTime.Today);
 			FillGrid();
 		}
 
-		private void FillProvs() {
+		private void FillProvs(List<Provider> listProviders) {
+			comboProvs.Items.Clear();
 			comboProvs.IncludeAll=true;
-			comboProvs.Items.AddProvsFull(Providers.GetListReports());
+			comboProvs.Items.AddProvsFull(listProviders);
 			comboProvs.IsAllSelected=true;
 		}
 
@@ -240,6 +242,16 @@ namespace OpenDental{
 		
 		private void butExport_Click(object sender,System.EventArgs e) {
 			gridMain.Export("Incomplete Procedure Notes");
+		}
+
+		private void comboClinics_SelectionChangeCommitted(object sender,EventArgs e) {
+			if(comboClinics.IsAllSelected) {
+				FillProvs(Providers.GetListReports());
+			}
+			else {
+				List<Provider> listProviders=Providers.GetListReportsForClinic(comboClinics.SelectedClinicNum);
+				FillProvs(listProviders);
+			}
 		}
 
 		private void butClose_Click(object sender, System.EventArgs e) {

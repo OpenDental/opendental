@@ -41,6 +41,9 @@ namespace OpenDental {
 			this.checkRepeatingChargesRunAging = new System.Windows.Forms.CheckBox();
 			this.checkRepeatingChargesAutomated = new System.Windows.Forms.CheckBox();
 			this.labelRecurChargPriProvDetails = new System.Windows.Forms.Label();
+			this.labelRecurringChargesTimeDetails = new System.Windows.Forms.Label();
+			this.labelRecurringChargesInactivateDeclinedCardsDetails = new System.Windows.Forms.Label();
+			this.labelRepeatingChargesAutomatedTimeDetails = new System.Windows.Forms.Label();
 			this.groupRecurringCharges.SuspendLayout();
 			this.groupRepeatingCharges.SuspendLayout();
 			this.SuspendLayout();
@@ -94,7 +97,7 @@ namespace OpenDental {
 			this.checkRecurPatBal0.Name = "checkRecurPatBal0";
 			this.checkRecurPatBal0.Size = new System.Drawing.Size(349, 17);
 			this.checkRecurPatBal0.TabIndex = 246;
-			this.checkRecurPatBal0.Text = "Allow recurring charges to run in the absence of a patient balance";
+			this.checkRecurPatBal0.Text = "Allow recurring charges to run even if no family balance present";
 			this.checkRecurPatBal0.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkRecurPatBal0.UseVisualStyleBackColor = true;
 			// 
@@ -241,11 +244,47 @@ namespace OpenDental {
 			this.labelRecurChargPriProvDetails.Text = "only used when Paysplit allocations is set to \'Rigorous\'";
 			this.labelRecurChargPriProvDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
+			// labelRecurringChargesTimeDetails
+			// 
+			this.labelRecurringChargesTimeDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelRecurringChargesTimeDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelRecurringChargesTimeDetails.Location = new System.Drawing.Point(476, 187);
+			this.labelRecurringChargesTimeDetails.Name = "labelRecurringChargesTimeDetails";
+			this.labelRecurringChargesTimeDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelRecurringChargesTimeDetails.TabIndex = 335;
+			this.labelRecurringChargesTimeDetails.Text = "this should be set to run after Repeating charges";
+			this.labelRecurringChargesTimeDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelRecurringChargesInactivateDeclinedCardsDetails
+			// 
+			this.labelRecurringChargesInactivateDeclinedCardsDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelRecurringChargesInactivateDeclinedCardsDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelRecurringChargesInactivateDeclinedCardsDetails.Location = new System.Drawing.Point(476, 283);
+			this.labelRecurringChargesInactivateDeclinedCardsDetails.Name = "labelRecurringChargesInactivateDeclinedCardsDetails";
+			this.labelRecurringChargesInactivateDeclinedCardsDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelRecurringChargesInactivateDeclinedCardsDetails.TabIndex = 336;
+			this.labelRecurringChargesInactivateDeclinedCardsDetails.Text = "3 states. If filled, behaves as unchecked. Recommend unchecked.";
+			this.labelRecurringChargesInactivateDeclinedCardsDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelRepeatingChargesAutomatedTimeDetails
+			// 
+			this.labelRepeatingChargesAutomatedTimeDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelRepeatingChargesAutomatedTimeDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelRepeatingChargesAutomatedTimeDetails.Location = new System.Drawing.Point(476, 400);
+			this.labelRepeatingChargesAutomatedTimeDetails.Name = "labelRepeatingChargesAutomatedTimeDetails";
+			this.labelRepeatingChargesAutomatedTimeDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelRepeatingChargesAutomatedTimeDetails.TabIndex = 337;
+			this.labelRepeatingChargesAutomatedTimeDetails.Text = "this should be set to run before Recurring charges";
+			this.labelRepeatingChargesAutomatedTimeDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// UserControlAccountRecAndRepCharges
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.labelRepeatingChargesAutomatedTimeDetails);
+			this.Controls.Add(this.labelRecurringChargesInactivateDeclinedCardsDetails);
+			this.Controls.Add(this.labelRecurringChargesTimeDetails);
 			this.Controls.Add(this.labelRecurChargPriProvDetails);
 			this.Controls.Add(this.groupRepeatingCharges);
 			this.Controls.Add(this.groupRecurringCharges);
@@ -278,5 +317,8 @@ namespace OpenDental {
 		private System.Windows.Forms.CheckBox checkRepeatingChargesRunAging;
 		private System.Windows.Forms.CheckBox checkRepeatingChargesAutomated;
 		private System.Windows.Forms.Label labelRecurChargPriProvDetails;
+		private System.Windows.Forms.Label labelRecurringChargesTimeDetails;
+		private System.Windows.Forms.Label labelRecurringChargesInactivateDeclinedCardsDetails;
+		private System.Windows.Forms.Label labelRepeatingChargesAutomatedTimeDetails;
 	}
 }

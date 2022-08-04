@@ -803,9 +803,8 @@
 			// 
 			// tabControlSplits
 			// 
-			this.tabControlSplits.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.tabControlSplits.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
 			this.tabControlSplits.Controls.Add(this.tabPageSplits);
 			this.tabControlSplits.Location = new System.Drawing.Point(9, 104);
 			this.tabControlSplits.Name = "tabControlSplits";
@@ -1211,7 +1210,6 @@
 			this.warningIntegrity1.Name = "warningIntegrity1";
 			this.warningIntegrity1.Size = new System.Drawing.Size(18, 18);
 			this.warningIntegrity1.TabIndex = 1001;
-			this.warningIntegrity1.Text = "warningIntegrity1";
 			// 
 			// labelTransactionCompleted
 			// 

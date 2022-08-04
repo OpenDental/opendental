@@ -132,10 +132,10 @@
 			// pictureCDS
 			// 
 			this.pictureCDS.HasBorder = false;
-			this.pictureCDS.Image = global::OpenDental.Properties.Resources.CDS_Button_green;
-			this.pictureCDS.Location = new System.Drawing.Point(10, 22);
+			this.pictureCDS.Image = global::OpenDental.Properties.Resources.Unison_BDR_Logo;
+			this.pictureCDS.Location = new System.Drawing.Point(6, 15);
 			this.pictureCDS.Name = "pictureCDS";
-			this.pictureCDS.Size = new System.Drawing.Size(83, 24);
+			this.pictureCDS.Size = new System.Drawing.Size(101, 39);
 			this.pictureCDS.TabIndex = 16;
 			this.pictureCDS.TextNullImage = null;
 			this.pictureCDS.Click += new System.EventHandler(this.pictureCDS_Click);

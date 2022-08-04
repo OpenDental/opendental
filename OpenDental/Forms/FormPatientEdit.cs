@@ -1958,6 +1958,9 @@ namespace OpenDental{
 		}
 
 		private void listCounties_Click(object sender, System.EventArgs e){
+			if(listCounties.SelectedIndex==-1) { 
+				return;
+			}
 			textCounty.Text=countiesArray[listCounties.SelectedIndex].CountyName;
 			textCounty.Focus();
 			textCounty.SelectionStart=textCounty.Text.Length;
@@ -2054,6 +2057,9 @@ namespace OpenDental{
 		}
 
 		private void listSites_Click(object sender,System.EventArgs e) {
+			if(listSites.SelectedIndex==-1) {
+				return;
+			}
 			textSite.Text=_listSitesFiltered[listSites.SelectedIndex].Description;
 			_patientCur.SiteNum=_listSitesFiltered[listSites.SelectedIndex].SiteNum;
 			textSite.Focus();
@@ -2206,6 +2212,9 @@ namespace OpenDental{
 
 		private void listEmps_DoubleClick(object sender, System.EventArgs e){
 			//no longer used
+			if(listEmps.SelectedItem==null) {
+				return;
+			}
 			textEmployer.Text=listEmps.SelectedItem.ToString();
 			textEmployer.Focus();
 			textEmployer.SelectionStart=textEmployer.Text.Length;
