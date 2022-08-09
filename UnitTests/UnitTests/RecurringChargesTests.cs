@@ -1171,6 +1171,214 @@ namespace UnitTests.RecurringCharges_Tests {
 				|| data.RecurringCharge.ChargeAmt!=50);
 		}
 
+		///<summary></summary> 
+		[TestMethod]
+		public void RecurringCharges_CalculateNextChargeDate_FixedDaysOfMonth() { 
+			//Fixed Days of Month
+			//October, 10, 2022
+			DateTime startDate=new DateTime(2022, 10, 10);
+			//Noverber, 10, 2022
+			DateTime stopDate=new DateTime(2022, 11, 10);
+			//2nd and 17th
+			string frequency=(int)ChargeFrequencyType.FixedDayOfMonth+"|2, 17";
+			DateTime nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==17 && nextChargeDate.Month==10 && nextChargeDate.Year==2022);
+			//Start date after charge day in current month
+			//October, 18, 2022
+			startDate=new DateTime(2022, 10, 18);
+			//Noverber, 10, 2022
+			stopDate=new DateTime(2022, 11, 10);
+			//2nd and 17th
+			frequency=(int)ChargeFrequencyType.FixedDayOfMonth+"|2, 17";			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==2 && nextChargeDate.Month==11 && nextChargeDate.Year==2022);
+			//Start date equals next charge day
+			//October, 17, 2022
+			startDate=new DateTime(2022, 10, 17);
+			//Noverber, 10, 2022
+			stopDate=new DateTime(2022, 11, 10);
+			//2nd and 17th
+			frequency=(int)ChargeFrequencyType.FixedDayOfMonth+"|2, 17";			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==17 && nextChargeDate.Month==10 && nextChargeDate.Year==2022);
+			//Stop date before charge day
+			//October, 3, 2022
+			startDate=new DateTime(2022, 10, 3);
+			//Noverber, 10, 2022
+			stopDate=new DateTime(2022, 10, 10);
+			//2nd and 17th
+			frequency=(int)ChargeFrequencyType.FixedDayOfMonth+"|2, 17";			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==1 && nextChargeDate.Month==1 && nextChargeDate.Year==1);
+		}
+
+			///<summary></summary> 
+		[TestMethod]
+		public void RecurringCharges_CalculateNextChargeDate_DayOfWeek() { 
+			/*Day of week
+Enums: DayOfWeekFrequency	/				DayOfWeek
+			0 - Every						/				Sunday					
+			1 - EveryOther			/				Monday,
+			2 - First						/				Tuesday,
+			3 - Second					/				Wednesday,
+			4 - Third						/				Thursday,
+			5 - Fourth					/				Friday,
+			6 - Fifth						/				Saturday,
+			*/
+			//October, 17, 2022
+			DateTime startDate=new DateTime(2022, 10, 17);
+			//Noverber, 10, 2022
+			DateTime stopDate=new DateTime(2022, 11, 10);
+			//DayOfWeek|frequency|Day
+			//Every and every other
+			//Every Sunday
+			string frequency=(int)ChargeFrequencyType.FixedWeekDay+"|"+(int)DayOfWeekFrequency.Every+"|"+(int)DayOfWeek.Sunday;
+			DateTime nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==23 && nextChargeDate.Month==10 && nextChargeDate.Year==2022);
+			//Start Date after all sundays in month.
+			//October, 31, 2022
+			startDate=new DateTime(2022, 10, 31);
+			//Noverber, 10, 2022
+			stopDate=new DateTime(2022, 11, 10);
+			//Every Sunday
+			frequency=(int)ChargeFrequencyType.FixedWeekDay+"|"+(int)DayOfWeekFrequency.Every+"|"+(int)DayOfWeek.Sunday;
+			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==6 && nextChargeDate.Month==11 && nextChargeDate.Year==2022);
+			//First
+			//Start Before charge day in month
+			//October, 1, 2022
+			startDate=new DateTime(2022, 10, 1);
+			//Noverber, 10, 2022
+			stopDate=new DateTime(2022, 11, 10);
+			//First Sunday
+			frequency=(int)ChargeFrequencyType.FixedWeekDay+"|"+(int)DayOfWeekFrequency.First+"|"+(int)DayOfWeek.Sunday;
+			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==2 && nextChargeDate.Month==10 && nextChargeDate.Year==2022);
+			//Start after charge day in month
+			//October, 10, 2022
+			startDate= new DateTime(2022, 10, 10);
+			//Noverber, 10, 2022
+			stopDate= new DateTime(2022, 11, 10);
+			//First Sunday
+			frequency=(int)ChargeFrequencyType.FixedWeekDay+"|"+(int)DayOfWeekFrequency.First+"|"+(int)DayOfWeek.Sunday;
+			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==6 && nextChargeDate.Month==11 && nextChargeDate.Year==2022);
+			//Second
+			//Start before charge day in month
+			//October, 5, 2022
+			startDate=new DateTime(2022, 10, 5);
+			//Noverber, 10, 2022
+			stopDate=new DateTime(2022, 11, 10);
+			//Second Sunday
+			frequency=(int)ChargeFrequencyType.FixedWeekDay+"|"+(int)DayOfWeekFrequency.Second+"|"+(int)DayOfWeek.Sunday;
+			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==9 && nextChargeDate.Month==10 && nextChargeDate.Year==2022);
+			//Start after charge day in month
+			//October, 10, 2022
+			startDate=new DateTime(2022, 10, 10);
+			//Noverber, 20, 2022
+			stopDate=new DateTime(2022, 11, 20);
+			//Second Sunday
+			frequency=(int)ChargeFrequencyType.FixedWeekDay+"|"+(int)DayOfWeekFrequency.Second+"|"+(int)DayOfWeek.Sunday;
+			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==13 && nextChargeDate.Month==11 && nextChargeDate.Year==2022);
+			//Third
+			//Start before charge day in month
+			//October, 5, 2022
+			startDate=new DateTime(2022, 10, 5);
+			//Noverber, 11, 2022
+			stopDate=new DateTime(2022, 11, 10);
+			//Third Sunday
+			frequency=(int)ChargeFrequencyType.FixedWeekDay+"|"+(int)DayOfWeekFrequency.Third+"|"+(int)DayOfWeek.Sunday;
+			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==16 && nextChargeDate.Month==10 && nextChargeDate.Year==2022);
+			//Start after charge day in month
+			//October, 17, 2022
+			startDate=new DateTime(2022, 10, 17);
+			//Noverber, 20, 2022
+			stopDate=new DateTime(2022, 11, 20);
+			//Third Sunday
+			frequency=(int)ChargeFrequencyType.FixedWeekDay+"|"+(int)DayOfWeekFrequency.Third+"|"+(int)DayOfWeek.Sunday;
+			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==20 && nextChargeDate.Month==11 && nextChargeDate.Year==2022);
+			//Fourth
+			//Start before charge day in month
+			//October, 5, 2022
+			startDate=new DateTime(2022, 10, 5);
+			//Noverber, 10, 2022
+			stopDate=new DateTime(2022, 11, 10);
+			//Fourth Sunday
+			frequency=(int)ChargeFrequencyType.FixedWeekDay+"|"+(int)DayOfWeekFrequency.Fourth+"|"+(int)DayOfWeek.Sunday;
+			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==23 && nextChargeDate.Month==10 && nextChargeDate.Year==2022);
+			//Start after charge day in month
+			//October, 29, 2022
+			startDate=new DateTime(2022, 10, 29);
+			//Noverber, 29, 2022
+			stopDate=new DateTime(2022, 11, 29);
+			//Fourth Sunday
+			frequency=(int)ChargeFrequencyType.FixedWeekDay+"|"+(int)DayOfWeekFrequency.Fourth+"|"+(int)DayOfWeek.Sunday;
+			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==27 && nextChargeDate.Month==11 && nextChargeDate.Year==2022);
+			//Fifth
+			//Start before charge day in month
+			//October, 5, 2022
+			startDate=new DateTime(2022, 10, 5);
+			//Noverber, 10, 2022
+			stopDate=new DateTime(2022, 11, 10);
+			//Fifth Sunday
+			frequency=(int)ChargeFrequencyType.FixedWeekDay+"|"+(int)DayOfWeekFrequency.Fifth+"|"+(int)DayOfWeek.Sunday;
+			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==30 && nextChargeDate.Month==10 && nextChargeDate.Year==2022);
+			// No 5th Sunday in Month.
+			//October, 29, 2022
+			startDate=new DateTime(2022, 10, 29);
+			//Noverber, 29, 2022
+			stopDate=new DateTime(2022, 12, 29);
+			//Fifth Sunday
+			frequency=(int)ChargeFrequencyType.FixedWeekDay+"|"+(int)DayOfWeekFrequency.Fifth+"|"+(int)DayOfWeek.Sunday;
+			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==30 && nextChargeDate.Month==10 && nextChargeDate.Year==2022);
+			// after charge day in current month, No 5th Sunday in next Month.
+			//October, 31, 2022
+			startDate=new DateTime(2022, 10, 31);
+			//Noverber, 29, 2022
+			stopDate=new DateTime(2022, 12, 29);
+			//Fifth Sunday
+			frequency=(int)ChargeFrequencyType.FixedWeekDay+"|"+(int)DayOfWeekFrequency.Fifth+"|"+(int)DayOfWeek.Sunday;
+			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==30 && nextChargeDate.Month==11 && nextChargeDate.Year==2022);
+		}
+
+		///<summary></summary> 
+		[TestMethod]
+		public void RecurringCharges_CalculateNextChargeDate_DefaultCases() { 
+			//Min Start Date
+			//1, 1, 1
+			DateTime startDate= DateTime.MinValue;
+			//Noverber, 2, 2022
+			DateTime stopDate= new DateTime(2022, 11, 2);
+			//Third Sunday
+			string frequency=(int)ChargeFrequencyType.FixedWeekDay+"|"+(int)DayOfWeekFrequency.Third+"|"+(int)DayOfWeek.Sunday;
+			DateTime nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==1 && nextChargeDate.Month==1 && nextChargeDate.Year==1);
+			//Stop date Before Charge Date
+			//October, 1, 2022
+			startDate=new DateTime(2022, 10, 1);
+			//October, 2, 2022
+			stopDate=new DateTime(2022, 10, 2);
+			//Third Sunday
+			frequency=(int)ChargeFrequencyType.FixedWeekDay+"|"+(int)DayOfWeekFrequency.Third+"|"+(int)DayOfWeek.Sunday;
+			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==1 && nextChargeDate.Month==1 && nextChargeDate.Year==1);
+						//Stop date Before Charge Date
+			//October, 1, 2022
+			startDate=DateTime.MinValue;
+			//October, 2, 2022
+			stopDate=DateTime.MinValue;
+			//Third Sunday
+			frequency=(int)ChargeFrequencyType.FixedWeekDay+"|"+(int)DayOfWeekFrequency.Third+"|"+(int)DayOfWeek.Sunday;
+			nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, startDate, stopDate);
+			Assert.IsTrue(nextChargeDate.Day==1 && nextChargeDate.Month==1 && nextChargeDate.Year==1);
+		}
+
 		private DataTable CreateRecurringChargeRow(DateTime dateLatestPayment,string chargeFrequency,decimal chargeAmt,DateTime dateStart) {
 			DataTable table=new DataTable();
 			table.Columns.Add("LatestPayment");

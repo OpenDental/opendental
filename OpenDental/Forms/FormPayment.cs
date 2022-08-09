@@ -3411,7 +3411,7 @@ namespace OpenDental {
 				SetComboDepositAccounts();
 			}
 			string resultNote=null;
-			double amountCharged=PIn.Double(textAmount.Text);
+			double amountCharged=(double)amount;
 			if(amountCharged>0 && FormP.TranType==PayConnectService.transType.VOID) {
 				amountCharged*=-1;
 			}

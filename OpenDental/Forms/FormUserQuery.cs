@@ -75,12 +75,15 @@ namespace OpenDental {
 		#endregion Fields
 
 		#region Constructor
-		public FormUserQuery(string query = "",bool submitQueryOnLoad = false) {
+		public FormUserQuery(string query = "",bool submitQueryOnLoad = false,UserQuery userQuery=null) {
 			InitializeComponent();// Required for Windows Form Designer support
 			InitializeLayoutManager();
 			this.DoubleBuffered=true;
 			_query = query;
 			_submitOnLoad=submitQueryOnLoad;
+			if(userQuery!=null) {
+				_userQueryCur=userQuery;
+			}
 		}
 		#endregion Constructor
 

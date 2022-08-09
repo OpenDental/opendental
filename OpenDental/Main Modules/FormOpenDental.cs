@@ -5778,7 +5778,7 @@ namespace OpenDental{
 				_formQuery.BringToFront();
 				return;
 			}
-			_formQuery=new FormUserQuery(userQuery.QueryText,true);
+			_formQuery=new FormUserQuery(userQuery.QueryText,true,userQuery);
 			_formQuery.FormClosed+=new FormClosedEventHandler((object senderF,FormClosedEventArgs eF) => { _formQuery=null; });
 			_formQuery.textQuery.Text=userQuery.QueryText;
 			_formQuery.textTitle.Text=userQuery.Description;
