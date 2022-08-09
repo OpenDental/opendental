@@ -3866,7 +3866,7 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}//End of 22_2_22() method
 
-		private static void To22_2_23() {
+        private static void To22_2_23() {
 			//This list of table names were not added the the Patients.MergeTwoPatientPointOfNoReturn(). This will move any data that was not moved during the merge. 
 			List<string> listTablesThatNeedMerged=new List<string>(){
 				"apptgeneralmessagesent",
@@ -3903,6 +3903,12 @@ namespace OpenDentBusiness {
 				string commandCur=commandTemplate.Replace("[PatNumTo]",POut.Long(patNumTo)).Replace("[PatNumFrom]",POut.Long(patNumFrom));
 				Db.NonQ(commandCur);
 			}
+
+            // Vyne Eclaim Support
+            command = @"INSERT INTO clearinghouse (ClearinghouseNum, Description, ExportPath, Payors, Eformat, ISA05, SenderTIN, ISA07, ISA08, ISA15, Password, ResponsePath, CommBridge, ClientProgram, LastBatchNumber, ModemPort, LoginID, SenderName, SenderTelephone, GS03, ISA02, ISA04, ISA16, SeparatorData, SeparatorSegment, ClinicNum, HqClearinghouseNum, IsEraDownloadAllowed, IsClaimExportAllowed, IsAttachmentSendAllowed)
+                        VALUES(22, 'Vyne', 'c:\\users\\public\\res\\dotr\\upload', NULL, 5, 'ZZ', NULL, 'ZZ', '113504608', 'P', '', '', 21, '', 62, 0, '', NULL, NULL, '113504608', '', '', '', '', '', 0, 22, 0, 1, 0);
+                        ";
+            Db.NonQ(command);
 		}
 	}
 }

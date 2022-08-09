@@ -81,9 +81,26 @@ namespace OpenDentBusiness.Eclaims
 					return;
 				}
 			}
-			else if(clearinghouseClin.CommBridge==EclaimsCommBridge.Renaissance){
-				AttemptLaunch(clearinghouseClin,batchNum);
-			}
+            else if (clearinghouseClin.CommBridge == EclaimsCommBridge.Renaissance)
+            {
+                AttemptLaunch(clearinghouseClin, batchNum);
+            }
+            else if (clearinghouseClin.CommBridge == EclaimsCommBridge.Vyne)
+            {
+                if (Vyne.Launch(clearinghouseClin, batchNum))
+                {
+                    var msgResult = MessageBox.Show("Claim(s) Successfully Sent. Open Vyne Trellis?", "Success", MessageBoxButtons.YesNo);
+                    if (msgResult == DialogResult.Yes)
+                    {
+                        Vyne.OpenSite(clearinghouseClin);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(Lans.g("Eclaims", "Error sending.") + "\r\n" + Vyne.ErrorMessage);
+                    return;
+                }
+            }
 			else if(clearinghouseClin.CommBridge==EclaimsCommBridge.ClaimConnect){
 				if(ClaimConnect.Launch(clearinghouseClin,batchNum)){
 					MessageBox.Show("Upload successful.");

@@ -346,6 +346,7 @@
     <Compile Include="Db Multi Table\PatientData.cs" />
     <Compile Include="Db Multi Table\PatientDataGenerated.cs" />
     <Compile Include="Eclaims\Lantek.cs" />
+    <Compile Include="Eclaims\Vyne.cs" />
     <Compile Include="Email\BasicEmailAttachment.cs" />
     <Compile Include="Email\EmailHosting\Account\Models\CreateSignedS3LinksRequest.cs" />
     <Compile Include="Email\EmailHosting\Account\Models\CreateSignedS3LinksResponse.cs" />

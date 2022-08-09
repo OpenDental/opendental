@@ -1139,6 +1139,8 @@ insert  into clearinghouse values
 (3, 'BCBS GA', 'C:\\BCBS\\Upload\\', 0, '00601', 1, 'BCBSGA', '', '', 'C:\\BCBS\\Response\\', 2, '', 0, 0, ''), 
 (4, 'RECS', 'C:\\Recscom\\', 0, '', 1, 'RECS', '', '', '', 5, 'C:\\Recscom\\Recscom.exe', 0, 0, ''), 
 (5, 'ClaimConnect', 'C:\\ClaimConnect\\Upload\\', 0, '', 1, '330989922', '', '', '', 4, '', 0, 0, '');
+(22, 'Vyne', 'c:\\users\\public\\res\\dotr\\upload', NULL, '', 5, '', '', '', '', 21, '', 0, 0, '');
+
 #----------------------------
 # Table structure for clockevent
 #----------------------------
