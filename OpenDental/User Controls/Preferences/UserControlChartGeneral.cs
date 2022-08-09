@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -85,6 +86,16 @@ namespace OpenDental {
 
 		private void checkDxIcdVersion_Click(object sender,EventArgs e) {
 			SetIcdLabels();
+		}
+
+		private void linkLabelIsAlertRadiologyProcsEnabledDetails_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {
+			try {
+				Process.Start("https://opendental.com/manual/ehrcpoeradapprove.html");
+			}
+			catch(Exception ex) {
+				MessageBox.Show(Lan.g(this,"Could not find")+" "+"https://opendental.com/manual/ehrcpoeradapprove.html"+"\r\n"
+					+Lan.g(this,"Please set up a default web browser."));
+			}
 		}
 		#endregion Methods - Event Handlers
 

@@ -75,12 +75,7 @@ namespace OpenDental {
 					this.ClientSize=new System.Drawing.Size(this.ClientSize.Width,this.ClientSize.Height-115);
 				}
 				UpdateFrequencyText();
-				if(_creditCard.ChargeFrequency.IsNullOrEmpty()) {
-					EnableFrequencyControls();
-				}
-				else {
-					DisableFrequencyControls();
-				}
+				EnableFrequencyControls();
 			}
 			else {//This will hide the recurring section and change the window size.
 				groupRecurringCharges.Visible=false;
@@ -130,9 +125,6 @@ namespace OpenDental {
 				if(CreditCardCur.ChargeAmt>0) {
 					textChargeAmt.Text=CreditCardCur.ChargeAmt.ToString("F");
 				}
-				if(CreditCardCur.DateStart.Year>1880) {
-					textDateStart.Text=CreditCardCur.DateStart.ToShortDateString();
-				}
 				if(CreditCardCur.DateStop.Year>1880) {
 					textDateStop.Text=CreditCardCur.DateStop.ToShortDateString();
 				}
@@ -148,10 +140,15 @@ namespace OpenDental {
 						comboDays.SelectedIndex=(int)CreditCards.GetDayOfWeek(CreditCardCur.ChargeFrequency);
 					}
 				}
+				if(CreditCardCur.DateStart.Year>1880) {
+					textDateStart.Text=CreditCardCur.DateStart.ToShortDateString();
+					UpdateTextNextChargeDate();
+				}
 			}
 			if(_isPaySimpleEnabled) {
 				textAccountType.Text=(CreditCardCur.CCSource==CreditCardSource.PaySimpleACH ? Lans.g(this,"ACH") : Lans.g(this,"Credit Card"));
 			}
+			textPreviousStartDate.Text=_creditCard.DateStart.ToShortDateString();
 		}
 
 		private void FillProcs() {
@@ -198,12 +195,14 @@ namespace OpenDental {
 				}
 			}
 			if(_isEdgeExpressEnabled || _isXChargeEnabled || _isPayConnectEnabled || _isPaySimpleEnabled) {//Only validate recurring setup if using X-Charge, PayConnect, or PaySimple.
-				if(!textDateStart.IsValid()
-					|| !textDateStop.IsValid()
-					|| !textChargeAmt.IsValid())
-				{
+				if(!ValidateDateStartAndStop() || !textChargeAmt.IsValid()){
 					MsgBox.Show(this,"Please fix data entry errors first.");
 					return false;
+				}
+				DateTime dateTimeStop;
+				bool isDateStopValid=DateTime.TryParse(textDateStop.Text, out dateTimeStop);
+				if(!isDateStopValid || dateTimeStop==null || dateTimeStop==new DateTime()) {
+					textDateStop.Text="";
 				}
 				if((textChargeAmt.Text=="" && comboPaymentPlans.SelectedIndex>0)
 					|| (textChargeAmt.Text=="" && textDateStart.Text.Trim()!="")
@@ -225,20 +224,98 @@ namespace OpenDental {
 		}
 
 		private void textDayOfMonth_TextChanged(object sender,EventArgs e) {
+			textDateStart.Text="";
 			UpdateFrequencyText();
+			UpdateTextNextChargeDate();
 		}
 
 		private void comboFrequency_SelectionChangeCommitted(object sender,EventArgs e) {
+			textDateStart.Text="";
 			UpdateFrequencyText();
+			UpdateTextNextChargeDate();
 		}
 
 		private void comboDays_SelectionChangeCommitted(object sender,EventArgs e) {
+			textDateStart.Text="";
 			UpdateFrequencyText();
+			UpdateTextNextChargeDate();
 		}
 
 		private void radioDayOfMonth_CheckedChanged(object sender,EventArgs e) {
+			textDateStart.Text="";
 			UpdateFrequencyText();
 			EnableFrequencyControls();
+			UpdateTextNextChargeDate();
+		}
+
+		//Calculates the next date the patient will be charged, and displays it in the text box
+		private void UpdateTextNextChargeDate() {
+			if(!ValidateDateStartAndStop()) {
+				textNextChargeDate.Text="";
+				return;
+			}
+			string frequency=GetFormattedChargeFrequency();
+			DateTime.TryParse(textDateStart.Text, out DateTime dateStart);
+			DateTime.TryParse(textDateStop.Text, out DateTime dateStop);
+			DateTime nextChargeDate=RecurringCharges.CalculateNextChargeDate(frequency, dateStart, dateStop);
+			//If date start is less than today, blank next charge date, if it is not new or equal to the prior start date.
+			if(dateStart<DateTime.Today && _creditCard.DateStart!=DateTime.MinValue && (_creditCard.DateStart!=dateStart||_creditCard.ChargeFrequency.IsNullOrEmpty())){
+				nextChargeDate=DateTime.MinValue;
+			}
+			textNextChargeDate.Value=nextChargeDate;
+		}
+
+		///<summary>This is an additional validation method for the case where we are editing a credit card with a recurring charge.</summary>
+		public bool IsUpdatedFrequencyValid() {
+			bool isValid=true;
+			if(textDateStart.Text==_creditCard.DateStart.ToShortDateString() 
+				&& GetFormattedChargeFrequency()==_creditCard.ChargeFrequency) 
+			{
+				return isValid;
+			}
+			if(textDateStart.Text.IsNullOrEmpty() && textDateStop.Text.IsNullOrEmpty() && textChargeAmt.Text.IsNullOrEmpty()) {
+				return isValid;
+			}
+			//if(!ValidateDateStartAndStop()) {
+			//	MessageBox.Show(Lans.g(this, "Start Date or Stop Date is invalid. Start Date is required, Stop Date must be valid or blank."));
+			//	isValid=false;
+			//	return isValid;
+			//}
+			string message="";
+			//If dateStart is not empty, and is not valid return.
+			if(!textDateStart.Text.IsNullOrEmpty() && !textDateStart.IsValid()) {
+				message+=Lans.g(this, "Start Date is Invalid.")+'\n';
+				isValid=false;
+			}			
+			//If dateStop is not empty, and is not valid return
+			if(!textDateStop.Text.IsNullOrEmpty() && !textDateStop.IsValid()) {
+				message+=Lans.g(this, "Stop Date is Invalid.")+'\n';
+				isValid=false;
+			}
+			if(radioDayOfMonth.Checked && textDayOfMonth.Text.IsNullOrEmpty()) {
+				message+=Lans.g(this, "Frequency Required.")+'\n';
+				isValid=false;
+			}
+			if(radioWeekDay.Checked && (comboDays.SelectedIndex<0 || comboFrequency.SelectedIndex<0)) {
+				message+=Lans.g(this, "Must choose a day.")+'\n';
+				isValid=false;
+			}
+			//Case where charge hasnt been set up previously.
+			if(_creditCard.DateStart.Year<1880 || _creditCard.ChargeFrequency=="") {
+				if(!isValid) {
+					MessageBox.Show(message);
+				}
+				return isValid;
+			}
+			//Date Start can be earlier than today, if this is a new charge. Must be valid so far or this could throw an exception.
+			if(isValid && !textDateStart.Text.IsNullOrEmpty() && DateTime.Parse(textDateStart.Text)<DateTime.Today) {
+				message+=Lans.g(this, "Start date is invalid. Must be today or later.");
+				isValid=false;
+			}
+			if(!isValid) {
+				MessageBox.Show(message);
+			}
+			return isValid;
 		}
 
 		private void EnableFrequencyControls() {
@@ -247,16 +324,6 @@ namespace OpenDental {
 			textDayOfMonth.Enabled=radioDayOfMonth.Checked;
 			butAddDay.Enabled=radioDayOfMonth.Checked;
 			butClearDayOfMonth.Enabled=radioDayOfMonth.Checked;
-		}
-
-		private void DisableFrequencyControls() {
-			comboDays.Enabled=false;
-			comboFrequency.Enabled=false;
-			textDayOfMonth.Enabled=false;
-			butAddDay.Enabled=false;
-			butClearDayOfMonth.Enabled=false;
-			radioDayOfMonth.Enabled=false;
-			radioWeekDay.Enabled=false;
 		}
 
 		private void UpdateFrequencyText() {
@@ -284,6 +351,37 @@ namespace OpenDental {
 				string dayOfWeek=comboDays.Items.GetTextShowingAt(comboDays.SelectedIndex);
 				labelFrequencyInWords.Text=frequency+" "+dayOfWeek+" "+Lan.g(this,"of the month");
 			}
+		}
+
+		//Returns true if start date is a valid date, and stop date is blank or a valid date.
+		private bool ValidateDateStartAndStop() {
+			DateTime dateTimeStart;
+			DateTime.TryParse(textDateStart.Text, out dateTimeStart);
+			if((textDateStart.Text.IsNullOrEmpty()	|| textDateStart.Text!=_creditCard.DateStart.ToShortDateString()) &&_creditCard.DateStart.Year>=1880) {
+				textPreviousStartDate.Visible=true;
+				labelPreviousStartDate.Visible=true;
+			}
+			else {
+				textPreviousStartDate.Visible=false;
+				labelPreviousStartDate.Visible=false;
+			}
+			if(textDateStart.Text.IsNullOrEmpty() && textDateStop.Text.IsNullOrEmpty() && textChargeAmt.Text.IsNullOrEmpty()) {
+				return true;
+			}
+			//Date Start is required
+			if(dateTimeStart==null || dateTimeStart.Year<1880) {
+				return false;
+			}
+			//Date Stop may be blank or default, or be a valid date.
+			if(textDateStop.Text.IsNullOrEmpty()||textDateStop.Text==DateTime.MinValue.ToShortDateString()) {
+				return true;
+			}
+			DateTime dateTimeStop;
+			DateTime.TryParse(textDateStop.Text, out dateTimeStop);
+			if((dateTimeStop==null || dateTimeStop.Year<1880 )&& !textDateStop.Text.IsNullOrEmpty()) {
+				return false;
+			}
+			return true;
 		}
 
 		private void butAddDay_Click(object sender,EventArgs e) {
@@ -346,10 +444,12 @@ namespace OpenDental {
 				textDayOfMonth.Text=PrefC.IsODHQ ? _patient.BillingCycleDay.ToString() : DateTime.Today.Day.ToString();
 			}
 			textDateStart.Text=DateTime.Today.ToShortDateString();
+			UpdateTextNextChargeDate();
 		}
 
 		private void textDateStart_Leave(object sender,EventArgs e) {
 			if(radioWeekDay.Checked) {
+				UpdateTextNextChargeDate();
 				return;
 			}
 			if(PrefC.IsODHQ) {
@@ -358,10 +458,16 @@ namespace OpenDental {
 			else {
 				DateTime dateStart=PIn.Date(textDateStart.Text);
 				if(dateStart.Year < 1880 || textDayOfMonth.Text!="") {//if invalid date or if they already have something in the day of the month text
+					UpdateTextNextChargeDate();
 					return;
 				}
 				textDayOfMonth.Text=dateStart.Date.Day.ToString();
+				UpdateTextNextChargeDate();
 			}
+		}
+
+		private void textDateStop_Leave(object sender,EventArgs e) { 
+			UpdateTextNextChargeDate();
 		}
 
 		private void butAddProc_Click(object sender,EventArgs e) {
@@ -571,6 +677,9 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
+			if(!IsUpdatedFrequencyValid()) {
+				return;
+			}
 			if(!VerifyData()) {
 				return;
 			}
@@ -762,6 +871,5 @@ namespace OpenDental {
 		private void butCancel_Click(object sender,EventArgs e) {
 			DialogResult=DialogResult.Cancel;
 		}
-
 	}
 }

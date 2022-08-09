@@ -3904,6 +3904,17 @@ namespace OpenDentBusiness {
 				Db.NonQ(commandCur);
 			}
 		}
+
+		private static void To22_2_26() {
+			//Some of the default WebSchedVerifyExistingPatText templates had '[ApptDate]' where they should have had '[ApptTime]'.
+			string command="SELECT ValueString FROM preference WHERE PrefName='WebSchedVerifyExistingPatText'";
+			string curValue=Db.GetScalar(command);
+			if(curValue=="Appointment scheduled for [FName] on [ApptDate] [ApptDate] at [OfficeName], [OfficeAddress]") {
+				string newValue="Appointment scheduled for [FName] on [ApptDate] [ApptTime] at [OfficeName], [OfficeAddress]";
+				command="UPDATE preference SET ValueString='"+POut.String(newValue)+"' WHERE PrefName='WebSchedVerifyExistingPatText'";
+				Db.NonQ(command);
+			}
+		}
 	}
 }
 

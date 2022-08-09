@@ -9502,10 +9502,10 @@ namespace OpenDental {
 				panelGridProg.Visible=false;
 				tabOrthoCategories.Visible=true;
 				LayoutManager.MoveLocation(tabOrthoCategories,new Point(panelGridProg.Left,panelGridProg.Top));
-				LayoutManager.MoveSize(tabOrthoCategories,new Size(this.Width-panelGridProg.Left,LayoutManager.Scale(23)));
+				LayoutManager.MoveSize(tabOrthoCategories,new Size(panelGridProg.Width,LayoutManager.Scale(23)));
 				gridOrtho.Visible=true;
 				LayoutManager.MoveLocation(gridOrtho,new Point(panelGridProg.Left,tabOrthoCategories.Bottom));
-				LayoutManager.MoveSize(gridOrtho,new Size(this.Width-panelGridProg.Left,panelGridProg.Bottom-gridOrtho.Top));
+				LayoutManager.MoveSize(gridOrtho,new Size(panelGridProg.Width,panelGridProg.Bottom-gridOrtho.Top));
 			}
 			else if(checkTreatPlans.Checked){
 				panelGridProg.Visible=false;

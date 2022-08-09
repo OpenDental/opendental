@@ -133,11 +133,11 @@ namespace OpenDental {
 				listEmailAddressNumsAllClinics=Clinics.GetDeepCopy().Select(x => x.EmailAddressNum).ToList();
 			}
 			List<EmailAddress> listEmailAddresses=EmailAddresses.GetDeepCopy().Where(x=>
-				x.UserNum==curUserNum || //associated with current user  
+				(x.UserNum==curUserNum || //associated with current user  
 				x.EmailAddressNum==defaultEmailAddressNum || //or is the practice default
 				(x.UserNum==0 && listEmailAddressNumsForUserClinics.Contains(x.EmailAddressNum)) ||//or has no user and is associated with any clinics this user has access to
-				(x.UserNum==0 && !listEmailAddressNumsAllClinics.Contains(x.EmailAddressNum)) || //or has no user and is not associated to any clinic
-				x.EmailAddressNum!=PrefC.GetLong(PrefName.EmailNotifyAddressNum) //Exclude web mail notification email address.
+				(x.UserNum==0 && !listEmailAddressNumsAllClinics.Contains(x.EmailAddressNum))) && //or has no user and is not associated to any clinic
+				x.EmailAddressNum!=PrefC.GetLong(PrefName.EmailNotifyAddressNum) //and Exclude web mail notification email address.
 			)
 				.OrderByDescending(x=>x.UserNum==curUserNum) //place user email first
 				.ThenByDescending(x=>x.EmailAddressNum==defaultEmailAddressNum)//then practice default
@@ -149,6 +149,7 @@ namespace OpenDental {
 				};
 				listEmailAddresses.Add(webMail);
 			}
+			comboEmailAddress.Items.Clear();//Clear out email addresses currently in combobox as to not duplicate them
 			comboEmailAddress.Items.AddList(listEmailAddresses,x=>EmailAddresses.GetDisplayStringForComboBox(x,curUserNum,defaultEmailAddressNum));
 			if(emailAddressNumPreviouslySelected<0) {
 				comboEmailAddress.SelectedIndex=0;//select the first one, will happen on load

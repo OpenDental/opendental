@@ -92,6 +92,99 @@ namespace OpenDentBusiness {
 			return (PrefC.GetBool(PrefName.RecurringChargesAllowedWhenNoPatBal) && isCreditCardCanChargeWhenNoBal);
 		}
 
+		/// <summary>Returns the next day that the customer will be charged on, or DateTime.Min value if no date is found. </summary>
+		public static DateTime CalculateNextChargeDate(string chargeFrequency,DateTime dateStart,DateTime dateStop) {
+			//Days of Month
+			if(dateStop==DateTime.MinValue) {
+				dateStop=DateTime.MaxValue;
+			}
+			if(dateStart==DateTime.MinValue) {
+				return DateTime.MinValue;
+			}
+			if(string.IsNullOrWhiteSpace(chargeFrequency)) {
+				return DateTime.MinValue;
+			}
+			if(dateStart>dateStop) {
+				return DateTime.MinValue;
+			}
+			DateTime dateTimeNextCharge = DateTime.MinValue;
+			DateTime dateCurrentlyChecking=dateStart;
+			bool isDayOfMonth=CreditCards.GetFrequencyType(chargeFrequency)==ChargeFrequencyType.FixedDayOfMonth;
+			if(isDayOfMonth) {
+				List<int> listDays=CreditCards.GetDaysOfMonthForChargeFrequency(chargeFrequency).Split(",",StringSplitOptions.RemoveEmptyEntries).Select(x => PIn.Int(x)).ToList();
+				//Iterate over 2 months, just in case we are at the end of the current month.
+				for(int i = 0;i<2;i++) {
+					int daysInThisMonth=DateTime.DaysInMonth(dateCurrentlyChecking.Year,dateCurrentlyChecking.Month);
+					//Loop over the possible charge days for the month
+					for(int j=0;j<listDays.Count;j++) {
+						if(listDays[j]<daysInThisMonth) {
+							dateCurrentlyChecking=new DateTime(dateCurrentlyChecking.Year,  dateCurrentlyChecking.Month, listDays[j]);
+						}
+						else {
+							//If a charge date chosen is greater than the number of days in the current month, use the last day instead.
+							dateCurrentlyChecking=new DateTime(dateCurrentlyChecking.Year,  dateCurrentlyChecking.Month, daysInThisMonth);
+						}
+						//If we are outside of the range, stop
+						if(dateCurrentlyChecking<dateStart||dateCurrentlyChecking>dateStop) {
+							continue;
+						}
+						dateTimeNextCharge=dateCurrentlyChecking;
+						break;
+					}
+					//If we found a date where a charge should occur, break out.
+					if(dateTimeNextCharge!=DateTime.MinValue) {
+						break;
+					}
+					dateCurrentlyChecking=dateCurrentlyChecking.AddMonths(1);
+				}
+			}
+			//Day Of Week
+			else {
+				DayOfWeekFrequency frequency=CreditCards.GetDayOfWeekFrequency(chargeFrequency);
+				DayOfWeek day=CreditCards.GetDayOfWeek(chargeFrequency);
+				switch(frequency) {
+					case DayOfWeekFrequency.EveryOther:
+					case DayOfWeekFrequency.Every:
+						dateTimeNextCharge=MiscUtils.GetUpcomingDayOfWeek(dateStart, day);
+						break;
+					case DayOfWeekFrequency.First:
+						dateTimeNextCharge= CreditCards.GetNthWeekdayofMonth(dateStart,1,day);
+						if(dateTimeNextCharge<dateStart) {
+							dateTimeNextCharge= CreditCards.GetNthWeekdayofMonth(dateStart.AddMonths(1),1,day);
+						}
+						break;
+					case DayOfWeekFrequency.Second:
+						dateTimeNextCharge= CreditCards.GetNthWeekdayofMonth(dateStart,2,day);
+						if(dateTimeNextCharge<dateStart) {
+							dateTimeNextCharge= CreditCards.GetNthWeekdayofMonth(dateStart.AddMonths(1),2,day);
+						}
+						break;
+					case DayOfWeekFrequency.Third:
+						dateTimeNextCharge= CreditCards.GetNthWeekdayofMonth(dateStart,3,day);
+						if(dateTimeNextCharge<dateStart) {
+							dateTimeNextCharge= CreditCards.GetNthWeekdayofMonth(dateStart.AddMonths(1),3,day);
+						}
+						break;
+					case DayOfWeekFrequency.Fourth:
+						dateTimeNextCharge= CreditCards.GetNthWeekdayofMonth(dateStart,4,day);
+						if(dateTimeNextCharge<dateStart) {
+							dateTimeNextCharge= CreditCards.GetNthWeekdayofMonth(dateStart.AddMonths(1),4,day);
+						}
+						break;
+					case DayOfWeekFrequency.Fifth:
+						dateTimeNextCharge= CreditCards.GetNthWeekdayofMonth(dateStart,5,day);
+						if(dateTimeNextCharge<dateStart) {
+							dateTimeNextCharge= CreditCards.GetNthWeekdayofMonth(dateStart.AddMonths(1),5,day);
+						}
+						break;
+				}
+			}
+			if(dateTimeNextCharge>dateStop) {
+				return DateTime.MinValue;
+			}
+			return dateTimeNextCharge;
+		}
+
 		/*
 		Only pull out the methods below as you need them.  Otherwise, leave them commented out.
 		#region Get Methods

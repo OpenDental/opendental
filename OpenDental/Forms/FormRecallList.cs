@@ -1495,7 +1495,7 @@ namespace OpenDental {
 		}
 
 		///<summary>Shared functionality with Recalls and Reactivations, be careful when making changes.</summary>
-		private void CommCreate(CommItemTypeAuto commType,bool doIncludeNote) {
+		private void CommCreate(CommItemTypeAuto commType,bool doIncludeNote,long defNumStatus=0) {
 			if(IsAnyRowSelected()) {
 				List<long> listPatNums=_gridCur.SelectedTags<PatRowTag>().Select(x => x.PatNum).ToList();
 				//show the first one, and then make all the others very similar
@@ -1508,15 +1508,17 @@ namespace OpenDental {
 				commlogCur.UserNum=Security.CurUser.UserNum;
 				if(doIncludeNote) {
 					commlogCur.Note=Lan.g(this,(commType==CommItemTypeAuto.RECALL?"Recall ":"Reactivation ")+" reminder.");
-					if(commType==CommItemTypeAuto.RECALL && comboSetStatusRecalls.SelectedIndex>0) {//comboStatus not None
-						commlogCur.Note+="  "+comboSetStatusRecalls.GetSelected<Def>().ItemName;
+					string status=Lan.g(this,"Status None");
+					if(defNumStatus > 0) {
+						status=Defs.GetName(DefCat.RecallUnschedStatus,defNumStatus);
+					}
+					else if(commType==CommItemTypeAuto.RECALL && comboSetStatusRecalls.SelectedIndex>0) {//comboStatus not None
+						status=comboSetStatusRecalls.GetSelected<Def>().ItemName;
 					}
 					else if(commType==CommItemTypeAuto.REACT && comboSetStatusReact.SelectedIndex>0) {//comboReactStatus not None
-						commlogCur.Note+="  "+comboSetStatusReact.GetSelected<Def>().ItemName;
+						status=comboSetStatusReact.GetSelected<Def>().ItemName;
 					}
-					else{
-						commlogCur.Note+="  "+Lan.g(this,"Status None");
-					}
+					commlogCur.Note+="  "+status;
 				}
 				commlogCur.IsNew=true;
 				using FormCommItem FormCI=new FormCommItem(commlogCur);
@@ -1727,7 +1729,7 @@ namespace OpenDental {
 			}
 			formRE.ShowDialog();
 			if(formRE.DialogResult==DialogResult.Yes) { //indicates the reactivation status changed
-				CommCreate(CommItemTypeAuto.REACT,doIncludeNote:true);
+				CommCreate(CommItemTypeAuto.REACT,doIncludeNote:true,defNumStatus:formRE.ReactivationCur.ReactivationStatus);
 			}
 			if(formRE.DialogResult==DialogResult.OK || formRE.DialogResult==DialogResult.Yes || formRE.DialogResult==DialogResult.Abort) {
 				FillReactivationGrid();

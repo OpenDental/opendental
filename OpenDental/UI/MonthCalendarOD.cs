@@ -101,14 +101,10 @@ namespace OpenDental.UI{
 			}
 			if(_rectangleLeftArrow.Contains(e.Location)){
 				_monthShowing=_monthShowing.AddMonths(-1);
-				_dateSelected=_dateSelected.AddMonths(-1);
-				DateChanged?.Invoke(this,new EventArgs());
 				Invalidate();
 			}
 			if(_rectangleRightArrow.Contains(e.Location)){
 				_monthShowing=_monthShowing.AddMonths(1);
-				_dateSelected=_dateSelected.AddMonths(1);
-				DateChanged?.Invoke(this,new EventArgs());
 				Invalidate();
 			}
 			if(_rectangleTodayHover.Contains(e.Location)){

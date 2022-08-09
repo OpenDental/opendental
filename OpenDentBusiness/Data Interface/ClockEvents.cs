@@ -283,8 +283,11 @@ namespace OpenDentBusiness{
 				clockEvent.TimeDisplayed2=clockEvent.TimeEntered2;
 				ClockEvents.Update(clockEvent);
 				if(clockEvent.IsWorkingHome != isAtHome) { //If coming back from break, and switching locations between home / office
-					System.Threading.Thread.Sleep(1000); //Needed to maintain that the end of a break, and the clock out doesnt happen at the same second, and break the calc daily functionality.
+					//This Sleep will ensure that the end of the break is before the end of the clockevent, otherwise it would break calc daily functionality.
+					System.Threading.Thread.Sleep(1000); 
 					ClockOut(employeeNum,TimeClockStatus.Home); //Home means not lunch or break is being counted.
+					//This Sleep will ensure that New clockevent starts a second after the first clockevent ends, otherwise it causes incorrect employee status.
+					System.Threading.Thread.Sleep(1000); 
 					ClockIn(employeeNum,isAtHome);//Clock in to start new clockEvent from new location.
 					return; //ensure we dont make 2 security logs for clocking in by hitting the end of this method twice.
 				}
