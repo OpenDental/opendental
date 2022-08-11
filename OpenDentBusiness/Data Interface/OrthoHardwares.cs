@@ -137,7 +137,7 @@ namespace OpenDentBusiness{
 				}
 				int int1=Tooth.ToInt(stringArrayTeeth[0]);
 				int int2=Tooth.ToInt(stringArrayTeeth[1]);
-				if(int1>=int2){
+				if(int1==int2){
 					return listOrthoWires;
 				}
 				if(int1>int2){

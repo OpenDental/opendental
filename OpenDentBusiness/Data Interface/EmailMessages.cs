@@ -2683,7 +2683,7 @@ namespace OpenDentBusiness{
 			if(isReplyAll) {
 				emailReceived.ToAddress.Split(',')//email@od.com,email2@od.com,...
 					.Select(x => ProcessInlineEncodedText(x).Trim())//Decode any UTF-8 or otherwise
-					.Where(x => x!=emailAddressSender.EmailUsername && x!=emailAddressSender.SenderAddress)//Since we are replying, remove our current email from list
+					.Where(x => !x.ToLower().Contains(emailAddressSender.EmailUsername.ToLower()) && !x.ToLower().Contains(emailAddressSender.SenderAddress.ToLower()))//Since we are replying, remove our current email from list
 					.ForEach(x => emailReply.ToAddress+=","+x);
 			}
       emailReply.FromAddress=ProcessInlineEncodedText(emailReceived.RecipientAddress);
@@ -2700,7 +2700,7 @@ namespace OpenDentBusiness{
 			List<string> temp=emailReceived.CcAddress.Split(',')
 				.Select(x => ProcessInlineEncodedText(x).Trim())
 				.ToList()
-				.FindAll(x=>x!=emailAddressSender.EmailUsername && x!=emailAddressSender.SenderAddress);
+				.FindAll(x=>!x.ToLower().Contains(emailAddressSender.EmailUsername.ToLower()) && !x.ToLower().Contains(emailAddressSender.SenderAddress.ToLower()));
 			//Loop through the email addresses, combining them into a comma separated list string.
 			for(int i=0; i<temp.Count;i++){
 				//First address

@@ -1060,7 +1060,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Only for reports. Includes all providers for a clinic where IsHiddenReport = 0 and ProvStatus != Deleted.</summary>
-		public static List<Provider> GetListReportsForClinic(long clinicNum) {
+		public static List<Provider> GetListProvidersForClinic(long clinicNum) {
 			//No need to check MiddleTierRole; no call to db.
 			return GetProvsForClinic(clinicNum).Where(x => !x.IsHiddenReport && x.ProvStatus!=ProviderStatus.Deleted).ToList();
 		}
