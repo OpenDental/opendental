@@ -1075,6 +1075,9 @@ namespace OpenDentBusiness{
 				else {//Correction
 					claimProc.FeeBilled=listClaimProcs[i].FeeBilled;
 				}
+				if(PayPlans.IsClosed(claimProc.PayPlanNum)) {
+					claimProc.PayPlanNum=0;//detatch the claimproc from closed ins pay plan
+				}
 				claimProc.ClaimPaymentNum=0;//no payment attached
 				//claimprocnum will be overwritten
 				claimProc.DedApplied=0;

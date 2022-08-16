@@ -78,7 +78,7 @@ namespace UnitTests.WebForms_Sheets_Tests {
 		}
 
 		///<summary>A copy of the code from ODDateHelper.java, which is the method that determines the format WebForms uses to save dates to the HQ WebForms db.
-		///C:\Development\Shared Projects Subversion\OpenDentalWebApps\head\OpenDentalWeb\xCore\src\com\od\base\utilODDateHelper.java</summary>
+		///C:\Development\Shared Projects Subversion\OpenDentalWebApps\head\OpenDentalWeb\xCore\src\com\od\base\util\ODDateHelper.java</summary>
 		private static string GetDateFormatLikeWebFormsDb(string cultureName,out string delimiterWeb) {
 			if(cultureName==null) {
 				cultureName="";
@@ -95,7 +95,8 @@ namespace UnitTests.WebForms_Sheets_Tests {
 				|| cultureName.Equals("en-GB")
 				|| cultureName.Equals("en-ES")
 				|| cultureName.Equals("en-MX")
-				|| cultureName.Equals("en-PR")) 
+				|| cultureName.Equals("en-PR")
+				|| cultureName.Equals("nl-NL")) 
 			{
 				pattern="dd/MM/yyyy";
 			}

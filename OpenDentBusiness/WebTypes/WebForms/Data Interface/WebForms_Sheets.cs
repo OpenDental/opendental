@@ -133,6 +133,7 @@ namespace OpenDentBusiness.WebTypes.WebForms {
 				case "en-ES":
 				case "en-MX":
 				case "en-PR":
+				case "nl-NL":
 					dateTimeFormat="dd/MM/yyyy";
 					break;
 				case "da-DK":
