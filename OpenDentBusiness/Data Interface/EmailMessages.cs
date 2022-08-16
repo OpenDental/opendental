@@ -2668,7 +2668,7 @@ namespace OpenDentBusiness{
 			if(isReplyAll) {
 				emailReceived.ToAddress.Split(',')//email@od.com,email2@od.com,...
 					.Select(x => ProcessInlineEncodedText(x).Trim())//Decode any UTF-8 or otherwise
-					.Where(x => x!=emailAddressSender.EmailUsername && x!=emailAddressSender.SenderAddress)//Since we are replying, remove our current email from list
+					.Where(x => !x.ToLower().Contains(emailAddressSender.EmailUsername.ToLower()) && !x.ToLower().Contains(emailAddressSender.SenderAddress.ToLower()))//Since we are replying, remove our current email from list
 					.ForEach(x => emailReply.ToAddress+=","+x);
 			}
       emailReply.FromAddress=ProcessInlineEncodedText(emailReceived.RecipientAddress);

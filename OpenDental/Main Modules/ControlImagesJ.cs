@@ -2251,7 +2251,7 @@ namespace OpenDental
 				}
 				Mount mount=Mounts.CreateMountFromDef(mountDef,_patCur.PatNum,defNumCategory);
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,mount.DocCategory);
-				string logText="Mount Created: "+mount.Description+" with catgegory "
+				string logText="Mount Created: "+mount.Description+" with category "
 					+defDocCategory.ItemName;
 				SecurityLogs.MakeLogEntry(Permissions.ImageCreate,_patCur.PatNum,logText);
 				FillTree(false);

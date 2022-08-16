@@ -61,7 +61,10 @@ namespace OpenDental {
 		public FormMapHQ() {
 			InitializeComponent();
 			//This form needs to dynamically add, remove, and dispose controls which remove is not currently supported when using custom borders.
-			InitializeLayoutManager(isLayoutMS:true);
+			//isLayoutMS handles most of the problems.
+			//is96dpi is turned on to allow proper drawing in the map area when zoom is used.
+			//It's a bit hacky, and really just needs an overhaul
+			InitializeLayoutManager(isLayoutMS:true,is96dpi:true);
 			//Do not do anything to do with database or control init here. We will be using this ctor later in order to create a temporary object so we can figure out what size the form should be when the user comes back from full screen mode. Wait until FormMapHQ_Load to do anything meaningful.
 			//_isFullScreen=false;
 			_timeDelta=MiscData.GetNowDateTime()-DateTime.Now;

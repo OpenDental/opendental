@@ -718,11 +718,11 @@
     <Compile Include="Forms\FormUserQuery.Designer.cs">
       <DependentUpon>FormUserQuery.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormMobileApptViewEdit.cs">
+    <Compile Include="Forms\FormApptViewEditMobile.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FormMobileApptViewEdit.designer.cs">
-      <DependentUpon>FormMobileApptViewEdit.cs</DependentUpon>
+    <Compile Include="Forms\FormApptViewEditMobile.designer.cs">
+      <DependentUpon>FormApptViewEditMobile.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormContinuityOfCareDocument.cs">
       <SubType>Form</SubType>
@@ -7422,8 +7422,8 @@
     <EmbeddedResource Include="Forms\FormUserQuery.resx">
       <DependentUpon>FormUserQuery.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormMobileApptViewEdit.resx">
-      <DependentUpon>FormMobileApptViewEdit.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FormApptViewEditMobile.resx">
+      <DependentUpon>FormApptViewEditMobile.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormContinuityOfCareDocument.resx">

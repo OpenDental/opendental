@@ -761,6 +761,19 @@ namespace OpenDentBusiness{
 			}
 			return false; 
 		}
+
+		/// <summary>Returns true if there is a PayPlan attached to the payPlanNum and it is open, false otherwise</summary>
+		public static bool IsClosed(long payPlanNum) {
+			//No need to check MiddleTierRole; no call to db.
+			if(payPlanNum==0) {
+				return false;
+			}
+			PayPlan payPlan=GetOne(payPlanNum);
+			if(payPlan==null || payPlan.IsClosed==false) {
+				return false;
+			}
+			return true;
+		}
 		#endregion
 
 		#region Xam Methods

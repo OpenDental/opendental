@@ -1449,7 +1449,7 @@ namespace OpenDental {
 				}		
 				MsgBox.Show(this,"Done.");
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
-				string logText="Document Exported: "+GetDocumentShowing(0).FileName+" with catgegory "
+				string logText="Document Exported: "+GetDocumentShowing(0).FileName+" with category "
 					+defDocCategory.ItemName+" to "+Path.GetDirectoryName(saveFileDialog.FileName);
 				SecurityLogs.MakeLogEntry(Permissions.ImageExport,PatientCur.PatNum,logText,GetDocumentShowing(0).DocNum,GetDocumentShowing(0).DateTStamp);
 				return;
@@ -1501,7 +1501,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Done.");
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 				string logText="Document Exported: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
-					+_mountShowing.Description+" with catgegory "+defDocCategory.ItemName+" to "+Path.GetDirectoryName(saveFileDialog.FileName);
+					+_mountShowing.Description+" with category "+defDocCategory.ItemName+" to "+Path.GetDirectoryName(saveFileDialog.FileName);
 				SecurityLogs.MakeLogEntry(Permissions.ImageExport,PatientCur.PatNum,logText,_documentArrayShowing[_idxSelectedInMount].DocNum,
 					_documentArrayShowing[_idxSelectedInMount].DateTStamp);
 				return;
@@ -1532,7 +1532,7 @@ namespace OpenDental {
 				bitmapExport.Dispose();
 				MsgBox.Show(this,"Done.");
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_mountShowing.DocCategory);
-				string logText="Mount Exported: "+_mountShowing.Description+" with catgegory "
+				string logText="Mount Exported: "+_mountShowing.Description+" with category "
 					+defDocCategory.ItemName+" to "+Path.GetDirectoryName(saveFileDialog.FileName);
 				SecurityLogs.MakeLogEntry(Permissions.ImageExport,PatientCur.PatNum,logText);
 				return;
@@ -1558,7 +1558,7 @@ namespace OpenDental {
 				Documents.Update(GetDocumentShowing(0),documentOld);
 				ImageStore.DeleteThumbnailImage(GetDocumentShowing(0),PatFolder);
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
-				string logText="Document Edited: "+GetDocumentShowing(0).FileName+" with catgegory "
+				string logText="Document Edited: "+GetDocumentShowing(0).FileName+" with category "
 					+defDocCategory.ItemName+" flipped horizontally";
 				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 			}
@@ -1578,7 +1578,7 @@ namespace OpenDental {
 				ImageStore.DeleteThumbnailImage(_documentArrayShowing[_idxSelectedInMount],PatFolder);
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 				string logText="Document Edited: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
-					+_mountShowing.Description+" with catgegory "+defDocCategory.ItemName+" flipped horizontally";
+					+_mountShowing.Description+" with category "+defDocCategory.ItemName+" flipped horizontally";
 				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 			}
 			panelMain.Invalidate();
@@ -1905,7 +1905,7 @@ namespace OpenDental {
 				ImageStore.DeleteThumbnailImage(GetDocumentShowing(0),PatFolder);
 				SetZoomSlider();
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
-				string logText="Document Edited: "+GetDocumentShowing(0).FileName+" with catgegory "
+				string logText="Document Edited: "+GetDocumentShowing(0).FileName+" with category "
 					+defDocCategory.ItemName+" rotated left 90 degrees";
 				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 			}
@@ -1937,7 +1937,7 @@ namespace OpenDental {
 				LoadBitmap(_idxSelectedInMount,EnumLoadBitmapType.IdxAndRaw);
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 				string logText="Document Edited: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
-					+_mountShowing.Description+" with catgegory "+defDocCategory.ItemName+" rotated left 90 degrees";
+					+_mountShowing.Description+" with category "+defDocCategory.ItemName+" rotated left 90 degrees";
 				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 			}
 			ThumbnailRefresh();
@@ -1962,7 +1962,7 @@ namespace OpenDental {
 				ImageStore.DeleteThumbnailImage(GetDocumentShowing(0),PatFolder);
 				SetZoomSlider();
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
-				string logText="Document Edited: "+GetDocumentShowing(0).FileName+" with catgegory "
+				string logText="Document Edited: "+GetDocumentShowing(0).FileName+" with category "
 					+defDocCategory.ItemName+" rotated right 90 degrees";
 				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 			}
@@ -1991,7 +1991,7 @@ namespace OpenDental {
 				LoadBitmap(_idxSelectedInMount,EnumLoadBitmapType.IdxAndRaw);
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 				string logText="Document Edited: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
-					+_mountShowing.Description+" with catgegory "+defDocCategory.ItemName+" rotated right 90 degrees";
+					+_mountShowing.Description+" with category "+defDocCategory.ItemName+" rotated right 90 degrees";
 				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 			}
 			ThumbnailRefresh();
@@ -2020,7 +2020,7 @@ namespace OpenDental {
 				ImageStore.DeleteThumbnailImage(GetDocumentShowing(0),PatFolder);
 				SetZoomSlider();
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
-				string logText="Document Edited: "+GetDocumentShowing(0).FileName+" with catgegory "
+				string logText="Document Edited: "+GetDocumentShowing(0).FileName+" with category "
 					+defDocCategory.ItemName+" rotated 180 degrees";
 				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 			}
@@ -2046,7 +2046,7 @@ namespace OpenDental {
 				//LoadBitmap(_idxSelectedInMount,EnumLoadBitmapType.IdxAndRaw);//no change to scale
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 				string logText="Document Edited: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
-					+_mountShowing.Description+" with catgegory "+defDocCategory.ItemName+" rotated 180 degrees";
+					+_mountShowing.Description+" with category "+defDocCategory.ItemName+" rotated 180 degrees";
 				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 			}
 			ThumbnailRefresh();
@@ -2070,7 +2070,7 @@ namespace OpenDental {
 					EventFillTree?.Invoke(this,true);
 					EventSelectTreeNode?.Invoke(this,null);
 					Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[0].DocCategory);
-					string logText="Document Edited: "+_documentArrayShowing[0].FileName+" with catgegory "
+					string logText="Document Edited: "+_documentArrayShowing[0].FileName+" with category "
 						+defDocCategory.ItemName+" was adjusted using the Size button";
 					SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 				}
@@ -2092,7 +2092,7 @@ namespace OpenDental {
 					LoadBitmap(_idxSelectedInMount,EnumLoadBitmapType.IdxAndRaw);
 					Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 					string logText="Document Edited: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
-						+_mountShowing.Description+" with catgegory "+defDocCategory.ItemName+" was adjusted using the Size button";
+						+_mountShowing.Description+" with category "+defDocCategory.ItemName+" was adjusted using the Size button";
 					SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 				}
 			}
@@ -3331,7 +3331,7 @@ namespace OpenDental {
 				ThumbnailRefresh();
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 				string logText="Document Edited: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
-					+_mountShowing.Description+" with catgegory "+defDocCategory.ItemName+" was moved using the Adjust button";
+					+_mountShowing.Description+" with category "+defDocCategory.ItemName+" was moved using the Adjust button";
 				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 				panelMain.Invalidate();
 				return;
@@ -3392,7 +3392,7 @@ namespace OpenDental {
 				_rectangleCrop=new Rectangle();
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[0].DocCategory);
 				string logText="Document Edited: "+_documentArrayShowing[0].FileName
-					+" with catgegory "+defDocCategory.ItemName+" was changed using the Crop button";
+					+" with category "+defDocCategory.ItemName+" was changed using the Crop button";
 				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 				panelMain.Invalidate();
 			}
@@ -4346,7 +4346,7 @@ namespace OpenDental {
 				ThinfinityUtils.ExportForDownload(tempFilePath);
 				MsgBox.Show(this,"Done.");
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
-				string logText="Document Exported: "+GetDocumentShowing(0).FileName+" with catgegory "
+				string logText="Document Exported: "+GetDocumentShowing(0).FileName+" with category "
 					+defDocCategory.ItemName+" to "+Path.GetDirectoryName(tempFilePath);
 				SecurityLogs.MakeLogEntry(Permissions.ImageExport,PatientCur.PatNum,logText,GetDocumentShowing(0).DocNum,GetDocumentShowing(0).DateTStamp);
 				return;
@@ -4362,7 +4362,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Done.");
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 				string logText="Document Exported: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
-					+_mountShowing.Description+" with catgegory "+defDocCategory.ItemName+" to "+Path.GetDirectoryName(tempFilePath);
+					+_mountShowing.Description+" with category "+defDocCategory.ItemName+" to "+Path.GetDirectoryName(tempFilePath);
 				SecurityLogs.MakeLogEntry(Permissions.ImageExport,PatientCur.PatNum,logText,_documentArrayShowing[_idxSelectedInMount].DocNum,
 					_documentArrayShowing[_idxSelectedInMount].DateTStamp);
 				return;
@@ -4382,7 +4382,7 @@ namespace OpenDental {
 				bitmapExport.Dispose();
 				MsgBox.Show(this,"Done.");
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_mountShowing.DocCategory);
-				string logText="Mount Exported: "+_mountShowing.Description+" with catgegory "
+				string logText="Mount Exported: "+_mountShowing.Description+" with category "
 					+defDocCategory.ItemName+" to "+Path.GetDirectoryName(tempFilePath);
 				SecurityLogs.MakeLogEntry(Permissions.ImageExport,PatientCur.PatNum,logText);
 				return;
