@@ -7357,7 +7357,9 @@ namespace OpenDental{
 			}
 			List<Form> listFormsToClose=GetOpenForms();
 			#region Close forms and quit threads.  Some form closing events rely on the closing events of parent forms.
-			controlImagesJ.InvokeIfRequired(() => controlImagesJ.CloseFloaters());
+			if(controlImagesJ!=null) {//controlImagesJ never initialized when using the old imaging module 
+				controlImagesJ.InvokeIfRequired(() => controlImagesJ.CloseFloaters());
+			}
 			while(listFormsToClose.Count > 0) {
 				Form formToClose=listFormsToClose[0];
 				if(isSnip) {

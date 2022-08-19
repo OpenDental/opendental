@@ -1169,6 +1169,7 @@ namespace OpenDentBusiness {
 					continue;
 				}
 				listProcedures[i].Note=PIn.String(dataTable.Rows[0]["Note"].ToString());
+				listProcedures[i].Signature=PIn.String(dataTable.Rows[0]["Signature"].ToString());
 			}
 			return listProcedures;
 		}
