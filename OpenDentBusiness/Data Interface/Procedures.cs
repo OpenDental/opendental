@@ -1137,6 +1137,7 @@ namespace OpenDentBusiness {
 			if(patNum!=0) {
 				command+="AND PatNum='"+POut.Long(patNum)+"'";
 			}
+			command+=" ORDER BY ProcNum DESC";
 			string commandDatetime="SELECT "+DbHelper.Now();
 			DateTime dateTimeServer=PIn.DateT(OpenDentBusiness.Db.GetScalar(commandDatetime));//run before procedures for rigorous inclusion of procedures
 			List<Procedure> listProcedures=Crud.ProcedureCrud.SelectMany(command);

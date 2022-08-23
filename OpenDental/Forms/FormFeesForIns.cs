@@ -133,12 +133,8 @@ namespace OpenDental{
 			}
 			bool isBlueBookOn=PrefC.GetEnum<AllowedFeeSchedsAutomate>(PrefName.AllowedFeeSchedsAutomate)==AllowedFeeSchedsAutomate.BlueBook;
 			FeeScheduleType feeScheduleTypeSelected=(FeeScheduleType)listType.SelectedIndex;
-			//Prevent Out of Network fee schedules from changing while BlueBook is turned on, and vice versa.
-			if(isBlueBookOn	&& feeScheduleTypeSelected==FeeScheduleType.OutNetwork) {
-				MessageBox.Show(Lan.g(this,"Cannot change Out of Network fee schedules while the Blue Book feature is turned on."));
-				return false;
-			}
-			else if(!isBlueBookOn	&& feeScheduleTypeSelected==FeeScheduleType.ManualBlueBook) {
+			//Prevent Manual Blue Book fee schedules from changing while BlueBook is turned off.
+			if(!isBlueBookOn && feeScheduleTypeSelected==FeeScheduleType.ManualBlueBook) {
 				MessageBox.Show(Lan.g(this,"Cannot change Manual Blue Book fee schedules while the Blue Book feature is turned off."));
 				return false;
 			}
