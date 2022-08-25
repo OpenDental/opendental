@@ -53,7 +53,6 @@ namespace OpenDental {
 			this.label38 = new System.Windows.Forms.Label();
 			this.checkAllowEmailCCReceipt = new System.Windows.Forms.CheckBox();
 			this.checkPaymentsPromptForPayType = new System.Windows.Forms.CheckBox();
-			this.checkAllowFutureDebits = new System.Windows.Forms.CheckBox();
 			this.butIncTxfrTreatNegProdAsIncomeDetails = new OpenDental.UI.Button();
 			this.butPayPlansVersionDetails = new OpenDental.UI.Button();
 			this.groupBoxUnearnedIncome.SuspendLayout();
@@ -65,7 +64,7 @@ namespace OpenDental {
 			// 
 			this.labelPayPlansUseSheetsDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelPayPlansUseSheetsDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelPayPlansUseSheetsDetails.Location = new System.Drawing.Point(476, 237);
+			this.labelPayPlansUseSheetsDetails.Location = new System.Drawing.Point(476, 214);
 			this.labelPayPlansUseSheetsDetails.Name = "labelPayPlansUseSheetsDetails";
 			this.labelPayPlansUseSheetsDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelPayPlansUseSheetsDetails.TabIndex = 330;
@@ -76,7 +75,7 @@ namespace OpenDental {
 			// 
 			this.labelDppUnearnedTypeDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelDppUnearnedTypeDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelDppUnearnedTypeDetails.Location = new System.Drawing.Point(476, 356);
+			this.labelDppUnearnedTypeDetails.Location = new System.Drawing.Point(476, 333);
 			this.labelDppUnearnedTypeDetails.Name = "labelDppUnearnedTypeDetails";
 			this.labelDppUnearnedTypeDetails.Size = new System.Drawing.Size(498, 30);
 			this.labelDppUnearnedTypeDetails.TabIndex = 333;
@@ -101,7 +100,7 @@ namespace OpenDental {
 			this.groupBoxUnearnedIncome.Controls.Add(this.checkAllowPrepayProvider);
 			this.groupBoxUnearnedIncome.Controls.Add(this.comboUnallocatedSplits);
 			this.groupBoxUnearnedIncome.Controls.Add(this.label28);
-			this.groupBoxUnearnedIncome.Location = new System.Drawing.Point(20, 425);
+			this.groupBoxUnearnedIncome.Location = new System.Drawing.Point(20, 402);
 			this.groupBoxUnearnedIncome.Name = "groupBoxUnearnedIncome";
 			this.groupBoxUnearnedIncome.Size = new System.Drawing.Size(450, 87);
 			this.groupBoxUnearnedIncome.TabIndex = 323;
@@ -162,7 +161,7 @@ namespace OpenDental {
 			this.groupBoxPayPlans.Controls.Add(this.label59);
 			this.groupBoxPayPlans.Controls.Add(this.label27);
 			this.groupBoxPayPlans.Controls.Add(this.textDynamicPayPlan);
-			this.groupBoxPayPlans.Location = new System.Drawing.Point(20, 205);
+			this.groupBoxPayPlans.Location = new System.Drawing.Point(20, 182);
 			this.groupBoxPayPlans.Name = "groupBoxPayPlans";
 			this.groupBoxPayPlans.Size = new System.Drawing.Size(450, 214);
 			this.groupBoxPayPlans.TabIndex = 322;
@@ -298,10 +297,9 @@ namespace OpenDental {
 			this.groupBoxPayments.Controls.Add(this.label38);
 			this.groupBoxPayments.Controls.Add(this.checkAllowEmailCCReceipt);
 			this.groupBoxPayments.Controls.Add(this.checkPaymentsPromptForPayType);
-			this.groupBoxPayments.Controls.Add(this.checkAllowFutureDebits);
 			this.groupBoxPayments.Location = new System.Drawing.Point(20, 20);
 			this.groupBoxPayments.Name = "groupBoxPayments";
-			this.groupBoxPayments.Size = new System.Drawing.Size(450, 179);
+			this.groupBoxPayments.Size = new System.Drawing.Size(450, 156);
 			this.groupBoxPayments.TabIndex = 307;
 			this.groupBoxPayments.Text = "Payments";
 			// 
@@ -321,7 +319,7 @@ namespace OpenDental {
 			// 
 			this.checkPaymentCompletedDisableMerchantButtons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkPaymentCompletedDisableMerchantButtons.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkPaymentCompletedDisableMerchantButtons.Location = new System.Drawing.Point(96, 152);
+			this.checkPaymentCompletedDisableMerchantButtons.Location = new System.Drawing.Point(96, 129);
 			this.checkPaymentCompletedDisableMerchantButtons.Name = "checkPaymentCompletedDisableMerchantButtons";
 			this.checkPaymentCompletedDisableMerchantButtons.Size = new System.Drawing.Size(344, 17);
 			this.checkPaymentCompletedDisableMerchantButtons.TabIndex = 306;
@@ -341,7 +339,7 @@ namespace OpenDental {
 			// 
 			this.checkIncTxfrTreatNegProdAsIncome.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkIncTxfrTreatNegProdAsIncome.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIncTxfrTreatNegProdAsIncome.Location = new System.Drawing.Point(13, 129);
+			this.checkIncTxfrTreatNegProdAsIncome.Location = new System.Drawing.Point(13, 106);
 			this.checkIncTxfrTreatNegProdAsIncome.Name = "checkIncTxfrTreatNegProdAsIncome";
 			this.checkIncTxfrTreatNegProdAsIncome.Size = new System.Drawing.Size(427, 17);
 			this.checkIncTxfrTreatNegProdAsIncome.TabIndex = 305;
@@ -364,7 +362,7 @@ namespace OpenDental {
 			// 
 			this.checkAllowEmailCCReceipt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkAllowEmailCCReceipt.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkAllowEmailCCReceipt.Location = new System.Drawing.Point(230, 106);
+			this.checkAllowEmailCCReceipt.Location = new System.Drawing.Point(230, 83);
 			this.checkAllowEmailCCReceipt.Name = "checkAllowEmailCCReceipt";
 			this.checkAllowEmailCCReceipt.Size = new System.Drawing.Size(210, 17);
 			this.checkAllowEmailCCReceipt.TabIndex = 292;
@@ -383,22 +381,10 @@ namespace OpenDental {
 			this.checkPaymentsPromptForPayType.Text = "Payments prompt for Payment Type";
 			this.checkPaymentsPromptForPayType.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// checkAllowFutureDebits
-			// 
-			this.checkAllowFutureDebits.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.checkAllowFutureDebits.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkAllowFutureDebits.Location = new System.Drawing.Point(100, 83);
-			this.checkAllowFutureDebits.Name = "checkAllowFutureDebits";
-			this.checkAllowFutureDebits.Size = new System.Drawing.Size(340, 17);
-			this.checkAllowFutureDebits.TabIndex = 289;
-			this.checkAllowFutureDebits.Text = "Allow future dated payments (not recommended, see manual)";
-			this.checkAllowFutureDebits.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkAllowFutureDebits.UseVisualStyleBackColor = true;
-			// 
 			// butIncTxfrTreatNegProdAsIncomeDetails
 			// 
 			this.butIncTxfrTreatNegProdAsIncomeDetails.ForeColor = System.Drawing.Color.Black;
-			this.butIncTxfrTreatNegProdAsIncomeDetails.Location = new System.Drawing.Point(479, 146);
+			this.butIncTxfrTreatNegProdAsIncomeDetails.Location = new System.Drawing.Point(479, 123);
 			this.butIncTxfrTreatNegProdAsIncomeDetails.Name = "butIncTxfrTreatNegProdAsIncomeDetails";
 			this.butIncTxfrTreatNegProdAsIncomeDetails.Size = new System.Drawing.Size(64, 21);
 			this.butIncTxfrTreatNegProdAsIncomeDetails.TabIndex = 371;
@@ -408,7 +394,7 @@ namespace OpenDental {
 			// butPayPlansVersionDetails
 			// 
 			this.butPayPlansVersionDetails.ForeColor = System.Drawing.Color.Black;
-			this.butPayPlansVersionDetails.Location = new System.Drawing.Point(479, 284);
+			this.butPayPlansVersionDetails.Location = new System.Drawing.Point(479, 261);
 			this.butPayPlansVersionDetails.Name = "butPayPlansVersionDetails";
 			this.butPayPlansVersionDetails.Size = new System.Drawing.Size(64, 21);
 			this.butPayPlansVersionDetails.TabIndex = 372;
@@ -448,7 +434,6 @@ namespace OpenDental {
 		private System.Windows.Forms.CheckBox checkAllowPrepayProvider;
 		private UI.ComboBoxOD comboUnallocatedSplits;
 		private System.Windows.Forms.Label label28;
-		private System.Windows.Forms.CheckBox checkAllowFutureDebits;
 		private System.Windows.Forms.CheckBox checkAllowEmailCCReceipt;
 		private UI.GroupBoxOD groupBoxPayments;
 		private UI.Button butPayPlanTermsAndConditions;

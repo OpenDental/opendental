@@ -1425,7 +1425,7 @@ namespace OpenDentBusiness{
 										}
 									}
 									if(excluded) {
-										break;//Skip any patplan that is apart of a insplan that is marked as don't verify
+										continue; //Skip any patplan that is a part of an insplan that is marked as "Don't Verify"
 									}
 								}
 								if(PIn.Date(tableInsVerify.Rows[v]["DateLastVerified"].ToString())<dateTimeLastPatEligibility) {

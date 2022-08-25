@@ -140,7 +140,7 @@ namespace OpenDental {
 				if(_listProcedureCodes[i].CodeNum==0) {//shouldn't happen but just in case
 					continue;
 				}
-				listBoxProcCodes.Items.Add(_listProcedureCodes[i].ProcCode);
+				listBoxProcCodes.Items.Add(_listProcedureCodes[i].ProcCode,_listProcedureCodes[i]);
 			}
 		}
 
@@ -166,7 +166,10 @@ namespace OpenDental {
 				return;
 			}
 			if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"Remove selected procedure(s)?")) {
-				_listProcedureCodes.RemoveAll(x => listBoxProcCodes.GetStringSelectedItems().Contains(x.ProcCode));
+				List<ProcedureCode> listProcCodes=listBoxProcCodes.GetListSelected<ProcedureCode>();
+				for(int i=0;i<listProcCodes.Count;i++) {
+					_listProcedureCodes.Remove(listProcCodes[i]);
+				}
 				RefreshListBoxProcCodes();
 			}
 		}

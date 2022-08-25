@@ -164,7 +164,8 @@ namespace OpenDentBusiness {
 			s=s.Replace("&","&amp;");
 			s=s.Replace("&amp;<","&lt;");//because "&" was changed to "&amp;" in the line above.
 			s=s.Replace("&amp;>","&gt;");//because "&" was changed to "&amp;" in the line above.
-			if(isEmail){
+			if(isEmail & !isPreviewOnly){//Prevents tags from showing in the preview pane or the wiki.
+				//This allows the tags to be read in such a way that characters inside of them (such as email @) are not detected as ids.
 				s=s.Replace("<","&lt;");
 				s=s.Replace(">","&gt;");
 			}

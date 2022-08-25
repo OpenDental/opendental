@@ -38,7 +38,6 @@ namespace OpenDental {
 			this.checkInsPayNoWriteoffMoreThanProc = new System.Windows.Forms.CheckBox();
 			this.comboClaimCredit = new OpenDental.UI.ComboBoxOD();
 			this.labelClaimCredit = new System.Windows.Forms.Label();
-			this.checkAllowFuturePayments = new System.Windows.Forms.CheckBox();
 			this.groupBoxOD2 = new OpenDental.UI.GroupBoxOD();
 			this.checkShowClaimPatResp = new System.Windows.Forms.CheckBox();
 			this.checkPromptForSecondaryClaim = new System.Windows.Forms.CheckBox();
@@ -70,7 +69,7 @@ namespace OpenDental {
 			// checkCanadianPpoLabEst
 			// 
 			this.checkCanadianPpoLabEst.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkCanadianPpoLabEst.Location = new System.Drawing.Point(93, 559);
+			this.checkCanadianPpoLabEst.Location = new System.Drawing.Point(93, 540);
 			this.checkCanadianPpoLabEst.Name = "checkCanadianPpoLabEst";
 			this.checkCanadianPpoLabEst.Size = new System.Drawing.Size(367, 17);
 			this.checkCanadianPpoLabEst.TabIndex = 300;
@@ -80,14 +79,14 @@ namespace OpenDental {
 			// 
 			// textInsWriteoffDescript
 			// 
-			this.textInsWriteoffDescript.Location = new System.Drawing.Point(330, 537);
+			this.textInsWriteoffDescript.Location = new System.Drawing.Point(330, 518);
 			this.textInsWriteoffDescript.Name = "textInsWriteoffDescript";
 			this.textInsWriteoffDescript.Size = new System.Drawing.Size(130, 20);
 			this.textInsWriteoffDescript.TabIndex = 283;
 			// 
 			// label17
 			// 
-			this.label17.Location = new System.Drawing.Point(73, 540);
+			this.label17.Location = new System.Drawing.Point(73, 521);
 			this.label17.Name = "label17";
 			this.label17.Size = new System.Drawing.Size(254, 17);
 			this.label17.TabIndex = 284;
@@ -121,7 +120,7 @@ namespace OpenDental {
 			// 
 			this.groupBoxClaimsMedical.Controls.Add(this.checkClaimMedTypeIsInstWhenInsPlanIsMedical);
 			this.groupBoxClaimsMedical.Controls.Add(this.checkEclaimsMedicalProvTreatmentAsOrdering);
-			this.groupBoxClaimsMedical.Location = new System.Drawing.Point(20, 484);
+			this.groupBoxClaimsMedical.Location = new System.Drawing.Point(20, 465);
 			this.groupBoxClaimsMedical.Name = "groupBoxClaimsMedical";
 			this.groupBoxClaimsMedical.Size = new System.Drawing.Size(450, 51);
 			this.groupBoxClaimsMedical.TabIndex = 304;
@@ -154,17 +153,16 @@ namespace OpenDental {
 			this.groupBoxClaimsPayments.Controls.Add(this.checkInsPayNoWriteoffMoreThanProc);
 			this.groupBoxClaimsPayments.Controls.Add(this.comboClaimCredit);
 			this.groupBoxClaimsPayments.Controls.Add(this.labelClaimCredit);
-			this.groupBoxClaimsPayments.Controls.Add(this.checkAllowFuturePayments);
 			this.groupBoxClaimsPayments.Location = new System.Drawing.Point(20, 370);
 			this.groupBoxClaimsPayments.Name = "groupBoxClaimsPayments";
-			this.groupBoxClaimsPayments.Size = new System.Drawing.Size(450, 112);
+			this.groupBoxClaimsPayments.Size = new System.Drawing.Size(450, 93);
 			this.groupBoxClaimsPayments.TabIndex = 305;
 			this.groupBoxClaimsPayments.Text = "Claims Payments";
 			// 
 			// checkNoInitialPrimaryInsMoreThanProc
 			// 
 			this.checkNoInitialPrimaryInsMoreThanProc.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkNoInitialPrimaryInsMoreThanProc.Location = new System.Drawing.Point(3, 90);
+			this.checkNoInitialPrimaryInsMoreThanProc.Location = new System.Drawing.Point(3, 71);
 			this.checkNoInitialPrimaryInsMoreThanProc.Name = "checkNoInitialPrimaryInsMoreThanProc";
 			this.checkNoInitialPrimaryInsMoreThanProc.Size = new System.Drawing.Size(437, 17);
 			this.checkNoInitialPrimaryInsMoreThanProc.TabIndex = 295;
@@ -185,7 +183,7 @@ namespace OpenDental {
 			// checkInsPayNoWriteoffMoreThanProc
 			// 
 			this.checkInsPayNoWriteoffMoreThanProc.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkInsPayNoWriteoffMoreThanProc.Location = new System.Drawing.Point(73, 71);
+			this.checkInsPayNoWriteoffMoreThanProc.Location = new System.Drawing.Point(73, 52);
 			this.checkInsPayNoWriteoffMoreThanProc.Name = "checkInsPayNoWriteoffMoreThanProc";
 			this.checkInsPayNoWriteoffMoreThanProc.Size = new System.Drawing.Size(367, 17);
 			this.checkInsPayNoWriteoffMoreThanProc.TabIndex = 294;
@@ -209,16 +207,6 @@ namespace OpenDental {
 			this.labelClaimCredit.TabIndex = 290;
 			this.labelClaimCredit.Text = "Payment exceeds procedure balance";
 			this.labelClaimCredit.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// checkAllowFuturePayments
-			// 
-			this.checkAllowFuturePayments.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkAllowFuturePayments.Location = new System.Drawing.Point(73, 52);
-			this.checkAllowFuturePayments.Name = "checkAllowFuturePayments";
-			this.checkAllowFuturePayments.Size = new System.Drawing.Size(367, 17);
-			this.checkAllowFuturePayments.TabIndex = 288;
-			this.checkAllowFuturePayments.Text = "Allow future payments";
-			this.checkAllowFuturePayments.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// groupBoxOD2
 			// 
@@ -485,7 +473,6 @@ namespace OpenDental {
 		private UI.ComboBoxOD comboZeroDollarProcClaimBehavior;
 		private System.Windows.Forms.Label labelClaimCredit;
 		private UI.ComboBoxOD comboClaimCredit;
-		private System.Windows.Forms.CheckBox checkAllowFuturePayments;
 		private UI.GroupBoxOD groupBoxClaimIdPrefix;
 		private UI.Button butReplacements;
 		private System.Windows.Forms.TextBox textClaimIdentifier;

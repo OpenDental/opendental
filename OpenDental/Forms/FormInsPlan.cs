@@ -813,7 +813,9 @@ namespace OpenDental{
 			switch(_insPlanTypeComboItemSelected) {
 				case InsPlanTypeComboItem.CategoryPercentage:
 					_insPlan.PlanType="";
-					checkUseBlueBook.Visible=true;
+					if(PrefC.GetEnum<AllowedFeeSchedsAutomate>(PrefName.AllowedFeeSchedsAutomate)==AllowedFeeSchedsAutomate.BlueBook) {
+						checkUseBlueBook.Visible=true; //Only show checkbox if Blue Book is enabled.
+					}
 					break;
 				case InsPlanTypeComboItem.PPO:
 				case InsPlanTypeComboItem.PPOFixedBenefit:

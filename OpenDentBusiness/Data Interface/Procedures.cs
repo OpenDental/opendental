@@ -1150,6 +1150,17 @@ namespace OpenDentBusiness {
 			return listProcedureForApis;
 		}
 
+		///<summary>Gets a list of treatment planned (TP) procedures for a planned appointment. Returns an empty list if not found.</summary>
+		public static List<Procedure> GetProceduresPlannedForApi(long patNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Procedure>>(MethodBase.GetCurrentMethod(),patNum);
+			}
+			string command="SELECT procedurelog.* FROM procedurelog "
+				+"WHERE PatNum="+POut.Long(patNum)+" "
+				+"AND ProcStatus="+POut.Long((int)ProcStat.TP)+" ";
+			return Crud.ProcedureCrud.SelectMany(command);
+    }
+
 		///<summary>Gets a list of a patient's procedures (including notes). Filters by ProcStatus of (C), (EC), or (EO).</summary>
 		public static List<Procedure> GetProceduresWithNotesForApi(long patNum,List<long> listProcNums) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

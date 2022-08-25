@@ -2333,24 +2333,21 @@ namespace OpenDental
 						_deviceController=null;
 						return;
 					}
-				}
-			}
-			else {
-				try{
-					_deviceController.InitializeDevice();
-				}
-				catch(Exception ex){
-					MsgBox.Show(ex.Message);
-					_deviceController=null;
-					return;
-				}
-			}
-			if(ODBuild.IsWeb()){
-				if(_deviceController.ImgDeviceControlType==EnumImgDeviceControlType.Twain){
 					Bitmap bitmap2=ODCloudClient.TwainAcquireBitmap(_deviceController.TwainName);
-					PlaceAcquiredBitmapInUI(bitmap2);
+					while(PlaceAcquiredBitmapInUI(bitmap2) && IsMountShowing()) {
+						bitmap2=ODCloudClient.TwainAcquireBitmap(_deviceController.TwainName);
+					}
 				}
 				LayoutControls();//To refresh the mount after acquiring images.
+				return;
+			}
+			//Below here NOT web
+			try{
+				_deviceController.InitializeDevice();
+			}
+			catch(Exception ex){
+				MsgBox.Show(ex.Message);
+				_deviceController=null;
 				return;
 			}
 			if(_deviceController.ImgDeviceControlType==EnumImgDeviceControlType.TwainMulti){
