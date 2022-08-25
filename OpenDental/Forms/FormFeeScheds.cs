@@ -50,10 +50,6 @@ namespace OpenDental{
 					listType.Items.Add(arrayFeeSchedTypes.GetValue(i).ToString());
 				}
 				listType.SetSelected(i);
-				//Deselect the Item if the FeeScheduleType is Out of Network and using the blue book feature.
-				if(feeScheduleType==FeeScheduleType.OutNetwork && pref==AllowedFeeSchedsAutomate.BlueBook){
-					listType.SetSelected(i,false);
-				}
 				//Deselect the Item if the FeeScheduleType is ManualBlueBook and not using the blue book feature (using Legacy Blue book or None).
 				if(feeScheduleType==FeeScheduleType.ManualBlueBook && pref!=AllowedFeeSchedsAutomate.BlueBook) {
 					listType.SetSelected(i,false);

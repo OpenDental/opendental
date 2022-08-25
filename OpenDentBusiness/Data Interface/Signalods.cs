@@ -72,7 +72,7 @@ namespace OpenDentBusiness {
 			if(!listITypes.IsNullOrEmpty()) {
 				command+="AND IType IN("+String.Join(",",listITypes.Select(x => (int)x))+") ";
 			}
-			command+="ORDER BY SigDateTime";
+			command+="ORDER BY SignalNum";
 			//note: this might return an occasional row that has both times newer.
 			List<Signalod> listSignalods=new List<Signalod>();
 			string commandDatetime="SELECT "+DbHelper.Now();

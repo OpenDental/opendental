@@ -115,10 +115,6 @@ namespace OpenDental {
 			FeeScheduleType feeScheduleTypeSelected=(FeeScheduleType)listType.SelectedIndex;
 			AllowedFeeSchedsAutomate allowedFeeSchedsAutomatePref=(AllowedFeeSchedsAutomate)PrefC.GetInt(PrefName.AllowedFeeSchedsAutomate);
 			if(FeeSchedCur.IsNew) {
-				if(feeScheduleTypeSelected==FeeScheduleType.OutNetwork && allowedFeeSchedsAutomatePref==AllowedFeeSchedsAutomate.BlueBook) {
-					MsgBox.Show(this,"Out Of Network fee schedules cannot be created when the Blue Book feature is on.");
-					return true;
-				}
 				if(feeScheduleTypeSelected==FeeScheduleType.ManualBlueBook && allowedFeeSchedsAutomatePref!=AllowedFeeSchedsAutomate.BlueBook) {
 					MsgBox.Show(this,"Manual Blue Book fee schedules can only be created when the Blue Book feature is on.");
 					return true;

@@ -1129,6 +1129,7 @@ namespace OpenDentBusiness {
 			else {
 				command+="WHERE DateTStamp>='"+dateTStamp+"'";
 			}
+			command+=" ORDER BY ProcNum DESC";
 			string commandDatetime ="SELECT "+DbHelper.Now();
 			DateTime dateTimeServer=PIn.DateT(OpenDentBusiness.Db.GetScalar(commandDatetime));//run before procedures for rigorous inclusion of procedures
 			List<Procedure> listProcedures=Crud.ProcedureCrud.SelectMany(command);
