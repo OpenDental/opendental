@@ -1,0 +1,42 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="OpenDentBusiness.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="OpenDentBusiness_OpenDentalServer_ServiceMain" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost/OpenDentalServer/ServiceMain.asmx</Value>
+    </Setting>
+    <Setting Name="OpenDentBusiness_WebServiceMainHQ_WebServiceMainHQ" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx</Value>
+    </Setting>
+    <Setting Name="OpenDentBusiness_customerupdates_Service1" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://50.201.161.44:1942/WebServiceCustomerUpdates/Service1.asmx</Value>
+    </Setting>
+    <Setting Name="OpenDentBusiness_localhost_Service1" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost:3824/Service1.asmx</Value>
+    </Setting>
+    <Setting Name="OpenDentBusiness_Dentalxchange2016_DwsService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://webservices.dentalxchange.com:443/dws/DwsService</Value>
+    </Setting>
+    <Setting Name="OpenDentBusiness_com_dentalxchange_webservices_WebServiceService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://webservices.dentalxchange.com/dws/services/dciservice.svl</Value>
+    </Setting>
+    <Setting Name="OpenDentBusiness_EmdeonITS_ITSWS" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://its.changehealthcare.com/ITS/ITSWS.asmx</Value>
+    </Setting>
+    <Setting Name="OpenDentBusiness_com_dosespot_staging_my_API" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://my.dosespot.com/api/12/api.asmx</Value>
+    </Setting>
+    <Setting Name="OpenDentBusiness_PayConnectService_MerchantService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://prelive2.dentalxchange.com:443/merchant/MerchantService</Value>
+    </Setting>
+    <Setting Name="OpenDentBusiness_DentalxchangePartnerService_DeaPartnerService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://prelive2.dentalxchange.com:443/dea/DeaPartnerService</Value>
+    </Setting>
+    <Setting Name="OpenDentBusiness_SheetsSynch_SheetsSynch" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost:2923/SheetsSynch.asmx</Value>
+    </Setting>
+    <Setting Name="OpenDentBusiness_WebServiceMainHq_Mock" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

@@ -1,0 +1,65 @@
+CREATE TABLE tasklist(
+  TaskListNum mediumint unsigned NOT NULL auto_increment,
+  Descript varchar(255) NOT NULL,
+  Parent mediumint unsigned NOT NULL,
+  DateTL date NOT NULL default '0001-01-01',
+  IsRepeating tinyint unsigned NOT NULL,
+  DateType tinyint unsigned NOT NULL,
+  FromNum mediumint unsigned NOT NULL,
+  ObjectType tinyint unsigned NOT NULL,
+  PRIMARY KEY (TaskListNum)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE task(
+  TaskNum mediumint unsigned NOT NULL auto_increment,
+  TaskListNum mediumint unsigned NOT NULL,
+  DateTask date NOT NULL default '0001-01-01',
+  KeyNum mediumint unsigned NOT NULL,
+  Descript text NOT NULL,
+  TaskStatus tinyint unsigned NOT NULL,
+  IsRepeating tinyint unsigned NOT NULL,
+  DateType tinyint unsigned NOT NULL,
+  FromNum mediumint unsigned NOT NULL,
+  ObjectType tinyint unsigned NOT NULL,
+  PRIMARY KEY (TaskNum)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE instructor(
+  InstructorNum mediumint unsigned NOT NULL auto_increment,
+  LName varchar(255) NOT NULL,
+  FName varchar(255) NOT NULL,
+  Suffix varchar(100) NOT NULL,
+  PRIMARY KEY (InstructorNum)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE schoolclass(
+  SchoolClassNum mediumint unsigned NOT NULL auto_increment,
+  GradYear mediumint unsigned NOT NULL,
+  Descript varchar(255) NOT NULL,
+  PRIMARY KEY (SchoolClassNum)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE schoolcourse(
+  SchoolCourseNum mediumint unsigned NOT NULL auto_increment,
+  CourseID varchar(255) NOT NULL,
+  Descript varchar(255) NOT NULL,
+  PRIMARY KEY (SchoolCourseNum)
+) DEFAULT CHARSET=utf8;
+
+ALTER TABLE scheddefault ADD Op smallint unsigned NOT NULL;
+ALTER TABLE schedule ADD Op smallint unsigned NOT NULL;
+INSERT INTO definition(Category,ItemOrder,ItemName,ItemValue,ItemColor,IsHidden)
+  VALUES ('17','5','Blockout Text','','-9539986','0');
+INSERT INTO preference VALUES ('BackupPath','D:\\Backups\\');
+ALTER TABLE patient ADD PriPatID varchar(100) NOT NULL;
+ALTER TABLE patient ADD SecPatID varchar(100) NOT NULL;
+ALTER TABLE provider CHANGE Title Suffix varchar(100) NOT NULL;
+ALTER TABLE appointment ADD InstructorNum mediumint unsigned NOT NULL;
+ALTER TABLE appointment ADD SchoolClassNum mediumint unsigned NOT NULL;
+ALTER TABLE appointment ADD SchoolCourseNum mediumint unsigned NOT NULL;
+ALTER TABLE appointment ADD GradePoint float unsigned NOT NULL;
+ALTER TABLE provider ADD SchoolClassNum mediumint unsigned NOT NULL;
+INSERT INTO preference VALUES ('EasyHideDentalSchools','1');
+INSERT INTO preference VALUES ('EclaimsSeparateTreatProv','0');
+ALTER TABLE insplan ADD TrojanID varchar(100) NOT NULL;
+DELETE FROM schedule WHERE Status=0 AND StartTime=StopTime;

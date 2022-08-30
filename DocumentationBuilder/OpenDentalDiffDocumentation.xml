@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml-stylesheet type='text/xsl' href='OpenDentalDiffDocumentation.xsl'?>
+<database version="22.3.0.0">
+  <table name="alertcategorylink">
+    <summary></summary>
+    <column order="2" name="AlertType" type="tinyint(4)">
+      <summary>Enum:AlertType Identifies what types of alert this row is associated to.</summary>
+      <Enumeration name="AlertType">
+        <summary>Enum representing different alert types.</summary>
+        <EnumValue name="AddToCalendar">36 - Alert if a clinic is not signed for eConfirmations but is trying to use the AddToCalendar tag. FKey on this alert type is used to determine
+            the type of autocomm that created this alert rather than a FKey to a db row.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="alertitem">
+    <summary></summary>
+    <column order="3" name="Type" type="tinyint(4)">
+      <summary>Enum:AlertType Identifies what type of alert this row is.</summary>
+      <Enumeration name="AlertType">
+        <summary>Enum representing different alert types.</summary>
+        <EnumValue name="AddToCalendar">36 - Alert if a clinic is not signed for eConfirmations but is trying to use the AddToCalendar tag. FKey on this alert type is used to determine
+            the type of autocomm that created this alert rather than a FKey to a db row.</EnumValue>
+      </Enumeration>
+    </column>
+    <column order="6" name="FormToOpen" type="tinyint(4)">
+      <summary>Enum:FormType The form to open when the user clicks "Open Form".</summary>
+      <Enumeration name="FormType">
+        <summary>Add this.</summary>
+        <EnumValue name="FormOnlinePayments">2 - FormOnlinePayments.</EnumValue>
+        <EnumValue name="FormEServicesAutoMsging">18 - FormEServicesAutoMsging</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="autocommexcludedate">
+    <summary></summary>
+    <column order="0" name="AutoCommExcludeDateNum" type="bigint(20)">
+      <summary>Primary key.</summary>
+    </column>
+    <column order="1" name="ClinicNum" type="bigint(20)">
+      <summary>ClinicNum this row applies to. 0 for HQ</summary>
+    </column>
+    <column order="2" name="DateExclude" type="datetime">
+      <summary>Date for which Auto Communications will not be sent.</summary>
+    </column>
+  </table>
+  <table name="entrylog">
+    <summary></summary>
+    <column order="4" name="LogSource" type="tinyint(4)">
+      <summary>Enum:LogSources</summary>
+      <Enumeration name="LogSources">
+        <summary>Known entities that create security logs.</summary>
+        <EnumValue name="ClaimReceiveAutomatic">24 - Indicates that a claim was automatically received.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="eservicelog">
+    <summary></summary>
+    <column order="4" name="EServiceAction" type="smallint(6)">
+      <summary>Enum:eServiceAction</summary>
+      <Enumeration name="eServiceAction">
+        <summary>List of some possible eServices.</summary>
+        <EnumValue name="ECBYODValidationReached">64 - EClipboard - BYOD 6 Digit validation page reached</EnumValue>
+        <EnumValue name="ECBYODValidationFailed">65 - EClipboard - BYOD 6 Digit validation failed</EnumValue>
+        <EnumValue name="ECBYODValidationSuccess">66 - EClipboard - BYOD 6 Digit validation success</EnumValue>
+        <EnumValue name="EC2FactorAuthShown">67 - EClipboard - 2 Factor Auth Screen Shown</EnumValue>
+        <EnumValue name="EC2FactorAuthClosed">68 - EClipboard - 2 Factor Auth Close Clicked</EnumValue>
+        <EnumValue name="EC2FactorAuthEmailSelected">69 - EClipboard - 2 Factor Auth Email Selected</EnumValue>
+        <EnumValue name="EC2FactorAuthTextSelected">70 - EClipboard - 2 Factor Auth Text Selected</EnumValue>
+        <EnumValue name="EC2FactorAuthCodeSubmitted">71 - EClipboard - 2 Factor Auth Code Submitted</EnumValue>
+        <EnumValue name="EC2FactorAuthCodeSuccess">72 - EClipboard - 2 Factor Auth Code Success</EnumValue>
+        <EnumValue name="EC2FactorAuthCodeFail">73 - EClipboard - 2 Factor Auth Code Fail</EnumValue>
+        <EnumValue name="ECOpenPaymentPage">68 - EClipboard - patient opens payment page. Note should indicate where it is opened from</EnumValue>
+        <EnumValue name="ECAddCreditCardTapped">69 - EClipboard - User tapped "Add Card"</EnumValue>
+        <EnumValue name="ECCreditCardManageDoneTapped">70 - EClipboard - User tapped 'Done' on credit card manage page </EnumValue>
+        <EnumValue name="ECCreditCardRemoved">71 - EClipboard - User removed a credit card </EnumValue>
+        <EnumValue name="ECCreditCardPaymentWithNewCard">72 - EClipboard - User made payment with new credit card</EnumValue>
+        <EnumValue name="ECCreditCardPaymentWIthExistingCard">73 - EClipboard - User made payment with existing credit card</EnumValue>
+        <EnumValue name="ECCreditCardPaymentCancelled">74 - EClipboard - User tapped cancel when making a payment </EnumValue>
+        <EnumValue name="ECCreditCardErrorDeleteCardNotFound">75 - EClipboard - Error: Delete card not found</EnumValue>
+        <EnumValue name="ECCreditCardErrorDeleteCardPatNumDoesNotMatch">76 - EClipboard - Error: Delete credit card patnum does not match current patnum</EnumValue>
+        <EnumValue name="ECCreditCardErrorDeleteCardInvalidAlias">77 - EClipboard - Error: Delete credit card invalid alias</EnumValue>
+        <EnumValue name="ECCreditCardErrorDeleteCardPatientNotFound">78 - EClipboard - Error: Delete credit card patient not found</EnumValue>
+        <EnumValue name="ECCreditCardErrorMakingPaymentWithAlias">79 - EClipboard - Error: error making payment</EnumValue>
+        <EnumValue name="ECCreditCardErrorMakingPaymentPatientNotFound">80 - EClipboard - Error: Making Payment, patient not found</EnumValue>
+        <EnumValue name="ECCreditCardErrorMakingPaymentInvalidAmount">81 - EClipboard - Error: Making Payment, invalid amount </EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="eserviceshortguid">
+    <summary></summary>
+    <column order="1" name="EServiceCode" type="varchar(255)">
+      <summary>Enum:eServiceCode EService that this short GUID applies to.</summary>
+      <Enumeration name="eServiceCode">
+        <summary>Used by EServiceSignal.ServiceCode. Each service will have an entry here. Stored as an int for forward compatibility.</summary>
+        <EnumValue name="WebFormManager">41 - A Windows service running at HQ that is monitored by Headmaster.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="grouppermission">
+    <summary></summary>
+    <column order="4" name="PermType" type="tinyint">
+      <summary>Enum:Permissions Some permissions will treat a zero FKey differently. Some denote it as having access to everything for that PermType. I.e. Reports.</summary>
+      <Enumeration name="Permissions">
+        <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+        <EnumValue name="ApiAccountEdit">234 - Allows the editing of customer accounts for the ODApi via the BCM.</EnumValue>
+        <EnumValue name="RegistrationKeyCreate">235 - Logs when registration keys are created. For audit trails only.</EnumValue>
+        <EnumValue name="RegistrationKeyEdit">236 - Logs when registration keys are edited. For audit trails only.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="insplan">
+    <summary></summary>
+    <column order="43" name="InsPlansZeroWriteOffsOnAnnualMaxOverride" type="tinyint(4)">
+      <summary>Overrides the InsPlansZeroWriteOffsOnAnnualMax preference. 0=use default, 1=true, 2=false.</summary>
+    </column>
+    <column order="44" name="InsPlansZeroWriteOffsOnFreqOrAgingOverride" type="tinyint(4)">
+      <summary>Overrides the InsPlansZeroWriteOffsOnFreqOrAging preference. 0=use default, 1=true, 2=false.</summary>
+    </column>
+  </table>
+  <table name="mobileappdevice">
+    <summary></summary>
+    <column order="11" name="UserNum" type="bigint(20)" fk="userod">
+      <summary>FK to userod.UserNum. Indicates which user is currently logged into the device. 0 indicates this device is not logged into.</summary>
+    </column>
+  </table>
+  <table name="mobiledatabyte">
+    <summary></summary>
+    <column order="5" name="ActionType" type="tinyint(4)">
+      <summary>Enum:eActionType Stores the intended action associated to this rows data.</summary>
+      <Enumeration name="eActionType">
+        <summary>Actions representing different endpoints in mobile app.</summary>
+        <EnumValue name="ExamSheet">5 - Used by eClilpboard to fill out exam sheets.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="securitylog">
+    <summary></summary>
+    <column order="1" name="PermType" type="tinyint">
+      <summary>Enum:Permissions</summary>
+      <Enumeration name="Permissions">
+        <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+        <EnumValue name="ApiAccountEdit">234 - Allows the editing of customer accounts for the ODApi via the BCM.</EnumValue>
+        <EnumValue name="RegistrationKeyCreate">235 - Logs when registration keys are created. For audit trails only.</EnumValue>
+        <EnumValue name="RegistrationKeyEdit">236 - Logs when registration keys are edited. For audit trails only.</EnumValue>
+      </Enumeration>
+    </column>
+    <column order="8" name="LogSource" type="tinyint(4)">
+      <summary>Enum:LogSources None, WebSched, InsPlanImport834, FHIR, PatientPortal.</summary>
+      <Enumeration name="LogSources">
+        <summary>Known entities that create security logs.</summary>
+        <EnumValue name="ClaimReceiveAutomatic">24 - Indicates that a claim was automatically received.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="sheetfield">
+    <summary></summary>
+    <column order="26" name="CanElectronicallySign" type="tinyint(4)">
+      <summary>When true, allows a user to sign a signature box electronically.</summary>
+    </column>
+    <column order="27" name="IsSigProvRestricted" type="tinyint(4)">
+      <summary>When true, only allows the signature box to be signed by a provider.</summary>
+    </column>
+  </table>
+  <table name="sheetfielddef">
+    <summary></summary>
+    <column order="27" name="CanElectronicallySign" type="tinyint(4)">
+      <summary>When true, allows a user to sign a signature box electronically.</summary>
+    </column>
+    <column order="28" name="IsSigProvRestricted" type="tinyint(4)">
+      <summary>When true, only allows the signature box to be signed by a provider.</summary>
+    </column>
+  </table>
+  <table name="userod">
+    <summary></summary>
+    <column order="22" name="EClipboardClinicalPin" type="text">
+      <summary></summary>
+    </column>
+  </table>
+  <table name="alertitem">
+    <summary></summary>
+    <column order="6" name="FormToOpen" type="tinyint(4)">
+      <summary>Enum:FormType The form to open when the user clicks "Open Form".</summary>
+      <Enumeration name="FormType">
+        <summary>Add this.</summary>
+      </Enumeration>
+    </column>
+  </table>
+</database>

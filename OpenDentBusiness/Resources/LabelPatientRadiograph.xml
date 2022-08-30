@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SheetDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <IsNew>false</IsNew>
+  <SheetDefNum>0</SheetDefNum>
+  <Description>Label Patient Radiograph</Description>
+  <SheetType>LabelPatient</SheetType>
+  <FontSize>12</FontSize>
+  <FontName>Microsoft Sans Serif</FontName>
+  <Width>108</Width>
+  <Height>346</Height>
+  <IsLandscape>true</IsLandscape>
+  <PageCount>1</PageCount>
+  <IsMultiPage>false</IsMultiPage>
+  <SheetFieldDefs>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3538</SheetFieldDefNum>
+      <SheetDefNum>65</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>birthdate</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>25</XPos>
+      <YPos>49</YPos>
+      <Width>105</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3539</SheetFieldDefNum>
+      <SheetDefNum>65</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>priProvName</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>130</XPos>
+      <YPos>49</YPos>
+      <Width>150</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3536</SheetFieldDefNum>
+      <SheetDefNum>65</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>nameLF</FieldName>
+      <FieldValue />
+      <FontSize>12</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>25</XPos>
+      <YPos>30</YPos>
+      <Width>150</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3537</SheetFieldDefNum>
+      <SheetDefNum>65</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>dateTime.Today</FieldName>
+      <FieldValue />
+      <FontSize>12</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>180</XPos>
+      <YPos>30</YPos>
+      <Width>100</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+  </SheetFieldDefs>
+</SheetDef>

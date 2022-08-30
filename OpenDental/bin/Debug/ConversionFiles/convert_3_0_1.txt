@@ -1,0 +1,84 @@
+CREATE TABLE emailtemplate(
+  EmailTemplateNum mediumint unsigned NOT NULL auto_increment,
+  Subject text NOT NULL,
+  BodyText text NOT NULL,
+  PRIMARY KEY (EmailTemplateNum)
+);
+
+CREATE TABLE emailmessage(
+  EmailMessageNum mediumint unsigned NOT NULL auto_increment,
+  PatNum mediumint NOT NULL,
+  ToAddress text NOT NULL,
+  FromAddress text NOT NULL,
+  Subject text NOT NULL,
+  BodyText text NOT NULL,
+  MsgDateTime datetime NOT NULL,
+  PRIMARY KEY (EmailMessageNum),
+  INDEX (PatNum)
+);
+
+CREATE TABLE quickpastenote(
+  QuickPasteNoteNum mediumint unsigned NOT NULL auto_increment,
+  QuickPasteCatNum smallint unsigned NOT NULL,
+  ItemOrder smallint unsigned NOT NULL,
+  Note Text NOT NULL,
+  Abbreviation varchar(255) NOT NULL,
+  PRIMARY KEY (QuickPasteNoteNum)
+);
+
+CREATE TABLE quickpastecat(
+  QuickPasteCatNum smallint unsigned NOT NULL auto_increment,
+  Description varchar(255) NOT NULL,
+  ItemOrder smallint unsigned NOT NULL,
+  DefaultForTypes text NOT NULL,
+  PRIMARY KEY (QuickPasteCatNum)
+);
+
+INSERT INTO preference VALUES ('EmailSMTPserver','');
+INSERT INTO preference VALUES ('EmailSenderAddress','');
+INSERT INTO preference VALUES ('ScannerCompressionRadiographs','90');
+INSERT INTO preference VALUES ('ScannerCompressionPhotos','70');
+INSERT INTO preference VALUES ('AppointmentTimeIncrement','10');
+ALTER TABLE commlog CHANGE CommDate CommDateTime DATETIME NOT NULL;
+ALTER TABLE commlog ADD Mode tinyint unsigned NOT NULL;
+ALTER TABLE commlog ADD SentOrReceived tinyint unsigned NOT NULL;
+ALTER TABLE commlog ADD EmailMessageNum mediumint unsigned NOT NULL;
+ALTER TABLE document ADD ImgType tinyint unsigned NOT NULL;
+ALTER TABLE document ADD IsFlipped tinyint(1) unsigned NOT NULL;
+ALTER TABLE document ADD DegreesRotated smallint unsigned NOT NULL;
+ALTER TABLE apptviewitem ADD ElementDesc varchar(255) NOT NULL;
+ALTER TABLE apptviewitem ADD ElementOrder tinyint unsigned NOT NULL;
+ALTER TABLE apptviewitem ADD ElementColor int NOT NULL;
+ALTER TABLE apptview ADD RowsPerIncr tinyint unsigned default '1' NOT NULL;
+ALTER TABLE appointment CHANGE Pattern Pattern varchar(255) NOT NULL;
+ALTER TABLE claimproc ADD AllowedAmt double NOT NULL default '-1';
+ALTER TABLE claimproc ADD Percentage tinyint NOT NULL default '-1';
+ALTER TABLE claimproc ADD PercentOverride tinyint NOT NULL default '-1';
+ALTER TABLE claimproc ADD CopayAmt double NOT NULL default '-1';
+ALTER TABLE claimproc ADD OverrideInsEst double NOT NULL default '-1';
+ALTER TABLE claimproc ADD NoBillIns tinyint(1) unsigned NOT NULL;
+ALTER TABLE claimproc ADD DedBeforePerc tinyint(1) unsigned NOT NULL;
+ALTER TABLE claimproc ADD OverAnnualMax double NOT NULL default '-1';
+ALTER TABLE claimproc ADD PaidOtherIns double NOT NULL default '-1';
+ALTER TABLE claimproc ADD BaseEst double NOT NULL;
+ALTER TABLE claimproc ADD CopayOverride double NOT NULL default '-1';
+ALTER TABLE claimproc ADD ProcDate date NOT NULL;
+ALTER TABLE claimproc ADD INDEX indexProcNum (ProcNum);
+ALTER TABLE procedurelog CHANGE CapCopay CapCopay double NOT NULL default '0';
+ALTER TABLE language DROP PRIMARY KEY;
+ALTER TABLE language CHANGE English English varchar(225) BINARY NOT NULL;
+ALTER TABLE language CHANGE ClassType ClassType varchar(25) BINARY NOT NULL;
+ALTER TABLE language ADD PRIMARY KEY (ClassType,English);
+ALTER TABLE languageforeign CHANGE English English varchar(225) BINARY NOT NULL;
+ALTER TABLE languageforeign CHANGE ClassType ClassType varchar(25) BINARY NOT NULL;
+
+
+
+
+
+
+
+
+
+
+
