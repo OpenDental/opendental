@@ -101,7 +101,10 @@ namespace OpenDentBusiness{
 		PaySimpleAchFailed
 	}
 
-
+	public class PaymentForApi {
+		public Payment PaymentCur;
+		public DateTime DateTimeServer;
+  }
 
 }
 

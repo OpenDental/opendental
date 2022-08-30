@@ -160,6 +160,8 @@ namespace OpenDentBusiness {
 		EserviceLog,
 		///<summary>40 - Used for storing customers license agreement acceptance signature. </summary>
 		LicenseAgreementSig,
+		///<summary>41 - A Windows service running at HQ that is monitored by Headmaster.</summary>
+		WebFormManager,
 	}
 
 	///<summary>Indicates if HostedURL can be overridden by resellers, for this service.</summary>

@@ -231,7 +231,7 @@ namespace OpenDental {
 			this.labelPPOpercentageDetails.Name = "labelPPOpercentageDetails";
 			this.labelPPOpercentageDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelPPOpercentageDetails.TabIndex = 358;
-			this.labelPPOpercentageDetails.Text = "otherwise default to \'Category Percentage\'";
+			this.labelPPOpercentageDetails.Text = "otherwise, default to \'Category Percentage\'";
 			this.labelPPOpercentageDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelPatInitBillingTypeFromPriInsPlanDetails
