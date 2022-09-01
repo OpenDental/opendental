@@ -36,9 +36,23 @@ namespace OpenDental {
 		}
 
 		public static string FillInTextTemplate(string template,Patient pat) {
-			return template
+			if(!template.Contains("[Practice Name]")) {
+				return template
 				.Replace("[FName]",pat.GetNameFirstOrPreferred())
 				.Replace("[WirelessPhone]",pat.WirelessPhone);
+			}
+			//fill in the [Practice Name] 
+			string clinicName=ClinicPrefs.GetPrefValue(PrefName.ShortCodeOptInClinicTitle,pat.ClinicNum);
+			if(string.IsNullOrEmpty(clinicName)) {
+				clinicName=PrefC.GetString(PrefName.PracticeTitle);
+				if(string.IsNullOrEmpty(clinicName)) {
+					clinicName="your dentist";
+				}
+			}
+			return template
+				.Replace("[FName]",pat.GetNameFirstOrPreferred())
+				.Replace("[WirelessPhone]",pat.WirelessPhone)
+				.Replace("[Practice Name]",clinicName);
 		}
 
 		private void LayoutMenu() {

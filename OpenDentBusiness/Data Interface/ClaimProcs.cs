@@ -2876,6 +2876,24 @@ namespace OpenDentBusiness{
 			return ClaimProcCrud.SelectMany(command);
 		}
 
+		///<summary>Gets a list of ClaimProcs from the db. Returns an empty list if not found.</summary>
+		public static List<ClaimProc> GetClaimProcsForApi(int limit,int offset,long patNum,long claimNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ClaimProc>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,claimNum);
+			}
+			string command="SELECT * from claimproc"
+				+" WHERE SecDateTEdit>="+POut.DateT(DateTime.MinValue);
+      if(patNum>0) {
+				command+=" AND PatNum="+POut.Long(patNum);
+      }
+			if(claimNum>0){
+				command+=" AND ClaimNum="+POut.Long(claimNum);
+      }
+			command+=" ORDER BY ClaimProcNum"
+				+" LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return ClaimProcCrud.SelectMany(command);
+		}
+
 		///<summary>Returns true if the entire list of ProcNums are attached to the claim, otherwise returns false.</summary>
 		public static bool AreAllAttachedToClaim(long claimNum,List<long> listProcNums) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
