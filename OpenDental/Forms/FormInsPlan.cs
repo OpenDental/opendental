@@ -574,11 +574,11 @@ namespace OpenDental{
 			comboOutOfNetwork.Items.Clear();
 			comboOutOfNetwork.Items.AddNone<FeeSched>();
 			comboOutOfNetwork.Items.AddList(_listFeeSchedsOutOfNetwork,x=>x.Description);
-			comboOutOfNetwork.SetSelectedKey<FeeSched>(_insPlanCur.AllowedFeeSched,x=>x.FeeSchedNum);
+			comboOutOfNetwork.SetSelectedKey<FeeSched>(_insPlanCur.AllowedFeeSched,x=>x.FeeSchedNum,x=>FeeScheds.GetDescription(x));
 			comboManualBlueBook.Items.Clear();
 			comboManualBlueBook.Items.AddNone<FeeSched>();
 			comboManualBlueBook.Items.AddList(_listFeeSchedsManualBlueBook,x => x.Description);
-			comboManualBlueBook.SetSelectedKey<FeeSched>(_insPlanCur.ManualFeeSchedNum,x => x.FeeSchedNum);
+			comboManualBlueBook.SetSelectedKey<FeeSched>(_insPlanCur.ManualFeeSchedNum,x => x.FeeSchedNum,x=>FeeScheds.GetDescription(x));
 			comboCobRule.Items.Clear();
 			for(int i=0;i<Enum.GetNames(typeof(EnumCobRule)).Length;i++) {
 				comboCobRule.Items.Add(Lan.g("enumEnumCobRule",Enum.GetNames(typeof(EnumCobRule))[i]));

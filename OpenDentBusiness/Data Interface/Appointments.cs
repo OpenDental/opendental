@@ -2725,9 +2725,9 @@ namespace OpenDentBusiness{
 			//this query overall as compared to left joining the appointment table onto itself,
 			//because the in-memory temporary table has many fewer rows than the appointment table
 			//on average.
-			string command="SELECT tplanned.* "
-				+"FROM (SELECT a.* FROM appointment a "
-				+"INNER JOIN patient p ON p.PatNum=a.PatNum ";
+			string command="SELECT a.* FROM appointment a "
+				+"INNER JOIN patient p ON p.PatNum=a.PatNum "
+			  +"LEFT JOIN appointment tregular ON a.AptNum=tregular.NextAptNum ";
 			if(!string.IsNullOrEmpty(codeStart)) {
 				command+="INNER JOIN ( "
 						+"SELECT procedurelog.PlannedAptNum "
@@ -2741,6 +2741,9 @@ namespace OpenDentBusiness{
 						+"GROUP BY procedurelog.PlannedAptNum "
 					+")ProcCheck ON ProcCheck.PlannedAptNum=a.AptNum ";
 			}
+			if(orderby=="status") {
+				command+="LEFT JOIN definition d ON d.DefNum=a.UnschedStatus ";
+			}
 			command+="WHERE a.AptStatus="+POut.Long((int)ApptStatus.Planned)
 				+" AND p.PatStatus="+POut.Long((int)PatientStatus.Patient)+" ";
 			if(provNum>0) {
@@ -2752,9 +2755,10 @@ namespace OpenDentBusiness{
 			if(clinicNum>=0) { //Only include appointments that belong to HQ clinic when clinics are enabled and no ClinicNum is specified.
 				command+="AND a.ClinicNum="+POut.Long(clinicNum)+" ";
 			}
-			command+="AND "+DbHelper.DtimeToDate("a.AptDateTime")+" BETWEEN "+POut.Date(dateStart)+" AND "+POut.Date(dateEnd);
+			command+="AND "+DbHelper.DtimeToDate("a.AptDateTime")+" BETWEEN "+POut.Date(dateStart)+" AND "+POut.Date(dateEnd)+" "
+				+"AND tregular.NextAptNum IS NULL ";
 			if(orderby=="status") {
-				command+="ORDER BY a.UnschedStatus,a.AptDateTime";
+				command+="ORDER BY d.ItemName,a.AptDateTime";
 			} 
 			else if(orderby=="alph") {
 				command+="ORDER BY p.LName,p.FName";
@@ -2762,9 +2766,6 @@ namespace OpenDentBusiness{
 			else { //if(orderby=="date"){
 				command+="ORDER BY a.AptDateTime";
 			}
-			command+=") tplanned "
-				+"LEFT JOIN appointment tregular ON tplanned.AptNum=tregular.NextAptNum "
-				+"WHERE tregular.NextAptNum IS NULL";
 			return Crud.AppointmentCrud.SelectMany(command);
 		}
 
