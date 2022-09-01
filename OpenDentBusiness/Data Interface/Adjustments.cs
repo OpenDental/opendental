@@ -44,6 +44,21 @@ namespace OpenDentBusiness{
 			return Crud.AdjustmentCrud.SelectMany(command);
 		}
 
+		///<summary>Gets adjustments for a given patient. Can filter by AdjType. Returns an empty list if not found.</summary>
+		public static List<Adjustment> GetAdjustmentsForApi(long patNum,long adjType=0) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Adjustment>>(MethodBase.GetCurrentMethod(),patNum,adjType);
+			}
+			string command=
+				"SELECT * FROM adjustment"
+				+" WHERE PatNum = "+POut.Long(patNum);
+			if(adjType!=0) {
+				command+=" AND AdjType = "+POut.Long(adjType);
+			}
+			command+=" ORDER BY AdjDate";
+			return Crud.AdjustmentCrud.SelectMany(command);
+		}
+
 		///<summary>Gets one adjustment from the db.</summary>
 		public static Adjustment GetOne(long adjNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
