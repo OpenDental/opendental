@@ -2766,6 +2766,9 @@ namespace OpenDentBusiness{
 						+"GROUP BY procedurelog.PlannedAptNum "
 					+")ProcCheck ON ProcCheck.PlannedAptNum=a.AptNum ";
 			}
+			if(orderby=="status") {
+				command+="LEFT JOIN definition d ON d.DefNum=a.UnschedStatus ";
+			}
 			command+="WHERE a.AptStatus="+POut.Long((int)ApptStatus.Planned)
 				+" AND p.PatStatus="+POut.Long((int)PatientStatus.Patient)+" ";
 			if(provNum>0) {
@@ -2780,7 +2783,7 @@ namespace OpenDentBusiness{
 			command+="AND "+DbHelper.DtimeToDate("a.AptDateTime")+" BETWEEN "+POut.Date(dateStart)+" AND "+POut.Date(dateEnd)+" "
 				+"AND tregular.NextAptNum IS NULL ";
 			if(orderby=="status") {
-				command+="ORDER BY a.UnschedStatus,a.AptDateTime";
+				command+="ORDER BY d.ItemName,a.AptDateTime";
 			} 
 			else if(orderby=="alph") {
 				command+="ORDER BY p.LName,p.FName";

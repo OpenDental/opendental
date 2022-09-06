@@ -670,8 +670,8 @@ namespace OpenDental{
 			butViewBirthdate.Visible=false;
 			//butViewBirthdate is not visible from designer.
 			//Move age back over since butViewBirthdate is not showing
-			LayoutManager.MoveLocation(label20,new Point(label20.Location.X-LayoutManager.Scale(72),label20.Location.Y));
-			LayoutManager.MoveLocation(textAge,new Point(textAge.Location.X-LayoutManager.Scale(72),textAge.Location.Y));
+			LayoutManager.MoveLocation(label20,new Point(label20.Location.X-LayoutManager.Scale(77),label20.Location.Y));
+			LayoutManager.MoveLocation(textAge,new Point(textAge.Location.X-LayoutManager.Scale(77),textAge.Location.Y));
 		}
 
 		private void butShortCodeOptIn_Click(object sender,EventArgs e) {
