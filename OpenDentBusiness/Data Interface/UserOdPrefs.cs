@@ -176,31 +176,23 @@ namespace OpenDentBusiness{
 		}
 
 		public static List<UserOdPref> GetByUserAndFkeyType(long userNum,UserOdFkeyType fkeyType) {
-			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				return Meth.GetObject<List<UserOdPref>>(MethodBase.GetCurrentMethod(),userNum,fkeyType);
-			}
+			//No need to check MiddleTierRole; no call to db.
 			return GetWhere(x => x.UserNum==userNum && x.FkeyType==fkeyType);
 		}
 
 		public static List<UserOdPref> GetByFkeyAndFkeyType(long fkey,UserOdFkeyType fkeyType) {
-			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				return Meth.GetObject<List<UserOdPref>>(MethodBase.GetCurrentMethod(),fkey,fkeyType);
-			}
+			//No need to check MiddleTierRole; no call to db.
 			return GetWhere(x => x.Fkey==fkey && x.FkeyType==fkeyType);
 		}
 
 		public static List<UserOdPref> GetByUserFkeyAndFkeyType(long userNum,long fkey,UserOdFkeyType fkeyType) {
-			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				return Meth.GetObject<List<UserOdPref>>(MethodBase.GetCurrentMethod(),userNum,fkey,fkeyType);
-			}
+			//No need to check MiddleTierRole; no call to db.
 			return GetWhere(x => x.UserNum==userNum && x.Fkey==fkey && x.FkeyType==fkeyType);
 		}
 
 		///<summary>Creates a new UserOdPref if the fkeyType does not exist for the userNum.</summary>
 		public static UserOdPref GetFirstOrNewByUserAndFkeyType(long userNum,UserOdFkeyType fkeyType) {
-			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				return Meth.GetObject<UserOdPref>(MethodBase.GetCurrentMethod(),userNum,fkeyType);
-			}
+			//No need to check MiddleTierRole; no call to db.
 			UserOdPref userOdPref=GetFirstOrDefault(x => x.UserNum==userNum && x.FkeyType==fkeyType);
 			//Create a new instance if db value does not exist.
 			if(userOdPref==null) {
@@ -219,9 +211,7 @@ namespace OpenDentBusiness{
 
 		///<summary>Will return a list of UserOdPrefs corresponding to the usernum/fkey/fkeytype combination given.</summary>
 		public static List<UserOdPref> GetByUserAndFkeyAndFkeyType(long userNum,long fkey,UserOdFkeyType fkeyType,List<long> listClinicNums=null) {
-			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				return Meth.GetObject<List<UserOdPref>>(MethodBase.GetCurrentMethod(),userNum,fkey,fkeyType,listClinicNums);
-			}
+			//No need to check MiddleTierRole; no call to db.
 			List<UserOdPref> listUserOdPrefs=GetWhere(x => x.UserNum==userNum && x.Fkey==fkey && x.FkeyType==fkeyType);
 			if(!listClinicNums.IsNullOrEmpty()) {
 				listUserOdPrefs=listUserOdPrefs.Where(x => ListTools.In(x.ClinicNum,listClinicNums)).ToList();
@@ -231,9 +221,7 @@ namespace OpenDentBusiness{
 
 		///<summary>Will return the UserOdPref corresponding to the usernum/fkey/fkeytype/ClinicNum composite key given.</summary>
 		public static UserOdPref GetByCompositeKey(long userNum,long fkey,UserOdFkeyType fkeyType,long clinicNum=0) {
-			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				return Meth.GetObject<UserOdPref>(MethodBase.GetCurrentMethod(),userNum,fkey,fkeyType,clinicNum);
-			}
+			//No need to check MiddleTierRole; no call to db.
 			UserOdPref userOdPref=GetFirstOrDefault(x => 
 				x.UserNum==userNum
 				&& x.Fkey==fkey 
@@ -256,16 +244,12 @@ namespace OpenDentBusiness{
 	
 		///<summary>Returns a list of UserOdPrefs for the given UserOdFkeyType.</summary>
 		public static List<UserOdPref> GetByFkeyType(UserOdFkeyType fkeyType) {
-			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				return Meth.GetObject<List<UserOdPref>>(MethodBase.GetCurrentMethod(),fkeyType);
-			}
+			//No need to check MiddleTierRole; no call to db.
 			return GetWhere(x => x.FkeyType==fkeyType);
 		}
 
 		public static List<UserOdPref> GetAllByFkeyAndFkeyType(long fkey,UserOdFkeyType fkeyType) {
-			if(RemotingClient.RemotingRole==RemotingRole.ClientWeb) {
-				return Meth.GetObject<List<UserOdPref>>(MethodBase.GetCurrentMethod(),fkey,fkeyType);
-			}
+			//No need to check MiddleTierRole; no call to db.
 			return GetWhere(x => x.Fkey==fkey && x.FkeyType==fkeyType);
 		}
 

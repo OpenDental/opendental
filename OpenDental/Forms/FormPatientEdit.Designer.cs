@@ -515,7 +515,7 @@ namespace OpenDental{
 			this.textAge.Location = new System.Drawing.Point(380, 264);
 			this.textAge.Name = "textAge";
 			this.textAge.ReadOnly = true;
-			this.textAge.Size = new System.Drawing.Size(39, 20);
+			this.textAge.Size = new System.Drawing.Size(44, 20);
 			this.textAge.TabIndex = 0;
 			this.textAge.TabStop = false;
 			// 
