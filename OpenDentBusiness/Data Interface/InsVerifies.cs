@@ -205,7 +205,7 @@ namespace OpenDentBusiness{
 					,dateStartMedicaid,dateEndMedicaid,datePatEligibilityLastVerifiedMedicaid,datePlanBenefitsLastVerifiedMedicaid,insVerifyListType);
 			}
 			List<long> listInsFilingCodeNums=InsFilingCodes.GetAll().Select(x=>x.InsFilingCodeNum).ToList();
-			List<string> listInsVerifyMedicaidFilingCodes=PrefC.GetString(PrefName.InsVerifyMedicaidFilingCodes).Split(',').ToList();
+			List<string> listInsVerifyMedicaidFilingCodes=PrefC.GetString(PrefName.InsVerifyMedicaidFilingCodes).Split(",",StringSplitOptions.RemoveEmptyEntries).ToList();
 			//Construct two lists of InsFilingCodeNums; one for Medicaid CodeNums (contained in the InsVerifyMedicaidFilingCodes pref), and one for the rest of the CodeNums.
 			List<long> listInsFilingCodeNumsMedicaid=listInsVerifyMedicaidFilingCodes.Select(x => PIn.Long(x,hasExceptions:false)).ToList();
 			List<long> listInsFilingCodeNumsStandard=listInsFilingCodeNums.FindAll(x => !listInsFilingCodeNumsMedicaid.Contains(x));
@@ -409,7 +409,7 @@ namespace OpenDentBusiness{
 		///<summary>Builds a query to select certain values from the insverifies table within a passed in timeframe.</summary>
 		private static string GetInsVerifyCleanupQuery(DateTime dateStart, DateTime dateEndStandard, DateTime dateEndMedicaid) {
 			List<long> listInsFilingCodeNums=InsFilingCodes.GetAll().Select(x=>x.InsFilingCodeNum).ToList();
-			List<string> listInsVerifyMedicaidFilingCodes=PrefC.GetString(PrefName.InsVerifyMedicaidFilingCodes).Split(',').ToList();
+			List<string> listInsVerifyMedicaidFilingCodes=PrefC.GetString(PrefName.InsVerifyMedicaidFilingCodes).Split(",",StringSplitOptions.RemoveEmptyEntries).ToList();
 			//Construct two lists of InsFilingCodeNums; one for Medicaid CodeNums (contained in the InsVerifyMedicaidFilingCodes pref), and one for the rest of the CodeNums.
 			List<long> listInsFilingCodeNumsMedicaid=listInsVerifyMedicaidFilingCodes.Select(x => PIn.Long(x,hasExceptions:false)).ToList();
 			List<long> listInsFilingCodeNumsStandard=listInsFilingCodeNums.FindAll(x => !listInsFilingCodeNumsMedicaid.Contains(x));

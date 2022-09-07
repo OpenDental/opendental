@@ -40,8 +40,7 @@ namespace OpenDental {
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(506, 17);
 			this.label2.TabIndex = 13;
-			this.label2.Text = "Verified email addresses may be used to send Mass Email or Secure Email notificat" +
-    "ions.";
+			this.label2.Text = "Verified email addresses may be used to send Secure Email notifications.";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// gridMain

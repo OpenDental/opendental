@@ -202,6 +202,7 @@ namespace OpenDentBusiness {
 					list.Add(new DisplayField("First",0,category));
 					list.Add(new DisplayField("Middle",0,category));
 					list.Add(new DisplayField("Preferred",0,category));
+					list.Add(new DisplayField("Preferred Pronoun",0,category));
 					list.Add(new DisplayField("Title",0,category));
 					list.Add(new DisplayField("Salutation",0,category));
 					list.Add(new DisplayField("Status",0,category));
@@ -286,6 +287,7 @@ namespace OpenDentBusiness {
 				#region ChartPatientInformation
 				case DisplayFieldCategory.ChartPatientInformation:
 					list.Add(new DisplayField("Age",0,category));
+					list.Add(new DisplayField("Preferred Pronoun",0,category));
 					list.Add(new DisplayField("ABC0",0,category));
 					list.Add(new DisplayField("Billing Type",0,category));
 					list.Add(new DisplayField("Referred From",0,category));
@@ -679,6 +681,7 @@ namespace OpenDentBusiness {
 					list.Add(new DisplayField("First",0,category));
 					list.Add(new DisplayField("Middle",0,category));
 					list.Add(new DisplayField("Preferred",0,category));
+					list.Add(new DisplayField("Preferred Pronoun",0,category));
 					list.Add(new DisplayField("Title",0,category));
 					list.Add(new DisplayField("Salutation",0,category));
 					list.Add(new DisplayField("Status",0,category));
@@ -766,6 +769,7 @@ namespace OpenDentBusiness {
 				#region ChartPatientInformation
 				case DisplayFieldCategory.ChartPatientInformation:
 					list.Add(new DisplayField("Age",0,category));
+					list.Add(new DisplayField("Preferred Pronoun",0,category));
 					list.Add(new DisplayField("ABC0",0,category));
 					list.Add(new DisplayField("Billing Type",0,category));
 					list.Add(new DisplayField("Referred From",0,category));

@@ -4251,6 +4251,11 @@ namespace OpenDental {
 						}
 						break;
 					#endregion Premedicate
+					#region Preferred Pronoun
+					case "Preferred Pronoun":
+						row.Cells.Add(Pd.PatientNote.Pronoun.ToString());
+						break;
+					#endregion Preferred Pronoun
 					#region Pri Ins
 					case "Pri Ins":
 						string name;

@@ -1405,7 +1405,7 @@ namespace OpenDentBusiness{
 										continue;//Specifically marked as don't verify, so skip it
 									}
 									DateTime dateLastPlanBenefits=dateTimeLastPlanBenefitsStandard;
-									if(listInsVerifyMedicaidFilingCodeNums.Contains(insPlan.FilingCode)){ //If this filing code is for Medicaid, use Medicaid timing.
+									if(insPlan!=null && listInsVerifyMedicaidFilingCodeNums.Contains(insPlan.FilingCode)){ //If this filing code is for Medicaid, use Medicaid timing.
 										dateLastPlanBenefits=dateTimeLastPlanBenefitsMedicaid;
 									}
 									if(PIn.Date(tableInsVerify.Rows[v]["DateLastVerified"].ToString())<dateLastPlanBenefits) {
@@ -1421,7 +1421,7 @@ namespace OpenDentBusiness{
 										continue;
 									}
 									DateTime dateLastPlanBenefits=dateTimeLastPlanBenefitsStandard;
-									if(listInsVerifyMedicaidFilingCodeNums.Contains(insPlan.FilingCode)){ //If this filing code is for Medicaid, use Medicaid timing.
+									if(insPlan!=null && listInsVerifyMedicaidFilingCodeNums.Contains(insPlan.FilingCode)){ //If this filing code is for Medicaid, use Medicaid timing.
 										dateLastPlanBenefits=dateTimeLastPlanBenefitsMedicaid;
 									}
 									if(PIn.Date(tableInsVerify.Rows[v]["DateLastVerified"].ToString())<dateLastPlanBenefits) {
@@ -1452,9 +1452,9 @@ namespace OpenDentBusiness{
 									}
 								}
 								//At this point, we're dealing with a PatPlan, so the FKey is the PatPlanNum. We need the PlanNum instead.
-								insPlan=listInsPlans.Find(x=>x.PlanNum.ToString()==tableInsVerify.Rows[v]["PlanNum"].ToString());
+								insPlan=listInsPlans.Find(x=>x.PlanNum==PIn.Long(tableInsVerify.Rows[v]["PlanNum"].ToString()));
 								DateTime dateLastPatEligibility=dateTimeLastPatEligibilityStandard;
-								if(listInsVerifyMedicaidFilingCodeNums.Contains(insPlan.FilingCode)){ //If this filing code is for Medicaid, use Medicaid timing.
+								if(insPlan!=null && listInsVerifyMedicaidFilingCodeNums.Contains(insPlan.FilingCode)){ //If this filing code is for Medicaid, use Medicaid timing.
 									dateLastPatEligibility=dateTimeLastPatEligibilityMedicaid;
 								}
 								if(PIn.Date(tableInsVerify.Rows[v]["DateLastVerified"].ToString())<dateLastPatEligibility) {
@@ -2795,6 +2795,9 @@ namespace OpenDentBusiness{
 						+"GROUP BY procedurelog.PlannedAptNum "
 					+")ProcCheck ON ProcCheck.PlannedAptNum=a.AptNum ";
 			}
+			if(orderby=="status") {
+				command+="LEFT JOIN definition d ON d.DefNum=a.UnschedStatus ";
+			}
 			command+="WHERE a.AptStatus="+POut.Long((int)ApptStatus.Planned)
 				+" AND p.PatStatus="+POut.Long((int)PatientStatus.Patient)+" ";
 			if(provNum>0) {
@@ -2809,7 +2812,7 @@ namespace OpenDentBusiness{
 			command+="AND "+DbHelper.DtimeToDate("a.AptDateTime")+" BETWEEN "+POut.Date(dateStart)+" AND "+POut.Date(dateEnd)+" "
 				+"AND tregular.NextAptNum IS NULL ";
 			if(orderby=="status") {
-				command+="ORDER BY a.UnschedStatus,a.AptDateTime";
+				command+="ORDER BY d.ItemName,a.AptDateTime";
 			} 
 			else if(orderby=="alph") {
 				command+="ORDER BY p.LName,p.FName";
