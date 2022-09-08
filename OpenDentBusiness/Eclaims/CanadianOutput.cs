@@ -1026,7 +1026,7 @@ namespace OpenDentBusiness.Eclaims {
 			//Therefore, version 02 reports should come after version 04 reports.
 			if(String.IsNullOrEmpty(formatVersion) || formatVersion=="04") {//Version 04 request.
 				if(carrier==null) {//Version 04 request for all networks.
-					if(clearinghouseHq.CommBridge==EclaimsCommBridge.ITRANS) {
+					if(clearinghouseHq.CommBridge.In(EclaimsCommBridge.ITRANS,EclaimsCommBridge.ITRANS2)) {
 						listEtrans.AddRange(CanadianOutput.GetOutstandingForClearinghouse(clearinghouseClin,prov,"04",null,null,printForm,printCCD));
 					}
 					else if(clearinghouseHq.CommBridge==EclaimsCommBridge.Claimstream) {
@@ -1042,7 +1042,7 @@ namespace OpenDentBusiness.Eclaims {
 				}
 			}
 			if((String.IsNullOrEmpty(formatVersion) || formatVersion=="02") && carrier==null) {//Version 02 request.  Always an entire clearinghouse, not a carrier.
-				if(clearinghouseHq.CommBridge==EclaimsCommBridge.ITRANS) {
+				if(clearinghouseHq.CommBridge.In(EclaimsCommBridge.ITRANS,EclaimsCommBridge.ITRANS2)) {
 					listEtrans.AddRange(CanadianOutput.GetOutstandingForClearinghouse(clearinghouseClin,prov,"02",null,null,printForm,printCCD));
 				}
 				else if(clearinghouseHq.CommBridge==EclaimsCommBridge.Claimstream) {

@@ -156,8 +156,8 @@ namespace OpenDental{
 			}
 			FillListBoxEraBehavior();
 			listBoxEraBehavior.Enabled=true;
-			if(ClearinghouseCur.CommBridge.In(EclaimsCommBridge.ClaimConnect,EclaimsCommBridge.EDS,EclaimsCommBridge.Claimstream,EclaimsCommBridge.ITRANS,
-				EclaimsCommBridge.EmdeonMedical,EclaimsCommBridge.EdsMedical))
+			if(ClearinghouseCur.CommBridge.In(EclaimsCommBridge.ClaimConnect,EclaimsCommBridge.EDS,EclaimsCommBridge.Claimstream,
+				EclaimsCommBridge.ITRANS,EclaimsCommBridge.ITRANS2,EclaimsCommBridge.EmdeonMedical,EclaimsCommBridge.EdsMedical))
 			{
 				listBoxEraBehavior.Enabled=true;
 				checkIsClaimExportAllowed.Enabled=true;
@@ -195,7 +195,8 @@ namespace OpenDental{
 		}
 
 		private void FillListBoxEraBehavior() {
-			bool isCanadaEraClearinghouse= comboCommBridge.GetSelected<EclaimsCommBridge>().In(EclaimsCommBridge.Claimstream,EclaimsCommBridge.ITRANS);
+			bool isCanadaEraClearinghouse= comboCommBridge.GetSelected<EclaimsCommBridge>()
+				.In(EclaimsCommBridge.Claimstream,EclaimsCommBridge.ITRANS,EclaimsCommBridge.ITRANS2);
 			if(!isCanadaEraClearinghouse) {//If US
 				LayoutManager.MoveHeight(listBoxEraBehavior,30);
 			}
@@ -534,7 +535,8 @@ namespace OpenDental{
 		private void comboCommBridge_SelectionChangeCommitted(object sender,EventArgs e) {
 			FillListBoxEraBehavior();//Update ERA/EOB list box, specifically for if we print ERA vs EOB.
 			bool hasEclaimsEnabled= comboCommBridge.GetSelected<EclaimsCommBridge>().In(
-				EclaimsCommBridge.ClaimConnect,EclaimsCommBridge.EDS,EclaimsCommBridge.Claimstream,EclaimsCommBridge.ITRANS,
+				EclaimsCommBridge.ClaimConnect,EclaimsCommBridge.EDS,EclaimsCommBridge.Claimstream,
+				EclaimsCommBridge.ITRANS,EclaimsCommBridge.ITRANS2,
 				EclaimsCommBridge.EmdeonMedical,EclaimsCommBridge.EdsMedical);
 			listBoxEraBehavior.Enabled=hasEclaimsEnabled;
 			checkIsClaimExportAllowed.Enabled=hasEclaimsEnabled;

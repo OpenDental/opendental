@@ -59,7 +59,7 @@ namespace OpenDental {
 					trans.Amount=PIn.Double(fields[1]);
 					trans.CCEntry=fields[2];
 					trans.PatNum=0;
-					if(!string.IsNullOrWhiteSpace(fields[3])) {
+					if(!string.IsNullOrWhiteSpace(fields[3]) && fields[3].Length > 3) {
 						trans.PatNum=PIn.Long(fields[3].Substring(3));//remove "PAT" from the beginning of the string
 					}
 					trans.Result=fields[4];

@@ -1929,7 +1929,7 @@ namespace OpenDentBusiness {
 				}
 			}
 			else if(ptSearchArgs.DoLimit) {
-				command+=DbHelper.LimitAnd(41);
+				command=DbHelper.LimitOrderBy(command,41);
 			}
 			DataTable table=Db.GetTable(command);
 			if(usePhonenumTable && useExactMatch && phDigitsTrimmed.Length==exactMatchPhoneDigits && table.Rows.Count==0) {

@@ -957,6 +957,8 @@ namespace OpenDentBusiness{
 		EdsMedical,
 		///<summary>20</summary>
 		Lantek,
+		///<summary>21 Canadian clearinghouse.  Similar to ITRANS except supports certificate and carrier list web fetching.</summary>
+		ITRANS2,
 	}
 
 	///<summary>Used as the enumeration of FieldValueType.ForeignKey.  Basically, this allows lists to be included in the parameter list.  The lists are those common short lists that are used so frequently.  The user can only select one from the list, and the primary key of that item will be used as the parameter.</summary>

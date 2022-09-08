@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using CodeBase;
 using OpenDental.ReportingComplex;
+using OpenDental.UI;
 using OpenDentBusiness;
 
 namespace OpenDental{
@@ -239,8 +239,16 @@ namespace OpenDental{
 			if(!Validation()) {
 				return;
 			}
-			ReportComplex report=new ReportComplex(true,false); 
-			DataTable tableAging=RpAging.GetAgingTable(GetParamsFromForm());
+			ReportComplex report=new ReportComplex(true,false);
+			DataTable tableAging=new DataTable();
+			ProgressOD progressOD=new ProgressOD();
+			progressOD.ActionMain=() => { 
+				tableAging=RpAging.GetAgingTable(GetParamsFromForm());
+			};
+			progressOD.ShowDialogProgress();
+			if(progressOD.IsCancelled){
+				return;
+			}
 			report.IsLandscape=checkHasDateLastPay.Checked;
 			report.ReportName=Lan.g(this,"AGING OF ACCOUNTS RECEIVABLE REPORT");
 			report.AddTitle("Aging Report",Lan.g(this,"AGING OF ACCOUNTS RECEIVABLE"));
