@@ -4464,7 +4464,7 @@ namespace OpenDental.UI{
 						y+=h;
 						continue;
 					case "Production":
-						s=dataRow["production"].ToString();
+						s=Lan.g(this,"Production:")+" "+dataRow["production"].ToString();
 						h=g.MeasureString(s,font,widthBubble-(int)x).Height;
 						g.DrawString(s,font,brush,new RectangleF(x,y,widthBubble-(int)x,h));
 						y+=h;
@@ -4703,7 +4703,8 @@ namespace OpenDental.UI{
 						y+=h;
 						continue;					
 					case "Net Production":
-						s=PIn.Decimal(dataRow["netProductionVal"].ToString()).ToString("c");
+						decimal decimalPort=PIn.Decimal(dataRow["netProductionVal"].ToString());
+						s=Lan.g(this,"Net Production:")+" "+decimalPort.ToString("c");
 						h=g.MeasureString(s,font,widthBubble-(int)x).Height;
 						g.DrawString(s,font,brush,new RectangleF(x,y,widthBubble-(int)x,h));
 						y+=h;

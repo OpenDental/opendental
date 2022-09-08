@@ -457,16 +457,21 @@ namespace OpenDental.ReportingComplex {
 					QueryObject query=(QueryObject)_reportObjects[i];
 					bool wasSubmitted=false;
 					ProgressOD progressOD=new ProgressOD();
-					progressOD.ActionMain=() => { 
+					if(query.IsQueryStringNullOrEmpty) {
 						wasSubmitted=query.SubmitQuery();
+					}
+					else {
+						progressOD.ActionMain=() => { 
+							wasSubmitted=query.SubmitQuery();
 						};
-					progressOD.ShowDialogProgress();
+						progressOD.ShowDialogProgress();
+					}
 					if(!wasSubmitted) {
 						MsgBox.Show(this,"There was an error generating this report."
 							+ (hasReportServer ? "\r\nVerify or remove the report server connection settings and try again." : ""));
 						return false;
 					}
-					if(progressOD.IsCancelled){
+					if(!query.IsQueryStringNullOrEmpty && progressOD.IsCancelled){
 						return false;
 					}
 					if(query.ReportTable.Rows.Count==0) {

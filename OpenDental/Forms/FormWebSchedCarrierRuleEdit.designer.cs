@@ -133,6 +133,7 @@ namespace OpenDental {
 			this.radioAllowWithInput.TabStop = true;
 			this.radioAllowWithInput.Text = "Allow With Input";
 			this.radioAllowWithInput.UseVisualStyleBackColor = true;
+			this.radioAllowWithInput.CheckedChanged += new System.EventHandler(this.radioAllowWithInput_CheckedChanged);
 			// 
 			// radioAllow
 			// 

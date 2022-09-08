@@ -132,6 +132,7 @@ namespace OpenDental {
 		}
 
 		private void FillProvs() {
+			comboBoxMultiProv.IncludeAll=true;
 			foreach(Provider provCur in Providers.GetListReports()) {
 				comboBoxMultiProv.Items.Add(provCur.GetLongDesc(),provCur);
 			}

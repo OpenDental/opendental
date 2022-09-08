@@ -206,6 +206,12 @@ namespace OpenDental.ReportingComplex {
 				_isNegativeSummary=value;
 			}
 		}
+
+		public bool IsQueryStringNullOrEmpty {
+			get {
+				return string.IsNullOrEmpty(_stringQuery);
+			}
+		}
 		#endregion Properties
 
 		#region Methods

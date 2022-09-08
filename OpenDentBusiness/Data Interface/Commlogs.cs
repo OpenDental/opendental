@@ -138,7 +138,7 @@ namespace OpenDentBusiness{
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<Commlog>(MethodBase.GetCurrentMethod(),patNum,_mode,numberOfReminders,defNumNewStatus,commSource,userNum,
-					dateTimeNow,type);
+					dateTimeNow,type,message);
 			}
 			long commType=Commlogs.GetTypeAuto(type);
 			string commTypeStr=type==CommItemTypeAuto.RECALL?"Recall":"Reactivation";

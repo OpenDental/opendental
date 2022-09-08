@@ -862,7 +862,7 @@ namespace OpenDental {
 				listEventCodes.Add(((EhrMeasureEvent)gridAssessments.ListGridRows[i].Tag).CodeValueResult);
 			}
 			Snomed snomed;
-			List<string> listEventCodesOrderBy=(List<string>)listEventCodes.OrderBy(x => x);
+			List<string> listEventCodesOrderBy=listEventCodes.OrderBy(x => x).ToList();
 			for(int i=0;i<listEventCodesOrderBy.Count;i++) {
 				snomed=Snomeds.GetByCode(listEventCodesOrderBy[i]);
 				if(snomed==null) {//don't add invalid SNOMEDCT codes

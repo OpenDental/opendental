@@ -478,6 +478,7 @@ namespace OpenDentBusiness {
 				case DefCat.ImageCats:
 					listStrCommands.Add("SELECT COUNT(*) FROM document WHERE DocCategory="+POut.Long(def.DefNum));
 					listStrCommands.Add("SELECT COUNT(*) FROM sheetfielddef WHERE FieldType="+POut.Int((int)SheetFieldType.PatImage)+" AND FieldName="+POut.Long(def.DefNum));
+					listStrCommands.Add("SELECT COUNT(*) FROM mountdef WHERE DefaultCat="+POut.Long(def.DefNum));
 					if(def.DefNum!=0 && def.DefNum==PrefC.GetLong(PrefName.TaskAttachmentCategory)) {
 						return true;
 					}

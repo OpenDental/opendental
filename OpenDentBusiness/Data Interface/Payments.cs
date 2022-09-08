@@ -183,7 +183,7 @@ namespace OpenDentBusiness{
 		///<summary>Gets all payments that have a ProcessStatus of OnlinePending. Pass in an empty list to get payments for all clinics.</summary>
 		public static List<Payment> GetPaymentsUsingFilters(List<long> clinicNums, DateTime startDate,DateTime endDate,List<ProcessStat> listProcessStatus,List<CreditCardSource> listCreditCardSources) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Payment>>(MethodBase.GetCurrentMethod(),clinicNums);
+				return Meth.GetObject<List<Payment>>(MethodBase.GetCurrentMethod(),clinicNums,startDate,endDate,listProcessStatus,listCreditCardSources);
 			}
 			string command=$@"SELECT * FROM payment WHERE PayDate BETWEEN {POut.Date(startDate)} AND {POut.Date(endDate)}
 				AND ProcessStatus IN ({string.Join(",",listProcessStatus.Select(x => POut.Int((int)x)))})

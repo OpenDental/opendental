@@ -528,6 +528,10 @@ namespace OpenDental{
 			//Good sensor is 1700x1300. FMX mount would then be 10,700 x 3,900 = 125 MB
 			MountDefCur.Description=textDescription.Text;
 			MountDefCur.DefaultCat=comboDefaultCat.GetSelectedDefNum();
+			Def def=Defs.GetDef(DefCat.ImageCats, MountDefCur.DefaultCat);
+			if(def!=null && def.IsHidden) {
+				MsgBox.Show(Lan.g(this,"Warning: This Mount's default image category is hidden. Mounts with this category will be hidden."));
+			}
 			MountDefCur.Width=PIn.Int(textWidth.Text);
 			MountDefCur.Height=PIn.Int(textHeight.Text);
 			MountDefCur.ColorBack=butColorBack.BackColor;
