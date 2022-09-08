@@ -5262,7 +5262,7 @@ namespace OpenDentBusiness {
 					numFixed=0;
 					#region Etrans
 					//etrans---------------------------------------------------------------------------------------------------
-					where="WHERE PlanNum!=0 AND PlanNum NOT IN (SELECT inssub.PlanNum FROM inssub WHERE inssub.InsSubNum=etrans.InsSubNum)"
+					where="WHERE PlanNum!=0 AND InsSubNum!=0 AND PlanNum NOT IN (SELECT inssub.PlanNum FROM inssub WHERE inssub.InsSubNum=etrans.InsSubNum)"
 						+PatientAndClauseHelper(patNumSpecific,"etrans");
 					command="SELECT * FROM etrans "+where;
 					List<Etrans> listEtrans=Crud.EtransCrud.SelectMany(command);

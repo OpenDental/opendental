@@ -460,6 +460,7 @@ namespace OpenDental {
 			_gridResults.ListGridRows.Clear();
 			//fill rows and calculate widths for columns based on row data
 			int rowCount = 1;//row count always starts at 1
+			float localZoom=LayoutManager.ScaleMy();//get the current zoom factor for the local computer
 			foreach(List<string> row in _listRawData) {
 				UI.GridRow gridRow = new UI.GridRow();
 				if(checkNumberedRows.Checked) {//add numbered rows if selected
@@ -475,7 +476,9 @@ namespace OpenDental {
 							}
 							gridRow.Cells.Add(new UI.GridCell(valueChanged));
 							//get widest data in column, used to set column width later. Max column width of 400 pixels (word wrap can be turned on if more space is needed)
-							_listQueryColumns[i].Width = Math.Min(Math.Max(_listQueryColumns[i].Width,TextRenderer.MeasureText(valueChanged,_gridResults.Font).Width + 10),400);
+							//we also need to remove the zoom component from the text width calculation since this has already been factored in when resizing the grid intially
+							int textWidth=(int)(TextRenderer.MeasureText(valueChanged,_gridResults.Font).Width/localZoom)+10;
+							_listQueryColumns[i].Width=Math.Min(Math.Max(_listQueryColumns[i].Width,textWidth),400);
 							AddToColumnTotal(i,valueChanged);
 							i++;
 						}

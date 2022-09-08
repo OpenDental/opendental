@@ -39,6 +39,16 @@ namespace OpenDental {
 			}
 		}
 
+		private void radioAllowWithInput_CheckedChanged(object sender,EventArgs e) {
+			if(radioAllowWithInput.Checked) {
+				textMessage.Enabled=false;
+				textMessage.Text="";
+			}
+			else {
+				textMessage.Enabled=true;
+			}
+		}
+
 		private void butOK_Click(object sender,EventArgs e) {
 			if(radioAllowWithMessage.Checked || radioBlock.Checked) {
 				if(string.IsNullOrEmpty(textMessage.Text.Trim())) {

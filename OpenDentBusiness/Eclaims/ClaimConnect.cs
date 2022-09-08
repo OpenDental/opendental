@@ -648,6 +648,7 @@ namespace OpenDentBusiness.Eclaims {
 			etrans.ClearingHouseNum=clearingHouse.ClearinghouseNum;
 			etrans.Etype=EtransType.DXCAttachments;
 			etrans.PlanNum=claim.PlanNum;
+			etrans.InsSubNum=claim.InsSubNum;
 			etrans.EtransMessageTextNum=etransMessageText.EtransMessageTextNum;
 			Etranss.Insert(etrans);
 		}
