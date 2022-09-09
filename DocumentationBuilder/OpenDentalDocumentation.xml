@@ -2773,6 +2773,7 @@
         <EnumValue name="Ramq">18</EnumValue>
         <EnumValue name="EdsMedical">19</EnumValue>
         <EnumValue name="Lantek">20</EnumValue>
+        <EnumValue name="ITRANS2">21 Canadian clearinghouse.  Similar to ITRANS except supports certificate and carrier list web fetching.</EnumValue>
       </Enumeration>
     </column>
     <column order="13" name="ClientProgram" type="varchar(255)">
