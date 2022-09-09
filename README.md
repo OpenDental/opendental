@@ -15,5 +15,5 @@ For example, if you want to use the most recent code for Open Dental v21.4 you w
 
 ## Build
 The Open Dental solution does not build out of the box.\
-See [Source Code](https://www.opendental.com/site/sourcecode.html) for getting Open Dental to build.
+See [Source Code](https://www.opendental.com/site/sourcecode.html) for getting Open Dental to build.  
 We do not accept outside code contributions. See [Programming Assistance](https://www.opendental.com/site/programmingassistance.html)
