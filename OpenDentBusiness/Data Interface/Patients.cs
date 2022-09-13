@@ -1651,10 +1651,10 @@ namespace OpenDentBusiness {
 		}
 
 		public static List<PatientWithServerDT> GetPatientsSimpleForApi(int limit,int offset,string lName,string fName,
-			DateTime birthdate,int patStatus,long clinicNum,DateTime dateTStamp,long priProv)
+			DateTime birthdate,int patStatus,long clinicNum,DateTime dateTStamp,long priProv,int gender,int position)
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<PatientWithServerDT>>(MethodBase.GetCurrentMethod(),limit,offset,lName,fName,birthdate,patStatus,clinicNum,dateTStamp,priProv);
+				return Meth.GetObject<List<PatientWithServerDT>>(MethodBase.GetCurrentMethod(),limit,offset,lName,fName,birthdate,patStatus,clinicNum,dateTStamp,priProv,gender,position);
 			}
 			string command="SELECT * FROM patient WHERE DateTStamp >= "+POut.DateT(dateTStamp)+" "
 				+"AND PatStatus != "+POut.Int((int)PatientStatus.Deleted)+" ";//Do not return Deleted patients.
@@ -1675,6 +1675,12 @@ namespace OpenDentBusiness {
 			}
 			if(priProv>-1) {
 				command+="AND PriProv="+POut.Long(priProv)+" ";
+			}
+			if(gender>-1) {
+				command+="AND Gender="+POut.Int(gender)+" ";
+			}
+			if(position>-1) {
+				command+="AND Position="+POut.Int(position)+" ";
 			}
 			command+="ORDER BY PatNum "//same fixed order each time
 				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);

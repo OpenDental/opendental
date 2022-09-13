@@ -40,9 +40,15 @@ namespace OpenDental {
 			s=s.Replace("&","&amp;");
 			s=s.Replace("&amp;<","&lt;");//because "&" was changed to "&amp;" in the line above.
 			s = s.Replace("&amp;>","&gt;");//because "&" was changed to "&amp;" in the line above.
-			if(isEmail){
-				s=s.Replace("<","&lt;");
-				s=s.Replace(">","&gt;");
+			MatchCollection matchCollectionEmails=Regex.Matches(s,"<\\S*@\\S*>");//Collect all emails within tags (ie: replies)
+			if(matchCollectionEmails.Count!=0 && isEmail){//This issue only affects email users.
+				foreach(Match match in matchCollectionEmails) {
+					string matchBefore=match.Value;
+					string matchAfter=matchBefore;
+					matchAfter=matchAfter.Replace("<","&lt;");
+					matchAfter=matchAfter.Replace(">","&gt;");
+					s=s.Replace(matchBefore,matchAfter);//replace only the email tags to avoid @ being seen as an id.
+				}
 			}
 			s = "<body>"+s+"</body>";
 			XmlDocument doc=new XmlDocument();

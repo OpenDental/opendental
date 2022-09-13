@@ -4033,5 +4033,27 @@ namespace OpenDentBusiness {
 			command="INSERT INTO preference(PrefName,ValueString) VALUES ('InsAutoReceiveNoAssign','1')";//Default to True
 			Db.NonQ(command);
 		}//End of 22_3_1() method
+
+		private static void To22_3_6() {
+			string command = @"CREATE TABLE IF NOT EXISTS autocommexcludedate (
+				AutoCommExcludeDateNum bigint NOT NULL auto_increment PRIMARY KEY,
+				ClinicNum bigint NOT NULL,
+				DateExclude DateTime NOT NULL
+				) DEFAULT CHARSET=utf8";
+			Db.NonQ(command);
+			command="SELECT COUNT(*) FROM preference WHERE prefname='EConfirmExcludeDays'";
+			int rowCount = Db.GetInt(command);
+			if(rowCount==0) {
+				command=$"INSERT INTO preference(PrefName,ValueString) VALUES('EConfirmExcludeDays','0')"; //insert for HQ. 0 means AutoCommExcludeDays.None. 
+				Db.NonQ(command);
+			}
+			command="SELECT COUNT(*) FROM preference WHERE prefname='EConfirmExcludeDaysUseHQ'";
+			rowCount = Db.GetInt(command);
+			if(rowCount==0) {
+				command="INSERT INTO preference(PrefName,ValueString) VALUES('EConfirmExcludeDaysUseHQ','1')"; //This is here so we don't fail when trying to load this value for HQ using clinicPrefHelper.
+				Db.NonQ(command);
+			}
+		}//End of 22_3_6()
+
 	}
 }

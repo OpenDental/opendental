@@ -643,9 +643,9 @@ namespace OpenDental{
 			textSpecifySexOrientation.Text=_ehrPatient.SexualOrientationNote;
 			//Loop through the GenderId enum and display the Description attribute. If the Snomed attribute equals the patient's GenderIdentity, 
 			//set that item as the selected index.
-			for(int i=0;i<Enum.GetValues(typeof(SexOrientation)).Length;i++) {
-				comboGenderIdentity.Items.Add(((SexOrientation)i).GetDescription());
-				if(_ehrPatient.GenderIdentity==EnumTools.GetAttributeOrDefault<EhrAttribute>((SexOrientation)i).Snomed) {
+			for(int i=0;i<Enum.GetValues(typeof(GenderId)).Length;i++) {
+				comboGenderIdentity.Items.Add(((GenderId)i).GetDescription());
+				if(_ehrPatient.GenderIdentity==EnumTools.GetAttributeOrDefault<EhrAttribute>((GenderId)i).Snomed) {
 					comboGenderIdentity.SelectedIndex=comboGenderIdentity.Items.Count-1;//Make the last added item the selected one
 				}
 			}
