@@ -153,7 +153,7 @@ namespace OpenDental {
 				clinic.IsMedicalOnly=true;
 			}
 			clinic.ItemOrder=gridMain.ListGridRows.Count-(DoIncludeHQInList?1:0);//Set it last in the last position (minus 1 for HQ)
-			using FormClinicEdit formClinicEdit=new FormClinicEdit(clinic);
+			using FormClinicEdit formClinicEdit=new FormClinicEdit(clinic,ListClinics);
 			if(formClinicEdit.ShowDialog()==DialogResult.OK) {
 				clinic.ClinicNum=Clinics.Insert(clinic);//inserting this here so we have a ClinicNum; the user cannot cancel and undo this anyway
 				ListClinics.Add(clinic);
@@ -186,7 +186,7 @@ namespace OpenDental {
 				return;
 			}
 			Clinic clinicOld=(Clinic)gridMain.ListGridRows[e.Row].Tag;
-			using FormClinicEdit formClinicEdit=new FormClinicEdit(clinicOld.Copy());
+			using FormClinicEdit formClinicEdit=new FormClinicEdit(clinicOld.Copy(),ListClinics);
 			if(formClinicEdit.ShowDialog()==DialogResult.OK) {
 				Clinic clinicNew=formClinicEdit.ClinicCur;
 				if(clinicNew==null) {//Clinic was deleted

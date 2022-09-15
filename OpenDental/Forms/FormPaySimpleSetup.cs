@@ -193,6 +193,9 @@ namespace OpenDental {
 			_listProgProps.FindAll(x => x.ClinicNum==_listUserClinicNums[_indexClinicRevert]
 				&& x.PropertyDesc==PaySimple.PropertyDescs.PaySimplePreventSavingNewCC)
 				.ForEach(x => x.PropertyValue=POut.Bool(checkPreventSavingNewCC.Checked));
+			_listProgProps.FindAll(x => x.ClinicNum==_listUserClinicNums[_indexClinicRevert]
+				&& x.PropertyDesc==PaySimple.PropertyDescs.PaySimplePrintReceipt)
+				.ForEach(x => x.PropertyValue=POut.Bool(checkPrintReceipt.Checked));
 			_indexClinicRevert=comboClinic.SelectedIndex;//now that we've updated the values for the clinic we're switching from, update _indexClinicRevert
 			FillFields();
 		}
