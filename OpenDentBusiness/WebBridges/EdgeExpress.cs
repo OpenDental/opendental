@@ -33,7 +33,7 @@ namespace OpenDentBusiness {
 
 		#region Private methods
 		///<summary>Adds the base params for an EdgeExpress request.</summary>
-		private static void WriteEdgeExpressBaseRequest(long clinicNum,EdgeExpressTransType edgeExpressTransactionType,XmlWriter xmlWriter,bool isWebPayment = true) {
+		private static void WriteEdgeExpressBaseRequest(long clinicNum,EdgeExpressTransType edgeExpressTransactionType,XmlWriter xmlWriter,bool isWebPayment=true,double amount=0) {
 			ProgramProperties.GetXWebCreds(clinicNum,out WebPaymentProperties xwebProperties);
 			Program progEdge=Programs.GetCur(ProgramName.EdgeExpress);
 			Program progXWeb=Programs.GetCur(ProgramName.Xcharge);
@@ -48,6 +48,23 @@ namespace OpenDentBusiness {
 			xmlWriter.WriteElementString("XWEBTERMINALID",xwebProperties.TerminalID);
 			xmlWriter.WriteElementString("XWEBAUTHKEY",xwebProperties.AuthKey);
 			xmlWriter.WriteElementString("TRANSACTIONTYPE",edgeExpressTransactionType.ToString().ToUpper());
+			ODException.SwallowAnyException(() => Logger.LogVerbose(GetRequestLogText(xwebProperties,amount),subDirectory:"EdgeExpress"));
+		}
+
+		public static string GetRequestLogText(WebPaymentProperties xwebProperties,double amount) {
+			string terminalID="NULL";
+			string authKey="NULL";
+			if(xwebProperties!=null) {
+				if(xwebProperties.TerminalID!=null) {
+					terminalID=xwebProperties.TerminalID;
+				}
+				if(xwebProperties.AuthKey!=null) {
+					//Only display the first half of the AuthKey.
+					int countVisibleChars=(xwebProperties.AuthKey.Length / 2);
+					authKey=xwebProperties.AuthKey.Substring(0,countVisibleChars) + new string('X',countVisibleChars);
+				}
+			}
+			return $"TerminalID:{terminalID}  AuthKey:{authKey}  Amount:{amount:C}";
 		}
 		#endregion Private methods
 
@@ -139,7 +156,7 @@ namespace OpenDentBusiness {
 				RcmResponse rcmResponse=null;
 				StringBuilder strBldXml=new StringBuilder();
 				XmlWriter xmlWriter=XmlWriter.Create(strBldXml);
-				WriteEdgeExpressBaseRequest(clinicNum,edgeExpressTransactionType,xmlWriter,isWebPayment);
+				WriteEdgeExpressBaseRequest(clinicNum,edgeExpressTransactionType,xmlWriter,isWebPayment,amount);
 				AddOtherParamsEdgeExpress(xmlWriter,edgeExpressTransactionType,patient,amount,doPromptForSignature,doCreateToken,aliasToken,transactionId,
 					cashBackAmt,expDate);
 				string url=$"{_edgeExpressRCMURL}?xl2Parameters={strBldXml}";
@@ -276,7 +293,7 @@ namespace OpenDentBusiness {
 				bool isDirectPay=true;
 				StringBuilder strBldXml=new StringBuilder();
 				using(XmlWriter xmlWriter=XmlWriter.Create(strBldXml)) {
-					WriteEdgeExpressBaseRequest(clinicNum,edgeExpressTransactionType,xmlWriter,isWebPayment);
+					WriteEdgeExpressBaseRequest(clinicNum,edgeExpressTransactionType,xmlWriter,isWebPayment,amount);
 					orderId=string.IsNullOrEmpty(orderId) ? XWebResponses.CreateOrderId() : orderId;
 					AddAdditionalTransactionParams(xmlWriter,edgeExpressTransactionType,doCreateAlias,amount,pat,alias,transactionID,orderId,allowDuplicates,expDate);
 					//Only host pay calls can display a payment page, direct pay calls will return an error if we send UI parameters.

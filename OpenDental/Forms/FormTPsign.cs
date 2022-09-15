@@ -90,6 +90,7 @@ namespace OpenDental{
 				if(sheetField!=null && !string.IsNullOrEmpty(sheetField.FieldName)) {
 					labelSig.Text=$"{sheetField.FieldName} sign here --->";
 				}
+				SignatureBoxSheetCheck(sheetField,signatureBoxWrapper);
 				sheetField=SheetTP.GetSheetFieldByName("SignatureText");
 				if(sheetField!=null) {
 					textTypeSig.Text=TPcur.SignatureText;
@@ -107,6 +108,7 @@ namespace OpenDental{
 				if(sheetField!=null && !string.IsNullOrEmpty(sheetField.FieldName)) {
 					labelSigPractice.Text=$"{sheetField.FieldName} sign here --->";
 				}
+				SignatureBoxSheetCheck(sheetField,signatureBoxWrapperPractice);
 				sheetField=SheetTP.GetSheetFieldByName("SignaturePracticeText");
 				if(sheetField!=null) {
 					textTypeSigPractice.Text=TPcur.SignaturePracticeText;
@@ -138,6 +140,22 @@ namespace OpenDental{
 			}
 			else{//100%
 				previewContr.Zoom=1;
+			}
+		}
+
+		///<summary>SignatureBoxes can be restricted to providers, and are allowed to be signed electronically if enabled within sheets.</summary>
+		private void SignatureBoxSheetCheck(SheetField sheetField,SignatureBoxWrapper signatureBoxWrapper) {
+			if(sheetField==null) {
+				return;
+			}
+			if(sheetField.IsSigProvRestricted && (Security.CurUser==null || Security.CurUser.UserNum<1 || Security.CurUser.ProvNum<1)) {
+				signatureBoxWrapper.Enabled=false;
+			}
+			if(Security.CurUser!=null
+				&& Security.CurUser.UserNum>0 //Is currently a logged in user
+				&& sheetField.CanElectronicallySign) //If the field allows for electronic signature
+			{
+				signatureBoxWrapper.SetAllowDigitalSig(true,true);
 			}
 		}
 

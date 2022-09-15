@@ -5928,6 +5928,8 @@ namespace OpenDental {
 				procedure=Procedures.GetOneProc(procNum,true);
 			}
 			else {
+				Pd.Clear(EnumPdTable.Procedure);
+				Pd.FillIfNeeded(EnumPdTable.Procedure);
 				procedure=Pd.ListProcedures.Find(x => x.ProcNum==procNum);
 			}
 			if(procedure==null) {

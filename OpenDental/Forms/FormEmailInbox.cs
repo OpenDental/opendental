@@ -141,7 +141,6 @@ namespace OpenDental {
 				.OrderByDescending(x=>x.UserNum==curUserNum) //place user email first
 				.ThenByDescending(x=>x.EmailAddressNum==defaultEmailAddressNum)//then practice default
 				.ToList();
-			listEmailAddresses.RemoveAll(x => x.EmailAddressNum==PrefC.GetLong(PrefName.EmailNotifyAddressNum) && x.EmailAddressNum!=defaultEmailAddressNum);//Exclude web mail notification email address if it's not the practice default.
 			if(Security.CurUser.ProvNum!=0) {//Only providers have access to see Webmail messages.
 				EmailAddress webMail=new EmailAddress() {
 					EmailUsername="WebMail",
