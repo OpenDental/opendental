@@ -4943,7 +4943,7 @@ namespace OpenDentBusiness {
 					}
 					//etrans---------------------------------------------------------------------------------------------------
 					command="SELECT COUNT(*) FROM etrans "
-						+"WHERE PlanNum!=0 AND PlanNum NOT IN (SELECT inssub.PlanNum FROM inssub WHERE inssub.InsSubNum=etrans.InsSubNum)"
+						+"WHERE PlanNum!=0 AND InsSubNum!=0 AND PlanNum NOT IN (SELECT inssub.PlanNum FROM inssub WHERE inssub.InsSubNum=etrans.InsSubNum)"
 						+PatientAndClauseHelper(patNumSpecific,"etrans");
 					numFound=PIn.Int(Db.GetCount(command));
 					if(numFound>0 || verbose) {
@@ -5008,7 +5008,7 @@ namespace OpenDentBusiness {
 					.ToDictionary(x=>x.Key,x=>x.ToList());
 					//etrans---------------------------------------------------------------------------------------------------
 					command="SELECT etrans.PatNum,etrans.PlanNum,etrans.EtransNum,etrans.DateTimeTrans FROM etrans "
-						+"WHERE PlanNum!=0 AND PlanNum NOT IN (SELECT inssub.PlanNum FROM inssub WHERE inssub.InsSubNum=etrans.InsSubNum)"
+						+"WHERE PlanNum!=0 AND InsSubNum!=0 AND PlanNum NOT IN (SELECT inssub.PlanNum FROM inssub WHERE inssub.InsSubNum=etrans.InsSubNum)"
 						+PatientAndClauseHelper(patNumSpecific,"etrans");
 					var dictBadEtrans=Db.GetTable(command).Select().Select(x=>new {
 						PatNum=PIn.Long(x["PatNum"].ToString()),

@@ -31,13 +31,13 @@ namespace OpenDentBusiness {
 				textbox.ForeColor=sheetField.ItemColor;
 			}
 			textbox.SelectionAlignment=sheetField.TextAlign;
+			textbox.Multiline=IsTextBoxMultiline(textbox,sheetField:sheetField);//Needs to be set before we set the 'SelectedText' field or else the 'Text' field could be incorrectly truncated.
 			textbox.SelectedText=sheetField.FieldValue;
 			FontStyle style=FontStyle.Regular;
 			if(sheetField.FontIsBold) {
 				style=FontStyle.Bold;
 			}
 			textbox.Font=new Font(sheetField.FontName,sheetField.FontSize,style);
-			textbox.Multiline=IsTextBoxMultiline(textbox,sheetField:sheetField);
 			textbox.Height=sheetField.Height;
 			textbox.ScrollBars=RichTextBoxScrollBars.None;
 			textbox.Tag=sheetField;
