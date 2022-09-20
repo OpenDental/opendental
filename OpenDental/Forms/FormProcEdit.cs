@@ -1392,16 +1392,6 @@ namespace OpenDental {
 			{
 				return;
 			}
-			List<PaySplit> listPaySplitsForAdjustment=PaySplits.GetForAdjustments(new List<long>{FormAP.AdjustmentSelected.AdjNum});
-			if(listPaySplitsForAdjustment.Count>0) {
-				MsgBox.Show(this,"Cannot attach adjustment which has associated payments");
-				return;
-			}
-			List<PayPlanLink> listPayPlanLinks=PayPlanLinks.GetForFKeyAndLinkType(FormAP.AdjustmentSelected.AdjNum,PayPlanLinkType.Adjustment);
-			if(listPayPlanLinks.Count>0) {
-				MsgBox.Show(this,"Cannot attach adjustment which is associated to a payment plan.");
-				return;
-			}
 			decimal estPatPort=ClaimProcs.GetPatPortion(_procedure,_loadData.ListClaimProcsForProc,_loadData.ArrAdjustments.ToList());
 			decimal procPatPaid=(decimal)PaySplits.GetTotForProc(_procedure);
 			decimal adjRemAmt=estPatPort-procPatPaid+(decimal)FormAP.AdjustmentSelected.AdjAmt;

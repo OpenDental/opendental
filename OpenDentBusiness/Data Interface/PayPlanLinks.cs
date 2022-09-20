@@ -11,14 +11,15 @@ namespace OpenDentBusiness{
 	///<summary></summary>
 	public class PayPlanLinks{
 		#region Get Methods
-		///<summary></summary>
+		/*
+		///<summary>Not used. There is no PatNum column in the PayPlanLink table.</summary>
 		public static List<PayPlanLink> Refresh(long patNum){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<PayPlanLink>>(MethodBase.GetCurrentMethod(),patNum);
 			}
 			string command="SELECT * FROM payplanlink WHERE PatNum = "+POut.Long(patNum);
 			return Crud.PayPlanLinkCrud.SelectMany(command);
-		}
+		}*/
 
 		public static List<PayPlanLink> GetListForPayplan(long payplanNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -26,6 +27,17 @@ namespace OpenDentBusiness{
 			}
 			string command=$"SELECT * FROM payplanlink WHERE PayPlanNum={POut.Long(payplanNum)}";
 			return Crud.PayPlanLinkCrud.SelectMany(command);
+		}
+
+		public static List<long> GetListForLinkTypeAndFKeys(PayPlanLinkType linkType,List<long> listFKeys) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod(),linkType,listFKeys);
+			}
+			string command=$"SELECT FKey FROM payplanlink WHERE LinkType={POut.Int((int)linkType)}";
+			if(!listFKeys.IsNullOrEmpty()) {
+				command+=$" AND FKey IN ({string.Join(",",listFKeys.Select(x => POut.Long(x)))})";
+			}
+			return Db.GetListLong(command);
 		}
 
 		public static List<PayPlanLink> GetForPayPlans(List<long> listPayPlans) {

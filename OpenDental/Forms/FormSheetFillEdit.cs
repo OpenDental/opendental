@@ -115,6 +115,10 @@ namespace OpenDental {
 				checkSaveToImages.Checked=sheetDefForSheetCur?.AutoCheckSaveImage??false;
 				checkSaveToImages.Visible=true;
 			}
+			if(SheetCur.PatNum==0) {
+				checkSaveToImages.Enabled=false;
+				checkSaveToImages.Checked=false;
+			}
 			PointList=new List<Point>();
 			_uniqueFormIdentifier=MiscUtils.CreateRandomAlphaNumericString(15);//Thread safe random
 			Sheets.SetPageMargin(SheetCur,_printMargin);
@@ -1436,6 +1440,9 @@ namespace OpenDental {
 				SecurityLogs.MakeLogEntry(Permissions.SheetEdit,SheetCur.PatNum,Lan.g(this,"Sheet with ID")+" "+SheetCur.SheetNum+" "+Lan.g(this,"moved to PatNum")+" "+FormPS.PatNumSelected);
 				SecurityLogs.MakeLogEntry(Permissions.SheetEdit,FormPS.PatNumSelected,Lan.g(this,"Sheet with ID")+" "+SheetCur.SheetNum+" "+Lan.g(this,"moved from PatNum")+" "+SheetCur.PatNum);
 				SheetCur.PatNum=FormPS.PatNumSelected;
+				if(SheetCur.PatNum>0) {
+					checkSaveToImages.Enabled=true;
+				}
 			}
 		}
 

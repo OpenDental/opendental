@@ -39,6 +39,15 @@ namespace OpenDental {
 				doIncludeContent=PIn.Bool(userIncludeContentPref.ValueString);
 			}
 			checkIgnoreContent.Checked=!doIncludeContent;
+			if(string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.ReportingServerDbName))
+				|| string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.ReportingServerCompName))) 
+			{
+				checkReportServer.Visible=false;
+			}
+			else {//default to report server when one is set up.
+				checkReportServer.Visible=true;
+				checkReportServer.Checked=true;
+			}
 			SetFilterControlsAndAction(
 				() => { 
 					//This is so we're not running queries every time this event fires unless we want it to
@@ -95,7 +104,8 @@ namespace OpenDental {
 			//gridMain.Columns.Add(col);
 			gridMain.ListGridRows.Clear();
 			//This used to search the wikipagehist table, now archived pages are stored in wikipage.  See JobNum 4429.
-			listWikiPageTitles=WikiPages.GetForSearch(textSearch.Text,checkIgnoreContent.Checked,checkArchivedOnly.Checked,checkBoxMatchWholeWord.Checked,checkBoxShowMainPages.Checked);
+			listWikiPageTitles=ReportsComplex.RunFuncOnReportServer(() => WikiPages.GetForSearch(textSearch.Text,checkIgnoreContent.Checked,checkArchivedOnly.Checked,
+				checkBoxMatchWholeWord.Checked,checkBoxShowMainPages.Checked),checkReportServer.Checked);
 			for(int i=0;i<listWikiPageTitles.Count;i++) {
 				GridRow row=new GridRow();
 				row.Cells.Add(listWikiPageTitles[i]);

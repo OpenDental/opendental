@@ -171,7 +171,7 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(Permissions.ClinicEdit)) {
+			if(!IsSelectionMode && !Security.IsAuthorized(Permissions.ClinicEdit)) {
 				return;
 			}
 			if(gridMain.ListGridRows.Count==0){

@@ -40,6 +40,9 @@ namespace OpenDental {
 			//Because this window is only opened when linking adjustments, and we cannot link those associated with a paysplit, we filter those out.
 			List<PaySplit> listPaySplits=PaySplits.GetForAdjustments(_listAdjustments.Select(x => x.AdjNum).ToList());
 			_listAdjustments.RemoveAll(x => listPaySplits.Exists(y => y.AdjNum==x.AdjNum));
+			//Because this window is only opened when linking adjustments, and we cannot link those associated with a payplan, we filter those out.
+			List<long> listPayPlanAdjNums=PayPlanLinks.GetListForLinkTypeAndFKeys(PayPlanLinkType.Adjustment,_listAdjustments.Select(x => x.AdjNum).ToList());
+			_listAdjustments.RemoveAll(x => listPayPlanAdjNums.Contains(x.AdjNum));
 			FillGrid();
 		}
 

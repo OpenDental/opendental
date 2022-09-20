@@ -402,11 +402,11 @@ namespace OpenDental {
 			if(!ValidateRule()) {
 				return;
 			}
-			TimeSpan timeSpanPrior= new TimeSpan(PIn.Int(textDays.Text,false),PIn.Int(textHours.Text,false),0,0);
-			if(!radioBeforeAppt.Checked) {
+			TimeSpan timeSpanPrior=new TimeSpan(PIn.Int(textDays.Text,false),PIn.Int(textHours.Text,false),0,0);
+			if(ApptReminderRuleCur.TypeCur==ApptReminderType.PatientPortalInvite && !radioBeforeAppt.Checked) {
 				timeSpanPrior=timeSpanPrior.Negate();
 			}
-			else if(ApptReminderRuleCur.TypeCur==ApptReminderType.ScheduleThankYou) {
+			else if(ApptReminderRuleCur.TypeCur.In(ApptReminderType.ScheduleThankYou,ApptReminderType.GeneralMessage)) {
 				timeSpanPrior=timeSpanPrior.Negate();
 			}
 			if(_listApptReminderRulesClinic.Any(x => x.TypeCur!=ApptReminderRuleCur.TypeCur && x.TSPrior==timeSpanPrior && x.IsEnabled

@@ -369,7 +369,7 @@ namespace OpenDental {
 			// linkLabelClaimPaymentBatchOnly
 			// 
 			this.linkLabelClaimPaymentBatchOnly.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelClaimPaymentBatchOnly.LinkArea = new System.Windows.Forms.LinkArea(52, 10);
+			this.linkLabelClaimPaymentBatchOnly.LinkArea = new System.Windows.Forms.LinkArea(53, 10);
 			this.linkLabelClaimPaymentBatchOnly.LinkColor = System.Drawing.Color.MidnightBlue;
 			this.linkLabelClaimPaymentBatchOnly.Location = new System.Drawing.Point(476, 184);
 			this.linkLabelClaimPaymentBatchOnly.Name = "linkLabelClaimPaymentBatchOnly";

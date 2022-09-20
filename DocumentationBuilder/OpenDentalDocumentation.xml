@@ -2664,7 +2664,7 @@
       <summary>FK to user.UserNum</summary>
     </column>
     <column order="4" name="DateTimeEntry" type="timestamp">
-      <summary>When the row was inserted.</summary>
+      <summary>Automatically updated by MySQL every time a row is inserted or modified.</summary>
     </column>
     <column order="5" name="Note" type="text">
       <summary>Generic column for additional info.</summary>

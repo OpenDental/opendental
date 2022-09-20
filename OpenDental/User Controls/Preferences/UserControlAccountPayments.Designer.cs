@@ -66,7 +66,7 @@ namespace OpenDental {
 			// 
 			this.labelPayPlansUseSheetsDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelPayPlansUseSheetsDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelPayPlansUseSheetsDetails.Location = new System.Drawing.Point(476, 214);
+			this.labelPayPlansUseSheetsDetails.Location = new System.Drawing.Point(476, 237);
 			this.labelPayPlansUseSheetsDetails.Name = "labelPayPlansUseSheetsDetails";
 			this.labelPayPlansUseSheetsDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelPayPlansUseSheetsDetails.TabIndex = 330;
@@ -77,7 +77,7 @@ namespace OpenDental {
 			// 
 			this.labelDppUnearnedTypeDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelDppUnearnedTypeDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelDppUnearnedTypeDetails.Location = new System.Drawing.Point(476, 333);
+			this.labelDppUnearnedTypeDetails.Location = new System.Drawing.Point(476, 356);
 			this.labelDppUnearnedTypeDetails.Name = "labelDppUnearnedTypeDetails";
 			this.labelDppUnearnedTypeDetails.Size = new System.Drawing.Size(498, 30);
 			this.labelDppUnearnedTypeDetails.TabIndex = 333;
@@ -408,7 +408,7 @@ namespace OpenDental {
 			// butPayPlansVersionDetails
 			// 
 			this.butPayPlansVersionDetails.ForeColor = System.Drawing.Color.Black;
-			this.butPayPlansVersionDetails.Location = new System.Drawing.Point(479, 261);
+			this.butPayPlansVersionDetails.Location = new System.Drawing.Point(479, 285);
 			this.butPayPlansVersionDetails.Name = "butPayPlansVersionDetails";
 			this.butPayPlansVersionDetails.Size = new System.Drawing.Size(64, 21);
 			this.butPayPlansVersionDetails.TabIndex = 372;

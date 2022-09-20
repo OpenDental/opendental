@@ -281,8 +281,9 @@ namespace OpenDental.UI{
 		protected override void OnKeyDown(KeyEventArgs e) {
 			base.OnKeyDown(e);
 			if(e.KeyCode>=Keys.F1 && e.KeyCode<=Keys.F24) {
-				return;//Ignore any F keys, so that F key behavior is perserved
+				return;//Ignore any F keys, so that F key behavior is preserved
 			}
+			e.SuppressKeyPress=true;//Don't pass key event onto window. For example, 'c' could close window when we really want to jump to c in combobox list.
 			if(e.KeyCode==Keys.Up || e.KeyCode==Keys.Down) {//Select previous or next item.
 				if(SelectionModeMulti || _listSelectedIndices.Count==0) {
 					return;

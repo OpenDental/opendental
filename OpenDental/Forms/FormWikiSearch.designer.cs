@@ -35,6 +35,7 @@ namespace OpenDental{
 			this.checkBoxMatchWholeWord = new System.Windows.Forms.CheckBox();
 			this.checkBoxShowMainPages = new System.Windows.Forms.CheckBox();
 			this.butSearch = new OpenDental.UI.Button();
+			this.checkReportServer = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// gridMain
@@ -156,9 +157,19 @@ namespace OpenDental{
 			this.butSearch.Text = "Search";
 			this.butSearch.Click += new System.EventHandler(this.butSearch_Click);
 			// 
+			// checkReportServer
+			// 
+			this.checkReportServer.Location = new System.Drawing.Point(911, 12);
+			this.checkReportServer.Name = "checkReportServer";
+			this.checkReportServer.Size = new System.Drawing.Size(145, 22);
+			this.checkReportServer.TabIndex = 22;
+			this.checkReportServer.Text = "Run on report server";
+			this.checkReportServer.UseVisualStyleBackColor = true;
+			// 
 			// FormWikiSearch
 			// 
 			this.ClientSize = new System.Drawing.Size(1184, 662);
+			this.Controls.Add(this.checkReportServer);
 			this.Controls.Add(this.butSearch);
 			this.Controls.Add(this.checkBoxShowMainPages);
 			this.Controls.Add(this.checkBoxMatchWholeWord);
@@ -193,5 +204,6 @@ namespace OpenDental{
 		private System.Windows.Forms.CheckBox checkBoxMatchWholeWord;
 		private System.Windows.Forms.CheckBox checkBoxShowMainPages;
 		private UI.Button butSearch;
+		private System.Windows.Forms.CheckBox checkReportServer;
 	}
 }

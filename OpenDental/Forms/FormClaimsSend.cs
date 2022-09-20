@@ -1007,9 +1007,9 @@ namespace OpenDental{
 				gridHistory.Columns.Add(col);
 				col=new GridColumn(Lan.g("TableClaimHistory","AckCode"),100,HorizontalAlignment.Center);
 				gridHistory.Columns.Add(col);
-				col=new GridColumn(Lan.g("TableClaimHistory","Note"),170);
+				col=new GridColumn(Lan.g("TableClaimHistory","User"),130);
 				gridHistory.Columns.Add(col);
-				col=new GridColumn(Lan.g("TableClaimHistory","User"),130){ IsWidthDynamic=true };
+				col=new GridColumn(Lan.g("TableClaimHistory","Note"),170){ IsWidthDynamic=true };
 				gridHistory.Columns.Add(col);
 				gridHistory.ListGridRows.Clear();
 				GridRow row;
@@ -1021,9 +1021,9 @@ namespace OpenDental{
 					row.Cells.Add(_tableHistory.Rows[i]["dateTimeTrans"].ToString());
 					row.Cells.Add(_tableHistory.Rows[i]["etype"].ToString());
 					row.Cells.Add(_tableHistory.Rows[i]["ack"].ToString());
-					row.Cells.Add(_tableHistory.Rows[i]["Note"].ToString());
 					Userod user=Userods.GetUser(PIn.Long(_tableHistory.Rows[i]["UserNum"].ToString()));
 					row.Cells.Add(user==null ? "" : user.UserName);
+					row.Cells.Add(_tableHistory.Rows[i]["Note"].ToString());
 					gridHistory.ListGridRows.Add(row);
 				}
 			}
@@ -1135,7 +1135,8 @@ namespace OpenDental{
 			PrinterL.TryPrintOrDebugRpPreview(pd2_PrintPage,
 				Lan.g(this,"Claim history list printed"),
 				margins:new Margins(0,0,0,0),
-				printoutOrigin:PrintoutOrigin.AtMargin
+				printoutOrigin:PrintoutOrigin.AtMargin,
+				printoutOrientation:PrintoutOrientation.Landscape
 			);
 		}
 
@@ -1197,7 +1198,7 @@ namespace OpenDental{
 		}
 
 		private void pd2_PrintPage(object sender,System.Drawing.Printing.PrintPageEventArgs e) {
-			Rectangle rectangleBounds=new Rectangle(50,40,800,1035);//Some printers can handle up to 1042
+			Rectangle rectangleBounds=new Rectangle(50,40,1035,800);//Some printers can handle up to 1042
 			Graphics g=e.Graphics;
 			string text;
 			Font fontHeading=new Font("Arial",13,FontStyle.Bold);

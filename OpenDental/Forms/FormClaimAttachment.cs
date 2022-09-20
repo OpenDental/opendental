@@ -71,6 +71,7 @@ namespace OpenDental {
 			}
 			//Save this for later when we need to revert back to it
 			_titleOriginal=Text;
+			BringToFront();
 		}
 
 		public static void Open(Claim claim) {
@@ -163,6 +164,8 @@ namespace OpenDental {
 			//Remove the "waiting for snip" text from the title
 			Text=_titleOriginal;
 			butSnipTool.Enabled=true;
+			butAddImage.Enabled=true;
+			butPasteImage.Enabled=true;
     }
 
 		private void timerMonitorClipboard_Tick(object sender,EventArgs e) {
@@ -181,6 +184,7 @@ namespace OpenDental {
 				return;
 			}
 			EndSnipping();
+			BringToFront();
 			//Start trying to kill Snip & Sketch and Snipping Tool
 			_stopwatchKillSnipToolProcesses.Restart();
 			timerKillSnipToolProcesses.Start();
@@ -305,6 +309,8 @@ namespace OpenDental {
 			_titleOriginal=Text;
 			Text=_titleOriginal+$" ({Lan.g(this,"Waiting For Snip")}...)";
 			butSnipTool.Enabled=false;
+			butAddImage.Enabled=false;
+			butPasteImage.Enabled=false;
 			//Wait half a second before minimizing, otherwise Snip & Sketch can end up behind Open Dental
 			Thread.Sleep(500);
 			WindowState=FormWindowState.Minimized;
@@ -334,6 +340,7 @@ namespace OpenDental {
 			}
 			//In case this window was minimized
 			WindowState=FormWindowState.Normal;
+			BringToFront();
 			using FormClaimAttachmentItemEdit formClaimAttachmentItemEdit=new FormClaimAttachmentItemEdit(bitmap);
 			formClaimAttachmentItemEdit.IsSnip=isSnip;
 			formClaimAttachmentItemEdit.ShowDialog(this);
@@ -372,7 +379,7 @@ namespace OpenDental {
 			catch(System.OutOfMemoryException ex) {
 				//Image.FromFile() will throw an OOM exception when the image format is invalid or not supported.
 				//See MSDN if you have trust issues:  https://msdn.microsoft.com/en-us/library/stf701f5(v=vs.110).aspx
-				FriendlyException.Show(Lan.g(this,"The file does not have a valid image format. Please try again or call support."+"\r\n"+ex.Message),ex);
+				MsgBox.Show(Lan.g(this,"The file does not have a valid image format. Please try again or call support."));
 			}
 			catch(Exception ex) {
 				FriendlyException.Show(Lan.g(this,"An error occurred. Please try again or call support.")+"\r\n"+ex.Message,ex);

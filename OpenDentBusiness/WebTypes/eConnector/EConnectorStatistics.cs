@@ -34,13 +34,17 @@ namespace OpenDentBusiness.WebTypes {
 		public List<Pref> ListEServicePrefs;
 		///<summary>Public IP Address of the network hosting the eConnector</summary>
 		public string PublicIP;
+		///<summary>A list of the enabled ApptReminderRules.</summary>
+		public List<ApptReminderRule> ListApptReminderRules;
 
 		///<summary>Send a summary of eConnector statistics to OD HQ. This should only be called from the eConnector.</summary>
 		public static void UpdateEConnectorStats() {
 			EConnectorStatistics eConnStats=new EConnectorStatistics() {
 				ListEServiceSignals=new List<EServiceSignal>(),
 				ListEServicePrefs=new List<Pref>(),
+				ListApptReminderRules=new List<ApptReminderRule>(),
 			};
+			eConnStats.ListApptReminderRules=ApptReminderRules.GetAll();
 			eConnStats.EConnectorComputerName=Environment.MachineName;
 			eConnStats.EConnectorDomainUserName=Environment.UserName;
 			eConnStats.EConnectorIP=ODEnvironment.GetLocalIPAddress();
