@@ -240,7 +240,6 @@
       this.Controls.Add(this.butAddImage);
       this.Name = "FormClaimAttachment";
       this.Text = "Claim Attachments";
-      this.TopMost = true;
       this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormClaimAttachment_FormClosed);
       this.Load += new System.EventHandler(this.FormClaimAttachment_Load);
       this.Shown += new System.EventHandler(this.FormClaimAttachment_Shown);

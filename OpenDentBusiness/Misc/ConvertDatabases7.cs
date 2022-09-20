@@ -3915,7 +3915,10 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}
 		}
+
+		private static void To22_2_39() {
+			string command="UPDATE apptreminderrule SET TSPrior=-TSPrior WHERE TypeCur NOT IN(2,3,4,7) AND TSPrior<0";//ReminderFutureDay,PatientPortalInvite,ScheduleThankYou,GeneralMessage
+			Db.NonQ(command);
+		}
 	}
 }
-
-		
