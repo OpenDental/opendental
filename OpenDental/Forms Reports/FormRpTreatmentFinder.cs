@@ -104,6 +104,11 @@ namespace OpenDental{
 				}
 				GridRow row;
 				foreach(DataRow rowCur in table.Rows) {
+					for(int i=8;i<=16;i++) {
+						if(PIn.Double(rowCur[i].ToString())<0) {
+							rowCur[i]=POut.Double(0.00);
+						}
+					}
 					row=new GridRow() { Tag=rowCur };
 					double indMax=PIn.Double(rowCur[8].ToString());
 					double famMax=PIn.Double(rowCur[9].ToString());

@@ -195,6 +195,10 @@ namespace OpenDental {
 				}
 			}
 			if(_isEdgeExpressEnabled || _isXChargeEnabled || _isPayConnectEnabled || _isPaySimpleEnabled) {//Only validate recurring setup if using X-Charge, PayConnect, or PaySimple.
+				if(textDateStart.Text.IsNullOrEmpty() && !textChargeAmt.Text.IsNullOrEmpty()){
+					MsgBox.Show(this,"Please enter a Date Start first.");
+					return false;
+				}
 				if(!ValidateDateStartAndStop() || !textChargeAmt.IsValid()){
 					MsgBox.Show(this,"Please fix data entry errors first.");
 					return false;

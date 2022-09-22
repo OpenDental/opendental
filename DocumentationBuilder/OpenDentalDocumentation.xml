@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDocumentation.xsl"?>
-<database version="22.2.26.0">
+<database version="22.2.39.0">
     <table name="account">
         <summary>Used in the accounting section in chart of accounts.  Not related to patient accounts in any way.</summary>
         <column order="0" name="AccountNum" type="bigint(20)">
@@ -2647,7 +2647,7 @@
             <summary>FK to user.UserNum</summary>
         </column>
         <column order="4" name="DateTimeEntry" type="timestamp">
-            <summary>When the row was inserted.</summary>
+            <summary>Automatically updated by MySQL every time a row is inserted or modified.</summary>
         </column>
         <column order="5" name="Note" type="text">
             <summary>Generic column for additional info.</summary>
@@ -2756,6 +2756,7 @@
                 <EnumValue name="Ramq">18</EnumValue>
                 <EnumValue name="EdsMedical">19</EnumValue>
                 <EnumValue name="Lantek">20</EnumValue>
+                <EnumValue name="ITRANS2">21 Canadian clearinghouse.  Similar to ITRANS except supports certificate and carrier list web fetching.</EnumValue>
             </Enumeration>
         </column>
         <column order="13" name="ClientProgram" type="varchar(255)">
@@ -6533,6 +6534,7 @@
                 <EnumValue name="OregonCryo">38.</EnumValue>
                 <EnumValue name="EserviceLog">39 - eServices logging service.</EnumValue>
                 <EnumValue name="LicenseAgreementSig">40 - Used for storing customers license agreement acceptance signature. </EnumValue>
+                <EnumValue name="WebFormManager">41 - A Windows service running at HQ that is monitored by Headmaster.</EnumValue>
             </Enumeration>
         </column>
         <column order="2" name="ShortGuid" type="varchar(255)">
@@ -10248,7 +10250,7 @@
         </column>
     </table>
     <table name="orthoschedule">
-        <summary>Optional. Holds the Production Schedule for an OrhtoCase. </summary>
+        <summary>Optional. Holds the Production Schedule for an OrthoCase. </summary>
         <column order="0" name="OrthoScheduleNum" type="bigint(20)">
             <summary>Primary key</summary>
         </column>
