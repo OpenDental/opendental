@@ -20,6 +20,7 @@ namespace OpenDental{
 		///<summary>Not available if in Unix.</summary>
 		private MenuItemOD _menuItemCreateAtoZ;
 		private MenuItemOD _menuItemCustManagement;
+		private MenuItemOD _menuItemCustomReports;
 		///<summary>Only available in OD HQ.</summary>
 		private MenuItemOD _menuItemDefaultCCProcs;
 		private MenuItemOD _menuItemDentalSchoolClass;
@@ -98,6 +99,9 @@ namespace OpenDental{
 			_menuItemReports=new MenuItemOD("&Reports");
 			menuMain.Add(_menuItemReports);
 			LayoutMenuReports(_menuItemReports);
+			//Custom Reports-------------------------------------------------------------------------------------------------
+			_menuItemCustomReports=new MenuItemOD("Custom Reports");
+			menuMain.Add(_menuItemCustomReports);
 			//Tools----------------------------------------------------------------------------------------------------------
 			MenuItemOD menuItemTools=new MenuItemOD("&Tools");
 			menuMain.Add(menuItemTools);

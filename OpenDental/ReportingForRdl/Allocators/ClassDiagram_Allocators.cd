@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="8.25" />
+  <Comment CommentText="Different Allocators Should&#xD;&#xA;inherit form Allocator&#xD;&#xA;&#xD;&#xA;The Collection executes the different allocators in the _AllocatorList">
+    <Position X="2.24" Y="0.562" Height="1.323" Width="1.7" />
+  </Comment>
+  <Comment CommentText="MyAllocator has a constructor that calls the base class constructor with 2 variables to set the base class Fields.&#xD;&#xA;&#xD;&#xA;Main Method for this class is &#xD;&#xA;Allocate.&#xD;&#xA;&#xD;&#xA;--&gt;See Class Diagram &#xD;&#xA;MyAllocator1.SupportingCode.EPP_ClassDiagram.cd">
+    <Position X="7.677" Y="0.969" Height="1.729" Width="4.044" />
+  </Comment>
+  <Comment CommentText="Things that can make an allocation event:&#xD;&#xA;1) Adding or Deleting a Payment&#xD;&#xA;2) Adding or Deleting an Adjustment&#xD;&#xA;3) Adding or Deleting a Chargitem&#xD;&#xA;4) Adding, Deleting, or Changing a ClaimPayment&#xD;&#xA;5) Adding, Deleting, or Changing a claim writeoff">
+    <Position X="5.75" Y="3.75" Height="1.958" Width="3.137" />
+  </Comment>
+  <Class Name="OpenDental.Reporting.Allocators.AllocatorCollection">
+    <Position X="2.75" Y="3" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>Reporting\Allocators\AllocatorCollection.cs</FileName>
+      <HashCode>AgAAAAAAAAAAAAACCAAAAAAEAAAAAAAAAAQAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OpenDental.Reporting.Allocators.Allocator">
+    <Position X="0.5" Y="2.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>Reporting\Allocators\Allocator.cs</FileName>
+      <HashCode>AAAEAAAEAAAgABAFIAAAAAQgAAgAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OpenDental.Reporting.Allocators.MyAllocator1_ProviderPayment">
+    <Position X="5.5" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <FileName>Reporting\Allocators\MyAllocator1\MyAllocator1_ProviderPayment.cs</FileName>
+      <HashCode>AwAAAAgEAAAAABAAAgAAAwAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="OpenDental.Reporting.Allocators.IAllocate">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Reporting\Allocators\IAllocator.cs</FileName>
+      <HashCode>AAAAAAAEAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+</ClassDiagram>
