@@ -126,10 +126,8 @@ namespace OpenDentBusiness {
 			if(claim==null) {
 				return;
 			}
-			claim.ClaimStatus="R";
-			claim.DateReceived=DateTime_.Today;
-			Claims.Update(claim);
-			List<ClaimProc> listClaimProcs=ClaimProcs.RefreshForClaim(claim.ClaimNum);
+			//Invoke RefreshForClaims() instead of RefreshForClaim() so that Canadian labs are included.
+			List<ClaimProc> listClaimProcs=ClaimProcs.RefreshForClaims(new List<long>() { claim.ClaimNum });
 			for(int i=0;i<listClaimProcs.Count;i++) {
 				if(!listClaimProcs[i].Status.In(ClaimProcStatus.NotReceived,ClaimProcStatus.Preauth) || listClaimProcs[i].ClaimPaymentNum>0) {
 					continue;
@@ -139,7 +137,16 @@ namespace OpenDentBusiness {
 				listClaimProcs[i].InsPayEst=0;
 				listClaimProcs[i].WriteOff=0;
 			}
+			claim.ClaimStatus="R";
+			claim.DateReceived=DateTime_.Today;
+			//Synchronize the columns on the claim object that represent the totals of the claimproc columns we manipulated above.
+			claim.InsPayAmt=listClaimProcs.Sum(x => x.InsPayAmt);
+			claim.InsPayEst=listClaimProcs.Sum(x => x.InsPayEst);
+			claim.WriteOff=listClaimProcs.Sum(x => x.WriteOff);
+			Claims.Update(claim);
 			ClaimProcs.UpdateMany(listClaimProcs);
+			string logText=$"Claim on Date Entry: {claim.SecDateEntry.ToShortDateString()} and Date of Service: {claim.DateService.ToShortDateString()} has been zeroed out.";
+			SecurityLogs.MakeLogEntry(Permissions.ClaimSentEdit,claim.PatNum,logText,claim.ClaimNum,claim.SecDateTEdit);
 		}
 
 		[Serializable]

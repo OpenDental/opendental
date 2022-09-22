@@ -1485,6 +1485,7 @@ namespace OpenDental{
 					_menuItemLateCharges.Available=false;
 					_menuItemFinanceCharges.Available=true;
 				}
+				CheckCustomReports();
 				if(NeedsRedraw("ChartModule")) {
 					controlChart.InitializeLocalData();
 				}
@@ -1742,6 +1743,34 @@ namespace OpenDental{
 			}
 			catch {
 				return true;//Should never happen.  Would most likely be caused by invalid preferences within the database.
+			}
+		}
+
+		///<summary>Sets up the custom reports list in the main menu when certain requirements are met, or disables the custom reports menu item when those same conditions are not met. This function is called during initialization, and on the event that the A to Z folder usage has changed.</summary>
+		private void CheckCustomReports(){
+			_menuItemCustomReports.DropDown.Items.Clear();
+			//Try to load custom reports, but only if using the A to Z folders.
+			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
+				try {
+					string imagePath=ImageStore.GetPreferredAtoZpath();
+					string reportFolderName=PrefC.GetString(PrefName.ReportFolderName);
+					string reportDir=ODFileUtils.CombinePaths(imagePath,reportFolderName);
+					if(Directory.Exists(reportDir)) {
+						DirectoryInfo infoDir=new DirectoryInfo(reportDir);
+						FileInfo[] filesRdl=infoDir.GetFiles("*.rdl");
+						for(int i=0;i<filesRdl.Length;i++) {
+							string itemName=Path.GetFileNameWithoutExtension(filesRdl[i].Name);
+							_menuItemCustomReports.Add(itemName,new System.EventHandler(this.menuItemRDLReport_Click));
+						}
+					}
+				}
+				catch(Exception ex) {
+					ex.DoNothing();
+					MsgBox.Show(this,"Failed to retrieve custom reports.");
+				}
+			}
+			if(_menuItemCustomReports.DropDown.Items.Count==0) {
+				_menuItemCustomReports.Available=false;
 			}
 		}
 
@@ -4716,6 +4745,7 @@ namespace OpenDental{
 			//Audit trail is handled within the form due to being able to access FormPath from multiple areas.
 			using FormPath formPath=new FormPath();
 			formPath.ShowDialog();
+			CheckCustomReports();
 			this.RefreshCurrentModule();
 		}
 
@@ -5702,6 +5732,15 @@ namespace OpenDental{
 			MenuItemOD menuItem=(MenuItemOD)sender;
 			ToolButItem toolButItem=((ToolButItem)menuItem.Tag);			
 			ProgramL.Execute(toolButItem.ProgramNum,Patients.GetPat(PatNumCur));
+		}
+
+		private void menuItemRDLReport_Click(object sender,System.EventArgs e) {
+			//This point in the code is only reached if the A to Z folders are enabled, thus
+			//the image path should exist.
+			using FormReportCustom FormR=new FormReportCustom();
+			FormR.SourceFilePath=
+				ODFileUtils.CombinePaths(ImageStore.GetPreferredAtoZpath(),PrefC.GetString(PrefName.ReportFolderName),((MenuItemOD)sender).Text+".rdl");
+			FormR.ShowDialog();
 		}
 
 		private void StandardReport_Click(DisplayReport displayReport) {

@@ -256,6 +256,14 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="RdlEngine, Version=2.9.3.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\RdlEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="RdlViewer, Version=2.9.3.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\RdlViewer.dll</HintPath>
+    </Reference>
     <Reference Include="Serilog">
       <HintPath>..\Required dlls\Serilog.dll</HintPath>
     </Reference>
@@ -2750,6 +2758,12 @@
     <Compile Include="Misc\WebServiceRequest.cs" />
     <Compile Include="ReportingComplex\FormReportComplex.designer.cs">
       <DependentUpon>FormReportComplex.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ReportingForRdl\FormReportCustom.designer.cs">
+      <DependentUpon>FormReportCustom.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ReportingForRdl\FormReportForRdl.designer.cs">
+      <DependentUpon>FormReportForRdl.cs</DependentUpon>
     </Compile>
     <Compile Include="SheetFramework\SheetPrintingJob.cs" />
     <Compile Include="SheetFramework\SheetUtilL.cs" />
@@ -7078,6 +7092,66 @@
     </Compile>
     <Compile Include="ReportingComplex\QueryObject.cs" />
     <Compile Include="ReportingComplex\ReportComplex.cs" />
+    <Compile Include="ReportingForRdl\Allocators\Allocator.cs" />
+    <Compile Include="ReportingForRdl\Allocators\AllocatorCollection.cs" />
+    <Compile Include="ReportingForRdl\Allocators\FormProgressViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReportingForRdl\Allocators\FormProgressViewer.designer.cs">
+      <DependentUpon>FormProgressViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ReportingForRdl\Allocators\IAllocator.cs" />
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\FormInstallAllocator_Provider.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\FormInstallAllocator_Provider.Designer.cs">
+      <DependentUpon>FormInstallAllocator_Provider.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\FormReport_GuarantorAllocationCheck.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\FormReport_GuarantorAllocationCheck.designer.cs">
+      <DependentUpon>FormReport_GuarantorAllocationCheck.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\FormReport_ProviderIncomeReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\FormReport_ProviderIncomeReport.Designer.cs">
+      <DependentUpon>FormReport_ProviderIncomeReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\FormWarnToCloseComputers.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\FormWarnToCloseComputers.Designer.cs">
+      <DependentUpon>FormWarnToCloseComputers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\Images\ImageAnimator.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\Images\ImageAnimator.Designer.cs">
+      <DependentUpon>ImageAnimator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\MyAllocator1_ProviderPayment.cs" />
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\Report1_GuarantorAllocation.cs" />
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\ReportUI\ReportStyles.cs" />
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\SupportingCode\EqualizeProviderPayments.cs" />
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\SupportingCode\GuarantorLedgerItemsCollection.cs" />
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\SupportingCode\Guarantors.cs" />
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\SupportingCode\MakeLedgerObj.cs" />
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\SupportingCode\ODCheckQuerries.cs" />
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\SupportingCode\ODTableDefs.cs" />
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\SupportingCode\ODTablesUsed.cs" />
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\SupportingCode\PP_LedgerItem.cs" />
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\SupportingCode\PP_LedgerItemGenerator.cs" />
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\SupportingCode\PP_ODSQLPullStrings_LedgerItem.cs" />
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\SupportingCode\PP_PaySplitItem.cs" />
+    <Compile Include="ReportingForRdl\Allocators\MyAllocator1\SupportingCode\PU.cs" />
+    <Compile Include="ReportingForRdl\FormReportCustom.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReportingForRdl\FormReportForRdl.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ReportingComplex\ReportObject.cs" />
     <Compile Include="ReportingComplex\ReportObjectCollection.cs" />
     <Compile Include="ReportingComplex\Section.cs" />
@@ -12023,6 +12097,46 @@
       <DependentUpon>FormCommandLinePassOff.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="ReportingForRdl\Allocators\FormProgressViewer.resx">
+      <DependentUpon>FormProgressViewer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportingForRdl\Allocators\MyAllocator1\FormInstallAllocator_Provider.resx">
+      <DependentUpon>FormInstallAllocator_Provider.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportingForRdl\Allocators\MyAllocator1\FormReport_GuarantorAllocationCheck.resx">
+      <DependentUpon>FormReport_GuarantorAllocationCheck.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportingForRdl\Allocators\MyAllocator1\FormReport_ProviderIncomeReport.resx">
+      <DependentUpon>FormReport_ProviderIncomeReport.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportingForRdl\Allocators\MyAllocator1\FormWarnToCloseComputers.resx">
+      <DependentUpon>FormWarnToCloseComputers.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportingForRdl\Allocators\MyAllocator1\Images\ImageAnimator.resx">
+      <DependentUpon>ImageAnimator.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportingForRdl\FormReportCustom.resx">
+      <DependentUpon>FormReportCustom.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportingForRdl\FormReportForRdl.resx">
+      <DependentUpon>FormReportForRdl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Content Include="ReportingForRdl\Allocators\MyAllocator1\Images\SnuffLight1.gif" />
+    <Content Include="ReportingForRdl\Allocators\MyAllocator1\Images\SnuffLight2.gif" />
+    <Content Include="ReportingForRdl\Allocators\MyAllocator1\Images\SnuffLight3.gif" />
+    <Content Include="ReportingForRdl\Allocators\MyAllocator1\Images\SnuffLight4.gif" />
+    <Content Include="ReportingForRdl\Allocators\MyAllocator1\Images\SnuffLight5.gif" />
+    <Content Include="ReportingForRdl\Allocators\MyAllocator1\Images\SnuffLight6.gif" />
+    <Content Include="ReportingForRdl\Allocators\MyAllocator1\Images\SnuffLight7.gif" />
+    <Content Include="ReportingForRdl\Allocators\MyAllocator1\Images\SnuffLight8.gif" />
     <None Include="Resources\1500_02_12.gif" />
     <None Include="Resources\AForge.txt" />
     <Resource Include="Resources\Account32.gif" />
@@ -12031,6 +12145,8 @@
     <None Include="Resources\Appt32.gif" />
     <None Include="Resources\Angular.txt" />
     <Content Include="Resources\arrowRightTriangle.gif" />
+    <None Include="ReportingForRdl\Allocators\ClassDiagram_Allocators.cd" />
+    <None Include="ReportingForRdl\Allocators\MyAllocator1\SupportingCode\EPP_ClassDiagram.cd" />
     <None Include="Resources\arrowDownTriangle.gif" />
     <None Include="Resources\arrowUpTriangle.gif" />
     <None Include="ClassDiagram1.cd" />

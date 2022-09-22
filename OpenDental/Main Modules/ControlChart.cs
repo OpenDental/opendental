@@ -2462,6 +2462,10 @@ namespace OpenDental {
 					break;
 			}
 			ModuleSelected(Pd.PatNum);
+			if(Pd.Patient==null) {//Don't worry about running the Allocator if the patient is already deleted.
+				return;
+			}
+			Reporting.Allocators.MyAllocator1_ProviderPayment.AllocateWithToolCheck(Pd.Patient.Guarantor);
 		}
 
 		private void gridProg_KeyDown(object sender,KeyEventArgs e) {

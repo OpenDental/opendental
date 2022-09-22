@@ -99,7 +99,7 @@ namespace OpenDental {
 			this.labelApptProvbarWidthDetails.Name = "labelApptProvbarWidthDetails";
 			this.labelApptProvbarWidthDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelApptProvbarWidthDetails.TabIndex = 340;
-			this.labelApptProvbarWidthDetails.Text = "in pixels, enter 0 to remove, does not affect bars to the left of the operatories" +
+			this.labelApptProvbarWidthDetails.Text = "in pixels; enter 0 to remove; does not affect bars to the left of the operatories" +
     "";
 			this.labelApptProvbarWidthDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -133,7 +133,7 @@ namespace OpenDental {
 			this.labelApptFontSizeDetails.Name = "labelApptFontSizeDetails";
 			this.labelApptFontSizeDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelApptFontSizeDetails.TabIndex = 368;
-			this.labelApptFontSizeDetails.Text = "default is 8, decimals allowed, in addition to Zoom";
+			this.labelApptFontSizeDetails.Text = "default is 8; decimals allowed; in addition to Zoom";
 			this.labelApptFontSizeDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelApptBubNoteLengthDetails

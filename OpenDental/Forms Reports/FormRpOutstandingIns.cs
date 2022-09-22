@@ -760,7 +760,11 @@ namespace OpenDental {
 			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
-			if(!MsgBox.Show(MsgBoxButtons.OKCancel,"This clears out the selected claims with zero dollar payments. Changes can only be reverted manually. Continue?")) {
+			if(gridMain.ListGridRows.Count==0) {
+				MsgBox.Show(this,"Please select an item first.");
+				return;
+			}
+			if(!MsgBox.Show(MsgBoxButtons.OKCancel,"This clears out the selected claims and preauths with zero dollar payments. Changes can only be reverted manually. Continue?")) {
 				return;
 			}
 			List<long> listClaimNums=gridMain.SelectedTags<RpOutstandingIns.OutstandingInsClaim>().Select(x => x.ClaimNum).ToList();
