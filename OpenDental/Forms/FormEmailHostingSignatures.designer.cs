@@ -107,7 +107,7 @@ namespace OpenDental {
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(444, 23);
 			this.label1.TabIndex = 323;
-			this.label1.Text = "Signature will be included at the bottom of Mass Email and notifications.";
+			this.label1.Text = "Signature will be included at the bottom of Secure Email and notifications.";
 			// 
 			// textboxPlainText
 			// 

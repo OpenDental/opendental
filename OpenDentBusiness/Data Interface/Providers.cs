@@ -773,12 +773,17 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Gets a list of providers that are allowed to have new patient appointments scheduled for them.</summary>
-		public static List<Provider> GetProvidersForWebSchedNewPatAppt() {
+		public static List<Provider> GetProvidersForWebSchedNewPatAppt(long clinicNum=0) {
 			//No need to check MiddleTierRole; no call to db.
 			//Currently all providers are allowed to be considered for new patient appointments.
 			//This follows the "WebSchedProviderRules.FirstAvailable" logic for recall Web Sched appointments which is what Nathan agreed upon.
 			//This method is here so that we have a central location to go and get these types of providers in case we change this in the future.
-			return Providers.GetWhere(x => !x.IsNotPerson,true);//Make sure that we only return not is not persons.
+			if(clinicNum==0) {
+				return Providers.GetWhere(x => !x.IsNotPerson,true);//Make sure that we only return not is not persons.
+			}
+			else {
+				return Providers.GetProvsForClinic(clinicNum).Where(x => !x.IsNotPerson).ToList();
+			}
 		}
 
 		public static List<long> GetChangedSinceProvNums(DateTime changedSince) {
@@ -1055,7 +1060,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Only for reports. Includes all providers for a clinic where IsHiddenReport = 0 and ProvStatus != Deleted.</summary>
-		public static List<Provider> GetListReportsForClinic(long clinicNum) {
+		public static List<Provider> GetListProvidersForClinic(long clinicNum) {
 			//No need to check MiddleTierRole; no call to db.
 			return GetProvsForClinic(clinicNum).Where(x => !x.IsHiddenReport && x.ProvStatus!=ProviderStatus.Deleted).ToList();
 		}

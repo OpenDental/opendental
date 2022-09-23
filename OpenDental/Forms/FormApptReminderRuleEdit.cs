@@ -143,15 +143,18 @@ namespace OpenDental {
 		private void FillTimeSpan() {
 			textHours.Text=Math.Abs(ApptReminderRuleCur.TSPrior.Hours).ToString();//Hours, not total hours.
 			textDays.Text=Math.Abs(ApptReminderRuleCur.TSPrior.Days).ToString();//Days, not total Days.
-			if(ApptReminderRuleCur.TSPrior>=TimeSpan.Zero) {
-				radioBeforeAppt.Checked=true;
-			}
-			else {
-				radioAfterAppt.Checked=true;
-			}
 			if(ApptReminderRuleCur.TypeCur!=ApptReminderType.PatientPortalInvite) {
+				if(ApptReminderRuleCur.TypeCur==ApptReminderType.ScheduleThankYou) {
+					EnableWithinDaysAndHoursControls(enable: true);
+				}
 				radioBeforeAppt.Visible=false;
 				radioAfterAppt.Visible=false;
+			}
+			else if(ApptReminderRuleCur.TSPrior>=TimeSpan.Zero) {
+				radioBeforeAppt.Checked=true;
+			}
+			else if(ApptReminderRuleCur.TSPrior<TimeSpan.Zero) {
+				radioAfterAppt.Checked=true;
 			}
 			switch(ApptReminderRuleCur.TypeCur) {
 				case ApptReminderType.Arrival:
@@ -209,13 +212,18 @@ namespace OpenDental {
 			gridPriorities.EndUpdate();
 		}
 
+		/// <summary>Enables or disables the fields associated with the 'Do Not Send Within' label based on the boolean passed in.</summary>
+		private void EnableWithinDaysAndHoursControls(bool enable) {
+			labelDoNotSendWithin.Enabled=enable;
+			labelDaysWithin.Enabled=enable;
+			labelHoursWithin.Enabled=enable;
+			textDaysWithin.Enabled=enable;
+			textHoursWithin.Enabled=enable;
+		}
+
 		private void radioBeforeAfterAppt_CheckedChanged(object sender,EventArgs e) {
 			bool enabled=radioBeforeAppt.Checked || ApptReminderRuleCur.TypeCur==ApptReminderType.ScheduleThankYou;
-			labelDoNotSendWithin.Enabled=enabled;
-			labelDaysWithin.Enabled=enabled;
-			labelHoursWithin.Enabled=enabled;
-			textDaysWithin.Enabled=enabled;
-			textHoursWithin.Enabled=enabled;
+			EnableWithinDaysAndHoursControls(enabled);
 		}
 
 		private void radioSendPatientPortalInviteOnce_Click(object sender,EventArgs e) {
@@ -394,11 +402,11 @@ namespace OpenDental {
 			if(!ValidateRule()) {
 				return;
 			}
-			TimeSpan timeSpanPrior= new TimeSpan(PIn.Int(textDays.Text,false),PIn.Int(textHours.Text,false),0,0);
-			if(!radioBeforeAppt.Checked) {
+			TimeSpan timeSpanPrior=new TimeSpan(PIn.Int(textDays.Text,false),PIn.Int(textHours.Text,false),0,0);
+			if(ApptReminderRuleCur.TypeCur==ApptReminderType.PatientPortalInvite && !radioBeforeAppt.Checked) {
 				timeSpanPrior=timeSpanPrior.Negate();
 			}
-			else if(ApptReminderRuleCur.TypeCur==ApptReminderType.ScheduleThankYou) {
+			else if(ApptReminderRuleCur.TypeCur.In(ApptReminderType.ScheduleThankYou,ApptReminderType.GeneralMessage)) {
 				timeSpanPrior=timeSpanPrior.Negate();
 			}
 			if(_listApptReminderRulesClinic.Any(x => x.TypeCur!=ApptReminderRuleCur.TypeCur && x.TSPrior==timeSpanPrior && x.IsEnabled

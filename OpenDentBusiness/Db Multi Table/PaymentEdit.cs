@@ -995,43 +995,7 @@ namespace OpenDentBusiness {
 					dictPaySplitAccountEntries[(string)paySplit.TagOD]=splitEntry;
 				}
 			}
-			#region Adjustments (payment plans / procedures)
-			Dictionary<long,List<AccountEntry>> dictProcNumEntries=listExplicitAccountCharges.GroupBy(x => x.ProcNum)
-				.ToDictionary(x => x.Key,x => x.ToList());
-			#region Payment Plans
-			foreach(long procNum in dictProcNumEntries.Keys) {
-				//Adjustments can be associated to procedures that are associated to payment plans.
-				//Value should be removed from positive adjustments that have already been considered within the principal of payment plan credits.
-				if(dictProcNumEntries[procNum].Count(x => x.GetType()==typeof(FauxAccountEntry))==0
-					|| dictProcNumEntries[procNum].Count(x => x.GetType()==typeof(Adjustment))==0
-					|| dictProcNumEntries[procNum].Count(x => x.GetType()==typeof(Procedure))==0)
-				{
-					continue;//No payment plan entries, adjustments, or procedures.  Nothing to do in this loop which requires all three be present.
-				}
-				//Find the procedure that all of these entries are associated to in order to get access to the ProcFee.
-				AccountEntry procAccountEntry=dictProcNumEntries[procNum].First(x => x.GetType()==typeof(Procedure));
-				//Sum the principal for the faux entries and subtract the ProcFee from that value.
-				//Any amount remaining can be directly removed from the adjustment so it's not double counted.
-				decimal principalTotal=dictProcNumEntries[procNum].Where(x => x.GetType()==typeof(FauxAccountEntry))
-					.Cast<FauxAccountEntry>()
-					.Sum(x => x.Principal);
-				decimal amountRemaining=(principalTotal-procAccountEntry.AmountOriginal);
-				//Find all of the adjustments that are directly associated to this pat/prov/clinic combo.
-				List<AccountEntry> listAdjAccountEntries=dictProcNumEntries[procNum].FindAll(x => x.GetType()==typeof(Adjustment)
-					&& x.PatNum==procAccountEntry.PatNum
-					&& x.ProvNum==procAccountEntry.ProvNum
-					&& x.ClinicNum==procAccountEntry.ClinicNum);
-				foreach(AccountEntry adjAccountEntry in listAdjAccountEntries) {
-					if(CompareDecimal.IsLessThanOrEqualToZero(amountRemaining)) {
-						break;
-					}
-					decimal amountToRemove=Math.Min(adjAccountEntry.AmountEnd,amountRemaining);
-					adjAccountEntry.AmountEnd-=amountToRemove;
-					amountRemaining-=amountToRemove;
-				}
-			}
-			#endregion
-			#region Procedures
+			#region Adjustments
 			foreach(AccountEntry accountEntryProc in listExplicitAccountCharges.Where(x => x.GetType()==typeof(Procedure))) {
 				//Find every adjustment entry that is explicitly linked to the current procedure and directly manipulate the AmountEnd for both.
 				List<AccountEntry> listAdjEntries=listExplicitAccountCharges.FindAll(x => x.GetType()==typeof(Adjustment)
@@ -1068,7 +1032,6 @@ namespace OpenDentBusiness {
 				//Have any adjustments found balance each other out as much as possible.
 				BalanceAccountEntries(ref listAdjProcPosNegEntries);
 			}
-			#endregion
 			#endregion
 			//Group up all current and historical splits by Pat/Prov/Clinic for explicit linking.
 			var dictPatProvClinicSplits=listSplitsCurrentAndHistoric.Where(x => !CompareDouble.IsZero(x.SplitAmt))

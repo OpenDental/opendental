@@ -1075,6 +1075,9 @@ namespace OpenDentBusiness{
 				else {//Correction
 					claimProc.FeeBilled=listClaimProcs[i].FeeBilled;
 				}
+				if(PayPlans.IsClosed(claimProc.PayPlanNum)) {
+					claimProc.PayPlanNum=0;//detatch the claimproc from closed ins pay plan
+				}
 				claimProc.ClaimPaymentNum=0;//no payment attached
 				//claimprocnum will be overwritten
 				claimProc.DedApplied=0;
@@ -2820,6 +2823,24 @@ namespace OpenDentBusiness{
 				+POut.Long((int)ClaimProcStatus.Received)+","
 				+POut.Long((int)ClaimProcStatus.InsHist)+","
 				+POut.Long((int)ClaimProcStatus.Supplemental)+")";
+			return ClaimProcCrud.SelectMany(command);
+		}
+
+		///<summary>Gets a list of ClaimProcs from the db. Returns an empty list if not found.</summary>
+		public static List<ClaimProc> GetClaimProcsForApi(int limit,int offset,long patNum,long claimNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ClaimProc>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,claimNum);
+			}
+			string command="SELECT * from claimproc"
+				+" WHERE SecDateTEdit>="+POut.DateT(DateTime.MinValue);
+      if(patNum>0) {
+				command+=" AND PatNum="+POut.Long(patNum);
+      }
+			if(claimNum>0){
+				command+=" AND ClaimNum="+POut.Long(claimNum);
+      }
+			command+=" ORDER BY ClaimProcNum"
+				+" LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
 			return ClaimProcCrud.SelectMany(command);
 		}
 

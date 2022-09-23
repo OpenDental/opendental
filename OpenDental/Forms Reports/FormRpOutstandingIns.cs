@@ -97,11 +97,13 @@ namespace OpenDental {
 		}
 
 		private void FillProvs() {
+			comboBoxMultiProv.IncludeAll=true;
 			comboBoxMultiProv.Items.AddProvsFull(Providers.GetListReports());
 			comboBoxMultiProv.IsAllSelected=true;
 		}
 
 		private void FillUsers() {
+			comboUserAssigned.IncludeAll=true;
 			comboUserAssigned.Items.Add(Lans.g(this,"Unassigned"),new Userod() {UserNum=0});
 			_listClaimSentEditUsers.ForEach(x => comboUserAssigned.Items.Add(x.UserName,x));
 			comboUserAssigned.IsAllSelected=true;

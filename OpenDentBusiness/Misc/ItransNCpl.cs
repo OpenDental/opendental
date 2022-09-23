@@ -39,7 +39,7 @@ namespace OpenDentBusiness {
 			//	json=File.ReadAllText(@"..\..\..\UnitTests\Resources\test-n-cpl.txt");
 			//}
 			//If ITRANS2 is fully setup, then use the local ITRANS2 install on server to import carrier data.
-			if(clearinghouse.CommBridge==EclaimsCommBridge.ITRANS && !string.IsNullOrEmpty(clearinghouse.ResponsePath)) {
+			if(clearinghouse.CommBridge==EclaimsCommBridge.ITRANS2 && !string.IsNullOrEmpty(clearinghouse.ResponsePath)) {
 				if(!File.Exists(ODFileUtils.CombinePaths(clearinghouse.ResponsePath,"ITRANS Claims Director.exe"))) {
 					return Lans.g("Clearinghouse","Unable to find 'ITRANS Claims Director.exe'. Make sure the file exists and the path is correct.");
 				}
@@ -59,7 +59,7 @@ namespace OpenDentBusiness {
 				json=File.ReadAllText(ncplFilePath);//Read n-cpl.json
 				dateTimeTrans=File.GetCreationTime(ncplFilePath);
 			}
-			else {//ITRANS2 not used or not setup correctly, go to HQ for file content.
+			else {//ITRANS2 not used or not setup correctly (ex using "ITRANS"), go to HQ for file content.
 				try {
 					string result=WebServiceMainHQProxy.GetWebServiceMainHQInstance().CanadaCarrierUpdate(PayloadHelper.CreatePayload("",eServiceCode.Undefined));
 					json=WebSerializer.DeserializePrimitiveOrThrow<string>(result);

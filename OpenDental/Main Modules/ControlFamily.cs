@@ -1139,6 +1139,11 @@ namespace OpenDental{
 						row.Cells.Add(_patCur.Preferred);
 						break;
 					#endregion Preferred
+					#region Preferred Pronoun
+					case "Preferred Pronoun":
+						row.Cells.Add(_patNoteCur.Pronoun.ToString());
+						break;
+					#endregion
 					#region Primary Provider
 					case "Primary Provider":
 						if(_patCur.PriProv!=0) {

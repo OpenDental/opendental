@@ -1065,7 +1065,7 @@ namespace OpenDentBusiness {
 				return allowedSub;
 			}
 			//or, if not PPO, and an allowed fee schedule exists, then we use that.
-			if(allowedFeeSched!=0) {
+			if(allowedFeeSched!=0 && !FeeScheds.GetIsHidden(allowedFeeSched)) {
 				if(lookupFees!=null){
 					listFees=lookupFees[new FeeKey2(substCodeNum,allowedFeeSched)].ToList();
 				}

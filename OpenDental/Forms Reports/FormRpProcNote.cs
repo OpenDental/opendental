@@ -32,7 +32,7 @@ namespace OpenDental{
 		private void FormRpProcNote_Load(object sender,System.EventArgs e) {
 			checkNoNotes.Checked=PrefC.GetBool(PrefName.ReportsIncompleteProcsNoNotes);
 			checkUnsignedNote.Checked=PrefC.GetBool(PrefName.ReportsIncompleteProcsUnsigned);
-			List<Provider> listProviders=Providers.GetListReportsForClinic(comboClinics.SelectedClinicNum);
+			List<Provider> listProviders=Providers.GetListProvidersForClinic(comboClinics.SelectedClinicNum);
 			FillProvs(listProviders);
 			dateRangePicker.SetDateTimeFrom(DateTime.Today);
 			dateRangePicker.SetDateTimeTo(DateTime.Today);
@@ -245,12 +245,12 @@ namespace OpenDental{
 		}
 
 		private void comboClinics_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(comboClinics.IsAllSelected) {
+			if(comboClinics.IsAllSelected) {//return all providers if "All" is selected.
 				FillProvs(Providers.GetListReports());
 			}
-			else {
-				List<Provider> listProviders=Providers.GetListReportsForClinic(comboClinics.SelectedClinicNum);
-				FillProvs(listProviders);
+			else { //return providers associated with the selected clinics.
+				List<Provider> listProvs=comboClinics.ListSelectedClinicNums.SelectMany(x => Providers.GetListProvidersForClinic(x)).ToList();
+				FillProvs(listProvs);
 			}
 		}
 

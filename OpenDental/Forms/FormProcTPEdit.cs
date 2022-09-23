@@ -60,7 +60,12 @@ namespace OpenDental{
 			textPrognosis.Text=ProcCur.Prognosis;
 			textDx.Text=ProcCur.Dx;
 			textProcAbbr.Text=ProcCur.ProcAbbr;
-			textFeeAllowed.Text=ProcCur.FeeAllowed.ToString("F");
+			if(ProcCur.FeeAllowed>-1) {
+				textFeeAllowed.Text=ProcCur.FeeAllowed.ToString("F");
+			}
+			else {
+				textFeeAllowed.Text="";
+			}
 			if(Clinics.IsMedicalPracticeOrClinic(Clinics.ClinicNum)) {
 				labelToothNum.Visible=false;
 				textToothNumTP.Visible=false;
@@ -105,7 +110,12 @@ namespace OpenDental{
 			ProcCur.Prognosis=textPrognosis.Text;
 			ProcCur.Dx=textDx.Text;
 			ProcCur.ProcAbbr=textProcAbbr.Text;
-			ProcCur.FeeAllowed=PIn.Double(textFeeAllowed.Text);
+			if(String.IsNullOrWhiteSpace(textFeeAllowed.Text)) {
+				ProcCur.FeeAllowed=-1;
+			}
+			else {
+				ProcCur.FeeAllowed=PIn.Double(textFeeAllowed.Text);
+			}
 			ProcTPs.InsertOrUpdate(ProcCur,false);//IsNew not applicable here
 			SecurityLogs.MakeLogEntry(Permissions.TreatPlanEdit,ProcCur.PatNum,"Edit proc: "+ProcCur.Descript);
 			DialogResult=DialogResult.OK;

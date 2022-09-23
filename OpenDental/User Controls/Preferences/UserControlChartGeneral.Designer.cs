@@ -63,6 +63,9 @@ namespace OpenDental {
 			this.textICD9DefaultForNewProcs = new System.Windows.Forms.TextBox();
 			this.labelIcdCodeDefault = new System.Windows.Forms.Label();
 			this.butDiagnosisCode = new OpenDental.UI.Button();
+			this.labelMedicalFeeUsedForNewProcsDetails = new System.Windows.Forms.Label();
+			this.labelMedDefaultStopDaysDetails = new System.Windows.Forms.Label();
+			this.linkLabelIsAlertRadiologyProcsEnabledDetails = new System.Windows.Forms.LinkLabel();
 			this.groupBoxFunctionality.SuspendLayout();
 			this.groupBoxPerio.SuspendLayout();
 			this.groupBoxAppointments.SuspendLayout();
@@ -113,7 +116,7 @@ namespace OpenDental {
 			this.labelShowPlannedApptPromptDetails.Name = "labelShowPlannedApptPromptDetails";
 			this.labelShowPlannedApptPromptDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelShowPlannedApptPromptDetails.TabIndex = 347;
-			this.labelShowPlannedApptPromptDetails.Text = "when leaving the chart module and a patient has procedures that were treatment pl" +
+			this.labelShowPlannedApptPromptDetails.Text = "when leaving the Chart Module and a patient has procedures that were treatment pl" +
     "anned today";
 			this.labelShowPlannedApptPromptDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -136,7 +139,7 @@ namespace OpenDental {
 			this.labelDxIcdVersionDetails.Name = "labelDxIcdVersionDetails";
 			this.labelDxIcdVersionDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelDxIcdVersionDetails.TabIndex = 349;
-			this.labelDxIcdVersionDetails.Text = " uncheck for ICD-9";
+			this.labelDxIcdVersionDetails.Text = "uncheck for ICD-9";
 			this.labelDxIcdVersionDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// groupBoxFunctionality
@@ -221,9 +224,9 @@ namespace OpenDental {
 			// 
 			this.checkIsAlertRadiologyProcsEnabled.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkIsAlertRadiologyProcsEnabled.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIsAlertRadiologyProcsEnabled.Location = new System.Drawing.Point(76, 55);
+			this.checkIsAlertRadiologyProcsEnabled.Location = new System.Drawing.Point(6, 55);
 			this.checkIsAlertRadiologyProcsEnabled.Name = "checkIsAlertRadiologyProcsEnabled";
-			this.checkIsAlertRadiologyProcsEnabled.Size = new System.Drawing.Size(364, 17);
+			this.checkIsAlertRadiologyProcsEnabled.Size = new System.Drawing.Size(434, 17);
 			this.checkIsAlertRadiologyProcsEnabled.TabIndex = 238;
 			this.checkIsAlertRadiologyProcsEnabled.Text = "OpenDentalService alerts for scheduled non-CPOE radiology procedures";
 			this.checkIsAlertRadiologyProcsEnabled.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -244,7 +247,7 @@ namespace OpenDental {
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(361, 17);
 			this.label11.TabIndex = 234;
-			this.label11.Text = "Medication order default days until stop date (0 for no automatic stop date)";
+			this.label11.Text = "Medication Order default days until stop date";
 			this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkScreeningsUseSheets
@@ -493,11 +496,51 @@ namespace OpenDental {
 			this.butDiagnosisCode.Text = "...";
 			this.butDiagnosisCode.Click += new System.EventHandler(this.butDiagnosisCode_Click);
 			// 
+			// labelMedicalFeeUsedForNewProcsDetails
+			// 
+			this.labelMedicalFeeUsedForNewProcsDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelMedicalFeeUsedForNewProcsDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelMedicalFeeUsedForNewProcsDetails.Location = new System.Drawing.Point(476, 116);
+			this.labelMedicalFeeUsedForNewProcsDetails.Name = "labelMedicalFeeUsedForNewProcsDetails";
+			this.labelMedicalFeeUsedForNewProcsDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelMedicalFeeUsedForNewProcsDetails.TabIndex = 350;
+			this.labelMedicalFeeUsedForNewProcsDetails.Text = "when cross-coding";
+			this.labelMedicalFeeUsedForNewProcsDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelMedDefaultStopDaysDetails
+			// 
+			this.labelMedDefaultStopDaysDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelMedDefaultStopDaysDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelMedDefaultStopDaysDetails.Location = new System.Drawing.Point(476, 347);
+			this.labelMedDefaultStopDaysDetails.Name = "labelMedDefaultStopDaysDetails";
+			this.labelMedDefaultStopDaysDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelMedDefaultStopDaysDetails.TabIndex = 351;
+			this.labelMedDefaultStopDaysDetails.Text = "0 for no automatic stop date";
+			this.labelMedDefaultStopDaysDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// linkLabelIsAlertRadiologyProcsEnabledDetails
+			// 
+			this.linkLabelIsAlertRadiologyProcsEnabledDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.linkLabelIsAlertRadiologyProcsEnabledDetails.LinkArea = new System.Windows.Forms.LinkArea(4, 24);
+			this.linkLabelIsAlertRadiologyProcsEnabledDetails.LinkColor = System.Drawing.Color.MidnightBlue;
+			this.linkLabelIsAlertRadiologyProcsEnabledDetails.Location = new System.Drawing.Point(476, 368);
+			this.linkLabelIsAlertRadiologyProcsEnabledDetails.Name = "linkLabelIsAlertRadiologyProcsEnabledDetails";
+			this.linkLabelIsAlertRadiologyProcsEnabledDetails.Size = new System.Drawing.Size(498, 17);
+			this.linkLabelIsAlertRadiologyProcsEnabledDetails.TabIndex = 372;
+			this.linkLabelIsAlertRadiologyProcsEnabledDetails.TabStop = true;
+			this.linkLabelIsAlertRadiologyProcsEnabledDetails.Text = "see EHR Radiology Order List";
+			this.linkLabelIsAlertRadiologyProcsEnabledDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.linkLabelIsAlertRadiologyProcsEnabledDetails.UseCompatibleTextRendering = true;
+			this.linkLabelIsAlertRadiologyProcsEnabledDetails.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelIsAlertRadiologyProcsEnabledDetails_LinkClicked);
+			// 
 			// UserControlChartGeneral
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.linkLabelIsAlertRadiologyProcsEnabledDetails);
+			this.Controls.Add(this.labelMedDefaultStopDaysDetails);
+			this.Controls.Add(this.labelMedicalFeeUsedForNewProcsDetails);
 			this.Controls.Add(this.labelDxIcdVersionDetails);
 			this.Controls.Add(this.labelProvColorChartDetails);
 			this.Controls.Add(this.labelShowPlannedApptPromptDetails);
@@ -564,5 +607,8 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelShowPlannedApptPromptDetails;
 		private System.Windows.Forms.Label labelProvColorChartDetails;
 		private System.Windows.Forms.Label labelDxIcdVersionDetails;
+		private System.Windows.Forms.Label labelMedicalFeeUsedForNewProcsDetails;
+		private System.Windows.Forms.Label labelMedDefaultStopDaysDetails;
+		private System.Windows.Forms.LinkLabel linkLabelIsAlertRadiologyProcsEnabledDetails;
 	}
 }

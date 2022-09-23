@@ -1437,7 +1437,7 @@ namespace OpenDentBusiness {
 				+"appointment.AptNum AS schedAptNum "
 				+"FROM plannedappt "
 				+"LEFT JOIN appointment ON appointment.NextAptNum=plannedappt.AptNum AND appointment.NextAptNum!=0 "
-				+"LEFT JOIN procedurelog ON procedurelog.PlannedAptNum=plannedappt.AptNum	AND procedurelog.ProcStatus="+POut.Int((int)ProcStat.C)+" "
+				+"LEFT JOIN procedurelog ON procedurelog.PlannedAptNum=plannedappt.AptNum AND procedurelog.ProcStatus="+POut.Int((int)ProcStat.C)+" AND procedurelog.PatNum = plannedappt.patnum "
 				+"WHERE plannedappt.PatNum="+POut.Long(patNum)+" ";
 			if(DataConnection.DBtype==DatabaseType.MySql) {
 				command+="GROUP BY plannedappt.AptNum ";
@@ -1823,7 +1823,7 @@ namespace OpenDentBusiness {
 		///<summary>Creates a DataTable for Planned Appts for a patient, similar to GetPlannedApt().</summary>
 		public static DataTable GetPlannedApptsForApi(long patNum,int offset,int limit,string dateTimeFormatString) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetTable(MethodBase.GetCurrentMethod(),patNum,dateTimeFormatString);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),patNum,offset,limit,dateTimeFormatString);
 			}
 			DataConnection dcon=new DataConnection();
 			DataTable table=new DataTable();

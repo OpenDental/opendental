@@ -352,6 +352,9 @@ namespace OpenDentBusiness {
 							listCells.Add(XmlEscape(((DateTime)row[col]).ToString("o")));
 						}
 					}
+					else if(col.DataType==typeof(Byte[])) {
+						listCells.Add(XmlEscape(PIn.ByteArray(row[col])));
+					}
 					else {
 						listCells.Add(XmlEscape(row[col].ToString()));
 					}

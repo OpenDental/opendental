@@ -164,6 +164,8 @@ namespace OpenDentBusiness {
 		LabelPatientLFChartNumber,
 		LabelPatientLFPatNum,
 		LabelPatientRadiograph,
+		///<summary>Users are NEVER allowed to use this sheet type. The custom print logic used for this sheet type does not allow any customization.</summary>
+		[SheetInternal(DoShowInInternalList=false)]
 		LabelText,
 		LabelCarrier,
 		LabelReferral,

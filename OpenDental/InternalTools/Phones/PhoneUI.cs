@@ -454,9 +454,11 @@ namespace OpenDental {
 			}
 			ClockEvent clockEventLast=ClockEvents.GetLastEvent(employeeNum);
 			//If already clocked in, but switching locations between, available at home / available at office, To create a new clock event.
-			if(ClockEvents.IsClockedIn(employeeNum) && clockEventLast.IsWorkingHome != isAtHome) {
-				System.Threading.Thread.Sleep(1000); // Needed to maintain that the end of a break, and the clock out doesnt happen at the same second, and break the calc daily functionality.
-				ClockEvents.ClockOut(employeeNum,TimeClockStatus.Home); // clocking out for home to complete clock event.	
+			if(ClockEvents.IsClockedIn(employeeNum) && clockEventLast.IsWorkingHome!=isAtHome) {
+				ClockEvents.ClockOut(employeeNum,TimeClockStatus.Home); //clocking out for home to complete clock event.	
+				//Needed to maintain that the end of the first clockevent, and the start of the second clockevent doesnt happen at the same second.
+				//Otherwise it will break the calc daily functionality and cause the wrong employe status.
+				System.Threading.Thread.Sleep(1000); 
 			}
 			//If already clocked in and not switching locations.
 			else if(ClockEvents.IsClockedIn(employeeNum)) {

@@ -39,7 +39,6 @@ namespace OpenDental{
 		///<summary>This is a list of all operatories available to add to this view based on AssignedClinicNum and the clinic the ops are assigned to.  If the clinics show feature is turned off (EasyNoClinics=true) or if the view is not assigned to a clinic, all unhidden ops will be available.  If an op is not assigned to a clinic, it will only be available to add to views also not assigned to a clinic.  If the view is assigned to a clinic, ops assigned to the same clinic will be available to add to the view.</summary>
 		private List<long> _listOpNums;
 		private List<Provider> _listProviders;
-		private bool _isMobileViewUpdated;
 
 		///<summary></summary>
 		public FormApptViewEdit()
@@ -341,6 +340,15 @@ namespace OpenDental{
 			}
 		}
 
+		public void UpdateMobileViewList(List<ApptViewItem> listUpdatedItems) {
+			_listMobileApptViewItems=listUpdatedItems;
+		}
+
+		private void butMobileView_Click(object sender,EventArgs e) {
+			using FormApptViewEditMobile formMobileApptViewEdit=new FormApptViewEditMobile(ApptViewCur,_listMobileApptViewItems,this);
+			formMobileApptViewEdit.ShowDialog();
+		}
+		
 		private void butLeft_Click(object sender, System.EventArgs e) {
 			if(gridMain.SelectedIndices.Length>0) {
 				_listApptViewItemsDisplayedAll.Remove(_listApptViewItemsDisplayedMain[gridMain.SelectedIndices[0]]);
@@ -698,8 +706,11 @@ namespace OpenDental{
 					return;
 				}
 			}
-			ApptViewItems.DeleteAllForView(ApptViewCur);//start with a clean slate
+			//start with a clean slate
+			ApptViewItems.DeleteAllForView(ApptViewCur);
+			ApptViewItems.DeleteAllForView(ApptViewCur,isMobile:true);
 			ApptViewItem apptViewItem;
+			bool isClinicMobile=MobileAppDevices.IsClinicSignedUpForMobileWeb(comboClinic.SelectedClinicNum);
 			for(int i=0;i<_listOpNums.Count;i++){
 				if(listOps.SelectedIndices.Contains(i)){
 					apptViewItem=new ApptViewItem();
@@ -707,8 +718,9 @@ namespace OpenDental{
 					apptViewItem.OpNum=_listOpNums[i];
 					apptViewItem.IsMobile=false;
 					ApptViewItems.Insert(apptViewItem);
-					//if they are signed up for mobile, save a mobile version of operatory selection, since they cannot be changed in mobile appt view edit window
-					if(MobileAppDevices.IsClinicSignedUpForMobileWeb(comboClinic.SelectedClinicNum)) {
+					//if they are signed up for mobile, save a mobile version of provider selection, since they cannot be changed in mobile appt view edit window.
+					//If there are no mobile view items, then the mobile view doesn't exist so don't add the operatory.
+					if(isClinicMobile && _listMobileApptViewItems.Count!=0) {
 						apptViewItem.IsMobile=true;
 						ApptViewItems.Insert(apptViewItem);
 					}
@@ -721,8 +733,9 @@ namespace OpenDental{
 					apptViewItem.ProvNum=_listProviders[i].ProvNum;
 					apptViewItem.IsMobile=false;
 					ApptViewItems.Insert(apptViewItem);
-					//if they are signed up for mobile, save a mobile version of provider selection, since they cannot be changed in mobile appt view edit window
-					if(MobileAppDevices.IsClinicSignedUpForMobileWeb(comboClinic.SelectedClinicNum)) {
+					//if they are signed up for mobile, save a mobile version of provider selection, since they cannot be changed in mobile appt view edit window.
+					//If there are no mobile view items, then the mobile view doesn't exist so don't add the provider.
+					if(isClinicMobile && _listMobileApptViewItems.Count!=0) {
 						apptViewItem.IsMobile=true;
 						ApptViewItems.Insert(apptViewItem);
 					}
@@ -752,15 +765,17 @@ namespace OpenDental{
 				apptViewItem.IsMobile=false;
 				ApptViewItems.Insert(apptViewItem);
 			}
-			if(_isMobileViewUpdated) {
-				ApptViewItems.DeleteAllForView(ApptViewCur,isMobile: true);//start with a clean slate
+			if(isClinicMobile) {
 				ApptViewItem apptViewItemMobile;
-				for(int i = 0;i<_listMobileApptViewItems.Count;i++) {
-					apptViewItemMobile=_listMobileApptViewItems[i];
-					apptViewItemMobile.ApptViewNum=ApptViewCur.ApptViewNum;
-					apptViewItemMobile.ElementOrder=(byte)i;
-					apptViewItemMobile.IsMobile=true;
-					ApptViewItems.Insert(apptViewItemMobile);
+				for(int i=0;i<_listMobileApptViewItems.Count;i++) {
+					//Only add the ApptViewItems that do not include OpNum or ProvNum. This includes ElementDesc, ApptFieldDefNum, and PatFieldDefNum .
+					if(_listMobileApptViewItems[i].ProvNum==0 && _listMobileApptViewItems[i].OpNum==0) {
+						apptViewItemMobile=_listMobileApptViewItems[i];
+						apptViewItemMobile.ApptViewNum=ApptViewCur.ApptViewNum;
+						apptViewItemMobile.ElementOrder=(byte)i;
+						apptViewItemMobile.IsMobile=true;
+						ApptViewItems.Insert(apptViewItemMobile);
+					}
 				}
 			}
 			ApptViewCur.WaitingRmName=listWaitingRmNameFormat.GetSelected<EnumWaitingRmName>();
@@ -801,21 +816,10 @@ namespace OpenDental{
 			}
 			if(IsNew){
 				ApptViewItems.DeleteAllForView(ApptViewCur);
+				ApptViewItems.DeleteAllForView(ApptViewCur,isMobile:true);
 				ApptViews.Delete(ApptViewCur);
 			}
 		}
-
-		private void butMobileView_Click(object sender,EventArgs e) {
-			using FormMobileApptViewEdit formMobileApptViewEdit = new FormMobileApptViewEdit(ApptViewCur,_listMobileApptViewItems, this);
-			formMobileApptViewEdit.ShowDialog();
-		}
-
-		public void UpdateMobileViewList(List<ApptViewItem> listUpdatedItems) {
-			_listMobileApptViewItems=listUpdatedItems;
-			_isMobileViewUpdated=true;
-		}
-
-
 	}
 }
 

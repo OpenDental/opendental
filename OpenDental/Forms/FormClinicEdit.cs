@@ -8,9 +8,7 @@ using OpenDental.UI;
 using System.Text.RegularExpressions;
 
 namespace OpenDental {
-	/// <summary>
-	/// Summary description for FormBasicTemplate.
-	/// </summary>
+	///<summary></summary>
 	public partial class FormClinicEdit : FormODBase {
 		public Clinic ClinicCur;
 		//private List<Provider> _listProv;
@@ -19,13 +17,22 @@ namespace OpenDental {
 		private List<Def> _listDefsRegions;
 		///<summary>DefLink.FKey is ClinicNum to link to defs representing specialties for that clinic.</summary>
 		public List<DefLink> ListDefLinksSpecialties;
-		///<summary></summary>
-		public FormClinicEdit(Clinic clinic)
-		{
-			//
-			// Required for Windows Form Designer support
-			//
+		///<summary>List of clinics that will be used for validation. Hidden clinics and ClinicCur will not be present in this list. Some clinics in this list may not reflect what is in the cache or the database.</summary>
+		private List<Clinic> _listClinicsForValidation;
+
+		///<summary>Provide the clinic that will be edited. Optionally provide a list of clinics with local changes if in the middle of editing multiple clinics in memory.</summary>
+		public FormClinicEdit(Clinic clinic,List<Clinic> listClinics=null) {
 			ClinicCur=clinic;
+			//Initialize the list of clinics for validation with all non-hidden clinics in the cache.
+			_listClinicsForValidation=Clinics.GetWhere(x => x.ClinicNum!=ClinicCur.ClinicNum,isShort:true);
+			//Override any cached clinics with the list of clinics that were passed in. A user could be in the middle of editing the entire list of all clinics in memory.
+			if(!listClinics.IsNullOrEmpty()) {
+				List<long> listClinicNums=listClinics.Select(x => x.ClinicNum).ToList();
+				//Remove clinics passed in since the ones passed in can have different values.
+				_listClinicsForValidation.RemoveAll(x => listClinicNums.Contains(x.ClinicNum));
+				//Add the clinics passed to the class wide list. This will have all of the clinics that were passed in.
+				_listClinicsForValidation.AddRange(listClinics.FindAll(x => !x.IsHidden && x.ClinicNum!=ClinicCur.ClinicNum));
+			}
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
@@ -244,6 +251,11 @@ namespace OpenDental {
 			}
 			if(radioInsBillingProvSpecific.Checked && comboInsBillingProv.SelectedIndex==-1){ 
 				MsgBox.Show(this,"You must select a provider.");
+				return;
+			}
+			//Check to see if abbr already exists. The check will only happen for non-hidden clinics.
+			if(!checkHidden.Checked && _listClinicsForValidation.Any(x => x.Abbr.ToLower()==textClinicAbbr.Text.ToLower().Trim())) {
+				MsgBox.Show(this,"Abbreviation already exists.");
 				return;
 			}
 			string phone=textPhone.Text;

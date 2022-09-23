@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDiffDocumentation.xsl"?>
-<database version="22.2.23.0">
+<database version="22.2.39.0">
     <table name="apptgeneralmessagesent">
         <summary></summary>
         <column order="7" name="SendStatus" type="tinyint(4)">
@@ -72,6 +72,16 @@
         </column>
         <column order="16" name="DateTimeSent" type="datetime">
             <summary></summary>
+        </column>
+    </table>
+    <table name="clearinghouse">
+        <summary></summary>
+        <column order="12" name="CommBridge" type="tinyint">
+            <summary>Enum:EclaimsCommBridge  One of the included hard-coded communications bridges.  Or none to just create the claim files without uploading.</summary>
+            <Enumeration name="EclaimsCommBridge">
+                <summary>Each clearinghouse can have a hard-coded comm bridge which handles all the communications of transfering the claim files to the clearinghouse/carrier.  Does not just include X12, but can include any format at all.</summary>
+                <EnumValue name="ITRANS2">21 Canadian clearinghouse.  Similar to ITRANS except supports certificate and carrier list web fetching.</EnumValue>
+            </Enumeration>
         </column>
     </table>
     <table name="commlog">
@@ -152,6 +162,16 @@
                 <EnumValue name="ECCheckInListSheetPatientSignedPaymentPlan">61 - EClipboard - Check In List Sheet Patient signed Payment Plan</EnumValue>
                 <EnumValue name="ECPatientDirectedToMakePayment">62 - EClipboard - Check In List Sheet Patient signed Payment Plan</EnumValue>
                 <EnumValue name="DoNotLog"> - Used in Xam Exeptions. If this is sent back, error will not be logged. Default eServiceAction for XamException.</EnumValue>
+            </Enumeration>
+        </column>
+    </table>
+    <table name="eserviceshortguid">
+        <summary></summary>
+        <column order="1" name="EServiceCode" type="varchar(255)">
+            <summary>Enum:eServiceCode EService that this short GUID applies to.</summary>
+            <Enumeration name="eServiceCode">
+                <summary>Used by EServiceSignal.ServiceCode. Each service will have an entry here. Stored as an int for forward compatibility.</summary>
+                <EnumValue name="WebFormManager">41 - A Windows service running at HQ that is monitored by Headmaster.</EnumValue>
             </Enumeration>
         </column>
     </table>

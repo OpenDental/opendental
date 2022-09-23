@@ -66,6 +66,8 @@ namespace OpenDental {
 			checkCommLogAutoSave.Checked=PrefC.GetBool(PrefName.CommLogAutoSave);
 			checkStatementInvoiceGridShowWriteoffs.Checked=PrefC.GetBool(PrefName.InvoicePaymentsGridShowNetProd);
 			checkAllowFutureTrans.Checked=PrefC.GetBool(PrefName.FutureTransDatesAllowed);
+			checkAllowFuturePayments.Checked=PrefC.GetBool(PrefName.AllowFutureInsPayments);
+			checkAllowFutureDebits.Checked=PrefC.GetBool(PrefName.AccountAllowFutureDebits);
 			checkAgingProcLifo.CheckState=PrefC.GetYNCheckState(PrefName.AgingProcLifo);
 			DateTime agingBeginDateT=PrefC.GetDateT(PrefName.AgingBeginDateTime);
 			if(agingBeginDateT>DateTime.MinValue) {
@@ -91,6 +93,8 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateBool(PrefName.AccountShowPaymentNums,checkAccountShowPaymentNums.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.InvoicePaymentsGridShowNetProd,checkStatementInvoiceGridShowWriteoffs.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.FutureTransDatesAllowed,checkAllowFutureTrans.Checked);
+			Changed|=Prefs.UpdateBool(PrefName.AllowFutureInsPayments,checkAllowFuturePayments.Checked);
+			Changed|=Prefs.UpdateBool(PrefName.AccountAllowFutureDebits,checkAllowFutureDebits.Checked);
 			Changed|=Prefs.UpdateYN(PrefName.AgingProcLifo,checkAgingProcLifo.CheckState);
 			if(autoAgingRunTime==DateTime.MinValue) {
 				Changed|=Prefs.UpdateString(PrefName.AgingServiceTimeDue,"");

@@ -27,6 +27,10 @@ namespace OpenDental {
 				MsgBox.Show(this,"Not allowed because not using AtoZ folder");
 				return;
 			}
+			if(SheetCur.PatNum==0) {
+				MsgBox.Show(this,"Not allowed to add a patient image to an anonymous patient.");
+				return;
+			}
 			//Font font=new Font(SheetDefCur.FontName,SheetDefCur.FontSize);
 			using FormSheetFieldEditPatImage formSheetFieldEditPatImage=new FormSheetFieldEditPatImage();
 			formSheetFieldEditPatImage.SheetCur=SheetCur;

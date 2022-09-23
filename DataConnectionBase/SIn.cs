@@ -249,26 +249,26 @@ namespace DataConnectionBase {
 				return System.TimeSpan.Zero;
 			}
 			try {
-				if(DataConnection.DBtype==DatabaseType.Oracle) {
-					//return System.TimeSpan.Parse(myString); //Does not work. Confuses hours with days and an exception is thrown in our large timespan test.
-					bool isNegative=false;
-					if(myString.StartsWith("-")) {
-						isNegative=true;
-						myString=myString.Substring(1);//remove the '-'
-					}
-					string[] timeValues=myString.Split(new char[] { ':' });
-					if(timeValues.Length!=3) {
-						return System.TimeSpan.Zero;
-					}
-					TimeSpan retval=new TimeSpan(SIn.Int(timeValues[0]),SIn.Int(timeValues[1]),SIn.Int(timeValues[2]));
-					if(isNegative) {
-						return retval.Negate();
-					}
-					return retval;
-				}
-				else {//mysql
+				//if(DataConnection.DBtype==DatabaseType.Oracle) {
+				//	//return System.TimeSpan.Parse(myString); //Does not work. Confuses hours with days and an exception is thrown in our large timespan test.
+				//	bool isNegative=false;
+				//	if(myString.StartsWith("-")) {
+				//		isNegative=true;
+				//		myString=myString.Substring(1);//remove the '-'
+				//	}
+				//	string[] timeValues=myString.Split(new char[] { ':' });
+				//	if(timeValues.Length!=3) {
+				//		return System.TimeSpan.Zero;
+				//	}
+				//	TimeSpan retval=new TimeSpan(SIn.Int(timeValues[0]),SIn.Int(timeValues[1]),SIn.Int(timeValues[2]));
+				//	if(isNegative) {
+				//		return retval.Negate();
+				//	}
+				//	return retval;
+				//}
+				//else {//mysql
 					return (System.TimeSpan.Parse(myString));
-				}
+				//}
 			}
 			catch(Exception ex) {
 				ex.DoNothing();
@@ -282,12 +282,12 @@ namespace DataConnectionBase {
 				return System.TimeSpan.Zero;
 			}
 			try {
-				if(DataConnection.DBtype==DatabaseType.Oracle) {
-					return DateTime.Parse(myString).TimeOfDay;
-				}
-				else {//mysql
+				//if(DataConnection.DBtype==DatabaseType.Oracle) {
+				//	return DateTime.Parse(myString).TimeOfDay;
+				//}
+				//else {//mysql
 					return (System.TimeSpan.Parse(myString));
-				}
+				//}
 			}
 			catch(Exception ex) {
 				ex.DoNothing();

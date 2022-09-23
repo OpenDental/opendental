@@ -168,16 +168,14 @@ namespace OpenDental{
 			}
 			long patPlanNum=0;
 			checkUseBlueBook.Visible=false; // hidden by default, shown only if bluebook feature is turned on and plan is category%
-			if(PrefC.GetEnum<AllowedFeeSchedsAutomate>(PrefName.AllowedFeeSchedsAutomate)==AllowedFeeSchedsAutomate.BlueBook) {
-				comboOutOfNetwork.Enabled=false;
-				comboManualBlueBook.Enabled=true;
-				if(_insPlan.PlanType=="") {
-					checkUseBlueBook.Visible=true; // only show when bluebook is enabled and plan is Cat%. ""== Cat%
+			comboOutOfNetwork.Enabled=true;
+			comboManualBlueBook.Enabled=false;
+			if(PrefC.GetEnum<AllowedFeeSchedsAutomate>(PrefName.AllowedFeeSchedsAutomate)==AllowedFeeSchedsAutomate.BlueBook && _insPlan.PlanType=="") {
+				if(_insPlan.IsBlueBookEnabled) {
+					comboOutOfNetwork.Enabled=false;
+					comboManualBlueBook.Enabled=true;
 				}
-			}
-			else {
-				comboOutOfNetwork.Enabled=true;
-				comboManualBlueBook.Enabled=false;
+				checkUseBlueBook.Visible=true; // only show when bluebook is enabled and plan is Cat%. ""== Cat%
 			}
 			if(!Security.IsAuthorized(Permissions.InsPlanEdit,true)) {
 				Label labelNoPermission=new Label();
@@ -579,11 +577,11 @@ namespace OpenDental{
 			comboOutOfNetwork.Items.Clear();
 			comboOutOfNetwork.Items.AddNone<FeeSched>();
 			comboOutOfNetwork.Items.AddList(_listFeeSchedsOutOfNetwork,x=>x.Description);
-			comboOutOfNetwork.SetSelectedKey<FeeSched>(_insPlan.AllowedFeeSched,x=>x.FeeSchedNum);
+			comboOutOfNetwork.SetSelectedKey<FeeSched>(_insPlan.AllowedFeeSched,x=>x.FeeSchedNum,x=>FeeScheds.GetDescription(x));
 			comboManualBlueBook.Items.Clear();
 			comboManualBlueBook.Items.AddNone<FeeSched>();
 			comboManualBlueBook.Items.AddList(_listFeeSchedsManualBlueBook,x => x.Description);
-			comboManualBlueBook.SetSelectedKey<FeeSched>(_insPlan.ManualFeeSchedNum,x => x.FeeSchedNum);
+			comboManualBlueBook.SetSelectedKey<FeeSched>(_insPlan.ManualFeeSchedNum,x => x.FeeSchedNum,x=>FeeScheds.GetDescription(x));
 			comboCobRule.Items.Clear();
 			for(int i=0;i<Enum.GetNames(typeof(EnumCobRule)).Length;i++) {
 				comboCobRule.Items.Add(Lan.g("enumEnumCobRule",Enum.GetNames(typeof(EnumCobRule))[i]));
@@ -815,7 +813,9 @@ namespace OpenDental{
 			switch(_insPlanTypeComboItemSelected) {
 				case InsPlanTypeComboItem.CategoryPercentage:
 					_insPlan.PlanType="";
-					checkUseBlueBook.Visible=true;
+					if(PrefC.GetEnum<AllowedFeeSchedsAutomate>(PrefName.AllowedFeeSchedsAutomate)==AllowedFeeSchedsAutomate.BlueBook) {
+						checkUseBlueBook.Visible=true; //Only show checkbox if Blue Book is enabled.
+					}
 					break;
 				case InsPlanTypeComboItem.PPO:
 				case InsPlanTypeComboItem.PPOFixedBenefit:
@@ -833,6 +833,7 @@ namespace OpenDental{
 				default:
 					break;
 			}
+			SetAllowedFeeScheduleControls();
 			if(PrefC.GetBool(PrefName.InsDefaultShowUCRonClaims)) {//otherwise, no automation on this field.
 				if(_insPlan.PlanType=="") {
 					checkClaimsUseUCR.Checked=true;
@@ -3268,8 +3269,21 @@ namespace OpenDental{
 			return true;
 		}
 
+		///<summary>Enables/disables Out of network and Manual Blue Book ComboBoxes depending on if the blue book checkbox is visible and checked.</summary>
+		private void SetAllowedFeeScheduleControls() {
+			if(checkUseBlueBook.Checked && checkUseBlueBook.Visible) {
+				comboOutOfNetwork.Enabled=false;
+				comboManualBlueBook.Enabled=true;
+			}
+			else {
+				comboOutOfNetwork.Enabled=true;
+				comboManualBlueBook.Enabled=false;
+			}
+		}
+
 		private void checkUseBlueBook_CheckedChanged(object sender,EventArgs e) {
 			_insPlan.IsBlueBookEnabled=checkUseBlueBook.Checked;
+			SetAllowedFeeScheduleControls();
 		}
 
 		private void comboFeeSched_SelectionChangeCommitted(object sender,EventArgs e) {

@@ -2452,6 +2452,10 @@ namespace OpenDental {
 					break;
 			}
 			ModuleSelected(Pd.PatNum);
+			if(Pd.Patient==null) {//Don't worry about running the Allocator if the patient is already deleted.
+				return;
+			}
+			Reporting.Allocators.MyAllocator1_ProviderPayment.AllocateWithToolCheck(Pd.Patient.Guarantor);
 		}
 
 		private void gridProg_KeyDown(object sender,KeyEventArgs e) {
@@ -4241,6 +4245,11 @@ namespace OpenDental {
 						}
 						break;
 					#endregion Premedicate
+					#region Preferred Pronoun
+					case "Preferred Pronoun":
+						row.Cells.Add(Pd.PatientNote.Pronoun.ToString());
+						break;
+					#endregion Preferred Pronoun
 					#region Pri Ins
 					case "Pri Ins":
 						string name;
@@ -5913,6 +5922,8 @@ namespace OpenDental {
 				procedure=Procedures.GetOneProc(procNum,true);
 			}
 			else {
+				Pd.Clear(EnumPdTable.Procedure);
+				Pd.FillIfNeeded(EnumPdTable.Procedure);
 				procedure=Pd.ListProcedures.Find(x => x.ProcNum==procNum);
 			}
 			if(procedure==null) {
@@ -9502,10 +9513,10 @@ namespace OpenDental {
 				panelGridProg.Visible=false;
 				tabOrthoCategories.Visible=true;
 				LayoutManager.MoveLocation(tabOrthoCategories,new Point(panelGridProg.Left,panelGridProg.Top));
-				LayoutManager.MoveSize(tabOrthoCategories,new Size(this.Width-panelGridProg.Left,LayoutManager.Scale(23)));
+				LayoutManager.MoveSize(tabOrthoCategories,new Size(panelGridProg.Width,LayoutManager.Scale(23)));
 				gridOrtho.Visible=true;
 				LayoutManager.MoveLocation(gridOrtho,new Point(panelGridProg.Left,tabOrthoCategories.Bottom));
-				LayoutManager.MoveSize(gridOrtho,new Size(this.Width-panelGridProg.Left,panelGridProg.Bottom-gridOrtho.Top));
+				LayoutManager.MoveSize(gridOrtho,new Size(panelGridProg.Width,panelGridProg.Bottom-gridOrtho.Top));
 			}
 			else if(checkTreatPlans.Checked){
 				panelGridProg.Visible=false;

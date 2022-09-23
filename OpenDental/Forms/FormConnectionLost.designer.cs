@@ -71,7 +71,6 @@ namespace OpenDental{
 			// 
 			// FormConnectionLost
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(400, 200);
 			this.Controls.Add(this.labelErrMsg);
 			this.Controls.Add(this.butRetry);
@@ -82,7 +81,6 @@ namespace OpenDental{
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "FormConnectionLost";
-			this.ShowInTaskbar = false;
 			this.Text = "Connection Lost";
 			this.TopMost = true;
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormConnectionLost_FormClosing);

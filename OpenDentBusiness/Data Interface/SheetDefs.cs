@@ -400,11 +400,35 @@ namespace OpenDentBusiness{
 			listSheetFieldTypes.Add(SheetFieldType.Image);
 			listSheetFieldTypes.Add(SheetFieldType.Line);
 			listSheetFieldTypes.Add(SheetFieldType.Rectangle);
-			listSheetFieldTypes.Add(SheetFieldType.CheckBox);
-			if(!sheetType.In(SheetTypeEnum.DepositSlip)) {
-				listSheetFieldTypes.Add(SheetFieldType.SigBox);
+			if(!sheetType.In(SheetTypeEnum.ERA,SheetTypeEnum.ERAGridHeader)) {
+				listSheetFieldTypes.Add(SheetFieldType.CheckBox);
+			}
+			if(!sheetType.In(SheetTypeEnum.DepositSlip,SheetTypeEnum.ERA,SheetTypeEnum.ERAGridHeader)) {
 				listSheetFieldTypes.Add(SheetFieldType.PatImage);
+			}
+			if(!sheetType.In(SheetTypeEnum.DepositSlip,
+				SheetTypeEnum.ERA,
+				SheetTypeEnum.ERAGridHeader,
+				SheetTypeEnum.RoutingSlip,
+				SheetTypeEnum.LabelCarrier,
+				SheetTypeEnum.LabelPatient,
+				SheetTypeEnum.LabelReferral,
+				SheetTypeEnum.LabelAppointment,
+				SheetTypeEnum.Statement)) 
+			{
 				listSheetFieldTypes.Add(SheetFieldType.ComboBox);
+			}
+			if(!sheetType.In(SheetTypeEnum.DepositSlip,
+				SheetTypeEnum.ERA,
+				SheetTypeEnum.ERAGridHeader,
+				SheetTypeEnum.RoutingSlip,
+				SheetTypeEnum.LabelCarrier,
+				SheetTypeEnum.LabelPatient,
+				SheetTypeEnum.LabelReferral,
+				SheetTypeEnum.LabelAppointment,
+				SheetTypeEnum.Statement)) 
+			{
+				listSheetFieldTypes.Add(SheetFieldType.SigBox);
 			}
 			if(sheetType==SheetTypeEnum.TreatmentPlan) {
 				listSheetFieldTypes.Add(SheetFieldType.SigBoxPractice);
@@ -419,15 +443,6 @@ namespace OpenDentBusiness{
 			}
 			if(sheetType==SheetTypeEnum.Screening) {
 				listSheetFieldTypes.Add(SheetFieldType.ScreenChart);
-			}
-			if(sheetType.In(SheetTypeEnum.ERA,SheetTypeEnum.ERAGridHeader)){
-				listSheetFieldTypes.Remove(SheetFieldType.CheckBox);
-				listSheetFieldTypes.Remove(SheetFieldType.SigBox);
-				listSheetFieldTypes.Remove(SheetFieldType.ComboBox);
-				listSheetFieldTypes.Remove(SheetFieldType.PatImage);
-			}
-			if(sheetType==SheetTypeEnum.Statement) {
-				listSheetFieldTypes.Remove(SheetFieldType.SigBox);
 			}
 			if(SheetDefs.IsMobileAllowed(sheetType)){
 				listSheetFieldTypes.Add(SheetFieldType.MobileHeader);

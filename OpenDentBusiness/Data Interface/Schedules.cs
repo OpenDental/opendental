@@ -1911,7 +1911,9 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Gets schedule info that's filtered to match the criteria of any passed in arguments.</summary>
-		public static DataTable GetPeriodScheduleForApi(DateTime dateStart,DateTime dateEnd,long schedType,long blockoutDefNum,long provNum,long employeeNum,long scheduleNum,int limit,int offset,List<long> listOpNums=null) {
+		public static DataTable GetPeriodScheduleForApi(DateTime dateStart,DateTime dateEnd,long schedType,long blockoutDefNum,long provNum,long employeeNum,
+			long scheduleNum,int limit,int offset,List<long> listOpNums=null,string dateFormatString="yyyy-MM-dd")
+		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetTable(MethodBase.GetCurrentMethod(),dateStart,dateEnd,schedType,blockoutDefNum,provNum,employeeNum,scheduleNum,limit,offset,listOpNums);
 			}
@@ -1970,7 +1972,7 @@ namespace OpenDentBusiness{
 				}
 				DataRow row=tableReturn.NewRow();
 				row["ScheduleNum"]=rowCur["ScheduleNum"].ToString();
-				row["SchedDate"]=OpenDentBusiness.PIn.Date(rowCur["SchedDate"].ToString()).ToString("yyyy-MM-dd");
+				row["SchedDate"]=OpenDentBusiness.PIn.Date(rowCur["SchedDate"].ToString()).ToString(dateFormatString);
 				row["StartTime"]=rowCur["StartTime"].ToString();
 				row["StopTime"]=rowCur["StopTime"].ToString();
 				row["SchedType"]=Enum.GetName(typeof(OpenDentBusiness.ScheduleType),OpenDentBusiness.PIn.Long(rowCur["SchedType"].ToString()));

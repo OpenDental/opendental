@@ -26,6 +26,21 @@ namespace OpenDentBusiness{
 			return Crud.EServiceSignalCrud.SelectMany(command);
 		}
 
+		///<summary>returns all eServiceSignals with the given eServiceSignalSeverity within the date range, inclusive.</summary>
+		public static List<EServiceSignal> GetServicesForSeverity(eServiceSignalSeverity eServiceSeverity,DateTime dateStart,DateTime dateStop,int limit=0) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<EServiceSignal>>(MethodBase.GetCurrentMethod(),eServiceSeverity,dateStart,dateStop,limit);
+			}
+			string command="SELECT * FROM eservicesignal "
+				+"WHERE Severity="+POut.Int((int)eServiceSeverity)+" "
+				+"AND SigDateTime BETWEEN "+POut.Date(dateStart)+" AND "+POut.Date(dateStop.Date.AddDays(1))+" "
+				+"ORDER BY SigDateTime DESC";
+			if(limit > 0) {
+				command=DbHelper.LimitOrderBy(command,limit);
+			}
+			return Crud.EServiceSignalCrud.SelectMany(command);
+		}
+
 		///<summary>Returns the last known status for the given eService.</summary>
 		public static eServiceSignalSeverity GetServiceStatus(eServiceCode serviceCode) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

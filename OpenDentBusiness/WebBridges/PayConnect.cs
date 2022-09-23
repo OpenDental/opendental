@@ -37,7 +37,7 @@ namespace OpenDentBusiness {
 			string url="https://webservices.dentalxchange.com/merchant/MerchantService?wsdl";
 			//Force debug instances to point to the prelive WSDL. Engineers can either change this specific variable OR utilize introspection to override.
 			if(ODBuild.IsDebug()) {
-				url="https://prelive.dentalxchange.com/merchant/MerchantService?wsdl";
+				url="https://prelive2.dentalxchange.com/merchant/MerchantService?wsdl";
 			}
 			//Return the url that was set above OR return the value within the PayConnectWebServiceURL IntrospectionEntity if introspection is being used.
 			return Introspection.GetOverride(Introspection.IntrospectionEntity.PayConnectWebServiceURL,url);

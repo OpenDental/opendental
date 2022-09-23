@@ -492,18 +492,9 @@ namespace OpenDental {
 			if(table.Rows[e.Row]["ProcNum"].ToString()!="0"){
 				Procedure proc=Procedures.GetOneProc(PIn.Long(table.Rows[e.Row]["ProcNum"].ToString()),true);
 				Patient pat=_famCur.GetPatient(proc.PatNum);
-				List<ClaimProcHist> listClaimProcHistsLoop=new List<ClaimProcHist>();
-				List<ClaimProc> listClaimProc=ClaimProcs.RefreshForTP(_patCur.PatNum);
-				List<Procedure> listProcedures=Procedures.GetTpForPats(new List<long>(){_patCur.PatNum});
-				for(int i=0;i<listProcedures.Count;i++) {
-					if(listProcedures[i].ProcNum==proc.ProcNum) {
-						break;
-					}
-					listClaimProcHistsLoop.AddRange(ClaimProcs.GetHistForProc(listClaimProc,listProcedures[i].ProcNum,listProcedures[i].CodeNum));
-				}
 				using FormProcEdit formProcEdit=new FormProcEdit(proc,pat,_famCur);
 				formProcEdit.ListClaimProcHists=_loadData.HistList;
-				formProcEdit.ListClaimProcHistsLoop=listClaimProcHistsLoop;
+				formProcEdit.ListClaimProcHistsLoop=new List<ClaimProcHist>();
 				formProcEdit.ShowDialog();
 			}
 			else if(table.Rows[e.Row]["AdjNum"].ToString()!="0"){

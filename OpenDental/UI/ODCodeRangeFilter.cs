@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace OpenDental.UI {
 	public partial class ODCodeRangeFilter:UserControl {
@@ -38,13 +39,16 @@ namespace OpenDental.UI {
 			if(!string.IsNullOrEmpty(textCodeRange.Text.Trim())) {
 				if(textCodeRange.Text.Contains("-")) {
 					string[] codeSplit=textCodeRange.Text.Split('-');
-					codeStart=codeSplit[0].Trim().Replace('d','D');
-					codeEnd=codeSplit[1].Trim().Replace('d','D');
+					codeStart=codeSplit[0].Trim();
+					codeEnd=codeSplit[1].Trim();
 				}
 				else {
-					codeStart=textCodeRange.Text.Trim().Replace('d','D');
-					codeEnd=textCodeRange.Text.Trim().Replace('d','D');
+					codeStart=textCodeRange.Text.Trim();
+					codeEnd=textCodeRange.Text.Trim();
 				}
+				codeStart=Regex.Replace(codeStart,"^d","D");
+				codeEnd=Regex.Replace(codeEnd,"^d","D");
+
 			}
 			return (getStart ? codeStart : codeEnd);
 		}

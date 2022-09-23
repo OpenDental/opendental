@@ -314,7 +314,7 @@ namespace OpenDentBusiness{
 			double limit=0;
 			if(!PrefC.HasClinicsEnabled) {
 				if(PrefC.GetDate(PrefName.SmsContractDate).Year>1880) {
-					limit=PrefC.GetDouble(PrefName.SmsMonthlyLimit);
+					limit=PrefC.GetDouble(PrefName.SmsMonthlyLimit,doUseEnUSFormat:true);
 				}
 			}
 			else { 

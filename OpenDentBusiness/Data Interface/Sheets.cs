@@ -402,6 +402,9 @@ namespace OpenDentBusiness{
 			SheetParameter.SetParameter(sheetNew,"PatNum",sheet.PatNum);
 			//Fill the fields with the most recent values from the non-sheet related tables in database.
 			SheetFiller.FillFields(sheetNew);
+			if(sheet.SheetFields.IsNullOrEmpty()) {
+				SheetFields.GetFieldsAndParameters(sheet);
+			}
 			//If there are current medications in the DB, display them on the prefilled sheet. If there are not, use the previous sheet.
 			bool doUseMedicationsFromPreviousSheet=!MedicationPats.GetPatientData(sheet.PatNum).Any(x=>MedicationPats.IsMedActive(x));
 			//Get the fields that we want to fill from previous sheet.

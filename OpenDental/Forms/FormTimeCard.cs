@@ -810,11 +810,15 @@ namespace OpenDental{
 		private void butPrint_Click(object sender,EventArgs e) {
 			SaveNoteToDb();
 			linesPrinted=0;
+			PrintoutOrientation printoutOrientation=PrintoutOrientation.Portrait;
+      if(PrefC.IsODHQ) {
+				printoutOrientation=PrintoutOrientation.Landscape; //Switching for extra WFH column
+      }
 			PrinterL.TryPrintOrDebugClassicPreview(pd_PrintPage,
 				Lan.g(this,"Time card for")+" "+EmployeeCur.LName+","+EmployeeCur.FName+" "+Lan.g(this,"printed"),
 				new Margins(0,0,0,0),
 				printoutOrigin:PrintoutOrigin.AtMargin,
-				printoutOrientation:PrintoutOrientation.Landscape
+				printoutOrientation:printoutOrientation
 			);
 		}
 
@@ -860,7 +864,7 @@ namespace OpenDental{
 			colW[10]=45;//PL: Column starts to wrap at 41 pixels (Ex. -10.00), buffered to 45 for font variations on different operating systems
 			colW[11]=45;//Day
 			colW[12]=50;//Week
-			colW[13]=300;//Note
+			colW[13]=130;//Note
 			if(PrefC.IsODHQ) {
 				colW[11]=45;//WFH
 				colW[12]=45;//Day
@@ -868,8 +872,8 @@ namespace OpenDental{
 				colW[14]=300;//Note
 			}
 			else if(PrefC.HasClinicsEnabled) {
-				colW[13]=100;//Clinic
-				colW[14]=200;//Note: Reduce width when Clinic column is added so that we do not exceed the margin.
+				colW[13]=50;//Clinic
+				colW[14]=80;//Note: Reduce width when Clinic column is added so that we do not exceed the margin.
 			}
 			if(PrefC.HasClinicsEnabled && PrefC.IsODHQ) {
 				colW[14]=100;//Clinic

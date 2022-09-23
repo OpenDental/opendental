@@ -14,7 +14,7 @@ namespace OpenDental {
 	///status was not changed. DialogResult.Abort indicates the user clicked "Delete" to explicitly remove the reactivation. DialogResult.Cancel
 	///indicates the user clicked Cancel or closed normally.</summary>
 	public partial class FormReactivationEdit : FormODBase {
-		private Reactivation _reactivationCur;
+		public Reactivation ReactivationCur;
 
 		///<summary></summary>
 		public FormReactivationEdit(long patNum) : this(new Reactivation() { PatNum=patNum,IsNew=true }) {
@@ -25,41 +25,42 @@ namespace OpenDental {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
-			_reactivationCur=reactivationCur;
+			ReactivationCur=reactivationCur;
 		}
 
 		private void FormReactivationEdit_Load(object sender, System.EventArgs e) {
-			textPatName.Text=Patients.GetNameFL(_reactivationCur.PatNum);
-			DateTime lastContacted=Reactivations.GetDateLastContacted(_reactivationCur.PatNum);
+			textPatName.Text=Patients.GetNameFL(ReactivationCur.PatNum);
+			DateTime lastContacted=Reactivations.GetDateLastContacted(ReactivationCur.PatNum);
 			textDateLastContacted.Text=lastContacted==DateTime.MinValue?"":lastContacted.ToString();
 			comboStatus.Items.AddDefNone();
 			comboStatus.Items.AddDefs(Defs.GetDefsForCategory(DefCat.RecallUnschedStatus));
-			comboStatus.SetSelectedDefNum(_reactivationCur.ReactivationStatus);
-			checkBoxDNC.Checked=_reactivationCur.DoNotContact;
+			comboStatus.SetSelectedDefNum(ReactivationCur.ReactivationStatus);
+			checkBoxDNC.Checked=ReactivationCur.DoNotContact;
+			textNote.Text=ReactivationCur.ReactivationNote;
 		}
 
 		private void butDelete_Click(object sender, System.EventArgs e) {
 			if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Delete this Reactivation?")) {
 				return;
 			}
-			if(!_reactivationCur.IsNew) {
-				Reactivations.Delete(_reactivationCur.ReactivationNum);
+			if(!ReactivationCur.IsNew) {
+				Reactivations.Delete(ReactivationCur.ReactivationNum);
 			}
-			_reactivationCur=null;
+			ReactivationCur=null;
 			DialogResult=DialogResult.Abort;
 		}
 
 		private void butOK_Click(object sender, System.EventArgs e) {
 			Def selectedStatus=comboStatus.GetSelected<Def>();//Null when 'None' is selected.
-			bool didStatusChange=(_reactivationCur.ReactivationStatus!=(selectedStatus?.DefNum??0));
-			_reactivationCur.ReactivationStatus=selectedStatus==null?0:selectedStatus.DefNum;
-			_reactivationCur.ReactivationNote=textNote.Text;
-			_reactivationCur.DoNotContact=checkBoxDNC.Checked;
-			if(_reactivationCur.IsNew) {
-				Reactivations.Insert(_reactivationCur);
+			bool didStatusChange=(ReactivationCur.ReactivationStatus!=(selectedStatus?.DefNum??0));
+			ReactivationCur.ReactivationStatus=selectedStatus==null?0:selectedStatus.DefNum;
+			ReactivationCur.ReactivationNote=textNote.Text;
+			ReactivationCur.DoNotContact=checkBoxDNC.Checked;
+			if(ReactivationCur.IsNew) {
+				Reactivations.Insert(ReactivationCur);
 			}
 			else {
-				Reactivations.Update(_reactivationCur);
+				Reactivations.Update(ReactivationCur);
 			}
 			if(didStatusChange) {
 				//If the reactivation status is changing, we need to create a reactivation commlog. Rather than repeating

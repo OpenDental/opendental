@@ -194,9 +194,16 @@ namespace OpenDental {
 					return;
 				}
 			}
+			//If appointment search behavior is 'Provider Time' then not allowed to have provider be none
+			if(PrefC.GetInt(PrefName.AppointmentSearchBehavior)==0 && comboBoxMultiProv.GetSelectedProvNums().Contains(0)) {
+				Cursor=Cursors.Default;
+				MsgBox.Show(this,"Please pick a provider.");
+				return;
+			}
+			//This message will only show for 'Provider Time Operatory' searching
 			if(comboBoxMultiProv.GetSelectedProvNums().Contains(0) && comboBlockout.GetSelectedDefNum()==0) {
 				Cursor=Cursors.Default;
-				MsgBox.Show(this,"Please pick a provider or a blockout type.");
+				MsgBox.Show(this,"Please pick a provider and/or a blockout type.");
 				return;
 			}
 			#endregion

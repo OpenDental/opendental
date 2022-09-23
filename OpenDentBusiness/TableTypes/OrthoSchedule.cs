@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace OpenDentBusiness{
 
-	/// <summary>Optional. Holds the Production Schedule for an OrhtoCase. </summary>
+	/// <summary>Optional. Holds the Production Schedule for an OrthoCase. </summary>
 	[Serializable]
 	public class OrthoSchedule:TableBase {
 		///<summary>Primary key</summary>

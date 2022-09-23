@@ -69,12 +69,14 @@ namespace OpenDental {
 					return;
 				}
 			}
+			//Save this for later when we need to revert back to it
+			_titleOriginal=Text;
+			BringToFront();
 		}
 
 		public static void Open(Claim claim) {
 			FormClaimAttachment formClaimAttachment=new FormClaimAttachment(claim);
-			//Set the main FormOpenDental as the parent so the form will appear on top of it
-			formClaimAttachment.Show(Application.OpenForms.OfType<FormOpenDental>().ToList()[0]);
+			formClaimAttachment.Show();
 		}
 
 		private void FormClaimAttachment_FormClosed(object sender,FormClosedEventArgs e) {
@@ -155,23 +157,39 @@ namespace OpenDental {
 			return claimAttach;
 		}
 
-		private void timerMonitorClipboard_Tick(object sender,EventArgs e) {
-			using Bitmap bitmapClipboard=GetImageFromClipboard(isSilent:true);
-			if(bitmapClipboard==null) {
-				return;
-			}
-			//User made a snip; stop looking at the clipboard
+		private void EndSnipping() {
 			timerMonitorClipboard.Stop();
-			//Start trying to kill Snip & Sketch and Snipping Tool
-			_stopwatchKillSnipToolProcesses.Restart();
-			timerKillSnipToolProcesses.Start();
 			//Show the window in case it was minimized
 			WindowState=FormWindowState.Normal;
 			//Remove the "waiting for snip" text from the title
 			Text=_titleOriginal;
+			butSnipTool.Enabled=true;
+			butAddImage.Enabled=true;
+			butPasteImage.Enabled=true;
+    }
+
+		private void timerMonitorClipboard_Tick(object sender,EventArgs e) {
+			timerMonitorClipboard.Stop();
+			List<Process> listProcesses=GetProcessesSnipTool();
+      if(listProcesses.Count==0) {
+				WindowState=FormWindowState.Normal;
+				BringToFront();
+				MsgBox.Show(this,"The snipping tool was closed while waiting for a snip. Stopping snip.");
+				EndSnipping();
+				return;
+      }
+			timerMonitorClipboard.Start();
+			using Bitmap bitmapClipboard=GetImageFromClipboard(isSilent:true);
+			if(bitmapClipboard==null) {
+				return;
+			}
+			EndSnipping();
+			BringToFront();
+			//Start trying to kill Snip & Sketch and Snipping Tool
+			_stopwatchKillSnipToolProcesses.Restart();
+			timerKillSnipToolProcesses.Start();
 			//Create the attachment but with default values
 			CreateImageAttachment(bitmapClipboard,isSnip:true);
-			butSnipTool.Enabled=true;
 		}
 
 		///<summary>100ms. Monitor the list of running processes for Snip & Sketch and Snipping Tool, for a short duration,
@@ -289,8 +307,10 @@ namespace OpenDental {
 				return;
 			}
 			_titleOriginal=Text;
-			Text+=$" ({Lan.g(this,"Waiting For Snip")}...)";
+			Text=_titleOriginal+$" ({Lan.g(this,"Waiting For Snip")}...)";
 			butSnipTool.Enabled=false;
+			butAddImage.Enabled=false;
+			butPasteImage.Enabled=false;
 			//Wait half a second before minimizing, otherwise Snip & Sketch can end up behind Open Dental
 			Thread.Sleep(500);
 			WindowState=FormWindowState.Minimized;
@@ -320,6 +340,7 @@ namespace OpenDental {
 			}
 			//In case this window was minimized
 			WindowState=FormWindowState.Normal;
+			BringToFront();
 			using FormClaimAttachmentItemEdit formClaimAttachmentItemEdit=new FormClaimAttachmentItemEdit(bitmap);
 			formClaimAttachmentItemEdit.IsSnip=isSnip;
 			formClaimAttachmentItemEdit.ShowDialog(this);
@@ -358,7 +379,7 @@ namespace OpenDental {
 			catch(System.OutOfMemoryException ex) {
 				//Image.FromFile() will throw an OOM exception when the image format is invalid or not supported.
 				//See MSDN if you have trust issues:  https://msdn.microsoft.com/en-us/library/stf701f5(v=vs.110).aspx
-				FriendlyException.Show(Lan.g(this,"The file does not have a valid image format. Please try again or call support."+"\r\n"+ex.Message),ex);
+				MsgBox.Show(Lan.g(this,"The file does not have a valid image format. Please try again or call support."));
 			}
 			catch(Exception ex) {
 				FriendlyException.Show(Lan.g(this,"An error occurred. Please try again or call support.")+"\r\n"+ex.Message,ex);
@@ -566,5 +587,5 @@ namespace OpenDental {
 			DialogResult=DialogResult.Cancel;
 			Close();
 		}
-	}
+  }
 }

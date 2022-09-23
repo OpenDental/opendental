@@ -136,7 +136,7 @@ namespace OpenDentBusiness.Eclaims
 
 		///<summary>True if the x837 batch file should be created on the Cloud user's client machine. False it it should be created on the server.</summary>
 		public static bool DoSendBatchToCloudClient(Clearinghouse clearinghouse) {
-			if(clearinghouse.CommBridge==EclaimsCommBridge.ClaimConnect) {//ClaimConnect does everything without a client program.
+			if(clearinghouse.CommBridge==EclaimsCommBridge.ClaimConnect || clearinghouse.CommBridge==EclaimsCommBridge.EmdeonMedical) {//ClaimConnect and EmdeonMedical does everything without a client program.
 				return false;
 			}
 			return true;

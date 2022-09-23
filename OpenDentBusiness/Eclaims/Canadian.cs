@@ -1466,10 +1466,16 @@ namespace OpenDentBusiness.Eclaims {
 				errorMsg=Lans.g("Canadian","A CDAnet compatible clearinghouse could not be found.");
 				return "";//Return empty response, since we never received one.
 			}
+			if(!Directory.Exists(clearinghouseClin.ExportPath)) {
+				errorMsg=clearinghouseClin.ExportPath+" "+Lans.g("Canadian","not found.");
+				return "";//Return empty response, since we never received one.
+			}
 			bool isItrans=(clearinghouseClin.CommBridge==EclaimsCommBridge.ITRANS);
+			bool isItrans2=(clearinghouseClin.CommBridge==EclaimsCommBridge.ITRANS2);
 			bool isClaimstream=(clearinghouseClin.CommBridge==EclaimsCommBridge.Claimstream);
+			bool isCertificateNeeded=(network!=null && (isClaimstream || isItrans2));
 			string saveFolder=clearinghouseClin.ExportPath;
-			if(isClaimstream) {
+			if(isCertificateNeeded) {//Download vendor identity certificate to appropriate subfolder if needed.
 				DirectoryInfo dirInfo=new DirectoryInfo(saveFolder);
 				if(dirInfo.Name=="abc") {//Is pointing to the "abc" sub-folder.
 					//For backwards compatibility, if the export path is pointing to the "abc" sub-folder,
@@ -1487,16 +1493,14 @@ namespace OpenDentBusiness.Eclaims {
 					subDir="telusb";
 				}
 				else {
-					errorMsg=Lans.g("Canadian","ClaimStream does not support this transaction for network")+" "+network.Descript;
+					errorMsg=Lans.g("Canadian","Transaction not supported for network")+" "+network.Descript;
 					return "";//Return empty response, since we never received one.
 				}
 				saveFolder=ODFileUtils.CombinePaths(saveFolder,subDir);
-			}
-			if(!Directory.Exists(saveFolder)) {
-				errorMsg=saveFolder+" "+Lans.g("Canadian","not found.");
-				return "";//Return empty response, since we never received one.
-			}
-			if(isClaimstream) {
+				if(!Directory.Exists(saveFolder)) {
+					errorMsg=saveFolder+" "+Lans.g("Canadian","not found.");
+					return "";//Return empty response, since we never received one.
+				}
 				string certFileName="";
 				if(network.Abbrev=="ABC") {//Alberta Blue Cross
 					certFileName="OPENDENTAL.pem";
@@ -1510,7 +1514,7 @@ namespace OpenDentBusiness.Eclaims {
 					}
 				}
 				string certFilePath=ODFileUtils.CombinePaths(saveFolder,certFileName);
-				if(!File.Exists(certFilePath)) {
+				if(!File.Exists(certFilePath)) {//Download a copy of the certificate from HQ if needed.
 					byte[] arrayCertFileBytes=null;
 					try {
 						XmlWriterSettings settings=new XmlWriterSettings();
@@ -1612,7 +1616,7 @@ namespace OpenDentBusiness.Eclaims {
 				});
 			}
 			if(!File.Exists(outputFile)) {
-				if(isItrans) {
+				if(isItrans || isItrans2) {
 					errorMsg=Lans.g("Canadian","No response from iCAService (ITRANS) or ICDService (ITRANS 2.0). Ensure that the correct service for your version of ITRANS is started and the corresponding folder has the necessary permissions.");
 				}
 				else if(isClaimstream) {
@@ -1662,7 +1666,7 @@ namespace OpenDentBusiness.Eclaims {
 					errorCode=responses[1];
 				}
 				errorMsg=Lans.g("Canadian","Error")+" "+errorCode+"\r\n\r\n"+Lans.g("Canadian","Raw Response")+":\r\n"+resultPrefix+result+"\r\n\r\n";
-				if(isItrans) {
+				if(isItrans || isItrans2) {
 					if(errorCode=="1013") {
 						errorMsg+=Lans.g("Canadian","The CDA digital certificate for the provider is either missing, not exportable, expired, or invalid.")+"\r\n";
 					}

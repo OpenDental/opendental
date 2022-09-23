@@ -1137,6 +1137,7 @@ namespace OpenDentBusiness {
 			if(patNum!=0) {
 				command+="AND PatNum='"+POut.Long(patNum)+"'";
 			}
+			command+=" ORDER BY ProcNum DESC";
 			string commandDatetime="SELECT "+DbHelper.Now();
 			DateTime dateTimeServer=PIn.DateT(OpenDentBusiness.Db.GetScalar(commandDatetime));//run before procedures for rigorous inclusion of procedures
 			List<Procedure> listProcedures=Crud.ProcedureCrud.SelectMany(command);
@@ -1148,6 +1149,17 @@ namespace OpenDentBusiness {
 			}
 			return listProcedureForApis;
 		}
+
+		///<summary>Gets a list of treatment planned (TP) procedures for a planned appointment. Returns an empty list if not found.</summary>
+		public static List<Procedure> GetProceduresPlannedForApi(long patNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Procedure>>(MethodBase.GetCurrentMethod(),patNum);
+			}
+			string command="SELECT procedurelog.* FROM procedurelog "
+				+"WHERE PatNum="+POut.Long(patNum)+" "
+				+"AND ProcStatus="+POut.Long((int)ProcStat.TP)+" ";
+			return Crud.ProcedureCrud.SelectMany(command);
+    }
 
 		///<summary>Gets a list of a patient's procedures (including notes). Filters by ProcStatus of (C), (EC), or (EO).</summary>
 		public static List<Procedure> GetProceduresWithNotesForApi(long patNum,List<long> listProcNums) {
@@ -1169,6 +1181,7 @@ namespace OpenDentBusiness {
 					continue;
 				}
 				listProcedures[i].Note=PIn.String(dataTable.Rows[0]["Note"].ToString());
+				listProcedures[i].Signature=PIn.String(dataTable.Rows[0]["Signature"].ToString());
 			}
 			return listProcedures;
 		}

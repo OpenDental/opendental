@@ -45,6 +45,12 @@ namespace OpenDental{
 			this.label15 = new System.Windows.Forms.Label();
 			this.butAddProc = new OpenDental.UI.Button();
 			this.groupRecurringCharges = new OpenDental.UI.GroupBoxOD();
+			this.textDateStop = new OpenDental.ValidDate();
+			this.textDateStart = new OpenDental.ValidDate();
+			this.labelNextChargeDate = new System.Windows.Forms.Label();
+			this.textNextChargeDate = new OpenDental.ValidDate();
+			this.labelPreviousStartDate = new System.Windows.Forms.Label();
+			this.textPreviousStartDate = new OpenDental.ValidDate();
 			this.checkIsRecurringActive = new System.Windows.Forms.CheckBox();
 			this.comboPaymentType = new OpenDental.UI.ComboBoxOD();
 			this.label9 = new System.Windows.Forms.Label();
@@ -55,12 +61,9 @@ namespace OpenDental{
 			this.butClear = new OpenDental.UI.Button();
 			this.textNote = new OpenDental.ODtextBox();
 			this.label7 = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
 			this.textChargeAmt = new OpenDental.ValidDouble();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
-			this.textDateStop = new OpenDental.ValidDate();
-			this.textDateStart = new OpenDental.ValidDate();
 			this.label2 = new System.Windows.Forms.Label();
 			this.butDelete = new OpenDental.UI.Button();
 			this.textZip = new System.Windows.Forms.TextBox();
@@ -94,7 +97,8 @@ namespace OpenDental{
 			this.textClinic.Name = "textClinic";
 			this.textClinic.ReadOnly = true;
 			this.textClinic.Size = new System.Drawing.Size(169, 20);
-			this.textClinic.TabIndex = 137;
+			this.textClinic.TabIndex = 2;
+			this.textClinic.TabStop = false;
 			this.textClinic.Visible = false;
 			// 
 			// groupChargeFrequency
@@ -108,10 +112,11 @@ namespace OpenDental{
 			this.groupChargeFrequency.Controls.Add(this.radioDayOfMonth);
 			this.groupChargeFrequency.Controls.Add(this.labelFrequencyInWords);
 			this.groupChargeFrequency.Controls.Add(this.label8);
-			this.groupChargeFrequency.Location = new System.Drawing.Point(12, 359);
+			this.groupChargeFrequency.Location = new System.Drawing.Point(12, 360);
 			this.groupChargeFrequency.Name = "groupChargeFrequency";
 			this.groupChargeFrequency.Size = new System.Drawing.Size(495, 114);
-			this.groupChargeFrequency.TabIndex = 136;
+			this.groupChargeFrequency.TabIndex = 19;
+			this.groupChargeFrequency.TabStop = true;
 			this.groupChargeFrequency.Text = "Charge Frequency";
 			// 
 			// comboDays
@@ -119,7 +124,7 @@ namespace OpenDental{
 			this.comboDays.Location = new System.Drawing.Point(319, 55);
 			this.comboDays.Name = "comboDays";
 			this.comboDays.Size = new System.Drawing.Size(93, 21);
-			this.comboDays.TabIndex = 143;
+			this.comboDays.TabIndex = 25;
 			this.comboDays.SelectionChangeCommitted += new System.EventHandler(this.comboDays_SelectionChangeCommitted);
 			// 
 			// comboFrequency
@@ -127,7 +132,7 @@ namespace OpenDental{
 			this.comboFrequency.Location = new System.Drawing.Point(220, 55);
 			this.comboFrequency.Name = "comboFrequency";
 			this.comboFrequency.Size = new System.Drawing.Size(93, 21);
-			this.comboFrequency.TabIndex = 142;
+			this.comboFrequency.TabIndex = 24;
 			this.comboFrequency.SelectionChangeCommitted += new System.EventHandler(this.comboFrequency_SelectionChangeCommitted);
 			// 
 			// butAddDay
@@ -136,7 +141,7 @@ namespace OpenDental{
 			this.butAddDay.Location = new System.Drawing.Point(63, 81);
 			this.butAddDay.Name = "butAddDay";
 			this.butAddDay.Size = new System.Drawing.Size(60, 22);
-			this.butAddDay.TabIndex = 141;
+			this.butAddDay.TabIndex = 21;
 			this.butAddDay.Text = "Add Day";
 			this.butAddDay.Click += new System.EventHandler(this.butAddDay_Click);
 			// 
@@ -146,7 +151,7 @@ namespace OpenDental{
 			this.butClearDayOfMonth.Location = new System.Drawing.Point(128, 81);
 			this.butClearDayOfMonth.Name = "butClearDayOfMonth";
 			this.butClearDayOfMonth.Size = new System.Drawing.Size(60, 22);
-			this.butClearDayOfMonth.TabIndex = 140;
+			this.butClearDayOfMonth.TabIndex = 22;
 			this.butClearDayOfMonth.Text = "Clear";
 			this.butClearDayOfMonth.Click += new System.EventHandler(this.butClearDayOfMonth_Click);
 			// 
@@ -156,7 +161,7 @@ namespace OpenDental{
 			this.textDayOfMonth.Name = "textDayOfMonth";
 			this.textDayOfMonth.ReadOnly = true;
 			this.textDayOfMonth.Size = new System.Drawing.Size(125, 20);
-			this.textDayOfMonth.TabIndex = 139;
+			this.textDayOfMonth.TabIndex = 20;
 			this.textDayOfMonth.TextChanged += new System.EventHandler(this.textDayOfMonth_TextChanged);
 			// 
 			// radioWeekDay
@@ -165,7 +170,7 @@ namespace OpenDental{
 			this.radioWeekDay.Location = new System.Drawing.Point(270, 35);
 			this.radioWeekDay.Name = "radioWeekDay";
 			this.radioWeekDay.Size = new System.Drawing.Size(99, 17);
-			this.radioWeekDay.TabIndex = 137;
+			this.radioWeekDay.TabIndex = 23;
 			this.radioWeekDay.Text = "Fixed week day";
 			this.radioWeekDay.UseVisualStyleBackColor = true;
 			// 
@@ -176,7 +181,7 @@ namespace OpenDental{
 			this.radioDayOfMonth.Location = new System.Drawing.Point(65, 35);
 			this.radioDayOfMonth.Name = "radioDayOfMonth";
 			this.radioDayOfMonth.Size = new System.Drawing.Size(125, 17);
-			this.radioDayOfMonth.TabIndex = 138;
+			this.radioDayOfMonth.TabIndex = 19;
 			this.radioDayOfMonth.TabStop = true;
 			this.radioDayOfMonth.Text = "Fixed day(s) of month";
 			this.radioDayOfMonth.UseVisualStyleBackColor = true;
@@ -207,7 +212,8 @@ namespace OpenDental{
 			this.textAccountType.Name = "textAccountType";
 			this.textAccountType.ReadOnly = true;
 			this.textAccountType.Size = new System.Drawing.Size(80, 20);
-			this.textAccountType.TabIndex = 134;
+			this.textAccountType.TabIndex = 4;
+			this.textAccountType.TabStop = false;
 			this.textAccountType.Visible = false;
 			// 
 			// labelAcctType
@@ -227,10 +233,11 @@ namespace OpenDental{
 			this.groupProcedures.Controls.Add(this.butRemoveProc);
 			this.groupProcedures.Controls.Add(this.label15);
 			this.groupProcedures.Controls.Add(this.butAddProc);
-			this.groupProcedures.Location = new System.Drawing.Point(14, 479);
+			this.groupProcedures.Location = new System.Drawing.Point(14, 480);
 			this.groupProcedures.Name = "groupProcedures";
 			this.groupProcedures.Size = new System.Drawing.Size(493, 142);
-			this.groupProcedures.TabIndex = 133;
+			this.groupProcedures.TabIndex = 26;
+			this.groupProcedures.TabStop = true;
 			this.groupProcedures.Text = "Authorized Procedures";
 			this.groupProcedures.Visible = false;
 			// 
@@ -241,7 +248,7 @@ namespace OpenDental{
 			this.checkExcludeProcSync.Location = new System.Drawing.Point(355, 8);
 			this.checkExcludeProcSync.Name = "checkExcludeProcSync";
 			this.checkExcludeProcSync.Size = new System.Drawing.Size(133, 36);
-			this.checkExcludeProcSync.TabIndex = 137;
+			this.checkExcludeProcSync.TabIndex = 26;
 			this.checkExcludeProcSync.Text = "Exclude from proc sync";
 			// 
 			// listProcs
@@ -249,7 +256,7 @@ namespace OpenDental{
 			this.listProcs.Location = new System.Drawing.Point(129, 19);
 			this.listProcs.Name = "listProcs";
 			this.listProcs.Size = new System.Drawing.Size(220, 108);
-			this.listProcs.TabIndex = 134;
+			this.listProcs.TabIndex = 29;
 			// 
 			// butRemoveProc
 			// 
@@ -258,7 +265,7 @@ namespace OpenDental{
 			this.butRemoveProc.Location = new System.Drawing.Point(355, 103);
 			this.butRemoveProc.Name = "butRemoveProc";
 			this.butRemoveProc.Size = new System.Drawing.Size(78, 24);
-			this.butRemoveProc.TabIndex = 136;
+			this.butRemoveProc.TabIndex = 28;
 			this.butRemoveProc.Text = "Remove";
 			this.butRemoveProc.Click += new System.EventHandler(this.butRemoveProc_Click);
 			// 
@@ -278,12 +285,18 @@ namespace OpenDental{
 			this.butAddProc.Location = new System.Drawing.Point(355, 73);
 			this.butAddProc.Name = "butAddProc";
 			this.butAddProc.Size = new System.Drawing.Size(78, 24);
-			this.butAddProc.TabIndex = 135;
+			this.butAddProc.TabIndex = 27;
 			this.butAddProc.Text = "Add";
 			this.butAddProc.Click += new System.EventHandler(this.butAddProc_Click);
 			// 
 			// groupRecurringCharges
 			// 
+			this.groupRecurringCharges.Controls.Add(this.textDateStop);
+			this.groupRecurringCharges.Controls.Add(this.textDateStart);
+			this.groupRecurringCharges.Controls.Add(this.labelNextChargeDate);
+			this.groupRecurringCharges.Controls.Add(this.textNextChargeDate);
+			this.groupRecurringCharges.Controls.Add(this.labelPreviousStartDate);
+			this.groupRecurringCharges.Controls.Add(this.textPreviousStartDate);
 			this.groupRecurringCharges.Controls.Add(this.checkIsRecurringActive);
 			this.groupRecurringCharges.Controls.Add(this.comboPaymentType);
 			this.groupRecurringCharges.Controls.Add(this.label9);
@@ -294,18 +307,70 @@ namespace OpenDental{
 			this.groupRecurringCharges.Controls.Add(this.butClear);
 			this.groupRecurringCharges.Controls.Add(this.textNote);
 			this.groupRecurringCharges.Controls.Add(this.label7);
-			this.groupRecurringCharges.Controls.Add(this.label6);
 			this.groupRecurringCharges.Controls.Add(this.textChargeAmt);
 			this.groupRecurringCharges.Controls.Add(this.label1);
 			this.groupRecurringCharges.Controls.Add(this.label5);
-			this.groupRecurringCharges.Controls.Add(this.textDateStop);
-			this.groupRecurringCharges.Controls.Add(this.textDateStart);
 			this.groupRecurringCharges.Controls.Add(this.label2);
-			this.groupRecurringCharges.Location = new System.Drawing.Point(12, 120);
+			this.groupRecurringCharges.Location = new System.Drawing.Point(12, 119);
 			this.groupRecurringCharges.Name = "groupRecurringCharges";
-			this.groupRecurringCharges.Size = new System.Drawing.Size(495, 234);
-			this.groupRecurringCharges.TabIndex = 73;
+			this.groupRecurringCharges.Size = new System.Drawing.Size(495, 235);
+			this.groupRecurringCharges.TabIndex = 7;
+			this.groupRecurringCharges.TabStop = true;
 			this.groupRecurringCharges.Text = "Authorized Recurring Charges";
+			// 
+			// textDateStop
+			// 
+			this.textDateStop.Location = new System.Drawing.Point(129, 137);
+			this.textDateStop.Name = "textDateStop";
+			this.textDateStop.Size = new System.Drawing.Size(88, 20);
+			this.textDateStop.TabIndex = 13;
+			this.textDateStop.Leave += new System.EventHandler(this.textDateStop_Leave);
+			// 
+			// textDateStart
+			// 
+			this.textDateStart.Location = new System.Drawing.Point(129, 109);
+			this.textDateStart.Name = "textDateStart";
+			this.textDateStart.Size = new System.Drawing.Size(88, 20);
+			this.textDateStart.TabIndex = 11;
+			this.textDateStart.Leave += new System.EventHandler(this.textDateStart_Leave);
+			// 
+			// labelNextChargeDate
+			// 
+			this.labelNextChargeDate.Location = new System.Drawing.Point(305, 81);
+			this.labelNextChargeDate.Name = "labelNextChargeDate";
+			this.labelNextChargeDate.Size = new System.Drawing.Size(101, 16);
+			this.labelNextChargeDate.TabIndex = 145;
+			this.labelNextChargeDate.Text = "Next Charge Date";
+			this.labelNextChargeDate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// textNextChargeDate
+			// 
+			this.textNextChargeDate.Location = new System.Drawing.Point(406, 79);
+			this.textNextChargeDate.Name = "textNextChargeDate";
+			this.textNextChargeDate.ReadOnly = true;
+			this.textNextChargeDate.Size = new System.Drawing.Size(82, 20);
+			this.textNextChargeDate.TabIndex = 17;
+			this.textNextChargeDate.TabStop = false;
+			// 
+			// labelPreviousStartDate
+			// 
+			this.labelPreviousStartDate.Location = new System.Drawing.Point(302, 107);
+			this.labelPreviousStartDate.Name = "labelPreviousStartDate";
+			this.labelPreviousStartDate.Size = new System.Drawing.Size(104, 16);
+			this.labelPreviousStartDate.TabIndex = 143;
+			this.labelPreviousStartDate.Text = "Previous Start Date";
+			this.labelPreviousStartDate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.labelPreviousStartDate.Visible = false;
+			// 
+			// textPreviousStartDate
+			// 
+			this.textPreviousStartDate.Location = new System.Drawing.Point(406, 105);
+			this.textPreviousStartDate.Name = "textPreviousStartDate";
+			this.textPreviousStartDate.ReadOnly = true;
+			this.textPreviousStartDate.Size = new System.Drawing.Size(82, 20);
+			this.textPreviousStartDate.TabIndex = 18;
+			this.textPreviousStartDate.TabStop = false;
+			this.textPreviousStartDate.Visible = false;
 			// 
 			// checkIsRecurringActive
 			// 
@@ -315,7 +380,7 @@ namespace OpenDental{
 			this.checkIsRecurringActive.Location = new System.Drawing.Point(322, 49);
 			this.checkIsRecurringActive.Name = "checkIsRecurringActive";
 			this.checkIsRecurringActive.Size = new System.Drawing.Size(128, 13);
-			this.checkIsRecurringActive.TabIndex = 141;
+			this.checkIsRecurringActive.TabIndex = 16;
 			this.checkIsRecurringActive.Text = "Is Recurring Active";
 			this.checkIsRecurringActive.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
@@ -324,7 +389,7 @@ namespace OpenDental{
 			this.comboPaymentType.Location = new System.Drawing.Point(129, 53);
 			this.comboPaymentType.Name = "comboPaymentType";
 			this.comboPaymentType.Size = new System.Drawing.Size(167, 21);
-			this.comboPaymentType.TabIndex = 140;
+			this.comboPaymentType.TabIndex = 8;
 			this.comboPaymentType.Text = "comboPaymentType";
 			// 
 			// label9
@@ -344,7 +409,7 @@ namespace OpenDental{
 			this.checkChrgWithNoBal.Location = new System.Drawing.Point(322, 17);
 			this.checkChrgWithNoBal.Name = "checkChrgWithNoBal";
 			this.checkChrgWithNoBal.Size = new System.Drawing.Size(128, 26);
-			this.checkChrgWithNoBal.TabIndex = 138;
+			this.checkChrgWithNoBal.TabIndex = 15;
 			this.checkChrgWithNoBal.Text = "Run charge even if no family balance present";
 			// 
 			// labelPayPlan
@@ -361,7 +426,7 @@ namespace OpenDental{
 			this.comboPaymentPlans.Location = new System.Drawing.Point(129, 26);
 			this.comboPaymentPlans.Name = "comboPaymentPlans";
 			this.comboPaymentPlans.Size = new System.Drawing.Size(167, 21);
-			this.comboPaymentPlans.TabIndex = 131;
+			this.comboPaymentPlans.TabIndex = 7;
 			// 
 			// butToday
 			// 
@@ -369,7 +434,7 @@ namespace OpenDental{
 			this.butToday.Location = new System.Drawing.Point(233, 106);
 			this.butToday.Name = "butToday";
 			this.butToday.Size = new System.Drawing.Size(63, 22);
-			this.butToday.TabIndex = 77;
+			this.butToday.TabIndex = 12;
 			this.butToday.Text = "Today";
 			this.butToday.Click += new System.EventHandler(this.butToday_Click);
 			// 
@@ -379,7 +444,7 @@ namespace OpenDental{
 			this.butClear.Location = new System.Drawing.Point(233, 80);
 			this.butClear.Name = "butClear";
 			this.butClear.Size = new System.Drawing.Size(63, 22);
-			this.butClear.TabIndex = 76;
+			this.butClear.TabIndex = 10;
 			this.butClear.Text = "Clear";
 			this.butClear.Click += new System.EventHandler(this.butClear_Click);
 			// 
@@ -389,32 +454,23 @@ namespace OpenDental{
 			this.textNote.BackColor = System.Drawing.SystemColors.Window;
 			this.textNote.DetectLinksEnabled = false;
 			this.textNote.DetectUrls = false;
-			this.textNote.Location = new System.Drawing.Point(129, 157);
+			this.textNote.Location = new System.Drawing.Point(129, 165);
 			this.textNote.MaxLength = 10000;
 			this.textNote.Name = "textNote";
 			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.FinancialNotes;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNote.Size = new System.Drawing.Size(344, 64);
-			this.textNote.TabIndex = 75;
+			this.textNote.TabIndex = 14;
 			this.textNote.Text = "";
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(28, 157);
+			this.label7.Location = new System.Drawing.Point(27, 165);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(99, 16);
 			this.label7.TabIndex = 74;
 			this.label7.Text = "Note";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.TopRight;
-			// 
-			// label6
-			// 
-			this.label6.Location = new System.Drawing.Point(319, 82);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(160, 71);
-			this.label6.TabIndex = 73;
-			this.label6.Text = "Date Stop will be blank if the charges will be repeated indefinitely.  Clear all " +
-    "these values if no further recurring charges are planned.";
 			// 
 			// textChargeAmt
 			// 
@@ -422,12 +478,12 @@ namespace OpenDental{
 			this.textChargeAmt.MaxVal = 100000000D;
 			this.textChargeAmt.MinVal = -100000000D;
 			this.textChargeAmt.Name = "textChargeAmt";
-			this.textChargeAmt.Size = new System.Drawing.Size(100, 20);
-			this.textChargeAmt.TabIndex = 68;
+			this.textChargeAmt.Size = new System.Drawing.Size(88, 20);
+			this.textChargeAmt.TabIndex = 9;
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(21, 134);
+			this.label1.Location = new System.Drawing.Point(21, 137);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(106, 16);
 			this.label1.TabIndex = 72;
@@ -442,21 +498,6 @@ namespace OpenDental{
 			this.label5.TabIndex = 67;
 			this.label5.Text = "Charge Amount";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// textDateStop
-			// 
-			this.textDateStop.Location = new System.Drawing.Point(129, 133);
-			this.textDateStop.Name = "textDateStop";
-			this.textDateStop.Size = new System.Drawing.Size(100, 20);
-			this.textDateStop.TabIndex = 71;
-			// 
-			// textDateStart
-			// 
-			this.textDateStart.Location = new System.Drawing.Point(129, 107);
-			this.textDateStart.Name = "textDateStart";
-			this.textDateStart.Size = new System.Drawing.Size(100, 20);
-			this.textDateStart.TabIndex = 69;
-			this.textDateStart.Leave += new System.EventHandler(this.textDateStart_Leave);
 			// 
 			// label2
 			// 
@@ -475,7 +516,7 @@ namespace OpenDental{
 			this.butDelete.Location = new System.Drawing.Point(21, 627);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(75, 24);
-			this.butDelete.TabIndex = 12;
+			this.butDelete.TabIndex = 32;
 			this.butDelete.Text = "&Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
@@ -485,7 +526,7 @@ namespace OpenDental{
 			this.textZip.MaxLength = 100;
 			this.textZip.Name = "textZip";
 			this.textZip.Size = new System.Drawing.Size(136, 20);
-			this.textZip.TabIndex = 9;
+			this.textZip.TabIndex = 6;
 			// 
 			// labelAddress
 			// 
@@ -502,7 +543,7 @@ namespace OpenDental{
 			this.textAddress.MaxLength = 100;
 			this.textAddress.Name = "textAddress";
 			this.textAddress.Size = new System.Drawing.Size(365, 20);
-			this.textAddress.TabIndex = 6;
+			this.textAddress.TabIndex = 5;
 			// 
 			// labelZip
 			// 
@@ -519,7 +560,7 @@ namespace OpenDental{
 			this.butOK.Location = new System.Drawing.Point(351, 627);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
-			this.butOK.TabIndex = 10;
+			this.butOK.TabIndex = 30;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
@@ -529,7 +570,7 @@ namespace OpenDental{
 			this.butCancel.Location = new System.Drawing.Point(432, 627);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
-			this.butCancel.TabIndex = 11;
+			this.butCancel.TabIndex = 31;
 			this.butCancel.Text = "&Cancel";
 			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
@@ -538,7 +579,8 @@ namespace OpenDental{
 			this.textExpDate.Location = new System.Drawing.Point(141, 38);
 			this.textExpDate.Name = "textExpDate";
 			this.textExpDate.Size = new System.Drawing.Size(71, 20);
-			this.textExpDate.TabIndex = 4;
+			this.textExpDate.TabIndex = 3;
+			this.textExpDate.TabStop = false;
 			// 
 			// label4
 			// 
@@ -556,6 +598,7 @@ namespace OpenDental{
 			this.textCardNumber.ReadOnly = true;
 			this.textCardNumber.Size = new System.Drawing.Size(136, 20);
 			this.textCardNumber.TabIndex = 1;
+			this.textCardNumber.TabStop = false;
 			// 
 			// label3
 			// 
@@ -568,7 +611,7 @@ namespace OpenDental{
 			// 
 			// FormCreditCardEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(524, 663);
+			this.ClientSize = new System.Drawing.Size(524, 657);
 			this.Controls.Add(this.labelClinic);
 			this.Controls.Add(this.textClinic);
 			this.Controls.Add(this.groupChargeFrequency);
@@ -615,13 +658,10 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelZip;
 		private UI.Button butDelete;
 		private System.Windows.Forms.Label label1;
-		private ValidDate textDateStop;
 		private System.Windows.Forms.Label label2;
-		private ValidDate textDateStart;
 		private ValidDouble textChargeAmt;
 		private System.Windows.Forms.Label label5;
 		private OpenDental.UI.GroupBoxOD groupRecurringCharges;
-		private System.Windows.Forms.Label label6;
 		private ODtextBox textNote;
 		private System.Windows.Forms.Label label7;
 		private UI.Button butClear;
@@ -652,5 +692,11 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textClinic;
 		private System.Windows.Forms.Label labelClinic;
 		private System.Windows.Forms.CheckBox checkIsRecurringActive;
+		private System.Windows.Forms.Label labelNextChargeDate;
+		private ValidDate textNextChargeDate;
+		private System.Windows.Forms.Label labelPreviousStartDate;
+		private ValidDate textPreviousStartDate;
+		private ValidDate textDateStop;
+		private ValidDate textDateStart;
 	}
 }

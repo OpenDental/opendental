@@ -72,7 +72,7 @@ namespace OpenDentBusiness{
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),clientComputerName,hostComputerName);
 				return;
 			}
-			string command=$"SELECT COUNT(*) FROM computer WHERE CompName ='{clientComputerName}'";
+			string command="SELECT COUNT(*) FROM computer WHERE CompName ='"+POut.String(clientComputerName)+"'";
 			long count=Db.GetLong(command);
 			if(count == 0) {
 				Computer Cur=new Computer();
@@ -96,7 +96,7 @@ namespace OpenDentBusiness{
 				return;
 			}
 			//computerName is the client computer of a remote connection.
-			string command=$"SELECT ComputerNum FROM computer WHERE CompName='{hostComputerName}'";
+			string command=$"SELECT ComputerNum FROM computer WHERE CompName='{POut.String(hostComputerName)}'";
 			long hostComputerNum=Db.GetLong(command);
 			if(hostComputerNum == 0) {
 				return;//Could not find the host computer in the database, no printer settings to copy.
@@ -135,9 +135,9 @@ namespace OpenDentBusiness{
 				return;
 			}
 			//Delete any accociated printer settings from the printer table
-			string command=$"DELETE FROM printer WHERE ComputerNum={comp.ComputerNum}";
+			string command=$"DELETE FROM printer WHERE ComputerNum={POut.Long(comp.ComputerNum)}";
  			Db.NonQ(command);
-			command=$"DELETE FROM computer WHERE ComputerNum={comp.ComputerNum}";
+			command=$"DELETE FROM computer WHERE ComputerNum={POut.Long(comp.ComputerNum)}";
  			Db.NonQ(command);
 		}
 

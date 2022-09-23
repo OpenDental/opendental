@@ -1167,7 +1167,8 @@ namespace OpenDental {
 			return true;
 		}
 
-		///<summary>Returns true if the eConnector service is already installed or was successfully installed. Otherwise; false.
+		///<summary>Returns true if the eConnector service is already installed or was successfully installed. 
+		///Returns false if there are EConnectors present on other machines, or on any error.
 		///Uninstalls all OpenDentalCustListener services that are present. Installs the eConnector service after successfully removing all CustListener services.
 		///Set isSilent to false to show meaningful error messages, otherwise fails silently.
 		///Set doOverrideBlankUpdateServerName to true if this computer should be set as the new update server if the WebServiceServerName preference is currently blank.
@@ -1193,7 +1194,14 @@ namespace OpenDental {
 			}
 			if(string.IsNullOrWhiteSpace(updateServerName)) {
 				//The calling method wants to install the eConnector which is going to be attempted farther down.
-				//Simply check to see if the calling method wants this computer to take over the WebServiceServerName preference.
+				//This will only be permitted if there haven't been any heartbeats within the last 24hrs.
+				//Get any EConnector heartbeats from within the last 24hrs.
+				List<EServiceSignal> listEServiceSignalsForPastDay=EServiceSignals.GetServicesForSeverity(eServiceSignalSeverity.Working,DateTime.Now.AddDays(-1),DateTime.Now);
+				//There is recent Econnector activity, so don't install the Econnector.
+				if(listEServiceSignalsForPastDay.Count > 0) {
+					return false;//This is not an error and there is simply another eConnector installed somewhere.
+				}
+				//Check to see if the calling method wants this computer to take over the WebServiceServerName preference.
 				if(doOverrideBlankUpdateServerName) {
 					try {
 						Prefs.UpdateString(PrefName.WebServiceServerName,Dns.GetHostName());

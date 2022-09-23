@@ -17,7 +17,7 @@ namespace OpenDentBusiness{
 		public ClaimTrackingType TrackingType;
 		///<summary>FK to user.UserNum</summary>
 		public long UserNum;
-		///<summary>When the row was inserted.</summary>
+		///<summary>Automatically updated by MySQL every time a row is inserted or modified.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.TimeStamp)]
 		public DateTime DateTimeEntry;
 		///<summary>Generic column for additional info.</summary>

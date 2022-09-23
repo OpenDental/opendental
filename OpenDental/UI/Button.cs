@@ -254,9 +254,12 @@ namespace OpenDental.UI {
 			try {
 				int buffer=6;
 				int textWidth=0;
-				using(Graphics g = this.CreateGraphics()) {
-					textWidth=(int)g.MeasureString(Text,Font).Width;
-				}
+				//jordan- The three lines below cause this button to not show in FormSheetDefs because that form is set to be dpi unaware.
+				//We don't know why.
+				//using(Graphics g = this.CreateGraphics()) {
+				//	textWidth=(int)g.MeasureString(Text,Font).Width;
+				//}
+				textWidth=TextRenderer.MeasureText(Text,Font).Width;
 				int oldWidth=Width;
 				if(this.Image==null) {
 					if(Width<textWidth+buffer) {

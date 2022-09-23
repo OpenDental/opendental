@@ -36,20 +36,26 @@ namespace OpenDental {
 			this.checkBalancesDontSubtractIns = new System.Windows.Forms.CheckBox();
 			this.checkAgingProcLifo = new System.Windows.Forms.CheckBox();
 			this.checkAccountShowPaymentNums = new System.Windows.Forms.CheckBox();
-			this.checkAllowFutureTrans = new System.Windows.Forms.CheckBox();
 			this.checkStatementInvoiceGridShowWriteoffs = new System.Windows.Forms.CheckBox();
+			this.checkAllowFutureTrans = new System.Windows.Forms.CheckBox();
 			this.groupCommLogs = new OpenDental.UI.GroupBoxOD();
 			this.checkCommLogAutoSave = new System.Windows.Forms.CheckBox();
 			this.checkShowFamilyCommByDefault = new System.Windows.Forms.CheckBox();
 			this.butAgingProcLifoDetails = new OpenDental.UI.Button();
+			this.labelAllowFutureTransDetails = new System.Windows.Forms.Label();
+			this.groupBoxFutureDatedTransactions = new OpenDental.UI.GroupBoxOD();
+			this.labelFutureDatedOptions = new System.Windows.Forms.Label();
+			this.checkAllowFutureDebits = new System.Windows.Forms.CheckBox();
+			this.checkAllowFuturePayments = new System.Windows.Forms.CheckBox();
 			this.groupBoxFunctionality.SuspendLayout();
 			this.groupCommLogs.SuspendLayout();
+			this.groupBoxFutureDatedTransactions.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// label62
 			// 
 			this.label62.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.label62.Location = new System.Drawing.Point(172, 366);
+			this.label62.Location = new System.Drawing.Point(172, 453);
 			this.label62.Name = "label62";
 			this.label62.Size = new System.Drawing.Size(288, 48);
 			this.label62.TabIndex = 306;
@@ -72,7 +78,7 @@ namespace OpenDental {
 			// 
 			this.labelAccountShowPaymentNumsDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelAccountShowPaymentNumsDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelAccountShowPaymentNumsDetails.Location = new System.Drawing.Point(473, 162);
+			this.labelAccountShowPaymentNumsDetails.Location = new System.Drawing.Point(476, 162);
 			this.labelAccountShowPaymentNumsDetails.Name = "labelAccountShowPaymentNumsDetails";
 			this.labelAccountShowPaymentNumsDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelAccountShowPaymentNumsDetails.TabIndex = 325;
@@ -81,7 +87,7 @@ namespace OpenDental {
 			// 
 			// butClearAgingBeginDateT
 			// 
-			this.butClearAgingBeginDateT.Location = new System.Drawing.Point(397, 198);
+			this.butClearAgingBeginDateT.Location = new System.Drawing.Point(397, 168);
 			this.butClearAgingBeginDateT.Name = "butClearAgingBeginDateT";
 			this.butClearAgingBeginDateT.Size = new System.Drawing.Size(43, 21);
 			this.butClearAgingBeginDateT.TabIndex = 328;
@@ -98,17 +104,16 @@ namespace OpenDental {
 			this.groupBoxFunctionality.Controls.Add(this.checkBalancesDontSubtractIns);
 			this.groupBoxFunctionality.Controls.Add(this.checkAgingProcLifo);
 			this.groupBoxFunctionality.Controls.Add(this.checkAccountShowPaymentNums);
-			this.groupBoxFunctionality.Controls.Add(this.checkAllowFutureTrans);
 			this.groupBoxFunctionality.Controls.Add(this.checkStatementInvoiceGridShowWriteoffs);
 			this.groupBoxFunctionality.Location = new System.Drawing.Point(20, 122);
 			this.groupBoxFunctionality.Name = "groupBoxFunctionality";
-			this.groupBoxFunctionality.Size = new System.Drawing.Size(450, 233);
+			this.groupBoxFunctionality.Size = new System.Drawing.Size(450, 208);
 			this.groupBoxFunctionality.TabIndex = 307;
 			this.groupBoxFunctionality.Text = "Functionality";
 			// 
 			// labelAgingBeginDateT
 			// 
-			this.labelAgingBeginDateT.Location = new System.Drawing.Point(6, 196);
+			this.labelAgingBeginDateT.Location = new System.Drawing.Point(8, 166);
 			this.labelAgingBeginDateT.Name = "labelAgingBeginDateT";
 			this.labelAgingBeginDateT.Size = new System.Drawing.Size(230, 27);
 			this.labelAgingBeginDateT.TabIndex = 314;
@@ -117,7 +122,7 @@ namespace OpenDental {
 			// 
 			// textAgingBeginDateT
 			// 
-			this.textAgingBeginDateT.Location = new System.Drawing.Point(239, 199);
+			this.textAgingBeginDateT.Location = new System.Drawing.Point(241, 169);
 			this.textAgingBeginDateT.Name = "textAgingBeginDateT";
 			this.textAgingBeginDateT.ReadOnly = true;
 			this.textAgingBeginDateT.Size = new System.Drawing.Size(150, 20);
@@ -126,7 +131,7 @@ namespace OpenDental {
 			// 
 			// labelAutoAgingRunTime
 			// 
-			this.labelAutoAgingRunTime.Location = new System.Drawing.Point(13, 168);
+			this.labelAutoAgingRunTime.Location = new System.Drawing.Point(13, 137);
 			this.labelAutoAgingRunTime.Name = "labelAutoAgingRunTime";
 			this.labelAutoAgingRunTime.Size = new System.Drawing.Size(350, 17);
 			this.labelAutoAgingRunTime.TabIndex = 312;
@@ -135,7 +140,7 @@ namespace OpenDental {
 			// 
 			// textAutoAgingRunTime
 			// 
-			this.textAutoAgingRunTime.Location = new System.Drawing.Point(366, 165);
+			this.textAutoAgingRunTime.Location = new System.Drawing.Point(366, 134);
 			this.textAutoAgingRunTime.Name = "textAutoAgingRunTime";
 			this.textAutoAgingRunTime.Size = new System.Drawing.Size(74, 20);
 			this.textAutoAgingRunTime.TabIndex = 21;
@@ -156,7 +161,7 @@ namespace OpenDental {
 			// 
 			this.checkAgingProcLifo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkAgingProcLifo.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkAgingProcLifo.Location = new System.Drawing.Point(5, 134);
+			this.checkAgingProcLifo.Location = new System.Drawing.Point(5, 103);
 			this.checkAgingProcLifo.Name = "checkAgingProcLifo";
 			this.checkAgingProcLifo.Size = new System.Drawing.Size(435, 17);
 			this.checkAgingProcLifo.TabIndex = 19;
@@ -175,17 +180,6 @@ namespace OpenDental {
 			this.checkAccountShowPaymentNums.Text = "Show payment numbers in Account Module";
 			this.checkAccountShowPaymentNums.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// checkAllowFutureTrans
-			// 
-			this.checkAllowFutureTrans.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.checkAllowFutureTrans.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkAllowFutureTrans.Location = new System.Drawing.Point(89, 103);
-			this.checkAllowFutureTrans.Name = "checkAllowFutureTrans";
-			this.checkAllowFutureTrans.Size = new System.Drawing.Size(351, 17);
-			this.checkAllowFutureTrans.TabIndex = 18;
-			this.checkAllowFutureTrans.Text = "Allow future dated transactions";
-			this.checkAllowFutureTrans.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
 			// checkStatementInvoiceGridShowWriteoffs
 			// 
 			this.checkStatementInvoiceGridShowWriteoffs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -196,6 +190,17 @@ namespace OpenDental {
 			this.checkStatementInvoiceGridShowWriteoffs.TabIndex = 16;
 			this.checkStatementInvoiceGridShowWriteoffs.Text = "Invoice payments grid shows write-offs\r\n";
 			this.checkStatementInvoiceGridShowWriteoffs.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// checkAllowFutureTrans
+			// 
+			this.checkAllowFutureTrans.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.checkAllowFutureTrans.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkAllowFutureTrans.Location = new System.Drawing.Point(142, 10);
+			this.checkAllowFutureTrans.Name = "checkAllowFutureTrans";
+			this.checkAllowFutureTrans.Size = new System.Drawing.Size(298, 15);
+			this.checkAllowFutureTrans.TabIndex = 18;
+			this.checkAllowFutureTrans.Text = "Allow future dated transactions";
+			this.checkAllowFutureTrans.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// groupCommLogs
 			// 
@@ -235,18 +240,75 @@ namespace OpenDental {
 			// butAgingProcLifoDetails
 			// 
 			this.butAgingProcLifoDetails.ForeColor = System.Drawing.Color.Black;
-			this.butAgingProcLifoDetails.Location = new System.Drawing.Point(476, 253);
+			this.butAgingProcLifoDetails.Location = new System.Drawing.Point(479, 222);
 			this.butAgingProcLifoDetails.Name = "butAgingProcLifoDetails";
 			this.butAgingProcLifoDetails.Size = new System.Drawing.Size(64, 21);
 			this.butAgingProcLifoDetails.TabIndex = 370;
 			this.butAgingProcLifoDetails.Text = "Details";
 			this.butAgingProcLifoDetails.Click += new System.EventHandler(this.butAgingProcLifoDetails_Click);
 			// 
+			// labelAllowFutureTransDetails
+			// 
+			this.labelAllowFutureTransDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelAllowFutureTransDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelAllowFutureTransDetails.Location = new System.Drawing.Point(476, 352);
+			this.labelAllowFutureTransDetails.Name = "labelAllowFutureTransDetails";
+			this.labelAllowFutureTransDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelAllowFutureTransDetails.TabIndex = 371;
+			this.labelAllowFutureTransDetails.Text = "including patient payments and insurance payments";
+			this.labelAllowFutureTransDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// groupBoxFutureDatedTransactions
+			// 
+			this.groupBoxFutureDatedTransactions.Controls.Add(this.labelFutureDatedOptions);
+			this.groupBoxFutureDatedTransactions.Controls.Add(this.checkAllowFutureDebits);
+			this.groupBoxFutureDatedTransactions.Controls.Add(this.checkAllowFuturePayments);
+			this.groupBoxFutureDatedTransactions.Controls.Add(this.checkAllowFutureTrans);
+			this.groupBoxFutureDatedTransactions.Location = new System.Drawing.Point(20, 344);
+			this.groupBoxFutureDatedTransactions.Name = "groupBoxFutureDatedTransactions";
+			this.groupBoxFutureDatedTransactions.Size = new System.Drawing.Size(450, 98);
+			this.groupBoxFutureDatedTransactions.TabIndex = 372;
+			this.groupBoxFutureDatedTransactions.Text = "Future Dated Transactions";
+			// 
+			// labelFutureDatedOptions
+			// 
+			this.labelFutureDatedOptions.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelFutureDatedOptions.Location = new System.Drawing.Point(93, 28);
+			this.labelFutureDatedOptions.Name = "labelFutureDatedOptions";
+			this.labelFutureDatedOptions.Size = new System.Drawing.Size(350, 17);
+			this.labelFutureDatedOptions.TabIndex = 329;
+			this.labelFutureDatedOptions.Text = "(or enable one of the two options below)";
+			this.labelFutureDatedOptions.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// checkAllowFutureDebits
+			// 
+			this.checkAllowFutureDebits.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.checkAllowFutureDebits.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkAllowFutureDebits.Location = new System.Drawing.Point(100, 71);
+			this.checkAllowFutureDebits.Name = "checkAllowFutureDebits";
+			this.checkAllowFutureDebits.Size = new System.Drawing.Size(340, 17);
+			this.checkAllowFutureDebits.TabIndex = 290;
+			this.checkAllowFutureDebits.Text = "Allow future dated patient payments";
+			this.checkAllowFutureDebits.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkAllowFutureDebits.UseVisualStyleBackColor = true;
+			// 
+			// checkAllowFuturePayments
+			// 
+			this.checkAllowFuturePayments.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkAllowFuturePayments.Location = new System.Drawing.Point(73, 48);
+			this.checkAllowFuturePayments.Name = "checkAllowFuturePayments";
+			this.checkAllowFuturePayments.Size = new System.Drawing.Size(367, 17);
+			this.checkAllowFuturePayments.TabIndex = 289;
+			this.checkAllowFuturePayments.Text = "Allow future dated insurance payments";
+			this.checkAllowFuturePayments.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
 			// UserControlAccountGeneral
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.groupBoxFutureDatedTransactions);
+			this.Controls.Add(this.labelAllowFutureTransDetails);
 			this.Controls.Add(this.butAgingProcLifoDetails);
 			this.Controls.Add(this.labelAccountShowPaymentNumsDetails);
 			this.Controls.Add(this.labelCommLogAutoSaveDetails);
@@ -258,6 +320,7 @@ namespace OpenDental {
 			this.groupBoxFunctionality.ResumeLayout(false);
 			this.groupBoxFunctionality.PerformLayout();
 			this.groupCommLogs.ResumeLayout(false);
+			this.groupBoxFutureDatedTransactions.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -282,5 +345,10 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textAutoAgingRunTime;
 		private UI.Button butClearAgingBeginDateT;
 		private UI.Button butAgingProcLifoDetails;
+		private System.Windows.Forms.Label labelAllowFutureTransDetails;
+		private UI.GroupBoxOD groupBoxFutureDatedTransactions;
+		private System.Windows.Forms.CheckBox checkAllowFuturePayments;
+		private System.Windows.Forms.CheckBox checkAllowFutureDebits;
+		private System.Windows.Forms.Label labelFutureDatedOptions;
 	}
 }

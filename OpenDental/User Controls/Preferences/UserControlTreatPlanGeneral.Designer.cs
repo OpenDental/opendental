@@ -63,6 +63,8 @@ namespace OpenDental {
 			this.groupTreatPlan = new OpenDental.UI.GroupBoxOD();
 			this.linkLabelProcDiscountTypeDetails1 = new System.Windows.Forms.LinkLabel();
 			this.linkLabelProcDiscountTypeDetails2 = new System.Windows.Forms.LinkLabel();
+			this.labelTreatPlanItemizedDetails = new System.Windows.Forms.Label();
+			this.butInsuranceHistoryDetails = new OpenDental.UI.Button();
 			this.groupTreatPlanSort.SuspendLayout();
 			this.groupBoxInsuranceHistory.SuspendLayout();
 			this.groupBoxDiscounts.SuspendLayout();
@@ -203,11 +205,11 @@ namespace OpenDental {
 			// checkTreatPlanItemized
 			// 
 			this.checkTreatPlanItemized.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkTreatPlanItemized.Location = new System.Drawing.Point(300, 29);
+			this.checkTreatPlanItemized.Location = new System.Drawing.Point(152, 29);
 			this.checkTreatPlanItemized.Name = "checkTreatPlanItemized";
-			this.checkTreatPlanItemized.Size = new System.Drawing.Size(140, 17);
+			this.checkTreatPlanItemized.Size = new System.Drawing.Size(288, 17);
 			this.checkTreatPlanItemized.TabIndex = 246;
-			this.checkTreatPlanItemized.Text = "Itemize Treatment Plan";
+			this.checkTreatPlanItemized.Text = "Show itemized fees";
 			this.checkTreatPlanItemized.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkTreatPlanItemized.UseVisualStyleBackColor = false;
 			// 
@@ -484,11 +486,34 @@ namespace OpenDental {
 			this.linkLabelProcDiscountTypeDetails2.UseCompatibleTextRendering = true;
 			this.linkLabelProcDiscountTypeDetails2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelProcDiscountTypeDetails2_LinkClicked);
 			// 
+			// labelTreatPlanItemizedDetails
+			// 
+			this.labelTreatPlanItemizedDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelTreatPlanItemizedDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelTreatPlanItemizedDetails.Location = new System.Drawing.Point(476, 108);
+			this.labelTreatPlanItemizedDetails.Name = "labelTreatPlanItemizedDetails";
+			this.labelTreatPlanItemizedDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelTreatPlanItemizedDetails.TabIndex = 370;
+			this.labelTreatPlanItemizedDetails.Text = "only when printing";
+			this.labelTreatPlanItemizedDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// butInsuranceHistoryDetails
+			// 
+			this.butInsuranceHistoryDetails.ForeColor = System.Drawing.Color.Black;
+			this.butInsuranceHistoryDetails.Location = new System.Drawing.Point(476, 303);
+			this.butInsuranceHistoryDetails.Name = "butInsuranceHistoryDetails";
+			this.butInsuranceHistoryDetails.Size = new System.Drawing.Size(76, 21);
+			this.butInsuranceHistoryDetails.TabIndex = 374;
+			this.butInsuranceHistoryDetails.Text = "Default Info";
+			this.butInsuranceHistoryDetails.Click += new System.EventHandler(this.butInsuranceHistoryDetails_Click);
+			// 
 			// UserControlTreatPlanGeneral
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.butInsuranceHistoryDetails);
+			this.Controls.Add(this.labelTreatPlanItemizedDetails);
 			this.Controls.Add(this.linkLabelProcDiscountTypeDetails2);
 			this.Controls.Add(this.linkLabelProcDiscountTypeDetails1);
 			this.Controls.Add(this.groupTreatPlan);
@@ -552,5 +577,7 @@ namespace OpenDental {
 		private UI.GroupBoxOD groupTreatPlan;
 		private System.Windows.Forms.LinkLabel linkLabelProcDiscountTypeDetails1;
 		private System.Windows.Forms.LinkLabel linkLabelProcDiscountTypeDetails2;
+		private System.Windows.Forms.Label labelTreatPlanItemizedDetails;
+		private UI.Button butInsuranceHistoryDetails;
 	}
 }

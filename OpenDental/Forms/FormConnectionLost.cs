@@ -43,6 +43,7 @@ namespace OpenDental {
 			//Spawn a thread that will monitor _shouldWindowClose every 500 MS (expecting another thread or the Retry button to set it correctly).
 			if(_funcShouldWindowClose!=null) {
 				StartShouldCloseMonitor();
+				Activate();
 			}
 		}
 

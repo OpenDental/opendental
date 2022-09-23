@@ -148,13 +148,6 @@ namespace OpenDental {
 				//The lock could be by any user, including the current user on a different instance of OD.
 				LockControls();
 				labelLocked.Text="Locked by: "+Userods.GetName(_userNumLocked);
-				if(ODBuild.IsDebug()) {
-					//Helpful to know who when you have multiple windows open for testing.
-					MsgBox.Show(this,Userods.GetName(_userNumLocked)+Lan.g(this," has already locked this ortho chart for editing."));
-				}
-				else {
-					MsgBox.Show(this,"Another user has already locked this ortho chart for editing.");
-				}
 			}
 		}
 

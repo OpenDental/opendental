@@ -6587,6 +6587,77 @@ namespace UnitTests.PaymentEdit_Tests {
 		}
 
 		[TestMethod]
+		public void PaymentEdit_ConstructAndLinkChargeCredits_PayPlanWithNegAndPosAdjsOnProc() {
+			//There will be a completed procedure for $150.
+			//That procedure will have a $15 adjustment (taxes or something).
+			//The entire amount ($165) will be associated to a payment plan.
+			//However, coming way out of left field, we will add yet another adjustment but this one will be a negative $165.
+			//Don't ask, this mimics a live scenario here at HQ, just go with it.
+			/*****************************************************
+				Create Patient:  pat
+				Create Provider: provNum
+				Create proc:         Today  provNum  pat   $150
+				Create payplan:      Today  provNum  pat   $165
+					^Associated to proc
+				Create adj1:         Today  provNum  pat   $15
+					^Attached to proc
+				Create adj2:         Today  provNum  pat  -$165
+					^Attached to proc
+			******************************************************/
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			long unearnedType=PrefC.GetLong(PrefName.PrepaymentUnearnedType);
+			Patient pat=PatientT.CreatePatient(suffix);
+			long provNum=ProviderT.CreateProvider(suffix);
+			Procedure proc=ProcedureT.CreateProcedure(pat,"PPWNAPAOP",ProcStat.C,"",150,DateTime.Today,provNum:provNum);
+			//Make the two adjustments to the account (one positive and one negative).
+			Adjustment adj1=AdjustmentT.MakeAdjustment(pat.PatNum,15,procNum:proc.ProcNum,provNum:proc.ProvNum);
+			Adjustment adj2=AdjustmentT.MakeAdjustment(pat.PatNum,-165,procNum:proc.ProcNum,provNum:provNum);
+			//Make a payment plan for the entire $165 all due today.
+			PayPlan payPlan=PayPlanT.CreatePayPlanNoCharges(pat.PatNum,165,DateTime.Today,0);
+			PayPlanChargeT.CreateOne(payPlan.PayPlanNum,pat.PatNum,pat.PatNum,DateTime.Today,165,procNum:proc.ProcNum,chargeType:PayPlanChargeType.Credit);
+			PayPlanChargeT.CreateOne(payPlan.PayPlanNum,pat.PatNum,pat.PatNum,DateTime.Today,165,chargeType:PayPlanChargeType.Debit);
+			PaymentEdit.ConstructResults chargeResult=PaymentEdit.ConstructAndLinkChargeCredits(pat.PatNum,isIncomeTxfr:true);
+			/*****************************************************
+			AccountEntry:  Today  provNum  pat   $150
+				^Represents proc.
+			AccountEntry:  Today  provNum  pat   $15
+				^Represents adj1 that is attached to proc.
+			AccountEntry:  Today  provNum  pat  -$165
+				^Represents adj2 that is unattached.
+			AccountEntry:  Today  provNum  pat   $165
+				^Faux entry designed for proc / payplan combo.
+			******************************************************/
+			Assert.AreEqual(4,chargeResult.ListAccountEntries.Count);
+			Assert.AreEqual(1,chargeResult.ListAccountEntries.Count(x => x.GetType()==typeof(Procedure)
+				&& x.PatNum==pat.PatNum
+				&& x.AmountOriginal==150
+				&& x.AmountEnd==-165//The random negative adjustment should make this procedure 'overpaid'.
+				&& x.ProcNum==proc.ProcNum
+				&& x.PayPlanNum==0));
+			Assert.AreEqual(1,chargeResult.ListAccountEntries.Count(x => x.GetType()==typeof(Adjustment)
+				&& x.PatNum==pat.PatNum
+				&& x.AmountOriginal==15
+				&& x.AmountEnd==0//Explicitly linked to procedure so the value should reside there.
+				&& x.ProcNum==proc.ProcNum
+				&& x.AdjNum==adj1.AdjNum
+				&& x.PayPlanNum==0));
+			Assert.AreEqual(1,chargeResult.ListAccountEntries.Count(x => x.GetType()==typeof(Adjustment)
+				&& x.PatNum==pat.PatNum
+				&& x.AmountOriginal==-165
+				&& x.AmountEnd==0//Explicitly linked to procedure so the value should reside there.
+				&& x.ProcNum==proc.ProcNum
+				&& x.AdjNum==adj2.AdjNum
+				&& x.PayPlanNum==0));
+			Assert.AreEqual(1,chargeResult.ListAccountEntries.Count(x => x.GetType()==typeof(FauxAccountEntry)
+				&& x.PatNum==pat.PatNum
+				&& x.AmountOriginal==165
+				&& x.AmountEnd==165//All due today
+				&& x.ProcNum==proc.ProcNum
+				&& x.PayPlanNum==payPlan.PayPlanNum
+				&& ((FauxAccountEntry)x).ChargeType==PayPlanChargeType.Debit));
+		}
+
+		[TestMethod]
 		public void PaymentEdit_ConstructAndLinkChargeCredits_PayPlanWithAdjustmentsDynamic() {
 			/*****************************************************
 				Create Patient:  pat

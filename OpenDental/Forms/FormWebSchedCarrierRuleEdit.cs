@@ -40,6 +40,16 @@ namespace OpenDental {
 			labelCount.Text=textMessage.Text.Length.ToString()+"/100";
 		}
 
+		private void radioAllowWithInput_CheckedChanged(object sender,EventArgs e) {
+			if(radioAllowWithInput.Checked) {
+				textMessage.Enabled=false;
+				textMessage.Text="";
+			}
+			else {
+				textMessage.Enabled=true;
+			}
+		}
+
 		private void textMessage_TextChanged(object sender,EventArgs e) {
 			labelCount.Text=textMessage.Text.Length.ToString()+"/100";
 		}

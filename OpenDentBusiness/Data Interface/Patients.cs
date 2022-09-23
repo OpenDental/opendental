@@ -1929,7 +1929,7 @@ namespace OpenDentBusiness {
 				}
 			}
 			else if(ptSearchArgs.DoLimit) {
-				command+=DbHelper.LimitAnd(41);
+				command=DbHelper.LimitOrderBy(command,41);
 			}
 			DataTable table=Db.GetTable(command);
 			if(usePhonenumTable && useExactMatch && phDigitsTrimmed.Length==exactMatchPhoneDigits && table.Rows.Count==0) {
@@ -2776,7 +2776,7 @@ namespace OpenDentBusiness {
 			if(!PrefC.GetBool(PrefName.BalancesDontSubtractIns)) {
 				strMinusIns="-guar.InsEst";
 			}
-			string strBalExclude="(ROUND(guar.BalTotal"+strMinusIns+",3) >= ROUND("+POut.Double(excludeLessThan)+",3) OR guar.PayPlanDue > 0";
+			string strBalExclude="(ROUND(guar.BalTotal"+strMinusIns+",3) >= ROUND("+POut.Double(excludeLessThan)+",3) OR guar.PayPlanDue >= ROUND("+POut.Double(excludeLessThan)+",3)";
 			if(!excludeNeg) {//include credits
 				strBalExclude+=" OR ROUND(guar.BalTotal"+strMinusIns+",3) < 0";
 			}

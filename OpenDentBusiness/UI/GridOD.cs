@@ -3646,7 +3646,7 @@ namespace OpenDental.UI {
 			if(_printedRows==ListGridRows.Count) {//done printing
 				//set row heights back to screen heights.
 				using(Graphics gfx=this.CreateGraphics()) {
-					ComputeRows(gfx,doActualCalc:false);
+					ComputeRows(gfx,doActualCalc:true);
 				}
 				return yPos;
 			}

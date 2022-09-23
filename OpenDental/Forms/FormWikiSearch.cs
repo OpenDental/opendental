@@ -28,8 +28,8 @@ namespace OpenDental {
 		private void FormWikiSearch_Load(object sender,EventArgs e) {
 			Rectangle rectWorkingArea=System.Windows.Forms.Screen.GetWorkingArea(this);
 			Top=0;
-			Left=Math.Max(0,((rectWorkingArea.Width-1200)/2)+rectWorkingArea.Left);
-			Width=Math.Min(rectWorkingArea.Width,1200);
+			Left=Math.Max(0,((rectWorkingArea.Width-LayoutManager.Scale(1200))/2)+rectWorkingArea.Left);
+			Width=Math.Min(rectWorkingArea.Width,LayoutManager.Scale(1200));
 			Height=rectWorkingArea.Height;
 			FillGrid();
 			wikiPageTitleSelected="";
