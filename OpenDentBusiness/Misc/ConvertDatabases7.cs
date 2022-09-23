@@ -3906,7 +3906,7 @@ namespace OpenDentBusiness {
 
             // Vyne Eclaim Support
             command = @"INSERT INTO clearinghouse (ClearinghouseNum, Description, ExportPath, Payors, Eformat, ISA05, SenderTIN, ISA07, ISA08, ISA15, Password, ResponsePath, CommBridge, ClientProgram, LastBatchNumber, ModemPort, LoginID, SenderName, SenderTelephone, GS03, ISA02, ISA04, ISA16, SeparatorData, SeparatorSegment, ClinicNum, HqClearinghouseNum, IsEraDownloadAllowed, IsClaimExportAllowed, IsAttachmentSendAllowed)
-                        VALUES(22, 'Vyne', 'c:\\users\\public\\res\\dotr\\upload', NULL, 5, 'ZZ', NULL, 'ZZ', '113504608', 'P', '', '', 21, '', 62, 0, '', NULL, NULL, '113504608', '', '', '', '', '', 0, 22, 0, 1, 0);
+                        VALUES(23, 'Vyne', 'c:\\users\\public\\res\\dotr\\upload', NULL, 5, 'ZZ', NULL, 'ZZ', '113504608', 'P', '', '', 21, '', 62, 0, '', NULL, NULL, '113504608', '', '', '', '', '', 0, 22, 0, 1, 0);
                         ";
             Db.NonQ(command);
 		}
