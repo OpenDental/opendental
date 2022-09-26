@@ -162,6 +162,10 @@ namespace OpenDental{
 			//are guaranteed to get a valid number from these prefs.
 			timerFillGrid.Interval=PIn.Int(PrefC.GetString(PrefName.PatientSelectSearchPauseMs));
 			_patSearchMinChars=PIn.Int(PrefC.GetString(PrefName.PatientSelectSearchMinChars));
+      if(ODBuild.IsWeb()) {
+        //Keyboard does not currently work with WEB users. 
+        butOnScreenKeyboard.Visible=false;
+      }
 			if(ExplicitPatNums!=null && ExplicitPatNums.Count>0) {
 				FillGrid(false,ExplicitPatNums);
 				return;
@@ -181,10 +185,6 @@ namespace OpenDental{
 			//Set the Textbox Enter Event Handler to keep track of which TextBox had focus last.  
 			//This helps dictate the desired text box for input after opening up the On Screen Keyboard.
 			SetAllTextBoxEnterEventListeners();
-      if(ODBuild.IsWeb()) {
-        //Keyboard does not currently work with WEB users. 
-        butOnScreenKeyboard.Visible=false;
-      }
 		}
 
 		///<summary>This used to be called all the time, now only needs to be called on load.</summary>

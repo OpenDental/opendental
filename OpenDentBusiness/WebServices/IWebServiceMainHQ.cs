@@ -70,6 +70,8 @@ namespace OpenDentBusiness {
 		string SetSmsPatientPhoneOptIn(string officeData);
 		string BuildApptThankYouIcs(string shortGuid);
 		string GetGoogleAccessToken(string officeData);
+		string GetGoogleAuthorizationUrl(long registrationKeyNum);
+		string GetGoogleAuthorizationUrlLoopbackIpAddressFlow(long registrationKeyNum);
 		string EmailHostingSignup(string officeData);
 		string EmailHostingChangeClinicStatus(string officeData);
 		string GetCareCreditOAuthToken(string officeData);

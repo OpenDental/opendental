@@ -640,6 +640,31 @@ namespace OpenDentBusiness.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///    &lt;head&gt;
+        ///        &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html&quot; charset=&quot;iso-8859-1&quot;&gt;
+        ///        &lt;title&gt;Open Dental Software - Google Code&lt;/title&gt;
+        ///        &lt;link href=&quot;https://opendental.com/style.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;&gt;
+        ///        &lt;style&gt;
+        ///            body {
+        ///                padding: 0;
+        ///                margin: 0;
+        ///                background-color: #507C79;
+        ///                color: #505050;
+        ///            }
+        ///
+        ///            table {
+        ///                width: 100%;
+        ///      [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string GoogleAuthCodeResponseHtml {
+            get {
+                return ResourceManager.GetString("GoogleAuthCodeResponseHtml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
         ///&lt;SheetDef xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
         ///  &lt;IsNew&gt;false&lt;/IsNew&gt;

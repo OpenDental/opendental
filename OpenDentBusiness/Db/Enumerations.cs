@@ -1484,10 +1484,12 @@ namespace OpenDentBusiness{
 	public enum OAuthApplicationNames {
 		///<summary>0</summary>
 		Dropbox,
-		///<summary>1</summary>
+		///<summary>1 - This uses Google's Out-Of-Band (OOB) OAuth flow. Google is depricating that flow on 10/03/2022.</summary>
 		Google,
 		///<summary>2</summary>
 		QuickBooksOnline,
+		///<summary>3 - This flow replaces OOB. It should be used instead of "Google".</summary>
+		GoogleLoopbackIpAddressFlow,
 	}
 
 	///<summary></summary>

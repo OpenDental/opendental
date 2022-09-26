@@ -1739,6 +1739,7 @@ namespace OpenDental {
 					_isCtrlDown=false;
 					return;
 				}
+				_isCtrlDown=false;//reset the CTRL key since the key_up event will be consumed by the MsgBox above.
 			}
 			_listSheetFieldDefsCopyPaste=new List<SheetFieldDef>(); //empty the remembered field list
 			for(int i=0;i<listBoxFields.SelectedIndices.Count;i++) {

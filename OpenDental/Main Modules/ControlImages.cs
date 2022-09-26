@@ -3815,7 +3815,7 @@ namespace OpenDental {
 				docPath=ODFileUtils.CombinePaths(ImageStore.GetAmdFolder(),amd.FileName);
 			}
 			if(!string.IsNullOrEmpty(docPath)) {
-				FileAtoZ.Copy(docPath,tempFilePath,FileAtoZSourceDestination.AtoZToLocal,"Exporting file...");
+				FileAtoZ.Copy(docPath,tempFilePath,FileAtoZSourceDestination.AtoZToLocal,"Exporting file...",doOverwrite:true);
 				ThinfinityUtils.ExportForDownload(tempFilePath);
 			}
 			else {
