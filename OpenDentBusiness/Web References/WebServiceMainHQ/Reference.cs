@@ -14,12 +14,12 @@
 #pragma warning disable 1591
 
 namespace OpenDentBusiness.WebServiceMainHQ {
-    using System;
-    using System.Web.Services;
     using System.Diagnostics;
-    using System.Web.Services.Protocols;
+    using System;
     using System.Xml.Serialization;
     using System.ComponentModel;
+    using System.Web.Services.Protocols;
+    using System.Web.Services;
     
     
     /// <remarks/>
@@ -28,6 +28,8 @@ namespace OpenDentBusiness.WebServiceMainHQ {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Web.Services.WebServiceBindingAttribute(Name="WebServiceMainHQSoap", Namespace="https://www.opendental.com/OpenDentalWebServiceHQ/")]
     public partial class WebServiceMainHQ : System.Web.Services.Protocols.SoapHttpClientProtocol {
+        
+        private System.Threading.SendOrPostCallback TestConnectionOperationCompleted;
         
         private System.Threading.SendOrPostCallback TestConnectionDbOperationCompleted;
         
@@ -117,6 +119,8 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         
         private System.Threading.SendOrPostCallback GetGoogleAuthorizationUrlOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetGoogleAuthorizationUrlLoopbackIpAddressFlowOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetGoogleAccessTokenOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetCareCreditOAuthTokenOperationCompleted;
@@ -197,8 +201,6 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         
         private System.Threading.SendOrPostCallback ProcessEConnectorFailoverOperationCompleted;
         
-        private System.Threading.SendOrPostCallback TestConnectionOperationCompleted;
-        
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
@@ -236,6 +238,9 @@ namespace OpenDentBusiness.WebServiceMainHQ {
                 this.useDefaultCredentialsSetExplicitly = true;
             }
         }
+        
+        /// <remarks/>
+        public event TestConnectionCompletedEventHandler TestConnectionCompleted;
         
         /// <remarks/>
         public event TestConnectionDbCompletedEventHandler TestConnectionDbCompleted;
@@ -370,6 +375,9 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         public event GetGoogleAuthorizationUrlCompletedEventHandler GetGoogleAuthorizationUrlCompleted;
         
         /// <remarks/>
+        public event GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompletedEventHandler GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompleted;
+        
+        /// <remarks/>
         public event GetGoogleAccessTokenCompletedEventHandler GetGoogleAccessTokenCompleted;
         
         /// <remarks/>
@@ -490,7 +498,33 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         public event ProcessEConnectorFailoverCompletedEventHandler ProcessEConnectorFailoverCompleted;
         
         /// <remarks/>
-        public event TestConnectionCompletedEventHandler TestConnectionCompleted;
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/TestConnection", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string TestConnection(string officeData) {
+            object[] results = this.Invoke("TestConnection", new object[] {
+                        officeData});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void TestConnectionAsync(string officeData) {
+            this.TestConnectionAsync(officeData, null);
+        }
+        
+        /// <remarks/>
+        public void TestConnectionAsync(string officeData, object userState) {
+            if ((this.TestConnectionOperationCompleted == null)) {
+                this.TestConnectionOperationCompleted = new System.Threading.SendOrPostCallback(this.OnTestConnectionOperationCompleted);
+            }
+            this.InvokeAsync("TestConnection", new object[] {
+                        officeData}, this.TestConnectionOperationCompleted, userState);
+        }
+        
+        private void OnTestConnectionOperationCompleted(object arg) {
+            if ((this.TestConnectionCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.TestConnectionCompleted(this, new TestConnectionCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/TestConnectionDb", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -1779,6 +1813,36 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/GetGoogleAuthorizationUrlLoopba" +
+            "ckIpAddressFlow", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string GetGoogleAuthorizationUrlLoopbackIpAddressFlow(long registrationKeyNum) {
+            object[] results = this.Invoke("GetGoogleAuthorizationUrlLoopbackIpAddressFlow", new object[] {
+                        registrationKeyNum});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetGoogleAuthorizationUrlLoopbackIpAddressFlowAsync(long registrationKeyNum) {
+            this.GetGoogleAuthorizationUrlLoopbackIpAddressFlowAsync(registrationKeyNum, null);
+        }
+        
+        /// <remarks/>
+        public void GetGoogleAuthorizationUrlLoopbackIpAddressFlowAsync(long registrationKeyNum, object userState) {
+            if ((this.GetGoogleAuthorizationUrlLoopbackIpAddressFlowOperationCompleted == null)) {
+                this.GetGoogleAuthorizationUrlLoopbackIpAddressFlowOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetGoogleAuthorizationUrlLoopbackIpAddressFlowOperationCompleted);
+            }
+            this.InvokeAsync("GetGoogleAuthorizationUrlLoopbackIpAddressFlow", new object[] {
+                        registrationKeyNum}, this.GetGoogleAuthorizationUrlLoopbackIpAddressFlowOperationCompleted, userState);
+        }
+        
+        private void OnGetGoogleAuthorizationUrlLoopbackIpAddressFlowOperationCompleted(object arg) {
+            if ((this.GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompleted(this, new GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/GetGoogleAccessToken", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string GetGoogleAccessToken(string officeData) {
             object[] results = this.Invoke("GetGoogleAccessToken", new object[] {
@@ -2951,35 +3015,6 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/TestConnection", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public string TestConnection(string officeData) {
-            object[] results = this.Invoke("TestConnection", new object[] {
-                        officeData});
-            return ((string)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void TestConnectionAsync(string officeData) {
-            this.TestConnectionAsync(officeData, null);
-        }
-        
-        /// <remarks/>
-        public void TestConnectionAsync(string officeData, object userState) {
-            if ((this.TestConnectionOperationCompleted == null)) {
-                this.TestConnectionOperationCompleted = new System.Threading.SendOrPostCallback(this.OnTestConnectionOperationCompleted);
-            }
-            this.InvokeAsync("TestConnection", new object[] {
-                        officeData}, this.TestConnectionOperationCompleted, userState);
-        }
-        
-        private void OnTestConnectionOperationCompleted(object arg) {
-            if ((this.TestConnectionCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.TestConnectionCompleted(this, new TestConnectionCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -2995,6 +3030,32 @@ namespace OpenDentBusiness.WebServiceMainHQ {
                 return true;
             }
             return false;
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void TestConnectionCompletedEventHandler(object sender, TestConnectionCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class TestConnectionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal TestConnectionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
         }
     }
     
@@ -4144,6 +4205,32 @@ namespace OpenDentBusiness.WebServiceMainHQ {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompletedEventHandler(object sender, GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
     public delegate void GetGoogleAccessTokenCompletedEventHandler(object sender, GetGoogleAccessTokenCompletedEventArgs e);
     
     /// <remarks/>
@@ -5169,32 +5256,6 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         private object[] results;
         
         internal ProcessEConnectorFailoverCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public string Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((string)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
-    public delegate void TestConnectionCompletedEventHandler(object sender, TestConnectionCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class TestConnectionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal TestConnectionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

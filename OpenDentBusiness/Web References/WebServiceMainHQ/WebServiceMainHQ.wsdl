@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="https://www.opendental.com/OpenDentalWebServiceHQ/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+<wsdl:definitions xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="https://www.opendental.com/OpenDentalWebServiceHQ/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <s:schema elementFormDefault="qualified" targetNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/">
+      <s:element name="TestConnection">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TestConnectionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="TestConnectionResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="TestConnectionDb">
         <s:complexType>
           <s:sequence>
@@ -616,6 +630,20 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="GetGoogleAuthorizationUrlLoopbackIpAddressFlow">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="registrationKeyNum" type="s:long" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetGoogleAuthorizationUrlLoopbackIpAddressFlowResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetGoogleAuthorizationUrlLoopbackIpAddressFlowResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="GetGoogleAccessToken">
         <s:complexType>
           <s:sequence>
@@ -1177,23 +1205,15 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="TestConnection">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="TestConnectionResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="TestConnectionResult" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
       <s:element name="string" nillable="true" type="s:string" />
     </s:schema>
   </wsdl:types>
+  <wsdl:message name="TestConnectionSoapIn">
+    <wsdl:part name="parameters" element="tns:TestConnection" />
+  </wsdl:message>
+  <wsdl:message name="TestConnectionSoapOut">
+    <wsdl:part name="parameters" element="tns:TestConnectionResponse" />
+  </wsdl:message>
   <wsdl:message name="TestConnectionDbSoapIn">
     <wsdl:part name="parameters" element="tns:TestConnectionDb" />
   </wsdl:message>
@@ -1458,6 +1478,12 @@
   <wsdl:message name="GetGoogleAuthorizationUrlSoapOut">
     <wsdl:part name="parameters" element="tns:GetGoogleAuthorizationUrlResponse" />
   </wsdl:message>
+  <wsdl:message name="GetGoogleAuthorizationUrlLoopbackIpAddressFlowSoapIn">
+    <wsdl:part name="parameters" element="tns:GetGoogleAuthorizationUrlLoopbackIpAddressFlow" />
+  </wsdl:message>
+  <wsdl:message name="GetGoogleAuthorizationUrlLoopbackIpAddressFlowSoapOut">
+    <wsdl:part name="parameters" element="tns:GetGoogleAuthorizationUrlLoopbackIpAddressFlowResponse" />
+  </wsdl:message>
   <wsdl:message name="GetGoogleAccessTokenSoapIn">
     <wsdl:part name="parameters" element="tns:GetGoogleAccessToken" />
   </wsdl:message>
@@ -1698,11 +1724,11 @@
   <wsdl:message name="ProcessEConnectorFailoverSoapOut">
     <wsdl:part name="parameters" element="tns:ProcessEConnectorFailoverResponse" />
   </wsdl:message>
-  <wsdl:message name="TestConnectionSoapIn">
-    <wsdl:part name="parameters" element="tns:TestConnection" />
+  <wsdl:message name="TestConnectionHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
   </wsdl:message>
-  <wsdl:message name="TestConnectionSoapOut">
-    <wsdl:part name="parameters" element="tns:TestConnectionResponse" />
+  <wsdl:message name="TestConnectionHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
   </wsdl:message>
   <wsdl:message name="TestConnectionDbHttpPostIn">
     <wsdl:part name="officeData" type="s:string" />
@@ -1970,6 +1996,12 @@
   <wsdl:message name="GetGoogleAuthorizationUrlHttpPostOut">
     <wsdl:part name="Body" element="tns:string" />
   </wsdl:message>
+  <wsdl:message name="GetGoogleAuthorizationUrlLoopbackIpAddressFlowHttpPostIn">
+    <wsdl:part name="registrationKeyNum" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetGoogleAuthorizationUrlLoopbackIpAddressFlowHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
   <wsdl:message name="GetGoogleAccessTokenHttpPostIn">
     <wsdl:part name="officeData" type="s:string" />
   </wsdl:message>
@@ -2213,13 +2245,11 @@
   <wsdl:message name="ProcessEConnectorFailoverHttpPostOut">
     <wsdl:part name="Body" element="tns:string" />
   </wsdl:message>
-  <wsdl:message name="TestConnectionHttpPostIn">
-    <wsdl:part name="officeData" type="s:string" />
-  </wsdl:message>
-  <wsdl:message name="TestConnectionHttpPostOut">
-    <wsdl:part name="Body" element="tns:string" />
-  </wsdl:message>
   <wsdl:portType name="WebServiceMainHQSoap">
+    <wsdl:operation name="TestConnection">
+      <wsdl:input message="tns:TestConnectionSoapIn" />
+      <wsdl:output message="tns:TestConnectionSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="TestConnectionDb">
       <wsdl:input message="tns:TestConnectionDbSoapIn" />
       <wsdl:output message="tns:TestConnectionDbSoapOut" />
@@ -2396,6 +2426,10 @@
       <wsdl:input message="tns:GetGoogleAuthorizationUrlSoapIn" />
       <wsdl:output message="tns:GetGoogleAuthorizationUrlSoapOut" />
     </wsdl:operation>
+    <wsdl:operation name="GetGoogleAuthorizationUrlLoopbackIpAddressFlow">
+      <wsdl:input message="tns:GetGoogleAuthorizationUrlLoopbackIpAddressFlowSoapIn" />
+      <wsdl:output message="tns:GetGoogleAuthorizationUrlLoopbackIpAddressFlowSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="GetGoogleAccessToken">
       <wsdl:input message="tns:GetGoogleAccessTokenSoapIn" />
       <wsdl:output message="tns:GetGoogleAccessTokenSoapOut" />
@@ -2556,12 +2590,12 @@
       <wsdl:input message="tns:ProcessEConnectorFailoverSoapIn" />
       <wsdl:output message="tns:ProcessEConnectorFailoverSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="TestConnection">
-      <wsdl:input message="tns:TestConnectionSoapIn" />
-      <wsdl:output message="tns:TestConnectionSoapOut" />
-    </wsdl:operation>
   </wsdl:portType>
   <wsdl:portType name="WebServiceMainHQHttpPost">
+    <wsdl:operation name="TestConnection">
+      <wsdl:input message="tns:TestConnectionHttpPostIn" />
+      <wsdl:output message="tns:TestConnectionHttpPostOut" />
+    </wsdl:operation>
     <wsdl:operation name="TestConnectionDb">
       <wsdl:input message="tns:TestConnectionDbHttpPostIn" />
       <wsdl:output message="tns:TestConnectionDbHttpPostOut" />
@@ -2738,6 +2772,10 @@
       <wsdl:input message="tns:GetGoogleAuthorizationUrlHttpPostIn" />
       <wsdl:output message="tns:GetGoogleAuthorizationUrlHttpPostOut" />
     </wsdl:operation>
+    <wsdl:operation name="GetGoogleAuthorizationUrlLoopbackIpAddressFlow">
+      <wsdl:input message="tns:GetGoogleAuthorizationUrlLoopbackIpAddressFlowHttpPostIn" />
+      <wsdl:output message="tns:GetGoogleAuthorizationUrlLoopbackIpAddressFlowHttpPostOut" />
+    </wsdl:operation>
     <wsdl:operation name="GetGoogleAccessToken">
       <wsdl:input message="tns:GetGoogleAccessTokenHttpPostIn" />
       <wsdl:output message="tns:GetGoogleAccessTokenHttpPostOut" />
@@ -2898,13 +2936,18 @@
       <wsdl:input message="tns:ProcessEConnectorFailoverHttpPostIn" />
       <wsdl:output message="tns:ProcessEConnectorFailoverHttpPostOut" />
     </wsdl:operation>
-    <wsdl:operation name="TestConnection">
-      <wsdl:input message="tns:TestConnectionHttpPostIn" />
-      <wsdl:output message="tns:TestConnectionHttpPostOut" />
-    </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="WebServiceMainHQSoap" type="tns:WebServiceMainHQSoap">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="TestConnection">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/TestConnection" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="TestConnectionDb">
       <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/TestConnectionDb" style="document" />
       <wsdl:input>
@@ -3301,6 +3344,15 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetGoogleAuthorizationUrlLoopbackIpAddressFlow">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetGoogleAuthorizationUrlLoopbackIpAddressFlow" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetGoogleAccessToken">
       <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetGoogleAccessToken" style="document" />
       <wsdl:input>
@@ -3661,18 +3713,18 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="TestConnection">
-      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/TestConnection" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="WebServiceMainHQSoap12" type="tns:WebServiceMainHQSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="TestConnection">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/TestConnection" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="TestConnectionDb">
       <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/TestConnectionDb" style="document" />
       <wsdl:input>
@@ -4069,6 +4121,15 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetGoogleAuthorizationUrlLoopbackIpAddressFlow">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetGoogleAuthorizationUrlLoopbackIpAddressFlow" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetGoogleAccessToken">
       <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetGoogleAccessToken" style="document" />
       <wsdl:input>
@@ -4429,18 +4490,18 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="TestConnection">
-      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/TestConnection" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="WebServiceMainHQHttpPost" type="tns:WebServiceMainHQHttpPost">
     <http:binding verb="POST" />
+    <wsdl:operation name="TestConnection">
+      <http:operation location="/TestConnection" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="TestConnectionDb">
       <http:operation location="/TestConnectionDb" />
       <wsdl:input>
@@ -4837,6 +4898,15 @@
         <mime:mimeXml part="Body" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetGoogleAuthorizationUrlLoopbackIpAddressFlow">
+      <http:operation location="/GetGoogleAuthorizationUrlLoopbackIpAddressFlow" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetGoogleAccessToken">
       <http:operation location="/GetGoogleAccessToken" />
       <wsdl:input>
@@ -5190,15 +5260,6 @@
     </wsdl:operation>
     <wsdl:operation name="ProcessEConnectorFailover">
       <http:operation location="/ProcessEConnectorFailover" />
-      <wsdl:input>
-        <mime:content type="application/x-www-form-urlencoded" />
-      </wsdl:input>
-      <wsdl:output>
-        <mime:mimeXml part="Body" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="TestConnection">
-      <http:operation location="/TestConnection" />
       <wsdl:input>
         <mime:content type="application/x-www-form-urlencoded" />
       </wsdl:input>

@@ -334,4 +334,320 @@
   <data name="COVID191" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\COVID19.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="GoogleAuthCodeResponseHtml" xml:space="preserve">
+    <value>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;meta http-equiv="Content-Type" content="text/html" charset="iso-8859-1"&gt;
+        &lt;title&gt;Open Dental Software - Google Code&lt;/title&gt;
+        &lt;link href="https://opendental.com/style.css" rel="stylesheet" type="text/css"&gt;
+        &lt;style&gt;
+            body {
+                padding: 0;
+                margin: 0;
+                background-color: #507C79;
+                color: #505050;
+            }
+
+            table {
+                width: 100%;
+                font-size: small;
+                padding: 0;
+                margin: 0;
+                border: 0;
+                border-collapse: collapse;
+            }
+
+            td {
+                padding: 0;
+                margin: 0;
+                border: 0;
+            }
+
+            tr {
+                padding: 0;
+                margin: 0;
+                border: 0;
+            }
+
+            #table-main {
+                margin-left: auto;
+                margin-right: auto;
+                width: 946px;
+            }
+
+            .important-note {
+                color: red;
+            }
+
+            .left {
+                text-align: left;
+            }
+
+            .center {
+                text-align: center;
+            }
+
+            .footer {
+                height: 80px;
+                vertical-align: top;
+                text-align: center;
+                color: #FFFFFF;
+                font-size: 11px;
+            }
+
+            /*Titlebar CSS*/
+            #table-navbar {
+                width: 100%;
+                height: 80px;
+            }
+
+                #table-navbar li {
+                    list-style-position: outside;
+                    list-style-image: url(https://opendental.com/open-dental/Bullet.gif);
+                    list-style-type: none;
+                }
+
+            #logo {
+                vertical-align: top;
+                width: 235px;
+                height: 80px;
+            }
+
+            #table-header {
+                width: 100%;
+                background: url(https://opendental.com/open-dental/bg-top.jpg);
+            }
+
+            #nav-links {
+                height: 25px;
+                text-align: right;
+                vertical-align: middle;
+                padding: 0 10px 0 0;
+            }
+
+                #nav-links a {
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 12px;
+                    line-height: 13px;
+                    color: #003300;
+                    text-decoration: none;
+                    border-bottom: 1px dotted;
+                }
+
+                    #nav-links a:hover {
+                        background-color: #E3F4E8;
+                        border-bottom: 0px dotted;
+                    }
+
+            #home {
+                width: 17px;
+                height: 15px;
+            }
+
+            #user-manual {
+                width: 27px;
+                height: 15px;
+            }
+
+            #discussion-forum {
+                width: 27px;
+                height: 15px;
+            }
+
+            #search {
+                width: 27px;
+                height: 15px;
+            }
+
+            .table-menu {
+                width: 711px;
+                height: 55px;
+            }
+
+                .table-menu tr {
+                    vertical-align: middle;
+                    text-align: left;
+                }
+
+                .table-menu td {
+                    height: 55px;
+                }
+
+                .table-menu a {
+                    text-decoration: none;
+                }
+
+                    .table-menu a:hover {
+                        border-bottom: 1px dotted;
+                        color: #333333;
+                    }
+
+                .table-menu img {
+                    height: 55px;
+                    width: 1px;
+                    vertical-align: bottom;
+                }
+
+                .table-menu menu-line {
+                    width: 1px;
+                }
+
+            .link-item {
+                padding: 0 0 0 5px;
+            }
+
+            .menu-item {
+                width: 152px;
+                height: 30px;
+                list-style-position: outside;
+                list-style-image: url(https://opendental.com/open-dental/Bullet.gif);
+                list-style-type: none;
+                padding: 0 0 0 15px;
+                margin: 0px 0px 0px 5px;
+            }
+
+            .menu-top {
+                height: 46px;
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 11px;
+                color: #002353;
+                font-weight: bold;
+                line-height: 10px;
+            }
+
+            .menu-b {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 12px;
+                font-weight: bold;
+                color: #347A92;
+                text-decoration: none;
+            }
+            /*End Titlebar CSS*/
+
+            .labelNote {
+                display: inline-block;
+                width: 50%;
+                margin-top: 25px;
+                margin-bottom: 25px;
+            }
+
+            #content-main {
+                background-color: #FFFFFF;
+                text-align: left;
+                padding-left: 15px;
+                padding-top: 20px;
+                padding-right: 15px;
+                background-image: url(https://opendental.com/open-dental/Back.jpg);
+                background-repeat: repeat-x;
+            }
+
+            #content-title {
+                margin-top: 0px;
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 20px;
+                font-weight: bolder;
+                color: #FFFFFF;
+            }
+
+            #content {
+                font-weight: bold;
+                font-size: 18px;
+                padding: 50px;
+            }
+        &lt;/style&gt;
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        &lt;table id="table-main"&gt;
+            &lt;!-- Titlebar row --&gt;
+            &lt;tr&gt;
+                &lt;td&gt;
+		           &lt;table id="table-navbar"&gt;
+			            &lt;tr&gt;
+    		                &lt;td&gt;
+                                &lt;a href="http://opendental.com/index.html"&gt;
+                                    &lt;img src="https://opendental.com/open-dental/LogoInner.jpg" alt="Open Dental Logo" id="logo"&gt;
+                                &lt;/a&gt;
+    		                &lt;/td&gt;
+    		                &lt;td&gt;
+					            &lt;table id="table-header"&gt;
+      			                    &lt;tr&gt;
+        			                    &lt;td id="nav-links"&gt;
+						                    &lt;a href="http://opendental.com/index.html"&gt;&lt;img src="https://opendental.com/open-dental/home.gif" alt="" id="home"&gt;Home&lt;/a&gt;
+						                    &lt;a href="http://opendental.com/manual/toc.html"&gt;&lt;img src="https://opendental.com/open-dental/UserManual.gif" alt="" id="user-manual"&gt;User Manual&lt;/a&gt;
+						                    &lt;a href="http://opendentalsoft.com/forum/"&gt;&lt;img src="https://opendental.com/open-dental/DiscForum.gif" alt="" id="discussion-forum"&gt;Discussion Forum&lt;/a&gt;
+						                    &lt;a href="http://opendental.com/manual/search.html"&gt;&lt;img src="https://opendental.com/open-dental/SearchIcon.gif" alt="" id="search"&gt;Search&lt;/a&gt;
+					                    &lt;/td&gt;
+				                    &lt;/tr&gt;
+				                    &lt;tr&gt;
+        			                    &lt;td&gt;
+                                            &lt;table class="table-menu"&gt;
+            			                        &lt;tr&gt;
+              			                            &lt;td class="link-item"&gt;
+									                    &lt;ul class="menu-item"&gt;
+                                                            &lt;li&gt;&lt;a href="http://opendental.com/trial.html"&gt;
+										                        &lt;span class="menu-top"&gt;TRIAL&lt;/span&gt;&lt;br&gt;
+                    			                                &lt;span class="menu-b"&gt;VERSION&lt;/span&gt;&lt;/a&gt;
+                                                            &lt;/li&gt;
+                  		                                &lt;/ul&gt;
+								                    &lt;/td&gt;
+                                                    &lt;td class="menu-line"&gt;&lt;img src="https://opendental.com/open-dental/Line.gif" alt=""&gt;&lt;/td&gt;
+                		                            &lt;td class="link-item"&gt;
+									                    &lt;ul class="menu-item"&gt;
+                  			                                &lt;li&gt;&lt;a href="http://opendental.com/programmers-resellers.html"&gt;
+											                    &lt;span class="menu-top"&gt;PROGRAMMERS&lt;/span&gt;&lt;br&gt;
+                      		                                    &lt;span class="menu-b"&gt;&amp; DISTRIBUTORS&lt;/span&gt;&lt;/a&gt;
+										                    &lt;/li&gt;
+                  		                                &lt;/ul&gt;
+								                    &lt;/td&gt;
+                		                            &lt;td class="menu-line"&gt;&lt;img src="https://opendental.com/open-dental/Line.gif" alt=""&gt;&lt;/td&gt;
+                		                            &lt;td class="link-item"&gt;
+									                    &lt;ul class="menu-item"&gt;
+                  			                                &lt;li&gt;&lt;a href="http://opendental.com/order.html"&gt;
+											                    &lt;span class="menu-top"&gt;ORDER&lt;/span&gt;&lt;br&gt;
+                      		                                    &lt;span class="menu-b"&gt;HERE&lt;/span&gt;&lt;/a&gt;
+										                    &lt;/li&gt;
+                  		                                &lt;/ul&gt;
+								                    &lt;/td&gt;
+                		                            &lt;td class="menu-line"&gt;&lt;img src="https://opendental.com/open-dental/Line.gif" alt=""&gt;&lt;/td&gt;
+                		                            &lt;td class="link-item"&gt;
+									                    &lt;ul class="menu-item"&gt;
+                				                            &lt;li class="LIMenu"&gt;&lt;a href="http://opendental.com/contact.html"&gt;
+											                    &lt;span class="menu-top"&gt;CONTACT&lt;/span&gt;&lt;br&gt;
+                      		                                    &lt;span class="menu-b"&gt;INFORMATION&lt;/span&gt;&lt;/a&gt; 
+                				                            &lt;/li&gt;
+                    		                            &lt;/ul&gt;
+								                    &lt;/td&gt;
+                		                        &lt;/tr&gt;
+              		                        &lt;/table&gt;
+					                    &lt;/td&gt;
+          		                    &lt;/tr&gt;
+        	                    &lt;/table&gt;
+		                    &lt;/td&gt;
+	                    &lt;/tr&gt;
+                    &lt;/table&gt;
+                &lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;!-- Main content row --&gt;
+            &lt;tr&gt;
+                &lt;td id="content-main"&gt;
+	                &lt;p id="content-title"&gt;Google Authorization Code Received&lt;/p&gt;
+                    &lt;br /&gt;
+                    &lt;p id="content" class="center"&gt;You may close the browser and return to Open Dental.&lt;/p&gt;
+                    &lt;br&gt;
+                &lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;!-- Footer row --&gt;
+            &lt;tr&gt;
+	            &lt;td class="footer"&gt;
+                    &lt;div&gt;
+			          Open Dental Software  1-503-363-5432
+                    &lt;/div&gt;
+		        &lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+    &lt;/body&gt;
+&lt;/html&gt;</value>
+  </data>
 </root>

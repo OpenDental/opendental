@@ -7,6 +7,7 @@ using OpenDentBusiness;
 using CodeBase;
 using System.Collections.Generic;
 using System.Diagnostics;
+using OpenDental.UI;
 
 namespace OpenDental{
 ///<summary></summary>
@@ -170,27 +171,37 @@ namespace OpenDental{
 			AdjustEmailTextFields(isEnablingEmailFields:true);
 		}
 
+		///<summary>Requests authorization for Open Dental to send emails and access the inbox for a gmail address.
+		///Google sends us access and refresh tokens that we store in the database.</summary>
 		private void butAuthGoogle_Click(object sender,EventArgs e) {
+			Google.AuthorizationRequest authorizationRequest=new Google.AuthorizationRequest();
+			GoogleToken googleToken=null;
+			string emailAddress=textUsername.Text;
+			ProgressOD progressOD=new ProgressOD();
+			progressOD.StartingMessage=Lan.g(this,"Searching for an available port")+"...";
+			progressOD.ActionMain=() => {
+				authorizationRequest.StartListener();
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g(this,"Requesting tokens and waiting for a response from Google")+"...");
+				googleToken=authorizationRequest.MakeAccessTokenRequest(emailAddress);
+			};
 			try {
-				string url=Google.GetGoogleAuthorizationUrl(textUsername.Text);
-				Process.Start(url);
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
-				MsgBox.Show("Error: "+ex.Message);
+				FriendlyException.Show("Failed to get tokens from Google.",ex);
 				return;
 			}
-			using InputBox inputBox=new InputBox("Please enter the authorization code from your browser");
-			inputBox.setTitle("Google Account Authorization");
-			inputBox.ShowDialog(this);
-			if(inputBox.DialogResult!=DialogResult.OK) {
+			finally {
+				authorizationRequest.CloseListener();
+			}
+			if(progressOD.IsCancelled) {
 				return;
 			}
-			if(string.IsNullOrWhiteSpace(inputBox.textResult.Text)) {
-				MsgBox.Show(this,"There was no authorization code entered.");
+			if(googleToken==null) {//This should never happen. An error should be thrown or be in the googleToken.
+				MsgBox.Show(this,"Failed to get tokens from Google.");
 				return;
 			}
-			string authCode=inputBox.textResult.Text;
-			GoogleToken googleToken=Google.MakeAccessTokenRequest(authCode);
+			//Errors that occur in WebServiceMainHQ are put in the GoogleToken that is returned.
 			if(googleToken.ErrorMessage!="") {
 				MsgBox.Show("Error: "+googleToken.ErrorMessage);
 				return;
