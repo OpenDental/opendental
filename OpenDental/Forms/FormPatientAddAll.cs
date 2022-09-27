@@ -156,11 +156,11 @@ namespace OpenDental {
 			listTextOk3.SelectedIndex=0;
 			listTextOk4.SelectedIndex=0;
 			listTextOk5.SelectedIndex=0;
-			listGender1.SelectedIndex=2;
-			listGender2.SelectedIndex=2;
-			listGender3.SelectedIndex=2;
-			listGender4.SelectedIndex=2;
-			listGender5.SelectedIndex=2;
+			SetGenderListBox(listGender1);
+			SetGenderListBox(listGender2);
+			SetGenderListBox(listGender3);
+			SetGenderListBox(listGender4);
+			SetGenderListBox(listGender5);
 			listPosition1.SelectedIndex=1;
 			listPosition2.SelectedIndex=1;
 			if(PrefC.GetBool(PrefName.PriProvDefaultToSelectProv)) {
@@ -258,6 +258,13 @@ namespace OpenDental {
 			SetRequiredFields();
 			_isLoad=false;
 			Plugins.HookAddCode(this,"FormPatientAddAll.FormPatientAddAll_Load_end");
+		}
+
+		private void SetGenderListBox(ListBoxOD listBox) {
+			listBox.Items.Add(PatientGender.Male.ToString(),PatientGender.Male);
+			listBox.Items.Add(PatientGender.Female.ToString(),PatientGender.Female);
+			listBox.Items.Add(PatientGender.Other.ToString(),PatientGender.Other);
+			listBox.Items.Add(PatientGender.Unknown.ToString(),PatientGender.Unknown);
 		}
 
 		///<summary>Removes required fields that are not used in this window.</summary>
@@ -2407,7 +2414,10 @@ namespace OpenDental {
 					case 0://guarantor
 						patient.LName=textLName1.Text;
 						patient.FName=textFName1.Text;
-						patient.Gender=(PatientGender)listGender1.SelectedIndex;
+						if(listGender1.SelectedIndex==-1) { 
+							listGender1.SetSelectedEnum(PatientGender.Unknown);	
+						}
+						patient.Gender=listGender1.GetSelected<PatientGender>();
 						patient.Position=(PatientPosition)listPosition1.SelectedIndex;
 						patient.Birthdate=PIn.Date(textBirthdate1.Text);
 						if(PrefC.GetBool(PrefName.PriProvDefaultToSelectProv)) {
@@ -2435,7 +2445,10 @@ namespace OpenDental {
 						patient.PatNum=0;//may not be necessary, insert pat again with new values, insert will assign new PatNum
 						patient.LName=textLName2.Text;
 						patient.FName=textFName2.Text;
-						patient.Gender=(PatientGender)listGender2.SelectedIndex;
+						if(listGender2.SelectedIndex==-1) { 
+							listGender2.SetSelectedEnum(PatientGender.Unknown);	
+						}
+						patient.Gender=listGender2.GetSelected<PatientGender>();
 						patient.Position=(PatientPosition)listPosition2.SelectedIndex;
 						patient.Birthdate=PIn.Date(textBirthdate2.Text);
 						if(PrefC.GetBool(PrefName.PriProvDefaultToSelectProv)) {
@@ -2463,7 +2476,10 @@ namespace OpenDental {
 						patient.PatNum=0;//may not be necessary, insert pat again with new values, insert will assign new PatNum
 						patient.LName=textLName3.Text;
 						patient.FName=textFName3.Text;
-						patient.Gender=(PatientGender)listGender3.SelectedIndex;
+						if(listGender3.SelectedIndex==-1) { 
+							listGender3.SetSelectedEnum(PatientGender.Unknown);	
+						}
+						patient.Gender=listGender3.GetSelected<PatientGender>();
 						patient.Position=PatientPosition.Child;
 						patient.Birthdate=PIn.Date(textBirthdate3.Text);
 						if(PrefC.GetBool(PrefName.PriProvDefaultToSelectProv)) {
@@ -2491,7 +2507,10 @@ namespace OpenDental {
 						patient.PatNum=0;//may not be necessary, insert pat again with new values, insert will assign new PatNum
 						patient.LName=textLName4.Text;
 						patient.FName=textFName4.Text;
-						patient.Gender=(PatientGender)listGender4.SelectedIndex;
+						if(listGender4.SelectedIndex==-1) { 
+							listGender4.SetSelectedEnum(PatientGender.Unknown);	
+						}
+						patient.Gender=listGender4.GetSelected<PatientGender>();
 						patient.Position=PatientPosition.Child;
 						patient.Birthdate=PIn.Date(textBirthdate4.Text);
 						if(PrefC.GetBool(PrefName.PriProvDefaultToSelectProv)) {
@@ -2519,7 +2538,10 @@ namespace OpenDental {
 						patient.PatNum=0;//may not be necessary, insert pat again with new values, insert will assign new PatNum
 						patient.LName=textLName5.Text;
 						patient.FName=textFName5.Text;
-						patient.Gender=(PatientGender)listGender5.SelectedIndex;
+						if(listGender5.SelectedIndex==-1) { 
+							listGender5.SetSelectedEnum(PatientGender.Unknown);	
+						}
+						patient.Gender=listGender5.GetSelected<PatientGender>();
 						patient.Position=PatientPosition.Child;
 						patient.Birthdate=PIn.Date(textBirthdate5.Text);
 						if(PrefC.GetBool(PrefName.PriProvDefaultToSelectProv)) {

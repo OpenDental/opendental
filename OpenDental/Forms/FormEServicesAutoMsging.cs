@@ -178,7 +178,7 @@ namespace OpenDental {
 				if(listSendOrders.Contains(CommType.Text.ToString())) {
 					note+=Lan.g(this,"SMS Template")+":\r\n"+GetShortenedNote(listApptReminderRules[i].TemplateSMS)+"\r\n\r\n";
 				}
-				if(listSendOrders.Contains(CommType.Email.ToString())) {
+				if(listSendOrders.Any(x => AutoCommActives.IsForEmail(x))) {
 					note+=Lan.g(this,"Email Subject Template")+":\r\n"+GetShortenedNote(listApptReminderRules[i].TemplateEmailSubject)+"\r\n"
 					+Lan.g(this,"Email Template")+":\r\n"+GetShortenedNote(listApptReminderRules[i].TemplateEmail);
 				}

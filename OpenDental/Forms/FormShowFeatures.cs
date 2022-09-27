@@ -83,6 +83,13 @@ namespace OpenDental{
 			MsgBox.Show(this,"You will need to restart the program for the change to take effect.");
 		}
 
+		private void checkPublicHealth_Click(object sender,EventArgs e) {
+			if(checkPublicHealth.Checked) {
+				MsgBox.Show(this,"You will need to restart the program for the change to take effect.");
+			}
+		}
+
+
 		private void checkRestart_Click(object sender,EventArgs e) {
 			MsgBox.Show("You will need to restart the program for the change to take effect.");
 		}

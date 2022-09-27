@@ -323,6 +323,7 @@
     <Compile Include="Data Interface\APIKeys.cs" />
     <Compile Include="Data Interface\ApiSubscriptions.cs" />
     <Compile Include="Data Interface\ApptGeneralMessageSents.cs" />
+    <Compile Include="Data Interface\AutoCommActives.cs" />
     <Compile Include="Data Interface\AutoCommExcludeDates.cs" />
     <Compile Include="Data Interface\CareCreditWebResponses.cs" />
     <Compile Include="Data Interface\AdvertisingPostcards.cs" />

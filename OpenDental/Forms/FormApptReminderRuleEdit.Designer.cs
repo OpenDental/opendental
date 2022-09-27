@@ -50,6 +50,7 @@
 			this.butAdvanced = new OpenDental.UI.Button();
 			this.butLanguage = new OpenDental.UI.Button();
 			this.tabPageDefault = new System.Windows.Forms.TabPage();
+			this.checkSendSecureEmail = new System.Windows.Forms.CheckBox();
 			this.tabControl = new System.Windows.Forms.TabControl();
 			this.checkEConfirmationAutoReplies = new System.Windows.Forms.CheckBox();
 			this.butRemove = new OpenDental.UI.Button();
@@ -330,6 +331,17 @@
 			this.tabPageDefault.TabIndex = 0;
 			this.tabPageDefault.Text = "Default";
 			// 
+			// checkSendSecureEmail
+			// 
+			this.checkSendSecureEmail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.checkSendSecureEmail.Location = new System.Drawing.Point(29, 567);
+			this.checkSendSecureEmail.Name = "checkSendSecureEmail";
+			this.checkSendSecureEmail.Size = new System.Drawing.Size(179, 18);
+			this.checkSendSecureEmail.TabIndex = 134;
+			this.checkSendSecureEmail.Text = "Send Secure Email";
+			this.checkSendSecureEmail.UseVisualStyleBackColor = true;
+			this.checkSendSecureEmail.Click += new System.EventHandler(this.CheckSendSecureEmail_Click);
+			// 
 			// tabControl
 			// 
 			this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -423,6 +435,7 @@
 			this.Controls.Add(this.groupPatientPortalInvites);
 			this.Controls.Add(this.butRemove);
 			this.Controls.Add(this.checkEConfirmationAutoReplies);
+			this.Controls.Add(this.checkSendSecureEmail);
 			this.Controls.Add(this.tabControl);
 			this.Controls.Add(this.butLanguage);
 			this.Controls.Add(this.checkEnabled);
@@ -484,5 +497,6 @@
 		private System.Windows.Forms.RadioButton radioSendPatientPortalInviteMultiple;
 		private System.Windows.Forms.RadioButton radioSendPatientPortalInviteOnce;
 		private System.Windows.Forms.RadioButton radioSendPatientPortalInviteNoVisit;
+		public System.Windows.Forms.CheckBox checkSendSecureEmail;
 	}
 }

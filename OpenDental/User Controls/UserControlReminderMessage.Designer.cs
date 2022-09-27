@@ -24,11 +24,11 @@
 		/// </summary>
 		private void InitializeComponent() {
 			this.textTemplateSms = new System.Windows.Forms.RichTextBox();
-			this.textTemplateSubject = new System.Windows.Forms.RichTextBox();
 			this.butEditEmail = new OpenDental.UI.Button();
 			this.labelEmail = new System.Windows.Forms.Label();
-			this.browserEmailBody = new System.Windows.Forms.WebBrowser();
 			this.label2 = new System.Windows.Forms.Label();
+			this.browserEmailBody = new System.Windows.Forms.WebBrowser();
+			this.butEditEmail = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// textTemplateSms
@@ -51,17 +51,6 @@
 			this.textTemplateSubject.TabIndex = 113;
 			this.textTemplateSubject.Text = "";
 			// 
-			// butEditEmail
-			// 
-			this.butEditEmail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butEditEmail.Location = new System.Drawing.Point(626, 274);
-			this.butEditEmail.Name = "butEditEmail";
-			this.butEditEmail.Size = new System.Drawing.Size(75, 26);
-			this.butEditEmail.TabIndex = 126;
-			this.butEditEmail.Text = "&Edit";
-			this.butEditEmail.UseVisualStyleBackColor = true;
-			this.butEditEmail.Click += new System.EventHandler(this.butEditEmail_Click);
-			// 
 			// labelEmail
 			// 
 			this.labelEmail.Location = new System.Drawing.Point(0, 79);
@@ -70,6 +59,15 @@
 			this.labelEmail.TabIndex = 127;
 			this.labelEmail.Text = "Email Subject and Body";
 			this.labelEmail.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(0, 0);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(163, 18);
+			this.label2.TabIndex = 129;
+			this.label2.Text = "Text Message";
+			this.label2.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// browserEmailBody
 			// 
@@ -83,17 +81,19 @@
 			this.browserEmailBody.Size = new System.Drawing.Size(696, 144);
 			this.browserEmailBody.TabIndex = 128;
 			this.browserEmailBody.WebBrowserShortcutsEnabled = false;
-			this.browserEmailBody.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.browserEmailBody_Navigating);
 			this.browserEmailBody.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.browserEmailBody_Navigated);
+			this.browserEmailBody.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.browserEmailBody_Navigating);
 			// 
-			// label2
+			// butEditEmail
 			// 
-			this.label2.Location = new System.Drawing.Point(0, 0);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(163, 18);
-			this.label2.TabIndex = 129;
-			this.label2.Text = "Text Message";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+			this.butEditEmail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butEditEmail.Location = new System.Drawing.Point(626, 274);
+			this.butEditEmail.Name = "butEditEmail";
+			this.butEditEmail.Size = new System.Drawing.Size(75, 26);
+			this.butEditEmail.TabIndex = 126;
+			this.butEditEmail.Text = "&Edit";
+			this.butEditEmail.UseVisualStyleBackColor = true;
+			this.butEditEmail.Click += new System.EventHandler(this.butEditEmail_Click);
 			// 
 			// UserControlReminderMessage
 			// 

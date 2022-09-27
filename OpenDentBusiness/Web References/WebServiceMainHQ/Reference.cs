@@ -29,6 +29,8 @@ namespace OpenDentBusiness.WebServiceMainHQ {
     [System.Web.Services.WebServiceBindingAttribute(Name="WebServiceMainHQSoap", Namespace="https://www.opendental.com/OpenDentalWebServiceHQ/")]
     public partial class WebServiceMainHQ : System.Web.Services.Protocols.SoapHttpClientProtocol {
         
+        private System.Threading.SendOrPostCallback UploadRedactedDataPatientPortalInvitesOperationCompleted;
+        
         private System.Threading.SendOrPostCallback UploadPatientPortalXWebResponsesOperationCompleted;
         
         private System.Threading.SendOrPostCallback ProcessEConnectorFailoverOperationCompleted;
@@ -123,6 +125,8 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         
         private System.Threading.SendOrPostCallback GetGoogleAuthorizationUrlOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetGoogleAuthorizationUrlLoopbackIpAddressFlowOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetGoogleAccessTokenOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetCareCreditOAuthTokenOperationCompleted;
@@ -199,8 +203,6 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         
         private System.Threading.SendOrPostCallback UpdateFHIRAPIKeysOperationCompleted;
         
-        private System.Threading.SendOrPostCallback UploadRedactedDataPatientPortalInvitesOperationCompleted;
-        
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
@@ -238,6 +240,9 @@ namespace OpenDentBusiness.WebServiceMainHQ {
                 this.useDefaultCredentialsSetExplicitly = true;
             }
         }
+        
+        /// <remarks/>
+        public event UploadRedactedDataPatientPortalInvitesCompletedEventHandler UploadRedactedDataPatientPortalInvitesCompleted;
         
         /// <remarks/>
         public event UploadPatientPortalXWebResponsesCompletedEventHandler UploadPatientPortalXWebResponsesCompleted;
@@ -381,6 +386,9 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         public event GetGoogleAuthorizationUrlCompletedEventHandler GetGoogleAuthorizationUrlCompleted;
         
         /// <remarks/>
+        public event GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompletedEventHandler GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompleted;
+        
+        /// <remarks/>
         public event GetGoogleAccessTokenCompletedEventHandler GetGoogleAccessTokenCompleted;
         
         /// <remarks/>
@@ -495,7 +503,34 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         public event UpdateFHIRAPIKeysCompletedEventHandler UpdateFHIRAPIKeysCompleted;
         
         /// <remarks/>
-        public event UploadRedactedDataPatientPortalInvitesCompletedEventHandler UploadRedactedDataPatientPortalInvitesCompleted;
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/UploadRedactedDataPatientPortal" +
+            "Invites", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string UploadRedactedDataPatientPortalInvites(string officeData) {
+            object[] results = this.Invoke("UploadRedactedDataPatientPortalInvites", new object[] {
+                        officeData});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void UploadRedactedDataPatientPortalInvitesAsync(string officeData) {
+            this.UploadRedactedDataPatientPortalInvitesAsync(officeData, null);
+        }
+        
+        /// <remarks/>
+        public void UploadRedactedDataPatientPortalInvitesAsync(string officeData, object userState) {
+            if ((this.UploadRedactedDataPatientPortalInvitesOperationCompleted == null)) {
+                this.UploadRedactedDataPatientPortalInvitesOperationCompleted = new System.Threading.SendOrPostCallback(this.OnUploadRedactedDataPatientPortalInvitesOperationCompleted);
+            }
+            this.InvokeAsync("UploadRedactedDataPatientPortalInvites", new object[] {
+                        officeData}, this.UploadRedactedDataPatientPortalInvitesOperationCompleted, userState);
+        }
+        
+        private void OnUploadRedactedDataPatientPortalInvitesOperationCompleted(object arg) {
+            if ((this.UploadRedactedDataPatientPortalInvitesCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.UploadRedactedDataPatientPortalInvitesCompleted(this, new UploadRedactedDataPatientPortalInvitesCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/UploadPatientPortalXWebResponse" +
@@ -1872,6 +1907,36 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/GetGoogleAuthorizationUrlLoopba" +
+            "ckIpAddressFlow", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string GetGoogleAuthorizationUrlLoopbackIpAddressFlow(long registrationKeyNum) {
+            object[] results = this.Invoke("GetGoogleAuthorizationUrlLoopbackIpAddressFlow", new object[] {
+                        registrationKeyNum});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetGoogleAuthorizationUrlLoopbackIpAddressFlowAsync(long registrationKeyNum) {
+            this.GetGoogleAuthorizationUrlLoopbackIpAddressFlowAsync(registrationKeyNum, null);
+        }
+        
+        /// <remarks/>
+        public void GetGoogleAuthorizationUrlLoopbackIpAddressFlowAsync(long registrationKeyNum, object userState) {
+            if ((this.GetGoogleAuthorizationUrlLoopbackIpAddressFlowOperationCompleted == null)) {
+                this.GetGoogleAuthorizationUrlLoopbackIpAddressFlowOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetGoogleAuthorizationUrlLoopbackIpAddressFlowOperationCompleted);
+            }
+            this.InvokeAsync("GetGoogleAuthorizationUrlLoopbackIpAddressFlow", new object[] {
+                        registrationKeyNum}, this.GetGoogleAuthorizationUrlLoopbackIpAddressFlowOperationCompleted, userState);
+        }
+        
+        private void OnGetGoogleAuthorizationUrlLoopbackIpAddressFlowOperationCompleted(object arg) {
+            if ((this.GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompleted(this, new GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/GetGoogleAccessToken", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string GetGoogleAccessToken(string officeData) {
             object[] results = this.Invoke("GetGoogleAccessToken", new object[] {
@@ -2984,36 +3049,6 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/UploadRedactedDataPatientPortal" +
-            "Invites", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public string UploadRedactedDataPatientPortalInvites(string officeData) {
-            object[] results = this.Invoke("UploadRedactedDataPatientPortalInvites", new object[] {
-                        officeData});
-            return ((string)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void UploadRedactedDataPatientPortalInvitesAsync(string officeData) {
-            this.UploadRedactedDataPatientPortalInvitesAsync(officeData, null);
-        }
-        
-        /// <remarks/>
-        public void UploadRedactedDataPatientPortalInvitesAsync(string officeData, object userState) {
-            if ((this.UploadRedactedDataPatientPortalInvitesOperationCompleted == null)) {
-                this.UploadRedactedDataPatientPortalInvitesOperationCompleted = new System.Threading.SendOrPostCallback(this.OnUploadRedactedDataPatientPortalInvitesOperationCompleted);
-            }
-            this.InvokeAsync("UploadRedactedDataPatientPortalInvites", new object[] {
-                        officeData}, this.UploadRedactedDataPatientPortalInvitesOperationCompleted, userState);
-        }
-        
-        private void OnUploadRedactedDataPatientPortalInvitesOperationCompleted(object arg) {
-            if ((this.UploadRedactedDataPatientPortalInvitesCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.UploadRedactedDataPatientPortalInvitesCompleted(this, new UploadRedactedDataPatientPortalInvitesCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -3029,6 +3064,32 @@ namespace OpenDentBusiness.WebServiceMainHQ {
                 return true;
             }
             return false;
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void UploadRedactedDataPatientPortalInvitesCompletedEventHandler(object sender, UploadRedactedDataPatientPortalInvitesCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class UploadRedactedDataPatientPortalInvitesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal UploadRedactedDataPatientPortalInvitesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
         }
     }
     
@@ -4256,6 +4317,32 @@ namespace OpenDentBusiness.WebServiceMainHQ {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompletedEventHandler(object sender, GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetGoogleAuthorizationUrlLoopbackIpAddressFlowCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
     public delegate void GetGoogleAccessTokenCompletedEventHandler(object sender, GetGoogleAccessTokenCompletedEventArgs e);
     
     /// <remarks/>
@@ -5229,32 +5316,6 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         private object[] results;
         
         internal UpdateFHIRAPIKeysCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public string Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((string)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
-    public delegate void UploadRedactedDataPatientPortalInvitesCompletedEventHandler(object sender, UploadRedactedDataPatientPortalInvitesCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class UploadRedactedDataPatientPortalInvitesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal UploadRedactedDataPatientPortalInvitesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

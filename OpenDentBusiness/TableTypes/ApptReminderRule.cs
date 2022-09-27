@@ -426,7 +426,11 @@ namespace OpenDentBusiness {
 		Text = 1,
 		///<summary>2 - Attempt to send email message, if successful do not send via text. (Unless, a SendAll bool is used, which usually negates the need for this enumeration.)</summary>
 		[CommType(ContactMethod=ContactMethod.Email)]
-		Email = 2
+		Email = 2,
+		///<summary>3 - Attempt to send secure email message. </summary>
+		[CommType(ContactMethod=ContactMethod.Email)]
+		[Description("Secure Email")]
+		SecureEmail = 3,
 	}
 
 	public class CommTypeAttribute : Attribute {

@@ -2,6 +2,20 @@
 <wsdl:definitions xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="https://www.opendental.com/OpenDentalWebServiceHQ/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <s:schema elementFormDefault="qualified" targetNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/">
+      <s:element name="UploadRedactedDataPatientPortalInvites">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UploadRedactedDataPatientPortalInvitesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UploadRedactedDataPatientPortalInvitesResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="UploadPatientPortalXWebResponses">
         <s:complexType>
           <s:sequence>
@@ -658,6 +672,20 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="GetGoogleAuthorizationUrlLoopbackIpAddressFlow">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="registrationKeyNum" type="s:long" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetGoogleAuthorizationUrlLoopbackIpAddressFlowResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetGoogleAuthorizationUrlLoopbackIpAddressFlowResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="GetGoogleAccessToken">
         <s:complexType>
           <s:sequence>
@@ -1191,23 +1219,15 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="UploadRedactedDataPatientPortalInvites">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="UploadRedactedDataPatientPortalInvitesResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="UploadRedactedDataPatientPortalInvitesResult" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
       <s:element name="string" nillable="true" type="s:string" />
     </s:schema>
   </wsdl:types>
+  <wsdl:message name="UploadRedactedDataPatientPortalInvitesSoapIn">
+    <wsdl:part name="parameters" element="tns:UploadRedactedDataPatientPortalInvites" />
+  </wsdl:message>
+  <wsdl:message name="UploadRedactedDataPatientPortalInvitesSoapOut">
+    <wsdl:part name="parameters" element="tns:UploadRedactedDataPatientPortalInvitesResponse" />
+  </wsdl:message>
   <wsdl:message name="UploadPatientPortalXWebResponsesSoapIn">
     <wsdl:part name="parameters" element="tns:UploadPatientPortalXWebResponses" />
   </wsdl:message>
@@ -1490,6 +1510,12 @@
   <wsdl:message name="GetGoogleAuthorizationUrlSoapOut">
     <wsdl:part name="parameters" element="tns:GetGoogleAuthorizationUrlResponse" />
   </wsdl:message>
+  <wsdl:message name="GetGoogleAuthorizationUrlLoopbackIpAddressFlowSoapIn">
+    <wsdl:part name="parameters" element="tns:GetGoogleAuthorizationUrlLoopbackIpAddressFlow" />
+  </wsdl:message>
+  <wsdl:message name="GetGoogleAuthorizationUrlLoopbackIpAddressFlowSoapOut">
+    <wsdl:part name="parameters" element="tns:GetGoogleAuthorizationUrlLoopbackIpAddressFlowResponse" />
+  </wsdl:message>
   <wsdl:message name="GetGoogleAccessTokenSoapIn">
     <wsdl:part name="parameters" element="tns:GetGoogleAccessToken" />
   </wsdl:message>
@@ -1718,11 +1744,11 @@
   <wsdl:message name="UpdateFHIRAPIKeysSoapOut">
     <wsdl:part name="parameters" element="tns:UpdateFHIRAPIKeysResponse" />
   </wsdl:message>
-  <wsdl:message name="UploadRedactedDataPatientPortalInvitesSoapIn">
-    <wsdl:part name="parameters" element="tns:UploadRedactedDataPatientPortalInvites" />
+  <wsdl:message name="UploadRedactedDataPatientPortalInvitesHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
   </wsdl:message>
-  <wsdl:message name="UploadRedactedDataPatientPortalInvitesSoapOut">
-    <wsdl:part name="parameters" element="tns:UploadRedactedDataPatientPortalInvitesResponse" />
+  <wsdl:message name="UploadRedactedDataPatientPortalInvitesHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
   </wsdl:message>
   <wsdl:message name="UploadPatientPortalXWebResponsesHttpPostIn">
     <wsdl:part name="officeData" type="s:string" />
@@ -2008,6 +2034,12 @@
   <wsdl:message name="GetGoogleAuthorizationUrlHttpPostOut">
     <wsdl:part name="Body" element="tns:string" />
   </wsdl:message>
+  <wsdl:message name="GetGoogleAuthorizationUrlLoopbackIpAddressFlowHttpPostIn">
+    <wsdl:part name="registrationKeyNum" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetGoogleAuthorizationUrlLoopbackIpAddressFlowHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
   <wsdl:message name="GetGoogleAccessTokenHttpPostIn">
     <wsdl:part name="officeData" type="s:string" />
   </wsdl:message>
@@ -2239,13 +2271,11 @@
   <wsdl:message name="UpdateFHIRAPIKeysHttpPostOut">
     <wsdl:part name="Body" element="tns:string" />
   </wsdl:message>
-  <wsdl:message name="UploadRedactedDataPatientPortalInvitesHttpPostIn">
-    <wsdl:part name="officeData" type="s:string" />
-  </wsdl:message>
-  <wsdl:message name="UploadRedactedDataPatientPortalInvitesHttpPostOut">
-    <wsdl:part name="Body" element="tns:string" />
-  </wsdl:message>
   <wsdl:portType name="WebServiceMainHQSoap">
+    <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
+      <wsdl:input message="tns:UploadRedactedDataPatientPortalInvitesSoapIn" />
+      <wsdl:output message="tns:UploadRedactedDataPatientPortalInvitesSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="UploadPatientPortalXWebResponses">
       <wsdl:input message="tns:UploadPatientPortalXWebResponsesSoapIn" />
       <wsdl:output message="tns:UploadPatientPortalXWebResponsesSoapOut" />
@@ -2434,6 +2464,10 @@
       <wsdl:input message="tns:GetGoogleAuthorizationUrlSoapIn" />
       <wsdl:output message="tns:GetGoogleAuthorizationUrlSoapOut" />
     </wsdl:operation>
+    <wsdl:operation name="GetGoogleAuthorizationUrlLoopbackIpAddressFlow">
+      <wsdl:input message="tns:GetGoogleAuthorizationUrlLoopbackIpAddressFlowSoapIn" />
+      <wsdl:output message="tns:GetGoogleAuthorizationUrlLoopbackIpAddressFlowSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="GetGoogleAccessToken">
       <wsdl:input message="tns:GetGoogleAccessTokenSoapIn" />
       <wsdl:output message="tns:GetGoogleAccessTokenSoapOut" />
@@ -2586,12 +2620,12 @@
       <wsdl:input message="tns:UpdateFHIRAPIKeysSoapIn" />
       <wsdl:output message="tns:UpdateFHIRAPIKeysSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
-      <wsdl:input message="tns:UploadRedactedDataPatientPortalInvitesSoapIn" />
-      <wsdl:output message="tns:UploadRedactedDataPatientPortalInvitesSoapOut" />
-    </wsdl:operation>
   </wsdl:portType>
   <wsdl:portType name="WebServiceMainHQHttpPost">
+    <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
+      <wsdl:input message="tns:UploadRedactedDataPatientPortalInvitesHttpPostIn" />
+      <wsdl:output message="tns:UploadRedactedDataPatientPortalInvitesHttpPostOut" />
+    </wsdl:operation>
     <wsdl:operation name="UploadPatientPortalXWebResponses">
       <wsdl:input message="tns:UploadPatientPortalXWebResponsesHttpPostIn" />
       <wsdl:output message="tns:UploadPatientPortalXWebResponsesHttpPostOut" />
@@ -2780,6 +2814,10 @@
       <wsdl:input message="tns:GetGoogleAuthorizationUrlHttpPostIn" />
       <wsdl:output message="tns:GetGoogleAuthorizationUrlHttpPostOut" />
     </wsdl:operation>
+    <wsdl:operation name="GetGoogleAuthorizationUrlLoopbackIpAddressFlow">
+      <wsdl:input message="tns:GetGoogleAuthorizationUrlLoopbackIpAddressFlowHttpPostIn" />
+      <wsdl:output message="tns:GetGoogleAuthorizationUrlLoopbackIpAddressFlowHttpPostOut" />
+    </wsdl:operation>
     <wsdl:operation name="GetGoogleAccessToken">
       <wsdl:input message="tns:GetGoogleAccessTokenHttpPostIn" />
       <wsdl:output message="tns:GetGoogleAccessTokenHttpPostOut" />
@@ -2932,13 +2970,18 @@
       <wsdl:input message="tns:UpdateFHIRAPIKeysHttpPostIn" />
       <wsdl:output message="tns:UpdateFHIRAPIKeysHttpPostOut" />
     </wsdl:operation>
-    <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
-      <wsdl:input message="tns:UploadRedactedDataPatientPortalInvitesHttpPostIn" />
-      <wsdl:output message="tns:UploadRedactedDataPatientPortalInvitesHttpPostOut" />
-    </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="WebServiceMainHQSoap" type="tns:WebServiceMainHQSoap">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UploadRedactedDataPatientPortalInvites" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="UploadPatientPortalXWebResponses">
       <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UploadPatientPortalXWebResponses" style="document" />
       <wsdl:input>
@@ -3362,6 +3405,15 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetGoogleAuthorizationUrlLoopbackIpAddressFlow">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetGoogleAuthorizationUrlLoopbackIpAddressFlow" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetGoogleAccessToken">
       <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetGoogleAccessToken" style="document" />
       <wsdl:input>
@@ -3704,18 +3756,18 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
-      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UploadRedactedDataPatientPortalInvites" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="WebServiceMainHQSoap12" type="tns:WebServiceMainHQSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UploadRedactedDataPatientPortalInvites" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="UploadPatientPortalXWebResponses">
       <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UploadPatientPortalXWebResponses" style="document" />
       <wsdl:input>
@@ -4139,6 +4191,15 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetGoogleAuthorizationUrlLoopbackIpAddressFlow">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetGoogleAuthorizationUrlLoopbackIpAddressFlow" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetGoogleAccessToken">
       <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GetGoogleAccessToken" style="document" />
       <wsdl:input>
@@ -4481,18 +4542,18 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
-      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UploadRedactedDataPatientPortalInvites" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="WebServiceMainHQHttpPost" type="tns:WebServiceMainHQHttpPost">
     <http:binding verb="POST" />
+    <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
+      <http:operation location="/UploadRedactedDataPatientPortalInvites" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="UploadPatientPortalXWebResponses">
       <http:operation location="/UploadPatientPortalXWebResponses" />
       <wsdl:input>
@@ -4916,6 +4977,15 @@
         <mime:mimeXml part="Body" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetGoogleAuthorizationUrlLoopbackIpAddressFlow">
+      <http:operation location="/GetGoogleAuthorizationUrlLoopbackIpAddressFlow" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetGoogleAccessToken">
       <http:operation location="/GetGoogleAccessToken" />
       <wsdl:input>
@@ -5251,15 +5321,6 @@
     </wsdl:operation>
     <wsdl:operation name="UpdateFHIRAPIKeys">
       <http:operation location="/UpdateFHIRAPIKeys" />
-      <wsdl:input>
-        <mime:content type="application/x-www-form-urlencoded" />
-      </wsdl:input>
-      <wsdl:output>
-        <mime:mimeXml part="Body" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
-      <http:operation location="/UploadRedactedDataPatientPortalInvites" />
       <wsdl:input>
         <mime:content type="application/x-www-form-urlencoded" />
       </wsdl:input>

@@ -787,6 +787,15 @@ namespace OpenDental {
 					DateTime.Now
 				)
 			.Concat(
+					WebSchedRecalls.InsertForRecallNums(
+					recallNums,
+					checkGroupFamiliesRecalls.Checked,
+					comboSortRecalls.GetSelected<RecallListSort>(),
+					WebSchedRecallSource.FormRecallList,
+					CommType.SecureEmail,
+					DateTime.Now
+				)
+			).Concat(
 				//Queue SMS.  AutoComm will filter out any that cannot be sent as SMS.
 				WebSchedRecalls.InsertForRecallNums(
 					recallNums,

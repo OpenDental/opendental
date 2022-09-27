@@ -146,6 +146,7 @@ namespace OpenDental {
 			this.checkPublicHealth.TabIndex = 18;
 			this.checkPublicHealth.Text = "Public Health";
 			this.checkPublicHealth.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkPublicHealth.Click += new System.EventHandler(this.checkPublicHealth_Click);
 			// 
 			// checkEnableClinics
 			// 

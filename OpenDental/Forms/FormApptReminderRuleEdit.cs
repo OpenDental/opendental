@@ -20,7 +20,7 @@ namespace OpenDental {
 		public readonly ApptReminderRule ApptReminderRuleOld;
 		///<summary>True if any preferences were updated.</summary>
 		public bool IsPrefsChanged;
-		private List<CommType> _listComTypesSendOrder;
+		private List<CommType> _listCommTypesSendOrder;
 		private List<ApptReminderRule> _listApptReminderRulesClinic;
 		/// <summary>Public so it can be passed back to the parent form. The list of new language rules that were added from this window. </summary>
 		public List<ApptReminderRule> ListApptReminderRulesNonDefaultAdded=new List<ApptReminderRule>();
@@ -97,7 +97,15 @@ namespace OpenDental {
 			if(GetListLanguageRules().Count==0) {
 				butRemove.Visible=false;
 			}
-			_listComTypesSendOrder=ApptReminderRuleCur.SendOrder.Split(',').Select(x => (CommType)PIn.Int(x)).ToList();
+			_listCommTypesSendOrder=ApptReminderRuleCur.SendOrder.Split(',').Select(x => (CommType)PIn.Int(x)).ToList();
+			if(Clinics.IsSecureEmailEnabled(ApptReminderRuleCur.ClinicNum)) { 
+				checkSendSecureEmail.Enabled=true;
+				checkSendSecureEmail.Checked=_listCommTypesSendOrder.Contains(CommType.SecureEmail);
+			}
+			else {//Secure email not enabled
+				checkSendSecureEmail.Enabled=false;
+				checkSendSecureEmail.Checked=false;
+			}
 			FillGridPriority();
 			FillTimeSpan();
 			FillTabs();
@@ -184,8 +192,8 @@ namespace OpenDental {
 			gridPriorities.Columns.Clear();
 			gridPriorities.Columns.Add(new GridColumn("",50){ IsWidthDynamic=true });
 			gridPriorities.ListGridRows.Clear();
-			for(int i = 0;i < _listComTypesSendOrder.Count; i++) {
-				CommType commType=_listComTypesSendOrder[i];
+			for(int i=0;i<_listCommTypesSendOrder.Count;i++) {
+				CommType commType=_listCommTypesSendOrder[i];
 				GridRow gridRow;
 				if(commType==CommType.Preferred) {
 					if(checkSendAll.Checked) {
@@ -205,7 +213,7 @@ namespace OpenDental {
 				}
 				else {
 					gridRow=new GridRow();
-					gridRow.Cells.Add(Lan.g(this,commType.ToString()));
+					gridRow.Cells.Add(Lan.g(this,commType.GetDescription()));
 					gridPriorities.ListGridRows.Add(gridRow);
 				}
 			}
@@ -277,18 +285,18 @@ namespace OpenDental {
 				//-1 if nothing selected. 0 if top item selected.
 				return;
 			}
-			_listComTypesSendOrder.Reverse(idx-1,2);
+			_listCommTypesSendOrder.Reverse(idx-1,2);
 			FillGridPriority();
 			gridPriorities.SetSelected(idx-1,true);
 		}
 
 		private void butDown_Click(object sender,EventArgs e) {
 			int idx = gridPriorities.GetSelectedIndex();
-			if(idx==-1 || idx==_listComTypesSendOrder.Count-1) {
+			if(idx==-1 || idx==_listCommTypesSendOrder.Count-1) {
 				//-1 nothing selected. Count-1 if last item selected.
 				return;
 			}
-			_listComTypesSendOrder.Reverse(idx,2);
+			_listCommTypesSendOrder.Reverse(idx,2);
 			FillGridPriority();
 			gridPriorities.SetSelected(idx+1,true);
 		}
@@ -393,6 +401,26 @@ namespace OpenDental {
 			tabControl.TabPages.Remove(tabControl.SelectedTab);
 		}
 
+		private void CheckSendSecureEmail_Click(object sender,EventArgs e) {
+			EmailCommTypeSwap();
+			FillGridPriority();
+		}
+
+		private void EmailCommTypeSwap() {
+			for(int i=0;i<_listCommTypesSendOrder.Count;i++) {
+				if(checkSendSecureEmail.Checked) { 
+					if(_listCommTypesSendOrder[i]==CommType.Email) { 
+						_listCommTypesSendOrder[i]=CommType.SecureEmail;
+					}
+				}
+				else {//not checked
+					if(_listCommTypesSendOrder[i]==CommType.SecureEmail) { 
+						_listCommTypesSendOrder[i]=CommType.Email;
+					}
+				}
+			}
+		}
+
 		private void butOk_Click(object sender,EventArgs e) {
 			bool hasValidNums=UIHelper.GetAllControls(this).OfType<ValidNum>().All(x => x.IsValid());
 			if(!hasValidNums) {
@@ -431,7 +459,7 @@ namespace OpenDental {
 				return;
 			}
 			CheckMultipleEConfirms();
-			ApptReminderRuleCur.SendOrder=string.Join(",",_listComTypesSendOrder.Select(x => ((int)x).ToString()).ToArray());
+			ApptReminderRuleCur.SendOrder=string.Join(",",_listCommTypesSendOrder.Select(x => ((int)x).ToString()).ToArray());
 			ApptReminderRuleCur.IsSendAll=checkSendAll.Checked;
 			ApptReminderRuleCur.TSPrior=timeSpanPrior;
 			if(radioBeforeAppt.Checked || ApptReminderRuleCur.TypeCur==ApptReminderType.ScheduleThankYou) {

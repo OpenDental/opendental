@@ -56,7 +56,7 @@ namespace OpenDentBusiness{
 				return Meth.GetObject<List<WebSchedRecall>>(MethodBase.GetCurrentMethod(),listMessageTypes,listClinicNums);
 			}
 			//Default to All if not specified.
-			listMessageTypes??=new List<CommType> { CommType.Text, CommType.Email };
+			listMessageTypes??=Enum.GetValues(typeof(CommType)).Cast<CommType>().ToList().FindAll(x => x!=CommType.Invalid);
 			//We don't want to include rows that have a status of SendFailed or SendSuccess
 			string command="SELECT * FROM webschedrecall WHERE DateTimeSent < '1880-01-01' "
 				+$"AND MessageType IN ({string.Join(",",listMessageTypes.Select(x => POut.Int((int)x)))}) "
