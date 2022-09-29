@@ -94,7 +94,7 @@ namespace OpenDentBusiness.WebTypes {
 			}
 			List<EConnectorStatistics> listStatsToSend=new List<EConnectorStatistics> { eConnStats };
 			string dbStats=PrefC.GetString(PrefName.EConnectorStatistics);
-			List<EConnectorStatistics> listDbStats=DeserializeListFromJson(dbStats)??new List<EConnectorStatistics>();
+			List<EConnectorStatistics> listDbStats=DecompressIfNeededAndDeserializeListFromJson(dbStats)??new List<EConnectorStatistics>();
 			bool doCreateAlert=false;
 			foreach(EConnectorStatistics stats in listDbStats) {
 				//If a different eConnector is saving stats, add that one to the list to be sent to HQ.
@@ -117,15 +117,20 @@ namespace OpenDentBusiness.WebTypes {
 				};
 				AlertItems.Insert(alert);
 			}
-			string statsStr=SerializeToJson(listStatsToSend);
+			string statsStr=CompressAndSerializeToJson(listStatsToSend);
 			OpenDentBusiness.Prefs.UpdateString(PrefName.EConnectorStatistics,statsStr);
 			string payload=PayloadHelper.CreatePayload(PayloadHelper.CreatePayloadContent(statsStr,"EConnectorStatsStr"),
 				eServiceCode.ListenerService);
 			WebServiceMainHQProxy.GetWebServiceMainHQInstance().SetEConnectorStatsAsync(payload);
 		}
 		
-		///<summary>Returns an empty list if deserialization fails.</summary>
-		public static List<EConnectorStatistics> DeserializeListFromJson(string jsonString) {
+		///<summary>Returns an empty list if deserialization fails. Will attempt to decompress and deserialize jsonString into a list of EConnectorStatistics. If decompression fails, will attempt to deserialize the original jsonString</summary>
+		public static List<EConnectorStatistics> DecompressIfNeededAndDeserializeListFromJson(string jsonString) {
+			string plainText;
+			string errorStr="";
+			if(ODCrypt.Encryption.DecompressString(jsonString,out plainText,ref errorStr)) {
+				jsonString=plainText;
+			}
 			try {
 				return JsonConvert.DeserializeObject<List<EConnectorStatistics>>(jsonString)??new List<EConnectorStatistics>();
 			}
@@ -142,8 +147,14 @@ namespace OpenDentBusiness.WebTypes {
 			}
 		}
 
-		public static string SerializeToJson(List<EConnectorStatistics> listStats) {
-			return JsonConvert.SerializeObject(listStats);
+		/// <summary>Serializes to to a JSON string. If compression is successful, returns compressed string. Otherwise, returns the serialized string.</summary>
+		public static string CompressAndSerializeToJson(List<EConnectorStatistics> listStats) {
+			string serializedText=JsonConvert.SerializeObject(listStats);
+			string errorStr="";
+			if(ODCrypt.Encryption.CompressString(serializedText,out string compressedStr,ref errorStr)) {
+				return compressedStr;
+			}
+			return serializedText;
 		}
 
 		///<summary>Get the most recent entry for each computer.</summary>

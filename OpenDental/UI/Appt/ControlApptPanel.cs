@@ -1458,7 +1458,9 @@ namespace OpenDental.UI{
 			int heightMainOnePage=rectangleMarginBounds.Height-(int)_heightProvOpHeaders;
 			int pagesAcross=(int)Math.Ceiling((decimal)_listOpsVisible.Count/PrintingColsPerPage);//Rounds up.  We frequently fall exactly on a boudary for rounding.
 			double dHoursPerPage=heightMainOnePage/_heightLine/_rowsPerHr;//When less than one a single hour block is divided into multiple pages.
-			int pagesTall=(int)Math.Ceiling((stopHour-startHour)/Math.Max(Math.Truncate(dHoursPerPage),1.0));//Number of hour blocks than can be displayed on a page.
+			int hoursPerPage=(int)Math.Max(Math.Truncate(dHoursPerPage),1.0);//rounds down or defaults to 1 hour per page.
+			int pagesTall=(int)Math.Ceiling(Math.Max((double)(stopHour-startHour)/hoursPerPage,1.0));//Number of hour blocks than can be displayed on a page.
+			int totalPages=pagesAcross*pagesTall;
 			//The if statements below just handle extreme edge cases where one hour is taller than a page.
 			if(dHoursPerPage<1 && dHoursPerPage>=.5){//Defaults to 30 min per page.
 				dHoursPerPage=.5;
@@ -1472,30 +1474,21 @@ namespace OpenDental.UI{
 			else if(dHoursPerPage<.2) {//Defaults to 6 min per page.
 				dHoursPerPage=.10;
 			}
-			else {
-				dHoursPerPage=1;//Default. No extra pages needed for each hour block.
-			}
-			int totalPages=pagesAcross*pagesTall*(int)(1/dHoursPerPage);//dHoursPerPage is usualy 1
 			if(IsWeeklyView) {
 				pagesAcross=1;
-				totalPages=1*pagesTall*(int)(1/dHoursPerPage);
+				totalPages=pagesTall;
 			}
 			#region Rows and Cols for this Page
-			int hoursPerPage=(int)Math.Max(Math.Truncate(dHoursPerPage),1.0);//rounds down or defaults to 1 hour per page.
 			float hourBegin=startHour+(hoursPerPage*PrintingPageRow);//PrintingPageRow=0 for first page
 			float hourEnd=hourBegin+hoursPerPage;
 			if(dHoursPerPage<1) {//Only for extreme edge cases where one hour is taller than a page.
+				totalPages=totalPages*(int)(1/dHoursPerPage);
 				hourBegin=startHour+(float)(dHoursPerPage*PrintingPageRow);//Start with the correct amount of hours and minutes per page.
 				hourEnd=hourBegin+(float)dHoursPerPage;//End with the correct amount of hours and minutes per page.
 			}
 			if(hourEnd>stopHour) {//Don't show too many hours on the last page
 				hourEnd=stopHour;
 			}
-			if(hourEnd>23) {//Midnight must be 0.
-				hourEnd=0;
-			}
-			DateTime dateTimeBegin=new DateTime(1,1,1,(int)hourBegin,(int)((hourBegin-Math.Truncate(hourBegin))*60),0);
-			DateTime dateTimeEnd=new DateTime(1,1,1,(int)hourEnd,(int)((hourEnd-Math.Truncate(hourEnd))*60),0);
 			int colStart=PrintingPageColumn*PrintingColsPerPage;
 			int colStop=colStart+PrintingColsPerPage;
 			if(colStop>_listOpsVisible.Count){

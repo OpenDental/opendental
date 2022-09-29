@@ -108,6 +108,7 @@ namespace OpenDental {
 			}
 			gridMain.EndUpdate();
 			labelRows.Text=$"Row Count: {listEServiceLogs.Count}";
+			gridMain.ScrollToEnd();
 		}
 
 		private void butRefresh_Click(object sender,EventArgs e) {

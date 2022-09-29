@@ -493,7 +493,7 @@ namespace OpenDentBusiness {
 		///<summary>Will throw exception if the repeatCharge.ProcCode is in a hidden category and not a Z-code.I nserts a procedure for the repeat charge.
 		///Set isNewCropInitial to true when adding repeat charge for the first time from FormNewCrop. Possibly will allocate prepayments to the procedure.</summary>
 		public static Procedure AddProcForRepeatCharge(RepeatCharge repeatCharge,DateTime billingDate,DateTime dateNow
-			,OrthoCaseProcLinkingData orthoCaseProcLinkingData,bool isNewCropInitial=false)
+			,OrthoCaseProcLinkingData orthoCaseProcLinkingData,bool isNewCropInitial=false,bool isNewCropFutureDated=false)
 		{
 			//No remoting role check; no call to db
 			Procedure procedure=new Procedure();
@@ -519,7 +519,7 @@ namespace OpenDentBusiness {
 			procedure.MedicalCode=ProcedureCodes.GetProcCode(procedure.CodeNum).MedicalCode;
 			procedure.BaseUnits=ProcedureCodes.GetProcCode(procedure.CodeNum).BaseUnits;
 			procedure.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
-			if(isNewCropInitial) {
+			if(isNewCropInitial || isNewCropFutureDated) {
 				procedure.RepeatChargeNum=0;
 			}
 			else {
@@ -537,6 +537,9 @@ namespace OpenDentBusiness {
 					}
 					if(isNewCropInitial) {
 						procedure.BillingNote+="\r\nNew provider charge, previous month.";
+					}
+					if(isNewCropFutureDated) {
+						procedure.BillingNote+="\r\nNew provider charge, current month.";
 					}
 					else if(!string.IsNullOrEmpty(repeatCharge.Note)) {
 						procedure.BillingNote+="\r\n"+repeatCharge.Note;

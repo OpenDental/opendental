@@ -19,13 +19,13 @@ namespace OpenDentBusiness{
 		///<summary>Deprecated. Use UserGroupAttaches to link Userods to UserGroups.</summary>
 		[CrudColumn(IsNotCemtColumn=true)]
 		public long UserGroupNum;
-		///<summary>FK to employee.EmployeeNum. Cannot be used if provnum is used. Used for timecards to block access by other users.</summary>
+		///<summary>FK to employee.EmployeeNum. Used for timecards to block access by other users.</summary>
 		[CrudColumn(IsNotCemtColumn=true)]
 		public long EmployeeNum;
 		///<summary>FK to clinic.ClinicNum.  Default clinic for this user.  It causes new patients to default to this clinic when entered by this user.  
 		///If 0, then user has no default clinic or default clinic is HQ if clinics are enabled.</summary> 		
 		public long ClinicNum;
-		///<summary>FK to provider.ProvNum.  Cannot be used if EmployeeNum is used.  It is possible to have multiple userods attached to a single provider.</summary>
+		///<summary>FK to provider.ProvNum.  It is possible to have multiple userods attached to a single provider.</summary>
 		[CrudColumn(IsNotCemtColumn=true)]
 		public long ProvNum;
 		///<summary>Set true to hide user from login list.</summary>

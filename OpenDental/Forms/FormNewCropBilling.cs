@@ -345,6 +345,11 @@ namespace OpenDental {
 						numSkipped++;
 						continue;
 					}
+					bool isFutureDated=false;//Used to see if we need to future date the repeating charge in the case that the billing date has passed.  If the customer's charge date of the month has passed, we need to future date the repeating charge procedure so that this makes more sense to our customers from a billing standpoint.  We will instead include a proc for the previous month, a proc for the current month, and a future dated repeating charge.
+					if(dateErxCharge.Day<=DateTime.Today.Day) {
+						dateErxCharge=dateErxCharge.AddMonths(1);
+						isFutureDated=true;
+					}
 					_listNewCropCharges[i].repeatCharge=new RepeatCharge();
 					_listNewCropCharges[i].repeatCharge.IsNew=true;
 					_listNewCropCharges[i].repeatCharge.PatNum=_listNewCropCharges[i].PatNumForRegKey;
@@ -379,14 +384,18 @@ namespace OpenDental {
 					_listNewCropCharges[i].repeatCharge.RepeatChargeNum=RepeatCharges.Insert(_listNewCropCharges[i].repeatCharge);
 					RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(_listNewCropCharges[i].repeatCharge,Permissions.RepeatChargeCreate,isAutomated:true,oldPat:patientOld,newPat:patientNew);
 					DateTime dateNow=MiscData.GetNowDateTime();
-					Procedure procedure=new Procedure();
+					Procedure procedurePrevMonth=new Procedure();
+					Procedure procedureCurrentMonth=new Procedure();
 					try {
-						procedure=RepeatCharges.AddProcForRepeatCharge(_listNewCropCharges[i].repeatCharge,dateNow,dateNow,new OrthoCaseProcLinkingData(_listNewCropCharges[i].repeatCharge.PatNum),isNewCropInitial:true);
+						procedurePrevMonth=RepeatCharges.AddProcForRepeatCharge(_listNewCropCharges[i].repeatCharge,dateNow,dateNow,new OrthoCaseProcLinkingData(_listNewCropCharges[i].repeatCharge.PatNum),isNewCropInitial:true);
+						if(isFutureDated) {//Since we are future dating the repeating charge we need a second proc for the current month
+							procedureCurrentMonth=RepeatCharges.AddProcForRepeatCharge(_listNewCropCharges[i].repeatCharge,dateNow,dateNow,new OrthoCaseProcLinkingData(_listNewCropCharges[i].repeatCharge.PatNum),isNewCropInitial:false,isNewCropFutureDated:true);
+						}
 					}
 					catch(ODException ex) {
 						ex.DoNothing();//Shouldn't happen because we ignore throwing for Z-codes, but something could've went wrong. Next conditional will add it to listNewCropChargesNoProcedure.
 					}
-					if(procedure.ProcNum==0) {
+					if(procedurePrevMonth.ProcNum==0 || (isFutureDated && procedureCurrentMonth.ProcNum==0)) {
 						listNewCropChargesNoProcedure.Add(_listNewCropCharges[i]);
 					}
 					_listRepeatChargesErx.Add(_listNewCropCharges[i].repeatCharge);
@@ -417,7 +426,7 @@ namespace OpenDental {
 				StringBuilderAddRepeatCharges(stringBuilderMsg,listNewCropChargesAdded);
 			}
 			if(listNewCropChargesNoProcedure.Count>0) {
-				stringBuilderMsg.AppendLine("Could not attach a z-code proc to the following repeated charges: ");
+				stringBuilderMsg.AppendLine("Could not attach one of the z-code procs to the following repeated charges: ");
 				StringBuilderAddRepeatCharges(stringBuilderMsg,listNewCropChargesNoProcedure);
 			}
 			List<NewCropCharge> listNewCropChargesFailed=_listNewCropChargesToAdd.Where(x => listNewCropChargesAdded.All(y => y.AccountId != x.AccountId && y.NPI != x.NPI)).ToList();

@@ -24,7 +24,7 @@
 		/// </summary>
 		private void InitializeComponent() {
 			this.textTemplateSms = new System.Windows.Forms.RichTextBox();
-			this.butEditEmail = new OpenDental.UI.Button();
+			this.textTemplateSubject = new System.Windows.Forms.RichTextBox();
 			this.labelEmail = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.browserEmailBody = new System.Windows.Forms.WebBrowser();
