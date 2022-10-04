@@ -462,7 +462,7 @@ namespace OpenDental {
 			ApptReminderRuleCur.SendOrder=string.Join(",",_listCommTypesSendOrder.Select(x => ((int)x).ToString()).ToArray());
 			ApptReminderRuleCur.IsSendAll=checkSendAll.Checked;
 			ApptReminderRuleCur.TSPrior=timeSpanPrior;
-			if(radioBeforeAppt.Checked || ApptReminderRuleCur.TypeCur==ApptReminderType.ScheduleThankYou) {
+			if(radioBeforeAppt.Checked || ApptReminderRules.IsReminderTypeAlwaysSendBefore(ApptReminderRuleCur.TypeCur)) {
 				ApptReminderRuleCur.DoNotSendWithin=new TimeSpan(PIn.Int(textDaysWithin.Text,false),PIn.Int(textHoursWithin.Text,false),0,0);
 			}
 			ApptReminderRuleCur.IsEnabled=checkEnabled.Checked;
@@ -529,7 +529,7 @@ namespace OpenDental {
 					errors.Add(Lan.g(this,"Lead time must 1 day or more for confirmations."));
 				}
 			}
-			if(radioBeforeAppt.Checked) {
+			if(radioBeforeAppt.Checked || ApptReminderRules.IsReminderTypeAlwaysSendBefore(ApptReminderRuleCur.TypeCur)) {
 				TimeSpan timeSpanPrior=new TimeSpan(PIn.Int(textDays.Text,false),PIn.Int(textHours.Text,false),0,0);
 				TimeSpan timeSpanDoNotSendWithin=new TimeSpan(PIn.Int(textDaysWithin.Text,false),PIn.Int(textHoursWithin.Text,false),0,0);
 				if(timeSpanDoNotSendWithin >= timeSpanPrior && ApptReminderRuleCur.TypeCur!=ApptReminderType.ScheduleThankYou) {

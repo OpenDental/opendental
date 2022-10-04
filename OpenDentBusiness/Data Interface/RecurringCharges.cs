@@ -798,7 +798,12 @@ namespace OpenDentBusiness {
 				return true;
 			}
 			catch(Exception ex) {
-				MarkFailed(chargeData,"Unable to charge card.\r\nError Message: "+ex.Message,LogLevel.Error);
+				if(ex.Message.ToLower().Contains("decline")) {
+					MarkDeclined(chargeData,Lans.g(_lanThis,"Response from XWeb:")+" "+ex.Message,LogLevel.Information);
+				}
+				else {
+					MarkFailed(chargeData,"Unable to charge card.\r\nError Message: "+ex.Message,LogLevel.Error);
+				}
 				amount=0;
 				xWebResponseNum=0;
 				//An error code of XWebDTGFailed means that communication with XWeb was successful so the charge was technically attempted, return true.

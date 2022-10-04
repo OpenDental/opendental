@@ -17053,14 +17053,14 @@
       <summary>Deprecated. Use UserGroupAttaches to link Userods to UserGroups.</summary>
     </column>
     <column order="4" name="EmployeeNum" type="bigint(20)" fk="employee">
-      <summary>FK to employee.EmployeeNum. Cannot be used if provnum is used. Used for timecards to block access by other users.</summary>
+      <summary>FK to employee.EmployeeNum. Used for timecards to block access by other users.</summary>
     </column>
     <column order="5" name="ClinicNum" type="bigint(20)" fk="clinic">
       <summary>FK to clinic.ClinicNum.  Default clinic for this user.  It causes new patients to default to this clinic when entered by this user.  
             If 0, then user has no default clinic or default clinic is HQ if clinics are enabled.</summary>
     </column>
     <column order="6" name="ProvNum" type="bigint(20)" fk="provider">
-      <summary>FK to provider.ProvNum.  Cannot be used if EmployeeNum is used.  It is possible to have multiple userods attached to a single provider.</summary>
+      <summary>FK to provider.ProvNum.  It is possible to have multiple userods attached to a single provider.</summary>
     </column>
     <column order="7" name="IsHidden" type="tinyint(1)">
       <summary>Set true to hide user from login list.</summary>

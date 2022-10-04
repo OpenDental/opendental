@@ -1728,7 +1728,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns true if this benefit is for flouride age limitation. Checks for US and Canada.</summary>
 		public static bool IsFlourideAgeLimit(Benefit ben) {
-			if(ben.CodeNum==ProcedureCodes.GetCodeNum(ProcedureCodes.FlourideCode)
+			if(ProcedureCodes.ListFlourideCodeNums.Contains(ben.CodeNum)
 				&& ben.BenefitType==InsBenefitType.Limitations
 				//&& ben.CovCatNum==CovCats.GetForEbenCat(EbenefitCategory.Db).CovCatNum//ignored
 				&& ben.MonetaryAmt==-1

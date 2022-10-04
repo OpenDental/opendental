@@ -1751,12 +1751,19 @@ namespace OpenDentBusiness {
 
 		private static Bitmap GetSigTPHelper(Sheet sheet,SheetField field) {
 			TreatPlan treatPlan=(TreatPlan)SheetParameter.GetParamByName(sheet.Parameters,"TreatPlan").ParamValue;
+			bool sigIsTopaz=treatPlan.SigIsTopaz;
 			if(field.FieldType==SheetFieldType.SigBox && treatPlan.Signature!="") {
 				SignatureBoxWrapper sigBoxWrapper=new SignatureBoxWrapper();
 				sigBoxWrapper.SignatureMode=SignatureBoxWrapper.SigMode.TreatPlan;
 				string keyData=TreatPlans.GetKeyDataForSignatureHash(treatPlan,treatPlan.ListProcTPs);
-				sigBoxWrapper.FillSignature(treatPlan.SigIsTopaz,keyData,treatPlan.Signature);
-				if(sigBoxWrapper.GetNumberOfTabletPoints(treatPlan.SigIsTopaz)!=0) {
+				sigBoxWrapper.FillSignature(sigIsTopaz,keyData,treatPlan.Signature);
+				//There are two signature boxes and only one SigIsTopaz column.
+				//The patient and the practice could have signed the treatment plan using different mediums so attempt to load both just in case.
+				if(!sigBoxWrapper.IsValid) {
+					sigIsTopaz=!sigIsTopaz;
+					sigBoxWrapper.FillSignature(sigIsTopaz,keyData,treatPlan.Signature);
+				}
+				if(sigBoxWrapper.GetNumberOfTabletPoints(sigIsTopaz)!=0) {
 					return sigBoxWrapper.GetSigImage();
 				}
 			}
@@ -1764,8 +1771,14 @@ namespace OpenDentBusiness {
 				SignatureBoxWrapper sigBoxWrapper=new SignatureBoxWrapper();
 				sigBoxWrapper.SignatureMode=SignatureBoxWrapper.SigMode.TreatPlan;
 				string keyData=TreatPlans.GetKeyDataForSignatureHash(treatPlan,treatPlan.ListProcTPs);
-				sigBoxWrapper.FillSignature(treatPlan.SigIsTopaz,keyData,treatPlan.SignaturePractice);
-				if(sigBoxWrapper.GetNumberOfTabletPoints(treatPlan.SigIsTopaz)!=0) {
+				sigBoxWrapper.FillSignature(sigIsTopaz,keyData,treatPlan.SignaturePractice);
+				//There are two signature boxes and only one SigIsTopaz column.
+				//The patient and the practice could have signed the treatment plan using different mediums so attempt to load both just in case.
+				if(!sigBoxWrapper.IsValid) {
+					sigIsTopaz=!sigIsTopaz;
+					sigBoxWrapper.FillSignature(sigIsTopaz,keyData,treatPlan.SignaturePractice);
+				}
+				if(sigBoxWrapper.GetNumberOfTabletPoints(sigIsTopaz)!=0) {
 					return sigBoxWrapper.GetSigImage();
 				}
 			}
