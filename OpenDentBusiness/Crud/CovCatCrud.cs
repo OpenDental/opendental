@@ -50,7 +50,7 @@ namespace OpenDentBusiness.Crud{
 				covCat.CovCatNum     = PIn.Long  (row["CovCatNum"].ToString());
 				covCat.Description   = PIn.String(row["Description"].ToString());
 				covCat.DefaultPercent= PIn.Int   (row["DefaultPercent"].ToString());
-				covCat.CovOrder      = PIn.Byte  (row["CovOrder"].ToString());
+				covCat.CovOrder      = PIn.Int   (row["CovOrder"].ToString());
 				covCat.IsHidden      = PIn.Bool  (row["IsHidden"].ToString());
 				covCat.EbenefitCat   = (OpenDentBusiness.EbenefitCategory)PIn.Int(row["EbenefitCat"].ToString());
 				retVal.Add(covCat);
@@ -75,7 +75,7 @@ namespace OpenDentBusiness.Crud{
 					POut.Long  (covCat.CovCatNum),
 					            covCat.Description,
 					POut.Int   (covCat.DefaultPercent),
-					POut.Byte  (covCat.CovOrder),
+					POut.Int   (covCat.CovOrder),
 					POut.Bool  (covCat.IsHidden),
 					POut.Int   ((int)covCat.EbenefitCat),
 				});
@@ -104,7 +104,7 @@ namespace OpenDentBusiness.Crud{
 			command+=
 				 "'"+POut.String(covCat.Description)+"',"
 				+    POut.Int   (covCat.DefaultPercent)+","
-				+    POut.Byte  (covCat.CovOrder)+","
+				+    POut.Int   (covCat.CovOrder)+","
 				+    POut.Bool  (covCat.IsHidden)+","
 				+    POut.Int   ((int)covCat.EbenefitCat)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
@@ -138,7 +138,7 @@ namespace OpenDentBusiness.Crud{
 			command+=
 				 "'"+POut.String(covCat.Description)+"',"
 				+    POut.Int   (covCat.DefaultPercent)+","
-				+    POut.Byte  (covCat.CovOrder)+","
+				+    POut.Int   (covCat.CovOrder)+","
 				+    POut.Bool  (covCat.IsHidden)+","
 				+    POut.Int   ((int)covCat.EbenefitCat)+")";
 			if(useExistingPK || isRandomKeys) {
@@ -155,7 +155,7 @@ namespace OpenDentBusiness.Crud{
 			string command="UPDATE covcat SET "
 				+"Description   = '"+POut.String(covCat.Description)+"', "
 				+"DefaultPercent=  "+POut.Int   (covCat.DefaultPercent)+", "
-				+"CovOrder      =  "+POut.Byte  (covCat.CovOrder)+", "
+				+"CovOrder      =  "+POut.Int   (covCat.CovOrder)+", "
 				+"IsHidden      =  "+POut.Bool  (covCat.IsHidden)+", "
 				+"EbenefitCat   =  "+POut.Int   ((int)covCat.EbenefitCat)+" "
 				+"WHERE CovCatNum = "+POut.Long(covCat.CovCatNum);
@@ -175,7 +175,7 @@ namespace OpenDentBusiness.Crud{
 			}
 			if(covCat.CovOrder != oldCovCat.CovOrder) {
 				if(command!="") { command+=",";}
-				command+="CovOrder = "+POut.Byte(covCat.CovOrder)+"";
+				command+="CovOrder = "+POut.Int(covCat.CovOrder)+"";
 			}
 			if(covCat.IsHidden != oldCovCat.IsHidden) {
 				if(command!="") { command+=",";}

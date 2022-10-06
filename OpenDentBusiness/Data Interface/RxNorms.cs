@@ -115,11 +115,11 @@ namespace OpenDentBusiness{
 				return Meth.GetObject<List<RxNorm>>(MethodBase.GetCurrentMethod(),codeOrDesc,isExact,ignoreNumbers);
 			}
 			string command="SELECT * FROM rxnorm WHERE MmslCode='' ";
+			if(isExact) {
+				command+="AND (RxCui = '"+POut.String(codeOrDesc)+"' OR Description = '"+POut.String(codeOrDesc)+"')";
+			}
 			if(ignoreNumbers) {
 				command+="AND Description NOT REGEXP '.*[0-9]+.*' ";
-			}
-			if(isExact) {
-				command+="AND (RxCui LIKE '"+POut.String(codeOrDesc)+"' OR Description LIKE '"+POut.String(codeOrDesc)+"')";
 			}
 			else {//Similar matches
 				string[] arraySearchWords=codeOrDesc.Split(new char[] { ' ','\t','\r','\n' },StringSplitOptions.RemoveEmptyEntries);

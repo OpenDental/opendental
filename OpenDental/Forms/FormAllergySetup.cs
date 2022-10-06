@@ -32,7 +32,7 @@ namespace OpenDental {
 			_listAllergyDefs=AllergyDefs.GetAll(checkShowHidden.Checked);
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
-			GridColumn col=new GridColumn(Lan.g("FormAllergySetup","Desciption"),160);
+			GridColumn col=new GridColumn(Lan.g("FormAllergySetup","Description"),160);
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lan.g("FormAllergySetup","Hidden"),60);
 			gridMain.Columns.Add(col);

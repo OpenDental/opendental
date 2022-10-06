@@ -89,7 +89,7 @@ namespace OpenDentBusiness {
 			}
 			nodeURLs=doc.GetElementsByTagName("URL");
 			if(nodeURLs==null) {
-				throw new Exception("Invalid response from server recieved.");
+				throw new Exception("Invalid response from server received.");
 			}
 			#endregion
 			//At this point we know we got a valid response from our web service.

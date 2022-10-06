@@ -68,7 +68,7 @@ namespace OpenDentBusiness.Crud{
 				task.SecDateTEdit     = PIn.DateT (row["SecDateTEdit"].ToString());
 				task.DescriptOverride = PIn.String(row["DescriptOverride"].ToString());
 				task.IsReadOnly       = PIn.Bool  (row["IsReadOnly"].ToString());
-				task.TriageCategory       = PIn.Long  (row["TriageCategory"].ToString());
+				task.TriageCategory   = PIn.Long  (row["TriageCategory"].ToString());
 				retVal.Add(task);
 			}
 			return retVal;
@@ -261,7 +261,7 @@ namespace OpenDentBusiness.Crud{
 				//SecDateTEdit can only be set by MySQL
 				+"DescriptOverride = '"+POut.String(task.DescriptOverride)+"', "
 				+"IsReadOnly       =  "+POut.Bool  (task.IsReadOnly)+", "
-				+"TriageCategory       =  "+POut.Long  (task.TriageCategory)+" "
+				+"TriageCategory   =  "+POut.Long  (task.TriageCategory)+" "
 				+"WHERE TaskNum = "+POut.Long(task.TaskNum);
 			if(task.Descript==null) {
 				task.Descript="";

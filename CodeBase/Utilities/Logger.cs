@@ -559,17 +559,29 @@ namespace CodeBase {
 			}
 		}
 		protected Func<long,string> _getName;
+		protected Func<bool> _hasClinics;
 		protected readonly Logger.IWriteLine _logger;
 
-		public ClinicLogger(Logger.IWriteLine logger,Func<long,string> getName=null) {
+		public ClinicLogger(Logger.IWriteLine logger,Func<long,string> getName=null,Func<bool> hasClinics=null) {
 			_logger=logger;
 			_getName=getName;
+			_hasClinics=hasClinics;
 		}
 
 		protected string GetDirectory(string subDirectory="") {
 			string clinicStr="";//Start at base directory for HQ clinic.
 			if(ClinicNum!=0) {
 				clinicStr=$"Clinic_{ClinicNum}"+((_getName is null) ? "" : $"_{_getName(ClinicNum)}");
+			}
+			else if(!(_hasClinics is null)) {
+				try {
+					if(_hasClinics()) {
+						clinicStr="HQ";
+					}
+				}
+				catch(Exception e) {
+					//Invoker is not in a state to figure out if clinics are enabled yet, log in base directory.
+				}
 			}
 			return Path.Combine(clinicStr,subDirectory);
 		}

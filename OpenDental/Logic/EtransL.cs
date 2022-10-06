@@ -273,7 +273,7 @@ namespace OpenDental {
 				int maxColumnLength=Math.Max(maxNamesLength,maxX835NameLength);
 				#endregion
 				#region Construct msg
-				string msg="One or more claims are not recieved.\r\n"
+				string msg="One or more claims are not received.\r\n"
 				+"You must receive all of the following claims before finializing payment:\r\n";
 				msg+="-------------------------------------------------------------------\r\n";
 				msg+="PatNum".PadRight(patNumColumnLength)+"\t"+"Patient".PadRight(maxColumnLength)+"\tDOS       \tTotal Fee\r\n";

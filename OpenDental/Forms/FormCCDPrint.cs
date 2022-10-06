@@ -360,7 +360,7 @@ namespace OpenDental {
 				return;
 			}
 			if(_listClaimProcs.Exists(x => x.Status.In(ClaimProcStatus.Received,ClaimProcStatus.Supplemental,ClaimProcStatus.CapComplete) || x.ClaimPaymentNum!=0)) {
-				MsgBox.Show(this,"Cannot import because the claim has previously been recieved or is attached to a payment. Set the claim not recieved and try again.");
+				MsgBox.Show(this,"Cannot import because the claim has previously been received or is attached to a payment. Set the claim not recieved and try again.");
 				return;
 			}
 			if(!_ccdFieldInputterFormData.HasValidPaymentLines()) {
@@ -392,7 +392,7 @@ namespace OpenDental {
 			}
 			Canadian.EOBImportHelper(_ccdFieldInputterFormData,_listClaimProcs,listProcedures,listClaimProcs,_claim,false,FormClaimEdit.ShowProviderTransferWindow,eraBehaviors,_patient);
 			SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,_claim.PatNum
-				,"Claim for service date "+POut.Date(_claim.DateService)+" amounts overwritten manually using recieved EOB amounts.");
+				,"Claim for service date "+POut.Date(_claim.DateService)+" amounts overwritten manually using received EOB amounts.");
 			MsgBox.Show(this,"Done");
 		}
 

@@ -1194,6 +1194,8 @@ namespace OpenDental{
 				_heightHeadingPrint=yPos;
 			}
 			#endregion
+			Rectangle rectangleOriginalBounds=gridHistory.Bounds; //Store the gridHistory bounds to revert after printing.
+			LayoutManager.MoveSize(gridHistory,new Size(LayoutManager.Scale(1035),gridHistory.Height)); //Adjust gridHistory so that no columns are cut off when printing.
 			yPos=gridHistory.PrintPage(g,_pagesPrinted,rectangleBounds,_heightHeadingPrint);
 			_pagesPrinted++;
 			if(yPos==-1) {
@@ -1202,6 +1204,7 @@ namespace OpenDental{
 			else {
 				e.HasMorePages=false;
 			}
+			LayoutManager.MoveSize(gridHistory,new Size(rectangleOriginalBounds.Width,rectangleOriginalBounds.Height));//Revert gridHistory to original bounds.
 			g.Dispose();
 		}
 

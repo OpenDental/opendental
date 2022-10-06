@@ -447,7 +447,20 @@ If you have questions, call <a href=""tel:[OfficePhone]"">[OfficePhone]</a>.",
 			}
 			retVal.Sort();//alphabetical
 			return retVal;
-		}	
+		}
+
+		public static bool IsReminderTypeAlwaysSendBefore(ApptReminderType apptReminderType) {
+		return apptReminderType.In(ApptReminderType.Reminder,
+			ApptReminderType.ConfirmationFutureDay,
+			ApptReminderType.Arrival,
+			ApptReminderType.Birthday,
+			ApptReminderType.ScheduleThankYou,
+			ApptReminderType.WebSchedRecall);
+		}
+
+		public static bool IsReminderTypeAlwaysSendAfter(ApptReminderType apptReminderType) {
+			return apptReminderType.In(ApptReminderType.GeneralMessage);
+		}
 
 		/// <summary>Returns the list of replacement tags available for the Aggregate Templates for the passed in ApptReminderRuleType.</summary>
 		public static List<string> GetAvailableAggTags(ApptReminderType type) {

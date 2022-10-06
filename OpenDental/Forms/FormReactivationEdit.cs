@@ -33,7 +33,7 @@ namespace OpenDental {
 			DateTime lastContacted=Reactivations.GetDateLastContacted(ReactivationCur.PatNum);
 			textDateLastContacted.Text=lastContacted==DateTime.MinValue?"":lastContacted.ToString();
 			comboStatus.Items.AddDefNone();
-			comboStatus.Items.AddDefs(Defs.GetDefsForCategory(DefCat.RecallUnschedStatus));
+			comboStatus.Items.AddDefs(Defs.GetDefsForCategory(DefCat.RecallUnschedStatus,isShort:true));
 			comboStatus.SetSelectedDefNum(ReactivationCur.ReactivationStatus);
 			checkBoxDNC.Checked=ReactivationCur.DoNotContact;
 			textNote.Text=ReactivationCur.ReactivationNote;

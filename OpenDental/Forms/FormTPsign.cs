@@ -84,6 +84,11 @@ namespace OpenDental{
 			signatureBoxWrapper.SignatureMode=UI.SignatureBoxWrapper.SigMode.TreatPlan;
 			string keyData= TreatPlans.GetKeyDataForSignatureHash(TPcur,proctpList);
 			signatureBoxWrapper.FillSignature(TPcur.SigIsTopaz,keyData,TPcur.Signature);
+			//There are two signature boxes and only one SigIsTopaz column.
+			//The patient and the practice could have signed the treatment plan using different mediums so attempt to load both just in case.
+			if(!signatureBoxWrapper.IsValid) {
+				signatureBoxWrapper.FillSignature(!TPcur.SigIsTopaz,keyData,TPcur.Signature);
+			}
 			SheetField sheetField;
 			if(SheetTP!=null) {
 				sheetField=SheetTP.SheetFields.FirstOrDefault(x => x.FieldType==SheetFieldType.SigBox);
@@ -103,6 +108,11 @@ namespace OpenDental{
 				labelSigPractice.Visible=true;
 				signatureBoxWrapperPractice.SignatureMode=UI.SignatureBoxWrapper.SigMode.TreatPlan;
 				signatureBoxWrapperPractice.FillSignature(TPcur.SigIsTopaz,keyData,TPcur.SignaturePractice);
+				//There are two signature boxes and only one SigIsTopaz column.
+				//The patient and the practice could have signed the treatment plan using different mediums so attempt to load both just in case.
+				if(!signatureBoxWrapperPractice.IsValid) {
+					signatureBoxWrapperPractice.FillSignature(!TPcur.SigIsTopaz,keyData,TPcur.SignaturePractice);
+				}
 				sheetField=SheetTP.SheetFields.FirstOrDefault(x => x.FieldType==SheetFieldType.SigBoxPractice);
 				if(sheetField!=null && !string.IsNullOrEmpty(sheetField.FieldName)) {
 					labelSigPractice.Text=$"{sheetField.FieldName} sign here --->";
