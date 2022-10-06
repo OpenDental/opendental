@@ -314,7 +314,7 @@ namespace OpenDental {
 			this.checkOnlinePaymentsMarkAsProcessed.Name = "checkOnlinePaymentsMarkAsProcessed";
 			this.checkOnlinePaymentsMarkAsProcessed.Size = new System.Drawing.Size(360, 17);
 			this.checkOnlinePaymentsMarkAsProcessed.TabIndex = 308;
-			this.checkOnlinePaymentsMarkAsProcessed.Text = "Mark online payments as processed when they are auto-split";
+			this.checkOnlinePaymentsMarkAsProcessed.Text = "Mark online payments as processed";
 			this.checkOnlinePaymentsMarkAsProcessed.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkStoreCCTokens

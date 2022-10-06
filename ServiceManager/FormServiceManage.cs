@@ -100,7 +100,8 @@ namespace ServiceManager {
 			}
 			if(_serviceFileInfo.Name=="OpenDentalEConnector.exe"
 				|| _serviceFileInfo.Name=="OpenDentalService.exe" 
-				|| _serviceFileInfo.Name=="OpenDentalReplicationService.exe")
+				|| _serviceFileInfo.Name=="OpenDentalReplicationService.exe"
+				|| _serviceFileInfo.Name=="OpenDentalAPIService.exe")
 			{
 				using FormWebConfigSettings FormWCS=new FormWebConfigSettings(_serviceFileInfo);
 				FormWCS.ShowDialog();

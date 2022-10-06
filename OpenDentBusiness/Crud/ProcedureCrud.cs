@@ -109,7 +109,7 @@ namespace OpenDentBusiness.Crud{
 				procedure.IcdVersion         = PIn.Byte  (row["IcdVersion"].ToString());
 				procedure.IsCpoe             = PIn.Bool  (row["IsCpoe"].ToString());
 				procedure.SecUserNumEntry    = PIn.Long  (row["SecUserNumEntry"].ToString());
-				procedure.SecDateEntry       = PIn.Date  (row["SecDateEntry"].ToString());
+				procedure.SecDateEntry       = PIn.DateT (row["SecDateEntry"].ToString());
 				procedure.DateComplete       = PIn.Date  (row["DateComplete"].ToString());
 				procedure.OrderingReferralNum= PIn.Long  (row["OrderingReferralNum"].ToString());
 				procedure.TaxAmt             = PIn.Double(row["TaxAmt"].ToString());
@@ -184,7 +184,7 @@ namespace OpenDentBusiness.Crud{
 				IcdVersion         = PIn.Byte  (row["IcdVersion"].ToString()),
 				IsCpoe             = PIn.Bool  (row["IsCpoe"].ToString()),
 				SecUserNumEntry    = PIn.Long  (row["SecUserNumEntry"].ToString()),
-				SecDateEntry       = PIn.Date  (row["SecDateEntry"].ToString()),
+				SecDateEntry       = PIn.DateT (row["SecDateEntry"].ToString()),
 				DateComplete       = PIn.Date  (row["DateComplete"].ToString()),
 				OrderingReferralNum= PIn.Long  (row["OrderingReferralNum"].ToString()),
 				TaxAmt             = PIn.Double(row["TaxAmt"].ToString()),

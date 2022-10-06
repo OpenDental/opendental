@@ -266,7 +266,7 @@ namespace OpenDentBusiness {
 			SetOrder(GetForEbenCat(EbenefitCategory.Orthodontics),12);
 			SetOrder(GetForEbenCat(EbenefitCategory.Adjunctive),13);
 			//now set the remaining categories to come after the ebens.
-			byte idx=14;
+			int idx=14;
 			List<CovCat> listCovCatsShort=CovCats.GetWhere(x => x.EbenefitCat==EbenefitCategory.None,true);
 			for(int i=0;i<listCovCatsShort.Count;i++) {
 				SetOrder(listCovCatsShort[i],idx);

@@ -427,7 +427,7 @@ namespace OpenDental {
 			List<Hx835_Claim> listHx835_ClaimsReceived=listHx835_ClaimsSelected.FindAll(x => listClaimsAttached.Any(y => y.ClaimNum==x.ClaimNum && y.ClaimStatus=="R"));
 			StringBuilder stringBuilderWarnings=new StringBuilder();
 			if(listHx835_ClaimsReceived.Count>0) {
-				stringBuilderWarnings.AppendLine(Lan.g(this,"You have selected some claims which are already recieved."));
+				stringBuilderWarnings.AppendLine(Lan.g(this,"You have selected some claims which are already received."));
 				stringBuilderWarnings.AppendLine(Lan.g(this,"Detaching these will not reverse any payment information."));
 			}
 			if(gridClaimDetails.SelectedIndices.Length>1) {

@@ -1708,6 +1708,17 @@ namespace OpenDentBusiness{
 		Frequency,
 	}
 
+	///<summary>The type of VM associated with the ip address.</summary>
+   public enum MachineType {
+      ///<summary>0 - None</summary>
+      None,
+      ///<summary>1 - Windows VM</summary>
+      Windows,
+      ///<summary>2 - Linux VM</summary>
+      Linux,
+      ///<summary>3 - Reserved for HQ</summary>
+      HQReserve
+   }
 
 }
 

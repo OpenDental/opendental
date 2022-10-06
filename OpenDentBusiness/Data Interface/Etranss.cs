@@ -1409,7 +1409,7 @@ namespace OpenDentBusiness{
 			}
 			if(listClaims.Exists(x => x.ClaimNum==0 || x.ClaimStatus!="R")) {
 				if(isAutomatic && automationResult!=null) {
-					automationResult.PaymentFinalizationError=Lans.g("X835","Payment could not be finalized because one or more claims are not marked recieved.");
+					automationResult.PaymentFinalizationError=Lans.g("X835","Payment could not be finalized because one or more claims are not marked received.");
 				}
 				return false;
 			}

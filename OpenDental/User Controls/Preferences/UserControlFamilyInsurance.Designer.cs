@@ -116,14 +116,14 @@ namespace OpenDental {
 			// linkLabelZeroOutWriteoffOnAgeOrFreq
 			// 
 			this.linkLabelZeroOutWriteoffOnAgeOrFreq.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelZeroOutWriteoffOnAgeOrFreq.LinkArea = new System.Windows.Forms.LinkArea(31, 10);
+			this.linkLabelZeroOutWriteoffOnAgeOrFreq.LinkArea = new System.Windows.Forms.LinkArea(36, 10);
 			this.linkLabelZeroOutWriteoffOnAgeOrFreq.LinkColor = System.Drawing.Color.MidnightBlue;
 			this.linkLabelZeroOutWriteoffOnAgeOrFreq.Location = new System.Drawing.Point(476, 339);
 			this.linkLabelZeroOutWriteoffOnAgeOrFreq.Name = "linkLabelZeroOutWriteoffOnAgeOrFreq";
 			this.linkLabelZeroOutWriteoffOnAgeOrFreq.Size = new System.Drawing.Size(498, 17);
 			this.linkLabelZeroOutWriteoffOnAgeOrFreq.TabIndex = 375;
 			this.linkLabelZeroOutWriteoffOnAgeOrFreq.TabStop = true;
-			this.linkLabelZeroOutWriteoffOnAgeOrFreq.Text = "can be overridden by plan; see Unit Tests 118-123";
+			this.linkLabelZeroOutWriteoffOnAgeOrFreq.Text = "can be overridden by plan; also see Unit Tests 118-123";
 			this.linkLabelZeroOutWriteoffOnAgeOrFreq.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.linkLabelZeroOutWriteoffOnAgeOrFreq.UseCompatibleTextRendering = true;
 			this.linkLabelZeroOutWriteoffOnAgeOrFreq.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelZeroOutWriteoffOnAgeOrFreq_LinkClicked);
@@ -131,14 +131,14 @@ namespace OpenDental {
 			// linkLabelZeroOutWriteoffOnAnnualMax
 			// 
 			this.linkLabelZeroOutWriteoffOnAnnualMax.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelZeroOutWriteoffOnAnnualMax.LinkArea = new System.Windows.Forms.LinkArea(31, 10);
+			this.linkLabelZeroOutWriteoffOnAnnualMax.LinkArea = new System.Windows.Forms.LinkArea(36, 10);
 			this.linkLabelZeroOutWriteoffOnAnnualMax.LinkColor = System.Drawing.Color.MidnightBlue;
 			this.linkLabelZeroOutWriteoffOnAnnualMax.Location = new System.Drawing.Point(476, 316);
 			this.linkLabelZeroOutWriteoffOnAnnualMax.Name = "linkLabelZeroOutWriteoffOnAnnualMax";
 			this.linkLabelZeroOutWriteoffOnAnnualMax.Size = new System.Drawing.Size(498, 17);
 			this.linkLabelZeroOutWriteoffOnAnnualMax.TabIndex = 374;
 			this.linkLabelZeroOutWriteoffOnAnnualMax.TabStop = true;
-			this.linkLabelZeroOutWriteoffOnAnnualMax.Text = "can be overridden by plan; see Unit Tests 115-117";
+			this.linkLabelZeroOutWriteoffOnAnnualMax.Text = "can be overridden by plan; also see Unit Tests 115-117";
 			this.linkLabelZeroOutWriteoffOnAnnualMax.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.linkLabelZeroOutWriteoffOnAnnualMax.UseCompatibleTextRendering = true;
 			this.linkLabelZeroOutWriteoffOnAnnualMax.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelZeroOutWriteoffOnAnnualMax_LinkClicked);

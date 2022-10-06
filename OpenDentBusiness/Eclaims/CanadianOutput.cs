@@ -986,7 +986,7 @@ namespace OpenDentBusiness.Eclaims {
 								//}
 								Canadian.EOBImportHelper(fieldInputter,listClaimProcsForClaim,listAllProcs,listAllClaimProcs,claim,true,null,clearinghouseClin.IsEraDownloadAllowed,pat);
 								SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,claim.PatNum
-									,"Claim for service date "+POut.Date(claim.DateService)+" amounts overwritten using recieved EOB amounts."
+									,"Claim for service date "+POut.Date(claim.DateService)+" amounts overwritten using received EOB amounts."
 									,LogSources.CanadaEobAutoImport);
 							}
 						}

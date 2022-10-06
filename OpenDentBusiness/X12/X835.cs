@@ -4270,11 +4270,11 @@ namespace OpenDentBusiness {
 			bool areAnyClaimProcsUnreceived=listClaimProcsForClaim.Any(x => ClaimProcs.GetEstimatedStatuses().Contains(x.Status));
 			if(is835ClaimSupplemental && areAnyClaimProcsUnreceived) {
 				if(claimPaid.IsReversal) {
-					stringBuilderErrorMessage.AppendLine(Lans.g("X835","The ERA should be providing a reversal, but some claim procedures have not recieved an initial payment yet."));
+					stringBuilderErrorMessage.AppendLine(Lans.g("X835","The ERA should be providing a reversal, but some claim procedures have not received an initial payment yet."));
 				}
 				else {
 					stringBuilderErrorMessage.AppendLine(
-						Lans.g("X835","The ERA should be providing a supplemental payment, but some claim procedures have not recieved an initial payment yet."));
+						Lans.g("X835","The ERA should be providing a supplemental payment, but some claim procedures have not received an initial payment yet."));
 				}
 			}
 			string errorMessage=stringBuilderErrorMessage.ToString();

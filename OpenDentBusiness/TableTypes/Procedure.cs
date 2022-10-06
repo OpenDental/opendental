@@ -145,8 +145,8 @@ namespace OpenDentBusiness {
 		///<summary>FK to userod.UserNum.  Set to the user logged in when the row was inserted at SecDateEntry date and time.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.ExcludeFromUpdate)]
 		public long SecUserNumEntry;
-		///<summary>Timestamp automatically generated and user not allowed to change.  The actual date of entry.</summary>
-		[CrudColumn(SpecialType=CrudSpecialColType.DateEntry)]
+		///<summary>Timestamp automatically generated and user not allowed to change.  The actual date and time of entry.</summary>
+		[CrudColumn(SpecialType=CrudSpecialColType.DateTEntry)]
 		public DateTime SecDateEntry;
 		//No SecDateTEdit, DateTStamp already exists and is the timestamp updated by MySQL when a row is added or changed
 		///<summary>The date the procedure was originally set complete. If status is set complete and then set to something other than complete, this field will be set to DateTime.MinValue if DateComplete is today.  If DateComplete is set to a day in the past and the status is changed from complete to something else, the field will not be cleared or updated.  Db only field used by one customer and this is how they requested it. PatNum #19191</summary>

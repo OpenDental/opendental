@@ -500,7 +500,7 @@ namespace OpenDental {
 			// butInsuranceHistoryDetails
 			// 
 			this.butInsuranceHistoryDetails.ForeColor = System.Drawing.Color.Black;
-			this.butInsuranceHistoryDetails.Location = new System.Drawing.Point(476, 303);
+			this.butInsuranceHistoryDetails.Location = new System.Drawing.Point(479, 303);
 			this.butInsuranceHistoryDetails.Name = "butInsuranceHistoryDetails";
 			this.butInsuranceHistoryDetails.Size = new System.Drawing.Size(76, 21);
 			this.butInsuranceHistoryDetails.TabIndex = 374;

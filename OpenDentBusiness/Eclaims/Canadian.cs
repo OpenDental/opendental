@@ -953,7 +953,7 @@ namespace OpenDentBusiness.Eclaims {
 				EOBImportHelper(fieldInputter,claimProcsClaim,procListAll,claimProcList,claim,false,showProviderTransferWindow,clearinghouseClin.IsEraDownloadAllowed
 					,planList,benefitList,subList,patient);
 				SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,claim.PatNum
-					,"Claim for service date "+POut.Date(claim.DateService)+" amounts overwritten using recieved EOB amounts."
+					,"Claim for service date "+POut.Date(claim.DateService)+" amounts overwritten using received EOB amounts."
 					,LogSources.CanadaEobAutoImport);
 			}
 			if(claim.ClaimType!="PreAuth") {
@@ -1077,7 +1077,7 @@ namespace OpenDentBusiness.Eclaims {
 							EOBImportHelper(fieldInputter2,claimProcsClaim2,procListAll,claimProcList,claim2,false,showProviderTransferWindow,clearinghouseClin.IsEraDownloadAllowed
 								,planList,benefitList,subList,patient);
 							SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,claim2.PatNum
-								,"Claim for service date "+POut.Date(claim2.DateService)+" amounts overwritten using recieved EOB amounts."
+								,"Claim for service date "+POut.Date(claim2.DateService)+" amounts overwritten using received EOB amounts."
 								,LogSources.CanadaEobAutoImport);
 						}
 						if(doPrint && formCCDPrint!=null) {

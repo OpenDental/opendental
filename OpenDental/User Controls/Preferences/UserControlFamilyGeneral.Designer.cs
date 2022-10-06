@@ -132,7 +132,7 @@ namespace OpenDental {
 			// butSuperFamSortDetails
 			// 
 			this.butSuperFamSortDetails.ForeColor = System.Drawing.Color.Black;
-			this.butSuperFamSortDetails.Location = new System.Drawing.Point(476, 378);
+			this.butSuperFamSortDetails.Location = new System.Drawing.Point(479, 378);
 			this.butSuperFamSortDetails.Name = "butSuperFamSortDetails";
 			this.butSuperFamSortDetails.Size = new System.Drawing.Size(64, 21);
 			this.butSuperFamSortDetails.TabIndex = 371;
