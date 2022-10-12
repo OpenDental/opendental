@@ -123,6 +123,12 @@
       </Enumeration>
     </column>
   </table>
+  <table name="procedurelog">
+    <summary></summary>
+    <column order="61" name="SecDateEntry" type="datetime">
+      <summary>Timestamp automatically generated and user not allowed to change.  The actual date and time of entry.</summary>
+    </column>
+  </table>
   <table name="securitylog">
     <summary></summary>
     <column order="1" name="PermType" type="tinyint">
@@ -173,6 +179,12 @@
       <Enumeration name="FormType">
         <summary>Add this.</summary>
       </Enumeration>
+    </column>
+  </table>
+  <table name="procedurelog">
+    <summary></summary>
+    <column order="61" name="SecDateEntry" type="date">
+      <summary>Timestamp automatically generated and user not allowed to change.  The actual date and time of entry.</summary>
     </column>
   </table>
 </database>

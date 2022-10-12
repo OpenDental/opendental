@@ -12284,8 +12284,8 @@
     <column order="60" name="SecUserNumEntry" type="bigint(20)" fk="userod">
       <summary>FK to userod.UserNum.  Set to the user logged in when the row was inserted at SecDateEntry date and time.</summary>
     </column>
-    <column order="61" name="SecDateEntry" type="date">
-      <summary>Timestamp automatically generated and user not allowed to change.  The actual date of entry.</summary>
+    <column order="61" name="SecDateEntry" type="datetime">
+      <summary>Timestamp automatically generated and user not allowed to change.  The actual date and time of entry.</summary>
     </column>
     <column order="62" name="DateComplete" type="date">
       <summary>The date the procedure was originally set complete. If status is set complete and then set to something other than complete, this field will be set to DateTime.MinValue if DateComplete is today.  If DateComplete is set to a day in the past and the status is changed from complete to something else, the field will not be cleared or updated.  Db only field used by one customer and this is how they requested it. PatNum #19191</summary>

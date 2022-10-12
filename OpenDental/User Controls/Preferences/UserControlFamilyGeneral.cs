@@ -43,22 +43,6 @@ namespace OpenDental {
 				MsgBox.Show(this,"Done");
 			}
 		}
-
-		private void comboCobRule_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Would you like to change the COB rule for all existing insurance plans?")) {
-				InsPlans.UpdateCobRuleForAll((EnumCobRule)comboCobRule.SelectedIndex);
-			}
-		}
-
-		private void linkLabelCobRuleDetails_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {
-			try {
-				Process.Start("https://www.opendental.com/manual/cob.html");
-			}
-			catch(Exception ex) {
-				MessageBox.Show(Lan.g(this,"Could not find")+" "+"https://www.opendental.com/manual/cob.html"+"\r\n"
-					+Lan.g(this,"Please set up a default web browser."));
-			}
-		}
 		#endregion Methods - Event Handlers
 
 		#region Methods - Private
@@ -84,15 +68,6 @@ namespace OpenDental {
 
 		#region Methods - Public
 		public void FillFamilyGeneral() {
-			for(int i=0;i<Enum.GetNames(typeof(EnumCobRule)).Length;i++) {
-				comboCobRule.Items.Add(Lan.g("enumEnumCobRule",Enum.GetNames(typeof(EnumCobRule))[i]));
-			}
-			comboCobRule.SelectedIndex=PrefC.GetInt(PrefName.InsDefaultCobRule);
-			List<EclaimCobInsPaidBehavior> listCobs=Enum.GetValues(typeof(EclaimCobInsPaidBehavior)).Cast<EclaimCobInsPaidBehavior>().ToList();
-			listCobs.Remove(EclaimCobInsPaidBehavior.Default);//Exclude Default option, as it is only for the carrier edit window.
-			//The following line is similar to ComboBoxPlus.AddEnums(), except we need to exclude Default enum value, thus we are forced to mimic.
-			comboCobSendPaidByInsAt.Items.AddList(listCobs,x=>Lan.g("enum"+typeof(EclaimCobInsPaidBehavior).Name,ODPrimitiveExtensions.GetDescription(x)));
-			comboCobSendPaidByInsAt.SetSelectedEnum(PrefC.GetEnum<EclaimCobInsPaidBehavior>(PrefName.ClaimCobInsPaidBehavior));
 			checkTextMsgOkStatusTreatAsNo.Checked=PrefC.GetBool(PrefName.TextMsgOkStatusTreatAsNo);
 			checkFamPhiAccess.Checked=PrefC.GetBool(PrefName.FamPhiAccess);
 			checkGoogleAddress.Checked=PrefC.GetBool(PrefName.ShowFeatureGoogleMaps);
@@ -163,8 +138,6 @@ namespace OpenDental {
 				Changed|=Prefs.UpdateYN(PrefName.PatientPhoneUsePhonenumberTable,checkUsePhoneNumTable.Checked ? YN.Yes : YN.No);
 			}
 			claimSnapshotRunTime=new DateTime(1881,01,01,claimSnapshotRunTime.Hour,claimSnapshotRunTime.Minute,claimSnapshotRunTime.Second);
-			Changed|=Prefs.UpdateInt(PrefName.InsDefaultCobRule,comboCobRule.SelectedIndex);
-			Changed|=Prefs.UpdateInt(PrefName.ClaimCobInsPaidBehavior,(int)comboCobSendPaidByInsAt.GetSelected<EclaimCobInsPaidBehavior>());
 			Changed|=Prefs.UpdateBool(PrefName.TextMsgOkStatusTreatAsNo,checkTextMsgOkStatusTreatAsNo.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.FamPhiAccess,checkFamPhiAccess.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.ShowFeatureGoogleMaps,checkGoogleAddress.Checked);

@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="checkDcodes.Text" xml:space="preserve">
-    <value>D codes - Add any missing 2022 ADA codes and fix descriptions and blank abbreviations of existing codes.  This option does not work in the trial version, self-compiled version, or outside the USA. In Canada, it adds Canadian codes.</value>
+    <value>D codes - Add any missing 2023 ADA codes and fix descriptions and blank abbreviations of existing codes.  This option does not work in the trial version, self-compiled version, or outside the USA. In Canada, it adds Canadian codes.</value>
   </data>
   <data name="label5.Text" xml:space="preserve">
     <value>These tools are typically used by a new customer AFTER upgrading from the trial version to the full version.  They perform a number of  necessary tasks to make a new database functional.  They can also be used individually later if you have hopelessly damaged your settings.  Autocodes, for example, are hard to set up, but they are also usually the same for everyone.</value>

@@ -83,6 +83,22 @@ namespace OpenDental {
 			MessageBox.Show(Lan.g(this,"Plans affected: ")+plansAffected.ToString());
 		}
 
+		private void comboCobRule_SelectionChangeCommitted(object sender,EventArgs e) {
+			if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Would you like to change the COB rule for all existing insurance plans?")) {
+				InsPlans.UpdateCobRuleForAll((EnumCobRule)comboCobRule.SelectedIndex);
+			}
+		}
+
+		private void linkLabelCobRuleDetails_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {
+			try {
+				Process.Start("https://www.opendental.com/manual/cob.html");
+			}
+			catch(Exception ex) {
+				MessageBox.Show(Lan.g(this,"Could not find")+" "+"https://www.opendental.com/manual/cob.html"+"\r\n"
+					+Lan.g(this,"Please set up a default web browser."));
+			}
+		}
+
 		private void linkLabelZeroOutWriteoffOnAgeOrFreq_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {
 			try {
 				Process.Start("https://www.opendental.com/resources/UnitTestsDocumentation.xml#InsPlans_ComputeEstimates_ZeroWriteoffOverFrequencyGlobalLevel"); 
@@ -123,6 +139,15 @@ namespace OpenDental {
 			checkPatInitBillingTypeFromPriInsPlan.Checked=PrefC.GetBool(PrefName.PatInitBillingTypeFromPriInsPlan);
 			checkEnableZeroWriteoffOnAnnualMax.Checked=PrefC.GetBool(PrefName.InsPlansZeroWriteOffsOnAnnualMax);
 			checkEnableZeroWriteoffOnLimitations.Checked=PrefC.GetBool(PrefName.InsPlansZeroWriteOffsOnFreqOrAging);
+			for(int i=0;i<Enum.GetNames(typeof(EnumCobRule)).Length;i++) {
+				comboCobRule.Items.Add(Lan.g("enumEnumCobRule",Enum.GetNames(typeof(EnumCobRule))[i]));
+			}
+			comboCobRule.SelectedIndex=PrefC.GetInt(PrefName.InsDefaultCobRule);
+			List<EclaimCobInsPaidBehavior> listCobs=Enum.GetValues(typeof(EclaimCobInsPaidBehavior)).Cast<EclaimCobInsPaidBehavior>().ToList();
+			listCobs.Remove(EclaimCobInsPaidBehavior.Default);//Exclude Default option, as it is only for the carrier edit window.
+			//The following line is similar to ComboBoxPlus.AddEnums(), except we need to exclude Default enum value, thus we are forced to mimic.
+			comboCobSendPaidByInsAt.Items.AddList(listCobs,x=>Lan.g("enum"+typeof(EclaimCobInsPaidBehavior).Name,ODPrimitiveExtensions.GetDescription(x)));
+			comboCobSendPaidByInsAt.SetSelectedEnum(PrefC.GetEnum<EclaimCobInsPaidBehavior>(PrefName.ClaimCobInsPaidBehavior));
 		}
 
 		public bool SaveFamilyInsurance() {
@@ -140,6 +165,8 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateBool(PrefName.PatInitBillingTypeFromPriInsPlan,checkPatInitBillingTypeFromPriInsPlan.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.InsPlansZeroWriteOffsOnAnnualMax,checkEnableZeroWriteoffOnAnnualMax.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.InsPlansZeroWriteOffsOnFreqOrAging,checkEnableZeroWriteoffOnLimitations.Checked);
+			Changed|=Prefs.UpdateInt(PrefName.InsDefaultCobRule,comboCobRule.SelectedIndex);
+			Changed|=Prefs.UpdateInt(PrefName.ClaimCobInsPaidBehavior,(int)comboCobSendPaidByInsAt.GetSelected<EclaimCobInsPaidBehavior>());
 			return true;
 		}
 		#endregion Methods - Public

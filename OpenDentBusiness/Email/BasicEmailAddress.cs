@@ -23,7 +23,16 @@ namespace OpenDentBusiness.Email {
 		public string AccessToken;
 		///<summary>OAuth token used to refresh the AccessToken.</summary>
 		public string RefreshToken;
-
+		///<summary>OAuth type used. 0-None, 1-Google, 2-Microsoft</summary>
+		public BasicOAuthType AuthenticationType;
 	}
 
+	public enum BasicOAuthType {
+		///<summary>0 - Not using OAuth</summary>
+		None,
+		///<summary>1 - Using OAuth for Google</summary>
+		Google,
+		///<summary>2 - Using OAuth for Microsoft</summary>
+		Microsoft,
+	}
 }

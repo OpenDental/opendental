@@ -3935,6 +3935,44 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}
 
+		private static void To22_2_43() {
+			string command="ALTER TABLE emailaddress ADD AuthenticationType tinyint NOT NULL";
+			Db.NonQ(command);
+			command="UPDATE emailaddress SET AuthenticationType=1 WHERE AccessToken!='' OR RefreshToken!=''"; //Already have Google Authentication selected
+			Db.NonQ(command);
+			command="ALTER TABLE emailaddress MODIFY AccessToken varchar(2000) NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE emailaddress MODIFY RefreshToken TEXT NOT NULL";
+			Db.NonQ(command);
+			//Moving codes to the Obsolete category that were deleted in CDT 2023.
+			if(CultureInfo.CurrentCulture.Name.EndsWith("US")) {//United States
+				//Move deprecated codes to the Obsolete procedure code category.
+				//Make sure the procedure code category exists before moving the procedure codes.
+				string procCatDescript="Obsolete";
+				long defNum=0;
+				command="SELECT DefNum FROM definition WHERE Category=11 AND ItemName='"+POut.String(procCatDescript)+"'";//11 is DefCat.ProcCodeCats
+				DataTable dtDef=Db.GetTable(command);
+				if(dtDef.Rows.Count==0) { //The procedure code category does not exist, add it
+					command="SELECT COUNT(*) FROM definition WHERE Category=11";//11 is DefCat.ProcCodeCats
+					int countCats=PIn.Int(Db.GetCount(command));
+						command="INSERT INTO definition (Category,ItemName,ItemOrder) "
+								+"VALUES (11"+",'"+POut.String(procCatDescript)+"',"+POut.Int(countCats)+")";//11 is DefCat.ProcCodeCats
+					defNum=Db.NonQ(command,true);
+				}
+				else { //The procedure code category already exists, get the existing defnum
+					defNum=PIn.Long(dtDef.Rows[0]["DefNum"].ToString());
+				}
+				string[] cdtCodesDeleted=new string[] {
+					"D0351",
+					"D0704"
+				};
+				//Change the procedure codes' category to Obsolete.
+				command="UPDATE procedurecode SET ProcCat="+POut.Long(defNum)
+					+" WHERE ProcCode IN('"+string.Join("','",cdtCodesDeleted.Select(x => POut.String(x)))+"') ";
+				Db.NonQ(command);
+			}//end United States CDT codes update
+		} // end of 22_2_43
+
 		private static void To22_3_1() {
 			string command;
 			DataTable table;
@@ -4068,6 +4106,47 @@ namespace OpenDentBusiness {
 		private static void To22_3_13() {
 			string command="ALTER TABLE procedurelog MODIFY SecDateEntry DATETIME NOT NULL DEFAULT '0001-01-01 00:00:00'";//was just a date
 			Db.NonQ(command);
+		}
+
+		private static void To22_3_14() {
+			string command;
+			if(!ColumnExists(GetCurrentDatabase(),"emailaddress","AuthenticationType")) {
+				command="ALTER TABLE emailaddress ADD AuthenticationType tinyint NOT NULL";
+				Db.NonQ(command);
+				command="UPDATE emailaddress SET AuthenticationType=1 WHERE AccessToken!='' OR RefreshToken!=''"; //Already have Google Authentication selected
+				Db.NonQ(command);
+				command="ALTER TABLE emailaddress MODIFY AccessToken varchar(2000) NOT NULL";
+				Db.NonQ(command);
+				command="ALTER TABLE emailaddress MODIFY RefreshToken TEXT NOT NULL";
+				Db.NonQ(command);
+			}
+			//Moving codes to the Obsolete category that were deleted in CDT 2023.
+			if(CultureInfo.CurrentCulture.Name.EndsWith("US")) {//United States
+				//Move deprecated codes to the Obsolete procedure code category.
+				//Make sure the procedure code category exists before moving the procedure codes.
+				string procCatDescript="Obsolete";
+				long defNum=0;
+				command="SELECT DefNum FROM definition WHERE Category=11 AND ItemName='"+POut.String(procCatDescript)+"'";//11 is DefCat.ProcCodeCats
+				DataTable dtDef=Db.GetTable(command);
+				if(dtDef.Rows.Count==0) { //The procedure code category does not exist, add it
+					command="SELECT COUNT(*) FROM definition WHERE Category=11";//11 is DefCat.ProcCodeCats
+					int countCats=PIn.Int(Db.GetCount(command));
+						command="INSERT INTO definition (Category,ItemName,ItemOrder) "
+								+"VALUES (11"+",'"+POut.String(procCatDescript)+"',"+POut.Int(countCats)+")";//11 is DefCat.ProcCodeCats
+					defNum=Db.NonQ(command,true);
+				}
+				else { //The procedure code category already exists, get the existing defnum
+					defNum=PIn.Long(dtDef.Rows[0]["DefNum"].ToString());
+				}
+				string[] cdtCodesDeleted=new string[] {
+					"D0351",
+					"D0704"
+				};
+				//Change the procedure codes' category to Obsolete.
+				command="UPDATE procedurecode SET ProcCat="+POut.Long(defNum)
+					+" WHERE ProcCode IN('"+string.Join("','",cdtCodesDeleted.Select(x => POut.String(x)))+"') ";
+				Db.NonQ(command);
+			}//end United States CDT codes update
 		}
 	}
 }

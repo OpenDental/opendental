@@ -206,6 +206,7 @@ namespace OpenDental{
 			this.gridInsBlueBookRules.Size = new System.Drawing.Size(459, 135);
 			this.gridInsBlueBookRules.TabIndex = 266;
 			this.gridInsBlueBookRules.Title = "Insurance Blue Book Rules Hierarchy";
+			this.gridInsBlueBookRules.TranslationName = "TableInsuranceBlueBookRules";
 			this.gridInsBlueBookRules.VScrollVisible = false;
 			this.gridInsBlueBookRules.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.GridInsBlueBookRules_CellDoubleClick);
 			// 

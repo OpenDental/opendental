@@ -12,6 +12,7 @@ using GmailApi=Google.Apis.Gmail.v1;
 using Google;
 using System.Text.RegularExpressions;
 using System.Linq;
+using Bridges;
 
 namespace OpenDentBusiness.Email {
 
@@ -34,7 +35,7 @@ namespace OpenDentBusiness.Email {
 		public static void WireEmailUnsecure(BasicEmailAddress address,BasicEmailMessage emailMessage,NameValueCollection nameValueCollectionHeaders,
 			int emailSendTimeoutMs=EMAIL_SEND_TIMEOUT_MS,params AlternateView[] arrayAlternateViews) {
 			//For now we only support OAuth for Gmail but this may change in the future.
-			if(!address.AccessToken.IsNullOrEmpty() && address.SMTPserver=="smtp.gmail.com") {
+			if(!address.AccessToken.IsNullOrEmpty() && address.AuthenticationType.In(BasicOAuthType.Google,BasicOAuthType.Microsoft)) {
 				SendEmailOAuth(address,emailMessage);
 			}
 			else {
@@ -175,18 +176,30 @@ namespace OpenDentBusiness.Email {
 
 		///<summary>Throws exceptions if failing to send emails or authenticate with Google.</summary>
 		private static void SendEmailOAuth(BasicEmailAddress address,BasicEmailMessage message) {
-			using GmailApi.GmailService gService=GoogleApiConnector.CreateGmailService(address);
-			try {
-				GmailApi.Data.Message gmailMessage=CreateGmailMsg(address,message);
-				gService.Users.Messages.Send(gmailMessage,address.EmailUsername).Execute();
+			if(address.AuthenticationType==BasicOAuthType.Google) {
+				using GmailApi.GmailService gService=GoogleApiConnector.CreateGmailService(address);
+				try {
+					GmailApi.Data.Message gmailMessage=CreateGmailMsg(address,message);
+					gService.Users.Messages.Send(gmailMessage,address.EmailUsername).Execute();
+				}
+				catch(GoogleApiException gae) {
+					//This will bubble up to the UI level and be caught in a copypaste box.
+					throw new GoogleApiException(gae.ServiceName,"Unable to authenticate with Google: "+gae.Message,gae);
+				}
+				catch(Exception ex) {
+					//This will bubble up to the UI level and be caught in a copypaste box.
+					throw new Exception($"Error sending email with OAuth authorization: {ex.Message}");
+				}
 			}
-			catch(GoogleApiException gae) {
-				//This will bubble up to the UI level and be caught in a copypaste box.
-				throw new GoogleApiException(gae.ServiceName,"Unable to authenticate with Google: "+gae.Message,gae);
-			}
-			catch(Exception ex) {
-				//This will bubble up to the UI level and be caught in a copypaste box.
-				throw new Exception($"Error sending email with OAuth authorization: {ex.Message}");
+			else if(address.AuthenticationType==BasicOAuthType.Microsoft) {
+				//create and send microsoft email.
+				try {
+					MicrosoftApiConnector.SendEmail(address.EmailUsername,address.AccessToken,message);
+				}
+				catch(Exception ex) {
+					//This will bubble up to the UI level and be caught in a copypaste box.
+					throw new Exception($"Error sending email with OAuth authorization: {ex.Message}");
+				}
 			}
 		}
 
@@ -260,7 +273,5 @@ namespace OpenDentBusiness.Email {
 			gMsg.Raw=gMsg.Raw.Replace("/","_");
 			return gMsg;
 		}
-
 	}
-
 }

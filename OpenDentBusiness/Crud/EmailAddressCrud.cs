@@ -61,6 +61,7 @@ namespace OpenDentBusiness.Crud{
 				emailAddress.RefreshToken      = PIn.String(row["RefreshToken"].ToString());
 				emailAddress.DownloadInbox     = PIn.Bool  (row["DownloadInbox"].ToString());
 				emailAddress.QueryString       = PIn.String(row["QueryString"].ToString());
+				emailAddress.AuthenticationType= (OpenDentBusiness.OAuthType)PIn.Int(row["AuthenticationType"].ToString());
 				retVal.Add(emailAddress);
 			}
 			return retVal;
@@ -86,6 +87,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("RefreshToken");
 			table.Columns.Add("DownloadInbox");
 			table.Columns.Add("QueryString");
+			table.Columns.Add("AuthenticationType");
 			foreach(EmailAddress emailAddress in listEmailAddresss) {
 				table.Rows.Add(new object[] {
 					POut.Long  (emailAddress.EmailAddressNum),
@@ -102,6 +104,7 @@ namespace OpenDentBusiness.Crud{
 					            emailAddress.RefreshToken,
 					POut.Bool  (emailAddress.DownloadInbox),
 					            emailAddress.QueryString,
+					POut.Int   ((int)emailAddress.AuthenticationType),
 				});
 			}
 			return table;
@@ -121,7 +124,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="EmailAddressNum,";
 			}
-			command+="SMTPserver,EmailUsername,EmailPassword,ServerPort,UseSSL,SenderAddress,Pop3ServerIncoming,ServerPortIncoming,UserNum,AccessToken,RefreshToken,DownloadInbox,QueryString) VALUES(";
+			command+="SMTPserver,EmailUsername,EmailPassword,ServerPort,UseSSL,SenderAddress,Pop3ServerIncoming,ServerPortIncoming,UserNum,AccessToken,RefreshToken,DownloadInbox,QueryString,AuthenticationType) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(emailAddress.EmailAddressNum)+",";
 			}
@@ -136,14 +139,19 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   (emailAddress.ServerPortIncoming)+","
 				+    POut.Long  (emailAddress.UserNum)+","
 				+"'"+POut.String(emailAddress.AccessToken)+"',"
-				+"'"+POut.String(emailAddress.RefreshToken)+"',"
+				+    DbHelper.ParamChar+"paramRefreshToken,"
 				+    POut.Bool  (emailAddress.DownloadInbox)+","
-				+"'"+POut.String(emailAddress.QueryString)+"')";
+				+"'"+POut.String(emailAddress.QueryString)+"',"
+				+    POut.Int   ((int)emailAddress.AuthenticationType)+")";
+			if(emailAddress.RefreshToken==null) {
+				emailAddress.RefreshToken="";
+			}
+			OdSqlParameter paramRefreshToken=new OdSqlParameter("paramRefreshToken",OdDbType.Text,POut.StringParam(emailAddress.RefreshToken));
 			if(useExistingPK || PrefC.RandomKeys) {
-				Db.NonQ(command);
+				Db.NonQ(command,paramRefreshToken);
 			}
 			else {
-				emailAddress.EmailAddressNum=Db.NonQ(command,true,"EmailAddressNum","emailAddress");
+				emailAddress.EmailAddressNum=Db.NonQ(command,true,"EmailAddressNum","emailAddress",paramRefreshToken);
 			}
 			return emailAddress.EmailAddressNum;
 		}
@@ -163,7 +171,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="EmailAddressNum,";
 			}
-			command+="SMTPserver,EmailUsername,EmailPassword,ServerPort,UseSSL,SenderAddress,Pop3ServerIncoming,ServerPortIncoming,UserNum,AccessToken,RefreshToken,DownloadInbox,QueryString) VALUES(";
+			command+="SMTPserver,EmailUsername,EmailPassword,ServerPort,UseSSL,SenderAddress,Pop3ServerIncoming,ServerPortIncoming,UserNum,AccessToken,RefreshToken,DownloadInbox,QueryString,AuthenticationType) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(emailAddress.EmailAddressNum)+",";
 			}
@@ -178,14 +186,19 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   (emailAddress.ServerPortIncoming)+","
 				+    POut.Long  (emailAddress.UserNum)+","
 				+"'"+POut.String(emailAddress.AccessToken)+"',"
-				+"'"+POut.String(emailAddress.RefreshToken)+"',"
+				+    DbHelper.ParamChar+"paramRefreshToken,"
 				+    POut.Bool  (emailAddress.DownloadInbox)+","
-				+"'"+POut.String(emailAddress.QueryString)+"')";
+				+"'"+POut.String(emailAddress.QueryString)+"',"
+				+    POut.Int   ((int)emailAddress.AuthenticationType)+")";
+			if(emailAddress.RefreshToken==null) {
+				emailAddress.RefreshToken="";
+			}
+			OdSqlParameter paramRefreshToken=new OdSqlParameter("paramRefreshToken",OdDbType.Text,POut.StringParam(emailAddress.RefreshToken));
 			if(useExistingPK || isRandomKeys) {
-				Db.NonQ(command);
+				Db.NonQ(command,paramRefreshToken);
 			}
 			else {
-				emailAddress.EmailAddressNum=Db.NonQ(command,true,"EmailAddressNum","emailAddress");
+				emailAddress.EmailAddressNum=Db.NonQ(command,true,"EmailAddressNum","emailAddress",paramRefreshToken);
 			}
 			return emailAddress.EmailAddressNum;
 		}
@@ -203,11 +216,16 @@ namespace OpenDentBusiness.Crud{
 				+"ServerPortIncoming=  "+POut.Int   (emailAddress.ServerPortIncoming)+", "
 				+"UserNum           =  "+POut.Long  (emailAddress.UserNum)+", "
 				+"AccessToken       = '"+POut.String(emailAddress.AccessToken)+"', "
-				+"RefreshToken      = '"+POut.String(emailAddress.RefreshToken)+"', "
+				+"RefreshToken      =  "+DbHelper.ParamChar+"paramRefreshToken, "
 				+"DownloadInbox     =  "+POut.Bool  (emailAddress.DownloadInbox)+", "
-				+"QueryString       = '"+POut.String(emailAddress.QueryString)+"' "
+				+"QueryString       = '"+POut.String(emailAddress.QueryString)+"', "
+				+"AuthenticationType=  "+POut.Int   ((int)emailAddress.AuthenticationType)+" "
 				+"WHERE EmailAddressNum = "+POut.Long(emailAddress.EmailAddressNum);
-			Db.NonQ(command);
+			if(emailAddress.RefreshToken==null) {
+				emailAddress.RefreshToken="";
+			}
+			OdSqlParameter paramRefreshToken=new OdSqlParameter("paramRefreshToken",OdDbType.Text,POut.StringParam(emailAddress.RefreshToken));
+			Db.NonQ(command,paramRefreshToken);
 		}
 
 		///<summary>Updates one EmailAddress in the database.  Uses an old object to compare to, and only alters changed fields.  This prevents collisions and concurrency problems in heavily used tables.  Returns true if an update occurred.</summary>
@@ -255,7 +273,7 @@ namespace OpenDentBusiness.Crud{
 			}
 			if(emailAddress.RefreshToken != oldEmailAddress.RefreshToken) {
 				if(command!="") { command+=",";}
-				command+="RefreshToken = '"+POut.String(emailAddress.RefreshToken)+"'";
+				command+="RefreshToken = "+DbHelper.ParamChar+"paramRefreshToken";
 			}
 			if(emailAddress.DownloadInbox != oldEmailAddress.DownloadInbox) {
 				if(command!="") { command+=",";}
@@ -265,12 +283,20 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="QueryString = '"+POut.String(emailAddress.QueryString)+"'";
 			}
+			if(emailAddress.AuthenticationType != oldEmailAddress.AuthenticationType) {
+				if(command!="") { command+=",";}
+				command+="AuthenticationType = "+POut.Int   ((int)emailAddress.AuthenticationType)+"";
+			}
 			if(command=="") {
 				return false;
 			}
+			if(emailAddress.RefreshToken==null) {
+				emailAddress.RefreshToken="";
+			}
+			OdSqlParameter paramRefreshToken=new OdSqlParameter("paramRefreshToken",OdDbType.Text,POut.StringParam(emailAddress.RefreshToken));
 			command="UPDATE emailaddress SET "+command
 				+" WHERE EmailAddressNum = "+POut.Long(emailAddress.EmailAddressNum);
-			Db.NonQ(command);
+			Db.NonQ(command,paramRefreshToken);
 			return true;
 		}
 
@@ -314,6 +340,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(emailAddress.QueryString != oldEmailAddress.QueryString) {
+				return true;
+			}
+			if(emailAddress.AuthenticationType != oldEmailAddress.AuthenticationType) {
 				return true;
 			}
 			return false;

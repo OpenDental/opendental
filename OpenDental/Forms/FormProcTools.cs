@@ -55,7 +55,7 @@ namespace OpenDental{
 			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
 				//Tcodes remain enabled
 				//Ncodes remain enabled
-				checkDcodes.Text="CDA codes - Add any missing 2022 CDA codes.  This option does not work in the trial version.";
+				checkDcodes.Text="CDA codes - Add any missing 2023 CDA codes.  This option does not work in the trial version.";
 				checkRecallTypes.Text="Recall Types - Resets the recall types and triggers to default.  Replaces any T codes with CDA codes.";
 				_codeList=null;//Is only filled when the code tool runs because the user might not need to download the codes.
 			}
@@ -123,7 +123,7 @@ namespace OpenDental{
 			//The updating of CDT codes takes place towards the end of the year, while we typically do it in December, we have 
 			//done it as early as Novemeber before. This warning will inform users that using the new codes will cause rejection
 			//on their claims if they try to use them before the first of the new year.
-			DateTime datePromptStart=new DateTime(2021,10,28);
+			DateTime datePromptStart=new DateTime(2022,10,11);
 			DateTime datePromptEnd=new DateTime(datePromptStart.Year,12,31);
 			if(DateTime.Now.Between(datePromptStart,datePromptEnd) && checkDcodes.Checked) {//Only validate if attempting to update D Codes
 				if(MessageBox.Show(//Still between datePromptStart and the first of the next year, prompt that these codes may cause problems.

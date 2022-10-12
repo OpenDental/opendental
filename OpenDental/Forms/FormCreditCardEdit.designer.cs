@@ -162,6 +162,7 @@ namespace OpenDental{
 			this.textDayOfMonth.ReadOnly = true;
 			this.textDayOfMonth.Size = new System.Drawing.Size(125, 20);
 			this.textDayOfMonth.TabIndex = 20;
+			this.textDayOfMonth.TabStop = false;
 			this.textDayOfMonth.TextChanged += new System.EventHandler(this.textDayOfMonth_TextChanged);
 			// 
 			// radioWeekDay
@@ -435,6 +436,7 @@ namespace OpenDental{
 			this.butToday.Name = "butToday";
 			this.butToday.Size = new System.Drawing.Size(63, 22);
 			this.butToday.TabIndex = 12;
+			this.butToday.TabStop = false;
 			this.butToday.Text = "Today";
 			this.butToday.Click += new System.EventHandler(this.butToday_Click);
 			// 
@@ -445,6 +447,7 @@ namespace OpenDental{
 			this.butClear.Name = "butClear";
 			this.butClear.Size = new System.Drawing.Size(63, 22);
 			this.butClear.TabIndex = 10;
+			this.butClear.TabStop = false;
 			this.butClear.Text = "Clear";
 			this.butClear.Click += new System.EventHandler(this.butClear_Click);
 			// 
@@ -527,6 +530,7 @@ namespace OpenDental{
 			this.textZip.Name = "textZip";
 			this.textZip.Size = new System.Drawing.Size(136, 20);
 			this.textZip.TabIndex = 6;
+			this.textZip.TabStop = false;
 			// 
 			// labelAddress
 			// 

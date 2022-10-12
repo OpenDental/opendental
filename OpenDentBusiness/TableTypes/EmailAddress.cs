@@ -34,14 +34,17 @@ namespace OpenDentBusiness {
 		///<summary>Needed for OAuth.</summary>
 		public string AccessToken;
 		///<summary>Needed for OAuth.</summary>
+		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string RefreshToken;
 		///<summary>When true, this will allow the user to download emails to their inbox.</summary>
 		public bool DownloadInbox;
 		///<summary>Allows gmail users to specify search parameters</summary>
 		public string QueryString;
+		///<summary>Enum:OAuthType None=0,Google=1,Microsoft=2.  Indicates which OAuth type to use for the email address.</summary>
+		public OAuthType AuthenticationType;
 
-    ///<summary>We assume the email settings are implicit if the server port is 465.</summary>
-    public bool IsImplicitSsl {
+		///<summary>We assume the email settings are implicit if the server port is 465.</summary>
+		public bool IsImplicitSsl {
 			get {
 				if(ServerPort==465) {
 					return true;
@@ -59,8 +62,14 @@ namespace OpenDentBusiness {
 		public string GetFrom() {
 			return string.IsNullOrEmpty(SenderAddress) ? EmailUsername : SenderAddress;
 		}
-
 	}
 
-
+	public enum OAuthType {
+		///<summary>0 - Not using OAuth</summary>
+		None,
+		///<summary>1 - Using OAuth for Google</summary>
+		Google,
+		///<summary>2 - Using OAuth for Microsoft</summary>
+		Microsoft,
+	}
 }

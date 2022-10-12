@@ -26,8 +26,6 @@ namespace OpenDental {
 		private void InitializeComponent() {
 			this.labelUsePhoneNumTableDetails = new System.Windows.Forms.Label();
 			this.labelSelectProvDetails = new System.Windows.Forms.Label();
-			this.labelCobSendPaidByInsAtDetails = new System.Windows.Forms.Label();
-			this.linkLabelCobRuleDetails = new System.Windows.Forms.LinkLabel();
 			this.labelSuperFamSyncDetails = new System.Windows.Forms.Label();
 			this.butSuperFamSortDetails = new OpenDental.UI.Button();
 			this.groupBoxHIPAA = new OpenDental.UI.GroupBoxOD();
@@ -45,11 +43,6 @@ namespace OpenDental {
 			this.checkAllowPatsAtHQ = new System.Windows.Forms.CheckBox();
 			this.checkSelectProv = new System.Windows.Forms.CheckBox();
 			this.checkGoogleAddress = new System.Windows.Forms.CheckBox();
-			this.groupBoxCOB = new OpenDental.UI.GroupBoxOD();
-			this.comboCobSendPaidByInsAt = new OpenDental.UI.ComboBoxOD();
-			this.labelCobSendPaidByOtherInsAt = new System.Windows.Forms.Label();
-			this.comboCobRule = new OpenDental.UI.ComboBoxOD();
-			this.labelCobRule = new System.Windows.Forms.Label();
 			this.groupBoxClaimSnapshot = new OpenDental.UI.GroupBoxOD();
 			this.comboClaimSnapshotTrigger = new OpenDental.UI.ComboBoxOD();
 			this.textClaimSnapshotRunTime = new System.Windows.Forms.TextBox();
@@ -63,7 +56,6 @@ namespace OpenDental {
 			this.checkSuperFamCloneCreate = new System.Windows.Forms.CheckBox();
 			this.groupBoxHIPAA.SuspendLayout();
 			this.groupBoxPatientEdit.SuspendLayout();
-			this.groupBoxCOB.SuspendLayout();
 			this.groupBoxClaimSnapshot.SuspendLayout();
 			this.groupBoxSuperFamily.SuspendLayout();
 			this.SuspendLayout();
@@ -72,7 +64,7 @@ namespace OpenDental {
 			// 
 			this.labelUsePhoneNumTableDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelUsePhoneNumTableDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelUsePhoneNumTableDetails.Location = new System.Drawing.Point(476, 256);
+			this.labelUsePhoneNumTableDetails.Location = new System.Drawing.Point(476, 182);
 			this.labelUsePhoneNumTableDetails.Name = "labelUsePhoneNumTableDetails";
 			this.labelUsePhoneNumTableDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelUsePhoneNumTableDetails.TabIndex = 355;
@@ -84,45 +76,18 @@ namespace OpenDental {
 			// 
 			this.labelSelectProvDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelSelectProvDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelSelectProvDetails.Location = new System.Drawing.Point(476, 133);
+			this.labelSelectProvDetails.Location = new System.Drawing.Point(476, 59);
 			this.labelSelectProvDetails.Name = "labelSelectProvDetails";
 			this.labelSelectProvDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelSelectProvDetails.TabIndex = 356;
 			this.labelSelectProvDetails.Text = "require user to select a provider";
 			this.labelSelectProvDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
-			// labelCobSendPaidByInsAtDetails
-			// 
-			this.labelCobSendPaidByInsAtDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelCobSendPaidByInsAtDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelCobSendPaidByInsAtDetails.Location = new System.Drawing.Point(476, 52);
-			this.labelCobSendPaidByInsAtDetails.Name = "labelCobSendPaidByInsAtDetails";
-			this.labelCobSendPaidByInsAtDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelCobSendPaidByInsAtDetails.TabIndex = 357;
-			this.labelCobSendPaidByInsAtDetails.Text = "Claim Level means just the total for the claim, Procedure Level means the amount " +
-    "for each procedure";
-			this.labelCobSendPaidByInsAtDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// linkLabelCobRuleDetails
-			// 
-			this.linkLabelCobRuleDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelCobRuleDetails.LinkArea = new System.Windows.Forms.LinkArea(4, 24);
-			this.linkLabelCobRuleDetails.LinkColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelCobRuleDetails.Location = new System.Drawing.Point(476, 28);
-			this.linkLabelCobRuleDetails.Name = "linkLabelCobRuleDetails";
-			this.linkLabelCobRuleDetails.Size = new System.Drawing.Size(498, 17);
-			this.linkLabelCobRuleDetails.TabIndex = 369;
-			this.linkLabelCobRuleDetails.TabStop = true;
-			this.linkLabelCobRuleDetails.Text = "see Coordination of Benefits";
-			this.linkLabelCobRuleDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.linkLabelCobRuleDetails.UseCompatibleTextRendering = true;
-			this.linkLabelCobRuleDetails.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelCobRuleDetails_LinkClicked);
-			// 
 			// labelSuperFamSyncDetails
 			// 
 			this.labelSuperFamSyncDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelSuperFamSyncDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelSuperFamSyncDetails.Location = new System.Drawing.Point(476, 401);
+			this.labelSuperFamSyncDetails.Location = new System.Drawing.Point(476, 327);
 			this.labelSuperFamSyncDetails.Name = "labelSuperFamSyncDetails";
 			this.labelSuperFamSyncDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelSuperFamSyncDetails.TabIndex = 370;
@@ -132,7 +97,7 @@ namespace OpenDental {
 			// butSuperFamSortDetails
 			// 
 			this.butSuperFamSortDetails.ForeColor = System.Drawing.Color.Black;
-			this.butSuperFamSortDetails.Location = new System.Drawing.Point(479, 378);
+			this.butSuperFamSortDetails.Location = new System.Drawing.Point(479, 304);
 			this.butSuperFamSortDetails.Name = "butSuperFamSortDetails";
 			this.butSuperFamSortDetails.Size = new System.Drawing.Size(64, 21);
 			this.butSuperFamSortDetails.TabIndex = 371;
@@ -144,7 +109,7 @@ namespace OpenDental {
 			this.groupBoxHIPAA.Controls.Add(this.checkFamPhiAccess);
 			this.groupBoxHIPAA.Controls.Add(this.checkPatientSSNMasked);
 			this.groupBoxHIPAA.Controls.Add(this.checkPatientDOBMasked);
-			this.groupBoxHIPAA.Location = new System.Drawing.Point(20, 288);
+			this.groupBoxHIPAA.Location = new System.Drawing.Point(20, 214);
 			this.groupBoxHIPAA.Name = "groupBoxHIPAA";
 			this.groupBoxHIPAA.Size = new System.Drawing.Size(450, 77);
 			this.groupBoxHIPAA.TabIndex = 310;
@@ -195,7 +160,7 @@ namespace OpenDental {
 			this.groupBoxPatientEdit.Controls.Add(this.checkAllowPatsAtHQ);
 			this.groupBoxPatientEdit.Controls.Add(this.checkSelectProv);
 			this.groupBoxPatientEdit.Controls.Add(this.checkGoogleAddress);
-			this.groupBoxPatientEdit.Location = new System.Drawing.Point(20, 84);
+			this.groupBoxPatientEdit.Location = new System.Drawing.Point(20, 10);
 			this.groupBoxPatientEdit.Name = "groupBoxPatientEdit";
 			this.groupBoxPatientEdit.Size = new System.Drawing.Size(450, 201);
 			this.groupBoxPatientEdit.TabIndex = 309;
@@ -313,56 +278,6 @@ namespace OpenDental {
 			this.checkGoogleAddress.Text = "Show Google Maps in Patient Edit window";
 			this.checkGoogleAddress.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// groupBoxCOB
-			// 
-			this.groupBoxCOB.BackColor = System.Drawing.Color.White;
-			this.groupBoxCOB.Controls.Add(this.comboCobSendPaidByInsAt);
-			this.groupBoxCOB.Controls.Add(this.labelCobSendPaidByOtherInsAt);
-			this.groupBoxCOB.Controls.Add(this.comboCobRule);
-			this.groupBoxCOB.Controls.Add(this.labelCobRule);
-			this.groupBoxCOB.Location = new System.Drawing.Point(20, 10);
-			this.groupBoxCOB.Name = "groupBoxCOB";
-			this.groupBoxCOB.Size = new System.Drawing.Size(450, 71);
-			this.groupBoxCOB.TabIndex = 285;
-			this.groupBoxCOB.Text = "Coordination of Benefits (COB)";
-			// 
-			// comboCobSendPaidByInsAt
-			// 
-			this.comboCobSendPaidByInsAt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboCobSendPaidByInsAt.Location = new System.Drawing.Point(312, 39);
-			this.comboCobSendPaidByInsAt.Name = "comboCobSendPaidByInsAt";
-			this.comboCobSendPaidByInsAt.Size = new System.Drawing.Size(128, 21);
-			this.comboCobSendPaidByInsAt.TabIndex = 287;
-			// 
-			// labelCobSendPaidByOtherInsAt
-			// 
-			this.labelCobSendPaidByOtherInsAt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelCobSendPaidByOtherInsAt.Location = new System.Drawing.Point(67, 42);
-			this.labelCobSendPaidByOtherInsAt.Name = "labelCobSendPaidByOtherInsAt";
-			this.labelCobSendPaidByOtherInsAt.Size = new System.Drawing.Size(242, 17);
-			this.labelCobSendPaidByOtherInsAt.TabIndex = 286;
-			this.labelCobSendPaidByOtherInsAt.Text = "Send Paid By Other Insurance At";
-			this.labelCobSendPaidByOtherInsAt.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// comboCobRule
-			// 
-			this.comboCobRule.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboCobRule.Location = new System.Drawing.Point(312, 15);
-			this.comboCobRule.Name = "comboCobRule";
-			this.comboCobRule.Size = new System.Drawing.Size(128, 21);
-			this.comboCobRule.TabIndex = 262;
-			this.comboCobRule.SelectionChangeCommitted += new System.EventHandler(this.comboCobRule_SelectionChangeCommitted);
-			// 
-			// labelCobRule
-			// 
-			this.labelCobRule.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelCobRule.Location = new System.Drawing.Point(67, 18);
-			this.labelCobRule.Name = "labelCobRule";
-			this.labelCobRule.Size = new System.Drawing.Size(242, 17);
-			this.labelCobRule.TabIndex = 264;
-			this.labelCobRule.Text = "Coordination of Benefits (COB) rule";
-			this.labelCobRule.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
 			// groupBoxClaimSnapshot
 			// 
 			this.groupBoxClaimSnapshot.BackColor = System.Drawing.Color.White;
@@ -370,7 +285,7 @@ namespace OpenDental {
 			this.groupBoxClaimSnapshot.Controls.Add(this.textClaimSnapshotRunTime);
 			this.groupBoxClaimSnapshot.Controls.Add(this.label30);
 			this.groupBoxClaimSnapshot.Controls.Add(this.label31);
-			this.groupBoxClaimSnapshot.Location = new System.Drawing.Point(20, 472);
+			this.groupBoxClaimSnapshot.Location = new System.Drawing.Point(20, 398);
 			this.groupBoxClaimSnapshot.Name = "groupBoxClaimSnapshot";
 			this.groupBoxClaimSnapshot.Size = new System.Drawing.Size(450, 65);
 			this.groupBoxClaimSnapshot.TabIndex = 284;
@@ -420,7 +335,7 @@ namespace OpenDental {
 			this.groupBoxSuperFamily.Controls.Add(this.checkSuperFamSync);
 			this.groupBoxSuperFamily.Controls.Add(this.checkSuperFamAddIns);
 			this.groupBoxSuperFamily.Controls.Add(this.checkSuperFamCloneCreate);
-			this.groupBoxSuperFamily.Location = new System.Drawing.Point(20, 368);
+			this.groupBoxSuperFamily.Location = new System.Drawing.Point(20, 294);
 			this.groupBoxSuperFamily.Name = "groupBoxSuperFamily";
 			this.groupBoxSuperFamily.Size = new System.Drawing.Size(450, 101);
 			this.groupBoxSuperFamily.TabIndex = 283;
@@ -484,20 +399,16 @@ namespace OpenDental {
 			this.BackColor = System.Drawing.Color.White;
 			this.Controls.Add(this.butSuperFamSortDetails);
 			this.Controls.Add(this.labelSuperFamSyncDetails);
-			this.Controls.Add(this.linkLabelCobRuleDetails);
-			this.Controls.Add(this.labelCobSendPaidByInsAtDetails);
 			this.Controls.Add(this.labelSelectProvDetails);
 			this.Controls.Add(this.labelUsePhoneNumTableDetails);
 			this.Controls.Add(this.groupBoxHIPAA);
 			this.Controls.Add(this.groupBoxPatientEdit);
-			this.Controls.Add(this.groupBoxCOB);
 			this.Controls.Add(this.groupBoxClaimSnapshot);
 			this.Controls.Add(this.groupBoxSuperFamily);
 			this.Name = "UserControlFamilyGeneral";
 			this.Size = new System.Drawing.Size(974, 624);
 			this.groupBoxHIPAA.ResumeLayout(false);
 			this.groupBoxPatientEdit.ResumeLayout(false);
-			this.groupBoxCOB.ResumeLayout(false);
 			this.groupBoxClaimSnapshot.ResumeLayout(false);
 			this.groupBoxClaimSnapshot.PerformLayout();
 			this.groupBoxSuperFamily.ResumeLayout(false);
@@ -507,11 +418,6 @@ namespace OpenDental {
 
 		#endregion
 
-		private UI.GroupBoxOD groupBoxCOB;
-		private UI.ComboBoxOD comboCobSendPaidByInsAt;
-		private System.Windows.Forms.Label labelCobSendPaidByOtherInsAt;
-		private UI.ComboBoxOD comboCobRule;
-		private System.Windows.Forms.Label labelCobRule;
 		private UI.GroupBoxOD groupBoxClaimSnapshot;
 		private UI.ComboBoxOD comboClaimSnapshotTrigger;
 		private System.Windows.Forms.TextBox textClaimSnapshotRunTime;
@@ -540,8 +446,6 @@ namespace OpenDental {
 		private UI.GroupBoxOD groupBoxHIPAA;
 		private System.Windows.Forms.Label labelUsePhoneNumTableDetails;
 		private System.Windows.Forms.Label labelSelectProvDetails;
-		private System.Windows.Forms.Label labelCobSendPaidByInsAtDetails;
-		private System.Windows.Forms.LinkLabel linkLabelCobRuleDetails;
 		private System.Windows.Forms.Label labelSuperFamSyncDetails;
 		private UI.Button butSuperFamSortDetails;
 	}

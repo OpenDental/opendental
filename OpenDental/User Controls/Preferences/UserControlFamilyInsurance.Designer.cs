@@ -51,16 +51,24 @@ namespace OpenDental {
 			this.checkInsPPOsecWriteoffs = new System.Windows.Forms.CheckBox();
 			this.checkPPOpercentage = new System.Windows.Forms.CheckBox();
 			this.checkInsDefaultAssignmentOfBenefits = new System.Windows.Forms.CheckBox();
+			this.groupBoxCOB = new OpenDental.UI.GroupBoxOD();
+			this.comboCobSendPaidByInsAt = new OpenDental.UI.ComboBoxOD();
+			this.labelCobSendPaidByOtherInsAt = new System.Windows.Forms.Label();
+			this.comboCobRule = new OpenDental.UI.ComboBoxOD();
+			this.labelCobRule = new System.Windows.Forms.Label();
+			this.linkLabelCobRuleDetails = new System.Windows.Forms.LinkLabel();
+			this.labelCobSendPaidByInsAtDetails = new System.Windows.Forms.Label();
 			this.groupBoxClaims.SuspendLayout();
 			this.groupBoxOtherInsInfo.SuspendLayout();
 			this.groupBoxInsuranceGeneral.SuspendLayout();
+			this.groupBoxCOB.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// labelPPOpercentageDetails
 			// 
 			this.labelPPOpercentageDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelPPOpercentageDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelPPOpercentageDetails.Location = new System.Drawing.Point(476, 77);
+			this.labelPPOpercentageDetails.Location = new System.Drawing.Point(476, 47);
 			this.labelPPOpercentageDetails.Name = "labelPPOpercentageDetails";
 			this.labelPPOpercentageDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelPPOpercentageDetails.TabIndex = 358;
@@ -71,7 +79,7 @@ namespace OpenDental {
 			// 
 			this.labelPatInitBillingTypeFromPriInsPlanDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelPatInitBillingTypeFromPriInsPlanDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelPatInitBillingTypeFromPriInsPlanDetails.Location = new System.Drawing.Point(476, 191);
+			this.labelPatInitBillingTypeFromPriInsPlanDetails.Location = new System.Drawing.Point(476, 161);
 			this.labelPatInitBillingTypeFromPriInsPlanDetails.Name = "labelPatInitBillingTypeFromPriInsPlanDetails";
 			this.labelPatInitBillingTypeFromPriInsPlanDetails.Size = new System.Drawing.Size(498, 18);
 			this.labelPatInitBillingTypeFromPriInsPlanDetails.TabIndex = 361;
@@ -83,7 +91,7 @@ namespace OpenDental {
 			// 
 			this.labelInsPlanExclusionsMarkDoNotBillDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelInsPlanExclusionsMarkDoNotBillDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelInsPlanExclusionsMarkDoNotBillDetails.Location = new System.Drawing.Point(476, 294);
+			this.labelInsPlanExclusionsMarkDoNotBillDetails.Location = new System.Drawing.Point(476, 256);
 			this.labelInsPlanExclusionsMarkDoNotBillDetails.Name = "labelInsPlanExclusionsMarkDoNotBillDetails";
 			this.labelInsPlanExclusionsMarkDoNotBillDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelInsPlanExclusionsMarkDoNotBillDetails.TabIndex = 362;
@@ -94,7 +102,7 @@ namespace OpenDental {
 			// 
 			this.labelInsPPOsecWriteoffsDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelInsPPOsecWriteoffsDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelInsPPOsecWriteoffsDetails.Location = new System.Drawing.Point(476, 168);
+			this.labelInsPPOsecWriteoffsDetails.Location = new System.Drawing.Point(476, 138);
 			this.labelInsPPOsecWriteoffsDetails.Name = "labelInsPPOsecWriteoffsDetails";
 			this.labelInsPPOsecWriteoffsDetails.Size = new System.Drawing.Size(498, 18);
 			this.labelInsPPOsecWriteoffsDetails.TabIndex = 367;
@@ -105,7 +113,7 @@ namespace OpenDental {
 			// 
 			this.labelClaimUseOverrideProcDescriptDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelClaimUseOverrideProcDescriptDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelClaimUseOverrideProcDescriptDetails.Location = new System.Drawing.Point(476, 398);
+			this.labelClaimUseOverrideProcDescriptDetails.Location = new System.Drawing.Point(476, 352);
 			this.labelClaimUseOverrideProcDescriptDetails.Name = "labelClaimUseOverrideProcDescriptDetails";
 			this.labelClaimUseOverrideProcDescriptDetails.Size = new System.Drawing.Size(498, 18);
 			this.labelClaimUseOverrideProcDescriptDetails.TabIndex = 368;
@@ -118,7 +126,7 @@ namespace OpenDental {
 			this.linkLabelZeroOutWriteoffOnAgeOrFreq.ForeColor = System.Drawing.Color.MidnightBlue;
 			this.linkLabelZeroOutWriteoffOnAgeOrFreq.LinkArea = new System.Windows.Forms.LinkArea(36, 10);
 			this.linkLabelZeroOutWriteoffOnAgeOrFreq.LinkColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelZeroOutWriteoffOnAgeOrFreq.Location = new System.Drawing.Point(476, 339);
+			this.linkLabelZeroOutWriteoffOnAgeOrFreq.Location = new System.Drawing.Point(476, 301);
 			this.linkLabelZeroOutWriteoffOnAgeOrFreq.Name = "linkLabelZeroOutWriteoffOnAgeOrFreq";
 			this.linkLabelZeroOutWriteoffOnAgeOrFreq.Size = new System.Drawing.Size(498, 17);
 			this.linkLabelZeroOutWriteoffOnAgeOrFreq.TabIndex = 375;
@@ -133,7 +141,7 @@ namespace OpenDental {
 			this.linkLabelZeroOutWriteoffOnAnnualMax.ForeColor = System.Drawing.Color.MidnightBlue;
 			this.linkLabelZeroOutWriteoffOnAnnualMax.LinkArea = new System.Windows.Forms.LinkArea(36, 10);
 			this.linkLabelZeroOutWriteoffOnAnnualMax.LinkColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelZeroOutWriteoffOnAnnualMax.Location = new System.Drawing.Point(476, 316);
+			this.linkLabelZeroOutWriteoffOnAnnualMax.Location = new System.Drawing.Point(476, 279);
 			this.linkLabelZeroOutWriteoffOnAnnualMax.Name = "linkLabelZeroOutWriteoffOnAnnualMax";
 			this.linkLabelZeroOutWriteoffOnAnnualMax.Size = new System.Drawing.Size(498, 17);
 			this.linkLabelZeroOutWriteoffOnAnnualMax.TabIndex = 374;
@@ -146,7 +154,7 @@ namespace OpenDental {
 			// butInsPlanExclusionsUseUCR
 			// 
 			this.butInsPlanExclusionsUseUCR.ForeColor = System.Drawing.Color.Black;
-			this.butInsPlanExclusionsUseUCR.Location = new System.Drawing.Point(479, 269);
+			this.butInsPlanExclusionsUseUCR.Location = new System.Drawing.Point(479, 231);
 			this.butInsPlanExclusionsUseUCR.Name = "butInsPlanExclusionsUseUCR";
 			this.butInsPlanExclusionsUseUCR.Size = new System.Drawing.Size(64, 21);
 			this.butInsPlanExclusionsUseUCR.TabIndex = 366;
@@ -156,7 +164,7 @@ namespace OpenDental {
 			// butFixedBenefitBlankLikeZero
 			// 
 			this.butFixedBenefitBlankLikeZero.ForeColor = System.Drawing.Color.Black;
-			this.butFixedBenefitBlankLikeZero.Location = new System.Drawing.Point(479, 121);
+			this.butFixedBenefitBlankLikeZero.Location = new System.Drawing.Point(479, 91);
 			this.butFixedBenefitBlankLikeZero.Name = "butFixedBenefitBlankLikeZero";
 			this.butFixedBenefitBlankLikeZero.Size = new System.Drawing.Size(64, 21);
 			this.butFixedBenefitBlankLikeZero.TabIndex = 365;
@@ -166,7 +174,7 @@ namespace OpenDental {
 			// butCoPayFeeScheduleBlankLikeZero
 			// 
 			this.butCoPayFeeScheduleBlankLikeZero.ForeColor = System.Drawing.Color.Black;
-			this.butCoPayFeeScheduleBlankLikeZero.Location = new System.Drawing.Point(479, 98);
+			this.butCoPayFeeScheduleBlankLikeZero.Location = new System.Drawing.Point(479, 68);
 			this.butCoPayFeeScheduleBlankLikeZero.Name = "butCoPayFeeScheduleBlankLikeZero";
 			this.butCoPayFeeScheduleBlankLikeZero.Size = new System.Drawing.Size(64, 21);
 			this.butCoPayFeeScheduleBlankLikeZero.TabIndex = 364;
@@ -177,7 +185,7 @@ namespace OpenDental {
 			// 
 			this.groupBoxClaims.Controls.Add(this.checkClaimUseOverrideProcDescript);
 			this.groupBoxClaims.Controls.Add(this.checkClaimTrackingRequireError);
-			this.groupBoxClaims.Location = new System.Drawing.Point(20, 385);
+			this.groupBoxClaims.Location = new System.Drawing.Point(20, 339);
 			this.groupBoxClaims.Name = "groupBoxClaims";
 			this.groupBoxClaims.Size = new System.Drawing.Size(450, 65);
 			this.groupBoxClaims.TabIndex = 280;
@@ -212,7 +220,7 @@ namespace OpenDental {
 			this.groupBoxOtherInsInfo.Controls.Add(this.checkEnableZeroWriteoffOnLimitations);
 			this.groupBoxOtherInsInfo.Controls.Add(this.checkEnableZeroWriteoffOnAnnualMax);
 			this.groupBoxOtherInsInfo.Controls.Add(this.checkInsPlanExclusionsMarkDoNotBill);
-			this.groupBoxOtherInsInfo.Location = new System.Drawing.Point(20, 234);
+			this.groupBoxOtherInsInfo.Location = new System.Drawing.Point(20, 196);
 			this.groupBoxOtherInsInfo.Name = "groupBoxOtherInsInfo";
 			this.groupBoxOtherInsInfo.Size = new System.Drawing.Size(450, 137);
 			this.groupBoxOtherInsInfo.TabIndex = 279;
@@ -283,7 +291,7 @@ namespace OpenDental {
 			this.groupBoxInsuranceGeneral.Controls.Add(this.checkInsPPOsecWriteoffs);
 			this.groupBoxInsuranceGeneral.Controls.Add(this.checkPPOpercentage);
 			this.groupBoxInsuranceGeneral.Controls.Add(this.checkInsDefaultAssignmentOfBenefits);
-			this.groupBoxInsuranceGeneral.Location = new System.Drawing.Point(20, 40);
+			this.groupBoxInsuranceGeneral.Location = new System.Drawing.Point(20, 10);
 			this.groupBoxInsuranceGeneral.Name = "groupBoxInsuranceGeneral";
 			this.groupBoxInsuranceGeneral.Size = new System.Drawing.Size(450, 180);
 			this.groupBoxInsuranceGeneral.TabIndex = 278;
@@ -368,11 +376,91 @@ namespace OpenDental {
 			this.checkInsDefaultAssignmentOfBenefits.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkInsDefaultAssignmentOfBenefits.Click += new System.EventHandler(this.checkInsDefaultAssignmentOfBenefits_Click);
 			// 
+			// groupBoxCOB
+			// 
+			this.groupBoxCOB.BackColor = System.Drawing.Color.White;
+			this.groupBoxCOB.Controls.Add(this.comboCobSendPaidByInsAt);
+			this.groupBoxCOB.Controls.Add(this.labelCobSendPaidByOtherInsAt);
+			this.groupBoxCOB.Controls.Add(this.comboCobRule);
+			this.groupBoxCOB.Controls.Add(this.labelCobRule);
+			this.groupBoxCOB.Location = new System.Drawing.Point(20, 410);
+			this.groupBoxCOB.Name = "groupBoxCOB";
+			this.groupBoxCOB.Size = new System.Drawing.Size(450, 78);
+			this.groupBoxCOB.TabIndex = 376;
+			this.groupBoxCOB.Text = "Coordination of Benefits (COB)";
+			// 
+			// comboCobSendPaidByInsAt
+			// 
+			this.comboCobSendPaidByInsAt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboCobSendPaidByInsAt.Location = new System.Drawing.Point(312, 42);
+			this.comboCobSendPaidByInsAt.Name = "comboCobSendPaidByInsAt";
+			this.comboCobSendPaidByInsAt.Size = new System.Drawing.Size(128, 21);
+			this.comboCobSendPaidByInsAt.TabIndex = 287;
+			// 
+			// labelCobSendPaidByOtherInsAt
+			// 
+			this.labelCobSendPaidByOtherInsAt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelCobSendPaidByOtherInsAt.Location = new System.Drawing.Point(67, 45);
+			this.labelCobSendPaidByOtherInsAt.Name = "labelCobSendPaidByOtherInsAt";
+			this.labelCobSendPaidByOtherInsAt.Size = new System.Drawing.Size(242, 17);
+			this.labelCobSendPaidByOtherInsAt.TabIndex = 286;
+			this.labelCobSendPaidByOtherInsAt.Text = "Send Paid By Other Insurance At";
+			this.labelCobSendPaidByOtherInsAt.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// comboCobRule
+			// 
+			this.comboCobRule.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboCobRule.Location = new System.Drawing.Point(312, 15);
+			this.comboCobRule.Name = "comboCobRule";
+			this.comboCobRule.Size = new System.Drawing.Size(128, 21);
+			this.comboCobRule.TabIndex = 262;
+			this.comboCobRule.SelectionChangeCommitted += new System.EventHandler(this.comboCobRule_SelectionChangeCommitted);
+			// 
+			// labelCobRule
+			// 
+			this.labelCobRule.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelCobRule.Location = new System.Drawing.Point(67, 18);
+			this.labelCobRule.Name = "labelCobRule";
+			this.labelCobRule.Size = new System.Drawing.Size(242, 17);
+			this.labelCobRule.TabIndex = 264;
+			this.labelCobRule.Text = "Coordination of Benefits (COB) rule";
+			this.labelCobRule.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// linkLabelCobRuleDetails
+			// 
+			this.linkLabelCobRuleDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.linkLabelCobRuleDetails.LinkArea = new System.Windows.Forms.LinkArea(4, 24);
+			this.linkLabelCobRuleDetails.LinkColor = System.Drawing.Color.MidnightBlue;
+			this.linkLabelCobRuleDetails.Location = new System.Drawing.Point(476, 428);
+			this.linkLabelCobRuleDetails.Name = "linkLabelCobRuleDetails";
+			this.linkLabelCobRuleDetails.Size = new System.Drawing.Size(498, 17);
+			this.linkLabelCobRuleDetails.TabIndex = 377;
+			this.linkLabelCobRuleDetails.TabStop = true;
+			this.linkLabelCobRuleDetails.Text = "see Coordination of Benefits";
+			this.linkLabelCobRuleDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.linkLabelCobRuleDetails.UseCompatibleTextRendering = true;
+			this.linkLabelCobRuleDetails.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelCobRuleDetails_LinkClicked);
+			// 
+			// labelCobSendPaidByInsAtDetails
+			// 
+			this.labelCobSendPaidByInsAtDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelCobSendPaidByInsAtDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelCobSendPaidByInsAtDetails.Location = new System.Drawing.Point(476, 455);
+			this.labelCobSendPaidByInsAtDetails.Name = "labelCobSendPaidByInsAtDetails";
+			this.labelCobSendPaidByInsAtDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelCobSendPaidByInsAtDetails.TabIndex = 378;
+			this.labelCobSendPaidByInsAtDetails.Text = "Claim Level means just the total for the claim, Procedure Level means the amount " +
+    "for each procedure";
+			this.labelCobSendPaidByInsAtDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// UserControlFamilyInsurance
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.labelCobSendPaidByInsAtDetails);
+			this.Controls.Add(this.linkLabelCobRuleDetails);
+			this.Controls.Add(this.groupBoxCOB);
 			this.Controls.Add(this.linkLabelZeroOutWriteoffOnAgeOrFreq);
 			this.Controls.Add(this.linkLabelZeroOutWriteoffOnAnnualMax);
 			this.Controls.Add(this.labelClaimUseOverrideProcDescriptDetails);
@@ -391,6 +479,7 @@ namespace OpenDental {
 			this.groupBoxClaims.ResumeLayout(false);
 			this.groupBoxOtherInsInfo.ResumeLayout(false);
 			this.groupBoxInsuranceGeneral.ResumeLayout(false);
+			this.groupBoxCOB.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -423,5 +512,12 @@ namespace OpenDental {
 		private System.Windows.Forms.CheckBox checkEnableZeroWriteoffOnAnnualMax;
 		private System.Windows.Forms.LinkLabel linkLabelZeroOutWriteoffOnAgeOrFreq;
 		private System.Windows.Forms.LinkLabel linkLabelZeroOutWriteoffOnAnnualMax;
+		private UI.GroupBoxOD groupBoxCOB;
+		private UI.ComboBoxOD comboCobSendPaidByInsAt;
+		private System.Windows.Forms.Label labelCobSendPaidByOtherInsAt;
+		private UI.ComboBoxOD comboCobRule;
+		private System.Windows.Forms.Label labelCobRule;
+		private System.Windows.Forms.LinkLabel linkLabelCobRuleDetails;
+		private System.Windows.Forms.Label labelCobSendPaidByInsAtDetails;
 	}
 }
