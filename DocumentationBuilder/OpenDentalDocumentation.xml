@@ -5797,10 +5797,10 @@
       <summary>FK to userod.UserNum.  Associates a user with this email address.  A user may only have one email address associated with them.
             Can be 0 if no user is associated with this email address.</summary>
     </column>
-    <column order="10" name="AccessToken" type="varchar(255)">
+    <column order="10" name="AccessToken" type="varchar(2000)">
       <summary>Needed for OAuth.</summary>
     </column>
-    <column order="11" name="RefreshToken" type="varchar(255)">
+    <column order="11" name="RefreshToken" type="text">
       <summary>Needed for OAuth.</summary>
     </column>
     <column order="12" name="DownloadInbox" type="tinyint(4)">
@@ -5808,6 +5808,15 @@
     </column>
     <column order="13" name="QueryString" type="varchar(1000)">
       <summary>Allows gmail users to specify search parameters</summary>
+    </column>
+    <column order="14" name="AuthenticationType" type="tinyint(4)">
+      <summary>Enum:OAuthType None=0,Google=1,Microsoft=2.  Indicates which OAuth type to use for the email address.</summary>
+      <Enumeration name="OAuthType">
+        <summary></summary>
+        <EnumValue name="None">0 - Not using OAuth</EnumValue>
+        <EnumValue name="Google">1 - Using OAuth for Google</EnumValue>
+        <EnumValue name="Microsoft">2 - Using OAuth for Microsoft</EnumValue>
+      </Enumeration>
     </column>
   </table>
   <table name="emailattach">
