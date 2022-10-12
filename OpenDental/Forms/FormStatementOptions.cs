@@ -279,6 +279,7 @@ namespace OpenDental{
 				butEmail.Enabled=false;
 				butPrint.Enabled=false;
 				butPreview.Enabled=false;
+				butPatPortal.Enabled=false;
 				//Send Text Message-------------------------------------------------------------------------------
 				checkSendSms.ThreeState=true;
 				checkSendSms.CheckState=CheckState.Indeterminate;
