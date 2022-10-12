@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 22,2,42,0
- PRODUCTVERSION 22,2,42,0
+ FILEVERSION 22,2,43,0
+ PRODUCTVERSION 22,2,43,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -68,12 +68,12 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "Open Dental Software"
-            VALUE "FileVersion", "22.2.42.0"
+            VALUE "FileVersion", "22.2.43.0"
             VALUE "InternalName", "xDirect2.dll"
             VALUE "LegalCopyright", "Copyright (C) 2020"
             VALUE "OriginalFilename", "xDirect2.dll"
             VALUE "ProductName", "Open Dental"
-            VALUE "ProductVersion", "22.2.42.0"
+            VALUE "ProductVersion", "22.2.43.0"
         END
     END
     BLOCK "VarFileInfo"

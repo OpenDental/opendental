@@ -456,6 +456,7 @@ namespace OpenDental {
 				UpdateTextNextChargeDate();
 				return;
 			}
+			string textDateStartCopy=textDateStart.Text;//Copy textDateStart.Text to fill textDateStart field after textDayOfMonth_TextChanged() clears it
 			if(PrefC.IsODHQ) {
 				textDayOfMonth.Text=_patient.BillingCycleDay.ToString();
 			}
@@ -468,6 +469,7 @@ namespace OpenDental {
 				textDayOfMonth.Text=dateStart.Date.Day.ToString();
 				UpdateTextNextChargeDate();
 			}
+			textDateStart.Text=textDateStartCopy;
 		}
 
 		private void textDateStop_Leave(object sender,EventArgs e) { 

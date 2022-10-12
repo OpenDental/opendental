@@ -61,18 +61,20 @@ namespace OpenDental {
 			this.textRefreshToken = new System.Windows.Forms.TextBox();
 			this.labelAccess = new System.Windows.Forms.Label();
 			this.labelRefresh = new System.Windows.Forms.Label();
-			this.groupGoogleAuth = new OpenDental.UI.GroupBoxOD();
+			this.groupAuth = new OpenDental.UI.GroupBoxOD();
+			this.butGmailSettings = new OpenDental.UI.Button();
 			this.butClearTokens = new OpenDental.UI.Button();
 			this.butAuthGoogle = new System.Windows.Forms.Label();
 			this.groupAuthentication = new OpenDental.UI.GroupBoxOD();
 			this.label12 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.webServiceService1 = new OpenDental.com.dentalxchange.webservices.WebServiceService();
-			this.butGmailSettings = new OpenDental.UI.Button();
+			this.butAuthMicrosoft = new System.Windows.Forms.Button();
+			this.label15 = new System.Windows.Forms.Label();
 			this.groupOutgoing.SuspendLayout();
 			this.groupIncoming.SuspendLayout();
 			this.groupUserod.SuspendLayout();
-			this.groupGoogleAuth.SuspendLayout();
+			this.groupAuth.SuspendLayout();
 			this.groupAuthentication.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -80,7 +82,7 @@ namespace OpenDental {
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(658, 544);
+			this.butCancel.Location = new System.Drawing.Point(658, 590);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 7;
@@ -90,7 +92,7 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(577, 544);
+			this.butOK.Location = new System.Drawing.Point(577, 590);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 6;
@@ -203,7 +205,7 @@ namespace OpenDental {
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(14, 544);
+			this.butDelete.Location = new System.Drawing.Point(14, 590);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(75, 24);
 			this.butDelete.TabIndex = 8;
@@ -221,7 +223,7 @@ namespace OpenDental {
 			this.groupOutgoing.Controls.Add(this.textSender);
 			this.groupOutgoing.Controls.Add(this.textPort);
 			this.groupOutgoing.Controls.Add(this.label5);
-			this.groupOutgoing.Location = new System.Drawing.Point(14, 188);
+			this.groupOutgoing.Location = new System.Drawing.Point(14, 234);
 			this.groupOutgoing.Name = "groupOutgoing";
 			this.groupOutgoing.Size = new System.Drawing.Size(719, 180);
 			this.groupOutgoing.TabIndex = 4;
@@ -253,7 +255,7 @@ namespace OpenDental {
 			this.groupIncoming.Controls.Add(this.label10);
 			this.groupIncoming.Controls.Add(this.textPortIncoming);
 			this.groupIncoming.Controls.Add(this.label11);
-			this.groupIncoming.Location = new System.Drawing.Point(14, 374);
+			this.groupIncoming.Location = new System.Drawing.Point(14, 420);
 			this.groupIncoming.Name = "groupIncoming";
 			this.groupIncoming.Size = new System.Drawing.Size(719, 116);
 			this.groupIncoming.TabIndex = 5;
@@ -311,7 +313,7 @@ namespace OpenDental {
 			// butRegisterCertificate
 			// 
 			this.butRegisterCertificate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butRegisterCertificate.Location = new System.Drawing.Point(346, 544);
+			this.butRegisterCertificate.Location = new System.Drawing.Point(346, 590);
 			this.butRegisterCertificate.Name = "butRegisterCertificate";
 			this.butRegisterCertificate.Size = new System.Drawing.Size(122, 24);
 			this.butRegisterCertificate.TabIndex = 9;
@@ -323,7 +325,7 @@ namespace OpenDental {
 			this.groupUserod.Controls.Add(this.butPickUserod);
 			this.groupUserod.Controls.Add(this.labelUserod);
 			this.groupUserod.Controls.Add(this.textUserod);
-			this.groupUserod.Location = new System.Drawing.Point(15, 496);
+			this.groupUserod.Location = new System.Drawing.Point(15, 542);
 			this.groupUserod.Name = "groupUserod";
 			this.groupUserod.Size = new System.Drawing.Size(718, 42);
 			this.groupUserod.TabIndex = 10;
@@ -359,7 +361,7 @@ namespace OpenDental {
 			// 
 			// textAccessToken
 			// 
-			this.textAccessToken.Location = new System.Drawing.Point(129, 17);
+			this.textAccessToken.Location = new System.Drawing.Point(129, 32);
 			this.textAccessToken.Name = "textAccessToken";
 			this.textAccessToken.ReadOnly = true;
 			this.textAccessToken.Size = new System.Drawing.Size(115, 20);
@@ -367,7 +369,7 @@ namespace OpenDental {
 			// 
 			// textRefreshToken
 			// 
-			this.textRefreshToken.Location = new System.Drawing.Point(129, 43);
+			this.textRefreshToken.Location = new System.Drawing.Point(129, 60);
 			this.textRefreshToken.Name = "textRefreshToken";
 			this.textRefreshToken.ReadOnly = true;
 			this.textRefreshToken.Size = new System.Drawing.Size(115, 20);
@@ -375,7 +377,7 @@ namespace OpenDental {
 			// 
 			// labelAccess
 			// 
-			this.labelAccess.Location = new System.Drawing.Point(10, 17);
+			this.labelAccess.Location = new System.Drawing.Point(10, 32);
 			this.labelAccess.Name = "labelAccess";
 			this.labelAccess.Size = new System.Drawing.Size(116, 20);
 			this.labelAccess.TabIndex = 14;
@@ -384,30 +386,40 @@ namespace OpenDental {
 			// 
 			// labelRefresh
 			// 
-			this.labelRefresh.Location = new System.Drawing.Point(11, 43);
+			this.labelRefresh.Location = new System.Drawing.Point(11, 60);
 			this.labelRefresh.Name = "labelRefresh";
 			this.labelRefresh.Size = new System.Drawing.Size(115, 20);
 			this.labelRefresh.TabIndex = 15;
 			this.labelRefresh.Text = "Refresh Token";
 			this.labelRefresh.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// groupGoogleAuth
+			// groupAuth
 			// 
-			this.groupGoogleAuth.Controls.Add(this.butGmailSettings);
-			this.groupGoogleAuth.Controls.Add(this.textAccessToken);
-			this.groupGoogleAuth.Controls.Add(this.butClearTokens);
-			this.groupGoogleAuth.Controls.Add(this.labelAccess);
-			this.groupGoogleAuth.Controls.Add(this.textRefreshToken);
-			this.groupGoogleAuth.Controls.Add(this.labelRefresh);
-			this.groupGoogleAuth.Location = new System.Drawing.Point(381, 54);
-			this.groupGoogleAuth.Name = "groupGoogleAuth";
-			this.groupGoogleAuth.Size = new System.Drawing.Size(352, 128);
-			this.groupGoogleAuth.TabIndex = 16;
-			this.groupGoogleAuth.Text = "Gmail Authorization";
+			this.groupAuth.Controls.Add(this.butGmailSettings);
+			this.groupAuth.Controls.Add(this.textAccessToken);
+			this.groupAuth.Controls.Add(this.butClearTokens);
+			this.groupAuth.Controls.Add(this.labelAccess);
+			this.groupAuth.Controls.Add(this.textRefreshToken);
+			this.groupAuth.Controls.Add(this.labelRefresh);
+			this.groupAuth.Location = new System.Drawing.Point(381, 54);
+			this.groupAuth.Name = "groupAuth";
+			this.groupAuth.Size = new System.Drawing.Size(352, 174);
+			this.groupAuth.TabIndex = 16;
+			this.groupAuth.Text = "Gmail Authorization";
+			// 
+			// butGmailSettings
+			// 
+			this.butGmailSettings.Location = new System.Drawing.Point(129, 136);
+			this.butGmailSettings.Name = "butGmailSettings";
+			this.butGmailSettings.Size = new System.Drawing.Size(115, 23);
+			this.butGmailSettings.TabIndex = 18;
+			this.butGmailSettings.Text = "Gmail Settings";
+			this.butGmailSettings.UseVisualStyleBackColor = true;
+			this.butGmailSettings.Click += new System.EventHandler(this.butGmailSettings_Click);
 			// 
 			// butClearTokens
 			// 
-			this.butClearTokens.Location = new System.Drawing.Point(129, 72);
+			this.butClearTokens.Location = new System.Drawing.Point(129, 89);
 			this.butClearTokens.Name = "butClearTokens";
 			this.butClearTokens.Size = new System.Drawing.Size(115, 23);
 			this.butClearTokens.TabIndex = 16;
@@ -430,6 +442,8 @@ namespace OpenDental {
 			// 
 			// groupAuthentication
 			// 
+			this.groupAuthentication.Controls.Add(this.butAuthMicrosoft);
+			this.groupAuthentication.Controls.Add(this.label15);
 			this.groupAuthentication.Controls.Add(this.label12);
 			this.groupAuthentication.Controls.Add(this.textPassword);
 			this.groupAuthentication.Controls.Add(this.label4);
@@ -437,7 +451,7 @@ namespace OpenDental {
 			this.groupAuthentication.Controls.Add(this.label7);
 			this.groupAuthentication.Location = new System.Drawing.Point(14, 54);
 			this.groupAuthentication.Name = "groupAuthentication";
-			this.groupAuthentication.Size = new System.Drawing.Size(345, 128);
+			this.groupAuthentication.Size = new System.Drawing.Size(345, 174);
 			this.groupAuthentication.TabIndex = 19;
 			this.groupAuthentication.Text = "Email Authentication";
 			// 
@@ -466,27 +480,38 @@ namespace OpenDental {
 			this.webServiceService1.Url = "https://webservices.dentalxchange.com/dws/services/dciservice.svl";
 			this.webServiceService1.UseDefaultCredentials = false;
 			// 
-			// butGmailSettings
+			// butAuthMicrosoft
 			// 
-			this.butGmailSettings.Location = new System.Drawing.Point(129, 98);
-			this.butGmailSettings.Name = "butGmailSettings";
-			this.butGmailSettings.Size = new System.Drawing.Size(115, 23);
-			this.butGmailSettings.TabIndex = 18;
-			this.butGmailSettings.Text = "Gmail Settings";
-			this.butGmailSettings.UseVisualStyleBackColor = true;
-			this.butGmailSettings.Click += new System.EventHandler(this.butGmailSettings_Click);
+			this.butAuthMicrosoft.FlatAppearance.BorderSize = 0;
+			this.butAuthMicrosoft.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.butAuthMicrosoft.Image = ((System.Drawing.Image)(resources.GetObject("butAuthMicrosoft.Image")));
+			this.butAuthMicrosoft.Location = new System.Drawing.Point(107, 125);
+			this.butAuthMicrosoft.Name = "butAuthMicrosoft";
+			this.butAuthMicrosoft.Size = new System.Drawing.Size(190, 45);
+			this.butAuthMicrosoft.TabIndex = 22;
+			this.butAuthMicrosoft.UseVisualStyleBackColor = true;
+			this.butAuthMicrosoft.Click += new System.EventHandler(this.butAuthMicrosoft_Click);
+			// 
+			// label15
+			// 
+			this.label15.Location = new System.Drawing.Point(9, 125);
+			this.label15.Name = "label15";
+			this.label15.Size = new System.Drawing.Size(95, 43);
+			this.label15.TabIndex = 21;
+			this.label15.Text = "Required for Microsoft addresses";
+			this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// FormEmailAddressEdit
 			// 
 			this.AcceptButton = this.butOK;
 			this.CancelButton = this.butCancel;
-			this.ClientSize = new System.Drawing.Size(749, 584);
+			this.ClientSize = new System.Drawing.Size(749, 630);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.textUsername);
 			this.Controls.Add(this.groupAuthentication);
-			this.Controls.Add(this.groupGoogleAuth);
+			this.Controls.Add(this.groupAuth);
 			this.Controls.Add(this.groupUserod);
 			this.Controls.Add(this.butRegisterCertificate);
 			this.Controls.Add(this.groupIncoming);
@@ -506,8 +531,8 @@ namespace OpenDental {
 			this.groupIncoming.PerformLayout();
 			this.groupUserod.ResumeLayout(false);
 			this.groupUserod.PerformLayout();
-			this.groupGoogleAuth.ResumeLayout(false);
-			this.groupGoogleAuth.PerformLayout();
+			this.groupAuth.ResumeLayout(false);
+			this.groupAuth.PerformLayout();
 			this.groupAuthentication.ResumeLayout(false);
 			this.groupAuthentication.PerformLayout();
 			this.ResumeLayout(false);
@@ -550,7 +575,7 @@ namespace OpenDental {
 		private TextBox textRefreshToken;
 		private Label labelAccess;
 		private Label labelRefresh;
-		private OpenDental.UI.GroupBoxOD groupGoogleAuth;
+		private OpenDental.UI.GroupBoxOD groupAuth;
 		private UI.Button butClearTokens;
 		private Label butAuthGoogle;
 		private OpenDental.UI.GroupBoxOD groupAuthentication;
@@ -558,5 +583,7 @@ namespace OpenDental {
 		private Label label12;
 		private UI.Button butGmailSettings;
 		private com.dentalxchange.webservices.WebServiceService webServiceService1;
+		private Button butAuthMicrosoft;
+		private Label label15;
 	}
 }

@@ -118,9 +118,6 @@ namespace OpenDentBusiness{
 			if(isExact) {
 				command+="AND (RxCui = '"+POut.String(codeOrDesc)+"' OR Description = '"+POut.String(codeOrDesc)+"')";
 			}
-			if(ignoreNumbers) {
-				command+="AND Description NOT REGEXP '.*[0-9]+.*' ";
-			}
 			else {//Similar matches
 				string[] arraySearchWords=codeOrDesc.Split(new char[] { ' ','\t','\r','\n' },StringSplitOptions.RemoveEmptyEntries);
 				if(arraySearchWords.Length > 0) {
@@ -130,6 +127,9 @@ namespace OpenDentBusiness{
 						+"("+String.Join(" AND ",arraySearchWords.Select(x => "Description LIKE '%"+POut.String(x)+"%'"))+") "
 						+")";
 				}
+			}
+			if(ignoreNumbers) {
+				command+="AND Description NOT REGEXP '.*[0-9]+.*' ";
 			}
 			command+=" ORDER BY Description";
 			return Crud.RxNormCrud.SelectMany(command);

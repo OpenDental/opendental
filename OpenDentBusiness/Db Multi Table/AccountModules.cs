@@ -1857,7 +1857,7 @@ namespace OpenDentBusiness {
 				rows.Add(row);
 			}
 			#endregion Statements
-			#region Payment Plans
+			#region Payment Plans Versions 1 and 4
 			//Payment plans----------------------------------------------------------------------------------
 			//get all payment plans for members of this family. For V1, this means that the payplan row in the ledger will correctly appear as a credit.
 			//this also helps populate the payment plans grid in the account module by getting passed into GetPayPlans().
@@ -1883,11 +1883,15 @@ namespace OpenDentBusiness {
 			if(!isInvoice && stmt.StatementType!=StmtType.LimitedStatement) {
 				rawPayPlan=dcon.GetTable(command);
 			}
-			if(payPlanVersionCur==PayPlanVersions.DoNotAge) {
+			if(payPlanVersionCur.In(PayPlanVersions.DoNotAge,PayPlanVersions.NoCharges)) {//Version 1 and 4
 				//0 rows if isInvoice or statement type is LimitedStatement.  In spite of this, the payment plans breakdown will still show at the top of invoices.
 				for(int i=0;i<rawPayPlan.Rows.Count;i++) {
 					//Version 1. If the payment plan's patnum isn't in the current family, then skip. We only want it to show as a credit for the patient of the payment plan.
 					if(!fam.ListPats.Select(x => x.PatNum).Contains(PIn.Long(rawPayPlan.Rows[i]["PatNum"].ToString()))){
+						continue;
+					}
+					//For version 4, patient payment plans do not show in Ledger, but insurance payment plans always show for all versions.
+					if(rawPayPlan.Rows[i]["PlanNum"].ToString()=="0" && payPlanVersionCur==PayPlanVersions.NoCharges){
 						continue;
 					}
 					row=table.NewRow();
@@ -1938,7 +1942,7 @@ namespace OpenDentBusiness {
 					rows.Add(row);
 				}
 			}
-			#endregion Payment Plans
+			#endregion Payment Plans Versions 1 and 4
 			#region Payment Plans Version 2 - Credits and Debits
 			if(payPlanVersionCur==PayPlanVersions.AgeCreditsAndDebits) { //this information is only required for v2
 				string patnums=familyPatNums;
@@ -2133,11 +2137,6 @@ namespace OpenDentBusiness {
 				}
 			}
 			#endregion Payment Plans Version 3 - Credits Only
-			#region Payment Plans Version 4 - No Charges
-			if(payPlanVersionCur==PayPlanVersions.NoCharges) {
-				//For No Charges payment plans, we DO NOT want to show the payment plan charges in the Account Module.  This is intentional.
-			}
-			#endregion
 			#region Dynamic Payment Plans (Credits)
 			decimal totPlannedFee=0;//Used to calculate the entire planned fee for a payplan.
 			if(payPlanVersionCur==PayPlanVersions.AgeCreditsAndDebits || payPlanVersionCur==PayPlanVersions.AgeCreditsOnly) {

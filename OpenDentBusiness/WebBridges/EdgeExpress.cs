@@ -182,6 +182,8 @@ namespace OpenDentBusiness {
 					if(!string.IsNullOrEmpty(aliasToken)) {
 						xmlWriter.WriteElementString("ALIAS",aliasToken);
 					}
+					xmlWriter.WriteElementString("INVOICENO",$"PAT{patient.PatNum}");
+					xmlWriter.WriteElementString("CLERK",Security.CurUser.UserName);
 				}
 				if(edgeExpressTransactionType.In(EdgeExpressTransType.AliasUpdate,EdgeExpressTransType.AliasDelete)) {
 					xmlWriter.WriteElementString("ALIAS",aliasToken);
@@ -192,8 +194,18 @@ namespace OpenDentBusiness {
 				if(edgeExpressTransactionType.In(EdgeExpressTransType.CreditVoid,EdgeExpressTransType.CreditReturn,EdgeExpressTransType.CreditOnlineCapture)) {
 					xmlWriter.WriteElementString("TRANSACTIONID",transactionId);
 				}
+				if(edgeExpressTransactionType.In(EdgeExpressTransType.CreditOnlineCapture)) {
+					xmlWriter.WriteElementString("INVOICENO",$"PAT{patient.PatNum}");
+					xmlWriter.WriteElementString("CLERK",Security.CurUser.UserName);
+				}
 				if(edgeExpressTransactionType.In(EdgeExpressTransType.DebitSale)) {
 					xmlWriter.WriteElementString("CASHBACKAMOUNT",cashBackAmt.ToString());
+					xmlWriter.WriteElementString("INVOICENO",$"PAT{patient.PatNum}");
+					xmlWriter.WriteElementString("CLERK",Security.CurUser.UserName);
+				}
+				if(edgeExpressTransactionType.In(EdgeExpressTransType.DebitReturn)) {
+					xmlWriter.WriteElementString("INVOICENO",$"PAT{patient.PatNum}");
+					xmlWriter.WriteElementString("CLERK",Security.CurUser.UserName);
 				}
 				//Include the patient first and last name with every transaction type if they are available.
 				if(!string.IsNullOrWhiteSpace(patient.FName)) {
@@ -309,6 +321,10 @@ namespace OpenDentBusiness {
 							xmlWriter.WriteElementString("ALIAS",alias);
 						}
 						xmlWriter.WriteElementString("ALLOWDUPLICATES",allowDuplicates.ToString());
+						xmlWriter.WriteElementString("INVOICENO",$"PAT{pat.PatNum}");
+						if(Security.CurUser!=null && Security.CurUser.EServiceType==EServiceTypes.None) {//Not an eService, a valid user is logged in.
+							xmlWriter.WriteElementString("CLERK",Security.CurUser.UserName);
+						}
 						break;
 					case EdgeExpressTransType.CreditReturn:
 						xmlWriter.WriteElementString("TRANSACTIONID",transactionID);
@@ -319,6 +335,10 @@ namespace OpenDentBusiness {
 						if(!alias.IsNullOrEmpty()) {
 							xmlWriter.WriteElementString("ALIAS",alias);
 						}
+						xmlWriter.WriteElementString("INVOICENO",$"PAT{pat.PatNum}");
+						if(Security.CurUser!=null && Security.CurUser.EServiceType==EServiceTypes.None) {//Not an eService, a valid user is logged in.
+							xmlWriter.WriteElementString("CLERK",Security.CurUser.UserName);
+						}
 						break;
 					case EdgeExpressTransType.CreditVoid:
 						xmlWriter.WriteElementString("TRANSACTIONID",transactionID);
@@ -326,10 +346,15 @@ namespace OpenDentBusiness {
 						if(!alias.IsNullOrEmpty()) {
 							xmlWriter.WriteElementString("ALIAS",alias);
 						}
+						xmlWriter.WriteElementString("INVOICENO",$"PAT{pat.PatNum}");
 						break;
 					case EdgeExpressTransType.CreditOnlineCapture://Force
 						xmlWriter.WriteElementString("AMOUNT",amount.ToString());
 						xmlWriter.WriteElementString("TRANSACTIONID",transactionID);
+						xmlWriter.WriteElementString("INVOICENO",$"PAT{pat.PatNum}");
+						if(Security.CurUser!=null && Security.CurUser.EServiceType==EServiceTypes.None) {//Not an eService, a valid user is logged in.
+							xmlWriter.WriteElementString("CLERK",Security.CurUser.UserName);
+						}
 						break;
 					case EdgeExpressTransType.QueryPayment:
 						xmlWriter.WriteElementString("ORDERID",orderId);
@@ -340,6 +365,12 @@ namespace OpenDentBusiness {
 						break;
 					case EdgeExpressTransType.AliasDelete:
 						xmlWriter.WriteElementString("ALIAS",alias);
+						break;
+					case EdgeExpressTransType.DebitSale:
+					case EdgeExpressTransType.DebitReturn:
+						if(Security.CurUser!=null && Security.CurUser.EServiceType==EServiceTypes.None) {//Not an eService, a valid user is logged in.
+							xmlWriter.WriteElementString("CLERK",Security.CurUser.UserName);
+						}
 						break;
 				}
 			}

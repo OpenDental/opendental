@@ -512,8 +512,8 @@ namespace OpenDentBusiness{
 				+"AND pp.PlanNum=0 ";//exclude payplans used to track insurance payments
 			#endregion PayPlan Charges
 			#region PayPlan Principal and Interest/CompletedAmt
-			#region PayPlan Version 1
-			if(payPlanVersionCur==PayPlanVersions.DoNotAge && !doAgePatPayPlanPayments) {
+			#region Payment Plans Versions 1 and 4
+			if((payPlanVersionCur==PayPlanVersions.DoNotAge && !doAgePatPayPlanPayments) || payPlanVersionCur==PayPlanVersions.NoCharges) {
 				//v1 and NOT doAgePatPayPlanPayments: aging the entire payment plan, not the payPlanCharges
 				//if aging patient payplan payments, don't age the CompletedAmt or it will duplicate the credits aged
 				command+="UNION ALL "
@@ -523,9 +523,10 @@ namespace OpenDentBusiness{
 					+(isAgedByProc?",0 AgedProcNum,'0001-01-01' AgedProcDate":"")+" "
 					+"FROM payplan pp "
 					+"WHERE pp.CompletedAmt != 0 "
-					+(isAllPats?"":("AND pp.PatNum IN ("+familyPatNums+") "));
+					+(isAllPats?"":("AND pp.PatNum IN ("+familyPatNums+") "))
+					+((payPlanVersionCur==PayPlanVersions.NoCharges)?"AND pp.PlanNum!=0 ":"");//Insurance pay plans always show.
 			}
-			#endregion PayPlan Version 1
+			#endregion Payment Plans Versions 1 and 4
 			#region PayPlan Version 2
 			else if(payPlanVersionCur==PayPlanVersions.AgeCreditsAndDebits) {//v2, we should be looking for payplancharges and aging those as patient debits/credits accordingly
 				//For credits, use the patient on the payment plan (because they need to have their account balance reduced).
@@ -562,11 +563,6 @@ namespace OpenDentBusiness{
 					+(isAllPats?"":("AND ppc.PatNum IN ("+familyPatNums+") "));
 			}
 			#endregion PayPlan Version 3
-			#region Payment Plans Version 4 - No Charges
-			else if(payPlanVersionCur==PayPlanVersions.NoCharges) {
-				//For No Charges payment plans, payment plan charges DO NOT affect account balances.  This is intentional.
-			}
-			#endregion
 			#region PayPlanLinks (Dynamic Payment Plan) for Versions 2 & 3
 			if(payPlanVersionCur.In(PayPlanVersions.AgeCreditsAndDebits,PayPlanVersions.AgeCreditsOnly)) {
 				command+=@"UNION ALL

@@ -8,6 +8,7 @@ using CodeBase;
 using System.Collections.Generic;
 using System.Diagnostics;
 using OpenDental.UI;
+using Bridges;
 
 namespace OpenDental{
 ///<summary></summary>
@@ -16,6 +17,7 @@ namespace OpenDental{
 		private bool _isNew;
 		private int _groupAuthLocationXAuthorized=14;
 		private int _groupAuthLocationXNotAuthorized=165;
+		private OAuthType _authenticationType=OAuthType.None;
 
 		///<summary></summary>
 		public FormEmailAddressEdit(EmailAddress emailAddress,bool isOpenedFromEmailSetup=false) {
@@ -23,6 +25,7 @@ namespace OpenDental{
 			InitializeLayoutManager();
 			Lan.F(this);
 			_emailAddress=emailAddress;
+			_authenticationType=emailAddress.AuthenticationType;
 			List<long> listDefaultAddressNums=new List<long>();
 			listDefaultAddressNums.Add(PrefC.GetLong(PrefName.EmailNotifyAddressNum));
 			listDefaultAddressNums.Add(PrefC.GetLong(PrefName.EmailDefaultAddressNum));
@@ -39,6 +42,7 @@ namespace OpenDental{
 
 		private void FormEmailAddress_Load(object sender, System.EventArgs e) {
 			butAuthGoogleImageHelper(butAuthGoogle.Image);
+			butAuthMicrosoftImageHelper(butAuthMicrosoft.Image);
 			if(_emailAddress!=null) {
 				textSMTPserver.Text=_emailAddress.SMTPserver;
 				textUsername.Text=_emailAddress.EmailUsername;
@@ -64,16 +68,9 @@ namespace OpenDental{
 				}
 				textAccessToken.Text=_emailAddress.AccessToken;
 				textRefreshToken.Text=_emailAddress.RefreshToken;
-				if(!textAccessToken.Text.IsNullOrEmpty()) {//If using Google OAuth, disable unnecessary fields
-					textPassword.Enabled=false;
-					textSMTPserver.ReadOnly=true;
-					textPort.Enabled=false;
-					textSMTPserverIncoming.ReadOnly=true;
-					textPortIncoming.Enabled=false;
-				}
 			}
-			groupGoogleAuth.Visible=!textAccessToken.Text.IsNullOrEmpty();
-			if(groupGoogleAuth.Visible) {
+			groupAuth.Visible=!textAccessToken.Text.IsNullOrEmpty();
+			if(groupAuth.Visible) {
 				AdjustEmailTextFields();
 				LayoutManager.MoveLocation(groupAuthentication,new Point(_groupAuthLocationXAuthorized,groupAuthentication.Location.Y));
 			}
@@ -83,23 +80,48 @@ namespace OpenDental{
 		}
 
 		private void AdjustEmailTextFields(bool isEnablingEmailFields=false) {
-			textSMTPserver.Text="smtp.gmail.com";
-			textPort.Text="0";
-			if(_emailAddress.DownloadInbox) {
-				textPassword.Text="";
-				textSMTPserverIncoming.Text="pop.gmail.com";
-				textPortIncoming.Text="0";
-			}
-			else {
-				textSMTPserverIncoming.Text="";
-				textPortIncoming.Text="";
-			}
-			//Google OAuth uses the API instead of ports so we can disable and autofill fields
+			//OAuth uses the API instead of ports so we can disable and autofill fields
 			textPassword.Enabled=isEnablingEmailFields;
 			textSMTPserver.ReadOnly=!isEnablingEmailFields;
 			textPort.Enabled=isEnablingEmailFields;
 			textSMTPserverIncoming.ReadOnly=!isEnablingEmailFields;
 			textPortIncoming.Enabled=isEnablingEmailFields;
+			if(_authenticationType==OAuthType.Google) {
+				textSMTPserver.Text="smtp.gmail.com";
+				textPort.Text="0";
+				if(_emailAddress.DownloadInbox) {
+					textPassword.Text="";
+					textSMTPserverIncoming.Text="pop.gmail.com";
+					textPortIncoming.Text="0";
+				}
+				else {
+					textSMTPserverIncoming.Text="";
+					textPortIncoming.Text="";
+				}
+				groupAuth.Visible=true;
+				groupAuth.Text="Google Authorization";
+				butClearTokens.Enabled=true;
+				butClearTokens.Text="Clear Tokens";
+				butGmailSettings.Visible=true;
+				textRefreshToken.Visible=true;
+				labelRefresh.Visible=true;
+			}
+			else if(_authenticationType==OAuthType.Microsoft) {
+				//Microsoft OAuth doesnt need to use these fields since it uses it's own Api and redirect URI to access Microsoft Graph.
+				textPort.Text="0";
+				textPassword.Text="";
+				//These values are populated to allow sending/receiving emails. Microsoft Graph doesn't need these values. These are random and not in Microsoft Documentation.
+				textSMTPserver.Text="smtp.outlook.com";
+				textSMTPserverIncoming.Text="pop.outlook.com";
+				textPortIncoming.Text="";
+				groupAuth.Visible=true;
+				groupAuth.Text="Microsoft Authorization";
+				butClearTokens.Enabled=true;
+				butClearTokens.Text="Sign out";
+				butGmailSettings.Visible=false;
+				textRefreshToken.Visible=false;
+				labelRefresh.Visible=false;
+			}
 		}
 
 		private void butAuthGoogleImageHelper(Image image) {
@@ -111,6 +133,17 @@ namespace OpenDental{
 				butAuthGoogle.Image=bitmap;//panelEdgeExpress will dispose of this new Bitmap once the control itself is disposed of as normal
 			}
 			butAuthGoogle.ResumeLayout();
+		}
+
+		private void butAuthMicrosoftImageHelper(Image image) {
+			butAuthMicrosoft.SuspendLayout();
+			if(LayoutManager.ScaleMy()!=1) {
+				Size size=new Size(LayoutManager.Scale(image.Width),LayoutManager.Scale(image.Height));
+				Bitmap bitmap=new Bitmap(image,size);
+				butAuthMicrosoft.Image?.Dispose();
+				butAuthMicrosoft.Image=bitmap;//panelEdgeExpress will dispose of this new Bitmap once the control itself is disposed of as normal
+			}
+			butAuthMicrosoft.ResumeLayout();
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
@@ -164,16 +197,31 @@ namespace OpenDental{
 		}
 
 		private void butClearTokens_Click(object sender,EventArgs e) {
+			if(_authenticationType==OAuthType.Google) {
+				_emailAddress.DownloadInbox=false;
+			}
+			else if(_authenticationType==OAuthType.Microsoft && textRefreshToken.Text!="") {
+				//Microsft requires it's own way of signing out users in this application rather than just clearing the token.
+				MicrosoftTokenHelper microsoftToken=MicrosoftApiConnector.SignOutUser(textUsername.Text,textRefreshToken.Text).Result;
+				if(microsoftToken.ErrorMessage!="") {
+					MsgBox.Show("Error: "+microsoftToken.ErrorMessage);
+					return;
+				}
+			}
 			textAccessToken.Text="";
 			textRefreshToken.Text="";
 			butClearTokens.Enabled=false;
-			_emailAddress.DownloadInbox=false;
+			_authenticationType=OAuthType.None;
 			AdjustEmailTextFields(isEnablingEmailFields:true);
 		}
 
 		///<summary>Requests authorization for Open Dental to send emails and access the inbox for a gmail address.
 		///Google sends us access and refresh tokens that we store in the database.</summary>
 		private void butAuthGoogle_Click(object sender,EventArgs e) {
+			if(!textAccessToken.Text.IsNullOrEmpty() && _authenticationType==OAuthType.Microsoft) {
+				MsgBox.Show("Already signed into Microsoft.");
+				return;
+			}
 			Google.AuthorizationRequest authorizationRequest=new Google.AuthorizationRequest();
 			GoogleToken googleToken=null;
 			string emailAddress=textUsername.Text;
@@ -208,10 +256,9 @@ namespace OpenDental{
 			}
 			textAccessToken.Text=googleToken.AccessToken;
 			textRefreshToken.Text=googleToken.RefreshToken;
+			_authenticationType=OAuthType.Google;
 			AdjustEmailTextFields();
 			LayoutManager.MoveLocation(groupAuthentication,new Point(_groupAuthLocationXAuthorized,groupAuthentication.Location.Y));
-			groupGoogleAuth.Visible=true;
-			butClearTokens.Enabled=true;
 		}
 
 		private void butAuthGoogle_MouseEnter(object sender,EventArgs e) {
@@ -241,6 +288,32 @@ namespace OpenDental{
 			formGmail.IsNew=_isNew;
 			formGmail.ShowDialog();
 			AdjustEmailTextFields();
+		}
+
+		private void butAuthMicrosoft_Click(object sender,EventArgs e) {
+			if(!textAccessToken.Text.IsNullOrEmpty() && _authenticationType==OAuthType.Google) {
+				MsgBox.Show("Already signed into Google.");
+				return;
+			}
+			MicrosoftTokenHelper microsoftToken=System.Threading.Tasks.Task.Run(async () =>
+				await MicrosoftApiConnector.GetAccessToken(textUsername.Text,textRefreshToken.Text)
+			).GetAwaiter().GetResult();
+			if(microsoftToken.ErrorMessage!="") {
+				MsgBox.Show("Error: "+microsoftToken.ErrorMessage);
+				return;
+			}
+			if(microsoftToken.AccessToken=="") {
+				return; //Authentication was cancelled so do nothing.
+			}
+			textUsername.Text=microsoftToken.EmailAddress;
+			textAccessToken.Text=microsoftToken.AccessToken;
+			textRefreshToken.Text=microsoftToken.AccountInfo;
+			_authenticationType=OAuthType.Microsoft;
+			//These two settings are for Gmail so make sure they're cleared.
+			_emailAddress.QueryString="";
+			_emailAddress.DownloadInbox=false;
+			AdjustEmailTextFields();
+			LayoutManager.MoveLocation(groupAuthentication,new Point(_groupAuthLocationXAuthorized,groupAuthentication.Location.Y));
 		}
 
 		private void butOK_Click(object sender, System.EventArgs e) {
@@ -278,6 +351,7 @@ namespace OpenDental{
 			_emailAddress.Pop3ServerIncoming=PIn.String(textSMTPserverIncoming.Text);
 			_emailAddress.ServerPortIncoming=PIn.Int(textPortIncoming.Text);
 			_emailAddress.UserNum=((Userod)(textUserod.Tag))?.UserNum??0;
+			_emailAddress.AuthenticationType=_authenticationType;
 			if(_isNew) {
 				EmailAddresses.Insert(_emailAddress);
 			}

@@ -80,9 +80,6 @@ namespace OpenDental {
 			if(!string.IsNullOrEmpty(SheetFieldDefCur.UiLabelMobile)) { //Already has a value that user has setup previously.
 				textUiLabelMobile.Text=SheetFieldDefCur.UiLabelMobile;
 			}
-			labelReportableName.Visible=false;
-			textReportableName.Visible=false;
-			textReportableName.Text="";
 		}
 
 		private void listFields_DoubleClick(object sender,EventArgs e) {

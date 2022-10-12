@@ -32,6 +32,7 @@ using Google.Apis.Auth.OAuth2.Responses;
 using Google.Apis.Requests;
 using Google;
 using Google.Apis.Services;
+using Bridges;
 
 namespace OpenDentBusiness{
 	///<summary>An email message is always attached to a patient.</summary>
@@ -853,6 +854,20 @@ namespace OpenDentBusiness{
 					throw ex;
 				}
 			}
+			//Refresh the token for Microsoft here because it won't be able to be updated in the db further.
+			else if(!emailAddress.AccessToken.IsNullOrEmpty() && emailAddress.AuthenticationType==OAuthType.Microsoft) {
+				try {
+					MicrosoftApiConnector.GetProfile(emailAddress.EmailUsername,emailAddress.AccessToken);
+				}
+				catch(Exception ex) {
+					if(!hasRetried && ex.InnerException.Message.Contains("InvalidAuthenticationToken")) { //Need to refresh the token and try again.
+						RefreshMicrosoftToken(emailAddress);
+						SendEmailUnsecure(emailMessage,emailAddress,nameValueCollectionHeaders,true,arrayAlternateViews);
+						return;
+					}
+					throw ex;
+				}
+			}
 			//Always send the email through this centralized method.  We cannot assume we have a database context inside SendEmail.
 			Email.SendEmail.WireEmailUnsecure(ODEmailAddressToBasic(emailAddress),ODEmailMessageToBasic(emailMessage),nameValueCollectionHeaders,arrayAlternateViews);
 			emailMessage.UserNum=Security.CurUser.UserNum;
@@ -913,7 +928,9 @@ namespace OpenDentBusiness{
 		private static List<EmailMessage> ReceiveFromInboxThreadSafe(int receiveCount,EmailAddress emailAddressInbox,ref List<string> listSkipMsgUids) {
 			//No need to check MiddleTierRole; no call to db.
 			List<EmailMessage> retVal=new List<EmailMessage>();
-			if(!emailAddressInbox.AccessToken.IsNullOrEmpty() && emailAddressInbox.DownloadInbox) {
+			if(!emailAddressInbox.AccessToken.IsNullOrEmpty()
+				&& ((emailAddressInbox.AuthenticationType==OAuthType.Google && emailAddressInbox.DownloadInbox) || emailAddressInbox.AuthenticationType==OAuthType.Microsoft)) 
+			{
 				return RetrieveFromInboxOAuth(emailAddressInbox,ref listSkipMsgUids,receiveCount);
 			}
 			else {
@@ -1048,6 +1065,17 @@ namespace OpenDentBusiness{
 
 		///<summary>Use token based authentication to retrieve emails.</summary>
 		private static List<EmailMessage> RetrieveFromInboxOAuth(EmailAddress emailAddressInbox,ref List<string> listSkipMsgUids,int receiveCount,bool hasRetried=false) {
+			if(emailAddressInbox.AuthenticationType==OAuthType.Google) {
+				return RetrieveFromGmailInbox(emailAddressInbox,ref listSkipMsgUids,receiveCount,hasRetried);
+			}
+			else if(emailAddressInbox.AuthenticationType==OAuthType.Microsoft) {
+				return RetrieveFromMicrosoftInbox(emailAddressInbox,hasRetried);
+			}
+			return new List<EmailMessage>(); //Shouldn't happen
+		}
+
+		///<summary>Use Gmail authentication to retrieve emails.</summary>
+		private static List<EmailMessage> RetrieveFromGmailInbox(EmailAddress emailAddressInbox,ref List<string> listSkipMsgUids,int receiveCount,bool hasRetried=false) {
 			//Get all the IDs in the users inbox (this is paginated so we have to continuously receive IDs until we don't receive a 'next page' token)
 			List<EmailMessage> listEmailMessages=new List<EmailMessage>();
 			using GmailApi.GmailService gService=GoogleApiConnector.CreateGmailService(ODEmailAddressToBasic(emailAddressInbox));
@@ -1116,6 +1144,68 @@ namespace OpenDentBusiness{
 				}
 			}
 			return listEmailMessages;
+		}
+
+		///<summary>Use Microsoft authentication to retrieve emails.</summary>
+		private static List<EmailMessage> RetrieveFromMicrosoftInbox(EmailAddress emailAddressInbox,bool hasRetried=false) {
+			List<Microsoft.Graph.Message> listMessages=new List<Microsoft.Graph.Message>();
+			try {
+				listMessages=MicrosoftApiConnector.RetrieveMessages(emailAddressInbox.EmailUsername,emailAddressInbox.AccessToken);
+			}
+			catch(Exception ex) {
+				if(!hasRetried && ex.InnerException.Message.Contains("InvalidAuthenticationToken")) { //Need to refresh the token and try again.
+					RefreshMicrosoftToken(emailAddressInbox);
+					return RetrieveFromMicrosoftInbox(emailAddressInbox,true);
+				}
+				throw ex;
+			}
+			//Filter out messages that have already been received.
+			List<string> listEmailMessageUids=EmailMessageUids.GetMsgIdsRecipientAddress(emailAddressInbox.EmailUsername)
+				.Select(x=>x.TrimStart("MicrosoftId".ToCharArray())).ToList();
+			listMessages=listMessages.Where(x => !listEmailMessageUids.Contains(x.Id)).ToList();
+			List<EmailMessage> listEmailMessages=new List<EmailMessage>();
+			for(int i=0;i<listMessages.Count;i++) {
+				EmailMessage emailMessage=ConvertMicrosoftMessageToEmailMessage(emailAddressInbox.EmailUsername,listMessages[i]);
+				listEmailMessages.Add(emailMessage);
+				EmailMessageUid uid=new EmailMessageUid();
+				uid.MsgId=listMessages[i].Id;
+				uid.RecipientAddress=emailAddressInbox.EmailUsername;
+				EmailMessageUids.Insert(uid);
+				Insert(emailMessage);
+			}
+			return listEmailMessages;
+		}
+
+		private static EmailMessage ConvertMicrosoftMessageToEmailMessage(string emailAddress,Microsoft.Graph.Message message) {
+			OpenDentBusiness.EmailMessage emailMessageTemp=new OpenDentBusiness.EmailMessage();
+			emailMessageTemp.EmailMessageNum=0;
+			emailMessageTemp.Subject=message.Subject;
+			emailMessageTemp.RecipientAddress=emailAddress;
+			emailMessageTemp.ToAddress=string.Join(",",message.ToRecipients.Select(x => x.EmailAddress.Address));
+			emailMessageTemp.FromAddress=message.From.EmailAddress.Address;
+			emailMessageTemp.CcAddress=string.Join(",",message.CcRecipients.Select(x => x.EmailAddress.Address));
+			emailMessageTemp.BccAddress=string.Join(",",message.BccRecipients.Select(x => x.EmailAddress.Address));
+			emailMessageTemp.BodyText=message.Body.Content;
+			if(message.Attachments!=null) { //message.HasAttachments not entirely accurate so use this instead.
+				//This will only be getting file attachments to the email.
+				List<Microsoft.Graph.FileAttachment> listFileAttachments=message.Attachments.OfType<Microsoft.Graph.FileAttachment>().ToList();
+				for(int i=0;i<listFileAttachments.Count;i++) {
+					if(listFileAttachments[i]==null) {
+						continue;
+					}
+					try {
+						EmailAttach emailAttach=EmailAttaches.CreateAttach(listFileAttachments[i].Name,listFileAttachments[i].ContentBytes);
+						emailMessageTemp.Attachments.Add(emailAttach);
+					}
+					catch(Exception) {
+						continue; //unable to download the attachment so will just continue to the next one.
+					}
+				}
+			}
+			emailMessageTemp.RawEmailIn=message.Body.Content;
+			emailMessageTemp.SentOrReceived=EmailSentOrReceived.Received;
+			emailMessageTemp.MsgDateTime=((DateTimeOffset)message.SentDateTime).DateTime;
+			return emailMessageTemp;
 		}
 
 		///<summary>Parses a raw email into a usable object.</summary>
@@ -1530,6 +1620,26 @@ namespace OpenDentBusiness{
 			}
 		}
 
+		///<summary>Attempts to refresh the Access token for the passed in EmailAddress.</summary>
+		public static void RefreshMicrosoftToken(EmailAddress emailAddress) {
+			//No need to check MiddleTierRole; no call to db.
+			string dbToken=EmailAddresses.GetOneFromDb(emailAddress.EmailAddressNum).AccessToken;
+			if(dbToken!=emailAddress.AccessToken) {
+				emailAddress.AccessToken=dbToken; //This means that another service has already updated the token in the db, so use that one
+				return;
+			}
+			MicrosoftTokenHelper microsoftTokenHelper=System.Threading.Tasks.Task.Run(async () =>
+				await MicrosoftApiConnector.GetAccessToken(emailAddress.EmailUsername,emailAddress.RefreshToken)
+			).GetAwaiter().GetResult();
+			if(microsoftTokenHelper.ErrorMessage!="" || microsoftTokenHelper.AccessToken=="") {
+				return;//authentication was cancelled or there was an error so just return.
+			}
+			emailAddress.AccessToken=microsoftTokenHelper.AccessToken;
+			EmailAddresses.Update(emailAddress);
+			EmailAddresses.RefreshCache();
+			Signalods.SetInvalid(InvalidType.Email);
+		}
+
 		///<summary>Converts an OD email address to a basic email address. Decrypts the password.</summary>
 		public static BasicEmailAddress ODEmailAddressToBasic(EmailAddress odAddress) {
 			BasicEmailAddress emailAddress=new BasicEmailAddress();
@@ -1540,6 +1650,7 @@ namespace OpenDentBusiness{
 			emailAddress.UseSSL=odAddress.UseSSL;
 			emailAddress.AccessToken=odAddress.AccessToken;
 			emailAddress.RefreshToken=odAddress.RefreshToken;
+			emailAddress.AuthenticationType=(BasicOAuthType)odAddress.AuthenticationType;
 			return emailAddress;
 		}
 

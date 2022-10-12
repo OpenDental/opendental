@@ -1509,12 +1509,7 @@ namespace OpenDental {
 							bool doMake5Minute=procsForSingleApt.Count>0;//Appointments without procs are already returned in 5 minute increments.
 							string calcPattern=Appointments.CalculatePattern(apptCur.ProvNum,apptCur.ProvHyg,codeNums,doMake5Minute);
 							if(apptCur.Pattern!=calcPattern) {
-								if(apptCur.TimeLocked) {
-									if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Appointment length is locked.  Change length for new provider anyway?")) {
-										apptCur.Pattern=calcPattern;
-									}
-								}
-								else {//appt time not locked
+								if(!apptCur.TimeLocked) {//appt time not locked. Do not give popup for Timelocked appointments.
 									if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Change length for new provider?")) {
 										apptCur.Pattern=calcPattern;
 									}
@@ -4177,12 +4172,7 @@ namespace OpenDental {
 							bool doMake5Minute=procsForSingleApt.Count>0;//Appointments without procs are already returned in 5 minute increments.
 							string calcPattern=Appointments.CalculatePattern(appt.ProvNum,appt.ProvHyg,codeNums,doMake5Minute);
 							if(appt.Pattern!=calcPattern) {//Updating op provs will not change apt lengths.
-								if(appt.TimeLocked) {
-									if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Appointment length is locked.  Change length for new provider anyway?")) {
-										appt.Pattern=calcPattern;
-									}
-								}
-								else {//appt time not locked
+								if(!appt.TimeLocked) {//appt time not locked. Do not give popup for Timelocked appointments.
 									if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Change length for new provider?")) {
 										appt.Pattern=calcPattern;
 									}
