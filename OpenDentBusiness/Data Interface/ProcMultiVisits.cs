@@ -230,6 +230,7 @@ namespace OpenDentBusiness{
 					//Set the ClaimProc.ProcDate and Claim.DateService as used to be done in AccountModules.CreateClaim()
 					List<Procedure> listPatProcs=Procedures.Refresh(pmv.PatNum);
 					foreach(ClaimProc cp in listClaimProcsForClaim) {
+						ClaimProc cpOld=cp.Copy();
 						//It is common for only some of the procedures in a multi visit group to be attached to the claim while others are not.
 						//For example, the Crown code with fee would be attached to the claim,
 						//while the Seat code is not attached to the claim because its fee is usually $0, which the UI blocks from attaching to the claim.
@@ -261,7 +262,7 @@ namespace OpenDentBusiness{
 								cp.ProcDate=dateForGroup;
 							}
 						}
-					//The cp changes will be updated to the database at the end of this function.
+						ClaimProcs.Update(cp,cpOld);
 					}
 					if(listProcMultiVisitsForClaims.Count>0) {//A multi visit claim.
 						//For most dental claims, the ProcDate will be the same for all procedures.

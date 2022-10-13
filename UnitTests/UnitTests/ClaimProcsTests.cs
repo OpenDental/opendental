@@ -676,7 +676,7 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//Save changes in the list to the database, just like the TP module does when loaded. Then the values can be referenced elsewhere in the program instead of recalculating.
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -833,7 +833,7 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//Save changes in the list to the database, just like the TP module does when loaded.
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -849,7 +849,7 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 			ClaimProc claimProc2=ClaimProcs.GetEstimate(claimProcs,proc2.ProcNum,plan.PlanNum,subNum);
 			histList=ClaimProcs.GetHistList(pat.PatNum,benefitList,patPlans,planList,DateTime.Today,subList);//The history list is fetched when the TP module is loaded and is passed in the same for all claimprocs.
 			loopList=new List<ClaimProcHist>();
-			loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,proc1.ProcNum,proc1.CodeNum));
+			loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,proc1,proc1.CodeNum));
 			FormClaimProc formCP2=new FormClaimProc(claimProc2,proc2,fam,pat,planList,histList,ref loopList,patPlans,false,subList);
 			formCP2.Initialize();
 			Assert.AreEqual("0.00",formCP2.GetTextValue("textDedEst"));

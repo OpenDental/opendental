@@ -4039,7 +4039,7 @@ namespace OpenDentBusiness {
 						null,false,false,listSubstLinks,false,
 						listFees,null,blueBookEstimateData:blueBookEstimateData);
 				}
-				List<ClaimProcHist> listClaimProcHistToAdd=ClaimProcs.GetHistForProc(claimProcList,procCur.ProcNum,procCur.CodeNum);
+				List<ClaimProcHist> listClaimProcHistToAdd=ClaimProcs.GetHistForProc(claimProcList,procCur,procCur.CodeNum);
 				loopList.AddRange(listClaimProcHistToAdd);
 				//Remove any from the histList that were just added to the loopList. This is needed so we don't count the estimated amounts twice (histList and loopList)
 				histList.RemoveAll(x => x.ProcNum==procCur.ProcNum

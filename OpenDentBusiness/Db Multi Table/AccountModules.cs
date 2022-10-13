@@ -3358,11 +3358,6 @@ namespace OpenDentBusiness {
 				}
 			}
 			ClaimCur.PatNum=pat.PatNum;
-			//All procedures in each multi visit group attached to this claim are set complete.
-			//Therefore, the procedures are no longer in process and will not be in the cache.
-			//We must get the group data from the database directly so we can calculate max group dates.
-			List<ProcMultiVisit> listClaimPmvs=ProcMultiVisits.GetGroupsForProcsFromDb(claimProcs.Select(x => x.ProcNum).ToArray());
-			List<Procedure> listPatProcs=Procedures.Refresh(pat.PatNum);//We need a fresh list of procs so we can get current ProcDates.			
 			ClaimCur.ClinicNum=clinicNum;
 			ClaimCur.DateService = listProcs?.Last().ProcDate ?? DateTime.MinValue;
 			ClaimCur.PlaceService=proc.PlaceService;
@@ -3583,6 +3578,8 @@ namespace OpenDentBusiness {
 			{
 				ClaimSnapshots.CreateClaimSnapshot(ClaimProcs.Refresh(pat.PatNum).FindAll(x => x.ClaimNum==ClaimCur.ClaimNum),ClaimSnapshotTrigger.ClaimCreate,claimType);
 			}
+			ProcMultiVisits.UpdateGroupForProc(listProcs[0].ProcNum,listProcs[0].ProcStatus);//Recalculate claim.DateService and all claimproc.ProcDates
+			ClaimCur=Claims.GetClaim(ClaimCur.ClaimNum);//To refresh the claim.DateService
 			return new ODTuple<bool,Claim,string>(true,ClaimCur,claimError);
 		}
 

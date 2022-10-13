@@ -1362,7 +1362,7 @@ namespace OpenDental{
 					{
 						continue;//If this is the active plan, only include TP procs that are attached to this treatment plan
 					}
-					_listClaimProcHistsLoops.AddRange(ClaimProcs.GetHistForProc(_listClaimProcs,_listProceduresTP[i].ProcNum,_listProceduresTP[i].CodeNum));
+					_listClaimProcHistsLoops.AddRange(ClaimProcs.GetHistForProc(_listClaimProcs,_listProceduresTP[i],_listProceduresTP[i].CodeNum));
 				}
 				using FormProcEdit formProcEdit=new FormProcEdit(procedure,PatientCur,_family,listPatToothInitials:_listToothInitials);
 				formProcEdit.ListClaimProcHistsLoop=_listClaimProcHistsLoops;
@@ -2093,7 +2093,7 @@ namespace OpenDental{
 						_loadActiveTPData.ListFees,lookupFees,
 						orthoProcLink,orthoCase,orthoSchedule,listOrthoProcLinksForOrthoCases,_loadActiveTPData.BlueBookEstimateData);
 					//then, add this information to loopList so that the next procedure is aware of it.
-					_listClaimProcHistsLoops.AddRange(ClaimProcs.GetHistForProc(_listClaimProcs,listProceduresForTPs[i].ProcNum,listProceduresForTPs[i].CodeNum));
+					_listClaimProcHistsLoops.AddRange(ClaimProcs.GetHistForProc(_listClaimProcs,listProceduresForTPs[i],listProceduresForTPs[i].CodeNum));
 				}
 				SyncCanadianLabs(_listClaimProcs,listProceduresForTPs);
 				//We don't want to save the claimprocs if it's a date other than DateTime.Today, since they are calculated using modified date information.
@@ -2116,7 +2116,7 @@ namespace OpenDental{
 						orthoProcLink:orthoProcLink,orthoCase:orthoCase,orthoSchedule:orthoSchedule,listOrthoProcLinksForOrthoCase:listOrthoProcLinksForOrthoCases,
 						blueBookEstimateData:_loadActiveTPData.BlueBookEstimateData);
 					//then, add this information to loopList so that the next procedure is aware of it.
-					_listClaimProcHistsLoops.AddRange(ClaimProcs.GetHistForProc(_listClaimProcs,listProceduresForTPs[i].ProcNum,listProceduresForTPs[i].CodeNum));
+					_listClaimProcHistsLoops.AddRange(ClaimProcs.GetHistForProc(_listClaimProcs,listProceduresForTPs[i],listProceduresForTPs[i].CodeNum));
 				}
 				SyncCanadianLabs(_listClaimProcs,listProceduresForTPs);
 				//Only save to db if this is the active TP.  Inactive TPs should not change what is stored in the db, only what is displayed in the grid.

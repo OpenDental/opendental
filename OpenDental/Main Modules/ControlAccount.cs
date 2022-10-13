@@ -3816,7 +3816,7 @@ namespace OpenDental {
 				if(listProcedures[i].ProcNum==proc.ProcNum) {
 					break;
 				}
-				listClaimProcHistsLoop.AddRange(ClaimProcs.GetHistForProc(listClaimProc,listProcedures[i].ProcNum,listProcedures[i].CodeNum));
+				listClaimProcHistsLoop.AddRange(ClaimProcs.GetHistForProc(listClaimProc,listProcedures[i],listProcedures[i].CodeNum));
 			}
 			using FormProcEdit formProcEdit=new FormProcEdit(proc,_patCur,_famCur,true);
 			formProcEdit.ListClaimProcHists=_loadData.HistList;
