@@ -1559,8 +1559,10 @@ namespace OpenDental{
 			bool hasPerio=PerioExams.GetExamsTable(_patCur.PatNum).Rows.Count>0;
 			bool hasClones=(listPatNumClones.Count>1);//The list of "clones for all" will always include the current patient.
 			bool hasDiscount=discountPlanNum>0;
+			bool hasAllergies=Allergies.GetAll(_patCur.PatNum,true).Any();
+			bool hasProblems=Diseases.Refresh(true,_patCur.PatNum).Any();
 			if(hasProcs || hasAppt || hasClaims || hasAdj || hasPay || hasClaimProcs || hasComm || hasPayPlans || hasInsPlans
-				|| hasRef || hasMeds || isSuperFamilyHead || hasSheets || hasRepeat || hasCC || hasRegKey || hasPerio || hasClones || hasDiscount) 
+				|| hasRef || hasMeds || isSuperFamilyHead || hasSheets || hasRepeat || hasCC || hasRegKey || hasPerio || hasClones || hasDiscount || hasAllergies || hasProblems) 
 			{
 				string message=Lan.g(this,"You cannot delete this patient without first deleting the following data:")+"\r";
 				if(hasProcs) {
@@ -1619,6 +1621,12 @@ namespace OpenDental{
 				}
 				if(hasDiscount) {
 					message+=Lan.g(this,"Discount Plan")+"\r";
+				}
+				if(hasAllergies) {
+					message+=Lan.g(this,"Allergies")+"\r";
+				}
+				if(hasProblems) {
+					message+=Lan.g(this,"Problems")+"\r";
 				}
 				MessageBox.Show(message);
 				return;

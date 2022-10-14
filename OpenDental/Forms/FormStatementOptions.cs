@@ -1208,6 +1208,9 @@ namespace OpenDental{
 			if(StmtList==null && StmtCur.DocNum==0) {
 				SaveAsDocument(false);//needs to be called after the statement is inserted for the payment plan grid (if present)
 			}
+			if(checkExportCSV.Checked) {
+				Statements.SaveStatementAsCSV(StmtCur); 
+			}
 			DialogResult=DialogResult.OK;
 		}
 

@@ -808,6 +808,8 @@ namespace OpenDental
 				imageSelector.SetSelected(EnumImageNodeType.Mount,GetMountShowing().MountNum);//Need to update _nodeObjTagSelected in case category changed
 				NodeTypeAndKey nodeTypeAndKey=formImageFloat.GetNodeTypeAndKey();
 				formImageFloat.SelectTreeNode(nodeTypeAndKey);
+				unmountedBar.SetObjects(formImageFloat.GetUmountedObjects());
+				unmountedBar.SetColorBack(GetMountShowing().ColorBack);
 				return;			
 			}
 			//From here down is Document=================================================================================================
@@ -1026,6 +1028,10 @@ namespace OpenDental
 			}
 			NodeTypeAndKey nodeTypeAndKey=formImageFloat.GetNodeTypeAndKey();
 			formImageFloat.SelectTreeNode(nodeTypeAndKey);
+			if(imageSelector.GetSelectedType()==EnumImageNodeType.Mount) {
+				unmountedBar.SetObjects(formImageFloat.GetUmountedObjects());
+				unmountedBar.SetColorBack(GetMountShowing().ColorBack);
+			}
 			//this resets zoom and pan
 		}
 
