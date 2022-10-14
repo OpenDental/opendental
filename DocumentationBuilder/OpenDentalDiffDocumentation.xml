@@ -43,24 +43,6 @@
       <summary>Date for which Auto Communications will not be sent.</summary>
     </column>
   </table>
-  <table name="emailaddress">
-    <summary></summary>
-    <column order="10" name="AccessToken" type="varchar(2000)">
-      <summary>Needed for OAuth.</summary>
-    </column>
-    <column order="11" name="RefreshToken" type="text">
-      <summary>Needed for OAuth.</summary>
-    </column>
-    <column order="14" name="AuthenticationType" type="tinyint(4)">
-      <summary>Enum:OAuthType None=0,Google=1,Microsoft=2.  Indicates which OAuth type to use for the email address.</summary>
-      <Enumeration name="OAuthType">
-        <summary></summary>
-        <EnumValue name="None">0 - Not using OAuth</EnumValue>
-        <EnumValue name="Google">1 - Using OAuth for Google</EnumValue>
-        <EnumValue name="Microsoft">2 - Using OAuth for Microsoft</EnumValue>
-      </Enumeration>
-    </column>
-  </table>
   <table name="entrylog">
     <summary></summary>
     <column order="4" name="LogSource" type="tinyint(4)">
@@ -197,15 +179,6 @@
       <Enumeration name="FormType">
         <summary>Add this.</summary>
       </Enumeration>
-    </column>
-  </table>
-  <table name="emailaddress">
-    <summary></summary>
-    <column order="10" name="AccessToken" type="varchar(255)">
-      <summary>Needed for OAuth.</summary>
-    </column>
-    <column order="11" name="RefreshToken" type="varchar(255)">
-      <summary>Needed for OAuth.</summary>
     </column>
   </table>
   <table name="procedurelog">

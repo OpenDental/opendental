@@ -1205,7 +1205,7 @@ namespace OpenDental{
 					{
 						continue;//If this is the active plan, only include TP procs that are attached to this treatment plan
 					}
-					listClaimProcHistsLoops.AddRange(ClaimProcs.GetHistForProc(_listClaimProcs,_listProceduresTP[i].ProcNum,_listProceduresTP[i].CodeNum));
+					listClaimProcHistsLoops.AddRange(ClaimProcs.GetHistForProc(_listClaimProcs,_listProceduresTP[i],_listProceduresTP[i].CodeNum));
 				}
 				using FormProcEdit formProcEdit=new FormProcEdit(procedure,PatientCur,_family,listPatToothInitials:_listToothInitials);
 				formProcEdit.ListClaimProcHistsLoop=listClaimProcHistsLoops;

@@ -1096,7 +1096,7 @@ namespace OpenDentBusiness{
 				//then, add this information to loopList so that the next procedure is aware of it.
 				//Exclude preauths becase thier estimates would incorrectly add both NotRecieved and Preauth estimates when calculating limitations.
 				List<ClaimProc> listClaimProcs=ClaimProcsAll.Where(x => x.ProcNum==ProcCur.ProcNum && x.Status!=ClaimProcStatus.Preauth).ToList();
-				loopList.AddRange(ClaimProcs.GetHistForProc(listClaimProcs,ProcCur.ProcNum,ProcCur.CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(listClaimProcs,ProcCur,ProcCur.CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref ClaimProcsAll,claimProcListOld);

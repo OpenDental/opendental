@@ -24,7 +24,7 @@ namespace OpenDentBusiness{
 		///<summary>Complete current Medical History</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText | CrudSpecialColType.CleanText)]
 		public string MedicalComp;
-		///<summary>Shows in the Chart module just below the graphical tooth chart.</summary>
+		///<summary>Shows in the Chart module normally just below the graphical tooth chart. Also known as Odontogram Notes.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText | CrudSpecialColType.CleanText)]
 		public string Treatment;
 		///<summary>In Case of Emergency Name.</summary>

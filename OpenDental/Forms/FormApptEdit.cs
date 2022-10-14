@@ -925,7 +925,7 @@ namespace OpenDental{
 				if(listProcedures[i].ProcNum==procedure.ProcNum) {
 					break;
 				}
-				listClaimProcHistsLoop.AddRange(ClaimProcs.GetHistForProc(listClaimProcsRefresh,listProcedures[i].ProcNum,listProcedures[i].CodeNum));
+				listClaimProcHistsLoop.AddRange(ClaimProcs.GetHistForProc(listClaimProcsRefresh,listProcedures[i],listProcedures[i].CodeNum));
 			}
 			Procedures.ComputeEstimates(procedure,_patient.PatNum,ref listClaimProcs,isInitialEntry: true,_listInsPlans,_listPatPlans,_listBenefits,
 				_loadData.ListClaimProcHists,listClaimProcHistsLoop,saveToDb: true,_patient.Age,_listInsSubs,listClaimProcsAll: null,
@@ -1045,7 +1045,7 @@ namespace OpenDental{
 				if(listProcedures[i].ProcNum==procedure.ProcNum) {
 					break;
 				}
-				listClaimProcHists.AddRange(ClaimProcs.GetHistForProc(listClaimProcs,listProcedures[i].ProcNum,listProcedures[i].CodeNum));
+				listClaimProcHists.AddRange(ClaimProcs.GetHistForProc(listClaimProcs,listProcedures[i],listProcedures[i].CodeNum));
 			}
 			using FormProcEdit formProcEdit=new FormProcEdit(procedure,_patient,_family);
 			formProcEdit.ListClaimProcHists=_loadData.ListClaimProcHists;

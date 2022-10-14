@@ -2690,7 +2690,7 @@ namespace OpenDental {
 				}
 			}
 			bool isAccountingSynchRequired=false;
-			double accountingOldAmt=_payment.PayAmt;
+			double accountingOldAmt=_paymentOld.PayAmt;
 			long accountingNewAcct=-1;//the old acctNum will be retrieved inside the validation code.
 			if(textDepositAccount.Visible) {//Not visable when IsNew or _loadData.Transaction is null or if listPayType is clicked.
 				accountingNewAcct=-1;//indicates no change

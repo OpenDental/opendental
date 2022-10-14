@@ -2238,7 +2238,7 @@ namespace OpenDentBusiness{
 						AppendToEstimateNote(claimProcForLab,note);
 					}
 					//next proc needs to know this one is already added, 
-					loopList.AddRange(ClaimProcs.GetHistForProc(new List<ClaimProc> () {claimProcForLab},procLab.ProcNum,procParent.CodeNum));
+					loopList.AddRange(ClaimProcs.GetHistForProc(new List<ClaimProc> () {claimProcForLab},procLab,procParent.CodeNum));
 					Update(claimProcForLab);
 				});
 				return;
@@ -2271,7 +2271,7 @@ namespace OpenDentBusiness{
 				claimProcLab.InsPayEst=ClaimProcs.GetInsEstTotal(claimProcLab);
 				AppendToEstimateNote(claimProcLab,note);
 			}
-			loopList.AddRange(ClaimProcs.GetHistForProc(new List<ClaimProc>() {claimProcLab},procLab.ProcNum,procParent.CodeNum));
+			loopList.AddRange(ClaimProcs.GetHistForProc(new List<ClaimProc>() {claimProcLab},procLab,procParent.CodeNum));
 			Update(claimProcLab);
 		}
 
@@ -2829,12 +2829,12 @@ namespace OpenDentBusiness{
 			return retVal;
 		}
 
-		/// <summary>Used in creation of the loopList.  Used in TP list estimation and in claim creation.  Some of the items in the claimProcList passed in will not have been saved to the database yet.</summary>
-		public static List<ClaimProcHist> GetHistForProc(List<ClaimProc> claimProcList,long procNum,long codeNum) {
+		/// <summary>Used in creation of the loopList.  Used in TP list estimation and in claim creation.  Some of the items in the claimProcList passed in will not have been saved to the database yet.  The codeNum can be different than Proc.CodeNum.</summary>
+		public static List<ClaimProcHist> GetHistForProc(List<ClaimProc> claimProcList,Procedure proc,long codeNum) {
 			List<ClaimProcHist> retVal=new List<ClaimProcHist>();
 			ClaimProcHist cph;
 			for(int i=0;i<claimProcList.Count;i++) {
-				if(claimProcList[i].ProcNum != procNum) {
+				if(claimProcList[i].ProcNum != proc.ProcNum) {
 					continue;
 				}
 				cph=new ClaimProcHist();
@@ -2852,6 +2852,7 @@ namespace OpenDentBusiness{
 				cph.ProcDate=DateTime.Today;
 				cph.Status=ClaimProcStatus.Estimate;
 				cph.StrProcCode=ProcedureCodes.GetStringProcCode(codeNum);
+				cph.Surf=proc.Surf;
 				retVal.Add(cph);
 			}
 			return retVal;

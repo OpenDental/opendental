@@ -20,6 +20,12 @@ namespace OpenDental {
 				textParams.Text=GmailAddress.QueryString;
 				checkDownloadInbox.Checked=GmailAddress.DownloadInbox;
 			}
+			if(!checkDownloadInbox.Checked) {
+				textParams.Text="";
+				textParams.Enabled=false;
+				checkUnread.Checked=false;
+				checkUnread.Enabled=false;
+			}
 		}
 
 		private bool ContainsIsUnread(string queryString) {

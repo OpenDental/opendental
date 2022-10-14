@@ -341,6 +341,29 @@ namespace OpenDentBusiness{
 			return Crud.TaskCrud.SelectMany(command);
 		}
 
+		///<summary>Gets multiple Tasks from database. Returns empty list if not found.</summary>
+		public static List<Task> GetTasksForApi(int limit,int offset,long taskListNum,long keyNum,int objectType,int taskStatus,DateTime dateTimeOriginal) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Task>>(MethodBase.GetCurrentMethod(),limit,offset,taskListNum,keyNum,objectType,taskStatus,dateTimeOriginal);
+			}
+			string command="SELECT * FROM task WHERE DateTimeOriginal >= "+POut.DateT(dateTimeOriginal)+" ";
+			if(taskListNum>-1) {
+				command+="AND TaskListNum="+POut.Long(taskListNum)+" ";
+			}
+			if(keyNum>-1) {
+				command+="AND KeyNum="+POut.Long(keyNum)+" ";
+			}
+			if(objectType>-1) {
+				command+="AND ObjectType="+POut.Int(objectType)+" ";
+			}
+			if(taskStatus>-1) {
+				command+="AND TaskStatus="+POut.Int(taskStatus)+" ";
+			}
+			command+="ORDER BY TaskNum "//same fixed order each time
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.TaskCrud.SelectMany(command);
+		}
+
 		///<summary>Gets the count of reminder tasks on or after the specified dateTimeAsOf.</summary>
 		public static int GetCountReminderTasks(string reminderGroupId,DateTime dateTimeAsOf) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

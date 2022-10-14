@@ -549,7 +549,7 @@ namespace UnitTests.InsPlans_Tests {
 				Procedures.ComputeEstimates(ListProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i].ProcNum,ListProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i],ListProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -656,7 +656,7 @@ namespace UnitTests.InsPlans_Tests {
 				Procedures.ComputeEstimates(ListProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i].ProcNum,ListProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i],ListProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -763,7 +763,7 @@ namespace UnitTests.InsPlans_Tests {
 				Procedures.ComputeEstimates(ListProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i].ProcNum,ListProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i],ListProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -870,7 +870,7 @@ namespace UnitTests.InsPlans_Tests {
 				Procedures.ComputeEstimates(ListProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i].ProcNum,ListProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i],ListProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -977,7 +977,7 @@ namespace UnitTests.InsPlans_Tests {
 				Procedures.ComputeEstimates(ListProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i].ProcNum,ListProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i],ListProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -1084,7 +1084,7 @@ namespace UnitTests.InsPlans_Tests {
 				Procedures.ComputeEstimates(ListProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i].ProcNum,ListProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i],ListProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -1194,7 +1194,7 @@ namespace UnitTests.InsPlans_Tests {
 				Procedures.ComputeEstimates(ListProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age+i,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i].ProcNum,ListProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i],ListProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -1305,7 +1305,7 @@ namespace UnitTests.InsPlans_Tests {
 				Procedures.ComputeEstimates(ListProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age+i,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i].ProcNum,ListProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i],ListProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -1416,7 +1416,7 @@ namespace UnitTests.InsPlans_Tests {
 				Procedures.ComputeEstimates(ListProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age+i,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i].ProcNum,ListProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i],ListProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);

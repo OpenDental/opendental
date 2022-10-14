@@ -1819,7 +1819,7 @@ namespace UnitTests.Procedures_Test {
 				Procedures.ComputeEstimates(ListProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i].ProcNum,ListProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i],ListProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -1951,7 +1951,7 @@ namespace UnitTests.Procedures_Test {
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -1999,7 +1999,7 @@ namespace UnitTests.Procedures_Test {
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -2048,7 +2048,7 @@ namespace UnitTests.Procedures_Test {
 				Procedures.ComputeEstimates(listProeduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProeduresTPs[i].ProcNum,listProeduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProeduresTPs[i],listProeduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -2100,7 +2100,7 @@ namespace UnitTests.Procedures_Test {
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -2330,7 +2330,7 @@ Patient has one insurance plan, subscriber self. Benefits: annual max $1000, ded
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -2388,7 +2388,7 @@ Patient has one insurance plan, subscriber self. Benefits: annual max $1000, ded
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -2440,7 +2440,7 @@ Patient has one insurance plan, subscriber self. Benefits: annual max $1000, ded
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -2498,7 +2498,7 @@ Patient has one insurance plan, subscriber self. Benefits: annual max $1000, ded
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,isInitialEntry:false,planList,patPlans,benefitList,
 					histList,loopList,saveToDb:false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -2558,7 +2558,7 @@ Patient has one insurance plan, subscriber self. Benefits: annual max $1000, ded
 				Procedures.ComputeEstimates(ProcListTP[i],pat.PatNum,ref claimProcs,isInitialEntry:false,planList,patPlans,benefitList,
 					histList,loopList,saveToDb:false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ProcListTP[i].ProcNum,ProcListTP[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ProcListTP[i],ProcListTP[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -2628,7 +2628,7 @@ Patient has one insurance plan, subscriber self. Benefits: annual max $1000, ded
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -2660,7 +2660,7 @@ Patient has one insurance plan, subscriber self. Benefits: annual max $1000, ded
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			ClaimProc claimProc3=ClaimProcs.GetEstimate(claimProcs,proc3.ProcNum,plan.PlanNum,sub.InsSubNum);
 			Assert.AreEqual(50,claimProc3.DedEst);
@@ -2906,7 +2906,7 @@ Patient has one insurance plan, subscriber self. Benefits: annual max $1000, ded
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -2952,7 +2952,7 @@ Patient has one insurance plan, subscriber self. Benefits: annual max $1000, ded
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -3438,7 +3438,7 @@ If instead the preference was off for this unit test, then Writeoff2 would have 
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -3463,7 +3463,7 @@ If instead the preference was off for this unit test, then Writeoff2 would have 
 				Procedures.ComputeEstimates(listProceduresTPs2[i],pat.PatNum,ref claimProcs2,false,planList2,patPlans2,benefitList2,
 					histList2,loopList2,false,pat.Age,subList2);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs2,listProceduresTPs2[i].ProcNum,listProceduresTPs2[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs2,listProceduresTPs2[i],listProceduresTPs2[i].CodeNum));
 			}
 			ClaimProcs.Synch(ref claimProcs2,claimProcListOld2);
 			claimProcs2=ClaimProcs.Refresh(pat.PatNum);
@@ -3503,7 +3503,7 @@ If instead the preference was off for this unit test, then Writeoff2 would have 
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -3528,7 +3528,7 @@ If instead the preference was off for this unit test, then Writeoff2 would have 
 				Procedures.ComputeEstimates(listProceduresTPs2[i],pat.PatNum,ref claimProcs2,false,planList2,patPlans2,benefitList2,
 					histList2,loopList2,false,pat.Age,subList2);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs2,listProceduresTPs2[i].ProcNum,listProceduresTPs2[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs2,listProceduresTPs2[i],listProceduresTPs2[i].CodeNum));
 			}
 			ClaimProcs.Synch(ref claimProcs2,claimProcListOld2);
 			claimProcs2=ClaimProcs.Refresh(pat.PatNum);
@@ -3735,7 +3735,7 @@ If instead the preference was off for this unit test, then Writeoff2 would have 
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -3779,7 +3779,7 @@ If instead the preference was off for this unit test, then Writeoff2 would have 
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
@@ -3831,7 +3831,7 @@ If instead the preference was off for this unit test, then Writeoff2 would have 
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
 					histList,loopList,false,pat.Age,subList);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);

@@ -1245,6 +1245,7 @@ namespace OpenDental {
 				return;
 			}
 			SendToPinBoardAptNums(formApptsOther.ListAptNumsSelected);
+			RefreshPeriod(listPinApptNums:formApptsOther.ListAptNumsSelected);
 			if(contrApptPanel.IsWeeklyView) {
 				return;
 			}
@@ -1320,6 +1321,7 @@ namespace OpenDental {
 				return;
 			}
 			SendToPinBoardAptNums(formApptsOther.ListAptNumsSelected);
+			RefreshPeriod(listPinApptNums:formApptsOther.ListAptNumsSelected);
 			if(contrApptPanel.IsWeeklyView) {
 				return;
 			}

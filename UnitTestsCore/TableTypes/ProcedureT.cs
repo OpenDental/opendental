@@ -106,7 +106,7 @@ namespace UnitTestsCore {
 				Procedures.ComputeEstimates(listProceduresTPs[i],pat.PatNum,ref claimProcs,false,listPlans,listPatPlans,listBens,
 					histList,loopList,false,pat.Age,listSubs);
 				//then, add this information to loopList so that the next procedure is aware of it.
-				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i].ProcNum,listProceduresTPs[i].CodeNum));
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,listProceduresTPs[i],listProceduresTPs[i].CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref claimProcs,claimProcListOld);

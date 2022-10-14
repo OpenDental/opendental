@@ -756,7 +756,7 @@ namespace OpenDental {
 				if(_listProceduresTPs[i].ProcNum==procCur.ProcNum) {
 					break;
 				}
-				listClaimProcHistsLoop.AddRange(ClaimProcs.GetHistForProc(listClaimProc,_listProceduresTPs[i].ProcNum,_listProceduresTPs[i].CodeNum));
+				listClaimProcHistsLoop.AddRange(ClaimProcs.GetHistForProc(listClaimProc,_listProceduresTPs[i],_listProceduresTPs[i].CodeNum));
 			}
 			using FormProcEdit formProcEdit=new FormProcEdit(procCur,Pd.Patient,Pd.Family,listPatToothInitials:Pd.ListToothInitials);
 			formProcEdit.ListClaimProcHistsLoop=listClaimProcHistsLoop;
@@ -2337,7 +2337,7 @@ namespace OpenDental {
 							if(listProcedures[i].ProcNum==proc.ProcNum) {
 								break;
 							}
-							listClaimProcHistsLoop.AddRange(ClaimProcs.GetHistForProc(listClaimProc,listProcedures[i].ProcNum,listProcedures[i].CodeNum));
+							listClaimProcHistsLoop.AddRange(ClaimProcs.GetHistForProc(listClaimProc,listProcedures[i],listProcedures[i].CodeNum));
 						}
 						using FormProcEdit formProcEdit=new FormProcEdit(proc,Pd.Patient,Pd.Family,listPatToothInitials:Pd.ListToothInitials);
 						formProcEdit.ListClaimProcHistsLoop=listClaimProcHistsLoop;
@@ -7573,7 +7573,7 @@ namespace OpenDental {
 						if(listProcedures[i].ProcNum==procNew.ProcNum) {
 							break;
 						}
-						listClaimProcHistsLoop.AddRange(ClaimProcs.GetHistForProc(listClaimProc,listProcedures[i].ProcNum,listProcedures[i].CodeNum));
+						listClaimProcHistsLoop.AddRange(ClaimProcs.GetHistForProc(listClaimProc,listProcedures[i],listProcedures[i].CodeNum));
 					}
 					Procedures.ComputeEstimates(procNew,procNew.PatNum,ref listClaimProcs,false,Pd.ListInsPlans,Pd.ListPatPlans,Pd.ListBenefits,
 						Pd.ListClaimProcHists,listClaimProcHistsLoop,true,Pd.Patient.Age,Pd.ListInsSubs);
@@ -9573,7 +9573,7 @@ namespace OpenDental {
 				if(listProceduresTP[i].ProcNum==procedure.ProcNum) {
 					break;
 				}
-				listClaimProcHistsLoop.AddRange(ClaimProcs.GetHistForProc(listClaimProc,listProceduresTP[i].ProcNum,listProceduresTP[i].CodeNum));
+				listClaimProcHistsLoop.AddRange(ClaimProcs.GetHistForProc(listClaimProc,listProceduresTP[i],listProceduresTP[i].CodeNum));
 			}
 			using FormProcEdit formProcEdit=new FormProcEdit(procedure,Pd.Patient.Copy(),Pd.Family,listPatToothInitials:Pd.ListToothInitials);
 			formProcEdit.IsNew=true;
@@ -9743,7 +9743,7 @@ namespace OpenDental {
 				if(listProcedures[i].ProcNum==procedure.ProcNum) {								
 					break;
 				}
-				listClaimProcHistsLoop.AddRange(ClaimProcs.GetHistForProc(listClaimProc,listProcedures[i].ProcNum,listProcedures[i].CodeNum));
+				listClaimProcHistsLoop.AddRange(ClaimProcs.GetHistForProc(listClaimProc,listProcedures[i],listProcedures[i].CodeNum));
 			}
 			Procedures.ComputeEstimates(procedure,Pd.PatNum,ref listClaimProcs,true,Pd.ListInsPlans,Pd.ListPatPlans,Pd.ListBenefits,
 				Pd.ListClaimProcHists,listClaimProcHistsLoop,true,Pd.Patient.Age,Pd.ListInsSubs,null,false,false,_listSubstitutionLinks,false,
