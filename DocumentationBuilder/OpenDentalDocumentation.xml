@@ -10830,7 +10830,7 @@
       <summary>Complete current Medical History</summary>
     </column>
     <column order="6" name="Treatment" type="text">
-      <summary>Shows in the Chart module just below the graphical tooth chart.</summary>
+      <summary>Shows in the Chart module normally just below the graphical tooth chart. Also known as Odontogram Notes.</summary>
     </column>
     <column order="7" name="ICEName" type="varchar(255)">
       <summary>In Case of Emergency Name.</summary>
