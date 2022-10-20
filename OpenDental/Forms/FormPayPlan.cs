@@ -861,24 +861,12 @@ namespace OpenDental{
 			if(FormPPC.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			_listPayPlanCharges.RemoveAll(x => x.ChargeType==PayPlanChargeType.Credit);
-			_listPayPlanCharges.AddRange(FormPPC.ListPayPlanCreditsCur);
-			double txCompleteAmt=0;
-			foreach(PayPlanCharge credit in FormPPC.ListPayPlanCreditsCur) {
-				if(credit.ChargeDate.Date!=DateTime.MaxValue.Date) { //do not take into account maxvalue (tp'd) charges
-					txCompleteAmt+=credit.Principal;
-				}
-			}
-			textCompletedAmt.Text=txCompleteAmt.ToString("f");
-			double txTotalAmt=PayPlans.GetTxTotalAmt(_listPayPlanCharges);
-			textTotalTxAmt.Text=txTotalAmt.ToString("f");
-      double amt = PIn.Double(textTotalTxAmt.Text);
-      double compl = PIn.Double(textAmount.Text);
+			UpdateTxPaymentPlanChargeSummary(FormPPC.ListPayPlanCreditsCur);
       //only attempt to change the total amt of the payment plan if an amortization schedule doesn't already exist.
       if(_listPayPlanCharges.Count(x => x.ChargeType==PayPlanChargeType.Debit)==0//amortization schedule does not exist
 				&& PIn.Double(textTotalTxAmt.Text)!=PIn.Double(textAmount.Text)//Total treatment amount does not match term amount.
 				&& MsgBox.Show(this,MsgBoxButtons.YesNo,"Change term Total Amount to match Total Tx Amount?")) {
-				textAmount.Text=txTotalAmt.ToString("f");
+				textAmount.Text=textTotalTxAmt.Text;
 			}
 			FillCharges();
 		}
@@ -1108,11 +1096,25 @@ namespace OpenDental{
 					ProcNum=0,
 				};
 				_listPayPlanCharges.Add(txOffset);
-				double txTotalAmt=PayPlans.GetTxTotalAmt(_listPayPlanCharges);
-				textTotalTxAmt.Text=txTotalAmt.ToString("f");
+				List<PayPlanCharge> listPayPlanChargesCredit=_listPayPlanCharges.FindAll(x => x.ChargeType==PayPlanChargeType.Credit);
+				UpdateTxPaymentPlanChargeSummary(listPayPlanChargesCredit);
 			}
 			FillCharges();
 			SetNote();
+		}
+
+		private void UpdateTxPaymentPlanChargeSummary(List<PayPlanCharge> listPayPlanChargesCredit) {
+			_listPayPlanCharges.RemoveAll(x => x.ChargeType==PayPlanChargeType.Credit);
+			_listPayPlanCharges.AddRange(listPayPlanChargesCredit);
+			double txCompleteAmt=0;
+			for(int i=0;i<listPayPlanChargesCredit.Count;i++) {
+				if(listPayPlanChargesCredit[i].ChargeDate.Date!=DateTime.MaxValue.Date) { //do not take into account maxvalue (tp'd) charges
+					txCompleteAmt+=listPayPlanChargesCredit[i].Principal;
+				}
+			}
+			textCompletedAmt.Text=txCompleteAmt.ToString("f");
+			double txTotalAmt=PayPlans.GetTxTotalAmt(_listPayPlanCharges);
+			textTotalTxAmt.Text=txTotalAmt.ToString("f");
 		}
 
 		private void butSendToDevice_Click(object sender,EventArgs e) {

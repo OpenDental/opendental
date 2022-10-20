@@ -77,9 +77,13 @@ namespace OpenDentBusiness.AutoComm {
 
 		///<summary>Creates CalendarIcsInfo using the current ApptLite.</summary>
 		public CalendarIcsInfo ToCalendarIcs() {
+			long clinicNum=ClinicNum;
+			if(ClinicPrefs.GetBool(PrefName.ThankYouTitleUseDefault,ClinicNum)) {
+				clinicNum=0;
+			}
 			return new CalendarIcsInfo() {
 				PatNum=PatNum,
-				Title=ClinicPrefs.GetPrefValue(PrefName.ApptThankYouCalendarTitle,ClinicNum),
+				Title=ClinicPrefs.GetPrefValue(PrefName.ApptThankYouCalendarTitle,clinicNum),
 				Location=$"{OfficeName} {OfficeAddress}",
 				AptNum=PrimaryKey,
 				DateStart=AptDateTime,

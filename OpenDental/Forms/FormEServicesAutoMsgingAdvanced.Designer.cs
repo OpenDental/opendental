@@ -44,6 +44,7 @@ namespace OpenDental {
 			this.labelThankYouTitle = new System.Windows.Forms.Label();
 			this.textThankYouTitle = new System.Windows.Forms.TextBox();
 			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.checkUseDefault = new System.Windows.Forms.CheckBox();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
 			this.textPremedTemplate = new System.Windows.Forms.TextBox();
@@ -57,8 +58,8 @@ namespace OpenDental {
 			// gridMain
 			// 
 			this.gridMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.HasAutoWrappedHeaders = true;
 			this.gridMain.HasMultilineHeaders = true;
 			this.gridMain.Location = new System.Drawing.Point(13, 198);
@@ -133,7 +134,7 @@ namespace OpenDental {
 			// comboStatusEFailed
 			// 
 			this.comboStatusEFailed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.comboStatusEFailed.Location = new System.Drawing.Point(97, 92);
 			this.comboStatusEFailed.Name = "comboStatusEFailed";
 			this.comboStatusEFailed.Size = new System.Drawing.Size(228, 21);
@@ -151,7 +152,7 @@ namespace OpenDental {
 			// comboStatusEDeclined
 			// 
 			this.comboStatusEDeclined.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.comboStatusEDeclined.Location = new System.Drawing.Point(97, 67);
 			this.comboStatusEDeclined.Name = "comboStatusEDeclined";
 			this.comboStatusEDeclined.Size = new System.Drawing.Size(228, 21);
@@ -160,7 +161,7 @@ namespace OpenDental {
 			// comboStatusESent
 			// 
 			this.comboStatusESent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.comboStatusESent.Location = new System.Drawing.Point(97, 17);
 			this.comboStatusESent.Name = "comboStatusESent";
 			this.comboStatusESent.Size = new System.Drawing.Size(228, 21);
@@ -169,7 +170,7 @@ namespace OpenDental {
 			// comboStatusEAccepted
 			// 
 			this.comboStatusEAccepted.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.comboStatusEAccepted.Location = new System.Drawing.Point(97, 42);
 			this.comboStatusEAccepted.Name = "comboStatusEAccepted";
 			this.comboStatusEAccepted.Size = new System.Drawing.Size(228, 21);
@@ -240,6 +241,7 @@ namespace OpenDental {
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.checkUseDefault);
 			this.groupBox1.Controls.Add(this.comboClinic);
 			this.groupBox1.Controls.Add(this.textThankYouTitle);
 			this.groupBox1.Controls.Add(this.labelThankYouTitle);
@@ -249,9 +251,21 @@ namespace OpenDental {
 			this.groupBox1.TabIndex = 278;
 			this.groupBox1.Text = "Auto Message Settings";
 			// 
+			// checkUseDefault
+			// 
+			this.checkUseDefault.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkUseDefault.Location = new System.Drawing.Point(73, 20);
+			this.checkUseDefault.Name = "checkUseDefault";
+			this.checkUseDefault.Size = new System.Drawing.Size(165, 24);
+			this.checkUseDefault.TabIndex = 280;
+			this.checkUseDefault.Text = "Use Practice Default";
+			this.checkUseDefault.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkUseDefault.UseVisualStyleBackColor = true;
+			this.checkUseDefault.Click += new System.EventHandler(this.checkUseDefault_Click);
+			// 
 			// comboClinic
 			// 
-			this.comboClinic.HqDescription = "Defaults";
+			this.comboClinic.HqDescription = "Headquarters";
 			this.comboClinic.IncludeUnassigned = true;
 			this.comboClinic.Location = new System.Drawing.Point(505, 19);
 			this.comboClinic.Name = "comboClinic";
@@ -342,5 +356,6 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textPremedTemplate;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.ColorDialog colorDialog;
-	}
+        private System.Windows.Forms.CheckBox checkUseDefault;
+    }
 }

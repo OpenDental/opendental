@@ -1429,6 +1429,8 @@ namespace OpenDental{
 				//Has fixed time
 				else if(appointmentType.Pattern!="") {
 					_appointment.Pattern=appointmentType.Pattern;
+					_appointment.TimeLocked=true;//Appointment has appt type and that appt type has a custom time pattern. That custom time pattern takes priority so we time lock the appt.
+					checkTimeLocked.Checked=true;
 					//SetTimeSliderColors();
 				}
 				//No Procs, No time.

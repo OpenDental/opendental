@@ -48,6 +48,9 @@ namespace OpenDentBusiness {
 			Procedures.SetDateFirstVisit(appointment.AptDateTime.Date,1,patient);
 			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(appointment.PatNum);
 			List<string> listStringProcCodes=new List<string>();
+			//Examples: D0220#7,D0220#10,D0220#25
+			//D0220,D0220,D0220  
+			//D0220,D0220#10,D0220#25
 			for(int i = 0;i<listProcedureCodesAndToothNumstoAdd.Count;i++) {
 				string[] stringArrayProcedureCodeAndToothNum=listProcedureCodesAndToothNumstoAdd[i].Split('#');//Example D2102#8 (tooth is in international format)
 				listStringProcCodes.Add(stringArrayProcedureCodeAndToothNum[0]);//ProcCode is first item

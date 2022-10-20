@@ -26,6 +26,7 @@ namespace OpenDental {
 		///<summary>This list holds specific DefNums so that we know which ones can't be edited.</summary>
 		private List<long> _listDefNumsUneditable;
 		private long _defNumTimeArrived;
+		private bool _isAutoThankYouEnabled;
 
 		public FormEServicesAutoMsgingAdvanced() {
 			InitializeComponent();
@@ -105,11 +106,10 @@ namespace OpenDental {
 			#region Thank-You Settings
 			groupAutomationStatuses.Enabled=allowEdit;
 			//Do we want to hide editing this behind a pref that's on the previous form?
-			textThankYouTitle.Enabled=PrefC.GetBool(PrefName.ApptThankYouAutoEnabled) && allowEdit;
-			labelThankYouTitle.Enabled=PrefC.GetBool(PrefName.ApptThankYouAutoEnabled) && allowEdit;
+			_isAutoThankYouEnabled=PrefC.GetBool(PrefName.ApptThankYouAutoEnabled) && allowEdit;
 			_listClinicPrefs=ClinicPrefs.GetPrefAllClinics(PrefName.ApptThankYouCalendarTitle,includeDefault:true);
-			//Will never be null since we start on clinic 0.
-			textThankYouTitle.Text=_listClinicPrefs.FirstOrDefault(x => x.ClinicNum==_clinicNumCur).ValueString;
+			_listClinicPrefs.AddRange(ClinicPrefs.GetPrefAllClinics(PrefName.ThankYouTitleUseDefault));
+			FillThankYouTitleAndUseDefault();
 			#endregion
 			textPremedTemplate.Enabled=allowEdit;
 			textPremedTemplate.Text=PrefC.GetString(PrefName.ApptReminderPremedTemplate);
@@ -228,7 +228,9 @@ namespace OpenDental {
 			isPrefRefreshRequired|=Prefs.UpdateBool(PrefName.ApptEConfirm2ClickConfirmation,radio2ClickConfirm.Checked);
 			#endregion
 			#region Thank-You Settings
-			ParseThankYouTitle();
+			if(!checkUseDefault.Checked || !checkUseDefault.Visible) {
+				ParseThankYouTitle();
+			}
 			bool isClinicPrefRefreshRequired=false;
 			for(int i = 0;i<_listClinicPrefs.Count;i++) {
 				if(_listClinicPrefs[i].ClinicNum==0) {
@@ -261,23 +263,72 @@ namespace OpenDental {
 
 		///<summary>Parses textThankYouTitle textbox into the appropriate ClinicPref in _listThankYouTitles.</summary>
 		private void ParseThankYouTitle() {
-			ClinicPref clinicPref=_listClinicPrefs.FirstOrDefault(x => x.ClinicNum==_clinicNumCur);
+			ClinicPref clinicPref=GetClinicPrefFromList(PrefName.ApptThankYouCalendarTitle,_clinicNumCur);
 			clinicPref.ValueString=textThankYouTitle.Text;
+		}
+
+		/// <summary>Tries to get the clinicPref for the clinicNum from the list of clinicPrefs. If the clinicPref doesn't exist, and prefName is either ApptThankYouCalendarTitle or ThankYouTitleUseDefault it is added to the list and returned. Can return null. </summary>
+		private ClinicPref GetClinicPrefFromList(PrefName prefName, long clinicNum) {
+			ClinicPref clinicPref=_listClinicPrefs.FirstOrDefault(x => x.ClinicNum==clinicNum && x.PrefName==prefName);
+			if(clinicPref==null) {
+				if(prefName==PrefName.ApptThankYouCalendarTitle) {
+					string thankYouTitle=PrefC.GetString(PrefName.ApptThankYouCalendarTitle);
+					clinicPref=new ClinicPref(clinicNum,prefName,thankYouTitle);
+				}
+				else if (prefName==PrefName.ThankYouTitleUseDefault) {
+					bool thankYouUseDefault=PrefC.GetBool(PrefName.ThankYouTitleUseDefault);
+					clinicPref=new ClinicPref(clinicNum,prefName,thankYouUseDefault);
+				}
+				_listClinicPrefs.Add(clinicPref);
+			}
+			return clinicPref;
+		}
+
+		/// <summary>Fills textThankYouTitle and checkUseDefault with their respective clinicPrefs from the DB. If no clinicPrefs are loaded, new clinicPrefs are created. Also enables and disables textThankYouTitle and shows and hides checkUseDefault. </summary>
+		private void FillThankYouTitleAndUseDefault() {
+			if(!_isAutoThankYouEnabled) {
+				textThankYouTitle.Enabled=false;
+				labelThankYouTitle.Enabled=false;
+				return;
+			}
+			ClinicPref clinicPrefThankYouTitle=GetClinicPrefFromList(PrefName.ApptThankYouCalendarTitle,_clinicNumCur);
+			if(_clinicNumCur==0) {
+				checkUseDefault.Visible=false;
+				textThankYouTitle.Enabled=true;
+				textThankYouTitle.Text=clinicPrefThankYouTitle.ValueString;
+				return;
+			}
+			ClinicPref clinicPrefThankYouUseDefault=GetClinicPrefFromList(PrefName.ThankYouTitleUseDefault,_clinicNumCur);
+			checkUseDefault.Visible=true;
+			bool useDefault=PIn.Bool(clinicPrefThankYouUseDefault.ValueString);
+			checkUseDefault.Checked=useDefault;
+			if(useDefault) {
+				textThankYouTitle.Enabled=false;
+				ClinicPref clinicPrefThankYouTitleHeadquarters=GetClinicPrefFromList(PrefName.ApptThankYouCalendarTitle,0);
+				textThankYouTitle.Text=clinicPrefThankYouTitleHeadquarters.ValueString;
+				return;
+			}
+			textThankYouTitle.Enabled=true;
+			textThankYouTitle.Text=clinicPrefThankYouTitle.ValueString;
+		}
+
+		private void checkUseDefault_Click(object sender,EventArgs e) {
+			if(checkUseDefault.Checked) {
+				ParseThankYouTitle();
+			}
+			ClinicPref clinicPref=GetClinicPrefFromList(PrefName.ThankYouTitleUseDefault,_clinicNumCur);
+			clinicPref.ValueString=POut.Bool(checkUseDefault.Checked);
+			FillThankYouTitleAndUseDefault();
 		}
 
 		///<summary></summary>
 		private void comboClinic_SelectionChangeCommitted(object sender,EventArgs e) {
-			//Save the previous title.
-			ParseThankYouTitle();
-			_clinicNumCur=comboClinic.SelectedClinicNum;
-			ClinicPref clinicPref=_listClinicPrefs.FirstOrDefault(x => x.ClinicNum==_clinicNumCur);
-			if(clinicPref is null) {
-				//If the ClinicPref doesn't exist, add it.
-				string title=PrefC.GetString(PrefName.ApptThankYouCalendarTitle);
-				clinicPref=new ClinicPref(_clinicNumCur,PrefName.ApptThankYouCalendarTitle,title);
-				_listClinicPrefs.Add(clinicPref);
+			//Save the previous title if it is not default or we're on the default clinic
+			if(!checkUseDefault.Checked || !checkUseDefault.Visible) {
+				ParseThankYouTitle();
 			}
-			textThankYouTitle.Text=_listClinicPrefs.FirstOrDefault(x => x.ClinicNum==_clinicNumCur).ValueString;
+			_clinicNumCur=comboClinic.SelectedClinicNum;
+			FillThankYouTitleAndUseDefault();
 		}
 
 		private void gridMain_CellClick(object sender,ODGridClickEventArgs e) {			

@@ -4148,5 +4148,11 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}//end United States CDT codes update
 		}
+
+		private static void To22_3_18() {
+			string command;
+			command="INSERT INTO preference (PrefName,ValueString) VALUES ('ThankYouTitleUseDefault','0')";
+			Db.NonQ(command);
+		}
 	}
 }

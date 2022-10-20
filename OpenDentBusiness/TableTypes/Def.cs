@@ -74,7 +74,7 @@ namespace OpenDentBusiness {
 		///<summary>2- Appointment confirmed types.</summary>
 		[Description("Appt Confirmed")]
 		ApptConfirmed,
-		///<summary>3- Procedure quick add list for appointments. Example: D1023,D1024. Single tooth numbers are allowed for single codes, example D1151#8. This is really only useful for PAs. Tooth number is stored in user's nomenclature, not American numbering.</summary>
+		///<summary>3- Procedure quick add list for appointments. Example: D1023,D1024. Single tooth numbers are allowed, example D1151#8,D0220#15. This is really only useful for PAs. Tooth number is stored in user's nomenclature, not American numbering.</summary>
 		[Description("Appt Procs Quick Add")]
 		ApptProcsQuickAdd,
 		///<summary>4- Billing types.</summary>

@@ -2120,6 +2120,9 @@ namespace OpenDentBusiness {
 		TextPaymentLinkAppointmentBalance,
 		///<summary>String. Template for sending a payment text for account balance.</summary>
 		TextPaymentLinkAccountBalance,
+		///<summary>Boolean, default is false. Only used by the clinicpref table. If true, the practice level ApptThankYouCalendarTitle will be displayed.</summary>
+		[PrefName(ValueType=PrefValueType.BOOL)]
+		ThankYouTitleUseDefault,
 		///<summary>Deprecated.</summary>
 		ThemeSetByUser,
 		TimeCardADPExportIncludesName,

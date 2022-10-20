@@ -671,15 +671,14 @@ namespace OpenDentBusiness{
 			if(stringArrayProcCodes.IsNullOrEmpty()) {
 				throw new Exception(Lans.g("FormDefEdit","Definition contains no valid code(s)"));
 			}
-			int countToothNumProcs=0;
 			for(int i=0;i<stringArrayProcCodes.Length;i++) {
+				//Examples: D0220#7,D0220#10,D0220#25
+				//D0220,D0220,D0220  
+				//D0220,D0220#10,D0220#25
 				//Validate ToothNum
 				string[] stringArrayProcCodeAndToothNum=null;
 				if(doAllowToothNum) {
 					stringArrayProcCodeAndToothNum=stringArrayProcCodes[i].Split('#');//0: ProcCode, 1: ToothNum (if present)
-					if(countToothNumProcs>0) {
-						throw new Exception(Lans.g("FormDefEdit","Definition contains multiple procedure codes and default tooth number(s). For a procedure code to have a default tooth number it must be the only procedure code for this Appt Proc Quick Add."));
-					}
 					if(stringArrayProcCodeAndToothNum.Length>2) {
 							throw new Exception(Lans.g("FormDefEdit", "Definition contains multiple tooth numbers. Only 1 default tooth number per procedure code is allowed."));
 					}
@@ -687,7 +686,6 @@ namespace OpenDentBusiness{
 						if(!Tooth.IsValidEntry(stringArrayProcCodeAndToothNum[1])) {
 							throw new Exception(Lans.g("FormDefEdit","Definition contains invalid tooth number: ")+stringArrayProcCodeAndToothNum[1]);
 						}
-						countToothNumProcs++;
 					}
 				}
 				//Validate ProcCode

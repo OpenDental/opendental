@@ -190,6 +190,7 @@ namespace OpenDental {
 		}
 
 		private void textMyPoints_TextChanged(object sender,EventArgs e) {
+			textMyPoints.Text=textMyPoints.Text.Replace("-","");
 			RecalcMyPoints();
 		}
 
