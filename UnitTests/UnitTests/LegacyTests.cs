@@ -136,6 +136,7 @@ namespace UnitTests.Documentation{
 		PaymentEdit_ConstructAndLinkChargeCredits_MismatchedOffsettingAdjustments=112,
 		PaymentEdit_ConstructAndLinkChargeCredits_DynamicPayPlanInterestCharge=113,
 		PaymentEdit_ConstructAndLinkChargeCredits_OffsettingUnattachedAdjustments=114,
+		Procedures_ComputeEstimates_FrequencyLimitation_Ignore_NoBillIns=137,
 		//Add new items to enum here at end of list
 	}
 }

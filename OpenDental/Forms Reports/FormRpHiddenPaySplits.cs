@@ -130,7 +130,7 @@ namespace OpenDental{
 			}
 			if(PrefC.HasClinicsEnabled && checkAllClinics.Checked) {
 				subtitleClinics="All Clinics (includes hidden)";
-				listClinicNums=listBoxClinic.GetListSelected<Clinic>().Select(x => x.ClinicNum).ToList();
+				listClinicNums=listBoxClinic.Items.GetAll<Clinic>().Select(x => x.ClinicNum).ToList();
 			}
 			else if(PrefC.HasClinicsEnabled && !checkAllClinics.Checked) {
 				subtitleClinics=string.Join(", ",listBoxClinic.GetListSelected<Clinic>().Select(x => x.Abbr).ToList());

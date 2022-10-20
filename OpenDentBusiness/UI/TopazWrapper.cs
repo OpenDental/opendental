@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Forms;
+using CodeBase;
 using OpenDentBusiness;
 using Topaz;
 
@@ -88,7 +89,17 @@ namespace OpenDental.UI {
 		}
 
 		public static void SetTopazSigString(Control topaz,string signature) {
-			((SigPlusNET)topaz).SetSigString(signature);
+			try {
+				((SigPlusNET)topaz).SetSigString(signature);
+			}
+			catch(Exception ex) {
+				//The signature could have become corrupted within the database (or from wherever it is coming from).
+				//The Topaz dll can throw exceptions for invalid signatures even if the signature data is a valid ASCII string.
+				//E.g. A customer had a plethora of treatment plan signatures with a value of '1' which is a valid ASCII string but is not a valid signature.
+				//This caused Topaz to throw a System.IndexOutOfRangeException: 'Index was outside the bounds of the array.'
+				//No 'tablet points' should be present on the signature pad at this time which is how calling methods will know the signature was invalid.
+				ex.DoNothing();//Do nothing so that the program doesn't crash.
+			}
 			//this hook shouldn't be implemented or necessary, we only set/get the sig string on the local UI control, so this command shouldn't be sent to
 			//the remote connection sig pad
 			Plugins.HookAddCode(null,"TopazWrapper.SetTopazSigString_end",topaz,signature);

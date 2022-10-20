@@ -425,9 +425,13 @@ namespace OpenDentBusiness {
 			List<ScheduleOp> listScheduleOps=ScheduleOps.GetForSchedList(listSchedules);
 			//4. User provided an operatoryNum. Remove what we don't want from the lists.
 			if(operatoryNum!=0) {
-				//Only list appointments for the operatory that the user asked about.
-				listAppointments.RemoveAll(x => x.Op!=operatoryNum);
-				//Only list scheduleOps for the operatory that the user asked about.
+				//Revised behavior: Consider provider's appointments in all operatories, instead of only the operatory the provider is assigned to.
+				//Example: Two operatories; OpNum 1, and OpNum 2. Provider is only assigned to OpNum 2.
+				//Provider has an appointment in OpNum 1 and an appointment in OpNum 2.
+				//Return three available slots (between two operatories) instead of two.
+				//Previous behavior: Only list appointments for the operatory that the user asked about.
+				//listAppointments.RemoveAll(x => x.Op!=operatoryNum);
+				//Only list scheduleOps for the operatory that the user asked about. (Still consider appointments in other operatories.)
 				listScheduleOps.RemoveAll(x => x.OperatoryNum!=operatoryNum);
 				//Only list the schedules for the operatory that the user asked about.
 				listSchedules=listSchedules.Where(x => listScheduleOps.Any(y => y.ScheduleNum==x.ScheduleNum)).ToList();
@@ -491,7 +495,7 @@ namespace OpenDentBusiness {
 					blockEnd=0;
 				}
 				//Pick an op to assign to each slot.
-				//First, look for an operatory that this provider is assigned to.
+				//First, look for an operatory in which this provider has an appointment scheduled.
 				if(listApiAppointmentSlots.Exists(x => x.DateTimeStart.Date==date)) {//Slots were added today.
 					//User provided an operatoryNum, use that.
 					if(operatoryNum!=0) {
@@ -499,8 +503,12 @@ namespace OpenDentBusiness {
 					}
 					else {
 						Operatory operatory=Operatories.GetWhere(x => x.ProvDentist==provNum || x.ProvHygienist==provNum).FirstOrDefault();
-						if(operatory is null) { //If that fails, then look through list of scheduleops to see if one of the schedules for today is linked to an op.		
-							//This can't ever be null. If slots were added for this day, then it guarentees a non-empty list of schedules (and therefore ScheduleOps, too).
+						if(operatory is null && listScheduleOps.Count==0) {
+							//Provider is not assigned to an operatory and not scheduled to an operatory, but is scheduled for the day.
+							//OpNum is not included in the API request. No need to set operatoryNum, will default 0, just continue for this rare use case.
+						}
+						else if(operatory is null) { //If that fails, then look through list of scheduleops to see if one of the schedules for today is linked to an op.
+							//If slots were added for this day, then it guarantees a non-empty list of schedules (and therefore ScheduleOps, too).
 							operatoryNum=listScheduleOps.FindAll(x => listSchedules.Exists(y => y.ScheduleNum==x.ScheduleNum && y.SchedDate==date)).FirstOrDefault().OperatoryNum;
 						}
 						else {
@@ -510,7 +518,7 @@ namespace OpenDentBusiness {
 						listApiAppointmentSlots.Where(x => x.DateTimeStart.Date==date).ForEach(x => x.OpNum=operatoryNum);
 					}
 				}
-			}//Day		
+			}//Day
 			return listApiAppointmentSlots;
 		}
 

@@ -10,6 +10,7 @@ using System.Threading;
 using CodeBase;
 using OpenDentBusiness.FileIO;
 using OpenDentBusiness.WebTypes.Shared.XWeb;
+using EdgeExpressProps=OpenDentBusiness.ProgramProperties.PropertyDescs.EdgeExpress;
 
 namespace OpenDentBusiness {
 	///<summary></summary>
@@ -1116,6 +1117,9 @@ namespace OpenDentBusiness {
 			}
 			else if(ccSource==CreditCardSource.PaySimpleACH) {
 				ppPayTypeDesc=PaySimple.PropertyDescs.PaySimplePayTypeACH;
+			}
+			else if(ccSource==CreditCardSource.EdgeExpressCNP || ccSource==CreditCardSource.EdgeExpressRCM) {
+				ppPayTypeDesc=EdgeExpressProps.PaymentType;
 			}
 			if(ccSource!=CreditCardSource.PaySimpleACH) {
 				paymentCur.PayType=PrefC.GetLong(PrefName.RecurringChargesPayTypeCC);

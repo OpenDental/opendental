@@ -4508,10 +4508,11 @@ namespace OpenDental {
 			if(result==OtherResult.Cancel) {
 				return;
 			}
+			List<long> listSelectedAptNums;
 			switch(result) {
 				case OtherResult.CopyToPinBoard:
 				case OtherResult.NewToPinBoard:
-					List<long> listSelectedAptNums=arraySelectedAptNums.ToList();
+					listSelectedAptNums=arraySelectedAptNums.ToList();
 					//Looks scary, but currently users can only select one appointment at a time in FormApptsOther.cs.
 					if(!DoApptBreakRequired(Appointments.GetOneApt(listSelectedAptNums.First()))) {
 						return;
@@ -4522,6 +4523,7 @@ namespace OpenDental {
 					RefreshPeriod(listPinApptNums:listSelectedAptNums);
 					break;
 				case OtherResult.PinboardAndSearch:
+					listSelectedAptNums=arraySelectedAptNums.ToList();
 					SendToPinBoardAptNums(arraySelectedAptNums.ToList());
 					if(contrApptPanel.IsWeeklyView) {
 						break;
@@ -4531,6 +4533,7 @@ namespace OpenDental {
 						ShowSearch();
 					}
 					DoSearch(isForMakeRecall:true);
+					RefreshPeriod(listPinApptNums:listSelectedAptNums);
 					break;
 				case OtherResult.CreateNew:
 					contrApptPanel.SelectedAptNum=arraySelectedAptNums[0];

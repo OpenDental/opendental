@@ -2730,7 +2730,7 @@ namespace OpenDentBusiness{
 				}
 				List<Benefit> listLimitationsInGroups=Procedures.GetAllLimitationsForGroups(listLimitations,plan,patPlanList[p].PatPlanNum);
 				string command="SELECT claimproc.ProcDate,CodeNum,InsPayEst,InsPayAmt,DedApplied,claimproc.PatNum,Status,ClaimNum,claimproc.InsSubNum,claimproc.ProcNum, "
-					+"procedurelog.Surf, procedurelog.ToothRange, procedurelog.ToothNum "
+					+"claimproc.NoBillIns,procedurelog.Surf, procedurelog.ToothRange, procedurelog.ToothNum "
 					+"FROM claimproc "
 					+"LEFT JOIN procedurelog on claimproc.ProcNum=procedurelog.ProcNum "//to get the codenum
 					+"WHERE claimproc.InsSubNum="+POut.Long(patPlanList[p].InsSubNum)
@@ -2773,6 +2773,7 @@ namespace OpenDentBusiness{
 					cph.Surf       = PIn.String(table.Rows[i]["Surf"].ToString());
 					cph.ToothRange = PIn.String(table.Rows[i]["ToothRange"].ToString());
 					cph.ToothNum   = PIn.String(table.Rows[i]["ToothNum"].ToString());
+					cph.NoBillIns  = PIn.Bool(table.Rows[i]["NoBillIns"].ToString());
 					retVal.Add(cph);
 				}
 			}
@@ -2803,6 +2804,9 @@ namespace OpenDentBusiness{
 				cph.Status=ClaimProcStatus.Estimate;
 				cph.StrProcCode=ProcedureCodes.GetStringProcCode(codeNum);
 				cph.Surf=proc.Surf;
+				cph.ToothRange=proc.ToothRange;
+				cph.ToothNum=proc.ToothNum;
+				cph.NoBillIns=claimProcList[i].NoBillIns;
 				retVal.Add(cph);
 			}
 			return retVal;
@@ -3084,6 +3088,8 @@ namespace OpenDentBusiness{
 		public string ToothRange;
 		///<summary>This value is formatted exactly the same as it is within the database for procedurelog.ToothNum</summary>
 		public string ToothNum;
+		///<summary>Copied from claimproc.NoBillIns</summary>
+		public bool NoBillIns;
 
 		public override string ToString() {
 			return StrProcCode+" "+Status.ToString()+" "+Amount.ToString()+" ded:"+Deduct.ToString();

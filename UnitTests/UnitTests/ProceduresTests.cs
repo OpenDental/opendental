@@ -3920,6 +3920,73 @@ If instead the preference was off for this unit test, then Writeoff2 would have 
 			Assert.AreEqual(0,claimProc.InsEstTotal);
 		}
 
+		///<summary>Makes sure that if two claimprocs are created for the same frequency limitation group and one is marked NoBillIns,
+		///the other claimproc estimate is unaffected.</summary>
+		[TestMethod]
+		[Documentation.Numbering(Documentation.EnumTestNum.Procedures_ComputeEstimates_FrequencyLimitation_Ignore_NoBillIns)]
+		[Documentation.Description("Makes sure that if two claimprocs are created for the same frequency limitation group and one is marked NoBillIns, the other claimproc estimate is unaffected.")]
+
+		public void Procedures_ComputeEstimates_FrequencyLimitation_Ignore_NoBillIns() {
+			string suffix="137";
+			Patient pat=PatientT.CreatePatient(suffix);
+			long patNum=pat.PatNum;
+			long feeSchedNum1=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,suffix);
+			//Standard Fee
+			long codeNum=ProcedureCodeT.GetCodeNum("D0210");
+			Fee fee=Fees.GetFee(codeNum,53,0,0);
+			if(fee==null) {
+				fee=new Fee();
+				fee.CodeNum=codeNum;
+				fee.FeeSched=53;
+				fee.Amount=150;
+				Fees.Insert(fee);
+			}
+			else {
+				fee.Amount=1200;
+				Fees.Update(fee);
+			}
+			long codeNum2=ProcedureCodeT.GetCodeNum("D0330");
+			Fee fee2=Fees.GetFee(codeNum2,53,0,0);
+			if(fee2==null) {
+				fee2=new Fee();
+				fee2.CodeNum=codeNum2;
+				fee2.FeeSched=53;
+				fee2.Amount=200;
+				Fees.Insert(fee2);
+			}
+			else {
+				fee2.Amount=100;
+				Fees.Update(fee2);
+			}
+			//Carrier
+			Carrier carrier=CarrierT.CreateCarrier(suffix);
+			long planNum1=InsPlanT.CreateInsPlanPPO(carrier.CarrierNum,feeSchedNum1).PlanNum;
+			InsSub sub1=InsSubT.CreateInsSub(pat.PatNum,planNum1);
+			long subNum1=sub1.InsSubNum;
+			BenefitT.CreateCategoryPercent(planNum1,EbenefitCategory.DiagnosticXRay,100);
+			BenefitT.CreateFrequencyProc(planNum1,"D0210",BenefitQuantity.Years,5);
+			PatPlanT.CreatePatPlan(1,patNum,subNum1);
+			Procedure proc=ProcedureT.CreateProcedure(pat,"D0210",ProcStat.TP,"",Fees.GetAmount0(codeNum,53),DateTime.Today.AddDays(-30));
+			ClaimProc claimProc=ClaimProcT.CreateClaimProc(patNum,proc.ProcNum,planNum1,subNum1,cps:ClaimProcStatus.Estimate);
+			claimProc.NoBillIns=true;
+			ClaimProcs.Update(claimProc);
+			Procedure proc2=ProcedureT.CreateProcedure(pat,"D0330",ProcStat.TP,"",Fees.GetAmount0(codeNum2,53));
+			//Lists
+			List<ClaimProc> claimProcs=ClaimProcs.Refresh(patNum);
+			Family fam=Patients.GetFamily(patNum);
+			List<InsSub> subList=InsSubs.RefreshForFam(fam);
+			List<InsPlan> planList=InsPlans.RefreshForSubList(subList);
+			List<PatPlan> patPlans=PatPlans.Refresh(patNum);
+			List<Benefit> benefitList=Benefits.Refresh(patPlans,subList);
+			List<ClaimProcHist> histList=ClaimProcs.GetHistList(patNum,benefitList,patPlans,new List<InsPlan>() {InsPlans.GetPlan(planNum1,null)},proc2.ProcDate,subList);
+			List<ClaimProcHist> loopList=ClaimProcs.GetHistForProc(claimProcs,proc,proc.CodeNum);
+			//Validate
+			Procedures.ComputeEstimates(proc2,patNum,ref claimProcs,false,planList,patPlans,benefitList,histList,loopList,true,pat.Age,subList);
+			claimProcs=ClaimProcs.Refresh(patNum);
+			claimProc=ClaimProcs.GetEstimate(claimProcs,proc2.ProcNum,planNum1,subNum1);
+			Assert.AreEqual(200,claimProc.InsEstTotal);
+		}
+
 		[TestMethod]
 		[Documentation.Numbering(Documentation.EnumTestNum.Procedures_ComputeEstimates_MultipleProceduresOneClaimExceedAnnualMax)]
 

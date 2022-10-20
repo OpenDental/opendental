@@ -469,7 +469,7 @@ namespace OpenDental {
 			this.textStateLicense.MaxLength = 15;
 			this.textStateLicense.Name = "textStateLicense";
 			this.textStateLicense.Size = new System.Drawing.Size(102, 20);
-			this.textStateLicense.TabIndex = 275;
+			this.textStateLicense.TabIndex = 276;
 			// 
 			// textDEANum
 			// 
@@ -477,7 +477,7 @@ namespace OpenDental {
 			this.textDEANum.MaxLength = 15;
 			this.textDEANum.Name = "textDEANum";
 			this.textDEANum.Size = new System.Drawing.Size(102, 20);
-			this.textDEANum.TabIndex = 277;
+			this.textDEANum.TabIndex = 278;
 			// 
 			// label12
 			// 
@@ -502,7 +502,7 @@ namespace OpenDental {
 			this.textStateWhereLicensed.MaxLength = 15;
 			this.textStateWhereLicensed.Name = "textStateWhereLicensed";
 			this.textStateWhereLicensed.Size = new System.Drawing.Size(34, 20);
-			this.textStateWhereLicensed.TabIndex = 276;
+			this.textStateWhereLicensed.TabIndex = 277;
 			// 
 			// checkAllowLegacy
 			// 
@@ -546,7 +546,7 @@ namespace OpenDental {
 			this.textBirthdate.Location = new System.Drawing.Point(202, 185);
 			this.textBirthdate.Name = "textBirthdate";
 			this.textBirthdate.Size = new System.Drawing.Size(102, 20);
-			this.textBirthdate.TabIndex = 273;
+			this.textBirthdate.TabIndex = 274;
 			// 
 			// label22
 			// 
@@ -886,7 +886,7 @@ namespace OpenDental {
 			this.groupBox1.Location = new System.Drawing.Point(194, 211);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(156, 80);
-			this.groupBox1.TabIndex = 274;
+			this.groupBox1.TabIndex = 275;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "SSN or TIN (no dashes)";
 			// 
@@ -1211,7 +1211,7 @@ namespace OpenDental {
 			this.textPreferredName.MaxLength = 100;
 			this.textPreferredName.Name = "textPreferredName";
 			this.textPreferredName.Size = new System.Drawing.Size(161, 20);
-			this.textPreferredName.TabIndex = 344;
+			this.textPreferredName.TabIndex = 273;
 			// 
 			// label25
 			// 

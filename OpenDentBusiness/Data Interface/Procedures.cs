@@ -3683,13 +3683,15 @@ namespace OpenDentBusiness {
 			ProcedureCode procCode,InsPlan planCur,List<InsPlan> listInsPlans,PatPlan patPlan=null,List<ClaimProcHist> loopList=null,List<InsSub> listInsSubs=null) 
 		{
 			//No need to check MiddleTierRole; no call to db.
-			if(histList==null || benefitList==null || !PrefC.GetBool(PrefName.InsChecksFrequency) || proc.ProcDate.Year<1880) {
+			if(histList==null || benefitList==null || !PrefC.GetBool(PrefName.InsChecksFrequency) || proc.ProcDate.Year<1880 || claimProc.NoBillIns) {
 				return false;
 			}
 			List<ClaimProcHist> listAll=new List<ClaimProcHist>(histList);
 			if(loopList!=null) {
 				listAll.AddRange(loopList);
 			}
+			//Procedures not billed to insurance do not affect frequency limitations, because the carrier is the entity which would enforce the limit.
+			listAll=listAll.FindAll(x => !x.NoBillIns);
 			//In case we are recalculating the estimate for a procedure already attached to a claim, we need to make sure the histList does not include
 			//the claim proc we are currently recalculating.
 			listAll=listAll.FindAll(x => x.ProcNum!=claimProc.ProcNum || x.ClaimNum!=claimProc.ClaimNum);
