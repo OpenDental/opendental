@@ -112,7 +112,7 @@ namespace OpenDental{
 			report.AddTitle("Title",Lan.g(this,"PPO Write-offs"),fontTitle);
 			report.AddSubTitle("PracTitle",PrefC.GetString(PrefName.PracticeTitle),fontSubTitle);
 			report.AddSubTitle("Date SubTitle",date1.SelectionStart.ToShortDateString()+" - "+date2.SelectionStart.ToShortDateString(),fontSubTitle);
-			report.AddSubTitle("Claims",Lan.g(this,"Individual Claims"),fontSubTitle);
+			report.AddSubTitle("Claims",Lan.g(this,"Group by Carrier"),fontSubTitle);
 			if(textCarrier.Text!="") {
 				report.AddSubTitle("Carrier",Lan.g(this,"Carrier like: ")+textCarrier.Text,fontSubTitle);
 			}

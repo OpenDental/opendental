@@ -9,6 +9,7 @@ using OpenDentBusiness;
 using OpenDental.ReportingComplex;
 using System.Collections.Generic;
 using CodeBase;
+using System.Linq;
 
 namespace OpenDental{
 ///<summary></summary>
@@ -200,6 +201,9 @@ namespace OpenDental{
 						}
 					}
 				}
+				if(checkAllClin.Checked) {//All Clinics selected; add all visible or hidden unrestricted clinics to the list
+					listClinics.AddRange(Clinics.GetAllForUserod(Security.CurUser).Where(x => !listClinics.Select(y => y.ClinicNum).Contains(x.ClinicNum)));
+				}
 			}
 			string reportName="Provider Payroll Transactional Detailed";
 			if(radioTransactionalToday.Checked) {
@@ -255,7 +259,7 @@ namespace OpenDental{
 			//setup query
 			QueryObject query;
 			DataTable dt=RpProdInc.GetNetProductionDetailDataSet(dateFrom,dateTo,listProvs,listClinics
-				,checkAllProv.Checked,checkAllClin.Checked,PrefC.GetBool(PrefName.NetProdDetailUseSnapshotToday));
+				,checkAllProv.Checked,PrefC.GetBool(PrefName.NetProdDetailUseSnapshotToday));
 			query=report.AddQuery(dt,"","",SplitByKind.None,1,true);
 			// add columns to report
 			Font font=new Font("Tahoma",8,FontStyle.Regular);

@@ -116,6 +116,7 @@ namespace OpenDental {
 		private bool _isMouseDownOnImageSplitter;
 		private int _originalImageMousePos;
 		private int _pagesPrinted;
+		private int _countPages;
 		//private Patient _patient;
 		///<summary>Full path to the patient folder, including \ on the end.  Could be null if a patient folder could not be created / found.</summary>
 		private string _patFolder;
@@ -1418,12 +1419,7 @@ namespace OpenDental {
 		}
 
 		private void menuItemPrintProg_Click(object sender,EventArgs e) {
-			_pagesPrinted=0;
-			_headingPrinted=false;
-			PrinterL.TryPrintOrDebugRpPreview(pd2_PrintPage,
-				Lan.g(this,"Progress notes printed"),
-				auditPatNum:Pd.PatNum
-			);
+			Tool_Print_Click();
 		}
 
 		private void menuItemPrintRouteSlip_Click(object sender,EventArgs e) {
@@ -1819,8 +1815,8 @@ namespace OpenDental {
 			Rectangle bounds=new Rectangle(25,40,800,1000);//1035);//Some printers can handle up to 1042
 			Graphics g=e.Graphics;
 			string text;
-			Font fontHeading=new Font("Arial",13,FontStyle.Bold);
-			Font fontSubHeading=new Font("Arial",10,FontStyle.Bold);
+			using Font fontHeading=new Font("Arial",13,FontStyle.Bold);
+			using Font fontSubHeading=new Font("Arial",10,FontStyle.Bold);
 			int yPos=bounds.Top;
 			int center=bounds.X+bounds.Width/2;
 			#region printHeading
@@ -1830,6 +1826,9 @@ namespace OpenDental {
 			g.DrawString(text,fontSubHeading,Brushes.Black,bounds.Right-g.MeasureString(text,fontSubHeading).Width,yPos);
 			yPos+=(int)g.MeasureString(text,fontHeading).Height;
 			text=Pd.Patient.GetNameFL();//name
+			if(!Pd.Patient.ChartNumber.IsNullOrEmpty()) {
+				text+=" - "+Pd.Patient.ChartNumber.ToString();
+			}
 			if(g.MeasureString(text,fontSubHeading).Width>700) {
 				//extremely long name
 				text=Pd.Patient.GetNameFirst()[0]+". "+Pd.Patient.LName;//example: J. Sparks
@@ -1838,7 +1837,7 @@ namespace OpenDental {
 			Plugins.HookAddCode(this,"ContrChart.pd2_PrintPage_middle",Pd.Patient,e,g,arrayHeaderText);
 			text=arrayHeaderText[0];
 			g.DrawString(text,fontSubHeading,Brushes.Black,center-g.MeasureString(text,fontSubHeading).Width/2,yPos);
-			text="Page "+(_pagesPrinted+1);
+			text="Page "+(_pagesPrinted+1)+" / "+_countPages;
 			g.DrawString(text,fontSubHeading,Brushes.Black,bounds.Right-g.MeasureString(text,fontSubHeading).Width,yPos);
 			yPos+=30;
 			_headingPrinted=true;
@@ -1864,6 +1863,9 @@ namespace OpenDental {
 			}
 			else {
 				e.HasMorePages=false;
+				_pagesPrinted=0;
+				_headingPrinted=false;
+				_headingPrintH=0;
 			}
 			g.Dispose();
 		}
@@ -3516,6 +3518,9 @@ namespace OpenDental {
 			if(e.Button.Tag.GetType()==typeof(string)) {
 				//standard predefined button
 				switch(e.Button.Tag.ToString()) {
+					case "Print":
+						Tool_Print_Click();
+						break;
 					case "Rx":
 						Tool_Rx_Click();
 						break;
@@ -4673,6 +4678,7 @@ namespace OpenDental {
 			if(!ToolButItems.GetCacheIsNull()) {
 				LayoutToolBar();
 				if(!_isModuleSelected) {
+					ToolBarMain.Buttons["Print"].Enabled=false;
 					if(HasHideRxButtonsEcw()) {
 						//Don't show the Rx and eRx buttons.
 					}
@@ -4809,6 +4815,9 @@ namespace OpenDental {
 		public void LayoutToolBar() {
 			ToolBarMain.Buttons.Clear();
 			ODToolBarButton button;
+			button=new ODToolBarButton(Lan.g(this,"Print"),5,"","Print");
+			button.ToolTipText=Lan.g(this,"Print Progress Notes");
+			ToolBarMain.Buttons.Add(button);
 			if(HasHideRxButtonsEcw()) {
 				//Don't show the Rx and eRx buttons.
 			}
@@ -4987,6 +4996,7 @@ namespace OpenDental {
 				//tabPlanned.Enabled=false;
 				_toothChartRelay.Enabled=false;
 				gridProg.Enabled=false;
+				ToolBarMain.Buttons["Print"].Enabled=false;
 				if(HasHideRxButtonsEcw()) {
 					//Don't show the Rx and eRx buttons.
 				}
@@ -5046,6 +5056,7 @@ namespace OpenDental {
 				//groupPlanned.Enabled=true;
 				_toothChartRelay.Enabled=true;
 				gridProg.Enabled=true;
+				ToolBarMain.Buttons["Print"].Enabled=true;
 				if(HasHideRxButtonsEcw()) {
 					//Don't show the Rx and eRx buttons.
 				}
@@ -9143,6 +9154,29 @@ namespace OpenDental {
 			using FormOrthoChart formOrthoChart=new FormOrthoChart(Pd.Patient);
 			formOrthoChart.ShowDialog();
 			ModuleSelected(curPatNum);
+		}
+
+		private void Tool_Print_Click() {
+			_pagesPrinted=0;
+			_headingPrinted=false;
+			ODprintout printoutCounting=new ODprintout(
+				printPageEventHandler:pd2_PrintPage,
+				auditDescription:Lan.g(this,"Progress notes printed"),
+				totalPages:0
+			);
+			_countPages=0;
+			printoutCounting.PrintDoc.PrintController=new PreviewPrintController();//dummy to ignore actual printing commands
+			printoutCounting.PrintDoc.PrintPage+=(sender,e) => _countPages++;//second event handler that also fires
+			printoutCounting.PrintDoc.Print();
+			//done counting pages, so reset
+			_pagesPrinted=0;
+			_headingPrinted=false;
+			PrinterL.TryPrintOrDebugClassicPreview(pd2_PrintPage,
+				Lan.g(this,"Progress notes printed"),
+				totalPages:_countPages,
+				auditPatNum:Pd.PatNum,
+				isForcedPreview:true
+			);
 		}
 
 		private void Tool_Rx_Click() {

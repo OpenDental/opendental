@@ -171,6 +171,7 @@ namespace OpenDental {
 			// 
 			// label2
 			// 
+			this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.label2.Location = new System.Drawing.Point(93, 628);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(355, 29);

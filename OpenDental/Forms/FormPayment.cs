@@ -2404,15 +2404,15 @@ namespace OpenDental {
 		}
 
 		private string MakeEdgeExpressTransactionCNP(EdgeExpressTransType edgeExpressTransType,double amt,bool doCreateToken,
-			string aliasToken,string transactionId, double prepaidAmount=0)
+			string aliasToken,string transactionId, double prepaidAmount=0,long clinicNum=-1)
 		{
 			XWebResponse xWebResponse;
-			XWebResponse xWebResponseProcessed;
+			XWebResponse xWebResponseProcessed=new XWebResponse();
 			string payNote="";
 			switch(edgeExpressTransType) {
 				case EdgeExpressTransType.CreditSale:
 					xWebResponse=EdgeExpress.CNP.GetUrlForPaymentPage(_patient.PatNum,textNote.Text,amt,
-						doCreateToken,CreditCardSource.EdgeExpressCNP,false,aliasToken,paymentNum:_payment.PayNum);
+						doCreateToken,CreditCardSource.EdgeExpressCNP,false,aliasToken,paymentNum:_payment.PayNum,clinicNum:clinicNum);
 					using(FormWebBrowser formWebBrowser=new FormWebBrowser(xWebResponse.HpfUrl)) {//Braces required within switch statements.
 						formWebBrowser.ShowDialog();
 					}
@@ -2497,6 +2497,12 @@ namespace OpenDental {
 						}
 					}
 					break;
+			}
+			if(xWebResponseProcessed.TransactionStatus==XWebTransactionStatus.EdgeExpressPending) {
+				return null;
+			}
+			else if(xWebResponseProcessed.TransactionStatus==XWebTransactionStatus.EdgeExpressMonitoringError) {
+				throw new ODException("Transaction failed with status "+xWebResponseProcessed.TransactionStatus.GetDescription());
 			}
 			return payNote;
 		}
@@ -4004,7 +4010,7 @@ namespace OpenDental {
 		}
 
 		///<summary>Returns null upon failure, otherwise returns the transaction detail as a string.</summary>
-		public string MakeEdgeExpressTransaction(double prepaidAmt=0) {
+		public string MakeEdgeExpressTransaction(double prepaidAmt=0,long clinicNum=-1) {
 			if(!HasEdgeExpress()) {
 				return null;
 			}
@@ -4043,7 +4049,7 @@ namespace OpenDental {
 			//Web entry - CNP
 			if(edgeExpressApiTypeSelection==EdgeExpressApiType.Web) {
 				try {
-					note=MakeEdgeExpressTransactionCNP(edgeExpressTransType,amt,doCreateToken,aliasToken,transactionId,prepaidAmt);
+					note=MakeEdgeExpressTransactionCNP(edgeExpressTransType,amt,doCreateToken,aliasToken,transactionId,prepaidAmt,clinicNum);
 				}
 				catch(Exception ex) {
 					FormFriendlyException formFriendlyException=new FormFriendlyException("Error processing EdgeExpress request",ex,false);

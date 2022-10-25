@@ -801,12 +801,6 @@
     <Compile Include="Forms\FormWebBrowserPrefs.designer.cs">
       <DependentUpon>FormWebBrowserPrefs.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormEClipboardSecurityEdit.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormEClipboardSecurityEdit.designer.cs">
-      <DependentUpon>FormEClipboardSecurityEdit.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\FormCommItemHistory.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -7744,9 +7738,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormWebBrowserPrefs.resx">
       <DependentUpon>FormWebBrowserPrefs.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormEClipboardSecurityEdit.resx">
-      <DependentUpon>FormEClipboardSecurityEdit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormCommItemHistory.resx">
       <DependentUpon>FormCommItemHistory.cs</DependentUpon>

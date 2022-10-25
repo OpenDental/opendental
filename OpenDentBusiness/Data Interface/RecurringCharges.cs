@@ -561,8 +561,17 @@ namespace OpenDentBusiness {
 			if(_isManual) {
 				payNote="Made from manually ran recurring charge";
 			}
-			XWebResponse response=EdgeExpress.CNP.ProcessPaymentDirect(chargeData.RecurringCharge.PatNum,Lans.g(_lanThis,payNote),
-				chargeData.RecurringCharge.ChargeAmt,chargeData.CCSource,false,chargeData.XChargeToken,forceDuplicates,listCreditCardSourcesEdgeExpress);
+			XWebResponse response=EdgeExpress.CNP.ProcessPaymentDirect(
+				chargeData.RecurringCharge.PatNum,
+				Lans.g(_lanThis,payNote),			
+				chargeData.RecurringCharge.ChargeAmt,
+				chargeData.CCSource,
+				isWebPayment:false,
+				chargeData.XChargeToken,
+				forceDuplicates,
+				listCreditCardSourcesEdgeExpress,
+				chargeData.RecurringCharge.ClinicNum
+			);
 			double amount=response.Amount;
 			if(response.XWebResponseCode==XWebResponseCodes.Approval) {
 				chargeData.RecurringCharge.ChargeStatus=RecurringChargeStatus.ChargeSuccessful;

@@ -216,16 +216,6 @@ namespace OpenDental {
 				FillImageCaptureFrequencyUI();
 			}
 		}
-
-		private void butSecurity_Click(object sender,EventArgs e) {
-			//Permissions check presumably. Discuss with Sam.
-			using FormEClipboardSecurityEdit formEClipSecEdit=new FormEClipboardSecurityEdit();
-			int.TryParse(_clinicPrefHelper.GetStringVal(PrefName.EClipboardClinicalValidationFrequency,clinicPickerEClipboard.SelectedClinicNum),out int securityFreq);
-			formEClipSecEdit.SecurityFrequency=securityFreq;
-			if(formEClipSecEdit.ShowDialog()==DialogResult.OK) {
-				_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardClinicalValidationFrequency,clinicPickerEClipboard.SelectedClinicNum,POut.Int(formEClipSecEdit.SecurityFrequency));
-			}
-		}
 		#endregion Methods - Event Handlers Main
 
 		#region Methods - Event Handlers Prefs Section

@@ -264,6 +264,7 @@ namespace OpenDental {
 			bool isReceived=EmailMessages.IsReceived(_emailMessage.SentOrReceived);
 			lableUserName.Visible=!isReceived;
 			textUserName.Visible=!isReceived;
+			FixReceivedEmailWithInvalidHtmlType();
 			bool isHtml=EmailMessages.IsHtmlEmail(_emailMessage.HtmlType);
 			if(EmailMessages.IsReceived(_emailMessage.SentOrReceived) && !isHtml) {
 				//Check for MIME encoding.  Will only occur on received emails that are not already in HTML format.
@@ -279,6 +280,24 @@ namespace OpenDental {
 					HtmlText=MarkupEdit.TranslateToXhtml(_emailMessage.BodyText,false,false,true);
 				}
 				InitializeHtmlEmail(true);//web browser needs to be set and made visible to show the translated text.
+			}
+		}
+
+		///<summary>Implemented in job B39379 to address a bug that incorrectly changed the HTML type of received emails to EmailType.Html.
+		///That type is Open Dental's custom markup used for composing emails. Open Dental never receives emails in that format.</summary>
+		private void FixReceivedEmailWithInvalidHtmlType() {
+			if(_emailMessage.HtmlType!=EmailType.Html || !EmailMessages.IsReceived(_emailMessage.SentOrReceived)) {
+				return;
+			}
+			if(_emailMessage.SentOrReceived.In(EmailSentOrReceived.SecureEmailReceivedUnread,EmailSentOrReceived.SecureEmailReceivedRead)) {
+				//Received Secure Emails have no RawEmailIn for ParseMIME() to parse because they are not true emails. They are raw HTML messages that our
+				//servers transmit between the web application and dental offices.
+				_emailMessage.HtmlType=EmailType.RawHtml;
+			}
+			else {
+				//All other received emails should have type Regular. Their RawEmailIn will be processed by a call to ParseMIME(),
+				//and their HtmlType will be set to EmailType.RawHtml as needed.
+				_emailMessage.HtmlType=EmailType.Regular;
 			}
 		}
 

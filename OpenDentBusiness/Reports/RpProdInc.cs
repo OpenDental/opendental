@@ -1301,9 +1301,9 @@ namespace OpenDentBusiness {
 		///This is also used to provide a "Daily" Provider Payroll Transaction Detail report, 
 		///which will have slightly different logic to calculate due to claimsnapshot eConnector trigger timing issues.
 		///If not using clinics then simply supply an empty list of clinicNums.</summary>
-		public static DataTable GetNetProductionDetailDataSet(DateTime dateFrom,DateTime dateTo,List<Provider> listProvs,List<Clinic> listClinics,bool hasAllProvs,bool hasAllClinics,bool useSnapshotForToday) {
+		public static DataTable GetNetProductionDetailDataSet(DateTime dateFrom,DateTime dateTo,List<Provider> listProvs,List<Clinic> listClinics,bool hasAllProvs,bool useSnapshotForToday) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetTable(MethodBase.GetCurrentMethod(),dateFrom,dateTo,listProvs,listClinics,hasAllProvs,hasAllClinics,useSnapshotForToday);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),dateFrom,dateTo,listProvs,listClinics,hasAllProvs,useSnapshotForToday);
 			}
 			List<long> listProvNums=new List<long>();
 			for(int i=0;i<listProvs.Count;i++) {
@@ -1321,7 +1321,7 @@ namespace OpenDentBusiness {
 			if(!hasAllProvs && listProvNums.Count>0) {
 				hasProvs=true;
 			}
-			if(!hasAllClinics && listClinicNums.Count>0) {
+			if(listClinicNums.Count>0) {
 				hasClinics=true;
 			}
 			bool isToday=false;
@@ -1416,7 +1416,7 @@ namespace OpenDentBusiness {
 			if(String.IsNullOrEmpty(listBadDebtAdj)) {
 				listBadDebtAdj="0";
 			}
-			if(!hasAllClinics&&listClinicNums.Count>0) {
+			if(hasClinics) {
 				whereClin="AND adjustment.ClinicNum IN ("+String.Join(",",listClinicNums)+") ";
 			}
 			command+=@"SELECT 'Prod Adjustment' AS TranType,adjustment.ProvNum, adjustment.ClinicNum, adjustment.PatNum, adjustment.ProcNum, adjustment.DateEntry AS CalendarDate, 

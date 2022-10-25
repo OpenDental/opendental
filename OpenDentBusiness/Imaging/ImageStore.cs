@@ -572,7 +572,7 @@ namespace OpenDentBusiness {
 			encoderParameters.Param[0] = encoderParameter;
 			//AutoCrop()?
 			try {
-				SaveDocument(doc,image,imageCodecInfo,encoderParameters,patFolder);//Makes log entry
+				SaveDocument(doc,image,imageCodecInfo,encoderParameters,patFolder,uploadHasExceptions:true); //Makes log entry. Allows the file upload to throw if it fails.
 				if(PrefC.AtoZfolderUsed==DataStorageType.InDatabase) {
 					Documents.Update(doc);//because SaveDocument stuck the image in doc.RawBase64.
 					//no thumbnail yet
@@ -939,7 +939,7 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>If usingAtoZfoler, then patFolder must be fully qualified and valid.  If not usingAtoZ folder, this uploads to Cloud or fills the doc.RawBase64 which must then be updated to db.</summary>
-		public static void SaveDocument(Document doc,Bitmap image,ImageCodecInfo codec,EncoderParameters encoderParameters,string patFolder) {
+		public static void SaveDocument(Document doc,Bitmap image,ImageCodecInfo codec,EncoderParameters encoderParameters,string patFolder,bool uploadHasExceptions=false) {
 			//Had to reassign image to new bitmap due to a possible C# bug. Would sometimes cause UE: "A generic error occurred in GDI+."
 			using(Bitmap bitmap=new Bitmap(image)) {
 				if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {//if saving to AtoZ folder
@@ -948,7 +948,7 @@ namespace OpenDentBusiness {
 				else if(CloudStorage.IsCloudStorage) {
 					using(MemoryStream stream=new MemoryStream()) {
 						bitmap.Save(stream,codec,encoderParameters);
-						CloudStorage.Upload(patFolder,doc.FileName,stream.ToArray());
+						CloudStorage.Upload(patFolder,doc.FileName,stream.ToArray(),hasExceptions:uploadHasExceptions);
 					}
 				}
 				else {//if saving to db

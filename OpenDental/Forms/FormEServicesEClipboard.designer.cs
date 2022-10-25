@@ -68,7 +68,6 @@ namespace OpenDental{
 			this.clinicPickerEClipboard = new OpenDental.UI.ComboBoxClinicPicker();
 			this.labelEClipboardNotSignedUp = new System.Windows.Forms.Label();
 			this.butCancel = new OpenDental.UI.Button();
-			this.butSecurity = new OpenDental.UI.Button();
 			this.menuWebSchedVerifyTextTemplate.SuspendLayout();
 			this.groupEClipboardRules.SuspendLayout();
 			this.groupBoxImage.SuspendLayout();
@@ -509,20 +508,9 @@ namespace OpenDental{
 			this.butCancel.UseVisualStyleBackColor = true;
 			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
-			// butSecurity
-			// 
-			this.butSecurity.Location = new System.Drawing.Point(12, 783);
-			this.butSecurity.Name = "butSecurity";
-			this.butSecurity.Size = new System.Drawing.Size(83, 24);
-			this.butSecurity.TabIndex = 502;
-			this.butSecurity.Text = "Security";
-			this.butSecurity.UseVisualStyleBackColor = true;
-			this.butSecurity.Click += new System.EventHandler(this.butSecurity_Click);
-			// 
 			// FormEServicesEClipboard
 			// 
 			this.ClientSize = new System.Drawing.Size(1192, 818);
-			this.Controls.Add(this.butSecurity);
 			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.labelEClipboardNotSignedUp);
 			this.Controls.Add(this.clinicPickerEClipboard);
@@ -592,6 +580,5 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textEclipboardImageDefs;
 		private System.Windows.Forms.CheckBox checkDisplayIndividually;
 		private System.Windows.Forms.CheckBox checkEClipboardAllowPaymentCheckIn;
-		private UI.Button butSecurity;
 	}
 }

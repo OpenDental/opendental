@@ -98,7 +98,7 @@ namespace OpenDental {
 			// 
 			// textBox2
 			// 
-			this.textBox2.BackColor = System.Drawing.SystemColors.Control;
+			this.textBox2.BackColor = System.Drawing.SystemColors.Window;
 			this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.textBox2.Location = new System.Drawing.Point(101, 28);
 			this.textBox2.Multiline = true;

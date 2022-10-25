@@ -11,7 +11,7 @@ namespace CodeBase {
 		private PrintDocument _printDoc;
 		///<summary>Used to determin the printiner that should be used.</summary>
 		public PrintSituation Situation=PrintSituation.Default;
-		///<summary></summary>
+		///<summary>If this is set to zero, then it won't show the second number in #/# pages.</summary>
 		public int TotalPages=1;
 		///<summary>The description that is shown on the audi trails. If blank nothing will be entered.</summary>
 		public string AuditDescription="";

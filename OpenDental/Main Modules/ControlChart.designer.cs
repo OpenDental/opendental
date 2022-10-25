@@ -224,6 +224,7 @@
 			this.tabOrtho = new System.Windows.Forms.TabPage();
 			this.checkOrthoGraphics = new System.Windows.Forms.CheckBox();
 			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
+			this.butOrthoRx = new OpenDental.UI.Button();
 			this.label27 = new System.Windows.Forms.Label();
 			this.label26 = new System.Windows.Forms.Label();
 			this.butOrthoAdd = new OpenDental.UI.Button();
@@ -273,7 +274,6 @@
 			this.button1 = new OpenDental.UI.Button();
 			this.textTreatmentNotes = new OpenDental.ODtextBox();
 			this.odInternalCustomerGrids = new OpenDental.UI.ODInternalCustomerGrids();
-			this.butOrthoRx = new OpenDental.UI.Button();
 			this.tabControlImages.SuspendLayout();
 			this.panelImages.SuspendLayout();
 			this.tabProc.SuspendLayout();
@@ -451,6 +451,7 @@
 			this.imageListMain.Images.SetKeyName(2, "Probe.gif");
 			this.imageListMain.Images.SetKeyName(3, "Anesth.gif");
 			this.imageListMain.Images.SetKeyName(4, "commlog.gif");
+			this.imageListMain.Images.SetKeyName(5, "butPrint.gif");
 			// 
 			// menuProgRight
 			// 
@@ -2423,6 +2424,15 @@
 			this.groupBoxOD1.TabIndex = 205;
 			this.groupBoxOD1.Text = "Hardware";
 			// 
+			// butOrthoRx
+			// 
+			this.butOrthoRx.Location = new System.Drawing.Point(11, 39);
+			this.butOrthoRx.Name = "butOrthoRx";
+			this.butOrthoRx.Size = new System.Drawing.Size(77, 23);
+			this.butOrthoRx.TabIndex = 208;
+			this.butOrthoRx.Text = "Prescriptions";
+			this.butOrthoRx.Click += new System.EventHandler(this.butOrthoRx_Click);
+			// 
 			// label27
 			// 
 			this.label27.Location = new System.Drawing.Point(7, 16);
@@ -2897,15 +2907,6 @@
 			this.odInternalCustomerGrids.Size = new System.Drawing.Size(410, 334);
 			this.odInternalCustomerGrids.TabIndex = 213;
 			this.odInternalCustomerGrids.Visible = false;
-			// 
-			// butOrthoRx
-			// 
-			this.butOrthoRx.Location = new System.Drawing.Point(11, 39);
-			this.butOrthoRx.Name = "butOrthoRx";
-			this.butOrthoRx.Size = new System.Drawing.Size(77, 23);
-			this.butOrthoRx.TabIndex = 208;
-			this.butOrthoRx.Text = "Prescriptions";
-			this.butOrthoRx.Click += new System.EventHandler(this.butOrthoRx_Click);
 			// 
 			// ControlChart
 			// 
