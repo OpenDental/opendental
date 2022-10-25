@@ -2404,7 +2404,7 @@ namespace OpenDental {
 		}
 
 		private string MakeEdgeExpressTransactionCNP(EdgeExpressTransType transType,double amt,bool doCreateToken,
-			string aliasToken,string transactionId, double prepaidAmount=0)
+			string aliasToken,string transactionId, double prepaidAmount=0,long clinicNum=-1)
 		{
 			XWebResponse response;
 			XWebResponse xWebResponseProcessed;
@@ -2412,7 +2412,7 @@ namespace OpenDental {
 			switch(transType) {
 				case EdgeExpressTransType.CreditSale:
 					response=EdgeExpress.CNP.GetUrlForPaymentPage(_patCur.PatNum,textNote.Text,amt,
-						doCreateToken,CreditCardSource.EdgeExpressCNP,false,aliasToken,paymentNum:_paymentCur.PayNum);
+						doCreateToken,CreditCardSource.EdgeExpressCNP,false,aliasToken,paymentNum:_paymentCur.PayNum,clinicNum:clinicNum);
 					using(FormWebBrowser formWB=new FormWebBrowser(response.HpfUrl)) {//Braces required within switch statements.
 						formWB.ShowDialog();
 					}
@@ -4004,7 +4004,7 @@ namespace OpenDental {
 		}
 
 		///<summary>Returns null upon failure, otherwise returns the transaction detail as a string.</summary>
-		public string MakeEdgeExpressTransaction(double prepaidAmt=0) {
+		public string MakeEdgeExpressTransaction(double prepaidAmt=0,long clinicNum=-1) {
 			if(!HasEdgeExpress()) {
 				return null;
 			}
@@ -4043,7 +4043,7 @@ namespace OpenDental {
 			//Web entry - CNP
 			if(apiSelection==EdgeExpressApiType.Web) {
 				try {
-					note=MakeEdgeExpressTransactionCNP(transType,amt,doCreateToken,aliasToken,transactionId,prepaidAmt);
+					note=MakeEdgeExpressTransactionCNP(transType,amt,doCreateToken,aliasToken,transactionId,prepaidAmt,clinicNum);
 				}
 				catch(Exception ex) {
 					FormFriendlyException formFE=new FormFriendlyException("Error processing EdgeExpress request",ex,false);

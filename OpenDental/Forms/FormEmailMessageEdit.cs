@@ -72,28 +72,40 @@ namespace OpenDental {
 		///<summary>Configures and adds the 'Send Email' button and 'Close' button to the UI.</summary>
 		private void ConfigureSendButtons() {
 			toolBarSend.Buttons.Clear();
-			MenuItem menuItemClose=new MenuItem();
-			menuItemClose.Text=Lan.g(this,"Close");
-			menuItemClose.Click+=new EventHandler(this.butCancel_Click);
-			ODToolBarButton but=new ODToolBarButton(Lan.g(this,"Close"),EnumIcons.None,"",menuItemClose);
+			ODToolBarButton odToolBarButton=null;
+			ContextMenu contextMenu=null;
+			//Init the cancel button it will be part of the ODToolBarButton regardless.
+			MenuItem menuItemCancel=new MenuItem();
+			menuItemCancel.Text=Lan.g(this,"Cancel");
+			menuItemCancel.Click+=new EventHandler(this.butCancel_Click);
+			//Add send buttons if we are composing
 			if(emailPreview.IsComposing) {
-				ContextMenu contextMenuSend=GetSendMenu();
+				contextMenu=GetSendMenu();
+				contextMenu.MenuItems.Add(menuItemCancel);
 				//Setting the Tag to the first option in the list results in first option click event on click.
-				MenuItem menuItemSendDefault=contextMenuSend.MenuItems[0];
-				but=new ODToolBarButton(menuItemSendDefault.Text,EnumIcons.Email,menuItemSendDefault.Text,menuItemSendDefault);
-				but.Style=ODToolBarButtonStyle.DropDownButton;
-				but.DropDownMenu=contextMenuSend;
+				MenuItem menuItemSendDefault=contextMenu.MenuItems[0];
+				odToolBarButton=new ODToolBarButton(menuItemSendDefault.Text,EnumIcons.Email,menuItemSendDefault.Text,menuItemSendDefault);
+				odToolBarButton.Style=ODToolBarButtonStyle.DropDownButton;
+				odToolBarButton.DropDownMenu=contextMenu;
 			}
+			//Add reply button if this is a received email
 			else if(EmailMessages.IsReceived(_emailMessage.SentOrReceived)) {
-				//Read only mode.
 				MenuItem menuItemReply=new MenuItem();
 				menuItemReply.Text=Lan.g(this,"Reply");
 				menuItemReply.Click+=new EventHandler(this.butSend_Click);//Opens new FormEmailMessageEdit window pre-filled with a reply to this email.
-				but=new ODToolBarButton(menuItemReply.Text,EnumIcons.Email,"",menuItemReply);
+				contextMenu=new ContextMenu(new MenuItem[] { menuItemReply,menuItemCancel });
+				odToolBarButton=new ODToolBarButton(menuItemReply.Text,EnumIcons.Email,"",menuItemReply);
+				odToolBarButton.Style=ODToolBarButtonStyle.DropDownButton;
+				odToolBarButton.DropDownMenu=contextMenu;
+			}
+			//Sent emails will only have Cancel
+			else {
+				odToolBarButton=new ODToolBarButton(menuItemCancel.Text,EnumIcons.None,"",menuItemCancel);
 			}
 			//ODToolBarButton does not have dimensions until after ToolBarOD's first OnPaint()...
+			toolBarSend.Visible=true;
 			toolBarSend.Paint+=ToolBarSend_Paint;
-			toolBarSend.Buttons.Add(but);
+			toolBarSend.Buttons.Add(odToolBarButton);
 			toolBarSend.Invalidate();
 		}
 
@@ -200,7 +212,6 @@ namespace OpenDental {
 			if(!emailPreview.IsComposing) {
 				panelTemplates.Visible=false;
 				panelAutographs.Visible=false;
-				butSave.Visible=false;//not allowed to save changes.				
 				//When opening an email from FormEmailInbox, the email status will change to read automatically,
 				//and changing the text on the cancel button helps convey that to the user.
 				butEditText.Visible=false;
@@ -554,13 +565,15 @@ namespace OpenDental {
 
 		private void SaveMsg(){
 			//allowed to save message with invalid fields, so no validation here.  Only validate when sending.
-			_emailMessage.BodyText=emailPreview.BodyText;//markup text
-			_emailMessage.HtmlText=emailPreview.HtmlText;
-			if(emailPreview.IsHtml) {
-				_emailMessage.HtmlType=EmailType.Html;
-			}
-			if(_isRawHtml) {
-				_emailMessage.HtmlType=EmailType.RawHtml;
+			if(emailPreview.IsComposing) {
+				_emailMessage.BodyText=emailPreview.BodyText;//markup text
+				_emailMessage.HtmlText=emailPreview.HtmlText;
+				if(emailPreview.IsHtml) {
+					_emailMessage.HtmlType=EmailType.Html;
+				}
+				if(_isRawHtml) {
+					_emailMessage.HtmlType=EmailType.RawHtml;
+				}
 			}
 			emailPreview.SaveMsg(_emailMessage);
 			if(IsNew) {
@@ -886,13 +899,7 @@ namespace OpenDental {
 		#endregion Secure Email Validation
 
 		private void butCancel_Click(object sender, System.EventArgs e) {
-			if(!emailPreview.IsComposing) {//Use clicked the 'Close' button.  This is a 'read' email, so only changeable property is HideInFlags.
-				SaveMsg();
-				DialogResult=DialogResult.OK;//Triggers a refresh in calling views.
-			}
-			else {
-				DialogResult=DialogResult.Cancel;
-			}
+			DialogResult=DialogResult.Cancel;
 			Close();
 		}
 

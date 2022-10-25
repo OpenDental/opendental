@@ -767,7 +767,7 @@ namespace OpenDental {
 					sheetField.TabOrderMobile=tabOrderMobile++;
 					//We need to ensure any new SFD checkboxs in a group have the mobile tab order set. Even if they are 'new'.
 					if(sheetField.FieldType==SheetFieldType.CheckBox) {
-						List<SheetFieldDef> listSheetFieldDefNew=OpenDentBusiness.SheetFieldDefs.GetRadioGroupForSheetFieldDef(sheetField,listMobileSheetDefs.FindAll(x=>string.IsNullOrWhiteSpace(x.Language)));
+						List<SheetFieldDef> listSheetFieldDefNew=OpenDentBusiness.SheetFieldDefs.GetRadioGroupForSheetFieldDef(sheetField,sheetDef.SheetFieldDefs.FindAll(x=>string.IsNullOrWhiteSpace(x.Language)));
 						foreach(SheetFieldDef newSFDCheckboxInGroup in listSheetFieldDefNew ) {
 							if(OpenDentBusiness.SheetFieldDefs.CompareSheetFieldDefsByValueForMobileLayout(newSFDCheckboxInGroup,sheetField)) {
 								continue;

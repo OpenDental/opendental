@@ -111,10 +111,19 @@ namespace OpenDentBusiness {
 			return retVal;
 		}
 
-		///<summary>Returns a list of valid diseasedefnums to delete from the passed in list.</summary>
-		public static List<long> ValidateDeleteList(List<long> listDiseaseDefNums) {
+		///<summary>Returns a list of valid diseasedefnums to delete.</summary>
+		public static List<long> ValidateDeleteList() {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod(),listDiseaseDefNums);
+				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod());
+			}
+			//Get non-hidden diseasedefnums
+			List<long> listDiseaseDefNums=new List<long>();
+			string command = "SELECT DiseaseDefNum FROM diseasedef WHERE !IsHidden";
+			try {
+				listDiseaseDefNums.AddRange(Db.GetListLong(command));
+			}
+			catch {
+				//Do Nothing
 			}
 			List<long> listDiseaseDefNumsNotDeletable=new List<long>();
 			if(listDiseaseDefNums==null || listDiseaseDefNums.Count < 1) {
@@ -125,10 +134,12 @@ namespace OpenDentBusiness {
 				listDiseaseDefNumsNotDeletable.Add(PrefC.GetLong(PrefName.ProblemsIndicateNone));
 			}
 			//Validate patient attached
-			string command = "SELECT DISTINCT disease.DiseaseDefNum "
-				+"FROM patient,disease "
-				+"WHERE patient.PatNum=disease.PatNum "
-				+"AND disease.DiseaseDefNum IN ("+String.Join(",",listDiseaseDefNums)+") ";
+			command = "SELECT diseasedef.DiseaseDefNum "
+								+"FROM diseasedef "
+								+"WHERE EXISTS(SELECT 1 FROM patient "
+								+"INNER JOIN disease ON patient.PatNum=disease.PatNum "
+								+"WHERE disease.DiseaseDefNum=diseasedef.DiseaseDefNum) "
+								+"AND !diseasedef.IsHidden;";
 			try {
 				listDiseaseDefNumsNotDeletable.AddRange(Db.GetListLong(command));
 			}
@@ -136,7 +147,11 @@ namespace OpenDentBusiness {
 				//Do Nothing
 			}
 			//Validate edu resource attached
-			command="SELECT DISTINCT eduresource.DiseaseDefNum FROM eduresource WHERE eduresource.DiseaseDefNum IN ("+String.Join(",",listDiseaseDefNums)+") ";
+			command="SELECT diseasedef.DiseaseDefNum "
+							+"FROM diseasedef "
+							+"WHERE EXISTS(SELECT 1 FROM eduresource "
+							+"WHERE eduresource.DiseaseDefNum=diseasedef.DiseaseDefNum) "
+							+"AND !diseasedef.IsHidden;";
 			try {
 				listDiseaseDefNumsNotDeletable.AddRange(Db.GetListLong(command));
 			}
@@ -144,9 +159,12 @@ namespace OpenDentBusiness {
 				//Do Nothing
 			}
 			//Validate family health history attached
-			command="SELECT DISTINCT familyhealth.DiseaseDefNum FROM patient,familyhealth "
-				+"WHERE patient.PatNum=familyhealth.PatNum "
-				+"AND familyhealth.DiseaseDefNum IN ("+String.Join(",",listDiseaseDefNums)+") ";
+			command="SELECT diseasedef.DiseaseDefNum "
+							+"FROM diseasedef "
+							+"WHERE EXISTS(SELECT 1 FROM patient "
+							+"INNER JOIN familyhealth ON patient.PatNum=familyhealth.PatNum "
+							+"WHERE familyhealth.DiseaseDefNum=diseasedef.DiseaseDefNum) "
+							+"AND !diseasedef.IsHidden;";
 			try {
 				listDiseaseDefNumsNotDeletable.AddRange(Db.GetListLong(command));
 			}

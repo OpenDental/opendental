@@ -265,20 +265,25 @@ namespace OpenDentBusiness {
 				}
 			}
 
-			///<summary>Sends a web request to the XWeb EdgeExpress API.</summary>
-			private static XWebResponse SendEdgeExpressRequest(long patNum,EdgeExpressTransType edgeExpressTransactionType,string url,bool isWebPayment,double amount = 0,
-				string orderId="",bool doCreateAlias=false,string alias="",string transactionID="",bool allowDuplicates=false,string expDate="",bool doUseCurrentClinicNum=false)
+			///<summary>Sends a web request to the XWeb EdgeExpress API. By default the clinic will be set to the Patient's clinic, however passing in	
+			///doUseCurrentClinicNum as true will set it to the Clinics.ClinicNum</summary>
+			private static XWebResponse SendEdgeExpressRequest(long patNum,EdgeExpressTransType edgeExpressTransactionType,string url,bool isWebPayment,double amount=0,
+				string orderId="",bool doCreateAlias=false,string alias="",string transactionID="",bool allowDuplicates=false,string expDate="",bool doUseCurrentClinicNum=false,long clinicNum=-1)
 			{
 				Patient pat=Patients.GetLim(patNum);
 				if(patNum!=pat.PatNum) {
 					throw new ODException("Patient not found for PatNum: "+patNum.ToString(),ODException.ErrorCodes.XWebProgramProperties);
 				}
-				long clinicNum=0;
 				if(PrefC.HasClinicsEnabled) {
-					clinicNum=pat.ClinicNum;
-					if(doUseCurrentClinicNum) {
-						clinicNum=Clinics.ClinicNum;
+					if(clinicNum<=0) {
+						clinicNum=pat.ClinicNum;
+						if(doUseCurrentClinicNum) {
+							clinicNum=Clinics.ClinicNum;
+						}
 					}
+				}
+				else {
+					clinicNum=0;
 				}
 				bool isDirectPay=true;
 				StringBuilder strBldXml=new StringBuilder();
@@ -519,7 +524,7 @@ namespace OpenDentBusiness {
 			///</summary>
 			public static XWebResponse GetUrlForPaymentPage(long patNum,string payNote,double amount,bool createAlias,
 				CreditCardSource ccSource,bool isWebPayment,string alias="",bool allowDuplicates=false,string email="",string logGuid="",
-				long paymentNum=0)
+				long paymentNum=0,long clinicNum=-1)
 			{
 				//No need to check MiddleTierRole;no call to db.
 				if(!ccSource.In(CreditCardSource.XWeb,CreditCardSource.XWebPortalLogin,CreditCardSource.EdgeExpressCNP)) {
@@ -530,8 +535,7 @@ namespace OpenDentBusiness {
 					throw new ODException("Invalid Amount",ODException.ErrorCodes.OtkArgsInvalid);
 				}
 				try {
-					XWebResponse response=SendEdgeExpressRequest(patNum,EdgeExpressTransType.CreditSale,_edgeExpressHostPayUrl,isWebPayment,amount,
-						doCreateAlias:createAlias,alias:alias,allowDuplicates:allowDuplicates);
+					XWebResponse response=SendEdgeExpressRequest(patNum,EdgeExpressTransType.CreditSale,_edgeExpressHostPayUrl,isWebPayment,						amount,doCreateAlias:createAlias,alias:alias,allowDuplicates:allowDuplicates,clinicNum:clinicNum);
 					response.Amount=amount;
 					response.PayNote=payNote;
 					response.CCSource=ccSource;
@@ -547,8 +551,9 @@ namespace OpenDentBusiness {
 			}
 
 			///<summary>Makes a payment using the Direct Pay URL. Does not display a webpage and an alias is required.</summary>
-			public static XWebResponse ProcessPaymentDirect(long patNum,string payNote,double amount,CreditCardSource ccSource,bool isWebPayment,string alias,bool allowDuplicates,
-				List<CreditCardSource> listCreditCardSourcesEdgeExpress) 
+			public static XWebResponse ProcessPaymentDirect(long patNum,string payNote,double amount,CreditCardSource ccSource,
+				bool isWebPayment,string alias,bool allowDuplicates,List<CreditCardSource> listCreditCardSourcesEdgeExpress,
+				long clinicNum=-1)  
 			{
 				//No need to check MiddleTierRole;no call to db.
 				if(!listCreditCardSourcesEdgeExpress.Contains(ccSource)) {
@@ -655,10 +660,10 @@ namespace OpenDentBusiness {
 			}
 
 			///<summary>Makes a web request to EdgeExpress to get the status for the OTK passed in.  Throws exceptions.</summary>
-			public static XWebResponse GetOtkStatus(long patNum,string orderId,bool isWebPayment) {
+			public static XWebResponse GetOtkStatus(long patNum,string orderId,bool isWebPayment,long clinicNum=-1) {
 				//No need to check MiddleTierRole;no call to db.
 				try {
-					return SendEdgeExpressRequest(patNum,EdgeExpressTransType.QueryPayment,_edgeExpressDirectPayUrl,isWebPayment,orderId: orderId);
+					return SendEdgeExpressRequest(patNum,EdgeExpressTransType.QueryPayment,_edgeExpressDirectPayUrl,isWebPayment,orderId:orderId,clinicNum:clinicNum);
 				}
 				catch(Exception ex) {
 					throw new ODException("Error querying transaction information.",ex);
@@ -731,7 +736,7 @@ namespace OpenDentBusiness {
 				XWebResponse xWebResponseUpdate=xWebResponseOld;
 				try {
 					//Get the OTK status from the gateway.
-					XWebResponse xWebResponseNew=GetOtkStatus(xWebResponseOld.PatNum,xWebResponseOld.OrderId,false);
+					XWebResponse xWebResponseNew=GetOtkStatus(xWebResponseOld.PatNum,xWebResponseOld.OrderId,false,existingPayment.ClinicNum);
 					if(xWebResponseNew.XWebResponseCode==XWebResponseCodes.Pending || xWebResponseNew.XWebResponseCode==XWebResponseCodes.Undefined) { //No new status to report. Try again next time.
 						if(DateTime.Now>xWebResponseOld.HpfExpiration.AddMinutes(5)) {
 							//EdgeExpress will return 814 "Invalid Reference Error" indefinitely if the patient doesn't finish the transaction.

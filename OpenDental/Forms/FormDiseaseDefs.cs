@@ -87,7 +87,7 @@ namespace OpenDental{
 			}
 			_listDiseaseDefsOld=_listDiseaseDefs.Select(x => x.Copy()).ToList();
 			_listDiseaseDefsShowing=new List<DiseaseDef>();//fillGrid takes care of filling this.
-			_listDiseaseDefNumsNotDeletable=DiseaseDefs.ValidateDeleteList(_listDiseaseDefs.Select(x => x.DiseaseDefNum).ToList());
+			_listDiseaseDefNumsNotDeletable=DiseaseDefs.ValidateDeleteList();
 			FillGrid();
 		}
 

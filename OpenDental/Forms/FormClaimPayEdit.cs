@@ -415,7 +415,7 @@ namespace OpenDental{
 			using FormPayment formPayment=new FormPayment(patient,family,payment,preferCurrentPat:false);
 			string tranDetail=null;
 			try {
-				tranDetail=formPayment.MakeEdgeExpressTransaction(PIn.Double(textAmount.Text));
+				tranDetail=formPayment.MakeEdgeExpressTransaction(PIn.Double(textAmount.Text),payment.ClinicNum);
 			}
 			catch(Exception ex) {
 				FriendlyException.Show(Lan.g(this,"Error processing transaction.\r\n\r\nPlease contact support with the details of this error:")+"\r\n"+ex.Message,ex);

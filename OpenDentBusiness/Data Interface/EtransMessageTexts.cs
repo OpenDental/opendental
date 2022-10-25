@@ -118,9 +118,9 @@ namespace OpenDentBusiness{
 			}
 			else { 
 				//When a etransNum is specified we cannot delete the EtransMessageText row if it is associated to any other etransNum.
-				command="DELETE etransMessageText FROM etransMessageText "
-					+"LEFT JOIN etrans ON etrans.EtransMessageTextNum=etransMessageText.EtransMessageTextNum AND etrans.EtransNum!="+POut.Long(etransNum)+" "
-					+"WHERE etransMessageText.EtransMessageTextNum="+POut.Long(etransMessageTextNum)+" "
+				command="DELETE etransmessagetext FROM etransmessagetext "
+					+"LEFT JOIN etrans ON etrans.EtransMessageTextNum=etransmessagetext.EtransMessageTextNum AND etrans.EtransNum!="+POut.Long(etransNum)+" "
+					+"WHERE etransmessagetext.EtransMessageTextNum="+POut.Long(etransMessageTextNum)+" "
 					+"AND etrans.EtransNum IS NULL";
 			}
 			Db.NonQ(command);
