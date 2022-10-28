@@ -107,6 +107,7 @@ namespace OpenDental {
 			this.textInsPlanNum = new System.Windows.Forms.TextBox();
 			this.label29 = new System.Windows.Forms.Label();
 			this.groupPlan = new OpenDental.UI.GroupBoxOD();
+			this.labelMedicalInsurance = new System.Windows.Forms.Label();
 			this.butOtherSubscribers = new OpenDental.UI.Button();
 			this.textBIN = new System.Windows.Forms.TextBox();
 			this.labelBIN = new System.Windows.Forms.Label();
@@ -192,7 +193,6 @@ namespace OpenDental {
 			this.checkOrthoWaitDays = new System.Windows.Forms.CheckBox();
 			this.gridBenefits = new OpenDental.UI.GridOD();
 			this.textPlanNote = new OpenDental.ODtextBox();
-			this.label12 = new System.Windows.Forms.Label();
 			this.groupSubscriber.SuspendLayout();
 			this.groupRequestBen.SuspendLayout();
 			this.panelPat.SuspendLayout();
@@ -1042,7 +1042,7 @@ namespace OpenDental {
 			// 
 			// groupPlan
 			// 
-			this.groupPlan.Controls.Add(this.label12);
+			this.groupPlan.Controls.Add(this.labelMedicalInsurance);
 			this.groupPlan.Controls.Add(this.butOtherSubscribers);
 			this.groupPlan.Controls.Add(this.textBIN);
 			this.groupPlan.Controls.Add(this.labelBIN);
@@ -1063,6 +1063,15 @@ namespace OpenDental {
 			this.groupPlan.Name = "groupPlan";
 			this.groupPlan.Size = new System.Drawing.Size(425, 277);
 			this.groupPlan.TabIndex = 148;
+			// 
+			// labelMedicalInsurance
+			// 
+			this.labelMedicalInsurance.Location = new System.Drawing.Point(131, 7);
+			this.labelMedicalInsurance.Name = "labelMedicalInsurance";
+			this.labelMedicalInsurance.Size = new System.Drawing.Size(110, 17);
+			this.labelMedicalInsurance.TabIndex = 192;
+			this.labelMedicalInsurance.Text = "Medical Insurance";
+			this.labelMedicalInsurance.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// butOtherSubscribers
 			// 
@@ -1884,15 +1893,6 @@ namespace OpenDental {
 			this.textPlanNote.Text = "1 - InsPlan\n2\n3 lines will show here in 46 vert.\n4 lines will show here in 59 ver" +
     "t.\n5 lines in 72 vert\n6 in 85";
 			// 
-			// label12
-			// 
-			this.label12.Location = new System.Drawing.Point(131, 7);
-			this.label12.Name = "label12";
-			this.label12.Size = new System.Drawing.Size(110, 17);
-			this.label12.TabIndex = 192;
-			this.label12.Text = "Medical Insurance";
-			this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// FormInsPlan
 			// 
 			this.ClientSize = new System.Drawing.Size(984, 700);
@@ -2124,6 +2124,6 @@ namespace OpenDental {
 		private OpenDental.UI.GroupBoxOD groupCarrierAllowedAmounts;
 		private OpenDental.UI.GroupBoxOD groupCoPay;
 		private CheckBox checkUseBlueBook;
-		private Label label12;
+		private Label labelMedicalInsurance;
 	}
 }

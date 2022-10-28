@@ -268,16 +268,18 @@ namespace OpenDentBusiness{
 			}
 			long newNum=employerNums[0];
 			for(int i=1;i<employerNums.Count;i++) {
-				string command="UPDATE patient SET EmployerNum = "+POut.Long(newNum)
-					+" WHERE EmployerNum = "+POut.Long(employerNums[i]);
-				Db.NonQ(command);
+				string command="SELECT PatNum FROM patient WHERE EmployerNum = "+POut.Long(employerNums[i])+"";
+				List<long> patientNums=Db.GetListLong(command);
+				for(int j=0;j<patientNums.Count;j++) {
+					command="UPDATE patient SET EmployerNum = "+POut.Long(newNum)+" WHERE PatNum = "+POut.Long(patientNums[j])+"";
+					Db.NonQ(command);
+				}
 				command="SELECT * FROM insplan WHERE EmployerNum = "+POut.Long(employerNums[i]);
 				List<InsPlan> listInsPlans=Crud.InsPlanCrud.SelectMany(command);
-				command="UPDATE insplan SET EmployerNum = "+POut.Long(newNum)
-					+" WHERE EmployerNum = "+POut.Long(employerNums[i]);
-				Db.NonQ(command);
 				//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
 				listInsPlans.ForEach(x => { //log updated employernums for insplan.
+					command="UPDATE insplan SET EmployerNum = "+POut.Long(newNum)+" WHERE PlanNum = "+POut.Long(x.PlanNum);
+					Db.NonQ(command);
 					InsEditLogs.MakeLogEntry("EmployerNum",Security.CurUser.UserNum,employerNums[i].ToString(),newNum.ToString(),
 						InsEditLogType.InsPlan,x.PlanNum,0,x.GroupNum+" - "+x.GroupName);
 				});

@@ -94,14 +94,14 @@ namespace OpenDentBusiness{
 			if(listGuarantorNums.Count==1) {
 				FamAging famAgingCur=Crud.FamAgingCrud.SelectOne(GetAgingQueryString(asOfDate,listGuarantorNums));
 				command="UPDATE patient p SET "
-					+"p.BalOver90 =CASE WHEN p.Guarantor!=p.PatNum THEN 0 ELSE "+famAgingCur.BalOver90 +" END,"
-					+"p.Bal_61_90 =CASE WHEN p.Guarantor!=p.PatNum THEN 0 ELSE "+famAgingCur.Bal_61_90 +" END,"
-					+"p.Bal_31_60 =CASE WHEN p.Guarantor!=p.PatNum THEN 0 ELSE "+famAgingCur.Bal_31_60 +" END,"
-					+"p.Bal_0_30  =CASE WHEN p.Guarantor!=p.PatNum THEN 0 ELSE "+famAgingCur.Bal_0_30  +" END,"
-					+"p.BalTotal  =CASE WHEN p.Guarantor!=p.PatNum THEN 0 ELSE "+famAgingCur.BalTotal  +" END,"
-					+"p.InsEst    =CASE WHEN p.Guarantor!=p.PatNum THEN 0 ELSE "+famAgingCur.InsEst    +" END,"
-					+"p.PayPlanDue=CASE WHEN p.Guarantor!=p.PatNum THEN 0 ELSE "+famAgingCur.PayPlanDue+" END "
-					+"WHERE p.Guarantor="+listGuarantorNums[0];
+					+"p.BalOver90 =CASE WHEN p.Guarantor!=p.PatNum THEN 0 ELSE "+POut.Double(famAgingCur.BalOver90)+" END,"
+					+"p.Bal_61_90 =CASE WHEN p.Guarantor!=p.PatNum THEN 0 ELSE "+POut.Double(famAgingCur.Bal_61_90)+" END,"
+					+"p.Bal_31_60 =CASE WHEN p.Guarantor!=p.PatNum THEN 0 ELSE "+POut.Double(famAgingCur.Bal_31_60)+" END,"
+					+"p.Bal_0_30  =CASE WHEN p.Guarantor!=p.PatNum THEN 0 ELSE "+POut.Double(famAgingCur.Bal_0_30)+" END,"
+					+"p.BalTotal  =CASE WHEN p.Guarantor!=p.PatNum THEN 0 ELSE "+POut.Double(famAgingCur.BalTotal)+" END,"
+					+"p.InsEst    =CASE WHEN p.Guarantor!=p.PatNum THEN 0 ELSE "+POut.Double(famAgingCur.InsEst)+" END,"
+					+"p.PayPlanDue=CASE WHEN p.Guarantor!=p.PatNum THEN 0 ELSE "+POut.Double(famAgingCur.PayPlanDue)+" END "
+					+"WHERE p.Guarantor="+POut.Long(listGuarantorNums[0]);
 			}
 			else {
 				List<FamAging> listFamAgings=Crud.FamAgingCrud.SelectMany(GetAgingQueryString(asOfDate,listGuarantorNums)
