@@ -181,6 +181,11 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please set a field value first.");
 				return;
 			}
+			List<string> listStrsInvalid=XmlConverter.XmlFindAllInvalidChars(textFieldValue.Text);
+			if(listStrsInvalid.Count>0){	
+				MsgBox.Show(this,"Invalid characters found. Please remove or replace the following: "+string.Join(", ",listStrsInvalid));
+				return;
+			}
 			if(comboFontName.GetSelected<string>()=="" || comboFontName.GetSelected<string>()==null){
 				//not going to bother testing for validity unless it will cause a crash.
 				MsgBox.Show(this,"Please select a font name first.");

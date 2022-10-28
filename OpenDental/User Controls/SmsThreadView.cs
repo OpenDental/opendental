@@ -53,15 +53,10 @@ namespace OpenDental {
 		}
 
 		private void FillMessageThread() {
-			//Clear controls and reset navigation bars.
-			panelScroll.SuspendLayout();
-			DisposeChildrenRecursive(panelScroll,doDisposeParent:false);
-			panelScroll.ResumeLayout();
-			panelScroll.Controls.Clear();
-			panelNavigation.Visible=false;
-			panelScroll.Location=new Point(0,0);
 			Invalidate();
 			if(_listSmsThreadMessages==null || _listSmsThreadMessages.Count<1) {
+				panelNavigation.Visible=false;
+				LayoutManager.MoveLocation(panelScroll,new Point(0,0));
 				return;
 			}
 			BuildListMessages();
@@ -71,6 +66,8 @@ namespace OpenDental {
 			int y=0;
 			Control controlHighlighted=null;
 			panelScroll.SuspendLayout();
+			//Loop through and update existing control sizes, text, borders, etc.  Add new controls for messages not already represented.
+			//We assume no messages are deleted and never change order.
 			for(int i=0;i<_listSmsThreadToDisplay.Count;i++) {
 				SmsThreadMessage msg=_listSmsThreadToDisplay[i];
 				y+=verticalPadding;
@@ -90,7 +87,8 @@ namespace OpenDental {
 				labelMessageHeader.Width=bodyWidth;
 				labelMessageHeader.Height=textSize.Height+2;//Extra vertical padding to ensure that the text will fit when including the border.
 				labelMessageHeader.Location=new Point(0,y);
-				LayoutManager.Add(labelMessageHeader,panelScroll);
+				labelMessageHeader.Font=panelScroll.Font;
+				AddOrUpdatePanelScrollChildControl(labelMessageHeader);
 				y+=labelMessageHeader.Height;
 				RichTextBox textBoxMessage=new RichTextBox();
 				textBoxMessage.DetectUrls=true;
@@ -102,9 +100,6 @@ namespace OpenDental {
 				textBoxMessage.MouseWheel+=MouseWheel_Scroll;//Textboxes handle their own scroll events, because they have their own scroll bars.
 				textBoxMessage.Font=panelScroll.Font;
 				textBoxMessage.BackColor=msg.BackColor;
-				if(msg.IsHighlighted) {
-					controlHighlighted=textBoxMessage;
-				}
 				if(msg.IsImportant) {
 					textBoxMessage.ForeColor=Color.Red;
 				}
@@ -123,6 +118,7 @@ namespace OpenDental {
 					Height=textBoxMessage.Height+2,
 					BackColor=Color.Black,
 				};
+				border.Name="msgBorder"+i;
 				if(msg.IsAlignedLeft) {
 					border.Location=new Point(horizontalMargin,y);
 				}
@@ -130,8 +126,11 @@ namespace OpenDental {
 					border.Location=new Point(bodyWidth-horizontalMargin-border.Width,y);
 				}
 				textBoxMessage.Location=new Point(border.Location.X+1,border.Location.Y+1);
-				LayoutManager.Add(textBoxMessage,panelScroll);
-				LayoutManager.Add(border,panelScroll);
+				textBoxMessage=(RichTextBox)AddOrUpdatePanelScrollChildControl(textBoxMessage);
+				if(msg.IsHighlighted) {
+					controlHighlighted=textBoxMessage;
+				}
+				AddOrUpdatePanelScrollChildControl(border);
 				y+=border.Height;
 			}
 			Label labelBottomSpacer=new Label();
@@ -141,7 +140,7 @@ namespace OpenDental {
 			labelBottomSpacer.Width=bodyWidth;
 			labelBottomSpacer.Height=verticalPadding;
 			labelBottomSpacer.Location=new Point(0,y);
-			LayoutManager.Add(labelBottomSpacer,panelScroll);
+			AddOrUpdatePanelScrollChildControl(labelBottomSpacer);
 			y+=labelBottomSpacer.Height;
 			if(controlHighlighted==null) {
 				controlHighlighted=labelBottomSpacer;
@@ -151,6 +150,29 @@ namespace OpenDental {
 			}
 			panelScroll.ResumeLayout();
 			panelScroll.ScrollControlIntoView(controlHighlighted);//Scroll to highlighted control, or if none highlighted, then scroll to the end.
+		}
+
+		///<summary>Returns the control which previsouly existing in the panel or returns the new control if it was added.</summary>
+		private Control AddOrUpdatePanelScrollChildControl(Control control) {
+			//Control name never changes once set on a control above.
+			Control existingControl=panelScroll.Controls.AsEnumerable<Control>().FirstOrDefault(x => x.Name==control.Name);
+			if(existingControl==null) {
+				LayoutManager.Add(control,panelScroll);
+				return control;
+			}
+			//The properties updated here must match any properties which can change from their original values above.
+			//Double buffering never changes once set on a control above.
+			existingControl.Text=control.Text;
+			if(existingControl is Label existingLabel && control is Label label) {
+				existingLabel.TextAlign=label.TextAlign;
+			}
+			existingControl.Width=control.Width;
+			existingControl.Height=control.Height;
+			existingControl.Location=control.Location;
+			existingControl.ForeColor=control.ForeColor;
+			DisposeChildrenRecursive(control,true);
+			LayoutManager.Move(existingControl,existingControl.Bounds);
+			return existingControl;
 		}
 
 		private void TextBoxMessage_LinkClicked(object sender,LinkClickedEventArgs e) {	
@@ -194,11 +216,11 @@ namespace OpenDental {
 			_listSmsThreadToDisplay=_listSmsThreadToDisplay.OrderBy(x => x.MsgDateTime).ToList();	
 			if(_listSmsThreadMessages.Count<=CountMessagesToDisplay) {
 				panelNavigation.Visible=false;
-				panelScroll.Location=new Point(0,0);
+				LayoutManager.MoveLocation(panelScroll,new Point(0,0));
 			}
 			else {
 				panelNavigation.Visible=true;
-				panelScroll.Location=new Point(0,panelNavigation.Location.Y+panelNavigation.Height);	//Buttress up against the panelNavigation
+				LayoutManager.MoveLocation(panelScroll,new Point(0,panelNavigation.Location.Y+panelNavigation.Height));//Just below panelNavigation
 			}			
 			if(_smsThreadPage==maxPage) {
 				butBackPage.Enabled=false;

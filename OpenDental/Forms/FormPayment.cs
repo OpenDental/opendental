@@ -2407,7 +2407,7 @@ namespace OpenDental {
 			string aliasToken,string transactionId, double prepaidAmount=0,long clinicNum=-1)
 		{
 			XWebResponse xWebResponse;
-			XWebResponse xWebResponseProcessed=new XWebResponse();
+			XWebResponse xWebResponseProcessed;
 			string payNote="";
 			switch(edgeExpressTransType) {
 				case EdgeExpressTransType.CreditSale:
@@ -2415,6 +2415,9 @@ namespace OpenDental {
 						doCreateToken,CreditCardSource.EdgeExpressCNP,false,aliasToken,paymentNum:_payment.PayNum,clinicNum:clinicNum);
 					using(FormWebBrowser formWebBrowser=new FormWebBrowser(xWebResponse.HpfUrl)) {//Braces required within switch statements.
 						formWebBrowser.ShowDialog();
+						if(formWebBrowser.DialogResult==DialogResult.Cancel) {
+							return null;
+						}
 					}
 					xWebResponseProcessed=EdgeExpress.CNP.ProcessTransaction(xWebResponse,_payment);
 					payNote=xWebResponseProcessed.GetFormattedNote(true,false);
@@ -2436,6 +2439,9 @@ namespace OpenDental {
 					xWebResponse=EdgeExpress.CNP.GetUrlForCreditCardAlias(_patient.PatNum,CreditCardSource.EdgeExpressCNP,false,amt,doCreateToken);
 					using(FormWebBrowser formWebBrowser=new FormWebBrowser(xWebResponse.HpfUrl)) {//Braces required within switch statements.
 						formWebBrowser.ShowDialog();
+						if(formWebBrowser.DialogResult==DialogResult.Cancel) {
+							return null;
+						}
 					}
 					xWebResponseProcessed=EdgeExpress.CNP.ProcessTransaction(xWebResponse,_payment);
 					payNote=xWebResponseProcessed.GetFormattedNote(true,false);
@@ -2497,12 +2503,6 @@ namespace OpenDental {
 						}
 					}
 					break;
-			}
-			if(xWebResponseProcessed.TransactionStatus==XWebTransactionStatus.EdgeExpressPending) {
-				return null;
-			}
-			else if(xWebResponseProcessed.TransactionStatus==XWebTransactionStatus.EdgeExpressMonitoringError) {
-				throw new ODException("Transaction failed with status "+xWebResponseProcessed.TransactionStatus.GetDescription());
 			}
 			return payNote;
 		}

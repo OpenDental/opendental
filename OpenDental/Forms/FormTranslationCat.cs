@@ -28,6 +28,7 @@ namespace OpenDental{
 				DialogResult=DialogResult.Cancel;
 				return;
 			}
+			labelLanguage.Text+="\r\n"+CultureInfo.CurrentCulture.DisplayName;
 			FillList();
 		}
 

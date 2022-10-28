@@ -4442,6 +4442,10 @@ namespace OpenDentBusiness {
 				actionOnFailure.Invoke(Lans.g(translationSource, "Please fix arch first."));
 				return false;
 			}
+			if(procedureCode.TreatArea==TreatmentArea.Tooth && !Tooth.IsValidEntry(textTooth)) {
+				actionOnFailure.Invoke(Lans.g(translationSource, "Please fix tooth number first."));
+				return false;
+			}
 			#region Medical Code
 			if(textMedicalCode!="" && !ProcedureCodes.GetContainsKey(textMedicalCode)){
 				actionOnFailure.Invoke(Lans.g(translationSource,"Invalid medical code.  It must refer to an existing procedure code."));

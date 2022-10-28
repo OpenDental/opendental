@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeBase;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -520,6 +521,45 @@ namespace OpenDentBusiness {
 			return myString;
 		}
 
+		/// <summary>Returns a list of the invalid XML chars (both hex and char values that fall outside the valid char range for XML) contained in myString.</summary>
+		public static List<string> XmlFindAllInvalidChars(string myString) {
+			if(string.IsNullOrEmpty(myString)) {
+				return new List<string>();
+			}
+			//There are essentailly 2 possiblities for invalid XML chars that we need to consider. The first is hex char values whose value
+			//is invalid in XML. Per the documentation valid XML chars are: #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] |
+			//[#x10000-#x10FFFF] | /* any Unicode character, excluding the surrogate blocks, FFFE, and FFFF. */(https://www.w3.org/TR/xml/#charsets).
+			//A value of &#x2; for example, reduces to the hex value of x02 which is not inside the valid range. The regex below doesn't bother with that
+			//level of error checking and we assume that anything of the form &#xhexDigit; is an error that the user must correct.
+			string strRegexHexChars=@"&#x[0-9abcdefABCDEF]+;"; 
+			List<string> listStrsInvalidChars=new List<string>();
+			MatchCollection matchCollection=Regex.Matches(myString,strRegexHexChars);
+			for(int i = 0;i < matchCollection.Count;i++) {
+				listStrsInvalidChars.Add(matchCollection[i].Value);
+			}
+			//The second posibility is that the user has entered chars (not hex represnetations) that are invalid in XML. To display valid, erroneous chars
+			//to the user, we must consider the case where the user entered unicode chars. Some unicode is represented by UTF-32, while C# strings are UTF-16.
+			//https://learn.microsoft.com/en-us/dotnet/api/system.char?view=net-6.0#Relationship. This means that a pair of chars in C# can make up 1 unicode
+			//char. If a character is a surrogate (meaning part of a pair) then we try to create a string that includes both chars.
+			List<char> listCharsInvalid=myString.Where(x => !XmlConvert.IsXmlChar(x)).ToList();
+			string strUnicodeChar;
+			for (int i = 0; i < listCharsInvalid.Count; i++) {
+				if(listCharsInvalid.Count>=2 && char.IsSurrogate(listCharsInvalid[i])) {
+					if(i>listCharsInvalid.Count-2) {//Invalid surrogate pair, shouldn't happen.
+						continue;
+					}
+					strUnicodeChar=string.Concat(listCharsInvalid[i], listCharsInvalid[i + 1]);
+					i++;//Increment past the second char we just used.
+				}
+				else {//1 char in list or not a surrogate.
+					strUnicodeChar=listCharsInvalid[i].ToString();
+				}
+				if(!listStrsInvalidChars.Contains(strUnicodeChar)) {//No duplicates.
+          listStrsInvalidChars.Add(strUnicodeChar);
+				}
+      }
+			return listStrsInvalidChars;
+		}
 	}
 
 }

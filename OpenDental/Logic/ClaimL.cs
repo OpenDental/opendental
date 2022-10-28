@@ -197,6 +197,7 @@ namespace OpenDental {
 			bool doCreateSecondaryClaim=!hasSecondaryClaim && PatPlans.GetOrdinal(PriSecMed.Secondary,createClaimDataWrapper.ClaimData.ListPatPlans,
 				createClaimDataWrapper.ClaimData.ListInsPlans,createClaimDataWrapper.ClaimData.ListInsSubs)>0 //if there exists a secondary plan
 				&& !CultureInfo.CurrentCulture.Name.EndsWith("CA");//And not Canada (don't create secondary claim for Canada)
+			Claim claimPrimary=null;
 			if(!hasPrimaryClaim) {
 				string claimType="P";
 				//If they have medical insurance and no dental, make the claim type Medical.  This is to avoid the scenario of multiple med ins and no dental.
@@ -206,18 +207,18 @@ namespace OpenDental {
 				{
 					claimType="Med";
 				}
-				Claim claimCur=new Claim();
-				claimCur.DateSent=DateTime.Today;
-				claimCur.DateSentOrig=DateTime.MinValue;
-				claimCur.ClaimStatus="W";
-				//Set claimCur to what CreateClaim returns because the reference to claimCur gets broken when inserting.
-				claimCur=CreateClaim(claimCur,claimType,isVerbose,createClaimDataWrapper,"Primary Claim Error");
-				if(claimCur.ClaimNum==0) {
+				claimPrimary=new Claim();
+				claimPrimary.DateSent=DateTime.Today;
+				claimPrimary.DateSentOrig=DateTime.MinValue;
+				claimPrimary.ClaimStatus="W";
+				//Set claimPrimary to what CreateClaim returns because the reference to claimPrimary gets broken when inserting.
+				claimPrimary=CreateClaim(claimPrimary,claimType,isVerbose,createClaimDataWrapper,"Primary Claim Error");
+				if(claimPrimary.ClaimNum==0) {
 					createClaimDataWrapper.DoRefresh=true;
 					return createClaimDataWrapper; 
 				}
-				if(isVerbose && claimCur.ClaimNum!=0) {//Only provide the user with the option to cancel the claim if attempting to create a single claim manually.
-					using FormClaimEdit FormCE=new FormClaimEdit(claimCur,createClaimDataWrapper.Pat,createClaimDataWrapper.Fam);
+				if(isVerbose && claimPrimary.ClaimNum!=0) {//Only provide the user with the option to cancel the claim if attempting to create a single claim manually.
+					using FormClaimEdit FormCE=new FormClaimEdit(claimPrimary,createClaimDataWrapper.Pat,createClaimDataWrapper.Fam);
 					FormCE.IsNew=true;//this causes it to delete the claim if cancelling.
 					FormCE.ShowDialog();
 					if(FormCE.DialogResult!=DialogResult.OK) {
@@ -225,29 +226,39 @@ namespace OpenDental {
 						return createClaimDataWrapper;
 					}
 					double unearnedAmount=(double)PaySplits.GetTotalAmountOfUnearnedForPats(createClaimDataWrapper.Fam.GetPatNums());
-					AllocateUnearnedPayment(createClaimDataWrapper.Pat,createClaimDataWrapper.Fam,unearnedAmount,claimCur);
+					AllocateUnearnedPayment(createClaimDataWrapper.Pat,createClaimDataWrapper.Fam,unearnedAmount,claimPrimary);
 				}
-				else if(claimCur.ClaimNum!=0) {//isVerbose is false, still need to log.
+				else if(claimPrimary.ClaimNum!=0) {//isVerbose is false, still need to log.
 					Patient patCur=createClaimDataWrapper.Pat;
 					SecurityLogs.MakeLogEntry(Permissions.ClaimEdit,patCur.PatNum,"New claim created for "+patCur.LName+","+patCur.FName,
-						claimCur.ClaimNum,claimCur.SecDateTEdit);
+						claimPrimary.ClaimNum,claimPrimary.SecDateTEdit);
 				}
 			}
+			Claim claimSecondary=null;
 			if(doCreateSecondaryClaim) {
 				//ClaimL.CalculateAndUpdate() could have added new claimprocs for additional insurance plans if they were added after the proc was completed
 				createClaimDataWrapper.ClaimData.ListClaimProcs=ClaimProcs.Refresh(createClaimDataWrapper.Pat.PatNum);
-				Claim claimCur=new Claim();
-				claimCur.ClaimStatus="H";
-				//Set ClaimCur to CreateClaim because the reference to ClaimCur gets broken when inserting.
-				claimCur=CreateClaim(claimCur,"S",isVerbose,createClaimDataWrapper,"Secondary Claim Error");
-				if(claimCur.ClaimNum==0) {
+				claimSecondary=new Claim();
+				claimSecondary.ClaimStatus="H";
+				//Set claimSecondary to CreateClaim because the reference to claimSecondary gets broken when inserting.
+				claimSecondary=CreateClaim(claimSecondary,"S",isVerbose,createClaimDataWrapper,"Secondary Claim Error");
+				if(claimSecondary.ClaimNum==0) {
 					createClaimDataWrapper.DoRefresh=true;
 					return createClaimDataWrapper;
 				}
 				else {
 					Patient patCur=createClaimDataWrapper.Pat;
 					SecurityLogs.MakeLogEntry(Permissions.ClaimEdit,patCur.PatNum,"New claim created for "+patCur.LName+","+patCur.FName,
-						claimCur.ClaimNum,claimCur.SecDateTEdit);
+						claimSecondary.ClaimNum,claimSecondary.SecDateTEdit);
+				}
+			}
+			if(claimPrimary!=null) {
+				claimPrimary=Claims.GetClaim(claimPrimary.ClaimNum);
+				if(claimSecondary!=null && claimSecondary.ClaimStatus.In("H","U") && claimPrimary.ClaimStatus=="R") {
+					if(PrefC.GetBool(PrefName.PromptForSecondaryClaim) && Security.IsAuthorized(Permissions.ClaimSend,suppressMessage:true)) {
+						List<ClaimProc> listClaimProcs=createClaimDataWrapper.ClaimData.ListClaimProcs.FindAll(x=>x.ClaimNum==claimPrimary.ClaimNum);
+						PromptForSecondaryClaim(listClaimProcs);
+					}
 				}
 			}
 			createClaimDataWrapper.DoRefresh=true;

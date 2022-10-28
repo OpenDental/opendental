@@ -738,7 +738,9 @@ namespace OpenDental.UI{
 					Invalidate();
 					SelectionChangeCommitted?.Invoke(this,new EventArgs());
 				}
-				ContextMenu.Show(this,e.Location);
+				if(ContextMenu!=null) {//When using FormImagePickerPatient, the ContextMenu control is not initialized so we need to do a null check to prevent errors.
+					ContextMenu.Show(this,e.Location);
+				}
 				return;
 			}
 			//Select row================================================================================================

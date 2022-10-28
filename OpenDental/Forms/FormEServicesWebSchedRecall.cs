@@ -76,6 +76,9 @@ namespace OpenDental {
 			comboWebSchedClinic.Items.Add(Lan.g(this,"Unassigned"));
 			_listClinicsAll=Clinics.GetDeepCopy();
 			for(int i=0;i<_listClinicsAll.Count;i++) {
+				if(_listClinicsAll[i].IsHidden) {
+					continue;
+				}
 				comboWebSchedClinic.Items.Add(_listClinicsAll[i].Abbr);
 			}
 			comboWebSchedClinic.SelectedIndex=0;

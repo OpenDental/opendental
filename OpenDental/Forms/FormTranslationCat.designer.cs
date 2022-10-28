@@ -29,10 +29,8 @@ namespace OpenDental {
 			this.butExport = new OpenDental.UI.Button();
 			this.butDownload = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
-			this.textBox1 = new System.Windows.Forms.TextBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-			this.groupBox1.SuspendLayout();
+			this.labelLanguage = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// listCats
@@ -77,7 +75,8 @@ namespace OpenDental {
 			// 
 			// butDownload
 			// 
-			this.butDownload.Location = new System.Drawing.Point(14, 22);
+			this.butDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.butDownload.Location = new System.Drawing.Point(310, 34);
 			this.butDownload.Name = "butDownload";
 			this.butDownload.Size = new System.Drawing.Size(102, 26);
 			this.butDownload.TabIndex = 4;
@@ -94,52 +93,34 @@ namespace OpenDental {
 			this.label2.Text = "Use this to create a file to send to us with all translations.  You can ONLY do t" +
     "his if you are the manager for your language.";
 			// 
-			// textBox1
+			// labelLanguage
 			// 
-			this.textBox1.BackColor = System.Drawing.SystemColors.Control;
-			this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.textBox1.Location = new System.Drawing.Point(14, 58);
-			this.textBox1.Multiline = true;
-			this.textBox1.Name = "textBox1";
-			this.textBox1.Size = new System.Drawing.Size(178, 58);
-			this.textBox1.TabIndex = 6;
-			this.textBox1.Text = "Download and install the most current translations from our website.  This will o" +
-    "verwrite all current translations.";
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.butDownload);
-			this.groupBox1.Controls.Add(this.textBox1);
-			this.groupBox1.Location = new System.Drawing.Point(306, 30);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(200, 122);
-			this.groupBox1.TabIndex = 7;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "NO ENGLISH ??";
+			this.labelLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelLanguage.Location = new System.Drawing.Point(310, 63);
+			this.labelLanguage.Name = "labelLanguage";
+			this.labelLanguage.Size = new System.Drawing.Size(198, 81);
+			this.labelLanguage.TabIndex = 6;
+			this.labelLanguage.Text = "Language/Culture: ";
 			// 
 			// FormTranslationCat
 			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5,13);
 			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(520, 648);
+			this.Controls.Add(this.labelLanguage);
 			this.Controls.Add(this.butClose);
-			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.butExport);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.listCats);
+			this.Controls.Add(this.butDownload);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "FormTranslationCat";
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Select Category";
 			this.Load += new System.EventHandler(this.FormTranslation_Load);
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox1.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -151,8 +132,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butExport;
 		private OpenDental.UI.Button butDownload;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox textBox1;
-		private OpenDental.UI.GroupBoxOD groupBox1;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+		private Label labelLanguage;
 	}
 }

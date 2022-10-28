@@ -1205,7 +1205,7 @@ namespace OpenDentBusiness{
 			}
 			emailMessageTemp.RawEmailIn=message.Body.Content;
 			emailMessageTemp.SentOrReceived=EmailSentOrReceived.Received;
-			emailMessageTemp.MsgDateTime=((DateTimeOffset)message.SentDateTime).DateTime;
+			emailMessageTemp.MsgDateTime=((DateTimeOffset)message.SentDateTime).DateTime.ToLocalTime();
 			return emailMessageTemp;
 		}
 
