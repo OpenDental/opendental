@@ -5233,7 +5233,6 @@ namespace OpenDental {
 					tabProc.TabPages.Add(tabShow);
 					tabProc.TabPages.Add(tabDraw);*/
 					tabProc.SelectedTab=tabPageSelected;
-					_selectedProcTab=tabProc.SelectedIndex;
 					textSurf.Visible=true;
 					butBF.Visible=true;
 					butOI.Visible=true;
@@ -5242,6 +5241,13 @@ namespace OpenDental {
 					butD.Visible=true;
 					butL.Visible=true;
 					checkShowTeeth.Visible=true;
+					if(!tabProc.TabPages.Contains(tabMissing)) {
+						tabProc.TabPages.Insert(1,tabMissing); 
+					}
+					if(!tabProc.TabPages.Contains(tabMovements)) {
+						tabProc.TabPages.Insert(2,tabMovements);
+					}
+					_selectedProcTab=tabProc.SelectedIndex;
 				}
 			}
 			ToolBarMain.Invalidate();

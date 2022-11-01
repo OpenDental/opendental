@@ -98,7 +98,8 @@ namespace OpenDental {
 					textChatMessage.Text="";
 					textChatMessage.Enabled=false;
 				}
-				SmsThreadMessage msg=new SmsThreadMessage(webChatMessage.DateT,
+				SmsThreadMessage msg=new SmsThreadMessage(webChatMessage.WebChatMessageNum.ToString(),
+					webChatMessage.DateT,
 					strMsg,
 					(webChatMessage.MessageType==WebChatMessageType.Customer),
 					false,

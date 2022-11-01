@@ -2415,11 +2415,11 @@ namespace OpenDental {
 						doCreateToken,CreditCardSource.EdgeExpressCNP,false,aliasToken,paymentNum:_payment.PayNum,clinicNum:clinicNum);
 					using(FormWebBrowser formWebBrowser=new FormWebBrowser(xWebResponse.HpfUrl)) {//Braces required within switch statements.
 						formWebBrowser.ShowDialog();
-						if(formWebBrowser.DialogResult==DialogResult.Cancel) {
-							return null;
-						}
 					}
 					xWebResponseProcessed=EdgeExpress.CNP.ProcessTransaction(xWebResponse,_payment);
+					if(xWebResponseProcessed.TransactionStatus==XWebTransactionStatus.EdgeExpressPending) {
+						return null; //FormWebBrowser closed early
+					}
 					payNote=xWebResponseProcessed.GetFormattedNote(true,false);
 					_payment.PaymentSource=xWebResponseProcessed.CCSource;
 					if(xWebResponseProcessed.TransactionStatus==XWebTransactionStatus.EdgeExpressCompletePaymentApproved) {
@@ -2439,11 +2439,11 @@ namespace OpenDental {
 					xWebResponse=EdgeExpress.CNP.GetUrlForCreditCardAlias(_patient.PatNum,CreditCardSource.EdgeExpressCNP,false,amt,doCreateToken);
 					using(FormWebBrowser formWebBrowser=new FormWebBrowser(xWebResponse.HpfUrl)) {//Braces required within switch statements.
 						formWebBrowser.ShowDialog();
-						if(formWebBrowser.DialogResult==DialogResult.Cancel) {
-							return null;
-						}
 					}
 					xWebResponseProcessed=EdgeExpress.CNP.ProcessTransaction(xWebResponse,_payment);
+					if(xWebResponseProcessed.TransactionStatus==XWebTransactionStatus.EdgeExpressPending) {
+						return null; //FormWebBrowser closed early
+					}
 					payNote=xWebResponseProcessed.GetFormattedNote(true,false);
 					_payment.Receipt=EdgeExpress.CNP.BuildReceiptString(xWebResponseProcessed,false);
 					if(xWebResponseProcessed.XWebResponseCode==XWebResponseCodes.Approval) {// only print receipt if its an approved transaction

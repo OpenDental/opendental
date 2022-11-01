@@ -66,15 +66,27 @@ namespace OpenDental {
 			int y=0;
 			Control controlHighlighted=null;
 			panelScroll.SuspendLayout();
+			//Remove message controls for messages which have been removed from the given list of messages.
+			for(int i=panelScroll.Controls.Count-1;i>=0;i--) {
+				Control control=panelScroll.Controls[i];//Freeze the variable so we can remove it before disposing it below.
+				if(!control.Name.Contains("_")) {
+					continue;
+				}
+				string id=control.Name.Substring(control.Name.IndexOf("_")+1);
+				if(!_listSmsThreadToDisplay.Exists(x => x.ID==id)) {
+					//LayoutManager.Remove() currently only supports tab pages.
+					panelScroll.Controls.Remove(control);
+					control.Dispose();//This control does not have any child controls.
+				}
+			}
 			//Loop through and update existing control sizes, text, borders, etc.  Add new controls for messages not already represented.
-			//We assume no messages are deleted and never change order.
 			for(int i=0;i<_listSmsThreadToDisplay.Count;i++) {
 				SmsThreadMessage msg=_listSmsThreadToDisplay[i];
 				y+=verticalPadding;
 				Label labelMessageHeader=new Label();
 				SetDoubleBuffered(labelMessageHeader,true);
 				//labelMessageHeader.MouseWheel+=MouseWheel_Scroll;//Labels automatically pass their scroll events through to their parent controls.
-				labelMessageHeader.Name="labelMessageHeader"+i;
+				labelMessageHeader.Name="labelMessageHeader_"+msg.ID;
 				labelMessageHeader.Text=((msg.UserName==null)?"":(msg.UserName+"  "))+msg.MsgDateTime.ToString();
 				if(msg.IsAlignedLeft) {
 					labelMessageHeader.TextAlign=ContentAlignment.MiddleLeft;
@@ -103,7 +115,7 @@ namespace OpenDental {
 				if(msg.IsImportant) {
 					textBoxMessage.ForeColor=Color.Red;
 				}
-				textBoxMessage.Name="textSmsThreadMsg"+i;
+				textBoxMessage.Name="textSmsThreadMsg_"+msg.ID;
 				textBoxMessage.BorderStyle=BorderStyle.None;
 				textBoxMessage.Multiline=true;
 				textBoxMessage.Text=msg.Message.Replace("\r\n","\n").Replace("\n","\r\n");//Normalize \n coming from RichTextBox to \r\n for TextBox.
@@ -118,7 +130,7 @@ namespace OpenDental {
 					Height=textBoxMessage.Height+2,
 					BackColor=Color.Black,
 				};
-				border.Name="msgBorder"+i;
+				border.Name="msgBorder_"+msg.ID;
 				if(msg.IsAlignedLeft) {
 					border.Location=new Point(horizontalMargin,y);
 				}
@@ -170,7 +182,7 @@ namespace OpenDental {
 			existingControl.Height=control.Height;
 			existingControl.Location=control.Location;
 			existingControl.ForeColor=control.ForeColor;
-			DisposeChildrenRecursive(control,true);
+			control.Dispose();//This control does not have any child controls.
 			LayoutManager.Move(existingControl,existingControl.Bounds);
 			return existingControl;
 		}
@@ -304,6 +316,8 @@ namespace OpenDental {
 	}
 
 	public class SmsThreadMessage {
+		///<summary>Context specific.  Must be a unique ID which can identify the message within the SmsThreadView control.</summary>
+		public string ID;
 		///<summary>The date and time the message was sent or received.</summary>
 		public DateTime MsgDateTime;
 		///<summary>The message itself.</summary>
@@ -337,7 +351,8 @@ namespace OpenDental {
 			}
 		}
 
-		public SmsThreadMessage(DateTime msgDateTime,string message,bool isAlignedLeft,bool isImportant,bool isHighlighted,string userName=null) {
+		public SmsThreadMessage(string id,DateTime msgDateTime,string message,bool isAlignedLeft,bool isImportant,bool isHighlighted,string userName=null) {
+			ID=id;
 			MsgDateTime=msgDateTime;
 			Message=message;
 			IsAlignedLeft=isAlignedLeft;

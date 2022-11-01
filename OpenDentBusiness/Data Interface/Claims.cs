@@ -1768,6 +1768,9 @@ namespace OpenDentBusiness{
 			}
 			//Using RefreshForClaims() to get ClaimProcs for a single Claim because RefreshForClaim() excludes Canada labs.
 			List<ClaimProc> listClaimProcs=ClaimProcs.RefreshForClaims(new List<long>{claim.ClaimNum});
+			if(listClaimProcs.Any(x => x.Status==ClaimProcStatus.Received || x.InsPayAmt!=0)) {
+				return false;
+			}
 			for(int i=0;i<listClaimProcs.Count;i++) {
 				ClaimProc claimProcOld=listClaimProcs[i].Copy();
 				ClaimProc claimProcNew=listClaimProcs[i];

@@ -125,15 +125,20 @@ namespace CodeBase {
 
 		///<summary>If HasVerboseLogging(Environment.MachineName) then Logger.WriteLine(log). Otherwise do nothing.</summary>
 		public static void LogVerbose(string log,string subDirectory = "") {
-			try {
-				if(DoVerboseLogging==null || !DoVerboseLogging()) {
+			if(DoVerboseLogging==null || !DoVerboseLogging()) {
 					return;
-				}
-				if(DateTime.Now.Subtract(_lastLoggerCleanup)>TimeSpan.FromDays(1)) { //Once a day logger cleanup is due.
-					Logger.CleanupLoggerDirectoryAsync(0);
-					_lastLoggerCleanup=DateTime.Now;
-				}
-				Logger.WriteLine(log,subDirectory);
+			}
+			Logger.WriteLine(log,subDirectory,daysOld:30);
+		}
+
+		/// <summary>Runs the logger directory cleanup code once per day. Use daysOld to specify the age (in days) after which files should be deleted. </summary>
+		public static void CleanupLoggerDirectoryOncePerDay(int daysOld) {
+			if(DateTime.Now.Subtract(_lastLoggerCleanup)<=TimeSpan.FromDays(1)) { //Once a day logger cleanup is due.
+				return;//It's not time to try and clear the logs yet.
+			}
+			try {
+				Logger.CleanupLoggerDirectoryAsync(0,cleanIfOlderThanDays:daysOld);
+				_lastLoggerCleanup=DateTime.Now;
 			}
 			catch(Exception e) {
 				e.DoNothing();
@@ -180,11 +185,12 @@ namespace CodeBase {
 			return ret;
 		}
 
-		public static void WriteLine(string line,string subDirectory) {
-			WriteLine(line,subDirectory,false,true);
+		public static void WriteLine(string line,string subDirectory,int daysOld=90) {
+			WriteLine(line,subDirectory,false,true,daysOld);
 		}
 
-		public static void WriteLine(string line,string subDirectory,bool singleFileOnly,bool includeTimestamp) {
+		public static void WriteLine(string line,string subDirectory,bool singleFileOnly,bool includeTimestamp,int daysOld=90) {
+			CleanupLoggerDirectoryOncePerDay(daysOld);
 			lock (_lock) {
 				subDirectory=ScrubSubDirPath(subDirectory);
 				StreamWriter file = Open(subDirectory,singleFileOnly);

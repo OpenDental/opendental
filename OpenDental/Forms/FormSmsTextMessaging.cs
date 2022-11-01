@@ -528,10 +528,10 @@ namespace OpenDental {
 			labelPatientsForPhone.Visible=false;
 			if(_selectedPatNum==0 && _selectedSmsGroup==null) { //A message with no patNum was selected and is not a group, or nothing is selected at all.
 				if(_selectedSmsToMobile!=null) { //SmsToMobile is selected.
-					smsThreadView.ListSmsThreadMessages=new List<SmsThreadMessage>() { new SmsThreadMessage(_selectedSmsToMobile.DateTimeSent,_selectedSmsToMobile.MsgText,true,true,true) };
+					smsThreadView.ListSmsThreadMessages=new List<SmsThreadMessage>() { new SmsThreadMessage("T"+_selectedSmsToMobile.SmsToMobileNum,_selectedSmsToMobile.DateTimeSent,_selectedSmsToMobile.MsgText,true,true,true) };
 				}
 				else if(_selectedSmsFromMobile!=null) { //SmsFromMobile is selected.
-					smsThreadView.ListSmsThreadMessages=new List<SmsThreadMessage>() { new SmsThreadMessage(_selectedSmsFromMobile.DateTimeReceived,_selectedSmsFromMobile.MsgText,true,true,true) };
+					smsThreadView.ListSmsThreadMessages=new List<SmsThreadMessage>() { new SmsThreadMessage("F"+_selectedSmsFromMobile.SmsFromMobileNum,_selectedSmsFromMobile.DateTimeReceived,_selectedSmsFromMobile.MsgText,true,true,true) };
 				}
 				else { //Nothing selected at all, clear the message thread.
 					smsThreadView.ListSmsThreadMessages=null;
@@ -561,7 +561,7 @@ namespace OpenDental {
 				if(_selectedSmsFromMobile!=null && _selectedSmsFromMobile.SmsFromMobileNum==smsFromMobile.SmsFromMobileNum) {
 					isHighlighted=true;
 				}
-				listSmsThreadMessages.Add(new SmsThreadMessage(smsFromMobile.DateTimeReceived,smsFromMobile.MsgText,true,false,isHighlighted));
+				listSmsThreadMessages.Add(new SmsThreadMessage("F"+smsFromMobile.SmsFromMobileNum,smsFromMobile.DateTimeReceived,smsFromMobile.MsgText,true,false,isHighlighted));
 			}
 			List<SmsToMobile> listSmsToMobile=SmsToMobiles.GetMessages(DateTime.MinValue,DateTime.MinValue,GetListSelectedClinicNums(),patNumForDb,
 				numberForDb);
@@ -574,7 +574,7 @@ namespace OpenDental {
 				if(smsToMobile.SmsStatus==SmsDeliveryStatus.FailNoCharge ||smsToMobile.SmsStatus==SmsDeliveryStatus.FailWithCharge) {
 					isImportant=true;
 				}
-				listSmsThreadMessages.Add(new SmsThreadMessage(smsToMobile.DateTimeSent,smsToMobile.MsgText,false,isImportant,isHighlighted));
+				listSmsThreadMessages.Add(new SmsThreadMessage("T"+smsToMobile.SmsToMobileNum,smsToMobile.DateTimeSent,smsToMobile.MsgText,false,isImportant,isHighlighted));
 			}
 			listSmsThreadMessages.Sort(SmsThreadMessage.CompareMessages);
 			smsThreadView.ListSmsThreadMessages=listSmsThreadMessages;

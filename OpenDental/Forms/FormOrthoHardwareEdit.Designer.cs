@@ -61,7 +61,7 @@ namespace OpenDental{
 			// 
 			// labelTeeth
 			// 
-			this.labelTeeth.Location = new System.Drawing.Point(32, 88);
+			this.labelTeeth.Location = new System.Drawing.Point(30, 88);
 			this.labelTeeth.Name = "labelTeeth";
 			this.labelTeeth.Size = new System.Drawing.Size(99, 16);
 			this.labelTeeth.TabIndex = 26;
@@ -77,7 +77,7 @@ namespace OpenDental{
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(9, 57);
+			this.label2.Location = new System.Drawing.Point(7, 57);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(122, 16);
 			this.label2.TabIndex = 30;
@@ -106,7 +106,7 @@ namespace OpenDental{
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(9, 24);
+			this.label3.Location = new System.Drawing.Point(7, 24);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(122, 16);
 			this.label3.TabIndex = 32;
@@ -122,7 +122,7 @@ namespace OpenDental{
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(50, 118);
+			this.label4.Location = new System.Drawing.Point(48, 118);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(81, 16);
 			this.label4.TabIndex = 103;

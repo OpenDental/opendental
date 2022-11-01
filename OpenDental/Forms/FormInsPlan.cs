@@ -107,9 +107,10 @@ namespace OpenDental{
 			_patPlanOld=patPlan?.Copy();
 			_insSub=insSub;
 			_listBoxEmps=new ListBox();//Instead of ListBoxOD for consistency with listCars.
-			_listBoxEmps.Location=new Point(tabControlInsPlan.Left+tabPageInsPlanInfo.Left+panelPlan.Left+groupPlan.Left+textEmployer.Left,
-				tabPageInsPlanInfo.Top+tabControlInsPlan.Top+panelPlan.Top+groupPlan.Top+textEmployer.Bottom);
-			_listBoxEmps.Size=new Size(231,100);
+			_listBoxEmps.Location=new Point(LayoutManager.Scale(tabControlInsPlan.Left+tabPageInsPlanInfo.Left+panelPlan.Left+groupPlan.Left+textEmployer.Left),
+				LayoutManager.Scale(tabPageInsPlanInfo.Top+tabControlInsPlan.Top+panelPlan.Top+groupPlan.Top+textEmployer.Bottom));
+			_listBoxEmps.Size=LayoutManager.ScaleSize(new Size(231,100));
+			_listBoxEmps.Font=new Font(Font.FontFamily,LayoutManager.ScaleF(Font.Size));
 			_listBoxEmps.Visible=false;
 			_listBoxEmps.Click += new System.EventHandler(listBoxEmps_Click);
 			_listBoxEmps.DoubleClick += new System.EventHandler(listBoxEmps_DoubleClick);
@@ -118,9 +119,10 @@ namespace OpenDental{
 			LayoutManager.Add(_listBoxEmps,this);
 			_listBoxEmps.BringToFront();
 			_listBoxCarriers=new ListBox();//Instead of ListBoxOD, for horiz scroll on a dropdown.
-			_listBoxCarriers.Location=new Point(tabControlInsPlan.Left+tabPageInsPlanInfo.Left+panelPlan.Left+groupPlan.Left+groupCarrier.Left+textCarrier.Left,
-				tabControlInsPlan.Top+tabPageInsPlanInfo.Top+panelPlan.Top+groupPlan.Top+groupCarrier.Top+textCarrier.Bottom);
-			_listBoxCarriers.Size=new Size(700,100);
+			_listBoxCarriers.Location=new Point(LayoutManager.Scale(tabControlInsPlan.Left+tabPageInsPlanInfo.Left+panelPlan.Left+groupPlan.Left+groupCarrier.Left+textCarrier.Left),
+				LayoutManager.Scale(tabControlInsPlan.Top+tabPageInsPlanInfo.Top+panelPlan.Top+groupPlan.Top+groupCarrier.Top+textCarrier.Bottom));
+			_listBoxCarriers.Size=LayoutManager.ScaleSize(new Size(700,100));
+			_listBoxCarriers.Font=new Font(Font.FontFamily,LayoutManager.ScaleF(Font.Size));
 			_listBoxCarriers.HorizontalScrollbar=true;
 			_listBoxCarriers.Visible=false;
 			_listBoxCarriers.Click += new System.EventHandler(listBoxCarriers_Click);
@@ -1023,7 +1025,7 @@ namespace OpenDental{
 			if(h > ClientSize.Height-_listBoxEmps.Top){
 				h=ClientSize.Height-_listBoxEmps.Top;
 			}
-			_listBoxEmps.Size=new Size(231,h);
+			LayoutManager.MoveSize(_listBoxEmps,new Size(_listBoxEmps.Width,LayoutManager.Scale(h)));
 			_listBoxEmps.Visible=true;
 		}
 
@@ -1148,7 +1150,7 @@ namespace OpenDental{
 			if(h > ClientSize.Height-_listBoxCarriers.Top){
 				h=ClientSize.Height-_listBoxCarriers.Top;
 			}
-			_listBoxCarriers.Size=new Size(_listBoxCarriers.Width,h);
+			LayoutManager.MoveSize(_listBoxCarriers,new Size(_listBoxCarriers.Width,LayoutManager.Scale(h)));
 			_listBoxCarriers.Visible=true;
 		}
 

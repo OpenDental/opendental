@@ -3973,6 +3973,11 @@ namespace OpenDentBusiness {
 			}//end United States CDT codes update
 		} // end of 22_2_43
 
+		private static void To22_2_51() {
+			string command="UPDATE sheetfield SET Height=22 WHERE FieldType=10 AND Height=0";
+			Db.NonQ(command);
+		}
+
 		private static void To22_3_1() {
 			string command;
 			DataTable table;
@@ -4152,6 +4157,11 @@ namespace OpenDentBusiness {
 		private static void To22_3_18() {
 			string command;
 			command="INSERT INTO preference (PrefName,ValueString) VALUES ('ThankYouTitleUseDefault','0')";
+			Db.NonQ(command);
+		}
+
+		private static void To22_3_21() {
+			string command="UPDATE sheetfield SET Height=22 WHERE FieldType=10 AND Height=0";
 			Db.NonQ(command);
 		}
 	}

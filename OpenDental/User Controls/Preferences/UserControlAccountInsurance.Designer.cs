@@ -60,6 +60,7 @@ namespace OpenDental {
 			this.butReplacements = new OpenDental.UI.Button();
 			this.textClaimIdentifier = new System.Windows.Forms.TextBox();
 			this.checkClaimsValidateACN = new System.Windows.Forms.CheckBox();
+			this.label1 = new System.Windows.Forms.Label();
 			this.groupBoxClaimsMedical.SuspendLayout();
 			this.groupBoxClaimsPayments.SuspendLayout();
 			this.groupBoxOD2.SuspendLayout();
@@ -444,11 +445,22 @@ namespace OpenDental {
 			this.checkClaimsValidateACN.Text = "Require ACN# in remarks on claims with ADDP group name";
 			this.checkClaimsValidateACN.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
+			// label1
+			// 
+			this.label1.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.label1.Location = new System.Drawing.Point(476, 366);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(455, 17);
+			this.label1.TabIndex = 327;
+			this.label1.Text = "Only applies to claims with no payments entered and no received claim procedures." +
+    "";
+			// 
 			// UserControlAccountInsurance
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.label1);
 			this.Controls.Add(this.labelEclaimsSeparateTreatProvDetails);
 			this.Controls.Add(this.labelClaimIdPrefixDetails);
 			this.Controls.Add(this.groupBoxClaimsMedical);
@@ -509,5 +521,6 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelEclaimsSeparateTreatProvDetails;
 		private System.Windows.Forms.CheckBox checkEclaimsSeparateTreatProv;
 		private System.Windows.Forms.CheckBox checkInsAutoReceiveNoAssign;
+		private System.Windows.Forms.Label label1;
 	}
 }
