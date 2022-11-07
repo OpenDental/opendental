@@ -424,13 +424,13 @@ namespace OpenDental {
 		}
 
 		///<summary>Sets the starting location of this form. Should only be called on load.
-		///The first Task window will default to CenterScreen. After that we will cascade down.
+		///The first Task window will default to CenterParent. After that we will cascade down.
 		///If any part of this form will be off screen we will default the next task to the top left of the primary monitor.</summary>
 		private void SetTaskStartingLocation() { 
 			List<FormTaskEdit> listTaskEdits=Application.OpenForms.OfType<FormTaskEdit>().ToList();
 			//Since this form has already gone through the initilize, there will be at least 1. Except when running unit tests.
 			if(listTaskEdits.Count<=1) {
-				this.StartPosition=FormStartPosition.CenterScreen;
+				this.StartPosition=FormStartPosition.CenterParent;
 				return;
 			}
 			Point pointStart;

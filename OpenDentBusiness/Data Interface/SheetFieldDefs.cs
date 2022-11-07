@@ -98,6 +98,10 @@ namespace OpenDentBusiness{
 			||(sheetFieldType==SheetFieldType.CheckBox);
 		}
 
+		/// <summary>
+		/// Returns a group of checkboxes from listSheetFields which are grouped with the passed in checkbox.
+		/// Returns a single checkbox if no group members found, or an empty list if no checkboxes are found from group.
+		/// </summary>
 		public static List<SheetFieldDef> GetRadioGroupForSheetFieldDef(SheetFieldDef sheetFieldDef,List<SheetFieldDef> listSheetFields){
 			List<SheetFieldDef> retVal=new List<SheetFieldDef>();
 			//Each SheetFieldDef item goes into the panel of available fields.
@@ -138,9 +142,6 @@ namespace OpenDentBusiness{
 			else if(checkboxGroups.Any(x => CompareSheetFieldDefsByValueForMobileLayout(x,sheetFieldDef))) {
 				retVal=checkboxGroups.GroupBy(x => x.UiLabelMobile).Where(x=>x.Key==sheetFieldDef.UiLabelMobile).SelectMany(x=>x).ToList();
 			}
-			if(retVal.Count<=1) {
-				retVal=new List<SheetFieldDef>();
-			}
 			return retVal;
 		}
 
@@ -164,8 +165,8 @@ namespace OpenDentBusiness{
 				&& sheetFieldDefA.RadioButtonValue==sheetFieldDefB.RadioButtonValue
 				&& sheetFieldDefA.UiLabelMobile==sheetFieldDefB.UiLabelMobile
 				&& GetUiLabelMobileRadioButton(sheetFieldDefA)==GetUiLabelMobileRadioButton(sheetFieldDefB)
-				&& sheetFieldDefA.XPos==sheetFieldDefB.XPos 
-				&& sheetFieldDefA.YPos==sheetFieldDefB.YPos;
+				&& ((sheetFieldDefA.XPos==sheetFieldDefB.XPos && sheetFieldDefA.YPos==sheetFieldDefB.YPos)
+				||sheetFieldDefA.SheetFieldDefNum==sheetFieldDefB.SheetFieldDefNum);
 		}
 
 		///<Summary>Gets one SheetFieldDef from the database.</Summary>

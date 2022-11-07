@@ -1058,6 +1058,7 @@ namespace OpenDental {
 			this.Controls.Add(this.splitContainerDescriptNote);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormTaskEdit";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Task";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormTaskEdit_FormClosing);
 			this.Load += new System.EventHandler(this.FormTaskListEdit_Load);

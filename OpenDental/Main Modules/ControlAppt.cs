@@ -1776,6 +1776,9 @@ namespace OpenDental {
 			}
 			finally {
 				pinBoard.HideDraggableTempApptSingle();
+				if(pinBoard.ListPinBoardItems.Count>0) {//If there are any more items in the pinboard, update the selected index.
+					pinBoard.SelectedIndex=pinBoard.ListPinBoardItems.Count-1;
+				}
 			}
 		}
 

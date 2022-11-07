@@ -4372,7 +4372,10 @@ namespace OpenDentBusiness{
 			Appointment apptNew=apptPlanned.Copy();
 			apptNew.NextAptNum=apptPlanned.AptNum;
 			apptNew.AptStatus=ApptStatus.Scheduled;
-			apptNew.TimeLocked=PrefC.GetBool(PrefName.AppointmentTimeIsLocked);
+			apptNew.TimeLocked=apptPlanned.TimeLocked;
+			if(PrefC.GetBool(PrefName.AppointmentTimeIsLocked)) {
+				apptNew.TimeLocked=PrefC.GetBool(PrefName.AppointmentTimeIsLocked);
+			}
 			apptNew.AptDateTime=aptDateTime;
 			apptNew.Op=opNum;
 			Appointments.Insert(apptNew);//now, aptnum is different.
@@ -5309,10 +5312,11 @@ namespace OpenDentBusiness{
 			if(listAptNumsToDelete.Count > 0) {
 				Delete(listAptNumsToDelete);
 				//Nathan asked for a specific log entry message explaining why each apt was deleted.
-				for(int i=0;i<listAptNumsToDelete.Count;i++) {
+				List<long> listAptNumsToDeleteDistinct=listAptNumsToDelete.Distinct().ToList();
+				for(int i=0;i<listAptNumsToDeleteDistinct.Count;i++) {
 					SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit, patNum
 						, "All procedures were moved off of the appointment, resulting in its deletion."
-						, listAptNumsToDelete[i], DateTime.MinValue);
+						, listAptNumsToDeleteDistinct[i], DateTime.MinValue);
 				}
 			}
 		}

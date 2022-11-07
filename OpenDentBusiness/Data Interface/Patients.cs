@@ -3834,6 +3834,14 @@ namespace OpenDentBusiness {
 					+" WHERE "+tableAndKeyName[1]+"="+POut.Long(patFrom);
 				Db.NonQ(command);
 			}
+			//We have changed the PatNum in the paysplit table.
+			//The PatNum field is included in the generation of the PaySplit.SecurityHash field.
+			//Rehash all their paysplits to match the new PatNum.
+			List<PaySplit> listPaySplits=PaySplits.GetForPats(new List<long> {patTo});
+			for(int i=0;i<listPaySplits.Count; i++) {
+				listPaySplits[i].SecurityHash=PaySplits.HashFields(listPaySplits[i]);
+				PaySplits.Update(listPaySplits[i]);
+			}
 			//Update the 'HasIns' column, and handle discount plans.
 			//If the combined patient has insurance, we want to make sure we update 'HasIns' and 
 			//remove any discount plan. If the combined patient has no insurance, only merge in 

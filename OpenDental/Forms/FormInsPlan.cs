@@ -107,9 +107,10 @@ namespace OpenDental{
 			_patPlanOld=patPlan?.Copy();
 			_insSub=insSub;
 			_listBoxEmps=new ListBox();//Instead of ListBoxOD for consistency with listCars.
-			_listBoxEmps.Location=new Point(tabControlInsPlan.Left+tabPageInsPlanInfo.Left+panelPlan.Left+groupPlan.Left+textEmployer.Left,
-				tabPageInsPlanInfo.Top+tabControlInsPlan.Top+panelPlan.Top+groupPlan.Top+textEmployer.Bottom);
-			_listBoxEmps.Size=new Size(231,100);
+			_listBoxEmps.Location=new Point(LayoutManager.Scale(tabControlInsPlan.Left+tabPageInsPlanInfo.Left+panelPlan.Left+groupPlan.Left+textEmployer.Left),
+				LayoutManager.Scale(tabPageInsPlanInfo.Top+tabControlInsPlan.Top+panelPlan.Top+groupPlan.Top+textEmployer.Bottom));
+			_listBoxEmps.Size=LayoutManager.ScaleSize(new Size(231,100));
+			_listBoxEmps.Font=new Font(Font.FontFamily,LayoutManager.ScaleF(Font.Size));
 			_listBoxEmps.Visible=false;
 			_listBoxEmps.Click += new System.EventHandler(listBoxEmps_Click);
 			_listBoxEmps.DoubleClick += new System.EventHandler(listBoxEmps_DoubleClick);
@@ -118,9 +119,10 @@ namespace OpenDental{
 			LayoutManager.Add(_listBoxEmps,this);
 			_listBoxEmps.BringToFront();
 			_listBoxCarriers=new ListBox();//Instead of ListBoxOD, for horiz scroll on a dropdown.
-			_listBoxCarriers.Location=new Point(tabControlInsPlan.Left+tabPageInsPlanInfo.Left+panelPlan.Left+groupPlan.Left+groupCarrier.Left+textCarrier.Left,
-				tabControlInsPlan.Top+tabPageInsPlanInfo.Top+panelPlan.Top+groupPlan.Top+groupCarrier.Top+textCarrier.Bottom);
-			_listBoxCarriers.Size=new Size(700,100);
+			_listBoxCarriers.Location=new Point(LayoutManager.Scale(tabControlInsPlan.Left+tabPageInsPlanInfo.Left+panelPlan.Left+groupPlan.Left+groupCarrier.Left+textCarrier.Left),
+				LayoutManager.Scale(tabControlInsPlan.Top+tabPageInsPlanInfo.Top+panelPlan.Top+groupPlan.Top+groupCarrier.Top+textCarrier.Bottom));
+			_listBoxCarriers.Size=LayoutManager.ScaleSize(new Size(700,100));
+			_listBoxCarriers.Font=new Font(Font.FontFamily,LayoutManager.ScaleF(Font.Size));
 			_listBoxCarriers.HorizontalScrollbar=true;
 			_listBoxCarriers.Visible=false;
 			_listBoxCarriers.Click += new System.EventHandler(listBoxCarriers_Click);
@@ -862,6 +864,35 @@ namespace OpenDental{
 			return(isFixedBenefitPlanType!=isFixedBenefitSched);
 		}
 
+		/// <summary>Helper function that returns true if text width is longer than controler width</summary>
+		private bool IsHorizontalScrollBarVisibleForListBox(ListBox listBox) {
+			if(!listBox.HorizontalScrollbar) {
+				return false;
+			}
+			for(int i=0;i<listBox.Items.Count;i++) {
+				int textWidth=TextRenderer.MeasureText(listBox.Items[i].ToString(),listBox.Font).Width;
+				if(textWidth>listBox.Width) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/// <summary>Calculates the list box height and retuns the value</summary>
+		private int CalculateListBoxHeight<T>(ListBox listBox, List<T> listItems) {
+			int horizontalScrollBarHeight=0;
+			if(IsHorizontalScrollBarVisibleForListBox(listBox)) {
+				horizontalScrollBarHeight=17;
+			}
+			//Base line height is 13. The box height is not tall enough without the +5.
+			//Scroll bar height is always 17 and doesn't need to be scaled.
+			int h=LayoutManager.Scale(13*listItems.Count+5)+horizontalScrollBarHeight;
+			if(h > ClientSize.Height-listBox.Top){
+				h=ClientSize.Height-listBox.Top;
+			}
+			return h;
+		}
+
 		private void FillComboCoPay() {
 			List<FeeSched> listFilteredCopayFeeSched=GetFilteredCopayFeeSched(_listFeeSchedsCopay);
 			comboCopay.Items.Clear();
@@ -1011,11 +1042,8 @@ namespace OpenDental{
 			for(int i=0;i<listEmployersSimilar.Count;i++) {
 				_listBoxEmps.Items.Add(listEmployersSimilar[i].EmpName);
 			}
-			int h=13*listEmployersSimilar.Count+5;
-			if(h > ClientSize.Height-_listBoxEmps.Top){
-				h=ClientSize.Height-_listBoxEmps.Top;
-			}
-			_listBoxEmps.Size=new Size(231,h);
+			int height=CalculateListBoxHeight<Employer>(_listBoxEmps,listEmployersSimilar);
+			LayoutManager.MoveSize(_listBoxEmps,new Size(_listBoxEmps.Width,height));
 			_listBoxEmps.Visible=true;
 		}
 
@@ -1136,11 +1164,8 @@ namespace OpenDental{
 					+_listCarriersSimilar[i].State+", "
 					+_listCarriersSimilar[i].Zip);
 			}
-			int h=13*_listCarriersSimilar.Count+5;
-			if(h > ClientSize.Height-_listBoxCarriers.Top){
-				h=ClientSize.Height-_listBoxCarriers.Top;
-			}
-			_listBoxCarriers.Size=new Size(_listBoxCarriers.Width,h);
+			int height=CalculateListBoxHeight<Carrier>(_listBoxCarriers,_listCarriersSimilar);
+			LayoutManager.MoveSize(_listBoxCarriers,new Size(_listBoxCarriers.Width,height));
 			_listBoxCarriers.Visible=true;
 		}
 

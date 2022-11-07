@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Bridges;
 using CodeBase;
 using OpenDental.UI;
 using OpenDentBusiness;
@@ -771,6 +772,32 @@ namespace OpenDental {
 			if(emailAddress.SMTPserver==""){
 				MsgBox.Show(this,"The email address in email setup must have an SMTP server.");
 				return;
+			}
+			if(emailAddress.AccessToken.IsNullOrEmpty() && emailAddress.AuthenticationType==OAuthType.Microsoft) {
+				if(MsgBox.Show(this,MsgBoxButtons.YesNo,"This email address needs to be re-authenticated. Sign into this email through Microsoft?")) {
+					MicrosoftTokenHelper microsoftToken=System.Threading.Tasks.Task.Run(async () =>
+						await MicrosoftApiConnector.GetAccessToken(emailAddress.EmailUsername,"")
+					).GetAwaiter().GetResult();
+					if(microsoftToken.ErrorMessage!="") {
+						MsgBox.Show("Error: "+microsoftToken.ErrorMessage);
+						return;
+					}
+					if(microsoftToken.AccessToken=="") {
+						return; //Authentication was cancelled so do nothing.
+					}
+					if(microsoftToken.EmailAddress!=emailAddress.EmailUsername) {
+						MsgBox.Show("Please sign in with the same email address.");
+						return;
+					}
+					emailAddress.AccessToken=microsoftToken.AccessToken;
+					emailAddress.RefreshToken=microsoftToken.AccountInfo;
+					emailAddress.Pop3ServerIncoming="pop.outlook.com"; //This field was also cleared and needs to be populated.
+					EmailAddresses.Update(emailAddress);
+					DataValid.SetInvalid(InvalidType.Email);
+				}
+				else {
+					return;//User wants to manually sign into the email in the setup window.
+				}
 			}
 			//If default autograph is HTML send the whole email as HTML.
 			EmailAutograph emailAutograph=FindDefaultEmailAutograph();

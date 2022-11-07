@@ -2417,6 +2417,9 @@ namespace OpenDental {
 						formWB.ShowDialog();
 					}
 					xWebResponseProcessed=EdgeExpress.CNP.ProcessTransaction(response,_paymentCur);
+					if(xWebResponseProcessed.TransactionStatus==XWebTransactionStatus.EdgeExpressPending) {
+						return null; //FormWebBrowser closed early
+					}
 					payNote=xWebResponseProcessed.GetFormattedNote(true,false);
 					_paymentCur.PaymentSource=xWebResponseProcessed.CCSource;
 					if(xWebResponseProcessed.TransactionStatus==XWebTransactionStatus.EdgeExpressCompletePaymentApproved) {
@@ -2438,6 +2441,9 @@ namespace OpenDental {
 						formWB.ShowDialog();
 					}
 					xWebResponseProcessed=EdgeExpress.CNP.ProcessTransaction(response,_paymentCur);
+					if(xWebResponseProcessed.TransactionStatus==XWebTransactionStatus.EdgeExpressPending) {
+						return null; //FormWebBrowser closed early
+					}
 					payNote=xWebResponseProcessed.GetFormattedNote(true,false);
 					_paymentCur.Receipt=EdgeExpress.CNP.BuildReceiptString(xWebResponseProcessed,false);
 					if(xWebResponseProcessed.XWebResponseCode==XWebResponseCodes.Approval) {// only print receipt if its an approved transaction
