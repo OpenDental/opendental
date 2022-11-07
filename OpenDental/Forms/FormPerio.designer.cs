@@ -157,9 +157,9 @@ namespace OpenDental {
 			// radioRight
 			// 
 			this.radioRight.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.radioRight.Location = new System.Drawing.Point(13, 20);
+			this.radioRight.Location = new System.Drawing.Point(9, 20);
 			this.radioRight.Name = "radioRight";
-			this.radioRight.Size = new System.Drawing.Size(49, 18);
+			this.radioRight.Size = new System.Drawing.Size(53, 18);
 			this.radioRight.TabIndex = 1;
 			this.radioRight.Text = "Right";
 			this.radioRight.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -169,9 +169,9 @@ namespace OpenDental {
 			// 
 			this.radioLeft.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.radioLeft.Checked = true;
-			this.radioLeft.Location = new System.Drawing.Point(74, 20);
+			this.radioLeft.Location = new System.Drawing.Point(68, 20);
 			this.radioLeft.Name = "radioLeft";
-			this.radioLeft.Size = new System.Drawing.Size(46, 18);
+			this.radioLeft.Size = new System.Drawing.Size(53, 18);
 			this.radioLeft.TabIndex = 0;
 			this.radioLeft.TabStop = true;
 			this.radioLeft.Text = "Left";
@@ -733,12 +733,12 @@ namespace OpenDental {
 			this.butCopyPrevious.Text = "Copy";
 			this.butCopyPrevious.Click += new System.EventHandler(this.butCopyPrevious_Click);
 			// 
-			// gridP
+			// contrPerio
 			// 
 			this.contrPerio.BackColor = System.Drawing.SystemColors.Window;
 			this.contrPerio.DoShowCurrentExamOnly = true;
 			this.contrPerio.Location = new System.Drawing.Point(390, 8);
-			this.contrPerio.Name = "gridP";
+			this.contrPerio.Name = "contrPerio";
 			this.contrPerio.SelectedExam = 0;
 			this.contrPerio.Size = new System.Drawing.Size(608, 685);
 			this.contrPerio.TabIndex = 75;

@@ -2462,7 +2462,7 @@ namespace OpenDental {
 			if(textDiagnosisCode4.Text!="") {
 				diagnosticCodes.Add(textDiagnosisCode4.Text);
 			}
-			Procedures.UpdateProcedureFields(_procedure,_patient,textCodeMod1.Text,PIn.Double(textDiscount.Text),
+			Procedures.UpdateProcedureFields(_procedure,_patient,textMedicalCode.Text,PIn.Double(textDiscount.Text),
 				_snomedBodySite,checkIcdVersion.Checked,diagnosticCodes,checkIsPrincDiag.Checked,_selectedProvOrderNum,_referralOrdering,
 				textCodeMod1.Text,textCodeMod2.Text,textCodeMod3.Text,textCodeMod4.Text,PIn.Int(textUnitQty.Text),(ProcUnitQtyType)comboUnitType.SelectedIndex,
 				textRevCode.Text,(EnumProcDrugUnit)comboDrugUnit.SelectedIndex,PIn.Float(textDrugQty.Text),(checkIsEmergency.Checked?ProcUrgency.Emergency:ProcUrgency.Normal),

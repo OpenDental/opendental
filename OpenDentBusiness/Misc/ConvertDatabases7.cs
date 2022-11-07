@@ -3225,6 +3225,10 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		private static void To22_1_62() {
+			Misc.SecurityHash.UpdateHashing();
+		}
+
 		private static void To22_2_1() {
 			DataTable table;
 			string upgrading="Upgrading database to version: 22.2.0. ";
@@ -3976,6 +3980,32 @@ namespace OpenDentBusiness {
 		private static void To22_2_51() {
 			string command="UPDATE sheetfield SET Height=22 WHERE FieldType=10 AND Height=0";
 			Db.NonQ(command);
+			command="SELECT EmailUsername,RefreshToken FROM emailaddress WHERE AuthenticationType=2";//AuthenticationType.Microsoft=2
+			DataTable table=Db.GetTable(command);
+			//We must determine if there are any emails currently authenticated with Microsoft.
+			if(table.Rows.Count>0) {
+				//Clear the Microsoft authenticated information out
+				command="UPDATE emailaddress SET AccessToken='' WHERE AuthenticationType=2";//AuthenticationType.Microsoft=2
+				Db.NonQ(command);
+				command="UPDATE emailaddress SET RefreshToken='' WHERE AuthenticationType=2";//AuthenticationType.Microsoft=2
+				Db.NonQ(command);
+				command="UPDATE emailaddress SET Pop3ServerIncoming='' WHERE AuthenticationType=2";//AuthenticationType.Microsoft=2
+				Db.NonQ(command);
+				string microsoftEmailAddresses="";
+				for(int i=0;i<table.Rows.Count;i++) {
+					if(i>0) {
+						microsoftEmailAddresses+=", ";
+					}
+					microsoftEmailAddresses+=table.Rows[i]["EmailUsername"];
+				}
+				//Create an alert displaying all the effected email addresses, notifying the user to re-authenticate the effected email addresses.
+				string description=$"The email addresses: {microsoftEmailAddresses} have each had their authentication information cleared. Please go through the 'Microsoft sign in' button for each of these email addresses to be re-authenticated. This can be done through Setup > Emails, then edit an email address, and click the Microsoft Sign In button.";
+				command=$"INSERT INTO alertitem (ClinicNum,Description,Type,Severity,Actions,FormToOpen,FKey,ItemValue,UserNum) VALUES (" +
+						//AlertType.Generic=0,SeverityType.Medium=2,ActionType.Delete|ActionType.MarkAsRead|ActionType.OpenForm=7,FormToOpen.FormEmailAddresses=13,Fkey=0
+						$"-1,'{POut.String(description)}',0,2,7,13,0,'',0)";
+				Db.NonQ(command);
+			}
+			Misc.SecurityHash.UpdateHashing();
 		}
 
 		private static void To22_3_1() {
@@ -4164,5 +4194,40 @@ namespace OpenDentBusiness {
 			string command="UPDATE sheetfield SET Height=22 WHERE FieldType=10 AND Height=0";
 			Db.NonQ(command);
 		}
+
+		private static void To22_3_22() {
+			string command="SELECT EmailUsername,RefreshToken FROM emailaddress WHERE AuthenticationType=2";//AuthenticationType.Microsoft=2
+			DataTable table=Db.GetTable(command);
+			//We must determine if there are any emails currently authenticated with Microsoft.
+			if(table.Rows.Count>0) {
+				//Attempt decrypting a RefreshToken to see if the old encryption is used on the table.
+				string decryptedCache=MiscUtils.Decrypt(table.Rows[0]["RefreshToken"].ToString());
+				if(decryptedCache=="") { //old encryption is in place, clear the information out
+					command="UPDATE emailaddress SET AccessToken='' WHERE AuthenticationType=2";//AuthenticationType.Microsoft=2
+					Db.NonQ(command);
+					command="UPDATE emailaddress SET RefreshToken='' WHERE AuthenticationType=2";//AuthenticationType.Microsoft=2
+					Db.NonQ(command);
+					command="UPDATE emailaddress SET Pop3ServerIncoming='' WHERE AuthenticationType=2";//AuthenticationType.Microsoft=2
+					Db.NonQ(command);
+					string microsoftEmailAddresses="";
+					for(int i=0;i<table.Rows.Count;i++) {
+						if(i>0) {
+							microsoftEmailAddresses+=", ";
+						}
+						microsoftEmailAddresses+=table.Rows[i]["EmailUsername"];
+					}
+					//Create an alert displaying all the effected email addresses, notifying the user to re-authenticate the effected email addresses.
+					string description=$"The email addresses: {microsoftEmailAddresses} have each had their authentication information cleared. Please go through the 'Microsoft sign in' button for each of these email addresses to be re-authenticated. This can be done through Setup > Emails, then edit an email address, and click the Microsoft Sign In button.";
+					command=$"INSERT INTO alertitem (ClinicNum,Description,Type,Severity,Actions,FormToOpen,FKey,ItemValue,UserNum) VALUES (" +
+							//AlertType.Generic=0,SeverityType.Medium=2,ActionType.Delete|ActionType.MarkAsRead|ActionType.OpenForm=7,FormToOpen.FormEmailAddresses=13,Fkey=0
+							$"-1,'{POut.String(description)}',0,2,7,13,0,'',0)";
+					Db.NonQ(command);
+				}
+			}
+			Misc.SecurityHash.UpdateHashing();
+			command="UPDATE preference SET ValueString=-1 WHERE PrefName IN ('RecallShowIfDaysFirstReminder','RecallShowIfDaysSecondReminder') and ValueString=0";
+			Db.NonQ(command);
+		}
+
 	}
 }

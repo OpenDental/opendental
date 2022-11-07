@@ -4403,7 +4403,10 @@ namespace OpenDentBusiness{
 			Appointment apptNew=apptPlanned.Copy();
 			apptNew.NextAptNum=apptPlanned.AptNum;
 			apptNew.AptStatus=ApptStatus.Scheduled;
-			apptNew.TimeLocked=PrefC.GetBool(PrefName.AppointmentTimeIsLocked);
+			apptNew.TimeLocked=apptPlanned.TimeLocked;
+			if(PrefC.GetBool(PrefName.AppointmentTimeIsLocked)) {
+				apptNew.TimeLocked=PrefC.GetBool(PrefName.AppointmentTimeIsLocked);
+			}
 			apptNew.AptDateTime=aptDateTime;
 			apptNew.Op=opNum;
 			Appointments.Insert(apptNew);//now, aptnum is different.

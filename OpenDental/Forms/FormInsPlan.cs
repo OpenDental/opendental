@@ -872,6 +872,35 @@ namespace OpenDental{
 			return(isFixedBenefitPlanType!=isFixedBenefitSched);
 		}
 
+		/// <summary>Helper function that returns true if text width is longer than controler width</summary>
+		private bool IsHorizontalScrollBarVisibleForListBox(ListBox listBox) {
+			if(!listBox.HorizontalScrollbar) {
+				return false;
+			}
+			for(int i=0;i<listBox.Items.Count;i++) {
+				int textWidth=TextRenderer.MeasureText(listBox.Items[i].ToString(),listBox.Font).Width;
+				if(textWidth>listBox.Width) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/// <summary>Calculates the list box height and retuns the value</summary>
+		private int CalculateListBoxHeight<T>(ListBox listBox, List<T> listItems) {
+			int horizontalScrollBarHeight=0;
+			if(IsHorizontalScrollBarVisibleForListBox(listBox)) {
+				horizontalScrollBarHeight=17;
+			}
+			//Base line height is 13. The box height is not tall enough without the +5.
+			//Scroll bar height is always 17 and doesn't need to be scaled.
+			int h=LayoutManager.Scale(13*listItems.Count+5)+horizontalScrollBarHeight;
+			if(h > ClientSize.Height-listBox.Top){
+				h=ClientSize.Height-listBox.Top;
+			}
+			return h;
+		}
+
 		private void FillComboCoPay() {
 			List<FeeSched> listFilteredCopayFeeSched=GetFilteredCopayFeeSched(_listFeeSchedsCopay);
 			comboCopay.Items.Clear();
@@ -1021,11 +1050,8 @@ namespace OpenDental{
 			for(int i=0;i<listEmployersSimilar.Count;i++) {
 				_listBoxEmps.Items.Add(listEmployersSimilar[i].EmpName);
 			}
-			int h=13*listEmployersSimilar.Count+5;
-			if(h > ClientSize.Height-_listBoxEmps.Top){
-				h=ClientSize.Height-_listBoxEmps.Top;
-			}
-			LayoutManager.MoveSize(_listBoxEmps,new Size(_listBoxEmps.Width,LayoutManager.Scale(h)));
+			int height=CalculateListBoxHeight<Employer>(_listBoxEmps,listEmployersSimilar);
+			LayoutManager.MoveSize(_listBoxEmps,new Size(_listBoxEmps.Width,height));
 			_listBoxEmps.Visible=true;
 		}
 
@@ -1146,11 +1172,8 @@ namespace OpenDental{
 					+_listCarriersSimilar[i].State+", "
 					+_listCarriersSimilar[i].Zip);
 			}
-			int h=13*_listCarriersSimilar.Count+5;
-			if(h > ClientSize.Height-_listBoxCarriers.Top){
-				h=ClientSize.Height-_listBoxCarriers.Top;
-			}
-			LayoutManager.MoveSize(_listBoxCarriers,new Size(_listBoxCarriers.Width,LayoutManager.Scale(h)));
+			int height=CalculateListBoxHeight<Carrier>(_listBoxCarriers,_listCarriersSimilar);
+			LayoutManager.MoveSize(_listBoxCarriers,new Size(_listBoxCarriers.Width,height));
 			_listBoxCarriers.Visible=true;
 		}
 

@@ -529,13 +529,28 @@ namespace OpenDental {
 		#endregion Methods - Event Handlers
 
 		private bool AreSettingsValid() {
+			List<string> listSetupErrors=new List<string>();
 			if(!radioDoNotSendText.Checked && !textWebSchedPerBatch.IsValid()) {
-				return false;
+				listSetupErrors.Add("- "+Lan.g(this,"Max texts per clinic is invalid."));
 			}
 			if(!textWebSchedRecallApptSearchDays.IsValid()) {
-				return false;
+				listSetupErrors.Add("- "+Lan.g(this,"Number of days in the future is invalid."));
 			}
 			if(!textNumMonthsCheck.IsValid()) {
+				listSetupErrors.Add("- "+Lan.g(this,"Max number of months to search is invalid."));
+			}
+			if(!radioDoNotSend.Checked || !radioDoNotSendText.Checked) {
+				if(PrefC.GetLong(PrefName.RecallShowIfDaysFirstReminder)<1) {//Initial Reminder field
+					listSetupErrors.Add("- "+Lan.g(this,"Initial Reminder field has to be greater than 0."));
+				}
+				if(PrefC.GetLong(PrefName.RecallShowIfDaysSecondReminder)<1) {//Second(or more) Reminder field
+					listSetupErrors.Add("- "+Lan.g(this,"Second (or more) Reminder field has to be greater than 0."));
+				}
+			}
+			if(listSetupErrors.Count>0) {
+				MessageBox.Show(Lan.g(this,"Recall Setup settings are not correctly set in order to Send Messages Automatically to patients:")
+						+"\r\n"+string.Join("\r\n",listSetupErrors)
+					,Lan.g(this,"Web Sched - Recall Setup Error"));
 				return false;
 			}
 			return true;
@@ -582,7 +597,6 @@ namespace OpenDental {
 
 		private void butOK_Click(object sender,EventArgs e) {
 			if(!AreSettingsValid()) {
-				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
 			}
 			SaveWebSchedRecall();

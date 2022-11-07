@@ -724,7 +724,7 @@ namespace OpenDental {
 				if(sheetDef.SheetDefNum!=_sheetDef.SheetDefNum) {
 					throw new Exception("SheetDefNum mismtach. Unable to save mobile field settings.");
 				}
-				//We made deep copies of all SheetFieldDefs when we entered the control so we can modify fields here without consequence.
+				//We made deep copies of all SheetFieldDefs when we entered the control so we can modify fields here without consequence. This list is in the intended order, but lacks new fields.
 				List<SheetFieldDef> listMobileSheetDefs=SheetFieldDefs;//List of SheetFieldDefs pulled from panel UI
 				string languageCheck=listMobileSheetDefs.FirstOrDefault()?.Language??"";//Blank string is used for 'Default' translation.
 				//StaticText can be excluded by user choice. See FormSheetFieldStatic.butOk_Click() for reference.
@@ -769,7 +769,9 @@ namespace OpenDental {
 					if(sheetField.FieldType==SheetFieldType.CheckBox) {
 						List<SheetFieldDef> listSheetFieldDefNew=OpenDentBusiness.SheetFieldDefs.GetRadioGroupForSheetFieldDef(sheetField,sheetDef.SheetFieldDefs.FindAll(x=>string.IsNullOrWhiteSpace(x.Language)));
 						foreach(SheetFieldDef newSFDCheckboxInGroup in listSheetFieldDefNew ) {
+							//Checks for the first element
 							if(OpenDentBusiness.SheetFieldDefs.CompareSheetFieldDefsByValueForMobileLayout(newSFDCheckboxInGroup,sheetField)) {
+								newSFDCheckboxInGroup.TabOrderMobile=sheetField.TabOrderMobile;
 								continue;
 							}
 							newSFDCheckboxInGroup.TabOrderMobile=tabOrderMobile++;
@@ -789,14 +791,31 @@ namespace OpenDental {
 					}
 				}
 				else {
-					List<List<SheetFieldDef>> listSheetFieldDefsByLanguage=listMobileSheetDefs.GroupBy(x=>x.Language).Select(x=>x.ToList()).ToList();
+					//If we arent ordering based on default, order other languages
+					List<List<SheetFieldDef>> listSheetFieldDefsByLanguage=listMobileSheetDefs.Where(x=>!String.IsNullOrWhiteSpace(x.Language)).GroupBy(x=>x.Language).Select(x=>x.ToList()).ToList();
 					foreach(List<SheetFieldDef> sheetFieldDefLanguageGrouping in listSheetFieldDefsByLanguage) {
+						listMobileSheetDefsAlreadyOrdered=new List<SheetFieldDef>();
 						foreach(SheetFieldDef sheetFieldDef in sheetFieldDefLanguageGrouping) {
+							if(listMobileSheetDefsAlreadyOrdered.Any(x=>OpenDentBusiness.SheetFieldDefs.CompareSheetFieldDefsByValueForMobileLayout(x,sheetFieldDef))) {
+								continue;
+							}
 							sheetFieldDef.TabOrderMobile=tabOrderMobile++;
+							//We need to ensure any new SFD checkboxs in a group have the mobile tab order set. Even if they are 'new'.
+							if(sheetFieldDef.FieldType==SheetFieldType.CheckBox) {
+								List<SheetFieldDef> listSheetFieldDefNew=OpenDentBusiness.SheetFieldDefs.GetRadioGroupForSheetFieldDef(sheetFieldDef,sheetDef.SheetFieldDefs.FindAll(x=>sheetFieldDef.Language==x.Language));
+								foreach(SheetFieldDef newSFDCheckboxInGroup in listSheetFieldDefNew ) {
+									//Checks for the first element
+									if(OpenDentBusiness.SheetFieldDefs.CompareSheetFieldDefsByValueForMobileLayout(newSFDCheckboxInGroup,sheetFieldDef)) {
+										newSFDCheckboxInGroup.TabOrderMobile=sheetFieldDef.TabOrderMobile;
+										continue;
+									}
+									newSFDCheckboxInGroup.TabOrderMobile=tabOrderMobile++;
+									listMobileSheetDefsAlreadyOrdered.Add(newSFDCheckboxInGroup);
+								}
+							}						
 						}
 					}
 				}
-
 				var sheetDefNumsMobile=listMobileSheetDefs.Where(x => x.TabOrderMobile>0).Select(x => x.SheetFieldDefNum);
 				List<SheetFieldDef> listNonMobileSheetDefs=_sheetDef.SheetFieldDefs.Where(x => x.Language==languageCheck && !sheetDefNumsMobile.Contains(x.SheetFieldDefNum)).ToList();
 				//Give all non mobile sheet defs tab order of 0. This will exclude them from the mobile web layout.
@@ -826,6 +845,10 @@ namespace OpenDental {
 				//It is safe to make changes.
 				List<SheetFieldDef> listAllSheetDefs=listMobileSheetDefs.Union(listNonMobileSheetDefs).ToList();
 				foreach(var sfdOld in sheetDef.SheetFieldDefs) {
+					//These have already been ordered for sheetDef, however listMobileSheetDef will not have been. Skip attempting to order via lisMobileSheetDef.
+					if(sfdOld.FieldType==SheetFieldType.CheckBox) {
+					 continue;
+					}
 					var sfdNew=listAllSheetDefs.FirstOrDefault(x => x.SheetFieldDefNum==sfdOld.SheetFieldDefNum);
 					//New fields being merged in will not exist yet in the list so don't try to save the TabOrderMobile in that case.
 					if(sfdNew!=null) { 

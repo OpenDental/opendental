@@ -357,7 +357,10 @@ namespace OpenDental {
 			if(ProcCur.ProcStatus!=ProcStat.C) {
 				comboUnearnedTypes.Enabled=true;
 				if(ProcCur.ProcStatus==ProcStat.TP) {
+					PaySplitCur.PayPlanNum=0;
+					PaySplitCur.PayPlanChargeNum=0;
 					checkPayPlan.Checked=false;
+					checkPayPlan.Enabled=false;
 				}
 			}
 			else {//There is no good way to determine if a proc previously had TP unearned so we will just keep whatever loaded in and disable the box. 
@@ -505,6 +508,9 @@ namespace OpenDental {
 			if(ProcCur!=null) {
 				ListSplitsCur.Where(x => x.ProcNum==ProcCur.ProcNum && x.IsSame(PaySplitCur))
 					.ForEach(x => x.ProcNum=0);
+				if(ProcCur.ProcStatus==ProcStat.TP) {
+					checkPayPlan.Enabled=true;
+				}
 			}
 			ProcCur=null;
 			SetEnabledProc();
