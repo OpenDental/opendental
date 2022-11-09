@@ -2009,6 +2009,103 @@ namespace OpenDentBusiness {
 			return log;
 		}
 
+		[DbmMethodAttr(HasBreakDown=true)]
+		public static string ClaimMissingProcedures(bool verbose, DbmMode modeCur) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
+			}
+			string log="";
+			string command="SELECT patient.Lname 'Last Name',patient.FName 'First Name',DATE(claim.DateService) 'Claim Date',claim.ClaimType 'Claim Type',"
+					+"claim.ClaimFee 'Claim Fee',GROUP_CONCAT(claimproc.CodeSent) AS 'Codes Sent' "
+					+"FROM claimproc "
+					+"INNER JOIN claim ON claimproc.ClaimNum=claim.ClaimNum "
+					+"INNER JOIN patient ON patient.PatNum=claim.PatNum "
+					+"WHERE claimproc.ProcNum=0 AND claimproc.CodeSent!='' "
+					+"GROUP BY claim.ClaimNum "
+					+"ORDER BY patient.PatNum,claim.DateService,claim.ClaimNum";
+			DataTable dataTable=Db.GetTable(command);
+			if(dataTable.Rows.Count==0 && !verbose) {
+				return log;
+			}
+			log+=Lans.g("FormDatabaseMaintenance","Claims with missing procedures")+": "+dataTable.Rows.Count;
+			switch(modeCur) {
+				case DbmMode.Check:
+				case DbmMode.Fix:
+					if(dataTable.Rows.Count>0) {
+						log+="\r\n"+Lans.g("FormDatabaseMaintenance","Manual fix needed. Double click to see a break down.");
+					}
+					break;
+				case DbmMode.Breakdown:
+					if(dataTable.Rows.Count==0) {
+						return log;
+					}
+					log+=", "+Lans.g("FormDatabaseMaintenance","including")+":\r\n";
+					List<int> listMaxColumnWidths=new List<int>();
+					List<string> listStringColValues=new List<string>();
+					int columnWidthCur;
+					string strMaxColumnValue;
+					string strColumnValueCur;
+					for(int i=0;i< dataTable.Columns.Count;i++) {
+						if(dataTable.Columns[i].ColumnName=="Claim Date") {
+							strMaxColumnValue=dataTable.AsEnumerable().Select(x => ((DateTime)x[dataTable.Columns[i]]).ToShortDateString()).OrderByDescending(x => x.Length).FirstOrDefault();
+						}
+						else {
+							strMaxColumnValue=dataTable.AsEnumerable().Select(x => x[dataTable.Columns[i]].ToString()).OrderByDescending(x => x.Length).FirstOrDefault();
+						}
+						if(strMaxColumnValue.IsNullOrEmpty()) {
+							columnWidthCur=100;//Default width if parse fails. Shouldn't happen.
+						}
+						else {
+							columnWidthCur=strMaxColumnValue.Length;
+						}
+						listMaxColumnWidths.Add(columnWidthCur);
+						strColumnValueCur=dataTable.Columns[i].ColumnName;
+						if(strColumnValueCur.Length < columnWidthCur) {//Pad with spaces if needed
+							strColumnValueCur+=new string(' ',columnWidthCur-strColumnValueCur.Length);
+						}
+						listStringColValues.Add(strColumnValueCur);
+					}
+					log+=string.Join(" | ",listStringColValues)+"\r\n"+new string('-',93)+"\r\n";
+					listStringColValues.Clear();
+					for(int i = 0;i < dataTable.Rows.Count;i++) {
+						for(int j=0;j<dataTable.Columns.Count;j++) {
+							if(dataTable.Columns[j].ColumnName=="Claim Type") {
+								try {
+									EnumClaimType enumClaimType=(EnumClaimType)Enum.Parse(typeof(EnumClaimType),dataTable.Rows[i][j].ToString());
+									strColumnValueCur=Lans.g("FormDatabaseMaintenance",enumClaimType.GetDescription());
+								}
+								catch {
+									strColumnValueCur=Lans.g("FormDatabaseMaintenance",dataTable.Rows[i][j].ToString());
+								}
+							} 
+							else if (dataTable.Columns[j].ColumnName=="Claim Fee") {
+								try {
+									decimal claimFee=decimal.Parse(dataTable.Rows[i][j].ToString());
+									strColumnValueCur=claimFee.ToString("C",CultureInfo.CurrentCulture);
+								}
+								catch {
+									strColumnValueCur=dataTable.Rows[i][j].ToString();
+								}
+							}
+							else if (dataTable.Columns[j].ColumnName=="Claim Date") {
+								strColumnValueCur=((DateTime)dataTable.Rows[i][j]).ToShortDateString();
+							}
+							else {
+								strColumnValueCur=dataTable.Rows[i][j].ToString();
+							}
+							if(strColumnValueCur.Length<dataTable.Columns[j].ColumnName.Length) {//Pad with spaces if needed
+								strColumnValueCur+=new string(' ',dataTable.Columns[j].ColumnName.Length-strColumnValueCur.Length);
+							}
+							listStringColValues.Add(strColumnValueCur);
+						}
+						log+=string.Join(" | ",listStringColValues)+"\r\n";
+						listStringColValues.Clear();
+					}
+					log+="\r\n"+Lans.g("FormDatabaseMaintenance","They need to be fixed manually.");
+					break;
+			}
+			return log;
+		}
 		#endregion Carrier, Claim-----------------------------------------------------------------------------------------------------------------------
 		#region ClaimPayment----------------------------------------------------------------------------------------------------------------------------
 

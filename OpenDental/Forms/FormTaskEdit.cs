@@ -424,16 +424,27 @@ namespace OpenDental {
 		}
 
 		///<summary>Sets the starting location of this form. Should only be called on load.
-		///The first Task window will default to CenterParent. After that we will cascade down.
-		///If any part of this form will be off screen we will default the next task to the top left of the primary monitor.</summary>
+		///The first Task window will default to the primary monitor. After that we will cascade down.
+		///If FormOpenDental is not minimized, the first Task will instead appear in the center of wherever it is.
+		///If any part of this form will be off screen we will default the next task to the top left of the monitor.</summary>
 		private void SetTaskStartingLocation() { 
 			List<FormTaskEdit> listTaskEdits=Application.OpenForms.OfType<FormTaskEdit>().ToList();
+			Point pointStart;
+			this.StartPosition=FormStartPosition.Manual;
 			//Since this form has already gone through the initilize, there will be at least 1. Except when running unit tests.
 			if(listTaskEdits.Count<=1) {
-				this.StartPosition=FormStartPosition.CenterParent;
+				FormOpenDental formOpenDental=Application.OpenForms.OfType<FormOpenDental>().ToList().FirstOrDefault();//Should be exactly 1.
+				if(formOpenDental!=null) { //Should never be null.
+					pointStart=formOpenDental.Location;
+					pointStart.X+=(formOpenDental.Width/2)-(this.Width/2);
+					pointStart.Y+=(formOpenDental.Height/2)-(this.Height/2);
+					System.Windows.Forms.Screen[] screenArray=System.Windows.Forms.Screen.AllScreens;
+					if(screenArray.Any(x => x.WorkingArea.Contains(pointStart))) {//Make sure the task would actually be visible in the manual location.
+						this.Location=pointStart;
+					}
+				}
 				return;
 			}
-			Point pointStart;
 			//There are multiple task edit windows open, so offset the new window by a little so that it does not show up directly over the old one.
 			const int OFFSET=20;//Sets how far to offset the cascaded form location.
 			this.StartPosition=FormStartPosition.Manual;

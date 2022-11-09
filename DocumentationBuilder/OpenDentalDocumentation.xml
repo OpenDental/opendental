@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDocumentation.xsl"?>
-<database version="22.2.43.0">
+<database version="22.2.51.0">
     <table name="account">
         <summary>Used in the accounting section in chart of accounts.  Not related to patient accounts in any way.</summary>
         <column order="0" name="AccountNum" type="bigint(20)">
@@ -3948,7 +3948,7 @@
                 <EnumValue name="AccountColors">0- Colors to display in Account module.</EnumValue>
                 <EnumValue name="AdjTypes">1- Adjustment types.</EnumValue>
                 <EnumValue name="ApptConfirmed">2- Appointment confirmed types.</EnumValue>
-                <EnumValue name="ApptProcsQuickAdd">3- Procedure quick add list for appointments. Example: D1023,D1024. Single tooth numbers are allowed for single codes, example D1151#8. This is really only useful for PAs. Tooth number is stored in user's nomenclature, not American numbering.</EnumValue>
+                <EnumValue name="ApptProcsQuickAdd">3- Procedure quick add list for appointments. Example: D1023,D1024. Single tooth numbers are allowed, example D1151#8,D0220#15. This is really only useful for PAs. Tooth number is stored in user's nomenclature, not American numbering.</EnumValue>
                 <EnumValue name="BillingTypes">4- Billing types.</EnumValue>
                 <EnumValue name="ClaimFormats">5- Not used.</EnumValue>
                 <EnumValue name="DunningMessages">6- Not used.</EnumValue>
