@@ -14,7 +14,7 @@ namespace OpenDental.UI {
 		///<summary>Inserts the iFrame into the DOM and initializes it.</summary>
 		public void Initialize(string url="") {
 			_frameId=Browser.InsertIframe(this.Handle,url);
-        }
+		}
 
 		///<summary>Navigates the iFrame to the url.</summary>
 		public void Navigate(string url) {
@@ -31,6 +31,9 @@ namespace OpenDental.UI {
 
 		///<summary>Displays a file in the iFrame.</summary>
 		public void DisplayFile(string filepath) {
+			if(!string.IsNullOrEmpty(filepath) && filepath.StartsWith(@"\\")) {
+				filepath=ThinfinityUtils.GetTempLocalPathForFile(filepath);
+			}
 			string url=Browser.GetSafeUrl(filepath);
 			Navigate(url);
 		}
