@@ -3217,6 +3217,11 @@ namespace OpenDentBusiness {
 				Db.NonQ(commandCur);
 			}
 		}
+
+		private static void To22_1_62() {
+			Misc.SecurityHash.UpdateHashing();
+		}
+
 	}
 }
 

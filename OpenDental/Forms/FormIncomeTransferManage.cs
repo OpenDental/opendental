@@ -99,6 +99,10 @@ namespace OpenDental {
 				_constructResults=PaymentEdit.ConstructAndLinkChargeCredits(_family.GetPatNums(),_patient.PatNum,
 					new List<PaySplit>(),new Payment(),new List<AccountEntry>(),isIncomeTxfr:true,dateAsOf:datePickerAsOf.Value);
 			}
+			//Get information for all patients including those not currently present within the family.
+			List<long> listPatNums=_constructResults.ListAccountEntries.Select(x => x.PatNum).Distinct().ToList();
+			List<Patient>listPatients=Patients.GetLimForPats(listPatNums);
+			//Group up account entries by Pat/Prov/Clinic
 			List<List<AccountEntry>> listListsAccountEntries=_constructResults.ListAccountEntries
 				.GroupBy(x => new { x.PatNum,x.ProvNum,x.ClinicNum })
 				.Select(x => new List<AccountEntry>(x.ToList())).ToList();
@@ -107,18 +111,18 @@ namespace OpenDental {
 				if(CompareDecimal.IsZero(listListsAccountEntries[i].Sum(x => x.AmountEnd))) {
 					continue;
 				}
-				gridImbalances.ListGridRows.AddRange(GetRowsForGroup(listListsAccountEntries[i]));
+				gridImbalances.ListGridRows.AddRange(GetRowsForGroup(listListsAccountEntries[i],listPatients));
 			}
 			gridImbalances.EndUpdate();
 		}
 
-		private List<GridRow> GetRowsForGroup(List<AccountEntry> listAccountEntries) {
+		private List<GridRow> GetRowsForGroup(List<AccountEntry> listAccountEntries,List<Patient> listPatients) {
 			List<GridRow> listGridRows=new List<GridRow>();
 			AccountEntry accountEntryFirst=listAccountEntries.First();
 			GridRow row=new GridRow();
 			row.Bold=checkShowBreakdown.Checked;
 			row.Cells.Add(Providers.GetAbbr(accountEntryFirst.ProvNum,includeHidden: true));
-			Patient patient=_family.GetPatient(accountEntryFirst.PatNum);
+			Patient patient=listPatients.Find(x => x.PatNum==accountEntryFirst.PatNum);
 			row.Cells.Add(patient.GetNameFLnoPref());
 			if(PrefC.HasClinicsEnabled) {
 				row.Cells.Add(Clinics.GetAbbr(accountEntryFirst.ClinicNum));
@@ -126,9 +130,9 @@ namespace OpenDental {
 			if(checkShowBreakdown.Checked) {
 				row.Cells.Add("");
 			}
-			List<AccountEntry> listPositiveEntries = listAccountEntries.FindAll(x => CompareDecimal.IsGreaterThanZero(x.AmountEnd));
+			List<AccountEntry> listPositiveEntries=listAccountEntries.FindAll(x => CompareDecimal.IsGreaterThanZero(x.AmountEnd));
 			row.Cells.Add(listPositiveEntries.Sum(x => x.AmountEnd).ToString("c"));
-			List<AccountEntry> listNegativeEntries = listAccountEntries.FindAll(x => CompareDecimal.IsLessThanZero(x.AmountEnd));
+			List<AccountEntry> listNegativeEntries=listAccountEntries.FindAll(x => CompareDecimal.IsLessThanZero(x.AmountEnd));
 			row.Cells.Add(listNegativeEntries.Sum(x => x.AmountEnd).ToString("c"));
 			row.Cells.Add(listAccountEntries.Sum(x => x.AmountEnd).ToString("c"));
 			row.Tag=listAccountEntries;
