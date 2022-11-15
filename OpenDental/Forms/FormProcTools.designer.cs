@@ -55,9 +55,9 @@ namespace OpenDental {
 			this.checkAutocodes.Name = "checkAutocodes";
 			this.checkAutocodes.Size = new System.Drawing.Size(646, 36);
 			this.checkAutocodes.TabIndex = 43;
-			this.checkAutocodes.Text = "Autocodes - Deletes all current autocodes and then adds the default autocodes.  P" +
-    "rocedure codes must have already been entered or they cannot be added as an auto" +
-    "code.";
+			this.checkAutocodes.Text = "Auto codes - Deletes all current auto codes and then adds the default autocodes. " +
+    "Procedure codes must have already been entered or they cannot be added as an aut" +
+    "o code.";
 			this.checkAutocodes.UseVisualStyleBackColor = true;
 			// 
 			// checkTcodes
@@ -66,9 +66,9 @@ namespace OpenDental {
 			this.checkTcodes.Name = "checkTcodes";
 			this.checkTcodes.Size = new System.Drawing.Size(646, 36);
 			this.checkTcodes.TabIndex = 44;
-			this.checkTcodes.Text = "T codes - Remove temp codes, codes that start with \"T\", which were only needed fo" +
-    "r the trial version.  If a T code has already been used, then this moves it to t" +
-    "he obsolete category.";
+			this.checkTcodes.Text = "T Codes - Remove temp codes, codes that start with \"T\", which were only needed fo" +
+    "r the trial version. If a T code has already been used, then this moves it to th" +
+    "e obsolete category.\r\n";
 			this.checkTcodes.UseVisualStyleBackColor = true;
 			// 
 			// checkDcodes
@@ -79,7 +79,9 @@ namespace OpenDental {
 			this.checkDcodes.Name = "checkDcodes";
 			this.checkDcodes.Size = new System.Drawing.Size(646, 36);
 			this.checkDcodes.TabIndex = 45;
-			this.checkDcodes.Text = resources.GetString("checkDcodes.Text");
+			this.checkDcodes.Text = "D Codes - Add any missing 2023 CDT Codes and fix descriptions and blank abbreviat" +
+    "ions of existing codes. This option does not work in the trial version, self-com" +
+    "piled version, or outside the USA.";
 			this.checkDcodes.UseVisualStyleBackColor = true;
 			// 
 			// checkNcodes
@@ -115,7 +117,7 @@ namespace OpenDental {
 			this.checkApptProcsQuickAdd.Size = new System.Drawing.Size(646, 36);
 			this.checkApptProcsQuickAdd.TabIndex = 51;
 			this.checkApptProcsQuickAdd.Text = "Appt Procs Quick Add - This is the list of procedures that you pick from within t" +
-    "he appt edit window.  This resets the list to default.";
+    "he Edit Appointment window. This resets the list to default.";
 			this.checkApptProcsQuickAdd.UseVisualStyleBackColor = true;
 			// 
 			// checkRecallTypes
@@ -124,8 +126,8 @@ namespace OpenDental {
 			this.checkRecallTypes.Name = "checkRecallTypes";
 			this.checkRecallTypes.Size = new System.Drawing.Size(646, 36);
 			this.checkRecallTypes.TabIndex = 52;
-			this.checkRecallTypes.Text = "Recall Types - Resets the recall types and triggers to default.  Replaces any T c" +
-    "odes with D codes.";
+			this.checkRecallTypes.Text = "Recall Types - Resets the recall types and triggers to default. Replaces any T co" +
+    "des with D codes.";
 			this.checkRecallTypes.UseVisualStyleBackColor = true;
 			// 
 			// butRun

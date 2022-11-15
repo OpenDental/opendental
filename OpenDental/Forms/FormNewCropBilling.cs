@@ -289,9 +289,12 @@ namespace OpenDental {
 					break;
 				}
 			}
-			//The customer is not on monthly support, so use any other existing repeating charge day (example EHR Monthly and Mobile).
-			if(!hasMaintCharge && repeatChargeArrayForPats.Length>0) {
-				day=repeatChargeArrayForPats[0].DateStart.Day;
+			//The customer is not on monthly support, so use customer's billing cycle date if possible.
+			if(!hasMaintCharge) {
+				int billCycleDay=Patients.GetBillingCycleDayForPat(patNum);
+				if(billCycleDay!=0) {
+					day=billCycleDay;
+				}
 			}
 			return day;
 		}

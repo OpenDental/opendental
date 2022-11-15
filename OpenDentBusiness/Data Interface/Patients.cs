@@ -1446,6 +1446,15 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		/// <summary>Get the patient's Billing Cycle Day of the month.  Will return 0 if it doesn't exist.</summary>
+		public static int GetBillingCycleDayForPat(long patNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetInt(MethodBase.GetCurrentMethod(),patNum);
+			}
+			string command="SELECT BillingCycleDay FROM patient WHERE PatNum="+POut.Long(patNum);
+			return Db.GetInt(command);
+		}
+
 		///<summary>Returns a Family object for the supplied patNum.  Use Family.GetPatient to extract the desired patient from the family.</summary>
 		public static Family GetFamily(long patNum) {
 			//No need to check MiddleTierRole; no call to db.

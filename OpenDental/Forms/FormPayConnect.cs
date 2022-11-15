@@ -33,6 +33,10 @@ namespace OpenDental {
 		private bool _hasSwipedCard;
 		private int _expYear;
 		private int _expMonth;
+		///<summary>Opening the PayConnect or PaySimple window from FormPayment, and then closing them, can set isCcDeclined to True.
+		///This is because FormPayment didn't know if a transaction was attempted or not, and was assuming it was.
+		///This can cause the payment amount to be reset to $0. So, this bool indicates if we have actually attempted a transaction.</summary>
+		public bool WasPaymentAttempted=false;
 
 		///<summary>Can handle CreditCard being null.</summary>
 		public FormPayConnect(long clinicNum,Patient patient,decimal amount,CreditCard creditCard,bool isAddingCard=false) {
@@ -647,6 +651,7 @@ namespace OpenDental {
 				return;
 			}
 			bool isSuccess;
+			WasPaymentAttempted=true;
 			if(radioWebService.Checked) {
 				isSuccess=ProcessPaymentWebService(_expYear,_expMonth);
 			}

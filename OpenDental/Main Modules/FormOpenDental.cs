@@ -5383,7 +5383,8 @@ namespace OpenDental{
 			formClinics.ShowDialog();
 			SecurityLogs.MakeLogEntry(Permissions.ClinicEdit,0,"Clinics");
 			//this menu item is only visible if the clinics show feature is enabled (!EasyNoClinics)
-			if(Clinics.GetDesc(Clinics.ClinicNum)=="") {//will be empty string if ClinicNum is not valid, in case they deleted the clinic
+			//Check if Clinic has been deleted and clinic is not headquarters.
+			if(Clinics.GetDesc(Clinics.ClinicNum)=="" && Clinics.ClinicNum!=0) {//will be empty string if ClinicNum is not valid, in case they deleted the clinic
 				Clinics.ClinicNum=Security.CurUser.ClinicNum;
 				SetSmsNotificationText(doUseSignalInterval:true);//Update sms notification text.
 				Text=PatientL.GetMainTitle(Patients.GetPat(PatNumCur),Clinics.ClinicNum);

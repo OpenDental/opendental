@@ -18,6 +18,10 @@ namespace OpenDental {
 		///Set on OK_Click to discourage using it in the form.
 		///Contains the important details of what happened with PaySimple</summary>
 		public PaySimple.ApiResponse ApiResponseOut;
+		///<summary>Opening the PayConnect or PaySimple window from FormPayment, and then closing them, can set isCcDeclined to True.
+		///This is because FormPayment didn't know if a transaction was attempted or not, and was assuming it was.
+		///This can cause the payment amount to be reset to $0. So, this bool indicates if we have actually attempted a transaction.</summary>
+		public bool WasPaymentAttempted=false;
 
 		private Patient _patCur;
 		private MagstripCardParser _parser=null;
@@ -620,6 +624,7 @@ namespace OpenDental {
 				}
 				ApiResponseOut=ProcessPaymentACH();
 			}
+			WasPaymentAttempted=true;
 			bool isSuccess=(ApiResponseOut!=null);
 			Cursor=Cursors.Default;
 			if(isSuccess) {

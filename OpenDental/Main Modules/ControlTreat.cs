@@ -1589,7 +1589,10 @@ namespace OpenDental{
 			{
 				//Open PDF and allow user to print from pdf software.
 				Cursor=Cursors.WaitCursor;
-				Documents.OpenDoc(_listTreatPlans[gridPlans.SelectedIndices[0]].DocNum);
+				string errMsg=Documents.OpenDoc(_listTreatPlans[gridPlans.SelectedIndices[0]].DocNum);
+				if(errMsg!="") {
+					MsgBox.Show(errMsg);
+				}
 				Cursor=Cursors.Default;
 				return;
 			}
@@ -2744,7 +2747,10 @@ namespace OpenDental{
 			{
 				MsgBox.Show(this,"Document already signed and saved to PDF. Unsign treatment plan from edit window to enable resigning.");
 				Cursor=Cursors.WaitCursor;
-				Documents.OpenDoc(_listTreatPlans[gridPlans.SelectedIndices[0]].DocNum);
+				string errMsg=Documents.OpenDoc(_listTreatPlans[gridPlans.SelectedIndices[0]].DocNum);
+				if(errMsg!="") {
+					MsgBox.Show(errMsg);
+				}
 				Cursor=Cursors.Default;
 				return;//cannot re-sign document.
 			}

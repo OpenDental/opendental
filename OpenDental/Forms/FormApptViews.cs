@@ -71,6 +71,7 @@ namespace OpenDental{
 				apptView.ItemOrder=_listApptViews[_listApptViews.Count-1].ItemOrder+1;
 			}
 			apptView.ApptTimeScrollStart=DateTime.Parse("08:00:00").TimeOfDay;//default to 8 AM
+			apptView.RowsPerIncr=1;//Should never be zero because it will cause OD to hang on an infinite loop.
 			ApptViews.Insert(apptView);//this also gets the primary key
 			using FormApptViewEdit formApptViewEdit=new FormApptViewEdit();
 			formApptViewEdit.ApptViewCur=apptView;

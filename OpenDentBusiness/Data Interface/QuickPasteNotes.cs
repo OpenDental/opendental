@@ -123,6 +123,22 @@ namespace OpenDentBusiness{
 			//Eventually we may want to change this to not be passing in listOld.
 			return Crud.QuickPasteNoteCrud.Sync(listNew.Select(x=>x.Copy()).ToList(),listOld.Select(x=>x.Copy()).ToList());
 		}
+
+		///<summary>Gets multiple QuickPasteNotes from the database. Returns empty list if not found.</summary>
+		public static List<QuickPasteNote> GetQuickPasteNotesForApi(int limit,int offset,long quickPasteCatNum){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<QuickPasteNote>>(MethodBase.GetCurrentMethod(),limit,offset,quickPasteCatNum);
+			}
+			string command="SELECT * FROM quickpastenote ";
+			if(quickPasteCatNum>-1) {
+				command+="WHERE QuickPasteCatNum="+POut.Long(quickPasteCatNum)+" ";
+			}
+			command+="ORDER BY QuickPasteNoteNum "//same fixed order each time
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			List<QuickPasteNote> listQuickPasteNotes=Crud.QuickPasteNoteCrud.SelectMany(command);
+			return listQuickPasteNotes;
+		}
+
 		#endregion
 
 		#region CachePattern

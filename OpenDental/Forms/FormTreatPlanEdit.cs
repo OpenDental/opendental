@@ -127,7 +127,10 @@ namespace OpenDental{
 				MsgBox.Show(this,"Unable to open document.");
 				return;
 			}
-			Documents.OpenDoc(doc.DocNum);
+			string errMsg=Documents.OpenDoc(doc.DocNum);
+			if(errMsg!="") {
+				MsgBox.Show(errMsg);
+			}
 		}
 
 		private void butDocumentDetach_Click(object sender,EventArgs e) {

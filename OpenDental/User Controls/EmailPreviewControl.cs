@@ -309,7 +309,6 @@ namespace OpenDental {
 				webBrowser.Visible=true;
 				LayoutManager.MoveLocation(webBrowser,textBodyText.Location);
 				LayoutManager.MoveSize(webBrowser,textBodyText.Size);
-				webBrowser.Anchor=textBodyText.Anchor;
 				webBrowser.DocumentText=HtmlText;
 				webBrowser.BringToFront();
 			}

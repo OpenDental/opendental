@@ -447,6 +447,9 @@ namespace OpenDental {
 			if(e.Button!=MouseButtons.Left) {
 				return;
 			}
+      if(!ShowOverridePrompt()) {
+				return;
+      }
 			Program program=Programs.GetCur(ProgramName.CareCredit);
 			if(!program.Enabled) {
 				ODException.SwallowAnyException(() =>
@@ -639,6 +642,9 @@ namespace OpenDental {
 			if(!CanAddNewCreditCard(Programs.GetCur(ProgramName.PayConnect),PayConnect.ProgramProperties.PayConnectPreventSavingNewCC)) {
 				return;
 			}
+      if(!ShowOverridePrompt()) {
+				return;
+      }
 			if(comboCreditCards.SelectedIndex < _listCreditCards.Count) {
 				CreditCard creditCard=_listCreditCards[comboCreditCards.SelectedIndex];
 				if(creditCard!=null && creditCard.CCSource==CreditCardSource.PayConnectPortal) {
@@ -659,6 +665,9 @@ namespace OpenDental {
 			if(!CanAddNewCreditCard(Programs.GetCur(ProgramName.PaySimple),PaySimple.PropertyDescs.PaySimplePreventSavingNewCC)) {
 				return;
 			}
+      if(!ShowOverridePrompt()) {
+				return;
+      }
 			MakePaySimpleTransaction();
 			if(_payment.IsCcCompleted) {
 				DisablePaymentControls();
@@ -881,12 +890,15 @@ namespace OpenDental {
 		}
 
 		private void panelXcharge_MouseClick(object sender,MouseEventArgs e) {
-			if(e.Button != MouseButtons.Left) {
+			if(e.Button!=MouseButtons.Left) {
 				return;
 			}
 			if(!CanAddNewCreditCard(Programs.GetCur(ProgramName.Xcharge),ProgramProperties.PropertyDescs.XCharge.XChargePreventSavingNewCC)) {
 				return;
 			}
+      if(!ShowOverridePrompt()) {
+				return;
+      }
 			_xChargeMilestone="";
 			try {
 				MakeXChargeTransaction();
@@ -908,6 +920,9 @@ namespace OpenDental {
 			if(!CanAddNewCreditCard(Programs.GetCur(ProgramName.EdgeExpress),ProgramProperties.PropertyDescs.EdgeExpress.PreventSavingNewCC)) {
 				return;
 			}
+      if(!ShowOverridePrompt()) {
+				return;
+      }
 			try {
 				MakeEdgeExpressTransaction();
 			}
@@ -989,6 +1004,16 @@ namespace OpenDental {
 		#endregion
 
 		#region Methods - Private
+		///<summary>Prompt the user if this payment already had IsCcCompleted set to true.</summary>
+		private bool ShowOverridePrompt() {
+			if(_payment.IsCcCompleted) {
+				string prompt = "Warning: This payment already contains data from a previously successful card transaction.  "
+					+"Some data may be overwritten if you choose to charge a card again.  Continue?";
+				return MessageBox.Show(Lan.g(this,prompt),"Alert",MessageBoxButtons.YesNoCancel,MessageBoxIcon.Exclamation)==DialogResult.Yes;
+			}
+			return true;//If there's no need to ask for an override, just return true
+    }
+
 		///<summary>Returns the selected provider or first provider. Otherwise returns -1.</summary>
 		private long GetProvNum() {
 			List<long> listProvNums=_listPaySplits.Where(x => x.ProvNum!=0).Select(x => x.ProvNum).Distinct().ToList();
@@ -3461,7 +3486,7 @@ namespace OpenDental {
 					butEmailReceipt.Visible=true;
 				}
 			}
-			if(formPayConnect.GetResponse()==null || formPayConnect.GetResponse().StatusCode!="0") { //The transaction failed.
+			if(formPayConnect.WasPaymentAttempted && !_payment.IsCcCompleted && (formPayConnect.GetResponse()==null || formPayConnect.GetResponse().StatusCode!="0")) { //The transaction failed.
 				if(formPayConnect.TransType==PayConnectService.transType.SALE || formPayConnect.TransType==PayConnectService.transType.AUTH) {
 					textAmount.Text=formPayConnect.GetAmountCharged();//Preserve the amount so the user can try the payment again more easily.
 				}
@@ -3605,7 +3630,7 @@ namespace OpenDental {
 					butEmailReceipt.Visible=true;
 				}
 			}
-			if(formPaySimple.ApiResponseOut==null || formPaySimple.ApiResponseOut.Status.ToLower()=="failed") { //The transaction failed.
+			if(formPaySimple.WasPaymentAttempted && !_payment.IsCcCompleted && (formPaySimple.ApiResponseOut==null || formPaySimple.ApiResponseOut.Status.ToLower()=="failed")) { //The transaction failed.
 				//PaySimple checks the transaction type here and sets the amount the user chose to the textAmount textbox. 
 				//We don't have that information here so do nothing.
 				_isCCDeclined=true;
@@ -3838,7 +3863,9 @@ namespace OpenDental {
 								}
 								doNeedToken=false;//Don't update CCard due to failure
 								isNewCard=false;//Don't insert CCard due to failure
-								_isCCDeclined=true;
+								if(!_payment.IsCcCompleted) {
+									_isCCDeclined=true;
+								}
 								break;
 							}
 							if(tranType==1) {

@@ -55,8 +55,8 @@ namespace OpenDental{
 			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
 				//Tcodes remain enabled
 				//Ncodes remain enabled
-				checkDcodes.Text="CDA codes - Add any missing 2023 CDA codes.  This option does not work in the trial version.";
-				checkRecallTypes.Text="Recall Types - Resets the recall types and triggers to default.  Replaces any T codes with CDA codes.";
+				checkDcodes.Text="CDA Codes - Add any missing 2023 CDA Codes. This option does not work in the trial version.";
+				checkRecallTypes.Text="Recall Types - Resets the recall types and triggers to default. Replaces any T codes with CDA Codes.";
 				_codeList=null;//Is only filled when the code tool runs because the user might not need to download the codes.
 			}
 			else { //USA

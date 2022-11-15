@@ -78,7 +78,7 @@ namespace OpenDental {
 			this.textAmount.MinVal = -100000000D;
 			this.textAmount.Name = "textAmount";
 			this.textAmount.Size = new System.Drawing.Size(68, 20);
-			this.textAmount.TabIndex = 0;
+			this.textAmount.TabIndex = 3;
 			this.textAmount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			this.textAmount.Leave += new System.EventHandler(this.TextAmount_Leave);
 			// 
@@ -87,7 +87,7 @@ namespace OpenDental {
 			this.textDate.Location = new System.Drawing.Point(159, 93);
 			this.textDate.Name = "textDate";
 			this.textDate.Size = new System.Drawing.Size(68, 20);
-			this.textDate.TabIndex = 6;
+			this.textDate.TabIndex = 1;
 			this.textDate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// textBankBranch
@@ -96,7 +96,7 @@ namespace OpenDental {
 			this.textBankBranch.MaxLength = 25;
 			this.textBankBranch.Name = "textBankBranch";
 			this.textBankBranch.Size = new System.Drawing.Size(100, 20);
-			this.textBankBranch.TabIndex = 2;
+			this.textBankBranch.TabIndex = 5;
 			// 
 			// textCheckNum
 			// 
@@ -104,7 +104,7 @@ namespace OpenDental {
 			this.textCheckNum.MaxLength = 25;
 			this.textCheckNum.Name = "textCheckNum";
 			this.textCheckNum.Size = new System.Drawing.Size(100, 20);
-			this.textCheckNum.TabIndex = 1;
+			this.textCheckNum.TabIndex = 4;
 			// 
 			// textNote
 			// 
@@ -115,7 +115,7 @@ namespace OpenDental {
 			this.textNote.Name = "textNote";
 			this.textNote.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.textNote.Size = new System.Drawing.Size(335, 73);
-			this.textNote.TabIndex = 4;
+			this.textNote.TabIndex = 7;
 			// 
 			// label6
 			// 
@@ -209,7 +209,7 @@ namespace OpenDental {
 			this.textCarrierName.MaxLength = 25;
 			this.textCarrierName.Name = "textCarrierName";
 			this.textCarrierName.Size = new System.Drawing.Size(263, 20);
-			this.textCarrierName.TabIndex = 3;
+			this.textCarrierName.TabIndex = 6;
 			// 
 			// label7
 			// 
@@ -234,7 +234,7 @@ namespace OpenDental {
 			this.textDateIssued.Location = new System.Drawing.Point(159, 114);
 			this.textDateIssued.Name = "textDateIssued";
 			this.textDateIssued.Size = new System.Drawing.Size(68, 20);
-			this.textDateIssued.TabIndex = 7;
+			this.textDateIssued.TabIndex = 2;
 			this.textDateIssued.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// label1

@@ -3996,10 +3996,10 @@ namespace OpenDentBusiness {
 					if(i>0) {
 						microsoftEmailAddresses+=", ";
 					}
-					microsoftEmailAddresses+=table.Rows[i]["EmailUsername"];
+					microsoftEmailAddresses+=POut.String(table.Rows[i]["EmailUsername"].ToString());
 				}
 				//Create an alert displaying all the effected email addresses, notifying the user to re-authenticate the effected email addresses.
-				string description=$"The email addresses: {microsoftEmailAddresses} have each had their authentication information cleared. Please go through the 'Microsoft sign in' button for each of these email addresses to be re-authenticated. This can be done through Setup > Emails, then edit an email address, and click the Microsoft Sign In button.";
+				string description=$"The following email address(es) need to be re-authenticated: {microsoftEmailAddresses}";
 				command=$"INSERT INTO alertitem (ClinicNum,Description,Type,Severity,Actions,FormToOpen,FKey,ItemValue,UserNum) VALUES (" +
 						//AlertType.Generic=0,SeverityType.Medium=2,ActionType.Delete|ActionType.MarkAsRead|ActionType.OpenForm=7,FormToOpen.FormEmailAddresses=13,Fkey=0
 						$"-1,'{POut.String(description)}',0,2,7,13,0,'',0)";
@@ -4199,10 +4199,10 @@ namespace OpenDentBusiness {
 			string command="SELECT EmailUsername,RefreshToken FROM emailaddress WHERE AuthenticationType=2";//AuthenticationType.Microsoft=2
 			DataTable table=Db.GetTable(command);
 			//We must determine if there are any emails currently authenticated with Microsoft.
-			if(table.Rows.Count>0) {
+			if(table.Rows.Count>0 && !string.IsNullOrWhiteSpace(PIn.String(table.Rows[0]["RefreshToken"].ToString()))) {
 				//Attempt decrypting a RefreshToken to see if the old encryption is used on the table.
-				string decryptedCache=MiscUtils.Decrypt(table.Rows[0]["RefreshToken"].ToString());
-				if(decryptedCache=="") { //old encryption is in place, clear the information out
+				string decryptedCache=MiscUtils.Decrypt(PIn.String(table.Rows[0]["RefreshToken"].ToString()));
+				if(string.IsNullOrWhiteSpace(decryptedCache)) { //old encryption is in place, clear the information out
 					command="UPDATE emailaddress SET AccessToken='' WHERE AuthenticationType=2";//AuthenticationType.Microsoft=2
 					Db.NonQ(command);
 					command="UPDATE emailaddress SET RefreshToken='' WHERE AuthenticationType=2";//AuthenticationType.Microsoft=2
@@ -4214,10 +4214,10 @@ namespace OpenDentBusiness {
 						if(i>0) {
 							microsoftEmailAddresses+=", ";
 						}
-						microsoftEmailAddresses+=table.Rows[i]["EmailUsername"];
+						microsoftEmailAddresses+=POut.String(table.Rows[i]["EmailUsername"].ToString());
 					}
 					//Create an alert displaying all the effected email addresses, notifying the user to re-authenticate the effected email addresses.
-					string description=$"The email addresses: {microsoftEmailAddresses} have each had their authentication information cleared. Please go through the 'Microsoft sign in' button for each of these email addresses to be re-authenticated. This can be done through Setup > Emails, then edit an email address, and click the Microsoft Sign In button.";
+					string description=$"The following email address(es) need to be re-authenticated: {microsoftEmailAddresses}";
 					command=$"INSERT INTO alertitem (ClinicNum,Description,Type,Severity,Actions,FormToOpen,FKey,ItemValue,UserNum) VALUES (" +
 							//AlertType.Generic=0,SeverityType.Medium=2,ActionType.Delete|ActionType.MarkAsRead|ActionType.OpenForm=7,FormToOpen.FormEmailAddresses=13,Fkey=0
 							$"-1,'{POut.String(description)}',0,2,7,13,0,'',0)";
