@@ -31,6 +31,10 @@ namespace OpenDental {
 		///which would cause our parsing logic to happen before the magstripe reader finished outputting the data.
 		///We add a timer delay to attempt to compensate for this functionality.</summary>
 		private bool _hasSwipedCard;
+		///<summary>Opening the PayConnect or PaySimple window from FormPayment, and then closing them, can set isCcDeclined to True.
+		///This is because FormPayment didn't know if a transaction was attempted or not, and was assuming it was.
+		///This can cause the payment amount to be reset to $0. So, this bool indicates if we have actually attempted a transaction.</summary>
+		public bool WasPaymentAttempted=false;
 
 		///<summary>Only call after the form is closed and the DialogResult is DialogResult.OK.</summary>
 		public string AmountCharged {
@@ -685,6 +689,7 @@ namespace OpenDental {
 				return;
 			}
 			bool isSuccess;
+			WasPaymentAttempted=true;
 			if(radioWebService.Checked) {
 				isSuccess=ProcessPaymentWebService(expYear,expMonth);
 			}

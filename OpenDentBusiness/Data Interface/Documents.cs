@@ -891,14 +891,14 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Attempts to open the document using the default program. If not using AtoZfolder saves a local temp file and opens it.</summary>
-		public static void OpenDoc(long docNum) {
+		public static string OpenDoc(long docNum) {
 			Document docCur=Documents.GetByNum(docNum);
 			if(docCur.DocNum==0) {
-				return;
+				return "";
 			}
 			Patient patCur=Patients.GetPat(docCur.PatNum);
 			if(patCur==null) {
-				return;
+				return "";
 			}
 			string docPath;
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
@@ -917,10 +917,18 @@ namespace OpenDentBusiness {
 				File.WriteAllBytes(docPath,state.FileContent);
 				if(ODBuild.IsWeb()) {
 					ThinfinityUtils.HandleFile(docPath);
-					return;
+					return "";
 				}
 			}
-			Process.Start(docPath);
+			try {
+				Process.Start(docPath);
+			}
+			catch(Exception ex) {
+				return Lans.g("Documents","Error occurred while attempting to open document.\r\n"+
+					"Verify a default application has been selected to open files of type: ")+
+					Path.GetExtension(docCur.FileName)+"\r\n"+ex.Message;
+			}
+			return "";
 		}
 
 		//Checks to see if the document exists in the correct location, or checks DB for stored content.

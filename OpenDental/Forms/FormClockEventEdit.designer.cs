@@ -120,7 +120,7 @@ namespace OpenDental {
 			this.textTimeDisplayed1.Location = new System.Drawing.Point(101, 43);
 			this.textTimeDisplayed1.Name = "textTimeDisplayed1";
 			this.textTimeDisplayed1.Size = new System.Drawing.Size(156, 20);
-			this.textTimeDisplayed1.TabIndex = 4;
+			this.textTimeDisplayed1.TabIndex = 0;
 			this.textTimeDisplayed1.TextChanged += new System.EventHandler(this.textTimeDisplayed1_TextChanged);
 			// 
 			// listStatus
@@ -158,7 +158,7 @@ namespace OpenDental {
 			this.groupBox1.Location = new System.Drawing.Point(79, 29);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(267, 100);
-			this.groupBox1.TabIndex = 13;
+			this.groupBox1.TabIndex = 2;
 			this.groupBox1.Text = "Clock In Date and Time";
 			// 
 			// butNow1
@@ -181,7 +181,7 @@ namespace OpenDental {
 			this.groupBox2.Location = new System.Drawing.Point(352, 29);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(267, 100);
-			this.groupBox2.TabIndex = 14;
+			this.groupBox2.TabIndex = 3;
 			this.groupBox2.Text = "Clock Out Date and Time";
 			// 
 			// textTimeEntered2
@@ -236,7 +236,7 @@ namespace OpenDental {
 			this.textTimeDisplayed2.Location = new System.Drawing.Point(101, 43);
 			this.textTimeDisplayed2.Name = "textTimeDisplayed2";
 			this.textTimeDisplayed2.Size = new System.Drawing.Size(156, 20);
-			this.textTimeDisplayed2.TabIndex = 4;
+			this.textTimeDisplayed2.TabIndex = 0;
 			this.textTimeDisplayed2.TextChanged += new System.EventHandler(this.textTimeDisplayed2_TextChanged);
 			// 
 			// textOTimeHours
@@ -244,7 +244,7 @@ namespace OpenDental {
 			this.textOTimeHours.Location = new System.Drawing.Point(176, 79);
 			this.textOTimeHours.Name = "textOTimeHours";
 			this.textOTimeHours.Size = new System.Drawing.Size(68, 20);
-			this.textOTimeHours.TabIndex = 7;
+			this.textOTimeHours.TabIndex = 1;
 			this.textOTimeHours.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			this.textOTimeHours.TextChanged += new System.EventHandler(this.textOvertime_TextChanged);
 			// 
@@ -263,7 +263,7 @@ namespace OpenDental {
 			this.textClockedTime.Name = "textClockedTime";
 			this.textClockedTime.ReadOnly = true;
 			this.textClockedTime.Size = new System.Drawing.Size(68, 20);
-			this.textClockedTime.TabIndex = 1;
+			this.textClockedTime.TabIndex = 2;
 			this.textClockedTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// label8
@@ -281,7 +281,7 @@ namespace OpenDental {
 			this.textRegTime.Name = "textRegTime";
 			this.textRegTime.ReadOnly = true;
 			this.textRegTime.Size = new System.Drawing.Size(68, 20);
-			this.textRegTime.TabIndex = 4;
+			this.textRegTime.TabIndex = 5;
 			this.textRegTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// label9
@@ -310,7 +310,7 @@ namespace OpenDental {
 			this.groupTimeSpans.Location = new System.Drawing.Point(79, 181);
 			this.groupTimeSpans.Name = "groupTimeSpans";
 			this.groupTimeSpans.Size = new System.Drawing.Size(267, 134);
-			this.groupTimeSpans.TabIndex = 30;
+			this.groupTimeSpans.TabIndex = 4;
 			this.groupTimeSpans.Text = "Time Spans";
 			// 
 			// textOTimeAuto
@@ -319,7 +319,7 @@ namespace OpenDental {
 			this.textOTimeAuto.Name = "textOTimeAuto";
 			this.textOTimeAuto.ReadOnly = true;
 			this.textOTimeAuto.Size = new System.Drawing.Size(68, 20);
-			this.textOTimeAuto.TabIndex = 3;
+			this.textOTimeAuto.TabIndex = 4;
 			this.textOTimeAuto.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// textAdjust
@@ -327,7 +327,7 @@ namespace OpenDental {
 			this.textAdjust.Location = new System.Drawing.Point(176, 56);
 			this.textAdjust.Name = "textAdjust";
 			this.textAdjust.Size = new System.Drawing.Size(68, 20);
-			this.textAdjust.TabIndex = 6;
+			this.textAdjust.TabIndex = 0;
 			this.textAdjust.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			this.textAdjust.TextChanged += new System.EventHandler(this.textAdjust_TextChanged);
 			// 
@@ -364,7 +364,7 @@ namespace OpenDental {
 			this.textAdjustAuto.Name = "textAdjustAuto";
 			this.textAdjustAuto.ReadOnly = true;
 			this.textAdjustAuto.Size = new System.Drawing.Size(68, 20);
-			this.textAdjustAuto.TabIndex = 2;
+			this.textAdjustAuto.TabIndex = 3;
 			this.textAdjustAuto.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// textRate2Auto
@@ -373,7 +373,7 @@ namespace OpenDental {
 			this.textRate2Auto.Name = "textRate2Auto";
 			this.textRate2Auto.ReadOnly = true;
 			this.textRate2Auto.Size = new System.Drawing.Size(68, 20);
-			this.textRate2Auto.TabIndex = 31;
+			this.textRate2Auto.TabIndex = 3;
 			this.textRate2Auto.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// labelRate2
@@ -390,7 +390,7 @@ namespace OpenDental {
 			this.textRate2Hours.Location = new System.Drawing.Point(176, 56);
 			this.textRate2Hours.Name = "textRate2Hours";
 			this.textRate2Hours.Size = new System.Drawing.Size(68, 20);
-			this.textRate2Hours.TabIndex = 32;
+			this.textRate2Hours.TabIndex = 0;
 			this.textRate2Hours.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			this.textRate2Hours.TextChanged += new System.EventHandler(this.textRate2Hours_TextChanged);
 			// 
@@ -442,7 +442,7 @@ namespace OpenDental {
 			this.textTotalHours.Name = "textTotalHours";
 			this.textTotalHours.ReadOnly = true;
 			this.textTotalHours.Size = new System.Drawing.Size(68, 20);
-			this.textTotalHours.TabIndex = 34;
+			this.textTotalHours.TabIndex = 2;
 			this.textTotalHours.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// textRate1Auto
@@ -451,7 +451,7 @@ namespace OpenDental {
 			this.textRate1Auto.Name = "textRate1Auto";
 			this.textRate1Auto.ReadOnly = true;
 			this.textRate1Auto.Size = new System.Drawing.Size(68, 20);
-			this.textRate1Auto.TabIndex = 12;
+			this.textRate1Auto.TabIndex = 5;
 			this.textRate1Auto.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// label15
@@ -489,7 +489,7 @@ namespace OpenDental {
 			this.groupRate2orRate3.Location = new System.Drawing.Point(352, 181);
 			this.groupRate2orRate3.Name = "groupRate2orRate3";
 			this.groupRate2orRate3.Size = new System.Drawing.Size(267, 134);
-			this.groupRate2orRate3.TabIndex = 31;
+			this.groupRate2orRate3.TabIndex = 5;
 			this.groupRate2orRate3.Text = "Rate 2 or Rate 3";
 			// 
 			// textRate3Hours
@@ -497,7 +497,7 @@ namespace OpenDental {
 			this.textRate3Hours.Location = new System.Drawing.Point(176, 79);
 			this.textRate3Hours.Name = "textRate3Hours";
 			this.textRate3Hours.Size = new System.Drawing.Size(68, 20);
-			this.textRate3Hours.TabIndex = 40;
+			this.textRate3Hours.TabIndex = 1;
 			this.textRate3Hours.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			this.textRate3Hours.TextChanged += new System.EventHandler(this.textRate3Hours_TextChanged);
 			// 
@@ -516,7 +516,7 @@ namespace OpenDental {
 			this.textRate3Auto.Name = "textRate3Auto";
 			this.textRate3Auto.ReadOnly = true;
 			this.textRate3Auto.Size = new System.Drawing.Size(68, 20);
-			this.textRate3Auto.TabIndex = 39;
+			this.textRate3Auto.TabIndex = 4;
 			this.textRate3Auto.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// label18

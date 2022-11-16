@@ -447,6 +447,9 @@ namespace OpenDental {
 			if(e.Button!=MouseButtons.Left) {
 				return;
 			}
+			if(!ShowOverridePrompt()) {
+				return;
+      }
 			Program prog=Programs.GetCur(ProgramName.CareCredit);
 			if(!prog.Enabled) {
 				ODException.SwallowAnyException(() =>
@@ -639,6 +642,9 @@ namespace OpenDental {
 			if(!CanAddNewCreditCard(Programs.GetCur(ProgramName.PayConnect),PayConnect.ProgramProperties.PayConnectPreventSavingNewCC)) {
 				return;
 			}
+			if(!ShowOverridePrompt()) {
+				return;
+      }
 			if(comboCreditCards.SelectedIndex < _listCreditCards.Count) {
 				CreditCard cc=_listCreditCards[comboCreditCards.SelectedIndex];
 				if(cc!=null && cc.CCSource==CreditCardSource.PayConnectPortal) {
@@ -659,6 +665,9 @@ namespace OpenDental {
 			if(!CanAddNewCreditCard(Programs.GetCur(ProgramName.PaySimple),PaySimple.PropertyDescs.PaySimplePreventSavingNewCC)) {
 				return;
 			}
+			if(!ShowOverridePrompt()) {
+				return;
+      }
 			MakePaySimpleTransaction();
 			if(_paymentCur.IsCcCompleted) {
 				DisablePaymentControls();
@@ -881,12 +890,15 @@ namespace OpenDental {
 		}
 
 		private void panelXcharge_MouseClick(object sender,MouseEventArgs e) {
-			if(e.Button != MouseButtons.Left) {
+			if(e.Button!=MouseButtons.Left) {
 				return;
 			}
 			if(!CanAddNewCreditCard(Programs.GetCur(ProgramName.Xcharge),ProgramProperties.PropertyDescs.XCharge.XChargePreventSavingNewCC)) {
 				return;
 			}
+			if(!ShowOverridePrompt()) {
+				return;
+      }
 			_xChargeMilestone="";
 			try {
 				MakeXChargeTransaction();
@@ -908,6 +920,9 @@ namespace OpenDental {
 			if(!CanAddNewCreditCard(Programs.GetCur(ProgramName.EdgeExpress),ProgramProperties.PropertyDescs.EdgeExpress.PreventSavingNewCC)) {
 				return;
 			}
+			if(!ShowOverridePrompt()) {
+				return;
+      }
 			try {
 				MakeEdgeExpressTransaction();
 			}
@@ -989,6 +1004,16 @@ namespace OpenDental {
 		#endregion
 
 		#region Methods - Private
+		///<summary>Prompt the user if this payment already had IsCcCompleted set to true.</summary>
+		private bool ShowOverridePrompt() {
+			if(_paymentCur.IsCcCompleted) {
+				string prompt = "Warning: This payment already contains data from a previously successful card transaction.  "
+					+"Some data may be overwritten if you choose to charge a card again.  Continue?";
+				return MessageBox.Show(Lan.g(this,prompt),"Alert",MessageBoxButtons.YesNoCancel,MessageBoxIcon.Exclamation)==DialogResult.Yes;
+			}
+			return true;//If there's no need to ask for an override, just return true
+    }
+
 		///<summary>Returns the selected provider or first provider. Otherwise returns -1.</summary>
 		private long GetProvNum() {
 			List<long> listProvNums=_listSplitsCur.Where(x => x.ProvNum!=0).Select(x => x.ProvNum).Distinct().ToList();
@@ -3461,7 +3486,7 @@ namespace OpenDental {
 					butEmailReceipt.Visible=true;
 				}
 			}
-			if(FormP.Response==null || FormP.Response.StatusCode!="0") { //The transaction failed.
+			if(FormP.WasPaymentAttempted && !_paymentCur.IsCcCompleted && (FormP.Response==null || FormP.Response.StatusCode!="0")) { //The transaction failed.
 				if(FormP.TranType==PayConnectService.transType.SALE || FormP.TranType==PayConnectService.transType.AUTH) {
 					textAmount.Text=FormP.AmountCharged;//Preserve the amount so the user can try the payment again more easily.
 				}
@@ -3605,7 +3630,7 @@ namespace OpenDental {
 					butEmailReceipt.Visible=true;
 				}
 			}
-			if(form.ApiResponseOut==null || form.ApiResponseOut.Status.ToLower()=="failed") { //The transaction failed.
+			if(form.WasPaymentAttempted && !_paymentCur.IsCcCompleted && (form.ApiResponseOut==null || form.ApiResponseOut.Status.ToLower()=="failed")) { //The transaction failed.
 				//PaySimple checks the transaction type here and sets the amount the user chose to the textAmount textbox. 
 				//We don't have that information here so do nothing.
 				_isCCDeclined=true;
@@ -3838,7 +3863,9 @@ namespace OpenDental {
 								}
 								needToken=false;//Don't update CCard due to failure
 								newCard=false;//Don't insert CCard due to failure
-								_isCCDeclined=true;
+								if(!_paymentCur.IsCcCompleted) {
+									_isCCDeclined=true;
+								}
 								break;
 							}
 							if(tranType==1) {

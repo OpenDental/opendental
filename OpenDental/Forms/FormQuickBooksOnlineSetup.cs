@@ -251,7 +251,7 @@ namespace OpenDental {
 			//Can't disable QuickBooks Online if it is the currently selected deposit software.
 			if(PrefC.GetEnum<AccountingSoftware>(PrefName.AccountingSoftware)==AccountingSoftware.QuickBooksOnline && _progOld.Enabled) {
 				checkEnabled.Checked=true;
-				MsgBox.Show(this,"You cannot disable QuickBooks Online while it is the selected Deposit Software in Manage Module Preferences.");
+				MsgBox.Show(this,"You cannot disable QuickBooks Online while it is the selected Deposit Software in Setup | Preferences | Manage - General.");
 				return;
 			}
 			EnableOrDisableControls();

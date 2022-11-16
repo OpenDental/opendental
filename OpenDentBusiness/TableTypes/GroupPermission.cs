@@ -704,10 +704,10 @@ namespace OpenDentBusiness{
 		///that is stored in grouppermission.FKey. Pattern approved by Jordan.</summary>
 		[Description("Adjustment Type Deny")]
 		AdjustmentTypeDeny,
-		///<summary></summary>223 - Allows user to export statements as CSV files.</summary>///
+		///<summary>223 - Allows user to export statements as CSV files.</summary>
 		[Description("Export CSV")]
 		StatementCSV,
-		///<summary></summary>224 - Allows users to edit carriers.</summary>///
+		///<summary>224 - Allows users to edit carriers.</summary>
 		[Description("Carrier Edit")]
 		CarrierEdit,
 		///<summary>225 - Logs when API subscriptions are added or deleted. For audit trails only.</summary>

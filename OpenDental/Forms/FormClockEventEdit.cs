@@ -185,10 +185,12 @@ namespace OpenDental{
 					-(_clockEvent.OTimeHours==TimeSpan.FromHours(-1)?_clockEvent.OTimeAuto:_clockEvent.OTimeHours);
 				textRegTime.Text=ClockEvents.Format(timeSpanRegular);
 			}
-			//Rate 2 spans -----------------------------------------------------------------------------
+			//Rate 2 and Rate 3 spans -----------------------------------------------------------------------------
 			if(timeSpanClocked>TimeSpan.Zero) {
 				TimeSpan timeSpanTotal=timeSpanClocked+(_clockEvent.AdjustIsOverridden?_clockEvent.Adjust:_clockEvent.AdjustAuto);//clockedTime+(Adj or AdjAuto)
-				TimeSpan timeSpanRate1Hours=timeSpanTotal-(_clockEvent.Rate2Hours==TimeSpan.FromHours(-1)?_clockEvent.Rate2Auto:_clockEvent.Rate2Hours);//totalTime-(Rate2 or Rate2Auto)
+				TimeSpan timeSpanRate2=_clockEvent.Rate2Hours==TimeSpan.FromHours(-1)?_clockEvent.Rate2Auto:_clockEvent.Rate2Hours;//Rate2 or Rate2Auto
+				TimeSpan timeSpanRate3=_clockEvent.Rate3Hours==TimeSpan.FromHours(-1)?_clockEvent.Rate3Auto:_clockEvent.Rate3Hours;//Rate3 or Rate3Auto
+				TimeSpan timeSpanRate1Hours=timeSpanTotal-timeSpanRate2-timeSpanRate3;//totalTime-(Rate2 or Rate2Auto)-(Rate3 or Rate3Auto)
 				textTotalHours.Text=ClockEvents.Format(timeSpanTotal);
 				textRate1Auto.Text=ClockEvents.Format(timeSpanRate1Hours);
 			}

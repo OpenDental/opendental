@@ -138,14 +138,16 @@ namespace OpenDental {
 					databaseIntegrity.WarningIntegrityType=(EnumWarningIntegrityType)Enum.Parse(typeof(EnumWarningIntegrityType),warningIntegrityType);
 				}
 				catch{ 
-					return;//something is very wrong	
+					//Something is very wrong so we will exclude this row. 
+					continue;
 				}
 				databaseIntegrity.PluginName=table.Rows[i]["PluginName"];
 				try{
 					databaseIntegrity.Behavior=(EnumIntegrityBehavior)Enum.Parse(typeof(EnumIntegrityBehavior),table.Rows[i]["Behavior"].ToString());
 				}
 				catch{ 
-					return;//something is very wrong	
+					//Something is very wrong so we will exclude this row. 
+					continue;
 				}
 				databaseIntegrity.Message=table.Rows[i]["Message"];
 				databaseIntegrity.Note=table.Rows[i]["Note"];
