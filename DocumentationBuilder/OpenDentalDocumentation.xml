@@ -7546,6 +7546,8 @@
         <EnumValue name="AdjustmentTypeDeny">222 - Denies users access to specific adjustment types. Special type of permission where having this permission actually 
             denies users access. If a usergroup has an entry for this permission, then they do not have access to the adjustment type with the defnum
             that is stored in grouppermission.FKey. Pattern approved by Jordan.</EnumValue>
+        <EnumValue name="StatementCSV">223 - Allows user to export statements as CSV files.</EnumValue>
+        <EnumValue name="CarrierEdit">224 - Allows users to edit carriers.</EnumValue>
         <EnumValue name="ApiSubscription">225 - Logs when API subscriptions are added or deleted. For audit trails only.</EnumValue>
         <EnumValue name="SecurityGlobal">226 - Logs changes to global lock date. For audit trails only.</EnumValue>
         <EnumValue name="TaskDelete">228 - Allows user to delete tasks.</EnumValue>
@@ -14578,6 +14580,8 @@
         <EnumValue name="AdjustmentTypeDeny">222 - Denies users access to specific adjustment types. Special type of permission where having this permission actually 
             denies users access. If a usergroup has an entry for this permission, then they do not have access to the adjustment type with the defnum
             that is stored in grouppermission.FKey. Pattern approved by Jordan.</EnumValue>
+        <EnumValue name="StatementCSV">223 - Allows user to export statements as CSV files.</EnumValue>
+        <EnumValue name="CarrierEdit">224 - Allows users to edit carriers.</EnumValue>
         <EnumValue name="ApiSubscription">225 - Logs when API subscriptions are added or deleted. For audit trails only.</EnumValue>
         <EnumValue name="SecurityGlobal">226 - Logs changes to global lock date. For audit trails only.</EnumValue>
         <EnumValue name="TaskDelete">228 - Allows user to delete tasks.</EnumValue>

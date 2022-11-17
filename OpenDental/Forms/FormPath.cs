@@ -15,6 +15,7 @@ namespace OpenDental{
 		///<summary>If this is set to true before opening this form, then the program cannot find the AtoZ path and needs user input.</summary>
 		public bool IsStartingUp;
 		private string _errorMsg="";
+		private bool _didVerifySwitchingFromDBStorage;
 		#region Dropbox Private Variables
 		private Program _program;
 		private ProgramProperty _programPropertyDropboxPathAtoZ;
@@ -86,6 +87,32 @@ namespace OpenDental{
 				butOK.Enabled=false;
 				DisableMostControls();
 			}
+			if(PrefC.AtoZfolderUsed!=DataStorageType.InDatabase && !Documents.IsRawBase64DataStored()) {//Image Module data is not stored in the database
+				radioDatabaseStorage.Visible=false;
+				radioDropboxStorage.Location=new Point(9,38);
+				radioSftp.Location=new Point(9,57);
+			}
+		}
+
+		/// <summary>Returns true if user really wants to continue or N/A. Verifies if there is RawBase64 data currently stored in the database. It will warn users that switching away means they are no longer able to access that data.</summary>
+		private bool VerifySwitchingAwayFromDBStorage() {
+			if(_didVerifySwitchingFromDBStorage) {
+				return true;//already verified
+			}
+			if(PrefC.AtoZfolderUsed!=DataStorageType.InDatabase) {
+				return true;//N/A
+			}
+			if(!Documents.IsRawBase64DataStored()) {//Image Module data is not currently stored in the database
+				return true;//N/A
+			}
+			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Don't do this. You will lose access to your existing Imaging Module data currently stored in the database. Continue anyway?")) 
+			{
+				//user will have one more chance to cancel because they can just cancel out of the form.
+				SetRadioButtonChecked(_dataStorageType);
+				return false;//changed their mind
+			}
+			_didVerifySwitchingFromDBStorage=true;
+			return true;
 		}
 
 		private void DisableMostControls() {
@@ -95,7 +122,7 @@ namespace OpenDental{
 			checkMultiplePaths.Enabled=false;
 			textServerPath.ReadOnly=true;
 			butBrowseServer.Enabled=false;
-			radioAtoZfolderNotRequired.Enabled=false;
+			radioDatabaseStorage.Enabled=false;
 			textExportPath.ReadOnly=true;
 			butBrowseExport.Enabled=false;
 			textLetterMergePath.ReadOnly=true;
@@ -122,7 +149,7 @@ namespace OpenDental{
 					break;
 				case DataStorageType.InDatabase:
 					_dataStorageType=DataStorageType.InDatabase;
-					radioAtoZfolderNotRequired.Checked=true;//Will only do something when SetRadioButtonChecked is called on Load
+					radioDatabaseStorage.Checked=true;//Will only do something when SetRadioButtonChecked is called on Load
 					tabControlDataStorageType.SelectedTab=tabInDatabase;
 					break;
 				case DataStorageType.DropboxAtoZ:
@@ -239,6 +266,9 @@ namespace OpenDental{
 		}
 
 		private void radioUseFolder_Click(object sender,EventArgs e) {
+			if(!VerifySwitchingAwayFromDBStorage()) { //they clicked cancel
+				return;
+			}
 			labelPathSameForAll.Enabled = radioUseFolder.Checked;
 			textDocPath.Enabled = radioUseFolder.Checked;
 			butBrowseDoc.Enabled = radioUseFolder.Checked;
@@ -254,8 +284,8 @@ namespace OpenDental{
 			SetRadioButtonChecked(DataStorageType.LocalAtoZ);
 		}
 
-		private void radioAtoZfolderNotRequired_Click(object sender,EventArgs e) {
-			if(radioAtoZfolderNotRequired.Checked){//user attempting to use db to store images
+		private void radioDatabaseStorage_Click(object sender,EventArgs e) {
+			if(radioDatabaseStorage.Checked){//user attempting to use db to store images
 				using InputBox inputbox=new InputBox("Please enter password");
 				inputbox.ShowDialog();
 				if(inputbox.DialogResult!=DialogResult.OK){
@@ -309,6 +339,9 @@ namespace OpenDental{
 		}
 
 		private void radioDropboxStorage_Click(object sender,EventArgs e) {
+			if(!VerifySwitchingAwayFromDBStorage()) { //they clicked cancel
+				return;
+			}
 			if(_dataStorageType==DataStorageType.DropboxAtoZ) {
 				return;
 			}
@@ -362,6 +395,9 @@ namespace OpenDental{
 		}
 		
 		private void radioSftp_Click(object sender,EventArgs e) {
+			if(!VerifySwitchingAwayFromDBStorage()) { //they clicked cancel
+				return;
+			}
 			if(_dataStorageType==DataStorageType.SftpAtoZ) {
 				return;
 			}

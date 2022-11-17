@@ -141,6 +141,7 @@ namespace OpenDental {
 			}
 			if(PaySplitCur.ProvNum>0) {
 				comboUnearnedTypes.SelectedIndex=0;
+				DetachPayPlan();
 				comboUnearnedTypes.Enabled=false;
 				PaySplitCur.UnearnedType=0;
 			}
@@ -162,9 +163,9 @@ namespace OpenDental {
 			if(PaySplitCur.UnearnedType>0) {//If they use an unearned type the provnum must be zero if Edit Anyway isn't pressed
 				PaySplitCur.ProvNum=0;
 				comboProvider.SelectedIndex=0;
+				DetachPayPlan();
 				comboProvider.Enabled=false;
 				butPickProv.Enabled=false;
-				checkPayPlan.Checked=false;
 				checkPayPlan.Enabled=false;
 			}
 			else {
@@ -248,6 +249,7 @@ namespace OpenDental {
 			}
 			if(!_isEditAnyway) {//When user clicks Edit Anyway they are specifically trying to correct a bad split, so don't clear it out.
 				ProcCur=null;
+				DetachPayPlan();
 				FillProcedure();
 			}
 			FillAdjustment();
@@ -356,12 +358,6 @@ namespace OpenDental {
 			}
 			if(ProcCur.ProcStatus!=ProcStat.C) {
 				comboUnearnedTypes.Enabled=true;
-				if(ProcCur.ProcStatus==ProcStat.TP) {
-					PaySplitCur.PayPlanNum=0;
-					PaySplitCur.PayPlanChargeNum=0;
-					checkPayPlan.Checked=false;
-					checkPayPlan.Enabled=false;
-				}
 			}
 			else {//There is no good way to determine if a proc previously had TP unearned so we will just keep whatever loaded in and disable the box. 
 				comboUnearnedTypes.SelectedIndex=0;//First item is always None, if there is a procedure it cannot be a prepayment, regardless of enforce fully.
@@ -480,6 +476,13 @@ namespace OpenDental {
 			ComputeTotals();
 		}
 
+		/// <summary>Helper Method that detaches Payment Plan Info from PaySplitCur </summary>
+		private void DetachPayPlan() {
+			PaySplitCur.PayPlanNum=0;
+			PaySplitCur.PayPlanChargeNum=0;
+			checkPayPlan.Checked=false;
+		}
+
 		///<summary>Attaches procedure, sets the selected provider, and fills Procedure information.</summary>
 		private void butAttachProc_Click(object sender, System.EventArgs e) {
 			using FormProcSelect FormPS=new FormProcSelect(PaySplitCur.PatNum,false);
@@ -513,6 +516,7 @@ namespace OpenDental {
 				}
 			}
 			ProcCur=null;
+			DetachPayPlan();
 			SetEnabledProc();
 			FillProcedure();
 			FillAdjustment();
@@ -529,6 +533,7 @@ namespace OpenDental {
 			PaySplitCur.ProvNum=_adjCur.ProvNum;
 			PaySplitCur.ClinicNum=_adjCur.ClinicNum;
 			PaySplitCur.UnearnedType=0;
+			DetachPayPlan();
 			SetEnabledProc();
 			FillProcedure();
 			FillAdjustment();
@@ -540,6 +545,7 @@ namespace OpenDental {
 					.ForEach(x => x.AdjNum=0);
 			}
 			_adjCur=null;
+			DetachPayPlan();
 			SetEnabledProc();//think about this.
 			FillProcedure();
 			FillAdjustment();
@@ -554,13 +560,12 @@ namespace OpenDental {
 		private void AttachPlanCharge(PayPlan payPlan, long guar) {
 			//get all current charges for that pay plan. If there are no current charges, don't allow the pay plan attach. 
 			List<PayPlanCharge> listPayPlanChargesCurrent=PayPlanCharges.GetDueForPayPlan(payPlan,guar);
-				if(listPayPlanChargesCurrent.Count==0) {
-					//No current payments due for patient. Payment may be made ahead of schedule if procedure is attached.
-					PaySplitCur.PayPlanChargeNum=0;
-				}
-				else {
-					PaySplitCur.PayPlanChargeNum=listPayPlanChargesCurrent.OrderBy(x => x.ChargeDate).First().PayPlanChargeNum;//get oldest
-				}
+			if(listPayPlanChargesCurrent.Count==0) {
+				//No current payments due for patient. Payment may be made ahead of schedule if procedure is attached.
+				DetachPayPlan();
+				return;
+			}
+			PaySplitCur.PayPlanChargeNum=listPayPlanChargesCurrent.OrderBy(x => x.ChargeDate).First().PayPlanChargeNum;//get oldest
 		}
 
 		private void checkPayPlan_Click(object sender, System.EventArgs e) {
@@ -599,10 +604,8 @@ namespace OpenDental {
 				//get the selected pay plan's current charges. If there is a charge, attach the split to that charge.
 				AttachPlanCharge(selectPayPlan,selectPayPlan.Guarantor);
 			}
-			else{//payPlan unchecked
-				PaySplitCur.PayPlanNum=0;
-				PaySplitCur.PayPlanChargeNum=0;
-			}
+			//payPlan unchecked
+			DetachPayPlan();
 		}
 
 		private string SecurityLogEntryHelper(string oldVal,string newVal,string textInLog) {

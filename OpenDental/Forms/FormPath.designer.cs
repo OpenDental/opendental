@@ -69,7 +69,7 @@ namespace OpenDental {
 			this.textSftpAtoZ = new System.Windows.Forms.TextBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.textSftpHostname = new System.Windows.Forms.TextBox();
-			this.radioAtoZfolderNotRequired = new System.Windows.Forms.RadioButton();
+			this.radioDatabaseStorage = new System.Windows.Forms.RadioButton();
 			this.radioUseFolder = new System.Windows.Forms.RadioButton();
 			this.groupbox1.SuspendLayout();
 			this.tabControlDataStorageType.SuspendLayout();
@@ -195,13 +195,12 @@ namespace OpenDental {
 			this.groupbox1.Controls.Add(this.radioSftp);
 			this.groupbox1.Controls.Add(this.radioDropboxStorage);
 			this.groupbox1.Controls.Add(this.tabControlDataStorageType);
-			this.groupbox1.Controls.Add(this.radioAtoZfolderNotRequired);
+			this.groupbox1.Controls.Add(this.radioDatabaseStorage);
 			this.groupbox1.Controls.Add(this.radioUseFolder);
 			this.groupbox1.Location = new System.Drawing.Point(10, 12);
 			this.groupbox1.Name = "groupbox1";
-			this.groupbox1.Size = new System.Drawing.Size(624, 330);
+			this.groupbox1.Size = new System.Drawing.Size(624, 335);
 			this.groupbox1.TabIndex = 0;
-			this.groupbox1.TabStop = false;
 			this.groupbox1.Text = "A to Z Images Folder for storing images and documents";
 			// 
 			// radioSftp
@@ -235,13 +234,14 @@ namespace OpenDental {
 			this.tabControlDataStorageType.Location = new System.Drawing.Point(11, 92);
 			this.tabControlDataStorageType.Name = "tabControlDataStorageType";
 			this.tabControlDataStorageType.SelectedIndex = 0;
-			this.tabControlDataStorageType.Size = new System.Drawing.Size(606, 234);
+			this.tabControlDataStorageType.Size = new System.Drawing.Size(606, 236);
 			this.tabControlDataStorageType.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
 			this.tabControlDataStorageType.TabIndex = 97;
 			this.tabControlDataStorageType.TabStop = false;
 			// 
 			// tabAtoZ
 			// 
+			this.tabAtoZ.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
 			this.tabAtoZ.Controls.Add(this.butBrowseLocal);
 			this.tabAtoZ.Controls.Add(this.labelPathSameForAll);
 			this.tabAtoZ.Controls.Add(this.butBrowseServer);
@@ -255,10 +255,9 @@ namespace OpenDental {
 			this.tabAtoZ.Location = new System.Drawing.Point(4, 14);
 			this.tabAtoZ.Name = "tabAtoZ";
 			this.tabAtoZ.Padding = new System.Windows.Forms.Padding(3);
-			this.tabAtoZ.Size = new System.Drawing.Size(598, 216);
+			this.tabAtoZ.Size = new System.Drawing.Size(598, 218);
 			this.tabAtoZ.TabIndex = 0;
 			this.tabAtoZ.Text = "AtoZ";
-			this.tabAtoZ.UseVisualStyleBackColor = true;
 			// 
 			// butBrowseLocal
 			// 
@@ -312,14 +311,14 @@ namespace OpenDental {
 			// 
 			// tabInDatabase
 			// 
+			this.tabInDatabase.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
 			this.tabInDatabase.Controls.Add(this.label2);
 			this.tabInDatabase.Location = new System.Drawing.Point(4, 14);
 			this.tabInDatabase.Name = "tabInDatabase";
 			this.tabInDatabase.Padding = new System.Windows.Forms.Padding(3);
-			this.tabInDatabase.Size = new System.Drawing.Size(598, 216);
+			this.tabInDatabase.Size = new System.Drawing.Size(598, 218);
 			this.tabInDatabase.TabIndex = 1;
 			this.tabInDatabase.Text = "Database";
-			this.tabInDatabase.UseVisualStyleBackColor = true;
 			// 
 			// label2
 			// 
@@ -331,6 +330,7 @@ namespace OpenDental {
 			// 
 			// tabDropbox
 			// 
+			this.tabDropbox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
 			this.tabDropbox.Controls.Add(this.label12);
 			this.tabDropbox.Controls.Add(this.label5);
 			this.tabDropbox.Controls.Add(this.textAtoZPath);
@@ -341,10 +341,9 @@ namespace OpenDental {
 			this.tabDropbox.Location = new System.Drawing.Point(4, 14);
 			this.tabDropbox.Name = "tabDropbox";
 			this.tabDropbox.Padding = new System.Windows.Forms.Padding(3);
-			this.tabDropbox.Size = new System.Drawing.Size(598, 216);
+			this.tabDropbox.Size = new System.Drawing.Size(598, 218);
 			this.tabDropbox.TabIndex = 2;
 			this.tabDropbox.Text = "Dropbox";
-			this.tabDropbox.UseVisualStyleBackColor = true;
 			// 
 			// label12
 			// 
@@ -409,6 +408,7 @@ namespace OpenDental {
 			// 
 			// tabSftp
 			// 
+			this.tabSftp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
 			this.tabSftp.Controls.Add(this.label11);
 			this.tabSftp.Controls.Add(this.butSftpClear);
 			this.tabSftp.Controls.Add(this.label10);
@@ -422,10 +422,9 @@ namespace OpenDental {
 			this.tabSftp.Controls.Add(this.textSftpHostname);
 			this.tabSftp.Location = new System.Drawing.Point(4, 14);
 			this.tabSftp.Name = "tabSftp";
-			this.tabSftp.Size = new System.Drawing.Size(598, 216);
+			this.tabSftp.Size = new System.Drawing.Size(598, 218);
 			this.tabSftp.TabIndex = 3;
 			this.tabSftp.Text = "SFTP";
-			this.tabSftp.UseVisualStyleBackColor = true;
 			// 
 			// label11
 			// 
@@ -519,16 +518,16 @@ namespace OpenDental {
 			this.textSftpHostname.Size = new System.Drawing.Size(134, 20);
 			this.textSftpHostname.TabIndex = 130;
 			// 
-			// radioAtoZfolderNotRequired
+			// radioDatabaseStorage
 			// 
-			this.radioAtoZfolderNotRequired.Location = new System.Drawing.Point(9, 38);
-			this.radioAtoZfolderNotRequired.Name = "radioAtoZfolderNotRequired";
-			this.radioAtoZfolderNotRequired.Size = new System.Drawing.Size(537, 17);
-			this.radioAtoZfolderNotRequired.TabIndex = 101;
-			this.radioAtoZfolderNotRequired.Text = "Store images directly in database.  No AtoZ folder. (Some features will be unavai" +
+			this.radioDatabaseStorage.Location = new System.Drawing.Point(9, 38);
+			this.radioDatabaseStorage.Name = "radioDatabaseStorage";
+			this.radioDatabaseStorage.Size = new System.Drawing.Size(537, 17);
+			this.radioDatabaseStorage.TabIndex = 101;
+			this.radioDatabaseStorage.Text = "Store images directly in database.  No AtoZ folder. (Some features will be unavai" +
     "lable)";
-			this.radioAtoZfolderNotRequired.UseVisualStyleBackColor = true;
-			this.radioAtoZfolderNotRequired.Click += new System.EventHandler(this.radioAtoZfolderNotRequired_Click);
+			this.radioDatabaseStorage.UseVisualStyleBackColor = true;
+			this.radioDatabaseStorage.Click += new System.EventHandler(this.radioDatabaseStorage_Click);
 			// 
 			// radioUseFolder
 			// 
@@ -591,7 +590,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butBrowseLetter;
 		private System.Windows.Forms.TextBox textLetterMergePath;
 		private CheckBox checkMultiplePaths;
-		private RadioButton radioAtoZfolderNotRequired;
+		private RadioButton radioDatabaseStorage;
 		private RadioButton radioUseFolder;
 		private Label labelLocalPath;
 		private TextBox textLocalPath;

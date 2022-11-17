@@ -393,7 +393,8 @@ namespace OpenDentBusiness{
 					InsVerifies.DeleteByFKey(patPlanNum,VerifyTypes.PatientEnrollment);
 				}
 			}
-			InsPlans.ComputeEstimatesForPatNums(new List<long> { patNum });
+			//Include completed procedures when computing estimates so that they are removed.
+			InsPlans.ComputeEstimatesForPatNums(new List<long> { patNum },hasCompletedProcs:true);
 //Cameron_ Possibly create outbound ADT message to update insurance info
 		}
 

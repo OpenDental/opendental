@@ -370,7 +370,7 @@ namespace CodeBase {
 			return Convert.ToBase64String(retval);
 		}
 
-		public static string Decrypt(string encString,bool doThrow = false) {
+		public static string Decrypt(string encString,bool doThrow=false,bool isSilent=false) {
 			try {
 				byte[] encrypted=Convert.FromBase64String(encString);
 				MemoryStream ms=null;
@@ -397,7 +397,9 @@ namespace CodeBase {
 				if(doThrow) {
 					throw e;
 				}
-				MessageBox.Show("Text entered was not valid encrypted text.");
+				if(!isSilent) {
+					MessageBox.Show("Text entered was not valid encrypted text.");
+				}
 				return "";
 			}
 		}

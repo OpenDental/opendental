@@ -92,6 +92,8 @@
       <summary>Enum:Permissions Some permissions will treat a zero FKey differently. Some denote it as having access to everything for that PermType. I.e. Reports.</summary>
       <Enumeration name="Permissions">
         <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+        <EnumValue name="StatementCSV">223 - Allows user to export statements as CSV files.</EnumValue>
+        <EnumValue name="CarrierEdit">224 - Allows users to edit carriers.</EnumValue>
         <EnumValue name="ApiAccountEdit">234 - Allows the editing of customer accounts for the ODApi via the BCM.</EnumValue>
         <EnumValue name="RegistrationKeyCreate">235 - Logs when registration keys are created. For audit trails only.</EnumValue>
         <EnumValue name="RegistrationKeyEdit">236 - Logs when registration keys are edited. For audit trails only.</EnumValue>
@@ -135,6 +137,8 @@
       <summary>Enum:Permissions</summary>
       <Enumeration name="Permissions">
         <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+        <EnumValue name="StatementCSV">223 - Allows user to export statements as CSV files.</EnumValue>
+        <EnumValue name="CarrierEdit">224 - Allows users to edit carriers.</EnumValue>
         <EnumValue name="ApiAccountEdit">234 - Allows the editing of customer accounts for the ODApi via the BCM.</EnumValue>
         <EnumValue name="RegistrationKeyCreate">235 - Logs when registration keys are created. For audit trails only.</EnumValue>
         <EnumValue name="RegistrationKeyEdit">236 - Logs when registration keys are edited. For audit trails only.</EnumValue>

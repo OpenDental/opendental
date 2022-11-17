@@ -4201,7 +4201,7 @@ namespace OpenDentBusiness {
 			//We must determine if there are any emails currently authenticated with Microsoft.
 			if(table.Rows.Count>0 && !string.IsNullOrWhiteSpace(PIn.String(table.Rows[0]["RefreshToken"].ToString()))) {
 				//Attempt decrypting a RefreshToken to see if the old encryption is used on the table.
-				string decryptedCache=MiscUtils.Decrypt(PIn.String(table.Rows[0]["RefreshToken"].ToString()));
+				string decryptedCache=MiscUtils.Decrypt(PIn.String(table.Rows[0]["RefreshToken"].ToString()),isSilent:true);
 				if(string.IsNullOrWhiteSpace(decryptedCache)) { //old encryption is in place, clear the information out
 					command="UPDATE emailaddress SET AccessToken='' WHERE AuthenticationType=2";//AuthenticationType.Microsoft=2
 					Db.NonQ(command);
