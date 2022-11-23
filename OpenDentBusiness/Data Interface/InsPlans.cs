@@ -1171,7 +1171,7 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Computes estimates for all patients passed.</summary>
-		public static void ComputeEstimatesForPatNums(List<long> listPatNums) {
+		public static void ComputeEstimatesForPatNums(List<long> listPatNums,bool hasCompletedProcs=false) {
 			//No need to check MiddleTierRole; no call to db.
 			listPatNums=listPatNums.Distinct().ToList();
 			for(int i=0;i<listPatNums.Count;i++) {
@@ -1179,11 +1179,14 @@ namespace OpenDentBusiness {
 				Family fam=Patients.GetFamily(patNum);
 				Patient pat=fam.GetPatient(patNum);
 				List<Procedure> procs=Procedures.Refresh(patNum);
-				//Only grab the procedures that have not been completed yet.
-				List<Procedure> listNonCompletedProcs=procs.FindAll(x => x.ProcStatus!=ProcStat.C && x.ProcStatus!=ProcStat.D);
-				List<ClaimProc> claimProcs=ClaimProcs.Refresh(patNum);
-				//Only use the claim procs associated to the non-completed procedures.
-				List<ClaimProc> listNonCompletedClaimProcs=claimProcs.FindAll(x => listNonCompletedProcs.Exists(y => y.ProcNum==x.ProcNum));
+				//Never waste time computing estimates for deleted procedures.
+				procs.RemoveAll(x => x.ProcStatus==ProcStat.D);
+				//Remove completed procedures for speed purposes unless the calling method explicitly wants to recalculate estimates on completed procedures.
+				if(!hasCompletedProcs) {
+					procs.RemoveAll(x => x.ProcStatus==ProcStat.C);
+				}
+				//Only use the claim procs associated to the procedures in our list.
+				List<ClaimProc> claimProcs=ClaimProcs.Refresh(patNum).FindAll(x => procs.Exists(y => y.ProcNum==x.ProcNum));
 				List<InsSub> subs=InsSubs.RefreshForFam(fam);
 				List<InsPlan> plans=InsPlans.RefreshForSubList(subs);
 				List<PatPlan> patPlans=PatPlans.Refresh(patNum);
@@ -1198,7 +1201,7 @@ namespace OpenDentBusiness {
 				List<Fee> listFees=Fees.GetListFromObjects(listProcedureCodes,procs.Select(x=>x.MedicalCode).ToList(),procs.Select(x=>x.ProvNum).ToList(),
 					pat.PriProv,pat.SecProv,pat.FeeSched,plans,procs.Select(x=>x.ClinicNum).ToList(),null,//don't need appts to set proc provs
 					listSubstLinks,discountPlanNum);
-				Procedures.ComputeEstimatesForAll(patNum,listNonCompletedClaimProcs,listNonCompletedProcs,plans,patPlans,benefitList,pat.Age,subs,
+				Procedures.ComputeEstimatesForAll(patNum,claimProcs,procs,plans,patPlans,benefitList,pat.Age,subs,
 					null,false,listSubstLinks,listFees);
 				Patients.SetHasIns(patNum);
 			}

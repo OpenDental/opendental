@@ -279,7 +279,7 @@ namespace OpenDentBusiness {
 			string patientPortalURL=PrefC.GetString(PrefName.PatientPortalURL);
 			string hostedURL=signupOut.EServices.FirstOrDefault(x => x.EService==eServiceCode.PatientPortal && x.ClinicNum==0)?.HostedUrl ?? "";
 			if(!string.IsNullOrEmpty(hostedURL)
-				&& patientPortalURL.Length>29
+				&& patientPortalURL.Length>=29
 				&& patientPortalURL.Substring(0,29).ToLower()=="https://www.patientviewer.com"
 				&& patientPortalURL.ToLower()!=hostedURL.ToLower())
 			{

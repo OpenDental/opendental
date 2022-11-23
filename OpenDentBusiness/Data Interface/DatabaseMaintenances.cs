@@ -2490,6 +2490,49 @@ namespace OpenDentBusiness {
 		}
 
 		[DbmMethodAttr(IsReplicationUnsafe=true)]
+		public static string ClaimProcDeleteDroppedInsPlanEstimates(bool verbose,DbmMode modeCur) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
+			}
+			//Get all of the ClaimProcNums for insurance estimates that are not associated to a claim and are associated to an insurance plan that has been dropped.
+			string command=$@"SELECT claimproc.ClaimProcNum 
+				FROM claimproc
+				LEFT JOIN (
+					SELECT patplan.PatNum,insplan.PlanNum
+					FROM patplan
+					INNER JOIN inssub ON patplan.InsSubNum=inssub.InsSubNum
+					INNER JOIN insplan ON inssub.PlanNum=insplan.PlanNum
+				) patinsplan ON claimproc.PatNum=patinsplan.PatNum AND claimproc.PlanNum=patinsplan.PlanNum
+				WHERE claimproc.ClaimNum=0
+				AND claimproc.Status IN ({POut.Enum(ClaimProcStatus.Estimate)},{POut.Enum(ClaimProcStatus.CapEstimate)})
+				AND patinsplan.PlanNum IS NULL";//The patient no longer has this insurance plan.
+			DataTable table=Db.GetTable(command);
+			string log="";
+			switch(modeCur) {
+				case DbmMode.Check:
+					if(table.Rows.Count>0 || verbose) {
+						log+=Lans.g("FormDatabaseMaintenance","ClaimProc estimates for a dropped InsPlan found:")+" "+table.Rows.Count+"\r\n";
+					}
+					break;
+				case DbmMode.Fix:
+					List<DbmLog> listDbmLogs=new List<DbmLog>();
+					string methodName=MethodBase.GetCurrentMethod().Name;
+					if(table.Rows.Count > 0) {
+						List<long> listClaimProcNums=table.Select().Select(x => PIn.Long(x["ClaimProcNum"].ToString())).ToList();
+						Db.NonQ($"DELETE FROM claimproc WHERE ClaimProcNum IN ({string.Join(",",listClaimProcNums)})");
+						listClaimProcNums.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x,DbmLogFKeyType.ClaimProc,
+							DbmLogActionType.Delete,methodName,"ClaimProc estimate deleted because it was attached to dropped insurance plan.")));
+					}
+					if(table.Rows.Count > 0 || verbose) {
+						Crud.DbmLogCrud.InsertMany(listDbmLogs);//Does nothing for empty list.
+						log+=Lans.g("FormDatabaseMaintenance","ClaimProc estimates for a dropped InsPlan deleted:")+" "+table.Rows.Count+"\r\n";
+					}
+					break;
+			}
+			return log;
+		}
+
+		[DbmMethodAttr(IsReplicationUnsafe=true)]
 		public static string ClaimProcDeleteDuplicateEstimateForSameInsPlan(bool verbose,DbmMode modeCur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);

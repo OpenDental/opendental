@@ -1171,6 +1171,13 @@ namespace OpenDentBusiness{
 				uid.MsgId=listMessages[i].Id;
 				uid.RecipientAddress=emailAddressInbox.EmailUsername;
 				EmailMessageUids.Insert(uid);
+				if(emailMessage.PatNum==0) {//If a patient match was not already found, try to locate patient based on the email address sent from.
+					string emailFromAddress=GetAddressSimple(emailMessage.FromAddress);
+					List<Patient> listMatchedPats=Patients.GetPatsByEmailAddress(emailFromAddress);
+					if(listMatchedPats.Count==1) {//If multiple matches, then we do not want to mislead the user by assigning a patient.
+						emailMessage.PatNum=listMatchedPats[0].PatNum;
+					}
+				}
 				Insert(emailMessage);
 			}
 			return listEmailMessages;

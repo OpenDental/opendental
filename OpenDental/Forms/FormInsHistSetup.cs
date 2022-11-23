@@ -153,6 +153,7 @@ namespace OpenDental {
 				//We don't want a full exception, just a popup.  OK_Click will block them from putting invalid data in the db.
 				ex.DoNothing();
 				MsgBox.Show(this,"Invalid date.");
+				return;
 			}
 			if(DateTime.Parse(textBox.Text).Year<1880 || DateTime.Parse(textBox.Text).Year>2100) {
 				MsgBox.Show("Valid dates between 1880 and 2100");

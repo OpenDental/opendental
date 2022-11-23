@@ -450,7 +450,7 @@ namespace OpenDental {
 			PaymentEdit.ConstructResults constructResults=PaymentEdit.ConstructAndLinkChargeCredits(_patient.PatNum,
 				listPatNums:ListTools.FromSingle(_patient.PatNum),
 				isIncomeTxfr:!radioIncludeAll.Checked,
-				loadData:loadData);
+				loadData:loadData,hasInsOverpay:true);
 			//Verify that the user has permission to add adjustments to completed procedures if such adjustments were created.
 			List<long> listProcNums=_listAdjustments.Select(x => x.ProcNum).ToList();
 			List<AccountEntry> listAccountEntriesCompletedProcs=constructResults.ListAccountEntries.FindAll(x => x.PatNum==_patient.PatNum

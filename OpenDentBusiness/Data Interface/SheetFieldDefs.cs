@@ -142,6 +142,9 @@ namespace OpenDentBusiness{
 			else if(checkboxGroups.Any(x => CompareSheetFieldDefsByValueForMobileLayout(x,sheetFieldDef))) {
 				retVal=checkboxGroups.GroupBy(x => x.UiLabelMobile).Where(x=>x.Key==sheetFieldDef.UiLabelMobile).SelectMany(x=>x).ToList();
 			}
+			else {
+				retVal.AddRange(listSheetFields.FindAll(x=>CompareSheetFieldDefsByValueForMobileLayout(x,sheetFieldDef)));
+			}
 			return retVal;
 		}
 
