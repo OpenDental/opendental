@@ -4229,5 +4229,9 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}
 
+		private static void To22_3_26() {
+			string command = "ALTER TABLE autocommexcludedate ALTER DateExclude SET DEFAULT '0001-01-01 00:00:00'";
+			Db.NonQ(command);
+		}
 	}
 }

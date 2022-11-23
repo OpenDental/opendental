@@ -55,6 +55,8 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         
         private System.Threading.SendOrPostCallback LicenseAgreementAcceptedOperationCompleted;
         
+        private System.Threading.SendOrPostCallback ProvisionTenDlcBrandOperationCompleted;
+        
         private System.Threading.SendOrPostCallback EServiceSetupOperationCompleted;
         
         private System.Threading.SendOrPostCallback RecordValidateDbBackupResultsOperationCompleted;
@@ -279,6 +281,9 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         
         /// <remarks/>
         public event LicenseAgreementAcceptedCompletedEventHandler LicenseAgreementAcceptedCompleted;
+        
+        /// <remarks/>
+        public event ProvisionTenDlcBrandCompletedEventHandler ProvisionTenDlcBrandCompleted;
         
         /// <remarks/>
         public event EServiceSetupCompletedEventHandler EServiceSetupCompleted;
@@ -878,6 +883,35 @@ namespace OpenDentBusiness.WebServiceMainHQ {
             if ((this.LicenseAgreementAcceptedCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.LicenseAgreementAcceptedCompleted(this, new LicenseAgreementAcceptedCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/ProvisionTenDlcBrand", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string ProvisionTenDlcBrand(string officeData) {
+            object[] results = this.Invoke("ProvisionTenDlcBrand", new object[] {
+                        officeData});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void ProvisionTenDlcBrandAsync(string officeData) {
+            this.ProvisionTenDlcBrandAsync(officeData, null);
+        }
+        
+        /// <remarks/>
+        public void ProvisionTenDlcBrandAsync(string officeData, object userState) {
+            if ((this.ProvisionTenDlcBrandOperationCompleted == null)) {
+                this.ProvisionTenDlcBrandOperationCompleted = new System.Threading.SendOrPostCallback(this.OnProvisionTenDlcBrandOperationCompleted);
+            }
+            this.InvokeAsync("ProvisionTenDlcBrand", new object[] {
+                        officeData}, this.ProvisionTenDlcBrandOperationCompleted, userState);
+        }
+        
+        private void OnProvisionTenDlcBrandOperationCompleted(object arg) {
+            if ((this.ProvisionTenDlcBrandCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.ProvisionTenDlcBrandCompleted(this, new ProvisionTenDlcBrandCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -3392,6 +3426,32 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         private object[] results;
         
         internal LicenseAgreementAcceptedCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    public delegate void ProvisionTenDlcBrandCompletedEventHandler(object sender, ProvisionTenDlcBrandCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class ProvisionTenDlcBrandCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal ProvisionTenDlcBrandCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

@@ -92,5 +92,6 @@ namespace OpenDentBusiness {
 		string UploadPostcardManiaPatientList(string officeData);
 		string GetLatestCloudClientVersion();
 		string GetCareCreditWebToken(string officeData);
+		string ProvisionTenDlcBrand(string officeData);
 	}
 }

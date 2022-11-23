@@ -145,6 +145,19 @@ namespace OpenDentBusiness{
 			}
 			return Crud.QuickPasteCatCrud.Sync(listNew.Select(x=>x.Copy()).ToList(),listOld.Select(x=>x.Copy()).ToList());
 		}
+
+		///<summary>Gets a list of QuickPasteCats from the database.</summary>
+		public static List<QuickPasteCat> GetQuickPasteCatsForApi(int limit,int offset){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<QuickPasteCat>>(MethodBase.GetCurrentMethod(),limit,offset);
+			}
+			string command="SELECT * FROM quickpastecat ";
+			command+="ORDER BY QuickPasteCatNum "//same fixed order each time
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			List<QuickPasteCat> listQuickPasteCats=Crud.QuickPasteCatCrud.SelectMany(command);
+			return listQuickPasteCats;
+		}
+
 	}
 
 }

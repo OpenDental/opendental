@@ -49,7 +49,7 @@ namespace OpenDentBusiness.Crud{
 				autoCommExcludeDate=new AutoCommExcludeDate();
 				autoCommExcludeDate.AutoCommExcludeDateNum= PIn.Long  (row["AutoCommExcludeDateNum"].ToString());
 				autoCommExcludeDate.ClinicNum             = PIn.Long  (row["ClinicNum"].ToString());
-				autoCommExcludeDate.DateExclude           = PIn.Date  (row["DateExclude"].ToString());
+				autoCommExcludeDate.DateExclude           = PIn.DateT  (row["DateExclude"].ToString());
 				retVal.Add(autoCommExcludeDate);
 			}
 			return retVal;
@@ -94,7 +94,7 @@ namespace OpenDentBusiness.Crud{
 			}
 			command+=
 				     POut.Long  (autoCommExcludeDate.ClinicNum)+","
-				+    POut.Date  (autoCommExcludeDate.DateExclude)+")";
+				+    POut.DateT  (autoCommExcludeDate.DateExclude)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -125,7 +125,7 @@ namespace OpenDentBusiness.Crud{
 			}
 			command+=
 				     POut.Long  (autoCommExcludeDate.ClinicNum)+","
-				+    POut.Date  (autoCommExcludeDate.DateExclude)+")";
+				+    POut.DateT  (autoCommExcludeDate.DateExclude)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -139,7 +139,7 @@ namespace OpenDentBusiness.Crud{
 		public static void Update(AutoCommExcludeDate autoCommExcludeDate) {
 			string command="UPDATE autocommexcludedate SET "
 				+"ClinicNum             =  "+POut.Long  (autoCommExcludeDate.ClinicNum)+", "
-				+"DateExclude           =  "+POut.Date  (autoCommExcludeDate.DateExclude)+" "
+				+"DateExclude           =  "+POut.DateT  (autoCommExcludeDate.DateExclude)+" "
 				+"WHERE AutoCommExcludeDateNum = "+POut.Long(autoCommExcludeDate.AutoCommExcludeDateNum);
 			Db.NonQ(command);
 		}
@@ -151,9 +151,9 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="ClinicNum = "+POut.Long(autoCommExcludeDate.ClinicNum)+"";
 			}
-			if(autoCommExcludeDate.DateExclude.Date != oldAutoCommExcludeDate.DateExclude.Date) {
+			if(autoCommExcludeDate.DateExclude != oldAutoCommExcludeDate.DateExclude) {
 				if(command!="") { command+=",";}
-				command+="DateExclude = "+POut.Date(autoCommExcludeDate.DateExclude)+"";
+				command+="DateExclude = "+POut.DateT(autoCommExcludeDate.DateExclude)+"";
 			}
 			if(command=="") {
 				return false;
@@ -170,7 +170,7 @@ namespace OpenDentBusiness.Crud{
 			if(autoCommExcludeDate.ClinicNum != oldAutoCommExcludeDate.ClinicNum) {
 				return true;
 			}
-			if(autoCommExcludeDate.DateExclude.Date != oldAutoCommExcludeDate.DateExclude.Date) {
+			if(autoCommExcludeDate.DateExclude != oldAutoCommExcludeDate.DateExclude) {
 				return true;
 			}
 			return false;

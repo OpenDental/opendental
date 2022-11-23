@@ -9,8 +9,9 @@ namespace OpenDentBusiness {
         public long AutoCommExcludeDateNum;
         /// <summary>ClinicNum this row applies to. 0 for HQ</summary>
         public long ClinicNum;
-        /// <summary>Date for which Auto Communications will not be sent.</summary>
-        public DateTime DateExclude;
+		[CrudColumn(SpecialType = CrudSpecialColType.DateT)]
+		/// <summary>Date/time for which Auto Communications will not be sent.</summary>
+		public DateTime DateExclude;
 
         /// <summary>Bit flag for tracking excluded days of the week for AutoCommExclusions. Stored in preference and clinic pref as a single byte.
         /// One can translate a 0 based array of Days of the Week using calculations listed below.

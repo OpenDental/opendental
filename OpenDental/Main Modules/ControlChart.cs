@@ -1995,11 +1995,11 @@ namespace OpenDental {
 			}
 			//selected tab will have changed, so we need to test the original selected tab:
 			Rectangle rect=tabProc.GetTabRect(_selectedProcTab);
-			if(rect.Contains(e.X,e.Y) && tabProc.Height>LayoutManager.Scale(28)) {//clicked on the already selected tab which was maximized
-				LayoutManager.MoveHeight(tabProc,LayoutManager.Scale(27));//tabs are ~27 high, but we have to assume rounding errors
+			if(rect.Contains(e.X,e.Y) && tabProc.Height>tabEnterTx.Top) {//clicked on the already selected tab which was maximized
+				LayoutManager.MoveHeight(tabProc,tabEnterTx.Top);//tabs are ~27 high, but we have to assume rounding errors
 				tabProc.Refresh();
 			}
-			else if(tabProc.Height<LayoutManager.Scale(29)) {//clicked on a minimized tab
+			else if(tabProc.Height<=tabEnterTx.Top) {//clicked on a minimized tab
 				LayoutManager.MoveHeight(tabProc,LayoutManager.Scale(_heightTabProcOrig96));
 				_heightTabProcOrig96=0;//Set 0 so that we save height again next time. Height could change with different layout.
 				tabProc.Refresh();

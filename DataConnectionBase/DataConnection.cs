@@ -586,7 +586,7 @@ namespace DataConnectionBase {
 			_cmd.Connection=_con;
 			_con.Open();
 			if(!skipValidation) {
-				_cmd.CommandText="UPDATE preference SET ValueString = '0' WHERE ValueString = '0'";
+				_cmd.CommandText="UPDATE preference SET Comments = '' WHERE PrefName = 'DataBaseVersion'";
 				RunMySqlAction(new Action(() => _cmd.ExecuteNonQuery()));
 			}
 			_con.Close();

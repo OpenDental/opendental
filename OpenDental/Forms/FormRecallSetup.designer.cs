@@ -91,9 +91,9 @@ namespace OpenDental {
 			// 
 			this.radioExcludeFutureYes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.radioExcludeFutureYes.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.radioExcludeFutureYes.Location = new System.Drawing.Point(414, 570);
+			this.radioExcludeFutureYes.Location = new System.Drawing.Point(408, 570);
 			this.radioExcludeFutureYes.Name = "radioExcludeFutureYes";
-			this.radioExcludeFutureYes.Size = new System.Drawing.Size(217, 18);
+			this.radioExcludeFutureYes.Size = new System.Drawing.Size(213, 18);
 			this.radioExcludeFutureYes.TabIndex = 72;
 			this.radioExcludeFutureYes.Text = "Exclude from list if any future appt";
 			this.radioExcludeFutureYes.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -102,7 +102,7 @@ namespace OpenDental {
 			// label8
 			// 
 			this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label8.Location = new System.Drawing.Point(28, 567);
+			this.label8.Location = new System.Drawing.Point(24, 567);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(176, 16);
 			this.label8.TabIndex = 19;
@@ -113,9 +113,9 @@ namespace OpenDental {
 			// 
 			this.radioExcludeFutureNo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.radioExcludeFutureNo.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.radioExcludeFutureNo.Location = new System.Drawing.Point(414, 552);
+			this.radioExcludeFutureNo.Location = new System.Drawing.Point(408, 552);
 			this.radioExcludeFutureNo.Name = "radioExcludeFutureNo";
-			this.radioExcludeFutureNo.Size = new System.Drawing.Size(217, 18);
+			this.radioExcludeFutureNo.Size = new System.Drawing.Size(213, 18);
 			this.radioExcludeFutureNo.TabIndex = 71;
 			this.radioExcludeFutureNo.Text = "Exclude from list if recall scheduled";
 			this.radioExcludeFutureNo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -124,7 +124,7 @@ namespace OpenDental {
 			// textPostcardsPerSheet
 			// 
 			this.textPostcardsPerSheet.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textPostcardsPerSheet.Location = new System.Drawing.Point(204, 564);
+			this.textPostcardsPerSheet.Location = new System.Drawing.Point(200, 564);
 			this.textPostcardsPerSheet.Name = "textPostcardsPerSheet";
 			this.textPostcardsPerSheet.Size = new System.Drawing.Size(34, 20);
 			this.textPostcardsPerSheet.TabIndex = 18;
@@ -134,9 +134,9 @@ namespace OpenDental {
 			this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBox4.Controls.Add(this.radioUseEmailFalse);
 			this.groupBox4.Controls.Add(this.radioUseEmailTrue);
-			this.groupBox4.Location = new System.Drawing.Point(697, 542);
+			this.groupBox4.Location = new System.Drawing.Point(689, 542);
 			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(191, 57);
+			this.groupBox4.Size = new System.Drawing.Size(199, 57);
 			this.groupBox4.TabIndex = 70;
 			this.groupBox4.Text = "Use email if";
 			// 
@@ -165,9 +165,9 @@ namespace OpenDental {
 			this.groupBox2.Controls.Add(this.label12);
 			this.groupBox2.Controls.Add(this.textRight);
 			this.groupBox2.Controls.Add(this.label13);
-			this.groupBox2.Location = new System.Drawing.Point(697, 472);
+			this.groupBox2.Location = new System.Drawing.Point(689, 472);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(191, 64);
+			this.groupBox2.Size = new System.Drawing.Size(199, 64);
 			this.groupBox2.TabIndex = 48;
 			this.groupBox2.Text = "Adjust Postcard Position in Inches";
 			// 
@@ -215,9 +215,9 @@ namespace OpenDental {
 			this.groupBox3.Controls.Add(this.checkGroupFamilies);
 			this.groupBox3.Controls.Add(this.label14);
 			this.groupBox3.Controls.Add(this.label15);
-			this.groupBox3.Location = new System.Drawing.Point(425, 472);
+			this.groupBox3.Location = new System.Drawing.Point(415, 472);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(253, 78);
+			this.groupBox3.Size = new System.Drawing.Size(261, 78);
 			this.groupBox3.TabIndex = 54;
 			this.groupBox3.Text = "Recall List Default View";
 			// 
@@ -271,7 +271,7 @@ namespace OpenDental {
 			// label25
 			// 
 			this.label25.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label25.Location = new System.Drawing.Point(45, 476);
+			this.label25.Location = new System.Drawing.Point(41, 476);
 			this.label25.Name = "label25";
 			this.label25.Size = new System.Drawing.Size(157, 16);
 			this.label25.TabIndex = 57;
@@ -282,7 +282,7 @@ namespace OpenDental {
 			// 
 			this.comboStatusMailedRecall.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboStatusMailedRecall.Location = new System.Drawing.Point(204, 472);
+			this.comboStatusMailedRecall.Location = new System.Drawing.Point(200, 472);
 			this.comboStatusMailedRecall.Name = "comboStatusMailedRecall";
 			this.comboStatusMailedRecall.Size = new System.Drawing.Size(206, 21);
 			this.comboStatusMailedRecall.TabIndex = 58;
@@ -290,7 +290,7 @@ namespace OpenDental {
 			// label26
 			// 
 			this.label26.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label26.Location = new System.Drawing.Point(45, 499);
+			this.label26.Location = new System.Drawing.Point(41, 499);
 			this.label26.Name = "label26";
 			this.label26.Size = new System.Drawing.Size(157, 16);
 			this.label26.TabIndex = 59;
@@ -304,9 +304,9 @@ namespace OpenDental {
 			this.groupBox1.Controls.Add(this.textDaysFirstReminder);
 			this.groupBox1.Controls.Add(this.label2);
 			this.groupBox1.Controls.Add(this.label3);
-			this.groupBox1.Location = new System.Drawing.Point(425, 590);
+			this.groupBox1.Location = new System.Drawing.Point(415, 590);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(253, 62);
+			this.groupBox1.Size = new System.Drawing.Size(261, 62);
 			this.groupBox1.TabIndex = 65;
 			this.groupBox1.Text = "Also show in list if # of days since";
 			// 
@@ -315,6 +315,7 @@ namespace OpenDental {
 			this.textDaysSecondReminder.Location = new System.Drawing.Point(192, 38);
 			this.textDaysSecondReminder.MaxVal = 10000;
 			this.textDaysSecondReminder.Name = "textDaysSecondReminder";
+			this.textDaysSecondReminder.ShowZero = false;
 			this.textDaysSecondReminder.Size = new System.Drawing.Size(53, 20);
 			this.textDaysSecondReminder.TabIndex = 66;
 			// 
@@ -323,6 +324,7 @@ namespace OpenDental {
 			this.textDaysFirstReminder.Location = new System.Drawing.Point(192, 16);
 			this.textDaysFirstReminder.MaxVal = 10000;
 			this.textDaysFirstReminder.Name = "textDaysFirstReminder";
+			this.textDaysFirstReminder.ShowZero = false;
 			this.textDaysFirstReminder.Size = new System.Drawing.Size(53, 20);
 			this.textDaysFirstReminder.TabIndex = 65;
 			// 
@@ -346,7 +348,7 @@ namespace OpenDental {
 			// 
 			// textMaxReminders
 			// 
-			this.textMaxReminders.Location = new System.Drawing.Point(827, 625);
+			this.textMaxReminders.Location = new System.Drawing.Point(819, 625);
 			this.textMaxReminders.MaxVal = 10000;
 			this.textMaxReminders.Name = "textMaxReminders";
 			this.textMaxReminders.ShowZero = false;
@@ -357,7 +359,7 @@ namespace OpenDental {
 			// 
 			this.label4.Location = new System.Drawing.Point(679, 624);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(146, 20);
+			this.label4.Size = new System.Drawing.Size(138, 20);
 			this.label4.TabIndex = 67;
 			this.label4.Text = "Max # Reminders (e.g. 4)";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -366,7 +368,7 @@ namespace OpenDental {
 			// 
 			this.comboStatusEmailedRecall.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboStatusEmailedRecall.Location = new System.Drawing.Point(204, 495);
+			this.comboStatusEmailedRecall.Location = new System.Drawing.Point(200, 495);
 			this.comboStatusEmailedRecall.Name = "comboStatusEmailedRecall";
 			this.comboStatusEmailedRecall.Size = new System.Drawing.Size(206, 21);
 			this.comboStatusEmailedRecall.TabIndex = 60;
@@ -374,7 +376,7 @@ namespace OpenDental {
 			// listTypes
 			// 
 			this.listTypes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.listTypes.Location = new System.Drawing.Point(204, 604);
+			this.listTypes.Location = new System.Drawing.Point(200, 604);
 			this.listTypes.Name = "listTypes";
 			this.listTypes.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
 			this.listTypes.Size = new System.Drawing.Size(120, 82);
@@ -383,7 +385,7 @@ namespace OpenDental {
 			// label1
 			// 
 			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label1.Location = new System.Drawing.Point(47, 604);
+			this.label1.Location = new System.Drawing.Point(43, 604);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(157, 65);
 			this.label1.TabIndex = 63;
@@ -396,7 +398,7 @@ namespace OpenDental {
 			this.checkReturnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.checkReturnAdd.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkReturnAdd.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkReturnAdd.Location = new System.Drawing.Point(70, 585);
+			this.checkReturnAdd.Location = new System.Drawing.Point(66, 585);
 			this.checkReturnAdd.Name = "checkReturnAdd";
 			this.checkReturnAdd.Size = new System.Drawing.Size(147, 19);
 			this.checkReturnAdd.TabIndex = 43;
@@ -428,7 +430,7 @@ namespace OpenDental {
 			// 
 			this.comboStatusEmailTextRecall.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboStatusEmailTextRecall.Location = new System.Drawing.Point(204, 541);
+			this.comboStatusEmailTextRecall.Location = new System.Drawing.Point(200, 541);
 			this.comboStatusEmailTextRecall.Name = "comboStatusEmailTextRecall";
 			this.comboStatusEmailTextRecall.Size = new System.Drawing.Size(206, 21);
 			this.comboStatusEmailTextRecall.TabIndex = 78;
@@ -436,9 +438,9 @@ namespace OpenDental {
 			// label5
 			// 
 			this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label5.Location = new System.Drawing.Point(2, 545);
+			this.label5.Location = new System.Drawing.Point(0, 545);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(200, 16);
+			this.label5.Size = new System.Drawing.Size(198, 16);
 			this.label5.TabIndex = 77;
 			this.label5.Text = "Status for emailed and texted recall";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -447,7 +449,7 @@ namespace OpenDental {
 			// 
 			this.comboStatusTextedRecall.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboStatusTextedRecall.Location = new System.Drawing.Point(204, 518);
+			this.comboStatusTextedRecall.Location = new System.Drawing.Point(200, 518);
 			this.comboStatusTextedRecall.Name = "comboStatusTextedRecall";
 			this.comboStatusTextedRecall.Size = new System.Drawing.Size(206, 21);
 			this.comboStatusTextedRecall.TabIndex = 76;
@@ -455,7 +457,7 @@ namespace OpenDental {
 			// label6
 			// 
 			this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label6.Location = new System.Drawing.Point(45, 522);
+			this.label6.Location = new System.Drawing.Point(41, 522);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(157, 16);
 			this.label6.TabIndex = 75;
@@ -464,7 +466,7 @@ namespace OpenDental {
 			// 
 			// textMaxAutoReminders
 			// 
-			this.textMaxAutoReminders.Location = new System.Drawing.Point(827, 603);
+			this.textMaxAutoReminders.Location = new System.Drawing.Point(819, 603);
 			this.textMaxAutoReminders.MaxVal = 10000;
 			this.textMaxAutoReminders.Name = "textMaxAutoReminders";
 			this.textMaxAutoReminders.ShowZero = false;
@@ -475,7 +477,7 @@ namespace OpenDental {
 			// 
 			this.label7.Location = new System.Drawing.Point(682, 603);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(143, 20);
+			this.label7.Size = new System.Drawing.Size(135, 20);
 			this.label7.TabIndex = 79;
 			this.label7.Text = "Max # Auto Reminders";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;

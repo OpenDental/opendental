@@ -181,6 +181,20 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="ProvisionTenDlcBrand">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProvisionTenDlcBrandResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProvisionTenDlcBrandResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="EServiceSetup">
         <s:complexType>
           <s:sequence>
@@ -1300,6 +1314,12 @@
   <wsdl:message name="LicenseAgreementAcceptedSoapOut">
     <wsdl:part name="parameters" element="tns:LicenseAgreementAcceptedResponse" />
   </wsdl:message>
+  <wsdl:message name="ProvisionTenDlcBrandSoapIn">
+    <wsdl:part name="parameters" element="tns:ProvisionTenDlcBrand" />
+  </wsdl:message>
+  <wsdl:message name="ProvisionTenDlcBrandSoapOut">
+    <wsdl:part name="parameters" element="tns:ProvisionTenDlcBrandResponse" />
+  </wsdl:message>
   <wsdl:message name="EServiceSetupSoapIn">
     <wsdl:part name="parameters" element="tns:EServiceSetup" />
   </wsdl:message>
@@ -1821,6 +1841,12 @@
   <wsdl:message name="LicenseAgreementAcceptedHttpPostOut">
     <wsdl:part name="Body" element="tns:string" />
   </wsdl:message>
+  <wsdl:message name="ProvisionTenDlcBrandHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ProvisionTenDlcBrandHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
   <wsdl:message name="EServiceSetupHttpPostIn">
     <wsdl:part name="officeData" type="s:string" />
   </wsdl:message>
@@ -2324,6 +2350,10 @@
       <wsdl:input message="tns:LicenseAgreementAcceptedSoapIn" />
       <wsdl:output message="tns:LicenseAgreementAcceptedSoapOut" />
     </wsdl:operation>
+    <wsdl:operation name="ProvisionTenDlcBrand">
+      <wsdl:input message="tns:ProvisionTenDlcBrandSoapIn" />
+      <wsdl:output message="tns:ProvisionTenDlcBrandSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="EServiceSetup">
       <wsdl:input message="tns:EServiceSetupSoapIn" />
       <wsdl:output message="tns:EServiceSetupSoapOut" />
@@ -2673,6 +2703,10 @@
     <wsdl:operation name="LicenseAgreementAccepted">
       <wsdl:input message="tns:LicenseAgreementAcceptedHttpPostIn" />
       <wsdl:output message="tns:LicenseAgreementAcceptedHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProvisionTenDlcBrand">
+      <wsdl:input message="tns:ProvisionTenDlcBrandHttpPostIn" />
+      <wsdl:output message="tns:ProvisionTenDlcBrandHttpPostOut" />
     </wsdl:operation>
     <wsdl:operation name="EServiceSetup">
       <wsdl:input message="tns:EServiceSetupHttpPostIn" />
@@ -3083,6 +3117,15 @@
     </wsdl:operation>
     <wsdl:operation name="LicenseAgreementAccepted">
       <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/LicenseAgreementAccepted" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProvisionTenDlcBrand">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ProvisionTenDlcBrand" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -3876,6 +3919,15 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="ProvisionTenDlcBrand">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ProvisionTenDlcBrand" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="EServiceSetup">
       <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/EServiceSetup" style="document" />
       <wsdl:input>
@@ -4655,6 +4707,15 @@
     </wsdl:operation>
     <wsdl:operation name="LicenseAgreementAccepted">
       <http:operation location="/LicenseAgreementAccepted" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProvisionTenDlcBrand">
+      <http:operation location="/ProvisionTenDlcBrand" />
       <wsdl:input>
         <mime:content type="application/x-www-form-urlencoded" />
       </wsdl:input>
