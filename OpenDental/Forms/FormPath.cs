@@ -89,8 +89,8 @@ namespace OpenDental{
 			}
 			if(PrefC.AtoZfolderUsed!=DataStorageType.InDatabase && !Documents.IsRawBase64DataStored()) {//Image Module data is not stored in the database
 				radioDatabaseStorage.Visible=false;
-				radioDropboxStorage.Location=new Point(9,38);
-				radioSftp.Location=new Point(9,57);
+				LayoutManager.MoveLocation(radioDropboxStorage,new Point(LayoutManager.Scale(9),LayoutManager.Scale(38)));
+				LayoutManager.MoveLocation(radioSftp,new Point(LayoutManager.Scale(9),LayoutManager.Scale(57)));
 			}
 		}
 

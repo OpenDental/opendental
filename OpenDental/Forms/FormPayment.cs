@@ -421,7 +421,6 @@ namespace OpenDental {
 			PaySplit paySplit=new PaySplit();
 			paySplit.SplitAmt=0;
 			paySplit.DatePay=_payment.PayDate;
-			paySplit.DateEntry=MiscData.GetNowDateTime();//just a nicety for the user.  Insert uses server time.
 			paySplit.PayNum=_payment.PayNum;
 			paySplit.ProvNum=Patients.GetProvNum(_patient);
 			paySplit.ClinicNum=_payment.ClinicNum;

@@ -2196,6 +2196,25 @@ namespace OpenDentBusiness {
 				TimePeriod=BenefitTimePeriod.None,
 			};
 		}
+
+		///<summary>Gets all Benefits for a passed in InsPlan or PatPlan from the database. Returns empty list if not found.</summary>
+		public static List<Benefit> GetBenefitsForApi(int limit,int offset,long planNum,long patPlanNum){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Benefit>>(MethodBase.GetCurrentMethod(),limit,offset,planNum,patPlanNum);
+			}
+			string command="SELECT * FROM benefit ";
+			if(planNum>0) {
+				command+="WHERE PlanNum="+POut.Long(planNum)+" ";
+			}
+			if(patPlanNum>0) {
+				command+="WHERE PatPlanNum="+POut.Long(patPlanNum)+" ";
+			}
+			command+="ORDER BY BenefitNum "//same fixed order each time
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			List<Benefit> listBenefits=Crud.BenefitCrud.SelectMany(command);
+			return listBenefits;
+		}
+
 	}
 
 	public enum FrequencyType {

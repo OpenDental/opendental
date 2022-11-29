@@ -1222,7 +1222,7 @@
       <summary>ClinicNum this row applies to. 0 for HQ</summary>
     </column>
     <column order="2" name="DateExclude" type="datetime">
-      <summary>Date for which Auto Communications will not be sent.</summary>
+      <summary></summary>
     </column>
   </table>
   <table name="automation">

@@ -2537,29 +2537,15 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
 			}
-			string command;
-			if(DataConnection.DBtype==DatabaseType.MySql) {
-				//Get all the claimproc estimates that already have a claimproc marked as received from the same InsPlan.
-				command="SELECT cp.ClaimProcNum FROM claimproc cp USE KEY(PRIMARY)"
+			string command="SELECT cp.ClaimProcNum FROM claimproc cp USE KEY(PRIMARY)"
 				+" INNER JOIN claimproc cp2 ON cp2.PatNum=cp.PatNum"
 				+" AND cp2.PlanNum=cp.PlanNum"    //The same insurance plan
 				+" AND cp2.InsSubNum=cp.InsSubNum"//for the same subscriber
 				+" AND cp2.ProcNum=cp.ProcNum"    //for the same procedure.
-				+" AND cp2.Status="+POut.Int((int)ClaimProcStatus.Received)
+				+" AND cp2.Status IN ("+POut.Int((int)ClaimProcStatus.Received)+","+POut.Int((int)ClaimProcStatus.NotReceived)+")"
 				+" WHERE cp.Status="+POut.Int((int)ClaimProcStatus.Estimate)
-				+" AND cp.ClaimNum=0";//Make sure the estimate is not already attached to a claim somehow.
-			}
-			else {//oracle
-						//Get all the claimproc estimates that already have a claimproc marked as received from the same InsPlan.
-				command="SELECT cp.ClaimProcNum FROM claimproc cp"
-				+" INNER JOIN claimproc cp2 ON cp2.PatNum=cp.PatNum"
-				+" AND cp2.PlanNum=cp.PlanNum"    //The same insurance plan
-				+" AND cp2.InsSubNum=cp.InsSubNum"//for the same subscriber
-				+" AND cp2.ProcNum=cp.ProcNum"    //for the same procedure.
-				+" AND cp2.Status="+POut.Int((int)ClaimProcStatus.Received)
-				+" WHERE cp.Status="+POut.Int((int)ClaimProcStatus.Estimate)
-				+" AND cp.ClaimNum=0";//Make sure the estimate is not already attached to a claim somehow.
-			}
+				+" AND cp.ClaimNum=0"//Make sure the estimate is not already attached to a claim somehow.
+				+" GROUP BY cp.ClaimProcNum";//Group by the PK of the claimprocs that will be deleted so that the counts are accurate.
 			DataTable table=Db.GetTable(command);
 			string log="";
 			switch(modeCur) {
@@ -2578,7 +2564,7 @@ namespace OpenDentBusiness {
 						command="DELETE FROM claimproc WHERE ClaimProcNum IN ("+inCommand+")";
 						Db.NonQ(command);
 						listClaimProcNums.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x,DbmLogFKeyType.ClaimProc,
-							DbmLogActionType.Delete,methodName,"Deleted ClaimProc from ClaimProcDeleteDuplicateEstimateForSameInsPlan.")));
+							DbmLogActionType.Delete,methodName,"Deleted this ClaimProc Estimate due to having a duplicate Received or NotReceived ClaimProc.")));
 					}
 					if(table.Rows.Count>0 || verbose) {
 						Crud.DbmLogCrud.InsertMany(listDbmLogs);

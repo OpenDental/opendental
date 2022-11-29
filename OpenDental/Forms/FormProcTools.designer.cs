@@ -55,9 +55,9 @@ namespace OpenDental {
 			this.checkAutocodes.Name = "checkAutocodes";
 			this.checkAutocodes.Size = new System.Drawing.Size(646, 36);
 			this.checkAutocodes.TabIndex = 43;
-			this.checkAutocodes.Text = "Auto codes - Deletes all current auto codes and then adds the default autocodes. " +
-    "Procedure codes must have already been entered or they cannot be added as an aut" +
-    "o code.";
+			this.checkAutocodes.Text = "Auto Codes - Deletes all current auto codes and then adds the default auto codes." +
+    " Procedure codes must have already been entered or they cannot be added as an au" +
+    "to code.";
 			this.checkAutocodes.UseVisualStyleBackColor = true;
 			// 
 			// checkTcodes
@@ -90,7 +90,7 @@ namespace OpenDental {
 			this.checkNcodes.Name = "checkNcodes";
 			this.checkNcodes.Size = new System.Drawing.Size(646, 36);
 			this.checkNcodes.TabIndex = 46;
-			this.checkNcodes.Text = "N codes - Add any missing no-fee codes.";
+			this.checkNcodes.Text = "N Codes - Add any missing no-fee codes.";
 			this.checkNcodes.UseVisualStyleBackColor = true;
 			// 
 			// label5

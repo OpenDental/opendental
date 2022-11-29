@@ -502,6 +502,7 @@ namespace OpenDental {
 				comboUnearnedTypes.SelectedIndex=0;
 				PaySplitCur.UnearnedType=0;
 			}
+			DetachPayPlan();
 			SetEnabledProc();
 			FillProcedure();
 			FillAdjustment();
@@ -556,56 +557,59 @@ namespace OpenDental {
 			SetEnabledProc();
 		}
 
-		///<summary>Get the selected pay plan's current charges. If there is a charge, attach the split to that charge.</summary>
-		private void AttachPlanCharge(PayPlan payPlan, long guar) {
-			//get all current charges for that pay plan. If there are no current charges, don't allow the pay plan attach. 
-			List<PayPlanCharge> listPayPlanChargesCurrent=PayPlanCharges.GetDueForPayPlan(payPlan,guar);
-			if(listPayPlanChargesCurrent.Count==0) {
-				//No current payments due for patient. Payment may be made ahead of schedule if procedure is attached.
-				DetachPayPlan();
-				return;
+		///<summary>Attaches this payment split to the payment plan passed in. Also attaches the split to the oldest payment plan charge due if present.</summary>
+		private void AttachPayPlan(PayPlan payPlan) {
+			//Always associate the payment split to the payment plan passed in.
+			PaySplitCur.PayPlanNum=payPlan.PayPlanNum;
+			//Don't attach a payment plan charge if none are due.
+			long payPlanChargeNum=0;
+			//Get all charges that are due for that payment plan.
+			List<PayPlanCharge> listPayPlanChargesCurrent=PayPlanCharges.GetDueForPayPlan(payPlan,payPlan.Guarantor);
+			if(listPayPlanChargesCurrent.Count > 0) {
+				//Get the PayPlanChargeNum from the oldest charge.
+				payPlanChargeNum=listPayPlanChargesCurrent.OrderBy(x => x.ChargeDate).First().PayPlanChargeNum;
 			}
-			PaySplitCur.PayPlanChargeNum=listPayPlanChargesCurrent.OrderBy(x => x.ChargeDate).First().PayPlanChargeNum;//get oldest
+			//This will either clear out PayPlanChargeNum or will be the oldest payment plan charge that is due.
+			PaySplitCur.PayPlanChargeNum=payPlanChargeNum;
 		}
 
 		private void checkPayPlan_Click(object sender, System.EventArgs e) {
-			if(checkPayPlan.Checked){
-				if(checkPatOtherFam.Checked){//prevents a bug.
-					checkPayPlan.Checked=false;
-					return;
-				}
-				if(comboUnearnedTypes.SelectedIndex!=0 && ProcCur!=null && ProcCur.ProcStatus==ProcStat.TP) {
-					MsgBox.Show("Treatment planned unearned cannot be applied to payment plans.");
-					checkPayPlan.Checked=false;
-					return;
-				}
-				//get all plans where the selected patient is the patnum or the guarantor of the payplan. Do not include insurance payment plans
-				List<PayPlan> payPlanList=PayPlans.GetForPatNum(_famCur.ListPats[listPatient.SelectedIndex].PatNum).Where(x => x.PlanNum == 0).ToList();
-				if(payPlanList.Count==0){//no valid plans
-					MsgBox.Show(this,"The selected patient is not the guarantor for any payment plans.");
-					checkPayPlan.Checked=false;
-					return;
-				}
-				if(payPlanList.Count==1){ //if there is only one valid payplan
-					PaySplitCur.PayPlanNum=payPlanList[0].PayPlanNum;
-					AttachPlanCharge(payPlanList[0],payPlanList[0].Guarantor);
-					return;
-				}
-				//more than one valid PayPlan
-				using FormPayPlanSelect FormPPS=new FormPayPlanSelect(payPlanList);
-				//FormPPS.ValidPlans=payPlanList;
-				FormPPS.ShowDialog();
-				if(FormPPS.DialogResult==DialogResult.Cancel){
-					checkPayPlan.Checked=false;
-					return;
-				}
-				PaySplitCur.PayPlanNum=FormPPS.SelectedPayPlanNum; 
-				PayPlan selectPayPlan=payPlanList.FirstOrDefault(x => x.PayPlanNum==PaySplitCur.PayPlanNum);
-				//get the selected pay plan's current charges. If there is a charge, attach the split to that charge.
-				AttachPlanCharge(selectPayPlan,selectPayPlan.Guarantor);
+			if(!checkPayPlan.Checked) {
+				//The user manually unchecked 'Attached to Payment Plan'. Detach the split from the payment plan.
+				DetachPayPlan();
+				return;
 			}
-			//payPlan unchecked
-			DetachPayPlan();
+			//Do not let users associated payment splits to payment plans when 'Is from another family' is checked.
+			if(checkPatOtherFam.Checked) {
+				checkPayPlan.Checked=false;
+				return;
+			}
+			if(comboUnearnedTypes.SelectedIndex!=0 && ProcCur!=null && ProcCur.ProcStatus==ProcStat.TP) {
+				MsgBox.Show("Treatment planned unearned cannot be applied to payment plans.");
+				checkPayPlan.Checked=false;
+				return;
+			}
+			//Get all payment plans that the selected patient is associated to. Do not include insurance payment plans.
+			List<PayPlan> listPayPlans=PayPlans.GetForPatNum(_famCur.ListPats[listPatient.SelectedIndex].PatNum).FindAll(x => x.PlanNum==0);
+			if(listPayPlans.Count==0) {
+				MsgBox.Show(this,"The selected patient is not the guarantor for any payment plans.");
+				checkPayPlan.Checked=false;
+				return;
+			}
+			//Automatically associate the split to the payment plan if there is only one valid payment plan.
+			if(listPayPlans.Count==1) {
+				AttachPayPlan(listPayPlans[0]);
+				return;
+			}
+			//Have the user select which payment plan to associate this split to when there is more than one valid payment plan.
+			using FormPayPlanSelect formPayPlanSelect=new FormPayPlanSelect(listPayPlans);
+			formPayPlanSelect.ShowDialog();
+			if(formPayPlanSelect.DialogResult==DialogResult.Cancel) {
+				checkPayPlan.Checked=false;
+				return;
+			}
+			PayPlan payPlanSelect=listPayPlans.First(x => x.PayPlanNum==PaySplitCur.PayPlanNum);
+			AttachPayPlan(payPlanSelect);
 		}
 
 		private string SecurityLogEntryHelper(string oldVal,string newVal,string textInLog) {
@@ -637,6 +641,10 @@ namespace OpenDental {
 		private bool IsValid() {
 			if(!textAmount.IsValid() || !textDatePay.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
+				return false;
+			}
+			if(PaySplitCur.PayPlanNum > 0 && comboUnearnedTypes.SelectedIndex!=0 && ProcCur!=null && ProcCur.ProcStatus==ProcStat.TP) {
+				MsgBox.Show("Treatment planned unearned cannot be applied to payment plans.");
 				return false;
 			}
 			//check for TP pre-pay changes. If money has been detached from procedure it needs to be transferred to regular unearned if had been hidden.

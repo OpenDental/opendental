@@ -753,6 +753,11 @@ namespace OpenDental {
 			etrans835AttachSplit.ClaimNum=claimSplit.ClaimNum;
 			Etrans835Attaches.Insert(etrans835AttachSplit);
 			#endregion
+			//Update the multi-visit groups
+			for(int i=0;i<ListClaimProcs.Count;i++) {
+				Procedure procedure=Procedures.GetOneProc(ListClaimProcs[i].ProcNum,false);
+				ProcMultiVisits.UpdateGroupForProc(procedure.ProcNum,procedure.ProcStatus);
+			}
 			//Remove all split claimProcs from the internal list, will not show in grid after FillGridProcedures();
 			ListClaimProcs.RemoveAll(x => listClaimProcsSelected.Contains(x));
 			FillGridProcedures();

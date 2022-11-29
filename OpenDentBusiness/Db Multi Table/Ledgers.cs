@@ -394,8 +394,10 @@ namespace OpenDentBusiness{
 				+(doIncludeProcNum?",cp.ProcNum,0 PayNum":"")
 				+(isAgedByProc?",0 AgedProcNum,'0001-01-01' AgedProcDate":"")+" "
 				+"FROM claimproc cp "
+				+"LEFT JOIN procedurelog p ON cp.ProcNum=p.ProcNum "
 				+(payPlanVersionCur==PayPlanVersions.AgeCreditsAndDebits?"LEFT JOIN payplan pp ON cp.PayPlanNum=pp.PayPlanNum ":"")
 				+"WHERE cp.Status IN (0,1,4,5,7) "//NotReceived,Received,Supplemental,CapClaim,CapComplete
+				+"AND (cp.ProcNum=0 OR p.ProcStatus=2) "//Either a total payment or associated to a completed procedure
 				+(isAllPats?"":("AND cp.PatNum IN ("+familyPatNums+") "))
 				//efficiency improvement for MySQL only.
 				+(DataConnection.DBtype==DatabaseType.MySql?"HAVING TranAmount != 0 OR InsWoEst != 0 OR InsPayEst != 0 ":"");
@@ -420,7 +422,9 @@ namespace OpenDentBusiness{
 					+(isAgedByProc?",0 AgedProcNum,'0001-01-01' AgedProcDate":"")+" "
 					+"FROM claimproc cp "
 					+"LEFT JOIN claimsnapshot css ON cp.ClaimProcNum=css.ClaimProcNum "
+					+"LEFT JOIN procedurelog p ON cp.ProcNum=p.ProcNum "
 					+"WHERE cp.Status IN (0,1,4,5,7) "//NotReceived,Received,Supplemental,CapClaim,CapComplete
+					+"AND (cp.ProcNum=0 OR p.ProcStatus=2) "//Either a total payment or associated to a completed procedure
 					+(isAllPats?"":("AND cp.PatNum IN ("+familyPatNums+") "))
 					+(DataConnection.DBtype==DatabaseType.MySql?"HAVING TranAmount != 0 OR InsWoEst != 0 ":"")//efficiency improvement for MySQL only.
 					+"UNION ALL "
@@ -433,7 +437,9 @@ namespace OpenDentBusiness{
 					+(isAgedByProc?",0 AgedProcNum,'0001-01-01' AgedProcDate":"")+" "
 					+"FROM claimproc cp "
 					+"INNER JOIN claimsnapshot css ON cp.ClaimProcNum=css.ClaimProcNum "
+					+"LEFT JOIN procedurelog p ON cp.ProcNum=p.ProcNum "
 					+"WHERE cp.Status IN (1,4,5,7) "//Received,Supplemental,CapClaim,CapComplete
+					+"AND (cp.ProcNum=0 OR p.ProcStatus=2) "//Either a total payment or associated to a completed procedure
 					+(isAllPats?"":("AND cp.PatNum IN ("+familyPatNums+") "))
 					+(DataConnection.DBtype==DatabaseType.MySql?"HAVING TranAmount != 0 ":"");//efficiency improvement for MySQL only.
 			}

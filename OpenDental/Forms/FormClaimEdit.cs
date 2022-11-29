@@ -2049,6 +2049,18 @@ namespace OpenDental{
 			//Selection validation logic ensures these are only procs that are eligible to split from this claim.
 			Claims.InsertSplitClaim(_claim,gridProc.SelectedTags<ClaimProc>());
 			_listClaimProcs=ClaimProcs.Refresh(_patient.PatNum);
+			List<long> listModifiedClaimNums=new List<long>();
+			//Update the multi-visit groups
+			for(int i = 0;i<_listClaimProcs.Count;i++) {
+				Procedure procedure=Procedures.GetOneProc(_listClaimProcs[i].ProcNum,false);
+				List<long> listGroupModifiedClaimNums=ProcMultiVisits.UpdateGroupForProc(procedure.ProcNum,procedure.ProcStatus);
+				listModifiedClaimNums.AddRange(listGroupModifiedClaimNums);
+			}
+			if(listModifiedClaimNums.Contains(_claim.ClaimNum)) {
+				Claim claim=Claims.GetClaim(_claim.ClaimNum);//Refresh claim from database to get current status since it might have changed.
+				ClaimStatus claimStatus=_listClaimStatuses.Where(x=>x.GetDescription(useShortVersionIfAvailable:true)==claim.ClaimStatus).FirstOrDefault();
+				comboClaimStatus.SelectedIndex=_listClaimStatuses.IndexOf(claimStatus);
+			}
 			FillGrids();
 		}
 
