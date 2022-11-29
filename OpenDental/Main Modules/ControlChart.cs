@@ -10507,7 +10507,14 @@ namespace OpenDental {
 				//Refresh the procedures from the database to ensure the ones that we group together actually exist.
 				_listChartedProcs=Procedures.GetManyProc(_listChartedProcs.Select(x => x.ProcNum).Where(x => x!=0).ToList(),false)
 					.FindAll(x => x.ProcStatus!=ProcStat.D);
-				ProcMultiVisits.CreateGroup(_listChartedProcs);
+				//Create multi visit groups for each tooth that are not in a ToothRange
+				for(int i=0;i<_toothChartRelay.SelectedTeeth.Count;i++) {
+					List<Procedure> listToothProcedures=_listChartedProcs.FindAll(x => x.ToothNum==_toothChartRelay.SelectedTeeth[i] && x.ToothRange=="");
+					ProcMultiVisits.CreateGroup(listToothProcedures);
+				}
+				//Add any leftover procedures to it's own group
+				List<Procedure> listRangedProcedures=_listChartedProcs.FindAll(x => x.ToothNum=="");
+				ProcMultiVisits.CreateGroup(listRangedProcedures);
 			}
 			_listChartedProcs=null;
 			ClearButtons();

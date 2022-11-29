@@ -56,7 +56,7 @@ namespace OpenDental{
 				//Tcodes remain enabled
 				//Ncodes remain enabled
 				checkDcodes.Text="CDA Codes - Add any missing 2023 CDA Codes. This option does not work in the trial version.";
-				checkRecallTypes.Text="Recall Types - Resets the recall types and triggers to default. Replaces any T codes with CDA Codes.";
+				checkRecallTypes.Text="Recall Types - Resets the recall types and triggers to default. Replaces any T Codes with CDA Codes.";
 				_codeList=null;//Is only filled when the code tool runs because the user might not need to download the codes.
 			}
 			else { //USA
@@ -180,10 +180,10 @@ namespace OpenDental{
 			if(checkAutocodes.Checked) {
 				//checking for any AutoCodes and prompting the user if they exist
 				if(AutoCodes.GetCount() > 0) {
-					string msgText=Lan.g(this,"This tool will delete all current autocodes and then add in the default autocodes.")+"\r\n";
+					string msgText=Lan.g(this,"This tool will delete all current auto codes and then add in the default auto codes.")+"\r\n";
 					//If the proc tool isn't going to put the procedure buttons back to default, warn them that they will need to reassociate them.
 					if(!checkProcButtons.Checked) {
-						msgText+=Lan.g(this,"Any procedure buttons associated with the current autocodes will be dissociated and will need to be reassociated manually.")+"\r\n";
+						msgText+=Lan.g(this,"Any procedure buttons associated with the current auto codes will be dissociated and will need to be reassociated manually.")+"\r\n";
 					}
 					msgText+=Lan.g(this,"Continue?");
 					if(MsgBox.Show(this,MsgBoxButtons.YesNo,msgText)) {
@@ -205,7 +205,7 @@ namespace OpenDental{
 			#endregion
 			#region Proc Buttons
 			if(checkProcButtons.Checked) {
-					if(MsgBox.Show(this,MsgBoxButtons.YesNo,"This tool will delete all current ProcButtons and Quick Buttons from the Chart Module and add in the defaults. Continue?")) {
+					if(MsgBox.Show(this,MsgBoxButtons.YesNo,"This tool will delete all current Procedure Buttons and Quick Buttons from the Chart Module and add in the defaults. Continue?")) {
 						ProcButtons.SetToDefault();
 						ProcButtonQuicks.SetToDefault();
 						Changed=true;
@@ -272,7 +272,7 @@ namespace OpenDental{
 				Changed=true;
 				//yes, this really does refresh before moving on.
 				DataValid.SetInvalid(InvalidType.Defs, InvalidType.ProcCodes);
-				SecurityLogs.MakeLogEntry(Permissions.ProcCodeEdit,0,"T-Codes deleted.");
+				SecurityLogs.MakeLogEntry(Permissions.ProcCodeEdit,0,"T Codes deleted.");
 			}
 			#endregion
 			if(Changed) {

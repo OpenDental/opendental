@@ -61,13 +61,10 @@ namespace OpenDental{
 					listLab.SelectedIndex=i;
 				}
 			}
-			_listProviders=Providers.GetDeepCopy(true);
-			for(int i=0;i<_listProviders.Count;i++){
-				comboProv.Items.Add(_listProviders[i].Abbr);
-				if(_listProviders[i].ProvNum==LabCaseCur.ProvNum){
-					comboProv.SelectedIndex=i;
-				}
-			}
+			//Include the current provider, even if it is hidden.
+			_listProviders=Providers.GetWhere(x => x.ProvNum==LabCaseCur.ProvNum || !x.IsHidden);
+			comboProv.Items.AddProvsAbbr(_listProviders);
+			comboProv.SetSelectedProvNum(LabCaseCur.ProvNum);
 			Appointment appointment=Appointments.GetOneApt(LabCaseCur.AptNum);
 			if(appointment!=null){
 				if(appointment.AptStatus==ApptStatus.UnschedList){

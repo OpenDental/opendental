@@ -163,13 +163,13 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Responsible for updating procedures in the group to "In Process" or "Not In Process", depending on the stat passed in.
-		///Also sends signal to cause cache refresh.  Refreshes cache.</summary>
-		public static void UpdateGroupForProc(long procNum,ProcStat stat) {
+		///Also sends signal to cause cache refresh.  Returns list of ClaimNums which had claimClaimStatus modified (can be empty list).</summary>
+		public static List<long> UpdateGroupForProc(long procNum,ProcStat stat) {
 			//No need to check MiddleTierRole; no call to db.
 			List<ProcMultiVisit> listPmvs=GetGroupsForProcsFromDb(procNum);
 			ProcMultiVisit pmv=listPmvs.FirstOrDefault(x => x.ProcNum==procNum);
 			if(pmv==null) {
-				return;//Rare edge case.  Might happen is someone deletes the procedure at the same time another person is updating it.
+				return new List<long>();//Rare edge case.  Might happen is someone deletes the procedure at the same time another person is updating it.
 			}
 			bool isGroupInProcessOld=IsGroupInProcess(listPmvs);
 			if(stat==ProcStat.D) {
@@ -201,16 +201,17 @@ namespace OpenDentBusiness{
 			//Use claimProc.ClaimNum to determine if a claim is attached to the given In Process proc (ClaimNum!=0)
 			List<long> listClaimNums=listClaimProcsForProcMultiVisit.Select(x=>x.ClaimNum).Distinct().ToList();
 			List<Claim> listClaims=Claims.GetClaimsFromClaimNums(listClaimNums);
+			List<long> listModifiedClaimNums=new List<long>();
 			for(int i=0;i<listClaims.Count;i++) {
 				//If a claim is not attached or the ClaimStatus is not "U", "W", "I", or "H", kick out.
 				if(!listClaims[i].ClaimStatus.In("U","W","I","H")) {
-					return;
+					return listModifiedClaimNums;
 				}
 				Claim claimOld=listClaims[i].Copy();
 				List<ClaimProc> listClaimProcsForClaim=new List<ClaimProc>();
 				listClaimProcsForClaim=ClaimProcs.RefreshForClaim(listClaims[i].ClaimNum);
 				if(listClaimProcsForClaim.Count==0) {//This is rare but still happens.  See DBM. 
-					return;
+					return listModifiedClaimNums;
 				}
 				bool isProcsInProcess=listClaimProcsForClaim.Exists(x=>IsProcInProcess(x.ProcNum));
 				if(isProcsInProcess) {
@@ -275,7 +276,9 @@ namespace OpenDentBusiness{
 					}
 				}
 				Claims.Update(listClaims[i],claimOld);
+				listModifiedClaimNums.Add(listClaims[i].ClaimNum);
 			}
+			return listModifiedClaimNums;
 		}
 
 		///<summary>Updates the group IsInProcess values for all procedures to the specified bool value.

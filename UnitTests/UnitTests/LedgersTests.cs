@@ -740,6 +740,45 @@ namespace UnitTests.Ledgers_Tests {
 			}
 		}
 
+		[TestMethod]
+		public void LedgersTests_GetAgingGuarTransTable_IgnoreInsPayEstOnTpProcs() {
+			//Canadians often have strange estimates (and in this database, NotReceived claimprocs) associated to TP procedures.
+			//This unit test will be for asserting that claimprocs associated to TP procedures are IGNORED.
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			Patient pat=PatientT.CreatePatient(fName:"Aging_InsEstOnTp",suffix:suffix);
+			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,suffix);
+			//Create a legitimate completed procedure that has a NotReceived claimproc associated.
+			Procedure proc95=ProcedureT.CreateProcedure(pat,"D0270",ProcStat.C,"",1000,DateTime.Today.AddDays(-95));
+			ClaimProc cp95=new ClaimProc();
+			ClaimProcs.CreateEst(cp95,proc95,insInfo.PriInsPlan,insInfo.PriInsSub);
+			cp95.Status=ClaimProcStatus.NotReceived;
+			cp95.InsEstTotal=800;
+			cp95.InsPayEst=800;
+			cp95.WriteOffEst=200;
+			cp95.WriteOff=200;
+			ClaimProcs.Update(cp95);
+			//Create an illegitimate procedure with a NotReceived claimproc.
+			//Yes, I know, this shouldn't be possible but we constantly get Canadian databases with this scenario.
+			Procedure proc85=ProcedureT.CreateProcedure(pat,"D1110",ProcStat.TP,"",100,DateTime.Today.AddDays(-85));
+			ClaimProc cp85=new ClaimProc();
+			ClaimProcs.CreateEst(cp85,proc85,insInfo.PriInsPlan,insInfo.PriInsSub);
+			cp85.Status=ClaimProcStatus.NotReceived;
+			cp85.InsEstTotal=60;
+			cp85.InsPayEst=60;
+			cp85.WriteOffEst=40;
+			cp85.WriteOff=40;
+			ClaimProcs.Update(cp85);
+			//Assert that InsPayEst and InsWoEst IGNORE the claimproc associated to the TP procedure (and no claim).
+			PrefT.UpdateInt(PrefName.AgingProcLifo,(int)YN.No);
+			Dictionary<long,DataRow> dictAging=Ledgers.GetAgingGuarTransTable(DateTime.Today,new List<long> { pat.Guarantor });
+			Assert.AreEqual(800,PIn.Double(dictAging[pat.Guarantor]["InsPayEst"].ToString()));
+			Assert.AreEqual(200,PIn.Double(dictAging[pat.Guarantor]["InsWoEst"].ToString()));
+			PrefT.UpdateInt(PrefName.AgingProcLifo,(int)YN.Yes);
+			dictAging=Ledgers.GetAgingGuarTransTable(DateTime.Today,new List<long> { pat.Guarantor });
+			Assert.AreEqual(800,PIn.Double(dictAging[pat.Guarantor]["InsPayEst"].ToString()));
+			Assert.AreEqual(200,PIn.Double(dictAging[pat.Guarantor]["InsWoEst"].ToString()));
+		}
+
 	}
 }
 
