@@ -185,9 +185,13 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<Payment>>(MethodBase.GetCurrentMethod(),clinicNums,startDate,endDate,listProcessStatus,listCreditCardSources);
 			}
-			string command=$@"SELECT * FROM payment WHERE PayDate BETWEEN {POut.Date(startDate)} AND {POut.Date(endDate)}
-				AND ProcessStatus IN ({string.Join(",",listProcessStatus.Select(x => POut.Int((int)x)))})
-				AND PaymentSource IN ({string.Join(",",listCreditCardSources.Select(x => POut.Int((int)x)))})";
+			string command=$@"SELECT * FROM payment WHERE PayDate BETWEEN {POut.Date(startDate)} AND {POut.Date(endDate)}";
+			if(listProcessStatus.Count>0) {
+				command+=$" AND ProcessStatus IN ({string.Join(",",listProcessStatus.Select(x => POut.Int((int)x)))})";
+			}
+			if(listCreditCardSources.Count>0) {
+				command+=$" AND PaymentSource IN ({string.Join(",",listCreditCardSources.Select(x => POut.Int((int)x)))})";
+			}
 			if(clinicNums.Count>0) {
 				command+=$" AND payment.ClinicNum IN ({string.Join(",",clinicNums)})";
 			}

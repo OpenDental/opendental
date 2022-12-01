@@ -163,6 +163,8 @@ namespace OpenDental{
 		private FormRpDPPOvercharged _formRpDPPOvercharged;
 		///<summary>There is one instance of this object. References are passed to each module. This object is never initialized other than this one spot. This abbreviation is approved because this will be very heavily used and needs to not take up space.</summary>
 		private PatientData _pd=new PatientData();
+		///<summary>E40138 - Used to give a timespan for HQ users so they can perform time clock actions without being interrupted by task popups.</summary>
+		private DateTime _dateTimeLastSignalTickInactiveHq=DateTime.MinValue;
 		#endregion Fields - Private
 
 		#region Constructor
@@ -3288,6 +3290,9 @@ namespace OpenDental{
 			try {
 				if(_hasSignalProcessingPaused && !IsWorkStationActive()) {
 					SignalsTickWhileInactive();
+					if(PrefC.IsODHQ) {
+						_dateTimeLastSignalTickInactiveHq=DateTime.Now;
+					}
 				}
 				else {
 					SignalsTick();
@@ -3302,6 +3307,13 @@ namespace OpenDental{
 		private void SignalsTick(bool isAllInvalidTypes=true) {
 			try {
 				Logger.LogToPath("",LogPath.Signals,LogPhase.Start);
+				if(PrefC.IsODHQ) {
+					TimeSpan timeSpan=DateTime.Now-_dateTimeLastSignalTickInactiveHq;
+					//If 15 seconds have not passed, kick out.
+					if(timeSpan.TotalSeconds<15) {
+						return;
+					}
+				}
 				//This checks if any forms are open that make us want to continue processing signals even if inactive. Currently only FormTerminal.
 				if(Application.OpenForms.OfType<FormTerminal>().Count()==0) {
 					//check if we're inactive and if so, pause regular signal processing and set the private shutdown signal check variable

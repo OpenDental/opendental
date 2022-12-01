@@ -876,7 +876,9 @@ namespace OpenDental{
 			}
 			if(control is ScrollableControl scrollableControl && scrollableControl.AutoScroll){
 				//We need to return true for these forms to avoid a bug with scrollable splitters or panels that can create uneccessary additional white space.
-				List<string> listFormNames=new List<string>(){"FormSheetDefEdit","FormSheetFillEdit"};
+				List<string> listFormNames=new List<string>(){
+					typeof(FormSheetDefEdit).Name,typeof(FormSheetFillEdit).Name,typeof(FormWebChatSession).Name,typeof(FormSmsTextMessaging).Name
+				};
 				if(control.TopLevelControl!=null && listFormNames.Contains(control.TopLevelControl.Name)) {
 					return true;
 				}

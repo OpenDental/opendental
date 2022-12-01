@@ -95,7 +95,7 @@ namespace OpenDentBusiness {
 			strB.Append(" - Computer Name: "+machineName);
 			strB.Append('-',45);
 			strB.AppendLine();//New line.
-			strB.Append(logText);
+			strB.AppendLine(logText.Trim());
 			strB.AppendLine(Lans.g("FormDatabaseMaintenance","Done"));
 			string path=CodeBase.ODFileUtils.CombinePaths(ImageStore.GetPreferredAtoZpath(),"DBMLogs");
 			try {
@@ -3316,33 +3316,38 @@ namespace OpenDentBusiness {
 			}
 			StringBuilder log=new StringBuilder();
 			string command=@"SELECT CONCAT(patient.LName,', ',patient.FName) as PatName,claimproc.CodeSent,claim.DateSent,claim.ClaimType 
-			FROM claimproc 
-			INNER JOIN patient ON patient.PatNum=claimproc.PatNum
-			INNER JOIN claim ON claim.ClaimNum=claimproc.ClaimNum
-			WHERE claimproc.ClaimNum!=0 AND claimproc.ProcNum!=0 AND claimproc.Status!=4
-			GROUP BY claimproc.ClaimNum,claimproc.ProcNum,claimproc.Status
-			HAVING COUNT(*) > 1 
-			ORDER BY claim.DateSent";
+				FROM claimproc 
+				INNER JOIN patient ON patient.PatNum=claimproc.PatNum
+				INNER JOIN claim ON claim.ClaimNum=claimproc.ClaimNum
+				WHERE claimproc.ClaimNum!=0 AND claimproc.ProcNum!=0 AND claimproc.Status!=4
+				GROUP BY claimproc.ClaimNum,claimproc.ProcNum,claimproc.Status
+				HAVING COUNT(*) > 1 
+				ORDER BY claim.DateSent";
 			DataTable tableDupeClaimProcs=Db.GetTable(command);
+			if(tableDupeClaimProcs.Rows.Count==0 && !verbose) {
+				return log.ToString();
+			}
+			//There is something to report OR the user has verbose mode on.
+			log.Append(Lans.g("FormDatabaseMaintenance","ClaimProcs with partial duplicates found:")+" "+tableDupeClaimProcs.Rows.Count);
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
-					if(tableDupeClaimProcs.Rows.Count>0){
-						log.AppendLine(Lans.g("FormDatabaseMaintenance","Manual fix is needed. Double click to see a breakdown."));
+					if(tableDupeClaimProcs.Rows.Count>0) {
+						log.AppendLine("\r\n   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down."));
 					}
 					break;
 				case DbmMode.Breakdown:
-					if(tableDupeClaimProcs.Rows.Count>0){
-						log.AppendLine(Lans.g("FormDatabaseMaintenance","The following patients have duplicate procedeures attached to claims. " +
-							"You will need to manually navigate to them and delete the procedure you don't need."));
+					if(tableDupeClaimProcs.Rows.Count>0) {
+						log.AppendLine(", "+Lans.g("FormDatabaseMaintenance","including")+":");
 						for(int i=0;i<tableDupeClaimProcs.Rows.Count;i++) {
 							DataRow row=tableDupeClaimProcs.Rows[i];
-							log.AppendLine(Lans.g("FormDatabaseMaintenance","Patient: ")+PIn.String(row["PatName"].ToString())+"  "
-								+Lans.g("FormDatabaseMaintenance","Code Sent: ")+PIn.String(row["CodeSent"].ToString())+"  "
-								+Lans.g("FormDatabaseMaintenance","Claim Date: ")+PIn.DateT(row["DateSent"].ToString()).ToShortDateString()+"  "
-								+Lans.g("FormDatabaseMaintenance","Claim Type: ")+PIn.String(row["ClaimType"].ToString()) 
-							);
+							log.AppendLine(Lans.g("FormDatabaseMaintenance","  Patient:")+" "+PIn.String(row["PatName"].ToString())+"  "
+								+Lans.g("FormDatabaseMaintenance","Code Sent:")+" "+PIn.String(row["CodeSent"].ToString())+"  "
+								+Lans.g("FormDatabaseMaintenance","Claim Date:")+" "+PIn.DateT(row["DateSent"].ToString()).ToShortDateString()+"  "
+								+Lans.g("FormDatabaseMaintenance","Claim Type:")+" "+PIn.String(row["ClaimType"].ToString()));
 						}
+						log.AppendLine(Lans.g("FormDatabaseMaintenance","The above patients have duplicate claim procedures attached to claims. "
+							+"You will need to manually navigate to the claims and delete the claim procedures you don't need."));
 					}
 					break;
 			}

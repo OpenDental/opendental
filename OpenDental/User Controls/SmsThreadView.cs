@@ -53,8 +53,19 @@ namespace OpenDental {
 		}
 
 		private void FillMessageThread() {
+			List<Control> listControls=panelScroll.Controls.Cast<Control>().ToList();
+			listControls.ForEach(x => x.Parent=null);
+			Point location=panelScroll.Location;
+			panelScroll.Dispose();//Clears the empty scroll space.
+			panelScroll=new Panel();
+			panelScroll.Location=location;
+			panelScroll.Size=new Size(Width,Height-panelScroll.Location.Y);
+			panelScroll.Anchor=AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom;
+			panelScroll.AutoScroll=true;
+			LayoutManager.Add(panelScroll,this);
 			Invalidate();
 			if(_listSmsThreadMessages==null || _listSmsThreadMessages.Count<1) {
+				listControls.ForEach(x => x.Dispose());
 				panelNavigation.Visible=false;
 				LayoutManager.MoveLocation(panelScroll,new Point(0,0));
 				return;
@@ -67,17 +78,20 @@ namespace OpenDental {
 			Control controlHighlighted=null;
 			panelScroll.SuspendLayout();
 			//Remove message controls for messages which have been removed from the given list of messages.
-			for(int i=panelScroll.Controls.Count-1;i>=0;i--) {
-				Control control=panelScroll.Controls[i];//Freeze the variable so we can remove it before disposing it below.
+			for(int i=listControls.Count-1;i>=0;i--) {
+				Control control=listControls[i];//Freeze the variable so we can remove it before disposing it below.
 				if(!control.Name.Contains("_")) {
 					continue;
 				}
 				string id=control.Name.Substring(control.Name.IndexOf("_")+1);
 				if(!_listSmsThreadToDisplay.Exists(x => x.ID==id)) {
 					//LayoutManager.Remove() currently only supports tab pages.
-					panelScroll.Controls.Remove(control);
+					listControls.Remove(control);
 					control.Dispose();//This control does not have any child controls.
 				}
+			}
+			foreach(Control control in listControls) {
+				LayoutManager.Add(control,panelScroll);
 			}
 			//Loop through and update existing control sizes, text, borders, etc.  Add new controls for messages not already represented.
 			for(int i=0;i<_listSmsThreadToDisplay.Count;i++) {
@@ -158,10 +172,12 @@ namespace OpenDental {
 				controlHighlighted=labelBottomSpacer;
 			}
 			if(panelScroll.VerticalScroll.Value!=panelScroll.VerticalScroll.Maximum) {
-				panelScroll.VerticalScroll.Value=panelScroll.VerticalScroll.Maximum; //scroll to the end first then scroll to control
+				//We have to set the scroll value twice or else the scroll will occur but the UI of the scrollbar will be wrong.
+				//https://stackoverflow.com/questions/5565653/scrollbar-does-not-update-on-changing-the-scroll-value
+				panelScroll.VerticalScroll.Value=panelScroll.VerticalScroll.Maximum;
+				panelScroll.VerticalScroll.Value=panelScroll.VerticalScroll.Maximum;//Intentionally set twice.
 			}
 			panelScroll.ResumeLayout();
-			panelScroll.ScrollControlIntoView(controlHighlighted);//Scroll to highlighted control, or if none highlighted, then scroll to the end.
 		}
 
 		///<summary>Returns the control which previsouly existing in the panel or returns the new control if it was added.</summary>

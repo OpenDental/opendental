@@ -118,6 +118,14 @@ namespace OpenDentBusiness {
 			return GetFirstOrDefault(x => x.Descript==descript);
 		}
 
+		///<summary>Gets one AutoNoteControl by its AutoNoteControlNum from the DB. Returns null if not found.</summary>
+		public static AutoNoteControl GetAutoNoteControlForApi(long autoNoteControlNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<AutoNoteControl>(MethodBase.GetCurrentMethod(),autoNoteControlNum);
+			}
+			return Crud.AutoNoteControlCrud.SelectOne(autoNoteControlNum);
+		}
+
 		/// <summary>Takes in a list of control descripts and returns a list of AutoNoteControls ready for JSON serialization
 		/// (currently only used for exporting AutoNotes).</summary>
 		public static List<SerializableAutoNoteControl> GetSerializableAutoNoteControls(List<AutoNoteControl> listAutoNoteControls) {

@@ -23,13 +23,13 @@ namespace OpenDental {
 		private void FormPendingOnlinePayments_Load(object sender,EventArgs e) {
 			if(PrefC.HasClinicsEnabled) {
 				FillClinics();
-				FillProcessStatus();
-				FillPaymentSource();
 			}
 			else {
 				comboClinic.Visible=false;
 				labelClinic.Visible=false;
 			}
+			FillProcessStatus();
+			FillPaymentSource();
 			dateStart.Value=DateTime.Today.AddDays(-30);
 			RefreshPayments();
 		}

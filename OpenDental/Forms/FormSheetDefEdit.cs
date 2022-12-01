@@ -1103,7 +1103,7 @@ namespace OpenDental {
 								listBoxFields.SetSelected(i,true); 
 							}
 						}
-						if(Math.Abs(listSheetFieldDefsShowing[i].Height)<2){
+						else if(Math.Abs(listSheetFieldDefsShowing[i].Height)<2){
 							//horiz line
 							Rectangle rectangleTempDefBounds=new Rectangle(sheetFieldDef.Bounds.X,sheetFieldDef.Bounds.Y-1,sheetFieldDef.Bounds.Width,2);
 							if(sheetFieldDef.Bounds.Width<0){
@@ -1113,7 +1113,41 @@ namespace OpenDental {
 								listBoxFields.SetSelected(i,true); 
 							}
 						}
-						//no math for diagonal lines yet
+						else{
+							//diagonal line
+							double lineXStart=(double)sheetFieldDef.Bounds.X;//x value starting point
+							double lineYStart=(double)sheetFieldDef.Bounds.Y;//y value starting point
+							bool hasLongerHeight=false;
+							//Determine the lines maxlength using either height or width, whichever is longer
+							int lineMaxLength=Math.Abs(sheetFieldDef.Width);
+							if(Math.Abs(sheetFieldDef.Height)>Math.Abs(sheetFieldDef.Width)) {
+								lineMaxLength=Math.Abs(sheetFieldDef.Height);
+								hasLongerHeight=true;
+							}
+							//Determine the slope of the line
+							double slope=(((double)sheetFieldDef.Height+(double)sheetFieldDef.Bounds.Y)-(double)sheetFieldDef.Bounds.Y)
+								/(((double)sheetFieldDef.Width+(double)sheetFieldDef.Bounds.X)-(double)sheetFieldDef.Bounds.X);
+							Point pointOnLine=new Point(0,0);
+							for(int j=0;j<lineMaxLength;j++) {//Step pixel by pixel
+								if(hasLongerHeight) {//Move along the y axis
+									pointOnLine=new Point((int)Math.Round((j/slope)+lineXStart,MidpointRounding.AwayFromZero),(int)lineYStart+j);
+									if(sheetFieldDef.Bounds.Height<0) {//Move backwards along the y axis instead
+										pointOnLine=new Point((int)Math.Round((-j/slope)+lineXStart,MidpointRounding.AwayFromZero),(int)lineYStart-j);
+									}
+								}
+								else {//Move along the x axis
+									pointOnLine=new Point((int)lineXStart+j,(int)Math.Round((j*slope)+lineYStart,MidpointRounding.AwayFromZero));
+									if(sheetFieldDef.Bounds.Width<0) {//Move backwards along the x axis instead
+										pointOnLine=new Point((int)lineXStart-j,(int)Math.Round((-j*slope)+lineYStart,MidpointRounding.AwayFromZero));
+									}
+								}
+								//Check each point and see if our highlighted box intersects with the line
+								if(rectangleSelectionBounds.Contains(pointOnLine)) {
+									listBoxFields.SetSelected(i,true);
+									break;
+								}
+							}
+						}
 						continue;
 					}
 					if(sheetFieldDef.FieldType==SheetFieldType.Image || sheetFieldDef.FieldType==SheetFieldType.MobileHeader) {

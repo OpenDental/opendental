@@ -2178,7 +2178,7 @@ namespace OpenDental{
 			ClaimPayment claimPayment=new ClaimPayment();
 			claimPayment.CheckDate=MiscData.GetNowDateTime().Date;//Today's date for easier tracking by the office and to avoid backdating before accounting lock dates.
 			claimPayment.IsPartial=true;
-			claimPayment.ClinicNum=_patient.ClinicNum;
+			claimPayment.ClinicNum=_claim.ClinicNum;
 			claimPayment.CarrierName=Carriers.GetName(InsPlans.GetPlan(_claim.PlanNum,_listInsPlans).CarrierNum);
 			ClaimPayments.Insert(claimPayment);
 			long onlyOneClaimNum=0;
