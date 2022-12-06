@@ -8,13 +8,13 @@ namespace UnitTestsCore {
 
 		///<summary>Returns a procedure code object that utilizes the procCode passed in.
 		///Either returns the pre-existing code from the cache or creates a new one.  Throws an exception if procCode is longer than 15 chars.</summary>
-		public static ProcedureCode CreateProcCode(string procCode,bool isCanadianLab=false,string abbrDesc="",long procCat=0,TreatmentArea treatmentArea=TreatmentArea.None,bool isTreatmentAreaAlsoToothRange=false) {
+		public static ProcedureCode CreateProcCode(string procCode,bool isCanadianLab=false,string abbrDesc="",long procCat=0,TreatmentArea treatmentArea=TreatmentArea.None,bool isTreatmentAreaAlsoToothRange=false,ToothPaintingType paintType=ToothPaintingType.None) {
 			//The ProcCode column on the procedurecode table is a VARCHAR(15).  MySQL will not throw an exception but will instead truncate the ProcCode.
 			//Engineers might not be expecting this and might write an invalid unit test assuming that this method did what they told it to do.
 			if(procCode.Length > 15) {
 				throw new ODException("Invalid procCode passed into ProcedureCodeT.CreateProcCode(); Must be less than 15 characters.");
 			}
-			AddIfNotPresent(procCode,isCanadianLab,abbrDesc,procCat,treatmentArea:treatmentArea,isTreatmentAreaAlsoToothRange:isTreatmentAreaAlsoToothRange);
+			AddIfNotPresent(procCode,isCanadianLab,abbrDesc,procCat,treatmentArea:treatmentArea,isTreatmentAreaAlsoToothRange:isTreatmentAreaAlsoToothRange,toothPaintingType:paintType);
 			return ProcedureCodes.GetOne(procCode);
 		}
 		///<summary>Returns a list of procedure code objects, each with unique TreatAreas.</summary>

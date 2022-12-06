@@ -539,7 +539,7 @@ namespace OpenDental {
 					ProcStatus=ProcStat.C
 				};
 				for(int j=0;j<listProcedureChargesMatching.Count();j++){
-					procedure.BillingNote+=$"Rate: ${POut.Double(listProcedureChargesMatching[j].BaseFee)} Months: {POut.Int(listProcedureChargesMatching[i].ProcCount)}\r\n";
+					procedure.BillingNote+=$"Rate: ${POut.Double(listProcedureChargesMatching[j].BaseFee)} Months: {POut.Int(listProcedureChargesMatching[j].ProcCount)}\r\n";
 				}
 				procedure.BillingNote+=_prepaidThroughNote;
 				List<Procedure> listProcedureMatchingCompleted=_listProceduresCompleted.FindAll(x => x.CodeNum==_listProcedureCodesPrePaySupport[i].CodeNum);

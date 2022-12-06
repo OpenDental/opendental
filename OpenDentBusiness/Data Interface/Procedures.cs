@@ -839,16 +839,18 @@ namespace OpenDentBusiness {
 				if(procCode.PaintType!=ToothPaintingType.Extraction) {
 					continue;
 				}
-				int j=0;
-				while(j<extracted.Count) {
-					if(extracted[j].DateTStamp>=proc.DateTStamp) {
-						break;
+				//Canadian claims only allow 1 extraction procedure per tooth.
+				//If there are duplicates found, the CDA only wants the most recent extraction procedure.
+				Procedure procedureInList=extracted.FirstOrDefault(x => x.ToothNum==proc.ToothNum);
+				if(procedureInList!=null) {
+					if(procedureInList.DateTStamp>proc.DateTStamp) {
+						continue;//The current proc is not the most recent extraction for the toothnum.
 					}
-					j++;
+					extracted.Remove(procedureInList);
 				}
-				extracted.Insert(j,proc.Copy());
+				extracted.Add(proc.Copy());
 			}
-			return extracted;
+			return extracted.OrderByDescending(x => x.DateTStamp).ToList();
 		}
 
 		///<summary>Takes the list of all procedures for the patient, and finds any that are attached as lab procs to that proc.</summary>

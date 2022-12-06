@@ -4008,6 +4008,44 @@ namespace OpenDentBusiness {
 			Misc.SecurityHash.UpdateHashing();
 		}
 
+		private static void To22_2_56() {
+			//Remove all Provider/Operatory mobile view items that aren't associated to a valid Provider/Operatory apptviewitem.
+			string command="DELETE a FROM apptviewitem a "+
+				"LEFT JOIN apptviewitem a2 ON a.ProvNum=a2.ProvNum AND !a2.IsMobile AND a.ApptViewNum=a2.ApptViewNum "+
+				"LEFT JOIN apptviewitem a3 ON a.OpNum=a3.OpNum AND !a3.IsMobile AND a.ApptViewNum=a3.ApptViewNum "+
+			"WHERE a.IsMobile AND (a2.ApptViewItemNum IS NULL OR a3.ApptViewItemNum IS NULL)";
+			Db.NonQ(command);
+			//Find and delete all duplicate mobile view items for Provider/Operatory.
+			command="SELECT ApptViewNum,ProvNum FROM apptviewitem WHERE IsMobile AND ProvNum>0 GROUP BY ApptViewNum,ProvNum HAVING COUNT(*)>1";
+			DataTable table=Db.GetTable(command);
+			for(int i=0;i<table.Rows.Count;i++) { //Can have multiple duplicate Mobile Provider View Items so need to clean each one individually
+				long apptViewNum=PIn.Long(table.Rows[i]["ApptViewNum"].ToString());
+				long provNum=PIn.Long(table.Rows[i]["ProvNum"].ToString());
+				command="SELECT ApptViewItemNum FROM apptviewitem WHERE ApptViewNum="+POut.Long(apptViewNum)+" AND ProvNum="+POut.Long(provNum)+" AND IsMobile";
+				List<long> apptViewItemNums=Db.GetListLong(command,hasExceptions:false);
+				if(apptViewItemNums.Count<2) {
+					continue;
+				}
+				//Keep one valid Mobile Provider view item
+				command="DELETE FROM apptviewitem WHERE ApptViewItemNum IN ("+string.Join(",",apptViewItemNums.Skip(1).Select(x => POut.Long(x)))+")";
+				Db.NonQ(command);
+			}
+			command="SELECT ApptViewNum,OpNum FROM apptviewitem WHERE IsMobile AND OpNum>0 GROUP BY ApptViewNum,OpNum HAVING COUNT(*)>1";
+			table=Db.GetTable(command);
+			for(int i=0;i<table.Rows.Count;i++) { //Can have multiple duplicate Mobile Operatory View Items so need to clean each one individually
+				long apptViewNum=PIn.Long(table.Rows[i]["ApptViewNum"].ToString());
+				long opNum=PIn.Long(table.Rows[i]["OpNum"].ToString());
+				command="SELECT ApptViewItemNum FROM apptviewitem WHERE ApptViewNum="+POut.Long(apptViewNum)+" AND OpNum="+POut.Long(opNum)+" AND IsMobile";
+				List<long> apptViewItemNums=Db.GetListLong(command,hasExceptions:false);
+				if(apptViewItemNums.Count<2) {
+					continue;
+				}
+				//Keep one valid Mobile Provider view item
+				command="DELETE FROM apptviewitem WHERE ApptViewItemNum IN ("+string.Join(",",apptViewItemNums.Skip(1).Select(x => POut.Long(x)))+")";
+				Db.NonQ(command);
+			}
+		}
+
 		private static void To22_3_1() {
 			string command;
 			DataTable table;
@@ -4232,6 +4270,44 @@ namespace OpenDentBusiness {
 		private static void To22_3_26() {
 			string command = "ALTER TABLE autocommexcludedate ALTER DateExclude SET DEFAULT '0001-01-01 00:00:00'";
 			Db.NonQ(command);
+		}
+
+		private static void To22_3_29() {
+			//Remove all Provider/Operatory mobile view items that aren't associated to a valid Provider/Operatory apptviewitem.
+			string command="DELETE a FROM apptviewitem a "+
+				"LEFT JOIN apptviewitem a2 ON a.ProvNum=a2.ProvNum AND !a2.IsMobile AND a.ApptViewNum=a2.ApptViewNum "+
+				"LEFT JOIN apptviewitem a3 ON a.OpNum=a3.OpNum AND !a3.IsMobile AND a.ApptViewNum=a3.ApptViewNum "+
+			"WHERE a.IsMobile AND (a2.ApptViewItemNum IS NULL OR a3.ApptViewItemNum IS NULL)";
+			Db.NonQ(command);
+			//Find and delete all duplicate mobile view items for Provider/Operatory.
+			command="SELECT ApptViewNum,ProvNum FROM apptviewitem WHERE IsMobile AND ProvNum>0 GROUP BY ApptViewNum,ProvNum HAVING COUNT(*)>1";
+			DataTable table=Db.GetTable(command);
+			for(int i=0;i<table.Rows.Count;i++) { //Can have multiple duplicate Mobile Provider View Items so need to clean each one individually
+				long apptViewNum=PIn.Long(table.Rows[i]["ApptViewNum"].ToString());
+				long provNum=PIn.Long(table.Rows[i]["ProvNum"].ToString());
+				command="SELECT ApptViewItemNum FROM apptviewitem WHERE ApptViewNum="+POut.Long(apptViewNum)+" AND ProvNum="+POut.Long(provNum)+" AND IsMobile";
+				List<long> apptViewItemNums=Db.GetListLong(command,hasExceptions:false);
+				if(apptViewItemNums.Count<2) {
+					continue;
+				}
+				//Keep one valid Mobile Provider view item
+				command="DELETE FROM apptviewitem WHERE ApptViewItemNum IN ("+string.Join(",",apptViewItemNums.Skip(1).Select(x => POut.Long(x)))+")";
+				Db.NonQ(command);
+			}
+			command="SELECT ApptViewNum,OpNum FROM apptviewitem WHERE IsMobile AND OpNum>0 GROUP BY ApptViewNum,OpNum HAVING COUNT(*)>1";
+			table=Db.GetTable(command);
+			for(int i=0;i<table.Rows.Count;i++) { //Can have multiple duplicate Mobile Operatory View Items so need to clean each one individually
+				long apptViewNum=PIn.Long(table.Rows[i]["ApptViewNum"].ToString());
+				long opNum=PIn.Long(table.Rows[i]["OpNum"].ToString());
+				command="SELECT ApptViewItemNum FROM apptviewitem WHERE ApptViewNum="+POut.Long(apptViewNum)+" AND OpNum="+POut.Long(opNum)+" AND IsMobile";
+				List<long> apptViewItemNums=Db.GetListLong(command,hasExceptions:false);
+				if(apptViewItemNums.Count<2) {
+					continue;
+				}
+				//Keep one valid Mobile Provider view item
+				command="DELETE FROM apptviewitem WHERE ApptViewItemNum IN ("+string.Join(",",apptViewItemNums.Skip(1).Select(x => POut.Long(x)))+")";
+				Db.NonQ(command);
+			}
 		}
 	}
 }

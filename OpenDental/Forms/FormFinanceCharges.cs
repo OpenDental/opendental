@@ -308,7 +308,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please select at least one billing type first.");
 				return;
 			}
-			if(PIn.Long(textAPR.Text) < 2) {
+			if(PIn.Double(textAPR.Text) < 2) {
 				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"The APR is much lower than normal. Do you wish to proceed?")) {
 					return;
 				}

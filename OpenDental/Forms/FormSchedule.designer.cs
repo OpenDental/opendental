@@ -45,7 +45,7 @@ namespace OpenDental {
 			this.tabPageProv = new System.Windows.Forms.TabPage();
 			this.tabPageEmp = new System.Windows.Forms.TabPage();
 			this.checkClinicNotes = new System.Windows.Forms.CheckBox();
-			this.butDelete = new OpenDental.UI.Button();
+			this.butClearWeek = new OpenDental.UI.Button();
 			this.butPrint = new OpenDental.UI.Button();
 			this.textDateTo = new OpenDental.ValidDate();
 			this.textDateFrom = new OpenDental.ValidDate();
@@ -189,16 +189,16 @@ namespace OpenDental {
 			this.checkClinicNotes.UseVisualStyleBackColor = true;
 			this.checkClinicNotes.Click += new System.EventHandler(this.checkClinicNotes_Click);
 			// 
-			// butDelete
+			// butClearWeek
 			// 
-			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
-			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(14, 360);
-			this.butDelete.Name = "butDelete";
-			this.butDelete.Size = new System.Drawing.Size(119, 24);
-			this.butDelete.TabIndex = 27;
-			this.butDelete.Text = "Clear Week";
-			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
+			this.butClearWeek.Icon = OpenDental.UI.EnumIcons.DeleteX;
+			this.butClearWeek.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butClearWeek.Location = new System.Drawing.Point(14, 360);
+			this.butClearWeek.Name = "butClearWeek";
+			this.butClearWeek.Size = new System.Drawing.Size(119, 24);
+			this.butClearWeek.TabIndex = 27;
+			this.butClearWeek.Text = "Clear Week";
+			this.butClearWeek.Click += new System.EventHandler(this.butClearWeek_Click);
 			// 
 			// butPrint
 			// 
@@ -385,7 +385,7 @@ namespace OpenDental {
 			this.groupBoxFilter.Controls.Add(this.groupBoxWeekFilter);
 			this.groupBoxFilter.Controls.Add(this.butRefresh);
 			this.groupBoxFilter.Controls.Add(this.comboClinic);
-			this.groupBoxFilter.Controls.Add(this.butDelete);
+			this.groupBoxFilter.Controls.Add(this.butClearWeek);
 			this.groupBoxFilter.Controls.Add(this.tabControl1);
 			this.groupBoxFilter.Controls.Add(this.checkPracticeNotes);
 			this.groupBoxFilter.Controls.Add(this.textDateTo);
@@ -491,7 +491,7 @@ namespace OpenDental {
 		private Label label1;
 		private OpenDental.UI.ListBoxOD listBoxProvs;
 		private OpenDental.UI.Button butPrint;
-		private OpenDental.UI.Button butDelete;
+		private OpenDental.UI.Button butClearWeek;
 		private CheckBox checkPracticeNotes;
 		private OpenDental.UI.ListBoxOD listBoxEmps;
 		private TabControl tabControl1;

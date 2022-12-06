@@ -182,8 +182,9 @@ namespace OpenDental {
 						if(PrefC.GetBool(PrefName.EasyHideClinical)) {
 							_listButtons[i].Caption=Lan.g(this,"Procs");
 						}
-						if(!isMedical){
-							_listButtons[i].Icon2=EnumIcons.Chart32W;
+						_listButtons[i].Icon2=EnumIcons.Chart32W;
+						if(isMedical){
+							_listButtons[i].Icon2=EnumIcons.ChartMed32;
 						}
 						break;
 					case EnumModuleType.Imaging:
@@ -542,8 +543,9 @@ namespace OpenDental {
 		///<summary></summary>
 		public string Caption;
 		///<summary></summary>
+		///
 		public EnumIcons Icon;
-		///<summary>Just used by Chart module to show bitmap with white background instead of default gray</summary>
+		///<summary>Just used by Chart module to show bitmap with white background instead of default gray. This was required because the Chart icon doesn't look good around the edges when drawn on a white background, so we have to have a second chart icon specifically for when the white background (Chart module selected) is showing.</summary>
 		public EnumIcons Icon2;
 		///<summary></summary>
 		public EnumModuleType ModuleType;

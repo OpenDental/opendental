@@ -34,7 +34,7 @@ namespace OpenDental {
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
-			this.textAPR = new OpenDental.ValidNum();
+			this.textAPR = new OpenDental.ValidDouble();
 			this.textDateLastRun = new OpenDental.ValidDate();
 			this.label5 = new System.Windows.Forms.Label();
 			this.butUndo = new OpenDental.UI.Button();
@@ -625,7 +625,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label4;
-		private OpenDental.ValidNum textAPR;
+		private OpenDental.ValidDouble textAPR;
 		private ValidDate textDateLastRun;
 		private Label label5;
 		private OpenDental.UI.Button butUndo;

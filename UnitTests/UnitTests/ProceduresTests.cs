@@ -3699,10 +3699,72 @@ If instead the preference was off for this unit test, then Writeoff2 would have 
 			Assert.AreEqual(50,claimProcParent.InsEstTotal);
 			Assert.AreEqual(5,claimProcLab.InsEstTotal);
 		}
+		[TestMethod]
+		public void Procedures_GetCanadianExtractedTeeth_2Procedures_SameToothNum_SameProcedure() {
+			ProcedureT.ClearProcedureTable();
+			ProcedureCodeT.ClearProcedureCodeTable();
+			Patient patient=PatientT.CreatePatient(fName:"Test",lName:"Tester");
+			ProcedureCode procCode=ProcedureCodeT.CreateProcCode("D7111",treatmentArea:TreatmentArea.Tooth,paintType:ToothPaintingType.Extraction);
+			DateTime dateTStampOld=DateTime.Now.AddDays(-1);
+			DateTime dateTStampToday=DateTime.Now;
+			List<Procedure> listProcedures = new List<Procedure>
+			{
+				ProcedureT.CreateProcedure(patient,"D7111",ProcStat.C,toothNum:"8",procFee:15.95,codeNum:procCode.CodeNum,dateTStamp:dateTStampOld),
+				ProcedureT.CreateProcedure(patient,"D7111",ProcStat.C,toothNum:"8",procFee:15.95,codeNum:procCode.CodeNum,dateTStamp:dateTStampToday)
+			};
+			List<Procedure> listExtractions=Procedures.GetCanadianExtractedTeeth(listProcedures);
+			Assert.IsNotNull(listExtractions);
+			Assert.AreEqual(1, listExtractions.Count);
+			Assert.AreEqual(dateTStampToday,listExtractions[0].DateTStamp);
+		}
+
+		[TestMethod]
+		public void Procedures_GetCanadianExtractedTeeth_2Procedures_SameToothNum_DifferentProcedure() {
+			ProcedureT.ClearProcedureTable();
+			ProcedureCodeT.ClearProcedureCodeTable();
+			Patient patient=PatientT.CreatePatient(fName:"Test",lName:"Tester");
+			ProcedureCode procCode=ProcedureCodeT.CreateProcCode("D7111",treatmentArea:TreatmentArea.Tooth,paintType:ToothPaintingType.Extraction);
+			ProcedureCode procCode2=ProcedureCodeT.CreateProcCode("D7222",treatmentArea:TreatmentArea.Tooth,paintType:ToothPaintingType.Extraction);
+			DateTime dateTStampOld=DateTime.Now.AddDays(-1);
+			DateTime dateTStampToday=DateTime.Now;
+			List<Procedure> listProcedures = new List<Procedure>
+			{
+				ProcedureT.CreateProcedure(patient,"D7111",ProcStat.C,toothNum:"8",procFee:15.95,codeNum:procCode.CodeNum,dateTStamp:dateTStampOld),
+				ProcedureT.CreateProcedure(patient,"D7222",ProcStat.C,toothNum:"8",procFee:15.95,codeNum:procCode2.CodeNum,dateTStamp:dateTStampToday)
+			};
+			List<Procedure> listExtractions=Procedures.GetCanadianExtractedTeeth(listProcedures);
+			Assert.IsNotNull(listExtractions);
+			Assert.AreEqual(1, listExtractions.Count);
+			Assert.AreEqual(dateTStampToday,listExtractions[0].DateTStamp);
+		}
+
+		[TestMethod]
+		public void Procedures_GetCanadianExtractedTeeth_3Procedures_2SameToothNum_2DifferentProcedures() {
+			ProcedureT.ClearProcedureTable();
+			ProcedureCodeT.ClearProcedureCodeTable();
+			Patient patient=PatientT.CreatePatient(fName:"Test",lName:"Tester");
+			ProcedureCode procCode=ProcedureCodeT.CreateProcCode("D7111",treatmentArea:TreatmentArea.Tooth,paintType:ToothPaintingType.Extraction);
+			ProcedureCode procCode2=ProcedureCodeT.CreateProcCode("D7222",treatmentArea:TreatmentArea.Tooth,paintType:ToothPaintingType.Extraction);
+			DateTime dateTStampOld=DateTime.Now.AddDays(-1);
+			DateTime dateTStampToday=DateTime.Now;
+			List<Procedure> listProcedures = new List<Procedure>
+			{
+				ProcedureT.CreateProcedure(patient,"D7111",ProcStat.C,toothNum:"8",procFee:15.95,codeNum:procCode2.CodeNum,dateTStamp:dateTStampOld),
+				ProcedureT.CreateProcedure(patient,"D7222",ProcStat.C,toothNum:"10",procFee:15.95,codeNum:procCode2.CodeNum,dateTStamp:dateTStampToday),
+				ProcedureT.CreateProcedure(patient,"D7222",ProcStat.C,toothNum:"8",procFee:15.95,codeNum:procCode.CodeNum,dateTStamp:dateTStampOld)
+			};
+			List<Procedure> listExtractions=Procedures.GetCanadianExtractedTeeth(listProcedures);
+			Assert.IsNotNull(listExtractions);
+			Assert.AreEqual(2, listExtractions.Count);
+			Assert.AreEqual(1,listExtractions.FindAll(x => x.CodeNum==procCode.CodeNum).Count);
+			Assert.AreEqual(1,listExtractions.FindAll(x => x.CodeNum==procCode2.CodeNum).Count);
+			//Assert sort worked 
+			Assert.AreEqual(dateTStampToday,listExtractions[0].DateTStamp);
+			Assert.AreEqual(dateTStampOld,listExtractions[1].DateTStamp);
+		}
 
 		[TestMethod]
 		[Documentation.Numbering(Documentation.EnumTestNum.Procedures_ComputeEstimates_OrthoMaxSeparateFamilyAndIndividualMaxes)]
-
 		public void Procedures_ComputeEstimates_OrthoMaxSeparateFamilyAndIndividualMaxes() {
 			string suffix="75";
 			Patient pat=PatientT.CreatePatient(suffix);
