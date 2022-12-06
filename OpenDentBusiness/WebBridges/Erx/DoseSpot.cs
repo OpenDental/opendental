@@ -1464,6 +1464,9 @@ namespace OpenDentBusiness {
 			if(resObj.Result.ResultCode.ToUpper().Contains("ERROR")) {
 				throw new ODException(Lans.g("DoseSpot","Error adding patient: ")+resObj.Result.ResultDescription);
 			}
+			if(resObj.Id=="-1") {
+				throw new ODException(Lans.g("DoseSpot","Error adding patient, DoseSpot returned an invalid patient ID: ")+resObj.Result.ResultDescription);
+			}
 			return resObj.Id;
 		}
 

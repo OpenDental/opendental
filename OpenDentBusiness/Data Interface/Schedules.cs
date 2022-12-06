@@ -1638,23 +1638,23 @@ namespace OpenDentBusiness{
 
 		///<summary>Clears all schedule entries for the given date range and the given providers, employees, and practice. 
 		///Insert an invalid schedule signalod.</summary>
-		public static void Clear(DateTime dateStart,DateTime dateEnd,List<long> provNums,List<long> empNums,bool includePNotes,bool includeCNotes,long clinicNum) {
+		public static void Clear(DateTime dateStart,DateTime dateEnd,List<long> provNums,List<long> empNums,bool includePNotes,bool includeCNotes,bool excludeHolidays,long clinicNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),dateStart,dateEnd,provNums,empNums,includePNotes,includeCNotes,clinicNum);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),dateStart,dateEnd,provNums,empNums,includePNotes,includeCNotes,excludeHolidays,clinicNum);
 				return;
 			}
-			DeleteMany(GetSchedulesToDelete(dateStart,dateEnd,provNums,empNums,includePNotes,includeCNotes,clinicNum).Select(x => x.ScheduleNum).ToList());
+			DeleteMany(GetSchedulesToDelete(dateStart,dateEnd,provNums,empNums,includePNotes,includeCNotes,clinicNum,excludeHolidays).Select(x => x.ScheduleNum).ToList());
 		}
 
 		///<summary>Returns all Schedules that match the passed in arguments.</summary>
 		public static List<Schedule> GetSchedulesToDelete(DateTime dateStart,DateTime dateEnd,List<long> provNums,List<long> empNums,bool includePNotes,
-			bool includeCNotes,long clinicNum) 
+			bool includeCNotes,long clinicNum,bool excludeHolidays=false) 
 		{
 			if(provNums.Count==0 && empNums.Count==0 && !includeCNotes && !includePNotes) {
 				return new List<Schedule>();
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Schedule>>(MethodBase.GetCurrentMethod(),dateStart,dateEnd,provNums,empNums,includePNotes,includeCNotes,clinicNum);
+				return Meth.GetObject<List<Schedule>>(MethodBase.GetCurrentMethod(),dateStart,dateEnd,provNums,empNums,includePNotes,includeCNotes,clinicNum,excludeHolidays);
 			}
 			List<string> listOrClauses=new List<string>();
 			//Only notes with clinicNum==0
@@ -1673,7 +1673,10 @@ namespace OpenDentBusiness{
 			}
 			string command="SELECT * FROM schedule "
 				+"WHERE SchedDate BETWEEN "+POut.Date(dateStart)+" AND "+POut.Date(dateEnd)+" "
-				+"AND ("+string.Join(" OR ",listOrClauses)+")";
+				+"AND ("+string.Join(" OR ",listOrClauses)+") ";
+			if(excludeHolidays) {
+				command+="AND schedule.Status!="+POut.Int((int)SchedStatus.Holiday);
+			}
 			return Crud.ScheduleCrud.SelectMany(command);
 		}
 

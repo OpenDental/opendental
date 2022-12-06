@@ -1492,9 +1492,12 @@ namespace OpenDentBusiness.Eclaims {
 				else if(network.Abbrev=="TELUS B") {
 					subDir="telusb";
 				}
-				else {
+				else if(isClaimstream) {
 					errorMsg=Lans.g("Canadian","Transaction not supported for network")+" "+network.Descript;
 					return "";//Return empty response, since we never received one.
+				}
+				if(isItrans2 && !Directory.Exists(ODFileUtils.CombinePaths(saveFolder,subDir))) {
+					subDir="";
 				}
 				saveFolder=ODFileUtils.CombinePaths(saveFolder,subDir);
 				if(!Directory.Exists(saveFolder)) {
@@ -1514,7 +1517,7 @@ namespace OpenDentBusiness.Eclaims {
 					}
 				}
 				string certFilePath=ODFileUtils.CombinePaths(saveFolder,certFileName);
-				if(!File.Exists(certFilePath)) {//Download a copy of the certificate from HQ if needed.
+				if(subDir!="" && !File.Exists(certFilePath)) {//Download a copy of the certificate from HQ if needed.
 					byte[] arrayCertFileBytes=null;
 					try {
 						XmlWriterSettings settings=new XmlWriterSettings();

@@ -263,7 +263,7 @@ namespace OpenDental {
 			if(!PrefC.GetBool(PrefName.ShowAllocateUnearnedPaymentPrompt) || ClaimProcs.GetPatPortionForClaim(ClaimCur)<=0) { 
 				return;
 			}
-			using FormProcSelect FormPS=new FormProcSelect(patcur.PatNum,false,true,true);
+			using FormProcSelect FormPS=new FormProcSelect(patcur.PatNum,false,true,doShowAdjustments:true,doShowTreatmentPlanProcs:false);
 			if(FormPS.ShowDialog()!=DialogResult.OK) {
 				return;
 			}

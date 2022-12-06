@@ -77,7 +77,7 @@ namespace OpenDental{
 					textDateTo.Text=dateFrom.AddMonths(12).AddDays(-1).ToShortDateString();
 					break;
 				case FormScheduleMode.ViewSchedule:
-					butDelete.Visible=false;
+					butClearWeek.Visible=false;
 					groupCopy.Visible=false;
 					groupPaste.Visible=false;
 					if(PrefC.GetBool(PrefName.DistributorKey)) {//if this is OD HQ
@@ -309,14 +309,14 @@ namespace OpenDental{
 		private void checkShowClinicSchedules_CheckedChanged(object sender,EventArgs e) {
 			if(checkShowClinicSchedules.Checked) {
 				SelectAllProvsAndEmps();
-				butDelete.Enabled=false;
+				butClearWeek.Enabled=false;
 				butCopyDay.Enabled=false;
 				butCopyWeek.Enabled=false;
 				butPaste.Enabled=false;
 				butRepeat.Enabled=false;
 			}
 			else {
-				butDelete.Enabled=true;
+				butClearWeek.Enabled=true;
 				butCopyDay.Enabled=true;
 				butCopyWeek.Enabled=true;
 				butPaste.Enabled=true;
@@ -489,23 +489,23 @@ namespace OpenDental{
 				case ScheduleWeekendFilter.FullWeek: 
 					_weekendFilter=ScheduleWeekendFilter.FullWeek;
 					butCopyWeek.Text=Lan.g(this,"Copy Week");
-					butDelete.Text=Lan.g(this,"Clear Week");
+					butClearWeek.Text=Lan.g(this,"Clear Week");
 					break;
 				case ScheduleWeekendFilter.WorkWeek: 
 					_weekendFilter=ScheduleWeekendFilter.WorkWeek;
 					butCopyWeek.Text=Lan.g(this,"Copy Week");
-					butDelete.Text=Lan.g(this,"Clear Week");
+					butClearWeek.Text=Lan.g(this,"Clear Week");
 					break;
 				case ScheduleWeekendFilter.Weekend: 
 					_weekendFilter=ScheduleWeekendFilter.Weekend;
 					butCopyWeek.Text=Lan.g(this,"Copy Weekend");
-					butDelete.Text=Lan.g(this,"Clear Weekend");
+					butClearWeek.Text=Lan.g(this,"Clear Weekend");
 					break;
 			}
 			FillGrid();
 		}
 
-		private void butDelete_Click(object sender,EventArgs e) {
+		private void butClearWeek_Click(object sender,EventArgs e) {
 			if(!ValidateInputs()) {
 				return;
 			}
@@ -545,11 +545,11 @@ namespace OpenDental{
 			}
 			if(_weekendFilter==ScheduleWeekendFilter.Weekend) {
 				//Clear sunday and saturday individually
-				Schedules.Clear(dateSelectedStart,dateSelectedStart,listProvNums,listEmployeeNums,checkPracticeNotes.Checked,checkClinicNotes.Checked,comboClinic.SelectedClinicNum);
-				Schedules.Clear(dateSelectedEnd,dateSelectedEnd,listProvNums,listEmployeeNums,checkPracticeNotes.Checked,checkClinicNotes.Checked,comboClinic.SelectedClinicNum);
+				Schedules.Clear(dateSelectedStart,dateSelectedStart,listProvNums,listEmployeeNums,checkPracticeNotes.Checked,checkClinicNotes.Checked,excludeHolidays:true,comboClinic.SelectedClinicNum);
+				Schedules.Clear(dateSelectedEnd,dateSelectedEnd,listProvNums,listEmployeeNums,checkPracticeNotes.Checked,checkClinicNotes.Checked,excludeHolidays:true,comboClinic.SelectedClinicNum);
 			} 
 			else {
-				Schedules.Clear(dateSelectedStart,dateSelectedEnd,listProvNums,listEmployeeNums,checkPracticeNotes.Checked,checkClinicNotes.Checked,comboClinic.SelectedClinicNum);	
+				Schedules.Clear(dateSelectedStart,dateSelectedEnd,listProvNums,listEmployeeNums,checkPracticeNotes.Checked,checkClinicNotes.Checked,excludeHolidays:true,comboClinic.SelectedClinicNum);	
 			}
 			
 			FillGrid();

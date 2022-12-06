@@ -695,11 +695,13 @@ namespace OpenDental {
 					UpdateResultTextForRow(grid,intArraySelectedIndices[i],Lan.g("FormDatabaseMaintenance","Running")+"...");
 					string strResult=RunMethod(methodInfo,dbmModeCur);
 					string strStatus="";
-					if(strResult=="") {//Only possible if running a check / fix in non-verbose mode and nothing happened or needs to happen.
+					if(string.IsNullOrWhiteSpace(strResult)) {//Only possible if running a check / fix in non-verbose mode and nothing happened or needs to happen.
 						strStatus=Lan.g("FormDatabaseMaintenance","Done.  No maintenance needed.");
 					}
+					else {
+						stringBuilderLogText.AppendLine(strResult.Trim());
+					}
 					UpdateResultTextForRow(grid,intArraySelectedIndices[i],strResult+strStatus);
-					stringBuilderLogText.Append(strResult);
 					//Check flag to see if user wants to stop DBM
 					if(_isCancelled) {
 						break;
