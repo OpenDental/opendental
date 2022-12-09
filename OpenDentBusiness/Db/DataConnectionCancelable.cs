@@ -21,38 +21,30 @@ namespace OpenDentBusiness {
 		private static object _lockObj=new object();
 
 
-		///<summary>Turns "pooling" off, then opens the current database connection, adds that connection to the dictionary of MySqlConnections, then returns the unique ServerThread.  
-		///The returned ServerThread can then be used later in order to stop the query in the middle of executing.
-		///A non-pooled connection will NOT attempt to re-use connections to the DB that already exist but are idle, 
-		///rather it will create a brand new connection that no other connection can use.
-		///This is so that user queries can be safely cancelled if needed.
-		///Required as a first step for user queries (and ONLY user queries).
-		///Not currently Oracle compatible.</summary>
-		public static int GetServerThread(bool isReportServer) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetInt(MethodBase.GetCurrentMethod(),isReportServer);
+		///<summary>Opens a new and reserved connection to the DBMS (pooling=false) and leaves the connection open so that a query can be ran at a later time.
+		///Returns the ServerThread of the open connection to the DBMS so that other methods within this class can take actions against this specific connection.</summary>
+		public static int GetServerThread(bool useReportServer) {
+			//Directly call the report server if desired and the current instance is a client (ClientDirect or ClientMT).
+			if(useReportServer && RemotingClient.MiddleTierRole.In(MiddleTierRole.ClientDirect,MiddleTierRole.ClientMT)) {
+				//Recursively invoke this method against the report server BUT tell the method to NOT use the report server.
+				//This is because we are taking care of the report server by recursively executing the method within RunFuncOnReportServer().
+				return ReportsComplex.RunFuncOnReportServer(() => GetServerThread(false));
 			}
-			MySqlConnection con=new MySqlConnection();
-			if(isReportServer) {
-				if(ODBuild.IsWeb() && PrefC.ReportingServer.Server!="" && PrefC.ReportingServer.Database!=DataConnection.GetDatabaseName()) {
-					//Security safeguard to prevent Web users from connecting to another office's database.
-					throw new ODException("Report server database name must match current database.");
-				}
-				con=new MySqlConnection(
-					DataConnection.GetReportConnectionString(
-						PrefC.ReportingServer.Server
-						,PrefC.ReportingServer.Database
-						,PrefC.ReportingServer.MySqlUser
-						,PrefC.ReportingServer.MySqlPass)
-					+";pooling=false");
+			//At this point it is safe to perform the typical S class Middle Tier remoting role check.
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetInt(MethodBase.GetCurrentMethod(),useReportServer);
+			}
+			//Either not using a report server or the call stack has finally reached the correct server.
+			string connectStr="";
+			//Use the database user with lower permissions when in Middle Tier since this method is explicitly designed for the User Query window.
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ServerMT) {
+				connectStr=DataConnection.GetLowConnectionString();
 			}
 			else {
-				//Use the database user with lower permissions when in Middle Tier since this method is explicitly designed for the User Query window.
-				string connectStr=(RemotingClient.MiddleTierRole==MiddleTierRole.ServerMT ? DataConnection.GetLowConnectionString() 
-					: DataConnection.GetCurrentConnectionString());
-				//all connection details are the same, except pooling should be false.
-				con=new MySqlConnection(connectStr+";pooling=false");
+				connectStr=DataConnection.GetCurrentConnectionString();
 			}
+			//Append pooling=false to the connection string.
+			MySqlConnection con=new MySqlConnection(connectStr+";pooling=false");
 			con.Open();
 			int serverThread=con.ServerThread;
 			//If the dictionary already contains the ServerThread key, then something went wrong. Just stop and throw.
@@ -66,12 +58,19 @@ namespace OpenDentBusiness {
 			return serverThread;
 		}
 
-		///<summary>Currently only for user queries.  The connection must already be opened before calling this method.
-		///Fills and returns a DataTable from the database.  Use isRunningOnReportServer to indicate if the connection is made directly to the Report
-		///Server.  Throws an exception if a connection could not be found via the passed in server thread.</summary>
-		public static DataTable GetTableConAlreadyOpen(int serverThread,string command,bool isSqlValidated,bool isRunningOnReportServer=false,bool hasStackTrace=false, bool suppressMessage=false) {
+		///<summary>Fills and returns a DataTable from the database using an exiting database connection.
+		///Currently only for user queries. The connection must already be opened before calling this method; See GetServerThread()
+		///Throws an exception if a connection could not be found via the passed in server thread.</summary>
+		public static DataTable GetTableConAlreadyOpen(int serverThread,string command,bool wasSqlValidated,bool isSqlAllowedReportServer=false,bool hasStackTrace=false,bool suppressMessage=false,bool useReportServer=false) {
+			//Directly call the report server if desired and the current instance is a client (ClientDirect or ClientMT).
+			if(useReportServer && RemotingClient.MiddleTierRole.In(MiddleTierRole.ClientDirect,MiddleTierRole.ClientMT)) {
+				//Recursively invoke this method against the report server BUT tell the method to NOT use the report server.
+				//This is because we are taking care of the report server by recursively executing the method within RunFuncOnReportServer().
+				return ReportsComplex.RunFuncOnReportServer(() => GetTableConAlreadyOpen(serverThread,command,wasSqlValidated,isSqlAllowedReportServer,hasStackTrace,suppressMessage,useReportServer:false));
+			}
+			//At this point it is safe to perform the typical S class Middle Tier remoting role check.
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetTable(MethodBase.GetCurrentMethod(),serverThread,command,isSqlValidated,isRunningOnReportServer,hasStackTrace, suppressMessage);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),serverThread,command,wasSqlValidated,isSqlAllowedReportServer,hasStackTrace,suppressMessage,useReportServer);
 			}
 			//If the dictionary does not contain the ServerThread key, then something went wrong. Just stop and throw.
 			MySqlConnection con;
@@ -79,7 +78,7 @@ namespace OpenDentBusiness {
 				throw new ApplicationException("Critical error in GetTableConAlreadyOpen: A connection could not be found via the given server thread ID.");
 			}
 			//Throws Exception if Sql is not allowed, which is handled by the ExceptionThreadHandler and output in a MsgBox
-			if(!isSqlValidated && !Db.IsSqlAllowed(command,suppressMessage: suppressMessage, isRunningOnReportServer:isRunningOnReportServer)) {
+			if(!wasSqlValidated && !Db.IsSqlAllowed(command,suppressMessage:suppressMessage,isRunningOnReportServer:isSqlAllowedReportServer)) {
 				throw new ApplicationException("Error: Command is either not safe or user does not have permission.");
 			}
 			//At this point, we know that _dictCons contains the current connection's ServerThread ID.
@@ -101,9 +100,20 @@ namespace OpenDentBusiness {
 		///<summary>Currently only for user queries.  Tries to cancel the connection that corresponds to the passed in server thread. 
 		///Does not close the connection as that is taken care of in GetTableConAlreadyOpen() in a finally statement.
 		///Optionally throws an exception if a connection could not be found via the passed in server thread.</summary>
-		public static void CancelQuery(int serverThread,bool hasExceptions = true) {
+		public static void CancelQuery(int serverThread,bool hasExceptions=true,bool useReportServer=false) {
+			//Directly call the report server if desired and the current instance is a client (ClientDirect or ClientMT).
+			if(useReportServer && RemotingClient.MiddleTierRole.In(MiddleTierRole.ClientDirect,MiddleTierRole.ClientMT)) {
+				//Recursively invoke this method against the report server BUT tell the method to NOT use the report server.
+				//This is because we are taking care of the report server by recursively executing the method within RunFuncOnReportServer().
+				ReportsComplex.RunFuncOnReportServer(() => {
+					CancelQuery(serverThread,hasExceptions,false);
+					return "";//Not used. Func has to return something.
+				});
+				return;
+			}
+			//At this point it is safe to perform the typical S class Middle Tier remoting role check.
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),serverThread,hasExceptions);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),serverThread,hasExceptions,useReportServer);
 				return;
 			}
 			if(!_dictCons.ContainsKey(serverThread)) {
@@ -127,6 +137,11 @@ namespace OpenDentBusiness {
 			catch(Exception e) {
 				if(hasExceptions) {
 					throw e; //and throw all other exceptions.
+				}
+			}
+			finally {
+				lock(_lockObj) {
+					_dictCons.Remove(serverThread);
 				}
 			}
 		}

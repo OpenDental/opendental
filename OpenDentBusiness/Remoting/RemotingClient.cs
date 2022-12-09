@@ -99,12 +99,7 @@ namespace OpenDentBusiness {
 				return _isReportServer;
 			}
 			set {
-				if(MiddleTierRole!=MiddleTierRole.ServerMT) {
-					_isReportServer=false;//We only allow the passing of queries over middle tier when the client is itself a middle tier server.
-				}
-				else {
-					_isReportServer=value;
-				}
+				_isReportServer=value;
 			}
 		}
 

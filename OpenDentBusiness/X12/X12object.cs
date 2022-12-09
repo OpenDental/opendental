@@ -315,8 +315,10 @@ namespace OpenDentBusiness
 					return "03";
 				case PlaceOfService.SkilledNursFac:
 					return "31";
-				case PlaceOfService.Telehealth:
+				case PlaceOfService.TelehealthOutsideHome:
 					return "02";
+				case PlaceOfService.TelehealthInHome:
+					return "10";
 			}
 			return "11";
 		}
@@ -1074,7 +1076,9 @@ namespace OpenDentBusiness
 		///<summary>14. Code 24</summary>
 		AmbulatorySurgicalCenter,
 		///<summary>15. Code 02.</summary>
-		Telehealth,
+		TelehealthOutsideHome,
+		///<summary>16. Code 10</summary>
+		TelehealthInHome
 	}
 
 }

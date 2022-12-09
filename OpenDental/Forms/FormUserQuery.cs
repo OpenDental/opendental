@@ -111,11 +111,10 @@ namespace OpenDental {
 				butAdd.Enabled=false;
 				butPaste.Enabled=false;
 			}
-			if(string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.ReportingServerDbName))
-				|| string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.ReportingServerCompName))) {
-				checkReportServer.Visible=false;
-			}
-			else {//default to report server when one is set up.
+			if(!string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.ReportingServerCompName))
+				|| !string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.ReportingServerURI)))
+			{
+				//default to report server when one is set up.
 				checkReportServer.Visible=true;
 				checkReportServer.Checked=true;
 			}
@@ -210,15 +209,15 @@ namespace OpenDental {
 		}
 
 		private void butSubmit_Click(object sender,System.EventArgs e) {
-			if(butSubmit.Text==Lan.g(this,"Stop Execution")) { //Abort abort!
-																												 //Flag the currently running query to stop.
+			if(butSubmit.Text==Lan.g(this,"Stop Execution")) {
+				//Flag the currently running query to stop.
 				if(_threadQuery!=null) {
 					_threadQuery.QuitAsync(true);
 				}
 				//Cancel the query that is currently running on MySQL using a KILL command.
 				if(_serverThreadID!=0) {
 					_queryExceptionStateCur = QueryExceptionState.Interrupt;
-					DataConnectionCancelable.CancelQuery(_serverThreadID);
+					DataConnectionCancelable.CancelQuery(_serverThreadID,useReportServer:checkReportServer.Checked);
 				}
 			}
 			else { //run query
@@ -233,7 +232,7 @@ namespace OpenDental {
 			_queryExceptionStateCur=QueryExceptionState.Suppress;
 			//Try to cancel any queries that could be running right now.
 			if(_serverThreadID!=0) {
-				DataConnectionCancelable.CancelQuery(_serverThreadID,false);
+				DataConnectionCancelable.CancelQuery(_serverThreadID,hasExceptions:false,useReportServer:checkReportServer.Checked);
 			}
 			ODThread.QuitAsyncThreadsByGroupName("UserQueryGroup",true);
 		}
@@ -868,8 +867,8 @@ namespace OpenDental {
 		}
 
 		///<summary>Used to submit user queries in a thread.  Column names will be handled automatically.
-		///Set isSqlValidated to true in order to skip SQL saftey validation.</summary>
-		public void SubmitQueryThreaded(bool isSqlValidated = false) {
+		///Set wasSqlValidated to true in order to skip SQL saftey validation if the query has already been vetted.</summary>
+		public void SubmitQueryThreaded(bool wasSqlValidated=false) {
 			if(_threadQuery!=null || _serverThreadID!=0) {
 				return;//There is already a query executing.
 			}
@@ -878,7 +877,7 @@ namespace OpenDental {
 			ClearGrid();
 			LayoutHelperForState(QueryExecuteState.Executing);
 			_queryExceptionStateCur=QueryExceptionState.Throw;
-			_threadQuery=new ODThread(OnThreadStart);
+			_threadQuery=new ODThread((o) => ExecuteQuery(checkReportServer.Checked,wasSqlValidated));
 			_threadQuery.Name="UserQueryThread";
 			_threadQuery.GroupName="UserQueryGroup";
 			_threadQuery.AddExitHandler(OnThreadExit);
@@ -1031,11 +1030,11 @@ namespace OpenDental {
 			}
 		}
 
-		private void OnThreadStart(ODThread thread) {
-			bool hasStackTrace = UserHasStackTracePref();
-			_serverThreadID=DataConnectionCancelable.GetServerThread(checkReportServer.Checked);
-			FillDataFromQuery(DataConnectionCancelable.GetTableConAlreadyOpen(_serverThreadID,_query
-				,false,checkReportServer.Checked,hasStackTrace, suppressMessage:true));
+		private void ExecuteQuery(bool useReportServer,bool wasSqlValidated) {
+			bool hasStackTrace=UserHasStackTracePref();
+			_serverThreadID=DataConnectionCancelable.GetServerThread(useReportServer);
+			DataTable table=DataConnectionCancelable.GetTableConAlreadyOpen(_serverThreadID,_query,wasSqlValidated,useReportServer,hasStackTrace,suppressMessage:true,useReportServer:useReportServer);
+			FillDataFromQuery(table);
 		}
 
 		private bool UserHasStackTracePref() {

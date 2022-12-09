@@ -106,7 +106,6 @@
 			this.Controls.Add(this.labelEmail);
 			this.Controls.Add(this.textTemplateSubject);
 			this.Controls.Add(this.butEditEmail);
-			this.MinimumSize = new System.Drawing.Size(702, 303);
 			this.Name = "UserControlReminderMessage";
 			this.Size = new System.Drawing.Size(705, 303);
 			this.ResumeLayout(false);

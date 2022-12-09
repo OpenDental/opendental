@@ -82,6 +82,15 @@ namespace OpenDentBusiness {
 			return Crud.InsPlanCrud.SelectMany(command);
 		}
 
+		///<summary>Gets a list of plans from the database for the API.</summary>
+		public static List<InsPlan> GetInsPlansForApi(int limit,int offset) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<InsPlan>>(MethodBase.GetCurrentMethod(),limit,offset);
+			}
+			string command="SELECT * FROM insplan LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.InsPlanCrud.SelectMany(command);
+		}
+
 		/*
 		///<summary>Will return null if no active plan for that ordinal.  Ordinal means primary, secondary, etc.</summary>
 		public static InsPlan GetPlanByOrdinal(int patNum,int ordinal) {
