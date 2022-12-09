@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="OpenDentalDocumentation.xsl"?>
-<database version="22.2.51.0">
+<database version="22.2.56.0">
     <table name="account">
         <summary>Used in the accounting section in chart of accounts.  Not related to patient accounts in any way.</summary>
         <column order="0" name="AccountNum" type="bigint(20)">
@@ -7504,6 +7504,8 @@
                 <EnumValue name="AdjustmentTypeDeny">222 - Denies users access to specific adjustment types. Special type of permission where having this permission actually 
             denies users access. If a usergroup has an entry for this permission, then they do not have access to the adjustment type with the defnum
             that is stored in grouppermission.FKey. Pattern approved by Jordan.</EnumValue>
+                <EnumValue name="StatementCSV">223 - Allows user to export statements as CSV files.</EnumValue>
+                <EnumValue name="CarrierEdit">224 - Allows users to edit carriers.</EnumValue>
                 <EnumValue name="ApiSubscription">225 - Logs when API subscriptions are added or deleted. For audit trails only.</EnumValue>
                 <EnumValue name="SecurityGlobal">226 - Logs changes to global lock date. For audit trails only.</EnumValue>
                 <EnumValue name="TaskDelete">228 - Allows user to delete tasks.</EnumValue>
@@ -14523,6 +14525,8 @@
                 <EnumValue name="AdjustmentTypeDeny">222 - Denies users access to specific adjustment types. Special type of permission where having this permission actually 
             denies users access. If a usergroup has an entry for this permission, then they do not have access to the adjustment type with the defnum
             that is stored in grouppermission.FKey. Pattern approved by Jordan.</EnumValue>
+                <EnumValue name="StatementCSV">223 - Allows user to export statements as CSV files.</EnumValue>
+                <EnumValue name="CarrierEdit">224 - Allows users to edit carriers.</EnumValue>
                 <EnumValue name="ApiSubscription">225 - Logs when API subscriptions are added or deleted. For audit trails only.</EnumValue>
                 <EnumValue name="SecurityGlobal">226 - Logs changes to global lock date. For audit trails only.</EnumValue>
                 <EnumValue name="TaskDelete">228 - Allows user to delete tasks.</EnumValue>

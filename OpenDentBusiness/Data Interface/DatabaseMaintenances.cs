@@ -6875,44 +6875,55 @@ namespace OpenDentBusiness {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur,patNum);
 			}
 			string log="";
-			string command;
-			string patWhere=(patNum>0 ? ("paysplit.PatNum="+POut.Long(patNum)+" AND ") : "");
+			//Get the unique PayNums for orphaned paysplits.
+			string command="SELECT paysplit.PayNum FROM paysplit WHERE NOT EXISTS(SELECT * FROM payment WHERE paysplit.PayNum=payment.PayNum) ";
+			if(patNum > 0) {
+				command+=$"AND paysplit.PatNum={POut.Long(patNum)} ";
+			}
+			command+="GROUP BY paysplit.PayNum";
+			List<long> listPayNums=Db.GetListLong(command);
+			long countFound=0;
+			List<DataRow> listDataRows=new List<DataRow>();
+			//Get the all of the data necessary to create dummy payments for ALL payment splits associated to the orphaned PayNums.
+			if(!listPayNums.IsNullOrEmpty()) {
+				command=$@"SELECT PayNum,PatNum,DatePay,DateEntry,SUM(SplitAmt) SplitAmt_,COUNT(*) Count_
+					FROM paysplit
+					WHERE PayNum IN({string.Join(",",listPayNums.Select(x => POut.Long(x)))})
+					GROUP BY PayNum";
+				DataTable table=Db.GetTable(command);
+				listDataRows=table.Select().ToList();
+				//The query results were grouped by PayNum so sum the value in the Count_ column for all of the rows returned.
+				countFound=listDataRows.Sum(x => PIn.Long(x["Count_"].ToString()));
+			}
 			switch(modeCur) {
 				case DbmMode.Check:
-					command="SELECT COUNT(*) FROM paysplit WHERE "
-						+patWhere
-						+"NOT EXISTS(SELECT * FROM payment WHERE paysplit.PayNum=payment.PayNum)";
-					int numFound=PIn.Int(Db.GetCount(command));
-					if(numFound>0 || verbose) {
-						log+=Lans.g("FormDatabaseMaintenance","Paysplits found with invalid PayNum: ")+numFound+"\r\n";
+					if(countFound>0 || verbose) {
+						log+=Lans.g("FormDatabaseMaintenance","Paysplits found with invalid PayNum:")+" "+countFound+"\r\n";
 					}
 					break;
 				case DbmMode.Fix:
-					if(DataConnection.DBtype==DatabaseType.Oracle) {
-						return Lans.g("FormDatabaseMaintenance","Currently not Oracle compatible.  Please call support.");
-					}
 					List<DbmLog> listDbmLogs=new List<DbmLog>();
 					string methodName=MethodBase.GetCurrentMethod().Name;
-					command=@"SELECT *,SUM(SplitAmt) SplitAmt_ 
-						FROM paysplit WHERE "
-						+patWhere
-						+"NOT EXISTS(SELECT * FROM payment WHERE paysplit.PayNum=payment.PayNum) "
-						+"AND PayNum!=0 "
-						+"GROUP BY PayNum";
-					DataTable table=Db.GetTable(command);
-					int rowsFixed=0;
-					if(table.Rows.Count>0) {
-						List<Def> listDefs=Defs.GetDefsForCategory(DefCat.PaymentTypes,true);
-						for(int i = 0;i<table.Rows.Count;i++) {
+					long countFixed=0;
+					bool hasPayNumZero=false;
+					List<Def> listDefsPaymentTypes=Defs.GetDefsForCategory(DefCat.PaymentTypes,true);
+					#region PayNum Not Zero
+					if(listDataRows.Count > 0) {
+						for(int i=0;i<listDataRows.Count;i++) {
+							long payNum=PIn.Long(listDataRows[i]["PayNum"].ToString());
+							if(payNum==0) {
+								hasPayNumZero=true;
+								continue;
+							}
 							//There's only one place in the program where this is called from.  Date is today, so no need to validate the date.
 							Payment payment=new Payment();
-							payment.PayType=listDefs[0].DefNum;
-							payment.DateEntry=PIn.Date(table.Rows[i]["DateEntry"].ToString());
-							payment.PatNum=PIn.Long(table.Rows[i]["PatNum"].ToString());
-							payment.PayDate=PIn.Date(table.Rows[i]["DatePay"].ToString());
-							payment.PayAmt=PIn.Double(table.Rows[i]["SplitAmt_"].ToString());
+							payment.PayType=listDefsPaymentTypes[0].DefNum;
+							payment.DateEntry=PIn.Date(listDataRows[i]["DateEntry"].ToString());
+							payment.PatNum=PIn.Long(listDataRows[i]["PatNum"].ToString());
+							payment.PayDate=PIn.Date(listDataRows[i]["DatePay"].ToString());
+							payment.PayAmt=PIn.Double(listDataRows[i]["SplitAmt_"].ToString());
 							payment.PayNote="Dummy payment. Original payment entry missing from the database.";
-							payment.PayNum=PIn.Long(table.Rows[i]["PayNum"].ToString());
+							payment.PayNum=payNum;
 							//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
 							payment.SecUserNumEntry=Security.CurUser.UserNum;
 							payment.PaymentSource=CreditCardSource.None;
@@ -6921,29 +6932,27 @@ namespace OpenDentBusiness {
 							Payments.Insert(payment,true);
 							listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,payment.PayNum,DbmLogFKeyType.Payment,
 								DbmLogActionType.Insert,methodName,"Inserted payment from PaySplitWithInvalidPayNum."));
+							countFixed+=PIn.Long(listDataRows[i]["Count_"].ToString());
 						}
-						rowsFixed+=table.Rows.Count;
 					}
-					//Handling paysplits that have a pay num of 0 separately because we want to create one payment per patient per day
-					command=@"SELECT *,SUM(SplitAmt) SplitAmt_ 
-						FROM paysplit WHERE "
-						+patWhere
-						+"NOT EXISTS(SELECT * FROM payment WHERE paysplit.PayNum=payment.PayNum) "
-						+"AND PayNum=0 "
-						+"GROUP BY PatNum,DatePay";
-					table=Db.GetTable(command);
-					string where="";
-					if(table.Rows.Count>0) {
-						List<Def> listDefs=Defs.GetDefsForCategory(DefCat.PaymentTypes,true);
+					#endregion
+					#region PayNum Zero
+					if(hasPayNumZero) {
+						//Handling paysplits that have a pay num of 0 separately because we want to create one payment per patient per day
+						command="SELECT PatNum,DatePay,DateEntry,SUM(SplitAmt) SplitAmt_,COUNT(*) Count_ FROM paysplit WHERE PayNum=0 ";
+						if(patNum > 0) {
+							command+=$"AND PatNum={POut.Long(patNum)} ";
+						}
+						command+="GROUP BY PatNum,DatePay";
+						DataTable table=Db.GetTable(command);
 						for(int i=0;i<table.Rows.Count;i++) {
 							Payment payment=new Payment();
-							payment.PayType=listDefs[0].DefNum;
+							payment.PayType=listDefsPaymentTypes[0].DefNum;
 							payment.DateEntry=PIn.Date(table.Rows[i]["DateEntry"].ToString());
 							payment.PatNum=PIn.Long(table.Rows[i]["PatNum"].ToString());
 							payment.PayDate=PIn.Date(table.Rows[i]["DatePay"].ToString());
 							payment.PayAmt=PIn.Double(table.Rows[i]["SplitAmt_"].ToString());
 							payment.PayNote="Dummy payment. Original payment entry number was 0.";
-							payment.PayNum=PIn.Long(table.Rows[i]["PayNum"].ToString());
 							//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
 							payment.SecUserNumEntry=Security.CurUser.UserNum;
 							payment.PaymentSource=CreditCardSource.None;
@@ -6952,18 +6961,19 @@ namespace OpenDentBusiness {
 							Payments.Insert(payment);
 							listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,payment.PayNum,DbmLogFKeyType.Payment,
 								DbmLogActionType.Insert,methodName,"Inserted payment from PaySplitWithInvalidPayNum."));
-							where=" WHERE PayNum=0 AND PatNum="+POut.Long(payment.PatNum)+" AND DatePay="+POut.Date(payment.PayDate);
-							command="SELECT SplitNum FROM paysplit"+where;
+							command=$"SELECT SplitNum FROM paysplit WHERE PayNum=0 AND PatNum={POut.Long(payment.PatNum)} AND DatePay={POut.Date(payment.PayDate)}";
 							List<long> listPaySplitNums=Db.GetListLong(command);
-							command="UPDATE paysplit SET PayNum="+POut.Long(payment.PayNum)+where;
+							command=$@"UPDATE paysplit SET PayNum={POut.Long(payment.PayNum)}
+								WHERE SplitNum IN({string.Join(",",listPaySplitNums.Select(x => POut.Long(x)))})";
 							Db.NonQ(command);
-							listPaySplitNums.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x,DbmLogFKeyType.Payment,
+							listPaySplitNums.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x,DbmLogFKeyType.PaySplit,
 								DbmLogActionType.Update,methodName,"Updated PayNum from 0 to "+payment.PayNum+".")));
+							countFixed+=listPaySplitNums.Count;
 						}
-						rowsFixed+=table.Rows.Count;
 					}
-					if(rowsFixed > 0 || verbose) {
-						log+=Lans.g("FormDatabaseMaintenance","Paysplits found with invalid PayNum fixed: ")+rowsFixed.ToString()+"\r\n";
+					#endregion
+					if(countFixed > 0 || verbose) {
+						log+=Lans.g("FormDatabaseMaintenance","Paysplits found with invalid PayNum fixed:")+" "+countFixed.ToString()+"\r\n";
 						Crud.DbmLogCrud.InsertMany(listDbmLogs);
 					}
 					break;
