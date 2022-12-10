@@ -8,6 +8,8 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
+using CodeBase.Controls;
 using Newtonsoft.Json;
 
 namespace CodeBase {
@@ -176,7 +178,7 @@ namespace CodeBase {
 			ODCloudClientData cloudClientData=new ODCloudClientData();
 			string resultData;
 			try{
-				resultData=SendToODCloudClientSynchronously(cloudClientData,CloudClientAction.SetDefaultScanner, 300);
+				resultData=SendToODCloudClientSynchronously(cloudClientData,CloudClientAction.SetDefaultScanner,300,false);
 			}
 			catch(Exception ex){
 				ODMessageBox.Show(ex.Message);
@@ -413,6 +415,79 @@ namespace CodeBase {
 			}
 		}
 
+		///<summary>Sends a request to the OpenDentalCloudClient to run the CloudClientAction ODCloudAuthGoogleListener to start
+		///an HttpListener that listens for response from google authentication</summary>
+		public static bool ODCloudAuthGoogleListener(string loopBackAddress) {
+			CloudClientAction action = CloudClientAction.ODCloudAuthGoogleListener;
+			ODCloudClientData cloudClientData = new ODCloudClientData {
+				OtherData = loopBackAddress,
+			};
+			bool isStarted;
+			try {
+				isStarted=Convert.ToBoolean(SendToODCloudClientSynchronously(cloudClientData,action,doShowProgressBar:false));
+			}
+			catch(Exception) {
+				isStarted=false;
+			}
+			return isStarted;
+		}
+
+		///<summary>Sends the GoogleAuthCodeResponseHtml and state to the OpenDenalCloudClient SendListenerResponse method to
+		///send a response to Google via the HttpListenerContext.</summary>
+		public static string SendListenerResponse(string data, string state) {
+			CloudClientAction action = CloudClientAction.SendListenerResponse;
+			ODCloudClientData cloudClientData = new ODCloudClientData {
+				OtherData = data,
+				State=state
+			};
+			string authCode="";
+			try {
+				authCode=SendToODCloudClientSynchronously(cloudClientData,action,doShowProgressBar: false);
+			}
+			catch(Exception ex) {
+				ex.DoNothing();
+			}
+			return authCode;
+		}
+
+		///<summary>Sends a request to the OpenDentalCloudClient to run the CloudClientAction GetRedirectUri to get our redirect URI</summary>
+		public static string GetRedirectUri() {
+			CloudClientAction action = CloudClientAction.GetRedirectUri;
+			string redirectUri="";
+			try {
+				redirectUri=SendToODCloudClientSynchronously(new ODCloudClientData(),action,doShowProgressBar:false);
+			}
+			catch(Exception ex) {
+				ex.DoNothing();
+			}
+			return redirectUri;
+		}
+
+		///<summary>Sends a request to the OpenDentalCloudClient to run the CloudClientAction CloseListener, to close the httplistener</summary>
+		public static void CloseListener() {
+			CloudClientAction action = CloudClientAction.CloseListener;
+			try {
+				SendToODCloudClientSynchronously(new ODCloudClientData(),action,5,doShowProgressBar:false);
+			}
+			catch(Exception) {
+				return;
+			}
+			return;
+		}
+
+		///<summary>Sends a request to the OpenDentalCloudClient to run the CloudClientAction CheckIsListening, to check if the httplistener is listening</summary>
+		public static bool CheckIsListening() {
+			CloudClientAction action = CloudClientAction.CheckIsListening;
+			bool isListening;
+			try {
+				isListening=Convert.ToBoolean(SendToODCloudClientSynchronously(new ODCloudClientData(),action,doShowProgressBar:false));
+			}
+			catch(Exception) {
+				isListening=false;
+			}
+			return isListening;
+		}
+
 		///<summary>Sends a requests to ODCloudClient and waits for a response. Throws any exception that ODCloudClient returns.</summary>
 		private static string SendToODCloudClientSynchronously(ODCloudClientData cloudClientData,CloudClientAction cloudClientAction,int timeoutSecs=30
 			,bool doShowProgressBar=true) 
@@ -541,6 +616,9 @@ namespace CodeBase {
 			public string LatestCloudClientVersion;
 			///<summary>Indicates that the browser should prompt the user if their ODCloudClient is not the latest version.</summary>
 			public bool DoCheckVersion=false;
+			///<summary>A random 32 byte string, base64 encoded. Sent with the auth request. Google returns it with their response
+			///so we can confirm that thier response is for our application's request.</summary>
+			public string State;
 		}
 
 		///<summary>Contains the arguments to be sent to OD Cloud Client. Will be serialized as JSON.</summary>
@@ -626,7 +704,18 @@ namespace CodeBase {
 			///<summary>Asks ODCloudClient to acquire a single image from the TWAIN device. Assumes the device has already been initialized using TwainInitializeDevice.</summary>
 			TwainAcquireBitmap,
 			///<summary>Check the workstation's running processes</summary>
-			IsProcessRunning
+			IsProcessRunning,
+			///<summary>Starts an HttpListener to listen for response from google authentication</summary>
+			ODCloudAuthGoogleListener ,
+			///<summary>Sends a response to Google via the HttpListenerContext.</summary>
+			SendListenerResponse,
+			///<summary>Returns the first Prefix of the HttpListener which should be our redirect URI.</summary>
+			GetRedirectUri,
+			///<summary>Closes the HttpListener if it is not null. If you close the listener but intend to use this AuthorizationRequest again,
+			///you must call StartListener() again.</summary>
+			CloseListener,
+			///<summary>Check if HttpListener is listening on the ODCloudClient</summary>
+			CheckIsListening
 		}
 
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>
@@ -649,6 +738,10 @@ namespace CodeBase {
 			SetIframeVisible,
 			///<summary>Pass the data on to ODCloudClient via the websocket. Used for API traffic.</summary>
 			SendToODCloudClientSocket,
+			///<summary>Check if ODCloudClient is running via the browser and ask if they want to download or launch</summary>
+			CheckODCloudClientViaBrowser,
+			//Relaunch the cloudclient from the browser
+			RelaunchODCloudClientViaBrowser
 		}
 
 		///<summary>Enum to identify the result of the request.</summary>
@@ -662,6 +755,5 @@ namespace CodeBase {
 			///<summary>An ODException was thrown. ResultData will contain a serialized ODException.</summary>
 			ODException,
 		}
-
 	}
 }

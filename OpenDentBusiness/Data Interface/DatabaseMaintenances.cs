@@ -7148,6 +7148,42 @@ namespace OpenDentBusiness {
 			return log;
 		}
 
+		[DbmMethodAttr]
+		public static string PhoneNumbersWithEmptyDigits(bool verbose,DbmMode modeCur) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
+			}
+			string log="";
+			string command;
+			switch(modeCur) {
+				case DbmMode.Check:
+					command="SELECT COUNT(*) FROM phonenumber WHERE phonenumber.PhoneNumberDigits='' AND phonenumber.PhoneType="+POut.Enum(PhoneType.Other);
+					int numFound=PIn.Int(Db.GetCount(command));
+					if(numFound>0 || verbose) {
+						log+=Lans.g("FormDatabaseMaintenance","Unsearchable Other Numbers found")+": "+numFound.ToString()+"\r\n";
+					}
+					break;
+				case DbmMode.Fix:
+					command="SELECT * FROM phonenumber WHERE phonenumber.PhoneNumberDigits='' AND phonenumber.PhoneType="+POut.Enum(PhoneType.Other);
+					DataTable table=Db.GetTable(command);
+					if(table.Rows.Count>0 || verbose) {
+						long numberFixed=0;
+						List<PhoneNumber> listPhoneNumbers=Crud.PhoneNumberCrud.TableToList(table);
+						for(int i=0;i<listPhoneNumbers.Count;i++) {
+							string phoneNumberDigits=PhoneNumbers.RemoveNonDigitsAndTrimStart(listPhoneNumbers[i].PhoneNumberVal);
+							if(phoneNumberDigits!=listPhoneNumbers[i].PhoneNumberDigits) {
+								listPhoneNumbers[i].PhoneNumberDigits=phoneNumberDigits;
+								PhoneNumbers.Update(listPhoneNumbers[i]);
+								numberFixed++;
+							}
+						}
+						log+=Lans.g("FormDatabaseMaintenance","Unsearchable Other Numbers fixed")+": "+numberFixed.ToString()+"\r\n";
+					}
+					break;
+			}
+			return log;
+		}
+
 		[DbmMethodAttr(IsReplicationUnsafe=true)]
 		public static string PlannedApptsWithInvalidAptNum(bool verbose,DbmMode modeCur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

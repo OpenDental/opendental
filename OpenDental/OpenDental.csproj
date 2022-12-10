@@ -2721,6 +2721,7 @@
     </Compile>
     <Compile Include="Logic\AutoNoteL.cs" />
     <Compile Include="Logic\CareCreditL.cs" />
+    <Compile Include="Logic\CloudClientL.cs" />
     <Compile Include="Logic\PayConnectL.cs" />
     <Compile Include="Logic\PayPlanL.cs" />
     <Compile Include="Logic\aaLogicUI.cs" />

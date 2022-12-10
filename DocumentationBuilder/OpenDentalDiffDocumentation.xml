@@ -43,6 +43,28 @@
       <summary></summary>
     </column>
   </table>
+  <table name="claim">
+    <summary></summary>
+    <column order="21" name="PlaceService" type="tinyint">
+      <summary>Enum:PlaceOfService .</summary>
+      <Enumeration name="PlaceOfService">
+        <summary></summary>
+        <EnumValue name="TelehealthOutsideHome">15. Code 02.</EnumValue>
+        <EnumValue name="TelehealthInHome">16. Code 10</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="clinic">
+    <summary></summary>
+    <column order="9" name="DefaultPlaceService" type="tinyint">
+      <summary>Enum:PlaceOfService Usually 0 unless a mobile clinic for instance.</summary>
+      <Enumeration name="PlaceOfService">
+        <summary></summary>
+        <EnumValue name="TelehealthOutsideHome">15. Code 02.</EnumValue>
+        <EnumValue name="TelehealthInHome">16. Code 10</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
   <table name="entrylog">
     <summary></summary>
     <column order="4" name="LogSource" type="tinyint(4)">
@@ -92,8 +114,6 @@
       <summary>Enum:Permissions Some permissions will treat a zero FKey differently. Some denote it as having access to everything for that PermType. I.e. Reports.</summary>
       <Enumeration name="Permissions">
         <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
-        <EnumValue name="StatementCSV">223 - Allows user to export statements as CSV files.</EnumValue>
-        <EnumValue name="CarrierEdit">224 - Allows users to edit carriers.</EnumValue>
         <EnumValue name="ApiAccountEdit">234 - Allows the editing of customer accounts for the ODApi via the BCM.</EnumValue>
         <EnumValue name="RegistrationKeyCreate">235 - Logs when registration keys are created. For audit trails only.</EnumValue>
         <EnumValue name="RegistrationKeyEdit">236 - Logs when registration keys are edited. For audit trails only.</EnumValue>
@@ -127,8 +147,27 @@
   </table>
   <table name="procedurelog">
     <summary></summary>
+    <column order="14" name="PlaceService" type="tinyint">
+      <summary>Enum:PlaceOfService  Only used in Public Health. Zero(Office) until procedure set complete. Then it's set to the value of the DefaultProcedurePlaceService preference.</summary>
+      <Enumeration name="PlaceOfService">
+        <summary></summary>
+        <EnumValue name="TelehealthOutsideHome">15. Code 02.</EnumValue>
+        <EnumValue name="TelehealthInHome">16. Code 10</EnumValue>
+      </Enumeration>
+    </column>
     <column order="61" name="SecDateEntry" type="datetime">
       <summary>Timestamp automatically generated and user not allowed to change.  The actual date and time of entry.</summary>
+    </column>
+  </table>
+  <table name="screengroup">
+    <summary></summary>
+    <column order="5" name="PlaceService" type="tinyint(4)">
+      <summary>Enum:PlaceOfService Describes where the screening will take place.</summary>
+      <Enumeration name="PlaceOfService">
+        <summary></summary>
+        <EnumValue name="TelehealthOutsideHome">15. Code 02.</EnumValue>
+        <EnumValue name="TelehealthInHome">16. Code 10</EnumValue>
+      </Enumeration>
     </column>
   </table>
   <table name="securitylog">
@@ -137,8 +176,6 @@
       <summary>Enum:Permissions</summary>
       <Enumeration name="Permissions">
         <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
-        <EnumValue name="StatementCSV">223 - Allows user to export statements as CSV files.</EnumValue>
-        <EnumValue name="CarrierEdit">224 - Allows users to edit carriers.</EnumValue>
         <EnumValue name="ApiAccountEdit">234 - Allows the editing of customer accounts for the ODApi via the BCM.</EnumValue>
         <EnumValue name="RegistrationKeyCreate">235 - Logs when registration keys are created. For audit trails only.</EnumValue>
         <EnumValue name="RegistrationKeyEdit">236 - Logs when registration keys are edited. For audit trails only.</EnumValue>
@@ -170,6 +207,17 @@
       <summary>When true, only allows the signature box to be signed by a provider.</summary>
     </column>
   </table>
+  <table name="site">
+    <summary></summary>
+    <column order="9" name="PlaceService" type="tinyint(4)">
+      <summary>Enum:PlaceOfService Describes where the site is located.</summary>
+      <Enumeration name="PlaceOfService">
+        <summary></summary>
+        <EnumValue name="TelehealthOutsideHome">15. Code 02.</EnumValue>
+        <EnumValue name="TelehealthInHome">16. Code 10</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
   <table name="userod">
     <summary></summary>
     <column order="22" name="EClipboardClinicalPin" type="text">
@@ -185,10 +233,52 @@
       </Enumeration>
     </column>
   </table>
+  <table name="claim">
+    <summary></summary>
+    <column order="21" name="PlaceService" type="tinyint">
+      <summary>Enum:PlaceOfService .</summary>
+      <Enumeration name="PlaceOfService">
+        <summary></summary>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="clinic">
+    <summary></summary>
+    <column order="9" name="DefaultPlaceService" type="tinyint">
+      <summary>Enum:PlaceOfService Usually 0 unless a mobile clinic for instance.</summary>
+      <Enumeration name="PlaceOfService">
+        <summary></summary>
+      </Enumeration>
+    </column>
+  </table>
   <table name="procedurelog">
     <summary></summary>
+    <column order="14" name="PlaceService" type="tinyint">
+      <summary>Enum:PlaceOfService  Only used in Public Health. Zero(Office) until procedure set complete. Then it's set to the value of the DefaultProcedurePlaceService preference.</summary>
+      <Enumeration name="PlaceOfService">
+        <summary></summary>
+      </Enumeration>
+    </column>
     <column order="61" name="SecDateEntry" type="date">
       <summary>Timestamp automatically generated and user not allowed to change.  The actual date and time of entry.</summary>
+    </column>
+  </table>
+  <table name="screengroup">
+    <summary></summary>
+    <column order="5" name="PlaceService" type="tinyint(4)">
+      <summary>Enum:PlaceOfService Describes where the screening will take place.</summary>
+      <Enumeration name="PlaceOfService">
+        <summary></summary>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="site">
+    <summary></summary>
+    <column order="9" name="PlaceService" type="tinyint(4)">
+      <summary>Enum:PlaceOfService Describes where the site is located.</summary>
+      <Enumeration name="PlaceOfService">
+        <summary></summary>
+      </Enumeration>
     </column>
   </table>
 </database>

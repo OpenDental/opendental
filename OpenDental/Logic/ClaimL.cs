@@ -278,7 +278,6 @@ namespace OpenDental {
 			if(FormPS.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
-			List<AccountEntry> listProcAccountEntries=PaymentEdit.CreateAccountEntries(FormPS.ListSelectedProcs);
 			Payment paymentCur=new Payment();
 			paymentCur.PayDate=DateTime.Today;
 			paymentCur.PatNum=patcur.PatNum;
@@ -308,7 +307,7 @@ namespace OpenDental {
 			using FormPayment FormP=new FormPayment(patcur,famcur,paymentCur,false);
 			FormP.IsNew=true;
 			FormP.UnearnedAmt=unearnedAmt;
-			FormP.ListAccountEntriesPayFirst=listProcAccountEntries;
+			FormP.ListAccountEntriesPayFirst=FormPS.ListAccountEntries;
 			FormP.IsIncomeTransfer=true;
 			FormP.ShowDialog();
 		}

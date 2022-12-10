@@ -2002,7 +2002,8 @@
         <EnumValue name="RuralHealthClinic">12. Code 72</EnumValue>
         <EnumValue name="EmergencyRoomHospital">13. Code 23</EnumValue>
         <EnumValue name="AmbulatorySurgicalCenter">14. Code 24</EnumValue>
-        <EnumValue name="Telehealth">15. Code 02.</EnumValue>
+        <EnumValue name="TelehealthOutsideHome">15. Code 02.</EnumValue>
+        <EnumValue name="TelehealthInHome">16. Code 10</EnumValue>
       </Enumeration>
     </column>
     <column order="22" name="AccidentRelated" type="char(1)">
@@ -2887,7 +2888,8 @@
         <EnumValue name="RuralHealthClinic">12. Code 72</EnumValue>
         <EnumValue name="EmergencyRoomHospital">13. Code 23</EnumValue>
         <EnumValue name="AmbulatorySurgicalCenter">14. Code 24</EnumValue>
-        <EnumValue name="Telehealth">15. Code 02.</EnumValue>
+        <EnumValue name="TelehealthOutsideHome">15. Code 02.</EnumValue>
+        <EnumValue name="TelehealthInHome">16. Code 10</EnumValue>
       </Enumeration>
     </column>
     <column order="10" name="InsBillingProv" type="bigint(20)" fk="provider">
@@ -12130,7 +12132,8 @@
         <EnumValue name="RuralHealthClinic">12. Code 72</EnumValue>
         <EnumValue name="EmergencyRoomHospital">13. Code 23</EnumValue>
         <EnumValue name="AmbulatorySurgicalCenter">14. Code 24</EnumValue>
-        <EnumValue name="Telehealth">15. Code 02.</EnumValue>
+        <EnumValue name="TelehealthOutsideHome">15. Code 02.</EnumValue>
+        <EnumValue name="TelehealthInHome">16. Code 10</EnumValue>
       </Enumeration>
     </column>
     <column order="15" name="Prosthesis" type="char(1)">
@@ -14294,7 +14297,8 @@
         <EnumValue name="RuralHealthClinic">12. Code 72</EnumValue>
         <EnumValue name="EmergencyRoomHospital">13. Code 23</EnumValue>
         <EnumValue name="AmbulatorySurgicalCenter">14. Code 24</EnumValue>
-        <EnumValue name="Telehealth">15. Code 02.</EnumValue>
+        <EnumValue name="TelehealthOutsideHome">15. Code 02.</EnumValue>
+        <EnumValue name="TelehealthInHome">16. Code 10</EnumValue>
       </Enumeration>
     </column>
     <column order="6" name="County" type="varchar(255)" fk="county">
@@ -15477,7 +15481,8 @@
         <EnumValue name="RuralHealthClinic">12. Code 72</EnumValue>
         <EnumValue name="EmergencyRoomHospital">13. Code 23</EnumValue>
         <EnumValue name="AmbulatorySurgicalCenter">14. Code 24</EnumValue>
-        <EnumValue name="Telehealth">15. Code 02.</EnumValue>
+        <EnumValue name="TelehealthOutsideHome">15. Code 02.</EnumValue>
+        <EnumValue name="TelehealthInHome">16. Code 10</EnumValue>
       </Enumeration>
     </column>
   </table>

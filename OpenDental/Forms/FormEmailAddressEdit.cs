@@ -218,6 +218,29 @@ namespace OpenDental{
 		///<summary>Requests authorization for Open Dental to send emails and access the inbox for a gmail address.
 		///Google sends us access and refresh tokens that we store in the database.</summary>
 		private void butAuthGoogle_Click(object sender,EventArgs e) {
+			if(ODBuild.IsWeb()) {
+				CloudClientL.PromptSelections promptSelections=CloudClientL.PromptODCloudClientInstall();
+				if(promptSelections==CloudClientL.PromptSelections.ClientRunning) {
+					//do nothing
+				}
+				else if(promptSelections==CloudClientL.PromptSelections.Cancel || promptSelections==CloudClientL.PromptSelections.Download) {
+					return;
+				}
+				else if(promptSelections==CloudClientL.PromptSelections.Launch) {
+					try {
+						string response=ODCloudClient.SendToBrowserSynchronously("",ODCloudClient.BrowserAction.RelaunchODCloudClientViaBrowser,6);
+					}
+					catch(Exception) {
+						MsgBox.Show("ODCloudClient did not respond, please ensure that the ODCloudClient is installed.");
+						return;
+					}
+					if(CloudClientL.PromptODCloudClientInstall(true)==CloudClientL.PromptSelections.NoResponse) {
+						MsgBox.Show("ODCloudClient did not respond, please ensure that the ODCloudClient is installed.");
+						return;
+					}
+					//do nothing
+				}
+			}
 			if(!textAccessToken.Text.IsNullOrEmpty() && _authenticationType==OAuthType.Microsoft) {
 				MsgBox.Show("Already signed into Microsoft.");
 				return;

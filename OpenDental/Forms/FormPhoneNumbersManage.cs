@@ -43,7 +43,10 @@ namespace OpenDental {
 			if(inputBox.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			PhoneNumbers.Update(listOther.GetSelected<PhoneNumber>());
+			PhoneNumber phoneNumber=listOther.GetSelected<PhoneNumber>();
+			phoneNumber.PhoneNumberVal=inputBox.textResult.Text;
+			phoneNumber.PhoneNumberDigits=PhoneNumbers.RemoveNonDigitsAndTrimStart(phoneNumber.PhoneNumberVal);
+			PhoneNumbers.Update(phoneNumber);
 			FillList();
 		}
 
@@ -56,6 +59,7 @@ namespace OpenDental {
 			PhoneNumber phoneNumber=new PhoneNumber();
 			phoneNumber.PatNum=PatNum;
 			phoneNumber.PhoneNumberVal=inputBox.textResult.Text;
+			phoneNumber.PhoneNumberDigits=PhoneNumbers.RemoveNonDigitsAndTrimStart(phoneNumber.PhoneNumberVal);
 			PhoneNumbers.Insert(phoneNumber);
 			FillList();
 		}
