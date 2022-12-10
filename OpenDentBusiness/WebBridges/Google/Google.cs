@@ -14,6 +14,7 @@ using System.Xml;
 using WebServiceSerializer;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using OpenDentBusiness.UI;
 
 namespace OpenDentBusiness {
 	public class Google {
@@ -185,16 +186,29 @@ namespace OpenDentBusiness {
 					return;
 				}
 				for(int i=_MIN_PORT;i<_MAX_PORT;i++) {
-					_listener=new HttpListener();
-					_listener.Prefixes.Add($"http://{IPAddress.Loopback}:{i}/");
-					try {
-						_listener.Start();
-						return;
+					if(ODBuild.IsWeb()) {
+						try {
+							if(!ODCloudClient.ODCloudAuthGoogleListener($"http://{IPAddress.Loopback}:{i}/")) {
+								continue;
+							}
+							return;
+						}
+						catch(Exception) {
+							return;
+						}
 					}
-					catch(Exception ex) {
-						//If the port is not available, an error is thrown and the listener disposes itself.
-						//Do nothing because we will keep trying until we run out of ports in our range.
-						ex.DoNothing();
+					else {
+						_listener=new HttpListener();
+						_listener.Prefixes.Add($"http://{IPAddress.Loopback}:{i}/");
+						try {
+							_listener.Start();
+							return;
+						}
+						catch(Exception ex) {
+							//If the port is not available, an error is thrown and the listener disposes itself.
+							//Do nothing because we will keep trying until we run out of ports in our range.
+							ex.DoNothing();
+						}
 					}
 				}
 				throw new ODException($"Could not find an available port for the HttpListener. Ports {_MIN_PORT} to {_MAX_PORT} were tried.");
@@ -206,17 +220,31 @@ namespace OpenDentBusiness {
 			///Exchanges the auth code for tokens and returns them. The GoogleToken returned may contain an error message from WebServiceMainHQ.
 			///If you are done with the AuthorizationRequest after calling this, be sure to call CloseListener().</summary>
 			public GoogleToken MakeAccessTokenRequest(string emailAddress) {
-				if(_listener==null || !_listener.IsListening) {
-					throw new ODException("An attempt to request tokens was made before starting the HttpListener.");
+				if(ODBuild.IsWeb()) {
+					if(!ODCloudClient.CheckIsListening()) {
+						throw new ODException("An attempt to request tokens was made before starting the HttpListener.");
+					}
+				}
+				else {
+					if(_listener==null || !_listener.IsListening) {
+						throw new ODException("An attempt to request tokens was made before starting the HttpListener.");
+					}
 				}
 				_state=RandomDataBase64Url(32);
 				_codeVerifier=RandomDataBase64Url(32);
 				_codeChallenge=Base64urlencodeNoPadding(Sha256(_codeVerifier));
 				BuildAuthorizationUrl(emailAddress);
 				Process.Start(_url);
-				HttpListenerContext context=_listener.GetContext();
-				SendListenerResponse(context);
-				string code=GetAuthCodeFromContextOrThrow(context);
+				string code;
+				if(ODBuild.IsWeb()) {
+					string GoogleAuthCodeResponseHtml=Properties.Resources.GoogleAuthCodeResponseHtml;
+					code=ODCloudClient.SendListenerResponse(GoogleAuthCodeResponseHtml,_state);
+				}
+				else {
+					HttpListenerContext context=_listener.GetContext();
+					SendListenerResponse(context);
+					code=GetAuthCodeFromContextOrThrow(context);
+				}
 				GoogleToken token=Google.GetAccessTokenHqOrThrow(code,isRefresh:false,GetRedirectUri(),_codeVerifier);
 				return token;
 			}
@@ -224,9 +252,14 @@ namespace OpenDentBusiness {
 			///<summary>Closes the HttpListener if it is not null. If you close the listener but intend to use this AuthorizationRequest again,
 			///you must call StartListener() again.</summary>
 			public void CloseListener() {
-				if(_listener!=null) {
-					_listener.Close();
-					_listener=null;
+				if(ODBuild.IsWeb()) {
+					ODCloudClient.CloseListener();
+				}
+				else {
+					if(_listener!=null) {
+						_listener.Close();
+						_listener=null;
+					}	
 				}
 			}
 
@@ -300,10 +333,16 @@ namespace OpenDentBusiness {
 
 			///<summary>Returns the first Prefix of the HttpListener which should be our redirect URI.</summary>
 			private string GetRedirectUri() {
-				string redirectUri=_listener.Prefixes.AsEnumerable().FirstOrDefault();
-				if(redirectUri==null) {
-					redirectUri="";
+				string redirectUri;
+				if(ODBuild.IsWeb()) {
+					redirectUri = ODCloudClient.GetRedirectUri();
 				}
+				else {
+					redirectUri=_listener.Prefixes.AsEnumerable().FirstOrDefault();
+				}
+				if(redirectUri==null) {
+						redirectUri="";
+					}
 				return redirectUri;
 			}
 

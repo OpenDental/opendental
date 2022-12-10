@@ -1556,9 +1556,10 @@ namespace OpenDental {
 			//Now find all ProcMultiVisits with a matching GroupProcMultiVisitNum
 			List<ProcMultiVisit> listProcMultiVisits=Pd.ListProcMultiVisits.FindAll(x => listGroupProcMultiVisitNums.Contains(x.GroupProcMultiVisitNum));
 			List<long> listProcNumsInGroup=listProcMultiVisits.Select(x=>x.ProcNum).ToList();
-			List<DataRow> listDataRowsProcs=Pd.TableProgNotes.Select()
-				.Where(x => listProcNumsInGroup.Contains(PIn.Long(x["ProcNum"].ToString())))
-				.ToList();
+			List<DataRow> listDataRowsProcs=new List<DataRow>();
+			for(int i=0;i<listProcNumsInGroup.Count;i++) {
+				listDataRowsProcs.AddRange(Pd.TableProgNotes.Select().Where(x => listProcNumsInGroup[i]==PIn.Long(x["ProcNum"].ToString())));
+			}
 			//Get all procedures per PMV group
 			Dictionary<long,List<DataRow>> dictProceduresPerGroup=new Dictionary<long,List<DataRow>>();
 			for(int i=0;i<listDataRowsProcs.Count;i++) {
@@ -10523,6 +10524,7 @@ namespace OpenDental {
 				AutomationL.Trigger(AutomationTrigger.CompleteProcedure,listProcCodes,Pd.PatNum);
 				Pd.FillIfNeeded(EnumPdTable.Procedure);
 			}
+			ModuleSelected(Pd.PatNum);
 		}
 
 		private void UpdateSurf() {
