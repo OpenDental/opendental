@@ -1,0 +1,15 @@
+Source: opendental
+Section: unknown
+Priority: optional
+Maintainer: Frederik Carlier <frederik.carlier@carlier-online.be>
+Build-Depends: debhelper (>= 4.2.32)
+Standards-Version: 3.7.2
+
+Package: opendental
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libmono-corlib2.0-cil (>= 1.2.5), libmono-system2.0-cil (>= 1.2.5), libmono-winforms2.0-cil (>= 1.2.5), libmono2.0-cil (>= 1.2.5), libmono-oracle2.0-cil (>= 1.2.5)
+Description: Open Dental: Open Source Practice Management
+ *** Unofficial package from frederik.carlier@carlier-online.be ***
+ .
+ Modern dental software includes Appointment Scheduling, Imaging, 
+ and 3D Dental Charting.

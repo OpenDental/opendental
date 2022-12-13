@@ -1,0 +1,229 @@
+﻿/*dennis start*/
+body
+{
+min-width: 300px;
+max-width:1500px;
+background-color:#FFFFFF;
+}
+
+#progress {
+    -webkit-border-radius: 10px;
+    background-color: rgba(0,0,0,.7);
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    left: 60px;
+    margin: 0 auto;
+    position: absolute;
+    text-align: center;
+    top: 120px;
+    width: 200px;
+}
+#progresslogout {
+    -webkit-border-radius: 10px;
+    background-color: rgba(0,0,0,.7);
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    top: 120px;
+    width: 200px;
+    margin-left: auto;
+	margin-right: auto;
+
+}
+.logout{
+     right: 6px;
+     left: auto;
+     z-index: 1;
+}
+.datenavigation{
+    height:33px;
+}
+/* multiple style don't work in some cases android hence some styles had to be written all over again*/
+#previous, #previousApImage, #next, #nextApImage, #datepickerbutton{
+    position: relative;
+    overflow: hidden;
+    top: 10px;
+    right: 6px;
+    margin: 0;
+    border-width: 0 5px;
+    padding: 0 3px;
+    width:50px;
+    height: 30px;
+    line-height: 30px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: rgba(0, 0, 0, 0.5) 0px -1px 0;
+    text-overflow: ellipsis;
+    text-decoration: none;
+    white-space: nowrap;
+    background: none;
+    float:left;
+}
+
+#previous,#previousApImage  {
+    left:8px;
+}
+
+#next, #nextApImage{
+    float: right;
+}
+
+#datepickerbutton{
+    top: 8px;
+    margin-left:15px;
+    width: auto;
+}
+
+.datestring{
+    position: relative;
+    top:15px; 
+    margin-left:20px;
+}
+.contents{
+    clear:both;
+}
+/*long words like long email addresses may need the word wrap*/
+.style1{
+ color:#000000;
+ font-size:14px;
+ word-wrap:break-word;
+}
+.style2 {
+  display:inline;
+  text-decoration:underline;
+  color:#343C83;
+  word-wrap:break-word;
+  white-space: normal;
+}
+.leftcolumn{
+    float:left;
+    display:table-cell;
+    width:63px;
+}
+.coloncolumn{
+    display:table-cell; 
+    width:10px;
+}
+.rightcolumn{
+    display:table-cell;
+    padding-right:10px
+}
+.infocolumn{
+    word-wrap:break-word;
+    white-space:normal;
+    padding-top:4px
+}
+.styleError{
+    margin-left:10px;
+    text-align:center; 
+    color:Red;
+}
+
+h2{
+   font: bold 14px Helvetica;
+   color:#000000;
+}
+/* multiple style don't work in some cases android hence some styles had to be written all over again*/
+/*.appts, .home, .patients{
+    left: 6px;
+    right: auto;
+    padding: 0;
+    max-width: 55px;
+    border-width: 0 8px 0 14px;
+    -webkit-border-image: url(themes/apple/img/backButton.png) 0 8 0 14;    
+}
+*/
+/* multiple style don't work in some cases in android hence some styles had to be written all over again*/
+.appts, .home, .patients, .pharmacies
+{
+    left: 6px;
+    right: auto;
+    padding: 0;
+    max-width: 35px;
+    border-width: 0 8px 0 14px;
+    position: absolute;
+    overflow: hidden;
+    top: 8px;
+    right: 6px;
+    margin: 0;
+    width: auto;
+    height: 30px;
+    line-height: 30px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: rgba(0, 0, 0, 0.5) 0px -1px 0;
+    text-overflow: ellipsis;
+    text-decoration: none;
+    white-space: nowrap;
+    background: none;
+    -webkit-border-image: url(themes/apple/img/backButton.png) 0 8 0 14; 
+}
+
+.patients{
+    max-width: 50px;
+}
+
+.pharmacies{
+    max-width: 70px;
+}
+
+#searchbutton{
+ position:relative; float:right;top:17px;left:-10px;
+ 
+}
+
+/*overides existing checkbox css in theme.css does not work*/
+
+.chk{
+ -webkit-perspective: none;
+ -webkit-transform-style: flat;
+ position: static;
+ -webkit-transform:none;
+
+}
+ul li input[type="text"], ul li input[type="password"]{
+ -webkit-appearance: none;/*overides -webkit-appearance: textarea; dennis: puts a unacceptable grey shadow at the top of the text box*/ 
+}
+
+/*possible overide values which do not work.*/
+ul li input[type="checkbox"]{
+    -webkit-perspective: none;
+    -webkit-transform-style: flat;
+    position: static;
+    -webkit-transform:none;
+}
+
+ul li input[type="checkbox"]:after {
+    content: attr(title);
+    font: 17px Helvetica;
+    display: block;
+    width: 246px;
+    color: #777;
+    margin: -0px 0px 0px 27px;
+}
+
+/*top and bottom padding adjusted*/
+ul li {
+    padding: 10px 10px 10px 10px;
+}
+.normalheight {
+    padding: 5px 10px 5px 10px;
+}
+
+/*right padding to adjust postion of the ellipse*/
+.elladjust{
+    padding-right:15px;
+ 
+}
+
+.narrowul{
+    text-align:center;
+    margin-right:75px;
+    margin-left:75px; 
+}

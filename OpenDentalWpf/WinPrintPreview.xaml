@@ -1,0 +1,6 @@
+﻿<Window x:Class="OpenDentalWpf.WinPrintPreview"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Print Preview" Height="300" Width="300" WindowState="Maximized">
+    <DocumentViewer Name="documentViewer" MaxWidth="1600" />
+</Window>

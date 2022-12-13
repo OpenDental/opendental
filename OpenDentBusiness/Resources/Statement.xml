@@ -1,0 +1,1135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SheetDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <IsNew>false</IsNew>
+  <SheetDefNum>0</SheetDefNum>
+  <Description>Statement</Description>
+  <SheetType>Statement</SheetType>
+  <FontSize>9</FontSize>
+  <FontName>Arial</FontName>
+  <Width>850</Width>
+  <Height>1100</Height>
+  <IsLandscape>false</IsLandscape>
+  <PageCount>1</PageCount>
+  <IsMultiPage>false</IsMultiPage>
+  <BypassGlobalLock>NeverBypass</BypassGlobalLock>
+  <HasMobileLayout>false</HasMobileLayout>
+  <DateTCreated>2020-01-22T11:02:21</DateTCreated>
+  <SheetFieldDefs>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>385</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>NAME</FieldValue>
+      <FontSize>8</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>445</XPos>
+      <YPos>315</YPos>
+      <Width>42</Width>
+      <Height>14</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>true</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>384</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>Line</FieldType>
+      <FieldName />
+      <FieldValue />
+      <FontSize>0</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>566</XPos>
+      <YPos>201</YPos>
+      <Width>200</Width>
+      <Height>0</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>true</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>383</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>CREDIT CARD TYPE</FieldValue>
+      <FontSize>8</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>445</XPos>
+      <YPos>190</YPos>
+      <Width>125</Width>
+      <Height>14</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>true</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>382</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>Grid</FieldType>
+      <FieldName>StatementEnclosed</FieldName>
+      <FieldValue />
+      <FontSize>8.5</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>445</XPos>
+      <YPos>120</YPos>
+      <Width>321</Width>
+      <Height>31</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>381</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>accountNumber</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>310</XPos>
+      <YPos>102</YPos>
+      <Width>230</Width>
+      <Height>13</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Center</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>380</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>statement.DateSent</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>310</XPos>
+      <YPos>88</YPos>
+      <Width>230</Width>
+      <Height>13</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Center</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>379</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>returnAddress</FieldName>
+      <FieldValue />
+      <FontSize>10</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>40</XPos>
+      <YPos>75</YPos>
+      <Width>250</Width>
+      <Height>80</Height>
+      <GrowthBehavior>DownLocal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>378</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>Line</FieldType>
+      <FieldName />
+      <FieldValue />
+      <FontSize>0</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>573</XPos>
+      <YPos>301</YPos>
+      <Width>193</Width>
+      <Height>0</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>true</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>377</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>Line</FieldType>
+      <FieldName />
+      <FieldValue />
+      <FontSize>0</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>488</XPos>
+      <YPos>326</YPos>
+      <Width>278</Width>
+      <Height>0</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>true</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>376</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>statement.Note</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>50</XPos>
+      <YPos>703</YPos>
+      <Width>725</Width>
+      <Height>14</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>375</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>insEstValue</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>705</XPos>
+      <YPos>405</YPos>
+      <Width>80</Width>
+      <Height>14</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Right</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>374</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>futureAppointments</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>50</XPos>
+      <YPos>688</YPos>
+      <Width>725</Width>
+      <Height>14</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>373</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>Grid</FieldType>
+      <FieldName>StatementMain</FieldName>
+      <FieldValue />
+      <FontSize>8.5</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>65</XPos>
+      <YPos>646</YPos>
+      <Width>720</Width>
+      <Height>31</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>372</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>Grid</FieldType>
+      <FieldName>StatementPayPlan</FieldName>
+      <FieldValue />
+      <FontSize>8.5</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>170</XPos>
+      <YPos>506</YPos>
+      <Width>510</Width>
+      <Height>49</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>371</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>statement.NoteBold</FieldName>
+      <FieldValue />
+      <FontSize>10</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>true</FontIsBold>
+      <XPos>50</XPos>
+      <YPos>495</YPos>
+      <Width>725</Width>
+      <Height>14</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-7667712</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>370</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>balanceValue</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>true</FontIsBold>
+      <XPos>705</XPos>
+      <YPos>420</YPos>
+      <Width>80</Width>
+      <Height>14</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Right</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>369</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>balanceLabel</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>true</FontIsBold>
+      <XPos>554</XPos>
+      <YPos>420</YPos>
+      <Width>150</Width>
+      <Height>14</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Right</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>368</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>insEstLabel</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>554</XPos>
+      <YPos>405</YPos>
+      <Width>150</Width>
+      <Height>14</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Right</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>367</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>SIGNATURE</FieldValue>
+      <FontSize>8</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>445</XPos>
+      <YPos>340</YPos>
+      <Width>80</Width>
+      <Height>14</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>true</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>366</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>Grid</FieldType>
+      <FieldName>StatementAging</FieldName>
+      <FieldValue />
+      <FontSize>8.5</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>60</XPos>
+      <YPos>444</YPos>
+      <Width>650</Width>
+      <Height>31</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>365</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>totalValue</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>705</XPos>
+      <YPos>390</YPos>
+      <Width>80</Width>
+      <Height>14</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Right</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>364</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>totalLabel</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>554</XPos>
+      <YPos>390</YPos>
+      <Width>150</Width>
+      <Height>14</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Right</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>363</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>PLEASE DETACH AND RETURN THE UPPER PORTION WITH YOUR PAYMENT</FieldValue>
+      <FontSize>6</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>225</XPos>
+      <YPos>365</YPos>
+      <Width>400</Width>
+      <Height>10</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>true</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-2894893</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>362</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>Line</FieldType>
+      <FieldName />
+      <FieldValue />
+      <FontSize>0</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>0</XPos>
+      <YPos>359</YPos>
+      <Width>850</Width>
+      <Height>0</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>true</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-2894893</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>361</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>Line</FieldType>
+      <FieldName />
+      <FieldValue />
+      <FontSize>0</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>521</XPos>
+      <YPos>351</YPos>
+      <Width>245</Width>
+      <Height>0</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>true</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>360</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>statementReceiptInvoice</FieldName>
+      <FieldValue />
+      <FontSize>15</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>true</FontIsBold>
+      <XPos>310</XPos>
+      <YPos>65</YPos>
+      <Width>230</Width>
+      <Height>22</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Center</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>386</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>#</FieldValue>
+      <FontSize>8</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>445</XPos>
+      <YPos>215</YPos>
+      <Width>12</Width>
+      <Height>14</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>true</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>387</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>3 DIGIT CSV</FieldValue>
+      <FontSize>8</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>445</XPos>
+      <YPos>240</YPos>
+      <Width>75</Width>
+      <Height>14</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>true</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>388</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>billingAddress</FieldName>
+      <FieldValue />
+      <FontSize>10</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>85</XPos>
+      <YPos>244</YPos>
+      <Width>250</Width>
+      <Height>115</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>389</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>Line</FieldType>
+      <FieldName />
+      <FieldValue />
+      <FontSize>0</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>521</XPos>
+      <YPos>251</YPos>
+      <Width>245</Width>
+      <Height>0</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>true</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>390</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>EXPIRES</FieldValue>
+      <FontSize>8</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>445</XPos>
+      <YPos>265</YPos>
+      <Width>59</Width>
+      <Height>14</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>true</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>391</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>Line</FieldType>
+      <FieldName />
+      <FieldValue />
+      <FontSize>0</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>505</XPos>
+      <YPos>276</YPos>
+      <Width>261</Width>
+      <Height>0</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>true</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>392</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>AMOUNT APPROVED</FieldValue>
+      <FontSize>8</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>445</XPos>
+      <YPos>290</YPos>
+      <Width>127</Width>
+      <Height>14</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>true</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>393</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>Line</FieldType>
+      <FieldName />
+      <FieldValue />
+      <FontSize>0</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>458</XPos>
+      <YPos>226</YPos>
+      <Width>308</Width>
+      <Height>0</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>true</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>394</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>statement.NoteBold</FieldName>
+      <FieldValue />
+      <FontSize>10</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>true</FontIsBold>
+      <XPos>50</XPos>
+      <YPos>718</YPos>
+      <Width>725</Width>
+      <Height>14</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-7667712</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>395</SheetFieldDefNum>
+      <SheetDefNum>0</SheetDefNum>
+      <FieldType>Grid</FieldType>
+      <FieldName>StatementDynamicPayPlan</FieldName>
+      <FieldValue />
+      <FontSize>8.5</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>170</XPos>
+      <YPos>576</YPos>
+      <Width>510</Width>
+      <Height>49</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <TabOrderMobile>0</TabOrderMobile>
+      <UiLabelMobile />
+      <UiLabelMobileRadioButton />
+      <LayoutMode>Default</LayoutMode>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+  </SheetFieldDefs>
+</SheetDef>

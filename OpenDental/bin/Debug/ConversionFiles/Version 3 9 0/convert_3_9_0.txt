@@ -1,0 +1,35 @@
+DROP TABLE report;
+DROP TABLE reportobject;
+DROP TABLE reportparameter;
+
+CREATE TABLE repeatcharge(
+  RepeatChargeNum mediumint unsigned NOT NULL auto_increment,
+  PatNum mediumint unsigned NOT NULL,
+  ADACode varchar(15) character set utf8 collate utf8_bin NOT NULL default '',
+  ChargeAmt double NOT NULL,
+  DateStart date NOT NULL default '0001-01-01',
+  DateStop date NOT NULL default '0001-01-01',
+  Note text NOT NULL,
+  PRIMARY KEY (RepeatChargeNum)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE patplan(
+  PatPlanNum mediumint unsigned NOT NULL auto_increment,
+  PatNum int NOT NULL,
+  PlanNum mediumint unsigned NOT NULL,
+  Ordinal tinyint unsigned NOT NULL,
+  IsPending tinyint unsigned NOT NULL,
+  Relationship tinyint unsigned NOT NULL,
+  PatID varchar(100) NOT NULL,
+  PRIMARY KEY (PatPlanNum)
+) DEFAULT CHARSET=utf8;
+
+INSERT INTO preference VALUES ('EasyHideRepeatCharges','1');
+ALTER TABLE document ADD ToothNumbers varchar(255) NOT NULL;
+ALTER TABLE procedurecode ADD MedicalCode varchar(15) character set utf8 collate utf8_bin NOT NULL default '';
+ALTER TABLE procedurelog ADD MedicalCode varchar(15) character set utf8 collate utf8_bin NOT NULL default '';
+ALTER TABLE procedurelog ADD DiagnosticCode varchar(255) NOT NULL;
+ALTER TABLE insplan ADD IsMedical tinyint unsigned NOT NULL;
+ALTER TABLE covpat ADD PatPlanNum mediumint unsigned NOT NULL;
+ALTER TABLE patient ADD HasIns varchar(255) NOT NULL;
+INSERT INTO preference VALUES ('InsurancePlansShared','0');

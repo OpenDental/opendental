@@ -1,0 +1,7 @@
+2007-03-30  Frederik Carlier  <frederik.carlier@carlier-online.be>
+
+	* FormOpenDental.cs: Work around limitation in Mono by using the Linux preprocessor variable: Mono does not support Directory.CreateDirectory(string, DirectorySecurity).
+
+2007-03-17  Frederik Carlier  <frederik.carlier@carlier-online.be>
+
+	* ContrDocs.cs: Remove check for null value of the Rectangle struct. A struct is a value type and can never be null. This causes a build failure on Mono.

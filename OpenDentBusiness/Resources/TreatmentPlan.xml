@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SheetDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <IsNew>false</IsNew>
+  <SheetDefNum>0</SheetDefNum>
+  <Description>Treatment Plan</Description>
+  <SheetType>TreatmentPlan</SheetType>
+  <FontSize>9</FontSize>
+  <FontName>Arial</FontName>
+  <Width>850</Width>
+  <Height>1100</Height>
+  <IsLandscape>false</IsLandscape>
+  <PageCount>1</PageCount>
+  <IsMultiPage>false</IsMultiPage>
+  <SheetFieldDefs>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3921</SheetFieldDefNum>
+      <SheetDefNum>83</SheetDefNum>
+      <FieldType>Grid</FieldType>
+      <FieldName>TreatPlanBenefitsFamily</FieldName>
+      <FieldValue />
+      <FontSize>8.5</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>275</XPos>
+      <YPos>556</YPos>
+      <Width>300</Width>
+      <Height>49</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3922</SheetFieldDefNum>
+      <SheetDefNum>83</SheetDefNum>
+      <FieldType>Grid</FieldType>
+      <FieldName>TreatPlanMain</FieldName>
+      <FieldValue />
+      <FontSize>8.5</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>51</XPos>
+      <YPos>520</YPos>
+      <Width>845</Width>
+      <Height>31</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3923</SheetFieldDefNum>
+      <SheetDefNum>83</SheetDefNum>
+      <FieldType>Grid</FieldType>
+      <FieldName>TreatPlanBenefitsIndividual</FieldName>
+      <FieldValue />
+      <FontSize>8.5</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>275</XPos>
+      <YPos>609</YPos>
+      <Width>300</Width>
+      <Height>49</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3924</SheetFieldDefNum>
+      <SheetDefNum>83</SheetDefNum>
+      <FieldType>SigBox</FieldType>
+      <FieldName />
+      <FieldValue />
+      <FontSize>0</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>243</XPos>
+      <YPos>720</YPos>
+      <Width>364</Width>
+      <Height>81</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3925</SheetFieldDefNum>
+      <SheetDefNum>83</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>Note</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>50</XPos>
+      <YPos>669</YPos>
+      <Width>750</Width>
+      <Height>50</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3926</SheetFieldDefNum>
+      <SheetDefNum>83</SheetDefNum>
+      <FieldType>Special</FieldType>
+      <FieldName>toothChartLegend</FieldName>
+      <FieldValue />
+      <FontSize>0</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>500</YPos>
+      <Width>650</Width>
+      <Height>14</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3927</SheetFieldDefNum>
+      <SheetDefNum>83</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>defaultHeading</FieldName>
+      <FieldValue />
+      <FontSize>10</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>true</FontIsBold>
+      <XPos>225</XPos>
+      <YPos>93</YPos>
+      <Width>400</Width>
+      <Height>20</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Center</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3928</SheetFieldDefNum>
+      <SheetDefNum>83</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>Heading</FieldName>
+      <FieldValue />
+      <FontSize>13</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>true</FontIsBold>
+      <XPos>225</XPos>
+      <YPos>65</YPos>
+      <Width>400</Width>
+      <Height>22</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Center</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3929</SheetFieldDefNum>
+      <SheetDefNum>83</SheetDefNum>
+      <FieldType>Special</FieldType>
+      <FieldName>toothChart</FieldName>
+      <FieldValue />
+      <FontSize>0</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>175</XPos>
+      <YPos>114</YPos>
+      <Width>500</Width>
+      <Height>370</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3930</SheetFieldDefNum>
+      <SheetDefNum>83</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Your
+        Left</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>680</XPos>
+      <YPos>285</YPos>
+      <Width>50</Width>
+      <Height>44</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Center</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3931</SheetFieldDefNum>
+      <SheetDefNum>83</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Your
+        Right</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Arial</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>120</XPos>
+      <YPos>285</YPos>
+      <Width>50</Width>
+      <Height>44</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Center</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+  </SheetFieldDefs>
+</SheetDef>

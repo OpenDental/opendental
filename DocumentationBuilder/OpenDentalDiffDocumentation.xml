@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml-stylesheet type='text/xsl' href='OpenDentalDiffDocumentation.xsl'?>
+<database version="22.4.0.0">
+  <table name="account">
+    <summary></summary>
+    <column order="6" name="IsRetainedEarnings" type="tinyint(4)">
+      <summary>This will be set true for exactly one account, and it can't be changed.  On the Balance Sheet report, this special account will also contain the sum of all expenses and income for all previous years.</summary>
+    </column>
+  </table>
+  <table name="appointmenttype">
+    <summary></summary>
+    <column order="7" name="CodeStrRequired" type="varchar(4000)">
+      <summary>Comma delimited list of procedure codes that are required for this appt type.  E.g. T1234,T4321,N3214.</summary>
+    </column>
+    <column order="8" name="RequiredProcCodesNeeded" type="tinyint(4)">
+      <summary>Enum:EnumRequiredProcCodesNeeded 0=None,1=AtLeastOne,2=All</summary>
+      <Enumeration name="EnumRequiredProcCodesNeeded">
+        <summary>Governs how many of the ProcCodes on an AppointmentType that are required on an appointment.</summary>
+        <EnumValue name="None">No ProcCodes from CodeStrRequired are needed to schedule appointments of this AppointmentType.</EnumValue>
+        <EnumValue name="AtLeastOne">At least one ProcCode from CodeStrRequired is needed to schedule appointments of this AppointmentType.</EnumValue>
+        <EnumValue name="All">All ProcCodes from CodeStrRequired are needed to schedule appointments of this AppointmentType.</EnumValue>
+      </Enumeration>
+    </column>
+    <column order="9" name="BlockoutTypes" type="varchar(255)">
+      <summary>Comma delimited list of Blockout Types (definition.DefNums where definition.Category=25) this appointment type can be associated to.</summary>
+    </column>
+  </table>
+  <table name="definition">
+    <summary></summary>
+    <column order="1" name="Category" type="tinyint">
+      <summary>Enum:DefCat</summary>
+      <Enumeration name="DefCat">
+        <summary>Definition Category. Go to the definition setup window (FormDefinitions) in the program to see how each of these categories is used.
+             If you add a category, make sure to add it to the switch statement in DefL so the user can edit it.
+             Add a "NotUsed" description attribute to defs that shouldn't show up in FormDefinitions.</summary>
+        <EnumValue name="OperatoryTypes">55 - Operatory Types. This field is only informational. The value isn't used for functionality.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="ehrpatient">
+    <summary></summary>
+    <column order="9" name="DischargeDate" type="datetime">
+      <summary>Used in hospitals. Used to track patients discharge date.</summary>
+    </column>
+  </table>
+  <table name="eservicelog">
+    <summary></summary>
+    <column order="5" name="KeyType" type="smallint(6)">
+      <summary>Enum:FKeyType</summary>
+      <Enumeration name="FKeyType">
+        <summary>Type associated with FKey value.</summary>
+        <EnumValue name="UtmNum">4 Utm Number.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="eserviceshortguid">
+    <summary></summary>
+    <column order="1" name="EServiceCode" type="varchar(255)">
+      <summary>Enum:eServiceCode EService that this short GUID applies to.</summary>
+      <Enumeration name="eServiceCode">
+        <summary>Used by EServiceSignal.ServiceCode. Each service will have an entry here. Stored as an int for forward compatibility.</summary>
+        <EnumValue name="EClipboardClinical">42 - Eclipboard Clinical Mobile application.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="grouppermission">
+    <summary></summary>
+    <column order="4" name="PermType" type="tinyint">
+      <summary>Enum:Permissions Some permissions will treat a zero FKey differently. Some denote it as having access to everything for that PermType. I.e. Reports.</summary>
+      <Enumeration name="Permissions">
+        <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+        <EnumValue name="AppointmentDelete">237 - Allows user to delete appointments.</EnumValue>
+        <EnumValue name="AppointmentCompleteDelete">238 - Allows user to delete completed appointments.</EnumValue>
+        <EnumValue name="AppointmentTypeEdit">239 - Logs when Appointment Types are edited. For audit trails only.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="intervention">
+    <summary></summary>
+    <column order="7" name="CodeSet" type="tinyint(4)">
+      <summary>Enum:InterventionCodeSet AboveNormalWeight, BelowNormalWeight, TobaccoCessation, Nutrition, PhysicalActivity, Dialysis.</summary>
+      <Enumeration name="InterventionCodeSet">
+        <summary>Value sets for interventions.  This will limit the codes in FormInterventionEdit to a smaller list of codes and allow us to recommend codes to meet specific CQMs.</summary>
+        <EnumValue name="None">6 - None</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="operatory">
+    <summary></summary>
+    <column order="13" name="OperatoryType" type="bigint(20)" fk="definition">
+      <summary>FK to definition.DefNum. The type of the Operatory. This value is not normally used, but rather to just mark which type the Operatory is.</summary>
+    </column>
+  </table>
+  <table name="orthohardware">
+    <summary></summary>
+    <column order="7" name="IsHidden" type="tinyint(4)">
+      <summary></summary>
+    </column>
+  </table>
+  <table name="requiredfield">
+    <summary></summary>
+    <column order="2" name="FieldName" type="varchar(50)">
+      <summary>Enum:RequiredFieldName </summary>
+      <Enumeration name="RequiredFieldName">
+        <summary>This enum is stored as a string, so the order of values can be rearranged.</summary>
+        <EnumValue name="DischargeDate"></EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="requiredfieldcondition">
+    <summary></summary>
+    <column order="2" name="ConditionType" type="varchar(50)">
+      <summary>Enum:RequiredFieldName </summary>
+      <Enumeration name="RequiredFieldName">
+        <summary>This enum is stored as a string, so the order of values can be rearranged.</summary>
+        <EnumValue name="DischargeDate"></EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="securitylog">
+    <summary></summary>
+    <column order="1" name="PermType" type="tinyint">
+      <summary>Enum:Permissions</summary>
+      <Enumeration name="Permissions">
+        <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+        <EnumValue name="AppointmentDelete">237 - Allows user to delete appointments.</EnumValue>
+        <EnumValue name="AppointmentCompleteDelete">238 - Allows user to delete completed appointments.</EnumValue>
+        <EnumValue name="AppointmentTypeEdit">239 - Logs when Appointment Types are edited. For audit trails only.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="utm">
+    <summary></summary>
+    <column order="0" name="UtmNum" type="bigint(20)">
+      <summary>Primary key.</summary>
+    </column>
+    <column order="1" name="CampaignName" type="varchar(500)">
+      <summary>Text that identifies a specific campaign or promotion identifying why traffic is being directed to the users website.</summary>
+    </column>
+    <column order="2" name="MediumInfo" type="varchar(500)">
+      <summary>Text that tracks how traffic is getting to the users website, such as email or social media.</summary>
+    </column>
+    <column order="3" name="SourceInfo" type="varchar(500)">
+      <summary>Text that identifies where traffic is originating from.</summary>
+    </column>
+  </table>
+</database>
