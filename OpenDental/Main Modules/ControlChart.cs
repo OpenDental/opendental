@@ -10385,7 +10385,9 @@ namespace OpenDental {
 				}//n selected teeth
 			}//end Part 1 checking for ProcCodes, now will check for AutoCodes
 			//long orionProvNum=0;
+			List<long> listAllAutoCodesProcNums=new List<long>();
 			for(int i=0;i<arrayAutoCodeList.Length;i++) {
+				List<long> listAutoCodesProcNums=new List<long>();
 				for(int n=0;n==0 || n<_toothChartRelay.SelectedTeeth.Count;n++) {
 					isValid=true;
 					if(_toothChartRelay.SelectedTeeth.Count!=0) {
@@ -10497,8 +10499,14 @@ namespace OpenDental {
 					else {//mouth
 						AddQuick(procCur,listFees);
 					}
+					listAutoCodesProcNums.Add(procCur.ProcNum);
 					listProcCodes.Add(ProcedureCodes.GetProcCode(procCur.CodeNum).ProcCode);
 				}//n selected teeth
+				if(procButton!=null && procButton.IsMultiVisit) { //Auto codes need their own MultiVisit group if enabled
+					List<Procedure> listAutoProcedures=Procedures.GetManyProc(listAutoCodesProcNums,false);
+					ProcMultiVisits.CreateGroup(listAutoProcedures);
+					listAllAutoCodesProcNums.AddRange(listAutoCodesProcNums);
+				}
 				//orionProvNum=ProcCur.ProvNum;
 			}//for i
 			//this was requiring too many irrelevant queries and going too slowly   //ModuleSelected(PatCur.PatNum);			
@@ -10510,11 +10518,12 @@ namespace OpenDental {
 					.FindAll(x => x.ProcStatus!=ProcStat.D);
 				//Create multi visit groups for each tooth that are not in a ToothRange
 				for(int i=0;i<_toothChartRelay.SelectedTeeth.Count;i++) {
-					List<Procedure> listToothProcedures=_listChartedProcs.FindAll(x => x.ToothNum==_toothChartRelay.SelectedTeeth[i] && x.ToothRange=="");
+					List<Procedure> listToothProcedures=_listChartedProcs.FindAll(x => x.ToothNum==_toothChartRelay.SelectedTeeth[i] && x.ToothRange=="" 
+						&& !listAllAutoCodesProcNums.Contains(x.ProcNum));
 					ProcMultiVisits.CreateGroup(listToothProcedures);
 				}
 				//Add any leftover procedures to it's own group
-				List<Procedure> listRangedProcedures=_listChartedProcs.FindAll(x => x.ToothNum=="");
+				List<Procedure> listRangedProcedures=_listChartedProcs.FindAll(x => x.ToothNum=="" && !listAllAutoCodesProcNums.Contains(x.ProcNum));
 				ProcMultiVisits.CreateGroup(listRangedProcedures);
 			}
 			_listChartedProcs=null;
