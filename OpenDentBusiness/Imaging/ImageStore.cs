@@ -197,18 +197,13 @@ namespace OpenDentBusiness {
 				}
 			}
 			else if(CloudStorage.IsCloudStorage) {
-				OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(patFolder.Replace("\\","/")
-					,doc.FileName);
-				filebytes=state.FileContent;
+				filebytes=GetBytes(doc,patFolder);
 			}
 			if(doc.Note == null) {
 				textbytes = Encoding.UTF8.GetBytes("");
 			}
 			else {
 				textbytes = Encoding.UTF8.GetBytes(doc.Note);
-			}
-			if(CloudStorage.IsCloudStorage) {
-				filebytes=GetBytes(doc,patFolder);
 			}
 			if(PrefC.AtoZfolderUsed==DataStorageType.InDatabase) {
 				try {
@@ -438,22 +433,10 @@ namespace OpenDentBusiness {
 		}
 
 		public static byte[] GetBytes(Document doc,string patFolder) {
-			/*if(ImageStoreIsDatabase) {not supported
-				byte[] buffer;
-				using(IDbConnection connection = DataSettings.GetConnection())
-				using(IDbCommand command = connection.CreateCommand()) {
-					command.CommandText =	@"SELECT Data FROM files WHERE DocNum = ?DocNum";
-					IDataParameter docNumParameter = command.CreateParameter();
-					docNumParameter.ParameterName = "?DocNum";
-					docNumParameter.Value = doc.DocNum;
-					command.Parameters.Add(docNumParameter);
-					connection.Open();
-					buffer = (byte[])command.ExecuteScalar();
-					connection.Close();
-				}
-				return buffer;
+			if(CloudStorage.IsCloudStorage) {
+				OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(patFolder.Replace("\\","/"),doc.FileName);
+				return state.FileContent;
 			}
-			else {*/
 			string path = ODFileUtils.CombinePaths(patFolder,doc.FileName);
 			if(!File.Exists(path)) {
 				return new byte[] { };
@@ -587,14 +570,19 @@ namespace OpenDentBusiness {
 		}
 
 		/// <summary>Saves to AtoZ folder, Cloud, or to db.  Saves document based off of the mimeType passed in.</summary>
-		public static Document Import(byte[] arrayBytes,long docCategory,ImageType imageType,Patient pat,string mimeType="image/jpeg") {
+		public static Document Import(byte[] arrayBytes,long docCategory,ImageType imageType,Patient pat,string mimeType="image/jpeg",string fileExtension=null) {
 			string patFolder="";
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ || CloudStorage.IsCloudStorage) {
 				patFolder=GetPatientFolder(pat,GetPreferredAtoZpath());
 			}
 			Document doc=new Document();
 			doc.ImgType=imageType;
-			doc.FileName=GetImageFileExtensionByMimeType(mimeType);
+			if(fileExtension==null) {
+				doc.FileName=GetImageFileExtensionByMimeType(mimeType);
+			}
+			else {
+				doc.FileName=fileExtension;
+			}
 			doc.DateCreated=DateTime.Now;
 			doc.PatNum=pat.PatNum;
 			doc.DocCategory=docCategory;

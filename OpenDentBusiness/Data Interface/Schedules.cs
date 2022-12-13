@@ -966,16 +966,21 @@ namespace OpenDentBusiness{
 		///<summary>Gets a calculated StopTime based on all schedules that are passed in.  This is to ensure that we don't get duplicate schedule times.
 		///Ex.  Sched1: 8am-3pm, Sched2: 1pm-5pm.  This will return 5pm because the actual schedule runs 8am-5pm even though its split out into multiple schedule rows.</summary>
 		private static DateTime GetEndTimeForProvSchedStartTime(Schedule schedToFindEndTimeFor,List<Schedule> listSchedsForProv) {
-			//The base case will simply return the StopTime for the passed in schedule.
-			DateTime retVal=new DateTime(schedToFindEndTimeFor.StopTime.Ticks);
-			List<Schedule> listSchedsOverlapping=listSchedsForProv.FindAll(x => x.SchedDate==schedToFindEndTimeFor.SchedDate 
-					&& x.StopTime>schedToFindEndTimeFor.StopTime && x.StartTime<=schedToFindEndTimeFor.StopTime).ToList();
-			//Loop through all schedules that end after the passed in schedule, and starts before the passed in schedule has ended.
-			foreach(Schedule schedCur in listSchedsOverlapping) {
-				//Recursively call this method to see if there are any schedules that overlap the new schedule but end after it.
-				retVal=GetEndTimeForProvSchedStartTime(schedCur,listSchedsForProv);
+			DateTime retVal = new DateTime(schedToFindEndTimeFor.StopTime.Ticks);
+			List<Schedule> listSchedsOrdered = listSchedsForProv.FindAll(x => x.SchedDate==schedToFindEndTimeFor.SchedDate)
+				.OrderBy(x => x.StartTime).ToList(); //Order the list, just in case we didn't prior to coming in here
+			TimeSpan currentStopTime = schedToFindEndTimeFor.StopTime;
+			for(int i = 0;i<listSchedsOrdered.Count;i++) {
+				if(listSchedsOrdered[i].StartTime>currentStopTime) {
+					//Time is no longer contiguous, break out
+					break;
+				}
+				if(listSchedsOrdered[i].StopTime>currentStopTime) {
+					//Set the stop time, since it is greater than what is currently set
+					currentStopTime=listSchedsOrdered[i].StopTime;
+				}
 			}
-			return retVal;
+			return new DateTime(currentStopTime.Ticks);
 		}
 
 		///<summary>Clears all blockouts for day.</summary>

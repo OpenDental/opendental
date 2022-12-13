@@ -28,7 +28,9 @@ namespace OpenDentBusiness {
 					display.Pvdr,
 					display.InsBal,
 					display.AcctBal,
-					display.Type
+					display.Type,
+					display.TranNum AS 'PrimaryKey',
+					display.PatNum
 				FROM(
 				/*cases out data from rows that we need, performing aggregate functions for day and overall totals.*/
 				SELECT
@@ -143,7 +145,9 @@ namespace OpenDentBusiness {
 							THEN FORMAT(SUM(core.Charge - core.Credit - core.InsCredits),2) -- total for date
 						WHEN 4
 							THEN FORMAT(SUM(core.Charge - core.Credit - core.InsCredits),2) -- overall total
-					END) AS 'AcctBal'
+					END) AS 'AcctBal',
+					TranNum,
+					PatNum
 				FROM(
 				  {GetCoreQuery(patNum,isFamily,payPlanVersion)}
 				) core

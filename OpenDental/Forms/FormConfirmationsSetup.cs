@@ -28,19 +28,11 @@ namespace OpenDental {
 
 		///<summary>Called on load to initially load confirmation with values from the database.  Calls FillGrid at the end.</summary>
 		private void FillTabManualConfirmation() {
-			_listDefsApptConfirmed=Defs.GetDefsForCategory(DefCat.ApptConfirmed,true);
-			for(int i=0;i<_listDefsApptConfirmed.Count;i++) {
-				comboStatusEmailedConfirm.Items.Add(_listDefsApptConfirmed[i].ItemName);
-				if(_listDefsApptConfirmed[i].DefNum==PrefC.GetLong(PrefName.ConfirmStatusEmailed)) {
-					comboStatusEmailedConfirm.SelectedIndex=i;
-				}
-			}
-			for(int i=0;i<_listDefsApptConfirmed.Count;i++) {
-				comboStatusTextMessagedConfirm.Items.Add(_listDefsApptConfirmed[i].ItemName);
-				if(_listDefsApptConfirmed[i].DefNum==PrefC.GetLong(PrefName.ConfirmStatusTextMessaged)) {
-					comboStatusTextMessagedConfirm.SelectedIndex=i;
-				}
-			}
+			_listDefsApptConfirmed=Defs.GetDefsForCategory(DefCat.ApptConfirmed,isShort:false);
+			comboStatusEmailedConfirm.Items.AddDefs(_listDefsApptConfirmed);
+			comboStatusEmailedConfirm.SetSelectedDefNum(PrefC.GetLong(PrefName.ConfirmStatusEmailed));
+			comboStatusTextMessagedConfirm.Items.AddDefs(_listDefsApptConfirmed);
+			comboStatusTextMessagedConfirm.SetSelectedDefNum(PrefC.GetLong(PrefName.ConfirmStatusTextMessaged));
 			checkGroupFamilies.Checked=PrefC.GetBool(PrefName.ConfirmGroupByFamily);
 			FillGrid();
 		}
@@ -136,18 +128,8 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender,System.EventArgs e) {
-			if(comboStatusEmailedConfirm.SelectedIndex==-1) {
-				Prefs.UpdateLong(PrefName.ConfirmStatusEmailed,0);
-			}
-			else {
-				Prefs.UpdateLong(PrefName.ConfirmStatusEmailed,_listDefsApptConfirmed[comboStatusEmailedConfirm.SelectedIndex].DefNum);
-			}
-			if(comboStatusTextMessagedConfirm.SelectedIndex==-1) {
-				Prefs.UpdateLong(PrefName.ConfirmStatusTextMessaged,0);
-			}
-			else {
-				Prefs.UpdateLong(PrefName.ConfirmStatusTextMessaged,_listDefsApptConfirmed[comboStatusTextMessagedConfirm.SelectedIndex].DefNum);
-			}
+			Prefs.UpdateLong(PrefName.ConfirmStatusEmailed,comboStatusEmailedConfirm.GetSelectedDefNum());
+			Prefs.UpdateLong(PrefName.ConfirmStatusTextMessaged,comboStatusTextMessagedConfirm.GetSelectedDefNum());
 			Prefs.UpdateBool(PrefName.ConfirmGroupByFamily,checkGroupFamilies.Checked);
 			//If we want to take the time to check every Update and see if something changed 
 			//then we could move this to a FormClosing event later.

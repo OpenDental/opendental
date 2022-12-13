@@ -1131,15 +1131,18 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Gets a list of ProcedureForApi from db. Returns and empty list if not found.</summary>
-		public static List<ProcedureForApi> GetProceduresForApi(long patNum,DateTime dateTStamp) {
+		public static List<ProcedureForApi> GetProceduresForApi(long patNum,DateTime dateTStamp,long aptNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ProcedureForApi>>(MethodBase.GetCurrentMethod(),patNum,dateTStamp);
+				return Meth.GetObject<List<ProcedureForApi>>(MethodBase.GetCurrentMethod(),patNum,dateTStamp,aptNum);
 			}
 			List<ProcedureForApi> listProcedureForApis=new List<ProcedureForApi>();
 			string command="SELECT * FROM procedurelog "
 				+"WHERE DateTStamp>="+POut.DateT(dateTStamp)+" ";
 			if(patNum!=0) {
-				command+="AND PatNum='"+POut.Long(patNum)+"'";
+				command+="AND PatNum='"+POut.Long(patNum)+"' ";
+			}
+			if(aptNum!=0) {
+				command+="AND AptNum='"+POut.Long(aptNum)+"' ";
 			}
 			command+=" ORDER BY ProcNum DESC";
 			string commandDatetime="SELECT "+DbHelper.Now();
