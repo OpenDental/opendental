@@ -87,7 +87,7 @@ namespace OpenDental{
 				butOK.Enabled=false;
 				DisableMostControls();
 			}
-			if(PrefC.AtoZfolderUsed!=DataStorageType.InDatabase && !Documents.IsRawBase64DataStored()) {//Image Module data is not stored in the database
+			if(PrefC.AtoZfolderUsed!=DataStorageType.InDatabase) {
 				radioDatabaseStorage.Visible=false;
 				LayoutManager.MoveLocation(radioDropboxStorage,new Point(LayoutManager.Scale(9),LayoutManager.Scale(38)));
 				LayoutManager.MoveLocation(radioSftp,new Point(LayoutManager.Scale(9),LayoutManager.Scale(57)));
@@ -102,10 +102,7 @@ namespace OpenDental{
 			if(PrefC.AtoZfolderUsed!=DataStorageType.InDatabase) {
 				return true;//N/A
 			}
-			if(!Documents.IsRawBase64DataStored()) {//Image Module data is not currently stored in the database
-				return true;//N/A
-			}
-			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Don't do this. You will lose access to your existing Imaging Module data currently stored in the database. Continue anyway?")) 
+			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"You have chosen to switch away from storing images in the database. If you continue, you will not be able to switch back and you will lose access to your existing Imaging Module data currently stored in the database. Continue anyway?"))
 			{
 				//user will have one more chance to cancel because they can just cancel out of the form.
 				SetRadioButtonChecked(_dataStorageType);
@@ -285,7 +282,7 @@ namespace OpenDental{
 		}
 
 		private void radioDatabaseStorage_Click(object sender,EventArgs e) {
-			if(radioDatabaseStorage.Checked){//user attempting to use db to store images
+			if(radioDatabaseStorage.Checked && PrefC.AtoZfolderUsed!=DataStorageType.InDatabase){//user attempting to use db to store images
 				using InputBox inputbox=new InputBox("Please enter password");
 				inputbox.ShowDialog();
 				if(inputbox.DialogResult!=DialogResult.OK){

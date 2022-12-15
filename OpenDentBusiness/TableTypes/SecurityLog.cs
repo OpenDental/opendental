@@ -15,7 +15,7 @@ namespace OpenDentBusiness{
 		public Permissions PermType;
 		///<summary>FK to userod.UserNum</summary>
 		public long UserNum;
-		///<summary>The date and time of the entry.  It's value is set when inserting and can never change.  Even if a user changes the date on their ocmputer, this remains accurate because it uses server time.</summary>
+		///<summary>The date and time of the entry.  It's value is set when inserting and can never change.  Even if a user changes the date on their computer, this remains accurate because it uses server time.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.DateTEntry)]
 		public DateTime LogDateTime;
 		///<summary>The description of exactly what was done. Varies by permission type.</summary>

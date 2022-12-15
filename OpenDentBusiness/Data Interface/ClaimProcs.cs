@@ -130,6 +130,18 @@ namespace OpenDentBusiness{
 			return listOutstandingAsTotals;
 		}
 
+		///<summary>Gets one ClaimProc from db. Returns null if not found.</summary>
+		public static ClaimProc GetOneClaimProc(long claimProcNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<ClaimProc>(MethodBase.GetCurrentMethod(),claimProcNum);
+			}
+			if(claimProcNum==0) {
+				return null;
+			}
+			string command="SELECT * FROM claimproc "
+				+"WHERE ClaimProcNum = '"+POut.Long(claimProcNum)+"'";
+			return Crud.ClaimProcCrud.SelectOne(command);
+		}
 		#endregion
 
 		#region Insert
