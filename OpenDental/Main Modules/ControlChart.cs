@@ -4963,6 +4963,7 @@ namespace OpenDental {
 			//ParentForm.Text=Patients.GetMainTitle(PatCur);
 			LayoutToolBar();
 			if(IsPatientNull()) {
+				textTreatmentNotes.Enabled=false;
 				//groupShow.Enabled=false;
 				gridPtInfo.Enabled=false;
 				//tabPlanned.Enabled=false;
@@ -5021,6 +5022,7 @@ namespace OpenDental {
 				textSearch.Text="";
 			}
 			else {
+				textTreatmentNotes.Enabled=true;
 				trackToothProcDates.Enabled=true;
 				textToothProcDate.Enabled=true;
 				//groupShow.Enabled=true;

@@ -138,6 +138,14 @@ namespace OpenDentBusiness {
 			return listExportAutoNotes.Select(x => new SerializableAutoNote(x)).ToList();
 		}
 
+		///<summary>Gets an AutoNote by primary key from the database for the API. Returns null if not found.</summary>
+		public static AutoNote GetAutoNoteForApi(long autoNoteNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<AutoNote>(MethodBase.GetCurrentMethod(),autoNoteNum);
+			}
+			return Crud.AutoNoteCrud.SelectOne(autoNoteNum);
+		}
+
 		///<summary>Returns true if there is a valid AutoNote for the passed in AutoNoteName.</summary>
 		public static bool IsValidAutoNote(string autoNoteTitle) {
 			//No need to check MiddleTierRole; no call to db.

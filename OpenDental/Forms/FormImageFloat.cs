@@ -1831,16 +1831,23 @@ namespace OpenDental {
 					MsgBox.Show(this,"Cannot paste content, invalid patient attached to the copied content.");
 					return;
 				}
-				string sourceFile="";
-				try {
-					sourceFile=FileAtoZ.CombinePaths(ImageStore.GetPatientFolder(patientOriginal,ImageStore.GetPreferredAtoZpath()),documentOriginal.FileName);
+				string patientFolder=ImageStore.GetPatientFolder(patientOriginal,ImageStore.GetPreferredAtoZpath());
+				if(CloudStorage.IsCloudStorage) {
+					byte[] byteArray=ImageStore.GetBytes(documentOriginal,patientFolder);
+					document=ImageStore.Import(byteArray,GetCurrentCategory(),documentOriginal.ImgType,PatientCur,fileExtension:Path.GetExtension(documentOriginal.FileName));
 				}
-				catch(Exception ex) {
-					FriendlyException.Show(Lan.g(this,"Cannot paste content."),ex);
-					return;
+				else {
+					string sourceFile="";
+					try {
+						sourceFile=FileAtoZ.CombinePaths(patientFolder,documentOriginal.FileName);
+					}
+					catch(Exception ex) {
+						FriendlyException.Show(Lan.g(this,"Cannot paste content."),ex);
+						return;
+					}
+					//we could be pasting into the same patient or a different patient.
+					document=ImageStore.Import(sourceFile,GetCurrentCategory(),PatientCur);
 				}
-				//we could be pasting into the same patient or a different patient.
-				document=ImageStore.Import(sourceFile,GetCurrentCategory(),PatientCur);
 				document.CropH=documentOriginal.CropH;
 				document.CropW=documentOriginal.CropW;
 				document.CropX=documentOriginal.CropX;

@@ -1526,7 +1526,7 @@ namespace OpenDental
 			if(idx==-1){
 				List<MountItem> listAvail=GetAvailSlots(1);
 				if(listAvail is null){//no more available slots
-					MsgBox.Show(this,"Please select an an item in the mount first.");
+					MsgBox.Show(this,"Please select an item in the mount first.");
 					return;
 				}
 				else{

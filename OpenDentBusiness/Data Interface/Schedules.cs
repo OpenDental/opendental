@@ -56,14 +56,14 @@ namespace OpenDentBusiness{
 				if(schedTemp.Ops.Count==0) {//only look at schedules without operatories
 					isOverlapping=(listProvSchedsOnly.Where(x => x.ProvNum==schedTemp.ProvNum //Only consider current provider for overlaps w/o Ops
 							&& x.Ops.Count==0 //Also doesn't have an operatory
-							&& schedTemp.StartTime<=x.StopTime //Overlapping Time
+							&& schedTemp.StartTime<x.StopTime //Overlapping Time
 							&& schedTemp.StopTime>=x.StartTime)//Overlapping Time
 						.Count() > 1);
 				}
 				//====================COMPLEX OVERLAP, Ops and All====================
 				else if(!isOverlapping && schedTemp.Ops.Count>0) {//If we did not find a simple overlap, attempt to find a "complicated" overlap
 					isOverlapping=(listProvSchedsOnly.Where(x => x.Ops.Count>0 //Can only overlap if Ops are involved
-							&& schedTemp.StartTime<=x.StopTime //Overlapping Time
+							&& schedTemp.StartTime<x.StopTime //Overlapping Time
 							&& schedTemp.StopTime>=x.StartTime //Overlapping Time
 							&& x.Ops.Any(y => listSelectedOpNums.Contains(y)))//Schedule contains any operatory in question.
 						.Count() > 1);

@@ -153,24 +153,24 @@ namespace OpenDental {
 			if(index==-1) {//Should not happen, menu item is only enabled when exactly 1 row is selected.
 				return;
 			}
-			if(gridCharges.ListGridRows[index].Tag.GetType()==typeof(PayPlanCharge)) {
-				PayPlanCharge payPlanCharge=(PayPlanCharge)gridCharges.ListGridRows[index].Tag;
-				if(payPlanCharge.PayPlanChargeNum==0) {
-					MsgBox.Show(Lan.g(this,"The selected charge hasn't been posted yet. Only posted charges can be deleted."));
-					return;
-				}
-				List<long> listPayPlanChargeNums=new List<long>(){payPlanCharge.PayPlanChargeNum};
-				List<PaySplit> listPaySplitsForPayPlanCharges=PaySplits.GetForPayPlanCharges(listPayPlanChargeNums);
-				if(listPaySplitsForPayPlanCharges.IsNullOrEmpty()) {
-					List<PayPlanCharge> listPayPlanCharges=new List<PayPlanCharge>(){payPlanCharge};
-					PayPlanCharges.DeleteDebitsWithoutPayments(listPayPlanCharges,doDelete:true);
-					LoadPayDataFromDB();
-					FillCharges();
-				}
-				else {
-					MsgBox.Show(Lan.g(this,"The selected charge couldn't be deleted. Only a debit charge without a payment can be deleted."));
-				}
+			DynamicPayPlanRowData rowData=(DynamicPayPlanRowData)gridCharges.ListGridRows[index].Tag;
+			if(!rowData.IsChargeRow()) {
+				return;
 			}
+			List<PayPlanCharge> listPayPlanCharges=PayPlanCharges.GetMany(rowData.ListPayPlanChargeNums);
+			List<long> listPayPlanChargeNums=listPayPlanCharges.Select(x => x.PayPlanChargeNum).ToList();
+			if(listPayPlanChargeNums.All(x => x==0)) {
+				MsgBox.Show(Lan.g(this,"The selected charge hasn't been posted yet. Only posted charges can be deleted."));
+				return;
+			}
+			List<PaySplit> listPaySplitsForPayPlanCharges=PaySplits.GetForPayPlanCharges(listPayPlanChargeNums);
+			if(listPaySplitsForPayPlanCharges.Count > 0) {
+				MsgBox.Show(Lan.g(this,"The selected charge couldn't be deleted. Only a debit charge without a payment can be deleted."));
+				return;
+			}
+			PayPlanCharges.DeleteDebitsWithoutPayments(listPayPlanCharges,doDelete:true);
+			LoadPayDataFromDB();
+			FillCharges();
 		}
 
 		private void FillUiForSavedPayPlan() {
@@ -254,11 +254,11 @@ namespace OpenDental {
 			gridCharges.BeginUpdate();
 			gridCharges.Columns.Clear();
 			GridColumn col;
+			col=new GridColumn(Lan.g("PayPlanAmortization","Charge Number"),50,HorizontalAlignment.Right);//0
+			gridCharges.Columns.Add(col);
 			//If this column is changed from a date column then the comparer method (ComparePayPlanRows) needs to be updated.
 			//If changes are made to the order of the grid, changes need to also be made for butPrint_Click
-			col=new GridColumn(Lan.g("PayPlanAmortization","Date"),64,HorizontalAlignment.Center);//0
-			gridCharges.Columns.Add(col);
-			col=new GridColumn(Lan.g("PayPlanAmortization","Provider"),50);//1
+			col=new GridColumn(Lan.g("PayPlanAmortization","Date"),64,HorizontalAlignment.Center);//1
 			gridCharges.Columns.Add(col);
 			col=new GridColumn(Lan.g("PayPlanAmortization","Description"),147);//2
 			gridCharges.Columns.Add(col);
@@ -282,46 +282,33 @@ namespace OpenDental {
 				gridCharges.EndUpdate();
 				return false;
 			}
-			List<GridRow> listGridRowsPayPlan=new List<GridRow>();
-			int numCharges=0;
-			DateTime datePrevCharge=DateTime.MinValue;
-			for(int i=0;i<listPayPlanChargesExpected.Count;i++) {
-				if(listPayPlanChargesExpected[i].ChargeDate!=datePrevCharge) {
-					numCharges++;
-				}
-				listGridRowsPayPlan.Add(PayPlanL.CreateRowForPayPlanCharge(listPayPlanChargesExpected[i],numCharges,true));
-				datePrevCharge=listPayPlanChargesExpected[i].ChargeDate;
-			}
 			List<PaySplit> listPaySplits=new List<PaySplit>();
 			DataTable tableBundledPayments=PaySplits.GetForPayPlan(_dynamicPaymentPlanData.PayPlan.PayPlanNum);
 			listPaySplits=PaySplits.GetFromBundled(tableBundledPayments);
-			for(int i=0;i<listPaySplits.Count;i++) {
-				listGridRowsPayPlan.Add(PayPlanL.CreateRowForPaySplit(tableBundledPayments.Rows[i],listPaySplits[i],true));
-			}
-			listGridRowsPayPlan.Sort(PayPlanL.ComparePayPlanRows);
+			List<GridRow> listRows=PayPlanL.CreateRowsForDynamicPayPlanCharges(listPayPlanChargesExpected,listPaySplits);
 			int totalsRowIndex = -1; //if -1, then don't show a bold line as the first charge showing has not come due yet.
 			#region Fill Sum Text
 			double balanceAmt=0;
 			double principalDue=0;
 			_dynamicPaymentPlanData.TotalInterest=0;
 			double totalPay=0;
-			for(int i=0;i<listGridRowsPayPlan.Count;i++) {
-				bool isFutureCharge=PIn.Date(listGridRowsPayPlan[i].Cells[0].Text)>DateTime.Today;
+			for(int i=0;i<listRows.Count;i++) {
+				bool isFutureCharge=PIn.Date(listRows[i].Cells[1].Text)>DateTime.Today;
 				if(!checkExcludePast.Checked || isFutureCharge) {
 					//Add the row if we aren't excluding past activity or the activity is in the future.
-					gridCharges.ListGridRows.Add(listGridRowsPayPlan[i]);
+					gridCharges.ListGridRows.Add(listRows[i]);
 				}
-				if(listGridRowsPayPlan[i].Cells[3].Text!="") {//Principal
-					principalDue+=PIn.Double(listGridRowsPayPlan[i].Cells[3].Text);
-					balanceAmt+=PIn.Double(listGridRowsPayPlan[i].Cells[3].Text);
+				if(listRows[i].Cells[3].Text!="") {//Principal
+					principalDue+=PIn.Double(listRows[i].Cells[3].Text);
+					balanceAmt+=PIn.Double(listRows[i].Cells[3].Text);
 				}
-				if(listGridRowsPayPlan[i].Cells[4].Text!="") {//Interest
-					_dynamicPaymentPlanData.TotalInterest+=PIn.Double(listGridRowsPayPlan[i].Cells[4].Text);
-					balanceAmt+=PIn.Double(listGridRowsPayPlan[i].Cells[4].Text);
+				if(listRows[i].Cells[4].Text!="") {//Interest
+					_dynamicPaymentPlanData.TotalInterest+=PIn.Double(listRows[i].Cells[4].Text);
+					balanceAmt+=PIn.Double(listRows[i].Cells[4].Text);
 				}
-				else if(listGridRowsPayPlan[i].Cells[6].Text!="") {//Payment
-					totalPay+=PIn.Double(listGridRowsPayPlan[i].Cells[6].Text);
-					balanceAmt-=PIn.Double(listGridRowsPayPlan[i].Cells[6].Text);
+				else if(listRows[i].Cells[6].Text!="") {//Payment
+					totalPay+=PIn.Double(listRows[i].Cells[6].Text);
+					balanceAmt-=PIn.Double(listRows[i].Cells[6].Text);
 				}
 				if(!checkExcludePast.Checked || isFutureCharge) {
 					gridCharges.ListGridRows[gridCharges.ListGridRows.Count-1].Cells[7].Text=balanceAmt.ToString("f");
@@ -751,16 +738,16 @@ namespace OpenDental {
 			}
 		}
 
-		private void gridCharges_CellDoubleClick(object sender,OpenDental.UI.ODGridClickEventArgs e) { 
+		private void gridCharges_CellDoubleClick(object sender,OpenDental.UI.ODGridClickEventArgs e) {
 			if(gridCharges.ListGridRows[e.Row].Tag==null) {//Prevent double clicking on the "Current Totals" row
 				return;
 			}
-			if(gridCharges.ListGridRows[e.Row].Tag.GetType()==typeof(PayPlanCharge)) {
+			DynamicPayPlanRowData rowData=(DynamicPayPlanRowData)gridCharges.ListGridRows[e.Row].Tag;
+			if(rowData.IsChargeRow()) {
 				//don't do anything. Dynamic payment plan charges are not editable. 
 			}
-			else if(gridCharges.ListGridRows[e.Row].Tag.GetType()==typeof(PaySplit)) {
-				PaySplit paySplit=(PaySplit)gridCharges.ListGridRows[e.Row].Tag;
-				Payment payment=Payments.GetPayment(paySplit.PayNum);
+			else if(rowData.IsPaymentRow()) {
+				Payment payment = Payments.GetPayment(rowData.PayNum);
 				if(payment==null) {
 					MessageBox.Show(Lans.g(this,"No payment exists.  Please run database maintenance method")+" "+nameof(DatabaseMaintenances.PaySplitWithInvalidPayNum));
 					return;
@@ -952,26 +939,33 @@ namespace OpenDental {
 					("Total Cost of Loan Detail",sectType,new Point(x2,yPos),size,(_sumAttachedProduction+(decimal)_dynamicPaymentPlanData.TotalInterest).ToString("n"),font,alignR));
 				yPos+=space;
 				section.Height=yPos+30;
+				List<PayPlanCharge> listExpectedPayPlanChargesAwaitingCompletion=new List<PayPlanCharge>();
+				if(terms.DynamicPayPlanTPOption==DynamicPayPlanTPOptions.AwaitComplete) {
+					List<PayPlanCharge> listPayPlanChargesExpectedDownPayment=PayPlanEdit.GetDownPaymentCharges(_dynamicPaymentPlanData.PayPlan,terms,_dynamicPaymentPlanData.ListPayPlanLinks);
+					listExpectedPayPlanChargesAwaitingCompletion=PayPlanEdit.GetListExpectedChargesAwaitingCompletion(_dynamicPaymentPlanData.ListPayPlanChargesDb,terms,_dynamicPaymentPlanData.Family,_dynamicPaymentPlanData.ListPayPlanLinks,
+						_dynamicPaymentPlanData.PayPlan,isNextPeriodOnly:false,listPaySplits:_dynamicPaymentPlanData.ListPaySplits,
+						listExpectedChargesDownPayment:listPayPlanChargesExpectedDownPayment);
+				}
 				DataTable table=new DataTable();
+				table.Columns.Add("charge");
 				table.Columns.Add("date");
-				table.Columns.Add("prov");
+				if(listExpectedPayPlanChargesAwaitingCompletion.Count>0) {
+					table.Columns.Add("prov");
+				}
 				table.Columns.Add("description");
 				table.Columns.Add("principal");
 				table.Columns.Add("interest");
 				table.Columns.Add("due");
 				table.Columns.Add("payment");
 				table.Columns.Add("balance");
-				List<PayPlanCharge> listPayPlanCharges=new List<PayPlanCharge>();
-				if(terms.DynamicPayPlanTPOption==DynamicPayPlanTPOptions.AwaitComplete) {
-					List<PayPlanCharge> listPayPlanChargesExpectedDownPayment=PayPlanEdit.GetDownPaymentCharges(_dynamicPaymentPlanData.PayPlan,terms,_dynamicPaymentPlanData.ListPayPlanLinks);
-					listPayPlanCharges.AddRange(PayPlanEdit.GetListExpectedChargesAwaitingCompletion(_dynamicPaymentPlanData.ListPayPlanChargesDb,terms,_dynamicPaymentPlanData.Family,_dynamicPaymentPlanData.ListPayPlanLinks,
-						_dynamicPaymentPlanData.PayPlan,false,listPaySplits:_dynamicPaymentPlanData.ListPaySplits,listExpectedChargesDownPayment:listPayPlanChargesExpectedDownPayment));
-				}
 				DataRow row;
 				for(int i = 0;i<gridCharges.ListGridRows.Count;i++) {
 					row=table.NewRow();
-					row["date"]=gridCharges.ListGridRows[i].Cells[0].Text;
-					row["prov"]=gridCharges.ListGridRows[i].Cells[1].Text;
+					row["charge"]=gridCharges.ListGridRows[i].Cells[0].Text;
+					row["date"]=gridCharges.ListGridRows[i].Cells[1].Text;
+					if(listExpectedPayPlanChargesAwaitingCompletion.Count>0) {
+						row["prov"]="";
+					}
 					row["description"]=gridCharges.ListGridRows[i].Cells[2].Text;
 					row["principal"]=gridCharges.ListGridRows[i].Cells[3].Text;
 					row["interest"]=gridCharges.ListGridRows[i].Cells[4].Text;
@@ -987,10 +981,11 @@ namespace OpenDental {
 				else {
 					finalBalance=gridCharges.ListGridRows[gridCharges.ListGridRows.Count-1].Cells[7].Text;
 				}
-				for(int i = 0;i<listPayPlanCharges.Count;i++) {
-					GridRow rowForCharge=PayPlanL.CreateRowForPayPlanCharge(listPayPlanCharges[i],0,true);
+				for(int i = 0;i<listExpectedPayPlanChargesAwaitingCompletion.Count;i++) {
+					GridRow rowForCharge=PayPlanL.CreateRowForPayPlanCharge(listExpectedPayPlanChargesAwaitingCompletion[i],0,isDynamic:true);
 					row=table.NewRow();
-					row["date"]="";
+					row["charge"]="TBD";
+					row["date"]="TBD";
 					row["prov"]=rowForCharge.Cells[1].Text;
 					row["description"]=Lans.g(this,"Planned - ")+rowForCharge.Cells[2].Text;
 					row["principal"]=rowForCharge.Cells[3].Text;
@@ -1001,10 +996,15 @@ namespace OpenDental {
 					table.Rows.Add(row);
 				}
 				QueryObject queryObject=reportComplex.AddQuery(table,"","",SplitByKind.None,1,true);
-				queryObject.AddColumn("ChargeDate",80,FieldValueType.Date,font);
+				queryObject.AddColumn("ChargeNumber",70,FieldValueType.String,font);
+				queryObject.GetColumnHeader("ChargeNumber").StaticText="Charge #";
+				queryObject.AddColumn("ChargeDate",80,FieldValueType.String,font);
 				queryObject.GetColumnHeader("ChargeDate").StaticText="Date";
-				queryObject.AddColumn("Provider",75,FieldValueType.String,font);
+				if(listExpectedPayPlanChargesAwaitingCompletion.Count>0) {
+					queryObject.AddColumn("Provider",75,FieldValueType.String,font);
+				}
 				queryObject.AddColumn("Description",130,FieldValueType.String,font);
+				queryObject.GetColumnDetail("Description").ContentAlignment=ContentAlignment.MiddleCenter;
 				queryObject.AddColumn("Principal",70,FieldValueType.Number,font);
 				queryObject.AddColumn("Interest",52,FieldValueType.Number,font);
 				queryObject.AddColumn("Due",70,FieldValueType.Number,font);

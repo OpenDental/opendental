@@ -278,7 +278,7 @@ namespace OpenDental{
 				DataTable tablePaymentsBundled=PaySplits.GetForPayPlan(_payPlan.PayPlanNum);
 				_listPaySplits=PaySplits.GetFromBundled(tablePaymentsBundled);
 				for(int i=0;i<_listPaySplits.Count;i++) {
-					listGridRowsPayPlan.Add(PayPlanL.CreateRowForPaySplit(tablePaymentsBundled.Rows[i],_listPaySplits[i]));
+					listGridRowsPayPlan.Add(PayPlanL.CreateRowForPatientPayPlanSplit(tablePaymentsBundled.Rows[i],_listPaySplits[i]));
 				}
 			}
 			else {//Insurance payplan

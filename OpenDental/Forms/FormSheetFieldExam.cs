@@ -35,6 +35,9 @@ namespace OpenDental {
 			//Add exam sheet fields to the list
 			List<SheetFieldDef> listSheetFieldDefsAvail=SheetFieldDefs.GetForExamSheet(listBoxExamSheets.GetSelected<SheetDef>().SheetDefNum);
 			for(int i=0;i<listSheetFieldDefsAvail.Count;i++) {
+				if(!IsValidSheetFieldType(listSheetFieldDefsAvail[i].FieldType)) {
+					continue;
+				}
 				if(listSheetFieldDefsAvail[i].FieldName=="") {
 					continue;
 				}
@@ -57,6 +60,14 @@ namespace OpenDental {
 			listSortedAvailFields.Sort();
 			listBoxAvailFields.Items.Clear();
 			listBoxAvailFields.Items.AddList(listSortedAvailFields,x => x.ToString());
+		}
+
+		///<summary>Only allow SheetFieldTypes of CheckBox/Radio Buttons, Input, and OutputText fields.</summary>
+		private bool IsValidSheetFieldType(SheetFieldType sheetFieldType) {
+			if(sheetFieldType==SheetFieldType.CheckBox || sheetFieldType==SheetFieldType.OutputText || sheetFieldType==SheetFieldType.InputField) {
+				return true;
+			}
+			return false;
 		}
 
 		private void listExamSheets_MouseClick(object sender,MouseEventArgs e) {

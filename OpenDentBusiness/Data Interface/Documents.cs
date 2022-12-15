@@ -1195,16 +1195,6 @@ namespace OpenDentBusiness {
 			return false;
 		}
 		#endregion Xam Methods
-
-		///<summary>Returns true if there is RawBase64 data in the documents table.</summary>
-		public static bool IsRawBase64DataStored() {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod());
-			}
-			string command="SELECT DocNum FROM document"
-				+" WHERE RawBase64!='' Limit 1;";
-			return Db.GetTable(command).Rows.Count>0;//RawBase64 data has been saved in database.
-		}
 	}
 
 	public class DocumentForApi {

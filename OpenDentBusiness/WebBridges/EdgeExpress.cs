@@ -197,6 +197,10 @@ namespace OpenDentBusiness {
 					EdgeExpressTransType.CreditOnlineCapture,EdgeExpressTransType.DebitSale,EdgeExpressTransType.DebitReturn)) {
 					xmlWriter.WriteElementString("AMOUNT",amount.ToString());
 				}
+				string userName=Security.CurUser.UserName;
+				if(userName.Length>20) {
+					userName=userName.Substring(0,20);//EdgeExpress only Accepts CLERK Id's up to 20 characters long. Payment will fail if UserName is over 20 characters long.
+				}
 				if(edgeExpressTransactionType.In(EdgeExpressTransType.CreditSale,EdgeExpressTransType.CreditReturn,EdgeExpressTransType.CreditAuth)) {
 					xmlWriter.WriteElementString("RECEIPTLINEITEMS","Pat"+patient.PatNum);
 					xmlWriter.WriteElementString("PROMPTSIGNATURE",doPromptForSignature ? "True" : "False");
@@ -205,7 +209,7 @@ namespace OpenDentBusiness {
 						xmlWriter.WriteElementString("ALIAS",aliasToken);
 					}
 					xmlWriter.WriteElementString("INVOICENO",$"PAT{patient.PatNum}");
-					xmlWriter.WriteElementString("CLERK",Security.CurUser.UserName);
+					xmlWriter.WriteElementString("CLERK",userName);
 				}
 				if(edgeExpressTransactionType.In(EdgeExpressTransType.AliasUpdate,EdgeExpressTransType.AliasDelete)) {
 					xmlWriter.WriteElementString("ALIAS",aliasToken);
@@ -218,16 +222,16 @@ namespace OpenDentBusiness {
 				}
 				if(edgeExpressTransactionType.In(EdgeExpressTransType.CreditOnlineCapture)) {
 					xmlWriter.WriteElementString("INVOICENO",$"PAT{patient.PatNum}");
-					xmlWriter.WriteElementString("CLERK",Security.CurUser.UserName);
+					xmlWriter.WriteElementString("CLERK",userName);
 				}
 				if(edgeExpressTransactionType.In(EdgeExpressTransType.DebitSale)) {
 					xmlWriter.WriteElementString("CASHBACKAMOUNT",cashBackAmt.ToString());
 					xmlWriter.WriteElementString("INVOICENO",$"PAT{patient.PatNum}");
-					xmlWriter.WriteElementString("CLERK",Security.CurUser.UserName);
+					xmlWriter.WriteElementString("CLERK",userName);
 				}
 				if(edgeExpressTransactionType.In(EdgeExpressTransType.DebitReturn)) {
 					xmlWriter.WriteElementString("INVOICENO",$"PAT{patient.PatNum}");
-					xmlWriter.WriteElementString("CLERK",Security.CurUser.UserName);
+					xmlWriter.WriteElementString("CLERK",userName);
 				}
 				//Include the patient first and last name with every transaction type if they are available.
 				if(!string.IsNullOrWhiteSpace(patient.FName)) {
@@ -336,6 +340,10 @@ namespace OpenDentBusiness {
 			private static void AddAdditionalTransactionParams(XmlWriter xmlWriter,EdgeExpressTransType edgeExpressTransactionType,bool doCreateAlias,
 				double amount,Patient pat,string alias,string transactionID,string orderId,bool allowDuplicates=false,string expDate="")
 			{
+				string userName=Security.CurUser.UserName;
+				if(userName.Length>20) {
+					userName=userName.Substring(0,20);//EdgeExpress CNP only Accepts CLERK Id's up to 20 characters long. Payment will fail if UserName is over 20 characters long. The CNP API guide(2019) states that it accepts up to 50, but this is not true according to testing.
+				}
 				switch(edgeExpressTransactionType) {
 					case EdgeExpressTransType.CreditSale:
 					case EdgeExpressTransType.CreditAuth:
@@ -351,7 +359,7 @@ namespace OpenDentBusiness {
 						xmlWriter.WriteElementString("ALLOWDUPLICATES",allowDuplicates.ToString());
 						xmlWriter.WriteElementString("INVOICENO",$"PAT{pat.PatNum}");
 						if(Security.CurUser!=null && Security.CurUser.EServiceType==EServiceTypes.None) {//Not an eService, a valid user is logged in.
-							xmlWriter.WriteElementString("CLERK",Security.CurUser.UserName);
+							xmlWriter.WriteElementString("CLERK",userName);
 						}
 						break;
 					case EdgeExpressTransType.CreditReturn:
@@ -365,7 +373,7 @@ namespace OpenDentBusiness {
 						}
 						xmlWriter.WriteElementString("INVOICENO",$"PAT{pat.PatNum}");
 						if(Security.CurUser!=null && Security.CurUser.EServiceType==EServiceTypes.None) {//Not an eService, a valid user is logged in.
-							xmlWriter.WriteElementString("CLERK",Security.CurUser.UserName);
+							xmlWriter.WriteElementString("CLERK",userName);
 						}
 						break;
 					case EdgeExpressTransType.CreditVoid:
@@ -381,7 +389,7 @@ namespace OpenDentBusiness {
 						xmlWriter.WriteElementString("TRANSACTIONID",transactionID);
 						xmlWriter.WriteElementString("INVOICENO",$"PAT{pat.PatNum}");
 						if(Security.CurUser!=null && Security.CurUser.EServiceType==EServiceTypes.None) {//Not an eService, a valid user is logged in.
-							xmlWriter.WriteElementString("CLERK",Security.CurUser.UserName);
+							xmlWriter.WriteElementString("CLERK",userName);
 						}
 						break;
 					case EdgeExpressTransType.QueryPayment:
@@ -397,7 +405,7 @@ namespace OpenDentBusiness {
 					case EdgeExpressTransType.DebitSale:
 					case EdgeExpressTransType.DebitReturn:
 						if(Security.CurUser!=null && Security.CurUser.EServiceType==EServiceTypes.None) {//Not an eService, a valid user is logged in.
-							xmlWriter.WriteElementString("CLERK",Security.CurUser.UserName);
+							xmlWriter.WriteElementString("CLERK",userName);
 						}
 						break;
 				}

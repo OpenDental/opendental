@@ -200,12 +200,12 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Creates charge rows for display on the form from the data table input. Similar to CreateRowForPayPlanCharge but for use with sheets/datatables.</summary>
-		public static DataRow CreateRowForPayPlanChargeDT(DataTable table,PayPlanCharge payPlanCharge,int payPlanChargeOrdinal,bool isDynamic) {
+		public static DataRow CreateRowForPayPlanChargeDT(DataTable table,PayPlanCharge payPlanCharge,int payPlanChargeOrdinal,bool isDynamic,bool hasExpectedChargesAwaitingCompletion=false) {
 			DataRow retVal=table.NewRow();
 			string chargeDate=payPlanCharge.ChargeDate.ToShortDateString();
 			string interestAmt=payPlanCharge.Interest.ToString("f");
 			string paymentDue=(payPlanCharge.Principal+payPlanCharge.Interest).ToString("n");
-			string descript="#"+(payPlanChargeOrdinal+1);
+			string descript="";
 			//MaxValue to check for treatment planned status.
 			if(isDynamic && payPlanCharge.LinkType==PayPlanLinkType.Procedure) {
 				Procedure curProc=Procedures.GetOneProc(payPlanCharge.FKey,false);
@@ -214,7 +214,6 @@ namespace OpenDentBusiness {
 						chargeDate="TBD";
 						interestAmt="TBD";
 						paymentDue="TBD";
-						descript="#-";
 					}
 					ProcedureCode curProcCode=ProcedureCodes.GetProcCodeFromDb(curProc.CodeNum);
 					if(curProcCode!=null) {
@@ -225,18 +224,28 @@ namespace OpenDentBusiness {
 					}
 				}
 			}
-			if(isDynamic && payPlanCharge.LinkType==PayPlanLinkType.Adjustment) {
-				descript+=" - "+Lans.g("Pay Plan Edit","Adjustment");
-       }
-			if(payPlanCharge.Note!="") {
+			else if(!isDynamic) {
+				descript="#"+(payPlanChargeOrdinal+1);
+			}
+			if(!payPlanCharge.Note.IsNullOrEmpty()) {
 				descript+=" "+payPlanCharge.Note;
 				//Don't add a # if it's a recalculated charge because they aren't "true" payplan charges.
 				if(payPlanCharge.Note.Trim().ToLower().Contains("recalculated based on")) {
 					descript=payPlanCharge.Note;
 				}
 			}
+			if(isDynamic) {
+				if(chargeDate=="TBD") {
+					retVal["ChargeNum"]="TBD";
+				}
+				else {
+					retVal["ChargeNum"]=payPlanChargeOrdinal+1;
+				}
+			}
 			retVal["ChargeDate"]=chargeDate;//0 Date
-			retVal["Provider"]=Providers.GetAbbr(payPlanCharge.ProvNum);//1 Prov Abbr
+			if(hasExpectedChargesAwaitingCompletion || !isDynamic) {
+					retVal["Provider"]=Providers.GetAbbr(payPlanCharge.ProvNum);//1 Prov Abbr
+			}
 			retVal["Description"]=descript;//2 Descript
 			if(payPlanCharge.Principal<0) { //it's a patient payment plan adjustment (non-dynamic)
 				retVal["Principal"]="";
@@ -308,16 +317,25 @@ namespace OpenDentBusiness {
 		///<summary>Creates pay plan split rows for display on the form from the data table input. Similar to CreateRowForPayPlanSplit but for use with sheets/datatables.</summary>
 		public static DataRow CreateRowForPayPlanSplitDT(DataTable table,PaySplit payPlanSplit,DataRow rowBundlePayment,bool isDynamic) {
 			DataRow retVal=table.NewRow();
-			string descript=Defs.GetName(DefCat.PaymentTypes,PIn.Long(rowBundlePayment["PayType"].ToString()));
-			if(rowBundlePayment["CheckNum"].ToString()!="") {
-				descript+=" #"+rowBundlePayment["CheckNum"].ToString();
+			string descript="";
+			if(isDynamic) {
+				retVal["ChargeNum"]="";
+				descript="Payment";
 			}
-			descript+=" "+payPlanSplit.SplitAmt.ToString("c");
-			if(PIn.Double(rowBundlePayment["PayAmt"].ToString())!=payPlanSplit.SplitAmt) {
-				descript+=Lans.g("FormPayPlan","(split)");
+			else {
+				descript=Defs.GetName(DefCat.PaymentTypes,PIn.Long(rowBundlePayment["PayType"].ToString()));
+				if(rowBundlePayment["CheckNum"].ToString()!="") {
+					descript+=" #"+rowBundlePayment["CheckNum"].ToString();
+				}
+				descript+=" "+payPlanSplit.SplitAmt.ToString("c");
+				if(PIn.Double(rowBundlePayment["PayAmt"].ToString())!=payPlanSplit.SplitAmt) {
+					descript+=Lans.g("FormPayPlan","(split)");
+				}
 			}
 			retVal["ChargeDate"]=payPlanSplit.DatePay.ToShortDateString();//0 Date
-			retVal["Provider"]=Providers.GetAbbr(PIn.Long(rowBundlePayment["ProvNum"].ToString()));//1 Prov Abbr
+			if(!isDynamic) {
+				retVal["Provider"]=Providers.GetAbbr(PIn.Long(rowBundlePayment["ProvNum"].ToString()));//1 Prov Abbr
+			}
 			retVal["Description"]=descript;//2 Descript
 			retVal["Principal"]=0.ToString("f");//3 Principal
 			retVal["Interest"]=0.ToString("f");//4 Interest 
@@ -389,6 +407,68 @@ namespace OpenDentBusiness {
 				return x["Type"].ToString().CompareTo(y["Type"].ToString());//charges first; I.e. "charge".CompareTo("pay") will return charge first
 			}
 			return x["Description"].ToString().CompareTo(y["Description"].ToString());//Sort by description. 
+		}
+
+		public static int CompareDynamicPayPlanRowsDT(DataRow x,DataRow y) {
+			DateTime dateTimeX=PIn.Date(x["ChargeDate"].ToString());
+			DateTime dateTimeY=PIn.Date(y["ChargeDate"].ToString()); 
+			if(x["chargeDate"].ToString()=="TBD") {
+				dateTimeX=DateTime.MaxValue;
+			}
+			if(y["ChargeDate"].ToString()=="TBD") {
+				dateTimeY=DateTime.MaxValue;
+			}
+			if(dateTimeX.Date!=dateTimeY.Date) {
+				return dateTimeX.CompareTo(dateTimeY);// sort by date
+			}
+			if(x["Type"].ToString()!=y["Type"].ToString()) {
+				return x["Type"].ToString().CompareTo(y["Type"].ToString());//charges first; I.e. "charge".CompareTo("pay") will return charge first
+			}
+			return 0;
+		}
+
+		///<summary>Fills the passed in dataTable with rows for all charges in DB, expected charges, pay splits consolidated by date.
+		///listPayPlanCharges must be sorted by ChargeDate in ascending order with expected charges awaiting completion at the end.</summary>
+		public static void AddRowsForDynamicPayPlanDT(DataTable dataTablePayPlan,PayPlan payPlan,List<PayPlanCharge> listPayPlanCharges,List<PaySplit> listPaySplits,bool hasExpectedChargesAwaitingCompletion) {
+			List<PayPlanCharge> listPayPlanChargesMerged=new List<PayPlanCharge>();
+			List<PaySplit> listPaySplitsMerged=new List<PaySplit>();
+			//Treatment planned procedures awaiting completion have a ChargeDate of DateTime.MaxValue.
+			List<DateTime> listChargeDates=listPayPlanCharges.Select(x=>x.ChargeDate).Distinct().ToList().FindAll(x=>x!=DateTime.MaxValue);
+			for(int i=0;i<listChargeDates.Count;i++) {
+				List<PayPlanCharge> listPayPlanChargesForDate=listPayPlanCharges.FindAll(x=>x.ChargeDate==listChargeDates[i]);
+				double principal=listPayPlanChargesForDate.Sum(x=>x.Principal);
+				double interest=listPayPlanChargesForDate.Sum(x=>x.Interest);
+				PayPlanCharge payplanChargeMerged=new PayPlanCharge();
+				payplanChargeMerged.Principal=principal;
+				payplanChargeMerged.Interest=interest;
+				payplanChargeMerged.ChargeDate=listChargeDates[i];
+				listPayPlanChargesMerged.Add(payplanChargeMerged);
+			}
+			listPayPlanChargesMerged.AddRange(listPayPlanCharges.FindAll(x=>x.ChargeDate==DateTime.MaxValue));
+			List<DataRow> listPayPlanDataRows=new List<DataRow>();
+			for(int i=0;i<listPayPlanChargesMerged.Count;i++) {
+				listPayPlanDataRows.Add(PayPlanEdit.CreateRowForPayPlanChargeDT(dataTablePayPlan,listPayPlanChargesMerged[i],i,payPlan.IsDynamic,hasExpectedChargesAwaitingCompletion));
+			}
+			List<long> listPayNums=listPaySplits.Select(x=>x.PayNum).Distinct().ToList();
+			for(int i=0;i<listPayNums.Count;i++) {
+				List<PaySplit> listPaySplitsForPayment=listPaySplits.FindAll(x=>x.PayNum==listPayNums[i]);
+				double sumSplitAmt=listPaySplitsForPayment.Sum(x=>x.SplitAmt);
+				PaySplit paySplitMerged=new PaySplit();
+				paySplitMerged.SplitAmt=sumSplitAmt;
+				paySplitMerged.DatePay=listPaySplitsForPayment[0].DatePay;
+				listPaySplitsMerged.Add(paySplitMerged);
+			}
+			//===payplan payments===
+			DataTable bundledPayments=PaySplits.GetForPayPlan(payPlan.PayPlanNum);
+			for(int i = 0;i<listPaySplitsMerged.Count;i++) {
+				listPayPlanDataRows.Add(PayPlanEdit.CreateRowForPayPlanSplitDT(dataTablePayPlan,listPaySplitsMerged[i],bundledPayments.Rows[i],payPlan.IsDynamic));
+			}
+			//Sort rows based on date and type ===============================================================================
+			listPayPlanDataRows.Sort(PayPlanEdit.CompareDynamicPayPlanRowsDT);
+			//Fill sorted data rows to sortRetVal DataTable ===============================================================================
+			for(int i = 0;i<listPayPlanDataRows.Count;i++) {
+				dataTablePayPlan.Rows.Add(listPayPlanDataRows[i]);
+			}
 		}
 
 		///<summary>Creates one PayPlanCharge debit whose principal is the sum of all credits minus the sum of all past debits.</summary>

@@ -319,6 +319,8 @@ namespace OpenDentBusiness{
 					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="facilityID",Description="Lab",ColumnWidth=28,ItemOrder=++i });
 					break;
 				case "PayPlanMain":
+					retVal.Add(new DisplayField
+						{ Category=DisplayFieldCategory.None,InternalName="ChargeNum",Description="Charge #",ColumnWidth=60,ItemOrder=++i });
 					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="ChargeDate",Description="Date",ColumnWidth=75,ItemOrder=++i });
 					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="Provider",Description="Provider",ColumnWidth=60,ItemOrder=++i });
 					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="Description",Description="Description",ColumnWidth=140,ItemOrder=++i });
@@ -802,9 +804,14 @@ namespace OpenDentBusiness{
 				columns.RemoveAll(x => x.InternalName=="PatNum");
 			}
 			if(sheet.SheetType==SheetTypeEnum.PaymentPlan) {
-				PayPlan payPlan=(PayPlan)SheetParameter.GetParamByName(sheet.Parameters,"payplan").ParamValue;
-				if(payPlan.IsDynamic) {
-					columns.RemoveAll(x => x.InternalName=="Adjustment");
+				if(!table.Columns.Contains("Adjustment")) {
+					columns.RemoveAll(x=>x.InternalName=="Adjustment");
+				}
+				if(!table.Columns.Contains("Provider")) {
+					columns.RemoveAll(x=>x.InternalName=="Provider");
+				}
+				if(!table.Columns.Contains("ChargeNum")) {
+					columns.RemoveAll(x=>x.InternalName=="ChargeNum");
 				}
 			}
 			bool isDiscountPlan=false;

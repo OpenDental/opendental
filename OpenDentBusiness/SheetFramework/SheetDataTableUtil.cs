@@ -37,7 +37,13 @@ namespace OpenDentBusiness.SheetFramework {
 					retVal=GetTable_MedLabResults(medLab);
 					break;
 				case "PayPlanMain":
-					retVal=GetTable_PayPlanMain(sheet);
+					PayPlan payPlan=(PayPlan)SheetParameter.GetParamByName(sheet.Parameters,"payplan").ParamValue;
+					if(payPlan.IsDynamic) {
+						retVal=GetTable_DynamicPayPlanMain(sheet);
+					}
+					else {
+						retVal=GetTable_PatientPayPlanMain(sheet);
+					}
 					break;
 				case "TreatPlanMain":
 					retVal=GetTable_TreatPlanMain(sheet);
@@ -445,7 +451,7 @@ namespace OpenDentBusiness.SheetFramework {
 			return retval;
 		}
 
-		private static DataTable GetTable_PayPlanMain(Sheet sheet) {
+		private static DataTable GetTable_PatientPayPlanMain(Sheet sheet) {
 			PayPlan payPlan=(PayPlan)SheetParameter.GetParamByName(sheet.Parameters,"payplan").ParamValue;
 			//Construct empty Data table ===============================================================================
 			DataTable retVal=new DataTable();
@@ -457,11 +463,7 @@ namespace OpenDentBusiness.SheetFramework {
 				new DataColumn("Interest",typeof(string)),
 				new DataColumn("Due",typeof(string)),
 				new DataColumn("Payment",typeof(string)),
-			});
-			if(!payPlan.IsDynamic) {
-				retVal.Columns.Add(new DataColumn("Adjustment",typeof(string)));
-			}
-			retVal.Columns.AddRange(new[] {
+				new DataColumn("Adjustment",typeof(string)),
 				new DataColumn("Balance",typeof(string)),
 				new DataColumn("Type",typeof(string)),
 				new DataColumn("paramIsBold",typeof(bool)),
@@ -472,24 +474,11 @@ namespace OpenDentBusiness.SheetFramework {
 			}
 			//Fill data table if neccessary ===============================================================================
 			List<PayPlanCharge> payPlanChargeList=PayPlanCharges.GetForPayPlan(payPlan.PayPlanNum);
-			if(payPlan.IsDynamic) {
-				List<PayPlanLink> listPayPlanLinks=PayPlanLinks.GetListForPayplan(payPlan.PayPlanNum);
-				PayPlanTerms terms=PayPlanEdit.GetPayPlanTerms(payPlan,listPayPlanLinks);
-				List<PayPlanCharge> listExpectedCharges=PayPlanEdit.GetListExpectedCharges(payPlanChargeList
-					,terms,Patients.GetFamily(payPlan.PatNum),listPayPlanLinks,payPlan,false);
-				if(payPlan.DynamicPayPlanTPOption==DynamicPayPlanTPOptions.AwaitComplete) {
-					listExpectedCharges.AddRange(PayPlanEdit.GetListExpectedChargesAwaitingCompletion(payPlanChargeList
-					,terms,Patients.GetFamily(payPlan.PatNum),listPayPlanLinks,payPlan,false));
-				}
-				payPlanChargeList.AddRange(listExpectedCharges);
-			}
 			DataTable bundledPayments=PaySplits.GetForPayPlan(payPlan.PayPlanNum);
 			List<PaySplit> payPlanSplitList=PaySplits.GetFromBundled(bundledPayments);
 			DataTable bundledClaimProcs=ClaimProcs.GetBundlesForPayPlan(payPlan.PayPlanNum);
 			int count=0;//used to set Note decription
 						//===payplan charges===
-			DateTime prevPeriod=DateTime.MinValue;
-			int periodNum=-1;//Negative to offset the original functionality
 			for(int i = 0;i<payPlanChargeList.Count;i++) {
 				if(payPlanChargeList[i].Note.Trim().ToLower().Contains("recalculated based on")
 					|| payPlanChargeList[i].Note.Trim().ToLower().Contains("expected")) //from clasic pay plan print outs.
@@ -501,16 +490,7 @@ namespace OpenDentBusiness.SheetFramework {
 					count++;
 					continue;//hide credits from the amortization grid.
 				}
-        if(payPlan.IsDynamic) {
-					if(prevPeriod!=payPlanChargeList[i].ChargeDate) {
-						prevPeriod=payPlanChargeList[i].ChargeDate;
-						periodNum++;
-          }
-					retVal.Rows.Add(PayPlanEdit.CreateRowForPayPlanChargeDT(retVal,payPlanChargeList[i],periodNum,payPlan.IsDynamic));
-				} 
-				else {
-					retVal.Rows.Add(PayPlanEdit.CreateRowForPayPlanChargeDT(retVal,payPlanChargeList[i],i-count,payPlan.IsDynamic));
-				}
+        retVal.Rows.Add(PayPlanEdit.CreateRowForPayPlanChargeDT(retVal,payPlanChargeList[i],i-count,payPlan.IsDynamic));
 			}
 			//===payplan payments===
 			if(payPlan.PlanNum==0) {//===normal payplan===
@@ -531,24 +511,11 @@ namespace OpenDentBusiness.SheetFramework {
 			payPlanList=payPlanList.OrderBy(x=>x["ChargeDate"].ToString()=="TBD").ToList();
 			//Fill sorted data rows to sortRetVal DataTable ===============================================================================
 			DataTable sortRetVal=retVal.Clone();
-			prevPeriod=DateTime.MinValue; //Only for dynamic pay plan.
-			periodNum=-1;//Negative to offset the original functionality. Only for dynamic pay plan.
 			for(int i = 0;i<payPlanList.Count;i++) {
 				if(PIn.Double(payPlanList[i][6].ToString()) > 0) {//payment
 					count++;
 				}
-        if(payPlan.IsDynamic) {
-					//Since the entries are sorted by date, period will only increase if the previous period was a different date. 
-					PayPlanEdit.PayPlanEntryType entryType=(PayPlanEdit.PayPlanEntryType)Enum.Parse(typeof(PayPlanEdit.PayPlanEntryType),PIn.String(payPlanList[i][8].ToString()));
-					if(prevPeriod!=PIn.Date(payPlanList[i][0].ToString()) && entryType!=PayPlanEdit.PayPlanEntryType.pay) {
-						prevPeriod=PIn.Date(payPlanList[i][0].ToString());
-						periodNum++;
-					}
-					sortRetVal.Rows.Add(PayPlanEdit.CreateRowForPayPlanListDT(sortRetVal,payPlanList[i],periodNum,payPlan.IsDynamic));
-				} 
-				else {
-					sortRetVal.Rows.Add(PayPlanEdit.CreateRowForPayPlanListDT(sortRetVal,payPlanList[i],i-count,payPlan.IsDynamic));
-				}
+        sortRetVal.Rows.Add(PayPlanEdit.CreateRowForPayPlanListDT(sortRetVal,payPlanList[i],i-count,payPlan.IsDynamic));
 			}
 			//Calculate running totals and add to sortRetVal DataTable ===============================================================================
 			double totPrincipal=0;
@@ -564,9 +531,7 @@ namespace OpenDentBusiness.SheetFramework {
 				double rowDue=PIn.Double(rowTemp["Due"].ToString());
 				double rowPayment=PIn.Double(rowTemp["Payment"].ToString());
 				double rowAdjustment=0;
-				if(!payPlan.IsDynamic) {
-					rowAdjustment=PIn.Double(rowTemp["Adjustment"].ToString());
-				}
+				rowAdjustment=PIn.Double(rowTemp["Adjustment"].ToString());
 				totPrincipal+=rowPrincipal;
 				totInterest+=rowInterest;
 				totDue+=rowDue;
@@ -593,12 +558,94 @@ namespace OpenDentBusiness.SheetFramework {
 			totalRow["Interest"]=totInterest.ToString("n");
 			totalRow["Due"]=totDue.ToString("n");
 			totalRow["Payment"]=totPayment.ToString("n");
-			if(!payPlan.IsDynamic) {
-				totalRow["Adjustment"]=totAdjustment.ToString("n");
-			}
+			totalRow["Adjustment"]=totAdjustment.ToString("n");
 			totalRow["paramIsBold"]=true;
 			sortRetVal.Rows.Add(totalRow);
 			return sortRetVal;
+		}
+
+		private static DataTable GetTable_DynamicPayPlanMain(Sheet sheet) {
+			PayPlan payPlan=(PayPlan)SheetParameter.GetParamByName(sheet.Parameters,"payplan").ParamValue;
+			List<PayPlanCharge> listPayPlanCharges=PayPlanCharges.GetForPayPlan(payPlan.PayPlanNum);
+			List<PayPlanLink> listPayPlanLinks=PayPlanLinks.GetListForPayplan(payPlan.PayPlanNum);
+			PayPlanTerms terms=PayPlanEdit.GetPayPlanTerms(payPlan,listPayPlanLinks);
+			Family family=Patients.GetFamily(payPlan.PatNum);
+			List<PayPlanCharge> listExpectedCharges=PayPlanEdit.GetListExpectedCharges(listPayPlanCharges
+				,terms,family,listPayPlanLinks,payPlan,false);
+			bool hasExpectedChargesAwaitingCompletion=false;
+			if(payPlan.DynamicPayPlanTPOption==DynamicPayPlanTPOptions.AwaitComplete) {
+				List<PayPlanCharge> listExpectedPayPlanChargesAwaitingCompletion=PayPlanEdit.GetListExpectedChargesAwaitingCompletion(listPayPlanCharges
+				,terms,family,listPayPlanLinks,payPlan,false);
+				if(listExpectedPayPlanChargesAwaitingCompletion.Count>0) {
+					hasExpectedChargesAwaitingCompletion=true;
+				}
+				listExpectedCharges.AddRange(listExpectedPayPlanChargesAwaitingCompletion);
+			}
+			listPayPlanCharges.AddRange(listExpectedCharges);
+			//Construct empty Data table ===============================================================================
+			DataTable dataTablePayPlan=new DataTable();
+			dataTablePayPlan.Columns.AddRange(new[] {
+				new DataColumn("ChargeNum",typeof(string)),
+				new DataColumn("ChargeDate",typeof(string)),
+			});
+			if(hasExpectedChargesAwaitingCompletion) {
+				dataTablePayPlan.Columns.Add(new DataColumn("Provider",typeof(string)));
+			}
+			dataTablePayPlan.Columns.AddRange(new[] {
+				new DataColumn("Description",typeof(string)),
+				new DataColumn("Principal",typeof(string)),
+				new DataColumn("Interest",typeof(string)),
+				new DataColumn("Due",typeof(string)),
+				new DataColumn("Payment",typeof(string)),
+				new DataColumn("Balance",typeof(string)),
+				new DataColumn("Type",typeof(string)),
+				new DataColumn("paramIsBold",typeof(bool)),
+			});
+			Patient patCur=Patients.GetPat(payPlan.PatNum);
+			if(payPlan.PatNum==0 || patCur==null) {//Pay plan should never exist without a patnum or be null.
+				return dataTablePayPlan;//return an empty data table that has the correct format.
+			}
+			//Fill data table if neccessary ===============================================================================
+			List<PaySplit> listPaySplits=PaySplits.GetForPayPlans(new List<long>(){ payPlan.PayPlanNum });
+			//=============This is where you need to merge the rows for Pay Plan Charges and Pay Plan Splits==============================
+			PayPlanEdit.AddRowsForDynamicPayPlanDT(dataTablePayPlan,payPlan,listPayPlanCharges,listPaySplits,hasExpectedChargesAwaitingCompletion);
+			//Calculate running totals and add to sortRetVal DataTable ===============================================================================
+			double totPrincipal=0;
+			double totInterest=0;
+			double totDue=0;
+			double totPayment=0;
+			double runningBalance=0;
+			for(int i=0;i<dataTablePayPlan.Rows.Count;i++) {
+				DataRow rowTemp=dataTablePayPlan.Rows[i];
+				double rowPrincipal=PIn.Double(rowTemp["Principal"].ToString());
+				double rowInterest=PIn.Double(rowTemp["Interest"].ToString());
+				double rowDue=PIn.Double(rowTemp["Due"].ToString());
+				double rowPayment=PIn.Double(rowTemp["Payment"].ToString());
+				totPrincipal+=rowPrincipal;
+				totInterest+=rowInterest;
+				totDue+=rowDue;
+				totPayment+=rowPayment;
+				if(rowDue>0) {
+					runningBalance+=rowDue;
+				}
+				if(rowPayment==0) {
+					rowTemp["Payment"]=0.ToString("n");
+				}
+				else {
+					runningBalance-=rowPayment;
+				}
+				rowTemp["Balance"]=runningBalance.ToString("n");
+				rowTemp["paramIsBold"]=false;
+			}
+			DataRow totalRow=dataTablePayPlan.NewRow();
+			//Fill payment and balance columns/cells to sortRetVal ===============================================================================
+			totalRow["Principal"]=totPrincipal.ToString("n");
+			totalRow["Interest"]=totInterest.ToString("n");
+			totalRow["Due"]=totDue.ToString("n");
+			totalRow["Payment"]=totPayment.ToString("n");
+			totalRow["paramIsBold"]=true;
+			dataTablePayPlan.Rows.Add(totalRow);
+			return dataTablePayPlan;
 		}
 
 		private static DataTable GetTable_TreatPlanMain(Sheet sheet) {

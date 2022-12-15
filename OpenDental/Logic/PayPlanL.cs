@@ -60,6 +60,32 @@ namespace OpenDental {
 			//their charge number.  Might order payments by check number as well.
 		}
 
+		public static int CompareMergedPayPlanRows(GridRow x,GridRow y) {
+			DateTime dateTimeX=DateTime.Parse(x.Cells[1].Text);
+			DateTime dateTimeY=DateTime.Parse(y.Cells[1].Text);
+			DynamicPayPlanRowData rowDataX=(DynamicPayPlanRowData)x.Tag;
+			DynamicPayPlanRowData rowDataY=(DynamicPayPlanRowData)x.Tag;
+			if(dateTimeX<dateTimeY) {
+				return -1;
+			}
+			else if(dateTimeX>dateTimeY) {
+				return 1;
+			}
+			//Show charges before Payment on the same date.
+			if(rowDataX.IsChargeRow()) {//x is charge (Type.Equals doesn't seem to work in sorters for some reason)
+				if(rowDataY.IsPaymentRow()) {//y is credit, x goes first
+					return -1;
+				}
+			}
+			else {//x is credit
+				if(rowDataY.IsChargeRow()) {//y is charge
+					return 1;
+				}
+				//x and y are both Payments
+			}
+			return 0;
+		}
+
 		public static GridRow CreateRowForPayPlanCharge(PayPlanCharge payPlanCharge,int payPlanChargeOrdinal,bool isDynamic=false) {
 			string descript="#"+payPlanChargeOrdinal;
 			if(isDynamic && payPlanCharge.LinkType==PayPlanLinkType.Procedure) {
@@ -124,7 +150,7 @@ namespace OpenDental {
 			return row;
 		}
 
-		public static GridRow CreateRowForPaySplit(DataRow rowBundlePayment,PaySplit paySplit,bool isDynamic=false) {
+		public static GridRow CreateRowForPatientPayPlanSplit(DataRow rowBundlePayment,PaySplit paySplit) {
 			string descript=Defs.GetName(DefCat.PaymentTypes,PIn.Long(rowBundlePayment["PayType"].ToString()));
 			if(rowBundlePayment["CheckNum"].ToString()!="") {
 				descript+=" #"+rowBundlePayment["CheckNum"].ToString();
@@ -141,9 +167,7 @@ namespace OpenDental {
 			row.Cells.Add("");//4 Interest
 			row.Cells.Add("");//5 Due
 			row.Cells.Add(paySplit.SplitAmt.ToString("n"));//6 Payment
-			if(!isDynamic) {
-				row.Cells.Add("");//7 Adjustment - Does not exist for dynamic payment plans
-			}
+			row.Cells.Add("");//7 Adjustment - Does not exist for dynamic payment plans
 			row.Cells.Add("");//8 Balance (filled later)
 			row.Tag=paySplit;
 			row.ColorText=Defs.GetDefByExactName(DefCat.AccountColors,"Payment").ItemColor;
@@ -244,5 +268,67 @@ namespace OpenDental {
 							(payPlanCur.PlanNum == 0 ? "Patient" : "Insurance") + " Payment Plan closed.",payPlanOld.PayPlanNum,DateTime.MinValue);
 			}
 		}
+
+		/// <summary>Creates a list of GridRows where PayPlanCharges are merged into 1 row with the same date, and PaySplits with the same PayNum. Returns the list with 1 Row for 1 date set of charges, and 1 Row for 1 Set of paysplits grouped by PayNum. listPayPlanCharges needs to be sorted by ChargeDate in ascending order.</summary>
+		public static List<GridRow> CreateRowsForDynamicPayPlanCharges(List<PayPlanCharge> listPayPlanCharges,List<PaySplit> listPaySplits) {
+			List<GridRow> listGridRowsMerged=new List<GridRow>();
+			List<DateTime> listChargeDates=listPayPlanCharges.Select(x => x.ChargeDate).Distinct().ToList();
+			for(int i=0;i<listChargeDates.Count;i++) {
+				List<PayPlanCharge> listPayPlanChargesForDate=listPayPlanCharges.FindAll(x=>x.ChargeDate==listChargeDates[i]);
+				double principal=listPayPlanChargesForDate.Sum(x=>x.Principal);
+				double interest=listPayPlanChargesForDate.Sum(x=>x.Interest);
+				double due=principal+interest;
+				GridRow row=new GridRow();
+				row.Cells.Add((i+1).ToString());
+				row.Cells.Add(listChargeDates[i].ToShortDateString());
+				row.Cells.Add("");
+				row.Cells.Add(principal.ToString("n"));
+				row.Cells.Add(interest.ToString("n"));
+				row.Cells.Add(due.ToString("n"));
+				row.Cells.Add("");
+				row.Cells.Add("");//6 Balance (filled later)
+				if(listPayPlanChargesForDate.Any(x => x.PayPlanChargeNum==0)) {
+					row.ColorText=System.Drawing.Color.Gray;//it isn't an actual charge yet, it hasn't come due and been inserted into the database. 
+				}
+				row.Tag=new DynamicPayPlanRowData() {
+					ListPayPlanChargeNums=listPayPlanChargesForDate.Select(x => x.PayPlanChargeNum).ToList()
+				};
+				listGridRowsMerged.Add(row);
+			}
+			List<long> listPayNums=listPaySplits.Select(x=>x.PayNum).Distinct().ToList(); 
+			for(int i=0;i<listPayNums.Count;i++) {
+				List<PaySplit> listPaySplitsForPayment=listPaySplits.FindAll(x=>x.PayNum==listPayNums[i]);
+				string datePay=listPaySplitsForPayment[0].DatePay.ToShortDateString();
+				double sumSplitAmt=listPaySplitsForPayment.Sum(x=>x.SplitAmt);
+				GridRow row=new GridRow();
+				row.Cells.Add("");//0 Charge number
+				row.Cells.Add(datePay);//1 Date
+				row.Cells.Add("Payment");//2 Description
+				row.Cells.Add("");//3 Principal
+				row.Cells.Add("");//4 Interest
+				row.Cells.Add("");//5 Due
+				row.Cells.Add(sumSplitAmt.ToString("n"));//6 Payment
+				row.Cells.Add("");//7 Balance (filled later)
+				row.ColorText=Defs.GetDefByExactName(DefCat.AccountColors,"Payment").ItemColor;
+				row.Tag=new DynamicPayPlanRowData() {
+					PayNum=listPayNums[i]
+				};
+				listGridRowsMerged.Add(row);
+			}
+			listGridRowsMerged.Sort(PayPlanL.CompareMergedPayPlanRows);
+			return listGridRowsMerged;
+		}
 	}
+
+	public class DynamicPayPlanRowData {
+		public List<long> ListPayPlanChargeNums=new List<long>();
+		public long PayNum=0;
+		public bool IsChargeRow() {
+			return ListPayPlanChargeNums.Count>0;
+		}
+		public bool IsPaymentRow() {
+			return PayNum!=0;
+		}
+	}
+
 }

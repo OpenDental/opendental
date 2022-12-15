@@ -385,14 +385,19 @@ namespace OpenDentBusiness {
 			}
 			int _yAdjCurRow=0;//used to adjust for Titles, Headers, Rows, and footers (all considered part of the same row).
 			List<DisplayField> listDisplayFields=SheetUtil.GetGridColumnsAvailable(field.FieldName);
-			if(sheet.SheetType==SheetTypeEnum.PaymentPlan) {
-				PayPlan payPlan=(PayPlan)SheetParameter.GetParamByName(sheet.Parameters,"payplan").ParamValue;
-				if(payPlan.IsDynamic) {
-					listDisplayFields.RemoveAll(x => x.InternalName=="Adjustment");
-				}
-			}
 			if(table==null) {
 				table=SheetDataTableUtil.GetDataTableForGridType(sheet,dataSet,field.FieldName,stmt,medLab,patGuar: patGuar);
+			}
+			if(sheet.SheetType==SheetTypeEnum.PaymentPlan) {
+				if(!table.Columns.Contains("Adjustment")) {
+					listDisplayFields.RemoveAll(x=>x.InternalName=="Adjustment");
+				}
+				if(!table.Columns.Contains("Provider")) {
+					listDisplayFields.RemoveAll(x=>x.InternalName=="Provider");
+				}
+				if(!table.Columns.Contains("ChargeNum")) {
+					listDisplayFields.RemoveAll(x=>x.InternalName=="ChargeNum");
+				}
 			}
 			if(field.FieldName=="TreatPlanMain") {
 				TreatPlanType tpType=(TreatPlanType)PIn.Int(table.Rows[0]["paramTreatPlanType"].ToString());

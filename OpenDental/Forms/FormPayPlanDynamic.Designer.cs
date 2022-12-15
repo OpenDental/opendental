@@ -833,7 +833,7 @@ namespace OpenDental {
 			// textBalanceSum
 			// 
 			this.textBalanceSum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBalanceSum.Location = new System.Drawing.Point(557, 475);
+			this.textBalanceSum.Location = new System.Drawing.Point(410, 455);
 			this.textBalanceSum.MaxVal = 100000000D;
 			this.textBalanceSum.MinVal = -100000000D;
 			this.textBalanceSum.Name = "textBalanceSum";
@@ -846,7 +846,7 @@ namespace OpenDental {
 			// 
 			this.checkExcludePast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkExcludePast.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkExcludePast.Location = new System.Drawing.Point(2, 477);
+			this.checkExcludePast.Location = new System.Drawing.Point(2, 478);
 			this.checkExcludePast.Name = "checkExcludePast";
 			this.checkExcludePast.Size = new System.Drawing.Size(144, 17);
 			this.checkExcludePast.TabIndex = 198;
@@ -858,7 +858,7 @@ namespace OpenDental {
 			// textDueSum
 			// 
 			this.textDueSum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.textDueSum.Location = new System.Drawing.Point(407, 475);
+			this.textDueSum.Location = new System.Drawing.Point(260, 455);
 			this.textDueSum.Name = "textDueSum";
 			this.textDueSum.ReadOnly = true;
 			this.textDueSum.Size = new System.Drawing.Size(76, 20);
@@ -868,7 +868,7 @@ namespace OpenDental {
 			// textInterestSum
 			// 
 			this.textInterestSum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.textInterestSum.Location = new System.Drawing.Point(340, 475);
+			this.textInterestSum.Location = new System.Drawing.Point(193, 455);
 			this.textInterestSum.Name = "textInterestSum";
 			this.textInterestSum.ReadOnly = true;
 			this.textInterestSum.Size = new System.Drawing.Size(68, 20);
@@ -878,7 +878,7 @@ namespace OpenDental {
 			// textPaymentSum
 			// 
 			this.textPaymentSum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.textPaymentSum.Location = new System.Drawing.Point(482, 475);
+			this.textPaymentSum.Location = new System.Drawing.Point(335, 455);
 			this.textPaymentSum.MaxVal = 100000000D;
 			this.textPaymentSum.MinVal = -100000000D;
 			this.textPaymentSum.Name = "textPaymentSum";
@@ -890,7 +890,7 @@ namespace OpenDental {
 			// textPrincipalSum
 			// 
 			this.textPrincipalSum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.textPrincipalSum.Location = new System.Drawing.Point(265, 475);
+			this.textPrincipalSum.Location = new System.Drawing.Point(118, 455);
 			this.textPrincipalSum.MaxVal = 100000000D;
 			this.textPrincipalSum.MinVal = -100000000D;
 			this.textPrincipalSum.Name = "textPrincipalSum";
@@ -903,7 +903,7 @@ namespace OpenDental {
 			// 
 			this.labelTotals.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.labelTotals.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelTotals.Location = new System.Drawing.Point(154, 477);
+			this.labelTotals.Location = new System.Drawing.Point(8, 457);
 			this.labelTotals.Name = "labelTotals";
 			this.labelTotals.Size = new System.Drawing.Size(104, 18);
 			this.labelTotals.TabIndex = 195;
@@ -917,7 +917,7 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridCharges.Location = new System.Drawing.Point(3, 3);
 			this.gridCharges.Name = "gridCharges";
-			this.gridCharges.Size = new System.Drawing.Size(659, 472);
+			this.gridCharges.Size = new System.Drawing.Size(659, 451);
 			this.gridCharges.TabIndex = 191;
 			this.gridCharges.Tag = "";
 			this.gridCharges.Title = "Amortization Schedule";
@@ -1049,7 +1049,6 @@ namespace OpenDental {
 			this.warningIntegrity1.Name = "warningIntegrity1";
 			this.warningIntegrity1.Size = new System.Drawing.Size(18, 18);
 			this.warningIntegrity1.TabIndex = 203;
-			this.warningIntegrity1.Text = "warningIntegrity1";
 			// 
 			// FormPayPlanDynamic
 			// 

@@ -1228,7 +1228,7 @@ namespace OpenDental {
 		//Right Make Buttons----------------------------------------------------------------------------------------
 		private void butFamRecall_Click(object sender,EventArgs e) {
 			if(_patCur==null) {
-				MsgBox.Show(this,"Please select a patient, first.");
+				MsgBox.Show(this,"Please select a patient first.");
 				return;
 			}
 			if(!Security.IsAuthorized(Permissions.AppointmentCreate)) {
@@ -1258,7 +1258,7 @@ namespace OpenDental {
 
 		private void butMakeAppt_Click(object sender,System.EventArgs e) {
 			if(_patCur==null) {
-				MsgBox.Show(this,"Please select a patient, first.");
+				MsgBox.Show(this,"Please select a patient first.");
 				return;
 			}
 			if(!Security.IsAuthorized(Permissions.AppointmentCreate)) {
@@ -1291,7 +1291,7 @@ namespace OpenDental {
 
 		private void butMakeRecall_Click(object sender,EventArgs e) {
 			if(_patCur==null) {
-				MsgBox.Show(this,"Please select a patient, first.");
+				MsgBox.Show(this,"Please select a patient first.");
 				return;
 			}
 			if(!Security.IsAuthorized(Permissions.AppointmentCreate)) {
@@ -2978,7 +2978,7 @@ namespace OpenDental {
 		///<summary>Displays the Other Appointments for the current patient, then refreshes screen as needed.  initialClick specifies whether the user doubleclicked on a blank time to get to this dialog.</summary>
 		public void DisplayOtherDlg(bool initialClick) {
 			if(_patCur==null) {
-				MsgBox.Show(this,"Please select a patient, first.");
+				MsgBox.Show(this,"Please select a patient first.");
 				return;
 			}
 			using FormApptsOther FormAO=new FormApptsOther(_patCur.PatNum,pinBoard.ListPinBoardItems.Select(x => x.AptNum).ToList());
