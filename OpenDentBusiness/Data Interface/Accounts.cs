@@ -364,7 +364,10 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Gets automatic Retained Earnings for all previous years combined into one number.  Does not include any for the current year showing.</summary>
-		public static decimal GetRE_PreviousYears(DateTime dateAsOf){
+		public static decimal GetRE_PreviousYears(DateTime dateAsOf) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<decimal>(MethodBase.GetCurrentMethod(),dateAsOf);
+			}
 			DateTime dateFirstofYear=new DateTime(dateAsOf.Year,1,1);
 			//this works for both income and expenses, because we are subracting expenses, so signs cancel
 			string command="SELECT SUM(CreditAmt-DebitAmt) "

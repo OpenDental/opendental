@@ -807,7 +807,6 @@ namespace OpenDental {
 			this.tabControl1.Controls.Add(this.tabProduction);
 			this.tabControl1.Location = new System.Drawing.Point(369, 21);
 			this.tabControl1.Name = "tabControl1";
-			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(673, 524);
 			this.tabControl1.TabIndex = 192;
 			// 
@@ -822,10 +821,10 @@ namespace OpenDental {
 			this.tabSchedule.Controls.Add(this.textPrincipalSum);
 			this.tabSchedule.Controls.Add(this.labelTotals);
 			this.tabSchedule.Controls.Add(this.gridCharges);
-			this.tabSchedule.Location = new System.Drawing.Point(4, 22);
+			this.tabSchedule.Location = new System.Drawing.Point(2, 21);
 			this.tabSchedule.Name = "tabSchedule";
 			this.tabSchedule.Padding = new System.Windows.Forms.Padding(3);
-			this.tabSchedule.Size = new System.Drawing.Size(665, 498);
+			this.tabSchedule.Size = new System.Drawing.Size(669, 501);
 			this.tabSchedule.TabIndex = 0;
 			this.tabSchedule.Tag = "gridCharges[OpenDental.UI.ODGrid]";
 			this.tabSchedule.Text = "Schedule";
@@ -833,12 +832,12 @@ namespace OpenDental {
 			// textBalanceSum
 			// 
 			this.textBalanceSum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBalanceSum.Location = new System.Drawing.Point(410, 455);
+			this.textBalanceSum.Location = new System.Drawing.Point(556, 475);
 			this.textBalanceSum.MaxVal = 100000000D;
 			this.textBalanceSum.MinVal = -100000000D;
 			this.textBalanceSum.Name = "textBalanceSum";
 			this.textBalanceSum.ReadOnly = true;
-			this.textBalanceSum.Size = new System.Drawing.Size(87, 20);
+			this.textBalanceSum.Size = new System.Drawing.Size(92, 20);
 			this.textBalanceSum.TabIndex = 199;
 			this.textBalanceSum.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -846,7 +845,7 @@ namespace OpenDental {
 			// 
 			this.checkExcludePast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkExcludePast.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkExcludePast.Location = new System.Drawing.Point(2, 478);
+			this.checkExcludePast.Location = new System.Drawing.Point(6, 477);
 			this.checkExcludePast.Name = "checkExcludePast";
 			this.checkExcludePast.Size = new System.Drawing.Size(144, 17);
 			this.checkExcludePast.TabIndex = 198;
@@ -858,7 +857,7 @@ namespace OpenDental {
 			// textDueSum
 			// 
 			this.textDueSum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.textDueSum.Location = new System.Drawing.Point(260, 455);
+			this.textDueSum.Location = new System.Drawing.Point(406, 475);
 			this.textDueSum.Name = "textDueSum";
 			this.textDueSum.ReadOnly = true;
 			this.textDueSum.Size = new System.Drawing.Size(76, 20);
@@ -868,7 +867,7 @@ namespace OpenDental {
 			// textInterestSum
 			// 
 			this.textInterestSum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.textInterestSum.Location = new System.Drawing.Point(193, 455);
+			this.textInterestSum.Location = new System.Drawing.Point(339, 475);
 			this.textInterestSum.Name = "textInterestSum";
 			this.textInterestSum.ReadOnly = true;
 			this.textInterestSum.Size = new System.Drawing.Size(68, 20);
@@ -878,7 +877,7 @@ namespace OpenDental {
 			// textPaymentSum
 			// 
 			this.textPaymentSum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.textPaymentSum.Location = new System.Drawing.Point(335, 455);
+			this.textPaymentSum.Location = new System.Drawing.Point(481, 475);
 			this.textPaymentSum.MaxVal = 100000000D;
 			this.textPaymentSum.MinVal = -100000000D;
 			this.textPaymentSum.Name = "textPaymentSum";
@@ -890,7 +889,7 @@ namespace OpenDental {
 			// textPrincipalSum
 			// 
 			this.textPrincipalSum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.textPrincipalSum.Location = new System.Drawing.Point(118, 455);
+			this.textPrincipalSum.Location = new System.Drawing.Point(264, 475);
 			this.textPrincipalSum.MaxVal = 100000000D;
 			this.textPrincipalSum.MinVal = -100000000D;
 			this.textPrincipalSum.Name = "textPrincipalSum";
@@ -903,12 +902,12 @@ namespace OpenDental {
 			// 
 			this.labelTotals.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.labelTotals.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelTotals.Location = new System.Drawing.Point(8, 457);
+			this.labelTotals.Location = new System.Drawing.Point(155, 475);
 			this.labelTotals.Name = "labelTotals";
 			this.labelTotals.Size = new System.Drawing.Size(104, 18);
 			this.labelTotals.TabIndex = 195;
 			this.labelTotals.Text = "Current Totals";
-			this.labelTotals.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			this.labelTotals.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// gridCharges
 			// 
@@ -917,7 +916,7 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridCharges.Location = new System.Drawing.Point(3, 3);
 			this.gridCharges.Name = "gridCharges";
-			this.gridCharges.Size = new System.Drawing.Size(659, 451);
+			this.gridCharges.Size = new System.Drawing.Size(663, 466);
 			this.gridCharges.TabIndex = 191;
 			this.gridCharges.Tag = "";
 			this.gridCharges.Title = "Amortization Schedule";
@@ -931,10 +930,10 @@ namespace OpenDental {
 			this.tabProduction.Controls.Add(this.butDeleteProduction);
 			this.tabProduction.Controls.Add(this.butPrintProduction);
 			this.tabProduction.Controls.Add(this.gridLinkedProduction);
-			this.tabProduction.Location = new System.Drawing.Point(4, 22);
+			this.tabProduction.Location = new System.Drawing.Point(2, 21);
 			this.tabProduction.Name = "tabProduction";
 			this.tabProduction.Padding = new System.Windows.Forms.Padding(3);
-			this.tabProduction.Size = new System.Drawing.Size(665, 498);
+			this.tabProduction.Size = new System.Drawing.Size(669, 501);
 			this.tabProduction.TabIndex = 1;
 			this.tabProduction.Tag = "gridLinkedProduction[OpenDental.UI.ODGrid]";
 			this.tabProduction.Text = "Production";
@@ -944,7 +943,7 @@ namespace OpenDental {
 			this.butAddProd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butAddProd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAddProd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAddProd.Location = new System.Drawing.Point(589, 473);
+			this.butAddProd.Location = new System.Drawing.Point(593, 476);
 			this.butAddProd.Name = "butAddProd";
 			this.butAddProd.Size = new System.Drawing.Size(73, 22);
 			this.butAddProd.TabIndex = 36;
@@ -957,7 +956,7 @@ namespace OpenDental {
 			this.butDeleteProduction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDeleteProduction.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDeleteProduction.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDeleteProduction.Location = new System.Drawing.Point(3, 473);
+			this.butDeleteProduction.Location = new System.Drawing.Point(3, 476);
 			this.butDeleteProduction.Name = "butDeleteProduction";
 			this.butDeleteProduction.Size = new System.Drawing.Size(84, 22);
 			this.butDeleteProduction.TabIndex = 35;
@@ -969,7 +968,7 @@ namespace OpenDental {
 			this.butPrintProduction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butPrintProduction.Image = global::OpenDental.Properties.Resources.butPrintSmall;
 			this.butPrintProduction.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPrintProduction.Location = new System.Drawing.Point(296, 473);
+			this.butPrintProduction.Location = new System.Drawing.Point(300, 476);
 			this.butPrintProduction.Name = "butPrintProduction";
 			this.butPrintProduction.Size = new System.Drawing.Size(73, 22);
 			this.butPrintProduction.TabIndex = 31;
@@ -985,7 +984,7 @@ namespace OpenDental {
 			this.gridLinkedProduction.Location = new System.Drawing.Point(3, 3);
 			this.gridLinkedProduction.Name = "gridLinkedProduction";
 			this.gridLinkedProduction.SelectionMode = OpenDental.UI.GridSelectionMode.OneCell;
-			this.gridLinkedProduction.Size = new System.Drawing.Size(659, 465);
+			this.gridLinkedProduction.Size = new System.Drawing.Size(663, 468);
 			this.gridLinkedProduction.TabIndex = 0;
 			this.gridLinkedProduction.Title = "Attached Production  ";
 			this.gridLinkedProduction.TranslationName = "TablePaymentPlanCredits";

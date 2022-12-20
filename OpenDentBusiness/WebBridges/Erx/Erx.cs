@@ -323,7 +323,7 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Sends the provider information to NewCrop without allowing the provider to use NewCrop.</summary>
-		public static void ComposeNewRxLegacyWebRequest(byte[] postDataBytes) {
+		public static void ComposeNewRxNewCropWebRequest(byte[] postDataBytes) {
 			string newCropUrl=GetLegacyUrl();
 			WebRequest webRequest=WebRequest.Create(newCropUrl);
 			webRequest.Method="POST";
@@ -341,11 +341,11 @@ namespace OpenDentBusiness {
 	///Any changes made to this enum need to also be changed there.</summary>
 	public enum ErxOption {
 		///<summary>0.</summary>
-		Legacy,
+		NewCrop,
 		///<summary>1.</summary>
 		DoseSpot,
 		///<summary>2.</summary>
-		DoseSpotWithLegacy,
+		DoseSpotWithNewCrop,
 	}
 
 	///<summary>Used by Erx to determine if the provider or clinic has been enabled at ODHQ.

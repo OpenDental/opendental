@@ -40,7 +40,7 @@ namespace OpenDental{
 				row.Tag=_listPrograms[i];
 				Color color = Color.FromArgb(230, 255, 238);
 				row.ColorBackG=row.ColorBackG;
-				if(Enabled){
+				if(_listPrograms[i].Enabled){
 					row.ColorBackG=color;
 				}
 				GridCell cell=new GridCell(_listPrograms[i].Enabled ? "X" : "");

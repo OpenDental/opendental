@@ -22,9 +22,9 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Used to display a list of entries for one account. Even though we're passing in a dateFrom, we always get full list for assets, liabilities, and equity in order to get the running total, even if we don't show those rows.</summary>
-		public static List <JournalEntry> GetForAccount(Account account,DateTime dateFrom,DateTime dateTo) {
+		public static List<JournalEntry> GetForAccount(Account account,DateTime dateFrom,DateTime dateTo) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List <JournalEntry>>(MethodBase.GetCurrentMethod(),account);
+				return Meth.GetObject<List<JournalEntry>>(MethodBase.GetCurrentMethod(),account,dateFrom,dateTo);
 			}
 			string command;
 			List<JournalEntry> listJournalEntries=new List<JournalEntry>();

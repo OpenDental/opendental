@@ -44,14 +44,14 @@ namespace OpenDental {
 				_listProgramProperties=ProgramProperties.GetForProgram(_program.ProgramNum);
 				checkEnabled.Checked=_program.Enabled;
 				_erxOption=PIn.Enum<ErxOption>(ErxOptionPP.PropertyValue);
-				if(_erxOption==ErxOption.Legacy) {
+				if(_erxOption==ErxOption.NewCrop) {
 					radioNewCrop.Checked=true;
 				}
 				else if(_erxOption==ErxOption.DoseSpot) {
 					radioDoseSpot.Checked=true;
 					//HideLegacy();
 				}
-				else if(_erxOption==ErxOption.DoseSpotWithLegacy) {
+				else if(_erxOption==ErxOption.DoseSpotWithNewCrop) {
 					radioDoseSpotLegacy.Checked=true;
 					//HideLegacy();
 				}
@@ -178,7 +178,7 @@ namespace OpenDental {
 		}
 
 		///<summary>All references removed in I12045.</summary>
-		private void HideLegacy() {
+		private void HideNewCrop() {
 			radioNewCrop.Visible=false;
 			radioDoseSpotLegacy.Location=radioDoseSpot.Location;
 			radioDoseSpot.Location=radioNewCrop.Location;
@@ -187,7 +187,7 @@ namespace OpenDental {
 
 		private void SetRadioButtonChecked(ErxOption erxOption) {
 			_erxOption=erxOption;
-			if(erxOption==ErxOption.Legacy) {
+			if(erxOption==ErxOption.NewCrop) {
 				label7.Visible=true;
 				textNewCropAccountID.Visible=true;
 				butClearAccountId.Visible=true;
@@ -213,17 +213,17 @@ namespace OpenDental {
 		}
 
 		private void radioNewCrop_Click(object sender,EventArgs e) {
-			SetRadioButtonChecked(ErxOption.Legacy);
+			SetRadioButtonChecked(ErxOption.NewCrop);
 		}
 
 		private void radioDoseSpot_Click(object sender,EventArgs e) {
-			MsgBox.Show(this,"This enables the DoseSpot program link only.  You must contact support to cancel current eRx Legacy charges and sign up for DoseSpot.");
+			MsgBox.Show(this,"This enables the DoseSpot program link only.  You must contact support to cancel current eRx NewCrop charges and sign up for DoseSpot.");
 			SetRadioButtonChecked(ErxOption.DoseSpot);
 		}
 
 		private void radioDoseSpotLegacy_Click(object sender,EventArgs e) {
 			MsgBox.Show(this,"This enables the program links only. You must contact support to sign up for eRx.");
-			SetRadioButtonChecked(ErxOption.DoseSpotWithLegacy);
+			SetRadioButtonChecked(ErxOption.DoseSpotWithNewCrop);
 		}
 
 		private void butClearAccountId_Click(object sender,EventArgs e) {

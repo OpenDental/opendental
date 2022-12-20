@@ -55,22 +55,21 @@ namespace OpenDental {
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(15, 12);
+			this.label2.Location = new System.Drawing.Point(15, 8);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(293, 27);
+			this.label2.Size = new System.Drawing.Size(400, 17);
 			this.label2.TabIndex = 43;
-			this.label2.Text = "Double click on one of the programs in the\r\nlist below to enable it or change its" +
-    " settings";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.label2.Text = "Double-click a program in the list below to enable it or change its settings.";
+			this.label2.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// label1
 			// 
 			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.label1.Location = new System.Drawing.Point(97, 630);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(200, 29);
+			this.label1.Size = new System.Drawing.Size(144, 29);
 			this.label1.TabIndex = 44;
-			this.label1.Text = "Do not Add unless you have a totally\r\ncustom bridge which we don\'t support.";
+			this.label1.Text = "only used for custom bridges not listed above";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// gridProgram
@@ -78,9 +77,9 @@ namespace OpenDental {
 			this.gridProgram.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.gridProgram.Location = new System.Drawing.Point(18, 42);
+			this.gridProgram.Location = new System.Drawing.Point(18, 29);
 			this.gridProgram.Name = "gridProgram";
-			this.gridProgram.Size = new System.Drawing.Size(429, 575);
+			this.gridProgram.Size = new System.Drawing.Size(429, 588);
 			this.gridProgram.TabIndex = 45;
 			this.gridProgram.Title = "Programs";
 			this.gridProgram.TranslationName = "TablePrograms";

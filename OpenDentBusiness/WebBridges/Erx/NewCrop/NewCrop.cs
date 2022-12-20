@@ -100,7 +100,7 @@ namespace OpenDentBusiness {
 		public static bool RefreshPrescriptions(long patNum,ref List<RxPat> listNewRx) {
 			Program programNewCrop=Programs.GetCur(ProgramName.eRx);
 			ErxOption erxOption=PIn.Enum<ErxOption>(ProgramProperties.GetPropForProgByDesc(programNewCrop.ProgramNum,Erx.PropertyDescs.ErxOption).PropertyValue);
-			if(erxOption!=ErxOption.Legacy && erxOption!=ErxOption.DoseSpotWithLegacy) {
+			if(erxOption!=ErxOption.NewCrop && erxOption!=ErxOption.DoseSpotWithNewCrop) {
 				return false;
 			}
 			string newCropAccountId=PrefC.GetString(PrefName.NewCropAccountId);

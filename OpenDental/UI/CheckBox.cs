@@ -170,13 +170,13 @@ namespace OpenDental.UI {
 			Graphics g=e.Graphics;
 			g.SmoothingMode=SmoothingMode.HighQuality;
 			g.Clear(BackColor);
-			SolidBrush solidBrush;
+			SolidBrush solidBrushFillBox;
 			if(_isHovering){
-				solidBrush=new SolidBrush(Color.FromArgb(210,239,255));
+				solidBrushFillBox=new SolidBrush(Color.FromArgb(210,239,255));
 					//ColorOD.Hover=Color.FromArgb(229,239,251);//not blue enough for this situation
 			}
 			else{
-				solidBrush=new SolidBrush(Color.White);
+				solidBrushFillBox=new SolidBrush(Color.White);
 			}
 			//The box always scales with LM zoom instead of with the font.
 			//So if someone sets a checkbox to 10 font, the box will not get bigger.
@@ -210,8 +210,13 @@ namespace OpenDental.UI {
 				stringFormat.LineAlignment=StringAlignment.Center;
 			}
 			//TopCenter and BottomCenter are not supported
-			g.FillRectangle(solidBrush,rectangleBox);
-			using Pen penBox=new Pen(ColorOD.Gray(50));
+			g.FillRectangle(solidBrushFillBox,rectangleBox);
+			Pen penBox=new Pen(ColorOD.Gray(50));//disposed
+			SolidBrush solidBrushText=new SolidBrush(Color.Black);
+			if(!Enabled){
+				penBox=new Pen(ColorOD.Gray(180));
+				solidBrushText=new SolidBrush(ColorOD.Gray(100));
+			}
 			g.DrawRectangle(penBox,rectangleBox);
 			//We don't need to do this because when we zoom, we also change the font size separately.
 			//float fontSize=Font.Size*_zoomTest/100f;
@@ -219,7 +224,7 @@ namespace OpenDental.UI {
 			if(CheckState==CheckState.Indeterminate){
 				float fontSize=LayoutManager.ScaleF(8.25f);
 				Font fontQuestion=new Font("Microsoft Sans Serif",fontSize);
-				g.DrawString("?",fontQuestion,Brushes.Black,rectangleBox.X+LayoutManager.ScaleF(1f),rectangleBox.Y-LayoutManager.ScaleF(.5f));
+				g.DrawString("?",fontQuestion,solidBrushText,rectangleBox.X+LayoutManager.ScaleF(1f),rectangleBox.Y-LayoutManager.ScaleF(.5f));
 			}
 			else if(Checked){
 				using Pen pen=new Pen(ColorOD.Gray(90),LayoutManager.ScaleF(1.6f));
@@ -238,12 +243,15 @@ namespace OpenDental.UI {
 					y2:rectangleBox.Top+LayoutManager.ScaleF(2.75f));
 			}
 			int textTop=Height/2-Font.Height/2;
-			g.DrawString(Text,Font,Brushes.Black,rectangleText,stringFormat);
+			g.DrawString(Text,Font,solidBrushText,rectangleText,stringFormat);
+			penBox?.Dispose();
+			solidBrushText?.Dispose();
 		}
 		#endregion Event - Event Handlers - OnPaint
 
 		#region Events - Event Handlers - Mouse
 		protected override void OnMouseDown(MouseEventArgs e){
+			base.OnMouseDown(e);
 			if(!AutoCheck){
 				return;
 			}

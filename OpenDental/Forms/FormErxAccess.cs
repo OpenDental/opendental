@@ -37,7 +37,7 @@ namespace OpenDental {
 			gridProviders.Columns.Add(col);
 			//Gets from db.  Better to call db than to use cache at HQ, since cache might be large.
 			//Only get Legacy eRx items.  Other types will be in the BroadcasterMonitor.
-			_listProviderErxs=ProviderErxs.Refresh(_patient.PatNum).FindAll(x => x.ErxType==ErxOption.Legacy);
+			_listProviderErxs=ProviderErxs.Refresh(_patient.PatNum).FindAll(x => x.ErxType==ErxOption.NewCrop);
 			for(int i=0;i<_listProviderErxs.Count;i++) {
 				UI.GridRow row=new UI.GridRow();
 				row.Tag=_listProviderErxs[i];
@@ -171,7 +171,7 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
-			List<ProviderErx> listProviderErxes=ProviderErxs.Refresh(_patient.PatNum).FindAll(x => x.ErxType==ErxOption.Legacy);
+			List<ProviderErx> listProviderErxes=ProviderErxs.Refresh(_patient.PatNum).FindAll(x => x.ErxType==ErxOption.NewCrop);
 			ProviderErxs.Sync(_listProviderErxs,listProviderErxes);//No cache refresh because this is an HQ only form.
 			DialogResult=DialogResult.OK;
 		}

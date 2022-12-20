@@ -274,7 +274,7 @@ namespace OpenDental{
 			so the check box is checked and disabled if consent was previously given.*/
 			Program programErx=Programs.GetCur(ProgramName.eRx);
 			ErxOption erxOption=PIn.Enum<ErxOption>(ProgramProperties.GetPropForProgByDesc(programErx.ProgramNum,Erx.PropertyDescs.ErxOption).PropertyValue);
-			if(programErx.Enabled && (erxOption==ErxOption.DoseSpot || erxOption==ErxOption.DoseSpotWithLegacy)) {
+			if(programErx.Enabled && (erxOption==ErxOption.DoseSpot || erxOption==ErxOption.DoseSpotWithNewCrop)) {
 				checkDoseSpotConsent.Visible=true;
 				checkDoseSpotConsent.Checked=_patientNote.Consent.HasFlag(PatConsentFlags.ShareMedicationHistoryErx);
 				if(checkDoseSpotConsent.Checked) {//once checked, should never be able to be unchecked.

@@ -662,6 +662,8 @@ namespace OpenDental{
 			BeginODDashboardStarterThread();
 			Logger.LogToPath("FillSignalButtons",LogPath.Startup,LogPhase.Unspecified);
 			FillSignalButtons();
+			bool hasConnected=true;
+			string storageErrMsg="";
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
 				Logger.LogToPath("GetPreferredAtoZpath",LogPath.Startup,LogPhase.Unspecified);
 				string prefImagePath=ImageStore.GetPreferredAtoZpath();
@@ -675,6 +677,59 @@ namespace OpenDental{
 						Application.Exit();
 					}
 				}
+			}
+			else if(PrefC.AtoZfolderUsed==DataStorageType.DropboxAtoZ) {
+				storageErrMsg="The Dropbox data path for your A to Z Images Folder is not available and this may cause functionality issues or slowness " +
+					"as long as it is not available.";
+				Program program=Programs.GetCur(ProgramName.Dropbox);
+				if(program==null) {//Should never happen.
+					hasConnected=false;//If an error occurs, DataStorageType does not connect
+				}
+				List<ProgramProperty> listProgramProperties=ProgramProperties.GetForProgram(program.ProgramNum);
+				ProgramProperty programPropertyPath=listProgramProperties.Find(x => x.PropertyDesc==Dropbox.PropertyDescs.AtoZPath);
+				ProgramProperty programPropertyAccessToken=listProgramProperties.Find(x => x.PropertyDesc==Dropbox.PropertyDescs.AccessToken);
+				if(programPropertyPath==null || programPropertyAccessToken==null) {
+					hasConnected=false;//If an error occurs, DataStorageType does not connect
+				}
+				else {
+					try {
+						hasConnected=OpenDentalCloud.Dropbox.FileExists(programPropertyAccessToken.PropertyValue,
+							ODFileUtils.CombinePaths(programPropertyPath.PropertyValue,"A",'/'));
+					}
+					catch(Exception) {
+						hasConnected=false;//If an error occurs, DataStorageType does not connect
+					}
+				}
+			}
+			else if(PrefC.AtoZfolderUsed==DataStorageType.SftpAtoZ) {
+				storageErrMsg="The SFTP data path for your A to Z Images Folder is not available and this may cause functionality issues or slowness " +
+					"as long as it is not available.";
+				Program program=Programs.GetCur(ProgramName.SFTP);
+				if(program==null) {//Should never happen.
+					hasConnected=false;//If an error occurs, DataStorageType does not connect
+				}
+				List<ProgramProperty> listProgramProperties=ProgramProperties.GetForProgram(program.ProgramNum);
+				ProgramProperty programPropertyPath=listProgramProperties.Find(x => x.PropertyDesc==ODSftp.PropertyDescs.AtoZPath);
+				ProgramProperty programPropertyHost=listProgramProperties.Find(x => x.PropertyDesc==ODSftp.PropertyDescs.SftpHostname);
+				ProgramProperty programPropertyUsername=listProgramProperties.Find(x => x.PropertyDesc==ODSftp.PropertyDescs.UserName);
+				ProgramProperty programPropertyPassword=listProgramProperties.Find(x => x.PropertyDesc==ODSftp.PropertyDescs.Password);
+				if(programPropertyPath==null || programPropertyHost==null || programPropertyUsername==null || programPropertyPassword==null) {
+					hasConnected=false;//If an error occurs, DataStorageType does not connect
+				}
+				else {
+					string decryptedPassword;
+					CDT.Class1.DecryptSftp(programPropertyPassword.PropertyValue,out decryptedPassword); //Password is encrypted when stored, so	we have to decrypt it in order to get the plaintext.
+					try {
+						hasConnected=OpenDentalCloud.Sftp.FileExists(programPropertyHost.PropertyValue,programPropertyUsername.PropertyValue,decryptedPassword,
+							ODFileUtils.CombinePaths(programPropertyPath.PropertyValue,"A",'/'));
+					}
+					catch(Exception) {
+						hasConnected=false;//If an error occurs, DataStorageType does not connect
+					}
+				}
+			}
+			if(!hasConnected) {//It does not successfully connect to Dropbox or Sftp, showing an error message.
+				MsgBox.Show(storageErrMsg);
 			}
 			IsTreatPlanSortByTooth=PrefC.GetBool(PrefName.TreatPlanSortByTooth); //not a great place for this, but we don't have a better alternative.
 			if(userControlTasks1.Visible) {

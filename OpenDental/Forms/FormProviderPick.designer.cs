@@ -196,6 +196,7 @@ namespace OpenDental {
 			// textFilter
 			// 
 			this.textFilter.AcceptsTab = true;
+			this.textFilter.AllowsCarriageReturns = false;
 			this.textFilter.BackColor = System.Drawing.SystemColors.Window;
 			this.textFilter.DetectLinksEnabled = false;
 			this.textFilter.DetectUrls = false;

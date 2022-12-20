@@ -78,7 +78,6 @@ namespace OpenDental{
 			this.groupErxOptions.Name = "groupErxOptions";
 			this.groupErxOptions.Size = new System.Drawing.Size(171, 80);
 			this.groupErxOptions.TabIndex = 43;
-			this.groupErxOptions.TabStop = false;
 			this.groupErxOptions.Text = "eRx Solution";
 			// 
 			// radioDoseSpotLegacy
@@ -87,7 +86,7 @@ namespace OpenDental{
 			this.radioDoseSpotLegacy.Name = "radioDoseSpotLegacy";
 			this.radioDoseSpotLegacy.Size = new System.Drawing.Size(149, 17);
 			this.radioDoseSpotLegacy.TabIndex = 2;
-			this.radioDoseSpotLegacy.Text = "DoseSpot with Legacy";
+			this.radioDoseSpotLegacy.Text = "DoseSpot with NewCrop";
 			this.radioDoseSpotLegacy.UseVisualStyleBackColor = true;
 			this.radioDoseSpotLegacy.Click += new System.EventHandler(this.radioDoseSpotLegacy_Click);
 			// 
@@ -109,7 +108,7 @@ namespace OpenDental{
 			this.radioNewCrop.Size = new System.Drawing.Size(96, 17);
 			this.radioNewCrop.TabIndex = 0;
 			this.radioNewCrop.TabStop = true;
-			this.radioNewCrop.Text = "Legacy";
+			this.radioNewCrop.Text = "NewCrop";
 			this.radioNewCrop.UseVisualStyleBackColor = true;
 			this.radioNewCrop.Click += new System.EventHandler(this.radioNewCrop_Click);
 			// 
@@ -132,7 +131,6 @@ namespace OpenDental{
 			// 
 			// checkShowHiddenClinics
 			// 
-			this.checkShowHiddenClinics.AutoSize = true;
 			this.checkShowHiddenClinics.Location = new System.Drawing.Point(23, 128);
 			this.checkShowHiddenClinics.Name = "checkShowHiddenClinics";
 			this.checkShowHiddenClinics.Size = new System.Drawing.Size(123, 17);

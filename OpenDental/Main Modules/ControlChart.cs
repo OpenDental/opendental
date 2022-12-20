@@ -7707,7 +7707,7 @@ namespace OpenDental {
 				return;
 			}
 			ErxOption erxOption=PIn.Enum<ErxOption>(ProgramProperties.GetPropForProgByDesc(program.ProgramNum,Erx.PropertyDescs.ErxOption).PropertyValue);
-			if(erxOption!=ErxOption.DoseSpot && erxOption!=ErxOption.DoseSpotWithLegacy) {
+			if(erxOption!=ErxOption.DoseSpot && erxOption!=ErxOption.DoseSpotWithNewCrop) {
 				return;
 			}
 			//Set the menu items for DoseSpot to visible.
@@ -8148,16 +8148,16 @@ namespace OpenDental {
 			else {
 				prov=Providers.GetProv(Pd.Patient.PriProv);
 			}
-			if(erxOption==ErxOption.DoseSpotWithLegacy) {
-				//ODCloud does not support Legacy eRx so just use DoseSpot if in web mode.
+			if(erxOption==ErxOption.DoseSpotWithNewCrop) {
+				//ODCloud does not support NewCrop eRx so just use DoseSpot if in web mode.
 				if(!ODBuild.IsWeb() && prov.IsErxEnabled==ErxEnabledStatus.EnabledWithLegacy) {
 					using InputBox pickErxOption=
-						new InputBox(Lan.g(this,"Which eRx option would you like to use?"),new List<string>() { "Legacy","DoseSpot"},false);
+						new InputBox(Lan.g(this,"Which eRx option would you like to use?"),new List<string>() { "NewCrop","DoseSpot"},false);
 					if(pickErxOption.ShowDialog()==DialogResult.Cancel) {
 						return;
 					}
-					if(pickErxOption.SelectedIndex==0) {//Legacy
-						erxOption=ErxOption.Legacy;
+					if(pickErxOption.SelectedIndex==0) {//NewCrop
+						erxOption=ErxOption.NewCrop;
 					}
 					else {
 						erxOption=ErxOption.DoseSpot;
@@ -8184,10 +8184,10 @@ namespace OpenDental {
 				return;
 			}
 			#endregion Provider Term Date Check
-			if(erxOption==ErxOption.Legacy) {
+			if(erxOption==ErxOption.NewCrop) {
 				if(ODBuild.IsWeb()) {
-					//ODCloud does not support Legacy eRx.
-					MsgBox.Show(this,"Legacy eRx is not available while viewing through the web.");
+					//ODCloud does not support NewCrop eRx.
+					MsgBox.Show(this,"NewCrop is not available while viewing through the web.");
 					return;
 				}
 				string newCropAccountId=PrefC.GetString(PrefName.NewCropAccountId);
@@ -8557,7 +8557,7 @@ namespace OpenDental {
 				else {
 					//This is how we send the provider information to NewCrop without allowing the provider to use NewCrop.
 					//NewCrop requires the provider information on their server in order to complete Identity Proofing (IDP).
-					Erx.ComposeNewRxLegacyWebRequest(arrayPostDataBytes);
+					Erx.ComposeNewRxNewCropWebRequest(arrayPostDataBytes);
 				}
 			}
 			catch(Exception ex) {
@@ -8812,7 +8812,7 @@ namespace OpenDental {
 				provErxCur=new ProviderErx();
 				provErxCur.PatNum=0;
 				provErxCur.NationalProviderID=npi;
-				if(erxOption==ErxOption.Legacy) {
+				if(erxOption==ErxOption.NewCrop) {
 					provErxCur.IsEnabled=ErxStatus.Disabled;
 					if(PrefC.GetBool(PrefName.NewCropIsLegacy)) {
 						provErxCur.IsEnabled=ErxStatus.Enabled;
@@ -8850,19 +8850,19 @@ namespace OpenDental {
 				isOdUpdateAddress=true;
 			}
 			DateTime dateLastAccessMonth=DateTime.MinValue;
-			if(erxOption==ErxOption.Legacy) {
+			if(erxOption==ErxOption.NewCrop) {
 				dateLastAccessMonth=PrefC.GetDate(PrefName.NewCropDateLastAccessCheck);
 			}
 			else {//DoseSpot
 				dateLastAccessMonth=PrefC.GetDate(PrefName.DoseSpotDateLastAccessCheck);
 			}
 			dateLastAccessMonth=new DateTime(dateLastAccessMonth.Year,dateLastAccessMonth.Month,1);
-			if(erxOption==ErxOption.Legacy && isDistributorCustomer && isOdUpdateAddress) {
+			if(erxOption==ErxOption.NewCrop && isDistributorCustomer && isOdUpdateAddress) {
 				//The distributor forgot to change the "Server Address for Updates" inside of the Update Setup window for this customer.
 				//Do not contact the OD web service.
 			}
 			else if(provErxCur.IsEnabled!=ErxStatus.Enabled //If prov is not yet enabled, always check with OD HQ to see if the prov has been enabled yet.
-				|| (erxOption==ErxOption.Legacy && !PrefC.GetBool(PrefName.NewCropIsLegacy) && !provErxCur.IsIdentifyProofed)//If new prov is not yet identity proofed, send to OD HQ.
+				|| (erxOption==ErxOption.NewCrop && !PrefC.GetBool(PrefName.NewCropIsLegacy) && !provErxCur.IsIdentifyProofed)//If new prov is not yet identity proofed, send to OD HQ.
 				|| !provErxCur.IsSentToHq//If prov has not been sent to OD HQ yet, always send to OD HQ so we can track our providers using eRx.
 				|| dateLastAccessMonth<new DateTime(DateTime.Today.Year,DateTime.Today.Month,1))//If it has been over a month since sent to OD HQ, send.
 			{
@@ -8975,7 +8975,7 @@ namespace OpenDental {
 					if(isCacheRefreshNeeded) {
 						DataValid.SetInvalid(InvalidType.ProviderErxs);
 					}
-					if(erxOption==ErxOption.Legacy) {
+					if(erxOption==ErxOption.NewCrop) {
 						if(Prefs.UpdateDateT(PrefName.NewCropDateLastAccessCheck,DateTime.Today)) {
 							DataValid.SetInvalid(InvalidType.Prefs);
 						}

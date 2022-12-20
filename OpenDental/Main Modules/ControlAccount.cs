@@ -2592,8 +2592,8 @@ namespace OpenDental {
 				FillOrthoCasesGrid();
 			}
 			Logger.LogAction("FillPatInfo",LogPath.AccountModule,() => FillPatInfo());
-			LayoutPanelsAndRefreshMainGrids(true);
 			FillTpUnearned();
+			LayoutPanelsAndRefreshMainGrids(true);
 			Plugins.HookAddCode(this,"ContrAccount.RefreshModuleScreen_end",_famCur,_patCur,_dataSetMain,_PPBalanceTotal,isSelectingFamily);
 		}
 
@@ -3890,14 +3890,17 @@ namespace OpenDental {
 			if(_listSplitsHidden.Count==0) {//might need to get updated more often than from loadData. Not sure how much we care. 
 				tabControlAccount.TabPages.Remove(tabPageHiddenSplits);
 			}
-			else if(!tabControlAccount.TabPages.Contains(tabPageHiddenSplits)) {
-				LayoutManager.Add(tabPageHiddenSplits,tabControlAccount);
-				double totPaySplitAmount = gridTpSplits.GetTags<PaySplit>().Sum(x => x.SplitAmt);
+			else{
+				if(!tabControlAccount.TabPages.Contains(tabPageHiddenSplits)) {
+					LayoutManager.Add(tabPageHiddenSplits,tabControlAccount);
+				}
+				List<PaySplit> listPaySplits=gridTpSplits.GetTags<PaySplit>();
+				double totPaySplitAmount = listPaySplits.Sum(x => x.SplitAmt);
 				if(CompareDouble.IsZero(totPaySplitAmount)) {
 					tabPageHiddenSplits.ColorTab=Color.Empty;
 				}
 				else{
-					tabPageHiddenSplits.ColorTab=Color.Red;//make the tab red if hidden splits do not total $0
+					tabPageHiddenSplits.ColorTab=Color.LightCoral;//make the tab red if hidden splits do not total $0
 				}
 			}
 			if(tabControlAccount.TabPages.Contains(tabPageAutoOrtho) 

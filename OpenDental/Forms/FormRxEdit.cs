@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using OpenDentBusiness;
 using System.Drawing.Printing;
+using CodeBase;
 
 namespace OpenDental{
 ///<summary></summary>
@@ -19,6 +20,7 @@ namespace OpenDental{
 		private Sheet _sheet;
 		private RxPat _rxPatOld;
 		private List <Procedure> _listProceduresInUse;
+		private Provider _userProvider=null;
 
 		///<summary></summary>
 		public FormRxEdit(Patient patient,RxPat rxPat){
@@ -38,9 +40,8 @@ namespace OpenDental{
 				butView.Visible=false;
 				labelView.Visible=false;
 				_sheet=null;
-				Provider provider=Providers.GetProv(Security.CurUser.ProvNum);
-				if(provider!=null && !provider.IsSecondary) {//Only set the provider on the Rx if the provider is not a hygienist.
-					_rxPat.ProvNum=Security.CurUser.ProvNum;
+				_userProvider=Providers.GetProv(Security.CurUser.ProvNum);
+				if(_userProvider!=null && !_userProvider.IsSecondary) {//Only set the provider on the Rx if the provider is not a hygienist.
 					if(PrefC.GetBool(PrefName.ShowFeatureEhr)) {//Is CPOE
 						labelCPOE.Visible=true;
 						comboProv.Enabled=false;
@@ -149,37 +150,26 @@ namespace OpenDental{
 			textPharmacy.Text=Pharmacies.GetDescription(_rxPat.PharmacyNum);
 			comboClinic.SelectedClinicNum=_rxPat.ClinicNum;
 			FillComboProvNum();
+			if(comboProv.Items.Count==0) {
+				MsgBox.Show(this,"No providers available from clinic with a DEA#");
+				DialogResult=DialogResult.Cancel;
+			}
 		}
 
 		///<summary>Fill the provider combobox with items depending on the clinic selected</summary>
 		private void FillComboProvNum() { 
 			comboProv.Items.Clear();
 			List<Provider> listProviders = Providers.GetProvsForClinicList(new List<long>{0, comboClinic.SelectedClinicNum}).Where(x => !x.IsNotPerson).ToList();
+			if(_userProvider!=null && !listProviders.Contains(_userProvider) && !_userProvider.IsNotPerson) {
+				listProviders.Add(_userProvider);
+			}
 			if(PrefC.GetBool(PrefName.RxHideProvsWithoutDEA)) {
-				//get defaul clinic provider, if in HQ gets default practice provider, if none set, gets 0
-				long defaultClinicProvNum = Clinics.GetClinic(comboClinic.SelectedClinicNum)?.DefaultProv??Providers.GetDefaultProvider()?.ProvNum??0;
-				long userProvNum = Security.CurUser.ProvNum;
-				List<long> listProviderNumsToKeep = ProviderClinics.GetByProvNumsAndClinicNum(listProviders.Select(x => x.ProvNum).ToList(),comboClinic.SelectedClinicNum, includeUnsassigned:true)
-				.Where(x => !String.IsNullOrEmpty(x.DEANum)
-					|| x.ProvNum == userProvNum
-					|| x.ProvNum == defaultClinicProvNum)
+				List<long> listProvNums=listProviders.Select(x => x.ProvNum).ToList();
+				List<long> listProviderNumsToKeep = ProviderClinics.GetByProvNumsAndClinicNum(listProvNums,comboClinic.SelectedClinicNum,includeUnsassigned:true)
+				.Where(x => !x.DEANum.IsNullOrEmpty())
 				.Select(x => x.ProvNum)
 				.ToList();
 				listProviders = listProviders.Where(x => listProviderNumsToKeep.Contains(x.ProvNum)).ToList();
-				//make sure list has the default provider for the clinic if any
-				if(defaultClinicProvNum != 0 && listProviders.FindIndex(x => x.ProvNum == defaultClinicProvNum) == -1) {
-					Provider provider=Providers.GetProv(defaultClinicProvNum);
-					if(!provider.IsNotPerson) {
-						listProviders.Add(provider);
-					}
-				}
-				//make sure list has the user's assigned provider if any
-				if(userProvNum != 0 && listProviders.FindIndex(x => x.ProvNum == userProvNum) == -1) {
-					Provider provider=Providers.GetProv(userProvNum);
-					if(!provider.IsNotPerson) {
-						listProviders.Add(provider);
-					}
-				}
 				if(_rxPat.ProvNum != 0 && listProviders.FindIndex(x=> x.ProvNum==_rxPat.ProvNum) == -1) {//because List<T>.Contains can't manage to find a provider that is in the list
 					Provider provider = Providers.GetProv(_rxPat.ProvNum);
 					if(!provider.IsNotPerson) {
@@ -188,13 +178,18 @@ namespace OpenDental{
 				}
 			}
 			comboProv.Items.AddProvsAbbr(listProviders);
-			if(_rxPat.ProvNum==0) {//If new Rx									 
-				if(comboProv.Items.Count==0) {//No items in dropdown
-					//Use clinic default prov.  We need some default selection.
-					comboProv.SetSelectedProvNum(Providers.GetDefaultProvider(comboClinic.SelectedClinicNum).ProvNum);
+			if(_rxPat.ProvNum==0) {//If new Rx 
+				if(_userProvider!=null && listProviders.Any(x=>x.ProvNum==_userProvider.ProvNum)) {
+					comboProv.SetSelectedProvNum(_userProvider.ProvNum);
+				}
+				else if(listProviders.Any(x=>x.ProvNum==_patient.PriProv)) {//Select the patient's primary provider, if possible.
+					comboProv.SetSelectedProvNum(_patient.PriProv);
+				}
+				else if(listProviders.Count==1) {
+					comboProv.SetSelectedProvNum(listProviders[0].ProvNum);
 				}
 				else {
-					comboProv.SetSelected(0);//First in list
+					//no provider will be selected.  This will be caught at OK click.
 				}
 			}
 			else {
@@ -240,9 +235,9 @@ namespace OpenDental{
 				MessageBox.Show(Lan.g(this,"Please fix data entry errors first."));
 				return false;
 			}
-			long selectedProvNum=comboProv.GetSelectedProvNum();
-			if(selectedProvNum==0) {//should not happen
-				MessageBox.Show(Lan.g(this,"Invalid provider."));
+			long selectedProvNum=comboProv.GetSelectedProvNum();//zero if nothing selected
+			if(selectedProvNum==0) {//Happens if the patient's primary provider is not in the list of providers or the logged in user is not a provider. 
+				MessageBox.Show(Lan.g(this,"Please select a provider."));
 				return false;
 			}
 			//Prevents prescriptions from being added that have a provider selected that is past their term date
