@@ -180,7 +180,7 @@ namespace OpenDental{
 			checkIsHiddenOnReports.Checked=ProvCur.IsHiddenReport;
 			checkUseErx.Checked=(ProvCur.IsErxEnabled!=ErxEnabledStatus.Disabled);
 			ErxOption erxOption=Erx.GetErxOption();
-			if(erxOption==ErxOption.DoseSpotWithLegacy) {
+			if(erxOption==ErxOption.DoseSpotWithNewCrop) {
 				checkAllowLegacy.Visible=true;
 				checkAllowLegacy.Checked=(ProvCur.IsErxEnabled==ErxEnabledStatus.EnabledWithLegacy);
 			}
@@ -564,7 +564,7 @@ namespace OpenDental{
 			ErxOption erxOption=Erx.GetErxOption();
 			//If the ErxOption is Legacy, we want to keep the EnabledStatus as EnabledWithLegacy.
 			//If the office switches eRx Options we will know to prompt those providers which eRx solution to use until the office disables legacy.
-			if(erxOption!=ErxOption.Legacy && checkAllowLegacy.Visible && checkAllowLegacy.Checked) {
+			if(erxOption!=ErxOption.NewCrop && checkAllowLegacy.Visible && checkAllowLegacy.Checked) {
 				ProvCur.IsErxEnabled=ErxEnabledStatus.EnabledWithLegacy;
 			}
 			ProvCur.CustomID=textCustomID.Text;

@@ -69,8 +69,8 @@ namespace OpenDental {
 			await webViewMain.EnsureCoreWebView2Async(environment);
 			Text=Lan.g(this,"Loading")+"...";
 			LayoutToolBars();
-			if(ErxOptionCur==ErxOption.Legacy) {
-				ComposeNewRxLegacy();
+			if(ErxOptionCur==ErxOption.NewCrop) {
+				ComposeNewRxNewCrop();
 			}
 			else {
 				ComposeNewRxDoseSpot();
@@ -102,9 +102,9 @@ namespace OpenDental {
 		///<summary>Sends the ClickThroughXml to eRx and loads the result within the browser control.
 		///Loads the compose tab in NewCrop's web interface.  Can be called externally to send provider information to eRx
 		///without allowing the user to write any prescriptions.</summary>
-		public void ComposeNewRxLegacy() {
+		public void ComposeNewRxNewCrop() {
 			string additionalHeaders="Content-Type: application/x-www-form-urlencoded\r\n";
-			string newCropUrl=Erx.GetLegacyUrl();
+			string newCropUrl=Erx.GetNewCropUrl();
 			_memoryStream?.Dispose();
 			_memoryStream=new MemoryStream(ByteArray);
 			CoreWebView2WebResourceRequest coreWebView2WebResourceRequest=webViewMain.CoreWebView2.Environment.CreateWebResourceRequest(newCropUrl,"POST",_memoryStream,additionalHeaders);

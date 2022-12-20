@@ -13306,7 +13306,7 @@
       <summary>.</summary>
     </column>
     <column order="11" name="ProvNum" type="bigint(20)" fk="provider">
-      <summary>FK to provider.ProvNum.  Used when refering out a patient to track the reffering provider for EHR meaningfull use.</summary>
+      <summary>FK to provider.ProvNum.  Used when referring out a patient to track the referring provider for EHR meaningfull use.</summary>
     </column>
     <column order="12" name="DateTStamp" type="timestamp">
       <summary>The datetime this referral attachment was last edited.</summary>
@@ -14603,7 +14603,7 @@
       <summary>FK to userod.UserNum</summary>
     </column>
     <column order="3" name="LogDateTime" type="datetime">
-      <summary>The date and time of the entry.  It's value is set when inserting and can never change.  Even if a user changes the date on their ocmputer, this remains accurate because it uses server time.</summary>
+      <summary>The date and time of the entry.  It's value is set when inserting and can never change.  Even if a user changes the date on their computer, this remains accurate because it uses server time.</summary>
     </column>
     <column order="4" name="LogText" type="text">
       <summary>The description of exactly what was done. Varies by permission type.</summary>

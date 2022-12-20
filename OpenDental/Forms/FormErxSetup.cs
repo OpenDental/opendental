@@ -44,15 +44,15 @@ namespace OpenDental {
 				_listProgramProperties=ProgramProperties.GetForProgram(_program.ProgramNum);
 				checkEnabled.Checked=_program.Enabled;
 				_erxOption=PIn.Enum<ErxOption>(ErxOptionPP.PropertyValue);
-				if(_erxOption==ErxOption.Legacy) {
+				if(_erxOption==ErxOption.NewCrop) {
 					radioNewCrop.Checked=true;
 				}
 				else if(_erxOption==ErxOption.DoseSpot) {
 					radioDoseSpot.Checked=true;
 					//HideLegacy();
 				}
-				else if(_erxOption==ErxOption.DoseSpotWithLegacy) {
-					radioDoseSpotLegacy.Checked=true;
+				else if(_erxOption==ErxOption.DoseSpotWithNewCrop) {
+					radioDoseSpotNewCrop.Checked=true;
 					//HideLegacy();
 				}
 				textNewCropAccountID.Text=PrefC.GetString(PrefName.NewCropAccountId);
@@ -178,16 +178,16 @@ namespace OpenDental {
 		}
 
 		///<summary>All references removed in I12045.</summary>
-		private void HideLegacy() {
+		private void HideNewCrop() {
 			radioNewCrop.Visible=false;
-			radioDoseSpotLegacy.Location=radioDoseSpot.Location;
+			radioDoseSpotNewCrop.Location=radioDoseSpot.Location;
 			radioDoseSpot.Location=radioNewCrop.Location;
-			groupErxOptions.Size=new Size(groupErxOptions.Size.Width,radioDoseSpotLegacy.Location.Y+radioDoseSpotLegacy.Height+5);
+			groupErxOptions.Size=new Size(groupErxOptions.Size.Width,radioDoseSpotNewCrop.Location.Y+radioDoseSpotNewCrop.Height+5);
 		}
 
 		private void SetRadioButtonChecked(ErxOption erxOption) {
 			_erxOption=erxOption;
-			if(erxOption==ErxOption.Legacy) {
+			if(erxOption==ErxOption.NewCrop) {
 				label7.Visible=true;
 				textNewCropAccountID.Visible=true;
 				butClearAccountId.Visible=true;
@@ -196,8 +196,8 @@ namespace OpenDental {
 				butDelete.Visible=false;
 			}
 			else {
-				//This will also display the DoseSpot controls if DoseSpotWithLegacy is checked.
-				//This is important because the user is migrating away from Legacy to use DoseSpot.
+				//This will also display the DoseSpot controls if DoseSpotWithNewCrop is checked.
+				//This is important because the user is migrating away from NewCrop to use DoseSpot.
 				//Plus, the user cannot do anything in the NewCrop controls.
 				label7.Visible=false;
 				textNewCropAccountID.Visible=false;
@@ -213,17 +213,17 @@ namespace OpenDental {
 		}
 
 		private void radioNewCrop_Click(object sender,EventArgs e) {
-			SetRadioButtonChecked(ErxOption.Legacy);
+			SetRadioButtonChecked(ErxOption.NewCrop);
 		}
 
 		private void radioDoseSpot_Click(object sender,EventArgs e) {
-			MsgBox.Show(this,"This enables the DoseSpot program link only.  You must contact support to cancel current eRx Legacy charges and sign up for DoseSpot.");
+			MsgBox.Show(this,"This enables the DoseSpot program link only.  You must contact support to cancel current eRx NewCrop charges and sign up for DoseSpot.");
 			SetRadioButtonChecked(ErxOption.DoseSpot);
 		}
 
-		private void radioDoseSpotLegacy_Click(object sender,EventArgs e) {
+		private void radioDoseSpotNewCrop_Click(object sender,EventArgs e) {
 			MsgBox.Show(this,"This enables the program links only. You must contact support to sign up for eRx.");
-			SetRadioButtonChecked(ErxOption.DoseSpotWithLegacy);
+			SetRadioButtonChecked(ErxOption.DoseSpotWithNewCrop);
 		}
 
 		private void butClearAccountId_Click(object sender,EventArgs e) {

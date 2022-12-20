@@ -242,7 +242,7 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		///<summary>An employee user is assumed to be a proxy user in DoseSpot/Legacy. Returns true if a.) No prov is associated to user or b.) provider is associated but it is a secondary provider with blank NPI.</summary>
+		///<summary>An employee user is assumed to be a proxy user in DoseSpot/NewCrop. Returns true if a.) No prov is associated to user or b.) provider is associated but it is a secondary provider with blank NPI.</summary>
 		public static bool IsUserAnEmployee(Userod userod) {
 			bool isEmployee=false;
 			if(userod.EmployeeNum==0) {//The current user does not have an employee associated.
@@ -314,7 +314,7 @@ namespace OpenDentBusiness {
 			return doseSpotUrl+stringSSOQuery;
 		}
 
-		public static string GetLegacyUrl() {
+		public static string GetNewCropUrl() {
 			string newCropUrl=Introspection.GetOverride(Introspection.IntrospectionEntity.NewCropRxEntryURL,"https://secure.newcropaccounts.com/interfacev7/rxentry.aspx");
 			if(ODBuild.IsDebug()) {
 				newCropUrl="https://preproduction.newcropaccounts.com/interfaceV7/rxentry.aspx";
@@ -323,8 +323,8 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Sends the provider information to NewCrop without allowing the provider to use NewCrop.</summary>
-		public static void ComposeNewRxLegacyWebRequest(byte[] postDataBytes) {
-			string newCropUrl=GetLegacyUrl();
+		public static void ComposeNewRxNewCropWebRequest(byte[] postDataBytes) {
+			string newCropUrl=GetNewCropUrl();
 			WebRequest webRequest=WebRequest.Create(newCropUrl);
 			webRequest.Method="POST";
 			webRequest.ContentType="application/x-www-form-urlencoded";
@@ -341,11 +341,11 @@ namespace OpenDentBusiness {
 	///Any changes made to this enum need to also be changed there.</summary>
 	public enum ErxOption {
 		///<summary>0.</summary>
-		Legacy,
+		NewCrop,
 		///<summary>1.</summary>
 		DoseSpot,
 		///<summary>2.</summary>
-		DoseSpotWithLegacy,
+		DoseSpotWithNewCrop,
 	}
 
 	///<summary>Used by Erx to determine if the provider or clinic has been enabled at ODHQ.
