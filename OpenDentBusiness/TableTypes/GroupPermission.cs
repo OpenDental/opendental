@@ -753,7 +753,10 @@ namespace OpenDentBusiness{
 		AppointmentCompleteDelete,
 		///<summary>239 - Logs when Appointment Types are edited. For audit trails only.</summary>
 		[Description("Appointment Type Edit")]
-		AppointmentTypeEdit
+		AppointmentTypeEdit,
+		///<summary>240 - Allows users to edit tendlc brand information </summary>
+		[Description("Texting Account Edit")]
+		TextingAccountEdit,
 	}
 }
 

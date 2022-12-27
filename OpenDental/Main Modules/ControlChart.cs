@@ -3928,6 +3928,20 @@ namespace OpenDental {
 						row.Cells.Add(Pd.Patient.CreditType);
 						break;
 					#endregion ABC0
+					#region Admit Date
+					case "Admit Date":
+						if(PrefC.GetBool(PrefName.EasyHideHospitals)) { //true is hidden
+							continue;
+						}
+						if(Pd.Patient.AdmitDate.Year<1880) {
+							row.Cells.Add("");
+						}
+						else {
+							row.Cells.Add(Pd.Patient.AdmitDate.ToShortDateString());
+						}
+						row.Tag=null;
+						break;
+					#endregion Admit Date
 					#region Age
 					case "Age":
 						row.Cells.Add(PatientLogic.DateToAgeString(Pd.Patient.Birthdate,Pd.Patient.DateTimeDeceased));
@@ -4046,6 +4060,21 @@ namespace OpenDental {
 						row.Tag=null;
 						break;
 					#endregion Date First Visit
+					#region Discharge Date
+					case "Discharge Date":
+						if(PrefC.GetBool(PrefName.EasyHideHospitals)) { //true is hidden
+							continue;
+						}
+						EhrPatient ehrPatient=EhrPatients.GetOne(Pd.PatNum);
+						if(ehrPatient.DischargeDate.Year<1880) {
+							row.Cells.Add("");
+						}
+						else {
+							row.Cells.Add(ehrPatient.DischargeDate.ToShortDateString());
+						}
+						row.Tag=null;
+						break;
+					#endregion Discharge Date
 					#region Ehr Provider Keys
 					case "Ehr Provider Keys":
 						//Not even available to most users.

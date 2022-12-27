@@ -530,6 +530,8 @@ namespace OpenDental {
 					node.Nodes.Add(node2);
 					node2=SetNode(Permissions.ApiAccountEdit);
 					node.Nodes.Add(node2);
+					node2=SetNode(Permissions.TextingAccountEdit);
+					node.Nodes.Add(node2);
 				treePermissions.Nodes.Add(node);
 			}
 			#endregion

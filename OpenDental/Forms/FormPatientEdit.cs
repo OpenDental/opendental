@@ -2863,8 +2863,10 @@ namespace OpenDental{
 				MsgBox.Show(this,"Patient's Birthdate is not a valid or allowed date.");
 				return;
 			}
-			//Only validate admitDate when Hosptals is turned on. User has no way to correct errors otherwise.
-			if(!odDatePickerDateFirstVisit.IsValid() || (!PrefC.GetBool(PrefName.EasyHideHospitals) && !odDatePickerAdmitDate.IsValid() && !odDatePickerDischargeDate.IsValid())) {
+			if(!odDatePickerDateFirstVisit.IsValid() 
+				|| (!PrefC.GetBool(PrefName.EasyHideHospitals) //Only validate admitDate and dischargeDate when Hospitals is turned on. User has no way to correct errors otherwise.
+				&& (!odDatePickerAdmitDate.IsValid() || !odDatePickerDischargeDate.IsValid()))) 
+			{
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
 			}

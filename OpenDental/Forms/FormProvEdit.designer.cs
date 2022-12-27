@@ -43,6 +43,8 @@ namespace OpenDental {
 			this.label18 = new System.Windows.Forms.Label();
 			this.tabControlProvider = new System.Windows.Forms.TabControl();
 			this.tabGeneral = new System.Windows.Forms.TabPage();
+			this.textPreferredName = new System.Windows.Forms.TextBox();
+			this.label25 = new System.Windows.Forms.Label();
 			this.odColorPickerOutline = new OpenDental.UI.ODColorPicker();
 			this.odColorPickerAppt = new OpenDental.UI.ODColorPicker();
 			this.groupClinicOverrides = new OpenDental.UI.GroupBoxOD();
@@ -128,8 +130,6 @@ namespace OpenDental {
 			this.checkAllClinics = new System.Windows.Forms.CheckBox();
 			this.listBoxClinics = new OpenDental.UI.ListBoxOD();
 			this.labelClinics = new System.Windows.Forms.Label();
-			this.textPreferredName = new System.Windows.Forms.TextBox();
-			this.label25 = new System.Windows.Forms.Label();
 			this.groupBox2.SuspendLayout();
 			this.tabControlProvider.SuspendLayout();
 			this.tabGeneral.SuspendLayout();
@@ -178,7 +178,6 @@ namespace OpenDental {
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(496, 157);
 			this.groupBox2.TabIndex = 33;
-			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Supplemental Provider Identifiers";
 			// 
 			// gridProvIdent
@@ -391,6 +390,23 @@ namespace OpenDental {
 			this.tabGeneral.TabIndex = 0;
 			this.tabGeneral.Text = "General";
 			// 
+			// textPreferredName
+			// 
+			this.textPreferredName.Location = new System.Drawing.Point(202, 164);
+			this.textPreferredName.MaxLength = 100;
+			this.textPreferredName.Name = "textPreferredName";
+			this.textPreferredName.Size = new System.Drawing.Size(161, 20);
+			this.textPreferredName.TabIndex = 273;
+			// 
+			// label25
+			// 
+			this.label25.Location = new System.Drawing.Point(63, 168);
+			this.label25.Name = "label25";
+			this.label25.Size = new System.Drawing.Size(138, 14);
+			this.label25.TabIndex = 345;
+			this.label25.Text = "Preferred Name";
+			this.label25.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			// 
 			// odColorPickerOutline
 			// 
 			this.odColorPickerOutline.BackgroundColor = System.Drawing.Color.Empty;
@@ -422,7 +438,6 @@ namespace OpenDental {
 			this.groupClinicOverrides.Name = "groupClinicOverrides";
 			this.groupClinicOverrides.Size = new System.Drawing.Size(340, 98);
 			this.groupClinicOverrides.TabIndex = 341;
-			this.groupClinicOverrides.TabStop = false;
 			this.groupClinicOverrides.Text = "Clinic Overrides";
 			// 
 			// label15
@@ -511,7 +526,7 @@ namespace OpenDental {
 			this.checkAllowLegacy.Name = "checkAllowLegacy";
 			this.checkAllowLegacy.Size = new System.Drawing.Size(189, 17);
 			this.checkAllowLegacy.TabIndex = 340;
-			this.checkAllowLegacy.Text = "Allow Legacy eRx Option";
+			this.checkAllowLegacy.Text = "Allow NewCrop eRx Option";
 			this.checkAllowLegacy.Visible = false;
 			// 
 			// labelTermDate
@@ -725,7 +740,6 @@ namespace OpenDental {
 			this.groupAnesthProvType.Name = "groupAnesthProvType";
 			this.groupAnesthProvType.Size = new System.Drawing.Size(347, 83);
 			this.groupAnesthProvType.TabIndex = 303;
-			this.groupAnesthProvType.TabStop = false;
 			this.groupAnesthProvType.Text = "Anesthesia Provider Groups (optional)";
 			// 
 			// radAsstCirc
@@ -887,7 +901,6 @@ namespace OpenDental {
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(156, 80);
 			this.groupBox1.TabIndex = 275;
-			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "SSN or TIN (no dashes)";
 			// 
 			// radioTIN
@@ -921,21 +934,21 @@ namespace OpenDental {
 			// 
 			// listSpecialty
 			// 
-			this.listSpecialty.Items.AddRange(new object[] {
-            "Dental General Practice",
-            "Dental Hygienist",
-            "Endodontics",
-            "Pediatric Dentistry",
-            "Periodontics",
-            "Prosthodontics",
-            "Orthodontics",
-            "Denturist",
-            "Surgery, Oral & Maxillofacial",
-            "Dental Assistant",
-            "Dental Laboratory Technician",
-            "Pathology, Oral & MaxFac",
-            "Public Health",
-            "Radiology"});
+			this.listSpecialty.ItemStrings = new string[] {
+        "Dental General Practice",
+        "Dental Hygienist",
+        "Endodontics",
+        "Pediatric Dentistry",
+        "Periodontics",
+        "Prosthodontics",
+        "Orthodontics",
+        "Denturist",
+        "Surgery, Oral & Maxillofacial",
+        "Dental Assistant",
+        "Dental Laboratory Technician",
+        "Pathology, Oral & MaxFac",
+        "Public Health",
+        "Radiology"};
 			this.listSpecialty.Location = new System.Drawing.Point(598, 34);
 			this.listSpecialty.Name = "listSpecialty";
 			this.listSpecialty.Size = new System.Drawing.Size(154, 186);
@@ -1054,7 +1067,7 @@ namespace OpenDental {
 			this.tabSupplementalIDs.Location = new System.Drawing.Point(4, 22);
 			this.tabSupplementalIDs.Name = "tabSupplementalIDs";
 			this.tabSupplementalIDs.Padding = new System.Windows.Forms.Padding(3);
-			this.tabSupplementalIDs.Size = new System.Drawing.Size(862, 599);
+			this.tabSupplementalIDs.Size = new System.Drawing.Size(862, 585);
 			this.tabSupplementalIDs.TabIndex = 1;
 			this.tabSupplementalIDs.Text = "Supplemental IDs";
 			// 
@@ -1074,7 +1087,7 @@ namespace OpenDental {
 			this.tabDentalSchools.Location = new System.Drawing.Point(4, 22);
 			this.tabDentalSchools.Name = "tabDentalSchools";
 			this.tabDentalSchools.Padding = new System.Windows.Forms.Padding(3);
-			this.tabDentalSchools.Size = new System.Drawing.Size(862, 599);
+			this.tabDentalSchools.Size = new System.Drawing.Size(862, 585);
 			this.tabDentalSchools.TabIndex = 2;
 			this.tabDentalSchools.Text = "Dental Schools";
 			// 
@@ -1090,7 +1103,7 @@ namespace OpenDental {
 			this.tabWebSched.Location = new System.Drawing.Point(4, 22);
 			this.tabWebSched.Name = "tabWebSched";
 			this.tabWebSched.Padding = new System.Windows.Forms.Padding(3);
-			this.tabWebSched.Size = new System.Drawing.Size(862, 599);
+			this.tabWebSched.Size = new System.Drawing.Size(862, 585);
 			this.tabWebSched.TabIndex = 3;
 			this.tabWebSched.Text = "Web Sched";
 			// 
@@ -1164,7 +1177,7 @@ namespace OpenDental {
 			this.tabClinics.Location = new System.Drawing.Point(4, 22);
 			this.tabClinics.Name = "tabClinics";
 			this.tabClinics.Padding = new System.Windows.Forms.Padding(3);
-			this.tabClinics.Size = new System.Drawing.Size(862, 599);
+			this.tabClinics.Size = new System.Drawing.Size(862, 585);
 			this.tabClinics.TabIndex = 4;
 			this.tabClinics.Text = "Clinics";
 			// 
@@ -1204,23 +1217,6 @@ namespace OpenDental {
 			this.labelClinics.TabIndex = 47;
 			this.labelClinics.Text = "Clinics";
 			this.labelClinics.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-			// 
-			// textPreferredName
-			// 
-			this.textPreferredName.Location = new System.Drawing.Point(202, 164);
-			this.textPreferredName.MaxLength = 100;
-			this.textPreferredName.Name = "textPreferredName";
-			this.textPreferredName.Size = new System.Drawing.Size(161, 20);
-			this.textPreferredName.TabIndex = 273;
-			// 
-			// label25
-			// 
-			this.label25.Location = new System.Drawing.Point(63, 168);
-			this.label25.Name = "label25";
-			this.label25.Size = new System.Drawing.Size(138, 14);
-			this.label25.TabIndex = 345;
-			this.label25.Text = "Preferred Name";
-			this.label25.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// FormProvEdit
 			// 

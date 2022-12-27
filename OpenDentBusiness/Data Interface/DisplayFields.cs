@@ -293,6 +293,10 @@ namespace OpenDentBusiness {
 					list.Add(new DisplayField("Billing Type",0,category));
 					list.Add(new DisplayField("Referred From",0,category));
 					list.Add(new DisplayField("Date First Visit",0,category));
+					if(!PrefC.GetBool(PrefName.EasyHideHospitals)){ //true will hide
+						list.Add(new DisplayField("Admit Date",0,category));
+						list.Add(new DisplayField("Discharge Date",0,category));
+					}
 					list.Add(new DisplayField("Prov. (Pri, Sec)",0,category));
 					list.Add(new DisplayField("Pri Ins",0,category));
 					list.Add(new DisplayField("Sec Ins",0,category));
@@ -776,6 +780,10 @@ namespace OpenDentBusiness {
 					list.Add(new DisplayField("Billing Type",0,category));
 					list.Add(new DisplayField("Referred From",0,category));
 					list.Add(new DisplayField("Date First Visit",0,category));
+					if(!PrefC.GetBool(PrefName.EasyHideHospitals)){ //true will hide
+						list.Add(new DisplayField("Admit Date",0,category));
+						list.Add(new DisplayField("Discharge Date",0,category));
+					}
 					list.Add(new DisplayField("Prov. (Pri, Sec)",0,category));
 					list.Add(new DisplayField("Pri Ins",0,category));
 					list.Add(new DisplayField("Sec Ins",0,category));

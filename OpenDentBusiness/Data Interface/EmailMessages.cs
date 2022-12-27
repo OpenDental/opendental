@@ -1126,20 +1126,31 @@ namespace OpenDentBusiness{
 				.Select(x=>x.TrimStart("MicrosoftId".ToCharArray())).ToList();
 			listMessages=listMessages.Where(x => !listEmailMessageUids.Contains(x.Id)).ToList();
 			for(int i=0;i<listMessages.Count;i++) {
-				EmailMessage emailMessage=ConvertMicrosoftMessageToEmailMessage(emailAddressInbox.EmailUsername,listMessages[i]);
+				EmailMessage emailMessage=new EmailMessage();
+				//Check to see if the message has any inline attachments. If so then need to use MIME formatting.
+				if(listMessages[i].Attachments.OfType<Microsoft.Graph.FileAttachment>().ToList().Any(x => (bool)x.IsInline)) {
+					MimeKit.MimeMessage mimeMsg=MicrosoftApiConnector.GetMIMEMessage(emailAddressInbox.EmailUsername,emailAddressInbox.AccessToken,listMessages[i].Id);
+					if(IsEmailFromInbox(emailAddressInbox.EmailUsername,mimeMsg.To.ToList(),mimeMsg.From.ToList(),mimeMsg.Cc.ToList(),mimeMsg.Bcc.ToList())) {
+						//Convert MIME to our Email format and store the ID in the database
+						emailMessage=ProcessRawEmailMessageIn(mimeMsg.ToString(),0,emailAddressInbox,true);
+					}
+				}
+				else {
+					emailMessage=ConvertMicrosoftMessageToEmailMessage(emailAddressInbox.EmailUsername,listMessages[i]);
+					if(emailMessage.PatNum==0) {//If a patient match was not already found, try to locate patient based on the email address sent from.
+						string emailFromAddress=GetAddressSimple(emailMessage.FromAddress);
+						List<Patient> listMatchedPats=Patients.GetPatsByEmailAddress(emailFromAddress);
+						if(listMatchedPats.Count==1) {//If multiple matches, then we do not want to mislead the user by assigning a patient.
+							emailMessage.PatNum=listMatchedPats[0].PatNum;
+						}
+					}
+					Insert(emailMessage);
+				}
 				countNewEmails++;
 				EmailMessageUid uid=new EmailMessageUid();
 				uid.MsgId=listMessages[i].Id;
 				uid.RecipientAddress=emailAddressInbox.EmailUsername;
 				EmailMessageUids.Insert(uid);
-				if(emailMessage.PatNum==0) {//If a patient match was not already found, try to locate patient based on the email address sent from.
-					string emailFromAddress=GetAddressSimple(emailMessage.FromAddress);
-					List<Patient> listMatchedPats=Patients.GetPatsByEmailAddress(emailFromAddress);
-					if(listMatchedPats.Count==1) {//If multiple matches, then we do not want to mislead the user by assigning a patient.
-						emailMessage.PatNum=listMatchedPats[0].PatNum;
-					}
-				}
-				Insert(emailMessage);
 			}
 			return countNewEmails;
 		}

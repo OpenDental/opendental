@@ -96,23 +96,7 @@ namespace OpenDental{
 
 		private void butSetScanner_Click(object sender,EventArgs e) {
 			if(ODBuild.IsWeb()) {
-				CloudClientL.PromptSelections promptSelections=CloudClientL.PromptODCloudClientInstall();
-				if(promptSelections==CloudClientL.PromptSelections.ClientRunning) {
-					ODCloudClient.SetDefaultScanner();
-					return;
-				}
-				if(promptSelections==CloudClientL.PromptSelections.Launch) {
-					try {
-						string response=ODCloudClient.SendToBrowserSynchronously("",ODCloudClient.BrowserAction.RelaunchODCloudClientViaBrowser,6);
-					}
-					catch(Exception) {
-						MsgBox.Show("ODCloudClient did not respond, please ensure that the ODCloudClient is installed.");
-						return;
-					}
-					if(CloudClientL.PromptODCloudClientInstall(true)==CloudClientL.PromptSelections.NoResponse) {
-						MsgBox.Show("ODCloudClient did not respond, please ensure that the ODCloudClient is installed.");
-						return;
-					}
+				if(CloudClientL.IsCloudClientRunning()) {
 					ODCloudClient.SetDefaultScanner();
 				}
 				return;

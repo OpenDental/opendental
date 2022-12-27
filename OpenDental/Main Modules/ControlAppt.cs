@@ -1175,6 +1175,10 @@ namespace OpenDental {
 			if(ApptIsNull(appt)) {
 				return;
 			}
+			if(appt.AptStatus==ApptStatus.PtNote || appt.AptStatus==ApptStatus.PtNoteCompleted) {
+				MsgBox.Show(this,"Patient Notes cannot be sent to the Unscheduled List.");
+				return;
+			}
 			if(!AppointmentL.ValidateApptUnsched(appt)) {
 				return;
 			}
@@ -1972,6 +1976,10 @@ namespace OpenDental {
 			Appointment appt=Appointments.GetOneApt((long)parentMenuItem.Tag);//Refresh since they could of waited to interact with menu.
 			if(appt==null) {//This can happen if another user deleted the appt just after the current user right clicked on the appt.
 				MsgBox.Show(this,"Appointment not found.");
+				return null;
+			}
+			if(appt.AptStatus==ApptStatus.PtNote || appt.AptStatus==ApptStatus.PtNoteCompleted) {
+				MsgBox.Show(this,"Only appointments may be broken, not notes.");
 				return null;
 			}
 			if(AppointmentL.DoPreventChangesToCompletedAppt(appt,PreventChangesApptAction.Break)) {

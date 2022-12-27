@@ -37,6 +37,16 @@ namespace OpenDental{
 				_listDisplayFieldsShowing.RemoveAll(x => x.InternalName=="Tobacco Use");
 				_changed=true;
 			}
+			if(DisplayFieldCategoryCur==DisplayFieldCategory.ChartPatientInformation
+				&& PrefC.GetBool(PrefName.EasyHideHospitals) //true is hidden
+				&& (_listDisplayFieldsShowing.Any(x => x.InternalName=="Admit Date" || x.InternalName=="Discharge Date")))
+			{
+				//user may have enable Hospitals features, added the Admit Date or Discharge Date display field, and then disabled Hospital features,
+				//remove the Admit Date or Discharge Date display field
+				_listDisplayFieldsShowing.RemoveAll(x => x.InternalName=="Admit Date");
+				_listDisplayFieldsShowing.RemoveAll(x => x.InternalName=="Discharge Date");
+				_changed=true;
+			}
 			FillGrids();
 		}
 

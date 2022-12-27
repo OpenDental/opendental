@@ -12916,9 +12916,9 @@
       <Enumeration name="ErxOption">
         <summary>This Enumeration should match the enumeration in WebServiceCustomerUpdates.ProviderErx.
             Any changes made to this enum need to also be changed there.</summary>
-        <EnumValue name="Legacy">0.</EnumValue>
+        <EnumValue name="NewCrop">0.</EnumValue>
         <EnumValue name="DoseSpot">1.</EnumValue>
-        <EnumValue name="DoseSpotWithLegacy">2.</EnumValue>
+        <EnumValue name="DoseSpotWithNewCrop">2.</EnumValue>
       </Enumeration>
     </column>
     <column order="8" name="UserId" type="varchar(255)">
@@ -13340,7 +13340,7 @@
       <summary>.</summary>
     </column>
     <column order="11" name="ProvNum" type="bigint(20)" fk="provider">
-      <summary>FK to provider.ProvNum.  Used when referring out a patient to track the referring provider for EHR meaningfull use.</summary>
+      <summary>FK to provider.ProvNum.  Used when referring out a patient to track the referring provider for EHR meaningful use.</summary>
     </column>
     <column order="12" name="DateTStamp" type="timestamp">
       <summary>The datetime this referral attachment was last edited.</summary>

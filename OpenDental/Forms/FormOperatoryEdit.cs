@@ -57,7 +57,7 @@ namespace OpenDental{
 				label11.Visible=false;
 			}
 			comboOpType.Items.AddDefNone(); //Add none so can clear the Operatory Type
-			comboOpType.Items.AddDefs(Defs.GetDefsForCategory(DefCat.OperatoryTypes));
+			comboOpType.Items.AddDefs(Defs.GetDefsForCategory(DefCat.OperatoryTypes,true));
 			comboOpType.SetSelectedDefNum(_operatory.OperatoryType);
 		}
 

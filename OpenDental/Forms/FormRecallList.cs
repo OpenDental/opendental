@@ -1753,9 +1753,12 @@ namespace OpenDental {
 			if(PrefC.HasClinicsEnabled) {
 				clinicNum=comboClinicReact.SelectedClinicNum;
 			}
-			long siteNum=comboSiteReact.GetSelected<Site>().SiteNum;
+			long siteNum;
 			if(PrefC.GetBool(PrefName.EasyHidePublicHealth) || comboSiteReact.IsAllSelected){
 				siteNum=0;
+			}
+			else {
+				siteNum=comboSiteReact.GetSelected<Site>().SiteNum;
 			}
 			DataTable tableReacts=new DataTable();
 			ProgressOD progressOD=new ProgressOD();

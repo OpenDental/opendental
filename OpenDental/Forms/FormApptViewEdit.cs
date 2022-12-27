@@ -133,12 +133,7 @@ namespace OpenDental{
 				else{
 					row.Cells.Add(_listApptViewItemsDisplayedMain[i].ElementDesc);
 				}
-				if(_listApptViewItemsDisplayedMain[i].ElementDesc==EnumApptViewElement.MedOrPremed_plus.GetDescription()
-					|| _listApptViewItemsDisplayedMain[i].ElementDesc==EnumApptViewElement.HasIns_I.GetDescription()
-					|| _listApptViewItemsDisplayedMain[i].ElementDesc==EnumApptViewElement.InsToSend_excl.GetDescription()
-					|| _listApptViewItemsDisplayedMain[i].ElementDesc==EnumApptViewElement.RecallPastDue_R.GetDescription()
-					|| _listApptViewItemsDisplayedMain[i].ElementDesc==EnumApptViewElement.ProphyPerioPastDue_P.GetDescription()
-					|| _listApptViewItemsDisplayedMain[i].ElementDesc==EnumApptViewElement.LateColor.GetDescription())
+				if(DoSetBackgroundColor(_listApptViewItemsDisplayedMain[i].ElementDesc))
 				{
 					row.ColorBackG=_listApptViewItemsDisplayedMain[i].ElementColor;
 				}
@@ -165,12 +160,7 @@ namespace OpenDental{
 				else {
 					row.Cells.Add(_listApptViewItemsDisplayedUR[i].ElementDesc);
 				}
-				if(_listApptViewItemsDisplayedUR[i].ElementDesc==EnumApptViewElement.MedOrPremed_plus.GetDescription()
-					|| _listApptViewItemsDisplayedUR[i].ElementDesc==EnumApptViewElement.HasIns_I.GetDescription()
-					|| _listApptViewItemsDisplayedUR[i].ElementDesc==EnumApptViewElement.InsToSend_excl.GetDescription()
-					|| _listApptViewItemsDisplayedUR[i].ElementDesc==EnumApptViewElement.RecallPastDue_R.GetDescription()
-					|| _listApptViewItemsDisplayedUR[i].ElementDesc==EnumApptViewElement.ProphyPerioPastDue_P.GetDescription()
-					|| _listApptViewItemsDisplayedUR[i].ElementDesc==EnumApptViewElement.LateColor.GetDescription())
+				if(DoSetBackgroundColor(_listApptViewItemsDisplayedUR[i].ElementDesc))
 				{
 					row.ColorBackG=_listApptViewItemsDisplayedUR[i].ElementColor;
 				}
@@ -197,12 +187,7 @@ namespace OpenDental{
 				else {
 					row.Cells.Add(_listApptViewItemsDisplayedLR[i].ElementDesc);
 				}
-				if(_listApptViewItemsDisplayedLR[i].ElementDesc==EnumApptViewElement.MedOrPremed_plus.GetDescription()
-					|| _listApptViewItemsDisplayedLR[i].ElementDesc==EnumApptViewElement.HasIns_I.GetDescription()
-					|| _listApptViewItemsDisplayedLR[i].ElementDesc==EnumApptViewElement.InsToSend_excl.GetDescription()
-					|| _listApptViewItemsDisplayedLR[i].ElementDesc==EnumApptViewElement.RecallPastDue_R.GetDescription()
-					|| _listApptViewItemsDisplayedLR[i].ElementDesc==EnumApptViewElement.ProphyPerioPastDue_P.GetDescription()
-					|| _listApptViewItemsDisplayedLR[i].ElementDesc==EnumApptViewElement.LateColor.GetDescription())
+				if(DoSetBackgroundColor(_listApptViewItemsDisplayedLR[i].ElementDesc))
 				{
 					row.ColorBackG=_listApptViewItemsDisplayedLR[i].ElementColor;
 				}
@@ -367,6 +352,10 @@ namespace OpenDental{
 				//the item order is not used until saving to db.
 				string strDescript=_listEnumApptViewElementsAvailable[gridAvailable.GetSelectedIndex()].GetDescription();
 				Color color=Color.Black;
+				if(DoSetBackgroundColor(strDescript)) {
+					//Default background color to White.
+					color=Color.White;
+				}
 				ApptViewItem item=new ApptViewItem(strDescript,0,color);
 				if(gridMain.SelectedIndices.Length==1) {//insert
 					int newIdx=_listApptViewItemsDisplayedAll.IndexOf(_listApptViewItemsDisplayedMain[gridMain.GetSelectedIndex()]);
@@ -579,6 +568,17 @@ namespace OpenDental{
 			formApptViewItemEdit.ShowDialog();
 			FillElements();
 			ReselectItem(formApptViewItemEdit.ApptViewItemCur);
+		}
+
+		///<summary>Returns true if FillGrid sets the background color.</summary>
+		private bool DoSetBackgroundColor(string apptItemDescription) {
+			return apptItemDescription.In(
+				EnumApptViewElement.MedOrPremed_plus.GetDescription(),
+				EnumApptViewElement.HasIns_I.GetDescription(),
+				EnumApptViewElement.InsToSend_excl.GetDescription(),
+				EnumApptViewElement.RecallPastDue_R.GetDescription(),
+				EnumApptViewElement.ProphyPerioPastDue_P.GetDescription(),
+				EnumApptViewElement.LateColor.GetDescription());
 		}
 
 		///<summary>Returns the ApptFieldDef.FieldName with the tag (hidden) if the ApptFieldDef is hidden. Otherwise return the FieldName.</summary>

@@ -632,7 +632,8 @@ namespace OpenDentBusiness{
 					Permissions.VerifyPhoneOwnership,
 					Permissions.HeadmasterSetup,
 					Permissions.FAQEdit,
-					Permissions.EditReadOnlyTasks
+					Permissions.EditReadOnlyTasks,
+					Permissions.TextingAccountEdit
 				)) 
 			{
 				return false;

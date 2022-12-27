@@ -186,7 +186,6 @@ namespace OpenDental{
 				if(_appointment.AptStatus!=ApptStatus.Complete && !Security.IsAuthorized(Permissions.AppointmentEdit)
 					|| (_appointment.AptStatus==ApptStatus.Complete && !Security.IsAuthorized(Permissions.AppointmentCompleteEdit))) {//completed apts have their own perm.
 					butOK.Enabled=false;
-					butDelete.Enabled=false;
 					butPin.Enabled=false;
 					butTask.Enabled=false;
 					gridProc.Enabled=false;
