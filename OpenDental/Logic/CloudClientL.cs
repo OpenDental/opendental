@@ -12,6 +12,7 @@ namespace OpenDental
 {
 	public class CloudClientL
 	{
+		///<summary>Prompt the user to launch, or download and install, the OpenDentalCloudClient</summary>
 		public static PromptSelections PromptODCloudClientInstall(bool isCheckingCloudClientResponseOnly=false) {
 			string response="false";
 			try {
@@ -27,7 +28,7 @@ namespace OpenDental
 				return PromptSelections.ClientRunning;
 			}
 			if(response=="false") {
-				string message=@"It appears OpenDentalCloudClient is not running. Please launch the OpenDentalCloudClient program and try again, download and install first if missing.";
+				string message=Lan.g("CloudClient","Please launch (download and install if missing) the OpenDentalCloudClient program and try again.");
 				InputBox inputBox=new InputBox(message,new List<string>() { "Launch","Download" },0);
 				if(inputBox.ShowDialog()==DialogResult.Cancel) {
 					return PromptSelections.Cancel;
@@ -43,6 +44,29 @@ namespace OpenDental
 			}
 			return PromptSelections.ClientRunning;
 		}
+
+		///<summary>PromptODCloudClientInstall helper method for prompting the user to launch, or download and install, the OpenDentalCloudClient</summary>
+		public static bool IsCloudClientRunning() {
+			CloudClientL.PromptSelections promptSelections=CloudClientL.PromptODCloudClientInstall();
+			if(promptSelections==CloudClientL.PromptSelections.Cancel || promptSelections==CloudClientL.PromptSelections.Download) {
+				return false;
+			}
+			else if(promptSelections==CloudClientL.PromptSelections.Launch) {
+				try {
+					string response=ODCloudClient.SendToBrowserSynchronously("",ODCloudClient.BrowserAction.RelaunchODCloudClientViaBrowser,timeoutSecs:6);
+				}
+				catch(Exception) {
+					MsgBox.Show("ODCloudClient","ODCloudClient did not respond, please ensure that the ODCloudClient is installed.");
+					return false;
+				}
+				if(CloudClientL.PromptODCloudClientInstall(true)==CloudClientL.PromptSelections.NoResponse) {
+					MsgBox.Show("ODCloudClient","ODCloudClient did not respond, please ensure that the ODCloudClient is installed.");
+					return false;
+				}
+			}
+			return true;
+		}
+
 		public enum PromptSelections {
 			Launch,
 			Download,

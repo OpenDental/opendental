@@ -2806,7 +2806,7 @@ namespace OpenDentBusiness {
 			if(!PrefC.GetBool(PrefName.BalancesDontSubtractIns)) {
 				strMinusIns="-guar.InsEst";
 			}
-			string strBalExclude="(ROUND(guar.BalTotal"+strMinusIns+",3) >= ROUND("+POut.Double(excludeLessThan)+",3) OR guar.PayPlanDue >= ROUND("+POut.Double(excludeLessThan)+",3)";
+			string strBalExclude="(ROUND(guar.BalTotal"+strMinusIns+",3) >= ROUND("+POut.Double(excludeLessThan)+",3) OR (guar.PayPlanDue > 0 AND guar.PayPlanDue >= ROUND("+POut.Double(excludeLessThan)+",3))";
 			if(!excludeNeg) {//include credits
 				strBalExclude+=" OR ROUND(guar.BalTotal"+strMinusIns+",3) < 0";
 			}

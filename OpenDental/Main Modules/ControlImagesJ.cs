@@ -2667,7 +2667,9 @@ namespace OpenDental
 				return;
 			}	
 			if(ODBuild.IsWeb()) {
-				ToolbarScanWeb(scanType);
+				if(CloudClientL.IsCloudClientRunning()) {
+					ToolbarScanWeb(scanType);
+				}
 				return;
 			}
 			Cursor=Cursors.WaitCursor;
@@ -2854,7 +2856,9 @@ namespace OpenDental
 				return;
 			}
 			if(ODBuild.IsWeb()) {
-				ToolbarScanMultiWeb();
+				if(CloudClientL.IsCloudClientRunning()) {
+					ToolbarScanMultiWeb();
+				}
 				return;
 			}
 			string tempFile=PrefC.GetRandomTempFile(".pdf");

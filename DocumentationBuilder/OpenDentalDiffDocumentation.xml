@@ -159,6 +159,18 @@
       <summary>Timestamp automatically generated and user not allowed to change.  The actual date and time of entry.</summary>
     </column>
   </table>
+  <table name="providererx">
+    <summary></summary>
+    <column order="7" name="ErxType" type="tinyint(4)">
+      <summary>Enum:ErxOption Identifies which eRx option is being used when asking HQ if they are enabled.</summary>
+      <Enumeration name="ErxOption">
+        <summary>This Enumeration should match the enumeration in WebServiceCustomerUpdates.ProviderErx.
+            Any changes made to this enum need to also be changed there.</summary>
+        <EnumValue name="NewCrop">0.</EnumValue>
+        <EnumValue name="DoseSpotWithNewCrop">2.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
   <table name="screengroup">
     <summary></summary>
     <column order="5" name="PlaceService" type="tinyint(4)">
@@ -261,6 +273,16 @@
     </column>
     <column order="61" name="SecDateEntry" type="date">
       <summary>Timestamp automatically generated and user not allowed to change.  The actual date and time of entry.</summary>
+    </column>
+  </table>
+  <table name="providererx">
+    <summary></summary>
+    <column order="7" name="ErxType" type="tinyint(4)">
+      <summary>Enum:ErxOption Identifies which eRx option is being used when asking HQ if they are enabled.</summary>
+      <Enumeration name="ErxOption">
+        <summary>This Enumeration should match the enumeration in WebServiceCustomerUpdates.ProviderErx.
+            Any changes made to this enum need to also be changed there.</summary>
+      </Enumeration>
     </column>
   </table>
   <table name="screengroup">

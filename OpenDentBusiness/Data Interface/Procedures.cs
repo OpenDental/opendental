@@ -1266,13 +1266,17 @@ namespace OpenDentBusiness {
 				return 0;
 			}
 			Fee procFee=Fees.GetFee(procedure.CodeNum,dictDiscountFees.First().Value,procedure.ClinicNum,procedure.ProvNum);
-			if(procFee==null) {//No fee for discount plan's feesched and proc's provider
-				Patient pat=Patients.GetPat(procedure.PatNum);
-				Provider patProv=Providers.GetProv(pat.PriProv);
-				procFee=Fees.GetFee(procedure.CodeNum,patProv.FeeSched,procedure.ClinicNum,patProv.ProvNum);
-				if(procFee==null) {//No fee for pat's pri prov feesched and pat's pri prov
-					patProv=Providers.GetProv(PrefC.GetLong(PrefName.PracticeDefaultProv));
+			if(procFee==null) {//No fee for discount plan's feesched
+				Provider procProv=Providers.GetProv(procedure.ProvNum);
+				procFee=Fees.GetFee(procedure.CodeNum,procProv.FeeSched,procedure.ClinicNum,procProv.ProvNum);
+				if(procFee==null) {//No fee for discount plan's feesched and proc's provider
+					Patient pat=Patients.GetPat(procedure.PatNum);
+					Provider patProv=Providers.GetProv(pat.PriProv);
 					procFee=Fees.GetFee(procedure.CodeNum,patProv.FeeSched,procedure.ClinicNum,patProv.ProvNum);
+					if(procFee==null) {//No fee for pat's pri prov feesched and pat's pri prov
+						patProv=Providers.GetProv(PrefC.GetLong(PrefName.PracticeDefaultProv));
+						procFee=Fees.GetFee(procedure.CodeNum,patProv.FeeSched,procedure.ClinicNum,patProv.ProvNum);
+					}
 				}
 			}
 			//double procFeeAmt=(procFee == null) ? procedure.ProcFeeTotal : procFee.Amount;

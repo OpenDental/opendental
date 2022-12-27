@@ -511,7 +511,7 @@ namespace OpenDental {
 			this.checkAllowLegacy.Name = "checkAllowLegacy";
 			this.checkAllowLegacy.Size = new System.Drawing.Size(189, 17);
 			this.checkAllowLegacy.TabIndex = 340;
-			this.checkAllowLegacy.Text = "Allow Legacy eRx Option";
+			this.checkAllowLegacy.Text = "Allow NewCrop eRx Option";
 			this.checkAllowLegacy.Visible = false;
 			// 
 			// labelTermDate
