@@ -399,7 +399,7 @@ namespace CodeBase {
 			};
 			string authCode="";
 			try {
-				authCode=SendToODCloudClientSynchronously(cloudClientData,action,doShowProgressBar: false);
+				authCode=SendToODCloudClientSynchronously(cloudClientData,action,timeoutSecs:300,doShowProgressBar: false);
 			}
 			catch(Exception ex) {
 				ex.DoNothing();
@@ -424,7 +424,7 @@ namespace CodeBase {
 		public static void CloseListener() {
 			CloudClientAction action = CloudClientAction.CloseListener;
 			try {
-				SendToODCloudClientSynchronously(new ODCloudClientData(),action,5,doShowProgressBar:false);
+				SendToODCloudClient(new ODCloudClientData(),action);
 			}
 			catch(Exception) {
 				return;
