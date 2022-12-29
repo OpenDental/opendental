@@ -392,10 +392,11 @@ namespace OpenDental.UI {
 				if(!TabPages[i].Enabled){
 					break;//also blocked when trying to change SelectedIndex
 				}
-				if(SelectedIndex!=i){
+				int idxOld=SelectedIndex;
+				SelectedIndex=i;
+				if(idxOld!=i){
 					Selected?.Invoke(this,new EventArgs());
 				}
-				SelectedIndex=i;
 				break;
 			}
 		}

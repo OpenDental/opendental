@@ -712,6 +712,23 @@ namespace OpenDental {
 					}
 					_listSheetImportRows.Add(row);
 				}
+				//StateNoValidation---------------------------------
+				fieldVal=GetInputValue("StateNoValidation");
+				if(fieldVal!=null) {
+					row=new SheetImportRow();
+					row.FieldName="StateNoValidation";
+					row.OldValDisplay=_patient.State;
+					row.OldValObj=_patient.State;
+					row.NewValDisplay=fieldVal;
+					row.NewValObj=row.NewValDisplay;
+					row.ImpValDisplay=row.NewValDisplay;
+					row.ImpValObj=row.NewValObj;
+					row.ObjType=typeof(string);
+					if(row.OldValDisplay!=row.NewValDisplay) {
+						row.DoImport=true;
+					}
+					_listSheetImportRows.Add(row);
+				}
 				//Zip---------------------------------------------
 				fieldVal=GetInputValue("Zip");
 				if(fieldVal!=null) {
@@ -2391,6 +2408,9 @@ namespace OpenDental {
 							_patient.City=_listSheetImportRows[i].ImpValDisplay;
 							break;
 						case "State":
+							_patient.State=_listSheetImportRows[i].ImpValDisplay;
+							break;
+						case "StateNoValidation":
 							_patient.State=_listSheetImportRows[i].ImpValDisplay;
 							break;
 						case "Zip":

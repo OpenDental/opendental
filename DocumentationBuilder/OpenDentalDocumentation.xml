@@ -7588,6 +7588,7 @@
         <EnumValue name="AppointmentDelete">237 - Allows user to delete appointments.</EnumValue>
         <EnumValue name="AppointmentCompleteDelete">238 - Allows user to delete completed appointments.</EnumValue>
         <EnumValue name="AppointmentTypeEdit">239 - Logs when Appointment Types are edited. For audit trails only.</EnumValue>
+        <EnumValue name="TextingAccountEdit">240 - Allows users to edit tendlc brand information </EnumValue>
       </Enumeration>
     </column>
     <column order="5" name="FKey" type="bigint(20)">
@@ -14636,6 +14637,7 @@
         <EnumValue name="AppointmentDelete">237 - Allows user to delete appointments.</EnumValue>
         <EnumValue name="AppointmentCompleteDelete">238 - Allows user to delete completed appointments.</EnumValue>
         <EnumValue name="AppointmentTypeEdit">239 - Logs when Appointment Types are edited. For audit trails only.</EnumValue>
+        <EnumValue name="TextingAccountEdit">240 - Allows users to edit tendlc brand information </EnumValue>
       </Enumeration>
     </column>
     <column order="2" name="UserNum" type="bigint(20)" fk="userod">

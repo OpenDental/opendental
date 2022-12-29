@@ -1279,7 +1279,7 @@ namespace UnitTests.Procedures_Test {
 			insInfo.ListAllProcs.Add(procRecieved);
 			Claim claimReceived=ClaimT.CreateClaim(new List<Procedure> { procRecieved },insInfo);
 			insInfo.ListAllClaimProcs=ClaimProcs.Refresh(pat.PatNum);
-			ClaimT.ReceiveClaim(claimReceived,insInfo.ListAllClaimProcs.Where(x => x.ClaimNum==claimReceived.ClaimNum).ToList(),doAddPayAmount:true);
+			ClaimT.ReceiveClaim(claimReceived,insInfo.ListAllClaimProcs.Where(x => x.ClaimNum==claimReceived.ClaimNum).ToList(),doSetInsPayAmt:true);
 			insInfo.ListAllClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			//Patient only has $120 benefit remaining. Add new procedure to the appointment
 			Procedure proc3=ProcedureT.CreateProcedure(pat,"D2740",ProcStat.TP,"",400,DateTime.Today,aptNum: apt.AptNum);

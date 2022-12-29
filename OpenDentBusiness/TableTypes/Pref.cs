@@ -61,7 +61,7 @@ namespace OpenDentBusiness {
 		///<summary>Boolean, true by default.  When set to true and a new family member is added, the new patient's email will be autofilled with the 
 		///guarantor's email.</summary>
 		AddFamilyInheritsEmail,
-		///<summary>ENUM:EnumAdjustmentBlockOrWarn When a user tries to make a negative adjustment that exceeds a remaining patient portion. 0 = Warn, 1 = Block, 2 = Do Nothing.</summary>
+		///<summary>ENUM:EnumAdjustmentBlockOrWarn When a user tries to make a negative adjustment that exceeds a remaining patient portion. 0 = Warn, 1 = Block, 2 = Allow.</summary>
 		[PrefName(ValueType=PrefValueType.ENUM)]
 		AdjustmentBlockNegativeExceedingPatPortion,
 		///<summary>Deprecated in version 17.4.40.  When set to true, the user will not be able to save a new adjustment without first attaching a procedure to it.</summary>
@@ -2773,8 +2773,8 @@ namespace OpenDentBusiness {
 		Warn,
 		///<summary> 1 - Block. </summary>
 		Block,
-		///<summary> 2 - Do Nothing.</summary>
-		DoNothing
+		///<summary> 2 - Allow.</summary>
+		Allow
 	}
 
 }

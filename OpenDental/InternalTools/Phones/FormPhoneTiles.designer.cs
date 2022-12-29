@@ -53,15 +53,20 @@
 			this.menuItemLunch = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemHome = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemBreak = new System.Windows.Forms.ToolStripMenuItem();
-			this.checkBoxAll = new System.Windows.Forms.CheckBox();
+			this.checkBoxAll = new OpenDental.UI.CheckBox();
 			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
 			this.radioByExt = new System.Windows.Forms.RadioButton();
 			this.radioByName = new System.Windows.Forms.RadioButton();
 			this.butSettings = new OpenDental.UI.Button();
 			this.butConfRooms = new OpenDental.UI.Button();
-			this.checkHideClockedOut = new System.Windows.Forms.CheckBox();
+			this.checkHideClockedOut = new OpenDental.UI.CheckBox();
 			this.timerFlash = new System.Windows.Forms.Timer(this.components);
-			this.checkHideOnBreak = new System.Windows.Forms.CheckBox();
+			this.checkHideOnBreak = new OpenDental.UI.CheckBox();
+			this.gridMain = new OpenDental.UI.GridOD();
+			this.checkShowOldInterface = new OpenDental.UI.CheckBox();
+			this.textSearch = new System.Windows.Forms.TextBox();
+			this.labelSearch = new System.Windows.Forms.Label();
+			this.checkNeedsHelpTop = new OpenDental.UI.CheckBox();
 			this.menuNumbers.SuspendLayout();
 			this.menuStatus.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -71,9 +76,9 @@
 			// 
 			this.labelMsg.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelMsg.ForeColor = System.Drawing.Color.Firebrick;
-			this.labelMsg.Location = new System.Drawing.Point(102, 10);
+			this.labelMsg.Location = new System.Drawing.Point(81, 10);
 			this.labelMsg.Name = "labelMsg";
-			this.labelMsg.Size = new System.Drawing.Size(198, 20);
+			this.labelMsg.Size = new System.Drawing.Size(128, 20);
 			this.labelMsg.TabIndex = 27;
 			this.labelMsg.Text = "Voice Mails: 0";
 			this.labelMsg.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -286,16 +291,15 @@
 			this.checkBoxAll.Size = new System.Drawing.Size(128, 16);
 			this.checkBoxAll.TabIndex = 28;
 			this.checkBoxAll.Text = "Show All";
-			this.checkBoxAll.UseVisualStyleBackColor = true;
 			this.checkBoxAll.Click += new System.EventHandler(this.checkBoxAll_Click);
 			// 
 			// groupBox1
 			// 
 			this.groupBox1.Controls.Add(this.radioByExt);
 			this.groupBox1.Controls.Add(this.radioByName);
-			this.groupBox1.Location = new System.Drawing.Point(325, 0);
+			this.groupBox1.Location = new System.Drawing.Point(215, 0);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(198, 40);
+			this.groupBox1.Size = new System.Drawing.Size(188, 40);
 			this.groupBox1.TabIndex = 29;
 			this.groupBox1.Text = "Sort By:";
 			// 
@@ -346,12 +350,10 @@
 			this.checkHideClockedOut.Size = new System.Drawing.Size(128, 16);
 			this.checkHideClockedOut.TabIndex = 31;
 			this.checkHideClockedOut.Text = "Hide clocked out";
-			this.checkHideClockedOut.UseVisualStyleBackColor = true;
 			this.checkHideClockedOut.CheckedChanged += new System.EventHandler(this.checkHideClockedOut_CheckedChanged);
 			// 
 			// timerFlash
 			// 
-			this.timerFlash.Enabled = true;
 			this.timerFlash.Interval = 300;
 			this.timerFlash.Tick += new System.EventHandler(this.timerFlash_Tick);
 			// 
@@ -362,13 +364,64 @@
 			this.checkHideOnBreak.Size = new System.Drawing.Size(128, 16);
 			this.checkHideOnBreak.TabIndex = 32;
 			this.checkHideOnBreak.Text = "Hide on break";
-			this.checkHideOnBreak.UseVisualStyleBackColor = true;
 			this.checkHideOnBreak.CheckedChanged += new System.EventHandler(this.checkHideOnBreak_CheckedChanged);
+			// 
+			// gridMain
+			// 
+			this.gridMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+			this.gridMain.Location = new System.Drawing.Point(280, 46);
+			this.gridMain.Name = "gridMain";
+			this.gridMain.Size = new System.Drawing.Size(646, 929);
+			this.gridMain.TabIndex = 33;
+			this.gridMain.TranslationName = "TableBigPhones";
+			// 
+			// checkShowOldInterface
+			// 
+			this.checkShowOldInterface.Location = new System.Drawing.Point(916, 10);
+			this.checkShowOldInterface.Name = "checkShowOldInterface";
+			this.checkShowOldInterface.Size = new System.Drawing.Size(229, 16);
+			this.checkShowOldInterface.TabIndex = 34;
+			this.checkShowOldInterface.Text = "Show old interface (soon deprecated)";
+			this.checkShowOldInterface.Click += new System.EventHandler(this.checkShowOldInterface_Click);
+			// 
+			// textSearch
+			// 
+			this.textSearch.Location = new System.Drawing.Point(115, 46);
+			this.textSearch.Name = "textSearch";
+			this.textSearch.Size = new System.Drawing.Size(147, 20);
+			this.textSearch.TabIndex = 0;
+			// 
+			// labelSearch
+			// 
+			this.labelSearch.Location = new System.Drawing.Point(24, 45);
+			this.labelSearch.Name = "labelSearch";
+			this.labelSearch.Size = new System.Drawing.Size(87, 20);
+			this.labelSearch.TabIndex = 35;
+			this.labelSearch.Text = "Search";
+			this.labelSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// checkNeedsHelpTop
+			// 
+			this.checkNeedsHelpTop.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkNeedsHelpTop.Checked = true;
+			this.checkNeedsHelpTop.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkNeedsHelpTop.Location = new System.Drawing.Point(0, 72);
+			this.checkNeedsHelpTop.Name = "checkNeedsHelpTop";
+			this.checkNeedsHelpTop.Size = new System.Drawing.Size(128, 16);
+			this.checkNeedsHelpTop.TabIndex = 36;
+			this.checkNeedsHelpTop.Text = "Needs Help at Top";
+			this.checkNeedsHelpTop.Click += new System.EventHandler(this.checkNeedsHelpTop_Click);
 			// 
 			// FormPhoneTiles
 			// 
 			this.AutoScroll = true;
 			this.ClientSize = new System.Drawing.Size(1764, 987);
+			this.Controls.Add(this.checkNeedsHelpTop);
+			this.Controls.Add(this.textSearch);
+			this.Controls.Add(this.labelSearch);
+			this.Controls.Add(this.checkShowOldInterface);
+			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.checkHideOnBreak);
 			this.Controls.Add(this.checkHideClockedOut);
 			this.Controls.Add(this.butConfRooms);
@@ -388,6 +441,7 @@
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -414,7 +468,7 @@
 		private System.Windows.Forms.ToolStripMenuItem menuItemLunch;
 		private System.Windows.Forms.ToolStripMenuItem menuItemHome;
 		private System.Windows.Forms.ToolStripMenuItem menuItemBreak;
-		private System.Windows.Forms.CheckBox checkBoxAll;
+		private OpenDental.UI.CheckBox checkBoxAll;
 		private System.Windows.Forms.ToolStripMenuItem menuItemNeedsHelp;
 		private OpenDental.UI.GroupBoxOD groupBox1;
 		private System.Windows.Forms.RadioButton radioByExt;
@@ -426,8 +480,13 @@
 		private UI.Button butConfRooms;
 		private System.Windows.Forms.ToolStripMenuItem menuItemTCResponder;
 		private System.Windows.Forms.ToolStripMenuItem menuItemEmployeeSettings;
-		private System.Windows.Forms.CheckBox checkHideClockedOut;
+		private OpenDental.UI.CheckBox checkHideClockedOut;
 		private System.Windows.Forms.Timer timerFlash;
-		private System.Windows.Forms.CheckBox checkHideOnBreak;
+		private OpenDental.UI.CheckBox checkHideOnBreak;
+		private UI.GridOD gridMain;
+		private UI.CheckBox checkShowOldInterface;
+		private System.Windows.Forms.TextBox textSearch;
+		private System.Windows.Forms.Label labelSearch;
+		private UI.CheckBox checkNeedsHelpTop;
 	}
 }

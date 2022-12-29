@@ -65,10 +65,12 @@ namespace OpenDentBusiness{
 			}
 			balStart+=amtBalRE;//no change for non-RE
 			JournalEntry journalEntry=new JournalEntry();
+			journalEntry.CheckNumber="";
 			if(dateFrom.Year>1880){
 				journalEntry.DateDisplayed=dateFrom.AddDays(-1);
 			}
 			journalEntry.Memo=Lans.g("FormJournal","(starting balance)");
+			journalEntry.Splits="";
 			if(Accounts.DebitIsPos(account.AcctType)) {
 				if(balStart>=0){
 					journalEntry.DebitAmt=balStart;

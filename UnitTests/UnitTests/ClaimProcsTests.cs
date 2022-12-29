@@ -1558,9 +1558,9 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 			Claim claimSec=ClaimT.CreateClaim(new List<Procedure>{ proc,proc2 },ins,claimType:"S");
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(ins.Pat.PatNum);
 			//Receive primary and pay by procedure utilizing the estimated 50%.
-			ClaimT.ReceiveClaim(claimPri,ins.ListAllClaimProcs.FindAll(x => x.ClaimNum==claimPri.ClaimNum),doAddPayAmount:true);
+			ClaimT.ReceiveClaim(claimPri,ins.ListAllClaimProcs.FindAll(x => x.ClaimNum==claimPri.ClaimNum),doSetInsPayAmt:true);
 			//Receive secondary but this time pay by total and ignore the estimates by covering the other 50%.
-			ClaimT.ReceiveClaim(claimSec,ins.ListAllClaimProcs.FindAll(x => x.ClaimNum==claimSec.ClaimNum),doAddPayAmount:false);
+			ClaimT.ReceiveClaim(claimSec,ins.ListAllClaimProcs.FindAll(x => x.ClaimNum==claimSec.ClaimNum),doSetInsPayAmt:false);
 			ClaimProcT.AddInsPaidAsTotal(pat.PatNum,ins.SecInsPlan.PlanNum,provNum,183.50,ins.SecInsSub.InsSubNum,0,0,claimSec.ClaimNum);
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(ins.Pat.PatNum);
 			Procedures.ComputeEstimatesForAll(pat.PatNum,ins.ListAllClaimProcs,ins.ListAllProcs,ins.ListInsPlans,ins.ListPatPlans,ins.ListBenefits,pat.Age,
@@ -1624,9 +1624,9 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 			Claim claimSec=ClaimT.CreateClaim(new List<Procedure>{ proc,proc2 },ins,claimType:"S");
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(ins.Pat.PatNum);
 			//Receive primary and pay by procedure utilizing the estimated 50%.
-			ClaimT.ReceiveClaim(claimPri,ins.ListAllClaimProcs.FindAll(x => x.ClaimNum==claimPri.ClaimNum),doAddPayAmount:true);
+			ClaimT.ReceiveClaim(claimPri,ins.ListAllClaimProcs.FindAll(x => x.ClaimNum==claimPri.ClaimNum),doSetInsPayAmt:true);
 			//Receive secondary but this time pay by total and ignore the estimates by covering the other 50%.
-			ClaimT.ReceiveClaim(claimSec,ins.ListAllClaimProcs.FindAll(x => x.ClaimNum==claimSec.ClaimNum),doAddPayAmount:false);
+			ClaimT.ReceiveClaim(claimSec,ins.ListAllClaimProcs.FindAll(x => x.ClaimNum==claimSec.ClaimNum),doSetInsPayAmt:false);
 			//Overpay the claim which should cause the supplemental Txfr for the first procedure on the claim to get the leftovers.
 			ClaimProcT.AddInsPaidAsTotal(pat.PatNum,ins.SecInsPlan.PlanNum,provNum,200,ins.SecInsSub.InsSubNum,0,0,claimSec.ClaimNum);
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(ins.Pat.PatNum);
@@ -1689,10 +1689,10 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 			Claim claimSec=ClaimT.CreateClaim(new List<Procedure>{ proc,proc2 },ins,claimType:"S");
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(ins.Pat.PatNum);
 			//Receive primary and insert a singular as total payment for the estimated 50%.
-			ClaimT.ReceiveClaim(claimPri,ins.ListAllClaimProcs.FindAll(x => x.ClaimNum==claimPri.ClaimNum),doAddPayAmount:false);
+			ClaimT.ReceiveClaim(claimPri,ins.ListAllClaimProcs.FindAll(x => x.ClaimNum==claimPri.ClaimNum),doSetInsPayAmt:false);
 			ClaimProcT.AddInsPaidAsTotal(pat.PatNum,ins.PriInsPlan.PlanNum,provNum,183.50,ins.PriInsSub.InsSubNum,0,0,claimPri.ClaimNum);
 			//Receive secondary that will also insert a singular as total payment for the other 50%.
-			ClaimT.ReceiveClaim(claimSec,ins.ListAllClaimProcs.FindAll(x => x.ClaimNum==claimSec.ClaimNum),doAddPayAmount:false);
+			ClaimT.ReceiveClaim(claimSec,ins.ListAllClaimProcs.FindAll(x => x.ClaimNum==claimSec.ClaimNum),doSetInsPayAmt:false);
 			ClaimProcT.AddInsPaidAsTotal(pat.PatNum,ins.SecInsPlan.PlanNum,provNum,183.50,ins.SecInsSub.InsSubNum,0,0,claimSec.ClaimNum);
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(ins.Pat.PatNum);
 			Procedures.ComputeEstimatesForAll(pat.PatNum,ins.ListAllClaimProcs,ins.ListAllProcs,ins.ListInsPlans,ins.ListPatPlans,ins.ListBenefits,pat.Age,

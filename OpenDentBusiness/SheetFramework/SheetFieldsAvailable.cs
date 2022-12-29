@@ -427,6 +427,7 @@ namespace OpenDentBusiness{
 				list.Add(NewInput("referredFrom"));
 				list.Add(NewInput("SSN"));
 				list.Add(NewInput("State"));
+				list.Add(NewInput("StateNoValidation"));
 				list.Add(NewInput("WkPhone"));
 				list.Add(NewInput("WirelessPhone"));
 				list.Add(NewInput("wirelessCarrier"));

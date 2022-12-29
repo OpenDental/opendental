@@ -2004,6 +2004,13 @@ namespace OpenDental {
 				LayoutManager.Synch(dictionaryStringControl.Values.ElementAt(i));//The controls were just moved around programmatically by the sheetLayoutController.
 				//This will also pick up any change in anchor and move that over to the LayoutManager
 			}
+			//If enabled, the Ortho tab may also need to be adjusted, this will follow the space used by panelGrid to grow and shrink if necessary.
+			if(checkShowOrtho.Checked && tabControlProc.SelectedTab==tabOrtho){
+				LayoutManager.MoveLocation(tabControlOrthoCategories,new Point(panelGridProg.Left,panelGridProg.Top));
+				LayoutManager.MoveSize(tabControlOrthoCategories,new Size(panelGridProg.Width,LayoutManager.Scale(23)));
+				LayoutManager.MoveLocation(gridOrtho,new Point(panelGridProg.Left,tabControlOrthoCategories.Bottom));
+				LayoutManager.MoveSize(gridOrtho,new Size(panelGridProg.Width,panelGridProg.Bottom-gridOrtho.Top));
+			}
 		}
 		#endregion Methods - Event Handlers - Tabs General
 

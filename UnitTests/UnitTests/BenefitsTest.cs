@@ -358,7 +358,7 @@ namespace UnitTests.Benefits_Test {
 			//Create first claimproc. The insurance paid all
 			Claim claimReceived=ClaimT.CreateClaim(new List<Procedure> { proc1 },ins);
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(pat.PatNum);
-			ClaimT.ReceiveClaim(claimReceived,ins.ListAllClaimProcs.Where(x => x.ClaimNum==claimReceived.ClaimNum).ToList(),doAddPayAmount:true);
+			ClaimT.ReceiveClaim(claimReceived,ins.ListAllClaimProcs.Where(x => x.ClaimNum==claimReceived.ClaimNum).ToList(),doSetInsPayAmt:true);
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			//Create second procedure within the service year.
 			Procedure proc2=ProcedureT.CreateProcedure(pat,"D0274",ProcStat.TP,"",100,new DateTime(yearPlanStart,monthBetweenServiceYear,25));

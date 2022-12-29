@@ -1368,8 +1368,17 @@ namespace OpenDental {
 			decimal estPatPort=ClaimProcs.GetPatPortion(_procedure,_loadData.ListClaimProcsForProc,_loadData.ArrAdjustments.ToList());
 			decimal procPatPaid=(decimal)PaySplits.GetTotForProc(_procedure);
 			decimal adjRemAmt=estPatPort-procPatPaid+(decimal)formAdjustmentPicker.AdjustmentSelected.AdjAmt;
-			if(adjRemAmt<0 && !MsgBox.Show(this,MsgBoxButtons.OKCancel,"Remaining amount is negative.  Continue?","Overpaid Procedure Warning")) {
-				return;
+			if(adjRemAmt<0) {
+				EnumAdjustmentBlockOrWarn enumAdjustmentBlockOrWarn=PrefC.GetEnum<EnumAdjustmentBlockOrWarn>(PrefName.AdjustmentBlockNegativeExceedingPatPortion);
+				if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Warn) {
+					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Remaining amount is negative.  Continue?","Overpaid Procedure Warning")) {
+						return;
+					}
+				}
+				if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Block) {
+					MsgBox.Show(this,"Cannot create a negative adjustment exceeding the remaining amount on the procedure.");
+					return;
+				}
 			}
 			formAdjustmentPicker.AdjustmentSelected.ProcNum=_procedure.ProcNum;
 			formAdjustmentPicker.AdjustmentSelected.ProcDate=_procedure.ProcDate;

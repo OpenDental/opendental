@@ -66,6 +66,19 @@ namespace OpenDentBusiness{
 			Db.NonQ(command);
 		}
 
+		///<summary></summary>
+		public static void Update(PatientNote patientNote,PatientNote patientNoteOld,long guarantor) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),patientNote,patientNoteOld,guarantor);
+				return;
+			}
+			Crud.PatientNoteCrud.Update(patientNote,patientNoteOld);//FamFinancial gets skipped
+			string command = "UPDATE patientnote SET "
+				+ "FamFinancial = '"+POut.String(patientNote.FamFinancial)+"'"
+				+" WHERE patnum = '"+POut.Long   (guarantor)+"'";
+			Db.NonQ(command);
+		}
+
 		///<summary>Gets the PatientNote for the patient passed in.  The FamFinancial note could be incorrect.
 		///Users should call Refresh() to get the correct PatientNote for the patient and guarantor combo.</summary>
 		private static PatientNote GetOne(long patNum) {

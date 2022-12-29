@@ -1079,6 +1079,9 @@ namespace OpenDental {
 		private void butPrint_Click(object sender,EventArgs e) {
 			//Statements and referral letters with grids or toothcharts are the only sheets that should not refresh from the db before printing.
 			bool hasSheetFromDb=!IsStatement && !IsNewReferralLetter();
+			if(!ValidateStateField()) {
+				return;
+			}
 			validateAndUpdateFonts(SheetCur,true);// validate fonts before printing/creating PDF
 			if(SheetCur.SheetType==SheetTypeEnum.PaymentPlan) {
 				SaveSignaturePayPlan();
@@ -1196,6 +1199,9 @@ namespace OpenDental {
 		private void butSimplePrint_Click(object sender,EventArgs e) {
 			//Statements and referral letters with grids or toothcharts are the only sheets that should not refresh from the db before printing.
 			bool hasSheetFromDb=!IsStatement && !IsNewReferralLetter();
+			if(!ValidateStateField()) {
+				return;
+			}
 			validateAndUpdateFonts(SheetCur,true);// validate fonts before printing/creating PDF
 			if(SheetCur.SheetType==SheetTypeEnum.PaymentPlan) {
 				SaveSignaturePayPlan();
@@ -1337,6 +1343,9 @@ namespace OpenDental {
 		private void butEmail_Click(object sender,EventArgs e) {
 			//Statements and referral letters with grids or toothcharts are the only sheets that should not refresh from the db before printing.
 			bool hasSheetFromDb=!IsStatement && !IsNewReferralLetter();
+			if(!ValidateStateField()) {
+				return;
+			}
 			validateAndUpdateFonts(SheetCur,true);// validate fonts before printing/creating PDF
 			if(SheetCur.SheetType==SheetTypeEnum.PaymentPlan) {
 				SaveSignaturePayPlan();
@@ -1400,6 +1409,9 @@ namespace OpenDental {
 		private void butPDF_Click(object sender,EventArgs e) {
 			//Statements and referral letters with grids or toothcharts are the only sheets that should not refresh from the db before printing.
 			bool hasSheetFromDb=!IsStatement && !IsNewReferralLetter();
+			if(!ValidateStateField()) {
+				return;
+			}
 			validateAndUpdateFonts(SheetCur,true);// validate fonts before printing/creating PDF
 			if(SheetCur.SheetType==SheetTypeEnum.PaymentPlan) {
 				SaveSignaturePayPlan();
@@ -1636,10 +1648,18 @@ namespace OpenDental {
 				}
 				if(panelMain.Controls[i].GetType()==typeof(RichTextBox)) {//WinForms
 					richTextBoxFormatted.Text="";
-					//RichTextBox can alter the string being passed in. This compairison will ensure we are only updating the sheet value when the user has changes something.
+					//RichTextBox can alter the string being passed in. This comparison will ensure we are only updating the sheet value when the user has changed something.
 					GraphicsHelper.CreateTextBoxForSheetDisplay((SheetField)panelMain.Controls[i].Tag,false,richTextBoxFormatted);
+					//Purposefully trimming leading and trailing whitespace from all input fields.
+					//This method gets invoked prior to hashing signature data when saving so this programmatic manipulation is safe to do.
+					if(isSave
+						&& ((SheetField)panelMain.Controls[i].Tag).FieldType==SheetFieldType.InputField
+						&& !((SheetField)panelMain.Controls[i].Tag).FieldValue.IsNullOrEmpty())
+					{
+						richTextBoxFormatted.Text=richTextBoxFormatted.Text.Trim();
+					}
 					if(panelMain.Controls[i].Text!=richTextBoxFormatted.Text) {
-						((SheetField)panelMain.Controls[i].Tag).FieldValue=panelMain.Controls[i].Text;
+						((SheetField)panelMain.Controls[i].Tag).FieldValue=panelMain.Controls[i].Text.Trim();
 					}
 				}
 				else if(panelMain.Controls[i].GetType()==typeof(System.Windows.Forms.Integration.ElementHost)) {//This will never be hit, since we are no longer using WPF RichTextBox. Leaving for documentation
@@ -2036,6 +2056,9 @@ namespace OpenDental {
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
+			if(!ValidateStateField()) {
+				return;
+			}
 			if(SheetCur.SheetType==SheetTypeEnum.PaymentPlan) {//Payment plan saves and closes the window.
 				if(!VerifyRequiredFields()) {
 					return;
@@ -2089,6 +2112,9 @@ namespace OpenDental {
 		}
 
 		private void ValidateSaveAndExit() {
+			if(!ValidateStateField()) {
+				return;
+			}
 			validateAndUpdateFonts(SheetCur);// validate fonts before saving
 			if(!VerifyRequiredFields() || !DoSaveChanges() || !TryToSaveData()){
 				return;
@@ -2156,6 +2182,29 @@ namespace OpenDental {
 			if(isPrinting && hasErrors) {
 				MsgBox.Show(Lan.g(this,$"Form is trying to save or print with unsupported font(s): {string.Join(", ",listStrBadFonts.ToArray())}. Font(s) will be replaced with a generic substitute to allow saving and printing."));
 			}
+		}
+
+		//Currently only for PatientForms, verify that the InputField of "State" is exactly 2 characters in length. 
+		private bool ValidateStateField() {
+			if(SheetCur.SheetType!=SheetTypeEnum.PatientForm) {
+				return true;
+			}
+			for(int i=0;i<panelMain.Controls.Count;i++){
+				if(panelMain.Controls[i].Tag==null){
+					continue;
+				}
+				if(panelMain.Controls[i].GetType()==typeof(RichTextBox)) {
+					SheetField sheetField=(SheetField)panelMain.Controls[i].Tag;
+					if(sheetField.FieldType!=SheetFieldType.InputField){
+						continue;
+					}
+					if(sheetField.FieldName=="State" && sheetField.FieldValue.Trim().Length!=2 && sheetField.FieldValue.Trim().Length>0) {
+						MessageBox.Show(Lan.g(this,"The State field must be exactly two characters in length."));
+						return false;
+					}
+				}
+			}
+			return true;
 		}
 
 		private void butCancel_Click(object sender,EventArgs e) {

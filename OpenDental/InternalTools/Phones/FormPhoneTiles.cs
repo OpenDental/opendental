@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using CodeBase;
+using OpenDental.UI;
 using OpenDentBusiness;
 
 namespace OpenDental {
@@ -20,11 +21,12 @@ namespace OpenDental {
 		///<summary>A timer is constantly flipping this back and forth.  Indicates currently pink, regardless of whether any lights really need to be flashing.</summary>
 		private bool _isFlashingPink;
 		private List<ChatUser> _listChatUsers;
-		///<summary>This thread fills labelMsg</summary>
+		private List<MapArea> _listMapAreas;
+		private List<MapAreaContainer> _listMapAreasContainers;
 		private List<Phone> _listPhones;
 		private List<WebChatSession> _listWebChatSessions;
-		private List<PeerInfo> _listRemoteSupportSessions;
-		//private int _msgCount;
+		///<summary>Remote Support Sessions.</summary>
+		private List<PeerInfo> _listPeerInfos;
 		///<summary>This gives us something to paint on.</summary>
 		private UI.PanelOD panelMain;
 		private Phone _phoneSelected;
@@ -62,6 +64,7 @@ namespace OpenDental {
 		#region Methods - Event Handlers Standard
 		private void FormPhoneTiles_Load(object sender,EventArgs e) {
 			panelMain=new UI.PanelOD();
+			panelMain.Visible=false;
 			panelMain.Size=PanelClient.Size;
 			panelMain.Anchor=AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
 			panelMain.MouseClick+=panelMain_MouseClick;
@@ -77,8 +80,15 @@ namespace OpenDental {
 			_isFlashingPink=false;
 			_timeSpanDelta=MiscData.GetNowDateTime()-DateTime.Now;
 			//Do not call FillTiles() yet. Need to create PhoneTile controls first.
-			SetPhoneList(Phones.GetPhoneList(),ChatUsers.GetAll(),WebChatSessions.GetActiveSessions(),PeerInfos.GetActiveSessions(false,true),
-				isFillTiles:false);
+			_listPhones=Phones.GetPhoneList();
+			_listChatUsers=ChatUsers.GetAll();
+			_listWebChatSessions=WebChatSessions.GetActiveSessions();
+			_listPeerInfos=PeerInfos.GetActiveSessions(false,true);
+			_listMapAreas=MapAreas.Refresh();
+			_listMapAreasContainers=PhoneMapJSON.GetFromDb();
+			_listPhones.Sort(new Phones.PhoneComparer(_sortBy));
+			panelMain.Invalidate();
+			FillGrid();
 			if(_listPhones.Count>=1) {
 				int columns=(int)Math.Ceiling((double)_listPhones.Count/_tilesPerColumn);
 				int widthForm=1780;//This width and height is changed to accomadate Jordan's taskbar and sidebar setup.
@@ -87,13 +97,14 @@ namespace OpenDental {
 			}
 			radioByExt.CheckedChanged+=radioSort_CheckedChanged;
 			radioByName.CheckedChanged+=radioSort_CheckedChanged;
+			timerFlash.Enabled=true;
 		}
 
 		private void FormPhoneTiles_Shown(object sender,EventArgs e) {      
-			DateTime now=DateTime.Now;
-			while(now.AddSeconds(1)>DateTime.Now) {
-				Application.DoEvents();
-			}
+			//DateTime now=DateTime.Now;
+			//while(now.AddSeconds(1)>DateTime.Now) {
+			//	Application.DoEvents();
+			//}
 		}
 
 		private void checkHideClockedOut_CheckedChanged(object sender,EventArgs e) {
@@ -104,6 +115,30 @@ namespace OpenDental {
 		private void checkHideOnBreak_CheckedChanged(object sender,EventArgs e) {
 			FilterPhoneList();
 			FillTiles(false);
+		}
+
+		private void checkNeedsHelpTop_Click(object sender,EventArgs e){
+			FilterPhoneList();
+			FillTiles(false);
+		}
+
+		private void checkShowOldInterface_Click(object sender,EventArgs e) {
+			if(checkShowOldInterface.Checked){
+				panelMain.Visible=true;
+				gridMain.Visible=false;
+				labelSearch.Visible=false;
+				textSearch.Visible=false;
+				checkNeedsHelpTop.Visible=false;
+				panelMain.Invalidate();
+			}
+			else{//new interface
+				panelMain.Visible=false;
+				gridMain.Visible=true;
+				labelSearch.Visible=true;
+				textSearch.Visible=true;
+				checkNeedsHelpTop.Visible=true;
+				FillGrid();
+			}
 		}
 
 		private void radioSort_CheckedChanged(object sender,EventArgs e) {
@@ -134,14 +169,19 @@ namespace OpenDental {
 		}
 
 		private void timerFlash_Tick(object sender,EventArgs e) {
+			//every 300 ms
 			_isFlashingPink=!_isFlashingPink;//toggles flash
 			panelMain.Invalidate();
+			FillGrid();
 		}
 		#endregion Methods - Event Handlers Standard
 
 		#region Method - OnPaint
 		
 		private void panelMain_Paint(object sender, PaintEventArgs e){
+			if(!checkShowOldInterface.Checked){
+				return;
+			}
 			base.OnPaint(e);
 			Graphics g=e.Graphics;
 			Pen pen=new Pen(Color.Black);
@@ -158,8 +198,8 @@ namespace OpenDental {
 			int statusWidth=62;
 			int statusX=0;
 			int statusY=20;
-			int imageLocationX=97;
-			int proxLocationX=116;
+			int imageLocationX=97;//phone or chat icon
+			int proxLocationX=116;//either person fig, small circle, or home
 			int timeBoxLocationX=3;
 			int timeBoxLocationY=17;
 			int timeBoxWidth=39;
@@ -171,58 +211,57 @@ namespace OpenDental {
 			int webChatHeightWidth=14;//Used for the rectangle that houses the web chat icon to prevent it from breaking the box boundary.
 			//i starts at 1, because it determines the number of columns with modulo division on line if(i%_tilesPerColumn==0)
 			List<PhoneEmpDefault> listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
-			for(int i=1;i<_listPhones.Count+1;i++) {
-				int numCur=i-1;
-				employee=Employees.GetEmp(_listPhones[numCur].EmployeeNum);
+			for(int i=0;i<_listPhones.Count;i++) {
+				employee=Employees.GetEmp(_listPhones[i].EmployeeNum);
 				bool isWorkingHome=false;
 				if(employee!=null) {
 					isWorkingHome=employee.IsWorkingHome;
 				}
-				ChatUser chatUser=_listChatUsers.Where(chat => chat.Extension==_listPhones[numCur].Extension).FirstOrDefault();
-				WebChatSession webChatSession=_listWebChatSessions.FirstOrDefault(session => session.TechName==_listPhones[numCur].EmployeeName);
-				PeerInfo remoteSupportSession=_listRemoteSupportSessions.FirstOrDefault(x => x.EmployeeNum==_listPhones[numCur].EmployeeNum);
-				Color outerColor;
-				Color innerColor;
-				Color fontColor;
+				ChatUser chatUser=_listChatUsers.Where(chat => chat.Extension==_listPhones[i].Extension).FirstOrDefault();
+				WebChatSession webChatSession=_listWebChatSessions.FirstOrDefault(session => session.TechName==_listPhones[i].EmployeeName);
+				PeerInfo remoteSupportSession=_listPeerInfos.FirstOrDefault(x => x.EmployeeNum==_listPhones[i].EmployeeNum);
+				Color colorOuter;
+				Color colorInner;
+				Color colorFont;
 				bool isTriageOperatorOnTheClock=false;
 				//set the phone color 
-				Phones.GetPhoneColor(_listPhones[numCur],listPhoneEmpDefaults.Find(phone => phone.EmployeeNum==_listPhones[numCur].EmployeeNum),false,
-					out outerColor,out innerColor,out fontColor,out isTriageOperatorOnTheClock);
+				Phones.GetPhoneColor(_listPhones[i],listPhoneEmpDefaults.Find(phone => phone.EmployeeNum==_listPhones[i].EmployeeNum),false,
+					out colorOuter,out colorInner,out colorFont,out isTriageOperatorOnTheClock);
 				//get the color scheme
 				Phones.PhoneColorScheme phoneColorScheme=new Phones.PhoneColorScheme(true);
-				string extensionAndName=$"{_listPhones[numCur].Extension}-{_listPhones[numCur].EmployeeName}";
+				string extensionAndName=$"{_listPhones[i].Extension}-{_listPhones[i].EmployeeName}";
 				//determine if the extension has a user associated with it
-				if(_listPhones[numCur].EmployeeName=="") {
+				if(_listPhones[i].EmployeeName=="") {
 					extensionAndName+="Vacant";
 				}
 				//determine the status or note if the user is gone, otherwise just leave it
-				string statusAndNote="";
-				if(_listPhones[numCur].ClockStatus==ClockStatusEnum.Home
-					|| _listPhones[numCur].ClockStatus==ClockStatusEnum.None
-					|| _listPhones[numCur].ClockStatus==ClockStatusEnum.Off) {
-					statusAndNote="Clock In";
+				string clockStatus="";
+				if(_listPhones[i].ClockStatus==ClockStatusEnum.Home
+					|| _listPhones[i].ClockStatus==ClockStatusEnum.None
+					|| _listPhones[i].ClockStatus==ClockStatusEnum.Off) {
+					clockStatus="Clock In";
 				}
-				if(_listPhones[numCur].ClockStatus==ClockStatusEnum.Unavailable) {
-					statusAndNote="Unavbl.";
+				if(_listPhones[i].ClockStatus==ClockStatusEnum.Unavailable) {
+					clockStatus="Unavbl.";
 				}
 				//get the customer number
-				string customer=_listPhones[numCur].CustomerNumber;
+				string customer=_listPhones[i].CustomerNumber;
 				//get the time that has passed on a call
 				string time="";
-				if(_listPhones[numCur].DateTimeNeedsHelpStart.Date==DateTime.Today) {
-					time=(DateTime.Now-_listPhones[numCur].DateTimeNeedsHelpStart+_timeSpanDelta).ToStringHmmss();
+				if(_listPhones[i].DateTimeNeedsHelpStart.Date==DateTime.Today) {
+					time=(DateTime.Now-_listPhones[i].DateTimeNeedsHelpStart+_timeSpanDelta).ToStringHmmss();
 				}
-				else if(_listPhones[numCur].DateTimeStart.Date==DateTime.Today) {
-					time=(DateTime.Now-_listPhones[numCur].DateTimeStart+_timeSpanDelta).ToStringHmmss();
+				else if(_listPhones[i].DateTimeStart.Date==DateTime.Today) {
+					time=(DateTime.Now-_listPhones[i].DateTimeStart+_timeSpanDelta).ToStringHmmss();
 				}
 				//draw the time box with its determined color
-				Color colorBar=outerColor;
-				//don't draw anything if they are clocked out or unavailable
-				if(_listPhones[numCur].ClockStatus!=ClockStatusEnum.Home
-					&&_listPhones[numCur].ClockStatus!=ClockStatusEnum.None
-					&&_listPhones[numCur].ClockStatus!=ClockStatusEnum.Off) {
+				Color colorBar=colorOuter;
+				//don't draw anything if they are clocked out
+				if(_listPhones[i].ClockStatus!=ClockStatusEnum.Home
+					&&_listPhones[i].ClockStatus!=ClockStatusEnum.None
+					&&_listPhones[i].ClockStatus!=ClockStatusEnum.Off) {
 					//determine if they need help and flash pink if they do 
-					if(_listPhones[numCur].ClockStatus==ClockStatusEnum.NeedsHelp) {
+					if(_listPhones[i].ClockStatus==ClockStatusEnum.NeedsHelp) {
 						if(_isFlashingPink) {
 							colorBar=phoneColorScheme.ColorOuterNeedsHelp;
 						}
@@ -231,28 +270,28 @@ namespace OpenDental {
 						}
 					}
 					//set the color of the inside of the time box
-					if(_listPhones[numCur].ClockStatus==ClockStatusEnum.HelpOnTheWay) {
+					if(_listPhones[i].ClockStatus==ClockStatusEnum.HelpOnTheWay) {
 						colorBar=phoneColorScheme.ColorOuterNeedsHelp;
 					}
 					//draw the inside of the time box if the user is not on break
-					if(_listPhones[numCur].ClockStatus!=ClockStatusEnum.Break && _listPhones[numCur].ClockStatus!=ClockStatusEnum.Unavailable) {
+					if(_listPhones[i].ClockStatus!=ClockStatusEnum.Break && _listPhones[i].ClockStatus!=ClockStatusEnum.Unavailable) {
 						using(SolidBrush brush=new SolidBrush(colorBar)) {
 							g.FillRectangle(brush,(x*_tileWidth)+timeBoxLocationX,(y*_tileHeight)+yTop+timeBoxLocationY,timeBoxWidth,controlHeight);
 						}
 					}
 					//draw the outline of the time box
-					if(_listPhones[numCur].ClockStatus!=ClockStatusEnum.Unavailable) {
+					if(_listPhones[i].ClockStatus!=ClockStatusEnum.Unavailable) {
 						g.DrawRectangle(pen,(x*_tileWidth)+timeBoxLocationX,(y*_tileHeight)+yTop+timeBoxLocationY,timeBoxWidth,controlHeight);
 					}
 					//draw either the figure or circle depending on if they are proxmial 
-					if(_listPhones[numCur].IsProxVisible && !isWorkingHome && _listPhones[numCur].ClockStatus!=ClockStatusEnum.Unavailable) {
+					if(_listPhones[i].IsProxVisible && !isWorkingHome && _listPhones[i].ClockStatus!=ClockStatusEnum.Unavailable) {
 						g.DrawImage(Properties.Resources.Figure,(x*_tileWidth)+proxLocationX,(y*_tileHeight)+yTop+controlMargin,12,14);
 					}
-					else if(_listPhones[numCur].DateTProximal.AddHours(8)>DateTime.Now && !isWorkingHome && _listPhones[numCur].ClockStatus!=ClockStatusEnum.Unavailable) {
+					else if(_listPhones[i].DateTProximal.AddHours(8)>DateTime.Now && !isWorkingHome && _listPhones[i].ClockStatus!=ClockStatusEnum.Unavailable) {
 						g.DrawImage(Properties.Resources.NoFigure,(x*_tileWidth)+proxLocationX,(y*_tileHeight)+yTop+controlMargin);
 					}
 					//draw the phone image if it is in use
-					if(_listPhones[numCur].Description!="") {
+					if(_listPhones[i].Description!="") {
 						g.DrawImage(Properties.Resources.phoneInUse,(x*_tileWidth)+imageLocationX,(y*_tileHeight)+yTop+controlMargin+1,17,13);
 					}
 					else if(webChatSession!=null) {
@@ -269,7 +308,7 @@ namespace OpenDental {
 						time=remoteSupportSession.SessionTime.ToStringHmmss();
 					}
 					//draw the time on call or what ever activity they are doing
-					if(time!="" && _listPhones[numCur].ClockStatus!=ClockStatusEnum.Unavailable) {
+					if(time!="" && _listPhones[i].ClockStatus!=ClockStatusEnum.Unavailable) {
 						g.DrawString(time,fontDraw,solidBrush,(x*_tileWidth)+timeLocationX,(y*_tileHeight)+yTop+timeBoxLocationY+2);
 					}
 				}
@@ -285,8 +324,8 @@ namespace OpenDental {
 				//draw the things that need to be shown at all times such as the employee name, customer, and emp status
 				g.DrawString(extensionAndName,fontBold,solidBrush,new RectangleF((x*_tileWidth),(y*_tileHeight)+yTop+controlMargin,
 					extensionWidth,controlHeight),new StringFormat() { FormatFlags=StringFormatFlags.NoWrap });
-				if(statusAndNote!="") { //the status only shows if it is Clock In or Unavailable
-					g.DrawString(statusAndNote,fontDraw,solidBrush,new RectangleF((x*_tileWidth)+statusX,(y*_tileHeight)+yTop+statusY,
+				if(clockStatus!="") { //the status only shows if it is Clock In or Unavailable
+					g.DrawString(clockStatus,fontDraw,solidBrush,new RectangleF((x*_tileWidth)+statusX,(y*_tileHeight)+yTop+statusY,
 						statusWidth,controlHeight),new StringFormat() { Trimming=StringTrimming.EllipsisCharacter,FormatFlags=StringFormatFlags.NoWrap });
 				}
 				g.DrawString(customer,fontDraw,solidBrush,new RectangleF((x*_tileWidth)+customerX,(y*_tileHeight)+yTop+customerY+controlMargin,
@@ -324,7 +363,7 @@ namespace OpenDental {
 
 		private void butConfRooms_Click(object sender,EventArgs e) {
 			using FormPhoneConfs FormPC=new FormPhoneConfs();
-			FormPC.ShowDialog();//ShowDialog because we do not this window to be floating open for long periods of time.
+			FormPC.ShowDialog();//ShowDialog because we do not want this window to be floating open for long periods of time.
 		}
 
 		private void checkBoxAll_Click(object sender,EventArgs e) {
@@ -484,22 +523,18 @@ namespace OpenDental {
 		#endregion Methods - Event Handlers Click
 
 		#region Methods - Public 
+		///<summary>Called from FormOpenDental when signals come in.</summary>
 		public void SetPhoneList(List<Phone> listPhones,List<ChatUser> listChatUsers,List<WebChatSession> listWebChatSession,
-			List<PeerInfo> listRemoteSupportSessions,bool isFillTiles=true)
+			List<PeerInfo> listPeerInfos)
 		{
-			//create a new list so our sorting doesn't affect this list elsewhere
-			_listPhones=new List<Phone>(listPhones);
+			_listPhones=new List<Phone>(listPhones);//a copy so that we don't alter the original
 			_listChatUsers=listChatUsers;
 			_listWebChatSessions=listWebChatSession;
-			_listRemoteSupportSessions=listRemoteSupportSessions;
-			if(isFillTiles) {
-				FilterPhoneList();
-				FillTiles(false);//this is dangerous.  If it were true, it would be a loop.
-			}
-			else {
-				_listPhones.Sort(new Phones.PhoneComparer(_sortBy));
-			}
+			_listPeerInfos=listPeerInfos;
+			FilterPhoneList();
+			FillTiles(false);
 			panelMain.Invalidate();
+			FillGrid();
 		}
 
 		public void SetVoicemailCount(int voiceMailCount) {
@@ -531,6 +566,167 @@ namespace OpenDental {
 			FormPEDE.ShowDialog();
 		}
 
+		private void FillGrid(){
+			if(checkShowOldInterface.Checked){
+				return;
+			}
+			//this grid is on a timer to get refreshed every 300ms, which is pretty cool.  It doesn't even flicker.
+			List<Phone> listPhones=_listPhones.FindAll(x=>x.EmployeeName.ToLower().Contains(textSearch.Text.ToLower()));
+			if(checkNeedsHelpTop.Checked){
+				if(radioByName.Checked){
+					listPhones=listPhones.OrderBy(x=>x.ClockStatus!=ClockStatusEnum.NeedsHelp)
+						.ThenBy(x=>x.EmployeeName=="")//empty names at bottom
+						.ThenBy(x=>x.EmployeeName).ToList();
+				}
+				else{
+					listPhones=listPhones.OrderBy(x=>x.ClockStatus!=ClockStatusEnum.NeedsHelp).ThenBy(x=>x.Extension).ToList();
+				}
+			}
+			else{
+				if(radioByName.Checked){
+					listPhones=listPhones.OrderBy(x=>x.EmployeeName=="")//empty names at bottom
+						.ThenBy(x=>x.EmployeeName).ToList();
+				}
+				else{
+					listPhones=listPhones.OrderBy(x=>x.Extension).ToList();
+				}
+			}
+			gridMain.BeginUpdate();
+			gridMain.Columns.Clear();
+			GridColumn col=new GridColumn("Ext",40);
+			gridMain.Columns.Add(col);
+			col=new GridColumn("Name",80);
+			gridMain.Columns.Add(col);
+			col=new GridColumn("Status",80);
+			gridMain.Columns.Add(col);
+			col=new GridColumn("Phone",60);
+			gridMain.Columns.Add(col);
+			col=new GridColumn("Prox",50);
+			gridMain.Columns.Add(col);
+			col=new GridColumn("Time",50);
+			gridMain.Columns.Add(col);
+			col=new GridColumn("Cubicle",50);
+			gridMain.Columns.Add(col);
+			col=new GridColumn("Customer",200);
+			gridMain.Columns.Add(col);
+			gridMain.ListGridRows.Clear();
+			List<PhoneEmpDefault> listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
+			for(int i=0;i<listPhones.Count;i++){
+				GridRow row=new GridRow();
+				//Ext--------------------------------------------------------------------------------------------------------------
+				row.Cells.Add(listPhones[i].Extension.ToString());
+				//Name--------------------------------------------------------------------------------------------------------------
+				row.Cells.Add(listPhones[i].EmployeeName);
+				//Status------------------------------------------------------------------------------------------------------------
+				//the old interface only showed Unavbl, Clock In, or blank. I think that's terrible,
+				//so I'm showing all clockStatuses except Home, None, and Off.
+				string clockStatus=listPhones[i].ClockStatus.ToString();
+				if(listPhones[i].ClockStatus==ClockStatusEnum.Unavailable){
+					clockStatus="Unavail";
+				}
+				if(listPhones[i].ClockStatus.In(ClockStatusEnum.Home,ClockStatusEnum.None,ClockStatusEnum.Off)){
+					clockStatus="";
+				}
+				row.Cells.Add(clockStatus);
+				//Phone-------------------------------------------------------------------------------------------------------------
+				string time="";
+				if(listPhones[i].DateTimeNeedsHelpStart.Date==DateTime.Today) {
+					time=(DateTime.Now-listPhones[i].DateTimeNeedsHelpStart+_timeSpanDelta).ToStringHmmss();
+				}
+				else if(listPhones[i].DateTimeStart.Date==DateTime.Today) {
+					time=(DateTime.Now-listPhones[i].DateTimeStart+_timeSpanDelta).ToStringHmmss();
+				}
+				ChatUser chatUser=_listChatUsers.Find(x => x.Extension==listPhones[i].Extension);
+				WebChatSession webChatSession=_listWebChatSessions.Find(session => session.TechName==listPhones[i].EmployeeName);
+				PeerInfo peerInfo=_listPeerInfos.Find(x => x.EmployeeNum==listPhones[i].EmployeeNum);
+				if(listPhones[i].ClockStatus.In(ClockStatusEnum.Home,ClockStatusEnum.None,ClockStatusEnum.Off)){
+					row.Cells.Add("");
+				}
+				else if(listPhones[i].Description!="") {//InUse
+					row.Cells.Add("Phone");//Later, replace with phone icon.
+				}
+				else if(webChatSession!=null) {
+					row.Cells.Add("WebChat");//Later, replace with WebChatIcon
+					time=(DateTime.Now-webChatSession.DateTcreated).ToStringHmmss();
+				}
+				else if(chatUser!=null && chatUser.CurrentSessions!=0) {
+					row.Cells.Add("Chat");//Later, replace with gtaicon3
+					time=TimeSpan.FromMilliseconds(chatUser.SessionTime).ToStringHmmss();
+				}
+				else if(peerInfo!=null) {
+					row.Cells.Add("RemoteSupp");//Later, replace with remoteSupportIcon
+					time=peerInfo.SessionTime.ToStringHmmss();
+				}
+				else{
+					row.Cells.Add("");
+				}
+				//Prox--------------------------------------------------------------------------------------------------------------
+				Employee employee=Employees.GetEmp(listPhones[i].EmployeeNum);
+				bool isWorkingHome=false;
+				if(employee!=null) {
+					isWorkingHome=employee.IsWorkingHome;
+				}
+				if(isWorkingHome) {//draw the home icon regardless of whether they are clocked in or out
+					row.Cells.Add("AtHome");//todo: show _bitmapHouse
+				}
+				else if(listPhones[i].ClockStatus.In(ClockStatusEnum.Unavailable,ClockStatusEnum.Home,ClockStatusEnum.None,ClockStatusEnum.Off)){
+					row.Cells.Add("");
+				}
+				else if(listPhones[i].IsProxVisible) {
+					row.Cells.Add("AtDesk");//Todo: show human figure icon
+				}
+				else if(listPhones[i].DateTProximal.AddHours(8)>DateTime.Now ) {
+					row.Cells.Add("Away");//Todo: show small circle icon
+				}
+				else{
+					row.Cells.Add("");
+				}
+				//Time--------------------------------------------------------------------------------------------------------------
+				Color colorOuter;
+				Color colorInner;//not used
+				Color colorFont;//not used
+				bool isTriageOperatorOnTheClock=false;
+				Phones.GetPhoneColor(listPhones[i],listPhoneEmpDefaults.Find(phone => phone.EmployeeNum==listPhones[i].EmployeeNum),false,
+					out colorOuter,out colorInner,out colorFont,out isTriageOperatorOnTheClock);//todo: get rid of the outs by splitting GetPhoneColor into multiple methods.
+				Phones.PhoneColorScheme phoneColorScheme=new Phones.PhoneColorScheme(true);
+				Color colorBar=colorOuter;
+				if(listPhones[i].ClockStatus==ClockStatusEnum.NeedsHelp) {
+					if(_isFlashingPink) {
+						colorBar=phoneColorScheme.ColorOuterNeedsHelp;
+					}
+					else {
+						colorBar=Color.Empty;
+					}
+				}
+				if(listPhones[i].ClockStatus==ClockStatusEnum.HelpOnTheWay) {
+					colorBar=phoneColorScheme.ColorOuterNeedsHelp;
+				}
+				if(listPhones[i].ClockStatus.In(ClockStatusEnum.Home,ClockStatusEnum.None,ClockStatusEnum.Off)){
+					row.Cells.Add("");//no time or color
+				}
+				else{
+					GridCell gridCell=new GridCell(time);
+					gridCell.ColorBackG=colorBar;
+					row.Cells.Add(gridCell);
+				}
+				//Cubicle------------------------------------------------------------------------------------------------------------
+				MapArea mapArea=_listMapAreas.Find(x => 
+					x.Extension==listPhones[i].Extension 
+					&& x.Description!="" 
+					&& _listMapAreasContainers.Exists(y=>y.MapAreaContainerNum==x.MapAreaContainerNum));
+				if(mapArea==null){
+					row.Cells.Add("");
+				}
+				else{
+					row.Cells.Add(mapArea.Description);
+				}
+				//Customer------------------------------------------------------------------------------------------------------------
+				row.Cells.Add(listPhones[i].CustomerNumber);
+				gridMain.ListGridRows.Add(row);
+			}
+			gridMain.EndUpdate();
+		}
+
 		///<summary>Could return null</summary>
 		private Phone GetPhone(Point location,int column,int row) {
 			int index=(column)*_tilesPerColumn+row;
@@ -545,12 +741,20 @@ namespace OpenDental {
 		}
 
 		private void FillTiles(bool doRefreshList) {
-			if(doRefreshList) { //Refresh the phone list. This will cause a database refresh for our list and call this function again with the new list.
-				DataValid.SetInvalid(InvalidType.PhoneEmpDefaults);
-				SetPhoneList(Phones.GetPhoneList(),ChatUsers.GetAll(),WebChatSessions.GetActiveSessions(),PeerInfos.GetActiveSessions(false,true));
+			if(doRefreshList) { //Refresh the phone list. This will cause a database refresh for our list.
+				PhoneEmpDefaults.RefreshCache();
+				_listPhones=Phones.GetPhoneList();
+				_listChatUsers=ChatUsers.GetAll();
+				_listWebChatSessions=WebChatSessions.GetActiveSessions();
+				_listPeerInfos=PeerInfos.GetActiveSessions(false,true);
+				_listMapAreas=MapAreas.Refresh();
+				FilterPhoneList();
+				panelMain.Invalidate();
+				FillGrid();
 				return;
 			}
 			panelMain.Invalidate();
+			FillGrid();
 		}
 
 		///<summary>Filters phone list. Checks the checkHideClockedOut and will remove phones if employee is not clocked in.</summary>
@@ -578,11 +782,13 @@ namespace OpenDental {
 			PhoneUI.BuildMenuStatus(menuStatus,phoneCur);
 			menuStatus.Show(location);		
 		}
-		
+
+
+
+
+
 		#endregion Methods - Private
 
-	
-
-
+		
 	}
 }

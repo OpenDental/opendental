@@ -4387,9 +4387,9 @@ namespace OpenDental{
 				_formPhoneTiles=new FormPhoneTiles();
 				_formPhoneTiles.GoToPatient += new System.EventHandler(this.phonePanel_GoToChanged);
 				_formPhoneTiles.Show();
-				Rectangle rectangle=System.Windows.Forms.Screen.FromControl(this).Bounds;
-				_formPhoneTiles.Location=new Point((rectangle.Width-_formPhoneTiles.Width)/2+rectangle.X,0);
-				_formPhoneTiles.BringToFront();
+				//Rectangle rectangle=System.Windows.Forms.Screen.FromControl(this).Bounds;
+				//_formPhoneTiles.Location=new Point((rectangle.Width-_formPhoneTiles.Width)/2+rectangle.X,0);
+				//_formPhoneTiles.BringToFront();
 			}
 			else {
 				if(_formPhoneTiles.WindowState==FormWindowState.Minimized) {
@@ -5578,7 +5578,8 @@ namespace OpenDental{
 			}
 			using FormProviderSetup formProviderSetup=new FormProviderSetup();
 			formProviderSetup.ShowDialog();
-			SecurityLogs.MakeLogEntry(Permissions.ProviderEdit,0,"Provider Setup");
+			//The ProvNum of the provider to be edited cannot be logged here because no provider has been selected yet.
+ 			SecurityLogs.MakeLogEntry(Permissions.ProviderEdit,0,"Provider Setup",0,SecurityLogs.LogSource,DateTime.MinValue);
 		}
 
 		private void menuItemPrescriptions_Click(object sender, System.EventArgs e) {

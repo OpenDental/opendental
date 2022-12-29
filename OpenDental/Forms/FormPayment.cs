@@ -453,7 +453,9 @@ namespace OpenDental {
 				MsgBox.Show(this,$"The CareCredit Setup window does not have a Payment Type set{(PrefC.HasClinicsEnabled ? " for this clinic." : ".")}");
 				return;
 			}
-			listPayType.SelectedIndex=defCareCredit;
+			if(!PrefC.GetBool(PrefName.PaymentsPromptForPayType)) {
+				listPayType.SelectedIndex=defCareCredit;
+			}
 			SetComboDepositAccounts();
 			//Prevent SavePaymentToDb() from setting textAmount.Text to zero. _isCCDeclined is irrelevant here.
 			_isCCDeclined=false;
@@ -3434,7 +3436,9 @@ namespace OpenDental {
 				Program program=Programs.GetCur(ProgramName.PayConnect);
 				//still need to add functionality for accountingAutoPay
 				string paytype=ProgramProperties.GetPropVal(program.ProgramNum,"PaymentType",_payment.ClinicNum);//paytype could be an empty string
-				listPayType.SelectedIndex=Defs.GetOrder(DefCat.PaymentTypes,PIn.Long(paytype));
+				if(!PrefC.GetBool(PrefName.PaymentsPromptForPayType)) { 
+					listPayType.SelectedIndex=Defs.GetOrder(DefCat.PaymentTypes,PIn.Long(paytype));
+				}
 				SetComboDepositAccounts();
 			}
 			double amountCharged=(double)amount;
@@ -3572,7 +3576,9 @@ namespace OpenDental {
 				//still need to add functionality for accountingAutoPay
 				//paytype could be an empty string
 				string paytype=ProgramProperties.GetPropValForClinicOrDefault(program.ProgramNum,PaySimple.PropertyDescs.PaySimplePayTypeCC,_payment.ClinicNum);
-				listPayType.SelectedIndex=Defs.GetOrder(DefCat.PaymentTypes,PIn.Long(paytype));
+				if(!PrefC.GetBool(PrefName.PaymentsPromptForPayType)) {
+					listPayType.SelectedIndex=Defs.GetOrder(DefCat.PaymentTypes,PIn.Long(paytype));
+				}
 				SetComboDepositAccounts();
 			}
 			if(prepaidAmt!=0) {
@@ -3599,7 +3605,7 @@ namespace OpenDental {
 					_payment.ExternalId=formPaySimple.ApiResponseOut.RefNumber;
 					int defOrder=Defs.GetOrder(DefCat.PaymentTypes,PIn.Long(paytype));
 					//paytype could be an empty string, so then leave listPayType as it was.
-					if(defOrder>=-1) {
+					if(defOrder>=-1 && !PrefC.GetBool(PrefName.PaymentsPromptForPayType)) {
 						listPayType.SelectedIndex=defOrder;
 					}
 				}
@@ -3728,7 +3734,9 @@ namespace OpenDental {
 				//These UI changes only need to happen for regular credit cards when the payment window is displayed.
 				string xPayTypeNum=ProgramProperties.GetPropVal(_programX.ProgramNum,"PaymentType",_payment.ClinicNum);
 				//still need to add functionality for accountingAutoPay
-				listPayType.SelectedIndex=Defs.GetOrder(DefCat.PaymentTypes,PIn.Long(xPayTypeNum));
+				if(!PrefC.GetBool(PrefName.PaymentsPromptForPayType)) { 
+					listPayType.SelectedIndex=Defs.GetOrder(DefCat.PaymentTypes,PIn.Long(xPayTypeNum));
+				}
 				SetComboDepositAccounts();
 			}
 			/*XCharge.exe [/TRANSACTIONTYPE:type] [/AMOUNT:amount] [/ACCOUNT:account] [/EXP:exp]
@@ -4097,7 +4105,9 @@ namespace OpenDental {
 			if(prepaidAmt==0) {
 				Program program=Programs.GetCur(ProgramName.EdgeExpress);
 				string payType=ProgramProperties.GetPropVal(program.ProgramNum,ProgramProperties.PropertyDescs.EdgeExpress.PaymentType,_payment.ClinicNum);//payType could be an empty string
-				listPayType.SelectedIndex=Defs.GetOrder(DefCat.PaymentTypes,PIn.Long(payType));
+				if(!PrefC.GetBool(PrefName.PaymentsPromptForPayType)) { 
+					listPayType.SelectedIndex=Defs.GetOrder(DefCat.PaymentTypes,PIn.Long(payType));
+				}
 			}
 			_payment.ProcessStatus=ProcessStat.OfficeProcessed;
 			EdgeExpressTransType edgeExpressTransType=formEdgeExpressTrans.EdgeExpressTransTypeCur;

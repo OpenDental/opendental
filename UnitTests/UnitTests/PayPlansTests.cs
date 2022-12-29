@@ -61,7 +61,7 @@ namespace UnitTests.PayPlans_Tests {
 			//Insurance pays their portion.
 			Claim claim=ClaimT.CreateClaim("P",insInfo.ListPatPlans,insInfo.ListInsPlans,insInfo.ListAllClaimProcs,insInfo.ListAllProcs,pat,
 				new List<Procedure>{proc},insInfo.ListBenefits,insInfo.ListInsSubs);
-			ClaimT.ReceiveClaim(claim,insInfo.ListAllClaimProcs,doAddPayAmount:true);
+			ClaimT.ReceiveClaim(claim,insInfo.ListAllClaimProcs,doSetInsPayAmt:true);
 			//Payment plan should not be overpaid.
 			List<PayPlan> listOverPaidDPP=PayPlans.GetOverChargedPayPlans(new List<long>{dynamicPayPlan.PayPlanNum});
 			Assert.AreEqual(0,listOverPaidDPP.Count);
@@ -94,7 +94,7 @@ namespace UnitTests.PayPlans_Tests {
 			//Insurance pays their portion.
 			Claim claim=ClaimT.CreateClaim("P",insInfo.ListPatPlans,insInfo.ListInsPlans,insInfo.ListAllClaimProcs,insInfo.ListAllProcs,pat,
 				new List<Procedure>{proc},insInfo.ListBenefits,insInfo.ListInsSubs);
-			ClaimT.ReceiveClaim(claim,insInfo.ListAllClaimProcs,doAddPayAmount:true);
+			ClaimT.ReceiveClaim(claim,insInfo.ListAllClaimProcs,doSetInsPayAmt:true);
 			//And then insurance overpays their portion.
 			ClaimProcT.AddInsPaid(pat.PatNum,insplan.PlanNum,proc.ProcNum,50,insInfo.PriInsSub.InsSubNum,0,0);
 			//Payment plan should be overpaid.
@@ -132,7 +132,7 @@ namespace UnitTests.PayPlans_Tests {
 			insInfo.ListAllClaimProcs.First().InsPayEst=2060;
 			Claim claim=ClaimT.CreateClaim("P",insInfo.ListPatPlans,insInfo.ListInsPlans,insInfo.ListAllClaimProcs,insInfo.ListAllProcs,pat,
 				new List<Procedure>{proc},insInfo.ListBenefits,insInfo.ListInsSubs);
-			ClaimT.ReceiveClaim(claim,insInfo.ListAllClaimProcs,doAddPayAmount: true);
+			ClaimT.ReceiveClaim(claim,insInfo.ListAllClaimProcs,doSetInsPayAmt: true);
 			//Make sure that the payment plan doesn't think it's over charged.
 			List<PayPlan> listOverPaidDPP=PayPlans.GetOverChargedPayPlans(new List<long>{dynamicPayPlan.PayPlanNum});
 			Assert.AreEqual(0,listOverPaidDPP.Count);

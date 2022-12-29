@@ -102,7 +102,6 @@ namespace OpenDentBusiness{
 			for(int i=0;i<arraySupportedTransPayers.Length;i++) {
 				Dentalxchange2016.supportedTransPayer supportedTransPayer=arraySupportedTransPayers[i];
 				ElectID electID=GetFirstOrDefault(x=>x.PayorID==supportedTransPayer.PayerIDCode && x.CarrierName==supportedTransPayer.Name);
-				ElectID oldElectID=electID.Copy();
 				if(electID is null) {
 					electID=new ElectID();
 					electID.CarrierName=supportedTransPayer.Name;
@@ -111,6 +110,7 @@ namespace OpenDentBusiness{
 					hasChanged=true;
 				}
 				else {
+					ElectID oldElectID=electID.Copy();
 					electID.CarrierName=supportedTransPayer.Name;
 					electID.PayorID=supportedTransPayer.PayerIDCode;
 					hasChanged|=Update(electID,oldElectID);

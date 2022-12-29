@@ -2829,9 +2829,9 @@ namespace OpenDental {
 				}
 				if(sheetFieldDef.FieldType==SheetFieldType.CheckBox && (sheetFieldDef.FieldName.StartsWith("allergy:")) || sheetFieldDef.FieldName.StartsWith("problem:")) {
 					for(int j=0;j<listSheetFieldDefMedCheckBox.Count();j++) { //check for duplicates
-						if(listSheetFieldDefMedCheckBox[i].FieldName==sheetFieldDef.FieldName 
-							&& listSheetFieldDefMedCheckBox[i].RadioButtonValue==sheetFieldDef.RadioButtonValue 
-							&& listSheetFieldDefMedCheckBox[i].Language==sheetFieldDef.Language) 
+						if(listSheetFieldDefMedCheckBox[j].FieldName==sheetFieldDef.FieldName 
+							&& listSheetFieldDefMedCheckBox[j].RadioButtonValue==sheetFieldDef.RadioButtonValue 
+							&& listSheetFieldDefMedCheckBox[j].Language==sheetFieldDef.Language) 
 						{
 							listSheetFieldDefErroneousDuplicates.Add(sheetFieldDef);
 						}
@@ -2841,7 +2841,7 @@ namespace OpenDental {
 				}
 				else if(sheetFieldDef.FieldType==SheetFieldType.InputField && sheetFieldDef.FieldName.StartsWith("inputMed")) {
 					for(int j=0;j<listSheetFieldDefInputMedList.Count();j++) { //check for duplicates
-						if(listSheetFieldDefInputMedList[i].FieldName==sheetFieldDef.FieldName && listSheetFieldDefInputMedList[i].Language==sheetFieldDef.Language) {
+						if(listSheetFieldDefInputMedList[j].FieldName==sheetFieldDef.FieldName && listSheetFieldDefInputMedList[j].Language==sheetFieldDef.Language) {
 							listSheetFieldDefErroneousDuplicates.Add(sheetFieldDef);
 							continue;
 						}
@@ -2851,13 +2851,22 @@ namespace OpenDental {
 				}
 				else if(sheetFieldDef.FieldType==SheetFieldType.CheckBox && sheetFieldDef.FieldName.StartsWith("checkMed")) {
 					for(int j=0;j<listSheetFieldDefCheckMedList.Count();j++) { //check for duplicates
-						if(listSheetFieldDefCheckMedList[i].FieldName==sheetFieldDef.FieldName && listSheetFieldDefCheckMedList[i].Language==sheetFieldDef.Language) {
+						if(listSheetFieldDefCheckMedList[j].FieldName==sheetFieldDef.FieldName && listSheetFieldDefCheckMedList[j].Language==sheetFieldDef.Language) {
 							listSheetFieldDefErroneousDuplicates.Add(sheetFieldDef);
 							continue;
 						}
 					}
 					//Not a duplicate so add it to the check med list.
 					listSheetFieldDefCheckMedList.Add(sheetFieldDef);
+				}
+				if(sheetFieldDef.FieldType==SheetFieldType.InputField && sheetFieldDef.FieldName=="State") {
+					for(int j=0;j<_sheetDef.SheetFieldDefs.Count;j++) {
+						if(_sheetDef.SheetFieldDefs[j].FieldName=="StateNoValidation") {
+							MessageBox.Show(Lan.g(this,"Input Fields \"State\" and \"StateNoValidation\" may not be present on the same form.  " +
+								"Please remove one of these fields to continue."));
+							return false;
+						}
+					}
 				}
 			}
 			//If any duplicates are found in a language, show a message to the user for all duplicates.
