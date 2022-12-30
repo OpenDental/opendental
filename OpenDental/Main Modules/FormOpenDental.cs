@@ -5613,7 +5613,8 @@ namespace OpenDental{
 			}
 			using FormProviderSetup formProviderSetup=new FormProviderSetup();
 			formProviderSetup.ShowDialog();
-			SecurityLogs.MakeLogEntry(Permissions.ProviderEdit,0,"Provider Setup");
+			//The ProvNum of the provider to be edited cannot be logged here because no provider has been selected yet.
+ 			SecurityLogs.MakeLogEntry(Permissions.ProviderEdit,0,"Provider Setup",0,SecurityLogs.LogSource,DateTime.MinValue);
 		}
 
 		private void menuItemPrescriptions_Click(object sender, System.EventArgs e) {

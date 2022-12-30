@@ -197,7 +197,13 @@ namespace OpenDentBusiness {
 			if(accountEntry.GetType() is null || accountEntry.GetType()!=typeof(Procedure)) {
 				return 0;
 			}
-			decimal amountProc=(decimal)((Procedure)accountEntry.Tag).ProcFeeTotal+accountEntry.AdjustedAmt;
+			//Start with the raw ProcFeeTotal.
+			decimal amountProc=(decimal)((Procedure)accountEntry.Tag).ProcFeeTotal;
+			//Always add any adjustments (which will actually subtract negative adjustments).
+			amountProc+=accountEntry.AdjustedAmt;
+			//Payment Plans remove value from procedures based on how much principal has been applied.
+			amountProc-=accountEntry.ListPayPlanPrincipalApplieds.Sum(x => x.PrincipalApplied);
+			//Next is to consider insurance payments and then conditionally consider patient payments.
 			decimal amountToSubtract=accountEntry.InsPayAmt;
 			if(doConsiderPatPayments) {
 				amountToSubtract+=(decimal)accountEntry.AmountPaid;

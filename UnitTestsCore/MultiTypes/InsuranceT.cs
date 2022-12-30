@@ -175,7 +175,7 @@ namespace UnitTestsCore {
 				for(int p=0;p<listProcedures.Count;p++) {
 					ProcedureT.SetComplete(listProcedures[p],Pat,this);
 				}
-				ClaimT.ReceiveClaim(ListClaims[i],listClaimProcs,doAddPayAmount:doAddPayAmount);
+				ClaimT.ReceiveClaim(ListClaims[i],listClaimProcs,doSetInsPayAmt:doAddPayAmount);
 			}
 		}
 	}

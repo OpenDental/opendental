@@ -409,7 +409,7 @@ namespace OpenDental{
 						return;
 					}
 					if(Security.IsAuthorized(Permissions.ProviderEdit,suppressMessage:true)) {//Other provider. Dental schools specific permissions do not log.
-						SecurityLogs.MakeLogEntry(Permissions.ProviderEdit,0,"Provider: "+FormPE.ProvCur.Abbr+" edited.");
+						SecurityLogs.MakeLogEntry(Permissions.ProviderEdit,0,"Provider: "+FormPE.ProvCur.Abbr+" edited.",FormPE.ProvCur.ProvNum,SecurityLogs.LogSource,DateTime.MinValue);
 					}
 				}
 				else {
@@ -431,7 +431,7 @@ namespace OpenDental{
 				if(FormPE.DialogResult!=DialogResult.OK) {
 					return;
 				}
-				SecurityLogs.MakeLogEntry(Permissions.ProviderEdit,0,"Provider: "+FormPE.ProvCur.Abbr+" edited.");
+				SecurityLogs.MakeLogEntry(Permissions.ProviderEdit,0,"Provider: "+FormPE.ProvCur.Abbr+" edited.",FormPE.ProvCur.ProvNum,SecurityLogs.LogSource,DateTime.MinValue);
 			}
 			_hasChanged=true;
 			Cache.Refresh(InvalidType.Providers);

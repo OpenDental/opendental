@@ -13318,247 +13318,6 @@ namespace UnitTests.PaymentEdit_Tests {
 				&& x.UnearnedType==0));
 		}
 
-		[TestMethod]
-		public void PaymentEdit_MakeIncomeTransferForClaimProcs_IgnoreUnearned() {
-			//Have a large amount of unearned money sitting around that should be ignored when invoking MakeIncomeTransferForClaimProcs()
-			/*****************************************************
-				Create Provider: provNum
-				Create Patient:  patient
-				Create procedure1: Today  provNum  patient   $50
-				Create procedure2: Today  provNum  patient   $60
-				Create procedure3: Today  provNum  patient   $100
-				Create payment:    Today  provNum  patient   $5000
-					^Unearned money just chillin' on the account.
-				Create claim:      Today  provNum  patient   $150
-					^Pay the claim exactly as it is estimated to be paid.
-			******************************************************/
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			long unearnedType=PrefC.GetLong(PrefName.PrepaymentUnearnedType);
-			long provNum=ProviderT.CreateProvider(suffix);
-			Patient patient=PatientT.CreatePatient(suffix,priProvNum:provNum);
-			ProcedureCode procedureCode1=ProcedureCodeT.CreateProcCode("IU001");
-			ProcedureCode procedureCode2=ProcedureCodeT.CreateProcCode("IU002");
-			ProcedureCode procedureCode3=ProcedureCodeT.CreateProcCode("IU003");
-			InsuranceInfo insInfo=InsuranceT.AddInsurance(patient,suffix);
-			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode1.CodeNum,80));
-			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode2.CodeNum,50));
-			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode3.CodeNum,80));
-			Procedure procedure1=ProcedureT.CreateProcedure(patient,procedureCode1.ProcCode,ProcStat.C,"12",50,provNum:provNum);
-			Procedure procedure2=ProcedureT.CreateProcedure(patient,procedureCode2.ProcCode,ProcStat.C,"13",60,provNum:provNum);
-			Procedure procedure3=ProcedureT.CreateProcedure(patient,procedureCode3.ProcCode,ProcStat.C,"14",100,provNum:provNum);
-			insInfo.ListAllProcs=new List<Procedure>() { procedure1,procedure2,procedure3 };
-			insInfo.ComputeEstimates();
-			Assert.AreEqual(3,insInfo.ListAllClaimProcs.Count);
-			List<Procedure> listProceduresOnClaim=new List<Procedure>() { procedure1,procedure3 };
-			Claim claim=ClaimT.CreateClaim(listProceduresOnClaim,insInfo);
-			//Take a $5000 payment from the patient and associate it to unearned.
-			PaymentT.MakePayment(patient.PatNum,payAmt:5000,provNum:provNum,unearnedType:unearnedType);
-			//Make a claim for JUST procedure1 and procedure3.
-			List<ClaimProc> listClaimProcs=insInfo.ListAllClaimProcs.FindAll(x => x.ProcNum!=procedure2.ProcNum);
-			//Have insurance pay both procedures on the claim in full exactly as estimated.
-			ClaimT.ReceiveClaim(claim,listClaimProcs,doAddPayAmount:true);
-			//Everything went as planned. However, there is still outstanding value on the procedures associated to the claim (only 80% was covered for each).
-			//Unearned money should NOT be transferred to either procedure on the claim because that is NOT what MakeIncomeTransferForClaimProcs is designed to do.
-			//It is only here to move around patient payments associated to the production and unearned money is NOT associated with any kind of production.
-			PayNumPaySplitsGroup payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
-			Assert.IsNull(payNumPaySplitsGroup);
-		}
-
-		[TestMethod]
-		public void PaymentEdit_MakeIncomeTransferForClaimProcs_PatPortApplyToOtherProcOnClaim() {
-			//Deductible applied to different procedure than estimated via EOB / insurance payment.
-			/*****************************************************
-				Create Provider: provNum
-				Create Patient:  patient
-				Create procedure1: Today  provNum  patient   $50
-				Create procedure2: Today  provNum  patient   $60
-				Create procedure3: Today  provNum  patient   $100
-				Create payment:    Today  provNum  patient   $20
-					^Attached to procedure1 since Open Dental estimates a $20 deductible for this procedure.
-				Create claim:      Today  provNum  patient   $150
-					^Only attach procedure1 and procedure3 to this claim which leaves procedure 2 out of the claim along with 50% outstanding value.
-			******************************************************/
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			long provNum=ProviderT.CreateProvider(suffix);
-			Patient patient=PatientT.CreatePatient(suffix,priProvNum:provNum);
-			ProcedureCode procedureCode1=ProcedureCodeT.CreateProcCode("PPATOPOC1");
-			ProcedureCode procedureCode2=ProcedureCodeT.CreateProcCode("PPATOPOC2");
-			ProcedureCode procedureCode3=ProcedureCodeT.CreateProcCode("PPATOPOC3");
-			InsuranceInfo insInfo=InsuranceT.AddInsurance(patient,suffix);
-			insInfo.AddBenefit(BenefitT.CreateDeductibleGeneral(insInfo.PriInsPlan.PlanNum,BenefitCoverageLevel.Individual,20));
-			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode1.CodeNum,100));
-			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode2.CodeNum,50));
-			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode3.CodeNum,100));
-			Procedure procedure1=ProcedureT.CreateProcedure(patient,procedureCode1.ProcCode,ProcStat.C,"12",50,provNum:provNum);
-			Procedure procedure2=ProcedureT.CreateProcedure(patient,procedureCode2.ProcCode,ProcStat.C,"13",60,provNum:provNum);
-			Procedure procedure3=ProcedureT.CreateProcedure(patient,procedureCode3.ProcCode,ProcStat.C,"14",100,provNum:provNum);
-			insInfo.ListAllProcs=new List<Procedure>() { procedure1,procedure2,procedure3 };
-			insInfo.ComputeEstimates();
-			Assert.AreEqual(3,insInfo.ListAllClaimProcs.Count);
-			List<Procedure> listProceduresOnClaim=new List<Procedure>() { procedure1,procedure3 };
-			Claim claim=ClaimT.CreateClaim(listProceduresOnClaim,insInfo);
-			//Take a $20 payment from the patient and associate it to procedure1.
-			PaymentT.MakePayment(patient.PatNum,payAmt:20,provNum:provNum,procNum:procedure1.ProcNum);
-			//Make a claim for JUST procedure1 and procedure3.
-			List<ClaimProc> listClaimProcs=insInfo.ListAllClaimProcs.FindAll(x => x.ProcNum!=procedure2.ProcNum);
-			//Have insurance apply the deductible to procedure3 (which is the other procedure on the claim).
-			//This will cause procedure1 to be covered entirely ($50) and procedure3 will only be covered for ($100 - $20 = $80).
-			listClaimProcs.First(x => x.ProcNum==procedure1.ProcNum).InsPayAmt=50;
-			listClaimProcs.First(x => x.ProcNum==procedure3.ProcNum).DedApplied=20;
-			listClaimProcs.First(x => x.ProcNum==procedure3.ProcNum).InsPayAmt=80;
-			ClaimT.ReceiveClaim(claim,listClaimProcs,doAddPayAmount:false);
-			//Insurance did NOT do what Open Dental estimated and the dental office has incorrectly taken patient payment and cause procedure1 to be overpaid.
-			//Make an income transfer in order to take patient payment away from procedure1 and move it to procedure3 (other procedure on the same claim).
-			//The money should NOT be transferred to procedure2 which is just an outstanding procedure on the account.
-			PayNumPaySplitsGroup payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
-			Assert.IsNotNull(payNumPaySplitsGroup);
-			//Assert that the income transfer takes patient portion away from procedure1 and gives it to procedure3.
-			Assert.AreEqual(4,payNumPaySplitsGroup.ListPaySplits.Count);
-			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==-20
-				&& x.ProcNum==procedure1.ProcNum
-				&& x.UnearnedType==0));
-			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==20
-				&& x.ProcNum==0 
-				&& x.UnearnedType > 0));
-			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==-20
-				&& x.ProcNum==0
-				&& x.UnearnedType > 0));
-			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==20
-				&& x.ProcNum==procedure3.ProcNum
-				&& x.UnearnedType==0));
-			//Executing the transfer logic a second time should do nothing.
-			payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
-			Assert.IsNull(payNumPaySplitsGroup);
-		}
-
-		[TestMethod]
-		public void PaymentEdit_MakeIncomeTransferForClaimProcs_PatPortApplyToUnearned() {
-			//Patient thought they had a deductible but they already paid it in a prior software (thus insurance covers 100% of the claim w/ no ded).
-			/*****************************************************
-				Create Provider: provNum
-				Create Patient:  patient
-				Create procedure1: Today  provNum  patient   $50
-				Create procedure2: Today  provNum  patient   $60
-				Create procedure3: Today  provNum  patient   $100
-				Create payment:    Today  provNum  patient   $20
-					^Attached to procedure1 since Open Dental estimates a $20 deductible for this procedure.
-				Create claim:      Today  provNum  patient   $150
-					^Only attach procedure1 and procedure3 to this claim which leaves procedure 2 out of the claim along with 50% outstanding value.
-			******************************************************/
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			long provNum=ProviderT.CreateProvider(suffix);
-			Patient patient=PatientT.CreatePatient(suffix,priProvNum:provNum);
-			ProcedureCode procedureCode1=ProcedureCodeT.CreateProcCode("PPATU1");
-			ProcedureCode procedureCode2=ProcedureCodeT.CreateProcCode("PPATU2");
-			ProcedureCode procedureCode3=ProcedureCodeT.CreateProcCode("PPATU3");
-			InsuranceInfo insInfo=InsuranceT.AddInsurance(patient,suffix);
-			insInfo.AddBenefit(BenefitT.CreateDeductibleGeneral(insInfo.PriInsPlan.PlanNum,BenefitCoverageLevel.Individual,20));
-			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode1.CodeNum,100));
-			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode2.CodeNum,50));
-			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode3.CodeNum,100));
-			Procedure procedure1=ProcedureT.CreateProcedure(patient,procedureCode1.ProcCode,ProcStat.C,"12",50,provNum:provNum);
-			Procedure procedure2=ProcedureT.CreateProcedure(patient,procedureCode2.ProcCode,ProcStat.C,"13",60,provNum:provNum);
-			Procedure procedure3=ProcedureT.CreateProcedure(patient,procedureCode3.ProcCode,ProcStat.C,"14",100,provNum:provNum);
-			insInfo.ListAllProcs=new List<Procedure>() { procedure1,procedure2,procedure3 };
-			insInfo.ComputeEstimates();
-			Assert.AreEqual(3,insInfo.ListAllClaimProcs.Count);
-			List<Procedure> listProceduresOnClaim=new List<Procedure>() { procedure1,procedure3 };
-			Claim claim=ClaimT.CreateClaim(listProceduresOnClaim,insInfo);
-			//Take a $20 payment from the patient and associate it to procedure1.
-			PaymentT.MakePayment(patient.PatNum,payAmt:20,provNum:provNum,procNum:procedure1.ProcNum);
-			//Make a claim for JUST procedure1 and procedure3.
-			List<ClaimProc> listClaimProcs=insInfo.ListAllClaimProcs.FindAll(x => x.ProcNum!=procedure2.ProcNum);
-			//Have insurance pay both procedures on the claim in full (they know that the patient has already taken care of their deductible earlier this year).
-			listClaimProcs.First(x => x.ProcNum==procedure1.ProcNum).InsPayAmt=50;
-			listClaimProcs.First(x => x.ProcNum==procedure1.ProcNum).DedApplied=0;
-			listClaimProcs.First(x => x.ProcNum==procedure3.ProcNum).InsPayAmt=100;
-			listClaimProcs.First(x => x.ProcNum==procedure3.ProcNum).DedApplied=0;
-			ClaimT.ReceiveClaim(claim,listClaimProcs,doAddPayAmount:false);
-			//Insurance did NOT do what Open Dental estimated and the dental office has incorrectly taken patient payment and cause procedure1 to be overpaid.
-			//Make an income transfer in order to take patient payment away from procedure1 and move it to unearned (insurance covered everything on the claim).
-			//The money should NOT be transferred to procedure2 since it has nothing to do with the claim.
-			PayNumPaySplitsGroup payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
-			Assert.IsNotNull(payNumPaySplitsGroup);
-			//Assert that the income transfer takes patient portion away from procedure1 and moves it to unearned.
-			Assert.AreEqual(2,payNumPaySplitsGroup.ListPaySplits.Count);
-			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==-20
-				&& x.ProcNum==procedure1.ProcNum
-				&& x.UnearnedType==0));
-			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==20
-				&& x.ProcNum==0 
-				&& x.UnearnedType > 0));
-			//Executing the transfer logic a second time should do nothing.
-			payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
-			Assert.IsNull(payNumPaySplitsGroup);
-		}
-
-		[TestMethod]
-		public void PaymentEdit_MakeIncomeTransferForClaimProcs_PatPortTxfrInsOverpay() {
-			//Deductible applied to different procedure than estimated via EOB / insurance payment.
-			/*****************************************************
-				Create Provider: provNum
-				Create Patient:  patient
-				Create procedure1: Today  provNum  patient   $50
-				Create procedure2: Today  provNum  patient   $60
-				Create procedure3: Today  provNum  patient   $100
-				Create payment:    Today  provNum  patient   $20
-					^Attached to procedure1 since Open Dental estimates a $20 deductible for this procedure.
-				Create claim:      Today  provNum  patient   $150
-					^Only attach procedure1 and procedure3 to this claim which leaves procedure 2 out of the claim along with 50% outstanding value.
-			******************************************************/
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			long provNum=ProviderT.CreateProvider(suffix);
-			Patient patient=PatientT.CreatePatient(suffix,priProvNum:provNum);
-			ProcedureCode procedureCode1=ProcedureCodeT.CreateProcCode("PPTIO1");
-			ProcedureCode procedureCode2=ProcedureCodeT.CreateProcCode("PPTIO2");
-			ProcedureCode procedureCode3=ProcedureCodeT.CreateProcCode("PPTIO3");
-			InsuranceInfo insInfo=InsuranceT.AddInsurance(patient,suffix);
-			insInfo.AddBenefit(BenefitT.CreateDeductibleGeneral(insInfo.PriInsPlan.PlanNum,BenefitCoverageLevel.Individual,20));
-			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode1.CodeNum,100));
-			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode2.CodeNum,50));
-			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode3.CodeNum,100));
-			Procedure procedure1=ProcedureT.CreateProcedure(patient,procedureCode1.ProcCode,ProcStat.C,"12",50,provNum:provNum);
-			Procedure procedure2=ProcedureT.CreateProcedure(patient,procedureCode2.ProcCode,ProcStat.C,"13",60,provNum:provNum);
-			Procedure procedure3=ProcedureT.CreateProcedure(patient,procedureCode3.ProcCode,ProcStat.C,"14",100,provNum:provNum);
-			insInfo.ListAllProcs=new List<Procedure>() { procedure1,procedure2,procedure3 };
-			insInfo.ComputeEstimates();
-			Assert.AreEqual(3,insInfo.ListAllClaimProcs.Count);
-			List<Procedure> listProceduresOnClaim=new List<Procedure>() { procedure1,procedure3 };
-			Claim claim=ClaimT.CreateClaim(listProceduresOnClaim,insInfo);
-			//Take a $20 payment from the patient and associate it to procedure1.
-			PaymentT.MakePayment(patient.PatNum,payAmt:20,provNum:provNum,procNum:procedure1.ProcNum);
-			//Make a claim for JUST procedure1 and procedure3.
-			List<ClaimProc> listClaimProcs=insInfo.ListAllClaimProcs.FindAll(x => x.ProcNum!=procedure2.ProcNum);
-			//Have insurance make 100% of the estimated coverage ($30 + $100 = $130) to procedure1 (sorry procedure3, better luck next time).
-			//This will cause procedure1 to be overpaid by insurance and by the patient.
-			listClaimProcs.First(x => x.ProcNum==procedure1.ProcNum).InsPayAmt=130;
-			listClaimProcs.First(x => x.ProcNum==procedure1.ProcNum).DedApplied=20;
-			listClaimProcs.First(x => x.ProcNum==procedure3.ProcNum).InsPayAmt=0;
-			ClaimT.ReceiveClaim(claim,listClaimProcs,doAddPayAmount:false);
-			//Insurance did NOT do what Open Dental estimated and the dental office has incorrectly associated patient payment to procedure1 causing it to be overpaid.
-			//Make an income transfer in order to take patient payment away from procedure1 and move it to procedure3 (other procedure on the same claim).
-			//The money should NOT be transferred to procedure2 or unearned since procedure3 technically still wants money.
-			PayNumPaySplitsGroup payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
-			Assert.IsNotNull(payNumPaySplitsGroup);
-			//Assert that the income transfer takes patient portion away from procedure1 and gives it to procedure3.
-			Assert.AreEqual(4,payNumPaySplitsGroup.ListPaySplits.Count);
-			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==-20
-				&& x.ProcNum==procedure1.ProcNum
-				&& x.UnearnedType==0));
-			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==20
-				&& x.ProcNum==0 
-				&& x.UnearnedType > 0));
-			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==-20
-				&& x.ProcNum==0
-				&& x.UnearnedType > 0));
-			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==20
-				&& x.ProcNum==procedure3.ProcNum
-				&& x.UnearnedType==0));
-			//Executing the transfer logic a second time should do nothing.
-			payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
-			Assert.IsNull(payNumPaySplitsGroup);
-		}
-
 		#endregion
 
 		#region GetIncomeTransferSplitsFIFO Tests
@@ -13834,6 +13593,406 @@ namespace UnitTests.PaymentEdit_Tests {
 			PaymentEdit.IncomeTransferData incomeTransferData=PaymentEdit.GetIncomeTransferDataFIFO(pat.PatNum,DateTime.Today);
 			//FIFO will do nothing because pat/prov/clinic are ignored and the procedures are paid in full.
 			Assert.AreEqual(0,incomeTransferData.ListSplitsCur.Count);
+		}
+
+		#endregion
+
+		#region MakeIncomeTransferForClaimProcs
+
+		[TestMethod]
+		public void PaymentEdit_MakeIncomeTransferForClaimProcs_IgnoreNegativeAdjustment() {
+			//Have a claim that does everything as expected (insurance pays what it estimates and the user writes off the leftovers).
+			//Then come way out of left field and add a negative adjustment associated with procedure3 for the value of the write-off.
+			//This should put procedure3 into the negative but MakeIncomeTransferForClaimProcs should NOT transfer that amount to Unearned.
+			/*****************************************************
+				Create Provider: provNum
+				Create Patient:  patient
+				Create procedure1: Today  provNum  patient   $50
+				Create procedure2: Today  provNum  patient   $60
+				Create procedure3: Today  provNum  patient   $100
+				Create claim:      Today  provNum  patient   $150
+					^Pay the claim exactly as it is estimated to be paid.
+					^Make sure to set the write-off amounts so that the procedure is zeroed out.
+				Create adjustment: Today  provNum  patient  -$20
+					^Associated with procedure3 for the value of the write-off amount so that the procedure goes into the negative.
+			******************************************************/
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			long unearnedType=PrefC.GetLong(PrefName.PrepaymentUnearnedType);
+			long provNum=ProviderT.CreateProvider(suffix);
+			Patient patient=PatientT.CreatePatient(suffix,priProvNum:provNum);
+			ProcedureCode procedureCode1=ProcedureCodeT.CreateProcCode("INA001");
+			ProcedureCode procedureCode2=ProcedureCodeT.CreateProcCode("INA002");
+			ProcedureCode procedureCode3=ProcedureCodeT.CreateProcCode("INA003");
+			//Create an allowed fee schedule where only $80 of procedureCode3 will be allowed.
+			long feeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,suffix);
+			FeeT.CreateFee(feeSchedNum,procedureCode3.CodeNum,amount:80);
+			InsuranceInfo insInfo=InsuranceT.AddInsurance(patient,suffix,planType:"p",feeSchedNum:feeSchedNum);
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode1.CodeNum,80));
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode2.CodeNum,50));
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode3.CodeNum,80));
+			Procedure procedure1=ProcedureT.CreateProcedure(patient,procedureCode1.ProcCode,ProcStat.C,"12",50,provNum:provNum);
+			Procedure procedure2=ProcedureT.CreateProcedure(patient,procedureCode2.ProcCode,ProcStat.C,"13",60,provNum:provNum);
+			Procedure procedure3=ProcedureT.CreateProcedure(patient,procedureCode3.ProcCode,ProcStat.C,"14",100,provNum:provNum);
+			insInfo.ListAllProcs=new List<Procedure>() { procedure1,procedure2,procedure3 };
+			insInfo.ComputeEstimates();
+			Assert.AreEqual(3,insInfo.ListAllClaimProcs.Count);
+			//Make a claim for JUST procedure1 and procedure3.
+			List<Procedure> listProceduresOnClaim=new List<Procedure>() { procedure1,procedure3 };
+			Claim claim=ClaimT.CreateClaim(listProceduresOnClaim,insInfo);
+			List<ClaimProc> listClaimProcs=insInfo.ListAllClaimProcs.FindAll(x => x.ProcNum!=procedure2.ProcNum);
+			//Have insurance pay both procedures on the claim in full exactly as estimated.
+			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:true,doSetWriteOff:true);
+			//Assert that the claimproc associated with procedure3 has a write-off value set.
+			ClaimProc claimProc3=insInfo.ListAllClaimProcs.First(x => x.ProcNum==procedure3.ProcNum);
+			Assert.IsTrue(claimProc3.WriteOff > 0);//Should be set to 20% of the procedure fee.
+			//Make a negative adjustment for the amount of the write-off that is associated with procedure3.
+			double adjAmt=claimProc3.WriteOff * -1;
+			Adjustment adjustment=AdjustmentT.MakeAdjustment(patient.PatNum,adjAmt,procNum:procedure3.ProcNum,provNum:provNum);
+			//Everything went as planned. However, procedure3 should technically have an AmountEnd value in the negative at this point.
+			//This negative value should NOT be transferred to Unearned since it is not the job of MakeIncomeTransferForClaimProcs to do so.
+			//Also, there are no patient payments in this unit test and those are the only thing that should be transferred around.
+			PayNumPaySplitsGroup payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
+			Assert.IsNull(payNumPaySplitsGroup);
+		}
+
+		[TestMethod]
+		public void PaymentEdit_MakeIncomeTransferForClaimProcs_IgnoreNegativeNonPatientPayments() {
+			//This is a very specific scenario that I don't even know how to begin describing since it doesn't make any sense to me.
+			/*****************************************************
+				Create Provider: provNum
+				Create Patient:  patient
+				Create procedure: Today  provNum  patient   $840
+				Create claim:      Today  provNum  patient   $682
+					^InsPayAmt will be $0 but WriteOff will be $682
+				Create adjustment: Today  provNum  patient  -$158
+					^Associated with procedure
+				Create payplan:    Today  provNum  patient   $158
+					^Associated with procedure
+			******************************************************/
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			long unearnedType=PrefC.GetLong(PrefName.PrepaymentUnearnedType);
+			long provNum=ProviderT.CreateProvider(suffix);
+			Patient patient=PatientT.CreatePatient(suffix,priProvNum:provNum);
+			ProcedureCode procedureCode=ProcedureCodeT.CreateProcCode("INNPP");
+			InsuranceInfo insInfo=InsuranceT.AddInsurance(patient,suffix);
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode.CodeNum,0));
+			Procedure procedure=ProcedureT.CreateProcedure(patient,procedureCode.ProcCode,ProcStat.C,"12",840,provNum:provNum);
+			insInfo.ListAllProcs=new List<Procedure>() { procedure };
+			insInfo.ComputeEstimates();
+			//Make a claim for JUST procedure.
+			List<Procedure> listProceduresOnClaim=new List<Procedure>() { procedure };
+			Claim claim=ClaimT.CreateClaim(listProceduresOnClaim,insInfo);
+			List<ClaimProc> listClaimProcs=insInfo.ListAllClaimProcs.FindAll(x => x.ProcNum==procedure.ProcNum);
+			//Manually set the InsPayEst to $0 and the WriteOffEst value to $682.
+			ClaimProc claimProc=listClaimProcs.First();
+			claimProc.InsPayEst=0;
+			claimProc.WriteOffEst=682;
+			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:true,doSetWriteOff:true);
+			//Make a negative adjustment for -$158.
+			Adjustment adjustment=AdjustmentT.MakeAdjustment(patient.PatNum,-158,procNum:procedure.ProcNum,provNum:provNum);
+			//Make a simple patient payment plan that is set to pay $158 of procedure.
+			PayPlan payPlan=PayPlanT.CreatePayPlanNoCharges(patient.PatNum,158,DateTime.Today,guarantorNum:patient.Guarantor,provNum:provNum);
+			PayPlanCharge payPlanChargeCredit=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,DateTime.Today,158,
+				provNum:procedure.ProvNum,procNum:procedure.ProcNum,chargeType:PayPlanChargeType.Credit);
+			PayPlanCharge payPlanChargeDebit=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,DateTime.Today,158,
+				chargeType:PayPlanChargeType.Debit);
+			//The procedure should technically have an AmountEnd value in the negative at this point.
+			//This negative value should NOT be transferred to Unearned since it is not the job of MakeIncomeTransferForClaimProcs to do so.
+			//Also, there are no patient payments in this unit test and those are the only thing that should be transferred around.
+			PayNumPaySplitsGroup payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
+			Assert.IsNull(payNumPaySplitsGroup);
+		}
+
+		[TestMethod]
+		public void PaymentEdit_MakeIncomeTransferForClaimProcs_IgnoreUnearned() {
+			//Have a large amount of unearned money sitting around that should be ignored when invoking MakeIncomeTransferForClaimProcs()
+			/*****************************************************
+				Create Provider: provNum
+				Create Patient:  patient
+				Create procedure1: Today  provNum  patient   $50
+				Create procedure2: Today  provNum  patient   $60
+				Create procedure3: Today  provNum  patient   $100
+				Create payment:    Today  provNum  patient   $5000
+					^Unearned money just chillin' on the account.
+				Create claim:      Today  provNum  patient   $150
+					^Pay the claim exactly as it is estimated to be paid.
+			******************************************************/
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			long unearnedType=PrefC.GetLong(PrefName.PrepaymentUnearnedType);
+			long provNum=ProviderT.CreateProvider(suffix);
+			Patient patient=PatientT.CreatePatient(suffix,priProvNum:provNum);
+			ProcedureCode procedureCode1=ProcedureCodeT.CreateProcCode("IU001");
+			ProcedureCode procedureCode2=ProcedureCodeT.CreateProcCode("IU002");
+			ProcedureCode procedureCode3=ProcedureCodeT.CreateProcCode("IU003");
+			InsuranceInfo insInfo=InsuranceT.AddInsurance(patient,suffix);
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode1.CodeNum,80));
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode2.CodeNum,50));
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode3.CodeNum,80));
+			Procedure procedure1=ProcedureT.CreateProcedure(patient,procedureCode1.ProcCode,ProcStat.C,"12",50,provNum:provNum);
+			Procedure procedure2=ProcedureT.CreateProcedure(patient,procedureCode2.ProcCode,ProcStat.C,"13",60,provNum:provNum);
+			Procedure procedure3=ProcedureT.CreateProcedure(patient,procedureCode3.ProcCode,ProcStat.C,"14",100,provNum:provNum);
+			insInfo.ListAllProcs=new List<Procedure>() { procedure1,procedure2,procedure3 };
+			insInfo.ComputeEstimates();
+			Assert.AreEqual(3,insInfo.ListAllClaimProcs.Count);
+			List<Procedure> listProceduresOnClaim=new List<Procedure>() { procedure1,procedure3 };
+			Claim claim=ClaimT.CreateClaim(listProceduresOnClaim,insInfo);
+			//Take a $5000 payment from the patient and associate it to unearned.
+			PaymentT.MakePayment(patient.PatNum,payAmt:5000,provNum:provNum,unearnedType:unearnedType);
+			//Make a claim for JUST procedure1 and procedure3.
+			List<ClaimProc> listClaimProcs=insInfo.ListAllClaimProcs.FindAll(x => x.ProcNum!=procedure2.ProcNum);
+			//Have insurance pay both procedures on the claim in full exactly as estimated.
+			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:true);
+			//Everything went as planned. However, there is still outstanding value on the procedures associated to the claim (only 80% was covered for each).
+			//Unearned money should NOT be transferred to either procedure on the claim because that is NOT what MakeIncomeTransferForClaimProcs is designed to do.
+			//It is only here to move around patient payments associated to the production and unearned money is NOT associated with any kind of production.
+			PayNumPaySplitsGroup payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
+			Assert.IsNull(payNumPaySplitsGroup);
+		}
+
+		[TestMethod]
+		public void PaymentEdit_MakeIncomeTransferForClaimProcs_PatPlanIgnoreOvercharge() {
+			//Have a payment plan that overcharges a procedure which should be ignored when invoking MakeIncomeTransferForClaimProcs()
+			/*****************************************************
+				Create Provider: provNum
+				Create Patient:  patient
+				Create procedure1: Today  provNum  patient   $50
+				Create procedure2: Today  provNum  patient   $60
+				Create procedure3: Today  provNum  patient   $100
+				Create payplan:    Today  provNum  patient   $110
+					^Associated to procedure3; this overcharges the proc by $10
+				Create claim:      Today  provNum  patient   $0
+					^The claim shouldn't cover anything. This is just to simplify the logic under the hood.
+			******************************************************/
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			long unearnedType=PrefC.GetLong(PrefName.PrepaymentUnearnedType);
+			long provNum=ProviderT.CreateProvider(suffix);
+			Patient patient=PatientT.CreatePatient(suffix,priProvNum:provNum);
+			ProcedureCode procedureCode1=ProcedureCodeT.CreateProcCode("IU001");
+			ProcedureCode procedureCode2=ProcedureCodeT.CreateProcCode("IU002");
+			ProcedureCode procedureCode3=ProcedureCodeT.CreateProcCode("IU003");
+			InsuranceInfo insInfo=InsuranceT.AddInsurance(patient,suffix);
+			//Don't have insurance cover the three procedures to simplify the unit test.
+			//This allows procedure3 to be overcharged by a payment plan without insurance getting in the way.
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode1.CodeNum,0));
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode2.CodeNum,0));
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode3.CodeNum,0));
+			Procedure procedure1=ProcedureT.CreateProcedure(patient,procedureCode1.ProcCode,ProcStat.C,"12",50,provNum:provNum);
+			Procedure procedure2=ProcedureT.CreateProcedure(patient,procedureCode2.ProcCode,ProcStat.C,"13",60,provNum:provNum);
+			Procedure procedure3=ProcedureT.CreateProcedure(patient,procedureCode3.ProcCode,ProcStat.C,"14",100,provNum:provNum);
+			insInfo.ListAllProcs=new List<Procedure>() { procedure1,procedure2,procedure3 };
+			insInfo.ComputeEstimates();
+			Assert.AreEqual(3,insInfo.ListAllClaimProcs.Count);
+			//Make a claim for JUST procedure1 and procedure3.
+			List<Procedure> listProceduresOnClaim=new List<Procedure>() { procedure1,procedure3 };
+			Claim claim=ClaimT.CreateClaim(listProceduresOnClaim,insInfo);
+			List<ClaimProc> listClaimProcs=insInfo.ListAllClaimProcs.FindAll(x => x.ProcNum!=procedure2.ProcNum);
+			//Receive the Claim since that is what the user would have to do within the UI in order to trigger MakeIncomeTransferForClaimProcs().
+			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:true);
+			//Make a simple patient payment plan that overcharges procedure3
+			PayPlan payPlan=PayPlanT.CreatePayPlanNoCharges(patient.PatNum,500,DateTime.Today);
+			PayPlanCharge payPlanChargeCredit=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,DateTime.Today,110,
+				procNum:procedure3.ProcNum,chargeType:PayPlanChargeType.Credit);
+			PayPlanCharge payPlanChargeDebit=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,DateTime.Today,110,
+				chargeType:PayPlanChargeType.Debit);
+			//Nothing should be transferred around since there are no patient payments associated to the procedures on the claim.
+			//It shouldn't matter that procedure3 has been overcharged. That value should NOT be transferred to unearned.
+			PayNumPaySplitsGroup payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
+			Assert.IsNull(payNumPaySplitsGroup);
+		}
+
+		[TestMethod]
+		public void PaymentEdit_MakeIncomeTransferForClaimProcs_PatPortApplyToOtherProcOnClaim() {
+			//Deductible applied to different procedure than estimated via EOB / insurance payment.
+			/*****************************************************
+				Create Provider: provNum
+				Create Patient:  patient
+				Create procedure1: Today  provNum  patient   $50
+				Create procedure2: Today  provNum  patient   $60
+				Create procedure3: Today  provNum  patient   $100
+				Create payment:    Today  provNum  patient   $20
+					^Attached to procedure1 since Open Dental estimates a $20 deductible for this procedure.
+				Create claim:      Today  provNum  patient   $150
+					^Only attach procedure1 and procedure3 to this claim which leaves procedure 2 out of the claim along with 50% outstanding value.
+			******************************************************/
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			long provNum=ProviderT.CreateProvider(suffix);
+			Patient patient=PatientT.CreatePatient(suffix,priProvNum:provNum);
+			ProcedureCode procedureCode1=ProcedureCodeT.CreateProcCode("PPATOPOC1");
+			ProcedureCode procedureCode2=ProcedureCodeT.CreateProcCode("PPATOPOC2");
+			ProcedureCode procedureCode3=ProcedureCodeT.CreateProcCode("PPATOPOC3");
+			InsuranceInfo insInfo=InsuranceT.AddInsurance(patient,suffix);
+			insInfo.AddBenefit(BenefitT.CreateDeductibleGeneral(insInfo.PriInsPlan.PlanNum,BenefitCoverageLevel.Individual,20));
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode1.CodeNum,100));
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode2.CodeNum,50));
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode3.CodeNum,100));
+			Procedure procedure1=ProcedureT.CreateProcedure(patient,procedureCode1.ProcCode,ProcStat.C,"12",50,provNum:provNum);
+			Procedure procedure2=ProcedureT.CreateProcedure(patient,procedureCode2.ProcCode,ProcStat.C,"13",60,provNum:provNum);
+			Procedure procedure3=ProcedureT.CreateProcedure(patient,procedureCode3.ProcCode,ProcStat.C,"14",100,provNum:provNum);
+			insInfo.ListAllProcs=new List<Procedure>() { procedure1,procedure2,procedure3 };
+			insInfo.ComputeEstimates();
+			Assert.AreEqual(3,insInfo.ListAllClaimProcs.Count);
+			List<Procedure> listProceduresOnClaim=new List<Procedure>() { procedure1,procedure3 };
+			Claim claim=ClaimT.CreateClaim(listProceduresOnClaim,insInfo);
+			//Take a $20 payment from the patient and associate it to procedure1.
+			PaymentT.MakePayment(patient.PatNum,payAmt:20,provNum:provNum,procNum:procedure1.ProcNum);
+			//Make a claim for JUST procedure1 and procedure3.
+			List<ClaimProc> listClaimProcs=insInfo.ListAllClaimProcs.FindAll(x => x.ProcNum!=procedure2.ProcNum);
+			//Have insurance apply the deductible to procedure3 (which is the other procedure on the claim).
+			//This will cause procedure1 to be covered entirely ($50) and procedure3 will only be covered for ($100 - $20 = $80).
+			listClaimProcs.First(x => x.ProcNum==procedure1.ProcNum).InsPayAmt=50;
+			listClaimProcs.First(x => x.ProcNum==procedure3.ProcNum).DedApplied=20;
+			listClaimProcs.First(x => x.ProcNum==procedure3.ProcNum).InsPayAmt=80;
+			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:false);
+			//Insurance did NOT do what Open Dental estimated and the dental office has incorrectly taken patient payment and cause procedure1 to be overpaid.
+			//Make an income transfer in order to take patient payment away from procedure1 and move it to procedure3 (other procedure on the same claim).
+			//The money should NOT be transferred to procedure2 which is just an outstanding procedure on the account.
+			PayNumPaySplitsGroup payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
+			Assert.IsNotNull(payNumPaySplitsGroup);
+			//Assert that the income transfer takes patient portion away from procedure1 and gives it to procedure3.
+			Assert.AreEqual(4,payNumPaySplitsGroup.ListPaySplits.Count);
+			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==-20
+				&& x.ProcNum==procedure1.ProcNum
+				&& x.UnearnedType==0));
+			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==20
+				&& x.ProcNum==0 
+				&& x.UnearnedType > 0));
+			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==-20
+				&& x.ProcNum==0
+				&& x.UnearnedType > 0));
+			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==20
+				&& x.ProcNum==procedure3.ProcNum
+				&& x.UnearnedType==0));
+			//Executing the transfer logic a second time should do nothing.
+			payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
+			Assert.IsNull(payNumPaySplitsGroup);
+		}
+
+		[TestMethod]
+		public void PaymentEdit_MakeIncomeTransferForClaimProcs_PatPortApplyToUnearned() {
+			//Patient thought they had a deductible but they already paid it in a prior software (thus insurance covers 100% of the claim w/ no ded).
+			/*****************************************************
+				Create Provider: provNum
+				Create Patient:  patient
+				Create procedure1: Today  provNum  patient   $50
+				Create procedure2: Today  provNum  patient   $60
+				Create procedure3: Today  provNum  patient   $100
+				Create payment:    Today  provNum  patient   $20
+					^Attached to procedure1 since Open Dental estimates a $20 deductible for this procedure.
+				Create claim:      Today  provNum  patient   $150
+					^Only attach procedure1 and procedure3 to this claim which leaves procedure 2 out of the claim along with 50% outstanding value.
+			******************************************************/
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			long provNum=ProviderT.CreateProvider(suffix);
+			Patient patient=PatientT.CreatePatient(suffix,priProvNum:provNum);
+			ProcedureCode procedureCode1=ProcedureCodeT.CreateProcCode("PPATU1");
+			ProcedureCode procedureCode2=ProcedureCodeT.CreateProcCode("PPATU2");
+			ProcedureCode procedureCode3=ProcedureCodeT.CreateProcCode("PPATU3");
+			InsuranceInfo insInfo=InsuranceT.AddInsurance(patient,suffix);
+			insInfo.AddBenefit(BenefitT.CreateDeductibleGeneral(insInfo.PriInsPlan.PlanNum,BenefitCoverageLevel.Individual,20));
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode1.CodeNum,100));
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode2.CodeNum,50));
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode3.CodeNum,100));
+			Procedure procedure1=ProcedureT.CreateProcedure(patient,procedureCode1.ProcCode,ProcStat.C,"12",50,provNum:provNum);
+			Procedure procedure2=ProcedureT.CreateProcedure(patient,procedureCode2.ProcCode,ProcStat.C,"13",60,provNum:provNum);
+			Procedure procedure3=ProcedureT.CreateProcedure(patient,procedureCode3.ProcCode,ProcStat.C,"14",100,provNum:provNum);
+			insInfo.ListAllProcs=new List<Procedure>() { procedure1,procedure2,procedure3 };
+			insInfo.ComputeEstimates();
+			Assert.AreEqual(3,insInfo.ListAllClaimProcs.Count);
+			List<Procedure> listProceduresOnClaim=new List<Procedure>() { procedure1,procedure3 };
+			Claim claim=ClaimT.CreateClaim(listProceduresOnClaim,insInfo);
+			//Take a $20 payment from the patient and associate it to procedure1.
+			PaymentT.MakePayment(patient.PatNum,payAmt:20,provNum:provNum,procNum:procedure1.ProcNum);
+			//Make a claim for JUST procedure1 and procedure3.
+			List<ClaimProc> listClaimProcs=insInfo.ListAllClaimProcs.FindAll(x => x.ProcNum!=procedure2.ProcNum);
+			//Have insurance pay both procedures on the claim in full (they know that the patient has already taken care of their deductible earlier this year).
+			listClaimProcs.First(x => x.ProcNum==procedure1.ProcNum).InsPayAmt=50;
+			listClaimProcs.First(x => x.ProcNum==procedure1.ProcNum).DedApplied=0;
+			listClaimProcs.First(x => x.ProcNum==procedure3.ProcNum).InsPayAmt=100;
+			listClaimProcs.First(x => x.ProcNum==procedure3.ProcNum).DedApplied=0;
+			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:false);
+			//Insurance did NOT do what Open Dental estimated and the dental office has incorrectly taken patient payment and cause procedure1 to be overpaid.
+			//Make an income transfer in order to take patient payment away from procedure1 and move it to unearned (insurance covered everything on the claim).
+			//The money should NOT be transferred to procedure2 since it has nothing to do with the claim.
+			PayNumPaySplitsGroup payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
+			Assert.IsNotNull(payNumPaySplitsGroup);
+			//Assert that the income transfer takes patient portion away from procedure1 and moves it to unearned.
+			Assert.AreEqual(2,payNumPaySplitsGroup.ListPaySplits.Count);
+			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==-20
+				&& x.ProcNum==procedure1.ProcNum
+				&& x.UnearnedType==0));
+			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==20
+				&& x.ProcNum==0 
+				&& x.UnearnedType > 0));
+			//Executing the transfer logic a second time should do nothing.
+			payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
+			Assert.IsNull(payNumPaySplitsGroup);
+		}
+
+		[TestMethod]
+		public void PaymentEdit_MakeIncomeTransferForClaimProcs_PatPortTxfrInsOverpay() {
+			//Deductible applied to different procedure than estimated via EOB / insurance payment.
+			/*****************************************************
+				Create Provider: provNum
+				Create Patient:  patient
+				Create procedure1: Today  provNum  patient   $50
+				Create procedure2: Today  provNum  patient   $60
+				Create procedure3: Today  provNum  patient   $100
+				Create payment:    Today  provNum  patient   $20
+					^Attached to procedure1 since Open Dental estimates a $20 deductible for this procedure.
+				Create claim:      Today  provNum  patient   $150
+					^Only attach procedure1 and procedure3 to this claim which leaves procedure 2 out of the claim along with 50% outstanding value.
+			******************************************************/
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			long provNum=ProviderT.CreateProvider(suffix);
+			Patient patient=PatientT.CreatePatient(suffix,priProvNum:provNum);
+			ProcedureCode procedureCode1=ProcedureCodeT.CreateProcCode("PPTIO1");
+			ProcedureCode procedureCode2=ProcedureCodeT.CreateProcCode("PPTIO2");
+			ProcedureCode procedureCode3=ProcedureCodeT.CreateProcCode("PPTIO3");
+			InsuranceInfo insInfo=InsuranceT.AddInsurance(patient,suffix);
+			insInfo.AddBenefit(BenefitT.CreateDeductibleGeneral(insInfo.PriInsPlan.PlanNum,BenefitCoverageLevel.Individual,20));
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode1.CodeNum,100));
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode2.CodeNum,50));
+			insInfo.AddBenefit(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procedureCode3.CodeNum,100));
+			Procedure procedure1=ProcedureT.CreateProcedure(patient,procedureCode1.ProcCode,ProcStat.C,"12",50,provNum:provNum);
+			Procedure procedure2=ProcedureT.CreateProcedure(patient,procedureCode2.ProcCode,ProcStat.C,"13",60,provNum:provNum);
+			Procedure procedure3=ProcedureT.CreateProcedure(patient,procedureCode3.ProcCode,ProcStat.C,"14",100,provNum:provNum);
+			insInfo.ListAllProcs=new List<Procedure>() { procedure1,procedure2,procedure3 };
+			insInfo.ComputeEstimates();
+			Assert.AreEqual(3,insInfo.ListAllClaimProcs.Count);
+			List<Procedure> listProceduresOnClaim=new List<Procedure>() { procedure1,procedure3 };
+			Claim claim=ClaimT.CreateClaim(listProceduresOnClaim,insInfo);
+			//Take a $20 payment from the patient and associate it to procedure1.
+			PaymentT.MakePayment(patient.PatNum,payAmt:20,provNum:provNum,procNum:procedure1.ProcNum);
+			//Make a claim for JUST procedure1 and procedure3.
+			List<ClaimProc> listClaimProcs=insInfo.ListAllClaimProcs.FindAll(x => x.ProcNum!=procedure2.ProcNum);
+			//Have insurance make 100% of the estimated coverage ($30 + $100 = $130) to procedure1 (sorry procedure3, better luck next time).
+			//This will cause procedure1 to be overpaid by insurance and by the patient.
+			listClaimProcs.First(x => x.ProcNum==procedure1.ProcNum).InsPayAmt=130;
+			listClaimProcs.First(x => x.ProcNum==procedure1.ProcNum).DedApplied=20;
+			listClaimProcs.First(x => x.ProcNum==procedure3.ProcNum).InsPayAmt=0;
+			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:false);
+			//Insurance did NOT do what Open Dental estimated and the dental office has incorrectly associated patient payment to procedure1 causing it to be overpaid.
+			//Make an income transfer in order to take patient payment away from procedure1 and move it to procedure3 (other procedure on the same claim).
+			//The money should NOT be transferred to procedure2 or unearned since procedure3 technically still wants money.
+			PayNumPaySplitsGroup payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
+			Assert.IsNotNull(payNumPaySplitsGroup);
+			//Assert that the income transfer takes patient portion away from procedure1 and gives it to procedure3.
+			Assert.AreEqual(4,payNumPaySplitsGroup.ListPaySplits.Count);
+			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==-20
+				&& x.ProcNum==procedure1.ProcNum
+				&& x.UnearnedType==0));
+			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==20
+				&& x.ProcNum==0 
+				&& x.UnearnedType > 0));
+			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==-20
+				&& x.ProcNum==0
+				&& x.UnearnedType > 0));
+			Assert.AreEqual(1,payNumPaySplitsGroup.ListPaySplits.Count(x => x.SplitAmt==20
+				&& x.ProcNum==procedure3.ProcNum
+				&& x.UnearnedType==0));
+			//Executing the transfer logic a second time should do nothing.
+			payNumPaySplitsGroup=PaymentEdit.MakeIncomeTransferForClaimProcs(patient.PatNum,listClaimProcs);
+			Assert.IsNull(payNumPaySplitsGroup);
 		}
 
 		#endregion

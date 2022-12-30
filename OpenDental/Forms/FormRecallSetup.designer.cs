@@ -256,7 +256,7 @@ namespace OpenDental {
 			this.label14.Name = "label14";
 			this.label14.Size = new System.Drawing.Size(184, 20);
 			this.label14.TabIndex = 50;
-			this.label14.Text = "Days Past (e.g. 1095, blank, etc)";
+			this.label14.Text = "Days Past (e.g. 545, blank, etc)";
 			this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label15

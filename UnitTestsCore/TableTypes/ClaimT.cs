@@ -152,13 +152,16 @@ namespace UnitTestsCore {
 				insInfo.ListBenefits,insInfo.ListInsSubs,claimIdentifier:claimIdentifier);
 		}
 
-		public static void ReceiveClaim(Claim claim,List<ClaimProc> listClaimProcs,bool doAddPayAmount=false) {
+		public static void ReceiveClaim(Claim claim,List<ClaimProc> listClaimProcs,bool doSetInsPayAmt=false,bool doSetWriteOff=false) {
 			claim.ClaimStatus="R";
 			Claims.Update(claim);
 			foreach(ClaimProc cp in listClaimProcs) {
 				cp.Status=ClaimProcStatus.Received;
-				if(doAddPayAmount) {
+				if(doSetInsPayAmt) {
 					cp.InsPayAmt=cp.InsPayEst;
+				}
+				if(doSetWriteOff) {
+					cp.WriteOff=cp.WriteOffEst;
 				}
 				ClaimProcs.Update(cp);
 			}
