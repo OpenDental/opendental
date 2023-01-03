@@ -49,7 +49,7 @@ namespace OpenDental{
 			this.butRefresh = new OpenDental.UI.Button();
 			this.checkOffAtTop = new OpenDental.UI.CheckBox();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.textAbsent = new System.Windows.Forms.TextBox();
 			this.label12 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
@@ -63,7 +63,7 @@ namespace OpenDental{
 			this.textNote = new System.Windows.Forms.TextBox();
 			this.butToday = new OpenDental.UI.Button();
 			this.label11 = new System.Windows.Forms.Label();
-			this.comboSupervisor = new OpenDental.UI.ComboBoxOD();
+			this.comboSupervisor = new OpenDental.UI.ComboBox();
 			this.butShifts = new OpenDental.UI.Button();
 			this.monthCalendarOD = new OpenDental.UI.MonthCalendarOD();
 			this.butPrintList = new OpenDental.UI.Button();
@@ -565,7 +565,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label5;
 		private UI.Button butRefresh;
 		private OpenDental.UI.CheckBox checkOffAtTop;
-		private OpenDental.UI.GroupBoxOD groupBoxOD1;
+		private OpenDental.UI.GroupBox groupBoxOD1;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.TextBox textDailyLimitSoFar;
 		private System.Windows.Forms.Label label8;
@@ -577,7 +577,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label10;
 		private UI.Button butToday;
 		private System.Windows.Forms.Label label11;
-		private UI.ComboBoxOD comboSupervisor;
+		private UI.ComboBox comboSupervisor;
 		private System.Windows.Forms.TextBox textAbsent;
 		private System.Windows.Forms.Label label12;
 		private UI.Button butShifts;

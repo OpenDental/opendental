@@ -42,17 +42,17 @@ namespace OpenDental {
 			this.butFind = new OpenDental.UI.Button();
 			this.textPatient = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
-			this.comboUser = new OpenDental.UI.ComboBoxOD();
+			this.comboUser = new OpenDental.UI.ComboBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboPermission = new OpenDental.UI.ComboBoxOD();
+			this.comboPermission = new OpenDental.UI.ComboBox();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.textDateFrom = new OpenDental.ValidDate();
 			this.textDateTo = new OpenDental.ValidDate();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.grid = new OpenDental.UI.GridOD();
-			this.comboLogSource = new OpenDental.UI.ComboBoxOD();
+			this.comboLogSource = new OpenDental.UI.ComboBox();
 			this.labelLogSource = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -322,17 +322,17 @@ namespace OpenDental {
 		private UI.Button butFind;
 		private TextBox textPatient;
 		private Label label5;
-		private OpenDental.UI.ComboBoxOD comboUser;
+		private OpenDental.UI.ComboBox comboUser;
 		private Label label4;
 		private Label label1;
-		private OpenDental.UI.ComboBoxOD comboPermission;
+		private OpenDental.UI.ComboBox comboPermission;
 		private UI.Button butRefresh;
 		private ValidDate textDateFrom;
 		private ValidDate textDateTo;
 		private Label label2;
 		private Label label3;
 		private OpenDental.UI.GridOD grid;
-		private UI.ComboBoxOD comboLogSource;
+		private UI.ComboBox comboLogSource;
 		private Label labelLogSource;
 	}
 }

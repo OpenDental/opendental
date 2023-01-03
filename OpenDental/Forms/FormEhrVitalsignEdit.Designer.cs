@@ -45,7 +45,7 @@
 			this.textDocumentation = new System.Windows.Forms.TextBox();
 			this.checkIneligible = new OpenDental.UI.CheckBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.checkActivity = new OpenDental.UI.CheckBox();
 			this.checkNutrition = new OpenDental.UI.CheckBox();
 			this.groupBox1.SuspendLayout();
@@ -329,7 +329,7 @@
 		private System.Windows.Forms.TextBox textDocumentation;
 		private OpenDental.UI.CheckBox checkIneligible;
 		private System.Windows.Forms.Label label3;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.CheckBox checkActivity;
 		private OpenDental.UI.CheckBox checkNutrition;
 	}

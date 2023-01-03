@@ -25,7 +25,7 @@
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrPatListResults));
 			this.butClose = new System.Windows.Forms.Button();
-			this.groupOrderBy = new OpenDental.UI.GroupBoxOD();
+			this.groupOrderBy = new OpenDental.UI.GroupBox();
 			this.radioDesc = new System.Windows.Forms.RadioButton();
 			this.radioAsc = new System.Windows.Forms.RadioButton();
 			this.gridMain = new OpenDental.UI.GridOD();
@@ -126,7 +126,7 @@
 
 		private OpenDental.UI.GridOD gridMain;
 		private System.Windows.Forms.Button butClose;
-		private OpenDental.UI.GroupBoxOD groupOrderBy;
+		private OpenDental.UI.GroupBox groupOrderBy;
 		private System.Windows.Forms.RadioButton radioDesc;
 		private System.Windows.Forms.RadioButton radioAsc;
 		private System.Windows.Forms.Button butPrint;

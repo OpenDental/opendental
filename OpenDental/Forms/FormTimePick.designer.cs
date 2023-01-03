@@ -28,10 +28,10 @@ namespace OpenDental{
 			this.radioPM = new System.Windows.Forms.RadioButton();
 			this.radioAM = new System.Windows.Forms.RadioButton();
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboMinute = new OpenDental.UI.ComboBoxOD();
-			this.comboHour = new OpenDental.UI.ComboBoxOD();
-			this.groupDate = new OpenDental.UI.GroupBoxOD();
-			this.groupTime = new OpenDental.UI.GroupBoxOD();
+			this.comboMinute = new OpenDental.UI.ComboBox();
+			this.comboHour = new OpenDental.UI.ComboBox();
+			this.groupDate = new OpenDental.UI.GroupBox();
+			this.groupTime = new OpenDental.UI.GroupBox();
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.groupDate.SuspendLayout();
@@ -154,13 +154,13 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
-		private OpenDental.UI.ComboBoxOD comboHour;
-		private OpenDental.UI.ComboBoxOD comboMinute;
+		private OpenDental.UI.ComboBox comboHour;
+		private OpenDental.UI.ComboBox comboMinute;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.RadioButton radioAM;
 		private System.Windows.Forms.RadioButton radioPM;
 		private System.Windows.Forms.DateTimePicker dateTimePicker;
-		private OpenDental.UI.GroupBoxOD groupDate;
-		private OpenDental.UI.GroupBoxOD groupTime;
+		private OpenDental.UI.GroupBox groupDate;
+		private OpenDental.UI.GroupBox groupTime;
 	}
 }

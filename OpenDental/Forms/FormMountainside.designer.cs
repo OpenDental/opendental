@@ -41,7 +41,7 @@ namespace OpenDental {
 			this.label2 = new System.Windows.Forms.Label();
 			this.textHL7FolderOut = new System.Windows.Forms.TextBox();
 			this.labelHL7FolderOut = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -187,7 +187,7 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textProgDesc;// Required designer variable.
 		private TextBox textHL7FolderOut;
 		private Label labelHL7FolderOut;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private Label label5;
 	}
 }

@@ -30,7 +30,7 @@ namespace OpenDental {
 			this.butClose = new OpenDental.UI.Button();
 			this.label14 = new System.Windows.Forms.Label();
 			this.textGuide = new System.Windows.Forms.TextBox();
-			this.groupEdit = new OpenDental.UI.GroupBoxOD();
+			this.groupEdit = new OpenDental.UI.GroupBox();
 			this.butAlphabetize = new OpenDental.UI.Button();
 			this.butHide = new OpenDental.UI.Button();
 			this.butDown = new OpenDental.UI.Button();
@@ -201,7 +201,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label label14;
 		private System.Windows.Forms.TextBox textGuide;
-		private OpenDental.UI.GroupBoxOD groupEdit;
+		private OpenDental.UI.GroupBox groupEdit;
 		private OpenDental.UI.ListBoxOD listCategory;
 		private System.Windows.Forms.Label label13;
 		private OpenDental.UI.Button butAdd;

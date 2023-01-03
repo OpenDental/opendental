@@ -51,7 +51,7 @@ namespace OpenDental {
 			this.listMode = new OpenDental.UI.ListBoxOD();
 			this.checkIntermingled = new OpenDental.UI.CheckBox();
 			this.checkSinglePatient = new OpenDental.UI.CheckBox();
-			this.groupDateRange = new OpenDental.UI.GroupBoxOD();
+			this.groupDateRange = new OpenDental.UI.GroupBox();
 			this.textDateEnd = new System.Windows.Forms.TextBox();
 			this.checkBoxBillShowTransSinceZero = new OpenDental.UI.CheckBox();
 			this.textDateStart = new System.Windows.Forms.TextBox();
@@ -63,7 +63,7 @@ namespace OpenDental {
 			this.butPreview = new OpenDental.UI.Button();
 			this.textDate = new System.Windows.Forms.TextBox();
 			this.checkIsReceipt = new OpenDental.UI.CheckBox();
-			this.groupInvoice = new OpenDental.UI.GroupBoxOD();
+			this.groupInvoice = new OpenDental.UI.GroupBox();
 			this.textInvoiceNum = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.checkIsInvoiceCopy = new OpenDental.UI.CheckBox();
@@ -563,7 +563,7 @@ namespace OpenDental {
 		private OpenDental.UI.ListBoxOD listMode;
 		private OpenDental.UI.CheckBox checkSinglePatient;
 		private OpenDental.UI.CheckBox checkIntermingled;
-		private OpenDental.UI.GroupBoxOD groupDateRange;
+		private OpenDental.UI.GroupBox groupDateRange;
 		private Label label4;
 		private OpenDental.UI.CheckBox checkIsSent;
 		private OpenDental.UI.Button butDelete;
@@ -574,7 +574,7 @@ namespace OpenDental {
 		private TextBox textDateStart;
 		private TextBox textDate;		
 		private OpenDental.UI.CheckBox checkIsReceipt;
-		private OpenDental.UI.GroupBoxOD groupInvoice;
+		private OpenDental.UI.GroupBox groupInvoice;
 		private OpenDental.UI.CheckBox checkIsInvoiceCopy;
 		private OpenDental.UI.CheckBox checkIsInvoice;
 		private TextBox textInvoiceNum;

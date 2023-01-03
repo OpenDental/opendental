@@ -49,7 +49,7 @@ namespace OpenDental{
 			this.labelBlockoutTypes = new System.Windows.Forms.Label();
 			this.butClearBlockoutTypes = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.radioButtonAll = new System.Windows.Forms.RadioButton();
 			this.radioButtonAtLeastOne = new System.Windows.Forms.RadioButton();
 			this.groupBoxOD1.SuspendLayout();
@@ -388,7 +388,7 @@ namespace OpenDental{
         private System.Windows.Forms.Label labelBlockoutTypes;
 		private UI.Button butClearBlockoutTypes;
 		private System.Windows.Forms.Label label1;
-		private UI.GroupBoxOD groupBoxOD1;
+		private UI.GroupBox groupBoxOD1;
 		private System.Windows.Forms.RadioButton radioButtonAll;
 		private System.Windows.Forms.RadioButton radioButtonAtLeastOne;
 	}

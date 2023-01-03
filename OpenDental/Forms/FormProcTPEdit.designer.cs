@@ -45,7 +45,7 @@ namespace OpenDental {
 			this.label9 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
 			this.label11 = new System.Windows.Forms.Label();
-			this.comboPriority = new OpenDental.UI.ComboBoxOD();
+			this.comboPriority = new OpenDental.UI.ComboBox();
 			this.textSurf = new System.Windows.Forms.TextBox();
 			this.textCode = new System.Windows.Forms.TextBox();
 			this.textDescript = new System.Windows.Forms.TextBox();
@@ -413,7 +413,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.TextBox textToothNumTP;
-		private OpenDental.UI.ComboBoxOD comboPriority;
+		private OpenDental.UI.ComboBox comboPriority;
 		private System.Windows.Forms.TextBox textSurf;
 		private System.Windows.Forms.TextBox textCode;
 		private System.Windows.Forms.TextBox textDescript;

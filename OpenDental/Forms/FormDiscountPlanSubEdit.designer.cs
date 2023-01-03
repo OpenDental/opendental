@@ -24,7 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDiscountPlanSubEdit));
-            this.groupSubscriber = new OpenDental.UI.GroupBoxOD();
+            this.groupSubscriber = new OpenDental.UI.GroupBox();
             this.labelSubNote = new System.Windows.Forms.Label();
             this.textName = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -301,7 +301,7 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.GroupBoxOD groupSubscriber;
+		private OpenDental.UI.GroupBox groupSubscriber;
 		private System.Windows.Forms.Label label6;
 		private ValidDate textDateTerm;
 		private ValidDate textDateEffective;

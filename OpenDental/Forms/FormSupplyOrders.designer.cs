@@ -24,7 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSupplyOrders));
-			this.comboSupplier = new OpenDental.UI.ComboBoxOD();
+			this.comboSupplier = new OpenDental.UI.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.gridItems = new OpenDental.UI.GridOD();
 			this.gridOrders = new OpenDental.UI.GridOD();
@@ -158,7 +158,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butCancel;
 		private UI.Button butNewOrder;
 		private UI.GridOD gridOrders;
-		private UI.ComboBoxOD comboSupplier;
+		private UI.ComboBox comboSupplier;
 		private System.Windows.Forms.Label label3;
 		private UI.GridOD gridItems;
 		private UI.Button butAddSupply;

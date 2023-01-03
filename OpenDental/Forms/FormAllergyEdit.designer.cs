@@ -28,7 +28,7 @@ namespace OpenDental{
 			this.textReaction = new System.Windows.Forms.TextBox();
 			this.labelReaction = new System.Windows.Forms.Label();
 			this.labelAllergy = new System.Windows.Forms.Label();
-			this.comboAllergies = new OpenDental.UI.ComboBoxOD();
+			this.comboAllergies = new OpenDental.UI.ComboBox();
 			this.textDate = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
@@ -201,7 +201,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textReaction;
 		private System.Windows.Forms.Label labelReaction;
 		private System.Windows.Forms.Label labelAllergy;
-		private OpenDental.UI.ComboBoxOD comboAllergies;
+		private OpenDental.UI.ComboBox comboAllergies;
 		private UI.Button butCancel;
 		private System.Windows.Forms.TextBox textDate;
 		private System.Windows.Forms.Label label1;

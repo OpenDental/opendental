@@ -28,9 +28,9 @@ namespace OpenDental{
 			this.label7 = new System.Windows.Forms.Label();
 			this.butSetup = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.comboStatusTextMessagedConfirm = new OpenDental.UI.ComboBoxOD();
+			this.comboStatusTextMessagedConfirm = new OpenDental.UI.ComboBox();
 			this.label6 = new System.Windows.Forms.Label();
-			this.comboStatusEmailedConfirm = new OpenDental.UI.ComboBoxOD();
+			this.comboStatusEmailedConfirm = new OpenDental.UI.ComboBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.checkGroupFamilies = new OpenDental.UI.CheckBox();
 			this.SuspendLayout();
@@ -159,9 +159,9 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label7;
 		private UI.Button butSetup;
 		private UI.GridOD gridMain;
-		private OpenDental.UI.ComboBoxOD comboStatusTextMessagedConfirm;
+		private OpenDental.UI.ComboBox comboStatusTextMessagedConfirm;
 		private System.Windows.Forms.Label label6;
-		private OpenDental.UI.ComboBoxOD comboStatusEmailedConfirm;
+		private OpenDental.UI.ComboBox comboStatusEmailedConfirm;
 		private System.Windows.Forms.Label label5;
 		private UI.Button butOK;
 		private UI.Button butCancel;

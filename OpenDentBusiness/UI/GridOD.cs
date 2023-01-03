@@ -112,6 +112,7 @@ using OpenDental.UI;
 			//186,199,219);//recent listboxOD color
 			//Color.Silver;//gray 192
 		private bool _hasAddButton=false;
+		private bool _hasAlternateRowsColored=false;
 		private bool _hasDropDowns=false;
 		private bool _headersVisible=true;
 		private bool _hScrollVisible=false;
@@ -393,6 +394,20 @@ using OpenDental.UI;
 			get {return _hasAddButton;}
 			set {
 				_hasAddButton=value;
+				Invalidate();
+			}
+		}
+
+		///<summary></summary>
+		[Category("OD")]
+		[Description("Set to true to have alternate rows colored a very pale green.")]
+		[DefaultValue(false)]
+		public bool HasAlternateRowsColored {
+			get {
+				return _hasAlternateRowsColored;
+			}
+			set {
+				_hasAlternateRowsColored=value;
 				Invalidate();
 			}
 		}
@@ -893,6 +908,9 @@ using OpenDental.UI;
 			else if(gridRow.ColorBackG.ToArgb()!=Color.White.ToArgb()) {//.ToArgb required for value comparison
 				colorRow=gridRow.ColorBackG;
 			}
+			else if(_hasAlternateRowsColored && rowI%2==0){//color even rows
+				colorRow=Color.FromArgb(245,255,248);
+			}
 			//normal row color
 			else {//need to draw over the gray background
 				colorRow=gridRow.ColorBackG;
@@ -1170,9 +1188,9 @@ using OpenDental.UI;
 				return;
 			}
 			g.FillRectangle(_brushTitleBackground,1,1,Width,ScaleI(_heightTitle));
-			if(!DesignMode){
+			//if(!DesignMode){
 				g.DrawString(_title,_fontTitle,Brushes.White,Width/2-g.MeasureString(_title,_fontTitle).Width/2,2);
-			}
+			//}
 			if(!HasAddButton) {
 				return;
 			}

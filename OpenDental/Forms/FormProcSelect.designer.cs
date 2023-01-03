@@ -8,11 +8,11 @@
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 		private OpenDental.UI.GridOD gridMain;
-		private OpenDental.UI.GroupBoxOD groupCreditLogic;
+		private OpenDental.UI.GroupBox groupCreditLogic;
 		private System.Windows.Forms.RadioButton radioExcludeAllCredits;
 		private System.Windows.Forms.RadioButton radioOnlyAllocatedCredits;
 		private System.Windows.Forms.RadioButton radioIncludeAllCredits;
-		private OpenDental.UI.GroupBoxOD groupBreakdown;
+		private OpenDental.UI.GroupBox groupBreakdown;
 		private System.Windows.Forms.Label label12;
 		private System.Windows.Forms.Label labelCurrentSplits;
 		private System.Windows.Forms.Label label8;
@@ -64,11 +64,11 @@
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
-			this.groupCreditLogic = new OpenDental.UI.GroupBoxOD();
+			this.groupCreditLogic = new OpenDental.UI.GroupBox();
 			this.radioExcludeAllCredits = new System.Windows.Forms.RadioButton();
 			this.radioOnlyAllocatedCredits = new System.Windows.Forms.RadioButton();
 			this.radioIncludeAllCredits = new System.Windows.Forms.RadioButton();
-			this.groupBreakdown = new OpenDental.UI.GroupBoxOD();
+			this.groupBreakdown = new OpenDental.UI.GroupBox();
 			this.label12 = new System.Windows.Forms.Label();
 			this.labelCurrentSplits = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();

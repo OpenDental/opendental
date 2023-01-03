@@ -29,10 +29,10 @@ namespace OpenDental {
 			this.butSaveDefault = new OpenDental.UI.Button();
 			this.textExcludeLessThan = new OpenDental.ValidDouble();
 			this.checkExcludeInactive = new OpenDental.UI.CheckBox();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.labelExcludeIfPendingDays = new System.Windows.Forms.Label();
 			this.textDaysInsPendingExclude = new OpenDental.ValidNum();
-			this.comboInsFilingCodes = new OpenDental.UI.ComboBoxOD();
+			this.comboInsFilingCodes = new OpenDental.UI.ComboBox();
 			this.labelInsFilingCodes = new System.Windows.Forms.Label();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.checkUseClinicDefaults = new OpenDental.UI.CheckBox();
@@ -41,7 +41,7 @@ namespace OpenDental {
 			this.labelSaveDefaults = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
-			this.comboAge = new OpenDental.UI.ComboBoxOD();
+			this.comboAge = new OpenDental.UI.ComboBox();
 			this.checkExcludeInsPending = new OpenDental.UI.CheckBox();
 			this.checkIncludeChanged = new OpenDental.UI.CheckBox();
 			this.textLastStatement = new OpenDental.ValidDate();
@@ -55,7 +55,7 @@ namespace OpenDental {
 			this.label3 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.textNote = new OpenDental.ODtextBox();
-			this.groupDateRange = new OpenDental.UI.GroupBoxOD();
+			this.groupDateRange = new OpenDental.UI.GroupBox();
 			this.but30days = new OpenDental.UI.Button();
 			this.textDateStart = new OpenDental.ValidDate();
 			this.labelStartDate = new System.Windows.Forms.Label();
@@ -623,7 +623,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butSaveDefault;
 		private OpenDental.ValidDouble textExcludeLessThan;
 		private OpenDental.UI.CheckBox checkExcludeInactive;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private OpenDental.UI.Button butDunningSetup;
 		private System.Windows.Forms.Label label3;
 		private OpenDental.UI.GridOD gridDunning;
@@ -636,7 +636,7 @@ namespace OpenDental {
 		private OpenDental.ValidDate textLastStatement;
 		private OpenDental.UI.Button butCreate;
 		private OpenDental.UI.CheckBox checkExcludeInsPending;
-		private OpenDental.UI.GroupBoxOD groupDateRange;
+		private OpenDental.UI.GroupBox groupDateRange;
 		private ValidDate textDateStart;
 		private Label labelStartDate;
 		private Label labelEndDate;
@@ -647,7 +647,7 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkIntermingled;
 		private OpenDental.UI.Button butDefaults;
 		private OpenDental.UI.Button but30days;
-		private OpenDental.UI.ComboBoxOD comboAge;
+		private OpenDental.UI.ComboBox comboAge;
 		private Label label6;
 		private Label label7;
 		private OpenDental.UI.ListBoxOD listBillType;
@@ -664,7 +664,7 @@ namespace OpenDental {
 		private Label labelMultiClinicGenMsg;
 		private OpenDental.UI.ComboBoxClinicPicker comboClinic;
 		private Label labelInsFilingCodes;
-		private UI.ComboBoxOD comboInsFilingCodes;
+		private UI.ComboBox comboInsFilingCodes;
 		private ValidNum textDaysInsPendingExclude;
 		private Label labelExcludeIfPendingDays;
 	}

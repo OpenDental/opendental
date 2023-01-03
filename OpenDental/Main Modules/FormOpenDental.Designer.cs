@@ -37,9 +37,13 @@ namespace OpenDental{
 			this.menuEmail = new System.Windows.Forms.ContextMenu();
 			this.menuLetter = new System.Windows.Forms.ContextMenu();
 			this.panelPhoneSmall = new System.Windows.Forms.Panel();
+			this.butNewMap = new OpenDental.UI.Button();
+			this.label3 = new System.Windows.Forms.Label();
+			this.label2 = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
 			this.butVoiceMails = new OpenDental.UI.Button();
 			this.labelFieldType = new System.Windows.Forms.Label();
-			this.comboTriageCoordinator = new OpenDental.UI.ComboBoxOD();
+			this.comboTriageCoordinator = new OpenDental.UI.ComboBox();
 			this.labelMsg = new System.Windows.Forms.Label();
 			this.butMapPhones = new OpenDental.UI.Button();
 			this.butTriage = new OpenDental.UI.Button();
@@ -138,6 +142,10 @@ namespace OpenDental{
 			// 
 			this.panelPhoneSmall.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+			this.panelPhoneSmall.Controls.Add(this.butNewMap);
+			this.panelPhoneSmall.Controls.Add(this.label3);
+			this.panelPhoneSmall.Controls.Add(this.label2);
+			this.panelPhoneSmall.Controls.Add(this.label1);
 			this.panelPhoneSmall.Controls.Add(this.butVoiceMails);
 			this.panelPhoneSmall.Controls.Add(this.labelFieldType);
 			this.panelPhoneSmall.Controls.Add(this.comboTriageCoordinator);
@@ -152,18 +160,54 @@ namespace OpenDental{
 			this.panelPhoneSmall.Size = new System.Drawing.Size(213, 481);
 			this.panelPhoneSmall.TabIndex = 56;
 			// 
+			// butNewMap
+			// 
+			this.butNewMap.Location = new System.Drawing.Point(51, 27);
+			this.butNewMap.Name = "butNewMap";
+			this.butNewMap.Size = new System.Drawing.Size(60, 24);
+			this.butNewMap.TabIndex = 96;
+			this.butNewMap.Text = "New Map";
+			this.butNewMap.Click += new System.EventHandler(this.butNewMap_Click);
+			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(110, 42);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(70, 15);
+			this.label3.TabIndex = 95;
+			this.label3.Text = "Messages";
+			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(111, 57);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(70, 15);
+			this.label2.TabIndex = 94;
+			this.label2.Text = "WaitTime";
+			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(100, 28);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(81, 15);
+			this.label1.TabIndex = 93;
+			this.label1.Text = "Triage Tasks";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
 			// butVoiceMails
 			// 
-			this.butVoiceMails.Location = new System.Drawing.Point(1, 0);
+			this.butVoiceMails.Location = new System.Drawing.Point(1, 1);
 			this.butVoiceMails.Name = "butVoiceMails";
-			this.butVoiceMails.Size = new System.Drawing.Size(18, 24);
+			this.butVoiceMails.Size = new System.Drawing.Size(74, 24);
 			this.butVoiceMails.TabIndex = 89;
-			this.butVoiceMails.Text = "V";
+			this.butVoiceMails.Text = "Voicemail";
 			this.butVoiceMails.Click += new System.EventHandler(this.butVoiceMails_Click);
 			// 
 			// labelFieldType
 			// 
-			this.labelFieldType.Location = new System.Drawing.Point(4, 25);
+			this.labelFieldType.Location = new System.Drawing.Point(4, 64);
 			this.labelFieldType.Name = "labelFieldType";
 			this.labelFieldType.Size = new System.Drawing.Size(143, 15);
 			this.labelFieldType.TabIndex = 88;
@@ -173,7 +217,7 @@ namespace OpenDental{
 			// comboTriageCoordinator
 			// 
 			this.comboTriageCoordinator.AllowScroll = false;
-			this.comboTriageCoordinator.Location = new System.Drawing.Point(0, 42);
+			this.comboTriageCoordinator.Location = new System.Drawing.Point(0, 81);
 			this.comboTriageCoordinator.Name = "comboTriageCoordinator";
 			this.comboTriageCoordinator.Size = new System.Drawing.Size(213, 21);
 			this.comboTriageCoordinator.TabIndex = 87;
@@ -183,60 +227,60 @@ namespace OpenDental{
 			// 
 			this.labelMsg.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelMsg.ForeColor = System.Drawing.Color.Firebrick;
-			this.labelMsg.Location = new System.Drawing.Point(20, 2);
+			this.labelMsg.Location = new System.Drawing.Point(178, 41);
 			this.labelMsg.Name = "labelMsg";
-			this.labelMsg.Size = new System.Drawing.Size(35, 20);
+			this.labelMsg.Size = new System.Drawing.Size(34, 17);
 			this.labelMsg.TabIndex = 53;
 			this.labelMsg.Text = "00";
 			this.labelMsg.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// butMapPhones
 			// 
-			this.butMapPhones.Location = new System.Drawing.Point(192, 0);
+			this.butMapPhones.Location = new System.Drawing.Point(1, 27);
 			this.butMapPhones.Name = "butMapPhones";
-			this.butMapPhones.Size = new System.Drawing.Size(19, 24);
+			this.butMapPhones.Size = new System.Drawing.Size(48, 24);
 			this.butMapPhones.TabIndex = 54;
-			this.butMapPhones.Text = "M";
+			this.butMapPhones.Text = "Map";
 			this.butMapPhones.Click += new System.EventHandler(this.butMapPhones_Click);
 			// 
 			// butTriage
 			// 
-			this.butTriage.Location = new System.Drawing.Point(154, 0);
+			this.butTriage.Location = new System.Drawing.Point(77, 1);
 			this.butTriage.Name = "butTriage";
-			this.butTriage.Size = new System.Drawing.Size(18, 24);
+			this.butTriage.Size = new System.Drawing.Size(58, 24);
 			this.butTriage.TabIndex = 52;
-			this.butTriage.Text = "T";
+			this.butTriage.Text = "Triage";
 			this.butTriage.Click += new System.EventHandler(this.butTriage_Click);
 			// 
 			// butBigPhones
 			// 
-			this.butBigPhones.Location = new System.Drawing.Point(173, 0);
+			this.butBigPhones.Location = new System.Drawing.Point(137, 1);
 			this.butBigPhones.Name = "butBigPhones";
-			this.butBigPhones.Size = new System.Drawing.Size(18, 24);
+			this.butBigPhones.Size = new System.Drawing.Size(75, 24);
 			this.butBigPhones.TabIndex = 52;
-			this.butBigPhones.Text = "B";
+			this.butBigPhones.Text = "Big Phones";
 			this.butBigPhones.Click += new System.EventHandler(this.butBigPhones_Click);
 			// 
 			// labelWaitTime
 			// 
 			this.labelWaitTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelWaitTime.ForeColor = System.Drawing.Color.Black;
-			this.labelWaitTime.Location = new System.Drawing.Point(123, 2);
+			this.labelWaitTime.Location = new System.Drawing.Point(178, 56);
 			this.labelWaitTime.Name = "labelWaitTime";
-			this.labelWaitTime.Size = new System.Drawing.Size(30, 20);
+			this.labelWaitTime.Size = new System.Drawing.Size(30, 17);
 			this.labelWaitTime.TabIndex = 53;
 			this.labelWaitTime.Text = "00m";
-			this.labelWaitTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.labelWaitTime.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelTriage
 			// 
 			this.labelTriage.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelTriage.ForeColor = System.Drawing.Color.Black;
-			this.labelTriage.Location = new System.Drawing.Point(71, 2);
+			this.labelTriage.Location = new System.Drawing.Point(178, 27);
 			this.labelTriage.Name = "labelTriage";
-			this.labelTriage.Size = new System.Drawing.Size(41, 20);
+			this.labelTriage.Size = new System.Drawing.Size(34, 17);
 			this.labelTriage.TabIndex = 53;
-			this.labelTriage.Text = "T:000";
+			this.labelTriage.Text = "000";
 			this.labelTriage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// menuText
@@ -384,7 +428,7 @@ namespace OpenDental{
 		private Label labelTriage;
 		private Label labelMsg;
 		private UI.Button butMapPhones;
-		private UI.ComboBoxOD comboTriageCoordinator;
+		private UI.ComboBox comboTriageCoordinator;
 		private Label labelFieldType;
 		private MenuItem menuItem14;
 		private ContextMenu menuText;
@@ -401,5 +445,9 @@ namespace OpenDental{
 		private FormWebChatSurveys _formWebChatSurveys;
 		private SplitContainerNoFlicker splitContainerNoFlickerDashboard;
 		private UI.MenuOD menuMain;
+		private Label label3;
+		private Label label2;
+		private Label label1;
+		private UI.Button butNewMap;
 	}
 }

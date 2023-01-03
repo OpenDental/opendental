@@ -61,7 +61,7 @@ namespace OpenDental {
 			this.label18 = new System.Windows.Forms.Label();
 			this.textSubstitutionCode = new System.Windows.Forms.TextBox();
 			this.label19 = new System.Windows.Forms.Label();
-			this.comboSubstOnlyIf = new OpenDental.UI.ComboBoxOD();
+			this.comboSubstOnlyIf = new OpenDental.UI.ComboBox();
 			this.checkMultiVisit = new System.Windows.Forms.CheckBox();
 			this.labelDrugNDC = new System.Windows.Forms.Label();
 			this.labelRevenueCode = new System.Windows.Forms.Label();
@@ -69,7 +69,7 @@ namespace OpenDental {
 			this.textRevenueCode = new System.Windows.Forms.TextBox();
 			this.label20 = new System.Windows.Forms.Label();
 			this.label21 = new System.Windows.Forms.Label();
-			this.comboProvNumDefault = new OpenDental.UI.ComboBoxOD();
+			this.comboProvNumDefault = new OpenDental.UI.ComboBox();
 			this.label22 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label23 = new System.Windows.Forms.Label();
@@ -1073,7 +1073,7 @@ namespace OpenDental {
 		private UI.GridOD gridNotes;
 		private OpenDental.UI.Button butAddNote;
 		private Label label19;
-		private OpenDental.UI.ComboBoxOD comboSubstOnlyIf;
+		private OpenDental.UI.ComboBox comboSubstOnlyIf;
 		private CheckBox checkMultiVisit;
 		private Label labelDrugNDC;
 		private Label labelRevenueCode;
@@ -1081,7 +1081,7 @@ namespace OpenDental {
 		private TextBox textRevenueCode;
 		private Label label20;
 		private Label label21;
-		private UI.ComboBoxOD comboProvNumDefault;
+		private UI.ComboBox comboProvNumDefault;
 		private Label label22;
 		private UI.Button butAuditTrail;
 		private UI.Button butMore;

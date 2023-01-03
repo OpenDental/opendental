@@ -25,7 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormClaimPayList));
 			this.butPickPaymentGroup = new OpenDental.UI.Button();
-			this.comboPayGroup = new OpenDental.UI.ComboBoxOD();
+			this.comboPayGroup = new OpenDental.UI.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
@@ -183,7 +183,7 @@ namespace OpenDental{
 		private OpenDental.UI.ComboBoxClinicPicker comboClinic;
 		private UI.Button butRefresh;
 		private UI.Button butAdd;
-		private OpenDental.UI.ComboBoxOD comboPayGroup;
+		private OpenDental.UI.ComboBox comboPayGroup;
 		private System.Windows.Forms.Label label1;
 		private UI.Button butPickPaymentGroup;
 	}

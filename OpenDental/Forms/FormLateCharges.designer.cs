@@ -31,7 +31,7 @@ namespace OpenDental{
 			this.textDateNewCharges = new OpenDental.ValidDate();
 			this.labelDateNewCharges = new System.Windows.Forms.Label();
 			this.labelBillType = new System.Windows.Forms.Label();
-			this.groupBoxUndo = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxUndo = new OpenDental.UI.GroupBox();
 			this.textDateUndo = new OpenDental.ValidDate();
 			this.labelDateUndo = new System.Windows.Forms.Label();
 			this.butUndo = new OpenDental.UI.Button();
@@ -51,12 +51,12 @@ namespace OpenDental{
 			this.textDateRangeStart = new OpenDental.ValidNum();
 			this.labelDateRange3 = new System.Windows.Forms.Label();
 			this.butSaveDefaults = new OpenDental.UI.Button();
-			this.groupLateCharge = new OpenDental.UI.GroupBoxOD();
+			this.groupLateCharge = new OpenDental.UI.GroupBox();
 			this.checkExcludeExistingLateCharges = new OpenDental.UI.CheckBox();
 			this.radioPatPriProv = new System.Windows.Forms.RadioButton();
 			this.radioSpecificProv = new System.Windows.Forms.RadioButton();
-			this.comboSpecificProv = new OpenDental.UI.ComboBoxOD();
-			this.groupBoxAssignCharge = new OpenDental.UI.GroupBoxOD();
+			this.comboSpecificProv = new OpenDental.UI.ComboBox();
+			this.groupBoxAssignCharge = new OpenDental.UI.GroupBox();
 			this.groupBoxUndo.SuspendLayout();
 			this.groupLateCharge.SuspendLayout();
 			this.groupBoxAssignCharge.SuspendLayout();
@@ -431,7 +431,7 @@ namespace OpenDental{
 		private ValidDate textDateNewCharges;
 		private System.Windows.Forms.Label labelDateNewCharges;
 		private System.Windows.Forms.Label labelBillType;
-		private OpenDental.UI.GroupBoxOD groupBoxUndo;
+		private OpenDental.UI.GroupBox groupBoxUndo;
 		private ValidDate textDateUndo;
 		private System.Windows.Forms.Label labelDateUndo;
 		private UI.Button butUndo;
@@ -451,11 +451,11 @@ namespace OpenDental{
 		private ValidNum textDateRangeStart;
 		private System.Windows.Forms.Label labelDateRange3;
 		private UI.Button butSaveDefaults;
-		private OpenDental.UI.GroupBoxOD groupLateCharge;
+		private OpenDental.UI.GroupBox groupLateCharge;
 		private System.Windows.Forms.RadioButton radioPatPriProv;
 		private System.Windows.Forms.RadioButton radioSpecificProv;
-		private UI.ComboBoxOD comboSpecificProv;
-		private OpenDental.UI.GroupBoxOD groupBoxAssignCharge;
+		private UI.ComboBox comboSpecificProv;
+		private OpenDental.UI.GroupBox groupBoxAssignCharge;
 		private OpenDental.UI.CheckBox checkExcludeExistingLateCharges;
 	}
 }

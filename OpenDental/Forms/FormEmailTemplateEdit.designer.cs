@@ -52,7 +52,7 @@ namespace OpenDental {
 			this.butEditHtml = new OpenDental.UI.Button();
 			this.butEditText = new OpenDental.UI.Button();
 			this.webBrowserHtml = new System.Windows.Forms.WebBrowser();
-			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.groupBoxOD1.SuspendLayout();
 			this.SuspendLayout();
@@ -324,7 +324,7 @@ namespace OpenDental {
 		private UI.Button butEditHtml;
 		private UI.Button butEditText;
 		private WebBrowser webBrowserHtml;
-		private UI.GroupBoxOD groupBoxOD1;
+		private UI.GroupBox groupBoxOD1;
 		private Label label4;
 	}
 }

@@ -30,7 +30,7 @@ namespace OpenDental{
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
-			this.comboScaleType = new OpenDental.UI.ComboBoxOD();
+			this.comboScaleType = new OpenDental.UI.ComboBox();
 			this.labelScaleType = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butDelete = new OpenDental.UI.Button();
@@ -181,7 +181,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelPercent;
 		private UI.Button butOK;
 		private UI.Button butCancel;
-		private OpenDental.UI.ComboBoxOD comboScaleType;
+		private OpenDental.UI.ComboBox comboScaleType;
 		private System.Windows.Forms.Label labelScaleType;
 		private UI.Button butDelete;
 		private System.Windows.Forms.Label labelWarning;

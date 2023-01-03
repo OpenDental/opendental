@@ -182,7 +182,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void FillFeeSchedGroupComboBox(ComboBoxOD comboFeeSchedGroup,long feeSchedNumSelected,long feeSchedGroupNum) {
+		private void FillFeeSchedGroupComboBox(UI.ComboBox comboFeeSchedGroup,long feeSchedNumSelected,long feeSchedGroupNum) {
 			List<long> listComboGroupNums=new List<long>();
 			List<FeeSchedGroup> listFeeSchedGroups=FeeSchedGroups.GetAllForFeeSched(feeSchedNumSelected);
 			for(int i=0;i<listFeeSchedGroups.Count;i++)  {

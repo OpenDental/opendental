@@ -37,7 +37,7 @@ namespace OpenDental{
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.textFieldValueDoc = new System.Windows.Forms.TextBox();
-			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.textFieldValueMount = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.butChange = new OpenDental.UI.Button();
@@ -246,7 +246,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butDelete;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textFieldValueDoc;
-		private UI.GroupBoxOD groupBoxOD1;
+		private UI.GroupBox groupBoxOD1;
 		private UI.Button butChange;
 		private System.Windows.Forms.TextBox textFieldValueMount;
 		private System.Windows.Forms.Label label2;

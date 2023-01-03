@@ -35,11 +35,11 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormClinics));
-			this.groupClinicOrder = new OpenDental.UI.GroupBoxOD();
+			this.groupClinicOrder = new OpenDental.UI.GroupBox();
 			this.butUp = new OpenDental.UI.Button();
 			this.butDown = new OpenDental.UI.Button();
 			this.checkOrderAlphabetical = new OpenDental.UI.CheckBox();
-			this.groupMovePats = new OpenDental.UI.GroupBoxOD();
+			this.groupMovePats = new OpenDental.UI.GroupBox();
 			this.butMovePats = new OpenDental.UI.Button();
 			this.butClinicPick = new OpenDental.UI.Button();
 			this.textMoveTo = new System.Windows.Forms.TextBox();
@@ -279,12 +279,12 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label1;
 		private UI.GridOD gridMain;
 		private UI.Button butOK;
-		private OpenDental.UI.GroupBoxOD groupMovePats;
+		private OpenDental.UI.GroupBox groupMovePats;
 		private UI.Button butMovePats;
 		private UI.Button butClinicPick;
 		private TextBox textMoveTo;
 		private Label label2;
-		private OpenDental.UI.GroupBoxOD groupClinicOrder;
+		private OpenDental.UI.GroupBox groupClinicOrder;
 		private UI.Button butUp;
 		private UI.Button butDown;
 		private UI.Button butSelectAll;

@@ -30,7 +30,7 @@ namespace OpenDental {
 			this.checkAssign = new System.Windows.Forms.CheckBox();
 			this.checkRelease = new System.Windows.Forms.CheckBox();
 			this.textSubscriber = new System.Windows.Forms.TextBox();
-			this.groupSubscriber = new OpenDental.UI.GroupBoxOD();
+			this.groupSubscriber = new OpenDental.UI.GroupBox();
 			this.butChange = new OpenDental.UI.Button();
 			this.label25 = new System.Windows.Forms.Label();
 			this.textSubscriberID = new System.Windows.Forms.TextBox();
@@ -46,14 +46,14 @@ namespace OpenDental {
 			this.butGetElectronic = new OpenDental.UI.Button();
 			this.butSubstCodes = new OpenDental.UI.Button();
 			this.labelDrop = new System.Windows.Forms.Label();
-			this.groupRequestBen = new OpenDental.UI.GroupBoxOD();
+			this.groupRequestBen = new OpenDental.UI.GroupBox();
 			this.labelHistElect = new System.Windows.Forms.Label();
 			this.textElectBenLastDate = new System.Windows.Forms.TextBox();
 			this.labelTrojanID = new System.Windows.Forms.Label();
 			this.textTrojanID = new System.Windows.Forms.TextBox();
 			this.label26 = new System.Windows.Forms.Label();
 			this.panel1 = new System.Windows.Forms.Panel();
-			this.comboRelationship = new OpenDental.UI.ComboBoxOD();
+			this.comboRelationship = new OpenDental.UI.ComboBox();
 			this.label31 = new System.Windows.Forms.Label();
 			this.checkIsPending = new System.Windows.Forms.CheckBox();
 			this.label32 = new System.Windows.Forms.Label();
@@ -76,9 +76,9 @@ namespace OpenDental {
 			this.butDrop = new OpenDental.UI.Button();
 			this.label18 = new System.Windows.Forms.Label();
 			this.radioChangeAll = new System.Windows.Forms.RadioButton();
-			this.groupChanges = new OpenDental.UI.GroupBoxOD();
+			this.groupChanges = new OpenDental.UI.GroupBox();
 			this.radioCreateNew = new System.Windows.Forms.RadioButton();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label34 = new System.Windows.Forms.Label();
 			this.checkDontVerify = new System.Windows.Forms.CheckBox();
 			this.butVerifyBenefits = new OpenDental.UI.Button();
@@ -93,20 +93,20 @@ namespace OpenDental {
 			this.tabPageInsPlanInfo = new OpenDental.UI.TabPage();
 			this.panelPlan = new System.Windows.Forms.Panel();
 			this.checkUseBlueBook = new System.Windows.Forms.CheckBox();
-			this.groupCarrierAllowedAmounts = new OpenDental.UI.GroupBoxOD();
+			this.groupCarrierAllowedAmounts = new OpenDental.UI.GroupBox();
 			this.labelManualBlueBook = new System.Windows.Forms.Label();
-			this.comboManualBlueBook = new OpenDental.UI.ComboBoxOD();
+			this.comboManualBlueBook = new OpenDental.UI.ComboBox();
 			this.labelOutOfNetwork = new System.Windows.Forms.Label();
-			this.comboOutOfNetwork = new OpenDental.UI.ComboBoxOD();
-			this.comboFeeSched = new OpenDental.UI.ComboBoxOD();
-			this.groupCoPay = new OpenDental.UI.GroupBoxOD();
+			this.comboOutOfNetwork = new OpenDental.UI.ComboBox();
+			this.comboFeeSched = new OpenDental.UI.ComboBox();
+			this.groupCoPay = new OpenDental.UI.GroupBox();
 			this.labelCopayFeeSched = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
-			this.comboCopay = new OpenDental.UI.ComboBoxOD();
+			this.comboCopay = new OpenDental.UI.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.textInsPlanNum = new System.Windows.Forms.TextBox();
 			this.label29 = new System.Windows.Forms.Label();
-			this.groupPlan = new OpenDental.UI.GroupBoxOD();
+			this.groupPlan = new OpenDental.UI.GroupBox();
 			this.labelMedicalInsurance = new System.Windows.Forms.Label();
 			this.butOtherSubscribers = new OpenDental.UI.Button();
 			this.textBIN = new System.Windows.Forms.TextBox();
@@ -114,13 +114,13 @@ namespace OpenDental {
 			this.textDivisionNo = new System.Windows.Forms.TextBox();
 			this.textGroupName = new System.Windows.Forms.TextBox();
 			this.textEmployer = new System.Windows.Forms.TextBox();
-			this.groupCarrier = new OpenDental.UI.GroupBoxOD();
+			this.groupCarrier = new OpenDental.UI.GroupBox();
 			this.labelSendElectronically = new System.Windows.Forms.Label();
-			this.comboSendElectronically = new OpenDental.UI.ComboBoxOD();
+			this.comboSendElectronically = new OpenDental.UI.ComboBox();
 			this.butPickCarrier = new OpenDental.UI.Button();
 			this.textPhone = new OpenDental.ValidPhone();
 			this.textAddress = new System.Windows.Forms.TextBox();
-			this.comboElectIDdescript = new OpenDental.UI.ComboBoxOD();
+			this.comboElectIDdescript = new OpenDental.UI.ComboBox();
 			this.textElectID = new System.Windows.Forms.TextBox();
 			this.butSearch = new OpenDental.UI.Button();
 			this.textAddress2 = new System.Windows.Forms.TextBox();
@@ -138,41 +138,41 @@ namespace OpenDental {
 			this.textGroupNum = new System.Windows.Forms.TextBox();
 			this.labelGroupNum = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
-			this.comboLinked = new OpenDental.UI.ComboBoxOD();
+			this.comboLinked = new OpenDental.UI.ComboBox();
 			this.textLinkedNum = new System.Windows.Forms.TextBox();
 			this.label16 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.labelDivisionDash = new System.Windows.Forms.Label();
-			this.comboPlanType = new OpenDental.UI.ComboBoxOD();
+			this.comboPlanType = new OpenDental.UI.ComboBox();
 			this.label14 = new System.Windows.Forms.Label();
 			this.tabPageOtherInsInfo = new OpenDental.UI.TabPage();
 			this.panelOrthInfo = new System.Windows.Forms.Panel();
-			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.labelZeroWriteoffAnnualMax = new System.Windows.Forms.Label();
-			this.comboZeroWriteOffsOnLimitationOrAging = new OpenDental.UI.ComboBoxOD();
-			this.comboBoxZeroWriteOffsOnAnnualMaxLimitation = new OpenDental.UI.ComboBoxOD();
+			this.comboZeroWriteOffsOnLimitationOrAging = new OpenDental.UI.ComboBox();
+			this.comboBoxZeroWriteOffsOnAnnualMaxLimitation = new OpenDental.UI.ComboBox();
 			this.label39 = new System.Windows.Forms.Label();
-			this.comboExclusionFeeRule = new OpenDental.UI.ComboBoxOD();
+			this.comboExclusionFeeRule = new OpenDental.UI.ComboBox();
 			this.label11 = new System.Windows.Forms.Label();
 			this.checkPpoSubWo = new System.Windows.Forms.CheckBox();
-			this.comboBillType = new OpenDental.UI.ComboBoxOD();
+			this.comboBillType = new OpenDental.UI.ComboBox();
 			this.label38 = new System.Windows.Forms.Label();
-			this.comboCobRule = new OpenDental.UI.ComboBoxOD();
+			this.comboCobRule = new OpenDental.UI.ComboBox();
 			this.label20 = new System.Windows.Forms.Label();
-			this.comboFilingCodeSubtype = new OpenDental.UI.ComboBoxOD();
+			this.comboFilingCodeSubtype = new OpenDental.UI.ComboBox();
 			this.label15 = new System.Windows.Forms.Label();
 			this.checkIsHidden = new System.Windows.Forms.CheckBox();
 			this.checkCodeSubst = new System.Windows.Forms.CheckBox();
 			this.checkShowBaseUnits = new System.Windows.Forms.CheckBox();
-			this.comboFilingCode = new OpenDental.UI.ComboBoxOD();
+			this.comboFilingCode = new OpenDental.UI.ComboBox();
 			this.label13 = new System.Windows.Forms.Label();
-			this.comboClaimForm = new OpenDental.UI.ComboBoxOD();
+			this.comboClaimForm = new OpenDental.UI.ComboBox();
 			this.label23 = new System.Windows.Forms.Label();
 			this.checkAlternateCode = new System.Windows.Forms.CheckBox();
 			this.checkClaimsUseUCR = new System.Windows.Forms.CheckBox();
 			this.tabPageCanadian = new OpenDental.UI.TabPage();
 			this.panelCanadian = new System.Windows.Forms.Panel();
-			this.groupCanadian = new OpenDental.UI.GroupBoxOD();
+			this.groupCanadian = new OpenDental.UI.GroupBox();
 			this.label19 = new System.Windows.Forms.Label();
 			this.textCanadianInstCode = new System.Windows.Forms.TextBox();
 			this.label9 = new System.Windows.Forms.Label();
@@ -191,8 +191,8 @@ namespace OpenDental {
 			this.butPickOrthoProc = new OpenDental.UI.Button();
 			this.textOrthoAutoProc = new System.Windows.Forms.TextBox();
 			this.label37 = new System.Windows.Forms.Label();
-			this.comboOrthoClaimType = new OpenDental.UI.ComboBoxOD();
-			this.comboOrthoAutoProcPeriod = new OpenDental.UI.ComboBoxOD();
+			this.comboOrthoClaimType = new OpenDental.UI.ComboBox();
+			this.comboOrthoAutoProcPeriod = new OpenDental.UI.ComboBox();
 			this.labelAutoOrthoProcPeriod = new System.Windows.Forms.Label();
 			this.label36 = new System.Windows.Forms.Label();
 			this.checkOrthoWaitDays = new System.Windows.Forms.CheckBox();
@@ -1071,7 +1071,7 @@ namespace OpenDental {
 			// 
 			// labelMedicalInsurance
 			// 
-			this.labelMedicalInsurance.Location = new System.Drawing.Point(131, 7);
+			this.labelMedicalInsurance.Location = new System.Drawing.Point(131, 4);
 			this.labelMedicalInsurance.Name = "labelMedicalInsurance";
 			this.labelMedicalInsurance.Size = new System.Drawing.Size(110, 17);
 			this.labelMedicalInsurance.TabIndex = 192;
@@ -1123,7 +1123,7 @@ namespace OpenDental {
 			// 
 			// textEmployer
 			// 
-			this.textEmployer.Location = new System.Drawing.Point(117, 25);
+			this.textEmployer.Location = new System.Drawing.Point(117, 21);
 			this.textEmployer.MaxLength = 255;
 			this.textEmployer.Name = "textEmployer";
 			this.textEmployer.Size = new System.Drawing.Size(286, 20);
@@ -1152,15 +1152,15 @@ namespace OpenDental {
 			this.groupCarrier.Controls.Add(this.label17);
 			this.groupCarrier.Controls.Add(this.textState);
 			this.groupCarrier.Controls.Add(this.labelCitySTZip);
-			this.groupCarrier.Location = new System.Drawing.Point(10, 45);
+			this.groupCarrier.Location = new System.Drawing.Point(10, 42);
 			this.groupCarrier.Name = "groupCarrier";
-			this.groupCarrier.Size = new System.Drawing.Size(402, 164);
+			this.groupCarrier.Size = new System.Drawing.Size(402, 167);
 			this.groupCarrier.TabIndex = 1;
 			this.groupCarrier.Text = "Carrier";
 			// 
 			// labelSendElectronically
 			// 
-			this.labelSendElectronically.Location = new System.Drawing.Point(6, 140);
+			this.labelSendElectronically.Location = new System.Drawing.Point(6, 145);
 			this.labelSendElectronically.Name = "labelSendElectronically";
 			this.labelSendElectronically.Size = new System.Drawing.Size(100, 17);
 			this.labelSendElectronically.TabIndex = 155;
@@ -1169,14 +1169,14 @@ namespace OpenDental {
 			// 
 			// comboSendElectronically
 			// 
-			this.comboSendElectronically.Location = new System.Drawing.Point(107, 139);
+			this.comboSendElectronically.Location = new System.Drawing.Point(107, 144);
 			this.comboSendElectronically.Name = "comboSendElectronically";
 			this.comboSendElectronically.Size = new System.Drawing.Size(286, 21);
 			this.comboSendElectronically.TabIndex = 154;
 			// 
 			// butPickCarrier
 			// 
-			this.butPickCarrier.Location = new System.Drawing.Point(376, 11);
+			this.butPickCarrier.Location = new System.Drawing.Point(376, 16);
 			this.butPickCarrier.Name = "butPickCarrier";
 			this.butPickCarrier.Size = new System.Drawing.Size(19, 21);
 			this.butPickCarrier.TabIndex = 153;
@@ -1185,7 +1185,7 @@ namespace OpenDental {
 			// 
 			// textPhone
 			// 
-			this.textPhone.Location = new System.Drawing.Point(107, 33);
+			this.textPhone.Location = new System.Drawing.Point(107, 38);
 			this.textPhone.MaxLength = 30;
 			this.textPhone.Name = "textPhone";
 			this.textPhone.Size = new System.Drawing.Size(157, 20);
@@ -1193,7 +1193,7 @@ namespace OpenDental {
 			// 
 			// textAddress
 			// 
-			this.textAddress.Location = new System.Drawing.Point(107, 54);
+			this.textAddress.Location = new System.Drawing.Point(107, 59);
 			this.textAddress.MaxLength = 60;
 			this.textAddress.Name = "textAddress";
 			this.textAddress.Size = new System.Drawing.Size(286, 20);
@@ -1202,7 +1202,7 @@ namespace OpenDental {
 			// 
 			// comboElectIDdescript
 			// 
-			this.comboElectIDdescript.Location = new System.Drawing.Point(162, 117);
+			this.comboElectIDdescript.Location = new System.Drawing.Point(162, 122);
 			this.comboElectIDdescript.Name = "comboElectIDdescript";
 			this.comboElectIDdescript.Size = new System.Drawing.Size(159, 21);
 			this.comboElectIDdescript.TabIndex = 125;
@@ -1210,7 +1210,7 @@ namespace OpenDental {
 			// 
 			// textElectID
 			// 
-			this.textElectID.Location = new System.Drawing.Point(107, 117);
+			this.textElectID.Location = new System.Drawing.Point(107, 122);
 			this.textElectID.MaxLength = 20;
 			this.textElectID.Name = "textElectID";
 			this.textElectID.Size = new System.Drawing.Size(54, 20);
@@ -1219,7 +1219,7 @@ namespace OpenDental {
 			// 
 			// butSearch
 			// 
-			this.butSearch.Location = new System.Drawing.Point(322, 117);
+			this.butSearch.Location = new System.Drawing.Point(322, 122);
 			this.butSearch.Name = "butSearch";
 			this.butSearch.Size = new System.Drawing.Size(71, 21);
 			this.butSearch.TabIndex = 124;
@@ -1228,7 +1228,7 @@ namespace OpenDental {
 			// 
 			// textAddress2
 			// 
-			this.textAddress2.Location = new System.Drawing.Point(107, 75);
+			this.textAddress2.Location = new System.Drawing.Point(107, 80);
 			this.textAddress2.MaxLength = 60;
 			this.textAddress2.Name = "textAddress2";
 			this.textAddress2.Size = new System.Drawing.Size(286, 20);
@@ -1237,7 +1237,7 @@ namespace OpenDental {
 			// 
 			// textZip
 			// 
-			this.textZip.Location = new System.Drawing.Point(322, 96);
+			this.textZip.Location = new System.Drawing.Point(322, 101);
 			this.textZip.MaxLength = 10;
 			this.textZip.Name = "textZip";
 			this.textZip.Size = new System.Drawing.Size(71, 20);
@@ -1245,7 +1245,7 @@ namespace OpenDental {
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(6, 55);
+			this.label10.Location = new System.Drawing.Point(6, 60);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(100, 17);
 			this.label10.TabIndex = 10;
@@ -1254,7 +1254,7 @@ namespace OpenDental {
 			// 
 			// textCity
 			// 
-			this.textCity.Location = new System.Drawing.Point(107, 96);
+			this.textCity.Location = new System.Drawing.Point(107, 101);
 			this.textCity.MaxLength = 40;
 			this.textCity.Name = "textCity";
 			this.textCity.Size = new System.Drawing.Size(153, 20);
@@ -1263,7 +1263,7 @@ namespace OpenDental {
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(6, 34);
+			this.label7.Location = new System.Drawing.Point(6, 39);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(100, 17);
 			this.label7.TabIndex = 7;
@@ -1273,7 +1273,7 @@ namespace OpenDental {
 			// textCarrier
 			// 
 			this.textCarrier.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.textCarrier.Location = new System.Drawing.Point(107, 11);
+			this.textCarrier.Location = new System.Drawing.Point(107, 16);
 			this.textCarrier.MaxLength = 50;
 			this.textCarrier.Name = "textCarrier";
 			this.textCarrier.Size = new System.Drawing.Size(268, 21);
@@ -1283,7 +1283,7 @@ namespace OpenDental {
 			// 
 			// labelElectronicID
 			// 
-			this.labelElectronicID.Location = new System.Drawing.Point(6, 118);
+			this.labelElectronicID.Location = new System.Drawing.Point(6, 123);
 			this.labelElectronicID.Name = "labelElectronicID";
 			this.labelElectronicID.Size = new System.Drawing.Size(100, 17);
 			this.labelElectronicID.TabIndex = 15;
@@ -1292,7 +1292,7 @@ namespace OpenDental {
 			// 
 			// label21
 			// 
-			this.label21.Location = new System.Drawing.Point(6, 76);
+			this.label21.Location = new System.Drawing.Point(6, 81);
 			this.label21.Name = "label21";
 			this.label21.Size = new System.Drawing.Size(100, 17);
 			this.label21.TabIndex = 79;
@@ -1301,7 +1301,7 @@ namespace OpenDental {
 			// 
 			// label17
 			// 
-			this.label17.Location = new System.Drawing.Point(6, 12);
+			this.label17.Location = new System.Drawing.Point(6, 17);
 			this.label17.Name = "label17";
 			this.label17.Size = new System.Drawing.Size(100, 17);
 			this.label17.TabIndex = 152;
@@ -1310,7 +1310,7 @@ namespace OpenDental {
 			// 
 			// textState
 			// 
-			this.textState.Location = new System.Drawing.Point(261, 96);
+			this.textState.Location = new System.Drawing.Point(261, 101);
 			this.textState.MaxLength = 2;
 			this.textState.Name = "textState";
 			this.textState.Size = new System.Drawing.Size(60, 20);
@@ -1319,7 +1319,7 @@ namespace OpenDental {
 			// 
 			// labelCitySTZip
 			// 
-			this.labelCitySTZip.Location = new System.Drawing.Point(6, 97);
+			this.labelCitySTZip.Location = new System.Drawing.Point(6, 102);
 			this.labelCitySTZip.Name = "labelCitySTZip";
 			this.labelCitySTZip.Size = new System.Drawing.Size(100, 17);
 			this.labelCitySTZip.TabIndex = 11;
@@ -1329,7 +1329,7 @@ namespace OpenDental {
 			// checkIsMedical
 			// 
 			this.checkIsMedical.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkIsMedical.Location = new System.Drawing.Point(117, 7);
+			this.checkIsMedical.Location = new System.Drawing.Point(117, 4);
 			this.checkIsMedical.Name = "checkIsMedical";
 			this.checkIsMedical.Size = new System.Drawing.Size(18, 17);
 			this.checkIsMedical.TabIndex = 113;
@@ -1379,7 +1379,7 @@ namespace OpenDental {
 			// 
 			// label16
 			// 
-			this.label16.Location = new System.Drawing.Point(6, 26);
+			this.label16.Location = new System.Drawing.Point(6, 22);
 			this.label16.Name = "label16";
 			this.label16.Size = new System.Drawing.Size(110, 17);
 			this.label16.TabIndex = 73;
@@ -2013,7 +2013,7 @@ namespace OpenDental {
 		private OpenDental.ValidDate textDateTerm;
 		private System.Windows.Forms.CheckBox checkRelease;
 		private System.Windows.Forms.TextBox textSubscriber;
-		private OpenDental.UI.GroupBoxOD groupSubscriber;
+		private OpenDental.UI.GroupBox groupSubscriber;
 		private OpenDental.UI.Button butDelete;
 		private System.Windows.Forms.TextBox textSubscriberID;
 		private System.Windows.Forms.Label label2;
@@ -2023,7 +2023,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butDrop;
 		private OpenDental.ODtextBox textSubscNote;
 		private OpenDental.UI.Button butLabel;
-		private OpenDental.UI.GroupBoxOD groupRequestBen;
+		private OpenDental.UI.GroupBox groupRequestBen;
 		private System.Windows.Forms.Label labelTrojanID;
 		private System.Windows.Forms.TextBox textTrojanID;
 		private OpenDental.UI.Button butImportTrojan;
@@ -2037,7 +2037,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label33;
 		private System.Windows.Forms.Label label35;
 		private System.Windows.Forms.Label labelPatID;
-		private OpenDental.UI.ComboBoxOD comboRelationship;
+		private OpenDental.UI.ComboBox comboRelationship;
 		private System.Windows.Forms.CheckBox checkIsPending;
 		private System.Windows.Forms.TextBox textPatID;
 		private OpenDental.UI.Button butAdjAdd;
@@ -2079,7 +2079,7 @@ namespace OpenDental {
 		private UI.Button butPickCarrier;
 		private ValidPhone textPhone;
 		private TextBox textAddress;
-		private OpenDental.UI.ComboBoxOD comboElectIDdescript;
+		private OpenDental.UI.ComboBox comboElectIDdescript;
 		private TextBox textElectID;
 		private UI.Button butSearch;
 		private TextBox textAddress2;
@@ -2097,25 +2097,25 @@ namespace OpenDental {
 		private TextBox textGroupNum;
 		private Label labelGroupNum;
 		private Label label8;
-		private OpenDental.UI.ComboBoxOD comboLinked;
+		private OpenDental.UI.ComboBox comboLinked;
 		private TextBox textLinkedNum;
 		private Label label16;
 		private Label label4;
 		private Label labelDivisionDash;
-		private OpenDental.UI.ComboBoxOD comboPlanType;
+		private OpenDental.UI.ComboBox comboPlanType;
 		private Label label14;
 		private OpenDental.UI.TabPage tabPageOtherInsInfo;
 		private Panel panelOrthInfo;
-		private OpenDental.UI.ComboBoxOD comboCobRule;
+		private OpenDental.UI.ComboBox comboCobRule;
 		private Label label20;
-		private UI.ComboBoxOD comboFilingCodeSubtype;
+		private UI.ComboBox comboFilingCodeSubtype;
 		private Label label15;
 		private CheckBox checkIsHidden;
 		private CheckBox checkCodeSubst;
 		private CheckBox checkShowBaseUnits;
-		private UI.ComboBoxOD comboFilingCode;
+		private UI.ComboBox comboFilingCode;
 		private Label label13;
-		private UI.ComboBoxOD comboClaimForm;
+		private UI.ComboBox comboClaimForm;
 		private Label label23;
 		private CheckBox checkAlternateCode;
 		private CheckBox checkClaimsUseUCR;
@@ -2136,47 +2136,47 @@ namespace OpenDental {
 		private Label labelAutoOrthoProcPeriod;
 		private Label label36;
 		private CheckBox checkOrthoWaitDays;
-		private OpenDental.UI.ComboBoxOD comboOrthoClaimType;
-		private OpenDental.UI.ComboBoxOD comboOrthoAutoProcPeriod;
+		private OpenDental.UI.ComboBox comboOrthoClaimType;
+		private OpenDental.UI.ComboBox comboOrthoAutoProcPeriod;
 		private UI.Button butPatOrtho;
 		private UI.Button butPickOrthoProc;
 		private TextBox textOrthoAutoProc;
 		private Label label37;
 		private UI.Button butAuditPat;
 		private Label labelManualBlueBook;
-		private UI.ComboBoxOD comboManualBlueBook;
-		private UI.ComboBoxOD comboSendElectronically;
+		private UI.ComboBox comboManualBlueBook;
+		private UI.ComboBox comboSendElectronically;
 		private Label labelSendElectronically;
 		private CheckBox checkPpoSubWo;
 		private UI.Button butHistory;
-		private OpenDental.UI.ComboBoxOD comboExclusionFeeRule;
+		private OpenDental.UI.ComboBox comboExclusionFeeRule;
 		private Label label11;
 		private UI.Button butDefaultAutoOrthoProc;
 		private Label labelOrthoAutoFee;
 		private ValidDouble textOrthoAutoFee;
-		private UI.ComboBoxOD comboFeeSched;
+		private UI.ComboBox comboFeeSched;
 		private Label labelOutOfNetwork;
-		private UI.ComboBoxOD comboOutOfNetwork;
+		private UI.ComboBox comboOutOfNetwork;
 		private Label labelCopayFeeSched;
 		private Label label3;
-		private UI.ComboBoxOD comboCopay;
+		private UI.ComboBox comboCopay;
 		private Label label1;
-		private UI.ComboBoxOD comboBillType;
+		private UI.ComboBox comboBillType;
 		private Label label38;
 		private UI.Button butSubstCodes;
-		private OpenDental.UI.GroupBoxOD groupChanges;
-		private OpenDental.UI.GroupBoxOD groupBox1;
-		private OpenDental.UI.GroupBoxOD groupPlan;
-		private OpenDental.UI.GroupBoxOD groupCarrier;
-		private OpenDental.UI.GroupBoxOD groupCanadian;
-		private OpenDental.UI.GroupBoxOD groupCarrierAllowedAmounts;
-		private OpenDental.UI.GroupBoxOD groupCoPay;
+		private OpenDental.UI.GroupBox groupChanges;
+		private OpenDental.UI.GroupBox groupBox1;
+		private OpenDental.UI.GroupBox groupPlan;
+		private OpenDental.UI.GroupBox groupCarrier;
+		private OpenDental.UI.GroupBox groupCanadian;
+		private OpenDental.UI.GroupBox groupCarrierAllowedAmounts;
+		private OpenDental.UI.GroupBox groupCoPay;
 		private CheckBox checkUseBlueBook;
-		private UI.ComboBoxOD comboZeroWriteOffsOnLimitationOrAging;
+		private UI.ComboBox comboZeroWriteOffsOnLimitationOrAging;
 		private Label label39;
-		private UI.ComboBoxOD comboBoxZeroWriteOffsOnAnnualMaxLimitation;
+		private UI.ComboBox comboBoxZeroWriteOffsOnAnnualMaxLimitation;
 		private Label labelZeroWriteoffAnnualMax;
-		private UI.GroupBoxOD groupBoxOD1;
+		private UI.GroupBox groupBoxOD1;
 		private Label labelMedicalInsurance;
 	}
 }

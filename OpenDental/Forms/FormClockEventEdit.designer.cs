@@ -42,9 +42,9 @@ namespace OpenDental {
 			this.listStatus = new OpenDental.UI.ListBoxOD();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butNow1 = new OpenDental.UI.Button();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.textTimeEntered2 = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.butClear = new OpenDental.UI.Button();
@@ -57,7 +57,7 @@ namespace OpenDental {
 			this.label8 = new System.Windows.Forms.Label();
 			this.textRegTime = new System.Windows.Forms.TextBox();
 			this.label9 = new System.Windows.Forms.Label();
-			this.groupTimeSpans = new OpenDental.UI.GroupBoxOD();
+			this.groupTimeSpans = new OpenDental.UI.GroupBox();
 			this.textOTimeAuto = new System.Windows.Forms.TextBox();
 			this.textAdjust = new System.Windows.Forms.TextBox();
 			this.label12 = new System.Windows.Forms.Label();
@@ -75,7 +75,7 @@ namespace OpenDental {
 			this.textRate1Auto = new System.Windows.Forms.TextBox();
 			this.label15 = new System.Windows.Forms.Label();
 			this.label17 = new System.Windows.Forms.Label();
-			this.groupRate2orRate3 = new OpenDental.UI.GroupBoxOD();
+			this.groupRate2orRate3 = new OpenDental.UI.GroupBox();
 			this.textRate3Hours = new System.Windows.Forms.TextBox();
 			this.labelRate3 = new System.Windows.Forms.Label();
 			this.textRate3Auto = new System.Windows.Forms.TextBox();
@@ -607,8 +607,8 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.TextBox textTimeDisplayed1;
 		private OpenDental.UI.Button butDelete;
-		private OpenDental.UI.GroupBoxOD groupBox1;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox1;
+		private OpenDental.UI.GroupBox groupBox2;
 		private TextBox textTimeEntered2;
 		private Label label5;
 		private Label label6;
@@ -622,7 +622,7 @@ namespace OpenDental {
 		private Label label8;
 		private TextBox textRegTime;
 		private Label label9;
-		private OpenDental.UI.GroupBoxOD groupTimeSpans;
+		private OpenDental.UI.GroupBox groupTimeSpans;
 		private TextBox textOTimeAuto;
 		private TextBox textAdjust;
 		private Label label12;
@@ -637,7 +637,7 @@ namespace OpenDental {
 		private TextBox textRate1Auto;
 		private Label label15;
 		private Label label17;
-		private OpenDental.UI.GroupBoxOD groupRate2orRate3;
+		private OpenDental.UI.GroupBox groupRate2orRate3;
 		private Label label18;
 		private ODtextBox textNote;
 		private UI.ComboBoxClinicPicker comboClinic;

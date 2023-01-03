@@ -65,10 +65,10 @@
 			this.tabEnterTx = new OpenDental.UI.TabPage();
 			this.checkTreatPlans = new System.Windows.Forms.CheckBox();
 			this.panelQuickButtons = new OpenDental.UI.ODButtonPanel();
-			this.comboPrognosis = new OpenDental.UI.ComboBoxOD();
+			this.comboPrognosis = new OpenDental.UI.ComboBox();
 			this.labelPrognosis = new System.Windows.Forms.Label();
 			this.listDx = new OpenDental.UI.ListBoxOD();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.radioEntryCn = new System.Windows.Forms.RadioButton();
 			this.radioEntryR = new System.Windows.Forms.RadioButton();
 			this.radioEntryC = new System.Windows.Forms.RadioButton();
@@ -77,7 +77,7 @@
 			this.radioEntryTP = new System.Windows.Forms.RadioButton();
 			this.listButtonCats = new OpenDental.UI.ListBoxOD();
 			this.butD = new OpenDental.UI.Button();
-			this.comboPriority = new OpenDental.UI.ComboBoxOD();
+			this.comboPriority = new OpenDental.UI.ComboBox();
 			this.textDate = new OpenDental.ValidDate();
 			this.butBF = new OpenDental.UI.Button();
 			this.butL = new OpenDental.UI.Button();
@@ -91,24 +91,24 @@
 			this.butMixed = new OpenDental.UI.Button();
 			this.butAllPerm = new OpenDental.UI.Button();
 			this.butAllPrimary = new OpenDental.UI.Button();
-			this.groupBox5 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox5 = new OpenDental.UI.GroupBox();
 			this.butPerm = new OpenDental.UI.Button();
 			this.butPrimary = new OpenDental.UI.Button();
 			this.label5 = new System.Windows.Forms.Label();
 			this.butUnhide = new OpenDental.UI.Button();
 			this.listHidden = new OpenDental.UI.ListBoxOD();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.butNotMissing = new OpenDental.UI.Button();
 			this.butMissing = new OpenDental.UI.Button();
 			this.butHidden = new OpenDental.UI.Button();
 			this.butEdentulous = new OpenDental.UI.Button();
 			this.tabMovements = new OpenDental.UI.TabPage();
-			this.groupBox9 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox9 = new OpenDental.UI.GroupBox();
 			this.butClearSelectedMovements = new OpenDental.UI.Button();
 			this.butClearAllMovements = new OpenDental.UI.Button();
 			this.label16 = new System.Windows.Forms.Label();
-			this.groupBox4 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox4 = new OpenDental.UI.GroupBox();
 			this.butTipBplus = new OpenDental.UI.Button();
 			this.butTipBminus = new OpenDental.UI.Button();
 			this.butTipMplus = new OpenDental.UI.Button();
@@ -121,7 +121,7 @@
 			this.label12 = new System.Windows.Forms.Label();
 			this.textRotate = new OpenDental.ValidDouble();
 			this.label15 = new System.Windows.Forms.Label();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.butShiftBplus = new OpenDental.UI.Button();
 			this.butShiftBminus = new OpenDental.UI.Button();
 			this.butShiftOplus = new OpenDental.UI.Button();
@@ -150,7 +150,7 @@
 			this.checkTPChart = new System.Windows.Forms.CheckBox();
 			this.textShowDateRange = new System.Windows.Forms.TextBox();
 			this.labelCustView = new System.Windows.Forms.Label();
-			this.groupBox7 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox7 = new OpenDental.UI.GroupBox();
 			this.checkCommSuperFamily = new System.Windows.Forms.CheckBox();
 			this.checkSheets = new System.Windows.Forms.CheckBox();
 			this.checkTasks = new System.Windows.Forms.CheckBox();
@@ -160,7 +160,7 @@
 			this.checkLabCase = new System.Windows.Forms.CheckBox();
 			this.checkRx = new System.Windows.Forms.CheckBox();
 			this.checkComm = new System.Windows.Forms.CheckBox();
-			this.groupBox6 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox6 = new OpenDental.UI.GroupBox();
 			this.checkShowCn = new System.Windows.Forms.CheckBox();
 			this.checkShowE = new System.Windows.Forms.CheckBox();
 			this.checkShowR = new System.Windows.Forms.CheckBox();
@@ -186,7 +186,7 @@
 			this.butAddText = new OpenDental.UI.Button();
 			this.butDeleteText = new OpenDental.UI.Button();
 			this.listBoxText = new OpenDental.UI.ListBoxOD();
-			this.groupBox8 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox8 = new OpenDental.UI.GroupBox();
 			this.panelBlack = new System.Windows.Forms.Panel();
 			this.label22 = new System.Windows.Forms.Label();
 			this.butColorOther = new OpenDental.UI.Button();
@@ -226,7 +226,7 @@
 			this.label25 = new System.Windows.Forms.Label();
 			this.checkOrthoMode = new System.Windows.Forms.CheckBox();
 			this.checkShowOrtho = new System.Windows.Forms.CheckBox();
-			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.butUnhideOrtho = new OpenDental.UI.Button();
 			this.butHideOrtho = new OpenDental.UI.Button();
 			this.butOrthoRx = new OpenDental.UI.Button();
@@ -235,7 +235,7 @@
 			this.butOrthoAdd = new OpenDental.UI.Button();
 			this.butOrthoCopy = new OpenDental.UI.Button();
 			this.butOrthoDelete = new OpenDental.UI.Button();
-			this.comboOrthoDate = new OpenDental.UI.ComboBoxOD();
+			this.comboOrthoDate = new OpenDental.UI.ComboBox();
 			this.menuConsent = new System.Windows.Forms.ContextMenu();
 			this.panelEcw = new System.Windows.Forms.Panel();
 			this.labelECWerror = new System.Windows.Forms.Label();
@@ -553,7 +553,7 @@
 			// 
 			// tabControlImages
 			// 
-			this.tabControlImages.AlignmentIsBottom = true;
+			this.tabControlImages.TabAlignment=OpenDental.UI.EnumTabAlignment.Bottom;
 			this.tabControlImages.Controls.Add(this.tabPage1);
 			this.tabControlImages.Controls.Add(this.tabPage2);
 			this.tabControlImages.Controls.Add(this.tabPage4);
@@ -2986,7 +2986,7 @@
 		private OpenDental.UI.Button butL;
 		private OpenDental.UI.Button butV;
 		private System.Windows.Forms.TextBox textSurf;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.RadioButton radioEntryTP;
 		private System.Windows.Forms.RadioButton radioEntryEO;
 		private System.Windows.Forms.RadioButton radioEntryEC;
@@ -3013,7 +3013,7 @@
 		private OpenDental.UI.ToolBarOD ToolBarMain;
 		private System.Windows.Forms.Label labelDx;
 		private System.Windows.Forms.ToolTip toolTip1;
-		private UI.ComboBoxOD comboPriority;
+		private UI.ComboBox comboPriority;
 		private System.Windows.Forms.ContextMenu menuProgRight;
 		private System.Windows.Forms.MenuItem menuItemPrintProg;
 		private OpenDental.UI.TabPage tabPage1;
@@ -3041,7 +3041,7 @@
 		private OpenDental.UI.TabPage tabEnterTx;
 		private OpenDental.UI.TabPage tabMissing;
 		private OpenDental.UI.TabPage tabMovements;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.Button butUnhide;
 		private System.Windows.Forms.Label label5;
 		private OpenDental.UI.ListBoxOD listHidden;
@@ -3050,9 +3050,9 @@
 		private OpenDental.UI.Button butNotMissing;
 		private OpenDental.UI.Button butMissing;
 		private OpenDental.UI.Button butHidden;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox3;
 		private System.Windows.Forms.Label label8;
-		private OpenDental.UI.GroupBoxOD groupBox4;
+		private OpenDental.UI.GroupBox groupBox4;
 		private ValidDouble textTipB;
 		private System.Windows.Forms.Label label11;
 		private ValidDouble textTipM;
@@ -3088,8 +3088,8 @@
 		private System.Windows.Forms.MenuItem menuItemDelete;
 		private OpenDental.UI.TabPage tabPlanned;
 		private OpenDental.UI.TabPage tabShow;
-		private OpenDental.UI.GroupBoxOD groupBox7;
-		private OpenDental.UI.GroupBoxOD groupBox6;
+		private OpenDental.UI.GroupBox groupBox7;
+		private OpenDental.UI.GroupBox groupBox6;
 		private System.Windows.Forms.CheckBox checkAppt;
 		private System.Windows.Forms.CheckBox checkLabCase;
 		private OpenDental.UI.Button butAddKey;
@@ -3103,7 +3103,7 @@
 		private System.Windows.Forms.RadioButton radioEraser;
 		private System.Windows.Forms.RadioButton radioPen;
 		private System.Windows.Forms.Panel panelDrawColor;
-		private OpenDental.UI.GroupBoxOD groupBox8;
+		private OpenDental.UI.GroupBox groupBox8;
 		private System.Windows.Forms.Panel panelTPlight;
 		private System.Windows.Forms.Panel panelTPdark;
 		private System.Windows.Forms.Label label18;
@@ -3141,7 +3141,7 @@
 		private System.Windows.Forms.Label labelCustView;
 		private OpenDental.UI.GridOD gridChartViews;
 		private bool chartCustViewChanged;
-		private UI.ComboBoxOD comboPrognosis;
+		private UI.ComboBox comboPrognosis;
 		private System.Windows.Forms.Label labelPrognosis;
 		private UI.Button butShowDateRange;
 		private System.Windows.Forms.TextBox textShowDateRange;
@@ -3198,7 +3198,7 @@
 		private SparksToothChart.ToothChartWrapper toothChartWrapper;
 		private System.Windows.Forms.ContextMenu _contextMenuRxManage;
 		private System.Windows.Forms.MenuItem _menuItemRxManage;
-		private OpenDental.UI.GroupBoxOD groupBox9;
+		private OpenDental.UI.GroupBox groupBox9;
 		private UI.Button butClearSelectedMovements;
 		private System.Windows.Forms.CheckBox checkShowCommAuto;
 		private System.Windows.Forms.CheckBox checkCommSuperFamily;
@@ -3206,7 +3206,7 @@
 		private UI.Button butMixed;
 		private UI.Button butAllPerm;
 		private UI.Button butAllPrimary;
-		private OpenDental.UI.GroupBoxOD groupBox5;
+		private OpenDental.UI.GroupBox groupBox5;
 		private UI.Button butPerm;
 		private UI.Button butPrimary;
 		private UI.Button butDeleteText;
@@ -3224,10 +3224,10 @@
 		private UI.Button butOrthoAdd;
 		private System.Windows.Forms.CheckBox checkOrthoMode;
 		private UI.Button butOrthoCopy;
-		private UI.ComboBoxOD comboOrthoDate;
+		private UI.ComboBox comboOrthoDate;
 		private System.Windows.Forms.Label label25;
 		private UI.Button butOrthoDelete;
-		private UI.GroupBoxOD groupBoxOD1;
+		private UI.GroupBox groupBoxOD1;
 		private System.Windows.Forms.Label label26;
 		private System.Windows.Forms.Label label27;
 		private System.Windows.Forms.CheckBox checkOrthoGraphics;

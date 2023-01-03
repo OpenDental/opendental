@@ -26,7 +26,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormJobTeamEdit));
 			this.butCancel = new OpenDental.UI.Button();
 			this.butOk = new OpenDental.UI.Button();
-			this.comboTeamFocus = new OpenDental.UI.ComboBoxOD();
+			this.comboTeamFocus = new OpenDental.UI.ComboBox();
 			this.labelTeamFocus = new System.Windows.Forms.Label();
 			this.labelTeamDescription = new System.Windows.Forms.Label();
 			this.textTeamDescription = new System.Windows.Forms.TextBox();
@@ -131,7 +131,7 @@ namespace OpenDental {
 
 		private OpenDental.UI.Button butOk;
 		private OpenDental.UI.Button butCancel;
-		private UI.ComboBoxOD comboTeamFocus;
+		private UI.ComboBox comboTeamFocus;
 		private System.Windows.Forms.Label labelTeamFocus;
 		private System.Windows.Forms.Label labelTeamDescription;
 		private System.Windows.Forms.TextBox textTeamDescription;

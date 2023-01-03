@@ -15,6 +15,8 @@ namespace OpenDental.UI{
 	///<summary>For some internal combo boxes, this is the part that comes up as the "list" to pick from.  It's a Form in order to allow more powerful and longer lists that are larger than the containing form.  It can handle thousands of entries instead of just 100.  Jordan is the only one allowed to edit this file.</summary>
 	public partial class FormComboPicker : Form{
 		#region Fields - Public
+		///<summary>Just used to draw the drop down arrow. Passed in from parent because this is not a FormODBase.</summary>
+		public LayoutManagerForms LayoutManager=new LayoutManagerForms();
 		///<summary>The strings to show in the listbox.</summary>
 		public List<string> ListStrings;
 		///<summary>Required, but can be the same as ListStrings.  These strings are used in the summary at the top of the listbox.</summary>
@@ -251,6 +253,7 @@ namespace OpenDental.UI{
 		private void FormComboPicker_Paint(object sender, PaintEventArgs e){
 			//the top portion is painted to look exactly like the combobox and down arrow that are underneath.
 			Graphics g=e.Graphics;
+			g.SmoothingMode=SmoothingMode.AntiAlias;
 			SolidBrush solidBrushBack=new SolidBrush(Color.FromArgb(229,241,251));
 			Pen penArrow=new Pen(Color.FromArgb(20,20,20),1.5f);
 			Pen penBlueOutline=new Pen(Color.FromArgb(0,120,215));
@@ -266,8 +269,17 @@ namespace OpenDental.UI{
 				g.FillRectangle(solidBrushBack,rectangleCombo);
 				g.DrawRectangle(penBlueOutline,rectangleCombo);
 				//The down arrow, starting at the left
-				g.DrawLine(penArrow,Width-13,9,Width-9.5f,12);
-				g.DrawLine(penArrow,Width-9.5f,12,Width-6,9);
+				float yCent=HeightCombo/2f;
+				g.DrawLine(penArrow,
+					x1:Width-LayoutManager.ScaleF(13),
+					y1:yCent-LayoutManager.ScaleF(1.5f),
+					x2:Width-LayoutManager.ScaleF(9.5f),
+					y2:yCent+LayoutManager.ScaleF(1.5f));
+				g.DrawLine(penArrow,
+					x1:Width-LayoutManager.ScaleF(9.5f),
+					y1:yCent+LayoutManager.ScaleF(1.5f),
+					x2:Width-LayoutManager.ScaleF(6),
+					y2:yCent-LayoutManager.ScaleF(1.5f));
 				RectangleF rectangleFString=new RectangleF();
 				rectangleFString.X=rectangleCombo.X+2;
 				rectangleFString.Y=rectangleCombo.Y+4;

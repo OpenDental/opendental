@@ -31,7 +31,7 @@ namespace OpenDental{
 			this.label5 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboProv = new OpenDental.UI.ComboBoxOD();
+			this.comboProv = new OpenDental.UI.ComboBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.butPickProv = new OpenDental.UI.Button();
@@ -306,7 +306,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label1;
 		private UI.Button button1;
-		private UI.ComboBoxOD comboProv;
+		private UI.ComboBox comboProv;
 		private UI.Button butPickProv;
 		private System.Windows.Forms.Label label7;
 		private UI.ComboBoxClinicPicker comboClinic;

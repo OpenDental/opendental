@@ -30,12 +30,12 @@ namespace OpenDental {
 			this.label2 = new System.Windows.Forms.Label();
 			this.butSetSimpleGraphics = new OpenDental.UI.Button();
 			this.label3 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butResetZoom = new OpenDental.UI.Button();
 			this.textCurComp = new System.Windows.Forms.TextBox();
 			this.labelCurComp = new System.Windows.Forms.Label();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.textServComment = new System.Windows.Forms.TextBox();
 			this.textVersion = new System.Windows.Forms.TextBox();
 			this.textService = new System.Windows.Forms.TextBox();
@@ -300,11 +300,11 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label2;
 		private UI.Button butSetSimpleGraphics;
 		private Label label3;
-		private OpenDental.UI.GroupBoxOD groupBox1;// Required designer variable.
+		private OpenDental.UI.GroupBox groupBox1;// Required designer variable.
 		private Label labelCurComp;
 		private TextBox textCurComp;
-		private OpenDental.UI.GroupBoxOD groupBox2;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox2;
+		private OpenDental.UI.GroupBox groupBox3;
 		private TextBox textServComment;
 		private TextBox textVersion;
 		private TextBox textService;

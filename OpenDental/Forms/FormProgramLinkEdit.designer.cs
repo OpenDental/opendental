@@ -64,7 +64,7 @@ namespace OpenDental {
 			this.checkHideButtons = new System.Windows.Forms.CheckBox();
 			this.labelCloudMessage = new System.Windows.Forms.Label();
 			this.butClinicLink = new OpenDental.UI.Button();
-			this.groupboxPLbuttons = new OpenDental.UI.GroupBoxOD();
+			this.groupboxPLbuttons = new OpenDental.UI.GroupBox();
 			this.labelClinicStateWarning = new System.Windows.Forms.Label();
 			this.labelDisableForClinic = new System.Windows.Forms.Label();
 			this.label11 = new System.Windows.Forms.Label();
@@ -498,7 +498,7 @@ namespace OpenDental {
 		private CheckBox checkHideButtons;
 		private Label labelCloudMessage;
 		private UI.Button butClinicLink;
-		private OpenDental.UI.GroupBoxOD groupboxPLbuttons;
+		private OpenDental.UI.GroupBox groupboxPLbuttons;
 		private Label labelClinicStateWarning;
 		private Label labelDisableForClinic;
 		private Label label11;

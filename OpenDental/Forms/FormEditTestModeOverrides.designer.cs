@@ -26,7 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEditTestModeOverrides));
 			this.butSave = new OpenDental.UI.Button();
 			this.butClose = new OpenDental.UI.Button();
-			this.comboSelectOverride = new OpenDental.UI.ComboBoxOD();
+			this.comboSelectOverride = new OpenDental.UI.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textEnterOverrideValue = new System.Windows.Forms.TextBox();
@@ -119,7 +119,7 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butSave;
 		private OpenDental.UI.Button butClose;
-		private UI.ComboBoxOD comboSelectOverride;
+		private UI.ComboBox comboSelectOverride;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textEnterOverrideValue;

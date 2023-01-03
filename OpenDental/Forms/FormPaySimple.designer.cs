@@ -29,7 +29,7 @@ namespace OpenDental{
 			this.checkOneTimePayment = new System.Windows.Forms.CheckBox();
 			this.labelRefNumber = new System.Windows.Forms.Label();
 			this.textRefNumber = new System.Windows.Forms.TextBox();
-			this.groupTransType = new OpenDental.UI.GroupBoxOD();
+			this.groupTransType = new OpenDental.UI.GroupBox();
 			this.radioSale = new System.Windows.Forms.RadioButton();
 			this.radioReturn = new System.Windows.Forms.RadioButton();
 			this.radioAuthorization = new System.Windows.Forms.RadioButton();
@@ -56,7 +56,7 @@ namespace OpenDental{
 			this.labelAmountACH = new System.Windows.Forms.Label();
 			this.textAmountACH = new System.Windows.Forms.TextBox();
 			this.checkOneTimePaymentACH = new System.Windows.Forms.CheckBox();
-			this.groupBankAccountType = new OpenDental.UI.GroupBoxOD();
+			this.groupBankAccountType = new OpenDental.UI.GroupBox();
 			this.radioCheckings = new System.Windows.Forms.RadioButton();
 			this.radioSavings = new System.Windows.Forms.RadioButton();
 			this.label8 = new System.Windows.Forms.Label();
@@ -490,7 +490,7 @@ namespace OpenDental{
 		private System.Windows.Forms.CheckBox checkOneTimePayment;
 		private System.Windows.Forms.Label labelRefNumber;
 		private System.Windows.Forms.TextBox textRefNumber;
-		private OpenDental.UI.GroupBoxOD groupTransType;
+		private OpenDental.UI.GroupBox groupTransType;
 		private System.Windows.Forms.RadioButton radioSale;
 		private System.Windows.Forms.RadioButton radioReturn;
 		private System.Windows.Forms.RadioButton radioVoid;
@@ -512,7 +512,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TabPage tabCredit;
 		private System.Windows.Forms.TabPage tabACH;
 		private System.Windows.Forms.CheckBox checkOneTimePaymentACH;
-		private OpenDental.UI.GroupBoxOD groupBankAccountType;
+		private OpenDental.UI.GroupBox groupBankAccountType;
 		private System.Windows.Forms.RadioButton radioCheckings;
 		private System.Windows.Forms.RadioButton radioSavings;
 		private System.Windows.Forms.Label label8;

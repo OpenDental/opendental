@@ -35,7 +35,7 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormScreenEdit));
-			this.comboGradeLevel = new OpenDental.UI.ComboBoxOD();
+			this.comboGradeLevel = new OpenDental.UI.ComboBox();
 			this.label35 = new System.Windows.Forms.Label();
 			this.label15 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
@@ -414,7 +414,7 @@ namespace OpenDental {
 		}
 		#endregion
 
-		private OpenDental.UI.ComboBoxOD comboGradeLevel;
+		private OpenDental.UI.ComboBox comboGradeLevel;
 		private System.Windows.Forms.Label label35;
 		private System.Windows.Forms.Label label15;
 		private System.Windows.Forms.Label label10;

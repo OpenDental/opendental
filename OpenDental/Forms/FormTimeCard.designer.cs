@@ -38,7 +38,7 @@ namespace OpenDental {
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.timerUpdateBreak = new System.Windows.Forms.Timer(this.components);
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.labelNote = new System.Windows.Forms.Label();
 			this.textNote = new System.Windows.Forms.TextBox();
 			this.textDatePaycheck = new System.Windows.Forms.TextBox();
@@ -49,7 +49,7 @@ namespace OpenDental {
 			this.label4 = new System.Windows.Forms.Label();
 			this.labelOvertime = new System.Windows.Forms.Label();
 			this.textOvertime = new System.Windows.Forms.TextBox();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.radioBreaks = new System.Windows.Forms.RadioButton();
 			this.radioTimeCard = new System.Windows.Forms.RadioButton();
 			this.textOvertime2 = new System.Windows.Forms.TextBox();
@@ -63,7 +63,7 @@ namespace OpenDental {
 			this.butCalcWeekOT = new OpenDental.UI.Button();
 			this.butAdj = new OpenDental.UI.Button();
 			this.butClose = new OpenDental.UI.Button();
-			this.groupEmployee = new OpenDental.UI.GroupBoxOD();
+			this.groupEmployee = new OpenDental.UI.GroupBox();
 			this.butPrevEmp = new OpenDental.UI.Button();
 			this.butNextEmp = new OpenDental.UI.Button();
 			this.labelPTO = new System.Windows.Forms.Label();
@@ -559,7 +559,7 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textTotal;
 		private System.Windows.Forms.Timer timerUpdateBreak;
 		private OpenDental.UI.GridOD gridMain;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.Button butRight;
 		private OpenDental.UI.Button butLeft;
 		private Label label4;
@@ -571,7 +571,7 @@ namespace OpenDental {
 		private TextBox textOvertime;
 		private OpenDental.UI.Button butCalcWeekOT;
 		private OpenDental.UI.Button butPrint;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private RadioButton radioBreaks;
 		private RadioButton radioTimeCard;
 		private TextBox textOvertime2;
@@ -580,7 +580,7 @@ namespace OpenDental {
 		private TextBox textRateTwo2;
 		private Label labelRateTwo;
 		private TextBox textRateTwo;
-		private OpenDental.UI.GroupBoxOD groupEmployee;
+		private OpenDental.UI.GroupBox groupEmployee;
 		private UI.Button butPrevEmp;
 		private UI.Button butNextEmp;
 		private Label labelNote;

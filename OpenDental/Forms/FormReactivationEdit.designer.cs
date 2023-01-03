@@ -26,7 +26,7 @@
 			this.textDateLastContacted = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
-			this.comboStatus = new OpenDental.UI.ComboBoxOD();
+			this.comboStatus = new OpenDental.UI.ComboBox();
 			this.label9 = new System.Windows.Forms.Label();
 			this.textNote = new OpenDental.ODtextBox();
 			this.butDelete = new OpenDental.UI.Button();
@@ -182,7 +182,7 @@
 		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label8;
-		private UI.ComboBoxOD comboStatus;
+		private UI.ComboBox comboStatus;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.TextBox textDateLastContacted;
 		private OpenDental.UI.Button butOK;

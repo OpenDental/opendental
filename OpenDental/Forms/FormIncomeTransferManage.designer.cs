@@ -35,7 +35,7 @@ namespace OpenDental{
 			this.butFIFO = new OpenDental.UI.Button();
 			this.label6 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
-			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.groupBoxOD1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -203,6 +203,6 @@ namespace OpenDental{
 		private UI.Button butFIFO;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label label8;
-		private UI.GroupBoxOD groupBoxOD1;
+		private UI.GroupBox groupBoxOD1;
 	}
 }

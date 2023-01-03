@@ -32,7 +32,7 @@ namespace OpenDental{
 			this.textGradingScale = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.textGradeShowingPercent = new System.Windows.Forms.TextBox();
-			this.comboGradeShowing = new OpenDental.UI.ComboBoxOD();
+			this.comboGradeShowing = new OpenDental.UI.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.textGradeNumber = new System.Windows.Forms.TextBox();
 			this.labelApptNote = new System.Windows.Forms.Label();
@@ -193,7 +193,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textGradingScale;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.TextBox textGradeShowingPercent;
-		private OpenDental.UI.ComboBoxOD comboGradeShowing;
+		private OpenDental.UI.ComboBox comboGradeShowing;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textGradeNumber;
 		private System.Windows.Forms.Label labelApptNote;

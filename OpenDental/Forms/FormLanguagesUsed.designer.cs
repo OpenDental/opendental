@@ -43,7 +43,7 @@ namespace OpenDental {
 			this.butAdd = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
-			this.comboLanguagesIndicateNone = new OpenDental.UI.ComboBoxOD();
+			this.comboLanguagesIndicateNone = new OpenDental.UI.ComboBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -239,7 +239,7 @@ namespace OpenDental {
 		private TextBox textCustom;
 		private Label label4;
 		private UI.Button butAddCustom;
-		private OpenDental.UI.ComboBoxOD comboLanguagesIndicateNone;
+		private OpenDental.UI.ComboBox comboLanguagesIndicateNone;
 		private Label label5;
 	}
 }

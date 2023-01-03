@@ -33,16 +33,16 @@ namespace OpenDental{
 			this.butPrint = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.labelSuppliers = new System.Windows.Forms.Label();
-			this.comboSuppliers = new OpenDental.UI.ComboBoxOD();
+			this.comboSuppliers = new OpenDental.UI.ComboBox();
 			this.checkShowHidden = new OpenDental.UI.CheckBox();
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.label2 = new System.Windows.Forms.Label();
-			this.comboCategories = new OpenDental.UI.ComboBoxOD();
+			this.comboCategories = new OpenDental.UI.ComboBox();
 			this.labelPrint = new System.Windows.Forms.Label();
 			this.labelCreateOrder = new System.Windows.Forms.Label();
 			this.butCreateOrders = new OpenDental.UI.Button();
-			this.groupCreateOrders = new OpenDental.UI.GroupBoxOD();
+			this.groupCreateOrders = new OpenDental.UI.GroupBox();
 			this.butCreateOrdersQty = new OpenDental.UI.Button();
 			this.label3 = new System.Windows.Forms.Label();
 			this.checkEnterQty = new OpenDental.UI.CheckBox();
@@ -306,7 +306,7 @@ namespace OpenDental{
 
 		private OpenDental.UI.GridOD gridMain;
 		private System.Windows.Forms.Label labelSuppliers;
-		private UI.ComboBoxOD comboSuppliers;
+		private UI.ComboBox comboSuppliers;
 		private OpenDental.UI.CheckBox checkShowHidden;
 		private OpenDental.UI.Button butAdd;
 		private System.Windows.Forms.Label label1;
@@ -317,11 +317,11 @@ namespace OpenDental{
 		private UI.Button butUp;
 		private UI.Button butDown;
 		private System.Windows.Forms.Label label2;
-		private UI.ComboBoxOD comboCategories;
+		private UI.ComboBox comboCategories;
 		private System.Windows.Forms.Label labelPrint;
 		private System.Windows.Forms.Label labelCreateOrder;
 		private UI.Button butCreateOrders;
-		private OpenDental.UI.GroupBoxOD groupCreateOrders;
+		private OpenDental.UI.GroupBox groupCreateOrders;
 		private UI.Button butCreateOrdersQty;
 		private System.Windows.Forms.Label label3;
 		private OpenDental.UI.CheckBox checkEnterQty;

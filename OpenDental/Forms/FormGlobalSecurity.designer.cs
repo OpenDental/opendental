@@ -45,9 +45,9 @@ namespace OpenDental{
 			this.label1 = new System.Windows.Forms.Label();
 			this.checkCannotEditOwn = new OpenDental.UI.CheckBox();
 			this.checkTimecardSecurityEnabled = new OpenDental.UI.CheckBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
-			this.comboGroups = new OpenDental.UI.ComboBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
+			this.comboGroups = new OpenDental.UI.ComboBox();
 			this.labelPermission = new System.Windows.Forms.Label();
 			this.checkAllowLogoffOverride = new OpenDental.UI.CheckBox();
 			this.checkCannotEditPastPayPeriods = new OpenDental.UI.CheckBox();
@@ -381,9 +381,9 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.CheckBox checkCannotEditOwn;
 		private OpenDental.UI.CheckBox checkTimecardSecurityEnabled;
-		private OpenDental.UI.GroupBoxOD groupBox1;
-		private OpenDental.UI.GroupBoxOD groupBox2;
-		private UI.ComboBoxOD comboGroups;
+		private OpenDental.UI.GroupBox groupBox1;
+		private OpenDental.UI.GroupBox groupBox2;
+		private UI.ComboBox comboGroups;
 		private System.Windows.Forms.Label labelPermission;
 		private OpenDental.UI.CheckBox checkAllowLogoffOverride;
 		private OpenDental.UI.CheckBox checkCannotEditPastPayPeriods;

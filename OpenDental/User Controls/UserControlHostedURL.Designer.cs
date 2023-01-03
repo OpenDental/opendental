@@ -35,10 +35,10 @@
 			this.butClearNewPat = new OpenDental.UI.Button();
 			this.butCopy = new OpenDental.UI.Button();
 			this.butEditNewPat = new OpenDental.UI.Button();
-			this.groupExistingPat = new OpenDental.UI.GroupBoxOD();
+			this.groupExistingPat = new OpenDental.UI.GroupBox();
 			this.checkExistingPatEmail = new OpenDental.UI.CheckBox();
 			this.checkExistingPatText = new OpenDental.UI.CheckBox();
-			this.groupNewPat = new OpenDental.UI.GroupBoxOD();
+			this.groupNewPat = new OpenDental.UI.GroupBox();
 			this.checkNewPatEmail = new OpenDental.UI.CheckBox();
 			this.checkNewPatText = new OpenDental.UI.CheckBox();
 			this.groupExistingPat.SuspendLayout();
@@ -262,10 +262,10 @@
 		private System.Windows.Forms.Label labelSchedulingURL;
 		private System.Windows.Forms.TextBox textWebFormToLaunchNewPat;
 		private OpenDental.UI.CheckBox checkAllowChildren;
-		private UI.GroupBoxOD groupExistingPat;
+		private UI.GroupBox groupExistingPat;
 		private OpenDental.UI.CheckBox checkExistingPatEmail;
 		private OpenDental.UI.CheckBox checkExistingPatText;
-		private UI.GroupBoxOD groupNewPat;
+		private UI.GroupBox groupNewPat;
 		private OpenDental.UI.CheckBox checkNewPatEmail;
 		private OpenDental.UI.CheckBox checkNewPatText;
 	}

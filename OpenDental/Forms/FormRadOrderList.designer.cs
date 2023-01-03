@@ -32,7 +32,7 @@ namespace OpenDental{
 			this.butSelected = new OpenDental.UI.Button();
 			this.butAll = new OpenDental.UI.Button();
 			this.butClose = new OpenDental.UI.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -145,6 +145,6 @@ namespace OpenDental{
 		private System.Windows.Forms.ContextMenu menuRightClick;
 		private System.Windows.Forms.MenuItem menuItemSeeFamily;
 		private System.Windows.Forms.MenuItem menuItemSeeChart;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 	}
 }

@@ -34,7 +34,7 @@ namespace OpenDental{
 			this.radioButtonReAssign = new System.Windows.Forms.RadioButton();
 			this.radioButtonError = new System.Windows.Forms.RadioButton();
 			this.radioButtonOther = new System.Windows.Forms.RadioButton();
-			this.groupBoxDPC = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxDPC = new OpenDental.UI.GroupBox();
 			this.groupBoxDPC.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -193,6 +193,6 @@ namespace OpenDental{
 		private System.Windows.Forms.RadioButton radioButtonReAssign;
 		private System.Windows.Forms.RadioButton radioButtonError;
 		private System.Windows.Forms.RadioButton radioButtonOther;
-		private OpenDental.UI.GroupBoxOD groupBoxDPC;
+		private OpenDental.UI.GroupBox groupBoxDPC;
 	}
 }

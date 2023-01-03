@@ -28,10 +28,10 @@ namespace OpenDental {
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormImagingSetup));
 			this.label12 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.radioScanDocUseOptionsBelow = new System.Windows.Forms.RadioButton();
 			this.radioScanDocShowOptions = new System.Windows.Forms.RadioButton();
-			this.groupScanningOptions = new OpenDental.UI.GroupBoxOD();
+			this.groupScanningOptions = new OpenDental.UI.GroupBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.checkScanDocDuplex = new OpenDental.UI.CheckBox();
 			this.label5 = new System.Windows.Forms.Label();
@@ -41,15 +41,15 @@ namespace OpenDental {
 			this.checkScanDocSelectSource = new OpenDental.UI.CheckBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.textScanDocQuality = new OpenDental.ValidNum();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.labelPanoBW = new System.Windows.Forms.Label();
 			this.slider = new OpenDental.UI.WindowingSlider();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.label37 = new System.Windows.Forms.Label();
-			this.groupBoxSuni = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxSuni = new OpenDental.UI.GroupBox();
 			this.checkBinned = new OpenDental.UI.CheckBox();
-			this.comboType = new OpenDental.UI.ComboBoxOD();
+			this.comboType = new OpenDental.UI.ComboBox();
 			this.upDownPort = new System.Windows.Forms.NumericUpDown();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
@@ -429,21 +429,21 @@ namespace OpenDental {
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label12;
-		private OpenDental.UI.GroupBoxOD groupBox1;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox1;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.Label labelPanoBW;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox3;
 		private System.Windows.Forms.Label label37;
 		private UI.WindowingSlider slider;
 		private Label label1;
-		private OpenDental.UI.GroupBoxOD groupBoxSuni;
+		private OpenDental.UI.GroupBox groupBoxSuni;
 		private Label label2;
 		private NumericUpDown upDownExposure;
 		private NumericUpDown upDownPort;
 		private Label label4;
 		private Label label3;
 		private ValidNum textScanDocQuality;
-		private OpenDental.UI.ComboBoxOD comboType;
+		private OpenDental.UI.ComboBox comboType;
 		private ValidNum textScanDocResolution;
 		private Label label6;
 		private Label label5;
@@ -454,7 +454,7 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkScanDocGrayscale;
 		private RadioButton radioScanDocUseOptionsBelow;
 		private RadioButton radioScanDocShowOptions;
-		private OpenDental.UI.GroupBoxOD groupScanningOptions;
+		private OpenDental.UI.GroupBox groupScanningOptions;
 		private Label label8;
 		private OpenDental.UI.CheckBox checkBinned;
 	}

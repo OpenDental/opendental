@@ -39,7 +39,7 @@ namespace OpenDental {
 			this.textDateTask = new OpenDental.ValidDate();
 			this.comboDateType = new System.Windows.Forms.ComboBox();
 			this.labelDateAdvice = new System.Windows.Forms.Label();
-			this.groupReminder = new OpenDental.UI.GroupBoxOD();
+			this.groupReminder = new OpenDental.UI.GroupBox();
 			this.datePickerReminder = new System.Windows.Forms.DateTimePicker();
 			this.panelReminderFrequency = new OpenDental.UI.PanelOD();
 			this.labelRemindFrequency = new System.Windows.Forms.Label();
@@ -1112,7 +1112,7 @@ namespace OpenDental {
 		private Label labelReminderRepeat;
 		private ValidNum textReminderRepeatFrequency;
 		private Label label2;
-		private OpenDental.UI.GroupBoxOD groupReminder;
+		private OpenDental.UI.GroupBox groupReminder;
 		private Label labelRemindFrequency;
 		private Label labelReminderRepeatDays;
 		private OpenDental.UI.CheckBox checkReminderRepeatSunday;

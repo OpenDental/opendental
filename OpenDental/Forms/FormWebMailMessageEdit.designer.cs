@@ -33,7 +33,7 @@ namespace OpenDental{
 			this.label4 = new System.Windows.Forms.Label();
 			this.labelNotification = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
-			this.comboRegardingPatient = new OpenDental.UI.ComboBoxOD();
+			this.comboRegardingPatient = new OpenDental.UI.ComboBox();
 			this.listAttachments = new OpenDental.UI.ListBoxOD();
 			this.contextMenuAttachments = new System.Windows.Forms.ContextMenu();
 			this.menuItemAttachmentPreview = new System.Windows.Forms.MenuItem();
@@ -303,7 +303,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelNotification;
 		private UI.Button butPreview;
 		private System.Windows.Forms.Label label5;
-		private OpenDental.UI.ComboBoxOD comboRegardingPatient;
+		private OpenDental.UI.ComboBox comboRegardingPatient;
 		private OpenDental.UI.ListBoxOD listAttachments;
 		private UI.Button butAttach;
 		private System.Windows.Forms.ContextMenu contextMenuAttachments;

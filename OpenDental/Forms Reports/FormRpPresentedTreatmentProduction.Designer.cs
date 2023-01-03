@@ -30,17 +30,17 @@ namespace OpenDental{
 			this.listClin = new OpenDental.UI.ListBoxOD();
 			this.listUser = new OpenDental.UI.ListBoxOD();
 			this.labelUsers = new System.Windows.Forms.Label();
-			this.groupOrder = new OpenDental.UI.GroupBoxOD();
+			this.groupOrder = new OpenDental.UI.GroupBox();
 			this.radioFirstPresented = new System.Windows.Forms.RadioButton();
 			this.radioLastPresented = new System.Windows.Forms.RadioButton();
-			this.groupType = new OpenDental.UI.GroupBoxOD();
+			this.groupType = new OpenDental.UI.GroupBox();
 			this.radioDetailed = new System.Windows.Forms.RadioButton();
 			this.radioTotals = new System.Windows.Forms.RadioButton();
 			this.date2 = new System.Windows.Forms.MonthCalendar();
 			this.date1 = new System.Windows.Forms.MonthCalendar();
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
-			this.groupUser = new OpenDental.UI.GroupBoxOD();
+			this.groupUser = new OpenDental.UI.GroupBox();
 			this.radioPresenter = new System.Windows.Forms.RadioButton();
 			this.radioEntryUser = new System.Windows.Forms.RadioButton();
 			this.groupOrder.SuspendLayout();
@@ -273,8 +273,8 @@ namespace OpenDental{
 		private System.Windows.Forms.RadioButton radioTotals;
 		private System.Windows.Forms.MonthCalendar date2;
 		private System.Windows.Forms.MonthCalendar date1;
-		private OpenDental.UI.GroupBoxOD groupType;
-		private OpenDental.UI.GroupBoxOD groupOrder;
+		private OpenDental.UI.GroupBox groupType;
+		private OpenDental.UI.GroupBox groupOrder;
 		private System.Windows.Forms.RadioButton radioFirstPresented;
 		private System.Windows.Forms.RadioButton radioLastPresented;
 		private System.Windows.Forms.CheckBox checkAllUsers;
@@ -283,7 +283,7 @@ namespace OpenDental{
 		private OpenDental.UI.ListBoxOD listClin;
 		private OpenDental.UI.ListBoxOD listUser;
 		private System.Windows.Forms.Label labelUsers;
-		private OpenDental.UI.GroupBoxOD groupUser;
+		private OpenDental.UI.GroupBox groupUser;
 		private System.Windows.Forms.RadioButton radioPresenter;
 		private System.Windows.Forms.RadioButton radioEntryUser;
 	}

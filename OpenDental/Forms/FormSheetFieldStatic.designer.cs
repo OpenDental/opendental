@@ -29,21 +29,21 @@ namespace OpenDental{
 			this.label1 = new System.Windows.Forms.Label();
 			this.listFields = new System.Windows.Forms.ListBox();
 			this.textFieldValue = new System.Windows.Forms.TextBox();
-			this.comboGrowthBehavior = new OpenDental.UI.ComboBoxOD();
+			this.comboGrowthBehavior = new OpenDental.UI.ComboBox();
 			this.label9 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.numFontSize = new System.Windows.Forms.NumericUpDown();
 			this.label10 = new System.Windows.Forms.Label();
 			this.butColor = new System.Windows.Forms.Button();
-			this.comboTextAlign = new OpenDental.UI.ComboBoxOD();
+			this.comboTextAlign = new OpenDental.UI.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.checkFontIsBold = new OpenDental.UI.CheckBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.comboFontName = new OpenDental.UI.ComboBoxOD();
+			this.comboFontName = new OpenDental.UI.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.checkIsLocked = new OpenDental.UI.CheckBox();
 			this.butExamSheet = new OpenDental.UI.Button();
@@ -423,9 +423,9 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label3;
-		private OpenDental.UI.ComboBoxOD comboFontName;
+		private OpenDental.UI.ComboBox comboFontName;
 		private OpenDental.UI.CheckBox checkFontIsBold;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label5;
@@ -436,7 +436,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label7;
 		private ValidNum textHeight;
 		private System.Windows.Forms.Label label8;
-		private UI.ComboBoxOD comboGrowthBehavior;
+		private UI.ComboBox comboGrowthBehavior;
 		private System.Windows.Forms.Label label9;
 		private OpenDental.UI.Button butDelete;
 		private System.Windows.Forms.TextBox textFieldValue;
@@ -444,7 +444,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label labelTextW;
 		private UI.Button butExamSheet;
-		private OpenDental.UI.ComboBoxOD comboTextAlign;
+		private OpenDental.UI.ComboBox comboTextAlign;
 		private System.Windows.Forms.Label label2;
 		private OpenDental.UI.CheckBox checkPmtOpt;
 		private System.Windows.Forms.Label label10;

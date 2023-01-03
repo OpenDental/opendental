@@ -41,7 +41,7 @@ namespace OpenDental{
 			this.labelMySqlVersion = new System.Windows.Forms.Label();
 			this.labelServComment = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.labelDatabase = new System.Windows.Forms.Label();
 			this.labelMachineName = new System.Windows.Forms.Label();
 			this.pictureOpenDental = new OpenDental.UI.ODPictureBox();
@@ -269,7 +269,7 @@ namespace OpenDental{
 		private Label labelMySqlVersion;
 		private Label labelServComment;
 		private Label label2;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox3;
 		private UI.ODPictureBox pictureOpenDental;
 		private Label labelMachineName;
 		private UI.Button butDiagnostics;

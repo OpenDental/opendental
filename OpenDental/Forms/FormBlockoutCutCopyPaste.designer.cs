@@ -35,13 +35,13 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormBlockoutCutCopyPaste));
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textClipboard = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.butCopyWeek = new OpenDental.UI.Button();
 			this.butCopyDay = new OpenDental.UI.Button();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.butRepeat = new OpenDental.UI.Button();
 			this.label4 = new System.Windows.Forms.Label();
 			this.checkReplace = new OpenDental.UI.CheckBox();
@@ -210,10 +210,10 @@ namespace OpenDental {
 		}
 		#endregion
 
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.Button butCopyWeek;
 		private OpenDental.UI.Button butCopyDay;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private OpenDental.UI.Button butRepeat;
 		private Label label4;
 		private OpenDental.UI.CheckBox checkReplace;

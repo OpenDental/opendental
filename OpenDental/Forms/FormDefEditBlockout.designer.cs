@@ -32,7 +32,7 @@ namespace OpenDental {
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.checkHidden = new OpenDental.UI.CheckBox();
-			this.groupBoxUsage = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxUsage = new OpenDental.UI.GroupBox();
 			this.checkOverlap = new OpenDental.UI.CheckBox();
 			this.checkCutCopyPaste = new OpenDental.UI.CheckBox();
 			this.butColor = new System.Windows.Forms.Button();
@@ -173,6 +173,6 @@ namespace OpenDental {
 		private Button butColor;
 		private Label labelColor;
 		private TextBox textName;
-		private OpenDental.UI.GroupBoxOD groupBoxUsage;
+		private OpenDental.UI.GroupBox groupBoxUsage;
 	}
 }

@@ -80,7 +80,7 @@ namespace OpenDentBusiness.Eclaims
 				//At this point we are connected to the MDE SFTP server.
 				if(batchNum==0){
 					if(!Directory.Exists(clearinghouseClin.ResponsePath)){
-						throw new Exception(Lans.g(progress.LanThis,"Clearinghouse response path is invalid. Go To Setup > Family/Insurance > Clearinghouses > and double click desired clearinghouse to update path."));
+						throw new Exception(Lans.g(progress.LanThis,"Clearinghouse response path is invalid. Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path."));
 					}
 					progress.UpdateProgress(Lans.g(progress.LanThis,"Getting files"),"reports","33%",33);
 					if(progress.IsPauseOrCancel()) {
@@ -148,7 +148,7 @@ namespace OpenDentBusiness.Eclaims
 				}
 				else {
 					if(!Directory.Exists(clearinghouseClin.ExportPath)){
-							throw new Exception(Lans.g(progress.LanThis,"Clearinghouse export path is invalid.  Go To Setup > Family/Insurance > Clearinghouses > and double click desired clearinghouse to update path."));
+							throw new Exception(Lans.g(progress.LanThis,"Clearinghouse export path is invalid. Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path."));
 					}
 					//First upload the batch to the temporary directory.
 					progress.UpdateProgress(Lans.g(progress.LanThis,"Uploading files to temp directory"),"reports","33%",33);

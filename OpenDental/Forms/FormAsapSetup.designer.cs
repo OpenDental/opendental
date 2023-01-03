@@ -32,7 +32,7 @@ namespace OpenDental{
 			this.labelMaxWebSched = new System.Windows.Forms.Label();
 			this.labelLeaveBlank = new System.Windows.Forms.Label();
 			this.checkAsapPromptEnabled = new OpenDental.UI.CheckBox();
-			this.groupBoxASAPPrompt = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxASAPPrompt = new OpenDental.UI.GroupBox();
 			this.labelNoteASAP = new System.Windows.Forms.Label();
 			this.groupBoxASAPPrompt.SuspendLayout();
 			this.SuspendLayout();
@@ -166,7 +166,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelMaxWebSched;
 		private System.Windows.Forms.Label labelLeaveBlank;
 		private OpenDental.UI.CheckBox checkAsapPromptEnabled;
-		private UI.GroupBoxOD groupBoxASAPPrompt;
+		private UI.GroupBox groupBoxASAPPrompt;
 		private System.Windows.Forms.Label labelNoteASAP;
 	}
 }

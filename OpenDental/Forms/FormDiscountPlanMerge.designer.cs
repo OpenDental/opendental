@@ -24,7 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDiscountPlanMerge));
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textAdjTypeInto = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.butChangePlanInto = new OpenDental.UI.Button();
@@ -32,7 +32,7 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.textDescriptionInto = new System.Windows.Forms.TextBox();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.textAdjTypeFrom = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.butChangePlanFrom = new OpenDental.UI.Button();
@@ -248,12 +248,12 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butMerge;
 		private OpenDental.UI.Button butCancel;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.TextBox textFeeSchedInto;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textDescriptionInto;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private OpenDental.UI.Button butChangePlanInto;
 		private OpenDental.UI.Button butChangePlanFrom;
 		private System.Windows.Forms.TextBox textFeeSchedFrom;

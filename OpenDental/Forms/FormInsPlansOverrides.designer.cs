@@ -38,13 +38,13 @@ namespace OpenDental {
 			this.labelCarrier = new System.Windows.Forms.Label();
 			this.textEmployer = new System.Windows.Forms.TextBox();
 			this.labelEmployer = new System.Windows.Forms.Label();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.radioOrderCarrier = new System.Windows.Forms.RadioButton();
 			this.radioOrderEmp = new System.Windows.Forms.RadioButton();
 			this.butClose = new OpenDental.UI.Button();
-			this.groupBoxFilters = new OpenDental.UI.GroupBoxOD();
-			this.groupOverrides = new OpenDental.UI.GroupBoxOD();
-			this.groupNoBillInsOverrides = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxFilters = new OpenDental.UI.GroupBox();
+			this.groupOverrides = new OpenDental.UI.GroupBox();
+			this.groupNoBillInsOverrides = new OpenDental.UI.GroupBox();
 			this.labelNoBillIns = new System.Windows.Forms.Label();
 			this.labelBillToIns = new System.Windows.Forms.Label();
 			this.labelDeleteNoBillIns = new System.Windows.Forms.Label();
@@ -385,7 +385,7 @@ namespace OpenDental {
 		}
 		#endregion
 		private OpenDental.UI.Button butClose;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.RadioButton radioOrderCarrier;
 		private System.Windows.Forms.RadioButton radioOrderEmp;
 		private Label labelEmployer;
@@ -403,10 +403,10 @@ namespace OpenDental {
 		private UI.Button butGetAll;
 		private TextBox textPlanNum;
 		private Label labelInsPlanID;
-		private OpenDental.UI.GroupBoxOD groupBoxFilters;
-		private UI.GroupBoxOD groupOverrides;
+		private OpenDental.UI.GroupBox groupBoxFilters;
+		private UI.GroupBox groupOverrides;
 		private UI.Button butSelectAll;
-		private UI.GroupBoxOD groupNoBillInsOverrides;
+		private UI.GroupBox groupNoBillInsOverrides;
 		private UI.Button butDelete;
 		private UI.Button ButDontBill;
 		private UI.Button butBillIns;

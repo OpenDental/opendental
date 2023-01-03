@@ -39,7 +39,7 @@
 			this.eServiceMetricsControl = new OpenDental.EServiceMetricsControl();
 			this.label3 = new System.Windows.Forms.Label();
 			this.labelTriageOpsCountLocal = new OpenDental.MapCubicle();
-			this.groupPhoneMetrics = new OpenDental.UI.GroupBoxOD();
+			this.groupPhoneMetrics = new OpenDental.UI.GroupBox();
 			this.labelChatTimeSpan = new OpenDental.MapCubicle();
 			this.labelChatCount = new OpenDental.MapCubicle();
 			this.label2 = new System.Windows.Forms.Label();
@@ -241,8 +241,6 @@
 			// 
 			// eServiceMetricsControl
 			// 
-			this.eServiceMetricsControl.AccountBalance = 562F;
-			this.eServiceMetricsControl.AlertColor = System.Drawing.Color.Blue;
 			this.eServiceMetricsControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.eServiceMetricsControl.Location = new System.Drawing.Point(76, 959);
 			this.eServiceMetricsControl.Name = "eServiceMetricsControl";
@@ -776,7 +774,7 @@
 		private System.Windows.Forms.Label label3;
 		private EscalationViewControl escalationView;
 		private MapCubicle labelTriageOpsCountLocal;
-		private OpenDental.UI.GroupBoxOD groupPhoneMetrics;
+		private OpenDental.UI.GroupBox groupPhoneMetrics;
 		private MapCubicle labelTriageTimeSpan;
 		private MapCubicle labelTriageRedCalls;
 		private System.Windows.Forms.Label label1;

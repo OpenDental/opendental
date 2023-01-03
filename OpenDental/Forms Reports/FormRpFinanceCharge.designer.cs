@@ -25,7 +25,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpFinanceCharge));
 			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textDateFrom = new OpenDental.ValidDate();
 			this.textDateTo = new OpenDental.ValidDate();
@@ -190,7 +190,7 @@ namespace OpenDental {
 
 		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private Label label2;
 		private ValidDate textDateFrom;
 		private ValidDate textDateTo;

@@ -35,7 +35,7 @@ namespace OpenDental{
 			this.labelUnits = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.textPixels = new System.Windows.Forms.TextBox();
-			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.butCalculate = new OpenDental.UI.Button();
 			this.label5 = new System.Windows.Forms.Label();
@@ -254,7 +254,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelUnits;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.TextBox textPixels;
-		private UI.GroupBoxOD groupBoxOD1;
+		private UI.GroupBox groupBoxOD1;
 		private System.Windows.Forms.Label label2;
 		private UI.Button butCalculate;
 		private System.Windows.Forms.Label label5;

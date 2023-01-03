@@ -46,8 +46,8 @@ namespace OpenDental {
 			this.checkSetProspective = new System.Windows.Forms.CheckBox();
 			this.checkIsHygiene = new System.Windows.Forms.CheckBox();
 			this.label8 = new System.Windows.Forms.Label();
-			this.comboHyg = new OpenDental.UI.ComboBoxOD();
-			this.comboProv = new OpenDental.UI.ComboBoxOD();
+			this.comboHyg = new OpenDental.UI.ComboBox();
+			this.comboProv = new OpenDental.UI.ComboBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.checkIsHidden = new System.Windows.Forms.CheckBox();
@@ -57,7 +57,7 @@ namespace OpenDental {
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupBoxApptType = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxApptType = new OpenDental.UI.GroupBox();
 			this.labelWSEPDesc = new System.Windows.Forms.Label();
 			this.butWSEPPickApptTypes = new OpenDental.UI.Button();
 			this.textWSEPApptTypes = new System.Windows.Forms.TextBox();
@@ -68,7 +68,7 @@ namespace OpenDental {
 			this.butUpdateProvs = new OpenDental.UI.Button();
 			this.label5 = new System.Windows.Forms.Label();
 			this.label11 = new System.Windows.Forms.Label();
-			this.comboOpType = new OpenDental.UI.ComboBoxOD();
+			this.comboOpType = new OpenDental.UI.ComboBox();
 			this.label12 = new System.Windows.Forms.Label();
 			this.label13 = new System.Windows.Forms.Label();
 			this.groupBoxApptType.SuspendLayout();
@@ -461,8 +461,8 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textOpName;
 		private System.Windows.Forms.TextBox textAbbrev;
 		private System.Windows.Forms.CheckBox checkIsHidden;
-		private UI.ComboBoxOD comboHyg;
-		private UI.ComboBoxOD comboProv;
+		private UI.ComboBox comboHyg;
+		private UI.ComboBox comboProv;
 		private System.Windows.Forms.CheckBox checkIsHygiene;
 		private CheckBox checkSetProspective;
 		private Label label3;
@@ -471,7 +471,7 @@ namespace OpenDental {
 		private UI.Button butPickProv;
 		private UI.Button butPickHyg;
 		private Label labelApptType;
-		private OpenDental.UI.GroupBoxOD groupBoxApptType;
+		private OpenDental.UI.GroupBox groupBoxApptType;
 		private Label label10;
 		private UI.Button butWSNPAPickApptTypes;
 		private TextBox textWSNPAApptTypes;
@@ -482,7 +482,7 @@ namespace OpenDental {
 		private UI.Button butWSEPPickApptTypes;
 		private TextBox textWSEPApptTypes;
 		private Label labelWSEPApptTypes;
-		private UI.ComboBoxOD comboOpType;
+		private UI.ComboBox comboOpType;
 		private Label label12;
 		private Label label13;
 	}

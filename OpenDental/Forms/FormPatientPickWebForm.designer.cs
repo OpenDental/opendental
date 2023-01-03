@@ -27,7 +27,7 @@ namespace OpenDental{
 			this.butCancel = new OpenDental.UI.Button();
 			this.labelExplanation = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.groupWebFormInfo = new OpenDental.UI.GroupBoxOD();
+			this.groupWebFormInfo = new OpenDental.UI.GroupBox();
 			this.labelClinic = new System.Windows.Forms.Label();
 			this.textClinic = new System.Windows.Forms.TextBox();
 			this.butView = new OpenDental.UI.Button();
@@ -280,7 +280,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label labelExplanation;
 		private UI.GridOD gridMain;
-		private OpenDental.UI.GroupBoxOD groupWebFormInfo;
+		private OpenDental.UI.GroupBox groupWebFormInfo;
 		private System.Windows.Forms.TextBox textFName;
 		private System.Windows.Forms.TextBox textLName;
 		private System.Windows.Forms.Label label3;

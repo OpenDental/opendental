@@ -34,7 +34,7 @@ namespace OpenDental {
 		}
 
 		///<summary>Fills the combo box passed in with all of the sheet defs available for the passed-in sheet type, and sets the selected index based on either clinic or default prefs.</summary>
-		private void FillSheetDefComboBox(UI.ComboBoxOD comboBox,SheetTypeEnum sheetType, PrefName prefName) {
+		private void FillSheetDefComboBox(UI.ComboBox comboBox,SheetTypeEnum sheetType, PrefName prefName) {
 			//Gets the sheetDef name and prepends 'Internal' if the SheetDef is internal.
 			Func<SheetDef,string> funcGetSheetDefName = x => {
 				if(x.SheetDefNum==0) {
@@ -76,7 +76,7 @@ namespace OpenDental {
 
 		///<summary>Updates the ClinicPref.SheetDefNum for a given prefName. If clinics are disabled, or isIndependentOfClinic is set to true,
 		///then the 'preference' table is updated.</summary>
-		private void UpdateSheetDefDefault(UI.ComboBoxOD comboBox,PrefName prefName,bool isIndependentOfClinic=false) {
+		private void UpdateSheetDefDefault(UI.ComboBox comboBox,PrefName prefName,bool isIndependentOfClinic=false) {
 			if(comboBox.SelectedIndex==-1) {
 				return;
 			}
@@ -106,7 +106,7 @@ namespace OpenDental {
 		}
 
 		///<summary>Helper to do selection on comboboxes, abstracted to work with any Combobox in the form and any SheetTypeEnum.</summary>
-		private void SelectComboBoxesDefault(UI.ComboBoxOD comboBox,PrefName prefName) {
+		private void SelectComboBoxesDefault(UI.ComboBox comboBox,PrefName prefName) {
 			ClinicPref clinicPref=ClinicPrefs.GetPref(prefName,comboClinicDefault.SelectedClinicNum);
 			if(clinicPref==null || comboClinicDefault.SelectedClinicNum==0) {
 				Pref pref=Prefs.GetPref(prefName.GetDescription());
@@ -139,7 +139,7 @@ namespace OpenDental {
 		}
 
 		///<summary>Returns true if the comboboxes selected key is different from the stored key in the db</summary>
-		private bool ClinicDependentComboBoxes_Validate(UI.ComboBoxOD comboBox, PrefName prefName) {
+		private bool ClinicDependentComboBoxes_Validate(UI.ComboBox comboBox, PrefName prefName) {
 			ClinicPref clinicPref=ClinicPrefs.GetPref(prefName,comboClinicDefault.SelectedClinicNum);
 			if(clinicPref==null || comboClinicDefault.SelectedClinicNum==0) {
 				Pref pref=Prefs.GetPref(prefName.GetDescription());

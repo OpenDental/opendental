@@ -36,8 +36,8 @@
 			this.textHeight = new System.Windows.Forms.TextBox();
 			this.textBMI = new System.Windows.Forms.TextBox();
 			this.labelWeightCode = new System.Windows.Forms.Label();
-			this.comboHeightExamCode = new OpenDental.UI.ComboBoxOD();
-			this.comboWeightExamCode = new OpenDental.UI.ComboBoxOD();
+			this.comboHeightExamCode = new OpenDental.UI.ComboBox();
+			this.comboWeightExamCode = new OpenDental.UI.ComboBox();
 			this.labelHeightExamCode = new System.Windows.Forms.Label();
 			this.labelWeightExamCode = new System.Windows.Forms.Label();
 			this.labelBMIPercentileCode = new System.Windows.Forms.Label();
@@ -51,7 +51,7 @@
 			this.checkPregnant = new OpenDental.UI.CheckBox();
 			this.textPregCode = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
-			this.groupExclusion = new OpenDental.UI.GroupBoxOD();
+			this.groupExclusion = new OpenDental.UI.GroupBox();
 			this.butChangeDefault = new OpenDental.UI.Button();
 			this.textReasonDescript = new System.Windows.Forms.TextBox();
 			this.textPregCodeDescript = new System.Windows.Forms.TextBox();
@@ -61,7 +61,7 @@
 			this.label3 = new System.Windows.Forms.Label();
 			this.checkNotPerf = new OpenDental.UI.CheckBox();
 			this.labelPregNotice = new System.Windows.Forms.Label();
-			this.groupInterventions = new OpenDental.UI.GroupBoxOD();
+			this.groupInterventions = new OpenDental.UI.GroupBox();
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridInterventions = new OpenDental.UI.GridOD();
 			this.textBMIPercentile = new System.Windows.Forms.TextBox();
@@ -597,8 +597,8 @@
 		private System.Windows.Forms.TextBox textHeight;
 		private System.Windows.Forms.TextBox textBMI;
 		private System.Windows.Forms.Label labelWeightCode;
-		private OpenDental.UI.ComboBoxOD comboHeightExamCode;
-		private OpenDental.UI.ComboBoxOD comboWeightExamCode;
+		private OpenDental.UI.ComboBox comboHeightExamCode;
+		private OpenDental.UI.ComboBox comboWeightExamCode;
 		private System.Windows.Forms.Label labelHeightExamCode;
 		private System.Windows.Forms.Label labelWeightExamCode;
 		private System.Windows.Forms.Label labelBMIPercentileCode;
@@ -612,14 +612,14 @@
 		private OpenDental.UI.CheckBox checkPregnant;
 		private System.Windows.Forms.TextBox textPregCode;
 		private System.Windows.Forms.Label label6;
-		private OpenDental.UI.GroupBoxOD groupExclusion;
+		private OpenDental.UI.GroupBox groupExclusion;
 		private OpenDental.UI.CheckBox checkNotPerf;
 		private System.Windows.Forms.Label labelPregNotice;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label labelNotPerf;
 		private System.Windows.Forms.TextBox textReasonCode;
-		private OpenDental.UI.GroupBoxOD groupInterventions;
+		private OpenDental.UI.GroupBox groupInterventions;
 		private OpenDental.UI.GridOD gridInterventions;
 		private System.Windows.Forms.TextBox textBMIPercentile;
 		private System.Windows.Forms.Label labelBMIPercentile;

@@ -28,9 +28,9 @@ namespace OpenDental {
 			this.butOK = new OpenDental.UI.Button();
 			this.labelProvNum = new System.Windows.Forms.Label();
 			this.textProvNum = new System.Windows.Forms.TextBox();
-			this.groupDentalSchools = new OpenDental.UI.GroupBoxOD();
+			this.groupDentalSchools = new OpenDental.UI.GroupBox();
 			this.labelClass = new System.Windows.Forms.Label();
-			this.comboClass = new OpenDental.UI.ComboBoxOD();
+			this.comboClass = new OpenDental.UI.ComboBox();
 			this.textLName = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textFName = new System.Windows.Forms.TextBox();
@@ -242,14 +242,14 @@ namespace OpenDental {
 		private OpenDental.UI.Button butOK;
 		private Label labelProvNum;
 		private TextBox textProvNum;
-		private OpenDental.UI.GroupBoxOD groupDentalSchools;
+		private OpenDental.UI.GroupBox groupDentalSchools;
 		private TextBox textLName;
 		private Label label2;
 		private CheckBox checkShowAll;
 		private TextBox textFName;
 		private Label label1;
 		private Label labelClass;
-		private OpenDental.UI.ComboBoxOD comboClass;
+		private OpenDental.UI.ComboBox comboClass;
 		private UI.Button butSelectNone;
 		private Label label3;
 		private ODtextBox textFilter;

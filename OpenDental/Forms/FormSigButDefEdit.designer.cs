@@ -48,12 +48,12 @@ namespace OpenDental {
 			this.radioAll = new System.Windows.Forms.RadioButton();
 			this.radioOne = new System.Windows.Forms.RadioButton();
 			this.textComputerName = new System.Windows.Forms.TextBox();
-			this.comboTo = new OpenDental.UI.ComboBoxOD();
+			this.comboTo = new OpenDental.UI.ComboBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
-			this.comboExtras = new OpenDental.UI.ComboBoxOD();
+			this.comboExtras = new OpenDental.UI.ComboBox();
 			this.label11 = new System.Windows.Forms.Label();
-			this.comboMessage = new OpenDental.UI.ComboBoxOD();
+			this.comboMessage = new OpenDental.UI.ComboBox();
 			this.SuspendLayout();
 			// 
 			// label2
@@ -272,11 +272,11 @@ namespace OpenDental {
 		private RadioButton radioAll;
 		private RadioButton radioOne;
 		private TextBox textComputerName;
-		private OpenDental.UI.ComboBoxOD comboTo;
+		private OpenDental.UI.ComboBox comboTo;
 		private Label label4;
 		private Label label10;
-		private OpenDental.UI.ComboBoxOD comboExtras;
+		private OpenDental.UI.ComboBox comboExtras;
 		private Label label11;
-		private OpenDental.UI.ComboBoxOD comboMessage;
+		private OpenDental.UI.ComboBox comboMessage;
 	}
 }

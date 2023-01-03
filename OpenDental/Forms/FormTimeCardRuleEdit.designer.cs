@@ -29,7 +29,7 @@ namespace OpenDental{
       this.textClockInMin = new System.Windows.Forms.TextBox();
       this.textOverHoursPerDay = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
-      this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+      this.groupBox2 = new OpenDental.UI.GroupBox();
       this.label4 = new System.Windows.Forms.Label();
       this.but6am = new OpenDental.UI.Button();
       this.textAfterTimeOfDay = new System.Windows.Forms.TextBox();
@@ -262,7 +262,7 @@ namespace OpenDental{
 		private UI.Button but6am;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.TextBox textBeforeTimeOfDay;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private OpenDental.UI.CheckBox checkIsOvertimeExempt;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox textClockInMin;

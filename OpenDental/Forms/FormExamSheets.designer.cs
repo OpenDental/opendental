@@ -32,7 +32,7 @@ namespace OpenDental{
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.panelSheetPreview = new OpenDental.UI.PanelOD();
 			this.labelVerticalDivider = new System.Windows.Forms.Label();
-			this.groupEClipboard = new OpenDental.UI.GroupBoxOD();
+			this.groupEClipboard = new OpenDental.UI.GroupBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butSendToDevice = new OpenDental.UI.Button();
@@ -204,7 +204,7 @@ namespace OpenDental{
 		private UI.MenuOD menuMain;
 		private OpenDental.UI.PanelOD panelSheetPreview;
 		private System.Windows.Forms.Label labelVerticalDivider;
-		private UI.GroupBoxOD groupEClipboard;
+		private UI.GroupBox groupEClipboard;
 		private UI.Button butSendAllToDevice;
 		private UI.Button butSendToDevice;
 		private System.Windows.Forms.Label label2;

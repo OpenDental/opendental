@@ -49,7 +49,7 @@ namespace OpenDental {
             this.textTime = new System.Windows.Forms.TextBox();
             this.labelMountItem = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.comboProv = new OpenDental.UI.ComboBoxOD();
+            this.comboProv = new OpenDental.UI.ComboBox();
             this.SuspendLayout();
             // 
             // listCategory
@@ -317,6 +317,6 @@ namespace OpenDental {
 		private TextBox textTime;
 		private Label labelMountItem;
 		private Label label1;
-		private UI.ComboBoxOD comboProv;
+		private UI.ComboBox comboProv;
 	}
 }

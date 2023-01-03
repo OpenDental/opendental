@@ -27,7 +27,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWebSchedASAPSend));
 			this.butSend = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
-			this.groupSendMode = new OpenDental.UI.GroupBoxOD();
+			this.groupSendMode = new OpenDental.UI.GroupBox();
 			this.radioEmail = new System.Windows.Forms.RadioButton();
 			this.radioTextEmail = new System.Windows.Forms.RadioButton();
 			this.radioPreferred = new System.Windows.Forms.RadioButton();
@@ -254,7 +254,7 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butSend;
 		private OpenDental.UI.Button butCancel;
-		private OpenDental.UI.GroupBoxOD groupSendMode;
+		private OpenDental.UI.GroupBox groupSendMode;
 		private System.Windows.Forms.RadioButton radioEmail;
 		private System.Windows.Forms.RadioButton radioTextEmail;
 		private System.Windows.Forms.RadioButton radioPreferred;

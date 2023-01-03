@@ -26,7 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAdjustSelect));
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
-			this.groupBoxBreakdown = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxBreakdown = new OpenDental.UI.GroupBox();
 			this.label9 = new System.Windows.Forms.Label();
 			this.label12 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
@@ -231,7 +231,7 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
-		private OpenDental.UI.GroupBoxOD groupBoxBreakdown;
+		private OpenDental.UI.GroupBox groupBoxBreakdown;
 		private UI.GridOD gridAdjusts;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label labelAmtAvail;

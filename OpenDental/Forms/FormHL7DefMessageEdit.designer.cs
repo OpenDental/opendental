@@ -26,8 +26,8 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormHL7DefMessageEdit));
 			this.radioOut = new System.Windows.Forms.RadioButton();
 			this.radioIn = new System.Windows.Forms.RadioButton();
-			this.comboMessageStructure = new OpenDental.UI.ComboBoxOD();
-			this.comboMsgType = new OpenDental.UI.ComboBoxOD();
+			this.comboMessageStructure = new OpenDental.UI.ComboBox();
+			this.comboMsgType = new OpenDental.UI.ComboBox();
 			this.labelItemOrder = new System.Windows.Forms.Label();
 			this.textNote = new System.Windows.Forms.TextBox();
 			this.label12 = new System.Windows.Forms.Label();
@@ -242,8 +242,8 @@ namespace OpenDental{
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.RadioButton radioOut;
 		private System.Windows.Forms.RadioButton radioIn;
-		private OpenDental.UI.ComboBoxOD comboMessageStructure;
-		private OpenDental.UI.ComboBoxOD comboMsgType;
+		private OpenDental.UI.ComboBox comboMessageStructure;
+		private OpenDental.UI.ComboBox comboMsgType;
 		private System.Windows.Forms.Label labelItemOrder;
 		private System.Windows.Forms.TextBox textNote;
 		private System.Windows.Forms.Label label12;

@@ -27,7 +27,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpUnfinalizedInsPay));
 			this.butClose = new OpenDental.UI.Button();
 			this.labelType = new System.Windows.Forms.Label();
-			this.comboBoxMultiType = new OpenDental.UI.ComboBoxOD();
+			this.comboBoxMultiType = new OpenDental.UI.ComboBox();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.openEOBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -40,7 +40,7 @@ namespace OpenDental {
 			this.textCarrier = new System.Windows.Forms.TextBox();
 			this.labelCarrier = new System.Windows.Forms.Label();
 			this.butRefresh = new OpenDental.UI.Button();
-			this.groupBoxFilter = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxFilter = new OpenDental.UI.GroupBox();
 			this.comboClinics = new OpenDental.UI.ComboBoxClinicPicker();
 			this.contextMenuStrip1.SuspendLayout();
 			this.groupBoxFilter.SuspendLayout();
@@ -237,7 +237,7 @@ namespace OpenDental {
 		#endregion
 		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label labelType;
-		private UI.ComboBoxOD comboBoxMultiType;
+		private UI.ComboBox comboBoxMultiType;
 		private UI.GridOD gridMain;
 		private UI.Button butExport;
 		private UI.Button butPrint;
@@ -250,7 +250,7 @@ namespace OpenDental {
 		private System.Windows.Forms.ToolStripMenuItem goToAccountToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem openClaimToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem createCheckToolStripMenuItem;
-		private OpenDental.UI.GroupBoxOD groupBoxFilter;
+		private OpenDental.UI.GroupBox groupBoxFilter;
 		private UI.ComboBoxClinicPicker comboClinics;
 	}
 }

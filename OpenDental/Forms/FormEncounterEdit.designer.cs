@@ -25,7 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEncounterEdit));
 			this.label9 = new System.Windows.Forms.Label();
-			this.comboProv = new OpenDental.UI.ComboBoxOD();
+			this.comboProv = new OpenDental.UI.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
@@ -274,7 +274,7 @@ namespace OpenDental{
 		#endregion
 
 		private System.Windows.Forms.Label label9;
-		private OpenDental.UI.ComboBoxOD comboProv;
+		private OpenDental.UI.ComboBox comboProv;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label2;

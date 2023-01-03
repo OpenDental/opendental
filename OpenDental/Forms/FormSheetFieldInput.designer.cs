@@ -32,7 +32,7 @@ namespace OpenDental{
 			this.labelTabOrder = new System.Windows.Forms.Label();
 			this.checkRequired = new OpenDental.UI.CheckBox();
 			this.butDelete = new OpenDental.UI.Button();
-			this.comboGrowthBehavior = new UI.ComboBoxOD();
+			this.comboGrowthBehavior = new UI.ComboBox();
 			this.label9 = new System.Windows.Forms.Label();
 			this.textHeight = new OpenDental.ValidNum();
 			this.label8 = new System.Windows.Forms.Label();
@@ -42,11 +42,11 @@ namespace OpenDental{
 			this.label6 = new System.Windows.Forms.Label();
 			this.textXPos = new OpenDental.ValidNum();
 			this.label5 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.checkFontIsBold = new OpenDental.UI.CheckBox();
 			this.textFontSize = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.comboFontName = new OpenDental.UI.ComboBoxOD();
+			this.comboFontName = new OpenDental.UI.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.listFields = new OpenDental.UI.ListBoxOD();
@@ -374,9 +374,9 @@ namespace OpenDental{
 		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label2;
 		private OpenDental.UI.ListBoxOD listFields;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label3;
-		private OpenDental.UI.ComboBoxOD comboFontName;
+		private OpenDental.UI.ComboBox comboFontName;
 		private OpenDental.UI.CheckBox checkFontIsBold;
 		private System.Windows.Forms.TextBox textFontSize;
 		private System.Windows.Forms.Label label4;
@@ -388,7 +388,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label7;
 		private ValidNum textHeight;
 		private System.Windows.Forms.Label label8;
-		private UI.ComboBoxOD comboGrowthBehavior;
+		private UI.ComboBox comboGrowthBehavior;
 		private System.Windows.Forms.Label label9;
 		private OpenDental.UI.Button butDelete;
 		private OpenDental.UI.CheckBox checkRequired;

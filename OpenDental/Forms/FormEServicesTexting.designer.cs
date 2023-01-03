@@ -33,7 +33,7 @@ namespace OpenDental{
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.groupShortCode = new OpenDental.UI.GroupBoxOD();
+			this.groupShortCode = new OpenDental.UI.GroupBox();
 			this.labelUnsavedShortCodeChanges = new System.Windows.Forms.Label();
 			this.butSaveShortCodes = new OpenDental.UI.Button();
 			this.labelShortCodeOptInClinicTitle = new System.Windows.Forms.Label();
@@ -319,7 +319,7 @@ namespace OpenDental{
 		private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
-		private OpenDental.UI.GroupBoxOD groupShortCode;
+		private OpenDental.UI.GroupBox groupShortCode;
 		private OpenDental.UI.CheckBox checkOptInPrompt;
 		private UI.ComboBoxClinicPicker comboShortCodeClinic;
 		private System.Windows.Forms.Label labelShortCodeOptInClinicTitle;

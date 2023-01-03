@@ -24,7 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormHL7Msgs));
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butCurrent = new OpenDental.UI.Button();
 			this.butAll = new OpenDental.UI.Button();
 			this.butFind = new OpenDental.UI.Button();
@@ -34,7 +34,7 @@ namespace OpenDental{
 			this.labelEndDate = new System.Windows.Forms.Label();
 			this.textPatient = new System.Windows.Forms.TextBox();
 			this.labelPatient = new System.Windows.Forms.Label();
-			this.comboHL7Status = new OpenDental.UI.ComboBoxOD();
+			this.comboHL7Status = new OpenDental.UI.ComboBox();
 			this.labelStartDate = new System.Windows.Forms.Label();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
@@ -212,9 +212,9 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label labelPatient;
-		private OpenDental.UI.ComboBoxOD comboHL7Status;
+		private OpenDental.UI.ComboBox comboHL7Status;
 		private System.Windows.Forms.Label labelHL7Status;
 		private ValidDate textDateEnd;
 		private ValidDate textDateStart;

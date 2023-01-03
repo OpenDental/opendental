@@ -28,11 +28,11 @@ namespace OpenDental{
 			this.textDescription = new System.Windows.Forms.TextBox();
 			this.checkHidden = new OpenDental.UI.CheckBox();
 			this.label2 = new System.Windows.Forms.Label();
-			this.comboSnomedAllergyType = new OpenDental.UI.ComboBoxOD();
+			this.comboSnomedAllergyType = new OpenDental.UI.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textMedication = new System.Windows.Forms.TextBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.textUnii = new System.Windows.Forms.TextBox();
 			this.butNoneUnii = new OpenDental.UI.Button();
 			this.butNone = new OpenDental.UI.Button();
@@ -250,16 +250,16 @@ namespace OpenDental{
 		private OpenDental.UI.CheckBox checkHidden;
 		private UI.Button butCancel;
 		private System.Windows.Forms.Label label2;
-		private OpenDental.UI.ComboBoxOD comboSnomedAllergyType;
+		private OpenDental.UI.ComboBox comboSnomedAllergyType;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textMedication;
 		private UI.Button butMedicationSelect;
 		private UI.Button butNone;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textUnii;
 		private UI.Button butUniiSelect;
 		private UI.Button butNoneUnii;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 	}
 }

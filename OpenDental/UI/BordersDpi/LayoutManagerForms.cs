@@ -962,7 +962,7 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 				}
 				return false;//don't skip.  Let it get caught in HandleManualAlteration
 			}
-			if(control is ComboBox){
+			if(control is System.Windows.Forms.ComboBox){
 				control96Info.BoundsLast.Height=control.Height;//we have no control over comboBox height, and we don't need automatic changes to trigger an alarm
 				return false;//but do not skip this control.  It will ignore our attempt to change its height.
 			}
@@ -1011,7 +1011,7 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 				comboBoxClinicPicker.LayoutManager=this;
 				return;
 			}
-			if(control is UI.ComboBoxOD comboBoxPlus){
+			if(control is UI.ComboBox comboBoxPlus){
 				comboBoxPlus.LayoutManager=this;
 				return;
 			}
@@ -1082,7 +1082,7 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 			//	((UI.GridOD)control).ScaleMy=this.ScaleMy;
 			//	return;
 			//}
-			if(control is OpenDental.UI.GroupBoxOD groupBoxOD){
+			if(control is OpenDental.UI.GroupBox groupBoxOD){
 				groupBoxOD.LayoutManager=this;
 				return;
 			}

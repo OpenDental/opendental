@@ -28,14 +28,14 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCreditRecurringCharges));
 			this.checkHideBold = new OpenDental.UI.CheckBox();
-			this.groupCounts = new OpenDental.UI.GroupBoxOD();
+			this.groupCounts = new OpenDental.UI.GroupBox();
 			this.labelUpdated = new System.Windows.Forms.Label();
 			this.labelFailed = new System.Windows.Forms.Label();
 			this.labelCharged = new System.Windows.Forms.Label();
 			this.labelSelected = new System.Windows.Forms.Label();
 			this.labelTotal = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.groupClinics = new OpenDental.UI.GroupBoxOD();
+			this.groupClinics = new OpenDental.UI.GroupBox();
 			this.checkAllClin = new OpenDental.UI.CheckBox();
 			this.listClinics = new OpenDental.UI.ListBoxOD();
 			this.butPrintList = new OpenDental.UI.Button();
@@ -46,7 +46,7 @@ namespace OpenDental{
 			this.butCancel = new OpenDental.UI.Button();
 			this.textDate = new OpenDental.ValidDate();
 			this.butToday = new OpenDental.UI.Button();
-			this.groupDateFilter = new OpenDental.UI.GroupBoxOD();
+			this.groupDateFilter = new OpenDental.UI.GroupBox();
 			this.checkForceDuplicates = new OpenDental.UI.CheckBox();
 			this.butHistory = new OpenDental.UI.Button();
 			this.checkShowInactive = new OpenDental.UI.CheckBox();
@@ -330,7 +330,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butSend;
 		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridMain;
-		private OpenDental.UI.GroupBoxOD groupCounts;
+		private OpenDental.UI.GroupBox groupCounts;
 		private System.Windows.Forms.Label labelFailed;
 		private System.Windows.Forms.Label labelCharged;
 		private System.Windows.Forms.Label labelSelected;
@@ -343,10 +343,10 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelUpdated;
 		private OpenDental.UI.CheckBox checkAllClin;
 		private OpenDental.UI.ListBoxOD listClinics;
-		private OpenDental.UI.GroupBoxOD groupClinics;
+		private OpenDental.UI.GroupBox groupClinics;
 		private ValidDate textDate;
 		private UI.Button butToday;
-		private OpenDental.UI.GroupBoxOD groupDateFilter;
+		private OpenDental.UI.GroupBox groupDateFilter;
 		private OpenDental.UI.CheckBox checkForceDuplicates;
 		private UI.Button butHistory;
 		private OpenDental.UI.CheckBox checkShowInactive;

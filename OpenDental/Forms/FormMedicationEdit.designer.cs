@@ -43,13 +43,13 @@ namespace OpenDental {
 			this.textNotes = new OpenDental.ODtextBox();
 			this.butDelete = new OpenDental.UI.Button();
 			this.label4 = new System.Windows.Forms.Label();
-			this.comboPatients = new OpenDental.UI.ComboBoxOD();
+			this.comboPatients = new OpenDental.UI.ComboBox();
 			this.labelPatients = new System.Windows.Forms.Label();
 			this.labelBrands = new System.Windows.Forms.Label();
-			this.comboBrands = new OpenDental.UI.ComboBoxOD();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.comboBrands = new OpenDental.UI.ComboBox();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.labelPatientAllergy = new System.Windows.Forms.Label();
-			this.comboPatientAllergy = new OpenDental.UI.ComboBoxOD();
+			this.comboPatientAllergy = new OpenDental.UI.ComboBox();
 			this.labelRxNorm = new System.Windows.Forms.Label();
 			this.textRxNormDesc = new System.Windows.Forms.TextBox();
 			this.butRxNormSelect = new OpenDental.UI.Button();
@@ -288,15 +288,15 @@ namespace OpenDental {
 		private OpenDental.ODtextBox textNotes;
 		private OpenDental.UI.Button butDelete;
 		private System.Windows.Forms.Label label4;
-		private OpenDental.UI.ComboBoxOD comboPatients;
+		private OpenDental.UI.ComboBox comboPatients;
 		private System.Windows.Forms.Label labelBrands;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label labelPatients;
-		private OpenDental.UI.ComboBoxOD comboBrands;//does not allow changing to non generic.
+		private OpenDental.UI.ComboBox comboBrands;//does not allow changing to non generic.
 		private Label labelRxNorm;
 		private TextBox textRxNormDesc;
 		private UI.Button butRxNormSelect;
 		private Label labelPatientAllergy;
-		private OpenDental.UI.ComboBoxOD comboPatientAllergy;
+		private OpenDental.UI.ComboBox comboPatientAllergy;
 	}
 }

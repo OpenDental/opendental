@@ -24,18 +24,18 @@ namespace OpenDental {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.groupRecurringCharges = new OpenDental.UI.GroupBoxOD();
+			this.groupRecurringCharges = new OpenDental.UI.GroupBox();
 			this.checkRecurringChargesShowInactive = new OpenDental.UI.CheckBox();
 			this.checkRecurringChargesInactivateDeclinedCards = new OpenDental.UI.CheckBox();
 			this.checkRecurPatBal0 = new OpenDental.UI.CheckBox();
 			this.label56 = new System.Windows.Forms.Label();
-			this.comboRecurringChargePayType = new OpenDental.UI.ComboBoxOD();
+			this.comboRecurringChargePayType = new OpenDental.UI.ComboBox();
 			this.labelRecurringChargesAutomatedTime = new System.Windows.Forms.Label();
 			this.textRecurringChargesTime = new OpenDental.ValidTime();
 			this.checkRecurringChargesAutomated = new OpenDental.UI.CheckBox();
 			this.checkRecurringChargesUseTransDate = new OpenDental.UI.CheckBox();
 			this.checkRecurChargPriProv = new OpenDental.UI.CheckBox();
-			this.groupRepeatingCharges = new OpenDental.UI.GroupBoxOD();
+			this.groupRepeatingCharges = new OpenDental.UI.GroupBox();
 			this.labelRepeatingChargesAutomatedTime = new System.Windows.Forms.Label();
 			this.textRepeatingChargesAutomatedTime = new OpenDental.ValidTime();
 			this.checkRepeatingChargesRunAging = new OpenDental.UI.CheckBox();
@@ -291,18 +291,18 @@ namespace OpenDental {
 
 		#endregion
 
-		private UI.GroupBoxOD groupRecurringCharges;
+		private UI.GroupBox groupRecurringCharges;
 		private OpenDental.UI.CheckBox checkRecurringChargesShowInactive;
 		private OpenDental.UI.CheckBox checkRecurringChargesInactivateDeclinedCards;
 		private OpenDental.UI.CheckBox checkRecurPatBal0;
 		private System.Windows.Forms.Label label56;
-		private UI.ComboBoxOD comboRecurringChargePayType;
+		private UI.ComboBox comboRecurringChargePayType;
 		private System.Windows.Forms.Label labelRecurringChargesAutomatedTime;
 		private ValidTime textRecurringChargesTime;
 		private OpenDental.UI.CheckBox checkRecurringChargesAutomated;
 		private OpenDental.UI.CheckBox checkRecurringChargesUseTransDate;
 		private OpenDental.UI.CheckBox checkRecurChargPriProv;
-		private UI.GroupBoxOD groupRepeatingCharges;
+		private UI.GroupBox groupRepeatingCharges;
 		private System.Windows.Forms.Label labelRepeatingChargesAutomatedTime;
 		private ValidTime textRepeatingChargesAutomatedTime;
 		private OpenDental.UI.CheckBox checkRepeatingChargesRunAging;

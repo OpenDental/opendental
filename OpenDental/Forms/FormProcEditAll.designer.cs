@@ -31,11 +31,11 @@ namespace OpenDental{
 			this.butEditAnyway = new OpenDental.UI.Button();
 			this.labelClaim = new System.Windows.Forms.Label();
 			this.butToday = new OpenDental.UI.Button();
-			this.comboProv = new UI.ComboBoxOD();
+			this.comboProv = new UI.ComboBox();
 			this.butMoreProvs = new OpenDental.UI.Button();
 			this.labelClinic = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.comboClinic = new UI.ComboBoxOD();
+			this.comboClinic = new UI.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -198,11 +198,11 @@ namespace OpenDental{
 		private OpenDental.UI.Button butEditAnyway;
 		private System.Windows.Forms.Label labelClaim;
 		private OpenDental.UI.Button butToday;
-		private UI.ComboBoxOD comboProv;
+		private UI.ComboBox comboProv;
 		private UI.Button butMoreProvs;
 		private System.Windows.Forms.Label labelClinic;
 		private System.Windows.Forms.Label label2;
-		private UI.ComboBoxOD comboClinic;
+		private UI.ComboBox comboClinic;
 		private System.Windows.Forms.Label label3;
 	}
 }

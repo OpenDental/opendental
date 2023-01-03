@@ -32,18 +32,18 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPayPeriodManager));
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.radioPayBefore = new System.Windows.Forms.RadioButton();
 			this.radioPayAfter = new System.Windows.Forms.RadioButton();
 			this.checkExcludeWeekends = new System.Windows.Forms.CheckBox();
-			this.comboDay = new OpenDental.UI.ComboBoxOD();
+			this.comboDay = new OpenDental.UI.ComboBox();
 			this.textDaysAfterPayPeriod = new OpenDental.ValidNum();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
-			this.groupBoxSemiMonthly = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
+			this.groupBoxSemiMonthly = new OpenDental.UI.GroupBox();
 			this.checkLast = new System.Windows.Forms.CheckBox();
 			this.labelPeriod2Day = new System.Windows.Forms.Label();
 			this.textDay2 = new OpenDental.ValidNum();
@@ -457,14 +457,14 @@ namespace OpenDental {
 		private RadioButton radioWeekly;
 		private RadioButton radioMonthly;
 		private RadioButton radioBiWeekly;
-		private OpenDental.UI.GroupBoxOD groupBox2;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox2;
+		private OpenDental.UI.GroupBox groupBox3;
 		private Label label4;
 		private Label label2;
 		private Label label5;
 		private ValidNum textDaysAfterPayPeriod;
 		private ValidNum textPayPeriods;
-		private OpenDental.UI.ComboBoxOD comboDay;
+		private OpenDental.UI.ComboBox comboDay;
 		private RadioButton radioPayBefore;
 		private RadioButton radioPayAfter;
 		private CheckBox checkExcludeWeekends;
@@ -472,7 +472,7 @@ namespace OpenDental {
 		private RadioButton radioSemiMonthly;
 		private Label label7;
 		private Label label6;
-		private OpenDental.UI.GroupBoxOD groupBoxSemiMonthly;
+		private OpenDental.UI.GroupBox groupBoxSemiMonthly;
 		private Label labelPeriod2Day;
 		private ValidNum textDay2;
 		private Label labelPeriod1Day;

@@ -35,7 +35,7 @@ namespace OpenDental{
 			this.checkIsHidden = new OpenDental.UI.CheckBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.label12 = new System.Windows.Forms.Label();
-			this.comboCategory = new OpenDental.UI.ComboBoxOD();
+			this.comboCategory = new OpenDental.UI.ComboBox();
 			this.textLevelDesired = new OpenDental.ValidDouble();
 			this.textPrice = new OpenDental.ValidDouble();
 			this.butDelete = new OpenDental.UI.Button();
@@ -299,7 +299,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label label12;
 		private ValidDouble textPrice;
-		private UI.ComboBoxOD comboCategory;
+		private UI.ComboBox comboCategory;
 		private ValidDouble textLevelDesired;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label7;

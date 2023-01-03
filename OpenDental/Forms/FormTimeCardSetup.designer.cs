@@ -32,7 +32,7 @@ namespace OpenDental {
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTimeCardSetup));
 			this.checkUseDecimal = new OpenDental.UI.CheckBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.checkShowSeconds = new OpenDental.UI.CheckBox();
 			this.checkAdjOverBreaks = new OpenDental.UI.CheckBox();
 			this.butAddRule = new OpenDental.UI.Button();
@@ -274,7 +274,7 @@ namespace OpenDental {
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.CheckBox checkUseDecimal;
 		private UI.GridOD gridRules;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.Button butAddRule;
 		private OpenDental.UI.CheckBox checkAdjOverBreaks;
 		private Label label2;

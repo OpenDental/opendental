@@ -34,10 +34,10 @@
 			this.label4 = new System.Windows.Forms.Label();
 			this.butCancel = new System.Windows.Forms.Button();
 			this.butOk = new System.Windows.Forms.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.textDateTimeTest = new System.Windows.Forms.TextBox();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.textServiceID = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.textServiceName = new System.Windows.Forms.TextBox();
@@ -320,9 +320,9 @@
 		private System.Windows.Forms.Button butCancel;
 		private System.Windows.Forms.Button butOk;
 		private OpenDental.UI.GridOD gridMain;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label6;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.TextBox textServiceID;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox textServiceName;

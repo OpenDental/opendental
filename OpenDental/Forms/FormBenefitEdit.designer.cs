@@ -36,7 +36,7 @@ namespace OpenDental {
 			this.label4 = new System.Windows.Forms.Label();
 			this.listQuantityQualifier = new OpenDental.UI.ListBoxOD();
 			this.label8 = new System.Windows.Forms.Label();
-			this.groupQuantity = new OpenDental.UI.GroupBoxOD();
+			this.groupQuantity = new OpenDental.UI.GroupBox();
 			this.textQuantity = new OpenDental.ValidNum();
 			this.listCoverageLevel = new OpenDental.UI.ListBoxOD();
 			this.label1 = new System.Windows.Forms.Label();
@@ -295,7 +295,7 @@ namespace OpenDental {
 		private ValidNum textQuantity;
 		private OpenDental.UI.ListBoxOD listQuantityQualifier;
 		private Label label8;
-		private OpenDental.UI.GroupBoxOD groupQuantity;
+		private OpenDental.UI.GroupBox groupQuantity;
 		private OpenDental.UI.CheckBox checkPat;
 		private OpenDental.UI.ListBoxOD listCoverageLevel;
 		private Label label1;

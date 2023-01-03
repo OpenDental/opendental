@@ -25,7 +25,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpAging));
 			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
-			this.groupAgeOfAccount = new OpenDental.UI.GroupBoxOD();
+			this.groupAgeOfAccount = new OpenDental.UI.GroupBox();
 			this.radio30 = new System.Windows.Forms.RadioButton();
 			this.radio90 = new System.Windows.Forms.RadioButton();
 			this.radio60 = new System.Windows.Forms.RadioButton();
@@ -35,7 +35,7 @@ namespace OpenDental {
 			this.listBillType = new OpenDental.UI.ListBoxOD();
 			this.label2 = new System.Windows.Forms.Label();
 			this.checkIncludeNeg = new System.Windows.Forms.CheckBox();
-			this.groupIncludePats = new OpenDental.UI.GroupBoxOD();
+			this.groupIncludePats = new OpenDental.UI.GroupBox();
 			this.checkIncludeInsNoBal = new System.Windows.Forms.CheckBox();
 			this.checkOnlyNeg = new System.Windows.Forms.CheckBox();
 			this.checkExcludeInactive = new System.Windows.Forms.CheckBox();
@@ -48,15 +48,15 @@ namespace OpenDental {
 			this.listClin = new OpenDental.UI.ListBoxOD();
 			this.labelClin = new System.Windows.Forms.Label();
 			this.checkHasDateLastPay = new System.Windows.Forms.CheckBox();
-			this.groupGroupBy = new OpenDental.UI.GroupBoxOD();
+			this.groupGroupBy = new OpenDental.UI.GroupBox();
 			this.radioGroupByPat = new System.Windows.Forms.RadioButton();
 			this.radioGroupByFam = new System.Windows.Forms.RadioButton();
 			this.checkAgeWriteoffs = new System.Windows.Forms.CheckBox();
 			this.checkExcludeArchive = new System.Windows.Forms.CheckBox();
 			this.butQuery = new OpenDental.UI.Button();
-			this.groupOnlyShow = new OpenDental.UI.GroupBoxOD();
+			this.groupOnlyShow = new OpenDental.UI.GroupBox();
 			this.checkOnlyInsNoBal = new System.Windows.Forms.CheckBox();
-			this.groupExcludePats = new OpenDental.UI.GroupBoxOD();
+			this.groupExcludePats = new OpenDental.UI.GroupBox();
 			this.checkAgePatPayPlanPayments = new System.Windows.Forms.CheckBox();
 			this.labelFutureTrans = new System.Windows.Forms.Label();
 			this.checkBoxExcludeIncomeTransfers = new System.Windows.Forms.CheckBox();
@@ -505,7 +505,7 @@ namespace OpenDental {
 
 		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
-		private OpenDental.UI.GroupBoxOD groupAgeOfAccount;
+		private OpenDental.UI.GroupBox groupAgeOfAccount;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.ValidDate textDate;
 		private OpenDental.UI.ListBoxOD listBillType;
@@ -514,7 +514,7 @@ namespace OpenDental {
 		private System.Windows.Forms.RadioButton radio90;
 		private System.Windows.Forms.RadioButton radio60;
 		private System.Windows.Forms.CheckBox checkIncludeNeg;
-		private OpenDental.UI.GroupBoxOD groupIncludePats;
+		private OpenDental.UI.GroupBox groupIncludePats;
 		private System.Windows.Forms.CheckBox checkOnlyNeg;
 		private System.Windows.Forms.CheckBox checkExcludeInactive;
 		private OpenDental.UI.ListBoxOD listProv;
@@ -527,16 +527,16 @@ namespace OpenDental {
 		private Label labelClin;
 		private System.Windows.Forms.RadioButton radioAny;
 		private CheckBox checkHasDateLastPay;
-		private OpenDental.UI.GroupBoxOD groupGroupBy;
+		private OpenDental.UI.GroupBox groupGroupBy;
 		private RadioButton radioGroupByPat;
 		private RadioButton radioGroupByFam;
 		private CheckBox checkAgeWriteoffs;
 		private CheckBox checkExcludeArchive;
 		private UI.Button butQuery;
 		private CheckBox checkIncludeInsNoBal;
-		private OpenDental.UI.GroupBoxOD groupOnlyShow;
+		private OpenDental.UI.GroupBox groupOnlyShow;
 		private CheckBox checkOnlyInsNoBal;
-		private OpenDental.UI.GroupBoxOD groupExcludePats;
+		private OpenDental.UI.GroupBox groupExcludePats;
 		private CheckBox checkAgePatPayPlanPayments;
 		private Label labelFutureTrans;
 		private CheckBox checkBoxExcludeIncomeTransfers;

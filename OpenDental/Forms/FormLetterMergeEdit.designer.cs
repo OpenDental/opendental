@@ -41,7 +41,7 @@ namespace OpenDental {
 			this.label1 = new System.Windows.Forms.Label();
 			this.textDataFileName = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.comboCategory = new OpenDental.UI.ComboBoxOD();
+			this.comboCategory = new OpenDental.UI.ComboBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.textPath = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
@@ -58,7 +58,7 @@ namespace OpenDental {
 			this.label6 = new System.Windows.Forms.Label();
 			this.listOther = new OpenDental.UI.ListBoxOD();
 			this.labelImageCategory = new System.Windows.Forms.Label();
-			this.comboImageFolder = new OpenDental.UI.ComboBoxOD();
+			this.comboImageFolder = new OpenDental.UI.ComboBox();
 			this.SuspendLayout();
 			// 
 			// butCancel
@@ -333,7 +333,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textTemplateName;
 		private System.Windows.Forms.TextBox textDataFileName;
-		private OpenDental.UI.ComboBoxOD comboCategory;
+		private OpenDental.UI.ComboBox comboCategory;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox textPath;
@@ -350,6 +350,6 @@ namespace OpenDental {
 		private OpenDental.UI.ListBoxOD listOther;
 		private System.Windows.Forms.TextBox textBox1;
 		private Label labelImageCategory;
-		private UI.ComboBoxOD comboImageFolder;
+		private UI.ComboBox comboImageFolder;
 	}
 }

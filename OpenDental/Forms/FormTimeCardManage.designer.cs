@@ -24,7 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTimeCardManage));
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textDatePaycheck = new System.Windows.Forms.TextBox();
 			this.textDateStop = new System.Windows.Forms.TextBox();
 			this.textDateStart = new System.Windows.Forms.TextBox();
@@ -41,8 +41,8 @@ namespace OpenDental{
 			this.butClearAuto = new OpenDental.UI.Button();
 			this.butClearManual = new OpenDental.UI.Button();
 			this.butPrintSelected = new OpenDental.UI.Button();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.butTimeCardBenefits = new OpenDental.UI.Button();
 			this.menuMain = new OpenDental.UI.MenuOD();
@@ -311,7 +311,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butClose;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.TextBox textDatePaycheck;
 		private System.Windows.Forms.TextBox textDateStop;
 		private System.Windows.Forms.TextBox textDateStart;
@@ -327,8 +327,8 @@ namespace OpenDental{
 		private UI.Button butClearAuto;
 		private UI.Button butClearManual;
 		private UI.Button butPrintSelected;
-		private OpenDental.UI.GroupBoxOD groupBox2;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox2;
+		private OpenDental.UI.GroupBox groupBox3;
 		private UI.ComboBoxClinicPicker comboClinic;
 		private UI.Button butTimeCardBenefits;
 		private UI.MenuOD menuMain;

@@ -47,8 +47,8 @@
 			this.textDateStart = new OpenDental.ValidDate();
 			this.labelProblemSuggest = new System.Windows.Forms.Label();
 			this.labelLabValueType = new System.Windows.Forms.Label();
-			this.comboUnits = new OpenDental.UI.ComboBoxOD();
-			this.comboLabValueType = new OpenDental.UI.ComboBoxOD();
+			this.comboUnits = new OpenDental.UI.ComboBox();
+			this.comboLabValueType = new OpenDental.UI.ComboBox();
 			this.SuspendLayout();
 			// 
 			// labelOperand
@@ -351,7 +351,7 @@
 		private System.Windows.Forms.Button butProblem;
 		private System.Windows.Forms.Label labelProblemSuggest;
 		private System.Windows.Forms.Label labelLabValueType;
-		private OpenDental.UI.ComboBoxOD comboUnits;
-		private OpenDental.UI.ComboBoxOD comboLabValueType;
+		private OpenDental.UI.ComboBox comboUnits;
+		private OpenDental.UI.ComboBox comboLabValueType;
 	}
 }

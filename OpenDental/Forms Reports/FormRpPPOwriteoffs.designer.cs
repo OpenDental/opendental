@@ -44,7 +44,7 @@ namespace OpenDental {
 			this.radioGroup = new System.Windows.Forms.RadioButton();
 			this.textCarrier = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.radioWriteoffClaimDate = new System.Windows.Forms.RadioButton();
 			this.label5 = new System.Windows.Forms.Label();
 			this.radioWriteoffProcDate = new System.Windows.Forms.RadioButton();
@@ -226,7 +226,7 @@ namespace OpenDental {
 		private RadioButton radioGroup;
 		private TextBox textCarrier;
 		private Label label1;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox3;
 		private Label label5;
 		private RadioButton radioWriteoffProcDate;
 		private RadioButton radioWriteoffInsPayDate;

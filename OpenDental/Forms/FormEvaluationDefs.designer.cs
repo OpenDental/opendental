@@ -28,7 +28,7 @@ namespace OpenDental{
 			this.butDuplicate = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.comboCourse = new OpenDental.UI.ComboBoxOD();
+			this.comboCourse = new OpenDental.UI.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -120,7 +120,7 @@ namespace OpenDental{
 		private UI.Button butDuplicate;
 		private UI.Button butAdd;
 		private UI.GridOD gridMain;
-		private OpenDental.UI.ComboBoxOD comboCourse;
+		private OpenDental.UI.ComboBox comboCourse;
 		private System.Windows.Forms.Label label1;
 	}
 }

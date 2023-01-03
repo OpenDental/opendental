@@ -36,7 +36,7 @@ namespace OpenDental {
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormClaimReports));
 			this.labelRetrieving = new System.Windows.Forms.Label();
-			this.comboClearhouse = new OpenDental.UI.ComboBoxOD();
+			this.comboClearhouse = new OpenDental.UI.ComboBox();
 			this.butRetrieve = new OpenDental.UI.Button();
 			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
@@ -101,7 +101,7 @@ namespace OpenDental {
 
 		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label labelRetrieving;
-		private OpenDental.UI.ComboBoxOD comboClearhouse;
+		private OpenDental.UI.ComboBox comboClearhouse;
 		private OpenDental.UI.Button butRetrieve;
 	}
 }

@@ -35,7 +35,7 @@ namespace OpenDental {
 			this.label1 = new System.Windows.Forms.Label();
 			this.radioUnsent = new System.Windows.Forms.RadioButton();
 			this.radioSent = new System.Windows.Forms.RadioButton();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.labelTexted = new System.Windows.Forms.Label();
 			this.labelSentElect = new System.Windows.Forms.Label();
 			this.labelEmailed = new System.Windows.Forms.Label();
@@ -47,12 +47,12 @@ namespace OpenDental {
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.butRefresh = new OpenDental.UI.Button();
-			this.comboOrder = new OpenDental.UI.ComboBoxOD();
+			this.comboOrder = new OpenDental.UI.ComboBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.butPrintList = new OpenDental.UI.Button();
 			this.label5 = new System.Windows.Forms.Label();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
-			this.comboEmailFrom = new OpenDental.UI.ComboBoxOD();
+			this.comboEmailFrom = new OpenDental.UI.ComboBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.butDefaults = new OpenDental.UI.Button();
 			this.contextMenu.SuspendLayout();
@@ -423,7 +423,7 @@ namespace OpenDental {
 		private Label label1;
 		private RadioButton radioUnsent;
 		private RadioButton radioSent;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private Label labelSelected;
 		private Label labelEmailed;
 		private Label labelPrinted;
@@ -433,7 +433,7 @@ namespace OpenDental {
 		private Label label2;
 		private Label label3;
 		private OpenDental.UI.Button butRefresh;
-		private OpenDental.UI.ComboBoxOD comboOrder;
+		private OpenDental.UI.ComboBox comboOrder;
 		private Label label4;
 		private OpenDental.UI.Button butPrintList;
 		private ContextMenuStrip contextMenu;
@@ -441,7 +441,7 @@ namespace OpenDental {
 		private Label label5;
 		private Label labelSentElect;
 		private OpenDental.UI.ComboBoxClinicPicker comboClinic;
-		private OpenDental.UI.ComboBoxOD comboEmailFrom;
+		private OpenDental.UI.ComboBox comboEmailFrom;
 		private Label label6;
 		private UI.Button butDefaults;
 		private Label labelTexted;

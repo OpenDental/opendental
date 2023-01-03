@@ -28,19 +28,19 @@ namespace OpenDental{
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.butPreview = new OpenDental.UI.Button();
-			this.groupBoxPrintRouting = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxPrintRouting = new OpenDental.UI.GroupBox();
 			this.butSelectedView = new OpenDental.UI.Button();
 			this.butSelectedDay = new OpenDental.UI.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
-			this.groupBoxOD2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
+			this.groupBoxOD2 = new OpenDental.UI.GroupBox();
 			this.radioLessColor = new System.Windows.Forms.RadioButton();
 			this.radioFullColor = new System.Windows.Forms.RadioButton();
 			this.radioGrayscale = new System.Windows.Forms.RadioButton();
-			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.radioPortrait = new System.Windows.Forms.RadioButton();
 			this.radioLandscape = new System.Windows.Forms.RadioButton();
-			this.comboStop = new OpenDental.UI.ComboBoxOD();
-			this.comboStart = new OpenDental.UI.ComboBoxOD();
+			this.comboStop = new OpenDental.UI.ComboBox();
+			this.comboStart = new OpenDental.UI.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textFontSize = new OpenDental.ValidNum();
 			this.labelStopTime = new System.Windows.Forms.Label();
@@ -328,12 +328,12 @@ namespace OpenDental{
 		private OpenDental.UI.Button butCancel;
 		private UI.Button butSave;
 		private UI.Button butPreview;
-		private OpenDental.UI.GroupBoxOD groupBoxPrintRouting;
+		private OpenDental.UI.GroupBox groupBoxPrintRouting;
 		private UI.Button butSelectedView;
 		private UI.Button butSelectedDay;
-		private OpenDental.UI.GroupBoxOD groupBox1;
-		private OpenDental.UI.ComboBoxOD comboStop;
-		private OpenDental.UI.ComboBoxOD comboStart;
+		private OpenDental.UI.GroupBox groupBox1;
+		private OpenDental.UI.ComboBox comboStop;
+		private OpenDental.UI.ComboBox comboStart;
 		private System.Windows.Forms.Label label3;
 		private ValidNum textFontSize;
 		private System.Windows.Forms.Label labelStopTime;
@@ -344,9 +344,9 @@ namespace OpenDental{
 		private System.Windows.Forms.RadioButton radioFullColor;
 		private System.Windows.Forms.RadioButton radioGrayscale;
 		private System.Windows.Forms.RadioButton radioLessColor;
-		private UI.GroupBoxOD groupBoxOD1;
+		private UI.GroupBox groupBoxOD1;
 		private System.Windows.Forms.RadioButton radioPortrait;
 		private System.Windows.Forms.RadioButton radioLandscape;
-		private UI.GroupBoxOD groupBoxOD2;
+		private UI.GroupBox groupBoxOD2;
 	}
 }

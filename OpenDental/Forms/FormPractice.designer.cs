@@ -28,7 +28,7 @@ namespace OpenDental {
 			this.label10 = new System.Windows.Forms.Label();
 			this.textBankNumber = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.label16 = new System.Windows.Forms.Label();
 			this.textZip = new System.Windows.Forms.TextBox();
 			this.textST = new System.Windows.Forms.TextBox();
@@ -41,17 +41,17 @@ namespace OpenDental {
 			this.label3 = new System.Windows.Forms.Label();
 			this.labelPlaceService = new System.Windows.Forms.Label();
 			this.listPlaceService = new OpenDental.UI.ListBoxOD();
-			this.groupBox4 = new OpenDental.UI.GroupBoxOD();
-			this.comboInsBillingProv = new OpenDental.UI.ComboBoxOD();
+			this.groupBox4 = new OpenDental.UI.GroupBox();
+			this.comboInsBillingProv = new OpenDental.UI.ComboBox();
 			this.radioInsBillingProvSpecific = new System.Windows.Forms.RadioButton();
 			this.radioInsBillingProvTreat = new System.Windows.Forms.RadioButton();
 			this.radioInsBillingProvDefault = new System.Windows.Forms.RadioButton();
-			this.groupSwiss = new OpenDental.UI.GroupBoxOD();
+			this.groupSwiss = new OpenDental.UI.GroupBox();
 			this.textBankAddress = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textBankRouting = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label18 = new System.Windows.Forms.Label();
 			this.checkUseBillingAddressOnClaims = new System.Windows.Forms.CheckBox();
 			this.label7 = new System.Windows.Forms.Label();
@@ -62,7 +62,7 @@ namespace OpenDental {
 			this.textBillingAddress = new System.Windows.Forms.TextBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.label11 = new System.Windows.Forms.Label();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.label17 = new System.Windows.Forms.Label();
 			this.label13 = new System.Windows.Forms.Label();
 			this.textPayToZip = new System.Windows.Forms.TextBox();
@@ -79,7 +79,7 @@ namespace OpenDental {
 			this.label9 = new System.Windows.Forms.Label();
 			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
-			this.comboProv = new OpenDental.UI.ComboBoxOD();
+			this.comboProv = new OpenDental.UI.ComboBox();
 			this.labelBillingPhone = new System.Windows.Forms.Label();
 			this.textBillingPhone = new OpenDental.ValidPhone();
 			this.labelPayToPhone = new System.Windows.Forms.Label();
@@ -694,7 +694,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.TextBox textBankNumber;
 		private System.Windows.Forms.Label label4;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.TextBox textZip;
 		private System.Windows.Forms.TextBox textST;
 		private System.Windows.Forms.TextBox textCity;
@@ -713,13 +713,13 @@ namespace OpenDental {
 		private System.Windows.Forms.RadioButton radioInsBillingProvTreat;
 		private System.Windows.Forms.RadioButton radioInsBillingProvDefault;
 		private System.Windows.Forms.RadioButton radioInsBillingProvSpecific;
-		private UI.ComboBoxOD comboInsBillingProv;
-		private OpenDental.UI.GroupBoxOD groupSwiss;
+		private UI.ComboBox comboInsBillingProv;
+		private OpenDental.UI.GroupBox groupSwiss;
 		private TextBox textBankAddress;
 		private Label label2;
 		private TextBox textBankRouting;
 		private Label label1;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private Label label7;
 		private TextBox textBillingZip;
 		private TextBox textBillingST;
@@ -729,7 +729,7 @@ namespace OpenDental {
 		private Label label8;
 		private Label label11;
 		private CheckBox checkUseBillingAddressOnClaims;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox3;
 		private Label label13;
 		private TextBox textPayToZip;
 		private TextBox textPayToST;
@@ -745,8 +745,8 @@ namespace OpenDental {
 		private ValidPhone textPhone;//Auto formatting turned off on purpose.  See validation.
 		private Label label19;
 		private Label label9;
-		private OpenDental.UI.GroupBoxOD groupBox4;// Required designer variable.
-		private UI.ComboBoxOD comboProv;
+		private OpenDental.UI.GroupBox groupBox4;// Required designer variable.
+		private UI.ComboBox comboProv;
 		private ValidPhone textBillingPhone;
 		private Label labelBillingPhone;
 		private ValidPhone textPayToPhone;

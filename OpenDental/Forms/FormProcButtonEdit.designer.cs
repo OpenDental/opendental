@@ -36,7 +36,7 @@ namespace OpenDental {
 			this.butAdd = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.label5 = new System.Windows.Forms.Label();
-			this.comboCategory = new OpenDental.UI.ComboBoxOD();
+			this.comboCategory = new OpenDental.UI.ComboBox();
 			this.pictureBox = new System.Windows.Forms.PictureBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.butImport = new OpenDental.UI.Button();
@@ -336,7 +336,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butDelete;
 		private System.Windows.Forms.Label label4;
 		private Label label5;
-		private OpenDental.UI.ComboBoxOD comboCategory;
+		private OpenDental.UI.ComboBox comboCategory;
 		private PictureBox pictureBox;
 		private Label label6;
 		private OpenDental.UI.Button butImport;

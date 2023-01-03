@@ -39,11 +39,11 @@
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.label5 = new System.Windows.Forms.Label();
 			this.textName = new System.Windows.Forms.TextBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.textSpecimenLocation = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.textServiceID = new System.Windows.Forms.TextBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.textServiceName = new System.Windows.Forms.TextBox();
@@ -337,11 +337,11 @@
 		private System.Windows.Forms.Button butAdd;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox textName;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.TextBox textSpecimenLocation;
 		private System.Windows.Forms.Label label6;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.TextBox textServiceID;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.TextBox textServiceName;

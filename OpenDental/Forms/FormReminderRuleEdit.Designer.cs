@@ -27,7 +27,7 @@
 			this.butDelete = new System.Windows.Forms.Button();
 			this.butOk = new System.Windows.Forms.Button();
 			this.butCancel = new System.Windows.Forms.Button();
-			this.comboReminderCriterion = new OpenDental.UI.ComboBoxOD();
+			this.comboReminderCriterion = new OpenDental.UI.ComboBox();
 			this.textCriterionValue = new System.Windows.Forms.TextBox();
 			this.textReminderMessage = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -213,7 +213,7 @@
 		private System.Windows.Forms.Button butDelete;
 		private System.Windows.Forms.Button butOk;
 		private System.Windows.Forms.Button butCancel;
-		private OpenDental.UI.ComboBoxOD comboReminderCriterion;
+		private OpenDental.UI.ComboBox comboReminderCriterion;
 		private System.Windows.Forms.TextBox textCriterionValue;
 		private System.Windows.Forms.TextBox textReminderMessage;
 		private System.Windows.Forms.Label label1;

@@ -26,11 +26,11 @@
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTerminalManager));
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.groupBoxPassword = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxPassword = new OpenDental.UI.GroupBox();
 			this.textPassword = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.butSave = new OpenDental.UI.Button();
-			this.groupBoxPatient = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxPatient = new OpenDental.UI.GroupBox();
 			this.butRemoveTreatPlan = new OpenDental.UI.Button();
 			this.listTreatPlans = new OpenDental.UI.ListBoxOD();
 			this.labelTreatPlans = new System.Windows.Forms.Label();
@@ -248,11 +248,11 @@
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textPassword;
 		private OpenDental.UI.Button butSave;
-		private OpenDental.UI.GroupBoxOD groupBoxPatient;
+		private OpenDental.UI.GroupBox groupBoxPatient;
 		private OpenDental.UI.ListBoxOD listSheets;
 		private System.Windows.Forms.Label labelSheets;
 		private System.Windows.Forms.Label labelPatient;
-		private OpenDental.UI.GroupBoxOD groupBoxPassword;
+		private OpenDental.UI.GroupBox groupBoxPassword;
 		private OpenDental.UI.Button butClose;
 		private UI.Button butPatForms;
 		private UI.ComboBoxClinicPicker contrClinicPicker;

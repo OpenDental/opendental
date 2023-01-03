@@ -269,6 +269,7 @@
     <Compile Include="Crud\JobTeamUserCrud.cs" />
     <Compile Include="Crud\LimitedBetaFeatureCrud.cs" />
     <Compile Include="Crud\LoginAttemptCrud.cs" />
+    <Compile Include="Crud\MapAreaContainerCrud.cs" />
     <Compile Include="Crud\MobileAppDeviceCrud.cs" />
     <Compile Include="Crud\MobileDataByteCrud.cs" />
     <Compile Include="Crud\OrthoCaseCrud.cs" />
@@ -560,6 +561,8 @@
     <Compile Include="InternalTools\Job Manager\TableTypes\MobileRelease.cs" />
     <Compile Include="InternalTools\Job Manager\TableTypes\MobileReleaseBuild.cs" />
     <Compile Include="InternalTools\Job Manager\TableTypes\JobTeam.cs" />
+    <Compile Include="InternalTools\Phones\MapAreaContainers.cs" />
+    <Compile Include="InternalTools\Phones\TableTypes\MapAreaContainer.cs" />
     <Compile Include="InternalTools\Phones\TableTypes\VoiceMailPath.cs" />
     <Compile Include="InternalTools\RemoteSupport\PeerInfos.cs" />
     <Compile Include="InternalTools\RemoteSupport\TableTypes\PeerInfo.cs" />
@@ -1216,7 +1219,7 @@
     <Compile Include="Data Interface\Icd10s.cs" />
     <Compile Include="Data Interface\Interventions.cs" />
     <Compile Include="Data Interface\Loincs.cs" />
-    <Compile Include="Data Interface\MapAreas.cs" />
+    <Compile Include="InternalTools\Phones\MapAreas.cs" />
     <Compile Include="Data Interface\MedLabFacAttaches.cs" />
     <Compile Include="Data Interface\MedLabFacilities.cs" />
     <Compile Include="Data Interface\MedLabResults.cs" />
@@ -1370,7 +1373,6 @@
     <Compile Include="InternalTools\Phones\PhoneAsterisks.cs" />
     <Compile Include="InternalTools\Phones\PhoneEmpDefaults.cs" />
     <Compile Include="InternalTools\Phones\PhoneEmpSubGroups.cs" />
-    <Compile Include="InternalTools\Phones\PhoneMapJSON.cs" />
     <Compile Include="InternalTools\Phones\PhoneGraphs.cs" />
     <Compile Include="InternalTools\Phones\PhoneMetrics.cs" />
     <Compile Include="Data Interface\PhoneNumbers.cs" />
@@ -1774,7 +1776,7 @@
     <Compile Include="TableTypes\Ucum.cs" />
     <Compile Include="TableTypes\EmailMessageUid.cs" />
     <Compile Include="TableTypes\EhrTrigger.cs" />
-    <Compile Include="TableTypes\MapArea.cs" />
+    <Compile Include="InternalTools\Phones\TableTypes\MapArea.cs" />
     <Compile Include="TableTypes\EhrAmendment.cs" />
     <Compile Include="TableTypes\Automation.cs" />
     <Compile Include="TableTypes\ApptFieldDef.cs" />

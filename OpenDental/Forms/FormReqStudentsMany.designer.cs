@@ -36,9 +36,9 @@ namespace OpenDental {
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormReqStudentsMany));
 			this.label2 = new System.Windows.Forms.Label();
-			this.comboCourse = new OpenDental.UI.ComboBoxOD();
+			this.comboCourse = new OpenDental.UI.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboClass = new OpenDental.UI.ComboBoxOD();
+			this.comboClass = new OpenDental.UI.ComboBox();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
@@ -130,8 +130,8 @@ namespace OpenDental {
 		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GridOD gridMain;
 		private Label label2;
-		private OpenDental.UI.ComboBoxOD comboCourse;
+		private OpenDental.UI.ComboBox comboCourse;
 		private Label label1;
-		private OpenDental.UI.ComboBoxOD comboClass;
+		private OpenDental.UI.ComboBox comboClass;
 	}
 }

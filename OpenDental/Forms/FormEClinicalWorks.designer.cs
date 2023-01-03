@@ -43,10 +43,10 @@ namespace OpenDental {
 			this.labelHL7FolderIn = new System.Windows.Forms.Label();
 			this.textHL7FolderOut = new System.Windows.Forms.TextBox();
 			this.labelHL7FolderOut = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.labelDefaultUserGroup = new System.Windows.Forms.Label();
-			this.comboDefaultUserGroup = new OpenDental.UI.ComboBoxOD();
+			this.comboDefaultUserGroup = new OpenDental.UI.ComboBox();
 			this.checkShowImages = new OpenDental.UI.CheckBox();
 			this.radioModeTight = new System.Windows.Forms.RadioButton();
 			this.radioModeStandalone = new System.Windows.Forms.RadioButton();
@@ -534,10 +534,10 @@ namespace OpenDental {
 		private TextBox textHL7FolderIn;
 		private TextBox textHL7FolderOut;
 		private Label labelHL7FolderOut;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private Label label5;
 		private Label labelDefaultUserGroup;
-		private OpenDental.UI.ComboBoxOD comboDefaultUserGroup;
+		private OpenDental.UI.ComboBox comboDefaultUserGroup;
 		private OpenDental.UI.CheckBox checkShowImages;
 		private RadioButton radioModeTight;
 		private RadioButton radioModeStandalone;

@@ -24,29 +24,29 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTaskSearch));
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
-			this.groupText = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
+			this.groupText = new OpenDental.UI.GroupBox();
 			this.labelExcluding = new System.Windows.Forms.Label();
 			this.textExcluding = new System.Windows.Forms.TextBox();
 			this.labelIncluding = new System.Windows.Forms.Label();
 			this.textIncluding = new System.Windows.Forms.TextBox();
 			this.checkIncludeAttachments = new OpenDental.UI.CheckBox();
-			this.groupUsers = new OpenDental.UI.GroupBoxOD();
+			this.groupUsers = new OpenDental.UI.GroupBox();
 			this.checkShowHiddenUsers = new OpenDental.UI.CheckBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboUsers = new OpenDental.UI.ComboBoxOD();
+			this.comboUsers = new OpenDental.UI.ComboBox();
 			this.butUserPicker = new OpenDental.UI.Button();
 			this.checkBoxIncludeCompleted = new OpenDental.UI.CheckBox();
 			this.checkBoxIncludesTaskNotes = new OpenDental.UI.CheckBox();
-			this.comboPriority = new OpenDental.UI.ComboBoxOD();
+			this.comboPriority = new OpenDental.UI.ComboBox();
 			this.label12 = new System.Windows.Forms.Label();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.butClearCompleted = new OpenDental.UI.Button();
 			this.dateCompletedTo = new System.Windows.Forms.DateTimePicker();
 			this.dateCompletedFrom = new System.Windows.Forms.DateTimePicker();
 			this.label6 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butClearCreated = new OpenDental.UI.Button();
 			this.dateCreatedTo = new System.Windows.Forms.DateTimePicker();
 			this.dateCreatedFrom = new System.Windows.Forms.DateTimePicker();
@@ -513,7 +513,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridTasks;
 		private UI.Button butRefresh;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.TextBox textPatNum;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.TextBox textIncluding;
@@ -525,12 +525,12 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.CheckBox checkLimit;
 		private UI.Button butPatPicker;
-		private OpenDental.UI.ComboBoxOD comboUsers;
+		private OpenDental.UI.ComboBox comboUsers;
 		private UI.Button butUserPicker;
-		private OpenDental.UI.ComboBoxOD comboPriority;
+		private OpenDental.UI.ComboBox comboPriority;
 		private System.Windows.Forms.Label label12;
-		private OpenDental.UI.GroupBoxOD groupBox3;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox3;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.DateTimePicker dateCreatedFrom;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label2;
@@ -546,10 +546,10 @@ namespace OpenDental{
 		private OpenDental.UI.CheckBox checkBoxIncludesTaskNotes;
 		private OpenDental.UI.CheckBox checkReportServer;
 		private OpenDental.UI.CheckBox checkShowHiddenUsers;
-		private UI.GroupBoxOD groupUsers;
+		private UI.GroupBox groupUsers;
 		private OpenDental.UI.CheckBox checkIncludeAttachments;
 		private System.Windows.Forms.Label labelExcluding;
 		private System.Windows.Forms.TextBox textExcluding;
-		private UI.GroupBoxOD groupText;
+		private UI.GroupBox groupText;
 	}
 }

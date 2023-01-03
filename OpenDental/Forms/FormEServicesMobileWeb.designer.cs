@@ -33,10 +33,10 @@ namespace OpenDental{
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.groupBox5 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox5 = new OpenDental.UI.GroupBox();
 			this.butSetupMobileWebUsers = new OpenDental.UI.Button();
 			this.label29 = new System.Windows.Forms.Label();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.textHostedUrlMobileWeb = new System.Windows.Forms.TextBox();
 			this.label12 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
@@ -200,11 +200,11 @@ namespace OpenDental{
 
 		#endregion
 		private System.Windows.Forms.Label label37;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.TextBox textHostedUrlMobileWeb;
 		private System.Windows.Forms.Label label12;
 		private System.Windows.Forms.Label label5;
-		private OpenDental.UI.GroupBoxOD groupBox5;
+		private OpenDental.UI.GroupBox groupBox5;
 		private UI.Button butSetupMobileWebUsers;
 		private System.Windows.Forms.Label label29;
 		private System.Windows.Forms.ContextMenuStrip menuWebSchedVerifyTextTemplate;

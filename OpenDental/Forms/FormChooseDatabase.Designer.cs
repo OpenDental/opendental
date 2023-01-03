@@ -29,7 +29,7 @@ namespace OpenDental{
 			this.listType = new OpenDental.UI.ListBoxOD();
 			this.label7 = new System.Windows.Forms.Label();
 			this.checkConnectServer = new OpenDental.UI.CheckBox();
-			this.groupServer = new OpenDental.UI.GroupBoxOD();
+			this.groupServer = new OpenDental.UI.GroupBox();
 			this.checkBoxAutomaticLogin = new OpenDental.UI.CheckBox();
 			this.checkUsingEcw = new OpenDental.UI.CheckBox();
 			this.textURI = new System.Windows.Forms.TextBox();
@@ -39,7 +39,7 @@ namespace OpenDental{
 			this.label11 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
-			this.groupDirect = new OpenDental.UI.GroupBoxOD();
+			this.groupDirect = new OpenDental.UI.GroupBox();
 			this.textUser = new System.Windows.Forms.TextBox();
 			this.comboDatabase = new System.Windows.Forms.ComboBox();
 			this.checkNoShow = new OpenDental.UI.CheckBox();
@@ -362,7 +362,7 @@ namespace OpenDental{
 		private OpenDental.UI.ListBoxOD listType;
 		private System.Windows.Forms.Label label7;
 		private OpenDental.UI.CheckBox checkConnectServer;
-		private OpenDental.UI.GroupBoxOD groupServer;
+		private OpenDental.UI.GroupBox groupServer;
 		private OpenDental.UI.CheckBox checkUsingEcw;
 		private System.Windows.Forms.TextBox textURI;
 		private System.Windows.Forms.TextBox textUser2;
@@ -371,7 +371,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.Label label6;
-		private OpenDental.UI.GroupBoxOD groupDirect;
+		private OpenDental.UI.GroupBox groupDirect;
 		private System.Windows.Forms.TextBox textUser;
 		private System.Windows.Forms.ComboBox comboDatabase;
 		private OpenDental.UI.CheckBox checkNoShow;

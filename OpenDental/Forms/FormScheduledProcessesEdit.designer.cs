@@ -30,8 +30,8 @@ namespace OpenDental{
 			this.labelTimeToRun = new System.Windows.Forms.Label();
 			this.labelFrequencyToRun = new System.Windows.Forms.Label();
 			this.labelScheduledAction = new System.Windows.Forms.Label();
-			this.comboFrequency = new OpenDental.UI.ComboBoxOD();
-			this.comboScheduledAction = new OpenDental.UI.ComboBoxOD();
+			this.comboFrequency = new OpenDental.UI.ComboBox();
+			this.comboScheduledAction = new OpenDental.UI.ComboBox();
 			this.butOK = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
@@ -146,8 +146,8 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
-		private UI.ComboBoxOD comboScheduledAction;
-		private UI.ComboBoxOD comboFrequency;
+		private UI.ComboBox comboScheduledAction;
+		private UI.ComboBox comboFrequency;
 		private System.Windows.Forms.Label labelScheduledAction;
 		private System.Windows.Forms.Label labelFrequencyToRun;
 		private System.Windows.Forms.Label labelTimeToRun;

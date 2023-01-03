@@ -32,7 +32,7 @@ namespace OpenDental{
 			this.butSelectPatients = new OpenDental.UI.Button();
 			this.textListName = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboPostcardAccount = new OpenDental.UI.ComboBoxOD();
+			this.comboPostcardAccount = new OpenDental.UI.ComboBox();
 			this.butViewAccount = new OpenDental.UI.Button();
 			this.menuAccountSetup = new OpenDental.UI.MenuOD();
 			this.SuspendLayout();
@@ -166,7 +166,7 @@ namespace OpenDental{
 		private UI.Button butSelectPatients;
 		private System.Windows.Forms.TextBox textListName;
 		private System.Windows.Forms.Label label1;
-		private UI.ComboBoxOD comboPostcardAccount;
+		private UI.ComboBox comboPostcardAccount;
 		private UI.Button butViewAccount;
 		private UI.MenuOD menuAccountSetup;
 	}

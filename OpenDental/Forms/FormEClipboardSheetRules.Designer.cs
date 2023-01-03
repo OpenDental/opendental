@@ -29,7 +29,7 @@ namespace OpenDental {
 			this.labelMinAge = new System.Windows.Forms.Label();
 			this.labelMaxAge = new System.Windows.Forms.Label();
 			this.labelFrequency = new System.Windows.Forms.Label();
-			this.comboBehavior = new OpenDental.UI.ComboBoxOD();
+			this.comboBehavior = new OpenDental.UI.ComboBox();
 			this.checkMinAge = new OpenDental.UI.CheckBox();
 			this.checkMaxAge = new OpenDental.UI.CheckBox();
 			this.textMinAge = new System.Windows.Forms.TextBox();
@@ -247,7 +247,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelMinAge;
 		private System.Windows.Forms.Label labelMaxAge;
 		private System.Windows.Forms.Label labelFrequency;
-		private UI.ComboBoxOD comboBehavior;
+		private UI.ComboBox comboBehavior;
 		private OpenDental.UI.CheckBox checkMinAge;
 		private OpenDental.UI.CheckBox checkMaxAge;
 		private System.Windows.Forms.TextBox textMinAge;

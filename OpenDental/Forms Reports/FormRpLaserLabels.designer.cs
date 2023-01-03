@@ -74,7 +74,7 @@ namespace OpenDental {
 			this.listStatus = new OpenDental.UI.ListBoxOD();
 			this.tabLabelSetup = new System.Windows.Forms.TabControl();
 			this.tabBirthday = new System.Windows.Forms.TabPage();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butBirthdayMonth = new OpenDental.UI.Button();
 			this.butBirthdayRight = new OpenDental.UI.Button();
 			this.butBirthdayLeft = new OpenDental.UI.Button();
@@ -855,7 +855,7 @@ namespace OpenDental {
 		private CheckBox checkBirthdayActive;
 		private TextBox textBirthdayFrom;
 		private TextBox textBirthdayTo;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.Button butBirthdayLeft;
 		private OpenDental.UI.Button butBirthdayRight;
 		private OpenDental.UI.Button butBirthdayMonth;

@@ -35,8 +35,8 @@ namespace OpenDental{
 			this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.butOk = new OpenDental.UI.Button();
 			this.label25 = new System.Windows.Forms.Label();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textLogCleanupInterval = new OpenDental.ValidNum();
 			this.labelIntervalDays = new System.Windows.Forms.Label();
 			this.checkEmailsWithDiffProcess = new System.Windows.Forms.CheckBox();
@@ -359,7 +359,7 @@ namespace OpenDental{
 
 		#endregion
 		private UI.Button butOk;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox3;
 		private UI.Button butStartListenerService;
 		private System.Windows.Forms.Label label24;
 		private System.Windows.Forms.Label labelListenerStatus;
@@ -386,6 +386,6 @@ namespace OpenDental{
 		private UI.Button butCancel;
 		private System.Windows.Forms.Label labelIntervalDays;
 		private ValidNum textLogCleanupInterval;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 	}
 }

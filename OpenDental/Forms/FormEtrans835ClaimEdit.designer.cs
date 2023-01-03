@@ -48,7 +48,7 @@ namespace OpenDental{
 			this.label10 = new System.Windows.Forms.Label();
 			this.textInsPaidCalc = new System.Windows.Forms.TextBox();
 			this.textProcAdjAmtSum = new System.Windows.Forms.TextBox();
-			this.groupBalancing = new OpenDental.UI.GroupBoxOD();
+			this.groupBalancing = new OpenDental.UI.GroupBox();
 			this.gridClaimAdjustments = new OpenDental.UI.GridOD();
 			this.gridAdjudicationInfo = new OpenDental.UI.GridOD();
 			this.gridProcedureBreakdown = new OpenDental.UI.GridOD();
@@ -470,7 +470,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.TextBox textInsPaidCalc;
 		private System.Windows.Forms.TextBox textProcAdjAmtSum;
-		private OpenDental.UI.GroupBoxOD groupBalancing;
+		private OpenDental.UI.GroupBox groupBalancing;
 		private UI.GridOD gridSupplementalInfo;
 		private System.Windows.Forms.TextBox textDatePayerReceived;
 		private System.Windows.Forms.Label label11;

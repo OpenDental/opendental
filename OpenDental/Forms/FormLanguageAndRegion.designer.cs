@@ -27,7 +27,7 @@ namespace OpenDental{
 			this.textBoxDescript = new System.Windows.Forms.TextBox();
 			this.textLARDB = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboLanguageAndRegion = new OpenDental.UI.ComboBoxOD();
+			this.comboLanguageAndRegion = new OpenDental.UI.ComboBox();
 			this.labelNewLAR = new System.Windows.Forms.Label();
 			this.checkNoShow = new OpenDental.UI.CheckBox();
 			this.textLARLocal = new System.Windows.Forms.TextBox();
@@ -159,7 +159,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textBoxDescript;
 		private System.Windows.Forms.TextBox textLARDB;
 		private System.Windows.Forms.Label label1;
-		private OpenDental.UI.ComboBoxOD comboLanguageAndRegion;
+		private OpenDental.UI.ComboBox comboLanguageAndRegion;
 		private System.Windows.Forms.Label labelNewLAR;
 		private OpenDental.UI.CheckBox checkNoShow;
 		private System.Windows.Forms.TextBox textLARLocal;

@@ -26,7 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormInsVerificationSetup));
 			this.checkExcludePatientClones = new OpenDental.UI.CheckBox();
 			this.checkInsVerifyExcludePatVerify = new OpenDental.UI.CheckBox();
-			this.groupStandard = new OpenDental.UI.GroupBoxOD();
+			this.groupStandard = new OpenDental.UI.GroupBox();
 			this.labelPastDueDaysStandard = new System.Windows.Forms.Label();
 			this.textPastDueDaysStandard = new OpenDental.ValidNum();
 			this.labelPastDueStandard = new System.Windows.Forms.Label();
@@ -44,7 +44,7 @@ namespace OpenDental{
 			this.butCancel = new OpenDental.UI.Button();
 			this.checkFutureDateBenefitYear = new OpenDental.UI.CheckBox();
 			this.checkFutureDatePatEnrollmentYear = new OpenDental.UI.CheckBox();
-			this.groupMedicaid = new OpenDental.UI.GroupBoxOD();
+			this.groupMedicaid = new OpenDental.UI.GroupBox();
 			this.labelInsuranceFilingCodeInMedicaid = new System.Windows.Forms.Label();
 			this.listBoxInsFilingCodes = new OpenDental.UI.ListBoxOD();
 			this.labelPastDueDaysMedicaid = new System.Windows.Forms.Label();
@@ -460,7 +460,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelPlanBenefitsDaysStandard;
 		private System.Windows.Forms.Label labelPatientEligibilityDaysStandard;
 		private System.Windows.Forms.Label labelScheduledAppointmentStandard;
-		private OpenDental.UI.GroupBoxOD groupStandard;
+		private OpenDental.UI.GroupBox groupStandard;
 		private System.Windows.Forms.Label labelSchedApptDaysStandard;
 		private OpenDental.UI.CheckBox checkInsVerifyExcludePatVerify;
 		private OpenDental.UI.CheckBox checkExcludePatientClones;
@@ -469,7 +469,7 @@ namespace OpenDental{
 		private ValidNum textPastDueDaysStandard;
 		private System.Windows.Forms.Label labelPastDueStandard;
 		private OpenDental.UI.CheckBox checkFutureDatePatEnrollmentYear;
-		private UI.GroupBoxOD groupMedicaid;
+		private UI.GroupBox groupMedicaid;
 		private System.Windows.Forms.Label labelPastDueDaysMedicaid;
 		private ValidNum textPastDueDaysMedicaid;
 		private System.Windows.Forms.Label labelPastDueMedicaid;

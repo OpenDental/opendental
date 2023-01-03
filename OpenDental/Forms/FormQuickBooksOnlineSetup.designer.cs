@@ -31,7 +31,7 @@ namespace OpenDental{
 			this.labelClassesInOD = new System.Windows.Forms.Label();
 			this.labelIncomeAccountsInOD = new System.Windows.Forms.Label();
 			this.labelDepositAccountsInOD = new System.Windows.Forms.Label();
-			this.groupEnable = new OpenDental.UI.GroupBoxOD();
+			this.groupEnable = new OpenDental.UI.GroupBox();
 			this.textRealmID = new System.Windows.Forms.TextBox();
 			this.labelRealmID = new System.Windows.Forms.Label();
 			this.textRefreshToken = new System.Windows.Forms.TextBox();
@@ -377,7 +377,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelClassesInOD;
 		private System.Windows.Forms.Label labelIncomeAccountsInOD;
 		private System.Windows.Forms.Label labelDepositAccountsInOD;
-		private OpenDental.UI.GroupBoxOD groupEnable;
+		private OpenDental.UI.GroupBox groupEnable;
 		private System.Windows.Forms.Label labelAuthenticate;
 		private System.Windows.Forms.Label labelDeposits;
 		private System.Windows.Forms.TextBox textRealmID;

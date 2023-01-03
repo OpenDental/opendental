@@ -42,10 +42,10 @@
 			this.textDateEntry = new OpenDental.ValidDate();
 			this.label8 = new System.Windows.Forms.Label();
 			this.butPickProv = new OpenDental.UI.Button();
-			this.comboProv = new OpenDental.UI.ComboBoxOD();
+			this.comboProv = new OpenDental.UI.ComboBox();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.textNote = new OpenDental.ODtextBox();
-			this.groupProcedure = new OpenDental.UI.GroupBoxOD();
+			this.groupProcedure = new OpenDental.UI.GroupBox();
 			this.labelProcDisabled = new System.Windows.Forms.Label();
 			this.butEditAnyway = new OpenDental.UI.Button();
 			this.textProcWriteoff = new System.Windows.Forms.TextBox();
@@ -627,9 +627,9 @@
 		private OpenDental.ValidDate textDateEntry;
 		private System.Windows.Forms.Label label8;
 		private OpenDental.UI.Button butPickProv;
-		private UI.ComboBoxOD comboProv;
+		private UI.ComboBox comboProv;
 		private UI.ComboBoxClinicPicker comboClinic;
-		private OpenDental.UI.GroupBoxOD groupProcedure;
+		private OpenDental.UI.GroupBox groupProcedure;
 		private System.Windows.Forms.TextBox textProcWriteoff;
 		private System.Windows.Forms.Label label16;
 		private System.Windows.Forms.TextBox textProcTooth;

@@ -26,7 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormBillingTypeMerge));
 			this.butMerge = new OpenDental.UI.Button();
 			this.butClose = new OpenDental.UI.Button();
-			this.groupBoxInto = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxInto = new OpenDental.UI.GroupBox();
 			this.textItemValueInto = new System.Windows.Forms.TextBox();
 			this.labelItemValueInto = new System.Windows.Forms.Label();
 			this.textNameInto = new System.Windows.Forms.TextBox();
@@ -34,7 +34,7 @@ namespace OpenDental{
 			this.butChangeInto = new OpenDental.UI.Button();
 			this.textDefNumInto = new System.Windows.Forms.TextBox();
 			this.labelDefNumInto = new System.Windows.Forms.Label();
-			this.groupBoxFrom = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxFrom = new OpenDental.UI.GroupBox();
 			this.textItemValueFrom = new System.Windows.Forms.TextBox();
 			this.labelItemValueFrom = new System.Windows.Forms.Label();
 			this.textNameFrom = new System.Windows.Forms.TextBox();
@@ -247,11 +247,11 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butMerge;
 		private OpenDental.UI.Button butClose;
-		private OpenDental.UI.GroupBoxOD groupBoxInto;
+		private OpenDental.UI.GroupBox groupBoxInto;
 		private UI.Button butChangeInto;
 		private System.Windows.Forms.TextBox textDefNumInto;
 		private System.Windows.Forms.Label labelDefNumInto;
-		private OpenDental.UI.GroupBoxOD groupBoxFrom;
+		private OpenDental.UI.GroupBox groupBoxFrom;
 		private UI.Button butChangeFrom;
 		private System.Windows.Forms.TextBox textDefNumFrom;
 		private System.Windows.Forms.Label labelDefNumFrom;

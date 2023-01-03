@@ -30,7 +30,7 @@
 			this.butSubmit = new System.Windows.Forms.Button();
 			this.butOK = new System.Windows.Forms.Button();
 			this.butShow = new System.Windows.Forms.Button();
-			this.groupHL7 = new OpenDental.UI.GroupBoxOD();
+			this.groupHL7 = new OpenDental.UI.GroupBox();
 			this.groupHL7.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -141,6 +141,6 @@
 		private System.Windows.Forms.Button butSubmit;
 		private System.Windows.Forms.Button butOK;
 		private System.Windows.Forms.Button butShow;
-		private OpenDental.UI.GroupBoxOD groupHL7;
+		private OpenDental.UI.GroupBox groupHL7;
 	}
 }

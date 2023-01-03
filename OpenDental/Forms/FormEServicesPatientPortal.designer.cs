@@ -27,7 +27,7 @@ namespace OpenDental{
 			this.label37 = new System.Windows.Forms.Label();
 			this.butOK = new OpenDental.UI.Button();
 			this.label5 = new System.Windows.Forms.Label();
-			this.groupBox4 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox4 = new OpenDental.UI.GroupBox();
 			this.comboPPClinicUrl = new OpenDental.UI.ComboBoxClinicPicker();
 			this.label39 = new System.Windows.Forms.Label();
 			this.radioPatientPortalPayment = new System.Windows.Forms.RadioButton();
@@ -37,7 +37,7 @@ namespace OpenDental{
 			this.butNavigateTo = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
-			this.groupBoxNotification = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxNotification = new OpenDental.UI.GroupBox();
 			this.butEditWebMailNotificationBody = new OpenDental.UI.Button();
 			this.browserWebMailNotificatonBody = new System.Windows.Forms.WebBrowser();
 			this.label9 = new System.Windows.Forms.Label();
@@ -45,7 +45,7 @@ namespace OpenDental{
 			this.textBoxNotificationSubject = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butUseHosted = new OpenDental.UI.Button();
 			this.butCustomUrl = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
@@ -369,16 +369,16 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textBoxNotificationSubject;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label6;
-		private OpenDental.UI.GroupBoxOD groupBoxNotification;
+		private OpenDental.UI.GroupBox groupBoxNotification;
 		private System.Windows.Forms.Label label7;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.TextBox textPatientFacingUrlPortal;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label9;
 		private UI.Button butOK;
 		private System.Windows.Forms.Label label37;
-		private OpenDental.UI.GroupBoxOD groupBox4;
+		private OpenDental.UI.GroupBox groupBox4;
 		private System.Windows.Forms.TextBox textHostedUrlPortal;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;

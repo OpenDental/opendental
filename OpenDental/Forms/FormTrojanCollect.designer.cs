@@ -51,7 +51,7 @@ namespace OpenDental {
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.textDate = new OpenDental.ValidDate();
-			this.groupTransactionType = new OpenDental.UI.GroupBoxOD();
+			this.groupTransactionType = new OpenDental.UI.GroupBox();
 			this.textAmount = new OpenDental.ValidDouble();
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.groupTransactionType.SuspendLayout();
@@ -385,7 +385,7 @@ namespace OpenDental {
 		private RadioButton radioFirm;
 		private RadioButton radioSkip;
 		private ValidDate textDate;
-		private OpenDental.UI.GroupBoxOD groupTransactionType;
+		private OpenDental.UI.GroupBox groupTransactionType;
 		private ValidDouble textAmount;
 		private UI.MenuOD menuMain;
 	}

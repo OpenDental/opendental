@@ -31,9 +31,9 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			this.listConditionValues = new OpenDental.UI.ListBoxOD();
 			this.label3 = new System.Windows.Forms.Label();
-			this.comboOperator2 = new OpenDental.UI.ComboBoxOD();
+			this.comboOperator2 = new OpenDental.UI.ComboBox();
 			this.textConditionValue2 = new System.Windows.Forms.TextBox();
-			this.comboOperator1 = new OpenDental.UI.ComboBoxOD();
+			this.comboOperator1 = new OpenDental.UI.ComboBox();
 			this.listRelationships = new OpenDental.UI.ListBoxOD();
 			this.butPickProv = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
@@ -215,9 +215,9 @@ namespace OpenDental{
 		private UI.Button butPickProv;
 		private OpenDental.UI.ListBoxOD listConditionValues;
 		private System.Windows.Forms.Label label3;
-		private OpenDental.UI.ComboBoxOD comboOperator2;
+		private OpenDental.UI.ComboBox comboOperator2;
 		private System.Windows.Forms.TextBox textConditionValue2;
-		private OpenDental.UI.ComboBoxOD comboOperator1;
+		private OpenDental.UI.ComboBox comboOperator1;
 		private OpenDental.UI.ListBoxOD listRelationships;
 	}
 }

@@ -39,7 +39,7 @@ namespace OpenDental{
 			this.label4 = new System.Windows.Forms.Label();
 			this.textShippingCharge = new OpenDental.ValidDouble();
 			this.labelShippingCharge = new System.Windows.Forms.Label();
-			this.comboUser = new OpenDental.UI.ComboBoxOD();
+			this.comboUser = new OpenDental.UI.ComboBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.textDateReceived = new OpenDental.ValidDate();
 			this.labelDateReceived = new System.Windows.Forms.Label();
@@ -279,7 +279,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label4;
 		private ValidDouble textShippingCharge;
 		private System.Windows.Forms.Label labelShippingCharge;
-		private UI.ComboBoxOD comboUser;
+		private UI.ComboBox comboUser;
 		private System.Windows.Forms.Label label5;
 		private ValidDate textDateReceived;
 		private System.Windows.Forms.Label labelDateReceived;

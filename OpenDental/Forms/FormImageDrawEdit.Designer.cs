@@ -40,7 +40,7 @@ namespace OpenDental{
 			this.label7 = new System.Windows.Forms.Label();
 			this.textFontApparent = new OpenDental.ValidDouble();
 			this.butCalculateActual = new OpenDental.UI.Button();
-			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.butCalculateApparent = new OpenDental.UI.Button();
 			this.label4 = new System.Windows.Forms.Label();
 			this.butColorBack = new System.Windows.Forms.Button();
@@ -296,7 +296,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label7;
 		private ValidDouble textFontApparent;
 		private UI.Button butCalculateActual;
-		private UI.GroupBoxOD groupBoxOD1;
+		private UI.GroupBox groupBoxOD1;
 		private UI.Button butCalculateApparent;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Button butColorBack;

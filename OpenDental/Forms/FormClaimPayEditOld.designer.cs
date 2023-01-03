@@ -38,7 +38,7 @@ namespace OpenDental {
 			this.checkShowUn = new OpenDental.UI.CheckBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butDelete = new OpenDental.UI.Button();
-			this.comboClinic = new OpenDental.UI.ComboBoxOD();
+			this.comboClinic = new OpenDental.UI.ComboBox();
 			this.labelClinic = new System.Windows.Forms.Label();
 			this.textCarrierName = new System.Windows.Forms.TextBox();
 			this.label7 = new System.Windows.Forms.Label();
@@ -301,7 +301,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.CheckBox checkShowUn;
 		private OpenDental.UI.Button butDelete;
-		private OpenDental.UI.ComboBoxOD comboClinic;
+		private OpenDental.UI.ComboBox comboClinic;
 		private System.Windows.Forms.Label labelClinic;
 		private System.Windows.Forms.TextBox textCarrierName;
 		private System.Windows.Forms.Label label7;

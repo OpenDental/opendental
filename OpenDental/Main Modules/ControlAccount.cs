@@ -1419,13 +1419,13 @@ namespace OpenDental {
 				}
 			}
 			#endregion Autoselect Today's Procedures
-			List<long> listPatNums=null;
-			List<long> listProcClaimNums=null;
-			List<long> listPayClaimNums=null;
-			List<long> listProcNums=null;
-			List<long> listAdjNums=null;
-			List<long> listPayNums=null;
-			List<long> listPayPlanChargeNums=null;
+			List<long> listPatNums=new List<long>();
+			List<long> listProcClaimNums=new List<long>();
+			List<long> listPayClaimNums=new List<long>();
+			List<long> listProcNums=new List<long>();
+			List<long> listAdjNums=new List<long>();
+			List<long> listPayNums=new List<long>();
+			List<long> listPayPlanChargeNums=new List<long>();
 			if(gridAccount.SelectedIndices.Length>0) {
 				PayPlanVersions payPlanVersionCur=(PayPlanVersions)PrefC.GetInt(PrefName.PayPlansVersion);
 				//guaranteed to have rows selected from here down, verify they are allowed transactions

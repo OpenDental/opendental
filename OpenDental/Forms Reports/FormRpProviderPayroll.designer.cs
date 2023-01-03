@@ -39,10 +39,10 @@ namespace OpenDental {
 			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.checkClinicInfo = new System.Windows.Forms.CheckBox();
-			this.groupPayrollReportType = new OpenDental.UI.GroupBoxOD();
+			this.groupPayrollReportType = new OpenDental.UI.GroupBox();
 			this.radioDetailedReport = new System.Windows.Forms.RadioButton();
 			this.radioSimpleReport = new System.Windows.Forms.RadioButton();
-			this.groupDateRange = new OpenDental.UI.GroupBoxOD();
+			this.groupDateRange = new OpenDental.UI.GroupBox();
 			this.dtPickerTo = new System.Windows.Forms.DateTimePicker();
 			this.dtPickerFrom = new System.Windows.Forms.DateTimePicker();
 			this.butRight = new OpenDental.UI.Button();
@@ -348,10 +348,10 @@ namespace OpenDental {
 		private UI.Button butRight;
 		private DateTimePicker dtPickerFrom;
 		private DateTimePicker dtPickerTo;
-		private OpenDental.UI.GroupBoxOD groupDateRange;
+		private OpenDental.UI.GroupBox groupDateRange;
 		private RadioButton radioSimpleReport;
 		private RadioButton radioDetailedReport;
-		private OpenDental.UI.GroupBoxOD groupPayrollReportType;
+		private OpenDental.UI.GroupBox groupPayrollReportType;
 		private Label labelSpecialReport;
 	}
 }

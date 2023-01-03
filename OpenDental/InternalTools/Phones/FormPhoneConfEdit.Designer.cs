@@ -31,7 +31,7 @@ namespace OpenDental {
 			this.textExtension = new OpenDental.ValidDouble();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
-			this.comboSite = new OpenDental.UI.ComboBoxOD();
+			this.comboSite = new OpenDental.UI.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.butDelete = new OpenDental.UI.Button();
 			this.SuspendLayout();
@@ -162,7 +162,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label8;
-		private UI.ComboBoxOD comboSite;
+		private UI.ComboBox comboSite;
 		private System.Windows.Forms.Label label3;
 		private UI.Button butDelete;
 		private ValidDouble textButtonIndex;

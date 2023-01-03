@@ -25,11 +25,11 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWebChatSurveys));
 			this.butClose = new OpenDental.UI.Button();
-			this.groupFilters = new OpenDental.UI.GroupBoxOD();
+			this.groupFilters = new OpenDental.UI.GroupBox();
 			this.textSessionNum = new OpenDental.ODtextBox();
 			this.labelSessionNum = new System.Windows.Forms.Label();
 			this.dateRangeWebChat = new OpenDental.UI.ODDateRangePicker();
-			this.comboUsers = new OpenDental.UI.ComboBoxOD();
+			this.comboUsers = new OpenDental.UI.ComboBox();
 			this.textSurveyTextContains = new OpenDental.ODtextBox();
 			this.labelSurveyTextContains = new System.Windows.Forms.Label();
 			this.labelUsers = new System.Windows.Forms.Label();
@@ -204,11 +204,11 @@ namespace OpenDental{
 
 		#endregion
 		private OpenDental.UI.Button butClose;
-		private OpenDental.UI.GroupBoxOD groupFilters;
+		private OpenDental.UI.GroupBox groupFilters;
 		private ODtextBox textSessionNum;
 		private System.Windows.Forms.Label labelSessionNum;
 		private UI.ODDateRangePicker dateRangeWebChat;
-		private OpenDental.UI.ComboBoxOD comboUsers;
+		private OpenDental.UI.ComboBox comboUsers;
 		private ODtextBox textSurveyTextContains;
 		private System.Windows.Forms.Label labelSurveyTextContains;
 		private System.Windows.Forms.Label labelUsers;

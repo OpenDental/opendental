@@ -41,7 +41,7 @@ namespace OpenDental{
 			this.butCancel = new OpenDental.UI.Button();
 			this.textNote = new OpenDental.ODtextBox();
 			this.labelPlanType = new System.Windows.Forms.Label();
-			this.comboPlanType = new OpenDental.UI.ComboBoxOD();
+			this.comboPlanType = new OpenDental.UI.ComboBox();
 			this.contextMenuProcs.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -262,6 +262,6 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelHeading;
 		private ODtextBox textNote;
 		private System.Windows.Forms.Label labelPlanType;
-		private OpenDental.UI.ComboBoxOD comboPlanType;
+		private OpenDental.UI.ComboBox comboPlanType;
 	}
 }

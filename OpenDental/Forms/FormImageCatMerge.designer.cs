@@ -26,11 +26,11 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormImageCatMerge));
 			this.butMerge = new OpenDental.UI.Button();
 			this.butClose = new OpenDental.UI.Button();
-			this.groupBoxInto = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxInto = new OpenDental.UI.GroupBox();
 			this.buttonChangeInto = new OpenDental.UI.Button();
 			this.textBoxInto = new System.Windows.Forms.TextBox();
 			this.labelInto = new System.Windows.Forms.Label();
-			this.groupBoxFrom = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxFrom = new OpenDental.UI.GroupBox();
 			this.buttonChangeFrom = new OpenDental.UI.Button();
 			this.textBoxFrom = new System.Windows.Forms.TextBox();
 			this.labelFrom = new System.Windows.Forms.Label();
@@ -164,11 +164,11 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butMerge;
 		private OpenDental.UI.Button butClose;
-		private OpenDental.UI.GroupBoxOD groupBoxInto;
+		private OpenDental.UI.GroupBox groupBoxInto;
 		private UI.Button buttonChangeInto;
 		private System.Windows.Forms.TextBox textBoxInto;
 		private System.Windows.Forms.Label labelInto;
-		private OpenDental.UI.GroupBoxOD groupBoxFrom;
+		private OpenDental.UI.GroupBox groupBoxFrom;
 		private UI.Button buttonChangeFrom;
 		private System.Windows.Forms.TextBox textBoxFrom;
 		private System.Windows.Forms.Label labelFrom;

@@ -39,9 +39,9 @@ namespace OpenDental{
 			this.butStaticText = new OpenDental.UI.Button();
 			this.butInputField = new OpenDental.UI.Button();
 			this.butOutputText = new OpenDental.UI.Button();
-			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
-			this.groupBoxOD2 = new OpenDental.UI.GroupBoxOD();
-			this.groupBoxOD3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
+			this.groupBoxOD2 = new OpenDental.UI.GroupBox();
+			this.groupBoxOD3 = new OpenDental.UI.GroupBox();
 			this.label44 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
@@ -380,9 +380,9 @@ namespace OpenDental{
 		private UI.Button butStaticText;
 		private UI.Button butInputField;
 		private UI.Button butOutputText;
-		private UI.GroupBoxOD groupBoxOD1;
-		private UI.GroupBoxOD groupBoxOD2;
-		private UI.GroupBoxOD groupBoxOD3;
+		private UI.GroupBox groupBoxOD1;
+		private UI.GroupBox groupBoxOD2;
+		private UI.GroupBox groupBoxOD3;
 		private System.Windows.Forms.Label label44;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;

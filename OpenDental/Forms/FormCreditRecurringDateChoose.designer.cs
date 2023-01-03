@@ -31,7 +31,7 @@ namespace OpenDental{
 			this.labelLastMonth = new System.Windows.Forms.Label();
 			this.labelThisMonth = new System.Windows.Forms.Label();
 			this.labelMonthSelect = new System.Windows.Forms.Label();
-			this.comboBoxMonthSelect = new OpenDental.UI.ComboBoxOD();
+			this.comboBoxMonthSelect = new OpenDental.UI.ComboBox();
 			this.butOK = new OpenDental.UI.Button();
 			this.labelNoDates = new System.Windows.Forms.Label();
 			this.SuspendLayout();
@@ -160,7 +160,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelLastMonth;
 		private System.Windows.Forms.Label labelThisMonth;
 		private System.Windows.Forms.Label labelMonthSelect;
-		private UI.ComboBoxOD comboBoxMonthSelect;
+		private UI.ComboBox comboBoxMonthSelect;
 		private UI.Button butOK;
 		private System.Windows.Forms.Label labelNoDates;
 	}

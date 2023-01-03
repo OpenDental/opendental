@@ -24,32 +24,32 @@ namespace OpenDental {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.comboRefundAdjustmentType = new OpenDental.UI.ComboBoxOD();
+			this.comboRefundAdjustmentType = new OpenDental.UI.ComboBox();
 			this.labelRefundAdjustmentType = new System.Windows.Forms.Label();
-			this.comboLateChargeAdjType = new OpenDental.UI.ComboBoxOD();
+			this.comboLateChargeAdjType = new OpenDental.UI.ComboBox();
 			this.label42 = new System.Windows.Forms.Label();
 			this.label12 = new System.Windows.Forms.Label();
 			this.labelLateChargeAdjType = new System.Windows.Forms.Label();
-			this.groupBoxOD3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD3 = new OpenDental.UI.GroupBox();
 			this.checkAutomateSalesTax = new OpenDental.UI.CheckBox();
-			this.comboSalesTaxAdjType = new OpenDental.UI.ComboBoxOD();
+			this.comboSalesTaxAdjType = new OpenDental.UI.ComboBox();
 			this.label60 = new System.Windows.Forms.Label();
 			this.label26 = new System.Windows.Forms.Label();
 			this.textTaxPercent = new System.Windows.Forms.TextBox();
 			this.label33 = new System.Windows.Forms.Label();
-			this.comboSalesTaxDefaultProvider = new OpenDental.UI.ComboBoxOD();
-			this.comboFinanceChargeAdjType = new OpenDental.UI.ComboBoxOD();
-			this.comboBillingChargeAdjType = new OpenDental.UI.ComboBoxOD();
+			this.comboSalesTaxDefaultProvider = new OpenDental.UI.ComboBox();
+			this.comboFinanceChargeAdjType = new OpenDental.UI.ComboBox();
+			this.comboBillingChargeAdjType = new OpenDental.UI.ComboBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.comboPayPlanAdj = new OpenDental.UI.ComboBoxOD();
-			this.groupBox4 = new OpenDental.UI.GroupBoxOD();
+			this.comboPayPlanAdj = new OpenDental.UI.ComboBox();
+			this.groupBox4 = new OpenDental.UI.GroupBox();
 			this.listboxBadDebtAdjs = new OpenDental.UI.ListBoxOD();
 			this.label29 = new System.Windows.Forms.Label();
 			this.butBadDebt = new OpenDental.UI.Button();
-			this.groupBoxAdjustments = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxAdjustments = new OpenDental.UI.GroupBox();
 			this.labelcomboSalesTaxDefaultProviderDetails = new System.Windows.Forms.Label();
 			this.labelcheckAutomateSalesTaxDetails = new System.Windows.Forms.Label();
-			this.comboNegativeAdjustments = new OpenDental.UI.ComboBoxOD();
+			this.comboNegativeAdjustments = new OpenDental.UI.ComboBox();
 			this.labelNegativeAdjustments = new System.Windows.Forms.Label();
 			this.groupBoxOD3.SuspendLayout();
 			this.groupBox4.SuspendLayout();
@@ -348,32 +348,32 @@ namespace OpenDental {
 		}
 
 		#endregion
-		private UI.ComboBoxOD comboRefundAdjustmentType;
+		private UI.ComboBox comboRefundAdjustmentType;
 		private System.Windows.Forms.Label labelRefundAdjustmentType;
-		private UI.ComboBoxOD comboLateChargeAdjType;
+		private UI.ComboBox comboLateChargeAdjType;
 		private System.Windows.Forms.Label labelLateChargeAdjType;
-		private UI.GroupBoxOD groupBoxOD3;
+		private UI.GroupBox groupBoxOD3;
 		private OpenDental.UI.CheckBox checkAutomateSalesTax;
-		private UI.ComboBoxOD comboSalesTaxAdjType;
+		private UI.ComboBox comboSalesTaxAdjType;
 		private System.Windows.Forms.Label label60;
 		private System.Windows.Forms.Label label26;
 		private System.Windows.Forms.TextBox textTaxPercent;
 		private System.Windows.Forms.Label label33;
-		private UI.ComboBoxOD comboSalesTaxDefaultProvider;
-		private UI.ComboBoxOD comboFinanceChargeAdjType;
-		private UI.ComboBoxOD comboBillingChargeAdjType;
-		private UI.ComboBoxOD comboPayPlanAdj;
+		private UI.ComboBox comboSalesTaxDefaultProvider;
+		private UI.ComboBox comboFinanceChargeAdjType;
+		private UI.ComboBox comboBillingChargeAdjType;
+		private UI.ComboBox comboPayPlanAdj;
 		private System.Windows.Forms.Label label42;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label12;
-		private UI.GroupBoxOD groupBox4;
+		private UI.GroupBox groupBox4;
 		private UI.ListBoxOD listboxBadDebtAdjs;
 		private System.Windows.Forms.Label label29;
 		private UI.Button butBadDebt;
-		private UI.GroupBoxOD groupBoxAdjustments;
+		private UI.GroupBox groupBoxAdjustments;
 		private System.Windows.Forms.Label labelcomboSalesTaxDefaultProviderDetails;
 		private System.Windows.Forms.Label labelcheckAutomateSalesTaxDetails;
 		private System.Windows.Forms.Label labelNegativeAdjustments;
-		private UI.ComboBoxOD comboNegativeAdjustments;
+		private UI.ComboBox comboNegativeAdjustments;
 	}
 }

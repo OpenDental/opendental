@@ -31,7 +31,7 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
-			this.comboSopCode = new OpenDental.UI.ComboBoxOD();
+			this.comboSopCode = new OpenDental.UI.ComboBox();
 			this.textDate = new ValidDate();
 			this.SuspendLayout();
 			// 
@@ -150,7 +150,7 @@
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label5;
-		private OpenDental.UI.ComboBoxOD comboSopCode;
+		private OpenDental.UI.ComboBox comboSopCode;
 		private ValidDate textDate;
 
 

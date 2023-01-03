@@ -27,7 +27,7 @@ namespace OpenDental{
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
-			this.comboHardwareSpec = new OpenDental.UI.ComboBoxOD();
+			this.comboHardwareSpec = new OpenDental.UI.ComboBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.labelComments = new System.Windows.Forms.Label();
 			this.labelTeeth = new System.Windows.Forms.Label();
@@ -189,7 +189,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
 		private UI.Button butDelete;
-		private UI.ComboBoxOD comboHardwareSpec;
+		private UI.ComboBox comboHardwareSpec;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label labelComments;
 		private System.Windows.Forms.Label labelTeeth;

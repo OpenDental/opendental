@@ -46,8 +46,8 @@ namespace OpenDental {
 			this.butEditCats = new OpenDental.UI.Button();
 			this.butCreateData = new OpenDental.UI.Button();
 			this.butEditTemplate = new OpenDental.UI.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
-			this.comboImageCategory = new OpenDental.UI.ComboBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
+			this.comboImageCategory = new OpenDental.UI.ComboBox();
 			this.labelImageCategory = new System.Windows.Forms.Label();
 			this.butViewData = new OpenDental.UI.Button();
 			this.butPreview = new OpenDental.UI.Button();
@@ -239,10 +239,10 @@ namespace OpenDental {
 		private OpenDental.UI.Button butMerge;
 		private OpenDental.UI.Button butCreateData;
 		private OpenDental.UI.Button butEditTemplate;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.Button butViewData;
 		private OpenDental.UI.Button butPreview;
-		private UI.ComboBoxOD comboImageCategory;
+		private UI.ComboBox comboImageCategory;
 		private Label labelImageCategory;
 		private System.Drawing.Printing.PrintDocument pd2;
 	}

@@ -32,7 +32,7 @@ namespace OpenDental {
 			this.checkAllProv = new System.Windows.Forms.CheckBox();
 			this.listClin = new OpenDental.UI.ListBoxOD();
 			this.labelClin = new System.Windows.Forms.Label();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.butRight = new OpenDental.UI.Button();
 			this.butThis = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
@@ -46,7 +46,7 @@ namespace OpenDental {
 			this.label1 = new System.Windows.Forms.Label();
 			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
-			this.groupShowInsWriteoffs = new OpenDental.UI.GroupBoxOD();
+			this.groupShowInsWriteoffs = new OpenDental.UI.GroupBox();
 			this.radioWriteoffClaim = new System.Windows.Forms.RadioButton();
 			this.label5 = new System.Windows.Forms.Label();
 			this.radioWriteoffProc = new System.Windows.Forms.RadioButton();
@@ -334,7 +334,7 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textToday;
 		private OpenDental.ValidDate textDateFrom;
 		private OpenDental.ValidDate textDateTo;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private OpenDental.UI.Button butThis;
 		private OpenDental.UI.Button butLeft;
 		private OpenDental.UI.Button butRight;
@@ -343,7 +343,7 @@ namespace OpenDental {
 		private CheckBox checkAllProv;
 		private CheckBox checkAllClin;
 		private CheckBox checkClinicBreakdown;
-		private OpenDental.UI.GroupBoxOD groupShowInsWriteoffs;
+		private OpenDental.UI.GroupBox groupShowInsWriteoffs;
 		private RadioButton radioWriteoffClaim;
 		private Label label5;
 		private RadioButton radioWriteoffProc;

@@ -33,7 +33,7 @@ namespace OpenDental{
 			this.textUserName = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textAbbr = new System.Windows.Forms.TextBox();
-			this.comboClass = new OpenDental.UI.ComboBoxOD();
+			this.comboClass = new OpenDental.UI.ComboBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textPassword = new System.Windows.Forms.TextBox();
@@ -235,7 +235,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textUserName;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textAbbr;
-		private OpenDental.UI.ComboBoxOD comboClass;
+		private OpenDental.UI.ComboBox comboClass;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textPassword;

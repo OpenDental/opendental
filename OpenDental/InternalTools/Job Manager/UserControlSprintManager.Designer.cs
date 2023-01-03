@@ -29,14 +29,14 @@
 			this.panel2 = new System.Windows.Forms.Panel();
 			this.textCompletionPercentage = new System.Windows.Forms.Label();
 			this.progressBarCompletionPercent = new OpenDental.UI.OdProgressBar();
-			this.groupBoxSprintDetails = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxSprintDetails = new OpenDental.UI.GroupBox();
 			this.butDashboard = new OpenDental.UI.Button();
 			this.checkProgressMode = new OpenDental.UI.CheckBox();
 			this.butSave = new OpenDental.UI.Button();
 			this.textBreakHours = new OpenDental.ValidDouble();
 			this.textAvgDevelopmentHours = new OpenDental.ValidDouble();
 			this.textEngJobPercent = new OpenDental.ValidDouble();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textDateEndActual = new System.Windows.Forms.Label();
 			this.labelDateEndActual = new System.Windows.Forms.Label();
 			this.textAvgAllocatableHours = new System.Windows.Forms.Label();
@@ -575,7 +575,7 @@
 		private System.Windows.Forms.Label labelCompletionPercentDescription;
 		private OpenDental.UI.OdProgressBar progressBarCompletionPercent;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-		private OpenDental.UI.GroupBoxOD groupBoxSprintDetails;
+		private OpenDental.UI.GroupBox groupBoxSprintDetails;
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.Label labelAllocatedHoursDescription;
 		private System.Windows.Forms.Label labelMaxHoursDescription;
@@ -586,7 +586,7 @@
 		private System.Windows.Forms.Label textAllocatedHours;
 		private System.Windows.Forms.Label textMaxHours;
 		private System.Windows.Forms.TextBox textTitle;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.TextBox textNote;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label7;

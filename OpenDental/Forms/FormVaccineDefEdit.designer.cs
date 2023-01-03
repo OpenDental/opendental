@@ -24,7 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormVaccineDefEdit));
-			this.comboManufacturer = new OpenDental.UI.ComboBoxOD();
+			this.comboManufacturer = new OpenDental.UI.ComboBox();
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.label3 = new System.Windows.Forms.Label();
@@ -161,6 +161,6 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelCVXCode;
 		private UI.Button butDelete;
 		private UI.Button butCvxSelect;
-		private OpenDental.UI.ComboBoxOD comboManufacturer;
+		private OpenDental.UI.ComboBox comboManufacturer;
 	}
 }

@@ -40,7 +40,7 @@ namespace OpenDental {
 			this.textName = new System.Windows.Forms.TextBox();
 			this.buttonDelete = new OpenDental.UI.Button();
 			this.labelStatus = new System.Windows.Forms.Label();
-			this.comboFieldType = new OpenDental.UI.ComboBoxOD();
+			this.comboFieldType = new OpenDental.UI.ComboBox();
 			this.labelFieldType = new System.Windows.Forms.Label();
 			this.textPickList = new System.Windows.Forms.TextBox();
 			this.labelWarning = new System.Windows.Forms.Label();
@@ -180,7 +180,7 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textName;
 		private OpenDental.UI.Button buttonDelete;
 		private Label labelStatus;
-		private UI.ComboBoxOD comboFieldType;
+		private UI.ComboBox comboFieldType;
 		private Label labelFieldType;
 		private TextBox textPickList;
 		private Label labelWarning;

@@ -57,8 +57,8 @@
 			this.menuItemReminderGoto = new System.Windows.Forms.MenuItem();
 			this.imageListTasks = new System.Windows.Forms.ImageList(this.components);
 			this.menuRecall = new System.Windows.Forms.ContextMenu();
-			this.groupSearch = new OpenDental.UI.GroupBoxOD();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupSearch = new OpenDental.UI.GroupBox();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butProvHygenist = new OpenDental.UI.Button();
 			this.butProvDentist = new OpenDental.UI.Button();
 			this.butProvPick = new OpenDental.UI.Button();
@@ -66,7 +66,7 @@
 			this.listSearchResults = new OpenDental.UI.ListBoxOD();
 			this._listBoxProviders = new OpenDental.UI.ListBoxOD();
 			this.butSearchClose = new OpenDental.UI.Button();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.textAfter = new System.Windows.Forms.TextBox();
 			this.label11 = new System.Windows.Forms.Label();
 			this.radioBeforePM = new System.Windows.Forms.RadioButton();
@@ -99,7 +99,7 @@
 			this.butLab = new OpenDental.UI.Button();
 			this.butClearPin = new OpenDental.UI.Button();
 			this.butSearch = new OpenDental.UI.Button();
-			this.comboView = new OpenDental.UI.ComboBoxOD();
+			this.comboView = new OpenDental.UI.ComboBox();
 			this.butMonth = new OpenDental.UI.Button();
 			this.monthCalendarOD = new OpenDental.UI.MonthCalendarOD();
 			this.contrApptPanel = new OpenDental.UI.ControlApptPanel();
@@ -987,7 +987,7 @@
 		private System.Windows.Forms.TextBox textProduction;
 		private System.Windows.Forms.Label labelProduction;
 		private System.Windows.Forms.TextBox textLab;
-		private UI.ComboBoxOD comboView;
+		private UI.ComboBox comboView;
 		private System.Windows.Forms.Label label2;
 		private UI.Button butClearPin;
 		private UI.MonthCalendarOD monthCalendarOD;
@@ -1004,8 +1004,8 @@
 		private OpenDental.UI.TabPage tabReminders;
 		private UI.GridOD gridReminders;
 		private OpenDental.UI.ListBoxOD listConfirmed;
-		private OpenDental.UI.GroupBoxOD groupSearch;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupSearch;
+		private OpenDental.UI.GroupBox groupBox1;
 		private UI.Button butProvHygenist;
 		private UI.Button butProvDentist;
 		private UI.Button butProvPick;
@@ -1013,7 +1013,7 @@
 		private OpenDental.UI.ListBoxOD listSearchResults;
 		private UI.ListBoxOD _listBoxProviders;
 		private UI.Button butSearchClose;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.TextBox textAfter;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.RadioButton radioBeforePM;

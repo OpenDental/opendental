@@ -63,10 +63,10 @@ namespace OpenDental {
 			this.butDelete = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
-			this.comboSite = new OpenDental.UI.ComboBoxOD();
+			this.comboSite = new OpenDental.UI.ComboBox();
 			this.label18 = new System.Windows.Forms.Label();
 			this.label19 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textReportsTo = new System.Windows.Forms.TextBox();
 			this.label21 = new System.Windows.Forms.Label();
 			this.checkIsWorkingHome = new System.Windows.Forms.CheckBox();
@@ -569,10 +569,10 @@ namespace OpenDental {
 		private OpenDental.UI.ListBoxOD listStatusOverride;
 		private Label label17;
 		private CheckBox checkIsTriageOperator;
-		private OpenDental.UI.ComboBoxOD comboSite;
+		private OpenDental.UI.ComboBox comboSite;
 		private Label label18;
 		private Label label19;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private CheckBox checkIsWorkingHome;
 		private CheckBox checkIsFurloughed;
 		private TextBox textEmailPersonal;

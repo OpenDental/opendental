@@ -29,7 +29,7 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textFamilyMember = new System.Windows.Forms.TextBox();
-			this.comboRelationship = new OpenDental.UI.ComboBoxOD();
+			this.comboRelationship = new OpenDental.UI.ComboBox();
 			this.checkIsGuardian = new OpenDental.UI.CheckBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.butDelete = new OpenDental.UI.Button();
@@ -186,7 +186,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textFamilyMember;
 		private OpenDental.UI.Button butPick;
 		private OpenDental.UI.Button butDelete;
-		private OpenDental.UI.ComboBoxOD comboRelationship;
+		private OpenDental.UI.ComboBox comboRelationship;
 		private OpenDental.UI.CheckBox checkIsGuardian;
 		private System.Windows.Forms.Label label4;
 	}

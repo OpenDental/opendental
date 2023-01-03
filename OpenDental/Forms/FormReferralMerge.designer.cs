@@ -24,7 +24,7 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormReferralMerge));
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.checkIsDoctorFrom = new System.Windows.Forms.CheckBox();
 			this.butChangeReferralFrom = new OpenDental.UI.Button();
 			this.checkIsPersonFrom = new System.Windows.Forms.CheckBox();
@@ -34,7 +34,7 @@ namespace OpenDental {
 			this.label4 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
 			this.textTitleFrom = new System.Windows.Forms.TextBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.checkIsDoctorInto = new System.Windows.Forms.CheckBox();
 			this.checkIsPersonInto = new System.Windows.Forms.CheckBox();
 			this.label7 = new System.Windows.Forms.Label();
@@ -295,9 +295,9 @@ namespace OpenDental {
 
 		#endregion
 
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private UI.Button butChangeReferralFrom;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.TextBox textTitleInto;
 		private System.Windows.Forms.Label label5;
 		private UI.Button butChangeReferralInto;

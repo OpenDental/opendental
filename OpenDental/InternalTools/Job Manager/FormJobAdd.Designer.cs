@@ -51,7 +51,7 @@ namespace OpenDental{
 			this.labelVersion = new System.Windows.Forms.Label();
 			this.comboProposedVersion = new System.Windows.Forms.ComboBox();
 			this.labelPriority = new System.Windows.Forms.Label();
-			this.comboPriority = new OpenDental.UI.ComboBoxOD();
+			this.comboPriority = new OpenDental.UI.ComboBox();
 			this.comboCategory = new System.Windows.Forms.ComboBox();
 			this.labelCategory = new System.Windows.Forms.Label();
 			this.tabControlExtra.SuspendLayout();
@@ -481,7 +481,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label labelPriority;
 		private System.Windows.Forms.Label labelCategory;
-		private UI.ComboBoxOD comboPriority;
+		private UI.ComboBox comboPriority;
 		private System.Windows.Forms.ComboBox comboCategory;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
 		private OdtextEditor textConcept;

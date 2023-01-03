@@ -33,7 +33,7 @@
 			this.label4 = new System.Windows.Forms.Label();
 			this.numPixelsPerFoot = new System.Windows.Forms.NumericUpDown();
 			this.checkShowOutline = new System.Windows.Forms.CheckBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.menu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.newCubicleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newLabelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,7 +48,7 @@
 			this.textDescription = new OpenDental.ODtextBox();
 			this.butAddRoom = new OpenDental.UI.Button();
 			this.label8 = new System.Windows.Forms.Label();
-			this.comboSite = new OpenDental.UI.ComboBoxOD();
+			this.comboSite = new OpenDental.UI.ComboBox();
 			this.butAddSmall = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			((System.ComponentModel.ISupportInitialize)(this.numFloorWidthFeet)).BeginInit();
@@ -198,7 +198,6 @@
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(182, 138);
 			this.groupBox1.TabIndex = 23;
-			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Preview Different Options";
 			// 
 			// menu
@@ -239,7 +238,7 @@
 			this.gridEmployees.Font = new System.Drawing.Font("Calibri", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.gridEmployees.Location = new System.Drawing.Point(1392, 201);
 			this.gridEmployees.Name = "gridEmployees";
-			this.gridEmployees.Size = new System.Drawing.Size(182, 727);
+			this.gridEmployees.Size = new System.Drawing.Size(182, 693);
 			this.gridEmployees.TabIndex = 25;
 			this.gridEmployees.Title = "Employees";
 			this.gridEmployees.TranslationName = "TableEmployees";
@@ -251,30 +250,31 @@
 			this.mapAreaPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.mapAreaPanel.AutoScroll = true;
 			this.mapAreaPanel.AutoScrollMinSize = new System.Drawing.Size(1326, 935);
 			this.mapAreaPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.mapAreaPanel.FloorColor = System.Drawing.Color.White;
-			this.mapAreaPanel.HeightFloorFeet = 55;
-			this.mapAreaPanel.WidthFloorFeet = 78;
 			this.mapAreaPanel.Font = new System.Drawing.Font("Calibri", 25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.mapAreaPanel.FontCubicle = new System.Drawing.Font("Calibri", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.mapAreaPanel.FontCubicleHeader = new System.Drawing.Font("Calibri", 19F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.mapAreaPanel.FontLabel = new System.Drawing.Font("Calibri", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.mapAreaPanel.GridColor = System.Drawing.Color.LightGray;
+			this.mapAreaPanel.HeightFloorFeet = 55;
 			this.mapAreaPanel.Location = new System.Drawing.Point(12, 34);
 			this.mapAreaPanel.Name = "mapAreaPanel";
 			this.mapAreaPanel.PixelsPerFoot = 17;
 			this.mapAreaPanel.ShowGrid = false;
 			this.mapAreaPanel.ShowOutline = true;
-			this.mapAreaPanel.Size = new System.Drawing.Size(1374, 969);
+			this.mapAreaPanel.Size = new System.Drawing.Size(1374, 975);
 			this.mapAreaPanel.TabIndex = 4;
+			this.mapAreaPanel.WidthFloorFeet = 78;
 			this.mapAreaPanel.MapCubicleEdited += new System.EventHandler(this.mapAreaPanel_MapCubicleEdited);
 			this.mapAreaPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mapAreaPanel_MouseUp);
 			// 
 			// butCancel
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(1499, 1019);
+			this.butCancel.Location = new System.Drawing.Point(1499, 985);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 28;
@@ -286,7 +286,7 @@
 			this.butAddMapArea.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butAddMapArea.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAddMapArea.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAddMapArea.Location = new System.Drawing.Point(1499, 930);
+			this.butAddMapArea.Location = new System.Drawing.Point(1499, 896);
 			this.butAddMapArea.Name = "butAddMapArea";
 			this.butAddMapArea.Size = new System.Drawing.Size(75, 24);
 			this.butAddMapArea.TabIndex = 49;
@@ -320,7 +320,7 @@
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(1499, 989);
+			this.butSave.Location = new System.Drawing.Point(1499, 955);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 24);
 			this.butSave.TabIndex = 51;
@@ -350,7 +350,7 @@
 			this.butAddRoom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butAddRoom.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAddRoom.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAddRoom.Location = new System.Drawing.Point(1056, 5);
+			this.butAddRoom.Location = new System.Drawing.Point(1056, -29);
 			this.butAddRoom.Name = "butAddRoom";
 			this.butAddRoom.Size = new System.Drawing.Size(96, 24);
 			this.butAddRoom.TabIndex = 54;
@@ -383,7 +383,7 @@
 			this.butAddSmall.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butAddSmall.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAddSmall.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAddSmall.Location = new System.Drawing.Point(1491, 960);
+			this.butAddSmall.Location = new System.Drawing.Point(1491, 926);
 			this.butAddSmall.Name = "butAddSmall";
 			this.butAddSmall.Size = new System.Drawing.Size(83, 24);
 			this.butAddSmall.TabIndex = 59;
@@ -405,7 +405,7 @@
 			// FormMapSetup
 			// 
 			this.AutoScroll = true;
-			this.ClientSize = new System.Drawing.Size(1579, 1045);
+			this.ClientSize = new System.Drawing.Size(1579, 1011);
 			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.butAddSmall);
@@ -448,7 +448,7 @@
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.NumericUpDown numPixelsPerFoot;
 		private System.Windows.Forms.CheckBox checkShowOutline;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.ContextMenuStrip menu;
 		private System.Windows.Forms.ToolStripMenuItem newCubicleToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem newLabelToolStripMenuItem;
@@ -462,7 +462,7 @@
 		private ODtextBox textDescription;
 		private UI.Button butAddRoom;
 		private System.Windows.Forms.Label label8;
-		private UI.ComboBoxOD comboSite;
+		private UI.ComboBox comboSite;
 		private UI.Button butAddSmall;
 		private UI.Button butDelete;
 	}

@@ -44,7 +44,7 @@ namespace OpenDental {
 			this.textMedNote = new System.Windows.Forms.TextBox();
 			this.labelGenericNotes = new System.Windows.Forms.Label();
 			this.labelPatNote = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butRxNormSelect = new OpenDental.UI.Button();
 			this.textRxNormDesc = new System.Windows.Forms.TextBox();
 			this.labelRxNorm = new System.Windows.Forms.Label();
@@ -53,9 +53,9 @@ namespace OpenDental {
 			this.butRemove = new OpenDental.UI.Button();
 			this.label5 = new System.Windows.Forms.Label();
 			this.textPatNote = new OpenDental.ODtextBox();
-			this.groupOrder = new OpenDental.UI.GroupBoxOD();
+			this.groupOrder = new OpenDental.UI.GroupBox();
 			this.label8 = new System.Windows.Forms.Label();
-			this.comboProv = new OpenDental.UI.ComboBoxOD();
+			this.comboProv = new OpenDental.UI.ComboBox();
 			this.butTodayStop = new OpenDental.UI.Button();
 			this.butTodayStart = new OpenDental.UI.Button();
 			this.textDateStop = new OpenDental.ValidDate();
@@ -365,7 +365,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelGenericName;
 		private System.Windows.Forms.Label labelGenericNotes;
 		private System.Windows.Forms.Label labelPatNote;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label labelEdit;
 		private System.Windows.Forms.TextBox textMedName;
@@ -374,7 +374,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butRemove;
 		private OpenDental.UI.Button butEdit;
 		private OpenDental.ODtextBox textPatNote;
-		private OpenDental.UI.GroupBoxOD groupOrder;
+		private OpenDental.UI.GroupBox groupOrder;
 		private ValidDate textDateStop;
 		private Label label7;
 		private ValidDate textDateStart;
@@ -382,7 +382,7 @@ namespace OpenDental {
 		private UI.Button butTodayStop;
 		private UI.Button butTodayStart;
 		private Label label8;
-		private OpenDental.UI.ComboBoxOD comboProv;
+		private OpenDental.UI.ComboBox comboProv;
 		private TextBox textRxNormDesc;
 		private Label labelRxNorm;
 		private UI.Button butRxNormSelect;

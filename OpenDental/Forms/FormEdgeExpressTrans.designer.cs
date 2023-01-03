@@ -34,7 +34,7 @@ namespace OpenDental{
 			this.checkPrintReceipt = new OpenDental.UI.CheckBox();
 			this.textTransactionId = new System.Windows.Forms.TextBox();
 			this.labelTransactionID = new System.Windows.Forms.Label();
-			this.groupCardEntry = new OpenDental.UI.GroupBoxOD();
+			this.groupCardEntry = new OpenDental.UI.GroupBox();
 			this.radioWeb = new System.Windows.Forms.RadioButton();
 			this.radioTerminal = new System.Windows.Forms.RadioButton();
 			this.groupCardEntry.SuspendLayout();
@@ -198,7 +198,7 @@ namespace OpenDental{
 		private OpenDental.UI.CheckBox checkPrintReceipt;
 		private System.Windows.Forms.TextBox textTransactionId;
 		private System.Windows.Forms.Label labelTransactionID;
-		private OpenDental.UI.GroupBoxOD groupCardEntry;
+		private OpenDental.UI.GroupBox groupCardEntry;
 		private System.Windows.Forms.RadioButton radioWeb;
 		private System.Windows.Forms.RadioButton radioTerminal;
 	}

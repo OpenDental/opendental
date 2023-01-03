@@ -41,7 +41,7 @@ namespace OpenDental{
 			this.textPhysicianNPI = new System.Windows.Forms.TextBox();
 			this.labelTestsOrd = new System.Windows.Forms.Label();
 			this.labelGenComments = new System.Windows.Forms.Label();
-			this.groupPat = new OpenDental.UI.GroupBoxOD();
+			this.groupPat = new OpenDental.UI.GroupBox();
 			this.butPatSelect = new OpenDental.UI.Button();
 			this.textFasting = new System.Windows.Forms.TextBox();
 			this.labelFasting = new System.Windows.Forms.Label();
@@ -61,7 +61,7 @@ namespace OpenDental{
 			this.textPatID = new System.Windows.Forms.TextBox();
 			this.labelSpecimenNum = new System.Windows.Forms.Label();
 			this.textSpecimenNumber = new System.Windows.Forms.TextBox();
-			this.groupOrderingPhys = new OpenDental.UI.GroupBoxOD();
+			this.groupOrderingPhys = new OpenDental.UI.GroupBox();
 			this.butProvSelect = new OpenDental.UI.Button();
 			this.labelShowHL7 = new System.Windows.Forms.Label();
 			this.labelPrint = new System.Windows.Forms.Label();
@@ -656,7 +656,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelGenComments;
 		private ODtextBox textGenComments;
 		private UI.GridOD gridFacilities;
-		private OpenDental.UI.GroupBoxOD groupPat;
+		private OpenDental.UI.GroupBox groupPat;
 		private System.Windows.Forms.TextBox textFasting;
 		private System.Windows.Forms.Label labelFasting;
 		private System.Windows.Forms.TextBox textGender;
@@ -675,7 +675,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textPatID;
 		private System.Windows.Forms.Label labelSpecimenNum;
 		private System.Windows.Forms.TextBox textSpecimenNumber;
-		private OpenDental.UI.GroupBoxOD groupOrderingPhys;
+		private OpenDental.UI.GroupBox groupOrderingPhys;
 		private System.Windows.Forms.Label labelShowHL7;
 		private System.Windows.Forms.Label labelPrint;
 		private UI.Button butDelete;

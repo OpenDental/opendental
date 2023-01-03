@@ -25,7 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPayConnect));
-			this.groupProcessMethod = new OpenDental.UI.GroupBoxOD();
+			this.groupProcessMethod = new OpenDental.UI.GroupBox();
 			this.radioWebService = new System.Windows.Forms.RadioButton();
 			this.radioTerminal = new System.Windows.Forms.RadioButton();
 			this.sigBoxWrapper = new OpenDental.UI.SignatureBoxWrapper();
@@ -35,7 +35,7 @@ namespace OpenDental{
 			this.checkSaveToken = new System.Windows.Forms.CheckBox();
 			this.labelRefNumber = new System.Windows.Forms.Label();
 			this.textRefNumber = new System.Windows.Forms.TextBox();
-			this.groupTransType = new OpenDental.UI.GroupBoxOD();
+			this.groupTransType = new OpenDental.UI.GroupBox();
 			this.radioSale = new System.Windows.Forms.RadioButton();
 			this.radioReturn = new System.Windows.Forms.RadioButton();
 			this.radioAuthorization = new System.Windows.Forms.RadioButton();
@@ -426,7 +426,7 @@ namespace OpenDental{
 		private System.Windows.Forms.RadioButton radioAuthorization;
 		private System.Windows.Forms.RadioButton radioVoid;
 		private System.Windows.Forms.RadioButton radioReturn;
-		private OpenDental.UI.GroupBoxOD groupTransType;
+		private OpenDental.UI.GroupBox groupTransType;
 		private System.Windows.Forms.TextBox textRefNumber;
 		private System.Windows.Forms.Label labelRefNumber;
 		private System.Windows.Forms.CheckBox checkSaveToken;
@@ -434,7 +434,7 @@ namespace OpenDental{
 		private System.Windows.Forms.RadioButton radioForce;
 		private UI.SignatureBoxWrapper sigBoxWrapper;
 		private System.Windows.Forms.CheckBox checkForceDuplicate;
-		private OpenDental.UI.GroupBoxOD groupProcessMethod;
+		private OpenDental.UI.GroupBox groupProcessMethod;
 		private System.Windows.Forms.RadioButton radioWebService;
 		private System.Windows.Forms.RadioButton radioTerminal;
 		private System.Windows.Forms.Timer timerParseCardSwipe;

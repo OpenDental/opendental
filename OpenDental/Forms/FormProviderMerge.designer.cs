@@ -24,7 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormProviderMerge));
-			this.groupBoxInto = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxInto = new OpenDental.UI.GroupBox();
 			this.textAbbrInto = new System.Windows.Forms.TextBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.textNpiInto = new System.Windows.Forms.TextBox();
@@ -34,7 +34,7 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.textProvNumInto = new System.Windows.Forms.TextBox();
-			this.groupBoxFrom = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxFrom = new OpenDental.UI.GroupBox();
 			this.checkDeletedProvs = new System.Windows.Forms.CheckBox();
 			this.textAbbrFrom = new System.Windows.Forms.TextBox();
 			this.label8 = new System.Windows.Forms.Label();
@@ -293,7 +293,7 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butMerge;
 		private OpenDental.UI.Button butClose;
-		private OpenDental.UI.GroupBoxOD groupBoxInto;
+		private OpenDental.UI.GroupBox groupBoxInto;
 		private System.Windows.Forms.TextBox textNpiInto;
 		private System.Windows.Forms.Label label5;
 		private UI.Button butChangeProvInto;
@@ -303,7 +303,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textProvNumInto;
 		private System.Windows.Forms.TextBox textAbbrInto;
 		private System.Windows.Forms.Label label7;
-		private OpenDental.UI.GroupBoxOD groupBoxFrom;
+		private OpenDental.UI.GroupBox groupBoxFrom;
 		private System.Windows.Forms.TextBox textAbbrFrom;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.TextBox textNpiFrom;

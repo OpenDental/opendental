@@ -68,12 +68,12 @@ namespace OpenDental{
 		private UI.Button butTimeCard;
 		private UI.Button butViewSched;
 		private System.Windows.Forms.CheckBox checkIncludeAck;
-		private ComboBox comboBoxViewUser;
+		private System.Windows.Forms.ComboBox comboBoxViewUser;
 		private GridOD gridEmp;
 		private GridOD gridMessages;
-		private OpenDental.UI.GroupBoxOD groupBox1;
-		private OpenDental.UI.GroupBoxOD groupBox2;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox1;
+		private OpenDental.UI.GroupBox groupBox2;
+		private OpenDental.UI.GroupBox groupBox3;
 		private Label label1;
 		private Label label3;
 		private Label label4;
@@ -126,7 +126,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ControlManage));
 			this.timerUpdateTime = new System.Windows.Forms.Timer(this.components);
 			this.butSchedule = new OpenDental.UI.Button();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.butEras = new OpenDental.UI.Button();
 			this.butImportInsPlans = new OpenDental.UI.Button();
 			this.butEmailInbox = new OpenDental.UI.Button();
@@ -139,7 +139,7 @@ namespace OpenDental{
 			this.butSendClaims = new OpenDental.UI.Button();
 			this.butTasks = new OpenDental.UI.Button();
 			this.butManageAR = new OpenDental.UI.Button();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.listBoxMessages = new OpenDental.UI.ListBoxOD();
 			this.butSend = new OpenDental.UI.Button();
 			this.butAck = new OpenDental.UI.Button();
@@ -159,7 +159,7 @@ namespace OpenDental{
 			this.listBoxTo = new OpenDental.UI.ListBoxOD();
 			this.label1 = new System.Windows.Forms.Label();
 			this.textMessage = new System.Windows.Forms.TextBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textFilterName = new System.Windows.Forms.TextBox();
 			this.labelFilterName = new System.Windows.Forms.Label();
 			this.butViewSched = new OpenDental.UI.Button();

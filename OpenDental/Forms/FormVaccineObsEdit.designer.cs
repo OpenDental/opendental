@@ -27,7 +27,7 @@ namespace OpenDental{
 			this.listValueType = new OpenDental.UI.ListBoxOD();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.comboObservationQuestion = new OpenDental.UI.ComboBoxOD();
+			this.comboObservationQuestion = new OpenDental.UI.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textValue = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
@@ -39,7 +39,7 @@ namespace OpenDental{
 			this.textMethodCode = new System.Windows.Forms.TextBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.labelMethodCodeNote = new System.Windows.Forms.Label();
-			this.comboUnits = new OpenDental.UI.ComboBoxOD();
+			this.comboUnits = new OpenDental.UI.ComboBox();
 			this.butDelete = new OpenDental.UI.Button();
 			this.textDateObserved = new OpenDental.ValidDate();
 			this.butOK = new OpenDental.UI.Button();
@@ -270,7 +270,7 @@ namespace OpenDental{
 		private OpenDental.UI.ListBoxOD listValueType;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
-		private OpenDental.UI.ComboBoxOD comboObservationQuestion;
+		private OpenDental.UI.ComboBox comboObservationQuestion;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textValue;
 		private System.Windows.Forms.Label label4;
@@ -284,7 +284,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label labelMethodCodeNote;
 		private UI.Button butDelete;
-		private OpenDental.UI.ComboBoxOD comboUnits;
+		private OpenDental.UI.ComboBox comboUnits;
 		private UI.Button butTodayDateObserved;
 	}
 }

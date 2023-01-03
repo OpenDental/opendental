@@ -24,7 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormInsRemain));
-			this.groupBoxIndIns = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxIndIns = new OpenDental.UI.GroupBox();
 			this.textPriDed = new System.Windows.Forms.TextBox();
 			this.textPriUsed = new System.Windows.Forms.TextBox();
 			this.textPriDedRem = new System.Windows.Forms.TextBox();
@@ -45,7 +45,7 @@ namespace OpenDental{
 			this.label16 = new System.Windows.Forms.Label();
 			this.textSecDed = new System.Windows.Forms.TextBox();
 			this.textSecUsed = new System.Windows.Forms.TextBox();
-			this.groupBoxFamilyIns = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxFamilyIns = new OpenDental.UI.GroupBox();
 			this.textFamPriMax = new System.Windows.Forms.TextBox();
 			this.textFamPriDed = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
@@ -421,7 +421,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butClose;
-		private OpenDental.UI.GroupBoxOD groupBoxIndIns;
+		private OpenDental.UI.GroupBox groupBoxIndIns;
 		private System.Windows.Forms.TextBox textPriDed;
 		private System.Windows.Forms.TextBox textPriUsed;
 		private System.Windows.Forms.TextBox textPriDedRem;
@@ -442,7 +442,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label16;
 		private System.Windows.Forms.TextBox textSecDed;
 		private System.Windows.Forms.TextBox textSecUsed;
-		private OpenDental.UI.GroupBoxOD groupBoxFamilyIns;
+		private OpenDental.UI.GroupBox groupBoxFamilyIns;
 		private System.Windows.Forms.TextBox textFamPriMax;
 		private System.Windows.Forms.TextBox textFamPriDed;
 		private System.Windows.Forms.Label label4;

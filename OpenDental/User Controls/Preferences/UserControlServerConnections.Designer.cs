@@ -25,9 +25,9 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			this.checkUseReadOnlyServer = new OpenDental.UI.CheckBox();
-			this.groupBoxReadOnlyServerSetup = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxReadOnlyServerSetup = new OpenDental.UI.GroupBox();
 			this.radioReadOnlyServerDirect = new System.Windows.Forms.RadioButton();
-			this.groupConnectionSettings = new OpenDental.UI.GroupBoxOD();
+			this.groupConnectionSettings = new OpenDental.UI.GroupBox();
 			this.comboServerName = new System.Windows.Forms.ComboBox();
 			this.textMysqlPass = new System.Windows.Forms.TextBox();
 			this.comboDatabase = new System.Windows.Forms.ComboBox();
@@ -37,7 +37,7 @@ namespace OpenDental {
 			this.label3 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.radioReadOnlyServerMiddleTier = new System.Windows.Forms.RadioButton();
-			this.groupMiddleTier = new OpenDental.UI.GroupBoxOD();
+			this.groupMiddleTier = new OpenDental.UI.GroupBox();
 			this.textMiddleTierURI = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.butReadOnlyServerSetupDetails = new OpenDental.UI.Button();
@@ -248,14 +248,14 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label4;
-		private UI.GroupBoxOD groupConnectionSettings;
+		private UI.GroupBox groupConnectionSettings;
 		private OpenDental.UI.CheckBox checkUseReadOnlyServer;
 		private System.Windows.Forms.RadioButton radioReadOnlyServerMiddleTier;
 		private System.Windows.Forms.RadioButton radioReadOnlyServerDirect;
 		private System.Windows.Forms.TextBox textMiddleTierURI;
 		private System.Windows.Forms.Label label6;
-		private UI.GroupBoxOD groupMiddleTier;
-		private UI.GroupBoxOD groupBoxReadOnlyServerSetup;
+		private UI.GroupBox groupMiddleTier;
+		private UI.GroupBox groupBoxReadOnlyServerSetup;
 		private System.Windows.Forms.ComboBox comboServerName;
 		private System.Windows.Forms.ComboBox comboDatabase;
 		private UI.Button butReadOnlyServerSetupDetails;

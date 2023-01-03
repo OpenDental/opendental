@@ -36,7 +36,7 @@
 			this.butRefresh = new OpenDental.UI.Button();
 			this.butSelectAll = new OpenDental.UI.Button();
 			this.checkShowProcsNoIns = new System.Windows.Forms.CheckBox();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.comboClinics = new OpenDental.UI.ComboBoxClinicPicker();
 			this.checkShowProcsInProcess = new System.Windows.Forms.CheckBox();
 			this.dateRangePicker = new OpenDental.UI.ODDateRangePicker();
@@ -245,7 +245,7 @@
 		private System.Windows.Forms.ImageList imageListCalendar;
 		private UI.Button butSelectAll;
 		private System.Windows.Forms.CheckBox checkShowProcsNoIns;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private UI.ODDateRangePicker dateRangePicker;
 		private System.Windows.Forms.CheckBox checkShowProcsInProcess;
 		private UI.ComboBoxClinicPicker comboClinics;

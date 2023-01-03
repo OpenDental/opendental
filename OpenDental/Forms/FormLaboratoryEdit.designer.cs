@@ -45,7 +45,7 @@ namespace OpenDental {
 			this.label6 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
-			this.comboSlip = new OpenDental.UI.ComboBoxOD();
+			this.comboSlip = new OpenDental.UI.ComboBox();
 			this.label21 = new System.Windows.Forms.Label();
 			this.textNotes = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
@@ -349,7 +349,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.Button butDeleteTurnaround;
-		private OpenDental.UI.ComboBoxOD comboSlip;
+		private OpenDental.UI.ComboBox comboSlip;
 		private Label label21;
 		private Label label4;
 		private Label label5;

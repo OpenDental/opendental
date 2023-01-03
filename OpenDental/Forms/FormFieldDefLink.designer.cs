@@ -31,7 +31,7 @@ namespace OpenDental{
 			this.butRight = new OpenDental.UI.Button();
 			this.butLeft = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboFieldLocation = new OpenDental.UI.ComboBoxOD();
+			this.comboFieldLocation = new OpenDental.UI.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -155,7 +155,7 @@ namespace OpenDental{
 		private UI.Button butRight;
 		private UI.Button butLeft;
 		private System.Windows.Forms.Label label1;
-		private OpenDental.UI.ComboBoxOD comboFieldLocation;
+		private OpenDental.UI.ComboBox comboFieldLocation;
 		private System.Windows.Forms.Label label2;
 	}
 }

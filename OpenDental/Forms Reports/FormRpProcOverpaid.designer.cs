@@ -38,7 +38,7 @@ namespace OpenDental {
 			this.contextMenuGrid = new System.Windows.Forms.ContextMenu();
 			this.menuItemGoToAccount = new System.Windows.Forms.MenuItem();
 			this.butRefresh = new OpenDental.UI.Button();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.checkExcludeOverpaidWithIns = new System.Windows.Forms.CheckBox();
 			this.butCurrent = new OpenDental.UI.Button();
 			this.butAll = new OpenDental.UI.Button();
@@ -46,7 +46,7 @@ namespace OpenDental {
 			this.textPatient = new System.Windows.Forms.TextBox();
 			this.labelPatient = new System.Windows.Forms.Label();
 			this.labelProv = new System.Windows.Forms.Label();
-			this.comboBoxMultiProv = new OpenDental.UI.ComboBoxOD();
+			this.comboBoxMultiProv = new OpenDental.UI.ComboBox();
 			this.comboBoxMultiClinics = new OpenDental.UI.ComboBoxClinicPicker();
 			this.dateRangePicker = new OpenDental.UI.ODDateRangePicker();
 			this.groupBox2.SuspendLayout();
@@ -255,10 +255,10 @@ namespace OpenDental {
 		private UI.Button butClose;
 		private UI.Button butPrint;
 		private UI.GridOD gridMain;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private UI.ODDateRangePicker dateRangePicker;
 		private UI.ComboBoxClinicPicker comboBoxMultiClinics;
-		private UI.ComboBoxOD comboBoxMultiProv;
+		private UI.ComboBox comboBoxMultiProv;
 		private Label labelProv;
 		private UI.Button butCurrent;
 		private UI.Button butAll;

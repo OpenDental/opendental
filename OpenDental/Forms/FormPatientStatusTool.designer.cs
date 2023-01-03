@@ -25,8 +25,8 @@ namespace OpenDental {
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPatientStatusTool));
 			this.butCancel = new OpenDental.UI.Button();
-			this.groupCriteria = new OpenDental.UI.GroupBoxOD();
-			this.comboPatientStatusCur = new OpenDental.UI.ComboBoxOD();
+			this.groupCriteria = new OpenDental.UI.GroupBox();
+			this.comboPatientStatusCur = new OpenDental.UI.ComboBox();
 			this.labelPatientCurrent = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
@@ -38,7 +38,7 @@ namespace OpenDental {
 			this.butCreateList = new OpenDental.UI.Button();
 			this.butRun = new OpenDental.UI.Button();
 			this.labelChangeTo = new System.Windows.Forms.Label();
-			this.comboChangePatientStatusTo = new OpenDental.UI.ComboBoxOD();
+			this.comboChangePatientStatusTo = new OpenDental.UI.ComboBox();
 			this.groupCriteria.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -229,13 +229,13 @@ namespace OpenDental {
 		private UI.Button butDeselectAll;
 		private UI.Button butSelectAll;
 		private OpenDental.UI.ListBoxOD listOptions;
-		private OpenDental.UI.GroupBoxOD groupCriteria;
+		private OpenDental.UI.GroupBox groupCriteria;
 		private UI.ComboBoxClinicPicker comboClinic;
 		private System.Windows.Forms.Label label1;
 		private UI.ODDatePicker odDatePickerSince;
 		private System.Windows.Forms.Label labelChangeTo;
 		private System.Windows.Forms.Label labelPatientCurrent;
-		private UI.ComboBoxOD comboPatientStatusCur;
-		private UI.ComboBoxOD comboChangePatientStatusTo;
+		private UI.ComboBox comboPatientStatusCur;
+		private UI.ComboBox comboChangePatientStatusTo;
 	}
 }

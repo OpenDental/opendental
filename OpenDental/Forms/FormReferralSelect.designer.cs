@@ -34,7 +34,7 @@ namespace OpenDental {
 			this.butAdd = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.checkPreferred = new System.Windows.Forms.CheckBox();
 			this.checkShowOther = new System.Windows.Forms.CheckBox();
 			this.checkShowDoctor = new System.Windows.Forms.CheckBox();
@@ -237,7 +237,7 @@ namespace OpenDental {
 		private TextBox textSearch;
 		private Label label1;
 		private Label labelResultCount;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private CheckBox checkShowOther;
 		private CheckBox checkShowDoctor;
 		private CheckBox checkShowPat;

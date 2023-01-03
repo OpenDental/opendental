@@ -35,7 +35,7 @@ namespace OpenDental{
 			this.textWidth2 = new System.Windows.Forms.TextBox();
 			this.textHeight2 = new System.Windows.Forms.TextBox();
 			this.pictureBox = new System.Windows.Forms.PictureBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.checkRatio = new OpenDental.UI.CheckBox();
 			this.butShrink = new OpenDental.UI.Button();
 			this.butImport = new OpenDental.UI.Button();
@@ -315,7 +315,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textWidth2;
 		private System.Windows.Forms.TextBox textHeight2;
 		private System.Windows.Forms.PictureBox pictureBox;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.Button butShrink;
 		private OpenDental.UI.CheckBox checkRatio;
 	}

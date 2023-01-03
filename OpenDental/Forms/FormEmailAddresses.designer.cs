@@ -25,7 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEmailAddresses));
 			this.label2 = new System.Windows.Forms.Label();
-			this.groupEmailPrefs = new OpenDental.UI.GroupBoxOD();
+			this.groupEmailPrefs = new OpenDental.UI.GroupBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butSetDefault = new OpenDental.UI.Button();
 			this.butWebMailNotify = new OpenDental.UI.Button();
@@ -212,7 +212,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelInboxCheckUnits;
 		private System.Windows.Forms.TextBox textInboxCheckInterval;
 		private UI.Button butWebMailNotify;
-		private OpenDental.UI.GroupBoxOD groupEmailPrefs;
+		private OpenDental.UI.GroupBox groupEmailPrefs;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private OpenDental.UI.CheckBox checkEmailDisclaimer;

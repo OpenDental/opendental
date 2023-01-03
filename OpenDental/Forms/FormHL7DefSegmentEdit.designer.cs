@@ -29,7 +29,7 @@ namespace OpenDental{
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.checkCanRepeat = new OpenDental.UI.CheckBox();
 			this.checkIsOptional = new OpenDental.UI.CheckBox();
-			this.comboSegmentName = new OpenDental.UI.ComboBoxOD();
+			this.comboSegmentName = new OpenDental.UI.ComboBox();
 			this.labelItemOrder = new System.Windows.Forms.Label();
 			this.textNote = new System.Windows.Forms.TextBox();
 			this.label12 = new System.Windows.Forms.Label();
@@ -220,7 +220,7 @@ namespace OpenDental{
 		private UI.GridOD gridMain;
 		private OpenDental.UI.CheckBox checkCanRepeat;
 		private OpenDental.UI.CheckBox checkIsOptional;
-		private OpenDental.UI.ComboBoxOD comboSegmentName;
+		private OpenDental.UI.ComboBox comboSegmentName;
 		private System.Windows.Forms.Label labelItemOrder;
 		private System.Windows.Forms.TextBox textNote;
 		private System.Windows.Forms.Label label12;

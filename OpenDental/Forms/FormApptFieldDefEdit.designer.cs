@@ -43,7 +43,7 @@ namespace OpenDental {
 			this.labelWarning = new System.Windows.Forms.Label();
 			this.textPickList = new System.Windows.Forms.TextBox();
 			this.labelFieldType = new System.Windows.Forms.Label();
-			this.comboFieldType = new OpenDental.UI.ComboBoxOD();
+			this.comboFieldType = new OpenDental.UI.ComboBox();
 			this.SuspendLayout();
 			// 
 			// butCancel
@@ -169,6 +169,6 @@ namespace OpenDental {
 		private Label labelWarning;
 		private TextBox textPickList;
 		private Label labelFieldType;
-		private OpenDental.UI.ComboBoxOD comboFieldType;
+		private OpenDental.UI.ComboBox comboFieldType;
 	}
 }

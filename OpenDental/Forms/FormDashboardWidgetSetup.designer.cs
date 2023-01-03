@@ -25,7 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDashboardWidgetSetup));
 			this.gridCustom = new OpenDental.UI.GridOD();
-			this.comboUserGroup = new OpenDental.UI.ComboBoxOD();
+			this.comboUserGroup = new OpenDental.UI.ComboBox();
 			this.labelUserGroup = new System.Windows.Forms.Label();
 			this.butSetAll = new OpenDental.UI.Button();
 			this.gridInternal = new OpenDental.UI.GridOD();
@@ -168,7 +168,7 @@ namespace OpenDental{
 
 		#endregion
 		private UI.GridOD gridCustom;
-		private UI.ComboBoxOD comboUserGroup;
+		private UI.ComboBox comboUserGroup;
 		private System.Windows.Forms.Label labelUserGroup;
 		private UI.Button butSetAll;
 		private UI.GridOD gridInternal;

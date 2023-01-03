@@ -25,7 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAvaTax));
 			this.butCancel = new OpenDental.UI.Button();
-			this.groupProcCodes = new OpenDental.UI.GroupBoxOD();
+			this.groupProcCodes = new OpenDental.UI.GroupBox();
 			this.textDiscountCodes = new System.Windows.Forms.TextBox();
 			this.labelDiscountCodes = new System.Windows.Forms.Label();
 			this.labelPrePayCodes = new System.Windows.Forms.Label();
@@ -37,7 +37,7 @@ namespace OpenDental{
 			this.checkEnabled = new OpenDental.UI.CheckBox();
 			this.labelStatesNotTaxed = new System.Windows.Forms.Label();
 			this.listBoxNonTaxedStates = new OpenDental.UI.ListBoxOD();
-			this.groupOffice = new OpenDental.UI.GroupBoxOD();
+			this.groupOffice = new OpenDental.UI.GroupBox();
 			this.validTaxLockDate = new OpenDental.ValidDate();
 			this.labelSalesTaxLockDate = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
@@ -51,7 +51,7 @@ namespace OpenDental{
 			this.labelCompanyCode = new System.Windows.Forms.Label();
 			this.textCompanyCode = new System.Windows.Forms.TextBox();
 			this.butChooseTaxAdjType = new OpenDental.UI.Button();
-			this.groupApiSettings = new OpenDental.UI.GroupBoxOD();
+			this.groupApiSettings = new OpenDental.UI.GroupBox();
 			this.listBoxLogLevel = new OpenDental.UI.ListBoxOD();
 			this.labelLogLevel = new System.Windows.Forms.Label();
 			this.labelPass = new System.Windows.Forms.Label();
@@ -62,7 +62,7 @@ namespace OpenDental{
 			this.radioProdEnv = new System.Windows.Forms.RadioButton();
 			this.radioTestEnv = new System.Windows.Forms.RadioButton();
 			this.butOK = new OpenDental.UI.Button();
-			this.groupOverrides = new OpenDental.UI.GroupBoxOD();
+			this.groupOverrides = new OpenDental.UI.GroupBox();
 			this.textOverrides = new System.Windows.Forms.TextBox();
 			this.labelOverrides = new System.Windows.Forms.Label();
 			this.groupProcCodes.SuspendLayout();
@@ -502,7 +502,7 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
-		private OpenDental.UI.GroupBoxOD groupOffice;
+		private OpenDental.UI.GroupBox groupOffice;
 		private UI.Button butChooseTaxAdjType;
 		private UI.ListBoxOD listBoxNonTaxedStates;
 		private System.Windows.Forms.Label labelStatesNotTaxed;
@@ -510,7 +510,7 @@ namespace OpenDental{
 		private System.Windows.Forms.RadioButton radioProdEnv;
 		private System.Windows.Forms.TextBox textUsername;
 		private System.Windows.Forms.Label labelUser;
-		private OpenDental.UI.GroupBoxOD groupApiSettings;
+		private OpenDental.UI.GroupBox groupApiSettings;
 		private System.Windows.Forms.Label labelPass;
 		private UI.Button butPing;
 		private System.Windows.Forms.TextBox textPassword;
@@ -525,7 +525,7 @@ namespace OpenDental{
 		private UI.Button butLeft;
 		private UI.ListBoxOD listBoxTaxedStates;
 		private System.Windows.Forms.Label labelStatesTaxed;
-		private OpenDental.UI.GroupBoxOD groupProcCodes;
+		private OpenDental.UI.GroupBox groupProcCodes;
 		private System.Windows.Forms.Label labelPrePayCodes;
 		private System.Windows.Forms.TextBox textPrePayCodes;
 		private System.Windows.Forms.Label labelTaxExempt;
@@ -533,7 +533,7 @@ namespace OpenDental{
 		private UI.Button butChooseTaxExempt;
 		private System.Windows.Forms.TextBox textDiscountCodes;
 		private System.Windows.Forms.Label labelDiscountCodes;
-		private OpenDental.UI.GroupBoxOD groupOverrides;
+		private OpenDental.UI.GroupBox groupOverrides;
 		private System.Windows.Forms.TextBox textOverrides;
 		private System.Windows.Forms.Label labelOverrides;
 		private System.Windows.Forms.Label labelSalesTaxLockDate;

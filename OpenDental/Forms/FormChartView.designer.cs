@@ -38,7 +38,7 @@ namespace OpenDental {
 			this.label2 = new System.Windows.Forms.Label();
 			this.listAvailable = new OpenDental.UI.ListBoxOD();
 			this.label3 = new System.Windows.Forms.Label();
-			this.groupBox7 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox7 = new OpenDental.UI.GroupBox();
 			this.checkCommSuperFamily = new OpenDental.UI.CheckBox();
 			this.checkSheets = new OpenDental.UI.CheckBox();
 			this.checkTasks = new OpenDental.UI.CheckBox();
@@ -48,7 +48,7 @@ namespace OpenDental {
 			this.checkLabCase = new OpenDental.UI.CheckBox();
 			this.checkRx = new OpenDental.UI.CheckBox();
 			this.checkComm = new OpenDental.UI.CheckBox();
-			this.groupBox6 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox6 = new OpenDental.UI.GroupBox();
 			this.checkShowCn = new OpenDental.UI.CheckBox();
 			this.checkShowE = new OpenDental.UI.CheckBox();
 			this.checkShowR = new OpenDental.UI.CheckBox();
@@ -58,7 +58,7 @@ namespace OpenDental {
 			this.checkNotes = new OpenDental.UI.CheckBox();
 			this.checkAudit = new OpenDental.UI.CheckBox();
 			this.textBoxViewDesc = new System.Windows.Forms.TextBox();
-			this.groupBoxProperties = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxProperties = new OpenDental.UI.GroupBox();
 			this.checkTPChart = new OpenDental.UI.CheckBox();
 			this.butShowNone = new OpenDental.UI.Button();
 			this.butShowAll = new OpenDental.UI.Button();
@@ -66,7 +66,7 @@ namespace OpenDental {
 			this.listProcStatusCodes = new OpenDental.UI.ListBoxOD();
 			this.labelProcStatus = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboDatesShowing = new OpenDental.UI.ComboBoxOD();
+			this.comboDatesShowing = new OpenDental.UI.ComboBox();
 			this.butDelete = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.butRight = new OpenDental.UI.Button();
@@ -570,7 +570,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butRight;
 		private OpenDental.UI.Button butLeft;
 		private OpenDental.UI.Button butOK;
-		private OpenDental.UI.GroupBoxOD groupBox7;
+		private OpenDental.UI.GroupBox groupBox7;
 		private OpenDental.UI.CheckBox checkSheets;
 		private OpenDental.UI.CheckBox checkTasks;
 		private OpenDental.UI.CheckBox checkEmail;
@@ -579,7 +579,7 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkLabCase;
 		private OpenDental.UI.CheckBox checkRx;
 		private OpenDental.UI.CheckBox checkComm;
-		private OpenDental.UI.GroupBoxOD groupBox6;
+		private OpenDental.UI.GroupBox groupBox6;
 		private OpenDental.UI.CheckBox checkShowCn;
 		private OpenDental.UI.CheckBox checkShowE;
 		private OpenDental.UI.CheckBox checkShowR;
@@ -591,13 +591,13 @@ namespace OpenDental {
 		private OpenDental.UI.Button butShowAll;
 		private OpenDental.UI.Button butShowNone;
 		private TextBox textBoxViewDesc;
-		private OpenDental.UI.GroupBoxOD groupBoxProperties;
+		private OpenDental.UI.GroupBox groupBoxProperties;
 		private OpenDental.UI.Button butDelete;
 		private Label labelDescription;
 		private OpenDental.UI.ListBoxOD listProcStatusCodes;
 		private Label labelProcStatus;
 		private Label label1;
-		private OpenDental.UI.ComboBoxOD comboDatesShowing;
+		private OpenDental.UI.ComboBox comboDatesShowing;
 		private OpenDental.UI.CheckBox checkTPChart;
 		private OpenDental.UI.CheckBox checkCommSuperFamily;
 	}

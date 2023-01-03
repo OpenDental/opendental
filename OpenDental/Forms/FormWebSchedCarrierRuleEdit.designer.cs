@@ -32,7 +32,7 @@ namespace OpenDental {
 			this.textDisplayName = new System.Windows.Forms.TextBox();
 			this.labelMessage = new System.Windows.Forms.Label();
 			this.textMessage = new System.Windows.Forms.TextBox();
-			this.groupRuleType = new OpenDental.UI.GroupBoxOD();
+			this.groupRuleType = new OpenDental.UI.GroupBox();
 			this.radioAllowWithInput = new System.Windows.Forms.RadioButton();
 			this.radioAllow = new System.Windows.Forms.RadioButton();
 			this.radioAllowWithMessage = new System.Windows.Forms.RadioButton();
@@ -208,7 +208,7 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textDisplayName;
 		private System.Windows.Forms.Label labelMessage;
 		private System.Windows.Forms.TextBox textMessage;
-		private UI.GroupBoxOD groupRuleType;
+		private UI.GroupBox groupRuleType;
 		private System.Windows.Forms.RadioButton radioAllow;
 		private System.Windows.Forms.RadioButton radioAllowWithMessage;
 		private System.Windows.Forms.RadioButton radioBlock;

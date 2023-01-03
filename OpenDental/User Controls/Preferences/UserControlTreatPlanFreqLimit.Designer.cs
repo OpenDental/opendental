@@ -24,7 +24,7 @@ namespace OpenDental {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.groupBoxDiscountPlanFreqLimit = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxDiscountPlanFreqLimit = new OpenDental.UI.GroupBox();
 			this.label63 = new System.Windows.Forms.Label();
 			this.textDiscountPACodes = new System.Windows.Forms.TextBox();
 			this.labelDiscountPAFreq = new System.Windows.Forms.Label();
@@ -40,7 +40,7 @@ namespace OpenDental {
 			this.labelDiscountFluorideFreq = new System.Windows.Forms.Label();
 			this.textDiscountProphyCodes = new System.Windows.Forms.TextBox();
 			this.labelDiscountExamFreq = new System.Windows.Forms.Label();
-			this.groupBoxFrequencyLimit = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxFrequencyLimit = new OpenDental.UI.GroupBox();
 			this.textInsImplant = new System.Windows.Forms.TextBox();
 			this.labelInsImplant = new System.Windows.Forms.Label();
 			this.label52 = new System.Windows.Forms.Label();
@@ -568,7 +568,7 @@ namespace OpenDental {
 
 		#endregion
 
-		private UI.GroupBoxOD groupBoxDiscountPlanFreqLimit;
+		private UI.GroupBox groupBoxDiscountPlanFreqLimit;
 		private System.Windows.Forms.Label label63;
 		private System.Windows.Forms.TextBox textDiscountPACodes;
 		private System.Windows.Forms.Label labelDiscountPAFreq;
@@ -584,7 +584,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelDiscountFluorideFreq;
 		private System.Windows.Forms.TextBox textDiscountProphyCodes;
 		private System.Windows.Forms.Label labelDiscountExamFreq;
-		private UI.GroupBoxOD groupBoxFrequencyLimit;
+		private UI.GroupBox groupBoxFrequencyLimit;
 		private System.Windows.Forms.TextBox textInsImplant;
 		private System.Windows.Forms.Label labelInsImplant;
 		private System.Windows.Forms.Label label52;

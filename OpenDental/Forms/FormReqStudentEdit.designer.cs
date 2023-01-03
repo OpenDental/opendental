@@ -41,7 +41,7 @@ namespace OpenDental {
 			this.label5 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
 			this.textDateCompleted = new System.Windows.Forms.TextBox();
-			this.comboInstructor = new OpenDental.UI.ComboBoxOD();
+			this.comboInstructor = new OpenDental.UI.ComboBox();
 			this.label11 = new System.Windows.Forms.Label();
 			this.butNow = new OpenDental.UI.Button();
 			this.butDetachPat = new OpenDental.UI.Button();
@@ -291,7 +291,7 @@ namespace OpenDental {
 		private Label label5;
 		private Label label6;
 		private TextBox textDateCompleted;
-		private OpenDental.UI.ComboBoxOD comboInstructor;
+		private OpenDental.UI.ComboBox comboInstructor;
 		private Label label11;
 		private OpenDental.UI.Button butNow;
 		private TextBox textDescription;

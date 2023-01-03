@@ -29,10 +29,10 @@
 			this.butRequest = new System.Windows.Forms.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butShowXhtml = new System.Windows.Forms.Button();
 			this.butShowXml = new System.Windows.Forms.Button();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.butExport = new System.Windows.Forms.Button();
 			this.butSendEmail = new System.Windows.Forms.Button();
@@ -194,10 +194,10 @@
 				private System.Windows.Forms.Button butDelete;
 				private System.Windows.Forms.Button butRequest;
 				private System.Windows.Forms.Label label1;
-				private OpenDental.UI.GroupBoxOD groupBox1;
+				private OpenDental.UI.GroupBox groupBox1;
 				private System.Windows.Forms.Button butShowXhtml;
 				private System.Windows.Forms.Button butShowXml;
-				private OpenDental.UI.GroupBoxOD groupBox3;
+				private OpenDental.UI.GroupBox groupBox3;
 				private System.Windows.Forms.Label label2;
 				private System.Windows.Forms.Button butExport;
 				private System.Windows.Forms.Button butSendEmail;

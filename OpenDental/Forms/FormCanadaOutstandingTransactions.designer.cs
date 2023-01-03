@@ -25,11 +25,11 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCanadaOutstandingTransactions));
 			this.listCarriers = new OpenDental.UI.ListBoxOD();
-			this.groupCarrier = new OpenDental.UI.GroupBoxOD();
+			this.groupCarrier = new OpenDental.UI.GroupBox();
 			this.radioVersion2 = new System.Windows.Forms.RadioButton();
 			this.radioVersion4Itrans = new System.Windows.Forms.RadioButton();
 			this.radioVersion4ToCarrier = new System.Windows.Forms.RadioButton();
-			this.groupOfficeNumber = new OpenDental.UI.GroupBoxOD();
+			this.groupOfficeNumber = new OpenDental.UI.GroupBox();
 			this.listOfficeNumbers = new OpenDental.UI.ListBoxOD();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.butOK = new OpenDental.UI.Button();
@@ -168,11 +168,11 @@ namespace OpenDental{
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.ListBoxOD listCarriers;
-		private OpenDental.UI.GroupBoxOD groupCarrier;
+		private OpenDental.UI.GroupBox groupCarrier;
 		private System.Windows.Forms.RadioButton radioVersion2;
 		private System.Windows.Forms.RadioButton radioVersion4Itrans;
 		private System.Windows.Forms.RadioButton radioVersion4ToCarrier;
-		private OpenDental.UI.GroupBoxOD groupOfficeNumber;
+		private OpenDental.UI.GroupBox groupOfficeNumber;
 		private OpenDental.UI.ListBoxOD listOfficeNumbers;
 		private System.Windows.Forms.TextBox textBox1;
 	}

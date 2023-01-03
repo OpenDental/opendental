@@ -34,7 +34,7 @@ namespace OpenDental {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDiseaseDefs));
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.checkShowHidden = new OpenDental.UI.CheckBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.textSnoMed = new OpenDental.ODtextBox();
@@ -318,7 +318,7 @@ namespace OpenDental {
 		private System.Windows.Forms.ToolTip toolTip1;
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.GridOD gridMain;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private ODtextBox textSnoMed;
 		private ODtextBox textDescript;
 		private Label label3;

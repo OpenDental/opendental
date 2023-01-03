@@ -41,7 +41,7 @@ namespace OpenDental {
 			this.textHeight = new OpenDental.ValidNum();
 			this.label4 = new System.Windows.Forms.Label();
 			this.panelSplitter = new System.Windows.Forms.Panel();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.labelReorder = new System.Windows.Forms.Label();
 			this.butReorder = new OpenDental.UI.Button();
 			this.label7 = new System.Windows.Forms.Label();
@@ -298,7 +298,7 @@ namespace OpenDental {
 		private Panel panelSplitter;
 		private UI.Button butDown;
 		private UI.Button butUp;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private Label labelWarning;
 		private Label label5;
 		private Label label7;

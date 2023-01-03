@@ -57,7 +57,7 @@ namespace OpenDental {
 			this.butExport = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butOpenInvoice = new OpenDental.UI.Button();
 			this.butAttachInvoice = new OpenDental.UI.Button();
 			this.textSourceInvoice = new System.Windows.Forms.TextBox();
@@ -578,7 +578,7 @@ namespace OpenDental {
 		private TextBox textMemo;
 		private OpenDental.UI.Button butChange;
 		private TextBox textAccount;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private TextBox textSourceDeposit;
 		private Label label9;
 		private Label label8;

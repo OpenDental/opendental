@@ -37,7 +37,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRecallTypeEdit));
 			this.label1 = new System.Windows.Forms.Label();
 			this.textDescription = new System.Windows.Forms.TextBox();
-			this.groupInterval = new OpenDental.UI.GroupBoxOD();
+			this.groupInterval = new OpenDental.UI.GroupBox();
 			this.textWeeks = new OpenDental.ValidNum();
 			this.label7 = new System.Windows.Forms.Label();
 			this.textDays = new OpenDental.ValidNum();
@@ -51,7 +51,7 @@ namespace OpenDental {
 			this.label14 = new System.Windows.Forms.Label();
 			this.label15 = new System.Windows.Forms.Label();
 			this.listProcs = new OpenDental.UI.ListBoxOD();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.labelRestrictToBlockouts = new System.Windows.Forms.Label();
 			this.butRemoveProc = new OpenDental.UI.Button();
 			this.butSelectBlockouts = new OpenDental.UI.Button();
@@ -60,7 +60,7 @@ namespace OpenDental {
 			this.listTriggers = new OpenDental.UI.ListBoxOD();
 			this.labelTriggers = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
-			this.comboSpecial = new OpenDental.UI.ComboBoxOD();
+			this.comboSpecial = new OpenDental.UI.ComboBox();
 			this.labelSpecial = new System.Windows.Forms.Label();
 			this.butRemoveTrigger = new OpenDental.UI.Button();
 			this.butAddTrigger = new OpenDental.UI.Button();
@@ -70,7 +70,7 @@ namespace OpenDental {
 			this.butDelete = new OpenDental.UI.Button();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
-			this.groupAgeLimit = new OpenDental.UI.GroupBoxOD();
+			this.groupAgeLimit = new OpenDental.UI.GroupBox();
 			this.textRecallAgeAdult = new OpenDental.ValidNum();
 			this.label8 = new System.Windows.Forms.Label();
 			this.label17 = new System.Windows.Forms.Label();
@@ -515,7 +515,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textDescription;
-		private OpenDental.UI.GroupBoxOD groupInterval;
+		private OpenDental.UI.GroupBox groupInterval;
 		private ValidNum textWeeks;
 		private Label label7;
 		private ValidNum textDays;
@@ -529,7 +529,7 @@ namespace OpenDental {
 		private Label label14;
 		private Label label15;
 		private OpenDental.UI.ListBoxOD listProcs;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private OpenDental.UI.Button butRemoveProc;
 		private OpenDental.UI.Button butAddProc;
 		private OpenDental.UI.Button butRemoveTrigger;
@@ -537,13 +537,13 @@ namespace OpenDental {
 		private OpenDental.UI.ListBoxOD listTriggers;
 		private Label labelTriggers;
 		private Label label3;
-		private OpenDental.UI.ComboBoxOD comboSpecial;
+		private OpenDental.UI.ComboBox comboSpecial;
 		private Label labelSpecial;
 		private Label labelTriggerDisable;
 		private OpenDental.UI.Button butDelete;
 		private Label label4;
 		private Label label5;
-		private OpenDental.UI.GroupBoxOD groupAgeLimit;
+		private OpenDental.UI.GroupBox groupAgeLimit;
 		private ValidNum textRecallAgeAdult;
 		private Label label8;
 		private Label label17;

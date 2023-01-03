@@ -11,61 +11,35 @@ using CodeBase;
 
 namespace OpenDental {
 	public partial class EServiceMetricsControl:UserControl {
-		bool _flashUp=true;
-		private Color _alertColor=Color.Black;
-		[Category("Appearance")]
-		[Description("Alert Bubble Color")]
-		public Color AlertColor {
-			get {
-				return _alertColor;
-			}
-			set {
-				if(_alertColor==value) {
-					return;
-				}
-				_alertColor=value;
-				panelAlertColor.BackColor=_alertColor;
-			}
-		}
-
 		private float _accountBalance=0f;
-		[Category("Appearance")]
-		[Description("Remaining Balance")]
-		public float AccountBalance {
-			get {
-				return _accountBalance;
+		private Color _colorAlert=Color.Blue;
+		private bool _flashUp=true;
+
+		///<summary>When flashing, color of the bubble will alternate between this and the BackColor.</summary>
+		public void SetColorAlert(Color color) {
+			if(_colorAlert==color) {
+				return;
 			}
-			set {
-				_accountBalance=value;
-				labelAccountBalance.Text=AccountBalanceEuro;
-			}
+			_colorAlert=color;
+			panelAlertColor.BackColor=_colorAlert;
 		}
 
-		public string AccountBalanceEuro {
-			get {
-				return "\u20AC"+AccountBalance.ToString("0");
-			}
+		public void SetAccountBalance(float bal) {
+			_accountBalance=bal;
+			labelAccountBalance.Text="\u20AC"+_accountBalance.ToString("0");
 		}
 
-		public string FlashReason {
-			get {
-				if(labelAccountBalance.Tag==null) {
-					return "No errors found";
-				}
-				if(!(labelAccountBalance.Tag is string)) {
-					return "No errors found";
-				}
-				if(string.IsNullOrEmpty((string)labelAccountBalance.Tag)) {
-					return "No errors found";
-				}
-				return(string)labelAccountBalance.Tag;
+		private string GetFlashReason() {
+			if(labelAccountBalance.Tag==null) {
+				return "No errors found";
 			}
-		}
-
-		public bool IsFlashing {
-			get {
-				return timerFlash.Enabled;
+			if(!(labelAccountBalance.Tag is string)) {
+				return "No errors found";
 			}
+			if(string.IsNullOrEmpty((string)labelAccountBalance.Tag)) {
+				return "No errors found";
+			}
+			return(string)labelAccountBalance.Tag;
 		}
 		
 		public EServiceMetricsControl() {
@@ -75,7 +49,7 @@ namespace OpenDental {
 		private void timerFlash_Tick(object sender,EventArgs e) {
 			//Flip the colors.
 			if(_flashUp) {
-				panelAlertColor.BackColor=AlertColor;
+				panelAlertColor.BackColor=_colorAlert;
 			}
 			else {
 				panelAlertColor.BackColor=this.BackColor;
@@ -84,7 +58,7 @@ namespace OpenDental {
 		}
 
 		public void StartFlashing(string reason) {
-			if(IsFlashing) { //already on
+			if(timerFlash.Enabled) { //already on
 				return;
 			}
 			//Flash is starting so save the reason so we can look at it.
@@ -93,14 +67,14 @@ namespace OpenDental {
 		}
 
 		public void StopFlashing() {
-			if(!IsFlashing) { //already off
+			if(!timerFlash.Enabled) { //already off
 				return;
 			}
 			//Flash is stopping so mark fixed but keep it around so we can still look at it if desired.
-			string reason="THIS PROBLEM HAS BEEN FIXED! "+FlashReason;
+			string reason="THIS PROBLEM HAS BEEN FIXED! "+GetFlashReason();
 			labelAccountBalance.Tag=reason;
 			timerFlash.Stop();
-			panelAlertColor.BackColor=AlertColor;
+			panelAlertColor.BackColor=_colorAlert;
 		}
 
 		private void panelAlertColor_Paint(object sender,PaintEventArgs e) {
@@ -117,7 +91,7 @@ namespace OpenDental {
 		}
 
 		private void labelAccountBalance_DoubleClick(object sender,EventArgs e) {
-			MessageBox.Show(FlashReason);
+			MessageBox.Show(GetFlashReason());
 		}
 	}
 }

@@ -33,7 +33,7 @@ namespace OpenDental {
 			this.butDecimal = new OpenDental.UI.Button();
 			this.textNumDecimals = new System.Windows.Forms.TextBox();
 			this.label7 = new System.Windows.Forms.Label();
-			this.comboTrackClinic = new OpenDental.UI.ComboBoxOD();
+			this.comboTrackClinic = new OpenDental.UI.ComboBox();
 			this.labelTrackClinic = new System.Windows.Forms.Label();
 			this.checkTimeCardUseLocal = new System.Windows.Forms.CheckBox();
 			this.butPickLanguageAndRegion = new OpenDental.UI.Button();
@@ -47,15 +47,15 @@ namespace OpenDental {
 			this.textWebServiceServerName = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupBox6 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox6 = new OpenDental.UI.GroupBox();
 			this.checkTitleBarShowSpecialty = new System.Windows.Forms.CheckBox();
 			this.checkUseClinicAbbr = new System.Windows.Forms.CheckBox();
 			this.textMainWindowTitle = new System.Windows.Forms.TextBox();
 			this.checkTitleBarShowSite = new System.Windows.Forms.CheckBox();
 			this.label15 = new System.Windows.Forms.Label();
-			this.comboShowID = new OpenDental.UI.ComboBoxOD();
+			this.comboShowID = new OpenDental.UI.ComboBox();
 			this.label17 = new System.Windows.Forms.Label();
-			this.groupSelectPatient = new OpenDental.UI.GroupBoxOD();
+			this.groupSelectPatient = new OpenDental.UI.GroupBox();
 			this.checkAllowRefreshWhileTyping = new System.Windows.Forms.CheckBox();
 			this.checkShowInactivePatientsDefault = new System.Windows.Forms.CheckBox();
 			this.checkPatientSelectFilterRestrictedClinics = new System.Windows.Forms.CheckBox();
@@ -73,7 +73,7 @@ namespace OpenDental {
 			this.textAlertCloudSessions = new OpenDental.ValidNum();
 			this.labelAlertCloudSessions = new System.Windows.Forms.Label();
 			this.checkAuditTrailUseReportingServer = new System.Windows.Forms.CheckBox();
-			this.groupBoxPopups = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxPopups = new OpenDental.UI.GroupBox();
 			this.textPopupsDisableTimeSpan = new System.Windows.Forms.TextBox();
 			this.labelTimeSpan = new System.Windows.Forms.Label();
 			this.textPopupsDisableDays = new System.Windows.Forms.TextBox();
@@ -680,10 +680,10 @@ namespace OpenDental {
 		private OpenDental.UI.Button butLanguages;
 		private Label label4;
 		private ToolTip toolTip1;
-		private OpenDental.UI.ComboBoxOD comboShowID;
+		private OpenDental.UI.ComboBox comboShowID;
 		private Label label15;
 		private Label label17;
-		private OpenDental.UI.GroupBoxOD groupBox6;
+		private OpenDental.UI.GroupBox groupBox6;
 		private CheckBox checkTitleBarShowSite;
 		private TextBox textWebServiceServerName;
 		private Label label2;
@@ -696,7 +696,7 @@ namespace OpenDental {
 		private Label label6;
 		private UI.Button butPickLanguageAndRegion;
     private CheckBox checkTimeCardUseLocal;
-		private OpenDental.UI.ComboBoxOD comboTrackClinic;
+		private OpenDental.UI.ComboBox comboTrackClinic;
 		private Label labelTrackClinic;
 		private Label label1;
 		private UI.Button butDecimal;
@@ -710,7 +710,7 @@ namespace OpenDental {
 		private CheckBox checkUseClinicAbbr;
 		private CheckBox checkSubmitExceptions;
 		private CheckBox checkTitleBarShowSpecialty;
-		private OpenDental.UI.GroupBoxOD groupSelectPatient;
+		private OpenDental.UI.GroupBox groupSelectPatient;
 		private CheckBox checkPatientSelectFilterRestrictedClinics;
 		private CheckBox checkShowInactivePatientsDefault;
 		private ValidNum textInactiveAlert;
@@ -721,7 +721,7 @@ namespace OpenDental {
 		private Label labelAlertCloudSessions;
 		private CheckBox checkAllowRefreshWhileTyping;
 		private CheckBox checkAuditTrailUseReportingServer;
-		private UI.GroupBoxOD groupBoxPopups;
+		private UI.GroupBox groupBoxPopups;
 		private TextBox textPopupsDisableTimeSpan;
 		private Label labelTimeSpan;
 		private TextBox textPopupsDisableDays;

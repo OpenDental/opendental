@@ -44,7 +44,7 @@ namespace OpenDental {
 			this.label6 = new System.Windows.Forms.Label();
 			this.butColor = new System.Windows.Forms.Button();
 			this.label7 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butRecordNew = new OpenDental.UI.Button();
 			this.butDeleteSound = new OpenDental.UI.Button();
 			this.butRecord = new OpenDental.UI.Button();
@@ -298,7 +298,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butDelete;
 		private OpenDental.UI.Button butPlay;
 		private OpenDental.UI.Button butImport;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.Button butRecord;
 		private OpenDental.UI.Button butExport;
 		private OpenDental.UI.Button butDeleteSound;

@@ -26,7 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormUnschedListSetup));
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.textDaysFuture = new OpenDental.ValidNum();
 			this.textDaysPast = new OpenDental.ValidNum();
 			this.label14 = new System.Windows.Forms.Label();
@@ -140,7 +140,7 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox3;
 		private ValidNum textDaysFuture;
 		private ValidNum textDaysPast;
 		private System.Windows.Forms.Label label14;

@@ -26,7 +26,7 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrLabSpecimenEdit));
 			this.butCancel = new System.Windows.Forms.Button();
 			this.butSave = new System.Windows.Forms.Button();
-			this.groupBox6 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox6 = new OpenDental.UI.GroupBox();
 			this.label44 = new System.Windows.Forms.Label();
 			this.textSpecimenTypeCodeSystemNameAlt = new System.Windows.Forms.TextBox();
 			this.label43 = new System.Windows.Forms.Label();
@@ -41,7 +41,7 @@
 			this.label34 = new System.Windows.Forms.Label();
 			this.label35 = new System.Windows.Forms.Label();
 			this.textSpecimenTypeIDAlt = new System.Windows.Forms.TextBox();
-			this.groupBox8 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox8 = new OpenDental.UI.GroupBox();
 			this.textCollectionDateTimeStart = new System.Windows.Forms.TextBox();
 			this.label17 = new System.Windows.Forms.Label();
 			this.label18 = new System.Windows.Forms.Label();
@@ -309,7 +309,7 @@
 		private System.Windows.Forms.Button butCancel;
 		private System.Windows.Forms.Button butSave;
 		private UI.GridOD gridReject;
-		private OpenDental.UI.GroupBoxOD groupBox6;
+		private OpenDental.UI.GroupBox groupBox6;
 		private System.Windows.Forms.Label label44;
 		private System.Windows.Forms.TextBox textSpecimenTypeCodeSystemNameAlt;
 		private System.Windows.Forms.Label label43;
@@ -324,7 +324,7 @@
 		private System.Windows.Forms.Label label34;
 		private System.Windows.Forms.Label label35;
 		private System.Windows.Forms.TextBox textSpecimenTypeIDAlt;
-		private OpenDental.UI.GroupBoxOD groupBox8;
+		private OpenDental.UI.GroupBox groupBox8;
 		private System.Windows.Forms.TextBox textCollectionDateTimeStart;
 		private System.Windows.Forms.Label label17;
 		private System.Windows.Forms.Label label18;

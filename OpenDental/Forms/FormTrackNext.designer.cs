@@ -39,13 +39,13 @@ namespace OpenDental {
 			this.toolStripMenuItemSelectPatient = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItemSeeChart = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItemSendToPinboard = new System.Windows.Forms.ToolStripMenuItem();
-			this.comboProv = new OpenDental.UI.ComboBoxOD();
+			this.comboProv = new OpenDental.UI.ComboBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.butRefresh = new OpenDental.UI.Button();
-			this.comboOrder = new OpenDental.UI.ComboBoxOD();
+			this.comboOrder = new OpenDental.UI.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butPrint = new OpenDental.UI.Button();
-			this.comboSite = new OpenDental.UI.ComboBoxOD();
+			this.comboSite = new OpenDental.UI.ComboBox();
 			this.labelSite = new System.Windows.Forms.Label();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.dateRangePicker = new OpenDental.UI.ODDateRangePicker();
@@ -258,13 +258,13 @@ namespace OpenDental {
 
 		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GridOD gridMain;
-		private OpenDental.UI.ComboBoxOD comboProv;
+		private OpenDental.UI.ComboBox comboProv;
 		private Label label4;
 		private OpenDental.UI.Button butRefresh;
-		private OpenDental.UI.ComboBoxOD comboOrder;
+		private OpenDental.UI.ComboBox comboOrder;
 		private Label label1;
 		private OpenDental.UI.Button butPrint;
-		private OpenDental.UI.ComboBoxOD comboSite;
+		private OpenDental.UI.ComboBox comboSite;
 		private Label labelSite;
 		private UI.ComboBoxClinicPicker comboClinic;
 		private ToolStripMenuItem toolStripMenuItemSelectPatient;

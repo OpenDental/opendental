@@ -26,7 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWebForms));
 			this.menuWebFormsRight = new System.Windows.Forms.ContextMenu();
 			this.menuItemViewAllSheets = new System.Windows.Forms.MenuItem();
-			this.groupFilters = new OpenDental.UI.GroupBoxOD();
+			this.groupFilters = new OpenDental.UI.GroupBox();
 			this.comboClinics = new OpenDental.UI.ComboBoxClinicPicker();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.butToday = new OpenDental.UI.Button();
@@ -236,7 +236,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.Button butRetrieve;
-		private OpenDental.UI.GroupBoxOD groupFilters;
+		private OpenDental.UI.GroupBox groupFilters;
 		private OpenDental.UI.Button butToday;
 		private ValidDate textDateStart;
 		private System.Windows.Forms.Label labelStartDate;

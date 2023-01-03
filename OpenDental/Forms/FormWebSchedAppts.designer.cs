@@ -28,19 +28,19 @@ namespace OpenDental {
 			this.butClose = new OpenDental.UI.Button();
 			this.datePicker = new OpenDental.UI.ODDateRangePicker();
 			this.comboBoxClinicMulti = new OpenDental.UI.ComboBoxClinicPicker();
-			this.comboConfStatus = new OpenDental.UI.ComboBoxOD();
+			this.comboConfStatus = new OpenDental.UI.ComboBox();
 			this.labelConfStatus = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.contextMenuMainGrid = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.mainGridMenuItemPatChart = new System.Windows.Forms.ToolStripMenuItem();
 			this.mainGridMenuItemApptEdit = new System.Windows.Forms.ToolStripMenuItem();
 			this.butRefresh = new OpenDental.UI.Button();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.checkWebSchedExistingPat = new OpenDental.UI.CheckBox();
 			this.checkASAP = new OpenDental.UI.CheckBox();
 			this.checkWebSchedNewPat = new OpenDental.UI.CheckBox();
 			this.checkWebSchedRecall = new OpenDental.UI.CheckBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.contextMenuMainGrid.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -225,11 +225,11 @@ namespace OpenDental {
 		private OpenDental.UI.Button butClose;
 		private UI.ODDateRangePicker datePicker;
 		private UI.ComboBoxClinicPicker comboBoxClinicMulti;
-		private OpenDental.UI.ComboBoxOD comboConfStatus;
+		private OpenDental.UI.ComboBox comboConfStatus;
 		private System.Windows.Forms.Label labelConfStatus;
 		private UI.GridOD gridMain;
 		private UI.Button butRefresh;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private OpenDental.UI.CheckBox checkWebSchedNewPat;
 		private OpenDental.UI.CheckBox checkWebSchedRecall;
 		private System.Windows.Forms.ContextMenuStrip contextMenuMainGrid;
@@ -237,6 +237,6 @@ namespace OpenDental {
 		private System.Windows.Forms.ToolStripMenuItem mainGridMenuItemApptEdit;
 		private OpenDental.UI.CheckBox checkASAP;
 		private OpenDental.UI.CheckBox checkWebSchedExistingPat;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 	}
 }

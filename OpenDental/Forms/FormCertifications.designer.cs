@@ -31,7 +31,7 @@ namespace OpenDental{
 			this.butSetup = new OpenDental.UI.Button();
 			this.labelEmployee = new System.Windows.Forms.Label();
 			this.labelCategories = new System.Windows.Forms.Label();
-			this.groupBoxOrderBy = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOrderBy = new OpenDental.UI.GroupBox();
 			this.radioCategory = new System.Windows.Forms.RadioButton();
 			this.radioCertification = new System.Windows.Forms.RadioButton();
 			this.labelCertification = new System.Windows.Forms.Label();
@@ -43,7 +43,7 @@ namespace OpenDental{
 			this.checkSortDate = new OpenDental.UI.CheckBox();
 			this.labelCategories2 = new System.Windows.Forms.Label();
 			this.listBoxCategories2 = new OpenDental.UI.ListBoxOD();
-			this.comboSupervisor = new OpenDental.UI.ComboBoxOD();
+			this.comboSupervisor = new OpenDental.UI.ComboBox();
 			this.labelReportsTo = new System.Windows.Forms.Label();
 			this.checkSortDateCertComplete = new OpenDental.UI.CheckBox();
 			this.groupBoxOrderBy.SuspendLayout();
@@ -308,7 +308,7 @@ namespace OpenDental{
 		private UI.Button butSetup;
 		private System.Windows.Forms.Label labelEmployee;
 		private System.Windows.Forms.Label labelCategories;
-		private OpenDental.UI.GroupBoxOD groupBoxOrderBy;
+		private OpenDental.UI.GroupBox groupBoxOrderBy;
 		private System.Windows.Forms.RadioButton radioCategory;
 		private System.Windows.Forms.RadioButton radioCertification;
 		private System.Windows.Forms.Label labelCertification;
@@ -320,7 +320,7 @@ namespace OpenDental{
 		private OpenDental.UI.CheckBox checkSortDate;
 		private System.Windows.Forms.Label labelCategories2;
 		private UI.ListBoxOD listBoxCategories2;
-		private UI.ComboBoxOD comboSupervisor;
+		private UI.ComboBox comboSupervisor;
 		private System.Windows.Forms.Label labelReportsTo;
 		private OpenDental.UI.CheckBox checkSortDateCertComplete;
 	}

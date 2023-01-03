@@ -26,10 +26,10 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSheetDef));
 			this.labelSheetType = new System.Windows.Forms.Label();
 			this.listSheetType = new OpenDental.UI.ListBoxOD();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textFontSize = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.comboFontName = new OpenDental.UI.ComboBoxOD();
+			this.comboFontName = new OpenDental.UI.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
@@ -263,9 +263,9 @@ namespace OpenDental{
 		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label labelSheetType;
 		private OpenDental.UI.ListBoxOD listSheetType;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label3;
-		private OpenDental.UI.ComboBoxOD comboFontName;
+		private OpenDental.UI.ComboBox comboFontName;
 		private System.Windows.Forms.TextBox textFontSize;
 		private System.Windows.Forms.Label label4;
 		private ValidNum textWidth;

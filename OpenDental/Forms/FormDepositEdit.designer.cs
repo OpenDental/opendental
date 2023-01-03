@@ -35,8 +35,8 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDepositEdit));
-			this.groupSelect = new OpenDental.UI.GroupBoxOD();
-			this.comboClassRefs = new OpenDental.UI.ComboBoxOD();
+			this.groupSelect = new OpenDental.UI.GroupBox();
+			this.comboClassRefs = new OpenDental.UI.ComboBox();
 			this.labelClassRef = new System.Windows.Forms.Label();
 			this.listInsPayType = new OpenDental.UI.ListBoxOD();
 			this.label6 = new System.Windows.Forms.Label();
@@ -52,7 +52,7 @@ namespace OpenDental {
 			this.textBankAccountInfo = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.textAmount = new System.Windows.Forms.TextBox();
-			this.comboDepositAccount = new OpenDental.UI.ComboBoxOD();
+			this.comboDepositAccount = new OpenDental.UI.ComboBox();
 			this.labelDepositAccount = new System.Windows.Forms.Label();
 			this.textDepositAccount = new System.Windows.Forms.TextBox();
 			this.textMemo = new System.Windows.Forms.TextBox();
@@ -74,7 +74,7 @@ namespace OpenDental {
 			this.butPDF = new OpenDental.UI.Button();
 			this.butEmailPDF = new OpenDental.UI.Button();
 			this.labelDepositAccountNum = new System.Windows.Forms.Label();
-			this.comboDepositAccountNum = new OpenDental.UI.ComboBoxOD();
+			this.comboDepositAccountNum = new OpenDental.UI.ComboBox();
 			this.textBatch = new System.Windows.Forms.TextBox();
 			this.labelBatchNum = new System.Windows.Forms.Label();
 			this.groupSelect.SuspendLayout();
@@ -569,14 +569,14 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textBankAccountInfo;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.TextBox textAmount;
-		private OpenDental.UI.GroupBoxOD groupSelect;
+		private OpenDental.UI.GroupBox groupSelect;
 		private OpenDental.UI.Button butPrint;
 		private OpenDental.UI.GridOD gridPat;
 		private OpenDental.UI.GridOD gridIns;
 		private OpenDental.ValidDate textDateStart;
 		private System.Windows.Forms.Label label5;
 		private OpenDental.UI.Button butRefresh;
-		private OpenDental.UI.ComboBoxOD comboDepositAccount;
+		private OpenDental.UI.ComboBox comboDepositAccount;
 		private Label labelDepositAccount;
 		private TextBox textDepositAccount;
 		private UI.Button butSendQB;
@@ -591,11 +591,11 @@ namespace OpenDental {
 		private TextBox textItemNum;
 		private Label label9;
 		private UI.Button butPDF;
-		private OpenDental.UI.ComboBoxOD comboClassRefs;
+		private OpenDental.UI.ComboBox comboClassRefs;
 		private Label labelClassRef;
 		private UI.Button butEmailPDF;
 		private Label labelDepositAccountNum;
-		private UI.ComboBoxOD comboDepositAccountNum;
+		private UI.ComboBox comboDepositAccountNum;
 		private TextBox textBatch;
 		private Label labelBatchNum;
 	}

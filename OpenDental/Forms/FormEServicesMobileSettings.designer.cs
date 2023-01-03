@@ -29,7 +29,7 @@ namespace OpenDental{
 			this.comboBoxClinicPicker1 = new OpenDental.UI.ComboBoxClinicPicker();
 			this.label1 = new System.Windows.Forms.Label();
 			this.textUserName = new System.Windows.Forms.TextBox();
-			this.groupAccountRecovery = new OpenDental.UI.GroupBoxOD();
+			this.groupAccountRecovery = new OpenDental.UI.GroupBox();
 			this.textValidPhone = new OpenDental.ValidPhone();
 			this.label5 = new System.Windows.Forms.Label();
 			this.textEmail = new System.Windows.Forms.TextBox();
@@ -226,7 +226,7 @@ namespace OpenDental{
 		private UI.ComboBoxClinicPicker comboBoxClinicPicker1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textUserName;
-		private OpenDental.UI.GroupBoxOD groupAccountRecovery;
+		private OpenDental.UI.GroupBox groupAccountRecovery;
 		private ValidPhone textValidPhone;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox textEmail;

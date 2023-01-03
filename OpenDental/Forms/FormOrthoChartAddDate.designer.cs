@@ -29,7 +29,7 @@ namespace OpenDental{
 			this.textDate = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.comboProv = new OpenDental.UI.ComboBoxOD();
+			this.comboProv = new OpenDental.UI.ComboBox();
 			this.butToday = new OpenDental.UI.Button();
 			this.butNow = new OpenDental.UI.Button();
 			this.labelOptional = new System.Windows.Forms.Label();
@@ -144,7 +144,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textDate;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
-		private UI.ComboBoxOD comboProv;
+		private UI.ComboBox comboProv;
 		private UI.Button butToday;
 		private UI.Button butNow;
 		private System.Windows.Forms.Label labelOptional;

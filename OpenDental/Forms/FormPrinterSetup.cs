@@ -44,8 +44,8 @@ namespace OpenDental{
 				if(c.Controls[i]==checkSimple){
 					continue;
 				}
-				if(c.Controls[i].GetType()==typeof(ComboBoxOD)){
-					FillCombo((ComboBoxOD)c.Controls[i],installedPrinters);
+				if(c.Controls[i].GetType()==typeof(UI.ComboBox)){
+					FillCombo((UI.ComboBox)c.Controls[i],installedPrinters);
 				}
 				if(c.Controls[i].GetType()==typeof(System.Windows.Forms.CheckBox)){
 					FillCheck((System.Windows.Forms.CheckBox)c.Controls[i]);
@@ -53,7 +53,7 @@ namespace OpenDental{
 			}
 		}
 
-		private void FillCombo(ComboBoxOD comboBox,PrinterSettings.StringCollection installedPrinters) {
+		private void FillCombo(UI.ComboBox comboBox,PrinterSettings.StringCollection installedPrinters) {
 			PrintSituation printerSituation=GetSit(comboBox);
 			Printer printerForSit=Printers.GetForSit(printerSituation);
 			string printerName="";
@@ -192,7 +192,7 @@ namespace OpenDental{
 					}
 				}
 				for(int j=0;j<panelSimple.Controls.Count;j++){
-					if(panelSimple.Controls[j].GetType()!=typeof(ComboBoxOD)//skip anything but comboBoxes and CheckBoxes
+					if(panelSimple.Controls[j].GetType()!=typeof(UI.ComboBox)//skip anything but comboBoxes and CheckBoxes
 						&& panelSimple.Controls[j].GetType()!=typeof(System.Windows.Forms.CheckBox))
 					{
 						continue;
@@ -201,12 +201,12 @@ namespace OpenDental{
 					if(GetSit(panelSimple.Controls[j])!=(PrintSituation)i){
 						continue;
 					}
-					if(panelSimple.Controls[j].GetType()==typeof(ComboBoxOD)){
-						if(((ComboBoxOD)panelSimple.Controls[j]).SelectedIndex==0){
+					if(panelSimple.Controls[j].GetType()==typeof(UI.ComboBox)){
+						if(((UI.ComboBox)panelSimple.Controls[j]).SelectedIndex==0){
 							printerName="";
 						}
 						else{
-							printerName=((ComboBoxOD)panelSimple.Controls[j]).SelectedItem.ToString();
+							printerName=((UI.ComboBox)panelSimple.Controls[j]).SelectedItem.ToString();
 						}
 					}
 					else{//checkBox

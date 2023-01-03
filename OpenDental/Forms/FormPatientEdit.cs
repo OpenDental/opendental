@@ -52,7 +52,7 @@ namespace OpenDental{
 		private bool _isValidating=false;
 		private EhrPatient _ehrPatient;
 		private List<PatientRace> _listPatientRaces;
-		private ComboBoxOD comboBoxMultiRace;
+		private UI.ComboBox comboBoxMultiRace;
 		private bool _hasGuardiansChanged=false;
 		///<summary>Because adding the new feature where patients can choose their race from hundreds of options would cause us to need to recertify EHR, 
 		///we committed all the code for the new feature while keeping the old behavior for EHR users. When we are ready to switch to the new feature, 
@@ -1370,12 +1370,12 @@ namespace OpenDental{
 
 		///<summary>Puts an asterisk next to the label if the field is required and the conditions are met. If the disallowedIdx is also selected, 
 		///sets the error provider.</summary>
-		private void SetRequiredComboBoxOD(Label label,ComboBoxOD comboBox,bool areConditionsMet,int disallowedIdx,string errorMsg) {
+		private void SetRequiredComboBoxOD(Label label,UI.ComboBox comboBox,bool areConditionsMet,int disallowedIdx,string errorMsg) {
 			SetRequiredControl(label,comboBox,areConditionsMet,disallowedIdx,new List<int>(),errorMsg);
 		}
 
 		///<summary>Puts an asterisk next to the label if the field is required and the conditions are met. If a disallowedIndices is also selected, sets the error provider.</summary>
-		private void SetRequiredComboBoxOD(Label label,ComboBoxOD comboBox,bool areConditionsMet,List<int> listDisallowedIndices,string errorMsg) {
+		private void SetRequiredComboBoxOD(Label label,UI.ComboBox comboBox,bool areConditionsMet,List<int> listDisallowedIndices,string errorMsg) {
 			SetRequiredControl(label,comboBox,areConditionsMet,-1,listDisallowedIndices,errorMsg);
 		}	
 
@@ -1395,8 +1395,8 @@ namespace OpenDental{
 						showBirthdate=odDatePicker.GetDateTime() == DateTime.MinValue;
 					}
 				}
-				if((control is ComboBoxOD && ((ComboBoxOD)control).SelectionModeMulti && ((ComboBoxOD)control).SelectedIndices.Exists(x => listDisallowedIndices.Exists(y => y==x)))
-					|| (control is ComboBoxOD && !((ComboBoxOD)control).SelectionModeMulti && ((ComboBoxOD)control).SelectedIndex==disallowedIdx)
+				if((control is UI.ComboBox && ((UI.ComboBox)control).SelectionModeMulti && ((UI.ComboBox)control).SelectedIndices.Exists(x => listDisallowedIndices.Exists(y => y==x)))
+					|| (control is UI.ComboBox && !((UI.ComboBox)control).SelectionModeMulti && ((UI.ComboBox)control).SelectedIndex==disallowedIdx)
 					|| (control is TextBox && ((TextBox)control).Text=="")
 					|| (control is ODDatePicker && showBirthdate) 
 				) 
@@ -1719,7 +1719,7 @@ namespace OpenDental{
 		}
 
 		private void checkSuperBilling_MouseDown(object sender,MouseEventArgs e) {
-			if(!Security.IsAuthorized(Permissions.Billing)) {
+			if(!Security.IsAuthorized(Permissions.PatientBillingEdit)) {
 				return;
 			}
 		}

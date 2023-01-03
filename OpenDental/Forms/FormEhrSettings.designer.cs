@@ -25,7 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrSettings));
 			this.comboMU2 = new System.Windows.Forms.ComboBox();
-			this.groupEncounter = new OpenDental.UI.GroupBoxOD();
+			this.groupEncounter = new OpenDental.UI.GroupBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.butEncounterTool = new OpenDental.UI.Button();
 			this.textEncCodeDescript = new System.Windows.Forms.TextBox();
@@ -42,7 +42,7 @@ namespace OpenDental{
 			this.label3 = new System.Windows.Forms.Label();
 			this.butEncSnomed = new OpenDental.UI.Button();
 			this.butEncCdt = new OpenDental.UI.Button();
-			this.groupPregnancy = new OpenDental.UI.GroupBoxOD();
+			this.groupPregnancy = new OpenDental.UI.GroupBox();
 			this.textPregCodeDescript = new System.Windows.Forms.TextBox();
 			this.comboPregCodes = new System.Windows.Forms.ComboBox();
 			this.labelPregWarning = new System.Windows.Forms.Label();
@@ -56,7 +56,7 @@ namespace OpenDental{
 			this.label11 = new System.Windows.Forms.Label();
 			this.label12 = new System.Windows.Forms.Label();
 			this.label13 = new System.Windows.Forms.Label();
-			this.groupGlobalSettings = new OpenDental.UI.GroupBoxOD();
+			this.groupGlobalSettings = new OpenDental.UI.GroupBox();
 			this.checkAutoWebmails = new OpenDental.UI.CheckBox();
 			this.checkAlertHighSeverity = new OpenDental.UI.CheckBox();
 			this.butOK = new OpenDental.UI.Button();
@@ -476,7 +476,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.ComboBox comboMU2;
-		private OpenDental.UI.GroupBoxOD groupEncounter;
+		private OpenDental.UI.GroupBox groupEncounter;
 		private System.Windows.Forms.Label labelEncWarning;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label label5;
@@ -488,7 +488,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label3;
-		private OpenDental.UI.GroupBoxOD groupPregnancy;
+		private OpenDental.UI.GroupBox groupPregnancy;
 		private System.Windows.Forms.Label labelPregWarning;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label label9;
@@ -500,7 +500,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.Label label12;
 		private System.Windows.Forms.Label label13;
-		private OpenDental.UI.GroupBoxOD groupGlobalSettings;
+		private OpenDental.UI.GroupBox groupGlobalSettings;
 		private System.Windows.Forms.ComboBox comboEncCodes;
 		private System.Windows.Forms.ComboBox comboPregCodes;
 		private UI.Button butEncCpt;

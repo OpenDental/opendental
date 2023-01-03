@@ -1451,6 +1451,7 @@ namespace OpenDental {
 			TaskUnreads.AddUnreads(TaskCur,Security.CurUser.UserNum);//we also need to tell the database about all the users with unread tasks
 			SendSignalsRefillLocal(TaskCur,taskListNum);
 			DialogResult=DialogResult.OK;
+			_formTaskNoteEdit.FormClosed-=FormTaskNoteEdit_FormClosed_Reply;
 			Close();
 		}
 

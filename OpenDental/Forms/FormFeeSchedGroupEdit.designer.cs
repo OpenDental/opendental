@@ -33,7 +33,7 @@ namespace OpenDental{
 			this.gridGroup = new OpenDental.UI.GridOD();
 			this.gridAvailable = new OpenDental.UI.GridOD();
 			this.butDelete = new OpenDental.UI.Button();
-			this.comboFeeSched = new OpenDental.UI.ComboBoxOD();
+			this.comboFeeSched = new OpenDental.UI.ComboBox();
 			this.labelFeeSched = new System.Windows.Forms.Label();
 			this.butPickFeeSched = new OpenDental.UI.Button();
 			this.SuspendLayout();
@@ -193,7 +193,7 @@ namespace OpenDental{
 		private UI.GridOD gridGroup;
 		private UI.GridOD gridAvailable;
 		private UI.Button butDelete;
-		private UI.ComboBoxOD comboFeeSched;
+		private UI.ComboBox comboFeeSched;
 		private System.Windows.Forms.Label labelFeeSched;
 		private UI.Button butPickFeeSched;
 	}

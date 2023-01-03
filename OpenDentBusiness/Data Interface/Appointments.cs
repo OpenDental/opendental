@@ -4122,9 +4122,9 @@ namespace OpenDentBusiness{
 				.FindAll(x => MiscUtils.DoSlotsOverlap(x.SchedDate.Add(x.StartTime),x.SchedDate.Add(x.StopTime),apt.AptDateTime,apt.AptDateTime.AddMinutes(apt.Length)));
 			List<Schedule> listSchedulesOverlappingBlockoutsNoSchedule=listSchedulesOverlappingBlockouts
 				.FindAll(x => Defs.GetDef(DefCat.BlockoutTypes,x.BlockoutType,listDefs).ItemValue.Contains(BlockoutType.NoSchedule.GetDescription()));
-			//See if apt has an AppointmentType associated to it.
+			//See if apt has an AppointmentType associated to it. Also see if the AppointmentType is associated to any blockout types in the first place.
 			AppointmentType appointmentType=AppointmentTypes.GetOne(apt.AppointmentTypeNum);
-			if(appointmentType!=null) {
+			if(appointmentType!=null && !appointmentType.BlockoutTypes.IsNullOrEmpty()) {
 				//Get all BlockoutTypes associated to this AppointmentType
 				List<string> listBlockoutTypes=appointmentType.BlockoutTypes.Split(",",StringSplitOptions.RemoveEmptyEntries).ToList();
 				//Convert the BlockoutTypes into a list of longs

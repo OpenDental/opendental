@@ -39,7 +39,7 @@ namespace OpenDental {
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
-			this.comboOrthoChartTabs = new OpenDental.UI.ComboBoxOD();
+			this.comboOrthoChartTabs = new OpenDental.UI.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butSetupTabs = new OpenDental.UI.Button();
 			this.SuspendLayout();
@@ -237,7 +237,7 @@ namespace OpenDental {
 		private Label labelCategory;
 		private Label labelCustomField;
 		private TextBox textCustomField;
-		private OpenDental.UI.ComboBoxOD comboOrthoChartTabs;
+		private OpenDental.UI.ComboBox comboOrthoChartTabs;
 		private UI.Button butSetupTabs;
 		private Label label1;
 	}

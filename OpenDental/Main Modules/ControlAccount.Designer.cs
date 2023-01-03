@@ -110,7 +110,7 @@
 			this.menuItemDeletePayPlanCharge = new System.Windows.Forms.MenuItem();
 			this.menuItemAddRefundWorkNotPerformed = new System.Windows.Forms.MenuItem();
 			this.groupBoxIndDis = new OpenDental.DashIndividualDiscount();
-			this.groupBoxFamilyIns = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxFamilyIns = new OpenDental.UI.GroupBox();
 			this.textFamPriMax = new System.Windows.Forms.TextBox();
 			this.textFamPriDed = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
@@ -119,7 +119,7 @@
 			this.label9 = new System.Windows.Forms.Label();
 			this.textFamSecDed = new System.Windows.Forms.TextBox();
 			this.label17 = new System.Windows.Forms.Label();
-			this.groupBoxIndIns = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxIndIns = new OpenDental.UI.GroupBox();
 			this.textPriDed = new System.Windows.Forms.TextBox();
 			this.textPriUsed = new System.Windows.Forms.TextBox();
 			this.textPriDedRem = new System.Windows.Forms.TextBox();
@@ -151,11 +151,11 @@
 			this.tabPageAutoOrtho = new OpenDental.UI.TabPage();
 			this.splitContainerAutoOrtho = new System.Windows.Forms.SplitContainer();
 			this.gridAutoOrtho = new OpenDental.UI.GridOD();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.butAutoOrthoDefaultPlacement = new OpenDental.UI.Button();
 			this.textDateAutoOrthoPlacement = new OpenDental.ValidDate();
 			this.butEditAutoOrthoPlacement = new OpenDental.UI.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textAutoOrthoMonthsTreat = new OpenDental.ValidNum();
 			this.butAutoOrthoDefaultMonthsTreat = new OpenDental.UI.Button();
 			this.butAutoOrthoEditMonthsTreat = new OpenDental.UI.Button();
@@ -1793,10 +1793,10 @@
 		private System.Windows.Forms.ContextMenu contextMenuQuickProcs;
 		private System.Windows.Forms.ContextMenu contextMenuRepeat;
 		private System.Windows.Forms.ContextMenu contextMenuStatement;
-		private OpenDental.UI.GroupBoxOD groupBox1;
-		private OpenDental.UI.GroupBoxOD groupBox2;
-		private OpenDental.UI.GroupBoxOD groupBoxFamilyIns;
-		private OpenDental.UI.GroupBoxOD groupBoxIndIns;
+		private OpenDental.UI.GroupBox groupBox1;
+		private OpenDental.UI.GroupBox groupBox2;
+		private OpenDental.UI.GroupBox groupBoxFamilyIns;
+		private OpenDental.UI.GroupBox groupBoxIndIns;
 		private System.Windows.Forms.ImageList imageListMain;
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.Label label11;

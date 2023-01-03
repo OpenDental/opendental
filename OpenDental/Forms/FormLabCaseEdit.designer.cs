@@ -53,10 +53,10 @@ namespace OpenDental {
 			this.label9 = new System.Windows.Forms.Label();
 			this.textDateDue = new System.Windows.Forms.TextBox();
 			this.label10 = new System.Windows.Forms.Label();
-			this.comboProv = new OpenDental.UI.ComboBoxOD();
+			this.comboProv = new OpenDental.UI.ComboBox();
 			this.label11 = new System.Windows.Forms.Label();
 			this.listLab = new OpenDental.UI.ListBoxOD();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butCheckedNow = new OpenDental.UI.Button();
 			this.butRecdNow = new OpenDental.UI.Button();
 			this.butSentNow = new OpenDental.UI.Button();
@@ -515,10 +515,10 @@ namespace OpenDental {
 		private Label label9;
 		private TextBox textDateDue;
 		private Label label10;
-		private OpenDental.UI.ComboBoxOD comboProv;
+		private OpenDental.UI.ComboBox comboProv;
 		private Label label11;
 		private OpenDental.UI.ListBoxOD listLab;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.Button butCheckedNow;
 		private OpenDental.UI.Button butRecdNow;
 		private OpenDental.UI.Button butSentNow;

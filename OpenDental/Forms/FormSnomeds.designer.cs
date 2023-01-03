@@ -32,7 +32,7 @@ namespace OpenDental{
 			this.butSearch = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butMapICD9 = new OpenDental.UI.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.imageListInfoButton = new System.Windows.Forms.ImageList(this.components);
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -160,7 +160,7 @@ namespace OpenDental{
 		private UI.Button butSearch;
 		private UI.GridOD gridMain;
 		private UI.Button butMapICD9;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.ImageList imageListInfoButton;
 	}
 }

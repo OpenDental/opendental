@@ -25,7 +25,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormFinanceCharges));
 			this.textDate = new OpenDental.ValidDate();
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.radio30 = new System.Windows.Forms.RadioButton();
 			this.radio90 = new System.Windows.Forms.RadioButton();
 			this.radio60 = new System.Windows.Forms.RadioButton();
@@ -38,7 +38,7 @@ namespace OpenDental {
 			this.textDateLastRun = new OpenDental.ValidDate();
 			this.label5 = new System.Windows.Forms.Label();
 			this.butUndo = new OpenDental.UI.Button();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.textDateUndo = new OpenDental.ValidDate();
 			this.label6 = new System.Windows.Forms.Label();
 			this.listBillType = new OpenDental.UI.ListBoxOD();
@@ -57,7 +57,7 @@ namespace OpenDental {
 			this.textBillingCharge = new OpenDental.ValidDouble();
 			this.radioBillingCharge = new System.Windows.Forms.RadioButton();
 			this.checkBadAddress = new OpenDental.UI.CheckBox();
-			this.groupBoxFilters = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxFilters = new OpenDental.UI.GroupBox();
 			this.textExcludeLessThan = new OpenDental.ValidDouble();
 			this.textExcludeNotBilledSince = new OpenDental.ValidDate();
 			this.labelExcludeNotBilledSince = new System.Windows.Forms.Label();
@@ -66,8 +66,8 @@ namespace OpenDental {
 			this.checkIgnoreInPerson = new OpenDental.UI.CheckBox();
 			this.checkExcludeInsPending = new OpenDental.UI.CheckBox();
 			this.checkExcludeInactive = new OpenDental.UI.CheckBox();
-			this.groupBoxAssignCharge = new OpenDental.UI.GroupBoxOD();
-			this.comboSpecificProv = new OpenDental.UI.ComboBoxOD();
+			this.groupBoxAssignCharge = new OpenDental.UI.GroupBox();
+			this.comboSpecificProv = new OpenDental.UI.ComboBox();
 			this.radioSpecificProv = new System.Windows.Forms.RadioButton();
 			this.radioPatPriProv = new System.Windows.Forms.RadioButton();
 			this.textDaysInsPendingExclude = new OpenDental.ValidNum();
@@ -605,7 +605,7 @@ namespace OpenDental {
 
 		private OpenDental.ValidDate textDate;
 		private System.Windows.Forms.Label label1;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.RadioButton radio30;
 		private System.Windows.Forms.RadioButton radio90;
 		private System.Windows.Forms.RadioButton radio60;
@@ -618,7 +618,7 @@ namespace OpenDental {
 		private ValidDate textDateLastRun;
 		private Label label5;
 		private OpenDental.UI.Button butUndo;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private ValidDate textDateUndo;
 		private Label label6;
 		private OpenDental.UI.ListBoxOD listBillType;
@@ -637,7 +637,7 @@ namespace OpenDental {
 		private Label labelCompound;
 		private Label label7;
 		private OpenDental.UI.CheckBox checkBadAddress;
-		private OpenDental.UI.GroupBoxOD groupBoxFilters;
+		private OpenDental.UI.GroupBox groupBoxFilters;
 		private ValidDouble textExcludeLessThan;
 		private Label labelExcludeBalanceLessThan;
 		private OpenDental.UI.CheckBox checkExcludeAccountNoTil;
@@ -646,10 +646,10 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkExcludeInactive;
 		private Label labelExcludeNotBilledSince;
 		private ValidDate textExcludeNotBilledSince;
-		private OpenDental.UI.GroupBoxOD groupBoxAssignCharge;
+		private OpenDental.UI.GroupBox groupBoxAssignCharge;
 		private RadioButton radioSpecificProv;
 		private RadioButton radioPatPriProv;
-		private UI.ComboBoxOD comboSpecificProv;
+		private UI.ComboBox comboSpecificProv;
 		private ValidNum textDaysInsPendingExclude;
 		private Label labelExcludeIfPendingDays;
 	}

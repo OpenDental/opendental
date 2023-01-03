@@ -24,16 +24,16 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDispensary));
-			this.groupDentalSchools = new OpenDental.UI.GroupBoxOD();
+			this.groupDentalSchools = new OpenDental.UI.GroupBox();
 			this.labelClass = new System.Windows.Forms.Label();
-			this.comboClass = new OpenDental.UI.ComboBoxOD();
+			this.comboClass = new OpenDental.UI.ComboBox();
 			this.textLName = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textFName = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.textProvNum = new System.Windows.Forms.TextBox();
 			this.labelUniqueID = new System.Windows.Forms.Label();
-			this.groupSupply = new OpenDental.UI.GroupBoxOD();
+			this.groupSupply = new OpenDental.UI.GroupBox();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.textBox2 = new System.Windows.Forms.TextBox();
@@ -41,8 +41,8 @@ namespace OpenDental{
 			this.textBox3 = new System.Windows.Forms.TextBox();
 			this.labelSupDescript = new System.Windows.Forms.Label();
 			this.labelCategory = new System.Windows.Forms.Label();
-			this.comboCategory = new OpenDental.UI.ComboBoxOD();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.comboCategory = new OpenDental.UI.ComboBox();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textSupplier = new System.Windows.Forms.TextBox();
 			this.labelSupplier = new System.Windows.Forms.Label();
 			this.textSupplyDescript = new System.Windows.Forms.TextBox();
@@ -394,9 +394,9 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.GroupBoxOD groupDentalSchools;
+		private OpenDental.UI.GroupBox groupDentalSchools;
 		private System.Windows.Forms.Label labelClass;
-		private OpenDental.UI.ComboBoxOD comboClass;
+		private OpenDental.UI.ComboBox comboClass;
 		private System.Windows.Forms.TextBox textLName;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textFName;
@@ -407,9 +407,9 @@ namespace OpenDental{
 		private UI.GridOD gridSupply;
 		private UI.GridOD gridDispSupply;
 		private UI.GridOD gridEquip;
-		private OpenDental.UI.GroupBoxOD groupSupply;
+		private OpenDental.UI.GroupBox groupSupply;
 		private System.Windows.Forms.Label labelCategory;
-		private OpenDental.UI.ComboBoxOD comboCategory;
+		private OpenDental.UI.ComboBox comboCategory;
 		private System.Windows.Forms.TextBox textBox1;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.TextBox textBox2;
@@ -417,7 +417,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textBox3;
 		private System.Windows.Forms.Label labelSupDescript;
 		private UI.Button butScan;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.TextBox textSupplier;
 		private System.Windows.Forms.Label labelSupplier;
 		private System.Windows.Forms.TextBox textSupplyDescript;

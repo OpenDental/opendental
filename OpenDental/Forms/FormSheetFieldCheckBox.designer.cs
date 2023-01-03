@@ -33,7 +33,7 @@ namespace OpenDental{
 			this.label3 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
 			this.checkRequired = new OpenDental.UI.CheckBox();
-			this.groupRadioMisc = new OpenDental.UI.GroupBoxOD();
+			this.groupRadioMisc = new OpenDental.UI.GroupBox();
 			this.comboRadioGroupNameMisc = new System.Windows.Forms.ComboBox();
 			this.textUiLabelMobileMisc = new System.Windows.Forms.TextBox();
 			this.labelUiLabelMobileMisc = new System.Windows.Forms.Label();
@@ -41,7 +41,7 @@ namespace OpenDental{
 			this.labelUiLabelMobileRadioButtonMisc = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.listRadio = new OpenDental.UI.ListBoxOD();
-			this.groupRadio = new OpenDental.UI.GroupBoxOD();
+			this.groupRadio = new OpenDental.UI.GroupBox();
 			this.labelItemOverride = new System.Windows.Forms.Label();
 			this.textItemOverride = new System.Windows.Forms.TextBox();
 			this.labelAlsoActs = new System.Windows.Forms.Label();
@@ -657,10 +657,10 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label9;
 		private OpenDental.UI.CheckBox checkRequired;
-		private OpenDental.UI.GroupBoxOD groupRadioMisc;
+		private OpenDental.UI.GroupBox groupRadioMisc;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.ListBoxOD listRadio;
-		private OpenDental.UI.GroupBoxOD groupRadio;
+		private OpenDental.UI.GroupBox groupRadio;
 		private ValidNum textTabOrder;
 		private System.Windows.Forms.Label labelTabOrder;
 		private OpenDental.UI.ListBoxOD listMedical;

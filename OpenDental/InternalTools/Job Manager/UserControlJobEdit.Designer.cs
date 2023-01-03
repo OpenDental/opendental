@@ -64,7 +64,7 @@
 			this.butActions = new OpenDental.UI.Button();
 			this.comboProposedVersion = new System.Windows.Forms.ComboBox();
 			this.butPopout = new OpenDental.UI.Button();
-			this.comboPriority = new OpenDental.UI.ComboBoxOD();
+			this.comboPriority = new OpenDental.UI.ComboBox();
 			this.label13 = new System.Windows.Forms.Label();
 			this.butChangeEst = new OpenDental.UI.Button();
 			this.comboPatternStatus = new System.Windows.Forms.ComboBox();
@@ -97,7 +97,7 @@
 			this.gridTestingNotes = new OpenDental.UI.GridOD();
 			this.checkNotTested = new OpenDental.UI.CheckBox();
 			this.butTested = new OpenDental.UI.Button();
-			this.comboPriorityTesting = new OpenDental.UI.ComboBoxOD();
+			this.comboPriorityTesting = new OpenDental.UI.ComboBox();
 			this.textTitle = new OpenDental.ODtextBox();
 			this.timerTesting = new System.Windows.Forms.Timer(this.components);
 			this.tablePanelLinks.SuspendLayout();
@@ -1061,7 +1061,7 @@
 		private System.Windows.Forms.ComboBox comboPhase;
 		private System.Windows.Forms.ComboBox comboCategory;
 		private System.Windows.Forms.Label label12;
-		private UI.ComboBoxOD comboPriority;
+		private UI.ComboBox comboPriority;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label3;
@@ -1098,7 +1098,7 @@
 		private System.Windows.Forms.TabPage tabTesting;
 		private UI.GridOD gridTestingNotes;
 		private System.Windows.Forms.Label label9;
-		private UI.ComboBoxOD comboPriorityTesting;
+		private UI.ComboBox comboPriorityTesting;
 		private System.Windows.Forms.Label label1;
 		private ValidDouble textHoursLeft;
 		private UI.Button butChangeEst;

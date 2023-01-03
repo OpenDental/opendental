@@ -27,7 +27,7 @@ namespace OpenDental{
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.radioPermanent = new System.Windows.Forms.RadioButton();
 			this.radioPrimary = new System.Windows.Forms.RadioButton();
 			this.groupBox1.SuspendLayout();
@@ -121,7 +121,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butDelete;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.RadioButton radioPermanent;
 		private System.Windows.Forms.RadioButton radioPrimary;
 	}

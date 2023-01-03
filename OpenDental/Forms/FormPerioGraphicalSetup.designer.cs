@@ -38,7 +38,7 @@ namespace OpenDental{
 			this.butColorFurc = new System.Windows.Forms.Button();
 			this.label5 = new System.Windows.Forms.Label();
 			this.butColorCal = new System.Windows.Forms.Button();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.colorPicker = new System.Windows.Forms.ColorDialog();
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
@@ -264,7 +264,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Button butColorGM;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Button butColorCal;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.ColorDialog colorPicker;
 	}
 }

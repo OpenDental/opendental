@@ -57,7 +57,7 @@ namespace OpenDental {
 			this.textService = new OpenDental.ODtextBox();
 			this.textMedUrgNote = new OpenDental.ODtextBox();
 			this.checkPremed = new System.Windows.Forms.CheckBox();
-			this.groupMedsDocumented = new OpenDental.UI.GroupBoxOD();
+			this.groupMedsDocumented = new OpenDental.UI.GroupBox();
 			this.radioMedsDocumentedNo = new System.Windows.Forms.RadioButton();
 			this.radioMedsDocumentedYes = new System.Windows.Forms.RadioButton();
 			this.label6 = new System.Windows.Forms.Label();
@@ -1021,7 +1021,7 @@ namespace OpenDental {
 		private ODtextBox textService;
 		private ODtextBox textMedUrgNote;
 		private CheckBox checkPremed;
-		private OpenDental.UI.GroupBoxOD groupMedsDocumented;
+		private OpenDental.UI.GroupBox groupMedsDocumented;
 		private RadioButton radioMedsDocumentedNo;
 		private RadioButton radioMedsDocumentedYes;
 		private Label label6;

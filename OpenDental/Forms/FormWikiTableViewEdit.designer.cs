@@ -31,7 +31,7 @@ namespace OpenDental{
 			this.listShowing = new OpenDental.UI.ListBoxOD();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
-			this.comboOrderBy = new OpenDental.UI.ComboBoxOD();
+			this.comboOrderBy = new OpenDental.UI.ComboBox();
 			this.butDelete = new OpenDental.UI.Button();
 			this.butLeft = new OpenDental.UI.Button();
 			this.butRight = new OpenDental.UI.Button();
@@ -197,7 +197,7 @@ namespace OpenDental{
 		private OpenDental.UI.ListBoxOD listShowing;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
-		private OpenDental.UI.ComboBoxOD comboOrderBy;
+		private OpenDental.UI.ComboBox comboOrderBy;
 		private UI.Button butDelete;
 	}
 }

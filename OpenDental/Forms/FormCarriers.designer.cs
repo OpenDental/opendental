@@ -47,7 +47,7 @@ namespace OpenDental {
 			this.textPhone = new OpenDental.ValidPhone();
 			this.labelPhone = new System.Windows.Forms.Label();
 			this.butRefresh = new OpenDental.UI.Button();
-			this.groupItrans = new OpenDental.UI.GroupBoxOD();
+			this.groupItrans = new OpenDental.UI.GroupBox();
 			this.checkItransMissing = new OpenDental.UI.CheckBox();
 			this.checkItransAddress = new OpenDental.UI.CheckBox();
 			this.checkITransPhone = new OpenDental.UI.CheckBox();
@@ -291,7 +291,7 @@ namespace OpenDental {
 		private Label labelPhone;
 		private UI.Button butRefresh;
 		private UI.Button butItransUpdateCarriers;
-		private OpenDental.UI.GroupBoxOD groupItrans;
+		private OpenDental.UI.GroupBox groupItrans;
 		private OpenDental.UI.CheckBox checkITransPhone;
 		private OpenDental.UI.CheckBox checkItransAddress;
 		private OpenDental.UI.CheckBox checkItransMissing;

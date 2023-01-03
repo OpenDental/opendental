@@ -34,7 +34,7 @@ namespace OpenDental {
 			this.butRunReport = new OpenDental.UI.Button();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.groupBoxFilters = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxFilters = new OpenDental.UI.GroupBox();
 			this.comboClinicMulti = new OpenDental.UI.ComboBoxClinicPicker();
 			this.odDateRangePicker = new OpenDental.UI.ODDateRangePicker();
 			this.comboBoxInsFilter = new System.Windows.Forms.ComboBox();
@@ -162,7 +162,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butRunReport;
 		private UI.Button butRefresh;
 		private UI.GridOD gridMain;
-		private OpenDental.UI.GroupBoxOD groupBoxFilters;
+		private OpenDental.UI.GroupBox groupBoxFilters;
 		private Label labelClaimFilter;
 		private ComboBox comboBoxInsFilter;
 		private UI.ODDateRangePicker odDateRangePicker;

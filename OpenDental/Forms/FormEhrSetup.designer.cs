@@ -24,7 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrSetup));
-			this.groupCodeSystems = new OpenDental.UI.GroupBoxOD();
+			this.groupCodeSystems = new OpenDental.UI.GroupBox();
 			this.butCodeImport = new OpenDental.UI.Button();
 			this.butRxNorm = new OpenDental.UI.Button();
 			this.butICD9s = new OpenDental.UI.Button();
@@ -300,7 +300,7 @@ namespace OpenDental{
 		private UI.Button butLoincs;
 		private UI.Button butSnomeds;
 		private UI.Button butCodeImport;
-		private OpenDental.UI.GroupBoxOD groupCodeSystems;
+		private OpenDental.UI.GroupBox groupCodeSystems;
 		private UI.Button butTimeSynch;
 		private UI.Button butEhrTriggers;
 		private UI.Button butOIDs;

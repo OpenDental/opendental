@@ -32,39 +32,39 @@ namespace OpenDental {
 			this.label8 = new System.Windows.Forms.Label();
 			this.radioExcludeFutureNo = new System.Windows.Forms.RadioButton();
 			this.textPostcardsPerSheet = new System.Windows.Forms.TextBox();
-			this.groupBox4 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox4 = new OpenDental.UI.GroupBox();
 			this.radioUseEmailFalse = new System.Windows.Forms.RadioButton();
 			this.radioUseEmailTrue = new System.Windows.Forms.RadioButton();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.textDown = new OpenDental.ValidDouble();
 			this.label12 = new System.Windows.Forms.Label();
 			this.textRight = new OpenDental.ValidDouble();
 			this.label13 = new System.Windows.Forms.Label();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.textDaysFuture = new OpenDental.ValidNum();
 			this.textDaysPast = new OpenDental.ValidNum();
 			this.checkGroupFamilies = new System.Windows.Forms.CheckBox();
 			this.label14 = new System.Windows.Forms.Label();
 			this.label15 = new System.Windows.Forms.Label();
 			this.label25 = new System.Windows.Forms.Label();
-			this.comboStatusMailedRecall = new OpenDental.UI.ComboBoxOD();
+			this.comboStatusMailedRecall = new OpenDental.UI.ComboBox();
 			this.label26 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textDaysSecondReminder = new OpenDental.ValidNum();
 			this.textDaysFirstReminder = new OpenDental.ValidNum();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textMaxReminders = new OpenDental.ValidNum();
 			this.label4 = new System.Windows.Forms.Label();
-			this.comboStatusEmailedRecall = new OpenDental.UI.ComboBoxOD();
+			this.comboStatusEmailedRecall = new OpenDental.UI.ComboBox();
 			this.listTypes = new OpenDental.UI.ListBoxOD();
 			this.label1 = new System.Windows.Forms.Label();
 			this.checkReturnAdd = new System.Windows.Forms.CheckBox();
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
-			this.comboStatusEmailTextRecall = new OpenDental.UI.ComboBoxOD();
+			this.comboStatusEmailTextRecall = new OpenDental.UI.ComboBox();
 			this.label5 = new System.Windows.Forms.Label();
-			this.comboStatusTextedRecall = new OpenDental.UI.ComboBoxOD();
+			this.comboStatusTextedRecall = new OpenDental.UI.ComboBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.textMaxAutoReminders = new OpenDental.ValidNum();
 			this.label7 = new System.Windows.Forms.Label();
@@ -348,6 +348,7 @@ namespace OpenDental {
 			// 
 			// textMaxReminders
 			// 
+			this.textMaxReminders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.textMaxReminders.Location = new System.Drawing.Point(819, 625);
 			this.textMaxReminders.MaxVal = 10000;
 			this.textMaxReminders.Name = "textMaxReminders";
@@ -357,6 +358,7 @@ namespace OpenDental {
 			// 
 			// label4
 			// 
+			this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.label4.Location = new System.Drawing.Point(679, 624);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(138, 20);
@@ -466,6 +468,7 @@ namespace OpenDental {
 			// 
 			// textMaxAutoReminders
 			// 
+			this.textMaxAutoReminders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.textMaxAutoReminders.Location = new System.Drawing.Point(819, 603);
 			this.textMaxAutoReminders.MaxVal = 10000;
 			this.textMaxAutoReminders.Name = "textMaxAutoReminders";
@@ -475,6 +478,7 @@ namespace OpenDental {
 			// 
 			// label7
 			// 
+			this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.label7.Location = new System.Drawing.Point(682, 603);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(135, 20);
@@ -537,7 +541,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.TextBox textPostcardsPerSheet;
 		private System.Windows.Forms.CheckBox checkReturnAdd;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private ValidDouble textDown;
 		private Label label12;
 		private ValidDouble textRight;
@@ -545,16 +549,16 @@ namespace OpenDental {
 		private CheckBox checkGroupFamilies;
 		private Label label14;
 		private Label label15;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox3;
 		private Label label25;
-		private UI.ComboBoxOD comboStatusMailedRecall;
-		private UI.ComboBoxOD comboStatusEmailedRecall;
+		private UI.ComboBox comboStatusMailedRecall;
+		private UI.ComboBox comboStatusEmailedRecall;
 		private Label label26;
 		private UI.ListBoxOD listTypes;
 		private Label label1;
 		private ValidNum textDaysPast;
 		private ValidNum textDaysFuture;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private ValidNum textDaysSecondReminder;
 		private ValidNum textDaysFirstReminder;
 		private Label label2;
@@ -562,14 +566,14 @@ namespace OpenDental {
 		private OpenDental.UI.GridOD gridMain;
 		private ValidNum textMaxReminders;//""= infinite, 0=disabled;
 		private Label label4;
-		private OpenDental.UI.GroupBoxOD groupBox4;
+		private OpenDental.UI.GroupBox groupBox4;
 		private RadioButton radioUseEmailFalse;
 		private RadioButton radioUseEmailTrue;
 		private RadioButton radioExcludeFutureNo;
 		private RadioButton radioExcludeFutureYes;
-		private UI.ComboBoxOD comboStatusEmailTextRecall;
+		private UI.ComboBox comboStatusEmailTextRecall;
 		private Label label5;
-		private UI.ComboBoxOD comboStatusTextedRecall;
+		private UI.ComboBox comboStatusTextedRecall;
 		private Label label6;
 		private ValidNum textMaxAutoReminders;
 		private Label label7;

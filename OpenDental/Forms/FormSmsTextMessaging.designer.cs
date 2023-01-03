@@ -34,7 +34,7 @@ namespace OpenDental{
 			this.menuItem1 = new System.Windows.Forms.MenuItem();
 			this.menuItemGoToPatient = new System.Windows.Forms.MenuItem();
 			this.labelPatientsForPhone = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.radioGroupByPhone = new System.Windows.Forms.RadioButton();
 			this.radioGroupByNone = new System.Windows.Forms.RadioButton();
 			this.radioGroupByPatient = new System.Windows.Forms.RadioButton();
@@ -484,7 +484,7 @@ namespace OpenDental{
 		private System.Windows.Forms.MenuItem menuItem1;
 		private System.Windows.Forms.MenuItem menuItemGoToPatient;
 		private System.Windows.Forms.MenuItem menuItemBlockNumber;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.RadioButton radioGroupByPatient;
 		private System.Windows.Forms.RadioButton radioGroupByNone;
 		private System.Windows.Forms.RadioButton radioGroupByPhone;

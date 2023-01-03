@@ -34,7 +34,7 @@ namespace OpenDental {
 				"Every # Months",
 				"# in Last 12 Months"
 			};
-			List<ComboBoxOD> listComboBoxes = UIHelper.GetAllControls(this).OfType<ComboBoxOD>().ToList();
+			List<UI.ComboBox> listComboBoxes = UIHelper.GetAllControls(this).OfType<UI.ComboBox>().ToList();
 			for(int i=0;i<listComboBoxes.Count;++i) {
 				listComboBoxes[i].Items.AddList(listFrequencyOptions);
 				listComboBoxes[i].SelectedIndex=0;//Every # years
@@ -216,7 +216,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void FillBenefit(Benefit ben,ValidNum textBoxBenefit,ComboBoxOD comboBenefit) {
+		private void FillBenefit(Benefit ben,ValidNum textBoxBenefit,UI.ComboBox comboBenefit) {
 			textBoxBenefit.Text=ben.Quantity.ToString();
 			if(ben.QuantityQualifier==BenefitQuantity.Years) {
 				comboBenefit.SelectedIndex=0;//Every # Years
@@ -259,7 +259,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void CreateFrequencyBenefit(ValidNum textBox,ComboBoxOD comboBox,string procCodeStr) {
+		private void CreateFrequencyBenefit(ValidNum textBox,UI.ComboBox comboBox,string procCodeStr) {
 			if(PIn.Byte(textBox.Text,false)==0 || ProcedureCodes.GetCodeNum(procCodeStr)==0) {
 				return;
 			}
@@ -268,7 +268,7 @@ namespace OpenDental {
 			ListBenefits.Add(ben);
 		}
 
-		private BenefitQuantity GetQuantityQualifier(ComboBoxOD comboBox) {
+		private BenefitQuantity GetQuantityQualifier(UI.ComboBox comboBox) {
 			switch(comboBox.SelectedIndex) {
 				case 0:
 					return BenefitQuantity.Years;

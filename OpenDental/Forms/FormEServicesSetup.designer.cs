@@ -36,7 +36,7 @@ namespace OpenDental{
 			this.label23 = new System.Windows.Forms.Label();
 			this.labelECR = new System.Windows.Forms.Label();
 			this.labelSignup = new System.Windows.Forms.Label();
-			this.groupboxWebSched = new OpenDental.UI.GroupBoxOD();
+			this.groupboxWebSched = new OpenDental.UI.GroupBox();
 			this.butExistingPatient = new OpenDental.UI.Button();
 			this.butAdvanced = new OpenDental.UI.Button();
 			this.butNewPatient = new OpenDental.UI.Button();
@@ -306,7 +306,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label23;
 		private System.Windows.Forms.Label labelECR;
 		private System.Windows.Forms.Label labelSignup;
-		private OpenDental.UI.GroupBoxOD groupboxWebSched;
+		private OpenDental.UI.GroupBox groupboxWebSched;
 		private UI.Button butNewPatient;
 		private UI.Button butRecall;
 		private UI.Button butAdvanced;

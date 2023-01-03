@@ -26,7 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSheetFieldGridType));
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
-			this.comboGridType = new OpenDental.UI.ComboBoxOD();
+			this.comboGridType = new OpenDental.UI.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -87,7 +87,7 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
-		private OpenDental.UI.ComboBoxOD comboGridType;
+		private OpenDental.UI.ComboBox comboGridType;
 		private System.Windows.Forms.Label label3;
 	}
 }

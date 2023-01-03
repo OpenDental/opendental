@@ -27,7 +27,7 @@ namespace OpenDental{
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.checkUsePat = new OpenDental.UI.CheckBox();
-			this.comboExamSheets = new OpenDental.UI.ComboBoxOD();
+			this.comboExamSheets = new OpenDental.UI.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -101,7 +101,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.CheckBox checkUsePat;
-		private OpenDental.UI.ComboBoxOD comboExamSheets;
+		private OpenDental.UI.ComboBox comboExamSheets;
 		private System.Windows.Forms.Label label1;
 	}
 }

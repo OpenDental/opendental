@@ -29,7 +29,7 @@
 			this.smsService1 = new OpenDental.CallFireService.SMSService();
 			this.listStatus = new OpenDental.UI.ListBoxOD();
 			this.butRefresh = new OpenDental.UI.Button();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.textRangeMin = new OpenDental.ValidNum();
 			this.textRangeMax = new OpenDental.ValidNum();
 			this.labelDaysOldMax = new System.Windows.Forms.Label();
@@ -325,7 +325,7 @@
 		private System.Windows.Forms.Label labelStatus;
 		private System.Windows.Forms.Label labelCarrier;
 		private ODtextBox textCheckTrace;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private ValidNum textRangeMin;
 		private ValidNum textRangeMax;
 		private System.Windows.Forms.Label labelDaysOldMax;

@@ -979,7 +979,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 		}
 
 		private void comboBox_MouseWheel(object sender, MouseEventArgs e) {
-			ComboBox comboControl=(ComboBox)sender;
+			System.Windows.Forms.ComboBox comboControl=(System.Windows.Forms.ComboBox)sender;
 			if(!comboControl.DroppedDown) {
 				((HandledMouseEventArgs)e).Handled=true;
 			}

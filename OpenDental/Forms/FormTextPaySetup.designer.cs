@@ -38,7 +38,7 @@ namespace OpenDental{
 			this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.label2 = new System.Windows.Forms.Label();
-			this.comboBoxTemplates = new OpenDental.UI.ComboBoxOD();
+			this.comboBoxTemplates = new OpenDental.UI.ComboBox();
 			this.checkUseDefaults = new OpenDental.UI.CheckBox();
 			this.contextMenuStripTextTemplate.SuspendLayout();
 			this.SuspendLayout();
@@ -205,7 +205,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textMessageTemplate;
 		private System.Windows.Forms.Label label2;
-		private UI.ComboBoxOD comboBoxTemplates;
+		private UI.ComboBox comboBoxTemplates;
 		private System.Windows.Forms.ContextMenuStrip contextMenuStripTextTemplate;
 		private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemInsertFields;
 		private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;

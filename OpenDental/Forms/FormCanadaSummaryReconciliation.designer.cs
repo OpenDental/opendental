@@ -34,7 +34,7 @@ namespace OpenDental{
 			this.textDateReconciliation = new System.Windows.Forms.TextBox();
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
-			this.groupCarrierOrNetwork = new OpenDental.UI.GroupBoxOD();
+			this.groupCarrierOrNetwork = new OpenDental.UI.GroupBox();
 			this.checkGetForAllCarriers = new OpenDental.UI.CheckBox();
 			this.groupCarrierOrNetwork.SuspendLayout();
 			this.SuspendLayout();
@@ -186,7 +186,7 @@ namespace OpenDental{
 		private OpenDental.UI.ListBoxOD listTreatingProvider;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.TextBox textDateReconciliation;
-		private OpenDental.UI.GroupBoxOD groupCarrierOrNetwork;
+		private OpenDental.UI.GroupBox groupCarrierOrNetwork;
 		private OpenDental.UI.CheckBox checkGetForAllCarriers;
 	}
 }

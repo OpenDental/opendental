@@ -26,7 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormHL7DefFieldEdit));
 			this.label1 = new System.Windows.Forms.Label();
 			this.listFieldNames = new OpenDental.UI.ListBoxOD();
-			this.comboDataType = new OpenDental.UI.ComboBoxOD();
+			this.comboDataType = new OpenDental.UI.ComboBox();
 			this.textTableId = new System.Windows.Forms.TextBox();
 			this.labelItemOrder = new System.Windows.Forms.Label();
 			this.label12 = new System.Windows.Forms.Label();
@@ -206,7 +206,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.ListBoxOD listFieldNames;
-		private OpenDental.UI.ComboBoxOD comboDataType;
+		private OpenDental.UI.ComboBox comboDataType;
 		private System.Windows.Forms.TextBox textTableId;
 		private System.Windows.Forms.Label labelItemOrder;
 		private System.Windows.Forms.Label label12;

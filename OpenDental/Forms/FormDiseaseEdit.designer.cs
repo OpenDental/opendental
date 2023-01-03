@@ -42,12 +42,12 @@ namespace OpenDental {
 			this.textIcd9 = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.labelStatus = new System.Windows.Forms.Label();
-			this.comboStatus = new OpenDental.UI.ComboBoxOD();
+			this.comboStatus = new OpenDental.UI.ComboBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
 			this.textSnomed = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
-			this.comboSnomedProblemType = new OpenDental.UI.ComboBoxOD();
+			this.comboSnomedProblemType = new OpenDental.UI.ComboBox();
 			this.labelSnomedProblemType = new System.Windows.Forms.Label();
 			this.butTodayStop = new OpenDental.UI.Button();
 			this.butTodayStart = new OpenDental.UI.Button();
@@ -58,7 +58,7 @@ namespace OpenDental {
 			this.butCancel = new OpenDental.UI.Button();
 			this.label7 = new System.Windows.Forms.Label();
 			this.labelFunctionalStatus = new System.Windows.Forms.Label();
-			this.comboEhrFunctionalStatus = new OpenDental.UI.ComboBoxOD();
+			this.comboEhrFunctionalStatus = new OpenDental.UI.ComboBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
 			this.textIcd10 = new System.Windows.Forms.TextBox();
@@ -351,7 +351,7 @@ namespace OpenDental {
 		private TextBox textIcd9;
 		private Label label3;
 		private Label labelStatus;
-		private OpenDental.UI.ComboBoxOD comboStatus;
+		private OpenDental.UI.ComboBox comboStatus;
 		private Label label4;
 		private Label label5;
 		private ValidDate textDateStart;
@@ -360,11 +360,11 @@ namespace OpenDental {
 		private UI.Button butTodayStop;
 		private TextBox textSnomed;
 		private Label label6;
-		private OpenDental.UI.ComboBoxOD comboSnomedProblemType;
+		private OpenDental.UI.ComboBox comboSnomedProblemType;
 		private Label labelSnomedProblemType;
 		private Label label7;
 		private Label labelFunctionalStatus;
-		private OpenDental.UI.ComboBoxOD comboEhrFunctionalStatus;
+		private OpenDental.UI.ComboBox comboEhrFunctionalStatus;
 		private Label label8;
 		private Label label9;
 		private TextBox textIcd10;

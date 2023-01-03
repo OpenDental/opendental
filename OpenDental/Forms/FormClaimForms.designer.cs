@@ -35,11 +35,11 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormClaimForms));
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
-			this.comboReassign = new OpenDental.UI.ComboBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
+			this.comboReassign = new OpenDental.UI.ComboBox();
 			this.butReassign = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butDuplicate = new OpenDental.UI.Button();
 			this.butExport = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
@@ -252,15 +252,15 @@ namespace OpenDental {
 		private OpenDental.UI.Button butDelete;
 		private OpenDental.UI.Button butExport;
 		private OpenDental.UI.Button butImport;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.Button butDefault;
 		private OpenDental.UI.Button butReassign;
 		private Label label2;
-		private OpenDental.UI.ComboBoxOD comboReassign;
+		private OpenDental.UI.ComboBox comboReassign;
 		private UI.GridOD gridInternal;
 		private UI.GridOD gridCustom;
 		private UI.Button butCopy;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private Label label1;
 	}
 }

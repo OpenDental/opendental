@@ -51,7 +51,7 @@ namespace OpenDental{
 			this.gridError = new OpenDental.UI.GridOD();
 			this.checkIncludeAck = new System.Windows.Forms.CheckBox();
 			this.labelStatus = new System.Windows.Forms.Label();
-			this.comboStatuses = new OpenDental.UI.ComboBoxOD();
+			this.comboStatuses = new OpenDental.UI.ComboBox();
 			this.contextMenu.SuspendLayout();
 			this.tabControl.SuspendLayout();
 			this.tabTrans.SuspendLayout();
@@ -388,7 +388,7 @@ namespace OpenDental{
 		private UI.GridOD gridQSBatchTrans;
 		private UI.Button butProcessBatchQS;
 		private System.Windows.Forms.Label labelStatus;
-		private UI.ComboBoxOD comboStatuses;
+		private UI.ComboBox comboStatuses;
 		private System.Windows.Forms.Label labelProcessQSBatches;
 		private System.Windows.Forms.ToolStripMenuItem viewErrorMessageMenuItem;
 		private UI.Button butNoneQSBatch;

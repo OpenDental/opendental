@@ -97,7 +97,7 @@ namespace OpenDentBusiness.Eclaims {
 					if(!Directory.Exists(clearinghouseClin.ResponsePath)) {
 						progress.UpdateProgress(Lans.g(progress.LanThis,"Clearinghouse response path is invalid."));
 						return false;
-						throw new Exception("Clearinghouse response path is invalid. Go To Setup > Family/Insurance > Clearinghouses > and double click desired clearinghouse to update path.");
+						throw new Exception("Clearinghouse response path is invalid. Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path.");
 					}
 					//Only retrieving reports so do not send new claims.
 					//Although the documentation we received from Denti-Cal says that the folder name should start "OXi", that was not the case for a customer
@@ -177,7 +177,7 @@ namespace OpenDentBusiness.Eclaims {
 						return false;
 					}
 					if(!Directory.Exists(clearinghouseClin.ExportPath)) {
-						throw new Exception(Lans.g(progress.LanThis,"Clearinghouse export path is invalid. Go To Setup > Family/Insurance > Clearinghouses > and double click desired clearinghouse to update path."));
+						throw new Exception(Lans.g(progress.LanThis,"Clearinghouse export path is invalid. Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path."));
 					}
 					string[] files=Directory.GetFiles(clearinghouseClin.ExportPath);
 					//Try to find a folder that starts with "dcaprod" or "OXi".

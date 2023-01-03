@@ -25,14 +25,14 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpTreatmentFinder));
 			this.label1 = new System.Windows.Forms.Label();
 			this.checkIncludeNoIns = new System.Windows.Forms.CheckBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.checkUseTreatingProvider = new System.Windows.Forms.CheckBox();
 			this.comboClinics = new OpenDental.UI.ComboBoxClinicPicker();
 			this.codeRangeFilter = new OpenDental.UI.ODCodeRangeFilter();
 			this.checkBenefitAssumeGeneral = new System.Windows.Forms.CheckBox();
-			this.comboBoxMultiBilling = new OpenDental.UI.ComboBoxOD();
-			this.comboBoxMultiProv = new OpenDental.UI.ComboBoxOD();
+			this.comboBoxMultiBilling = new OpenDental.UI.ComboBox();
+			this.comboBoxMultiProv = new OpenDental.UI.ComboBox();
 			this.textOverAmount = new OpenDental.ValidDouble();
 			this.comboMonthStart = new System.Windows.Forms.ComboBox();
 			this.label8 = new System.Windows.Forms.Label();
@@ -475,7 +475,7 @@ namespace OpenDental {
 		private Label label1;
 		private CheckBox checkIncludeNoIns;
 		private UI.GridOD gridMain;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private UI.Button butPrint;
 		private UI.Button butRefresh;
 		private ContextMenu contextRightClick;
@@ -495,8 +495,8 @@ namespace OpenDental {
 		private Label label8;
 		private ComboBox comboMonthStart;
 		private ValidDouble textOverAmount;
-		private UI.ComboBoxOD comboBoxMultiProv;
-		private UI.ComboBoxOD comboBoxMultiBilling;
+		private UI.ComboBox comboBoxMultiProv;
+		private UI.ComboBox comboBoxMultiBilling;
 		private CheckBox checkIncludePatsWithApts;
 		private CheckBox checkBenefitAssumeGeneral;
 		private UI.ODCodeRangeFilter codeRangeFilter;

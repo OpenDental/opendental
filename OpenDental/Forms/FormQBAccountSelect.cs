@@ -59,7 +59,7 @@ namespace OpenDental {
 			comboIncomeAccount.SelectedIndex=0;//change this combo box name.
 		}
 
-		private void FillAccountsFromProgramProperty(ProgramProperty progProp,OpenDental.UI.ComboBoxOD comboBox) {
+		private void FillAccountsFromProgramProperty(ProgramProperty progProp,OpenDental.UI.ComboBox comboBox) {
 			List<string> listAccountsNames=ProgramProperties.GetQuickBooksOnlineEntityNames(progProp.PropertyValue);
 			for(int i=0;i<listAccountsNames.Count;i++) {
 				comboBox.Items.Add(listAccountsNames[i]);

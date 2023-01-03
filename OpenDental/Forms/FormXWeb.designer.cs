@@ -28,7 +28,7 @@ namespace OpenDental{
 			this.butCancel = new OpenDental.UI.Button();
 			this.labelRefNumber = new System.Windows.Forms.Label();
 			this.textRefNumber = new System.Windows.Forms.TextBox();
-			this.groupTransType = new OpenDental.UI.GroupBoxOD();
+			this.groupTransType = new OpenDental.UI.GroupBox();
 			this.radioReturn = new System.Windows.Forms.RadioButton();
 			this.textZipCode = new System.Windows.Forms.TextBox();
 			this.label7 = new System.Windows.Forms.Label();
@@ -264,7 +264,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label labelRefNumber;
 		private System.Windows.Forms.TextBox textRefNumber;
-		private OpenDental.UI.GroupBoxOD groupTransType;
+		private OpenDental.UI.GroupBox groupTransType;
 		private System.Windows.Forms.RadioButton radioReturn;
 		private System.Windows.Forms.TextBox textZipCode;
 		private System.Windows.Forms.Label label7;

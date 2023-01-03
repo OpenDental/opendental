@@ -26,9 +26,9 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEvaluations));
 			this.butCancel = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.comboInstructor = new OpenDental.UI.ComboBoxOD();
+			this.comboInstructor = new OpenDental.UI.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
-			this.groupStudents = new OpenDental.UI.GroupBoxOD();
+			this.groupStudents = new OpenDental.UI.GroupBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textProvNum = new System.Windows.Forms.TextBox();
 			this.butRefresh = new OpenDental.UI.Button();
@@ -41,8 +41,8 @@ namespace OpenDental{
 			this.textDateStart = new ValidDate();
 			this.label6 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
-			this.groupAdmin = new OpenDental.UI.GroupBoxOD();
-			this.comboCourse = new OpenDental.UI.ComboBoxOD();
+			this.groupAdmin = new OpenDental.UI.GroupBox();
+			this.comboCourse = new OpenDental.UI.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butReport = new OpenDental.UI.Button();
 			this.groupStudents.SuspendLayout();
@@ -291,9 +291,9 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridMain;
-		private OpenDental.UI.ComboBoxOD comboInstructor;
+		private OpenDental.UI.ComboBox comboInstructor;
 		private System.Windows.Forms.Label label2;
-		private OpenDental.UI.GroupBoxOD groupStudents;
+		private OpenDental.UI.GroupBox groupStudents;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textProvNum;
 		private System.Windows.Forms.Label label5;
@@ -305,9 +305,9 @@ namespace OpenDental{
 		private ValidDate textDateStart;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label label7;
-		private OpenDental.UI.GroupBoxOD groupAdmin;
+		private OpenDental.UI.GroupBox groupAdmin;
 		private UI.Button butRefresh;
-		private OpenDental.UI.ComboBoxOD comboCourse;
+		private OpenDental.UI.ComboBox comboCourse;
 		private System.Windows.Forms.Label label1;
 		private UI.Button butReport;
 	}

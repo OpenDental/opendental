@@ -29,7 +29,7 @@ namespace OpenDental{
 			this.label4 = new System.Windows.Forms.Label();
 			this.textPassword = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.labelCredentials = new System.Windows.Forms.Label();
 			this.menuRightClick = new System.Windows.Forms.ContextMenu();
 			this.menuItemAccount = new System.Windows.Forms.MenuItem();
@@ -43,8 +43,8 @@ namespace OpenDental{
 			this.butDelete = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.labelBundleRequired = new System.Windows.Forms.Label();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
-			this.comboBillingType = new OpenDental.UI.ComboBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
+			this.comboBillingType = new OpenDental.UI.ComboBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
@@ -350,7 +350,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.TextBox textPassword;
 		private System.Windows.Forms.Label label5;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label labelCredentials;
 		private UI.Button butOK;
 		private System.Windows.Forms.ContextMenu menuRightClick;
@@ -361,12 +361,12 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelTotal;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label labelBundleRequired;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textNote;
 		private System.Windows.Forms.TextBox textVotesAllotted;
-		private UI.ComboBoxOD comboBillingType;
+		private UI.ComboBox comboBillingType;
 	}
 }

@@ -27,7 +27,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserControlTasks));
 			this.tabContr = new System.Windows.Forms.TabControl();
 			this.tabUser = new System.Windows.Forms.TabPage();
-			this.groupBoxOD2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD2 = new OpenDental.UI.GroupBox();
 			this.tabNew = new System.Windows.Forms.TabPage();
 			this.tabOpenTickets = new System.Windows.Forms.TabPage();
 			this.tabPatientTickets = new System.Windows.Forms.TabPage();
@@ -595,7 +595,7 @@ namespace OpenDental {
 		private System.Windows.Forms.MenuItem menuUnarchive;
 		private System.Windows.Forms.ContextMenuStrip menuAttachments;
 		private System.Windows.Forms.MenuItem menuNavAttachment;
-		private UI.GroupBoxOD groupBoxOD2;
+		private UI.GroupBox groupBoxOD2;
 		private OpenDental.UI.Button butClearFilter;
 		private System.Windows.Forms.TextBox textListFilter;
 		private UI.Button butRefresh;

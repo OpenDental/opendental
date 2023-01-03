@@ -561,7 +561,7 @@ namespace OpenDental{
 
 		///<summary>Puts an asterisk next to the label if the field is required and the conditions are met. If the disallowedIdx is also selected, 
 		///highlights the combobox background.</summary>
-		private void SetRequiredComboBox(Label labelCur,OpenDental.UI.ComboBoxOD comboBoxCur,bool areConditionsMet,int disallowedIdx,string errorMsg) {
+		private void SetRequiredComboBox(Label labelCur,OpenDental.UI.ComboBox comboBoxCur,bool areConditionsMet,int disallowedIdx,string errorMsg) {
 			if(areConditionsMet) {
 				labelCur.Text=labelCur.Text.Replace("*","")+"*";
 				if(comboBoxCur.SelectedIndex==disallowedIdx) {
@@ -581,7 +581,7 @@ namespace OpenDental{
 		}
 
 		///<summary>Puts an asterisk next to the label if the field is required and the conditions are met. </summary>
-		private void SetRequiredComboBoxPlus(Label labelCur,ComboBoxOD comboBoxCur,bool areConditionsMet,int disallowedIdx,string errorMsg) {
+		private void SetRequiredComboBoxPlus(Label labelCur,UI.ComboBox comboBoxCur,bool areConditionsMet,int disallowedIdx,string errorMsg) {
 			if(areConditionsMet) {
 				labelCur.Text=labelCur.Text.Replace("*","")+"*";
 				if(comboBoxCur.SelectedIndex==disallowedIdx) {

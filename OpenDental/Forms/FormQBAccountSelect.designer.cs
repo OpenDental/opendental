@@ -27,9 +27,9 @@ namespace OpenDental {
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.labelDepositAccount = new System.Windows.Forms.Label();
-			this.comboDepositAccount = new OpenDental.UI.ComboBoxOD();
+			this.comboDepositAccount = new OpenDental.UI.ComboBox();
 			this.labelIncomeAccountQB = new System.Windows.Forms.Label();
-			this.comboIncomeAccount = new OpenDental.UI.ComboBoxOD();
+			this.comboIncomeAccount = new OpenDental.UI.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -117,9 +117,9 @@ namespace OpenDental {
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label labelDepositAccount;
-		private OpenDental.UI.ComboBoxOD comboDepositAccount;
+		private OpenDental.UI.ComboBox comboDepositAccount;
 		private System.Windows.Forms.Label labelIncomeAccountQB;
-		private OpenDental.UI.ComboBoxOD comboIncomeAccount;
+		private OpenDental.UI.ComboBox comboIncomeAccount;
 		private System.Windows.Forms.Label label1;
 	}
 }

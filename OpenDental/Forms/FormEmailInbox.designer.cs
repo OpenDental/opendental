@@ -32,18 +32,18 @@ namespace OpenDental{
 			this.imageListButtonSmall = new System.Windows.Forms.ImageList(this.components);
 			this.imageListMailboxesLarge = new System.Windows.Forms.ImageList(this.components);
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this.groupShowIn = new OpenDental.UI.GroupBoxOD();
+			this.groupShowIn = new OpenDental.UI.GroupBox();
 			this.listShowIn = new OpenDental.UI.ListBoxOD();
 			this.checkShowHiddenEmails = new OpenDental.UI.CheckBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.comboEmailAddress = new OpenDental.UI.ComboBoxOD();
+			this.comboEmailAddress = new OpenDental.UI.ComboBox();
 			this.butMarkUnread = new OpenDental.UI.Button();
 			this.butMarkRead = new OpenDental.UI.Button();
 			this.butChangePat = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.butCompose = new OpenDental.UI.Button();
 			this.butReply = new OpenDental.UI.Button();
-			this.groupSearch = new OpenDental.UI.GroupBoxOD();
+			this.groupSearch = new OpenDental.UI.GroupBox();
 			this.textDateTo = new OpenDental.ValidDate();
 			this.label2 = new System.Windows.Forms.Label();
 			this.butClear = new OpenDental.UI.Button();
@@ -68,7 +68,7 @@ namespace OpenDental{
 			this.butReplyAll = new OpenDental.UI.Button();
 			this.butForward = new OpenDental.UI.Button();
 			this.menuMain = new OpenDental.UI.MenuOD();
-			this.groupSentMessageSource = new OpenDental.UI.GroupBoxOD();
+			this.groupSentMessageSource = new OpenDental.UI.GroupBox();
 			this.butAutomatedNone = new OpenDental.UI.Button();
 			this.butManualNone = new OpenDental.UI.Button();
 			this.labelAutomatedMsgSource = new System.Windows.Forms.Label();
@@ -729,7 +729,7 @@ namespace OpenDental{
 
 		#endregion
     private System.Windows.Forms.Label label3;
-    private OpenDental.UI.ComboBoxOD comboEmailAddress;
+    private OpenDental.UI.ComboBox comboEmailAddress;
     private UI.Button butMarkUnread;
     private UI.Button butMarkRead;
     private UI.Button butChangePat;
@@ -737,7 +737,7 @@ namespace OpenDental{
     private UI.Button butCompose;
     private System.Windows.Forms.ImageList imageListButtonSmall;
     private UI.Button butReply;
-    private OpenDental.UI.GroupBoxOD groupSearch;
+    private OpenDental.UI.GroupBox groupSearch;
     private UI.Button butClear;
     private UI.Button butSearch;
     private OpenDental.UI.CheckBox checkSearchAttach;
@@ -768,9 +768,9 @@ namespace OpenDental{
 		private UI.Button butForward;
 		private OpenDental.UI.CheckBox checkShowHiddenEmails;
 		private UI.ListBoxOD listShowIn;
-		private OpenDental.UI.GroupBoxOD groupShowIn;
+		private OpenDental.UI.GroupBox groupShowIn;
 		private UI.MenuOD menuMain;
-		private OpenDental.UI.GroupBoxOD groupSentMessageSource;
+		private OpenDental.UI.GroupBox groupSentMessageSource;
 		private UI.ListBoxOD listManualMessageSource;
 		private OpenDental.UI.CheckBox checkShowFailedSent;
 		private UI.ListBoxOD listAutomatedMessageSource;

@@ -32,7 +32,7 @@ namespace OpenDental{
 			this.checkUseReportServer = new System.Windows.Forms.CheckBox();
 			this.radioReportServerMiddleTier = new System.Windows.Forms.RadioButton();
 			this.radioReportServerDirect = new System.Windows.Forms.RadioButton();
-			this.groupConnectionSettings = new OpenDental.UI.GroupBoxOD();
+			this.groupConnectionSettings = new OpenDental.UI.GroupBox();
 			this.comboServerName = new System.Windows.Forms.ComboBox();
 			this.textMysqlPass = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
@@ -41,7 +41,7 @@ namespace OpenDental{
 			this.comboDatabase = new System.Windows.Forms.ComboBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
-			this.groupMiddleTier = new OpenDental.UI.GroupBoxOD();
+			this.groupMiddleTier = new OpenDental.UI.GroupBox();
 			this.textMiddleTierURI = new System.Windows.Forms.TextBox();
 			this.label11 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
@@ -51,7 +51,7 @@ namespace OpenDental{
 			this.label7 = new System.Windows.Forms.Label();
 			this.textIncompleteProcsExcludeCodes = new OpenDental.ODtextBox();
 			this.checkReportDisplayUnearnedTP = new System.Windows.Forms.CheckBox();
-			this.comboReportWriteoff = new OpenDental.UI.ComboBoxOD();
+			this.comboReportWriteoff = new OpenDental.UI.ComboBox();
 			this.checkOutstandingRpDateTab = new System.Windows.Forms.CheckBox();
 			this.checkBenefitAssumeGeneral = new System.Windows.Forms.CheckBox();
 			this.checkReportsIncompleteProcsUnsigned = new System.Windows.Forms.CheckBox();
@@ -558,8 +558,8 @@ namespace OpenDental{
     private System.Windows.Forms.Label label6;
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.Label label4;
-    private OpenDental.UI.GroupBoxOD groupConnectionSettings;
-    private OpenDental.UI.GroupBoxOD groupMiddleTier;
+    private OpenDental.UI.GroupBox groupConnectionSettings;
+    private OpenDental.UI.GroupBox groupMiddleTier;
     private System.Windows.Forms.TextBox textMiddleTierURI;
     private System.Windows.Forms.Label label11;
     private System.Windows.Forms.Label label9;
@@ -570,7 +570,7 @@ namespace OpenDental{
 		private User_Controls.UserControlReportSetup userControlReportSetup;
 		private System.Windows.Forms.CheckBox checkBenefitAssumeGeneral;
 		private System.Windows.Forms.CheckBox checkOutstandingRpDateTab;
-		private UI.ComboBoxOD comboReportWriteoff;
+		private UI.ComboBox comboReportWriteoff;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.CheckBox checkReportDisplayUnearnedTP;
 		private System.Windows.Forms.Label label7;

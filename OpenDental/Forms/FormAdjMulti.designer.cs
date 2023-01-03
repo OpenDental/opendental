@@ -27,7 +27,7 @@ namespace OpenDental {
 			this.label5 = new System.Windows.Forms.Label();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.label3 = new System.Windows.Forms.Label();
-			this.comboProv = new OpenDental.UI.ComboBoxOD();
+			this.comboProv = new OpenDental.UI.ComboBox();
 			this.labelAdjDate = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butCancel = new OpenDental.UI.Button();
@@ -42,17 +42,17 @@ namespace OpenDental {
 			this.textAmt = new OpenDental.ValidDouble();
 			this.radioPercentProcFee = new System.Windows.Forms.RadioButton();
 			this.labelAmount = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.listTypePos = new OpenDental.UI.ListBoxOD();
 			this.labelAdditions = new System.Windows.Forms.Label();
 			this.labelSubtractions = new System.Windows.Forms.Label();
 			this.listTypeNeg = new OpenDental.UI.ListBoxOD();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.radioIncludeAll = new System.Windows.Forms.RadioButton();
 			this.radioAllocatedOnly = new System.Windows.Forms.RadioButton();
 			this.radioExcludeAll = new System.Windows.Forms.RadioButton();
-			this.groupCreditLogic = new OpenDental.UI.GroupBoxOD();
+			this.groupCreditLogic = new OpenDental.UI.GroupBox();
 			this.butUpdate = new OpenDental.UI.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
@@ -410,7 +410,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelAdjDate;
 		private UI.Button butPickProv;
 		private System.Windows.Forms.Label label3;
-		private OpenDental.UI.ComboBoxOD comboProv;
+		private OpenDental.UI.ComboBox comboProv;
 		private UI.ComboBoxClinicPicker comboClinic;
 		private UI.Button butAdd;
 		private UI.Button butDelete;
@@ -424,17 +424,17 @@ namespace OpenDental {
 		private System.Windows.Forms.RadioButton radioPercentProcFee;
 		private System.Windows.Forms.Label labelAmount;
 		private System.Windows.Forms.RadioButton radioFixedAmt;
-		private OpenDental.UI.GroupBoxOD groupBox1;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox1;
+		private OpenDental.UI.GroupBox groupBox2;
 		private OpenDental.UI.ListBoxOD listTypePos;
 		private System.Windows.Forms.Label labelAdditions;
 		private System.Windows.Forms.Label labelSubtractions;
 		private OpenDental.UI.ListBoxOD listTypeNeg;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox3;
 		private System.Windows.Forms.RadioButton radioIncludeAll;
 		private System.Windows.Forms.RadioButton radioAllocatedOnly;
 		private System.Windows.Forms.RadioButton radioExcludeAll;
-		private OpenDental.UI.GroupBoxOD groupCreditLogic;
+		private OpenDental.UI.GroupBox groupCreditLogic;
 		private UI.Button butUpdate;
 	}
 }

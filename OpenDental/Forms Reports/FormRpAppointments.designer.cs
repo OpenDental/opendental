@@ -46,7 +46,7 @@ namespace OpenDental {
 			this.textDateFrom = new OpenDental.ValidDate();
 			this.butTomorrow = new OpenDental.UI.Button();
 			this.butToday = new OpenDental.UI.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.checkShowNoteAppts = new System.Windows.Forms.CheckBox();
 			this.radioDateAptCreated = new System.Windows.Forms.RadioButton();
 			this.radioAptDate = new System.Windows.Forms.RadioButton();
@@ -54,7 +54,7 @@ namespace OpenDental {
 			this.labelClinics = new System.Windows.Forms.Label();
 			this.checkAllClinics = new System.Windows.Forms.CheckBox();
 			this.checkAllProvs = new System.Windows.Forms.CheckBox();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.checkWebSchedExistingPat = new System.Windows.Forms.CheckBox();
 			this.checkWebSchedASAP = new System.Windows.Forms.CheckBox();
 			this.checkWebSchedNewPat = new System.Windows.Forms.CheckBox();
@@ -327,12 +327,12 @@ namespace OpenDental {
 		private ValidDate textDateFrom;
 		private UI.Button butTomorrow;
 		private UI.Button butToday;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.ListBoxOD listClinics;
 		private Label labelClinics;
 		private CheckBox checkAllClinics;
 		private CheckBox checkAllProvs;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private CheckBox checkWebSchedNewPat;
 		private RadioButton radioDateAptCreated;
 		private RadioButton radioAptDate;

@@ -37,7 +37,7 @@ namespace OpenDentalImaging{
 			this.comboTwainName = new System.Windows.Forms.ComboBox();
 			this.checkShowTwainUI = new OpenDental.UI.CheckBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.radioTwain = new System.Windows.Forms.RadioButton();
 			this.radioTwainMulti = new System.Windows.Forms.RadioButton();
@@ -247,7 +247,7 @@ namespace OpenDentalImaging{
 		private System.Windows.Forms.ComboBox comboTwainName;
 		private OpenDental.UI.CheckBox checkShowTwainUI;
 		private System.Windows.Forms.Label label3;
-		private OpenDental.UI.GroupBoxOD groupBoxOD1;
+		private OpenDental.UI.GroupBox groupBoxOD1;
 		private System.Windows.Forms.RadioButton radioTwain;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.RadioButton radioTwainMulti;

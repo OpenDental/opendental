@@ -33,7 +33,7 @@ namespace OpenDental {
 			this.labelReferralNotes = new System.Windows.Forms.Label();
 			this.labelNote = new System.Windows.Forms.Label();
 			this.textNote = new System.Windows.Forms.TextBox();
-			this.comboRefToStatus = new OpenDental.UI.ComboBoxOD();
+			this.comboRefToStatus = new OpenDental.UI.ComboBox();
 			this.labelRefToStatus = new System.Windows.Forms.Label();
 			this.listSheets = new OpenDental.UI.ListBoxOD();
 			this.labelSheets = new System.Windows.Forms.Label();
@@ -43,7 +43,7 @@ namespace OpenDental {
 			this.textProc = new System.Windows.Forms.TextBox();
 			this.labelProc = new System.Windows.Forms.Label();
 			this.labelDateProcComplete = new System.Windows.Forms.Label();
-			this.comboProvNum = new OpenDental.UI.ComboBoxOD();
+			this.comboProvNum = new OpenDental.UI.ComboBox();
 			this.labelProv = new System.Windows.Forms.Label();
 			this.butNoneProv = new OpenDental.UI.Button();
 			this.butPickProv = new OpenDental.UI.Button();
@@ -410,7 +410,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelReferralNotes;
 		private Label labelNote;
 		private TextBox textNote;
-		private OpenDental.UI.ComboBoxOD comboRefToStatus;
+		private OpenDental.UI.ComboBox comboRefToStatus;
 		private Label labelRefToStatus;
 		private OpenDental.UI.Button butDetach;
 		private OpenDental.UI.ListBoxOD listSheets;
@@ -424,7 +424,7 @@ namespace OpenDental {
 		private Label labelDateProcComplete;
 		private UI.Button butChangeReferral;
 		private UI.Button butNoneProv;
-		private OpenDental.UI.ComboBoxOD comboProvNum;
+		private OpenDental.UI.ComboBox comboProvNum;
 		private UI.Button butPickProv;
 		private Label labelProv;
 	}

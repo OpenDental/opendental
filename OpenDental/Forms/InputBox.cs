@@ -53,9 +53,9 @@ namespace OpenDental{
 			}
 		}
 
-		public ComboBoxOD comboSelection {
+		public UI.ComboBox comboSelection {
 			get {
-				return (ComboBoxOD)_listInputControls.FirstOrDefault(x => x is ComboBoxOD);
+				return (UI.ComboBox)_listInputControls.FirstOrDefault(x => x is UI.ComboBox);
 			}
 		}
 
@@ -88,12 +88,12 @@ namespace OpenDental{
 
 		public List<int> SelectedIndices {
 			get {
-				Control control=_listInputControls.FirstOrDefault(x => x is ComboBoxOD || x is ListBoxOD);
+				Control control = _listInputControls.FirstOrDefault(x => x is UI.ComboBox || x is ListBoxOD);
 				if(control==null) {
 					return new List<int>();
 				}
-				if(control is ComboBoxOD) {
-					return ((ComboBoxOD)control).SelectedIndices;
+				if(control is UI.ComboBox) {
+					return ((UI.ComboBox)control).SelectedIndices;
 				}
 				if(control is ListBoxOD) {
 					return ((ListBoxOD)control).SelectedIndices;
@@ -265,7 +265,7 @@ namespace OpenDental{
 						_curLocationY+=checkBox.Size.Height+2;
 						break;
 					case InputBoxType.ComboSelect:
-						UI.ComboBoxOD comboBoxPlus=new UI.ComboBoxOD();
+						UI.ComboBox comboBoxPlus=new UI.ComboBox();
 						comboBoxPlus.Name="comboBox"+itemOrder;
 						comboBoxPlus.Location=new Point(posX,_curLocationY);
 						comboBoxPlus.Size=inputParam.ParamSize==Size.Empty ? new Size(controlWidth,21) : inputParam.ParamSize;
@@ -278,7 +278,7 @@ namespace OpenDental{
 						_curLocationY+=23;
 						break;
 					case InputBoxType.ComboMultiSelect:
-						UI.ComboBoxOD comboBoxPlus2=new UI.ComboBoxOD();
+						UI.ComboBox comboBoxPlus2=new UI.ComboBox();
 						comboBoxPlus2.SelectionModeMulti=true;
 						comboBoxPlus2.Name="comboBox"+itemOrder;
 						comboBoxPlus2.Location=new Point(posX,_curLocationY);
@@ -413,11 +413,11 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
 			}
-			if(_listInputControls.OfType<ComboBoxOD>().Any(x=>!x.SelectionModeMulti && x.SelectedIndex==-1)) {//single selection
+			if(_listInputControls.OfType<UI.ComboBox>().Any(x=>!x.SelectionModeMulti && x.SelectedIndex==-1)) {//single selection
 				MsgBox.Show(this,"Please make a selection.");
 				return;
 			}
-			if(_listInputControls.OfType<ComboBoxOD>().Any(x=>x.SelectionModeMulti && x.SelectedIndices.Count==0)) {//multi selection
+			if(_listInputControls.OfType<UI.ComboBox>().Any(x=>x.SelectionModeMulti && x.SelectedIndices.Count==0)) {//multi selection
 				MsgBox.Show(this,"Please make at least one selection.");
 				return;
 			}

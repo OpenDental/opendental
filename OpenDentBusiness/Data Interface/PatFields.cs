@@ -41,6 +41,32 @@ namespace OpenDentBusiness {
 			return Crud.PatFieldCrud.SelectMany(command);
 		}
 
+		///<summary>Gets all PatFields from the database. Used for API.</summary>
+		public static List<PatField> GetPatFieldsForApi(int limit,int offset,long patNum,string fieldName,DateTime dateSecDateTEdit) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<PatField>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,fieldName,dateSecDateTEdit);
+			}
+			string command="SELECT * FROM patfield WHERE SecDateTEdit >= "+POut.DateT(dateSecDateTEdit)+" ";
+			if(patNum>0) {
+				command+="AND PatNum="+POut.Long(patNum)+" ";
+			}
+			if(fieldName!="") {
+				command+="AND FieldName='"+POut.String(fieldName)+"' ";
+			}
+			command+="ORDER BY PatFieldNum "//Ensure order for limit and offset.
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.PatFieldCrud.SelectMany(command);
+		}
+
+		///<summary>Gets one PatField from the database. Used for API.</summary>
+		public static PatField GetPatFieldForApi(long patFieldNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<PatField>(MethodBase.GetCurrentMethod(),patFieldNum);
+			}
+			string command="SELECT * FROM patfield WHERE PatFieldNum="+POut.Long(patFieldNum);
+			return Crud.PatFieldCrud.SelectOne(command);
+		}
+
 		///<summary>Returns whether there are more than 0 PatFields with the given field name.</summary>
 		public static bool IsFieldNameInUse(string fieldName) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -113,26 +139,5 @@ namespace OpenDentBusiness {
 		}
 	}
 
-		
-
-
-
-		
-	
-
-	
-
-	
-
 
 }
-
-
-
-
-
-
-
-
-
-

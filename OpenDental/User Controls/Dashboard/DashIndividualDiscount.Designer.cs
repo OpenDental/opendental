@@ -23,7 +23,7 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.groupBoxIndDiscount = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxIndDiscount = new OpenDental.UI.GroupBox();
 			this.textUsedAdj = new System.Windows.Forms.TextBox();
 			this.textRemainingAdj = new System.Windows.Forms.TextBox();
 			this.textMaxAdj = new System.Windows.Forms.TextBox();
@@ -120,7 +120,7 @@
 
 		#endregion
 
-		private OpenDental.UI.GroupBoxOD groupBoxIndDiscount;
+		private OpenDental.UI.GroupBox groupBoxIndDiscount;
 		private System.Windows.Forms.TextBox textUsedAdj;
 		private System.Windows.Forms.TextBox textRemainingAdj;
 		private System.Windows.Forms.TextBox textMaxAdj;

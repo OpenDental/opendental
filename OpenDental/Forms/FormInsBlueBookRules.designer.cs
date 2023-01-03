@@ -37,7 +37,7 @@ namespace OpenDental{
 			this.labelArrowButtons = new System.Windows.Forms.Label();
 			this.textUcrFeePercent = new OpenDental.ValidNum();
 			this.labelUcrFeePercent = new System.Windows.Forms.Label();
-			this.groupBlueBookSettings = new OpenDental.UI.GroupBoxOD();
+			this.groupBlueBookSettings = new OpenDental.UI.GroupBox();
 			this.gridInsBlueBookRules = new OpenDental.UI.GridOD();
 			this.groupBlueBookSettings.SuspendLayout();
 			this.SuspendLayout();
@@ -243,6 +243,6 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelArrowButtons;
 		private ValidNum textUcrFeePercent;
 		private System.Windows.Forms.Label labelUcrFeePercent;
-		private OpenDental.UI.GroupBoxOD groupBlueBookSettings;
+		private OpenDental.UI.GroupBox groupBlueBookSettings;
 	}
 }

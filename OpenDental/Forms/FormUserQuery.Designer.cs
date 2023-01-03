@@ -18,7 +18,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butPrintPreview;
 		private OpenDental.UI.Button butSubmit;
 		private OpenDental.UI.CheckBox checkReportServer;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.PrintPreviewDialog printPreviewDialog2;
@@ -40,9 +40,9 @@ namespace OpenDental {
 			this.label1 = new System.Windows.Forms.Label();
 			this.butAdd = new OpenDental.UI.Button();
 			this.butFavorite = new OpenDental.UI.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label2 = new System.Windows.Forms.Label();
-			this.comboAlignment = new OpenDental.UI.ComboBoxOD();
+			this.comboAlignment = new OpenDental.UI.ComboBox();
 			this.radioHuman = new System.Windows.Forms.RadioButton();
 			this.checkNumberedRows = new OpenDental.UI.CheckBox();
 			this.radioRaw = new System.Windows.Forms.RadioButton();
@@ -399,6 +399,6 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelRowCount;
 		private OpenDental.UI.CheckBox checkNumberedRows;
 		private System.Windows.Forms.Label label2;
-		private UI.ComboBoxOD comboAlignment;
+		private UI.ComboBox comboAlignment;
 	}
 }

@@ -25,8 +25,8 @@
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMedLabs));
 			this.checkIncludeNoPat = new System.Windows.Forms.CheckBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
-			this.comboClinic = new OpenDental.UI.ComboBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
+			this.comboClinic = new OpenDental.UI.ComboBox();
 			this.labelClinic = new System.Windows.Forms.Label();
 			this.checkOnlyNoPat = new System.Windows.Forms.CheckBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -257,7 +257,7 @@
 		private OpenDental.UI.GridOD gridMain;
 		private UI.Button butClose;
 		private System.Windows.Forms.CheckBox checkIncludeNoPat;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private UI.Button butCurrent;
 		private UI.Button butAll;
 		private UI.Button butFind;
@@ -270,7 +270,7 @@
 		private UI.Button butRefresh;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.CheckBox checkOnlyNoPat;
-		private OpenDental.UI.ComboBoxOD comboClinic;
+		private OpenDental.UI.ComboBox comboClinic;
 		private System.Windows.Forms.Label labelClinic;
 	}
 }

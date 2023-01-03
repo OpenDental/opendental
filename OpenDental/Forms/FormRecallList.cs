@@ -1219,7 +1219,7 @@ namespace OpenDental {
 					clinic=Clinics.GetClinic(PIn.Long(_tableAddress.Rows[i]["ClinicNum"].ToString()));
 				}
 				long clinicNumEmail=clinic?.ClinicNum??Clinics.ClinicNum;
-				OpenDental.UI.ComboBoxOD cbEmail=isRecallGridSelected?comboEmailFromRecalls:comboEmailFromReact;
+				OpenDental.UI.ComboBox cbEmail=isRecallGridSelected?comboEmailFromRecalls:comboEmailFromReact;
 				emailAddress=cbEmail.GetSelected<EmailAddress>()??new EmailAddress();
 				if(emailAddress.EmailAddressNum==0) { //clinic/practice default
 					clinicNumEmail=PIn.Long(_tableAddress.Rows[i]["ClinicNum"].ToString());

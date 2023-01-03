@@ -28,10 +28,10 @@
 			this.butMeasures = new System.Windows.Forms.Button();
 			this.butHash = new System.Windows.Forms.Button();
 			this.butEncryption = new System.Windows.Forms.Button();
-			this.groupBox4 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox4 = new OpenDental.UI.GroupBox();
 			this.but2014CQM = new System.Windows.Forms.Button();
 			this.butEhrNotPerformed = new System.Windows.Forms.Button();
-			this.groupBox5 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox5 = new OpenDental.UI.GroupBox();
 			this.butVaccines = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
@@ -43,7 +43,7 @@
 			this.butInterventions = new System.Windows.Forms.Button();
 			this.butCarePlans = new System.Windows.Forms.Button();
 			this.but2011Labs = new System.Windows.Forms.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butMeasureEvent = new System.Windows.Forms.Button();
 			this.gridMu = new OpenDental.UI.GridOD();
 			this.butClinicalSummary = new System.Windows.Forms.Button();
@@ -340,8 +340,8 @@
 		private System.Windows.Forms.Button butHash;
 		private System.Windows.Forms.Button butEncryption;
 		private OpenDental.UI.GridOD gridMu;
-		private OpenDental.UI.GroupBoxOD groupBox4;
-		private OpenDental.UI.GroupBoxOD groupBox5;
+		private OpenDental.UI.GroupBox groupBox4;
+		private OpenDental.UI.GroupBox groupBox5;
 		private System.Windows.Forms.Button butVaccines;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
@@ -355,7 +355,7 @@
 		private System.Windows.Forms.Button butInterventions;
 		private System.Windows.Forms.Button butCarePlans;
 		private System.Windows.Forms.Button but2011Labs;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Button butMeasureEvent;
 		private System.Windows.Forms.Button butClinicalSummary;
 		private System.Windows.Forms.Button butPatList;

@@ -35,7 +35,7 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormClearinghouses));
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butEligibility = new OpenDental.UI.Button();
 			this.butDefaultMedical = new OpenDental.UI.Button();
 			this.butDefaultDental = new OpenDental.UI.Button();
@@ -49,7 +49,7 @@ namespace OpenDental {
 			this.radioInterval = new System.Windows.Forms.RadioButton();
 			this.radioTime = new System.Windows.Forms.RadioButton();
 			this.textReportCheckTime = new OpenDental.ValidTime();
-			this.groupRecieveSettings = new OpenDental.UI.GroupBoxOD();
+			this.groupRecieveSettings = new OpenDental.UI.GroupBox();
 			this.checkReceiveReportsService = new OpenDental.UI.CheckBox();
 			this.textReportComputerName = new System.Windows.Forms.TextBox();
 			this.butThisComputer = new OpenDental.UI.Button();
@@ -291,7 +291,7 @@ namespace OpenDental {
 
 		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butAdd;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private UI.Button butDefaultMedical;
 		private UI.Button butDefaultDental;
 		private TextBox textReportCheckInterval;
@@ -303,7 +303,7 @@ namespace OpenDental {
 		private RadioButton radioInterval;
 		private RadioButton radioTime;
 		private ValidTime textReportCheckTime;
-		private OpenDental.UI.GroupBoxOD groupRecieveSettings;
+		private OpenDental.UI.GroupBox groupRecieveSettings;
 		private OpenDental.UI.CheckBox checkReceiveReportsService;
 		private TextBox textReportComputerName;
 		private UI.Button butThisComputer;

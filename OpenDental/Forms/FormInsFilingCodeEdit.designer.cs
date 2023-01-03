@@ -45,7 +45,7 @@ namespace OpenDental {
 			this.butCancel = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.label3 = new System.Windows.Forms.Label();
-			this.comboGroup = new OpenDental.UI.ComboBoxOD();
+			this.comboGroup = new OpenDental.UI.ComboBox();
 			this.checkExcludeOtherCoverage = new OpenDental.UI.CheckBox();
 			this.SuspendLayout();
 			// 
@@ -201,7 +201,7 @@ namespace OpenDental {
 		private OpenDental.UI.GridOD gridInsFilingCodeSubtypes;
 		private OpenDental.UI.Button butAdd;
 		private Label label3;
-		private UI.ComboBoxOD comboGroup;
+		private UI.ComboBox comboGroup;
 		private OpenDental.UI.CheckBox checkExcludeOtherCoverage;
 	}
 }

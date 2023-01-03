@@ -24,7 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPatientMerge));
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textPatToBirthdate = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.butChangePatientInto = new OpenDental.UI.Button();
@@ -32,7 +32,7 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			this.labelPatNumInto = new System.Windows.Forms.Label();
 			this.textPatNumInto = new System.Windows.Forms.TextBox();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.textPatFromBirthdate = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.butChangePatientFrom = new OpenDental.UI.Button();
@@ -249,12 +249,12 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butMerge;
 		private OpenDental.UI.Button butCancel;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.TextBox textPatientNameInto;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label labelPatNumInto;
 		private System.Windows.Forms.TextBox textPatNumInto;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private OpenDental.UI.Button butChangePatientInto;
 		private OpenDental.UI.Button butChangePatientFrom;
 		private System.Windows.Forms.TextBox textPatientNameFrom;

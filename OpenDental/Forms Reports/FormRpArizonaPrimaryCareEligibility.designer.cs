@@ -32,7 +32,7 @@ namespace OpenDental{
 			this.label3=new System.Windows.Forms.Label();
 			this.textEligibilityFile=new System.Windows.Forms.TextBox();
 			this.dateTimeFrom=new System.Windows.Forms.DateTimePicker();
-			this.groupBox1=new OpenDental.UI.GroupBoxOD();
+			this.groupBox1=new OpenDental.UI.GroupBox();
 			this.label5=new System.Windows.Forms.Label();
 			this.dateTimeTo=new System.Windows.Forms.DateTimePicker();
 			this.label4=new System.Windows.Forms.Label();
@@ -243,7 +243,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butCopy;
 		private OpenDental.UI.Button butRun;
 		private System.Windows.Forms.DateTimePicker dateTimeFrom;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.DateTimePicker dateTimeTo;
 		private System.Windows.Forms.Label label4;

@@ -44,7 +44,7 @@ namespace OpenDental {
 			this.label3 = new System.Windows.Forms.Label();
 			this.butEditZip = new OpenDental.UI.Button();
 			this.textZip = new System.Windows.Forms.TextBox();
-			this.comboZip = new OpenDental.UI.ComboBoxOD();
+			this.comboZip = new OpenDental.UI.ComboBox();
 			this.textState = new System.Windows.Forms.TextBox();
 			this.labelST = new System.Windows.Forms.Label();
 			this.textAddress = new System.Windows.Forms.TextBox();
@@ -55,9 +55,9 @@ namespace OpenDental {
 			this.textCity = new System.Windows.Forms.TextBox();
 			this.labelAddress = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.comboPlaceService = new OpenDental.UI.ComboBoxOD();
+			this.comboPlaceService = new OpenDental.UI.ComboBox();
 			this.labelPriProv = new System.Windows.Forms.Label();
-			this.comboProv = new OpenDental.UI.ComboBoxOD();
+			this.comboProv = new OpenDental.UI.ComboBox();
 			this.butSiteLink = new OpenDental.UI.Button();
 			this.butPickProvider = new OpenDental.UI.Button();
 			this.SuspendLayout();
@@ -334,7 +334,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label3;
 		private UI.Button butEditZip;
 		private TextBox textZip;
-		private OpenDental.UI.ComboBoxOD comboZip;
+		private OpenDental.UI.ComboBox comboZip;
 		private TextBox textState;
 		private Label labelST;
 		private TextBox textAddress;
@@ -345,9 +345,9 @@ namespace OpenDental {
 		private TextBox textCity;
 		private Label labelAddress;
 		private Label label2;
-		private OpenDental.UI.ComboBoxOD comboPlaceService;
+		private OpenDental.UI.ComboBox comboPlaceService;
 		private Label labelPriProv;
-		private UI.ComboBoxOD comboProv;
+		private UI.ComboBox comboProv;
 		private UI.Button butSiteLink;
 		private UI.Button butPickProvider;
 	}

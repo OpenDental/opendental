@@ -23,12 +23,12 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormBackup));
 			this.tabControl1 = new OpenDental.UI.TabControl();
 			this.tabPageBackup = new OpenDental.UI.TabPage();
-			this.groupManagedBackups = new OpenDental.UI.GroupBoxOD();
+			this.groupManagedBackups = new OpenDental.UI.GroupBox();
 			this.pictureCDS = new OpenDental.UI.ODPictureBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.checkExcludeImages = new OpenDental.UI.CheckBox();
 			this.butSave = new OpenDental.UI.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textBox5 = new System.Windows.Forms.TextBox();
 			this.butBrowseRestoreAtoZTo = new OpenDental.UI.Button();
 			this.textBackupRestoreAtoZToPath = new System.Windows.Forms.TextBox();
@@ -47,7 +47,7 @@
 			this.textBackupToPath = new System.Windows.Forms.TextBox();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.butBrowseTo = new OpenDental.UI.Button();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.tabPageArchive = new OpenDental.UI.TabPage();
 			this.labelSelectTables = new System.Windows.Forms.Label();
 			this.checkEmailMessage = new OpenDental.UI.CheckBox();
@@ -56,7 +56,7 @@
 			this.labelWarning = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.butSaveArchiveData = new OpenDental.UI.Button();
-			this.groupBoxBackupConnection = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxBackupConnection = new OpenDental.UI.GroupBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
@@ -694,7 +694,7 @@
 		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.Button butRestore;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.TextBox textBox1;
 		private System.Windows.Forms.TextBox textBox2;
 		private System.Windows.Forms.TextBox textBox4;
@@ -714,10 +714,10 @@
 		private OpenDental.UI.Button butSave;
 		//Required designer variable.
 		private System.ComponentModel.Container components = null;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private OpenDental.UI.CheckBox checkExcludeImages;
 		private UI.ODPictureBox pictureCDS;
-		private OpenDental.UI.GroupBoxOD groupManagedBackups;
+		private OpenDental.UI.GroupBox groupManagedBackups;
 		private OpenDental.UI.TabControl tabControl1;
 		private OpenDental.UI.TabPage tabPageArchive;
 		private OpenDental.UI.TabPage tabPageBackup;
@@ -727,7 +727,7 @@
 		private System.Windows.Forms.TextBox textArchivePass;
 		private System.Windows.Forms.TextBox textArchiveUser;
 		private UI.Button butArchive;
-		private OpenDental.UI.GroupBoxOD groupBoxBackupConnection;
+		private OpenDental.UI.GroupBox groupBoxBackupConnection;
 		private System.Windows.Forms.Label label7;
 		private UI.Button butSaveArchiveData;
 		private System.Windows.Forms.Label labelWarning;

@@ -33,18 +33,18 @@
 			this.label3 = new System.Windows.Forms.Label();
 			this.textLoincDescription = new System.Windows.Forms.TextBox();
 			this.butLoinc = new System.Windows.Forms.Button();
-			this.comboComparator = new OpenDental.UI.ComboBoxOD();
-			this.comboUnits = new OpenDental.UI.ComboBoxOD();
-			this.groupBox5 = new OpenDental.UI.GroupBoxOD();
+			this.comboComparator = new OpenDental.UI.ComboBox();
+			this.comboUnits = new OpenDental.UI.ComboBox();
+			this.groupBox5 = new OpenDental.UI.GroupBox();
 			this.label5 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.textSnomedDescription = new System.Windows.Forms.TextBox();
 			this.butSnomed = new System.Windows.Forms.Button();
 			this.textSnomed = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.checkAllResults = new OpenDental.UI.CheckBox();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.groupBox5.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
@@ -289,17 +289,17 @@
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textLoincDescription;
 		private System.Windows.Forms.Button butLoinc;
-		private OpenDental.UI.ComboBoxOD comboComparator;
-		private OpenDental.UI.ComboBoxOD comboUnits;
-		private OpenDental.UI.GroupBoxOD groupBox5;
+		private OpenDental.UI.ComboBox comboComparator;
+		private OpenDental.UI.ComboBox comboUnits;
+		private OpenDental.UI.GroupBox groupBox5;
 		private System.Windows.Forms.Label label5;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.TextBox textSnomedDescription;
 		private System.Windows.Forms.Button butSnomed;
 		private System.Windows.Forms.TextBox textSnomed;
 		private System.Windows.Forms.Label label2;
 		private OpenDental.UI.CheckBox checkAllResults;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 	}
 }

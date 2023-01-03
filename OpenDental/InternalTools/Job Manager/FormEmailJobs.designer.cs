@@ -53,7 +53,7 @@ namespace OpenDental {
 			this.butSend = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.butExport = new OpenDental.UI.Button();
-			this.comboEmailFrom = new OpenDental.UI.ComboBoxOD();
+			this.comboEmailFrom = new OpenDental.UI.ComboBox();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -344,6 +344,6 @@ namespace OpenDental {
 		private ODtextBox textVersions;
 		private Label label5;
 		private UI.Button butExport;
-		private UI.ComboBoxOD comboEmailFrom;
+		private UI.ComboBox comboEmailFrom;
 	}
 }

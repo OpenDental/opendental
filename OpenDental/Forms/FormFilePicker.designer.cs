@@ -32,7 +32,7 @@ namespace OpenDental{
 			this.butPreview = new OpenDental.UI.Button();
 			this.butFileChoose = new OpenDental.UI.Button();
 			this.butGo = new OpenDental.UI.Button();
-			this.groupThumbnail = new OpenDental.UI.GroupBoxOD();
+			this.groupThumbnail = new OpenDental.UI.GroupBox();
 			this.labelThumbnail = new System.Windows.Forms.Label();
 			this.odPictureBox = new OpenDental.UI.ODPictureBox();
 			this.butImport = new OpenDental.UI.Button();
@@ -201,7 +201,7 @@ namespace OpenDental{
 		private UI.Button butPreview;
 		private UI.Button butFileChoose;
 		private UI.Button butGo;
-		private OpenDental.UI.GroupBoxOD groupThumbnail;
+		private OpenDental.UI.GroupBox groupThumbnail;
 		private UI.ODPictureBox odPictureBox;
 		private System.Windows.Forms.Label labelThumbnail;
 		private UI.Button butImport;

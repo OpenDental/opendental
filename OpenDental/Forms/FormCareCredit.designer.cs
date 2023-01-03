@@ -25,7 +25,7 @@ namespace OpenDental {
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCareCredit));
 			this.butClose = new OpenDental.UI.Button();
-			this.comboProviders = new OpenDental.UI.ComboBoxOD();
+			this.comboProviders = new OpenDental.UI.ComboBox();
 			this.labelProviders = new System.Windows.Forms.Label();
 			this.comboClinics = new OpenDental.UI.ComboBoxClinicPicker();
 			this.butApply = new OpenDental.UI.Button();
@@ -168,7 +168,7 @@ namespace OpenDental {
 
 		#endregion
 		private OpenDental.UI.Button butClose;
-		private UI.ComboBoxOD comboProviders;
+		private UI.ComboBox comboProviders;
 		private System.Windows.Forms.Label labelProviders;
 		private UI.ComboBoxClinicPicker comboClinics;
 		private UI.Button butApply;

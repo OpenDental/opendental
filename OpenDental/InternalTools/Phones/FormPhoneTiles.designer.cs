@@ -53,8 +53,7 @@
 			this.menuItemLunch = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemHome = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuItemBreak = new System.Windows.Forms.ToolStripMenuItem();
-			this.checkBoxAll = new OpenDental.UI.CheckBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.radioByExt = new System.Windows.Forms.RadioButton();
 			this.radioByName = new System.Windows.Forms.RadioButton();
 			this.butSettings = new OpenDental.UI.Button();
@@ -67,9 +66,28 @@
 			this.textSearch = new System.Windows.Forms.TextBox();
 			this.labelSearch = new System.Windows.Forms.Label();
 			this.checkNeedsHelpTop = new OpenDental.UI.CheckBox();
+			this.panelGrid = new System.Windows.Forms.Panel();
+			this.label1 = new System.Windows.Forms.Label();
+			this.listBoxStatus = new OpenDental.UI.ListBoxOD();
+			this.panelGrid2 = new System.Windows.Forms.Panel();
+			this.label5 = new System.Windows.Forms.Label();
+			this.butEditDefaults = new OpenDental.UI.Button();
+			this.butGotoPatient = new OpenDental.UI.Button();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
+			this.label4 = new System.Windows.Forms.Label();
+			this.butPhoneManage = new OpenDental.UI.Button();
+			this.butPhoneAttach = new OpenDental.UI.Button();
+			this.label3 = new System.Windows.Forms.Label();
+			this.listBoxClockOut = new OpenDental.UI.ListBoxOD();
+			this.label2 = new System.Windows.Forms.Label();
+			this.listBoxQueues = new OpenDental.UI.ListBoxOD();
+			this.label6 = new System.Windows.Forms.Label();
 			this.menuNumbers.SuspendLayout();
 			this.menuStatus.SuspendLayout();
 			this.groupBox1.SuspendLayout();
+			this.panelGrid.SuspendLayout();
+			this.panelGrid2.SuspendLayout();
+			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// labelMsg
@@ -283,16 +301,6 @@
 			this.menuItemBreak.Text = "Break";
 			this.menuItemBreak.Click += new System.EventHandler(this.menuItemBreak_Click);
 			// 
-			// checkBoxAll
-			// 
-			this.checkBoxAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.checkBoxAll.Location = new System.Drawing.Point(1624, 5);
-			this.checkBoxAll.Name = "checkBoxAll";
-			this.checkBoxAll.Size = new System.Drawing.Size(128, 16);
-			this.checkBoxAll.TabIndex = 28;
-			this.checkBoxAll.Text = "Show All";
-			this.checkBoxAll.Click += new System.EventHandler(this.checkBoxAll_Click);
-			// 
 			// groupBox1
 			// 
 			this.groupBox1.Controls.Add(this.radioByExt);
@@ -370,11 +378,14 @@
 			// 
 			this.gridMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+			this.gridMain.HasAlternateRowsColored = true;
 			this.gridMain.Location = new System.Drawing.Point(280, 46);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(646, 929);
+			this.gridMain.Size = new System.Drawing.Size(759, 929);
 			this.gridMain.TabIndex = 33;
 			this.gridMain.TranslationName = "TableBigPhones";
+			this.gridMain.WrapText = false;
+			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
 			// 
 			// checkShowOldInterface
 			// 
@@ -387,14 +398,14 @@
 			// 
 			// textSearch
 			// 
-			this.textSearch.Location = new System.Drawing.Point(115, 46);
+			this.textSearch.Location = new System.Drawing.Point(124, 3);
 			this.textSearch.Name = "textSearch";
 			this.textSearch.Size = new System.Drawing.Size(147, 20);
 			this.textSearch.TabIndex = 0;
 			// 
 			// labelSearch
 			// 
-			this.labelSearch.Location = new System.Drawing.Point(24, 45);
+			this.labelSearch.Location = new System.Drawing.Point(33, 2);
 			this.labelSearch.Name = "labelSearch";
 			this.labelSearch.Size = new System.Drawing.Size(87, 20);
 			this.labelSearch.TabIndex = 35;
@@ -406,27 +417,200 @@
 			this.checkNeedsHelpTop.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkNeedsHelpTop.Checked = true;
 			this.checkNeedsHelpTop.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkNeedsHelpTop.Location = new System.Drawing.Point(0, 72);
+			this.checkNeedsHelpTop.Location = new System.Drawing.Point(9, 29);
 			this.checkNeedsHelpTop.Name = "checkNeedsHelpTop";
 			this.checkNeedsHelpTop.Size = new System.Drawing.Size(128, 16);
 			this.checkNeedsHelpTop.TabIndex = 36;
 			this.checkNeedsHelpTop.Text = "Needs Help at Top";
 			this.checkNeedsHelpTop.Click += new System.EventHandler(this.checkNeedsHelpTop_Click);
 			// 
+			// panelGrid
+			// 
+			this.panelGrid.Controls.Add(this.textSearch);
+			this.panelGrid.Controls.Add(this.labelSearch);
+			this.panelGrid.Controls.Add(this.checkNeedsHelpTop);
+			this.panelGrid.Location = new System.Drawing.Point(0, 43);
+			this.panelGrid.Name = "panelGrid";
+			this.panelGrid.Size = new System.Drawing.Size(274, 426);
+			this.panelGrid.TabIndex = 37;
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(7, 5);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(92, 18);
+			this.label1.TabIndex = 38;
+			this.label1.Text = "Change Status";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			// 
+			// listBoxStatus
+			// 
+			this.listBoxStatus.ItemStrings = new string[] {
+        "Available",
+        "Training",
+        "TeamAssist",
+        "TC/Responder",
+        "NeedsHelp",
+        "WrapUp",
+        "OfflineAssist",
+        "Unavailable",
+        "Backup"};
+			this.listBoxStatus.Location = new System.Drawing.Point(101, 3);
+			this.listBoxStatus.Name = "listBoxStatus";
+			this.listBoxStatus.Size = new System.Drawing.Size(120, 121);
+			this.listBoxStatus.TabIndex = 37;
+			this.listBoxStatus.Text = "listBox1";
+			this.listBoxStatus.SelectionChangeCommitted += new System.EventHandler(this.listBoxStatus_SelectionChangeCommitted);
+			// 
+			// panelGrid2
+			// 
+			this.panelGrid2.Controls.Add(this.label6);
+			this.panelGrid2.Controls.Add(this.label5);
+			this.panelGrid2.Controls.Add(this.butEditDefaults);
+			this.panelGrid2.Controls.Add(this.butGotoPatient);
+			this.panelGrid2.Controls.Add(this.groupBox2);
+			this.panelGrid2.Controls.Add(this.label3);
+			this.panelGrid2.Controls.Add(this.listBoxClockOut);
+			this.panelGrid2.Controls.Add(this.label2);
+			this.panelGrid2.Controls.Add(this.listBoxQueues);
+			this.panelGrid2.Controls.Add(this.label1);
+			this.panelGrid2.Controls.Add(this.listBoxStatus);
+			this.panelGrid2.Location = new System.Drawing.Point(1045, 44);
+			this.panelGrid2.Name = "panelGrid2";
+			this.panelGrid2.Size = new System.Drawing.Size(234, 456);
+			this.panelGrid2.TabIndex = 38;
+			// 
+			// label5
+			// 
+			this.label5.Location = new System.Drawing.Point(122, 398);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(108, 42);
+			this.label5.TabIndex = 46;
+			this.label5.Text = "for Employee\r\n(or double click\r\nany other col)";
+			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// butEditDefaults
+			// 
+			this.butEditDefaults.Location = new System.Drawing.Point(36, 408);
+			this.butEditDefaults.Name = "butEditDefaults";
+			this.butEditDefaults.Size = new System.Drawing.Size(82, 24);
+			this.butEditDefaults.TabIndex = 46;
+			this.butEditDefaults.Text = "Edit Defaults";
+			this.butEditDefaults.Click += new System.EventHandler(this.butEditDefaults_Click);
+			// 
+			// butGotoPatient
+			// 
+			this.butGotoPatient.Location = new System.Drawing.Point(36, 361);
+			this.butGotoPatient.Name = "butGotoPatient";
+			this.butGotoPatient.Size = new System.Drawing.Size(82, 24);
+			this.butGotoPatient.TabIndex = 46;
+			this.butGotoPatient.Text = "Go to Patient";
+			this.butGotoPatient.Click += new System.EventHandler(this.butGotoPatient_Click);
+			// 
+			// groupBox2
+			// 
+			this.groupBox2.Controls.Add(this.label4);
+			this.groupBox2.Controls.Add(this.butPhoneManage);
+			this.groupBox2.Controls.Add(this.butPhoneAttach);
+			this.groupBox2.Location = new System.Drawing.Point(14, 267);
+			this.groupBox2.Name = "groupBox2";
+			this.groupBox2.Size = new System.Drawing.Size(207, 86);
+			this.groupBox2.TabIndex = 44;
+			this.groupBox2.Text = "Phone Numbers";
+			// 
+			// label4
+			// 
+			this.label4.Location = new System.Drawing.Point(100, 56);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(92, 18);
+			this.label4.TabIndex = 45;
+			this.label4.Text = "to Current Patient";
+			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// butPhoneManage
+			// 
+			this.butPhoneManage.Location = new System.Drawing.Point(22, 24);
+			this.butPhoneManage.Name = "butPhoneManage";
+			this.butPhoneManage.Size = new System.Drawing.Size(72, 24);
+			this.butPhoneManage.TabIndex = 39;
+			this.butPhoneManage.Text = "Manage";
+			this.butPhoneManage.Click += new System.EventHandler(this.butPhoneManage_Click);
+			// 
+			// butPhoneAttach
+			// 
+			this.butPhoneAttach.Location = new System.Drawing.Point(22, 53);
+			this.butPhoneAttach.Name = "butPhoneAttach";
+			this.butPhoneAttach.Size = new System.Drawing.Size(72, 24);
+			this.butPhoneAttach.TabIndex = 43;
+			this.butPhoneAttach.Text = "Attach";
+			this.butPhoneAttach.Click += new System.EventHandler(this.butPhoneAttach_Click);
+			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(7, 204);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(92, 18);
+			this.label3.TabIndex = 42;
+			this.label3.Text = "Clock out for";
+			this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			// 
+			// listBoxClockOut
+			// 
+			this.listBoxClockOut.ItemStrings = new string[] {
+        "Home",
+        "Lunch",
+        "Break"};
+			this.listBoxClockOut.Location = new System.Drawing.Point(101, 203);
+			this.listBoxClockOut.Name = "listBoxClockOut";
+			this.listBoxClockOut.Size = new System.Drawing.Size(120, 43);
+			this.listBoxClockOut.TabIndex = 41;
+			this.listBoxClockOut.Text = "listBox1";
+			this.listBoxClockOut.SelectionChangeCommitted += new System.EventHandler(this.listBoxClockOut_SelectionChangeCommitted);
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(7, 137);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(92, 18);
+			this.label2.TabIndex = 40;
+			this.label2.Text = "Queues";
+			this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			// 
+			// listBoxQueues
+			// 
+			this.listBoxQueues.ItemStrings = new string[] {
+        "Tech",
+        "None",
+        "Default",
+        "Backup"};
+			this.listBoxQueues.Location = new System.Drawing.Point(101, 136);
+			this.listBoxQueues.Name = "listBoxQueues";
+			this.listBoxQueues.Size = new System.Drawing.Size(120, 56);
+			this.listBoxQueues.TabIndex = 39;
+			this.listBoxQueues.Text = "listBox1";
+			this.listBoxQueues.SelectionChangeCommitted += new System.EventHandler(this.listBoxQueues_SelectionChangeCommitted);
+			// 
+			// label6
+			// 
+			this.label6.Location = new System.Drawing.Point(121, 357);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(108, 32);
+			this.label6.TabIndex = 47;
+			this.label6.Text = "(or double click\r\nCustomer col)";
+			this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// FormPhoneTiles
 			// 
 			this.AutoScroll = true;
 			this.ClientSize = new System.Drawing.Size(1764, 987);
-			this.Controls.Add(this.checkNeedsHelpTop);
-			this.Controls.Add(this.textSearch);
-			this.Controls.Add(this.labelSearch);
+			this.Controls.Add(this.panelGrid2);
+			this.Controls.Add(this.panelGrid);
 			this.Controls.Add(this.checkShowOldInterface);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.checkHideOnBreak);
 			this.Controls.Add(this.checkHideClockedOut);
 			this.Controls.Add(this.butConfRooms);
 			this.Controls.Add(this.groupBox1);
-			this.Controls.Add(this.checkBoxAll);
 			this.Controls.Add(this.labelMsg);
 			this.Controls.Add(this.butSettings);
 			this.HasHelpButton = false;
@@ -440,8 +624,11 @@
 			this.menuStatus.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
+			this.panelGrid.ResumeLayout(false);
+			this.panelGrid.PerformLayout();
+			this.panelGrid2.ResumeLayout(false);
+			this.groupBox2.ResumeLayout(false);
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
@@ -468,9 +655,8 @@
 		private System.Windows.Forms.ToolStripMenuItem menuItemLunch;
 		private System.Windows.Forms.ToolStripMenuItem menuItemHome;
 		private System.Windows.Forms.ToolStripMenuItem menuItemBreak;
-		private OpenDental.UI.CheckBox checkBoxAll;
 		private System.Windows.Forms.ToolStripMenuItem menuItemNeedsHelp;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.RadioButton radioByExt;
 		private System.Windows.Forms.RadioButton radioByName;
 		private System.Windows.Forms.ToolStripMenuItem menuItemStatusOnBehalf;
@@ -488,5 +674,21 @@
 		private System.Windows.Forms.TextBox textSearch;
 		private System.Windows.Forms.Label labelSearch;
 		private UI.CheckBox checkNeedsHelpTop;
+		private System.Windows.Forms.Panel panelGrid;
+		private System.Windows.Forms.Label label1;
+		private UI.ListBoxOD listBoxStatus;
+		private System.Windows.Forms.Panel panelGrid2;
+		private System.Windows.Forms.Label label2;
+		private UI.ListBoxOD listBoxQueues;
+		private System.Windows.Forms.Label label3;
+		private UI.ListBoxOD listBoxClockOut;
+		private UI.GroupBox groupBox2;
+		private System.Windows.Forms.Label label4;
+		private UI.Button butPhoneManage;
+		private UI.Button butPhoneAttach;
+		private UI.Button butGotoPatient;
+		private System.Windows.Forms.Label label5;
+		private UI.Button butEditDefaults;
+		private System.Windows.Forms.Label label6;
 	}
 }

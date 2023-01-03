@@ -28,7 +28,7 @@ namespace OpenDental {
       this.butCancel = new OpenDental.UI.Button();
       this.textClinicId = new System.Windows.Forms.TextBox();
       this.labelUserId = new System.Windows.Forms.Label();
-      this.comboClinics = new UI.ComboBoxOD();
+      this.comboClinics = new UI.ComboBox();
       this.butClinicPick = new OpenDental.UI.Button();
       this.label1 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
@@ -165,7 +165,7 @@ namespace OpenDental {
     private OpenDental.UI.Button butCancel;
     private System.Windows.Forms.TextBox textClinicId;
     private System.Windows.Forms.Label labelUserId;
-    private UI.ComboBoxOD comboClinics;
+    private UI.ComboBox comboClinics;
     private UI.Button butClinicPick;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label label2;

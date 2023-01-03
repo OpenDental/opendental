@@ -28,11 +28,11 @@ namespace OpenDental {
 			this.labelSelectProvDetails = new System.Windows.Forms.Label();
 			this.labelSuperFamSyncDetails = new System.Windows.Forms.Label();
 			this.butSuperFamSortDetails = new OpenDental.UI.Button();
-			this.groupBoxHIPAA = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxHIPAA = new OpenDental.UI.GroupBox();
 			this.checkFamPhiAccess = new OpenDental.UI.CheckBox();
 			this.checkPatientSSNMasked = new OpenDental.UI.CheckBox();
 			this.checkPatientDOBMasked = new OpenDental.UI.CheckBox();
-			this.groupBoxPatientEdit = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxPatientEdit = new OpenDental.UI.GroupBox();
 			this.checkTextMsgOkStatusTreatAsNo = new OpenDental.UI.CheckBox();
 			this.checkAutoFillPatEmail = new OpenDental.UI.CheckBox();
 			this.checkPreferredPronouns = new OpenDental.UI.CheckBox();
@@ -43,13 +43,13 @@ namespace OpenDental {
 			this.checkAllowPatsAtHQ = new OpenDental.UI.CheckBox();
 			this.checkSelectProv = new OpenDental.UI.CheckBox();
 			this.checkGoogleAddress = new OpenDental.UI.CheckBox();
-			this.groupBoxClaimSnapshot = new OpenDental.UI.GroupBoxOD();
-			this.comboClaimSnapshotTrigger = new OpenDental.UI.ComboBoxOD();
+			this.groupBoxClaimSnapshot = new OpenDental.UI.GroupBox();
+			this.comboClaimSnapshotTrigger = new OpenDental.UI.ComboBox();
 			this.textClaimSnapshotRunTime = new System.Windows.Forms.TextBox();
 			this.label30 = new System.Windows.Forms.Label();
 			this.label31 = new System.Windows.Forms.Label();
-			this.groupBoxSuperFamily = new OpenDental.UI.GroupBoxOD();
-			this.comboSuperFamSort = new OpenDental.UI.ComboBoxOD();
+			this.groupBoxSuperFamily = new OpenDental.UI.GroupBox();
+			this.comboSuperFamSort = new OpenDental.UI.ComboBox();
 			this.labelSuperFamSort = new System.Windows.Forms.Label();
 			this.checkSuperFamSync = new OpenDental.UI.CheckBox();
 			this.checkSuperFamAddIns = new OpenDental.UI.CheckBox();
@@ -398,13 +398,13 @@ namespace OpenDental {
 		}
 
 		#endregion
-		private UI.GroupBoxOD groupBoxClaimSnapshot;
-		private UI.ComboBoxOD comboClaimSnapshotTrigger;
+		private UI.GroupBox groupBoxClaimSnapshot;
+		private UI.ComboBox comboClaimSnapshotTrigger;
 		private System.Windows.Forms.TextBox textClaimSnapshotRunTime;
 		private System.Windows.Forms.Label label30;
 		private System.Windows.Forms.Label label31;
-		private UI.GroupBoxOD groupBoxSuperFamily;
-		private UI.ComboBoxOD comboSuperFamSort;
+		private UI.GroupBox groupBoxSuperFamily;
+		private UI.ComboBox comboSuperFamSort;
 		private System.Windows.Forms.Label labelSuperFamSort;
 		private OpenDental.UI.CheckBox checkSuperFamSync;
 		private OpenDental.UI.CheckBox checkSuperFamAddIns;
@@ -422,8 +422,8 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkSelectProv;
 		private OpenDental.UI.CheckBox checkGoogleAddress;
 		private OpenDental.UI.CheckBox checkPreferredPronouns;
-		private UI.GroupBoxOD groupBoxPatientEdit;
-		private UI.GroupBoxOD groupBoxHIPAA;
+		private UI.GroupBox groupBoxPatientEdit;
+		private UI.GroupBox groupBoxHIPAA;
 		private System.Windows.Forms.Label labelUsePhoneNumTableDetails;
 		private System.Windows.Forms.Label labelSelectProvDetails;
 		private System.Windows.Forms.Label labelSuperFamSyncDetails;

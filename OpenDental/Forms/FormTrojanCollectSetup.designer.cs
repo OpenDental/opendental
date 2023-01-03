@@ -38,7 +38,7 @@ namespace OpenDental {
 			this.labelExportFolder = new System.Windows.Forms.Label();
 			this.textExportFolder = new System.Windows.Forms.TextBox();
 			this.labelBillType = new System.Windows.Forms.Label();
-			this.comboBillType = new OpenDental.UI.ComboBoxOD();
+			this.comboBillType = new OpenDental.UI.ComboBox();
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.textPassword = new System.Windows.Forms.TextBox();
@@ -171,7 +171,7 @@ namespace OpenDental {
 		private Label labelExportFolder;
 		private TextBox textExportFolder;
 		private Label labelBillType;
-		private OpenDental.UI.ComboBoxOD comboBillType;
+		private OpenDental.UI.ComboBox comboBillType;
 		private TextBox textPassword;
 		private Label labelPassword;
 		private UI.Button butBrowse;

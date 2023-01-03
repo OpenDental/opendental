@@ -37,7 +37,7 @@ namespace OpenDental{
 			this.textDateFrom = new OpenDental.ValidDate();
 			this.textDateTo = new OpenDental.ValidDate();
 			this.butClose = new OpenDental.UI.Button();
-			this.comboClinic = new OpenDental.UI.ComboBoxOD();
+			this.comboClinic = new OpenDental.UI.ComboBox();
 			this.labelClinic = new System.Windows.Forms.Label();
 			this.contextMenu.SuspendLayout();
 			this.SuspendLayout();
@@ -203,7 +203,7 @@ namespace OpenDental{
 		private System.Windows.Forms.ToolStripMenuItem openPaymentToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem voidPaymentToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem processReturnToolStripMenuItem;
-		private OpenDental.UI.ComboBoxOD comboClinic;
+		private OpenDental.UI.ComboBox comboClinic;
 		private System.Windows.Forms.Label labelClinic;
 	}
 }

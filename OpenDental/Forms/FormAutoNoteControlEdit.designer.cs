@@ -35,7 +35,7 @@ namespace OpenDental {
 			this.label = new System.Windows.Forms.Label();
 			this.textBoxTextControl = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboType = new OpenDental.UI.ComboBoxOD();
+			this.comboType = new OpenDental.UI.ComboBox();
 			this.textBoxControlLabel = new System.Windows.Forms.TextBox();
 			this.textBoxControlDescript = new System.Windows.Forms.TextBox();
 			this.labelControlType = new System.Windows.Forms.Label();
@@ -348,7 +348,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label;
 		private System.Windows.Forms.TextBox textBoxTextControl;
 		private System.Windows.Forms.Label label1;
-		private OpenDental.UI.ComboBoxOD comboType;
+		private OpenDental.UI.ComboBox comboType;
 		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.TextBox textBoxControlLabel;

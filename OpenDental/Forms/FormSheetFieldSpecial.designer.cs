@@ -38,7 +38,7 @@ namespace OpenDental{
 			this.butDelete = new OpenDental.UI.Button();
 			this.labelSpecialInfo = new System.Windows.Forms.Label();
 			this.listBoxAvailable = new OpenDental.UI.ListBoxOD();
-			this.comboGrowthBehavior = new UI.ComboBoxOD();
+			this.comboGrowthBehavior = new UI.ComboBox();
 			this.labelGrowth = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -237,7 +237,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butDelete;
 		private System.Windows.Forms.Label labelSpecialInfo;
 		private OpenDental.UI.ListBoxOD listBoxAvailable;
-		private UI.ComboBoxOD comboGrowthBehavior;
+		private UI.ComboBox comboGrowthBehavior;
 		private System.Windows.Forms.Label labelGrowth;
 	}
 }

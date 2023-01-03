@@ -37,7 +37,7 @@ namespace OpenDental {
 			this.butRight = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butClose = new OpenDental.UI.Button();
-			this.comboFieldTypes = new OpenDental.UI.ComboBoxOD();
+			this.comboFieldTypes = new OpenDental.UI.ComboBox();
 			this.SuspendLayout();
 			// 
 			// listAvailableFields
@@ -224,6 +224,6 @@ namespace OpenDental {
 		private UI.Button butDelete;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.CheckBox checkMedicaidLength;
-		private OpenDental.UI.ComboBoxOD comboFieldTypes;
+		private OpenDental.UI.ComboBox comboFieldTypes;
 	}
 }

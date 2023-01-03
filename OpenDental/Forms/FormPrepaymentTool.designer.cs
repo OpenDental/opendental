@@ -35,7 +35,7 @@ namespace OpenDental {
 			this.butAdd12 = new OpenDental.UI.Button();
 			this.GridCodes = new OpenDental.UI.GridOD();
 			this.label3 = new System.Windows.Forms.Label();
-			this.groupAddProcedures = new OpenDental.UI.GroupBoxOD();
+			this.groupAddProcedures = new OpenDental.UI.GroupBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.butDelete = new OpenDental.UI.Button();
 			this.textTotal = new OpenDental.ValidDouble();
@@ -337,7 +337,7 @@ namespace OpenDental {
 		private UI.Button butAdd12;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label4;
-		private OpenDental.UI.GroupBoxOD groupAddProcedures;
+		private OpenDental.UI.GroupBox groupAddProcedures;
 		private UI.Button butDelete;
 		private ValidDouble textTotal;
 		private ValidDouble textOrigSub;

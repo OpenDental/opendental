@@ -34,7 +34,7 @@ namespace OpenDental{
 			this.label3 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
 			this.textInsPaidCalc = new System.Windows.Forms.TextBox();
-			this.groupBalancing = new OpenDental.UI.GroupBoxOD();
+			this.groupBalancing = new OpenDental.UI.GroupBox();
 			this.labelEquation6 = new System.Windows.Forms.Label();
 			this.labelEquation5 = new System.Windows.Forms.Label();
 			this.labelEquation4 = new System.Windows.Forms.Label();
@@ -430,7 +430,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.TextBox textInsPaidCalc;
-		private OpenDental.UI.GroupBoxOD groupBalancing;
+		private OpenDental.UI.GroupBox groupBalancing;
 		private System.Windows.Forms.TextBox textInsPaid;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textOtherAdjustmentSum;

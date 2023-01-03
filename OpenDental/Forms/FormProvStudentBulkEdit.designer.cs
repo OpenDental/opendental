@@ -30,13 +30,13 @@ namespace OpenDental{
 			this.gridStudents = new OpenDental.UI.GridOD();
 			this.label7 = new System.Windows.Forms.Label();
 			this.textProvNum = new System.Windows.Forms.TextBox();
-			this.comboClass = new OpenDental.UI.ComboBoxOD();
+			this.comboClass = new OpenDental.UI.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label14 = new System.Windows.Forms.Label();
 			this.butOutlineColor = new System.Windows.Forms.Button();
 			this.labelColor = new System.Windows.Forms.Label();
 			this.butColor = new System.Windows.Forms.Button();
-			this.groupCreateUsers = new OpenDental.UI.GroupBoxOD();
+			this.groupCreateUsers = new OpenDental.UI.GroupBox();
 			this.colorDialog1 = new System.Windows.Forms.ColorDialog();
 			this.groupCreateUsers.SuspendLayout();
 			this.SuspendLayout();
@@ -194,13 +194,13 @@ namespace OpenDental{
 		private UI.GridOD gridStudents;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.TextBox textProvNum;
-		private OpenDental.UI.ComboBoxOD comboClass;
+		private OpenDental.UI.ComboBox comboClass;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label14;
 		private System.Windows.Forms.Button butOutlineColor;
 		private System.Windows.Forms.Label labelColor;
 		private System.Windows.Forms.Button butColor;
-		private OpenDental.UI.GroupBoxOD groupCreateUsers;
+		private OpenDental.UI.GroupBox groupCreateUsers;
 		private System.Windows.Forms.ColorDialog colorDialog1;
 	}
 }

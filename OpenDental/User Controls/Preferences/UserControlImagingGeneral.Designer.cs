@@ -30,7 +30,7 @@ namespace OpenDental {
 			this.butVideoImageCategoryDefault = new OpenDental.UI.Button();
 			this.label41 = new System.Windows.Forms.Label();
 			this.textVideoImageCategoryDefault = new System.Windows.Forms.TextBox();
-			this.groupBoxOD2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD2 = new OpenDental.UI.GroupBox();
 			this.textDecimals = new OpenDental.ValidNum();
 			this.textScale = new OpenDental.ValidDouble();
 			this.textUnits = new System.Windows.Forms.TextBox();
@@ -49,8 +49,8 @@ namespace OpenDental {
 			this.textAutoImportFolder = new System.Windows.Forms.TextBox();
 			this.labelImagesModuleUsesOld2020Details = new System.Windows.Forms.Label();
 			this.labelPDFLaunchWindowDetails = new System.Windows.Forms.Label();
-			this.groupImport = new OpenDental.UI.GroupBoxOD();
-			this.groupBoxFunctionality = new OpenDental.UI.GroupBoxOD();
+			this.groupImport = new OpenDental.UI.GroupBox();
+			this.groupBoxFunctionality = new OpenDental.UI.GroupBox();
 			this.labelDefaultMeasurementScaleDetails = new System.Windows.Forms.Label();
 			this.groupBoxOD2.SuspendLayout();
 			this.groupImport.SuspendLayout();
@@ -368,7 +368,7 @@ namespace OpenDental {
 		private UI.Button butVideoImageCategoryDefault;
 		private System.Windows.Forms.Label label41;
 		private System.Windows.Forms.TextBox textVideoImageCategoryDefault;
-		private UI.GroupBoxOD groupBoxOD2;
+		private UI.GroupBox groupBoxOD2;
 		private ValidNum textDecimals;
 		private ValidDouble textScale;
 		private System.Windows.Forms.TextBox textUnits;
@@ -387,8 +387,8 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textAutoImportFolder;
 		private System.Windows.Forms.Label labelImagesModuleUsesOld2020Details;
 		private System.Windows.Forms.Label labelPDFLaunchWindowDetails;
-		private UI.GroupBoxOD groupImport;
-		private UI.GroupBoxOD groupBoxFunctionality;
+		private UI.GroupBox groupImport;
+		private UI.GroupBox groupBoxFunctionality;
 		private System.Windows.Forms.Label labelDefaultMeasurementScaleDetails;
 	}
 }

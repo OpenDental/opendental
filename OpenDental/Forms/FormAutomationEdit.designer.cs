@@ -45,9 +45,9 @@ namespace OpenDental {
 			this.labelActionObject = new System.Windows.Forms.Label();
 			this.labelMessage = new System.Windows.Forms.Label();
 			this.textMessage = new System.Windows.Forms.TextBox();
-			this.comboTrigger = new OpenDental.UI.ComboBoxOD();
-			this.comboAction = new OpenDental.UI.ComboBoxOD();
-			this.comboActionObject = new OpenDental.UI.ComboBoxOD();
+			this.comboTrigger = new OpenDental.UI.ComboBox();
+			this.comboAction = new OpenDental.UI.ComboBox();
+			this.comboActionObject = new OpenDental.UI.ComboBox();
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butProcCode = new OpenDental.UI.Button();
@@ -265,9 +265,9 @@ namespace OpenDental {
 		private Label labelActionObject;
 		private Label labelMessage;
 		private TextBox textMessage;
-		private OpenDental.UI.ComboBoxOD comboTrigger;
-		private OpenDental.UI.ComboBoxOD comboAction;
-		private UI.ComboBoxOD comboActionObject;
+		private OpenDental.UI.ComboBox comboTrigger;
+		private OpenDental.UI.ComboBox comboAction;
+		private UI.ComboBox comboActionObject;
 		private OpenDental.UI.Button butProcCode;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.Button butAdd;

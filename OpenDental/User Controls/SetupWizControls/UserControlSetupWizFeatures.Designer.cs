@@ -26,7 +26,7 @@
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserControlSetupWizFeatures));
 			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.labelExplanation = new System.Windows.Forms.Label();
 			this.panelInfo = new System.Windows.Forms.Panel();
 			this.labelInfoMedIns = new System.Windows.Forms.Label();
@@ -319,7 +319,7 @@
 		private System.Windows.Forms.Label labelInfoClinical;
 		private System.Windows.Forms.Label labelInfoClinics;
 		private System.Windows.Forms.Label labelInfoInsurance;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private UI.Button butAdvanced;
 		private System.Windows.Forms.Label label1;
 	}

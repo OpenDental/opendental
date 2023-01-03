@@ -28,7 +28,7 @@ namespace OpenDental{
 			this.butBirthdays = new OpenDental.UI.Button();
 			this.labelAnalytics = new System.Windows.Forms.Label();
 			this.labelBirthdays = new System.Windows.Forms.Label();
-			this.groupSetup = new OpenDental.UI.GroupBoxOD();
+			this.groupSetup = new OpenDental.UI.GroupBox();
 			this.butTemplates = new OpenDental.UI.Button();
 			this.labelTemplates = new System.Windows.Forms.Label();
 			this.butAddresses = new OpenDental.UI.Button();
@@ -218,7 +218,7 @@ namespace OpenDental{
 		private UI.Button butBirthdays;
 		private System.Windows.Forms.Label labelAnalytics;
 		private System.Windows.Forms.Label labelBirthdays;
-		private OpenDental.UI.GroupBoxOD groupSetup;
+		private OpenDental.UI.GroupBox groupSetup;
 		private UI.Button butAddresses;
 		private System.Windows.Forms.Label labelSenders;
 		private UI.Button butSignatures;

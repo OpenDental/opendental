@@ -27,7 +27,7 @@ namespace OpenDental{
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.checkEnabled = new OpenDental.UI.CheckBox();
-			this.groupErxOptions = new OpenDental.UI.GroupBoxOD();
+			this.groupErxOptions = new OpenDental.UI.GroupBox();
 			this.radioDoseSpotLegacy = new System.Windows.Forms.RadioButton();
 			this.radioDoseSpot = new System.Windows.Forms.RadioButton();
 			this.radioNewCrop = new System.Windows.Forms.RadioButton();
@@ -203,7 +203,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.CheckBox checkEnabled;
-		private OpenDental.UI.GroupBoxOD groupErxOptions;
+		private OpenDental.UI.GroupBox groupErxOptions;
 		private System.Windows.Forms.RadioButton radioDoseSpot;
 		private System.Windows.Forms.RadioButton radioNewCrop;
 		private System.Windows.Forms.TextBox textNewCropAccountID;

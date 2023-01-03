@@ -22,7 +22,7 @@
 		private OpenDental.UI.Button butSubmit;
 		private System.Windows.Forms.CheckBox checkReportServer;
 		private System.Windows.Forms.DataGrid grid2;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label labelTotPages;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.DataGridTableStyle myGridTS;
@@ -52,7 +52,7 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.butAdd = new OpenDental.UI.Button();
 			this.butFavorite = new OpenDental.UI.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.radioHuman = new System.Windows.Forms.RadioButton();
 			this.radioRaw = new System.Windows.Forms.RadioButton();
 			this.butSubmit = new OpenDental.UI.Button();

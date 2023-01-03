@@ -22,6 +22,7 @@ namespace UnitTests{
 		public FormComboTests(){
 			InitializeComponent();
 			InitializeLayoutManager();
+			LayoutManager.ZoomTest=50;
 			cClinic.IsTestModeNoDb=true;
 			cClinicMulti.IsTestModeNoDb=true;
 			cClinicL.IsTestModeNoDb=true;

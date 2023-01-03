@@ -31,7 +31,7 @@
 			this.butCancel = new OpenDental.UI.Button();
 			this.textDateEntry = new OpenDental.ValidDate();
 			this.textSchedStart1 = new System.Windows.Forms.TextBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label18 = new System.Windows.Forms.Label();
 			this.textEmployee = new System.Windows.Forms.TextBox();
 			this.label17 = new System.Windows.Forms.Label();
@@ -42,7 +42,7 @@
 			this.label3 = new System.Windows.Forms.Label();
 			this.textSchedStop1 = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
-			this.groupOverrides = new OpenDental.UI.GroupBoxOD();
+			this.groupOverrides = new OpenDental.UI.GroupBox();
 			this.radioNotTracked = new System.Windows.Forms.RadioButton();
 			this.radioShortNotice = new System.Windows.Forms.RadioButton();
 			this.radioPrescheduled = new System.Windows.Forms.RadioButton();
@@ -62,7 +62,7 @@
 			this.checkGraphDefault = new System.Windows.Forms.CheckBox();
 			this.checkPrescheduledOff = new System.Windows.Forms.CheckBox();
 			this.label12 = new System.Windows.Forms.Label();
-			this.groupProv = new OpenDental.UI.GroupBoxOD();
+			this.groupProv = new OpenDental.UI.GroupBox();
 			this.label19 = new System.Windows.Forms.Label();
 			this.textProvider = new System.Windows.Forms.TextBox();
 			this.label16 = new System.Windows.Forms.Label();
@@ -677,7 +677,7 @@
 		private UI.Button butCancel;
 		private UI.Button butDelete;
 		private System.Windows.Forms.TextBox textSchedStart1;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox textSchedStop2;
 		private System.Windows.Forms.Label label4;
@@ -685,7 +685,7 @@
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textSchedStop1;
 		private System.Windows.Forms.Label label2;
-		private OpenDental.UI.GroupBoxOD groupOverrides;
+		private OpenDental.UI.GroupBox groupOverrides;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.TextBox textStop2;
 		private System.Windows.Forms.Label label7;
@@ -708,7 +708,7 @@
 		private System.Windows.Forms.TextBox textEmployee;
 		private System.Windows.Forms.Label label17;
 		private System.Windows.Forms.RadioButton radioNotTracked;
-		private OpenDental.UI.GroupBoxOD groupProv;
+		private OpenDental.UI.GroupBox groupProv;
 		private System.Windows.Forms.Label label19;
 		private System.Windows.Forms.TextBox textProvider;
 		private System.Windows.Forms.Label label16;

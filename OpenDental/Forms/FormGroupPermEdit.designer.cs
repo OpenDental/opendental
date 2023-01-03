@@ -32,7 +32,7 @@ namespace OpenDental {
 			this.textDate = new OpenDental.ValidDate();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textDays = new OpenDental.ValidNum();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -171,6 +171,6 @@ namespace OpenDental {
 		private OpenDental.ValidDate textDate;
 		private System.Windows.Forms.Label label3;
 		private ValidNum textDays;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 	}
 }

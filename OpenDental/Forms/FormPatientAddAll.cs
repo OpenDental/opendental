@@ -639,7 +639,7 @@ namespace OpenDental {
 					case RequiredFieldName.PrimaryProvider:
 						//Conditions of type PrimaryProvider store the ProvNum as the ConditionValue.
 						//All Primary Provider conditions will be true if any of the Primary Providers meet the condition.
-						List<ComboBoxOD> listComboBoxesProvider=new List<ComboBoxOD>();
+						List<UI.ComboBox> listComboBoxesProvider = new List<UI.ComboBox>();
 						listComboBoxesProvider.Add(comboPriProv1);
 						listComboBoxesProvider.Add(comboPriProv2);
 						listComboBoxesProvider.Add(comboPriProv3);
@@ -741,7 +741,7 @@ namespace OpenDental {
 
 		///<summary>Puts an asterisk next to the label if the field is required and the conditions are met. If the disallowedIdx is also selected, 
 		///highlights the combobox background.</summary>
-		private void SetRequiredComboBoxOD(Label label,ComboBoxOD comboBox,bool areConditionsMet,int disallowedIdx,string errorMsg,
+		private void SetRequiredComboBoxOD(Label label,UI.ComboBox comboBox,bool areConditionsMet,int disallowedIdx,string errorMsg,
 			ErrorIconAlignment errorIconAlignment=ErrorIconAlignment.MiddleRight)
 		{
 			if(areConditionsMet) {
@@ -820,7 +820,7 @@ namespace OpenDental {
 				SetRequiredListControl(label,(ListControl)controlRequired,areConditionsMet,disallowedIdx,errorMsg,errorIconAlignment);
 			}
 			else {
-				SetRequiredComboBoxOD(label,(ComboBoxOD)controlRequired,areConditionsMet,disallowedIdx,errorMsg,errorIconAlignment);
+				SetRequiredComboBoxOD(label,(UI.ComboBox)controlRequired,areConditionsMet,disallowedIdx,errorMsg,errorIconAlignment);
 			}
 		}
 
@@ -1281,7 +1281,7 @@ namespace OpenDental {
 			listBox.SelectedIndex=0;
 		}
 
-		private void FillComboBillTypes(ComboBoxOD comboBox,long clinicNum) {
+		private void FillComboBillTypes(UI.ComboBox comboBox,long clinicNum) {
 			_listDefsBillingType=Defs.GetDefsForCategory(DefCat.BillingTypes,true);
 			comboBox.Items.Clear();
 			long defNum=PIn.Long(ClinicPrefs.GetPrefValue(PrefName.PracticeDefaultBillType,clinicNum));

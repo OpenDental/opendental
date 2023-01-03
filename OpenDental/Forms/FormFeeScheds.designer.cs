@@ -41,7 +41,7 @@ namespace OpenDental {
 			this.labelSort = new System.Windows.Forms.Label();
 			this.butSort = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupBox7 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox7 = new OpenDental.UI.GroupBox();
 			this.butIns = new OpenDental.UI.Button();
 			this.label6 = new System.Windows.Forms.Label();
 			this.butDown = new OpenDental.UI.Button();
@@ -293,7 +293,7 @@ namespace OpenDental {
 		private OpenDental.UI.ListBoxOD listType;
 		private OpenDental.UI.Button butDown;
 		private OpenDental.UI.Button butUp;
-		private OpenDental.UI.GroupBoxOD groupBox7;
+		private OpenDental.UI.GroupBox groupBox7;
 		private OpenDental.UI.Button butIns;
 		private Label label6;
 		private Label label1;

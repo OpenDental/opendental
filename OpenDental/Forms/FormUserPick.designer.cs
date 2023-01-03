@@ -30,7 +30,7 @@ namespace OpenDental{
 			this.butShow = new OpenDental.UI.Button();
 			this.butNone = new OpenDental.UI.Button();
 			this.butAll = new OpenDental.UI.Button();
-			this.groupSelect = new OpenDental.UI.GroupBoxOD();
+			this.groupSelect = new OpenDental.UI.GroupBox();
 			this.butMe = new OpenDental.UI.Button();
 			this.groupSelect.SuspendLayout();
 			this.SuspendLayout();
@@ -149,7 +149,7 @@ namespace OpenDental{
 		private UI.Button butShow;
 		private UI.Button butNone;
 		private UI.Button butAll;
-		private OpenDental.UI.GroupBoxOD groupSelect;
+		private OpenDental.UI.GroupBox groupSelect;
 		private UI.Button butMe;
 	}
 }

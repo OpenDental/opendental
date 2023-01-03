@@ -37,7 +37,7 @@ namespace OpenDental {
 			this.butOK = new OpenDental.UI.Button();
 			this.labelDescription = new System.Windows.Forms.Label();
 			this.labelGlobalFilter = new System.Windows.Forms.Label();
-			this.comboGlobalFilter = new OpenDental.UI.ComboBoxOD();
+			this.comboGlobalFilter = new OpenDental.UI.ComboBox();
 			this.textDescript = new System.Windows.Forms.TextBox();
 			this.labelDate = new System.Windows.Forms.Label();
 			this.labelDate2 = new System.Windows.Forms.Label();
@@ -242,7 +242,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelObjectType;
 		private TextBox textTaskListNum;
 		private Label labelTaskListNum;
-		private UI.ComboBoxOD comboGlobalFilter;
+		private UI.ComboBox comboGlobalFilter;
 		private Label labelGlobalFilter;
 		private ErrorProvider errorProvider1;
 	}

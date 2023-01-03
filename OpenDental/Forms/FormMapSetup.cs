@@ -32,7 +32,7 @@ namespace OpenDental {
 		}
 
 		private void FillCombo() {
-			ListMapAreaContainers=PhoneMapJSON.GetFromDb();
+			ListMapAreaContainers=MapAreaContainers.Refresh();
 			_mapAreaContainer=ListMapAreaContainers[0];
 			for(int i=0;i<ListMapAreaContainers.Count;i++) {
 				comboRoom.Items.Add(ListMapAreaContainers[i].Description);
@@ -265,7 +265,14 @@ namespace OpenDental {
 
 		private void butAddRoom_Click(object sender,EventArgs e) {
 			long mapAreaContainerNum=ListMapAreaContainers.Max(x => x.MapAreaContainerNum)+1;
-			MapAreaContainer mapAreaContainer=new MapAreaContainer(mapAreaContainerNum,71,57,17,false,true,"New Room");
+			MapAreaContainer mapAreaContainer=new MapAreaContainer();
+			mapAreaContainer.MapAreaContainerNum=mapAreaContainerNum;
+			mapAreaContainer.FloorWidthFeet=71;
+			mapAreaContainer.FloorHeightFeet=57;
+			mapAreaContainer.PixelsPerFoot=17;
+			mapAreaContainer.ShowGrid=false;
+			mapAreaContainer.ShowOutline=true;
+			mapAreaContainer.Description="New Room";
 			ListMapAreaContainers.Add(mapAreaContainer);
 			comboRoom.Items.Clear();
 			for(int i=0;i<ListMapAreaContainers.Count;i++) {
@@ -335,7 +342,7 @@ namespace OpenDental {
 				MsgBox.Show("Map descriptions may not contain semicolons.\nOffending maps:\n"+listOffendingMaps);
 				return;
 			}
-			PhoneMapJSON.SaveToDb(ListMapAreaContainers);
+			MapAreaContainers.SaveToDb(ListMapAreaContainers);
 			DataValid.SetInvalid(InvalidType.PhoneMap);
 			DialogResult=DialogResult.OK;
 			Close();
@@ -356,7 +363,7 @@ namespace OpenDental {
 			mapAreaPanel.Clear(true);
 			//Delete room
 			ListMapAreaContainers.Remove(_mapAreaContainer);
-			PhoneMapJSON.SaveToDb(ListMapAreaContainers);
+			MapAreaContainers.SaveToDb(ListMapAreaContainers);
 			//reset combobox
 			comboRoom.Items.Clear();
 			for(int i=0;i<ListMapAreaContainers.Count;i++) {

@@ -27,7 +27,7 @@ namespace OpenDental{
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.checkBoxSendGuarantorBirthdayForMinor = new System.Windows.Forms.CheckBox();
-			this.groupSendTime = new OpenDental.UI.GroupBoxOD();
+			this.groupSendTime = new OpenDental.UI.GroupBox();
 			this.radioOnBirthday = new System.Windows.Forms.RadioButton();
 			this.radioAfterBirthday = new System.Windows.Forms.RadioButton();
 			this.radioBeforeBirthday = new System.Windows.Forms.RadioButton();
@@ -42,7 +42,7 @@ namespace OpenDental{
 			this.butLangaugeAdd = new OpenDental.UI.Button();
 			this.butLanguageRemove = new OpenDental.UI.Button();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
-			this.comboMinorAge = new OpenDental.UI.ComboBoxOD();
+			this.comboMinorAge = new OpenDental.UI.ComboBox();
 			this.labelNotActivated = new System.Windows.Forms.Label();
 			this.labelDefaults = new System.Windows.Forms.Label();
 			this.groupSendTime.SuspendLayout();
@@ -305,7 +305,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.CheckBox checkBoxSendGuarantorBirthdayForMinor;
-		private OpenDental.UI.GroupBoxOD groupSendTime;
+		private OpenDental.UI.GroupBox groupSendTime;
 		private System.Windows.Forms.RadioButton radioAfterBirthday;
 		private System.Windows.Forms.RadioButton radioBeforeBirthday;
 		private ValidNum textDays;
@@ -320,7 +320,7 @@ namespace OpenDental{
 		private UI.Button butLanguageRemove;
 		private UI.ComboBoxClinicPicker comboClinic;
 		private System.Windows.Forms.RadioButton radioOnBirthday;
-		private OpenDental.UI.ComboBoxOD comboMinorAge;
+		private OpenDental.UI.ComboBox comboMinorAge;
 		private System.Windows.Forms.Label labelNotActivated;
 		private System.Windows.Forms.Label labelDefaults;
 	}

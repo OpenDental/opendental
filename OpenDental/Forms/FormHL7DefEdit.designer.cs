@@ -49,7 +49,7 @@ namespace OpenDental{
 			this.label8 = new System.Windows.Forms.Label();
 			this.textFieldSep = new System.Windows.Forms.TextBox();
 			this.label7 = new System.Windows.Forms.Label();
-			this.comboModeTx = new OpenDental.UI.ComboBoxOD();
+			this.comboModeTx = new OpenDental.UI.ComboBox();
 			this.textSftpPassword = new System.Windows.Forms.TextBox();
 			this.labelSftpPassword = new System.Windows.Forms.Label();
 			this.textSftpUsername = new System.Windows.Forms.TextBox();
@@ -68,7 +68,7 @@ namespace OpenDental{
 			this.label18 = new System.Windows.Forms.Label();
 			this.textHL7Server = new System.Windows.Forms.TextBox();
 			this.label19 = new System.Windows.Forms.Label();
-			this.groupShowDemographics = new OpenDental.UI.GroupBoxOD();
+			this.groupShowDemographics = new OpenDental.UI.GroupBox();
 			this.label20 = new System.Windows.Forms.Label();
 			this.radioChangeAndAdd = new System.Windows.Forms.RadioButton();
 			this.radioChange = new System.Windows.Forms.RadioButton();
@@ -78,9 +78,9 @@ namespace OpenDental{
 			this.checkShowAppts = new OpenDental.UI.CheckBox();
 			this.checkQuadAsToothNum = new OpenDental.UI.CheckBox();
 			this.labelLabImageCat = new System.Windows.Forms.Label();
-			this.comboLabImageCat = new OpenDental.UI.ComboBoxOD();
-			this.groupDelimeters = new OpenDental.UI.GroupBoxOD();
-			this.groupHL7Comm = new OpenDental.UI.GroupBoxOD();
+			this.comboLabImageCat = new OpenDental.UI.ComboBox();
+			this.groupDelimeters = new OpenDental.UI.GroupBox();
+			this.groupHL7Comm = new OpenDental.UI.GroupBox();
 			this.butBrowseOut = new OpenDental.UI.Button();
 			this.butBrowseIn = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
@@ -834,7 +834,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textCompSep;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label label7;
-		private OpenDental.UI.ComboBoxOD comboModeTx;
+		private OpenDental.UI.ComboBox comboModeTx;
 		private UI.Button butBrowseOut;
 		private UI.Button butBrowseIn;
 		private System.Windows.Forms.TextBox textSftpPassword;
@@ -857,7 +857,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label18;
 		private System.Windows.Forms.TextBox textHL7Server;
 		private System.Windows.Forms.Label label19;
-		private OpenDental.UI.GroupBoxOD groupShowDemographics;
+		private OpenDental.UI.GroupBox groupShowDemographics;
 		private System.Windows.Forms.RadioButton radioChangeAndAdd;
 		private System.Windows.Forms.RadioButton radioChange;
 		private System.Windows.Forms.RadioButton radioShow;
@@ -867,10 +867,10 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label20;
 		private OpenDental.UI.CheckBox checkQuadAsToothNum;
 		private System.Windows.Forms.Label labelLabImageCat;
-		private OpenDental.UI.ComboBoxOD comboLabImageCat;
-		private OpenDental.UI.GroupBoxOD groupDelimeters;
+		private OpenDental.UI.ComboBox comboLabImageCat;
+		private OpenDental.UI.GroupBox groupDelimeters;
 		private System.Windows.Forms.TextBox textFieldSep;
-		private OpenDental.UI.GroupBoxOD groupHL7Comm;
+		private OpenDental.UI.GroupBox groupHL7Comm;
 		private OpenDental.UI.CheckBox checkLongDCodes;
 		private OpenDental.UI.CheckBox checkProcsAppt;
 	}

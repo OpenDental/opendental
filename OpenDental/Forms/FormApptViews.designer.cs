@@ -41,7 +41,7 @@ namespace OpenDental {
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.radioFive = new System.Windows.Forms.RadioButton();
 			this.radioFifteen = new System.Windows.Forms.RadioButton();
 			this.radioTen = new System.Windows.Forms.RadioButton();
@@ -210,7 +210,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butUp;
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.ListBoxOD listViews;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.RadioButton radioTen;
 		private System.Windows.Forms.RadioButton radioFifteen;
 		private OpenDental.UI.CheckBox checkTwoRows;

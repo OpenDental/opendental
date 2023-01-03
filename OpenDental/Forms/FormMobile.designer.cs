@@ -29,7 +29,7 @@ namespace OpenDental{
 			this.labelMinutesBetweenSynch = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.groupPreferences = new OpenDental.UI.GroupBoxOD();
+			this.groupPreferences = new OpenDental.UI.GroupBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.textMobileUserName = new System.Windows.Forms.TextBox();
@@ -323,7 +323,7 @@ namespace OpenDental{
 		private UI.Button butFullSync;
 		private UI.Button butSync;
 		private UI.Button butClose;
-		private OpenDental.UI.GroupBoxOD groupPreferences;
+		private OpenDental.UI.GroupBox groupPreferences;
 		private UI.Button butSave;
 		private ValidNum textSynchMinutes;
 		private System.Windows.Forms.Label label4;

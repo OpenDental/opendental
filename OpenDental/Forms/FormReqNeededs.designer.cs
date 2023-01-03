@@ -24,16 +24,16 @@ namespace OpenDental {
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormReqNeededs));
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboClassFrom = new OpenDental.UI.ComboBoxOD();
+			this.comboClassFrom = new OpenDental.UI.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
-			this.comboCourseFrom = new OpenDental.UI.ComboBoxOD();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.comboCourseFrom = new OpenDental.UI.ComboBox();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butCopy = new OpenDental.UI.Button();
 			this.label3 = new System.Windows.Forms.Label();
-			this.comboClassTo = new OpenDental.UI.ComboBoxOD();
-			this.comboCourseTo = new OpenDental.UI.ComboBoxOD();
+			this.comboClassTo = new OpenDental.UI.ComboBox();
+			this.comboCourseTo = new OpenDental.UI.ComboBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butOk = new OpenDental.UI.Button();
@@ -232,17 +232,17 @@ namespace OpenDental {
 		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.GridOD gridMain;
-		private OpenDental.UI.ComboBoxOD comboClassFrom;
+		private OpenDental.UI.ComboBox comboClassFrom;
 		private Label label1;
 		private Label label2;
-		private OpenDental.UI.ComboBoxOD comboCourseFrom;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.ComboBox comboCourseFrom;
+		private OpenDental.UI.GroupBox groupBox1;
 		private Label label3;
-		private OpenDental.UI.ComboBoxOD comboClassTo;
-		private OpenDental.UI.ComboBoxOD comboCourseTo;
+		private OpenDental.UI.ComboBox comboClassTo;
+		private OpenDental.UI.ComboBox comboCourseTo;
 		private Label label4;
 		private UI.Button butDeleteReq;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox3;
 		private UI.Button butOk;
 		private UI.Button butCopy;
 	}

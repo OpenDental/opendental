@@ -25,7 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWebFormSetup));
 			this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-			this.groupConstructURL = new OpenDental.UI.GroupBoxOD();
+			this.groupConstructURL = new OpenDental.UI.GroupBox();
 			this.butCopyToClipboard = new OpenDental.UI.Button();
 			this.butNavigateTo = new OpenDental.UI.Button();
 			this.checkDisableTypedSig = new OpenDental.UI.CheckBox();
@@ -51,7 +51,7 @@ namespace OpenDental{
 			this.butUpdate = new OpenDental.UI.Button();
 			this.butOk = new OpenDental.UI.Button();
 			this.checkDisableWebFormSignatures = new OpenDental.UI.CheckBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.checkEnableAutoDownload = new OpenDental.UI.CheckBox();
 			this.groupConstructURL.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -377,7 +377,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butDelete;
 		private OpenDental.UI.Button butAdd;
 		private UI.Button butSave;
-		private OpenDental.UI.GroupBoxOD groupConstructURL;
+		private OpenDental.UI.GroupBox groupConstructURL;
 		private System.Windows.Forms.TextBox textRedirectURL;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textNextForms;
@@ -393,7 +393,7 @@ namespace OpenDental{
 		private UI.Button butCopyToClipboard;
 		private UI.Button butNavigateTo;
 		private OpenDental.UI.CheckBox checkDisableWebFormSignatures;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.CheckBox checkEnableAutoDownload;
 	}
 }

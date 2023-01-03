@@ -25,7 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormApptBreak));
 			this.butCancel = new OpenDental.UI.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.radioMissed = new System.Windows.Forms.RadioButton();
 			this.radioCancelled = new System.Windows.Forms.RadioButton();
 			this.butUnsched = new OpenDental.UI.Button();
@@ -135,7 +135,7 @@ namespace OpenDental{
 
 		#endregion
 		private OpenDental.UI.Button butCancel;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.RadioButton radioCancelled;
 		private System.Windows.Forms.RadioButton radioMissed;
 		private UI.Button butUnsched;

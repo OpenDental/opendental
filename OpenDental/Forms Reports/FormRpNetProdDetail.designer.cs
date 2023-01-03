@@ -33,7 +33,7 @@ namespace OpenDental {
 			this.label3 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.textToday = new System.Windows.Forms.TextBox();
-			this.groupDateRange = new OpenDental.UI.GroupBoxOD();
+			this.groupDateRange = new OpenDental.UI.GroupBox();
 			this.dtPickerTo = new System.Windows.Forms.DateTimePicker();
 			this.dtPickerFrom = new System.Windows.Forms.DateTimePicker();
 			this.butRight = new OpenDental.UI.Button();
@@ -45,7 +45,7 @@ namespace OpenDental {
 			this.checkAllClin = new System.Windows.Forms.CheckBox();
 			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
-			this.groupPayrollReportType = new OpenDental.UI.GroupBoxOD();
+			this.groupPayrollReportType = new OpenDental.UI.GroupBox();
 			this.radioTransactionalToday = new System.Windows.Forms.RadioButton();
 			this.radioTransactionalHistorical = new System.Windows.Forms.RadioButton();
 			this.labelSpecialReport = new System.Windows.Forms.Label();
@@ -312,12 +312,12 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.TextBox textToday;
-		private OpenDental.UI.GroupBoxOD groupDateRange;
+		private OpenDental.UI.GroupBox groupDateRange;
 		private OpenDental.UI.ListBoxOD listClin;
 		private Label labelClin;
 		private CheckBox checkAllProv;
 		private CheckBox checkAllClin;
-		private OpenDental.UI.GroupBoxOD groupPayrollReportType;
+		private OpenDental.UI.GroupBox groupPayrollReportType;
 		private UI.Button butLeft;
 		private UI.Button butThis;
 		private UI.Button butRight;

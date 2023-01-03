@@ -28,10 +28,10 @@
 			this.butSendToPortal = new System.Windows.Forms.Button();
 			this.gridEHRMeasureEvents = new OpenDental.UI.GridOD();
 			this.butDelete = new System.Windows.Forms.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butShowXhtml = new System.Windows.Forms.Button();
 			this.butShowXml = new System.Windows.Forms.Button();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butExport = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
@@ -170,10 +170,10 @@
 		private System.Windows.Forms.Button butSendToPortal;
         private OpenDental.UI.GridOD gridEHRMeasureEvents;
 				private System.Windows.Forms.Button butDelete;
-				private OpenDental.UI.GroupBoxOD groupBox1;
+				private OpenDental.UI.GroupBox groupBox1;
 				private System.Windows.Forms.Button butShowXhtml;
 				private System.Windows.Forms.Button butShowXml;
-				private OpenDental.UI.GroupBoxOD groupBox2;
+				private OpenDental.UI.GroupBox groupBox2;
 				private System.Windows.Forms.Button butExport;
 				private System.Windows.Forms.Label label1;
 	}

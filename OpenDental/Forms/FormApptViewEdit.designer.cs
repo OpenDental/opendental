@@ -52,11 +52,11 @@ namespace OpenDental {
 			this.textRowsPerIncr = new System.Windows.Forms.TextBox();
 			this.checkOnlyScheduledProvs = new OpenDental.UI.CheckBox();
 			this.textBeforeTime = new System.Windows.Forms.TextBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.labelAfterTime = new System.Windows.Forms.Label();
 			this.textAfterTime = new System.Windows.Forms.TextBox();
 			this.labelBeforeTime = new System.Windows.Forms.Label();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.listStackLR = new OpenDental.UI.ListBoxOD();
 			this.label4 = new System.Windows.Forms.Label();
 			this.listStackUR = new OpenDental.UI.ListBoxOD();
@@ -556,11 +556,11 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textRowsPerIncr;
 		private OpenDental.UI.CheckBox checkOnlyScheduledProvs;
 		private TextBox textBeforeTime;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private Label labelBeforeTime;
 		private Label labelAfterTime;
 		private TextBox textAfterTime;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private Label label8;
 		private OpenDental.UI.GridOD gridLR;
 		private OpenDental.UI.GridOD gridUR;

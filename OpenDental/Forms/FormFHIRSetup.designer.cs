@@ -33,7 +33,7 @@ namespace OpenDental{
 			this.label3 = new System.Windows.Forms.Label();
 			this.textSubInterval = new OpenDental.ValidDouble();
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboPayType = new OpenDental.UI.ComboBoxOD();
+			this.comboPayType = new OpenDental.UI.ComboBox();
 			this.SuspendLayout();
 			// 
 			// butClose
@@ -167,6 +167,6 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label3;
 		private ValidDouble textSubInterval;
 		private System.Windows.Forms.Label label1;
-		private UI.ComboBoxOD comboPayType;
+		private UI.ComboBox comboPayType;
 	}
 }

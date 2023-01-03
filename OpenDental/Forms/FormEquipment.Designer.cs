@@ -25,7 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEquipment));
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.textDateStart = new OpenDental.ValidDate();
 			this.textDateEnd = new OpenDental.ValidDate();
@@ -216,7 +216,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butPrint;
 		private ValidDate textDateEnd;
 		private ValidDate textDateStart;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.RadioButton radioPurchased;
 		private System.Windows.Forms.RadioButton radioSold;
 		private System.Windows.Forms.RadioButton radioAll;

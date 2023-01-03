@@ -27,17 +27,17 @@ namespace OpenDental{
 			this.butSearch = new OpenDental.UI.Button();
 			this.butClose = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.comboBlockout = new OpenDental.UI.ComboBoxOD();
+			this.comboBlockout = new OpenDental.UI.ComboBox();
 			this.butMore = new OpenDental.UI.Button();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
-			this.comboBoxMultiProv = new OpenDental.UI.ComboBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
+			this.comboBoxMultiProv = new OpenDental.UI.ComboBox();
 			this.dateSearchTo = new System.Windows.Forms.DateTimePicker();
 			this.butProviders = new OpenDental.UI.Button();
 			this.textAfter = new System.Windows.Forms.TextBox();
 			this.comboBoxClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.labelAptViews = new System.Windows.Forms.Label();
 			this.radioBeforePM = new System.Windows.Forms.RadioButton();
-			this.comboApptView = new OpenDental.UI.ComboBoxOD();
+			this.comboApptView = new OpenDental.UI.ComboBox();
 			this.radioBeforeAM = new System.Windows.Forms.RadioButton();
 			this.textBefore = new System.Windows.Forms.TextBox();
 			this.panel1 = new System.Windows.Forms.Panel();
@@ -50,7 +50,7 @@ namespace OpenDental{
 			this.labelBlockout = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butProvHygenist = new OpenDental.UI.Button();
 			this.butProvDentist = new OpenDental.UI.Button();
 			this.groupBox2.SuspendLayout();
@@ -388,9 +388,9 @@ namespace OpenDental{
 		private OpenDental.UI.Button butSearch;
 		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
-		private UI.ComboBoxOD comboBlockout;
+		private UI.ComboBox comboBlockout;
 		private UI.Button butMore;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.DateTimePicker dateSearchTo;
 		private System.Windows.Forms.TextBox textAfter;
 		private System.Windows.Forms.Label label11;
@@ -406,13 +406,13 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label labelBlockout;
 		private UI.Button butProviders;
-		private UI.ComboBoxOD comboApptView;
+		private UI.ComboBox comboApptView;
 		private System.Windows.Forms.Label labelAptViews;
 		private UI.ComboBoxClinicPicker comboBoxClinic;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private UI.Button butProvHygenist;
 		private UI.Button butProvDentist;
 		private System.Windows.Forms.Label label2;
-		private UI.ComboBoxOD comboBoxMultiProv;
+		private UI.ComboBox comboBoxMultiProv;
 	}
 }

@@ -96,7 +96,10 @@ namespace OpenDental.UI {
 			get {
 				return _checked;
 			}
-			set { 
+			set {
+				if(value==Checked) {
+					return;
+				}
 				_checked=value;
 				if(_checked){
 					_checkState=CheckState.Checked;//using private field to preven infinite loop

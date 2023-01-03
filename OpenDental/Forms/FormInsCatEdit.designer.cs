@@ -35,7 +35,7 @@ namespace OpenDental {
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textPercent = new OpenDental.ValidNum();
-			this.comboCat = new OpenDental.UI.ComboBoxOD();
+			this.comboCat = new OpenDental.UI.ComboBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -180,7 +180,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
 		private OpenDental.ValidNum textPercent;
-		private OpenDental.UI.ComboBoxOD comboCat;
+		private OpenDental.UI.ComboBox comboCat;
 		private Label label4;
 	}
 }

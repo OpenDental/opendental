@@ -28,7 +28,7 @@ namespace OpenDental{
 			this.labelCopyFrom = new System.Windows.Forms.Label();
 			this.listClinicsCopyTo = new OpenDental.UI.ListBoxOD();
 			this.labelCopyTo = new System.Windows.Forms.Label();
-			this.comboClinicsFrom = new OpenDental.UI.ComboBoxOD();
+			this.comboClinicsFrom = new OpenDental.UI.ComboBox();
 			this.butCopyRules = new OpenDental.UI.Button();
 			this.butCopyToAll = new OpenDental.UI.Button();
 			this.gridWebSchedCarrierRules = new OpenDental.UI.GridOD();
@@ -159,7 +159,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelCopyFrom;
 		private UI.ListBoxOD listClinicsCopyTo;
 		private System.Windows.Forms.Label labelCopyTo;
-		private UI.ComboBoxOD comboClinicsFrom;
+		private UI.ComboBox comboClinicsFrom;
 		private UI.Button butCopyRules;
 		private UI.Button butCopyToAll;
 		private UI.GridOD gridWebSchedCarrierRules;

@@ -28,8 +28,8 @@ namespace OpenDental{
 			this.gridGroups = new OpenDental.UI.GridOD();
 			this.gridClinics = new OpenDental.UI.GridOD();
 			this.butAdd = new OpenDental.UI.Button();
-			this.groupFilters = new OpenDental.UI.GroupBoxOD();
-			this.comboClinic = new OpenDental.UI.ComboBoxOD();
+			this.groupFilters = new OpenDental.UI.GroupBox();
+			this.comboClinic = new OpenDental.UI.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.labelFeeSchedFilter = new System.Windows.Forms.Label();
 			this.textFeeSched = new System.Windows.Forms.TextBox();
@@ -156,10 +156,10 @@ namespace OpenDental{
 		private UI.GridOD gridGroups;
 		private UI.GridOD gridClinics;
 		private UI.Button butAdd;
-		private OpenDental.UI.GroupBoxOD groupFilters;
+		private OpenDental.UI.GroupBox groupFilters;
 		private System.Windows.Forms.Label labelFeeSchedFilter;
 		private System.Windows.Forms.TextBox textFeeSched;
-		private OpenDental.UI.ComboBoxOD comboClinic;
+		private OpenDental.UI.ComboBox comboClinic;
 		private System.Windows.Forms.Label label1;
 	}
 }

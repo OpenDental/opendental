@@ -29,7 +29,7 @@
 			this.gridDefs = new OpenDental.UI.GridOD();
 			this.label14 = new System.Windows.Forms.Label();
 			this.textGuide = new System.Windows.Forms.TextBox();
-			this.groupEdit = new OpenDental.UI.GroupBoxOD();
+			this.groupEdit = new OpenDental.UI.GroupBox();
 			this.butHide = new OpenDental.UI.Button();
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
@@ -170,7 +170,7 @@
 		private UI.GridOD gridDefs;
 		private System.Windows.Forms.Label label14;
 		private System.Windows.Forms.TextBox textGuide;
-		private OpenDental.UI.GroupBoxOD groupEdit;
+		private OpenDental.UI.GroupBox groupEdit;
 		private UI.Button butHide;
 		private UI.Button butDown;
 		private UI.Button butUp;

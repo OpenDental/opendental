@@ -28,7 +28,7 @@ namespace OpenDental{
 			this.pictureBoxCamera = new System.Windows.Forms.PictureBox();
 			this.butCapture = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboCameras = new OpenDental.UI.ComboBoxOD();
+			this.comboCameras = new OpenDental.UI.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBoxCamera)).BeginInit();
 			this.SuspendLayout();
@@ -122,7 +122,7 @@ namespace OpenDental{
 		private System.Windows.Forms.PictureBox pictureBoxCamera;
 		private UI.Button butCapture;
 		private System.Windows.Forms.Label label1;
-		private OpenDental.UI.ComboBoxOD comboCameras;
+		private OpenDental.UI.ComboBox comboCameras;
 		private System.Windows.Forms.Label label2;
 	}
 }

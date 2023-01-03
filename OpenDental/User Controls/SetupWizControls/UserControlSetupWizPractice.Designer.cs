@@ -33,7 +33,7 @@
 			this.textPracticeTitle = new System.Windows.Forms.TextBox();
 			this.listProvider = new OpenDental.UI.ListBoxOD();
 			this.label10 = new System.Windows.Forms.Label();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
@@ -283,7 +283,7 @@
 		private System.Windows.Forms.TextBox textPracticeTitle;
 		private OpenDental.UI.ListBoxOD listProvider;
 		private System.Windows.Forms.Label label10;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.Label label16;
 		private System.Windows.Forms.TextBox textZip;
 		private System.Windows.Forms.TextBox textST;

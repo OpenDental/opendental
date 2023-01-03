@@ -39,7 +39,7 @@ namespace OpenDental{
             this.textInstructions = new System.Windows.Forms.TextBox();
             this.labelInstructions = new System.Windows.Forms.Label();
             this.checkReferral = new OpenDental.UI.CheckBox();
-            this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+            this.groupBox1 = new OpenDental.UI.GroupBox();
             this.textDate = new ValidDate();
             this.dateLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -325,7 +325,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textInstructions;
 		private System.Windows.Forms.Label labelInstructions;
 		private OpenDental.UI.CheckBox checkReferral;
-        private OpenDental.UI.GroupBoxOD groupBox1;
+        private OpenDental.UI.GroupBox groupBox1;
 		private ValidDate textDate;
 		private System.Windows.Forms.Label dateLabel;
         private System.Windows.Forms.Label label1;

@@ -28,7 +28,7 @@ namespace OpenDental {
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
-			this.groupCreditInfo = new OpenDental.UI.GroupBoxOD();
+			this.groupCreditInfo = new OpenDental.UI.GroupBox();
 			this.textCode = new OpenDental.ODtextBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.butAddOrUpdate = new OpenDental.UI.Button();
@@ -328,7 +328,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridMain;
-		private OpenDental.UI.GroupBoxOD groupCreditInfo;
+		private OpenDental.UI.GroupBox groupCreditInfo;
 		private System.Windows.Forms.Label label2;
 		private ValidDouble textAmt;
 		private System.Windows.Forms.Label label1;

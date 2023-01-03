@@ -60,7 +60,7 @@ namespace OpenDental {
 			this.tabTools = new OpenDental.UI.TabPage();
 			this.butFixTools = new OpenDental.UI.Button();
 			this.gridTools = new OpenDental.UI.GridOD();
-			this.groupBoxUpdateInProg = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxUpdateInProg = new OpenDental.UI.GroupBox();
 			this.labelUpdateInProgress = new System.Windows.Forms.Label();
 			this.textBoxUpdateInProg = new System.Windows.Forms.TextBox();
 			this.butClearUpdateInProgress = new OpenDental.UI.Button();
@@ -564,7 +564,7 @@ namespace OpenDental {
 		private OpenDental.UI.TabPage tabTools;
 		private TextBox textTools;
 		private Label labelSkipCheckTable;
-		private OpenDental.UI.GroupBoxOD groupBoxUpdateInProg;
+		private OpenDental.UI.GroupBox groupBoxUpdateInProg;
 		private Label labelUpdateInProgress;
 		private TextBox textBoxUpdateInProg;
 		private UI.Button butClearUpdateInProgress;

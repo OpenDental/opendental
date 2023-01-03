@@ -42,9 +42,9 @@
 			this.label10 = new System.Windows.Forms.Label();
 			this.label11 = new System.Windows.Forms.Label();
 			this.textEClipboardVersionFound = new System.Windows.Forms.TextBox();
-			this.groupBoxEClipboard = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxEClipboard = new OpenDental.UI.GroupBox();
 			this.textEClipboardVersionFixed = new System.Windows.Forms.TextBox();
-			this.groupBoxODMobile = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxODMobile = new OpenDental.UI.GroupBox();
 			this.textODMobileVersionFixed = new System.Windows.Forms.TextBox();
 			this.textODMobileVersionFound = new System.Windows.Forms.TextBox();
 			this.label12 = new System.Windows.Forms.Label();
@@ -590,9 +590,9 @@
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.TextBox textEClipboardVersionFound;
-		private OpenDental.UI.GroupBoxOD groupBoxEClipboard;
+		private OpenDental.UI.GroupBox groupBoxEClipboard;
 		private System.Windows.Forms.TextBox textEClipboardVersionFixed;
-		private OpenDental.UI.GroupBoxOD groupBoxODMobile;
+		private OpenDental.UI.GroupBox groupBoxODMobile;
 		private System.Windows.Forms.TextBox textODMobileVersionFixed;
 		private System.Windows.Forms.TextBox textODMobileVersionFound;
 		private System.Windows.Forms.Label label12;

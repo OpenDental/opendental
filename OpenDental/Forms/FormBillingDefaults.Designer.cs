@@ -24,7 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormBillingDefaults));
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.listModesToText = new OpenDental.UI.ListBoxOD();
 			this.label6 = new System.Windows.Forms.Label();
 			this.textSmsTemplate = new OpenDental.ODtextBox();
@@ -33,21 +33,21 @@ namespace OpenDental{
 			this.checkSinglePatient = new OpenDental.UI.CheckBox();
 			this.textInvoiceNote = new OpenDental.ODtextBox();
 			this.label11 = new System.Windows.Forms.Label();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.textBillingEmailBody = new OpenDental.ODtextBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
 			this.textBillingEmailSubject = new System.Windows.Forms.TextBox();
 			this.label10 = new System.Windows.Forms.Label();
-			this.groupBoxBilling = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxBilling = new OpenDental.UI.GroupBox();
 			this.checkIncludeClinicNum = new OpenDental.UI.CheckBox();
 			this.checkIncludeAdjust = new OpenDental.UI.CheckBox();
 			this.checkCreatePDF = new OpenDental.UI.CheckBox();
 			this.labelBlankForDefault = new System.Windows.Forms.Label();
 			this.textStatementURL = new System.Windows.Forms.TextBox();
 			this.labelStatementURL = new System.Windows.Forms.Label();
-			this.comboPracticeAddr = new OpenDental.UI.ComboBoxOD();
-			this.comboRemitAddr = new OpenDental.UI.ComboBoxOD();
+			this.comboPracticeAddr = new OpenDental.UI.ComboBox();
+			this.comboRemitAddr = new OpenDental.UI.ComboBox();
 			this.labelPracticeAddr = new System.Windows.Forms.Label();
 			this.labelRemitAddr = new System.Windows.Forms.Label();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
@@ -56,7 +56,7 @@ namespace OpenDental{
 			this.labelPassword = new System.Windows.Forms.Label();
 			this.textUserName = new System.Windows.Forms.TextBox();
 			this.labelUserName = new System.Windows.Forms.Label();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.checkAmEx = new OpenDental.UI.CheckBox();
 			this.checkD = new OpenDental.UI.CheckBox();
 			this.checkV = new OpenDental.UI.CheckBox();
@@ -667,13 +667,13 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label4;
 		private ValidNum textDays;
 		private System.Windows.Forms.Label label1;
-		private OpenDental.UI.GroupBoxOD groupBoxBilling;
+		private OpenDental.UI.GroupBox groupBoxBilling;
 		private System.Windows.Forms.TextBox textPassword;
 		private System.Windows.Forms.Label labelPassword;
 		private System.Windows.Forms.TextBox textBillingEmailSubject;
 		private System.Windows.Forms.TextBox textUserName;
 		private System.Windows.Forms.Label labelUserName;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private OpenDental.UI.CheckBox checkAmEx;
 		private OpenDental.UI.CheckBox checkD;
 		private OpenDental.UI.CheckBox checkV;
@@ -687,7 +687,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textVendorId;
 		private System.Windows.Forms.Label label2;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox3;
 		private System.Windows.Forms.Label label10;
 		private OpenDental.UI.ListBoxOD listElectBilling;
 		private System.Windows.Forms.Label label11;
@@ -695,14 +695,14 @@ namespace OpenDental{
 		private OpenDental.UI.ComboBoxClinicPicker comboClinic;
 		private System.Windows.Forms.Label labelPracticeAddr;
 		private System.Windows.Forms.Label labelRemitAddr;
-		private OpenDental.UI.ComboBoxOD comboPracticeAddr;
-		private OpenDental.UI.ComboBoxOD comboRemitAddr;
+		private OpenDental.UI.ComboBox comboPracticeAddr;
+		private OpenDental.UI.ComboBox comboRemitAddr;
 		private System.Windows.Forms.TextBox textStatementURL;
 		private System.Windows.Forms.Label labelStatementURL;
 		private System.Windows.Forms.Label labelBlankForDefault;
 		private OpenDental.UI.CheckBox checkCreatePDF;
 		private OpenDental.UI.CheckBox checkSinglePatient;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private ODtextBox textSmsTemplate;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label7;

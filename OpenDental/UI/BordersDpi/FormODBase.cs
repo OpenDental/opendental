@@ -1498,8 +1498,8 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 					UI.CheckBox checkbox = (UI.CheckBox)control;
 					checkbox.CheckedChanged+=Control_FilterCommitImmediate;
 				}
-				else if(control.GetType().IsSubclassOf(typeof(ComboBox)) || control.GetType()==typeof(ComboBox)) {
-					ComboBox comboBox = (ComboBox)control;
+				else if(control.GetType().IsSubclassOf(typeof(System.Windows.Forms.ComboBox)) || control.GetType()==typeof(System.Windows.Forms.ComboBox)) {
+					System.Windows.Forms.ComboBox comboBox = (System.Windows.Forms.ComboBox)control;
 					comboBox.SelectionChangeCommitted+=Control_FilterCommitImmediate;
 				}
 				else if(control.GetType().IsSubclassOf(typeof(ODDateRangePicker)) || control.GetType()==typeof(ODDateRangePicker)) {
@@ -1520,8 +1520,8 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				else if(control.GetType().IsSubclassOf(typeof(ComboBoxClinicPicker)) || control.GetType()==typeof(ComboBoxClinicPicker)) {
 					((ComboBoxClinicPicker)control).SelectionChangeCommitted+=Control_FilterCommitImmediate;
 				}
-				else if(control.GetType().IsSubclassOf(typeof(ComboBoxOD)) || control.GetType()==typeof(ComboBoxOD)) {
-					((ComboBoxOD)control).SelectionChangeCommitted+=Control_FilterCommitImmediate;
+				else if(control.GetType().IsSubclassOf(typeof(UI.ComboBox)) || control.GetType()==typeof(UI.ComboBox)) {
+					((UI.ComboBox)control).SelectionChangeCommitted+=Control_FilterCommitImmediate;
 				}
 				else if(control.GetType().IsSubclassOf(typeof(ListBoxOD)) || control.GetType()==typeof(ListBoxOD)) {
 					((ListBoxOD)control).SelectionChangeCommitted+=Control_FilterCommitImmediate;

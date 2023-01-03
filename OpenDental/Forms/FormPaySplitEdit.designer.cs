@@ -28,7 +28,7 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.textPatient = new System.Windows.Forms.TextBox();
 			this.checkPatOtherFam = new System.Windows.Forms.CheckBox();
-			this.groupPatient = new OpenDental.UI.GroupBoxOD();
+			this.groupPatient = new OpenDental.UI.GroupBox();
 			this.label15 = new System.Windows.Forms.Label();
 			this.label17 = new System.Windows.Forms.Label();
 			this.textDateEntry = new OpenDental.ValidDate();
@@ -38,8 +38,8 @@
 			this.butRemainder = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.ButCancel = new OpenDental.UI.Button();
-			this.comboUnearnedTypes = new OpenDental.UI.ComboBoxOD();
-			this.comboProvider = new OpenDental.UI.ComboBoxOD();
+			this.comboUnearnedTypes = new OpenDental.UI.ComboBox();
+			this.comboProvider = new OpenDental.UI.ComboBox();
 			this.butPickProv = new OpenDental.UI.Button();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.butEditAnyway = new OpenDental.UI.Button();
@@ -799,10 +799,10 @@
 		private UI.Button butEditAnyway;
 		private System.Windows.Forms.CheckBox checkPayPlan;
 		private System.Windows.Forms.CheckBox checkPatOtherFam;
-		private UI.ComboBoxOD comboUnearnedTypes;
-		private UI.ComboBoxOD comboProvider;
+		private UI.ComboBox comboUnearnedTypes;
+		private UI.ComboBox comboProvider;
 		private UI.ComboBoxClinicPicker comboClinic;
-		private OpenDental.UI.GroupBoxOD groupPatient;
+		private OpenDental.UI.GroupBox groupPatient;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label15;

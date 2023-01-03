@@ -42,7 +42,7 @@ namespace OpenDental {
 			this.butUp = new OpenDental.UI.Button();
 			this.butLeft = new OpenDental.UI.Button();
 			this.butRight = new OpenDental.UI.Button();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.label8 = new System.Windows.Forms.Label();
 			this.gridAvailable = new OpenDental.UI.GridOD();
@@ -232,7 +232,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butUp;
 		private OpenDental.UI.Button butLeft;
 		private OpenDental.UI.Button butRight;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private Label label8;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.GridOD gridAvailable;

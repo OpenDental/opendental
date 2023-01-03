@@ -49,10 +49,10 @@ namespace OpenDental {
 			this.butView = new OpenDental.UI.Button();
 			this.labelView = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
-			this.comboSendStatus = new OpenDental.UI.ComboBoxOD();
+			this.comboSendStatus = new OpenDental.UI.ComboBox();
 			this.textDosageCode = new System.Windows.Forms.TextBox();
 			this.labelDosageCode = new System.Windows.Forms.Label();
-			this.comboProv = new OpenDental.UI.ComboBoxOD();
+			this.comboProv = new OpenDental.UI.ComboBox();
 			this.butPickProv = new OpenDental.UI.Button();
 			this.label7 = new System.Windows.Forms.Label();
 			this.textNotes = new OpenDental.ODtextBox();
@@ -61,7 +61,7 @@ namespace OpenDental {
 			this.label10 = new System.Windows.Forms.Label();
 			this.textPharmInfo = new OpenDental.ODtextBox();
 			this.checkProcRequired = new OpenDental.UI.CheckBox();
-			this.comboProcCode = new OpenDental.UI.ComboBoxOD();
+			this.comboProcCode = new OpenDental.UI.ComboBox();
 			this.labelProcedure = new System.Windows.Forms.Label();
 			this.labelDaysOfSupply = new System.Windows.Forms.Label();
 			this.textDaysOfSupply = new OpenDental.ValidDouble();
@@ -554,10 +554,10 @@ namespace OpenDental {
 		private OpenDental.UI.Button butView;
 		private Label labelView;
 		private Label label9;
-		private OpenDental.UI.ComboBoxOD comboSendStatus;
+		private OpenDental.UI.ComboBox comboSendStatus;
 		private TextBox textDosageCode;
 		private Label labelDosageCode;
-		private UI.ComboBoxOD comboProv;
+		private UI.ComboBox comboProv;
 		private UI.Button butPickProv;
 		private Label label7;
 		private Label labelCPOE;
@@ -565,7 +565,7 @@ namespace OpenDental {
 		private Label label10;
 		private ODtextBox textPharmInfo;
 		private OpenDental.UI.CheckBox checkProcRequired;
-		private OpenDental.UI.ComboBoxOD comboProcCode;
+		private OpenDental.UI.ComboBox comboProcCode;
 		private Label labelProcedure;
 		private Label labelDaysOfSupply;
 		private ValidDouble textDaysOfSupply;

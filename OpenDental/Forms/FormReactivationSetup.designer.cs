@@ -28,21 +28,21 @@ namespace OpenDental {
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.label8 = new System.Windows.Forms.Label();
 			this.textPostcardsPerSheet = new System.Windows.Forms.TextBox();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.textDaysPast = new OpenDental.ValidNum();
 			this.checkGroupFamilies = new System.Windows.Forms.CheckBox();
 			this.label14 = new System.Windows.Forms.Label();
 			this.label25 = new System.Windows.Forms.Label();
-			this.comboStatusMailedReactivation = new OpenDental.UI.ComboBoxOD();
+			this.comboStatusMailedReactivation = new OpenDental.UI.ComboBox();
 			this.label26 = new System.Windows.Forms.Label();
 			this.textMaxReminders = new OpenDental.ValidNum();
 			this.label4 = new System.Windows.Forms.Label();
-			this.comboStatusEmailedReactivation = new OpenDental.UI.ComboBoxOD();
+			this.comboStatusEmailedReactivation = new OpenDental.UI.ComboBox();
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.labelContactInterval = new System.Windows.Forms.Label();
 			this.textDaysContactInterval = new OpenDental.ValidNum();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.groupBox3.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -266,10 +266,10 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textPostcardsPerSheet;
 		private System.Windows.Forms.CheckBox checkGroupFamilies;
 		private System.Windows.Forms.Label label14;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox3;
 		private System.Windows.Forms.Label label25;
-		private UI.ComboBoxOD comboStatusMailedReactivation;
-		private UI.ComboBoxOD comboStatusEmailedReactivation;
+		private UI.ComboBox comboStatusMailedReactivation;
+		private UI.ComboBox comboStatusEmailedReactivation;
 		private System.Windows.Forms.Label label26;
 		private ValidNum textDaysPast;
 		private OpenDental.UI.GridOD gridMain;
@@ -277,6 +277,6 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label labelContactInterval;
 		private ValidNum textDaysContactInterval;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 	}
 }

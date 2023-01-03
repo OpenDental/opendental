@@ -26,15 +26,15 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEmailCertRegister));
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
-			this.groupStep1 = new OpenDental.UI.GroupBoxOD();
+			this.groupStep1 = new OpenDental.UI.GroupBox();
 			this.textEmailAddress = new System.Windows.Forms.TextBox();
 			this.labelEmailAddress = new System.Windows.Forms.Label();
 			this.butSendCode = new OpenDental.UI.Button();
-			this.groupStep2 = new OpenDental.UI.GroupBoxOD();
+			this.groupStep2 = new OpenDental.UI.GroupBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.labelVerificationCode = new System.Windows.Forms.Label();
 			this.textVerificationCode = new System.Windows.Forms.TextBox();
-			this.groupStep3 = new OpenDental.UI.GroupBoxOD();
+			this.groupStep3 = new OpenDental.UI.GroupBox();
 			this.butBrowse = new OpenDental.UI.Button();
 			this.labelCertFilePath = new System.Windows.Forms.Label();
 			this.textCertFilePath = new System.Windows.Forms.TextBox();
@@ -220,15 +220,15 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
-		private OpenDental.UI.GroupBoxOD groupStep1;
+		private OpenDental.UI.GroupBox groupStep1;
 		private System.Windows.Forms.Label labelEmailAddress;
 		private System.Windows.Forms.TextBox textEmailAddress;
 		private UI.Button butSendCode;
-		private OpenDental.UI.GroupBoxOD groupStep2;
+		private OpenDental.UI.GroupBox groupStep2;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label labelVerificationCode;
 		private System.Windows.Forms.TextBox textVerificationCode;
-		private OpenDental.UI.GroupBoxOD groupStep3;
+		private OpenDental.UI.GroupBox groupStep3;
 		private UI.Button butBrowse;
 		private System.Windows.Forms.Label labelCertFilePath;
 		private System.Windows.Forms.TextBox textCertFilePath;

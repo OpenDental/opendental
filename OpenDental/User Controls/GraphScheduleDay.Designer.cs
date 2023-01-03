@@ -26,16 +26,16 @@
 			this.components = new System.ComponentModel.Container();
 			this.timerRefresh = new System.Windows.Forms.Timer(this.components);
 			this.splitContainerMaster = new OpenDental.SplitContainerNoFlicker();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.numEndHour = new System.Windows.Forms.NumericUpDown();
 			this.label3 = new System.Windows.Forms.Label();
 			this.numStartHour = new System.Windows.Forms.NumericUpDown();
 			this.label2 = new System.Windows.Forms.Label();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.checkBoxEmployees = new OpenDental.UI.CheckBox();
 			this.checkBoxProviders = new OpenDental.UI.CheckBox();
 			this.checkBoxNotes = new OpenDental.UI.CheckBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.radioStopTime = new System.Windows.Forms.RadioButton();
 			this.radioStartTime = new System.Windows.Forms.RadioButton();
 			this.radioName = new System.Windows.Forms.RadioButton();
@@ -291,7 +291,7 @@
 		#endregion
 
 		private SplitContainerNoFlicker splitContainerBottom;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.RadioButton radioStopTime;
 		private System.Windows.Forms.RadioButton radioStartTime;
 		private System.Windows.Forms.RadioButton radioName;
@@ -300,8 +300,8 @@
 		private OpenDental.UI.CheckBox checkBoxProviders;
 		private OpenDental.UI.CheckBox checkBoxNotes;
 		private System.Windows.Forms.Timer timerRefresh;
-		private OpenDental.UI.GroupBoxOD groupBox2;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox2;
+		private OpenDental.UI.GroupBox groupBox3;
 		private System.Windows.Forms.NumericUpDown numStartHour;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.NumericUpDown numEndHour;

@@ -36,7 +36,7 @@ namespace OpenDental {
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPopupEdit));
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboPopupLevel = new OpenDental.UI.ComboBoxOD();
+			this.comboPopupLevel = new OpenDental.UI.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textPatient = new System.Windows.Forms.TextBox();
@@ -284,7 +284,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butOK;
 		private Label label1;
 		private OpenDental.UI.Button butDelete;
-		private OpenDental.UI.ComboBoxOD comboPopupLevel;
+		private OpenDental.UI.ComboBox comboPopupLevel;
 		private Label label2;
 		private Label label3;
 		private TextBox textPatient;

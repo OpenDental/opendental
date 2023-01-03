@@ -10,7 +10,7 @@ using System.Windows.Forms;
 namespace OpenDental {
 	class SheetUtilL {
 		///<summary>Fills the given comboBox with valid GrowthBehaviorEnum options. Centralizes fill of growth behavior into comboboxes in several forms to ensure consistent behavior regarding the available options.</summary>
-		public static void FillComboGrowthBehavior(UI.ComboBoxOD combo,GrowthBehaviorEnum growthBehaviorSelected,bool isDynamicSheetType=false,bool isGridCombo=false) {
+		public static void FillComboGrowthBehavior(UI.ComboBox combo,GrowthBehaviorEnum growthBehaviorSelected,bool isDynamicSheetType=false,bool isGridCombo=false) {
 			List<GrowthBehaviorEnum> listGrowthOptions=new List<GrowthBehaviorEnum>();
 			foreach(GrowthBehaviorEnum growthBehaviorEnum in Enum.GetValues(typeof(GrowthBehaviorEnum)).OfType<GrowthBehaviorEnum>().ToList()) {
 				SheetGrowthAttribute sheetGrowthAttribute=EnumTools.GetAttributeOrDefault<SheetGrowthAttribute>(growthBehaviorEnum);

@@ -28,7 +28,7 @@ namespace OpenDental {
 			this.labelCommLogAutoSaveDetails = new System.Windows.Forms.Label();
 			this.labelAccountShowPaymentNumsDetails = new System.Windows.Forms.Label();
 			this.butClearAgingBeginDateT = new OpenDental.UI.Button();
-			this.groupBoxFunctionality = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxFunctionality = new OpenDental.UI.GroupBox();
 			this.labelAgingBeginDateT = new System.Windows.Forms.Label();
 			this.textAgingBeginDateT = new System.Windows.Forms.TextBox();
 			this.labelAutoAgingRunTime = new System.Windows.Forms.Label();
@@ -37,11 +37,11 @@ namespace OpenDental {
 			this.checkAccountShowPaymentNums = new OpenDental.UI.CheckBox();
 			this.checkStatementInvoiceGridShowWriteoffs = new OpenDental.UI.CheckBox();
 			this.checkAllowFutureTrans = new OpenDental.UI.CheckBox();
-			this.groupCommLogs = new OpenDental.UI.GroupBoxOD();
+			this.groupCommLogs = new OpenDental.UI.GroupBox();
 			this.checkCommLogAutoSave = new OpenDental.UI.CheckBox();
 			this.checkShowFamilyCommByDefault = new OpenDental.UI.CheckBox();
 			this.labelAllowFutureTransDetails = new System.Windows.Forms.Label();
-			this.groupBoxFutureDatedTransactions = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxFutureDatedTransactions = new OpenDental.UI.GroupBox();
 			this.labelFutureDatedOptions = new System.Windows.Forms.Label();
 			this.checkAllowFutureDebits = new OpenDental.UI.CheckBox();
 			this.checkAllowFuturePayments = new OpenDental.UI.CheckBox();
@@ -291,7 +291,7 @@ namespace OpenDental {
 
 		#endregion
 
-		private UI.GroupBoxOD groupCommLogs;
+		private UI.GroupBox groupCommLogs;
 		private OpenDental.UI.CheckBox checkCommLogAutoSave;
 		private OpenDental.UI.CheckBox checkShowFamilyCommByDefault;
 		private OpenDental.UI.CheckBox checkBalancesDontSubtractIns;
@@ -299,7 +299,7 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkAccountShowPaymentNums;
 		private OpenDental.UI.CheckBox checkStatementInvoiceGridShowWriteoffs;
 		private System.Windows.Forms.Label label62;
-		private UI.GroupBoxOD groupBoxFunctionality;
+		private UI.GroupBox groupBoxFunctionality;
 		private System.Windows.Forms.Label labelCommLogAutoSaveDetails;
 		private System.Windows.Forms.Label labelAccountShowPaymentNumsDetails;
 		private System.Windows.Forms.Label labelAgingBeginDateT;
@@ -308,7 +308,7 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textAutoAgingRunTime;
 		private UI.Button butClearAgingBeginDateT;
 		private System.Windows.Forms.Label labelAllowFutureTransDetails;
-		private UI.GroupBoxOD groupBoxFutureDatedTransactions;
+		private UI.GroupBox groupBoxFutureDatedTransactions;
 		private OpenDental.UI.CheckBox checkAllowFuturePayments;
 		private OpenDental.UI.CheckBox checkAllowFutureDebits;
 		private System.Windows.Forms.Label labelFutureDatedOptions;

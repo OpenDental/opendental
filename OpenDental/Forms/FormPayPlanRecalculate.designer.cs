@@ -29,7 +29,7 @@ namespace OpenDental{
 			this.checkRecalculateInterest = new System.Windows.Forms.CheckBox();
 			this.radioPrepay = new System.Windows.Forms.RadioButton();
 			this.radioPrepayWithoutInterest = new System.Windows.Forms.RadioButton();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -131,7 +131,7 @@ namespace OpenDental{
 		private System.Windows.Forms.CheckBox checkRecalculateInterest;
 		private System.Windows.Forms.RadioButton radioPrepay;
 		private System.Windows.Forms.RadioButton radioPrepayWithoutInterest;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label1;
 	}
 }

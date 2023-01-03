@@ -34,7 +34,7 @@ namespace OpenDental{
 			this.textWidth = new OpenDental.ValidNum();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
-			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.textRows = new OpenDental.ValidNum();
 			this.label6 = new System.Windows.Forms.Label();
 			this.textColumns = new OpenDental.ValidNum();
@@ -228,7 +228,7 @@ namespace OpenDental{
 		private ValidNum textWidth;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label5;
-		private OpenDental.UI.GroupBoxOD groupBoxOD1;
+		private OpenDental.UI.GroupBox groupBoxOD1;
 		private ValidNum textRows;
 		private System.Windows.Forms.Label label6;
 		private ValidNum textColumns;

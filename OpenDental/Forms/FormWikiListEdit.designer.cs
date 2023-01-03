@@ -24,15 +24,15 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWikiListEdit));
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.butHistory = new OpenDental.UI.Button();
 			this.butRenameList = new OpenDental.UI.Button();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.butAddItem = new OpenDental.UI.Button();
 			this.labelSearch = new System.Windows.Forms.Label();
 			this.textSearch = new System.Windows.Forms.TextBox();
 			this.butDelete = new OpenDental.UI.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butColumnDelete = new OpenDental.UI.Button();
 			this.butHeaders = new OpenDental.UI.Button();
 			this.butColumnInsert = new OpenDental.UI.Button();
@@ -303,7 +303,7 @@ namespace OpenDental{
 
 		private UI.Button butClose;
 		private UI.GridOD gridMain;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private UI.Button butHeaders;
 		private UI.Button butColumnRight;
 		private UI.Button butColumnLeft;
@@ -313,8 +313,8 @@ namespace OpenDental{
 		private UI.Button butDelete;
 		private System.Windows.Forms.Label labelSearch;
 		private System.Windows.Forms.TextBox textSearch;
-		private OpenDental.UI.GroupBoxOD groupBox2;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox2;
+		private OpenDental.UI.GroupBox groupBox3;
 		private UI.Button butRenameList;
 		private UI.Button butHistory;
 		private UI.Button butAdvSearch;

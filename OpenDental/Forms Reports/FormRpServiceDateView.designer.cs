@@ -28,7 +28,7 @@ namespace OpenDental{
 			this.butPrint = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butSavePDFToImages = new OpenDental.UI.Button();
-			this.groupFilter = new OpenDental.UI.GroupBoxOD();
+			this.groupFilter = new OpenDental.UI.GroupBox();
 			this.checkDetailedView = new System.Windows.Forms.CheckBox();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.groupFilter.SuspendLayout();
@@ -141,7 +141,7 @@ namespace OpenDental{
 		private UI.Button butPrint;
 		private UI.GridOD gridMain;
 		private UI.Button butSavePDFToImages;
-		private OpenDental.UI.GroupBoxOD groupFilter;
+		private OpenDental.UI.GroupBox groupFilter;
 		private UI.Button butRefresh;
 		private System.Windows.Forms.CheckBox checkDetailedView;
 	}

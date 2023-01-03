@@ -29,7 +29,7 @@ namespace OpenDental {
 			this.butAddCat = new OpenDental.UI.Button();
 			this.butDown = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.butDefaultsReset = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
@@ -181,7 +181,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butAddCat;
 		private OpenDental.UI.Button butDown;
 		private OpenDental.UI.GridOD gridMain;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private TextBox textBox1;
 		private OpenDental.UI.Button butDefaultsReset;
 		private Label label1;

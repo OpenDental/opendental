@@ -104,7 +104,7 @@ namespace OpenDental {
 
 		private void FillMaps() {
 			//Get the list of maps from our JSON preference.
-			_listMapAreaContainers=PhoneMapJSON.GetFromDb();
+			_listMapAreaContainers=MapAreaContainers.Refresh();
 			//Add a custom order to this map list which will prefer maps that are associated to the local computer's site.
 			_listMapAreaContainers=_listMapAreaContainers.OrderBy(x => x.SiteNum!=_site.SiteNum)
 				.ThenBy(x => x.Description).ToList();
@@ -211,7 +211,7 @@ namespace OpenDental {
 					return;
 				}
 			}
-			eServiceMetricsControl.AccountBalance=metricsToday.AccountBalanceEuro;
+			eServiceMetricsControl.SetAccountBalance(metricsToday.AccountBalanceEuro);
 			if(metricsToday.Severity==eServiceSignalSeverity.Critical) {
 				eServiceMetricsControl.StartFlashing(metricsToday.CriticalStatus);
 			}
@@ -220,16 +220,16 @@ namespace OpenDental {
 			}
 			switch(metricsToday.Severity) {
 				case eServiceSignalSeverity.Working:
-					eServiceMetricsControl.AlertColor=Color.LimeGreen;
+					eServiceMetricsControl.SetColorAlert(Color.LimeGreen);
 					break;
 				case eServiceSignalSeverity.Warning:
-					eServiceMetricsControl.AlertColor=Color.Yellow;
+					eServiceMetricsControl.SetColorAlert(Color.Yellow);
 					break;
 				case eServiceSignalSeverity.Error:
-					eServiceMetricsControl.AlertColor=Color.Orange;
+					eServiceMetricsControl.SetColorAlert(Color.Orange);
 					break;
 				case eServiceSignalSeverity.Critical:
-					eServiceMetricsControl.AlertColor=Color.Red;
+					eServiceMetricsControl.SetColorAlert(Color.Red);
 					break;
 			}
 		}

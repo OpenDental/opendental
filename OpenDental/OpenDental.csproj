@@ -2704,6 +2704,18 @@
     <Compile Include="InternalTools\Job Manager\UserControlSprintManager.Designer.cs">
       <DependentUpon>UserControlSprintManager.cs</DependentUpon>
     </Compile>
+    <Compile Include="InternalTools\Phones\EscalationView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InternalTools\Phones\EscalationView.designer.cs">
+      <DependentUpon>EscalationView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InternalTools\Phones\FormMap.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InternalTools\Phones\FormMap.designer.cs">
+      <DependentUpon>FormMap.cs</DependentUpon>
+    </Compile>
     <Compile Include="InternalTools\Phones\FormMapHQPrefs.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2724,6 +2736,12 @@
     </Compile>
     <Compile Include="InternalTools\Phones\FormPhoneGraphAdminEdit.Designer.cs">
       <DependentUpon>FormPhoneGraphAdminEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InternalTools\Phones\MapNumber.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InternalTools\Phones\MapNumber.designer.cs">
+      <DependentUpon>MapNumber.cs</DependentUpon>
     </Compile>
     <Compile Include="InternalTools\Phones\UserControlMapDetails.cs">
       <SubType>UserControl</SubType>
@@ -2833,11 +2851,11 @@
       <DependentUpon>CloudIframe.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\ColorOD.cs" />
-    <Compile Include="UI\ComboBoxOD.cs">
+    <Compile Include="UI\ComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\ComboBoxOD.Designer.cs">
-      <DependentUpon>ComboBoxOD.cs</DependentUpon>
+    <Compile Include="UI\ComboBox.Designer.cs">
+      <DependentUpon>ComboBox.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\BordersDpi\Dpi.cs" />
     <Compile Include="UI\DatabaseIntegrity\DatabaseIntegrities.cs" />
@@ -2853,11 +2871,11 @@
     <Compile Include="UI\FormPrintPreview.designer.cs">
       <DependentUpon>FormPrintPreview.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\GroupBoxOD.cs">
+    <Compile Include="UI\GroupBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\GroupBoxOD.Designer.cs">
-      <DependentUpon>GroupBoxOD.cs</DependentUpon>
+    <Compile Include="UI\GroupBox.Designer.cs">
+      <DependentUpon>GroupBox.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\IconLibrary\Gen_Account32.cs" />
     <Compile Include="UI\IconLibrary\Gen_Acquire.cs" />
@@ -8294,6 +8312,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Job Manager\UserControlSprintManager.resx">
       <DependentUpon>UserControlSprintManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InternalTools\Phones\FormMap.resx">
+      <DependentUpon>FormMap.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Phones\FormMapHQPrefs.resx">
       <DependentUpon>FormMapHQPrefs.cs</DependentUpon>

@@ -31,7 +31,7 @@ namespace OpenDental{
 			this.labelNumberPatientsSelected = new System.Windows.Forms.Label();
 			this.labelPatsSelected = new System.Windows.Forms.Label();
 			this.panelFilterControls = new OpenDental.UI.PanelOD();
-			this.groupAppt = new OpenDental.UI.GroupBoxOD();
+			this.groupAppt = new OpenDental.UI.GroupBox();
 			this.checkHidePatientsNotSeenSince = new OpenDental.UI.CheckBox();
 			this.checkHidePatientsSeenSince = new OpenDental.UI.CheckBox();
 			this.datePickerPatientsSeenSince = new OpenDental.UI.ODDatePicker();
@@ -41,7 +41,7 @@ namespace OpenDental{
 			this.listBoxPatientBillingType = new OpenDental.UI.ListBoxOD();
 			this.labelPatStatus = new System.Windows.Forms.Label();
 			this.labelContact = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textPatientAgeTo = new OpenDental.ValidNum();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
@@ -462,7 +462,7 @@ namespace OpenDental{
 		private OpenDental.UI.CheckBox checkHidePatientsSeenSince;
 		private System.Windows.Forms.Label labelPatStatus;
 		private System.Windows.Forms.Label labelContact;
-		private UI.GroupBoxOD groupBox1;
+		private UI.GroupBox groupBox1;
 		private ValidNum textPatientAgeTo;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label4;
@@ -482,7 +482,7 @@ namespace OpenDental{
 		private UI.Button butSetSelected;
 		private UI.Button butSelectAll;
 		private UI.Button butCommitList;
-		private UI.GroupBoxOD groupAppt;
+		private UI.GroupBox groupAppt;
 		private UI.Button butFavorite;
 	}
 }

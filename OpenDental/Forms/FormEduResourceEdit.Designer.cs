@@ -39,7 +39,7 @@
 			this.textUrl = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.textLabTestName = new System.Windows.Forms.TextBox();
-			this.groupLabResults = new OpenDental.UI.GroupBoxOD();
+			this.groupLabResults = new OpenDental.UI.GroupBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.labelCriterionValue = new System.Windows.Forms.Label();
 			this.textCompareValue = new System.Windows.Forms.TextBox();
@@ -47,7 +47,7 @@
 			this.textICD9 = new System.Windows.Forms.TextBox();
 			this.textSnomed = new System.Windows.Forms.TextBox();
 			this.label8 = new System.Windows.Forms.Label();
-			this.groupProblems = new OpenDental.UI.GroupBoxOD();
+			this.groupProblems = new OpenDental.UI.GroupBox();
 			this.label9 = new System.Windows.Forms.Label();
 			this.textTobaccoAssessment = new System.Windows.Forms.TextBox();
 			this.butTobaccoCodeSelect = new System.Windows.Forms.Button();
@@ -363,7 +363,7 @@
 		private System.Windows.Forms.TextBox textUrl;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox textLabTestName;
-		private OpenDental.UI.GroupBoxOD groupLabResults;
+		private OpenDental.UI.GroupBox groupLabResults;
 		private System.Windows.Forms.Label labelCriterionValue;
 		private System.Windows.Forms.TextBox textCompareValue;
 		private System.Windows.Forms.Label label6;
@@ -371,7 +371,7 @@
 		private System.Windows.Forms.TextBox textICD9;
 		private System.Windows.Forms.TextBox textSnomed;
 		private System.Windows.Forms.Label label8;
-		private OpenDental.UI.GroupBoxOD groupProblems;
+		private OpenDental.UI.GroupBox groupProblems;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.TextBox textTobaccoAssessment;
 		private System.Windows.Forms.Button butTobaccoCodeSelect;

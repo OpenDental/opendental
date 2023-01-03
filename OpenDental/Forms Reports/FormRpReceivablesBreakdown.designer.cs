@@ -34,7 +34,7 @@ namespace OpenDental {
 			this.labelProvider = new System.Windows.Forms.Label();
 			this.listClinic = new OpenDental.UI.ListBoxOD();
 			this.labClinic = new System.Windows.Forms.Label();
-			this.groupInsBox = new OpenDental.UI.GroupBoxOD();
+			this.groupInsBox = new OpenDental.UI.GroupBox();
 			this.radioWriteoffProc = new System.Windows.Forms.RadioButton();
 			this.radioWriteoffPay = new System.Windows.Forms.RadioButton();
 			this.label2 = new System.Windows.Forms.Label();
@@ -185,7 +185,7 @@ namespace OpenDental {
 		private Label labelProvider;
 		private OpenDental.UI.ListBoxOD listClinic;
 		private Label labClinic;
-		private OpenDental.UI.GroupBoxOD groupInsBox;
+		private OpenDental.UI.GroupBox groupInsBox;
 		private RadioButton radioWriteoffPay;
 		private RadioButton radioWriteoffProc;
 		private Label label2;

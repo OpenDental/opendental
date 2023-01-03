@@ -40,10 +40,10 @@ namespace OpenDental {
 			this.textPayment = new OpenDental.ValidDouble();
 			this.textPrincipal = new OpenDental.ValidDouble();
 			this.labelTotals = new System.Windows.Forms.Label();
-			this.groupProvClin = new OpenDental.UI.GroupBoxOD();
+			this.groupProvClin = new OpenDental.UI.GroupBox();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.butPickProv = new OpenDental.UI.Button();
-			this.comboProv = new OpenDental.UI.ComboBoxOD();
+			this.comboProv = new OpenDental.UI.ComboBox();
 			this.label16 = new System.Windows.Forms.Label();
 			this.labelTxAmtInfo = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
@@ -72,7 +72,7 @@ namespace OpenDental {
 			this.label13 = new System.Windows.Forms.Label();
 			this.label12 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
-			this.groupTerms = new OpenDental.UI.GroupBoxOD();
+			this.groupTerms = new OpenDental.UI.GroupBox();
 			this.labelDateInterestStart = new System.Windows.Forms.Label();
 			this.textDateInterestStart = new OpenDental.ValidDate();
 			this.textInterestDelay = new OpenDental.ValidDouble();
@@ -81,7 +81,7 @@ namespace OpenDental {
 			this.labelInterestDelay1 = new System.Windows.Forms.Label();
 			this.butMoreOptions = new OpenDental.UI.Button();
 			this.textAPR = new OpenDental.ValidDouble();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.textPaymentCount = new OpenDental.ValidNum();
 			this.label7 = new System.Windows.Forms.Label();
 			this.textPeriodPayment = new OpenDental.ValidDouble();
@@ -103,9 +103,9 @@ namespace OpenDental {
 			this.labelClosed = new System.Windows.Forms.Label();
 			this.butSignPrint = new OpenDental.UI.Button();
 			this.signatureBoxWrapper = new OpenDental.UI.SignatureBoxWrapper();
-			this.groupBox4 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox4 = new OpenDental.UI.GroupBox();
 			this.checkExcludePast = new System.Windows.Forms.CheckBox();
-			this.comboCategory = new OpenDental.UI.ComboBoxOD();
+			this.comboCategory = new OpenDental.UI.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.butAdj = new OpenDental.UI.Button();
 			this.textAdjustment = new OpenDental.ValidDouble();
@@ -1016,7 +1016,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label8;
-		private OpenDental.UI.GroupBoxOD groupTerms;
+		private OpenDental.UI.GroupBox groupTerms;
 		private OpenDental.ValidDate textDate;
 		private OpenDental.ValidDouble textAmount;
 		private OpenDental.ValidDate textDateFirstPay;
@@ -1028,7 +1028,7 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textPatient;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.Label label11;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox3;
 		private OpenDental.ValidDouble textDownPayment;
 		private System.Windows.Forms.Label label12;
 		private System.Windows.Forms.Label label13;
@@ -1055,10 +1055,10 @@ namespace OpenDental {
 		private ValidDouble textCompletedAmt;
 		private Label labelTxAmtInfo;
 		private OpenDental.UI.Button butPickProv;
-		private UI.ComboBoxOD comboProv;
+		private UI.ComboBox comboProv;
 		private UI.ComboBoxClinicPicker comboClinic;
 		private Label label16;
-		private OpenDental.UI.GroupBoxOD groupProvClin;
+		private OpenDental.UI.GroupBox groupProvClin;
 		private UI.Button butMoreOptions;
 		private ValidDouble textBalance;
 		private TextBox textInterest;
@@ -1074,10 +1074,10 @@ namespace OpenDental {
 		private Label labelClosed;
 		private UI.Button butSignPrint;
 		private UI.SignatureBoxWrapper signatureBoxWrapper;
-		private OpenDental.UI.GroupBoxOD groupBox4;
+		private OpenDental.UI.GroupBox groupBox4;
 		private ValidNum textPaymentCount;
 		private CheckBox checkExcludePast;
-		private UI.ComboBoxOD comboCategory;
+		private UI.ComboBox comboCategory;
 		private Label label2;
 		private UI.Button butAdj;
 		private ValidDouble textAdjustment;

@@ -24,13 +24,13 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMarkupTableEdit));
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butColumnDelete = new OpenDental.UI.Button();
 			this.butHeaders = new OpenDental.UI.Button();
 			this.butColumnInsert = new OpenDental.UI.Button();
 			this.butColumnRight = new OpenDental.UI.Button();
 			this.butColumnLeft = new OpenDental.UI.Button();
-			this.groupRow = new OpenDental.UI.GroupBoxOD();
+			this.groupRow = new OpenDental.UI.GroupBox();
 			this.butRowDelete = new OpenDental.UI.Button();
 			this.butRowInsert = new OpenDental.UI.Button();
 			this.butRowDown = new OpenDental.UI.Button();
@@ -251,11 +251,11 @@ namespace OpenDental{
 		private UI.Button butCancel;
 		private UI.GridOD gridMain;
 		private UI.Button butManEdit;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private UI.Button butHeaders;
 		private UI.Button butColumnRight;
 		private UI.Button butColumnLeft;
-		private OpenDental.UI.GroupBoxOD groupRow;
+		private OpenDental.UI.GroupBox groupRow;
 		private UI.Button butRowDelete;
 		private UI.Button butRowInsert;
 		private UI.Button butRowDown;

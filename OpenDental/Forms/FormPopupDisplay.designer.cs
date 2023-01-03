@@ -35,12 +35,12 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPopupDisplay));
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboMinutes = new OpenDental.UI.ComboBoxOD();
-			this.comboHours = new OpenDental.UI.ComboBoxOD();
+			this.comboMinutes = new OpenDental.UI.ComboBox();
+			this.comboHours = new OpenDental.UI.ComboBox();
 			this.butPerm = new OpenDental.UI.Button();
 			this.butMinutes = new OpenDental.UI.Button();
 			this.butHours = new OpenDental.UI.Button();
@@ -244,11 +244,11 @@ namespace OpenDental {
 		#endregion
 
 		private OpenDental.UI.Button butOK;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.Button butMinutes;
 		private OpenDental.UI.Button butHours;
-		private OpenDental.UI.ComboBoxOD comboMinutes;
-		private OpenDental.UI.ComboBoxOD comboHours;
+		private OpenDental.UI.ComboBox comboMinutes;
+		private OpenDental.UI.ComboBox comboHours;
 		private Label label3;
 		private Label label2;
 		private Label label1;

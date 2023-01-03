@@ -32,7 +32,7 @@ namespace OpenDental {
 			this.labelInstructions = new System.Windows.Forms.Label();
 			this.butBlank = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
@@ -191,7 +191,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelInstructions;
 		private OpenDental.UI.Button butBlank;
 		private OpenDental.UI.GridOD gridMain;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private Label label2;
 		private Label label1;
 		private OpenDental.UI.CheckBox checkControlledOnly;

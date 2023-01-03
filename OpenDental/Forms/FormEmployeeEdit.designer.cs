@@ -46,7 +46,7 @@ namespace OpenDental {
 			this.checkIsFurloughed = new OpenDental.UI.CheckBox();
 			this.checkIsWorkingHome = new OpenDental.UI.CheckBox();
 			this.label5 = new System.Windows.Forms.Label();
-			this.comboReportsTo = new OpenDental.UI.ComboBoxOD();
+			this.comboReportsTo = new OpenDental.UI.ComboBox();
 			this.SuspendLayout();
 			// 
 			// textLName
@@ -327,7 +327,7 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkIsFurloughed;
 		private OpenDental.UI.CheckBox checkIsWorkingHome;
 		private Label label5;
-		private UI.ComboBoxOD comboReportsTo;
+		private UI.ComboBox comboReportsTo;
 		private ValidPhone textWirelessPhone;
 	}
 }

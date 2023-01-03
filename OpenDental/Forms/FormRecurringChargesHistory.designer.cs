@@ -33,11 +33,11 @@ namespace OpenDental{
 			this.menuItemDeletePending = new System.Windows.Forms.MenuItem();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.datePicker = new OpenDental.UI.ODDateRangePicker();
-			this.groupView = new OpenDental.UI.GroupBoxOD();
-			this.comboAutomated = new OpenDental.UI.ComboBoxOD();
+			this.groupView = new OpenDental.UI.GroupBox();
+			this.comboAutomated = new OpenDental.UI.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboStatuses = new OpenDental.UI.ComboBoxOD();
+			this.comboStatuses = new OpenDental.UI.ComboBox();
 			this.comboClinics = new OpenDental.UI.ComboBoxClinicPicker();
 			this.groupView.SuspendLayout();
 			this.SuspendLayout();
@@ -208,7 +208,7 @@ namespace OpenDental{
 		private UI.GridOD gridMain;
 		private UI.Button butRefresh;
 		private UI.ODDateRangePicker datePicker;
-		private OpenDental.UI.GroupBoxOD groupView;
+		private OpenDental.UI.GroupBox groupView;
 		private System.Windows.Forms.ContextMenu contextMenu;
 		private System.Windows.Forms.MenuItem menuItemGoTo;
 		private System.Windows.Forms.MenuItem menuItemOpenPayment;
@@ -216,8 +216,8 @@ namespace OpenDental{
 		private System.Windows.Forms.MenuItem menuItemDeletePending;
 		private UI.ComboBoxClinicPicker comboClinics;
 		private System.Windows.Forms.Label label1;
-		private UI.ComboBoxOD comboStatuses;
+		private UI.ComboBox comboStatuses;
 		private System.Windows.Forms.Label label2;
-		private OpenDental.UI.ComboBoxOD comboAutomated;
+		private OpenDental.UI.ComboBox comboAutomated;
 	}
 }

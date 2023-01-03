@@ -30,7 +30,7 @@ namespace OpenDental{
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.menuRightReferences = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.goToAccountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.textCountry = new System.Windows.Forms.TextBox();
 			this.labelCountry = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
@@ -54,12 +54,12 @@ namespace OpenDental{
 			this.textCity = new System.Windows.Forms.TextBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.checkBadRefs = new System.Windows.Forms.CheckBox();
-			this.groupFilter = new OpenDental.UI.GroupBoxOD();
+			this.groupFilter = new OpenDental.UI.GroupBox();
 			this.listBillingType = new OpenDental.UI.ListBoxOD();
 			this.label10 = new System.Windows.Forms.Label();
 			this.checkUsedRefs = new System.Windows.Forms.CheckBox();
 			this.checkGuarOnly = new System.Windows.Forms.CheckBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.checkRefresh = new System.Windows.Forms.CheckBox();
 			this.butGetAll = new OpenDental.UI.Button();
 			this.butSearch = new OpenDental.UI.Button();
@@ -501,7 +501,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridMain;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.TextBox textAge;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textZip;
@@ -523,9 +523,9 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textSuperFamily;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox textSpecialty;
-		private OpenDental.UI.GroupBoxOD groupFilter;
+		private OpenDental.UI.GroupBox groupFilter;
 		private System.Windows.Forms.CheckBox checkUsedRefs;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.CheckBox checkRefresh;
 		private UI.Button butGetAll;
 		private UI.Button butSearch;

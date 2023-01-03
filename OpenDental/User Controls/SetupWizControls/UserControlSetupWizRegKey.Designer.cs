@@ -23,7 +23,7 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.groupProcTools = new OpenDental.UI.GroupBoxOD();
+			this.groupProcTools = new OpenDental.UI.GroupBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butProcCodeTools = new OpenDental.UI.Button();
 			this.butChangeRegKey = new OpenDental.UI.Button();
@@ -151,7 +151,7 @@
 		private System.Windows.Forms.Label label2;
 		private UI.Button butProcCodeTools;
 		private System.Windows.Forms.Label label1;
-		private OpenDental.UI.GroupBoxOD groupProcTools;
+		private OpenDental.UI.GroupBox groupProcTools;
 		private UI.Button butAdvanced;
 		private System.Windows.Forms.Label label7;
 	}

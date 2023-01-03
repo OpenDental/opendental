@@ -25,7 +25,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpReferralAnalysis));
 			this.listProv = new OpenDental.UI.ListBoxOD();
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.butRight = new OpenDental.UI.Button();
 			this.butThis = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
@@ -251,7 +251,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.ListBoxOD listProv;
 		private Label label1;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private OpenDental.UI.Button butRight;
 		private OpenDental.UI.Button butThis;
 		private Label label2;

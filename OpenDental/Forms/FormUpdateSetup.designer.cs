@@ -45,7 +45,7 @@ namespace OpenDental {
 			this.textMultiple = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textWebProxyPassword = new System.Windows.Forms.TextBox();
 			this.label9 = new System.Windows.Forms.Label();
 			this.textWebProxyUserName = new System.Windows.Forms.TextBox();
@@ -363,7 +363,7 @@ namespace OpenDental {
 		private TextBox textMultiple;
 		private Label label5;
 		private Label label6;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private TextBox textWebProxyPassword;
 		private Label label9;
 		private TextBox textWebProxyUserName;

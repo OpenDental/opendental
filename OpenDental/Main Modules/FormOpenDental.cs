@@ -81,6 +81,7 @@ namespace OpenDental{
 		private static FormOpenDental _formOpenDentalSingleton;
 		///<summary>HQ only. Multiple phone maps can be opened at the same time. This keeps a list of all that are open so we can modify their contents.</summary>
 		private static List<FormMapHQ> _listFormMapHQs=new List<FormMapHQ>();
+		private static List<HqPhones.FormMap> _listFormMaps=new List<HqPhones.FormMap>();
 		///<summary>Todo: look into this dict of dicts.</summary>
 		private static Dictionary<long,Dictionary<long,DateTime>> _dictionaryBlockedAutomations;
 		///<summary>Task Popups use this upper limit of open FormTaskEdit instances to determine if a task should popup.  More than 115 open FormTaskEdit has been observed to crash the program.  See task #1481164.</summary>
@@ -1140,6 +1141,20 @@ namespace OpenDental{
 			}
 			formMapHQ.Show();
 			formMapHQ.BringToFront();
+		}
+
+		///<summary>Opens a call center map which matches the passed in description.</summary>
+		private void OpenMap(string mapDescription=null) {
+			HqPhones.FormMap formMap;
+			formMap=new HqPhones.FormMap();
+			formMap.HelpIsOnTheWay+=FormMap_HelpIsOnTheWay;
+			formMap.ExtraMapClicked+=FormMap_ExtraMapClicked;
+			formMap.GoToPatient+=FormMap_GoToPatient;
+			if(!mapDescription.IsNullOrEmpty()) {
+				formMap.MapDescription=mapDescription;
+			}
+			formMap.Show();
+			formMap.BringToFront();
 		}
 
 		///<summary></summary>
@@ -4411,11 +4426,29 @@ namespace OpenDental{
 			else {
 				formMapHQ=_listFormMapHQs[0]; //always just take the first one.
 				if(formMapHQ.WindowState==FormWindowState.Minimized) {
-					_listFormMapHQs[0].WindowState=FormWindowState.Normal; //always just take the first map in the list
+					formMapHQ.WindowState=FormWindowState.Normal; //always just take the first map in the list
 				}
 			}
 			formMapHQ.Show();
 			formMapHQ.BringToFront();
+		}
+
+		private void butNewMap_Click(object sender,EventArgs e) {
+			HqPhones.FormMap formMap;
+			if(_listFormMaps.Count==0) {
+				formMap=new HqPhones.FormMap();
+				formMap.HelpIsOnTheWay+=FormMap_HelpIsOnTheWay;
+				formMap.ExtraMapClicked+=FormMap_ExtraMapClicked;
+				formMap.GoToPatient+=FormMap_GoToPatient;
+			}
+			else {
+				formMap=_listFormMaps[0]; //always just take the first one.
+				if(formMap.WindowState==FormWindowState.Minimized) {
+					formMap.WindowState=FormWindowState.Normal; 
+				}
+			}
+			formMap.Show();
+			formMap.BringToFront();
 		}
 
 		private void butTriage_Click(object sender,EventArgs e) {
@@ -4465,6 +4498,13 @@ namespace OpenDental{
 			MapCubicle mapAreaRoomControl=(MapCubicle)sender;
 			PatNumCur=mapAreaRoomControl.PhoneCur.PatNum;
 			Patient patient=Patients.GetPat(PatNumCur);
+			RefreshCurrentModule();
+			FillPatientButton(patient);
+		}
+
+		private void FormMap_GoToPatient(object sender,long patNum) {
+			PatNumCur=patNum;
+			Patient patient=Patients.GetPat(patNum);
 			RefreshCurrentModule();
 			FillPatientButton(patient);
 		}
@@ -6966,8 +7006,18 @@ namespace OpenDental{
 			ODThread.WakeUpThreadsByGroupName(FormODThreadNames.HqMetrics.GetDescription());
 		}
 
+		///<summary></summary>
+		private void FormMap_HelpIsOnTheWay(object sender,int extension){
+			Phones.SetPhoneStatus(ClockStatusEnum.HelpOnTheWay,extension);
+			ODThread.WakeUpThreadsByGroupName(FormODThreadNames.HqMetrics.GetDescription());
+		}
+
 		private void FormMapHQ_ExtraMapClicked(object sender,EventArgs e) {
 			OpenMapHQ();
+		}
+
+		private void FormMap_ExtraMapClicked(object sender,EventArgs e) {
+			OpenMap();
 		}
 
 		/// <summary>HQ Only. ProcessOfficeDowns must be invoked from a worker thread. These are the arguments necessary.</summary>
@@ -6987,6 +7037,9 @@ namespace OpenDental{
 				}
 				for(int i=0;i<_listFormMapHQs.Count;i++) {
 					_listFormMapHQs[i].SetPhoneList(phoneList,listPhoneEmpSubGroups,listChatUsers,listWebChatSessions,listPeerInfoRemoteSupportSessions);
+				}
+				for(int i=0;i<_listFormMaps.Count;i++) {
+					_listFormMaps[i].SetPhoneList(phoneList,listPhoneEmpSubGroups,listChatUsers,listWebChatSessions,listPeerInfoRemoteSupportSessions);
 				}
 				//Now set the small display's current phone extension info.
 				long employeeNum=0;
@@ -7026,6 +7079,9 @@ namespace OpenDental{
 				for(int i=0;i<_listFormMapHQs.Count;i++) {
 					_listFormMapHQs[i].SetOfficesDownList(listTasksOfficeDowns);
 				}
+				for(int i=0;i<_listFormMaps.Count;i++) {
+					_listFormMaps[i].SetOfficesDownList(listTasksOfficeDowns);
+				}
 			}
 			catch {
 				//HQ users are complaining of unhandled exception when they close OD.
@@ -7039,6 +7095,14 @@ namespace OpenDental{
 
 		public static void RemoveMapFromList(FormMapHQ formMapHQ) {
 			_listFormMapHQs.Remove(formMapHQ);
+		}
+
+		public static void AddMapToList2(HqPhones.FormMap formMap) {
+			_listFormMaps.Add(formMap);
+		}
+
+		public static void RemoveMapFromList2(HqPhones.FormMap formMap) {
+			_listFormMaps.Remove(formMap);
 		}
 
 		/// <summary>HQ Only. OnFillTriageLabelsResults must be invoked from a worker thread. These are the arguments necessary.</summary>
@@ -7077,7 +7141,7 @@ namespace OpenDental{
 				}
 				labelTriage.ForeColor=Color.Black;
 			}
-			labelTriage.Text="T:"+countStr;
+			labelTriage.Text=countStr;
 			labelWaitTime.Text=((int)timeSpanTriageBehind.TotalMinutes).ToString()+"m";
 			for(int i=0;i<_listFormMapHQs.Count;i++) {
 				_listFormMapHQs[i].SetTriageNormal(countWhiteTasks,countBlueTasks,timeSpanTriageBehind,countRedTasks);
@@ -7087,6 +7151,16 @@ namespace OpenDental{
 				}
 				_listFormMapHQs[i].SetTriageUrgent(countRedTasks,urgentTriageBehind);
 				_listFormMapHQs[i].SetChatCount();
+			}
+			
+			for(int i=0;i<_listFormMaps.Count;i++) {
+				_listFormMaps[i].SetTriageMain(countWhiteTasks,countBlueTasks,timeSpanTriageBehind,countRedTasks);
+				TimeSpan urgentTriageBehind=new TimeSpan(0);
+				if(timeOfOldestRedTaskNote.Year>1880) {
+					urgentTriageBehind=DateTime.Now-timeOfOldestRedTaskNote;
+				}
+				_listFormMaps[i].SetTriageRed(countRedTasks,urgentTriageBehind);
+				_listFormMaps[i].SetChatCount();
 			}
 		}
 		#endregion HQ-only metrics

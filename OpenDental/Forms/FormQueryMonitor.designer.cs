@@ -30,7 +30,7 @@ namespace OpenDental {
 			this.butLog = new OpenDental.UI.Button();
 			this.gridFeed = new OpenDental.UI.GridOD();
 			this.timerProcessQueue = new System.Windows.Forms.Timer(this.components);
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
@@ -266,7 +266,7 @@ namespace OpenDental {
 		private UI.Button butLog;
 		private UI.GridOD gridFeed;
 		private System.Windows.Forms.Timer timerProcessQueue;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label2;

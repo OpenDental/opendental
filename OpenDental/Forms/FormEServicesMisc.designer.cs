@@ -34,7 +34,7 @@ namespace OpenDental{
 			this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.butClose = new OpenDental.UI.Button();
-			this.groupDateFormat = new OpenDental.UI.GroupBoxOD();
+			this.groupDateFormat = new OpenDental.UI.GroupBox();
 			this.label30 = new System.Windows.Forms.Label();
 			this.labelDateCustom = new System.Windows.Forms.Label();
 			this.textDateCustom = new System.Windows.Forms.TextBox();
@@ -44,9 +44,9 @@ namespace OpenDental{
 			this.radioDatem = new System.Windows.Forms.RadioButton();
 			this.radioDateLongDate = new System.Windows.Forms.RadioButton();
 			this.radioDateShortDate = new System.Windows.Forms.RadioButton();
-			this.groupNotUsed = new OpenDental.UI.GroupBoxOD();
+			this.groupNotUsed = new OpenDental.UI.GroupBox();
 			this.butShowOldMobileSych = new OpenDental.UI.Button();
-			this.groupBox8 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox8 = new OpenDental.UI.GroupBox();
 			this.dateRunEnd = new System.Windows.Forms.DateTimePicker();
 			this.label46 = new System.Windows.Forms.Label();
 			this.dateRunStart = new System.Windows.Forms.DateTimePicker();
@@ -345,13 +345,13 @@ namespace OpenDental{
 		#endregion
 		private UI.Button butClose;
 		private System.Windows.Forms.Label label37;
-		private OpenDental.UI.GroupBoxOD groupBox8;
+		private OpenDental.UI.GroupBox groupBox8;
 		private System.Windows.Forms.Label label46;
 		private System.Windows.Forms.DateTimePicker dateRunEnd;
 		private System.Windows.Forms.DateTimePicker dateRunStart;
 		private System.Windows.Forms.Label label47;
 		private System.Windows.Forms.Label label48;
-		private OpenDental.UI.GroupBoxOD groupNotUsed;
+		private OpenDental.UI.GroupBox groupNotUsed;
 		private UI.Button butShowOldMobileSych;
 		private System.Windows.Forms.ContextMenuStrip menuWebSchedVerifyTextTemplate;
 		private System.Windows.Forms.ToolStripMenuItem insertReplacementsToolStripMenuItem;
@@ -361,7 +361,7 @@ namespace OpenDental{
 		private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
 		private System.Windows.Forms.Label label34;
-		private OpenDental.UI.GroupBoxOD groupDateFormat;
+		private OpenDental.UI.GroupBox groupDateFormat;
 		private System.Windows.Forms.RadioButton radioDateCustom;
 		private System.Windows.Forms.RadioButton radioDateMMMMdyyyy;
 		private System.Windows.Forms.RadioButton radioDatem;

@@ -28,7 +28,7 @@ namespace OpenDental{
 			this.butCancel = new OpenDental.UI.Button();
 			this.labelLocationID = new System.Windows.Forms.Label();
 			this.textLocationID = new System.Windows.Forms.TextBox();
-			this.comboClinic = new OpenDental.UI.ComboBoxOD();
+			this.comboClinic = new OpenDental.UI.ComboBox();
 			this.labelClinic = new System.Windows.Forms.Label();
 			this.textOverride = new System.Windows.Forms.TextBox();
 			this.labelOverride = new System.Windows.Forms.Label();
@@ -47,7 +47,7 @@ namespace OpenDental{
 			this.textInfoFile = new System.Windows.Forms.TextBox();
 			this.radioPatient = new System.Windows.Forms.RadioButton();
 			this.radioChart = new System.Windows.Forms.RadioButton();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -310,7 +310,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label labelLocationID;
 		private System.Windows.Forms.TextBox textLocationID;
-		private OpenDental.UI.ComboBoxOD comboClinic;
+		private OpenDental.UI.ComboBox comboClinic;
 		private System.Windows.Forms.Label labelClinic;
 		private System.Windows.Forms.TextBox textOverride;
 		private System.Windows.Forms.Label labelOverride;
@@ -329,6 +329,6 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textInfoFile;
 		private System.Windows.Forms.RadioButton radioPatient;
 		private System.Windows.Forms.RadioButton radioChart;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 	}
 }

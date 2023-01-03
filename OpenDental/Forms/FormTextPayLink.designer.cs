@@ -30,8 +30,8 @@ namespace OpenDental{
 			this.labelFormattedPreview = new System.Windows.Forms.Label();
 			this.checkIncludeInsurance = new OpenDental.UI.CheckBox();
 			this.butPreview = new OpenDental.UI.Button();
-			this.grouTemplateOptions = new OpenDental.UI.GroupBoxOD();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.grouTemplateOptions = new OpenDental.UI.GroupBox();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.radioAccount = new System.Windows.Forms.RadioButton();
 			this.radioAppointment = new System.Windows.Forms.RadioButton();
 			this.label1 = new System.Windows.Forms.Label();
@@ -234,12 +234,12 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelFormattedPreview;
 		private OpenDental.UI.CheckBox checkIncludeInsurance;
 		private UI.Button butPreview;
-		private OpenDental.UI.GroupBoxOD grouTemplateOptions;
+		private OpenDental.UI.GroupBox grouTemplateOptions;
 		private System.Windows.Forms.Label labelCheckIns;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.CheckBox checkBalForFam;
 		private UI.ComboBoxClinicPicker comboBoxClinicPicker;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.RadioButton radioAccount;
 		private System.Windows.Forms.RadioButton radioAppointment;
 		private UI.ToolBarOD toolBarMain;

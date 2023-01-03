@@ -53,8 +53,8 @@ namespace OpenDental {
 			this.label13 = new System.Windows.Forms.Label();
 			this.label12 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
-			this.groupTerms = new OpenDental.UI.GroupBoxOD();
-			this.groupTreatmentPlanned = new OpenDental.UI.GroupBoxOD();
+			this.groupTerms = new OpenDental.UI.GroupBox();
+			this.groupTreatmentPlanned = new OpenDental.UI.GroupBox();
 			this.radioTpTreatAsComplete = new System.Windows.Forms.RadioButton();
 			this.radioTpAwaitComplete = new System.Windows.Forms.RadioButton();
 			this.labelDateInterestStart = new System.Windows.Forms.Label();
@@ -66,7 +66,7 @@ namespace OpenDental {
 			this.label7 = new System.Windows.Forms.Label();
 			this.textPaymentCount = new OpenDental.ValidNum();
 			this.textPeriodPayment = new OpenDental.ValidDouble();
-			this.groupBoxFrequency = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxFrequency = new OpenDental.UI.GroupBox();
 			this.radioQuarterly = new System.Windows.Forms.RadioButton();
 			this.radioMonthly = new System.Windows.Forms.RadioButton();
 			this.radioOrdinalWeekday = new System.Windows.Forms.RadioButton();
@@ -94,8 +94,8 @@ namespace OpenDental {
 			this.labelClosed = new System.Windows.Forms.Label();
 			this.butSignPrint = new OpenDental.UI.Button();
 			this.signatureBoxWrapper = new OpenDental.UI.SignatureBoxWrapper();
-			this.groupBoxSignature = new OpenDental.UI.GroupBoxOD();
-			this.comboCategory = new OpenDental.UI.ComboBoxOD();
+			this.groupBoxSignature = new OpenDental.UI.GroupBox();
+			this.comboCategory = new OpenDental.UI.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabSchedule = new System.Windows.Forms.TabPage();
@@ -1123,7 +1123,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label8;
-		private OpenDental.UI.GroupBoxOD groupTerms;
+		private OpenDental.UI.GroupBox groupTerms;
 		private OpenDental.ValidDate textDate;
 		private OpenDental.ValidDouble textTotalPrincipal;
 		private OpenDental.ValidDate textDateFirstPay;
@@ -1159,9 +1159,9 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelClosed;
 		private UI.Button butSignPrint;
 		private UI.SignatureBoxWrapper signatureBoxWrapper;
-		private OpenDental.UI.GroupBoxOD groupBoxSignature;
+		private OpenDental.UI.GroupBox groupBoxSignature;
 		private ValidNum textPaymentCount;
-		private UI.ComboBoxOD comboCategory;
+		private UI.ComboBox comboCategory;
 		private System.Windows.Forms.Label label2;
 		private UI.Button butUnlock;
 		private UI.Button butSave;
@@ -1179,7 +1179,7 @@ namespace OpenDental {
 		private System.Windows.Forms.TabPage tabProduction;
 		private UI.GridOD gridLinkedProduction;
 		private UI.Button butPrintProduction;
-		private OpenDental.UI.GroupBoxOD groupBoxFrequency;
+		private OpenDental.UI.GroupBox groupBoxFrequency;
 		public System.Windows.Forms.RadioButton radioWeekly;
 		public System.Windows.Forms.RadioButton radioEveryOtherWeek;
 		public System.Windows.Forms.RadioButton radioOrdinalWeekday;
@@ -1197,7 +1197,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelDateInterestStart;
 		private ValidDate textDateInterestStart;
 		private UI.Button butAddProd;
-		private OpenDental.UI.GroupBoxOD groupTreatmentPlanned;
+		private OpenDental.UI.GroupBox groupTreatmentPlanned;
 		private System.Windows.Forms.RadioButton radioTpTreatAsComplete;
 		private System.Windows.Forms.RadioButton radioTpAwaitComplete;
 		private UI.Button butSendToDevice;

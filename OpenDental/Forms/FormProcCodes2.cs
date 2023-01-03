@@ -341,7 +341,7 @@ namespace OpenDental {
 			butPickProv3.Enabled=true;
 		}
 
-		private void AddFeeSchedGroupToComboBox(FeeSchedGroup feeSchedGroup,ComboBoxOD comboBoxFeeSchedGroup,long feeSchedGroupNumSelected) {
+		private void AddFeeSchedGroupToComboBox(FeeSchedGroup feeSchedGroup,UI.ComboBox comboBoxFeeSchedGroup,long feeSchedGroupNumSelected) {
 			if(feeSchedGroup==null || feeSchedGroup.ListClinicNumsAll.Count==0){ //skip if empty group
 				return;
 			}

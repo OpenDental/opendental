@@ -25,7 +25,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpInsAging));
 			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
-			this.groupAgeOfAccount = new OpenDental.UI.GroupBoxOD();
+			this.groupAgeOfAccount = new OpenDental.UI.GroupBox();
 			this.radio30 = new System.Windows.Forms.RadioButton();
 			this.radio90 = new System.Windows.Forms.RadioButton();
 			this.radio60 = new System.Windows.Forms.RadioButton();
@@ -41,12 +41,12 @@ namespace OpenDental {
 			this.checkAllClin = new System.Windows.Forms.CheckBox();
 			this.listClin = new OpenDental.UI.ListBoxOD();
 			this.labelClin = new System.Windows.Forms.Label();
-			this.groupGroupBy = new OpenDental.UI.GroupBoxOD();
+			this.groupGroupBy = new OpenDental.UI.GroupBox();
 			this.radioGroupByPat = new System.Windows.Forms.RadioButton();
 			this.radioGroupByFam = new System.Windows.Forms.RadioButton();
 			this.labelFutureTrans = new System.Windows.Forms.Label();
 			this.checkOnlyShowPatsOutstandingClaims = new System.Windows.Forms.CheckBox();
-			this.groupFilter = new OpenDental.UI.GroupBoxOD();
+			this.groupFilter = new OpenDental.UI.GroupBox();
 			this.textGroupName = new System.Windows.Forms.TextBox();
 			this.textCarrier = new System.Windows.Forms.TextBox();
 			this.labelGroupName = new System.Windows.Forms.Label();
@@ -377,7 +377,7 @@ namespace OpenDental {
 		#region Designer Variables
 		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
-		private OpenDental.UI.GroupBoxOD groupAgeOfAccount;
+		private OpenDental.UI.GroupBox groupAgeOfAccount;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.ValidDate textDate;
 		private OpenDental.UI.ListBoxOD listBillType;
@@ -393,12 +393,12 @@ namespace OpenDental {
 		private OpenDental.UI.ListBoxOD listClin;
 		private Label labelClin;
 		private System.Windows.Forms.RadioButton radioAny;
-		private OpenDental.UI.GroupBoxOD groupGroupBy;
+		private OpenDental.UI.GroupBox groupGroupBy;
 		private RadioButton radioGroupByPat;
 		private RadioButton radioGroupByFam;
 		private CheckBox checkOnlyShowPatsOutstandingClaims;
 		private Label labelFutureTrans;
-		private OpenDental.UI.GroupBoxOD groupFilter;
+		private OpenDental.UI.GroupBox groupFilter;
 		private TextBox textGroupName;
 		private TextBox textCarrier;
 		private Label labelGroupName;

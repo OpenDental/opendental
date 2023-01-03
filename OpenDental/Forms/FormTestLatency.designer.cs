@@ -29,8 +29,8 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			this.butLatency = new OpenDental.UI.Button();
 			this.butClose = new OpenDental.UI.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.butSpeed = new OpenDental.UI.Button();
 			this.label4 = new System.Windows.Forms.Label();
@@ -176,8 +176,8 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textLatency;
 		private System.Windows.Forms.Label label2;
-		private OpenDental.UI.GroupBoxOD groupBox1;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox1;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.Label label3;
 		private UI.Button butSpeed;
 		private System.Windows.Forms.Label label4;

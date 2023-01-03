@@ -41,8 +41,8 @@ namespace OpenDental {
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.labelInfo = new System.Windows.Forms.Label();
 			this.label17 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
-			this.groupBox3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.label37 = new System.Windows.Forms.Label();
 			this.textSeparatorSegment = new System.Windows.Forms.TextBox();
 			this.label38 = new System.Windows.Forms.Label();
@@ -61,7 +61,7 @@ namespace OpenDental {
 			this.label18 = new System.Windows.Forms.Label();
 			this.textGS03 = new System.Windows.Forms.TextBox();
 			this.label24 = new System.Windows.Forms.Label();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.label30 = new System.Windows.Forms.Label();
 			this.label29 = new System.Windows.Forms.Label();
 			this.textSenderTelephone = new OpenDental.ValidPhone();
@@ -97,13 +97,13 @@ namespace OpenDental {
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.labelLoginID = new System.Windows.Forms.Label();
-			this.comboCommBridge = new OpenDental.UI.ComboBoxOD();
+			this.comboCommBridge = new OpenDental.UI.ComboBox();
 			this.label14 = new System.Windows.Forms.Label();
 			this.label13 = new System.Windows.Forms.Label();
 			this.label12 = new System.Windows.Forms.Label();
 			this.labelClientProgram = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
-			this.comboFormat = new OpenDental.UI.ComboBoxOD();
+			this.comboFormat = new OpenDental.UI.ComboBox();
 			this.labelPassword = new System.Windows.Forms.Label();
 			this.labelReportPath = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
@@ -939,12 +939,12 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label labelReportPath;
 		private System.Windows.Forms.Label labelPassword;
-		private UI.ComboBoxOD comboFormat;
+		private UI.ComboBox comboFormat;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.TextBox textPassword;
 		private System.Windows.Forms.Label labelClientProgram;
 		private System.Windows.Forms.TextBox textResponsePath;
-		private UI.ComboBoxOD comboCommBridge;
+		private UI.ComboBox comboCommBridge;
 		private System.Windows.Forms.TextBox textClientProgram;
 		private System.Windows.Forms.Label label12;
 		private System.Windows.Forms.TextBox textModemPort;
@@ -952,7 +952,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label14;
 		private System.Windows.Forms.TextBox textLoginID;
 		private System.Windows.Forms.Label labelLoginID;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private Label label9;
 		private TextBox textISA05;
 		private Label label16;
@@ -964,7 +964,7 @@ namespace OpenDental {
 		private Label label22;
 		private TextBox textISA15;
 		private Label label23;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private Label labelSenderTelephone;
 		private Label labelSenderName;
 		private Label labelTIN;
@@ -984,7 +984,7 @@ namespace OpenDental {
 		private Label label3;
 		private TextBox textISA04;
 		private Label label28;
-		private OpenDental.UI.GroupBoxOD groupBox3;
+		private OpenDental.UI.GroupBox groupBox3;
 		private Label label33;
 		private TextBox textSeparatorData;
 		private Label label34;

@@ -27,7 +27,7 @@ namespace OpenDental{
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butClose = new OpenDental.UI.Button();
-			this.groupBoxInsVerifyChecks = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxInsVerifyChecks = new OpenDental.UI.GroupBox();
 			this.checkChangeEffectiveDates = new OpenDental.UI.CheckBox();
 			this.checkChangeInsHist = new OpenDental.UI.CheckBox();
 			this.checkCheckDeductable = new OpenDental.UI.CheckBox();
@@ -158,7 +158,7 @@ namespace OpenDental{
 		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private UI.Button butAdd;
-		private UI.GroupBoxOD groupBoxInsVerifyChecks;
+		private UI.GroupBox groupBoxInsVerifyChecks;
 		private OpenDental.UI.CheckBox checkCheckDeductable;
 		private OpenDental.UI.CheckBox checkCheckAnnualMax;
 		private OpenDental.UI.CheckBox checkCreateAdjustments;

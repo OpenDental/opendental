@@ -27,14 +27,14 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOnlinePayments));
 			this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.menuItemGoTo = new System.Windows.Forms.ToolStripMenuItem();
-			this.comboClinic = new OpenDental.UI.ComboBoxOD();
+			this.comboClinic = new OpenDental.UI.ComboBox();
 			this.labelClinic = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.butClose = new OpenDental.UI.Button();
-			this.comboPaymentSource = new OpenDental.UI.ComboBoxOD();
+			this.comboPaymentSource = new OpenDental.UI.ComboBox();
 			this.labelPaymentSource = new System.Windows.Forms.Label();
-			this.comboProcessStatus = new OpenDental.UI.ComboBoxOD();
+			this.comboProcessStatus = new OpenDental.UI.ComboBox();
 			this.labelProcessStatus = new System.Windows.Forms.Label();
 			this.dateStart = new System.Windows.Forms.DateTimePicker();
 			this.dateEnd = new System.Windows.Forms.DateTimePicker();
@@ -202,14 +202,14 @@ namespace OpenDental {
 
 		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
-		private OpenDental.UI.ComboBoxOD comboClinic;
+		private OpenDental.UI.ComboBox comboClinic;
 		private System.Windows.Forms.Label labelClinic;
 		private UI.Button butRefresh;
 		private System.Windows.Forms.ContextMenuStrip contextMenu;
 		private System.Windows.Forms.ToolStripMenuItem menuItemGoTo;
-		private UI.ComboBoxOD comboPaymentSource;
+		private UI.ComboBox comboPaymentSource;
 		private System.Windows.Forms.Label labelPaymentSource;
-		private UI.ComboBoxOD comboProcessStatus;
+		private UI.ComboBox comboProcessStatus;
 		private System.Windows.Forms.Label labelProcessStatus;
 		private System.Windows.Forms.DateTimePicker dateStart;
 		private System.Windows.Forms.DateTimePicker dateEnd;

@@ -36,7 +36,7 @@ namespace OpenDental {
 			this.butBrowseLetter = new OpenDental.UI.Button();
 			this.textLetterMergePath = new System.Windows.Forms.TextBox();
 			this.checkMultiplePaths = new System.Windows.Forms.CheckBox();
-			this.groupbox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupbox1 = new OpenDental.UI.GroupBox();
 			this.radioSftp = new System.Windows.Forms.RadioButton();
 			this.radioDropboxStorage = new System.Windows.Forms.RadioButton();
 			this.tabControlDataStorageType = new System.Windows.Forms.TabControl();
@@ -598,7 +598,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butBrowseServer;
 		private Label labelServerPath;
 		private TextBox textServerPath;
-		private OpenDental.UI.GroupBoxOD groupbox1;
+		private OpenDental.UI.GroupBox groupbox1;
 		private TabControl tabControlDataStorageType;
 		private TabPage tabAtoZ;
 		private TabPage tabInDatabase;

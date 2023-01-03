@@ -486,7 +486,7 @@ namespace OpenDental {
 			if(Security.CurUser==null) {
 				return;//Don't waste time processing phone metrics when no one is logged in and sitting at the log on screen.
 			}
-			if(_listFormMapHQs.Count>0 
+			if((_listFormMapHQs.Count>0 || _listFormMaps.Count>0)
 				&& DateTime.Now.Subtract(_dateHqOfficeDownLastRefreshed).TotalSeconds>PrefC.GetInt(PrefName.ProcessSigsIntervalInSecs)) 
 			{
 				List<OpenDentBusiness.Task> listOfficesDowns=Tasks.GetOfficeDowns();
@@ -538,7 +538,7 @@ namespace OpenDental {
 			if(DateTime.Now.Subtract(_dateTimeHqEServiceMetricsLastRefreshed).TotalSeconds<10) {
 				return;
 			}
-			if(_listFormMapHQs.Count==0) { //Do not run if the HQ map is not open.
+			if(_listFormMapHQs.Count==0 && _listFormMaps.Count==0) { //Do not run if the HQ map is not open.
 				return;
 			}
 			_dateTimeHqEServiceMetricsLastRefreshed=DateTime.Now;
@@ -549,6 +549,9 @@ namespace OpenDental {
 			}
 			foreach(FormMapHQ formMapHQ in _listFormMapHQs) {
 				formMapHQ.Invoke(new MethodInvoker(delegate { formMapHQ.SetEServiceMetrics(metricsToday); }));
+			}
+			for(int i=0;i<_listFormMaps.Count;i++) {
+				_listFormMaps[i].Invoke(new MethodInvoker(delegate { _listFormMaps[i].SetEServiceMetrics(metricsToday); }));
 			}
 		}
 
@@ -1064,6 +1067,9 @@ namespace OpenDental {
 			}
 			foreach(FormMapHQ formMapHQ in _listFormMapHQs) {
 				formMapHQ.SetVoicemailRed(voiceMailCount,ageOfOldestVoicemail);
+			}
+			for(int i=0;i<_listFormMaps.Count;i++) {
+				_listFormMaps[i].SetVoicemail(voiceMailCount,ageOfOldestVoicemail);
 			}
 			if(_formPhoneTiles!=null && !_formPhoneTiles.IsDisposed) {
 				_formPhoneTiles.SetVoicemailCount(voiceMailCount);

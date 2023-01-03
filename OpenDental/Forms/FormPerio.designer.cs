@@ -33,7 +33,7 @@ namespace OpenDental {
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPerio));
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.radioFacialsFirst = new System.Windows.Forms.RadioButton();
 			this.radioRight = new System.Windows.Forms.RadioButton();
 			this.radioLeft = new System.Windows.Forms.RadioButton();
@@ -58,7 +58,7 @@ namespace OpenDental {
 			this.but10 = new OpenDental.UI.Button();
 			this.checkShowCurrent = new System.Windows.Forms.CheckBox();
 			this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.textCountMob = new System.Windows.Forms.TextBox();
 			this.updownMob = new System.Windows.Forms.DomainUpDown();
 			this.textRedMob = new System.Windows.Forms.TextBox();
@@ -117,7 +117,7 @@ namespace OpenDental {
 			this.labelListening = new System.Windows.Forms.Label();
 			this.labelNotes = new System.Windows.Forms.Label();
 			this.butCopyNote = new OpenDental.UI.Button();
-			this.groupEClip = new OpenDental.UI.GroupBoxOD();
+			this.groupEClip = new OpenDental.UI.GroupBox();
 			this.labelIsMobileActive = new System.Windows.Forms.Label();
 			this.butUnlockEClip = new OpenDental.UI.Button();
 			this.butEClipboard = new OpenDental.UI.Button();
@@ -1126,7 +1126,7 @@ namespace OpenDental {
 
 		#region Controls
 		private OpenDental.UI.Button but7;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.RadioButton radioLeft;
 		private System.Windows.Forms.RadioButton radioRight;
 		private OpenDental.UI.Button but3;
@@ -1145,7 +1145,7 @@ namespace OpenDental {
 		private System.Windows.Forms.ToolTip toolTip1;
 		private System.Windows.Forms.Button butColorBleed;
 		private System.Windows.Forms.ColorDialog colorDialog1;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.Button butColorPus;
 		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butAdd;
@@ -1216,7 +1216,7 @@ namespace OpenDental {
 		//private OpenDental.ContrPerio contrPerio1;
 		#endregion Controls
 
-		private UI.GroupBoxOD groupEClip;
+		private UI.GroupBox groupEClip;
 		private UI.Button butEClipboard;
 		private UI.Button butAllExamsEclip;
 		private Timer timerEClipCheck;

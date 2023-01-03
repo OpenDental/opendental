@@ -30,7 +30,7 @@
 			this.butOK = new OpenDental.UI.Button();
 			this.labelPath = new System.Windows.Forms.Label();
 			this.textPath = new System.Windows.Forms.TextBox();
-			this.groupSettings = new OpenDental.UI.GroupBoxOD();
+			this.groupSettings = new OpenDental.UI.GroupBox();
 			this.listToolBars = new OpenDental.UI.ListBoxOD();
 			this.label6 = new System.Windows.Forms.Label();
 			this.textProgDesc = new System.Windows.Forms.TextBox();
@@ -206,7 +206,7 @@
 		private UI.Button butOK;
 		private System.Windows.Forms.Label labelPath;
 		private System.Windows.Forms.TextBox textPath;
-		private OpenDental.UI.GroupBoxOD groupSettings;
+		private OpenDental.UI.GroupBox groupSettings;
 		private System.Windows.Forms.TextBox textProgDesc;
 		private System.Windows.Forms.Label labelDesc;
 		private System.Windows.Forms.Label labelButText;

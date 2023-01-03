@@ -30,7 +30,7 @@ namespace OpenDental{
 			this.butAll = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupFilters = new OpenDental.UI.GroupBoxOD();
+			this.groupFilters = new OpenDental.UI.GroupBox();
 			this.labelTo = new System.Windows.Forms.Label();
 			this.odDatePickerTo = new OpenDental.UI.ODDatePicker();
 			this.labelFrom = new System.Windows.Forms.Label();
@@ -228,7 +228,7 @@ namespace OpenDental{
 		private UI.Button butAll;
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.Label label1;
-		private OpenDental.UI.GroupBoxOD groupFilters;
+		private OpenDental.UI.GroupBox groupFilters;
 		private System.Windows.Forms.Label labelTransTypes;
 		private UI.ListBoxOD listBoxTransTypes;
 		private UI.Button butToday;

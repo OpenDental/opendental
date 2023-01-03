@@ -37,7 +37,7 @@ namespace OpenDental {
 			this.label6 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
-			this.comboTriageCoordinator = new OpenDental.UI.ComboBoxOD();
+			this.comboTriageCoordinator = new OpenDental.UI.ComboBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
 			this.butChangeColorInner = new OpenDental.UI.Button();
@@ -53,7 +53,7 @@ namespace OpenDental {
 			this.panelSiteColor = new System.Windows.Forms.Panel();
 			this.label11 = new System.Windows.Forms.Label();
 			this.label12 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.gridConnections = new OpenDental.UI.GridOD();
 			this.butDefault = new OpenDental.UI.Button();
 			this.groupBox1.SuspendLayout();
@@ -440,7 +440,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label7;
-		private OpenDental.UI.ComboBoxOD comboTriageCoordinator;
+		private OpenDental.UI.ComboBox comboTriageCoordinator;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label9;
 		private UI.Button butChangeColorInner;
@@ -456,7 +456,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Panel panelSiteColor;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.Label label12;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private UI.GridOD gridConnections;
 		private UI.Button butDefault;
 	}

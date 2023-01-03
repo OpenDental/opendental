@@ -28,8 +28,8 @@ namespace OpenDental{
 			this.butCancel = new OpenDental.UI.Button();
 			this.labelSpecialty = new System.Windows.Forms.Label();
 			this.labelClinic = new System.Windows.Forms.Label();
-			this.comboClinic = new OpenDental.UI.ComboBoxOD();
-			this.comboSpecialty = new OpenDental.UI.ComboBoxOD();
+			this.comboClinic = new OpenDental.UI.ComboBox();
+			this.comboSpecialty = new OpenDental.UI.ComboBox();
 			this.textPreferred = new System.Windows.Forms.TextBox();
 			this.textMiddleI = new System.Windows.Forms.TextBox();
 			this.textFName = new System.Windows.Forms.TextBox();
@@ -37,13 +37,13 @@ namespace OpenDental{
 			this.labelPreferredAndMiddleI = new System.Windows.Forms.Label();
 			this.labelFName = new System.Windows.Forms.Label();
 			this.labelLName = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textAge = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textBirthDate = new System.Windows.Forms.TextBox();
 			this.labelPriProv = new System.Windows.Forms.Label();
 			this.butPickPrimary = new OpenDental.UI.Button();
-			this.comboPriProv = new OpenDental.UI.ComboBoxOD();
+			this.comboPriProv = new OpenDental.UI.ComboBox();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -271,8 +271,8 @@ namespace OpenDental{
 		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label labelSpecialty;
 		private System.Windows.Forms.Label labelClinic;
-		private OpenDental.UI.ComboBoxOD comboClinic;
-		private OpenDental.UI.ComboBoxOD comboSpecialty;
+		private OpenDental.UI.ComboBox comboClinic;
+		private OpenDental.UI.ComboBox comboSpecialty;
 		private System.Windows.Forms.TextBox textPreferred;
 		private System.Windows.Forms.TextBox textMiddleI;
 		private System.Windows.Forms.TextBox textFName;
@@ -280,12 +280,12 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelPreferredAndMiddleI;
 		private System.Windows.Forms.Label labelFName;
 		private System.Windows.Forms.Label labelLName;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textBirthDate;
 		private System.Windows.Forms.TextBox textAge;
 		private System.Windows.Forms.Label labelPriProv;
 		private UI.Button butPickPrimary;
-		private OpenDental.UI.ComboBoxOD comboPriProv;
+		private OpenDental.UI.ComboBox comboPriProv;
 	}
 }

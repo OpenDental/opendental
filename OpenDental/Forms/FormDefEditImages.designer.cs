@@ -33,7 +33,7 @@ namespace OpenDental {
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.checkHidden = new OpenDental.UI.CheckBox();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.checkThumbnails = new OpenDental.UI.CheckBox();
 			this.checkTaskAttachments = new OpenDental.UI.CheckBox();
 			this.checkAutoSaveForm = new OpenDental.UI.CheckBox();
@@ -275,7 +275,7 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkClaimAttachments;
 		private OpenDental.UI.CheckBox checkLabCases;
 		private OpenDental.UI.CheckBox checkAutoSaveForm;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.CheckBox checkTaskAttachments;
 		private OpenDental.UI.CheckBox checkThumbnails;
 	}

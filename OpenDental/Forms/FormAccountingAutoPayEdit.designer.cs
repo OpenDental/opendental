@@ -35,7 +35,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAccountingAutoPayEdit));
 			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
-			this.comboPayType = new OpenDental.UI.ComboBoxOD();
+			this.comboPayType = new OpenDental.UI.ComboBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.listAccounts = new UI.ListBoxOD();
 			this.label6 = new System.Windows.Forms.Label();
@@ -153,7 +153,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butDelete;
 		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
-		private OpenDental.UI.ComboBoxOD comboPayType;
+		private OpenDental.UI.ComboBox comboPayType;
 		private Label label7;
 		private UI.ListBoxOD listAccounts;
 		private Label label6;

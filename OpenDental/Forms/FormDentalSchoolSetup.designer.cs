@@ -29,7 +29,7 @@ namespace OpenDental{
 			this.textStudents = new System.Windows.Forms.TextBox();
 			this.textInstructors = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butStudentPicker = new OpenDental.UI.Button();
 			this.butInstructorPicker = new OpenDental.UI.Button();
 			this.butGradingScales = new OpenDental.UI.Button();
@@ -176,6 +176,6 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label3;
 		private UI.Button butEvaluation;
 		private UI.Button butGradingScales;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 	}
 }

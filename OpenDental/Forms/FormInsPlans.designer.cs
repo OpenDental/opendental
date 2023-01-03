@@ -40,13 +40,13 @@ namespace OpenDental {
 			this.labelCarrier = new System.Windows.Forms.Label();
 			this.textEmployer = new System.Windows.Forms.TextBox();
 			this.labelEmployer = new System.Windows.Forms.Label();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.radioOrderCarrier = new System.Windows.Forms.RadioButton();
 			this.radioOrderEmp = new System.Windows.Forms.RadioButton();
 			this.butOK = new OpenDental.UI.Button();
 			this.butBlank = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -333,7 +333,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butBlank;
 		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.RadioButton radioOrderCarrier;
 		private System.Windows.Forms.RadioButton radioOrderEmp;
 		private Label labelEmployer;
@@ -353,6 +353,6 @@ namespace OpenDental {
 		private UI.Button butGetAll;
 		private TextBox textPlanNum;
 		private Label labelInsPlanID;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 	}
 }

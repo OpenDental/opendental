@@ -27,8 +27,8 @@ namespace OpenDental {
 			System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormBugSubmissionHashVitals));
 			this.gridHashes = new OpenDental.UI.GridOD();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
-			this.comboGrouping = new OpenDental.UI.ComboBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
+			this.comboGrouping = new OpenDental.UI.ComboBox();
 			this.label13 = new System.Windows.Forms.Label();
 			this.textBugIds = new OpenDental.ODtextBox();
 			this.label4 = new System.Windows.Forms.Label();
@@ -42,7 +42,7 @@ namespace OpenDental {
 			this.label1 = new System.Windows.Forms.Label();
 			this.splitContainerNoFlicker1 = new OpenDental.SplitContainerNoFlicker();
 			this.gridSubs = new OpenDental.UI.GridOD();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.butCheckHash = new OpenDental.UI.Button();
 			this.chartVitals = new System.Windows.Forms.DataVisualization.Charting.Chart();
 			this.gridHashData = new OpenDental.UI.GridOD();
@@ -332,7 +332,7 @@ namespace OpenDental {
 
 		#endregion
 		private UI.GridOD gridHashes;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private ODtextBox textHashNum;
 		private System.Windows.Forms.Label label2;
 		private ODtextBox textPartHash;
@@ -345,11 +345,11 @@ namespace OpenDental {
 		private UI.GridOD gridHashData;
 		private System.Windows.Forms.DataVisualization.Charting.Chart chartVitals;
 		private UI.Button butCheckHash;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private UI.GridOD gridSubs;
 		private ODtextBox textBugIds;
 		private System.Windows.Forms.Label label4;
-		private OpenDental.UI.ComboBoxOD comboGrouping;
+		private OpenDental.UI.ComboBox comboGrouping;
 		private System.Windows.Forms.Label label13;
 	}
 }

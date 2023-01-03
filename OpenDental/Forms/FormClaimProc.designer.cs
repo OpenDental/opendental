@@ -48,7 +48,7 @@
 			this.labelFeeBilled = new System.Windows.Forms.Label();
 			this.labelDedApplied = new System.Windows.Forms.Label();
 			this.labelPaidOtherIns = new System.Windows.Forms.Label();
-			this.groupClaim = new OpenDental.UI.GroupBoxOD();
+			this.groupClaim = new OpenDental.UI.GroupBox();
 			this.labelAttachedToCheck = new System.Windows.Forms.Label();
 			this.radioClaim = new System.Windows.Forms.RadioButton();
 			this.radioEstimate = new System.Windows.Forms.RadioButton();
@@ -71,7 +71,7 @@
 			this.textInsEstTotalOverride = new OpenDental.ValidDouble();
 			this.textInsEstTotal = new OpenDental.ValidDouble();
 			this.label17 = new System.Windows.Forms.Label();
-			this.groupAllowed = new OpenDental.UI.GroupBoxOD();
+			this.groupAllowed = new OpenDental.UI.GroupBox();
 			this.textAllowedOverride = new OpenDental.ValidDouble();
 			this.label10 = new System.Windows.Forms.Label();
 			this.textAllowedFeeSched = new System.Windows.Forms.TextBox();
@@ -92,7 +92,7 @@
 			this.textCopayAmt = new OpenDental.ValidDouble();
 			this.textDedEstOverride = new OpenDental.ValidDouble();
 			this.textPercentOverride = new OpenDental.ValidNum();
-			this.groupClaimInfo = new OpenDental.UI.GroupBoxOD();
+			this.groupClaimInfo = new OpenDental.UI.GroupBox();
 			this.textPatPortion2 = new OpenDental.ValidDouble();
 			this.labelPatPortion2 = new System.Windows.Forms.Label();
 			this.textWriteOff = new OpenDental.ValidDouble();
@@ -104,11 +104,11 @@
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.textClinic = new System.Windows.Forms.TextBox();
 			this.labelClinic = new System.Windows.Forms.Label();
-			this.comboProvider = new OpenDental.UI.ComboBoxOD();
-			this.comboStatus = new OpenDental.UI.ComboBoxOD();
+			this.comboProvider = new OpenDental.UI.ComboBox();
+			this.comboStatus = new OpenDental.UI.ComboBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.checkPayPlan = new OpenDental.UI.CheckBox();
-			this.comboPayTracker = new OpenDental.UI.ComboBoxOD();
+			this.comboPayTracker = new OpenDental.UI.ComboBox();
 			this.label12 = new System.Windows.Forms.Label();
 			this.butPickProv = new OpenDental.UI.Button();
 			this.textDateEntry = new OpenDental.ValidDate();
@@ -1157,7 +1157,7 @@
 		private System.Windows.Forms.Panel panelEstimateInfo;
 		private System.Windows.Forms.Label labelNotInClaim;
 		private System.Windows.Forms.Label labelAttachedToCheck;
-		private OpenDental.UI.GroupBoxOD groupClaimInfo;
+		private OpenDental.UI.GroupBox groupClaimInfo;
 		private System.Windows.Forms.Label labelInsPayAmt;
 		private System.Windows.Forms.Label labelInsPayEst;
 		private System.Windows.Forms.Label labelPaidOtherIns;
@@ -1169,7 +1169,7 @@
 		private System.Windows.Forms.Label labelRemarks;
 		private OpenDental.ValidDouble textCopayOverride;
 		private System.Windows.Forms.Panel panelClaimExtras;
-		private OpenDental.UI.GroupBoxOD groupClaim;
+		private OpenDental.UI.GroupBox groupClaim;
 		private OpenDental.ValidDate textProcDate;
 		private System.Windows.Forms.Label labelProcDate;
 		private System.Windows.Forms.Label labelCarrierAllowed;
@@ -1186,7 +1186,7 @@
 		private System.Windows.Forms.TextBox textFeeSched;
 		private System.Windows.Forms.TextBox textAllowedFeeSched;
 		private System.Windows.Forms.Label label8;
-		private OpenDental.UI.GroupBoxOD groupAllowed;
+		private OpenDental.UI.GroupBox groupAllowed;
 		private System.Windows.Forms.Label label10;
 		private ValidDouble textDedEstOverride;
 		private ValidDouble textDedEst;
@@ -1209,11 +1209,11 @@
 		private System.Windows.Forms.TextBox textClinic;
 		private System.Windows.Forms.Label labelClinic;
 		private OpenDental.UI.Button butPickProv;
-		private OpenDental.UI.ComboBoxOD comboProvider;
-		private OpenDental.UI.ComboBoxOD comboStatus;
+		private OpenDental.UI.ComboBox comboProvider;
+		private OpenDental.UI.ComboBox comboStatus;
 		private System.Windows.Forms.Label label6;
 		private OpenDental.UI.CheckBox checkPayPlan;
-		private OpenDental.UI.ComboBoxOD comboPayTracker;
+		private OpenDental.UI.ComboBox comboPayTracker;
 		private System.Windows.Forms.Label label12;
 		private UI.Button butBlueBookLog;
 		private System.Windows.Forms.Label labelClaimAdjReasonCodes;

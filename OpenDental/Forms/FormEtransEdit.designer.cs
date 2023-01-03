@@ -47,7 +47,7 @@ namespace OpenDental {
 			this.textAckCode = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.textNote = new System.Windows.Forms.TextBox();
-			this.groupAck = new OpenDental.UI.GroupBoxOD();
+			this.groupAck = new OpenDental.UI.GroupBox();
 			this.label10 = new System.Windows.Forms.Label();
 			this.butPrintAck = new OpenDental.UI.Button();
 			this.textAckNote = new System.Windows.Forms.TextBox();
@@ -389,7 +389,7 @@ namespace OpenDental {
 		private TextBox textAckCode;
 		private Label label6;
 		private TextBox textNote;
-		private OpenDental.UI.GroupBoxOD groupAck;
+		private OpenDental.UI.GroupBox groupAck;
 		private Label label7;
 		private RichTextBox textAckMessage;
 		private Label label9;

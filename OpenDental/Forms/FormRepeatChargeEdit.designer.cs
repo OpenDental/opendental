@@ -54,7 +54,7 @@ namespace OpenDental {
 			this.textTotalAmount = new System.Windows.Forms.TextBox();
 			this.textNumOfCharges = new System.Windows.Forms.TextBox();
 			this.label10 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butCalculate = new OpenDental.UI.Button();
 			this.butManual = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
@@ -77,7 +77,7 @@ namespace OpenDental {
 			this.textProvName = new System.Windows.Forms.TextBox();
 			this.textZipwhipChargeAmount = new OpenDental.ValidDouble();
 			this.labelZipwhipAmt = new System.Windows.Forms.Label();
-			this.comboUnearnedTypes = new OpenDental.UI.ComboBoxOD();
+			this.comboUnearnedTypes = new OpenDental.UI.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -571,7 +571,7 @@ namespace OpenDental {
 		private TextBox textTotalAmount;
 		private TextBox textNumOfCharges;
 		private Label label10;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private Button butCalculate;
 		private Label labelBillingCycleDay;
 		private ValidNum textBillingDay;
@@ -587,7 +587,7 @@ namespace OpenDental {
 		private TextBox textProvName;
 		private ValidDouble textZipwhipChargeAmount;
 		private Label labelZipwhipAmt;
-		private UI.ComboBoxOD comboUnearnedTypes;
+		private UI.ComboBox comboUnearnedTypes;
 		private Label label2;
 	}
 }

@@ -26,7 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpInsPayPlansPastDue));
 			this.butClose = new OpenDental.UI.Button();
 			this.labelProv = new System.Windows.Forms.Label();
-			this.comboProvs = new OpenDental.UI.ComboBoxOD();
+			this.comboProvs = new OpenDental.UI.ComboBox();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textDaysPastDue = new System.Windows.Forms.TextBox();
@@ -155,7 +155,7 @@ namespace OpenDental{
 		#endregion
 		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label labelProv;
-		private UI.ComboBoxOD comboProvs;
+		private UI.ComboBox comboProvs;
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textDaysPastDue;

@@ -29,7 +29,7 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			this.radioPatient = new System.Windows.Forms.RadioButton();
 			this.radioOther = new System.Windows.Forms.RadioButton();
-			this.groupRecipient = new OpenDental.UI.GroupBoxOD();
+			this.groupRecipient = new OpenDental.UI.GroupBox();
 			this.textPatient = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.butPatFind = new OpenDental.UI.Button();
@@ -257,7 +257,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.RadioButton radioPatient;
 		private System.Windows.Forms.RadioButton radioOther;
-		private OpenDental.UI.GroupBoxOD groupRecipient;
+		private OpenDental.UI.GroupBox groupRecipient;
 		private System.Windows.Forms.TextBox textPatient;
 		private System.Windows.Forms.Label label4;
 		private UI.Button butPatFind;

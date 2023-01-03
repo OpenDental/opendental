@@ -879,12 +879,12 @@ namespace OpenDental {
 					listControls[i].BackColor=SystemColors.Control;
 				}
 				else if(listControls[i] is UI.Button
-					|| listControls[i] is ComboBox 
-					|| listControls[i] is System.Windows.Forms.CheckBox 
-					|| listControls[i] is GroupBox 
-					|| listControls[i] is Panel 
-					|| listControls[i] is SignatureBoxWrapper 
-					|| listControls[i] is ComboBoxOD 
+					|| listControls[i] is System.Windows.Forms.ComboBox
+					|| listControls[i] is System.Windows.Forms.CheckBox
+					|| listControls[i] is System.Windows.Forms.GroupBox
+					|| listControls[i] is Panel
+					|| listControls[i] is SignatureBoxWrapper
+					|| listControls[i] is UI.ComboBox
 					|| listControls[i] is ComboBoxClinicPicker) 
 				{
 					listControls[i].Enabled=false;

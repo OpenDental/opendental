@@ -49,7 +49,7 @@ namespace OpenDental {
 			this.radioAuto = new System.Windows.Forms.RadioButton();
 			this.radioManual = new System.Windows.Forms.RadioButton();
 			this.label5 = new System.Windows.Forms.Label();
-			this.comboPTO = new OpenDental.UI.ComboBoxOD();
+			this.comboPTO = new OpenDental.UI.ComboBox();
 			this.labelPTO = new System.Windows.Forms.Label();
 			this.checkUnpaidProtectedLeave = new OpenDental.UI.CheckBox();
 			this.textUser = new System.Windows.Forms.TextBox();
@@ -283,7 +283,7 @@ namespace OpenDental {
 		private RadioButton radioAuto;
 		private RadioButton radioManual;
 		private Label label5;
-		private OpenDental.UI.ComboBoxOD comboPTO;
+		private OpenDental.UI.ComboBox comboPTO;
 		private Label labelPTO;
 		private OpenDental.UI.CheckBox checkUnpaidProtectedLeave;
 		private TextBox textUser;

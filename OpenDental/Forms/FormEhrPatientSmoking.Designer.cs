@@ -33,8 +33,8 @@
 			this.label6 = new System.Windows.Forms.Label();
 			this.comboTobaccoStatus = new System.Windows.Forms.ComboBox();
 			this.labelTobaccoStatus = new System.Windows.Forms.Label();
-			this.groupTobaccoUse = new OpenDental.UI.GroupBoxOD();
-			this.groupIntervention = new OpenDental.UI.GroupBoxOD();
+			this.groupTobaccoUse = new OpenDental.UI.GroupBox();
+			this.groupIntervention = new OpenDental.UI.GroupBox();
 			this.radioRecentInterventions = new System.Windows.Forms.RadioButton();
 			this.checkPatientDeclined = new OpenDental.UI.CheckBox();
 			this.radioAllInterventions = new System.Windows.Forms.RadioButton();
@@ -47,7 +47,7 @@
 			this.textDateIntervention = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.comboInterventionCode = new System.Windows.Forms.ComboBox();
-			this.groupAssessment = new OpenDental.UI.GroupBoxOD();
+			this.groupAssessment = new OpenDental.UI.GroupBox();
 			this.radioRecentStatuses = new System.Windows.Forms.RadioButton();
 			this.label8 = new System.Windows.Forms.Label();
 			this.gridAssessments = new OpenDental.UI.GridOD();
@@ -464,7 +464,7 @@
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.ComboBox comboTobaccoStatus;
 		private System.Windows.Forms.Label labelTobaccoStatus;
-		private OpenDental.UI.GroupBoxOD groupTobaccoUse;
+		private OpenDental.UI.GroupBox groupTobaccoUse;
 		private UI.GridOD gridInterventions;
 		private UI.Button butAddAssessment;
 		private UI.Button butAddIntervention;
@@ -482,8 +482,8 @@
 		private System.Windows.Forms.RadioButton radioAllInterventions;
 		private System.Windows.Forms.RadioButton radioMedInterventions;
 		private System.Windows.Forms.RadioButton radioCounselInterventions;
-		private OpenDental.UI.GroupBoxOD groupIntervention;
-		private OpenDental.UI.GroupBoxOD groupAssessment;
+		private OpenDental.UI.GroupBox groupIntervention;
+		private OpenDental.UI.GroupBox groupAssessment;
 		private OpenDental.UI.CheckBox checkPatientDeclined;
 		private System.Windows.Forms.RadioButton radioRecentInterventions;
 		private System.Windows.Forms.RadioButton radioRecentStatuses;

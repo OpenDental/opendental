@@ -30,7 +30,7 @@ namespace OpenDental{
 			this.checkTaskSortApptDateTime = new OpenDental.UI.CheckBox();
 			this.checkShowOpenTickets = new OpenDental.UI.CheckBox();
 			this.checkTasksNewTrackedByUser = new OpenDental.UI.CheckBox();
-			this.groupBoxComputerDefaults = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxComputerDefaults = new OpenDental.UI.GroupBox();
 			this.radioRight = new System.Windows.Forms.RadioButton();
 			this.radioBottom = new System.Windows.Forms.RadioButton();
 			this.validNumY = new OpenDental.ValidNum();
@@ -40,12 +40,12 @@ namespace OpenDental{
 			this.checkBoxTaskKeepListHidden = new OpenDental.UI.CheckBox();
 			this.checkTaskListAlwaysShow = new OpenDental.UI.CheckBox();
 			this.checkShowLegacyRepeatingTasks = new OpenDental.UI.CheckBox();
-			this.groupBoxDatabase = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxDatabase = new OpenDental.UI.GroupBox();
 			this.labelImageCategoryFolder = new System.Windows.Forms.Label();
-			this.comboImageCategoryFolders = new OpenDental.UI.ComboBoxOD();
+			this.comboImageCategoryFolders = new OpenDental.UI.ComboBox();
 			this.labelGlobalFilter = new System.Windows.Forms.Label();
 			this.butTaskInboxSetup = new OpenDental.UI.Button();
-			this.comboGlobalFilter = new OpenDental.UI.ComboBoxOD();
+			this.comboGlobalFilter = new OpenDental.UI.ComboBox();
 			this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
 			this.groupBoxComputerDefaults.SuspendLayout();
 			this.groupBoxDatabase.SuspendLayout();
@@ -318,7 +318,7 @@ namespace OpenDental{
 		private OpenDental.UI.CheckBox checkTaskSortApptDateTime;
 		private OpenDental.UI.CheckBox checkShowOpenTickets;
 		private OpenDental.UI.CheckBox checkTasksNewTrackedByUser;
-		private OpenDental.UI.GroupBoxOD groupBoxComputerDefaults;
+		private OpenDental.UI.GroupBox groupBoxComputerDefaults;
 		private System.Windows.Forms.RadioButton radioRight;
 		private System.Windows.Forms.RadioButton radioBottom;
 		private ValidNum validNumY;
@@ -328,12 +328,12 @@ namespace OpenDental{
 		private OpenDental.UI.CheckBox checkBoxTaskKeepListHidden;
 		private OpenDental.UI.CheckBox checkTaskListAlwaysShow;
 		private OpenDental.UI.CheckBox checkShowLegacyRepeatingTasks;
-		private OpenDental.UI.GroupBoxOD groupBoxDatabase;
+		private OpenDental.UI.GroupBox groupBoxDatabase;
 		private UI.Button butTaskInboxSetup;
-		private UI.ComboBoxOD comboGlobalFilter;
+		private UI.ComboBox comboGlobalFilter;
 		private System.Windows.Forms.ErrorProvider errorProvider1;
 		private System.Windows.Forms.Label labelGlobalFilter;
 		private System.Windows.Forms.Label labelImageCategoryFolder;
-		private UI.ComboBoxOD comboImageCategoryFolders;
+		private UI.ComboBox comboImageCategoryFolders;
 	}
 }

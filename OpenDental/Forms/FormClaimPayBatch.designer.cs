@@ -30,7 +30,7 @@ namespace OpenDental {
 			this.menuItemGotoAccount = new System.Windows.Forms.MenuItem();
 			this.menuRightOut = new System.Windows.Forms.ContextMenu();
 			this.menuItemGotoOut = new System.Windows.Forms.MenuItem();
-			this.groupFilters = new OpenDental.UI.GroupBoxOD();
+			this.groupFilters = new OpenDental.UI.GroupBox();
 			this.butCarrierPick = new OpenDental.UI.Button();
 			this.textCarrier = new System.Windows.Forms.TextBox();
 			this.label12 = new System.Windows.Forms.Label();
@@ -51,7 +51,7 @@ namespace OpenDental {
 			this.labelInstruct1 = new System.Windows.Forms.Label();
 			this.butDetach = new OpenDental.UI.Button();
 			this.gridOut = new OpenDental.UI.GridOD();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label13 = new System.Windows.Forms.Label();
 			this.textPayGroup = new System.Windows.Forms.TextBox();
 			this.label10 = new System.Windows.Forms.Label();
@@ -646,7 +646,7 @@ namespace OpenDental {
 		private ValidDate textDateIssued;
 		private Label labelDateIssued;
 		private TextBox textClinic;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private UI.Button butClaimPayEdit;
 		private OpenDental.UI.GridOD gridOut;
 		private UI.Button butDetach;
@@ -674,7 +674,7 @@ namespace OpenDental {
 		private TextBox textName;
 		private Label label11;
 		private Label label12;
-		private OpenDental.UI.GroupBoxOD groupFilters;
+		private OpenDental.UI.GroupBox groupFilters;
 		private Label label13;
 		private TextBox textPayGroup;
 		private UI.Button butCarrierPick;

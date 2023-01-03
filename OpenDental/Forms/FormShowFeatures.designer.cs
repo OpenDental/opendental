@@ -53,13 +53,13 @@ namespace OpenDental {
 			this.checkShowEnterprise = new OpenDental.UI.CheckBox();
 			this.checkShowReactivations = new OpenDental.UI.CheckBox();
 			this.checkEraShowControlId = new OpenDental.UI.CheckBox();
-			this.groupEnterprise = new OpenDental.UI.GroupBoxOD();
-			this.groupFamilyModule = new OpenDental.UI.GroupBoxOD();
-			this.groupGeneral = new OpenDental.UI.GroupBoxOD();
-			this.groupInsurance = new OpenDental.UI.GroupBoxOD();
-			this.groupSpecialUseOnly = new OpenDental.UI.GroupBoxOD();
-			this.groupChargeTools = new OpenDental.UI.GroupBoxOD();
-			this.groupBoxCharges = new OpenDental.UI.GroupBoxOD();
+			this.groupEnterprise = new OpenDental.UI.GroupBox();
+			this.groupFamilyModule = new OpenDental.UI.GroupBox();
+			this.groupGeneral = new OpenDental.UI.GroupBox();
+			this.groupInsurance = new OpenDental.UI.GroupBox();
+			this.groupSpecialUseOnly = new OpenDental.UI.GroupBox();
+			this.groupChargeTools = new OpenDental.UI.GroupBox();
+			this.groupBoxCharges = new OpenDental.UI.GroupBox();
 			this.radioBillingFinance = new System.Windows.Forms.RadioButton();
 			this.radioLateCharges = new System.Windows.Forms.RadioButton();
 			this.groupEnterprise.SuspendLayout();
@@ -426,14 +426,14 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkCapitation;
 		private OpenDental.UI.CheckBox checkShowReactivations;
 		private OpenDental.UI.CheckBox checkEraShowControlId;
-		private OpenDental.UI.GroupBoxOD groupEnterprise;
-		private OpenDental.UI.GroupBoxOD groupFamilyModule;
-		private OpenDental.UI.GroupBoxOD groupGeneral;
-		private OpenDental.UI.GroupBoxOD groupInsurance;
-		private OpenDental.UI.GroupBoxOD groupSpecialUseOnly;
-		private OpenDental.UI.GroupBoxOD groupChargeTools;
+		private OpenDental.UI.GroupBox groupEnterprise;
+		private OpenDental.UI.GroupBox groupFamilyModule;
+		private OpenDental.UI.GroupBox groupGeneral;
+		private OpenDental.UI.GroupBox groupInsurance;
+		private OpenDental.UI.GroupBox groupSpecialUseOnly;
+		private OpenDental.UI.GroupBox groupChargeTools;
 		private System.Windows.Forms.RadioButton radioLateCharges;
 		private System.Windows.Forms.RadioButton radioBillingFinance;
-		private OpenDental.UI.GroupBoxOD groupBoxCharges;
+		private OpenDental.UI.GroupBox groupBoxCharges;
 	}
 }

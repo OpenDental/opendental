@@ -29,7 +29,7 @@ namespace OpenDental{
 			this.label7 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.comboImageCategory = new OpenDental.UI.ComboBoxOD();
+			this.comboImageCategory = new OpenDental.UI.ComboBox();
 			this.butDelete = new OpenDental.UI.Button();
 			this.textHeight = new OpenDental.ValidNum();
 			this.textWidth = new OpenDental.ValidNum();
@@ -210,7 +210,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label8;
 		private OpenDental.UI.Button butDelete;
 		private System.Windows.Forms.Label label1;
-		private OpenDental.UI.ComboBoxOD comboImageCategory;
+		private OpenDental.UI.ComboBox comboImageCategory;
 		private System.Windows.Forms.Label label2;
 	}
 }

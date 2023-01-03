@@ -16,7 +16,7 @@ namespace UnitTests {
 			//Application.Run(new FormApptProvSliderTest());
 			//Application.Run(new FormButtonTest());
 			//Application.Run(new FormCheckBoxTests());
-			//Application.Run(new FormComboTests());
+			Application.Run(new FormComboTests());
 			//Application.Run(new FormDatePickerTests());
 			//Application.Run(new FormGridTest());
 			//Application.Run(new FormGroupBoxTests());
@@ -25,7 +25,7 @@ namespace UnitTests {
 			//Application.Run(new FormProgressTests());
 			//Application.Run(new FormSandboxJordan());
 			//Application.Run(new FormSplitter());
-			Application.Run(new FormTabControlTests());
+			//Application.Run(new FormTabControlTests());
 			//Application.Run(new FormToothChartTests());
 			//Application.Run(new FormValidTextTests());
 		}

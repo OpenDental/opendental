@@ -44,11 +44,11 @@ namespace OpenDental{
 			this.labelAsOfDateDesc = new System.Windows.Forms.Label();
 			this.datePickerAsOfDate = new System.Windows.Forms.DateTimePicker();
 			this.labelAsOfDate = new System.Windows.Forms.Label();
-			this.groupBoxIncomeTransfers = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxIncomeTransfers = new OpenDental.UI.GroupBox();
 			this.checkChangedSinceDate = new OpenDental.UI.CheckBox();
 			this.datePickerChangedSinceDate = new System.Windows.Forms.DateTimePicker();
 			this.labelChangedSinceDate = new System.Windows.Forms.Label();
-			this.groupBoxRecreateSplits = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxRecreateSplits = new OpenDental.UI.GroupBox();
 			this.labelAsOfDateDescRecreate = new System.Windows.Forms.Label();
 			this.butRecreate = new OpenDental.UI.Button();
 			this.datePickerAsOfDateRecreate = new System.Windows.Forms.DateTimePicker();
@@ -61,14 +61,14 @@ namespace OpenDental{
 			this.checkOutputVerbose = new OpenDental.UI.CheckBox();
 			this.timerOutput = new System.Windows.Forms.Timer(this.components);
 			this.butLog = new OpenDental.UI.Button();
-			this.groupBoxInsuranceOverpayments = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxInsuranceOverpayments = new OpenDental.UI.GroupBox();
 			this.butOverpay = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.datePickerOverpayPayDate = new System.Windows.Forms.DateTimePicker();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label56 = new System.Windows.Forms.Label();
-			this.comboOverpayPayType = new OpenDental.UI.ComboBoxOD();
+			this.comboOverpayPayType = new OpenDental.UI.ComboBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.groupBoxIncomeTransfers.SuspendLayout();
 			this.groupBoxRecreateSplits.SuspendLayout();
@@ -561,8 +561,8 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelAsOfDateDesc;
 		private System.Windows.Forms.DateTimePicker datePickerAsOfDate;
 		private System.Windows.Forms.Label labelAsOfDate;
-		private UI.GroupBoxOD groupBoxIncomeTransfers;
-		private UI.GroupBoxOD groupBoxRecreateSplits;
+		private UI.GroupBox groupBoxIncomeTransfers;
+		private UI.GroupBox groupBoxRecreateSplits;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.Label labelAsOfDateDescRecreate;
 		private UI.Button butRecreate;
@@ -578,14 +578,14 @@ namespace OpenDental{
 		private OpenDental.UI.CheckBox checkChangedSinceDate;
 		private System.Windows.Forms.DateTimePicker datePickerChangedSinceDate;
 		private System.Windows.Forms.Label labelChangedSinceDate;
-		private UI.GroupBoxOD groupBoxInsuranceOverpayments;
+		private UI.GroupBox groupBoxInsuranceOverpayments;
 		private System.Windows.Forms.Label label1;
 		private UI.Button butOverpay;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.DateTimePicker datePickerOverpayPayDate;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label56;
-		private UI.ComboBoxOD comboOverpayPayType;
+		private UI.ComboBox comboOverpayPayType;
 		private System.Windows.Forms.Label label8;
 	}
 }

@@ -26,7 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOrthoCase));
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
-			this.groupVisit = new OpenDental.UI.GroupBoxOD();
+			this.groupVisit = new OpenDental.UI.GroupBox();
 			this.textVisitPercent = new OpenDental.ValidDouble();
 			this.labelVisitsCompleted = new System.Windows.Forms.Label();
 			this.TextVisitCountComplete = new OpenDental.ValidNum();
@@ -78,14 +78,14 @@ namespace OpenDental{
 			this.butCloseOrthoCase = new OpenDental.UI.Button();
 			this.butDeleteOrthoCase = new OpenDental.UI.Button();
 			this.butDetachProcs = new OpenDental.UI.Button();
-			this.groupFee = new OpenDental.UI.GroupBoxOD();
+			this.groupFee = new OpenDental.UI.GroupBox();
 			this.textSecondaryInsuranceFee = new OpenDental.ValidDouble();
 			this.textSecondaryInsCompleted = new OpenDental.ValidDouble();
 			this.textSecondaryInsAR = new OpenDental.ValidDouble();
 			this.labelSecondaryInsuranceFee = new System.Windows.Forms.Label();
 			this.textSecondaryInsRemaining = new OpenDental.ValidDouble();
-			this.groupDates = new OpenDental.UI.GroupBoxOD();
-			this.groupProcBreakdown = new OpenDental.UI.GroupBoxOD();
+			this.groupDates = new OpenDental.UI.GroupBox();
+			this.groupProcBreakdown = new OpenDental.UI.GroupBox();
 			this.labelBandingProc = new System.Windows.Forms.Label();
 			this.butPatPayPlan = new OpenDental.UI.Button();
 			this.groupVisit.SuspendLayout();
@@ -841,7 +841,7 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
-		private OpenDental.UI.GroupBoxOD groupVisit;
+		private OpenDental.UI.GroupBox groupVisit;
 		private System.Windows.Forms.Label labelExpectedDebondDate;
 		private ValidDate textBandingDate;
 		private System.Windows.Forms.Label labelBandingDate;
@@ -891,9 +891,9 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelTreatmentLength;
 		private ValidNum textTreatmentLength;
 		private UI.Button butDetachProcs;
-		private OpenDental.UI.GroupBoxOD groupFee;
-		private OpenDental.UI.GroupBoxOD groupDates;
-		private OpenDental.UI.GroupBoxOD groupProcBreakdown;
+		private OpenDental.UI.GroupBox groupFee;
+		private OpenDental.UI.GroupBox groupDates;
+		private OpenDental.UI.GroupBox groupProcBreakdown;
 		private System.Windows.Forms.Label labelVisitsCompleted;
 		private System.Windows.Forms.Label labelBandingProc;
 		private ValidDouble textSecondaryInsuranceFee;

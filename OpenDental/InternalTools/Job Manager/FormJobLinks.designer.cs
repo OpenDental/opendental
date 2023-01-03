@@ -29,7 +29,7 @@ namespace OpenDental{
 			this.butLinkTask = new OpenDental.UI.Button();
 			this.butLinkFeatReq = new OpenDental.UI.Button();
 			this.butLinkBug = new OpenDental.UI.Button();
-			this.groupAddLink = new OpenDental.UI.GroupBoxOD();
+			this.groupAddLink = new OpenDental.UI.GroupBox();
 			this.butLinkQuote = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.groupAddLink.SuspendLayout();
@@ -146,7 +146,7 @@ namespace OpenDental{
 		private UI.Button butLinkTask;
 		private UI.Button butLinkFeatReq;
 		private UI.Button butLinkBug;
-		private OpenDental.UI.GroupBoxOD groupAddLink;
+		private OpenDental.UI.GroupBox groupAddLink;
 		private UI.GridOD gridMain;
 		private UI.Button butLinkQuote;
 	}

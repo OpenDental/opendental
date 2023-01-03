@@ -31,9 +31,9 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormReportsMore));
-			this.groupBusiness = new OpenDental.UI.GroupBoxOD();
+			this.groupBusiness = new OpenDental.UI.GroupBox();
 			this.picturePracticeByNumbers = new OpenDental.UI.ODPictureBox();
-			this.groupPatientReviews = new OpenDental.UI.GroupBoxOD();
+			this.groupPatientReviews = new OpenDental.UI.GroupBox();
 			this.picturePodium = new OpenDental.UI.ODPictureBox();
 			this.labelArizonaPrimaryCare = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
@@ -346,9 +346,9 @@ namespace OpenDental {
 		private OpenDental.UI.ListBoxOD listMonthly;
 		private UI.Button butPatList;
 		private UI.Button butPatExport;
-		private OpenDental.UI.GroupBoxOD groupPatientReviews;
+		private OpenDental.UI.GroupBox groupPatientReviews;
 		private UI.ODPictureBox picturePodium;
-		private OpenDental.UI.GroupBoxOD groupBusiness;
+		private OpenDental.UI.GroupBox groupBusiness;
 		private UI.ODPictureBox picturePracticeByNumbers;
 		private UI.MenuOD menuMain;
 	}

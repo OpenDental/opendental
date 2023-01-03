@@ -24,13 +24,13 @@ namespace OpenDentBusiness.Eclaims {
 			string arguments="";
 			try {
 				if(!File.Exists(clearinghouseClin.ClientProgram)) {
-					throw new Exception(Lans.g(progress.LanThis,"The WebMD program is not installed at the expected path. Go To Setup > Family/Insurance > Clearinghouses > and double click WebMD to confirm Launch Client Program path."));
+					throw new Exception(Lans.g(progress.LanThis,"The ChangeHealthcare program (WebMD) is not installed at the expected path. Go to Setup, Family/Insurance, Clearinghouses, and double-click") + clearinghouseClin.Description + Lans.g("Eclaims","to confirm the Launch Client Program path."));
 				}
 				if(!Directory.Exists(clearinghouseClin.ExportPath)) {
-					throw new Exception(Lans.g(progress.LanThis,"Clearinghouse export path is invalid. Go To Setup > Family/Insurance > Clearinghouses > and double click desired clearinghouse to update path."));
+					throw new Exception(Lans.g(progress.LanThis,"Clearinghouse export path is invalid. Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path."));
 				}
 				if(!Directory.Exists(clearinghouseClin.ResponsePath)) {
-					throw new Exception(Lans.g(progress.LanThis,"Clearinghouse response path is invalid. Go To Setup > Family/Insurance > Clearinghouses > and double click desired clearinghouse to update path."));
+					throw new Exception(Lans.g(progress.LanThis,"Clearinghouse response path is invalid. Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path."));
 				}
 				arguments="\""+ODFileUtils.RemoveTrailingSeparators(clearinghouseClin.ExportPath)+"\\"+"*.*\" "//upload claims path
 					+"\""+ODFileUtils.RemoveTrailingSeparators(clearinghouseClin.ResponsePath)+"\" "//Mail path

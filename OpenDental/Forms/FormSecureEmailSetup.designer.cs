@@ -24,7 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSecureEmailSetup));
-			this.groupSetup = new OpenDental.UI.GroupBoxOD();
+			this.groupSetup = new OpenDental.UI.GroupBox();
 			this.butAddresses = new OpenDental.UI.Button();
 			this.labelSenders = new System.Windows.Forms.Label();
 			this.butSignatures = new OpenDental.UI.Button();
@@ -32,7 +32,7 @@ namespace OpenDental{
 			this.webBrowser = new System.Windows.Forms.WebBrowser();
 			this.gridClinics = new OpenDental.UI.GridOD();
 			this.checkEnabled = new OpenDental.UI.CheckBox();
-			this.comboPlatform = new OpenDental.UI.ComboBoxOD();
+			this.comboPlatform = new OpenDental.UI.ComboBox();
 			this.labelPlatform = new System.Windows.Forms.Label();
 			this.butSignup = new OpenDental.UI.Button();
 			this.groupSetup.SuspendLayout();
@@ -169,7 +169,7 @@ namespace OpenDental{
 		}
 
 		#endregion
-		private OpenDental.UI.GroupBoxOD groupSetup;
+		private OpenDental.UI.GroupBox groupSetup;
 		private UI.Button butAddresses;
 		private System.Windows.Forms.Label labelSenders;
 		private UI.Button butSignatures;
@@ -177,7 +177,7 @@ namespace OpenDental{
 		private System.Windows.Forms.WebBrowser webBrowser;
 		private UI.GridOD gridClinics;
 		private OpenDental.UI.CheckBox checkEnabled;
-		private UI.ComboBoxOD comboPlatform;
+		private UI.ComboBox comboPlatform;
 		private System.Windows.Forms.Label labelPlatform;
 		private UI.Button butSignup;
 	}

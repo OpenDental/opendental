@@ -35,7 +35,7 @@
 			this.label8 = new System.Windows.Forms.Label();
 			this.labelRegKey = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.butCompare = new OpenDental.UI.Button();
 			this.butBugTask = new OpenDental.UI.Button();
 			this.butGoToAccount = new OpenDental.UI.Button();
@@ -491,7 +491,7 @@
 		private System.Windows.Forms.Label label6;
 		private ODtextBox textDevNote;
 		private System.Windows.Forms.SplitContainer splitContainer1;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private ODtextBox textStack;
 		private UI.GridOD gridCustomerSubs;
 		private Button butCompare;

@@ -26,14 +26,14 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrNotPerformedEdit));
 			this.textDate = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
-			this.groupItem = new OpenDental.UI.GroupBoxOD();
+			this.groupItem = new OpenDental.UI.GroupBox();
 			this.textDescription = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.labelBPsExamCode = new System.Windows.Forms.Label();
 			this.textCodeSystem = new System.Windows.Forms.TextBox();
 			this.labelBMIExamCode = new System.Windows.Forms.Label();
 			this.textCode = new System.Windows.Forms.TextBox();
-			this.groupReason = new OpenDental.UI.GroupBoxOD();
+			this.groupReason = new OpenDental.UI.GroupBox();
 			this.radioMedReason = new System.Windows.Forms.RadioButton();
 			this.label1 = new System.Windows.Forms.Label();
 			this.radioSysReason = new System.Windows.Forms.RadioButton();
@@ -334,13 +334,13 @@ namespace OpenDental{
 
 		private System.Windows.Forms.TextBox textDate;
 		private System.Windows.Forms.Label label5;
-		private OpenDental.UI.GroupBoxOD groupItem;
+		private OpenDental.UI.GroupBox groupItem;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label labelBPsExamCode;
 		private System.Windows.Forms.TextBox textCodeSystem;
 		private System.Windows.Forms.Label labelBMIExamCode;
 		private System.Windows.Forms.TextBox textCode;
-		private OpenDental.UI.GroupBoxOD groupReason;
+		private OpenDental.UI.GroupBox groupReason;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label4;

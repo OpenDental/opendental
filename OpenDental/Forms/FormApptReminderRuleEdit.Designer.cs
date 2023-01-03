@@ -33,7 +33,7 @@
 			this.checkSendAll = new OpenDental.UI.CheckBox();
 			this.labelTags = new System.Windows.Forms.Label();
 			this.butDelete = new OpenDental.UI.Button();
-			this.groupSendTime = new OpenDental.UI.GroupBoxOD();
+			this.groupSendTime = new OpenDental.UI.GroupBox();
 			this.textDaysWithin = new OpenDental.ValidNum();
 			this.labelDaysWithin = new System.Windows.Forms.Label();
 			this.labelDoNotSendWithin = new System.Windows.Forms.Label();
@@ -44,8 +44,8 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.textHours = new OpenDental.ValidNum();
 			this.labelHoursWithin = new System.Windows.Forms.Label();
-			this.groupSendOrder = new OpenDental.UI.GroupBoxOD();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupSendOrder = new OpenDental.UI.GroupBox();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.checkEnabled = new OpenDental.UI.CheckBox();
 			this.butAdvanced = new OpenDental.UI.Button();
 			this.butLanguage = new OpenDental.UI.Button();
@@ -54,7 +54,7 @@
 			this.tabControl = new OpenDental.UI.TabControl();
 			this.checkEConfirmationAutoReplies = new OpenDental.UI.CheckBox();
 			this.butRemove = new OpenDental.UI.Button();
-			this.groupPatientPortalInvites = new OpenDental.UI.GroupBoxOD();
+			this.groupPatientPortalInvites = new OpenDental.UI.GroupBox();
 			this.radioSendPatientPortalInviteNoVisit = new System.Windows.Forms.RadioButton();
 			this.textPatientPortalLastVisit = new OpenDental.ValidNum();
 			this.radioSendPatientPortalInviteMultiple = new System.Windows.Forms.RadioButton();
@@ -468,9 +468,9 @@
 		private OpenDental.UI.CheckBox checkSendAll;
 		private System.Windows.Forms.Label labelTags;
 		private UI.Button butDelete;
-		private OpenDental.UI.GroupBoxOD groupSendTime;
-		private OpenDental.UI.GroupBoxOD groupSendOrder;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupSendTime;
+		private OpenDental.UI.GroupBox groupSendOrder;
+		private OpenDental.UI.GroupBox groupBox2;
 		private ValidNum textHours;
 		private ValidNum textDays;
 		private System.Windows.Forms.Label label1;
@@ -488,7 +488,7 @@
 		private OpenDental.UI.TabControl tabControl;
 		private OpenDental.UI.CheckBox checkEConfirmationAutoReplies;
 		private UI.Button butRemove;
-		private UI.GroupBoxOD groupPatientPortalInvites;
+		private UI.GroupBox groupPatientPortalInvites;
 		private ValidNum textPatientPortalLastVisit;
 		private System.Windows.Forms.RadioButton radioSendPatientPortalInviteMultiple;
 		private System.Windows.Forms.RadioButton radioSendPatientPortalInviteOnce;

@@ -29,8 +29,8 @@ namespace OpenDental {
 			this.labelClaimTrack = new System.Windows.Forms.Label();
 			this.labelNote = new System.Windows.Forms.Label();
 			this.textNotes = new OpenDental.ODtextBox();
-			this.comboCustomTracking = new UI.ComboBoxOD();
-			this.comboErrorCode = new OpenDental.UI.ComboBoxOD();
+			this.comboCustomTracking = new UI.ComboBox();
+			this.comboErrorCode = new OpenDental.UI.ComboBox();
 			this.label = new System.Windows.Forms.Label();
 			this.textErrorDesc = new OpenDental.ODtextBox();
 			this.SuspendLayout();
@@ -154,8 +154,8 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelClaimTrack;
 		private System.Windows.Forms.Label labelNote;
 		private ODtextBox textNotes;
-		private UI.ComboBoxOD comboCustomTracking;
-		private UI.ComboBoxOD comboErrorCode;
+		private UI.ComboBox comboCustomTracking;
+		private UI.ComboBox comboErrorCode;
 		private System.Windows.Forms.Label label;
 		private ODtextBox textErrorDesc;
 	}

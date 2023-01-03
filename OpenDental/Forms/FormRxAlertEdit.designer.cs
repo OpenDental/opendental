@@ -34,7 +34,7 @@ namespace OpenDental{
 			this.textRxName = new System.Windows.Forms.TextBox();
 			this.labelRx = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupBox = new OpenDental.UI.GroupBoxOD();
+			this.groupBox = new OpenDental.UI.GroupBox();
 			this.checkIsHighSignificance = new OpenDental.UI.CheckBox();
 			this.groupBox.SuspendLayout();
 			this.SuspendLayout();
@@ -187,7 +187,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textRxName;
 		private System.Windows.Forms.Label labelRx;
 		private System.Windows.Forms.Label label1;
-		private OpenDental.UI.GroupBoxOD groupBox;
+		private OpenDental.UI.GroupBox groupBox;
 		private OpenDental.UI.CheckBox checkIsHighSignificance;
 	}
 }

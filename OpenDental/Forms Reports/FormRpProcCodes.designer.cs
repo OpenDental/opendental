@@ -37,7 +37,7 @@ namespace OpenDental {
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.checkShowBlankFees = new System.Windows.Forms.CheckBox();
-			this.groupBox5 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox5 = new OpenDental.UI.GroupBox();
 			this.groupBox5.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -189,6 +189,6 @@ namespace OpenDental {
 		private Label label2;
 		private Label label3;
 		private CheckBox checkShowBlankFees;
-		private OpenDental.UI.GroupBoxOD groupBox5;
+		private OpenDental.UI.GroupBox groupBox5;
 	}
 }

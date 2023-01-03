@@ -42,10 +42,10 @@ namespace OpenDental {
 			this.label6 = new System.Windows.Forms.Label();
 			this.checkSSL = new OpenDental.UI.CheckBox();
 			this.butDelete = new OpenDental.UI.Button();
-			this.groupOutgoing = new OpenDental.UI.GroupBoxOD();
+			this.groupOutgoing = new OpenDental.UI.GroupBox();
 			this.label13 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
-			this.groupIncoming = new OpenDental.UI.GroupBoxOD();
+			this.groupIncoming = new OpenDental.UI.GroupBox();
 			this.label14 = new System.Windows.Forms.Label();
 			this.textSMTPserverIncoming = new System.Windows.Forms.TextBox();
 			this.label8 = new System.Windows.Forms.Label();
@@ -53,7 +53,7 @@ namespace OpenDental {
 			this.textPortIncoming = new System.Windows.Forms.TextBox();
 			this.label11 = new System.Windows.Forms.Label();
 			this.butRegisterCertificate = new OpenDental.UI.Button();
-			this.groupUserod = new OpenDental.UI.GroupBoxOD();
+			this.groupUserod = new OpenDental.UI.GroupBox();
 			this.butPickUserod = new OpenDental.UI.Button();
 			this.labelUserod = new System.Windows.Forms.Label();
 			this.textUserod = new System.Windows.Forms.TextBox();
@@ -61,11 +61,11 @@ namespace OpenDental {
 			this.textRefreshToken = new System.Windows.Forms.TextBox();
 			this.labelAccess = new System.Windows.Forms.Label();
 			this.labelRefresh = new System.Windows.Forms.Label();
-			this.groupAuth = new OpenDental.UI.GroupBoxOD();
+			this.groupAuth = new OpenDental.UI.GroupBox();
 			this.butGmailSettings = new OpenDental.UI.Button();
 			this.butClearTokens = new OpenDental.UI.Button();
 			this.butAuthGoogle = new System.Windows.Forms.Label();
-			this.groupAuthentication = new OpenDental.UI.GroupBoxOD();
+			this.groupAuthentication = new OpenDental.UI.GroupBox();
 			this.butAuthMicrosoft = new System.Windows.Forms.Button();
 			this.label15 = new System.Windows.Forms.Label();
 			this.label12 = new System.Windows.Forms.Label();
@@ -554,8 +554,8 @@ namespace OpenDental {
 		private Label label6;
 		private OpenDental.UI.CheckBox checkSSL;
 		private UI.Button butDelete;
-		private OpenDental.UI.GroupBoxOD groupOutgoing;
-		private OpenDental.UI.GroupBoxOD groupIncoming;
+		private OpenDental.UI.GroupBox groupOutgoing;
+		private OpenDental.UI.GroupBox groupIncoming;
 		private TextBox textSMTPserverIncoming;
 		private Label label8;
 		private Label label10;
@@ -565,7 +565,7 @@ namespace OpenDental {
 		private UI.Button butRegisterCertificate;
 		private Label label13;
 		private Label label14;
-		private OpenDental.UI.GroupBoxOD groupUserod;
+		private OpenDental.UI.GroupBox groupUserod;
 		private UI.Button butPickUserod;
 		private Label labelUserod;
 		private TextBox textUserod;
@@ -573,10 +573,10 @@ namespace OpenDental {
 		private TextBox textRefreshToken;
 		private Label labelAccess;
 		private Label labelRefresh;
-		private OpenDental.UI.GroupBoxOD groupAuth;
+		private OpenDental.UI.GroupBox groupAuth;
 		private UI.Button butClearTokens;
 		private Label butAuthGoogle;
-		private OpenDental.UI.GroupBoxOD groupAuthentication;
+		private OpenDental.UI.GroupBox groupAuthentication;
 		private Label label7;
 		private Label label12;
 		private UI.Button butGmailSettings;

@@ -48,7 +48,7 @@ namespace OpenDental {
 			this.textDate = new OpenDental.ValidDate();
 			this.label5 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
-			this.comboProv = new OpenDental.UI.ComboBoxOD();
+			this.comboProv = new OpenDental.UI.ComboBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.butLayout = new OpenDental.UI.Button();
 			this.butColorTextBack = new System.Windows.Forms.Button();
@@ -360,7 +360,7 @@ namespace OpenDental {
 		private ValidDate textDate;
 		private Label label5;
 		private Label label6;
-		private UI.ComboBoxOD comboProv;
+		private UI.ComboBox comboProv;
 		private Label label7;
 		private UI.Button butLayout;
 		private Button butColorTextBack;

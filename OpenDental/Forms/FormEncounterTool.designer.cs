@@ -33,7 +33,7 @@ namespace OpenDental{
 			this.labelEncWarning = new System.Windows.Forms.Label();
 			this.textEncCodeDescript = new System.Windows.Forms.TextBox();
 			this.butEncCpt = new OpenDental.UI.Button();
-			this.comboEncCodes = new OpenDental.UI.ComboBoxOD();
+			this.comboEncCodes = new OpenDental.UI.ComboBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.textEncCodeValue = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -265,7 +265,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelEncWarning;
 		private System.Windows.Forms.TextBox textEncCodeDescript;
 		private UI.Button butEncCpt;
-		private OpenDental.UI.ComboBoxOD comboEncCodes;
+		private OpenDental.UI.ComboBox comboEncCodes;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox textEncCodeValue;
 		private System.Windows.Forms.Label label1;

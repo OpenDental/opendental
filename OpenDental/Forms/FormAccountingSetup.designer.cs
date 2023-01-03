@@ -36,7 +36,7 @@ namespace OpenDental {
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAccountingSetup));
 			this.label1 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.listAccountsDep = new UI.ListBoxOD();
 			this.butRemove = new OpenDental.UI.Button();
 			this.butChange = new OpenDental.UI.Button();
@@ -44,7 +44,7 @@ namespace OpenDental {
 			this.textAccountInc = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.butAdd = new OpenDental.UI.Button();
-			this.groupAutomaticPayment = new OpenDental.UI.GroupBoxOD();
+			this.groupAutomaticPayment = new OpenDental.UI.GroupBox();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butChangeCash = new OpenDental.UI.Button();
 			this.label4 = new System.Windows.Forms.Label();
@@ -258,14 +258,14 @@ namespace OpenDental {
 		private OpenDental.UI.Button butOK;
 		private Label label1;
 		private OpenDental.UI.Button butAdd;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private Label label2;
 		private OpenDental.UI.Button butChange;
 		private Label label3;
 		private TextBox textAccountInc;
 		private OpenDental.UI.Button butRemove;
 		private UI.ListBoxOD listAccountsDep;
-		private OpenDental.UI.GroupBoxOD groupAutomaticPayment;
+		private OpenDental.UI.GroupBox groupAutomaticPayment;
 		private OpenDental.UI.Button butChangeCash;
 		private Label label4;
 		private TextBox textAccountCashInc;

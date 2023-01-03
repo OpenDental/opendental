@@ -37,7 +37,7 @@ namespace OpenDental{
 			this.checkTroubleshooting = new OpenDental.UI.CheckBox();
 			this.butDelete = new OpenDental.UI.Button();
 			this.textDateTimeLastRun = new System.Windows.Forms.Label();
-			this.groupPreferences = new OpenDental.UI.GroupBoxOD();
+			this.groupPreferences = new OpenDental.UI.GroupBox();
 			this.label13 = new System.Windows.Forms.Label();
 			this.label14 = new System.Windows.Forms.Label();
 			this.textMobileUserName = new System.Windows.Forms.TextBox();
@@ -389,7 +389,7 @@ namespace OpenDental{
 		private OpenDental.UI.CheckBox checkTroubleshooting;
 		private UI.Button butDelete;
 		private System.Windows.Forms.Label textDateTimeLastRun;
-		private OpenDental.UI.GroupBoxOD groupPreferences;
+		private OpenDental.UI.GroupBox groupPreferences;
 		private System.Windows.Forms.Label label13;
 		private System.Windows.Forms.Label label14;
 		private System.Windows.Forms.TextBox textMobileUserName;

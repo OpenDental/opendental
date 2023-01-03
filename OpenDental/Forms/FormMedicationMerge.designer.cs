@@ -24,7 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMedicationMerge));
-			this.groupBoxFrom = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxFrom = new OpenDental.UI.GroupBox();
 			this.textGenNumFrom = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textRxFrom = new System.Windows.Forms.TextBox();
@@ -34,7 +34,7 @@ namespace OpenDental{
 			this.label8 = new System.Windows.Forms.Label();
 			this.textMedNumFrom = new System.Windows.Forms.TextBox();
 			this.butChangeMedFrom = new OpenDental.UI.Button();
-			this.groupBoxInto = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxInto = new OpenDental.UI.GroupBox();
 			this.textGenNumInto = new System.Windows.Forms.TextBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.textRxInto = new System.Windows.Forms.TextBox();
@@ -277,9 +277,9 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.GroupBoxOD groupBoxFrom;
+		private OpenDental.UI.GroupBox groupBoxFrom;
 		private UI.Button butChangeMedFrom;
-		private OpenDental.UI.GroupBoxOD groupBoxInto;
+		private OpenDental.UI.GroupBox groupBoxInto;
 		private System.Windows.Forms.TextBox textGenNumInto;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.TextBox textRxInto;

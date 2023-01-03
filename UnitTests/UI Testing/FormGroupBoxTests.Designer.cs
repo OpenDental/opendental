@@ -29,22 +29,22 @@
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.groupBoxOD3 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD3 = new OpenDental.UI.GroupBox();
 			this.textBox6 = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.groupBoxOD2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD2 = new OpenDental.UI.GroupBox();
 			this.textBox2 = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.tabControl2 = new System.Windows.Forms.TabControl();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
-			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
-			this.groupBoxOD4 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD4 = new OpenDental.UI.GroupBox();
 			this.textBox3 = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.groupBoxOD3.SuspendLayout();
@@ -268,7 +268,7 @@
 
 		#endregion
 		private System.Windows.Forms.GroupBox groupBox1;
-		private OpenDental.UI.GroupBoxOD groupBoxOD3;
+		private OpenDental.UI.GroupBox groupBoxOD3;
 		private System.Windows.Forms.TextBox textBox6;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.TabControl tabControl1;
@@ -277,13 +277,13 @@
 		private System.Windows.Forms.TabControl tabControl2;
 		private System.Windows.Forms.TabPage tabPage3;
 		private System.Windows.Forms.TabPage tabPage4;
-		private OpenDental.UI.GroupBoxOD groupBoxOD2;
+		private OpenDental.UI.GroupBox groupBoxOD2;
 		private System.Windows.Forms.TextBox textBox2;
 		private System.Windows.Forms.Label label2;
-		private OpenDental.UI.GroupBoxOD groupBoxOD1;
+		private OpenDental.UI.GroupBox groupBoxOD1;
 		private System.Windows.Forms.TextBox textBox1;
 		private System.Windows.Forms.Label label1;
-		private OpenDental.UI.GroupBoxOD groupBoxOD4;
+		private OpenDental.UI.GroupBox groupBoxOD4;
 		private System.Windows.Forms.TextBox textBox3;
 		private System.Windows.Forms.Label label3;
 	}

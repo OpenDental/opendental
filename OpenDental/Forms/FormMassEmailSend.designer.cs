@@ -41,11 +41,11 @@ namespace OpenDental{
 			this.textEmailGroup = new OpenDental.ODtextBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
-			this.groupSender = new OpenDental.UI.GroupBoxOD();
+			this.groupSender = new OpenDental.UI.GroupBox();
 			this.butVerifications = new OpenDental.UI.Button();
 			this.radioReturnAddress = new System.Windows.Forms.RadioButton();
 			this.radioNoReply = new System.Windows.Forms.RadioButton();
-			this.groupBoxOD1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.butSelectPatients = new OpenDental.UI.Button();
 			this.textNumberOfRecipients = new OpenDental.ODtextBox();
@@ -53,8 +53,8 @@ namespace OpenDental{
 			this.labelNotEnabled = new System.Windows.Forms.Label();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.label6 = new System.Windows.Forms.Label();
-			this.comboEmailHostingTemplate = new OpenDental.UI.ComboBoxOD();
-			this.groupClinics = new OpenDental.UI.GroupBoxOD();
+			this.comboEmailHostingTemplate = new OpenDental.UI.ComboBox();
+			this.groupClinics = new OpenDental.UI.GroupBox();
 			this.groupSender.SuspendLayout();
 			this.groupBoxOD1.SuspendLayout();
 			this.groupClinics.SuspendLayout();
@@ -459,11 +459,11 @@ namespace OpenDental{
 		private ODtextBox textEmailGroup;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label5;
-		private OpenDental.UI.GroupBoxOD groupSender;
+		private OpenDental.UI.GroupBox groupSender;
 		private UI.Button butVerifications;
 		private System.Windows.Forms.RadioButton radioReturnAddress;
 		private System.Windows.Forms.RadioButton radioNoReply;
-		private UI.GroupBoxOD groupBoxOD1;
+		private UI.GroupBox groupBoxOD1;
 		private UI.MenuOD menuMain;
 		private UI.Button butSelectPatients;
 		private OpenDental.ODtextBox textNumberOfRecipients;
@@ -471,7 +471,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelNotEnabled;
 		private UI.ComboBoxClinicPicker comboClinic;
 		private System.Windows.Forms.Label label6;
-		private UI.ComboBoxOD comboEmailHostingTemplate;
-		private UI.GroupBoxOD groupClinics;
+		private UI.ComboBox comboEmailHostingTemplate;
+		private UI.GroupBox groupClinics;
 	}
 }

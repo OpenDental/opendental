@@ -24,11 +24,11 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSubscriberMove));
-			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butViewInsPlanInto = new OpenDental.UI.Button();
 			this.butPickInsPlanInto = new OpenDental.UI.Button();
 			this.textCarrierNameInto = new System.Windows.Forms.TextBox();
-			this.groupBox2 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.butViewInsPlanFrom = new OpenDental.UI.Button();
 			this.butPickInsPlanFrom = new OpenDental.UI.Button();
 			this.textCarrierNameFrom = new System.Windows.Forms.TextBox();
@@ -174,9 +174,9 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butCancel;
-		private OpenDental.UI.GroupBoxOD groupBox1;
+		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.TextBox textCarrierNameInto;
-		private OpenDental.UI.GroupBoxOD groupBox2;
+		private OpenDental.UI.GroupBox groupBox2;
 		private OpenDental.UI.Button butPickInsPlanInto;
 		private OpenDental.UI.Button butPickInsPlanFrom;
 		private System.Windows.Forms.TextBox textCarrierNameFrom;

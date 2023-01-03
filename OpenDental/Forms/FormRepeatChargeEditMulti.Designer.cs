@@ -41,7 +41,7 @@ namespace OpenDental{
 			this.butRun = new OpenDental.UI.Button();
 			this.textChargeAmount = new OpenDental.ValidDouble();
 			this.textChargeAmountNew = new OpenDental.ValidDouble();
-			this.comboIsEnabled = new OpenDental.UI.ComboBoxOD();
+			this.comboIsEnabled = new OpenDental.UI.ComboBox();
 			this.label12 = new System.Windows.Forms.Label();
 			this.textPatNumSuperFamilyHead = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
@@ -272,7 +272,7 @@ namespace OpenDental{
 		private UI.Button butRun;
 		private ValidDouble textChargeAmount;
 		private ValidDouble textChargeAmountNew;
-		private UI.ComboBoxOD comboIsEnabled;
+		private UI.ComboBox comboIsEnabled;
 		private System.Windows.Forms.Label label12;
 		private System.Windows.Forms.TextBox textPatNumSuperFamilyHead;
 	}

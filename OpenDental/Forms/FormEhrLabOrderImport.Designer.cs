@@ -30,7 +30,7 @@
 			this.butPatSelect = new OpenDental.UI.Button();
 			this.label5 = new System.Windows.Forms.Label();
 			this.textName = new System.Windows.Forms.TextBox();
-			this.groupBox5 = new OpenDental.UI.GroupBoxOD();
+			this.groupBox5 = new OpenDental.UI.GroupBox();
 			this.textBirthdate = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.listBoxRaces = new OpenDental.UI.ListBoxOD();
@@ -233,7 +233,7 @@
 		private UI.Button butPatSelect;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox textName;
-		private OpenDental.UI.GroupBoxOD groupBox5;
+		private OpenDental.UI.GroupBox groupBox5;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label1;
