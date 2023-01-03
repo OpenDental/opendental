@@ -22,8 +22,8 @@ namespace OpenDentBusiness.Eclaims {
 			string batchFile="";
 			try {
 				if(!Directory.Exists(clearinghouseClin.ExportPath)) {
-					throw new ODException("Clearinghouse export path is invalid.");
-				}
+					throw new ODException("Clearinghouse export path is invalid. Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path.");
+					}
 				//We make sure to only send the X12 batch file for the current batch, so that if there is a failure, then we know
 				//for sure that we need to reverse the batch. This will also help us avoid any exterraneous/old batch files in the
 				//same directory which might be left if there is a permission issue when trying to delete the batch files after processing.
@@ -76,7 +76,7 @@ namespace OpenDentBusiness.Eclaims {
 			progress=progress??new ODProgressExtendedNull();
 			try {
 				if(!Directory.Exists(clearinghouseClin.ResponsePath)) {
-					throw new ODException(Lans.g(progress.LanThis,"Clearinghouse response path is invalid."));
+					throw new ODException(Lans.g(progress.LanThis,"Clearinghouse response path is invalid. Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path."));
 				}
 				progress.UpdateProgress(Lans.g(progress.LanThis,"Contacting web server"),"reports","17%",17);
 				if(progress.IsPauseOrCancel()) {

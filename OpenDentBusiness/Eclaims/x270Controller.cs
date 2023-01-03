@@ -251,7 +251,7 @@ namespace OpenDentBusiness.Eclaims {
 			if(!clearinghouseHq.CommBridge.In(EclaimsCommBridge.ClaimConnect,EclaimsCommBridge.EDS,EclaimsCommBridge.WebMD)
 				&& !Plugins.HookMethod(null,"x270Controller.TryInsVerifyRequest_is270Supported",clearinghouseHq))
 			{
-				error="So far, eligibility checks only work with ClaimConnect, EDS, WebMD (Emdeon Dental), and CDAnet.";
+				error="So far, eligibility checks only work with ClaimConnect, EDS, ChangeHealthcare (Emdeon Dental), and CDAnet.";
 				object[] parameters={error};
 				Plugins.HookAddCode(null,"x270Controller.TryInsVerifyRequest_270NotSupportedError",parameters);
 				error=(string)parameters[0];

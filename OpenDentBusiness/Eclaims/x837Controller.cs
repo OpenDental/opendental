@@ -32,6 +32,12 @@ namespace OpenDentBusiness.Eclaims
 
 		///<summary>Gets the filename for this batch. Used when saving.</summary>
 		private static string GetFileName(Clearinghouse clearinghouseClin,int batchNum,bool isAutomatic) { //called from this.SendBatch. Clinic-level clearinghouse passed in.
+			if(clearinghouseClin.CommBridge==EclaimsCommBridge.WebMD) { //If attempting to use WebMD, exit if client program does not exist.
+				if(!File.Exists(clearinghouseClin.ClientProgram)) {
+					MessageBox.Show(Lans.g("Eclaims","The ChangeHealthcare program (WebMD) is not installed at the expected path. Go to Setup, Family/Insurance, Clearinghouses, and double-click") + clearinghouseClin.Description + Lans.g("Eclaims","to confirm the Launch Client Program path."));
+							return "";
+				}
+			}
 			string saveFolder=clearinghouseClin.ExportPath;
 			if(!ODBuild.IsWeb() && !Directory.Exists(saveFolder)) {
 				if(!isAutomatic) {

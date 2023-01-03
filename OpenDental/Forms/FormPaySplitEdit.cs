@@ -608,7 +608,7 @@ namespace OpenDental {
 				checkPayPlan.Checked=false;
 				return;
 			}
-			PayPlan payPlanSelect=listPayPlans.First(x => x.PayPlanNum==PaySplitCur.PayPlanNum);
+			PayPlan payPlanSelect=listPayPlans.First(x => x.PayPlanNum==formPayPlanSelect.SelectedPayPlanNum);
 			AttachPayPlan(payPlanSelect);
 		}
 

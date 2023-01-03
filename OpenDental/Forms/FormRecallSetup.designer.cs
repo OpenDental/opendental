@@ -348,6 +348,7 @@ namespace OpenDental {
 			// 
 			// textMaxReminders
 			// 
+			this.textMaxReminders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.textMaxReminders.Location = new System.Drawing.Point(819, 625);
 			this.textMaxReminders.MaxVal = 10000;
 			this.textMaxReminders.Name = "textMaxReminders";
@@ -357,6 +358,7 @@ namespace OpenDental {
 			// 
 			// label4
 			// 
+			this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.label4.Location = new System.Drawing.Point(679, 624);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(138, 20);
@@ -466,6 +468,7 @@ namespace OpenDental {
 			// 
 			// textMaxAutoReminders
 			// 
+			this.textMaxAutoReminders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.textMaxAutoReminders.Location = new System.Drawing.Point(819, 603);
 			this.textMaxAutoReminders.MaxVal = 10000;
 			this.textMaxAutoReminders.Name = "textMaxAutoReminders";
@@ -475,6 +478,7 @@ namespace OpenDental {
 			// 
 			// label7
 			// 
+			this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.label7.Location = new System.Drawing.Point(682, 603);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(135, 20);
