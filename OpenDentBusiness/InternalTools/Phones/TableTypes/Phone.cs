@@ -57,16 +57,14 @@ namespace OpenDentBusiness {
 		//  Changes to this table must also be reflected in:
 		//    - PhoneTrackingServer.AsteriskPhones.GetExtensionsFromPhoneTableAndReconstructIfNeeded()
 
-		///<summary>Used with proximity sensors. Set from ProximityOD/WebcamOD.</summary>
-		public bool IsProxVisible {
-			get {
-				return IsProximal
-					&& DateTProximal.AddSeconds(60)>DateTime.Now
-					&& ClockStatus!=ClockStatusEnum.Home
-					&& ClockStatus!=ClockStatusEnum.None
-					&& ClockStatus!=ClockStatusEnum.Break
-					&& ClockStatus!=ClockStatusEnum.Off;
-			}
+		///<summary>Derived from IsProximal, DateTProximal, and ClockStatus. Set from ProximityOD/WebcamOD.</summary>
+		public bool IsProxVisible() {
+			return IsProximal
+				&& DateTProximal.AddSeconds(60)>DateTime.Now
+				&& ClockStatus!=ClockStatusEnum.Home
+				&& ClockStatus!=ClockStatusEnum.None
+				&& ClockStatus!=ClockStatusEnum.Break
+				&& ClockStatus!=ClockStatusEnum.Off;
 		}
 
 		///<summary>Only used for serialization purposes.</summary>

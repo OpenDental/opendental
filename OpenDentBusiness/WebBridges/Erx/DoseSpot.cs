@@ -1423,12 +1423,16 @@ namespace OpenDentBusiness {
 					+"To add a vital sign to the patient, go to the 'Chart' module, and double click on the pink medical area. "
 					+"There is a tab in the next window labeled vitals, click it and add a vital reading that includes height and weight."));
 			}
+			PatientGender gender=patient.Gender;
+			if(gender==PatientGender.Other) {
+				gender=PatientGender.Unknown;
+			}
 			string body=JsonConvert.SerializeObject(
 				new {
 					FirstName=patient.FName.Trim(),
 					LastName=patient.LName.Trim(),
 					DateOfBirth=patient.Birthdate,
-					Gender=patient.Gender+1,
+					Gender=gender+1,
 					Address1=patient.Address.Trim(),
 					City=patient.City.Trim(),
 					State=patient.State.Trim(),
@@ -1443,7 +1447,7 @@ namespace OpenDentBusiness {
 					FirstName = patient.FName.Trim(),
 					LastName = patient.LName.Trim(),
 					DateOfBirth = patient.Birthdate,
-					Gender = patient.Gender+1,
+					Gender = gender+1,
 					Address1 = patient.Address.Trim(),
 					City = patient.City.Trim(),
 					State = patient.State.Trim(),
@@ -1479,12 +1483,16 @@ namespace OpenDentBusiness {
 					+"To add a vital sign to the patient, go to the 'Chart' module, and double click on the pink medical area. "
 					+"There is a tab in the next window labeled vitals, click it and add a vital reading that includes height and weight."));
 			}
+			PatientGender gender=patient.Gender;
+			if(gender==PatientGender.Other) {
+				gender=PatientGender.Unknown;
+			}
 			string body=JsonConvert.SerializeObject(
 				new {
 					FirstName=patient.FName.Trim(),
 					LastName=patient.LName.Trim(),
 					DateOfBirth=patient.Birthdate,
-					Gender=patient.Gender+1,
+					Gender=gender+1,
 					Address1=patient.Address.Trim(),
 					City=patient.City.Trim(),
 					State=patient.State.Trim(),
@@ -1499,7 +1507,7 @@ namespace OpenDentBusiness {
 					FirstName = patient.FName.Trim(),
 					LastName = patient.LName.Trim(),
 					DateOfBirth = patient.Birthdate,
-					Gender = patient.Gender+1,
+					Gender = gender+1,
 					Address1 = patient.Address.Trim(),
 					City = patient.City.Trim(),
 					State = patient.State.Trim(),

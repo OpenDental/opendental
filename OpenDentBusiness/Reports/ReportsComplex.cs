@@ -46,15 +46,11 @@ namespace OpenDentBusiness {
 			return (T)threadGetTable.Tag;
 		}
 
-		///<summary>Wrapper method to call the passed-in func in a seperate thread connected to the read-only server.
+		///<summary>Wrapper method to call the passed-in func in a separate thread connected to the read-only server.
 		///This method should only be used for SELECT, with the exception DashboardAR. Using this for create/update/delete may cause duplicates.
 		///The return type of this function is whatever the return type of the method you passed in is.
 		///Throws an exception if anything went wrong executing func within the thread.</summary>
-		///<param name="doRunOnReadOnlyServer">If this false, the func will run against the currently connected server.</param>
-		public static T RunFuncOnReadOnlyServer<T>(Func<T> func,bool doRunOnReadOnlyServer=true) {
-			if(!doRunOnReadOnlyServer) {
-				return func();
-			}
+		public static T RunFuncOnReadOnlyServer<T>(Func<T> func) {
 			Exception ex=null;
 			ODThread threadGetTable = new ODThread(new ODThread.WorkerDelegate((ODThread o) => {
 				DataAction.Run(() => { o.Tag=func(); } //set the tag to the func's output.
@@ -62,6 +58,12 @@ namespace OpenDentBusiness {
 			}));
 			threadGetTable.AddExceptionHandler(new ODThread.ExceptionDelegate((Exception e) => {
 				ex=e;
+				if(!string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.ReadOnlyServerCompName))
+					|| !string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.ReadOnlyServerURI))) 
+				{ 
+					//add wording to the InnerException to let the user know that it's a problem with the Read-only server.
+					ex=new Exception("Read-Only Server Error",new Exception("An error occurred while trying to use the Read-Only Server.\n\n"+e.Message,e));
+				}
 			}));
 			threadGetTable.Name="ReadOnlyComplexGetTableThread";
 			threadGetTable.Start(true);

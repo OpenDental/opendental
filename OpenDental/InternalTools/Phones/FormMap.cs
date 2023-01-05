@@ -69,10 +69,9 @@ namespace OpenDental.HqPhones {
 		#endregion Events
 
 		#region Methods - Public
-		///<summary>Stub</summary>
+		///<summary></summary>
 		public void SetChatCount() {
 			_listWebChatSessions??=WebChatSessions.GetActiveSessions();
-			#region set label value
 			//get # of WebChats that still need to be claimed
 			List<WebChatSession> listWebChatSessionsUnclaimed=_listWebChatSessions.FindAll(x => string.IsNullOrEmpty(x.TechName));
 			DateTime dateTimeOldestWebChat=DateTime.MinValue;
@@ -86,8 +85,6 @@ namespace OpenDental.HqPhones {
 			else {
 				mapNumberChatTime.Text="00:00";
 			}
-			#endregion
-			#region set label colors
 			if(listWebChatSessionsUnclaimed.Count>=_chatRedCount) {
 				mapNumberChatCount.SetAlertColors();
 			}
@@ -100,7 +97,6 @@ namespace OpenDental.HqPhones {
 			else {
 				mapNumberChatTime.SetNormalColors();
 			}
-			#endregion
 		}
 		
 		public void SetEServiceMetrics(EServiceMetrics eServiceMetricsToday) {
@@ -131,7 +127,7 @@ namespace OpenDental.HqPhones {
 					break;
 			}
 		}
-		
+
 		///<summary>Stub</summary>
 		public void SetPhoneList(List<Phone> listPhones,List<PhoneEmpSubGroup> listPhoneEmpSubGroups,List<ChatUser> listChatUsers,
 			List<WebChatSession> listWebChatSessions,List<PeerInfo> listPeerInfosRemoteSupportSessions)
@@ -181,9 +177,7 @@ namespace OpenDental.HqPhones {
 			mapNumberTriageOpsLocal.Text=triageStaffCountLocal.ToString();
 			mapNumberTriageOpsTotal.Text=triageStaffCountTotal.ToString();
 			#endregion
-			//List<Control> listControlsAreaPanel = new List<Control>();
-			//listControlsAreaPanel.AddRange(this.mapAreaPanel.Controls.OfType<Control>());
-//Todo: main for loop
+			mapPanel.SetPhoneList(listPhones, listChatUsers,listWebChatSessions,listPeerInfosRemoteSupportSessions);
 			RefreshCurrentTabHelper(listPhoneEmpDefaults,listPhones,listPhoneEmpSubGroups);
 		}
 
@@ -360,7 +354,7 @@ namespace OpenDental.HqPhones {
 			}
 			PhoneEmpSubGroupType phoneEmpSubGroupTypeSelected=(PhoneEmpSubGroupType)(tabMain.SelectedTab?.Tag??PhoneEmpSubGroupType.Escal);
 			if(phoneEmpSubGroupTypeSelected==PhoneEmpSubGroupType.Avail) {//Special rules for the Avail escalation view
-				if(!phone.IsProxVisible && !Employees.GetEmp(phoneEmpDefault.EmployeeNum).IsWorkingHome) {
+				if(!phone.IsProxVisible() && !Employees.GetEmp(phoneEmpDefault.EmployeeNum).IsWorkingHome) {
 					return false;
 				}
 				if(!phone.ClockStatus.In(ClockStatusEnum.Available,ClockStatusEnum.Training,ClockStatusEnum.Backup)) {
@@ -390,6 +384,14 @@ namespace OpenDental.HqPhones {
 
 		///<summary>Setup the map panel with the cubicles and labels before filling with real-time data. Call this on load or anytime the cubicle layout has changed.</summary>
 		private void FillMapAreaPanel() {
+			if(comboRoom.SelectedIndex==-1){
+				return;
+			}
+			MapAreaContainer mapAreaContainer=_listMapAreaContainers[comboRoom.SelectedIndex];
+			mapPanel.Width=mapAreaContainer.FloorWidthFeet*17;
+			mapPanel.Height=mapAreaContainer.FloorHeightFeet*17;
+			mapPanel.SetListMapAreas(MapAreas.Refresh(mapAreaContainer.MapAreaContainerNum));
+			mapPanel.Invalidate();
 			/*
 			mapAreaPanel.PixelsPerFoot=LayoutManager.Scale(17);
 			mapAreaPanel.Clear(false);
@@ -467,6 +469,12 @@ namespace OpenDental.HqPhones {
 			_voicemailTime=PrefC.GetInt(PrefName.VoicemailTime);
 		}
 
+		///<summary>If the phone map has been changed, update all phone maps.</summary>
+		public override void ProcessSignalODs(List<Signalod> listSignalods) {
+			if(listSignalods.Exists(x => x.IType==InvalidType.PhoneMap)) {
+				FillMapAreaPanel();
+			}
+		}
 		private void RefreshCurrentTabHelper(List<PhoneEmpDefault> listPhoneEmpDefaultsIn,List<Phone> listPhones,List<PhoneEmpSubGroup> listPhoneEmpSubGroupsIn) {
 			PhoneEmpSubGroupType phoneEmpSubGroupTypeSelected=(PhoneEmpSubGroupType)(tabMain.SelectedTab?.Tag??PhoneEmpSubGroupType.Escal);
 			List<PhoneEmpSubGroup> listPhoneEmpSubGroups=listPhoneEmpSubGroupsIn.FindAll(x => x.SubGroupType==phoneEmpSubGroupTypeSelected);
@@ -502,7 +510,7 @@ namespace OpenDental.HqPhones {
 				EscalationItem escalationItem=new EscalationItem();
 				escalationItem.EmpName=listPhoneEmpDefaults[i].EmpName;
 				//Only show the proximity icon if the phone.IsProxVisible AND the employee is at the same site as our currently selected room.
-				escalationItem.IsProximity=_mapAreaContainer.SiteNum==listPhoneEmpDefaults[i].SiteNum && phone.IsProxVisible;
+				escalationItem.IsProximity=_mapAreaContainer.SiteNum==listPhoneEmpDefaults[i].SiteNum && phone.IsProxVisible();
 				//PeerInfo peerInfoRemoteSupportSession=_listPeerInfosRemoteSupportSessions.Find(x => x.EmployeeNum==phone.EmployeeNum);//not used?
 				escalationItem.IsWebChat=_listWebChatSessions.Any(x => x.TechName==phone.EmployeeName);
 				escalationItem.IsGTAChat=_listChatUsers.Any(x => x.Extension==listPhoneEmpDefaults[i].PhoneExt && x.CurrentSessions>0);
@@ -512,7 +520,7 @@ namespace OpenDental.HqPhones {
 					escalationItem.ShowExtension=true;
 				} 
 				else {
-					escalationItem.ShowExtension=phone.IsProxVisible;
+					escalationItem.ShowExtension=phone.IsProxVisible();
 				}
 				escalationItem.Extension=listPhoneEmpDefaults[i].PhoneExt;
 				listEscalationItems.Add(escalationItem);

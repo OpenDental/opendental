@@ -55,11 +55,11 @@
 			this.labelVoicemailCalls = new OpenDental.MapCubicle();
 			this.label6 = new System.Windows.Forms.Label();
 			this.label14 = new System.Windows.Forms.Label();
-			this.tabMain = new System.Windows.Forms.TabControl();
-			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.tabPage3 = new System.Windows.Forms.TabPage();
-			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.tabMain = new OpenDental.UI.TabControl();
+			this.tabPage1 = new OpenDental.UI.TabPage();
+			this.tabPage2 = new OpenDental.UI.TabPage();
+			this.tabPage3 = new OpenDental.UI.TabPage();
+			this.tabPage4 = new OpenDental.UI.TabPage();
 			this.label7 = new System.Windows.Forms.Label();
 			this.officesDownView = new OpenDental.EscalationViewControl();
 			this.labelTirageOpTotal = new System.Windows.Forms.Label();
@@ -92,30 +92,30 @@
 			// labelCurrentTime
 			// 
 			this.labelCurrentTime.AllowDragging = false;
-			this.labelCurrentTime.AllowEdit = false;
 			this.labelCurrentTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.labelCurrentTime.BorderThickness = 2;
-			this.labelCurrentTime.ChatImage = null;
-			this.labelCurrentTime.Elapsed = System.TimeSpan.Parse("00:00:00");
+			this.labelCurrentTime.ColorInner = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
+			this.labelCurrentTime.ColorOuter = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
 			this.labelCurrentTime.EmployeeName = null;
 			this.labelCurrentTime.EmployeeNum = ((long)(0));
-			this.labelCurrentTime.Empty = false;
 			this.labelCurrentTime.Extension = null;
 			this.labelCurrentTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 39.75F);
 			this.labelCurrentTime.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelCurrentTime.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.labelCurrentTime.InnerColor = System.Drawing.SystemColors.Control;
+			this.labelCurrentTime.ImageChat = null;
+			this.labelCurrentTime.ImagePhone = null;
+			this.labelCurrentTime.ImageProx = null;
+			this.labelCurrentTime.ImageRemoteSupport = null;
+			this.labelCurrentTime.ImageWebChat = null;
+			this.labelCurrentTime.IsEditAllowed = false;
+			this.labelCurrentTime.IsEmpty = false;
 			this.labelCurrentTime.Location = new System.Drawing.Point(1692, 5);
 			this.labelCurrentTime.Name = "labelCurrentTime";
-			this.labelCurrentTime.OuterColor = System.Drawing.SystemColors.Control;
-			this.labelCurrentTime.PhoneImage = null;
-			this.labelCurrentTime.ProxImage = null;
-			this.labelCurrentTime.RemoteSupportImage = null;
 			this.labelCurrentTime.Size = new System.Drawing.Size(182, 61);
 			this.labelCurrentTime.Status = null;
 			this.labelCurrentTime.TabIndex = 66;
 			this.labelCurrentTime.Text = "12:45 PM";
-			this.labelCurrentTime.WebChatImage = null;
+			this.labelCurrentTime.TimeSpanElapsed = System.TimeSpan.Parse("00:00:00");
 			// 
 			// labelTriageCoordinator
 			// 
@@ -147,80 +147,80 @@
 			// labelCustDownTime
 			// 
 			this.labelCustDownTime.AllowDragging = false;
-			this.labelCustDownTime.AllowEdit = false;
 			this.labelCustDownTime.BorderThickness = 1;
-			this.labelCustDownTime.ChatImage = null;
-			this.labelCustDownTime.Elapsed = System.TimeSpan.Parse("00:00:00");
+			this.labelCustDownTime.ColorInner = System.Drawing.Color.LightCyan;
+			this.labelCustDownTime.ColorOuter = System.Drawing.Color.Blue;
 			this.labelCustDownTime.EmployeeName = "";
 			this.labelCustDownTime.EmployeeNum = ((long)(0));
-			this.labelCustDownTime.Empty = false;
 			this.labelCustDownTime.Extension = null;
 			this.labelCustDownTime.Font = new System.Drawing.Font("Calibri", 40F);
 			this.labelCustDownTime.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelCustDownTime.InnerColor = System.Drawing.Color.LightCyan;
+			this.labelCustDownTime.ImageChat = null;
+			this.labelCustDownTime.ImagePhone = null;
+			this.labelCustDownTime.ImageProx = null;
+			this.labelCustDownTime.ImageRemoteSupport = null;
+			this.labelCustDownTime.ImageWebChat = null;
+			this.labelCustDownTime.IsEditAllowed = false;
+			this.labelCustDownTime.IsEmpty = false;
 			this.labelCustDownTime.Location = new System.Drawing.Point(305, 918);
 			this.labelCustDownTime.Name = "labelCustDownTime";
-			this.labelCustDownTime.OuterColor = System.Drawing.Color.Blue;
-			this.labelCustDownTime.PhoneImage = null;
-			this.labelCustDownTime.ProxImage = null;
-			this.labelCustDownTime.RemoteSupportImage = null;
 			this.labelCustDownTime.Size = new System.Drawing.Size(57, 39);
 			this.labelCustDownTime.Status = null;
 			this.labelCustDownTime.TabIndex = 94;
 			this.labelCustDownTime.Text = "0";
-			this.labelCustDownTime.WebChatImage = null;
+			this.labelCustDownTime.TimeSpanElapsed = System.TimeSpan.Parse("00:00:00");
 			// 
 			// labelCustDownCount
 			// 
 			this.labelCustDownCount.AllowDragging = false;
-			this.labelCustDownCount.AllowEdit = false;
 			this.labelCustDownCount.BorderThickness = 1;
-			this.labelCustDownCount.ChatImage = null;
-			this.labelCustDownCount.Elapsed = System.TimeSpan.Parse("00:00:00");
+			this.labelCustDownCount.ColorInner = System.Drawing.Color.LightCyan;
+			this.labelCustDownCount.ColorOuter = System.Drawing.Color.Blue;
 			this.labelCustDownCount.EmployeeName = "";
 			this.labelCustDownCount.EmployeeNum = ((long)(0));
-			this.labelCustDownCount.Empty = false;
 			this.labelCustDownCount.Extension = null;
 			this.labelCustDownCount.Font = new System.Drawing.Font("Calibri", 40F);
 			this.labelCustDownCount.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelCustDownCount.InnerColor = System.Drawing.Color.LightCyan;
+			this.labelCustDownCount.ImageChat = null;
+			this.labelCustDownCount.ImagePhone = null;
+			this.labelCustDownCount.ImageProx = null;
+			this.labelCustDownCount.ImageRemoteSupport = null;
+			this.labelCustDownCount.ImageWebChat = null;
+			this.labelCustDownCount.IsEditAllowed = false;
+			this.labelCustDownCount.IsEmpty = false;
 			this.labelCustDownCount.Location = new System.Drawing.Point(184, 918);
 			this.labelCustDownCount.Name = "labelCustDownCount";
-			this.labelCustDownCount.OuterColor = System.Drawing.Color.Blue;
-			this.labelCustDownCount.PhoneImage = null;
-			this.labelCustDownCount.ProxImage = null;
-			this.labelCustDownCount.RemoteSupportImage = null;
 			this.labelCustDownCount.Size = new System.Drawing.Size(57, 39);
 			this.labelCustDownCount.Status = null;
 			this.labelCustDownCount.TabIndex = 93;
 			this.labelCustDownCount.Text = "0";
-			this.labelCustDownCount.WebChatImage = null;
+			this.labelCustDownCount.TimeSpanElapsed = System.TimeSpan.Parse("00:00:00");
 			// 
 			// labelTriageOpsCountTotal
 			// 
 			this.labelTriageOpsCountTotal.AllowDragging = false;
-			this.labelTriageOpsCountTotal.AllowEdit = false;
 			this.labelTriageOpsCountTotal.BorderThickness = 1;
-			this.labelTriageOpsCountTotal.ChatImage = null;
-			this.labelTriageOpsCountTotal.Elapsed = System.TimeSpan.Parse("00:00:00");
+			this.labelTriageOpsCountTotal.ColorInner = System.Drawing.Color.LightCyan;
+			this.labelTriageOpsCountTotal.ColorOuter = System.Drawing.Color.Blue;
 			this.labelTriageOpsCountTotal.EmployeeName = "";
 			this.labelTriageOpsCountTotal.EmployeeNum = ((long)(0));
-			this.labelTriageOpsCountTotal.Empty = false;
 			this.labelTriageOpsCountTotal.Extension = null;
 			this.labelTriageOpsCountTotal.Font = new System.Drawing.Font("Calibri", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelTriageOpsCountTotal.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelTriageOpsCountTotal.InnerColor = System.Drawing.Color.LightCyan;
+			this.labelTriageOpsCountTotal.ImageChat = null;
+			this.labelTriageOpsCountTotal.ImagePhone = null;
+			this.labelTriageOpsCountTotal.ImageProx = null;
+			this.labelTriageOpsCountTotal.ImageRemoteSupport = null;
+			this.labelTriageOpsCountTotal.ImageWebChat = null;
+			this.labelTriageOpsCountTotal.IsEditAllowed = false;
+			this.labelTriageOpsCountTotal.IsEmpty = false;
 			this.labelTriageOpsCountTotal.Location = new System.Drawing.Point(305, 615);
 			this.labelTriageOpsCountTotal.Name = "labelTriageOpsCountTotal";
-			this.labelTriageOpsCountTotal.OuterColor = System.Drawing.Color.Blue;
-			this.labelTriageOpsCountTotal.PhoneImage = null;
-			this.labelTriageOpsCountTotal.ProxImage = null;
-			this.labelTriageOpsCountTotal.RemoteSupportImage = null;
 			this.labelTriageOpsCountTotal.Size = new System.Drawing.Size(57, 39);
 			this.labelTriageOpsCountTotal.Status = null;
 			this.labelTriageOpsCountTotal.TabIndex = 90;
 			this.labelTriageOpsCountTotal.Text = "0";
-			this.labelTriageOpsCountTotal.WebChatImage = null;
+			this.labelTriageOpsCountTotal.TimeSpanElapsed = System.TimeSpan.Parse("00:00:00");
 			// 
 			// escalationView
 			// 
@@ -259,28 +259,28 @@
 			// labelTriageOpsCountLocal
 			// 
 			this.labelTriageOpsCountLocal.AllowDragging = false;
-			this.labelTriageOpsCountLocal.AllowEdit = false;
 			this.labelTriageOpsCountLocal.BorderThickness = 1;
-			this.labelTriageOpsCountLocal.ChatImage = null;
-			this.labelTriageOpsCountLocal.Elapsed = System.TimeSpan.Parse("00:00:00");
+			this.labelTriageOpsCountLocal.ColorInner = System.Drawing.Color.LightCyan;
+			this.labelTriageOpsCountLocal.ColorOuter = System.Drawing.Color.Blue;
 			this.labelTriageOpsCountLocal.EmployeeName = "";
 			this.labelTriageOpsCountLocal.EmployeeNum = ((long)(0));
-			this.labelTriageOpsCountLocal.Empty = false;
 			this.labelTriageOpsCountLocal.Extension = null;
 			this.labelTriageOpsCountLocal.Font = new System.Drawing.Font("Calibri", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelTriageOpsCountLocal.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelTriageOpsCountLocal.InnerColor = System.Drawing.Color.LightCyan;
+			this.labelTriageOpsCountLocal.ImageChat = null;
+			this.labelTriageOpsCountLocal.ImagePhone = null;
+			this.labelTriageOpsCountLocal.ImageProx = null;
+			this.labelTriageOpsCountLocal.ImageRemoteSupport = null;
+			this.labelTriageOpsCountLocal.ImageWebChat = null;
+			this.labelTriageOpsCountLocal.IsEditAllowed = false;
+			this.labelTriageOpsCountLocal.IsEmpty = false;
 			this.labelTriageOpsCountLocal.Location = new System.Drawing.Point(184, 615);
 			this.labelTriageOpsCountLocal.Name = "labelTriageOpsCountLocal";
-			this.labelTriageOpsCountLocal.OuterColor = System.Drawing.Color.Blue;
-			this.labelTriageOpsCountLocal.PhoneImage = null;
-			this.labelTriageOpsCountLocal.ProxImage = null;
-			this.labelTriageOpsCountLocal.RemoteSupportImage = null;
 			this.labelTriageOpsCountLocal.Size = new System.Drawing.Size(57, 39);
 			this.labelTriageOpsCountLocal.Status = null;
 			this.labelTriageOpsCountLocal.TabIndex = 83;
 			this.labelTriageOpsCountLocal.Text = "0";
-			this.labelTriageOpsCountLocal.WebChatImage = null;
+			this.labelTriageOpsCountLocal.TimeSpanElapsed = System.TimeSpan.Parse("00:00:00");
 			// 
 			// groupPhoneMetrics
 			// 
@@ -306,55 +306,55 @@
 			// labelChatTimeSpan
 			// 
 			this.labelChatTimeSpan.AllowDragging = false;
-			this.labelChatTimeSpan.AllowEdit = false;
 			this.labelChatTimeSpan.BorderThickness = 1;
-			this.labelChatTimeSpan.ChatImage = null;
-			this.labelChatTimeSpan.Elapsed = System.TimeSpan.Parse("00:00:00");
+			this.labelChatTimeSpan.ColorInner = System.Drawing.Color.White;
+			this.labelChatTimeSpan.ColorOuter = System.Drawing.Color.Black;
 			this.labelChatTimeSpan.EmployeeName = null;
 			this.labelChatTimeSpan.EmployeeNum = ((long)(0));
-			this.labelChatTimeSpan.Empty = false;
 			this.labelChatTimeSpan.Extension = null;
 			this.labelChatTimeSpan.Font = new System.Drawing.Font("Calibri", 40F);
 			this.labelChatTimeSpan.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelChatTimeSpan.InnerColor = System.Drawing.Color.White;
+			this.labelChatTimeSpan.ImageChat = null;
+			this.labelChatTimeSpan.ImagePhone = null;
+			this.labelChatTimeSpan.ImageProx = null;
+			this.labelChatTimeSpan.ImageRemoteSupport = null;
+			this.labelChatTimeSpan.ImageWebChat = null;
+			this.labelChatTimeSpan.IsEditAllowed = false;
+			this.labelChatTimeSpan.IsEmpty = false;
 			this.labelChatTimeSpan.Location = new System.Drawing.Point(206, 140);
 			this.labelChatTimeSpan.Name = "labelChatTimeSpan";
-			this.labelChatTimeSpan.OuterColor = System.Drawing.Color.Black;
-			this.labelChatTimeSpan.PhoneImage = null;
-			this.labelChatTimeSpan.ProxImage = null;
-			this.labelChatTimeSpan.RemoteSupportImage = null;
 			this.labelChatTimeSpan.Size = new System.Drawing.Size(120, 44);
 			this.labelChatTimeSpan.Status = null;
 			this.labelChatTimeSpan.TabIndex = 36;
 			this.labelChatTimeSpan.Text = "00:00";
-			this.labelChatTimeSpan.WebChatImage = null;
+			this.labelChatTimeSpan.TimeSpanElapsed = System.TimeSpan.Parse("00:00:00");
 			// 
 			// labelChatCount
 			// 
 			this.labelChatCount.AllowDragging = false;
-			this.labelChatCount.AllowEdit = false;
 			this.labelChatCount.BackColor = System.Drawing.Color.White;
 			this.labelChatCount.BorderThickness = 1;
-			this.labelChatCount.ChatImage = null;
-			this.labelChatCount.Elapsed = System.TimeSpan.Parse("00:00:00");
+			this.labelChatCount.ColorInner = System.Drawing.Color.White;
+			this.labelChatCount.ColorOuter = System.Drawing.Color.Black;
 			this.labelChatCount.EmployeeName = "";
 			this.labelChatCount.EmployeeNum = ((long)(0));
-			this.labelChatCount.Empty = false;
 			this.labelChatCount.Extension = null;
 			this.labelChatCount.Font = new System.Drawing.Font("Calibri", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelChatCount.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelChatCount.InnerColor = System.Drawing.Color.White;
+			this.labelChatCount.ImageChat = null;
+			this.labelChatCount.ImagePhone = null;
+			this.labelChatCount.ImageProx = null;
+			this.labelChatCount.ImageRemoteSupport = null;
+			this.labelChatCount.ImageWebChat = null;
+			this.labelChatCount.IsEditAllowed = false;
+			this.labelChatCount.IsEmpty = false;
 			this.labelChatCount.Location = new System.Drawing.Point(105, 140);
 			this.labelChatCount.Name = "labelChatCount";
-			this.labelChatCount.OuterColor = System.Drawing.Color.Black;
-			this.labelChatCount.PhoneImage = null;
-			this.labelChatCount.ProxImage = null;
-			this.labelChatCount.RemoteSupportImage = null;
 			this.labelChatCount.Size = new System.Drawing.Size(81, 44);
 			this.labelChatCount.Status = null;
 			this.labelChatCount.TabIndex = 35;
 			this.labelChatCount.Text = "0";
-			this.labelChatCount.WebChatImage = null;
+			this.labelChatCount.TimeSpanElapsed = System.TimeSpan.Parse("00:00:00");
 			// 
 			// label2
 			// 
@@ -369,55 +369,55 @@
 			// labelTriageTimeSpan
 			// 
 			this.labelTriageTimeSpan.AllowDragging = false;
-			this.labelTriageTimeSpan.AllowEdit = false;
 			this.labelTriageTimeSpan.BorderThickness = 1;
-			this.labelTriageTimeSpan.ChatImage = null;
-			this.labelTriageTimeSpan.Elapsed = System.TimeSpan.Parse("00:00:00");
+			this.labelTriageTimeSpan.ColorInner = System.Drawing.Color.White;
+			this.labelTriageTimeSpan.ColorOuter = System.Drawing.Color.Black;
 			this.labelTriageTimeSpan.EmployeeName = null;
 			this.labelTriageTimeSpan.EmployeeNum = ((long)(0));
-			this.labelTriageTimeSpan.Empty = false;
 			this.labelTriageTimeSpan.Extension = null;
 			this.labelTriageTimeSpan.Font = new System.Drawing.Font("Calibri", 56F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelTriageTimeSpan.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelTriageTimeSpan.InnerColor = System.Drawing.Color.White;
+			this.labelTriageTimeSpan.ImageChat = null;
+			this.labelTriageTimeSpan.ImagePhone = null;
+			this.labelTriageTimeSpan.ImageProx = null;
+			this.labelTriageTimeSpan.ImageRemoteSupport = null;
+			this.labelTriageTimeSpan.ImageWebChat = null;
+			this.labelTriageTimeSpan.IsEditAllowed = false;
+			this.labelTriageTimeSpan.IsEmpty = false;
 			this.labelTriageTimeSpan.Location = new System.Drawing.Point(206, 187);
 			this.labelTriageTimeSpan.Name = "labelTriageTimeSpan";
-			this.labelTriageTimeSpan.OuterColor = System.Drawing.Color.Black;
-			this.labelTriageTimeSpan.PhoneImage = null;
-			this.labelTriageTimeSpan.ProxImage = null;
-			this.labelTriageTimeSpan.RemoteSupportImage = null;
 			this.labelTriageTimeSpan.Size = new System.Drawing.Size(120, 58);
 			this.labelTriageTimeSpan.Status = null;
 			this.labelTriageTimeSpan.TabIndex = 33;
-			this.labelTriageTimeSpan.Text = "0000";
-			this.labelTriageTimeSpan.WebChatImage = null;
+			this.labelTriageTimeSpan.Text = "0";
+			this.labelTriageTimeSpan.TimeSpanElapsed = System.TimeSpan.Parse("00:00:00");
 			// 
 			// labelTriageRedCalls
 			// 
 			this.labelTriageRedCalls.AllowDragging = false;
-			this.labelTriageRedCalls.AllowEdit = false;
 			this.labelTriageRedCalls.BackColor = System.Drawing.Color.White;
 			this.labelTriageRedCalls.BorderThickness = 1;
-			this.labelTriageRedCalls.ChatImage = null;
-			this.labelTriageRedCalls.Elapsed = System.TimeSpan.Parse("00:00:00");
+			this.labelTriageRedCalls.ColorInner = System.Drawing.Color.White;
+			this.labelTriageRedCalls.ColorOuter = System.Drawing.Color.Black;
 			this.labelTriageRedCalls.EmployeeName = "";
 			this.labelTriageRedCalls.EmployeeNum = ((long)(0));
-			this.labelTriageRedCalls.Empty = false;
 			this.labelTriageRedCalls.Extension = null;
 			this.labelTriageRedCalls.Font = new System.Drawing.Font("Calibri", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelTriageRedCalls.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelTriageRedCalls.InnerColor = System.Drawing.Color.White;
+			this.labelTriageRedCalls.ImageChat = null;
+			this.labelTriageRedCalls.ImagePhone = null;
+			this.labelTriageRedCalls.ImageProx = null;
+			this.labelTriageRedCalls.ImageRemoteSupport = null;
+			this.labelTriageRedCalls.ImageWebChat = null;
+			this.labelTriageRedCalls.IsEditAllowed = false;
+			this.labelTriageRedCalls.IsEmpty = false;
 			this.labelTriageRedCalls.Location = new System.Drawing.Point(105, 48);
 			this.labelTriageRedCalls.Name = "labelTriageRedCalls";
-			this.labelTriageRedCalls.OuterColor = System.Drawing.Color.Black;
-			this.labelTriageRedCalls.PhoneImage = null;
-			this.labelTriageRedCalls.ProxImage = null;
-			this.labelTriageRedCalls.RemoteSupportImage = null;
 			this.labelTriageRedCalls.Size = new System.Drawing.Size(81, 44);
 			this.labelTriageRedCalls.Status = null;
 			this.labelTriageRedCalls.TabIndex = 12;
 			this.labelTriageRedCalls.Text = "0";
-			this.labelTriageRedCalls.WebChatImage = null;
+			this.labelTriageRedCalls.TimeSpanElapsed = System.TimeSpan.Parse("00:00:00");
 			// 
 			// label1
 			// 
@@ -432,29 +432,29 @@
 			// labelTriageRedTimeSpan
 			// 
 			this.labelTriageRedTimeSpan.AllowDragging = false;
-			this.labelTriageRedTimeSpan.AllowEdit = false;
 			this.labelTriageRedTimeSpan.BackColor = System.Drawing.Color.White;
 			this.labelTriageRedTimeSpan.BorderThickness = 1;
-			this.labelTriageRedTimeSpan.ChatImage = null;
-			this.labelTriageRedTimeSpan.Elapsed = System.TimeSpan.Parse("00:00:00");
+			this.labelTriageRedTimeSpan.ColorInner = System.Drawing.Color.White;
+			this.labelTriageRedTimeSpan.ColorOuter = System.Drawing.Color.Black;
 			this.labelTriageRedTimeSpan.EmployeeName = null;
 			this.labelTriageRedTimeSpan.EmployeeNum = ((long)(0));
-			this.labelTriageRedTimeSpan.Empty = false;
 			this.labelTriageRedTimeSpan.Extension = null;
 			this.labelTriageRedTimeSpan.Font = new System.Drawing.Font("Calibri", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelTriageRedTimeSpan.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelTriageRedTimeSpan.InnerColor = System.Drawing.Color.White;
+			this.labelTriageRedTimeSpan.ImageChat = null;
+			this.labelTriageRedTimeSpan.ImagePhone = null;
+			this.labelTriageRedTimeSpan.ImageProx = null;
+			this.labelTriageRedTimeSpan.ImageRemoteSupport = null;
+			this.labelTriageRedTimeSpan.ImageWebChat = null;
+			this.labelTriageRedTimeSpan.IsEditAllowed = false;
+			this.labelTriageRedTimeSpan.IsEmpty = false;
 			this.labelTriageRedTimeSpan.Location = new System.Drawing.Point(206, 48);
 			this.labelTriageRedTimeSpan.Name = "labelTriageRedTimeSpan";
-			this.labelTriageRedTimeSpan.OuterColor = System.Drawing.Color.Black;
-			this.labelTriageRedTimeSpan.PhoneImage = null;
-			this.labelTriageRedTimeSpan.ProxImage = null;
-			this.labelTriageRedTimeSpan.RemoteSupportImage = null;
 			this.labelTriageRedTimeSpan.Size = new System.Drawing.Size(120, 44);
 			this.labelTriageRedTimeSpan.Status = null;
 			this.labelTriageRedTimeSpan.TabIndex = 7;
 			this.labelTriageRedTimeSpan.Text = "00:00";
-			this.labelTriageRedTimeSpan.WebChatImage = null;
+			this.labelTriageRedTimeSpan.TimeSpanElapsed = System.TimeSpan.Parse("00:00:00");
 			// 
 			// label4
 			// 
@@ -469,29 +469,29 @@
 			// labelVoicemailTimeSpan
 			// 
 			this.labelVoicemailTimeSpan.AllowDragging = false;
-			this.labelVoicemailTimeSpan.AllowEdit = false;
 			this.labelVoicemailTimeSpan.BackColor = System.Drawing.Color.White;
 			this.labelVoicemailTimeSpan.BorderThickness = 1;
-			this.labelVoicemailTimeSpan.ChatImage = null;
-			this.labelVoicemailTimeSpan.Elapsed = System.TimeSpan.Parse("00:00:00");
+			this.labelVoicemailTimeSpan.ColorInner = System.Drawing.Color.White;
+			this.labelVoicemailTimeSpan.ColorOuter = System.Drawing.Color.Black;
 			this.labelVoicemailTimeSpan.EmployeeName = null;
 			this.labelVoicemailTimeSpan.EmployeeNum = ((long)(0));
-			this.labelVoicemailTimeSpan.Empty = false;
 			this.labelVoicemailTimeSpan.Extension = null;
 			this.labelVoicemailTimeSpan.Font = new System.Drawing.Font("Calibri", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelVoicemailTimeSpan.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelVoicemailTimeSpan.InnerColor = System.Drawing.Color.White;
+			this.labelVoicemailTimeSpan.ImageChat = null;
+			this.labelVoicemailTimeSpan.ImagePhone = null;
+			this.labelVoicemailTimeSpan.ImageProx = null;
+			this.labelVoicemailTimeSpan.ImageRemoteSupport = null;
+			this.labelVoicemailTimeSpan.ImageWebChat = null;
+			this.labelVoicemailTimeSpan.IsEditAllowed = false;
+			this.labelVoicemailTimeSpan.IsEmpty = false;
 			this.labelVoicemailTimeSpan.Location = new System.Drawing.Point(206, 94);
 			this.labelVoicemailTimeSpan.Name = "labelVoicemailTimeSpan";
-			this.labelVoicemailTimeSpan.OuterColor = System.Drawing.Color.Black;
-			this.labelVoicemailTimeSpan.PhoneImage = null;
-			this.labelVoicemailTimeSpan.ProxImage = null;
-			this.labelVoicemailTimeSpan.RemoteSupportImage = null;
 			this.labelVoicemailTimeSpan.Size = new System.Drawing.Size(120, 44);
 			this.labelVoicemailTimeSpan.Status = null;
 			this.labelVoicemailTimeSpan.TabIndex = 9;
 			this.labelVoicemailTimeSpan.Text = "00:00";
-			this.labelVoicemailTimeSpan.WebChatImage = null;
+			this.labelVoicemailTimeSpan.TimeSpanElapsed = System.TimeSpan.Parse("00:00:00");
 			// 
 			// label11
 			// 
@@ -514,56 +514,56 @@
 			// labelTriageCalls
 			// 
 			this.labelTriageCalls.AllowDragging = false;
-			this.labelTriageCalls.AllowEdit = false;
 			this.labelTriageCalls.BackColor = System.Drawing.Color.White;
 			this.labelTriageCalls.BorderThickness = 1;
-			this.labelTriageCalls.ChatImage = null;
-			this.labelTriageCalls.Elapsed = System.TimeSpan.Parse("00:00:00");
+			this.labelTriageCalls.ColorInner = System.Drawing.Color.White;
+			this.labelTriageCalls.ColorOuter = System.Drawing.Color.Black;
 			this.labelTriageCalls.EmployeeName = "";
 			this.labelTriageCalls.EmployeeNum = ((long)(0));
-			this.labelTriageCalls.Empty = false;
 			this.labelTriageCalls.Extension = null;
 			this.labelTriageCalls.Font = new System.Drawing.Font("Calibri", 56F);
 			this.labelTriageCalls.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelTriageCalls.InnerColor = System.Drawing.Color.White;
-			this.labelTriageCalls.Location = new System.Drawing.Point(104, 187);
+			this.labelTriageCalls.ImageChat = null;
+			this.labelTriageCalls.ImagePhone = null;
+			this.labelTriageCalls.ImageProx = null;
+			this.labelTriageCalls.ImageRemoteSupport = null;
+			this.labelTriageCalls.ImageWebChat = null;
+			this.labelTriageCalls.IsEditAllowed = false;
+			this.labelTriageCalls.IsEmpty = false;
+			this.labelTriageCalls.Location = new System.Drawing.Point(105, 187);
 			this.labelTriageCalls.Name = "labelTriageCalls";
-			this.labelTriageCalls.OuterColor = System.Drawing.Color.Black;
-			this.labelTriageCalls.PhoneImage = null;
-			this.labelTriageCalls.ProxImage = null;
-			this.labelTriageCalls.RemoteSupportImage = null;
-			this.labelTriageCalls.Size = new System.Drawing.Size(82, 58);
+			this.labelTriageCalls.Size = new System.Drawing.Size(81, 58);
 			this.labelTriageCalls.Status = null;
 			this.labelTriageCalls.TabIndex = 14;
 			this.labelTriageCalls.Text = "0";
-			this.labelTriageCalls.WebChatImage = null;
+			this.labelTriageCalls.TimeSpanElapsed = System.TimeSpan.Parse("00:00:00");
 			// 
 			// labelVoicemailCalls
 			// 
 			this.labelVoicemailCalls.AllowDragging = false;
-			this.labelVoicemailCalls.AllowEdit = false;
 			this.labelVoicemailCalls.BackColor = System.Drawing.Color.White;
 			this.labelVoicemailCalls.BorderThickness = 1;
-			this.labelVoicemailCalls.ChatImage = null;
-			this.labelVoicemailCalls.Elapsed = System.TimeSpan.Parse("00:00:00");
+			this.labelVoicemailCalls.ColorInner = System.Drawing.Color.White;
+			this.labelVoicemailCalls.ColorOuter = System.Drawing.Color.Black;
 			this.labelVoicemailCalls.EmployeeName = "";
 			this.labelVoicemailCalls.EmployeeNum = ((long)(0));
-			this.labelVoicemailCalls.Empty = false;
 			this.labelVoicemailCalls.Extension = null;
 			this.labelVoicemailCalls.Font = new System.Drawing.Font("Calibri", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelVoicemailCalls.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelVoicemailCalls.InnerColor = System.Drawing.Color.White;
+			this.labelVoicemailCalls.ImageChat = null;
+			this.labelVoicemailCalls.ImagePhone = null;
+			this.labelVoicemailCalls.ImageProx = null;
+			this.labelVoicemailCalls.ImageRemoteSupport = null;
+			this.labelVoicemailCalls.ImageWebChat = null;
+			this.labelVoicemailCalls.IsEditAllowed = false;
+			this.labelVoicemailCalls.IsEmpty = false;
 			this.labelVoicemailCalls.Location = new System.Drawing.Point(105, 94);
 			this.labelVoicemailCalls.Name = "labelVoicemailCalls";
-			this.labelVoicemailCalls.OuterColor = System.Drawing.Color.Black;
-			this.labelVoicemailCalls.PhoneImage = null;
-			this.labelVoicemailCalls.ProxImage = null;
-			this.labelVoicemailCalls.RemoteSupportImage = null;
 			this.labelVoicemailCalls.Size = new System.Drawing.Size(81, 44);
 			this.labelVoicemailCalls.Status = null;
 			this.labelVoicemailCalls.TabIndex = 13;
 			this.labelVoicemailCalls.Text = "0";
-			this.labelVoicemailCalls.WebChatImage = null;
+			this.labelVoicemailCalls.TimeSpanElapsed = System.TimeSpan.Parse("00:00:00");
 			// 
 			// label6
 			// 
@@ -586,61 +586,52 @@
 			// 
 			// tabMain
 			// 
-			this.tabMain.Alignment = System.Windows.Forms.TabAlignment.Left;
 			this.tabMain.Controls.Add(this.tabPage1);
 			this.tabMain.Controls.Add(this.tabPage2);
 			this.tabMain.Controls.Add(this.tabPage3);
 			this.tabMain.Controls.Add(this.tabPage4);
-			this.tabMain.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
 			this.tabMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.tabMain.ItemSize = new System.Drawing.Size(28, 150);
 			this.tabMain.Location = new System.Drawing.Point(0, 331);
-			this.tabMain.Multiline = true;
 			this.tabMain.Name = "tabMain";
-			this.tabMain.SelectedIndex = 0;
-			this.tabMain.Size = new System.Drawing.Size(59, 282);
-			this.tabMain.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
+			this.tabMain.Size = new System.Drawing.Size(57, 282);
+			this.tabMain.SizeTabsLeft = new System.Drawing.Size(57, 28);
+			this.tabMain.TabAlignment = OpenDental.UI.EnumTabAlignment.LeftHorizontal;
 			this.tabMain.TabIndex = 89;
-			this.tabMain.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabMain_DrawItem);
 			this.tabMain.SelectedIndexChanged += new System.EventHandler(this.tabMain_SelectedIndexChanged);
 			// 
 			// tabPage1
 			// 
-			this.tabPage1.Location = new System.Drawing.Point(154, 4);
+			this.tabPage1.Location = new System.Drawing.Point(58, 2);
 			this.tabPage1.Name = "tabPage1";
 			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage1.Size = new System.Drawing.Size(0, 274);
+			this.tabPage1.Size = new System.Drawing.Size(0, 278);
 			this.tabPage1.TabIndex = 0;
-			this.tabPage1.Text = "tabPage1";
-			this.tabPage1.UseVisualStyleBackColor = true;
+			this.tabPage1.Text = "Avail";
 			// 
 			// tabPage2
 			// 
-			this.tabPage2.Location = new System.Drawing.Point(154, 4);
+			this.tabPage2.Location = new System.Drawing.Point(58, 2);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage2.Size = new System.Drawing.Size(0, 274);
+			this.tabPage2.Size = new System.Drawing.Size(0, 278);
 			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "tabPage2";
-			this.tabPage2.UseVisualStyleBackColor = true;
+			this.tabPage2.Text = "Escal";
 			// 
 			// tabPage3
 			// 
-			this.tabPage3.Location = new System.Drawing.Point(154, 4);
+			this.tabPage3.Location = new System.Drawing.Point(58, 2);
 			this.tabPage3.Name = "tabPage3";
-			this.tabPage3.Size = new System.Drawing.Size(0, 274);
+			this.tabPage3.Size = new System.Drawing.Size(0, 278);
 			this.tabPage3.TabIndex = 2;
-			this.tabPage3.Text = "tabPage3";
-			this.tabPage3.UseVisualStyleBackColor = true;
+			this.tabPage3.Text = "Eserv";
 			// 
 			// tabPage4
 			// 
-			this.tabPage4.Location = new System.Drawing.Point(154, 4);
+			this.tabPage4.Location = new System.Drawing.Point(58, 2);
 			this.tabPage4.Name = "tabPage4";
-			this.tabPage4.Size = new System.Drawing.Size(0, 274);
+			this.tabPage4.Size = new System.Drawing.Size(0, 278);
 			this.tabPage4.TabIndex = 3;
-			this.tabPage4.Text = "tabPage4";
-			this.tabPage4.UseVisualStyleBackColor = true;
+			this.tabPage4.Text = "etc...";
 			// 
 			// label7
 			// 
@@ -706,12 +697,12 @@
 			this.mapAreaPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.mapAreaPanel.FloorColor = System.Drawing.Color.White;
+			this.mapAreaPanel.ColorFloor = System.Drawing.Color.White;
+			this.mapAreaPanel.ColorGrid = System.Drawing.Color.LightGray;
 			this.mapAreaPanel.Font = new System.Drawing.Font("Calibri", 25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.mapAreaPanel.FontCubicle = new System.Drawing.Font("Calibri", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.mapAreaPanel.FontCubicleHeader = new System.Drawing.Font("Calibri", 19F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.mapAreaPanel.FontLabel = new System.Drawing.Font("Calibri", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.mapAreaPanel.GridColor = System.Drawing.Color.LightGray;
 			this.mapAreaPanel.HeightFloorFeet = 55;
 			this.mapAreaPanel.Location = new System.Drawing.Point(365, 78);
 			this.mapAreaPanel.Name = "mapAreaPanel";
@@ -731,6 +722,7 @@
 			// FormMapHQ
 			// 
 			this.ClientSize = new System.Drawing.Size(1884, 1042);
+			this.Controls.Add(this.tabMain);
 			this.Controls.Add(this.mapAreaPanel);
 			this.Controls.Add(this.userControlMapDetails1);
 			this.Controls.Add(this.labelCustDownTime);
@@ -749,7 +741,6 @@
 			this.Controls.Add(this.labelTirageOpLocal);
 			this.Controls.Add(this.label14);
 			this.Controls.Add(this.labelTirageOpTotal);
-			this.Controls.Add(this.tabMain);
 			this.Controls.Add(this.officesDownView);
 			this.Controls.Add(this.label7);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -788,11 +779,7 @@
 		private MapCubicle labelVoicemailCalls;
 		private System.Windows.Forms.Label label14;
 		private MapAreaPanel mapAreaPanel;
-		private System.Windows.Forms.TabControl tabMain;
-		private System.Windows.Forms.TabPage tabPage1;
-		private System.Windows.Forms.TabPage tabPage2;
-		private System.Windows.Forms.TabPage tabPage3;
-		private System.Windows.Forms.TabPage tabPage4;
+		private OpenDental.UI.TabControl tabMain;
 		private System.Windows.Forms.Label labelTirageOpTotal;
 		private System.Windows.Forms.Label labelTirageOpLocal;
 		private MapCubicle labelTriageOpsCountTotal;
@@ -807,5 +794,9 @@
 		private InternalTools.Phones.UserControlMapDetails userControlMapDetails1;
 		private UI.MenuOD menuMain;
 		private System.Windows.Forms.Timer timerWebCam;
+		private UI.TabPage tabPage1;
+		private UI.TabPage tabPage2;
+		private UI.TabPage tabPage3;
+		private UI.TabPage tabPage4;
 	}
 }

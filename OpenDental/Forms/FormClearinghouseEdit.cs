@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using OpenDentBusiness;
 using System.Collections.Generic;
 using CodeBase;
+using OpenDentBusiness.Eclaims;
 
 namespace OpenDental{
 	/// <summary>
@@ -474,31 +475,18 @@ namespace OpenDental{
 					}
 				}	
 			}
+			
 			//todo: Check all parts of program to allow either trailing slash or not
-			if(checkIsClaimExportAllowed.Checked && textExportPath.Text!="" && !Directory.Exists(textExportPath.Text)) {
-				if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Export path does not exist. Attempt to create?")) {
-					try{
-						Directory.CreateDirectory(textExportPath.Text);
-						MsgBox.Show(this,"Folder created.");
-					}
-					catch{
-						if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Not able to create folder. Continue anyway?")){
-							return false;
-						}
-					}
+			if(checkIsClaimExportAllowed.Checked && textExportPath.Text!="") {
+				bool hasResult=CheckOrCreateDirectory(textExportPath.Text);
+				if(!hasResult) {
+					return false;
 				}
 			}
-			if(textResponsePath.Text!="" && !Directory.Exists(textResponsePath.Text)) {//Clinic
-				if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Report path does not exist. Attempt to create?")) {
-					try {
-						Directory.CreateDirectory(textResponsePath.Text);
-						MsgBox.Show(this,"Folder created.");
-					}
-					catch {
-						if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Not able to create folder. Continue anyway?")) {
-							return false;
-						}
-					}
+			if(textResponsePath.Text!="") {//Clinic
+				bool hasResult=CheckOrCreateDirectory(textResponsePath.Text);
+				if(!hasResult) {
+					return false;
 				}
 			}
 			/*if(comboFormat.SelectedIndex==(int)ElectronicClaimFormat.X12){
@@ -517,6 +505,36 @@ namespace OpenDental{
 				}
 			}*/
 			return true;
+		}
+
+		private bool CheckOrCreateDirectory(string directoryName) {
+			bool isUsingODCloudClient=x837Controller.DoSendBatchToCloudClient(ClearinghouseCur);
+			bool didDirectoryExist=false;
+			if(isUsingODCloudClient && ODBuild.IsWeb()) {
+				didDirectoryExist=ODCloudClient.CheckOrCreateWithODCloudClient(directoryName,ODCloudClient.CloudClientAction.CheckForDirectory)=="Success";
+			}
+			else {
+				didDirectoryExist=Directory.Exists(directoryName);
+			}
+			if(didDirectoryExist || !MsgBox.Show(this,MsgBoxButtons.YesNo,"Export path does not exist. Attempt to create?")) {
+				return true;//Nothing to create.
+			}
+			try {
+				if(isUsingODCloudClient && ODBuild.IsWeb()) {
+					ODCloudClient.CheckOrCreateWithODCloudClient(directoryName,ODCloudClient.CloudClientAction.CreateDirectory);
+				}
+				else {
+					Directory.CreateDirectory(directoryName);
+				}
+				MsgBox.Show(this,"Folder created.");
+			}
+			catch {
+				string message = "Not able to create folder "+directoryName+".  Continue anyway?";
+				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,message)) {
+					return false;//Could not create directory.
+				}
+			}
+			return true;//Directory was created or exiting without creating.
 		}
 
 		private void comboClinic_SelectionChangeCommitted(object sender,EventArgs e) {

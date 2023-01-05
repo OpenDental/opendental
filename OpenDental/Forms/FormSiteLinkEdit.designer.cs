@@ -256,29 +256,29 @@ namespace OpenDental {
 			// labelOpsCountPreview
 			// 
 			this.labelOpsCountPreview.AllowDragging = false;
-			this.labelOpsCountPreview.AllowEdit = false;
+			this.labelOpsCountPreview.IsEditAllowed = false;
 			this.labelOpsCountPreview.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.labelOpsCountPreview.BorderThickness = 1;
-			this.labelOpsCountPreview.ChatImage = null;
-			this.labelOpsCountPreview.Elapsed = System.TimeSpan.Parse("00:00:00");
+			this.labelOpsCountPreview.ImageChat = null;
+			this.labelOpsCountPreview.TimeSpanElapsed = System.TimeSpan.Parse("00:00:00");
 			this.labelOpsCountPreview.EmployeeName = null;
 			this.labelOpsCountPreview.EmployeeNum = ((long)(0));
-			this.labelOpsCountPreview.Empty = false;
+			this.labelOpsCountPreview.IsEmpty = false;
 			this.labelOpsCountPreview.Extension = null;
 			this.labelOpsCountPreview.Font = new System.Drawing.Font("Calibri", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelOpsCountPreview.FontHeader = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelOpsCountPreview.InnerColor = System.Drawing.Color.LightCyan;
+			this.labelOpsCountPreview.ColorInner = System.Drawing.Color.LightCyan;
 			this.labelOpsCountPreview.Location = new System.Drawing.Point(86, 132);
 			this.labelOpsCountPreview.Name = "labelOpsCountPreview";
-			this.labelOpsCountPreview.OuterColor = System.Drawing.Color.Blue;
+			this.labelOpsCountPreview.ColorOuter = System.Drawing.Color.Blue;
 			this.labelOpsCountPreview.PhoneCur = null;
-			this.labelOpsCountPreview.PhoneImage = null;
-			this.labelOpsCountPreview.ProxImage = null;
+			this.labelOpsCountPreview.ImagePhone = null;
+			this.labelOpsCountPreview.ImageProx = null;
 			this.labelOpsCountPreview.Size = new System.Drawing.Size(107, 70);
 			this.labelOpsCountPreview.Status = null;
 			this.labelOpsCountPreview.TabIndex = 133;
 			this.labelOpsCountPreview.Text = "5";
-			this.labelOpsCountPreview.WebChatImage = null;
+			this.labelOpsCountPreview.ImageWebChat = null;
 			// 
 			// butChangeForeColor
 			// 

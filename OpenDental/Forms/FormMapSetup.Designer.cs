@@ -25,14 +25,14 @@
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMapSetup));
-			this.checkShowGrid = new System.Windows.Forms.CheckBox();
+			this.checkShowGrid = new OpenDental.UI.CheckBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.numFloorWidthFeet = new System.Windows.Forms.NumericUpDown();
 			this.label3 = new System.Windows.Forms.Label();
 			this.numFloorHeightFeet = new System.Windows.Forms.NumericUpDown();
 			this.label4 = new System.Windows.Forms.Label();
 			this.numPixelsPerFoot = new System.Windows.Forms.NumericUpDown();
-			this.checkShowOutline = new System.Windows.Forms.CheckBox();
+			this.checkShowOutline = new OpenDental.UI.CheckBox();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.menu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.newCubicleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,8 +66,6 @@
 			this.checkShowGrid.Size = new System.Drawing.Size(120, 16);
 			this.checkShowGrid.TabIndex = 3;
 			this.checkShowGrid.Text = "Show Grid";
-			this.checkShowGrid.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkShowGrid.UseVisualStyleBackColor = true;
 			this.checkShowGrid.CheckedChanged += new System.EventHandler(this.checkShowGrid_CheckedChanged);
 			// 
 			// label2
@@ -179,8 +177,6 @@
 			this.checkShowOutline.Size = new System.Drawing.Size(120, 16);
 			this.checkShowOutline.TabIndex = 21;
 			this.checkShowOutline.Text = "Show Outline";
-			this.checkShowOutline.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkShowOutline.UseVisualStyleBackColor = true;
 			this.checkShowOutline.CheckedChanged += new System.EventHandler(this.checkShowOutline_CheckedChanged);
 			// 
 			// groupBox1
@@ -253,19 +249,19 @@
 			this.mapAreaPanel.AutoScroll = true;
 			this.mapAreaPanel.AutoScrollMinSize = new System.Drawing.Size(1326, 935);
 			this.mapAreaPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.mapAreaPanel.FloorColor = System.Drawing.Color.White;
+			this.mapAreaPanel.ColorFloor = System.Drawing.Color.White;
+			this.mapAreaPanel.ColorGrid = System.Drawing.Color.LightGray;
 			this.mapAreaPanel.Font = new System.Drawing.Font("Calibri", 25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.mapAreaPanel.FontCubicle = new System.Drawing.Font("Calibri", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.mapAreaPanel.FontCubicleHeader = new System.Drawing.Font("Calibri", 19F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.mapAreaPanel.FontLabel = new System.Drawing.Font("Calibri", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.mapAreaPanel.GridColor = System.Drawing.Color.LightGray;
 			this.mapAreaPanel.HeightFloorFeet = 55;
 			this.mapAreaPanel.Location = new System.Drawing.Point(12, 34);
 			this.mapAreaPanel.Name = "mapAreaPanel";
 			this.mapAreaPanel.PixelsPerFoot = 17;
 			this.mapAreaPanel.ShowGrid = false;
 			this.mapAreaPanel.ShowOutline = true;
-			this.mapAreaPanel.Size = new System.Drawing.Size(1374, 975);
+			this.mapAreaPanel.Size = new System.Drawing.Size(1374, 974);
 			this.mapAreaPanel.TabIndex = 4;
 			this.mapAreaPanel.WidthFloorFeet = 78;
 			this.mapAreaPanel.MapCubicleEdited += new System.EventHandler(this.mapAreaPanel_MapCubicleEdited);
@@ -440,14 +436,14 @@
 		#endregion
 
 		private MapAreaPanel mapAreaPanel;
-		private System.Windows.Forms.CheckBox checkShowGrid;
+		private OpenDental.UI.CheckBox checkShowGrid;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.NumericUpDown numFloorWidthFeet;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.NumericUpDown numFloorHeightFeet;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.NumericUpDown numPixelsPerFoot;
-		private System.Windows.Forms.CheckBox checkShowOutline;
+		private OpenDental.UI.CheckBox checkShowOutline;
 		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.ContextMenuStrip menu;
 		private System.Windows.Forms.ToolStripMenuItem newCubicleToolStripMenuItem;

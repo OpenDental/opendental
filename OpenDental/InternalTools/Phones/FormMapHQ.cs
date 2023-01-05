@@ -28,8 +28,8 @@ namespace OpenDental {
 		private TimeSpan _timeSpanDelta;
 		private List<MapAreaContainer> _listMapAreaContainers;
 		private MapAreaContainer _mapAreaContainer;
-		///<summary>The site that is associated to the first three octets of the computer that has launched this map.</summary>
-		private Site _site;
+		///<summary>The site that is associated with the first three octets of the computer that has launched this map.</summary>
+		private Site _siteThisComputer;
 		//preferences for setting triage alert colors
 		private int _triageRedCalls,_triageRedTime,_voicemailCalls,_voicemailTime,_triageCalls,_triageTime,_triageTimeWarning,_triageCallsWarning;
 		///<summary>Tracks when chat boxes for map need to be set red.</summary>
@@ -47,20 +47,13 @@ namespace OpenDental {
 		private MapCubicle _mapCubicleSelected;
 		///<summary>Used to store the house icon that is displayed on cubicles if the employee is working from home.</summary>
 		private Bitmap _bitmapHouse;
-
-		private PhoneEmpSubGroupType GetCurSubGroupType() {
-			if(!tabMain.TabPages.ContainsKey(PhoneEmpSubGroupType.Escal.ToString())) {//Control has not been initialized.
-				return PhoneEmpSubGroupType.Escal;
-			}
-			return (PhoneEmpSubGroupType)(tabMain.SelectedTab.Tag??PhoneEmpSubGroupType.Escal);
-		}
 		#endregion Private Members
 
 		#region Initialize
 
 		public FormMapHQ() {
 			InitializeComponent();
-			//This form needs to dynamically add, remove, and dispose controls which remove is not currently supported when using custom borders.
+			//This form needs to dynamically add, remove, and dispose controls, but Remove is not currently supported when using custom borders.
 			//isLayoutMS handles most of the problems.
 			//is96dpi is turned on to allow proper drawing in the map area when zoom is used.
 			//It's a bit hacky, and really just needs an overhaul
@@ -85,8 +78,8 @@ namespace OpenDental {
 
 		private void FormMapHQ_Load(object sender,EventArgs e) {
 			LayoutControls();
-			_site=SiteLinks.GetSiteByGateway();
-			if(_site==null) {
+			_siteThisComputer=SiteLinks.GetSiteByGateway();
+			if(_siteThisComputer==null) {
 				MessageBox.Show("Error.  No sites found in the cache.");
 				DialogResult=DialogResult.Abort;
 				Close();
@@ -106,7 +99,7 @@ namespace OpenDental {
 			//Get the list of maps from our JSON preference.
 			_listMapAreaContainers=MapAreaContainers.Refresh();
 			//Add a custom order to this map list which will prefer maps that are associated to the local computer's site.
-			_listMapAreaContainers=_listMapAreaContainers.OrderBy(x => x.SiteNum!=_site.SiteNum)
+			_listMapAreaContainers=_listMapAreaContainers.OrderBy(x => x.SiteNum!=_siteThisComputer.SiteNum)
 				.ThenBy(x => x.Description).ToList();
 			//Select the first map in our list that matches the site associated to the current computer.
 			if(MapDescription.IsNullOrEmpty()) {
@@ -128,34 +121,27 @@ namespace OpenDental {
 		}
 
 		private void FillTabs() {
-			//jordan: this should be failing. Not allowed. Revisit.
-			foreach(System.Windows.Forms.TabPage tab in tabMain.TabPages) {
-				LayoutManager.Remove(tab);
-				//tabMain.TabPages.Remove(tab);
-				tab.Dispose();
-			}
-			System.Windows.Forms.TabPage tabPage=new System.Windows.Forms.TabPage(PhoneEmpSubGroupType.Avail.ToString());
+			tabMain.TabPages.Clear();//it internally handles the complexities.
+			UI.TabPage tabPage=new UI.TabPage(PhoneEmpSubGroupType.Avail.ToString());
 			tabPage.Name=PhoneEmpSubGroupType.Avail.ToString();
 			tabPage.Tag=PhoneEmpSubGroupType.Avail;
 			LayoutManager.Add(tabPage,tabMain);
-			//tabMain.TabPages.Add(tabPage);
-			List<PhoneEmpSubGroupType> listPhoneempSubGroupTypes=Enum.GetValues(typeof(PhoneEmpSubGroupType)).Cast<PhoneEmpSubGroupType>().ToList();
-			foreach(PhoneEmpSubGroupType phoneEmpSubGroupType in listPhoneempSubGroupTypes) {
-				if(phoneEmpSubGroupType==PhoneEmpSubGroupType.Avail) {
+			List<PhoneEmpSubGroupType> listPhoneEmpSubGroupTypes=Enum.GetValues(typeof(PhoneEmpSubGroupType)).Cast<PhoneEmpSubGroupType>().ToList();
+			for(int i=0;i<listPhoneEmpSubGroupTypes.Count;i++){
+				if(listPhoneEmpSubGroupTypes[i]==PhoneEmpSubGroupType.Avail) {
 					continue;//Already added above
 				}
-				tabPage=new System.Windows.Forms.TabPage(phoneEmpSubGroupType.ToString());
-				tabPage.Name=phoneEmpSubGroupType.ToString();
-				tabPage.Tag=phoneEmpSubGroupType;
+				tabPage=new UI.TabPage(listPhoneEmpSubGroupTypes[i].ToString());
+				tabPage.Name=listPhoneEmpSubGroupTypes[i].ToString();
+				tabPage.Tag=listPhoneEmpSubGroupTypes[i];
 				LayoutManager.Add(tabPage,tabMain);
-				//tabMain.TabPages.Add(tabPage);
 			}
 		}
 
 		private void FillCombo() {
 			comboRoom.Items.Clear();
-			foreach(MapAreaContainer mapCur in _listMapAreaContainers) {
-				comboRoom.Items.Add(mapCur.Description);
+			for (int i=0;i<_listMapAreaContainers.Count;i++) {
+				comboRoom.Items.Add(_listMapAreaContainers[i].Description);
 			}
 			int selectedIndex=0;
 			if(_mapAreaContainer!=null) {
@@ -205,20 +191,20 @@ namespace OpenDental {
 
 		#region Set label text and colors
 
-		public void SetEServiceMetrics(EServiceMetrics metricsToday) {
+		public void SetEServiceMetrics(EServiceMetrics eServiceMetricsToday) {
 			if(ODBuild.IsDebug()) {
 				if(Environment.MachineName.ToLower()=="jordanhome"){
 					return;
 				}
 			}
-			eServiceMetricsControl.SetAccountBalance(metricsToday.AccountBalanceEuro);
-			if(metricsToday.Severity==eServiceSignalSeverity.Critical) {
-				eServiceMetricsControl.StartFlashing(metricsToday.CriticalStatus);
+			eServiceMetricsControl.SetAccountBalance(eServiceMetricsToday.AccountBalanceEuro);
+			if(eServiceMetricsToday.Severity==eServiceSignalSeverity.Critical) {
+				eServiceMetricsControl.StartFlashing(eServiceMetricsToday.CriticalStatus);
 			}
 			else {
 				eServiceMetricsControl.StopFlashing();
 			}
-			switch(metricsToday.Severity) {
+			switch(eServiceMetricsToday.Severity) {
 				case eServiceSignalSeverity.Working:
 					eServiceMetricsControl.SetColorAlert(Color.LimeGreen);
 					break;
@@ -235,12 +221,11 @@ namespace OpenDental {
 		}
 
 		///<summary>Refresh the phone panel every X seconds after it has already been setup.  Make sure to call FillMapAreaPanel before calling this the first time.</summary>
-		public void SetPhoneList(List<Phone> phones,List<PhoneEmpSubGroup> listSubGroups,List<ChatUser> listChatUsers,
-			List<WebChatSession> listWebChatSessions,List<PeerInfo> listRemoteSupportSessions)
+		public void SetPhoneList(List<Phone> listPhones,List<PhoneEmpSubGroup> listPhoneEmpSubGroups,List<ChatUser> listChatUsers,
+			List<WebChatSession> listWebChatSessions,List<PeerInfo> listPeerInfosRemoteSupportSessions)
 		{
-			//refresh our lists to minimize trips to the database.
 			_listWebChatSessions=listWebChatSessions;
-			_listPeerInfosRemoteSupportSessions=listRemoteSupportSessions;
+			_listPeerInfosRemoteSupportSessions=listPeerInfosRemoteSupportSessions;
 			_listChatUsers=listChatUsers;
 			string title="Call Center Map - Triage Coord. - ";
 			try { //get the triage coord label but don't fail just because we can't find it
@@ -260,7 +245,7 @@ namespace OpenDental {
 			List<PhoneEmpDefault> listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
 			List<PhoneEmpDefault> listPhoneEmpDefaultsTriage=listPhoneEmpDefaults.FindAll(x => x.IsTriageOperator && x.HasColor);
 			for(int i=0;i<listPhoneEmpDefaultsTriage.Count;i++){
-				Phone phone=phones.FirstOrDefault(x => x.Extension==listPhoneEmpDefaultsTriage[i].PhoneExt);
+				Phone phone=listPhones.FirstOrDefault(x => x.Extension==listPhoneEmpDefaultsTriage[i].PhoneExt);
 				if(phone==null) {
 					continue;
 				}
@@ -278,75 +263,72 @@ namespace OpenDental {
 			labelTriageOpsCountLocal.Text=triageStaffCountLocal.ToString();
 			labelTriageOpsCountTotal.Text=triageStaffCountTotal.ToString();
 			#endregion
-			List<Control> listAreaPanelControls = new List<Control>();
-			listAreaPanelControls.AddRange(this.mapAreaPanel.Controls.OfType<Control>());
+			List<Control> listControlsAreaPanel = new List<Control>();
+			listControlsAreaPanel.AddRange(this.mapAreaPanel.Controls.OfType<Control>());
 			//listMapAreaRoomControls.Add(_mapCubicleSelected);
-			for(int i=0;i<listAreaPanelControls.Count;i++) { //loop through all of our cubicles and labels and find the matches
-				if(!(listAreaPanelControls[i] is MapCubicle)) {
+			for(int i=0;i<listControlsAreaPanel.Count;i++) { //loop through all of our cubicles and labels and find the matches
+				if(!(listControlsAreaPanel[i] is MapCubicle)) {
 					continue;
 				}
-				MapCubicle mapCubicle=(MapCubicle)listAreaPanelControls[i];
+				MapCubicle mapCubicle=(MapCubicle)listControlsAreaPanel[i];
 				if(mapCubicle.MapAreaCur.Extension==0) { //This cubicle has not been given an extension yet.
-					mapCubicle.Empty=true;
+					mapCubicle.IsEmpty=true;
 					continue;
 				}
-				Phone phone=Phones.GetPhoneForExtension(phones,mapCubicle.MapAreaCur.Extension);
+				Phone phone=Phones.GetPhoneForExtension(listPhones,mapCubicle.MapAreaCur.Extension);
 				if(phone==null) {//We have a cubicle with no corresponding phone entry.
-					mapCubicle.Empty=true;
+					mapCubicle.IsEmpty=true;
 					continue;
 				}
 				mapCubicle.PhoneCur=phone;//Refresh PhoneCur so that it has up to date customer information.
 				ChatUser chatuser=listChatUsers.Where(x => x.Extension == phone.Extension).FirstOrDefault();
 				PhoneEmpDefault phoneEmpDefault=PhoneEmpDefaults.GetEmpDefaultFromList(phone.EmployeeNum,listPhoneEmpDefaults);
 				if(phoneEmpDefault==null) {//We have a cubicle with no corresponding phone emp default entry.
-					mapCubicle.Empty=true;
+					mapCubicle.IsEmpty=true;
 					continue;
 				}
 				//we got this far so we found a corresponding cubicle for this phone entry
 				mapCubicle.EmployeeNum=phone.EmployeeNum;
 				mapCubicle.EmployeeName=phone.EmployeeName;
 				WebChatSession webChatSession=listWebChatSessions.FirstOrDefault(x => x.TechName==phone.EmployeeName);
-				PeerInfo remoteSupportSession=listRemoteSupportSessions.FirstOrDefault(x => x.EmployeeNum==phone.EmployeeNum);
+				PeerInfo peerInfoRemoteSupportSession=listPeerInfosRemoteSupportSessions.FirstOrDefault(x => x.EmployeeNum==phone.EmployeeNum);
 				if(phone.DateTimeNeedsHelpStart.Date==DateTime.Today) { //if they need help, use that time.
-					TimeSpan span=DateTime.Now-phone.DateTimeNeedsHelpStart+_timeSpanDelta;
-					DateTime timeOfDay=DateTime.Today+span;
-					mapCubicle.Elapsed=span;
+					TimeSpan timeSpan=DateTime.Now-phone.DateTimeNeedsHelpStart+_timeSpanDelta;
+					mapCubicle.TimeSpanElapsed=timeSpan;
 				}
 				else if(phone.DateTimeStart.Date==DateTime.Today && phone.Description != "") { //else if in a call, use call time.
-					TimeSpan span=DateTime.Now-phone.DateTimeStart+_timeSpanDelta;
-					DateTime timeOfDay=DateTime.Today+span;
-					mapCubicle.Elapsed=span;
+					TimeSpan timeSpan=DateTime.Now-phone.DateTimeStart+_timeSpanDelta;
+					mapCubicle.TimeSpanElapsed=timeSpan;
 				}
 				else if(phone.Description=="" && webChatSession!=null ) {//else if in a web chat session, use web chat session time
-					TimeSpan span=DateTime.Now-webChatSession.DateTcreated+_timeSpanDelta;
-					mapCubicle.Elapsed=span;	
+					TimeSpan timeSpan=DateTime.Now-webChatSession.DateTcreated+_timeSpanDelta;
+					mapCubicle.TimeSpanElapsed=timeSpan;	
 				}
 				else if(phone.Description=="" && chatuser!=null && chatuser.CurrentSessions>0) { //else if in a chat, use chat time.
-					TimeSpan span=TimeSpan.FromMilliseconds(chatuser.SessionTime)+_timeSpanDelta;
-					mapCubicle.Elapsed=span;
+					TimeSpan timeSpan=TimeSpan.FromMilliseconds(chatuser.SessionTime)+_timeSpanDelta;
+					mapCubicle.TimeSpanElapsed=timeSpan;
 				}
-				else if(phone.Description=="" && remoteSupportSession!=null) {
+				else if(phone.Description=="" && peerInfoRemoteSupportSession!=null) {
 					//Might need to enhance later to get a 'timeDelta' for the Remote Support server.
-					mapCubicle.Elapsed=remoteSupportSession.SessionTime;
+					mapCubicle.TimeSpanElapsed=peerInfoRemoteSupportSession.SessionTime;
 				}
 				else if(phone.DateTimeStart.Date==DateTime.Today) { //else available, use that time.
-					TimeSpan span = DateTime.Now-phone.DateTimeStart+_timeSpanDelta;
-					DateTime timeOfDay = DateTime.Today+span;
-					mapCubicle.Elapsed=span;
+					TimeSpan timeSpan = DateTime.Now-phone.DateTimeStart+_timeSpanDelta;
+					mapCubicle.TimeSpanElapsed=timeSpan;
 				}
 				else { //else, whatever.
-					mapCubicle.Elapsed=TimeSpan.Zero;
+					mapCubicle.TimeSpanElapsed=TimeSpan.Zero;
 				}
-				if(phone.IsProxVisible) {
-					mapCubicle.ProxImage=Properties.Resources.Figure;
+				if(phone.IsProxVisible()) {
+					mapCubicle.ImageProx=Properties.Resources.Figure;
 				}
 				else if(phone.DateTProximal.AddHours(8)>DateTime.Now) {
-					mapCubicle.ProxImage=Properties.Resources.NoFigure;//TODO: replace image with one from Nathan
+					mapCubicle.ImageProx=Properties.Resources.NoFigure;//Red circle
 				}
 				else {
-					mapCubicle.ProxImage=null;
+					mapCubicle.ImageProx=null;
 				}
-				mapCubicle.IsAtDesk=phone.IsProxVisible;
+				mapCubicle.IsAtDesk=phone.IsProxVisible();
 				string status=Phones.ConvertClockStatusToString(phone.ClockStatus);
 				//Check if the user is logged in.
 				if(phone.ClockStatus==ClockStatusEnum.None
@@ -355,34 +337,34 @@ namespace OpenDental {
 				}
 				mapCubicle.Status=status;
 				if(phone.Description=="") {
-					mapCubicle.PhoneImage=null;
-					mapCubicle.WebChatImage=null;
-					mapCubicle.ChatImage=null;
-					mapCubicle.RemoteSupportImage=null;
+					mapCubicle.ImagePhone=null;
+					mapCubicle.ImageWebChat=null;
+					mapCubicle.ImageChat=null;
+					mapCubicle.ImageRemoteSupport=null;
 					if(webChatSession!=null) {//active web chat session
-						mapCubicle.WebChatImage=Properties.Resources.WebChatIcon;
+						mapCubicle.ImageWebChat=Properties.Resources.WebChatIcon;
 					}
 					else if(chatuser!=null && chatuser.CurrentSessions!=0) {//check for GTA sessions if no web chats
-						mapCubicle.ChatImage=Properties.Resources.WebChatIcon;
+						mapCubicle.ImageChat=Properties.Resources.WebChatIcon;
 					}
-					else if(remoteSupportSession!=null) {
-						mapCubicle.RemoteSupportImage=Properties.Resources.remoteSupportIcon;
+					else if(peerInfoRemoteSupportSession!=null) {
+						mapCubicle.ImageRemoteSupport=Properties.Resources.remoteSupportIcon;
 					}
 				}
 				else {
-					mapCubicle.PhoneImage=Properties.Resources.phoneInUse;
+					mapCubicle.ImagePhone=Properties.Resources.phoneInUse;
 				}
-				Color outerColor;
-				Color innerColor;
-				Color fontColor;
+				Color colorOuter;
+				Color colorInner;
+				Color colorFont;
 				bool isTriageOperatorOnTheClock;
 				//get the cubicle color and triage status
-				Phones.GetPhoneColor(phone,phoneEmpDefault,true,out outerColor,out innerColor,out fontColor,out isTriageOperatorOnTheClock);
+				Phones.GetPhoneColor(phone,phoneEmpDefault,true,out colorOuter,out colorInner,out colorFont,out isTriageOperatorOnTheClock);
 				if(!mapCubicle.IsFlashing()) { //if the control is already flashing then don't overwrite the colors. this would cause a "spastic" flash effect.
-					mapCubicle.OuterColor=outerColor;
-					mapCubicle.InnerColor=innerColor;
+					mapCubicle.ColorOuter=colorOuter;
+					mapCubicle.ColorInner=colorInner;
 				}
-				mapCubicle.ForeColor=fontColor;
+				mapCubicle.ForeColor=colorFont;
 				if(phone.ClockStatus==ClockStatusEnum.NeedsHelp) { //turn on flashing
 					mapCubicle.StartFlashing();
 				}
@@ -395,29 +377,29 @@ namespace OpenDental {
 				Employee employee=Employees.GetEmp(phone.EmployeeNum);//from cache
 				if(employee!=null){
 					if(employee.IsWorkingHome) {
-						mapCubicle.ProxImage=_bitmapHouse;
+						mapCubicle.ImageProx=_bitmapHouse;
 					}
 					//plan to use this to show extra employee fields, like cellphone
 				}
 				mapCubicle.Invalidate(true);
 			}
-			refreshCurrentTabHelper(listPhoneEmpDefaults,phones,listSubGroups);
+			RefreshCurrentTabHelper(listPhoneEmpDefaults,listPhones,listPhoneEmpSubGroups);
 		}
 
 		///<summary>Sets the detail control to the clicked on cubicle as long as there is an associated phone.</summary>
-		private void FillDetails(MapCubicle cubeClicked=null) {
-			if(cubeClicked is null){
-
+		private void FillDetails(MapCubicle mapCubicleClicked=null) {
+			if(mapCubicleClicked is null){
+				// should we be returning here?
 			}
-			if(cubeClicked.PhoneCur is null) {
+			if(mapCubicleClicked.PhoneCur is null) {
 				return;
 			}
-			_mapCubicleSelected=cubeClicked;
+			_mapCubicleSelected=mapCubicleClicked;
 			//set the text before the image, because it was taking too long to load
-			userControlMapDetails1.SetEmployee(cubeClicked);
+			userControlMapDetails1.SetEmployee(mapCubicleClicked);
 			userControlMapDetails1.Visible=true;
 			Application.DoEvents();//process the events first so the text on the control will be set
-			FillDetailImage(cubeClicked.PhoneCur.EmployeeNum);
+			FillDetailImage(mapCubicleClicked.PhoneCur.EmployeeNum);
 		}
 
 		private void FillDetailImage(long employeeNum){
@@ -504,104 +486,94 @@ namespace OpenDental {
 
 		private void tabMain_SelectedIndexChanged(object sender,EventArgs e) {
 			List<PhoneEmpDefault> listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
-			refreshCurrentTabHelper(listPhoneEmpDefaults,Phones.GetPhoneList(),PhoneEmpSubGroups.GetAll());
+			List<Phone> listPhones=Phones.GetPhoneList();
+			List<PhoneEmpSubGroup> listPhoneEmpSubGroups=PhoneEmpSubGroups.GetAll();
+			RefreshCurrentTabHelper(listPhoneEmpDefaults,listPhones,listPhoneEmpSubGroups);
 		}
 
-		private void refreshCurrentTabHelper(List<PhoneEmpDefault> phoneEmpDefaultsIn,List<Phone> phonesIn,List<PhoneEmpSubGroup> subGroupsIn) {
-			List<PhoneEmpSubGroup> subGroups=subGroupsIn.FindAll(x => x.SubGroupType==GetCurSubGroupType());
+		private void RefreshCurrentTabHelper(List<PhoneEmpDefault> listPhoneEmpDefaultsIn,List<Phone> listPhones,List<PhoneEmpSubGroup> listPhoneEmpSubGroupsIn) {
+			PhoneEmpSubGroupType phoneEmpSubGroupTypeSelected=(PhoneEmpSubGroupType)(tabMain.SelectedTab?.Tag??PhoneEmpSubGroupType.Escal);
+			List<PhoneEmpSubGroup> listPhoneEmpSubGroups=listPhoneEmpSubGroupsIn.FindAll(x => x.SubGroupType==phoneEmpSubGroupTypeSelected);
 			//List of EmployeeNums to show for current tab.
-			List<long> empNums=subGroups.Select(y => y.EmployeeNum).ToList();
-			List<PhoneEmpDefault> phoneEmpDefaults=phoneEmpDefaultsIn.FindAll(x => empNums.Contains(x.EmployeeNum));//Employees who belong to this sub group.
-			foreach(PhoneEmpDefault phoneEmp in phoneEmpDefaults) {
-				phoneEmp.EscalationOrder=subGroups.First(x => x.EmployeeNum==phoneEmp.EmployeeNum).EscalationOrder;
+			List<long> listEmployeeNums=listPhoneEmpSubGroups.Select(y => y.EmployeeNum).ToList();
+			List<PhoneEmpDefault> listPhoneEmpDefaults=listPhoneEmpDefaultsIn.FindAll(x => listEmployeeNums.Contains(x.EmployeeNum));//Employees who belong to this sub group.
+			for (int i=0;i<listPhoneEmpDefaults.Count;i++) {
+				listPhoneEmpDefaults[i].EscalationOrder=listPhoneEmpSubGroups.First(x => x.EmployeeNum==listPhoneEmpDefaults[i].EmployeeNum).EscalationOrder;
 			}
-			SetEscalationList(phoneEmpDefaults,phonesIn);
-		}
-
-		private void SetEscalationList(List<PhoneEmpDefault> peds,List<Phone> phones) {
-			try {
-				escalationView.BeginUpdate();
-				escalationView.Items.Clear();
-				escalationView.DictProximity.Clear();
-				escalationView.DictShowExtension.Clear();
-				escalationView.DictExtensions.Clear();
-				escalationView.DictWebChat.Clear();
-				escalationView.DictGTAChat.Clear();
-				escalationView.DictRemoteSupport.Clear();
-				if(escalationView.Tag==null || (((int)escalationView.Tag)!=tabMain.SelectedIndex)) {
-					escalationView.IsNewItems=true;
-					escalationView.Tag=tabMain.SelectedIndex;
-				}
-				List<PhoneEmpDefault> listFiltered=peds.FindAll(x => DoAddToEscalationView(x,phones));
-				List<PhoneEmpDefault> listSorted=SortForEscalationView(listFiltered,phones);
-				if(_listChatUsers==null) {
-					_listChatUsers=ChatUsers.GetAll();
-				}
-				if(_listWebChatSessions==null) {
-					_listWebChatSessions=WebChatSessions.GetActiveSessions();
-				}
-				if(_listPeerInfosRemoteSupportSessions==null) {
-					_listPeerInfosRemoteSupportSessions=PeerInfos.GetActiveSessions(false,true);
-				}
-				for(int i=0;i<listSorted.Count;i++) {
-					PhoneEmpDefault ped=listSorted[i];
-					Phone phone=ODMethodsT.Coalesce(Phones.GetPhoneForEmployeeNum(phones,ped.EmployeeNum));
-					escalationView.Items.Add(ped.EmpName);
-					//Only show the proximity icon if the phone.IsProxVisible AND the employee is at the same site as our currently selected room.
-					escalationView.DictProximity.Add(ped.EmpName,(_mapAreaContainer.SiteNum==ped.SiteNum && phone.IsProxVisible));
-					PeerInfo remoteSupportSession=_listPeerInfosRemoteSupportSessions.FirstOrDefault(x => x.EmployeeNum==phone.EmployeeNum);
-					escalationView.DictWebChat.Add(ped.EmpName,_listWebChatSessions.Any(x => x.TechName==phone.EmployeeName));
-					escalationView.DictGTAChat.Add(ped.EmpName,_listChatUsers.Any(x => x.Extension==ped.PhoneExt && x.CurrentSessions>0));
-					escalationView.DictRemoteSupport.Add(ped.EmpName,_listPeerInfosRemoteSupportSessions.Any(x => x.EmployeeNum==phone.EmployeeNum));
-					//Extensions will always show if they are working from home or for both locations unless the employee is not proximal. 
-					if(Employees.GetEmp(ped.EmployeeNum).IsWorkingHome) {
-						escalationView.DictShowExtension.Add(ped.EmpName,true);
-					} 
-					else {
-						escalationView.DictShowExtension.Add(ped.EmpName,phone.IsProxVisible);
-					}
-					escalationView.DictExtensions.Add(ped.EmpName,ped.PhoneExt);
-				}
+			//Set Escalation List------------------------------------------------------------------------------
+			escalationView.BeginUpdate();
+			escalationView.Items.Clear();
+			escalationView.DictProximity.Clear();
+			escalationView.DictShowExtension.Clear();
+			escalationView.DictExtensions.Clear();
+			escalationView.DictWebChat.Clear();
+			escalationView.DictGTAChat.Clear();
+			escalationView.DictRemoteSupport.Clear();
+			if(escalationView.Tag==null || (((int)escalationView.Tag)!=tabMain.SelectedIndex)) {
+				escalationView.IsNewItems=true;
+				escalationView.Tag=tabMain.SelectedIndex;
 			}
-			catch {
+			List<PhoneEmpDefault> listPhoneEmpDefaultsEscalation=listPhoneEmpDefaults.FindAll(x => DoAddToEscalationView(x,listPhones));
+			List<PhoneEmpDefault> listPhoneEmpDefaultsSorted=SortForEscalationView(listPhoneEmpDefaultsEscalation,listPhones);
+			_listChatUsers??=ChatUsers.GetAll();
+			_listWebChatSessions??=WebChatSessions.GetActiveSessions();
+			_listPeerInfosRemoteSupportSessions??=PeerInfos.GetActiveSessions(false,true);
+			for(int i=0;i<listPhoneEmpDefaultsSorted.Count;i++) {
+				PhoneEmpDefault phoneEmpDefault=listPhoneEmpDefaultsSorted[i];
+				Phone phone=ODMethodsT.Coalesce(Phones.GetPhoneForEmployeeNum(listPhones,phoneEmpDefault.EmployeeNum));
+				escalationView.Items.Add(phoneEmpDefault.EmpName);
+				//Only show the proximity icon if the phone.IsProxVisible AND the employee is at the same site as our currently selected room.
+				escalationView.DictProximity.Add(phoneEmpDefault.EmpName,(_mapAreaContainer.SiteNum==phoneEmpDefault.SiteNum && phone.IsProxVisible()));
+				PeerInfo peerInfoRemoteSupportSession=_listPeerInfosRemoteSupportSessions.FirstOrDefault(x => x.EmployeeNum==phone.EmployeeNum);
+				escalationView.DictWebChat.Add(phoneEmpDefault.EmpName,_listWebChatSessions.Any(x => x.TechName==phone.EmployeeName));
+				escalationView.DictGTAChat.Add(phoneEmpDefault.EmpName,_listChatUsers.Any(x => x.Extension==phoneEmpDefault.PhoneExt && x.CurrentSessions>0));
+				escalationView.DictRemoteSupport.Add(phoneEmpDefault.EmpName,_listPeerInfosRemoteSupportSessions.Any(x => x.EmployeeNum==phone.EmployeeNum));
+				//Extensions will always show if they are working from home or for both locations unless the employee is not proximal. 
+				if(Employees.GetEmp(phoneEmpDefault.EmployeeNum).IsWorkingHome) {
+					escalationView.DictShowExtension.Add(phoneEmpDefault.EmpName,true);
+				} 
+				else {
+					escalationView.DictShowExtension.Add(phoneEmpDefault.EmpName,phone.IsProxVisible());
+				}
+				escalationView.DictExtensions.Add(phoneEmpDefault.EmpName,phoneEmpDefault.PhoneExt);
 			}
-			finally {
-				escalationView.EndUpdate();
-			}
+			escalationView.EndUpdate();
 		}
 
 		///<summary>Sorts the list of PhoneEmpDefaults in the appropriate way for the selected escalation view.</summary>
-		private List<PhoneEmpDefault> SortForEscalationView(List<PhoneEmpDefault> peds,List<Phone> phones) {
-			if(GetCurSubGroupType()==PhoneEmpSubGroupType.Avail) {
-				Func<PhoneEmpDefault,Phone> getPhone=new Func<PhoneEmpDefault,Phone>((phoneEmpDef) => {
-					return ODMethodsT.Coalesce(Phones.GetPhoneForEmployeeNum(phones,phoneEmpDef.EmployeeNum));
+		private List<PhoneEmpDefault> SortForEscalationView(List<PhoneEmpDefault> listPhoneEmpDefaults,List<Phone> listPhones) {
+			PhoneEmpSubGroupType phoneEmpSubGroupTypeSelected=(PhoneEmpSubGroupType)(tabMain.SelectedTab?.Tag??PhoneEmpSubGroupType.Escal);
+			if(phoneEmpSubGroupTypeSelected==PhoneEmpSubGroupType.Avail) {
+				Func<PhoneEmpDefault,Phone> funcGetPhone=new Func<PhoneEmpDefault,Phone>((phoneEmpDef) => {
+					return ODMethodsT.Coalesce(Phones.GetPhoneForEmployeeNum(listPhones,phoneEmpDef.EmployeeNum));
 				});
-				return peds.OrderBy(x => getPhone(x).ClockStatus!=ClockStatusEnum.Available)//Show Available first
-					.ThenBy(x => getPhone(x).ClockStatus!=ClockStatusEnum.Training)//Training next
-					.ThenBy(x => getPhone(x).ClockStatus!=ClockStatusEnum.Backup)//Backup next
-					.ThenBy(x => getPhone(x).DateTimeStart.Year < 1880)//Show people who have an actual DateTimeStart first
-					.ThenBy(x => getPhone(x).DateTimeStart)//Show those first who have been in this status longest
+				return listPhoneEmpDefaults.OrderBy(x => funcGetPhone(x).ClockStatus!=ClockStatusEnum.Available)//Show Available first
+					.ThenBy(x => funcGetPhone(x).ClockStatus!=ClockStatusEnum.Training)//Training next
+					.ThenBy(x => funcGetPhone(x).ClockStatus!=ClockStatusEnum.Backup)//Backup next
+					.ThenBy(x => funcGetPhone(x).DateTimeStart.Year < 1880)//Show people who have an actual DateTimeStart first
+					.ThenBy(x => funcGetPhone(x).DateTimeStart)//Show those first who have been in this status longest
 					.ToList();
 			}
 			//All other escalation views beside Avail
-			return peds.OrderBy(x => x.EscalationOrder)//Show people at the selected location first
+			return listPhoneEmpDefaults.OrderBy(x => x.EscalationOrder)//Show people at the selected location first
 				.ThenBy(x => x.EmpName).ToList();
 		}
 
 		///<summary>Returns true if the employee for the PhoneEmpDefault should be added to the selected escalation view.</summary>
-		private bool DoAddToEscalationView(PhoneEmpDefault ped,List<Phone> phones) {
-			if(ped.EscalationOrder<=0) { //Filter out employees that do not have an escalation order set.
+		private bool DoAddToEscalationView(PhoneEmpDefault phoneEmpDefault,List<Phone> listPhones) {
+			if(phoneEmpDefault.EscalationOrder<=0) { //Filter out employees that do not have an escalation order set.
 				return false;
 			}
-			if(ped.IsTriageOperator) {
+			if(phoneEmpDefault.IsTriageOperator) {
 				return false;
 			}
-			Phone phone=Phones.GetPhoneForEmployeeNum(phones,ped.EmployeeNum);
+			Phone phone=Phones.GetPhoneForEmployeeNum(listPhones,phoneEmpDefault.EmployeeNum);
 			if(phone==null || phone.Description!="") { //Filter out invalid employees or employees that are already on the phone.
 				return false;
 			}
-			if(GetCurSubGroupType()==PhoneEmpSubGroupType.Avail) {//Special rules for the Avail escalation view
-				if(!phone.IsProxVisible && !Employees.GetEmp(ped.EmployeeNum).IsWorkingHome) {
+			PhoneEmpSubGroupType phoneEmpSubGroupTypeSelected=(PhoneEmpSubGroupType)(tabMain.SelectedTab?.Tag??PhoneEmpSubGroupType.Escal);
+			if(phoneEmpSubGroupTypeSelected==PhoneEmpSubGroupType.Avail) {//Special rules for the Avail escalation view
+				if(!phone.IsProxVisible() && !Employees.GetEmp(phoneEmpDefault.EmployeeNum).IsWorkingHome) {
 					return false;
 				}
 				if(!phone.ClockStatus.In(ClockStatusEnum.Available,ClockStatusEnum.Training,ClockStatusEnum.Backup)) {
@@ -618,51 +590,45 @@ namespace OpenDental {
 
 		///<summary>Returns true if the employee for the PhoneEmpDefault is at the current location. An employee is considered to be at the same location
 		///as a room if the employee's site is the same for the current room.</summary>
-		private bool IsAtCurrentLocation(PhoneEmpDefault ped) {
-			return ped.SiteNum==_mapAreaContainer.SiteNum;
+		private bool IsAtCurrentLocation(PhoneEmpDefault phoneEmpDefault) {
+			return phoneEmpDefault.SiteNum==_mapAreaContainer.SiteNum;
 		}
 
-		public void SetOfficesDownList(List<Task> listOfficesDown) {
-			try {
-				officesDownView.BeginUpdate();
-				officesDownView.Items.Clear();
-				//Sort list by oldest.
-				listOfficesDown.Sort(delegate(Task t1,Task t2) {
-					return Comparer<DateTime>.Default.Compare(t1.DateTimeEntry,t2.DateTimeEntry);
-				});
-				for(int i=0;i<listOfficesDown.Count;i++) {
-					Task task=listOfficesDown[i];
-					if(task.TaskStatus==TaskStatusEnum.Done) { //Filter out old tasks. Should not be any but just in case.
-						continue;
-					}
-					TimeSpan timeActive=DateTime.Now.Subtract(task.DateTimeEntry);
-					//We got this far so the office is down.
-					officesDownView.Items.Add(timeActive.ToStringHmmss()+" - "+task.KeyNum.ToString());
-				}
-				labelCustDownCount.Text=listOfficesDown.Count.ToString();
-				if(listOfficesDown.Count>0) {
-					//Get the time of the oldest task
-					TimeSpan timeActive=DateTime.Now.Subtract(listOfficesDown[0].DateTimeEntry);
-					labelCustDownTime.Text=((int)timeActive.TotalMinutes).ToString();
-				}
-				else {
-					labelCustDownTime.Text="0";
-				}
-			}
-			catch {
-			}
-			finally {
+		public void SetOfficesDownList(List<Task> listTasksOfficeDown) {
+			officesDownView.BeginUpdate();
+			officesDownView.Items.Clear();
+			if (listTasksOfficeDown.IsNullOrEmpty()) {
+				labelCustDownTime.Text="0";
 				officesDownView.EndUpdate();
-			}		
+				return;
+			}
+			//Sort list by oldest.
+			listTasksOfficeDown.Sort(delegate(Task task1,Task task2) {
+				return Comparer<DateTime>.Default.Compare(task1.DateTimeEntry,task2.DateTimeEntry);
+			});
+			for(int i=0;i<listTasksOfficeDown.Count;i++) {
+				Task task=listTasksOfficeDown[i];
+				if(task.TaskStatus==TaskStatusEnum.Done) { //Filter out old tasks. Should not be any but just in case.
+					continue;
+				}
+				TimeSpan timeSpanActive=DateTime.Now.Subtract(task.DateTimeEntry);
+				//We got this far so the office is down.
+				officesDownView.Items.Add(timeSpanActive.ToStringHmmss()+" - "+task.KeyNum.ToString());
+			}
+			labelCustDownCount.Text=listTasksOfficeDown.Count.ToString();
+			//Get the time of the oldest task
+			TimeSpan timeSpanOldest=DateTime.Now.Subtract(listTasksOfficeDown[0].DateTimeEntry);
+			labelCustDownTime.Text=((int)timeSpanOldest.TotalMinutes).ToString();
+			officesDownView.EndUpdate();
 		}
 
-		public void SetTriageUrgent(int calls,TimeSpan timeBehind) {
+		public void SetTriageUrgent(int calls,TimeSpan timeSpanBehind) {
 			this.labelTriageRedCalls.Text=calls.ToString();
-			if(timeBehind==TimeSpan.Zero) { //format the string special for this case
+			if(timeSpanBehind==TimeSpan.Zero) { //format the string special for this case
 				this.labelTriageRedTimeSpan.Text="00:00";
 			}
 			else {
-				this.labelTriageRedTimeSpan.Text=timeBehind.ToStringmmss();
+				this.labelTriageRedTimeSpan.Text=timeSpanBehind.ToStringmmss();
 			}
 			if(calls>=_triageRedCalls) { //we are behind
 				labelTriageRedCalls.SetAlertColors();
@@ -670,7 +636,7 @@ namespace OpenDental {
 			else { //we are ok
 				labelTriageRedCalls.SetNormalColors();
 			}
-			if(timeBehind>=TimeSpan.FromMinutes(_triageRedTime)) { //we are behind
+			if(timeSpanBehind>=TimeSpan.FromMinutes(_triageRedTime)) { //we are behind
 				labelTriageRedTimeSpan.SetAlertColors();
 			}
 			else { //we are ok
@@ -678,13 +644,13 @@ namespace OpenDental {
 			}
 		}
 
-		public void SetVoicemailRed(int calls,TimeSpan timeBehind) {
+		public void SetVoicemailRed(int calls,TimeSpan timeSpanBehind) {
 			this.labelVoicemailCalls.Text=calls.ToString();
-			if(timeBehind==TimeSpan.Zero) { //format the string special for this case
+			if(timeSpanBehind==TimeSpan.Zero) { //format the string special for this case
 				this.labelVoicemailTimeSpan.Text="00:00";
 			}
 			else {
-				this.labelVoicemailTimeSpan.Text=timeBehind.ToStringmmss();
+				this.labelVoicemailTimeSpan.Text=timeSpanBehind.ToStringmmss();
 			}
 			if(calls>=_voicemailCalls) { //we are behind
 				labelVoicemailCalls.SetAlertColors();
@@ -692,7 +658,7 @@ namespace OpenDental {
 			else { //we are ok
 				labelVoicemailCalls.SetNormalColors();
 			}
-			if(timeBehind>=TimeSpan.FromMinutes(_voicemailTime)) { //we are behind
+			if(timeSpanBehind>=TimeSpan.FromMinutes(_voicemailTime)) { //we are behind
 				labelVoicemailTimeSpan.SetAlertColors();
 			}
 			else { //we are ok
@@ -701,12 +667,12 @@ namespace OpenDental {
 		}
 		
 		///<summary>Sets the time for current triage tasks and colors it according to how far behind we are.</summary>
-		public void SetTriageNormal(int callsWithNotes,int callsWithNoNotes,TimeSpan timeBehind,int triageRed) {
-			if(timeBehind==TimeSpan.Zero) { //format the string special for this case
+		public void SetTriageNormal(int callsWithNotes,int callsWithNoNotes,TimeSpan timeSpanBehind,int triageRed) {
+			if(timeSpanBehind==TimeSpan.Zero) { //format the string special for this case
 				labelTriageTimeSpan.Text="0";
 			}
 			else {
-				labelTriageTimeSpan.Text=((int)timeBehind.TotalMinutes).ToString();			
+				labelTriageTimeSpan.Text=((int)timeSpanBehind.TotalMinutes).ToString();
 			}
 			if(callsWithNoNotes>0 || triageRed>0) { //we have calls which don't have notes or a red triage task so display that number
 				labelTriageCalls.Text=(callsWithNoNotes+triageRed).ToString();
@@ -723,10 +689,10 @@ namespace OpenDental {
 			else { //we are ok
 				labelTriageCalls.SetNormalColors();
 			}
-			if(timeBehind>=TimeSpan.FromMinutes(_triageTime)) { //we are behind
+			if(timeSpanBehind>=TimeSpan.FromMinutes(_triageTime)) { //we are behind
 				labelTriageTimeSpan.SetAlertColors();
 			}
-			else if(timeBehind>=TimeSpan.FromMinutes(_triageTimeWarning)) { //we are approaching being behind
+			else if(timeSpanBehind>=TimeSpan.FromMinutes(_triageTimeWarning)) { //we are approaching being behind
 				labelTriageTimeSpan.SetWarnColors();
 			}
 			else { //we are ok
@@ -735,32 +701,30 @@ namespace OpenDental {
 		}
 
 		public void SetChatCount() {
-			if(_listWebChatSessions==null) {
-				_listWebChatSessions=WebChatSessions.GetActiveSessions();
-			}
+			_listWebChatSessions??=WebChatSessions.GetActiveSessions();
 			#region set label value
 			//get # of WebChats that still need to be claimed
-			List<WebChatSession> listUnclaimedSessions=_listWebChatSessions.FindAll(x => string.IsNullOrEmpty(x.TechName));
+			List<WebChatSession> listWebChatSessionsUnclaimed=_listWebChatSessions.FindAll(x => string.IsNullOrEmpty(x.TechName));
 			DateTime dateTimeOldestWebChat=DateTime.MinValue;
-			TimeSpan chatBehind=TimeSpan.Zero;
-			labelChatCount.Text=listUnclaimedSessions.Count.ToString();
-			if(listUnclaimedSessions.Count>0) {
-				dateTimeOldestWebChat=listUnclaimedSessions.Min(x => x.DateTcreated);
-				chatBehind=DateTime.Now-dateTimeOldestWebChat;
-				labelChatTimeSpan.Text=chatBehind.ToStringmmss();
+			TimeSpan timeSpanChatBehind=TimeSpan.Zero;
+			labelChatCount.Text=listWebChatSessionsUnclaimed.Count.ToString();
+			if(listWebChatSessionsUnclaimed.Count>0) {
+				dateTimeOldestWebChat=listWebChatSessionsUnclaimed.Min(x => x.DateTcreated);
+				timeSpanChatBehind=DateTime.Now-dateTimeOldestWebChat;
+				labelChatTimeSpan.Text=timeSpanChatBehind.ToStringmmss();
 			}
 			else {
 				labelChatTimeSpan.Text="00:00";
 			}
 			#endregion
 			#region set label colors
-			if(listUnclaimedSessions.Count>=_chatRedCount) {
+			if(listWebChatSessionsUnclaimed.Count>=_chatRedCount) {
 				labelChatCount.SetAlertColors();
 			}
 			else {
 				labelChatCount.SetNormalColors();
 			}
-			if(chatBehind>=TimeSpan.FromMinutes(_chatRedTimeMin)) {
+			if(timeSpanChatBehind>=TimeSpan.FromMinutes(_chatRedTimeMin)) {
 				labelChatTimeSpan.SetAlertColors();
 			}
 			else {
@@ -804,12 +768,12 @@ namespace OpenDental {
 			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
-			using FormMapSetup FormMS=new FormMapSetup();
-			FormMS.ShowDialog();
-			if(FormMS.DialogResult!=DialogResult.OK) {
+			using FormMapSetup formMapSetup=new FormMapSetup();
+			formMapSetup.ShowDialog();
+			if(formMapSetup.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			_listMapAreaContainers=FormMS.ListMapAreaContainers;
+			_listMapAreaContainers=formMapSetup.ListMapAreaContainers;
 			_mapAreaContainer=_listMapAreaContainers[comboRoom.SelectedIndex];
 			FillCombo();
 			FillMapAreaPanel();
@@ -820,9 +784,9 @@ namespace OpenDental {
 			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
-			using FormMapHQPrefs TriagePref=new FormMapHQPrefs();
-			TriagePref.ShowDialog();
-			if(TriagePref.DialogResult!=DialogResult.OK) {
+			using FormMapHQPrefs formMapHqPrefsTriage=new FormMapHQPrefs();
+			formMapHqPrefsTriage.ShowDialog();
+			if(formMapHqPrefsTriage.DialogResult!=DialogResult.OK) {
 				return;
 			}
 			FillTriagePreferences();
@@ -832,10 +796,10 @@ namespace OpenDental {
 			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
-			using FormPhoneEmpDefaultEscalationEdit FormE=new FormPhoneEmpDefaultEscalationEdit();
-			FormE.ShowDialog();
+			using FormPhoneEmpDefaultEscalationEdit formPhoneEmpDefaultEscalationEdit=new FormPhoneEmpDefaultEscalationEdit();
+			formPhoneEmpDefaultEscalationEdit.ShowDialog();
 			List<PhoneEmpDefault> listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
-			refreshCurrentTabHelper(listPhoneEmpDefaults,Phones.GetPhoneList(),PhoneEmpSubGroups.GetAll());
+			RefreshCurrentTabHelper(listPhoneEmpDefaults,Phones.GetPhoneList(),PhoneEmpSubGroups.GetAll());
 			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Escalation team changed");
 		}
 		
@@ -850,44 +814,21 @@ namespace OpenDental {
 			mapAreaPanel.Refresh();
 			timer1.Stop();
 		}
-		
-		private void tabMain_DrawItem(object sender,DrawItemEventArgs e) {
-			Graphics g=e.Graphics;
-			g.TextRenderingHint=TextRenderingHint.AntiAlias;
-			Brush brush=new SolidBrush(Color.Black);
-			System.Windows.Forms.TabPage tabPage=tabMain.TabPages[e.Index];
-			Rectangle rectangle=tabMain.GetTabRect(e.Index);
-			if(e.State==DrawItemState.Selected) {
-				g.FillRectangle(Brushes.White,e.Bounds);
-			}
-			else {
-				g.FillRectangle(Brushes.LightGray,e.Bounds);
-			}
-			StringFormat stringFormat=new StringFormat();
-			stringFormat.Alignment=StringAlignment.Near;
-			stringFormat.LineAlignment=StringAlignment.Center;
-			g.DrawString(tabPage.Text,tabMain.Font,brush,rectangle,stringFormat);
-		}
 
 		private void FormMapHQ_ResizeEnd(object sender,EventArgs e) {
 			LayoutControls();
 		}
 
 		private void LayoutControls(){
-			tabMain.ItemSize=new Size(LayoutManager.Scale(28),LayoutManager.Scale(150));
 			mapAreaPanel.PixelsPerFoot=LayoutManager.Scale(17);
 		}
 
 		private void toggleTriageToolStripMenuItem_Click(object sender,EventArgs e) {
-			if(mapAreaPanel.Left==0){
-				Point point=LayoutManager.ScalePoint(new Point(365,78));
-				mapAreaPanel.Bounds=new Rectangle(point.X,point.Y,ClientSize.Width-point.X,ClientSize.Height-point.Y);
+			Point point=LayoutManager.ScalePoint(new Point(0,78));
+			if(mapAreaPanel.Left==0) { // Don't expand mapAreaPanel to the left; don't cover up the other controls.
+				point=LayoutManager.ScalePoint(new Point(365,78));
 			}
-			else{
-				//Expand mapAreaPanel to the left, covering up the other controls.
-				Point point=LayoutManager.ScalePoint(new Point(0,78));
-				mapAreaPanel.Bounds=new Rectangle(point.X,point.Y,ClientSize.Width-point.X,ClientSize.Height-point.Y);
-			}
+			mapAreaPanel.Bounds=new Rectangle(point.X,point.Y,ClientSize.Width-point.X,ClientSize.Height-point.Y);
 		}
 
 		private void openNewMapToolStripMenuItem_Click(object sender,EventArgs e) {
@@ -907,13 +848,13 @@ namespace OpenDental {
 		}
 
 		private void phonesToolStripMenuItem_Click(object sender,EventArgs e) {
-			using FormPhoneEmpDefaults formPED=new FormPhoneEmpDefaults();
-			formPED.ShowDialog();
+			using FormPhoneEmpDefaults formPhoneEmpDefaults=new FormPhoneEmpDefaults();
+			formPhoneEmpDefaults.ShowDialog();
 		}
 
 		///<summary>If the phone map has been changed, update all phone maps.</summary>
-		public override void ProcessSignalODs(List<Signalod> listSignals) {
-			if(listSignals.Exists(x => x.IType==InvalidType.PhoneMap)) {
+		public override void ProcessSignalODs(List<Signalod> listSignalods) {
+			if(listSignalods.Exists(x => x.IType==InvalidType.PhoneMap)) {
 				FillMapAreaPanel();
 			}
 		}

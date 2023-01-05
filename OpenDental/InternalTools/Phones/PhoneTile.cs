@@ -155,7 +155,7 @@ namespace OpenDental {
 				labelExtensionName.Text=_phoneCur.Extension.ToString()+"-Vacant";
 			}
 			pictureProx.Visible=true;
-			if(phone.IsProxVisible) {
+			if(phone.IsProxVisible()) {
 				pictureProx.Image=Properties.Resources.Figure;
 			}
 			else if(phone.DateTProximal.AddHours(8)>DateTime.Now) {

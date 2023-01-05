@@ -122,44 +122,44 @@ namespace OpenDental {
 			}
 		}
 
-		private bool showOutline=false;
+		private bool _showOutline=false;
 		[Category("OD")]
 		[Description("Draws outline around the control")]
 		public bool ShowOutline {
 			get {
-				return showOutline;
+				return _showOutline;
 			}
 			set {
-				showOutline=value;
+				_showOutline=value;
 				Invalidate();
 			}
 		}
 
-		private Color gridColor=Color.DarkGray;
+		private Color _colorGrid=Color.DarkGray;
 		[Category("OD")]
 		[Description("Color used to draw the grid lines")]
-		public Color GridColor {
+		public Color ColorGrid {
 			get {
-				return gridColor;
+				return _colorGrid;
 			}
 			set {
-				gridColor=value;
+				_colorGrid=value;
 				Invalidate();
 			}
 		}
 
-		private Color floorColor=Color.White;
+		private Color _colorFloor=Color.White;
 		[Category("OD")]
 		[Description("Color used to draw the floor")]
-		public Color FloorColor {
+		public Color ColorFloor {
 			get {
-				return floorColor;
+				return _colorFloor;
 			}
 			set {
-				floorColor=value;
+				_colorFloor=value;
 				//This is effective the BackColor of this panel so set child controls BackColor to match.
 				for(int i=0;i<this.Controls.Count;i++) {
-					this.Controls[i].BackColor=floorColor;
+					this.Controls[i].BackColor=_colorFloor;
 				}
 				Invalidate(true);
 			}
@@ -180,18 +180,18 @@ namespace OpenDental {
 
 		#region Used for testing.
 
-		private static Random Rand = new Random();
+		private static Random _random = new Random();
 
 		public int GetRandomDimension() {
-			return Rand.Next(0,2)==1?6:9;
+			return _random.Next(0,2)==1?6:9;
 		}
 
 		public int GetRandomXPos(int cubicleWidth) {
-			return Rand.Next(0,WidthFloorFeet-cubicleWidth);
+			return _random.Next(0,WidthFloorFeet-cubicleWidth);
 		}
 
 		public int GetRandomYPos(int cubicleHeight) {
-			return Rand.Next(0,HeightFloorFeet-cubicleHeight);
+			return _random.Next(0,HeightFloorFeet-cubicleHeight);
 		}
 
 		public MapAreaPanel() {
@@ -204,7 +204,7 @@ namespace OpenDental {
 
 		#region Methods - Event Handlers
 		protected override void OnClick(EventArgs e) {
-			
+			// remove this ? or should something be happening here ?
 		}
 
 		private void mapCubicle_Clicked(object sender,EventArgs e) {
@@ -226,25 +226,25 @@ namespace OpenDental {
 			if(sender==null) {
 				return;
 			}
-			Control asControl=null;
-			MapArea clinicMapItem=null;
+			Control control=null;
+			MapArea mapAreaClinic=null;
 			if(sender is MapCubicle) {
-				asControl=(Control)sender;
-				clinicMapItem=((MapCubicle)sender).MapAreaCur;			
+				control=(Control)sender;
+				mapAreaClinic=((MapCubicle)sender).MapAreaCur;
 			}
 			else if(sender is MapLabel) {
-				asControl=(Control)sender;
-				clinicMapItem=((MapLabel)sender).MapAreaCur;
+				control=(Control)sender;
+				mapAreaClinic=((MapLabel)sender).MapAreaCur;
 			}
 			else {
 				return;
 			}
 			//recalculate XPos and YPos based on new location in the panel
-			PointF xy=ConvertScreenLocationToXY(asControl.Location,PixelsPerFoot);
-			clinicMapItem.XPos=Math.Round(xy.X,3);
-			clinicMapItem.YPos=Math.Round(xy.Y,3);
+			PointF pointF=ConvertScreenLocationToXY(control.Location,PixelsPerFoot);
+			mapAreaClinic.XPos=Math.Round(pointF.X,3);
+			mapAreaClinic.YPos=Math.Round(pointF.Y,3);
 			//save new cubicle location to db
-			MapAreas.Update(clinicMapItem);
+			MapAreas.Update(mapAreaClinic);
 			//alert the parent
 			mapCubicle_Edited(sender,new EventArgs());
 		}
@@ -272,9 +272,9 @@ namespace OpenDental {
 		///<summary>For testing only. Create a random cubicle and add it to the panel.</summary>
 		public MapArea AddRandomCubicle() {
 			MapArea mapArea=new MapArea();
-			mapArea.MapAreaNum=Rand.Next(1,1000000);
+			mapArea.MapAreaNum=_random.Next(1,1000000);
 			mapArea.Description="";
-			mapArea.Extension=Rand.Next(100,200);
+			mapArea.Extension=_random.Next(100,200);
 			mapArea.Width=GetRandomDimension();
 			mapArea.Height=GetRandomDimension();
 			mapArea.XPos=GetRandomXPos((int)mapArea.Width);
@@ -288,7 +288,7 @@ namespace OpenDental {
 			mapArea.ItemType=MapItemType.Cubicle;
 			MapCubicle mapCubicle=new MapCubicle();
 			mapCubicle.MapAreaCur=mapArea;
-			mapCubicle.Elapsed = TimeSpan.FromSeconds(Rand.Next(60,1200));
+			mapCubicle.TimeSpanElapsed = TimeSpan.FromSeconds(_random.Next(60,1200));
 			mapCubicle.EmployeeName = "Emp: "+this.Controls.Count.ToString();
 			mapCubicle.EmployeeNum = this.Controls.Count;
 			mapCubicle.Extension = mapArea.Extension.ToString();
@@ -297,15 +297,15 @@ namespace OpenDental {
 			mapCubicle.FontHeader=this.FontCubicleHeader;
 			mapCubicle.Location = GetScreenLocation(mapArea.XPos,mapArea.YPos,this.PixelsPerFoot);
 			mapCubicle.Size=GetScreenSize(mapArea.Width,mapArea.Height,this.PixelsPerFoot);
-			mapCubicle.InnerColor = Color.FromArgb(40,Color.Red);
-			mapCubicle.OuterColor = Color.Red;
-			mapCubicle.BackColor=this.FloorColor;
-			mapCubicle.PhoneImage = Properties.Resources.phoneInUse;
-			mapCubicle.ChatImage = Properties.Resources.gtaicon3;
-			mapCubicle.WebChatImage=Properties.Resources.WebChatIcon;
-			mapCubicle.RemoteSupportImage=Properties.Resources.remoteSupportIcon;
+			mapCubicle.ColorInner = Color.FromArgb(40,Color.Red);
+			mapCubicle.ColorOuter = Color.Red;
+			mapCubicle.BackColor=this.ColorFloor;
+			mapCubicle.ImagePhone = Properties.Resources.phoneInUse;
+			mapCubicle.ImageChat = Properties.Resources.gtaicon3;
+			mapCubicle.ImageWebChat=Properties.Resources.WebChatIcon;
+			mapCubicle.ImageRemoteSupport=Properties.Resources.remoteSupportIcon;
 			mapCubicle.AllowDragging=AllowDragging;
-			mapCubicle.AllowEdit=AllowEditing;
+			mapCubicle.IsEditAllowed=AllowEditing;
 			mapCubicle.Name=mapArea.MapAreaNum.ToString();
 			mapCubicle.PhoneCur=Phones.GetPhoneForExtensionDB(PIn.Int(mapCubicle.Extension));
 			mapCubicle.AllowRightClick=allowRightClickOptions;
@@ -313,39 +313,27 @@ namespace OpenDental {
 			mapCubicle.MapCubicleEdited+=mapCubicle_Edited;
 			mapCubicle.RoomControlClicked+=mapCubicle_Clicked;
 			mapCubicle.ClickedGoTo+=mapCubicle_ClickedGoTo;
-			try{
-				if(mapCubicle.Handle==IntPtr.Zero){
-					return;
-				}
+			if (mapCubicle.Handle!=IntPtr.Zero) {
+				LayoutManager.Add(mapCubicle,this);
 			}
-			catch{
-				return;
-			}
-			LayoutManager.Add(mapCubicle,this);
 		}
 
 		///<summary>Add a display label to the panel.</summary>
 		public void AddDisplayLabel(MapArea mapArea) {
-			MapLabel label=new MapLabel(
+			MapLabel mapLabel=new MapLabel(
 				mapArea,
 				new Font("Calibri",LayoutManager.ScaleF(14),FontStyle.Bold),//this.FontLabel,
 				this.ForeColor,
-				this.FloorColor, //This is effectively the BackColor of this panel, so set DisplayLabel controls BackColor to match.				
+				this.ColorFloor, //This is effectively the BackColor of this panel, so set DisplayLabel controls BackColor to match.
 				GetScreenLocation(mapArea.XPos,mapArea.YPos,this.PixelsPerFoot),
 				this.PixelsPerFoot,
 				this.AllowDragging,
 				this.AllowEditing);
-			label.DragDone+=mapCubicle_DragDone;
-			label.MapAreaDisplayLabelChanged+=mapCubicle_Edited;
-			try{
-				if(label.Handle==IntPtr.Zero){
-					return;
-				}
+			mapLabel.DragDone+=mapCubicle_DragDone;
+			mapLabel.MapAreaDisplayLabelChanged+=mapCubicle_Edited;
+			if(mapLabel.Handle!=IntPtr.Zero){
+				LayoutManager.Add(mapLabel,this);
 			}
-			catch{
-				return;
-			}
-			LayoutManager.Add(label,this);
 		}
 
 		///<summary>Call this BEFORE calling ResizeCubicles.</summary>
@@ -360,7 +348,7 @@ namespace OpenDental {
 
 		///<summary>Call this BEFORE calling Invalidate(true).</summary>
 		private void ResizeCubicles() {
-			if(this.Controls==null || this.Controls.Count<=0) {
+			if(this.Controls is null || this.Controls.Count==0) {
 				return;
 			}
 			for(int i=0;i<this.Controls.Count;i++) {
@@ -368,16 +356,16 @@ namespace OpenDental {
 					continue;
 				}
 				else if(this.Controls[i] is MapCubicle) {
-					MapCubicle cubicle=(MapCubicle)this.Controls[i];
-					cubicle.Location=GetScreenLocation(cubicle.MapAreaCur.XPos,cubicle.MapAreaCur.YPos,this.PixelsPerFoot);
-					cubicle.Size=GetScreenSize(cubicle.MapAreaCur.Width,cubicle.MapAreaCur.Height,this.PixelsPerFoot);
+					MapCubicle mapCubicle=(MapCubicle)this.Controls[i];
+					mapCubicle.Location=GetScreenLocation(mapCubicle.MapAreaCur.XPos,mapCubicle.MapAreaCur.YPos,this.PixelsPerFoot);
+					mapCubicle.Size=GetScreenSize(mapCubicle.MapAreaCur.Width,mapCubicle.MapAreaCur.Height,this.PixelsPerFoot);
 				}
 				else if(this.Controls[i] is MapLabel) {
-					MapLabel displayLabel=(MapLabel)this.Controls[i];
-					displayLabel.Location=GetScreenLocation(displayLabel.MapAreaCur.XPos,displayLabel.MapAreaCur.YPos,this.PixelsPerFoot);
-					displayLabel.Size=MapLabel.GetDrawingSize(displayLabel,this.PixelsPerFoot);
+					MapLabel mapLabel=(MapLabel)this.Controls[i];
+					mapLabel.Location=GetScreenLocation(mapLabel.MapAreaCur.XPos,mapLabel.MapAreaCur.YPos,this.PixelsPerFoot);
+					mapLabel.Size=MapLabel.GetDrawingSize(mapLabel,this.PixelsPerFoot);
 					//draw labels on top of all other controls
-					displayLabel.BringToFront();
+					mapLabel.BringToFront();
 				}
 			}
 		}
@@ -387,7 +375,7 @@ namespace OpenDental {
 		#region Drawing
 		private void MapAreaPanel_Paint(object sender,PaintEventArgs e) {
 			//draw the floor color as the background
-			using(Brush brushFloor=new SolidBrush(this.FloorColor)) {
+			using(Brush brushFloor=new SolidBrush(this.ColorFloor)) {
 				e.Graphics.FillRectangle(brushFloor,0,0,(this.WidthFloorFeet*this.PixelsPerFoot),(this.HeightFloorFeet*this.PixelsPerFoot));
 			}
 			if(ShowGrid) {
@@ -398,36 +386,32 @@ namespace OpenDental {
 			}
 		}
 
-		private void DrawGrid(Graphics graphics) {
-			using Pen pen=new Pen(this.GridColor,1F);
-			try {
-				graphics.TranslateTransform(this.AutoScrollPosition.X,this.AutoScrollPosition.Y);
-				//draw vertical vertical lines
-				int x=0;
-				while(x<=this.WidthFloorFeet) {
-					Point top=new Point(x*PixelsPerFoot,0);
-					Point bottom=new Point(x*PixelsPerFoot,this.HeightFloorFeet*PixelsPerFoot);
-					graphics.DrawLine(pen,top,bottom);
-					x++;
-				}
-				//draw horizontal lines
-				int y=0;
-				while(y<=this.HeightFloorFeet) {
-					Point left=new Point(0,y*PixelsPerFoot);
-					Point right=new Point(this.WidthFloorFeet*PixelsPerFoot,y*PixelsPerFoot);
-					graphics.DrawLine(pen,left,right);
-					y++;
-				}
+		private void DrawGrid(Graphics g) {
+			using Pen pen=new Pen(this.ColorGrid,1F);
+			g.TranslateTransform(this.AutoScrollPosition.X,this.AutoScrollPosition.Y);
+			//draw vertical lines
+			int x=0;
+			while(x<=this.WidthFloorFeet) {
+				Point pointTop=new Point(x*PixelsPerFoot,0);
+				Point pointBottom=new Point(x*PixelsPerFoot,this.HeightFloorFeet*PixelsPerFoot);
+				g.DrawLine(pen,pointTop,pointBottom);
+				x++;
 			}
-			catch {
+			//draw horizontal lines
+			int y=0;
+			while(y<=this.HeightFloorFeet) {
+				Point pointLeft=new Point(0,y*PixelsPerFoot);
+				Point pointRight=new Point(this.WidthFloorFeet*PixelsPerFoot,y*PixelsPerFoot);
+				g.DrawLine(pen,pointLeft,pointRight);
+				y++;
 			}
 		}
 
-		private void DrawOutline(Graphics graphics) {
+		private void DrawOutline(Graphics g) {
 			//draw the oultine around the entire panel
 			using(Pen penOutline=new Pen(Color.FromArgb(128,Color.Black),3)) {
 				float halfPenWidth=(float)penOutline.Width/2;
-				graphics.DrawRectangle(penOutline,halfPenWidth,halfPenWidth,(this.WidthFloorFeet*this.PixelsPerFoot)-halfPenWidth,(this.HeightFloorFeet*this.PixelsPerFoot)-halfPenWidth);
+				g.DrawRectangle(penOutline,halfPenWidth,halfPenWidth,(this.WidthFloorFeet*this.PixelsPerFoot)-halfPenWidth,(this.HeightFloorFeet*this.PixelsPerFoot)-halfPenWidth);
 			}
 		}
 

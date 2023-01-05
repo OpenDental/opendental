@@ -2743,6 +2743,12 @@
     <Compile Include="InternalTools\Phones\MapNumber.designer.cs">
       <DependentUpon>MapNumber.cs</DependentUpon>
     </Compile>
+    <Compile Include="InternalTools\Phones\MapPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InternalTools\Phones\MapPanel.designer.cs">
+      <DependentUpon>MapPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="InternalTools\Phones\UserControlMapDetails.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -1769,7 +1769,8 @@ namespace OpenDentBusiness {
 			//no need to call PhoneNumbers.SyncPat since only the status and guar are changed here
 		}
 
-		///<summary>Only used for the Select Patient dialog.  Pass in a billing type of 0 for all billing types.</summary>
+		///<summary>Only used for the Select Patient dialog. Pass in a billing type of 0 for all billing types. 
+		///Will use the Read-Only server if one is setup, otherwise runs on the current server like normal.</summary>
 		public static DataTable GetPtDataTable(PtTableSearchParams ptSearchArgs)
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -1959,10 +1960,11 @@ namespace OpenDentBusiness {
 			else if(ptSearchArgs.DoLimit) {
 				command=DbHelper.LimitOrderBy(command,41);
 			}
-			DataTable table=Db.GetTable(command);
+			//Will run on the Read-Only server. if not set up, automatically runs on the current server.
+			DataTable table=ReportsComplex.RunFuncOnReadOnlyServer(() => Db.GetTable(command));
 			if(usePhonenumTable && useExactMatch && phDigitsTrimmed.Length==exactMatchPhoneDigits && table.Rows.Count==0) {
 				command=command.Replace(phoneNumSearch,likeQueryString);
-				table=Db.GetTable(command);
+				table=ReportsComplex.RunFuncOnReadOnlyServer(() => Db.GetTable(command));
 			}
 			DataRow[] arrayRows=table.Select();
 			if(usePhonenumTable) {
@@ -1988,8 +1990,8 @@ namespace OpenDentBusiness {
 					WHERE AptStatus IN({SOut.Int((int)ApptStatus.Scheduled)},{SOut.Int((int)ApptStatus.Complete)})
 				  AND PatNum IN ({string.Join(",",listPatNums)})
 					GROUP BY PatNum";
-				dictNextLastApts=Db.GetTable(command).Select()
-					.ToDictionary(x => x["PatNum"].ToString(),x => Tuple.Create(SIn.DateT(x["NextVisit"].ToString()),SIn.DateT(x["LastVisit"].ToString())));
+				dictNextLastApts=ReportsComplex.RunFuncOnReadOnlyServer(() => Db.GetTable(command).Select() 
+					.ToDictionary(x => x["PatNum"].ToString(),x => Tuple.Create(SIn.DateT(x["NextVisit"].ToString()),SIn.DateT(x["LastVisit"].ToString()))));
 			}
 			DataTable PtDataTable=table.Clone();//does not copy any data
 			PtDataTable.TableName="table";

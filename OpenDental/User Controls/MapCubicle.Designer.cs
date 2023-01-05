@@ -12,11 +12,11 @@
 		protected override void Dispose(bool disposing) {
 			if(disposing) {
 				components?.Dispose();
-				ProxImage?.Dispose();
-				ChatImage?.Dispose();
-				WebChatImage?.Dispose();
-				RemoteSupportImage?.Dispose();
-				PhoneImage?.Dispose();
+				ImageProx?.Dispose();
+				ImageChat?.Dispose();
+				ImageWebChat?.Dispose();
+				ImageRemoteSupport?.Dispose();
+				ImagePhone?.Dispose();
 				BackgroundImage?.Dispose();
 			}
 			base.Dispose(disposing);
@@ -289,7 +289,7 @@
 			this.Name = "MapAreaRoomControl";
 			this.Size = new System.Drawing.Size(180, 163);
 			this.Click += new System.EventHandler(this.MapCubicle_Click);
-			this.Paint += new System.Windows.Forms.PaintEventHandler(this.MapCubicle_Paint);
+			this.Paint += new System.Windows.Forms.PaintEventHandler(this.mapCubicle_Paint);
 			this.DoubleClick += new System.EventHandler(this.MapCubicle_DoubleClick);
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MapCubicle_MouseDown);
 			this.menuStatus.ResumeLayout(false);

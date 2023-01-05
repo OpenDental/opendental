@@ -64,7 +64,7 @@ namespace OpenDental.HqPhones {
 			Invalidate();
 		}
 
-		///<summary>Replaces Graphics.DrawString. If the font is wider than will fit, then this reduces its size.  It does not consider height.</summary>
+		///<summary>Replaces Graphics.DrawString. If the text is wider than will fit, then this reduces its size.  It does not consider height.</summary>
 		private static void FitText(string text,Font font,Brush brush,RectangleF rectangleF,StringFormat stringFormat,Graphics g) {
 			float emSize=font.Size;
 			Size size=TextRenderer.MeasureText(text,font);
@@ -74,9 +74,8 @@ namespace OpenDental.HqPhones {
 					emSize=2F;
 				}
 			}
-			using(Font fontNew=new Font(font.FontFamily,emSize,font.Style)) {
-				g.DrawString(text,fontNew,brush,rectangleF,stringFormat);
-			}
+			using Font fontNew=new Font(font.FontFamily,emSize,font.Style);
+			g.DrawString(text,fontNew,brush,rectangleF,stringFormat);
 		}
 	}
 }

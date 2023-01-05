@@ -2211,8 +2211,16 @@ namespace OpenDentBusiness {
 			}
 			command+="ORDER BY BenefitNum "//same fixed order each time
 				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
-			List<Benefit> listBenefits=Crud.BenefitCrud.SelectMany(command);
-			return listBenefits;
+			return Crud.BenefitCrud.SelectMany(command);
+		}
+
+		///<summary>Gets a Benefit from the database by BenefitNum for the API. Returns null if not found.</summary>
+		public static Benefit GetBenefitForApi(long benefitNum){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<Benefit>(MethodBase.GetCurrentMethod(),benefitNum);
+			}
+			string command="SELECT * FROM benefit WHERE BenefitNum="+POut.Long(benefitNum)+" ";
+			return Crud.BenefitCrud.SelectOne(command);	
 		}
 
 	}

@@ -23,9 +23,9 @@ namespace OpenDental {
 		///<summary>Indicates if we came from the map setup window, will disable right click functionality if false.</summary>
 		public bool AllowRightClick;
 		/// <summary>Area of the cubicle where the employee name is drawn.</summary>
-		private RectangleF _rectangleName;
+		private RectangleF _rectangleFName;
 		/// <summary>Area of the cubicle where the phone icon is drawn.</summary>
-		private RectangleF _rectanglePhone;
+		private RectangleF _rectangleFPhone;
 
 		#endregion
 
@@ -45,7 +45,7 @@ namespace OpenDental {
 
 		[Category("OD")]
 		[Description("Elapsed Time Since Last Status Change")]
-		public TimeSpan Elapsed { get; set; }
+		public TimeSpan TimeSpanElapsed { get; set; }
 
 		[Category("OD")]
 		[Description("Current Employee Status")]
@@ -53,23 +53,23 @@ namespace OpenDental {
 
 		[Category("OD")]
 		[Description("Image Indicating Employee's Current Phone Status")]
-		public Image PhoneImage { get; set; }
+		public Image ImagePhone { get; set; }
 
 		[Category("OD")]
 		[Description("Image Indicating Employee's Current Phone Status")]
-		public Image ChatImage { get; set; }
+		public Image ImageChat { get; set; }
 
 		[Category("OD")]
 		[Description("Image Indicating Employee's Current WebChat Status")]
-		public Image WebChatImage { get; set; }
+		public Image ImageWebChat { get; set; }
 
 		[Category("OD")]
 		[Description("Image Indicating Employee's Current Proximity Status")]
-		public Image ProxImage { get; set; }
+		public Image ImageProx { get; set; }
 
 		[Category("OD")]
 		[Description("Image Indicating Employee's Current Remote Support Status")]
-		public Image RemoteSupportImage { get; set; }
+		public Image ImageRemoteSupport { get; set; }
 
 		[Category("OD")]
 		[Description("Overrides the drawing of the control and just makes it look like a label with a custom border")]
@@ -101,57 +101,57 @@ namespace OpenDental {
 		}
 
 		///<summary>Set when flashing starts so we know what inner color to go back to.</summary>
-		private Color _innerColorRestore=Color.FromArgb(128,Color.Red);
-		private Color DefaultOuterColor=Color.Red;
+		private Color _colorInnerRestore=Color.FromArgb(128,Color.Red);
+		private Color colorDefaultOuter=Color.Red;
 		[Category("OD")]
 		[Description("Exterior Border Color")]
-		public Color OuterColor {
+		public Color ColorOuter {
 			get {
-				return DefaultOuterColor;
+				return colorDefaultOuter;
 			}
 			set {
-				DefaultOuterColor=value;
+				colorDefaultOuter=value;
 				Invalidate();
 			}
 		}
 
 		///<summary>Set when flashing starts so we know what outer color to go back to.</summary>
-		private Color _outerColorRestore=Color.Red;
-		private Color DefaultInnerColor=Color.FromArgb(128,Color.Red);
+		private Color _colorOuterRestore=Color.Red;
+		private Color _colorDefaultInner=Color.FromArgb(128,Color.Red);
 		[Category("OD")]
 		[Description("Interior Fill Color")]
-		public Color InnerColor {
+		public Color ColorInner {
 			get {
-				return DefaultInnerColor;
+				return _colorDefaultInner;
 			}
 			set {
-				DefaultInnerColor=value;
+				_colorDefaultInner=value;
 				Invalidate();
 			}
 		}
 
-		private bool IsEmpty=false;
+		private bool _isEmpty=false;
 		[Category("OD")]
 		[Description("No Extension Assigned")]
-		public bool Empty {
+		public bool IsEmpty {
 			get {
-				return IsEmpty;
+				return _isEmpty;
 			}
 			set {
-				IsEmpty=value;
+				_isEmpty=value;
 				Invalidate();
 			}
 		}
 
-		private bool _allowEdit=false;
+		private bool _isEditAllowed=false;
 		[Category("OD")]
 		[Description("Double-click will open editor")]
-		public bool AllowEdit {
+		public bool IsEditAllowed {
 			get {
-				return _allowEdit;
+				return _isEditAllowed;
 			}
 			set {
-				_allowEdit=value;
+				_isEditAllowed=value;
 			}
 		}
 
@@ -199,8 +199,8 @@ namespace OpenDental {
 				return;
 			}
 			//save the colors
-			_outerColorRestore=OuterColor;
-			_innerColorRestore=InnerColor;
+			_colorOuterRestore=ColorOuter;
+			_colorInnerRestore=ColorInner;
 			timerFlash.Start();
 		}
 
@@ -209,8 +209,8 @@ namespace OpenDental {
 				return;
 			}
 			timerFlash.Stop();
-			OuterColor=_outerColorRestore;
-			InnerColor=_innerColorRestore;
+			ColorOuter=_colorOuterRestore;
+			ColorInner=_colorInnerRestore;
 		}
 
 		public void SetNormalColors() {
@@ -231,25 +231,25 @@ namespace OpenDental {
 				,SiteLinks.GetSiteInnerColorBySiteNum(siteNum,Phones.PhoneColorScheme.COLOR_DUAL_InnerTriageHere));
 		}
 
-		public void SetColors(Color foreColor,Color outerColor,Color innerColor) {
-			ForeColor=foreColor;
-			OuterColor=outerColor;
-			InnerColor=innerColor;
+		public void SetColors(Color colorFore,Color colorOuter,Color colorInner) {
+			ForeColor=colorFore;
+			ColorOuter=colorOuter;
+			ColorInner=colorInner;
 		}
 
 		private void timerFlash_Tick(object sender,EventArgs e) {
 			//flip inner and outer colors
-			if(OuterColor==_outerColorRestore) {
-				OuterColor=_innerColorRestore;
-				InnerColor=_outerColorRestore;
+			if(ColorOuter==_colorOuterRestore) {
+				ColorOuter=_colorInnerRestore;
+				ColorInner=_colorOuterRestore;
 			}
 			else {
-				OuterColor=_outerColorRestore;
-				InnerColor=_innerColorRestore;
+				ColorOuter=_colorOuterRestore;
+				ColorInner=_colorInnerRestore;
 			}
 		}
 
-		private void MapCubicle_Paint(object sender,PaintEventArgs e) {
+		private void mapCubicle_Paint(object sender,PaintEventArgs e) {
 			//use the width of the cubicle to determine which paint method we should use.
 			if(this.Size.Width<LayoutManager.Scale(102)) {
 				PaintSmall(e);
@@ -263,284 +263,284 @@ namespace OpenDental {
 		private void PaintLarge(PaintEventArgs e) {
 			Graphics g=e.Graphics;//alias
 			g.TextRenderingHint=TextRenderingHint.AntiAlias;
-			using Brush brushInner=new SolidBrush(Empty?Color.FromArgb(20,Color.Gray):InnerColor);
-			using Brush brushText=new SolidBrush(Empty?Color.FromArgb(128,Color.Gray):ForeColor);
-			using Pen penOuter=new Pen(Empty?Color.FromArgb(128,Color.Gray):OuterColor,BorderThickness);
-			_rectanglePhone=RectangleF.Empty;
-			_rectangleName=RectangleF.Empty;
-			string timeElapsed=TimeSpanToStringHelper(Elapsed);
-			try {
-				RectangleF rcOuter=this.ClientRectangle;
-				//clear control canvas
-				g.Clear(this.BackColor);
-				float halfPenThickness=BorderThickness/(float)2;
-				//deflate for border
-				rcOuter.Inflate(-halfPenThickness,-halfPenThickness);
-				//draw border
-				g.DrawRectangle(penOuter,rcOuter.X,rcOuter.Y,rcOuter.Width,rcOuter.Height);
-				//deflate to drawable region
-				rcOuter.Inflate(-halfPenThickness,-halfPenThickness);
-				//fill interior
-				g.FillRectangle(brushInner,rcOuter);
-				StringFormat stringFormat=new StringFormat(StringFormatFlags.NoWrap);
-				stringFormat.Alignment=StringAlignment.Center;
-				stringFormat.LineAlignment=StringAlignment.Center;
-				if(this.Empty) { //empty room so gray out and return
-					g.DrawString("EMPTY",Font,brushText,rcOuter,stringFormat);
-					return;
-				}
-				else if(Text!="") { //using as a label so just draw the string					
-					FitText(Text,Font,brushText,new RectangleF(rcOuter.Left,rcOuter.Top+2,rcOuter.Width,rcOuter.Height),stringFormat,g);
-					return;
-				}
-				//3 rows of data
-				int rowsLowestCommonDenominator=6;
-				float typicalRowHeight=rcOuter.Height/(float)rowsLowestCommonDenominator;
-				//==================== row 1 - EMPLOYEE NAME ====================
-				float rowHeight=typicalRowHeight*2; //row 1 is 2/6 tall
-				_rectangleName=new RectangleF(rcOuter.X,rcOuter.Y-2,rcOuter.Width,rowHeight);
-				FitText(EmployeeName,FontHeader,brushText,_rectangleName,stringFormat,g);
-				float yPosBottom=rowHeight;
-				//g.DrawRectangle(Pens.LimeGreen,rcOuter.X,rcOuter.Y,rcOuter.Width,rowHeight);
-				//==================== row 2 - ELAPSED TIME ====================
-				rowHeight=typicalRowHeight*2; //row 2 is 2/6 tall
-				FitText(timeElapsed,Font,brushText,new RectangleF(rcOuter.X,rcOuter.Y+yPosBottom-14,rcOuter.Width,rowHeight),stringFormat,g);
-				//g.DrawRectangle(Pens.Red,rcOuter.X,rcOuter.Y+yPosBottom,rcOuter.Width,rowHeight);
-				yPosBottom+=rowHeight;
-				//==================== row 3 (Middle) - EMPLOYEE EXTENSION ====================
-				//Display employee extension if they are present at their desk
-				if(IsAtDesk) {
-					FitText("x"+Extension,Font,brushText,new RectangleF(rcOuter.X,rcOuter.Y+yPosBottom-30,rcOuter.Width,rowHeight),stringFormat,g);
-				}
-				//==================== row 4 (Bottom) - EMPLOYEE STATUS ====================
-				//left-most 3/4 of row 3 is the status text
-				FitText(Status,Font,brushText,new RectangleF(rcOuter.X+(rcOuter.Width/6)-5,rcOuter.Y+yPosBottom-14,((rcOuter.Width/6)*4)+4,rowHeight),stringFormat,g);
-				//FitText(Status,Font,brushText,new RectangleF(rcOuter.X+(rcOuter.Width/6)-2,rcOuter.Y+yPosBottom+1,((rcOuter.Width/6)*4)+4,rowHeight),stringFormat,g);
-				//==================== row 5 (Left) - PROXIMITY STATUS ====================
-				int iconShiftCenter = 8;
-				rowHeight =typicalRowHeight*2; //row 3 is 2/6 tall
-				if(ProxImage!=null) {
-					//right-most 1/4 of row 3 is the phone icon
-					RectangleF rect = new RectangleF(rcOuter.X-2+iconShiftCenter,rcOuter.Y+yPosBottom+4,ProxImage.Width,rowHeight);
-					//Scale the image.
-					if(ProxImage.Height<rect.Height) {
-						rect.Y+=(rect.Height-ProxImage.Height)/2;
-						rect.Height=ProxImage.Height;
-					}
-					if(ProxImage.Width<rect.Width) {
-						rect.X-=(rect.Width-ProxImage.Width)/2;
-						rect.Width=ProxImage.Width;
-					}
-					g.DrawImage(
-						ProxImage,
-						rect,
-						new RectangleF(0,0,ProxImage.Width,ProxImage.Height),
-						GraphicsUnit.Pixel);
-					//g.DrawRectangle(Pens.Orange,rectImage.X,rectImage.Y,rectImage.Width,rectImage.Height);
-					//using(Font fnt = new Font("Arial",19,FontStyle.Regular)) {
-					//	TextRenderer.DrawText(g,"👤",fnt,new Point((int)rcOuter.X-6,(int)rcOuter.Y+(int)yPosBottom+3),Color.FromArgb(96,96,96));
-					//	//FitText uses g.DrawString() which does not handle unicode characters well.
-					//	//FitText("👤",fnt,Brushes.Gray,new RectangleF(rcOuter.X-2,rcOuter.Y+yPosBottom+1,((rcOuter.Width/6))+1,rowHeight),stringFormat,g,true);
-					//}
-				}
-				//Only show the Phone icon when employee is on the phone. Do not show a chat icon along with the phone icon.
-				//==================== row 5 (right) - PHONE ICON ====================
-				if(PhoneImage!=null) {
-					//right-most 1/4 of row 3 is the phone icon
-					RectangleF rect=new RectangleF((rcOuter.X+(rcOuter.Width/6)*5)-BorderThickness-2-iconShiftCenter,rcOuter.Y+yPosBottom+4,PhoneImage.Width,rowHeight);
-					//Scale the image.
-					if(PhoneImage.Height<rect.Height) {
-						rect.Y+=(rect.Height-PhoneImage.Height)/2;
-						rect.Height=PhoneImage.Height;
-					}
-					if(PhoneImage.Width<rect.Width) {
-						rect.X-=(rect.Width-PhoneImage.Width)/2;
-						rect.Width=PhoneImage.Width;
-					}
-					_rectanglePhone=rect;
-					g.DrawImage(
-						PhoneImage,
-						_rectanglePhone,
-						new RectangleF(0,0,PhoneImage.Width,PhoneImage.Height),
-						GraphicsUnit.Pixel);
-						//g.DrawRectangle(Pens.Orange,rectImage.X,rectImage.Y,rectImage.Width,rectImage.Height);
-				}
-				//Show a chat icon when the employee is not on the phone.
-				//==================== row 5 (middle) - WEB CHAT ICON ====================
-				else if(WebChatImage!=null) {
-					DisplayChatImage(WebChatImage,e,rcOuter,yPosBottom,rowHeight);
-				}
-				//==================== row 5 (middle) - CHAT ICON ====================
-				else if(ChatImage!=null) {
-					DisplayChatImage(ChatImage,e,rcOuter,yPosBottom,rowHeight);
-				}
-				//==================== row 5 (middle) - REMOTE SUPPORT ICON ====================
-				else if(RemoteSupportImage!=null) {
-					DisplayChatImage(RemoteSupportImage,e,rcOuter,yPosBottom,rowHeight);
-				}
-				//g.DrawRectangle(Pens.Blue,rcOuter.X,rcOuter.Y+yPosBottom,rcOuter.Width,rowHeight);
-				yPosBottom+=rowHeight;
+			Color color=ColorInner;
+			if(IsEmpty) {
+				color=Color.FromArgb(20,Color.Gray);
 			}
-			catch(Exception) { }
+			using Brush brushInner=new SolidBrush(color);
+			color=ForeColor;
+			if(IsEmpty) {
+				color=Color.FromArgb(128,Color.Gray);
+			}
+			using Brush brushText=new SolidBrush(color);
+			color=ColorOuter;
+			if(IsEmpty) {
+				color=Color.FromArgb(128,Color.Gray);
+			}
+			using Pen penOuter=new Pen(color,BorderThickness);
+			_rectangleFPhone=RectangleF.Empty;
+			_rectangleFName=RectangleF.Empty;
+			string timeElapsed=TimeSpanToStringHelper(TimeSpanElapsed);
+			RectangleF rectangleFOuter=this.ClientRectangle;
+			//clear control canvas
+			g.Clear(this.BackColor);
+			float halfPenThickness=BorderThickness/(float)2;
+			//deflate for border
+			rectangleFOuter.Inflate(-halfPenThickness,-halfPenThickness);
+			//draw border
+			g.DrawRectangle(penOuter,rectangleFOuter.X,rectangleFOuter.Y,rectangleFOuter.Width,rectangleFOuter.Height);
+			//deflate to drawable region
+			rectangleFOuter.Inflate(-halfPenThickness,-halfPenThickness);
+			//fill interior
+			g.FillRectangle(brushInner,rectangleFOuter);
+			StringFormat stringFormat=new StringFormat(StringFormatFlags.NoWrap);
+			stringFormat.Alignment=StringAlignment.Center;
+			stringFormat.LineAlignment=StringAlignment.Center;
+			if(this.IsEmpty) { //empty room so gray out and return
+				g.DrawString("EMPTY",Font,brushText,rectangleFOuter,stringFormat);
+				return;
+			}
+			else if(Text!="") { //using as a label so just draw the string					
+				FitText(Text,Font,brushText,new RectangleF(rectangleFOuter.Left,rectangleFOuter.Top+2,rectangleFOuter.Width,rectangleFOuter.Height),stringFormat,g);
+				return;
+			}
+			//3 rows of data
+			int rowsLowestCommonDenominator=6;
+			float typicalRowHeight=rectangleFOuter.Height/(float)rowsLowestCommonDenominator;
+			//==================== row 1 - EMPLOYEE NAME ====================
+			float rowHeight=typicalRowHeight*2; //row 1 is 2/6 tall
+			_rectangleFName=new RectangleF(rectangleFOuter.X,rectangleFOuter.Y-2,rectangleFOuter.Width,rowHeight);
+			FitText(EmployeeName,FontHeader,brushText,_rectangleFName,stringFormat,g);
+			float yPosBottom=rowHeight;
+			//g.DrawRectangle(Pens.LimeGreen,rcOuter.X,rcOuter.Y,rcOuter.Width,rowHeight);
+			//==================== row 2 - ELAPSED TIME ====================
+			rowHeight=typicalRowHeight*2; //row 2 is 2/6 tall
+			FitText(timeElapsed,Font,brushText,new RectangleF(rectangleFOuter.X,rectangleFOuter.Y+yPosBottom-14,rectangleFOuter.Width,rowHeight),stringFormat,g);
+			//g.DrawRectangle(Pens.Red,rcOuter.X,rcOuter.Y+yPosBottom,rcOuter.Width,rowHeight);
+			yPosBottom+=rowHeight;
+			//==================== row 3 (Middle) - EMPLOYEE EXTENSION ====================
+			//Display employee extension if they are present at their desk
+			if(IsAtDesk) {
+				FitText("x"+Extension,Font,brushText,new RectangleF(rectangleFOuter.X,rectangleFOuter.Y+yPosBottom-30,rectangleFOuter.Width,rowHeight),stringFormat,g);
+			}
+			//==================== row 4 (Bottom) - EMPLOYEE STATUS ====================
+			//left-most 3/4 of row 3 is the status text
+			FitText(Status,Font,brushText,new RectangleF(rectangleFOuter.X+(rectangleFOuter.Width/6)-5,rectangleFOuter.Y+yPosBottom-14,((rectangleFOuter.Width/6)*4)+4,rowHeight),stringFormat,g);
+			//FitText(Status,Font,brushText,new RectangleF(rcOuter.X+(rcOuter.Width/6)-2,rcOuter.Y+yPosBottom+1,((rcOuter.Width/6)*4)+4,rowHeight),stringFormat,g);
+			//==================== row 5 (Left) - PROXIMITY STATUS ====================
+			int iconShiftCenter = 8;
+			rowHeight =typicalRowHeight*2; //row 3 is 2/6 tall
+			if(ImageProx!=null) {
+				//right-most 1/4 of row 3 is the phone icon
+				RectangleF rectangleF = new RectangleF(rectangleFOuter.X-2+iconShiftCenter,rectangleFOuter.Y+yPosBottom+4,ImageProx.Width,rowHeight);
+				//Scale the image.
+				if(ImageProx.Height<rectangleF.Height) {
+					rectangleF.Y+=(rectangleF.Height-ImageProx.Height)/2;
+					rectangleF.Height=ImageProx.Height;
+				}
+				if(ImageProx.Width<rectangleF.Width) {
+					rectangleF.X-=(rectangleF.Width-ImageProx.Width)/2;
+					rectangleF.Width=ImageProx.Width;
+				}
+				g.DrawImage(
+					ImageProx,
+					rectangleF,
+					new RectangleF(0,0,ImageProx.Width,ImageProx.Height),
+					GraphicsUnit.Pixel);
+				//g.DrawRectangle(Pens.Orange,rectImage.X,rectImage.Y,rectImage.Width,rectImage.Height);
+				//using(Font fnt = new Font("Arial",19,FontStyle.Regular)) {
+				//	TextRenderer.DrawText(g,"👤",fnt,new Point((int)rcOuter.X-6,(int)rcOuter.Y+(int)yPosBottom+3),Color.FromArgb(96,96,96));
+				//	//FitText uses g.DrawString() which does not handle unicode characters well.
+				//	//FitText("👤",fnt,Brushes.Gray,new RectangleF(rcOuter.X-2,rcOuter.Y+yPosBottom+1,((rcOuter.Width/6))+1,rowHeight),stringFormat,g,true);
+				//}
+			}
+			//Only show the Phone icon when employee is on the phone. Do not show a chat icon along with the phone icon.
+			//==================== row 5 (right) - PHONE ICON ====================
+			if(ImagePhone!=null) {
+				//right-most 1/4 of row 3 is the phone icon
+				RectangleF rect=new RectangleF((rectangleFOuter.X+(rectangleFOuter.Width/6)*5)-BorderThickness-2-iconShiftCenter,rectangleFOuter.Y+yPosBottom+4,ImagePhone.Width,rowHeight);
+				//Scale the image.
+				if(ImagePhone.Height<rect.Height) {
+					rect.Y+=(rect.Height-ImagePhone.Height)/2;
+					rect.Height=ImagePhone.Height;
+				}
+				if(ImagePhone.Width<rect.Width) {
+					rect.X-=(rect.Width-ImagePhone.Width)/2;
+					rect.Width=ImagePhone.Width;
+				}
+				_rectangleFPhone=rect;
+				g.DrawImage(
+					ImagePhone,
+					_rectangleFPhone,
+					new RectangleF(0,0,ImagePhone.Width,ImagePhone.Height),
+					GraphicsUnit.Pixel);
+					//g.DrawRectangle(Pens.Orange,rectImage.X,rectImage.Y,rectImage.Width,rectImage.Height);
+			}
+			//Show a chat icon when the employee is not on the phone.
+			//==================== row 5 (middle) - WEB CHAT ICON ====================
+			else if(ImageWebChat!=null) {
+				DisplayChatImage(ImageWebChat,e,rectangleFOuter,yPosBottom,rowHeight);
+			}
+			//==================== row 5 (middle) - CHAT ICON ====================
+			else if(ImageChat!=null) {
+				DisplayChatImage(ImageChat,e,rectangleFOuter,yPosBottom,rowHeight);
+			}
+			//==================== row 5 (middle) - REMOTE SUPPORT ICON ====================
+			else if(ImageRemoteSupport!=null) {
+				DisplayChatImage(ImageRemoteSupport,e,rectangleFOuter,yPosBottom,rowHeight);
+			}
+			//g.DrawRectangle(Pens.Blue,rcOuter.X,rcOuter.Y+yPosBottom,rcOuter.Width,rowHeight);
+			yPosBottom+=rowHeight;
 		}
 
 		///<summary>Draws a modified cube to account for less workable area.</summary>
 		private void PaintSmall(PaintEventArgs e) {
 			Graphics g=e.Graphics;//alias
 			g.TextRenderingHint=TextRenderingHint.AntiAlias;
-			using Brush brushInner=new SolidBrush(Empty?Color.FromArgb(20,Color.Gray):InnerColor);
-			using Brush brushText=new SolidBrush(Empty?Color.FromArgb(128,Color.Gray):ForeColor);
+			Color color=ColorInner;
+			if(IsEmpty) {
+				color=Color.FromArgb(20,Color.Gray);
+			}
+			using Brush brushInner=new SolidBrush(color);
+			color=ForeColor;
+			if(IsEmpty) {
+				color=Color.FromArgb(128,Color.Gray);
+			}
+			using Brush brushText=new SolidBrush(color);
 			float halfPenThickness=BorderThickness/(float)2;
-			using Pen penOuter=new Pen(Empty?Color.FromArgb(128,Color.Gray):OuterColor,halfPenThickness);
-			_rectanglePhone=RectangleF.Empty;
-			_rectangleName=RectangleF.Empty;
-			string timeElapsed=TimeSpanToStringHelper(Elapsed,true);
-			EmployeeName=ShortenEmployeeNameHelper(EmployeeName);
-			try {
-				RectangleF rcOuter=this.ClientRectangle;
-				//clear control canvas
-				g.Clear(this.BackColor);
-				//deflate for border
-				rcOuter.Inflate(-halfPenThickness,-halfPenThickness);
-				//draw border
-				g.DrawRectangle(penOuter,rcOuter.X,rcOuter.Y,rcOuter.Width,rcOuter.Height);
-				//deflate to drawable region
-				rcOuter.Inflate(-halfPenThickness,-halfPenThickness);
-				//fill interior
-				g.FillRectangle(brushInner,rcOuter);
-				StringFormat stringFormat=new StringFormat(StringFormatFlags.NoWrap);
-				stringFormat.Alignment=StringAlignment.Center;
-				stringFormat.LineAlignment=StringAlignment.Center;
-				if(this.Empty) { //empty room so gray out and return
-					g.DrawString("EMPTY",Font,brushText,rcOuter,stringFormat);
-					return;
+			color=ColorOuter;
+			if(IsEmpty) {
+				color=Color.FromArgb(128,Color.Gray);
+			}
+			using Pen penOuter=new Pen(color,halfPenThickness);
+			_rectangleFPhone=RectangleF.Empty;
+			_rectangleFName=RectangleF.Empty;
+			string timeElapsed=TimeSpanToStringHelper(TimeSpanElapsed,true);
+			if(EmployeeName!=null && EmployeeName.Length>8){
+				EmployeeName=EmployeeName.Substring(0,8);
+			}
+			RectangleF rectangleFOuter=this.ClientRectangle;
+			//clear control canvas
+			g.Clear(this.BackColor);
+			//deflate for border
+			rectangleFOuter.Inflate(-halfPenThickness,-halfPenThickness);
+			//draw border
+			g.DrawRectangle(penOuter,rectangleFOuter.X,rectangleFOuter.Y,rectangleFOuter.Width,rectangleFOuter.Height);
+			//deflate to drawable region
+			rectangleFOuter.Inflate(-halfPenThickness,-halfPenThickness);
+			//fill interior
+			g.FillRectangle(brushInner,rectangleFOuter);
+			StringFormat stringFormat=new StringFormat(StringFormatFlags.NoWrap);
+			stringFormat.Alignment=StringAlignment.Center;
+			stringFormat.LineAlignment=StringAlignment.Center;
+			if(this.IsEmpty) { //empty room so gray out and return
+				g.DrawString("EMPTY",Font,brushText,rectangleFOuter,stringFormat);
+				return;
+			}
+			else if(this.Text!="") { //using as a label so just draw the string
+				FitText(this.Text,Font,brushText,new RectangleF(rectangleFOuter.Left,rectangleFOuter.Top+2,rectangleFOuter.Width,rectangleFOuter.Height),stringFormat,g);
+				return;
+			}
+			//3 rows of data
+			int rowsLowestCommonDenominator=6;
+			float typicalRowHeight=rectangleFOuter.Height/(float)rowsLowestCommonDenominator;
+			//==================== row 1 - EMPLOYEE NAME ====================
+			float rowHeight=typicalRowHeight*2; //row 1 is 2/6 tall
+			_rectangleFName=new RectangleF(rectangleFOuter.X,rectangleFOuter.Y,rectangleFOuter.Width,rowHeight);
+			FitText(EmployeeName,FontHeader,brushText,_rectangleFName,stringFormat,g);
+			float yPosBottom=rowHeight;
+			//g.DrawRectangle(Pens.LimeGreen,rcOuter.X,rcOuter.Y,rcOuter.Width,rowHeight);
+			//==================== row 2 - ELAPSED TIME ====================
+			rowHeight=typicalRowHeight*2;//row 2 is 2/6 tall
+			FitText(timeElapsed,Font,brushText,new RectangleF(rectangleFOuter.X,rectangleFOuter.Y+rowHeight,rectangleFOuter.Width,rowHeight),stringFormat,g);
+			//g.DrawRectangle(Pens.Red,rcOuter.X,rcOuter.Y+yPosBottom,rcOuter.Width,rowHeight);
+			//==================== row 3 - Prox ====================
+			yPosBottom+=rowHeight;
+			int smallMargin=1;
+			rowHeight=typicalRowHeight*2;//row 3 is 2/6 tall
+			if(ImageProx!=null) {
+				//right-most 1/4 of row 3 is the phone icon
+				RectangleF rectangleFImage=new RectangleF(rectangleFOuter.X,rectangleFOuter.Y+rowHeight*2-smallMargin,ImageProx.Width,rowHeight);
+				//Scale the image.
+				if(ImageProx.Height<rectangleFImage.Height || ImageProx.Width<rectangleFImage.Width) {
+					rectangleFImage.Y+=(rectangleFImage.Height-ImageProx.Height)/2;
+					rectangleFImage.X+=(rectangleFImage.Width-ImageProx.Width)/2;
+					rectangleFImage.Height=ImageProx.Height;
+					rectangleFImage.Width=ImageProx.Width;
 				}
-				else if(this.Text!="") { //using as a label so just draw the string					
-					FitText(this.Text,Font,brushText,new RectangleF(rcOuter.Left,rcOuter.Top+2,rcOuter.Width,rcOuter.Height),stringFormat,g);
-					return;
+				g.DrawImage(
+					ImageProx,
+					rectangleFImage,
+					new RectangleF(0,0,ImageProx.Width,ImageProx.Height),
+					GraphicsUnit.Pixel);
+				//g.DrawRectangle(Pens.Orange,rectImage.X,rectImage.Y,rectImage.Width,rectImage.Height);
+			}
+			//Only show the Phone icon when employee is on the phone. Do not show a chat icon along with the phone icon.
+			//==================== row 3 (right) - PHONE ICON ====================
+			if(ImagePhone!=null) {
+				Size sizeNew=new Size((int)(ImagePhone.Width/1.2),(int)(ImagePhone.Height/1.2));
+				RectangleF rectangleFImage=new RectangleF(((rectangleFOuter.Width+BorderThickness)-sizeNew.Width-smallMargin-2),rectangleFOuter.Y+yPosBottom-smallMargin,sizeNew.Width+3,rowHeight);
+				//Scale the image.
+				if(sizeNew.Height<rectangleFImage.Height || sizeNew.Width<=rectangleFImage.Width) {
+					rectangleFImage.Y+=(rectangleFImage.Height-sizeNew.Height)/2;
+					rectangleFImage.X+=(rectangleFImage.Width-sizeNew.Width)/2;
+					rectangleFImage.Height=sizeNew.Height;
+					rectangleFImage.Width=sizeNew.Width;
 				}
-				//3 rows of data
-				int rowsLowestCommonDenominator=6;
-				float typicalRowHeight=rcOuter.Height/(float)rowsLowestCommonDenominator;
-				//==================== row 1 - EMPLOYEE NAME ====================
-				float rowHeight=typicalRowHeight*2; //row 1 is 2/6 tall
-				_rectangleName=new RectangleF(rcOuter.X,rcOuter.Y,rcOuter.Width,rowHeight);
-				FitText(EmployeeName,FontHeader,brushText,_rectangleName,stringFormat,g);
-				float yPosBottom=rowHeight;
-				//g.DrawRectangle(Pens.LimeGreen,rcOuter.X,rcOuter.Y,rcOuter.Width,rowHeight);
-				//==================== row 2 - ELAPSED TIME ====================
-				rowHeight=typicalRowHeight*2;//row 2 is 2/6 tall
-				FitText(timeElapsed,Font,brushText,new RectangleF(rcOuter.X,rcOuter.Y+rowHeight,rcOuter.Width,rowHeight),stringFormat,g);
-				//g.DrawRectangle(Pens.Red,rcOuter.X,rcOuter.Y+yPosBottom,rcOuter.Width,rowHeight);
-				yPosBottom+=rowHeight;
-				int smallMargin=1;
-				rowHeight=typicalRowHeight*2;//row 3 is 2/6 tall
-				if(ProxImage!=null) {
-					//right-most 1/4 of row 3 is the phone icon
-					RectangleF rectImage=new RectangleF(rcOuter.X,rcOuter.Y+rowHeight*2-smallMargin,ProxImage.Width,rowHeight);
-					//Scale the image.
-					if(ProxImage.Height<rectImage.Height || ProxImage.Width<rectImage.Width) {
-						rectImage.Y+=(rectImage.Height-ProxImage.Height)/2;
-						rectImage.X+=(rectImage.Width-ProxImage.Width)/2;
-						rectImage.Height=ProxImage.Height;
-						rectImage.Width=ProxImage.Width;
-					}
-					g.DrawImage(
-						ProxImage,
-						rectImage,
-						new RectangleF(0,0,ProxImage.Width,ProxImage.Height),
-						GraphicsUnit.Pixel);
-					//g.DrawRectangle(Pens.Orange,rectImage.X,rectImage.Y,rectImage.Width,rectImage.Height);
-				}
-				//Only show the Phone icon when employee is on the phone. Do not show a chat icon along with the phone icon.
-				//==================== row 3 (right) - PHONE ICON ====================
-				if(PhoneImage!=null) {
-					Size sizeNew=new Size((int)(PhoneImage.Width/1.2),(int)(PhoneImage.Height/1.2));
-					RectangleF rectImage=new RectangleF(((rcOuter.Width+BorderThickness)-sizeNew.Width-smallMargin-2),rcOuter.Y+yPosBottom-smallMargin,sizeNew.Width+3,rowHeight);
-					//Scale the image.
-					if(sizeNew.Height<rectImage.Height || sizeNew.Width<=rectImage.Width) {
-						rectImage.Y+=(rectImage.Height-sizeNew.Height)/2;
-						rectImage.X+=(rectImage.Width-sizeNew.Width)/2;
-						rectImage.Height=sizeNew.Height;
-						rectImage.Width=sizeNew.Width;
-					}
-					_rectanglePhone=rectImage;
-					g.DrawImage(
-						PhoneImage,
-						_rectanglePhone,
-						new RectangleF(0,0,sizeNew.Width+3,sizeNew.Height),
-						GraphicsUnit.Pixel);
-					if(ODBuild.IsDebug()) {
-						//Uncomment if you need to see the boundaries of the rectangles being drawn.
-						//g.DrawRectangle(Pens.Orange,rectImage.X,rectImage.Y,rectImage.Width,rectImage.Height);
-					}
-				}
-				//Show a chat icon when the employee is not on the phone.
-				//==================== row 3 (middle) - WEB CHAT ICON ====================
-				else if(WebChatImage!=null) {
-					DisplayChatImage(WebChatImage,e,rcOuter,yPosBottom-BorderThickness,rowHeight);
-				}
-				//==================== row 3 (middle) - CHAT ICON ====================
-				else if(ChatImage!=null) {
-					DisplayChatImage(ChatImage,e,rcOuter,yPosBottom-BorderThickness,rowHeight);
-				}
-				//==================== row 3 (middle) - REMOTE SUPPORT ICON ====================
-				else if(RemoteSupportImage!=null) {
-					DisplayChatImage(RemoteSupportImage,e,rcOuter,yPosBottom-BorderThickness,rowHeight);
-				}
+				_rectangleFPhone=rectangleFImage;
+				g.DrawImage(
+					ImagePhone,
+					_rectangleFPhone,
+					new RectangleF(0,0,sizeNew.Width+3,sizeNew.Height),
+					GraphicsUnit.Pixel);
 				if(ODBuild.IsDebug()) {
 					//Uncomment if you need to see the boundaries of the rectangles being drawn.
-					//g.DrawRectangle(Pens.Blue,rcOuter.X,rcOuter.Y+yPosBottom,rcOuter.Width,rowHeight);
+					//g.DrawRectangle(Pens.Orange,rectImage.X,rectImage.Y,rectImage.Width,rectImage.Height);
 				}
-				yPosBottom+=rowHeight;
 			}
-			catch(Exception) { }
+			//Show a chat icon when the employee is not on the phone.
+			//==================== row 3 (middle) - WEB CHAT ICON ====================
+			else if(ImageWebChat!=null) {
+				DisplayChatImage(ImageWebChat,e,rectangleFOuter,yPosBottom-BorderThickness,rowHeight);
+			}
+			//==================== row 3 (middle) - CHAT ICON ====================
+			else if(ImageChat!=null) {
+				DisplayChatImage(ImageChat,e,rectangleFOuter,yPosBottom-BorderThickness,rowHeight);
+			}
+			//==================== row 3 (middle) - REMOTE SUPPORT ICON ====================
+			else if(ImageRemoteSupport!=null) {
+				DisplayChatImage(ImageRemoteSupport,e,rectangleFOuter,yPosBottom-BorderThickness,rowHeight);
+			}
+			if(ODBuild.IsDebug()) {
+				//Uncomment if you need to see the boundaries of the rectangles being drawn.
+				//g.DrawRectangle(Pens.Blue,rcOuter.X,rcOuter.Y+yPosBottom,rcOuter.Width,rowHeight);
+			}
+			yPosBottom+=rowHeight;
 		}
 
 		///<summary>Converts a TimeSpan to a string depending on the size of the room and how much time has elapsed.</summary>
 		private static string TimeSpanToStringHelper(TimeSpan span,bool isSmallCube=false) {
-			string retVal="";
-			//Build the smaller time string
-			if(isSmallCube) {
-				//Over an hour, just display minutes.
-				if(span.Hours>0) {
-					retVal=(span.Hours+"hr "+span.Minutes).ToString();
-				}
-				else {
-					retVal=span.ToStringmmss();
-				}
+			//Build the smaller time string and if it's over an hour, just display minutes.
+			if(isSmallCube && span.Hours>0) { 
+				return (span.Hours+"hr "+span.Minutes).ToString();
 			}
-			else {
-				retVal=span.ToStringHmmss();
-			}
-			return retVal;
-		}
-
-		///<summary>Wrapper for String.Substring that just returns the string if it is too short for the Substring operation.</summary>
-		private static string ShortenEmployeeNameHelper(string name) {
-			if(name==null){
-				return "";
-			}
-			if(name.Length<=8){
-				return name;
-			}
-			return name.Substring(0,8);
+			return span.ToStringHmmss();
 		}
 
 		private static void DisplayChatImage(Image img,PaintEventArgs e,RectangleF rcOuter,float yPosBottom,float rowHeight) {
 			//right-most 1/4 of row 3 is the phone icon
-			RectangleF rectImage=new RectangleF((rcOuter.X+(rcOuter.Width/2))-8,rcOuter.Y+yPosBottom+4,img.Width,rowHeight);
+			RectangleF rectangleFImage=new RectangleF((rcOuter.X+(rcOuter.Width/2))-8,rcOuter.Y+yPosBottom+4,img.Width,rowHeight);
 			//Scale the image.
-			if(img.Height<rectImage.Height || img.Width<rectImage.Width) {
-				rectImage.Y+=(rectImage.Height-img.Height)/2;
-				rectImage.Height=img.Height;
-				rectImage.X-=(rectImage.Width-img.Width)/2;
-				rectImage.Width=img.Width;
+			if(img.Height<rectangleFImage.Height || img.Width<rectangleFImage.Width) {
+				rectangleFImage.Y+=(rectangleFImage.Height-img.Height)/2;
+				rectangleFImage.Height=img.Height;
+				rectangleFImage.X-=(rectangleFImage.Width-img.Width)/2;
+				rectangleFImage.Width=img.Width;
 			}
 			e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
 			e.Graphics.DrawImage(
 				img,
-				rectImage,
+				rectangleFImage,
 				new RectangleF(0,0,img.Width,img.Height),
 				GraphicsUnit.Pixel);
 		}
@@ -565,13 +565,13 @@ namespace OpenDental {
 		#region Mouse events
 
 		private void MapCubicle_DoubleClick(object sender,EventArgs e) {
-			if(!AllowEdit) {
+			if(!IsEditAllowed) {
 				return;
 			}
 			//edit this room
-			using FormMapAreaEdit FormEP=new FormMapAreaEdit();
-			FormEP.MapAreaItem=this.MapAreaCur;
-			if(FormEP.ShowDialog(this)!=DialogResult.OK) {
+			using FormMapAreaEdit formMapAreaEdit=new FormMapAreaEdit();
+			formMapAreaEdit.MapAreaItem=this.MapAreaCur;
+			if(formMapAreaEdit.ShowDialog(this)!=DialogResult.OK) {
 				return;
 			}
 			if(MapCubicleEdited!=null) { //let anyone interested know that this cubicle was edited
@@ -580,10 +580,10 @@ namespace OpenDental {
 		}
 
 		private void MapCubicle_Click(object sender,EventArgs e) {
-			if(AllowEdit) {
+			if(IsEditAllowed) {
 				return; //they're editing the room, don't change anyone's statuses.
 			}
-			//they want to change the room's status to 'HelpOnTheWay' if they're needing help.			
+			//they want to change the room's status to 'HelpOnTheWay' if they're needing help.
 			RoomControlClicked?.Invoke(this, e);
 		}
 
@@ -593,11 +593,11 @@ namespace OpenDental {
 			}
 			if(e==null || e.Button!=MouseButtons.Right) {
 				if(e.Button==MouseButtons.Left && !IsFlashing() && Status!="OnWay") {
-					if(_rectangleName.Contains(e.Location)) {
+					if(_rectangleFName.Contains(e.Location)) {
 						PhoneUI.ShowEmployeeSettings(PhoneCur);
 						return;
 					}
-					if(_rectanglePhone.Contains(e.Location) && PhoneCur.PatNum!=0) {
+					if(_rectangleFPhone.Contains(e.Location) && PhoneCur.PatNum!=0) {
 						ClickedGoTo?.Invoke(this,new EventArgs());
 					}	
 				}
@@ -641,7 +641,6 @@ namespace OpenDental {
 			if(PhoneCur.PatNum==0) {//disable go to if not a current patient
 				menuItemGoTo.Enabled=false;
 			}
-			Point p=new Point(Location.X+e.Location.X,Location.Y+e.Location.Y);
 			menuStatus.Show(Cursor.Position);
 			Application.DoEvents();
 			RoomControlClicked?.Invoke(this, e);
@@ -721,29 +720,26 @@ namespace OpenDental {
 		#endregion
 
 		private void AddToolstripGroup(string groupName,string itemText) {
-			ToolStripItem[] tsiFound=menuStatus.Items.Find(groupName,false);
-			if(tsiFound==null || tsiFound.Length<=0) {
+			ToolStripItem[] toolStripItemsArrayFound=menuStatus.Items.Find(groupName,false);
+			if(toolStripItemsArrayFound.IsNullOrEmpty()) {
 				return;
 			}
-			tsiFound[0].Text=itemText;
+			toolStripItemsArrayFound[0].Text=itemText;
 		}
 
 		private void SetToolstripItemText(string toolStripItemName,bool isClockedIn) {
-			ToolStripItem[] tsiFound=menuStatus.Items.Find(toolStripItemName,false);
-			if(tsiFound==null || tsiFound.Length<=0) {
+			ToolStripItem[] toolStripItemsArrayFound=menuStatus.Items.Find(toolStripItemName,false);
+			if(toolStripItemsArrayFound.IsNullOrEmpty()) {
 				return;
 			}
 			//set back to default
-			tsiFound[0].Text=tsiFound[0].Text.Replace(" (Not Clocked In)","");
+			toolStripItemsArrayFound[0].Text=toolStripItemsArrayFound[0].Text.Replace(" (Not Clocked In)","");
 			if(isClockedIn) {
-				tsiFound[0].Enabled=true;
+				toolStripItemsArrayFound[0].Enabled=true;
+				return;
 			}
-			else {
-				tsiFound[0].Enabled=false;
-				tsiFound[0].Text=tsiFound[0].Text+" (Not Clocked In)";
-			}
+			toolStripItemsArrayFound[0].Enabled=false;
+			toolStripItemsArrayFound[0].Text=toolStripItemsArrayFound[0].Text+" (Not Clocked In)";
 		}
-
-
 	}
 }

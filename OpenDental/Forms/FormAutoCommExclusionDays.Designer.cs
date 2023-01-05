@@ -71,7 +71,7 @@ namespace OpenDental{
 			// 
 			// comboBoxClinicPicker
 			// 
-			this.comboBoxClinicPicker.HqDescription = "HQ";
+			this.comboBoxClinicPicker.HqDescription = "Default";
 			this.comboBoxClinicPicker.IncludeUnassigned = true;
 			this.comboBoxClinicPicker.Location = new System.Drawing.Point(38, 59);
 			this.comboBoxClinicPicker.Name = "comboBoxClinicPicker";

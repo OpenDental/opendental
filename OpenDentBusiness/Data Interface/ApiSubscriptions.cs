@@ -226,9 +226,17 @@ namespace OpenDentBusiness{
 			return listPatients;
 		}
 
-		
-
-		
+		///<summary></summary>
+		public static List<PatField> GetPatFieldsForSubscription(DateTime dateTimeStart,DateTime dateTimeStop) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<PatField>>(MethodBase.GetCurrentMethod(),dateTimeStart,dateTimeStop);
+			}
+			string command="SELECT * FROM patfield "
+				+"WHERE SecDateTEdit >= "+POut.DateT(dateTimeStart)+" "
+				+"AND SecDateTedit < "+POut.DateT(dateTimeStop);
+			List<PatField> listPatFields=Crud.PatFieldCrud.SelectMany(command);
+			return listPatFields;
+		}
 
 	}
 }

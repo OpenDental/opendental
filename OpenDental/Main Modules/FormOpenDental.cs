@@ -4449,6 +4449,9 @@ namespace OpenDental{
 			}
 			formMap.Show();
 			formMap.BringToFront();
+			if(!ODBuild.IsDebug()){
+				MsgBox.Show("This is still under construction and not yet ready for use.");
+			}
 		}
 
 		private void butTriage_Click(object sender,EventArgs e) {

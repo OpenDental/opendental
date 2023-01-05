@@ -71,6 +71,26 @@ namespace CodeBase {
 				SendToODCloudClient(cloudClientData,action);
 			}
 		}
+		
+		///<summary>Sends a request to ODCloudClient to check if a directory exists or create a directory.</summary>
+		/// <param name="directoryName"></param>
+		/// <param name="action"></param>
+		public static string CheckOrCreateWithODCloudClient(string directoryName,CloudClientAction action) {
+			string response="";
+			ODCloudClientData cloudClientData=new ODCloudClientData {
+				OtherData=directoryName,
+			};
+			try {
+				response=SendToODCloudClientSynchronously(cloudClientData,action);
+			}
+			catch(Exception ex) {
+				ODMessageBox.Show(ex.Message);
+			}
+			if(response!="Success" && action==CloudClientAction.CreateDirectory) {
+				throw new Exception("Failed to create directory with ODCloudClient.");
+			}
+			return response;
+		}
 
 		///<summary>Grabs the process name from the exe file path to see if it's currently running on the client's computer</summary>
 		private static string GetProcessNameFromPath(string exePath) {
@@ -715,7 +735,11 @@ namespace CodeBase {
 			///you must call StartListener() again.</summary>
 			CloseListener,
 			///<summary>Check if HttpListener is listening on the ODCloudClient</summary>
-			CheckIsListening
+			CheckIsListening,
+			///<summary>Call this enum action if you want to create a directory on the client machine.</summary>
+			CreateDirectory,
+			///<summary>Call this enum action if you want to check if a directory exists on the client machine.</summary>
+			CheckForDirectory,
 		}
 
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>

@@ -43,7 +43,7 @@ namespace OpenDental.InternalTools.Phones {
 				employeeName=mapCubicle.PhoneCur.EmployeeName;
 				extension="x"+mapCubicle.Extension.ToString();
 				status=mapCubicle.Status;
-				strTimer=mapCubicle.Elapsed.ToStringHmmss();
+				strTimer=mapCubicle.TimeSpanElapsed.ToStringHmmss();
 				//odPictureBoxEmployee.Image=bitmap;
 			}
 			labelUserName.Text=employeeName;
@@ -64,7 +64,7 @@ namespace OpenDental.InternalTools.Phones {
 		public void UpdateControl(MapCubicle clickedPhone) {
 			//Only need to worry about timer and status changing on signal.
 			labelCustomer.Text=clickedPhone.PhoneCur.CustomerNumber;
-			labelStatusTime.Text=clickedPhone.Status+"   "+clickedPhone.Elapsed.ToStringHmmss();
+			labelStatusTime.Text=clickedPhone.Status+"   "+clickedPhone.TimeSpanElapsed.ToStringHmmss();
 		}
 	}
 

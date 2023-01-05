@@ -43,6 +43,7 @@ namespace OpenDentBusiness {
 		///<summary>This value is not stored in the database. Just use empty string.</summary>
 		None,
 		Appointment,
+		PatField,
 		Patient,
 	}
 
@@ -50,7 +51,7 @@ namespace OpenDentBusiness {
 	public enum EnumApiUiEventType{
 		///<summary>This value is not stored in the database. Just use empty string.</summary>
 		None,
-		PatientSelected,		
+		PatientSelected,
 	}
 
 }

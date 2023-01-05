@@ -109,6 +109,8 @@ namespace OpenDentBusiness{
 				table=Db.GetTable(command);
 				for(int i=0;i<table.Rows.Count;i++) {
 					journalEntry=new JournalEntry();
+					journalEntry.CheckNumber="";
+					journalEntry.Splits="";
 					int year=PIn.Int(table.Rows[i]["yearDis"].ToString());
 					journalEntry.DateDisplayed=new DateTime(year,12,31);
 					double amount=PIn.Double(table.Rows[i]["Amount"].ToString());
@@ -137,6 +139,8 @@ namespace OpenDentBusiness{
 				table=Db.GetTable(command);
 				for(int i=0;i<table.Rows.Count;i++) {
 					journalEntry=new JournalEntry();
+					journalEntry.CheckNumber="";
+					journalEntry.Splits="";
 					int year=PIn.Int(table.Rows[i]["yearDis"].ToString());
 					journalEntry.DateDisplayed=new DateTime(year,12,31);
 					double amount=PIn.Double(table.Rows[i]["Amount"].ToString());
