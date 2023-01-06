@@ -159,6 +159,8 @@ namespace UnitTests.Documentation{
 		ApptSearch_GetSearchResults_SchedProvNoDefault_ProvTimeOp_TwoOps=135,
 		ApptSearch_GetSearchResults_DefaultProvNoSched_ProvTimeOp_OneOp_Only=136,
 		Procedures_ComputeEstimates_FrequencyLimitation_Ignore_NoBillIns=137,
+		ProcMultiVisit_UpdateGroupForProc_UpdatedClaimDates=138,
+		ProcMultiVisit_UpdateGroupForProc_UpdateClaimNotPreAuth=139,
 		//Add new items to enum here at end of list
 	}
 }

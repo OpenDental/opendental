@@ -205,13 +205,13 @@ namespace OpenDentBusiness{
 			for(int i=0;i<listClaims.Count;i++) {
 				//If a claim is not attached or the ClaimStatus is not "U", "W", "I", or "H", kick out.
 				if(!listClaims[i].ClaimStatus.In("U","W","I","H")) {
-					return listModifiedClaimNums;
+					continue;
 				}
 				Claim claimOld=listClaims[i].Copy();
 				List<ClaimProc> listClaimProcsForClaim=new List<ClaimProc>();
 				listClaimProcsForClaim=ClaimProcs.RefreshForClaim(listClaims[i].ClaimNum);
 				if(listClaimProcsForClaim.Count==0) {//This is rare but still happens.  See DBM. 
-					return listModifiedClaimNums;
+					continue;
 				}
 				bool isProcsInProcess=listClaimProcsForClaim.Exists(x=>IsProcInProcess(x.ProcNum));
 				if(isProcsInProcess) {
