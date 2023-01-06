@@ -124,7 +124,7 @@ namespace OpenDental {
 			_listFeeSchedFilesOntario.Add("ON_ODA_2022_PA.txt");//Ontario Dental Association 2022 fee schedule for Paediatric Dentists.
 			_listFeeSchedFilesOntario.Add("ON_ODA_2022_PE.txt");//Ontario Dental Association 2022 fee schedule for Periodontists.
 			_listFeeSchedFilesOntario.Add("ON_ODA_2022_PR.txt");//Ontario Dental Association 2022 fee schedule for Prosthodontists.
-			//_listFeeSchedFilesOntario.Add("ON_ODA_2023_AN.txt");//Not provided for 2023. Ontario Dental Association 2023 fee schedule for Anaesthesiologists.
+			_listFeeSchedFilesOntario.Add("ON_ODA_2023_AN.txt");//Ontario Dental Association 2023 fee schedule for Anaesthesiologists.
 			_listFeeSchedFilesOntario.Add("ON_ODA_2023_EN.txt");//Ontario Dental Association 2023 fee schedule for Endodontists.
 			_listFeeSchedFilesOntario.Add("ON_ODA_2023_GP.txt");//Ontario Dental Association 2023 fee schedule for General Practitioners.
 			_listFeeSchedFilesOntario.Add("ON_ODA_2023_OS.txt");//Ontario Dental Association 2023 fee schedule for Oral & Maxillofacial Surgeons.

@@ -1170,7 +1170,7 @@ namespace OpenDentBusiness {
 			ComputeEstimatesForPatNums(patnums);
 		}
 
-		///<summary>Computes estimates for all patients passed.</summary>
+		///<summary>Computes estimates for all patients passed. Optionally set hasCompletedProcs true to compute estimates for completed procedures that are not associated with a claim.</summary>
 		public static void ComputeEstimatesForPatNums(List<long> listPatNums,bool hasCompletedProcs=false) {
 			//No need to check MiddleTierRole; no call to db.
 			listPatNums=listPatNums.Distinct().ToList();
@@ -1185,8 +1185,24 @@ namespace OpenDentBusiness {
 				if(!hasCompletedProcs) {
 					procs.RemoveAll(x => x.ProcStatus==ProcStat.C);
 				}
-				//Only use the claim procs associated to the procedures in our list.
-				List<ClaimProc> claimProcs=ClaimProcs.Refresh(patNum).FindAll(x => procs.Exists(y => y.ProcNum==x.ProcNum));
+				//Make a list of ProcNums that need claimprocs from the database.
+				List<long> listProcNums=procs.Select(x => x.ProcNum).ToList();
+				//Only get the claim procs associated with the remaining procedures in the list.
+				//Mimics ClaimProcs.Refresh(long PatNum) which orders by LineNumber in the query.
+				List<ClaimProc> claimProcs=ClaimProcs.RefreshForProcs(listProcNums).OrderBy(x => x.LineNumber).ToList();
+				if(hasCompletedProcs) {//Compute estimates for completed procedures that are NOT associated with a claim.
+					List<long> listProcNumsComplete=procs.Where(x => x.ProcStatus==ProcStat.C).Select(x => x.ProcNum).ToList();
+					//Ignore claimprocs associated with a claim and a completed procedure.
+					//These are historical claimprocs that should not have estimates recalculated.
+					//Users are blocked from dropping insurance plans attached to claims that were created today.
+					claimProcs.RemoveAll(x => x.ClaimNum > 0 && listProcNumsComplete.Contains(x.ProcNum));
+					//Figure out which completed procedures still have claimprocs after removing the ones associated with a claim.
+					//Canadian users have been noticing an estimate remaining when there is an equivalent received and recomputing the estimate will remove it.
+					List<long> listProcNumsPreserve=claimProcs.Where(x => listProcNumsComplete.Contains(x.ProcNum)).Select(x => x.ProcNum).ToList();
+					List<long> listProcNumsRemove=listProcNumsComplete.Except(listProcNumsPreserve).ToList();
+					//Remove completed procedures from the list of procedures that don't have anymore claimprocs at this point.
+					procs.RemoveAll(x => listProcNumsRemove.Contains(x.ProcNum));
+				}
 				List<InsSub> subs=InsSubs.RefreshForFam(fam);
 				List<InsPlan> plans=InsPlans.RefreshForSubList(subs);
 				List<PatPlan> patPlans=PatPlans.Refresh(patNum);
