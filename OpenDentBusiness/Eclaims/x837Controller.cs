@@ -34,7 +34,7 @@ namespace OpenDentBusiness.Eclaims
 		private static string GetFileName(Clearinghouse clearinghouseClin,int batchNum,bool isAutomatic) { //called from this.SendBatch. Clinic-level clearinghouse passed in.
 			if(clearinghouseClin.CommBridge==EclaimsCommBridge.WebMD) { //If attempting to use WebMD, exit if client program does not exist.
 				if(!File.Exists(clearinghouseClin.ClientProgram)) {
-					MessageBox.Show(Lans.g("Eclaims","The ChangeHealthcare program (WebMD) is not installed at the expected path. Go to Setup, Family/Insurance, Clearinghouses, and double-click") + clearinghouseClin.Description + Lans.g("Eclaims","to confirm the Launch Client Program path."));
+					MessageBox.Show(Lans.g("Eclaims","The ChangeHealthcare program (WebMD) is not installed at the expected path. Go to Setup, Family/Insurance, Clearinghouses, and double-click ") + clearinghouseClin.Description + Lans.g("Eclaims"," to confirm the Launch Client Program path."));
 							return "";
 				}
 			}
@@ -51,12 +51,12 @@ namespace OpenDentBusiness.Eclaims
 							MessageBox.Show(Lans.g("Eclaims","Folder created."));
 						}
 						catch {
-							MessageBox.Show(Lans.g("Eclaims","Could not create directory ")+saveFolder+Lans.g("Eclaims","\r\nGo To Setup > Family/Insurance > Clearinghouses > and double click desired clearinghouse to update path."));
+							MessageBox.Show(Lans.g("Eclaims","Could not create directory ")+saveFolder+Lans.g("Eclaims","\r\nGo to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path."));
 							return "";
 						}
 					}
 					else {
-						MessageBox.Show(saveFolder+Lans.g("Eclaims"," not created. \r\nGo To Setup > Family/Insurance > Clearinghouses > and double click desired clearinghouse to update path."));
+						MessageBox.Show(saveFolder+Lans.g("Eclaims"," not created. \r\nGo to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path."));
 							return "";
 					}
 				}

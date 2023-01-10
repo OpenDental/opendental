@@ -91,7 +91,7 @@ namespace UnitTests.ProcMultiVisit_Tests {
 
 		[TestMethod]
 		[Documentation.Numbering(Documentation.EnumTestNum.ProcMultiVisit_UpdateGroupForProc_UpdatedClaimDates)]
-		[Documentation.VersionAdded("22.3")]
+		[Documentation.VersionAdded("22.2")]
 		[Documentation.Description("Patient has a Tp'd for a multiple visit group with two procedures, D2750 and N4118. They have their own insurance where they are the subscriber. Then create a claim for D2750 which should have the status 'Hold for In Process' until N4118 is completed. Ensure the claim date is set to the first procedure's date. Then complete N4118 which should update the claim's dates of service accordingly, and have the status 'Waiting to Send'.")]
 		public void ProcMultiVisit_UpdateGroupForProc_UpdatedClaimDates() {
 			string suffix=MethodBase.GetCurrentMethod().Name;
@@ -132,7 +132,7 @@ namespace UnitTests.ProcMultiVisit_Tests {
 
 		[TestMethod]
 		[Documentation.Numbering(Documentation.EnumTestNum.ProcMultiVisit_UpdateGroupForProc_UpdateClaimNotPreAuth)]
-		[Documentation.VersionAdded("22.3")]
+		[Documentation.VersionAdded("22.2")]
 		[Documentation.Description("Patient has a Tp'd for a multiple visit group with two procedures, D2750 and N4118. They have their own insurance where they are the subscriber. D2750 is first attached to a PreAuth claim. Receive that PreAuth and complete D2750. The PreAuth should still be received. Afterwards create a claim for D2750 which should have the status 'Hold for In Process' until N4118 is completed. The PreAuth claim should not have it's status updated since that claim was already marked 'Received'. Next complete N4118. The PreAuth should still be received, and the other claim should be 'Waiting to send' now.")]
 		public void ProcMultiVisit_UpdateGroupForProc_UpdateClaimNotPreAuth() {
 			string suffix=MethodBase.GetCurrentMethod().Name;

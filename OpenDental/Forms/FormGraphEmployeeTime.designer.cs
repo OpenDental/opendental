@@ -191,11 +191,11 @@ namespace OpenDental{
 			// 
 			// butEditDefaults
 			// 
-			this.butEditDefaults.Location = new System.Drawing.Point(624, 73);
+			this.butEditDefaults.Location = new System.Drawing.Point(586, 73);
 			this.butEditDefaults.Name = "butEditDefaults";
-			this.butEditDefaults.Size = new System.Drawing.Size(81, 24);
+			this.butEditDefaults.Size = new System.Drawing.Size(119, 24);
 			this.butEditDefaults.TabIndex = 55;
-			this.butEditDefaults.Text = "Edit Defaults";
+			this.butEditDefaults.Text = "Phone Emp Defaults";
 			this.butEditDefaults.UseVisualStyleBackColor = true;
 			this.butEditDefaults.Click += new System.EventHandler(this.butEditDefaults_Click);
 			// 

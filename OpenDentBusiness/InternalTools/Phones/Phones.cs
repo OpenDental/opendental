@@ -385,8 +385,8 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Consider all scenarios for a employee/phone/cubicle and return color and triage information</summary>
-		public static void GetPhoneColor(Phone phone,PhoneEmpDefault phoneEmpDefault,bool forDualColorScheme,out Color outerColor,out Color innerColor,out Color fontColor,out bool isTriageOperatorOnTheClock) {
-			PhoneColorScheme colorScheme=new PhoneColorScheme(forDualColorScheme);
+		public static void GetPhoneColor(Phone phone,PhoneEmpDefault phoneEmpDefault,bool isForDualColorScheme,out Color outerColor,out Color innerColor,out Color fontColor,out bool isTriageOperatorOnTheClock) {
+			PhoneColorScheme colorScheme=new PhoneColorScheme(isForDualColorScheme);
 			isTriageOperatorOnTheClock=false;
 			//first set the font color
 			if(phone==null
@@ -400,7 +400,7 @@ namespace OpenDentBusiness {
 			else {
 				fontColor=colorScheme.ColorFontHere;
 			}
-			if(phoneEmpDefault==null || (!forDualColorScheme && !phoneEmpDefault.HasColor)) {//smaller color boxes need special colors
+			if(phoneEmpDefault==null || (!isForDualColorScheme && !phoneEmpDefault.HasColor)) {//smaller color boxes need special colors
 				innerColor=Color.Black;
 				outerColor=Color.White;
 				return;
@@ -441,7 +441,7 @@ namespace OpenDentBusiness {
 					|| phone.ClockStatus==ClockStatusEnum.Lunch) {
 					//triage op is working today but currently on break/lunch
 					innerColor=colorScheme.ColorInnerTriageAway;
-					if(!forDualColorScheme) { //smaller color boxes need special colors
+					if(!isForDualColorScheme) { //smaller color boxes need special colors
 						outerColor=colorScheme.ColorInnerTriageAway;
 					}
 				}

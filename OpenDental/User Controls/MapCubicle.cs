@@ -570,7 +570,7 @@ namespace OpenDental {
 			}
 			//edit this room
 			using FormMapAreaEdit formMapAreaEdit=new FormMapAreaEdit();
-			formMapAreaEdit.MapAreaItem=this.MapAreaCur;
+			formMapAreaEdit.MapAreaCur=this.MapAreaCur;
 			if(formMapAreaEdit.ShowDialog(this)!=DialogResult.OK) {
 				return;
 			}

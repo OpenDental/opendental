@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using OpenDentBusiness;
 using CodeBase;
+using Newtonsoft.Json;
 
 namespace OpenDental.HqPhones {
 	public partial class FormMap:FormODBase {
@@ -30,6 +31,8 @@ namespace OpenDental.HqPhones {
 		private List<WebChatSession> _listWebChatSessions;
 		///<summary>This is the one that's showing.</summary>
 		private MapAreaContainer _mapAreaContainer;
+		///<summary>Used for the main menu and updates when the user is or is not in full screen mode.</summary>
+		private UI.MenuItemOD _menuItemSettings;
 		///<summary>The site that is associated with the first three octets of the computer that has launched this map.</summary>
 		private Site _siteThisComputer;
 		private int _triageCalls;
@@ -48,6 +51,7 @@ namespace OpenDental.HqPhones {
 			InitializeLayoutManager();
 			Lan.F(this);
 			escalationView.FadeAlphaIncrement=20;
+			mapPanel.GoToPatient+=(sender,patNum)=>GoToPatient?.Invoke(sender,patNum);
 		}
 		#endregion Constructor
 
@@ -61,11 +65,6 @@ namespace OpenDental.HqPhones {
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public event EventHandler<long> GoToPatient;
-
-		///<summary>When user clicks on a cubicle that is NeedsHelp. The eventHandler contains the phone extension.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public event EventHandler<int> HelpIsOnTheWay;
 		#endregion Events
 
 		#region Methods - Public
@@ -128,7 +127,7 @@ namespace OpenDental.HqPhones {
 			}
 		}
 
-		///<summary>Stub</summary>
+		///<summary>Gets called every second or two from a thread.</summary>
 		public void SetPhoneList(List<Phone> listPhones,List<PhoneEmpSubGroup> listPhoneEmpSubGroups,List<ChatUser> listChatUsers,
 			List<WebChatSession> listWebChatSessions,List<PeerInfo> listPeerInfosRemoteSupportSessions)
 		{
@@ -306,6 +305,9 @@ namespace OpenDental.HqPhones {
 			this.Text="Call Center Status Map - "+_listMapAreaContainers[comboRoom.SelectedIndex].Description;
 			FillMapAreaPanel();
 			FillTriageLabelColors();
+			//refresh immediately instead of waiting a second for a new signal.
+			ODThread.WakeUpThreadsByGroupName(FormOpenDental.FormODThreadNames.HqMetrics.GetDescription());
+			//ProcessHqMetricsPhones();
 		}
 
 		private void FormMapHQ2_FormClosed(object sender,FormClosedEventArgs e) {
@@ -321,7 +323,7 @@ namespace OpenDental.HqPhones {
 				return;
 			}
 			labelCurrentTime.Text=DateTime.Now.ToShortTimeString();
-			//LayoutMenu();
+			LayoutMenu();
 			FillMaps();
 			FillTabs();
 			FillCombo();
@@ -329,6 +331,9 @@ namespace OpenDental.HqPhones {
 			FillTriagePreferences();
 			FillTriageLabelColors();
 			FormOpenDental.AddMapToList2(this);
+			//refresh immediately instead of waiting a second for a new signal.
+			ODThread.WakeUpThreadsByGroupName(FormOpenDental.FormODThreadNames.HqMetrics.GetDescription());
+			//ProcessHqMetricsPhones();
 		}
 
 		private void tabMain_SelectedIndexChanged(object sender,EventArgs e) {
@@ -338,6 +343,75 @@ namespace OpenDental.HqPhones {
 			RefreshCurrentTabHelper(listPhoneEmpDefaults,listPhones,listPhoneEmpSubGroups);
 		}
 		#endregion Methods - Private, Event Handlers
+
+		#region Methods - private Menu
+
+		private void menuItemCallCenterThresh_Click(object sender,EventArgs e) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
+				return;
+			}
+			using FormMapHQPrefs formMapHqPrefsTriage=new FormMapHQPrefs();
+			formMapHqPrefsTriage.ShowDialog();
+			if(formMapHqPrefsTriage.DialogResult!=DialogResult.OK) {
+				return;
+			}
+			FillTriagePreferences();
+		}
+
+		private void menuItemConfRooms_Click(object sender,EventArgs e) {
+			using FormPhoneConfs formPhoneConfs=new FormPhoneConfs();
+			formPhoneConfs.ShowDialog();//ShowDialog because we do not want this window to be floating open for long periods of time.
+		}
+
+		private void menuItemEscalation_Click(object sender,EventArgs e) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
+				return;
+			}
+			using FormPhoneEmpDefaultEscalationEdit formPhoneEmpDefaultEscalationEdit=new FormPhoneEmpDefaultEscalationEdit();
+			formPhoneEmpDefaultEscalationEdit.ShowDialog();
+			List<PhoneEmpDefault> listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
+			RefreshCurrentTabHelper(listPhoneEmpDefaults,Phones.GetPhoneList(),PhoneEmpSubGroups.GetAll());
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Escalation team changed");
+		}
+
+		private void menuItemEditMap_Click(object sender,EventArgs e) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
+				return;
+			}
+			using FormMapAreaContainers formMapAreaContainers=new FormMapAreaContainers();
+			formMapAreaContainers.ShowDialog();
+			//if(formMapAreaContainers.DialogResult!=DialogResult.OK) {
+			//	return;
+			//}
+			_listMapAreaContainers=MapAreaContainers.Refresh();
+			_mapAreaContainer=_listMapAreaContainers[comboRoom.SelectedIndex];
+			FillCombo();
+
+
+			FillMapAreaPanel();
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"MapHQ layout changed");
+		}
+
+		private void menuItemOpenNewMap_Click(object sender,EventArgs e) {
+			//Open the map from FormOpenDental so that it can register for the click events.
+			ExtraMapClicked?.Invoke(this,e);
+			//Form gets added to the list of all HQMaps in Load method.
+		}
+
+		private void menuItemPhoneEmpDefaults_Click(object sender,EventArgs e) {
+			using FormPhoneEmpDefaults formPhoneEmpDefaults=new FormPhoneEmpDefaults();
+			formPhoneEmpDefaults.ShowDialog();
+		}
+
+		private void menuItemToggleTriage_Click(object sender,EventArgs e) {
+			Point pointLoc=LayoutManager.ScalePoint(new Point(0,78));
+			if(panelContainer.Left==0) { 
+				pointLoc=LayoutManager.ScalePoint(new Point(365,78));
+			}
+			Rectangle rectangle=new Rectangle(pointLoc.X,pointLoc.Y,ClientSize.Width-pointLoc.X-2,ClientSize.Height-pointLoc.Y-2);
+			LayoutManager.Move(panelContainer,rectangle);
+		}
+		#endregion Methods - private Menu
 
 		#region Methods - Private
 		///<summary>Returns true if the employee for the PhoneEmpDefault should be added to the selected escalation view.</summary>
@@ -370,6 +444,7 @@ namespace OpenDental.HqPhones {
 		}
 
 		private void FillCombo() {
+			//only called on load
 			comboRoom.Items.Clear();
 			for (int i=0;i<_listMapAreaContainers.Count;i++) {
 				comboRoom.Items.Add(_listMapAreaContainers[i].Description);
@@ -378,7 +453,12 @@ namespace OpenDental.HqPhones {
 			if(_mapAreaContainer!=null) {
 				selectedIndex=_listMapAreaContainers.FindIndex(x => x.MapAreaContainerNum==_mapAreaContainer.MapAreaContainerNum);
 			}
-			comboRoom.SelectedIndex=(selectedIndex==-1 ? 0 : selectedIndex);
+			if(selectedIndex==-1){
+				comboRoom.SelectedIndex=0;
+			}
+			else{
+				comboRoom.SelectedIndex=selectedIndex;
+			}
 			this.Text="Call Center Status Map - "+_listMapAreaContainers[comboRoom.SelectedIndex].Description;
 		}
 
@@ -388,9 +468,9 @@ namespace OpenDental.HqPhones {
 				return;
 			}
 			MapAreaContainer mapAreaContainer=_listMapAreaContainers[comboRoom.SelectedIndex];
-			mapPanel.Width=mapAreaContainer.FloorWidthFeet*17;
-			mapPanel.Height=mapAreaContainer.FloorHeightFeet*17;
-			mapPanel.SetListMapAreas(MapAreas.Refresh(mapAreaContainer.MapAreaContainerNum));
+			LayoutManager.MoveSize(mapPanel,new Size(mapAreaContainer.FloorWidthFeet*17,mapAreaContainer.FloorHeightFeet*17));
+			List<MapArea> listMapAreas=MapAreas.Refresh(mapAreaContainer.MapAreaContainerNum);
+			mapPanel.SetListMapAreas(listMapAreas);
 			mapPanel.Invalidate();
 			/*
 			mapAreaPanel.PixelsPerFoot=LayoutManager.Scale(17);
@@ -469,12 +549,109 @@ namespace OpenDental.HqPhones {
 			_voicemailTime=PrefC.GetInt(PrefName.VoicemailTime);
 		}
 
+		private void LayoutMenu() {
+			menuMain.BeginUpdate();
+			//Settings-----------------------------------------------------------------------------------------------------------
+			_menuItemSettings=new UI.MenuItemOD("Setup");
+			menuMain.Add(_menuItemSettings);
+			_menuItemSettings.Add("Call Center Thresholds",menuItemCallCenterThresh_Click);
+			_menuItemSettings.Add("Escalation",menuItemEscalation_Click);
+			_menuItemSettings.Add("Edit Maps",menuItemEditMap_Click);
+			_menuItemSettings.Add("Phone Emp Defaults",menuItemPhoneEmpDefaults_Click);
+			//Toggle Triage View--------------------------------------------------------------------------------------------------
+			menuMain.Add(new UI.MenuItemOD("Toggle Triage View",menuItemToggleTriage_Click));
+			//Open New Map--------------------------------------------------------------------------------------------------
+			menuMain.Add(new UI.MenuItemOD("Open New Map",menuItemOpenNewMap_Click));
+			//Conf Rooms--------------------------------------------------------------------------------------------------
+			menuMain.Add(new UI.MenuItemOD("Conf Rooms",menuItemConfRooms_Click));
+			menuMain.EndUpdate();
+		}
+
+		/*
+		///<summary>Copied from FormOpenDentalThreads.ProcessHqMetricsPhones()</summary>
+		private void ProcessHqMetricsPhones(){
+			List<WebChatSession> listWebChatSessions=null;
+			List<PeerInfo> listPeerInfoRemoteSupportSessions=null;
+			TriageMetric triageMetrics=Phones.GetTriageMetrics();
+			ODException.SwallowAnyException(() => FillTriageLabelsResults(triageMetrics));
+			//Attempt to deserialize the active web chat sessions from the triage metric row.
+			ODException.SwallowAnyException(() => listWebChatSessions=JsonConvert.DeserializeObject<List<WebChatSession>>(triageMetrics.WebChatSessions));
+			//Attempt to deserialize the active web chat sessions from the triage metric row.
+			ODException.SwallowAnyException(() => {
+				listPeerInfoRemoteSupportSessions=JsonConvert.DeserializeObject<List<PeerInfo>>(triageMetrics.RemoteSupportSessions);
+				PeerInfos.SetEmployeeNum(ref listPeerInfoRemoteSupportSessions);
+			});
+			if(listWebChatSessions==null) {//An empty string value within triageMetrics.WebChatSessions will deserialize to null.
+				listWebChatSessions=new List<WebChatSession>();
+			}
+			if(listPeerInfoRemoteSupportSessions==null) {//An empty string value within triageMetrics.RemoteSupportSessions will deserialize to null.
+				listPeerInfoRemoteSupportSessions=new List<PeerInfo>();
+			}
+			List<PhoneEmpDefault> listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
+			List<PhoneEmpSubGroup> listPhoneEmpSubGroups=PhoneEmpSubGroups.GetAll();
+			//Get the extension linked to this machine.
+			PhoneComp phoneComp=PhoneComps.GetFirstOrDefault(x => x.ComputerName.ToUpper()==Environment.MachineName.ToUpper());
+			int extension=phoneComp?.PhoneExt??0;
+			//Get the phoneempdefault row that is currently associated to the corresponding extension.
+			PhoneEmpDefault phoneEmpDefault=listPhoneEmpDefaults.Find(x => x.PhoneExt==extension);
+			bool isTriageOperator=phoneEmpDefault?.IsTriageOperator??false;
+			//Now get the Phone object for this extension. Phone table matches PhoneEmpDefault table more or less 1:1. 
+			//Phone fields represent current state of the PhoneEmpDefault table and will be modified by the phone tracking server anytime a phone state changes for a given extension 
+			//(EG... incoming call, outgoing call, hangup, etc).
+			List<Phone> listPhones=Phones.GetPhoneList();
+			Phone phone=listPhones.Find(x => x.Extension==extension);
+			List<ChatUser> listChatUsers=ChatUsers.GetAll();
+			//Instead of calling ProcessHqMetricsResults, just directly call SetPhoneList.
+			SetPhoneList(listPhones,listPhoneEmpSubGroups,listChatUsers,listWebChatSessions,listPeerInfoRemoteSupportSessions);
+		}
+
+		/// <summary>Copied from FormOpenDental.FillTriageLabelsResults().</summary>
+		private void FillTriageLabelsResults(TriageMetric triageMetric) {
+			int countBlueTasks=triageMetric.CountBlueTasks;
+			int countWhiteTasks=triageMetric.CountWhiteTasks;
+			int countRedTasks=triageMetric.CountRedTasks;
+			DateTime timeOfOldestBlueTaskNote=triageMetric.DateTimeOldestTriageTaskOrTaskNote;
+			DateTime timeOfOldestRedTaskNote=triageMetric.DateTimeOldestUrgentTaskOrTaskNote;
+			TimeSpan timeSpanTriageBehind=new TimeSpan(0);
+			if(timeOfOldestBlueTaskNote.Year>1880 && timeOfOldestRedTaskNote.Year>1880) {
+				if(timeOfOldestBlueTaskNote<timeOfOldestRedTaskNote) {
+					timeSpanTriageBehind=DateTime.Now-timeOfOldestBlueTaskNote;
+				}
+				else {//triageBehind based off of older RedTask
+					timeSpanTriageBehind=DateTime.Now-timeOfOldestRedTaskNote;
+				}
+			}
+			else if(timeOfOldestBlueTaskNote.Year>1880) {
+				timeSpanTriageBehind=DateTime.Now-timeOfOldestBlueTaskNote;
+			}
+			else if(timeOfOldestRedTaskNote.Year>1880) {
+				timeSpanTriageBehind=DateTime.Now-timeOfOldestRedTaskNote;
+			}
+			string countStr="0";
+			if(countBlueTasks>0 || countRedTasks>0) {//Triage show red so users notice more.
+				countStr=(countBlueTasks+countRedTasks).ToString();
+			}
+			else {
+				if(countWhiteTasks>0) {
+					countStr="("+countWhiteTasks.ToString()+")";
+				}
+			}
+			SetTriageMain(countWhiteTasks,countBlueTasks,timeSpanTriageBehind,countRedTasks);
+			TimeSpan urgentTriageBehind=new TimeSpan(0);
+			if(timeOfOldestRedTaskNote.Year>1880) {
+				urgentTriageBehind=DateTime.Now-timeOfOldestRedTaskNote;
+			}
+			SetTriageRed(countRedTasks,urgentTriageBehind);
+			SetChatCount();
+		}*/
+
 		///<summary>If the phone map has been changed, update all phone maps.</summary>
 		public override void ProcessSignalODs(List<Signalod> listSignalods) {
 			if(listSignalods.Exists(x => x.IType==InvalidType.PhoneMap)) {
 				FillMapAreaPanel();
 			}
 		}
+
 		private void RefreshCurrentTabHelper(List<PhoneEmpDefault> listPhoneEmpDefaultsIn,List<Phone> listPhones,List<PhoneEmpSubGroup> listPhoneEmpSubGroupsIn) {
 			PhoneEmpSubGroupType phoneEmpSubGroupTypeSelected=(PhoneEmpSubGroupType)(tabMain.SelectedTab?.Tag??PhoneEmpSubGroupType.Escal);
 			List<PhoneEmpSubGroup> listPhoneEmpSubGroups=listPhoneEmpSubGroupsIn.FindAll(x => x.SubGroupType==phoneEmpSubGroupTypeSelected);
@@ -560,7 +737,9 @@ namespace OpenDental.HqPhones {
 
 /*
 Todo:
-When we change a MapNumber.Text, I'm unclear if it properly Invalidates.
-
+Change date/time slightly on local machine and see if it still displays properly.
+Snap to nearest foot.
+Drawing label box needs to completely ignore width, and edit UI changed to match.
+The combobox of room names might not be refreshing properly in all situations.
 
 */

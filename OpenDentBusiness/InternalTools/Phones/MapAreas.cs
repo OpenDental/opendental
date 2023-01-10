@@ -54,5 +54,15 @@ namespace OpenDentBusiness{
 			string command= "DELETE FROM maparea WHERE MapAreaNum = "+POut.Long(mapAreaNum);
 			Db.NonQ(command);
 		}
+
+		///<summary></summary>
+		public static void DeleteAll(long mapAreaContainerNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),mapAreaContainerNum);
+				return;
+			}
+			string command= "DELETE FROM maparea WHERE MapAreaContainerNum = "+POut.Long(mapAreaContainerNum);
+			Db.NonQ(command);
+		}
 	}
 }

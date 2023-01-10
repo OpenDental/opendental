@@ -1147,7 +1147,6 @@ namespace OpenDental{
 		private void OpenMap(string mapDescription=null) {
 			HqPhones.FormMap formMap;
 			formMap=new HqPhones.FormMap();
-			formMap.HelpIsOnTheWay+=FormMap_HelpIsOnTheWay;
 			formMap.ExtraMapClicked+=FormMap_ExtraMapClicked;
 			formMap.GoToPatient+=FormMap_GoToPatient;
 			if(!mapDescription.IsNullOrEmpty()) {
@@ -4437,7 +4436,6 @@ namespace OpenDental{
 			HqPhones.FormMap formMap;
 			if(_listFormMaps.Count==0) {
 				formMap=new HqPhones.FormMap();
-				formMap.HelpIsOnTheWay+=FormMap_HelpIsOnTheWay;
 				formMap.ExtraMapClicked+=FormMap_ExtraMapClicked;
 				formMap.GoToPatient+=FormMap_GoToPatient;
 			}
@@ -7009,12 +7007,6 @@ namespace OpenDental{
 			ODThread.WakeUpThreadsByGroupName(FormODThreadNames.HqMetrics.GetDescription());
 		}
 
-		///<summary></summary>
-		private void FormMap_HelpIsOnTheWay(object sender,int extension){
-			Phones.SetPhoneStatus(ClockStatusEnum.HelpOnTheWay,extension);
-			ODThread.WakeUpThreadsByGroupName(FormODThreadNames.HqMetrics.GetDescription());
-		}
-
 		private void FormMapHQ_ExtraMapClicked(object sender,EventArgs e) {
 			OpenMapHQ();
 		}
@@ -7112,7 +7104,7 @@ namespace OpenDental{
 		private delegate void FillTriageLabelsResultsArgs(TriageMetric triageMetric);
 
 		/// <summary>HQ Only. Digest results of Phones.GetTriageMetrics() in ProcessHqMetrics(). Fills the triage labels and update form controls accordingly.</summary>
-		private void OnFillTriageLabelsResults(TriageMetric triageMetric) {
+		private void FillTriageLabelsResults(TriageMetric triageMetric) {
 			int countBlueTasks=triageMetric.CountBlueTasks;
 			int countWhiteTasks=triageMetric.CountWhiteTasks;
 			int countRedTasks=triageMetric.CountRedTasks;

@@ -498,7 +498,7 @@ namespace OpenDental {
 			List<WebChatSession> listWebChatSessions=null;
 			List<PeerInfo> listRemoteSupportSessions=null;
 			TriageMetric triageMetrics=Phones.GetTriageMetrics();
-			ODException.SwallowAnyException(() => Invoke(new FillTriageLabelsResultsArgs(OnFillTriageLabelsResults),triageMetrics));
+			ODException.SwallowAnyException(() => Invoke(new FillTriageLabelsResultsArgs(FillTriageLabelsResults),triageMetrics));
 			//Attempt to deserialize the active web chat sessions from the triage metric row.
 			ODException.SwallowAnyException(() => listWebChatSessions=JsonConvert.DeserializeObject<List<WebChatSession>>(triageMetrics.WebChatSessions));
 			//Attempt to deserialize the active web chat sessions from the triage metric row.
@@ -1173,7 +1173,7 @@ namespace OpenDental {
 		#endregion ApiEventsThread
 
 		///<summary>A list of the names and group names for all threads spawned from FormOpenDental.</summary>
-		private enum FormODThreadNames {
+		public enum FormODThreadNames {
 			[Obsolete]
 			CacheFillForFees,
 			CanadianItransCarrier,

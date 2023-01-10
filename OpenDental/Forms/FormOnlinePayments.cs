@@ -138,7 +138,8 @@ namespace OpenDental {
 				CreditCardSource.PayConnectPortal,
 				CreditCardSource.PayConnectPortalLogin,
 				CreditCardSource.EdgeExpressRCM,
-				CreditCardSource.EdgeExpressCNP
+				CreditCardSource.EdgeExpressCNP,
+				CreditCardSource.CareCredit
 			};
 			comboPaymentSource.Items.AddListEnum<CreditCardSource>(onlinePaymentSources);
 			comboPaymentSource.IsAllSelected=true;

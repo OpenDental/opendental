@@ -15,7 +15,10 @@ namespace OpenDentBusiness{
 			return Crud.MapAreaContainerCrud.SelectMany(command);
 		}
 
-		public static void SaveToDb(List<MapAreaContainer> listMapAreaContainers) {	
+		public static void SaveWholeListToDb(List<MapAreaContainer> listMapAreaContainers) {	
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),listMapAreaContainers);
+			}
 			//We do it the same as before the refactor.  Delete everything and re-insert.  Improve later
 			string command="DELETE FROM mapareacontainer";
 			Db.NonQ(command);
@@ -23,15 +26,45 @@ namespace OpenDentBusiness{
 				Crud.MapAreaContainerCrud.Insert(listMapAreaContainers[i],useExistingPK:true);
 			}
 		}
+
+		///<summary></summary>
+		public static long Insert(MapAreaContainer mapAreaContainer){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				mapAreaContainer.MapAreaContainerNum=Meth.GetLong(MethodBase.GetCurrentMethod(),mapAreaContainer);
+				return mapAreaContainer.MapAreaContainerNum;
+			}
+			return Crud.MapAreaContainerCrud.Insert(mapAreaContainer);
+		}
+
+		///<summary></summary>
+		public static void Update(MapAreaContainer mapAreaContainer){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),mapAreaContainer);
+				return;
+			}
+			Crud.MapAreaContainerCrud.Update(mapAreaContainer);
+		}
+
+		///<summary></summary>
+		public static void Delete(long mapAreaContainerNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),mapAreaContainerNum);
+				return;
+			}
+			string command= "DELETE FROM mapareacontainer WHERE MapAreaContainerNum = "+POut.Long(mapAreaContainerNum);
+			Db.NonQ(command);
+		}
 	}
 }
 
 
 /*Original data:
-[{"MapAreaContainerNum":5,"FloorWidthFeet":80,"FloorHeightFeet":57,"PixelsPerFoot":17,"ShowGrid":false,"ShowOutline":true,"Description":"B2","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":3},{"MapAreaContainerNum":6,"FloorWidthFeet":100,"FloorHeightFeet":56,"PixelsPerFoot":17,"ShowGrid":false,"ShowOutline":true,"Description":"F","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":1},{"MapAreaContainerNum":7,"FloorWidthFeet":90,"FloorHeightFeet":60,"PixelsPerFoot":17,"ShowGrid":true,"ShowOutline":true,"Description":"B1/C","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":3},{"MapAreaContainerNum":8,"FloorWidthFeet":90,"FloorHeightFeet":60,"PixelsPerFoot":17,"ShowGrid":true,"ShowOutline":true,"Description":"A/B1","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":3},{"MapAreaContainerNum":9,"FloorWidthFeet":90,"FloorHeightFeet":57,"PixelsPerFoot":17,"ShowGrid":true,"ShowOutline":true,"Description":"Tech Teams 1-14","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":3},{"MapAreaContainerNum":10,"FloorWidthFeet":90,"FloorHeightFeet":58,"PixelsPerFoot":17,"ShowGrid":true,"ShowOutline":true,"Description":"Specialty Teams","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":3},{"MapAreaContainerNum":11,"FloorWidthFeet":100,"FloorHeightFeet":56,"PixelsPerFoot":17,"ShowGrid":true,"ShowOutline":true,"Description":"G","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":3},{"MapAreaContainerNum":12,"FloorWidthFeet":90,"FloorHeightFeet":57,"PixelsPerFoot":17,"ShowGrid":true,"ShowOutline":true,"Description":"Tech Teams 15+","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":3},{"MapAreaContainerNum":13,"FloorWidthFeet":76,"FloorHeightFeet":40,"PixelsPerFoot":17,"ShowGrid":true,"ShowOutline":true,"Description":"Advanced Services","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":3},{"MapAreaContainerNum":14,"FloorWidthFeet":90,"FloorHeightFeet":57,"PixelsPerFoot":17,"ShowGrid":true,"ShowOutline":true,"Description":"Education","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":0}]
+[{"MapAreaContainerNum":5,"FloorWidthFeet":80,"FloorHeightFeet":57,"PixelsPerFoot":17,"ShowGrid":false,"ShowOutline":true,"Description":"B2","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":3},{"MapAreaContainerNum":6,"FloorWidthFeet":100,"FloorHeightFeet":56,"PixelsPerFoot":17,"ShowGrid":false,"ShowOutline":true,"Description":"F","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":1},{"MapAreaContainerNum":7,"FloorWidthFeet":90,"FloorHeightFeet":60,"PixelsPerFoot":17,"ShowGrid":true,"ShowOutline":true,"Description":"B1/C","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":3},{"MapAreaContainerNum":8,"FloorWidthFeet":90,"FloorHeightFeet":60,"PixelsPerFoot":17,"ShowGrid":true,"ShowOutline":true,"Description":"A/B1","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":3},{"MapAreaContainerNum":9,"FloorWidthFeet":90,"FloorHeightFeet":57,"PixelsPerFoot":17,"ShowGrid":true,"ShowOutline":true,"Description":"Tech Teams 1-14","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":3},{"MapAreaContainerNum":10,"FloorWidthFeet":90,"FloorHeightFeet":58,"PixelsPerFoot":17,"ShowGrid":true,"ShowOutline":true,"Description":"Specialty Teams","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":3},{"MapAreaContainerNum":11,"FloorWidthFeet":100,"FloorHeightFeet":56,"PixelsPerFoot":17,"ShowGrid":true,"ShowOutline":true,"Description":"G","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":3},{"MapAreaContainerNum":12,"FloorWidthFeet":90,"FloorHeightFeet":57,"PixelsPerFoot":17,"ShowGrid":true,"ShowOutline":true,"Description":"Tech Teams 15+","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":3},{"MapAreaContainerNum":13,"FloorWidthFeet":76,"FloorHeightFeet":40,"PixelsPerFoot":17,"ShowGrid":true,"ShowOutline":true,"Description":"Advanced Services","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":3},
+
+{"MapAreaContainerNum":14,"FloorWidthFeet":90,"FloorHeightFeet":57,"PixelsPerFoot":17,"ShowGrid":true,"ShowOutline":true,"Description":"Education","ExtensionStartRange":-1,"ExtensionEndRange":-1,"SiteNum":0}]
 */
 
-/*New data (I ran these queries on our live server)
+/*New data:
 DROP TABLE IF EXISTS mapareacontainer;
 CREATE TABLE mapareacontainer (
 	MapAreaContainerNum bigint NOT NULL auto_increment PRIMARY KEY,

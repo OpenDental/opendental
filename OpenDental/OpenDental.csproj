@@ -2716,6 +2716,24 @@
     <Compile Include="InternalTools\Phones\FormMap.designer.cs">
       <DependentUpon>FormMap.cs</DependentUpon>
     </Compile>
+    <Compile Include="InternalTools\Phones\FormMapAreaContainerDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InternalTools\Phones\FormMapAreaContainerDetail.designer.cs">
+      <DependentUpon>FormMapAreaContainerDetail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InternalTools\Phones\FormMapAreaContainerEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InternalTools\Phones\FormMapAreaContainerEdit.designer.cs">
+      <DependentUpon>FormMapAreaContainerEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InternalTools\Phones\FormMapAreaContainers.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InternalTools\Phones\FormMapAreaContainers.designer.cs">
+      <DependentUpon>FormMapAreaContainers.cs</DependentUpon>
+    </Compile>
     <Compile Include="InternalTools\Phones\FormMapHQPrefs.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2744,7 +2762,7 @@
       <DependentUpon>MapNumber.cs</DependentUpon>
     </Compile>
     <Compile Include="InternalTools\Phones\MapPanel.cs">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="InternalTools\Phones\MapPanel.designer.cs">
       <DependentUpon>MapPanel.cs</DependentUpon>
@@ -8322,11 +8340,23 @@
     <EmbeddedResource Include="InternalTools\Phones\FormMap.resx">
       <DependentUpon>FormMap.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="InternalTools\Phones\FormMapAreaContainerDetail.resx">
+      <DependentUpon>FormMapAreaContainerDetail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InternalTools\Phones\FormMapAreaContainerEdit.resx">
+      <DependentUpon>FormMapAreaContainerEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InternalTools\Phones\FormMapAreaContainers.resx">
+      <DependentUpon>FormMapAreaContainers.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Phones\FormMapHQPrefs.resx">
       <DependentUpon>FormMapHQPrefs.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Phones\FormPhoneGraphAdminEdit.resx">
       <DependentUpon>FormPhoneGraphAdminEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InternalTools\Phones\MapPanel.resx">
+      <DependentUpon>MapPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Phones\UserControlMapDetails.resx">
       <DependentUpon>UserControlMapDetails.cs</DependentUpon>

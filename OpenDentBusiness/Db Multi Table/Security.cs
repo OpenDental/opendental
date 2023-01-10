@@ -326,6 +326,16 @@ namespace OpenDentBusiness{
 			}
 			return false;
 		}
+
+		///<summary>Returns CurComputerName, ODEnvironment.MachineName, and Environment.MachineName in a comma seperated string. Replaces CurComputerName in some instances</summary>
+		public static string GetComplexComputerName() {
+			//If not RDP return CurComputerName for backwards compatibillity. Mimics ODEnvironment.MachineName
+			if(typeof(SystemInformation).GetProperty("TerminalServerSession").GetValue(null).ToString()!="True"){
+				return CurComputerName;
+			}
+			string[] arrayComputerNames=new string[] { CurComputerName,ODEnvironment.MachineName,Environment.MachineName };
+			return string.Join(", ",arrayComputerNames.Where(x => !string.IsNullOrEmpty(x)).Distinct());
+		}
 		
 		///<summary>Returns the Date that the user is restricted to for the passed-in PermType. 
 		///Returns MinVal if the user is not restricted or does not have the permission.</summary>

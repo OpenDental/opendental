@@ -747,16 +747,16 @@ namespace OpenDental {
 			//Settings-----------------------------------------------------------------------------------------------------------
 			_menuItemSettings=new MenuItemOD("Settings");
 			menuMain.Add(_menuItemSettings);
-			_menuItemSettings.Add("Call Center Thresholds",callCenterThreshToolStripMenuItem_Click);
-			_menuItemSettings.Add("Escalation",escalationToolStripMenuItem_Click);
-			_menuItemSettings.Add("Map",mapToolStripMenuItem_Click);
-			_menuItemSettings.Add("Phones",phonesToolStripMenuItem_Click);
+			_menuItemSettings.Add("Call Center Thresholds",menuItemCallCenterThresh_Click);
+			_menuItemSettings.Add("Escalation",menuItemEscalation_Click);
+			_menuItemSettings.Add("Map",menuItemMap_Click);
+			_menuItemSettings.Add("Phones",menuItemPhones_Click);
 			//Toggle Triage View--------------------------------------------------------------------------------------------------
-			menuMain.Add(new MenuItemOD("Toggle Triage View",toggleTriageToolStripMenuItem_Click));
+			menuMain.Add(new MenuItemOD("Toggle Triage View",menuItemToggleTriage_Click));
 			//Open New Map--------------------------------------------------------------------------------------------------
-			menuMain.Add(new MenuItemOD("Open New Map",openNewMapToolStripMenuItem_Click));
+			menuMain.Add(new MenuItemOD("Open New Map",menuItemOpenNewMap_Click));
 			//Conf Rooms--------------------------------------------------------------------------------------------------
-			menuMain.Add(new MenuItemOD("Conf Rooms",confRoomsToolStripMenuItem_Click));
+			menuMain.Add(new MenuItemOD("Conf Rooms",menuItemConfRooms_Click));
 			menuMain.EndUpdate();
 		}
 
@@ -764,7 +764,7 @@ namespace OpenDental {
 
 		}
 
-		private void mapToolStripMenuItem_Click(object sender,EventArgs e) {
+		private void menuItemMap_Click(object sender,EventArgs e) {
 			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
@@ -780,7 +780,7 @@ namespace OpenDental {
 			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"MapHQ layout changed");
 		}
 
-		private void callCenterThreshToolStripMenuItem_Click(object sender,EventArgs e) {
+		private void menuItemCallCenterThresh_Click(object sender,EventArgs e) {
 			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
@@ -792,7 +792,7 @@ namespace OpenDental {
 			FillTriagePreferences();
 		}
 
-		private void escalationToolStripMenuItem_Click(object sender,EventArgs e) {
+		private void menuItemEscalation_Click(object sender,EventArgs e) {
 			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
@@ -823,7 +823,7 @@ namespace OpenDental {
 			mapAreaPanel.PixelsPerFoot=LayoutManager.Scale(17);
 		}
 
-		private void toggleTriageToolStripMenuItem_Click(object sender,EventArgs e) {
+		private void menuItemToggleTriage_Click(object sender,EventArgs e) {
 			Point point=LayoutManager.ScalePoint(new Point(0,78));
 			if(mapAreaPanel.Left==0) { // Don't expand mapAreaPanel to the left; don't cover up the other controls.
 				point=LayoutManager.ScalePoint(new Point(365,78));
@@ -831,7 +831,7 @@ namespace OpenDental {
 			mapAreaPanel.Bounds=new Rectangle(point.X,point.Y,ClientSize.Width-point.X,ClientSize.Height-point.Y);
 		}
 
-		private void openNewMapToolStripMenuItem_Click(object sender,EventArgs e) {
+		private void menuItemOpenNewMap_Click(object sender,EventArgs e) {
 			//Open the map from FormOpenDental so that it can register for the click events.
 			ExtraMapClicked?.Invoke(this,e);
 			//Form gets added to the list of all HQMaps in Load method.
@@ -842,12 +842,12 @@ namespace OpenDental {
 			FormOpenDental.RemoveMapFromList(this);
 		}
 
-		private void confRoomsToolStripMenuItem_Click(object sender,EventArgs e) {
+		private void menuItemConfRooms_Click(object sender,EventArgs e) {
 			using FormPhoneConfs FormPC=new FormPhoneConfs();
 			FormPC.ShowDialog();//ShowDialog because we do not want this window to be floating open for long periods of time.
 		}
 
-		private void phonesToolStripMenuItem_Click(object sender,EventArgs e) {
+		private void menuItemPhones_Click(object sender,EventArgs e) {
 			using FormPhoneEmpDefaults formPhoneEmpDefaults=new FormPhoneEmpDefaults();
 			formPhoneEmpDefaults.ShowDialog();
 		}

@@ -81,7 +81,7 @@ namespace OpenDental {
 			}
 			//edit this display label
 			using FormMapAreaEdit FormEP=new FormMapAreaEdit();
-			FormEP.MapAreaItem=this.MapAreaCur;
+			FormEP.MapAreaCur=this.MapAreaCur;
 			if(FormEP.ShowDialog(this)!=DialogResult.OK) {
 				return;
 			}

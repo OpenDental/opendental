@@ -185,15 +185,15 @@ namespace OpenDentBusiness {
 		[EServiceLogType(eServiceType.PatientPortal)]
 		PPMadePayment,
 		///<summary>18 - Form created.</summary>
-		[Description("eClipboard - Form created.")]
+		[Description("eClipboard - Form created")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECAddedForm,
 		///<summary>19 - Form was filled out.</summary>
-		[Description("eClipboard - Form completed.")]
+		[Description("eClipboard - Form completed")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCompletedForm,
 		///<summary>20 - eClipboard Checked In.</summary>
-		[Description("eClipboard - Checked in.")]
+		[Description("eClipboard - Checked in")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECLoggedIn,
 		///<summary>21 - Web Forms Form Completed.</summary>
@@ -265,219 +265,219 @@ namespace OpenDentBusiness {
 		[EServiceLogType(eServiceType.PatientPortal)]
 		PPDuplicatePaymentDenied,
 		/// <summary>38 - eClipboard - Check In for patients bringing their own device</summary>
-		[Description("eClipboard - Check in bring your own device.")]
+		[Description("eClipboard - Check in bring your own device")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInBYOD,
 		/// <summary>39 - eClipboard - Check In process started</summary>
-		[Description("eClipboard - Check in process started.")]
+		[Description("eClipboard - Check in process started")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInStarted,
 		/// <summary>40 - eClipboard - Check In Arrived</summary>
-		[Description("eClipboard - Check in arrived.")]
+		[Description("eClipboard - Check in arrived")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInArrived,
 		/// <summary>41 - eClipboard - Check In Submitted</summary>
-		[Description("eClipboard - Check in submitted.")]
+		[Description("eClipboard - Check in submitted")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInSubmitted,
 		/// <summary>42 - eClipboard - Check In Error: Appt Not Found</summary>
-		[Description("eClipboard - Error: Appt not found.")]
+		[Description("eClipboard - Error: Appt not found")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInErrorApptNotFound,
 		/// <summary>43 - eClipboard - Check In Error: PatNum Not Linked To Appt</summary>
-		[Description("eClipboard - Error: PatNum not linked to appt.")]
+		[Description("eClipboard - Error: PatNum not linked to appt")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInErrorPatNumNotLinkedToAppt,
 		/// <summary>44 - eClipboard - Error: Device Setup for Other Clinic</summary>
-		[Description("eClipboard - Error: Device setup for other clinic.")]
+		[Description("eClipboard - Error: Device setup for other clinic")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInErrorDeviceSetupForOtherClinic,
 		/// <summary>45 - eClipboard - Check In Error: Device Not Allowed for Checkin</summary>
-		[Description("eClipboard - Error: Device not allowed for checkin.")]
+		[Description("eClipboard - Error: Device not allowed for checkin")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInErrorDeviceNotAllowedForCheckin,
 		/// <summary>46 - eClipboard - Check In Error: Office Device used as BYOD</summary>
-		[Description("eClipboard - Error: Office device used as BYOD.")]
+		[Description("eClipboard - Error: Office device used as BYOD")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInErrorOfficeDeviceUsedAsBYOD,
 		/// <summary>47 - eClipboard - Check In Error: No Appointment Found BYOD</summary>
-		[Description("eClipboard - Error: No appointment found BYOD.")]
+		[Description("eClipboard - Error: No appointment found BYOD")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInErrorNoApptFoundBYOD,
 		/// <summary>48 - eClipboard - Check In Error: No Appt Found</summary>
-		[Description("eClipboard - Error: No appt found.")]
+		[Description("eClipboard - Error: No appt found")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInErrorNoApptFound,
 		/// <summary>49 - eClipboard - Check In Error: Multiple Pats Found</summary>
-		[Description("eClipboard - Error: Multiple pats found.")]
+		[Description("eClipboard - Error: Multiple pats found")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInErrorMultiplePatsFound,
 		/// <summary>50 - eClipboard - Check In Error: Signature Error</summary>
-		[Description("eClipboard - Error: Signature error.")]
+		[Description("eClipboard - Error: Signature error")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInErrorSignatureError,
 		/// <summary>51 - eClipboard - Check In Error: Deprecated Method</summary>
-		[Description("eClipboard - Error: Deprecated method.")]
+		[Description("eClipboard - Error: Deprecated method")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInErrorDeprecatedMethod,
 		/// <summary>52 - eClipboard - Check In Confirmed Appt With Prov - Yes</summary>
-		[Description("eClipboard - Check in confirmed Appt With Prov - Yes.")]
+		[Description("eClipboard - Check in confirmed appt with prov - Yes")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInConfirmedApptWithProvYes,
 		/// <summary>53 - eClipboard - Check In Confirmed Appt With Prov - No</summary>
-		[Description("eClipboard - Check in confirmed appt with prov - No.")]
+		[Description("eClipboard - Check in confirmed appt with prov - No")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInConfirmedApptWithProvNo,
 		/// <summary>54 - eClipboard - Check In Took selfie before submitting</summary>
-		[Description("eClipboard - Check in list took selfie before submitting.")]
+		[Description("eClipboard - Check in list took selfie before submitting")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInListSubmittedWithPicture,
 		/// <summary>55 - eClipboard - Check In List Did not take selfie before submitting</summary>
-		[Description("eClipboard - Check in list did not take selfie before submitting.")]
+		[Description("eClipboard - Check in list did not take selfie before submitting")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInListSubmittedWithOutPicture,
 		/// <summary>56 - eClipboard - Check In List Error, submitted without all items</summary>
-		[Description("eClipboard - Error: Check in list submitted without all items.")]
+		[Description("eClipboard - Error: Check in list submitted without all items")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInListErrorSubmittedWithoutAllItems,
 		/// <summary>57 - eClipboard - Check In List Submit Xamarin Error</summary>
-		[Description("eClipboard - Error: Check in list submit xamarin.")]
+		[Description("eClipboard - Error: Check in list submit xamarin")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInListXamSubmitError,
 		/// <summary>58 - eClipboard - Check In Submit Success</summary>
-		[Description("eClipboard - Check in list submit success.")]
+		[Description("eClipboard - Check in list submit success")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInListSumbitSuccess,
 		/// <summary>59 - eClipboard - Check In Submit Success BYOD</summary>
-		[Description("eClipboard - Check in list submit success BYOD.")]
+		[Description("eClipboard - Check in list submit success BYOD")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInListSumbitSuccessBYOD,
 		/// <summary>60 - eClipboard - Check In List Selected Item</summary>
-		[Description("eClipboard - Check in list selected item.")]
+		[Description("eClipboard - Check in list selected item")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInListSelectedItem,
 		/// <summary>61 - eClipboard - Check In List Sheet Next Tapped</summary>
-		[Description("eClipboard - Check in list sheet next tapped.")]
+		[Description("eClipboard - Check in list sheet next tapped")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInListSheetNextTapped,
 		/// <summary>62 - eClipboard - Check In List Sheet Prev Tapped</summary>
-		[Description("eClipboard - Check in list sheet prev tapped.")]
+		[Description("eClipboard - Check in list sheet prev tapped")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInListSheetPrevTapped,
 		/// <summary>63 - eClipboard - Check In List Sheet Office signed Treatment Plan</summary>
-		[Description("eClipboard - Check in list office signed treatment plan.")]
+		[Description("eClipboard - Check in list office signed treatment plan")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInListSheetOfficeSignedTreatPlan,
 		/// <summary>64 - eClipboard - Check In List Sheet Patient signed treatment plan</summary>
-		[Description("eClipboard - Check in list patient signed treatment plan.")]
+		[Description("eClipboard - Check in list patient signed treatment plan")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInListSheetPatientSignedTreatPlan,
 		/// <summary>65 - eClipboard - Check In List Sheet Patient signed Payment Plan</summary>
-		[Description("eClipboard - Check in list patient signed payment plan.")]
+		[Description("eClipboard - Check in list patient signed payment plan")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCheckInListSheetPatientSignedPaymentPlan,
 		/// <summary>66 - eClipboard - Check In List Sheet Patient signed Payment Plan</summary>
-		[Description("eClipboard - Patient directed to make payment.")]
+		[Description("eClipboard - Patient directed to make payment")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECPatientDirectedToMakePayment,
 		/// <summary>64 - eClipboard - BYOD 6 Digit validation page reached</summary>
-		[Description("eClipboard - BYOD 6 digit validation page reached.")]
+		[Description("eClipboard - BYOD 6 digit validation page reached")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECBYODValidationReached,
 		/// <summary>65 - eClipboard - BYOD 6 Digit validation failed</summary>
-		[Description("eClipboard - BYOD 6 digit validation failed.")]
+		[Description("eClipboard - BYOD 6 digit validation failed")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECBYODValidationFailed,
 		/// <summary>66 - eClipboard - BYOD 6 Digit validation success</summary>
-		[Description("eClipboard - BYOD 6 digit validation success.")]
+		[Description("eClipboard - BYOD 6 digit validation success")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECBYODValidationSuccess,
 		/// <summary>67 - eClipboard - 2 Factor Auth Screen Shown</summary>
-		[Description("eClipboard - 2 factor auth screen shown.")]
+		[Description("eClipboard - 2 Factor auth screen shown")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		EC2FactorAuthShown,
 		/// <summary>68 - eClipboard - 2 Factor Auth Close Clicked</summary>
-		[Description("eClipboard - 2 factor auth close clicked.")]
+		[Description("eClipboard - 2 Factor auth close clicked")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		EC2FactorAuthClosed,
 		/// <summary>69 - eClipboard - 2 Factor Auth Email Selected</summary>
-		[Description("eClipboard - 2 factor auth email selected.")]
+		[Description("eClipboard - 2 Factor auth email selected")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		EC2FactorAuthEmailSelected,
 		/// <summary>70 - eClipboard - 2 Factor Auth Text Selected</summary>
-		[Description("eClipboard - 2 factor auth text selected.")]
+		[Description("eClipboard - 2 Factor auth text selected")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		EC2FactorAuthTextSelected,
 		/// <summary>71 - eClipboard - 2 Factor Auth Code Submitted</summary>
-		[Description("eClipboard - 2 factor auth code submitted.")]
+		[Description("eClipboard - 2 Factor auth code submitted")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		EC2FactorAuthCodeSubmitted,
 		/// <summary>72 - eClipboard - 2 Factor Auth Code Success</summary>
-		[Description("eClipboard - 2 factor auth code success.")]
+		[Description("eClipboard - 2 factor auth code success")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		EC2FactorAuthCodeSuccess,
 		/// <summary>73 - eClipboard - 2 Factor Auth Code Fail</summary>
-		[Description("eClipboard - 2 factor auth code fail.")]
+		[Description("eClipboard - 2 Factor auth code fail")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		EC2FactorAuthCodeFail,
 		/// <summary>67 - Used in Xam Exceptions. If this is sent back, error will not be logged. Default eServiceAction for XamException.</summary>
-		[Description("eClipboard - Error: Xam Exeptions.")]
+		[Description("eClipboard - Error: Xam exceptions")]
 		[EServiceLogType(eServiceType.Unknown)]
 		DoNotLog,
 		/// <summary>68 - eClipboard - patient opens payment page. Note should indicate where it is opened from</summary>
-		[Description("eClipboard - Patient opens payment page.")]
+		[Description("eClipboard - Patient opens payment page")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECOpenPaymentPage,
 		/// <summary>69 - eClipboard - User tapped "Add Card"</summary>
-		[Description("eClipboard - User tapped 'Add Card'.")]
+		[Description("eClipboard - User tapped 'Add Card'")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECAddCreditCardTapped,
 		/// <summary>70 - eClipboard - User tapped 'Done' on credit card manage page </summary>
-		[Description("eClipboard - User tapped 'Done' on credit card manage page.")]
+		[Description("eClipboard - User tapped 'Done' on credit card manage page")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCreditCardManageDoneTapped,
 		/// <summary>71 - eClipboard - User removed a credit card </summary>
-		[Description("eClipboard - User removed a credit card.")]
+		[Description("eClipboard - User removed a credit card")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCreditCardRemoved,
 		/// <summary>72 - eClipboard - User made payment with new credit card</summary>
-		[Description("eClipboard - User made payment with new credit card.")]
+		[Description("eClipboard - User made payment with new credit card")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCreditCardPaymentWithNewCard,
 		/// <summary>73 - eClipboard - User made payment with existing credit card</summary>
-		[Description("eClipboard - User made payment with existing credit card.")]
+		[Description("eClipboard - User made payment with existing credit card")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCreditCardPaymentWIthExistingCard,
 		/// <summary>74 - eClipboard - User tapped cancel when making a payment </summary>
-		[Description("eClipboard - User tapped cancel when making a payment.")]
+		[Description("eClipboard - User tapped cancel when making a payment")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCreditCardPaymentCancelled,
 		/// <summary>75 - eClipboard - Error: Delete card not found</summary>
-		[Description("eClipboard - Error: Delete card not found.")]
+		[Description("eClipboard - Error: Delete card not found")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCreditCardErrorDeleteCardNotFound,
 		/// <summary>76 - eClipboard - Error: Delete credit card patnum does not match current patnum</summary>
-		[Description("eClipboard - Error: Delete credit card patnum does not match current patnum.")]
+		[Description("eClipboard - Error: Delete credit card patnum does not match current patnum")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCreditCardErrorDeleteCardPatNumDoesNotMatch,
 		/// <summary>77 - eClipboard - Error: Delete credit card invalid alias</summary>
-		[Description("eClipboard - Error: Delete credit card invalid alias.")]
+		[Description("eClipboard - Error: Delete credit card invalid alias")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCreditCardErrorDeleteCardInvalidAlias,
 		/// <summary>78 - eClipboard - Error: Delete credit card patient not found</summary>
-		[Description("eClipboard - Error: Delete credit card patient not found.")]
+		[Description("eClipboard - Error: Delete credit card patient not found")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCreditCardErrorDeleteCardPatientNotFound,
 		/// <summary>79 - eClipboard - Error: error making payment</summary>
-		[Description("eClipboard - Error: Making payment with alias.")]
+		[Description("eClipboard - Error: Making payment with alias")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCreditCardErrorMakingPaymentWithAlias,
 		/// <summary>80 - eClipboard - Error: Making Payment, patient not found</summary>
-		[Description("eClipboard - Error: Patient not found for payment.")]
+		[Description("eClipboard - Error: Patient not found for payment")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCreditCardErrorMakingPaymentPatientNotFound,
 		/// <summary>81 - eClipboard - Error: Making Payment, invalid amount </summary>
-		[Description("eClipboard - Error: Invalid amount to make payment.")]
+		[Description("eClipboard - Error: Invalid amount to make payment")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCreditCardErrorMakingPaymentInvalidAmount,
 	}

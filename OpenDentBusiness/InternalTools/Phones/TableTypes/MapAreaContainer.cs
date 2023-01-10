@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace OpenDentBusiness{
+	///<summary>A room full of cubicles.</summary>
 	[Serializable]
 	[CrudTable(IsMissingInGeneral=true)]
 	public class MapAreaContainer:TableBase{
@@ -17,11 +18,11 @@ namespace OpenDentBusiness{
 		public int FloorWidthFeet;
 		///<summary></summary>
 		public int FloorHeightFeet;
-		///<summary></summary>
+		///<summary>Deprecated</summary>
 		public int PixelsPerFoot;
-		///<summary></summary>
+		///<summary>Deprecated</summary>
 		public bool ShowGrid;
-		///<summary></summary>
+		///<summary>Deprecated</summary>
 		public bool ShowOutline;
 		///<summary></summary>
 		public string Description;

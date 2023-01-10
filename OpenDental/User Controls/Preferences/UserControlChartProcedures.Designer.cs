@@ -185,7 +185,7 @@ namespace OpenDental {
 			this.checkClaimProcsAllowEstimatesOnCompl.Size = new System.Drawing.Size(400, 17);
 			this.checkClaimProcsAllowEstimatesOnCompl.TabIndex = 223;
 			this.checkClaimProcsAllowEstimatesOnCompl.Text = "Allow estimates to be created for backdated completed procedures";
-			this.checkClaimProcsAllowEstimatesOnCompl.CheckedChanged += new System.EventHandler(this.checkClaimProcsAllowEstimatesOnCompl_CheckedChanged);
+			this.checkClaimProcsAllowEstimatesOnCompl.CheckedChanged += new System.EventHandler(this.checkClaimProcsAllowEstimatesOnCompl_Click);
 			// 
 			// labelProcFeeUpdatePrompt
 			// 

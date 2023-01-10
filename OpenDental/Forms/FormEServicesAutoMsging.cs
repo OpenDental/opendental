@@ -364,31 +364,31 @@ namespace OpenDental {
 		}
 
 		private void checkUseDefaultsReminder_Click(object sender,EventArgs e) {
-			ChangeUseDefaults((System.Windows.Forms.CheckBox)sender,ApptReminderType.Reminder);
+			ChangeUseDefaults((UI.CheckBox)sender,ApptReminderType.Reminder);
 		}
 
 		private void checkUseDefaultsConfirmation_Click(object sender,EventArgs e) {
-			ChangeUseDefaults((System.Windows.Forms.CheckBox)sender,ApptReminderType.ConfirmationFutureDay);
+			ChangeUseDefaults((UI.CheckBox)sender,ApptReminderType.ConfirmationFutureDay);
 		}
 
 		private void checkUseDefaultThanks_Click(object sender,EventArgs e) {
-			ChangeUseDefaults((System.Windows.Forms.CheckBox)sender,ApptReminderType.ScheduleThankYou);
+			ChangeUseDefaults((UI.CheckBox)sender,ApptReminderType.ScheduleThankYou);
 		}
 
 		private void checkUseDefaultsArrival_Click(object sender,EventArgs e) {
-			ChangeUseDefaults((System.Windows.Forms.CheckBox)sender,ApptReminderType.Arrival);
+			ChangeUseDefaults((UI.CheckBox)sender,ApptReminderType.Arrival);
 		}
 
 		private void checkUseDefaultsInviteBefore_Click(object sender,EventArgs e) {
-			ChangeUseDefaults((System.Windows.Forms.CheckBox)sender,ApptReminderType.PatientPortalInvite);
+			ChangeUseDefaults((UI.CheckBox)sender,ApptReminderType.PatientPortalInvite);
 		}
 
 		private void checkUseDefaultsInvite_Click(object sender,EventArgs e) {
-			ChangeUseDefaults((System.Windows.Forms.CheckBox)sender,ApptReminderType.PatientPortalInvite);
+			ChangeUseDefaults((UI.CheckBox)sender,ApptReminderType.PatientPortalInvite);
 		}
 
 		private void checkUseDefaultsGeneralMessage_Click(object sender,EventArgs e) {
-			ChangeUseDefaults((System.Windows.Forms.CheckBox)sender,ApptReminderType.GeneralMessage);
+			ChangeUseDefaults((UI.CheckBox)sender,ApptReminderType.GeneralMessage);
 		}
 
 		private void comboClinicEConfirm_SelectionChangeCommitted(object sender,EventArgs e) {
@@ -436,7 +436,7 @@ namespace OpenDental {
 			_clinic.IsConfirmEnabled=checkIsConfirmEnabled.Checked;
 		}
 
-		private void ChangeUseDefaults(System.Windows.Forms.CheckBox checkBox,ApptReminderType apptReminderType) {
+		private void ChangeUseDefaults(UI.CheckBox checkBox,ApptReminderType apptReminderType) {
 			if(_clinic.ClinicNum==0) {
 				return;//Clinic 0, we don't need to do anything here.
 			}

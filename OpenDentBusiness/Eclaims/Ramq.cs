@@ -162,7 +162,7 @@ namespace OpenDentBusiness.Eclaims {
 				Etranss.Update(etrans);
 			}
 			if(!Directory.Exists(clearinghouseClin.ExportPath)) { 
-				MessageBox.Show(Lans.g("Ramq","Could not create directory ")+clearinghouseClin.ExportPath+Lans.g("Ramq","\r\nGo To Setup > Family/Insurance > Clearinghouses > and double click desired clearinghouse to update path."));
+				MessageBox.Show(Lans.g("Ramq","Could not create directory ")+clearinghouseClin.ExportPath+"\r\n"+Lans.g("Ramq","Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path."));
 				return "";
 			}
 			//Step 2 - ZIP XML and save to report path.  The zip file name and file name within the zip file do not matter.

@@ -94,7 +94,7 @@ namespace OpenDental {
 				LayoutManager.Add(control,panelScroll);
 			}
 			//Find last sms sent to mobile
-			SmsThreadMessage smsThreadMessageLastSent=_listSmsThreadToDisplay.FindAll(x => !x.IsAlignedLeft).Last();
+			SmsThreadMessage smsThreadMessageLastSent=_listSmsThreadToDisplay.FindAll(x => !x.IsAlignedLeft).LastOrDefault();
 			//Loop through and update existing control sizes, text, borders, etc.  Add new controls for messages not already represented.
 			for(int i=0;i<_listSmsThreadToDisplay.Count;i++) {
 				SmsThreadMessage smsThreadMessage=_listSmsThreadToDisplay[i];

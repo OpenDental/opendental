@@ -144,21 +144,12 @@ namespace OpenDentBusiness{
 					int year=PIn.Int(table.Rows[i]["yearDis"].ToString());
 					journalEntry.DateDisplayed=new DateTime(year,12,31);
 					double amount=PIn.Double(table.Rows[i]["Amount"].ToString());
-					if(Accounts.DebitIsPos(account.AcctType)) {
-						if(amount>0){
-							journalEntry.DebitAmt=amount;
-						}
-						else{
-							journalEntry.CreditAmt=-amount;
-						}
+					//this math is the same for both types because the query got credits as pos.
+					if(amount>0){
+						journalEntry.DebitAmt=amount;
 					}
 					else{
-						if(amount>0){
-							journalEntry.CreditAmt=amount;
-						}
-						else{
-							journalEntry.DebitAmt=-amount;
-						}
+						journalEntry.CreditAmt=-amount;
 					}
 					journalEntry.Memo=Lans.g("FormJournal","(auto)");
 					listJournalEntries.Add(journalEntry);

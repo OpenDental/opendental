@@ -120,56 +120,59 @@ namespace OpenDental {
 			gridMain.ListGridRows.Clear();
 			for(int i=0;i<listSheetDevices.Count();i++){
 				GridRow row=new GridRow();
-				row.Tag=listSheetDevices[i];
-				if(listSheetDevices[i].IsMobileAppDevice()){
-					row.Cells.Add(new GridCell(listSheetDevices[i].GetTerminalName()+"\r\n("+listSheetDevices[i].MobileAppDevice.UniqueID+")"));
+				//We assign the currently-indexed SheetDevice to a local object so that the CellClick() handler defined below here can refer to it safely
+				//Using the list index to refer to the SheetDevice will cause an out-of-bounds index UE after CellClick() invokes FillGrid()
+				SheetDevice sheetDeviceCurrent=listSheetDevices[i];
+				row.Tag=sheetDeviceCurrent;
+				if(sheetDeviceCurrent.IsMobileAppDevice()){
+					row.Cells.Add(new GridCell(sheetDeviceCurrent.GetTerminalName()+"\r\n("+sheetDeviceCurrent.MobileAppDevice.UniqueID+")"));
 				}
 				else{
-					row.Cells.Add(new GridCell(listSheetDevices[i].GetTerminalName()));
+					row.Cells.Add(new GridCell(sheetDeviceCurrent.GetTerminalName()));
 				}
-				row.Cells.Add(new GridCell(listSheetDevices[i].GetSessionName()));
-				if(listSheetDevices[i].MobileAppDevice!=null) {
-					row.Cells.Add(new GridCell(listSheetDevices[i].MobileAppDevice.DevicePage.GetDescription()));
+				row.Cells.Add(new GridCell(sheetDeviceCurrent.GetSessionName()));
+				if(sheetDeviceCurrent.MobileAppDevice!=null) {
+					row.Cells.Add(new GridCell(sheetDeviceCurrent.MobileAppDevice.DevicePage.GetDescription()));
 				}
-				else if(listSheetDevices[i].TerminalActiveComputerKiosk!=null) {
-					row.Cells.Add(new GridCell(listSheetDevices[i].TerminalActiveComputerKiosk.TerminalStatus.GetDescription()));
+				else if(sheetDeviceCurrent.TerminalActiveComputerKiosk!=null) {
+					row.Cells.Add(new GridCell(sheetDeviceCurrent.TerminalActiveComputerKiosk.TerminalStatus.GetDescription()));
 				}
 				else {
 					row.Cells.Add(new GridCell(""));
 				}
-				row.Cells.Add(new GridCell(listSheetDevices[i].GetPatName()));
-				if(listSheetDevices[i].IsMobileAppDevice()) {
-					row.Cells.Add(new GridCell(listSheetDevices[i].MobileAppDevice.IsBYODDevice ? "X" : " "));
+				row.Cells.Add(new GridCell(sheetDeviceCurrent.GetPatName()));
+				if(sheetDeviceCurrent.IsMobileAppDevice()) {
+					row.Cells.Add(new GridCell(sheetDeviceCurrent.MobileAppDevice.IsBYODDevice ? "X" : " "));
 				}
 				else {
 					row.Cells.Add(new GridCell(" "));
 				}
 				if(PrefC.HasClinicsEnabled) {
-					row.Cells.Add(new GridCell(listSheetDevices[i].GetClinicDesc()));
+					row.Cells.Add(new GridCell(sheetDeviceCurrent.GetClinicDesc()));
 				}
 				#region Load/Clear click handler
 				void CellClick(object sender,EventArgs e) {
 					FillGrid();
-					if(listSheetDevices[i].IsMobileAppDevice() && listSheetDevices[i].MobileAppDevice.IsBYODDevice) {
-						MsgBox.Show(this,"Use delete click for BYOD listSheetDevices[i]s.");
+					if(sheetDeviceCurrent.IsMobileAppDevice() && sheetDeviceCurrent.MobileAppDevice.IsBYODDevice) {
+						MsgBox.Show(this,"Use delete click for BYOD devices.");
 						return;
 					}
-					if(listSheetDevices[i].GetPatNum()==0) { //we are trying to load the patient
+					if(sheetDeviceCurrent.GetPatNum()==0) { //we are trying to load the patient
 						if(FormOpenDental.PatNumCur==0) {
-							MsgBox.Show(this,"There is currently no patient selected to send to the listSheetDevices[i]. Select a patient in Open Dental " +
+							MsgBox.Show(this,"There is currently no patient selected to send to the device Select a patient in Open Dental " +
 								"in order to continue.");
 							return;
 						}
-						if(listSheetDevices[i].IsKiosk()) { //kiosk only
+						if(sheetDeviceCurrent.IsKiosk()) { //kiosk only
 							if(listSheets.Items.Count==0) { //eClipboard will allow to continue to load here in case we just want to take a photo
-								MsgBox.Show(this,"There are no sheets to send to the computer or listSheetDevices[i] for the current patient.");
+								MsgBox.Show(this,"There are no sheets to send to the computer or device for the current patient.");
 								return;
 							}
 						}
 						else { //eclipboard only
 							if(MobileAppDevices.PatientIsAlreadyUsingDevice(FormOpenDental.PatNumCur)) {
-								MsgBox.Show(this,"The patient you have selected is already using another listSheetDevices[i]. Select a patient who is not currently "+
-									"using a listSheetDevices[i] in order to continue.");
+								MsgBox.Show(this,"The patient you have selected is already using another device Select a patient who is not currently "+
+									"using a device in order to continue.");
 								return;
 							}
 							Appointment apptForToday=Appointments.GetAppointmentsForPat(FormOpenDental.PatNumCur).FirstOrDefault(x => x.AptDateTime.Date==DateTime.Today.Date);
@@ -181,13 +184,13 @@ namespace OpenDental {
 							List<Sheet> listSheetsNonMobile=listSheets.Items.GetAll<Sheet>().FindAll(x => !x.HasMobileLayout);
 							if(listSheetsNonMobile.Count>0) {
 								if(!MsgBox.Show(MsgBoxButtons.YesNo,"The following sheets that have been queued for this patient cannot be " +
-									$"loaded onto an eClipboard listSheetDevices[i] because they do not have a mobile layout: \r\n" +
+									$"loaded onto an eClipboard device because they do not have a mobile layout: \r\n" +
 									$"{string.Join(", ",listSheetsNonMobile.Select(x => x.Description))}. \r\nDo you still wish to continue?")) {
 									return;
 								}
 							}
 							//They are in setup mode (not normal workflow) and there are no sheets for this patient. They have not run the rules to generate
-							//sheets as the patient has not been marked as arrived. When they push the patient to the listSheetDevices[i], they will not generate the sheets
+							//sheets as the patient has not been marked as arrived. When they push the patient to the sheetDeviceCurrent, they will not generate the sheets
 							//from there either. Ask them if they want to generate the sheets in this case.
 							if(_isSetupMode && listSheets.Items.Count==0 && ClinicPrefs.GetBool(PrefName.EClipboardCreateMissingFormsOnCheckIn,apptForToday.ClinicNum)) {
 								bool generateSheets=MsgBox.Show(MsgBoxButtons.YesNo,"This patient has no forms to load. Would you like to generate the "+
@@ -198,22 +201,22 @@ namespace OpenDental {
 								}
 							}
 						}
-						listSheetDevices[i].SetPatNum(FormOpenDental.PatNumCur);
+						sheetDeviceCurrent.SetPatNum(FormOpenDental.PatNumCur);
 					}
 					else { //we are trying to clear the patient
 						if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"A patient is currently using the terminal.  If you continue, they will lose the information that is on their "
 							+"screen.  Continue anyway?")) {
 							return;
 						}
-						listSheetDevices[i].SetPatNum(0);
-						if(listSheetDevices[i].MobileAppDevice != null) { // device might have disconnected without the grid being updated yet
-							TreatPlans.RemoveMobileAppDeviceNum(listSheetDevices[i].MobileAppDevice.MobileAppDeviceNum);
+						sheetDeviceCurrent.SetPatNum(0);
+						if(sheetDeviceCurrent.MobileAppDevice != null) { // device might have disconnected without the grid being updated yet
+							TreatPlans.RemoveMobileAppDeviceNum(sheetDeviceCurrent.MobileAppDevice.MobileAppDeviceNum);
 						}
 					}
 					FillGrid();
 				}
 				#endregion Load/Clear click handler
-				GridCell cell=new GridCell(listSheetDevices[i].GetPatNum()==0?"Load":"Clear");
+				GridCell cell=new GridCell(sheetDeviceCurrent.GetPatNum()==0?"Load":"Clear");
 				cell.ColorBackG=Color.LightGray;
 				cell.ClickEvent=CellClick;
 				row.Cells.Add(cell);
@@ -222,10 +225,10 @@ namespace OpenDental {
 					void DeleteClick(object sender,EventArgs e) {
 						FillGrid();
 						if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"A row should not be deleted unless it is showing erroneously and there really is "+
-							"nothing running on the computer or listSheetDevices[i] shown.  Continue anyway?")) {
+							"nothing running on the computer or device shown.  Continue anyway?")) {
 							return;
 						}
-						listSheetDevices[i].Delete();
+						sheetDeviceCurrent.Delete();
 						FillGrid();
 					}
 					#endregion Delete click handler
@@ -235,7 +238,7 @@ namespace OpenDental {
 					row.Cells.Add(cell);
 				}
 				gridMain.ListGridRows.Add(row);
-				if(sheetDeviceSelected!=null && listSheetDevices[i].Matches(sheetDeviceSelected)) {
+				if(sheetDeviceSelected!=null && sheetDeviceCurrent.Matches(sheetDeviceSelected)) {
 					selectedIndex=gridMain.ListGridRows.Count-1;
 				}
 			}

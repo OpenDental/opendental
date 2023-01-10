@@ -177,6 +177,16 @@ namespace OpenDental {
 				}
 				listBoxProcCodesRequired.Items.Add(_listProcedureCodesRequired[i].ProcCode,_listProcedureCodesRequired[i]);
 			}
+			if(_listProcedureCodesRequired.Count==0) {
+				radioButtonAll.Checked=false;
+				radioButtonAtLeastOne.Checked=false;
+				radioButtonAll.Enabled=false;
+				radioButtonAtLeastOne.Enabled=false;
+			}
+			else {
+				radioButtonAll.Enabled=true;
+				radioButtonAtLeastOne.Enabled=true;
+			}
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
@@ -235,10 +245,6 @@ namespace OpenDental {
 			List<ProcedureCode> listProcedureCodes=listBoxProcCodesRequired.GetListSelected<ProcedureCode>();
 			for(int i=0;i<listProcedureCodes.Count;i++) {
 				_listProcedureCodesRequired.Remove(listProcedureCodes[i]);
-			}
-			if(_listProcedureCodesRequired.Count==0) {
-				radioButtonAll.Checked=false;
-				radioButtonAtLeastOne.Checked=false;
 			}
 			RefreshListBoxProcCodesRequired();
 		}

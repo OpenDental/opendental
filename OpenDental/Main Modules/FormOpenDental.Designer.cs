@@ -162,11 +162,11 @@ namespace OpenDental{
 			// 
 			// butNewMap
 			// 
-			this.butNewMap.Location = new System.Drawing.Point(51, 27);
+			this.butNewMap.Location = new System.Drawing.Point(61, 27);
 			this.butNewMap.Name = "butNewMap";
-			this.butNewMap.Size = new System.Drawing.Size(60, 24);
+			this.butNewMap.Size = new System.Drawing.Size(50, 24);
 			this.butNewMap.TabIndex = 96;
-			this.butNewMap.Text = "New Map";
+			this.butNewMap.Text = "Map";
 			this.butNewMap.Click += new System.EventHandler(this.butNewMap_Click);
 			// 
 			// label3
@@ -238,9 +238,9 @@ namespace OpenDental{
 			// 
 			this.butMapPhones.Location = new System.Drawing.Point(1, 27);
 			this.butMapPhones.Name = "butMapPhones";
-			this.butMapPhones.Size = new System.Drawing.Size(48, 24);
+			this.butMapPhones.Size = new System.Drawing.Size(58, 24);
 			this.butMapPhones.TabIndex = 54;
-			this.butMapPhones.Text = "Map";
+			this.butMapPhones.Text = "Old Map";
 			this.butMapPhones.Click += new System.EventHandler(this.butMapPhones_Click);
 			// 
 			// butTriage

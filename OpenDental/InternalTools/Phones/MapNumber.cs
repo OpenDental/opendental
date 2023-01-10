@@ -20,6 +20,19 @@ namespace OpenDental.HqPhones {
 			DoubleBuffered=true;
 		}
 
+		[Category("Appearance")]
+		[Description("")]
+		[DefaultValue("")]
+		public override string Text{
+			get{
+				return base.Text;
+			}
+			set{
+				base.Text = value;
+				Invalidate();
+			}
+		}
+
 		protected override void OnPaint(PaintEventArgs pe) {
 			//base.OnPaint(pe);
 			Graphics g=pe.Graphics;

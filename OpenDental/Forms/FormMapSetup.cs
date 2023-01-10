@@ -151,15 +151,15 @@ namespace OpenDental {
 
 		private void newCubicleToolStripMenuItem_Click(object sender,EventArgs e) {
 			using FormMapAreaEdit formMapAreaEdit=new FormMapAreaEdit();
-			formMapAreaEdit.MapAreaItem=new MapArea();
-			formMapAreaEdit.MapAreaItem.IsNew=true;
-			formMapAreaEdit.MapAreaItem.Width=6;
-			formMapAreaEdit.MapAreaItem.Height=6;
-			formMapAreaEdit.MapAreaItem.ItemType=MapItemType.Cubicle;
+			formMapAreaEdit.MapAreaCur=new MapArea();
+			formMapAreaEdit.MapAreaCur.IsNew=true;
+			formMapAreaEdit.MapAreaCur.Width=6;
+			formMapAreaEdit.MapAreaCur.Height=6;
+			formMapAreaEdit.MapAreaCur.ItemType=MapItemType.Cubicle;
 			PointF pointF=GetXYFromMenuLocation(sender);
-			formMapAreaEdit.MapAreaItem.XPos=Math.Round(pointF.X,3);
-			formMapAreaEdit.MapAreaItem.YPos=Math.Round(pointF.Y,3);
-			formMapAreaEdit.MapAreaItem.MapAreaContainerNum=_mapAreaContainer.MapAreaContainerNum;
+			formMapAreaEdit.MapAreaCur.XPos=Math.Round(pointF.X,3);
+			formMapAreaEdit.MapAreaCur.YPos=Math.Round(pointF.Y,3);
+			formMapAreaEdit.MapAreaCur.MapAreaContainerNum=_mapAreaContainer.MapAreaContainerNum;
 			if(formMapAreaEdit.ShowDialog(this)!=DialogResult.OK) {
 				return;
 			}
@@ -168,15 +168,15 @@ namespace OpenDental {
 
 		private void newLabelToolStripMenuItem_Click(object sender,EventArgs e) {
 			using FormMapAreaEdit formMapAreaEdit=new FormMapAreaEdit();
-			formMapAreaEdit.MapAreaItem=new MapArea();
-			formMapAreaEdit.MapAreaItem.IsNew=true;
-			formMapAreaEdit.MapAreaItem.Width=6;
-			formMapAreaEdit.MapAreaItem.Height=6;
-			formMapAreaEdit.MapAreaItem.ItemType=MapItemType.Label;
+			formMapAreaEdit.MapAreaCur=new MapArea();
+			formMapAreaEdit.MapAreaCur.IsNew=true;
+			formMapAreaEdit.MapAreaCur.Width=6;
+			formMapAreaEdit.MapAreaCur.Height=6;
+			formMapAreaEdit.MapAreaCur.ItemType=MapItemType.Label;
 			PointF pointF=GetXYFromMenuLocation(sender);
-			formMapAreaEdit.MapAreaItem.XPos=Math.Round(pointF.X,3);
-			formMapAreaEdit.MapAreaItem.YPos=Math.Round(pointF.Y,3);
-			formMapAreaEdit.MapAreaItem.MapAreaContainerNum=_mapAreaContainer.MapAreaContainerNum;
+			formMapAreaEdit.MapAreaCur.XPos=Math.Round(pointF.X,3);
+			formMapAreaEdit.MapAreaCur.YPos=Math.Round(pointF.Y,3);
+			formMapAreaEdit.MapAreaCur.MapAreaContainerNum=_mapAreaContainer.MapAreaContainerNum;
 			if(formMapAreaEdit.ShowDialog(this)!=DialogResult.OK) {
 				return;
 			}
@@ -296,14 +296,14 @@ namespace OpenDental {
 			}
 			Employee employee=(Employee)gridEmployees.ListGridRows[gridEmployees.SelectedIndices[0]].Tag;
 			using FormMapAreaEdit formMapAreaEdit=new FormMapAreaEdit();
-			formMapAreaEdit.MapAreaItem=new MapArea();
-			formMapAreaEdit.MapAreaItem.IsNew=true;
-			formMapAreaEdit.MapAreaItem.Width=6;
-			formMapAreaEdit.MapAreaItem.Height=6;
-			formMapAreaEdit.MapAreaItem.ItemType=MapItemType.Cubicle;
-			formMapAreaEdit.MapAreaItem.Extension=employee.PhoneExt;
-			formMapAreaEdit.MapAreaItem.Description="";
-			formMapAreaEdit.MapAreaItem.MapAreaContainerNum=_mapAreaContainer.MapAreaContainerNum;
+			formMapAreaEdit.MapAreaCur=new MapArea();
+			formMapAreaEdit.MapAreaCur.IsNew=true;
+			formMapAreaEdit.MapAreaCur.Width=6;
+			formMapAreaEdit.MapAreaCur.Height=6;
+			formMapAreaEdit.MapAreaCur.ItemType=MapItemType.Cubicle;
+			formMapAreaEdit.MapAreaCur.Extension=employee.PhoneExt;
+			formMapAreaEdit.MapAreaCur.Description="";
+			formMapAreaEdit.MapAreaCur.MapAreaContainerNum=_mapAreaContainer.MapAreaContainerNum;
 			if(formMapAreaEdit.ShowDialog(this)!=DialogResult.OK) {
 				return;
 			}
@@ -322,14 +322,14 @@ namespace OpenDental {
 			}
 			Employee employee=(Employee)gridEmployees.ListGridRows[gridEmployees.SelectedIndices[0]].Tag;
 			using FormMapAreaEdit formMapAreaEdit=new FormMapAreaEdit();
-			formMapAreaEdit.MapAreaItem=new MapArea();
-			formMapAreaEdit.MapAreaItem.IsNew=true;
-			formMapAreaEdit.MapAreaItem.Width=3;
-			formMapAreaEdit.MapAreaItem.Height=3;
-			formMapAreaEdit.MapAreaItem.ItemType=MapItemType.Cubicle;
-			formMapAreaEdit.MapAreaItem.Extension=employee.PhoneExt;
-			formMapAreaEdit.MapAreaItem.Description="";
-			formMapAreaEdit.MapAreaItem.MapAreaContainerNum=_mapAreaContainer.MapAreaContainerNum;
+			formMapAreaEdit.MapAreaCur=new MapArea();
+			formMapAreaEdit.MapAreaCur.IsNew=true;
+			formMapAreaEdit.MapAreaCur.Width=3;
+			formMapAreaEdit.MapAreaCur.Height=3;
+			formMapAreaEdit.MapAreaCur.ItemType=MapItemType.Cubicle;
+			formMapAreaEdit.MapAreaCur.Extension=employee.PhoneExt;
+			formMapAreaEdit.MapAreaCur.Description="";
+			formMapAreaEdit.MapAreaCur.MapAreaContainerNum=_mapAreaContainer.MapAreaContainerNum;
 			if(formMapAreaEdit.ShowDialog(this)!=DialogResult.OK) {
 				return;
 			}
@@ -342,7 +342,7 @@ namespace OpenDental {
 				MsgBox.Show("Map descriptions may not contain semicolons.\nOffending maps:\n"+listOffendingMaps);
 				return;
 			}
-			MapAreaContainers.SaveToDb(ListMapAreaContainers);
+			MapAreaContainers.SaveWholeListToDb(ListMapAreaContainers);
 			DataValid.SetInvalid(InvalidType.PhoneMap);
 			DialogResult=DialogResult.OK;
 			Close();
@@ -363,7 +363,7 @@ namespace OpenDental {
 			mapAreaPanel.Clear(true);
 			//Delete room
 			ListMapAreaContainers.Remove(_mapAreaContainer);
-			MapAreaContainers.SaveToDb(ListMapAreaContainers);
+			MapAreaContainers.SaveWholeListToDb(ListMapAreaContainers);
 			//reset combobox
 			comboRoom.Items.Clear();
 			for(int i=0;i<ListMapAreaContainers.Count;i++) {

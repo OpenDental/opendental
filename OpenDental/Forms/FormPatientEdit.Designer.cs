@@ -1258,7 +1258,7 @@ namespace OpenDental{
 			// 
 			this.labelTextOk.Location = new System.Drawing.Point(295, 30);
 			this.labelTextOk.Name = "labelTextOk";
-			this.labelTextOk.Size = new System.Drawing.Size(64, 14);
+			this.labelTextOk.Size = new System.Drawing.Size(63, 14);
 			this.labelTextOk.TabIndex = 0;
 			this.labelTextOk.Text = "Text OK";
 			this.labelTextOk.TextAlign = System.Drawing.ContentAlignment.MiddleRight;

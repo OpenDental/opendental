@@ -43,7 +43,7 @@ namespace OpenDentBusiness.Eclaims {
 //Warning: this path is not handled properly if trailing slash is missing:
 			string saveFolder=clearinghouseClin.ExportPath;
 			if(!Directory.Exists(saveFolder)) {
-				throw new ApplicationException(saveFolder+" not found. Go To Setup > Family/Insurance > Clearinghouses > and double click desired clearinghouse to update path.");
+				throw new ApplicationException(saveFolder+" not found. Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path.");
 			}
 			Etrans etrans;
 			Claim claim;

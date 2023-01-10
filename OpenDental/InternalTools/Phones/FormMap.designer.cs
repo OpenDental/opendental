@@ -63,10 +63,10 @@ namespace OpenDental.HqPhones{
 			this.mapNumberCustDownCount = new OpenDental.HqPhones.MapNumber();
 			this.mapNumberCustDownTime = new OpenDental.HqPhones.MapNumber();
 			this.mapPanel = new OpenDental.InternalTools.Phones.MapPanel();
-			this.panelOD1 = new OpenDental.UI.PanelOD();
+			this.panelContainer = new OpenDental.UI.PanelOD();
 			this.groupPhoneMetrics.SuspendLayout();
 			this.tabMain.SuspendLayout();
-			this.panelOD1.SuspendLayout();
+			this.panelContainer.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// menuMain
@@ -445,27 +445,26 @@ namespace OpenDental.HqPhones{
 			// 
 			this.mapPanel.Location = new System.Drawing.Point(0, 0);
 			this.mapPanel.Name = "mapPanel";
-			this.mapPanel.Size = new System.Drawing.Size(1495, 942);
+			this.mapPanel.Size = new System.Drawing.Size(893, 942);
 			this.mapPanel.TabIndex = 106;
-			this.mapPanel.Text = "mapPanel1";
 			// 
-			// panelOD1
+			// panelContainer
 			// 
-			this.panelOD1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			this.panelContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.panelOD1.AutoScroll = true;
-			this.panelOD1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.panelOD1.Controls.Add(this.mapPanel);
-			this.panelOD1.Location = new System.Drawing.Point(365, 78);
-			this.panelOD1.Name = "panelOD1";
-			this.panelOD1.Size = new System.Drawing.Size(1515, 961);
-			this.panelOD1.TabIndex = 107;
+			this.panelContainer.AutoScroll = true;
+			this.panelContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.panelContainer.Controls.Add(this.mapPanel);
+			this.panelContainer.Location = new System.Drawing.Point(365, 78);
+			this.panelContainer.Name = "panelContainer";
+			this.panelContainer.Size = new System.Drawing.Size(1515, 961);
+			this.panelContainer.TabIndex = 107;
 			// 
 			// FormMap
 			// 
 			this.ClientSize = new System.Drawing.Size(1884, 1042);
-			this.Controls.Add(this.panelOD1);
+			this.Controls.Add(this.panelContainer);
 			this.Controls.Add(this.mapNumberCustDownTime);
 			this.Controls.Add(this.mapNumberCustDownCount);
 			this.Controls.Add(this.eServiceMetricsControl);
@@ -489,12 +488,13 @@ namespace OpenDental.HqPhones{
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMap";
 			this.Text = "Call Center Status Map";
+			this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMapHQ2_FormClosed);
 			this.Load += new System.EventHandler(this.FormMap_Load);
 			this.groupPhoneMetrics.ResumeLayout(false);
 			this.groupPhoneMetrics.PerformLayout();
 			this.tabMain.ResumeLayout(false);
-			this.panelOD1.ResumeLayout(false);
+			this.panelContainer.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -540,6 +540,6 @@ namespace OpenDental.HqPhones{
 		private MapNumber mapNumberCustDownCount;
 		private MapNumber mapNumberCustDownTime;
 		private InternalTools.Phones.MapPanel mapPanel;
-		private UI.PanelOD panelOD1;
+		private UI.PanelOD panelContainer;
 	}
 }

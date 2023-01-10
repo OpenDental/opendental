@@ -31,5 +31,10 @@ namespace OpenDental.UI {
 			this.Invalidate();
 		}
 
+		protected override void OnScroll(ScrollEventArgs se) {
+			base.OnScroll(se);
+			this.Invalidate();
+		}
+
 	}
 }
