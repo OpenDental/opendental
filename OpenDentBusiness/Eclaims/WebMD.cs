@@ -24,7 +24,7 @@ namespace OpenDentBusiness.Eclaims {
 			string arguments="";
 			try {
 				if(!File.Exists(clearinghouseClin.ClientProgram)) {
-					throw new Exception(Lans.g(progress.LanThis,"The ChangeHealthcare program (WebMD) is not installed at the expected path. Go to Setup, Family/Insurance, Clearinghouses, and double-click") + clearinghouseClin.Description + Lans.g("Eclaims","to confirm the Launch Client Program path."));
+					throw new Exception(Lans.g(progress.LanThis,"The ChangeHealthcare program (WebMD) is not installed at the expected path. Go to Setup, Family/Insurance, Clearinghouses, and double-click ") + clearinghouseClin.Description + Lans.g("Eclaims"," to confirm the Launch Client Program path."));
 				}
 				if(!Directory.Exists(clearinghouseClin.ExportPath)) {
 					throw new Exception(Lans.g(progress.LanThis,"Clearinghouse export path is invalid. Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path."));

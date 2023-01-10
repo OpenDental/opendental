@@ -105,7 +105,7 @@ namespace OpenDentBusiness.Eclaims {
 			}
 			string saveFolder=clearinghouseClin.ExportPath;
 			if(!Directory.Exists(saveFolder)) {
-				MessageBox.Show(saveFolder+" "+Lans.g("Dutch","not found."));
+				MessageBox.Show(saveFolder+" "+Lans.g("Dutch","not found. Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path."));
 				return false;
 			}
 			string saveFile=ODFileUtils.CombinePaths(saveFolder,"claims"+claim.ClaimNum.ToString()+".txt");

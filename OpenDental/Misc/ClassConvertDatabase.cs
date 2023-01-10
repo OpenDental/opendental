@@ -340,7 +340,7 @@ namespace OpenDental{
 					UserNum=0,//UserNum=0 because security log is created prior to a user logging in.
 					LogDateTime=DateTime.Now,
 					LogText="New version detected. Database update initiated from "+FromVersion.ToString()+" to "+ToVersion.ToString()+".",
-					CompName=Security.CurComputerName
+					CompName=Security.GetComplexComputerName()
 				};
 				SecurityLogs.MakeLogEntry(securityLog);
 			return true;

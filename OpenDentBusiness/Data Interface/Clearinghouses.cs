@@ -631,7 +631,7 @@ namespace OpenDentBusiness {
 		private static string ImportReportFiles(Clearinghouse clearinghouseClin,IODProgressExtended progress=null) { //uses clinic-level clearinghouse where necessary.
 			progress=progress??new ODProgressExtendedNull();
 			if(!Directory.Exists(clearinghouseClin.ResponsePath)) {
-				return Lans.g("FormClaimReports","Report directory does not exist")+": "+clearinghouseClin.ResponsePath;
+				return Lans.g("FormClaimReports","Report directory does not exist")+": "+clearinghouseClin.ResponsePath+"\r\n"+Lans.g("FormClaimReports","Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path.");
 			}
 			if(clearinghouseClin.Eformat==ElectronicClaimFormat.Canadian||clearinghouseClin.Eformat==ElectronicClaimFormat.Ramq) {
 				//the report path is shared with many other important files.  Do not process anything.  Comm is synchronous only.

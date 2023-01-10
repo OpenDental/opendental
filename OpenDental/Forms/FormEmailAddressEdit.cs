@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using OpenDental.UI;
 using Bridges;
+using Newtonsoft.Json;
 
 namespace OpenDental{
 ///<summary></summary>
@@ -201,10 +202,24 @@ namespace OpenDental{
 				_emailAddress.DownloadInbox=false;
 			}
 			else if(_authenticationType==OAuthType.Microsoft && textRefreshToken.Text!="") {
-				//Microsft requires it's own way of signing out users in this application rather than just clearing the token.
-				MicrosoftTokenHelper microsoftToken=MicrosoftApiConnector.SignOutUser(textUsername.Text,textRefreshToken.Text).Result;
-				if(microsoftToken.ErrorMessage!="") {
-					MsgBox.Show("Error: "+microsoftToken.ErrorMessage);
+				MicrosoftTokenHelper microsoftTokenHelper=new	MicrosoftTokenHelper();
+				if(ODBuild.IsWeb()) {
+					if(!CloudClientL.IsCloudClientRunning()) {
+						return;
+					}
+					string strMicrosoftTokenJSON=ODCloudClient.MicrosoftSignOutUser(textUsername.Text,textRefreshToken.Text);
+					if(strMicrosoftTokenJSON.IsNullOrEmpty()) { 
+						return;
+					}
+					//Microsft requires it's own way of signing out users in this application rather than just clearing the token.
+					microsoftTokenHelper=JsonConvert.DeserializeObject<MicrosoftTokenHelper>(strMicrosoftTokenJSON);
+				}
+				else {
+					//Microsft requires it's own way of signing out users in this application rather than just clearing the token.
+					microsoftTokenHelper=MicrosoftApiConnector.SignOutUser(textUsername.Text,textRefreshToken.Text).Result;
+				}
+				if(microsoftTokenHelper.ErrorMessage!="") {
+					MsgBox.Show("Error: "+microsoftTokenHelper.ErrorMessage);
 					return;
 				}
 			}
@@ -298,9 +313,18 @@ namespace OpenDental{
 				MsgBox.Show("Already signed into Google.");
 				return;
 			}
-			MicrosoftTokenHelper microsoftToken=System.Threading.Tasks.Task.Run(async () =>
-				await MicrosoftApiConnector.GetAccessToken(textUsername.Text,textRefreshToken.Text)
-			).GetAwaiter().GetResult();
+			MicrosoftTokenHelper microsoftToken=new MicrosoftTokenHelper();
+			if(ODBuild.IsWeb()) {
+				if(!CloudClientL.IsCloudClientRunning()) {
+					return; 
+				}
+				string strMicrosoftAuthCodesJSON=ODCloudClient.GetMicrosoftAccessToken(textUsername.Text,textRefreshToken.Text);
+				if(!strMicrosoftAuthCodesJSON.IsNullOrEmpty())
+				microsoftToken=JsonConvert.DeserializeObject<MicrosoftTokenHelper>(strMicrosoftAuthCodesJSON);
+			}
+			else {
+				microsoftToken=System.Threading.Tasks.Task.Run(async()=>await MicrosoftApiConnector.GetAccessToken(textUsername.Text,textRefreshToken.Text)).GetAwaiter().GetResult();
+			}
 			if(microsoftToken.ErrorMessage!="") {
 				MsgBox.Show("Error: "+microsoftToken.ErrorMessage);
 				return;

@@ -38,7 +38,7 @@ namespace OpenDental {
 			formWebBrowserPrefs.ShowDialog();
 		}
 
-		private void checkClaimProcsAllowEstimatesOnCompl_CheckedChanged(object sender,EventArgs e) {
+		private void checkClaimProcsAllowEstimatesOnCompl_Click(object sender,EventArgs e) {
 			if(checkClaimProcsAllowEstimatesOnCompl.Checked) {//user is attempting to Allow Estimates to be created for backdated complete procedures
 				using InputBox inputBox=new InputBox("Please enter password");
 				inputBox.ShowDialog();

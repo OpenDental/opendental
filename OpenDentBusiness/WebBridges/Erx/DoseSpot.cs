@@ -282,7 +282,7 @@ namespace OpenDentBusiness {
 						hasChangedPrescriptions=true;
 						SecurityLog securityLog = new SecurityLog();
 						securityLog.UserNum=0;//Don't attach to user since this is being done by DoseSpot
-						securityLog.CompName=Security.CurComputerName;
+						securityLog.CompName=Security.GetComplexComputerName();
 						securityLog.PermType=Permissions.RxEdit;
 						securityLog.FKey=0;
 						securityLog.LogSource=LogSources.eRx;

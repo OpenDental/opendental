@@ -37,7 +37,6 @@
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "FormGrowthCharts";
 			this.Load += new System.EventHandler(this.FormGrowthCharts_Load);
-			this.Paint += new System.Windows.Forms.PaintEventHandler(this.FormGrowthCharts_Paint);
 			this.ResumeLayout(false);
 
 		}

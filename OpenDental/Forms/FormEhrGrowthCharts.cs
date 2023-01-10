@@ -38,6 +38,8 @@ namespace OpenDental {
 			listVS = Vitalsigns.Refresh(PatNum);
 			pat=Patients.GetPat(PatNum);
 			Text+=" - "+pat.Gender.ToString()+" Growth Chart for "+pat.FName+" "+pat.LName+" age "+pat.Age;
+			this.Paint-=FormGrowthCharts_Paint;
+			this.PanelClient.Paint+=FormGrowthCharts_Paint;
 		}
 
 		private void FormGrowthCharts_Paint(object sender,PaintEventArgs e) {

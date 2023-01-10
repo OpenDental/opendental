@@ -321,7 +321,7 @@ namespace OpenDentBusiness.Eclaims{
 			for(int i=0;i<DisplayStrings.GetLength(0);i++){//usually 1, but sometimes 2 or 3
 				string uploadPath=_clearinghouseClin.ExportPath;//@"C:\Program Files\Renaissance\dotr\upload\";
 				if(!Directory.Exists(uploadPath)){
-					MessageBox.Show("Error. Renaissance not installed.  "+uploadPath+" not valid");
+					MessageBox.Show("Error. "+uploadPath+" is invalid. Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path.");
 					return;
 				}
 				int fileEnd=1;

@@ -680,7 +680,7 @@ namespace OpenDental{
 						}
 						else if(control.Controls[i] is ListBox){
 							scaledFont*=0.95f;//prevents most of the issues with scrollbars being automatically added 
-							//the new ListBoxOD does not require this hack; it scales nicely.
+							//the new UI.ListBox does not require this hack; it scales nicely.
 						}
 						else if(control.Controls[i] is Label
 							|| control.Controls[i] is CheckBox
@@ -733,7 +733,9 @@ namespace OpenDental{
 				if(control.Controls[i] is ListBox listBox3){
 					if(ScaleMy()<1 && listBox3.Name=="listTextOk"){
 						//this fixes a specific bug in FormPatientEdit.ListTextOk, where we could not select any item when negative zoom was in place
-						width=control96Info.BoundsF96.Width+5;
+						//Add additional pixels based on the negative zoom amount unscaled. We need to add an additional amount of pixels as a percentage as the -zoom increases. Unscaled gives us a percentage that works well up to the maximum negative zoom setting.
+						float additionalWidth=UnscaleF(Math.Abs(_zoomLocal));
+						width=control96Info.BoundsF96.Width+additionalWidth;
 					}
 				}
 				if(width<0){

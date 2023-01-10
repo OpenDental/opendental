@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using OpenDentBusiness;
 using Ionic.Zip;
+using System.Windows;
 
 namespace OpenDentBusiness.Eclaims {
 	public class Ramq {
@@ -159,6 +160,10 @@ namespace OpenDentBusiness.Eclaims {
 			foreach(Etrans etrans in listEtrans) {
 				etrans.EtransMessageTextNum=etransMsgText.EtransMessageTextNum;
 				Etranss.Update(etrans);
+			}
+			if(!Directory.Exists(clearinghouseClin.ExportPath)) { 
+				MessageBox.Show(Lans.g("Ramq","Could not create directory ")+clearinghouseClin.ExportPath+"\r\n"+Lans.g("Ramq","Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path."));
+				return "";
 			}
 			//Step 2 - ZIP XML and save to report path.  The zip file name and file name within the zip file do not matter.
 			string zipFilePath=CodeBase.ODFileUtils.CreateRandomFile(clearinghouseClin.ExportPath,".zip","claims");

@@ -569,6 +569,40 @@ namespace CodeBase {
 			SendDataToBrowser(request,(int)BrowserAction.SendToODCloudClient);
 		}
 
+		public static string GetMicrosoftAccessToken(string textUsername,string textRefreshToken) {
+			CloudClientAction action=CloudClientAction.GetMicrosoftAccessToken;
+			ODCloudClientData oDCloudClientData=new ODCloudClientData() {
+				OtherData=textUsername,
+				MicrosoftRefreshToken=textRefreshToken
+			};
+			string microsoftTokenData="";
+			try {
+				microsoftTokenData=SendToODCloudClientSynchronously(oDCloudClientData,action,timeoutSecs:300,doShowProgressBar:false);
+			}
+			catch(Exception ex) {
+				ODMessageBox.Show(ex.Message);
+			}
+			return microsoftTokenData;
+		}
+
+
+		public static string MicrosoftSignOutUser(string textUsername,string textRefreshToken) {
+			CloudClientAction action=CloudClientAction.MicrosoftSignOutUser;
+			ODCloudClientData oDCloudClientData=new ODCloudClientData() {
+				OtherData=textUsername,
+				MicrosoftRefreshToken=textRefreshToken
+			};
+			string microsoftTokenData="";
+			try {
+				microsoftTokenData=SendToODCloudClientSynchronously(oDCloudClientData,action,doShowProgressBar:false);
+			}
+			catch(Exception ex) {
+				ODMessageBox.Show(ex.Message);
+			}
+			return microsoftTokenData;
+		}
+
+
 		///<summary>Contains the data to be sent to the browser to perfrom a browser action. Will be serialized as JSON.</summary>
 		public class ODBrowserData {
 			public string ElementId;
@@ -639,6 +673,8 @@ namespace CodeBase {
 			///<summary>A random 32 byte string, base64 encoded. Sent with the auth request. Google returns it with their response
 			///so we can confirm that thier response is for our application's request.</summary>
 			public string State;
+			///<summary>Any error thrown while trying to perform acquisition will be held here.</summary>
+			public string MicrosoftRefreshToken;
 		}
 
 		///<summary>Contains the arguments to be sent to OD Cloud Client. Will be serialized as JSON.</summary>
@@ -740,6 +776,10 @@ namespace CodeBase {
 			CreateDirectory,
 			///<summary>Call this enum action if you want to check if a directory exists on the client machine.</summary>
 			CheckForDirectory,
+			///<summary>Get microsoft access token on the ODCloudClient</summary>
+			GetMicrosoftAccessToken,
+			///<summary>Signs out the passed in user from the account information. If there was an exception it will be held within the MicrosoftTokenHelper.</summary>
+			MicrosoftSignOutUser
 		}
 
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>

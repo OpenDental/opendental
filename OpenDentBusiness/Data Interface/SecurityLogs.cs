@@ -324,7 +324,7 @@ namespace OpenDentBusiness{
 			securityLog.PermType=permType;
 			securityLog.UserNum=userNum==0? Security.CurUser.UserNum : userNum;//need to be able to pass in UserNum from mobile app user
 			securityLog.LogText=logText;
-			securityLog.CompName=Security.CurComputerName;
+			securityLog.CompName=Security.GetComplexComputerName();
 			securityLog.PatNum=patNum;
 			securityLog.FKey=fKey;
 			securityLog.LogSource=logSource;
@@ -345,7 +345,7 @@ namespace OpenDentBusiness{
 			securityLog.PermType=permType;
 			securityLog.UserNum=userNum;
 			securityLog.LogText=logText;
-			securityLog.CompName=Security.CurComputerName;
+			securityLog.CompName=Security.GetComplexComputerName();
 			securityLog.PatNum=patnum;
 			securityLog.FKey=0;
 			securityLog.LogSource=source;

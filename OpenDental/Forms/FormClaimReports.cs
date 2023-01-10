@@ -79,7 +79,7 @@ namespace OpenDental{
 			Clearinghouse clearhouseHq=_listClearinghousesHq[comboClearhouse.SelectedIndex];
 			Clearinghouse clearinghouseClin=Clearinghouses.OverrideFields(clearhouseHq,Clinics.ClinicNum);
 			if(!Directory.Exists(clearinghouseClin.ResponsePath)) {
-				MsgBox.Show(this,"Clearinghouse does not have a valid Report Path set.");
+				MsgBox.Show(this,"Clearinghouse export path is invalid. Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path.");
 				return;
 			}
 			ODProgressExtended progressExtended=new ODProgressExtended(ODEventType.Clearinghouse,new ClearinghouseEvent(),this

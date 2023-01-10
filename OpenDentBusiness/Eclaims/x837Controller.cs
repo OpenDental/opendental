@@ -34,16 +34,32 @@ namespace OpenDentBusiness.Eclaims
 		private static string GetFileName(Clearinghouse clearinghouseClin,int batchNum,bool isAutomatic) { //called from this.SendBatch. Clinic-level clearinghouse passed in.
 			if(clearinghouseClin.CommBridge==EclaimsCommBridge.WebMD) { //If attempting to use WebMD, exit if client program does not exist.
 				if(!File.Exists(clearinghouseClin.ClientProgram)) {
-					MessageBox.Show(Lans.g("Eclaims","The ChangeHealthcare program (WebMD) is not installed at the expected path. Go to Setup, Family/Insurance, Clearinghouses, and double-click") + clearinghouseClin.Description + Lans.g("Eclaims","to confirm the Launch Client Program path."));
+					MessageBox.Show(Lans.g("Eclaims","The ChangeHealthcare program (WebMD) is not installed at the expected path. Go to Setup, Family/Insurance, Clearinghouses, and double-click ") + clearinghouseClin.Description + Lans.g("Eclaims"," to confirm the Launch Client Program path."));
 							return "";
 				}
 			}
 			string saveFolder=clearinghouseClin.ExportPath;
 			if(!ODBuild.IsWeb() && !Directory.Exists(saveFolder)) {
 				if(!isAutomatic) {
-					MessageBox.Show(saveFolder+" not found.");
+					string message=saveFolder+Lans.g("Eclaims"," not found. Attempt to create?");
+					MessageBoxButtons messsageBoxButtons=MessageBoxButtons.YesNo;
+					string title=""; 
+					DialogResult dialogResult=MessageBox.Show(message,title,messsageBoxButtons);
+					if (dialogResult==DialogResult.Yes) {
+						try{
+							Directory.CreateDirectory(saveFolder);
+							MessageBox.Show(Lans.g("Eclaims","Folder created."));
+						}
+						catch {
+							MessageBox.Show(Lans.g("Eclaims","Could not create directory ")+saveFolder+"\r\n"+Lans.g("Eclaims","Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path."));
+							return "";
+						}
+					}
+					else {
+						MessageBox.Show(saveFolder+Lans.g("Eclaims"," not created.")+"\r\n"+Lans.g("Eclaims","Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path."));
+							return "";
+					}
 				}
-				return "";
 			}
 			if(clearinghouseClin.CommBridge==EclaimsCommBridge.RECS){
 				if(!ODBuild.IsWeb() && File.Exists(ODFileUtils.CombinePaths(saveFolder,"ecs.txt"))){

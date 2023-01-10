@@ -4666,7 +4666,8 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<Patient>>(MethodBase.GetCurrentMethod(),emailAddress);
 			}
-			string command="SELECT * FROM patient WHERE Email LIKE '%"+POut.String(emailAddress)+"%'";
+			string command="SELECT * FROM patient WHERE Email LIKE '%"+POut.String(emailAddress)+"%' "
+				+"AND PatStatus!="+POut.Enum(PatientStatus.Archived)+" AND PatStatus!="+POut.Enum(PatientStatus.Deleted);
 			return Crud.PatientCrud.SelectMany(command);
 		}
 
