@@ -172,6 +172,7 @@ namespace OpenDental{
 			checkNotesSame.Checked=true;
 			checkEmailPhoneSame.Checked=true;
 			checkArriveEarlySame.Checked=true;
+			checkSuperBilling.Enabled=(Security.IsAuthorized(Permissions.PatientBillingEdit,true));
 			warningIntegrity1.SetTypeAndVisibility(EnumWarningIntegrityType.Patient,Patients.IsPatientHashValid(_patient));
 			bool isAuthArchivedEdit=Security.IsAuthorized(Permissions.ArchivedPatientEdit,true);
 			List<Patient> listPatientsFamily=_family.ListPats.ToList();
@@ -1705,12 +1706,6 @@ namespace OpenDental{
 			}
 			FillComboZip();
 			SetRequiredFields();
-		}
-
-		private void checkSuperBilling_MouseDown(object sender,MouseEventArgs e) {
-			if(!Security.IsAuthorized(Permissions.Billing)) {
-				return;
-			}
 		}
 
 		private void butEditZip_Click(object sender, System.EventArgs e) {

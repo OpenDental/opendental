@@ -1463,7 +1463,6 @@ namespace OpenDental{
 			this.checkSuperBilling.Text = "Included in Super Family Billing";
 			this.checkSuperBilling.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkSuperBilling.Visible = false;
-			this.checkSuperBilling.MouseDown += new System.Windows.Forms.MouseEventHandler(this.checkSuperBilling_MouseDown);
 			// 
 			// butPickSecondary
 			// 

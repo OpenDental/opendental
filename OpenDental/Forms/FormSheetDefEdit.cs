@@ -1115,37 +1115,8 @@ namespace OpenDental {
 						}
 						else{
 							//diagonal line
-							double lineXStart=(double)sheetFieldDef.Bounds.X;//x value starting point
-							double lineYStart=(double)sheetFieldDef.Bounds.Y;//y value starting point
-							bool hasLongerHeight=false;
-							//Determine the lines maxlength using either height or width, whichever is longer
-							int lineMaxLength=Math.Abs(sheetFieldDef.Width);
-							if(Math.Abs(sheetFieldDef.Height)>Math.Abs(sheetFieldDef.Width)) {
-								lineMaxLength=Math.Abs(sheetFieldDef.Height);
-								hasLongerHeight=true;
-							}
-							//Determine the slope of the line
-							double slope=(((double)sheetFieldDef.Height+(double)sheetFieldDef.Bounds.Y)-(double)sheetFieldDef.Bounds.Y)
-								/(((double)sheetFieldDef.Width+(double)sheetFieldDef.Bounds.X)-(double)sheetFieldDef.Bounds.X);
-							Point pointOnLine=new Point(0,0);
-							for(int j=0;j<lineMaxLength;j++) {//Step pixel by pixel
-								if(hasLongerHeight) {//Move along the y axis
-									pointOnLine=new Point((int)Math.Round((j/slope)+lineXStart,MidpointRounding.AwayFromZero),(int)lineYStart+j);
-									if(sheetFieldDef.Bounds.Height<0) {//Move backwards along the y axis instead
-										pointOnLine=new Point((int)Math.Round((-j/slope)+lineXStart,MidpointRounding.AwayFromZero),(int)lineYStart-j);
-									}
-								}
-								else {//Move along the x axis
-									pointOnLine=new Point((int)lineXStart+j,(int)Math.Round((j*slope)+lineYStart,MidpointRounding.AwayFromZero));
-									if(sheetFieldDef.Bounds.Width<0) {//Move backwards along the x axis instead
-										pointOnLine=new Point((int)lineXStart-j,(int)Math.Round((-j*slope)+lineYStart,MidpointRounding.AwayFromZero));
-									}
-								}
-								//Check each point and see if our highlighted box intersects with the line
-								if(rectangleSelectionBounds.Contains(pointOnLine)) {
-									listBoxFields.SetSelected(i,true);
-									break;
-								}
+							if(HasSelectedDiagonalLine(sheetFieldDef,rectangleSelectionBounds)) {
+								listBoxFields.SetSelected(i,true);
 							}
 						}
 						continue;
@@ -2072,6 +2043,42 @@ namespace OpenDental {
 			return HasScreeningChart(isTreatmentChart:true);
 		}
 
+		///<summary>Check to see if a diagonal line intersects a specified click or rectangle location by passing in the sheetDef and specified area.<summary>
+		private bool HasSelectedDiagonalLine(SheetFieldDef sheetFieldDef,Rectangle rectangleCheck) {
+			double lineXStart=(double)sheetFieldDef.Bounds.X;//x value starting point
+			double lineYStart=(double)sheetFieldDef.Bounds.Y;//y value starting point
+			bool hasLongerHeight=false;
+			//Determine the lines max length using either height or width, whichever is longer
+			int lineMaxLength=Math.Abs(sheetFieldDef.Width);
+			if(Math.Abs(sheetFieldDef.Height)>Math.Abs(sheetFieldDef.Width)) {
+				lineMaxLength=Math.Abs(sheetFieldDef.Height);
+				hasLongerHeight=true;
+			}
+			//Determine the slope of the line
+			double slope=(((double)sheetFieldDef.Height+(double)sheetFieldDef.Bounds.Y)-(double)sheetFieldDef.Bounds.Y)
+				/(((double)sheetFieldDef.Width+(double)sheetFieldDef.Bounds.X)-(double)sheetFieldDef.Bounds.X);
+			Point pointOnLine=new Point(0,0);
+			for(int i=0;i<lineMaxLength;i++) {//Step pixel by pixel
+				if(hasLongerHeight) {//Move along the y axis
+					pointOnLine=new Point((int)Math.Round((i/slope)+lineXStart,MidpointRounding.AwayFromZero),(int)lineYStart+i);
+					if(sheetFieldDef.Bounds.Height<0) {//Move backwards along the y axis instead
+						pointOnLine=new Point((int)Math.Round((-i/slope)+lineXStart,MidpointRounding.AwayFromZero),(int)lineYStart-i);
+					}
+				}
+				else {//Move along the x axis
+					pointOnLine=new Point((int)lineXStart+i,(int)Math.Round((i*slope)+lineYStart,MidpointRounding.AwayFromZero));
+					if(sheetFieldDef.Bounds.Width<0) {//Move backwards along the x axis instead
+						pointOnLine=new Point((int)lineXStart-i,(int)Math.Round((-i*slope)+lineYStart,MidpointRounding.AwayFromZero));
+					}
+				}
+				//Check each point and see if our area intersects with the line
+				if(rectangleCheck.Contains(pointOnLine)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		///<summary>Returns true if given def has equivilant translated values in _sheetDefCur.SheetFieldDefs, otherwise false.</summary>
 		private bool HasTranslatedSheetDefS(SheetFieldDef sheetFieldDef,out List<SheetFieldDef> listSheetFieldDefsMatched){
 			listSheetFieldDefsMatched=null;
@@ -2081,7 +2088,7 @@ namespace OpenDental {
 			return (!listSheetFieldDefsMatched.IsNullOrEmpty());
 		}
 
-		///<summary>Images will be ignored in the hit test since they frequently fill the entire background.  Diagonal Lines will also be ignored.</summary>
+		///<summary>Images will be ignored in the hit test since they frequently fill the entire background.</summary>
 		private SheetFieldDef HitTest(int x,int y) {
 			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
 			//Loop from the back of the list since those sheetfielddefs were added last, so they show on top of items at beginning of list.
@@ -2105,7 +2112,7 @@ namespace OpenDental {
 							}
 						}
 					}
-					if(Math.Abs(listSheetFieldDefsShowing[i].Height)<2){
+					else if(Math.Abs(listSheetFieldDefsShowing[i].Height)<2){
 						//horiz line
 						if(Math.Abs(y-listSheetFieldDefsShowing[i].YPos)<2){
 							if(listSheetFieldDefsShowing[i].Width<0){
@@ -2120,7 +2127,15 @@ namespace OpenDental {
 							}
 						}
 					}
-				}	
+					else {
+						//diagonal line
+						Rectangle rectClickedLocation=new Rectangle(x-1,y-1,3,3);//Create a rectangle 3x3 pixel area to make it easier to click on the line
+						if(HasSelectedDiagonalLine(listSheetFieldDefsShowing[i],rectClickedLocation)) {
+							return listSheetFieldDefsShowing[i];
+						}
+					}
+					continue;
+				}
 				Rectangle rectangleFieldDefBounds=listSheetFieldDefsShowing[i].Bounds;
 				if(rectangleFieldDefBounds.Contains(x,y)) {
 					//Center of a SheetFieldType.Rectangle will not be considered a hit.

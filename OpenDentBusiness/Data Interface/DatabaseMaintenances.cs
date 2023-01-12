@@ -7519,7 +7519,7 @@ namespace OpenDentBusiness {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
 			}
 			string log="";
-			string command=@"SELECT ProcCode FROM procedurecode GROUP BY ProcCode HAVING COUNT(*) > 1";
+			string command=@"SELECT ProcCode FROM procedurecode GROUP BY BINARY ProcCode HAVING COUNT(*) > 1";
 			List<string> listProcCodes=Db.GetListString(command);
 			switch(modeCur) {
 				case DbmMode.Check:
@@ -7553,8 +7553,8 @@ namespace OpenDentBusiness {
 									listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,codeNum,DbmLogFKeyType.ProcedureCode,
 										DbmLogActionType.Update,methodName,$"Duplicate procedure code found, ProcCode Changed from '"
 											+POut.String(procCodeOriginal)+"' to '"+POut.String(procCodeFix)+"'"));
-									numFixed++;
 								}
+								numFixed++;
 							}
 						}
 						if(numFixed>0 || verbose) {
