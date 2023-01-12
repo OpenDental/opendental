@@ -2722,7 +2722,6 @@ namespace OpenDentBusiness {
 			DataTable table=new DataTable();
 			long batchNumber=0;
 			#endregion Get Variables Used By All Batches
-			List<long> listProcNums=new List<long>();
 			try {
 				while(!_isQueueDone || _queueDataTables.Count>0) {//if batch thread is done and queue is empty, loop is finished
 					if(_queueDataTables.Count==0) {
@@ -2873,7 +2872,6 @@ namespace OpenDentBusiness {
 						s1.Stop();
 						Console.WriteLine("Updated "+y.Count+" procedures, runtime: "+s1.Elapsed.TotalSeconds+" sec");
 					}
-					listProcNums.AddRange(y);
 					procFeesUpdatedCount+=y.Count;
 				}))).ToList();
 				#endregion Create List of Actions
