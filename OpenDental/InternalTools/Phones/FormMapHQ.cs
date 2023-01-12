@@ -96,12 +96,7 @@ namespace OpenDental {
 		}
 
 		private void FillMaps() {
-			//Get the list of maps from our JSON preference.
-			_listMapAreaContainers=MapAreaContainers.Refresh();
-			//Add a custom order to this map list which will prefer maps that are associated to the local computer's site.
-			_listMapAreaContainers=_listMapAreaContainers.OrderBy(x => x.SiteNum!=_siteThisComputer.SiteNum)
-				.ThenBy(x => x.Description).ToList();
-			//Select the first map in our list that matches the site associated to the current computer.
+			_listMapAreaContainers=MapAreaContainers.GetAll(_siteThisComputer.SiteNum);
 			if(MapDescription.IsNullOrEmpty()) {
 				_mapAreaContainer=_listMapAreaContainers[0];
 			}

@@ -791,7 +791,7 @@
 		private MapCubicle labelCustDownTime;
 		private MapCubicle labelCustDownCount;
 		private EscalationViewControl officesDownView;
-		private InternalTools.Phones.UserControlMapDetails userControlMapDetails1;
+		private OpenDental.InternalTools.Phones.UserControlMapDetails userControlMapDetails1;
 		private UI.MenuOD menuMain;
 		private System.Windows.Forms.Timer timerWebCam;
 		private UI.TabPage tabPage1;

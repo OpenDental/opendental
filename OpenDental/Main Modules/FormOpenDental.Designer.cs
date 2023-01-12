@@ -236,11 +236,11 @@ namespace OpenDental{
 			// 
 			// butMapPhones
 			// 
-			this.butMapPhones.Location = new System.Drawing.Point(1, 27);
+			this.butMapPhones.Location = new System.Drawing.Point(-5, 21);
 			this.butMapPhones.Name = "butMapPhones";
-			this.butMapPhones.Size = new System.Drawing.Size(58, 24);
+			this.butMapPhones.Size = new System.Drawing.Size(74, 34);
 			this.butMapPhones.TabIndex = 54;
-			this.butMapPhones.Text = "Old Map";
+			this.butMapPhones.Text = "Old Map\r\n(do not use)";
 			this.butMapPhones.Click += new System.EventHandler(this.butMapPhones_Click);
 			// 
 			// butTriage

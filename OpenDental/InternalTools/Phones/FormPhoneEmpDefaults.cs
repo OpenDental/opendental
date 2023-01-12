@@ -12,7 +12,10 @@ namespace OpenDental{
 	/// Summary description for FormBasicTemplate.
 	/// </summary>
 	public partial class FormPhoneEmpDefaults:FormODBase {
-		private List<PhoneEmpDefault> ListPED;
+		public bool IsSelectionMode;
+		///<summary>Only used when IsSelectionMode.</summary>
+		public PhoneEmpDefault PhoneEmpDefaultSelected;
+		private List<PhoneEmpDefault> _listPhoneEmpDefaults;
 
 		///<summary></summary>
 		public FormPhoneEmpDefaults()
@@ -25,17 +28,23 @@ namespace OpenDental{
 			Lan.F(this);
 		}
 
-		private void FormAccountPick_Load(object sender,EventArgs e) {
+		private void FormPhoneEmpDefaults_Load(object sender,EventArgs e) {
 			if(Security.IsAuthorized(Permissions.Setup,true)) {
 				butPhoneComps.Visible=true;
 			}
 			FillGrid();
 			gridMain.SortForced(1,true);
+			if(IsSelectionMode){
+				butClose.Text="Cancel";
+			}
+			else{
+				butOK.Visible=false;
+			}
 		}
 
 		private void FillGrid(){
 			int sortedColumnIdx=gridMain.SortedByColumnIdx;
-      bool isSortAsc=gridMain.SortedIsAscending;
+			bool isSortAsc=gridMain.SortedIsAscending;
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn col;
@@ -59,27 +68,27 @@ namespace OpenDental{
 			gridMain.Columns.Add(col);
 			col=new GridColumn("Triage",50,HorizontalAlignment.Center);
 			gridMain.Columns.Add(col);
-			ListPED=PhoneEmpDefaults.GetDeepCopy();
+			_listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
 			gridMain.ListGridRows.Clear();
 			GridRow row;
-			for(int i=0;i<ListPED.Count;i++){
+			for(int i=0;i<_listPhoneEmpDefaults.Count;i++){
 				row=new GridRow();
-				row.Cells.Add(ListPED[i].EmployeeNum.ToString());
-				row.Cells.Add(ListPED[i].EmpName);
-				row.Cells.Add(ListPED[i].IsGraphed?"X":"");
-				row.Cells.Add(ListPED[i].HasColor?"X":"");
-				row.Cells.Add(ListPED[i].RingGroups.ToString());
-				row.Cells.Add(ListPED[i].PhoneExt.ToString());
-				if(ListPED[i].StatusOverride==PhoneEmpStatusOverride.None) {
+				row.Cells.Add(_listPhoneEmpDefaults[i].EmployeeNum.ToString());
+				row.Cells.Add(_listPhoneEmpDefaults[i].EmpName);
+				row.Cells.Add(_listPhoneEmpDefaults[i].IsGraphed?"X":"");
+				row.Cells.Add(_listPhoneEmpDefaults[i].HasColor?"X":"");
+				row.Cells.Add(_listPhoneEmpDefaults[i].RingGroups.ToString());
+				row.Cells.Add(_listPhoneEmpDefaults[i].PhoneExt.ToString());
+				if(_listPhoneEmpDefaults[i].StatusOverride==PhoneEmpStatusOverride.None) {
 					row.Cells.Add("");
 				}
 				else {
-					row.Cells.Add(ListPED[i].StatusOverride.ToString());
+					row.Cells.Add(_listPhoneEmpDefaults[i].StatusOverride.ToString());
 				}
-				row.Cells.Add(ListPED[i].Notes);
-				row.Cells.Add(ListPED[i].IsPrivateScreen?"X":"");
-				row.Cells.Add(ListPED[i].IsTriageOperator?"X":"");
-				row.Tag=ListPED[i];
+				row.Cells.Add(_listPhoneEmpDefaults[i].Notes);
+				row.Cells.Add(_listPhoneEmpDefaults[i].IsPrivateScreen?"X":"");
+				row.Cells.Add(_listPhoneEmpDefaults[i].IsTriageOperator?"X":"");
+				row.Tag=_listPhoneEmpDefaults[i];
 				gridMain.ListGridRows.Add(row);
 			}
 			gridMain.EndUpdate();
@@ -87,6 +96,11 @@ namespace OpenDental{
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
+			if(IsSelectionMode){
+				PhoneEmpDefaultSelected=(PhoneEmpDefault)gridMain.ListGridRows[e.Row].Tag;
+				DialogResult=DialogResult.OK;
+				return;
+			}
 			using FormPhoneEmpDefaultEdit FormPED=new FormPhoneEmpDefaultEdit();
 			FormPED.PedCur=(PhoneEmpDefault)gridMain.ListGridRows[e.Row].Tag;
 			FormPED.ShowDialog();
@@ -106,25 +120,23 @@ namespace OpenDental{
 			FillGrid();
 		}
 
-		private void butClose_Click(object sender, System.EventArgs e) {
-			Close();
+		private void butOK_Click(object sender,EventArgs e) {
+			//only visible in IsSelectionMode
+			int idx=gridMain.GetSelectedIndex();
+			if(idx==-1){
+				MsgBox.Show("Please select a row first.");
+				return;
+			}
+			PhoneEmpDefaultSelected=(PhoneEmpDefault)gridMain.ListGridRows[idx].Tag;
+			DialogResult=DialogResult.OK;
 		}
 
-		
-
-		
-
-		
-
-	
-
-		
-
-		
-
-	
-
-
+		private void butClose_Click(object sender, System.EventArgs e) {
+			if(IsSelectionMode){
+				DialogResult=DialogResult.Cancel;
+			}
+			Close();
+		}
 	}
 }
 

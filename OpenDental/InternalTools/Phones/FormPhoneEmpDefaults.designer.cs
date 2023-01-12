@@ -36,6 +36,7 @@ namespace OpenDental {
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butPhoneComps = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// butClose
@@ -82,9 +83,20 @@ namespace OpenDental {
 			this.butPhoneComps.Visible = false;
 			this.butPhoneComps.Click += new System.EventHandler(this.butPhoneComps_Click);
 			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(798, 546);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 14;
+			this.butOK.Text = "OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
 			// FormPhoneEmpDefaults
 			// 
 			this.ClientSize = new System.Drawing.Size(966, 582);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butPhoneComps);
 			this.Controls.Add(this.butAdd);
@@ -94,7 +106,7 @@ namespace OpenDental {
 			this.MinimizeBox = false;
 			this.Name = "FormPhoneEmpDefaults";
 			this.Text = "Phone Employee Defaults";
-			this.Load += new System.EventHandler(this.FormAccountPick_Load);
+			this.Load += new System.EventHandler(this.FormPhoneEmpDefaults_Load);
 			this.ResumeLayout(false);
 
 		}
@@ -104,5 +116,6 @@ namespace OpenDental {
 		private OpenDental.UI.Button butClose;
 		private UI.Button butAdd;
 		private UI.Button butPhoneComps;
+		private UI.Button butOK;
 	}
 }

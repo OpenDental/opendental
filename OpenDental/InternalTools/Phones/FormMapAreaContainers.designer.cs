@@ -75,6 +75,7 @@ namespace OpenDental{
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMapAreaContainers";
 			this.Text = "Map Area Containers";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMapAreaContainers_FormClosing);
 			this.Load += new System.EventHandler(this.FormMapAreaContainers_Load);
 			this.ResumeLayout(false);
 

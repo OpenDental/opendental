@@ -52,6 +52,34 @@ namespace OpenDental.InternalTools.Phones {
 			labelCustomer.Text=mapCubicle.PhoneCur.CustomerNumber;
 		}
 
+		///<summary></summary>
+		public void SetEmployee2(CubicleClickedDetail cubicleClickedDetail) {
+			string employeeName;
+			string extension;
+			string status;
+			string strTimer;
+			EmployeeNumCur=cubicleClickedDetail.EmployeeNum;
+			//If the clicked cubicle doesn't have an employee associated with it, use generic values.
+			if(EmployeeNumCur<1) {
+				employeeName="";
+				extension="x0000";
+				status="None";
+				strTimer="0:00:00";
+				//odPictureBoxEmployee.Image=null;
+			}
+			else {
+				employeeName=cubicleClickedDetail.EmployeeName;
+				extension="x"+cubicleClickedDetail.Extension.ToString();
+				status=cubicleClickedDetail.Status;
+				strTimer=cubicleClickedDetail.TimeSpanElapsed.ToStringHmmss();
+				//odPictureBoxEmployee.Image=bitmap;
+			}
+			labelUserName.Text=employeeName;
+			labelExtensionDesc.Text=extension+"   "+cubicleClickedDetail.Description;
+			labelStatusTime.Text=status+"   "+strTimer;
+			labelCustomer.Text=cubicleClickedDetail.CustomerNumber;
+		}
+
 		///<summary>Works for null</summary>
 		public void SetBitmap(Bitmap bitmap,EnumMapImageDisplayStatus mapImageDisplayStatus,long employeeNum){
 			odPictureBoxEmployee.Image?.Dispose();

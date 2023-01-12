@@ -32,7 +32,7 @@ namespace OpenDental {
 		}
 
 		private void FillCombo() {
-			ListMapAreaContainers=MapAreaContainers.Refresh();
+			ListMapAreaContainers=MapAreaContainers.GetAll(0);
 			_mapAreaContainer=ListMapAreaContainers[0];
 			for(int i=0;i<ListMapAreaContainers.Count;i++) {
 				comboRoom.Items.Add(ListMapAreaContainers[i].Description);

@@ -162,13 +162,17 @@ namespace OpenDental {
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
-			try{
-				Reconciles.Delete(ReconcileCur);
+			List<JournalEntry> listJournalEntries=JournalEntries.GetForReconcile(ReconcileCur.AccountNum,includeUncleared:false,ReconcileCur.ReconcileNum);
+			if(listJournalEntries.Count>0) {
+				if(MessageBox.Show(this,"This entire Reconcile will be deleted.  Are you sure you want to delete?","Reconcile Delete Warning",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					return;
+				}
 			}
-			catch(ApplicationException ex){
-				MessageBox.Show(ex.Message);
-				return;
+			for(int i=0;i<_listJournalEntries.Count;i++) {
+				_listJournalEntries[i].ReconcileNum=0;
 			}
+			SaveList();//detaches all journal entries.
+			Reconciles.Delete(ReconcileCur);
 			DialogResult=DialogResult.OK;
 		}
 

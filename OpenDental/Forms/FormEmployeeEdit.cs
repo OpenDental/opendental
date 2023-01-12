@@ -58,8 +58,8 @@ namespace OpenDental{
 		private void butOK_Click(object sender, System.EventArgs e) {
 			Employee employeeOld=EmployeeCur.Copy();
 			EmployeeCur.IsHidden=checkIsHidden.Checked;
-			EmployeeCur.LName=textLName.Text;
-			EmployeeCur.FName=textFName.Text;
+			EmployeeCur.LName=textLName.Text.Trim();//remove any leading/trailing whitespace
+			EmployeeCur.FName=textFName.Text.Trim();//remove any leading/trailing whitespace
 			EmployeeCur.MiddleI=textMI.Text;
 			EmployeeCur.PayrollID=textPayrollID.Text;
 			try{

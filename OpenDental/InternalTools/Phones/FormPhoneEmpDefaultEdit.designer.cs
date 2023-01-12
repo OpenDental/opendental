@@ -38,14 +38,14 @@ namespace OpenDental {
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.listRingGroup = new OpenDental.UI.ListBoxOD();
-			this.checkIsGraphed = new System.Windows.Forms.CheckBox();
+			this.checkIsGraphed = new OpenDental.UI.CheckBox();
 			this.label5 = new System.Windows.Forms.Label();
-			this.checkHasColor = new System.Windows.Forms.CheckBox();
+			this.checkHasColor = new OpenDental.UI.CheckBox();
 			this.textEmpName = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.textNotes = new OpenDental.ODtextBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.checkIsPrivateScreen = new System.Windows.Forms.CheckBox();
+			this.checkIsPrivateScreen = new OpenDental.UI.CheckBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
@@ -57,7 +57,7 @@ namespace OpenDental {
 			this.label16 = new System.Windows.Forms.Label();
 			this.listStatusOverride = new OpenDental.UI.ListBoxOD();
 			this.label17 = new System.Windows.Forms.Label();
-			this.checkIsTriageOperator = new System.Windows.Forms.CheckBox();
+			this.checkIsTriageOperator = new OpenDental.UI.CheckBox();
 			this.textPhoneExt = new OpenDental.ValidNum();
 			this.textEmployeeNum = new OpenDental.ValidNum();
 			this.butDelete = new OpenDental.UI.Button();
@@ -69,8 +69,8 @@ namespace OpenDental {
 			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.textReportsTo = new System.Windows.Forms.TextBox();
 			this.label21 = new System.Windows.Forms.Label();
-			this.checkIsWorkingHome = new System.Windows.Forms.CheckBox();
-			this.checkIsFurloughed = new System.Windows.Forms.CheckBox();
+			this.checkIsWorkingHome = new OpenDental.UI.CheckBox();
+			this.checkIsFurloughed = new OpenDental.UI.CheckBox();
 			this.textEmailPersonal = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.textEmailWork = new System.Windows.Forms.TextBox();
@@ -114,8 +114,6 @@ namespace OpenDental {
 			this.checkIsGraphed.Size = new System.Drawing.Size(155, 20);
 			this.checkIsGraphed.TabIndex = 2;
 			this.checkIsGraphed.Text = "Is Graphed (default)";
-			this.checkIsGraphed.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIsGraphed.UseVisualStyleBackColor = true;
 			this.checkIsGraphed.Click += new System.EventHandler(this.checkIsGraphed_Click);
 			// 
 			// label5
@@ -135,8 +133,6 @@ namespace OpenDental {
 			this.checkHasColor.Size = new System.Drawing.Size(155, 20);
 			this.checkHasColor.TabIndex = 3;
 			this.checkHasColor.Text = "Has Color";
-			this.checkHasColor.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkHasColor.UseVisualStyleBackColor = true;
 			this.checkHasColor.Click += new System.EventHandler(this.checkHasColor_Click);
 			// 
 			// textEmpName
@@ -187,8 +183,6 @@ namespace OpenDental {
 			this.checkIsPrivateScreen.Size = new System.Drawing.Size(155, 20);
 			this.checkIsPrivateScreen.TabIndex = 9;
 			this.checkIsPrivateScreen.Text = "Private Screen";
-			this.checkIsPrivateScreen.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIsPrivateScreen.UseVisualStyleBackColor = true;
 			this.checkIsPrivateScreen.Click += new System.EventHandler(this.checkIsPrivateScreen_Click);
 			// 
 			// label7
@@ -298,14 +292,11 @@ namespace OpenDental {
 			this.checkIsTriageOperator.Size = new System.Drawing.Size(155, 20);
 			this.checkIsTriageOperator.TabIndex = 10;
 			this.checkIsTriageOperator.Text = "Triage Operator";
-			this.checkIsTriageOperator.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIsTriageOperator.UseVisualStyleBackColor = true;
 			// 
 			// textPhoneExt
 			// 
 			this.textPhoneExt.Location = new System.Drawing.Point(144, 336);
 			this.textPhoneExt.MaxVal = 99999;
-			this.textPhoneExt.MinVal = 0;
 			this.textPhoneExt.Name = "textPhoneExt";
 			this.textPhoneExt.Size = new System.Drawing.Size(54, 20);
 			this.textPhoneExt.TabIndex = 5;
@@ -314,7 +305,6 @@ namespace OpenDental {
 			// 
 			this.textEmployeeNum.Location = new System.Drawing.Point(144, 24);
 			this.textEmployeeNum.MaxVal = 99999;
-			this.textEmployeeNum.MinVal = 0;
 			this.textEmployeeNum.Name = "textEmployeeNum";
 			this.textEmployeeNum.Size = new System.Drawing.Size(54, 20);
 			this.textEmployeeNum.TabIndex = 0;
@@ -364,8 +354,8 @@ namespace OpenDental {
 			this.label18.Name = "label18";
 			this.label18.Size = new System.Drawing.Size(359, 30);
 			this.label18.TabIndex = 50;
-			this.label18.Text = "Set site to the physical location of the phone associated to the extension above." +
-    "  Used in MapHQ and reserving conference rooms.";
+			this.label18.Text = "Set site to the physical location of the phone associated with the extension abov" +
+    "e.  Used in MapHQ and reserving conference rooms.";
 			// 
 			// label19
 			// 
@@ -392,7 +382,6 @@ namespace OpenDental {
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(427, 143);
 			this.groupBox1.TabIndex = 52;
-			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "From Employee table, read only";
 			// 
 			// textReportsTo
@@ -417,25 +406,21 @@ namespace OpenDental {
 			// 
 			this.checkIsWorkingHome.AutoCheck = false;
 			this.checkIsWorkingHome.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIsWorkingHome.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkIsWorkingHome.Location = new System.Drawing.Point(34, 123);
+			this.checkIsWorkingHome.Location = new System.Drawing.Point(3, 123);
 			this.checkIsWorkingHome.Name = "checkIsWorkingHome";
-			this.checkIsWorkingHome.Size = new System.Drawing.Size(117, 18);
+			this.checkIsWorkingHome.Size = new System.Drawing.Size(148, 18);
 			this.checkIsWorkingHome.TabIndex = 53;
 			this.checkIsWorkingHome.Text = "Working From Home";
-			this.checkIsWorkingHome.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkIsFurloughed
 			// 
 			this.checkIsFurloughed.AutoCheck = false;
 			this.checkIsFurloughed.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIsFurloughed.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.checkIsFurloughed.Location = new System.Drawing.Point(34, 104);
 			this.checkIsFurloughed.Name = "checkIsFurloughed";
 			this.checkIsFurloughed.Size = new System.Drawing.Size(117, 18);
 			this.checkIsFurloughed.TabIndex = 52;
 			this.checkIsFurloughed.Text = "Furloughed";
-			this.checkIsFurloughed.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textEmailPersonal
 			// 
@@ -547,14 +532,14 @@ namespace OpenDental {
 		private Label label2;
 		private OpenDental.UI.Button butDelete;
 		private OpenDental.UI.ListBoxOD listRingGroup;
-		private CheckBox checkIsGraphed;
+		private OpenDental.UI.CheckBox checkIsGraphed;
 		private Label label5;
-		private CheckBox checkHasColor;
+		private OpenDental.UI.CheckBox checkHasColor;
 		private TextBox textEmpName;
 		private Label label6;
 		private OpenDental.ODtextBox textNotes;
 		private Label label3;
-		private CheckBox checkIsPrivateScreen;
+		private OpenDental.UI.CheckBox checkIsPrivateScreen;
 		private Label label7;
 		private Label label8;
 		private Label label9;
@@ -568,13 +553,13 @@ namespace OpenDental {
 		private ValidNum textPhoneExt;
 		private OpenDental.UI.ListBoxOD listStatusOverride;
 		private Label label17;
-		private CheckBox checkIsTriageOperator;
+		private OpenDental.UI.CheckBox checkIsTriageOperator;
 		private OpenDental.UI.ComboBox comboSite;
 		private Label label18;
 		private Label label19;
 		private OpenDental.UI.GroupBox groupBox1;
-		private CheckBox checkIsWorkingHome;
-		private CheckBox checkIsFurloughed;
+		private OpenDental.UI.CheckBox checkIsWorkingHome;
+		private OpenDental.UI.CheckBox checkIsFurloughed;
 		private TextBox textEmailPersonal;
 		private Label label4;
 		private TextBox textEmailWork;

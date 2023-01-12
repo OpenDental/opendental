@@ -1525,7 +1525,7 @@ namespace OpenDental {
 				}
 				SaveFileDialog saveFileDialog=new SaveFileDialog();
 				saveFileDialog.Title="Export Mount";
-				saveFileDialog.FileName=PatientCur.GetNameLF()+".jpg";//_documentShowing.FileName;
+				saveFileDialog.FileName= Documents.GenerateUniqueFileName(".jpg",PatientCur);//_documentShowing.FileName;
 				saveFileDialog.DefaultExt=".jpg";
 				if(saveFileDialog.ShowDialog()!=DialogResult.OK) {
 					return;

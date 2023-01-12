@@ -129,15 +129,7 @@ namespace OpenDentBusiness {
 			doc.DocNum=Crud.DocumentCrud.Insert(doc);
 			//If the current filename is just an extension, then assign it a unique name.
 			if(doc.FileName==Path.GetExtension(doc.FileName)) {
-				string extension=doc.FileName;
-				doc.FileName="";
-				string s=pat.LName+pat.FName;
-				for(int i=0;i<s.Length;i++) {
-					if(Char.IsLetter(s,i)) {
-						doc.FileName+=s.Substring(i,1);
-					}
-				}
-				doc.FileName+=doc.DocNum.ToString()+extension;//ensures unique name
+				doc.FileName=GenerateUniqueFileName(doc.FileName,pat,doc.DocNum.ToString());
 				//there is still a slight chance that someone manually added a file with this name, so quick fix:
 				string command="SELECT FileName FROM document WHERE PatNum="+POut.Long(doc.PatNum);
 				DataTable table=Db.GetTable(command);
@@ -155,6 +147,21 @@ namespace OpenDentBusiness {
 				Update(doc);
 			}
 			return doc.DocNum;
+		}
+
+		//Returns a unique file name with the given extension for the specified patient. If uniqueNum is not set, will generate a random number to ensure the filename is unique.
+		public static string GenerateUniqueFileName(string extension, Patient patient, string uniqueIdentifier=null) {
+			//No need to check MiddleTierRole; no call to db.
+			if(string.IsNullOrWhiteSpace(extension) || patient==null) {
+				return "";
+			}
+			if(uniqueIdentifier.IsNullOrEmpty()) {//The current date/time stamp, to the 100,000th of a second
+				uniqueIdentifier=DateTime.Now.ToString("yyMMddhhmmssfffff");
+			}
+			string patientNameLastFirst=patient.LName+patient.FName;
+			string fileName=new string(patientNameLastFirst.Where(x => Char.IsLetter(x)).Select(x => x).ToArray());
+			fileName+=uniqueIdentifier+extension;
+			return fileName;
 		}
 
 		///<summary>This is a generic insert statement used to insert documents with custom file names.</summary>

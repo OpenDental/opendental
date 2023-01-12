@@ -760,7 +760,13 @@ namespace OpenDentBusiness {
 				XWebResponse xWebResponseUpdate=xWebResponseOld;
 				try {
 					//Get the OTK status from the gateway.
-					XWebResponse xWebResponseNew=GetOtkStatus(xWebResponseOld.PatNum,xWebResponseOld.OrderId,false,existingPayment.ClinicNum);
+					XWebResponse xWebResponseNew;
+					if(existingPayment==null) { //No existing payment usually when adding a new card
+						xWebResponseNew=GetOtkStatus(xWebResponseOld.PatNum,xWebResponseOld.OrderId,false);
+					}
+					else {
+						xWebResponseNew=GetOtkStatus(xWebResponseOld.PatNum,xWebResponseOld.OrderId,false,existingPayment.ClinicNum);
+					}
 					if(xWebResponseNew.XWebResponseCode==XWebResponseCodes.Pending || xWebResponseNew.XWebResponseCode==XWebResponseCodes.Undefined) { //No new status to report. Try again next time.
 						if(DateTime.Now>xWebResponseOld.HpfExpiration.AddMinutes(5)) {
 							//EdgeExpress will return 814 "Invalid Reference Error" indefinitely if the patient doesn't finish the transaction.

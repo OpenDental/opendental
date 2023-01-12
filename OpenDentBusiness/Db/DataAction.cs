@@ -224,6 +224,12 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		///<summary>HQ only. Perform the given action in the context of the designated 'triage tasks taken' database.
+		///The connection information for this context will come from the implimentation of ConnectionStoreBase.GetTriageHQ() so make sure to instantiate that correctly prior to invoking this.</summary>
+		public static void RunTriageHQ(Action a) {
+			Run(a,ConnectionNames.TriageHQ);
+		}
+
 		///<summary>HQ only.  Perform the given action in the context of the webchat db.
 		///Set useConnectionStore false to use the ConnectionSettingsHQ preference or the sitelink override for ConnectionNames.WebChat.</summary>
 		public static void RunWebChat(Action a,bool useConnectionStore=false) {

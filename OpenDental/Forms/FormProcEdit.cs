@@ -240,6 +240,7 @@ namespace OpenDental {
 				textClaimNote.Visible=false;
 				butBF.Text=Lan.g(this,"B/V");//vestibular instead of facial
 				butV.Text=Lan.g(this,"5");
+				listProcedures=Procedures.GetCanadianLabFees(_procedure.ProcNum);
 				if(_procedureCode.IsCanadianLab) { //Prevent lab fees from having lab fees attached.
 					labelCanadaLabFee1.Visible=false;
 					textCanadaLabFee1.Visible=false;
@@ -247,7 +248,6 @@ namespace OpenDental {
 					textCanadaLabFee2.Visible=false;
 				}
 				else {
-					listProcedures=Procedures.GetCanadianLabFees(_procedure.ProcNum);
 					if(listProcedures.Count>0) {
 						textCanadaLabFee1.Text=listProcedures[0].ProcFee.ToString("n");
 						if(listProcedures[0].ProcStatus==ProcStat.C) {

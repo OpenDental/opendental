@@ -1,4 +1,4 @@
-namespace OpenDental.HqPhones{
+namespace OpenDental.InternalTools.Phones{
 	partial class FormMap {
 		/// <summary>
 		/// Required designer variable.
@@ -23,20 +23,21 @@ namespace OpenDental.HqPhones{
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMap));
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.labelTriageCoordinator = new System.Windows.Forms.Label();
 			this.labelCurrentTime = new System.Windows.Forms.Label();
 			this.comboRoom = new OpenDental.UI.ComboBox();
 			this.groupPhoneMetrics = new OpenDental.UI.GroupBox();
-			this.mapNumberTriageTime = new OpenDental.HqPhones.MapNumber();
-			this.mapNumberTriageRedTime = new OpenDental.HqPhones.MapNumber();
-			this.mapNumberChatTime = new OpenDental.HqPhones.MapNumber();
-			this.mapNumberTriageCalls = new OpenDental.HqPhones.MapNumber();
-			this.mapNumberVoicemailTime = new OpenDental.HqPhones.MapNumber();
-			this.mapNumberChatCount = new OpenDental.HqPhones.MapNumber();
-			this.mapNumberVoicemailCalls = new OpenDental.HqPhones.MapNumber();
-			this.mapNumberTriageRedCalls = new OpenDental.HqPhones.MapNumber();
+			this.mapNumberTriageTime = new OpenDental.InternalTools.Phones.MapNumber();
+			this.mapNumberTriageRedTime = new OpenDental.InternalTools.Phones.MapNumber();
+			this.mapNumberChatTime = new OpenDental.InternalTools.Phones.MapNumber();
+			this.mapNumberTriageCalls = new OpenDental.InternalTools.Phones.MapNumber();
+			this.mapNumberVoicemailTime = new OpenDental.InternalTools.Phones.MapNumber();
+			this.mapNumberChatCount = new OpenDental.InternalTools.Phones.MapNumber();
+			this.mapNumberVoicemailCalls = new OpenDental.InternalTools.Phones.MapNumber();
+			this.mapNumberTriageRedCalls = new OpenDental.InternalTools.Phones.MapNumber();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
@@ -48,22 +49,23 @@ namespace OpenDental.HqPhones{
 			this.tabPage2 = new OpenDental.UI.TabPage();
 			this.tabPage3 = new OpenDental.UI.TabPage();
 			this.tabPage4 = new OpenDental.UI.TabPage();
-			this.escalationView = new OpenDental.HqPhones.EscalationView();
-			this.escalationViewOfficesDown = new OpenDental.HqPhones.EscalationView();
+			this.escalationView = new OpenDental.InternalTools.Phones.EscalationView();
+			this.escalationViewOfficesDown = new OpenDental.InternalTools.Phones.EscalationView();
 			this.labelTirageOpLocal = new System.Windows.Forms.Label();
 			this.label14 = new System.Windows.Forms.Label();
 			this.labelTirageOpTotal = new System.Windows.Forms.Label();
-			this.mapNumberTriageOpsLocal = new OpenDental.HqPhones.MapNumber();
-			this.mapNumberTriageOpsTotal = new OpenDental.HqPhones.MapNumber();
+			this.mapNumberTriageOpsLocal = new OpenDental.InternalTools.Phones.MapNumber();
+			this.mapNumberTriageOpsTotal = new OpenDental.InternalTools.Phones.MapNumber();
 			this.userControlMapDetails1 = new OpenDental.InternalTools.Phones.UserControlMapDetails();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.eServiceMetricsControl = new OpenDental.EServiceMetricsControl();
-			this.mapNumberCustDownCount = new OpenDental.HqPhones.MapNumber();
-			this.mapNumberCustDownTime = new OpenDental.HqPhones.MapNumber();
+			this.mapNumberCustDownCount = new OpenDental.InternalTools.Phones.MapNumber();
+			this.mapNumberCustDownTime = new OpenDental.InternalTools.Phones.MapNumber();
 			this.mapPanel = new OpenDental.InternalTools.Phones.MapPanel();
 			this.panelContainer = new OpenDental.UI.PanelOD();
+			this.timerWebCam = new System.Windows.Forms.Timer(this.components);
 			this.groupPhoneMetrics.SuspendLayout();
 			this.tabMain.SuspendLayout();
 			this.panelContainer.SuspendLayout();
@@ -461,6 +463,11 @@ namespace OpenDental.HqPhones{
 			this.panelContainer.Size = new System.Drawing.Size(1515, 961);
 			this.panelContainer.TabIndex = 107;
 			// 
+			// timerWebCam
+			// 
+			this.timerWebCam.Interval = 250;
+			this.timerWebCam.Tick += new System.EventHandler(this.timerWebCam_Tick);
+			// 
 			// FormMap
 			// 
 			this.ClientSize = new System.Drawing.Size(1884, 1042);
@@ -532,14 +539,15 @@ namespace OpenDental.HqPhones{
 		private System.Windows.Forms.Label labelTirageOpTotal;
 		private MapNumber mapNumberTriageOpsLocal;
 		private MapNumber mapNumberTriageOpsTotal;
-		private InternalTools.Phones.UserControlMapDetails userControlMapDetails1;
+		private OpenDental.InternalTools.Phones.UserControlMapDetails userControlMapDetails1;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label7;
 		private EServiceMetricsControl eServiceMetricsControl;
 		private MapNumber mapNumberCustDownCount;
 		private MapNumber mapNumberCustDownTime;
-		private InternalTools.Phones.MapPanel mapPanel;
+		private OpenDental.InternalTools.Phones.MapPanel mapPanel;
 		private UI.PanelOD panelContainer;
+		private System.Windows.Forms.Timer timerWebCam;
 	}
 }

@@ -1173,7 +1173,7 @@ namespace OpenDentBusiness{
 						continue;
 					}
 					try {
-						EmailAttach emailAttach=EmailAttaches.CreateAttach(listFileAttachments[i].Name,listFileAttachments[i].ContentBytes);
+						EmailAttach emailAttach=EmailAttaches.CreateAttach(listFileAttachments[i].Name,"",listFileAttachments[i].ContentBytes,false);
 						emailMessageTemp.Attachments.Add(emailAttach);
 					}
 					catch(Exception) {

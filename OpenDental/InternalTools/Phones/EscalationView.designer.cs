@@ -1,4 +1,4 @@
-﻿namespace OpenDental.HqPhones {
+﻿namespace OpenDental.InternalTools.Phones {
 	partial class EscalationView {
 		/// <summary>
 		/// Required designer variable.

@@ -71,22 +71,6 @@ namespace OpenDentBusiness {
 				});
 				return cn;
 			};
-			ConnectionStoreBase.GetCustomersHQFromPrefC=() => {
-				//If PrefC cache is not already filled and/or DataConnection.SetDb() has not already been called, this will fail.
-				CentralConnectionBase cn=null;
-				ODException.SwallowAnyException(() => {
-					if(!PrefC.IsODHQ) {
-						return;
-					}
-					cn=new CentralConnectionBase {
-						ServerName=ODBuild.IsDebug() ? "localhost" : PrefC.GetString(PrefName.CustomersHQServer),
-						DatabaseName=PrefC.GetString(PrefName.CustomersHQDatabase),
-						MySqlUser=PrefC.GetString(PrefName.CustomersHQMySqlUser),
-					};
-					CDT.Class1.Decrypt(PrefC.GetString(PrefName.CustomersHQMySqlPassHash),out cn.MySqlPassword);
-				});
-				return cn;
-			};
 		}
 
 		public new static ConnectionNames CurrentConnection {

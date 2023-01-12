@@ -11,6 +11,7 @@ using Intuit.Ipp.Data;
 namespace OpenDental {
 	public partial class FormMapAreaContainerEdit:FormODBase {
 		public MapAreaContainer MapAreaContainerCur;
+		private bool _isChanged;
 
 		public FormMapAreaContainerEdit() {
 			InitializeComponent();
@@ -20,18 +21,37 @@ namespace OpenDental {
 
 		private void FormMapAreaContainerEdit_Load(object sender,EventArgs e) {
 			mapPanel.IsEditMode=true;
+			mapPanel.IsChanged+=MapPanel_IsChanged;
 			mapPanel.MapAreaContainerNum=MapAreaContainerCur.MapAreaContainerNum;
 			mapPanel.RefreshCubicles();
 			LayoutManager.MoveSize(mapPanel,new Size(MapAreaContainerCur.FloorWidthFeet*17,MapAreaContainerCur.FloorHeightFeet*17));
 			textDescription.Text=MapAreaContainerCur.Description;
+			textWidth.Text=MapAreaContainerCur.FloorWidthFeet.ToString();
+			textHeight.Text=MapAreaContainerCur.FloorHeightFeet.ToString();
+			textSite.Text=Sites.GetDescription(MapAreaContainerCur.SiteNum);
+		}
+
+		private void MapPanel_IsChanged(object sender,EventArgs e) {
+			_isChanged=true;
 		}
 
 		private void butEdit_Click(object sender,EventArgs e) {
 			using FormMapAreaContainerDetail formMapAreaContainerDetail=new FormMapAreaContainerDetail();
+			formMapAreaContainerDetail.MapAreaContainerCur=MapAreaContainerCur;
 			formMapAreaContainerDetail.ShowDialog();
+			if(formMapAreaContainerDetail.DialogResult==DialogResult.OK){
+				_isChanged=true;
+			}
 			mapPanel.RefreshCubicles();
 			LayoutManager.MoveSize(mapPanel,new Size(MapAreaContainerCur.FloorWidthFeet*17,MapAreaContainerCur.FloorHeightFeet*17));
 			textDescription.Text=MapAreaContainerCur.Description;
+			textWidth.Text=MapAreaContainerCur.FloorWidthFeet.ToString();
+			textHeight.Text=MapAreaContainerCur.FloorHeightFeet.ToString();
+			textSite.Text=Sites.GetDescription(MapAreaContainerCur.SiteNum);
+		}
+
+		private void checkSnap_Click(object sender,EventArgs e) {
+			mapPanel.SnapToFeet=checkSnap.Checked;
 		}
 
 		private void butAddSmall_Click(object sender,EventArgs e){
@@ -47,6 +67,7 @@ namespace OpenDental {
 			if(formMapAreaEdit.ShowDialog(this)!=DialogResult.OK) {
 				return;
 			}
+			_isChanged=true;
 			mapPanel.RefreshCubicles();
 		}
 
@@ -63,6 +84,7 @@ namespace OpenDental {
 			if(formMapAreaEdit.ShowDialog(this)!=DialogResult.OK) {
 				return;
 			}
+			_isChanged=true;
 			mapPanel.RefreshCubicles();
 		}
 
@@ -79,6 +101,7 @@ namespace OpenDental {
 			if(formMapAreaEdit.ShowDialog(this)!=DialogResult.OK) {
 				return;
 			}
+			_isChanged=true;
 			mapPanel.RefreshCubicles();
 		}
 
@@ -94,6 +117,7 @@ namespace OpenDental {
 			}
 			MapAreas.DeleteAll(MapAreaContainerCur.MapAreaContainerNum);
 			MapAreaContainers.Delete(MapAreaContainerCur.MapAreaContainerNum);
+			_isChanged=true;
 			Close();
 		}
 
@@ -101,6 +125,10 @@ namespace OpenDental {
 			Close();
 		}
 
-		
+		private void FormMapAreaContainerEdit_FormClosing(object sender,FormClosingEventArgs e) {
+			if(_isChanged){
+				DataValid.SetInvalid(InvalidType.PhoneMap);
+			}
+		}
 	}
 }

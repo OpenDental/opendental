@@ -593,6 +593,13 @@ namespace OpenDental {
 			};
 			if(_patCur==null || _patCur.PatNum!=e.PatNumNew){//patient changed
 				RefreshModuleDataPatient(e.PatNumNew);
+				if(_patCur.PatStatus==PatientStatus.Deleted) {
+					Patient patOld=Patients.GetPat(e.PatNumNew);
+					_patCur.PatStatus=PatientStatus.Archived;
+					if(Patients.Update(_patCur,patOld)) {
+						MsgBox.Show("Patient has been set to archived because they were deleted by another user while making this appointment.");
+					}
+				}
 				FormOpenDental.S_Contr_PatientSelected(_patCur,true,false);
 				Plugins.HookAddCode(this,"ContrAppt.contrApptPanel_SelectedApptChanged_patientchanged_end");
 				return;

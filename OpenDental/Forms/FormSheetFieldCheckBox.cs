@@ -260,6 +260,10 @@ namespace OpenDental {
 				labelRequired.Visible=true;
 				checkRequired.Visible=true;
 			}
+			else if(SheetDefCur.SheetType==SheetTypeEnum.MedicalHistory) {
+				//Do not show any of the "non-misc" input fields if editing a MedicalHistory sheet
+				return;
+			}
 			else {
 				textReportableName.Text="";
 				_listRadioButtonVals=SheetFieldsAvailable.GetRadio(fieldNameSelected);

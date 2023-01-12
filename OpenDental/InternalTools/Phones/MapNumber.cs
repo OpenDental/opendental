@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenDentBusiness;
 
-namespace OpenDental.HqPhones {
+namespace OpenDental.InternalTools.Phones {
 	public partial class MapNumber:Control {
 		public Color ColorOutline=Color.Black;
 		public LayoutManagerForms LayoutManager=new LayoutManagerForms();
@@ -66,8 +66,8 @@ namespace OpenDental.HqPhones {
 
 		public void SetTriageColors(long siteNum=0) {
 			ForeColor=SiteLinks.GetSiteForeColorBySiteNum(siteNum,Color.Black);
-			ColorOutline=SiteLinks.GetSiteOuterColorBySiteNum(siteNum,Phones.PhoneColorScheme.COLOR_DUAL_OuterTriage);
-			BackColor=SiteLinks.GetSiteInnerColorBySiteNum(siteNum,Phones.PhoneColorScheme.COLOR_DUAL_InnerTriageHere);
+			ColorOutline=SiteLinks.GetSiteOuterColorBySiteNum(siteNum,OpenDentBusiness.Phones.PhoneColorScheme.COLOR_DUAL_OuterTriage);
+			BackColor=SiteLinks.GetSiteInnerColorBySiteNum(siteNum,OpenDentBusiness.Phones.PhoneColorScheme.COLOR_DUAL_InnerTriageHere);
 		}
 
 		public void SetWarnColors() {

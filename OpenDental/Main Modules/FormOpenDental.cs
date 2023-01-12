@@ -81,7 +81,7 @@ namespace OpenDental{
 		private static FormOpenDental _formOpenDentalSingleton;
 		///<summary>HQ only. Multiple phone maps can be opened at the same time. This keeps a list of all that are open so we can modify their contents.</summary>
 		private static List<FormMapHQ> _listFormMapHQs=new List<FormMapHQ>();
-		private static List<HqPhones.FormMap> _listFormMaps=new List<HqPhones.FormMap>();
+		private static List<InternalTools.Phones.FormMap> _listFormMaps=new List<InternalTools.Phones.FormMap>();
 		///<summary>Todo: look into this dict of dicts.</summary>
 		private static Dictionary<long,Dictionary<long,DateTime>> _dictionaryBlockedAutomations;
 		///<summary>Task Popups use this upper limit of open FormTaskEdit instances to determine if a task should popup.  More than 115 open FormTaskEdit has been observed to crash the program.  See task #1481164.</summary>
@@ -773,6 +773,19 @@ namespace OpenDental{
 						catch { }//for example, if working from home.
 					}
 				}
+				//Instantiate the static Func that dictates the database connection information when techs take/own tasks from the triage task list.
+				ConnectionStoreBase.GetTriageHQ=() => {
+					CentralConnectionBase cn=null;
+					ODException.SwallowAnyException(() => {
+						cn=new CentralConnectionBase {
+							ServerName=ODBuild.IsDebug() ? "localhost" : PrefC.GetString(PrefName.CustomersHQServer),
+							DatabaseName=PrefC.GetString(PrefName.CustomersHQDatabase),
+							MySqlUser=PrefC.GetString(PrefName.CustomersHQMySqlUser),
+						};
+						CDT.Class1.Decrypt(PrefC.GetString(PrefName.CustomersHQMySqlPassHash),out cn.MySqlPassword);
+					});
+					return cn;
+				};
 				FillComboTriageCoordinator();
 			}
 			Logger.LogToPath("BackupReminder",LogPath.Startup,LogPhase.Unspecified);
@@ -1145,8 +1158,8 @@ namespace OpenDental{
 
 		///<summary>Opens a call center map which matches the passed in description.</summary>
 		private void OpenMap(string mapDescription=null) {
-			HqPhones.FormMap formMap;
-			formMap=new HqPhones.FormMap();
+			InternalTools.Phones.FormMap formMap;
+			formMap=new InternalTools.Phones.FormMap();
 			formMap.ExtraMapClicked+=FormMap_ExtraMapClicked;
 			formMap.GoToPatient+=FormMap_GoToPatient;
 			if(!mapDescription.IsNullOrEmpty()) {
@@ -4433,9 +4446,9 @@ namespace OpenDental{
 		}
 
 		private void butNewMap_Click(object sender,EventArgs e) {
-			HqPhones.FormMap formMap;
+			InternalTools.Phones.FormMap formMap;
 			if(_listFormMaps.Count==0) {
-				formMap=new HqPhones.FormMap();
+				formMap=new InternalTools.Phones.FormMap();
 				formMap.ExtraMapClicked+=FormMap_ExtraMapClicked;
 				formMap.GoToPatient+=FormMap_GoToPatient;
 			}
@@ -7092,11 +7105,11 @@ namespace OpenDental{
 			_listFormMapHQs.Remove(formMapHQ);
 		}
 
-		public static void AddMapToList2(HqPhones.FormMap formMap) {
+		public static void AddMapToList2(InternalTools.Phones.FormMap formMap) {
 			_listFormMaps.Add(formMap);
 		}
 
-		public static void RemoveMapFromList2(HqPhones.FormMap formMap) {
+		public static void RemoveMapFromList2(InternalTools.Phones.FormMap formMap) {
 			_listFormMaps.Remove(formMap);
 		}
 

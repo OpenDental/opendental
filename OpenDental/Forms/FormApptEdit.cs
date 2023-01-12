@@ -2666,6 +2666,16 @@ namespace OpenDental{
 			if(!UpdateListAndDB(isClosing: true, doCreateSecLog: true, doInsertHL7: true)) {
 				return;
 			}
+			if(IsNew) {
+				//Refresh pat to check if PatStatus has changed.
+				Patient patOld=Patients.GetPat(_patient.PatNum);
+				if(patOld.PatStatus==PatientStatus.Deleted) {
+					_patient.PatStatus=PatientStatus.Archived;
+					if(Patients.Update(_patient,patOld)) {
+						MsgBox.Show("Patient has been set to archived because they were deleted by another user while making this appointment.");
+					}
+				}
+			}
 			AppointmentL.ShowKioskManagerIfNeeded(_appointmentOld,_appointment.Confirmed);
 			Plugins.HookAddCode(this,"FormApptEdit.butOK_Click_end",_appointment,_appointmentOld,_patient);
 			DialogResult=DialogResult.OK;

@@ -738,7 +738,7 @@ namespace OpenDentBusiness{
 			//This is considered valid and we only want to catch duplicates for different CC numbers
 			//CCNumberMasked only stores 4 digits, so adding the extra data to the select "grouping" allows a more reliable count.
 			return listCards
-				.Select(x => x.CCNumberMasked+x.CCExpiration.ToString("MMYYYYY")+x.CCSource.ToString())
+				.Select(x => x.CCNumberMasked.Substring(x.CCNumberMasked.Length-4)+x.CCExpiration.ToString("MMYYYYY")+x.CCSource.ToString())
 				.Distinct()
 				.Count();
 		}

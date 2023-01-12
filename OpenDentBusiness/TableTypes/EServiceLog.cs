@@ -113,75 +113,75 @@ namespace OpenDentBusiness {
 	///<summary>List of some possible eServices.</summary>
 	public enum eServiceAction {
 		///<summary>0 - Should not be in the database.</summary>
-		[Description("Should Not Be Used")]
+		[Description("Should not be used")]
 		[EServiceLogType(eServiceType.Unknown)]
 		Undefined=0,
 		///<summary>1 - Patient arrives at home view.</summary>
-		[Description("Web Sched - Patient Arrived At Home View")]
+		[Description("Web Sched - Patient arrived at home view")]
 		[EServiceLogType(eServiceType.WSGeneral,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSRecall,eServiceType.WSAsap)]
 		WSHomeView,
 		///<summary>2 - Patient chooses between new/existing/recall appointment on home view.</summary>
-		[Description("Web Sched - Patient Selected Service")]
+		[Description("Web Sched - Patient selected service")]
 		[EServiceLogType(eServiceType.WSGeneral,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSRecall,eServiceType.WSAsap)]
 		WSServiceSelect,
 		///<summary>3 - Patient identifies themselves.</summary>
-		[Description("Web Sched - Patient Identified Themselves")]
+		[Description("Web Sched - Patient identified themselves")]
 		[EServiceLogType(eServiceType.WSGeneral,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSRecall,eServiceType.WSAsap)]
 		WSIdentify,
 		///<summary>4 - Patient arrives at the scheduler page.</summary>
-		[Description("Web Sched - Patient Arrived At Scheduler")]
+		[Description("Web Sched - Patient arrived at scheduler")]
 		[EServiceLogType(eServiceType.WSGeneral,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSRecall,eServiceType.WSAsap)]
 		WSScheduler,
 		///<summary>5 - Patient switches months in the timeslot picker.</summary>
-		[Description("Web Sched - Patient Switches Months")]
+		[Description("Web Sched - Patient switches months")]
 		[EServiceLogType(eServiceType.WSGeneral,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSRecall,eServiceType.WSAsap)]
 		WSMonthSwitch,
 		///<summary>6 - Patient selects an open timeslot.</summary>
-		[Description("Web Sched - Patient Selected Timeslot")]
+		[Description("Web Sched - Patient selected timeslot")]
 		[EServiceLogType(eServiceType.WSGeneral,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSRecall,eServiceType.WSAsap)]
 		WSTimeSlotChoose,
 		///<summary>7 - Patient recieves the confirmation popup.</summary>
-		[Description("Web Sched - Patient Received Confirmation Popup")]
+		[Description("Web Sched - Patient received confirmation popup")]
 		[EServiceLogType(eServiceType.WSGeneral,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSRecall,eServiceType.WSAsap)]
 		WSConfirmationPopup,
 		///<summary>8 - Patient accepted the datetime.</summary>
-		[Description("Web Sched - Patient Accepted Date/Time")]
+		[Description("Web Sched - Patient accepted date/time")]
 		[EServiceLogType(eServiceType.WSGeneral,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSRecall,eServiceType.WSAsap)]
 		WSDateTimeYes,
 		///<summary>9 - Patient declines the datetime.</summary>
-		[Description("Web Sched - Patient Declined Date/Time")]
+		[Description("Web Sched - Patient declined date/time")]
 		[EServiceLogType(eServiceType.WSGeneral,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSRecall,eServiceType.WSAsap)]
 		WSDateTimeNo,
 		///<summary>10 - Patient was sent a 2FA code.</summary>
-		[Description("Web Sched - Patient Was Sent 2FA Code")]
+		[Description("Web Sched - Patient was sent 2FA code")]
 		[EServiceLogType(eServiceType.WSGeneral,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSRecall,eServiceType.WSAsap)]
 		WSTwoFactorSent,
 		///<summary>11 - Patient successfully passed 2FA.</summary>
-		[Description("Web Sched - Patient Passed 2FA")]
+		[Description("Web Sched - Patient passed 2FA")]
 		[EServiceLogType(eServiceType.WSGeneral,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSRecall,eServiceType.WSAsap)]
 		WSTwoFactorPassed,
 		///<summary>12 - Patient schedules appointment.</summary>
-		[Description("Web Sched - Patient Sent Schedule Request")]
+		[Description("Web Sched - Patient sent schedule request")]
 		[EServiceLogType(eServiceType.WSGeneral,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSRecall,eServiceType.WSAsap)]
 		WSAppointmentScheduleFromClient,
 		///<summary>13 - Appointment scheduled.</summary>
-		[Description("Web Sched - Appointment Scheduled")]
+		[Description("Web Sched - Appointment scheduled")]
 		[EServiceLogType(eServiceType.WSGeneral,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSRecall,eServiceType.WSAsap)]
 		WSAppointmentScheduledFromServer,
 		///<summary>14 - Appointment confirmation.</summary>
-		[Description("Appt Confirmation - Appointment Confirmed")]
+		[Description("Appt Confirmation - Appointment confirmed")]
 		[EServiceLogType(eServiceType.ApptConfirmations)]
 		CONFConfirmedAppt,
 		///<summary>15 - Appointment has been moved.</summary>
-		[Description("Web Sched - Appointment Moved")]
+		[Description("Web Sched - Appointment moved")]
 		[EServiceLogType(eServiceType.WSGeneral,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSRecall,eServiceType.WSAsap)]
 		WSMovedAppt,
 		///<summary>16 - Patient logged into patient portal.</summary>
-		[Description("Patient Portal - Patient Logged In")]
+		[Description("Patient Portal - Patient logged in")]
 		[EServiceLogType(eServiceType.PatientPortal)]
 		PPLoggedIn,
 		///<summary>17 - Deprecated. Do not use.</summary>
-		[Description("Patient Portal - Patient Made Payment")]
+		[Description("Patient Portal - Patient made payment")]
 		[EServiceLogType(eServiceType.PatientPortal)]
 		PPMadePayment,
 		///<summary>18 - Form created.</summary>
@@ -197,71 +197,71 @@ namespace OpenDentBusiness {
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECLoggedIn,
 		///<summary>21 - Web Forms Form Completed.</summary>
-		[Description("Web Forms - Completed Web Form")]
+		[Description("Web Forms - Completed web form")]
 		[EServiceLogType(eServiceType.WebForms)]
 		WFCompletedForm,
 		///<summary>22 - Web Sched Recall Not Found.</summary>
-		[Description("Web Sched - Recall Not Found")]
+		[Description("Web Sched - Recall not found")]
 		[EServiceLogType(eServiceType.WSGeneral,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSRecall,eServiceType.WSAsap)]
 		WSRecallNotFound,
 		///<summary>23 - Web Sched Already Scheduled.</summary>
-		[Description("Web Sched - Recall Already Scheduled")]
+		[Description("Web Sched - Recall already scheduled")]
 		[EServiceLogType(eServiceType.WSGeneral,eServiceType.WSNewPat,eServiceType.WSExistingPat,eServiceType.WSRecall,eServiceType.WSAsap)]
 		WSRecallAlreadyScheduled,
 		///<summary>24 - Arrivals, patient arrived.</summary>
-		[Description("Arrival - Patient Arrived")]
+		[Description("Arrival - Patient arrived")]
 		[EServiceLogType(eServiceType.Arrivals)]
 		ArrivalReceived,
 		///<summary>25 - Integrated Texting, Patient Opted Out.</summary>
-		[Description("Integrated Texting - Patient Opted Out")]
+		[Description("Integrated Texting - Patient opted out")]
 		[EServiceLogType(eServiceType.IntegratedTexting)]
 		IntegratedTextingOptOut,
 		///<summary>26 - Patient Portal, Patient Arrived At Statement Portal.</summary>
-		[Description("Patient Portal - Patient Arrived At Statement Portal")]
+		[Description("Patient Portal - Patient arrived at statement portal")]
 		[EServiceLogType(eServiceType.PatientPortal)]
 		PPStatementPortalArrived,
 		///<summary>27 - Patient Portal, Patient Logged In At Statement Portal.</summary>
-		[Description("Patient Portal - Patient Logged In At Statement Portal")]
+		[Description("Patient Portal - Patient logged in at statement portal")]
 		[EServiceLogType(eServiceType.PatientPortal)]
 		PPStatementPortalLoggedIn,
 		///<summary>28 - Patient Portal, Patient Downloaded Statement.</summary>
-		[Description("Patient Portal - Patient Downloaded Statement")]
+		[Description("Patient Portal - Patient downloaded statement")]
 		[EServiceLogType(eServiceType.PatientPortal)]
 		PPStatementPortalDownloadStatement,
 		///<summary>29 - Patient Portal, Patient Opened Payment Form.</summary>
-		[Description("Patient Portal - Patient Opened Payment Form")]
+		[Description("Patient Portal - Patient opened payment form")]
 		[EServiceLogType(eServiceType.PatientPortal)]
 		PPPaymentFormOpened,
 		///<summary>30 - Patient Portal, Patient Opened Payment Form From Login.</summary>
-		[Description("Patient Portal - Patient Opened Payment Form From Login")]
+		[Description("Patient Portal - Patient opened payment form from login")]
 		[EServiceLogType(eServiceType.PatientPortal)]
 		PPPaymentFormOpenedFromLogin,
 		///<summary>31 - Patient Portal, Patient Opened Hosted Payment Form.</summary>
-		[Description("Patient Portal - Patient Opened Hosted Payment Form")]
+		[Description("Patient Portal - Patient opened hosted payment form")]
 		[EServiceLogType(eServiceType.PatientPortal)]
 		PPOpenedHostedPaymentForm,
 		///<summary>32 - Patient Portal, Patient Paid With Existing Card.</summary>
-		[Description("Patient Portal - Patient Paid With Existing Card")]
+		[Description("Patient Portal - Patient paid with existing card")]
 		[EServiceLogType(eServiceType.PatientPortal)]
 		PPPayWithExistingFromClient,
 		///<summary>33 - Patient Portal, Patient Submitted Payment With XWeb.</summary>
-		[Description("Patient Portal - Patient Submitted Payment With XWeb")]
+		[Description("Patient Portal - Patient submitted payment with XWeb")]
 		[EServiceLogType(eServiceType.PatientPortal)]
 		PPPaymentCreatedByXWeb,
 		///<summary>34 - Patient Portal, Patient Submitted Payment With PayConnect.</summary>
-		[Description("Patient Portal - Patient Submitted Payment With PayConnect")]
+		[Description("Patient Portal - Patient submitted payment with PayConnect")]
 		[EServiceLogType(eServiceType.PatientPortal)]
 		PPPaymentCreatedByPayconnect,
 		///<summary>35 - Patient Portal, Patient Notified of Possible Duplicate Payment.</summary>
-		[Description("Patient Portal - Patient Notified of Possible Duplicate Payment")]
+		[Description("Patient Portal - Patient notified of possible duplicate payment")]
 		[EServiceLogType(eServiceType.PatientPortal)]
 		PPDuplicatePaymentAlert,
 		///<summary>36 - Patient Portal, Patient Allowed Submission of Duplicate Payment.</summary>
-		[Description("Patient Portal - Patient Allowed Submission of Duplicate Payment")]
+		[Description("Patient Portal - Patient allowed submission of duplicate payment")]
 		[EServiceLogType(eServiceType.PatientPortal)]
 		PPDuplicatePaymentAllowed,
 		///<summary>37 - Patient Portal, Patient Rejected Submission of Duplicate Payment.</summary>
-		[Description("Patient Portal - Patient Rejected Submission of Duplicate Payment")]
+		[Description("Patient Portal - Patient rejected submission of duplicate payment")]
 		[EServiceLogType(eServiceType.PatientPortal)]
 		PPDuplicatePaymentDenied,
 		/// <summary>38 - eClipboard - Check In for patients bringing their own device</summary>

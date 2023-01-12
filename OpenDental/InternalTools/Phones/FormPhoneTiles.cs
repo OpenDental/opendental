@@ -22,7 +22,6 @@ namespace OpenDental {
 		private bool _isFlashingPink;
 		private List<ChatUser> _listChatUsers;
 		private List<MapArea> _listMapAreas;
-		private List<MapAreaContainer> _listMapAreaContainers;
 		private List<Phone> _listPhonesAll;
 		///<summary>Filtered and sorted to exactly match grid.</summary>
 		private List<Phone> _listPhonesShowing;
@@ -32,7 +31,6 @@ namespace OpenDental {
 		///<summary>This gives us something to paint on.</summary>
 		private UI.PanelOD panelMain;
 		private Phone _phoneSelected;
-		private Phones.PhoneComparer.SortBy _sortBy=Phones.PhoneComparer.SortBy.name;
 		private int _tileHeight=35;
 		private int _tileWidth=130;
 		/// <summary>This is where the tiles need to start (under the existing controls) in the y axis in order to be drawn correctly.</summary>
@@ -78,10 +76,6 @@ namespace OpenDental {
 			_listPeerInfos=PeerInfos.GetActiveSessions(false,true);
 			_listPeerInfos=new List<PeerInfo>();
 			_listMapAreas=MapAreas.Refresh();
-			//MapAreaContainers "table" is stored as a json string instead of in a db table.
-			//Unfortunately, maparea.MapContainerNum is slightly corrupt, with orphaned FKs.
-			//So I only need this list until I can move the table to the db and fix the corruption.
-			_listMapAreaContainers=MapAreaContainers.Refresh();
 			FilterAndSortPhoneList();
 			panelMain.Invalidate();
 			FillGrid();
@@ -370,18 +364,6 @@ namespace OpenDental {
 		}
 
 		private void radioSort_CheckedChanged(object sender,EventArgs e) {
-			if(sender==null
-				|| !(sender is RadioButton)
-				|| ((RadioButton)sender).Checked==false) {
-				return;
-			}
-			if(radioByExt.Checked) {
-				_sortBy=Phones.PhoneComparer.SortBy.ext;
-			}
-			else {
-				_sortBy=Phones.PhoneComparer.SortBy.name;
-			}
-			//Get the phone tiles anew. This will force a resort according the preference we just set.
 			RefreshList();
 		}
 		
@@ -446,7 +428,7 @@ namespace OpenDental {
 				Color colorFont;
 				bool isTriageOperatorOnTheClock=false;
 				//set the phone color 
-				Phones.GetPhoneColor(_listPhonesShowing[i],listPhoneEmpDefaults.Find(phone => phone.EmployeeNum==_listPhonesShowing[i].EmployeeNum),false,
+				Phones.GetPhoneColor(_listPhonesShowing[i],listPhoneEmpDefaults.Find(phone => phone.EmployeeNum==_listPhonesShowing[i].EmployeeNum),isForDualColorScheme:false,
 					out colorOuter,out colorInner,out colorFont,out isTriageOperatorOnTheClock);
 				//get the color scheme
 				Phones.PhoneColorScheme phoneColorScheme=new Phones.PhoneColorScheme(true);
@@ -848,8 +830,7 @@ namespace OpenDental {
 				//Cubicle------------------------------------------------------------------------------------------------------------
 				MapArea mapArea=_listMapAreas.Find(x => 
 					x.Extension==_listPhonesShowing[i].Extension 
-					&& x.Description!="" 
-					&& _listMapAreaContainers.Exists(y=>y.MapAreaContainerNum==x.MapAreaContainerNum));
+					&& x.Description!="");
 				if(mapArea==null){
 					row.Cells.Add("");
 				}

@@ -19,8 +19,8 @@ namespace DataConnectionBase {
 		public static Func<CentralConnectionBase> GetDentalOfficeReportServerFromPrefC=() => { return null; };
 		///<summary>Called when getting the DentalOfficeReadOnlyServer settings from PrefC.</summary>
 		public static Func<CentralConnectionBase> GetDentalOfficeReadOnlyServerFromPrefC=() => { return null; };
-		///<summary>Called when getting the CustomersHQ settings from PrefC.</summary>
-		public static Func<CentralConnectionBase> GetCustomersHQFromPrefC=() => { return null; };
+		///<summary>Called when getting the TriageHQ settings.</summary>
+		public static Func<CentralConnectionBase> GetTriageHQ=() => { return null; };
 		///<summary>The current database connection.</summary>
 		private static ConnectionNames _currentConnection=ConnectionNames.DentalOffice;
 		///<summary>The current database connection. Specific to this thread.</summary>
@@ -96,13 +96,13 @@ namespace DataConnectionBase {
 				//Not already there so add it once.
 				return new Dictionary<ConnectionNames,CentralConnectionBase>() { { ConnectionNames.DentalOfficeReadOnlyServer,cn??new CentralConnectionBase() } };
 			}));
-			actionTryInit(new Func<Dictionary<ConnectionNames,CentralConnectionBase>>(() => { //CustomersHQ (via prefs).
-				if(HasSingleEntry(ConnectionNames.CustomersHQ)) { //Only try to add this value if it doesn't already exist.
+			actionTryInit(new Func<Dictionary<ConnectionNames,CentralConnectionBase>>(() => { //TriageHQ (if implemented).
+				if(HasSingleEntry(ConnectionNames.TriageHQ)) { //Only try to add this value if it doesn't already exist.
 					return null;
 				}
-				CentralConnectionBase cn=GetCustomersHQFromPrefC();
+				CentralConnectionBase cn=GetTriageHQ();
 				//Not already there so add it once.
-				return new Dictionary<ConnectionNames,CentralConnectionBase>() { { ConnectionNames.CustomersHQ,cn??new CentralConnectionBase() } };
+				return new Dictionary<ConnectionNames,CentralConnectionBase>() { { ConnectionNames.TriageHQ,cn??new CentralConnectionBase() } };
 			}));
 			Dictionary<ConnectionNames,CentralConnectionBase> dictRet=null;
 			lock(_lock) {

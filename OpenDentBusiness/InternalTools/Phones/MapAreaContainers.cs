@@ -7,11 +7,16 @@ using System.Text;
 namespace OpenDentBusiness{
 	///<summary></summary>
 	public class MapAreaContainers{
-		public static List<MapAreaContainer> Refresh() {
+		///<summary>Order is by sitenum, then by description.</summary>
+		public static List<MapAreaContainer> GetAll(long siteNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<MapAreaContainer>>(MethodBase.GetCurrentMethod());
+				return Meth.GetObject<List<MapAreaContainer>>(MethodBase.GetCurrentMethod(),siteNum);
 			}
-			string command="SELECT * FROM mapareacontainer";
+			//Add a custom order to this map list which will prefer maps that are associated with the local computer's site.
+			//_listMapAreaContainers=_listMapAreaContainers.OrderBy(x => x.SiteNum!=_siteThisComputer.SiteNum)
+			//	.ThenBy(x => x.Description).ToList();
+			string command="SELECT * FROM mapareacontainer ORDER BY SiteNum <> "+POut.Long(siteNum)
+				+", Description";
 			return Crud.MapAreaContainerCrud.SelectMany(command);
 		}
 

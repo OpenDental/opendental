@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace OpenDental.HqPhones {
+namespace OpenDental.InternalTools.Phones {
 	public partial class EscalationView:Control {
 		#region Fields - Public
 		public int FadeAlphaIncrement=0;

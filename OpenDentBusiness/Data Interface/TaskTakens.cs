@@ -20,7 +20,7 @@ namespace OpenDentBusiness{
 			}
 			try {
 				if(doRunOnPrimaryCustomers) {
-					DataAction.RunCustomers(() => Crud.TaskTakenCrud.Insert(new TaskTaken { TaskNum=taskNum }));
+					DataAction.RunTriageHQ(() => Crud.TaskTakenCrud.Insert(new TaskTaken { TaskNum=taskNum }));
 				}
 				else {
 					Crud.TaskTakenCrud.Insert(new TaskTaken { TaskNum=taskNum });
@@ -60,7 +60,7 @@ namespace OpenDentBusiness{
 			string command="DELETE FROM tasktaken WHERE TaskNum="+POut.Long(taskNum);			
 			try {
 				if(doRunOnPrimaryCustomers) {
-					DataAction.RunCustomers(() => Db.NonQ(command));
+					DataAction.RunTriageHQ(() => Db.NonQ(command));
 				}
 				else {
 					Db.NonQ(command);

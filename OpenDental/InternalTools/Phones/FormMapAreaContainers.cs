@@ -10,6 +10,9 @@ using OpenDental.UI;
 namespace OpenDental {
 	public partial class FormMapAreaContainers:FormODBase {
 		private List<MapAreaContainer> _listMapAreaContainers;
+		private bool _isChanged;
+		///<summary>The site that is associated with the first three octets of the computer that has launched this map.</summary>
+		private Site _siteThisComputer;
 
 		public FormMapAreaContainers() {
 			InitializeComponent();
@@ -18,11 +21,12 @@ namespace OpenDental {
 		}
 
 		private void FormMapAreaContainers_Load(object sender,EventArgs e) {
+			_siteThisComputer=SiteLinks.GetSiteByGateway();
 			FillGrid();
 		}
 
 		private void FillGrid(){
-			_listMapAreaContainers=MapAreaContainers.Refresh();
+			_listMapAreaContainers=MapAreaContainers.GetAll(_siteThisComputer.SiteNum);
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn col=new GridColumn("Description",120);
@@ -42,7 +46,7 @@ namespace OpenDental {
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			using FormMapAreaContainerEdit formMapAreaContainerEdit=new FormMapAreaContainerEdit();
 			formMapAreaContainerEdit.MapAreaContainerCur=_listMapAreaContainers[e.Row];
-			formMapAreaContainerEdit.ShowDialog();
+			formMapAreaContainerEdit.ShowDialog();//there is no dialog result
 			FillGrid();
 		}
 
@@ -55,12 +59,20 @@ namespace OpenDental {
 			mapAreaContainer.IsNew=true;//so we can delete if they hit cancel
 			using FormMapAreaContainerEdit formMapAreaContainerEdit=new FormMapAreaContainerEdit();
 			formMapAreaContainerEdit.MapAreaContainerCur=mapAreaContainer;
-			formMapAreaContainerEdit.ShowDialog();
+			formMapAreaContainerEdit.ShowDialog();//there is no dialog result
 			FillGrid();
+			_isChanged=true;
 		}
 
 		private void butClose_Click(object sender,EventArgs e) {
 			DialogResult=DialogResult.Cancel;
+		}
+
+		private void FormMapAreaContainers_FormClosing(object sender,FormClosingEventArgs e) {
+			if(_isChanged){
+				DataValid.SetInvalid(InvalidType.PhoneMap);
+				//this just handles adding new containers.  Most of the signals are sent from within other forms.
+			}
 		}
 	}
 }

@@ -108,18 +108,19 @@ namespace OpenDental {
 			long clinicNumDefault=PrefC.GetLong(PrefName.EmailSecureDefaultClinic);
 			for(int i=0;i<listClinics.Count();i++) {
 				GridRow row=new GridRow();
-				bool hasCredentials=Clinics.HasEmailHostingCredentials(listClinics[i].ClinicNum);
-				bool isSecureEmailActivated=Clinics.IsSecureEmailSignedUp(listClinics[i].ClinicNum);
-				bool isSecureEmailEnabled=Clinics.IsSecureEmailEnabled(listClinics[i].ClinicNum);
-				EmailPlatform emailPlatformDefault=PIn.Enum<EmailPlatform>(ClinicPrefs.GetPrefValue(PrefName.EmailDefaultSendPlatform,listClinics[i].ClinicNum),true);
-				row.Cells.Add(Clinics.GetAbbr(listClinics[i].ClinicNum,listClinics));
-				AddSignupCell(row,hasCredentials,isSecureEmailActivated,isSecureEmailEnabled,new EventHandler((o,e) => SignupSecureEmail(listClinics[i].ClinicNum)));
-				row.Cells.Add(new GridCell(clinicNumDefault==listClinics[i].ClinicNum ? "X" : ""));
+				Clinic clinic=listClinics[i];
+				bool hasCredentials=Clinics.HasEmailHostingCredentials(clinic.ClinicNum);
+				bool isSecureEmailActivated=Clinics.IsSecureEmailSignedUp(clinic.ClinicNum);
+				bool isSecureEmailEnabled=Clinics.IsSecureEmailEnabled(clinic.ClinicNum);
+				EmailPlatform emailPlatformDefault=PIn.Enum<EmailPlatform>(ClinicPrefs.GetPrefValue(PrefName.EmailDefaultSendPlatform,clinic.ClinicNum),true);
+				row.Cells.Add(Clinics.GetAbbr(clinic.ClinicNum,listClinics));
+				AddSignupCell(row,hasCredentials,isSecureEmailActivated,isSecureEmailEnabled,new EventHandler((o,e) => SignupSecureEmail(clinic.ClinicNum)));
+				row.Cells.Add(new GridCell(clinicNumDefault==clinic.ClinicNum ? "X" : ""));
 				row.Cells.Add(new GridCell($"{emailPlatformDefault.GetDescription(true)}") {
 					ComboSelectedIndex=_listEmailPlatforms.FindIndex(x => x==emailPlatformDefault),
 				});
 				row.Cells.Add("");
-				row.Tag=listClinics[i];
+				row.Tag=clinic;
 				gridClinics.ListGridRows.Add(row);
 			}
 			gridClinics.EndUpdate();

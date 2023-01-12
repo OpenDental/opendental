@@ -33,18 +33,6 @@
 		public string ConnectionString;
 		///<summary>Helper variable to keep track of the password hash that was passed in as a command line argument. This is necessary for automatically logging eCW users in when they are utilizing the Middle Tier.</summary>
 		public string OdPassHash;
-
-		public CentralConnectionBase() {
-		}
-
-		///<summary>Used in Jordan's Remote Management Tool.</summary>
-		public CentralConnectionBase(string server,string database,string user,string password,ConnectionNames connectionName) : this() {
-			ServerName=server;
-			DatabaseName=database;
-			MySqlUser=user;
-			MySqlPassword=password;
-			Note=connectionName.ToString();
-		}
 	}
 
 	///<summary>List of typically available database names. Used in conjunction with ConnectionStore.GetConnection().</summary>
@@ -87,6 +75,8 @@
 		///<summary>Database containing speed test scores.</summary>
 		SpeedTest,
 		///<summary>The OD proper database connection that is comprised of preferences via the currently connected database.</summary>
-		DentalOfficeReadOnlyServer
+		DentalOfficeReadOnlyServer,
+		///<summary>The centralized connection information at HQ that all workstations will use when taking/owning triage tasks.</summary>
+		TriageHQ,
 	}
 }

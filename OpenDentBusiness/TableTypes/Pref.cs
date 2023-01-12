@@ -700,13 +700,13 @@ namespace OpenDentBusiness {
 		CustListenerSocketTimeoutMS,
 		///<summary>Used by OD HQ.  Not added to db convert script.  Specifies the entire wait time alloted for a transmission initiated by the patient portal.  Negotiator will only wait this long for a valid response back from Listener before timing out.  Initially 30000</summary>		
 		CustListenerTransmissionTimeoutMS,
-		///<summary>Used by OD HQ. The name of the customers database that is considered the "source of truth".</summary>
+		///<summary>Used by OD HQ. The name of the database that all workstations will use when taking/owning triage tasks.</summary>
 		CustomersHQDatabase,
-		///<summary>Used by OD HQ. The MySQL password hash for the HQ customers database.</summary>
+		///<summary>Used by OD HQ. The MySQL password hash that all workstations will use when taking/owning triage tasks.</summary>
 		CustomersHQMySqlPassHash,
-		///<summary>Used by OD HQ. The MySQL user for the HQ customers database.</summary>
+		///<summary>Used by OD HQ. The MySQL user that all workstations will use when taking/owning triage tasks.</summary>
 		CustomersHQMySqlUser,
-		///<summary>Used by OD HQ. The name of the customers server that is considered the "source of truth".</summary>
+		///<summary>Used by OD HQ. The name of the server that all workstations will use when taking/owning triage tasks.</summary>
 		CustomersHQServer,
 		CustomizedForPracticeWeb,
 		DatabaseConvertedForMySql41,

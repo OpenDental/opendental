@@ -25,6 +25,7 @@ namespace OpenDental.InternalTools.Phones{
 		public List<MapAreaMore> ListMapAreaMores=new List<MapAreaMore>();
 		///<summary>Only used for edit mode.</summary>
 		public long MapAreaContainerNum;
+		public bool SnapToFeet=true;
 
 		///<summary>18x18. Same image used for webchat and chat.</summary>
 		private Bitmap _bitmapChat;
@@ -76,6 +77,16 @@ namespace OpenDental.InternalTools.Phones{
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public event EventHandler<long> GoToPatient;
+
+		///<summary>In Edit Mode, this notifies parent that any changes were made so that it can send signal to other computers for refresh.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public event EventHandler IsChanged;
+
+		///<summary>Certain detail gets passed up that we need to show in the detail panel.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public event EventHandler<CubicleClickedDetail> CubicleClicked;
 		#endregion Events
 
 		#region Methods - public
@@ -443,9 +454,11 @@ namespace OpenDental.InternalTools.Phones{
 			}
 			using FormMapAreaEdit formMapAreaEdit=new FormMapAreaEdit();
 			formMapAreaEdit.MapAreaCur=ListMapAreas[idx];
-			if(formMapAreaEdit.ShowDialog(this)!=DialogResult.OK) {
+			formMapAreaEdit.ShowDialog(this);
+			if(formMapAreaEdit.DialogResult!=DialogResult.OK) {
 				return;
 			}
+			IsChanged?.Invoke(this, new EventArgs());
 			RefreshCubicles();
 		}
 
@@ -507,6 +520,15 @@ namespace OpenDental.InternalTools.Phones{
 				if(HitTestPhone(idx,e.X,e.Y) && ListMapAreaMores[idx].PatNumCall!=0){//left clicked on phone icon
 					GoToPatient?.Invoke(this,ListMapAreaMores[idx].PatNumCall);
 				}	
+				CubicleClickedDetail cubicleClickedDetail=new CubicleClickedDetail();
+				cubicleClickedDetail.EmployeeName=ListMapAreaMores[idx].EmployeeName;
+				cubicleClickedDetail.EmployeeNum=ListMapAreaMores[idx].EmployeeNum;
+				cubicleClickedDetail.Extension=ListMapAreas[idx].Extension;
+				cubicleClickedDetail.Status=ListMapAreaMores[idx].Status;
+				cubicleClickedDetail.TimeSpanElapsed=ListMapAreaMores[idx].TimeSpanElapsed;
+				cubicleClickedDetail.Description=ListMapAreas[idx].Description;
+				cubicleClickedDetail.CustomerNumber=ListMapAreaMores[idx].CustomerNumber;
+				CubicleClicked?.Invoke(this,cubicleClickedDetail);
 				return;
 			}
 			if(e.Button!=MouseButtons.Right) {
@@ -588,10 +610,19 @@ namespace OpenDental.InternalTools.Phones{
 				if(!_listSelected.Contains(i)){
 					continue;
 				}
-				ListMapAreas[i].XPos=ListMapAreas[i].XPos+(_pointMouseNow.X-_pointMouseDown.X)/17f;
-				ListMapAreas[i].YPos=ListMapAreas[i].YPos+(_pointMouseNow.Y-_pointMouseDown.Y)/17f;
+				double x=ListMapAreas[i].XPos+(_pointMouseNow.X-_pointMouseDown.X)/17f;
+				double y=ListMapAreas[i].YPos+(_pointMouseNow.Y-_pointMouseDown.Y)/17f;
+				if(ListMapAreas[i].ItemType==MapItemType.Cubicle && SnapToFeet){
+					ListMapAreas[i].XPos=Math.Round(x);
+					ListMapAreas[i].YPos=Math.Round(y);
+				}
+				else{
+					ListMapAreas[i].XPos=x;
+					ListMapAreas[i].YPos=y;
+				}
 				MapAreas.Update(ListMapAreas[i]);
 			}
+			IsChanged?.Invoke(this, new EventArgs());
 			RefreshCubicles();
 		}
 		#endregion Methods - Mouse
@@ -772,11 +803,10 @@ namespace OpenDental.InternalTools.Phones{
 		}
 
 		private void DrawLabel(Graphics g,int i){
-			//The label Width and Height are largely ignored.
-			//Make the label just tall enough to fit the font and the lesser of the user defined width vs the actual width.
-			float widthMax=ListMapAreaMores[i].RectangleFBounds.Width;
+			//The label Width and Height are completely ignored.
+			//Make the width and height match the measured text size.
 			using Font font=new Font("Calibri",14,FontStyle.Bold);
-			SizeF sizeF=g.MeasureString(ListMapAreas[i].Description,font,(int)widthMax);
+			SizeF sizeF=g.MeasureString(ListMapAreas[i].Description,font);
 			using Brush brushBack=new SolidBrush(ListMapAreaMores[i].ColorBack);
 			RectangleF rectangleF=new RectangleF(ListMapAreaMores[i].X,ListMapAreaMores[i].Y,sizeF.Width,font.Height-2);
 			g.FillRectangle(brushBack,rectangleF);
@@ -937,5 +967,16 @@ namespace OpenDental.InternalTools.Phones{
 		public override string ToString() {
 			return EmployeeName;
 		}
+	}
+
+	///<summary>When a cubicle is clicked this object gets passed up in an event.</summary>
+	public class CubicleClickedDetail{
+		public long EmployeeNum;
+		public string EmployeeName;
+		public int Extension;
+		public string Status;
+		public TimeSpan TimeSpanElapsed;
+		public string Description;
+		public string CustomerNumber;
 	}
 }

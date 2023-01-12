@@ -120,14 +120,19 @@ namespace OpenDental.UI
 			}
 			else{
 				float ratio;
+				//amount of space around the outside edge of the image in pixels. 1px shows border, 2px shows border and a little whitespace.
+				int padding=0;
+				if(HasBorder) {
+					padding=1;
+				}
 				//Debug.WriteLine("Hratio:"+(float)image.Height/(float)Height+"Wratio:"+(float)image.Width/(float)Width);
 				if(heightImage/(float)Height > widthImage/(float)Width){//Image is proportionally taller
 					ratio=(float)Height/heightImage;
-					g.DrawImage(image,new RectangleF(Width/2-(widthImage*ratio)/2,0,widthImage*ratio,Height));
+					g.DrawImage(image,new RectangleF(Width/2-(widthImage*ratio)/2+padding,padding,widthImage*ratio-(2*padding),Height-(2*padding)));
 				}
 				else{//image proportionally wider
 					ratio=(float)Width/widthImage;
-					g.DrawImage(image,new RectangleF(0,(float)Height/2-(heightImage*ratio)/2,Width,heightImage*ratio));
+					g.DrawImage(image,new RectangleF(padding,(float)Height/2-(heightImage*ratio)/2+padding,Width-(2*padding),heightImage*ratio-(2*padding)));
 				}
 			}
 		}

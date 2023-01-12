@@ -517,7 +517,9 @@ namespace OpenDental {
 			foreach(FieldInfo field in fi) {
 				// find match for fields in Patients in the SheetFields
 				if(isWebForm) {
-					List<WebForms_SheetField> listWebFormsSheetFields=webFormSheet.SheetFields.FindAll(x=>x.FieldName.ToLower()==field.Name.ToLower());
+					//Additional check added when we come accross the "State" field for patient, and "State/StateNoValidation" field within the webform.
+					List<WebForms_SheetField> listWebFormsSheetFields=webFormSheet.SheetFields.FindAll(x=>x.FieldName.ToLower()==field.Name.ToLower()
+						|| (x.FieldName.ToLower().StartsWith("state") && field.Name==nameof(Patient.State)));
 					if(listWebFormsSheetFields.Count()>0) {
 						// this loop is used to fill a field that may generate mutiple values for a single field in the patient.
 						//for example the field gender has 2 eqivalent sheet fields in the SheetFields
@@ -527,7 +529,9 @@ namespace OpenDental {
 					}
 				}
 				else {
-					List<SheetField> listSheetFields=sheet.SheetFields.FindAll(x=>x.FieldName.ToLower()==field.Name.ToLower());
+					//Additional check added when we come accross the "State" field for patient, and "State/StateNoValidation" field within the sheet.
+					List<SheetField> listSheetFields=sheet.SheetFields.FindAll(x=>x.FieldName.ToLower()==field.Name.ToLower()
+						|| (x.FieldName.ToLower().StartsWith("state") && field.Name==nameof(Patient.State)));
 					if(listSheetFields.Count()>0) {
 						// this loop is used to fill a field that may generate mutiple values for a single field in the patient.
 						//for example the field gender has 2 eqivalent sheet fields in the SheetFields
