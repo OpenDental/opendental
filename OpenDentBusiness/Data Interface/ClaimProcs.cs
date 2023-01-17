@@ -2789,6 +2789,7 @@ namespace OpenDentBusiness{
 					continue;
 				}
 				cph=new ClaimProcHist();
+				cph.ProcNum=claimProcList[i].ProcNum;
 				cph.Amount=ClaimProcs.GetInsEstTotal(claimProcList[i]);
 				cph.ClaimNum=0;
 				if(claimProcList[i].DedEstOverride != -1) {

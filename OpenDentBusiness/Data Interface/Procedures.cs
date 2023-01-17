@@ -3773,7 +3773,7 @@ namespace OpenDentBusiness {
 					}
 					//Sometimes, we look at supplemental payments. Also, if there happen to be two received claimprocs for the same procedure, we only
 					//want to count these as one toward the frequency count if they are for the same procedure.
-					if(claimProcHistList.Count()>=ben.Quantity) {
+					if(claimProcHistList.DistinctBy(x => x.ProcNum).Count()>=ben.Quantity) {
 						return true;
 					}
 				}

@@ -235,10 +235,14 @@ namespace OpenDentBusiness {
 				_codeChallenge=Base64urlencodeNoPadding(Sha256(_codeVerifier));
 				BuildAuthorizationUrl(emailAddress);
 				Process.Start(_url);
-				string code;
+				string code="";
 				if(ODBuild.IsWeb()) {
 					string GoogleAuthCodeResponseHtml=Properties.Resources.GoogleAuthCodeResponseHtml;
-					code=ODCloudClient.SendListenerResponse(GoogleAuthCodeResponseHtml,_state);
+					ODCloudClient.HttpListenerGetContext();
+					while(string.IsNullOrWhiteSpace(code)) {
+						code=ODCloudClient.SendListenerResponse(GoogleAuthCodeResponseHtml,_state);
+						Thread.Sleep(100);
+					}
 				}
 				else {
 					HttpListenerContext context=_listener.GetContext();

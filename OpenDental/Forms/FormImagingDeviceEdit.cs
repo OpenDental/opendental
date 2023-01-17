@@ -38,6 +38,9 @@ namespace OpenDentalImaging {
 
 		private void comboTwainName_DropDown(object sender,EventArgs e) {
 			if(ODBuild.IsWeb()) {
+				if(!CloudClientL.IsCloudClientRunning()) {
+					return;
+				}
 				List<string>listTwainNames=ODCloudClient.GetTwainSourceList();
 				comboTwainName.Items.Clear();
 				comboTwainName.Items.AddRange(listTwainNames.ToArray());

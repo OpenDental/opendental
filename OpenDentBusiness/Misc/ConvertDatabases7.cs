@@ -419,6 +419,27 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}
 		}
+
+		///<summary>Convert script for B41238. Various WebSchedRecall bugs since the AndrewD refactor have lead to a buildup of overdue recalls. This cleanup helper
+		///purges unsent and potentially invalid webschedrecall rows which the eConnector will automatically recreate if they were in fact valid.
+		///This is too time sensitive to be done in a DBM tool as customers would need to know to run the tool before turning on their eConnector.
+		///Deleting them is necessary because after the bugfix B40690, we are now allowing WebSchedRecalls to send if they are in the database even if they
+		///are long overdue. Although we never want to delete from the database in the convert script, Alvin and Brittany strongly believe that any unsent
+		///WebSchedRecall automatically created is OK since even if we deleted a legitimately created WebSchedRecall, the AutoCommProcessor will insert a new one if
+		///it actually needs to be sent out (See WebSchedRecallFeature.PrepAutomaticWebSchedNotifications()). This is because our AutoCommProcessor will
+		///attempt to send any WebSchedRecall in our database that is considered unsent (SendStatus is SendNotAttempted), essentially treating this table as an
+		///outbound queue that has passed all of its security checks. See WebSchedRecallFeature.GetAutoCommObjs() where we call WebSchedRecalls.GetAllUnsent().
+		///An important thing to note is that we do not want to delete WebSchedRecalls that were entered into this table via FormRecallList (Send
+		///to Patient Viewer button/panel) as these were created manually. These are denoted by WebSchedRecall.Source which is stored as an integer in the database,
+		///1=FormRecallList and 2=EConnectorAutoComm. In no way do we want to touch manual entries since the customer would have no way of knowing WebSchedRecalls
+		///they thought they had manually queued up would no longer exist so the query has a WHERE clause for Source=2. Querying for CommLogNum=0 is technically a
+		///bit redundant since a WebSchedRecall will not have created a Commlog for this WebSchedRecall until after an attempt to send said WebSchedRecall
+		///was made at HQ (SendStatus would not be SendNotAttempted).</summary>
+		private static void CleanupAutoWebSchedRecalls() {
+			//Source=2 (EConnectorAutoComm), SendStatus=2 (AutoCommStatus.SendNotAttempted), CommLogNum=0 (Not associated to a commlog)
+			string command="DELETE FROM webschedrecall WHERE Source=2 AND SendStatus=2 AND CommLogNum=0";
+			Db.NonQ(command);
+		}
 		#endregion
 
 		private static void To20_5_1() {
@@ -4038,6 +4059,10 @@ namespace OpenDentBusiness {
 				command="DELETE FROM apptviewitem WHERE ApptViewItemNum IN ("+string.Join(",",apptViewItemNums.Skip(1).Select(x => POut.Long(x)))+")";
 				Db.NonQ(command);
 			}
+		}
+
+		private static void To22_2_64() {
+			CleanupAutoWebSchedRecalls();
 		}
 	}
 }

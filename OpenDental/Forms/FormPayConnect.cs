@@ -586,6 +586,9 @@ namespace OpenDental {
 		///<summary>Processes a PayConnect payment via a credit card terminal.</summary>
 		private bool ProcessPaymentTerminal() {
 			if(ODBuild.IsWeb()) {
+				if(!CloudClientL.IsCloudClientRunning()) {
+					return false;
+				}
 				if(radioSale.Checked) {
 					_pcResponse=ODCloudClient.ProcessPaymentTerminal("SALE",PIn.Decimal(textAmount.Text),checkForceDuplicate.Checked);
 				}

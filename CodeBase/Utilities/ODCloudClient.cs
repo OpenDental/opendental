@@ -505,6 +505,12 @@ namespace CodeBase {
 			SendDataToBrowser(request,(int)BrowserAction.SendToODCloudClient);
 		}
 
+		public static void HttpListenerGetContext() {
+			CloudClientAction action=CloudClientAction.HttpListenerGetContext;
+			SendToODCloudClient(new ODCloudClientData(),action);
+			return;
+		}
+
 		///<summary>Contains the data to be sent to the browser to perfrom a browser action. Will be serialized as JSON.</summary>
 		public class ODBrowserData {
 			public string ElementId;
@@ -655,7 +661,9 @@ namespace CodeBase {
 			///you must call StartListener() again.</summary>
 			CloseListener,
 			///<summary>Check if HttpListener is listening on the ODCloudClient</summary>
-			CheckIsListening
+			CheckIsListening,
+			///<summary>Start HttpListener.GetContext on the cloudclient</summary>
+			HttpListenerGetContext
 		}
 
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>
