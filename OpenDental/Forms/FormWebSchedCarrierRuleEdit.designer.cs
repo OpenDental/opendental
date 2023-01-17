@@ -162,7 +162,7 @@ namespace OpenDental {
 			this.radioBlock.Size = new System.Drawing.Size(147, 19);
 			this.radioBlock.TabIndex = 6;
 			this.radioBlock.TabStop = true;
-			this.radioBlock.Text = "Block";
+			this.radioBlock.Text = "Block With Message";
 			this.radioBlock.UseVisualStyleBackColor = true;
 			// 
 			// labelCount

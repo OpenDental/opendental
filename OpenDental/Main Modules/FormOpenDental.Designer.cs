@@ -62,6 +62,7 @@ namespace OpenDental{
 			this.lightSignalGrid1 = new OpenDental.UI.LightSignalGrid();
 			this.splitContainerNoFlickerDashboard = new OpenDental.SplitContainerNoFlicker();
 			this.menuMain = new OpenDental.UI.MenuOD();
+			this.toolTipMap = new System.Windows.Forms.ToolTip(this.components);
 			this.panelPhoneSmall.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainerNoFlickerDashboard)).BeginInit();
 			this.splitContainerNoFlickerDashboard.SuspendLayout();
@@ -167,6 +168,8 @@ namespace OpenDental{
 			this.butNewMap.Size = new System.Drawing.Size(50, 24);
 			this.butNewMap.TabIndex = 96;
 			this.butNewMap.Text = "Map";
+			this.toolTipMap.SetToolTip(this.butNewMap, "Do not normally use the old map.\r\nBut if the new map has a bug,\r\nyou can always s" +
+        "witch to the old\r\nmap while waiting for the bug fix.\r\n");
 			this.butNewMap.Click += new System.EventHandler(this.butNewMap_Click);
 			// 
 			// label3
@@ -241,6 +244,8 @@ namespace OpenDental{
 			this.butMapPhones.Size = new System.Drawing.Size(74, 34);
 			this.butMapPhones.TabIndex = 54;
 			this.butMapPhones.Text = "Old Map\r\n(do not use)";
+			this.toolTipMap.SetToolTip(this.butMapPhones, "Do not normally use the old map.\r\nBut if the new map has a bug,\r\nyou can always s" +
+        "witch to the old\r\nmap while waiting for the bug fix.\r\n");
 			this.butMapPhones.Click += new System.EventHandler(this.butMapPhones_Click);
 			// 
 			// butTriage
@@ -367,6 +372,12 @@ namespace OpenDental{
 			this.menuMain.Size = new System.Drawing.Size(1230, 24);
 			this.menuMain.TabIndex = 58;
 			// 
+			// toolTipMap
+			// 
+			this.toolTipMap.AutoPopDelay = 20000;
+			this.toolTipMap.InitialDelay = 0;
+			this.toolTipMap.ReshowDelay = 0;
+			// 
 			// FormOpenDental
 			// 
 			this.ClientSize = new System.Drawing.Size(1230, 696);
@@ -449,5 +460,6 @@ namespace OpenDental{
 		private Label label2;
 		private Label label1;
 		private UI.Button butNewMap;
+		private ToolTip toolTipMap;
 	}
 }

@@ -693,6 +693,30 @@
     <Compile Include="Forms Reports\FormSearchPatNotes.designer.cs">
       <DependentUpon>FormSearchPatNotes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormFlows.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormFlows.Designer.cs">
+      <DependentUpon>FormFlows.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormFlow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormFlow.Designer.cs">
+      <DependentUpon>FormFlow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormFlowDefEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormFlowDefEdit.Designer.cs">
+      <DependentUpon>FormFlowDefEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormFlowDefs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormFlowDefs.Designer.cs">
+      <DependentUpon>FormFlowDefs.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormWebChatSessionNoteEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -7758,9 +7782,6 @@
     <EmbeddedResource Include="Forms Reports\FormRpServiceDateView.resx">
       <DependentUpon>FormRpServiceDateView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormWebChatSessionNoteEdit.resx">
-      <DependentUpon>FormWebChatSessionNoteEdit.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormCalendar.resx">
       <DependentUpon>FormCalendar.cs</DependentUpon>
     </EmbeddedResource>
@@ -7769,6 +7790,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormDatePicker.resx">
       <DependentUpon>FormDatePicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormFlow.resx">
+      <DependentUpon>FormFlow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormFlowDefEdit.resx">
+      <DependentUpon>FormFlowDefEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormFlowDefs.resx">
+      <DependentUpon>FormFlowDefs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormFlows.resx">
+      <DependentUpon>FormFlows.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormMassEmailSendResults.resx">
       <DependentUpon>FormMassEmailSendResults.cs</DependentUpon>

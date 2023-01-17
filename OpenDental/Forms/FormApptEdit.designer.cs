@@ -887,7 +887,7 @@
 			this.checkShowCommAuto.Location = new System.Drawing.Point(692, 406);
 			this.checkShowCommAuto.Margin = new System.Windows.Forms.Padding(0);
 			this.checkShowCommAuto.Name = "checkShowCommAuto";
-			this.checkShowCommAuto.Size = new System.Drawing.Size(158, 17);
+			this.checkShowCommAuto.Size = new System.Drawing.Size(163, 17);
 			this.checkShowCommAuto.TabIndex = 189;
 			this.checkShowCommAuto.Text = "Show Automated Commlogs";
 			this.checkShowCommAuto.Click += new System.EventHandler(this.checkShowCommAuto_Click);

@@ -43,6 +43,7 @@ namespace OpenDental{
 		private MenuItemOD _menuItemNewCropBilling;
 		private MenuItemOD _menuItemNoAlerts;
 		private MenuItemOD _menuItemPatDashboards;
+		private MenuItemOD _menuItemPatientFlow;
 		private MenuItemOD _menuItemPatPortalTransactions;
 		private MenuItemOD _menuItemPayloadMonitor;
 		private MenuItemOD _menuItemOnlinePayments;
@@ -401,6 +402,8 @@ namespace OpenDental{
 			menuItemTools.Add("Ortho Auto Claims",menuItemOrthoAuto_Click);
 			_menuItemPatDashboards=new MenuItemOD("Patient Dashboards");
 			menuItemTools.Add(_menuItemPatDashboards);
+			_menuItemPatientFlow=new MenuItemOD("Patient Flow",_menuItemPatientFlow_Click);
+			menuItemTools.Add(_menuItemPatientFlow);
 			_menuItemPatPortalTransactions=new MenuItemOD("Patient Portal Transactions",menuItemXWebTrans_Click);
 			menuItemTools.Add(_menuItemPatPortalTransactions);
 			_menuItemOnlinePayments=new MenuItemOD("&Online Payments",menuItemOnlinePayments_Click);

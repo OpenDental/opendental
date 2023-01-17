@@ -41,6 +41,6 @@ namespace OpenDentBusiness {
 		///<summary>2</summary>
 		AllowWithMessage,
 		///<summary>3</summary>
-		Block,
+		BlockWithMessage,
 	}
 }

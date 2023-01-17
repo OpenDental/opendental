@@ -488,22 +488,36 @@ namespace OpenDental.InternalTools.Phones{
 
 		private void MapPanel_MouseDown_Normal(MouseEventArgs e){
 			int idx=HitTestCubicle(e.X,e.Y);
+			CubicleClickedDetail cubicleClickedDetail=new CubicleClickedDetail();
 			if(idx==-1){
+				CubicleClicked?.Invoke(this,cubicleClickedDetail);
 				return;
 			}
+			cubicleClickedDetail.EmployeeName=ListMapAreaMores[idx].EmployeeName;
+			cubicleClickedDetail.EmployeeNum=ListMapAreaMores[idx].EmployeeNum;
+			cubicleClickedDetail.Extension=ListMapAreas[idx].Extension;
+			cubicleClickedDetail.Status=ListMapAreaMores[idx].Status;
+			cubicleClickedDetail.TimeSpanElapsed=ListMapAreaMores[idx].TimeSpanElapsed;
+			cubicleClickedDetail.Description=ListMapAreas[idx].Description;
+			cubicleClickedDetail.CustomerNumber=ListMapAreaMores[idx].CustomerNumber;
 			if(e.Button==MouseButtons.Left) {
 				if(ListMapAreaMores[idx].ClockStatus==ClockStatusEnum.NeedsHelp){
 					//User is clicking to change status from NeedsHelp to HelpOnTheWay
 					OpenDentBusiness.Phones.SetPhoneStatus(ClockStatusEnum.HelpOnTheWay,ListMapAreas[idx].Extension);
 					ODThread.WakeUpThreadsByGroupName(FormOpenDental.FormODThreadNames.HqMetrics.GetDescription());
+					cubicleClickedDetail.Status=OpenDentBusiness.Phones.ConvertClockStatusToString(ClockStatusEnum.HelpOnTheWay);
+					CubicleClicked?.Invoke(this,cubicleClickedDetail);
 					return;
 				}
 				if(ListMapAreaMores[idx].ClockStatus==ClockStatusEnum.HelpOnTheWay){
 					//User is clicking to change status from HelpOnTheWay to Available
 					OpenDentBusiness.Phones.SetPhoneStatus(ClockStatusEnum.Available,ListMapAreas[idx].Extension);
 					ODThread.WakeUpThreadsByGroupName(FormOpenDental.FormODThreadNames.HqMetrics.GetDescription());
+					cubicleClickedDetail.Status=OpenDentBusiness.Phones.ConvertClockStatusToString(ClockStatusEnum.Available);
+					CubicleClicked?.Invoke(this,cubicleClickedDetail);
 					return;
 				}
+				CubicleClicked?.Invoke(this,cubicleClickedDetail);
 				if(HitTestName(idx,e.X,e.Y)){//left clicked on name
 					List<PhoneEmpDefault> listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
 					PhoneEmpDefault phoneEmpDefault=listPhoneEmpDefaults.Find
@@ -520,21 +534,13 @@ namespace OpenDental.InternalTools.Phones{
 				if(HitTestPhone(idx,e.X,e.Y) && ListMapAreaMores[idx].PatNumCall!=0){//left clicked on phone icon
 					GoToPatient?.Invoke(this,ListMapAreaMores[idx].PatNumCall);
 				}	
-				CubicleClickedDetail cubicleClickedDetail=new CubicleClickedDetail();
-				cubicleClickedDetail.EmployeeName=ListMapAreaMores[idx].EmployeeName;
-				cubicleClickedDetail.EmployeeNum=ListMapAreaMores[idx].EmployeeNum;
-				cubicleClickedDetail.Extension=ListMapAreas[idx].Extension;
-				cubicleClickedDetail.Status=ListMapAreaMores[idx].Status;
-				cubicleClickedDetail.TimeSpanElapsed=ListMapAreaMores[idx].TimeSpanElapsed;
-				cubicleClickedDetail.Description=ListMapAreas[idx].Description;
-				cubicleClickedDetail.CustomerNumber=ListMapAreaMores[idx].CustomerNumber;
-				CubicleClicked?.Invoke(this,cubicleClickedDetail);
 				return;
 			}
 			if(e.Button!=MouseButtons.Right) {
 				return;
 			}
 			//Right click
+			CubicleClicked?.Invoke(this,cubicleClickedDetail);
 			_phoneClicked=ListMapAreaMores[idx].PhoneCur;
 			bool allowStatusEdit=ClockEvents.IsClockedIn(ListMapAreaMores[idx].EmployeeNum);
 			if(ListMapAreaMores[idx].EmployeeNum==Security.CurUser.EmployeeNum) {//can always edit yourself

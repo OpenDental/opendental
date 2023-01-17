@@ -2337,6 +2337,9 @@ namespace OpenDental {
 		}
 
 		private void ToolbarScanWeb(string scanType) {
+			if(!CloudClientL.IsCloudClientRunning()) {
+				return;
+			}
 			Bitmap bitmapScanned=null;
 			try {
 				//Ask the ODCloudClient to use a scanner on the client's computer
@@ -2628,6 +2631,9 @@ namespace OpenDental {
 		}
 
 		private void ToolbarScanMultiWeb() {
+			if(!CloudClientL.IsCloudClientRunning()) {
+				return;
+			}
 			//Ask the ODCloudClient to use a scanner on the client's computer
 			string tempFile=ODCloudClient.GetImageMultiFromScanner(
 				ComputerPrefs.LocalComputer.ScanDocSelectSource,

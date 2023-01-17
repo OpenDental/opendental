@@ -134,6 +134,15 @@ namespace OpenDentBusiness{
 			return GetFirstOrDefault(x => x.AppointmentTypeNum==appointmentTypeNum);
 		}
 
+		///<summary>Gets all AppointmentTypes from the DB. Ordered by AppointmentTypeNum. Returns null if no match found.</summary>
+		public static List<AppointmentType> GetAllAppointmentTypesForApi() {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				return Meth.GetObject<List<AppointmentType>>(MethodBase.GetCurrentMethod());
+			}
+			string command="SELECT * FROM appointmenttype ORDER BY AppointmentTypeNum";
+			return Crud.AppointmentTypeCrud.SelectMany(command);
+		}
+
 		///<summary></summary>
 		public static long Insert(AppointmentType appointmentType){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){

@@ -548,12 +548,13 @@ namespace OpenDentBusiness{
 			else {//Liability or equity
 				command+="SUM(ROUND(CreditAmt,3)-ROUND(DebitAmt,3))";
 			}
-			command+=" AS SumTotal, AcctType, IsRetainedEarnings "
+			command+=" AS SumTotal, AcctType, IsRetainedEarnings,Inactive "//Inactive won't show
 				+"FROM account, journalentry "
 				+"WHERE account.AccountNum=journalentry.AccountNum "
 				+"AND DateDisplayed <= "+POut.Date(dateAsOf)+" "
 				+"AND AcctType="+POut.Int((int)accountType)+" "
 				+"GROUP BY account.AccountNum "
+				+"HAVING (SumTotal<>0 OR Inactive=0) "//either a bal or active
 				+"ORDER BY Description, DateDisplayed ";
 			DataTable table=Db.GetTable(command);
 			if(accountType!=AccountType.Equity){

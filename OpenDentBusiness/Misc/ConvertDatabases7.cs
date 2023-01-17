@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ADODB;
 using CodeBase;
 using DataConnectionBase;
 using OpenDentBusiness.Misc;
@@ -419,6 +420,27 @@ namespace OpenDentBusiness {
 				command="UPDATE preference SET ValueString='"+POut.String(String.Join(",",listToUpdate))+"' WHERE PrefName='"+POut.String(listPreferenceCategories[i])+"'";
 				Db.NonQ(command);
 			}
+		}
+
+		///<summary>Convert script for B41238. Various WebSchedRecall bugs since the AndrewD refactor have lead to a buildup of overdue recalls. This cleanup helper
+		///purges unsent and potentially invalid webschedrecall rows which the eConnector will automatically recreate if they were in fact valid.
+		///This is too time sensitive to be done in a DBM tool as customers would need to know to run the tool before turning on their eConnector.
+		///Deleting them is necessary because after the bugfix B40690, we are now allowing WebSchedRecalls to send if they are in the database even if they
+		///are long overdue. Although we never want to delete from the database in the convert script, Alvin and Brittany strongly believe that any unsent
+		///WebSchedRecall automatically created is OK since even if we deleted a legitimately created WebSchedRecall, the AutoCommProcessor will insert a new one if
+		///it actually needs to be sent out (See WebSchedRecallFeature.PrepAutomaticWebSchedNotifications()). This is because our AutoCommProcessor will
+		///attempt to send any WebSchedRecall in our database that is considered unsent (SendStatus is SendNotAttempted), essentially treating this table as an
+		///outbound queue that has passed all of its security checks. See WebSchedRecallFeature.GetAutoCommObjs() where we call WebSchedRecalls.GetAllUnsent().
+		///An important thing to note is that we do not want to delete WebSchedRecalls that were entered into this table via FormRecallList (Send
+		///to Patient Viewer button/panel) as these were created manually. These are denoted by WebSchedRecall.Source which is stored as an integer in the database,
+		///1=FormRecallList and 2=EConnectorAutoComm. In no way do we want to touch manual entries since the customer would have no way of knowing WebSchedRecalls
+		///they thought they had manually queued up would no longer exist so the query has a WHERE clause for Source=2. Querying for CommLogNum=0 is technically a
+		///bit redundant since a WebSchedRecall will not have created a Commlog for this WebSchedRecall until after an attempt to send said WebSchedRecall
+		///was made at HQ (SendStatus would not be SendNotAttempted).</summary>
+		private static void CleanupAutoWebSchedRecalls() {
+			//Source=2 (EConnectorAutoComm), SendStatus=2 (AutoCommStatus.SendNotAttempted), CommLogNum=0 (Not associated to a commlog)
+			string command="DELETE FROM webschedrecall WHERE Source=2 AND SendStatus=2 AND CommLogNum=0";
+			Db.NonQ(command);
 		}
 		#endregion
 
@@ -4047,6 +4069,10 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		private static void To22_2_64() {
+			CleanupAutoWebSchedRecalls();
+		}
+
 		private static void To22_3_1() {
 			string command;
 			DataTable table;
@@ -4310,6 +4336,10 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		private static void To22_3_31() {
+			CleanupAutoWebSchedRecalls();
+		}
+
 		private static void To22_4_1() {
 			string command;
 			DataTable table;
@@ -4452,6 +4482,79 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}
 		}//End of 22_4_1() method
+
+		private static void To22_4_10() {
+			CleanupAutoWebSchedRecalls();
+			string command = "DROP TABLE IF EXISTS flow";
+			Db.NonQ(command);
+			command = @"CREATE TABLE flow (
+					FlowNum bigint NOT NULL auto_increment PRIMARY KEY,
+					Description varchar(255) NOT NULL,
+					PatNum bigint NOT NULL,
+					ClinicNum bigint NOT NULL,
+					SecDateTEntry datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+					IsComplete tinyint NOT NULL,
+					INDEX(PatNum),
+					INDEX(ClinicNum),
+					INDEX(SecDateTEntry),
+					INDEX(IsComplete)
+					) DEFAULT CHARSET=utf8";
+			Db.NonQ(command);
+			command = "DROP TABLE IF EXISTS flowaction";
+			Db.NonQ(command);
+			command = @"CREATE TABLE flowaction (
+				FlowActionNum bigint NOT NULL auto_increment PRIMARY KEY,
+				FlowNum bigint NOT NULL,
+				ItemOrder int NOT NULL,
+				FlowActionType tinyint NOT NULL,
+				UserNum bigint NOT NULL,
+				IsComplete tinyint NOT NULL,
+				DateTimeComplete datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+				INDEX(FlowNum),
+				INDEX(UserNum)
+				) DEFAULT CHARSET=utf8";
+			Db.NonQ(command);
+			command = "DROP TABLE IF EXISTS flowactiondef";
+			Db.NonQ(command);
+			command = @"CREATE TABLE flowactiondef (
+				FlowActionDefNum bigint NOT NULL auto_increment PRIMARY KEY,
+				FlowDefNum bigint NOT NULL,
+				FlowActionType tinyint NOT NULL,
+				ItemOrder int NOT NULL,
+				SecDateTEntry datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+				DateTLastModified datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+				INDEX(FlowDefNum)
+				) DEFAULT CHARSET=utf8";
+			Db.NonQ(command);
+			command = "DROP TABLE IF EXISTS flowdef";
+			Db.NonQ(command);
+			command = @"CREATE TABLE flowdef (
+				FlowDefNum bigint NOT NULL auto_increment PRIMARY KEY,
+				ClinicNum bigint NOT NULL,
+				Description varchar(255) NOT NULL,
+				UserNumCreated bigint NOT NULL,
+				UserNumModified bigint NOT NULL,
+				SecDateTEntered datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+				DateLastModified datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+				INDEX(ClinicNum),
+				INDEX(UserNumCreated),
+				INDEX(UserNumModified)
+				) DEFAULT CHARSET=utf8";
+			Db.NonQ(command);
+			command = "DROP TABLE IF EXISTS flowdeflink";
+			Db.NonQ(command);
+			command = @"CREATE TABLE flowdeflink (
+				FlowDefLinkNum bigint NOT NULL auto_increment PRIMARY KEY,
+				FlowDefNum bigint NOT NULL,
+				Fkey bigint NOT NULL,
+				FlowType tinyint NOT NULL,
+				INDEX(FlowDefNum),
+				INDEX(Fkey)
+				) DEFAULT CHARSET=utf8";
+			Db.NonQ(command);
+			command = "INSERT INTO preference(PrefName,ValueString) VALUES('PatientFlowsUseHQDefaults','1')";//HQ and therefore the default value is set to true.
+			Db.NonQ(command);
+		}
 	}
 }
 

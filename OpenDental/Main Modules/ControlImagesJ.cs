@@ -2333,6 +2333,9 @@ namespace OpenDental
 			_deviceController.ShowTwainUI=imagingDevice.ShowTwainUI;
 			_deviceController.TwainName=imagingDevice.TwainName;
 			if(ODBuild.IsWeb()) {
+				if(!CloudClientL.IsCloudClientRunning()) {
+					return;
+				}
 				if(_deviceController.ImgDeviceControlType==EnumImgDeviceControlType.Twain){
 					try{
 						ODCloudClient.TwainInitializeDevice(_deviceController.ShowTwainUI);
@@ -2608,6 +2611,9 @@ namespace OpenDental
 
 		///<summary>Handles the scan click for ODCloud using similar logic to ToolbarScan_Click()</summary>
 		private void ToolbarScanWeb(string scanType) {
+			if(!CloudClientL.IsCloudClientRunning()) {
+				return;
+			}
 			Bitmap bitmapScanned=null;
 			try {
 				//Ask the ODCloudClient to use a scanner on the client's computer
@@ -2811,6 +2817,9 @@ namespace OpenDental
 
 		///<summary>Handles the scan multi click for ODCloud using similar logic to ToolbarScanMulti_Click()</summary>
 		private void ToolbarScanMultiWeb() {
+			if(!CloudClientL.IsCloudClientRunning()) {
+				return;
+			}
 			//Ask the ODCloudClient to use a scanner on the client's computer
 			string tempFile=ODCloudClient.GetImageMultiFromScanner(
 				ComputerPrefs.LocalComputer.ScanDocSelectSource,

@@ -413,7 +413,7 @@ namespace OpenDentBusiness {
 		[EServiceLogType(eServiceType.EClipboard)]
 		EC2FactorAuthCodeSubmitted,
 		/// <summary>72 - eClipboard - 2 Factor Auth Code Success</summary>
-		[Description("eClipboard - 2 factor auth code success")]
+		[Description("eClipboard - 2 Factor auth code success")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		EC2FactorAuthCodeSuccess,
 		/// <summary>73 - eClipboard - 2 Factor Auth Code Fail</summary>
@@ -425,7 +425,7 @@ namespace OpenDentBusiness {
 		[EServiceLogType(eServiceType.Unknown)]
 		DoNotLog,
 		/// <summary>68 - eClipboard - patient opens payment page. Note should indicate where it is opened from</summary>
-		[Description("eClipboard - Patient opens payment page")]
+		[Description("eClipboard - Patient opened payment page")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECOpenPaymentPage,
 		/// <summary>69 - eClipboard - User tapped "Add Card"</summary>

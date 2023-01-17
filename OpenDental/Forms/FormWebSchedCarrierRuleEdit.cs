@@ -57,7 +57,7 @@ namespace OpenDental {
 		private void butOK_Click(object sender,EventArgs e) {
 			if(radioAllowWithMessage.Checked || radioBlock.Checked) {
 				if(string.IsNullOrEmpty(textMessage.Text.Trim())) {
-					MsgBox.Show(this,"Rules that have the Rule Type of \"Allow With Message\" or \"Block\" must contain a message.");
+					MsgBox.Show(this,"Rules that have the Rule Type of \"Allow With Message\" or \"Block With Message\" must contain a message.");
 					return;
 				}
 			}
@@ -76,7 +76,7 @@ namespace OpenDental {
 				WebSchedCarrierRule.Rule=RuleType.AllowWithMessage;
 			} 
 			else {
-				WebSchedCarrierRule.Rule=RuleType.Block;
+				WebSchedCarrierRule.Rule=RuleType.BlockWithMessage;
 			}
 			WebSchedCarrierRule.Message=PIn.String(textMessage.Text);
 			WebSchedCarrierRules.Update(WebSchedCarrierRule);

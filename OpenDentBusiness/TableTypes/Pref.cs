@@ -1469,6 +1469,8 @@ namespace OpenDentBusiness {
 		///User editable.  Whatever value is in this preference is intended to be passed to DateTime.ToString().
 		///Used in eReminders, eConfirms, manual confirmations, ASAP list texting, and other places.</summary>
 		PatientCommunicationDateFormat,
+		[PrefName(ValueType=PrefValueType.BOOL)]
+		PatientFlowsUseHQDefaults,
 		PatientFormsShowConsent,
 		///<summary>Bool, false by default. Global pref. When true, the current patient and module will be maintained when switching OD users.</summary>
 		PatientMaintainedOnUserChange,

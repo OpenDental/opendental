@@ -262,6 +262,12 @@ namespace OpenDentBusiness {
 				ds.Tables.Add(ApptFieldDefs.GetTableFromCache(doRefreshServerCache));
 				ds.Tables.Add(FieldDefLinks.GetTableFromCache(doRefreshServerCache));
 			}
+			if(listITypes.Contains(InvalidType.FlowDef) || isAll) {
+				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.PatFields.ToString());
+				ds.Tables.Add(FlowDefs.GetTableFromCache(doRefreshServerCache));
+				ds.Tables.Add(FlowActionDefs.GetTableFromCache(doRefreshServerCache));
+				ds.Tables.Add(FlowDefLinks.GetTableFromCache(doRefreshServerCache));
+			}
 			if(listITypes.Contains(InvalidType.Pharmacies) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.Pharmacies.ToString());
 				ds.Tables.Add(Pharmacies.GetTableFromCache(doRefreshServerCache));
@@ -625,6 +631,12 @@ namespace OpenDentBusiness {
 				ApptFieldDefs.FillCacheFromTable(ds.Tables["ApptFieldDef"]);
 				FieldDefLinks.FillCacheFromTable(ds.Tables["FieldDefLink"]);
 			}
+			if(listITypes.Contains(InvalidType.FlowDef) || isAll) {
+				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.PatFields.ToString());
+				FlowDefs.FillCacheFromTable(ds.Tables["FlowDef"]);
+				FlowActionDefs.FillCacheFromTable(ds.Tables["FlowActionDef"]);
+				FlowDefLinks.FillCacheFromTable(ds.Tables["FlowDefLink"]);
+			}
 			if(listITypes.Contains(InvalidType.Pharmacies) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.Pharmacies.ToString());
 				Pharmacies.FillCacheFromTable(ds.Tables["Pharmacy"]);
@@ -878,6 +890,9 @@ namespace OpenDentBusiness {
 			listInvalidTypes.Add(InvalidType.UserOdPrefs);
 			listInvalidTypes.Add(InvalidType.JobTeams);
 			listInvalidTypes.Add(InvalidType.LimitedBetaFeature);
+			listInvalidTypes.Add(InvalidType.FlowDef);
+			listInvalidTypes.Add(InvalidType.FlowActionDef);
+			listInvalidTypes.Add(InvalidType.FlowDefLink);
 			return listInvalidTypes;
 		}
 

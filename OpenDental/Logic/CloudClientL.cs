@@ -64,6 +64,8 @@ namespace OpenDental
 					return false;
 				}
 			}
+			//close duplicate cloud client processes
+			ODCloudClient.TerminateDuplicateCloudClientProcesses();
 			return true;
 		}
 

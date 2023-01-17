@@ -398,7 +398,13 @@ namespace OpenDentBusiness{
 		///<summary>105. </summary>
 		EmailInboxRetrieve,
 		///<summary>106. Table in db is apisubscriptions. Small and changes rarely, but all workstations must know about the change.</summary>
-		ApiSubscriptions
+		ApiSubscriptions,
+		///<summary>107. Used as template for Patient Flows</summary>
+		FlowDef,
+		///<summary>108. Used as template for Patient Flow Actions</summary>
+		FlowActionDef,
+		///<summary>109. Used to link PatientFlowDefs with other objects: appointments, appt types, billing types, etc. </summary>
+		FlowDefLink
 	}
 	//<summary></summary>
 	/*public enum ButtonType{

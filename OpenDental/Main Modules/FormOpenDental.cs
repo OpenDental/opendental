@@ -1138,7 +1138,7 @@ namespace OpenDental{
 				if(listMapDescriptions[i].IsNullOrEmpty()) {
 					continue;
 				}
-				OpenMapHQ(listMapDescriptions[i]);
+				OpenMap(listMapDescriptions[i]);
 			}
 		}
 		
@@ -4460,9 +4460,6 @@ namespace OpenDental{
 			}
 			formMap.Show();
 			formMap.BringToFront();
-			if(!ODBuild.IsDebug()){
-				MsgBox.Show("This is still under construction and not yet ready for use.");
-			}
 		}
 
 		private void butTriage_Click(object sender,EventArgs e) {
@@ -6707,6 +6704,11 @@ namespace OpenDental{
 			if(_toolBarButtonText!=null) { //User may just have signed up for texting.
 				_toolBarButtonText.Enabled=Programs.IsEnabled(ProgramName.CallFire)||SmsPhones.IsIntegratedTextingEnabled();
 			}
+		}
+
+		private void _menuItemPatientFlow_Click(object sender, EventArgs e) {
+			using FormFlows formPatientFlows = new FormFlows();
+			formPatientFlows.ShowDialog();
 		}
 		#endregion Menu - eServices
 

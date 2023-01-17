@@ -112,7 +112,7 @@ namespace OpenDental{
 			// 
 			// labelStartDate
 			// 
-			this.labelStartDate.Location = new System.Drawing.Point(6, 19);
+			this.labelStartDate.Location = new System.Drawing.Point(2, 19);
 			this.labelStartDate.Name = "labelStartDate";
 			this.labelStartDate.Size = new System.Drawing.Size(69, 14);
 			this.labelStartDate.TabIndex = 221;
@@ -121,7 +121,7 @@ namespace OpenDental{
 			// 
 			// labelEndDate
 			// 
-			this.labelEndDate.Location = new System.Drawing.Point(6, 44);
+			this.labelEndDate.Location = new System.Drawing.Point(2, 44);
 			this.labelEndDate.Name = "labelEndDate";
 			this.labelEndDate.Size = new System.Drawing.Size(69, 14);
 			this.labelEndDate.TabIndex = 222;

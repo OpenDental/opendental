@@ -335,7 +335,7 @@ namespace OpenDental {
 					}
 				}
 				if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Block) {
-					MsgBox.Show(this,"Cannot create a negative adjustment exceeding the remaining amount on the procedure.");
+					MsgBox.Show(this,"Cannot create a negative adjustment exceeding the remaining amount on the procedure.","Overpaid Procedure Warning");
 					return;
 				}
 			}
