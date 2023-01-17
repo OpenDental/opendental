@@ -210,7 +210,7 @@ namespace OpenDental {
 				return;
 			}
 			Phone phone=_listPhonesShowing[gridMain.GetSelectedIndex()];
-			int idx=listBoxQueues.SelectedIndex;
+			int idx=listBoxClockOut.SelectedIndex;
 			switch(idx){
 				case 0:
 					PhoneUI.Home(phone);//these will show msgbox if user does not have permission

@@ -444,6 +444,11 @@ namespace OpenDental {
 				textByodSmsTemplate.Text=_clinicPrefHelper.GetStringVal(PrefName.EClipboardByodSmsTemplate,clinicNum);
 				textEClipboardMessage.Text=_clinicPrefHelper.GetStringVal(PrefName.EClipboardMessageComplete,clinicNum);
 			}
+			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.EClipClinical,clinicNum)) {
+				checkClinicalAutoLogin.Enabled=false;
+				checkClinicalAutoLogin.Visible=false;
+				return;
+			}
 		}
 
 		///<summary>Fills listEClipboardSheetsAvailable and small grid to its right.</summary>

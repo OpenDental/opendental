@@ -63,6 +63,126 @@
       </Enumeration>
     </column>
   </table>
+  <table name="flow">
+    <summary></summary>
+    <column order="0" name="FlowNum" type="bigint(20)">
+      <summary>Primary Key.</summary>
+    </column>
+    <column order="1" name="Description" type="varchar(255)">
+      <summary>Copied from FlowDef. </summary>
+    </column>
+    <column order="2" name="PatNum" type="bigint(20)" fk="patient">
+      <summary>FK to patient.PatNum. The patient this flow is for.</summary>
+    </column>
+    <column order="3" name="ClinicNum" type="bigint(20)" fk="clinic">
+      <summary>FK to clinic.ClinicNum. The clinic this patient flow is in. Set to 0 if in headquarters or clinics are disabled.</summary>
+    </column>
+    <column order="4" name="SecDateTEntry" type="datetime">
+      <summary>The DateTime this flow was created. Flows are created when they are started. Not able to edited by the user.</summary>
+    </column>
+    <column order="5" name="IsComplete" type="tinyint(4)">
+      <summary>Flow is considered complete if this is true. Used on backend to get incomplete flows without checking FlowActions</summary>
+    </column>
+  </table>
+  <table name="flowaction">
+    <summary></summary>
+    <column order="0" name="FlowActionNum" type="bigint(20)">
+      <summary>Primary Key</summary>
+    </column>
+    <column order="1" name="FlowNum" type="bigint(20)" fk="flow">
+      <summary>FK to flow.FlowNum</summary>
+    </column>
+    <column order="2" name="ItemOrder" type="int(11)">
+      <summary>Copied from flowActionDef.ItemOrder.</summary>
+    </column>
+    <column order="3" name="FlowActionType" type="tinyint(4)">
+      <summary>Enum:EnumFlowActionType </summary>
+      <Enumeration name="EnumFlowActionType">
+        <summary></summary>
+      </Enumeration>
+    </column>
+    <column order="4" name="UserNum" type="bigint(20)" fk="userod">
+      <summary>FK to userod.UserNum. This is the user that completed the action. If not complete, this will be 0.</summary>
+    </column>
+    <column order="5" name="IsComplete" type="tinyint(4)">
+      <summary>True if marked complete, otherwise set to false.</summary>
+    </column>
+    <column order="6" name="DateTimeComplete" type="datetime">
+      <summary>The date and time this action was set complete by the user.</summary>
+    </column>
+  </table>
+  <table name="flowactiondef">
+    <summary></summary>
+    <column order="0" name="FlowActionDefNum" type="bigint(20)">
+      <summary>PK</summary>
+    </column>
+    <column order="1" name="FlowDefNum" type="bigint(20)" fk="flowdef">
+      <summary>FK to flowdef.FlowDefNum. Defines what flow this action is tied to</summary>
+    </column>
+    <column order="2" name="FlowActionType" type="tinyint(4)">
+      <summary>Enum:EnumFlowActionType </summary>
+      <Enumeration name="EnumFlowActionType">
+        <summary></summary>
+      </Enumeration>
+    </column>
+    <column order="3" name="ItemOrder" type="int(11)">
+      <summary>Determines the order the items show in the patientflowactiondef and what order they are to be completed in.</summary>
+    </column>
+    <column order="4" name="SecDateTEntry" type="datetime">
+      <summary>The date this action definition was created. Not able to edited by the user.</summary>
+    </column>
+    <column order="5" name="DateTLastModified" type="datetime">
+      <summary>The date time this action was last changed. Not able to be edited by the user.</summary>
+    </column>
+  </table>
+  <table name="flowdef">
+    <summary></summary>
+    <column order="0" name="FlowDefNum" type="bigint(20)">
+      <summary></summary>
+    </column>
+    <column order="1" name="ClinicNum" type="bigint(20)" fk="clinic">
+      <summary>FK to clinic.ClinicNum. Represents the clinic that the flow is tied to, if any. Can be 0.</summary>
+    </column>
+    <column order="2" name="Description" type="varchar(255)">
+      <summary>The name of the flow.</summary>
+    </column>
+    <column order="3" name="UserNumCreated" type="bigint(20)" fk="userod">
+      <summary>FK to userod.UserNum. The user that created this flow. Cannot be edited by user.</summary>
+    </column>
+    <column order="4" name="UserNumModified" type="bigint(20)" fk="userod">
+      <summary>FK to userod.UserNum. The user that last edited this flow. Cannot be edited by user.</summary>
+    </column>
+    <column order="5" name="SecDateTEntered" type="datetime">
+      <summary>Date Time this flow was created. Cannot be edited by user.</summary>
+    </column>
+    <column order="6" name="DateLastModified" type="datetime">
+      <summary>Date time this flow was last edited. Cannot be edited by user.</summary>
+    </column>
+  </table>
+  <table name="flowdeflink">
+    <summary></summary>
+    <column order="0" name="FlowDefLinkNum" type="bigint(20)">
+      <summary>PK</summary>
+    </column>
+    <column order="1" name="FlowDefNum" type="bigint(20)" fk="flowdef">
+      <summary>FK to flowdef.FlowDefNum.</summary>
+    </column>
+    <column order="2" name="Fkey" type="bigint(20)" fk="other tables">
+      <summary>FK to other tables. Dictated by the FKey Type.</summary>
+    </column>
+    <column order="3" name="FlowType" type="tinyint(4)">
+      <summary>Enum:EnumFlowType </summary>
+      <Enumeration name="EnumFlowType">
+        <summary></summary>
+        <EnumValue name="General">0. Equivalent to no FlowDefLink.</EnumValue>
+        <EnumValue name="Appointment">1. Can have an Fkey to AppointmentTypeNum.</EnumValue>
+        <EnumValue name="BillingType">2. Always an Fkey to DefNum for billing type.</EnumValue>
+        <EnumValue name="Task">3. Not currently in use.</EnumValue>
+        <EnumValue name="TaskList">4. Not currently in use.</EnumValue>
+        <EnumValue name="Commlog">5. Not currenlty in use.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
   <table name="grouppermission">
     <summary></summary>
     <column order="4" name="PermType" type="tinyint">
@@ -131,6 +251,18 @@
       </Enumeration>
     </column>
   </table>
+  <table name="signalod">
+    <summary></summary>
+    <column order="5" name="IType" type="tinyint(4)">
+      <summary>Enum:InvalidType Indicates what cache or entity has been changed.</summary>
+      <Enumeration name="InvalidType">
+        <summary>When the autorefresh message is sent to the other computers, this is the type.</summary>
+        <EnumValue name="FlowDef">107. Used as template for Patient Flows</EnumValue>
+        <EnumValue name="FlowActionDef">108. Used as template for Patient Flow Actions</EnumValue>
+        <EnumValue name="FlowDefLink">109. Used to link PatientFlowDefs with other objects: appointments, appt types, billing types, etc. </EnumValue>
+      </Enumeration>
+    </column>
+  </table>
   <table name="utm">
     <summary></summary>
     <column order="0" name="UtmNum" type="bigint(20)">
@@ -144,6 +276,25 @@
     </column>
     <column order="3" name="SourceInfo" type="varchar(500)">
       <summary>Text that identifies where traffic is originating from.</summary>
+    </column>
+  </table>
+  <table name="webschedcarrierrule">
+    <summary></summary>
+    <column order="5" name="Rule" type="tinyint(4)">
+      <summary>Enum:RuleType Allow, AllowWithInput, AllowWithMessage, Block.</summary>
+      <Enumeration name="RuleType">
+        <summary></summary>
+        <EnumValue name="BlockWithMessage">3</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="webschedcarrierrule">
+    <summary></summary>
+    <column order="5" name="Rule" type="tinyint(4)">
+      <summary>Enum:RuleType Allow, AllowWithInput, AllowWithMessage, Block.</summary>
+      <Enumeration name="RuleType">
+        <summary></summary>
+      </Enumeration>
     </column>
   </table>
 </database>

@@ -180,7 +180,7 @@ namespace OpenDental{
 			this.checkClinicalAutoLogin.Name = "checkClinicalAutoLogin";
 			this.checkClinicalAutoLogin.Size = new System.Drawing.Size(458, 17);
 			this.checkClinicalAutoLogin.TabIndex = 505;
-			this.checkClinicalAutoLogin.Text = "Auto login users when scanning a QR code for Clinical features";
+			this.checkClinicalAutoLogin.Text = "Auto login users when scanning a QR code for Touch features";
 			this.checkClinicalAutoLogin.CheckedChanged += new System.EventHandler(this.checkClinicalAutoLogin_CheckedChanged);
 			// 
 			// checkEClipboardAllowPaymentCheckIn

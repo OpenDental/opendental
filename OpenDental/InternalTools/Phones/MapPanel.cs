@@ -53,6 +53,7 @@ namespace OpenDental.InternalTools.Phones{
 		private Timer _timerFlash;
 		///<summary>This is the difference between server time and local computer time.  Used to ensure that times displayed are accurate to the second.  This value is usally just a few seconds, but possibly a few minutes.</summary>
 		private TimeSpan _timeSpanDelta;
+		private bool _wasDoubleClick;
 		#endregion Fields
 
 		#region Constructor
@@ -448,6 +449,7 @@ namespace OpenDental.InternalTools.Phones{
 			if(!IsEditMode){
 				return;
 			}
+			_wasDoubleClick=true;
 			int idx=HitTest(e.X,e.Y);
 			if(idx==-1){
 				return;
@@ -472,6 +474,7 @@ namespace OpenDental.InternalTools.Phones{
 		}
 
 		private void MapPanel_MouseDown_EditMode(MouseEventArgs e){
+			_wasDoubleClick=false;
 			int idx=HitTest(e.X,e.Y);
 			_listSelected=new List<int>();
 			if(idx==-1){
@@ -611,6 +614,9 @@ namespace OpenDental.InternalTools.Phones{
 			if(_dateTimeMouseDown.AddMilliseconds(250)>DateTime.Now){
 				Invalidate();
 				return;//ignore a very fast drag because it's actually a click.
+			}
+			if(_wasDoubleClick){
+				return;
 			}
 			for(int i=0;i<ListMapAreas.Count;i++){
 				if(!_listSelected.Contains(i)){
