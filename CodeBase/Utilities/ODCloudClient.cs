@@ -585,7 +585,6 @@ namespace CodeBase {
 			return microsoftTokenData;
 		}
 
-
 		public static string MicrosoftSignOutUser(string textUsername,string textRefreshToken) {
 			CloudClientAction action=CloudClientAction.MicrosoftSignOutUser;
 			ODCloudClientData oDCloudClientData=new ODCloudClientData() {
@@ -602,6 +601,23 @@ namespace CodeBase {
 			return microsoftTokenData;
 		}
 
+		public static void HttpListenerGetContext() {
+			CloudClientAction action=CloudClientAction.HttpListenerGetContext;
+			SendToODCloudClient(new ODCloudClientData(),action);
+			return;
+		}
+
+		///<summary>Close duplicate Cloud Client processes</summary>
+		public static void TerminateDuplicateCloudClientProcesses() {
+			CloudClientAction action=CloudClientAction.TerminateDuplicateCloudClientProcesses;
+			try {
+				SendToODCloudClient(new ODCloudClientData(),action);
+			}
+			catch(Exception) {
+				return;
+			}
+			return;
+		}
 
 		///<summary>Contains the data to be sent to the browser to perfrom a browser action. Will be serialized as JSON.</summary>
 		public class ODBrowserData {
@@ -779,7 +795,11 @@ namespace CodeBase {
 			///<summary>Get microsoft access token on the ODCloudClient</summary>
 			GetMicrosoftAccessToken,
 			///<summary>Signs out the passed in user from the account information. If there was an exception it will be held within the MicrosoftTokenHelper.</summary>
-			MicrosoftSignOutUser
+			MicrosoftSignOutUser,
+			///<summary>Start HttpListener.GetContext on the cloudclient</summary>
+			HttpListenerGetContext,
+			///<summary>Close duplicate Cloud Client processes</summary>
+			TerminateDuplicateCloudClientProcesses
 		}
 
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>
