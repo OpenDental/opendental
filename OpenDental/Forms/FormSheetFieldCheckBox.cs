@@ -493,7 +493,6 @@ namespace OpenDental {
 			Action<string> updateGroupCaptionForFieldName=new Action<string>((caption) => {
 				SheetFieldDefCur.UiLabelMobile=caption;
 				List<SheetFieldDef> listSheetFieldDefs=SheetDefCur.SheetFieldDefs.FindAll(x =>
-					x.RadioButtonGroup==SheetFieldDefCur.RadioButtonGroup &&
 					x.FieldType==SheetFieldType.CheckBox &&
 					!string.IsNullOrEmpty(x.FieldName) &&
 					x.FieldName==SheetFieldDefCur.FieldName &&
@@ -514,9 +513,17 @@ namespace OpenDental {
 			}
 			else if(groupRadioMisc.Visible){
 				SheetFieldDefCur.RadioButtonGroup=comboRadioGroupNameMisc.Text;
+				SheetFieldDefCur.UiLabelMobile=textUiLabelMobileMisc.Text;
 				SheetFieldDefCur.UiLabelMobileRadioButton=textUiLabelMobileRadioButtonMisc.Text;
 				//All items with this group name get this UiLabelMobile.
-				updateGroupCaptionForFieldName(textUiLabelMobileMisc.Text);
+				List<SheetFieldDef> listSheetFieldDefs2=SheetDefCur.SheetFieldDefs.FindAll(x =>
+					x.FieldType==SheetFieldType.CheckBox &&
+					!string.IsNullOrEmpty(x.RadioButtonGroup) &&
+					x.RadioButtonGroup==SheetFieldDefCur.RadioButtonGroup &&
+					x.Language==SheetFieldDefCur.Language);
+				for(int i=0;i<listSheetFieldDefs2.Count;i++){
+					listSheetFieldDefs2[i].UiLabelMobile=SheetFieldDefCur.UiLabelMobile;
+				}
 			}
 			else if(SheetDefCur.SheetType==SheetTypeEnum.MedicalHistory) {
 				//All items with this group name get this UiLabelMobile.

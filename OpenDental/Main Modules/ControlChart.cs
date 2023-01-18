@@ -2244,6 +2244,10 @@ namespace OpenDental {
 		}
 
 		private void checkTreatPlans_Click(object sender,EventArgs e) {
+			if(checkTreatPlans.Checked) {
+				TreatPlanType tpTypeCur=(DiscountPlanSubs.HasDiscountPlan(Pd.PatNum)?TreatPlanType.Discount:TreatPlanType.Insurance);
+				TreatPlans.AuditPlans(Pd.PatNum,tpTypeCur);
+			}
 			gridTreatPlans.SetAll(false);
 			if(_listTreatPlans!=null && _listTreatPlans.Count>0) {
 				gridTreatPlans.SetSelected(0,true);
@@ -4962,6 +4966,10 @@ namespace OpenDental {
 				odInternalCustomerGrids.Visible=true;
 				odInternalCustomerGrids.BringToFront();
 				odInternalCustomerGrids.PatCur=Pd.Patient;
+			}
+			if(checkTreatPlans.Checked) {
+				TreatPlanType tpTypeCur=(DiscountPlanSubs.HasDiscountPlan(patNum)?TreatPlanType.Discount:TreatPlanType.Insurance);
+				TreatPlans.AuditPlans(patNum,tpTypeCur);
 			}
 			Logger.LogAction("RefreshModuleScreen",LogPath.ChartModule,() => RefreshModuleScreen(isClinicRefresh));//Update UI to reflect any changed dynamic SheetDefs.
 			LayoutControls();

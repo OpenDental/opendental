@@ -199,47 +199,36 @@ namespace OpenDentBusiness {
 			return 1;
 		}
 
-		///<summary>Creates charge rows for display on the form from the data table input. Similar to CreateRowForPayPlanCharge but for use with sheets/datatables.</summary>
+		///<summary>Creates charge rows for display on the form from the data table input. Similar to CreateRowForPayPlanCharge but for use with sheets/datatables. The payPlanCharge argument will only have Principal, Interest, and ChargeDate set if it is for a Dynamic Pay Plan aggregate row.</summary>
 		public static DataRow CreateRowForPayPlanChargeDT(DataTable table,PayPlanCharge payPlanCharge,int payPlanChargeOrdinal,bool isDynamic,bool hasExpectedChargesAwaitingCompletion=false) {
 			DataRow retVal=table.NewRow();
 			string chargeDate=payPlanCharge.ChargeDate.ToShortDateString();
 			string interestAmt=payPlanCharge.Interest.ToString("f");
 			string paymentDue=(payPlanCharge.Principal+payPlanCharge.Interest).ToString("n");
-			string descript="";
-			//MaxValue to check for treatment planned status.
-			if(isDynamic && payPlanCharge.LinkType==PayPlanLinkType.Procedure) {
+			string descript="#"+(payPlanChargeOrdinal+1);
+			//payPlanCharge.FKey will be zero if payPlanCharge represents an aggregate row.
+			if(isDynamic && payPlanCharge.LinkType==PayPlanLinkType.Procedure && payPlanCharge.FKey!=0) {
 				Procedure curProc=Procedures.GetOneProc(payPlanCharge.FKey,false);
-				if(curProc!=null) {
-					if(payPlanCharge.ChargeDate==DateTime.MaxValue && (curProc.ProcStatus==ProcStat.TP || curProc.ProcStatus==ProcStat.TPi)) {
-						chargeDate="TBD";
-						interestAmt="TBD";
-						paymentDue="TBD";
-					}
-					ProcedureCode curProcCode=ProcedureCodes.GetProcCodeFromDb(curProc.CodeNum);
-					if(curProcCode!=null) {
-						descript+=" "+curProcCode.ProcCode;
-						if(curProcCode.AbbrDesc!="") {
-							descript+=" - "+curProcCode.AbbrDesc;
-						}
+				//If Procedure has a TP status and the payPlanCharge.ChargeDate is MaxValue, the Dynamic Payment Plan is awaiting completion.
+				if(payPlanCharge.ChargeDate==DateTime.MaxValue && (curProc.ProcStatus==ProcStat.TP || curProc.ProcStatus==ProcStat.TPi)) {
+					chargeDate="TBD";
+					interestAmt="TBD";
+					paymentDue="TBD";
+					descript="#-";
+				}
+				ProcedureCode curProcCode=ProcedureCodes.GetProcCodeFromDb(curProc.CodeNum);
+				if(curProcCode!=null) {
+					descript+=" "+curProcCode.ProcCode;
+					if(curProcCode.AbbrDesc!="") {
+						descript+=" - "+curProcCode.AbbrDesc;
 					}
 				}
-			}
-			else if(!isDynamic) {
-				descript="#"+(payPlanChargeOrdinal+1);
 			}
 			if(!payPlanCharge.Note.IsNullOrEmpty()) {
 				descript+=" "+payPlanCharge.Note;
 				//Don't add a # if it's a recalculated charge because they aren't "true" payplan charges.
 				if(payPlanCharge.Note.Trim().ToLower().Contains("recalculated based on")) {
 					descript=payPlanCharge.Note;
-				}
-			}
-			if(isDynamic) {
-				if(chargeDate=="TBD") {
-					retVal["ChargeNum"]="TBD";
-				}
-				else {
-					retVal["ChargeNum"]=payPlanChargeOrdinal+1;
 				}
 			}
 			retVal["ChargeDate"]=chargeDate;//0 Date
@@ -319,7 +308,6 @@ namespace OpenDentBusiness {
 			DataRow retVal=table.NewRow();
 			string descript="";
 			if(isDynamic) {
-				retVal["ChargeNum"]="";
 				descript="Payment";
 			}
 			else {
@@ -442,6 +430,9 @@ namespace OpenDentBusiness {
 				payplanChargeMerged.Principal=principal;
 				payplanChargeMerged.Interest=interest;
 				payplanChargeMerged.ChargeDate=listChargeDates[i];
+				if(listPayPlanChargesForDate.Any(x=>x.Note=="Down Payment")) {
+					payplanChargeMerged.Note="Down payment";
+				}
 				listPayPlanChargesMerged.Add(payplanChargeMerged);
 			}
 			listPayPlanChargesMerged.AddRange(listPayPlanCharges.FindAll(x=>x.ChargeDate==DateTime.MaxValue));

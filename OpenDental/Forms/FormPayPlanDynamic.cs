@@ -254,23 +254,21 @@ namespace OpenDental {
 			gridCharges.BeginUpdate();
 			gridCharges.Columns.Clear();
 			GridColumn col;
-			col=new GridColumn(Lan.g("PayPlanAmortization","Charge Number"),50,HorizontalAlignment.Right);//0
-			gridCharges.Columns.Add(col);
 			//If this column is changed from a date column then the comparer method (ComparePayPlanRows) needs to be updated.
 			//If changes are made to the order of the grid, changes need to also be made for butPrint_Click
-			col=new GridColumn(Lan.g("PayPlanAmortization","Date"),64,HorizontalAlignment.Center);//1
+			col=new GridColumn(Lan.g("PayPlanAmortization","Date"),64,HorizontalAlignment.Center);//0
 			gridCharges.Columns.Add(col);
-			col=new GridColumn(Lan.g("PayPlanAmortization","Description"),147);//2
+			col=new GridColumn(Lan.g("PayPlanAmortization","Description"),147);//1
 			gridCharges.Columns.Add(col);
-			col=new GridColumn(Lan.g("PayPlanAmortization","Principal"),75,HorizontalAlignment.Right);//3
+			col=new GridColumn(Lan.g("PayPlanAmortization","Principal"),75,HorizontalAlignment.Right);//2
 			gridCharges.Columns.Add(col);
-			col=new GridColumn(Lan.g("PayPlanAmortization","Interest"),67,HorizontalAlignment.Right);//4
+			col=new GridColumn(Lan.g("PayPlanAmortization","Interest"),67,HorizontalAlignment.Right);//3
 			gridCharges.Columns.Add(col);
-			col=new GridColumn(Lan.g("PayPlanAmortization","Due"),75,HorizontalAlignment.Right);//5
+			col=new GridColumn(Lan.g("PayPlanAmortization","Due"),75,HorizontalAlignment.Right);//4
 			gridCharges.Columns.Add(col);
-			col=new GridColumn(Lan.g("PayPlanAmortization","Payment"),75,HorizontalAlignment.Right);//6
+			col=new GridColumn(Lan.g("PayPlanAmortization","Payment"),75,HorizontalAlignment.Right);//5
 			gridCharges.Columns.Add(col);
-			col=new GridColumn(Lan.g("PayPlanAmortization","Balance"),70,HorizontalAlignment.Right);//7
+			col=new GridColumn(Lan.g("PayPlanAmortization","Balance"),70,HorizontalAlignment.Right);//6
 			gridCharges.Columns.Add(col);
 			gridCharges.ListGridRows.Clear();
 			List<PayPlanCharge> listPayPlanChargesExpected=PayPlanEdit.GetPayPlanChargesForDynamicPaymentPlanSchedule(_dynamicPaymentPlanData.PayPlan,terms,_dynamicPaymentPlanData.ListPayPlanChargesDb,_dynamicPaymentPlanData.ListPayPlanLinks,_dynamicPaymentPlanData.ListPaySplits);
@@ -293,25 +291,25 @@ namespace OpenDental {
 			_dynamicPaymentPlanData.TotalInterest=0;
 			double totalPay=0;
 			for(int i=0;i<listRows.Count;i++) {
-				bool isFutureCharge=PIn.Date(listRows[i].Cells[1].Text)>DateTime.Today;
+				bool isFutureCharge=PIn.Date(listRows[i].Cells[0].Text)>DateTime.Today;
 				if(!checkExcludePast.Checked || isFutureCharge) {
 					//Add the row if we aren't excluding past activity or the activity is in the future.
 					gridCharges.ListGridRows.Add(listRows[i]);
 				}
-				if(listRows[i].Cells[3].Text!="") {//Principal
-					principalDue+=PIn.Double(listRows[i].Cells[3].Text);
+				if(listRows[i].Cells[2].Text!="") {//Principal
+					principalDue+=PIn.Double(listRows[i].Cells[2].Text);
+					balanceAmt+=PIn.Double(listRows[i].Cells[2].Text);
+				}
+				if(listRows[i].Cells[3].Text!="") {//Interest
+					_dynamicPaymentPlanData.TotalInterest+=PIn.Double(listRows[i].Cells[3].Text);
 					balanceAmt+=PIn.Double(listRows[i].Cells[3].Text);
 				}
-				if(listRows[i].Cells[4].Text!="") {//Interest
-					_dynamicPaymentPlanData.TotalInterest+=PIn.Double(listRows[i].Cells[4].Text);
-					balanceAmt+=PIn.Double(listRows[i].Cells[4].Text);
-				}
-				else if(listRows[i].Cells[6].Text!="") {//Payment
-					totalPay+=PIn.Double(listRows[i].Cells[6].Text);
-					balanceAmt-=PIn.Double(listRows[i].Cells[6].Text);
+				else if(listRows[i].Cells[5].Text!="") {//Payment
+					totalPay+=PIn.Double(listRows[i].Cells[5].Text);
+					balanceAmt-=PIn.Double(listRows[i].Cells[5].Text);
 				}
 				if(!checkExcludePast.Checked || isFutureCharge) {
-					gridCharges.ListGridRows[gridCharges.ListGridRows.Count-1].Cells[7].Text=balanceAmt.ToString("f");
+					gridCharges.ListGridRows[gridCharges.ListGridRows.Count-1].Cells[6].Text=balanceAmt.ToString("f");
 				}
 				if(!isFutureCharge) {
 					textPrincipalSum.Text=principalDue.ToString("f");
@@ -333,7 +331,7 @@ namespace OpenDental {
 			gridCharges.EndUpdate();
 			if(gridCharges.ListGridRows.Count>0 && totalsRowIndex != -1) {
 				gridCharges.ListGridRows[totalsRowIndex].ColorLborder=Color.Black;
-				gridCharges.ListGridRows[totalsRowIndex].Cells[6].Bold=YN.Yes;
+				gridCharges.ListGridRows[totalsRowIndex].Cells[5].Bold=YN.Yes;
 			}
 			textAccumulatedDue.Text=PayPlans.GetAccumDue(_dynamicPaymentPlanData.PayPlan.PayPlanNum,_dynamicPaymentPlanData.ListPayPlanChargesDb).ToString("f");
 			textPrincPaid.Text=PayPlans.GetPrincPaid(_dynamicPaymentPlanData.AmountPaid,_dynamicPaymentPlanData.PayPlan.PayPlanNum,_dynamicPaymentPlanData.ListPayPlanChargesDb).ToString("f");
@@ -947,7 +945,6 @@ namespace OpenDental {
 						listExpectedChargesDownPayment:listPayPlanChargesExpectedDownPayment);
 				}
 				DataTable table=new DataTable();
-				table.Columns.Add("charge");
 				table.Columns.Add("date");
 				if(listExpectedPayPlanChargesAwaitingCompletion.Count>0) {
 					table.Columns.Add("prov");
@@ -961,17 +958,16 @@ namespace OpenDental {
 				DataRow row;
 				for(int i = 0;i<gridCharges.ListGridRows.Count;i++) {
 					row=table.NewRow();
-					row["charge"]=gridCharges.ListGridRows[i].Cells[0].Text;
-					row["date"]=gridCharges.ListGridRows[i].Cells[1].Text;
+					row["date"]=gridCharges.ListGridRows[i].Cells[0].Text;
 					if(listExpectedPayPlanChargesAwaitingCompletion.Count>0) {
 						row["prov"]="";
 					}
-					row["description"]=gridCharges.ListGridRows[i].Cells[2].Text;
-					row["principal"]=gridCharges.ListGridRows[i].Cells[3].Text;
-					row["interest"]=gridCharges.ListGridRows[i].Cells[4].Text;
-					row["due"]=gridCharges.ListGridRows[i].Cells[5].Text;
-					row["payment"]=gridCharges.ListGridRows[i].Cells[6].Text;
-					row["balance"]=gridCharges.ListGridRows[i].Cells[7].Text;
+					row["description"]=gridCharges.ListGridRows[i].Cells[1].Text;
+					row["principal"]=gridCharges.ListGridRows[i].Cells[2].Text;
+					row["interest"]=gridCharges.ListGridRows[i].Cells[3].Text;
+					row["due"]=gridCharges.ListGridRows[i].Cells[4].Text;
+					row["payment"]=gridCharges.ListGridRows[i].Cells[5].Text;
+					row["balance"]=gridCharges.ListGridRows[i].Cells[6].Text;
 					table.Rows.Add(row);
 				}
 				string finalBalance="";
@@ -979,12 +975,11 @@ namespace OpenDental {
 					finalBalance="0.00";
 				}
 				else {
-					finalBalance=gridCharges.ListGridRows[gridCharges.ListGridRows.Count-1].Cells[7].Text;
+					finalBalance=gridCharges.ListGridRows[gridCharges.ListGridRows.Count-1].Cells[6].Text;
 				}
 				for(int i = 0;i<listExpectedPayPlanChargesAwaitingCompletion.Count;i++) {
 					GridRow rowForCharge=PayPlanL.CreateRowForPayPlanCharge(listExpectedPayPlanChargesAwaitingCompletion[i],0,isDynamic:true);
 					row=table.NewRow();
-					row["charge"]="TBD";
 					row["date"]="TBD";
 					row["prov"]=rowForCharge.Cells[1].Text;
 					row["description"]=Lans.g(this,"Planned - ")+rowForCharge.Cells[2].Text;
@@ -996,15 +991,13 @@ namespace OpenDental {
 					table.Rows.Add(row);
 				}
 				QueryObject queryObject=reportComplex.AddQuery(table,"","",SplitByKind.None,1,true);
-				queryObject.AddColumn("ChargeNumber",70,FieldValueType.String,font);
-				queryObject.GetColumnHeader("ChargeNumber").StaticText="Charge #";
 				queryObject.AddColumn("ChargeDate",80,FieldValueType.String,font);
 				queryObject.GetColumnHeader("ChargeDate").StaticText="Date";
 				if(listExpectedPayPlanChargesAwaitingCompletion.Count>0) {
 					queryObject.AddColumn("Provider",75,FieldValueType.String,font);
 				}
 				queryObject.AddColumn("Description",130,FieldValueType.String,font);
-				queryObject.GetColumnDetail("Description").ContentAlignment=ContentAlignment.MiddleCenter;
+				queryObject.GetColumnDetail("Description").ContentAlignment=ContentAlignment.MiddleLeft;
 				queryObject.AddColumn("Principal",70,FieldValueType.Number,font);
 				queryObject.AddColumn("Interest",52,FieldValueType.Number,font);
 				queryObject.AddColumn("Due",70,FieldValueType.Number,font);

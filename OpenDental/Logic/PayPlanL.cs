@@ -61,8 +61,8 @@ namespace OpenDental {
 		}
 
 		public static int CompareMergedPayPlanRows(GridRow x,GridRow y) {
-			DateTime dateTimeX=DateTime.Parse(x.Cells[1].Text);
-			DateTime dateTimeY=DateTime.Parse(y.Cells[1].Text);
+			DateTime dateTimeX=DateTime.Parse(x.Cells[0].Text);
+			DateTime dateTimeY=DateTime.Parse(y.Cells[0].Text);
 			DynamicPayPlanRowData rowDataX=(DynamicPayPlanRowData)x.Tag;
 			DynamicPayPlanRowData rowDataY=(DynamicPayPlanRowData)x.Tag;
 			if(dateTimeX<dateTimeY) {
@@ -278,10 +278,13 @@ namespace OpenDental {
 				double principal=listPayPlanChargesForDate.Sum(x=>x.Principal);
 				double interest=listPayPlanChargesForDate.Sum(x=>x.Interest);
 				double due=principal+interest;
+				string descript="#"+(i+1);
+				if(listPayPlanChargesForDate.Any(x=>x.Note=="Down Payment")) {
+					descript+=" Down payment";
+				}
 				GridRow row=new GridRow();
-				row.Cells.Add((i+1).ToString());
 				row.Cells.Add(listChargeDates[i].ToShortDateString());
-				row.Cells.Add("");
+				row.Cells.Add(descript);
 				row.Cells.Add(principal.ToString("n"));
 				row.Cells.Add(interest.ToString("n"));
 				row.Cells.Add(due.ToString("n"));
@@ -301,14 +304,13 @@ namespace OpenDental {
 				string datePay=listPaySplitsForPayment[0].DatePay.ToShortDateString();
 				double sumSplitAmt=listPaySplitsForPayment.Sum(x=>x.SplitAmt);
 				GridRow row=new GridRow();
-				row.Cells.Add("");//0 Charge number
-				row.Cells.Add(datePay);//1 Date
-				row.Cells.Add("Payment");//2 Description
-				row.Cells.Add("");//3 Principal
-				row.Cells.Add("");//4 Interest
-				row.Cells.Add("");//5 Due
-				row.Cells.Add(sumSplitAmt.ToString("n"));//6 Payment
-				row.Cells.Add("");//7 Balance (filled later)
+				row.Cells.Add(datePay);//0 Date
+				row.Cells.Add("Payment");//1 Description
+				row.Cells.Add("");//2 Principal
+				row.Cells.Add("");//3 Interest
+				row.Cells.Add("");//4 Due
+				row.Cells.Add(sumSplitAmt.ToString("n"));//5 Payment
+				row.Cells.Add("");//6 Balance (filled later)
 				row.ColorText=Defs.GetDefByExactName(DefCat.AccountColors,"Payment").ItemColor;
 				row.Tag=new DynamicPayPlanRowData() {
 					PayNum=listPayNums[i]

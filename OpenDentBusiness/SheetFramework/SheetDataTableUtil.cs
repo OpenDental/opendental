@@ -584,10 +584,7 @@ namespace OpenDentBusiness.SheetFramework {
 			listPayPlanCharges.AddRange(listExpectedCharges);
 			//Construct empty Data table ===============================================================================
 			DataTable dataTablePayPlan=new DataTable();
-			dataTablePayPlan.Columns.AddRange(new[] {
-				new DataColumn("ChargeNum",typeof(string)),
-				new DataColumn("ChargeDate",typeof(string)),
-			});
+			dataTablePayPlan.Columns.Add(new DataColumn ("ChargeDate", typeof(string)));
 			if(hasExpectedChargesAwaitingCompletion) {
 				dataTablePayPlan.Columns.Add(new DataColumn("Provider",typeof(string)));
 			}

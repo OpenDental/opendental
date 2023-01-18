@@ -395,9 +395,6 @@ namespace OpenDentBusiness {
 				if(!table.Columns.Contains("Provider")) {
 					listDisplayFields.RemoveAll(x=>x.InternalName=="Provider");
 				}
-				if(!table.Columns.Contains("ChargeNum")) {
-					listDisplayFields.RemoveAll(x=>x.InternalName=="ChargeNum");
-				}
 			}
 			if(field.FieldName=="TreatPlanMain") {
 				TreatPlanType tpType=(TreatPlanType)PIn.Int(table.Rows[0]["paramTreatPlanType"].ToString());
