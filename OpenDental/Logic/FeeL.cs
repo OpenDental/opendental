@@ -14,6 +14,7 @@ namespace OpenDental {
 		///<summary></summary>
 		public static void ImportFees(string fileName,long feeSchedNum,long clinicNum,long provNum) {
 			List<Fee> listFees=Fees.GetListExact(feeSchedNum,clinicNum,provNum);
+			List<Fee> listFeesAdded=new List<Fee>();
 			string[] fields;
 			int counter=0;
 			int lineCount=File.ReadAllLines(fileName).Length;//quick and dirty
@@ -30,10 +31,16 @@ namespace OpenDental {
 						line=sr.ReadLine();
 						continue;
 					}
+					Fee feeFound=listFeesAdded.Find(x => x.CodeNum==codeNum);
+					if(feeFound!=null) {//if we have added this fee from the file before we will skip it
+						line=sr.ReadLine();
+						continue;
+					}
 					Fee fee=Fees.GetFee(codeNum,feeSchedNum,clinicNum,provNum,listFees);
 					string feeOldStr="";
 					DateTime datePrevious=DateTime.MinValue;
 					if(fee!=null) {
+						listFeesAdded.Add(fee);
 						feeOldStr="Old Fee: "+fee.Amount.ToString("c")+", ";
 						datePrevious=fee.SecDateTEdit;
 					}
@@ -63,6 +70,7 @@ namespace OpenDental {
 							fee.CodeNum=codeNum;
 							fee.ClinicNum=clinicNum;//Either 0 because you're importing on an HQ schedule or local clinic because the feesched is localizable.
 							fee.ProvNum=provNum;
+							listFeesAdded.Add(fee);
 							Fees.Insert(fee);
 						}
 						else{

@@ -381,7 +381,7 @@
 			this.gridMain.HasAlternateRowsColored = true;
 			this.gridMain.Location = new System.Drawing.Point(280, 46);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(759, 929);
+			this.gridMain.Size = new System.Drawing.Size(759, 638);
 			this.gridMain.TabIndex = 33;
 			this.gridMain.TranslationName = "TableBigPhones";
 			this.gridMain.WrapText = false;
@@ -602,7 +602,7 @@
 			// FormPhoneTiles
 			// 
 			this.AutoScroll = true;
-			this.ClientSize = new System.Drawing.Size(1764, 987);
+			this.ClientSize = new System.Drawing.Size(1284, 696);
 			this.Controls.Add(this.panelGrid2);
 			this.Controls.Add(this.panelGrid);
 			this.Controls.Add(this.checkShowOldInterface);
@@ -618,6 +618,7 @@
 			this.Location = new System.Drawing.Point(10, 10);
 			this.Name = "FormPhoneTiles";
 			this.Text = "Big Phones";
+			this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
 			this.Load += new System.EventHandler(this.FormPhoneTiles_Load);
 			this.Shown += new System.EventHandler(this.FormPhoneTiles_Shown);
 			this.menuNumbers.ResumeLayout(false);

@@ -7857,6 +7857,9 @@
     <EmbeddedResource Include="Forms\FormCommItemHistory.resx">
       <DependentUpon>FormCommItemHistory.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormWebChatSessionNoteEdit.resx">
+      <DependentUpon>FormWebChatSessionNoteEdit.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormWebFormNextForms.resx">
       <DependentUpon>FormWebFormNextForms.cs</DependentUpon>
     </EmbeddedResource>

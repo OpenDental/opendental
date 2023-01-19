@@ -47,7 +47,9 @@ namespace OpenDental {
 		#region Constructor
 		public FormPhoneTiles() {
 			InitializeComponent();
-			InitializeLayoutManager(isLayoutMS:true);
+			InitializeLayoutManager();
+			//This window is bigger than our "allowed" size.
+			//It's maximized on startup to prevent it from resizing if zoomed.
 		}
 		#endregion Constructor
 

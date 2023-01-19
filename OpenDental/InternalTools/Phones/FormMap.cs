@@ -445,17 +445,20 @@ namespace OpenDental.InternalTools.Phones {
 			FillDetails(cubicleClickedDetail);
 		}
 
-		///<summary>Preserves selected index. Does not fill mapPanel.</summary>
+		///<summary>Preserves _mapAreaContainer. Does not fill mapPanel.</summary>
 		private void FillCombo() {
-			int idx=comboRoom.SelectedIndex;
-			if(idx==-1){
-				idx=0;
-			}
 			comboRoom.Items.Clear();
-			for(int i=0;i<_listMapAreaContainers.Count;i++) {
+			for (int i=0;i<_listMapAreaContainers.Count;i++) {
 				comboRoom.Items.Add(_listMapAreaContainers[i].Description);
 			}
-			comboRoom.SelectedIndex=idx;
+			int selectedIndex=0;
+			if(_mapAreaContainer!=null) {
+				selectedIndex=_listMapAreaContainers.FindIndex(x => x.MapAreaContainerNum==_mapAreaContainer.MapAreaContainerNum);
+			}
+			if(selectedIndex==-1){
+				selectedIndex=0;
+			}
+			comboRoom.SelectedIndex=selectedIndex;
 			this.Text="Call Center Status Map - "+_listMapAreaContainers[comboRoom.SelectedIndex].Description;
 		}
 

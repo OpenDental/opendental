@@ -47,7 +47,7 @@ namespace OpenDental{
 			this.butOK.Location = new System.Drawing.Point(364, 141);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
-			this.butOK.TabIndex = 3;
+			this.butOK.TabIndex = 98;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
@@ -57,7 +57,7 @@ namespace OpenDental{
 			this.butCancel.Location = new System.Drawing.Point(364, 171);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
-			this.butCancel.TabIndex = 2;
+			this.butCancel.TabIndex = 99;
 			this.butCancel.Text = "&Cancel";
 			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
@@ -79,7 +79,7 @@ namespace OpenDental{
 			this.label1.Location = new System.Drawing.Point(204, 67);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(193, 53);
-			this.label1.TabIndex = 110;
+			this.label1.TabIndex = 0;
 			this.label1.Text = "The line will extend from x,y to x+w,y+h.  So negative width and height are allow" +
     "ed.";
 			// 
@@ -90,7 +90,7 @@ namespace OpenDental{
 			this.textHeight.MinVal = -2000;
 			this.textHeight.Name = "textHeight";
 			this.textHeight.Size = new System.Drawing.Size(69, 20);
-			this.textHeight.TabIndex = 109;
+			this.textHeight.TabIndex = 4;
 			// 
 			// label8
 			// 
@@ -98,7 +98,7 @@ namespace OpenDental{
 			this.label8.Location = new System.Drawing.Point(58, 91);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(71, 16);
-			this.label8.TabIndex = 108;
+			this.label8.TabIndex = 0;
 			this.label8.Text = "Height";
 			this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
@@ -109,7 +109,7 @@ namespace OpenDental{
 			this.textWidth.MinVal = -2000;
 			this.textWidth.Name = "textWidth";
 			this.textWidth.Size = new System.Drawing.Size(69, 20);
-			this.textWidth.TabIndex = 107;
+			this.textWidth.TabIndex = 3;
 			// 
 			// label7
 			// 
@@ -117,7 +117,7 @@ namespace OpenDental{
 			this.label7.Location = new System.Drawing.Point(58, 65);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(71, 16);
-			this.label7.TabIndex = 106;
+			this.label7.TabIndex = 0;
 			this.label7.Text = "Width";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
@@ -128,7 +128,7 @@ namespace OpenDental{
 			this.textYPos.MinVal = -100;
 			this.textYPos.Name = "textYPos";
 			this.textYPos.Size = new System.Drawing.Size(69, 20);
-			this.textYPos.TabIndex = 105;
+			this.textYPos.TabIndex = 2;
 			// 
 			// label6
 			// 
@@ -136,7 +136,7 @@ namespace OpenDental{
 			this.label6.Location = new System.Drawing.Point(58, 39);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(71, 16);
-			this.label6.TabIndex = 104;
+			this.label6.TabIndex = 0;
 			this.label6.Text = "Y Pos";
 			this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
@@ -147,7 +147,7 @@ namespace OpenDental{
 			this.textXPos.MinVal = -100;
 			this.textXPos.Name = "textXPos";
 			this.textXPos.Size = new System.Drawing.Size(69, 20);
-			this.textXPos.TabIndex = 103;
+			this.textXPos.TabIndex = 1;
 			// 
 			// label5
 			// 
@@ -155,7 +155,7 @@ namespace OpenDental{
 			this.label5.Location = new System.Drawing.Point(58, 13);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(71, 16);
-			this.label5.TabIndex = 102;
+			this.label5.TabIndex = 0;
 			this.label5.Text = "X Pos";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
@@ -165,7 +165,7 @@ namespace OpenDental{
 			this.checkPmtOpt.Location = new System.Drawing.Point(12, 138);
 			this.checkPmtOpt.Name = "checkPmtOpt";
 			this.checkPmtOpt.Size = new System.Drawing.Size(130, 20);
-			this.checkPmtOpt.TabIndex = 236;
+			this.checkPmtOpt.TabIndex = 6;
 			this.checkPmtOpt.Text = "Is Payment Option";
 			// 
 			// butColor
@@ -174,7 +174,7 @@ namespace OpenDental{
 			this.butColor.Location = new System.Drawing.Point(129, 116);
 			this.butColor.Name = "butColor";
 			this.butColor.Size = new System.Drawing.Size(30, 20);
-			this.butColor.TabIndex = 237;
+			this.butColor.TabIndex = 5;
 			this.butColor.Click += new System.EventHandler(this.butColor_Click);
 			// 
 			// label2
@@ -183,7 +183,7 @@ namespace OpenDental{
 			this.label2.Location = new System.Drawing.Point(52, 116);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(71, 16);
-			this.label2.TabIndex = 238;
+			this.label2.TabIndex = 0;
 			this.label2.Text = "Color";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 

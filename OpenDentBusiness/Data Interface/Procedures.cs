@@ -3009,7 +3009,7 @@ namespace OpenDentBusiness {
 						+"LEFT JOIN inssub ON inssub.InsSubNum=patplan.InsSubNum "
 						+"LEFT JOIN insplan ON insplan.PlanNum=inssub.PlanNum "
 						+(isMedFeeUsedForNewProcs?"LEFT JOIN procedurecode ON procedurecode.ProcCode=procedurelog.MedicalCode ":"")
-						+"WHERE procedurelog.ProcStatus="+POut.Int((int)ProcStat.TP)+" "
+						+"WHERE procedurelog.ProcStatus IN ("+POut.Int((int)ProcStat.TP)+","+POut.Int((int)ProcStat.TPi)+") "
 						+(listWhereAnds.Count>0?("AND "+string.Join(" AND ",listWhereAnds)+" "):"")
 						+"GROUP BY procedurelog.ProcNum "//because sometimes a pat can have more than one primary patplan and DBM only has "manual fix needed" for this problem
 						+"ORDER BY NULL";//an old mysql trick to improve performance. Trick is obsolete as of 5.6.
