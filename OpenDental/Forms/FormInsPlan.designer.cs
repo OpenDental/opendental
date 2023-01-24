@@ -1072,7 +1072,7 @@ namespace OpenDental {
 			// 
 			// labelMedicalInsurance
 			// 
-			this.labelMedicalInsurance.Location = new System.Drawing.Point(131, 4);
+			this.labelMedicalInsurance.Location = new System.Drawing.Point(131, 2);
 			this.labelMedicalInsurance.Name = "labelMedicalInsurance";
 			this.labelMedicalInsurance.Size = new System.Drawing.Size(110, 17);
 			this.labelMedicalInsurance.TabIndex = 192;
@@ -1330,7 +1330,7 @@ namespace OpenDental {
 			// checkIsMedical
 			// 
 			this.checkIsMedical.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkIsMedical.Location = new System.Drawing.Point(117, 4);
+			this.checkIsMedical.Location = new System.Drawing.Point(117, 2);
 			this.checkIsMedical.Name = "checkIsMedical";
 			this.checkIsMedical.Size = new System.Drawing.Size(18, 17);
 			this.checkIsMedical.TabIndex = 113;

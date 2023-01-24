@@ -176,7 +176,7 @@ namespace OpenDental{
 			grid.Columns.Add(new GridColumn(Lan.g("TableAudit","User"),70));
 			grid.Columns.Add(new GridColumn(Lan.g("TableAudit","Permission"),190));
 			grid.Columns.Add(new GridColumn(Lan.g("TableAudit","Computer"),70));
-			grid.Columns.Add(new GridColumn(Lan.g("TableAudit","Log Text"),279) { IsWidthDynamic=true });
+			grid.Columns.Add(new GridColumn(Lan.g("TableAudit","Log Text"),279));
 			grid.Columns.Add(new GridColumn(Lan.g("TableAudit","Log Source"),140));
 			grid.Columns.Add(new GridColumn(Lan.g("TableAudit","Last Edit"),100));
 			grid.ListGridRows.Clear();

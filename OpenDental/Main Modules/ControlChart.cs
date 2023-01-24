@@ -3374,6 +3374,10 @@ namespace OpenDental {
 
 		#region Methods - Event Handlers - Tab Draw
 		private void butAddText_Click(object sender,EventArgs e) {
+			if(ODBuild.IsWeb()) {
+				MsgBox.Show(this,"The text feature is not available in Open Dental Cloud.");
+				return;
+			}
 			using InputBox inputBox=new InputBox("Text");
 			inputBox.ShowDialog();
 			if(inputBox.DialogResult!=DialogResult.OK){
@@ -3402,6 +3406,10 @@ namespace OpenDental {
 		}
 
 		private void butDeleteText_Click(object sender,EventArgs e) {
+			if(ODBuild.IsWeb()) {
+				MsgBox.Show(this,"The text feature is not available in Open Dental Cloud.");
+				return;
+			}
 			if(listBoxText.SelectedIndex==-1){
 				MsgBox.Show(this,"Please select an item above, first.");
 				return;
@@ -3495,6 +3503,11 @@ namespace OpenDental {
 		}
 
 		private void radioMoveText_Click(object sender,EventArgs e) {
+			if(ODBuild.IsWeb()) {
+				MsgBox.Show(this,"The text feature is not available in Open Dental Cloud.");
+				radioPointer.Checked=true;
+				return;
+			}
 			_toothChartRelay.CursorTool=CursorTool.MoveText;
 		}
 
@@ -10734,6 +10747,9 @@ namespace OpenDental {
 			}
 			for(int i=0;i<_listToothInitialsText.Count;i++) {
 				listBoxText.Items.Add(_listToothInitialsText[i].GetTextString(),_listToothInitialsText[i]);
+			}
+			if(ODBuild.IsWeb()) {
+				listBoxText.Enabled=false;
 			}
 			#endregion TextDraw
 		}

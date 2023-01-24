@@ -43,7 +43,7 @@ namespace OpenDentBusiness{
 		Date,
 		///<summary>3-If checked, value stored as "1".  If unchecked, row deleted.</summary>
 		Checkbox,
-		///<summary>4-This seems to have been added without implementing.  Not sure what will happen if someone tries to use it.</summary>
+		///<summary>4-Numbers only.</summary>
 		Currency,
 		///<summary>5 - DEPRECATED. (Only used 16.3.1, deprecated by 16.3.4)</summary>
 		InCaseOfEmergency,

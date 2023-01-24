@@ -314,20 +314,20 @@ namespace OpenDentBusiness{
 			if(listCharges.IsNullOrEmpty()) {
 				return listPayPlanChargesNotDeleted;
 			}
-			//Do not allow deleting debits with payments attached or any credits in general.
-			List<long> listPayPlanChargeNumsWithPayments=PaySplits.GetForPayPlanCharges(listCharges.Select(x=>x.PayPlanChargeNum).ToList())
-				.Select(y => y.PayPlanChargeNum)
+			//Do not allow deleting payment plan charges with payments attached.
+			List<long> listPayPlanChargeNumsPreserve=PaySplits.GetForPayPlanCharges(listCharges.Select(x=>x.PayPlanChargeNum).ToList())
+				.Select(x => x.PayPlanChargeNum)
 				.ToList();
-			//Figure out all of the debits that are safe to delete.
-			List<long> listPayPlanChargeNumsSafeToDelete=listCharges
-				.Where(x => !listPayPlanChargeNumsWithPayments.Contains(x.PayPlanChargeNum) && x.ChargeType!=PayPlanChargeType.Credit)
-				.Select(x => x.PayPlanChargeNum).ToList();
+			//Do not allow deleting debits.
+			List<PayPlanCharge> lisPayPlanChargesCredits=listCharges.FindAll(x => x.ChargeType==PayPlanChargeType.Credit);
+			listPayPlanChargeNumsPreserve.AddRange(lisPayPlanChargesCredits.Select(x => x.PayPlanChargeNum));
 			//Actually delete the charges from the database if calling method requests it.
 			if(doDelete) {
-				DeleteMany(listPayPlanChargeNumsSafeToDelete);
+				List<PayPlanCharge> listPayPlanChargesToDelete=listCharges.FindAll(x => !listPayPlanChargeNumsPreserve.Contains(x.PayPlanChargeNum));
+				DeleteMany(listPayPlanChargesToDelete.Select(x => x.PayPlanChargeNum).ToList());
 			}
 			//Return the list of charges that were not deleted.
-			return listCharges.FindAll(x => !listPayPlanChargeNumsSafeToDelete.Contains(x.PayPlanChargeNum));
+			return listCharges.FindAll(x => listPayPlanChargeNumsPreserve.Contains(x.PayPlanChargeNum));
 		}
 
 		///<summary></summary>

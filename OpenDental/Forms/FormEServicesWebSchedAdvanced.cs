@@ -178,8 +178,10 @@ namespace OpenDental {
 				_listUserControlHostedURLs.Add(userControlHostedURL);
 			}
 			Lan.C(this,userControlHostedURL);
+			//First make sure that the control fits within the bounds of the parent control by filling it, then the parent should call LayoutControlBoundsAndFonts which will scale all of it's child controls to match the current zoom setting.
+			userControlHostedURL.Dock=DockStyle.Fill;
 			LayoutManager.AddUnscaled(userControlHostedURL,panelHostedURLs);
-			LayoutManager.MoveWidth(userControlHostedURL,LayoutManager.Scale(userControlHostedURL.Width));
+			LayoutManager.LayoutControlBoundsAndFonts(panelHostedURLs);
 		}
 
 		#endregion Methods - Private

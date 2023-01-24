@@ -66,6 +66,7 @@ namespace OpenDentBusiness{
 			return Crud.PaySplitCrud.SelectMany(command);
 		}
 
+		///<summary>Returns all payment splits associated with the payment plan charges provided. Ignores payment splits with PayPlanChargeNum of 0.</summary>
 		public static List<PaySplit> GetForPayPlanCharges(List<long> listPayPlanChargeNums) {
 			if(listPayPlanChargeNums.IsNullOrEmpty()) {
 				return new List<PaySplit>();
@@ -73,7 +74,7 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<PaySplit>>(MethodBase.GetCurrentMethod(),listPayPlanChargeNums);
 			}
-			string command=$"SELECT * FROM paysplit WHERE PayPlanChargeNum IN ({string.Join(",",listPayPlanChargeNums)})";
+			string command=$"SELECT * FROM paysplit WHERE PayPlanChargeNum > 0 AND PayPlanChargeNum IN ({string.Join(",",listPayPlanChargeNums)})";
 			return Crud.PaySplitCrud.SelectMany(command);
 		}
 
