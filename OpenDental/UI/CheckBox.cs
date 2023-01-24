@@ -225,9 +225,11 @@ namespace OpenDental.UI {
 			//float fontSize=Font.Size*_zoomTest/100f;
 			//using Font font=new Font("Microsoft Sans Serif",fontSize);
 			if(CheckState==CheckState.Indeterminate){
-				float fontSize=LayoutManager.ScaleF(8.25f);
-				Font fontQuestion=new Font("Microsoft Sans Serif",fontSize);
-				g.DrawString("?",fontQuestion,solidBrushText,rectangleBox.X+LayoutManager.ScaleF(1f),rectangleBox.Y-LayoutManager.ScaleF(.5f));
+				using SolidBrush solidBrushIndet=new SolidBrush(ColorOD.Gray(50));
+				int intInflate=-LayoutManager.Scale(2);
+				Rectangle rectangleIndet=rectangleBox;
+				rectangleIndet.Inflate(intInflate,intInflate);
+				g.FillRectangle(solidBrushIndet,rectangleIndet);
 			}
 			else if(Checked){
 				using Pen pen=new Pen(ColorOD.Gray(90),LayoutManager.ScaleF(1.6f));

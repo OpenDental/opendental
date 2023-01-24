@@ -487,21 +487,23 @@ namespace OpenDentBusiness {
 			//5. Multiply the scheduled hours by the provider's HourlyProdGoalAmt
 			DataTable tableProdGoal=new DataTable();
 			if(!hasAllProvs && listProvNums.Count>0) {
-				whereProv="AND schedule.ProvNum IN ("+string.Join(",",listProvNums)+") ";
+				whereProv="AND S.ProvNum IN ("+string.Join(",",listProvNums)+") ";
 			}
 			if(!hasAllClinics && listClinicNums.Count>0) {
-				whereClin="AND COALESCE(operatory.ClinicNum,0) IN ("+string.Join(",",listClinicNums)+") ";
+				whereClin="AND COALESCE(COALESCE(S.ClinicNum,operatory.ClinicNum),0) IN ("+string.Join(",",listClinicNums)+") ";
 			}
 			//Fetch all schedules for the month and associated information (clinic from operatory, HourlyProdGoalAmt from provider)
-			command="SELECT "+DbHelper.DtimeToDate("schedule.SchedDate")+@" AS SchedDate, schedule.StartTime AS StartTime, schedule.StopTime AS StopTime,
-				COALESCE(operatory.ClinicNum,0) AS ClinicNum, provider.HourlyProdGoalAmt AS ProvProdGoal, provider.ProvNum AS ProvNum
+			command="SELECT S.SchedDate, S.StartTime, S.StopTime, COALESCE(COALESCE(S.ClinicNum,operatory.ClinicNum),0) AS ClinicNum, S.ProvProdGoal, S.ProvNum FROM "
+				+"(SELECT "+DbHelper.DtimeToDate("schedule.SchedDate")+@" AS SchedDate, schedule.StartTime AS StartTime, schedule.StopTime AS StopTime, schedule.SchedType AS SchedType, schedule.Status AS STATUS, 
+				operatory.ClinicNum AS ClinicNum, provider.HourlyProdGoalAmt AS ProvProdGoal, provider.ProvNum AS ProvNum
 				FROM schedule 
 				INNER JOIN provider ON provider.ProvNum=schedule.ProvNum 
 				LEFT JOIN scheduleop ON scheduleop.ScheduleNum=schedule.ScheduleNum 
-				LEFT JOIN operatory ON scheduleop.OperatoryNum=operatory.OperatoryNum 
-				WHERE schedule.SchedType="+POut.Int((int)ScheduleType.Provider)+" "
-				+"AND schedule.Status="+POut.Int((int)SchedStatus.Open)+" "
-				+"AND schedule."+DbHelper.BetweenDates("SchedDate",dateFrom,dateTo)+" "
+				LEFT JOIN operatory ON scheduleop.OperatoryNum=operatory.OperatoryNum) S
+				LEFT JOIN operatory ON S.ProvNum=operatory.ProvDentist OR S.ProvNum=operatory.ProvHygienist 
+				WHERE S.SchedType="+POut.Int((int)ScheduleType.Provider)+" "
+				+"AND S.Status="+POut.Int((int)SchedStatus.Open)+" "
+				+"AND S."+DbHelper.BetweenDates("SchedDate",dateFrom,dateTo)+" "
 				+whereProv
 				+whereClin;
 			if(isCEMT) {

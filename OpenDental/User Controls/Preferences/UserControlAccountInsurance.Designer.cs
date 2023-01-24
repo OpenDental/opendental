@@ -72,7 +72,7 @@ namespace OpenDental {
 			// checkCanadianPpoLabEst
 			// 
 			this.checkCanadianPpoLabEst.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkCanadianPpoLabEst.Location = new System.Drawing.Point(93, 577);
+			this.checkCanadianPpoLabEst.Location = new System.Drawing.Point(93, 579);
 			this.checkCanadianPpoLabEst.Name = "checkCanadianPpoLabEst";
 			this.checkCanadianPpoLabEst.Size = new System.Drawing.Size(367, 17);
 			this.checkCanadianPpoLabEst.TabIndex = 5;
@@ -80,14 +80,14 @@ namespace OpenDental {
 			// 
 			// textInsWriteoffDescript
 			// 
-			this.textInsWriteoffDescript.Location = new System.Drawing.Point(330, 555);
+			this.textInsWriteoffDescript.Location = new System.Drawing.Point(330, 557);
 			this.textInsWriteoffDescript.Name = "textInsWriteoffDescript";
 			this.textInsWriteoffDescript.Size = new System.Drawing.Size(130, 20);
 			this.textInsWriteoffDescript.TabIndex = 4;
 			// 
 			// label17
 			// 
-			this.label17.Location = new System.Drawing.Point(73, 558);
+			this.label17.Location = new System.Drawing.Point(73, 560);
 			this.label17.Name = "label17";
 			this.label17.Size = new System.Drawing.Size(254, 17);
 			this.label17.TabIndex = 284;
@@ -121,7 +121,7 @@ namespace OpenDental {
 			// 
 			this.groupBoxClaimsMedical.Controls.Add(this.checkClaimMedTypeIsInstWhenInsPlanIsMedical);
 			this.groupBoxClaimsMedical.Controls.Add(this.checkEclaimsMedicalProvTreatmentAsOrdering);
-			this.groupBoxClaimsMedical.Location = new System.Drawing.Point(20, 501);
+			this.groupBoxClaimsMedical.Location = new System.Drawing.Point(20, 503);
 			this.groupBoxClaimsMedical.Name = "groupBoxClaimsMedical";
 			this.groupBoxClaimsMedical.Size = new System.Drawing.Size(450, 51);
 			this.groupBoxClaimsMedical.TabIndex = 3;
@@ -155,7 +155,7 @@ namespace OpenDental {
 			this.groupBoxClaimsPayments.Controls.Add(this.labelClaimCredit);
 			this.groupBoxClaimsPayments.Location = new System.Drawing.Point(20, 389);
 			this.groupBoxClaimsPayments.Name = "groupBoxClaimsPayments";
-			this.groupBoxClaimsPayments.Size = new System.Drawing.Size(450, 110);
+			this.groupBoxClaimsPayments.Size = new System.Drawing.Size(450, 112);
 			this.groupBoxClaimsPayments.TabIndex = 2;
 			this.groupBoxClaimsPayments.Text = "Claims Payments";
 			// 
@@ -166,7 +166,7 @@ namespace OpenDental {
 			this.checkClaimPaymentPickStatementType.Name = "checkClaimPaymentPickStatementType";
 			this.checkClaimPaymentPickStatementType.Size = new System.Drawing.Size(437, 17);
 			this.checkClaimPaymentPickStatementType.TabIndex = 291;
-			this.checkClaimPaymentPickStatementType.Text = "Turns off default Payment Type selection in Edit Insurance Payment window";
+			this.checkClaimPaymentPickStatementType.Text = "Claim payments prompt for Payment Type";
 			// 
 			// checkNoInitialPrimaryInsMoreThanProc
 			// 

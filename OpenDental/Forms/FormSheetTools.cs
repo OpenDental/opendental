@@ -56,7 +56,8 @@ namespace OpenDental {
 			}
 			catch {
 				Cursor=Cursors.Default;
-				throw new ApplicationException(Lan.g("FormSheetDefs","Invalid file format"));
+				MsgBox.Show(this,"Invalid file format.");
+				return;
 			}
 			sheetDef.IsNew=true;
 			if(ValidateSheetDef(sheetDef)){

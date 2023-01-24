@@ -270,6 +270,11 @@ namespace OpenDentBusiness {
 		private bool _isManual;
 		///<summary>When shutting down, this is the maximum amount of time that we will wait for a single card to finish processing.</summary>
 		private TimeSpan _shutdownWaitTimeout=TimeSpan.FromSeconds(10);
+
+		/// <summary>Helper for EdgeExpress.CleanString()</summary>
+		private string CleanString(string str) {
+			return EdgeExpress.CleanString(str);
+		}
 		
 		///<summary>The current batch of recurring charges that are ready to be processed.</summary>
 		public List<RecurringChargeData> ListRecurringChargeData {
@@ -660,10 +665,10 @@ namespace OpenDentBusiness {
 				info.Arguments+="/EXP:"+exp.ToString("MMyy")+" ";
 			}
 			if(address!="") {
-				info.Arguments+="\"/ADDRESS:"+address+"\" ";
+				info.Arguments+="\"/ADDRESS:"+CleanString(address)+"\" ";
 			}
 			else if(addressPat!="") {
-				info.Arguments+="\"/ADDRESS:"+addressPat+"\" ";
+				info.Arguments+="\"/ADDRESS:"+CleanString(addressPat)+"\" ";
 			}
 			//If ODHQ, do not add the zip code if the customer has an active foreign registration key
 			bool hasForeignKey=false;
@@ -676,10 +681,10 @@ namespace OpenDentBusiness {
 					.Count()>0;
 			}
 			if(zip!="" && !hasForeignKey) {
-				info.Arguments+="\"/ZIP:"+zip+"\" ";
+				info.Arguments+="\"/ZIP:"+CleanString(zip)+"\" ";
 			}
 			else if(zipPat!="" && !hasForeignKey) {
-				info.Arguments+="\"/ZIP:"+zipPat+"\" ";
+				info.Arguments+="\"/ZIP:"+CleanString(zipPat)+"\" ";
 			}
 			info.Arguments+="/RECEIPT:Pat"+chargeData.RecurringCharge.PatNum+" ";//aka invoice#
 			info.Arguments+="\"/CLERK:"+Security.CurUser.UserName+" R\" /LOCKCLERK ";

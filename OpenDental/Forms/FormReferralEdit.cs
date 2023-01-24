@@ -42,10 +42,9 @@ namespace OpenDental{
 				return;
 			}
 			listSpecialty.Items.Clear();
-			Def[] defArraySpecs=Defs.GetDefsForCategory(DefCat.ProviderSpecialties,true).ToArray();
-			for(int i=0;i<defArraySpecs.Length;i++) {
-				listSpecialty.Items.Add(Lan.g("enumDentalSpecialty",defArraySpecs[i].ItemName));
-			}
+			listSpecialty.Items.AddNone<Def>(); //Add "None" onto the list
+			List<Def> listDefs=Defs.GetDefsForCategory(DefCat.ProviderSpecialties,true);
+			listSpecialty.Items.AddList(listDefs,x=>x.ItemName);
 			if(_isPatient){
 				if(IsNew){
 					Text=Lan.g(this,"Add Referral"); 
@@ -97,16 +96,9 @@ namespace OpenDental{
 				if(IsNew){
 					this.Text=Lan.g(this,"Add Referral"); 
 					ReferralCur=new Referral();
-					ReferralCur.Specialty=Defs.GetByExactNameNeverZero(DefCat.ProviderSpecialties,"General");
+					ReferralCur.Specialty=0; //If new patient, set specialty to 0 or "None".
 				}
-				Def specDefCur=Defs.GetDef(DefCat.ProviderSpecialties,ReferralCur.Specialty);
-				if(specDefCur!=null) {
-					for(int i=0;i<defArraySpecs.Length;i++) {
-						if(i==0 || defArraySpecs[i].ItemName==specDefCur.ItemName) {//default to the first specialty in the list
-							listSpecialty.SelectedIndex=i;
-						}
-					}
-				}
+				listSpecialty.SetSelectedKey<Def>(ReferralCur.Specialty,x=>x.DefNum); //If specialty is "None", the selected index will default to 0.
 				textLName.Select();
 			}
 			checkIsDoctor.Checked=ReferralCur.IsDoctor;
@@ -288,7 +280,7 @@ namespace OpenDental{
 			//ReferralCur.UsingTIN already taken care of
 			if(!_isPatient){
 				ReferralCur.IsDoctor=checkIsDoctor.Checked;
-				ReferralCur.Specialty=Defs.GetByExactNameNeverZero(DefCat.ProviderSpecialties,listSpecialty.SelectedItem.ToString());
+				ReferralCur.Specialty=listSpecialty.GetSelectedKey<Def>(x=>x.DefNum); //Specialty will be set to 0 if "None" or does not exist.
 			}
 			if(IsNew){
 				if(Referrals.GetExists(x => x.LName+x.FName==ReferralCur.LName+ReferralCur.FName)) {

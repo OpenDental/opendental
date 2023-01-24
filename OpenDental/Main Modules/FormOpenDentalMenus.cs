@@ -34,6 +34,8 @@ namespace OpenDental{
 		private MenuItemOD _menuItemFeeSchedGroups;
 		///<summary>Only available if Billing/Finance Charges are enabled on the Show Features window.</summary>
 		private MenuItemOD _menuItemFinanceCharges;
+		private MenuItemOD _menuItemHL7;
+		private MenuItemOD _menuItemEHR;
 		///<summary>Only available in OD HQ.</summary>
 		private MenuItemOD _menuItemJobManager;
 		///<summary>Only available if Late Charges are enabled on the Show Features window.</summary>
@@ -256,7 +258,8 @@ namespace OpenDental{
 
 		///<summary>Setup: Chart</summary>
 		private void LayoutSubMenuChart(MenuItemOD menuItemChart) {
-			menuItemChart.Add("EHR",menuItemEHR_Click);
+			_menuItemEHR=new MenuItemOD("EHR",menuItemEHR_Click);
+			menuItemChart.Add(_menuItemEHR);
 			menuItemChart.Add("Procedure Buttons",menuItemProcedureButtons_Click);
 		}
 
@@ -281,7 +284,8 @@ namespace OpenDental{
 			menuItemAdvSetup.Add("API",menuItemFHIR_Click);
 			menuItemAdvSetup.Add("Computers",menuItemComputers_Click);
 			menuItemAdvSetup.Add("HIE",menuItemHIE_Click);
-			menuItemAdvSetup.Add("HL7",menuItemHL7_Click);
+			_menuItemHL7=new MenuItemOD("HL7",menuItemHL7_Click);
+			menuItemAdvSetup.Add(_menuItemHL7);
 			_menuItemReplication=new MenuItemOD("Replication",menuItemReplication_Click);
 			menuItemAdvSetup.Add(_menuItemReplication);
 			menuItemAdvSetup.Add("Show Features",menuItemEasy_Click);

@@ -356,6 +356,7 @@ namespace OpenDental{
 				DiseaseDefs.Sync(_listDiseaseDefs,_listDiseaseDefsOld);//Update if anything has changed, even in selection mode.
 				//old securitylog pattern pasted from FormDiseaseDefEdit
 				_listSecurityLogMsgs.FindAll(x => !string.IsNullOrEmpty(x)).ForEach(x => SecurityLogs.MakeLogEntry(Permissions.ProblemDefEdit,0,x));
+				DiseaseDefs.FixItemOrders();
 				DataValid.SetInvalid(InvalidType.Diseases);//refreshes cache
 			}
 			ListDiseaseDefsSelected.Clear();

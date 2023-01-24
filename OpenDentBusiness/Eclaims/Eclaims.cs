@@ -188,6 +188,19 @@ namespace OpenDentBusiness.Eclaims
 				for(int j=0;j<queueItems.Count;j++) {
 					Etrans etrans=Etranss.SetClaimSentOrPrinted(queueItems[j].ClaimNum,queueItems[j].PatNum,
 						clearinghouseClin.HqClearinghouseNum,etype,batchNum,Security.CurUser.UserNum);
+					//Attempted fix for problems with Eclaims SendBatch attempts throwing null reference UEs. Job #41284
+					//If SetClaimSentOrPrinted() returns null, then we try again.
+					if(etrans==null) {
+						System.Threading.Thread.Sleep(100);
+						etrans=Etranss.SetClaimSentOrPrinted(queueItems[j].ClaimNum,queueItems[j].PatNum,
+							clearinghouseClin.HqClearinghouseNum,etype,batchNum,Security.CurUser.UserNum);
+					}
+					if(etrans==null) {
+						//etrans still cannot be retrieved, so we give up at this point and continue onto the next iteration.
+						//In the future, we should consider adding a DBM which will retroactively set the etrans.EtransMessageTextNum.
+						//etrans.EtransMessageTextNum is allowed to be 0 so it will not crash the program.
+						continue;
+					}
 					etrans.EtransMessageTextNum=etransMsgText.EtransMessageTextNum;
 					Etranss.Update(etrans);
 					//Now we need to update our cache of claims to reflect the change that took place in the database above in Etranss.SetClaimSentOrPrinted()

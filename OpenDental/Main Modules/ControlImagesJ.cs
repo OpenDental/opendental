@@ -3032,6 +3032,10 @@ namespace OpenDental
 		}
 
 		private void ToolBarVideo_Click(){
+			if(ODBuild.IsWeb()) {
+				MsgBox.Show(this,"This feature is not available in Open Dental Cloud.");
+				return;
+			}
 			//If no patient selected, then this button is disabled
 			if(!Security.IsAuthorized(Permissions.ImageCreate)) {
 				return;

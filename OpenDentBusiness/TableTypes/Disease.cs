@@ -60,7 +60,7 @@ namespace OpenDentBusiness {
 	}
 
 	///<summary>Used in EHR to export patient functional and cognitive statuses on CCD documents.</summary>
-	public enum SnomedProblemTypeEnum {
+	public enum SnomedProblemTypes {
 		///<summary>0 - Problem (finding). 55607006</summary>
 		Problem,
 		///<summary>1 - Finding. Clinical finding (finding). 404684003</summary>

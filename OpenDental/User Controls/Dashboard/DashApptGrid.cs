@@ -82,6 +82,16 @@ namespace OpenDental {
 			else if(e.Tag is List<Appointment>) {
 				listAppts=(List<Appointment>)e.Tag;
 			}
+			else if(e.Tag is List<Signalod>) {
+				List<Signalod> listSignalods=(List<Signalod>)e.Tag;
+				for(int i=0;i<listSignalods.Count;i++) {
+					if(listSignalods[i].FKeyType==KeyType.PatNum) {
+						Appointment appointmentFake=new Appointment();
+						appointmentFake.PatNum=listSignalods[i].FKey;
+						listAppts.Add(appointmentFake);
+					}
+				}
+			}
 			else {
 				return;//Event fired with unexpected Tag.
 			}

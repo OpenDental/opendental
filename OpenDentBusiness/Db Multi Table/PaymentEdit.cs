@@ -2269,8 +2269,8 @@ namespace OpenDentBusiness {
 				Family famCur=Patients.GetFamily(listAllAccountEntries.First().PatNum);
 				listPayPlans=PayPlans.GetForPats(famCur.GetPatNums(),famCur.Guarantor.Guarantor);
 			}
-			List<PayPlan> listPayPlansPatient=listPayPlans.FindAll(x => !x.IsDynamic);
-			List<PayPlan> listPayPlansDynamic=listPayPlans.FindAll(x => x.IsDynamic);
+			List<PayPlan> listPayPlansPatient=listPayPlans.FindAll(x => !x.IsDynamic && x.PlanNum==0);
+			List<PayPlan> listPayPlansDynamic=listPayPlans.FindAll(x => x.IsDynamic && x.PlanNum==0);
 			if(!listPayPlansPatient.IsNullOrEmpty()) {
 				//PayPlanCharge Credits are not made when the PaymentPlanVersion is set to NoCharges.
 				//For now, do not allow income transfers to be made when the version is set to NoCharges because we don't know what has value to transfer.

@@ -44,8 +44,9 @@ namespace OpenDental {
 			//Fill the BlockoutTypes list.
 			List<string> listBlockoutTypes=AppointmentTypeCur.BlockoutTypes.Split(",",StringSplitOptions.RemoveEmptyEntries).ToList();
 			List<long> listDefNums=listBlockoutTypes.Select(x => PIn.Long(x,hasExceptions:false)).ToList();
-			List<Def> listDefs=Defs.GetDefsForCategory(DefCat.BlockoutTypes);
-			listBoxBlockoutTypes.Items.AddList(listDefs,x => x.ItemName);
+			List<Def> listDefsBlockoutTypes=Defs.GetDefsForCategory(DefCat.BlockoutTypes);
+			List<Def> listDefsBlockoutTypesUnrestricted=listDefsBlockoutTypes.FindAll(x => !x.ItemValue.Contains(BlockoutType.NoSchedule.GetDescription()));
+			listBoxBlockoutTypes.Items.AddList(listDefsBlockoutTypesUnrestricted,x => x.ItemName);
 			//Set the ones from AppointmentTypeCur as selected.
 			for(int i=0;i<listBoxBlockoutTypes.Items.Count;i++) {
 				Def def=(Def)listBoxBlockoutTypes.Items.GetObjectAt(i);

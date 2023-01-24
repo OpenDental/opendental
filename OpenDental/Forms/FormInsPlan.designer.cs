@@ -883,7 +883,6 @@ namespace OpenDental {
 			this.tabControlInsPlan.Controls.Add(this.tabPageOrtho);
 			this.tabControlInsPlan.Location = new System.Drawing.Point(7, 96);
 			this.tabControlInsPlan.Name = "tabControlInsPlan";
-			this.tabControlInsPlan.SelectedIndex = 0;
 			this.tabControlInsPlan.Size = new System.Drawing.Size(455, 466);
 			this.tabControlInsPlan.TabIndex = 122;
 			// 
@@ -893,10 +892,10 @@ namespace OpenDental {
 			this.tabPageInsPlanInfo.Controls.Add(this.butAudit);
 			this.tabPageInsPlanInfo.Controls.Add(this.label32);
 			this.tabPageInsPlanInfo.Controls.Add(this.butPick);
-			this.tabPageInsPlanInfo.Location = new System.Drawing.Point(4, 22);
+			this.tabPageInsPlanInfo.Location = new System.Drawing.Point(2, 21);
 			this.tabPageInsPlanInfo.Name = "tabPageInsPlanInfo";
 			this.tabPageInsPlanInfo.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageInsPlanInfo.Size = new System.Drawing.Size(447, 440);
+			this.tabPageInsPlanInfo.Size = new System.Drawing.Size(451, 443);
 			this.tabPageInsPlanInfo.TabIndex = 0;
 			this.tabPageInsPlanInfo.Text = "Plan Info";
 			// 
@@ -1071,7 +1070,7 @@ namespace OpenDental {
 			// 
 			// labelMedicalInsurance
 			// 
-			this.labelMedicalInsurance.Location = new System.Drawing.Point(131, 4);
+			this.labelMedicalInsurance.Location = new System.Drawing.Point(132, 2);
 			this.labelMedicalInsurance.Name = "labelMedicalInsurance";
 			this.labelMedicalInsurance.Size = new System.Drawing.Size(110, 17);
 			this.labelMedicalInsurance.TabIndex = 192;
@@ -1329,7 +1328,7 @@ namespace OpenDental {
 			// checkIsMedical
 			// 
 			this.checkIsMedical.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkIsMedical.Location = new System.Drawing.Point(117, 4);
+			this.checkIsMedical.Location = new System.Drawing.Point(117, 2);
 			this.checkIsMedical.Name = "checkIsMedical";
 			this.checkIsMedical.Size = new System.Drawing.Size(18, 17);
 			this.checkIsMedical.TabIndex = 113;
@@ -1424,10 +1423,10 @@ namespace OpenDental {
 			// tabPageOtherInsInfo
 			// 
 			this.tabPageOtherInsInfo.Controls.Add(this.panelOrthInfo);
-			this.tabPageOtherInsInfo.Location = new System.Drawing.Point(4, 22);
+			this.tabPageOtherInsInfo.Location = new System.Drawing.Point(2, 21);
 			this.tabPageOtherInsInfo.Name = "tabPageOtherInsInfo";
 			this.tabPageOtherInsInfo.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageOtherInsInfo.Size = new System.Drawing.Size(447, 440);
+			this.tabPageOtherInsInfo.Size = new System.Drawing.Size(451, 443);
 			this.tabPageOtherInsInfo.TabIndex = 1;
 			this.tabPageOtherInsInfo.Text = "Other Ins Info";
 			// 
@@ -1662,10 +1661,10 @@ namespace OpenDental {
 			// tabPageCanadian
 			// 
 			this.tabPageCanadian.Controls.Add(this.panelCanadian);
-			this.tabPageCanadian.Location = new System.Drawing.Point(4, 22);
+			this.tabPageCanadian.Location = new System.Drawing.Point(2, 21);
 			this.tabPageCanadian.Name = "tabPageCanadian";
 			this.tabPageCanadian.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageCanadian.Size = new System.Drawing.Size(447, 440);
+			this.tabPageCanadian.Size = new System.Drawing.Size(451, 443);
 			this.tabPageCanadian.TabIndex = 2;
 			this.tabPageCanadian.Text = "Canadian";
 			// 
@@ -1789,10 +1788,10 @@ namespace OpenDental {
 			// tabPageOrtho
 			// 
 			this.tabPageOrtho.Controls.Add(this.panelOrtho);
-			this.tabPageOrtho.Location = new System.Drawing.Point(4, 22);
+			this.tabPageOrtho.Location = new System.Drawing.Point(2, 21);
 			this.tabPageOrtho.Name = "tabPageOrtho";
 			this.tabPageOrtho.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageOrtho.Size = new System.Drawing.Size(447, 440);
+			this.tabPageOrtho.Size = new System.Drawing.Size(451, 443);
 			this.tabPageOrtho.TabIndex = 3;
 			this.tabPageOrtho.Text = "Ortho";
 			// 

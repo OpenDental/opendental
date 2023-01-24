@@ -31,6 +31,13 @@ namespace OpenDental{
 		private void FormDiseaseEdit_Load(object sender,EventArgs e) {
 			DiseaseDef diseaseDef=DiseaseDefs.GetItem(_disease.DiseaseDefNum);//guaranteed to have one
 			textProblem.Text=diseaseDef.DiseaseName;
+			string snomedDesc=Snomeds.GetCodeAndDescription(diseaseDef.SnomedCode);
+			if(snomedDesc=="") {
+				textSnomed.Text=diseaseDef.SnomedCode;
+			}
+			else {
+				textSnomed.Text=snomedDesc;
+			}
 			string i9descript=ICD9s.GetCodeAndDescription(diseaseDef.ICD9Code);
 			if(i9descript=="") {
 				textIcd9.Text=diseaseDef.ICD9Code;
@@ -60,7 +67,7 @@ namespace OpenDental{
 				textDateStop.Text=_disease.DateStop.ToShortDateString();
 			}
 			comboSnomedProblemType.Items.Clear();
-			comboSnomedProblemType.Items.AddEnums<SnomedProblemTypeEnum>();
+			comboSnomedProblemType.Items.AddEnums<SnomedProblemTypes>();
 			if(_disease.SnomedProblemType=="404684003") {//Finding
 				comboSnomedProblemType.SelectedIndex=1;
 			}
@@ -132,7 +139,7 @@ namespace OpenDental{
 				return;
 			}
 			_disease=Diseases.SetDiseaseFields(_disease,PIn.Date(textDateStart.Text),PIn.Date(textDateStop.Text),(ProblemStatus)comboStatus.SelectedIndex,textNote.Text,
-				(SnomedProblemTypeEnum)comboSnomedProblemType.SelectedIndex,(FunctionalStatus)comboEhrFunctionalStatus.SelectedIndex);
+				(SnomedProblemTypes)comboSnomedProblemType.SelectedIndex,(FunctionalStatus)comboEhrFunctionalStatus.SelectedIndex);
 			if(IsNew){
 				//This code is never hit in current implementation 09/26/2013.
 				Diseases.Insert(_disease);

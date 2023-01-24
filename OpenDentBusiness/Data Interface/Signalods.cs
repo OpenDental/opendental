@@ -237,14 +237,16 @@ namespace OpenDentBusiness {
 			}
 			bool addSigForNewApt=IsApptInRefreshRange(apptNew);
 			bool addSignForOldAppt=IsApptInRefreshRange(apptOld);
-			//The six possible signals are:
+			//The eight possible signals are:
 			//  1.New Provider
 			//  2.New Hyg
 			//  3.New Op
 			//  4.Old Provider
 			//  5.Old Hyg
 			//  6.Old Op
-			//If there is no change between new and old, or if there is not an old appt provided, then fewer than 6 signals may be generated.
+			//  7.New Appt
+			//  8.Old Appt
+			//If there is no change between new and old, or if there is not an old appt provided, then fewer than 8 signals may be generated.
 			List<Signalod> listSignals=new List<Signalod>();
 			if(addSigForNewApt) {
 				//  1.New Provider
@@ -273,6 +275,16 @@ namespace OpenDentBusiness {
 							IType=InvalidType.Appointment,
 							FKey=apptNew.Op,
 							FKeyType=KeyType.Operatory,
+						});
+				}
+				//  7.New Appt
+				if(apptNew!=null) {
+					listSignals.Add(
+						new Signalod {
+							DateViewing=apptNew.AptDateTime,
+							IType=InvalidType.Appointment,
+							FKey=apptNew.PatNum,
+							FKeyType=KeyType.PatNum,
 						});
 				}
 			}
@@ -305,6 +317,16 @@ namespace OpenDentBusiness {
 							IType=InvalidType.Appointment,
 							FKey=apptOld.Op,
 							FKeyType=KeyType.Operatory,
+						});
+				}
+				//  8.Old Appt
+				if(apptOld!=null && (apptOld.AptDateTime.Date!=apptNew.AptDateTime.Date)) {
+					listSignals.Add(
+						new Signalod {
+							DateViewing=apptOld.AptDateTime,
+							IType=InvalidType.Appointment,
+							FKey=apptOld.PatNum,
+							FKeyType=KeyType.PatNum,
 						});
 				}
 			}
@@ -447,7 +469,7 @@ namespace OpenDentBusiness {
 		public static bool IsApptRefreshNeeded(DateTime startDate,DateTime endDate,List<Signalod> signalList,List<long> listOpNumsVisible,List<long> listProvNumsVisible) {
 			//No need to check MiddleTierRole; no call to db.
 			//A date range was refreshed.  Easier to refresh all without checking.
-			if(signalList.Exists(x => x.DateViewing.Date==DateTime.MinValue.Date && x.IType==InvalidType.Appointment)) {
+			if(signalList.Exists(x => (x.DateViewing.Date==DateTime.MinValue.Date || x.FKeyType==KeyType.PatNum) && x.IType==InvalidType.Appointment)) {
 				return true;
 			}
 			List<Signalod> listApptSignals=signalList.FindAll(x => x.IType==InvalidType.Appointment &&

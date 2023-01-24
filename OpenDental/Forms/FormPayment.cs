@@ -2635,6 +2635,11 @@ namespace OpenDental {
 			Init(doSelectAllSplits:doSelectAllSplits,doPreserveValues:true);
 		}
 
+		/// <summary>Helper for EdgeExpress.CleanString()</summary>
+		private string CleanString(string str) {
+			return EdgeExpress.CleanString(str);
+		}
+
 		///<summary>Checks if the dynamic payment plan has any charges with overpaid interest or principal. If it does, prompts the user to balance on prepay, principal, or return to payment page. Returns false if the user wants to stay in the Payment window.</summary>
 		private bool CheckDynamicPaymentPlanRebalance() {
 			if(!PayPlanEdit.AreAnyPayPlansOverpaid(_listPaySplits)) {
@@ -3814,24 +3819,24 @@ namespace OpenDental {
 				//Zip and address are optional fields and for prepaid cards this information is probably not provided to the user.
 			}
 			else if(isNewCard) {
-				processStartInfo.Arguments+="\"/ZIP:"+patient.Zip+"\" ";
-				processStartInfo.Arguments+="\"/ADDRESS:"+patient.Address+"\" ";
+				processStartInfo.Arguments+="\"/ZIP:"+CleanString(patient.Zip)+"\" ";
+				processStartInfo.Arguments+="\"/ADDRESS:"+CleanString(patient.Address)+"\" ";
 			}
 			else {
 				if(creditCard.CCExpiration!=null && creditCard.CCExpiration.Year>2005) {
 					processStartInfo.Arguments+="/EXP:"+creditCard.CCExpiration.ToString("MMyy")+" ";
 				}
 				if(!string.IsNullOrEmpty(creditCard.Zip)) {
-					processStartInfo.Arguments+="\"/ZIP:"+creditCard.Zip+"\" ";
+					processStartInfo.Arguments+="\"/ZIP:"+CleanString(creditCard.Zip)+"\" ";
 				}
 				else {
-					processStartInfo.Arguments+="\"/ZIP:"+patient.Zip+"\" ";
+					processStartInfo.Arguments+="\"/ZIP:"+CleanString(patient.Zip)+"\" ";
 				}
 				if(!string.IsNullOrEmpty(creditCard.Address)) {
-					processStartInfo.Arguments+="\"/ADDRESS:"+creditCard.Address+"\" ";
+					processStartInfo.Arguments+="\"/ADDRESS:"+CleanString(creditCard.Address)+"\" ";
 				}
 				else {
-					processStartInfo.Arguments+="\"/ADDRESS:"+patient.Address+"\" ";
+					processStartInfo.Arguments+="\"/ADDRESS:"+CleanString(patient.Address)+"\" ";
 				}
 				if(hasXToken) {//Special parameter for tokens.
 					processStartInfo.Arguments+="/RECURRING ";

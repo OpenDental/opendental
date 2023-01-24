@@ -902,6 +902,8 @@ namespace OpenDental{
 				_menuItemCreateAtoZ.Available=false;
 				_menuItemServiceManager.Available=false;
 				_menuItemReplication.Available=false;
+				_menuItemHL7.Available=false;
+				_menuItemEHR.Available=false;
 				_menuItemPrinter.Available=false;
 				//If the office needs to reset their office passowrd, we will prompt them until they change it.
 				if(PrefC.GetEnum<YN>(PrefName.CloudPasswordNeedsReset)!=YN.No) {
@@ -3627,6 +3629,7 @@ namespace OpenDental{
 					Logger.LogToPath("RefreshPeriod",LogPath.Signals,LogPhase.Start);
 					controlAppt.RefreshPeriod(isRefreshAppointments:isRefreshAppts,isRefreshSchedules:isRefreshScheds);
 					Logger.LogToPath("RefreshPeriod",LogPath.Signals,LogPhase.End);
+					AppointmentEvent.Fire(ODEventType.AppointmentEdited,listSignalods);
 				}
 				if(isRefreshPanelButtons) {
 					controlAppt.RefreshModuleScreenButtonsRight();

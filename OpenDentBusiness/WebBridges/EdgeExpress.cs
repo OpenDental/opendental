@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
@@ -66,6 +67,15 @@ namespace OpenDentBusiness {
 			}
 			return $"TerminalID:{terminalID}  AuthKey:{authKey}  Amount:{amount:C}";
 		}
+
+			///<summary> Removes { } [ ] < > ‘ ’ and trailing white space from passed in string </summary>
+			public static string CleanString(string str) {
+				if(string.IsNullOrEmpty(str)) {
+					return "";
+				}
+				string	reg=Regex.Replace(str,"[{,},\\[,\\],<,>,‘,’]","");
+				return reg.TrimEnd();
+			}
 		#endregion Private methods
 
 		#region Helper classes
@@ -232,10 +242,10 @@ namespace OpenDentBusiness {
 				}
 				//Include the patient first and last name with every transaction type if they are available.
 				if(!string.IsNullOrWhiteSpace(patient.FName)) {
-					xmlWriter.WriteElementString("CUSTOMERFIRSTNAME",patient.FName);
+					xmlWriter.WriteElementString("CUSTOMERFIRSTNAME",CleanString(patient.FName));
 				}
 				if(!string.IsNullOrWhiteSpace(patient.LName)) {
-					xmlWriter.WriteElementString("CUSTOMERLASTNAME",patient.LName);
+					xmlWriter.WriteElementString("CUSTOMERLASTNAME",CleanString(patient.LName));
 				}
 				xmlWriter.WriteEndElement();//REQUEST
 				xmlWriter.Flush();

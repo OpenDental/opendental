@@ -169,6 +169,7 @@ namespace OpenDental{
 				return;
 			}
 			EmailAddresses.Delete(_emailAddress.EmailAddressNum);
+			DataValid.SetInvalid(InvalidType.Email);
 			DialogResult=DialogResult.OK;//OK triggers a refresh for the grid.
 		}
 
@@ -385,6 +386,7 @@ namespace OpenDental{
 			else {
 				EmailAddresses.Update(_emailAddress);
 			}
+			DataValid.SetInvalid(InvalidType.Email);
 			DialogResult=DialogResult.OK;
 		}
 

@@ -51,6 +51,7 @@ namespace OpenDental {
 			this.labelcheckAutomateSalesTaxDetails = new System.Windows.Forms.Label();
 			this.comboNegativeAdjustments = new OpenDental.UI.ComboBox();
 			this.labelNegativeAdjustments = new System.Windows.Forms.Label();
+			this.labelNegativeAdjustmentsDetails = new System.Windows.Forms.Label();
 			this.groupBoxOD3.SuspendLayout();
 			this.groupBox4.SuspendLayout();
 			this.groupBoxAdjustments.SuspendLayout();
@@ -291,7 +292,7 @@ namespace OpenDental {
 			// labelcomboSalesTaxDefaultProviderDetails
 			// 
 			this.labelcomboSalesTaxDefaultProviderDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelcomboSalesTaxDefaultProviderDetails.Location = new System.Drawing.Point(476, 263);
+			this.labelcomboSalesTaxDefaultProviderDetails.Location = new System.Drawing.Point(476, 297);
 			this.labelcomboSalesTaxDefaultProviderDetails.Name = "labelcomboSalesTaxDefaultProviderDetails";
 			this.labelcomboSalesTaxDefaultProviderDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelcomboSalesTaxDefaultProviderDetails.TabIndex = 323;
@@ -301,11 +302,11 @@ namespace OpenDental {
 			// labelcheckAutomateSalesTaxDetails
 			// 
 			this.labelcheckAutomateSalesTaxDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelcheckAutomateSalesTaxDetails.Location = new System.Drawing.Point(476, 292);
+			this.labelcheckAutomateSalesTaxDetails.Location = new System.Drawing.Point(476, 325);
 			this.labelcheckAutomateSalesTaxDetails.Name = "labelcheckAutomateSalesTaxDetails";
 			this.labelcheckAutomateSalesTaxDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelcheckAutomateSalesTaxDetails.TabIndex = 324;
-			this.labelcheckAutomateSalesTaxDetails.Text = "as procedures are completed, if the Procedure Code is marked \'Is Taxed\', then add" +
+			this.labelcheckAutomateSalesTaxDetails.Text = "as procedures are completed, if the Procedure Code is marked \'Auto Tax\', then add" +
     " sales tax";
 			this.labelcheckAutomateSalesTaxDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -327,11 +328,22 @@ namespace OpenDental {
 			this.labelNegativeAdjustments.Text = "Negative Adjustments";
 			this.labelNegativeAdjustments.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
+			// labelNegativeAdjustmentsDetails
+			// 
+			this.labelNegativeAdjustmentsDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelNegativeAdjustmentsDetails.Location = new System.Drawing.Point(476, 158);
+			this.labelNegativeAdjustmentsDetails.Name = "labelNegativeAdjustmentsDetails";
+			this.labelNegativeAdjustmentsDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelNegativeAdjustmentsDetails.TabIndex = 325;
+			this.labelNegativeAdjustmentsDetails.Text = "when adjustment amount exceeds remaining";
+			this.labelNegativeAdjustmentsDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// UserControlAccountAdjustments
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.labelNegativeAdjustmentsDetails);
 			this.Controls.Add(this.labelcheckAutomateSalesTaxDetails);
 			this.Controls.Add(this.labelcomboSalesTaxDefaultProviderDetails);
 			this.Controls.Add(this.groupBoxAdjustments);
@@ -375,5 +387,6 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelcheckAutomateSalesTaxDetails;
 		private System.Windows.Forms.Label labelNegativeAdjustments;
 		private UI.ComboBox comboNegativeAdjustments;
+		private System.Windows.Forms.Label labelNegativeAdjustmentsDetails;
 	}
 }

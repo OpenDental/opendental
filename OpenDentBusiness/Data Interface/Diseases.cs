@@ -225,7 +225,7 @@ namespace OpenDentBusiness {
 					}
 					strDates+="\r\n"+listVitalsigns[i].DateTaken.ToShortDateString();
 				}
-				throw new Exception("Not allowed to delete this problem.  It is attached to "+listVitalsigns.Count.ToString()+" vital sign exams with dates including: "+strDates+".");
+				throw new Exception("Not allowed to delete this problem. It is attached to "+listVitalsigns.Count.ToString()+" vital sign exams with dates including: "+strDates+".");
 			}
 		}	
 
@@ -252,7 +252,7 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Takes in vitalsign object and sets its fields to the other passed in arguments. Does not set all of the vitalsign object's fields.</summary>
-		public static Disease SetDiseaseFields(Disease disease,DateTime dateStart,DateTime dateStop,ProblemStatus probStatus,string patNote,SnomedProblemTypeEnum snomedProblemType,
+		public static Disease SetDiseaseFields(Disease disease,DateTime dateStart,DateTime dateStop,ProblemStatus probStatus,string patNote,SnomedProblemTypes snomedProblemType,
 			FunctionalStatus functionStatus) {
 			disease.DateStart=dateStart;
 			disease.DateStop=dateStop;
@@ -260,25 +260,25 @@ namespace OpenDentBusiness {
 			disease.PatNote=patNote;
 			disease.FunctionStatus=functionStatus;
 			switch(snomedProblemType) { 
-				case SnomedProblemTypeEnum.Finding:
+				case SnomedProblemTypes.Finding:
 					disease.SnomedProblemType="404684003";
 					break;
-				case SnomedProblemTypeEnum.Complaint:
+				case SnomedProblemTypes.Complaint:
 					disease.SnomedProblemType="409586006";
 					break;
-				case SnomedProblemTypeEnum.Diagnosis:
+				case SnomedProblemTypes.Diagnosis:
 					disease.SnomedProblemType="282291009";
 					break;
-				case SnomedProblemTypeEnum.Condition:
+				case SnomedProblemTypes.Condition:
 					disease.SnomedProblemType="64572001";
 					break;
-				case SnomedProblemTypeEnum.FunctionalLimitation:
+				case SnomedProblemTypes.FunctionalLimitation:
 					disease.SnomedProblemType="248536006";
 					break;
-				case SnomedProblemTypeEnum.Symptom:
+				case SnomedProblemTypes.Symptom:
 					disease.SnomedProblemType="418799008";
 					break;
-				case SnomedProblemTypeEnum.Problem:
+				case SnomedProblemTypes.Problem:
 					disease.SnomedProblemType="55607006";
 					break;
 			}

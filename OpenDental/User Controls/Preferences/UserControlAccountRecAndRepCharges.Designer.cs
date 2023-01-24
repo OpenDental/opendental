@@ -44,6 +44,7 @@ namespace OpenDental {
 			this.labelRecurringChargesTimeDetails = new System.Windows.Forms.Label();
 			this.labelRecurringChargesInactivateDeclinedCardsDetails = new System.Windows.Forms.Label();
 			this.labelRepeatingChargesAutomatedTimeDetails = new System.Windows.Forms.Label();
+			this.labelRecurringChargesUseTransDateDetails = new System.Windows.Forms.Label();
 			this.groupRecurringCharges.SuspendLayout();
 			this.groupRepeatingCharges.SuspendLayout();
 			this.SuspendLayout();
@@ -228,7 +229,7 @@ namespace OpenDental {
 			// 
 			this.labelRecurChargPriProvDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelRecurChargPriProvDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelRecurChargPriProvDetails.Location = new System.Drawing.Point(476, 59);
+			this.labelRecurChargPriProvDetails.Location = new System.Drawing.Point(476, 60);
 			this.labelRecurChargPriProvDetails.Name = "labelRecurChargPriProvDetails";
 			this.labelRecurChargPriProvDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelRecurChargPriProvDetails.TabIndex = 334;
@@ -250,7 +251,7 @@ namespace OpenDental {
 			// 
 			this.labelRecurringChargesInactivateDeclinedCardsDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelRecurringChargesInactivateDeclinedCardsDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelRecurringChargesInactivateDeclinedCardsDetails.Location = new System.Drawing.Point(476, 283);
+			this.labelRecurringChargesInactivateDeclinedCardsDetails.Location = new System.Drawing.Point(476, 284);
 			this.labelRecurringChargesInactivateDeclinedCardsDetails.Name = "labelRecurringChargesInactivateDeclinedCardsDetails";
 			this.labelRecurringChargesInactivateDeclinedCardsDetails.Size = new System.Drawing.Size(498, 17);
 			this.labelRecurringChargesInactivateDeclinedCardsDetails.TabIndex = 336;
@@ -268,11 +269,23 @@ namespace OpenDental {
 			this.labelRepeatingChargesAutomatedTimeDetails.Text = "this should be set to run before Recurring charges";
 			this.labelRepeatingChargesAutomatedTimeDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
+			// labelRecurringChargesUseTransDateDetails
+			// 
+			this.labelRecurringChargesUseTransDateDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelRecurringChargesUseTransDateDetails.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.labelRecurringChargesUseTransDateDetails.Location = new System.Drawing.Point(476, 91);
+			this.labelRecurringChargesUseTransDateDetails.Name = "labelRecurringChargesUseTransDateDetails";
+			this.labelRecurringChargesUseTransDateDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelRecurringChargesUseTransDateDetails.TabIndex = 338;
+			this.labelRecurringChargesUseTransDateDetails.Text = "otherwise, use the date the charge is scheduled to process";
+			this.labelRecurringChargesUseTransDateDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// UserControlAccountRecAndRepCharges
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.labelRecurringChargesUseTransDateDetails);
 			this.Controls.Add(this.labelRepeatingChargesAutomatedTimeDetails);
 			this.Controls.Add(this.labelRecurringChargesInactivateDeclinedCardsDetails);
 			this.Controls.Add(this.labelRecurringChargesTimeDetails);
@@ -311,5 +324,6 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelRecurringChargesTimeDetails;
 		private System.Windows.Forms.Label labelRecurringChargesInactivateDeclinedCardsDetails;
 		private System.Windows.Forms.Label labelRepeatingChargesAutomatedTimeDetails;
+		private System.Windows.Forms.Label labelRecurringChargesUseTransDateDetails;
 	}
 }
