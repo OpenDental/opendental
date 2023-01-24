@@ -61,14 +61,17 @@ namespace OpenDentBusiness{
 			//insert 'blank' sheetfields to get sheetfieldnums assigned, then use ordered sheetfieldnums with actual field data to update 'blank' db fields
 			List<SheetField> listBlankSheetFields=sheet.SheetFields.Select(x => new SheetField() { SheetNum=sheet.SheetNum }).ToList();
 			SheetFields.InsertMany(listBlankSheetFields);
-			List<long> listSheetFieldNums=SheetFields.GetListForSheet(sheet.SheetNum)
-				.Select(x => x.SheetFieldNum)
-				.OrderBy(x => x)//PKs of all sheet fields that were just inserted.  Signatures require sheet fields be ordered by PK.
-				.ToList();
-			if(listSheetFieldNums.Count!=sheet.SheetFields.Count) {//shouldn't be possible, just in case
+			List<SheetField> listSheetFieldsDb=SheetFields.GetListForSheet(sheet.SheetNum);
+			//The count can be off for offices that read and write to separate servers when we get objects that were just inserted so we try twice.
+			if(listSheetFieldsDb.Count!=sheet.SheetFields.Count) {
+				System.Threading.Thread.Sleep(100);
+				listSheetFieldsDb=SheetFields.GetListForSheet(sheet.SheetNum);
+			}
+			if(listSheetFieldsDb.Count!=sheet.SheetFields.Count) {
 				Delete(sheet.SheetNum);//any blank inserted sheetfields will be linked to the sheet marked deleted
 				throw new ApplicationException("Incorrect sheetfield count.");
 			}
+			List<long> listSheetFieldNums=listSheetFieldsDb.Select(x => x.SheetFieldNum).OrderBy(x => x).ToList();
 			//now that we have an ordered list of sheetfieldnums, update db blank fields with all field data from field in memory
 			for(int i=0;i<sheet.SheetFields.Count;i++) {
 				SheetField fld=sheet.SheetFields[i];

@@ -15,7 +15,7 @@ namespace OpenDental {
 
 		private void FormChangeCloudPassword_Load(object sender,EventArgs e) {
 			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
-				return;
+				DialogResult=DialogResult.Cancel;
 			}
 		}
 

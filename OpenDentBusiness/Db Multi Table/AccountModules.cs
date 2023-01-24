@@ -3343,7 +3343,19 @@ namespace OpenDentBusiness {
 					}
 				}
 			}
-			ClaimCur=Claims.GetClaim(Claims.Insert(ClaimCur));//Insert to retreive Claim.ClaimNum and GetClaim to retreive SecDateEntry for permission check
+			long claimNum=Claims.Insert(ClaimCur);
+			ClaimCur=Claims.GetClaim(claimNum);//Insert to retreive Claim.ClaimNum and GetClaim to retreive SecDateEntry for permission check
+			//Attempted fix for problems with AccountModules CreateClaim attempts throwing null reference UEs. Job #41284
+			//If GetClaim() returns null, then we try again.
+			if(ClaimCur==null) {
+				Thread.Sleep(100);
+				ClaimCur=Claims.GetClaim(claimNum);//Insert to retreive Claim.ClaimNum and GetClaim to retreive SecDateEntry for permission check
+			}
+			if(ClaimCur==null) {
+				//Claim still cannot be retrieved, so we append an error message and return it instead of crashing.
+				claimError=StringTools.AppendLine(claimError,Lans.g("ContrAccount","Claim cannot be retreived."));
+				return new ODTuple<bool,Claim,string>(false,new Claim(),claimError);
+			}
 			//now, all claimProcs have a valid value
 			//for any CapComplete, need to make a copy so that original doesn't get attached.
 			for(int i=0;i<claimProcs.Length;i++){
