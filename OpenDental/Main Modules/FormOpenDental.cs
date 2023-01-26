@@ -1769,6 +1769,9 @@ namespace OpenDental{
 				_menuItemUserQuery.Available=false;
 			}
 			_menuItemQueryFavorites.Available=Security.IsAuthorized(Permissions.UserQuery,true);
+			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch, Clinics.ClinicNum)) {
+				_menuItemPatientFlow.Available = false;
+			}
 		}
 
 		private void FillComboTriageCoordinator() {

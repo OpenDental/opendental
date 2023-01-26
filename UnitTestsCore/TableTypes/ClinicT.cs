@@ -48,5 +48,76 @@ namespace UnitTestsCore {
 			DataCore.NonQ(command);
 			Clinics.RefreshCache();
 		}
+
+		/// <summary>Returns a list of three fake clinics for testing. Does not insert into testing DB</summary>
+		public static List<Clinic> CreatClinicList() {
+			List<Clinic> listClinics=new List<Clinic>();
+			Clinic clinicOne=new Clinic();
+			clinicOne.Description="France Regional";
+			clinicOne.Abbr=clinicOne.Description;
+			//Texting is off by default. Use OpenDentalWebTests.TableTypes.EServiceAccountT.SetupEServiceAccount() to turn on texting for this clinic.
+			clinicOne.SmsContractDate=DateTime.MinValue;
+			clinicOne.EmailAddressNum=1;
+			clinicOne.Address="75004 Boulevard Garibaldi";
+			clinicOne.City="Paris";
+			clinicOne.State="Île-de-France";
+			clinicOne.Phone="100555555";
+			clinicOne.Region=0;
+			Clinic clinicTwo= new Clinic();
+			clinicTwo.Description="Mexico Regional";
+			clinicTwo.Abbr=clinicTwo.Description;
+			clinicTwo.SmsContractDate=DateTime.MinValue;
+			clinicTwo.EmailAddressNum=2;
+			clinicTwo.Address="01000 San Angel";
+			clinicTwo.City="Mexico City";
+			clinicTwo.State="Ciudad de Mexico";
+			clinicTwo.Phone="1003555520004";
+			clinicTwo.Region=0;
+			Clinic clinicThree=new Clinic();
+			clinicThree.Description="Japan Regional";
+			clinicThree.Abbr=clinicTwo.Description;
+			clinicThree.SmsContractDate=DateTime.MinValue;
+			clinicThree.EmailAddressNum=2;
+			clinicThree.Address="113-0033 Hongo";
+			clinicThree.City="Tokyo";
+			clinicThree.State="Kanto";
+			clinicThree.Phone="100255555555";
+			listClinics.Add(clinicOne);
+			listClinics.Add(clinicTwo);
+			listClinics.Add(clinicThree);
+			return listClinics;
+		}
+
+		/// <summary>Returns a list of three fake clinics for testing with some empty fields. Does not insert into testing DB</summary>
+		public static List<Clinic> CreatClinicListEmpties() {
+			List<Clinic> listClinics=new List<Clinic>();
+			Clinic clinicOne=new Clinic();
+			clinicOne.Description="France Regional";
+			//Texting is off by default. Use OpenDentalWebTests.TableTypes.EServiceAccountT.SetupEServiceAccount() to turn on texting for this clinic.
+			clinicOne.SmsContractDate=DateTime.MinValue;
+			clinicOne.EmailAddressNum=1;
+			clinicOne.Address="75004 Boulevard Garibaldi";
+			clinicOne.City="Paris";
+			clinicOne.State="Île-de-France";
+			Clinic clinicTwo= new Clinic();
+			clinicTwo.Description="Mexico Regional";
+			clinicTwo.SmsContractDate=DateTime.MinValue;
+			clinicTwo.EmailAddressNum=2;
+			clinicTwo.Address="01000 San Angel";
+			clinicTwo.City="Mexico City";
+			clinicTwo.State="Ciudad de Mexico";
+			Clinic clinicThree=new Clinic();
+			clinicThree.Description="Japan Regional";
+			clinicThree.SmsContractDate=DateTime.MinValue;
+			clinicThree.EmailAddressNum=2;
+			clinicThree.Address="113-0033 Hongo";
+			clinicThree.City="Tokyo";
+			clinicThree.State="Kanto";
+			listClinics.Add(clinicOne);
+			listClinics.Add(clinicTwo);
+			listClinics.Add(clinicThree);
+			return listClinics;
+		}
+
 	}
 }

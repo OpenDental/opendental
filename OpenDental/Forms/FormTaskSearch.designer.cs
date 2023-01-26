@@ -283,19 +283,21 @@ namespace OpenDental{
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(34, 38);
+			this.label6.Location = new System.Drawing.Point(30, 38);
 			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(32, 15);
+			this.label6.Size = new System.Drawing.Size(36, 15);
 			this.label6.TabIndex = 5;
 			this.label6.Text = "To";
+			this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(34, 18);
+			this.label7.Location = new System.Drawing.Point(24, 18);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(32, 15);
+			this.label7.Size = new System.Drawing.Size(42, 15);
 			this.label7.TabIndex = 4;
 			this.label7.Text = "From";
+			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// groupBox1
 			// 
@@ -342,19 +344,21 @@ namespace OpenDental{
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(34, 38);
+			this.label5.Location = new System.Drawing.Point(30, 38);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(32, 15);
+			this.label5.Size = new System.Drawing.Size(36, 15);
 			this.label5.TabIndex = 1;
 			this.label5.Text = "To";
+			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(34, 18);
+			this.label2.Location = new System.Drawing.Point(24, 18);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(32, 15);
+			this.label2.Size = new System.Drawing.Size(42, 15);
 			this.label2.TabIndex = 0;
 			this.label2.Text = "From";
+			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// butPatPicker
 			// 

@@ -143,11 +143,18 @@ namespace OpenDental {
 
 			public override ODSetupStatus GetStatus {
 				get {
-					if(string.IsNullOrEmpty(PrefC.GetString(PrefName.RegistrationKey))) {
-						return ODSetupStatus.NotStarted;
-					}
-						return ODSetupStatus.Complete;
+					return GetSetupStatus();
 				}
+			}
+
+			public ODSetupStatus GetSetupStatus(string regKey=null) {
+				if(regKey==null) {
+					regKey=PrefC.GetString(PrefName.RegistrationKey);
+				}
+				if(string.IsNullOrEmpty(regKey)) {
+					return ODSetupStatus.NotStarted;
+				}
+				return ODSetupStatus.Complete;
 			}
 
 			public override string Name {
@@ -222,21 +229,27 @@ namespace OpenDental {
 
 			public override ODSetupStatus GetStatus {
 				get {
-					List<Clinic> listClinics = Clinics.GetDeepCopy(true);
-					if(listClinics.Count == 0) {
-						return ODSetupStatus.NotStarted;
-					}
-					foreach(Clinic clin in listClinics) {
-						if(string.IsNullOrEmpty(clin.Abbr)
-							|| string.IsNullOrEmpty(clin.Description)
-							|| string.IsNullOrEmpty(clin.Phone)
-							|| string.IsNullOrEmpty(clin.Address)
-							) {
-							return ODSetupStatus.NeedsAttention;
-						}
-					}
-					return ODSetupStatus.Complete;
+					return GetSetupStatus();
 				}
+			}
+
+			public ODSetupStatus GetSetupStatus(List<Clinic> listClinics=null) {
+				if(listClinics==null) {
+					listClinics=Clinics.GetDeepCopy(true);
+				}
+				if(listClinics.Count == 0) {
+					return ODSetupStatus.NotStarted;
+				}
+				foreach(Clinic clin in listClinics) {
+					if(string.IsNullOrEmpty(clin.Abbr)
+						|| string.IsNullOrEmpty(clin.Description)
+						|| string.IsNullOrEmpty(clin.Phone)
+						|| string.IsNullOrEmpty(clin.Address)
+						) {
+						return ODSetupStatus.NeedsAttention;
+					}
+				}
+				return ODSetupStatus.Complete;
 			}
 
 			public override SetupWizControl SetupControl {
@@ -305,25 +318,31 @@ namespace OpenDental {
 
 			public override ODSetupStatus GetStatus {
 				get {
-					List<Provider> listProviders = Providers.GetDeepCopy(true);
-					if(listProviders.Count == 0) {
-						return ODSetupStatus.NotStarted;
-					}
-					foreach(Provider prov in listProviders) {
-						bool isDentist = IsPrimary(prov);
-						bool isHyg = prov.IsSecondary;
-						if(((isDentist || isHyg) && string.IsNullOrEmpty(prov.Abbr))
-							|| ((isDentist || isHyg) && string.IsNullOrEmpty(prov.LName))
-							|| ((isDentist || isHyg) && string.IsNullOrEmpty(prov.FName))
-							|| ((isDentist) && string.IsNullOrEmpty(prov.Suffix))
-							|| ((isDentist) && string.IsNullOrEmpty(prov.SSN))
-							|| ((isDentist) && string.IsNullOrEmpty(prov.NationalProvID))
-							) {
-							return ODSetupStatus.NeedsAttention;
-						}
-					}
-					return ODSetupStatus.Complete;
+					return GetSetupStatus();
 				}
+			}
+
+			public ODSetupStatus GetSetupStatus(List<Provider> listProviders=null) {
+				if(listProviders==null) {
+					listProviders=Providers.GetDeepCopy(true);
+				}
+				if(listProviders.Count == 0) {
+					return ODSetupStatus.NotStarted;
+				}
+				foreach(Provider prov in listProviders) {
+					bool isDentist = IsPrimary(prov);
+					bool isHyg = prov.IsSecondary;
+					if(((isDentist || isHyg) && string.IsNullOrEmpty(prov.Abbr))
+						|| ((isDentist || isHyg) && string.IsNullOrEmpty(prov.LName))
+						|| ((isDentist || isHyg) && string.IsNullOrEmpty(prov.FName))
+						|| ((isDentist) && string.IsNullOrEmpty(prov.Suffix))
+						|| ((isDentist) && string.IsNullOrEmpty(prov.SSN))
+						|| ((isDentist) && string.IsNullOrEmpty(prov.NationalProvID))
+						) {
+						return ODSetupStatus.NeedsAttention;
+					}
+				}
+				return ODSetupStatus.Complete;
 			}
 
 			public override SetupWizControl SetupControl {
@@ -374,18 +393,24 @@ namespace OpenDental {
 
 			public override ODSetupStatus GetStatus {
 				get {
-					List<Operatory> listOperatories = Operatories.GetDeepCopy(true);
-					if(listOperatories.Count == 0) {
-						return ODSetupStatus.NotStarted;
-					}
-					foreach(Operatory op in listOperatories) {
-						if(string.IsNullOrEmpty(op.OpName)
-							|| string.IsNullOrEmpty(op.Abbrev)) {
-							return ODSetupStatus.NeedsAttention;
-						}
-					}
-					return ODSetupStatus.Complete;
+					return GetSetupStatus();
 				}
+			}
+
+			public ODSetupStatus GetSetupStatus(List<Operatory> listOperatories=null) {
+				if(listOperatories==null) {
+					listOperatories=Operatories.GetDeepCopy(true);
+				}
+				if(listOperatories.Count == 0) {
+					return ODSetupStatus.NotStarted;
+				}
+				foreach(Operatory op in listOperatories) {
+					if(string.IsNullOrEmpty(op.OpName)
+						|| string.IsNullOrEmpty(op.Abbrev)) {
+						return ODSetupStatus.NeedsAttention;
+					}
+				}
+				return ODSetupStatus.Complete;
 			}
 
 			public override SetupWizControl SetupControl {
@@ -445,19 +470,26 @@ namespace OpenDental {
 
 			public override ODSetupStatus GetStatus {
 				get {
-					List<Employee> listEmployees=Employees.GetDeepCopy(true);
-					if(listEmployees.Count==0) {
-						return ODSetupStatus.NotStarted;
-					}
-					foreach(Employee employee in listEmployees) {
-						if((string.IsNullOrEmpty(employee.FName))
-							|| (string.IsNullOrEmpty(employee.LName))
-							) {
-							return ODSetupStatus.NeedsAttention;
-						}
-					}
-					return ODSetupStatus.Complete;
+					return GetSetupStatus();
 				}
+					
+			}
+
+			public ODSetupStatus GetSetupStatus(List<Employee> listEmployees=null) {
+				if(listEmployees==null) {
+					listEmployees=Employees.GetDeepCopy(true);
+				}
+				if(listEmployees.Count==0) {
+					return ODSetupStatus.NotStarted;
+				}
+				foreach(Employee employee in listEmployees) {
+					if((string.IsNullOrEmpty(employee.FName))
+						|| (string.IsNullOrEmpty(employee.LName))
+						) {
+						return ODSetupStatus.NeedsAttention;
+					}
+				}
+				return ODSetupStatus.Complete;
 			}
 
 			public override string Name {
@@ -490,20 +522,26 @@ namespace OpenDental {
 			
 			///<summary>Returns Complete if all fee schedules have at least one fee entered.</summary>
 			public override ODSetupStatus GetStatus	{
-				get	{					
-					List<FeeSched> listFeeSched = FeeScheds.GetDeepCopy(true);
-					if(listFeeSched.Count==0) {
-						return ODSetupStatus.NotStarted;
-					}
-					List<long> listFeeSchedNums = listFeeSched.Select(x => x.FeeSchedNum).ToList();
-					//clinic nums shouldn't matter here, just want basdic default fee schedules. 
-					foreach(long schedNum in listFeeSchedNums) {
-						if(Fees.GetCountByFeeSchedNum(schedNum) <= 0) {
-							return ODSetupStatus.NeedsAttention;
-						}
-					}
-					return ODSetupStatus.Complete;
+				get	{
+					return GetSetupStatus();
 				}
+			}
+
+			public ODSetupStatus GetSetupStatus(List<FeeSched> listFeeScheds=null) {
+				if(listFeeScheds==null) {
+					listFeeScheds=FeeScheds.GetDeepCopy(true);
+				}
+				if(listFeeScheds.Count==0) {
+					return ODSetupStatus.NotStarted;
+				}
+				List<long> listFeeSchedNums = listFeeScheds.Select(x => x.FeeSchedNum).ToList();
+				//clinic nums shouldn't matter here, just want basdic default fee schedules. 
+				foreach(long schedNum in listFeeSchedNums) {
+					if(Fees.GetCountByFeeSchedNum(schedNum) <= 0) {
+						return ODSetupStatus.NeedsAttention;
+					}
+				}
+				return ODSetupStatus.Complete;
 			}
 
 			public override string Name	{

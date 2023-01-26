@@ -16,7 +16,7 @@ namespace OpenDental {
 
 		public FormExamSheets() {
 			InitializeComponent();
-			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.EClipClinical,Clinics.ClinicNum)) {
+			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch,Clinics.ClinicNum)) {
 				//When this is no longer in limited beta, remove this code and if statement
 				gridMain.Size=new Size(gridMain.Width,gridMain.Height+groupEClipboard.Height);
 			}
@@ -30,7 +30,7 @@ namespace OpenDental {
 			LayoutMenu();
 			FillListExamTypes();
 			FillGrid();
-			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.EClipClinical,Clinics.ClinicNum)) {
+			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch,Clinics.ClinicNum)) {
 				//When this is no longer in limited beta, remove this code and if statement
 				groupEClipboard.Visible=false;
 				groupEClipboard.Enabled=false;

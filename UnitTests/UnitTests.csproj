@@ -233,6 +233,7 @@
     <Compile Include="UI Testing\FormToothChartTests.Designer.cs">
       <DependentUpon>FormToothChartTests.cs</DependentUpon>
     </Compile>
+    <Compile Include="UnitTests\SetupWizardTests.cs" />
     <Compile Include="UnitTests\RpOutstandInsTests.cs" />
     <Compile Include="UnitTests\PaymentsTests.cs" />
     <Compile Include="UnitTests\PeerInfosTests.cs" />

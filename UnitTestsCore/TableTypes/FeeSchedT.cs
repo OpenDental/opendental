@@ -39,5 +39,12 @@ namespace UnitTestsCore {
 			FeeScheds.RefreshCache();
 		}
 
+		///<summary>Deletes a single FeeSched from the table by FeeSchedNum</summary>
+		public static void Delete(long feeSchedNum) {
+			string command="DELETE FROM feesched WHERE FeeSchedNum="+POut.Long(feeSchedNum);
+			DataCore.NonQ(command);
+			FeeScheds.RefreshCache();
+		}
+
 	}
 }

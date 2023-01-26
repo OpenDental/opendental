@@ -28,35 +28,35 @@ namespace OpenDentBusiness {
 						AND claimproc.ProcDate BETWEEN DATE({POut.Date(dateStart)}) AND DATE({POut.Date(dateEnd)}) ";
 			if(groupByProc) {
 				query+="GROUP BY claimproc.ProcNum ";
-            }
-            else {
+			}
+			else {
 				query+="GROUP BY claimproc.PatNum, claimproc.ProcDate ";
 			}
-			query+=@"HAVING SUM(claimproc.InsPayAmt+claimproc.Writeoff)>0/*ProcFee must be >0 and PayAmt must be >ProcFee, ergo PayAmt must be >0*/
+			query+=@"HAVING SUM(claimproc.InsPayAmt+claimproc.Writeoff)>0
 								ORDER BY NULL
 					) cp ";
-            if(groupByProc) {
+			if(groupByProc) {
 				query+="ON cp.ProcNum=procedurelog.ProcNum ";
-            }
-            else {
+			}
+			else {
 				query+=@"ON cp.PatNum = procedurelog.PatNum
 						AND cp.ProcDate = procedurelog.ProcDate ";
-            }
+			}
 			query+=$@"
 					INNER JOIN patient ON patient.PatNum=procedurelog.PatNum
 					WHERE procedurelog.ProcDate BETWEEN DATE({POut.Date(dateStart)}) AND DATE({POut.Date(dateEnd)})
 						AND procedurelog.ProcStatus=2
-						AND procedurelog.ProcFee>0 ";
+						AND procedurelog.ProcFee>=0 ";
 			if(listClinicNums.Count>0) {
 				query+=$"AND procedurelog.ClinicNum IN({string.Join(",",listClinicNums)}) ";
 			}
-            if(groupByProc) {
+			if(groupByProc) {
 				query+="GROUP BY procedurelog.ProcNum ";
 			}
-            else {
-                query+="GROUP BY procedurelog.PatNum, procedurelog.ProcDate ";
-            }
-            query+=@"HAVING ROUND($sumfee,3) < ROUND($PaidAndWriteoff,3)
+			else {
+				query+="GROUP BY procedurelog.PatNum, procedurelog.ProcDate ";
+			}
+			query+=@"HAVING ROUND($sumfee,3) < ROUND($PaidAndWriteoff,3)
 					 ORDER BY patient.LName,patient.FName,procedurelog.ProcDate";
 			return ReportsComplex.RunFuncOnReportServer(() => Db.GetTable(query));
 		}

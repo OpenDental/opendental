@@ -32,5 +32,38 @@ namespace UnitTestsCore {
 			Employees.RefreshCache();
 		}
 
+		/// <summary>Creates a list of three employees.</summary>
+		public static List<Employee> CreateEmployeeList() {
+			List<Employee> listEmployees=new List<Employee>();
+			Employee employeeOne=new Employee();
+			employeeOne.FName="Frodo";
+			employeeOne.LName="Baggins";
+			Employee employeeTwo=new Employee();
+			employeeTwo.FName="Gandalf";
+			employeeTwo.LName="The Grey";
+			Employee employeeThree=new Employee();
+			employeeThree.FName="Gimli";
+			employeeThree.LName="??";
+			listEmployees.Add(employeeOne);
+			listEmployees.Add(employeeTwo);
+			listEmployees.Add(employeeThree);
+			return listEmployees;
+		}
+
+		/// <summary>Creates a list of three employees with some empty fields.</summary>
+		public static List<Employee> CreateEmployeeListEmpties() {
+			List<Employee> listEmployees=new List<Employee>();
+			Employee employeeOne=new Employee();
+			employeeOne.FName="Frodo";
+			Employee employeeTwo=new Employee();
+			employeeTwo.FName="Gandalf";
+			Employee employeeThree=new Employee();
+			employeeThree.FName="Gimli";
+			listEmployees.Add(employeeOne);
+			listEmployees.Add(employeeTwo);
+			listEmployees.Add(employeeThree);
+			return listEmployees;
+		}
+
 	}
 }

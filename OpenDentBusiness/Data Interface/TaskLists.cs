@@ -505,7 +505,7 @@ namespace OpenDentBusiness{
 			}
 			long parentNum=taskListNumChild;
 			while(true) {
-				parentNum=PIn.Long(Db.GetScalar("SELECT parent FROM TaskList WHERE TaskListNum="+POut.Long(parentNum)));
+				parentNum=PIn.Long(Db.GetScalar("SELECT parent FROM tasklist WHERE TaskListNum="+POut.Long(parentNum)));
 				if(parentNum==0) {
 					return false;//Got to the top level of the tree for this list and it is the main list.
 				}

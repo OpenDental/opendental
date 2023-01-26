@@ -444,7 +444,7 @@ namespace OpenDental {
 				textByodSmsTemplate.Text=_clinicPrefHelper.GetStringVal(PrefName.EClipboardByodSmsTemplate,clinicNum);
 				textEClipboardMessage.Text=_clinicPrefHelper.GetStringVal(PrefName.EClipboardMessageComplete,clinicNum);
 			}
-			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.EClipClinical,clinicNum)) {
+			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch,clinicNum)) {
 				checkClinicalAutoLogin.Enabled=false;
 				checkClinicalAutoLogin.Visible=false;
 				return;
@@ -621,7 +621,7 @@ namespace OpenDental {
 			groupEClipboardSheets.Enabled=isClinicSignedUp && _canEditEClipboard && notUsingDefaults && enableSheets;
 			gridMobileAppDevices.Enabled=isClinicSignedUp;
 			labelEClipboardNotSignedUp.Visible=!isClinicSignedUp;
-			butSecurity.Visible=LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.EClipClinical,GetClinicNumEClipboardTab());
+			butSecurity.Visible=LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch,GetClinicNumEClipboardTab());
 		}
 
 		private void SwapSheets(bool doMoveUp) {

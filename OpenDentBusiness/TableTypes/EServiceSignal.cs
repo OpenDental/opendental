@@ -163,7 +163,7 @@ namespace OpenDentBusiness {
 		///<summary>41 - A Windows service running at HQ that is monitored by Headmaster.</summary>
 		WebFormManager,
 		///<summary>42 - Eclipboard Clinical Mobile application.</summary>
-		EClipboardClinical,
+		ODTouch,
 	}
 
 	///<summary>Indicates if HostedURL can be overridden by resellers, for this service.</summary>

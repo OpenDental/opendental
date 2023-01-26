@@ -43,7 +43,7 @@ namespace OpenDentBusiness {
 		[EServiceFeatureStatus(isFinished:true)]
 		SecureEmail=2,
 		[EServiceFeatureStatus(isFinished:false)]
-		EClipClinical=3,
+		ODTouch=3,
 	}
 
 	public class EServiceFeatureStatusAttribute:Attribute  {

@@ -36,6 +36,10 @@ namespace OpenDental {
 			textTarget.Text=(ReconcileCur.EndingBal-ReconcileCur.StartingBal).ToString("n");
 			bool doIncludeUncleared=!ReconcileCur.IsLocked;
 			_listJournalEntries=JournalEntries.GetForReconcile(ReconcileCur.AccountNum,doIncludeUncleared,ReconcileCur.ReconcileNum);
+			if(checkLocked.Checked) {
+				textStart.Enabled=false;
+				textEnd.Enabled=false;
+			}
 			FillGrid();
 		}
 
@@ -146,6 +150,12 @@ namespace OpenDental {
 					checkLocked.Checked=false;
 					return;
 				}
+				textStart.Enabled=false;
+				textEnd.Enabled=false;
+			} 
+			else {
+				textStart.Enabled=true;
+				textEnd.Enabled=true;
 			}
 			//else{//unchecking
 				//need to check permissions here.
@@ -162,6 +172,10 @@ namespace OpenDental {
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
+			if(checkLocked.Checked) {
+				MsgBox.Show(this, "Reconcile is locked. Unlock first to delete.");
+				return;
+			}
 			List<JournalEntry> listJournalEntries=JournalEntries.GetForReconcile(ReconcileCur.AccountNum,includeUncleared:false,ReconcileCur.ReconcileNum);
 			if(listJournalEntries.Count>0) {
 				if(MessageBox.Show(this,"This entire Reconcile will be deleted.  Are you sure you want to delete?","Reconcile Delete Warning",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {

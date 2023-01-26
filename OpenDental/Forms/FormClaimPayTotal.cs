@@ -165,9 +165,8 @@ namespace OpenDental {
 				}
 				row.Cells.Add(procFeeTotal.ToString("F"));
 				row.Cells.Add(ClaimProcArray[i].FeeBilled.ToString("F"));
-				double labFeesForProc=0;
 				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
-					labFeesForProc=Procedures.GetCanadianLabFees(ClaimProcArray[i].ProcNum,_listProcedures).Sum(x => x.ProcFee);
+					double labFeesForProc=Procedures.GetCanadianLabFees(ClaimProcArray[i].ProcNum,_listProcedures).Sum(x => x.ProcFee);
 					row.Cells.Add(labFeesForProc.ToString("F"));
 				}
 				row.Cells.Add(ClaimProcArray[i].DedApplied.ToString("F"));
@@ -183,7 +182,7 @@ namespace OpenDental {
 					if(ClaimProcArray[i].Status==ClaimProcStatus.Supplemental) {
 						procFeeTotal=0;
 					}
-					row.Cells.Add((procFeeTotal+labFeesForProc-ClaimProcArray[i].InsPayAmt-ClaimProcArray[i].WriteOff).ToString("F"));
+					row.Cells.Add((procFeeTotal-ClaimProcArray[i].InsPayAmt-ClaimProcArray[i].WriteOff).ToString("F"));
 				}
 				switch(ClaimProcArray[i].Status){
 					case ClaimProcStatus.Received:
@@ -271,10 +270,8 @@ namespace OpenDental {
 			double procFeeTotal=0;
 			for(int i=0;i<gridMain.ListGridRows.Count;i++){
 				claimFee+=ClaimProcArray[i].FeeBilled;//5
-				double labFeesForProc=0;
 				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
-					labFeesForProc=PIn.Double(gridMain.ListGridRows[i].Cells[gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Labs"))].Text);
-					labFees+=labFeesForProc;
+					labFees+=PIn.Double(gridMain.ListGridRows[i].Cells[gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Labs"))].Text);
 				}
 				dedApplied+=PIn.Double(gridMain.ListGridRows[i].Cells[gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Deduct"))].Text);
 				insPayAmtAllowed+=PIn.Double(gridMain.ListGridRows[i].Cells[gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Allowed"))].Text);
@@ -288,9 +285,6 @@ namespace OpenDental {
 						procFeeCur=0;
 					}
 					procFeeTotal+=procFeeCur;
-					gridMain.ListGridRows[i].Cells[gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Pat Resp"))].Text=
-						(procFeeCur+labFeesForProc-insPayAmtCur-writeOffCur).ToString("F");
-					gridMain.Invalidate();
 				}
 			}
 			textClaimFee.Text=claimFee.ToString("F");
@@ -300,7 +294,7 @@ namespace OpenDental {
 			textInsPayAmt.Text=insPayAmt.ToString("F");
 			textWriteOff.Text=writeOff.ToString("F");
 			if(_doShowPatResp) {
-				textPatResp.Text=(procFeeTotal+labFees-writeOff-insPayAmt).ToString("F");
+				textPatResp.Text=(procFeeTotal-writeOff-insPayAmt).ToString("F");
 			}
 		}
 

@@ -34,7 +34,7 @@ namespace OpenDentBusiness{
 
 		public static List<Flow> GetAllForClinicInDateRange(long clinicNum, DateTime fromDate, DateTime toDate, bool includeAll) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Flow>>(MethodBase.GetCurrentMethod(),clinicNum, fromDate, toDate);
+				return Meth.GetObject<List<Flow>>(MethodBase.GetCurrentMethod(),clinicNum, fromDate, toDate, includeAll);
 			}
 			string command = $"SELECT * FROM flow WHERE SecDateTEntry BETWEEN {POut.DateT(fromDate)} AND {POut.DateT(toDate)} + INTERVAL 1 DAY {(includeAll ? $"AND ClinicNum = {POut.Long(clinicNum)} " :"")}";
 			return Crud.FlowCrud.SelectMany(command);

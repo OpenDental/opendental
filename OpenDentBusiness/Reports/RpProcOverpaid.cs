@@ -25,7 +25,7 @@ namespace OpenDentBusiness {
 			else {
 				command+=DbHelper.Concat("patient.LName","', '","patient.FName","' '","patient.MiddleI");
 			}
-			command+=@" AS 'patientName', 
+			command+=@" AS 'patientName',
 				procedurelog.ProcDate,
 				procedurecode.ProcCode,
 				procedurelog.ToothNum,
@@ -39,7 +39,7 @@ namespace OpenDentBusiness {
 				INNER JOIN provider ON provider.ProvNum=procedurelog.ProvNum
 				WHERE procedurelog.ProcStatus="+POut.Int((int)ProcStat.C)+" AND "
 				+DbHelper.BetweenDates("procedurelog.ProcDate",dateStart,dateEnd)+" "
-				+"AND procedurelog.ProcFee>0 ";
+				+"AND procedurelog.ProcFee>=0 ";
 			if(listProvNums!=null && listProvNums.Count > 0) {
 				command+="AND procedurelog.ProvNum IN ("+string.Join(",",listProvNums.Select(x => POut.Long(x)))+") ";
 			}

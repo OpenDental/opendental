@@ -702,7 +702,7 @@ namespace OpenDental{
 
 		///<summary>Checks if perio is active on a MAD row with the current patient. If it is, locks editing.</summary>
 		private void CheckMobileActivity() {
-			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.EClipPerio,Clinics.ClinicNum)) {
+			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch,Clinics.ClinicNum)) {
 				groupEClip.Enabled=false;
 				groupEClip.Visible=false;
 				return;

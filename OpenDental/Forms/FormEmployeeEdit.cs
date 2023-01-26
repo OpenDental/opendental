@@ -75,7 +75,13 @@ namespace OpenDental{
 			EmployeeCur.IsWorkingHome=checkIsWorkingHome.Checked;
 			EmployeeCur.ReportsTo=comboReportsTo.GetSelectedKey<Employee>(x=>x.EmployeeNum);
 			if(IsNew) {
-				Employees.Insert(EmployeeCur);
+				try {
+					Employees.Insert(EmployeeCur);
+				}
+				catch(ApplicationException ex) {
+					MsgBox.Show(ex.Message);
+					return;
+				}
 				DialogResult=DialogResult.OK;
 				return;
 			}

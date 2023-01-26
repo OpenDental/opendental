@@ -45,5 +45,38 @@ namespace UnitTestsCore {
 			DataCore.NonQ(command);
 		}
 
+		/// <summary>Creates a list of  3 operatories</summary>
+		public static List<Operatory> CreateListOperatories() {
+			List<Operatory> listOperatories=new List<Operatory>();
+			Operatory operatoryOne=new Operatory();
+			operatoryOne.OpName="Hoth";
+			operatoryOne.Abbrev="HTH";
+			Operatory operatoryTwo=new Operatory();
+			operatoryTwo.OpName="Kashyyk";
+			operatoryTwo.Abbrev="KSH";
+			Operatory operatoryThree=new Operatory();
+			operatoryThree.OpName="Death Star";
+			operatoryThree.Abbrev="DSTR";
+			listOperatories.Add(operatoryOne);
+			listOperatories.Add(operatoryTwo);
+			listOperatories.Add(operatoryThree);
+			return listOperatories;
+		}
+
+		/// <summary>Creates list of 3 operatories with some empyt fields.</summary>
+		public static List<Operatory> CreateListOperatoriesEmpties() {
+			List<Operatory> listOperatories=new List<Operatory>();
+			Operatory operatoryOne=new Operatory();
+			operatoryOne.OpName="Hoth";
+			Operatory operatoryTwo=new Operatory();
+			operatoryTwo.OpName="Kashyyk";
+			Operatory operatoryThree=new Operatory();
+			operatoryThree.OpName="Death Star";
+			listOperatories.Add(operatoryOne);
+			listOperatories.Add(operatoryTwo);
+			listOperatories.Add(operatoryThree);
+			return listOperatories;
+		}
+
 	}
 }
