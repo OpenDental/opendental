@@ -10385,7 +10385,7 @@
         <EnumValue name="PickList">1</EnumValue>
         <EnumValue name="Date">2-Stored in db as entered, already localized.  For example, it could be 2/04/11, 2/4/11, 2/4/2011, or any other variant.  This makes it harder to create queries that filter by date, but easier to display dates as part of results.</EnumValue>
         <EnumValue name="Checkbox">3-If checked, value stored as "1".  If unchecked, row deleted.</EnumValue>
-        <EnumValue name="Currency">4-This seems to have been added without implementing.  Not sure what will happen if someone tries to use it.</EnumValue>
+        <EnumValue name="Currency">4-Numbers only.</EnumValue>
         <EnumValue name="InCaseOfEmergency">5 - DEPRECATED. (Only used 16.3.1, deprecated by 16.3.4)</EnumValue>
         <EnumValue name="CareCreditStatus">6 - CareCredit pre-approval status. For example, FieldValue string="Pre-Approved", from CareCreditWebStatus enum.</EnumValue>
       </Enumeration>

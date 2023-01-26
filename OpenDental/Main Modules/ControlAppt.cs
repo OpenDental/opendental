@@ -933,7 +933,7 @@ namespace OpenDental {
 				return;
 			}
 			if(appt.AptStatus == ApptStatus.PtNote || appt.AptStatus == ApptStatus.PtNoteCompleted) {
-				MsgBox.Show(this,"Only appointments may be broken, not notes.");
+				MsgBox.Show(this,"Patient Notes cannot be broken.");
 				return;
 			}
 			ProcedureCode procCodeBroke=null;//Will not chart if it stays null.
@@ -1979,7 +1979,7 @@ namespace OpenDental {
 				return null;
 			}
 			if(appt.AptStatus==ApptStatus.PtNote || appt.AptStatus==ApptStatus.PtNoteCompleted) {
-				MsgBox.Show(this,"Only appointments may be broken, not notes.");
+				MsgBox.Show(this,"Patient Notes cannot be broken.");
 				return null;
 			}
 			if(AppointmentL.DoPreventChangesToCompletedAppt(appt,PreventChangesApptAction.Break)) {

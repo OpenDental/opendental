@@ -74,32 +74,45 @@ namespace OpenDental {
 
 		protected override void OnPaint(PaintEventArgs pe) {
 			base.OnPaint(pe);
-			Color surroundColor=Color.FromArgb(245,234,200);
-			using(Brush hoverBrush = new SolidBrush(surroundColor))
-			using(Pen outlinePen = new Pen(Color.Black))
-			using(Pen surroundPen = new Pen(surroundColor))
-			using(Font strFont = new Font(FontFamily.GenericSansSerif,IsToothChart ? 10f : this.Height-10))
-			using(StringFormat strFormat = new StringFormat() { Alignment=StringAlignment.Center,LineAlignment=StringAlignment.Center })
-			using(Graphics g = pe.Graphics) {
-				g.SmoothingMode=SmoothingMode.HighQuality;
-				g.CompositingQuality=CompositingQuality.HighQuality;
-				g.FillRectangle(Brushes.White,0,0,Width,Height);//White background
-				if(_isHovering) {
-					g.FillRectangle(hoverBrush,0,0,Width-1,Height-1);
-					g.DrawRectangle(surroundPen,0,0,Width-1,Height-1);
-				}
-				g.DrawRectangle(outlinePen,-1,-1,Width,Height);//Outline
-				Brush brush = Brushes.Black;//Default to black.  Do not dispose brush because that will dispose of Brushes.Black... not good.
-				if(ToothChart) {
-					if(SelectedOption=="buc" || SelectedOption=="ling" || SelectedOption=="d" || SelectedOption=="m" || SelectedOption=="None") {
-						brush=Brushes.LightGray;
-					}
-					if(SelectedOption=="None") {
-						SelectedOption=DefaultOption;//Nothing has been selected so draw the "default" string in the combo box.  E.g. "b", "ling", etc.
-					}
-				}
-				g.DrawString(SelectedOption,strFont,brush,new Point(this.Width/2,this.Height/2),strFormat);
+			Color colorSurround=Color.FromArgb(245,234,200);
+			using Brush brushHover = new SolidBrush(colorSurround);
+			using Pen penOutline = new Pen(Color.Black);
+			using Pen penSurround = new Pen(colorSurround);
+			float sizeFont;
+			if(IsToothChart) {
+				sizeFont=10f;
 			}
+			else if(Height<11) {
+				sizeFont=10f;
+			}
+			else {
+				sizeFont=this.Height-10;
+			}
+			using Font fontStr = new Font(FontFamily.GenericSansSerif,sizeFont);
+			StringFormat stringFormat = new StringFormat();
+			stringFormat.Alignment=StringAlignment.Center;
+			stringFormat.LineAlignment=StringAlignment.Center;
+			Graphics g = pe.Graphics;
+			g.SmoothingMode=SmoothingMode.HighQuality;
+			g.CompositingQuality=CompositingQuality.HighQuality;
+			g.FillRectangle(Brushes.White,0,0,Width,Height);//White background
+			if(_isHovering) {
+				g.FillRectangle(brushHover,0,0,Width-1,Height-1);
+				g.DrawRectangle(penSurround,0,0,Width-1,Height-1);
+			}
+			g.DrawRectangle(penOutline,-1,-1,Width,Height);//Outline
+			Color colorText=Color.Black;
+			if(ToothChart) {
+				if(SelectedOption=="buc" || SelectedOption=="ling" || SelectedOption=="d" || SelectedOption=="m" || SelectedOption=="None") {
+					colorText=Color.LightGray;
+				}
+				if(SelectedOption=="None") {
+					SelectedOption=DefaultOption;//Nothing has been selected so draw the "default" string in the combo box.  E.g. "b", "ling", etc.
+				}
+			}
+			using Brush brush = new SolidBrush(colorText);
+			g.DrawString(SelectedOption,fontStr,brush,new Point(this.Width/2,this.Height/2),stringFormat);
+			stringFormat.Dispose();
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e) {

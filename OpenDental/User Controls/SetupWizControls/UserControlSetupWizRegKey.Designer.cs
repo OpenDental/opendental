@@ -59,9 +59,9 @@
 			// 
 			// butProcCodeTools
 			// 
-			this.butProcCodeTools.Location = new System.Drawing.Point(303, 66);
+			this.butProcCodeTools.Location = new System.Drawing.Point(248, 66);
 			this.butProcCodeTools.Name = "butProcCodeTools";
-			this.butProcCodeTools.Size = new System.Drawing.Size(122, 23);
+			this.butProcCodeTools.Size = new System.Drawing.Size(164, 23);
 			this.butProcCodeTools.TabIndex = 59;
 			this.butProcCodeTools.Text = "Procedure Code Tools";
 			this.butProcCodeTools.Click += new System.EventHandler(this.butProcCodeTools_Click);

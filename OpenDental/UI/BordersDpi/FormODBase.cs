@@ -254,7 +254,11 @@ namespace OpenDental {
 					ShowInTaskbar=false;
 				}
 				else{//false
-					ShowInTaskbar=true;
+					if(!ODBuild.IsWeb()) {
+						//This causes the form to refresh and in cloud the attached iframe loses the image and you have to reselect the image to make it show again.
+						//Also, there is no need to show in taskbar for cloud
+						ShowInTaskbar=true;
+					}
 				}
 				_isImageFloatDocked=value;
 				IsImageFloatDockedChanged?.Invoke(this,new EventArgs());

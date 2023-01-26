@@ -12,8 +12,8 @@ namespace OpenDental.UI {
 		}
 
 		///<summary>Inserts the iFrame into the DOM and initializes it.</summary>
-		public void Initialize(string url="") {
-			_frameId=Browser.InsertIframe(this.Handle,url);
+		public void Initialize(string url="",bool isHidden=false) {
+			_frameId=Browser.InsertIframe(this.Handle,url,isHidden);
 		}
 
 		///<summary>Navigates the iFrame to the url.</summary>
@@ -40,10 +40,7 @@ namespace OpenDental.UI {
 
 		///<summary>Makes the iFrame visible.</summary>
 		public void ShowIframe() {
-			if(_frameId.IsNullOrEmpty()) {
-				Initialize();
-				return;
-			}
+			Initialize();
 			ODCloudClient.ODBrowserData odBrowserData=new ODCloudClient.ODBrowserData {
 				ElementId=_frameId,
 				IsVisible=true
@@ -53,9 +50,7 @@ namespace OpenDental.UI {
 
 		///<summary>Hides the iFrame.</summary>
 		public void HideIframe() {
-			if(_frameId.IsNullOrEmpty()) {
-				return;
-			}
+			Initialize(isHidden:true);
 			ODCloudClient.ODBrowserData odBrowserData=new ODCloudClient.ODBrowserData {
 				ElementId=_frameId,
 				IsVisible=false
