@@ -359,6 +359,16 @@ namespace OpenDentBusiness{
 			return Crud.CarrierCrud.SelectOne(command);
 		}
 
+		///<summary>Gets a list of all carriers from the database. Returns null if not found.</summary>
+		public static List<Carrier> GetCarriersForApi(int limit,int offset) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Carrier>>(MethodBase.GetCurrentMethod(),limit,offset);
+			}
+			string command="SELECT * FROM carrier ORDER BY CarrierNum "
+			+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.CarrierCrud.SelectMany(command);
+		}
+
 		///<summary>Gets the specified carrier from Cache. 
 		///This also refreshes the list if necessary, so it will work even if the list has not been refreshed recently.</summary>
 		public static Carrier GetCarrier(long carrierNum) {

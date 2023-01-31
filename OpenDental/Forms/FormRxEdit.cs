@@ -160,7 +160,7 @@ namespace OpenDental{
 		private void FillComboProvNum() { 
 			comboProv.Items.Clear();
 			List<Provider> listProviders = Providers.GetProvsForClinicList(new List<long>{0, comboClinic.SelectedClinicNum}).Where(x => !x.IsNotPerson).ToList();
-			if(_userProvider!=null && !listProviders.Contains(_userProvider) && !_userProvider.IsNotPerson) {
+			if(_userProvider!=null && !listProviders.Any(x => x.ProvNum==_userProvider.ProvNum) && !_userProvider.IsNotPerson) {
 				listProviders.Add(_userProvider);
 			}
 			if(PrefC.GetBool(PrefName.RxHideProvsWithoutDEA)) {

@@ -137,7 +137,7 @@ namespace OpenDental.InternalTools.Phones {
 			_listWebChatSessions=listWebChatSessions;
 			_listPeerInfosRemoteSupportSessions=listPeerInfosRemoteSupportSessions;
 			_listChatUsers=listChatUsers;
-			string title="Call Center Map - Triage Coord. - ";
+			string title="Triage Coord. - ";
 			SiteLink siteLink=SiteLinks.GetFirstOrDefault(x => x.SiteNum==_mapAreaContainer.SiteNum);
 			if(siteLink==null){
 				title+="Not Set";
@@ -402,12 +402,19 @@ namespace OpenDental.InternalTools.Phones {
 		}
 
 		private void menuItemToggleTriage_Click(object sender,EventArgs e) {
-			Point pointLoc=LayoutManager.ScalePoint(new Point(0,78));
-			if(panelContainer.Left==0) { 
-				pointLoc=LayoutManager.ScalePoint(new Point(365,78));
+			Point pointLoc=LayoutManager.ScalePoint(new Point(0,69));
+			if(mapPanel.Left==0) { 
+				pointLoc=LayoutManager.ScalePoint(new Point(365,69));
 			}
 			Rectangle rectangle=new Rectangle(pointLoc.X,pointLoc.Y,ClientSize.Width-pointLoc.X-2,ClientSize.Height-pointLoc.Y-2);
-			LayoutManager.Move(panelContainer,rectangle);
+			LayoutManager.Move(mapPanel,rectangle);
+			//This is very similar to FillMapPanel(), but without refreshing cubicles because that would cause slowness
+			if(comboRoom.SelectedIndex==-1){
+				return;
+			}
+			Size sizeRoom=new Size(_mapAreaContainer.FloorWidthFeet,_mapAreaContainer.FloorHeightFeet);
+			mapPanel.SetZoomInitialFit(mapPanel.Size,sizeRoom);
+			mapPanel.Invalidate();
 		}
 		#endregion Methods - private Menu
 
@@ -475,21 +482,21 @@ namespace OpenDental.InternalTools.Phones {
 			//First, look for webcam image
 			Bitmap bitmap=GetWebCamImage(employeeNum);
 			if(bitmap!=null) {
-				userControlMapDetails1.SetBitmap(bitmap,mapImageDisplayStatus:OpenDental.InternalTools.Phones.EnumMapImageDisplayStatus.WebCam,employeeNum);
+				userControlMapDetails1.SetBitmap(bitmap,EnumMapImageDisplayStatus.WebCam,employeeNum);
 				return;
 			}
 			//Then, look for a stock image
-			if(userControlMapDetails1.MapImageDisplayStatus==OpenDental.InternalTools.Phones.EnumMapImageDisplayStatus.Stock//already showing stock
+			if(userControlMapDetails1.MapImageDisplayStatus==EnumMapImageDisplayStatus.Stock//already showing stock
 				&& userControlMapDetails1.EmployeeNumImage==employeeNum)//for this employee
 			{
 				return;
 			}
 			bitmap=GetEmployeePicture(employeeNum);
 			if(bitmap!=null){
-				userControlMapDetails1.SetBitmap(bitmap,mapImageDisplayStatus:OpenDental.InternalTools.Phones.EnumMapImageDisplayStatus.Stock,employeeNum);
+				userControlMapDetails1.SetBitmap(bitmap,EnumMapImageDisplayStatus.Stock,employeeNum);
 				return;
 			}
-			userControlMapDetails1.SetBitmap(null,mapImageDisplayStatus:OpenDental.InternalTools.Phones.EnumMapImageDisplayStatus.Empty,employeeNum);
+			userControlMapDetails1.SetBitmap(null,EnumMapImageDisplayStatus.Empty,employeeNum);
 		}
 
 		///<summary>This timer is always running.  4 times per second.</summary>
@@ -553,39 +560,18 @@ namespace OpenDental.InternalTools.Phones {
 			return bitmap2;
 		}
 
-		///<summary>Setup the map panel with the cubicles and labels before filling with real-time data. Call this on load or anytime the cubicle layout has changed.</summary>
+		///<summary>Sets up the map panel with the cubicles and labels before filling with real-time data.  Also sets initial zoom to fit. Call this on load or anytime the cubicle layout has changed.</summary>
 		private void FillMapPanel() {
 			if(comboRoom.SelectedIndex==-1){
 				return;
 			}
-			MapAreaContainer mapAreaContainer=_listMapAreaContainers[comboRoom.SelectedIndex];
-			LayoutManager.MoveSize(mapPanel,new Size(mapAreaContainer.FloorWidthFeet*17,mapAreaContainer.FloorHeightFeet*17));
-			List<MapArea> listMapAreas=MapAreas.Refresh(mapAreaContainer.MapAreaContainerNum);
-			mapPanel.SetListMapAreas(listMapAreas);
+			Size sizeRoom=new Size(_mapAreaContainer.FloorWidthFeet,_mapAreaContainer.FloorHeightFeet);
+			mapPanel.SetZoomInitialFit(mapPanel.Size,sizeRoom);
+			mapPanel.SetMapAreaContainer(_mapAreaContainer);
 			mapPanel.Invalidate();
-			/*
-			mapAreaPanel.PixelsPerFoot=LayoutManager.Scale(17);
-			mapAreaPanel.Clear(false);
-			mapAreaPanel.HeightFloorFeet=Math.Max(_mapAreaContainer.FloorHeightFeet,55);//Should at least fill the space set in the designer.
-			mapAreaPanel.WidthFloorFeet=Math.Max(_mapAreaContainer.FloorWidthFeet,89);//Should at least fill the space set in the designer.
-																			  //fill the panel
-			_bitmapHouse?.Dispose();//We do not know if the bitmap was disposed of by MapCubicle.Dispose() method, so manually dispose to be safe
-			_bitmapHouse=PhoneTile.GetHouse16();//Since we disposed above, we need to recreate the house bitmap
-			List<MapArea> listMapAreas=MapAreas.Refresh(_listMapAreaContainers[comboRoom.SelectedIndex].MapAreaContainerNum);
-			listMapAreas=listMapAreas.OrderByDescending(x => (int)(x.ItemType)).ToList();
-			for(int i=0;i<listMapAreas.Count;i++) {
-				if(listMapAreas[i].MapAreaContainerNum!=_listMapAreaContainers[comboRoom.SelectedIndex].MapAreaContainerNum) {
-					continue;
-				}
-				if(listMapAreas[i].ItemType==MapItemType.Cubicle) {
-					mapAreaPanel.AddCubicle(listMapAreas[i]);
-				}
-				else if(listMapAreas[i].ItemType==MapItemType.Label) {
-					mapAreaPanel.AddDisplayLabel(listMapAreas[i]);
-				}
-			}*/
 		}
 
+		///<summary>Only on load</summary>
 		private void FillMaps() {
 			_listMapAreaContainers=MapAreaContainers.GetAll(_siteThisComputer.SiteNum);
 			if(MapDescription.IsNullOrEmpty()) {
@@ -738,6 +724,7 @@ namespace OpenDental.InternalTools.Phones {
 			return listPhoneEmpDefaults.OrderBy(x => x.EscalationOrder)//Show people at the selected location first
 				.ThenBy(x => x.EmpName).ToList();
 		}
+
 
 		#endregion Methods - Private
 

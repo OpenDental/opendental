@@ -64,11 +64,10 @@ namespace OpenDental.InternalTools.Phones{
 			this.mapNumberCustDownCount = new OpenDental.InternalTools.Phones.MapNumber();
 			this.mapNumberCustDownTime = new OpenDental.InternalTools.Phones.MapNumber();
 			this.mapPanel = new OpenDental.InternalTools.Phones.MapPanel();
-			this.panelContainer = new OpenDental.UI.PanelOD();
 			this.timerWebCam = new System.Windows.Forms.Timer(this.components);
+			this.label8 = new System.Windows.Forms.Label();
 			this.groupPhoneMetrics.SuspendLayout();
 			this.tabMain.SuspendLayout();
-			this.panelContainer.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// menuMain
@@ -82,13 +81,13 @@ namespace OpenDental.InternalTools.Phones{
 			// 
 			this.labelTriageCoordinator.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelTriageCoordinator.Font = new System.Drawing.Font("Calibri", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelTriageCoordinator.Location = new System.Drawing.Point(406, 3);
+			this.labelTriageCoordinator.Font = new System.Drawing.Font("Calibri", 32F);
+			this.labelTriageCoordinator.Location = new System.Drawing.Point(788, 3);
 			this.labelTriageCoordinator.Name = "labelTriageCoordinator";
-			this.labelTriageCoordinator.Size = new System.Drawing.Size(1280, 72);
+			this.labelTriageCoordinator.Size = new System.Drawing.Size(898, 60);
 			this.labelTriageCoordinator.TabIndex = 74;
-			this.labelTriageCoordinator.Text = "Call Center Map - Triage Coord - Jim Smith";
-			this.labelTriageCoordinator.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.labelTriageCoordinator.Text = "Triage Coord - Jim Smith";
+			this.labelTriageCoordinator.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelCurrentTime
 			// 
@@ -103,10 +102,10 @@ namespace OpenDental.InternalTools.Phones{
 			// 
 			// comboRoom
 			// 
-			this.comboRoom.Font = new System.Drawing.Font("Microsoft Sans Serif", 27F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.comboRoom.Location = new System.Drawing.Point(0, 25);
+			this.comboRoom.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F);
+			this.comboRoom.Location = new System.Drawing.Point(0, 27);
 			this.comboRoom.Name = "comboRoom";
-			this.comboRoom.Size = new System.Drawing.Size(359, 48);
+			this.comboRoom.Size = new System.Drawing.Size(309, 40);
 			this.comboRoom.TabIndex = 76;
 			this.comboRoom.Text = "comboBox1";
 			this.comboRoom.SelectionChangeCommitted += new System.EventHandler(this.comboRoom_SelectionChangeCommitted);
@@ -127,7 +126,7 @@ namespace OpenDental.InternalTools.Phones{
 			this.groupPhoneMetrics.Controls.Add(this.label11);
 			this.groupPhoneMetrics.Controls.Add(this.label10);
 			this.groupPhoneMetrics.Controls.Add(this.label6);
-			this.groupPhoneMetrics.Location = new System.Drawing.Point(4, 79);
+			this.groupPhoneMetrics.Location = new System.Drawing.Point(4, 72);
 			this.groupPhoneMetrics.Name = "groupPhoneMetrics";
 			this.groupPhoneMetrics.Size = new System.Drawing.Size(357, 251);
 			this.groupPhoneMetrics.TabIndex = 83;
@@ -445,33 +444,33 @@ namespace OpenDental.InternalTools.Phones{
 			// 
 			// mapPanel
 			// 
-			this.mapPanel.Location = new System.Drawing.Point(0, 0);
-			this.mapPanel.Name = "mapPanel";
-			this.mapPanel.Size = new System.Drawing.Size(893, 942);
-			this.mapPanel.TabIndex = 106;
-			// 
-			// panelContainer
-			// 
-			this.panelContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			this.mapPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.panelContainer.AutoScroll = true;
-			this.panelContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.panelContainer.Controls.Add(this.mapPanel);
-			this.panelContainer.Location = new System.Drawing.Point(365, 78);
-			this.panelContainer.Name = "panelContainer";
-			this.panelContainer.Size = new System.Drawing.Size(1515, 961);
-			this.panelContainer.TabIndex = 107;
+			this.mapPanel.Location = new System.Drawing.Point(365, 69);
+			this.mapPanel.Name = "mapPanel";
+			this.mapPanel.Size = new System.Drawing.Size(1516, 970);
+			this.mapPanel.TabIndex = 106;
 			// 
 			// timerWebCam
 			// 
 			this.timerWebCam.Interval = 250;
 			this.timerWebCam.Tick += new System.EventHandler(this.timerWebCam_Tick);
 			// 
+			// label8
+			// 
+			this.label8.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label8.Location = new System.Drawing.Point(411, 30);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(116, 36);
+			this.label8.TabIndex = 107;
+			this.label8.Text = "use mouse to \r\npan and zoom";
+			// 
 			// FormMap
 			// 
 			this.ClientSize = new System.Drawing.Size(1884, 1042);
-			this.Controls.Add(this.panelContainer);
+			this.Controls.Add(this.label8);
+			this.Controls.Add(this.mapPanel);
 			this.Controls.Add(this.mapNumberCustDownTime);
 			this.Controls.Add(this.mapNumberCustDownCount);
 			this.Controls.Add(this.eServiceMetricsControl);
@@ -501,7 +500,6 @@ namespace OpenDental.InternalTools.Phones{
 			this.groupPhoneMetrics.ResumeLayout(false);
 			this.groupPhoneMetrics.PerformLayout();
 			this.tabMain.ResumeLayout(false);
-			this.panelContainer.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -547,7 +545,7 @@ namespace OpenDental.InternalTools.Phones{
 		private MapNumber mapNumberCustDownCount;
 		private MapNumber mapNumberCustDownTime;
 		private OpenDental.InternalTools.Phones.MapPanel mapPanel;
-		private UI.PanelOD panelContainer;
 		private System.Windows.Forms.Timer timerWebCam;
+		private System.Windows.Forms.Label label8;
 	}
 }

@@ -7113,11 +7113,11 @@
     <Compile Include="InternalTools\Phones\FormScreenshotBrowse.designer.cs">
       <DependentUpon>FormScreenshotBrowse.cs</DependentUpon>
     </Compile>
-    <Compile Include="InternalTools\Phones\FormPhoneTiles.cs">
+    <Compile Include="InternalTools\Phones\FormPhoneList.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="InternalTools\Phones\FormPhoneTiles.designer.cs">
-      <DependentUpon>FormPhoneTiles.cs</DependentUpon>
+    <Compile Include="InternalTools\Phones\FormPhoneList.designer.cs">
+      <DependentUpon>FormPhoneList.cs</DependentUpon>
     </Compile>
     <Compile Include="InternalTools\Phones\PhoneTile.cs">
       <SubType>UserControl</SubType>
@@ -12044,8 +12044,8 @@
       <DependentUpon>FormPatientAddAll.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="InternalTools\Phones\FormPhoneTiles.resx">
-      <DependentUpon>FormPhoneTiles.cs</DependentUpon>
+    <EmbeddedResource Include="InternalTools\Phones\FormPhoneList.resx">
+      <DependentUpon>FormPhoneList.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Phones\PhoneTile.resx">

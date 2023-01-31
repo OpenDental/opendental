@@ -59,7 +59,7 @@
       <summary>Enum:eServiceCode EService that this short GUID applies to.</summary>
       <Enumeration name="eServiceCode">
         <summary>Used by EServiceSignal.ServiceCode. Each service will have an entry here. Stored as an int for forward compatibility.</summary>
-        <EnumValue name="EClipboardClinical">42 - Eclipboard Clinical Mobile application.</EnumValue>
+        <EnumValue name="ODTouch">42 - Eclipboard Clinical Mobile application.</EnumValue>
       </Enumeration>
     </column>
   </table>

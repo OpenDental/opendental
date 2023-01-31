@@ -10,7 +10,7 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod(),strRecipientAddress);
 			}
-			string command="SELECT DISTINCT MsgId FROM emailmessageuid WHERE RecipientAddress='"+POut.String(strRecipientAddress)+"'";
+			string command="SELECT DISTINCT BINARY MsgId FROM emailmessageuid WHERE RecipientAddress='"+POut.String(strRecipientAddress)+"'";
 			return Db.GetListString(command);
 		}
 

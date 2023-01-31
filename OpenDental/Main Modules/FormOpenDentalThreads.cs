@@ -801,26 +801,24 @@ namespace OpenDental {
 		}
 
 		#endregion
-		#region PhoneConferenceThread
-
-		///<summary>Begins a thread that updates the phone conference rooms. This is for HQ only.</summary>
-		void BeginPhoneConferenceThread() {
-			if(IsThreadAlreadyRunning(FormODThreadNames.PhoneConference)) {
-				return;
-			}
-			ODThread odThread=new ODThread((o) => {
-				Logger.LogToPath("PhoneConf",LogPath.Signals,LogPhase.Start);
-				List<PhoneConf> listPhoneConfs=PhoneConfs.GetAll();
-				this.Invoke((() => lightSignalGrid1.SetConfs(listPhoneConfs)));
-				Logger.LogToPath("PhoneConf",LogPath.Signals,LogPhase.End);
-			});
-			odThread.AddExceptionHandler(ex => SignalsTickExceptionHandler(ex));
-			odThread.GroupName=FormODThreadNames.PhoneConference.GetDescription();
-			odThread.Name=FormODThreadNames.PhoneConference.GetDescription();
-			odThread.Start();
-		}
-
-		#endregion
+		//#region PhoneConferenceThread
+		/////<summary>Begins a thread that updates the phone conference rooms. This is for HQ only.</summary>
+		//void BeginPhoneConferenceThread() {
+		//	if(IsThreadAlreadyRunning(FormODThreadNames.PhoneConference)) {
+		//		return;
+		//	}
+		//	ODThread odThread=new ODThread((o) => {
+		//		Logger.LogToPath("PhoneConf",LogPath.Signals,LogPhase.Start);
+		//		List<PhoneConf> listPhoneConfs=PhoneConfs.GetAll();
+		//		this.Invoke((() => lightSignalGrid1.SetConfs(listPhoneConfs)));
+		//		Logger.LogToPath("PhoneConf",LogPath.Signals,LogPhase.End);
+		//	});
+		//	odThread.AddExceptionHandler(ex => SignalsTickExceptionHandler(ex));
+		//	odThread.GroupName=FormODThreadNames.PhoneConference.GetDescription();
+		//	odThread.Name=FormODThreadNames.PhoneConference.GetDescription();
+		//	odThread.Start();
+		//}
+		//#endregion
 		#region PlaySoundsThread
 
 		///<summary>Begins a thread that will play sounds based on the given signals.</summary>
@@ -1071,8 +1069,8 @@ namespace OpenDental {
 			for(int i=0;i<_listFormMaps.Count;i++) {
 				_listFormMaps[i].SetVoicemail(voiceMailCount,ageOfOldestVoicemail);
 			}
-			if(_formPhoneTiles!=null && !_formPhoneTiles.IsDisposed) {
-				_formPhoneTiles.SetVoicemailCount(voiceMailCount);
+			if(_formPhoneList!=null && !_formPhoneList.IsDisposed) {
+				_formPhoneList.SetVoicemailCount(voiceMailCount);
 			}
 		}
 

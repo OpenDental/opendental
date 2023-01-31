@@ -1034,8 +1034,8 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>This method is a concise version of FormPayment.SavePaymentToDb() modified for the API, Patient Portal, and eClipboard. Only handles patient payments, not income transfers, insurance, or TSI payments. Returns Payment.PaymentNum</summary>
-		public static long ProcessPaymentForWeb(Payment odbPayment,Patient odbPatient,double payAmt,bool isPatientPreferred=false,bool isPrepayment=false) {
-			PaymentEdit.AutoSplit autoSplitData=PaymentEdit.AutoSplitForPayment(odbPayment.PatNum,odbPayment,isPatPrefer:isPatientPreferred);
+		public static long ProcessPaymentForWeb(Payment odbPayment,Patient odbPatient,double payAmt,bool isPatientPreferred=false,bool isPrepayment=false,List<AccountEntry> listAccountEntries=null) {
+			PaymentEdit.AutoSplit autoSplitData=PaymentEdit.AutoSplitForPayment(odbPayment.PatNum,odbPayment,isPatPrefer:isPatientPreferred,listAccountEntriesPayFirst:listAccountEntries);
 			odbPayment.PayAmt=payAmt; //AutoSplitForPayment empties PayAmt - Set it back to what it should be.
 			//Zero dollar splits are not valid. Remove.
 			autoSplitData.ListPaySplitsSuggested.RemoveAll(x => CompareDouble.IsZero(x.SplitAmt));

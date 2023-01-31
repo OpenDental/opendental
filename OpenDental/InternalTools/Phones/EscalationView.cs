@@ -14,6 +14,7 @@ namespace OpenDental.InternalTools.Phones {
 		#region Fields - Public
 		public int FadeAlphaIncrement=0;
 		public bool IsNewItems;
+		public LayoutManagerForms LayoutManager=new LayoutManagerForms();
 		public List<EscalationItem> ListEscalationItems=new List<EscalationItem>();
 		#endregion Fields - Public
 
@@ -43,7 +44,8 @@ namespace OpenDental.InternalTools.Phones {
 			using Bitmap bitmapGta=Properties.Resources.gtaicon3;
 			using Bitmap bitmapRemoteSupport=Properties.Resources.remoteSupportIcon;
 			float widthChatIcon=18F;//Both the web chat and GTA icons are 18 pixels wide.
-			float widthExtension=g.MeasureString("9999",Font).Width;
+			//float widthExtension=LayoutManager.ScaleMS(g.MeasureString("9999",Font).Width);
+			float widthExtension=g.MeasureString("9999",Font).Width;//I think the above line is correct, but this one looks better
 			g.Clear(BackColor);
 			g.DrawRectangle(Pens.Black,0,0,Width-1,Height-1);
 			int alpha=255;
@@ -51,8 +53,9 @@ namespace OpenDental.InternalTools.Phones {
 			int idxStartFade=0;
 			int minAlpha=60;
 			//float rowTextHeight=Font.Height;
-			int linePadding=-6;
-			float heightRowTotal=Font.Height+(linePadding*2);
+			int linePadding=-LayoutManager.Scale(6);
+			float heightFont=LayoutManager.ScaleMS(Font.Height);
+			float heightRowTotal=heightFont+(linePadding*2);
 			for(int i=0;i<ListEscalationItems.Count;i++){
 				if(i>idxStartFade) { //Only start fading after the user defined fade index.
 					//Move toward transparency.
@@ -61,12 +64,12 @@ namespace OpenDental.InternalTools.Phones {
 				if(i<_indexItemStart) {
 					continue;//We have scrolled past the current item, do not draw.
 				}
-				float y=(countDrawn*Font.Height)+(countDrawn*(2*linePadding));
+				float y=(countDrawn*heightFont)+(countDrawn*(2*linePadding));
 				RectangleF rectangleF=new RectangleF(0,y,Width,heightRowTotal);
 				//Figure out the maximum size to allot for the item text (employee name or office down text).
 				float startExtensionX=Width-widthExtension;
-				float startProxImageX=startExtensionX-bitmapFigure.Width;
-				float startChatIconX=startProxImageX-widthChatIcon;
+				float startProxImageX=startExtensionX-LayoutManager.ScaleF(bitmapFigure.Width);
+				float startChatIconX=startProxImageX-LayoutManager.ScaleF(widthChatIcon);
 				using StringFormat stringFormat=new StringFormat(StringFormatFlags.NoWrap);
 				stringFormat.LineAlignment=StringAlignment.Center;//Vertically align the text in the center of the row.
 				using Brush brushText=new SolidBrush(Color.FromArgb(alpha,ForeColor));
@@ -92,32 +95,32 @@ namespace OpenDental.InternalTools.Phones {
 				if(ListEscalationItems[i].IsWebChat) {
 					g.DrawImage(bitmapWebChat,
 						x:startChatIconX,
-						y:y+(bitmapWebChat.Height/2),
-						width:bitmapWebChat.Width,
-						height:bitmapWebChat.Height);
+						y:y+(LayoutManager.ScaleF(bitmapWebChat.Height)/2),
+						width:LayoutManager.ScaleF(bitmapWebChat.Width),
+						height:LayoutManager.ScaleF(bitmapWebChat.Height));
 				}
 				else if(ListEscalationItems[i].IsGTAChat) {
 					//float ImgY = y+(gtaIcon.Height/2);
 					//RectangleF rectImage = new RectangleF(startChatIconX,ImgY,gtaIcon.Width,gtaIcon.Height);
 					g.DrawImage(bitmapGta,
-						startChatIconX,y+(bitmapGta.Height/2),
-						bitmapGta.Width,bitmapGta.Height);
+						startChatIconX,y+(LayoutManager.ScaleF(bitmapGta.Height)/2),
+						LayoutManager.ScaleF(bitmapGta.Width),LayoutManager.ScaleF(bitmapGta.Height));
 				}
 				else if(ListEscalationItems[i].IsRemoteSupport) {
-					float ImgY=(y + (bitmapRemoteSupport.Height/2));
-					RectangleF rectImage=new RectangleF(startChatIconX,ImgY,bitmapRemoteSupport.Width,bitmapRemoteSupport.Height);
+					float ImgY=(y + (LayoutManager.ScaleF(bitmapRemoteSupport.Height)/2));
+					RectangleF rectImage=new RectangleF(startChatIconX,ImgY,LayoutManager.ScaleF(bitmapRemoteSupport.Width),LayoutManager.ScaleF(bitmapRemoteSupport.Height));
 					g.DrawImage(bitmapRemoteSupport,
-						startChatIconX,y+(bitmapRemoteSupport.Height/2),
-						bitmapRemoteSupport.Width,bitmapRemoteSupport.Height);
+						startChatIconX,y+(LayoutManager.ScaleF(bitmapRemoteSupport.Height)/2),
+						LayoutManager.ScaleF(bitmapRemoteSupport.Width),LayoutManager.ScaleF(bitmapRemoteSupport.Height));
 				}
 				//The little proximity guy should only show for employees that are proximal AND at the same location that the currently selected room is at.
 				if(ListEscalationItems[i].IsProximity) {
 					//If we're not displaying the extension, we'll show the little proximity figure.
-					float proxImgY=y+(bitmapFigure.Height/2);
-					RectangleF rectImage=new RectangleF(startProxImageX,proxImgY,bitmapFigure.Width,bitmapFigure.Height);
+					float proxImgY=y+(LayoutManager.ScaleF(bitmapFigure.Height)/2);
+					RectangleF rectImage=new RectangleF(startProxImageX,proxImgY,LayoutManager.ScaleF(bitmapFigure.Width),LayoutManager.ScaleF(bitmapFigure.Height));
 					g.DrawImage(bitmapFigure,
-						startProxImageX,y+(bitmapFigure.Height/2),
-						bitmapFigure.Width,bitmapFigure.Height);
+						startProxImageX,y+(LayoutManager.ScaleF(bitmapFigure.Height)/2),
+						LayoutManager.ScaleF(bitmapFigure.Width),LayoutManager.ScaleF(bitmapFigure.Height));
 				}
 			}
 

@@ -281,6 +281,7 @@
 			// 
 			// MapPanel
 			// 
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.Name = "MapPanel";
 			this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.MapPanel_MouseDoubleClick);
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MapPanel_MouseDown);

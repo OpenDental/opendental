@@ -23,7 +23,7 @@ namespace UnitTests{
 			//CodeBase.OdThemeModernGrey.SetTheme(CodeBase.OdTheme.MonoFlatBlue);
 			Size sizeCanvas=new Size(1000,1000);
 			Size sizeImage=new Size(500,800);
-			zoomSlider1.SetValue(sizeCanvas,sizeImage,0);
+			zoomSlider1.SetValueInitialFit(sizeCanvas,sizeImage,0);
 		}
 
 		private void ButDeleteProc_Click(object sender, EventArgs e)

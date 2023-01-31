@@ -90,7 +90,8 @@ namespace OpenDental.UI {
 		}
 
 		///<summary></summary>
-		[Category("OD"),Description("Just like the MS version.")]
+		[Category("OD")]
+		[Description("Just like the MS version.")]
 		[DefaultValue(false)]
 		public bool Checked {
 			get {
@@ -114,7 +115,8 @@ namespace OpenDental.UI {
 		}
 
 		///<summary></summary>
-		[Category("OD"),Description("Just like the MS version. 3 states.")]
+		[Category("OD")]
+		[Description("Just like the MS version. 3 states.")]
 		[DefaultValue(CheckState.Unchecked)]
 		public CheckState CheckState {
 			get {
@@ -137,8 +139,23 @@ namespace OpenDental.UI {
 			}
 		}
 
+		//the attributes do not seem to be necessary.
+		//[Category("Appearance")]
+		//[Description("The text associated with the control.")]
+		//[DefaultValue("")]
+		public string Text{
+			get{
+				return base.Text;
+			}
+			set{
+				base.Text=value;
+				Invalidate();
+			}
+		}
+
 		///<summary></summary>
-		[Category("OD"),Description("Set true to allow 3 check states instead of two.")]
+		[Category("OD")]
+		[Description("Set true to allow 3 check states instead of two.")]
 		[DefaultValue(false)]
 		public bool ThreeState {
 			get {
@@ -168,7 +185,7 @@ namespace OpenDental.UI {
 		//public bool UseVisualStyleBackColor { get; set; } = false;
 		#endregion Properties
 
-		#region Event - Event Handlers - OnPaint
+		#region Methods - Event Handlers - OnPaint
 		protected override void OnPaint(PaintEventArgs e){
 			Graphics g=e.Graphics;
 			g.SmoothingMode=SmoothingMode.HighQuality;
@@ -252,29 +269,39 @@ namespace OpenDental.UI {
 			penBox?.Dispose();
 			solidBrushText?.Dispose();
 		}
-		#endregion Event - Event Handlers - OnPaint
+		#endregion Methods - Event Handlers - OnPaint
 
-		#region Events - Event Handlers - Mouse
+		#region Methods - Event Handlers - Mouse
+		protected override void OnClick(EventArgs e){
+			//base.OnClick(e);//no, we will fire the click from MouseDown so that we can control timing.
+		}
+
 		protected override void OnMouseDown(MouseEventArgs e){
 			base.OnMouseDown(e);
 			if(!AutoCheck){
 				return;
 			}
+			//Enabled is automatically handled by MS and mouse events don't even fire.
 			//order is off-on-indeterm
 			if(!Checked){
 				Checked=true;
+				base.OnClick(e);
 				return;
 			}
 			if(CheckState==CheckState.Indeterminate){
 				Checked=false;
+				base.OnClick(e);
+				return;
 			}
 			//Order is important here because Indeterminate is also checked
 			if(Checked){
 				if(ThreeState){
 					CheckState=CheckState.Indeterminate;
+					base.OnClick(e);
 					return;
 				}
 				Checked=false;
+				base.OnClick(e);
 				return;
 			}
 		}
@@ -296,9 +323,9 @@ namespace OpenDental.UI {
 		protected override void OnMouseUp(MouseEventArgs e) {
 			
 		}
-		#endregion Events - Event Handlers - Mouse
+		#endregion Methods - Event Handlers - Mouse
 
-		#region Events
+		#region Methods
 		/*This is how I think checkboxes should behave, but we will instead
 		//make our behave like MS checkBox, where the whole control is clickable.
 		///<summary>This is not a strict hit test. The active area is a bit bigger than the actual box.</summary>
@@ -315,7 +342,7 @@ namespace OpenDental.UI {
 			}
 			return false;
 		}*/
-		#endregion Events
+		#endregion Methods
 
 
 

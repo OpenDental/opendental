@@ -38,10 +38,8 @@ namespace OpenDental{
 			this.butAddSmall = new OpenDental.UI.Button();
 			this.butEdit = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
-			this.panelContainer = new OpenDental.UI.PanelOD();
 			this.mapPanel = new OpenDental.InternalTools.Phones.MapPanel();
 			this.butClose = new OpenDental.UI.Button();
-			this.panelContainer.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// label3
@@ -190,24 +188,14 @@ namespace OpenDental{
 			this.butDelete.Text = "Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
-			// panelContainer
-			// 
-			this.panelContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.panelContainer.AutoScroll = true;
-			this.panelContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.panelContainer.Controls.Add(this.mapPanel);
-			this.panelContainer.Location = new System.Drawing.Point(0, 0);
-			this.panelContainer.Name = "panelContainer";
-			this.panelContainer.Size = new System.Drawing.Size(993, 740);
-			this.panelContainer.TabIndex = 108;
-			// 
 			// mapPanel
 			// 
+			this.mapPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.mapPanel.Location = new System.Drawing.Point(0, 0);
 			this.mapPanel.Name = "mapPanel";
-			this.mapPanel.Size = new System.Drawing.Size(942, 532);
+			this.mapPanel.Size = new System.Drawing.Size(996, 744);
 			this.mapPanel.TabIndex = 106;
 			// 
 			// butClose
@@ -223,6 +211,7 @@ namespace OpenDental{
 			// FormMapAreaContainerEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(1109, 746);
+			this.Controls.Add(this.mapPanel);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.textSite);
 			this.Controls.Add(this.label2);
@@ -237,7 +226,6 @@ namespace OpenDental{
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.textDescription);
 			this.Controls.Add(this.butDelete);
-			this.Controls.Add(this.panelContainer);
 			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMapAreaContainerEdit";
@@ -245,7 +233,6 @@ namespace OpenDental{
 			this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMapAreaContainerEdit_FormClosing);
 			this.Load += new System.EventHandler(this.FormMapAreaContainerEdit_Load);
-			this.panelContainer.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -253,7 +240,6 @@ namespace OpenDental{
 
 		#endregion
 		private OpenDental.UI.Button butClose;
-		private UI.PanelOD panelContainer;
 		private OpenDental.InternalTools.Phones.MapPanel mapPanel;
 		private UI.Button butDelete;
 		private System.Windows.Forms.Label label4;

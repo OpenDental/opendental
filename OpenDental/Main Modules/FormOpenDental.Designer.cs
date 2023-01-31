@@ -47,7 +47,7 @@ namespace OpenDental{
 			this.labelMsg = new System.Windows.Forms.Label();
 			this.butMapPhones = new OpenDental.UI.Button();
 			this.butTriage = new OpenDental.UI.Button();
-			this.butBigPhones = new OpenDental.UI.Button();
+			this.butPhoneList = new OpenDental.UI.Button();
 			this.labelWaitTime = new System.Windows.Forms.Label();
 			this.labelTriage = new System.Windows.Forms.Label();
 			this.menuText = new System.Windows.Forms.ContextMenu();
@@ -153,7 +153,7 @@ namespace OpenDental{
 			this.panelPhoneSmall.Controls.Add(this.labelMsg);
 			this.panelPhoneSmall.Controls.Add(this.butMapPhones);
 			this.panelPhoneSmall.Controls.Add(this.butTriage);
-			this.panelPhoneSmall.Controls.Add(this.butBigPhones);
+			this.panelPhoneSmall.Controls.Add(this.butPhoneList);
 			this.panelPhoneSmall.Controls.Add(this.labelWaitTime);
 			this.panelPhoneSmall.Controls.Add(this.labelTriage);
 			this.panelPhoneSmall.Location = new System.Drawing.Point(71, 359);
@@ -257,14 +257,14 @@ namespace OpenDental{
 			this.butTriage.Text = "Triage";
 			this.butTriage.Click += new System.EventHandler(this.butTriage_Click);
 			// 
-			// butBigPhones
+			// butPhoneList
 			// 
-			this.butBigPhones.Location = new System.Drawing.Point(137, 1);
-			this.butBigPhones.Name = "butBigPhones";
-			this.butBigPhones.Size = new System.Drawing.Size(75, 24);
-			this.butBigPhones.TabIndex = 52;
-			this.butBigPhones.Text = "Big Phones";
-			this.butBigPhones.Click += new System.EventHandler(this.butBigPhones_Click);
+			this.butPhoneList.Location = new System.Drawing.Point(137, 1);
+			this.butPhoneList.Name = "butPhoneList";
+			this.butPhoneList.Size = new System.Drawing.Size(75, 24);
+			this.butPhoneList.TabIndex = 52;
+			this.butPhoneList.Text = "Phone List";
+			this.butPhoneList.Click += new System.EventHandler(this.butPhoneList_Click);
 			// 
 			// labelWaitTime
 			// 
@@ -434,7 +434,7 @@ namespace OpenDental{
 		private UserControlPhoneSmall phoneSmall;
 		private Panel panelPhoneSmall;
 		private UI.Button butTriage;
-		private UI.Button butBigPhones;
+		private UI.Button butPhoneList;
 		private Label labelWaitTime;
 		private Label labelTriage;
 		private Label labelMsg;

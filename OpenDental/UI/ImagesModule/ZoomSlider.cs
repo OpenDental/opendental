@@ -21,7 +21,7 @@ namespace OpenDental.UI{
 		private LinearGradientBrush _brushMainGradient;
 		///<summary></summary>
 		private LinearGradientBrush _brushPushedGradient;
-		///<summary>This is the zoom level that's calculated in SetValue and then constantly used to derive other values like _maximum.</summary>
+		///<summary>This is the zoom level that's calculated in SetValueInitialFit and then constantly used to derive other values like _maximum.</summary>
 		private int _fit;
 		private Font _font=new Font("Segoe UI",9f);
 		private bool _textHitEsc;
@@ -83,7 +83,7 @@ namespace OpenDental.UI{
 		#endregion Constructor
 
 		#region Properties
-		///<summary>The numeric zoom value, greater than zero.  To set, use SetValue or SetValueAndMax method.</summary>
+		///<summary>The numeric zoom value, greater than zero.  To set, use SetValueInitialFit or SetValueAndMax method.</summary>
 		[Browsable(false)]
 		public int Value {
 			get {
@@ -180,10 +180,11 @@ namespace OpenDental.UI{
 				return;
 			}
 			//Calculate a few rectangles
-			int widthOne=(int)g.MeasureString("1",_font).Width+2;//because "1" is the minimum value
+			using Font fontForMeasure=new Font(_font.FontFamily,LayoutManager.ScaleMS(_font.Size));
+			int widthOne=(int)g.MeasureString("1",fontForMeasure).Width+2;//because "1" is the minimum value
 			//_maximum won't change while mouse is down because drag can't take _value to larger than _maximum
-			int widthMax=(int)g.MeasureString(_maximum.ToString(),_font).Width+2;
-			int widthValue=(int)g.MeasureString(Round(_value).ToString(),_font).Width+2;
+			int widthMax=(int)g.MeasureString(_maximum.ToString(),fontForMeasure).Width+2;
+			int widthValue=(int)g.MeasureString(Round(_value).ToString(),fontForMeasure).Width+2;
 			int bufferLeft=widthOne/2;
 			int bufferRight=widthMax/2;
 			_rectangleTickLine=new Rectangle(_rectangleTickLineMargin.Left+bufferLeft,0,_rectangleTickLineMargin.Width-bufferLeft-bufferRight,Height);
@@ -412,7 +413,7 @@ namespace OpenDental.UI{
 			_brushMainGradient=new LinearGradientBrush(new Point(0,0),new Point(0,Height),Color.FromArgb(255,255,255),Color.FromArgb(171,181,209));
 			_brushPushedGradient=new LinearGradientBrush(new Point(0,0),new Point(0,Height),Color.FromArgb(225,225,225),Color.FromArgb(141,151,179));
 			_font?.Dispose();
-			_font=new Font("Segoe UI",LayoutManager.ScaleF(9f));
+			_font=new Font("Segoe UI",LayoutManager.ScaleFontODZoom(9f));
 			_penDivider?.Dispose();
 			_penSliderOutline?.Dispose();
 			_penTickLine?.Dispose();
@@ -440,7 +441,7 @@ namespace OpenDental.UI{
 		}
 
 		///<summary>These parameters are required because initial center zoom is always to "fit". This is also the only way to set Enabled to true.  If degreesRotated is is 90 or 270, it will swap width and height when doing the calc.</summary>
-		public void SetValue(Size sizeCanvas,Size sizeImage,float degreesRotated){
+		public void SetValueInitialFit(Size sizeCanvas,Size sizeImage,float degreesRotated){
 			_fit=(int)(ImageTools.CalcScaleFit(sizeCanvas,sizeImage,degreesRotated)*100);
 			_value=_fit;
 			_maximum=2*_fit;//starting point
@@ -457,7 +458,7 @@ namespace OpenDental.UI{
 			Invalidate();
 		}
 
-		///<summary>Max will grow if needed.</summary>
+		///<summary>Sets value.  If value is greater than Max, then Max will grow.</summary>
 		public void SetValueAndMax(float newval){
 			//Converting to a float causes the int.maxvalue to still wrap around to a negative value, removed 100 from the maximum to avoid this error.
 			if(newval>=int.MaxValue){

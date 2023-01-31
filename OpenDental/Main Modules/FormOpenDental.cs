@@ -105,7 +105,7 @@ namespace OpenDental{
 		///<summary>This list will only contain events for this computer where the users clicked to disable a popup for a specified period of time.  So it won't typically have many items in it.</summary>
 		private List<PopupEvent> _listPopupEvents;
 		private FormAlerts _formAlerts;
-		private FormPhoneTiles _formPhoneTiles;
+		private FormPhoneList _formPhoneList;
 		private FormTerminalManager _formTerminalManager;
 		private Form _formRecentlyOpenForLogoff;
 		///<summary>When auto log off is in use, we don't want to log off user if they are in the FormLogOn window.  Mostly a problem when using web service because CurUser is not null.</summary>
@@ -3137,7 +3137,7 @@ namespace OpenDental{
 			}
 			int maxButton=_arraySigButDefs.Select(x => x.ButtonIndex).DefaultIfEmpty(-1).Max()+1;
 			int lightGridHeightOld=lightSignalGrid1.Height;
-			int lightGridHeightNew=Math.Min(maxButton*25+1,this.ClientRectangle.Height-lightSignalGrid1.Location.Y);
+			int lightGridHeightNew=Math.Min(maxButton*LayoutManager.Scale(25)+1,PanelClient.Height-lightSignalGrid1.Location.Y);
 			if(lightGridHeightOld!=lightGridHeightNew) {
 				lightSignalGrid1.Visible=false;//"erases" light signal grid that has been drawn on FormOpenDental
 				LayoutManager.MoveHeight(lightSignalGrid1,lightGridHeightNew);
@@ -3521,10 +3521,6 @@ namespace OpenDental{
 			);
 			//Be careful about doing anything that takes a long amount of computation time after the SignalsTick.
 			//The UI will appear invalid for the time it takes any methods to process.
-			//Post Signal Processing
-			if(PrefC.IsODHQ) {//No actual signals are sent, so this must happen independantly from SignalsTick.
-				BeginPhoneConferenceThread();
-			}
 			//STOP! 
 			//If you are trying to do something in FormOpenDental that uses a signal, you should use FormOpenDental.OnProcessSignals() instead.
 			//This Function is only for processing things at regular intervals IF IT DOES NOT USE SIGNALS.
@@ -4415,21 +4411,21 @@ namespace OpenDental{
 			}
 		}
 
-		private void butBigPhones_Click(object sender,EventArgs e) {
-			if(_formPhoneTiles==null || _formPhoneTiles.IsDisposed) {
-				_formPhoneTiles=new FormPhoneTiles();
-				_formPhoneTiles.GoToPatient += new System.EventHandler(this.phonePanel_GoToChanged);
-				_formPhoneTiles.Show();
+		private void butPhoneList_Click(object sender,EventArgs e) {
+			if(_formPhoneList==null || _formPhoneList.IsDisposed) {
+				_formPhoneList=new FormPhoneList();
+				_formPhoneList.GoToPatient += new System.EventHandler(this.phonePanel_GoToChanged);
+				_formPhoneList.Show();
 				//Rectangle rectangle=System.Windows.Forms.Screen.FromControl(this).Bounds;
 				//_formPhoneTiles.Location=new Point((rectangle.Width-_formPhoneTiles.Width)/2+rectangle.X,0);
 				//_formPhoneTiles.BringToFront();
 			}
 			else {
-				if(_formPhoneTiles.WindowState==FormWindowState.Minimized) {
-					_formPhoneTiles.WindowState=FormWindowState.Normal;
+				if(_formPhoneList.WindowState==FormWindowState.Minimized) {
+					_formPhoneList.WindowState=FormWindowState.Normal;
 				}
-				_formPhoneTiles.Show();
-				_formPhoneTiles.BringToFront();
+				_formPhoneList.Show();
+				_formPhoneList.BringToFront();
 			}
 		}
 
@@ -4503,8 +4499,8 @@ namespace OpenDental{
 		}
 
 		private void phonePanel_GoToChanged(object sender,EventArgs e) {
-			if(_formPhoneTiles.PatNumGoTo!=0) {
-				PatNumCur=_formPhoneTiles.PatNumGoTo;
+			if(_formPhoneList.PatNumGoTo!=0) {
+				PatNumCur=_formPhoneList.PatNumGoTo;
 				Patient patient=Patients.GetPat(PatNumCur);
 				RefreshCurrentModule();
 				FillPatientButton(patient);
@@ -7048,8 +7044,8 @@ namespace OpenDental{
 				//Send the phoneList to the 2 places where it's needed.
 				//1) Send to the small display in the main OD form (quick-glance).
 				phoneSmall.SetPhoneList(phoneList);
-				if(_formPhoneTiles!=null && !_formPhoneTiles.IsDisposed) { //2) Send to the big phones panel if it is open.
-					_formPhoneTiles.SetPhoneList(phoneList,listChatUsers,listWebChatSessions,listPeerInfoRemoteSupportSessions);
+				if(_formPhoneList!=null && !_formPhoneList.IsDisposed) { //2) Send to the big phones panel if it is open.
+					_formPhoneList.SetPhoneList(phoneList,listChatUsers,listWebChatSessions,listPeerInfoRemoteSupportSessions);
 				}
 				for(int i=0;i<_listFormMapHQs.Count;i++) {
 					_listFormMapHQs[i].SetPhoneList(phoneList,listPhoneEmpSubGroups,listChatUsers,listWebChatSessions,listPeerInfoRemoteSupportSessions);

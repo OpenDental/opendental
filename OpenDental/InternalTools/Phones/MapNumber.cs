@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenDentBusiness;
+using CodeBase;
 
 namespace OpenDental.InternalTools.Phones {
 	public partial class MapNumber:Control {
@@ -78,15 +79,20 @@ namespace OpenDental.InternalTools.Phones {
 		}
 
 		///<summary>Replaces Graphics.DrawString. If the text is wider than will fit, then this reduces its size.  It does not consider height.</summary>
-		private static void FitText(string text,Font font,Brush brush,RectangleF rectangleF,StringFormat stringFormat,Graphics g) {
-			float emSize=font.Size;
-			Size size=TextRenderer.MeasureText(text,font);
-			if(size.Width>=rectangleF.Width) {
-				emSize=emSize*(rectangleF.Width/size.Width);//get the ratio of the room width to font width and multiply that by the font size
-				if(emSize<2) {//don't let the font be smaller than 2 point font
-					emSize=2F;
-				}
+		private void FitText(string text,Font font,Brush brush,RectangleF rectangleF,StringFormat stringFormat,Graphics g) {
+			if(text.IsNullOrEmpty()){
+				return;
 			}
+			//At this point, the font is already scaled for zoom by the layout manager
+			float emSize=font.Size;
+			SizeF sizef=g.MeasureString(text, font);
+				//TextRenderer.MeasureText(text,font);
+			float widthText=sizef.Width;
+			//widthText=LayoutManager.UnscaleMS(widthText);
+			if(sizef.Width>=rectangleF.Width) {
+				emSize=emSize*(rectangleF.Width/sizef.Width);//get the ratio of the room width to font width and multiply that by the font size
+			}
+			//emSize=emSize/LayoutManager.GetScaleMS();
 			using Font fontNew=new Font(font.FontFamily,emSize,font.Style);
 			g.DrawString(text,fontNew,brush,rectangleF,stringFormat);
 		}

@@ -89,6 +89,23 @@ namespace OpenDentBusiness{
 			return Crud.PaySplitCrud.SelectMany(command);
 		}
 
+		///<summary>Used by the ODApi, acquires a list of PaySplits from the DB based on a payNum and/or patNum.
+		///Returns null if nothing is found.</summary>
+		public static List<PaySplit> GetPaySplitsForApi(long payNum,long patNum,int limit,int offset) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<PaySplit>>(MethodBase.GetCurrentMethod(),payNum,patNum,limit,offset);
+			}
+			string command="SELECT * FROM paysplit WHERE SecDateTEdit>="+POut.DateT(DateTime.MinValue)+" ";
+			if(payNum!=0){
+				command+="AND PayNum="+POut.Long(payNum)+" ";
+			}
+			if(patNum!=0){
+				command+="AND PatNum="+POut.Long(patNum)+" ";
+			}
+			command+="LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.PaySplitCrud.SelectMany(command);
+		}
+
 		///<summary>Gets the splits for all the payments passed in.</summary>
 		public static List<PaySplit> GetForPayments(List<long> listPayNums) {
 			if(listPayNums.IsNullOrEmpty()) {

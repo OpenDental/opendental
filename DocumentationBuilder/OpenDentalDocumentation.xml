@@ -6611,7 +6611,7 @@
         <EnumValue name="EserviceLog">39 - eServices logging service.</EnumValue>
         <EnumValue name="LicenseAgreementSig">40 - Used for storing customers license agreement acceptance signature. </EnumValue>
         <EnumValue name="WebFormManager">41 - A Windows service running at HQ that is monitored by Headmaster.</EnumValue>
-        <EnumValue name="EClipboardClinical">42 - Eclipboard Clinical Mobile application.</EnumValue>
+        <EnumValue name="ODTouch">42 - Eclipboard Clinical Mobile application.</EnumValue>
       </Enumeration>
     </column>
     <column order="2" name="ShortGuid" type="varchar(255)">

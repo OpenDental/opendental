@@ -91,6 +91,23 @@ namespace OpenDentBusiness{
 			return Crud.TreatPlanCrud.SelectMany(command);
 		}
 
+		///<summary>Gets TreatPlans from database. Returns null if not found.</summary>
+		public static List<TreatPlan> GetTreatPlansForApi(int limit,int offset,long patNum,DateTime secDateTEdit,int tPStatus) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<TreatPlan>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,secDateTEdit,tPStatus);
+			}
+			string command="SELECT * FROM treatplan WHERE SecDateTEdit >= "+POut.DateT(secDateTEdit)+" ";
+			if(patNum>-1) {
+				command+="AND PatNum="+POut.Long(patNum)+" ";
+			}
+			if(tPStatus>-1) {
+				command+="AND TPStatus="+POut.Long(tPStatus)+" ";
+			}
+			command+="ORDER BY TreatPlanNum "//same fixed order each time
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.TreatPlanCrud.SelectMany(command);
+		}
+
 		///<summary></summary>
 		public static void Update(TreatPlan tp){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

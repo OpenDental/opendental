@@ -442,6 +442,45 @@ namespace OpenDentBusiness {
 			string command="DELETE FROM webschedrecall WHERE Source=2 AND SendStatus=2 AND CommLogNum=0";
 			Db.NonQ(command);
 		}
+
+		///<summary>Convert Script for B40820. This method is supposed to be passed in the email message nums of duplicate emails that were deleted.
+		///With that passed in list, this method will run a background thread to go through the emailattach table to find and delete all the attachments found by 
+		///the duplicate emails. This also includes going into the OpenDentImages folder where the attachments are stored and delete the files there as well.
+		///No exceptions should be shown during this process since this thread should just be a background thread.</summary>
+		private static void CleanupEmailAttachments() {
+			if(CloudStorage.IsCloudStorage || PrefC.AtoZfolderUsed!=DataStorageType.LocalAtoZ) {
+				return; //We will not effect cloud storage. Only if the files are on the computer.
+			}
+			ThreadStart threadStart=new ThreadStart(DeleteAttachments);
+			Thread thread=new Thread(threadStart);
+			thread.IsBackground=true;
+			thread.Start();
+		}
+
+		///<summary>Background thread method for deleting attachments from call in CleanupEmailAttachments.</summary>
+		private static void DeleteAttachments() {
+			string command="SELECT ActualFileName FROM emailattach WHERE EmailMessageNum NOT IN (SELECT EmailMessageNum FROM emailmessage)";
+			List<string> listAttachmentFilesToDelete=Db.GetListString(command);
+			if(listAttachmentFilesToDelete.Count==0) {
+				return;
+			}
+			//No need to check if using FileAtoZ since already checked before method call.
+			string attachPath=ODFileUtils.CombinePaths(ImageStore.GetPreferredAtoZpath(),"EmailAttachments");
+			//Delete all the attachment files within the images folder that aren't linked to a email message.
+			for(int i=0;i<listAttachmentFilesToDelete.Count;i++) {
+				try {
+					string attachFilePath=FileIO.FileAtoZ.CombinePaths(attachPath,listAttachmentFilesToDelete[i]);
+					if(FileIO.FileAtoZ.Exists(attachFilePath)) {
+						FileIO.FileAtoZ.Delete(attachFilePath);
+					}
+				}
+				catch {
+					continue; //Ignore message and continue
+				}
+			}
+			command="DELETE FROM emailattach WHERE EmailMessageNum NOT IN (SELECT EmailMessageNum FROM emailmessage)";
+			Db.NonQ(command);
+		}
 		#endregion
 
 		private static void To20_5_1() {
@@ -4340,6 +4379,79 @@ namespace OpenDentBusiness {
 			CleanupAutoWebSchedRecalls();
 		}
 
+		private static void To22_3_45() {
+			//Find and delete all duplicate MsgIds within emailmessageuid.
+			string command="SELECT MsgId FROM emailmessageuid GROUP BY BINARY MsgId HAVING COUNT(MsgId)>1";
+			List<string> listMsgIds=Db.GetListString(command);
+			if(listMsgIds.Count>0) {
+				for(int i=0;i<listMsgIds.Count;i++) {
+					command="SELECT EmailMessageUidNum FROM emailmessageuid WHERE BINARY MsgId='"+POut.String(listMsgIds[i])+"'";
+					List<long> listEmailMessageUidNums=Db.GetListLong(command,hasExceptions:false);
+					listEmailMessageUidNums.RemoveAt(0);//Keep one of the email message uids but remove the duplicates.
+					StringBuilder sbCommands=new StringBuilder();
+					sbCommands.Append("DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN (");
+					for(int j=0;j<listEmailMessageUidNums.Count;j++) {
+						if(j==0) {
+							sbCommands.Append(listEmailMessageUidNums[j].ToString());
+							continue;
+						}
+						if(sbCommands.Length+listEmailMessageUidNums[j].ToString().Length+1<TableBase.MaxAllowedPacketCount) {
+							sbCommands.Append(","+listEmailMessageUidNums[j].ToString());
+							continue;
+						}
+						else {
+							sbCommands.Append(")");
+							Db.NonQ(sbCommands.ToString());
+							sbCommands=new StringBuilder();
+							sbCommands.Append("DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN ("+listEmailMessageUidNums[j].ToString());
+						}
+					}
+					sbCommands.Append(")");
+					Db.NonQ(sbCommands.ToString());
+				}
+			}
+			//Find and remove all duplicate email messages.
+			command="SELECT Subject,RecipientAddress,ToAddress,FromAddress,CcAddress,BccAddress,BodyText,rawemailin,MsgDateTime "+
+				"FROM emailmessage "+
+				"GROUP BY BINARY Subject,RecipientAddress,ToAddress,FromAddress,CcAddress,BccAddress,BINARY BodyText,BINARY rawemailin,MsgDateTime "+
+				"HAVING COUNT(*)>1";
+			DataTable table=Db.GetTable(command);
+			if(table.Rows.Count>0) {
+				for(int i=0;i<table.Rows.Count;i++) {
+					DateTime dateMsgDateTime=PIn.DateT(table.Rows[i]["MsgDateTime"].ToString());
+					command="SELECT EmailMessageNum FROM emailmessage "+
+						"WHERE BINARY Subject='"+POut.String(table.Rows[i]["Subject"].ToString())+"' AND RecipientAddress='"+POut.String(table.Rows[i]["RecipientAddress"].ToString())+"' "+
+							"AND ToAddress='"+POut.String(table.Rows[i]["ToAddress"].ToString())+"' AND FromAddress='"+POut.String(table.Rows[i]["FromAddress"].ToString())+"' "+
+							"AND CcAddress='"+POut.String(table.Rows[i]["CcAddress"].ToString())+"' AND BccAddress='"+POut.String(table.Rows[i]["BccAddress"].ToString())+"' "+
+							"AND BINARY BodyText='"+POut.String(table.Rows[i]["BodyText"].ToString())+"' AND BINARY rawemailin='"+POut.String(table.Rows[i]["rawemailin"].ToString())+"' "+
+							"AND MsgDateTime="+POut.DateT(dateMsgDateTime)+"";
+					List<long> listEmailMessageNums=Db.GetListLong(command);
+					listEmailMessageNums.RemoveAt(0);//Keep the first email message of the duplicates.
+					StringBuilder sbCommands=new StringBuilder();
+					sbCommands.Append("DELETE FROM emailmessage WHERE EmailMessageNum IN (");
+					for(int j=0;j<listEmailMessageNums.Count;j++) {
+						if(j==0) {
+							sbCommands.Append(listEmailMessageNums[j].ToString());
+							continue;
+						}
+						if(sbCommands.Length+listEmailMessageNums[j].ToString().Length+1<TableBase.MaxAllowedPacketCount) {
+							sbCommands.Append(","+listEmailMessageNums[j].ToString());
+							continue;
+						}
+						else {
+							sbCommands.Append(")");
+							Db.NonQ(sbCommands.ToString());
+							sbCommands=new StringBuilder();
+							sbCommands.Append("DELETE FROM emailmessage WHERE EmailMessageNum IN ("+listEmailMessageNums[j].ToString());
+						}
+					}
+					sbCommands.Append(")");
+					Db.NonQ(sbCommands.ToString());
+				}
+				CleanupEmailAttachments();
+			}
+		}
+
 		private static void To22_4_1() {
 			string command;
 			DataTable table;
@@ -4555,6 +4667,79 @@ namespace OpenDentBusiness {
 			command = "INSERT INTO preference(PrefName,ValueString) VALUES('PatientFlowsUseHQDefaults','1')";//HQ and therefore the default value is set to true.
 			Db.NonQ(command);
 		}
+		private static void To22_4_16() {
+			//Find and delete all duplicate MsgIds within emailmessageuid.
+			string command="SELECT MsgId FROM emailmessageuid GROUP BY BINARY MsgId HAVING COUNT(MsgId)>1";
+			List<string> listMsgIds=Db.GetListString(command);
+			if(listMsgIds.Count>0) {
+				for(int i=0;i<listMsgIds.Count;i++) {
+					command="SELECT EmailMessageUidNum FROM emailmessageuid WHERE BINARY MsgId='"+POut.String(listMsgIds[i])+"'";
+					List<long> listEmailMessageUidNums=Db.GetListLong(command,hasExceptions:false);
+					listEmailMessageUidNums.RemoveAt(0);//Keep one of the email message uids but remove the duplicates.
+					StringBuilder sbCommands=new StringBuilder();
+					sbCommands.Append("DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN (");
+					for(int j=0;j<listEmailMessageUidNums.Count;j++) {
+						if(j==0) {
+							sbCommands.Append(listEmailMessageUidNums[j].ToString());
+							continue;
+						}
+						if(sbCommands.Length+listEmailMessageUidNums[j].ToString().Length+1<TableBase.MaxAllowedPacketCount) {
+							sbCommands.Append(","+listEmailMessageUidNums[j].ToString());
+							continue;
+						}
+						else {
+							sbCommands.Append(")");
+							Db.NonQ(sbCommands.ToString());
+							sbCommands=new StringBuilder();
+							sbCommands.Append("DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN ("+listEmailMessageUidNums[j].ToString());
+						}
+					}
+					sbCommands.Append(")");
+					Db.NonQ(sbCommands.ToString());
+				}
+			}
+			//Find and remove all duplicate email messages.
+			command="SELECT Subject,RecipientAddress,ToAddress,FromAddress,CcAddress,BccAddress,BodyText,rawemailin,MsgDateTime "+
+				"FROM emailmessage "+
+				"GROUP BY BINARY Subject,RecipientAddress,ToAddress,FromAddress,CcAddress,BccAddress,BINARY BodyText,BINARY rawemailin,MsgDateTime "+
+				"HAVING COUNT(*)>1";
+			DataTable table=Db.GetTable(command);
+			if(table.Rows.Count>0) {
+				for(int i=0;i<table.Rows.Count;i++) {
+					DateTime dateMsgDateTime=PIn.DateT(table.Rows[i]["MsgDateTime"].ToString());
+					command="SELECT EmailMessageNum FROM emailmessage "+
+						"WHERE BINARY Subject='"+POut.String(table.Rows[i]["Subject"].ToString())+"' AND RecipientAddress='"+POut.String(table.Rows[i]["RecipientAddress"].ToString())+"' "+
+							"AND ToAddress='"+POut.String(table.Rows[i]["ToAddress"].ToString())+"' AND FromAddress='"+POut.String(table.Rows[i]["FromAddress"].ToString())+"' "+
+							"AND CcAddress='"+POut.String(table.Rows[i]["CcAddress"].ToString())+"' AND BccAddress='"+POut.String(table.Rows[i]["BccAddress"].ToString())+"' "+
+							"AND BINARY BodyText='"+POut.String(table.Rows[i]["BodyText"].ToString())+"' AND BINARY rawemailin='"+POut.String(table.Rows[i]["rawemailin"].ToString())+"' "+
+							"AND MsgDateTime="+POut.DateT(dateMsgDateTime)+"";
+					List<long> listEmailMessageNums=Db.GetListLong(command);
+					listEmailMessageNums.RemoveAt(0);//Keep the first email message of the duplicates.
+					StringBuilder sbCommands=new StringBuilder();
+					sbCommands.Append("DELETE FROM emailmessage WHERE EmailMessageNum IN (");
+					for(int j=0;j<listEmailMessageNums.Count;j++) {
+						if(j==0) {
+							sbCommands.Append(listEmailMessageNums[j].ToString());
+							continue;
+						}
+						if(sbCommands.Length+listEmailMessageNums[j].ToString().Length+1<TableBase.MaxAllowedPacketCount) {
+							sbCommands.Append(","+listEmailMessageNums[j].ToString());
+							continue;
+						}
+						else {
+							sbCommands.Append(")");
+							Db.NonQ(sbCommands.ToString());
+							sbCommands=new StringBuilder();
+							sbCommands.Append("DELETE FROM emailmessage WHERE EmailMessageNum IN ("+listEmailMessageNums[j].ToString());
+						}
+					}
+					sbCommands.Append(")");
+					Db.NonQ(sbCommands.ToString());
+				}
+				CleanupEmailAttachments();
+			}
+		}
+
 	}
 }
 

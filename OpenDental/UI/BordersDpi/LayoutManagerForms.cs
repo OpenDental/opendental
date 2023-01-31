@@ -19,42 +19,65 @@ namespace OpenDental{
 	///<summary>This handles the bounds and fonts of all the controls on a form.  See notes below.  Gets passed to our custom controls on a form.</summary>
 	public class LayoutManagerForms{
 		/*
-There are just a few rules and restrictions to follow to make the entire system work.  These rules apply to forms derived from FormODBase, as well as some of our custom and user controls used on those forms.
+There are a number of rules and restrictions to follow to make the entire system work.  These rules apply to forms derived from FormODBase, as well as our custom and user controls used on those forms.
 
-InitializeLayoutManager() must go in the constructor of each form right after InitializeComponent(). There are comments in FormODBase.LayoutManager describing how some of this works, but you don't need to understand it.
+InitializeLayoutManager() must go in the constructor of each form right after InitializeComponent(). There are comments in FormODBase.LayoutManager describing how some of this works, but you don't need to understand it.  If you have a form that does not inherit from FormODBase, make sure it's set to AutoScale=none. In these cases, you typically pass in a LayoutManager so that this non FormODBase knows how to scale.  In the constructor of every UserControl and of every form that does not inherit from FormODBase, there should be this line: Font=LayoutManagerForms.FontInitial;  Form.MinimumSize and Form.MaximumSize should always be the default 0,0.
 
 Controls: Any programmatic resizing, moving, or adding of controls must be done using a LayoutManager.Move... or Add commands. These can be done at any time after InitializeLayoutManager. Be aware that PanelClient is present on all forms and acts as a container for the controls instead of the form itself.
 
-DPI: Your code must work even at different dpi.  For example, a control that was 75x25 in the designer might be 113x38 on a 150% monitor.  So programmatic moving and sizing must be built for that, and should also be tested at a different monitor scale.  Testing does not require a high dpi monitor -- just a different scale setting on the second monitor.  Also when adjusting the form size such as width or height or when adjusting a control's size to a set amount, you will need to scale this amount using the layoutManager.  
-Example: LayoutManager.MoveWidth(label2,LayoutManager.Scale(75));
+DPI: Your code must work even at different dpi.  For example, a control that was 75x25 in the designer might be 113x38 on a 150% monitor.  So programmatic moving and sizing must be built for that.  When adjusting a control's size to a set amount, you will need to scale this amount using the layoutManager.  Example: LayoutManager.MoveWidth(label2,LayoutManager.Scale(75));
+
+Fonts: Fonts are very tricky.  Our basic strategy is to manually scale all fonts by (most of) the zoom amount.  We use that size to actually draw the fonts because MS automatically scales the additional 50% in this example which is entirely out of our control.		When using LayoutManager.Add(), the font should already be scaled by the zoom amount, but not the MS amount.  Fonts are an ambient property, so they normally just use the parent control font.  But the LayoutManager stores the 96dpi version of each font and then explicitly sets each font to the zoom amount.
+
+Long example of font math:
+OD zoom=20.
+MS scale=150.
+Old math: scale=150+20=170
+New math might be: scale=120*1.5=180
+But I want to stick to the old math, which means I need to do this:
+scale=113*1.5=170
+113 is derived from 170/1.5
+So we set all fonts with just the zoom component using for example ScaleFontODZoom(8.25f).
+In this example the zoom amount works out to 1.13, so the font size is set to 9.32.
+Microsoft will then automatically scale by 150% to give us 170% total, and we have no control over that.
+MeasureString will also be already be scaled bigger by MS, just like DrawString.
+But Font.Height will be too small, and we will need to scale it by the MS amount.
+So when we are getting ready to draw, our font will usually be only scaled by the zoom amount.
+Remember that measuring things other than fonts is much easier. We always use the full scale for that, 170 in this example.
+
+Printing does not use scaled fonts of any kind.  There are different ways to handle this.  One way to reuse drawing code for printing is to set the scale numbers to default of 1,0, do the printing, and then set the scale numbers back for screen drawing.
+
+Testing: Manual layout must be tested at a different monitor scale.  To test, you need to use a 4k monitor so that you have room to crank up the scaling percentages.  You can ask IT for one or two 4k monitors for permanent use.  Set your resolution to 4k and your scaling to 150%.  In Visual Studio, do not edit any designer without restarting VS at 100% scaling. Because of this issue in VS and because older versions of OD do not support higher scaling, you will probably reset your main VS monitor to HD after this testing.  Once OD is started up, change the Zoom to 20%.  With MS=150% and zoom=20%, you will be able to easily see any scaling issues with either number.
 
 Form.Size: If you need to programmatically change a Form.Size, do not change it in the constructor (controls can still be changed in the constructor). Also do not change form size from outside when initializing the form.  Change it in the Load or after the load.  Unlike controls, changing form size does not require a call to LayoutManager.Move.  Just scale it.
 Example: this.Width=LayoutManager.Scale(240);
 
-Minimum/Maximum Size: Form.MinimumSize and Form.MaximumSize should always be the default 0,0.
+If you're running in Debug, then ProgramEntry line 94 will be skipped so your registry won't be changed.  If fonts are too big, look at that code and make the change in your Windows settings.
 
 Specific Controls=====================================================================================================================
 All controls had to be adapted and many unique situations arose. Here are some of the most common control issues to be aware of:
 
+Labels, radiobuttons, MS checkboxes, etc: There is a choice on these controls between FlatStyle.Standard and FlatStyle.System.  Always use Standard.  System was only added as an option for those who wished to support WinXP themes, but you lose a lot of other functionality and it can't scale at all.
+
 Menu: Main menus should be MenuOD, not Menu or MenuStrip.  Context menus don't matter.
 
-Splitter: Do not use System.Windows.Forms.Splitter.  Use SplitContainer, instead. SplitContainer can create annoying nesting, so another alternative is a manual narrow panel that behaves like a splitter based on MouseDown, MouseUp, MouseMove. 
+Splitter/SplitContainer: Do not use System.Windows.Forms.Splitter or System.Windows.Forms.SplitContainer.  Use OpenDental.UI.SplitContainer instead. You can grab a fresh copy from BasicTemplate.cs designer. 
 
-SplitContainer: Every SplitContainer should have an event handler for SplitterMoved if the user is allowed to move it. In that method, add LayoutManager.LayoutControlBoundsAndFonts(splitContainer);  If you hide one of the splitter panels, you will also need to call LayoutManager.LayoutControlBoundsAndFonts(splitContainer1); after that line.  If you set or change the Panel size or the bool of one of the Panels such as "Panel2Collapsed", you will also need to call LayoutManager.LayoutControlBoundsAndFonts(splitContainer1) so that the control will perform another layout. It is also recommended that you do not set either of the panels to PanelCollapsed=true within the design of the form.  This can cause issues if either of the splitter panels do not have an initial size.  Instead set your panels PanelCollapsed=true within the load method.  Then follow the steps above to re-layout the form.
+ListBoxes: Do not use System.Windows.Forms.ListBoxes. Instead use OpenDental.UI.ListBox (fka ListBoxOD).  In the extremely rare situation where you must use a MS listbox, be aware that Microsoft has a bug/annoyance where it resets the selected indices of a listbox when we change the font.  The layout manager must change the font in order to support different dpi, so it also fixes the selected indices.  For example, this could change the selected index from 0 to -1 and back to 0 again.  If you have an event for SelectedIndexChanged, that event might be fired twice during this process. One way to solve this is to add logic to test for SelectedIndex==-1 in your event handler.
 
-ListBoxes: Microsoft has a bug/annoyance where it resets the selected indices of a listbox when we change the font.  The layout manager must change the font in order to support different dpi, so it also fixes the selected indices.  For example, this could change the selected index from 0 to -1 and back to 0 again.  If you have an event for SelectedIndexChanged, that event might be fired twice during this process. This may also include situations when the grid is filled or refreshed.  For some previous cases, we added logic to test for SelectedIndex==-1.  More recently, we replaced all ListBoxes with ListBoxOD. AndrewJ is an expert on this.
-
-TabControl: Microsoft does not layout tabPages that are not visible/selected. So if a secondary tab page is not laying out, then forcefully lay it out when user clicks on it. Maybe use SelectedIndexChanged. Make sure nothing inside the tabPage is Dock Fill or anchored to anything except UL.  Then, resize things in code instead of depending on docking and anchoring. This is especially a problem with SplitContainers inside of tabPages.  When resizing everything, use tabPage.ClientRectangle and SplitterPanel.ClientRectangle to measure parent size for child control placement. As we switch over to OpenDental.UI.TabControl, some of these problems go away.
-
+TabControl: Do not use System.Windows.Forms.TabControl. Instead, use OpenDental.UI.TabControl. You can grab a fresh copy from BasicTemplate.cs designer.  The historical problem with MS tabControls is that they do not layout tabPages that are not visible/selected. So secondary tab pages won't lay out properly, which is especially noticeable with LL anchor or dock fill. This is not a problem with the UI.TabControl.
+		
 		*/
 
 		#region Fields
+		///<summary>"Microsoft Sans Serif",8.25f. Every single form and UserControl must have this set, or MS will use its own default font, which is different for each computer based on Windows version and dpi. This is already present in FormODBase so that inherited forms do not also need it, so UserControls is where you have to watch out for it.</summary>
+		public static Font FontInitial=new Font("Microsoft Sans Serif",8.25f);
 		///<summary>Height of title bar at 96 dpi. Includes any border lines, if we decide to draw them. Icon is usually 16.</summary>
 		private int _heightTitleBar96=26;
 		///<summary>See FormODBase.IsLayoutMS.  This is a copy.</summary>
 		public bool IsLayoutMS;
 		public bool Is96dpi=false;
-		///<summary>True if in the middle of laying out. Moving controls can sometimes trigger another layout event. Example, sizing a split container triggers its splitterMoved event.  This bool prevents another layout from starting in cases like that.</summary>
+		///<summary>True if in the middle of laying out. Moving controls can sometimes trigger another layout event. Example, sizing a split container triggers its splitterMoved event.  This bool prevents another layout from starting in cases like that.  2022-12-26- This may be deprecated since we no longer use MS SplitContainers.</summary>
 		public bool IsLayingOut;
 		///<summary>This is a list of the original 96dpi layout info, as it was in the designer.</summary>
 		private List<Control96Info> _listControl96Infos;
@@ -117,7 +140,7 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 		#endregion Events - Raise
 		
 		#region Methods - Add Move
-		///<summary>Adds any Control to any parent Control.  Prior to adding a control here, set its properties.  Location, Size, and Font must first be adjusted to current dpi scale.  For Location, it's usually simplest to use relative or measured numbers because they are already scaled. For Font, usually just set it to form.Font or to any other Font which is already scaled.  For absolute values that are at 96dpi, like maybe a specific Size for example, pass it through LayoutManager.Scale, .ScaleF, .ScaleSize, etc. prior to adding the Control.  Recursively adds info about the children to our internal tracking list.  Supports re-adding a control that was previously removed from the form programmatically as long as you didn't manually move or add any children.  When you are setting properties prior to using add, just do it like normal rather than using LayoutManager.Move.</summary>
+		///<summary>Adds any Control to any parent Control.  Prior to adding a control here, set its properties.  Location and Size must first be adjusted to full scale (MS plus zoom) for current dpi.  For Location, it's usually simplest to use relative or measured numbers because they are already scaled. For absolute values that are at 96dpi, like maybe a specific Size for example, pass it through LayoutManager.Scale, .ScaleF, .ScaleSize, etc. prior to adding the Control.  Fonts are really tricky and hard to explain.  See the discussion at the top of this file and the one in ScaleMyFont().  Usually just set it to form.Font or to any other Font which is already scaled by the zoom amount.  Do not pass in fonts that are already scaled with the MS scaling.  Recursively adds info about the children to our internal tracking list.  Supports re-adding a control that was previously removed from the form programmatically as long as you didn't manually move or add any children.  When you are setting properties prior to using add, just do it like normal rather than using LayoutManager.Move.</summary>
 		public void Add(Control control, Control parent,int tabIdx=-1){
 			//note: we could obviously auto-sense a new control and add it automatically.
 			//We don't do this because programmers will always forget to scale it first.
@@ -182,7 +205,7 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 			//Since it's the responsibility of whoever's doing the Add to scale everything to current dpi,
 			//then we must here unscale it to record the 96 dpi version.
 			control96Info.ClientSize96=new SizeF(UnscaleF(control.ClientSize.Width),UnscaleF(control.ClientSize.Height));
-			control96Info.FontSize96=UnscaleF(control.Font.Size);
+			control96Info.FontSize96=UnscaleFontODZoom(control.Font.Size);
 			control96Info.BoundsF96=CalculateBounds96(control.Bounds,parent,control.Anchor);
 			if(control.Bounds.Height<0 || control.Bounds.Width<0){
 				throw new Exception();
@@ -357,8 +380,11 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 		///<summary>Sets this control to have no anchor, docking, autosize, etc.  This prevents Windows from moving the controls and lets us take responsibility for that.</summary>
 		private void SetNoAnchorDock(Control control){
 			if(control is Splitter){
-				throw new Exception("Splitters are not allowed. Use a SplitContainer or a manual panel that behaves like a splitter.");
+				throw new Exception("Splitters are not allowed. Use a UI.SplitContainer instead.");
 			}
+			//if(control is System.Windows.Forms.SplitContainer){
+			//	throw new Exception("MS SplitContainers are not allowed. Use a UI.SplitContainer instead.");
+			//}
 			control.Anchor=AnchorStyles.Left | AnchorStyles.Top;
 			control.Dock=DockStyle.None;
 			if(control is ButtonBase buttonBase){
@@ -367,7 +393,7 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 			if(control is ContainerControl containerControl){
 				containerControl.AutoScaleMode=AutoScaleMode.None; 
 			}
-			if(control is ListBox listBox){
+			if(control is System.Windows.Forms.ListBox listBox){
 				listBox.IntegralHeight=false;
 			}
 		}
@@ -496,7 +522,7 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 			return Scale(_heightTitleBar96);
 		}
 
-		///<summary>Example 1.5. This is the scale of this form and all its controls, compared to 96dpi as 100%.  It's a combination of _scaleMS and ComputerPrefs.LocalComputer.Zoom.</summary>
+		///<summary>Example 1.7. This is the scale of this form and all its controls, compared to 96dpi as 100%.  It's a combination of _scaleMS and ComputerPrefs.LocalComputer.Zoom.</summary>
 		public float ScaleMy(){
 			if(Is96dpi){
 				return 1;
@@ -531,8 +557,49 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 			return retVal;
 		}
 
+		///<summary>Example 1.13. This is the scale for Fonts, which is only ComputerPrefs.LocalComputer.Zoom.  But a zoom of 20% will only be scaled to 1.13 here if the MS zoom is 150% because of the order of operations.</summary>
+		public float ScaleMyFont(){
+			if(Is96dpi){
+				return 1;
+			}
+			if(ZoomTest!=0){
+				return (ZoomTest+_scaleMS*100)/_scaleMS;//170/1.5
+			}
+			if(!Db.HasDatabaseConnection()){
+				//Cannot continue because ComputerPrefs.LocalComputer will be null and then it will get set to default instead of getting the computer prefs from the database.
+				//The symptom of this would be evident as the task dock y position would not be pulled from the database, so it would start in the wrong position.
+				return 1;
+			}
+			if(ComputerPrefs.IsLocalComputerNull()){
+				//This happens repeatedly during a conversion, as the progress bar redraws.
+				//If we were to continue, the computerpref table could have a different number of columns, so the query below would fail.
+				//This would drastically slow down the conversion.
+				//ComputerPrefs.LocalComputer will get set right after the conversion is done.
+				return 1;
+			}
+			int zoomLocal=_zoomLocal;
+			try{
+				zoomLocal=ComputerPrefs.LocalComputer.Zoom;
+			}
+			catch{
+				//this fails during version update, for example
+			}
+			if(zoomLocal!=_zoomLocal){
+				_zoomLocal=zoomLocal;
+				ZoomChanged?.Invoke(this,new EventArgs());
+			}
+			float retVal=(zoomLocal/100f+_scaleMS)/_scaleMS;//1.70/1.5
+			return retVal;
+		}
+
+		///<summary>Example 1.5</summary>
 		public float GetScaleMS(){
 			return _scaleMS;
+		}
+		
+		///<summary>Example 20</summary>
+		public float GetZoomLocal(){
+			return _zoomLocal;
 		}
 
 		///<summary>Example 1.5. Gets combined with zoom to create ScaleMy.</summary>
@@ -564,6 +631,25 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 			return retVal;
 		}
 
+		///<summary>Converts a float or int from 96dpi to current scale, but only (most of) the OD zoom, not the MS scale.</summary>
+		public float ScaleFontODZoom(float val96){
+			float scaleMyFont=ScaleMyFont();
+			float retVal=val96*scaleMyFont;
+			return retVal;
+		}
+
+		///<summary>Converts a font to current scale, but only (most of) the OD zoom, not the MS scale.</summary>
+		public Font ScaleFontODZoom(Font font){
+			Font fontRet=new Font(font.Name, font.Size*ScaleMyFont(),font.Style);
+			return fontRet;
+		}
+
+		///<summary>Scales a number only by the MS scale component.  This is used after we measure a font that was only scaled by the ODZoom component.</summary>
+		public float ScaleMS(float val96){
+			float retVal=val96*_scaleMS;
+			return retVal;
+		}
+
 		///<summary>Converts a point from 96dpi to current scale.</summary>
 		public Point ScalePoint(Point point96){
 			return new Point((int)Math.Round(point96.X*ScaleMy()),(int)Math.Round(point96.Y*ScaleMy()));
@@ -577,6 +663,16 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 		public float UnscaleF(float valScreen){
 			return valScreen/ScaleMy();
 		}		
+
+		///<summary>Converts a float or int from zoom dpi to 96dpi.</summary>
+		public float UnscaleFontODZoom(float valScreen){
+			return valScreen/ScaleMyFont();
+		}		
+
+		///<summary>Example 10/1.5=6.7, which is smaller</summary>
+		public float UnscaleMS(float valInput){
+			return valInput/GetScaleMS();
+		}
 		#endregion Methods - Public Scaling
 
 		#region Methods - Layout
@@ -610,7 +706,8 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 			}
 			IsLayingOut=true;
 			if(!IsLayoutMS){
-				formODBase.Font=new Font("Microsoft Sans Serif",ScaleF(8.25f));
+				formODBase.Font=ScaleFontODZoom(formODBase.Font);
+				//Font was set in constructor to 8.25
 			}
 			if(FormODBase.AreBordersMS){
 				formODBase.PanelClient.Bounds=formODBase.ClientRectangle;
@@ -697,55 +794,35 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 					//throw new ApplicationException("Controls cannot have their docking or anchor changed programmatically after creation: "+control.Controls[i].ToString());
 				//}
 				List<int> listBoxSelectedIndices=new List<int>();
-				if(control.Controls[i] is ListBox listbox){
+				if(control.Controls[i] is System.Windows.Forms.ListBox listbox){
 					//listboxes have a bug that resets their selected index each time you change the font. This bug happens for both One and MultiExtended
 					for(int s=0;s<listbox.SelectedIndices.Count;s++){
 						listBoxSelectedIndices.Add(listbox.SelectedIndices[s]);  
 					}
 				}
-				if(control.Controls[i] is RichTextBox){
-					//These are smart buggers.  They adapt their own internal scaling to the current dpi, so we need to leave font at equivalent 96dpi font.
+				//FONT===================================================================================================================================================================================
+				float scaledFont;
+				if(control.Controls[i] is TextBox
+					|| control.Controls[i] is System.Windows.Forms.ComboBox
+					|| control.Controls[i] is System.Windows.Forms.RichTextBox
+					|| control.Controls[i] is System.Windows.Forms.TreeView)
+				{
+					//Some MS controls need to have their font scaled completely, both MS and zoom.
+					scaledFont=ScaleF(control96Info.FontSize96);
 				}
 				else{
-					//Text was found to not fit when scaled exactly the same as the control.  Did testing.
-					//Main test was MS SS 8.25 label, check, and radio.  They all behaved very similarly in my test environment.
-					//I used FlatStyle=Standard for the testing.  If text on checkbox looks too small, change it to FlatStyle.Standard.
-					//UseCompatibleTextRendering=false. This is the default.  This means not compatible with .NET 1.0 GDI+. This is more compact.
-					//Width of each was about 400, adjusted so that even one reduction in pixel width would make the text wrap.
-					//I also tested at 3 pixels wider.  I tested in increments between -20% and 240%.
-					//There was huge variation.  I think the font size jumps in increments instead of smoothly scaling.
-					//Tried Segoe font, but it's bigger than MSSS, so it would require re-layout of all forms.  No.
-					//In the end, after hours of testing, it required a factor of 0.9 to avoid all artifacts.
-					//One quirk is that a 10% zoom doesn't increase font at all.
-					//But 90% was too small in practice, especially for FlatStyle.System.  0.92 looks better, and no obvious artifacts in FormModuleSetup.
-					float scaledFont=ScaleF(control96Info.FontSize96);
-					if(ScaleMy()!=1){
-						if(control.Controls[i] is UI.Button){
-							//no change
-						}
-						else if(control.Controls[i] is ListBox){
-							scaledFont*=0.95f;//prevents most of the issues with scrollbars being automatically added 
-							//the new UI.ListBox does not require this hack; it scales nicely.
-						}
-						else if(control.Controls[i] is Label
-							|| control.Controls[i] is System.Windows.Forms.CheckBox
-							|| control.Controls[i] is RadioButton)
-						{
-							scaledFont*=0.92f;
-						}
-						else{
-							//no change
-						}
-					}
-					if(control.Controls[i].Font.Bold){
-						control.Controls[i].Font=new Font(control.Controls[i].Font.FontFamily,scaledFont,FontStyle.Bold);
-					}
-					else{
-						control.Controls[i].Font=new Font(control.Controls[i].Font.FontFamily,scaledFont);
-					}
+					//But most controls only get zoomed by us, and then MS automatically does their own MS scaling.
+					scaledFont=ScaleFontODZoom(control96Info.FontSize96);
+					//Bad info: This group also includes RichTextBoxes, which adapt their own font to the current dpi, except OD zoom portion which we set.
 				}
-				if(control.Controls[i] is ListBox listbox2){
-					listbox2.ClearSelected();//jordan If it crashes on this line, then see Wiki: Programming Pattern - Layout Manager, ListBoxes.
+				if(control.Controls[i].Font.Bold){
+					control.Controls[i].Font=new Font(control.Controls[i].Font.FontFamily,scaledFont,FontStyle.Bold);
+				}
+				else{
+					control.Controls[i].Font=new Font(control.Controls[i].Font.FontFamily,scaledFont);
+				}
+				if(control.Controls[i] is System.Windows.Forms.ListBox listbox2){
+					listbox2.ClearSelected();//jordan If it crashes on this line, then the top of this file regarding ListBoxes.
 					for(int s=0;s<listBoxSelectedIndices.Count;s++){
 						//for selectionMode.One, this should only run once
 						listbox2.SetSelected(listBoxSelectedIndices[s],true);
@@ -775,7 +852,7 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 				else if((control96Info.Anchor & (AnchorStyles.Top | AnchorStyles.Bottom)) == AnchorStyles.Bottom){
 					y+=sizeParentClientNow96.Height-control96InfoParent.ClientSize96.Height;
 				}
-				if(control.Controls[i] is ListBox listBox3){
+				if(control.Controls[i] is System.Windows.Forms.ListBox listBox3){
 					if(ScaleMy()<1 && listBox3.Name=="listTextOk"){
 						//this fixes a specific bug in FormPatientEdit.ListTextOk, where we could not select any item when negative zoom was in place
 						//Add additional pixels based on the negative zoom amount unscaled. We need to add an additional amount of pixels as a percentage as the -zoom increases. Unscaled gives us a percentage that works well up to the maximum negative zoom setting.
@@ -1065,12 +1142,20 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 				dashFamilyInsurance.LayoutManager=this;
 				return;
 			}
+			if(control is DashIndividualDiscount dashIndividualDiscount){//only gets hit during non-dashboard, in controlTreat
+				dashIndividualDiscount.LayoutManager=this;
+				return;
+			}
 			if(control is DashIndividualInsurance dashIndividualInsurance){//only gets hit during non-dashboard, in controlTreat
 				dashIndividualInsurance.LayoutManager=this;
 				return;
 			}
 			if(control is EmailPreviewControl emailPreviewControl){
 				emailPreviewControl.LayoutManager=this;
+				return;
+			}
+			if(control is InternalTools.Phones.EscalationView escalationView){
+				escalationView.LayoutManager=this;
 				return;
 			}
 			if(control is GraphScheduleDay graphScheduleDay){
@@ -1106,6 +1191,14 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 			}
 			if(control is MapCubicle mapAreaRoomControl){
 				mapAreaRoomControl.LayoutManager=this;
+				return;
+			}
+			if(control is InternalTools.Phones.MapNumber mapNumber){
+				mapNumber.LayoutManager=this;
+				return;
+			}
+			if(control is InternalTools.Phones.MapPanel mapPanel){
+				mapPanel.LayoutManager=this;
 				return;
 			}
 			if(control is UI.MenuOD menuOD){
@@ -1146,6 +1239,10 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 			}
 			if(control is UI.TabControl tabControl){
 				tabControl.LayoutManager=this;
+				return;
+			}
+			if(control is UI.TabPage tabPage){
+				tabPage.LayoutManager=this;
 				return;
 			}
 			if(control is UI.ToggleDayWeek toggleDayWeek){
@@ -1251,16 +1348,35 @@ TabControl: Microsoft does not layout tabPages that are not visible/selected. So
 
 }
 
-//2021-01-03
-//There are still a few minor Font issues when primary monitor is not 100%, including:
-//Print progress notes, rows are slightly too tall.
-//Need to check sheet drawing, like with grids
+//2023-01-23-Unresolved high dpi issues:
+//HQ maps, etc
+//Text mount numbers
+//Print preview shows too big
 //Messaging buttons at lower left of main window are too short.
-//Thumbnail not avail text is either too big or too small
-//At 200%, a few crowded labels in Module Prefs
-//I hate the way the calendar scales.
-//Buttons generally look too big
-//Appt prov bar is too narrow.
-//At 200%, notice clicking area of +/- in Imaging is too small
+//Proc buttons might be too wide.
+//Need to check sheet drawing, like with grids
+
+//Bugs that I have not been able to fix, but might not be tolerable for a while:
+//When printing Chart Prog Notes, the rows on printout are too tall, and then the rows in UI get slightly too short.
+//FormMap, text in MapNumbers is slightly too small
+
+//Minor annoyances for later that I will not fix in the first pass:
+//Custom radiobutton
+//Custom textbox
+//Button corners are too sharp
+//Appt bubble thumbnail not avail
+//Listbox scrollbars get wider after hovering
+//Text in messageboxes is too small.
+//Numeric up/down controls don't scale well
+//Map right click menu font sizes are slightly wrong
+
+//Areas that still need to be tested. I put them off because they were too hard to set up:
+//SmsThreadView for chat
+
+//Areas that look good, but the math neeeds to be reviewed:
+//Pinboard, drag appts to this pinboard
+//MapPanel HitTest.
+//MapPanel.FitText. Why do I need to unscale it again. It was already unscaled earlier.
+
 
 

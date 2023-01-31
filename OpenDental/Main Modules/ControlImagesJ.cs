@@ -907,7 +907,7 @@ namespace OpenDental
 			imageSelector.SetSelected(imageNodeType,priKey);
 			ZoomSliderState zoomSliderState=formImageFloat.ZoomSliderStateInitial;
 			if(zoomSliderState!=null){
-				zoomSlider.SetValue(zoomSliderState.SizeCanvas,zoomSliderState.SizeImage,zoomSliderState.DegreesRotated);
+				zoomSlider.SetValueInitialFit(zoomSliderState.SizeCanvas,zoomSliderState.SizeImage,zoomSliderState.DegreesRotated);
 				zoomSlider.SetValueAndMax(formImageFloat.ZoomSliderValue);
 			}
 			formImageFloat.SetWindowingSlider();
@@ -950,7 +950,7 @@ namespace OpenDental
 		}
 
 		private void FormImageFloat_SetZoomSlider(object sender,ZoomSliderState zoomSliderState){
-			zoomSlider.SetValue(zoomSliderState.SizeCanvas,zoomSliderState.SizeImage,zoomSliderState.DegreesRotated);
+			zoomSlider.SetValueInitialFit(zoomSliderState.SizeCanvas,zoomSliderState.SizeImage,zoomSliderState.DegreesRotated);
 			((FormImageFloat)sender).ZoomSliderValue=zoomSlider.Value;
 		}
 
@@ -2006,7 +2006,11 @@ namespace OpenDental
 				panelSplitter.Right+1,
 				panelMainTop,//used to sit under panelAcquire, but now gets resized
 				Width-panelSplitter.Right-1,
-				unmountedBar.Top-panelMainTop-2));	
+				unmountedBar.Top-panelMainTop-2));
+			//FormOpenDental has minimized, in this case do not set the bounds for FormImageFloat so that it will restore from the taskbar
+			if(FindForm().WindowState==FormWindowState.Minimized) {
+				return;
+			}
 			FormImageFloat formImageFloat=GetFormImageFloatDocked();
 			if(formImageFloat!=null){
 				formImageFloat.Bounds=new Rectangle(PointToScreen(panelMain.Location),panelMain.Size);
@@ -2364,6 +2368,10 @@ namespace OpenDental
 			}
 			if(_deviceController.ImgDeviceControlType==EnumImgDeviceControlType.TwainMulti){
 				AcquireMulti();
+				if(GetMountShowing().AdjModeAfterSeries) {
+					SetCropPanAdj(EnumCropPanAdj.Adj);
+					LayoutControls();
+				}
 				return;
 			}
 			while(true){

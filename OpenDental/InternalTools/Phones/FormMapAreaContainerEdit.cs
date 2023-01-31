@@ -21,18 +21,45 @@ namespace OpenDental {
 
 		private void FormMapAreaContainerEdit_Load(object sender,EventArgs e) {
 			mapPanel.IsEditMode=true;
-			mapPanel.IsChanged+=MapPanel_IsChanged;
-			mapPanel.MapAreaContainerNum=MapAreaContainerCur.MapAreaContainerNum;
-			mapPanel.RefreshCubicles();
-			LayoutManager.MoveSize(mapPanel,new Size(MapAreaContainerCur.FloorWidthFeet*17,MapAreaContainerCur.FloorHeightFeet*17));
+			mapPanel.RefreshEditMode(MapAreaContainerCur);
+			VerifyNotTooSmall();
+			Size sizeRoom=new Size(MapAreaContainerCur.FloorWidthFeet,MapAreaContainerCur.FloorHeightFeet);
+			mapPanel.SetZoomInitialFit(mapPanel.Size,sizeRoom);
+			mapPanel.IsChanged+=(sender,e)=>_isChanged=true;
+			//LayoutManager.MoveSize(mapPanel,new Size(MapAreaContainerCur.FloorWidthFeet*17,MapAreaContainerCur.FloorHeightFeet*17));
 			textDescription.Text=MapAreaContainerCur.Description;
 			textWidth.Text=MapAreaContainerCur.FloorWidthFeet.ToString();
 			textHeight.Text=MapAreaContainerCur.FloorHeightFeet.ToString();
 			textSite.Text=Sites.GetDescription(MapAreaContainerCur.SiteNum);
+			mapPanel.Invalidate();
 		}
 
-		private void MapPanel_IsChanged(object sender,EventArgs e) {
-			_isChanged=true;
+		private void VerifyNotTooSmall(){
+			//This doesn't solve the problem of negatives, but we don't allow those.
+			Size sizeRoom=new Size(MapAreaContainerCur.FloorWidthFeet,MapAreaContainerCur.FloorHeightFeet);
+			Size sizeRoomNew=sizeRoom;
+			for(int i=0;i<mapPanel.ListMapAreas.Count;i++){
+				Rectangle rectangleRoom=new Rectangle(0,0,sizeRoomNew.Width,sizeRoomNew.Height);//this can change with each loop
+				RectangleF rectangleFIntersect=RectangleF.Intersect(rectangleRoom,mapPanel.ListMapAreaMores[i].RectangleFBounds);
+				if(!rectangleFIntersect.IsEmpty){//we can see the cubicle
+					continue;
+				}
+				int widthMin=(int)Math.Ceiling(mapPanel.ListMapAreas[i].XPos+mapPanel.ListMapAreas[i].Width);
+				if(widthMin>sizeRoomNew.Width){
+					sizeRoomNew=new Size(widthMin,sizeRoomNew.Height);
+				}
+				int heightMin=(int)Math.Ceiling(mapPanel.ListMapAreas[i].YPos+mapPanel.ListMapAreas[i].Height);
+				if(heightMin>sizeRoomNew.Height){
+					sizeRoomNew=new Size(sizeRoomNew.Width,heightMin);
+				}
+			}
+			if(sizeRoom==sizeRoomNew){
+				return;
+			}
+			MapAreaContainerCur.FloorWidthFeet=sizeRoomNew.Width;
+			MapAreaContainerCur.FloorHeightFeet=sizeRoomNew.Height;
+			MapAreaContainers.Update(MapAreaContainerCur);
+			MsgBox.Show("At least one MapArea was outside the bounds of the Container(room), so the Container was enlarged.");
 		}
 
 		private void butEdit_Click(object sender,EventArgs e) {
@@ -42,8 +69,11 @@ namespace OpenDental {
 			if(formMapAreaContainerDetail.DialogResult==DialogResult.OK){
 				_isChanged=true;
 			}
-			mapPanel.RefreshCubicles();
-			LayoutManager.MoveSize(mapPanel,new Size(MapAreaContainerCur.FloorWidthFeet*17,MapAreaContainerCur.FloorHeightFeet*17));
+			VerifyNotTooSmall();
+			Size sizeRoom=new Size(MapAreaContainerCur.FloorWidthFeet,MapAreaContainerCur.FloorHeightFeet);
+			mapPanel.SetZoomInitialFit(mapPanel.Size,sizeRoom);
+			mapPanel.RefreshEditMode(MapAreaContainerCur);
+			//LayoutManager.MoveSize(mapPanel,new Size(MapAreaContainerCur.FloorWidthFeet*17,MapAreaContainerCur.FloorHeightFeet*17));
 			textDescription.Text=MapAreaContainerCur.Description;
 			textWidth.Text=MapAreaContainerCur.FloorWidthFeet.ToString();
 			textHeight.Text=MapAreaContainerCur.FloorHeightFeet.ToString();
@@ -68,7 +98,7 @@ namespace OpenDental {
 				return;
 			}
 			_isChanged=true;
-			mapPanel.RefreshCubicles();
+			mapPanel.RefreshEditMode(MapAreaContainerCur);
 		}
 
 		private void butAddBig_Click(object sender,EventArgs e){
@@ -85,7 +115,7 @@ namespace OpenDental {
 				return;
 			}
 			_isChanged=true;
-			mapPanel.RefreshCubicles();
+			mapPanel.RefreshEditMode(MapAreaContainerCur);
 		}
 
 		private void butAddLabel_Click(object sender,EventArgs e){
@@ -102,7 +132,7 @@ namespace OpenDental {
 				return;
 			}
 			_isChanged=true;
-			mapPanel.RefreshCubicles();
+			mapPanel.RefreshEditMode(MapAreaContainerCur);
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
