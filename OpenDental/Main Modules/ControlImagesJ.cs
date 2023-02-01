@@ -2003,7 +2003,11 @@ namespace OpenDental
 				panelSplitter.Right+1,
 				panelMainTop,//used to sit under panelAcquire, but now gets resized
 				Width-panelSplitter.Right-1,
-				unmountedBar.Top-panelMainTop-2));	
+				unmountedBar.Top-panelMainTop-2));
+			//FormOpenDental has minimized, in this case do not set the bounds for FormImageFloat so that it will restore from the taskbar
+			if(FindForm().WindowState==FormWindowState.Minimized) {
+				return;
+			}
 			FormImageFloat formImageFloat=GetFormImageFloatDocked();
 			if(formImageFloat!=null){
 				formImageFloat.Bounds=new Rectangle(PointToScreen(panelMain.Location),panelMain.Size);
@@ -2361,6 +2365,10 @@ namespace OpenDental
 			}
 			if(_deviceController.ImgDeviceControlType==EnumImgDeviceControlType.TwainMulti){
 				AcquireMulti();
+				if(GetMountShowing().AdjModeAfterSeries) {
+					SetCropPanAdj(EnumCropPanAdj.Adj);
+					LayoutControls();
+				}
 				return;
 			}
 			while(true){
@@ -3080,7 +3088,7 @@ namespace OpenDental
 
 		#endregion Methods - Native
 	}
-
+	
 	#region External
 	public class ToolBarButtonState{
 		public bool Print;

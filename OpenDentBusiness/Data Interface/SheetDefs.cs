@@ -244,6 +244,10 @@ namespace OpenDentBusiness{
 				}
 				
 			}
+			command="DELETE FROM grouppermission" 
+				+" WHERE FKey="+POut.Long(sheetDefNum)
+				+" AND PermType="+POut.Enum<Permissions>(Permissions.DashboardWidget);
+			Db.NonQ(command);
 			command="DELETE FROM sheetfielddef WHERE SheetDefNum="+POut.Long(sheetDefNum);
 			Db.NonQ(command);
 			Crud.SheetDefCrud.Delete(sheetDefNum);

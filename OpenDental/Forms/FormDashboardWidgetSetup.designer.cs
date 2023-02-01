@@ -24,8 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDashboardWidgetSetup));
-			this.butOK = new OpenDental.UI.Button();
-			this.butCancel = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.gridCustom = new OpenDental.UI.GridOD();
 			this.comboUserGroup = new OpenDental.UI.ComboBoxOD();
 			this.labelUserGroup = new System.Windows.Forms.Label();
@@ -37,25 +36,15 @@ namespace OpenDental{
 			this.butAdd = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
-			// butOK
+			// butClose
 			// 
-			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(701, 626);
-			this.butOK.Name = "butOK";
-			this.butOK.Size = new System.Drawing.Size(75, 24);
-			this.butOK.TabIndex = 3;
-			this.butOK.Text = "&OK";
-			this.butOK.Click += new System.EventHandler(this.butOK_Click);
-			// 
-			// butCancel
-			// 
-			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(782, 626);
-			this.butCancel.Name = "butCancel";
-			this.butCancel.Size = new System.Drawing.Size(75, 24);
-			this.butCancel.TabIndex = 2;
-			this.butCancel.Text = "&Cancel";
-			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(782, 626);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridCustom
 			// 
@@ -127,7 +116,7 @@ namespace OpenDental{
 			this.butDuplicate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butDuplicate.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butDuplicate.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDuplicate.Location = new System.Drawing.Point(606, 626);
+			this.butDuplicate.Location = new System.Drawing.Point(687, 626);
 			this.butDuplicate.Name = "butDuplicate";
 			this.butDuplicate.Size = new System.Drawing.Size(89, 24);
 			this.butDuplicate.TabIndex = 236;
@@ -158,8 +147,7 @@ namespace OpenDental{
 			// FormDashboardWidgetSetup
 			// 
 			this.ClientSize = new System.Drawing.Size(869, 658);
-			this.Controls.Add(this.butOK);
-			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.butTools);
 			this.Controls.Add(this.butDuplicate);
@@ -172,15 +160,14 @@ namespace OpenDental{
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormDashboardWidgetSetup";
 			this.Text = "Dashboard Setup";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormDashboardWidgetSetup_FormClosing);
 			this.Load += new System.EventHandler(this.FormDashboardSetup_Load);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
-
-		private OpenDental.UI.Button butOK;
-		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridCustom;
 		private UI.ComboBoxOD comboUserGroup;
 		private System.Windows.Forms.Label labelUserGroup;

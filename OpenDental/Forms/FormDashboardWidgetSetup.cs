@@ -17,6 +17,8 @@ namespace OpenDental {
 		private List<GroupPermission> _listGroupPermissionsOld;
 		///<summary>The index of the Allowed column in gridCustom.</summary>
 		private int _colAllowed;
+		///<summary>Set to true when a change is made to a sheetDef.</summary>
+		private bool _hasChanged;
 
 		public FormDashboardWidgetSetup() {
 			InitializeComponent();
@@ -147,15 +149,12 @@ namespace OpenDental {
 		private bool ToggleDashboardPermission(UserGroup userGroup,SheetDef sheetDef) {
 			GroupPermission groupPermission;
 			List<SheetDef> listSheetDefsWidgets=gridCustom.GetTags<SheetDef>();
-			//User had all permissions before, add all permissions and remove the passed in sheetDef.
-			if(HasDashboardWidgetPermissionAll()) {
-				//Get rid of the 'all' permission.
+			//If user has 'all' permission remove it and create explicit list of all permissions.
+			bool hasAll=_listGroupPermissions.Any(x => x.UserGroupNum==userGroup.UserGroupNum && x.FKey==0);
+			if(hasAll) {
 				_listGroupPermissions.RemoveAll(x => x.UserGroupNum==userGroup.UserGroupNum);
-				//Add specific permission to all avaliable widgets except the one that is being toggled.
+				//Add specific permission to all avaliable widgets.
 				for(int i=0;i < listSheetDefsWidgets.Count;i++) {
-					if(listSheetDefsWidgets[i].SheetDefNum==sheetDef.SheetDefNum) {
-						continue;
-					}
 					groupPermission=new GroupPermission();
 					groupPermission.NewerDate=DateTime.MinValue;
 					groupPermission.NewerDays=0;
@@ -164,7 +163,6 @@ namespace OpenDental {
 					groupPermission.FKey=listSheetDefsWidgets[i].SheetDefNum;
 					_listGroupPermissions.Add(groupPermission);
 				}
-				return false;
 			}
 			groupPermission=_listGroupPermissions.FirstOrDefault(x => x.UserGroupNum==userGroup.UserGroupNum && x.FKey==sheetDef.SheetDefNum);
 			if(groupPermission!=null) {
@@ -241,6 +239,7 @@ namespace OpenDental {
 				//The sheetDef was deleted. Remove the permission to the sheetdef if one exists.
 				_listGroupPermissions.RemoveAll(x => x.FKey == sheetDefSelected.SheetDefNum);
 			}
+			_hasChanged=true;
 			FillGridCustom();
 		}
 
@@ -268,6 +267,7 @@ namespace OpenDental {
 				return;
 			}
 			SheetDef sheetDef=SheetDefs.GetWhere(x => x.SheetDefNum==sheetDefWidgetNum).FirstOrDefault();
+			_hasChanged=true;
 			if(sheetDef!=null) {
 				ToggleDashboardPermission(comboUserGroup.GetSelected<UserGroup>(),sheetDef);
 			}
@@ -292,6 +292,8 @@ namespace OpenDental {
 			SheetDef sheetDef=gridInternal.SelectedTag<SheetDef>().Copy(); 
 			sheetDef.IsNew=true;
 			SheetDefs.InsertOrUpdate(sheetDef);
+			SheetDefs.RefreshCache();
+			_hasChanged=true;
 			ToggleDashboardPermission(comboUserGroup.GetSelected<UserGroup>(),sheetDef);
 			FillGridCustom(false);
 			gridInternal.SetAll(false);//Clear selection.
@@ -308,6 +310,8 @@ namespace OpenDental {
 			SheetDefs.GetFieldsAndParameters(sheetDef);
 			sheetDef.IsNew=true;
 			SheetDefs.InsertOrUpdate(sheetDef);
+			SheetDefs.RefreshCache();
+			_hasChanged=true;
 			ToggleDashboardPermission(comboUserGroup.GetSelected<UserGroup>(),sheetDef);
 			FillGridCustom(false);
 			SelectDashboardDef(sheetDef);
@@ -336,15 +340,17 @@ namespace OpenDental {
 			SelectDashboardDef(sheetDefImported);
 		}
 
-		private void butOK_Click(object sender,EventArgs e) {
-			if(GroupPermissions.Sync(_listGroupPermissions,_listGroupPermissionsOld)) {
-				DataValid.SetInvalid(InvalidType.Security);
-			}
+		private void butClose_Click(object sender,EventArgs e) {
 			DialogResult=DialogResult.OK;
 		}
 
-    private void butCancel_Click(object sender,EventArgs e) {
-			DialogResult=DialogResult.Cancel;
+		private void FormDashboardWidgetSetup_FormClosing(object sender,FormClosingEventArgs e) {
+			if(GroupPermissions.Sync(_listGroupPermissions,_listGroupPermissionsOld)) {
+				DataValid.SetInvalid(InvalidType.Security);
+			}
+			if(_hasChanged) {
+				DataValid.SetInvalid(InvalidType.Sheets);
+			}
 		}
 	}
 }

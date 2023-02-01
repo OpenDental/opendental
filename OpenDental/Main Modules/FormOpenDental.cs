@@ -5134,13 +5134,9 @@ namespace OpenDental{
 		}
 
 		private void menuItemProblems_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(Permissions.Setup)) {
-				return;
-			}
 			using FormDiseaseDefs formDiseaseDefs=new FormDiseaseDefs();
 			formDiseaseDefs.ShowDialog();
 			//RefreshCurrentModule();
-			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Disease Defs");
 		}
 
 		private void menuItemProcedureButtons_Click(object sender, System.EventArgs e) {
