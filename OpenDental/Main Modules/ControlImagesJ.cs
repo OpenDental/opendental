@@ -2004,9 +2004,11 @@ namespace OpenDental
 				panelMainTop,//used to sit under panelAcquire, but now gets resized
 				Width-panelSplitter.Right-1,
 				unmountedBar.Top-panelMainTop-2));
-			//FormOpenDental has minimized, in this case do not set the bounds for FormImageFloat so that it will restore from the taskbar
-			if(FindForm().WindowState==FormWindowState.Minimized) {
-				return;
+			//FormOpenDental has minimized, in this case do not set the bounds for FormImageFloat so that it will restore from the taskbar. However, when there is a zoom scale setting in place, we adjust ControlImageJ's font but the parent is not set yet, so this will be null and cause OD to crash.  A null check prevents this.
+			if(FindForm()!=null) {
+				if(FindForm().WindowState==FormWindowState.Minimized) {
+					return;
+				}
 			}
 			FormImageFloat formImageFloat=GetFormImageFloatDocked();
 			if(formImageFloat!=null){
@@ -3088,7 +3090,7 @@ namespace OpenDental
 
 		#endregion Methods - Native
 	}
-	
+
 	#region External
 	public class ToolBarButtonState{
 		public bool Print;
