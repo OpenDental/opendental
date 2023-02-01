@@ -248,7 +248,7 @@ namespace OpenDental{
 			// 
 			this.label19.Location = new System.Drawing.Point(324, 226);
 			this.label19.Name = "label19";
-			this.label19.Size = new System.Drawing.Size(276, 32);
+			this.label19.Size = new System.Drawing.Size(185, 32);
 			this.label19.TabIndex = 12;
 			this.label19.Text = "Maximum size of window that our engineers will design";
 			this.label19.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;

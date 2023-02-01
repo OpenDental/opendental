@@ -378,6 +378,12 @@ namespace OpenDental {
 				DataValid.SetInvalid(InvalidType.Prefs);
 				Cursor=Cursors.Default;
 			}
+			PatientChangedEvent.Fired+=PatientChangedEvent_Fired;
+		}
+
+		/// <summary> Refreshes patient task list when we switch patients</summary>
+		private void PatientChangedEvent_Fired(ODEventArgs e) {
+			RefreshPatTicketsIfNeeded();
 		}
 
 		///<summary></summary>
