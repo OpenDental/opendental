@@ -1723,7 +1723,11 @@ namespace OpenDentBusiness {
 		RecallPostcardMessage2,
 		RecallPostcardMessage3,
 		RecallPostcardsPerSheet,
+		///<summary>Integer, 15 by default - Days since the first reminder was sent out before we try to send another one out. A value of -1 means disabled and a value
+		///of 0 is show all for the recall list. WebSchedRecalls will be prevented from sending if the value is not set to an integer greater than 0.</summary>
 		RecallShowIfDaysFirstReminder,
+		///<summary>Integer, 30 by default - Days since the second reminder (or more) was sent out before we try to send another one out. A value of -1 means disabled
+		///and a value of 0 is show all for the recall list. WebSchedRecalls will be prevented from sending if the value is not set to an integer greater than 0.</summary>
 		RecallShowIfDaysSecondReminder,
 		RecallStatusEmailed,
 		RecallStatusEmailedTexted,

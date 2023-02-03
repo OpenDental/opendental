@@ -4019,8 +4019,11 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}
 			Misc.SecurityHash.UpdateHashing();
-			command="UPDATE preference SET ValueString=-1 WHERE PrefName IN ('RecallShowIfDaysFirstReminder','RecallShowIfDaysSecondReminder') and ValueString=0";
-			Db.NonQ(command);
+			//This convert script has been commented out in JobNum:41876 because we erroneously thought that these needed to disallow 0. The reasoning behind this change
+			//originally, JobNum:B39748 was that having a value of 0 would cause WebSchedRecalls to send nonstop. However, this caused FormRecallList to stop showing all
+			//recalls in the grid. The following query was only available between versions 22.2.51 to version 22.2.66.
+			//command="UPDATE preference SET ValueString=-1 WHERE PrefName IN ('RecallShowIfDaysFirstReminder','RecallShowIfDaysSecondReminder') and ValueString=0";
+			//Db.NonQ(command);
 		}
 
 		private static void To22_2_56() {

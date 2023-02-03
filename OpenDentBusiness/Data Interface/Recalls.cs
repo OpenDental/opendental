@@ -282,7 +282,7 @@ namespace OpenDentBusiness {
 		public static DataTable GetRecallList(
 			DateTime fromDate,DateTime toDate,bool groupByFamilies,long provNum,long clinicNum,long siteNum,
 			RecallListSort sortBy,RecallListShowNumberReminders showReminders,long maxReminders,bool isAsap=false,string codeRangeStart="",string codeRangeEnd="",
-			bool doShowReminded=false,List<RecallType> listRecallTypes=null) 
+			bool doShowReminded=false,List<RecallType> listRecallTypes=null,bool isForWebSched=false) 
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetTable(MethodBase.GetCurrentMethod(),fromDate,toDate,groupByFamilies,provNum,clinicNum,siteNum,
@@ -527,7 +527,7 @@ namespace OpenDentBusiness {
 					numberOfReminders=listDTReminders.Distinct().Count();//number of recall reminders that happened after datePrevious
 					dateRemind=listDTReminders.DefaultIfEmpty(DateTime.MinValue).Max();
 					if(!DoIncludeRecall(numberOfReminders,dateRemind,showReminders,PIn.Double(rowCur["DisableUntilBalance"].ToString()),
-						PIn.Date(rowCur["DisableUntilDate"].ToString()),familyBalance,isAsap,doShowReminded,maxReminders))
+						PIn.Date(rowCur["DisableUntilDate"].ToString()),familyBalance,isAsap,doShowReminded,maxReminders,isForWebSched))
 					{
 						continue;
 					}
@@ -680,7 +680,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns true if a recall reminder should be sent for this patient based on the passed in arguments.</summary>
 		private static bool DoIncludeRecall(int numberOfReminders,DateTime dateRemind,RecallListShowNumberReminders showReminders
-			,double disableUntilBalance,DateTime disableUntilDate,double familyBalance,bool isAsap,bool doShowReminded,long maxReminders)
+			,double disableUntilBalance,DateTime disableUntilDate,double familyBalance,bool isAsap,bool doShowReminded,long maxReminders,bool isForWebSched=false)
 		{
 			//filter by disable until date and balance
 			if(disableUntilDate>DateTime.Today) {
@@ -707,13 +707,17 @@ namespace OpenDentBusiness {
 				return true;
 			}
 			//filter by number of reminders, if numberOfReminders==0, always show
-			return !HasTooManyReminders(numberOfReminders,dateRemind,maxReminders);
+			return !HasTooManyReminders(numberOfReminders,dateRemind,maxReminders,isForWebSched);
 		}
 
 		///<summary>Determines if the given numberOfReminders would exceed the allowed amount of Recall reminders, either by recall interval preference
 		///or by PrefName.RecallMaxNumberReminders.</summary>
-		public static bool HasTooManyReminders(int numberOfReminders,DateTime dateRemind,long maxReminders) {
+		public static bool HasTooManyReminders(int numberOfReminders,DateTime dateRemind,long maxReminders,bool isForWebSched=false) {
 			if(numberOfReminders==1) {
+				//For WebSchedRecalls, treat value of 0 as -1. Essentially don't send.
+				if(isForWebSched && PrefC.GetInt(PrefName.RecallShowIfDaysFirstReminder)==0) {
+					return true;
+				}
 				if(PrefC.GetInt(PrefName.RecallShowIfDaysFirstReminder)==-1) {
 					return true;
 				}
@@ -722,6 +726,10 @@ namespace OpenDentBusiness {
 				}
 			}
 			else if(numberOfReminders>1) {
+				//For WebSchedRecalls, treat value of 0 as -1. Essentially don't send.
+				if(isForWebSched && PrefC.GetInt(PrefName.RecallShowIfDaysSecondReminder)==0) {
+					return true;
+				}
 				if(PrefC.GetInt(PrefName.RecallShowIfDaysSecondReminder)==-1) {
 					return true;
 				}

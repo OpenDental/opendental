@@ -60,6 +60,11 @@ namespace OpenDentBusiness {
 		///<summary>ST02 Transaction Set Control Number (page 68)</summary>
 		private string _controlId;
 
+		///<summary>Hide this property so that we can empty the list to save memory. The structured data can be found in 835 objects instead.</summary>
+		public sealed override List<X12Segment> Segments { get { return base.Segments; } set { base.Segments=value;	}	}
+		///<summary>Hide this property so that we can empty the list to save memory. The structured data can be found in 835 objects instead.</summary>
+		public sealed override List<X12FunctionalGroup> FunctGroups { get { return base.FunctGroups; } set { base.FunctGroups=value; } }
+
 		///<summary>The list of all provider level adjustments (one level above the claim level) within this 835.</summary>
 		public List<Hx835_ProvAdj> ListProvAdjustments { get { return _listProvAdjustments; }  set { _listProvAdjustments=value; } }
 		///<summary>The list of all claim EOBs within this 835.</summary>
@@ -162,18 +167,14 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>See guide page 62 for format outline.  Specify a specific Transaction Set Identifier (ST02) for a particular EOB within the 835.
-		///Or set tranSetId to empty string to load the first EOB in the 835.  This class is only capable of loading a single transaction (EOB).
-		///If isSimple is true, then will skip pseudo attaching claims by claimnum and setting the Hx835_Claim.IsSupplemental flag (saves queries).</summary>
-		public X835(Etrans etransSource,string messageText,string tranSetId,List<Etrans835Attach> listAttached=null,bool isSimple=false):base(messageText) {//Parsing happens in the base class.
+		///Or set tranSetId to empty string to load the first EOB in the 835.  This class is only capable of loading a single transaction (EOB).</summary>
+		public X835(Etrans etransSource,string messageText,string tranSetId,List<Etrans835Attach> listAttached=null):base(messageText) {//Parsing happens in the base class.
 			EtransSource=etransSource;
 			_tranSetId=tranSetId;
 			ProcessMessage();
 			DiscoverSplitClaims();
 			SetAttached(listAttached);
-			if(isSimple) {
-				ClearSegments();
-				return;
-			}
+			ClearSegments();
 			SetClaimNumsForUnattached();
 		}
 		
