@@ -46,8 +46,8 @@ namespace OpenDental{
 			}
 			pictureBox.Image=PIn.Bitmap(_procButton.ButtonImage);
 			checkMultiVisit.Checked=_procButton.IsMultiVisit;
-			long[] longArrayCodeNum=ProcButtonItems.GetCodeNumListForButton(_procButton.ProcButtonNum);
-			long[] longArrayAuto=ProcButtonItems.GetAutoListForButton(_procButton.ProcButtonNum);
+			long[] longArrayCodeNum=ProcButtonItems.GetCodeNumListForButton(_procButton.ProcButtonNum).ToArray();
+			long[] longArrayAuto=ProcButtonItems.GetAutoListForButton(_procButton.ProcButtonNum).ToArray();
 			listADA.Items.Clear();
 			for(int i=0;i<longArrayCodeNum.Length;i++) {
 				listADA.Items.Add(ProcedureCodes.GetStringProcCode(longArrayCodeNum[i]));

@@ -50,7 +50,10 @@ namespace OpenDentBusiness {
 		///This method should only be used for SELECT, with the exception DashboardAR. Using this for create/update/delete may cause duplicates.
 		///The return type of this function is whatever the return type of the method you passed in is.
 		///Throws an exception if anything went wrong executing func within the thread.</summary>
-		public static T RunFuncOnReadOnlyServer<T>(Func<T> func) {
+		public static T RunFuncOnReadOnlyServer<T>(Func<T> func,bool doRunOnReadOnlyServer=true) {
+			if(!doRunOnReadOnlyServer) {
+				return func();
+			}
 			Exception ex=null;
 			ODThread threadGetTable = new ODThread(new ODThread.WorkerDelegate((ODThread o) => {
 				DataAction.Run(() => { o.Tag=func(); } //set the tag to the func's output.

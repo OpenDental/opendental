@@ -50,10 +50,10 @@ namespace OpenDental {
 			checkIncludeInMobile.Visible=SheetDefs.IsMobileAllowed(SheetDefCur.SheetType);
 			//Show/hide in mobile editor depending on if TabOrderMobile has been previously set. This is how we will selectively include only desireable StaticText fields.
 			checkIncludeInMobile.Checked=SheetFieldDefCur.TabOrderMobile>=1;
-			if (checkIsLocked.Checked==SheetFieldDefCur.IsNew){
+			if(SheetFieldDefCur.IsNew){
 				checkIsLocked.Checked=true;
 			}
-			else {
+			else{
 				checkIsLocked.Checked=SheetFieldDefCur.IsLocked;
 			}
 			textFieldValue.Text=SheetFieldDefCur.FieldValue;

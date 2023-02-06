@@ -91,20 +91,21 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Sorted by Item Order.</summary>
-		public static long[] GetCodeNumListForButton(long procButtonNum) {
+		public static List<long> GetCodeNumListForButton(long procButtonNum) {
 			//No need to check MiddleTierRole; no call to db.
 			return GetWhere(x => x.ProcButtonNum==procButtonNum && x.CodeNum > 0)
 				.OrderBy(x => x.ItemOrder)
 				.Select(x => x.CodeNum)
-				.ToArray();
+				.ToList();
 		}
 
 		///<summary>Sorted by Item Order.</summary>
-		public static long[] GetAutoListForButton(long procButtonNum) {
+		public static List<long> GetAutoListForButton(long procButtonNum) {
 			//No need to check MiddleTierRole; no call to db.
 			return GetWhere(x => x.ProcButtonNum==procButtonNum && x.AutoCodeNum > 0)
 				.OrderBy(x => x.ItemOrder)
-				.Select(x => x.AutoCodeNum).ToArray();
+				.Select(x => x.AutoCodeNum)
+				.ToList();
 		}
 
 		///<summary></summary>

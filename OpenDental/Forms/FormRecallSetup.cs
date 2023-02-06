@@ -470,13 +470,13 @@ namespace OpenDental{
 			Prefs.UpdateLong(PrefName.RecallStatusEmailedTexted,comboStatusEmailTextRecall.GetSelected<Def>().DefNum);
 			string recalltypes = string.Join(",",listTypes.SelectedIndices.OfType<int>().Select(x => listRecallTypesCache[x].RecallTypeNum));
 			Prefs.UpdateString(PrefName.RecallTypesShowingInList,recalltypes);
-			if(string.IsNullOrEmpty(textDaysFirstReminder.Text) || textDaysFirstReminder.Value==0) {
+			if(string.IsNullOrEmpty(textDaysFirstReminder.Text)) {
 				Prefs.UpdateLong(PrefName.RecallShowIfDaysFirstReminder,-1);
 			}
 			else {
 				Prefs.UpdateLong(PrefName.RecallShowIfDaysFirstReminder,textDaysFirstReminder.Value);
 			}
-			if(string.IsNullOrEmpty(textDaysSecondReminder.Text) || textDaysSecondReminder.Value==0) {
+			if(string.IsNullOrEmpty(textDaysSecondReminder.Text)) {
 				Prefs.UpdateLong(PrefName.RecallShowIfDaysSecondReminder,-1);
 			}
 			else {

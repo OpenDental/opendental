@@ -710,7 +710,7 @@ namespace OpenDentBusiness {
 			}
 			if(componentsToLoad.ShowRX) {
 				#region Rx
- 				command="SELECT RxNum,RxDate,Drug,Disp,ProvNum,Notes,PharmacyNum,UserNum,RxType,DateTStamp FROM rxpat WHERE PatNum="+POut.Long(patNum)
+				command="SELECT RxNum,RxDate,Drug,Disp,ProvNum,Notes,PharmacyNum,UserNum,RxType,DateTStamp FROM rxpat WHERE PatNum="+POut.Long(patNum)
 				+" ORDER BY RxDate";
 				DataTable rawRx=dcon.GetTable(command);
 				for(int i=0;i<rawRx.Rows.Count;i++) {
@@ -2121,40 +2121,40 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		public static bool AddProcHelper(Procedure procedure,List<Fee> listFees,PatientData pd,ProcStat procStatusNew,List<Procedure> listChartedProcs,
+		public static bool AddProcHelper(Procedure procedure,List<Fee> listFees,PatientData patientData,ProcStat procStatNew,List<Procedure> listProceduresCharted,
 			List<TreatPlan> listTreatPlans,List<SubstitutionLink> listSubstitutionLinks,long priorityNum,List<long> listTpNums,
-			ref List<ClaimProc> listClaimProcs,ref List<ClaimProcHist> listClaimProcHistsLoop,long diagnosisNum,long prognosisNum) 
+			ref List<ClaimProc> listClaimProcs,ref List<ClaimProcHist> listClaimProcHists,long diagnosisNum,long prognosisNum) 
 		{
-			procedure.PatNum=pd.PatNum;
-			if(procStatusNew!=ProcStat.EO) {
+			procedure.PatNum=patientData.PatNum;
+			if(procStatNew!=ProcStat.EO) {
 				procedure.ProcDate=procedure.DateTP;
 			}
 			procedure.Priority=priorityNum;
 			procedure.Dx=diagnosisNum;
 			procedure.Prognosis=prognosisNum;
-			ProcedureCode procCodeCur=ProcedureCodes.GetProcCode(procedure.CodeNum);
+			ProcedureCode procedureCode=ProcedureCodes.GetProcCode(procedure.CodeNum);
 			#region ProvNum
 			//This strategy for assigning procnum is consistent here, in the Chart Module, but it doesn't seem to be used anywhere else.
 			//For example, in the Appt Module, for recall, etc, the proc is simply whatever appointment we are in.
-			procedure.ProvNum=procCodeCur.ProvNumDefault;//use proc default prov if set
+			procedure.ProvNum=procedureCode.ProvNumDefault;//use proc default prov if set
 			if(procedure.ProvNum==0) {//no proc default prov set, check for appt prov, then use pri prov
-				long provPri=pd.Patient.PriProv;
-				long provSec=pd.Patient.SecProv;
-				List<Appointment> listAppointmentsToday=pd.ListAppointments.FindAll(x => x.AptDateTime.Date==DateTime.Today && x.AptStatus!=ApptStatus.Planned);
-				if(listAppointmentsToday.Count>0) {
-					provPri=listAppointmentsToday[0].ProvNum;
-					provSec=listAppointmentsToday[0].ProvHyg;
+				long provPri=patientData.Patient.PriProv;
+				long provSec=patientData.Patient.SecProv;
+				List<Appointment> listAppointments=patientData.ListAppointments.FindAll(x => x.AptDateTime.Date==DateTime.Today && x.AptStatus!=ApptStatus.Planned);
+				if(listAppointments.Count>0) {
+					provPri=listAppointments[0].ProvNum;
+					provSec=listAppointments[0].ProvHyg;
 				}
 				if(Providers.GetProv(provPri).IsHidden) {
 					//If the Patient's Primary Provider is hidden, use the patient's clinic's default provider, or practice default provider
 					if(PrefC.HasClinicsEnabled){
-						provPri=Providers.GetDefaultProvider(pd.Patient.ClinicNum).ProvNum;
+						provPri=Providers.GetDefaultProvider(patientData.Patient.ClinicNum).ProvNum;
 					}
 					else {
 						provPri=Providers.GetDefaultProvider().ProvNum;
 					}
 				}
-				if(procCodeCur.IsHygiene && provSec!=0 && !Providers.GetProv(provSec).IsHidden) {//Do not assign Sec. Provider's to Procedures when hidden
+				if(procedureCode.IsHygiene && provSec!=0 && !Providers.GetProv(provSec).IsHidden) {//Do not assign Sec. Provider's to Procedures when hidden
 					procedure.ProvNum=provSec;
 				}
 				else {
@@ -2163,8 +2163,8 @@ namespace OpenDentBusiness {
 			}
 			#endregion ProvNum
 			#region Note
-			if(procStatusNew==ProcStat.C || procStatusNew==ProcStat.TP) {
-				string procNoteDefault=ProcCodeNotes.GetNote(procedure.ProvNum,procedure.CodeNum,procStatusNew);
+			if(procStatNew==ProcStat.C || procStatNew==ProcStat.TP) {
+				string procNoteDefault=ProcCodeNotes.GetNote(procedure.ProvNum,procedure.CodeNum,procStatNew);
 				if(procedure.Note!="" && procNoteDefault!="") {
 					procedure.Note+="\r\n"; //add a new line if there was already a ProcNote on the procedure.
 				}
@@ -2178,26 +2178,26 @@ namespace OpenDentBusiness {
 				procedure.Note="";
 			}
 			#endregion
-			procedure.ClinicNum=pd.Patient.ClinicNum;
-			if(procStatusNew==ProcStat.R || procStatusNew==ProcStat.EO || procStatusNew==ProcStat.EC) {
+			procedure.ClinicNum=patientData.Patient.ClinicNum;
+			if(procStatNew==ProcStat.R || procStatNew==ProcStat.EO || procStatNew==ProcStat.EC) {
 				procedure.ProcFee=0;
 			}
 			else {
-				procedure.MedicalCode=procCodeCur.MedicalCode;
-				procedure.ProcFee=Procedures.GetProcFee(pd.Patient,pd.ListPatPlans,pd.ListInsSubs,pd.ListInsPlans,procedure.CodeNum,procedure.ProvNum,procedure.ClinicNum,
+				procedure.MedicalCode=procedureCode.MedicalCode;
+				procedure.ProcFee=Procedures.GetProcFee(patientData.Patient,patientData.ListPatPlans,patientData.ListInsSubs,patientData.ListInsPlans,procedure.CodeNum,procedure.ProvNum,procedure.ClinicNum,
 					procedure.MedicalCode,listFees:listFees);
 			}
-			if(procStatusNew==ProcStat.C 
+			if(procStatNew==ProcStat.C 
 				&& !Security.IsAuthorized(Permissions.ProcComplCreate,procedure.ProcDate,procedure.CodeNum,procedure.ProcFee)) 
 			{			
 				return false;
 			}
 			//surf
 			//toothnum
-			procedure.ProcStatus=procStatusNew;
-			procedure.BaseUnits=procCodeCur.BaseUnits;
-			procedure.SiteNum=pd.Patient.SiteNum;
-			procedure.RevCode=procCodeCur.RevenueCodeDefault;
+			procedure.ProcStatus=procStatNew;
+			procedure.BaseUnits=procedureCode.BaseUnits;
+			procedure.SiteNum=patientData.Patient.SiteNum;
+			procedure.RevCode=procedureCode.RevenueCodeDefault;
 			procedure.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
 			procedure.PlaceService=Clinics.GetPlaceService(procedure.ClinicNum);
 			if(Userods.IsUserCpoe(Security.CurUser)) {
@@ -2206,35 +2206,48 @@ namespace OpenDentBusiness {
 			}
 			//Find out if we are going to link the procedure to an ortho case.
 			OrthoCaseProcLinkingData orthoCaseProcLinkingData=new OrthoCaseProcLinkingData(procedure.PatNum);
-			procedure.ProcNum=Procedures.Insert(procedure,skipDiscountPlanAdjustment:orthoCaseProcLinkingData.CanProcLinkToOrthoCase(procedure));
-			//we already did Pd.FillIfNeeded(EnumPdTable.Procedure); in both of the places where this method is called.
-			pd.ListProcedures.Add(procedure);//Just in case a data refresh won't been executed
-			OrthoProcLink orthoProcLink=OrthoProcLinks.TryLinkProcForActiveOrthoCaseAndUpdate(orthoCaseProcLinkingData,procedure);
-			if(listChartedProcs!=null) {
-				listChartedProcs.Add(procedure);
+			// Save toothNum to reinsert after the insert.
+			string toothNumTemp=procedure.ToothNum;
+			TreatmentArea treatmentArea=ProcedureCodes.GetProcCode(procedure.CodeNum).TreatArea;
+			if (treatmentArea==TreatmentArea.None
+				|| treatmentArea==TreatmentArea.Mouth
+				|| treatmentArea==TreatmentArea.Quad
+				|| treatmentArea==TreatmentArea.Sextant
+				|| treatmentArea==TreatmentArea.Arch
+				|| treatmentArea==TreatmentArea.ToothRange)
+			{
+				procedure.ToothNum=""; // removing toothnum for procs that shouldn't display it.
 			}
-			if(procStatusNew==ProcStat.TP) {
-				AttachProcToTPs(procedure,listTreatPlans,listTpNums,pd,priorityNum);
+			procedure.ProcNum=Procedures.Insert(procedure,skipDiscountPlanAdjustment:orthoCaseProcLinkingData.CanProcLinkToOrthoCase(procedure));
+			procedure.ToothNum=toothNumTemp;
+			//we already did Pd.FillIfNeeded(EnumPdTable.Procedure); in both of the places where this method is called.
+			patientData.ListProcedures.Add(procedure);//Just in case a data refresh won't been executed
+			OrthoProcLink orthoProcLink=OrthoProcLinks.TryLinkProcForActiveOrthoCaseAndUpdate(orthoCaseProcLinkingData,procedure);
+			if(listProceduresCharted!=null) {
+				listProceduresCharted.Add(procedure);
+			}
+			if(procStatNew==ProcStat.TP) {
+				AttachProcToTPs(procedure,listTreatPlans,listTpNums,patientData,priorityNum);
 			}
 			if((procedure.ProcStatus==ProcStat.C || procedure.ProcStatus==ProcStat.EC || procedure.ProcStatus==ProcStat.EO)
-				&& procCodeCur.PaintType==ToothPaintingType.Extraction) {
+				&& procedureCode.PaintType==ToothPaintingType.Extraction) {
 				//if an extraction, then mark previous procs hidden
 				//Procedures.SetHideGraphical(ProcCur);//might not matter anymore
-				ToothInitials.SetValue(pd.PatNum,procedure.ToothNum,ToothInitialType.Missing);
+				ToothInitials.SetValue(patientData.PatNum,procedure.ToothNum,ToothInitialType.Missing);
 			}
-			List<ClaimProc> listClaimProc=ClaimProcs.RefreshForTP(pd.PatNum);
-			List<Procedure> listProcedures=pd.ListProcedures.FindAll(x=>x.ProcStatus==ProcStat.TP);
+			List<ClaimProc> listClaimProc=ClaimProcs.RefreshForTP(patientData.PatNum);
+			List<Procedure> listProcedures=patientData.ListProcedures.FindAll(x=>x.ProcStatus==ProcStat.TP);
 			for(int i=0;i<listProcedures.Count;i++) {
-				if(listProcedures[i].ProcNum==procedure.ProcNum) {								
+				if(listProcedures[i].ProcNum==procedure.ProcNum) {
 					break;
 				}
-				listClaimProcHistsLoop.AddRange(ClaimProcs.GetHistForProc(listClaimProc,listProcedures[i],listProcedures[i].CodeNum));
+				listClaimProcHists.AddRange(ClaimProcs.GetHistForProc(listClaimProc,listProcedures[i],listProcedures[i].CodeNum));
 			}
-			Procedures.ComputeEstimates(procedure,pd.PatNum,ref listClaimProcs,true,pd.ListInsPlans,pd.ListPatPlans,pd.ListBenefits,
-				pd.ListClaimProcHists,listClaimProcHistsLoop,true,pd.Patient.Age,pd.ListInsSubs,null,false,false,listSubstitutionLinks,false,
+			Procedures.ComputeEstimates(procedure,patientData.PatNum,ref listClaimProcs,true,patientData.ListInsPlans,patientData.ListPatPlans,patientData.ListBenefits,
+				patientData.ListClaimProcHists,listClaimProcHists,true,patientData.Patient.Age,patientData.ListInsSubs,null,false,false,listSubstitutionLinks,false,
 				listFees,orthoProcLink:orthoProcLink,orthoCase:orthoCaseProcLinkingData.ActiveOrthoCase,orthoSchedule:orthoCaseProcLinkingData.OrthoSchedule
 				,listOrthoProcLinksForOrthoCase:orthoCaseProcLinkingData.ListProcLinksForCase);
-			listClaimProcs=ClaimProcs.GetForProc(ClaimProcs.Refresh(pd.PatNum),procedure.ProcNum);
+			listClaimProcs=ClaimProcs.GetForProc(ClaimProcs.Refresh(patientData.PatNum),procedure.ProcNum);
 			return true;
 		}
 	}

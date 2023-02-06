@@ -78,6 +78,103 @@ namespace OpenDental {
 			Plugins.HookAddCode(this,"FormModuleSetup.FormModuleSetup_Load_end");
 		}
 
+		private void textSearch_TextChanged(object sender,EventArgs e) {
+			//loop through the different categories
+			List<TreeNode> listTreeNodes=GetListNodesFlat();
+			for(int i=0;i<listTreeNodes.Count;i++) {
+				bool isCategoryYellow=false;
+				if(textSearch.Text!="" && listTreeNodes[i].Text.ToLower().Contains(textSearch.Text.ToLower())){
+					isCategoryYellow=true;
+				}
+				UserControl userControl=(UserControl)listTreeNodes[i].Tag;
+				List<Control> listControls=GetListControlsFlat(userControl);
+				//labels
+				for(int c=0;c<listControls.Count;c++){
+					if(listControls[c] is Label label){
+						if(textSearch.Text==""){
+							label.BackColor=Color.White;
+							continue;
+						}
+						if(label.Text.ToLower().Contains(textSearch.Text.ToLower())){
+							isCategoryYellow=true;
+							label.BackColor=Color.FromArgb(255, 255, 192);
+						}
+						else{
+							label.BackColor=Color.White;
+						}
+					}
+				}
+				//checkboxes
+				for(int c=0;c<listControls.Count;c++){
+					if(listControls[c] is UI.CheckBox checkBox){
+						if(textSearch.Text==""){
+							checkBox.BackColor=Color.White;
+							continue;
+						}
+						if(checkBox.Text.ToLower().Contains(textSearch.Text.ToLower())){
+							isCategoryYellow=true;
+							checkBox.BackColor=Color.FromArgb(255, 255, 192);
+						}
+						else{
+							checkBox.BackColor=Color.White;
+						}
+					}
+				}
+				//groupboxes
+				for(int c=0;c<listControls.Count;c++){
+					if(listControls[c] is UI.GroupBox groupBox){
+						if(textSearch.Text==""){
+							groupBox.ColorBackLabel=Color.Empty;
+							continue;
+						}
+						if(groupBox.Text.ToLower().Contains(textSearch.Text.ToLower())){
+							isCategoryYellow=true;
+							groupBox.ColorBackLabel=Color.FromArgb(255, 255, 192);
+						}
+						else{
+							groupBox.ColorBackLabel=Color.Empty;
+						}
+					}
+				}
+				if(isCategoryYellow){
+					listTreeNodes[i].BackColor=Color.FromArgb(255, 255, 192);
+				}
+				else{
+					listTreeNodes[i].BackColor=Color.Empty;
+				}
+			}
+		}
+
+		///<summary>Gets a flat list of all tree nodes</summary>
+		private List<TreeNode> GetListNodesFlat(){
+			List<TreeNode> listTreeNodes=new List<TreeNode>();
+			for(int i=0;i<treeMain.Nodes.Count;i++){
+				listTreeNodes.Add(treeMain.Nodes[i]);
+				listTreeNodes.AddRange(GetChildrenFlat(treeMain.Nodes[i]));
+			}
+			return listTreeNodes;
+		}
+
+		///<summary>Recursive. Returns empty list when no children.</summary>
+		private List<TreeNode> GetChildrenFlat(TreeNode treeNode){
+			List<TreeNode> listTreeNodes=new List<TreeNode>();
+			for(int i=0;i<treeNode.Nodes.Count;i++){
+				listTreeNodes.Add(treeNode.Nodes[i]);//all direct children
+				listTreeNodes.AddRange(GetChildrenFlat(treeNode.Nodes[i]));//and recursively, their children
+			}
+			return listTreeNodes;
+		}
+		
+		///<summary>Gets a flat list of this control and all of its child controls. Recursive.</summary>
+		private List<Control> GetListControlsFlat(Control control){
+			List<Control> listControls=new List<Control>();
+			listControls.Add(control);//self
+			for(int i=0;i<control.Controls.Count;i++){
+				listControls.AddRange(GetListControlsFlat(control.Controls[i]));//all children, recursively
+			}
+			return listControls;
+		}
+
 		private void treeMain_AfterSelect(object sender,TreeViewEventArgs e) {
 			UserControl userControlSelected=treeMain.SelectedNode.Tag as UserControl;
 			if(userControlSelected==null) {
@@ -284,5 +381,7 @@ namespace OpenDental {
 			return treeMain.SelectedNode.Name;
 		}
 		#endregion Methods - Other
+
+		
 	}
 }

@@ -204,7 +204,6 @@ namespace OpenDental {
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(262, 499);
 			this.groupBox2.TabIndex = 0;
-			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Search by:";
 			// 
 			// butOnScreenKeyboard

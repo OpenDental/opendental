@@ -118,7 +118,7 @@ namespace OpenDentBusiness {
 			}
 			//Get non-hidden diseasedefnums
 			List<long> listDiseaseDefNums=new List<long>();
-			string command = "SELECT DiseaseDefNum FROM diseasedef WHERE !IsHidden";
+			string command = "SELECT DiseaseDefNum FROM diseasedef";
 			try {
 				listDiseaseDefNums.AddRange(Db.GetListLong(command));
 			}
@@ -138,8 +138,7 @@ namespace OpenDentBusiness {
 								+"FROM diseasedef "
 								+"WHERE EXISTS(SELECT 1 FROM patient "
 								+"INNER JOIN disease ON patient.PatNum=disease.PatNum "
-								+"WHERE disease.DiseaseDefNum=diseasedef.DiseaseDefNum) "
-								+"AND !diseasedef.IsHidden;";
+								+"WHERE disease.DiseaseDefNum=diseasedef.DiseaseDefNum)";
 			try {
 				listDiseaseDefNumsNotDeletable.AddRange(Db.GetListLong(command));
 			}
@@ -150,8 +149,7 @@ namespace OpenDentBusiness {
 			command="SELECT diseasedef.DiseaseDefNum "
 							+"FROM diseasedef "
 							+"WHERE EXISTS(SELECT 1 FROM eduresource "
-							+"WHERE eduresource.DiseaseDefNum=diseasedef.DiseaseDefNum) "
-							+"AND !diseasedef.IsHidden;";
+							+"WHERE eduresource.DiseaseDefNum=diseasedef.DiseaseDefNum)";
 			try {
 				listDiseaseDefNumsNotDeletable.AddRange(Db.GetListLong(command));
 			}
@@ -163,8 +161,7 @@ namespace OpenDentBusiness {
 							+"FROM diseasedef "
 							+"WHERE EXISTS(SELECT 1 FROM patient "
 							+"INNER JOIN familyhealth ON patient.PatNum=familyhealth.PatNum "
-							+"WHERE familyhealth.DiseaseDefNum=diseasedef.DiseaseDefNum) "
-							+"AND !diseasedef.IsHidden;";
+							+"WHERE familyhealth.DiseaseDefNum=diseasedef.DiseaseDefNum)";
 			try {
 				listDiseaseDefNumsNotDeletable.AddRange(Db.GetListLong(command));
 			}

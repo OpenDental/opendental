@@ -98,7 +98,13 @@ namespace OpenDental {
 				Appointment apt=Appointments.GetOneApt(contrApptPanel.SelectedAptNum);
 				if(apt!=null) {
 					Appointment aptOld=apt.Copy(); //this needs to happen before TryAdjustAppointmentPattern.
-					if(TryAdjustAppointmentPattern(apt,contrApptPanel.ListOpsVisible)) {
+					//if appts appttype is associated to blockouts and appt would start on an unassociated blockout, send to pinboard.
+					if(!CanScheduleAppointmentTypeOnBlockoutType(apt)) {
+						MsgBox.Show(this,"Appointment type cannot be scheduled on this blockout.  Moving appointment to pinboard.");
+						SendToPinBoardAptNums(new List<long> { apt.AptNum });
+						UpdateAppointmentToUnscheduled(apt,aptOld);
+					}
+					else if(TryAdjustAppointmentPattern(apt,contrApptPanel.ListOpsVisible)) {
 						MsgBox.Show(this,"Appointment is too long and would overlap another appointment or blockout.  Automatically shortened to fit.");
 						try {
 							Appointments.Update(apt,aptOld);//Appointments S-Class handles Signalods
@@ -224,17 +230,19 @@ namespace OpenDental {
 			if(appt == null) {
 				return; // appointment was already moved to pinboard from other dialogue, no need to continue method.
 			}
+			Appointment aptOld=appt.Copy();
+			//if appts appttype is associated to blockouts and appt would start on an unassociated blockout, send to pinboard.
+			if(!CanScheduleAppointmentTypeOnBlockoutType(appt)) {
+				MsgBox.Show(this,"Appointment type cannot be scheduled on this blockout.  Moving appointment to pinboard.");
+				SendToPinBoardAptNums(new List<long> { appt.AptNum });
+				UpdateAppointmentToUnscheduled(appt,aptOld);
+				RefreshPeriod();
+				return;//It's ok to skip the rest of the method here. The appointment is now on the pinboard and must be rescheduled
+			}
 			if(!HasValidStartTime(appt)) {
-				Appointment apptOld=appt.Copy();
 				MsgBox.Show(this,"Appointment start time would overlap another appointment.  Moving appointment to pinboard.");
 				SendToPinBoardAptNums(new List<long> { appt.AptNum });
-				appt.AptStatus=ApptStatus.UnschedList;
-				try {
-					Appointments.Update(appt,apptOld);//Appointments S-Class handles Signalods
-				}
-				catch(ApplicationException ex) {
-					MessageBox.Show(ex.Message);
-				}
+				UpdateAppointmentToUnscheduled(appt,aptOld);
 				RefreshPeriod();
 				return;//It's ok to skip the rest of the method here. The appointment is now on the pinboard and must be rescheduled
 			}
@@ -247,7 +255,7 @@ namespace OpenDental {
 					return;
 				}
 				#endregion Provider Term Date Check	
-				Appointment aptOld=appt.Copy();
+				aptOld=appt.Copy();
 				if(TryAdjustAppointmentPattern(appt,contrApptPanel.ListOpsVisible)) {
 					MsgBox.Show(this,"Appointment is too long and would overlap another appointment or blockout.  Automatically shortened to fit.");
 					try {
@@ -4055,6 +4063,28 @@ namespace OpenDental {
 			return !Appointments.TryAdjustAppointment(apt,contrApptPanel.ListOpsVisible,false,false,false,false,out notUsed);
 		}
 
+		///<summary>Checks if the appointment's start time would overlap a blockout that it cannot be scheduled over.
+		///Returns true if no overlap is found. Returns false if given appointment's start time would conflict with a blockout in the operatory.</summary>
+		private bool CanScheduleAppointmentTypeOnBlockoutType(Appointment appointment) {
+			List<Schedule> listScheduleBlockoutsOverlapping=Appointments.GetBlockoutsOverlappingNoSchedule(appointment);
+			for(int i=0;i<listScheduleBlockoutsOverlapping.Count;i++) {
+				if(appointment.AptDateTime>=listScheduleBlockoutsOverlapping[i].DateTimeStart && appointment.AptDateTime<listScheduleBlockoutsOverlapping[i].DateTimeStop) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		private void UpdateAppointmentToUnscheduled(Appointment appointment,Appointment appointmentOld) {
+			appointment.AptStatus=ApptStatus.UnschedList;
+			try {
+				Appointments.Update(appointment,appointmentOld);
+			}
+			catch(ApplicationException ex) {
+				MessageBox.Show(ex.Message);
+			}
+		}
+
 		///<summary>Returns true if the none appointment view is selected, clinics is turned on, and the Headquarters clinic is selected.  Also disables pretty much every control available in the appointment module if it is going to return true, otherwise re-enables them.</summary>
 		private bool IsHqNoneView() {
 			if(PrefC.HasClinicsEnabled && Clinics.ClinicNum==0 && ApptViews.IsNoneView(contrApptPanel.ApptViewCur)) {
@@ -4584,13 +4614,15 @@ namespace OpenDental {
 					if(!HasValidStartTime(apt)) {
 						MsgBox.Show(this,"Appointment start time would overlap another appointment.  Moving appointment to pinboard.");
 						SendToPinBoardAptNums(new List<long> { apt.AptNum });
-						apt.AptStatus=ApptStatus.UnschedList;
-						try {
-							Appointments.Update(apt,aptOld);
-						}
-						catch(ApplicationException ex) {
-							MessageBox.Show(ex.Message);
-						}
+						UpdateAppointmentToUnscheduled(apt,aptOld);
+						RefreshPeriod();
+						break;
+					}
+					//if appts appttype is associated to blockouts and appt would start on an unassociated blockout, send to pinboard.
+					if(!CanScheduleAppointmentTypeOnBlockoutType(apt)) {
+						MsgBox.Show(this,"Appointment type cannot be scheduled on this blockout.  Moving appointment to pinboard.");
+						SendToPinBoardAptNums(new List<long> { apt.AptNum });
+						UpdateAppointmentToUnscheduled(apt,aptOld);
 						RefreshPeriod();
 						break;
 					}

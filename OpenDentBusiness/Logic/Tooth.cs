@@ -383,7 +383,7 @@ namespace OpenDentBusiness{
 			return listQuads.Distinct().ToList();
 		}
 
-		/// <summary>Returns a string list of distinct arches that contain the specified teeth. If no teeth are selected, it will return an empty list.</summary>
+		/// <summary>Returns a string list of distinct arches that contain the specified teeth. So either U or L or U,L. If no teeth are selected, it will return an empty list.</summary>
 		public static List<string> GetArchesForTeeth(List<string> listToothNums) {
 			if(listToothNums.Count==0) {
 				return new List<string>();

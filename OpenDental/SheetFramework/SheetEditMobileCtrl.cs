@@ -343,7 +343,7 @@ namespace OpenDental {
 						&& (sheetFields.GroupBy(x=>x.RadioButtonGroup).Count()!=1 || sheetFields.All(x=>x.RadioButtonGroup.IsNullOrEmpty()))) {
 							#region CheckBox Group
 							panel.FieldType=GetTranslation("CheckBox Group");
-							List<UI.CheckBox> checkItems=new List<UI.CheckBox>();
+							List<System.Windows.Forms.CheckBox> checkItems=new List<System.Windows.Forms.CheckBox>();
 							Action<SheetFieldDef> addCheckOption=new Action<SheetFieldDef>((sheetFieldCheckItem) => {
 								SheetEditMobileRadioButton checkboxItem=addCheckBox(sheetFieldCheckItem);
 								checkboxItem.Text=sheetFieldCheckItem.UiLabelMobileRadioButton;
@@ -1233,7 +1233,7 @@ namespace OpenDental {
 
 	#region Classes and Interfaces
 	///<summary>Draws an outline when highlighted.</summary>
-	public class SheetEditMobileRadioButton:OpenDental.UI.CheckBox, IHasDragAttributes {
+	public class SheetEditMobileRadioButton:System.Windows.Forms.CheckBox, IHasDragAttributes {
 		public DragAttributes DragAtt { get; set; }
 		private bool _isHighlighted=false;
 		private Rectangle _rText=Rectangle.Empty;

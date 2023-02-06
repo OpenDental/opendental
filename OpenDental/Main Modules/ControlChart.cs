@@ -6735,7 +6735,7 @@ namespace OpenDental {
 			panelEClight.BackColor=listChartGraphicColorDefs[7].ItemColor;
 			panelEOlight.BackColor=listChartGraphicColorDefs[8].ItemColor;
 			panelRlight.BackColor=listChartGraphicColorDefs[9].ItemColor;
-    }
+	 }
 
 		///<summary>Gets run on ModuleSelected and each time a different images tab is selected. It first creates any missing thumbnails, then displays them. So it will be faster after the first time.</summary>
 		private void FillImages() {
@@ -6880,7 +6880,7 @@ namespace OpenDental {
 				item=new ListViewItem(new string[] {_arrayProcButtons[i].Description},_arrayProcButtons[i].ProcButtonNum.ToString());
 				listViewButtons.Items.Add(item);
 			}
-    }
+	 }
 
 		private void FillToothChart(bool retainSelection) {
 			if(PrefC.IsODHQ) {
@@ -9280,13 +9280,13 @@ namespace OpenDental {
 			else {
 				procedure.DateTP=PIn.Date(textDate.Text);
 			}
-			ProcedureCode procCodeCur=ProcedureCodes.GetProcCode(procedure.CodeNum);
+			ProcedureCode procedureCode=ProcedureCodes.GetProcCode(procedure.CodeNum);
 			if(_procStatusNew==ProcStat.C) {
 				if(procedure.ProcDate.Date>DateTime.Today.Date && !PrefC.GetBool(PrefName.FutureTransDatesAllowed)) {
 					MsgBox.Show(this,"Completed procedures cannot be set for future dates.");
 					return false;
 				}
-				Procedures.SetOrthoProcComplete(procedure,procCodeCur); //does nothing if not an ortho proc
+				Procedures.SetOrthoProcComplete(procedure,procedureCode); //does nothing if not an ortho proc
 			}
 			long priorityNum=0;
 			if(comboPriority.SelectedIndex!=0) {
@@ -9311,15 +9311,15 @@ namespace OpenDental {
 			{
 				return false;
 			}
-			long verifyCode;
+			long codeNumVerify;
 			bool isMandibular=false;
 			if(!string.IsNullOrEmpty(procedure.ToothRange)) {
 				isMandibular=procedure.ToothRange.Split(',').Any(x => !Tooth.IsMaxillary(x));
 			}
-			if(AutoCodeItems.ShouldPromptForCodeChange(procedure,procCodeCur,Pd.Patient,isMandibular,listClaimProcs,out verifyCode)) {
-				using FormAutoCodeLessIntrusive FormACLI=new FormAutoCodeLessIntrusive(Pd.Patient,procedure,procCodeCur,verifyCode,Pd.ListPatPlans,Pd.ListInsSubs,Pd.ListInsPlans,
+			if(AutoCodeItems.ShouldPromptForCodeChange(procedure,procedureCode,Pd.Patient,isMandibular,listClaimProcs,out codeNumVerify)) {
+				using FormAutoCodeLessIntrusive formAutoCodeLessIntrusive=new FormAutoCodeLessIntrusive(Pd.Patient,procedure,procedureCode,codeNumVerify,Pd.ListPatPlans,Pd.ListInsSubs,Pd.ListInsPlans,
 					Pd.ListBenefits,listClaimProcs);
-				if(FormACLI.ShowDialog()!=DialogResult.OK
+				if(formAutoCodeLessIntrusive.ShowDialog()!=DialogResult.OK
 					&& PrefC.GetBool(PrefName.ProcEditRequireAutoCodes))
 				{
 					using FormProcEdit formProcEdit=new FormProcEdit(procedure,Pd.Patient,Pd.Family,listToothInitials:Pd.ListToothInitials);//ProcCur may be modified in this form due to passing by reference. Intentional.
@@ -9335,7 +9335,7 @@ namespace OpenDental {
 							MessageBox.Show(ex.Message);
 						}
 						return false;
-					}					
+					}
 				}
 			}
 			return true;
@@ -9432,14 +9432,14 @@ namespace OpenDental {
 		}
 
 		///<summary>No user dialog is shown.  This only works for some kinds of procedures.  Set the codeNum first. AddProcedure and AddQuick both call AddProcHelper, where most of the logic for setting the fields for a new procedure is located. No validation is done before adding the procedure so check all permissions and such prior to calling this method.</summary>
-		private void AddQuick(Procedure ProcCur,List<Fee> listFees) {
-			Plugins.HookAddCode(this,"ContrChart.AddQuick_begin",ProcCur,listFees);
+		private void AddQuick(Procedure procedure,List<Fee> listFees) {
+			Plugins.HookAddCode(this,"ContrChart.AddQuick_begin",procedure,listFees);
 			Pd.FillIfNeeded(EnumPdTable.Procedure);
-			if(!AddProcHelper(ProcCur,listFees)) { //Procedure was deleted.
+			if(!AddProcHelper(procedure,listFees)) { //Procedure was deleted.
 				return;
 			}
-			ChartModules.AddProcSetCompleteHelper(ProcCur);
-			logComplCreate(ProcCur);
+			ChartModules.AddProcSetCompleteHelper(procedure);
+			logComplCreate(procedure);
 		}
 
 		private void ClearButtons() {
@@ -9548,7 +9548,6 @@ namespace OpenDental {
 		}
 
 		private void EnterTypedCode() {
-			//orionProcNum=0;
 			if(_procStatusNew==ProcStat.C) {
 				if(!PrefC.GetBool(PrefName.AllowSettingProcsComplete)) {
 					MsgBox.Show(this,"Set the procedure complete by setting the appointment complete. "
@@ -9596,86 +9595,86 @@ namespace OpenDental {
 			if(textProcCode.Text!="D9986" && textProcCode.Text!="D9987") {
 				Procedures.SetDateFirstVisit(DateTime.Today,1,Pd.Patient);
 			}
-			TreatmentArea tArea;
-			Procedure ProcCur;
+			TreatmentArea treatmentArea;
+			Procedure procedure;
 			for(int n=0;n==0 || n<_toothChartRelay.SelectedTeeth.Count;n++) {//always loops at least once.
-				ProcCur=new Procedure();//this will be an insert, so no need to set CurOld
-				ProcCur.CodeNum=ProcedureCodes.GetCodeNum(textProcCode.Text);
+				procedure=new Procedure();//this will be an insert, so no need to set CurOld
+				procedure.CodeNum=ProcedureCodes.GetCodeNum(textProcCode.Text);
 				bool isValid=true;
-				tArea=procedureCode.TreatArea;//ProcedureCodes.GetProcCode(ProcCur.CodeNum).TreatArea;
-				if((tArea==TreatmentArea.None
-					|| tArea==TreatmentArea.Arch
-					|| tArea==TreatmentArea.Mouth
-					|| tArea==TreatmentArea.Quad
-					|| tArea==TreatmentArea.Sextant
-					|| tArea==TreatmentArea.ToothRange)
+				treatmentArea=procedureCode.TreatArea;//ProcedureCodes.GetProcCode(ProcCur.CodeNum).TreatArea;
+				if((treatmentArea==TreatmentArea.None
+					|| treatmentArea==TreatmentArea.Arch
+					|| treatmentArea==TreatmentArea.Mouth
+					|| treatmentArea==TreatmentArea.Quad
+					|| treatmentArea==TreatmentArea.Sextant
+					|| treatmentArea==TreatmentArea.ToothRange)
 					&& n>0) {//the only two left are tooth and surf
 					continue;//only entered if n=0, so they don't get entered more than once.
 				}
 				else if(procedureCode.AreaAlsoToothRange) { // if AreaAlsoToothRange==true and procedureCode set for Quad or Arch
 					if(_toothChartRelay.SelectedTeeth.Count==0) {
-						AddProcedure(ProcCur,listFees);
+						AddProcedure(procedure,listFees);
 					}
 					else { 
-						if(tArea==TreatmentArea.Arch) { 
-							AddArchProcsWithToothRange(ProcCur,listFees);
+						if(treatmentArea==TreatmentArea.Arch) { 
+							AddArchProcsWithToothRange(procedure,listFees);
 						}
-						else if(tArea==TreatmentArea.Quad) {
-							AddQuadProcsWithToothRange(ProcCur,listFees);
+						else if(treatmentArea==TreatmentArea.Quad) {
+							AddQuadProcsWithToothRange(procedure,listFees);
 						}
 					}
 				}
-				else if(tArea==TreatmentArea.Quad) {
-					AddQuadProcs(ProcCur,listFees);
+				else if(treatmentArea==TreatmentArea.Quad) {
+					AddQuadProcs(procedure,listFees);
 				}
-				else if(tArea==TreatmentArea.Surf) {
+				else if(treatmentArea==TreatmentArea.Surf) {
 					if(_toothChartRelay.SelectedTeeth.Count==0) {
 						isValid=false;
 					}
 					else {
-						ProcCur.ToothNum=_toothChartRelay.SelectedTeeth[n];
+						procedure.ToothNum=_toothChartRelay.SelectedTeeth[n];
 					}
 					if(textSurf.Text=="") {
 						isValid=false;
 					}
 					else {
-						ProcCur.Surf=Tooth.SurfTidyFromDisplayToDb(textSurf.Text,ProcCur.ToothNum);//it's ok if toothnum is invalid
+						procedure.Surf=Tooth.SurfTidyFromDisplayToDb(textSurf.Text,procedure.ToothNum);//it's ok if toothnum is invalid
 					}
 					if(isValid) {
-						AddQuick(ProcCur,listFees);
+						AddQuick(procedure,listFees);
 					}
 					else {
-						AddProcedure(ProcCur,listFees);
+						AddProcedure(procedure,listFees);
 					}
 				}
-				else if(tArea==TreatmentArea.Tooth) {
+				else if(treatmentArea==TreatmentArea.Tooth) {
 					if(_toothChartRelay.SelectedTeeth.Count==0) {
-						AddProcedure(ProcCur,listFees);
+						AddProcedure(procedure,listFees);
 					}
 					else {
-						ProcCur.ToothNum=_toothChartRelay.SelectedTeeth[n];
-						AddQuick(ProcCur,listFees);
+						procedure.ToothNum=_toothChartRelay.SelectedTeeth[n];
+						AddQuick(procedure,listFees);
 					}
 				}
-				else if(tArea==TreatmentArea.ToothRange) {
+				else if(treatmentArea==TreatmentArea.ToothRange) {
 					if(_toothChartRelay.SelectedTeeth.Count==0) {
-						AddProcedure(ProcCur,listFees);
+						AddProcedure(procedure,listFees);
 					}
 					else {
-						ProcCur.ToothRange="";
+						procedure.ToothRange="";
 						for(int b=0;b<_toothChartRelay.SelectedTeeth.Count;b++) {
-							if(b!=0) ProcCur.ToothRange+=",";
-							ProcCur.ToothRange+=_toothChartRelay.SelectedTeeth[b];
+							if(b!=0) procedure.ToothRange+=",";
+							procedure.ToothRange+=_toothChartRelay.SelectedTeeth[b];
 						}
-						AddQuick(ProcCur,listFees);
+						AddQuick(procedure,listFees);
 					}
 				}
-				else if(tArea==TreatmentArea.Arch) {
+				else if(treatmentArea==TreatmentArea.Arch) {
 					if(_toothChartRelay.SelectedTeeth.Count==0) {
 						AutoCodeItem autoCodeItem=null;
-						if(AutoCodeItems.GetContainsKey(ProcCur.CodeNum)) { 
-							autoCodeItem=AutoCodeItems.GetListForCode(AutoCodeItems.GetOne(ProcCur.CodeNum).AutoCodeNum)
-								.FirstOrDefault(x => x.CodeNum==ProcCur.CodeNum);
+						if(AutoCodeItems.GetContainsKey(procedure.CodeNum)) { 
+							autoCodeItem=AutoCodeItems.GetListForCode(AutoCodeItems.GetOne(procedure.CodeNum).AutoCodeNum)
+								.FirstOrDefault(x => x.CodeNum==procedure.CodeNum);
 						}
 						List<AutoCodeCond> listAutoCodeCond=new List<AutoCodeCond>();
 						if(autoCodeItem!=null) {
@@ -9683,33 +9682,34 @@ namespace OpenDental {
 						}
 						if(listAutoCodeCond.Count==1) {
 							if(listAutoCodeCond[0].Cond==AutoCondition.Maxillary) {
-								ProcCur.Surf="U";
+								procedure.Surf="U";
 							}
 							else if(listAutoCodeCond[0].Cond==AutoCondition.Mandibular) {
-								ProcCur.Surf="L";
+								procedure.Surf="L";
 							}
 						}
 						else {
-							ProcCur.Surf=CodeMapping.GetArchSurfaceFromProcCode(ProcedureCodes.GetProcCode(ProcCur.CodeNum));
+							procedure.Surf=CodeMapping.GetArchSurfaceFromProcCode(ProcedureCodes.GetProcCode(procedure.CodeNum));
 						}
-						AddProcedure(ProcCur,listFees);
+						AddProcedure(procedure,listFees);
 						continue;
 					}
-					foreach(string arch in Tooth.GetArchesForTeeth(_toothChartRelay.SelectedTeeth)) {
-						Procedure proc=ProcCur.Copy();
-						proc.Surf=arch;
-						AddQuick(proc,listFees);
+					List<string> listArches = Tooth.GetArchesForTeeth(_toothChartRelay.SelectedTeeth);
+					for(int i = 0;i<listArches.Count;i++) {
+						Procedure procedureCopy =procedure.Copy();
+						procedureCopy.Surf=listArches[i];
+						AddQuick(procedureCopy,listFees);
 					}
 				}
-				else if(tArea==TreatmentArea.Sextant) {
-					AddProcedure(ProcCur,listFees);
+				else if(treatmentArea==TreatmentArea.Sextant) {
+					AddProcedure(procedure,listFees);
 				}
 				else {//mouth
-					AddQuick(ProcCur,listFees);
+					AddQuick(procedure,listFees);
 				}
-				procCodes.Add(ProcedureCodes.GetProcCode(ProcCur.CodeNum).ProcCode);
+				procCodes.Add(ProcedureCodes.GetProcCode(procedure.CodeNum).ProcCode);
 			}//n selected teeth
-			//this was requiring too many irrelevant queries and going too slowly   //ModuleSelected(PatCur.PatNum);			
+			//this was requiring too many irrelevant queries and going too slowly   //ModuleSelected(PatCur.PatNum);
 			Pd.ClearAndFill(EnumPdTable.ToothInitial);
 			ClearButtons();
 			FillProgNotes();
@@ -9733,32 +9733,31 @@ namespace OpenDental {
 				}
 			}
 			bool isValid;
-			TreatmentArea tArea;
+			TreatmentArea treatmentArea;
 			int quadCount=0;//automates quadrant codes.
-			long[] arrayCodeList;
-			long[] arrayAutoCodeList;
+			List<long> listCodeNums;
+			List<long> listAutoCodeNums;
 			if(procButton==null) {//Quick Button
-				arrayCodeList=new long[1];
-				arrayCodeList[0]=ProcedureCodes.GetCodeNum(procButtonQuick.CodeValue);
-				if(arrayCodeList[0]==0) {
+				listCodeNums=new List<long>();
+				listCodeNums.Add(ProcedureCodes.GetCodeNum(procButtonQuick.CodeValue));
+				if(listCodeNums[0]==0) {
 					MessageBox.Show(this,Lan.g(this,"Procedure code does not exist in database")+" : "+procButtonQuick.CodeValue);
 					return;
 				}
-				arrayAutoCodeList=new long[0];
+				listAutoCodeNums=new List<long>();
 			}
 			else {//Proc Button
-				arrayCodeList=ProcButtonItems.GetCodeNumListForButton(procButton.ProcButtonNum);
-				arrayAutoCodeList=ProcButtonItems.GetAutoListForButton(procButton.ProcButtonNum);
-				//if(codeList.
+				listCodeNums=ProcButtonItems.GetCodeNumListForButton(procButton.ProcButtonNum);
+				listAutoCodeNums=ProcButtonItems.GetAutoListForButton(procButton.ProcButtonNum);
 			}
 			//It is very important that we stop users here before entering any procedures or doing any automation.
-			foreach(long autoCodeNum in arrayAutoCodeList) {
-				if(!AutoCodes.GetContainsKey(autoCodeNum)) {
+			for(int i = 0;i<listAutoCodeNums.Count;i++) {
+				if(!AutoCodes.GetContainsKey(listAutoCodeNums[i])) {
 					MsgBox.Show(this,$"The procedure button '{procButton.Description}' contains an invalid AutoCode.\r\n" +
 						$"Run {nameof(DatabaseMaintenances.ProcButtonItemsDeleteWithInvalidAutoCode)} in the Database Maintenance Tool and try again.");
 					return;
 				}
-				AutoCode autoCode=AutoCodes.GetOne(autoCodeNum);
+				AutoCode autoCode=AutoCodes.GetOne(listAutoCodeNums[i]);
 				if(AutoCodeItems.GetListForCode(autoCode.AutoCodeNum).Count==0) {
 					//AutoCode is not setup correctly.
 					MessageBox.Show(this,Lan.g(this,"The following AutoCode has no associated Procedure Codes: ")+"\r\n"+autoCode.Description+"\r\n"
@@ -9768,19 +9767,29 @@ namespace OpenDental {
 			}
 			//Do not return past this point---------------------------------------------------------------------------------
 			List<ProcedureCode> listProcedureCodes=new List<ProcedureCode>();//just for the fee info
-			for(int i=0;i<arrayCodeList.Length;i++) {
-				listProcedureCodes.Add(ProcedureCodes.GetProcCode(arrayCodeList[i]));//could be a harmless empty code
+			for(int i=0;i<listCodeNums.Count;i++) {
+				listProcedureCodes.Add(ProcedureCodes.GetProcCode(listCodeNums[i]));//could be a harmless empty code
 			}
 			string toothNumString;
-			for(int i=0;i<arrayAutoCodeList.Length;i++) {//this is just a quick loop for fees. The real one is down further
+			for(int i=0;i<listAutoCodeNums.Count;i++) {//this is just a quick loop for fees. The real one is down further
 				for(int n=0;n==0 || n<_toothChartRelay.SelectedTeeth.Count;n++) {
 					isValid=true;
-					if(_toothChartRelay.SelectedTeeth.Count!=0) toothNumString=_toothChartRelay.SelectedTeeth[n]; else toothNumString="";
+					if(_toothChartRelay.SelectedTeeth.Count!=0) {
+						toothNumString=_toothChartRelay.SelectedTeeth[n];
+					}
+					else {
+						toothNumString="";
+					}
 					string surf="";
-					if(textSurf.Text=="5" && CultureInfo.CurrentCulture.Name.EndsWith("CA")) surf="V"; else surf=Tooth.SurfTidyForClaims(textSurf.Text,toothNumString);
+					if(textSurf.Text=="5" && CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
+						surf="V";
+					}
+					else {
+						surf=Tooth.SurfTidyForClaims(textSurf.Text,toothNumString);
+					}
 					bool isAdditional=n>0;
 					bool willBeMissing=Procedures.WillBeMissing(toothNumString,Pd.PatNum);//db call, but this NEEDS to happen.
-					long codeNum=AutoCodeItems.GetCodeNum(arrayAutoCodeList[i],toothNumString,surf,isAdditional,Pd.PatNum,Pd.Patient.Age,willBeMissing);
+					long codeNum=AutoCodeItems.GetCodeNum(listAutoCodeNums[i],toothNumString,surf,isAdditional,Pd.PatNum,Pd.Patient.Age,willBeMissing);
 					listProcedureCodes.Add(ProcedureCodes.GetProcCode(codeNum));
 				}
 			}
@@ -9792,89 +9801,89 @@ namespace OpenDental {
 				null,//listProvNumsTreat: providers will instead be set from other places
 				Pd.Patient.PriProv,Pd.Patient.SecProv,Pd.Patient.FeeSched,Pd.ListInsPlans,new List<long>(){Pd.Patient.ClinicNum}, Pd.ListAppointments ,_listSubstitutionLinks,discountPlanNum);
 			//If there are any codes in the list that are NOT 9986s and 9987s, then set the date first visit.
-			if(arrayCodeList.Any(x => ProcedureCodes.GetStringProcCode(x) != "D9986" && ProcedureCodes.GetStringProcCode(x) != "D9987")) {
+			if(listCodeNums.Any(x => ProcedureCodes.GetStringProcCode(x) != "D9986" && ProcedureCodes.GetStringProcCode(x) != "D9987")) {
 				Procedures.SetDateFirstVisit(DateTime.Today,1,Pd.Patient);
 			}
 			List<string> listProcCodes=new List<string>();
 			//"Bug fix" for Dr. Lazar-------------
 			bool isPeriapicalSix=false;
-			if(arrayCodeList.Length==6) {//quick check before checking all codes. So that the program isn't slowed down too much.
+			if(listCodeNums.Count==6) {//quick check before checking all codes. So that the program isn't slowed down too much.
 				string tempVal="";
-				foreach(long code in arrayCodeList) {
-					tempVal+=ProcedureCodes.GetProcCode(code).AbbrDesc;
+				for(int i = 0;i<listCodeNums.Count;i++) {
+					tempVal+=ProcedureCodes.GetProcCode(listCodeNums[i]).AbbrDesc;
 				}
 				if(tempVal=="PAPA+PA+PA+PA+PA+") {
 					isPeriapicalSix=true;
 					_toothChartRelay.SelectedTeeth.Clear();//set tooth numbers later
 				}
 			}
-			Procedure procCur=null;
+			Procedure procedure=null;
 			_listChartedProcs=new List<Procedure>();
-			for(int i=0;i<arrayCodeList.Length;i++) {
-				//needs to loop at least once, regardless of whether any teeth are selected.	
+			for(int i=0;i<listCodeNums.Count;i++) {
+				//needs to loop at least once, regardless of whether any teeth are selected.
 				for(int n=0;n==0 || n<_toothChartRelay.SelectedTeeth.Count;n++) {
 					isValid=true;
-					procCur=new Procedure();//insert, so no need to set CurOld
-					procCur.CodeNum=ProcedureCodes.GetProcCode(arrayCodeList[i]).CodeNum;
-					tArea=ProcedureCodes.GetProcCode(procCur.CodeNum).TreatArea;
+					procedure=new Procedure();//insert, so no need to set CurOld
+					procedure.CodeNum=ProcedureCodes.GetProcCode(listCodeNums[i]).CodeNum;
+					treatmentArea=ProcedureCodes.GetProcCode(procedure.CodeNum).TreatArea;
 					//"Bug fix" for Dr. Lazar-------------
 					if(isPeriapicalSix) {
 						//PA code is already set to treatment area mouth by default.
-						procCur.ToothNum=",8,14,19,24,30".Split(',')[i];//first code has tooth num "";
+						procedure.ToothNum=",8,14,19,24,30".Split(',')[i];//first code has tooth num "";
 						if(i==0) {
-							tArea=TreatmentArea.Mouth;
+							treatmentArea=TreatmentArea.Mouth;
 						}
 						else {
-							tArea=TreatmentArea.Tooth;
+							treatmentArea=TreatmentArea.Tooth;
 						}
 					}
-					if((tArea==TreatmentArea.None
-						|| tArea==TreatmentArea.Arch
-						|| tArea==TreatmentArea.Mouth
-						|| tArea==TreatmentArea.Quad
-						|| tArea==TreatmentArea.Sextant
-						|| tArea==TreatmentArea.ToothRange)
+					if((treatmentArea==TreatmentArea.None
+						|| treatmentArea==TreatmentArea.Arch
+						|| treatmentArea==TreatmentArea.Mouth
+						|| treatmentArea==TreatmentArea.Quad
+						|| treatmentArea==TreatmentArea.Sextant
+						|| treatmentArea==TreatmentArea.ToothRange)
 						&& n>0) 
 					{//the only two left are tooth and surf
 						continue;//only entered if n=0, so they don't get entered more than once.
 					}
-					else if(ProcedureCodes.GetProcCode(procCur.CodeNum).AreaAlsoToothRange) { // if AreaAlsoToothRange==true and procedureCode set for Quad or Arch
+					else if(ProcedureCodes.GetProcCode(procedure.CodeNum).AreaAlsoToothRange) { // if AreaAlsoToothRange==true and procedureCode set for Quad or Arch
 						if(_toothChartRelay.SelectedTeeth.Count==0) {
-							AddProcedure(procCur,listFees);
+							AddProcedure(procedure,listFees);
 						}
 						else { 
-							if(tArea==TreatmentArea.Arch) { 
-								AddArchProcsWithToothRange(procCur,listFees);
+							if(treatmentArea==TreatmentArea.Arch) { 
+								AddArchProcsWithToothRange(procedure,listFees);
 							}
-							else if(tArea==TreatmentArea.Quad) {
-								AddQuadProcsWithToothRange(procCur,listFees);
+							else if(treatmentArea==TreatmentArea.Quad) {
+								AddQuadProcsWithToothRange(procedure,listFees);
 							}
 						}
 					}
-					else if(tArea==TreatmentArea.Quad) {
+					else if(treatmentArea==TreatmentArea.Quad) {
 						if(_toothChartRelay.SelectedTeeth.Count==0) {
 							switch(quadCount%4) {
-								case 0: procCur.Surf="UR"; break;
-								case 1: procCur.Surf="UL"; break;
-								case 2: procCur.Surf="LL"; break;
-								case 3: procCur.Surf="LR"; break;
+								case 0: procedure.Surf="UR"; break;
+								case 1: procedure.Surf="UL"; break;
+								case 2: procedure.Surf="LL"; break;
+								case 3: procedure.Surf="LR"; break;
 							}
 							quadCount++;
 							if(procButtonQuick!=null && !string.IsNullOrWhiteSpace(procButtonQuick.Surf)) {//from quick buttons only.
-								procCur.Surf=Tooth.SurfTidyFromDisplayToDb(procButtonQuick.Surf,procCur.ToothNum);
+								procedure.Surf=Tooth.SurfTidyFromDisplayToDb(procButtonQuick.Surf,procedure.ToothNum);
 							}
-							AddQuick(procCur,listFees);
+							AddQuick(procedure,listFees);
 						}
 						else {
-							AddQuadProcs(procCur,listFees);
+							AddQuadProcs(procedure,listFees);
 						}
 					}
-					else if(tArea==TreatmentArea.Surf) {
+					else if(treatmentArea==TreatmentArea.Surf) {
 						if(_toothChartRelay.SelectedTeeth.Count==0) {
 							isValid=false;
 						}
 						else {
-							procCur.ToothNum=_toothChartRelay.SelectedTeeth[n];
+							procedure.ToothNum=_toothChartRelay.SelectedTeeth[n];
 						}
 						if(textSurf.Text=="" && procButtonQuick==null) {
 							isValid=false;// Pre-ODButtonPanel behavior
@@ -9883,10 +9892,10 @@ namespace OpenDental {
 							isValid=false; // ODButtonPanel behavior
 						}
 						else {
-							procCur.Surf=Tooth.SurfTidyFromDisplayToDb(textSurf.Text,procCur.ToothNum);//it's ok if toothnum is not valid.
+							procedure.Surf=Tooth.SurfTidyFromDisplayToDb(textSurf.Text,procedure.ToothNum);//it's ok if toothnum is not valid.
 							if(procButtonQuick!=null && !string.IsNullOrWhiteSpace(procButtonQuick.Surf)) {//from quick buttons only.
-								procCur.Surf=Tooth.SurfTidyFromDisplayToDb(procButtonQuick.Surf,procCur.ToothNum);
-								if(string.IsNullOrWhiteSpace(procCur.Surf)) {
+								procedure.Surf=Tooth.SurfTidyFromDisplayToDb(procButtonQuick.Surf,procedure.ToothNum);
+								if(string.IsNullOrWhiteSpace(procedure.Surf)) {
 									//QuickButton setup with a surface that is invalid for the selected tooth.  User should manually select surfaces via FormProcEdit.
 									isValid=false;
 								}
@@ -9894,60 +9903,60 @@ namespace OpenDental {
 							}
 						}
 						if(isValid) {
-							AddQuick(procCur,listFees);
+							AddQuick(procedure,listFees);
 						}
 						else {
-							AddProcedure(procCur,listFees);
+							AddProcedure(procedure,listFees);
 						}
 					}
-					else if(tArea==TreatmentArea.Tooth) {
+					else if(treatmentArea==TreatmentArea.Tooth) {
 						if(isPeriapicalSix) {
-							AddQuick(procCur,listFees);
+							AddQuick(procedure,listFees);
 						}
 						else if(_toothChartRelay.SelectedTeeth.Count==0) {
-							AddProcedure(procCur,listFees);
+							AddProcedure(procedure,listFees);
 						}
 						else {
-							procCur.ToothNum=_toothChartRelay.SelectedTeeth[n];
-							AddQuick(procCur,listFees);
+							procedure.ToothNum=_toothChartRelay.SelectedTeeth[n];
+							AddQuick(procedure,listFees);
 						}
 					}
-					else if(tArea==TreatmentArea.ToothRange) {
+					else if(treatmentArea==TreatmentArea.ToothRange) {
 						if(_toothChartRelay.SelectedTeeth.Count==0) {
-							AddProcedure(procCur,listFees);
+							AddProcedure(procedure,listFees);
 						}
 						else {
-							procCur.ToothRange="";
+							procedure.ToothRange="";
 							for(int b=0;b<_toothChartRelay.SelectedTeeth.Count;b++) {
-								if(b!=0) procCur.ToothRange+=",";
-								procCur.ToothRange+=_toothChartRelay.SelectedTeeth[b];
+								if(b!=0) procedure.ToothRange+=",";
+								procedure.ToothRange+=_toothChartRelay.SelectedTeeth[b];
 							}
-							AddQuick(procCur,listFees);
+							AddQuick(procedure,listFees);
 						}
 					}
-					else if(tArea==TreatmentArea.Arch) {
+					else if(treatmentArea==TreatmentArea.Arch) {
 						if(_toothChartRelay.SelectedTeeth.Count==0) {
-							procCur.Surf=CodeMapping.GetArchSurfaceFromProcCode(ProcedureCodes.GetProcCode(procCur.CodeNum));
-							AddProcedure(procCur,listFees);
+							procedure.Surf=CodeMapping.GetArchSurfaceFromProcCode(ProcedureCodes.GetProcCode(procedure.CodeNum));
+							AddProcedure(procedure,listFees);
 							continue;
 						}
-						foreach(string arch in Tooth.GetArchesForTeeth(_toothChartRelay.SelectedTeeth)) {
-							Procedure proc=procCur.Copy();
-							proc.Surf=arch;
-							AddQuick(proc,listFees);
+						List<string> listArches = Tooth.GetArchesForTeeth(_toothChartRelay.SelectedTeeth);
+						for(int j = 0;j<listArches.Count;j++) {
+							Procedure procedureCopy =procedure.Copy();
+							procedureCopy.Surf=listArches[j];
+							AddQuick(procedureCopy,listFees);
 						}
 					}
-					else if(tArea==TreatmentArea.Sextant) {
-						AddProcedure(procCur,listFees);
+					else if(treatmentArea==TreatmentArea.Sextant) {
+						AddProcedure(procedure,listFees);
 					}
 					else {//mouth
-						AddQuick(procCur,listFees);
+						AddQuick(procedure,listFees);
 					}
-					listProcCodes.Add(ProcedureCodes.GetProcCode(procCur.CodeNum).ProcCode);
+					listProcCodes.Add(ProcedureCodes.GetProcCode(procedure.CodeNum).ProcCode);
 				}//n selected teeth
 			}//end Part 1 checking for ProcCodes, now will check for AutoCodes
-			//long orionProvNum=0;
-			for(int i=0;i<arrayAutoCodeList.Length;i++) {
+			for(int i=0;i<listAutoCodeNums.Count;i++) {
 				for(int n=0;n==0 || n<_toothChartRelay.SelectedTeeth.Count;n++) {
 					isValid=true;
 					if(_toothChartRelay.SelectedTeeth.Count!=0) {
@@ -9956,7 +9965,7 @@ namespace OpenDental {
 					else {
 						toothNumString="";
 					}
-					procCur=new Procedure();//this will be an insert, so no need to set CurOld
+					procedure=new Procedure();//this will be an insert, so no need to set CurOld
 					//Clean to db
 					string surf="";
 					//For Canadians, when the only surface charted is 5, we need to not remove the 5 so that the correct one surface auto code is found.
@@ -9969,99 +9978,136 @@ namespace OpenDental {
 					else {
 						surf=Tooth.SurfTidyForClaims(textSurf.Text,toothNumString);
 					}
-					procCur.IsAdditional=n>0;	//This is used for determining the correct autocode in a little bit.
+					procedure.IsAdditional=n>0;	//This is used for determining the correct autocode in a little bit.
 					bool willBeMissing=Procedures.WillBeMissing(toothNumString,Pd.PatNum);
-					procCur.CodeNum=AutoCodeItems.GetCodeNum(arrayAutoCodeList[i],toothNumString,surf,procCur.IsAdditional,Pd.PatNum,Pd.Patient.Age,willBeMissing);
-					tArea=ProcedureCodes.GetProcCode(procCur.CodeNum).TreatArea;
-					if((tArea==TreatmentArea.None
-						|| tArea==TreatmentArea.Arch
-						|| tArea==TreatmentArea.Mouth
-						|| tArea==TreatmentArea.Quad
-						|| tArea==TreatmentArea.Sextant
-						|| tArea==TreatmentArea.ToothRange)
+					procedure.CodeNum=AutoCodeItems.GetCodeNum(listAutoCodeNums[i],toothNumString,surf,procedure.IsAdditional,Pd.PatNum,Pd.Patient.Age,willBeMissing);
+					treatmentArea=ProcedureCodes.GetProcCode(procedure.CodeNum).TreatArea;
+					if((treatmentArea==TreatmentArea.None
+						|| treatmentArea==TreatmentArea.Arch
+						|| treatmentArea==TreatmentArea.Mouth
+						|| treatmentArea==TreatmentArea.Quad
+						|| treatmentArea==TreatmentArea.Sextant
+						|| treatmentArea==TreatmentArea.ToothRange)
 						&& n>0)
 					{//the only two left are tooth and surf
 						continue;//only entered if n=0, so they don't get entered more than once.
 					}
-					else if(tArea==TreatmentArea.Quad) {
+					else if(treatmentArea==TreatmentArea.Quad) {
 						if(toothNumString=="") {
 							switch(quadCount%4) {
-								case 0: procCur.Surf="UR"; break;
-								case 1: procCur.Surf="UL"; break;
-								case 2: procCur.Surf="LL"; break;
-								case 4: procCur.Surf="LR"; break;
+								case 0: procedure.Surf="UR"; break;
+								case 1: procedure.Surf="UL"; break;
+								case 2: procedure.Surf="LL"; break;
+								case 4: procedure.Surf="LR"; break;
 							}
 							quadCount++;
-							AddQuick(procCur,listFees);
+							AddQuick(procedure,listFees);
 						}
 						else {
-							AddQuadProcs(procCur,listFees);
+							AddQuadProcs(procedure,listFees);
 						}
 					}
-					else if(tArea==TreatmentArea.Surf) {
+					else if(treatmentArea==TreatmentArea.Surf) {
 						if(_toothChartRelay.SelectedTeeth.Count==0) {
 							isValid=false;
 						}
 						else {
-							procCur.ToothNum=_toothChartRelay.SelectedTeeth[n];
+							procedure.ToothNum=_toothChartRelay.SelectedTeeth[n];
 						}
 						if(textSurf.Text=="") {
 							isValid=false;
 						}
 						else {
-							procCur.Surf=Tooth.SurfTidyFromDisplayToDb(textSurf.Text,procCur.ToothNum);//it's ok if toothnum is invalid
+							procedure.Surf=Tooth.SurfTidyFromDisplayToDb(textSurf.Text,procedure.ToothNum);//it's ok if toothnum is invalid
 						}
 						
 						if(isValid) {
-							AddQuick(procCur,listFees);
+							AddQuick(procedure,listFees);
 						}
 						else {
-							AddProcedure(procCur,listFees);
+							AddProcedure(procedure,listFees);
 						}
 					}
-					else if(tArea==TreatmentArea.Tooth) {
+					else if(treatmentArea==TreatmentArea.Tooth) {
 						if(_toothChartRelay.SelectedTeeth.Count==0) {
-							AddProcedure(procCur,listFees);
+							AddProcedure(procedure,listFees);
 						}
 						else {
-							procCur.ToothNum=_toothChartRelay.SelectedTeeth[n];
-							AddQuick(procCur,listFees);
+							procedure.ToothNum=_toothChartRelay.SelectedTeeth[n];
+							AddQuick(procedure,listFees);
 						}
 					}
-					else if(tArea==TreatmentArea.ToothRange) {
+					else if(treatmentArea==TreatmentArea.ToothRange) {
 						if(_toothChartRelay.SelectedTeeth.Count==0) {
-							AddProcedure(procCur,listFees);
+							AddProcedure(procedure,listFees);
 						}
 						else {
-							procCur.ToothRange="";
-							for(int b=0;b<_toothChartRelay.SelectedTeeth.Count;b++) {
-								if(b!=0) procCur.ToothRange+=",";
-								procCur.ToothRange+=_toothChartRelay.SelectedTeeth[b];
+							if (_toothChartRelay.SelectedTeeth.All(x => Tooth.IsMaxillary(x))
+								|| _toothChartRelay.SelectedTeeth.All(x => !Tooth.IsMaxillary(x)))
+							{
+								procedure.ToothRange="";
+								for(int b=0;b<_toothChartRelay.SelectedTeeth.Count;b++) {
+									if(b!=0) {
+										procedure.ToothRange+=",";
+									}
+									procedure.ToothRange+=_toothChartRelay.SelectedTeeth[b];
+								}
+								AddQuick(procedure,listFees);
 							}
-							AddQuick(procCur,listFees);
+							else {
+								string maxToothList="";
+								string manToothList="";
+								for (int j=0;j<_toothChartRelay.SelectedTeeth.Count;j++) {
+									if (Tooth.IsMaxillary(_toothChartRelay.SelectedTeeth[j])) {
+										if(!string.IsNullOrEmpty(maxToothList)) {
+											maxToothList+=",";
+										}
+										maxToothList+=_toothChartRelay.SelectedTeeth[j];
+									}
+									else {
+										if(!string.IsNullOrEmpty(manToothList)) {
+											manToothList+=",";
+										}
+										manToothList+=_toothChartRelay.SelectedTeeth[j];
+									}
+								}
+								procedure.ToothRange=maxToothList;
+								string toothNum=maxToothList.Split(',')[0];
+								procedure.CodeNum=AutoCodeItems.GetCodeNum(listAutoCodeNums[i],toothNum,surf:"",procedure.IsAdditional,Pd.PatNum,Pd.Patient.Age,willBeMissing);
+								AddQuick(procedure,listFees);
+								procedure.ToothRange=manToothList;
+								toothNum=manToothList.Split(',')[0];
+								procedure.CodeNum=AutoCodeItems.GetCodeNum(listAutoCodeNums[i],toothNum,surf:"",procedure.IsAdditional,Pd.PatNum,Pd.Patient.Age,willBeMissing);
+								AddQuick(procedure,listFees);
+							}
 						}
 					}
-					else if(tArea==TreatmentArea.Arch) {
+					else if(treatmentArea==TreatmentArea.Arch) {
 						if(_toothChartRelay.SelectedTeeth.Count==0) {
-							procCur.Surf=CodeMapping.GetArchSurfaceFromProcCode(ProcedureCodes.GetProcCode(procCur.CodeNum));
-							AddProcedure(procCur,listFees);
+							procedure.Surf=CodeMapping.GetArchSurfaceFromProcCode(ProcedureCodes.GetProcCode(procedure.CodeNum));
+							AddProcedure(procedure,listFees);
 							continue;
 						}
-						foreach(string arch in Tooth.GetArchesForTeeth(_toothChartRelay.SelectedTeeth)) {
-							Procedure proc=procCur.Copy();
-							proc.Surf=arch;
-							AddQuick(proc,listFees);
+						List<string> listArches = Tooth.GetArchesForTeeth(_toothChartRelay.SelectedTeeth);
+						for(int j=0;j<listArches.Count;j++) {//U,L, or U and L
+							procedure.Surf=listArches[j];//U or L
+							string toothNum="1";
+							if(listArches[j]=="L"){
+								toothNum="32";
+							}
+							//GetCodeNum ignores arch(surf) and only uses toothNum
+							procedure.CodeNum=AutoCodeItems.GetCodeNum(listAutoCodeNums[i],toothNum,surf:"",procedure.IsAdditional,Pd.PatNum,Pd.Patient.Age,willBeMissing);
+							AddQuick(procedure,listFees);
 						}
 					}
-					else if(tArea==TreatmentArea.Sextant) {
-						AddProcedure(procCur,listFees);
+					else if(treatmentArea==TreatmentArea.Sextant) {
+						AddProcedure(procedure,listFees);
 					}
 					else {//mouth
-						AddQuick(procCur,listFees);
+						AddQuick(procedure,listFees);
 					}
-					listProcCodes.Add(ProcedureCodes.GetProcCode(procCur.CodeNum).ProcCode);
+					listProcCodes.Add(ProcedureCodes.GetProcCode(procedure.CodeNum).ProcCode);
 				}//n selected teeth
-				//orionProvNum=ProcCur.ProvNum;
 			}//for i
 			//this was requiring too many irrelevant queries and going too slowly   //ModuleSelected(PatCur.PatNum);			
 			Pd.ClearAndFill(EnumPdTable.ToothInitial);
@@ -10070,7 +10116,7 @@ namespace OpenDental {
 				//Refresh the procedures from the database to ensure the ones that we group together actually exist.
 				_listChartedProcs=Procedures.GetManyProc(_listChartedProcs.Select(x => x.ProcNum).Where(x => x!=0).ToList(),false)
 					.FindAll(x => x.ProcStatus!=ProcStat.D);
-				if(arrayAutoCodeList.Length>0) {
+				if(listAutoCodeNums.Count>0) {
 					ProcMultiVisits.CreateGroup(_listChartedProcs);//Add all procedures within the procedure button to one group since there is an Auto code (ex Bridge).
 				}
 				else {
@@ -10080,8 +10126,8 @@ namespace OpenDental {
 						ProcMultiVisits.CreateGroup(listToothProcedures);
 					}
 					//Add any leftover procedures to it's own group
-					List<Procedure> listRangedProcedures=_listChartedProcs.FindAll(x => x.ToothNum=="");
-					ProcMultiVisits.CreateGroup(listRangedProcedures);
+					List<Procedure> listProceduresRanged=_listChartedProcs.FindAll(x => x.ToothNum=="");
+					ProcMultiVisits.CreateGroup(listProceduresRanged);
 				}
 			}
 			_listChartedProcs=null;
@@ -10266,12 +10312,7 @@ namespace OpenDental {
 			gridPlanned.Columns.Add(col);
 			col=new GridColumn(Lan.g("TablePlannedAppts","Note"),175);
 			gridPlanned.Columns.Add(col);
-			if(Programs.UsingOrion) {
-				col=new GridColumn(Lan.g("TablePlannedAppts","SchedBy"),80);
-			}
-			else {
-				col=new GridColumn(Lan.g("TablePlannedAppts","DateSched"),80);
-			}
+			col=new GridColumn(Lan.g("TablePlannedAppts","DateSched"),80);
 			gridPlanned.Columns.Add(col);
 			gridPlanned.ListGridRows.Clear();
 			GridRow row;
@@ -10302,44 +10343,15 @@ namespace OpenDental {
 				row.Cells.Add(_tablePlannedAll.Rows[i]["minutes"].ToString());
 				row.Cells.Add(_tablePlannedAll.Rows[i]["ProcDescript"].ToString());
 				row.Cells.Add(_tablePlannedAll.Rows[i]["Note"].ToString());
-				if(Programs.UsingOrion) {
-					string text;
-					List<Procedure> listProcs=Procedures.Refresh(Pd.PatNum);
-					DateTime newDateSched=new DateTime();
-					for(int p=0;p<listProcs.Count;p++) {
-						if(listProcs[p].PlannedAptNum==PIn.Long(_tablePlannedAll.Rows[i]["AptNum"].ToString())) {
-							OrionProc orionProc=OrionProcs.GetOneByProcNum(listProcs[p].ProcNum);
-							if(orionProc!=null && orionProc.DateScheduleBy.Year>1880) {
-								if(newDateSched.Year<1880) {
-									newDateSched=orionProc.DateScheduleBy;
-								}
-								else {
-									if(orionProc.DateScheduleBy<newDateSched) {
-										newDateSched=orionProc.DateScheduleBy;
-									}
-								}
-							}
-						}
-					}
-					if(newDateSched.Year>1880) {
-						text=newDateSched.ToShortDateString();
-					}
-					else {
-						text="None";
-					}
-					row.Cells.Add(text);
+				ApptStatus aptStatus=(ApptStatus)(PIn.Long(_tablePlannedAll.Rows[i]["AptStatus"].ToString()));
+				if(aptStatus==ApptStatus.UnschedList) {
+					row.Cells.Add(Lan.g(this,"Unsched"));
 				}
-				else {//Not Orion
-					ApptStatus aptStatus=(ApptStatus)(PIn.Long(_tablePlannedAll.Rows[i]["AptStatus"].ToString()));
-					if(aptStatus==ApptStatus.UnschedList) {
-						row.Cells.Add(Lan.g(this,"Unsched"));
-					}
-					else if(aptStatus==ApptStatus.Broken) {
-						row.Cells.Add(Lan.g(this,"Broken"));
-					}
-					else {//scheduled, complete and ASAP
-						row.Cells.Add(_tablePlannedAll.Rows[i]["dateSched"].ToString());
-					}
+				else if(aptStatus==ApptStatus.Broken) {
+					row.Cells.Add(Lan.g(this,"Broken"));
+				}
+				else {//scheduled, complete and ASAP
+					row.Cells.Add(_tablePlannedAll.Rows[i]["dateSched"].ToString());
 				}
 				row.ColorText=Color.FromArgb(PIn.Int(_tablePlannedAll.Rows[i]["colorText"].ToString()));
 				row.ColorBackG=Color.FromArgb(PIn.Int(_tablePlannedAll.Rows[i]["colorBackG"].ToString()));
@@ -11226,18 +11238,8 @@ namespace OpenDental {
 			public long MountNum;
 			public DateTime DateCreated;
 		}
-
-
-
-
-
-
-
-
-
 		#endregion Classes - Nested
 
-		
 	}//end class
 
 	#region Class - ODDataRowComparer
@@ -11254,11 +11256,4 @@ namespace OpenDental {
 		}
 	}
 	#endregion Class - ODDataRowComparer
-
-
 }
-
-
-
-
-

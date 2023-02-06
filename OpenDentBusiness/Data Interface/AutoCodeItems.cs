@@ -153,33 +153,33 @@ namespace OpenDentBusiness{
 
 		///<summary>Only called when closing the procedure edit window. Usually returns the supplied CodeNum, unless a better match is found.</summary>
 		public static long VerifyCode(long codeNum,string toothNum,string surf,bool isAdditional,long patNum,int age,
-			out AutoCode AutoCodeCur) {
+			out AutoCode autoCode) {
 			//No need to check MiddleTierRole; no call to db.
 			bool allCondsMet;
-			AutoCodeCur=null;
+			autoCode=null;
 			if(!GetContainsKey(codeNum)) {
 				return codeNum;
 			}
 			if(!AutoCodes.GetContainsKey(GetOne(codeNum).AutoCodeNum)) {
 				return codeNum;//just in case.
 			}
-			AutoCodeCur=AutoCodes.GetOne(GetOne(codeNum).AutoCodeNum);
-			if(AutoCodeCur.LessIntrusive) {
+			autoCode=AutoCodes.GetOne(GetOne(codeNum).AutoCodeNum);
+			if(autoCode.LessIntrusive) {
 				return codeNum;
 			}
 			bool willBeMissing=Procedures.WillBeMissing(toothNum,patNum);
-			List<AutoCodeItem> listForCode=AutoCodeItems.GetListForCode(GetOne(codeNum).AutoCodeNum);
-			List<AutoCodeCond> condList;
-			for(int i=0;i<listForCode.Count;i++) {
-				condList=AutoCodeConds.GetListForItem(listForCode[i].AutoCodeItemNum);
+			List<AutoCodeItem> listAutoCodeItems=AutoCodeItems.GetListForCode(GetOne(codeNum).AutoCodeNum);
+			List<AutoCodeCond> listAutoCodeConds;
+			for(int i=0;i<listAutoCodeItems.Count;i++) {
+				listAutoCodeConds=AutoCodeConds.GetListForItem(listAutoCodeItems[i].AutoCodeItemNum);
 				allCondsMet=true;
-				for(int j=0;j<condList.Count;j++) {
-					if(!AutoCodeConds.ConditionIsMet(condList[j].Cond,toothNum,surf,isAdditional,willBeMissing,age)) {
+				for(int j=0;j<listAutoCodeConds.Count;j++) {
+					if(!AutoCodeConds.ConditionIsMet(listAutoCodeConds[j].Cond,toothNum,surf,isAdditional,willBeMissing,age)) {
 						allCondsMet=false;
 					}
 				}
 				if(allCondsMet) {
-					return listForCode[i].CodeNum;
+					return listAutoCodeItems[i].CodeNum;
 				}
 			}
 			return codeNum;//if couldn't find a better match
@@ -187,54 +187,41 @@ namespace OpenDentBusiness{
 
 		///<summary>Checks inputs and determines if user should be prompted to pick a more applicable procedure code.</summary>
 		///<param name="verifyCode">This is the recommended code based on input. If it matches procCode return value will be false.</param>
-		public static bool ShouldPromptForCodeChange(Procedure proc,ProcedureCode procCode,Patient pat,bool isMandibular,
+		public static bool ShouldPromptForCodeChange(Procedure procedure,ProcedureCode procedureCode,Patient patient,bool isMandibular,
 			List<ClaimProc> claimProcsForProc,out long verifyCode) 
 		{
 			//No remoting role check; no call to db and method utilizes an out parameter.
-			verifyCode=proc.CodeNum;
+			verifyCode=procedure.CodeNum;
 			//these areas have no autocodes
-			if(procCode.TreatArea==TreatmentArea.Mouth
-				|| procCode.TreatArea==TreatmentArea.None
-				|| procCode.TreatArea==TreatmentArea.Quad
-				|| procCode.TreatArea==TreatmentArea.Sextant
-				|| Procedures.IsAttachedToClaim(proc,claimProcsForProc)) {
+			if(procedureCode.TreatArea==TreatmentArea.Mouth
+				|| procedureCode.TreatArea==TreatmentArea.None
+				|| procedureCode.TreatArea==TreatmentArea.Quad
+				|| procedureCode.TreatArea==TreatmentArea.Sextant
+				|| Procedures.IsAttachedToClaim(procedure,claimProcsForProc)) {
 				return false;
 			}
 			//this represents the suggested code based on the autocodes set up.
-			AutoCode AutoCodeCur=null;
-			if(procCode.TreatArea==TreatmentArea.Arch) {
-				if(string.IsNullOrEmpty(proc.Surf)) {
+			AutoCode autoCode=null;
+			if(procedureCode.TreatArea==TreatmentArea.Arch) {
+				if(string.IsNullOrEmpty(procedure.Surf)) {
 					return false;
 				}
-				if(proc.Surf=="U") {
-					verifyCode=AutoCodeItems.VerifyCode(procCode.CodeNum,"1","",proc.IsAdditional,pat.PatNum,pat.Age,out AutoCodeCur);//max
+				if(procedure.Surf=="U") {
+					verifyCode=AutoCodeItems.VerifyCode(procedureCode.CodeNum,"1","",procedure.IsAdditional,patient.PatNum,patient.Age,out autoCode);//max
 				}
 				else {
-					verifyCode=AutoCodeItems.VerifyCode(procCode.CodeNum,"32","",proc.IsAdditional,pat.PatNum,pat.Age,out AutoCodeCur);//mand
+					verifyCode=AutoCodeItems.VerifyCode(procedureCode.CodeNum,"32","",procedure.IsAdditional,patient.PatNum,patient.Age,out autoCode);//mand
 				}
 			}
-			else if(procCode.TreatArea==TreatmentArea.ToothRange) {
+			else if(procedureCode.TreatArea==TreatmentArea.ToothRange) {
 				//test for max or mand.
-				verifyCode=AutoCodeItems.VerifyCode(procCode.CodeNum,(isMandibular) ? "32" : "1","",proc.IsAdditional,pat.PatNum,pat.Age,out AutoCodeCur);
+				verifyCode=AutoCodeItems.VerifyCode(procedureCode.CodeNum,(isMandibular) ? "32" : "1","",procedure.IsAdditional,patient.PatNum,patient.Age,out autoCode);
 			}
 			else {//surf or tooth
-				string claimSurf=Tooth.SurfTidyForClaims(proc.Surf,proc.ToothNum);
-				verifyCode=AutoCodeItems.VerifyCode(procCode.CodeNum,proc.ToothNum,claimSurf,proc.IsAdditional,pat.PatNum,pat.Age,out AutoCodeCur);
+				string claimSurf=Tooth.SurfTidyForClaims(procedure.Surf,procedure.ToothNum);
+				verifyCode=AutoCodeItems.VerifyCode(procedureCode.CodeNum,procedure.ToothNum,claimSurf,procedure.IsAdditional,patient.PatNum,patient.Age,out autoCode);
 			}
-			return procCode.CodeNum!=verifyCode;
+			return procedureCode.CodeNum!=verifyCode;
 		}
 	}
-	
-	
-
-
 }
-
-
-
-
-
-
-
-
-

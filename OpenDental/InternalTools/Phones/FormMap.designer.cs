@@ -66,6 +66,7 @@ namespace OpenDental.InternalTools.Phones{
 			this.mapPanel = new OpenDental.InternalTools.Phones.MapPanel();
 			this.timerWebCam = new System.Windows.Forms.Timer(this.components);
 			this.label8 = new System.Windows.Forms.Label();
+			this.butZoomFit = new OpenDental.UI.Button();
 			this.groupPhoneMetrics.SuspendLayout();
 			this.tabMain.SuspendLayout();
 			this.SuspendLayout();
@@ -462,13 +463,23 @@ namespace OpenDental.InternalTools.Phones{
 			this.label8.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.label8.Location = new System.Drawing.Point(411, 30);
 			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(116, 36);
+			this.label8.Size = new System.Drawing.Size(237, 36);
 			this.label8.TabIndex = 107;
-			this.label8.Text = "use mouse to \r\npan and zoom";
+			this.label8.Text = "Use mouse to pan and zoom,\r\nbut it will not yet stick very well";
+			// 
+			// butZoomFit
+			// 
+			this.butZoomFit.Location = new System.Drawing.Point(340, 39);
+			this.butZoomFit.Name = "butZoomFit";
+			this.butZoomFit.Size = new System.Drawing.Size(60, 24);
+			this.butZoomFit.TabIndex = 108;
+			this.butZoomFit.Text = "Zoom Fit";
+			this.butZoomFit.Click += new System.EventHandler(this.butZoomFit_Click);
 			// 
 			// FormMap
 			// 
 			this.ClientSize = new System.Drawing.Size(1884, 1042);
+			this.Controls.Add(this.butZoomFit);
 			this.Controls.Add(this.label8);
 			this.Controls.Add(this.mapPanel);
 			this.Controls.Add(this.mapNumberCustDownTime);
@@ -547,5 +558,6 @@ namespace OpenDental.InternalTools.Phones{
 		private OpenDental.InternalTools.Phones.MapPanel mapPanel;
 		private System.Windows.Forms.Timer timerWebCam;
 		private System.Windows.Forms.Label label8;
+		private UI.Button butZoomFit;
 	}
 }

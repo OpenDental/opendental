@@ -303,6 +303,15 @@ namespace OpenDental.InternalTools.Phones {
 		#endregion Methods - Public
 
 		#region Methods - Private, Event Handlers
+		private void butZoomFit_Click(object sender,EventArgs e){
+			if(comboRoom.SelectedIndex==-1){
+				return;
+			}
+			Size sizeRoom=new Size(_mapAreaContainer.FloorWidthFeet,_mapAreaContainer.FloorHeightFeet);
+			mapPanel.SetZoomInitialFit(mapPanel.Size,sizeRoom);
+			mapPanel.Invalidate();
+		}
+
 		private void comboRoom_SelectionChangeCommitted(object sender,EventArgs e) {
 			_mapAreaContainer=_listMapAreaContainers[comboRoom.SelectedIndex];
 			this.Text="Call Center Status Map - "+_listMapAreaContainers[comboRoom.SelectedIndex].Description;
@@ -566,7 +575,12 @@ namespace OpenDental.InternalTools.Phones {
 				return;
 			}
 			Size sizeRoom=new Size(_mapAreaContainer.FloorWidthFeet,_mapAreaContainer.FloorHeightFeet);
-			mapPanel.SetZoomInitialFit(mapPanel.Size,sizeRoom);
+			if(mapPanel.Width==0){
+				//don't change the zoom because once they enlarge the window, they will want to see it normal.
+			}
+			else{
+				mapPanel.SetZoomInitialFit(mapPanel.Size,sizeRoom);
+			}
 			mapPanel.SetMapAreaContainer(_mapAreaContainer);
 			mapPanel.Invalidate();
 		}
@@ -724,6 +738,7 @@ namespace OpenDental.InternalTools.Phones {
 			return listPhoneEmpDefaults.OrderBy(x => x.EscalationOrder)//Show people at the selected location first
 				.ThenBy(x => x.EmpName).ToList();
 		}
+
 
 
 		#endregion Methods - Private

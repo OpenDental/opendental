@@ -435,6 +435,7 @@ namespace OpenDental{
 			this.gridTasks.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.gridTasks.DoShowRightClickLinks = true;
 			this.gridTasks.Location = new System.Drawing.Point(12, 12);
 			this.gridTasks.Name = "gridTasks";
 			this.gridTasks.NoteSpanStart = 2;

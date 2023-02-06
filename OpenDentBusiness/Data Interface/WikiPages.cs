@@ -179,7 +179,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Searches keywords, title, content.  Does not return pagetitles for drafts.</summary>
-		public static List<string> GetForSearch(string searchText,bool ignoreContent,bool isDeleted=false, bool isExactSearch=false,bool showMainPages=false) {
+		public static List<string> GetForSearch(string searchText,bool ignoreContent,bool isDeleted=false, bool isExactSearch=false,bool showMainPages=false,bool searchForLinks=true) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod(),searchText,ignoreContent,isDeleted,isExactSearch,showMainPages);
 			}
@@ -257,7 +257,7 @@ namespace OpenDentBusiness{
 					command+="PageContentPlainText LIKE '%"+POut.String(searchTokens[i])+"%' ";
 				}
 				command+=") ";
-				if(!listWikiPageNumsPageTitle.IsNullOrEmpty()) {
+				if(!listWikiPageNumsPageTitle.IsNullOrEmpty() && searchForLinks) {
 					command+=string.Join(" ",listWikiPageNumsPageTitle.Select(x => $"OR PageContent LIKE '%[[{x}]]%'"));
 				}
 				command+=") ";

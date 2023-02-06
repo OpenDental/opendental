@@ -574,6 +574,11 @@ namespace OpenDental{
 					entry.DebitAmt=-amt;
 				}
 			}
+			if(!IsNew) {
+				entry.SecUserNumEntry=_listJournalEntriesOld[0].SecUserNumEntry;
+				entry.SecDateTEntry=_listJournalEntriesOld[0].SecDateTEntry;
+				entry.JournalEntryNum=_listJournalEntriesOld[0].JournalEntryNum;
+			}
 			entry.Memo=textMemo.Text;
 			entry.CheckNumber=textCheckNumber.Text;
 			_listJournalEntries.Add(entry);
@@ -588,6 +593,11 @@ namespace OpenDental{
 			}
 			else{
 				entry.AccountNum=AccountPicked.AccountNum;
+			}
+			if(!IsNew && _listJournalEntriesOld.Count > 1) {
+				entry.SecUserNumEntry=_listJournalEntriesOld[1].SecUserNumEntry;
+				entry.SecDateTEntry=_listJournalEntriesOld[1].SecDateTEntry;
+				entry.JournalEntryNum=_listJournalEntriesOld[1].JournalEntryNum;
 			}
 			entry.Memo=textMemo.Text;
 			entry.CheckNumber=textCheckNumber.Text;

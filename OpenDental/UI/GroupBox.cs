@@ -17,6 +17,7 @@ namespace OpenDental.UI{//Jordan is the only one allowed to edit this file
 	public partial class GroupBox : System.Windows.Forms.Panel{//inheriting from panel in order to be a container
 		public LayoutManagerForms LayoutManager=new LayoutManagerForms();
 		private bool _drawBorder=true;
+		private Color _colorBackLabel=Color.Empty;
 		private Color _backColor=Color.Empty;
 		private string _text=null;
 
@@ -24,6 +25,7 @@ namespace OpenDental.UI{//Jordan is the only one allowed to edit this file
 			InitializeComponent();
 			DoubleBuffered=true;
 			ResizeRedraw=true;
+			base.TabStop=true;
 		}
 
 		[AmbientValue(typeof(Color), "Empty")]
@@ -54,6 +56,19 @@ namespace OpenDental.UI{//Jordan is the only one allowed to edit this file
 				Invalidate();
 			}
 		}
+
+		[Category("OD")]
+		[DefaultValue(typeof(Color), "Empty")]
+		[Description("Used when highlighting the text background on the groupBox.")]
+		public Color ColorBackLabel{
+			get{
+				return _colorBackLabel;
+			}
+			set{
+				_colorBackLabel=value;
+				Invalidate();
+			}
+		}
 		
 		///<summary>Used by designer to enable resetting the property to its default value.</summary>
 		public override void ResetBackColor(){
@@ -76,6 +91,19 @@ namespace OpenDental.UI{//Jordan is the only one allowed to edit this file
 			set{
 				_drawBorder=value;
 				Invalidate();
+			}
+		}
+
+		///<summary></summary>
+		[Category("OD")]
+		[DefaultValue(true)]
+		[Description("Always true, with no way to change it. Allows controls within the groupbox to get focus.")]
+		public new bool TabStop{
+			get{
+				return true;
+			}
+			set{
+				base.TabStop=true;//just ignore what they pass in.
 			}
 		}
 
@@ -114,6 +142,12 @@ namespace OpenDental.UI{//Jordan is the only one allowed to edit this file
 			using GraphicsPath graphicsPath=GraphicsHelper.GetRoundedPath(new RectangleF(0,0,Width-1,Height-1),radius);
 			Brush brush=new SolidBrush(BackColor);
 			g.FillPath(brush,graphicsPath);
+			if(ColorBackLabel!=Color.Empty){
+				SizeF sizeF=g.MeasureString(Text,Font);
+				RectangleF rectangleF=new RectangleF(LayoutManager.Scale(5),1,sizeF.Width,sizeF.Height);
+				using Brush brushBackLabel=new SolidBrush(ColorBackLabel);
+				g.FillRectangle(brushBackLabel,rectangleF);
+			}
 			if(DrawBorder){
 				g.DrawPath(Pens.Silver,graphicsPath);
 			}

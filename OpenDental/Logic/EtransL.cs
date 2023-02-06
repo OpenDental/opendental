@@ -141,7 +141,7 @@ namespace OpenDental {
 				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g("FormEtrans835s","Creating Etrans835 records")+" "+(i+1)+"/"+listEtransMissingEtrans835s.Count);
 				string messageText835=EtransMessageTexts.GetMessageText(listEtransMissingEtrans835s[i].EtransMessageTextNum);
 				List<Etrans835Attach> listAttachedTo835=Etrans835Attaches.GetForEtrans(listEtransMissingEtrans835s[i].EtransNum);
-				X835 x835=new X835(listEtransMissingEtrans835s[i],messageText835,listEtransMissingEtrans835s[i].TranSetId835,listAttachedTo835,true);
+				X835 x835=new X835(listEtransMissingEtrans835s[i],messageText835,listEtransMissingEtrans835s[i].TranSetId835,listAttachedTo835);
 				Etrans835 etrans835=new Etrans835();
 				etrans835.EtransNum=listEtransMissingEtrans835s[i].EtransNum;
 				Etrans835s.Upsert(etrans835,x835);

@@ -29,6 +29,8 @@ namespace OpenDental{
 			this.treeMain = new System.Windows.Forms.TreeView();
 			this.panelMain = new OpenDental.UI.PanelOD();
 			this.labelCategories = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
+			this.textSearch = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
 			// 
 			// butOK
@@ -57,10 +59,10 @@ namespace OpenDental{
 			this.treeMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.treeMain.HideSelection = false;
-			this.treeMain.Location = new System.Drawing.Point(12, 30);
+			this.treeMain.Location = new System.Drawing.Point(12, 52);
 			this.treeMain.Name = "treeMain";
 			this.treeMain.ShowPlusMinus = false;
-			this.treeMain.Size = new System.Drawing.Size(225, 624);
+			this.treeMain.Size = new System.Drawing.Size(225, 602);
 			this.treeMain.TabIndex = 0;
 			this.treeMain.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeMain_BeforeCollapse);
 			this.treeMain.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeMain_AfterSelect);
@@ -77,17 +79,37 @@ namespace OpenDental{
 			// 
 			// labelCategories
 			// 
-			this.labelCategories.Location = new System.Drawing.Point(12, 9);
+			this.labelCategories.Location = new System.Drawing.Point(11, 33);
 			this.labelCategories.Name = "labelCategories";
 			this.labelCategories.Size = new System.Drawing.Size(225, 18);
 			this.labelCategories.TabIndex = 236;
 			this.labelCategories.Text = "Categories";
 			this.labelCategories.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(2, 6);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(58, 18);
+			this.label1.TabIndex = 237;
+			this.label1.Text = "Search";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// textSearch
+			// 
+			this.textSearch.Location = new System.Drawing.Point(62, 5);
+			this.textSearch.MaxLength = 100;
+			this.textSearch.Name = "textSearch";
+			this.textSearch.Size = new System.Drawing.Size(130, 20);
+			this.textSearch.TabIndex = 0;
+			this.textSearch.TextChanged += new System.EventHandler(this.textSearch_TextChanged);
+			// 
 			// FormPreferences
 			// 
 			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(1230, 696);
+			this.Controls.Add(this.textSearch);
+			this.Controls.Add(this.label1);
 			this.Controls.Add(this.labelCategories);
 			this.Controls.Add(this.panelMain);
 			this.Controls.Add(this.treeMain);
@@ -99,6 +121,7 @@ namespace OpenDental{
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormPreferences_FormClosing);
 			this.Load += new System.EventHandler(this.FormModulePrefs_Load);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -109,5 +132,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TreeView treeMain;
 		private UI.PanelOD panelMain;
 		private System.Windows.Forms.Label labelCategories;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.TextBox textSearch;
 	}
 }

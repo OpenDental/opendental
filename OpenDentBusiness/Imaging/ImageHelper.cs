@@ -194,6 +194,9 @@ namespace OpenDentBusiness {
 			if(sizeCanvas is null){
 				return new Size((int)Math.Round(widthResult),(int)Math.Round(heightResult));
 			}
+			if(sizeCanvas.Value.Width==0){//this would cause ratioTargetWH to be zero, and then UE for later dividing by zero
+				return new Size((int)Math.Round(widthResult),(int)Math.Round(heightResult));
+			}
 			float ratioImageWH=widthResult/heightResult;//after the rotation
 			float ratioTargetWH=(float)sizeCanvas.Value.Width/sizeCanvas.Value.Height;
 			if(ratioTargetWH>ratioImageWH){//new should be wider

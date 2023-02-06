@@ -31,7 +31,6 @@ namespace OpenDental {
 			Left=Math.Max(0,((rectWorkingArea.Width-LayoutManager.Scale(1200))/2)+rectWorkingArea.Left);
 			Width=Math.Min(rectWorkingArea.Width,LayoutManager.Scale(1200));
 			Height=rectWorkingArea.Height;
-			FillGrid();
 			wikiPageTitleSelected="";
 			UserOdPref userIncludeContentPref=UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.WikiSearchIncludeContent).FirstOrDefault();
 			bool doIncludeContent=DO_INCLUDE_CONTENT_DEFAULT;
@@ -42,12 +41,13 @@ namespace OpenDental {
 			if(string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.ReportingServerDbName))
 				|| string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.ReportingServerCompName)))
 			{
-				checkReportServer.Visible=false;
+				checkReadOnlyServer.Visible=false;
 			}
 			else {//default to report server when one is set up.
-				checkReportServer.Visible=true;
-				checkReportServer.Checked=true;
+				checkReadOnlyServer.Visible=true;
+				checkReadOnlyServer.Checked=true;
 			}
+			FillGrid();
 			SetFilterControlsAndAction(
 				() => { 
 					//This is so we're not running queries every time this event fires unless we want it to
@@ -104,8 +104,8 @@ namespace OpenDental {
 			//gridMain.Columns.Add(col);
 			gridMain.ListGridRows.Clear();
 			//This used to search the wikipagehist table, now archived pages are stored in wikipage.  See JobNum 4429.
-			listWikiPageTitles=ReportsComplex.RunFuncOnReportServer(() => WikiPages.GetForSearch(textSearch.Text,checkIgnoreContent.Checked,checkArchivedOnly.Checked,
-				checkBoxMatchWholeWord.Checked,checkBoxShowMainPages.Checked),checkReportServer.Checked);
+			listWikiPageTitles=ReportsComplex.RunFuncOnReadOnlyServer(() => WikiPages.GetForSearch(textSearch.Text,checkIgnoreContent.Checked,checkArchivedOnly.Checked,
+				checkBoxMatchWholeWord.Checked,checkBoxShowMainPages.Checked,searchForLinks:false),checkReadOnlyServer.Checked);
 			for(int i=0;i<listWikiPageTitles.Count;i++) {
 				GridRow row=new GridRow();
 				row.Cells.Add(listWikiPageTitles[i]);

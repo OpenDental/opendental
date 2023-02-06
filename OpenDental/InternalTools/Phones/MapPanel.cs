@@ -314,6 +314,9 @@ namespace OpenDental.InternalTools.Phones{
 			g.TranslateTransform(Width/2f,Height/2f);
 			//because of order, scaling is center of panel instead of center of image.
 			float scaleFactor=_zoomValue/100f;//example 1759/100=17.59
+			if(_zoomValue==0){
+				return;
+			}
 			g.ScaleTransform(scaleFactor,scaleFactor);
 			//and the user translation must be in image coords rather than panel coords
 			g.TranslateTransform(_pointFTranslation.X,_pointFTranslation.Y);
