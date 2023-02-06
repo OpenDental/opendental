@@ -167,6 +167,15 @@ namespace OpenDentBusiness{
 			return Crud.DiscountPlanCrud.SelectOne(discountPlanNum);
 		}
 
+		///<summary>Gets a list of all DiscountPlans from the database.</summary>
+		public static List<DiscountPlan> GetPlans(){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<DiscountPlan>>(MethodBase.GetCurrentMethod());
+			}
+			string command="SELECT * FROM discountplan";
+			return Crud.DiscountPlanCrud.SelectMany(command);
+		}
+
 		///<summary>Returns a DiscountPlanProc object for every procedure passed in. It is assumed that all procedures are for the same patient. Passing in an empty list of Adjustments will assume
 		///no prior adjustments of the discountPlan.DefNum had been applied.</summary>
 		public static List<DiscountPlanProc> GetDiscountPlanProc(List<Procedure> listProcs,DiscountPlanSub discountPlanSub=null,DiscountPlan discountPlan=null,List<Adjustment> listAdjustments=null) {
