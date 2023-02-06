@@ -17,10 +17,10 @@ namespace OpenDentBusiness
 		public DateTime DateInterchange;
 		///<summary>usually *,:,and ~</summary>
 		public X12Separators Separators;
-		///<summary>A collection of X12FunctionalGroups. GS segments.</summary>
-		public List<X12FunctionalGroup> FunctGroups;
-		///<summary>All segments for the entiremessage.</summary>
-		public List<X12Segment> Segments;
+		///<summary>A collection of X12FunctionalGroups. GS segments. Virtual so that inheriting class can hide this property.</summary>
+		public virtual List<X12FunctionalGroup> FunctGroups { get; set; }
+		///<summary>All segments for the entiremessage. Virtual so that inheriting class can hide this property.</summary>
+		public virtual List<X12Segment> Segments { get; set; }
 
 		public static bool IsX12(string messageText){
 			if(ToX12object(messageText)!=null) {

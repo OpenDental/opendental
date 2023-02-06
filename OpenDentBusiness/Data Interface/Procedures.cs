@@ -1131,9 +1131,9 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Gets a list of ProcedureForApi from db. Returns and empty list if not found.</summary>
-		public static List<ProcedureForApi> GetProceduresForApi(long patNum,DateTime dateTStamp,long aptNum) {
+		public static List<ProcedureForApi> GetProceduresForApi(int limit,int offset,long patNum,DateTime dateTStamp,long aptNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ProcedureForApi>>(MethodBase.GetCurrentMethod(),patNum,dateTStamp,aptNum);
+				return Meth.GetObject<List<ProcedureForApi>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,dateTStamp,aptNum);
 			}
 			List<ProcedureForApi> listProcedureForApis=new List<ProcedureForApi>();
 			string command="SELECT * FROM procedurelog "
@@ -1144,7 +1144,8 @@ namespace OpenDentBusiness {
 			if(aptNum!=0) {
 				command+="AND AptNum='"+POut.Long(aptNum)+"' ";
 			}
-			command+=" ORDER BY ProcNum DESC";
+			command+=" ORDER BY ProcNum DESC "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
 			string commandDatetime="SELECT "+DbHelper.Now();
 			DateTime dateTimeServer=PIn.DateT(OpenDentBusiness.Db.GetScalar(commandDatetime));//run before procedures for rigorous inclusion of procedures
 			List<Procedure> listProcedures=Crud.ProcedureCrud.SelectMany(command);

@@ -60,7 +60,8 @@ namespace OpenDentBusiness.WebTypes.WebSched.TimeSlot {
 					+Lans.g("WebSched","Please call us to schedule your appointment."),ODException.ErrorCodes.NoOperatoriesSetup);
 			}
 			log?.WriteLine("listOperatories:\r\n\t"+string.Join(",\r\n\t",listOperatories.Select(x => x.OperatoryNum+" - "+x.Abbrev)),LogLevel.Verbose);
-			List<long> listProvNums=listProviders.Select(x => x.ProvNum).Distinct().ToList();
+			//Make sure that we only return not is not persons.
+			List<long> listProvNums=listProviders.Where(x => !x.IsNotPerson).Select(x => x.ProvNum).Distinct().ToList();
 			string timePatternRecall=recallType.TimePattern;
 			//Apparently scheduling this one recall can potentially schedule a bunch of other recalls at the same time.
 			//We need to potentially bloat our time pattern based on the other recalls that are due for this specific patient.

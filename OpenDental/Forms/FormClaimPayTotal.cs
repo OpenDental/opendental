@@ -228,6 +228,7 @@ namespace OpenDental {
 					}
 				}
 				row.Cells.Add(ClaimProcArray[i].Remarks);
+				row.Tag=ClaimProcArray[i];
 				gridMain.ListGridRows.Add(row);
 			}
 			gridMain.EndUpdate();
@@ -257,6 +258,26 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellTextChanged(object sender,EventArgs e) {
+			//The user could have just changed the text in a cell that impacts the Pat Resp value (Ins Pay or Write-off).
+			//Recalculate the Pat Resp value and update the corresponding cell with the new value if it is showing.
+			if(_doShowPatResp && gridMain.GetSelectedIndex() > -1) {
+				//Get the GridRow object which will be needed to manipulate cell text along with getting the Tag object.
+				GridRow gridRowSelected=gridMain.SelectedGridRows.First();
+				ClaimProc claimProc=(ClaimProc)gridRowSelected.Tag;
+				Procedure procedure=Procedures.GetProcFromList(_listProcedures,claimProc.ProcNum);
+				double procFee=procedure.ProcFeeTotal;
+				if(claimProc.Status==ClaimProcStatus.Supplemental) {
+					procFee=0;
+				}
+				//Read in the values from the cells on the grid that are editable.
+				double insPayAmt=PIn.Double(gridRowSelected.Cells[gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Ins Pay"))].Text);
+				double writeOff=PIn.Double(gridRowSelected.Cells[gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Write-off"))].Text);
+				//Calculate the new Pat Resp value and update the text in the corresponding cell.
+				double patResp=procFee-insPayAmt-writeOff;
+				gridRowSelected.Cells[gridMain.Columns.GetIndex(Lan.g("TableClaimProc","Pat Resp"))].Text=patResp.ToString("F");
+				gridMain.Invalidate();//Redraw the grid so that the user can see the new value.
+			}
+			//Recalculate all of the Totals text boxes that show up underneath the Procedures grid.
 			FillTotals();
 		}
 

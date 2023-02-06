@@ -82,7 +82,7 @@ namespace OpenDental {
 				comboWebSchedClinic.Items.Add(_listClinicsAll[i].Abbr);
 			}
 			comboWebSchedClinic.SelectedIndex=0;
-			_listProvidersAll=Providers.GetDeepCopy(true);
+			_listProvidersAll=Providers.GetDeepCopy(true).FindAll(x => !x.IsNotPerson);//Make sure that we only return not is not persons.
 			comboWebSchedProviders.Items.Clear();
 			comboWebSchedProviders.Items.Add(Lan.g(this,"All"));
 			for(int i=0;i<_listProvidersAll.Count;i++) {

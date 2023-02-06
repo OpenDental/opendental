@@ -4090,7 +4090,7 @@ namespace OpenDentBusiness {
 						int countDeleted=0;
 						for(int i=0;i<listEtransWithMultipleEtrans835s.Count;i++) {
 							string messageText835=EtransMessageTexts.GetMessageText(listEtransWithMultipleEtrans835s[i].EtransMessageTextNum);
-							X835 x835=new X835(listEtransWithMultipleEtrans835s[i],messageText835,listEtransWithMultipleEtrans835s[i].TranSetId835,null,true);
+							X835 x835=new X835(listEtransWithMultipleEtrans835s[i],messageText835,listEtransWithMultipleEtrans835s[i].TranSetId835,null);
 							List<string> listPatNames=x835.ListClaimsPaid.Select(x => x.PatientName.ToString()).Distinct().ToList();
 							//Mimics how the patient name is constructed in Etrans835s.Upsert()
 							string patientName=(listPatNames.Count>0 ? listPatNames[0] : "");

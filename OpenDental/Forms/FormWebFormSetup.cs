@@ -305,14 +305,10 @@ namespace OpenDental {
 		private void ConstructURLs() {
 			textURLs.Clear();
 			List<string> listURLs=new List<string>();
-			bool hasDuplicateSheets=false;
 			foreach(WebForms_SheetDef sheetDef in gridMain.SelectedTags<WebForms_SheetDef>()) {
 				string url=SheetDefBaseURL(sheetDef);
-				if(_listSelectedNextFormIds.Any(x => x==sheetDef.WebSheetDefID)) {//Duplicate sheets found for the current URL.
-					hasDuplicateSheets=true;
-				}
 				if(_listSelectedNextFormIds.Count>0) {
-					url+="&NFID="+string.Join("&NFID=",_listSelectedNextFormIds);
+					url+="&NFID="+string.Join("&NFID=",_listSelectedNextFormIds.FindAll(x => x!=sheetDef.WebSheetDefID));//Will remove ids that match the id of the sheet def we are currently constructing a url for.
 				}
 				if(comboClinic.SelectedClinicNum > 0) {//'None' is not selected
 					url+="&CID="+comboClinic.SelectedClinicNum.ToString(); 
@@ -327,9 +323,6 @@ namespace OpenDental {
 					url+="&ReturnURL="+HttpUtility.UrlEncode(textRedirectURL.Text);
 				}
 				listURLs.Add(url);
-			}
-			if(hasDuplicateSheets) {
-				MsgBox.Show(this,"One or more URLs contain duplicate sheets.");
 			}
 			textURLs.AppendText(string.Join("\r\n",listURLs));
 			ResetSaveButton();
