@@ -350,12 +350,12 @@ namespace OpenDental {
 			RequiredField requiredField;
 			for(int i=0;i<gridMain.SelectedIndices.Length;i++) {
 				requiredField=_listRequiredFields[gridMain.SelectedIndices[i]];
+				if(requiredField.FieldName==RequiredFieldName.MedicaidState) {
+					checkMedicaidLength.Checked=false;
+				}
 				RequiredFields.Delete(requiredField.RequiredFieldNum);
 			}
 			RequiredFields.RefreshCache();
-			if(_requiredField.FieldName==RequiredFieldName.MedicaidState) {
-				checkMedicaidLength.Checked=false;
-			}
 			FillAvailable();
 			FillMain();
 			gridConditions.BeginUpdate();

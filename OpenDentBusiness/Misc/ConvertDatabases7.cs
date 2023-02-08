@@ -420,11 +420,11 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		///<summary>Convert script for B41238. Various WebSchedRecall bugs since the AndrewD refactor have lead to a buildup of overdue recalls. This cleanup helper
+		///<summary>Convert script for B41238. Various WebSchedRecall bugs since the AutoComm refactor have lead to a buildup of overdue recalls. This cleanup helper
 		///purges unsent and potentially invalid webschedrecall rows which the eConnector will automatically recreate if they were in fact valid.
 		///This is too time sensitive to be done in a DBM tool as customers would need to know to run the tool before turning on their eConnector.
 		///Deleting them is necessary because after the bugfix B40690, we are now allowing WebSchedRecalls to send if they are in the database even if they
-		///are long overdue. Although we never want to delete from the database in the convert script, Alvin and Brittany strongly believe that any unsent
+		///are long overdue. Although we never want to delete from the database in the convert script, we strongly believe that any unsent
 		///WebSchedRecall automatically created is OK since even if we deleted a legitimately created WebSchedRecall, the AutoCommProcessor will insert a new one if
 		///it actually needs to be sent out (See WebSchedRecallFeature.PrepAutomaticWebSchedNotifications()). This is because our AutoCommProcessor will
 		///attempt to send any WebSchedRecall in our database that is considered unsent (SendStatus is SendNotAttempted), essentially treating this table as an
@@ -4382,98 +4382,44 @@ namespace OpenDentBusiness {
 		}
 
 		private static void To22_3_45() {
-			//Find and delete all duplicate MsgIds within emailmessageuid.
-			string command="SELECT MsgId FROM emailmessageuid GROUP BY BINARY MsgId HAVING COUNT(MsgId)>1";
-			List<string> listMsgIds=Db.GetListString(command);
-			if(listMsgIds.Count>0) {
-				for(int i=0;i<listMsgIds.Count;i++) {
-					command="SELECT EmailMessageUidNum FROM emailmessageuid WHERE BINARY MsgId='"+POut.String(listMsgIds[i])+"'";
-					List<long> listEmailMessageUidNums=Db.GetListLong(command,hasExceptions:false);
-					listEmailMessageUidNums.RemoveAt(0);//Keep one of the email message uids but remove the duplicates.
-					StringBuilder sbCommands=new StringBuilder();
-					sbCommands.Append("DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN (");
-					for(int j=0;j<listEmailMessageUidNums.Count;j++) {
-						if(j==0) {
-							sbCommands.Append(listEmailMessageUidNums[j].ToString());
-							continue;
-						}
-						if(sbCommands.Length+listEmailMessageUidNums[j].ToString().Length+1<TableBase.MaxAllowedPacketCount) {
-							sbCommands.Append(","+listEmailMessageUidNums[j].ToString());
-							continue;
-						}
-						else {
-							sbCommands.Append(")");
-							Db.NonQ(sbCommands.ToString());
-							sbCommands=new StringBuilder();
-							sbCommands.Append("DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN ("+listEmailMessageUidNums[j].ToString());
-						}
-					}
-					sbCommands.Append(")");
-					Db.NonQ(sbCommands.ToString());
-				}
-			}
-			//Find and remove all duplicate email messages.
-			command="SELECT GROUP_CONCAT(EmailMessageNum) msgNums "+
-				"FROM emailmessage "+
-				"GROUP BY BINARY Subject,RecipientAddress,ToAddress,FromAddress,CcAddress,BccAddress,BINARY BodyText,BINARY RawEmailIn,MsgDateTime "+
-				"HAVING COUNT(*)>1";
-			List<string> listDupMsgNums=Db.GetListString(command);
-     	if(listDupMsgNums.Count>0) {
-				for(int i=0;i<listDupMsgNums.Count;i++) {
-					List<string> listMsgNums=listDupMsgNums[i].Split(',').Skip(1).ToList();
-					if(listMsgNums.Count==0) {
-						continue;
-					}
-					Db.NonQ("DELETE FROM emailmessage WHERE EmailMessageNum IN("+string.Join(",",listMsgNums)+")");
-				}
-				CleanupEmailAttachments();
-			}
+			//Duplicate email code moved to 22.3.48, commented out here because the queries can take a long time to run and we don't want to run it more than once
 		}
 
 		private static void To22_3_47() {
+			//Duplicate email code moved to 22.3.48, commented out here because the queries can take a long time to run and we don't want to run it more than once
+		}
+
+		private static void To22_3_48() {
 			//Find and delete all duplicate MsgIds within emailmessageuid.
-			string command="SELECT MsgId FROM emailmessageuid GROUP BY BINARY MsgId HAVING COUNT(MsgId)>1";
-			List<string> listMsgIds=Db.GetListString(command);
-			if(listMsgIds.Count>0) {
-				for(int i=0;i<listMsgIds.Count;i++) {
-					command="SELECT EmailMessageUidNum FROM emailmessageuid WHERE BINARY MsgId='"+POut.String(listMsgIds[i])+"'";
-					List<long> listEmailMessageUidNums=Db.GetListLong(command,hasExceptions:false);
-					listEmailMessageUidNums.RemoveAt(0);//Keep one of the email message uids but remove the duplicates.
-					StringBuilder sbCommands=new StringBuilder();
-					sbCommands.Append("DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN (");
-					for(int j=0;j<listEmailMessageUidNums.Count;j++) {
-						if(j==0) {
-							sbCommands.Append(listEmailMessageUidNums[j].ToString());
-							continue;
-						}
-						if(sbCommands.Length+listEmailMessageUidNums[j].ToString().Length+1<TableBase.MaxAllowedPacketCount) {
-							sbCommands.Append(","+listEmailMessageUidNums[j].ToString());
-							continue;
-						}
-						else {
-							sbCommands.Append(")");
-							Db.NonQ(sbCommands.ToString());
-							sbCommands=new StringBuilder();
-							sbCommands.Append("DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN ("+listEmailMessageUidNums[j].ToString());
-						}
+			string command=$@"SET group_concat_max_len=4294967295;
+				SELECT GROUP_CONCAT(EmailMessageUidNum) msgUidNums
+				FROM emailmessageuid
+				GROUP BY BINARY MsgId
+				HAVING COUNT(*)>1";
+			List<string> listDupMsgUidNums=Db.GetListString(command);
+			if(listDupMsgUidNums.Count>0) {
+				for(int i=0;i<listDupMsgUidNums.Count;i++) {
+					List<string> listMsgUidNums=listDupMsgUidNums[i].Split(",",StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();//Keep one of the EmailMessageUidNums
+					if(listMsgUidNums.Count==0) {
+						continue;//shouldn't happen
 					}
-					sbCommands.Append(")");
-					Db.NonQ(sbCommands.ToString());
+					Db.NonQ($"DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN({string.Join(",",listMsgUidNums)})");
 				}
 			}
 			//Find and remove all duplicate email messages.
-			command="SELECT GROUP_CONCAT(EmailMessageNum) msgNums "+
-				"FROM emailmessage "+
-				"GROUP BY BINARY Subject,RecipientAddress,ToAddress,FromAddress,CcAddress,BccAddress,BINARY BodyText,BINARY RawEmailIn,MsgDateTime "+
-				"HAVING COUNT(*)>1";
+			command=$@"SET group_concat_max_len=4294967295;
+				SELECT GROUP_CONCAT(EmailMessageNum ORDER BY SentOrReceived DESC) msgNums
+				FROM emailmessage
+				GROUP BY BINARY SUBJECT,RecipientAddress,ToAddress,FromAddress,CcAddress,BccAddress,BINARY BodyText,MsgDateTime
+				HAVING COUNT(*)>1";
 			List<string> listDupMsgNums=Db.GetListString(command);
      	if(listDupMsgNums.Count>0) {
 				for(int i=0;i<listDupMsgNums.Count;i++) {
-					List<string> listMsgNums=listDupMsgNums[i].Split(',').Skip(1).ToList();
+					List<string> listMsgNums=listDupMsgNums[i].Split(",",StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();//Keep one of the EmailMessageNums
 					if(listMsgNums.Count==0) {
 						continue;
 					}
-					Db.NonQ("DELETE FROM emailmessage WHERE EmailMessageNum IN("+string.Join(",",listMsgNums)+")");
+					Db.NonQ($"DELETE FROM emailmessage WHERE EmailMessageNum IN({string.Join(",",listMsgNums)})");
 				}
 				CleanupEmailAttachments();
 			}

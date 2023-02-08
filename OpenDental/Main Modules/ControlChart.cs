@@ -1705,8 +1705,8 @@ namespace OpenDental {
 		#region Methods - Event Handlers - OnDrawItems
 		///<summary>Draws one tab item on tabControlImages.</summary>
 		private void DrawTabItem(object sender,DrawItemEventArgs e) {
-      Graphics g=e.Graphics;
-      //Pen penBlue=new Pen(Color.FromArgb(97,136,173));
+		Graphics g=e.Graphics;
+		//Pen penBlue=new Pen(Color.FromArgb(97,136,173));
 			//Pen penRed=new Pen(Color.FromArgb(140,51,46));
 			Pen penOrange=new Pen(Color.FromArgb(250,176,3),2);
 			Pen penDkOrange=new Pen(Color.FromArgb(227,119,4));
@@ -1738,7 +1738,7 @@ namespace OpenDental {
 					g.DrawString(tabControlImages.TabPages[e.Index].Text,Font,brBlack,bounds.X,bounds.Y);
 				}
 			}
-    }
+	 }
 		#endregion Methods - Event Handlers - OnDrawItems
 
 		#region Methods - Event Handlers - Panels
@@ -6780,7 +6780,7 @@ namespace OpenDental {
 			panelEClight.BackColor=listChartGraphicColorDefs[7].ItemColor;
 			panelEOlight.BackColor=listChartGraphicColorDefs[8].ItemColor;
 			panelRlight.BackColor=listChartGraphicColorDefs[9].ItemColor;
-    }
+	 }
 
 		///<summary>Gets run on ModuleSelected and each time a different images tab is selected. It first creates any missing thumbnails, then displays them. So it will be faster after the first time.</summary>
 		private void FillImages() {
@@ -6925,7 +6925,7 @@ namespace OpenDental {
 				item=new ListViewItem(new string[] {_arrayProcButtons[i].Description},_arrayProcButtons[i].ProcButtonNum.ToString());
 				listViewButtons.Items.Add(item);
 			}
-    }
+	 }
 
 		private void FillToothChart(bool retainSelection) {
 			if(PrefC.IsODHQ) {
@@ -7658,7 +7658,7 @@ namespace OpenDental {
 		}
 
 		///<summary>Returns false if account ID is blank or not in format of 1 or more digits, followed by 3 random alpha-numberic characters, followed by a 2 digit checksum. Only returns true when the NewCrop Account ID is one that was created by OD.</summary>
- 		private bool NewCropIsAccountIdValid() {
+		private bool NewCropIsAccountIdValid() {
 			bool validKey=false;
 			string newCropAccountId=PrefC.GetString(PrefName.NewCropAccountId);
 			if(Regex.IsMatch(newCropAccountId,"[0-9]+\\-[0-9A-Za-z]{3}[0-9]{2}")) { //Must contain at least 1 digit for patnum, 1 dash, 3 random alpha-numeric characters, then 2 digits for checksum.
@@ -10560,12 +10560,44 @@ namespace OpenDental {
 							AddProcedure(procCur,listFees);
 						}
 						else {
-							procCur.ToothRange="";
-							for(int b=0;b<_toothChartRelay.SelectedTeeth.Count;b++) {
-								if(b!=0) procCur.ToothRange+=",";
-								procCur.ToothRange+=_toothChartRelay.SelectedTeeth[b];
+							if (_toothChartRelay.SelectedTeeth.All(x => Tooth.IsMaxillary(x))
+								|| _toothChartRelay.SelectedTeeth.All(x => !Tooth.IsMaxillary(x)))
+							{
+								procCur.ToothRange="";
+								for(int b=0;b<_toothChartRelay.SelectedTeeth.Count;b++) {
+									if(b!=0) {
+										procCur.ToothRange+=",";
+									}
+									procCur.ToothRange+=_toothChartRelay.SelectedTeeth[b];
+								}
+								AddQuick(procCur,listFees);
 							}
-							AddQuick(procCur,listFees);
+							else {
+								string maxToothList="";
+								string manToothList="";
+								for (int j=0;j<_toothChartRelay.SelectedTeeth.Count;j++) {
+									if (Tooth.IsMaxillary(_toothChartRelay.SelectedTeeth[j])) {
+										if(!string.IsNullOrEmpty(maxToothList)) {
+											maxToothList+=",";
+										}
+										maxToothList+=_toothChartRelay.SelectedTeeth[j];
+									}
+									else {
+										if(!string.IsNullOrEmpty(manToothList)) {
+											manToothList+=",";
+										}
+										manToothList+=_toothChartRelay.SelectedTeeth[j];
+									}
+								}
+								procCur.ToothRange=maxToothList;
+								string toothNum=maxToothList.Split(',')[0];
+								procCur.CodeNum=AutoCodeItems.GetCodeNum(arrayAutoCodeList[i],toothNum,surf:"",procCur.IsAdditional,Pd.PatNum,Pd.Patient.Age,willBeMissing);
+								AddQuick(procCur,listFees);
+								procCur.ToothRange=manToothList;
+								toothNum=manToothList.Split(',')[0];
+								procCur.CodeNum=AutoCodeItems.GetCodeNum(arrayAutoCodeList[i],toothNum,surf:"",procCur.IsAdditional,Pd.PatNum,Pd.Patient.Age,willBeMissing);
+								AddQuick(procCur,listFees);
+							}
 						}
 					}
 					else if(tArea==TreatmentArea.Arch) {
@@ -10574,10 +10606,16 @@ namespace OpenDental {
 							AddProcedure(procCur,listFees);
 							continue;
 						}
-						foreach(string arch in Tooth.GetArchesForTeeth(_toothChartRelay.SelectedTeeth)) {
-							Procedure proc=procCur.Copy();
-							proc.Surf=arch;
-							AddQuick(proc,listFees);
+						List<string> listArches = Tooth.GetArchesForTeeth(_toothChartRelay.SelectedTeeth);
+						for(int j=0;j<listArches.Count;j++) {//U,L, or U and L
+							procCur.Surf=listArches[j];//U or L
+							string toothNum="1";
+							if(listArches[j]=="L"){
+								toothNum="32";
+							}
+							//GetCodeNum ignores arch(surf) and only uses toothNum
+							procCur.CodeNum=AutoCodeItems.GetCodeNum(arrayAutoCodeList[i],toothNum,surf:"",procCur.IsAdditional,Pd.PatNum,Pd.Patient.Age,willBeMissing);
+							AddQuick(procCur,listFees);
 						}
 					}
 					else if(tArea==TreatmentArea.Sextant) {

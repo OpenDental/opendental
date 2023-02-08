@@ -167,7 +167,7 @@ namespace OpenDentBusiness{
 				&& sheetFieldDefA.RadioButtonGroup==sheetFieldDefB.RadioButtonGroup
 				&& sheetFieldDefA.RadioButtonValue==sheetFieldDefB.RadioButtonValue
 				&& sheetFieldDefA.UiLabelMobile==sheetFieldDefB.UiLabelMobile
-				&& GetUiLabelMobileRadioButton(sheetFieldDefA)==GetUiLabelMobileRadioButton(sheetFieldDefB)
+				&& (GetUiLabelMobileRadioButton(sheetFieldDefA)==GetUiLabelMobileRadioButton(sheetFieldDefB) || sheetFieldDefA.SheetFieldDefNum==sheetFieldDefB.SheetFieldDefNum)
 				&& ((sheetFieldDefA.XPos==sheetFieldDefB.XPos && sheetFieldDefA.YPos==sheetFieldDefB.YPos)
 				||sheetFieldDefA.SheetFieldDefNum==sheetFieldDefB.SheetFieldDefNum);
 		}

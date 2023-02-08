@@ -1195,11 +1195,8 @@ namespace OpenDental {
 			if(string.IsNullOrWhiteSpace(updateServerName)) {
 				//The calling method wants to install the eConnector which is going to be attempted farther down.
 				//This will only be permitted if there haven't been any heartbeats within the last 24hrs.
-				//Get any EConnector heartbeats from within the last 24hrs.
-				List<EServiceSignal> listEServiceSignalsForPastDay=EServiceSignals.GetServicesForSeverity(eServiceSignalSeverity.Working,DateTime.Now.AddDays(-1),DateTime.Now);
-				//There is recent Econnector activity, so don't install the Econnector.
-				if(listEServiceSignalsForPastDay.Count > 0) {
-					return false;//This is not an error and there is simply another eConnector installed somewhere.
+				if(EServiceSignals.HasEverHadHeartbeat()) { //If there is any Econnector activity don't install the Econnector.
+					return false; //This is not an error and there is simply another eConnector installed somewhere.
 				}
 				//Check to see if the calling method wants this computer to take over the WebServiceServerName preference.
 				if(doOverrideBlankUpdateServerName) {
