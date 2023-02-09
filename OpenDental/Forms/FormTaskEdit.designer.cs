@@ -242,7 +242,7 @@ namespace OpenDental {
 			this.groupReminder.Controls.Add(this.panelReminderDays);
 			this.groupReminder.Location = new System.Drawing.Point(336, 1);
 			this.groupReminder.Name = "groupReminder";
-			this.groupReminder.Size = new System.Drawing.Size(242, 84);
+			this.groupReminder.Size = new System.Drawing.Size(242, 85);
 			this.groupReminder.TabIndex = 169;
 			this.groupReminder.Text = "Reminder";
 			this.groupReminder.Visible = false;
@@ -329,7 +329,7 @@ namespace OpenDental {
 			this.panelReminderDays.Controls.Add(this.checkReminderRepeatThursday);
 			this.panelReminderDays.Location = new System.Drawing.Point(1, 55);
 			this.panelReminderDays.Name = "panelReminderDays";
-			this.panelReminderDays.Size = new System.Drawing.Size(240, 28);
+			this.panelReminderDays.Size = new System.Drawing.Size(240, 29);
 			this.panelReminderDays.TabIndex = 3;
 			this.panelReminderDays.TabStop = true;
 			// 
@@ -337,7 +337,7 @@ namespace OpenDental {
 			// 
 			this.labelReminderRepeatDayKey.Location = new System.Drawing.Point(91, 15);
 			this.labelReminderRepeatDayKey.Name = "labelReminderRepeatDayKey";
-			this.labelReminderRepeatDayKey.Size = new System.Drawing.Size(109, 11);
+			this.labelReminderRepeatDayKey.Size = new System.Drawing.Size(109, 12);
 			this.labelReminderRepeatDayKey.TabIndex = 0;
 			this.labelReminderRepeatDayKey.Text = "M  T  W  R  F  S  U";
 			// 
@@ -355,7 +355,7 @@ namespace OpenDental {
 			this.checkReminderRepeatMonday.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkReminderRepeatMonday.Location = new System.Drawing.Point(92, 0);
 			this.checkReminderRepeatMonday.Name = "checkReminderRepeatMonday";
-			this.checkReminderRepeatMonday.Size = new System.Drawing.Size(13, 17);
+			this.checkReminderRepeatMonday.Size = new System.Drawing.Size(13, 15);
 			this.checkReminderRepeatMonday.TabIndex = 1;
 			// 
 			// checkReminderRepeatSunday
@@ -363,7 +363,7 @@ namespace OpenDental {
 			this.checkReminderRepeatSunday.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkReminderRepeatSunday.Location = new System.Drawing.Point(176, 0);
 			this.checkReminderRepeatSunday.Name = "checkReminderRepeatSunday";
-			this.checkReminderRepeatSunday.Size = new System.Drawing.Size(13, 17);
+			this.checkReminderRepeatSunday.Size = new System.Drawing.Size(13, 15);
 			this.checkReminderRepeatSunday.TabIndex = 7;
 			// 
 			// checkReminderRepeatTuesday
@@ -371,7 +371,7 @@ namespace OpenDental {
 			this.checkReminderRepeatTuesday.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkReminderRepeatTuesday.Location = new System.Drawing.Point(106, 0);
 			this.checkReminderRepeatTuesday.Name = "checkReminderRepeatTuesday";
-			this.checkReminderRepeatTuesday.Size = new System.Drawing.Size(13, 17);
+			this.checkReminderRepeatTuesday.Size = new System.Drawing.Size(13, 15);
 			this.checkReminderRepeatTuesday.TabIndex = 2;
 			// 
 			// checkReminderRepeatSaturday
@@ -379,7 +379,7 @@ namespace OpenDental {
 			this.checkReminderRepeatSaturday.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkReminderRepeatSaturday.Location = new System.Drawing.Point(162, 0);
 			this.checkReminderRepeatSaturday.Name = "checkReminderRepeatSaturday";
-			this.checkReminderRepeatSaturday.Size = new System.Drawing.Size(13, 17);
+			this.checkReminderRepeatSaturday.Size = new System.Drawing.Size(13, 15);
 			this.checkReminderRepeatSaturday.TabIndex = 6;
 			// 
 			// checkReminderRepeatWednesday
@@ -387,7 +387,7 @@ namespace OpenDental {
 			this.checkReminderRepeatWednesday.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkReminderRepeatWednesday.Location = new System.Drawing.Point(120, 0);
 			this.checkReminderRepeatWednesday.Name = "checkReminderRepeatWednesday";
-			this.checkReminderRepeatWednesday.Size = new System.Drawing.Size(13, 17);
+			this.checkReminderRepeatWednesday.Size = new System.Drawing.Size(13, 15);
 			this.checkReminderRepeatWednesday.TabIndex = 3;
 			// 
 			// checkReminderRepeatFriday
@@ -395,7 +395,7 @@ namespace OpenDental {
 			this.checkReminderRepeatFriday.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkReminderRepeatFriday.Location = new System.Drawing.Point(148, 0);
 			this.checkReminderRepeatFriday.Name = "checkReminderRepeatFriday";
-			this.checkReminderRepeatFriday.Size = new System.Drawing.Size(13, 17);
+			this.checkReminderRepeatFriday.Size = new System.Drawing.Size(13, 15);
 			this.checkReminderRepeatFriday.TabIndex = 5;
 			// 
 			// checkReminderRepeatThursday
@@ -403,7 +403,7 @@ namespace OpenDental {
 			this.checkReminderRepeatThursday.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkReminderRepeatThursday.Location = new System.Drawing.Point(134, 0);
 			this.checkReminderRepeatThursday.Name = "checkReminderRepeatThursday";
-			this.checkReminderRepeatThursday.Size = new System.Drawing.Size(13, 17);
+			this.checkReminderRepeatThursday.Size = new System.Drawing.Size(13, 15);
 			this.checkReminderRepeatThursday.TabIndex = 4;
 			// 
 			// comboJobs

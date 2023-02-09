@@ -50,7 +50,7 @@ namespace UnitTests.Carrier_Tests {
 				Assert.Fail(ex.Message);
 			}
 			Carriers.RefreshCache();
-			List<Carrier> listFromDb=Carriers.GetAllByElectId("123456789");
+			List<Carrier> listFromDb=Carriers.GetAllByElectId("123456");
 			Assert.IsTrue(listFromDb.Count==0);
 			try {
 				ItransNCpl.UpdateCarriersFromJsonList(itrans,false,ItransImportFields.AddMissing|ItransImportFields.Address|ItransImportFields.Phone);
@@ -59,9 +59,79 @@ namespace UnitTests.Carrier_Tests {
 				Assert.Fail(ex.Message);
 			}
 			Carriers.RefreshCache();
-			listFromDb=Carriers.GetAllByElectId("123456789");
+			listFromDb=Carriers.GetAllByElectId("123456");
 			Assert.IsTrue(listFromDb.Count==1);
+		}
 
+		[TestMethod]
+		///<summary>Claims resellers with the same elect id as a user created carrier may exist in the .json file. Instead, we want to make sure we'll only pulling from the actual claims processor to update flags and set the network for Canadian users</summary>
+		public void Carrier_CanadianUpdateCarriers_GetBestMatch() {
+			ItransNCpl itrans=null;
+			try {
+				itrans=JsonConvert.DeserializeObject<ItransNCpl>(Properties.Resources.test_n_cpl);
+			}
+			catch (Exception ex) {
+				Assert.Fail(ex.Message);
+			}
+			try {
+				ItransNCpl.UpdateCarriersFromJsonList(itrans,false,ItransImportFields.AddMissing|ItransImportFields.Address|ItransImportFields.Phone);
+			}
+			catch (Exception ex) {
+				Assert.Fail(ex.Message);
+			}
+			CarrierT.CreateCACarrier("CustomMedavie",electID:"610047");
+			Carrier origMedavieCarrier=Carriers.GetCarrierByName("Medavie Blue Cross");
+			Carrier origInterimCarrier=Carriers.GetCarrierByName("Interim Federal Health Program");
+			try {
+				//custMedavieCarrier will get updated to the last in matching ElectId
+				ItransNCpl.UpdateCarriersFromJsonList(itrans,false);//Just checking for flags, no need to update any other import fields
+			}
+			catch (Exception ex) {
+				Assert.Fail(ex.Message);
+			}
+			Carriers.RefreshCache();
+			Carrier custMedavieCarrier=Carriers.GetCarrierByName("CustomMedavie");
+			Assert.AreEqual(custMedavieCarrier.CanadianNetworkNum,origMedavieCarrier.CanadianNetworkNum);
+			Assert.AreNotEqual(custMedavieCarrier.CanadianSupportedTypes,origMedavieCarrier.CanadianSupportedTypes);
+			Assert.AreEqual(custMedavieCarrier.CanadianSupportedTypes,origInterimCarrier.CanadianSupportedTypes);
+		}
+
+		[TestMethod]
+		public void Carrier_CanadianUpdateCarriers_AddMissingCarrierNames() {
+			string json=GetCustomJson();
+			ItransNCpl itrans=null;
+			try {
+				itrans=JsonConvert.DeserializeObject<ItransNCpl>(json);
+			}
+			catch (Exception ex) {
+				Assert.Fail(ex.Message);
+			}
+			CarrierT.CreateCACarrier("ThisNameIsNotInTheJson","123456");
+			Carriers.RefreshCache();
+			List<Carrier> listFromDb=Carriers.GetAllByElectId("123456");
+			Assert.AreEqual(1,listFromDb.Count);
+			try {
+				//Expect to insert 1, no matching name was found
+				ItransNCpl.UpdateCarriersFromJsonList(itrans,false,ItransImportFields.AddMissing|ItransImportFields.Address|ItransImportFields.Phone);
+			}
+			catch (Exception ex) {
+				Assert.Fail(ex.Message);
+			}
+			Carriers.RefreshCache();
+			listFromDb=Carriers.GetAllByElectId("123456");
+			Assert.AreEqual(2,listFromDb.Count);
+			Assert.AreEqual(1,listFromDb.Where(x => x.CarrierName!="ThisNameIsNotInTheJson").Count());
+			try {
+				//Expect to insert 0, matching name is found
+				ItransNCpl.UpdateCarriersFromJsonList(itrans,false,ItransImportFields.AddMissing|ItransImportFields.Address|ItransImportFields.Phone);
+			}
+			catch (Exception ex) {
+				Assert.Fail(ex.Message);
+			}
+			Carriers.RefreshCache();
+			listFromDb=Carriers.GetAllByElectId("123456");
+			Assert.AreEqual(2,listFromDb.Count);
+			Assert.AreEqual(1,listFromDb.Where(x => x.CarrierName!="ThisNameIsNotInTheJson").Count());
 		}
 
 		///<summary>If a user creates their own carrier and sets the elect ID, we want to be able to give that custom carrier the same supported transaction types, version, and network. See task num 2286023 and 2722230</summary>
@@ -185,7 +255,7 @@ namespace UnitTests.Carrier_Tests {
           }
         }
       ],
-      ""bin"": ""123456789"",
+      ""bin"": ""123456"",
       ""versions"": [
         ""2"",
         ""4""

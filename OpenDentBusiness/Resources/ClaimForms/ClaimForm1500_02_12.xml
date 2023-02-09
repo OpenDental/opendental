@@ -43,11 +43,11 @@
       <ClaimFormItemNum>2689</ClaimFormItemNum>
       <ClaimFormNum>0</ClaimFormNum>
       <ImageFileName />
-      <FieldName>P2SystemAndTeeth</FieldName>
+      <FieldName>P2SupplementalInfo</FieldName>
       <FormatString />
       <XPos>31</XPos>
       <YPos>770</YPos>
-      <Width>160</Width>
+      <Width>610</Width>
       <Height>14</Height>
     </ClaimFormItem>
     <ClaimFormItem>
@@ -451,11 +451,11 @@
       <ClaimFormItemNum>2651</ClaimFormItemNum>
       <ClaimFormNum>0</ClaimFormNum>
       <ImageFileName />
-      <FieldName>P1SystemAndTeeth</FieldName>
+      <FieldName>P1SupplementalInfo</FieldName>
       <FormatString />
       <XPos>32</XPos>
       <YPos>737</YPos>
-      <Width>160</Width>
+      <Width>610</Width>
       <Height>14</Height>
     </ClaimFormItem>
     <ClaimFormItem>
@@ -463,11 +463,11 @@
       <ClaimFormItemNum>2652</ClaimFormItemNum>
       <ClaimFormNum>0</ClaimFormNum>
       <ImageFileName />
-      <FieldName>P6SystemAndTeeth</FieldName>
+      <FieldName>P6SupplementalInfo</FieldName>
       <FormatString />
       <XPos>32</XPos>
       <YPos>904</YPos>
-      <Width>160</Width>
+      <Width>610</Width>
       <Height>14</Height>
     </ClaimFormItem>
     <ClaimFormItem>
@@ -487,11 +487,11 @@
       <ClaimFormItemNum>2653</ClaimFormItemNum>
       <ClaimFormNum>0</ClaimFormNum>
       <ImageFileName />
-      <FieldName>P5SystemAndTeeth</FieldName>
+      <FieldName>P5SupplementalInfo</FieldName>
       <FormatString />
       <XPos>32</XPos>
       <YPos>870</YPos>
-      <Width>160</Width>
+      <Width>610</Width>
       <Height>14</Height>
     </ClaimFormItem>
     <ClaimFormItem>
@@ -1039,11 +1039,11 @@
       <ClaimFormItemNum>2605</ClaimFormItemNum>
       <ClaimFormNum>0</ClaimFormNum>
       <ImageFileName />
-      <FieldName>P3SystemAndTeeth</FieldName>
+      <FieldName>P3SupplementalInfo</FieldName>
       <FormatString />
       <XPos>32</XPos>
       <YPos>803</YPos>
-      <Width>160</Width>
+      <Width>610</Width>
       <Height>14</Height>
     </ClaimFormItem>
     <ClaimFormItem>
@@ -1999,11 +1999,11 @@
       <ClaimFormItemNum>2525</ClaimFormItemNum>
       <ClaimFormNum>0</ClaimFormNum>
       <ImageFileName />
-      <FieldName>P4SystemAndTeeth</FieldName>
+      <FieldName>P4SupplementalInfo</FieldName>
       <FormatString />
       <XPos>32</XPos>
       <YPos>837</YPos>
-      <Width>160</Width>
+      <Width>610</Width>
       <Height>14</Height>
     </ClaimFormItem>
     <ClaimFormItem>

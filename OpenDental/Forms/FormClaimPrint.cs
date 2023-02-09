@@ -2187,6 +2187,9 @@ namespace OpenDental{
 					case "P1SystemAndTeeth":
 						_stringArrayDisplay[i]=GenerateSystemAndTeethField(1,startProc);
 						break;
+					case "P1SupplementalInfo":
+						_stringArrayDisplay[i]=GenerateSupplementalInfoField(1,startProc);
+						break;
 					case "P1Date":
 						_stringArrayDisplay[i]=GetProcInfo("Date",1+startProc,ClaimFormCur.Items[i].FormatString);
 						break;
@@ -2296,6 +2299,9 @@ namespace OpenDental{
 					#region P2
 					case "P2SystemAndTeeth":
 						_stringArrayDisplay[i]=GenerateSystemAndTeethField(2,startProc);
+						break;
+					case "P2SupplementalInfo":
+						_stringArrayDisplay[i]=GenerateSupplementalInfoField(2,startProc);
 						break;
 					case "P2Date":
 						_stringArrayDisplay[i]=GetProcInfo("Date",2+startProc,ClaimFormCur.Items[i].FormatString);
@@ -2411,6 +2417,9 @@ namespace OpenDental{
 					case "P3SystemAndTeeth":
 						_stringArrayDisplay[i]=GenerateSystemAndTeethField(3,startProc);
 						break;
+					case "P3SupplementalInfo":
+						_stringArrayDisplay[i]=GenerateSupplementalInfoField(3,startProc);
+						break;
 					case "P3Date":
 						_stringArrayDisplay[i]=GetProcInfo("Date",3+startProc,ClaimFormCur.Items[i].FormatString);
 						break;
@@ -2524,6 +2533,9 @@ namespace OpenDental{
 					#region P4
 					case "P4SystemAndTeeth":
 						_stringArrayDisplay[i]=GenerateSystemAndTeethField(4,startProc);
+						break;
+					case "P4SupplementalInfo":
+						_stringArrayDisplay[i]=GenerateSupplementalInfoField(4,startProc);
 						break;
 					case "P4Date":
 						_stringArrayDisplay[i]=GetProcInfo("Date",4+startProc,ClaimFormCur.Items[i].FormatString);
@@ -2639,6 +2651,9 @@ namespace OpenDental{
 					case "P5SystemAndTeeth":
 						_stringArrayDisplay[i]=GenerateSystemAndTeethField(5,startProc);
 						break;
+					case "P5SupplementalInfo":
+						_stringArrayDisplay[i]=GenerateSupplementalInfoField(5,startProc);
+						break;
 					case "P5Date":
 						_stringArrayDisplay[i]=GetProcInfo("Date",5+startProc,ClaimFormCur.Items[i].FormatString);
 						break;
@@ -2752,6 +2767,9 @@ namespace OpenDental{
 					#region P6
 					case "P6SystemAndTeeth":
 						_stringArrayDisplay[i]=GenerateSystemAndTeethField(6,startProc);
+						break;
+					case "P6SupplementalInfo":
+						_stringArrayDisplay[i]=GenerateSupplementalInfoField(6,startProc);
 						break;
 					case "P6Date":
 						_stringArrayDisplay[i]=GetProcInfo("Date",6+startProc,ClaimFormCur.Items[i].FormatString);
@@ -2867,6 +2885,9 @@ namespace OpenDental{
 					case "P7SystemAndTeeth":
 						_stringArrayDisplay[i]=GenerateSystemAndTeethField(7,startProc);
 						break;
+					case "P7SupplementalInfo":
+						_stringArrayDisplay[i]=GenerateSupplementalInfoField(7,startProc);
+						break;
 					case "P7Date":
 						_stringArrayDisplay[i]=GetProcInfo("Date",7+startProc,ClaimFormCur.Items[i].FormatString);
 						break;
@@ -2980,6 +3001,9 @@ namespace OpenDental{
 					#region P8
 					case "P8SystemAndTeeth":
 						_stringArrayDisplay[i]=GenerateSystemAndTeethField(8,startProc);
+						break;
+					case "P8SupplementalInfo":
+						_stringArrayDisplay[i]=GenerateSupplementalInfoField(8,startProc);
 						break;
 					case "P8Date":
 						_stringArrayDisplay[i]=GetProcInfo("Date",8+startProc,ClaimFormCur.Items[i].FormatString);
@@ -3095,6 +3119,9 @@ namespace OpenDental{
 					case "P9SystemAndTeeth":
 						_stringArrayDisplay[i]=GenerateSystemAndTeethField(9,startProc);
 						break;
+					case "P9SupplementalInfo":
+						_stringArrayDisplay[i]=GenerateSupplementalInfoField(9,startProc);
+						break;
 					case "P9Date":
 						_stringArrayDisplay[i]=GetProcInfo("Date",9+startProc,ClaimFormCur.Items[i].FormatString);
 						break;
@@ -3208,6 +3235,9 @@ namespace OpenDental{
 					#region P10
 					case "P10SystemAndTeeth":
 						_stringArrayDisplay[i]=GenerateSystemAndTeethField(10,startProc);
+						break;
+					case "P10SupplementalInfo":
+						_stringArrayDisplay[i]=GenerateSupplementalInfoField(10,startProc);
 						break;
 					case "P10Date":
 						_stringArrayDisplay[i]=GetProcInfo("Date",10+startProc,ClaimFormCur.Items[i].FormatString);
@@ -3323,6 +3353,9 @@ namespace OpenDental{
 					case "P11SystemAndTeeth":
 						_stringArrayDisplay[i]=GenerateSystemAndTeethField(11,startProc);
 						break;
+					case "P11SupplementalInfo":
+						_stringArrayDisplay[i]=GenerateSupplementalInfoField(11,startProc);
+						break;
 					case "P11Date":
 						_stringArrayDisplay[i]=GetProcInfo("Date",11+startProc,ClaimFormCur.Items[i].FormatString);
 						break;
@@ -3436,6 +3469,9 @@ namespace OpenDental{
 					#region P12
 					case "P12SystemAndTeeth":
 						_stringArrayDisplay[i]=GenerateSystemAndTeethField(12,startProc);
+						break;
+					case "P12SupplementalInfo":
+						_stringArrayDisplay[i]=GenerateSupplementalInfoField(12,startProc);
 						break;
 					case "P12Date":
 						_stringArrayDisplay[i]=GetProcInfo("Date",12+startProc,ClaimFormCur.Items[i].FormatString);
@@ -3551,6 +3587,9 @@ namespace OpenDental{
 					case "P13SystemAndTeeth":
 						_stringArrayDisplay[i]=GenerateSystemAndTeethField(13,startProc);
 						break;
+					case "P13SupplementalInfo":
+						_stringArrayDisplay[i]=GenerateSupplementalInfoField(13,startProc);
+						break;
 					case "P13Date":
 						_stringArrayDisplay[i]=GetProcInfo("Date",13+startProc,ClaimFormCur.Items[i].FormatString);
 						break;
@@ -3665,6 +3704,9 @@ namespace OpenDental{
 					case "P14SystemAndTeeth":
 						_stringArrayDisplay[i]=GenerateSystemAndTeethField(14,startProc);
 						break;
+					case "P14SupplementalInfo":
+						_stringArrayDisplay[i]=GenerateSupplementalInfoField(14,startProc);
+						break;
 					case "P14Date":
 						_stringArrayDisplay[i]=GetProcInfo("Date",14+startProc,ClaimFormCur.Items[i].FormatString);
 						break;
@@ -3778,6 +3820,9 @@ namespace OpenDental{
 					#region P15
 					case "P15SystemAndTeeth":
 						_stringArrayDisplay[i]=GenerateSystemAndTeethField(15,startProc);
+						break;
+					case "P15SupplementalInfo":
+						_stringArrayDisplay[i]=GenerateSupplementalInfoField(15,startProc);
 						break;
 					case "P15Date":
 						_stringArrayDisplay[i]=GetProcInfo("Date",15+startProc,ClaimFormCur.Items[i].FormatString);
@@ -4567,6 +4612,30 @@ namespace OpenDental{
 					return "";
 				case "eClaimNote":
 					return procedure.ClaimNote;
+				case "DrugNDC":
+					if(procedureCode.DrugNDC!="") {
+						//For UB04, we must show the procedure description as a standard drug format so that the drug can be easily recognized.
+						//The DrugNDC field is only used when medical features are turned on so this behavior won't take effect in many circumstances.
+						string strDrugUnit="UN";//Unit
+						float drugQty=procedure.DrugQty;
+						switch(procedure.DrugUnit) {
+							case EnumProcDrugUnit.Gram:
+								strDrugUnit="GR";
+								break;
+							case EnumProcDrugUnit.InternationalUnit:
+								strDrugUnit="F2";
+								break;
+							case EnumProcDrugUnit.Milligram:
+								strDrugUnit="GR";
+								drugQty=drugQty/1000;
+								break;
+							case EnumProcDrugUnit.Milliliter:
+								strDrugUnit="ML";
+								break;
+						}
+						return "N4"+procedureCode.DrugNDC+" "+strDrugUnit+drugQty.ToString("f3");
+					}
+					return "";
 				default:
 					break;
 			}
@@ -4731,6 +4800,25 @@ namespace OpenDental{
 			List<string> listStringsToothNums=RemoveToothRangeFormat(strToothNum);
 			//loop through the list and construct the field
 			return "JP"+String.Join(" ",listStringsToothNums);//JP="Universal/National Tooth Designation System" (v. 02-12 1500 claim form)
+		}
+
+		private string GenerateSupplementalInfoField(int index,int startProc) {
+			List<string> listSuppInfo=new List<string>();
+			string systemAndTeeth=GenerateSystemAndTeethField(index,startProc);
+			if(systemAndTeeth=="") { 
+				string strDrugNDC=GetProcInfo("DrugNDC",index+startProc);
+				if(!strDrugNDC.IsNullOrEmpty()) {
+					listSuppInfo.Add(strDrugNDC);
+				}
+			}
+			else {
+				listSuppInfo.Add(systemAndTeeth);
+			}
+			string eClaimNote=GetProcInfo("eClaimNote",index+startProc);
+			if(!eClaimNote.IsNullOrEmpty()) {
+				listSuppInfo.Add("ZZ "+eClaimNote);
+			}
+			return StringTools.Truncate(String.Join("   ",listSuppInfo),61);
 		}
 
 		///<summary>In GetProcInfo() if the treament area is a ToothRange, the resulting string is formatted with a '-'.

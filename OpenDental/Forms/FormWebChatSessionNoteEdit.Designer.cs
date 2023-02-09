@@ -42,7 +42,7 @@ namespace OpenDental{
 			this.butOK.Location = new System.Drawing.Point(468, 317);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
-			this.butOK.TabIndex = 3;
+			this.butOK.TabIndex = 1;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
@@ -62,7 +62,7 @@ namespace OpenDental{
 			this.butAutoNote.Location = new System.Drawing.Point(304, 41);
 			this.butAutoNote.Name = "butAutoNote";
 			this.butAutoNote.Size = new System.Drawing.Size(80, 22);
-			this.butAutoNote.TabIndex = 168;
+			this.butAutoNote.TabIndex = 4;
 			this.butAutoNote.Text = "Auto Note";
 			this.butAutoNote.Click += new System.EventHandler(this.butAutoNote_Click);
 			// 
@@ -74,7 +74,7 @@ namespace OpenDental{
 			this.butDelete.Location = new System.Drawing.Point(34, 317);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(80, 24);
-			this.butDelete.TabIndex = 167;
+			this.butDelete.TabIndex = 3;
 			this.butDelete.Text = "&Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
@@ -84,6 +84,7 @@ namespace OpenDental{
 			this.textDateTime.Name = "textDateTime";
 			this.textDateTime.Size = new System.Drawing.Size(164, 20);
 			this.textDateTime.TabIndex = 166;
+			this.textDateTime.TabStop = false;
 			// 
 			// textTech
 			// 
@@ -92,6 +93,7 @@ namespace OpenDental{
 			this.textTech.ReadOnly = true;
 			this.textTech.Size = new System.Drawing.Size(134, 20);
 			this.textTech.TabIndex = 164;
+			this.textTech.TabStop = false;
 			// 
 			// label16
 			// 
@@ -117,7 +119,7 @@ namespace OpenDental{
 			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.Task;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNote.Size = new System.Drawing.Size(541, 218);
-			this.textNote.TabIndex = 159;
+			this.textNote.TabIndex = 0;
 			this.textNote.Text = "";
 			// 
 			// label4

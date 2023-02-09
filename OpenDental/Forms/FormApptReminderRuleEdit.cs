@@ -152,8 +152,10 @@ namespace OpenDental {
 			textHours.Text=Math.Abs(ApptReminderRuleCur.TSPrior.Hours).ToString();//Hours, not total hours.
 			textDays.Text=Math.Abs(ApptReminderRuleCur.TSPrior.Days).ToString();//Days, not total Days.
 			if(ApptReminderRuleCur.TypeCur!=ApptReminderType.PatientPortalInvite) {
-				if(ApptReminderRuleCur.TypeCur==ApptReminderType.ScheduleThankYou) {
-					EnableWithinDaysAndHoursControls(enable: true);
+				if(ApptReminderRuleCur.TypeCur==ApptReminderType.GeneralMessage) {
+					//Controls are enabled by default, disable these controls for after appointment rules (GeneralMessages, PatientPortalInvites)
+					//Disregarding PatientPortalInvites here since radioBeforeAfterAppt_CheckedChanged() takes care of it.
+					EnableWithinDaysAndHoursControls(enable: false);
 				}
 				radioBeforeAppt.Visible=false;
 				radioAfterAppt.Visible=false;

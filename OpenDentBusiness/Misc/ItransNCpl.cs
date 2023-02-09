@@ -108,11 +108,12 @@ namespace OpenDentBusiness {
 				string jsonCarrierPhone=GetPhoneNumberFromJsonCarrier(jsonCarrier);//Will be empty string if not found.
 				//Find all of the carriers in the database that have a matching ElectID and are flagged as IsCDA.
 				List<OpenDentBusiness.Carrier> listDbCarriers=Carriers.GetAllByElectId(jsonCarrier.Bin).FindAll(x => x.IsCDA);
-				if(listDbCarriers.IsNullOrEmpty()) {//There are no carriers with this ElectID in the database.
+				//There are no carriers with this ElectID in the database with a matching name so insert one with this name.
+				if(fieldsToImport.HasFlag(ItransImportFields.AddMissing)
+					&& (listDbCarriers.IsNullOrEmpty() || !listDbCarriers.Any(x => x.CarrierName.ToLower()==jsonCarrier.Name.En.ToLower()
+					|| x.CarrierName.ToLower()==jsonCarrier.Name.Fr.ToLower())))
+				{
 					#region Insert new carrier
-					if(!fieldsToImport.HasFlag(ItransImportFields.AddMissing)) {
-						continue;
-					}
 					OpenDentBusiness.Carrier carrierNew=new OpenDentBusiness.Carrier();
 					carrierNew.CanadianEncryptionMethod=1;//Default.  Deprecated for all Canadian carriers and will never be any other value.
 					TrySetCanadianNetworkNum(jsonCarrier,carrierNew,listCanadianNetworks);
@@ -139,7 +140,6 @@ namespace OpenDentBusiness {
 						ex.DoNothing();
 					}
 					#endregion
-					continue;
 				}
 				//Update the carrier information within the database with the carrier information provided by the n-cpl.json file.
 				//Carrier address and phone number will be preserved since customers can create custom carriers.

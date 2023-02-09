@@ -277,7 +277,7 @@ namespace OpenDental {
 		}
 
 		private void gridODNotes_CellDoubleClick(object sender,UI.ODGridClickEventArgs e) {
-			if(HasAnotherNoteOpen()) {
+			if(HasAnotherNoteOpen() || gridODNotes.SelectedTag<WebChatNote>()==null) {
 				return;
 			}
 			

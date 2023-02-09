@@ -84,9 +84,9 @@
 			// radioByExt
 			// 
 			this.radioByExt.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.radioByExt.Location = new System.Drawing.Point(31, 37);
+			this.radioByExt.Location = new System.Drawing.Point(17, 37);
 			this.radioByExt.Name = "radioByExt";
-			this.radioByExt.Size = new System.Drawing.Size(71, 17);
+			this.radioByExt.Size = new System.Drawing.Size(85, 17);
 			this.radioByExt.TabIndex = 1;
 			this.radioByExt.Text = "Extension";
 			this.radioByExt.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -96,9 +96,9 @@
 			// 
 			this.radioByName.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.radioByName.Checked = true;
-			this.radioByName.Location = new System.Drawing.Point(49, 17);
+			this.radioByName.Location = new System.Drawing.Point(30, 17);
 			this.radioByName.Name = "radioByName";
-			this.radioByName.Size = new System.Drawing.Size(53, 17);
+			this.radioByName.Size = new System.Drawing.Size(72, 17);
 			this.radioByName.TabIndex = 0;
 			this.radioByName.TabStop = true;
 			this.radioByName.Text = "Name";

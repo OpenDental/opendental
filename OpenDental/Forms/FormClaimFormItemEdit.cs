@@ -284,7 +284,8 @@ namespace OpenDental {
 				"DateOtherQualifier",
 				"IsOutsideLab",
 				"IsNotOutsideLab",
-				"OutsideLabFee"
+				"OutsideLabFee",
+				"SupplementalInfo"
 			};
 			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
 				FieldNames=FieldNames.Concat(ListTools.FromSingle("OfficeNumber")).ToArray();
