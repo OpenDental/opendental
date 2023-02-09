@@ -26,6 +26,7 @@ namespace OpenDentBusiness {
 			//columns that start with lowercase are altered for display rather than being raw data.
 			table.Columns.Add("aptDateTime",typeof(DateTime));
 			table.Columns.Add("AbbrDesc");
+			table.Columns.Add("attachmentCount");
 			table.Columns.Add("AptNum");
 			table.Columns.Add("clinic");
 			table.Columns.Add("ClinicNum");
@@ -895,19 +896,23 @@ namespace OpenDentBusiness {
 			}
 			if(componentsToLoad.ShowTasks) {
 				#region Task
-				command="SELECT task.*,COALESCE(tasklist.Descript,'') ListDisc,fampat.FName,fampat.PatNum "
+				command="SELECT task.*,COALESCE(tasklist.Descript,'') ListDisc,fampat.FName,fampat.PatNum, COUNT(taskattachment.TaskNum) attachmentCount "
 				+"FROM patient pat "
 				+"INNER JOIN patient fampat ON fampat.Guarantor=pat.Guarantor "
 				+"INNER JOIN task ON task.KeyNum=fampat.PatNum AND task.ObjectType="+POut.Int((int)TaskObjectType.Patient)+" "
 				+"LEFT JOIN tasklist ON task.TaskListNum=tasklist.TaskListNum "
+				+"LEFT JOIN taskattachment ON task.TaskNum=taskattachment.TaskNum "
 				+"WHERE pat.PatNum="+POut.Long(patNum)+" "
+				+"GROUP BY task.TaskNum "
 				+"UNION ALL "
-				+"SELECT task.*,COALESCE(tasklist.Descript,'') ListDisc,patient.FName,patient.PatNum "
+				+"SELECT task.*,COALESCE(tasklist.Descript,'') ListDisc,patient.FName,patient.PatNum, COUNT(taskattachment.TaskNum) attachmentCount "
 				+"FROM task "
 				+"INNER JOIN appointment ON appointment.AptNum=task.KeyNum AND task.ObjectType="+POut.Int((int)TaskObjectType.Appointment)+" "
 				+"LEFT JOIN tasklist ON task.TaskListNum=tasklist.TaskListNum "
 				+"LEFT JOIN patient ON patient.PatNum=appointment.PatNum "
+				+"LEFT JOIN taskattachment ON task.TaskNum=taskattachment.TaskNum "
 				+"WHERE appointment.PatNum IN ("+string.Join(",",family.ListPats.Select(x => x.PatNum))+") "
+				+"GROUP BY task.TaskNum "
 				+"ORDER BY DateTimeEntry";
 				DataTable rawTask=dcon.GetTable(command);
 				List<long> taskNums=rawTask.Select().Select(x => PIn.Long(x["TaskNum"].ToString())).ToList();
@@ -917,6 +922,7 @@ namespace OpenDentBusiness {
 					DataRow rawTaskRow=rawTask.Rows[i];
 					row=table.NewRow();
 					row["AbbrDesc"]="";
+					row["attachmentCount"]=PIn.Int(rawTaskRow["attachmentCount"].ToString());
 					row["aptDateTime"]=DateTime.MinValue;
 					row["AptNum"]=0;
 					row["clinic"]="";

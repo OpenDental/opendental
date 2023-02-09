@@ -1203,7 +1203,7 @@ namespace OpenDental {
 			// 
 			this.comboElectIDdescript.Location = new System.Drawing.Point(162, 122);
 			this.comboElectIDdescript.Name = "comboElectIDdescript";
-			this.comboElectIDdescript.Size = new System.Drawing.Size(159, 21);
+			this.comboElectIDdescript.Size = new System.Drawing.Size(159, 20);
 			this.comboElectIDdescript.TabIndex = 125;
 			this.comboElectIDdescript.SelectedIndexChanged += new System.EventHandler(this.comboElectIDdescript_SelectedIndexChanged);
 			// 

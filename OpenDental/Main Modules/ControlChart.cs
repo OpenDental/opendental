@@ -7421,7 +7421,11 @@ namespace OpenDental {
 					case "ClinicDesc":
 						row.Cells.Add(Clinics.GetDesc(PIn.Long(rowCur["ClinicNum"].ToString())));
 						break;
-					//If you add something here, you should also add it to SearchProgNotesMethod.
+					case "Attachment":
+						int countAttachments = PIn.Int(rowCur["attachmentCount"].ToString());
+						row.Cells.Add((countAttachments>0?"X":""));
+						break;
+					//If you add something here, you should also add it to SearchProgNotes Method.
 					default:
 						row.Cells.Add("");
 						break;
