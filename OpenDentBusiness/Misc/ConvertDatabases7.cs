@@ -442,45 +442,6 @@ namespace OpenDentBusiness {
 			string command="DELETE FROM webschedrecall WHERE Source=2 AND SendStatus=2 AND CommLogNum=0";
 			Db.NonQ(command);
 		}
-
-		///<summary>Convert Script for B40820. This method is supposed to be passed in the email message nums of duplicate emails that were deleted.
-		///With that passed in list, this method will run a background thread to go through the emailattach table to find and delete all the attachments found by 
-		///the duplicate emails. This also includes going into the OpenDentImages folder where the attachments are stored and delete the files there as well.
-		///No exceptions should be shown during this process since this thread should just be a background thread.</summary>
-		private static void CleanupEmailAttachments() {
-			if(CloudStorage.IsCloudStorage || PrefC.AtoZfolderUsed!=DataStorageType.LocalAtoZ) {
-				return; //We will not effect cloud storage. Only if the files are on the computer.
-			}
-			ThreadStart threadStart=new ThreadStart(DeleteAttachments);
-			Thread thread=new Thread(threadStart);
-			thread.IsBackground=true;
-			thread.Start();
-		}
-
-		///<summary>Background thread method for deleting attachments from call in CleanupEmailAttachments.</summary>
-		private static void DeleteAttachments() {
-			string command="SELECT ActualFileName FROM emailattach WHERE EmailMessageNum NOT IN (SELECT EmailMessageNum FROM emailmessage)";
-			List<string> listAttachmentFilesToDelete=Db.GetListString(command);
-			if(listAttachmentFilesToDelete.Count==0) {
-				return;
-			}
-			//No need to check if using FileAtoZ since already checked before method call.
-			string attachPath=ODFileUtils.CombinePaths(ImageStore.GetPreferredAtoZpath(),"EmailAttachments");
-			//Delete all the attachment files within the images folder that aren't linked to a email message.
-			for(int i=0;i<listAttachmentFilesToDelete.Count;i++) {
-				try {
-					string attachFilePath=FileIO.FileAtoZ.CombinePaths(attachPath,listAttachmentFilesToDelete[i]);
-					if(FileIO.FileAtoZ.Exists(attachFilePath)) {
-						FileIO.FileAtoZ.Delete(attachFilePath);
-					}
-				}
-				catch {
-					continue; //Ignore message and continue
-				}
-			}
-			command="DELETE FROM emailattach WHERE EmailMessageNum NOT IN (SELECT EmailMessageNum FROM emailmessage)";
-			Db.NonQ(command);
-		}
 		#endregion
 
 		private static void To20_5_1() {
@@ -4383,101 +4344,15 @@ namespace OpenDentBusiness {
 		}
 
 		private static void To22_3_45() {
-			//Find and delete all duplicate MsgIds within emailmessageuid.
-			string command="SELECT MsgId FROM emailmessageuid GROUP BY BINARY MsgId HAVING COUNT(MsgId)>1";
-			List<string> listMsgIds=Db.GetListString(command);
-			if(listMsgIds.Count>0) {
-				for(int i=0;i<listMsgIds.Count;i++) {
-					command="SELECT EmailMessageUidNum FROM emailmessageuid WHERE BINARY MsgId='"+POut.String(listMsgIds[i])+"'";
-					List<long> listEmailMessageUidNums=Db.GetListLong(command,hasExceptions:false);
-					listEmailMessageUidNums.RemoveAt(0);//Keep one of the email message uids but remove the duplicates.
-					StringBuilder sbCommands=new StringBuilder();
-					sbCommands.Append("DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN (");
-					for(int j=0;j<listEmailMessageUidNums.Count;j++) {
-						if(j==0) {
-							sbCommands.Append(listEmailMessageUidNums[j].ToString());
-							continue;
-						}
-						if(sbCommands.Length+listEmailMessageUidNums[j].ToString().Length+1<TableBase.MaxAllowedPacketCount) {
-							sbCommands.Append(","+listEmailMessageUidNums[j].ToString());
-							continue;
-						}
-						else {
-							sbCommands.Append(")");
-							Db.NonQ(sbCommands.ToString());
-							sbCommands=new StringBuilder();
-							sbCommands.Append("DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN ("+listEmailMessageUidNums[j].ToString());
-						}
-					}
-					sbCommands.Append(")");
-					Db.NonQ(sbCommands.ToString());
-				}
-			}
-			//Find and remove all duplicate email messages.
-			command="SELECT GROUP_CONCAT(EmailMessageNum) msgNums "+
-				"FROM emailmessage "+
-				"GROUP BY BINARY Subject,RecipientAddress,ToAddress,FromAddress,CcAddress,BccAddress,BINARY BodyText,BINARY RawEmailIn,MsgDateTime "+
-				"HAVING COUNT(*)>1";
-			List<string> listDupMsgNums=Db.GetListString(command);
-     	if(listDupMsgNums.Count>0) {
-				for(int i=0;i<listDupMsgNums.Count;i++) {
-					List<string> listMsgNums=listDupMsgNums[i].Split(',').Skip(1).ToList();
-					if(listMsgNums.Count==0) {
-						continue;
-					}
-					Db.NonQ("DELETE FROM emailmessage WHERE EmailMessageNum IN("+string.Join(",",listMsgNums)+")");
-				}
-				CleanupEmailAttachments();
-			}
+			//Duplicate email code moved to 22.3.48, commented out here because the queries can take a long time to run and we don't want to run it more than once
 		}
 
 		private static void To22_3_47() {
-			//Find and delete all duplicate MsgIds within emailmessageuid.
-			string command="SELECT MsgId FROM emailmessageuid GROUP BY BINARY MsgId HAVING COUNT(MsgId)>1";
-			List<string> listMsgIds=Db.GetListString(command);
-			if(listMsgIds.Count>0) {
-				for(int i=0;i<listMsgIds.Count;i++) {
-					command="SELECT EmailMessageUidNum FROM emailmessageuid WHERE BINARY MsgId='"+POut.String(listMsgIds[i])+"'";
-					List<long> listEmailMessageUidNums=Db.GetListLong(command,hasExceptions:false);
-					listEmailMessageUidNums.RemoveAt(0);//Keep one of the email message uids but remove the duplicates.
-					StringBuilder sbCommands=new StringBuilder();
-					sbCommands.Append("DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN (");
-					for(int j=0;j<listEmailMessageUidNums.Count;j++) {
-						if(j==0) {
-							sbCommands.Append(listEmailMessageUidNums[j].ToString());
-							continue;
-						}
-						if(sbCommands.Length+listEmailMessageUidNums[j].ToString().Length+1<TableBase.MaxAllowedPacketCount) {
-							sbCommands.Append(","+listEmailMessageUidNums[j].ToString());
-							continue;
-						}
-						else {
-							sbCommands.Append(")");
-							Db.NonQ(sbCommands.ToString());
-							sbCommands=new StringBuilder();
-							sbCommands.Append("DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN ("+listEmailMessageUidNums[j].ToString());
-						}
-					}
-					sbCommands.Append(")");
-					Db.NonQ(sbCommands.ToString());
-				}
-			}
-			//Find and remove all duplicate email messages.
-			command="SELECT GROUP_CONCAT(EmailMessageNum) msgNums "+
-				"FROM emailmessage "+
-				"GROUP BY BINARY Subject,RecipientAddress,ToAddress,FromAddress,CcAddress,BccAddress,BINARY BodyText,BINARY RawEmailIn,MsgDateTime "+
-				"HAVING COUNT(*)>1";
-			List<string> listDupMsgNums=Db.GetListString(command);
-     	if(listDupMsgNums.Count>0) {
-				for(int i=0;i<listDupMsgNums.Count;i++) {
-					List<string> listMsgNums=listDupMsgNums[i].Split(',').Skip(1).ToList();
-					if(listMsgNums.Count==0) {
-						continue;
-					}
-					Db.NonQ("DELETE FROM emailmessage WHERE EmailMessageNum IN("+string.Join(",",listMsgNums)+")");
-				}
-				CleanupEmailAttachments();
-			}
+			//Duplicate email code moved to 22.3.48, commented out here because the queries can take a long time to run and we don't want to run it more than once
+		}
+
+		private static void To22_3_48() {
+			//Duplicate email code moved to DBM tool under CleanUpDuplicateEmails(), commented out here because the queries can take a long time to run and we don't want to run it more than once
 		}
 
 		private static void To22_4_1() {
@@ -4712,38 +4587,18 @@ namespace OpenDentBusiness {
 		}
 
 		private static void To22_4_21() {
-			//Find and delete all duplicate MsgIds within emailmessageuid.
-			string command=$@"SET group_concat_max_len=4294967295;
-				SELECT GROUP_CONCAT(EmailMessageUidNum) msgUidNums
-				FROM emailmessageuid
-				GROUP BY BINARY MsgId
-				HAVING COUNT(*)>1";
-			List<string> listDupMsgUidNums=Db.GetListString(command);
-			if(listDupMsgUidNums.Count>0) {
-				for(int i=0;i<listDupMsgUidNums.Count;i++) {
-					List<string> listMsgUidNums=listDupMsgUidNums[i].Split(",",StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();//Keep one of the EmailMessageUidNums
-					if(listMsgUidNums.Count==0) {
-						continue;//shouldn't happen
-					}
-					Db.NonQ($"DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN({string.Join(",",listMsgUidNums)})");
-				}
-			}
-			//Find and remove all duplicate email messages.
-			command=$@"SET group_concat_max_len=4294967295;
-				SELECT GROUP_CONCAT(EmailMessageNum ORDER BY SentOrReceived DESC) msgNums
-				FROM emailmessage
-				GROUP BY BINARY SUBJECT,RecipientAddress,ToAddress,FromAddress,CcAddress,BccAddress,BINARY BodyText,MsgDateTime
-				HAVING COUNT(*)>1";
-			List<string> listDupMsgNums=Db.GetListString(command);
-     	if(listDupMsgNums.Count>0) {
-				for(int i=0;i<listDupMsgNums.Count;i++) {
-					List<string> listMsgNums=listDupMsgNums[i].Split(",",StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();//Keep one of the EmailMessageNums
-					if(listMsgNums.Count==0) {
-						continue;
-					}
-					Db.NonQ($"DELETE FROM emailmessage WHERE EmailMessageNum IN({string.Join(",",listMsgNums)})");
-				}
-				CleanupEmailAttachments();
+			//Duplicate email code moved to DBM tool under CleanUpDuplicateEmails(), commented out here because the queries can take a long time to run and we don't want to run it more than once
+		}
+
+		private static void To22_4_22() {
+			string command;
+			command="SELECT ProgramNum FROM program WHERE ProgName='Orion'";
+			long programNumOrion=Db.GetLong(command);
+			if(programNumOrion > 0) {
+				command="DELETE FROM programproperty WHERE ProgramNum="+POut.Long(programNumOrion);
+				Db.NonQ(command);
+				command="DELETE FROM program WHERE ProgramNum="+POut.Long(programNumOrion);
+				Db.NonQ(command);
 			}
 		}
 	}

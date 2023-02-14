@@ -626,7 +626,7 @@ namespace OpenDental {
 			if(IsDisposed) {//The user closed the form while the thread checking Web Sched signups was still running.
 				return;
 			}
-			if(_threadWebSchedSignups==null) {//The thread has not finished getting the list. 
+			if(_threadWebSchedSignups!=null) {//The thread has not finished getting the list.
 				_hasClickedWebSched=true;//The thread checking Web Sched signups will call this method on exit.
 				Cursor=Cursors.AppStarting;
 				return;

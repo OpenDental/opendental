@@ -2601,8 +2601,8 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Gets list of asap AppointmentsForApi. Pass in a clinicNum less than 0 to get ASAP appts for all clinics.</summary>
-		public static List<AppointmentWithServerDT> RefreshAsapForApi(long provNum,long siteNum,long clinicNum,List<ApptStatus> listStatuses,string codeRangeStart="",
-			string codeRangeEnd="") 
+		public static List<AppointmentWithServerDT> RefreshAsapForApi(int limit,int offset,long provNum,long siteNum,long clinicNum,
+			List<ApptStatus> listStatuses,string codeRangeStart="",string codeRangeEnd="") 
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<AppointmentWithServerDT>>(MethodBase.GetCurrentMethod(),provNum,siteNum,clinicNum,listStatuses,codeRangeStart,codeRangeEnd);
@@ -2645,7 +2645,8 @@ namespace OpenDentBusiness{
 			command+="AND NOT EXISTS(SELECT * FROM appointment a2 WHERE a2.NextAptNum=appointment.AptNum AND appointment.AptStatus="
 				+POut.Int((int)ApptStatus.Planned)+") "
 			+"GROUP BY appointment.AptNum "
-			+"ORDER BY appointment.AptDateTime";
+			+"ORDER BY appointment.AptDateTime "
+			+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
 			string commandDatetime="SELECT "+DbHelper.Now();
 			DateTime dateTimeServer=PIn.DateT(OpenDentBusiness.Db.GetScalar(commandDatetime));//run before appts for rigorous inclusion of appts
 			List<Appointment> listAppointments=Crud.AppointmentCrud.SelectMany(command);

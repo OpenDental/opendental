@@ -95,7 +95,7 @@ namespace OpenDental{
 				checkIsCDAnet.Visible=false;
 				groupCDAnet.Visible=false;
 				int newHeight=(this.Height-groupCDAnet.Height-checkIsCDAnet.Height);//Dynamically hide the CDAnet groupbox and Is CDAnet Carrier checkbox.
-				this.Size=new Size(LayoutManager.Scale(525),newHeight);
+				this.Size=new Size(LayoutManager.Scale(560),newHeight);
 			}
 			//Canadian stuff is filled in for everyone, because a Canadian user might sometimes have a computer set to American.
 			//So a computer set to American would not be able to SEE the Canadian fields, but they at least would not be damaged.

@@ -1639,8 +1639,8 @@ namespace OpenDental {
 				//Get the URL for the selected registration key.
 				WebServiceMainHQProxy.EServiceSetup.SignupOut signupOut=WebServiceMainHQProxy.GetEServiceSetupLite(SignupPortalPermission.FromHQ
 					,regKey.RegKey,"","","");
-				using FormWebBrowser formWebBrowser=new FormWebBrowser(signupOut.SignupPortalUrl);
-				formWebBrowser.ShowDialog();
+				using FormEServicesSignup formEServicesSignup=new FormEServicesSignup(signupOut);
+				formEServicesSignup.ShowDialog();
 				ModuleSelected(_patCur.PatNum);//Refresh the module.
 			}
 			catch(Exception ex) {

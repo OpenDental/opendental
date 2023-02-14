@@ -48,9 +48,7 @@ namespace OpenDental {
 				listSQLWheres.Add(SQLWhere.CreateIn(nameof(RecurringCharge.ClinicNum),comboClinics.ListSelectedClinicNums));
 			}
 			_listRecurringCharges=RecurringCharges.GetMany(listSQLWheres);
-			if(_listRecurringCharges.Any(x => !_listPatients.Exists(y => x.PatNum==y.PatNum))) {
-				_listPatients=Patients.GetLimForPats(_listRecurringCharges.Select(x => x.PatNum).ToList()).ToList();
-			}
+			_listPatients=Patients.GetLimForPats(_listRecurringCharges.Select(x => x.PatNum).ToList());
 			_dateRangePrevious=new DateRange(datePicker.GetDateTimeFrom(),datePicker.GetDateTimeTo());
 			_listClinicNumsPrevious=comboClinics.ListSelectedClinicNums;
 			Cursor=Cursors.Default;

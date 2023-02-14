@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Linq;
 using System.ComponentModel;
 using OpenDental.User_Controls.SetupWizard;
+using System.Windows.Documents;
 
 namespace OpenDental {
 	public partial class FormSetupWizardProgress:FormODBase {
@@ -119,10 +120,9 @@ namespace OpenDental {
 		}
 
 		private void SetCurrentUserControl(SetupWizControl ctrl) {
-			for(int i = splitContainer2.Panel2.Controls.Count-1;i > -1;i--) {
+			for(int i=splitContainer2.Panel2.Controls.Count-1;i>-1;i--) {
 				splitContainer2.Panel2.Controls.RemoveAt(i);
 			}
-			LayoutManager.Add(ctrl,splitContainer2.Panel2);
 			//cool & useless animations
 			//int wDiff = this.Width - ctrl.Width;
 			//int hDiff = splitContainer2.Panel2.Height - ctrl.Height;
@@ -155,19 +155,19 @@ namespace OpenDental {
 			//}
 			//this.FormBorderStyle = FormBorderStyle.FixedSingle;
 			ctrl.Dock=DockStyle.Fill;
-			if(_indexSetupClasses == 0) {
+			LayoutManager.AddUnscaled(ctrl,splitContainer2.Panel2);
+			LayoutManager.LayoutControlBoundsAndFonts(splitContainer2.Panel2);
+			if(_indexSetupClasses==0) {
 				butBack.Enabled=false;
 			}
 			else {
 				butBack.Enabled=true;
 			}
-			labelTitle.Text=Lan.g("FormSetupWizard", _listSetupWizClasses[_indexSetupClasses].Name + " Setup");
+			labelTitle.Text=Lan.g("FormSetupWizard",_listSetupWizClasses[_indexSetupClasses].Name+" Setup");
 		}
 
 		private void butClose_Click(object sender,EventArgs e) {
 			Close();
 		}
-
-		
 	}
 }

@@ -284,8 +284,7 @@ namespace OpenDental {
 				"DateOtherQualifier",
 				"IsOutsideLab",
 				"IsNotOutsideLab",
-				"OutsideLabFee",
-				"SupplementalInfo"
+				"OutsideLabFee"
 			};
 			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
 				FieldNames=FieldNames.Concat(ListTools.FromSingle("OfficeNumber")).ToArray();
@@ -316,6 +315,7 @@ namespace OpenDental {
 				"Minutes",
 				"PlaceNumericCode",
 				"RevCode",
+				"SupplementalInfo",
 				"Surface",
 				"System",
 				"SystemAndTeeth",

@@ -120,7 +120,7 @@ namespace OpenDentBusiness{
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<SmsFromMobile>>(MethodBase.GetCurrentMethod(),dateStart,dateEnd,listClinicNums,patNum,isMessageThread,
-					phoneNumber,listSmsFromStatuses.ToArray());
+					phoneNumber,listSmsFromStatuses);
 			}
 			List <string> listCommandFilters=new List<string>();
 			if(dateStart>DateTime.MinValue) {

@@ -45,7 +45,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Gets adjustments for a given patient. Can filter by AdjType. Returns an empty list if not found.</summary>
-		public static List<Adjustment> GetAdjustmentsForApi(long patNum,long adjType=0) {
+		public static List<Adjustment> GetAdjustmentsForApi(int limit,int offset,long patNum,long adjType=0) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<Adjustment>>(MethodBase.GetCurrentMethod(),patNum,adjType);
 			}
@@ -55,7 +55,8 @@ namespace OpenDentBusiness{
 			if(adjType!=0) {
 				command+=" AND AdjType = "+POut.Long(adjType);
 			}
-			command+=" ORDER BY AdjDate";
+			command+=" ORDER BY AdjDate "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
 			return Crud.AdjustmentCrud.SelectMany(command);
 		}
 

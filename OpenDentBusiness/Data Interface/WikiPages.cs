@@ -181,7 +181,7 @@ namespace OpenDentBusiness{
 		///<summary>Searches keywords, title, content.  Does not return pagetitles for drafts.</summary>
 		public static List<string> GetForSearch(string searchText,bool ignoreContent,bool isDeleted=false, bool isExactSearch=false,bool showMainPages=false,bool searchForLinks=true) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod(),searchText,ignoreContent,isDeleted,isExactSearch,showMainPages);
+				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod(),searchText,ignoreContent,isDeleted,isExactSearch,showMainPages,searchForLinks);
 			}
 			List<string> retVal=new List<string>();
 			DataTable tableResults=new DataTable();

@@ -1074,25 +1074,9 @@ namespace OpenDentBusiness{
 			foreach(GmailApi.Data.Message msg in listMessageIds) {
 				GmailApi.UsersResource.MessagesResource.GetRequest emailRequest=gService.Users.Messages.Get(emailAddressInbox.EmailUsername,msg.Id);
 				emailRequest.Format=GmailApi.UsersResource.MessagesResource.GetRequest.FormatEnum.Raw;
+				GmailApi.Data.Message response=null;
 				try {
-					GmailApi.Data.Message response=emailRequest.Execute();
-					//What we receive from Gmail is a Base64 File/URL safe string, but we need this to be just Base64 (replace - and _ with + and / respectively)
-					response.Raw=Regex.Replace(response.Raw,"-","+");
-					response.Raw=Regex.Replace(response.Raw,"_","/");
-					byte[] rawResponse=Convert.FromBase64String(response.Raw);
-					using MemoryStream mm=new MemoryStream(rawResponse);
-					MimeKit.MimeMessage mimeMsg=MimeKit.MimeMessage.Load(mm);
-					string recipientAddress=emailAddressInbox.EmailUsername.Trim();
-					if(IsEmailFromInbox(emailAddressInbox.EmailUsername,mimeMsg.To.ToList(),mimeMsg.From.ToList(),mimeMsg.Cc.ToList(),mimeMsg.Bcc.ToList())) {
-						//Convert MIME to our Email format and store the UID in the database
-						EmailMessage recd=ProcessRawEmailMessageIn(mimeMsg.ToString(),0,emailAddressInbox,true);
-						recipientAddress=recd.RecipientAddress;
-						countNewEmails++;
-					}
-					EmailMessageUid uid=new EmailMessageUid();
-					uid.MsgId=msg.Id; //Interchangeable with response.id
-					uid.RecipientAddress=recipientAddress;
-					EmailMessageUids.Insert(uid);
+					response=emailRequest.Execute();
 				}
 				catch(ThreadAbortException) {
 					//This can happen if the application is exiting. We need to leave right away so the program does not lock up.
@@ -1102,7 +1086,38 @@ namespace OpenDentBusiness{
 				catch(Exception ex) {
 					//If one particular email fails to download, then skip it for now and move on to the next email.
 					ex.DoNothing();
+					continue;
 				}
+				EmailMessageUid uid=new EmailMessageUid() {
+					MsgId=msg.Id, //Interchangeable with response.id
+					RecipientAddress=emailAddressInbox.EmailUsername.Trim()
+				};
+				try {
+					//What we receive from Gmail is a Base64 File/URL safe string, but we need this to be just Base64 (replace - and _ with + and / respectively)
+					response.Raw=Regex.Replace(response.Raw,"-","+");
+					response.Raw=Regex.Replace(response.Raw,"_","/");
+					byte[] rawResponse=Convert.FromBase64String(response.Raw);
+					using MemoryStream mm=new MemoryStream(rawResponse);
+					MimeKit.MimeMessage mimeMsg=MimeKit.MimeMessage.Load(mm);
+					if(IsEmailFromInbox(emailAddressInbox.EmailUsername,mimeMsg.To.ToList(),mimeMsg.From.ToList(),mimeMsg.Cc.ToList(),mimeMsg.Bcc.ToList())) {
+						//Convert MIME to our Email format and store the UID in the database
+						EmailMessage recd=ProcessRawEmailMessageIn(mimeMsg.ToString(),0,emailAddressInbox,isAck:true);
+						if(uid.RecipientAddress!=recd.RecipientAddress) {
+							uid.RecipientAddress=recd.RecipientAddress;
+						}
+						countNewEmails++;
+					}
+				}
+				catch(ThreadAbortException) {
+					//This can happen if the application is exiting. We need to leave right away so the program does not lock up.
+					//Otherwise, this loop could continue for a while if there are a lot of messages to download.
+					throw;
+				}
+				catch(Exception ex) {
+					//Something went wrong processing this email. Still insert uid so we don't download it again.
+					ex.DoNothing();
+				}
+				EmailMessageUids.Insert(uid);
 			}
 			return countNewEmails;
 		}

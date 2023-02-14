@@ -693,6 +693,8 @@ namespace OpenDental {
 				g.DrawLine(penButtons,_rectangleButMin.X+indentLeft,_rectangleButMin.Y+indentTop+whSymbol/2,_rectangleButMin.X+indentLeft+whSymbol,_rectangleButMin.Y+indentTop+whSymbol/2);
 			}
 			//Button Help:
+			//Had trouble with the ? getting bigger each time drawn.  There's bad logic somewhere, so we will ignore Font.
+			Font font2=new Font("Microsoft Sans Serif",LayoutManager.ScaleFontODZoom(8.25f));
 			if(HasHelpButton){
 				if(_isHotHelp){
 					g.SmoothingMode=SmoothingMode.HighQuality;
@@ -700,7 +702,7 @@ namespace OpenDental {
 					g.SmoothingMode=SmoothingMode.Default;
 					//g.FillRectangle(_brushButtonHot,_rectangleButQuest);
 				}
-				g.DrawString("?",Font,brushText,_rectangleButHelp.X+LayoutManager.Scale(7),_rectangleButHelp.Y+LayoutManager.Scale(6));
+				g.DrawString("?",font2,brushText,_rectangleButHelp.X+LayoutManager.Scale(7),_rectangleButHelp.Y+LayoutManager.Scale(6));
 			}
 			Rectangle rectangleIcon=new Rectangle(MaxInset()+5,MaxInset()+4,LayoutManager.Scale(20),LayoutManager.Scale(20));
 			if(ShowIcon){
@@ -708,8 +710,8 @@ namespace OpenDental {
 			}
 			if(_fontTitle==null){
 				RectangleF rectangleText=new RectangleF(MaxInset()+LayoutManager.ScaleF(30),MaxInset()+LayoutManager.ScaleF(7),
-				_rectangleButtons.Left-LayoutManager.ScaleF(30)-MaxInset()+LayoutManager.ScaleF(8),Font.Height+2);//The 8 is just so we can get closer to the right
-				g.DrawString(this.Text,this.Font,brushText,rectangleText);
+				_rectangleButtons.Left-LayoutManager.ScaleF(30)-MaxInset()+LayoutManager.ScaleF(8),font2.Height+2);//The 8 is just so we can get closer to the right
+				g.DrawString(this.Text,font2,brushText,rectangleText);
 			}
 			else{
 				//only used for font 13 main window

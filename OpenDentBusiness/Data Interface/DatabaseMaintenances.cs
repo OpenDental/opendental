@@ -8270,43 +8270,71 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
 			}
-			string command="SELECT procedurelog.ProcNum,claim.ClaimNum,claim.DateService,patient.PatNum,patient.LName,patient.FName,procedurecode.ProcCode "
-				+"FROM procedurelog,claim,claimproc,patient,procedurecode "
-				+"WHERE procedurelog.ProcNum=claimproc.ProcNum "
-				+"AND claim.ClaimNum=claimproc.ClaimNum "
-				+"AND claim.PatNum=patient.PatNum "
-				+"AND procedurelog.CodeNum=procedurecode.CodeNum "
-				+"AND procedurelog.ProcStatus!="+POut.Long((int)ProcStat.C)+" "//procedure not complete
-				+"AND (claim.ClaimStatus='W' OR claim.ClaimStatus='S' OR claim.ClaimStatus='R') "//waiting, sent, or received
-				+"AND (claim.ClaimType='P' OR claim.ClaimType='S' OR claim.ClaimType='Other')";//pri, sec, or other.  Eliminates preauths.
+			string command=$@"SELECT patient.PatNum,patient.LName,patient.FName,claim.ClaimNum,claim.DateService,
+					procedurelog.ProcNum,procedurecode.ProcCode,procedurelog.ProcStatus,procedurelog.ProcDate,
+					procedurelog.ProcNumLab,procedurecodelab.ProcCode ProcCodeLab,procedureloglab.ProcStatus ProcStatusLab,procedureloglab.ProcDate ProcDateLab
+				FROM procedurelog
+				INNER JOIN claimproc ON procedurelog.ProcNum=claimproc.ProcNum
+				INNER JOIN claim ON claimproc.ClaimNum=claim.ClaimNum
+				INNER JOIN patient ON claim.PatNum=patient.PatNum
+				INNER JOIN procedurecode ON procedurelog.CodeNum=procedurecode.CodeNum
+				LEFT JOIN procedurelog procedureloglab ON procedurelog.ProcNumLab=procedureloglab.ProcNum
+				LEFT JOIN procedurecode procedurecodelab ON procedureloglab.CodeNum=procedurecodelab.CodeNum
+				WHERE procedurelog.ProcStatus!={POut.Long((int)ProcStat.C)}
+				AND claim.ClaimStatus IN ('W','S','R')
+				AND claim.ClaimType IN ('P','S','Other')";
 			DataTable table=Db.GetTable(command);
 			if(table.Rows.Count==0 && !verbose) {
 				return "";
 			}
-			string log=Lans.g("FormDatabaseMaintenance","Procedures attached to claims with status of TP: ")+table.Rows.Count;
+			StringBuilder stringBuilder=new StringBuilder(Lans.g("FormDatabaseMaintenance","Procedures attached to claims that are not complete:")+" "+table.Rows.Count);
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
 					if(table.Rows.Count!=0) {
-						log+="\r\n   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down.")+"\r\n";
+						stringBuilder.AppendLine("\r\n   "+Lans.g("FormDatabaseMaintenance","Manual fix needed.  Double click to see a break down."));
 					}
 					break;
 				case DbmMode.Breakdown:
 					if(table.Rows.Count>0) {
-						log+=", "+Lans.g("FormDatabaseMaintenance","including")+":\r\n";
-						for(int i = 0;i<table.Rows.Count;i++) {
-							log+=Lans.g("FormDatabaseMaintenance","Patient")
-									+" "+table.Rows[i]["FName"].ToString()
-									+" "+table.Rows[i]["LName"].ToString()
-									+" #"+table.Rows[i]["PatNum"].ToString()
-									+", for claim service date "+PIn.Date(table.Rows[i]["DateService"].ToString()).ToShortDateString()
-									+", procedure code "+table.Rows[i]["ProcCode"].ToString()+"\r\n";
+						stringBuilder.AppendLine(", "+Lans.g("FormDatabaseMaintenance","including")+":");
+						List<PatNumClaimsGroup> listPatNumClaimsGroups=table.Select()
+							.GroupBy(x => PIn.Long(x["PatNum"].ToString()))
+							.Select(x => new PatNumClaimsGroup(x.Key,x.ToList()))
+							.ToList();
+						for(int i=0;i<listPatNumClaimsGroups.Count;i++) {
+							/**********************************************************************************************************************
+							 * Display the claims for each patient in groupings that will yield something like this for Americans:
+							 * 
+							 * Jason Salmon (PatNum:9)
+							 *   Claim (ClaimNum:10) with service date of 06/30/2020
+							 *     Procedure T6357 on 06/30/2020 (ProcNum:51) has a status of 'TPi'
+							 *     Procedure T6357 on 06/30/2020 (ProcNum:52) has a status of 'TPi'
+							 *   Claim (ClaimNum:14) with service date of 04/24/2020
+							 *     Procedure T9999 on 04/24/2020 (ProcNum:92) has a status of 'TPi'
+							 * Eric Salmon (PatNum:25)
+							 *   Claim (ClaimNum:16) with service date of 09/21/2022
+							 *     Procedure T1356 on 09/21/2022 (ProcNum:122) has a status of 'TPi'
+							 *     Procedure T3541 on 09/21/2022 (ProcNum:123) has a status of 'TPi'
+							 *     Procedure T1254 on 09/21/2022 (ProcNum:124) has a status of 'TPi'
+							 * 
+							 * And something like this for Canadians (if Lab Fees are involved):
+							 * 
+							 * Isla Salmon (PatNum:1277)
+							 *   Claim (ClaimNum:15210) with service date of 2020-03-04
+							 *     Procedure 67201 on 2020-03-04 (ProcNum:97282) has a status of 'C'
+							 *       ^^Lab Fee 99111 on 2019-10-04 (ProcNum:97294) has a status of 'TPi'
+							 *     Procedure 62502 on 2020-03-04 (ProcNum:97283) has a status of 'C'
+							 *       ^^Lab Fee 99111 on 2019-10-04 (ProcNum:97295) has a status of 'TPi'
+							 *       ...
+							 **********************************************************************************************************************/
+							stringBuilder.AppendLine(listPatNumClaimsGroups[i].ToString());
 						}
-						log+=Lans.g("FormDatabaseMaintenance","   They need to be fixed manually.")+"\r\n";
+						stringBuilder.AppendLine(Lans.g("FormDatabaseMaintenance","They need to be fixed manually."));
 					}
 					break;
 			}
-			return log;
+			return stringBuilder.ToString();
 		}
 
 		[DbmMethodAttr(HasBreakDown = true, IsCanada = true)]
@@ -11099,6 +11127,126 @@ HAVING cnt>1";
 			return sbLog.ToString();
 		}
 
+		///<summary>This method will remove all duplicate email messages and duplicate email message uids.</summary>
+		public static string CleanUpDuplicateEmails() {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetString(MethodBase.GetCurrentMethod());
+			}
+			//Find and delete all duplicate MsgIds within emailmessageuid.
+			string command=$@"SET group_concat_max_len=4294967295;
+				SELECT GROUP_CONCAT(EmailMessageUidNum) msgUidNums
+				FROM emailmessageuid
+				GROUP BY BINARY MsgId
+				HAVING COUNT(*)>1";
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Getting duplicate email message uids from the database..."));
+			List<string> listDupMsgUidNums=Db.GetListString(command);
+			if(listDupMsgUidNums.Count>0) {
+				for(int i=0;i<listDupMsgUidNums.Count;i++) {
+					try {
+						List<string> listMsgUidNums=listDupMsgUidNums[i].Split(",",StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();//Keep one of the EmailMessageUidNums
+						if(listMsgUidNums.Count==0) {
+							continue;//shouldn't happen
+						}
+						ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting duplicate email message uids from the database..."));
+						Db.NonQ($"DELETE FROM emailmessage WHERE EmailMessageNum IN({string.Join(",",listMsgUidNums)})");
+					}
+					catch(Exception ex) {
+						ex.DoNothing();
+						continue; //Skip any failures and continue
+					}
+				}
+			}
+			//Find and remove all duplicate email messages.
+			command=$@"SET group_concat_max_len=4294967295;
+				SELECT GROUP_CONCAT(EmailMessageNum ORDER BY SentOrReceived DESC) msgNums
+				FROM emailmessage
+				GROUP BY BINARY SUBJECT,RecipientAddress,ToAddress,FromAddress,CcAddress,BccAddress,BINARY BodyText,MsgDateTime
+				HAVING COUNT(*)>1";
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Getting duplicate email messages from the database..."));
+			List<string> listDupMsgNums=Db.GetListString(command);
+			if(listDupMsgUidNums.Count==0) {
+				return Lans.g("DatabaseMaintenance","There are no duplicate emails that need to be cleaned up.");
+			}
+     	if(listDupMsgNums.Count>0) {
+				for(int i=0;i<listDupMsgNums.Count;i++) {
+					try {
+						List<string> listMsgNums=listDupMsgNums[i].Split(",",StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();//Keep one of the EmailMessageNums
+						if(listMsgNums.Count==0) {
+							continue;
+						}
+						ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting duplicate email messages from the database..."));
+						Db.NonQ($"DELETE FROM emailmessage WHERE EmailMessageNum IN({string.Join(",",listMsgNums)})");
+					}
+					catch(Exception ex) {
+						ex.DoNothing();
+						continue; //Skip any failures and continue
+					}
+				}
+			}
+			if(DataConnection.DBtype==DatabaseType.MySql) {//Using MySQL.
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Optimizing the email message and email message uid tables..."));
+				OptimizeTable("emailmessageuid");
+				OptimizeTable("emailmessage");
+			}
+			string strResults=Lans.g("DatabaseMaintenance","Done.  No clean up required.");
+			if(listDupMsgUidNums.Count>0 || listDupMsgNums.Count>0) {
+				strResults=Lans.g("DatabaseMaintenance","Total duplicate email message uids deleted")+": "+listDupMsgUidNums.Count.ToString()+"\r\n"
+					+Lans.g("DatabaseMaintenance","Total duplicate email messages deleted")+": "+listDupMsgNums.Count.ToString();
+			}
+			return strResults;
+		}
+
+		///<summary>This method will go through the emailattach table to find and delete all the attachments not linked to an EmailMessage. 
+		///This also includes going into the OpenDentImages folder where the attachments are stored and delete the files there as well.</summary>
+		public static string CleanUpUnattachedAttachments() {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetString(MethodBase.GetCurrentMethod());
+			}
+			//We will not effect cloud storage. Only if the files are on the computer.
+			if(CloudStorage.IsCloudStorage || PrefC.AtoZfolderUsed!=DataStorageType.LocalAtoZ) {
+				return Lans.g("DatabaseMaintenance","This tool will not remove attachments using cloud storage or AtoZ folders."); 
+			}
+			string command="SELECT ActualFileName FROM emailattach WHERE EmailMessageNum NOT IN (SELECT EmailMessageNum FROM emailmessage)";
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Getting attachments not linked to an email message from the database..."));
+			List<string> listAttachmentFilesToDelete=Db.GetListString(command);
+			if(listAttachmentFilesToDelete.Count==0) {
+				return Lans.g("DatabaseMaintenance","There are no attachments that need to be deleted.");
+			}
+			//Safe to use this method since already checked if using cloud storage.
+			string attachPath=ODFileUtils.CombinePaths(ImageStore.GetPreferredAtoZpath(),"EmailAttachments");
+			int errorsCount=0;
+			int deletedCount=0;
+			//Delete all the attachment files within the images folder that aren't linked to a email message.
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting unlinked attachments in the EmailAttachments folder..."));
+			for(int i=0;i<listAttachmentFilesToDelete.Count;i++) {
+				try {
+					string attachFilePath=FileAtoZ.CombinePaths(attachPath,listAttachmentFilesToDelete[i]);
+					if(FileAtoZ.Exists(attachFilePath)) {
+						FileAtoZ.Delete(attachFilePath);
+						deletedCount++;
+					}
+				}
+				catch(Exception ex) {
+					ex.DoNothing();
+					errorsCount++;
+				}
+			}
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting unlinked email attaches from the database..."));
+			command="DELETE FROM emailattach WHERE EmailMessageNum NOT IN (SELECT EmailMessageNum FROM emailmessage)";
+			Db.NonQ(command);
+			if(DataConnection.DBtype==DatabaseType.MySql) {//Using MySQL.
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Optimizing the email attach table..."));
+				OptimizeTable("emailattach");
+			}
+			string strResults=Lans.g("DatabaseMaintenance","Done.  No clean up required.");
+			if(deletedCount>0 || errorsCount>0) {
+				strResults=Lans.g("DatabaseMaintenance","Total attachments considered")+": "+listAttachmentFilesToDelete.Count.ToString()+"\r\n"
+					+Lans.g("DatabaseMaintenance","Email Attaches successfully deleted")+": "+deletedCount.ToString()+"\r\n"
+					+Lans.g("DatabaseMaintenance","Email Attaches that failed to be deleted")+": "+errorsCount.ToString();
+			}
+			return strResults;
+		}
+
 		#endregion Tool Button and Helper Methods-----------------------------------------------------------------------------------------------------------
 
 		///<summary>Uses reflection to get all database maintenance methods that are specifically flagged for DBM.
@@ -11141,7 +11289,9 @@ HAVING cnt>1";
 			//No need to check MiddleTierRole; no call to db.
 			return method.GetCustomAttributes(typeof(DbmMethodAttr),true).OfType<DbmMethodAttr>().All(x => x.HasBreakDown);
 		}
-		
+
+		#region Helper Classes
+
 		private class PatientMissingTableHelper {
 
 			public string TableName;
@@ -11152,5 +11302,130 @@ HAVING cnt>1";
 				ColumnName=columnName;
 			}
 		}
+
+		private class PatNumClaimsGroup {
+			public long PatNum;
+			public string PatientName;
+			public List<ClaimNumProceduresGroup> ListClaimNumProceduresGroups;
+
+			///<summary>Each DataRow passed in must contain the following column names:
+			///LName, FName, PatNum, ClaimNum, DateService, ProcNum, ProcCode, ProcDate, ProcStatus, ProcNumLab, ProcCodeLab, ProcDateLab, ProcStatusLab</summary>
+			public PatNumClaimsGroup(long patNum,List<DataRow> listDataRows) {
+				PatNum=patNum;
+				PatientName=Patients.GetNameFLnoPref(PIn.String(listDataRows.First()["LName"].ToString()),PIn.String(listDataRows.First()["FName"].ToString()),"");
+				ListClaimNumProceduresGroups=listDataRows.GroupBy(x => PIn.Long(x["ClaimNum"].ToString()))
+					.Select(x => new ClaimNumProceduresGroup(x.Key,x.ToList()))
+					.ToList();
+			}
+
+			public override string ToString() {
+				return $"{PatientName} (PatNum:{PatNum})\r\n{string.Join("\r\n",ListClaimNumProceduresGroups)}";
+			}
+		}
+
+		private class ClaimNumProceduresGroup {
+			public long ClaimNum;
+			public DateTime DateService;
+			public List<ProcedureLiteLabsGroup> ListProcNumProcLabsGroups=new List<ProcedureLiteLabsGroup>();
+
+			public ClaimNumProceduresGroup(long claimNum,List<DataRow> listDataRows) {
+				ClaimNum=claimNum;
+				DateService=PIn.Date(listDataRows.First()["DateService"].ToString());
+				//Add a ProcNumProcLabsGroup object for every single procedure.
+				//Prefer to use ProcNumLab when set because that represents the 'parent' procedure that a lab fee is pointing to.
+				for(int i=0;i<listDataRows.Count;i++) {
+					long procNum=PIn.Long(listDataRows[i]["ProcNum"].ToString());
+					long procNumLab=PIn.Long(listDataRows[i]["ProcNumLab"].ToString());
+					long procNumParent=procNum;
+					if(procNumLab!=0) {
+						procNumParent=procNumLab;//Prefer the 'parent' num for lab fees.
+					}
+					//Check to see if parent procedure has already been added to the list (procedures can have multiple lab fees attached).
+					if(ListProcNumProcLabsGroups.Any(x => x.ProcedureLite.ProcNum==procNumParent)) {
+						continue;
+					}
+					ProcedureLite procedureLite=new ProcedureLite();
+					if(procNumLab==0) {//parent proc
+						procedureLite.ProcNum=procNum;
+						procedureLite.ProcCode=PIn.String(listDataRows[i]["ProcCode"].ToString());
+						procedureLite.ProcStatus=PIn.Enum<ProcStat>(listDataRows[i]["ProcStatus"].ToString());
+						procedureLite.ProcDate=PIn.Date(listDataRows[i]["ProcDate"].ToString());
+					}
+					else {//lab
+						procedureLite.ProcNum=procNumLab;
+						procedureLite.ProcCode=PIn.String(listDataRows[i]["ProcCodeLab"].ToString());
+						procedureLite.ProcStatus=PIn.Enum<ProcStat>(listDataRows[i]["ProcStatusLab"].ToString());
+						procedureLite.ProcDate=PIn.Date(listDataRows[i]["ProcDateLab"].ToString());
+					}
+					ListProcNumProcLabsGroups.Add(new ProcedureLiteLabsGroup(procedureLite));
+				}
+				List<DataRow> listDataRowsLabs=listDataRows.FindAll(x => x["ProcNumLab"].ToString()!="0");
+				//Add any Canadian Lab Fees to their parent ProcNumProcLabsGroup.
+				for(int i=0;i<listDataRowsLabs.Count;i++) {
+					long procNumLab=PIn.Long(listDataRows[i]["ProcNumLab"].ToString());
+					ProcedureLite procedureLite=new ProcedureLite();
+					procedureLite.ProcNum=PIn.Long(listDataRows[i]["ProcNum"].ToString());
+					procedureLite.ProcCode=PIn.String(listDataRows[i]["ProcCode"].ToString());
+					procedureLite.ProcStatus=PIn.Enum<ProcStat>(listDataRows[i]["ProcStatus"].ToString());
+					procedureLite.ProcDate=PIn.Date(listDataRows[i]["ProcDate"].ToString());
+					procedureLite.IsLabFee=true;
+					//Look for the parent procedure (which should have been added already).
+					ProcedureLiteLabsGroup procedureLiteLabsGroup=ListProcNumProcLabsGroups.Find(x => x.ProcedureLite.ProcNum==procNumLab);
+					if(procedureLiteLabsGroup==null) {
+						//The parent procedure wasn't found in the database... probably database corruption.
+						//Regardless, add this lab fee as a parent procedure so that it shows up in the break down.
+						ListProcNumProcLabsGroups.Add(new ProcedureLiteLabsGroup(procedureLite));
+					}
+					else {
+						//Add this lab fee to the parent procedure list of labs; there can be multiple labs.
+						procedureLiteLabsGroup.ListProcedureLitesLabs.Add(procedureLite);
+					}
+				}
+			}
+
+			public override string ToString() {
+				return $"  Claim (ClaimNum:{ClaimNum}) with service date of {DateService.ToShortDateString()}\r\n{string.Join("\r\n",ListProcNumProcLabsGroups)}";
+			}
+		}
+
+		private class ProcedureLiteLabsGroup {
+			public ProcedureLite ProcedureLite;
+			///<summary>A singular procedure can have multiple labs associated to it.</summary>
+			public List<ProcedureLite> ListProcedureLitesLabs=new List<ProcedureLite>();
+
+			public ProcedureLiteLabsGroup(ProcedureLite procedureLite) {
+				ProcedureLite=procedureLite;
+			}
+
+			public override string ToString() {
+				//The parent procedure description followed by any lab fee descriptions.
+				string retVal=ProcedureLite.ToString();
+				if(ListProcedureLitesLabs.Count > 0) {
+					retVal+="\r\n"+string.Join("\r\n",ListProcedureLitesLabs);
+				}
+				return retVal;
+			}
+		}
+
+		private class ProcedureLite {
+			public long ProcNum;
+			public string ProcCode;
+			public ProcStat ProcStatus;
+			public DateTime ProcDate;
+			public bool IsLabFee;
+
+			public override string ToString() {
+				string retVal;
+				if(IsLabFee) {
+					retVal=$"      ^^Lab Fee";//E.g. ^^Lab Fee 99111 on 2019-10-04 (ProcNum:97294) has a status of 'TPi'
+				}
+				else {
+					retVal=$"    Procedure";//E.g. Procedure 67201 on 2020-03-04 (ProcNum:97282) has a status of 'C'
+				}
+				return retVal+$" {ProcCode} on {ProcDate.ToShortDateString()} (ProcNum:{ProcNum}) has a status of '{ProcStatus}'";
+			}
+		}
+
+		#endregion Helper Classes
 	}
 }

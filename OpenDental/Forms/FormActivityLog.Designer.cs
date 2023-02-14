@@ -45,7 +45,7 @@ namespace OpenDental {
 			// 
 			// datePicker
 			// 
-			this.datePicker.BackColor = System.Drawing.SystemColors.Control;
+			this.datePicker.BackColor = System.Drawing.SystemColors.Window;
 			this.datePicker.EnableWeekButtons = false;
 			this.datePicker.Location = new System.Drawing.Point(12, 11);
 			this.datePicker.MaximumSize = new System.Drawing.Size(0, 185);

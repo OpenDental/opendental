@@ -693,7 +693,7 @@ namespace OpenDental.UI{
 			//Expand/Collapse============================================================================================
 			if(_listNodeObjTags[idx].NodeType==EnumImageNodeType.Category
 				&& (e.Button & MouseButtons.Left)==MouseButtons.Left//only left click can expand/collapse
-				&& e.X<_widthPlusMinus 
+				&& e.X<LayoutManager.Scale(_widthPlusMinus) 
 				&& _listNodeObjTags[idx].ExpandCollapse!=NodeObjTag.EnumExpandCollapse.None)
 			{
 				if(_listNodeObjTags[idx].ExpandCollapse==NodeObjTag.EnumExpandCollapse.Minus){

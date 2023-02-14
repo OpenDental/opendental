@@ -1,7 +1,10 @@
 using System;
+using System.Diagnostics;
 using System.DirectoryServices.AccountManagement;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using CodeBase;
 using OpenDentBusiness;
 
 namespace OpenDental {
@@ -51,6 +54,7 @@ namespace OpenDental {
 			try {
 				//This will change the password for the local user that OpenDental.exe is running under.
 				userPrincipal.ChangePassword(textOldPass.Text,newPass);
+				ChangePasswordLBE(newPass);
 			}
 			catch(Exception ex) {
 				FriendlyException.Show("Unable to update password: "+ex.Message,ex);
@@ -62,6 +66,31 @@ namespace OpenDental {
 			SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,"Changed Cloud office password.");
 			Prefs.UpdateInt(PrefName.CloudPasswordNeedsReset,(int)YN.No);//No refresh needed because this is only checked on startup.
 			MsgBox.Show(this,"Password changed.");
+		}
+
+		///<summary>Checks if cloud setup is a load balanced environment and updates the cloud servers.</summary>
+		private static void ChangePasswordLBE(string newPass) {
+			string scriptPath=$"C:\\Scripts\\ChangePasswordLBE.ps1";
+			//If the virtual machine has this script, then its an LBE
+			if(!File.Exists(scriptPath)) {
+				return;
+			}
+			string command=$"{scriptPath} {newPass} {Environment.UserName}";
+			string	powerShellCommand=$"/C powershell -ExecutionPolicy Bypass -File {command}";
+			using Process process=new Process();
+			ProcessStartInfo startInfo=new ProcessStartInfo("CMD.exe") {
+				CreateNoWindow=true,
+				UseShellExecute=false,
+				Arguments=powerShellCommand,
+				RedirectStandardError=true
+			};
+			process.StartInfo=startInfo;
+			process.Start();
+			process.WaitForExit();
+			if(process.ExitCode!=0) {
+				FriendlyException.Show(process.StandardError.ReadLine(),new Exception(process.StandardError.ReadToEnd()));
+			}
+			return;
 		}
 
 		private void butClose_Click(object sender,EventArgs e) {

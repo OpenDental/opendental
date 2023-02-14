@@ -784,6 +784,43 @@ namespace OpenDental {
 			FillToothChart(false);
 		}
 
+		private void gridTpProcs_CellClick(object sender,ODGridClickEventArgs e) {
+			if(!CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
+				return;
+			}
+			gridTpProcs.SetAll(false);//is this a desirable behavior?
+			if(gridTpProcs.ListGridRows[e.Row].Tag==null) {
+				return;//skip any hightlighted subtotal lines
+			}
+			CanadianSelectedRowHelper(((ProcTP)gridTpProcs.ListGridRows[e.Row].Tag), e.Row);
+		}
+
+			///<summary>Selects any associated lab procedures for the given selectedProcTp in gridTpProcs.</summary>
+		private void CanadianSelectedRowHelper(ProcTP procTpSelected, int index) {
+			if(!CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
+				return;
+			}
+			gridTpProcs.SetSelected(index,true);
+			Procedure procedureSelected=Procedures.GetOneProc(procTpSelected.ProcNumOrig,false);
+			for(int i=0;i<gridTpProcs.ListGridRows.Count;i++) {
+				if(gridTpProcs.ListGridRows[i].Tag==null) {
+					continue;
+				}
+				ProcTP procTP=(ProcTP)gridTpProcs.ListGridRows[i].Tag;
+				Procedure procedureLab=Procedures.GetOneProc(procTP.ProcNumOrig,false);
+				if(procedureLab==null) {
+					continue;
+				}
+				if((procedureSelected.ProcNumLab==0 && procedureSelected.ProcNum==procedureLab.ProcNumLab)//we have selected a procedure attach any labs 
+					|| (procedureSelected.ProcNumLab!=0 && procedureSelected.ProcNumLab==procedureLab.ProcNum)// we have selected a lab, attach procedures
+					|| (procedureSelected.ProcNumLab!=0 && procedureSelected.ProcNumLab==procedureLab.ProcNumLab))//we have selected a lab, attach other labs
+				{ 
+					gridTpProcs.SetSelected(i, true);
+				}
+			}
+			return;
+		}
+
 		private void gridTreatPlans_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			TreatPlan treatPlanSelected=_listTreatPlans[e.Row];
 			using FormTreatPlanCurEdit formTPCE=new FormTreatPlanCurEdit();
@@ -7125,6 +7162,11 @@ namespace OpenDental {
 			FillTpProcData();
 			FillTpProcDisplay();
 		}
+
+		private class ProcNumToLabs {
+			public long ProcNumLab;
+			public List<Procedure> listLabs;
+		}
 		
 		/// <summary>Fills _dictTpNumListTpRows with TreatPlanNums linked to the list of TpRows for the TP, used to fill gridTpProcs.</summary>
 		private void FillTpProcData() {
@@ -7134,11 +7176,24 @@ namespace OpenDental {
 				listTpRows=new List<TpRow>();
 				long treatPlanNumCur=_listTreatPlans[gridTreatPlans.SelectedIndices[i]].TreatPlanNum;
 				List<TreatPlanAttach> listTreatPlanAttaches=(List<TreatPlanAttach>)gridTreatPlans.ListGridRows[gridTreatPlans.SelectedIndices[i]].Tag;
-				List<Procedure> listProcsForTP=Procedures.GetManyProc(listTreatPlanAttaches.Select(x => x.ProcNum).ToList(),false)
+				List<Procedure> listProcsTPAll=Procedures.GetManyProc(listTreatPlanAttaches.Select(x => x.ProcNum).ToList(),false);
+				List<Procedure> listProcsTp=listProcsTPAll.FindAll(x => x.ProcNumLab==0);//get all regular procedures/non-atatched labs
+				List<ProcNumToLabs> listProcNumToLabs=listProcsTPAll.FindAll(x => x.ProcNumLab!=0)
+					.GroupBy(x => x.ProcNumLab, (key, group) => new ProcNumToLabs{ProcNumLab = key, listLabs = group.ToList()}).ToList();
+				List<Procedure> listProcsTPSorted=listProcsTp
 					.OrderBy(x => Defs.GetOrder(DefCat.TxPriorities,listTreatPlanAttaches.FirstOrDefault(y => y.ProcNum==x.ProcNum).Priority)<0)
 					.ThenBy(x => Defs.GetOrder(DefCat.TxPriorities,listTreatPlanAttaches.FirstOrDefault(y => y.ProcNum==x.ProcNum).Priority))
 					.ThenBy(x => Tooth.ToInt(x.ToothNum))
 					.ThenBy(x => x.ProcDate).ToList();
+				List<Procedure> listProcsForTP= new List<Procedure>();
+				for(int k=0;k<listProcsTPSorted.Count;k++) {
+					listProcsForTP.Add(listProcsTPSorted[k]);
+					ProcNumToLabs procNumToLab=listProcNumToLabs.FirstOrDefault(x => x.ProcNumLab==listProcsTPSorted[k].ProcNum);
+					if(procNumToLab==null) {
+						continue;
+					}
+					listProcsForTP.AddRange(procNumToLab.listLabs);
+				}
 				List<ProcTP> listProcTPsCur=new List<ProcTP>();
 				TpRow row;
 				for(int j=0;j<listProcsForTP.Count;j++) {
@@ -7161,6 +7216,9 @@ namespace OpenDental {
 						descript+=" #"+Tooth.DisplayRange(listProcsForTP[j].ToothRange);
 					}
 					row.Description=descript;
+					if(CultureInfo.CurrentCulture.Name.EndsWith("CA") && listProcsForTP[j].ProcNumLab!=0) {//for canada lab fees
+							row.Description=$"^ ^ {descript}";
+					}
 					row.ColorText=Defs.GetColor(DefCat.TxPriorities,listTreatPlanAttaches.FirstOrDefault(y => y.ProcNum==listProcsForTP[j].ProcNum).Priority);
 					if(row.ColorText==System.Drawing.Color.White) {
 						row.ColorText=System.Drawing.Color.Black;
@@ -11242,7 +11300,7 @@ namespace OpenDental {
 			public long MountNum;
 			public DateTime DateCreated;
 		}
-		#endregion Classes - Nested
+#endregion Classes - Nested
 
 	}//end class
 

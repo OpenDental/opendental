@@ -214,6 +214,9 @@ namespace OpenDentBusiness{
 				}
 			}
 			else if(procedureCode.TreatArea==TreatmentArea.ToothRange) {
+				if(string.IsNullOrEmpty(procedure.ToothRange)) {
+					return false;
+				}
 				//test for max or mand.
 				verifyCode=AutoCodeItems.VerifyCode(procedureCode.CodeNum,(isMandibular) ? "32" : "1","",procedure.IsAdditional,patient.PatNum,patient.Age,out autoCode);
 			}

@@ -338,7 +338,7 @@
 			this.listViewButtons.Activation = System.Windows.Forms.ItemActivation.OneClick;
 			this.listViewButtons.AutoArrange = false;
 			this.listViewButtons.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1});
+				this.columnHeader1});
 			this.listViewButtons.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
 			this.listViewButtons.HideSelection = false;
 			this.listViewButtons.Location = new System.Drawing.Point(311, 40);
@@ -458,19 +458,19 @@
 			// menuProgRight
 			// 
 			this.menuProgRight.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemDelete,
-            this.menuItemSetComplete,
-            this.menuItemSetEC,
-            this.menuItemSetEO,
-            this.menuItemEditSelected,
-            this.menuItemGroupSelected,
-            this.menuItemPrintProg,
-            this.menuItemPrintDay,
-            this.menuItemLabFeeDetach,
-            this.menuItemLabFee,
-            this.menuItemPrintRouteSlip,
-            this.menuItemGroupMultiVisit,
-            this.menuItemViewMultiVisitGroup});
+				this.menuItemDelete,
+				this.menuItemSetComplete,
+				this.menuItemSetEC,
+				this.menuItemSetEO,
+				this.menuItemEditSelected,
+				this.menuItemGroupSelected,
+				this.menuItemPrintProg,
+				this.menuItemPrintDay,
+				this.menuItemLabFeeDetach,
+				this.menuItemLabFee,
+				this.menuItemPrintRouteSlip,
+				this.menuItemGroupMultiVisit,
+				this.menuItemViewMultiVisitGroup});
 			this.menuProgRight.Popup += new System.EventHandler(this.menuProgRight_Popup);
 			// 
 			// menuItemDelete
@@ -591,7 +591,7 @@
 			// panelImages
 			// 
 			this.panelImages.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.panelImages.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.panelImages.Controls.Add(this.listViewImages);
 			this.panelImages.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -610,8 +610,8 @@
 			// 
 			this.listViewImages.Activation = System.Windows.Forms.ItemActivation.TwoClick;
 			this.listViewImages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.listViewImages.HideSelection = false;
 			this.listViewImages.LabelWrap = false;
 			this.listViewImages.LargeImageList = this.imageListThumbnails;
@@ -1496,12 +1496,12 @@
 			// gridPlanned
 			// 
 			this.gridPlanned.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.gridPlanned.Location = new System.Drawing.Point(0, 25);
 			this.gridPlanned.Name = "gridPlanned";
 			this.gridPlanned.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridPlanned.Size = new System.Drawing.Size(474, 211);
+			this.gridPlanned.Size = new System.Drawing.Size(520, 211);
 			this.gridPlanned.TabIndex = 193;
 			this.gridPlanned.Title = "Planned Appointments";
 			this.gridPlanned.TranslationName = "TablePlannedAppts";
@@ -1912,7 +1912,7 @@
 			this.label24.Size = new System.Drawing.Size(150, 71);
 			this.label24.TabIndex = 26;
 			this.label24.Text = "(the text feature here is completely different from the text that shows automatic" +
-    "ally for procedures with a PaintType of Text)";
+	 "ally for procedures with a PaintType of Text)";
 			// 
 			// radioMoveText
 			// 
@@ -2344,19 +2344,19 @@
 			// listCommonProcs
 			// 
 			this.listCommonProcs.ItemStrings = new string[] {
-        "Monthly Maintenance",
-        "Monthly Mobile",
-        "Monthly E-Mail Support",
-        "Monthly EHR",
-        "Data Conversion",
-        "Trial Conversion",
-        "Demo",
-        "Online Training",
-        "Additional Online Training",
-        "eCW Online Training",
-        "eCW Installation Verify",
-        "Programming",
-        "Query Programming"};
+		  "Monthly Maintenance",
+		  "Monthly Mobile",
+		  "Monthly E-Mail Support",
+		  "Monthly EHR",
+		  "Data Conversion",
+		  "Trial Conversion",
+		  "Demo",
+		  "Online Training",
+		  "Additional Online Training",
+		  "eCW Online Training",
+		  "eCW Installation Verify",
+		  "Programming",
+		  "Query Programming"};
 			this.listCommonProcs.Location = new System.Drawing.Point(203, 30);
 			this.listCommonProcs.Name = "listCommonProcs";
 			this.listCommonProcs.Size = new System.Drawing.Size(131, 173);
@@ -2542,8 +2542,8 @@
 			// labelECWerror
 			// 
 			this.labelECWerror.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.labelECWerror.Location = new System.Drawing.Point(25, 22);
 			this.labelECWerror.Name = "labelECWerror";
 			this.labelECWerror.Size = new System.Drawing.Size(314, 14);
@@ -2554,8 +2554,8 @@
 			// webBrowserEcw
 			// 
 			this.webBrowserEcw.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.webBrowserEcw.Location = new System.Drawing.Point(1, 11);
 			this.webBrowserEcw.MinimumSize = new System.Drawing.Size(20, 20);
 			this.webBrowserEcw.Name = "webBrowserEcw";
@@ -2566,8 +2566,8 @@
 			// menuToothChart
 			// 
 			this.menuToothChart.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemChartBig,
-            this.menuItemChartSave});
+				this.menuItemChartBig,
+				this.menuItemChartSave});
 			this.menuToothChart.Popup += new System.EventHandler(this.menuToothChart_Popup);
 			// 
 			// menuItemChartBig
@@ -2585,10 +2585,10 @@
 			// menuErx
 			// 
 			this.menuErx.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemErxRefresh,
-            this.menuItemDoseSpotPendingPescr,
-            this.menuItemDoseSpotRefillReqs,
-            this.menuItemDoseSpotTransactionErrors});
+				this.menuItemErxRefresh,
+				this.menuItemDoseSpotPendingPescr,
+				this.menuItemDoseSpotRefillReqs,
+				this.menuItemDoseSpotTransactionErrors});
 			// 
 			// menuItemErxRefresh
 			// 
@@ -2617,7 +2617,7 @@
 			// _contextMenuRxManage
 			// 
 			this._contextMenuRxManage.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this._menuItemRxManage});
+				this._menuItemRxManage});
 			// 
 			// _menuItemRxManage
 			// 
@@ -2671,7 +2671,7 @@
 			// panelTPpriority
 			// 
 			this.panelTPpriority.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+				| System.Windows.Forms.AnchorStyles.Left)));
 			this.panelTPpriority.Controls.Add(this.listPriorities);
 			this.panelTPpriority.Controls.Add(this.label4);
 			this.panelTPpriority.Location = new System.Drawing.Point(861, 412);
@@ -2682,7 +2682,7 @@
 			// listPriorities
 			// 
 			this.listPriorities.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.listPriorities.IntegralHeight = false;
 			this.listPriorities.Location = new System.Drawing.Point(0, 16);
 			this.listPriorities.Name = "listPriorities";
@@ -2704,8 +2704,8 @@
 			// 
 			this.gridProg.AllowSortingByColumn = true;
 			this.gridProg.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.gridProg.ContextMenu = this.menuProgRight;
 			this.gridProg.DoShowRightClickLinks = true;
 			this.gridProg.Location = new System.Drawing.Point(0, 0);
@@ -2726,7 +2726,7 @@
 			// gridProgPageNav
 			// 
 			this.gridProgPageNav.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.gridProgPageNav.BackColor = System.Drawing.Color.Transparent;
 			this.gridProgPageNav.GridOld = this.gridProg;
 			this.gridProgPageNav.Location = new System.Drawing.Point(0, 44);
@@ -2738,7 +2738,7 @@
 			// tabControlOrthoCategories
 			// 
 			this.tabControlOrthoCategories.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.tabControlOrthoCategories.Controls.Add(this.tabPage3);
 			this.tabControlOrthoCategories.Controls.Add(this.tabPage5);
 			this.tabControlOrthoCategories.Location = new System.Drawing.Point(805, 516);
@@ -2779,7 +2779,7 @@
 			// gridTpProcs
 			// 
 			this.gridTpProcs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+				| System.Windows.Forms.AnchorStyles.Left)));
 			this.gridTpProcs.Location = new System.Drawing.Point(415, 412);
 			this.gridTpProcs.Name = "gridTpProcs";
 			this.gridTpProcs.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
@@ -2788,6 +2788,7 @@
 			this.gridTpProcs.Title = "Procedures";
 			this.gridTpProcs.TranslationName = "TableTP";
 			this.gridTpProcs.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridTpProcs_CellDoubleClick);
+			this.gridTpProcs.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridTpProcs_CellClick);
 			// 
 			// butNewTP
 			// 
