@@ -90,7 +90,7 @@ namespace OpenDental{
 			// 
 			// checkIsGuardian
 			// 
-			this.checkIsGuardian.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkIsGuardian.CheckAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.checkIsGuardian.Location = new System.Drawing.Point(2, 64);
 			this.checkIsGuardian.Name = "checkIsGuardian";
 			this.checkIsGuardian.RightToLeft = System.Windows.Forms.RightToLeft.Yes;

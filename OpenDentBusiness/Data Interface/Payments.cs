@@ -46,7 +46,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Gets a list of PaymentForApi from db. Returns an empty list if not found.</summary>
-		public static List<PaymentForApi> GetPaymentsForApi(long patNum,DateTime dateEntry) {
+		public static List<PaymentForApi> GetPaymentsForApi(int limit,int offset,long patNum,DateTime dateEntry) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<PaymentForApi>>(MethodBase.GetCurrentMethod(),patNum,dateEntry);
 			}
@@ -55,7 +55,8 @@ namespace OpenDentBusiness{
 				"SELECT * from payment"
 				+" WHERE PatNum="+POut.Long(patNum)
 				+" AND DateEntry>="+POut.DateT(dateEntry)
-				+" ORDER BY PayNum";
+				+" ORDER BY PayNum"
+				+" LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
 			string commandDatetime="SELECT "+DbHelper.Now();
 			DateTime dateTimeServer=PIn.DateT(OpenDentBusiness.Db.GetScalar(commandDatetime)); //run before payments for rigorous inclusion of payments
 			List<Payment> listPayments=Crud.PaymentCrud.SelectMany(command);

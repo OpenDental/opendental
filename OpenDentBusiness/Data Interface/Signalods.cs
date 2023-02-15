@@ -75,7 +75,7 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary></summary>
-		public static List<SignalodForApi> GetSignalOdsForApi(DateTime sinceDateT,List<InvalidType> listITypes=null){
+		public static List<SignalodForApi> GetSignalOdsForApi(int limit,int offset,DateTime sinceDateT,List<InvalidType> listITypes=null){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<SignalodForApi>>(MethodBase.GetCurrentMethod(),sinceDateT,listITypes);
 			}
@@ -87,7 +87,8 @@ namespace OpenDentBusiness {
 			if(!listITypes.IsNullOrEmpty()) {
 				command+="AND IType IN("+String.Join(",",listITypes.Select(x => (int)x))+") ";
 			}
-			command+="ORDER BY SignalNum";
+			command+="ORDER BY SignalNum "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
 			//note: this might return an occasional row that has both times newer.
 			List<Signalod> listSignalods=new List<Signalod>();
 			string commandDatetime="SELECT "+DbHelper.Now();

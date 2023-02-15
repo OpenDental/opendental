@@ -231,6 +231,12 @@ namespace OpenDental {
 				row.Tag=new Action(RepeatChargeEditMultiFix);
 				gridTools.ListGridRows.Add(row);
 			}
+			row=new GridRow(Lan.g(this,"Email Duplicates"),Lan.g(this,"Deletes all duplicated email messages."));
+			row.Tag=new Action(DuplicateEmailsFix);
+			gridTools.ListGridRows.Add(row);
+			row=new GridRow(Lan.g(this,"Clean Attachments"),Lan.g(this,"Deletes all attachments not linked to an email message."));
+			row.Tag=new Action(CleanEmailAttachesFix);
+			gridTools.ListGridRows.Add(row);
 			gridTools.EndUpdate();
 		}
 
@@ -631,6 +637,56 @@ namespace OpenDental {
 		private void RepeatChargeEditMultiFix() {
 			using FormRepeatChargeEditMulti formRepeatChargeEditMulti=new FormRepeatChargeEditMulti();
 			formRepeatChargeEditMulti.ShowDialog();
+		}
+
+		private void DuplicateEmailsFix() {
+			if(!MsgBox.Show(this,MsgBoxButtons.YesNo
+				,"This tool is only necessary to run if utilizing the email feature.\r\n"
+				+"Run this tool if there are duplicate emails within the database.  "
+				+"The issue is evident when the email message table is very large.\r\n\r\n"
+				+"This tool could take a long time to finish, do you wish to continue?"))
+			{
+				return;
+			}
+			string strResult="";
+			ProgressOD progressOD=new ProgressOD();
+			progressOD.ActionMain=() => strResult=DatabaseMaintenances.CleanUpDuplicateEmails();
+			try{
+				progressOD.ShowDialogProgress();
+			}
+			catch(Exception ex){
+				strResult=Lan.g(this,"There was an error cleaning up duplicate emails:")+"\r\n"+ex.Message;
+			}
+			if(progressOD.IsCancelled){
+				return;
+			}
+			MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(strResult);
+			msgBoxCopyPaste.Show();
+		}
+
+		private void CleanEmailAttachesFix() {
+			if(!MsgBox.Show(this,MsgBoxButtons.YesNo
+				,"This tool is only necessary to run if utilizing the email feature.\r\n"
+				+"Run this tool if there are email attachments within the database that are not linked to an email message.  "
+				+"The issue is evident when the EmailAttachments Folder is very large.\r\n\r\n"
+				+"This tool could take a long time to finish, do you wish to continue?"))
+			{
+				return;
+			}
+			string strResult="";
+			ProgressOD progressOD=new ProgressOD();
+			progressOD.ActionMain=() => strResult=DatabaseMaintenances.CleanUpUnattachedAttachments();
+			try{
+				progressOD.ShowDialogProgress();
+			}
+			catch(Exception ex){
+				strResult=Lan.g(this,"There was an error deleting the attachments:")+"\r\n"+ex.Message;
+			}
+			if(progressOD.IsCancelled){
+				return;
+			}
+			MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(strResult);
+			msgBoxCopyPaste.Show();
 		}
 
 		#endregion

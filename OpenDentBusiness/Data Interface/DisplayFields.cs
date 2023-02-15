@@ -623,6 +623,7 @@ namespace OpenDentBusiness {
 					list.Add(new DisplayField("Abbr",50,category));
 					list.Add(new DisplayField("Locked",50,category));
 					list.Add(new DisplayField("HL7 Sent",60,category));
+					list.Add(new DisplayField("Attachment",55,category));
 					if(PrefC.HasClinicsEnabled) {
 						list.Add(new DisplayField("ClinicDesc",100,category));
 						list.Add(new DisplayField("Clinic",90,category));

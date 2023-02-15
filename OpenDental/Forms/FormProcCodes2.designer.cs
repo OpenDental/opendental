@@ -154,7 +154,7 @@ namespace OpenDental {
 			// listCategories
 			// 
 			this.listCategories.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+				| System.Windows.Forms.AnchorStyles.Left)));
 			this.listCategories.Location = new System.Drawing.Point(10, 149);
 			this.listCategories.Name = "listCategories";
 			this.listCategories.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
@@ -258,7 +258,7 @@ namespace OpenDental {
 			// groupBox1
 			// 
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+				| System.Windows.Forms.AnchorStyles.Left)));
 			this.groupBox1.Controls.Add(this.label6);
 			this.groupBox1.Controls.Add(this.comboSort);
 			this.groupBox1.Controls.Add(this.butShowHiddenDefault);
@@ -300,8 +300,8 @@ namespace OpenDental {
 			// gridMain
 			// 
 			this.gridMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.EditableEnterMovesDown = true;
 			this.gridMain.Location = new System.Drawing.Point(170, 8);
 			this.gridMain.Name = "gridMain";
@@ -773,7 +773,7 @@ namespace OpenDental {
 			// 
 			this.butColorClinicProv.Enabled = false;
 			this.butColorClinicProv.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.butColorClinicProv.Location = new System.Drawing.Point(89, 44);
+			this.butColorClinicProv.Location = new System.Drawing.Point(86, 44);
 			this.butColorClinicProv.Name = "butColorClinicProv";
 			this.butColorClinicProv.Size = new System.Drawing.Size(20, 20);
 			this.butColorClinicProv.TabIndex = 163;
@@ -782,7 +782,7 @@ namespace OpenDental {
 			// 
 			this.butColorProvider.Enabled = false;
 			this.butColorProvider.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.butColorProvider.Location = new System.Drawing.Point(10, 44);
+			this.butColorProvider.Location = new System.Drawing.Point(4, 44);
 			this.butColorProvider.Name = "butColorProvider";
 			this.butColorProvider.Size = new System.Drawing.Size(20, 20);
 			this.butColorProvider.TabIndex = 162;
@@ -791,7 +791,7 @@ namespace OpenDental {
 			// 
 			this.butColorClinic.Enabled = false;
 			this.butColorClinic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.butColorClinic.Location = new System.Drawing.Point(89, 18);
+			this.butColorClinic.Location = new System.Drawing.Point(86, 18);
 			this.butColorClinic.Name = "butColorClinic";
 			this.butColorClinic.Size = new System.Drawing.Size(20, 20);
 			this.butColorClinic.TabIndex = 161;
@@ -800,14 +800,14 @@ namespace OpenDental {
 			// 
 			this.butColorDefault.Enabled = false;
 			this.butColorDefault.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.butColorDefault.Location = new System.Drawing.Point(10, 17);
+			this.butColorDefault.Location = new System.Drawing.Point(4, 17);
 			this.butColorDefault.Name = "butColorDefault";
 			this.butColorDefault.Size = new System.Drawing.Size(20, 20);
 			this.butColorDefault.TabIndex = 160;
 			// 
 			// label21
 			// 
-			this.label21.Location = new System.Drawing.Point(110, 19);
+			this.label21.Location = new System.Drawing.Point(106, 19);
 			this.label21.Name = "label21";
 			this.label21.Size = new System.Drawing.Size(48, 17);
 			this.label21.TabIndex = 48;
@@ -816,25 +816,26 @@ namespace OpenDental {
 			// 
 			// label22
 			// 
-			this.label22.Location = new System.Drawing.Point(31, 47);
+			this.label22.Location = new System.Drawing.Point(24, 46);
 			this.label22.Name = "label22";
-			this.label22.Size = new System.Drawing.Size(55, 17);
+			this.label22.Size = new System.Drawing.Size(60, 17);
 			this.label22.TabIndex = 46;
 			this.label22.Text = "= Provider";
 			this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// label20
 			// 
-			this.label20.Location = new System.Drawing.Point(110, 47);
+			this.label20.BackColor = System.Drawing.Color.Transparent;
+			this.label20.Location = new System.Drawing.Point(106, 46);
 			this.label20.Name = "label20";
-			this.label20.Size = new System.Drawing.Size(88, 17);
+			this.label20.Size = new System.Drawing.Size(95, 17);
 			this.label20.TabIndex = 44;
 			this.label20.Text = "= Provider+Clinic";
 			this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// label19
 			// 
-			this.label19.Location = new System.Drawing.Point(31, 19);
+			this.label19.Location = new System.Drawing.Point(24, 18);
 			this.label19.Name = "label19";
 			this.label19.Size = new System.Drawing.Size(60, 17);
 			this.label19.TabIndex = 43;

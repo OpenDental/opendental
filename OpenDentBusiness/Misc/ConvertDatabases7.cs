@@ -4390,39 +4390,7 @@ namespace OpenDentBusiness {
 		}
 
 		private static void To22_3_48() {
-			//Find and delete all duplicate MsgIds within emailmessageuid.
-			string command=$@"SET group_concat_max_len=4294967295;
-				SELECT GROUP_CONCAT(EmailMessageUidNum) msgUidNums
-				FROM emailmessageuid
-				GROUP BY BINARY MsgId
-				HAVING COUNT(*)>1";
-			List<string> listDupMsgUidNums=Db.GetListString(command);
-			if(listDupMsgUidNums.Count>0) {
-				for(int i=0;i<listDupMsgUidNums.Count;i++) {
-					List<string> listMsgUidNums=listDupMsgUidNums[i].Split(",",StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();//Keep one of the EmailMessageUidNums
-					if(listMsgUidNums.Count==0) {
-						continue;//shouldn't happen
-					}
-					Db.NonQ($"DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN({string.Join(",",listMsgUidNums)})");
-				}
-			}
-			//Find and remove all duplicate email messages.
-			command=$@"SET group_concat_max_len=4294967295;
-				SELECT GROUP_CONCAT(EmailMessageNum ORDER BY SentOrReceived DESC) msgNums
-				FROM emailmessage
-				GROUP BY BINARY SUBJECT,RecipientAddress,ToAddress,FromAddress,CcAddress,BccAddress,BINARY BodyText,MsgDateTime
-				HAVING COUNT(*)>1";
-			List<string> listDupMsgNums=Db.GetListString(command);
-     	if(listDupMsgNums.Count>0) {
-				for(int i=0;i<listDupMsgNums.Count;i++) {
-					List<string> listMsgNums=listDupMsgNums[i].Split(",",StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();//Keep one of the EmailMessageNums
-					if(listMsgNums.Count==0) {
-						continue;
-					}
-					Db.NonQ($"DELETE FROM emailmessage WHERE EmailMessageNum IN({string.Join(",",listMsgNums)})");
-				}
-				CleanupEmailAttachments();
-			}
+			//Duplicate email code moved to DBM tool under CleanUpDuplicateEmails(), commented out here because the queries can take a long time to run and we don't want to run it more than once
 		}
 	}
 }

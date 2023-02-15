@@ -1454,7 +1454,7 @@
 			this.gridPlanned.Location = new System.Drawing.Point(0, 25);
 			this.gridPlanned.Name = "gridPlanned";
 			this.gridPlanned.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridPlanned.Size = new System.Drawing.Size(470, 208);
+			this.gridPlanned.Size = new System.Drawing.Size(520, 208);
 			this.gridPlanned.TabIndex = 193;
 			this.gridPlanned.Title = "Planned Appointments";
 			this.gridPlanned.TranslationName = "TablePlannedAppts";

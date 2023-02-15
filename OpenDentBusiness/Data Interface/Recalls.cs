@@ -286,7 +286,7 @@ namespace OpenDentBusiness {
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetTable(MethodBase.GetCurrentMethod(),fromDate,toDate,groupByFamilies,provNum,clinicNum,siteNum,
-					sortBy,showReminders,maxReminders,isAsap,codeRangeStart,codeRangeEnd,doShowReminded,listRecallTypes);
+					sortBy,showReminders,maxReminders,isAsap,codeRangeStart,codeRangeEnd,doShowReminded,listRecallTypes,isForWebSched);
 			}
 			#region Logging
 			Stopwatch sw=new Stopwatch();
