@@ -428,7 +428,7 @@ namespace OpenDental {
 			// 
 			this.label17.Location = new System.Drawing.Point(241, 144);
 			this.label17.Name = "label17";
-			this.label17.Size = new System.Drawing.Size(251, 17);
+			this.label17.Size = new System.Drawing.Size(251, 15);
 			this.label17.TabIndex = 0;
 			this.label17.Text = "(zero unless for some medical claims)";
 			// 
@@ -971,9 +971,9 @@ namespace OpenDental {
 			this.Controls.Add(this.tbTime);
 			this.Controls.Add(this.label18);
 			this.Controls.Add(this.label20);
+			this.Controls.Add(this.textDrugNDC);
 			this.Controls.Add(this.label17);
 			this.Controls.Add(this.textRevenueCode);
-			this.Controls.Add(this.textDrugNDC);
 			this.Controls.Add(this.textBaseUnits);
 			this.Controls.Add(this.labelRevenueCode);
 			this.Controls.Add(this.labelDrugNDC);

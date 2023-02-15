@@ -591,8 +591,7 @@ namespace OpenDental {
 			// checkUsePhoneNumTable
 			// 
 			this.checkUsePhoneNumTable.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkUsePhoneNumTable.Checked = true;
-			this.checkUsePhoneNumTable.CheckState = System.Windows.Forms.CheckState.Indeterminate;
+			this.checkUsePhoneNumTable.Checked = false;
 			this.checkUsePhoneNumTable.Location = new System.Drawing.Point(6, 97);
 			this.checkUsePhoneNumTable.Name = "checkUsePhoneNumTable";
 			this.checkUsePhoneNumTable.Size = new System.Drawing.Size(406, 17);
