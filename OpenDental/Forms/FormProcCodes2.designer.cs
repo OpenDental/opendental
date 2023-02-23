@@ -759,9 +759,9 @@ namespace OpenDental {
 			this.groupBox5.Controls.Add(this.butColorClinic);
 			this.groupBox5.Controls.Add(this.butColorDefault);
 			this.groupBox5.Controls.Add(this.label21);
-			this.groupBox5.Controls.Add(this.label22);
 			this.groupBox5.Controls.Add(this.label20);
 			this.groupBox5.Controls.Add(this.label19);
+			this.groupBox5.Controls.Add(this.label22);
 			this.groupBox5.Location = new System.Drawing.Point(780, 558);
 			this.groupBox5.Name = "groupBox5";
 			this.groupBox5.Size = new System.Drawing.Size(200, 70);
@@ -818,7 +818,7 @@ namespace OpenDental {
 			// 
 			this.label22.Location = new System.Drawing.Point(24, 46);
 			this.label22.Name = "label22";
-			this.label22.Size = new System.Drawing.Size(60, 17);
+			this.label22.Size = new System.Drawing.Size(65, 17);
 			this.label22.TabIndex = 46;
 			this.label22.Text = "= Provider";
 			this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;

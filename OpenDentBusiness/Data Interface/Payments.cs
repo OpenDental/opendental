@@ -48,7 +48,7 @@ namespace OpenDentBusiness{
 		///<summary>Gets a list of PaymentForApi from db. Returns an empty list if not found.</summary>
 		public static List<PaymentForApi> GetPaymentsForApi(int limit,int offset,long patNum,DateTime dateEntry) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<PaymentForApi>>(MethodBase.GetCurrentMethod(),patNum,dateEntry);
+				return Meth.GetObject<List<PaymentForApi>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,dateEntry);
 			}
 			List<PaymentForApi> listPaymentForApi=new List<PaymentForApi>();
 			string command=

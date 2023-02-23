@@ -2605,7 +2605,7 @@ namespace OpenDentBusiness{
 			List<ApptStatus> listStatuses,string codeRangeStart="",string codeRangeEnd="") 
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<AppointmentWithServerDT>>(MethodBase.GetCurrentMethod(),provNum,siteNum,clinicNum,listStatuses,codeRangeStart,codeRangeEnd);
+				return Meth.GetObject<List<AppointmentWithServerDT>>(MethodBase.GetCurrentMethod(),limit,offset,provNum,siteNum,clinicNum,listStatuses,codeRangeStart,codeRangeEnd);
 			}
 			List<long> listCodeNums=new List<long>();
 			if(!string.IsNullOrEmpty(codeRangeStart)) {

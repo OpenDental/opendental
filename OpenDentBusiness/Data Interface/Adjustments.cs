@@ -47,7 +47,7 @@ namespace OpenDentBusiness{
 		///<summary>Gets adjustments for a given patient. Can filter by AdjType. Returns an empty list if not found.</summary>
 		public static List<Adjustment> GetAdjustmentsForApi(int limit,int offset,long patNum,long adjType=0) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Adjustment>>(MethodBase.GetCurrentMethod(),patNum,adjType);
+				return Meth.GetObject<List<Adjustment>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,adjType);
 			}
 			string command=
 				"SELECT * FROM adjustment"

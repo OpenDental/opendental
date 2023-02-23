@@ -3978,12 +3978,16 @@ namespace OpenDentBusiness {
 					Db.NonQ(command);
 				});
 			}
+			//Delete any existing PatientLinks between these two patients of type Clone.
+			PatientLinks.DeleteCloneBetweenToAndFrom(patFrom,patTo);
 			//Create a link from the from patient to the to patient.
 			PatientLink patLink=new PatientLink();
 			patLink.PatNumFrom=patFrom;
 			patLink.PatNumTo=patTo;
 			patLink.LinkType=PatientLinkType.Merge;
 			PatientLinks.Insert(patLink);
+			//Update any remaining Clones PatientLinks and set their PatNumFrom fields to the merged into patnum. The clones will now be cloned from the merged into patient.
+			PatientLinks.UpdateFromPatientClonesAfterMerge(patFrom,patTo);
 			return true;
 		}
 

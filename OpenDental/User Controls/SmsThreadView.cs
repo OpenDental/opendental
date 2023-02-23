@@ -249,6 +249,7 @@ namespace OpenDental {
 			else {
 				panelNavigation.Visible=true;
 				LayoutManager.MoveLocation(panelScroll,new Point(0,panelNavigation.Location.Y+panelNavigation.Height));//Just below panelNavigation
+				LayoutManager.MoveHeight(panelScroll,Height-panelScroll.Location.Y);
 			}			
 			if(_smsThreadPage==maxPage) {
 				butBackPage.Enabled=false;

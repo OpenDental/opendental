@@ -4034,7 +4034,9 @@ namespace OpenDentBusiness {
 				}
 				Plugins.HookAddCode(null,"Procedures.SetCompleteInAppt_procLoop",procCur,procOld);
 				bool isProcLinkedToOrthoCase=orthoProcLink!=null;
-				Update(procCur,procOld,isProcLinkedToOrthoCase:isProcLinkedToOrthoCase);//Updates payplan charges for the procedure if it went from any status to complete.
+				if(procCur.ProcNumLab==0) {//skip because SetCanadianLabFeesCompleteForProc() called update already
+					Update(procCur,procOld,isProcLinkedToOrthoCase:isProcLinkedToOrthoCase);//Updates payplan charges for the procedure if it went from any status to complete.
+				}
 				if(isProcLinkedToOrthoCase) {//If proc was linked to orthoCase, Pass ortho case objects to ComputeEstimates.
 					ComputeEstimates(procCur,apt.PatNum,ref claimProcList,false,planList,patPlans,benefitList,
 						histList,loopList,true,

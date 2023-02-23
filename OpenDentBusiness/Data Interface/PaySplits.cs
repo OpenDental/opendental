@@ -454,12 +454,13 @@ namespace OpenDentBusiness{
 			}
 		}
 
-		///<summary>Inserts, updates, or deletes db rows to match listNew. Hashes new paySplits and existing valid splits. </summary>
-		public static bool Sync(List<PaySplit> listNew,List<PaySplit> listOld) {
+		///<summary>Goes to the db to grab current paysplits for the passed in paynum to insert, update, or delete db rows to match listNew.. Hashes new paySplits and existing valid splits. </summary>
+		public static bool Sync(List<PaySplit> listNew,long payNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),listNew,listOld);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),listNew,payNum);
 			}
 			bool isHashNeeded=true;
+			List<PaySplit> listOld=GetForPayment(payNum);
 			for(int i=0;i<listNew.Count;i++) {
 				isHashNeeded=true;
 				//Only rehash existing splits that are already valid

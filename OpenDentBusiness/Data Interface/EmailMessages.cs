@@ -858,7 +858,7 @@ namespace OpenDentBusiness{
 					MicrosoftApiConnector.GetProfile(emailAddress.EmailUsername,emailAddress.AccessToken);
 				}
 				catch(Exception ex) {
-					if(!hasRetried && ex.InnerException.Message.Contains("InvalidAuthenticationToken")) { //Need to refresh the token and try again.
+					if(!hasRetried && ex.InnerException.Message.Contains("InvalidAuthenticationToken") && !ODBuild.IsWeb()) { //Need to refresh the token and try again.
 						RefreshMicrosoftToken(emailAddress);
 						SendEmailUnsecure(emailMessage,emailAddress,nameValueCollectionHeaders,true,arrayAlternateViews);
 						return;

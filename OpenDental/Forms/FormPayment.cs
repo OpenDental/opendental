@@ -2834,7 +2834,7 @@ namespace OpenDental {
 			foreach(PaySplit paySplit in _listPaySplits) {
 				paySplit.DatePay=_payment.PayDate;
 			}
-			bool hasChanged=PaySplits.Sync(_listPaySplits,_listPaySplitsOld);
+			bool hasChanged=PaySplits.Sync(_listPaySplits,_payment.PayNum);
 			foreach(PaySplit paySplitOld in _listPaySplitsForSecLog) {
 				//Split was deleted. Add Securitylog Entry
 				SecurityLogs.MakeLogEntry(Permissions.PaymentEdit,paySplitOld.PatNum,PaySplits.GetSecurityLogMsgDelete(paySplitOld,_payment),0,
@@ -4275,7 +4275,7 @@ namespace OpenDental {
 			foreach(PaySplit paySplit in _listPaySplits) {
 				paySplit.DatePay=_payment.PayDate;
 			}
-			bool hasChanged=PaySplits.Sync(_listPaySplits,_listPaySplitsOld);
+			bool hasChanged=PaySplits.Sync(_listPaySplits,_payment.PayNum);
 			if(IsNew) {
 				SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,_payment.PatNum,Payments.GetSecuritylogEntryText(_payment,_paymentOld,IsNew,
 					_listDefsPaymentType));
