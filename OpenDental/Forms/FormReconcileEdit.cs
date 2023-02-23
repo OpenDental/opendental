@@ -59,6 +59,12 @@ namespace OpenDental {
 			gridMain.ListGridRows.Clear();
 			GridRow row;
 			decimal sum=0;//to avoid cumulative errors.
+			bool hasAmountFind=false;
+			double amtFind=0.00;
+			if(this.textFindAmount.Text.Length>0){
+				hasAmountFind=true;
+				amtFind=PIn.Double(textFindAmount.Text);
+			}
 			for(int i=0;i<_listJournalEntries.Count;i++) {
 				row=new GridRow();
 				row.Cells.Add(_listJournalEntries[i].CheckNumber);
@@ -89,18 +95,9 @@ namespace OpenDental {
 				else{
 					row.Cells.Add("X");
 				}
-				if(this.textFindAmount.Text.Length>0){
-					double amtFound=0.00;
-					try {
-						amtFound=Convert.ToDouble(textFindAmount.Text);
-					} 
-					catch {
-						//Just a format error in the amount probably, who cares.
-						gridMain.ListGridRows.Add(row);
-						return;
-					}
-					if((amtFound==0 && amtFound==_listJournalEntries[i].CreditAmt && amtFound==_listJournalEntries[i].DebitAmt)
-						|| (amtFound!=0 && (amtFound==_listJournalEntries[i].CreditAmt || amtFound==_listJournalEntries[i].DebitAmt))) 
+				if(hasAmountFind){
+					if((amtFind==0 && amtFind==_listJournalEntries[i].CreditAmt && amtFind==_listJournalEntries[i].DebitAmt)
+						|| (amtFind!=0 && (amtFind==_listJournalEntries[i].CreditAmt || amtFind==_listJournalEntries[i].DebitAmt))) 
 					{
 						row.ColorBackG=System.Drawing.Color.Yellow;
 					}

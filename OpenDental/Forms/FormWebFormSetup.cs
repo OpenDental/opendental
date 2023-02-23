@@ -402,19 +402,42 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please select an item from the grid first.");
 				return;
 			}
-			Cursor=Cursors.WaitCursor;
 			int failures=0;
-			foreach(WebForms_SheetDef wf_sheetDef in gridMain.SelectedTags<WebForms_SheetDef>()) {
-				if(!WebForms_SheetDefs.DeleteSheetDef(wf_sheetDef.WebSheetDefID)) {
+			List<WebForms_SheetDef> listWebForms_SheetDefs=gridMain.SelectedTags<WebForms_SheetDef>().ToList();//Sheets to be deleted
+			List<WebForms_SheetDef> listWebForms_SheetDefsNextForms=listWebForms_SheetDefs.FindAll(x => _listSelectedNextFormIds.Contains(x.WebSheetDefID));//Sheets currently in the 'Next Forms' field.
+			if(listWebForms_SheetDefsNextForms.Count>0) {//If a sheet that is to be deleted is currently in the 'Next Forms' field.
+				string sheetDescriptions=string.Join(",\n",listWebForms_SheetDefsNextForms.Select(x => x.Description));
+				//Prompt user if they want to continue with delete. If no, simply return.
+				if(MessageBox.Show(this,Lan.g(this,"The following sheet(s) will also be deleted from the 'Next Forms' field:")+"\n"+sheetDescriptions+"\n"+Lan.g(this,"Do you want to continue?")
+					,Lan.g(this,"Warning"),MessageBoxButtons.YesNo)==DialogResult.No)
+				{ 
+					return;
+				}
+			}
+			Cursor=Cursors.WaitCursor;
+			for(int i=0;i<listWebForms_SheetDefs.Count;i++) {
+				if(!WebForms_SheetDefs.DeleteSheetDef(listWebForms_SheetDefs[i].WebSheetDefID)) {
 					failures++;
 				}
 			}
 			if(failures>0) {
 				Cursor=Cursors.Default;
-				MessageBox.Show(this,Lan.g(this,"Error deleting ")+POut.Int(failures)+Lan.g(this," web form(s). Either the web service is not available or "
+				MessageBox.Show(this,Lan.g(this,"Error deleting")+" "+POut.Int(failures)+" "+Lan.g(this,"web form(s). Either the web service is not available or "
 					+"the Host Server Address cannot be found."));
 			}
 			FillGrid();
+			//Remove all the NextForm ids that belong to SheetDefs that were deleted.
+			_listSelectedNextFormIds=_listSelectedNextFormIds.FindAll(x => !listWebForms_SheetDefs.Any(y => y.WebSheetDefID==x));
+			//Recreate the textNextForms control's text.
+			List<string> listNextFormsDescriptions=new List<string>();
+			for(int i=0;i<_listSelectedNextFormIds.Count;i++) {
+				WebForms_SheetDef webForms_SheetDef=_listWebFormSheetDefs.Find(x => x.WebSheetDefID==_listSelectedNextFormIds[i]);
+				if(webForms_SheetDef!=null) {
+					listNextFormsDescriptions.Add(webForms_SheetDef.Description);
+				}
+			}
+			textNextForms.Text=string.Join(", ",listNextFormsDescriptions);
+			ConstructURLs();
 			Cursor=Cursors.Default;
 		}
 

@@ -1,5 +1,6 @@
 using CodeBase;
 using Newtonsoft.Json;
+using OpenDentBusiness.Crud;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -203,6 +204,14 @@ namespace OpenDentBusiness {
 				Crud.EServiceBillingCrud.Update(eServiceBilling);
 			}
 			return retVal;
+		}
+		
+		public static List<EServiceBilling> GetAll() {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				return Meth.GetObject<List<EServiceBilling>>(MethodBase.GetCurrentMethod());
+			}
+			string command="SELECT * FROM eservicebilling";
+			return EServiceBillingCrud.SelectMany(command);
 		}
 	}
 }

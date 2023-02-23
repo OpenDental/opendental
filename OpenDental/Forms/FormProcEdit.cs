@@ -2583,7 +2583,7 @@ namespace OpenDental {
 
 		private void SaveSignature(){
 			if(_signatureChanged){
-				string keyData=Procedures.GetSignatureKeyData(_procedure);
+				string keyData=Procedures.GetSignatureKeyData(_procedure, textNotes.Text);
 				_procedure.Signature=signatureBoxWrapper.GetSignature(keyData);
 				_procedure.SigIsTopaz=signatureBoxWrapper.GetSigIsTopaz();
 			}

@@ -65,6 +65,14 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
+		public static bool Update(MedicationPat medicationPat,MedicationPat medicationPatOld){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),medicationPat,medicationPatOld);
+			}
+			return Crud.MedicationPatCrud.Update(medicationPat,medicationPatOld);
+		}
+
+		///<summary></summary>
 		public static long Insert(MedicationPat medicationPat) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				medicationPat.MedicationPatNum=Meth.GetLong(MethodBase.GetCurrentMethod(),medicationPat);

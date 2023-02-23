@@ -52,7 +52,7 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(309, 241);
+			this.butOK.Location = new System.Drawing.Point(309, 196);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 10;
@@ -63,7 +63,7 @@ namespace OpenDental{
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(309, 271);
+			this.butCancel.Location = new System.Drawing.Point(309, 226);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 11;
@@ -74,14 +74,14 @@ namespace OpenDental{
 			// 
 			this.labelHeading.Location = new System.Drawing.Point(12, 9);
 			this.labelHeading.Name = "labelHeading";
-			this.labelHeading.Size = new System.Drawing.Size(348, 65);
+			this.labelHeading.Size = new System.Drawing.Size(348, 20);
 			this.labelHeading.TabIndex = 4;
-			this.labelHeading.Text = resources.GetString("labelHeading.Text");
+			this.labelHeading.Text = "Set procedures for each category in Preferences.";
 			// 
 			// labelExam
 			// 
 			this.labelExam.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelExam.Location = new System.Drawing.Point(5, 123);
+			this.labelExam.Location = new System.Drawing.Point(5, 78);
 			this.labelExam.Name = "labelExam";
 			this.labelExam.Size = new System.Drawing.Size(138, 17);
 			this.labelExam.TabIndex = 150;
@@ -90,7 +90,7 @@ namespace OpenDental{
 			// 
 			// textDateExam
 			// 
-			this.textDateExam.Location = new System.Drawing.Point(144, 121);
+			this.textDateExam.Location = new System.Drawing.Point(144, 76);
 			this.textDateExam.Name = "textDateExam";
 			this.textDateExam.Size = new System.Drawing.Size(151, 20);
 			this.textDateExam.TabIndex = 2;
@@ -100,7 +100,7 @@ namespace OpenDental{
 			// labelProphy
 			// 
 			this.labelProphy.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelProphy.Location = new System.Drawing.Point(5, 145);
+			this.labelProphy.Location = new System.Drawing.Point(5, 100);
 			this.labelProphy.Name = "labelProphy";
 			this.labelProphy.Size = new System.Drawing.Size(138, 17);
 			this.labelProphy.TabIndex = 152;
@@ -109,7 +109,7 @@ namespace OpenDental{
 			// 
 			// textDateProphy
 			// 
-			this.textDateProphy.Location = new System.Drawing.Point(144, 143);
+			this.textDateProphy.Location = new System.Drawing.Point(144, 98);
 			this.textDateProphy.Name = "textDateProphy";
 			this.textDateProphy.Size = new System.Drawing.Size(151, 20);
 			this.textDateProphy.TabIndex = 3;
@@ -119,7 +119,7 @@ namespace OpenDental{
 			// labelBitewing
 			// 
 			this.labelBitewing.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelBitewing.Location = new System.Drawing.Point(5, 79);
+			this.labelBitewing.Location = new System.Drawing.Point(5, 34);
 			this.labelBitewing.Name = "labelBitewing";
 			this.labelBitewing.Size = new System.Drawing.Size(138, 17);
 			this.labelBitewing.TabIndex = 154;
@@ -128,7 +128,7 @@ namespace OpenDental{
 			// 
 			// textDateBW
 			// 
-			this.textDateBW.Location = new System.Drawing.Point(144, 77);
+			this.textDateBW.Location = new System.Drawing.Point(144, 32);
 			this.textDateBW.Name = "textDateBW";
 			this.textDateBW.Size = new System.Drawing.Size(151, 20);
 			this.textDateBW.TabIndex = 0;
@@ -138,7 +138,7 @@ namespace OpenDental{
 			// labelFmxPano
 			// 
 			this.labelFmxPano.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelFmxPano.Location = new System.Drawing.Point(5, 101);
+			this.labelFmxPano.Location = new System.Drawing.Point(5, 56);
 			this.labelFmxPano.Name = "labelFmxPano";
 			this.labelFmxPano.Size = new System.Drawing.Size(138, 17);
 			this.labelFmxPano.TabIndex = 156;
@@ -147,7 +147,7 @@ namespace OpenDental{
 			// 
 			// textDateFmxPano
 			// 
-			this.textDateFmxPano.Location = new System.Drawing.Point(144, 99);
+			this.textDateFmxPano.Location = new System.Drawing.Point(144, 54);
 			this.textDateFmxPano.Name = "textDateFmxPano";
 			this.textDateFmxPano.Size = new System.Drawing.Size(151, 20);
 			this.textDateFmxPano.TabIndex = 1;
@@ -157,7 +157,7 @@ namespace OpenDental{
 			// labelPerioScalingUR
 			// 
 			this.labelPerioScalingUR.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelPerioScalingUR.Location = new System.Drawing.Point(5, 167);
+			this.labelPerioScalingUR.Location = new System.Drawing.Point(5, 122);
 			this.labelPerioScalingUR.Name = "labelPerioScalingUR";
 			this.labelPerioScalingUR.Size = new System.Drawing.Size(138, 17);
 			this.labelPerioScalingUR.TabIndex = 158;
@@ -166,7 +166,7 @@ namespace OpenDental{
 			// 
 			// textDatePerioScalingUR
 			// 
-			this.textDatePerioScalingUR.Location = new System.Drawing.Point(144, 165);
+			this.textDatePerioScalingUR.Location = new System.Drawing.Point(144, 120);
 			this.textDatePerioScalingUR.Name = "textDatePerioScalingUR";
 			this.textDatePerioScalingUR.Size = new System.Drawing.Size(151, 20);
 			this.textDatePerioScalingUR.TabIndex = 4;
@@ -176,7 +176,7 @@ namespace OpenDental{
 			// labelPerioScalingUL
 			// 
 			this.labelPerioScalingUL.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelPerioScalingUL.Location = new System.Drawing.Point(5, 189);
+			this.labelPerioScalingUL.Location = new System.Drawing.Point(5, 144);
 			this.labelPerioScalingUL.Name = "labelPerioScalingUL";
 			this.labelPerioScalingUL.Size = new System.Drawing.Size(138, 17);
 			this.labelPerioScalingUL.TabIndex = 160;
@@ -185,7 +185,7 @@ namespace OpenDental{
 			// 
 			// textDatePerioScalingUL
 			// 
-			this.textDatePerioScalingUL.Location = new System.Drawing.Point(144, 187);
+			this.textDatePerioScalingUL.Location = new System.Drawing.Point(144, 142);
 			this.textDatePerioScalingUL.Name = "textDatePerioScalingUL";
 			this.textDatePerioScalingUL.Size = new System.Drawing.Size(151, 20);
 			this.textDatePerioScalingUL.TabIndex = 5;
@@ -195,7 +195,7 @@ namespace OpenDental{
 			// labelPerioScalingLR
 			// 
 			this.labelPerioScalingLR.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelPerioScalingLR.Location = new System.Drawing.Point(5, 211);
+			this.labelPerioScalingLR.Location = new System.Drawing.Point(5, 166);
 			this.labelPerioScalingLR.Name = "labelPerioScalingLR";
 			this.labelPerioScalingLR.Size = new System.Drawing.Size(138, 17);
 			this.labelPerioScalingLR.TabIndex = 162;
@@ -204,7 +204,7 @@ namespace OpenDental{
 			// 
 			// textDatePerioScalingLR
 			// 
-			this.textDatePerioScalingLR.Location = new System.Drawing.Point(144, 209);
+			this.textDatePerioScalingLR.Location = new System.Drawing.Point(144, 164);
 			this.textDatePerioScalingLR.Name = "textDatePerioScalingLR";
 			this.textDatePerioScalingLR.Size = new System.Drawing.Size(151, 20);
 			this.textDatePerioScalingLR.TabIndex = 6;
@@ -214,7 +214,7 @@ namespace OpenDental{
 			// labelPerioScalingLL
 			// 
 			this.labelPerioScalingLL.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelPerioScalingLL.Location = new System.Drawing.Point(5, 233);
+			this.labelPerioScalingLL.Location = new System.Drawing.Point(5, 188);
 			this.labelPerioScalingLL.Name = "labelPerioScalingLL";
 			this.labelPerioScalingLL.Size = new System.Drawing.Size(138, 17);
 			this.labelPerioScalingLL.TabIndex = 164;
@@ -223,7 +223,7 @@ namespace OpenDental{
 			// 
 			// textDatePerioScalingLL
 			// 
-			this.textDatePerioScalingLL.Location = new System.Drawing.Point(144, 231);
+			this.textDatePerioScalingLL.Location = new System.Drawing.Point(144, 186);
 			this.textDatePerioScalingLL.Name = "textDatePerioScalingLL";
 			this.textDatePerioScalingLL.Size = new System.Drawing.Size(151, 20);
 			this.textDatePerioScalingLL.TabIndex = 7;
@@ -233,7 +233,7 @@ namespace OpenDental{
 			// labelPerioMaint
 			// 
 			this.labelPerioMaint.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelPerioMaint.Location = new System.Drawing.Point(5, 255);
+			this.labelPerioMaint.Location = new System.Drawing.Point(5, 210);
 			this.labelPerioMaint.Name = "labelPerioMaint";
 			this.labelPerioMaint.Size = new System.Drawing.Size(138, 17);
 			this.labelPerioMaint.TabIndex = 166;
@@ -242,7 +242,7 @@ namespace OpenDental{
 			// 
 			// textDatePerioMaint
 			// 
-			this.textDatePerioMaint.Location = new System.Drawing.Point(144, 253);
+			this.textDatePerioMaint.Location = new System.Drawing.Point(144, 208);
 			this.textDatePerioMaint.Name = "textDatePerioMaint";
 			this.textDatePerioMaint.Size = new System.Drawing.Size(151, 20);
 			this.textDatePerioMaint.TabIndex = 8;
@@ -252,7 +252,7 @@ namespace OpenDental{
 			// labelDebridgement
 			// 
 			this.labelDebridgement.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelDebridgement.Location = new System.Drawing.Point(5, 277);
+			this.labelDebridgement.Location = new System.Drawing.Point(5, 232);
 			this.labelDebridgement.Name = "labelDebridgement";
 			this.labelDebridgement.Size = new System.Drawing.Size(138, 17);
 			this.labelDebridgement.TabIndex = 168;
@@ -261,7 +261,7 @@ namespace OpenDental{
 			// 
 			// textDateDebridgement
 			// 
-			this.textDateDebridgement.Location = new System.Drawing.Point(144, 275);
+			this.textDateDebridgement.Location = new System.Drawing.Point(144, 230);
 			this.textDateDebridgement.Name = "textDateDebridgement";
 			this.textDateDebridgement.Size = new System.Drawing.Size(151, 20);
 			this.textDateDebridgement.TabIndex = 9;
@@ -272,7 +272,7 @@ namespace OpenDental{
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.CancelButton = this.butCancel;
-			this.ClientSize = new System.Drawing.Size(396, 307);
+			this.ClientSize = new System.Drawing.Size(396, 262);
 			this.Controls.Add(this.labelDebridgement);
 			this.Controls.Add(this.textDateDebridgement);
 			this.Controls.Add(this.labelPerioMaint);

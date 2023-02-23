@@ -494,6 +494,20 @@ namespace OpenDentBusiness {
 			return listUsers;
 		}
 
+		///<summary>Generates a git branch name for the job that follows the required syntax.</summary>
+		public static string GetGitBranchName(Job job) {
+			List<string> listTitle=job.Title.Split(' ').ToList();//Split job title on spaces
+			List<string> listStrippedTitle=new List<string>();
+			for(int i=0;i<listTitle.Count;i++) {
+				string result=StringTools.StripSpecialChars(listTitle[i]);//Remove all special characters from each individual string in our split job title
+				if(!string.IsNullOrWhiteSpace(result)) {//If after stripping the string, it is not an empty string, then add it to our list
+					listStrippedTitle.Add(result);
+				}
+			}
+			//Format and return the GIT branch name
+			return job.Category.ToString().Substring(0,1)+job.JobNum+"_"+string.Join("_",listStrippedTitle);
+		}
+
 		public class JobEmail {
 			public Patient Pat;
 			public string EmailAddress;

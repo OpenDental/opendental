@@ -126,6 +126,20 @@ namespace OpenDentBusiness{
 		}
 		#endregion
 
+		#region Update
+		///<summary>Updates any Clone PatientLink to set the PatNumFrom to the newly merged patient. The merged into patient will now become the original.</summary>
+		public static void UpdateFromPatientClonesAfterMerge(long patNumFromOriginal,long patNumFromNew) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),patNumFromOriginal,patNumFromNew);
+				return;
+			}
+			string command="UPDATE patientlink SET PatNumFrom="+POut.Long(patNumFromNew)+" "
+				+"WHERE PatNumFrom="+POut.Long(patNumFromOriginal)+" "
+				+"AND LinkType="+POut.Int((int)PatientLinkType.Clone);
+			Db.NonQ(command);
+		}
+		#endregion
+
 		#region Delete
 		///<summary>Deletes all of the entries for the patNumFrom passed in of the specified type.</summary>
 		public static void DeletePatNumFroms(long patNumFrom,PatientLinkType patLinkType) {
@@ -148,6 +162,17 @@ namespace OpenDentBusiness{
 			string command="DELETE FROM patientlink "
 				+"WHERE PatNumTo="+POut.Long(patNumTo)+" "
 				+"AND LinkType="+POut.Int((int)patLinkType);
+			Db.NonQ(command);
+		}
+
+		///<summary>Deletes all PatientLinks of type clone between the passed in patnums.</summary>
+		public static void DeleteCloneBetweenToAndFrom(long patNumTo,long patNumFrom) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),patNumTo,patNumFrom);
+				return;
+			}
+			string command="DELETE FROM patientlink WHERE ((PatNumTo="+POut.Long(patNumTo)+" AND PatNumFrom="+POut.Long(patNumFrom)+") " +
+				"OR (PatNumTo="+POut.Long(patNumFrom)+" AND PatNumFrom="+POut.Long(patNumTo)+")) AND LinkType="+POut.Int((int)PatientLinkType.Clone);
 			Db.NonQ(command);
 		}
 		#endregion

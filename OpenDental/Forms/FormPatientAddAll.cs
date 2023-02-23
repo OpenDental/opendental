@@ -1278,6 +1278,11 @@ namespace OpenDental {
 		private void FillListPatStatus(ListBoxOD listBox) {
 			listBox.Items.Clear();
 			listBox.Items.AddEnums<PatientStatus>();
+			for(int i=listBox.Items.Count-1;i>=0;i--){//We iterate backwards here so that when the target is removed, we do not run past the loop bounds
+				if(listBox.Items.GetTextShowingAt(i) == "Deleted"){
+					listBox.Items.RemoveAt(i);
+				}
+			}
 			listBox.SelectedIndex=0;
 		}
 

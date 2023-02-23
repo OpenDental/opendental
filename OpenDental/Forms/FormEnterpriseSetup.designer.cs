@@ -533,6 +533,7 @@ namespace OpenDental {
 			// 
 			// checkEnterpriseAllowRefresh
 			// 
+			this.checkEnterpriseAllowRefresh.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkEnterpriseAllowRefresh.Location = new System.Drawing.Point(6, 166);
 			this.checkEnterpriseAllowRefresh.Name = "checkEnterpriseAllowRefresh";
 			this.checkEnterpriseAllowRefresh.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -562,6 +563,7 @@ namespace OpenDental {
 			// 
 			// checkMatchExactPhoneNum
 			// 
+			this.checkMatchExactPhoneNum.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkMatchExactPhoneNum.Location = new System.Drawing.Point(6, 142);
 			this.checkMatchExactPhoneNum.Name = "checkMatchExactPhoneNum";
 			this.checkMatchExactPhoneNum.RightToLeft = System.Windows.Forms.RightToLeft.Yes;

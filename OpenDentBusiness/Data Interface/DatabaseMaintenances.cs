@@ -5782,7 +5782,7 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
 			}
-			string command="SELECT p.PatNum,p.Guarantor FROM patient p LEFT JOIN patient p2 ON p.Guarantor=p2.PatNum WHERE p2.PatNum IS NULL";
+			string command="SELECT p.PatNum,p.Guarantor FROM patient p LEFT JOIN patient p2 ON p.Guarantor=p2.PatNum WHERE (p2.PatNum IS NULL) OR (p.Guarantor != p.PatNum AND p.patstatus=4)";
 			DataTable table=Db.GetTable(command);
 			string log="";
 			switch(modeCur) {

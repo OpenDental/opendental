@@ -1826,6 +1826,7 @@ namespace OpenDental {
 				patRowTag.ClinicNum=PIn.Long(tableReacts.Rows[i]["ClinicNum"].ToString());
 				patRowTag.WirelessPhone=PIn.String(tableReacts.Rows[i]["WirelessPhone"].ToString());
 				rowNew.Tag=patRowTag;
+				gridReactivations.ListGridRows.Add(rowNew);
 				if(listPatRowTagsSelected.Any(x => x.PriKeyNum==((PatRowTag)rowNew.Tag).PriKeyNum)) {
 					gridReactivations.SetSelected(gridReactivations.ListGridRows.Count-1,true);
 				}

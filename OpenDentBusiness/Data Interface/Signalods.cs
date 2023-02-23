@@ -77,7 +77,7 @@ namespace OpenDentBusiness {
 		///<summary></summary>
 		public static List<SignalodForApi> GetSignalOdsForApi(int limit,int offset,DateTime sinceDateT,List<InvalidType> listITypes=null){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<SignalodForApi>>(MethodBase.GetCurrentMethod(),sinceDateT,listITypes);
+				return Meth.GetObject<List<SignalodForApi>>(MethodBase.GetCurrentMethod(),limit,offset,sinceDateT,listITypes);
 			}
 			//This command was written to take into account the fact that MySQL truncates seconds to the the whole second on DateTime columns. (newer versions support fractional seconds)
 			//By selecting signals less than Now() we avoid missing signals the next time this function is called. Without the addition of Now() it was possible

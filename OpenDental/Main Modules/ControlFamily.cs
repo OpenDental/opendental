@@ -2159,6 +2159,18 @@ namespace OpenDental{
 			}
 			else if(diagResult.In(DialogResult.None,DialogResult.No)) {//None = the fam doesn't belong to another super fam, just move into this super fam
 				if(diagResult==DialogResult.No) {
+					List<long> listPatientNumsInSuperFam=Patients.GetAllFamilyPatNumsForSuperFam(new List<long>(){superFamilyGuarantorNumPrevious});
+					for(int i=0;i<listPatientNumsInSuperFam.Count;i++) { //Create SecurityLog for each member of the superfamily being disbanded.
+						if(listPatientNumsInSuperFam[i]==patSelected.PatNum) { //SecurityLog for the SuperHead moving to another SuperFamily is already handled.
+							continue;
+						}
+						SecurityLogs.MakeLogEntry(
+							Permissions.PatientEdit,
+							listPatientNumsInSuperFam[i],
+							Lan.g(this,"Patient removed from superfamily. Previous superfamily guarantor PatNum:")+superFamilyGuarantorNumPrevious+
+							Lan.g(this,". Superfamily Disbanded.")
+						);
+					}
 					Patients.DisbandSuperFamily(patSelected.SuperFamily);//adding to this super family will happen below
 				}
 				Patients.AssignToSuperfamily(patSelected.Guarantor,_patCur.SuperFamily);

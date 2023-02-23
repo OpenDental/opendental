@@ -243,6 +243,15 @@ namespace OpenDentBusiness{
 			return null;
 		}
 
+		///<summary>Gets a referral from the database.</summary>
+		public static Referral GetReferralForApi(long referralNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<Referral>(MethodBase.GetCurrentMethod(),referralNum);
+			}
+			string command="SELECT * FROM referral WHERE ReferralNum='"+POut.Long(referralNum)+"'";
+			return Crud.ReferralCrud.SelectOne(command);
+		}
+
 		///<summary>Gets IsDoctors referred "from" referrals for the given patient.  Will return empty list if no "from" and IsDoctor found for patient.</summary>
 		public static List<Referral> GetIsDoctorReferralsForPat(long patNum,List<RefAttach> listRefAttaches=null) {
 			//No need to check MiddleTierRole; no call to db.

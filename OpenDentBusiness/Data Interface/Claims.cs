@@ -1763,7 +1763,6 @@ namespace OpenDentBusiness{
 
 		///<summary>Receives a claim and its claimprocs if the InsAutoReceiveNoAssign pref is on.
 		///Fields that have financial impact other than write-off are set to $0. Ignores preauths.
-		///Set doSetSecondaryWaitingInQueue true if this is called in a loop for processing a batch of claims.
 		///Returns true if the claim and claimprocs are received in this method.</summary>
 		public static bool ReceiveAsNoPaymentIfNeeded(long claimNum) {
 			Claim claim=Claims.GetClaim(claimNum);
@@ -1774,6 +1773,13 @@ namespace OpenDentBusiness{
 			bool doAssignBenefits=GetAssignmentOfBenefits(claim,insSub);
 			if(doAssignBenefits) {
 				return false;
+			}
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
+				Etrans etransAck=Etranss.GetAllForOneClaim(claimNum).OrderByDescending(x => x.DateTimeTrans)
+					.FirstOrDefault(x => x.Etype==EtransType.ClaimAck_CA);
+				if(etransAck?.AckCode=="R") {//Canadian claim was rejected.
+					return false;
+				}
 			}
 			//Using RefreshForClaims() to get ClaimProcs for a single Claim because RefreshForClaim() excludes Canada labs.
 			List<ClaimProc> listClaimProcs=ClaimProcs.RefreshForClaims(new List<long>{claim.ClaimNum});

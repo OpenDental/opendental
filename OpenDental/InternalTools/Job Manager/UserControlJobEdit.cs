@@ -87,7 +87,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 			InitializeComponent();
 			Enum.GetNames(typeof(JobPhase)).ToList().ForEach(x => comboPhase.Items.Add(x));
 			Enum.GetNames(typeof(JobPatternReviewProject)).ToList().ForEach(x => comboProject.Items.Add(x));
-			Enum.GetNames(typeof(JobPatternReviewStatus)).ToList().ForEach(x => comboPatternStatus.Items.Add(x));
 			Enum.GetNames(typeof(JobProposedVersion)).ToList().ForEach(x => comboProposedVersion.Items.Add(x));
 			_listCategoryNames=Enum.GetNames(typeof(JobCategory)).ToList();
 			_listCategoryNamesFiltered=_listCategoryNames.Where(x => !x.In(JobCategory.Query.ToString(),JobCategory.MarketingDesign.ToString())).ToList();
@@ -883,7 +882,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 			comboPhase.SelectedIndex=(int)_jobCur.PhaseCur;
 			comboProposedVersion.SelectedIndex=(int)_jobCur.ProposedVersion;
 			comboProject.SelectedIndex=(int)_jobCur.PatternReviewProject;
-			comboPatternStatus.SelectedIndex=(int)_jobCur.PatternReviewStatus;
 			textDateTested.Text=_jobCur.DateTimeTested.ToShortDateString();
 			checkNotTested.Checked=_jobCur.IsNotTested;
 			checkIsActive.Checked=job.ListJobActiveLinks.Exists(x => x.UserNum==Security.CurUser.UserNum && x.DateTimeEnd==DateTime.MinValue);
@@ -902,6 +900,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 			else {
 				textApprove.Text="No";
 			}
+			textGitBranchName.Text=Jobs.GetGitBranchName(job);
 			comboCategory.SelectedIndex=_listCategoryNamesFiltered.IndexOf(_jobCur.Category.ToString());
 			textDateEntry.Text=_jobCur.DateTimeEntry.Year>1880?_jobCur.DateTimeEntry.ToShortDateString():"";
 			textVersion.Text=_jobCur.JobVersion;
@@ -962,7 +961,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 			comboCategory.MouseWheel+=new MouseEventHandler(comboBox_MouseWheel);
 			comboPhase.MouseWheel+=new MouseEventHandler(comboBox_MouseWheel);
 			comboProject.MouseWheel+=new MouseEventHandler(comboBox_MouseWheel);
-			comboPatternStatus.MouseWheel+=new MouseEventHandler(comboBox_MouseWheel);
 			comboProposedVersion.MouseWheel+=new MouseEventHandler(comboBox_MouseWheel);
 			//ComboBoxPlus does not support mouse wheel functionality by default so no need to handle the MouseWheel event for them.
 			//comboPriority.MouseWheel+=new MouseEventHandler(comboBox_MouseWheel);
@@ -1137,7 +1135,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 			textJobEditor.ReadOnlyRequirementsGrid=true;
 			comboProject.Enabled=false;
 			textDateTested.ReadOnly=true;
-			comboPatternStatus.Enabled=JobPermissions.IsAuthorized(JobPerm.PatternReview,true);
 			if(_jobCur==null) {
 				return;
 			}
@@ -1318,7 +1315,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 					textJobEditor.ReadOnlyWriteup=false;
 					textJobEditor.ReadOnlyRequirementsGrid=false;
 					comboProject.Enabled=false;
-					comboPatternStatus.Enabled=JobPermissions.IsAuthorized(JobPerm.PatternReview,true);
 				}
 				else {
 					textTitle.ReadOnly=true;
@@ -1335,7 +1331,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 					textJobEditor.ReadOnlyWriteup=true;
 					textJobEditor.ReadOnlyRequirementsGrid=true;
 					comboProject.Enabled=false;
-					comboPatternStatus.Enabled=JobPermissions.IsAuthorized(JobPerm.PatternReview,true);
 				}
 			}
 			//Set description, documentation, and title to readonly if "Checked out"
@@ -1368,7 +1363,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 				textJobEditor.Enabled=true;
 				textEditorDocumentation.ReadOnly=false;
 				if(JobPermissions.IsAuthorized(JobPerm.Approval,true)) {
-					comboPatternStatus.Enabled=true;
 					comboProject.Enabled=true;
 				}
 			}
@@ -3424,22 +3418,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(!IsNew) {
 				Job job = Jobs.GetOne(_jobCur.JobNum);
 				job.PatternReviewProject=(JobPatternReviewProject)comboProject.SelectedIndex;
-				Jobs.Update(job);
-				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
-			}
-		}
-
-		private void comboPatternStatus_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(_isLoading) {
-				return;
-			}
-			JobPatternReviewStatus jobPatternStatus=(JobPatternReviewStatus)comboPatternStatus.SelectedIndex;
-			_jobCur.PatternReviewStatus=jobPatternStatus;
-			JobLogs.MakeLogEntryForPatternReview(_jobCur,_jobOld);
-			_jobOld.PatternReviewStatus=jobPatternStatus;
-			if(!IsNew) {
-				Job job=Jobs.GetOne(_jobCur.JobNum);
-				job.PatternReviewStatus=(JobPatternReviewStatus)comboPatternStatus.SelectedIndex;
 				Jobs.Update(job);
 				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 			}

@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Bridges;
 using CodeBase;
+using Newtonsoft.Json;
 using OpenDental.UI;
 using OpenDentBusiness;
 
@@ -774,9 +775,18 @@ namespace OpenDental {
 			}
 			if(emailAddress.AccessToken.IsNullOrEmpty() && emailAddress.AuthenticationType==OAuthType.Microsoft) {
 				if(MsgBox.Show(this,MsgBoxButtons.YesNo,"This email address needs to be re-authenticated. Sign into this email through Microsoft?")) {
-					MicrosoftTokenHelper microsoftToken=System.Threading.Tasks.Task.Run(async () =>
-						await MicrosoftApiConnector.GetAccessToken(emailAddress.EmailUsername,"")
-					).GetAwaiter().GetResult();
+					MicrosoftTokenHelper microsoftToken=new MicrosoftTokenHelper();
+					if(ODBuild.IsWeb()) {
+						if(!CloudClientL.IsCloudClientRunning()) {
+							return; 
+						}
+						string strMicrosoftAuthCodesJSON=ODCloudClient.GetMicrosoftAccessToken(emailAddress.EmailUsername,"");
+						if(!strMicrosoftAuthCodesJSON.IsNullOrEmpty())
+						microsoftToken=JsonConvert.DeserializeObject<MicrosoftTokenHelper>(strMicrosoftAuthCodesJSON);
+					}
+					else {
+						microsoftToken=System.Threading.Tasks.Task.Run(async()=>await MicrosoftApiConnector.GetAccessToken(emailAddress.EmailUsername,"")).GetAwaiter().GetResult();
+					}
 					if(microsoftToken.ErrorMessage!="") {
 						MsgBox.Show("Error: "+microsoftToken.ErrorMessage);
 						return;
@@ -831,6 +841,13 @@ namespace OpenDental {
 			}
 			catch(Exception ex){
 				Cursor=Cursors.Default;
+				if(ODBuild.IsWeb() && ex.InnerException.Message.Contains("InvalidAuthenticationToken")) {
+					emailAddress.AccessToken="";
+					EmailAddresses.Update(emailAddress);
+					DataValid.SetInvalid(InvalidType.Email);
+					butSend_Click(sender,e);
+					return;
+				}
 				string errMsg=Lan.g(this,"Failed to send email.")+"\r\n"+Lan.g(this, "Click Details to see the error message from the Email Client.");
 				FriendlyException.Show(errMsg, ex);
 				return;

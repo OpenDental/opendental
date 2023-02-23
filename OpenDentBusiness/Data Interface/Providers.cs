@@ -287,7 +287,7 @@ namespace OpenDentBusiness{
 		///<summary>Gets all providers changed since a certain DateTime, returning a list of providers with the server's current DateTime. </summary>
 		public static List<ProviderForApi> GetChangedSinceForApi(int limit,int offset,DateTime changedSince) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ProviderForApi>>(MethodBase.GetCurrentMethod(),changedSince);
+				return Meth.GetObject<List<ProviderForApi>>(MethodBase.GetCurrentMethod(),limit,offset,changedSince);
 			}
 			string command="SELECT * FROM provider WHERE DateTStamp >= "+POut.DateT(changedSince)+" ORDER BY provnum "
 			+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);

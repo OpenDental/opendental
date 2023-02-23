@@ -785,6 +785,253 @@ namespace UnitTests.InsPlans_Tests {
 			Assert.AreEqual(90,ClaimProcs.GetPatPortion(proc3,new List<ClaimProc>() { claimProc3 }));
 			Assert.AreEqual(proc3.ProcFeeTotal,claimProc3.WriteOffEst+claimProc3.InsPayEst+(double)ClaimProcs.GetPatPortion(proc3,new List<ClaimProc>() { claimProc3 }));
 		}
+
+		///<summary></summary>
+		[TestMethod]
+		[Documentation.Numbering(Documentation.EnumTestNum.InsPlans_ComputeEstimates_AnnualMaxSurpassedZerosWriteoff_Plan)]
+		[Documentation.VersionAdded("22.3")]
+		[Documentation.Description(@"Patient has one insurance plan, PPO, subscriber self. Global preference to zero out write-offs when annual max is entirely exceeded is set to false, plan override is set to true. Benefits include annual max of 90, crowns 100%. Three procedures are treatment planned: all crowns for $110, the second procedure causes the account to go over the annual max, and the third will then completely exceed the annual max resulting in a $0 writeoff. Also there is a deductible that will completely cover the first procedure. That procedure must not zero out the write-off.
+<table>
+  <tr>
+    <td><b>Procedure</b></td>
+    <td><b>Fee</b></td>
+    <td><b>Ins Pay Est.</b></td>
+    <td><b>Write-off</b></td>
+    <td><b>Pat portion</b></td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>$110.00</td>
+    <td>$0</td>
+    <td>$20.00</td>
+    <td>$90.00</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>$110.00</td>
+    <td>$90</td>
+    <td>$20</td>
+    <td>$0</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>$110.00</td>
+    <td>$0.00</td>
+    <td>$0.00</td>
+    <td>$110.00</td>
+  </tr>
+</table>")]
+		public void InsPlans_ComputeEstimates_ZeroWriteoffOverAnnualMaxPlanLevelWhenDeductibleEqualsProcFeeAllowedAndAnnualMaxMet() {
+			//3 procedures, insurance coverage is %100 with an annual max of $90 and $100 deductible.
+			// 1 - First proc will get no coverage, patportion is $90, with a $20 writeoff.
+			// 2 - Second proc will get full coverage for the $90, with a $20 writeoff.
+			// 3 - Third proc will get no coverage, with a $0 writeoff.
+			string suffix="3";
+			Patient pat=PatientT.CreatePatient(suffix);
+			//proc1 - Crown
+			Procedure proc1=ProcedureT.CreateProcedure(pat,"D2750",ProcStat.TP,"8",110);
+			ProcedureT.SetPriority(proc1,0);
+			//proc2 - Crown
+			Procedure proc2=ProcedureT.CreateProcedure(pat,"D2750",ProcStat.TP,"8",110);
+			ProcedureT.SetPriority(proc2,1);
+			//proc3 - Crown
+			Procedure proc3=ProcedureT.CreateProcedure(pat,"D2750",ProcStat.TP,"8",110);
+			ProcedureT.SetPriority(proc3,2);
+			//FeeSched - PPO
+			long feeSchedPPONum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"PPO");
+			long feePPONum=FeeT.CreateFee(feeSchedPPONum,proc1.CodeNum,90);
+			//Insuarance Plan - PPO
+			Carrier carrier=CarrierT.CreateCarrier(suffix);
+			InsPlan plan=InsPlanT.CreateInsPlan(carrier.CarrierNum,feeSched:feeSchedPPONum);
+			plan.PlanType="p";
+			plan.InsPlansZeroWriteOffsOnAnnualMaxOverride=YN.Yes; //Set plan level override.
+			InsPlans.Update(plan);
+			InsSub sub=InsSubT.CreateInsSub(pat.PatNum,plan.PlanNum);//guarantor is subscriber
+			BenefitT.CreateAnnualMax(plan.PlanNum,90);
+			BenefitT.CreateDeductible(plan.PlanNum,EbenefitCategory.General,90);
+			BenefitT.CreateCategoryPercent(plan.PlanNum,EbenefitCategory.Crowns,100);
+			//Set pref to 0 write offs after annual max is exceeded to false.
+			PrefT.UpdateBool(PrefName.InsPlansZeroWriteOffsOnAnnualMax,false);
+			//BenefitT.CreateFrequencyProc(plan.PlanNum,"D0274",BenefitQuantity.Years,1);//BW frequency every 1 year
+			PatPlanT.CreatePatPlan(1,pat.PatNum,sub.InsSubNum);
+			//Lists:
+			List<ClaimProc> claimProcs=ClaimProcs.Refresh(pat.PatNum);
+			List<ClaimProc> claimProcListOld=new List<ClaimProc>();
+			Family fam=Patients.GetFamily(pat.PatNum);
+			List<InsSub> subList=InsSubs.RefreshForFam(fam);
+			List<InsPlan> planList=InsPlans.RefreshForSubList(subList);
+			List<PatPlan> patPlans=PatPlans.Refresh(pat.PatNum);
+			List<Benefit> benefitList=Benefits.Refresh(patPlans,subList);
+			List<ClaimProcHist> histList=new List<ClaimProcHist>();
+			List<ClaimProcHist> loopList=new List<ClaimProcHist>();
+			List<Procedure>	ProcList=Procedures.Refresh(pat.PatNum);
+			List<Procedure> ListProceduresTPs=Procedures.GetListTPandTPi(ProcList);//sorted by priority, then toothnum
+			//Validate
+			for(int i=0;i<ListProceduresTPs.Count;i++){
+				Procedures.ComputeEstimates(ListProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
+					histList,loopList,false,pat.Age,subList);
+				//then, add this information to loopList so that the next procedure is aware of it.
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i],ListProceduresTPs[i].CodeNum));
+			}
+			//save changes in the list to the database
+			ClaimProcs.Synch(ref claimProcs,claimProcListOld);
+			claimProcs=ClaimProcs.Refresh(pat.PatNum);
+			long subNum=sub.InsSubNum;
+			//First claimProc: ProcFeeUCR=110 ProcFeeAllowed=90 Deductible=90 PercentageCoverage=100 DeductibleRem=90
+			//Writeoff est: ProcFeeUCR - ProcFeeAllowed
+			// -> 110 - 90 = 20
+			//InsPay est: (ProcFeeAllowed - DeductibleRem)-(ProcFeeAllowed - DeductibleRem)*PercentageCoverage || if DeductibleRem > ProcFeeAllowed : 0
+			// -> (90 - 90) - (90 - 90) * 0 = 0 || 0 
+			//Pat Portion est (Annual Max Met): ProcFeeUCR
+			// -> 110
+			//Pat Portion est (Annual Max NOT Met): ProcFeeUCR - InsPayEst - write off || ProcFeeAllowed - InsPayEst
+			// -> 110 - 0 - 20 = 90 || 90 - 0 = 90
+			//DeductibleRem after this claim proc: DeductibleRem - ProcFeeAllowed
+			// -> 90 - 90 = 0
+			ClaimProc claimProc1=ClaimProcs.GetEstimate(claimProcs,proc1.ProcNum,plan.PlanNum,subNum);
+			Assert.AreEqual(20,claimProc1.WriteOffEst);
+			Assert.AreEqual(0,claimProc1.InsPayEst);
+			Assert.AreEqual(90,(double)ClaimProcs.GetPatPortion(proc1,new List<ClaimProc>() { claimProc1 }));
+			Assert.AreEqual(proc1.ProcFeeTotal,claimProc1.WriteOffEst+claimProc1.InsPayEst+(double)ClaimProcs.GetPatPortion(proc1,new List<ClaimProc>() { claimProc1 }));
+			//First claimProc: ProcFeeUCR=110 ProcFeeAllowed=90 Deductible=90 PercentageCoverage=100 DeductibleRem=0
+			//Writeoff est: ProcFeeUCR - ProcFeeAllowed
+			// -> 110 - 90 = 20
+			//InsPay est: (ProcFeeAllowed - DeductibleRem)-(ProcFeeAllowed - DeductibleRem)*PercentageCoverage || if DeductibleRem > ProcFeeAllowed : 0
+			// -> (90 - 0) - (90 - 0) * 0 = 90 || 0 
+			//Pat Portion est (Annual Max Met): ProcFeeUCR
+			// -> 110
+			//Pat Portion est (Annual Max NOT Met): ProcFeeUCR - InsPayEst - write off || ProcFeeAllowed - InsPayEst
+			// -> 110 - 90 - 20 = 0 || 90 - 90 = 90
+			//DeductibleRem after this claim proc: DeductibleRem - ProcFeeAllowed
+			// -> 0 - 90 = 0
+			ClaimProc claimProc2=ClaimProcs.GetEstimate(claimProcs,proc2.ProcNum,plan.PlanNum,subNum);
+			Assert.AreEqual(20,claimProc2.WriteOffEst);
+			Assert.AreEqual(90,claimProc2.InsPayEst);
+			Assert.AreEqual(0,(double)ClaimProcs.GetPatPortion(proc2,new List<ClaimProc>() { claimProc2 }));
+			Assert.AreEqual(proc2.ProcFeeTotal,claimProc2.WriteOffEst+claimProc2.InsPayEst+(double)ClaimProcs.GetPatPortion(proc2,new List<ClaimProc>() { claimProc2 }));
+			//First claimProc: ProcFeeUCR=110 ProcFeeAllowed=90 Deductible=90 PercentageCoverage=100 DeductibleRem=0
+			//Writeoff est: ProcFeeUCR - ProcFeeAllowed
+			// -> 110 - 90 = 20
+			//InsPay est: (ProcFeeAllowed - DeductibleRem)-(ProcFeeAllowed - DeductibleRem)*PercentageCoverage || if DeductibleRem > ProcFeeAllowed : 0
+			// -> (90 - 0) - (90 - 0) * 0 = 90 || 0 
+			//Pat Portion est (Annual Max Met): ProcFeeUCR
+			// -> 110
+			//Pat Portion est (Annual Max NOT Met): ProcFeeUCR - InsPayEst - write off || ProcFeeAllowed - InsPayEst
+			// -> 110 - 90 - 20 = 90 || 90 - 0 = 90
+			//DeductibleRem after this claim proc: DeductibleRem - ProcFeeAllowed
+			// -> 0 - 90 = 0
+			ClaimProc claimProc3=ClaimProcs.GetEstimate(claimProcs,proc3.ProcNum,plan.PlanNum,subNum);
+			Assert.AreEqual(0,claimProc3.WriteOffEst);
+			Assert.AreEqual(0,claimProc3.InsPayEst);
+			Assert.AreEqual(110,ClaimProcs.GetPatPortion(proc3,new List<ClaimProc>() { claimProc3 }));
+			Assert.AreEqual(proc3.ProcFeeTotal,claimProc3.WriteOffEst+claimProc3.InsPayEst+(double)ClaimProcs.GetPatPortion(proc3,new List<ClaimProc>() { claimProc3 }));
+		}
+
+		[TestMethod]
+		public void InsPlans_ComputeEstimates_ZeroWriteoffOverAnnualMaxGlobalLevelDeductableExceedsProcEntirely() {
+		//3 procedures, insurance coverage is $81 with a annual max of $100.
+		// 1 - First proc will get full coverage for the $81, with a $20 writeoff.
+		// 2 - Second proc will get partial coverage for the $81, with a $20 writeoff.
+		// 3 - Third proc will get no coverage, with a $0 writeoff.
+		string suffix="3";
+		Patient pat=PatientT.CreatePatient(suffix);
+		//proc1 - Crown
+		Procedure proc1=ProcedureT.CreateProcedure(pat,"D2750",ProcStat.TP,"8",1000);
+		ProcedureT.SetPriority(proc1,0);
+		//proc2 - Crown
+		Procedure proc2=ProcedureT.CreateProcedure(pat,"D2750",ProcStat.TP,"8",1000);
+		ProcedureT.SetPriority(proc2,1);
+		//proc3 - Crown
+		Procedure proc3=ProcedureT.CreateProcedure(pat,"D2750",ProcStat.TP,"8",1000);
+		ProcedureT.SetPriority(proc3,2);
+		//FeeSched - UCR
+		long ucrFeeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"UCR Fees"+suffix);
+		long feePPONum2=FeeT.CreateFee(ucrFeeSchedNum,proc1.CodeNum,1000);
+		//FeeSched - PPO
+		long feeSchedPPONum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"PPO");
+		long feePPONum=FeeT.CreateFee(feeSchedPPONum,proc1.CodeNum,900);
+		//Insuarance Plan - PPO
+		Carrier carrier=CarrierT.CreateCarrier(suffix);
+		InsPlan plan=InsPlanT.CreateInsPlan(carrier.CarrierNum,feeSched:feeSchedPPONum);
+		plan.PlanType="p";
+		InsPlans.Update(plan);
+		InsSub sub=InsSubT.CreateInsSub(pat.PatNum,plan.PlanNum);//guarantor is subscriber
+		BenefitT.CreateAnnualMax(plan.PlanNum,99999);
+		BenefitT.CreateDeductible(plan.PlanNum,"D2750",1400.00);
+		BenefitT.CreateCategoryPercent(plan.PlanNum,EbenefitCategory.Crowns,90);
+		//Set pref to 0 write offs after annual max is exceeded.
+		PrefT.UpdateBool(PrefName.InsPlansZeroWriteOffsOnAnnualMax,true);
+		//BenefitT.CreateFrequencyProc(plan.PlanNum,"D0274",BenefitQuantity.Years,1);//BW frequency every 1 year
+		PatPlanT.CreatePatPlan(1,pat.PatNum,sub.InsSubNum);
+		//Lists:
+		List<ClaimProc> claimProcs=ClaimProcs.Refresh(pat.PatNum);
+		List<ClaimProc> claimProcListOld=new List<ClaimProc>();
+		Family fam=Patients.GetFamily(pat.PatNum);
+		List<InsSub> subList=InsSubs.RefreshForFam(fam);
+		List<InsPlan> planList=InsPlans.RefreshForSubList(subList);
+		List<PatPlan> patPlans=PatPlans.Refresh(pat.PatNum);
+		List<Benefit> benefitList=Benefits.Refresh(patPlans,subList);
+		List<ClaimProcHist> histList=new List<ClaimProcHist>();
+		List<ClaimProcHist> loopList=new List<ClaimProcHist>();
+		List<Procedure> ProcList=Procedures.Refresh(pat.PatNum);
+		List<Procedure> ListProceduresTPs=Procedures.GetListTPandTPi(ProcList);//sorted by priority, then toothnum
+		//Validate
+		for(int i=0;i<ListProceduresTPs.Count;i++){
+				Procedures.ComputeEstimates(ListProceduresTPs[i],pat.PatNum,ref claimProcs,false,planList,patPlans,benefitList,
+						histList,loopList,false,pat.Age,subList);
+				//then, add this information to loopList so that the next procedure is aware of it.
+				loopList.AddRange(ClaimProcs.GetHistForProc(claimProcs,ListProceduresTPs[i],ListProceduresTPs[i].CodeNum));
+		}
+		//save changes in the list to the database
+		ClaimProcs.Synch(ref claimProcs,claimProcListOld);
+		claimProcs=ClaimProcs.Refresh(pat.PatNum);
+		long subNum=sub.InsSubNum;
+		//First claimProc: ProcFeeUCR=1000 ProcFeeAllowed=900 Deductible=500 PercentageCoverage=(100-90)/100 DeductibleRem=1400
+		//Writeoff est: ProcFeeUCR - ProcFeeAllowed
+		// -> 1000 - 900=100
+		//InsPay est: (ProcFeeAllowed - DeductibleRem)-(ProcFeeAllowed - DeductibleRem)*PercentageCoverage || if DeductibleRem > ProcFeeAllowed : 0
+		// -> (900 - 1400) - (900 - 1400) * 0.1 = || 0 
+		//Pat Portion est (Annual Max Met): ProcFeeUCR
+		// -> 1000
+		//Pat Portion est (Annual Max NOT Met): ProcFeeUCR - InsPayEst - write off || ProcFeeAllowed - InsPayEst
+		// -> 1000 - 0 - 100 = 900 || 900 - 0 = 900
+		//DeductibleRem after this claim proc: DeductibleRem - ProcFeeAllowed
+		// -> 1400 - 900 = 500
+		ClaimProc claimProc1=ClaimProcs.GetEstimate(claimProcs,proc1.ProcNum,plan.PlanNum,subNum);
+		Assert.AreEqual(100.00,claimProc1.WriteOffEst);
+		Assert.AreEqual(0.00,claimProc1.InsPayEst);
+		Assert.AreEqual(900.00,(double)ClaimProcs.GetPatPortion(proc1,new List<ClaimProc>() { claimProc1 }));
+		Assert.AreEqual(proc1.ProcFeeTotal,claimProc1.WriteOffEst+claimProc1.InsPayEst+(double)ClaimProcs.GetPatPortion(proc1,new List<ClaimProc>() { claimProc1 }));
+		//Second claimProc: ProcFeeUCR=1000 ProcFeeAllowed=900 Deductible=500 PercentageCoverage=(100-90)/100 DeductibleRem=500
+		//Writeoff est: ProcFeeUCR - ProcFeeAllowed
+		// -> 1000 - 900 = 100
+		//InsPay est: (ProcFeeAllowed - DeductibleRem)-(ProcFeeAllowed - DeductibleRem)*PercentageCoverage || if DeductibleRem > ProcFeeAllowed : 0
+		// -> (900 - 500) - (900 - 500) * 0.1 = 360.00
+		//Pat Portion est (Annual Max Met): ProcFeeUCR
+		// -> 1000
+		//Pat Portion est (Annual Max NOT Met): ProcFeeUCR - InsPayEst - write off || ProcFeeAllowed - InsPayEst
+		// -> 1000 - 360 - 100 = 90 || 900 - 360 = 540
+		ClaimProc claimProc2=ClaimProcs.GetEstimate(claimProcs,proc2.ProcNum,plan.PlanNum,subNum);
+		Assert.AreEqual(100,claimProc2.WriteOffEst);
+		Assert.AreEqual(360.00,claimProc2.InsPayEst);
+		Assert.AreEqual(540.00,(double)ClaimProcs.GetPatPortion(proc2,new List<ClaimProc>() { claimProc2 }));
+		Assert.AreEqual(proc2.ProcFeeTotal,claimProc2.WriteOffEst+claimProc2.InsPayEst+(double)ClaimProcs.GetPatPortion(proc2,new List<ClaimProc>() { claimProc2 }));
+		//Third claimProc: ProcFeeUCR=1000 ProcFeeAllowed=900 Deductible=500 PercentageCoverage=(100-90)/100 DeductibleRem=0
+		//Writeoff est: ProcFeeUCR - ProcFeeAllowed
+		// -> 1000 - 900 = 100
+		//InsPay est: (ProcFeeAllowed - DeductibleRem)-(ProcFeeAllowed - DeductibleRem)*PercentageCoverage || if DeductibleRem > ProcFeeAllowed : 0
+		// -> (900 - 0) - (900 - 0) * 0.1 = 810
+		//Pat Portion est (Annual Max Met): ProcFeeUCR
+		// -> 1000
+		//Pat Portion est (Annual Max NOT Met): ProcFeeUCR - InsPayEst - write off || ProcFeeAllowed - InsPayEst
+		// -> 1000 - 810 - 100 = 90 || 900 - 810 = 90
+		ClaimProc claimProc3=ClaimProcs.GetEstimate(claimProcs,proc3.ProcNum,plan.PlanNum,subNum);
+		Assert.AreEqual(100.00,claimProc3.WriteOffEst);
+		Assert.AreEqual(810.00,claimProc3.InsPayEst);
+		Assert.AreEqual(90.00,(double)ClaimProcs.GetPatPortion(proc3,new List<ClaimProc>() { claimProc3 }));
+		Assert.AreEqual(proc3.ProcFeeTotal,claimProc3.WriteOffEst+claimProc3.InsPayEst+(double)ClaimProcs.GetPatPortion(proc3,new List<ClaimProc>() { claimProc3 }));
+		}
+
 		#endregion
 		#region InsPlansZeroWriteOffsOnFreqOrAging
 		///<summary></summary>

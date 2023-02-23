@@ -178,7 +178,10 @@ namespace OpenDental {
 				butDeletePayment.Enabled=false;
 			}
 			else {
-				checkPayTypeNone.Enabled=false;
+				//If the payment is attached to a deposit, or the payment type is already 'None', or the payment is not for $0, disable the 'None' checkbox. 
+				if(_payment.DepositNum!=0 || _payment.PayType==0 || _payment.PayAmt!=0) {
+					checkPayTypeNone.Enabled=false;
+				}
 				checkRecurring.Checked=_payment.IsRecurringCC;
 				if(checkRecurring.Checked) {
 					labelRecurringChargeWarning.Visible=true;
@@ -2873,7 +2876,7 @@ namespace OpenDental {
 			for(int i=0;i<_listPaySplits.Count;i++) {
 				_listPaySplits[i].DatePay=_payment.PayDate;
 			}
-			bool hasChanged=PaySplits.Sync(_listPaySplits,_listPaySplitsOld);
+			bool hasChanged=PaySplits.Sync(_listPaySplits,_payment.PayNum);
 			for(int i=0;i<_listPaySplitsForSecLog.Count;i++) {
 				//Split was deleted. Add Securitylog Entry
 				SecurityLogs.MakeLogEntry(Permissions.PaymentEdit,_listPaySplitsForSecLog[i].PatNum,PaySplits.GetSecurityLogMsgDelete(_listPaySplitsForSecLog[i],_payment),0,
@@ -4334,7 +4337,7 @@ namespace OpenDental {
 			for(int i=0;i<_listPaySplits.Count;i++) {
 				_listPaySplits[i].DatePay=_payment.PayDate;
 			}
-			bool hasChanged=PaySplits.Sync(_listPaySplits,_listPaySplitsOld);
+			bool hasChanged=PaySplits.Sync(_listPaySplits,_payment.PayNum);
 			if(IsNew) {
 				SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,_payment.PatNum,Payments.GetSecuritylogEntryText(_payment,_paymentOld,IsNew,
 					_listDefsPaymentType));

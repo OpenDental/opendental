@@ -992,6 +992,7 @@ namespace OpenDentBusiness {
 							note+=Lans.g("Benefits","Over annual max");
 						}
 					}
+					limitationTypeMet=LimitationTypeMet.PeriodMax;
 				}
 				else if(insEstTotalOverride!=-1 && insRemainingOverride != insEstTotalOverride) {
 					if(benInd!=null) {//redundant
@@ -1003,8 +1004,8 @@ namespace OpenDentBusiness {
 							note+=Lans.g("Benefits","Over annual max");
 						}
 					}
+					limitationTypeMet=LimitationTypeMet.PeriodMax;
 				}
-				limitationTypeMet=LimitationTypeMet.PeriodMax;
 				return retVal;//no family max anyway, so no need to go further.
 			}
 			double maxFam=benFam.MonetaryAmt;

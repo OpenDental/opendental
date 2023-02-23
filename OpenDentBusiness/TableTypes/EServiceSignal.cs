@@ -2,7 +2,7 @@
 using System.ComponentModel;
 
 namespace OpenDentBusiness {
-	///<summary>Communication item from OD Cloud to workstation.</summary>
+	///<summary>Communication item from workstation to OD HQ. Stores the statuses of the eConnector and other eServices. </summary>
 	[Serializable]
 	public class EServiceSignal:TableBase {
 		///<summary>Primary key.</summary>

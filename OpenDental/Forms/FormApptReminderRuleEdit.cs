@@ -130,7 +130,7 @@ namespace OpenDental {
 			tabPageDefault.Tag=ApptReminderRuleCur;
 			LayoutManager.AddUnscaled(_userControlReminderMessageDefault,tabPageDefault);
 			for(int i = 0; i < listApptReminderRulesLanguage.Count; i++) {
-				System.Windows.Forms.TabPage tabPagelanguage=new System.Windows.Forms.TabPage();
+				UI.TabPage tabPagelanguage=new UI.TabPage();
 				CultureInfo cultureInfo=MiscUtils.GetCultureFromThreeLetter(listApptReminderRulesLanguage[i].Language);
 				if(cultureInfo==null) {
 					tabPagelanguage.Text=listApptReminderRulesLanguage[i].Language;
