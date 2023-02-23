@@ -420,11 +420,11 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		///<summary>Convert script for B41238. Various WebSchedRecall bugs since the AndrewD refactor have lead to a buildup of overdue recalls. This cleanup helper
+		///<summary>Convert script for B41238. Various WebSchedRecall bugs since the AutoComm refactor have lead to a buildup of overdue recalls. This cleanup helper
 		///purges unsent and potentially invalid webschedrecall rows which the eConnector will automatically recreate if they were in fact valid.
 		///This is too time sensitive to be done in a DBM tool as customers would need to know to run the tool before turning on their eConnector.
 		///Deleting them is necessary because after the bugfix B40690, we are now allowing WebSchedRecalls to send if they are in the database even if they
-		///are long overdue. Although we never want to delete from the database in the convert script, Alvin and Brittany strongly believe that any unsent
+		///are long overdue. Although we never want to delete from the database in the convert script, we strongly believe that any unsent
 		///WebSchedRecall automatically created is OK since even if we deleted a legitimately created WebSchedRecall, the AutoCommProcessor will insert a new one if
 		///it actually needs to be sent out (See WebSchedRecallFeature.PrepAutomaticWebSchedNotifications()). This is because our AutoCommProcessor will
 		///attempt to send any WebSchedRecall in our database that is considered unsent (SendStatus is SendNotAttempted), essentially treating this table as an

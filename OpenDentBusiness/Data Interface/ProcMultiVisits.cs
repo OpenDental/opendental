@@ -200,7 +200,7 @@ namespace OpenDentBusiness{
 			List<ClaimProc> listClaimProcsForProcMultiVisit=ClaimProcs.GetForProcs(listPmvs.Select(x=>x.ProcNum).ToList());
 			//Use claimProc.ClaimNum to determine if a claim is attached to the given In Process proc (ClaimNum!=0)
 			List<long> listClaimNums=listClaimProcsForProcMultiVisit.Select(x=>x.ClaimNum).Distinct().ToList();
-			List<Claim> listClaims=Claims.GetClaimsFromClaimNums(listClaimNums);
+			List<Claim> listClaims=Claims.GetClaimsFromClaimNums(listClaimNums).Where(x => x.ClaimType!="PreAuth").ToList();//Ignore PreAuths
 			List<long> listModifiedClaimNums=new List<long>();
 			for(int i=0;i<listClaims.Count;i++) {
 				//If a claim is not attached or the ClaimStatus is not "U", "W", "I", or "H", kick out.
