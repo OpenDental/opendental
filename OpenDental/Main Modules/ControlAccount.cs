@@ -386,38 +386,44 @@ namespace OpenDental {
 				return;
 			}
 			gridPayPlan.SetAll(false);
-			foreach(int rowNum in gridAccount.SelectedIndices) {
-				if(table.Rows[rowNum]["PayPlanNum"].ToString()!="0") {
-					for(int i=0;i<gridPayPlan.ListGridRows.Count;i++) {
-						if(((DataRow)(gridPayPlan.ListGridRows[i].Tag))["PayPlanNum"].ToString()==table.Rows[rowNum]["PayPlanNum"].ToString()) {
-							gridPayPlan.SetSelected(i,true);
+			for(int i=0;i<gridAccount.SelectedIndices.Count();i++) {
+				if(table.Rows[gridAccount.SelectedIndices[i]]["PayPlanNum"].ToString()!="0") {
+					for(int j=0;j<gridPayPlan.ListGridRows.Count;j++) {
+						if(((DataRow)(gridPayPlan.ListGridRows[j].Tag))["PayPlanNum"].ToString()==table.Rows[gridAccount.SelectedIndices[i]]["PayPlanNum"].ToString()) {
+							gridPayPlan.SetSelected(j,true);
 						}
 					}
-					if(table.Rows[rowNum]["procsOnObj"].ToString()!="0") {
-						for(int i=0;i<table.Rows.Count;i++) {//loop through all rows
-							if(table.Rows[i]["ProcNum"].ToString()==table.Rows[rowNum]["procsOnObj"].ToString()) {
-								gridAccount.SetSelected(i,true);//select the pertinent procedure
+					if(table.Rows[gridAccount.SelectedIndices[i]]["procsOnObj"].ToString()!="0") {
+						for(int j=0;j<table.Rows.Count;j++) {//loop through all rows
+							if(j>=gridAccount.ListGridRows.Count) {
 								break;
 							}
-							if(table.Rows[i]["AdjNum"].ToString()==table.Rows[rowNum]["adjustsOnObj"].ToString()) {
-								gridAccount.SetSelected(i,true);//select the pertinent adjustment
+							if(table.Rows[j]["ProcNum"].ToString()==table.Rows[gridAccount.SelectedIndices[i]]["procsOnObj"].ToString()) {
+								gridAccount.SetSelected(j,true);//select the pertinent procedure
+								break;
+							}
+							if(table.Rows[j]["AdjNum"].ToString()==table.Rows[gridAccount.SelectedIndices[i]]["adjustsOnObj"].ToString()) {
+								gridAccount.SetSelected(j,true);//select the pertinent adjustment
 								break;
 							}
 						}
 					}
 				}
 			}
-			foreach(int rowNum in gridAccount.SelectedIndices) {
-				DataRow rowCur=table.Rows[rowNum];
+			for(int i=0;i<gridAccount.SelectedIndices.Count();i++) {
+				DataRow rowCur=table.Rows[gridAccount.SelectedIndices[i]];
 				if(rowCur["ClaimNum"].ToString()!="0") {//claims and claimpayments
 					//Since we removed all selected items above, we need to reselect the claim the user just clicked on at the very least.
 					//The "procsOnObj" column is going to be a comma delimited list of ProcNums associated to the corresponding claim.
 					List<string> listProcsOnClaim=rowCur["procsOnObj"].ToString().Split(',').ToList();
 					//Loop through the entire table and select any rows that are related to this claim (payments) while keeping track of their related ProcNums.
-					for(int i=0;i<table.Rows.Count;i++) {//loop through all rows
-						if(table.Rows[i]["ClaimNum"].ToString()==rowCur["ClaimNum"].ToString()) {
-							gridAccount.SetSelected(i,true);//for the claim payments
-							listProcsOnClaim.AddRange(table.Rows[i]["procsOnObj"].ToString().Split(','));
+					for(int j=0;j<table.Rows.Count;j++) {//loop through all rows
+						if(j>=gridAccount.ListGridRows.Count) {
+							break;
+						}
+						if(table.Rows[j]["ClaimNum"].ToString()==rowCur["ClaimNum"].ToString()) {
+							gridAccount.SetSelected(j,true);//for the claim payments
+							listProcsOnClaim.AddRange(table.Rows[j]["procsOnObj"].ToString().Split(','));
 						}
 					}
 					//Other software companies allow claims to be created with no procedures attached.
@@ -425,9 +431,12 @@ namespace OpenDental {
 					//Therefore, we need to specifically remove any entries of '0' from our procsOnClaim list before looping through it.
 					listProcsOnClaim.RemoveAll(x => x=="0");
 					//Loop through the table again in order to select any related procedures.
-					for(int i=0;i<table.Rows.Count;i++) {
-						if(listProcsOnClaim.Contains(table.Rows[i]["ProcNum"].ToString())) {
-							gridAccount.SetSelected(i,true);
+					for(int j=0;j<table.Rows.Count;j++) {
+						if(j>=gridAccount.ListGridRows.Count) {
+							break;
+						}
+						if(listProcsOnClaim.Contains(table.Rows[j]["ProcNum"].ToString())) {
+							gridAccount.SetSelected(j,true);
 						}
 					}
 				}
@@ -435,50 +444,65 @@ namespace OpenDental {
 					List<string> listProcsOnPayment=rowCur["procsOnObj"].ToString().Split(',').ToList();
 					List<string> listPaymentsOnObj=rowCur["paymentsOnObj"].ToString().Split(',').ToList();
 					List<string> listAdjustsOnPayment=rowCur["adjustsOnObj"].ToString().Split(',').ToList();
-					for(int i = 0;i<table.Rows.Count;i++) {//loop through all rows
-						if(table.Rows[i]["PayNum"].ToString()==rowCur["PayNum"].ToString()) {
-							gridAccount.SetSelected(i,true);//for other splits in family view
-							listProcsOnPayment.AddRange(table.Rows[i]["procsOnObj"].ToString().Split(','));
-							listPaymentsOnObj.AddRange(table.Rows[i]["paymentsOnObj"].ToString().Split(','));
-							listAdjustsOnPayment.AddRange(table.Rows[i]["adjustsOnObj"].ToString().Split(','));
+					for(int j = 0;j<table.Rows.Count;j++) {//loop through all rows
+						if(j>=gridAccount.ListGridRows.Count) {
+							break;
+						}
+						if(table.Rows[j]["PayNum"].ToString()==rowCur["PayNum"].ToString()) {
+							gridAccount.SetSelected(j,true);//for other splits in family view
+							listProcsOnPayment.AddRange(table.Rows[j]["procsOnObj"].ToString().Split(','));
+							listPaymentsOnObj.AddRange(table.Rows[j]["paymentsOnObj"].ToString().Split(','));
+							listAdjustsOnPayment.AddRange(table.Rows[j]["adjustsOnObj"].ToString().Split(','));
 						}
 					}
-					for(int i=0;i<table.Rows.Count;i++){
-						if(listProcsOnPayment.Contains(table.Rows[i]["ProcNum"].ToString())) {
-							gridAccount.SetSelected(i,true);
+					for(int j=0;j<table.Rows.Count;j++){
+						if(j>=gridAccount.ListGridRows.Count) {
+							break;
 						}
-						if(listPaymentsOnObj.Contains(table.Rows[i]["PayNum"].ToString())) {
-							gridAccount.SetSelected(i,true);
+						if(listProcsOnPayment.Contains(table.Rows[j]["ProcNum"].ToString())) {
+							gridAccount.SetSelected(j,true);
 						}
-						if(listAdjustsOnPayment.Contains(table.Rows[i]["Adjnum"].ToString())) {
-							gridAccount.SetSelected(i,true);
+						if(listPaymentsOnObj.Contains(table.Rows[j]["PayNum"].ToString())) {
+							gridAccount.SetSelected(j,true);
+						}
+						if(listAdjustsOnPayment.Contains(table.Rows[j]["Adjnum"].ToString())) {
+							gridAccount.SetSelected(j,true);
 						}
 					}
 				}
 				else if(gridAccount.SelectedIndices.Contains(e.Row) && rowCur["AdjNum"].ToString()!="0" && rowCur["procsOnObj"].ToString()!="0") {
-					for(int i=0;i<table.Rows.Count;i++) {
-						if(table.Rows[i]["ProcNum"].ToString()==rowCur["procsOnObj"].ToString()) {
-							gridAccount.SetSelected(i,true);
+					for(int j=0;j<table.Rows.Count;j++) {
+						if(j>=gridAccount.ListGridRows.Count) {
+							break;
+						}
+						if(table.Rows[j]["ProcNum"].ToString()==rowCur["procsOnObj"].ToString()) {
+							gridAccount.SetSelected(j,true);
 							break;
 						}
 					}
 				}
 				else if(rowCur["ProcNumLab"].ToString()!="0" && rowCur["ProcNumLab"].ToString()!="") {//Canadian Lab procedure, select parents and other associated labs too.
-					for(int i=0;i<table.Rows.Count;i++) {
-						if(table.Rows[i]["ProcNum"].ToString()==rowCur["ProcNumLab"].ToString()) {
-							gridAccount.SetSelected(i,true);
+					for(int j=0;j<table.Rows.Count;j++) {
+						if(j>=gridAccount.ListGridRows.Count) {
+							break;
+						}
+						if(table.Rows[j]["ProcNum"].ToString()==rowCur["ProcNumLab"].ToString()) {
+							gridAccount.SetSelected(j,true);
 							continue;
 						}
-						if(table.Rows[i]["ProcNumLab"].ToString()==rowCur["ProcNumLab"].ToString()) {
-							gridAccount.SetSelected(i,true);
+						if(table.Rows[j]["ProcNumLab"].ToString()==rowCur["ProcNumLab"].ToString()) {
+							gridAccount.SetSelected(j,true);
 							continue;
 						}
 					}
 				}
 				else if(rowCur["ProcNum"].ToString()!="0") {//Not a Canadian lab and is a procedure.
-					for(int i=0;i<table.Rows.Count;i++) {
-						if(table.Rows[i]["ProcNumLab"].ToString()==rowCur["ProcNum"].ToString()) {
-							gridAccount.SetSelected(i,true);
+					for(int j=0;j<table.Rows.Count;j++) {
+						if(j>=gridAccount.ListGridRows.Count) {
+							break;
+						}
+						if(table.Rows[j]["ProcNumLab"].ToString()==rowCur["ProcNum"].ToString()) {
+							gridAccount.SetSelected(j,true);
 							continue;
 						}
 					}
@@ -861,7 +885,7 @@ namespace OpenDental {
 					if(proc.MedicalCode==""){
 						continue;//ignore non-medical procedures
 					}
-					if(Procedures.NeedsSent(proc.ProcNum,medSubNum,claimData.ListClaimProcs)) {
+					if(Procedures.NeedsSent(proc.ProcNum,medSubNum,claimData.ListClaimProcs) && i<gridAccount.ListGridRows.Count) {
 						gridAccount.SetSelected(i,true);
 					}
 				}
@@ -1161,7 +1185,9 @@ namespace OpenDental {
 							continue;
 						}
 					}
-					gridAccount.SetSelected(i,true);
+					if(i < gridAccount.ListGridRows.Count) {
+						gridAccount.SetSelected(i,true);
+					}
 				}
 				if(gridAccount.SelectedIndices.Length==0) {//if still none selected
 					MsgBox.Show(this,"Please select procedures, adjustments or payment plan charges first.");
@@ -1340,7 +1366,9 @@ namespace OpenDental {
 					{
 						continue;
 					}
-					gridAccount.SetSelected(i,true);
+					if(i < gridAccount.ListGridRows.Count) {
+						gridAccount.SetSelected(i,true);
+					}
 				}
 				if(gridAccount.SelectedIndices.Length==0) {//if still none selected
 					MsgBox.Show(this,"Please select procedures, adjustments, payments, claims, or pay plan charges first.");
@@ -1415,7 +1443,9 @@ namespace OpenDental {
 					{
 						continue;
 					}
-					gridAccount.SetSelected(i,true);
+					if(i < gridAccount.ListGridRows.Count) {
+						gridAccount.SetSelected(i,true);
+					}
 				}
 			}
 			#endregion Autoselect Today's Procedures
@@ -2209,7 +2239,9 @@ namespace OpenDental {
 				if(claimNumRow!=claimNum){
 					continue;
 				}
-				gridAccount.SetSelected(i,true);
+				if(i<gridAccount.ListGridRows.Count) {
+					gridAccount.SetSelected(i,true);
+				}
 			}
 		}
 

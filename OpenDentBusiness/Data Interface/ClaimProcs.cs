@@ -3002,12 +3002,12 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Attaches all claimprocs that have an InsPayAmt entered to the specified ClaimPayment, 
-		///and then returns the sum amount of all the attached payments.  The claimprocs must be currently unattached.
+		///and then returns a list of the claimprocs.  The claimprocs must be currently unattached.
 		///Used from Edit Claim window (FormClaimEdit) when user is not doing the batch entry.
 		///To finalize a single claim, set onlyOneClaimNum to the claimNum to finalize.</summary>
-		public static double AttachAllOutstandingToPayment(long claimPaymentNum,DateTime dateClaimPayZero,long onlyOneClaimNum=0) {
+		public static List<ClaimProc> AttachAllOutstandingToPayment(long claimPaymentNum,DateTime dateClaimPayZero,long onlyOneClaimNum=0) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<double>(MethodBase.GetCurrentMethod(),claimPaymentNum,dateClaimPayZero,onlyOneClaimNum);
+				return Meth.GetObject<List<ClaimProc>>(MethodBase.GetCurrentMethod(),claimPaymentNum,dateClaimPayZero,onlyOneClaimNum);
 			}
 			//See job #7423.
 			//The claimproc.DateCP is essentially the same as the claim.DateReceived.
@@ -3031,8 +3031,8 @@ namespace OpenDentBusiness{
 				command+="AND ClaimNum="+POut.Long(onlyOneClaimNum);
 			}
 			Db.NonQ(command);
-			command="SELECT SUM(InsPayAmt) FROM claimproc WHERE ClaimPaymentNum="+POut.Long(claimPaymentNum);
-			return PIn.Double(Db.GetScalar(command));
+			command="SELECT * FROM claimproc WHERE ClaimPaymentNum="+POut.Long(claimPaymentNum);
+			return ClaimProcCrud.SelectMany(command);
 		}
 
 		///<summary>Called when we want to try and update claimProc.DateInsFinalized for claimProcs associated to the given claimPaymentNum.

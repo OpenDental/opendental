@@ -1105,12 +1105,14 @@ namespace OpenDental.UI {
 			}
 
 			///<summary>Rarely used. You can change the value of an existing item in the list.</summary>
-			public void SetValue(int index,object value) {
+			public void SetValue(int index,object value,bool setText=true) {
 				if(index>=_listListBoxItems.Count || index==-1) {
 					return;
 				}
 				_listListBoxItems[index].Item=value;
-				_listListBoxItems[index].Text=value.ToString();
+				if(setText){
+					_listListBoxItems[index].Text=value.ToString();
+				}
 				_listBoxODParent.Invalidate();
 			}
 		}

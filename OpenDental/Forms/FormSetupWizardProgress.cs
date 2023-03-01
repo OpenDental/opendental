@@ -11,12 +11,13 @@ using System.Linq;
 using System.ComponentModel;
 using OpenDental.User_Controls.SetupWizard;
 using System.Windows.Documents;
+using CodeBase;
 
 namespace OpenDental {
 	public partial class FormSetupWizardProgress:FormODBase {
 		private List<OpenDental.SetupWizard.SetupWizClass> _listSetupWizClasses;
 		///<summary>The current setup control that is being viewed.  Used in conjunction with _listSetupClasses.</summary>
-		private int _indexSetupClasses = 0;
+		private int _indexSetupClasses=0;
 		private bool _isSetupAll;
 
 		public FormSetupWizardProgress(List<SetupWizard.SetupWizClass> listSetupWizClasses, bool isSetupAll) {
@@ -28,7 +29,12 @@ namespace OpenDental {
 		}
 
 		private void FormSetupWizardProgress_Load(object sender,EventArgs e) {
-			SetCurrentUserControl(_listSetupWizClasses[_indexSetupClasses].SetupControl);
+			for(int i=0;i<_listSetupWizClasses.Count;i++) {
+				_listSetupWizClasses[i].SetupControl.Dock=DockStyle.Fill;
+				LayoutManager.AddUnscaled(_listSetupWizClasses[i].SetupControl,splitContainer2.Panel2);
+			}
+			LayoutManager.LayoutControlBoundsAndFonts(splitContainer2.Panel2);
+			SetControlCurrent();
 			butNext.Focus();
 		}
 
@@ -37,7 +43,8 @@ namespace OpenDental {
 		}
 
 		private void butBack_Click(object sender,EventArgs e) {
-			SetCurrentUserControl(_listSetupWizClasses[--_indexSetupClasses].SetupControl);
+			_indexSetupClasses--;
+			SetControlCurrent();
 		}
 
 		private void butNext_Click(object sender,EventArgs e) {
@@ -45,20 +52,21 @@ namespace OpenDental {
 				return;
 			}
 			if(!_listSetupWizClasses[_indexSetupClasses].SetupControl.IsDone) {
-				string strMsg = Lan.g("FormSetupWizard","You have not finished setting this section up yet.") 
-					+ "\r\n" + _listSetupWizClasses[_indexSetupClasses].SetupControl.StrIncomplete;
-				strMsg+="\r\n" + Lan.g("FormSetupWizard","Click 'Skip' if you do not wish to finish setting this section up at this time.");
+				string strMsg=Lan.g("FormSetupWizard","You have not finished setting this section up yet.") 
+					+"\r\n"+_listSetupWizClasses[_indexSetupClasses].SetupControl.StrIncomplete;
+				strMsg+="\r\n"+Lan.g("FormSetupWizard","Click 'Skip' if you do not wish to finish setting this section up at this time.");
 				MessageBox.Show(strMsg);
 				return;
 			}
 			//Call the Control Done method for the setup class.
 			ControlDone();
-			if(_listSetupWizClasses.Count-1 < ++_indexSetupClasses) {
+			_indexSetupClasses++;
+			if(_listSetupWizClasses.Count-1<_indexSetupClasses) {
 				MsgBox.Show("FormSetupWizard","You have finished setup.");
 				Close();
 				return;
 			}
-			SetCurrentUserControl(_listSetupWizClasses[_indexSetupClasses].SetupControl);
+			SetControlCurrent();
 		}
 
 		///<summary>Any validation should be done here.</summary>
@@ -77,14 +85,14 @@ namespace OpenDental {
 				return;
 			}
 			#region Clinic Show Feature
-			if(_listSetupWizClasses[_indexSetupClasses].GetType() == typeof(SetupWizard.FeatureSetup)) {
+			if(_listSetupWizClasses[_indexSetupClasses].GetType()==typeof(SetupWizard.FeatureSetup)) {
 				return;
 			}
-			SetupWizard.ClinicSetup clinicSetup = new SetupWizard.ClinicSetup();
+			SetupWizard.ClinicSetup clinicSetup=new SetupWizard.ClinicSetup();
 			//if Clinics got enabled but there is no clinic setup item, add it.
-			if(PrefC.HasClinicsEnabled && _listSetupWizClasses.Where(x => x.Name == clinicSetup.Name).Count() ==0) {
-				int endCat = _indexSetupClasses;
-				for(int i = _indexSetupClasses;i < _listSetupWizClasses.Count;i++) {
+			if(PrefC.HasClinicsEnabled && _listSetupWizClasses.Where(x => x.Name==clinicSetup.Name).Count()==0) {
+				int endCat=_indexSetupClasses;
+				for(int i=_indexSetupClasses;i<_listSetupWizClasses.Count;i++) {
 					if(_listSetupWizClasses[i].GetType()==typeof(SetupWizard.ProvSetup)) {
 						endCat+=2;
 						break;
@@ -96,74 +104,43 @@ namespace OpenDental {
 				_listSetupWizClasses.Insert(endCat,new SetupWizard.SetupComplete(clinicSetup.Name));
 			}
 			//otherwise, if clinics got disabled and there is a clinic setup item, remove it.
-			else if(!PrefC.HasClinicsEnabled && _listSetupWizClasses.Where(x => x.Name == clinicSetup.Name).Count()!=0) {
-				_listSetupWizClasses.RemoveAll(x => x.Name == clinicSetup.Name);
+			else if(!PrefC.HasClinicsEnabled && _listSetupWizClasses.Where(x => x.Name==clinicSetup.Name).Count()!=0) {
+				_listSetupWizClasses.RemoveAll(x => x.Name==clinicSetup.Name);
 			}
 			#endregion
 		}
 
 		private void butSkip_Click(object sender,EventArgs e) {
 			//find the next Complete, then add one.
-			for(int i = _indexSetupClasses;i < _listSetupWizClasses.Count;i++) {
+			for(int i=_indexSetupClasses;i<_listSetupWizClasses.Count;i++) {
 				if(_listSetupWizClasses[i].GetType()==typeof(SetupWizard.SetupComplete)) {
 					_indexSetupClasses++;
 					break;
 				}
 				_indexSetupClasses++;
 			}
-			if(_listSetupWizClasses.Count-1 < _indexSetupClasses) {
+			if(_listSetupWizClasses.Count-1<_indexSetupClasses) {
 				MsgBox.Show("FormSetupWizard","You have finished setup.");
 				Close();
 				return;
 			}
-			SetCurrentUserControl(_listSetupWizClasses[_indexSetupClasses].SetupControl);
+			SetControlCurrent();
 		}
 
-		private void SetCurrentUserControl(SetupWizControl ctrl) {
-			for(int i=splitContainer2.Panel2.Controls.Count-1;i>-1;i--) {
-				splitContainer2.Panel2.Controls.RemoveAt(i);
+		private void SetControlCurrent() {
+			if(_listSetupWizClasses.IsNullOrEmpty()) {
+				return;
 			}
-			//cool & useless animations
-			//int wDiff = this.Width - ctrl.Width;
-			//int hDiff = splitContainer2.Panel2.Height - ctrl.Height;
-			//double incRat = 0;
-			//if(Math.Abs(wDiff)>Math.Abs(hDiff)) {
-			//	incRat = (double)wDiff/(double)hDiff;
-			//}
-			//else {
-			//	incRat = (double)hDiff/(double)wDiff;
-			//}
-			//int hInc = 15;
-			//int wInc = Math.Abs((int)((double)hInc * incRat));
-			//this.FormBorderStyle = FormBorderStyle.Sizable;
-			//while(Math.Abs(wDiff) > wInc || Math.Abs(hDiff) > hInc) {
-			//	if(wDiff>0) {
-			//		this.Width-=wInc;
-			//	}
-			//	if(wDiff<0) {
-			//		this.Width+=wInc;
-			//	}
-			//	if(hDiff>0) {
-			//		this.Height-=hInc;
-			//	}
-			//	if(hDiff<0) {
-			//		this.Height+=hInc;
-			//	}
-			//	wDiff = this.Width - ctrl.Width;
-			//	hDiff = splitContainer2.Panel2.Height - ctrl.Height;
-			//	Application.DoEvents();
-			//}
-			//this.FormBorderStyle = FormBorderStyle.FixedSingle;
-			ctrl.Dock=DockStyle.Fill;
-			LayoutManager.AddUnscaled(ctrl,splitContainer2.Panel2);
-			LayoutManager.LayoutControlBoundsAndFonts(splitContainer2.Panel2);
+			int indexSetupClasses=Math.Max(0,_indexSetupClasses);
+			indexSetupClasses=Math.Min(indexSetupClasses,_listSetupWizClasses.Count);
+			_listSetupWizClasses[indexSetupClasses].SetupControl.BringToFront();
 			if(_indexSetupClasses==0) {
 				butBack.Enabled=false;
 			}
 			else {
 				butBack.Enabled=true;
 			}
-			labelTitle.Text=Lan.g("FormSetupWizard",_listSetupWizClasses[_indexSetupClasses].Name+" Setup");
+			labelTitle.Text=Lan.g("FormSetupWizard",_listSetupWizClasses[indexSetupClasses].Name+" Setup");
 		}
 
 		private void butClose_Click(object sender,EventArgs e) {

@@ -11,7 +11,7 @@ namespace OpenDental {
 	public partial class FormPatientStatusTool:FormODBase {
 
 		///<summary>Returns a list of all the patient statuses this form can handle.</summary>
-		private List<PatientStatus> _listPatientStatuses=new List<PatientStatus>() { PatientStatus.Patient,PatientStatus.Inactive,PatientStatus.Archived};
+		private List<PatientStatus> _listPatientStatuses=new List<PatientStatus>() { PatientStatus.Patient,PatientStatus.Inactive,PatientStatus.Archived, PatientStatus.Deleted};
 		///<summary>Returns the patient status from the Criteria filters.</summary>
 		private PatientStatus _patientStatusFrom => comboPatientStatusCur.GetSelected<PatientStatus>();
 		///<summary>Returns the patient status from the Change Patient Status To combobox.</summary>
@@ -46,7 +46,7 @@ namespace OpenDental {
 
 		private void FillComboPatientStatusTo() {
 			//Exclude the patient status from the criteria filter
-			List<PatientStatus> listPatientStatusesTo=_listPatientStatuses.FindAll(x => x!=_patientStatusFrom);
+			List<PatientStatus> listPatientStatusesTo=_listPatientStatuses.FindAll(x => x!=_patientStatusFrom && x!=PatientStatus.Deleted);
 			comboChangePatientStatusTo.Items.Clear();
 			comboChangePatientStatusTo.Items.AddList(listPatientStatusesTo,x => x.GetDescription());
 			comboChangePatientStatusTo.SetSelected(0);//Default to first item

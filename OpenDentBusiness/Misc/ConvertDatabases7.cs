@@ -4601,6 +4601,7 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}
 		}
+
 	}
 }
 

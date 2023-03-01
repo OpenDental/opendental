@@ -12,14 +12,6 @@ namespace OpenDentBusiness{
 		/*
 		Only pull out the methods below as you need them.  Otherwise, leave them commented out.
 
-		///<summary>Gets one SubstitutionLink from the db.</summary>
-		public static SubstitutionLink GetOne(long substitutionLinkNum){
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetObject<SubstitutionLink>(MethodBase.GetCurrentMethod(),substitutionLinkNum);
-			}
-			return Crud.SubstitutionLinkCrud.SelectOne(substitutionLinkNum);
-		}
-
 		///<summary></summary>
 		public static void Update(SubstitutionLink substitutionLink){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
@@ -42,6 +34,13 @@ namespace OpenDentBusiness{
 
 		
 		*/
+		///<summary>Gets one SubstitutionLink from the db.</summary>
+		public static SubstitutionLink GetOne(long substitutionLinkNum){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				return Meth.GetObject<SubstitutionLink>(MethodBase.GetCurrentMethod(),substitutionLinkNum);
+			}
+			return Crud.SubstitutionLinkCrud.SelectOne(substitutionLinkNum);
+		}
 
 		///<summary></summary>
 		public static List<SubstitutionLink> GetAllForPlans(List<InsPlan> listInsPlans) {

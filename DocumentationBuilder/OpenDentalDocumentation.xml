@@ -6634,7 +6634,7 @@
     </column>
   </table>
   <table name="eservicesignal">
-    <summary>Communication item from OD Cloud to workstation.</summary>
+    <summary>Communication item from workstation to OD HQ. Stores the statuses of the eConnector and other eServices. </summary>
     <column order="0" name="EServiceSignalNum" type="bigint(20)">
       <summary>Primary key.</summary>
     </column>

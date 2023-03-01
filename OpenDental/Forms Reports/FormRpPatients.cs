@@ -98,7 +98,7 @@ namespace OpenDental {
 			_listPatFilter.Add("CreditType");
 			_listPatFilter.Add("Email");
 			_listPatFilter.Add("EstBalance");
-			_listPatFilter.Add("FamAddrNote");
+			_listPatFilter.Add("AddrNote");
 			_listPatFilter.Add("FamFinUrgNote");
 			_listPatFilter.Add("FeeSched");
 			_listPatFilter.Add("First Visit Date");//new, need to add functionality  
@@ -503,6 +503,9 @@ namespace OpenDental {
 		#region Selected Index Changes
 
 		private void DropListFilter_SelectedIndexChanged(object sender,System.EventArgs e) {
+			if(DropListFilter.SelectedItem==null) {
+				return;
+			}
 			switch(DropListFilter.SelectedItem.ToString()) {
 				case "Address":
 				case "Address2":
@@ -512,7 +515,7 @@ namespace OpenDental {
 				case "CreditType":
 				case "Email":
 				case "EstBalance":
-				case "FamAddrNote":
+				case "AddrNote":
 				case "FamFinUrgNote":
 				case "FName":
 				case "HmPhone":

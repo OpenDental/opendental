@@ -122,9 +122,9 @@ namespace OpenDental{
 			this.checkOrthoFinancialInfoInChart.Name = "checkOrthoFinancialInfoInChart";
 			this.checkOrthoFinancialInfoInChart.Size = new System.Drawing.Size(327, 17);
 			this.checkOrthoFinancialInfoInChart.TabIndex = 1;
-			this.checkOrthoFinancialInfoInChart.Text = "Show Auto Ortho information in the ortho chart";
+			this.checkOrthoFinancialInfoInChart.Text = "Show Auto Ortho information in the Ortho Chart";
 			this.checkOrthoFinancialInfoInChart.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
+			//
 			// checkOrthoClaimUseDatePlacement
 			// 
 			this.checkOrthoClaimUseDatePlacement.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -144,7 +144,7 @@ namespace OpenDental{
 			this.checkOrthoClaimMarkAsOrtho.Name = "checkOrthoClaimMarkAsOrtho";
 			this.checkOrthoClaimMarkAsOrtho.Size = new System.Drawing.Size(327, 17);
 			this.checkOrthoClaimMarkAsOrtho.TabIndex = 2;
-			this.checkOrthoClaimMarkAsOrtho.Text = "Mark claims as Ortho if they have ortho procedures";
+			this.checkOrthoClaimMarkAsOrtho.Text = "Mark claims as Ortho if they have Ortho procedures";
 			this.checkOrthoClaimMarkAsOrtho.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label1
@@ -164,7 +164,7 @@ namespace OpenDental{
 			this.checkOrthoEnabled.Name = "checkOrthoEnabled";
 			this.checkOrthoEnabled.Size = new System.Drawing.Size(327, 17);
 			this.checkOrthoEnabled.TabIndex = 0;
-			this.checkOrthoEnabled.Text = "Show Auto Ortho in account module";
+			this.checkOrthoEnabled.Text = "Show Auto Ortho in Account Module";
 			this.checkOrthoEnabled.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label2
@@ -370,7 +370,7 @@ namespace OpenDental{
 			this.checkOrthoShowInChart.Name = "checkOrthoShowInChart";
 			this.checkOrthoShowInChart.Size = new System.Drawing.Size(327, 17);
 			this.checkOrthoShowInChart.TabIndex = 242;
-			this.checkOrthoShowInChart.Text = "Show Ortho button and tab in Chart module";
+			this.checkOrthoShowInChart.Text = "Show Ortho button and tab in Chart Module";
 			this.checkOrthoShowInChart.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label4

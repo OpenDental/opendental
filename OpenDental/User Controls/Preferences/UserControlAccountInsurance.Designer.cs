@@ -28,7 +28,6 @@ namespace OpenDental {
 			this.textInsWriteoffDescript = new System.Windows.Forms.TextBox();
 			this.label17 = new System.Windows.Forms.Label();
 			this.labelClaimIdPrefixDetails = new System.Windows.Forms.Label();
-			this.labelEclaimsSeparateTreatProvDetails = new System.Windows.Forms.Label();
 			this.groupBoxClaimsMedical = new OpenDental.UI.GroupBox();
 			this.checkClaimMedTypeIsInstWhenInsPlanIsMedical = new OpenDental.UI.CheckBox();
 			this.checkEclaimsMedicalProvTreatmentAsOrdering = new OpenDental.UI.CheckBox();
@@ -105,17 +104,6 @@ namespace OpenDental {
 			this.labelClaimIdPrefixDetails.Text = "Default is [PatNum]/. This prefix is followed by an auto-generated claim number. " +
     "Useful for internal tracking of claims.\r\n";
 			this.labelClaimIdPrefixDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelEclaimsSeparateTreatProvDetails
-			// 
-			this.labelEclaimsSeparateTreatProvDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelEclaimsSeparateTreatProvDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelEclaimsSeparateTreatProvDetails.Location = new System.Drawing.Point(476, 60);
-			this.labelEclaimsSeparateTreatProvDetails.Name = "labelEclaimsSeparateTreatProvDetails";
-			this.labelEclaimsSeparateTreatProvDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelEclaimsSeparateTreatProvDetails.TabIndex = 325;
-			this.labelEclaimsSeparateTreatProvDetails.Text = "recommend checked";
-			this.labelEclaimsSeparateTreatProvDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// groupBoxClaimsMedical
 			// 
@@ -448,7 +436,6 @@ namespace OpenDental {
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this.labelEclaimsSeparateTreatProvDetails);
 			this.Controls.Add(this.labelClaimIdPrefixDetails);
 			this.Controls.Add(this.groupBoxClaimsMedical);
 			this.Controls.Add(this.groupBoxClaimsPayments);
@@ -505,7 +492,6 @@ namespace OpenDental {
 		private UI.GroupBox groupBoxClaimsPayments;
 		private System.Windows.Forms.Label labelClaimIdPrefixDetails;
 		private OpenDental.UI.CheckBox checkNoInitialPrimaryInsMoreThanProc;
-		private System.Windows.Forms.Label labelEclaimsSeparateTreatProvDetails;
 		private OpenDental.UI.CheckBox checkEclaimsSeparateTreatProv;
 		private OpenDental.UI.CheckBox checkInsAutoReceiveNoAssign;
 		private OpenDental.UI.CheckBox checkClaimPaymentPickStatementType;

@@ -748,6 +748,9 @@ namespace OpenDental {
 		///<summary>Triggered when any field value changes.  Also causes fields to grow as needed and deselects other radiobuttons in a group.
 		///Will clear all signature boxes if this is not a "new" sheet.</summary>
 		private void FieldValueChanged(object sender) {
+			if(sender is null){
+				return;//this does happen, although I'm not sure how.
+			}
 			for(int i=0;i<_listSignatureBoxWrappers.Count;i++){
 				//When field values change, the signature should not show as "invalid" but instead should just be cleared so that the user can re-sign.
 				//sigBox.SetInvalid();

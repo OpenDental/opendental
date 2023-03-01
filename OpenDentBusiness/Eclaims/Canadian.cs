@@ -1482,6 +1482,7 @@ namespace OpenDentBusiness.Eclaims {
 					//then automatically move up one directory to the parent directory before deciding which sub-folder to use (see below for sub-folder).
 					saveFolder=dirInfo.Parent.FullName;
 				}
+				string configFilePath=ODFileUtils.CombinePaths(saveFolder,"ccdws.ini");
 				string subDir="";
 				if(network.Abbrev=="ABC") {//Alberta Blue Cross
 					subDir="abc";
@@ -1510,10 +1511,10 @@ namespace OpenDentBusiness.Eclaims {
 				}
 				else if(network.Abbrev=="TELUS A" || network.Abbrev=="TELUS B") {
 					if(ODBuild.IsDebug()) {
-						certFileName="OD_2018-02-26_2023-03-02_staging.pem";
+						certFileName="OD_2023-02-05_2028-02-09_staging.pem";
 					}
 					else {
-						certFileName="OD_2018-05-17_2023-05-21_prod.pem";
+						certFileName="OD_2023-02-20_2028-02-24_prod.pem";
 					}
 				}
 				string certFilePath=ODFileUtils.CombinePaths(saveFolder,certFileName);
@@ -1525,7 +1526,12 @@ namespace OpenDentBusiness.Eclaims {
 						settings.IndentChars=("    ");
 						StringBuilder strbuild=new StringBuilder();
 						using(XmlWriter writer=XmlWriter.Create(strbuild,settings)){
+							writer.WriteStartElement("Request");
 							writer.WriteElementString("RegistrationKey",PrefC.GetString(PrefName.RegistrationKey));
+							if(network.Abbrev=="TELUS A" || network.Abbrev=="TELUS B") {
+								writer.WriteElementString("RelativeFilePath","eclaim_certs/"+certFileName);
+							}
+							writer.WriteEndElement();
 						}
 						string response=null;
 						if(network.Abbrev=="ABC") {//Alberta Blue Cross
@@ -1573,6 +1579,19 @@ namespace OpenDentBusiness.Eclaims {
 					catch(Exception ex) {
 						errorMsg=Lans.g("Canadian","Failed to export certificate file to path")+" '"+certFilePath+"'\r\n  "+ex.Message;
 						return "";//Return empty response, since we never received one.
+					}
+				}
+				if(File.Exists(configFilePath)) {//Update the config file .pem references automatically. Customer might still need to restart CCDWS.
+					string configText=File.ReadAllText(configFilePath);
+					string configTextModified=configText.Replace("OD_2018-02-26_2023-03-02_staging.pem","OD_2023-02-05_2028-02-09_staging.pem");
+					configTextModified=configTextModified.Replace("OD_2018-05-17_2023-05-21_prod.pem","OD_2023-02-05_2028-02-09_prod.pem");
+					if(configText!=configTextModified) {
+						try {
+							File.WriteAllText(configFilePath,configTextModified);
+						}
+						catch(Exception ex) {
+							ex.DoNothing();//Probably due to concurrency, as this file is usually on a UNC path.
+						}
 					}
 				}
 			}

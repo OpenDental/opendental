@@ -39,8 +39,7 @@ namespace OpenDental {
 
 		private void butSearchBehaviorDetails_Click(object sender,EventArgs e) {
 			MsgBox.Show(this,"ProviderTime: searches availability using only the provider time bar at the very left.\r\n\r\n" +
-			"ProviderTimeOperatory: searches availability using both the provider time bar and space in the provider's operatories. This will prevent overlap of appointments.\r\n" +
-			"(but it only works for now if you assign ops in the prov schedules)");
+			"ProviderTimeOperatory: searches availability using both the provider time bar and space in the provider's operatories. This will prevent overlap of appointments.");
 		}
 
 		private void checkAppointmentTimeIsLocked_MouseUp(object sender,MouseEventArgs e) {
