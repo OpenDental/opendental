@@ -218,11 +218,14 @@ namespace OpenDental {
 			}
 		}
 
-		/// <summary>runs aging for all families for patient's on claims attached to payment</summary>
-		private void runAgingforClaims() {
+		/// <summary>Runs aging for all families for patient's on claims attached to payment</summary>
+		private void RunAgingForClaims() {
 			List<long> listPatNumsOnClaims = Claims.GetClaimsFromClaimNums(_listEtrans835Attaches.Select(x => x.ClaimNum).ToList()).Select(x => x.PatNum).ToList();
 			List<long> listGuarantors = Patients.GetGuarantorsForPatNums(listPatNumsOnClaims);
-			Ledgers.ComputeAging(listGuarantors,DateTime.Today);
+			//looping through guarNums 1 at a time to avoid using the famaging table, otherwise we would need to check/set the AgingBeginDateTime pref and signal other instances
+			for(int i=0;i<listGuarantors.Count;i++) {
+				Ledgers.ComputeAging(listGuarantors[i],DateTime.Today);
+			}
 		}
 
 		///<summary>Reads the X12 835 text in the MessageText variable and displays the information from Table 3 (Summary).</summary>
@@ -586,7 +589,7 @@ namespace OpenDental {
 			EtransCur.Note=textNote.Text;//update happens in FormClosing
 			DialogResult=DialogResult.OK;
 			if(PrefC.GetBool(PrefName.AgingCalculateOnBatchClaimReceipt)) {
-				runAgingforClaims();
+				RunAgingForClaims();
 			}
 			Close();
 		}
