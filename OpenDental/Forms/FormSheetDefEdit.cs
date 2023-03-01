@@ -373,6 +373,9 @@ namespace OpenDental {
 			Bounds=new Rectangle(rectangleBoth.Left,rectangleBoth.Top,Width,rectangleBoth.Height);
 			Rectangle rectangleFloat=new Rectangle(Right,rectangleWorkingArea.Top,_sheetEditMobileCtrl.Width,rectangleWorkingArea.Height);
 			_sheetEditMobileCtrl.ShowModeless(_sheetDef.Description,this,rectangleFloat);
+			//The next two lines are because we skip those during Undo if mobile is not showing.
+			_sheetEditMobileCtrl.UpdateLanguage(GetSelectedLanguageThreeLetters());
+			_sheetEditMobileCtrl.SetSheetDef(_sheetDef);
 			butMobile.Text=Lan.g(this,"Hide Mobile");				
 		}
 
@@ -526,16 +529,46 @@ namespace OpenDental {
 			int idxTarget=_listUndoLevels.Count-2-_undoLevel;
 			//example count=5, _undoLevel=0, so target is second from end, or 5-2-0=3
 			//example count=5, _undoLevel=1, so target is third from end, or 5-2-1=2
+			//It's too slow to FillFieldList if we are just undoing movements.
+			bool isOnlyMovements=true;
+			if(_sheetDef.SheetFieldDefs.Count!=_listUndoLevels[idxTarget].ListSheetFieldDefs.Count){
+				isOnlyMovements=false;
+			}
+			else{
+				//guaranteed to be same count
+				for(int i=0;i<_sheetDef.SheetFieldDefs.Count;i++){
+					if(_sheetDef.SheetFieldDefs[i].SheetFieldDefNum!=_listUndoLevels[idxTarget].ListSheetFieldDefs[i].SheetFieldDefNum){
+						isOnlyMovements=false;
+					}
+				}
+			}
 			_sheetDef=_listUndoLevels[idxTarget].SheetDef_.Copy();
 			_sheetDef.SheetFieldDefs=DeepCopy(_listUndoLevels[idxTarget].ListSheetFieldDefs);
 			//but we leave it on the list in case they want to redo
 			_undoLevel++;
-			FillFieldList();
-			for(int i=0;i<listBoxFields.Items.Count;i++){
-				//they are copies, so we must compare PKs
-				SheetFieldDef sheetFieldDef=(SheetFieldDef)listBoxFields.Items.GetObjectAt(i);
-				if(listSheetFieldDefNumsSelected.Contains(sheetFieldDef.SheetFieldDefNum)){
-					listBoxFields.SetSelected(i);
+			if(isOnlyMovements){
+				for(int i=0;i<listBoxFields.Items.Count;i++){
+					SheetFieldDef sheetFieldDefOld=(SheetFieldDef)listBoxFields.Items.GetObjectAt(i);
+					SheetFieldDef sheetFieldDefNew=_sheetDef.SheetFieldDefs.Find(x=>x.SheetFieldDefNum==sheetFieldDefOld.SheetFieldDefNum);
+					if(sheetFieldDefNew is null){
+						continue;//shouldn't be possible
+					}
+					listBoxFields.Items.SetValue(i,sheetFieldDefNew,setText:false);
+				}
+				if(_sheetEditMobileCtrl.IsFormFloatVisible()){
+					_sheetEditMobileCtrl.UpdateLanguage(GetSelectedLanguageThreeLetters());
+					_sheetEditMobileCtrl.SetSheetDef(_sheetDef);
+				}
+				panelMain.Invalidate();
+			}
+			else{
+				FillFieldList();
+				for(int i=0;i<listBoxFields.Items.Count;i++){
+					//they are copies, so we must compare PKs
+					SheetFieldDef sheetFieldDef=(SheetFieldDef)listBoxFields.Items.GetObjectAt(i);
+					if(listSheetFieldDefNumsSelected.Contains(sheetFieldDef.SheetFieldDefNum)){
+						listBoxFields.SetSelected(i);
+					}
 				}
 			}
 			textDescription.Text=_sheetDef.Description;
@@ -685,9 +718,9 @@ namespace OpenDental {
 						default:
 							break;
 					}
-					AddUndoLevel("Move arrow key");
 					MoveSheetFieldDefs(sheetFieldDef,newX,newY);
 				}
+				AddUndoLevel("Move arrow key");
 				panelMain.Invalidate();
 			}
 		}
@@ -1653,6 +1686,12 @@ namespace OpenDental {
 				_listUndoLevels.RemoveRange(_listUndoLevels.Count-_undoLevel,_undoLevel);
 				_undoLevel=0;
 			}
+			int max=100;
+			if(_listUndoLevels.Count>max){
+				//Should only need to remove one at a time.  Example count=101, so RemoveRange(0,1)
+				//Second example: count =105, so RemoveRange(0,105-100)
+				_listUndoLevels.RemoveRange(0,_listUndoLevels.Count-max);
+			}
 			UndoLevel undoLevel=new UndoLevel();
 			undoLevel.Description=description;
 			undoLevel.SheetDef_=_sheetDef.Copy();//does not include list
@@ -1973,7 +2012,7 @@ namespace OpenDental {
 				listBoxFields.Items.Add(txt,sheetFieldDef);
 			}
 			_sheetEditMobileCtrl.UpdateLanguage(selectedLanguage);//This must be called before sheetEditMobile.SheetDef
-			_sheetEditMobileCtrl.SheetDef=_sheetDef;
+			_sheetEditMobileCtrl.SetSheetDef(_sheetDef);
 		}
 
 		private bool GetIsDynamicSheetType() {
@@ -3754,10 +3793,10 @@ namespace OpenDental {
 				return colorDefault;
 			}
 			if(_sheetDef.SheetFieldDefs.Any(x => x.Language.IsNullOrEmpty() && IsEquivilantSheetDef(x,sheetFieldDef))){
-				return _colorGray;
+				return colorDefault;
 			}
 			if(isSelected){
-				return _colorRed;
+				return _colorRedOutline;
 			}
 			return Color.Green;
 		}

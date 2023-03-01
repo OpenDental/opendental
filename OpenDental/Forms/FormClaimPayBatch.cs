@@ -261,10 +261,13 @@ namespace OpenDental{
 			Cursor.Current=Cursors.Default;
 		}
 
-		/// <summary>runs aging for all families for patient's on claims attached to payment</summary>
-		private void runAgingforClaims() {
+		/// <summary>Runs aging for all families for patient's on claims attached to payment</summary>
+		private void RunAgingForClaims() {
 			List<long> listGuarNums = Patients.GetGuarantorsForPatNums(_listClaimsAttached.Select(x => x.PatNum).ToList());
-			Ledgers.ComputeAging(listGuarNums,asOfDate:DateTime.Today);
+			//looping through guarNums 1 at a time to avoid using the famaging table, otherwise we would need to check/set the AgingBeginDateTime pref and signal other instances
+			for(int i=0;i<listGuarNums.Count;i++) {
+				Ledgers.ComputeAging(listGuarNums[i],DateTime.Today);
+			}
 		}
 
 		private void butRefresh_Click(object sender,EventArgs e) {
@@ -654,7 +657,7 @@ namespace OpenDental{
 				}
 			}
 			if(PrefC.GetBool(PrefName.AgingCalculateOnBatchClaimReceipt)) {
-				runAgingforClaims();
+				RunAgingForClaims();
 			}
 			if(IsNew) {
 				SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,"Claim Payment: "+_claimPayment.ClaimPaymentNum);

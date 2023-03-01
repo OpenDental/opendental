@@ -112,551 +112,547 @@ namespace OpenDental {
 		}
 
 		///<summary>Creates an internal deep copy of the SheetDef and it's SheetFieldDefs. The original object will not be modified.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public SheetDef SheetDef {
-			set {
-				//Capture previous SheetDefNum so we can check if this is a new SheetDef or an update to the existing instance.
-				long sheetDefNumOld=_sheetDef==null?-1:_sheetDef.SheetDefNum;
-				if(value==null) {
-					_sheetDef=new SheetDef() {
-						SheetFieldDefs=new List<SheetFieldDef>(),
-						Parameters=new List<SheetParameter>(),
-					};
-				}
-				//Set this field before merging. It may have been changed intentionally by the owner of this control before setting the new field defs.
-				checkUseMobileLayout.Checked=value.HasMobileLayout;
-				bool updateExisting=sheetDefNumOld==value.SheetDefNum;
-				if(updateExisting) { //This is just an update so save changes before setting new fields.
-					MergeMobileSheetFieldDefs(value,false);
-				}
-				//Make a deep copy of the SheetDef.
-				_sheetDef=value.Copy();
-				_sheetDef.SheetFieldDefs=value.SheetFieldDefs==null ? new List<SheetFieldDef>() : value.SheetFieldDefs.Select(x => x.Copy()).ToList();
-				_sheetDef.Parameters=value.Parameters==null ? new List<SheetParameter>() : value.Parameters.Select(x => x.Copy()).ToList();
-				List<SheetEditMobilePanel> newPanels=new List<SheetEditMobilePanel>();
-				Func<bool> isReadOnly=new Func<bool>(() => { return IsReadOnly; } );
-				//Each SheetFieldDef item goes into the panel of available fields.
-				//Only mobile-friendly fields.
-				var mobileFields=_sheetDef.SheetFieldDefs.Where(x =>
-						OpenDentBusiness.SheetFieldDefs.IsMobileFieldType(x.FieldType,x.TabOrderMobile,x.FieldName) && x.Language==_languageCur
-					).ToList();
-				//2 different ways that fields can be grouped for radio groups so make a super-set of both styles.
-				Func<SheetFieldDef,bool> criteria1=new Func<SheetFieldDef, bool>((x) => {
-					//Misc and it has a RadioButtonGroup.						
-					return x.FieldName=="misc" && !string.IsNullOrEmpty(x.RadioButtonGroup);
+		public void SetSheetDef(SheetDef sheetDef){
+			//Capture previous SheetDefNum so we can check if this is a new SheetDef or an update to the existing instance.
+			long sheetDefNumOld=_sheetDef==null?-1:_sheetDef.SheetDefNum;
+			if(sheetDef==null) {
+				_sheetDef=new SheetDef() {
+					SheetFieldDefs=new List<SheetFieldDef>(),
+					Parameters=new List<SheetParameter>(),
+				};
+			}
+			//Set this field before merging. It may have been changed intentionally by the owner of this control before setting the new field defs.
+			checkUseMobileLayout.Checked=sheetDef.HasMobileLayout;
+			bool updateExisting=sheetDefNumOld==sheetDef.SheetDefNum;
+			if(updateExisting) { //This is just an update so save changes before setting new fields.
+				MergeMobileSheetFieldDefs(sheetDef,false);
+			}
+			//Make a deep copy of the SheetDef.
+			_sheetDef=sheetDef.Copy();
+			_sheetDef.SheetFieldDefs=sheetDef.SheetFieldDefs==null ? new List<SheetFieldDef>() : sheetDef.SheetFieldDefs.Select(x => x.Copy()).ToList();
+			_sheetDef.Parameters=sheetDef.Parameters==null ? new List<SheetParameter>() : sheetDef.Parameters.Select(x => x.Copy()).ToList();
+			List<SheetEditMobilePanel> newPanels=new List<SheetEditMobilePanel>();
+			Func<bool> isReadOnly=new Func<bool>(() => { return IsReadOnly; } );
+			//Each SheetFieldDef item goes into the panel of available fields.
+			//Only mobile-friendly fields.
+			var mobileFields=_sheetDef.SheetFieldDefs.Where(x =>
+					OpenDentBusiness.SheetFieldDefs.IsMobileFieldType(x.FieldType,x.TabOrderMobile,x.FieldName) && x.Language==_languageCur
+				).ToList();
+			//2 different ways that fields can be grouped for radio groups so make a super-set of both styles.
+			Func<SheetFieldDef,bool> criteria1=new Func<SheetFieldDef, bool>((x) => {
+				//Misc and it has a RadioButtonGroup.						
+				return x.FieldName=="misc" && !string.IsNullOrEmpty(x.RadioButtonGroup);
+			});
+			Func<SheetFieldDef,bool> criteria2=new Func<SheetFieldDef, bool>((x) => {
+				//Not misc but it has a RadioButtonValue.						
+				return x.FieldName!="misc" && !string.IsNullOrEmpty(x.RadioButtonValue);
+			});
+			var radioGroupsSuperSet=mobileFields
+				.Where(x => x.FieldType==SheetFieldType.CheckBox)
+				.Where(x => criteria1(x) || criteria2(x))
+				//If TabOrderMobile has not been established (0) then move to the bottom.
+				.OrderByDescending(x => x.TabOrderMobile>0)
+				//Sort each group by TabOrderMobile.
+				.OrderBy(x => x.TabOrderMobile)
+				.ToList();
+			//The first way.
+			var radioFields1=radioGroupsSuperSet
+				.Where(x => criteria1(x))
+				.GroupBy(x => x.RadioButtonGroup)
+				//Common anonymous class def that can be unioned and sorted below.
+				.Select(x => new {
+					Name=x.First().RadioButtonGroup,
+					MaxTabOrderDesktop=x.Max(y => y.TabOrder),
+					MaxTabOrderMobile=x.Max(y => y.TabOrderMobile),
+					Items=x.ToList()
+				})
+				//Must have at least 2 items to be a radio group. Otherwise it is still just a checkbox.
+				.Where(x => x.Items.Count>1).ToList();
+			//The second way.
+			var radioFields2=radioGroupsSuperSet
+				//Don't include any fields that have already been handled above.
+				.Where(x => criteria2(x))
+				.GroupBy(x => x.FieldName)
+				//Common anonymous class def that can be unioned and sorted below.
+				.Select(x => new {
+					Name=x.First().FieldName,
+					MaxTabOrderDesktop=x.Max(y => y.TabOrder),
+					MaxTabOrderMobile=x.Max(y => y.TabOrderMobile),
+					Items=x.ToList()
+				})
+				//Must have at least 2 items to be a radio group. Otherwise it is still just a checkbox.
+				.Where(x => x.Items.Count>1).ToList();
+			//Remove all items that have already been accounted for above.
+			List<SheetFieldDef> alreadyGrouped=radioFields1.SelectMany(x => x.Items)
+				.Union(radioFields2.SelectMany(x => x.Items))
+				.ToList();
+			var checkboxGroups=mobileFields
+				.Except(alreadyGrouped)
+				//If TabOrderMobile has not been established (0) then move to the bottom.
+				.OrderByDescending(x => x.TabOrderMobile>0)
+				//Sort each group by TabOrderMobile.
+				.OrderBy(x => x.TabOrderMobile)
+				.Where(x=> x.FieldName=="misc" && x.FieldType==SheetFieldType.CheckBox && !string.IsNullOrEmpty(x.UiLabelMobile) && string.IsNullOrEmpty(x.RadioButtonGroup))
+				.GroupBy(x => x.UiLabelMobile)
+				.Select(x => new {
+					Name=x.Key,
+					MaxTabOrderDesktop=x.Max(y => y.TabOrder),
+					MaxTabOrderMobile=x.Max(y => y.TabOrderMobile),
+					Items=x.ToList()
+				})
+				//Must have at least 2 items to be a checkbox group. Otherwise it is still just a checkbox.
+				.Where(x => x.Items.Count>1).ToList();
+			//Following pattern, but it is intentional that we don't add these back to the final list. We don't want them displayed, and instead should change inputMeds to display these.
+			var checkMedGroups=mobileFields
+				.Except(alreadyGrouped)
+				//If TabOrderMobile has not been established (0) then move to the bottom.
+				.OrderByDescending(x => x.TabOrderMobile>0)
+				//Sort each group by TabOrderMobile.
+				.OrderBy(x => x.TabOrderMobile)
+				.Where(x=> x.FieldName.Contains("checkMed") && x.FieldType==SheetFieldType.CheckBox)
+				.GroupBy(x => x.UiLabelMobile)
+				.Select(x => new {
+					Name=x.Key,
+					MaxTabOrderDesktop=x.Max(y => y.TabOrder),
+					MaxTabOrderMobile=x.Max(y => y.TabOrderMobile),
+					Items=x.ToList()
 				});
-				Func<SheetFieldDef,bool> criteria2=new Func<SheetFieldDef, bool>((x) => {
-					//Not misc but it has a RadioButtonValue.						
-					return x.FieldName!="misc" && !string.IsNullOrEmpty(x.RadioButtonValue);
-				});
-				var radioGroupsSuperSet=mobileFields
-					.Where(x => x.FieldType==SheetFieldType.CheckBox)
-					.Where(x => criteria1(x) || criteria2(x))
-					//If TabOrderMobile has not been established (0) then move to the bottom.
-					.OrderByDescending(x => x.TabOrderMobile>0)
-					//Sort each group by TabOrderMobile.
-					.OrderBy(x => x.TabOrderMobile)
-					.ToList();
-				//The first way.
-				var radioFields1=radioGroupsSuperSet
-					.Where(x => criteria1(x))
-					.GroupBy(x => x.RadioButtonGroup)
-					//Common anonymous class def that can be unioned and sorted below.
-					.Select(x => new {
-						Name=x.First().RadioButtonGroup,
-						MaxTabOrderDesktop=x.Max(y => y.TabOrder),
-						MaxTabOrderMobile=x.Max(y => y.TabOrderMobile),
-						Items=x.ToList()
-					})
-					//Must have at least 2 items to be a radio group. Otherwise it is still just a checkbox.
-					.Where(x => x.Items.Count>1).ToList();
-				//The second way.
-				var radioFields2=radioGroupsSuperSet
-					//Don't include any fields that have already been handled above.
-					.Where(x => criteria2(x))
-					.GroupBy(x => x.FieldName)
-					//Common anonymous class def that can be unioned and sorted below.
-					.Select(x => new {
-						Name=x.First().FieldName,
-						MaxTabOrderDesktop=x.Max(y => y.TabOrder),
-						MaxTabOrderMobile=x.Max(y => y.TabOrderMobile),
-						Items=x.ToList()
-					})
-					//Must have at least 2 items to be a radio group. Otherwise it is still just a checkbox.
-					.Where(x => x.Items.Count>1).ToList();
-				//Remove all items that have already been accounted for above.
-				List<SheetFieldDef> alreadyGrouped=radioFields1.SelectMany(x => x.Items)
-					.Union(radioFields2.SelectMany(x => x.Items))
-					.ToList();
-				var checkboxGroups=mobileFields
-					.Except(alreadyGrouped)
-					//If TabOrderMobile has not been established (0) then move to the bottom.
-					.OrderByDescending(x => x.TabOrderMobile>0)
-					//Sort each group by TabOrderMobile.
-					.OrderBy(x => x.TabOrderMobile)
-					.Where(x=> x.FieldName=="misc" && x.FieldType==SheetFieldType.CheckBox && !string.IsNullOrEmpty(x.UiLabelMobile) && string.IsNullOrEmpty(x.RadioButtonGroup))
-					.GroupBy(x => x.UiLabelMobile)
-					.Select(x => new {
-						Name=x.Key,
-						MaxTabOrderDesktop=x.Max(y => y.TabOrder),
-						MaxTabOrderMobile=x.Max(y => y.TabOrderMobile),
-						Items=x.ToList()
-					})
-					//Must have at least 2 items to be a checkbox group. Otherwise it is still just a checkbox.
-					.Where(x => x.Items.Count>1).ToList();
-				//Following pattern, but it is intentional that we don't add these back to the final list. We don't want them displayed, and instead should change inputMeds to display these.
-				var checkMedGroups=mobileFields
-					.Except(alreadyGrouped)
-					//If TabOrderMobile has not been established (0) then move to the bottom.
-					.OrderByDescending(x => x.TabOrderMobile>0)
-					//Sort each group by TabOrderMobile.
-					.OrderBy(x => x.TabOrderMobile)
-					.Where(x=> x.FieldName.Contains("checkMed") && x.FieldType==SheetFieldType.CheckBox)
-					.GroupBy(x => x.UiLabelMobile)
-					.Select(x => new {
-						Name=x.Key,
-						MaxTabOrderDesktop=x.Max(y => y.TabOrder),
-						MaxTabOrderMobile=x.Max(y => y.TabOrderMobile),
-						Items=x.ToList()
-					});
-				var removeSheetDefNums=radioFields1
-					.SelectMany(x => x.Items.Select(y => y.SheetFieldDefNum))
-					.Union(radioFields2.SelectMany(x => x.Items.Select(y => y.SheetFieldDefNum)))
-					.Union(checkboxGroups.SelectMany(x=> x.Items.Select(y => y.SheetFieldDefNum)))
-					.Union(checkMedGroups.SelectMany(x => x.Items.Select(y => y.SheetFieldDefNum))).ToList();
-				int removed=mobileFields.RemoveAll(x => removeSheetDefNums.Any(y => y==x.SheetFieldDefNum));
-				//Whatever is left is a stand-alone mobile-friendly field.
-				var nonRadioFields=mobileFields
-					//Common anonymous class def that can be unioned and sorted below.
-					.Select(x => new {
-						Name=x.FieldName,
-						MaxTabOrderDesktop=x.TabOrder,
-						MaxTabOrderMobile=x.TabOrderMobile,
-						Items=new List<SheetFieldDef>() { x }
-					}).ToList();
-				//Union the 3 lists and sort for final display.
-				var finalFields=radioFields1
-					.Union(radioFields2)
-					.Union(checkboxGroups)
-					.Union(nonRadioFields)
-					//New Mobile headers to top.
-					.OrderByDescending(x => x.Items[0].FieldType==SheetFieldType.MobileHeader && x.MaxTabOrderMobile==0)					
-					//Mobile tab order fields to top.
-					.ThenByDescending(x => x.MaxTabOrderMobile>0)
-					//Sort mobile fields.
-					.ThenBy(x => x.MaxTabOrderMobile)
-					//We are now left with mobile-friendly fields that do not yet have a mobile tab order.
-					//Desktop tab order ascending (leave 0 at the bottom).
-					.ThenByDescending(x => x.MaxTabOrderDesktop>0)
-					.ThenBy(x => x.MaxTabOrderDesktop)
-					//Name is always the tie-breaker.
-					.ThenBy(x => x.Name).ToList()
-					//We only need the lists of SheetFieldDefs.
-					.Select(x => x.Items).ToList();
-				SheetEditMobilePanel panelScrollTo=null;
-				//These are now properly grouped and ordered. Each group is 1 single row in the UI. The row may have mutliple fields if it is a group box.
-				foreach(List<SheetFieldDef> sheetFields in finalFields) {
-					#region addSheetDef Action
-					//The first SFD in the list will represent all items in the group.
-					SheetFieldDef sheetField=sheetFields[0];
-					SheetEditMobilePanel panel=new SheetEditMobilePanel(isReadOnly) {
-						Width=panelPreview.Width-22,
-						Header=string.IsNullOrEmpty(sheetField.UiLabelMobile) ?
-							(sheetFields.Count>1 ? "RadioGroup" : sheetField.FieldType.ToString())+" - "+sheetField.FieldName : sheetField.UiLabelMobile,
-						IsHeaderValid=sheetFields.Count>1 ? true : !string.IsNullOrEmpty(sheetField.UiLabelMobile),
-						FieldType=GetTranslation(sheetField.FieldType.GetDescription()),
-						ButtonLabel=GetTranslation("Drag to change order or double-click to edit label"),
-					};
-					if(sheetField.SheetFieldDefNum==ScrollToSheetFieldDefNum) { //We will scroll to this panel after we are done adding all panels.
-						panelScrollTo=panel;
+			var removeSheetDefNums=radioFields1
+				.SelectMany(x => x.Items.Select(y => y.SheetFieldDefNum))
+				.Union(radioFields2.SelectMany(x => x.Items.Select(y => y.SheetFieldDefNum)))
+				.Union(checkboxGroups.SelectMany(x=> x.Items.Select(y => y.SheetFieldDefNum)))
+				.Union(checkMedGroups.SelectMany(x => x.Items.Select(y => y.SheetFieldDefNum))).ToList();
+			int removed=mobileFields.RemoveAll(x => removeSheetDefNums.Any(y => y==x.SheetFieldDefNum));
+			//Whatever is left is a stand-alone mobile-friendly field.
+			var nonRadioFields=mobileFields
+				//Common anonymous class def that can be unioned and sorted below.
+				.Select(x => new {
+					Name=x.FieldName,
+					MaxTabOrderDesktop=x.TabOrder,
+					MaxTabOrderMobile=x.TabOrderMobile,
+					Items=new List<SheetFieldDef>() { x }
+				}).ToList();
+			//Union the 3 lists and sort for final display.
+			var finalFields=radioFields1
+				.Union(radioFields2)
+				.Union(checkboxGroups)
+				.Union(nonRadioFields)
+				//New Mobile headers to top.
+				.OrderByDescending(x => x.Items[0].FieldType==SheetFieldType.MobileHeader && x.MaxTabOrderMobile==0)					
+				//Mobile tab order fields to top.
+				.ThenByDescending(x => x.MaxTabOrderMobile>0)
+				//Sort mobile fields.
+				.ThenBy(x => x.MaxTabOrderMobile)
+				//We are now left with mobile-friendly fields that do not yet have a mobile tab order.
+				//Desktop tab order ascending (leave 0 at the bottom).
+				.ThenByDescending(x => x.MaxTabOrderDesktop>0)
+				.ThenBy(x => x.MaxTabOrderDesktop)
+				//Name is always the tie-breaker.
+				.ThenBy(x => x.Name).ToList()
+				//We only need the lists of SheetFieldDefs.
+				.Select(x => x.Items).ToList();
+			SheetEditMobilePanel panelScrollTo=null;
+			//These are now properly grouped and ordered. Each group is 1 single row in the UI. The row may have mutliple fields if it is a group box.
+			foreach(List<SheetFieldDef> sheetFields in finalFields) {
+				#region addSheetDef Action
+				//The first SFD in the list will represent all items in the group.
+				SheetFieldDef sheetField=sheetFields[0];
+				SheetEditMobilePanel panel=new SheetEditMobilePanel(isReadOnly) {
+					Width=panelPreview.Width-22,
+					Header=string.IsNullOrEmpty(sheetField.UiLabelMobile) ?
+						(sheetFields.Count>1 ? "RadioGroup" : sheetField.FieldType.ToString())+" - "+sheetField.FieldName : sheetField.UiLabelMobile,
+					IsHeaderValid=sheetFields.Count>1 ? true : !string.IsNullOrEmpty(sheetField.UiLabelMobile),
+					FieldType=GetTranslation(sheetField.FieldType.GetDescription()),
+					ButtonLabel=GetTranslation("Drag to change order or double-click to edit label"),
+				};
+				if(sheetField.SheetFieldDefNum==ScrollToSheetFieldDefNum) { //We will scroll to this panel after we are done adding all panels.
+					panelScrollTo=panel;
+				}
+				var mouseEnter=new EventHandler((sender,e) => SetControlAndChildrenBackColor(panel,Color.LightGray));
+				var mouseLeave=new EventHandler((sender,e) => {
+					if(panel.NeedsMove){
+						SetControlAndChildrenBackColor(panel,_colorFieldsNeedMove);
 					}
-					var mouseEnter=new EventHandler((sender,e) => SetControlAndChildrenBackColor(panel,Color.LightGray));
-					var mouseLeave=new EventHandler((sender,e) => {
-						if(panel.NeedsMove){
-							SetControlAndChildrenBackColor(panel,_colorFieldsNeedMove);
+					else if(panel.HasErrors) {
+						SetControlAndChildrenBackColor(panel,_colorFieldsError);
+					}
+					else{
+						SetControlAndChildrenBackColor(panel,_colorPanelBG);
+					}
+				});
+				//Mouse events are not fired when a drag is activated. Must handle drag events in this case instead of mouse events.
+				var dragOver=new DragEventHandler((sender,e) => {
+					Control controlDraggingOver=(Control)sender;
+					Control controlDragging=(Control)e.Data.GetData(e.Data.GetFormats()[0]);
+					if(controlDragging is SheetEditMobileRadioButton) { //Dragging over a Radio Item.
+						if(controlDraggingOver is SheetEditMobileRadioButton) {
+							SetControlAndChildrenBackColor(controlDraggingOver,Color.LightYellow);
 						}
-						else if(panel.HasErrors) {
-							SetControlAndChildrenBackColor(panel,_colorFieldsError);
+					}
+					else { //Dragging over the main panel.
+						SetControlAndChildrenBackColor(panel,Color.LightYellow);
+					}
+				});
+				var dragLeave=new EventHandler((sender,e) => {
+					if(panel.NeedsMove){
+						SetControlAndChildrenBackColor(panel,_colorFieldsNeedMove);
+					}
+					else{
+						SetControlAndChildrenBackColor(panel,_colorPanelBG);
+					}
+				});
+				bool isCheckBox=false;
+				Func<SheetFieldDef,SheetEditMobileRadioButton> addCheckBox=new Func<SheetFieldDef,SheetEditMobileRadioButton>((sheetFieldRadioItem) => {
+					SheetEditMobileRadioButton radioItem=new SheetEditMobileRadioButton(isReadOnly) {
+						Tag=sheetFieldRadioItem,
+						Width=INNER_CONTROL_WIDTH,
+						Height=20,
+						Anchor=AnchorStyles.Right,
+					};
+					//radioItem.Text should be set by caller of this func after return.
+					if(SheetFieldDefEdit!=null) {
+						radioItem.TextClick+=new EventHandler((sender,e) => {
+							SheetFieldDefEdit.Invoke(this,new SheetFieldDefEditArgs(new List<long> { sheetFieldRadioItem.SheetFieldDefNum },true));
+							SetHighlightedFieldDefs(new List<long> {sheetFieldRadioItem.SheetFieldDefNum });
+						});
+					}
+					radioItem.Selected+=new EventHandler((sender,e) => {
+						SheetFieldDefSelected?.Invoke(this,sheetFieldRadioItem.SheetFieldDefNum);
+					});
+					radioItem.MouseEnter+=new EventHandler((sender,e) => {
+						SetControlAndChildrenBackColor(radioItem,Color.LightGray);
+					});
+					radioItem.MouseLeave+=new EventHandler((sender,e) => {
+						if(panel.NeedsMove){
+							SetControlAndChildrenBackColor(radioItem,_colorFieldsNeedMove);
 						}
 						else{
-							SetControlAndChildrenBackColor(panel,_colorPanelBG);
+							SetControlAndChildrenBackColor(radioItem,_colorPanelBG);
 						}
 					});
-					//Mouse events are not fired when a drag is activated. Must handle drag events in this case instead of mouse events.
-					var dragOver=new DragEventHandler((sender,e) => {
-						Control controlDraggingOver=(Control)sender;
-						Control controlDragging=(Control)e.Data.GetData(e.Data.GetFormats()[0]);
-						if(controlDragging is SheetEditMobileRadioButton) { //Dragging over a Radio Item.
-							if(controlDraggingOver is SheetEditMobileRadioButton) {
-								SetControlAndChildrenBackColor(controlDraggingOver,Color.LightYellow);
-							}
+					panel.ButtonLabel=GetTranslation("Drag to change order or click checkbox button to edit single item");
+					panel.Controls.Add(radioItem);
+					//This is a checkbox panel so we won't register for DoubleClick below. Checkbox will take care of that.
+					isCheckBox=true;
+					return radioItem;
+				});
+				if(sheetFields.Count > 1 && sheetField.FieldType==SheetFieldType.CheckBox && sheetField.FieldName=="misc" && sheetFields.GroupBy(x=>x.UiLabelMobile).Count()==1 
+					&& (sheetFields.GroupBy(x=>x.RadioButtonGroup).Count()!=1 || sheetFields.All(x=>x.RadioButtonGroup.IsNullOrEmpty()))) {
+						#region CheckBox Group
+						panel.FieldType=GetTranslation("CheckBox Group");
+						List<CheckBox>checkItems=new List<CheckBox>();
+						Action<SheetFieldDef> addCheckOption=new Action<SheetFieldDef>((sheetFieldCheckItem) => {
+							SheetEditMobileRadioButton checkboxItem=addCheckBox(sheetFieldCheckItem);
+							checkboxItem.Text=sheetFieldCheckItem.UiLabelMobileRadioButton;
+							checkboxItem.MouseMove+=new MouseEventHandler((sender,e) => TryStartDragging(checkboxItem,e.Location));
+							checkItems.Add(checkboxItem);
+						});
+					foreach(var checkboxItem in sheetFields) {
+							addCheckOption(checkboxItem);
 						}
-						else { //Dragging over the main panel.
-							SetControlAndChildrenBackColor(panel,Color.LightYellow);
-						}
-					});
-					var dragLeave=new EventHandler((sender,e) => {
-						if(panel.NeedsMove){
-							SetControlAndChildrenBackColor(panel,_colorFieldsNeedMove);
-						}
-						else{
-							SetControlAndChildrenBackColor(panel,_colorPanelBG);
-						}
-					});
-					bool isCheckBox=false;
-					Func<SheetFieldDef,SheetEditMobileRadioButton> addCheckBox=new Func<SheetFieldDef,SheetEditMobileRadioButton>((sheetFieldRadioItem) => {
-						SheetEditMobileRadioButton radioItem=new SheetEditMobileRadioButton(isReadOnly) {
-							Tag=sheetFieldRadioItem,
-							Width=INNER_CONTROL_WIDTH,
-							Height=20,
-							Anchor=AnchorStyles.Right,
-						};
-						//radioItem.Text should be set by caller of this func after return.
-						if(SheetFieldDefEdit!=null) {
+						#endregion
+					}
+				else if(sheetFields.Count>1 || !string.IsNullOrEmpty(sheetFields[0].RadioButtonValue)) {
+					#region RadioGroup
+					panel.FieldType=GetTranslation("Radio Group");
+					List<SheetEditMobileRadioButton> radioItems=new List<SheetEditMobileRadioButton>();
+					Action<SheetFieldDef> addRadioOption=new Action<SheetFieldDef>((sheetFieldRadioItem) => {
+						#region addRadioOption
+						SheetEditMobileRadioButton radioItem=addCheckBox(sheetFieldRadioItem);
+						sheetFieldRadioItem.UiLabelMobileRadioButton=OpenDentBusiness.SheetFieldDefs.GetUiLabelMobileRadioButton(sheetFieldRadioItem);
+						radioItem.Text=sheetFieldRadioItem.UiLabelMobileRadioButton;
+						if(SheetFieldDefEdit==null) {
 							radioItem.TextClick+=new EventHandler((sender,e) => {
-								SheetFieldDefEdit.Invoke(this,new SheetFieldDefEditArgs(new List<long> { sheetFieldRadioItem.SheetFieldDefNum },true));
-								SetHighlightedFieldDefs(new List<long> {sheetFieldRadioItem.SheetFieldDefNum });
-							});
-						}
-						radioItem.Selected+=new EventHandler((sender,e) => {
-							SheetFieldDefSelected?.Invoke(this,sheetFieldRadioItem.SheetFieldDefNum);
-						});
-						radioItem.MouseEnter+=new EventHandler((sender,e) => {
-							SetControlAndChildrenBackColor(radioItem,Color.LightGray);
-						});
-						radioItem.MouseLeave+=new EventHandler((sender,e) => {
-							if(panel.NeedsMove){
-								SetControlAndChildrenBackColor(radioItem,_colorFieldsNeedMove);
-							}
-							else{
-								SetControlAndChildrenBackColor(radioItem,_colorPanelBG);
-							}
-						});
-						panel.ButtonLabel=GetTranslation("Drag to change order or click checkbox button to edit single item");
-						panel.Controls.Add(radioItem);
-						//This is a checkbox panel so we won't register for DoubleClick below. Checkbox will take care of that.
-						isCheckBox=true;
-						return radioItem;
-					});
-					if(sheetFields.Count > 1 && sheetField.FieldType==SheetFieldType.CheckBox && sheetField.FieldName=="misc" && sheetFields.GroupBy(x=>x.UiLabelMobile).Count()==1 
-						&& (sheetFields.GroupBy(x=>x.RadioButtonGroup).Count()!=1 || sheetFields.All(x=>x.RadioButtonGroup.IsNullOrEmpty()))) {
-							#region CheckBox Group
-							panel.FieldType=GetTranslation("CheckBox Group");
-							List<CheckBox>checkItems=new List<CheckBox>();
-							Action<SheetFieldDef> addCheckOption=new Action<SheetFieldDef>((sheetFieldCheckItem) => {
-								SheetEditMobileRadioButton checkboxItem=addCheckBox(sheetFieldCheckItem);
-								checkboxItem.Text=sheetFieldCheckItem.UiLabelMobileRadioButton;
-								checkboxItem.MouseMove+=new MouseEventHandler((sender,e) => TryStartDragging(checkboxItem,e.Location));
-								checkItems.Add(checkboxItem);
-							});
-						foreach(var checkboxItem in sheetFields) {
-								addCheckOption(checkboxItem);
-							}
-							#endregion
-						}
-					else if(sheetFields.Count>1 || !string.IsNullOrEmpty(sheetFields[0].RadioButtonValue)) {
-						#region RadioGroup
-						panel.FieldType=GetTranslation("Radio Group");
-						List<SheetEditMobileRadioButton> radioItems=new List<SheetEditMobileRadioButton>();
-						Action<SheetFieldDef> addRadioOption=new Action<SheetFieldDef>((sheetFieldRadioItem) => {
-							#region addRadioOption
-							SheetEditMobileRadioButton radioItem=addCheckBox(sheetFieldRadioItem);
-							sheetFieldRadioItem.UiLabelMobileRadioButton=OpenDentBusiness.SheetFieldDefs.GetUiLabelMobileRadioButton(sheetFieldRadioItem);
-							radioItem.Text=sheetFieldRadioItem.UiLabelMobileRadioButton;
-							if(SheetFieldDefEdit==null) {
-								radioItem.TextClick+=new EventHandler((sender,e) => {
-									using InputBox input=new InputBox(GetTranslation("Edit label for radio item"),sheetFieldRadioItem.UiLabelMobileRadioButton);
-									if(input.ShowDialog()==DialogResult.OK && !string.IsNullOrEmpty(input.textResult.Text)) {
-										sheetFieldRadioItem.UiLabelMobileRadioButton=input.textResult.Text;
-										radioItem.Text=input.textResult.Text;
-									}
-								});
-							}							
-							radioItem.CheckedChanged+=new EventHandler((sender,e) => {
-								if(!radioItem.Checked) {
-									return;
+								using InputBox input=new InputBox(GetTranslation("Edit label for radio item"),sheetFieldRadioItem.UiLabelMobileRadioButton);
+								if(input.ShowDialog()==DialogResult.OK && !string.IsNullOrEmpty(input.textResult.Text)) {
+									sheetFieldRadioItem.UiLabelMobileRadioButton=input.textResult.Text;
+									radioItem.Text=input.textResult.Text;
 								}
-								//Uncheck all others to give radio group effect.
-								radioItems.ForEach(x => {
-									if(x!=radioItem) {
-										x.Checked=false;
-									}
-								});
-							});							
-							radioItem.MouseMove+=new MouseEventHandler((sender,e) => TryStartDragging(radioItem,e.Location));
-							radioItems.Add(radioItem);
-							#endregion
-						});
-						foreach(var radioItem in sheetFields) {
-							//Prefer RadioButtonValue then FieldValue. If both are empty then just empty.
-							addRadioOption(radioItem);
-						}
-						#endregion
-					}
-					else if(sheetField.FieldType==SheetFieldType.ComboBox) {
-						#region ComboBox
-						string split=sheetField.FieldValue;
-						int i=split.IndexOf(';');
-						if(i==0) {
-							split=split.Substring(1);
-						}
-						ComboBox combo=new ComboBox() {
-							Width=INNER_CONTROL_WIDTH,
-							Height=20,
-							Anchor=AnchorStyles.Right,
-							DropDownStyle=ComboBoxStyle.DropDownList,
-							Tag=sheetField,
-						};
-						combo.Items.AddRange(split.Split('|').Select(x => x).Cast<object>().ToArray());
-						combo.MouseEnter+=mouseEnter;
-						combo.MouseLeave+=mouseLeave;
-						panel.Controls.Add(combo);
-						#endregion
-					}
-					else if(sheetField.FieldType==SheetFieldType.CheckBox) {
-						#region Checkbox
-						SheetEditMobileRadioButton checkBox=addCheckBox(sheetField);
-						checkBox.Text=sheetField.UiLabelMobileRadioButton;
-						//No panel header in this case. The checkbox holds the label.
-						panel.Header="";
-						#endregion
-					}
-					else if(sheetField.FieldType==SheetFieldType.InputField) {
-						#region InputField
-						TextBox textBox=new TextBox() {
-							Width=INNER_CONTROL_WIDTH,
-							Height=20,
-							Anchor=AnchorStyles.Right,
-							Tag=sheetField,
-							ReadOnly=true,
-							Text=sheetField.FieldName.IsNullOrEmpty() ? "Input Text" : sheetField.FieldName,
-							TextAlign=HorizontalAlignment.Right,
-						};
-						panel.Controls.Add(textBox);
-						#endregion
-					}
-					else if(sheetField.FieldType==SheetFieldType.SigBox) {
-						#region SigBox
-						TextBox picBox=new TextBox() {
-							Width=INNER_CONTROL_WIDTH,
-							Height=60,
-							Multiline=true,
-							Anchor=AnchorStyles.Right,
-							BorderStyle=BorderStyle.FixedSingle,
-							Tag=sheetField,
-							ReadOnly=true,
-							Text="\r\nSign Here",
-							TextAlign=HorizontalAlignment.Center,
-						};
-						panel.Controls.Add(picBox);
-						#endregion
-					}
-					else if(sheetField.FieldType==SheetFieldType.OutputText) {
-						#region OutputText
-						TextBox textBox=new TextBox() {
-							Width=INNER_CONTROL_WIDTH,
-							Height=20,
-							Anchor=AnchorStyles.Right,
-							Tag=sheetField,
-							ReadOnly=true,
-							Text="Output Text",
-							TextAlign=HorizontalAlignment.Right,
-						};
-						panel.Controls.Add(textBox);
-						#endregion
-					}
-					else if(sheetField.FieldType==SheetFieldType.MobileHeader) {
-						panel.MobileHeader=sheetField.UiLabelMobile;
-						panel.Tag=sheetField;
-					}
-					else if(sheetField.FieldType==SheetFieldType.StaticText) {
-						panel.MobileHeader=sheetField.FieldValue;
-						panel.Tag=sheetField;
-					}
-					else {
-						throw new Exception("Unsupported mobile FieldType: "+sheetField.FieldType.ToString());
-					}
-					panel.DoubleClick+=new EventHandler((sender,e) => {
-						#region Panel DoubleClick
-						if(IsReadOnly) {
-							return;
-						}
-						if(SheetFieldDefEdit!=null) { //Owner wants to handle editing.
-							SheetFieldDefEdit?.Invoke(this,new SheetFieldDefEditArgs(sheetFields.Select(x => x.SheetFieldDefNum).ToList(),false));
-							if(sheetField.FieldType==SheetFieldType.CheckBox) {
-								SetHighlightedFieldDefs(sheetFields.Select(x => x.SheetFieldDefNum).ToList());
+							});
+						}							
+						radioItem.CheckedChanged+=new EventHandler((sender,e) => {
+							if(!radioItem.Checked) {
+								return;
 							}
-							return;
-						}
-						//Owner is not handling editing so handle it here.
-						using InputBox input=new InputBox(GetTranslation("Edit label for")+" "+
-							(sheetField.FieldType==SheetFieldType.StaticText ? GetTranslation(SheetFieldType.StaticText.ToString()) : sheetField.FieldName),
-							sheetField.FieldType==SheetFieldType.StaticText ? sheetField.FieldValue : sheetField.UiLabelMobile);
-						if(input.ShowDialog()!=DialogResult.OK||string.IsNullOrEmpty(input.textResult.Text)) {
-							return;
-						}
-						string newLabel=input.textResult.Text;
-						sheetFields.ForEach(x => x.UiLabelMobile=newLabel);
-						panel.Header=newLabel;
-						panel.IsHeaderValid=!string.IsNullOrEmpty(newLabel);
-						if(sheetField.FieldType==SheetFieldType.MobileHeader) {
-							panel.MobileHeader=newLabel;
-							NewMobileHeader?.Invoke(this,new NewMobileFieldValueArgs(sheetField.SheetFieldDefNum,newLabel));
-						}
-						if(sheetField.FieldType==SheetFieldType.StaticText) {
-							panel.MobileHeader=newLabel;
-							sheetField.FieldValue=newLabel;
-							NewStaticText?.Invoke(this,new NewMobileFieldValueArgs(sheetField.SheetFieldDefNum,newLabel));
-						}
+							//Uncheck all others to give radio group effect.
+							radioItems.ForEach(x => {
+								if(x!=radioItem) {
+									x.Checked=false;
+								}
+							});
+						});							
+						radioItem.MouseMove+=new MouseEventHandler((sender,e) => TryStartDragging(radioItem,e.Location));
+						radioItems.Add(radioItem);
 						#endregion
 					});
-					panel.MouseDown+=new MouseEventHandler((sender,e) => {
-						#region MouseDown
-						if(e.Button!=MouseButtons.Left) {
-							return;
-						}
-						//Mouse-down will initiate both click and drag. 
-						//Start both here and determine if we are clicking or dragging once we start moving the mouse.
-						panel.DragAtt.StartMouseDown(e.Location);
-						#endregion
-					});
-					panel.MouseUp+=new MouseEventHandler((sender,e) => {
-						#region MouseUp
-						if(panel.DragAtt.CanMouseUp) { //We have not moved the mouse far enough to be considered a drag so it must be a click.							
-							SheetFieldDefSelected?.Invoke(this,sheetField.SheetFieldDefNum);
-						}
-						//Reset the panel for click and drag for next time.
-						panel.DragAtt.DisableMouseEvents();
-						#endregion
-					});
-					panel.MouseMove+=new MouseEventHandler((sender,e) => {
-						#region MouseMove
-						if(IsReadOnly) {
-							return;
-						}
-						TryStartDragging(panel,e.Location);
-						this.Cursor=Cursors.SizeAll;
-						#endregion
-					});
-					panel.MouseLeave+=new EventHandler((sender,e) => {
-						this.Cursor=Cursors.Default;
-					});
-					panel.MouseEnter+=mouseEnter;
-					panel.MouseLeave+=mouseLeave;
-					panel.DragOver+=dragOver;
-					panel.DragOver+=panel_DragOver;
-					panel.DragLeave+=dragLeave;
-					panel.DragEnter+=panel_DragEnter;
-					panel.DragDrop+=panel_DragDrop;
-					panel.BackColor=panel.NeedsMove ? _colorFieldsNeedMove : _colorPanelBG;
-					//Start with margin only.
-					int panelHeight=15+panel.Padding.Top;
-					//All controls must allow drop so we can detect when it is being dragged over and place the dragged control in that exact position.
-					panel.Controls.Cast<Control>().ForEach(x => {
-						panelHeight+=x.Height;
-						x.DragOver+=panel_DragOver;
-						x.DragEnter+=panel_DragEnter;
-						x.DragDrop+=panel_DragDrop;
-						x.DragOver+=dragOver;
-						x.DragLeave+=dragLeave;
-						x.AllowDrop=true;
-						x.Padding=new Padding(0);
-						x.Left=panel.Padding.Left;
-						x.Margin=new Padding(0,0,2,0);
-						x.BackColor=panel.NeedsMove ? _colorFieldsNeedMove : _colorPanelBG;
-						//Give this control a unique name so we can find it later.
-						x.Name=(++_controlIdCount).ToString();
-					});
-					panel.Name=(++_controlIdCount).ToString();
-					panel.Height=Math.Max(panelHeight,panel.Height);
-					newPanels.Add(panel);
+					foreach(var radioItem in sheetFields) {
+						//Prefer RadioButtonValue then FieldValue. If both are empty then just empty.
+						addRadioOption(radioItem);
+					}
 					#endregion
 				}
-				panelPreview.SuspendLayout();
-				//Each control must be individually disposed in order to avoid memory leaks.
-				//Grab a copy of the list.
-				var controls=new List<Control>(panelPreview.Controls.Cast<Control>());
-				if(_tabOrderMobileToMimicTabOrder) {
-					//For each panel, check if the controls within or the panel itself have a TabOrder=0. If yes, color the panel.
-					foreach(var panel in newPanels) {
-						//This happens with radio buttons
-						if(panel.Tag==null) { 
-							foreach(Control cont in panel.Controls) {
-								if(IsUnOrderable((SheetFieldDef)cont.Tag)) {
-									MarkUnOrderable(panel);
-									break;
-								}
-							}
+				else if(sheetField.FieldType==SheetFieldType.ComboBox) {
+					#region ComboBox
+					string split=sheetField.FieldValue;
+					int i=split.IndexOf(';');
+					if(i==0) {
+						split=split.Substring(1);
+					}
+					ComboBox combo=new ComboBox() {
+						Width=INNER_CONTROL_WIDTH,
+						Height=20,
+						Anchor=AnchorStyles.Right,
+						DropDownStyle=ComboBoxStyle.DropDownList,
+						Tag=sheetField,
+					};
+					combo.Items.AddRange(split.Split('|').Select(x => x).Cast<object>().ToArray());
+					combo.MouseEnter+=mouseEnter;
+					combo.MouseLeave+=mouseLeave;
+					panel.Controls.Add(combo);
+					#endregion
+				}
+				else if(sheetField.FieldType==SheetFieldType.CheckBox) {
+					#region Checkbox
+					SheetEditMobileRadioButton checkBox=addCheckBox(sheetField);
+					checkBox.Text=sheetField.UiLabelMobileRadioButton;
+					//No panel header in this case. The checkbox holds the label.
+					panel.Header="";
+					#endregion
+				}
+				else if(sheetField.FieldType==SheetFieldType.InputField) {
+					#region InputField
+					TextBox textBox=new TextBox() {
+						Width=INNER_CONTROL_WIDTH,
+						Height=20,
+						Anchor=AnchorStyles.Right,
+						Tag=sheetField,
+						ReadOnly=true,
+						Text=sheetField.FieldName.IsNullOrEmpty() ? "Input Text" : sheetField.FieldName,
+						TextAlign=HorizontalAlignment.Right,
+					};
+					panel.Controls.Add(textBox);
+					#endregion
+				}
+				else if(sheetField.FieldType==SheetFieldType.SigBox) {
+					#region SigBox
+					TextBox picBox=new TextBox() {
+						Width=INNER_CONTROL_WIDTH,
+						Height=60,
+						Multiline=true,
+						Anchor=AnchorStyles.Right,
+						BorderStyle=BorderStyle.FixedSingle,
+						Tag=sheetField,
+						ReadOnly=true,
+						Text="\r\nSign Here",
+						TextAlign=HorizontalAlignment.Center,
+					};
+					panel.Controls.Add(picBox);
+					#endregion
+				}
+				else if(sheetField.FieldType==SheetFieldType.OutputText) {
+					#region OutputText
+					TextBox textBox=new TextBox() {
+						Width=INNER_CONTROL_WIDTH,
+						Height=20,
+						Anchor=AnchorStyles.Right,
+						Tag=sheetField,
+						ReadOnly=true,
+						Text="Output Text",
+						TextAlign=HorizontalAlignment.Right,
+					};
+					panel.Controls.Add(textBox);
+					#endregion
+				}
+				else if(sheetField.FieldType==SheetFieldType.MobileHeader) {
+					panel.MobileHeader=sheetField.UiLabelMobile;
+					panel.Tag=sheetField;
+				}
+				else if(sheetField.FieldType==SheetFieldType.StaticText) {
+					panel.MobileHeader=sheetField.FieldValue;
+					panel.Tag=sheetField;
+				}
+				else {
+					throw new Exception("Unsupported mobile FieldType: "+sheetField.FieldType.ToString());
+				}
+				panel.DoubleClick+=new EventHandler((sender,e) => {
+					#region Panel DoubleClick
+					if(IsReadOnly) {
+						return;
+					}
+					if(SheetFieldDefEdit!=null) { //Owner wants to handle editing.
+						SheetFieldDefEdit?.Invoke(this,new SheetFieldDefEditArgs(sheetFields.Select(x => x.SheetFieldDefNum).ToList(),false));
+						if(sheetField.FieldType==SheetFieldType.CheckBox) {
+							SetHighlightedFieldDefs(sheetFields.Select(x => x.SheetFieldDefNum).ToList());
 						}
-						else {
-							if(IsUnOrderable((SheetFieldDef)panel.Tag)) {
+						return;
+					}
+					//Owner is not handling editing so handle it here.
+					using InputBox input=new InputBox(GetTranslation("Edit label for")+" "+
+						(sheetField.FieldType==SheetFieldType.StaticText ? GetTranslation(SheetFieldType.StaticText.ToString()) : sheetField.FieldName),
+						sheetField.FieldType==SheetFieldType.StaticText ? sheetField.FieldValue : sheetField.UiLabelMobile);
+					if(input.ShowDialog()!=DialogResult.OK||string.IsNullOrEmpty(input.textResult.Text)) {
+						return;
+					}
+					string newLabel=input.textResult.Text;
+					sheetFields.ForEach(x => x.UiLabelMobile=newLabel);
+					panel.Header=newLabel;
+					panel.IsHeaderValid=!string.IsNullOrEmpty(newLabel);
+					if(sheetField.FieldType==SheetFieldType.MobileHeader) {
+						panel.MobileHeader=newLabel;
+						NewMobileHeader?.Invoke(this,new NewMobileFieldValueArgs(sheetField.SheetFieldDefNum,newLabel));
+					}
+					if(sheetField.FieldType==SheetFieldType.StaticText) {
+						panel.MobileHeader=newLabel;
+						sheetField.FieldValue=newLabel;
+						NewStaticText?.Invoke(this,new NewMobileFieldValueArgs(sheetField.SheetFieldDefNum,newLabel));
+					}
+					#endregion
+				});
+				panel.MouseDown+=new MouseEventHandler((sender,e) => {
+					#region MouseDown
+					if(e.Button!=MouseButtons.Left) {
+						return;
+					}
+					//Mouse-down will initiate both click and drag. 
+					//Start both here and determine if we are clicking or dragging once we start moving the mouse.
+					panel.DragAtt.StartMouseDown(e.Location);
+					#endregion
+				});
+				panel.MouseUp+=new MouseEventHandler((sender,e) => {
+					#region MouseUp
+					if(panel.DragAtt.CanMouseUp) { //We have not moved the mouse far enough to be considered a drag so it must be a click.							
+						SheetFieldDefSelected?.Invoke(this,sheetField.SheetFieldDefNum);
+					}
+					//Reset the panel for click and drag for next time.
+					panel.DragAtt.DisableMouseEvents();
+					#endregion
+				});
+				panel.MouseMove+=new MouseEventHandler((sender,e) => {
+					#region MouseMove
+					if(IsReadOnly) {
+						return;
+					}
+					TryStartDragging(panel,e.Location);
+					this.Cursor=Cursors.SizeAll;
+					#endregion
+				});
+				panel.MouseLeave+=new EventHandler((sender,e) => {
+					this.Cursor=Cursors.Default;
+				});
+				panel.MouseEnter+=mouseEnter;
+				panel.MouseLeave+=mouseLeave;
+				panel.DragOver+=dragOver;
+				panel.DragOver+=panel_DragOver;
+				panel.DragLeave+=dragLeave;
+				panel.DragEnter+=panel_DragEnter;
+				panel.DragDrop+=panel_DragDrop;
+				panel.BackColor=panel.NeedsMove ? _colorFieldsNeedMove : _colorPanelBG;
+				//Start with margin only.
+				int panelHeight=15+panel.Padding.Top;
+				//All controls must allow drop so we can detect when it is being dragged over and place the dragged control in that exact position.
+				panel.Controls.Cast<Control>().ForEach(x => {
+					panelHeight+=x.Height;
+					x.DragOver+=panel_DragOver;
+					x.DragEnter+=panel_DragEnter;
+					x.DragDrop+=panel_DragDrop;
+					x.DragOver+=dragOver;
+					x.DragLeave+=dragLeave;
+					x.AllowDrop=true;
+					x.Padding=new Padding(0);
+					x.Left=panel.Padding.Left;
+					x.Margin=new Padding(0,0,2,0);
+					x.BackColor=panel.NeedsMove ? _colorFieldsNeedMove : _colorPanelBG;
+					//Give this control a unique name so we can find it later.
+					x.Name=(++_controlIdCount).ToString();
+				});
+				panel.Name=(++_controlIdCount).ToString();
+				panel.Height=Math.Max(panelHeight,panel.Height);
+				newPanels.Add(panel);
+				#endregion
+			}
+			panelPreview.SuspendLayout();
+			//Each control must be individually disposed in order to avoid memory leaks.
+			//Grab a copy of the list.
+			var controls=new List<Control>(panelPreview.Controls.Cast<Control>());
+			if(_tabOrderMobileToMimicTabOrder) {
+				//For each panel, check if the controls within or the panel itself have a TabOrder=0. If yes, color the panel.
+				foreach(var panel in newPanels) {
+					//This happens with radio buttons
+					if(panel.Tag==null) { 
+						foreach(Control cont in panel.Controls) {
+							if(IsUnOrderable((SheetFieldDef)cont.Tag)) {
 								MarkUnOrderable(panel);
-							}
-						}
-						//Reset so no, unintended consequences 
-						_tabOrderMobileToMimicTabOrder=false;
-					}
-				}
-				//The following two loops check if there are any panels that are colored and need to stay colored after the page refreshes
-				List<SheetEditMobilePanel> listPanelsNeedColor=panelPreview.Controls.Cast<SheetEditMobilePanel>().Where(x => x.NeedsMove==true).ToList();
-				List<long> listSfdNum=new List<long>();
-				//Old panels with color
-				foreach(SheetEditMobilePanel panel in listPanelsNeedColor) {
-					SheetFieldDef tag=(SheetFieldDef)panel.Tag;
-					if(tag==null) {
-						foreach(Control ctrl in panel.Controls) {
-							SheetFieldDef currentSFD=(SheetFieldDef)ctrl.Tag;
-							if(currentSFD!=null) {
-								listSfdNum.Add(currentSFD.SheetFieldDefNum);
+								break;
 							}
 						}
 					}
 					else {
-						listSfdNum.Add(tag.SheetFieldDefNum);
-					}
-				}
-				List<SheetEditMobilePanelandControl> checkBoxes=panelPreview.Controls.Cast<SheetEditMobilePanel>()
-					.SelectMany(x => x.Controls.Cast<Control>(),(x,y) => new SheetEditMobilePanelandControl(x,y))
-					.Where(x => x.Ctrl is SheetEditMobileRadioButton).ToList();
-				//New panels that need color
-				foreach(SheetEditMobilePanel panel in newPanels) {
-					SheetFieldDef tag=(SheetFieldDef)panel.Tag;
-					if(tag==null) {
-						foreach(Control ctrl in panel.Controls) {
-							SheetFieldDef currentSFD=(SheetFieldDef)ctrl.Tag;
-							if(currentSFD!=null) {
-								if(listSfdNum.Contains(currentSFD.SheetFieldDefNum)) {
-									MarkUnOrderable(panel);
-								}
-								else if(MobileSheetFieldDefHasErrors(currentSFD,checkBoxes)) {
-									MarkErroneous(panel);
-								}
-							}
-						}
-					}
-					else {
-						if(listSfdNum.Contains(tag.SheetFieldDefNum)) {
+						if(IsUnOrderable((SheetFieldDef)panel.Tag)) {
 							MarkUnOrderable(panel);
 						}
-						else if(MobileSheetFieldDefHasErrors(tag,checkBoxes)) {
-							MarkErroneous(panel);
+					}
+					//Reset so no, unintended consequences 
+					_tabOrderMobileToMimicTabOrder=false;
+				}
+			}
+			//The following two loops check if there are any panels that are colored and need to stay colored after the page refreshes
+			List<SheetEditMobilePanel> listPanelsNeedColor=panelPreview.Controls.Cast<SheetEditMobilePanel>().Where(x => x.NeedsMove==true).ToList();
+			List<long> listSfdNum=new List<long>();
+			//Old panels with color
+			foreach(SheetEditMobilePanel panel in listPanelsNeedColor) {
+				SheetFieldDef tag=(SheetFieldDef)panel.Tag;
+				if(tag==null) {
+					foreach(Control ctrl in panel.Controls) {
+						SheetFieldDef currentSFD=(SheetFieldDef)ctrl.Tag;
+						if(currentSFD!=null) {
+							listSfdNum.Add(currentSFD.SheetFieldDefNum);
 						}
 					}
 				}
-				panelPreview.Controls.Clear();
-				//Dispose each control that had previously belonged to the panel.
-				foreach(var c in controls) {
-					c.Dispose();
+				else {
+					listSfdNum.Add(tag.SheetFieldDefNum);
 				}
-				panelPreview.Controls.AddRange(newPanels.ToArray());
-				panelPreview.ResumeLayout();
-				if(panelScrollTo!=null) {
-					panelPreview.ScrollControlIntoView(panelScrollTo,true);
-				}
-				//Reset so we don't accidentally scroll to this panel next time.
-				ScrollToSheetFieldDefNum=-1;
 			}
+			List<SheetEditMobilePanelandControl> checkBoxes=panelPreview.Controls.Cast<SheetEditMobilePanel>()
+				.SelectMany(x => x.Controls.Cast<Control>(),(x,y) => new SheetEditMobilePanelandControl(x,y))
+				.Where(x => x.Ctrl is SheetEditMobileRadioButton).ToList();
+			//New panels that need color
+			foreach(SheetEditMobilePanel panel in newPanels) {
+				SheetFieldDef tag=(SheetFieldDef)panel.Tag;
+				if(tag==null) {
+					foreach(Control ctrl in panel.Controls) {
+						SheetFieldDef currentSFD=(SheetFieldDef)ctrl.Tag;
+						if(currentSFD!=null) {
+							if(listSfdNum.Contains(currentSFD.SheetFieldDefNum)) {
+								MarkUnOrderable(panel);
+							}
+							else if(MobileSheetFieldDefHasErrors(currentSFD,checkBoxes)) {
+								MarkErroneous(panel);
+							}
+						}
+					}
+				}
+				else {
+					if(listSfdNum.Contains(tag.SheetFieldDefNum)) {
+						MarkUnOrderable(panel);
+					}
+					else if(MobileSheetFieldDefHasErrors(tag,checkBoxes)) {
+						MarkErroneous(panel);
+					}
+				}
+			}
+			panelPreview.Controls.Clear();
+			//Dispose each control that had previously belonged to the panel.
+			foreach(var c in controls) {
+				c.Dispose();
+			}
+			panelPreview.Controls.AddRange(newPanels.ToArray());
+			panelPreview.ResumeLayout();
+			if(panelScrollTo!=null) {
+				panelPreview.ScrollControlIntoView(panelScrollTo,true);
+			}
+			//Reset so we don't accidentally scroll to this panel next time.
+			ScrollToSheetFieldDefNum=-1;
 		}
 
 		private void MarkErroneous(SheetEditMobilePanel panel) {
@@ -1119,7 +1115,7 @@ namespace OpenDental {
 			_tabOrderMobileToMimicTabOrder=true;
 			//This will redraw the panel with the fields re-ordered. Re-ordering of fields happens in MergeMobileFields because SheetFieldDefs
 			//has no set.
-			SheetDef=_sheetDef;
+			SetSheetDef(_sheetDef);
 			int numUnorderableMobileFields=SheetFieldDefs
 				.Where(x => IsUnOrderable(x) && x.TabOrderMobile>0)
 				.Count();
@@ -1167,6 +1163,13 @@ namespace OpenDental {
 		///<summary>Hides the modeless popup.</summary>
 		public void HideModeless() {
 			_formFloat.Close();
+		}
+
+		public bool IsFormFloatVisible(){
+			if(_formFloat is null || _formFloat.IsDisposed){
+				return false;
+			}
+			return _formFloat.Visible;
 		}
 		#endregion
 

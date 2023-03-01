@@ -1394,6 +1394,7 @@ namespace OpenDental {
 				}		
 				SaveFileDialog saveFileDialog=new SaveFileDialog();
 				saveFileDialog.Title="Export a Document";
+				saveFileDialog.Filter="All Files|*.*|JPEG|*.jpeg|TIFF|*.tiff|PNG|*.png|GIF|*.gif|BMP|*.bmp";
 				saveFileDialog.FileName=GetDocumentShowing(0).FileName;
 				saveFileDialog.DefaultExt=Path.GetExtension(GetDocumentShowing(0).FileName);
 				if(saveFileDialog.ShowDialog()!=DialogResult.OK) {

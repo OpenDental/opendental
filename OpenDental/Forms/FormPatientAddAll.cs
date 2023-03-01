@@ -622,6 +622,9 @@ namespace OpenDental {
 						listBoxesGender.Add(listGender4);
 						listBoxesGender.Add(listGender5);
 						for(int j=0;j<listBoxesGender.Count;j++) {
+							if(listBoxesGender[j].SelectedItem==null) {
+							 continue;
+							}
 							if(listRequiredFieldConditions[i].Operator==ConditionOperator.Equals
 								&& listRequiredFieldConditions[i].ConditionValue==listBoxesGender[j].SelectedItem.ToString()) 
 							{

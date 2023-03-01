@@ -4392,5 +4392,6 @@ namespace OpenDentBusiness {
 		private static void To22_3_48() {
 			//Duplicate email code moved to DBM tool under CleanUpDuplicateEmails(), commented out here because the queries can take a long time to run and we don't want to run it more than once
 		}
+
 	}
 }
