@@ -30,7 +30,8 @@ namespace OpenDental {
 
 		private void FillList(){
 			listOther.Items.Clear();
-			listOther.Items.AddList(PhoneNumbers.GetPhoneNumbers(PatNum),x => x.PhoneNumberVal);
+			List<PhoneNumber> listPhoneNumbers=PhoneNumbers.GetPhoneNumbers(PatNum).FindAll(x => x.PhoneType==PhoneType.Other);
+			listOther.Items.AddList(listPhoneNumbers,x => x.PhoneNumberVal);
 		}
 
 		private void listOther_DoubleClick(object sender,EventArgs e) {

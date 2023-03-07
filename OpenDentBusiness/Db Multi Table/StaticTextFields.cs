@@ -24,10 +24,6 @@ namespace OpenDentBusiness {
 			if(!sheetType.In(SheetTypeEnum.PatientLetter,SheetTypeEnum.ReferralLetter)) {
 				listFields.RemoveAll(x => x.In(StaticTextField.apptDateMonthSpelled,StaticTextField.apptProcs,StaticTextField.apptProvNameFormal));
 			}
-			//These fields cause the user to select specific procs from an appointment when creating the sheet. Only used with these SheetTypes.
-			if(!sheetType.In(SheetTypeEnum.PatientLetter,SheetTypeEnum.ReferralLetter,SheetTypeEnum.PatientForm,SheetTypeEnum.Consent)) { 
-				listFields.RemoveAll(x => x.In(StaticTextField.AppointmentProcsNoFee,StaticTextField.AppointmentProcsWithFee));
-			}
 			return listFields;
 		}
 
@@ -68,8 +64,6 @@ namespace OpenDentBusiness {
 			{StaticTextField.apptDateMonthSpelled,StaticTextFieldDependency.ListAppts},
 			{StaticTextField.apptModNote,StaticTextFieldDependency.Pat},
 			{StaticTextField.apptProcs,StaticTextFieldDependency.ListAppts | StaticTextFieldDependency.ListProceduresPat},
-			{StaticTextField.AppointmentProcsNoFee,StaticTextFieldDependency.ListProceduresPat},
-			{StaticTextField.AppointmentProcsWithFee,StaticTextFieldDependency.ListProceduresPat},
 			{StaticTextField.apptProvNameFormal,StaticTextFieldDependency.ListAppts},
 			{StaticTextField.age,StaticTextFieldDependency.Pat},
 			{StaticTextField.balTotal,StaticTextFieldDependency.Fam},
@@ -431,8 +425,6 @@ namespace OpenDentBusiness {
 		apptDateMonthSpelled,
 		apptModNote,
 		apptProcs,
-		AppointmentProcsNoFee,
-		AppointmentProcsWithFee,
 		apptProvNameFormal,
 		balTotal,
 		bal_0_30,

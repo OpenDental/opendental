@@ -693,6 +693,12 @@
     <Compile Include="Forms Reports\FormSearchPatNotes.designer.cs">
       <DependentUpon>FormSearchPatNotes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormSheetProcSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormSheetProcSelect.Designer.cs">
+      <DependentUpon>FormSheetProcSelect.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormFlows.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -7781,6 +7787,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms Reports\FormRpServiceDateView.resx">
       <DependentUpon>FormRpServiceDateView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormSheetProcSelect.resx">
+      <DependentUpon>FormSheetProcSelect.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormCalendar.resx">
       <DependentUpon>FormCalendar.cs</DependentUpon>

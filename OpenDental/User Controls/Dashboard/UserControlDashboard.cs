@@ -193,7 +193,9 @@ namespace OpenDental {
 		}
 
 		private void MenuItemRefresh_Click(object sender,EventArgs e) {
-			UserControlDashboardWidget_RefreshClicked((UserControlDashboardWidget)sender,e);
+			Cursor=Cursors.WaitCursor;
+			RefreshDashboard();//this spawns a new thread, so reluctant to wrap it in a progress bar.
+			Cursor=Cursors.Default;
 		}
 
 		private void CloseWidget(UserControlDashboardWidget widget,EventArgs e) {

@@ -1662,6 +1662,14 @@ namespace OpenDental {
 			SheetDefs.GetFieldsAndParameters(sheetDef);
 			Sheet sheet=SheetUtil.CreateSheet(sheetDef,Pd.PatNum);
 			SheetParameter.SetParameter(sheet,"PatNum",Pd.PatNum);
+			if(SheetDefs.ContainsGrids(sheetDef,"ProcsWithFee","ProcsNoFee")) {
+				using FormSheetProcSelect formSheetProcSelect=new FormSheetProcSelect();
+				formSheetProcSelect.PatNum=Pd.PatNum;
+				formSheetProcSelect.ShowDialog();
+				if(formSheetProcSelect.DialogResult==DialogResult.OK) {
+					SheetParameter.SetParameter(sheet,"ListProcNums",formSheetProcSelect.ListProcNumsSelected);
+				}
+			}
 			//Displays FormApptsOther if the user needs to select an appointment or procedures to show on this sheet.
 			if(!SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,Pd.PatNum)) {
 				return;
@@ -4127,6 +4135,9 @@ namespace OpenDental {
 							continue;
 						}
 						EhrPatient ehrPatient=EhrPatients.GetOne(Pd.PatNum);
+						if(ehrPatient==null) {
+							ehrPatient=EhrPatients.Refresh(Pd.PatNum);
+						}
 						if(ehrPatient.DischargeDate.Year<1880) {
 							row.Cells.Add("");
 						}

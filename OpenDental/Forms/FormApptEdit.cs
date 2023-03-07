@@ -2403,17 +2403,30 @@ namespace OpenDental{
 				//If this appointment is of a certain AppointmentType, check for required procedure codes.
 				AppointmentType appointmentType=_listAppointmentTypes[comboApptType.SelectedIndex-1];
 				if(appointmentType!=null && appointmentType.RequiredProcCodesNeeded!=EnumRequiredProcCodesNeeded.None) { //Should never be null.
-					List<string> listProcCodesRequiredForAppointmentType=appointmentType.CodeStrRequired.Split(",",StringSplitOptions.RemoveEmptyEntries).ToList();
+					List<string> listProcCodesRequiredForAppointmentType=appointmentType.CodeStrRequired.Split(",",StringSplitOptions.RemoveEmptyEntries).ToList(); //Includes duplicates.
 					//Get the ProcCodes of the selected Procedures.
 					List<Procedure> listProceduresSelected=gridProc.SelectedTags<Procedure>();
-					List<long> listProcCodeNumsSelected=listProceduresSelected.Select(x => x.CodeNum).ToList();
-					List<ProcedureCode> listProcedureCodesSelected=ProcedureCodes.GetCodesForCodeNums(listProcCodeNumsSelected); //Removes duplicates
-					List<string> listProcCodesSelected=listProcedureCodesSelected.Select(x => x.ProcCode).ToList();
-					//If any ProcCodes are required for this appointment's AppointmentType, figure out how many of them are selected.
-					int codesSelected=listProcCodesRequiredForAppointmentType.Count(x => listProcCodesSelected.Exists(y => x==y));
-					//If RequiredProcCodesNeeded is at least one, check for at least one CodeStrRequired code selected in listProcCodeNumsSelected
+					List<long> listCodeNumsSelected=listProceduresSelected.Select(x => x.CodeNum).ToList();
+					List<string> listProcCodesSelected=new List<string>();
+					for(int i=0;i<listCodeNumsSelected.Count;i++) {
+						ProcedureCode procedureCode=ProcedureCodes.GetFirstOrDefault(x=>x.CodeNum==listCodeNumsSelected[i]); //Should never return null.
+						listProcCodesSelected.Add(procedureCode.ProcCode);
+					}
+					//Figure out how many of our required procedures are present in the selected codes, and which ones are not.
+					int requiredCodesSelected=0;
+					List<string> listRequiredProcCodesMissing=new List<string>();
+					for(int i=0;i<listProcCodesRequiredForAppointmentType.Count;i++) {
+						string requiredProcCode=listProcCodesRequiredForAppointmentType[i];
+						if(listProcCodesSelected.Contains(requiredProcCode)) {
+							requiredCodesSelected++;
+							listProcCodesSelected.Remove(requiredProcCode);
+							continue;
+						}
+						listRequiredProcCodesMissing.Add(requiredProcCode);
+					}
+					//If RequiredProcCodesNeeded is at least one, check for at least one CodeStrRequired code selected.
 					if(appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.AtLeastOne) {
-						if(codesSelected==0) {
+						if(requiredCodesSelected==0) {
 							MsgBox.Show(Lan.g(this,"Appointment Type")+" \""+appointmentType.AppointmentTypeName+"\" "+Lan.g(this,"must contain at least one of the following procedures:")
 								+"\r\n"+String.Join(", ", listProcCodesRequiredForAppointmentType));
 							return false;
@@ -2421,10 +2434,11 @@ namespace OpenDental{
 					}
 					//If its all, make sure all CodeStrRequired codes are selected
 					if(appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.All) {
-						if(codesSelected!=listProcCodesRequiredForAppointmentType.Count) {
-							List<string> listProcCodesMissing=listProcCodesRequiredForAppointmentType.Except(listProcCodesSelected).ToList();
+						if(requiredCodesSelected!=listProcCodesRequiredForAppointmentType.Count) {
 							MsgBox.Show(Lan.g(this,"Appointment Type")+" \""+appointmentType.AppointmentTypeName+"\" "+Lan.g(this,"requires the following procedures:")
-								+"\r\n"+String.Join(", ",listProcCodesMissing));
+								+"\r\n"+String.Join(", ",listProcCodesRequiredForAppointmentType)
+								+"\r\n\r\n"+Lan.g(this,"The following procedures are missing from this appointment:")
+								+"\r\n"+String.Join(", ",listRequiredProcCodesMissing));
 							return false;
 						}
 					}

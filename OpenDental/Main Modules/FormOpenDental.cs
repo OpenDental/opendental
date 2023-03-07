@@ -2196,7 +2196,7 @@ namespace OpenDental{
 			Text=PatientL.GetMainTitle(patient, Clinics.ClinicNum);
 			bool patChanged=PatientL.AddPatsToMenu(menuPatient,new EventHandler(menuPatient_Click),patient.GetNameLF(),patient.PatNum);
 			if(patChanged){
-				ApiEvents.FireUiEvent(EnumApiUiEventType.PatientSelected,patient);
+				ApiEvents.FireUiEventAsynch(EnumApiUiEventType.PatientSelected,patient);
 				if(AutomationL.Trigger(AutomationTrigger.OpenPatient,null,patient.PatNum)) {//if a trigger happened
 					if(controlAppt.Visible) {
 						controlAppt.MouseUpForced();
@@ -2494,6 +2494,15 @@ namespace OpenDental{
 			SheetDef sheetDef=formSheetPicker.ListSheetDefsSelected[0];
 			Sheet sheet=SheetUtil.CreateSheet(sheetDef,PatNumCur);
 			SheetParameter.SetParameter(sheet,"PatNum",PatNumCur);
+			if(SheetDefs.ContainsGrids(sheetDef,"ProcsWithFee","ProcsNoFee")) {
+				using FormSheetProcSelect formSheetProcSelect=new FormSheetProcSelect();
+				formSheetProcSelect.PatNum=PatNumCur;
+				formSheetProcSelect.ShowDialog();
+				if(formSheetProcSelect.DialogResult!=DialogResult.OK) {
+					return;
+				}
+				SheetParameter.SetParameter(sheet,"ListProcNums",formSheetProcSelect.ListProcNumsSelected);
+			}
 			if(!SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,PatNumCur)) {
 				return;
 			}
@@ -2589,6 +2598,15 @@ namespace OpenDental{
 					if(sheetDef.SheetFieldDefs.Any(x => x.FieldType==SheetFieldType.Special && x.FieldName=="toothChart")) {
 						SheetParameter.SetParameter(sheet,"toothChartImg",SheetPrinting.GetToothChartHelper(PatNumCur,false,listProceduresFilteredOverride:listProcedures));
 					}
+				}
+				if(SheetDefs.ContainsGrids(sheetDef,"ProcsWithFee","ProcsNoFee")) {
+					using FormSheetProcSelect formSheetProcSelect=new FormSheetProcSelect();
+					formSheetProcSelect.PatNum=PatNumCur;
+					formSheetProcSelect.ShowDialog();
+					if(formSheetProcSelect.DialogResult!=DialogResult.OK) {
+						return;
+					}
+					SheetParameter.SetParameter(sheet,"ListProcNums",formSheetProcSelect.ListProcNumsSelected);
 				}
 				if(!SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,PatNumCur)) {
 					return;

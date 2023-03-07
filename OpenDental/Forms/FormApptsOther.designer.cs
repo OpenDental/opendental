@@ -40,9 +40,8 @@
 			this.label3 = new System.Windows.Forms.Label();
 			this.butNote = new OpenDental.UI.Button();
 			this.butRecallFamily = new OpenDental.UI.Button();
-			this.odApptGrid = new OpenDental.DashApptGrid();
 			this.checkShowCompletePlanned = new OpenDental.UI.CheckBox();
-			this.gridProcs = new OpenDental.UI.GridOD();
+			this.odApptGrid = new OpenDental.DashApptGrid();
 			this.SuspendLayout();
 			// 
 			// checkDone
@@ -256,17 +255,6 @@
 			this.butRecallFamily.Text = "Entire Family";
 			this.butRecallFamily.Click += new System.EventHandler(this.butRecallFamily_Click);
 			// 
-			// odApptGrid
-			// 
-			this.odApptGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.odApptGrid.Location = new System.Drawing.Point(12, 168);
-			this.odApptGrid.Name = "odApptGrid";
-			this.odApptGrid.Size = new System.Drawing.Size(897, 398);
-			this.odApptGrid.TabIndex = 67;
-			this.odApptGrid.GridSelectionCommitted += new System.EventHandler(this.odApptGrid_GridSelectionCommitted);
-			// 
 			// checkShowCompletePlanned
 			// 
 			this.checkShowCompletePlanned.ImeMode = System.Windows.Forms.ImeMode.NoControl;
@@ -278,27 +266,22 @@
 			this.checkShowCompletePlanned.Text = "Show Completed Planned Appts";
 			this.checkShowCompletePlanned.CheckedChanged += new System.EventHandler(this.checkShowCompletePlanned_CheckedChanged);
 			// 
-			// gridProcs
+			// odApptGrid
 			// 
-			this.gridProcs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			this.odApptGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.gridProcs.Location = new System.Drawing.Point(12, 397);
-			this.gridProcs.Name = "gridProcs";
-			this.gridProcs.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridProcs.Size = new System.Drawing.Size(897, 220);
-			this.gridProcs.TabIndex = 69;
-			this.gridProcs.Title = "Procedures for Appointment";
-			this.gridProcs.TranslationName = "Table Procedures";
-			this.gridProcs.Visible = false;
+			this.odApptGrid.Location = new System.Drawing.Point(12, 168);
+			this.odApptGrid.Name = "odApptGrid";
+			this.odApptGrid.Size = new System.Drawing.Size(897, 398);
+			this.odApptGrid.TabIndex = 67;
 			// 
 			// FormApptsOther
 			// 
 			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(924, 658);
-			this.Controls.Add(this.gridProcs);
-			this.Controls.Add(this.checkShowCompletePlanned);
 			this.Controls.Add(this.odApptGrid);
+			this.Controls.Add(this.checkShowCompletePlanned);
 			this.Controls.Add(this.butRecallFamily);
 			this.Controls.Add(this.butNote);
 			this.Controls.Add(this.label3);
@@ -348,8 +331,7 @@
 		private System.Windows.Forms.Label label3;
 		private OpenDental.UI.Button butNote;
 		private OpenDental.UI.Button butRecallFamily;
-		private DashApptGrid odApptGrid;
 		private OpenDental.UI.CheckBox checkShowCompletePlanned;
-		private UI.GridOD gridProcs;
+		private DashApptGrid odApptGrid;
 	}
 }

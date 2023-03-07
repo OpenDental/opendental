@@ -93,6 +93,7 @@ namespace OpenDental{
 			this.butDuplicate.Size = new System.Drawing.Size(75, 24);
 			this.butDuplicate.TabIndex = 7;
 			this.butDuplicate.Text = "&Duplicate";
+			this.butDuplicate.Click += new System.EventHandler(this.butDuplicate_ClicK);
 			// 
 			// labelUseDefaults
 			// 

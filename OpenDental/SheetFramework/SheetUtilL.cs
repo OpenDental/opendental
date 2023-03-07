@@ -57,43 +57,31 @@ namespace OpenDental {
 
 		///<summary>Helper method for setting AptNum and ListProcNums parameters. Checks for StaticTextFields: apptDateMonthSpelled, apptProcs, AppointmentProcsNoFee, AppointmentProcsWithFee, apptProvNameFormal. Returns true if the user selected at least an Appt from FormApptsOther.</summary>
 		public static bool SetApptProcParamsForSheet(Sheet sheet, SheetDef sheetDef, long patNum) {
-			if(SheetDefs.ContainsStaticFields(sheetDef,StaticTextField.apptDateMonthSpelled,
-			StaticTextField.apptProcs,
-			StaticTextField.AppointmentProcsNoFee,
-			StaticTextField.AppointmentProcsWithFee,
-			StaticTextField.apptProvNameFormal)) {
-				bool canSelectProcs=SheetDefs.ContainsStaticFields(sheetDef,StaticTextField.AppointmentProcsNoFee,StaticTextField.AppointmentProcsWithFee);
-				Appointment[] appointmentArray=Appointments.GetForPat(patNum);
-				long aptNum;
-				List<long> listProcNums=new List<long>();
-				if(appointmentArray.Length==0) {
-					aptNum=0;
-				}
-				//If canSelectProcs we still need to show FormApptsOther so the user may choose their specific procs.
-				else if(appointmentArray.Length==1 && !canSelectProcs) {
-					aptNum=appointmentArray[0].AptNum;
+			if(!SheetDefs.ContainsStaticFields(sheetDef,StaticTextField.apptDateMonthSpelled,StaticTextField.apptProcs,StaticTextField.apptProvNameFormal)) {
+				return true;
+			}
+			Appointment[] appointmentArray=Appointments.GetForPat(patNum);
+			long aptNum;
+			if(appointmentArray.Length==0) {
+				aptNum=0;
+			}
+			else if(appointmentArray.Length==1) {
+				aptNum=appointmentArray[0].AptNum;
+			}
+			else {
+				using FormApptsOther formApptsOther=new FormApptsOther(patNum,null);
+				formApptsOther.AllowSelectOnly=true;
+				formApptsOther.ShowDialog();
+				if(formApptsOther.DialogResult==DialogResult.OK) {
+					aptNum=formApptsOther.ListAptNumsSelected[0];
 				}
 				else {
-					using FormApptsOther formApptsOther=new FormApptsOther(patNum,null);
-					formApptsOther.AllowSelectOnly=true;
-					formApptsOther.AllowSelectProcs=canSelectProcs;
-					formApptsOther.ShowDialog();
-					if(formApptsOther.DialogResult==DialogResult.OK) {
-						aptNum=formApptsOther.ListAptNumsSelected[0];
-						listProcNums=formApptsOther.ListProcNumsSelected;
-					}
-					else {
-						return false;
-					}
+					return false;
 				}
-				//Fields that use AptNum
-				if(SheetDefs.ContainsStaticFields(sheetDef,StaticTextField.apptDateMonthSpelled,StaticTextField.apptProcs,StaticTextField.apptProvNameFormal)) {
-					SheetParameter.SetParameter(sheet,"AptNum",aptNum);
-				}
-				//Fields that use ListProcNums
-				if(SheetDefs.ContainsStaticFields(sheetDef,StaticTextField.AppointmentProcsNoFee,StaticTextField.AppointmentProcsWithFee)){
-					SheetParameter.SetParameter(sheet,"ListProcNums",listProcNums);
-				}
+			}
+			//Fields that use AptNum
+			if(SheetDefs.ContainsStaticFields(sheetDef,StaticTextField.apptDateMonthSpelled,StaticTextField.apptProcs,StaticTextField.apptProvNameFormal)) {
+				SheetParameter.SetParameter(sheet,"AptNum",aptNum);
 			}
 			return true;
 		}

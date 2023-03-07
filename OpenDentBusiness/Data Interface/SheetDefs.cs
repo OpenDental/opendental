@@ -39,6 +39,23 @@ namespace OpenDentBusiness{
 			return false;
 		}
 
+		///<summary>Returns true if any Grids on the sheet def contain any of the specific Grids passed in. Otherwise false.</summary>
+		public static bool ContainsGrids(SheetDef sheetDef,params string[] arrayGridNames) {
+			if(sheetDef.SheetFieldDefs.IsNullOrEmpty() || arrayGridNames.IsNullOrEmpty()) {
+				return false;
+			}
+			List<string> listGrids=arrayGridNames.ToList();
+			for(int i=0;i<sheetDef.SheetFieldDefs.Count;i++) {
+				if(sheetDef.SheetFieldDefs[i].FieldType!=SheetFieldType.Grid) {
+					continue;
+				}
+				if(listGrids.Any(x => sheetDef.SheetFieldDefs[i].FieldName.Contains(x))) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		///<summary>SheetType must either by PatientForm of MedicalHistory.</summary>
 		public static bool IsWebFormAllowed(SheetTypeEnum sheetType) {
 			return sheetType.In(SheetTypeEnum.PatientForm,SheetTypeEnum.MedicalHistory);
@@ -441,7 +458,7 @@ namespace OpenDentBusiness{
 				listSheetFieldTypes.Add(SheetFieldType.Special);
 			}
 			if(sheetType.In(SheetTypeEnum.Statement,SheetTypeEnum.MedLabResults,SheetTypeEnum.TreatmentPlan,SheetTypeEnum.PaymentPlan,
-				SheetTypeEnum.ReferralLetter,SheetTypeEnum.ERA))
+				SheetTypeEnum.ReferralLetter,SheetTypeEnum.ERA,SheetTypeEnum.Consent,SheetTypeEnum.PatientForm,SheetTypeEnum.PatientLetter))
 			{
 				listSheetFieldTypes.Add(SheetFieldType.Grid);
 			}

@@ -63,6 +63,12 @@ namespace OpenDentBusiness.SheetFramework {
 				case "ReferralLetterProceduresCompleted":
 					retVal=GetTable_ReferralLetterProceduresCompleted(sheet);
 					break;
+				case "ProcsWithFee":
+					retVal=GetTable_ProcsWithFee(sheet);
+					break;
+				case "ProcsNoFee":
+					retVal=GetTable_ProcsNoFee(sheet);
+					break;
 				default:
 					break;
 			}
@@ -1093,6 +1099,70 @@ namespace OpenDentBusiness.SheetFramework {
 				retVal.Rows.Add(dRow);
 			}
 			return retVal;
+		}
+
+		public static DataTable GetTable_ProcsWithFee(Sheet sheet) {
+			List<long> listProcNums=new List<long>();
+			//When loading sheet data from the database, this param is stored as a comma delimited string of procNums
+			object paramValue=SheetParameter.GetParamByName(sheet.Parameters,"ListProcNums").ParamValue;
+			if(paramValue is string) {
+				listProcNums=paramValue.ToString().Split(',').Select(x => PIn.Long(x)).ToList();
+			}
+			else {//When loading the initial sheetdef, this is stored as a list of objects
+				listProcNums=(List<long>)paramValue;
+			}
+			List<Procedure> listProcedures=Procedures.GetManyProc(listProcNums,false);
+			//Construct empty Data table ===============================================================================
+			DataTable table=new DataTable();
+			table.Columns.AddRange(new[] {
+				new DataColumn("Procedure Code",typeof(string)),
+				new DataColumn("Description",typeof(string)),
+				new DataColumn("ToothNum",typeof(string)),
+				new DataColumn("Surface",typeof(string)),
+				new DataColumn("Fee",typeof(string))
+			});
+			for(int i=0;i<listProcedures.Count;i++) {
+				DataRow dataRow=table.NewRow();
+				ProcedureCode procCode=ProcedureCodes.GetProcCode(listProcedures[i].CodeNum);
+				dataRow["Procedure Code"]         =procCode.ProcCode;
+				dataRow["Description"]            =procCode.Descript;
+				dataRow["ToothNum"]               =Tooth.Display(listProcedures[i].ToothNum);
+				dataRow["Surface"]                =listProcedures[i].Surf;
+				dataRow["Fee"]                    =listProcedures[i].ProcFee.ToString("C");
+				table.Rows.Add(dataRow);
+			}
+			return table;
+		}
+
+		public static DataTable GetTable_ProcsNoFee(Sheet sheet) {
+			List<long> listProcNums=new List<long>();
+			//When loading sheet data from the database, this param is stored as one long string
+			object paramValue=SheetParameter.GetParamByName(sheet.Parameters,"ListProcNums").ParamValue;
+			if(paramValue is string) {
+				listProcNums=paramValue.ToString().Split(',').Select(x => PIn.Long(x)).ToList();
+			}
+			else {//When loading the initial sheetdef, this is stored as a list of objects
+				listProcNums=(List<long>)paramValue;
+			}
+			List<Procedure> listProcedures=Procedures.GetManyProc(listProcNums,false);
+			//Construct empty Data table ===============================================================================
+			DataTable table=new DataTable();
+			table.Columns.AddRange(new[] {
+				new DataColumn("Procedure Code",typeof(string)),
+				new DataColumn("Description",typeof(string)),
+				new DataColumn("ToothNum",typeof(string)),
+				new DataColumn("Surface",typeof(string)),
+			});
+			for(int i=0;i<listProcedures.Count;i++) {
+				DataRow dataRow=table.NewRow();
+				ProcedureCode procCode=ProcedureCodes.GetProcCode(listProcedures[i].CodeNum);
+				dataRow["Procedure Code"]         =procCode.ProcCode;
+				dataRow["Description"]            =procCode.Descript;
+				dataRow["ToothNum"]               =Tooth.Display(listProcedures[i].ToothNum);
+				dataRow["Surface"]                =listProcedures[i].Surf;
+				table.Rows.Add(dataRow);
+			}
+			return table;
 		}
 	}
 }

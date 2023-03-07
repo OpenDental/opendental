@@ -122,6 +122,7 @@ namespace OpenDental {
 				x.FlowDefNum=_flowDef.FlowDefNum;
 				FlowDefLinks.Insert(x);
 			});
+			Cache.Refresh(InvalidType.FlowDef, InvalidType.FlowActionDef, InvalidType.FlowDefLink);
 		}
 
 		#endregion
@@ -129,6 +130,10 @@ namespace OpenDental {
 		#region Event Handlers
 
 		private void butAdd_Click(object sender,EventArgs e) {
+			if(comboActionType.SelectedItem == null) {
+				MsgBox.Show(this, "Please select an Action to add.");
+				return;
+			}
 			_listFlowActionDefs.Add(new FlowActionDef() { 
 				FlowActionType=(EnumFlowActionType)comboActionType.SelectedItem,
 				ItemOrder=_listFlowActionDefs.Count 
@@ -171,7 +176,7 @@ namespace OpenDental {
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
-			if(!MsgBox.Show(this,(MsgBoxButtons)MessageBoxButtons.YesNo,"Are you sure you want to delete this Patient Flow?")) {
+			if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Are you sure you want to delete this Patient Flow?")) {
 				return;
 			}
 			_listFlowActionDefs.ForEach(x => FlowActionDefs.Delete(x.FlowActionDefNum));
@@ -198,6 +203,10 @@ namespace OpenDental {
 		}
 
 		private void butAddLinkType_Click(object sender,EventArgs e) {
+			if(comboLinkType.SelectedItem == null) {
+				MsgBox.Show(this, "Please select a Link Type to add.");
+				return;
+			}
 			FlowDefLink flowDefLink = new FlowDefLink();
 			flowDefLink.Fkey=0;
 			flowDefLink.FlowDefNum=_flowDef.FlowDefNum;

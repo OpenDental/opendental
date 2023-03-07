@@ -228,8 +228,6 @@ namespace OpenDentBusiness {
 			string apptDateMonthSpelled="";
 			string apptModNote="";//This is the Appointment Module Note in the Appointments for window.  http://www.opendental.com/manual/apptsched.html
 			string apptProcs="";
-			string apptProcsNoFee="";
-			string apptProcsWithFee="";
 			string apptProvNameFormal="";
 			string apptsAllFuture="";
 			string birthdate="";
@@ -799,16 +797,6 @@ namespace OpenDentBusiness {
 						dateLastSrp=proc.ProcDate.ToShortDateString();
 					}
 				}
-				SheetParameter paramListProcNums=GetParamByName(sheet,"ListProcNums");
-				if(paramListProcNums!=null && paramListProcNums.ParamValue!=null && !data.ListProceduresPat.IsNullOrEmpty()) {
-					List<long> listProcNums=(List<long>)paramListProcNums.ParamValue;
-					//get our selected procedures
-					List<Procedure> listProcs=data.ListProceduresPat.Where(x => listProcNums.Any(y => y==x.ProcNum)).ToList();
-					if(!listProcs.IsNullOrEmpty()) {
-						apptProcsNoFee=string.Join("\r\n",listProcs.Select(x => Procedures.GetProcStringForStaticSheetField(x,StaticTextField.AppointmentProcsNoFee)));
-						apptProcsWithFee=string.Join("\r\n",listProcs.Select(x => Procedures.GetProcStringForStaticSheetField(x,StaticTextField.AppointmentProcsWithFee)));
-					}
-				}
 				#endregion
 				#region Recall
 				//Recall--------------------------------------------------------------------------------------------------------------------
@@ -1092,8 +1080,6 @@ namespace OpenDentBusiness {
 					fldval=fldval.Replace(StaticTextField.apptDateMonthSpelled.ToReplacementString(),apptDateMonthSpelled);
 					fldval=fldval.Replace(StaticTextField.apptModNote.ToReplacementString(),apptModNote);
 					fldval=fldval.Replace(StaticTextField.apptProcs.ToReplacementString(),apptProcs);
-					fldval=fldval.Replace(StaticTextField.AppointmentProcsNoFee.ToReplacementString(),apptProcsNoFee);
-					fldval=fldval.Replace(StaticTextField.AppointmentProcsWithFee.ToReplacementString(),apptProcsWithFee);
 					fldval=fldval.Replace(StaticTextField.apptProvNameFormal.ToReplacementString(),apptProvNameFormal);
 					fldval=fldval.Replace(StaticTextField.age.ToReplacementString(),Patients.AgeToString(pat.Age));
 					fldval=fldval.Replace(StaticTextField.balTotal.ToReplacementString(),fam.ListPats[0].BalTotal.ToString("c"));

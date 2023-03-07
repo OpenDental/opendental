@@ -278,8 +278,8 @@ namespace OpenDental{
 			//pharmacy is set when using pick button.
 			if(IsNew){
 				_rxPat.RxNum=RxPats.Insert(_rxPat);
-				SecurityLogs.MakeLogEntry(Permissions.RxCreate,_rxPat.PatNum,"CREATED("+_rxPat.RxDate.ToShortDateString()+","+_rxPat.Drug+","
-					+_rxPat.ProvNum+","+_rxPat.Disp+","+_rxPat.Refills+")",_rxPat.RxNum,DateTime.MinValue);//No date previous needed, new Rx Pat
+				SecurityLogs.MakeLogEntry(Permissions.RxCreate,_rxPat.PatNum,"CREATED("+_rxPat.RxDate.ToShortDateString()+","+_rxPat.Drug+",ProvNum:"
+					+_rxPat.ProvNum+",Disp:"+_rxPat.Disp+",Refills:"+_rxPat.Refills+")",_rxPat.RxNum,DateTime.MinValue);//No date previous needed, new Rx Pat
 				if(FormProcGroup.IsOpen){
 					FormProcGroup.RxNum=_rxPat.RxNum;
 				}

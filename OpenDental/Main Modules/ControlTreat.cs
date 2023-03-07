@@ -330,6 +330,11 @@ namespace OpenDental{
 			if(listGridRows.Count()>0) {//loop through selected procedures
 				StaticTextFieldDependency staticTextFieldDependencies=StaticTextData.GetStaticTextDependencies(sheet.SheetFields);
 				List<long> listProcNums=listGridRows.Select(x => ((ProcTP)x.Tag).ProcNumOrig).ToList();
+				if(listProcNums.Count>0) {
+					if(SheetDefs.ContainsGrids(sheetDef,"ProcsWithFee","ProcsNoFee")) {
+						SheetParameter.SetParameter(sheet,"ListProcNums",listProcNums);
+					}
+				}
 				List<Procedure> listProcedures=Procedures.GetManyProc(listProcNums,false);//get list of procedures from list of procedureNums
 				List<long> listCodeNums=listProcedures.Select(x => x.CodeNum).ToList();
 				if(listCodeNums.Count()>0) {

@@ -206,11 +206,13 @@ namespace OpenDentBusiness {
 			return retVal;
 		}
 		
-		public static List<EServiceBilling> GetAll() {
+		public static List<EServiceBilling> GetAllForRegKey(long registrationKeyNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
 				return Meth.GetObject<List<EServiceBilling>>(MethodBase.GetCurrentMethod());
 			}
-			string command="SELECT * FROM eservicebilling";
+			string command="SELECT * " +
+				"FROM eservicebilling " +
+				"WHERE RegistrationKeyNum="+registrationKeyNum;
 			return EServiceBillingCrud.SelectMany(command);
 		}
 	}

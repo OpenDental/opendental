@@ -28,7 +28,7 @@ namespace OpenDental.UI{//Jordan is the only one allowed to edit this file
 			base.TabStop=true;
 		}
 
-		[AmbientValue(typeof(Color), "Empty")]
+		[AmbientValue(typeof(Color), "")]//Color.Empty
 		[Category("Appearance")]
 		//[DefaultValue(typeof(Color), "Empty")]//this can't be set, or it causes the color to show bold even if it's the parent color. AmbientValueAttribute seems to mutually exclusive.
 		[Description("The background color of the component.")]
@@ -58,7 +58,7 @@ namespace OpenDental.UI{//Jordan is the only one allowed to edit this file
 		}
 
 		[Category("OD")]
-		[DefaultValue(typeof(Color), "Empty")]
+		[DefaultValue(typeof(Color), "")]//default is Color.Empty
 		[Description("Used when highlighting the text background on the groupBox.")]
 		public Color ColorBackLabel{
 			get{

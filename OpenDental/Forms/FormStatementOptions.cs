@@ -20,6 +20,8 @@ namespace OpenDental{
 		private Patient _patientSuperHead;
 		private List<Def> _listDefsImageCat;
 		private bool _isFromBilling=false;
+		///<summary>Tracks the state of this setting when it differs from the default.</summary>
+		public bool ShowBillTransSinceZero;
 		///<summary>This is true if on load the single statement IsNew.</summary>
 		private bool _isStatementNew;
 		public Statement StatementCur;
@@ -58,7 +60,13 @@ namespace OpenDental{
 					SetEnabled(false);
 				}
 				textDate.Text=StatementCur.DateSent.ToShortDateString();
-				checkBoxBillShowTransSinceZero.Checked=PrefC.GetBool(PrefName.BillingShowTransSinceBalZero);
+				//Allow the temporary value of this setting to override the default if there's a difference
+				//ShowBillTransSinceZero will have been updated only if _isFromBilling is true (ie the user arrived here from the Billing forms)
+				if(_isFromBilling){
+					checkBoxBillShowTransSinceZero.Checked=ShowBillTransSinceZero;
+				} else {
+					checkBoxBillShowTransSinceZero.Checked=PrefC.GetBool(PrefName.BillingShowTransSinceBalZero);
+				}
 				listMode.Items.Clear();
 				listMode.Items.AddEnums<StatementMode>();
 				listMode.SetSelectedEnum(StatementCur.Mode_);
@@ -341,6 +349,7 @@ namespace OpenDental{
 				textDateStart.Enabled=true;
 				textDateEnd.Enabled=true;
 			}
+			ShowBillTransSinceZero=checkBoxBillShowTransSinceZero.Checked;
 		}
 
 		private void checkIsSent_Click(object sender,EventArgs e) {

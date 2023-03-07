@@ -39,10 +39,6 @@ namespace OpenDental {
 				return _listApptOthers;
 			}
 		}
-		///<summary>Allows forms using DashApptGrid to hook into the grid's selectioncommitted event.</summary>
-		[Browsable(true)] [Category("Action")] 
-		[Description("Invoked when selection is changed on the grid.")]
-		public event EventHandler GridSelectionCommitted;
 
 		public DashApptGrid() {
 			InitializeComponent();
@@ -202,10 +198,6 @@ namespace OpenDental {
 				gridMain.SetSelected(currentSelection,true);
 				gridMain.ScrollValue=currentScroll;
 			}
-		}
-
-		private void gridMain_SelectionCommitted(object sender, EventArgs e) {
-			GridSelectionCommitted?.Invoke(this, e);
 		}
 
 		///<summary>Returns true if SelectedApptOther is null or is set to an appointment with an AptNum that is not in the database.

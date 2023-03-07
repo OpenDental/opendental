@@ -315,11 +315,15 @@ namespace OpenDental {
 			listEmailAttaches.ForEach(x => x.EmailTemplateNum=0); //Unattach the emailattachments from the email template.
 			EmailTemplate emailTemplateSelected=listEmailTemplates[listTemplates.SelectedIndex];
 			if(EmailMessages.IsHtmlEmail(emailTemplateSelected.TemplateType)) {
+				bool isRawHtml=emailTemplateSelected.TemplateType==EmailType.RawHtml;
+				if(!HasValidInlineAttachments(emailTemplateSelected.BodyText,isRawHtml)) { //Need to check inline images if they are valid
+					return;
+				}
 				//this is an html template. Translate and then set the view to html.
 				emailPreview.LoadTemplate(listEmailTemplates[listTemplates.SelectedIndex].Subject,emailTemplateSelected.BodyText,listEmailAttaches);
 				emailPreview.HtmlText=emailPreview.BodyText;
 				emailPreview.BodyText=emailPreview.BodyText;
-				_isRawHtml=emailTemplateSelected.TemplateType==EmailType.RawHtml;
+				_isRawHtml=isRawHtml;
 				ChangeViewToHtml(_isRawHtml);
 			}
 			else {
@@ -717,7 +721,44 @@ namespace OpenDental {
 			Cursor=Cursors.Default;
 			DialogResult=DialogResult.OK;
 			Close();//this form can be opened modelessly.
+		}
+
+		///<summary>Returns true if all of the inline images exist. Returns false otherwise. If the body text isRawHtml then will just return true and not check.</summary>
+		private bool HasValidInlineAttachments(string bodyText,bool isRawHtml) {
+			if(isRawHtml) {
+				return true;//Ignore checking inline images
 			}
+			string imageOpeningTag="[[img:";
+			string imageClosingTag="]]";
+			string bodyTextRemaining=bodyText;
+			while(bodyTextRemaining.Contains(imageOpeningTag)) {
+				int index=bodyTextRemaining.IndexOf(imageOpeningTag);
+				if(index==-1) {
+					break;//No more inline images
+				}
+				if(!bodyTextRemaining.Contains(imageClosingTag)) {
+					MessageBox.Show(Lan.g(this,"One or more image tags do not close within this template."));
+					return false;
+				}
+				index+=imageOpeningTag.Length;
+				bodyTextRemaining=bodyTextRemaining.Substring(index,bodyTextRemaining.Length-index);
+				string imgName=bodyTextRemaining.Substring(0,bodyTextRemaining.IndexOf(imageClosingTag));
+				string fullPath;
+				try {
+					fullPath=ImageStore.GetEmailImagePath();
+				}
+				catch(Exception ex) {
+					MessageBox.Show(Lan.g(this,ex.Message));
+					return false;
+				}
+				fullPath=FileAtoZ.CombinePaths(fullPath,POut.String(imgName));
+				if(!FileAtoZ.Exists(fullPath)) {
+					MessageBox.Show(Lan.g(this,$"{imgName} could not be found."));
+					return false;
+				}
+			}
+			return true;
+		}
 
 		///<summary>Checks to make sure there's a value in the From and To address text boxes. If isSecureEmail is true, will also check if there's a value in the Subject line</summary>
 		private bool ValidateFieldsForSend(bool isSecureEmail=false) {

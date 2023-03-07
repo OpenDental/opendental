@@ -28,7 +28,7 @@ namespace OpenDentBusiness{
 		///<para>Parameter: the FieldName stores the name of the parameter.</para></summary>
 		public string FieldName;
 		///<summary><para>For OutputText, this value is set before printing.  This is the data obtained from the database and ready to print.  For StaticText, this is copied from the sheetFieldDef, but in-line fields like [this] will have been filled.  For an archived sheet retrieved from the database (all SheetField rows), this value will have been saved and will not be filled again automatically.</para>
-		///<para>Parameter fieldtype: this will store the value of the parameter.</para>
+		///<para>Parameter fieldtype: this will store the value of the parameter. FKs are numbers. Two of the parameters allow multiple ProcNums, which are stored here as comma list.</para>
 		///<para>Drawing fieldtype: this will be the point data for the lines.  The format would look similar to this: 45,68;48,70;49,72;0,0;55,88;etc.  It's simply a sequence of points, separated by semicolons.</para>
 		///<para>CheckBox: it will either be an X or empty.</para>
 		///<para>SigBox: the first char will be 0 or 1 to indicate SigIsTopaz, and all subsequent chars will be the Signature itself.</para>

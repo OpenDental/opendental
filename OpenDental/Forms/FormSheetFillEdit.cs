@@ -1621,6 +1621,16 @@ namespace OpenDental {
 				//Update sheetCur with the docnum
 				SheetCur.DocNum=doc.DocNum;
 				Sheets.Update(SheetCur);
+				//now sync SigBoxes
+				SheetFields.Sync(listSheetFieldsSigBoxes,SheetCur.SheetNum,true);
+				//SheetFields.GetFieldsAndParameters(SheetCur);
+				//Each (SheetField)control has a tag pointing at a SheetCur.SheetField, and GetFieldsAndParameters() causes us to overwrite SheetCur.SheetFields.
+				//This leaves the tag pointing at nothing, so we need to call LayoutFields() to re-link the controls and data.
+				//LayoutFields();
+				if(SheetCur.ShowInTerminal>0) {
+					Signalods.SetInvalid(InvalidType.Kiosk);
+				}
+				return true;
 			}
 			//now sync SigBoxes
 			SheetFields.Sync(listSheetFieldsSigBoxes,SheetCur.SheetNum,true);

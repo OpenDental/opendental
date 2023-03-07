@@ -552,7 +552,8 @@ namespace OpenDentBusiness{
 			#endregion
 			//Calculations: Regular Time, Overtime, Rate2, Rate3 time---------------------------------------------------------------------------------------------------
 			TimeSpan tsDailyBreaksAdjustTotal=new TimeSpan();//used to adjust the clock event
-			TimeSpan tsDailyBreaksTotal=new TimeSpan();//used in calculating breaks over 30 minutes per day.
+			TimeSpan tsDailyBreaksTotal=new TimeSpan();//used in calculating breaks per day.
+			TimeSpan tsDailyHoursMinusBreaksTotal=new TimeSpan();//used in calculating breaks per day.
 			TimeSpan tsDailyRate2Total=new TimeSpan(); //hours before and after AM/PM Rate2 rules. Adjusted for overbreaks.
 			TimeSpan tsDailyRate3Total=new TimeSpan(); //hours worked on weekend for Rate3. Adjusted for overbreaks.
 			//Note: If TimeCardsMakesAdjustmentsForOverBreaks is true, only the first 30 minutes of break per day are paid. 
@@ -703,16 +704,39 @@ namespace OpenDentBusiness{
 								continue;//skip breaks for other dates than current ClockEvent
 							}
 							tsDailyBreaksTotal+=(listClockEventBreak[b].TimeDisplayed2.TimeOfDay-listClockEventBreak[b].TimeDisplayed1.TimeOfDay);
-							if(tsDailyBreaksTotal>TimeSpan.FromMinutes(31)) {//over 31 to avoid adjustments less than 1 minutes.
-								listClockEventBreak[b].AdjustAuto=TimeSpan.FromMinutes(30)-tsDailyBreaksTotal;
-								ClockEvents.Update(listClockEventBreak[b]);//save adjustments to breaks.
-								tsDailyBreaksAdjustTotal+=listClockEventBreak[b].AdjustAuto;
-								tsDailyBreaksTotal=TimeSpan.FromMinutes(30);//reset daily breaks to 30 minutes so the next break is all adjustment.
-							}//end overBreaks>31 minutes
+							tsDailyHoursMinusBreaksTotal=tsHoursWorkedTotal-tsDailyBreaksTotal;
+							if(PrefC.IsODHQ) {
+								if(tsDailyHoursMinusBreaksTotal>=TimeSpan.FromMinutes(331)&&tsDailyBreaksTotal>=TimeSpan.FromMinutes(30)) {//Break is over 30 minutes and total time worked is over 5 hour and 30 minutes.
+									listClockEventBreak[b].AdjustAuto=TimeSpan.FromMinutes(30)-tsDailyBreaksTotal;
+									ClockEvents.Update(listClockEventBreak[b]);//save adjustments to breaks.
+									tsDailyBreaksAdjustTotal+=listClockEventBreak[b].AdjustAuto;
+									tsDailyBreaksTotal=TimeSpan.FromMinutes(30);//reset daily breaks to 30 minutes so the next break is all adjustment.
+								}
+								else if(tsDailyHoursMinusBreaksTotal>=TimeSpan.FromMinutes(106)&&tsDailyBreaksTotal>=TimeSpan.FromMinutes(15)) {//Break is over 15 minutes and total time worked is over 1 hour and 45 minutes.
+									listClockEventBreak[b].AdjustAuto=TimeSpan.FromMinutes(15)-tsDailyBreaksTotal;
+									ClockEvents.Update(listClockEventBreak[b]);//save adjustments to breaks.
+									tsDailyBreaksAdjustTotal+=listClockEventBreak[b].AdjustAuto;
+									tsDailyBreaksTotal=TimeSpan.FromMinutes(30);//reset daily breaks to 30 minutes so the next break is all adjustment.
+								}
+								else {//Total time worked is less than 1 hour and 45 minutes.
+									listClockEventBreak[b].AdjustAuto=-tsDailyBreaksTotal;
+									ClockEvents.Update(listClockEventBreak[b]);//save adjustments to breaks.
+									tsDailyBreaksAdjustTotal+=listClockEventBreak[b].AdjustAuto;
+									tsDailyBreaksTotal=TimeSpan.FromMinutes(30);//reset daily breaks to 30 minutes so the next break is all adjustment.
+								}
+							}
 							else {
-								//If the adjustment is 30 minutes or less, the adjustment amount should be set to 0 
-								listClockEventBreak[b].AdjustAuto=TimeSpan.Zero;
-								ClockEvents.Update(listClockEventBreak[b]);
+								if(tsDailyBreaksTotal>TimeSpan.FromMinutes(31)) {//over 31 to avoid adjustments less than 1 minutes.
+									listClockEventBreak[b].AdjustAuto=TimeSpan.FromMinutes(30)-tsDailyBreaksTotal;
+									ClockEvents.Update(listClockEventBreak[b]);//save adjustments to breaks.
+									tsDailyBreaksAdjustTotal+=listClockEventBreak[b].AdjustAuto;
+									tsDailyBreaksTotal=TimeSpan.FromMinutes(30);//reset daily breaks to 30 minutes so the next break is all adjustment.
+								}//end overBreaks>31 minutes
+								else {
+									//If the adjustment is 30 minutes or less, the adjustment amount should be set to 0 
+									listClockEventBreak[b].AdjustAuto=TimeSpan.Zero;
+									ClockEvents.Update(listClockEventBreak[b]);
+								}
 							}
 						}//end checking all breaks for current day
 						//OverBreaks applies to overtime and then to RegularTime

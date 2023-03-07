@@ -16,8 +16,6 @@ namespace OpenDental {
 		#region Fields - Public
 		///<summary>Set to true to allow selecting appointments.</summary>
 		public bool AllowSelectOnly;
-		/// <summary>Set to true to allow selecting specific procs on an appointment. AllowSelectOnly must be true to use.</summary>
-		public bool AllowSelectProcs;
 		///<summary>DateTime that the user clicked in the Appt module before arriving here. Pass in if IsInitialDoubleClick.</summary>
 		public DateTime DateTimeClicked;
 		public DateTime DateTNew;
@@ -34,8 +32,6 @@ namespace OpenDental {
 		public string StringDateJumpTo;
 		///<summary>List of appointment view nums that contain the operatory num for the appointment to jump to.</summary>
 		public List<long> ListAptViewJumpTos=new List<long>();
-		/// <summary>Used with selection mode to return a specific list of procs associated to a selected Appointment.</summary>
-		public List<long> ListProcNumsSelected { get; private set; }
 		#endregion Fields - Public
 
 		#region Fields - Private
@@ -80,16 +76,9 @@ namespace OpenDental {
 				butRecallFamily.Visible=false;
 				label2.Visible=false;
 				listViewFamily.Visible=false;
-				if(AllowSelectProcs) {
-					gridProcs.Visible=true;
-					this.Height=LayoutManager.Scale(735);
-					LayoutManager.MoveHeight(odApptGrid,LayoutManager.Scale(223));
-				}
-				
 			}
 			else {
 				butOK.Visible=false;
-				odApptGrid.GridSelectionCommitted-=new System.EventHandler(this.odApptGrid_GridSelectionCommitted);
 			}
 			FillFamily();
 			odApptGrid.RefreshAppts();
@@ -163,49 +152,6 @@ namespace OpenDental {
 			}
 			checkDone.Checked=_patient.PlannedIsDone;
 			textFinUrg.Text=_family.ListPats[0].FamFinUrgNote;
-		}
-
-		private void FillGridProcs() {
-			if(odApptGrid.SelectedApptOther==null) {
-				return;
-			}
-			bool isPlanned=odApptGrid.SelectedApptOther.AptStatus==ApptStatus.Planned;
-			List<Procedure> listProcedures=Procedures.GetProcsForSingle(odApptGrid.SelectedApptOther.AptNum,isPlanned);
-			gridProcs.BeginUpdate();
-			gridProcs.ListGridRows.Clear();
-			gridProcs.Columns.Clear();
-			gridProcs.Columns.Add(new GridColumn(Lan.g("TableProc","Code"),55));
-			gridProcs.Columns.Add(new GridColumn(Lan.g("TableProc","Fee"),60,HorizontalAlignment.Left));
-			gridProcs.Columns.Add(new GridColumn(Lan.g("TableProc","Tooth"),50,HorizontalAlignment.Left));
-			gridProcs.Columns.Add(new GridColumn(Lan.g("TableProc","Surf"),62,HorizontalAlignment.Left));
-			gridProcs.Columns.Add(new GridColumn(Lan.g("TableProc","Description"),300,HorizontalAlignment.Left));
-			GridRow row;
-			for(int i=0;i<listProcedures.Count;i++) {
-				row=new GridRow();
-				ProcedureCode procedureCode=ProcedureCodes.GetProcCode(listProcedures[i].CodeNum);
-				row.Cells.Add(procedureCode.ProcCode);
-				row.Cells.Add(listProcedures[i].ProcFee.ToString("C"));
-				row.Cells.Add(Tooth.Display(listProcedures[i].ToothNum));
-				string displaySurf;
-				if(ProcedureCodes.GetProcCode(listProcedures[i].CodeNum).TreatArea==TreatmentArea.Sextant) {
-					displaySurf=Tooth.GetSextant(listProcedures[i].Surf,(ToothNumberingNomenclature)PrefC.GetInt(PrefName.UseInternationalToothNumbers));
-				}
-				else {
-					displaySurf=Tooth.SurfTidyFromDbToDisplay(listProcedures[i].Surf,listProcedures[i].ToothNum);
-				}
-				row.Cells.Add(displaySurf);
-				string description="";
-				if(procedureCode.LaymanTerm=="") {
-					description=procedureCode.Descript;
-				}
-				else {
-					description=procedureCode.LaymanTerm;
-				}
-				row.Cells.Add(description);
-				row.Tag=listProcedures[i];
-				gridProcs.ListGridRows.Add(row);
-			}
-			gridProcs.EndUpdate();
 		}
 
 		private void listFamily_DoubleClick(object sender, System.EventArgs e) {
@@ -637,13 +583,6 @@ namespace OpenDental {
 			_otherResult=OtherResult.GoTo;
 			DialogResult=DialogResult.OK;
 		}
-		
-		private void odApptGrid_GridSelectionCommitted(object sender,EventArgs e) {
-			//this event is only fired when AllowSelectOnly == true.
-			if(AllowSelectProcs) {
-				FillGridProcs();
-			}
-		}
 
 		private void butOK_Click(object sender, System.EventArgs e) {
 			//only used when selecting from TaskList. oResult is completely ignored in this case.
@@ -653,9 +592,6 @@ namespace OpenDental {
 				return;
 			}
 			ListAptNumsSelected.Add(odApptGrid.SelectedApptOther.AptNum);
-			if(AllowSelectProcs) { 
-				ListProcNumsSelected=gridProcs.SelectedTags<Procedure>().Select(x => x.ProcNum).ToList();//returns empty list if nothing is selected.
-			}
 			DialogResult=DialogResult.OK;
 		}
 

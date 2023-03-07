@@ -38,6 +38,8 @@ namespace OpenDental {
 		private ODProgressExtended _progExtended;
 		private bool _hasToShowPdf=false;
 		public bool IsHistoryStartMinDate;
+		///<summary>Used to hold this preference's state when it is different from the default.</summary>
+		public bool ShowBillTransSinceZero=false;
 		///<summary>The families that are selected when the user hits "Send". The key is the PatNum and the value is its Family.</summary>
 		Dictionary<long,Family> _dictionaryFamilies;
 
@@ -243,6 +245,7 @@ namespace OpenDental {
 				return;
 			}
 			formStatementOptions.StatementCur=statement;
+			formStatementOptions.ShowBillTransSinceZero=ShowBillTransSinceZero;
 			formStatementOptions.ShowDialog();
 		}
 

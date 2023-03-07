@@ -1553,7 +1553,7 @@ namespace OpenDental{
 		}
 
 		///<summary>Shows FormBilling and displays warning message if needed.  Pass 0 to show all clinics.  Make sure to check for unsent bills before calling this method.</summary>
-		private void ShowBilling(long clinicNum,bool isHistStartMinDate=false) {
+		private void ShowBilling(long clinicNum,bool isHistStartMinDate=false,bool showBillTransSinceZero=false) {
 			bool hadListShowing=false;
 			//Check to see if there is an instance of the billing list window already open that needs to be closed.
 			//This can happen if multiple people are trying to send bills at the same time.
@@ -1573,6 +1573,7 @@ namespace OpenDental{
 			_formBilling=new FormBilling();
 			_formBilling.ClinicNumInitial=clinicNum;
 			_formBilling.IsHistoryStartMinDate=isHistStartMinDate;
+			_formBilling.ShowBillTransSinceZero=showBillTransSinceZero;
 			_formBilling.Show();//FormBilling has a Go To option and is shown as a non-modal window so the user can view the patient account and the billing list at the same time.
 			_formBilling.BringToFront();
 			if(hadListShowing) {
@@ -1586,7 +1587,7 @@ namespace OpenDental{
 			formBillingOptions.ClinicNum=clinicNum;
 			formBillingOptions.ShowDialog();
 			if(formBillingOptions.DialogResult==DialogResult.OK) {
-				ShowBilling(clinicNum,formBillingOptions.IsHistoryStartMinDate);
+				ShowBilling(clinicNum,formBillingOptions.IsHistoryStartMinDate,formBillingOptions.ShowBillTransSinceZero);
 			}
 		}
 

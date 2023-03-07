@@ -39,7 +39,6 @@
 			this.gridMain.Title = "Appointments for Patient";
 			this.gridMain.TranslationName = "FormDisplayFields";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
-			this.gridMain.SelectionCommitted += new System.EventHandler(this.gridMain_SelectionCommitted);
 			// 
 			// DashApptGrid
 			// 

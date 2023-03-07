@@ -2572,7 +2572,8 @@ namespace OpenDental {
 						patient.BillingType=_listDefsBillingType[comboBillType5.SelectedIndex].DefNum;
 						break;
 				}
-				Patients.Insert(patient,false);
+				long patNum=Patients.Insert(patient,false);
+				EhrPatients.Refresh(patNum);
 				ImageStore.GetPatientFolder(patient,ImageStore.GetPreferredAtoZpath());
 				SecurityLogs.MakeLogEntry(Permissions.PatientCreate,patient.PatNum,"Created from Add Family window.");
 				//if this is the first family member it is the guarantor, so set pat.Guarantor=pat.PatNum and update

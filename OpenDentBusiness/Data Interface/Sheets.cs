@@ -582,7 +582,13 @@ namespace OpenDentBusiness{
 				field.SheetNum=sheet.SheetNum;
 				field.FieldType=SheetFieldType.Parameter;
 				field.FieldName=sheet.Parameters[i].ParamName;
-				field.FieldValue=sheet.Parameters[i].ParamValue.ToString();//the object will be an int. Stored as a string.
+				if(sheet.Parameters[i].ParamName=="ListProcNums") {//Save this parameter as a comma delimited list
+					List<long> listProcNums=(List<long>)SheetParameter.GetParamByName(sheet.Parameters,"ListProcNums").ParamValue;
+					field.FieldValue=String.Join(",",listProcNums);
+				}
+				else {
+					field.FieldValue=sheet.Parameters[i].ParamValue.ToString();//the object will be an int. Stored as a string.
+				}
 				field.FontSize=0;
 				field.FontName="";
 				field.FontIsBold=false;

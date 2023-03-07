@@ -187,7 +187,7 @@ namespace OpenDental {
 			ClaimPayments.Insert(claimPayment);
 			List<ClaimProc> listClaimProcs=ClaimProcs.AttachAllOutstandingToPayment(claimPayment.ClaimPaymentNum,PrefC.DateClaimReceivedAfter);
 			if(listClaimProcs.Count==0) {
-				MsgBox.Show(this,"There are no insurance payments to attach. Older insurance payments may be filtered out due to the Manage Module preference\r\n"+
+				MsgBox.Show(this,"There are no insurance payments to attach. Older insurance payments may be filtered out due to the Preference\r\n"+
 					"'Show claims received after days (blank to disable)'.");
 				try {
 					ClaimPayments.Delete(claimPayment);

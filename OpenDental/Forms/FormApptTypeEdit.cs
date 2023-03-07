@@ -266,8 +266,8 @@ namespace OpenDental {
 				}
 			}
 			AppointmentTypeCur.IsHidden=checkIsHidden.Checked;
-			AppointmentTypeCur.CodeStr=String.Join(",",_listProcedureCodes.Select(x => x.ProcCode).Distinct());
-			AppointmentTypeCur.CodeStrRequired=String.Join(",",_listProcedureCodesRequired.Select(x => x.ProcCode).Distinct());
+			AppointmentTypeCur.CodeStr=String.Join(",",_listProcedureCodes.Select(x => x.ProcCode));
+			AppointmentTypeCur.CodeStrRequired=String.Join(",",_listProcedureCodesRequired.Select(x => x.ProcCode));
 			AppointmentTypeCur.RequiredProcCodesNeeded=EnumRequiredProcCodesNeeded.None;
 			if(radioButtonAtLeastOne.Checked) {
 				AppointmentTypeCur.RequiredProcCodesNeeded=EnumRequiredProcCodesNeeded.AtLeastOne;
@@ -275,7 +275,7 @@ namespace OpenDental {
 			if(radioButtonAll.Checked) {
 				AppointmentTypeCur.RequiredProcCodesNeeded=EnumRequiredProcCodesNeeded.All;
 			}
-			List<long> listBlockoutTypeDefNums=listBoxBlockoutTypes.GetListSelected<Def>().Select(x=>x.DefNum).Distinct().ToList();
+			List<long> listBlockoutTypeDefNums=listBoxBlockoutTypes.GetListSelected<Def>().Select(x=>x.DefNum).ToList();
 			string blockoutTypes=String.Join(",",listBlockoutTypeDefNums);
 			AppointmentTypeCur.BlockoutTypes=blockoutTypes;
 			if(_stringBuilderTime.Length>0) {

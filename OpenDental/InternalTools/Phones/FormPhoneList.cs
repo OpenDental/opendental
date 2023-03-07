@@ -83,7 +83,7 @@ namespace OpenDental {
 			listBoxStatus.Items.Add("Unavailable",ClockStatusEnum.Unavailable);
 			listBoxStatus.Items.Add("Backup",ClockStatusEnum.Backup);
 			timerFlash.Enabled=true;
-			textSearch.Select();//Tab order might not have been good enough
+			textNameOrExt.Select();//Tab order might not have been good enough
 		}
 
 		private void FormPhoneTiles_Shown(object sender,EventArgs e) {      
@@ -183,6 +183,7 @@ namespace OpenDental {
 		private void listBoxClockOut_SelectionChangeCommitted(object sender,EventArgs e) {
 			if(gridMain.GetSelectedIndex()==-1){
 				MsgBox.Show("Please select a row in the grid first.");
+				listBoxClockOut.SelectedIndex=-1;
 				return;
 			}
 			Phone phone=_listPhonesShowing[gridMain.GetSelectedIndex()];
@@ -205,6 +206,7 @@ namespace OpenDental {
 		private void listBoxQueues_SelectionChangeCommitted(object sender,EventArgs e) {
 			if(gridMain.GetSelectedIndex()==-1){
 				MsgBox.Show("Please select a row in the grid first.");
+				listBoxQueues.SelectedIndex=-1;
 				return;
 			}
 			Phone phone=_listPhonesShowing[gridMain.GetSelectedIndex()];
@@ -229,6 +231,7 @@ namespace OpenDental {
 		private void listBoxStatus_SelectionChangeCommitted(object sender,EventArgs e) {
 			if(gridMain.GetSelectedIndex()==-1){
 				MsgBox.Show("Please select a row in the grid first.");
+				listBoxStatus.SelectedIndex=-1;
 				return;
 			}
 			Phone phone=_listPhonesShowing[gridMain.GetSelectedIndex()];
@@ -323,11 +326,11 @@ namespace OpenDental {
 
 		public void SetVoicemailCount(int voiceMailCount) {
 			if(voiceMailCount==0) {
-				labelMsg.Font=new Font(FontFamily.GenericSansSerif,8.5f,FontStyle.Regular);
+				labelMsg.Font=new Font(FontFamily.GenericSansSerif,LayoutManager.ScaleFontODZoom(8.5f),FontStyle.Regular);
 				labelMsg.ForeColor=Color.Black;
 			}
 			else {
-				labelMsg.Font=new Font(FontFamily.GenericSansSerif,10f,FontStyle.Bold);
+				labelMsg.Font=new Font(FontFamily.GenericSansSerif,LayoutManager.ScaleFontODZoom(10f),FontStyle.Bold);
 				labelMsg.ForeColor=Color.Firebrick;
 			}
 			labelMsg.Text="Voice Mails: "+voiceMailCount.ToString();
@@ -500,7 +503,7 @@ namespace OpenDental {
 					_listPhonesShowing.Add(_listPhonesAll[i]);
 				}
 			}
-			_listPhonesShowing=_listPhonesShowing.FindAll(x=>x.EmployeeName.ToLower().Contains(textSearch.Text.ToLower()));
+			_listPhonesShowing=_listPhonesShowing.FindAll(x=>x.EmployeeName.ToLower().Contains(textNameOrExt.Text.ToLower()) || x.Extension.ToString().Contains(textNameOrExt.Text.ToLower()));
 			if(checkNeedsHelpTop.Checked){
 				if(radioByName.Checked){
 					_listPhonesShowing=_listPhonesShowing.OrderBy(x=>x.ClockStatus!=ClockStatusEnum.NeedsHelp)

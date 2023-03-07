@@ -3874,7 +3874,7 @@ namespace OpenDental.UI{
 			#region UR
 			else if(align==ApptViewAlignment.UR) {
 				if(stackBehavior==ApptViewStackBehavior.Vertical) {
-					float w=widthAppt-9;
+					float w=widthAppt-WidthProvOnAppt;
 					if(isConfirmedCircle) {
 						Size sizeDesired=new Size((int)_heightLine,(int)_heightLine);
 						PointF drawLocThis=new PointF(pointDraw.X-(int)sizeDesired.Width,pointDraw.Y+1);//upper left corner of this element
@@ -3998,7 +3998,7 @@ namespace OpenDental.UI{
 			#region LR
 			else {//LR
 				if(stackBehavior==ApptViewStackBehavior.Vertical) {
-					float w=widthAppt-9;
+					float w=widthAppt-WidthProvOnAppt;
 					if(isConfirmedCircle) {
 						Size sizeDesired=new Size((int)_heightLine,(int)_heightLine);
 						PointF drawLocThis=new PointF(pointDraw.X-(int)sizeDesired.Width,pointDraw.Y+1-_heightLine);//upper left corner of this element

@@ -100,7 +100,9 @@ namespace OpenDental {
 		private void GridCell_DoubleClick(object sender, ODGridClickEventArgs e) {
 			_clinicPrefHelper.SyncAllPrefs();
 			using FormFlowDefEdit formPatientFlowEdit = new FormFlowDefEdit(gridPatientFlows.SelectedTag<FlowDef>());
-			formPatientFlowEdit.ShowDialog();
+			if(formPatientFlowEdit.ShowDialog() == DialogResult.OK) {
+				FillGrid();
+			}
 		}
 
 		private void butClose_Click(object sender,EventArgs e) {

@@ -2573,41 +2573,6 @@ namespace OpenDentBusiness {
 			return retVal;
 		}
 
-		/// <summary>Returns a formatted string that represents a procedure for displaying on a sheet. How the string is formatted can be customized based on the StaticTextField passed in.</summary>
-		public static string GetProcStringForStaticSheetField(Procedure proc, StaticTextField staticTextField) {
-			string retVal="";
-			ProcedureCode code=ProcedureCodes.GetProcCode(proc.CodeNum);
-			switch(staticTextField) {
-				case StaticTextField.AppointmentProcsNoFee:
-				case StaticTextField.AppointmentProcsWithFee:
-					retVal+=code.ProcCode+" ";
-					//Description - default to layman's term if available.
-					if(code.LaymanTerm!="") {
-						retVal+=code.LaymanTerm;
-					}
-					else {
-						retVal+=code.Descript;
-					}
-					retVal+=" ";
-					//AppointmentProcsNoFee gets tooth# and surface.
-					if(staticTextField==StaticTextField.AppointmentProcsNoFee) {
-						retVal+=GetToothAndSurfForCodeNum(code.CodeNum,proc.Surf,proc.ToothNum,true).TrimEnd('-');
-					}
-					//AppointmentProcsWithFee gets tooth# and fee
-					else {
-						if(code.TreatArea==TreatmentArea.Surf || code.TreatArea==TreatmentArea.Tooth) {
-							retVal+="#"+Tooth.Display(proc.ToothNum)+" ";
-						}
-						retVal+=proc.ProcFee.ToString("C");
-					}
-					break;
-				default:
-					retVal=GetDescriptionForLetter(proc);
-					break;
-			}
-			return retVal;
-		}
-
 		///<summary>Sets the provider and clinic for a proc based on the appt to which it is attached.  Also sets ProcDate for TP procs.  Changes are reflected in proc returned, but not saved to the db (for synch later).</summary>
 		public static Procedure ChangeProcInAppointment(Appointment apt,Procedure proc) {
 			//No need to check MiddleTierRole; no call to db.

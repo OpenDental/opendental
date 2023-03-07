@@ -148,6 +148,14 @@ namespace OpenDental {
 					}
 				}
 				sheet=SheetUtil.CreateSheet(sheetDef,PatNum);
+				if(SheetDefs.ContainsGrids(sheetDef,"ProcsWithFee","ProcsNoFee")) {
+					using FormSheetProcSelect formSheetProcSelect=new FormSheetProcSelect();
+					formSheetProcSelect.PatNum=PatNum;
+					formSheetProcSelect.ShowDialog();
+					if(formSheetProcSelect.DialogResult==DialogResult.OK) {
+						SheetParameter.SetParameter(sheet,"ListProcNums",formSheetProcSelect.ListProcNumsSelected);
+					}
+				}
 				//Will display FormApptsOther for the user to select an appointment or procedures to display on the sheet.
 				if(!SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,PatNum)) {
 					return;

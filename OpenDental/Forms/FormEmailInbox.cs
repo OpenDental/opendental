@@ -1148,7 +1148,7 @@ namespace OpenDental {
 			StringFormat stringFormat=new StringFormat();
 			stringFormat.Alignment=StringAlignment.Center;
 			stringFormat.LineAlignment=StringAlignment.Center;
-			g.DrawString(tabPage.Text,Font,Brushes.Black,rectangleBounds,new StringFormat(stringFormat));
+			g.DrawString(tabPage.Text,tabControl1.Font,Brushes.Black,rectangleBounds,new StringFormat(stringFormat));
 		}
 
 		///<summary>Updates email objects,DB, and UI in response to HideInFlags setting selections.</summary>

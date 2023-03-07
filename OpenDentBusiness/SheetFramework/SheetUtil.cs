@@ -277,6 +277,21 @@ namespace OpenDentBusiness{
 			int i=0;
 			List<DisplayField> retVal=new List<DisplayField>();
 			switch(gridType) {
+				case "ProcsWithFee":
+					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="Procedure Code",Description="Code",
+						ColumnWidth=65,ItemOrder=++i });
+					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="Description",Description="Description",ColumnWidth=440,ItemOrder=++i });
+					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="ToothNum",Description="Th",ColumnWidth=30,ItemOrder=++i });
+					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="Surface",Description="Surf",ColumnWidth=40,ItemOrder=++i });
+					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="Fee",Description="Fee",ColumnWidth=65,ItemOrder=++i });
+					break;
+				case "ProcsNoFee":
+					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="Procedure Code",Description="Code"
+						,ColumnWidth=65,ItemOrder=++i });
+					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="Description",Description="Description",ColumnWidth=440,ItemOrder=++i });
+					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="toothNum",Description="Th",ColumnWidth=30,ItemOrder=++i });
+					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="Surface",Description="Surf",ColumnWidth=40,ItemOrder=++i });
+					break;
 				case "StatementMain":
 					retVal=DisplayFields.GetForCategory(DisplayFieldCategory.StatementMainGrid);
 					break;
@@ -427,6 +442,12 @@ namespace OpenDentBusiness{
 		public static List<string> GetGridsAvailable(SheetTypeEnum sheetType,SheetFieldLayoutMode layoutMode) {
 			List<string> retVal=new List<string>();
 			switch(sheetType) {
+				case SheetTypeEnum.Consent:
+				case SheetTypeEnum.PatientForm:
+				case SheetTypeEnum.PatientLetter:
+					retVal.Add("ProcsWithFee");
+					retVal.Add("ProcsNoFee");
+					break;
 				case SheetTypeEnum.Statement:
 					retVal.Add("StatementAging");
 					retVal.Add("StatementEnclosed");
@@ -450,6 +471,8 @@ namespace OpenDentBusiness{
 					retVal.Add("EraClaimsPaid");
 					break;
 				case SheetTypeEnum.ReferralLetter:
+					retVal.Add("ProcsWithFee");
+					retVal.Add("ProcsNoFee");
 					retVal.Add("ReferralLetterProceduresCompleted");
 					break;
 				case SheetTypeEnum.ChartModule:

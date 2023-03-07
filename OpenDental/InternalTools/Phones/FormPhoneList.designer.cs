@@ -36,7 +36,7 @@
 			this.timerFlash = new System.Windows.Forms.Timer(this.components);
 			this.checkHideOnBreak = new OpenDental.UI.CheckBox();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.textSearch = new System.Windows.Forms.TextBox();
+			this.textNameOrExt = new System.Windows.Forms.TextBox();
 			this.labelSearch = new System.Windows.Forms.Label();
 			this.checkNeedsHelpTop = new OpenDental.UI.CheckBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -64,7 +64,7 @@
 			// 
 			this.labelMsg.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelMsg.ForeColor = System.Drawing.Color.Firebrick;
-			this.labelMsg.Location = new System.Drawing.Point(87, 1);
+			this.labelMsg.Location = new System.Drawing.Point(70, 1);
 			this.labelMsg.Name = "labelMsg";
 			this.labelMsg.Size = new System.Drawing.Size(128, 20);
 			this.labelMsg.TabIndex = 27;
@@ -73,9 +73,10 @@
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupBox1.Controls.Add(this.radioByExt);
 			this.groupBox1.Controls.Add(this.radioByName);
-			this.groupBox1.Location = new System.Drawing.Point(26, 114);
+			this.groupBox1.Location = new System.Drawing.Point(24, 108);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(126, 58);
 			this.groupBox1.TabIndex = 29;
@@ -109,14 +110,14 @@
 			// 
 			this.butSettings.Location = new System.Drawing.Point(0, 0);
 			this.butSettings.Name = "butSettings";
-			this.butSettings.Size = new System.Drawing.Size(75, 24);
+			this.butSettings.Size = new System.Drawing.Size(65, 24);
 			this.butSettings.TabIndex = 26;
 			this.butSettings.Text = "Settings";
 			this.butSettings.Click += new System.EventHandler(this.butSettings_Click);
 			// 
 			// butConfRooms
 			// 
-			this.butConfRooms.Location = new System.Drawing.Point(125, 32);
+			this.butConfRooms.Location = new System.Drawing.Point(78, 32);
 			this.butConfRooms.Name = "butConfRooms";
 			this.butConfRooms.Size = new System.Drawing.Size(89, 24);
 			this.butConfRooms.TabIndex = 30;
@@ -126,9 +127,9 @@
 			// checkHideClockedOut
 			// 
 			this.checkHideClockedOut.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkHideClockedOut.Location = new System.Drawing.Point(0, 182);
+			this.checkHideClockedOut.Location = new System.Drawing.Point(8, 176);
 			this.checkHideClockedOut.Name = "checkHideClockedOut";
-			this.checkHideClockedOut.Size = new System.Drawing.Size(128, 16);
+			this.checkHideClockedOut.Size = new System.Drawing.Size(118, 16);
 			this.checkHideClockedOut.TabIndex = 31;
 			this.checkHideClockedOut.Text = "Hide clocked out";
 			this.checkHideClockedOut.CheckedChanged += new System.EventHandler(this.checkHideClockedOut_CheckedChanged);
@@ -141,40 +142,41 @@
 			// checkHideOnBreak
 			// 
 			this.checkHideOnBreak.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkHideOnBreak.Location = new System.Drawing.Point(0, 205);
+			this.checkHideOnBreak.Location = new System.Drawing.Point(20, 199);
 			this.checkHideOnBreak.Name = "checkHideOnBreak";
-			this.checkHideOnBreak.Size = new System.Drawing.Size(128, 16);
+			this.checkHideOnBreak.Size = new System.Drawing.Size(106, 16);
 			this.checkHideOnBreak.TabIndex = 32;
 			this.checkHideOnBreak.Text = "Hide on break";
 			this.checkHideOnBreak.CheckedChanged += new System.EventHandler(this.checkHideOnBreak_CheckedChanged);
 			// 
 			// gridMain
 			// 
-			this.gridMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+			this.gridMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.HasAlternateRowsColored = true;
-			this.gridMain.Location = new System.Drawing.Point(280, 7);
+			this.gridMain.Location = new System.Drawing.Point(200, 5);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(759, 683);
+			this.gridMain.Size = new System.Drawing.Size(938, 687);
 			this.gridMain.TabIndex = 33;
 			this.gridMain.TranslationName = "TableBigPhones";
 			this.gridMain.WrapText = false;
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
 			// 
-			// textSearch
+			// textNameOrExt
 			// 
-			this.textSearch.Location = new System.Drawing.Point(114, 62);
-			this.textSearch.Name = "textSearch";
-			this.textSearch.Size = new System.Drawing.Size(147, 20);
-			this.textSearch.TabIndex = 0;
+			this.textNameOrExt.Location = new System.Drawing.Point(113, 62);
+			this.textNameOrExt.Name = "textNameOrExt";
+			this.textNameOrExt.Size = new System.Drawing.Size(81, 20);
+			this.textNameOrExt.TabIndex = 0;
 			// 
 			// labelSearch
 			// 
-			this.labelSearch.Location = new System.Drawing.Point(23, 61);
+			this.labelSearch.Location = new System.Drawing.Point(22, 61);
 			this.labelSearch.Name = "labelSearch";
 			this.labelSearch.Size = new System.Drawing.Size(87, 20);
 			this.labelSearch.TabIndex = 35;
-			this.labelSearch.Text = "Search";
+			this.labelSearch.Text = "Name or Ext";
 			this.labelSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkNeedsHelpTop
@@ -182,21 +184,21 @@
 			this.checkNeedsHelpTop.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkNeedsHelpTop.Checked = true;
 			this.checkNeedsHelpTop.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkNeedsHelpTop.Location = new System.Drawing.Point(0, 92);
+			this.checkNeedsHelpTop.Location = new System.Drawing.Point(2, 86);
 			this.checkNeedsHelpTop.Name = "checkNeedsHelpTop";
-			this.checkNeedsHelpTop.Size = new System.Drawing.Size(128, 16);
+			this.checkNeedsHelpTop.Size = new System.Drawing.Size(124, 16);
 			this.checkNeedsHelpTop.TabIndex = 36;
 			this.checkNeedsHelpTop.Text = "Needs Help at Top";
 			this.checkNeedsHelpTop.Click += new System.EventHandler(this.checkNeedsHelpTop_Click);
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(7, 5);
+			this.label1.Location = new System.Drawing.Point(-2, 7);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(92, 18);
+			this.label1.Size = new System.Drawing.Size(93, 18);
 			this.label1.TabIndex = 38;
 			this.label1.Text = "Change Status";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			this.label1.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// listBoxStatus
 			// 
@@ -210,15 +212,17 @@
         "OfflineAssist",
         "Unavailable",
         "Backup"};
-			this.listBoxStatus.Location = new System.Drawing.Point(101, 3);
+			this.listBoxStatus.Location = new System.Drawing.Point(1, 28);
 			this.listBoxStatus.Name = "listBoxStatus";
-			this.listBoxStatus.Size = new System.Drawing.Size(120, 121);
+			this.listBoxStatus.Size = new System.Drawing.Size(85, 121);
 			this.listBoxStatus.TabIndex = 37;
 			this.listBoxStatus.Text = "listBox1";
 			this.listBoxStatus.SelectionChangeCommitted += new System.EventHandler(this.listBoxStatus_SelectionChangeCommitted);
 			// 
 			// panelGrid2
 			// 
+			this.panelGrid2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.panelGrid2.Controls.Add(this.listBoxStatus);
 			this.panelGrid2.Controls.Add(this.label6);
 			this.panelGrid2.Controls.Add(this.label5);
 			this.panelGrid2.Controls.Add(this.butEditDefaults);
@@ -229,33 +233,32 @@
 			this.panelGrid2.Controls.Add(this.label2);
 			this.panelGrid2.Controls.Add(this.listBoxQueues);
 			this.panelGrid2.Controls.Add(this.label1);
-			this.panelGrid2.Controls.Add(this.listBoxStatus);
-			this.panelGrid2.Location = new System.Drawing.Point(1045, 13);
+			this.panelGrid2.Location = new System.Drawing.Point(1141, 13);
 			this.panelGrid2.Name = "panelGrid2";
-			this.panelGrid2.Size = new System.Drawing.Size(234, 456);
+			this.panelGrid2.Size = new System.Drawing.Size(88, 563);
 			this.panelGrid2.TabIndex = 38;
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(121, 357);
+			this.label6.Location = new System.Drawing.Point(1, 433);
 			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(108, 32);
+			this.label6.Size = new System.Drawing.Size(89, 30);
 			this.label6.TabIndex = 47;
 			this.label6.Text = "(or double click\r\nCustomer col)";
-			this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.label6.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(122, 398);
+			this.label5.Location = new System.Drawing.Point(1, 496);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(108, 42);
+			this.label5.Size = new System.Drawing.Size(88, 42);
 			this.label5.TabIndex = 46;
 			this.label5.Text = "for Employee\r\n(or double click\r\nany other col)";
-			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.label5.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// butEditDefaults
 			// 
-			this.butEditDefaults.Location = new System.Drawing.Point(36, 408);
+			this.butEditDefaults.Location = new System.Drawing.Point(3, 470);
 			this.butEditDefaults.Name = "butEditDefaults";
 			this.butEditDefaults.Size = new System.Drawing.Size(82, 24);
 			this.butEditDefaults.TabIndex = 46;
@@ -264,7 +267,7 @@
 			// 
 			// butGotoPatient
 			// 
-			this.butGotoPatient.Location = new System.Drawing.Point(36, 361);
+			this.butGotoPatient.Location = new System.Drawing.Point(3, 406);
 			this.butGotoPatient.Name = "butGotoPatient";
 			this.butGotoPatient.Size = new System.Drawing.Size(82, 24);
 			this.butGotoPatient.TabIndex = 46;
@@ -273,27 +276,28 @@
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupBox2.Controls.Add(this.label4);
 			this.groupBox2.Controls.Add(this.butPhoneManage);
 			this.groupBox2.Controls.Add(this.butPhoneAttach);
-			this.groupBox2.Location = new System.Drawing.Point(14, 267);
+			this.groupBox2.Location = new System.Drawing.Point(0, 293);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(207, 86);
+			this.groupBox2.Size = new System.Drawing.Size(88, 104);
 			this.groupBox2.TabIndex = 44;
 			this.groupBox2.Text = "Phone Numbers";
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(100, 56);
+			this.label4.Location = new System.Drawing.Point(13, 74);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(92, 18);
+			this.label4.Size = new System.Drawing.Size(63, 28);
 			this.label4.TabIndex = 45;
-			this.label4.Text = "to Current Patient";
-			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.label4.Text = "to Current\r\nPatient";
+			this.label4.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// butPhoneManage
 			// 
-			this.butPhoneManage.Location = new System.Drawing.Point(22, 24);
+			this.butPhoneManage.Location = new System.Drawing.Point(8, 18);
 			this.butPhoneManage.Name = "butPhoneManage";
 			this.butPhoneManage.Size = new System.Drawing.Size(72, 24);
 			this.butPhoneManage.TabIndex = 39;
@@ -302,7 +306,7 @@
 			// 
 			// butPhoneAttach
 			// 
-			this.butPhoneAttach.Location = new System.Drawing.Point(22, 53);
+			this.butPhoneAttach.Location = new System.Drawing.Point(8, 47);
 			this.butPhoneAttach.Name = "butPhoneAttach";
 			this.butPhoneAttach.Size = new System.Drawing.Size(72, 24);
 			this.butPhoneAttach.TabIndex = 43;
@@ -311,12 +315,12 @@
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(7, 204);
+			this.label3.Location = new System.Drawing.Point(-2, 224);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(92, 18);
+			this.label3.Size = new System.Drawing.Size(85, 18);
 			this.label3.TabIndex = 42;
 			this.label3.Text = "Clock out for";
-			this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			this.label3.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// listBoxClockOut
 			// 
@@ -324,21 +328,21 @@
         "Home",
         "Lunch",
         "Break"};
-			this.listBoxClockOut.Location = new System.Drawing.Point(101, 203);
+			this.listBoxClockOut.Location = new System.Drawing.Point(1, 245);
 			this.listBoxClockOut.Name = "listBoxClockOut";
-			this.listBoxClockOut.Size = new System.Drawing.Size(120, 43);
+			this.listBoxClockOut.Size = new System.Drawing.Size(85, 43);
 			this.listBoxClockOut.TabIndex = 41;
 			this.listBoxClockOut.Text = "listBox1";
 			this.listBoxClockOut.SelectionChangeCommitted += new System.EventHandler(this.listBoxClockOut_SelectionChangeCommitted);
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(7, 137);
+			this.label2.Location = new System.Drawing.Point(-2, 147);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(92, 18);
+			this.label2.Size = new System.Drawing.Size(63, 18);
 			this.label2.TabIndex = 40;
 			this.label2.Text = "Queues";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			this.label2.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// listBoxQueues
 			// 
@@ -347,9 +351,9 @@
         "None",
         "Default",
         "Backup"};
-			this.listBoxQueues.Location = new System.Drawing.Point(101, 136);
+			this.listBoxQueues.Location = new System.Drawing.Point(1, 168);
 			this.listBoxQueues.Name = "listBoxQueues";
-			this.listBoxQueues.Size = new System.Drawing.Size(120, 56);
+			this.listBoxQueues.Size = new System.Drawing.Size(85, 56);
 			this.listBoxQueues.TabIndex = 39;
 			this.listBoxQueues.Text = "listBox1";
 			this.listBoxQueues.SelectionChangeCommitted += new System.EventHandler(this.listBoxQueues_SelectionChangeCommitted);
@@ -357,7 +361,7 @@
 			// butClose
 			// 
 			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butClose.Location = new System.Drawing.Point(1202, 660);
+			this.butClose.Location = new System.Drawing.Point(1153, 668);
 			this.butClose.Name = "butClose";
 			this.butClose.Size = new System.Drawing.Size(72, 24);
 			this.butClose.TabIndex = 46;
@@ -366,10 +370,9 @@
 			// 
 			// FormPhoneList
 			// 
-			this.AutoScroll = true;
-			this.ClientSize = new System.Drawing.Size(1284, 696);
+			this.ClientSize = new System.Drawing.Size(1230, 696);
 			this.Controls.Add(this.butClose);
-			this.Controls.Add(this.textSearch);
+			this.Controls.Add(this.textNameOrExt);
 			this.Controls.Add(this.panelGrid2);
 			this.Controls.Add(this.labelSearch);
 			this.Controls.Add(this.checkNeedsHelpTop);
@@ -408,7 +411,7 @@
 		private System.Windows.Forms.Timer timerFlash;
 		private OpenDental.UI.CheckBox checkHideOnBreak;
 		private UI.GridOD gridMain;
-		private System.Windows.Forms.TextBox textSearch;
+		private System.Windows.Forms.TextBox textNameOrExt;
 		private System.Windows.Forms.Label labelSearch;
 		private UI.CheckBox checkNeedsHelpTop;
 		private System.Windows.Forms.Label label1;
