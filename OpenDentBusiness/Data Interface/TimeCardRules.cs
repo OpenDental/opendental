@@ -706,23 +706,22 @@ namespace OpenDentBusiness{
 							tsDailyBreaksTotal+=(listClockEventBreak[b].TimeDisplayed2.TimeOfDay-listClockEventBreak[b].TimeDisplayed1.TimeOfDay);
 							tsDailyHoursMinusBreaksTotal=tsHoursWorkedTotal-tsDailyBreaksTotal;
 							if(PrefC.IsODHQ) {
-								if(tsDailyHoursMinusBreaksTotal>=TimeSpan.FromMinutes(331)&&tsDailyBreaksTotal>=TimeSpan.FromMinutes(30)) {//Break is over 30 minutes and total time worked is over 5 hour and 30 minutes.
+								if(tsDailyHoursMinusBreaksTotal>=TimeSpan.FromMinutes(331) && tsDailyBreaksTotal>=TimeSpan.FromMinutes(30)) {//Break is over 30 minutes and total time worked is over 5 hour and 30 minutes.
 									listClockEventBreak[b].AdjustAuto=TimeSpan.FromMinutes(30)-tsDailyBreaksTotal;
 									ClockEvents.Update(listClockEventBreak[b]);//save adjustments to breaks.
 									tsDailyBreaksAdjustTotal+=listClockEventBreak[b].AdjustAuto;
-									tsDailyBreaksTotal=TimeSpan.FromMinutes(30);//reset daily breaks to 30 minutes so the next break is all adjustment.
+									tsDailyBreaksTotal=TimeSpan.FromMinutes(30);//reset daily breaks to 30 minutes so the next break is all adjustment
 								}
-								else if(tsDailyHoursMinusBreaksTotal>=TimeSpan.FromMinutes(106)&&tsDailyBreaksTotal>=TimeSpan.FromMinutes(15)) {//Break is over 15 minutes and total time worked is over 1 hour and 45 minutes.
-									listClockEventBreak[b].AdjustAuto=TimeSpan.FromMinutes(15)-tsDailyBreaksTotal;
+								else if(tsDailyHoursMinusBreaksTotal<TimeSpan.FromMinutes(331) && tsDailyHoursMinusBreaksTotal>=TimeSpan.FromMinutes(101) && tsDailyBreaksTotal>=TimeSpan.FromMinutes(20)) {//Break is over 20 minutes and total time worked is over 1 hour and 40 minutes.
+									listClockEventBreak[b].AdjustAuto=TimeSpan.FromMinutes(20)-tsDailyBreaksTotal;
 									ClockEvents.Update(listClockEventBreak[b]);//save adjustments to breaks.
 									tsDailyBreaksAdjustTotal+=listClockEventBreak[b].AdjustAuto;
-									tsDailyBreaksTotal=TimeSpan.FromMinutes(30);//reset daily breaks to 30 minutes so the next break is all adjustment.
+									tsDailyBreaksTotal=TimeSpan.FromMinutes(20);//reset daily breaks to 20 minutes so the next break is all adjustment
 								}
-								else {//Total time worked is less than 1 hour and 45 minutes.
+								else if(tsDailyHoursMinusBreaksTotal<TimeSpan.FromMinutes(101)){//Total time worked is less than 1 hour and 45 minutes.
 									listClockEventBreak[b].AdjustAuto=-tsDailyBreaksTotal;
 									ClockEvents.Update(listClockEventBreak[b]);//save adjustments to breaks.
 									tsDailyBreaksAdjustTotal+=listClockEventBreak[b].AdjustAuto;
-									tsDailyBreaksTotal=TimeSpan.FromMinutes(30);//reset daily breaks to 30 minutes so the next break is all adjustment.
 								}
 							}
 							else {

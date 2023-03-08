@@ -43,6 +43,14 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
+		public static bool Update(Allergy allergy, Allergy allergyOld){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),allergy,allergyOld);
+			}
+			return Crud.AllergyCrud.Update(allergy,allergyOld);
+		}
+
+		///<summary></summary>
 		public static void Delete(long allergyNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),allergyNum);

@@ -25,6 +25,20 @@ namespace OpenDentBusiness{
 			return Crud.RefAttachCrud.SelectMany(command);
 		}
 
+		///<summary>Gets all RefAttaches and orders them by RefAttachNum.</summary>
+		public static List<RefAttach> GetRefAttachesForApi(int limit,int offset,long patNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<RefAttach>>(MethodBase.GetCurrentMethod(),limit,offset,patNum);
+			}
+			string command="SELECT * FROM refattach ";
+			if(patNum>0) {
+				command+="WHERE PatNum="+POut.Long(patNum)+" ";
+			}
+			command+="ORDER BY RefAttachNum "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.RefAttachCrud.SelectMany(command);
+		}
+
 		///<summary>For the ReferralsPatient window.  showAll is only used for the referred procs view.</summary>
 		public static List<RefAttach> RefreshFiltered(long patNum,bool showAll,long procNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

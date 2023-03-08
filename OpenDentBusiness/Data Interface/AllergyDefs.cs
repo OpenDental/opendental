@@ -67,6 +67,14 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
+		public static bool Update(AllergyDef allergyDef, AllergyDef allergyDefOld){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),allergyDef,allergyDefOld);
+			}
+			return Crud.AllergyDefCrud.Update(allergyDef,allergyDefOld);
+		}
+
+		///<summary></summary>
 		public static List<AllergyDef> TableToList(DataTable table) {
 			//No need to check MiddleTierRole; no call to db.
 			return Crud.AllergyDefCrud.TableToList(table);

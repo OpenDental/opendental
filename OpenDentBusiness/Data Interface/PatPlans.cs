@@ -275,6 +275,23 @@ namespace OpenDentBusiness{
 			return 0;
 		}
 
+		///<summary>Gets multiple PatPlans from database. Returns null if not found.</summary>
+		public static List<PatPlan> GetPatPlansForApi(int limit,int offset,long patNum,long insSubNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<PatPlan>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,insSubNum);
+			}
+			string command="SELECT * FROM patplan WHERE SecDateTEdit>="+POut.DateT(DateTime.MinValue)+" ";
+			if(patNum>-1) {
+				command+="AND PatNum="+POut.Long(patNum)+" ";
+			}
+			if(insSubNum>-1) {
+				command+="AND InsSubNum="+POut.Long(insSubNum)+" ";
+			}
+			command+="ORDER BY PatPlanNum "//same fixed order each time
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.PatPlanCrud.SelectMany(command);
+		}
+
 		/*Deprecated
 		///<summary>Gets one patPlanNum directly from database.  Only used once in FormClaimProc.</summary>
 		public static long GetPatPlanNum(long patNum,long planNum) {
