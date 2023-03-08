@@ -27,6 +27,8 @@ namespace OpenDental{
 		private List<Def> _listDefsBillingType;
 		///<summary>List of all Insurance Filing Codes.</summary>
 		private List<InsFilingCode> _listInsFilingCodes;
+		/// <summary>Used to capture this preference's state when it is different from the current default.</summary>
+		public bool ShowBillTransSinceZero=false;
 		///<summary>Tracks if textDateStart is blank so we can display a warning in FormBilling.cs when sending electronic bills.</summary>
 		public bool IsHistoryStartMinDate { get; private set; }
 
@@ -575,6 +577,7 @@ namespace OpenDental{
 				textDateStart.Enabled=true;
 				textDateEnd.Enabled=true;
 			}
+			ShowBillTransSinceZero=checkBoxBillShowTransSinceZero.Checked;
 		}
 
 		private void but30days_Click(object sender,EventArgs e) {
