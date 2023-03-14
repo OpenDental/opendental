@@ -1135,6 +1135,18 @@ namespace OpenDentBusiness{
 			return Crud.ProcedureCodeCrud.SelectMany(command);
 		}
 
+		///<summary>Gets procedurecodes from the database after a supplied DateTStamp, ordered by ProcCode. Used in the API.</summary>
+		public static List<ProcedureCode> GetProcCodesForApi(int limit,int offset,DateTime dateTStamp) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ProcedureCode>>(MethodBase.GetCurrentMethod(),limit,offset,dateTStamp);
+			}
+			string command="SELECT * FROM procedurecode "
+				+"WHERE DateTStamp >= "+POut.DateT(dateTStamp)+" "
+				+"ORDER BY ProcCode "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.ProcedureCodeCrud.SelectMany(command);
+		}
+
 		///<summary>Zeros securitylog FKey column for rows that are using the matching codeNum as FKey and are related to ProcedureCode.
 		///Permtypes are generated from the AuditPerms property of the CrudTableAttribute within the ProcedureCode table type.</summary>
 		public static void ClearFkey(long codeNum) {

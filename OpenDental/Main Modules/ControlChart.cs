@@ -788,19 +788,17 @@ namespace OpenDental {
 			if(!CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
 				return;
 			}
-			gridTpProcs.SetAll(false);//is this a desirable behavior?
 			if(gridTpProcs.ListGridRows[e.Row].Tag==null) {
 				return;//skip any hightlighted subtotal lines
 			}
-			CanadianSelectedRowHelper(((ProcTP)gridTpProcs.ListGridRows[e.Row].Tag), e.Row);
+			CanadianSelectedRowHelper(((ProcTP)gridTpProcs.ListGridRows[e.Row].Tag));
 		}
 
 			///<summary>Selects any associated lab procedures for the given selectedProcTp in gridTpProcs.</summary>
-		private void CanadianSelectedRowHelper(ProcTP procTpSelected, int index) {
+		private void CanadianSelectedRowHelper(ProcTP procTpSelected) {
 			if(!CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
 				return;
 			}
-			gridTpProcs.SetSelected(index,true);
 			Procedure procedureSelected=Procedures.GetOneProc(procTpSelected.ProcNumOrig,false);
 			for(int i=0;i<gridTpProcs.ListGridRows.Count;i++) {
 				if(gridTpProcs.ListGridRows[i].Tag==null) {

@@ -1227,7 +1227,7 @@ namespace OpenDentBusiness {
 				accountEntryInsProc.WarningMsg.AppendLine($"  ^InsPayAmt: {accountEntryInsProc.InsPayAmt:C}");
 				decimal patPay=accountEntryInsProc.SplitCollection.Sum(x => (decimal)x.SplitAmt);
 				if(CompareDecimal.IsGreaterThanZero(patPay)) {
-					accountEntryInsProc.WarningMsg.AppendLine($"  ^Proc PatPay: {patPay:C} (transferrable portion)");
+					accountEntryInsProc.WarningMsg.AppendLine($"  ^Proc PatPay: {patPay:C} (transferable portion)");
 				}
 				//Only allow up to the patient payment amount to be transferred around.
 				decimal amountOverpaid=Math.Abs(accountEntryInsProc.AmountEnd);

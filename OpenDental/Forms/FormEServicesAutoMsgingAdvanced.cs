@@ -26,7 +26,7 @@ namespace OpenDental {
 		///<summary>This list holds specific DefNums so that we know which ones can't be edited.</summary>
 		private List<long> _listDefNumsUneditable;
 		private long _defNumTimeArrived;
-		private bool _isAutoThankYouEnabled;
+		private bool _doEnableCalendarIcsTitle;
 
 		public FormEServicesAutoMsgingAdvanced() {
 			InitializeComponent();
@@ -106,7 +106,9 @@ namespace OpenDental {
 			#region Thank-You Settings
 			groupAutomationStatuses.Enabled=allowEdit;
 			//Do we want to hide editing this behind a pref that's on the previous form?
-			_isAutoThankYouEnabled=PrefC.GetBool(PrefName.ApptThankYouAutoEnabled) && allowEdit;
+			_doEnableCalendarIcsTitle=(PrefC.GetBool(PrefName.ApptThankYouAutoEnabled) 
+				|| PrefC.GetBool(PrefName.ApptRemindAutoEnabled) 
+				|| PrefC.GetBool(PrefName.ApptConfirmAutoEnabled)) && allowEdit;
 			_listClinicPrefs=ClinicPrefs.GetPrefAllClinics(PrefName.ApptThankYouCalendarTitle,includeDefault:true);
 			_listClinicPrefs.AddRange(ClinicPrefs.GetPrefAllClinics(PrefName.ThankYouTitleUseDefault));
 			FillThankYouTitleAndUseDefault();
@@ -264,7 +266,7 @@ namespace OpenDental {
 		///<summary>Parses textThankYouTitle textbox into the appropriate ClinicPref in _listThankYouTitles.</summary>
 		private void ParseThankYouTitle() {
 			ClinicPref clinicPref=GetClinicPrefFromList(PrefName.ApptThankYouCalendarTitle,_clinicNumCur);
-			clinicPref.ValueString=textThankYouTitle.Text;
+			clinicPref.ValueString=textCalendarIcsTitle.Text;
 		}
 
 		/// <summary>Tries to get the clinicPref for the clinicNum from the list of clinicPrefs. If the clinicPref doesn't exist, and prefName is either ApptThankYouCalendarTitle or ThankYouTitleUseDefault it is added to the list and returned. Can return null. </summary>
@@ -286,16 +288,16 @@ namespace OpenDental {
 
 		/// <summary>Fills textThankYouTitle and checkUseDefault with their respective clinicPrefs from the DB. If no clinicPrefs are loaded, new clinicPrefs are created. Also enables and disables textThankYouTitle and shows and hides checkUseDefault. </summary>
 		private void FillThankYouTitleAndUseDefault() {
-			if(!_isAutoThankYouEnabled) {
-				textThankYouTitle.Enabled=false;
+			if(!_doEnableCalendarIcsTitle) {
+				textCalendarIcsTitle.Enabled=false;
 				labelThankYouTitle.Enabled=false;
 				return;
 			}
 			ClinicPref clinicPrefThankYouTitle=GetClinicPrefFromList(PrefName.ApptThankYouCalendarTitle,_clinicNumCur);
 			if(_clinicNumCur==0) {
 				checkUseDefault.Visible=false;
-				textThankYouTitle.Enabled=true;
-				textThankYouTitle.Text=clinicPrefThankYouTitle.ValueString;
+				textCalendarIcsTitle.Enabled=true;
+				textCalendarIcsTitle.Text=clinicPrefThankYouTitle.ValueString;
 				return;
 			}
 			ClinicPref clinicPrefThankYouUseDefault=GetClinicPrefFromList(PrefName.ThankYouTitleUseDefault,_clinicNumCur);
@@ -303,13 +305,13 @@ namespace OpenDental {
 			bool useDefault=PIn.Bool(clinicPrefThankYouUseDefault.ValueString);
 			checkUseDefault.Checked=useDefault;
 			if(useDefault) {
-				textThankYouTitle.Enabled=false;
+				textCalendarIcsTitle.Enabled=false;
 				ClinicPref clinicPrefThankYouTitleHeadquarters=GetClinicPrefFromList(PrefName.ApptThankYouCalendarTitle,0);
-				textThankYouTitle.Text=clinicPrefThankYouTitleHeadquarters.ValueString;
+				textCalendarIcsTitle.Text=clinicPrefThankYouTitleHeadquarters.ValueString;
 				return;
 			}
-			textThankYouTitle.Enabled=true;
-			textThankYouTitle.Text=clinicPrefThankYouTitle.ValueString;
+			textCalendarIcsTitle.Enabled=true;
+			textCalendarIcsTitle.Text=clinicPrefThankYouTitle.ValueString;
 		}
 
 		private void checkUseDefault_Click(object sender,EventArgs e) {

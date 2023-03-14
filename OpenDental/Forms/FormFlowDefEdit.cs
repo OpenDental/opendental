@@ -148,7 +148,6 @@ namespace OpenDental {
 			ReorderListItemOrders();
 			FillActionsGrid();
 			_hasChanged=true;
-			comboActionType.Enabled=false;
 		}
 
 		private void butUp_Click(object sender,EventArgs e) {
@@ -204,7 +203,7 @@ namespace OpenDental {
 
 		private void butAddLinkType_Click(object sender,EventArgs e) {
 			if(comboLinkType.SelectedItem == null) {
-				MsgBox.Show(this, "Please select a Link Type to add.");
+				MsgBox.Show(this, "Please select a trigger to add.");
 				return;
 			}
 			FlowDefLink flowDefLink = new FlowDefLink();

@@ -70,12 +70,26 @@ namespace OpenDental {
 				MsgBox.Show(this,"No item selected.");
 				return;
 			}
-			FlowDef patientFlowDefOrig = gridPatientFlows.SelectedTag<FlowDef>();
-			FlowDef patientFlowDefCopy = patientFlowDefOrig.Copy();
-			long patientFlowDefNum = FlowDefs.Insert(patientFlowDefCopy);
+			FlowDef patientFlowDefOrig=gridPatientFlows.SelectedTag<FlowDef>();
+			FlowDef patientFlowDefCopy=patientFlowDefOrig.Copy();
+			long patientFlowDefNum=FlowDefs.Insert(patientFlowDefCopy);
 			//get a copy of the actiondefs from the original item, inserting new copies pointing to our new patientflowdef.
-			FlowActionDefs.GetAllByFlowDef(patientFlowDefOrig.FlowDefNum)
-				.Select(x => FlowActionDefs.Insert(new FlowActionDef() { FlowDefNum = patientFlowDefNum, ItemOrder=x.ItemOrder, FlowActionType=x.FlowActionType }));
+			List<FlowActionDef> listFlowActions=FlowActionDefs.GetAllByFlowDef(patientFlowDefOrig.FlowDefNum);
+			for(int i=0; i<listFlowActions.Count; ++i) {
+				FlowActionDef newAction=new FlowActionDef();
+				newAction.FlowDefNum=patientFlowDefNum;
+				newAction.ItemOrder=listFlowActions[i].ItemOrder;
+				newAction.FlowActionType=listFlowActions[i].FlowActionType;
+				FlowActionDefs.Insert(newAction);
+			}
+			List<FlowDefLink> listFlowDefLinks=FlowDefLinks.GetListFlowTypesForFlowDefNum(patientFlowDefOrig.FlowDefNum);
+			for(int i=0; i<listFlowDefLinks.Count; ++i) {
+				FlowDefLink flowDefLink=new FlowDefLink();
+				flowDefLink.FlowDefNum=patientFlowDefNum;
+				flowDefLink.FlowType=listFlowDefLinks[i].FlowType;
+				flowDefLink.Fkey=listFlowDefLinks[i].Fkey;
+				FlowDefLinks.Insert(flowDefLink);
+			}
 			Cache.Refresh(InvalidType.FlowDef);
 			FillGrid();
 		}

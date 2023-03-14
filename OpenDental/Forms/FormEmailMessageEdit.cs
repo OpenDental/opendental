@@ -882,12 +882,14 @@ namespace OpenDental {
 			}
 			catch(Exception ex){
 				Cursor=Cursors.Default;
-				if(ODBuild.IsWeb() && ex.InnerException.Message.Contains("InvalidAuthenticationToken")) {
-					emailAddress.AccessToken="";
-					EmailAddresses.Update(emailAddress);
-					DataValid.SetInvalid(InvalidType.Email);
-					butSend_Click(sender,e);
+				if(ODBuild.IsWeb() && ex.InnerException!=null) {
+					if(ex.InnerException.Message.Contains("InvalidAuthenticationToken")) {
+						emailAddress.AccessToken="";
+						EmailAddresses.Update(emailAddress);
+						DataValid.SetInvalid(InvalidType.Email);
+						butSend_Click(sender,e);
 					return;
+					}
 				}
 				string errMsg=Lan.g(this,"Failed to send email.")+"\r\n"+Lan.g(this, "Click Details to see the error message from the Email Client.");
 				FriendlyException.Show(errMsg, ex);

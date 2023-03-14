@@ -271,6 +271,23 @@ namespace OpenDentBusiness{
 		}
 		 */
 
+		///<summary>Gets a list of InsSubs directly from the database. Used in ODApi.</summary>
+		public static List<InsSub> GetInsSubsForApi(int limit,int offset,long planNum,long patNum,DateTime secDateTEdit) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<InsSub>>(MethodBase.GetCurrentMethod(),limit,offset,planNum,patNum,secDateTEdit);
+			}
+			string command="SELECT * FROM inssub WHERE SecDateTEdit >= "+POut.DateT(secDateTEdit)+" ";
+			if(patNum>0) {
+				command+="AND Subscriber="+POut.Long(patNum)+" ";
+			}
+			if(planNum>0) {
+				command+="AND PlanNum="+POut.Long(planNum)+" ";
+			}
+			command+="ORDER BY inssubnum "//Ensure order for limit and offset.
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.InsSubCrud.SelectMany(command);
+		}
+
 		///<summary>Used in FormInsSelectSubscr to get a list of insplans for one subscriber directly from the database.</summary>
 		public static List<InsSub> GetListForSubscriber(long subscriber) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

@@ -278,7 +278,8 @@ namespace OpenDentBusiness {
 		///<summary>True if automated appointment thank yous are enabled for the entire DB. See ApptReminderRules for setup details.
 		///Permissions are still checked here at HQ so manually overriding this value will only make the program behave annoyingly, but won't break anything.</summary>
 		ApptThankYouAutoEnabled,
-		///<summary>Used as the value of the SUMMARY field in a .ics file for Appointment Thank You [AddToCalendar] tag.</summary>
+		///<summary>Used as the value of the SUMMARY field in a .ics file for Appointment Thank You, Reminders, and eConfirmation auto replies
+		///[AddToCalendar] tag.</summary>
 		ApptThankYouCalendarTitle,
 		///<summary>Boolean.  Defaults to false. Only used for the clinicpref table, not the preference table. When true, this clinic will use the 
 		///Appointment Thank You rules for ClinicNum 0.</summary>
