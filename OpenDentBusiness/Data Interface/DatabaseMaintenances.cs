@@ -5554,7 +5554,7 @@ namespace OpenDentBusiness {
 						+"(medicationpat.MedicationNum<>0 AND NOT EXISTS(SELECT * FROM medication WHERE medication.MedicationNum=medicationpat.MedicationNum))";
 					int numFound=PIn.Int(Db.GetCount(command));
 					if(numFound>0 || verbose) {
-						log+=Lans.g("FormDatabaseMaintenance","Medications found where no defition exists for them: ")+numFound+"\r\n";
+						log+=Lans.g("FormDatabaseMaintenance","Medications found where no definition exists for them: ")+numFound+"\r\n";
 					}
 					break;
 				case DbmMode.Fix:

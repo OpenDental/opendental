@@ -42,7 +42,7 @@ namespace OpenDental {
 			this.checkEnableNoClinic = new System.Windows.Forms.CheckBox();
 			this.label11 = new System.Windows.Forms.Label();
 			this.labelThankYouTitle = new System.Windows.Forms.Label();
-			this.textThankYouTitle = new System.Windows.Forms.TextBox();
+			this.textCalendarIcsTitle = new System.Windows.Forms.TextBox();
 			this.groupBox1 = new OpenDental.UI.GroupBoxOD();
 			this.checkUseDefault = new System.Windows.Forms.CheckBox();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
@@ -232,18 +232,18 @@ namespace OpenDental {
 			// 
 			// textThankYouTitle
 			// 
-			this.textThankYouTitle.AcceptsTab = true;
-			this.textThankYouTitle.BackColor = System.Drawing.SystemColors.Window;
-			this.textThankYouTitle.Location = new System.Drawing.Point(225, 46);
-			this.textThankYouTitle.Name = "textThankYouTitle";
-			this.textThankYouTitle.Size = new System.Drawing.Size(480, 20);
-			this.textThankYouTitle.TabIndex = 276;
+			this.textCalendarIcsTitle.AcceptsTab = true;
+			this.textCalendarIcsTitle.BackColor = System.Drawing.SystemColors.Window;
+			this.textCalendarIcsTitle.Location = new System.Drawing.Point(225, 46);
+			this.textCalendarIcsTitle.Name = "textThankYouTitle";
+			this.textCalendarIcsTitle.Size = new System.Drawing.Size(480, 20);
+			this.textCalendarIcsTitle.TabIndex = 276;
 			// 
 			// groupBox1
 			// 
 			this.groupBox1.Controls.Add(this.checkUseDefault);
 			this.groupBox1.Controls.Add(this.comboClinic);
-			this.groupBox1.Controls.Add(this.textThankYouTitle);
+			this.groupBox1.Controls.Add(this.textCalendarIcsTitle);
 			this.groupBox1.Controls.Add(this.labelThankYouTitle);
 			this.groupBox1.Location = new System.Drawing.Point(368, 12);
 			this.groupBox1.Name = "groupBox1";
@@ -349,13 +349,13 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label53;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.Label labelThankYouTitle;
-		private System.Windows.Forms.TextBox textThankYouTitle;
+		private System.Windows.Forms.TextBox textCalendarIcsTitle;
 		private OpenDental.UI.GroupBoxOD groupBox1;
 		private UI.ComboBoxClinicPicker comboClinic;
 		private UI.GroupBoxOD groupBox2;
 		private System.Windows.Forms.TextBox textPremedTemplate;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.ColorDialog colorDialog;
-        private System.Windows.Forms.CheckBox checkUseDefault;
-    }
+		private System.Windows.Forms.CheckBox checkUseDefault;
+	}
 }

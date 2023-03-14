@@ -3959,7 +3959,7 @@ namespace OpenDental.UI{
 						return new PointF(pointDraw.X-(int)sizeDesired.Width-3,pointDraw.Y);
 					}
 					else {
-						float w=pointDraw.X-9;
+						float w=pointDraw.X-WidthProvOnAppt;
 						sizeNote=g.MeasureString(text,_font,(int)w);
 						sizeNote=new SizeF(sizeNote.Width,_heightLine+1);//only allowed to be one line high.
 						if(sizeNote.Width<5) {
@@ -4052,7 +4052,7 @@ namespace OpenDental.UI{
 					}
 				}
 				else {//horizontal
-					float w=pointDraw.X-9;//drawLoc is upper right of each element.  The first element draws at (totalWidth-1,0).
+					float w=pointDraw.X-WidthProvOnAppt;//drawLoc is upper right of each element.  The first element draws at (totalWidth-1,0).
 					if(isConfirmedCircle) {
 						Size sizeDesired=new Size((int)_heightLine,(int)_heightLine);
 						if(pointDraw.X-sizeDesired.Width<=0) {

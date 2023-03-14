@@ -315,6 +315,8 @@ namespace OpenDental {
 				return true;//There shouldn't be any automatically downloaded web forms.
 			}
 			List<Sheet> listSheetsDownloaded=Sheets.GetUnmatchedWebFormSheets(listClinicNums);
+			//Keep track of patient import choices throughout the entire retrieval process.
+			PatientImportChoice patientImportChoice=new PatientImportChoice();
 			List<long> listSheetIDsToDelete=new List<long>();
 			for(int i=0;i<listSheetsDownloaded.Count;i++) {
 				//Continue if the SheetNum is either marked as skipped or is going to be deleted. 
@@ -322,7 +324,7 @@ namespace OpenDental {
 					continue;
 				}
 				try {
-					if(!DidImportSheet(listSheetsDownloaded[i],listSheetsDownloaded,ref listSheetIDsToDelete)) {
+					if(!DidImportSheet(null,listSheetsDownloaded[i],null,listSheetsDownloaded,CultureInfo.CurrentCulture.Name,ref listSheetIDsToDelete,ref patientImportChoice)) {
 						listMsgs.Add(Lan.g("FormWebForms","User manually cancelled unmatched patient web forms importing."));
 						return false;//User wants to cancel import.
 					}

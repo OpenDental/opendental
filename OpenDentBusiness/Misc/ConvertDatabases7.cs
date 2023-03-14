@@ -4393,5 +4393,17 @@ namespace OpenDentBusiness {
 			//Duplicate email code moved to DBM tool under CleanUpDuplicateEmails(), commented out here because the queries can take a long time to run and we don't want to run it more than once
 		}
 
+		private static void To22_3_54() {
+			//Adding Analyze Table ProcedureLog - B42604
+			string command=$@"SELECT ENGINE FROM information_schema.TABLES
+				WHERE TABLE_SCHEMA='{POut.String(DataConnection.GetDatabaseName())}'
+				AND TABLE_NAME='procedurelog'";
+			string procTableEngine=Db.GetScalar(command);
+			if(!string.IsNullOrEmpty(procTableEngine) && procTableEngine.ToLower()=="innodb") {
+				command="ANALYZE TABLE procedurelog";
+				Db.NonQ(command);
+			}
+		}
+
 	}
 }

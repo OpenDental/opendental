@@ -1252,7 +1252,11 @@ namespace OpenDental {
 					fileName=Path.GetTempPath()+GetDocumentShowing(0).FileName;
 					if(!ImageHelper.HasImageBeenEdited(GetDocumentShowing(0))) {//Do a file copy since no changes were made
 						string filePathSource=Documents.GetPath(GetDocumentShowing(0).DocNum);
-						File.Copy(filePathSource,fileName, overwrite:true);
+						while(File.Exists(fileName)) {
+							Random random=new Random();
+							fileName=Path.GetDirectoryName(fileName)+"\\"+Path.GetFileNameWithoutExtension(fileName)+random.Next(9)+Path.GetExtension(fileName);
+						}
+						File.Copy(filePathSource,fileName);
 					}
 					else {
 						bitmapCopy = ImageHelper.CopyWithCropRotate(GetDocumentShowing(0),GetBitmapShowing(0));
