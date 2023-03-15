@@ -67,7 +67,7 @@ namespace OpenDentBusiness{
 		///Otherwise contians the last date and time this user successfully logged in.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
 		public DateTime DateTLastLogin;
-		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
+		///<summary>Pin for ODT. This is the hashed value of the pin. Not used in OD proper.</summary>
 		public string EClipboardClinicalPin;
 
 		///<summary>The getter will return a struct created from the database-ready password which is stored in the Password field.

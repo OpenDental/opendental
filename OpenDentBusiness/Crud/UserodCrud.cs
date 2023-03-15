@@ -174,16 +174,12 @@ namespace OpenDentBusiness.Crud{
 				+"'"+POut.String(userod.MobileWebPin)+"',"
 				+    POut.Byte  (userod.MobileWebPinFailedAttempts)+","
 				+    POut.DateT (userod.DateTLastLogin)+","
-				+    DbHelper.ParamChar+"paramEClipboardClinicalPin)";
-			if(userod.EClipboardClinicalPin==null) {
-				userod.EClipboardClinicalPin="";
-			}
-			OdSqlParameter paramEClipboardClinicalPin=new OdSqlParameter("paramEClipboardClinicalPin",OdDbType.Text,POut.StringParam(userod.EClipboardClinicalPin));
+				+"'"+POut.String(userod.EClipboardClinicalPin)+"')";
 			if(useExistingPK || PrefC.RandomKeys) {
-				Db.NonQ(command,paramEClipboardClinicalPin);
+				Db.NonQ(command);
 			}
 			else {
-				userod.UserNum=Db.NonQ(command,true,"UserNum","userod",paramEClipboardClinicalPin);
+				userod.UserNum=Db.NonQ(command,true,"UserNum","userod");
 			}
 			return userod.UserNum;
 		}
@@ -229,16 +225,12 @@ namespace OpenDentBusiness.Crud{
 				+"'"+POut.String(userod.MobileWebPin)+"',"
 				+    POut.Byte  (userod.MobileWebPinFailedAttempts)+","
 				+    POut.DateT (userod.DateTLastLogin)+","
-				+    DbHelper.ParamChar+"paramEClipboardClinicalPin)";
-			if(userod.EClipboardClinicalPin==null) {
-				userod.EClipboardClinicalPin="";
-			}
-			OdSqlParameter paramEClipboardClinicalPin=new OdSqlParameter("paramEClipboardClinicalPin",OdDbType.Text,POut.StringParam(userod.EClipboardClinicalPin));
+				+"'"+POut.String(userod.EClipboardClinicalPin)+"')";
 			if(useExistingPK || isRandomKeys) {
-				Db.NonQ(command,paramEClipboardClinicalPin);
+				Db.NonQ(command);
 			}
 			else {
-				userod.UserNum=Db.NonQ(command,true,"UserNum","userod",paramEClipboardClinicalPin);
+				userod.UserNum=Db.NonQ(command,true,"UserNum","userod");
 			}
 			return userod.UserNum;
 		}
@@ -267,13 +259,9 @@ namespace OpenDentBusiness.Crud{
 				+"MobileWebPin              = '"+POut.String(userod.MobileWebPin)+"', "
 				+"MobileWebPinFailedAttempts=  "+POut.Byte  (userod.MobileWebPinFailedAttempts)+", "
 				+"DateTLastLogin            =  "+POut.DateT (userod.DateTLastLogin)+", "
-				+"EClipboardClinicalPin     =  "+DbHelper.ParamChar+"paramEClipboardClinicalPin "
+				+"EClipboardClinicalPin     = '"+POut.String(userod.EClipboardClinicalPin)+"' "
 				+"WHERE UserNum = "+POut.Long(userod.UserNum);
-			if(userod.EClipboardClinicalPin==null) {
-				userod.EClipboardClinicalPin="";
-			}
-			OdSqlParameter paramEClipboardClinicalPin=new OdSqlParameter("paramEClipboardClinicalPin",OdDbType.Text,POut.StringParam(userod.EClipboardClinicalPin));
-			Db.NonQ(command,paramEClipboardClinicalPin);
+			Db.NonQ(command);
 		}
 
 		///<summary>Updates one Userod in the database.  Uses an old object to compare to, and only alters changed fields.  This prevents collisions and concurrency problems in heavily used tables.  Returns true if an update occurred.</summary>
@@ -365,18 +353,14 @@ namespace OpenDentBusiness.Crud{
 			}
 			if(userod.EClipboardClinicalPin != oldUserod.EClipboardClinicalPin) {
 				if(command!="") { command+=",";}
-				command+="EClipboardClinicalPin = "+DbHelper.ParamChar+"paramEClipboardClinicalPin";
+				command+="EClipboardClinicalPin = '"+POut.String(userod.EClipboardClinicalPin)+"'";
 			}
 			if(command=="") {
 				return false;
 			}
-			if(userod.EClipboardClinicalPin==null) {
-				userod.EClipboardClinicalPin="";
-			}
-			OdSqlParameter paramEClipboardClinicalPin=new OdSqlParameter("paramEClipboardClinicalPin",OdDbType.Text,POut.StringParam(userod.EClipboardClinicalPin));
 			command="UPDATE userod SET "+command
 				+" WHERE UserNum = "+POut.Long(userod.UserNum);
-			Db.NonQ(command,paramEClipboardClinicalPin);
+			Db.NonQ(command);
 			return true;
 		}
 
@@ -467,13 +451,9 @@ namespace OpenDentBusiness.Crud{
 				+"InboxHidePopups      =  "+POut.Bool  (userod.InboxHidePopups)+", "
 				+"DomainUser           = '"+POut.String(userod.DomainUser)+"', "
 				+"DateTLastLogin       =  "+POut.DateT (userod.DateTLastLogin)+", "
-				+"EClipboardClinicalPin=  "+DbHelper.ParamChar+"paramEClipboardClinicalPin "
+				+"EClipboardClinicalPin= '"+POut.String(userod.EClipboardClinicalPin)+"' "
 				+"WHERE UserNumCEMT = "+POut.Long(userod.UserNumCEMT);
-			if(userod.EClipboardClinicalPin==null) {
-				userod.EClipboardClinicalPin="";
-			}
-			OdSqlParameter paramEClipboardClinicalPin=new OdSqlParameter("paramEClipboardClinicalPin",OdDbType.Text,POut.StringParam(userod.EClipboardClinicalPin));
-			Db.NonQ(command,paramEClipboardClinicalPin);
+			Db.NonQ(command);
 		}
 
 		///<summary>Deletes one Userod from the database.</summary>

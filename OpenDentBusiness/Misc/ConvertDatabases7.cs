@@ -4405,5 +4405,10 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		private static void To22_3_55() {
+			//Altering EClipboarcClinicalPin to a varchar(128) instead of IsText.
+			string command="ALTER TABLE userod MODIFY EClipboardClinicalPin VARCHAR(128)";
+			Db.NonQ(command);
+		}
 	}
 }

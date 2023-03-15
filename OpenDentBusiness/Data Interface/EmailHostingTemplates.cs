@@ -51,10 +51,11 @@ namespace OpenDentBusiness{
 			#region Sync Email Signatures
 			string plainTextSignature=GetSignature(clinicNum,isHtml:false);
 			string htmlSignature=GetSignature(clinicNum,isHtml:true);
+			string accountDescription=(clinicNum==0) ? PrefC.GetString(PrefName.PracticeTitle) : Clinics.GetAbbr(clinicNum);
 			UpdateSignatureRequest updateSignatureRequest=new UpdateSignatureRequest(){ 
 				SignatureHtml=htmlSignature, 
 				SignaturePlainText=plainTextSignature, 
-				AccountDescription=Clinics.GetAbbr(clinicNum) 
+				AccountDescription=accountDescription
 			};
 			UpdateSignatureResponse updateSignatureResponse=api.UpdateSignature(updateSignatureRequest);
 			//Update the cache in case we just uploaded default/generic signatures.
