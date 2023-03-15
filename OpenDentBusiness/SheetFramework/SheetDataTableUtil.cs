@@ -1103,8 +1103,13 @@ namespace OpenDentBusiness.SheetFramework {
 
 		public static DataTable GetTable_ProcsWithFee(Sheet sheet) {
 			List<long> listProcNums=new List<long>();
+			DataTable table=new DataTable();
+			SheetParameter sheetParameter=SheetParameter.GetParamByName(sheet.Parameters,"ListProcNums");
+			if(sheetParameter==null || sheetParameter.ParamValue==null) {
+				return table;
+			}
 			//When loading sheet data from the database, this param is stored as a comma delimited string of procNums
-			object paramValue=SheetParameter.GetParamByName(sheet.Parameters,"ListProcNums").ParamValue;
+			object paramValue=sheetParameter.ParamValue;
 			if(paramValue is string) {
 				listProcNums=paramValue.ToString().Split(',').Select(x => PIn.Long(x)).ToList();
 			}
@@ -1113,7 +1118,6 @@ namespace OpenDentBusiness.SheetFramework {
 			}
 			List<Procedure> listProcedures=Procedures.GetManyProc(listProcNums,false);
 			//Construct empty Data table ===============================================================================
-			DataTable table=new DataTable();
 			table.Columns.AddRange(new[] {
 				new DataColumn("Procedure Code",typeof(string)),
 				new DataColumn("Description",typeof(string)),
@@ -1136,8 +1140,13 @@ namespace OpenDentBusiness.SheetFramework {
 
 		public static DataTable GetTable_ProcsNoFee(Sheet sheet) {
 			List<long> listProcNums=new List<long>();
+			DataTable table=new DataTable();
+			SheetParameter sheetParameter=SheetParameter.GetParamByName(sheet.Parameters,"ListProcNums");
+			if(sheetParameter==null || sheetParameter.ParamValue==null) {
+				return table;
+			}
 			//When loading sheet data from the database, this param is stored as one long string
-			object paramValue=SheetParameter.GetParamByName(sheet.Parameters,"ListProcNums").ParamValue;
+			object paramValue=sheetParameter.ParamValue;
 			if(paramValue is string) {
 				listProcNums=paramValue.ToString().Split(',').Select(x => PIn.Long(x)).ToList();
 			}
@@ -1146,7 +1155,6 @@ namespace OpenDentBusiness.SheetFramework {
 			}
 			List<Procedure> listProcedures=Procedures.GetManyProc(listProcNums,false);
 			//Construct empty Data table ===============================================================================
-			DataTable table=new DataTable();
 			table.Columns.AddRange(new[] {
 				new DataColumn("Procedure Code",typeof(string)),
 				new DataColumn("Description",typeof(string)),

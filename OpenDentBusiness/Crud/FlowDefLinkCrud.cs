@@ -205,10 +205,5 @@ namespace OpenDentBusiness.Crud{
 				+"WHERE FlowDefLinkNum IN("+string.Join(",",listFlowDefLinkNums.Select(x => POut.Long(x)))+")";
 			Db.NonQ(command);
 		}
-
-		public static void DeleteAllForDefNum(long flowDefNum) {
-			string command = $"DELETE FROM flowdeflink WHERE FlowDefNum = {POut.Long(flowDefNum)}";
-			Db.NonQ(command);
-		}
 	}
 }

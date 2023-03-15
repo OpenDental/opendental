@@ -157,7 +157,8 @@ namespace OpenDentBusiness{
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),flowDefNum);
 				return;
 			}
-			Crud.FlowDefLinkCrud.DeleteAllForDefNum(flowDefNum);
+			string command = $"DELETE FROM flowdeflink WHERE FlowDefNum = {POut.Long(flowDefNum)}";
+			Db.NonQ(command);
 		}
 
 		#endregion Methods - Modify

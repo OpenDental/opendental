@@ -138,10 +138,11 @@ namespace OpenDental {
 
 		private void gridMain_CellLeave(object sender,ODGridClickEventArgs e) {
 			QuerySetStmtObject querySetStmtObject;
-			GridRow rowLeaving=gridMain.ListGridRows[e.Row];
+			GridRow rowLeaving;
 			try{
 				//Cannot use gridMain.SelectedGridRows due to leave being hit multiple times by input texboxes.
 				//Base grid logic fires this leave function multiple times.
+				rowLeaving=gridMain.ListGridRows[e.Row];
 				querySetStmtObject=(QuerySetStmtObject)rowLeaving.Tag;
 			}
 			catch {//Has occured when user types SHIFT+ENTER on the keyboard.

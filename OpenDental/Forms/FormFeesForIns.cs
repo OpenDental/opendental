@@ -20,6 +20,7 @@ namespace OpenDental{
 		private int _pagesPrinted;
 		private bool _hasHeadingPrinted;
 		private int _headingPrintH;
+		private List<long> _listFixedBenefitFeeSchedNums;
 
 		///<summary></summary>
 		public FormFeesForIns()
@@ -43,6 +44,7 @@ namespace OpenDental{
 					listType.Items.Add(stringArrayEnumNames[i]);
 				}
 			}
+			_listFixedBenefitFeeSchedNums=FeeScheds.GetListForType(FeeScheduleType.FixedBenefit,includeHidden:true).Select(x => x.FeeSchedNum).ToList();
 			listType.SelectedIndex=0;
 			ResetSelections();
 			FillGrid();
@@ -92,7 +94,7 @@ namespace OpenDental{
 			gridMain.Columns.Add(col);
 			col=new GridColumn("Group Name",100);
 			gridMain.Columns.Add(col);
-			col=new GridColumn("Plan Type",65);
+			col=new GridColumn("Plan Type",95);
 			gridMain.Columns.Add(col);
 			col=new GridColumn("Fee Schedule",90);
 			gridMain.Columns.Add(col);
@@ -108,7 +110,13 @@ namespace OpenDental{
 				row.Cells.Add(_table.Rows[i]["GroupName"].ToString());
 				planType=_table.Rows[i]["PlanType"].ToString();
 				if(planType=="p") {
-					row.Cells.Add("PPO");
+					//The CopayFeeSched field stores Copay fee schedules and fixed benefit fee schedules.
+					if(_listFixedBenefitFeeSchedNums.Contains(PIn.Long(_table.Rows[i]["CopayFeeSched"].ToString()))) {
+						row.Cells.Add("FixedBenefitPPO");
+					}
+					else {
+						row.Cells.Add("PPO");
+					}
 				}
 				else if(planType=="f") {
 					row.Cells.Add("FlatCopay");
@@ -280,6 +288,20 @@ namespace OpenDental{
 				newFeeSchedNum=_listFeeSchedsForType[comboFeeSchedNew.SelectedIndex-1].FeeSchedNum;
 			}
 			List<InsPlanRow> listInsPlanRowsToChange=gridMain.SelectedTags<InsPlanRow>().FindAll(x => x.FeeSched!=newFeeSchedNum);
+			if(listType.GetSelected<string>().Equals("FixedBenefit")) {
+				bool doNotChange=listInsPlanRowsToChange.Any(x => x.PlanType!="p" || !_listFixedBenefitFeeSchedNums.Contains(x.FeeSched));
+				if(doNotChange) {
+					MsgBox.Show(this, "Cannot change FixedBenefit fee schedules for plans that aren't Fixed Benefit PPO Plans.");
+					return;
+				}
+			}
+			if(listType.GetSelected<string>().Equals("CoPay")) {
+				bool doNotChange=listInsPlanRowsToChange.Any(x => x.PlanType=="p" && _listFixedBenefitFeeSchedNums.Contains(x.FeeSched));
+				if(doNotChange) {
+					MsgBox.Show(this, "Cannot assign CoPay fee schedules to Fixed Benefit PPO plans.");
+					return;
+				}
+			}
 			if(!ChangePlansWarningsOk(newFeeSchedNum,listInsPlanRowsToChange)) {
 				return;
 			}

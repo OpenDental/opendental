@@ -759,7 +759,7 @@ namespace OpenDentBusiness {
 				pFeeSched="ManualFeeSchedNum";
 			}
 			string command=
-				"SELECT insplan.PlanNum,insplan.GroupName,insplan.GroupNum,employer.EmpName,carrier.CarrierName,"
+				"SELECT insplan.PlanNum,insplan.GroupName,insplan.GroupNum,insPlan.CopayFeeSched,employer.EmpName,carrier.CarrierName,"
 				+"insplan.EmployerNum,insplan.CarrierNum,feesched.Description AS FeeSchedName,insplan.PlanType,"
 				+"insplan.IsBlueBookEnabled,insplan."+pFeeSched+" feeSched "
 				+"FROM insplan "
@@ -808,9 +808,6 @@ namespace OpenDentBusiness {
 			}
 			else if(feeSchedType==FeeScheduleType.CoPay || feeSchedType==FeeScheduleType.FixedBenefit) {
 				command+="insplan.CopayFeeSched ="+POut.Long(newFeeSchedNum);
-				if(feeSchedType==FeeScheduleType.FixedBenefit) {
-					command+=",insplan.PlanType='f'";
-				}
 				command+=" WHERE insplan.CopayFeeSched !="+POut.Long(newFeeSchedNum);
 			}
 			else if(feeSchedType==FeeScheduleType.ManualBlueBook) {
@@ -836,83 +833,6 @@ namespace OpenDentBusiness {
 			);
 			return Db.NonQ(command);
 		}
-
-		///<summary>Based on the four supplied parameters, it updates all similar plans.  Used in a specific tool: FormFeesForIns.</summary>
-		public static long SetFeeSched(long employerNum,string carrierName,string groupNum,
-			string groupName,long feeSchedNum, FeeScheduleType feeSchedType)
-		{
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetLong(MethodBase.GetCurrentMethod(),employerNum,carrierName,groupNum,groupName,feeSchedNum,feeSchedType);
-			}
-			//Code rewritten so that it is not only MySQL compatible, but Oracle compatible as well.
-			string command="SELECT insplan.PlanNum, ";
-			switch(feeSchedType) {
-				case FeeScheduleType.Normal:
-					command+="insplan.FeeSched, ";
-					break;
-				case FeeScheduleType.FixedBenefit:
-				case FeeScheduleType.CoPay:
-					command+="insplan.CopayFeeSched, ";
-					break;
-				case FeeScheduleType.OutNetwork:
-					command+="insplan.AllowedFeeSched, ";
-					break;
-				case FeeScheduleType.ManualBlueBook:
-					command+="insplan.ManualFeeSchedNum, ";
-					break;
-			}
-			command+="insplan.GroupNum, insplan.GroupName "
-				+"FROM insplan,carrier "
-				+"WHERE carrier.CarrierNum = insplan.CarrierNum "//employer.EmployerNum = insplan.EmployerNum "
-				+"AND insplan.EmployerNum="+POut.Long(employerNum)+" "
-				+"AND carrier.CarrierName='"+POut.String(carrierName)+"' "
-				+"AND insplan.GroupNum='"+POut.String(groupNum)+"' "
-				+"AND insplan.GroupName='"+POut.String(groupName)+"'";
-			//table[i][0] = PlanNum
-			//table[i][1] = FeeSchedNum (FeeSched, CopayFeeSched, AllowedFeeSched, FixedBenefit, or ManualFeeSchedNum)
-			//table[i][2] = GroupNum 
-			//table[i][3] = GroupName
-			DataTable table=Db.GetTable(command);
-			if(table.Rows.Count==0){
-				return 0;
-			}
-			command="UPDATE insplan SET ";
-			if(feeSchedType==FeeScheduleType.Normal){
-				command+="insplan.FeeSched ="+POut.Long(feeSchedNum)
-					+" WHERE insplan.FeeSched !="+POut.Long(feeSchedNum);
-			}
-			else if(feeSchedType==FeeScheduleType.OutNetwork){
-				command+="insplan.AllowedFeeSched ="+POut.Long(feeSchedNum)
-					+" WHERE insplan.AllowedFeeSched !="+POut.Long(feeSchedNum);
-			}
-			else if(feeSchedType==FeeScheduleType.CoPay || feeSchedType==FeeScheduleType.FixedBenefit) {
-				command+="insplan.CopayFeeSched ="+POut.Long(feeSchedNum);
-				if(feeSchedType==FeeScheduleType.FixedBenefit) {
-					command+= ",insplan.PlanType='f'";
-				}
-				command+=" WHERE insplan.CopayFeeSched !="+POut.Long(feeSchedNum);
-			}
-			else if(feeSchedType==FeeScheduleType.ManualBlueBook) {
-				command+="insplan.ManualFeeSchedNum ="+POut.Long(feeSchedNum)
-					+" WHERE insplan.ManualFeeSchedNum !="+POut.Long(feeSchedNum);
-			}
-			command+=" AND (";
-			for(int i=0;i<table.Rows.Count;i++){
-				command+="PlanNum="+table.Rows[i][0].ToString();
-				if(i<table.Rows.Count-1){
-					command+=" OR ";
-				}
-				//log InsPlan's fee schedule update.
-				//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
-				InsEditLogs.MakeLogEntry(POut.String(table.Columns[1].ToString()),
-					Security.CurUser.UserNum,POut.String(table.Rows[i][1].ToString()),feeSchedNum.ToString(),
-					InsEditLogType.InsPlan,PIn.Long(table.Rows[i][0].ToString()),0,
-					table.Rows[i][2].ToString()+" - "+table.Rows[i][3].ToString());
-			}
-			command+=")";
-			return Db.NonQ(command);
-		}
-
 
 		///<summary>Returns the number of fee schedules added.  It doesn't inform the user of how many plans were affected, but there will obviously be a
 		///certain number of plans for every new fee schedule.</summary>
