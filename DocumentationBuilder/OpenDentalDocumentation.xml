@@ -17127,8 +17127,8 @@
       <summary>Minimum date if last login date and time is unknown.
             Otherwise contians the last date and time this user successfully logged in.</summary>
     </column>
-    <column order="22" name="EClipboardClinicalPin" type="text">
-      <summary></summary>
+    <column order="22" name="EClipboardClinicalPin" type="varchar(128)">
+      <summary>Pin for ODT. This is the hashed value of the pin. Not used in OD proper.</summary>
     </column>
   </table>
   <table name="userodapptview">

@@ -232,8 +232,8 @@
   </table>
   <table name="userod">
     <summary></summary>
-    <column order="22" name="EClipboardClinicalPin" type="text">
-      <summary></summary>
+    <column order="22" name="EClipboardClinicalPin" type="varchar(128)">
+      <summary>Pin for ODT. This is the hashed value of the pin. Not used in OD proper.</summary>
     </column>
   </table>
   <table name="alertitem">
