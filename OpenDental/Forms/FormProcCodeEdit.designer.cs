@@ -242,9 +242,9 @@ namespace OpenDental {
 			// label9
 			// 
 			this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.label9.Location = new System.Drawing.Point(850, 662);
+			this.label9.Location = new System.Drawing.Point(850, 660);
 			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(135, 28);
+			this.label9.Size = new System.Drawing.Size(135, 32);
 			this.label9.TabIndex = 0;
 			this.label9.Text = "Clicking cancel will not undo changes to fees.";
 			this.label9.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -545,9 +545,9 @@ namespace OpenDental {
 			// label4
 			// 
 			this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.label4.Location = new System.Drawing.Point(947, 512);
+			this.label4.Location = new System.Drawing.Point(947, 508);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(122, 28);
+			this.label4.Size = new System.Drawing.Size(122, 32);
 			this.label4.TabIndex = 0;
 			this.label4.Text = "View provider and clinic specific fees";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.TopRight;

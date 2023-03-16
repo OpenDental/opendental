@@ -263,6 +263,12 @@
       </Enumeration>
     </column>
   </table>
+  <table name="userod">
+    <summary></summary>
+    <column order="22" name="EClipboardClinicalPin" type="varchar(128)">
+      <summary>Pin for ODT. This is the hashed value of the pin. Not used in OD proper.</summary>
+    </column>
+  </table>
   <table name="utm">
     <summary></summary>
     <column order="0" name="UtmNum" type="bigint(20)">
@@ -286,6 +292,12 @@
         <summary></summary>
         <EnumValue name="BlockWithMessage">3</EnumValue>
       </Enumeration>
+    </column>
+  </table>
+  <table name="userod">
+    <summary></summary>
+    <column order="22" name="EClipboardClinicalPin" type="text">
+      <summary>Pin for ODT. This is the hashed value of the pin. Not used in OD proper.</summary>
     </column>
   </table>
   <table name="webschedcarrierrule">
