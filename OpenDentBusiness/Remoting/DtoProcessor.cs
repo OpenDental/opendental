@@ -15,13 +15,17 @@ namespace OpenDentBusiness {
 		
 		///<summary>Used to indicate whether the middle tier process has initialized.</summary>
 		private static bool _isMiddleTierInitialized=false;
+		///<summary>The string representation of the AssemblyVersion for OpenDentBusiness.dll.</summary>
+		private static string _strOpenDentBusinessVersion=null;
+		///<summary>The raw ValueString of the ProgramVersion preference.</summary>
+		private static string _strProgramVersion=null;
 
 		///<summary>Pass in a serialized dto.  It returns a dto which must be deserialized by the client.
 		///Set serverMapPath to the root directory of the OpenDentalServerConfig.xml.  Typically Server.MapPath(".") from a web service.
 		///Optional parameter because it is not necessary for Unit Tests (mock server).</summary>
 		public static string ProcessDto(string dtoString,string serverMapPath="") {
 			try {
-				#region Normalize DateTime
+				#region Initialize
 				if(!_isMiddleTierInitialized) {
 					//If this fails, the exception will throw and be serialized and sent to the client.
 					ODInitialize.Initialize();
@@ -34,6 +38,7 @@ namespace OpenDentBusiness {
 					//Calling CDT.Class1.Decrypt will cause CDT to verify the assembly and then save the encryption key. This needs to be done here because
 					//if we later call CDT.Class1.Decrypt inside a thread, we won't we able to find OpenDentalServer.dll in the call stack.
 					ODException.SwallowAnyException(() => CDT.Class1.Decrypt("odv2e$fakeciphertext",out _));
+					_strOpenDentBusinessVersion=Assembly.GetAssembly(typeof(Db)).GetName().Version.ToString();
 					_isMiddleTierInitialized=true;
 				}
 				#endregion
@@ -58,6 +63,25 @@ namespace OpenDentBusiness {
 						configFilePath=ODFileUtils.CombinePaths(serverMapPath,"OpenDentalServerConfig.xml");
 					}
 					Userods.LoadDatabaseInfoFromFile(configFilePath);
+				}
+				#endregion
+				#region Verify Versions
+				//Middle Tier instances should be pointing at a databases of the same version.
+				//Obscure error messages can occur when the versions are different even if they differ by a single minor version.
+				//Every single payload should be blocked when the versions do not match and not just payloads invoking Security.LogInWeb (old behavior).
+				//Debug mode does not need to validate the ProgramVersion preference since that preference is purposefully ignored (never gets updated).
+				if(_strOpenDentBusinessVersion!=_strProgramVersion && !ODBuild.IsDebug()) {
+					//A valid database connection has been made by this point and one of two scenarios has happened:
+					//1. This is the first time verifying versions (_strProgramVersion is null).
+					//2. There was a version mismatch issue detected in a previous web call and we need to query the database again to see if it has been resolved.
+					//Get the raw value of the ProgramVersion preference from the database so that it can be verified.
+					//It is possible that this query will be executed a lot of times (for every payload sent to the server until the version issue has been fixed).
+					//This is purposeful since one of the scenarios can be fixed by upgrading the database and not manipulating or restarting the Middle Tier service.
+					_strProgramVersion=Db.GetScalar("SELECT ValueString FROM preference WHERE PrefName='ProgramVersion'");
+					if(_strOpenDentBusinessVersion!=_strProgramVersion) {
+						//The version mismatch issue is still present.
+						throw new ODException($"Version mismatch.  Middle Tier Server: '{_strOpenDentBusinessVersion}'  Database: '{_strProgramVersion}'");
+					}
 				}
 				#endregion
 				DataTransferObject dto=DataTransferObject.Deserialize(dtoString);

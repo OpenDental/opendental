@@ -78,11 +78,13 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please enter a valid date.");
 				return;
 			}
-			List<long> listOrthoCodeNums=ProcedureCodes.GetOrthoBandingCodeNums();
-			List<Procedure> listOrthoProcedures=Procedures.GetProcsByStatusForPat(_patPlan.PatNum,ProcStat.C).FindAll(x => listOrthoCodeNums.Contains(x.CodeNum));
-			if(listOrthoProcedures.Count==0) {
-				MsgBox.Show(this,"Cannot enter Next Claim Date until at least one Ortho Proc in Ortho Placement Procedures is complete. See Ortho Setup.");
-				return;
+			if(textDateNextClaim.Text!="") {
+				List<long> listOrthoCodeNums=ProcedureCodes.GetOrthoBandingCodeNums();
+				List<Procedure> listOrthoProcedures=Procedures.GetProcsByStatusForPat(_patPlan.PatNum,ProcStat.C).FindAll(x => listOrthoCodeNums.Contains(x.CodeNum));
+				if(listOrthoProcedures.Count==0) {
+					MsgBox.Show(this,"Cannot enter Next Claim Date until at least one Ortho Proc in Ortho Placement Procedures is complete. See Ortho Setup.");
+					return;
+				}
 			}
 			if(checkUseDefaultFee.Checked) {
 				_patPlan.OrthoAutoFeeBilledOverride = -1;

@@ -117,6 +117,37 @@ namespace OpenDentBusiness{
 			Crud.ConfirmationRequestCrud.Update(confirmationRequest);
 		}
 
+		///<summary>Returns all confirmation requests associated with an appointment and the short guid passed in. All confirmation requests for the same appointments 
+		///found via the short guid will be included in the list returned. This means that the confirmation requests returned may include some that do not 
+		///have the short guid passed in but still need to be updated. Also, some confirmation requests returned may not even have a short guid set at all but 
+		///instead are linked to an aggregate message that is being confirmed via the message type and message FK link.</summary>
+		public static List<ConfirmationRequest> GetAllConfirmationRequestsToUpdate(string shortGuid) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ConfirmationRequest>>(MethodBase.GetCurrentMethod(),shortGuid);
+			}
+			List<ConfirmationRequest> listConfirmationsByShortGuid=GetConfirmationsByShortGuid(shortGuid);
+			List<long> listApptNums=listConfirmationsByShortGuid.Select(x=>x.ApptNum).ToList();
+			CommType commType=listConfirmationsByShortGuid.FirstOrDefault()?.MessageType??CommType.Invalid;
+			long messageFk=listConfirmationsByShortGuid.FirstOrDefault()?.MessageFk??0;
+			//Remove any invalid appointment nums
+			listApptNums.RemoveAll(x=>x==0);
+			if(listApptNums.IsNullOrEmpty()) {
+				//Without any ApptNums, no updating of appointment status will be done so it's pointless to continue here. Just return an empty list.
+				return new List<ConfirmationRequest>();
+			}
+			//We want the confirmation requests that have been sent for this appointment.
+			string whereClause=$" WHERE ApptNum IN ({string.Join(",",listApptNums.Select(x=>POut.Long(x)))})";
+			//we need a valid commtype and a real message FK and then we want to find any confirmationrequests sent on the same message (aka an aggregate message)
+			if(commType>=0 && messageFk>0) {
+				//There is a known bug with an unknown cause for aggregate confirmations where the first row in an aggregate confirmation gets entered correctly
+				//but the rest are missing their short guid. Because of this we want to only match on message IF the short guid wasn't set. If a short guid is set it should be found via
+				//a matching shortGuid in the ConfirmationTerminated table at HQ.
+				whereClause+=$" OR (ShortGuid='' AND MessageType={POut.Enum(commType)} AND MessageFk={POut.Long(messageFk)})";
+			}
+			string command=$"SELECT * FROM confirmationrequest{whereClause}";
+			return Crud.ConfirmationRequestCrud.SelectMany(command);
+		}
+
 		///<summary>Expire confirmations for any appointments that have been rescheduled since sending out a confirmation request.</summary>
 		public static void HandleConfirmationsApptChanged(Logger.IWriteLine log) {	
 			//No remoting role check needed.		
