@@ -72,10 +72,9 @@ namespace OpenDental {
 			// checkIncludeNoIns
 			// 
 			this.checkIncludeNoIns.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIncludeNoIns.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkIncludeNoIns.Location = new System.Drawing.Point(558, 47);
+			this.checkIncludeNoIns.Location = new System.Drawing.Point(529, 46);
 			this.checkIncludeNoIns.Name = "checkIncludeNoIns";
-			this.checkIncludeNoIns.Size = new System.Drawing.Size(239, 16);
+			this.checkIncludeNoIns.Size = new System.Drawing.Size(268, 17);
 			this.checkIncludeNoIns.TabIndex = 8;
 			this.checkIncludeNoIns.Text = "Include secondary insurance and no insurance";
 			this.checkIncludeNoIns.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -124,10 +123,9 @@ namespace OpenDental {
 			// checkUseTreatingProvider
 			// 
 			this.checkUseTreatingProvider.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkUseTreatingProvider.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkUseTreatingProvider.Location = new System.Drawing.Point(558, 15);
+			this.checkUseTreatingProvider.Location = new System.Drawing.Point(558, 8);
 			this.checkUseTreatingProvider.Name = "checkUseTreatingProvider";
-			this.checkUseTreatingProvider.Size = new System.Drawing.Size(239, 16);
+			this.checkUseTreatingProvider.Size = new System.Drawing.Size(239, 17);
 			this.checkUseTreatingProvider.TabIndex = 6;
 			this.checkUseTreatingProvider.Text = "Use Treating Provider";
 			this.checkUseTreatingProvider.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -153,10 +151,9 @@ namespace OpenDental {
 			// checkBenefitAssumeGeneral
 			// 
 			this.checkBenefitAssumeGeneral.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkBenefitAssumeGeneral.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkBenefitAssumeGeneral.Location = new System.Drawing.Point(558, 31);
+			this.checkBenefitAssumeGeneral.Location = new System.Drawing.Point(558, 27);
 			this.checkBenefitAssumeGeneral.Name = "checkBenefitAssumeGeneral";
-			this.checkBenefitAssumeGeneral.Size = new System.Drawing.Size(239, 16);
+			this.checkBenefitAssumeGeneral.Size = new System.Drawing.Size(239, 17);
 			this.checkBenefitAssumeGeneral.TabIndex = 7;
 			this.checkBenefitAssumeGeneral.Text = "Assume procedures are General";
 			this.checkBenefitAssumeGeneral.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -235,10 +232,9 @@ namespace OpenDental {
 			// checkIncludePatsWithApts
 			// 
 			this.checkIncludePatsWithApts.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIncludePatsWithApts.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkIncludePatsWithApts.Location = new System.Drawing.Point(558, 63);
+			this.checkIncludePatsWithApts.Location = new System.Drawing.Point(529, 65);
 			this.checkIncludePatsWithApts.Name = "checkIncludePatsWithApts";
-			this.checkIncludePatsWithApts.Size = new System.Drawing.Size(239, 16);
+			this.checkIncludePatsWithApts.Size = new System.Drawing.Size(268, 17);
 			this.checkIncludePatsWithApts.TabIndex = 9;
 			this.checkIncludePatsWithApts.Text = "Include patients with upcoming appointments";
 			this.checkIncludePatsWithApts.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -436,7 +432,6 @@ namespace OpenDental {
 			// checkIncludeHiddenBillingTypes
 			// 
 			this.checkIncludeHiddenBillingTypes.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIncludeHiddenBillingTypes.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.checkIncludeHiddenBillingTypes.Location = new System.Drawing.Point(284, 85);
 			this.checkIncludeHiddenBillingTypes.Name = "checkIncludeHiddenBillingTypes";
 			this.checkIncludeHiddenBillingTypes.Size = new System.Drawing.Size(239, 16);

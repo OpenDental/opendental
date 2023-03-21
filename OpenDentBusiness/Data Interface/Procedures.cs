@@ -5494,6 +5494,16 @@ namespace OpenDentBusiness {
 				}
 			}
 		}
+
+		///<summary>Adds and returns a new EO procedure for the patient. New procedures will use the patient's default clinic and provider using the date specified.
+		///New procedure will use the first code in the category for the preference passed in.</summary>
+		public static Procedure InsertInsHistProcedureForApi(Patient patient,PrefName prefName,DateTime date,long planNum,long insSubNum) {
+			Procedure procedure=Procedures.CreateProcedureForInsHist(patient,date,prefName);
+			Procedures.Insert(procedure);
+			ClaimProcs.InsertClaimProcForInsHist(procedure,planNum,insSubNum);
+			Recalls.Synch(patient.PatNum);//A new EO procedure was added, run recall sync.
+			return procedure;
+		}
 		#endregion
 
 		//public static ProcExtended GetProcExtendedEntry(Procedure proc,params ProcAttachTypes[] excludedTypes) {

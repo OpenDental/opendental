@@ -124,8 +124,8 @@ namespace OpenDental {
 				}
 				else {
 					treeNode=new TreeNode();
-					treeNode.Tag=Tag=listTaskLists[i].TaskListNum;
-					treeNode.Text=Text=listTaskLists[i].Descript;
+					treeNode.Tag=listTaskLists[i].TaskListNum;
+					treeNode.Text=listTaskLists[i].Descript;
 					dictLookup.Add(listTaskLists[i].TaskListNum,treeNode);
 				}
 				if(listTaskLists[i].Parent==0) {

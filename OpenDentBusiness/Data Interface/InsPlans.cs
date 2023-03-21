@@ -759,7 +759,7 @@ namespace OpenDentBusiness {
 				pFeeSched="ManualFeeSchedNum";
 			}
 			string command=
-				"SELECT insplan.PlanNum,insplan.GroupName,insplan.GroupNum,insPlan.CopayFeeSched,employer.EmpName,carrier.CarrierName,"
+				"SELECT insplan.PlanNum,insplan.GroupName,insplan.GroupNum,insplan.CopayFeeSched,employer.EmpName,carrier.CarrierName,"
 				+"insplan.EmployerNum,insplan.CarrierNum,feesched.Description AS FeeSchedName,insplan.PlanType,"
 				+"insplan.IsBlueBookEnabled,insplan."+pFeeSched+" feeSched "
 				+"FROM insplan "
