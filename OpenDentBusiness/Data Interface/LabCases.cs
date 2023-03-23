@@ -31,13 +31,14 @@ namespace OpenDentBusiness{
 			string command="SELECT AptDateTime,appointment.AptNum,appointment.Op,DateTimeChecked,DateTimeRecd,DateTimeSent,"
 				+"LabCaseNum,laboratory.Description,LName,FName,Preferred,MiddleI,Phone,ProcDescript,Instructions "
 				+"FROM labcase "
-				+"LEFT JOIN appointment ON labcase.AptNum=appointment.AptNum "
+				+"LEFT JOIN appointment ON labcase.AptNum=appointment.AptNum OR labcase.PlannedAptNum=appointment.AptNum "
 				+"LEFT JOIN patient ON labcase.PatNum=patient.PatNum "
 				+"LEFT JOIN laboratory ON labcase.LaboratoryNum=laboratory.LaboratoryNum "
 				+"WHERE AptDateTime > "+POut.Date(aptStartDate)+" "
 				+"AND AptDateTime < "+POut.Date(aptEndDate.AddDays(1))+" ";
 			if(!showCompleted){
 				command+=" AND (AptStatus="+POut.Long((int)ApptStatus.Broken)
+					+" OR AptStatus="+POut.Long((int)ApptStatus.Planned)
 					+" OR AptStatus="+POut.Long((int)ApptStatus.None)
 					+" OR AptStatus="+POut.Long((int)ApptStatus.Scheduled)
 					+" OR AptStatus="+POut.Long((int)ApptStatus.UnschedList)+") ";
@@ -87,7 +88,8 @@ namespace OpenDentBusiness{
 					+"FROM labcase "
 					+"LEFT JOIN patient ON labcase.PatNum=patient.PatNum "
 					+"LEFT JOIN laboratory ON labcase.LaboratoryNum=laboratory.LaboratoryNum "
-					+"WHERE AptNum=0";
+					+"WHERE AptNum=0 "
+					+"AND PlannedAptNum=0 ";
 				raw=Db.GetTable(command);
 				for(int i=0;i<raw.Rows.Count;i++) {
 					row=table.NewRow();

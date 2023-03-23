@@ -395,15 +395,20 @@ namespace OpenDental {
 			}
 			gridSent.ListGridRows.Clear();
 			List<EmailMessage> listEmailsFiltered;
+			EmailAddress emailAddressSelected=GetSelectedAddress();
+			string[] arrayAddresses={ emailAddressSelected.EmailUsername.ToLower() };
+			if(!string.IsNullOrEmpty(emailAddressSelected.SenderAddress)) {
+				arrayAddresses.Append(emailAddressSelected.SenderAddress.ToLower());
+			}
 			if(_isSearching) { //if searching, use the search list. Should be prefilled.
-				listEmailsFiltered=_listEmailMessagesSentSearched.Where(x => GetSelectedAddress().EmailUsername.ToLower() == EmailMessages.GetAddressSimple(x.FromAddress).ToLower()).ToList();
+				listEmailsFiltered=_listEmailMessagesSentSearched.FindAll(x => EmailMessages.GetAddressSimple(x.FromAddress).ToLower().In(arrayAddresses));
 			}
 			else {
 				if(IsWebMail()) {
 					listEmailsFiltered=_listEmailMessagesSent.Where(x => x.ProvNumWebMail==Security.CurUser.ProvNum).ToList();
 				}
 				else {
-					listEmailsFiltered=_listEmailMessagesSent.Where(x => GetSelectedAddress().EmailUsername.ToLower() == EmailMessages.GetAddressSimple(x.FromAddress).ToLower()).ToList();
+					listEmailsFiltered=_listEmailMessagesSent.FindAll(x => EmailMessages.GetAddressSimple(x.FromAddress).ToLower().In(arrayAddresses));
 				}
 			}
 			//Refresh the local list of patient names with all of the patients in the filtered email list.

@@ -416,7 +416,8 @@ If you have questions, call <a href=""tel:[OfficePhone]"">[OfficePhone]</a>.",
 				"[ProvName]",
 				"[ProvAbbr]",
 				"[PracticeName]",
-				"[PracticePhone]"
+				"[PracticePhone]",
+				"[OfficePhone]"
 			};
 			switch(type) {
 				case ApptReminderType.Reminder:

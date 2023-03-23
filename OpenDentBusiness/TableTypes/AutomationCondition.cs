@@ -59,6 +59,9 @@ namespace OpenDentBusiness{
 		///<summary></summary>
 		[Description("Is Patient Instruction Present")]
 		IsPatientInstructionPresent,
+		///<summary></summary>
+		[Description("Insurance Plan ID")]
+		PlanNum,
 	}
 
 	///<summary></summary>

@@ -329,6 +329,11 @@ namespace OpenDental {
 							return false;
 						}
 						break;
+					case AutoCondField.PlanNum:
+						if(!PlanNumComparison(autoConditionsList[i],patNum)) {
+							return false;
+						}
+						break;
 				}
 			}
 			return true;
@@ -532,6 +537,23 @@ namespace OpenDental {
 			catch(Exception e) {
 				e.DoNothing();
 				return false;
+			}
+		}
+
+		///<summary>Returns true if the patient's insurance plan ID matches the autocondition PlanNum.</summary>
+		private static bool PlanNumComparison(AutomationCondition autoCond,long patNum) {
+			List<PatPlan> listPatPlans=PatPlans.Refresh(patNum);
+			if(listPatPlans.Count==0) {
+				return false;
+      }
+			List<InsSub> listInsSubs=InsSubs.GetMany(listPatPlans.Select(x => x.InsSubNum).ToList());
+			switch(autoCond.Comparison) {
+				case AutoCondComparison.Equals:
+					return listInsSubs.Any(x => x.PlanNum.ToString().ToLower()==autoCond.CompareString.ToLower());
+				case AutoCondComparison.Contains:
+					return listInsSubs.Any(x => x.PlanNum.ToString().ToLower().Contains(autoCond.CompareString.ToLower()));
+				default:
+					return false;
 			}
 		}
 		#endregion
