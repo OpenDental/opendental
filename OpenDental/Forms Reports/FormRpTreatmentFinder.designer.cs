@@ -72,6 +72,7 @@ namespace OpenDental {
 			// checkIncludeNoIns
 			// 
 			this.checkIncludeNoIns.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkIncludeNoIns.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.checkIncludeNoIns.Location = new System.Drawing.Point(529, 46);
 			this.checkIncludeNoIns.Name = "checkIncludeNoIns";
 			this.checkIncludeNoIns.Size = new System.Drawing.Size(268, 17);
@@ -123,6 +124,7 @@ namespace OpenDental {
 			// checkUseTreatingProvider
 			// 
 			this.checkUseTreatingProvider.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkUseTreatingProvider.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.checkUseTreatingProvider.Location = new System.Drawing.Point(558, 8);
 			this.checkUseTreatingProvider.Name = "checkUseTreatingProvider";
 			this.checkUseTreatingProvider.Size = new System.Drawing.Size(239, 17);
@@ -151,6 +153,7 @@ namespace OpenDental {
 			// checkBenefitAssumeGeneral
 			// 
 			this.checkBenefitAssumeGeneral.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkBenefitAssumeGeneral.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.checkBenefitAssumeGeneral.Location = new System.Drawing.Point(558, 27);
 			this.checkBenefitAssumeGeneral.Name = "checkBenefitAssumeGeneral";
 			this.checkBenefitAssumeGeneral.Size = new System.Drawing.Size(239, 17);
@@ -232,6 +235,7 @@ namespace OpenDental {
 			// checkIncludePatsWithApts
 			// 
 			this.checkIncludePatsWithApts.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkIncludePatsWithApts.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.checkIncludePatsWithApts.Location = new System.Drawing.Point(529, 65);
 			this.checkIncludePatsWithApts.Name = "checkIncludePatsWithApts";
 			this.checkIncludePatsWithApts.Size = new System.Drawing.Size(268, 17);
@@ -432,9 +436,10 @@ namespace OpenDental {
 			// checkIncludeHiddenBillingTypes
 			// 
 			this.checkIncludeHiddenBillingTypes.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkIncludeHiddenBillingTypes.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.checkIncludeHiddenBillingTypes.Location = new System.Drawing.Point(284, 85);
 			this.checkIncludeHiddenBillingTypes.Name = "checkIncludeHiddenBillingTypes";
-			this.checkIncludeHiddenBillingTypes.Size = new System.Drawing.Size(239, 16);
+			this.checkIncludeHiddenBillingTypes.Size = new System.Drawing.Size(239, 17);
 			this.checkIncludeHiddenBillingTypes.TabIndex = 51;
 			this.checkIncludeHiddenBillingTypes.Text = "Include Hidden Billing Types";
 			this.checkIncludeHiddenBillingTypes.TextAlign = System.Drawing.ContentAlignment.MiddleRight;

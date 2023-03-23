@@ -149,6 +149,20 @@ namespace OpenDentBusiness{
 			return table;
 		}
 
+		///<summary>Get a list of periomeasures from the db. Used in the API.</summary>
+		public static List<PerioMeasure> GetPerioMeasuresForApi(int limit,int offset,long perioExamNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<PerioMeasure>>(MethodBase.GetCurrentMethod(),limit,offset,perioExamNum);
+			}
+			string command="SELECT * FROM periomeasure ";
+			if(perioExamNum>0) {
+				command+="WHERE PerioExamNum="+POut.Long(perioExamNum)+" ";
+			}
+			command+="ORDER BY PerioMeasureNum "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit)+" ";
+			return Crud.PerioMeasureCrud.SelectMany(command);
+		}
+
 		public static List<PerioMeasure> GetAllForExam(long perioExamNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<PerioMeasure>>(MethodBase.GetCurrentMethod(),perioExamNum);

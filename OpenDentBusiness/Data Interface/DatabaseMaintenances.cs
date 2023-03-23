@@ -10218,6 +10218,8 @@ HAVING cnt>1";
 			listMissingPats.Add(new PatientMissingTableHelper("document","PatNum"));
 			listMissingPats.Add(new PatientMissingTableHelper("procedurelog","PatNum"));	
 			listMissingPats.Add(new PatientMissingTableHelper("inssub","Subscriber"));
+			listMissingPats.Add(new PatientMissingTableHelper("payment","PatNum"));
+			listMissingPats.Add(new PatientMissingTableHelper("paysplit","PatNum"));
 			//Use UNION instead of UNION ALL so that duplicates are removed.
 			string command="SELECT PatNum FROM (\r\n"
 				+string.Join("\r\nUNION\r\n",listMissingPats.Select(x =>
@@ -10233,8 +10235,10 @@ HAVING cnt>1";
 			List<DbmLog> listDbmLogs=new List<DbmLog>();
 			string methodName=MethodBase.GetCurrentMethod().Name;
 			for(int i=0;i<listMissingPatNums.Count;i++) {
-				if(listMissingPatNums[i]>maxPatNum+100) {
-					continue;
+				if(!PrefC.GetBool(PrefName.RandomPrimaryKeys)) {
+					if(listMissingPatNums[i]>maxPatNum+100) {
+						continue;
+					}
 				}
 				modifiedCount++;
 				Patient tempPat=Patients.CreateNewPatient("Patient",

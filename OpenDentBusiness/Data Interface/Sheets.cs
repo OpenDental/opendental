@@ -125,6 +125,7 @@ namespace OpenDentBusiness{
 				return Meth.GetObject<List<Sheet>>(MethodBase.GetCurrentMethod(),patNum,referralNum);
 			}
 			string command="SELECT * FROM sheet WHERE PatNum="+POut.Long(patNum)
+				+" AND sheet.SheetType="+POut.Int((int)SheetTypeEnum.ReferralSlip)
 				+" AND EXISTS(SELECT * FROM sheetfield "
 				+"WHERE sheet.SheetNum=sheetfield.SheetNum "
 				+"AND sheetfield.FieldType="+POut.Long((int)SheetFieldType.Parameter)

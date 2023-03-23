@@ -85,6 +85,14 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
+		public static bool Update(Vitalsign vitalsign,Vitalsign vitalsignOld){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),vitalsign,vitalsignOld);
+			}
+			return Crud.VitalsignCrud.Update(vitalsign,vitalsignOld);
+		}
+
+		///<summary></summary>
 		public static void Delete(long vitalsignNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),vitalsignNum);
@@ -668,6 +676,24 @@ namespace OpenDentBusiness{
 		public static List<Loinc> GetLoincsWeight() {
 			//The list returned will only contain the Loincs that are actually in the loinc table.
 			return Loincs.GetForCodeList("29463-7,18833-4,3141-9,3142-7,8350-1,8351-9");//Body weight,First Body weight,Body weight Measured,Body weight Stated,Body weight Measured --with clothes,Body weight Measured --without clothes
+		}
+
+		///<summary>Returns list of Loinc records related to blood pressure from DB.</summary>
+		public static List<Loinc> GetLoincsBloodPressure() {
+			//The list returned will only contain the Loincs that are actually in the loinc table.
+			return Loincs.GetForCodeList("8480-6,8462-4");//BP Systolic exan,BP Diastolic exam
+		}
+
+		///<summary>Returns list of Loinc records related to BMI Exam procedure from DB.</summary>
+		public static List<Loinc> GetLoincsBMIExam() {
+			//The list returned will only contain the Loincs that are actually in the loinc table.
+			return Loincs.GetForCodeList("39156-5");//BMI Exam procedure
+		}
+
+		///<summary>Returns list of Loinc records related to BMI Percentiles from DB.</summary>
+		public static List<Loinc> GetLoincsBMIPercentile() {
+			//The list returned will only contain the Loincs that are actually in the loinc table.
+			return Loincs.GetForCodeList("59576-9");//Body mass index (BMI) [Percentile] Per age and gender, only code we will allow for percentile
 		}
 
 		///<summary>Takes in vitalsign and various fields. Assigns the vitalsign's fields to those passed in.</summary>
