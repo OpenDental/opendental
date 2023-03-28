@@ -1334,6 +1334,7 @@
         <EnumValue name="IsProcRequired"></EnumValue>
         <EnumValue name="IsControlled"></EnumValue>
         <EnumValue name="IsPatientInstructionPresent"></EnumValue>
+        <EnumValue name="PlanNum"></EnumValue>
       </Enumeration>
     </column>
     <column order="3" name="Comparison" type="tinyint(4)">

@@ -181,7 +181,7 @@ namespace OpenDental{
 			this.labelAtoZSizeInfo.Name = "labelAtoZSizeInfo";
 			this.labelAtoZSizeInfo.Size = new System.Drawing.Size(340, 18);
 			this.labelAtoZSizeInfo.TabIndex = 12;
-			this.labelAtoZSizeInfo.Text = "Data over the max is charged at a rate of $0.32/GB per month";
+			this.labelAtoZSizeInfo.Text = "Data over the max is charged at a rate of $0.40/GB per month";
 			this.labelAtoZSizeInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelCurAtoZSize

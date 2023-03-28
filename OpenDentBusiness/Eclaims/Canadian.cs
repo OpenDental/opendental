@@ -33,7 +33,7 @@ namespace OpenDentBusiness.Eclaims {
 		}
 
 		///<summary>Throws exceptions.  Called directly instead of from Eclaims.SendBatches.  Includes one claim.
-		///Sets claim status internally if successfully sent.  Returns the EtransNum of the ack.
+		///Sets claim status internally if successfully sent. Returns ClaimNum of the secondary claim. Will be zero if we didn't send a secondary.
 		///Includes various user interaction such as displaying of messages, printing, triggering of COB claims, etc.
 		///The queueItem.ClearinghouseNum must refer to a valid Canadian clearinghouse.</summary>
 		public static long SendClaim(Clearinghouse clearinghouseClin,ClaimSendQueueItem queueItem,bool doPrint,bool isAutomatic,
@@ -977,6 +977,7 @@ namespace OpenDentBusiness.Eclaims {
 			if(doPrint && formCCDPrint!=null) {
 				formCCDPrint(etrans,result,true);//Physically print the form.
 			}
+			ClaimSendQueueItem queueItem2=null;
 			if(canCreateSecClaim) {
 				//If an eob was returned and patient has secondary insurance, we'll create secondary claim and then check of we need to consider an embedded response.
 				Claim claim2=new Claim();
@@ -1022,7 +1023,7 @@ namespace OpenDentBusiness.Eclaims {
 						claim2.ProvTreat=claim.ProvTreat;
 						Claims.Update(claim2);
 					}
-					ClaimSendQueueItem queueItem2=Claims.GetQueueList(claim2.ClaimNum,claim2.ClinicNum,0)[0];
+					queueItem2=Claims.GetQueueList(claim2.ClaimNum,claim2.ClinicNum,0)[0];
 					if(embeddedMsg.IsNullOrEmpty()) {//No embedded secondary response
 						string responseMessageVersion=result.Substring(18,2);//Field A03 always exists on all messages and is always in the same location.
 						//We can only send an electronic secondary claim when the EOB received from the primary insurance is a version 04 message and when
@@ -1030,9 +1031,9 @@ namespace OpenDentBusiness.Eclaims {
 						if(responseMessageVersion!="02" && carrier2.IsCDA && carrier2.NoSendElect==NoSendElectType.SendElect
 							&& carrier2.CanadianSupportedTypes.HasFlag(CanSupTransTypes.CobClaimTransaction_07))
 						{
-							long etransNum=SendClaim(clearinghouseClin,queueItem2,doPrint,isAutomatic,formCCDPrint,showProviderTransferWindow,
+							SendClaim(clearinghouseClin,queueItem2,doPrint,isAutomatic,formCCDPrint,showProviderTransferWindow,
 								printCdaClaimFormDelegate);//recursive
-							return etransNum;//for now, we'll return the etransnum of the secondary ack.
+							return queueItem2.ClaimNum;
 						}
 						//The secondary carrier does not support COB claim transactions. We must print a manual claim form so the user can send manually.
 						if(doPrint) {
@@ -1086,7 +1087,7 @@ namespace OpenDentBusiness.Eclaims {
 					}
 				}
 			}
-			return etransAck.EtransNum;
+			return (queueItem2?.ClaimNum)??0;
 		}
 
 		///<summary>Throws exception. Similar to Etrans.SetClaimSentOrPrinted(...) but not set the claim sent in the DB.

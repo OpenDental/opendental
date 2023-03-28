@@ -66,6 +66,7 @@ namespace OpenDental {
 			if(_hasPrintPreviewOnLoad) {
 				//This way the form will fully load visually before showing the print preview.
 				EtransL.PrintPreview835(_x835,_preLoadedPrintPreviewClaimNum);
+				SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,"ERA EOB window opened for eTrans number: "+EtransCur.EtransNum+", Carrier: "+_x835.PayerName+", Amount: "+_x835.InsPaid+", Date: "+EtransCur.DateTimeTrans+".");
 			}
 		}
 
@@ -531,6 +532,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Only ERAs with a status of Unprocessed, Partial, or NotFinalized can be processed automatically.");
 				return;
 			}
+			SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,"ERA auto-process button clicked.");
 			Cursor=Cursors.WaitCursor;
 			EraAutomationResult eraAutomationResult=eraAutomationResult=Etranss.TryAutoProcessEraEob(_x835,_listEtrans835Attaches,isFullyAutomatic:false);
 			RefreshFromDb();
@@ -622,6 +624,7 @@ namespace OpenDental {
 			}
 			Etrans835s.Upsert(etrans835,_x835);
 			_formEtrans835Edit=null;
+			SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,"ERA edit window closed for eTrans number: "+EtransCur.EtransNum+", Carrier: "+_x835.PayerName+", Amount: "+_x835.InsPaid+", Date: "+EtransCur.DateTimeTrans+".");
 		}
 		
 	}

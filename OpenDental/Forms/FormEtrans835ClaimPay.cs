@@ -501,7 +501,7 @@ namespace OpenDental {
 
 		///<Summary>Surround with try-catch.</Summary>
 		private void SaveGridChanges(){
-      //validate all grid cells
+		//validate all grid cells
 			double dbl;
 			for(int i=0;i<gridPayments.ListGridRows.Count;i++){
 				if(gridPayments.ListGridRows[i].Cells[_idxDeduct].Text!=""){//deduct
@@ -807,6 +807,10 @@ namespace OpenDental {
 				if(claim.ClaimType!="PreAuth") {
 					ClaimSnapshots.CreateClaimSnapshot(_listClaimProcsOld,ClaimSnapshotTrigger.InsPayment,claim.ClaimType);
 				}
+			}
+			for(int i=0;i<listClaimProcs.Count;i++) {
+				ClaimProc claimProcOld=_listClaimProcsOld.FirstOrDefault(x => x.ClaimProcNum==listClaimProcs[i].ClaimProcNum);
+				ClaimProcs.CreateAuditTrailEntryForClaimProcPayment(listClaimProcs[i],claimProcOld,isInsPayCreate:true,isPaymentFromERA:true);
 			}
 			DialogResult=DialogResult.OK;
 		}

@@ -43,6 +43,16 @@
       <summary></summary>
     </column>
   </table>
+  <table name="automationcondition">
+    <summary></summary>
+    <column order="2" name="CompareField" type="tinyint(4)">
+      <summary>Enum:AutoCondField </summary>
+      <Enumeration name="AutoCondField">
+        <summary></summary>
+        <EnumValue name="PlanNum"></EnumValue>
+      </Enumeration>
+    </column>
+  </table>
   <table name="claim">
     <summary></summary>
     <column order="21" name="PlaceService" type="tinyint">

@@ -1353,6 +1353,9 @@ namespace OpenDentBusiness{
 			if(isAutomatic) {
 				MakeEraClaimAutomationLog(claimOld,claim);
 			}
+                        else {
+                                SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,"ERA claim payment received");
+                        }
 			Claims.Update(claim);
 			ClaimProcs.RemoveSupplementalTransfersForClaims(claim.ClaimNum);
 			InsBlueBooks.SynchForClaimNums(claim.ClaimNum);

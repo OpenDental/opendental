@@ -109,7 +109,7 @@ namespace OpenDental{
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(313, 31);
 			this.label1.TabIndex = 13;
-			this.label1.Text = "Each additional session costs $15/month. You will only be charged for sessions ac" +
+			this.label1.Text = "Each additional session costs $18/month. You will only be charged for sessions ac" +
     "tually used each month.";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
