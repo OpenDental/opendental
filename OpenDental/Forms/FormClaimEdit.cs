@@ -45,7 +45,8 @@ namespace OpenDental{
 		private bool _hasDoubleClickWarningAlreadyBeenDisplayed=false;
 		private List<InsSub> _listInsSubs;
 		private bool _isCanadianClaimSending=false;
-
+		///<summary>Can be zero. Only populated when a secondary Canadian claim is automatically sent as a result of sending primary.</summary>
+		private long _canadianSecondaryClaimNum=0;
 		///<summary>The Ordering provider, for medical claims.</summary>
 		private long _provNumOrdering;
 		///<summary>If this claim is attached to an ordering referral, then this varible will not be null.</summary>
@@ -2798,7 +2799,7 @@ namespace OpenDental{
 				}
 			}
 			try {
-				Canadian.SendClaim(clearinghouseClin,claimSendQueueItem,true,false,FormCCDPrint.PrintCCD,ShowProviderTransferWindow,
+				_canadianSecondaryClaimNum=Canadian.SendClaim(clearinghouseClin,claimSendQueueItem,true,false,FormCCDPrint.PrintCCD,ShowProviderTransferWindow,
 					FormClaimPrint.PrintCdaClaimForm);//Ignore the etransNum result. Physically print the form.
 			}
 			catch(ApplicationException ex){
@@ -3675,8 +3676,8 @@ namespace OpenDental{
 			return _blueBookEstimateData;
 		}
 
-		///<summary>If claim was set from some other status to Sent, this may auto receive 
-		///the claim if InsAutoReceiveNoAssign pref is on and other conditions are met.</summary>
+		///<summary>If InsAutoReceiveNoAssign pref is on, can automatically receive the claim displayed in the form if its status has changed to Sent.
+		///If a Canadian claim was sent, this may receive it and any automatically sent secondary claims.</summary>
 		private void ReceiveAsNoPaymentIfNeeded() {
 			//Refresh because _claim and UI may not be updated.
 			Claim claim=Claims.GetClaim(_claim.ClaimNum);
@@ -3684,18 +3685,20 @@ namespace OpenDental{
 			if(_claimOld.ClaimStatus=="S" || claim.ClaimStatus!="S") {
 				return;
 			}
-			if(!Claims.ReceiveAsNoPaymentIfNeeded(claim.ClaimNum)) {
-				return;
+			if(Claims.ReceiveAsNoPaymentIfNeeded(claim.ClaimNum)) {
+				//The method above changes and updates the claim and claimprocs.
+				//Refresh them for use in closing method.
+				_listClaimProcs=ClaimProcs.Refresh(_patient.PatNum);
+				_claim=Claims.GetClaim(_claim.ClaimNum);
+				FillGrids();
+				//These must be set to trigger prompt for secondary claim if needed.
+				_isPaymentEntered=true;
+				comboClaimStatus.SelectedIndex=_listClaimStatuses.IndexOf(ClaimStatus.Received);
+				textDateRec.Text=DateTime.Today.ToShortDateString();
 			}
-			//The method above changes and updates the claim and claimprocs.
-			//Refresh them for use in closing method.
-			_listClaimProcs=ClaimProcs.Refresh(_patient.PatNum);
-			_claim=Claims.GetClaim(_claim.ClaimNum);
-			FillGrids();
-			//These must be set to trigger prompt for secondary claim if needed.
-			_isPaymentEntered=true;
-			comboClaimStatus.SelectedIndex=_listClaimStatuses.IndexOf(ClaimStatus.Received);
-			textDateRec.Text=DateTime.Today.ToShortDateString();
+			if(_canadianSecondaryClaimNum!=0) {
+				Claims.ReceiveAsNoPaymentIfNeeded(_canadianSecondaryClaimNum);
+			}
 		}
 
 		///<summary>We have to set _blueBookEstimateData to null when _listClaimProcsForClaim is assigned because we may not have all of the

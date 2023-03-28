@@ -127,7 +127,17 @@ namespace OpenDental{
 				else {
 					row.Cells.Add("Cat%");
 				}
-				row.Cells.Add(_table.Rows[i]["FeeSchedName"].ToString());
+				bool isFixedBenefitFeeSched=_listFixedBenefitFeeSchedNums.Contains(PIn.Long(_table.Rows[i]["FeeSched"].ToString()));
+				bool doAddName=true;
+				if((FeeScheduleType)listType.SelectedIndex==FeeScheduleType.CoPay && isFixedBenefitFeeSched) {
+					doAddName=false;
+				}
+				if((FeeScheduleType)listType.SelectedIndex==FeeScheduleType.FixedBenefit && !isFixedBenefitFeeSched) {
+					doAddName=false;
+				}
+				if(doAddName) {
+					row.Cells.Add(_table.Rows[i]["FeeSchedName"].ToString());
+				}
 				gridMain.ListGridRows.Add(row);
 			}
 			gridMain.EndUpdate();

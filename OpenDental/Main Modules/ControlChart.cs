@@ -5955,6 +5955,13 @@ namespace OpenDental {
 				}
 				return false;
 			}
+			long codeNum=PIn.Long(row["CodeNum"].ToString());
+			if(ProcedureCodes.GetStringProcCode(codeNum,doThrowIfMissing:false)==ProcedureCodes.GroupProcCode) {
+				if(!isSilent) {
+					MsgBox.Show(this,"Cannot create a multiple visit group with a group note.");
+				}
+				return false;
+			}
 			if(gridProg.SelectedTags<DataRow>().Count(x => x["ProcNum"].ToString()!="0")<2) {
 				if(!isSilent) {
 					MsgBox.Show(this,"At least two procedures must be selected to create a multiple visit group.");

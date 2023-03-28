@@ -99,7 +99,7 @@ namespace OpenDental{
 			_sigButDef.SynchIcon=PIn.Byte(textSynchIcon.Text);
 			_sigButDef.SigElementDefNumUser=0;
 			if(comboTo.SelectedIndex>0){
-				_sigButDef.SigElementDefNumUser=_arraySigElementDefExtras[comboTo.SelectedIndex-1].SigElementDefNum;
+				_sigButDef.SigElementDefNumUser=_arraySigElementDefUser[comboTo.SelectedIndex-1].SigElementDefNum;
 			}
 			_sigButDef.SigElementDefNumExtra=0;
 			if(comboExtras.SelectedIndex>0){

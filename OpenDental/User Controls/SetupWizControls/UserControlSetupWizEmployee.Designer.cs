@@ -43,7 +43,7 @@
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(3, 66);
+			this.label3.Location = new System.Drawing.Point(3, 103);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(166, 55);
 			this.label3.TabIndex = 34;
@@ -73,7 +73,7 @@
 			// 
 			this.label8.Location = new System.Drawing.Point(3, 0);
 			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(203, 66);
+			this.label8.Size = new System.Drawing.Size(215, 85);
 			this.label8.TabIndex = 27;
 			this.label8.Text = "Here is the list of your current employees. Click \'Add\' to add more employees. \r\n" +
     "Each employee must have a First Name and a Last Name.";

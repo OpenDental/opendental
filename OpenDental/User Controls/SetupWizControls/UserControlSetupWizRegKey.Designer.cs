@@ -41,25 +41,25 @@
 			this.groupProcTools.Controls.Add(this.butProcCodeTools);
 			this.groupProcTools.Location = new System.Drawing.Point(244, 281);
 			this.groupProcTools.Name = "groupProcTools";
-			this.groupProcTools.Size = new System.Drawing.Size(446, 105);
+			this.groupProcTools.Size = new System.Drawing.Size(446, 117);
 			this.groupProcTools.TabIndex = 61;
 			this.groupProcTools.TabStop = false;
 			this.groupProcTools.Text = "Procedure Code Tools";
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(6, 24);
+			this.label1.Location = new System.Drawing.Point(3, 24);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(419, 39);
+			this.label1.Size = new System.Drawing.Size(440, 51);
 			this.label1.TabIndex = 60;
 			this.label1.Text = "After a valid registration key has been entered, you should run the procedure cod" +
     "e tools to add in the correct procedure codes and remove any trial version \"T\" c" +
     "odes.";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// butProcCodeTools
 			// 
-			this.butProcCodeTools.Location = new System.Drawing.Point(248, 66);
+			this.butProcCodeTools.Location = new System.Drawing.Point(134, 78);
 			this.butProcCodeTools.Name = "butProcCodeTools";
 			this.butProcCodeTools.Size = new System.Drawing.Size(178, 23);
 			this.butProcCodeTools.TabIndex = 59;

@@ -616,5 +616,9 @@ namespace OpenDental {
 				ListHx835_ShortClaimProcsForUnsentClaims=listHx835_ShortClaimProcsForUnsentClaims;
 			}
 		}
+
+		private void FormRpEraAutoProcessed_Shown(object sender,EventArgs e) {
+			SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,"Window 'ERA's Automatically Processed' opened.");
+		}
 	}
 }

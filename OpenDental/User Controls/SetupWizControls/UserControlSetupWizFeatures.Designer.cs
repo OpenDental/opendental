@@ -267,9 +267,9 @@
 			// label1
 			// 
 			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.label1.Location = new System.Drawing.Point(631, 414);
+			this.label1.Location = new System.Drawing.Point(631, 402);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(296, 39);
+			this.label1.Size = new System.Drawing.Size(296, 51);
 			this.label1.TabIndex = 110;
 			this.label1.Text = "Further modifications to this list can be made by going to Setup -> Advanced Setu" +
     "p -> Show Features, or by clicking \"Advanced\".";

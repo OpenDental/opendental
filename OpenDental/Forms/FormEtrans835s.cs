@@ -64,6 +64,7 @@ namespace OpenDental {
 			if(PrefC.GetBool(PrefName.EraRefreshOnLoad)) {
 				//This must be in Shown due to the progress bar forcing this window behind other windows.
 				FilterAndFillGrid();
+				SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,"Window 'Electronic EOBs - ERA 835s' opened.");
 			}
 		}
 

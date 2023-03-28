@@ -667,7 +667,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Creates InsWriteOffEdit, InsPayEdit, and InsPayCreate logs for a claimproc as needed.</summary>
-		public static void CreateAuditTrailEntryForClaimProcPayment(ClaimProc claimProcNew,ClaimProc claimProcOld,bool isInsPayCreate) {
+		public static void CreateAuditTrailEntryForClaimProcPayment(ClaimProc claimProcNew,ClaimProc claimProcOld,bool isInsPayCreate, bool isPaymentFromERA=false) {
 			if(claimProcNew==null || claimProcOld==null) {
 				return;
 			}
@@ -681,6 +681,7 @@ namespace OpenDentBusiness{
 			string strClaimProcNewWriteOff=claimProcNew.WriteOff.ToString("C");
 			string strClaimProcOldInsPayAmt=claimProcOld.InsPayAmt.ToString("C");
 			string strClaimProcNewInsPayAmt=claimProcNew.InsPayAmt.ToString("C");
+			string strERA = isPaymentFromERA?" (Payment from ERA)":"";
 			long patNum=claimProcNew.PatNum;
 			Permissions permissionInsPay=Permissions.InsPayEdit;
 			if(isInsPayCreate) {
@@ -689,20 +690,20 @@ namespace OpenDentBusiness{
 			//The write off has changed
 			if(claimProcNew.WriteOff!=claimProcOld.WriteOff) {
 				SecurityLogs.MakeLogEntry(Permissions.InsWriteOffEdit,patNum,$"Write-off {strProcLog}"
-					+$"changed from {strClaimProcOldWriteOff} to {strClaimProcNewWriteOff}");
+					+$"changed from {strClaimProcOldWriteOff} to {strClaimProcNewWriteOff}"+strERA);
 			}
 			//Insurance payment is being created but hasn't changed. The only scenario I can think of where this would be true is $0 payment.
 			if(claimProcNew.InsPayAmt==claimProcOld.InsPayAmt && isInsPayCreate) {
 				if(!strProcLog.IsNullOrEmpty()) {
 					//This prepends to string from above, so strProcLog will be "Insurance payment amount for procedure Dxxxx, "
-					strProcLog=$"Insurance payment {strProcLog}";
+					strProcLog=$"Insurance payment {strProcLog}"+strERA;
 				}
-				SecurityLogs.MakeLogEntry(permissionInsPay,patNum,$"{strProcLog}Insurance payment amount {strClaimProcNewInsPayAmt}");
+				SecurityLogs.MakeLogEntry(permissionInsPay,patNum,$"{strProcLog}Insurance payment amount {strClaimProcNewInsPayAmt}"+strERA);
 			}
 			//Insurance payment is new or we are editing an existing one and payment amount has changed.
 			else if(claimProcNew.InsPayAmt!=claimProcOld.InsPayAmt) {
 				SecurityLogs.MakeLogEntry(permissionInsPay,patNum,$"Insurance payment {strProcLog}"
-					+$"changed from {strClaimProcOldInsPayAmt} to {strClaimProcNewInsPayAmt}");
+					+$"changed from {strClaimProcOldInsPayAmt} to {strClaimProcNewInsPayAmt}"+strERA);
 			}
 		}
 		#endregion

@@ -31,8 +31,6 @@ namespace OpenDental {
 		private Phone _phoneSelected;
 		private int _tileHeight=35;
 		private int _tileWidth=130;
-		/// <summary>This is where the tiles need to start (under the existing controls) in the y axis in order to be drawn correctly.</summary>
-		private int _tileStart;
 		///<summary>How many phone tiles should show up in each column before creating a new column.</summary>
 		private int _tilesPerColumn=27;
 		///<summary>This is the difference between server time and local computer time.  Used to ensure that times displayed are accurate to the second.  This value is usally just a few seconds, but possibly a few minutes.</summary>
@@ -59,7 +57,6 @@ namespace OpenDental {
 
 		#region Methods - Event Handlers
 		private void FormPhoneList_Load(object sender,EventArgs e) {
-			_tileStart=butSettings.Bottom+8;
 			_isFlashingPink=false;
 			_timeSpanDelta=MiscData.GetNowDateTime()-DateTime.Now;
 			_listPhonesAll=Phones.GetPhoneList();
@@ -68,6 +65,7 @@ namespace OpenDental {
 			_listPeerInfos=PeerInfos.GetActiveSessions(false,true);
 			_listPeerInfos=new List<PeerInfo>();
 			_listMapAreas=MapAreas.Refresh();
+			listBoxQueueFilter.SelectedIndex=0;//all
 			FilterAndSortPhoneList();
 			FillGrid();
 			radioByExt.CheckedChanged+=radioSort_CheckedChanged;
@@ -84,6 +82,7 @@ namespace OpenDental {
 			listBoxStatus.Items.Add("Backup",ClockStatusEnum.Backup);
 			timerFlash.Enabled=true;
 			textNameOrExt.Select();//Tab order might not have been good enough
+			//There is no event for textNameOrExt changing value because the grid gets refreshed every second or two.
 		}
 
 		private void FormPhoneTiles_Shown(object sender,EventArgs e) {      
@@ -357,6 +356,8 @@ namespace OpenDental {
 			gridMain.Columns.Add(col);
 			col=new GridColumn("Cubicle",50);
 			gridMain.Columns.Add(col);
+			col=new GridColumn("Queue",50);
+			gridMain.Columns.Add(col);
 			col=new GridColumn("Customer",150);
 			gridMain.Columns.Add(col);
 			col=new GridColumn("Employee Notes",200);
@@ -474,6 +475,13 @@ namespace OpenDental {
 				else{
 					row.Cells.Add(mapArea.Description);
 				}
+				//Queue---------------------------------------------------------------------------------------------------------------
+				if(_listPhonesShowing[i].RingGroups==AsteriskQueues.None){
+					row.Cells.Add("");
+				}
+				else{
+					row.Cells.Add(_listPhonesShowing[i].RingGroups.ToString());
+				}
 				//Customer------------------------------------------------------------------------------------------------------------
 				row.Cells.Add(_listPhonesShowing[i].CustomerNumber);
 				//Employee Notes--------------------------------------------------------------------------------------------------------
@@ -504,6 +512,10 @@ namespace OpenDental {
 				}
 			}
 			_listPhonesShowing=_listPhonesShowing.FindAll(x=>x.EmployeeName.ToLower().Contains(textNameOrExt.Text.ToLower()) || x.Extension.ToString().Contains(textNameOrExt.Text.ToLower()));
+			if(listBoxQueueFilter.SelectedIndex>0){
+				AsteriskQueues asteriskQueues=(AsteriskQueues)(listBoxQueueFilter.SelectedIndex-1);
+				_listPhonesShowing=_listPhonesShowing.FindAll(x=>x.RingGroups==asteriskQueues);
+			}
 			if(checkNeedsHelpTop.Checked){
 				if(radioByName.Checked){
 					_listPhonesShowing=_listPhonesShowing.OrderBy(x=>x.ClockStatus!=ClockStatusEnum.NeedsHelp)

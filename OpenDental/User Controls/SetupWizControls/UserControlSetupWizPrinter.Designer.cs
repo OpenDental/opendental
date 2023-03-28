@@ -563,9 +563,9 @@
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(0, 386);
+			this.label7.Location = new System.Drawing.Point(6, 349);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(285, 31);
+			this.label7.Size = new System.Drawing.Size(362, 34);
 			this.label7.TabIndex = 46;
 			this.label7.Text = "Further changes can be made by going to \r\nSetup -> Images -> Imaging Quality or c" +
     "licking \'Advanced\'.\r\n";
@@ -652,9 +652,9 @@
 			// 
 			// label18
 			// 
-			this.label18.Location = new System.Drawing.Point(5, 79);
+			this.label18.Location = new System.Drawing.Point(9, 79);
 			this.label18.Name = "label18";
-			this.label18.Size = new System.Drawing.Size(186, 19);
+			this.label18.Size = new System.Drawing.Size(180, 19);
 			this.label18.TabIndex = 15;
 			this.label18.Text = "Resolution";
 			this.label18.TextAlign = System.Drawing.ContentAlignment.MiddleRight;

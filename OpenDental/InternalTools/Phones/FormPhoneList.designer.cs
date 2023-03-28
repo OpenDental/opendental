@@ -55,6 +55,8 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.listBoxQueues = new OpenDental.UI.ListBoxOD();
 			this.butClose = new OpenDental.UI.Button();
+			this.label7 = new System.Windows.Forms.Label();
+			this.listBoxQueueFilter = new OpenDental.UI.ListBoxOD();
 			this.groupBox1.SuspendLayout();
 			this.panelGrid2.SuspendLayout();
 			this.groupBox2.SuspendLayout();
@@ -73,10 +75,9 @@
 			// 
 			// groupBox1
 			// 
-			this.groupBox1.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupBox1.Controls.Add(this.radioByExt);
 			this.groupBox1.Controls.Add(this.radioByName);
-			this.groupBox1.Location = new System.Drawing.Point(24, 108);
+			this.groupBox1.Location = new System.Drawing.Point(24, 180);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(126, 58);
 			this.groupBox1.TabIndex = 29;
@@ -127,7 +128,7 @@
 			// checkHideClockedOut
 			// 
 			this.checkHideClockedOut.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkHideClockedOut.Location = new System.Drawing.Point(8, 176);
+			this.checkHideClockedOut.Location = new System.Drawing.Point(8, 248);
 			this.checkHideClockedOut.Name = "checkHideClockedOut";
 			this.checkHideClockedOut.Size = new System.Drawing.Size(118, 16);
 			this.checkHideClockedOut.TabIndex = 31;
@@ -142,7 +143,7 @@
 			// checkHideOnBreak
 			// 
 			this.checkHideOnBreak.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkHideOnBreak.Location = new System.Drawing.Point(20, 199);
+			this.checkHideOnBreak.Location = new System.Drawing.Point(20, 271);
 			this.checkHideOnBreak.Name = "checkHideOnBreak";
 			this.checkHideOnBreak.Size = new System.Drawing.Size(106, 16);
 			this.checkHideOnBreak.TabIndex = 32;
@@ -184,7 +185,7 @@
 			this.checkNeedsHelpTop.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkNeedsHelpTop.Checked = true;
 			this.checkNeedsHelpTop.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkNeedsHelpTop.Location = new System.Drawing.Point(2, 86);
+			this.checkNeedsHelpTop.Location = new System.Drawing.Point(2, 158);
 			this.checkNeedsHelpTop.Name = "checkNeedsHelpTop";
 			this.checkNeedsHelpTop.Size = new System.Drawing.Size(124, 16);
 			this.checkNeedsHelpTop.TabIndex = 36;
@@ -276,7 +277,6 @@
 			// 
 			// groupBox2
 			// 
-			this.groupBox2.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupBox2.Controls.Add(this.label4);
 			this.groupBox2.Controls.Add(this.butPhoneManage);
 			this.groupBox2.Controls.Add(this.butPhoneAttach);
@@ -368,10 +368,35 @@
 			this.butClose.Text = "Close";
 			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
+			// label7
+			// 
+			this.label7.Location = new System.Drawing.Point(46, 86);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(63, 18);
+			this.label7.TabIndex = 49;
+			this.label7.Text = "Queues";
+			this.label7.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			// 
+			// listBoxQueueFilter
+			// 
+			this.listBoxQueueFilter.ItemStrings = new string[] {
+        "All",
+        "Tech",
+        "None",
+        "Default",
+        "Backup"};
+			this.listBoxQueueFilter.Location = new System.Drawing.Point(113, 86);
+			this.listBoxQueueFilter.Name = "listBoxQueueFilter";
+			this.listBoxQueueFilter.Size = new System.Drawing.Size(81, 69);
+			this.listBoxQueueFilter.TabIndex = 48;
+			this.listBoxQueueFilter.Text = "listBox1";
+			// 
 			// FormPhoneList
 			// 
 			this.ClientSize = new System.Drawing.Size(1230, 696);
+			this.Controls.Add(this.label7);
 			this.Controls.Add(this.butClose);
+			this.Controls.Add(this.listBoxQueueFilter);
 			this.Controls.Add(this.textNameOrExt);
 			this.Controls.Add(this.panelGrid2);
 			this.Controls.Add(this.labelSearch);
@@ -430,5 +455,7 @@
 		private UI.Button butEditDefaults;
 		private System.Windows.Forms.Label label6;
 		private UI.Button butClose;
+		private System.Windows.Forms.Label label7;
+		private UI.ListBoxOD listBoxQueueFilter;
 	}
 }

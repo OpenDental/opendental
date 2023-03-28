@@ -829,15 +829,9 @@ namespace OpenDental{
 			}
 			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
-				//No carrier or patients linked to the carrier group. Patients.GetAgingList() would result in an empty listPatAgings.
-				if(filterByInsFilingCodes && listInsSubNums.IsNullOrEmpty()) {
-					listPatAgings=new List<PatAging>();
-				}
-				else {
-					listPatAgings=Patients.GetAgingList(getAge,lastStatement,billingNums,checkBadAddress.Checked,!checkShowNegative.Checked,
-						PIn.Double(textExcludeLessThan.Text),checkExcludeInactive.Checked,checkIgnoreInPerson.Checked,listClinicNums,checkSuperFam.Checked,
-						checkSinglePatient.Checked,listPendingInsPatNums,listUnsentPatNums,dictionaryPatAgingTransactions,listInsSubNums: listInsSubNums);
-				}
+				listPatAgings=Patients.GetAgingList(getAge,lastStatement,billingNums,checkBadAddress.Checked,!checkShowNegative.Checked,
+					PIn.Double(textExcludeLessThan.Text),checkExcludeInactive.Checked,checkIgnoreInPerson.Checked,listClinicNums,checkSuperFam.Checked,
+					checkSinglePatient.Checked,listPendingInsPatNums,listUnsentPatNums,dictionaryPatAgingTransactions,listInsSubNums: listInsSubNums);
 			};
 			try {
 				progressOD.ShowDialogProgress();
