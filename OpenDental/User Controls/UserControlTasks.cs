@@ -1765,9 +1765,8 @@ namespace OpenDental {
 			string taskNum="";
 			try {
 				if(System.Windows.Clipboard.ContainsText()) {//System.Windows.Forms.Clipboard fails for Thinfinity
-					string txtClip="";
-					txtClip=System.Windows.Clipboard.GetText();
-					if(Regex.IsMatch(txtClip,@"^TaskNum:\d+$")){//very restrictive specific match for "TaskNum:##"
+					string txtClip=System.Windows.Clipboard.GetText().Trim().ToLower();
+					if(Regex.IsMatch(txtClip,@"^tasknum:\d+$")){//very restrictive specific match for "TaskNum:##"
 						taskNum=txtClip.Substring(8);
 						if(!taskNum.IsNullOrEmpty()) {
 							ODClipboard.Clear();//so if they click it again, the can search for a task

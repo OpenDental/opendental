@@ -2545,6 +2545,7 @@ namespace OpenDentBusiness{
 				"SELECT * FROM appointment "
 				+"WHERE appointment.AptDateTime BETWEEN "+POut.Date(startDate)+" AND "+POut.Date(endDate.AddDays(1))+" "
 				+"AND appointment.AptStatus != '"+(int)ApptStatus.UnschedList+"' "
+				+"AND appointment.AptStatus != '"+(int)ApptStatus.Broken+"' "
 				+"AND appointment.AptStatus != '"+(int)ApptStatus.Planned+"' "
 				+"AND appointment.Op IN ("+string.Join(",",listOpNums)+") ";
 			if(listClinicNums.Count>0) {
