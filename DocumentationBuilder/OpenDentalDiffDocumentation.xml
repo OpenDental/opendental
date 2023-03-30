@@ -25,16 +25,6 @@
       <summary>Comma delimited list of Blockout Types (definition.DefNums where definition.Category=25) this appointment type can be associated to.</summary>
     </column>
   </table>
-  <table name="automationcondition">
-    <summary></summary>
-    <column order="2" name="CompareField" type="tinyint(4)">
-      <summary>Enum:AutoCondField </summary>
-      <Enumeration name="AutoCondField">
-        <summary></summary>
-        <EnumValue name="PlanNum"></EnumValue>
-      </Enumeration>
-    </column>
-  </table>
   <table name="definition">
     <summary></summary>
     <column order="1" name="Category" type="tinyint">

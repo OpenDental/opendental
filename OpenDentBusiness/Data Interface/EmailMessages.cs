@@ -33,6 +33,7 @@ using Google.Apis.Requests;
 using Google;
 using Google.Apis.Services;
 using Bridges;
+using Newtonsoft.Json;
 
 namespace OpenDentBusiness{
 	///<summary></summary>
@@ -858,7 +859,7 @@ namespace OpenDentBusiness{
 					MicrosoftApiConnector.GetProfile(emailAddress.EmailUsername,emailAddress.AccessToken);
 				}
 				catch(Exception ex) {
-					if(!hasRetried && ex.InnerException.Message.Contains("InvalidAuthenticationToken") && !ODBuild.IsWeb()) { //Need to refresh the token and try again.
+					if(!hasRetried && ex.InnerException.Message.Contains("InvalidAuthenticationToken")) { //Need to refresh the token and try again.
 						RefreshMicrosoftToken(emailAddress);
 						SendEmailUnsecure(emailMessage,emailAddress,nameValueCollectionHeaders,true,arrayAlternateViews);
 						return;
@@ -1622,9 +1623,17 @@ namespace OpenDentBusiness{
 				emailAddress.AccessToken=dbToken; //This means that another service has already updated the token in the db, so use that one
 				return;
 			}
-			MicrosoftTokenHelper microsoftTokenHelper=System.Threading.Tasks.Task.Run(async () =>
-				await MicrosoftApiConnector.GetAccessToken(emailAddress.EmailUsername,emailAddress.RefreshToken)
-			).GetAwaiter().GetResult();
+			MicrosoftTokenHelper microsoftTokenHelper=new MicrosoftTokenHelper();
+			if(ODBuild.IsWeb()) {
+				string strMicrosoftAuthCodesJSON=ODCloudClient.GetMicrosoftAccessToken(emailAddress.EmailUsername,emailAddress.RefreshToken);
+				if(!strMicrosoftAuthCodesJSON.IsNullOrEmpty()) { 
+					microsoftTokenHelper=JsonConvert.DeserializeObject<MicrosoftTokenHelper>(strMicrosoftAuthCodesJSON);
+				} 
+			}
+			else {
+				microsoftTokenHelper=System.Threading.Tasks.Task.Run(async () =>
+					await MicrosoftApiConnector.GetAccessToken(emailAddress.EmailUsername,emailAddress.RefreshToken)).GetAwaiter().GetResult();
+			}
 			if(microsoftTokenHelper.ErrorMessage!="" || microsoftTokenHelper.AccessToken=="") {
 				return;//authentication was cancelled or there was an error so just return.
 			}

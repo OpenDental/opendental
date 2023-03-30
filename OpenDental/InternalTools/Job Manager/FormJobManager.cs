@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CodeBase;
 using OpenDental.UI;
@@ -152,6 +153,14 @@ namespace OpenDental {
 			}
 			catch {
 				textVersionText.Text="";
+			}
+			if (System.Windows.Clipboard.ContainsText()) {
+				//Load the new job into the job mananger controls and cache.
+				LoadJob(JobSearchFromClipboard(),false);
+				if(userControlJobManagerEditor.JobCur!=null) {
+					RefreshGridsForSearch();
+					gridSearch.ScrollToIndex(gridSearch.GetSelectedIndex());
+				}
 			}
 			timerRefreshUI.Start();
 		}
@@ -2643,7 +2652,10 @@ namespace OpenDental {
 		private void JobSearch() {
 			string searchTrimmed=textSearch.Text.Trim();
 			Job jobFound=null;
-			if(!string.IsNullOrEmpty(searchTrimmed) && textSearch.Text.All(x => char.IsNumber(x))) {
+			if(string.IsNullOrEmpty(searchTrimmed) && System.Windows.Clipboard.ContainsText()) {
+				jobFound=JobSearchFromClipboard();
+			}
+			else if(!string.IsNullOrEmpty(searchTrimmed) && textSearch.Text.All(x => char.IsNumber(x))) {
 				jobFound=Jobs.GetOneFilled(PIn.Long(searchTrimmed));
 			}
 			else {
@@ -2656,6 +2668,18 @@ namespace OpenDental {
 				gridSearch.ScrollToIndex(gridSearch.GetSelectedIndex());
 			}
 			tabControlNav.SelectedTab=tabSearch;
+		}
+
+		private Job JobSearchFromClipboard() {
+			string txtClip=System.Windows.Clipboard.GetText().Trim().ToLower();
+			Job jobFound=null;
+			if(Regex.IsMatch(txtClip,@"^jobnum:\d+$")) {
+				jobFound = Jobs.GetOneFilled(PIn.Long(txtClip.Substring(7)));
+			}
+			if (jobFound!=null) {
+				ODClipboard.Clear();
+			}
+			return jobFound;
 		}
 
 		private void RefreshGridsForSearch() {

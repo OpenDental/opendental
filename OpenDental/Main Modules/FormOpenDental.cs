@@ -1096,9 +1096,8 @@ namespace OpenDental{
 			bool isClipMatch=false;
 			try {
 				if(System.Windows.Clipboard.ContainsText() ){//System.Windows.Forms.Clipboard fails for Thinfinity
-					string txtClip="";
-					txtClip=System.Windows.Clipboard.GetText().Trim();
-					if(Regex.IsMatch(txtClip,@"^PatNum:\d+$")){//very restrictive specific match for "PatNum:##"
+					string txtClip=System.Windows.Clipboard.GetText().Trim().ToLower();
+					if(Regex.IsMatch(txtClip,@"^patnum:\d+$")){//very restrictive specific match for "PatNum:##"
 						long patNum=PIn.Long(txtClip.Substring(7));
 						Patient patient=Patients.GetLim(patNum);
 						if(patient.PatNum!=0){

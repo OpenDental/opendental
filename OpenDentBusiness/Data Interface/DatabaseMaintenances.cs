@@ -1725,27 +1725,31 @@ namespace OpenDentBusiness {
 			return log;
 		}
 
-		[DbmMethodAttr(IsReplicationUnsafe=true)]
-		public static string ClaimDeleteWithNoClaimProcs(bool verbose,DbmMode modeCur) {
+		[DbmMethodAttr(IsReplicationUnsafe=true,HasPatNum=true)]
+		public static string ClaimDeleteWithNoClaimProcs(bool verbose,DbmMode modeCur,long patNum=0) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
+				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur,patNum);
 			}
 			string log="";
 			string command;
+			string patWhere="";
+			if(patNum>0) {
+				patWhere=$"PatNum={POut.Long(patNum)} AND ";
+			}
 			switch(modeCur) {
 				case DbmMode.Check:
-					command=@"SELECT COUNT(*) FROM claim WHERE NOT EXISTS(
-						SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum)";
+					command=@"SELECT COUNT(*) FROM claim "
+						+$"WHERE {patWhere}NOT EXISTS(SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum)";
 					int numFound=PIn.Int(Db.GetCount(command));
 					if(numFound!=0 || verbose) {
-						log+=Lans.g("FormDatabaseMaintenance","Claims found with no procedures")+": "+numFound+"\r\n";
+						log+=Lans.g("FormDatabaseMaintenance","Claims found with no claimprocs")+": "+numFound+"\r\n";
 					}
 					break;
 				case DbmMode.Fix:
 					List<DbmLog> listDbmLogs=new List<DbmLog>();
 					string methodName=MethodBase.GetCurrentMethod().Name;
-					command="SELECT claim.ClaimNum FROM claim WHERE NOT EXISTS( "
-						+"SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum)";
+					command="SELECT claim.ClaimNum FROM claim "
+						+$"WHERE {patWhere}NOT EXISTS(SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum)";
 					DataTable tableClaimNums=Db.GetTable(command);
 					List<long> listClaimNums=new List<long>();
 					for(int i = 0;i<tableClaimNums.Rows.Count;i++) {
@@ -1760,14 +1764,14 @@ namespace OpenDentBusiness {
 							DbmLogActionType.Update,methodName,"Updated FKey from "+x.FKey+" to 0 from ClaimDeleteWithNoClaimProcs.")));
 					}
 					//Orphaned claims do not show in the account module (tested) so we need to delete them because no other way.
-					command=@"DELETE FROM claim WHERE NOT EXISTS(
-						SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum)";
+					command=@"DELETE FROM claim "
+						+$"WHERE {patWhere}NOT EXISTS(SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum)";
 					long numberFixed=Db.NonQ(command);
 					listClaimNums.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x,DbmLogFKeyType.Claim,DbmLogActionType.Delete,
 						methodName,"Deleted claim from ClaimDeleteWithNoClaimProcs")));
 					if(numberFixed!=0 || verbose) {
 						Crud.DbmLogCrud.InsertMany(listDbmLogs);
-						log+=Lans.g("FormDatabaseMaintenance","Claims deleted due to no procedures")+": "+numberFixed.ToString()+"\r\n";
+						log+=Lans.g("FormDatabaseMaintenance","Claims deleted due to no claimprocs")+": "+numberFixed.ToString()+"\r\n";
 					}
 					break;
 			}
