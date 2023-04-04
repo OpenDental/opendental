@@ -1456,10 +1456,9 @@ namespace OpenDentBusiness {
 					return "M";
 				case PatientGender.Female:
 					return "F";
-				case PatientGender.Unknown:
+				default:
 					return "U";
 			}
-			return "";
 		}
 
 		private static string GetRelat(Relat relat) {

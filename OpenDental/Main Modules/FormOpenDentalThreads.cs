@@ -724,8 +724,9 @@ namespace OpenDental {
 			}
 			ODThread threadCloudMachineName=new ODThread(60000,o => {//Once a minute
 				ODException.SwallowAnyException(ODEnvironment.SetMachineName);
-				if(ODEnvironment.MachineName.ToUpper()!=Security.CurComputerName.ToUpper()) {//_machineName was just found, update Security.cs
+				if(ODEnvironment.MachineName.ToUpper()!=Security.CurComputerName.ToUpper()) {//_machineName was just found, update Security.cs and the activeinstance row
 					Security.CurComputerName=ODEnvironment.MachineName;
+					ActiveInstances.Upsert(Security.CurUser.UserNum,Computers.GetCur().ComputerNum,Process.GetCurrentProcess().Id);
 				}
 			});
 			threadCloudMachineName.AddExceptionHandler((e) => e.DoNothing());

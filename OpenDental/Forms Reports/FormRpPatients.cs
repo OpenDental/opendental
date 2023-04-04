@@ -21,10 +21,14 @@ namespace OpenDental {
 		private string sItem;//just used in local loops
 		private string ProcLogLastDate;
 		private string ProcLogFirstDate;
+		private string _procLogLCompleteDate;
+		private string _procLogFCompleteDate;
 		private List<string> _listPatFilter;
 		private List<bool> UsingInsPlans;//this is outdated.
 		private List<bool> UsingProcLogFirst;
 		private List<bool> UsingProcLogLast;
+		private List<bool> _usingProcFComplete;
+		private List<bool> _usingProcLComplete;
 		private List<bool> UsingRefDent;
 		private List<bool> UsingRefPat;
 		private List<bool> UsingRecall;
@@ -36,6 +40,8 @@ namespace OpenDental {
 		private bool NeedRefPat=false;
 		private bool NeedProcLogLast=false;
 		private bool NeedProcLogFirst=false;
+		private bool _needProcLogLComplete=false;
+		private bool _needProcLogFComplete=false;
 		private bool NeedRecall=false;
 		private bool IsWhereRelation=false;
 		private bool RefToSel;
@@ -56,6 +62,8 @@ namespace OpenDental {
 			UsingProcLogFirst=new List<bool>();
 			UsingProcLogLast=new List<bool>();
 			UsingRecall=new List<bool>();
+			_usingProcFComplete=new List<bool>();
+			_usingProcLComplete=new List<bool>();
 			Fill();
 			SQLselect="";
 			SQLfrom="FROM patient ";
@@ -101,10 +109,12 @@ namespace OpenDental {
 			_listPatFilter.Add("AddrNote");
 			_listPatFilter.Add("FamFinUrgNote");
 			_listPatFilter.Add("FeeSched");
+			_listPatFilter.Add("First Complete Proc");
 			_listPatFilter.Add("First Visit Date");//new, need to add functionality  
 			_listPatFilter.Add("FName");
 			_listPatFilter.Add("Gender");
 			_listPatFilter.Add("HmPhone");
+			_listPatFilter.Add("Last Complete Proc");
 			_listPatFilter.Add("Last Visit Date");//new, need to add functionality 
 			_listPatFilter.Add("LName");
 			_listPatFilter.Add("MedUrgNote");
@@ -216,6 +226,8 @@ namespace OpenDental {
 			listPatientSelect.Items.Add("ResponsParty");
 			//listPatientSelect.Items.Add("CanadianEligibilityCode");
 			//listPatientSelect.Items.Add("AskToArriveEarly");
+			listPatientSelect.Items.Add("First Complete Proc"); // new, need to add functionality*
+			listPatientSelect.Items.Add("Last Complete Proc"); // new, need to add functionality*
 			SQLselect="";
 		}
 
@@ -275,6 +287,8 @@ namespace OpenDental {
 			NeedRefPat=false;
 			NeedProcLogFirst=false;
 			NeedProcLogLast=false;
+			_needProcLogFComplete=false;
+			_needProcLogLComplete=false;
 			NeedRecall=false;
 			for(int i = 0;i<UsingInsPlans.Count;i++) {
 				if(UsingInsPlans[i]) {
@@ -301,6 +315,12 @@ namespace OpenDental {
 					NeedRecall=true;
 					IsWhereRelation=true;
 				}
+				else if(_usingProcFComplete[i]) {
+					_needProcLogFComplete=true;
+				}
+				else if(_usingProcLComplete[i]) {
+					_needProcLogLComplete=true;
+				}
 			}
 			for(int i = 0;i<listPatientSelect.SelectedIndices.Count;i++) {
 				if((string)listPatientSelect.Items.GetObjectAt(listPatientSelect.SelectedIndices[i])=="RecallStatus") {
@@ -326,13 +346,17 @@ namespace OpenDental {
 					if(i>0) {
 						SQLselect+=",";
 					}
-					if(field=="RecallStatus") {
-						SQLselect+="recall";
+					if (field.Contains("st Complete Proc")) { // check for both firST and laST versions
+					string strMinOrMax=field.StartsWith("F")? "MIN" : "MAX";
+						SQLselect+=$"(SELECT {strMinOrMax}(ProcDate) FROM procedurelog WHERE procedurelog.PatNum = patient.PatNum AND procedurelog.ProcStatus = 2) AS ";
+						SQLselect+=strMinOrMax=="MIN"?"First Complete Proc Date":"Last Complete Proc Date";
+					}
+					else if(field=="RecallStatus") {
+						SQLselect+=$"recall.{field}";
 					}
 					else {
-						SQLselect+="patient";
+						SQLselect+=$"patient.{field}";
 					}
-					SQLselect+="."+field;
 				}
 				SQLselect+=" ";
 				butOK.Enabled=true;
@@ -670,6 +694,11 @@ namespace OpenDental {
 					listBoxColumns.Items.Add("LifePartner");
 					listBoxColumns.Items.Add("Dependent");
 					break;
+				case "First Complete Proc":
+				case "Last Complete Proc":
+					SetDateConditions();
+					labelHelp.Text="Type Date as mm/dd/yyyy";
+					break;
 			}
 		}
 
@@ -731,6 +760,8 @@ namespace OpenDental {
 			UsingProcLogLast.Add(false);
 			UsingRecall.Add(false);
 			UsingInsPlans.Add(false);
+			_usingProcFComplete.Add(false);
+			_usingProcLComplete.Add(false);
 			#region IsText
 			if(IsText) {
 				if(DropListFilter.SelectedItem.ToString()=="Primary Carrier") {
@@ -838,6 +869,22 @@ namespace OpenDental {
 							+listConditions.SelectedItem.ToString()+" '"
 							+DateTime.Parse(TextDate.Text).ToString("MM")+"-"
 							+DateTime.Parse(TextDate.Text).ToString("dd")+"'");
+					}
+				}
+				else if(DropListFilter.SelectedItem.ToString().Contains("st Complete Proc")) { // Matches FirST or LaST Complete Proc
+					bool isMin=DropListFilter.SelectedItem.ToString().StartsWith("F");
+					string body=$"(SELECT {(isMin?"MIN":"MAX")}(ProcDate) FROM procedurelog WHERE procedurelog.PatNum = patient.PatNum AND procedurelog.ProcStatus = 2)";
+					string operation = listConditions.SelectedItem.ToString().Trim().ToUpper();
+					string date=POut.Date(DateTime.Parse(TextDate.Text),false);
+					date=(operation=="LIKE")?$"'%{date}%'":$"'{date}'";
+					listPrerequisites.Items.Add($"{body} {operation} {date}");
+					if (isMin) {
+						_procLogFCompleteDate=$"{body} {operation} {date}";
+						_usingProcFComplete[_usingProcFComplete.Count-1]=true;
+					}
+					else {
+						_procLogLCompleteDate=$"{body} {operation} {date}";
+						_usingProcLComplete[_usingProcFComplete.Count-1]=true;
 					}
 				}
 				else {
@@ -1028,6 +1075,8 @@ namespace OpenDental {
 				UsingRefPat.RemoveAt(selectedIndex);
 				UsingProcLogFirst.RemoveAt(selectedIndex);
 				UsingProcLogLast.RemoveAt(selectedIndex);
+				_usingProcFComplete.RemoveAt(selectedIndex);
+				_usingProcLComplete.RemoveAt(selectedIndex);
 				RemoveListPrerequisitesItem(selectedIndex);
 			}
 			CreateSQL();

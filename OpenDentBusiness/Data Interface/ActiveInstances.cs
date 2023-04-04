@@ -134,7 +134,7 @@ namespace OpenDentBusiness{
 		/// If no current Active Instance is detected it will set the current Active Instance to one just inserted.</summary>
 		public static void Upsert(long userNum,long computerNum,long processId) {
 			//No need to check remoting role, no call to db. Sets the public static field CurrentActiveInstance.
-			ActiveInstance activeInstance=_curActiveInstance??GetOne(userNum,computerNum,processId);
+			ActiveInstance activeInstance=CurrentActiveInstance??GetOne(userNum,computerNum,processId);
 			if(activeInstance==null) {
 				activeInstance=new ActiveInstance();
 				if(ODBuild.IsWeb()) {
@@ -155,6 +155,13 @@ namespace OpenDentBusiness{
 			}
 			else {
 				activeInstance.DateTimeLastActive=Security.DateTimeLastActivity;
+				if(ODBuild.IsWeb() && (activeInstance.UserNum!=userNum || activeInstance.ComputerNum!=computerNum || activeInstance.ProcessId!=processId)) {
+					//Cloud instances start with computer name UNKNOWN until the computer name can be retrieved from the browser by the ODCloudMachineName thread
+					activeInstance.UserNum=userNum;
+					activeInstance.ComputerNum=computerNum;
+					activeInstance.ProcessId=processId;
+					CurrentActiveInstance=activeInstance;
+				}
 				Update(activeInstance);
 			}
 		}
