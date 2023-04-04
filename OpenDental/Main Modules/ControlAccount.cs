@@ -387,6 +387,9 @@ namespace OpenDental {
 			}
 			gridPayPlan.SetAll(false);
 			for(int i=0;i<gridAccount.SelectedIndices.Count();i++) {
+				if(gridAccount.SelectedIndices[i]>table.Rows.Count-1){
+					continue;//An office was getting an exception here, but we're not sure how grid and table could be out of sync and can't duplicate.
+				}
 				if(table.Rows[gridAccount.SelectedIndices[i]]["PayPlanNum"].ToString()!="0") {
 					for(int j=0;j<gridPayPlan.ListGridRows.Count;j++) {
 						if(((DataRow)(gridPayPlan.ListGridRows[j].Tag))["PayPlanNum"].ToString()==table.Rows[gridAccount.SelectedIndices[i]]["PayPlanNum"].ToString()) {

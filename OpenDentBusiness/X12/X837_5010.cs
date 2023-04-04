@@ -2466,10 +2466,9 @@ namespace OpenDentBusiness
 					return "M";
 				case PatientGender.Female:
 					return "F";
-				case PatientGender.Unknown:
+				default:
 					return "U";
 			}
-			return "";
 		}
 
 		///<summary>01 Spouse, 18 Self, 19 Child, 20 Employee, 21 Unknown, 39 Organ Donor, 40 Cadaver Donor, 53 Life Partner, G8 Other Relationship.</summary>

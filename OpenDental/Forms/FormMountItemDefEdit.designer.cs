@@ -204,11 +204,11 @@ namespace OpenDental{
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(13, 167);
+			this.label7.Location = new System.Drawing.Point(0, 167);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(150, 47);
+			this.label7.Size = new System.Drawing.Size(162, 51);
 			this.label7.TabIndex = 44;
-			this.label7.Text = "Text to show\r\nNo images can be placed in a mount item that contains text.";
+			this.label7.Text = "Text to show. No images can be placed in a mount item that contains text.";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// butAddField

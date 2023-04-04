@@ -43,6 +43,7 @@ namespace OpenDentBusiness {
 		///<summary>This value is not stored in the database. Just use empty string.</summary>
 		None,
 		Appointment,
+		AppointmentDeleted,
 		PatField,
 		Patient,
 	}

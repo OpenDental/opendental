@@ -213,6 +213,20 @@ namespace OpenDentBusiness{
 			List<Appointment> listAppointments=Crud.AppointmentCrud.SelectMany(command);
 			return listAppointments;
 		}
+
+		///<summary>Returns a list of HistAppts where the HistApptAction=4 (Deleted), and DateTStamp is between the Previous polling time and now.</summary>
+		public static List<HistAppointment> GetHistApptsForSubscription(DateTime dateTimeStart,DateTime dateTimeStop){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<HistAppointment>>(MethodBase.GetCurrentMethod(),dateTimeStart,dateTimeStop);
+			}
+			string command="SELECT * FROM histappointment "
+				+"WHERE DateTStamp >= "+POut.DateT(dateTimeStart)+" "
+				+"AND DateTStamp < "+POut.DateT(dateTimeStop)+" "
+				+"AND HistApptAction = "+POut.Int((int)HistAppointmentAction.Deleted);
+			//We use a rigorous stop time so that we don't get any duplicates or misses at the edges of the time range.
+			List<HistAppointment> listHistAppointments=Crud.HistAppointmentCrud.SelectMany(command);
+			return listHistAppointments;
+		}
 		
 		///<summary></summary>
 		public static List<Patient> GetPatsForSubscription(DateTime dateTimeStart,DateTime dateTimeStop){

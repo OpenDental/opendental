@@ -468,15 +468,13 @@ namespace OpenDental {
 			//After this point, we are closing this form no matter what.
 			string urlPurchasePage=CareCreditL.GetPurchasePageUrl(_patient,provNum,_payment.ClinicNum,payAmt,estimatedFeeAmt:payAmt,payNum:_payment.PayNum);
 			if(string.IsNullOrEmpty(urlPurchasePage)) {
-				//Error occurred when trying to get url. Message already displayed to the user. Return
-				DialogResult=DialogResult.OK;
+				//Error occurred when trying to get url. Message already displayed to the user.
 				return;
 			}
 			using FormCareCreditWeb formCareCreditWeb=new FormCareCreditWeb(urlPurchasePage,_patient);
 			formCareCreditWeb.ShowDialog();
 			if(string.IsNullOrEmpty(formCareCreditWeb.SessionId)) {
-				MsgBox.Show("Error retrieving CareCredit web page.");
-				DialogResult=DialogResult.OK;
+				MsgBox.Show("Error retrieving CareCredit web page. Try again.");
 				return;
 			}
 			CareCreditWebResponse careCreditWebResponse=CareCreditWebResponses.GetBySessionId(formCareCreditWeb.SessionId);
@@ -497,6 +495,7 @@ namespace OpenDental {
 			else {
 				MsgBox.Show("CareCredit transaction could not be completed. This payment will not be associated to the CareCredit Transactions.");
 				CareCreditWebResponses.ClearPayment(careCreditWebResponse.CareCreditWebResponseNum);
+				return;
 			}
 			DialogResult=DialogResult.OK;
 		}
