@@ -119,7 +119,12 @@ namespace OpenDental {
 				listInts.Add(scaleH2);
 			}
 			//use the smallest one.  The others would make it spill outside in at least one dimension.
-			textZoom.Text=listInts.Min().ToString();
+			int suggestedZoom=listInts.Min();
+			//Values between -5 and 5 are not allowed, so just keep them at 0 if within those ranges.
+			if(suggestedZoom>=-5 && suggestedZoom<=5) {
+				suggestedZoom=0;
+			}
+			textZoom.Text=suggestedZoom.ToString();
 		}
 
 		private string SizeToString(Size size){

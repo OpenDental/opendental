@@ -760,23 +760,26 @@ namespace OpenDental {
 			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
-			if(gridMain.ListGridRows.Count==0) {
+			if(gridMain.SelectedIndices.Count()==0) {
+				gridMain.SetAll(true);
+			}
+			List<long> listClaimNums=gridMain.SelectedTags<RpOutstandingIns.OutstandingInsClaim>().Select(x => x.ClaimNum).ToList();
+			List<Claim> listClaims=Claims.GetClaimsFromClaimNums(listClaimNums);
+			if(listClaims.Count==0) {
 				MsgBox.Show(this,"Please select an item first.");
 				return;
 			}
-			if(!MsgBox.Show(MsgBoxButtons.OKCancel,"This clears out the selected claims and preauths with zero dollar payments. Changes can only be reverted manually. Continue?")) {
+			if(listClaims.Any(x => x.ClaimType=="PreAuth")) {
+				MsgBox.Show(this,"Cannot clear preauths with zero dollar payments.");
 				return;
 			}
-			List<long> listClaimNums=gridMain.SelectedTags<RpOutstandingIns.OutstandingInsClaim>().Select(x => x.ClaimNum).ToList();
-			if(listClaimNums.Count==0) {
-				listClaimNums=gridMain.GetTags<RpOutstandingIns.OutstandingInsClaim>().Select(x => x.ClaimNum).ToList();
+			if(!MsgBox.Show(MsgBoxButtons.OKCancel,"This clears out the selected claims with zero dollar payments. Changes can only be reverted manually. Continue?")) {
+				return;
 			}
-			List<Claim> listClaims=Claims.GetClaimsFromClaimNums(listClaimNums);
 			for(int i=0;i<listClaims.Count;i++) {
 				RpOutstandingIns.ZeroClaim(listClaims[i]);
 			}
 			FillGrid();
 		}
-	
 	}
 }
