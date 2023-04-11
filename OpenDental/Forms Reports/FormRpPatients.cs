@@ -349,7 +349,7 @@ namespace OpenDental {
 					if (field.Contains("st Complete Proc")) { // check for both firST and laST versions
 					string strMinOrMax=field.StartsWith("F")? "MIN" : "MAX";
 						SQLselect+=$"(SELECT {strMinOrMax}(ProcDate) FROM procedurelog WHERE procedurelog.PatNum = patient.PatNum AND procedurelog.ProcStatus = 2) AS ";
-						SQLselect+=strMinOrMax=="MIN"?"First Complete Proc Date":"Last Complete Proc Date";
+						SQLselect+=strMinOrMax=="MIN"?"'First Complete Proc Date'":"'Last Complete Proc Date'";
 					}
 					else if(field=="RecallStatus") {
 						SQLselect+=$"recall.{field}";

@@ -134,7 +134,7 @@ namespace OpenDentBusiness{
 			DateTime dateCompletedTo=PIn.Date(taskDateCompletedTo);//will be DateTime.MinValue if not set, i.e. if " "
 			List<long> listSearchTaskNums=ReportsComplex.RunFuncOnReportServer(() => GetTasksNumsForSearch(userNum,listTaskListNums,listTaskNums,dateCreatedFrom,
 					dateCreatedTo,dateCompletedFrom,dateCompletedTo,taskIncluding,taskExcluding,taskPriorityNum,patNum,doIncludeTaskNote,doIncludeCompleted,doIncludeAttachments,limit),
-				doRunOnReportServer);			
+				doRunOnReportServer);
 			DataTable table=new DataTable();
 			table.Columns.Add(new DataColumn("description"));
 			table.Columns.Add(new DataColumn("note"));
@@ -253,12 +253,12 @@ namespace OpenDentBusiness{
 			}
 			//Note: DateTime strings that are empty actually are " " due to how the empty datetime control behaves.
 			if(dateCreatedFrom>DateTime.MinValue) {
-				listWhereClauses.Add("DATE(task.DateTimeOriginal)>="+POut.Date(dateCreatedFrom)); 
-				listWhereNoteClauses.Add("DATE(tasknote.DateTimeNote)>="+POut.Date(dateCreatedFrom)); 
+				listWhereClauses.Add("DATE(task.DateTimeOriginal)>="+POut.Date(dateCreatedFrom));
+				listWhereNoteClauses.Add("DATE(tasknote.DateTimeNote)>="+POut.Date(dateCreatedFrom));
 			}
 			if(dateCreatedTo>DateTime.MinValue) {
-				listWhereClauses.Add("DATE(task.DateTimeOriginal)<="+POut.Date(dateCreatedTo)); 
-				listWhereNoteClauses.Add("DATE(tasknote.DateTimeNote)<="+POut.Date(dateCreatedTo)); 
+				listWhereClauses.Add("DATE(task.DateTimeOriginal)<="+POut.Date(dateCreatedTo));
+				listWhereNoteClauses.Add("DATE(tasknote.DateTimeNote)<="+POut.Date(dateCreatedTo));
 			}
 			if(dateCompletedFrom>DateTime.MinValue) {
 				listWhereClauses.Add("DATE(task.DateTimeFinished)>="+POut.Date(dateCompletedFrom));
@@ -270,35 +270,18 @@ namespace OpenDentBusiness{
 				listWhereNoteClauses.Add("DATE(task.DateTimeFinished)<="+POut.Date(dateCompletedTo));
 				doJoinTaskOnTaskNote=true;
 			}
+			bool doIncludeKeywordSearch=false;
 			if(taskIncluding!="") {
-        foreach(string param in taskIncluding.Split(' ')) {
+				doIncludeKeywordSearch=true;
+				foreach(string param in taskIncluding.Split(' ')) {
 					if(doIncludeAttachments) {
-						listWhereClauses.Add("(task.Descript LIKE '%"+POut.String(param)+"%' OR taskattachment.Description LIKE '%"+POut.String(param)+"%' " 
-							+ "OR taskattachment.TextValue LIKE '%"+POut.String(param)+"%')");
+						listWhereClauses.Add("(task.Descript LIKE '%"+POut.String(param)+"%' OR taskattachment.Description LIKE '%"+POut.String(param)+"%' "
+							+"OR taskattachment.TextValue LIKE '%"+POut.String(param)+"%')");
 					}
 					else {
 						listWhereClauses.Add("task.Descript LIKE '%"+POut.String(param)+"%'");
 					}
-				  listWhereNoteClauses.Add("tasknote.Note LIKE '%"+POut.String(param)+"%'");
-        }
-			}
-			bool doExcludeAttachments=false;
-			if(taskExcluding!="") {
-				foreach(string param in taskExcluding.Split(' ')) {
-					if(doIncludeAttachments) {
-						//Exclude the search term from the task.Descript but do search taskattachment, verify WHERE ISNULL below instead.
-						listWhereClauses.Add("(task.Descript NOT LIKE '%"+POut.String(param)+"%' OR taskattachment.Description LIKE '%"+POut.String(param)+"%' "
-							+ "OR taskattachment.TextValue LIKE '%"+POut.String(param)+"%')");
-						doExcludeAttachments=true;
-					}
-					else {
-						listWhereClauses.Add("task.Descript NOT LIKE '%"+POut.String(param)+"%'");
-					}
-					listWhereNoteClauses.Add("tasknote.Note NOT LIKE '%"+POut.String(param)+"%'");
-					//Exclude both tasknote and task descriptions in the search. Excluding from noncompleted tasks structures the query differently, so task.Descript is not required.
-					if(!doIncludeCompleted) {
-						listWhereNoteClauses.Add("task.Descript NOT LIKE '%"+POut.String(param)+"%'");
-					}
+					listWhereNoteClauses.Add("tasknote.Note LIKE '%"+POut.String(param)+"%'");
 				}
 			}
 			if(taskPriorityNum!=0) {
@@ -325,33 +308,111 @@ namespace OpenDentBusiness{
 			if(listWhereNoteClauses.Count>0 && doIncludeTaskNote) {
 				whereNoteClause="WHERE "+string.Join(" AND ",listWhereNoteClauses)+" ";
 			}
-			string command="SELECT TaskNum FROM ("
-				+"(SELECT task.TaskNum,task.DateTimeOriginal DateTimeSearch ";
-			if(doExcludeAttachments) {
-				command+=",taskattachment.TaskAttachmentNum ";
-			}
-			command+="FROM task ";
-			if(doIncludeAttachments) {
-				command+="LEFT JOIN taskattachment ON task.TaskNum=taskattachment.TaskNum ";
-			}
-			command+=whereClause
-				+")";
-			if(doIncludeTaskNote) {
-				command+=" UNION "
-				+"(SELECT tasknote.TaskNum,tasknote.DateTimeNote DateTimeSearch ";
-			if(doExcludeAttachments) {//Used only for Union column alignment.
-					command+=",tasknote.TaskNoteNum ";
+			//Here be query assembly:
+			bool doExcludeKeywordSearch=false;
+			string command="SELECT TaskNum FROM (";
+			#region exclude
+			//Build exclude keyword query
+			if(taskExcluding!="") {
+				string[] arrayTaskExcluding=taskExcluding.Split(' ');//Exclude one or many keywords.
+				doExcludeKeywordSearch=true;
+				command+="SELECT task.TaskNum, task.DateTimeOriginal DateTimeSearch "
+					+"FROM task "
+					+"WHERE task.Descript NOT LIKE '%"+POut.String(arrayTaskExcluding[0])+"%' ";
+				if(arrayTaskExcluding.Length>1) {
+					for(int i=1;i<arrayTaskExcluding.Length;i++) {
+						command+="AND task.Descript NOT LIKE '%"+POut.String(arrayTaskExcluding[i])+"%' ";
+					}
 				}
-			command+="FROM tasknote "
-			+noteJoinClause
-			+whereNoteClause
-			+")";
+				if(!doIncludeCompleted) {
+					command+="AND task.TaskStatus!="+POut.Long((int)TaskStatusEnum.Done)+" ";
+				}
+				if(doIncludeTaskNote) {
+					command+="AND task.TaskNum "
+					+"NOT IN (SELECT tasknote.TaskNum FROM tasknote "
+					+"WHERE tasknote.Note LIKE '%"+POut.String(arrayTaskExcluding[0])+"%' ";
+					if(arrayTaskExcluding.Length>1) {
+						for(int i=1;i<arrayTaskExcluding.Length;i++) {
+							command+="OR tasknote.Note LIKE '%"+POut.String(arrayTaskExcluding[i])+"%' ";
+						}
+					}
+					command+=") ";
+				}
+				if(doIncludeAttachments) {
+					command+="AND task.TaskNum "
+						+"NOT IN (SELECT taskattachment.TaskNum FROM taskattachment "
+						+"WHERE taskattachment.Description LIKE '%"+POut.String(arrayTaskExcluding[0])+"%' "
+						+"OR taskattachment.TextValue LIKE '%"+POut.String(arrayTaskExcluding[0])+"%' ";
+					if(arrayTaskExcluding.Length>1) {
+						for(int i=1;i<arrayTaskExcluding.Length;i++) {
+							command+="OR taskattachment.Description LIKE '%"+POut.String(arrayTaskExcluding[i])+"%' "
+								+"OR taskattachment.TextValue LIKE '%"+POut.String(arrayTaskExcluding[i])+"%' ";
+						}
+					}
+					command+=") ";
+				}
+				if(doIncludeKeywordSearch) {
+					command+="AND task.TaskNum IN ";
+				}
 			}
-			command+=") tasksearch ";
-			if(doExcludeAttachments) {
-				command+="WHERE ISNULL(tasksearch.TaskAttachmentNum) ";
+			#endregion
+			#region include
+			//Build include-exclude query
+			if(doIncludeKeywordSearch && doExcludeKeywordSearch //User supplied both include and exclude keywords.
+				|| listWhereClauses.Count>0 && doExcludeKeywordSearch) {//User filtered by patNum, userNum, date range, etc. and supplied exclude keyword(s).
+				if(!doIncludeKeywordSearch) {
+					command+="AND task.TaskNum IN ";
+				}
+				command+="(SELECT task.TaskNum "
+					+"FROM task ";
+				if(doIncludeAttachments) {
+					command+="LEFT JOIN taskattachment ON task.TaskNum=taskattachment.TaskNum ";
+				}
+				command+=whereClause;
+				if(doIncludeTaskNote) {
+					command+=" UNION "
+					+"(SELECT tasknote.TaskNum "
+					+"FROM tasknote "
+					+noteJoinClause
+					+whereNoteClause
+					+")";
+				}
+				//User supplied exclude keyword and other filter(s). Requires additional perenths for grouping.
+				if(!doIncludeCompleted
+					|| userNum!=0
+					|| patNum!=0
+					|| listTaskListNums.Count>0
+					|| dateCreatedFrom>DateTime.MinValue
+					|| dateCreatedTo>DateTime.MinValue
+					|| dateCompletedFrom>DateTime.MinValue
+					|| dateCompletedTo>DateTime.MinValue
+					|| doIncludeAttachments
+					|| doExcludeKeywordSearch) {
+					command+=")";
+				}
 			}
-			command+="GROUP BY tasksearch.TaskNum ORDER BY MIN(tasksearch.DateTimeSearch) DESC ";
+			else if(doExcludeKeywordSearch) {//User supplied only exclude keyword(s).
+				//Do nothing. No need to build include query.
+			}
+			else {//Existing behavior. User supplied no keyword, or only include keyword(s), and/or filtered by patNum, userNum, date range, etc.
+				command+="(SELECT task.TaskNum,task.DateTimeOriginal DateTimeSearch "
+					+"FROM task ";
+				if(doIncludeAttachments) {
+					command+="LEFT JOIN taskattachment ON task.TaskNum=taskattachment.TaskNum ";
+				}
+				command+=whereClause
+					+")";
+				if(doIncludeTaskNote) {
+					command+=" UNION "
+					+"(SELECT tasknote.TaskNum,tasknote.DateTimeNote DateTimeSearch "
+					+"FROM tasknote "
+				+noteJoinClause
+				+whereNoteClause
+				+")";
+				}
+			}
+			#endregion
+			command+=") tasksearch GROUP BY tasksearch.TaskNum ORDER BY MIN(tasksearch.DateTimeSearch) DESC ";
 			if(limit) {
 				command+=" LIMIT 50";
 			}

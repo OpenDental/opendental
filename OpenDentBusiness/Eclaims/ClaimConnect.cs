@@ -53,7 +53,7 @@ namespace OpenDentBusiness.Eclaims {
 				}
 				else {
 					//Production
-					serverName="https://claimconnect.dentalxchange.com/dci/upload.svl";
+					serverName=Introspection.GetOverride(Introspection.IntrospectionEntity.DentalXChangeDciURL,"https://claimconnect.dentalxchange.com/dci/upload.svl");
 				}
 				webReq=(HttpWebRequest)WebRequest.Create(serverName);
 				string postData=
@@ -259,11 +259,12 @@ namespace OpenDentBusiness.Eclaims {
 			request.Content=HttpUtility.HtmlEncode(x12message);//get rid of ampersands, etc.
 			Dentalxchange2016.DwsService service=new Dentalxchange2016.DwsService();
 			if(ODBuild.IsDebug()) {
-				//service.Url = "https://prelive2.dentalxchange.com/dws/DwsService"; // testing
-				service.Url = "https://webservices.dentalxchange.com/dws/DwsService"; // production
+				//service.Url="https://prelive2.dentalxchange.com/dws/DwsService"; // testing
+				service.Url="https://webservices.dentalxchange.com/dws/DwsService"; // production
 			}
 			else {
-				service.Url = "https://webservices.dentalxchange.com/dws/DwsService"; //always use production. So I don't forget
+				// Production URL
+				service.Url=Introspection.GetOverride(Introspection.IntrospectionEntity.DentalXChangeDwsURL,"https://webservices.dentalxchange.com/dws/DwsService");
 			}
 			string strResponse="";
 			try {
@@ -648,7 +649,7 @@ namespace OpenDentBusiness.Eclaims {
 				service.Url="https://prelive2.dentalxchange.com/dws/DwsService"; //testing
 			}
 			else {
-				service.Url="https://webservices.dentalxchange.com/dws/DwsService"; //production
+				service.Url=Introspection.GetOverride(Introspection.IntrospectionEntity.DentalXChangeDwsURL,"https://webservices.dentalxchange.com/dws/DwsService"); //production
 			}
 			string strResponse="";
 			Dentalxchange2016.PayerListInfoResponse payerListInfoResponse=new Dentalxchange2016.PayerListInfoResponse();

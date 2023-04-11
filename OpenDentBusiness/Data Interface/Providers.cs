@@ -403,6 +403,17 @@ namespace OpenDentBusiness{
 			return _providerCache.GetFirstOrDefault(x => x.ProvNum==provNum);
 		}
 
+		///<summary>Gets a provider from the DB. Returns null if not found. Required for API.</summary>
+		public static Provider GetProvFromDb(long provNum) {
+			if(provNum==0) {
+				return null;
+			}
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<Provider>(MethodBase.GetCurrentMethod(),provNum);
+			} 
+			return Crud.ProviderCrud.SelectOne(provNum);
+		}
+
 		///<summary>Gets all providers that have the matching prov nums from ListLong.  Returns an empty list if no matches.</summary>
 		public static List<Provider> GetProvsByProvNums(List<long> listProvNums,bool isShort=false) {
 			//No need to check MiddleTierRole; no call to db.

@@ -168,7 +168,9 @@ namespace OpenDentBusiness{
 			}
 			string command;
 			if(!isStartup) {
-				if(_computerCache.ListIsNull()) {
+				if(_computerCache.ListIsNull() || !_computerCache.GetExists(x => x.CompName==computerName)) {
+					//RefreshCache if computer name doesn't exist in cache. Happens in cloud when a new computer connects to the db and is assigned the "UNKNOWN" name that is later updated
+					//when the ODCloudClient sets the ODEnvironment.MachineName property.   RefreshCache will insert the new computer row with CompName=ODEnvironment.MachineName.
 					RefreshCache();//adds new computer to list
 				}
 				command="SELECT LastHeartBeat<"+DbHelper.DateAddMinute(DbHelper.Now(),"-3")+" FROM computer WHERE CompName='"+POut.String(computerName)+"'";

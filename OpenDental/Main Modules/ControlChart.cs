@@ -5072,6 +5072,8 @@ namespace OpenDental {
 				//tabPlanned.Enabled=false;
 				_toothChartRelay.Enabled=false;
 				gridProg.Enabled=false;
+				_toothChartRelay.ResetTeeth();//if user logged out, then logged back in, pt will be null, but tooth still selected.
+				_toothChartRelay.EndUpdate();
 				ToolBarMain.Buttons["Print"].Enabled=false;
 				if(HasHideRxButtonsEcw()) {
 					//Don't show the Rx and eRx buttons.

@@ -368,6 +368,7 @@ namespace OpenDental {
 		///<summary>Refreshes the grid in the active tab. Should be the only reference to any FillGrid in FormJobManager</summary>
 		private void FillActiveTabGrid() {
 			Cursor=Cursors.WaitCursor;
+			tabAction.Text="Needs Action";
 			if(tabControlNav.SelectedTab==tabAction) {
 				FillGridActions();
 			}
@@ -613,7 +614,6 @@ namespace OpenDental {
 				userFilter=_listUsers[comboUser.SelectedIndex-2];
 			}
 			gridAction.Title="Action Items";
-			tabAction.Text="Needs Action";
 			checkShowUnassigned.Enabled=true;
 			long selectedJobNum=userControlJobManagerEditor.JobNumCur;
 			gridAction.BeginUpdate();
@@ -1345,7 +1345,6 @@ namespace OpenDental {
 				userFilter=_listUsers[comboUser.SelectedIndex-2];
 			}
 			gridNotify.Title="Action Items";
-			tabAction.Text="Needs Action";
 			long selectedJobNum=userControlJobManagerEditor.JobNumCur;
 			gridNotify.BeginUpdate();
 			gridNotify.Columns.Clear();
@@ -1780,7 +1779,6 @@ namespace OpenDental {
 				userFilter=_listUsers[comboUser.SelectedIndex-2];
 			}
 			gridSubmittedJobs.Title="Submitted Jobs";
-			tabAction.Text="Submitted Jobs";
 			checkShowOnHoldSubmitted.Enabled=true;
 			long selectedJobNum = userControlJobManagerEditor.JobNumCur;
 			gridSubmittedJobs.BeginUpdate();

@@ -270,24 +270,40 @@ namespace OpenDental {
 			}
 		}
 
+		///<summary>Throws an ODException if we can't find a certain ToolStripItem with custom exception message. Added for attempted bug fix job 43418.</summary>
+		private ToolStripItem FindBlockoutToolStripItem(string name) {
+			ToolStripItem[] arrayToolStripItems=menuBlockout.Items.Find(name,false);
+			if(arrayToolStripItems.Length==0) {
+				string patNum="No Patient Selected";
+				if(_patCur!=null) {
+					patNum=_patCur.PatNum.ToString();
+				}
+				ODException odException=new ODException($"Patnum: {patNum}\r\n" 
+				+$"OD Version: {Application.ProductVersion}\r\n"
+				+$"Missing ToolStripItem: {name}");
+				throw odException;
+			}
+			return arrayToolStripItems[0];
+		}
+
 		private void ContrApptPanel_ApptMainAreaRightClicked(object sender, UI.ApptMainClickEventArgs e){
-			ToolStripItem menuEdit=menuBlockout.Items.Find(MenuItemNames.EditBlockout,false)[0];
-			ToolStripItem menuCut=menuBlockout.Items.Find(MenuItemNames.CutBlockout,false)[0];
-			ToolStripItem menuCopy=menuBlockout.Items.Find(MenuItemNames.CopyBlockout,false)[0]; 
-			ToolStripItem menuPaste=menuBlockout.Items.Find(MenuItemNames.PasteBlockout,false)[0];
-			ToolStripItem menuDelete=menuBlockout.Items.Find(MenuItemNames.DeleteBlockout,false)[0];
+			ToolStripItem menuEdit=FindBlockoutToolStripItem(MenuItemNames.EditBlockout);
+			ToolStripItem menuCut=FindBlockoutToolStripItem(MenuItemNames.CutBlockout);
+			ToolStripItem menuCopy=FindBlockoutToolStripItem(MenuItemNames.CopyBlockout);
+			ToolStripItem menuPaste=FindBlockoutToolStripItem(MenuItemNames.PasteBlockout);
+			ToolStripItem menuDelete=FindBlockoutToolStripItem(MenuItemNames.DeleteBlockout);
 			//AddBlockout is not used here
-			ToolStripItem menuCutCopyPaste=menuBlockout.Items.Find(MenuItemNames.BlockoutCutCopyPaste,false)[0];
+			ToolStripItem menuCutCopyPaste=FindBlockoutToolStripItem(MenuItemNames.BlockoutCutCopyPaste);
 			ToolStripItem menuClearForDay=new ToolStripMenuItem();
 			ToolStripItem menuClearForDayOp=new ToolStripMenuItem();
 			ToolStripItem menuClearForDayClinics=new ToolStripMenuItem();
 			if(PrefC.HasClinicsEnabled) {//No clear for day if clinics enabled
-				menuClearForDayOp=menuBlockout.Items.Find(MenuItemNames.ClearAllBlockoutsForDayOpOnly,false)[0];
-				menuClearForDayClinics=menuBlockout.Items.Find(MenuItemNames.ClearAllBlockoutsForDayClinicOnly,false)[0];
+				menuClearForDayOp=FindBlockoutToolStripItem(MenuItemNames.ClearAllBlockoutsForDayOpOnly);
+				menuClearForDayClinics=FindBlockoutToolStripItem(MenuItemNames.ClearAllBlockoutsForDayClinicOnly);
 			}
 			else {//Clinics disabled, no clear for day clinics
-				menuClearForDay=menuBlockout.Items.Find(MenuItemNames.ClearAllBlockoutsForDay,false)[0];
-				menuClearForDayOp=menuBlockout.Items.Find(MenuItemNames.ClearAllBlockoutsForDayOpOnly,false)[0];
+				menuClearForDay=FindBlockoutToolStripItem(MenuItemNames.ClearAllBlockoutsForDay);
+				menuClearForDayOp=FindBlockoutToolStripItem(MenuItemNames.ClearAllBlockoutsForDayOpOnly);
 			}
 			if(!Security.IsAuthorized(Permissions.Blockouts,true)) {
 				menuCutCopyPaste.Enabled=false;

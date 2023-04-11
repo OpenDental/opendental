@@ -202,6 +202,8 @@ namespace OpenDentBusiness {
 			XWebGatewayURL,
 			///<summary></summary>
 			NewCropUpdate1URL,
+			///<summary></summary>
+			DentalXChangeDciURL,
 		}
 	}
 }

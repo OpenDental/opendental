@@ -35,7 +35,7 @@ namespace OpenDental {
 		///If this is a radio group then the list will include all SheetDefNums in the group.</summary>
 		public event EventHandler<SheetFieldDefEditArgs> SheetFieldDefEdit;
 		///<summary>When true, synchs field ordering with the default language. True by default due to FomSheetDefEdit being true by defualt.</summary>
-		public bool SyncSheetFieldsWithDefualt=true;
+		public bool SyncSheetFieldsWithDefualt=false;
 
 		public class SheetFieldDefEditArgs:EventArgs {
 			public List<long> SheetFieldDefNums { get; private set; }

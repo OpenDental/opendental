@@ -1755,6 +1755,7 @@ namespace OpenDental {
 			//Everything below this line is for one or more documents not in a mount=============================================================================================
 			//But we cannot test for this. Needs to work for cat selected, nothing selected, existing doc selected, etc.
 			Document document=null;
+			nodeTypeAndKey=null;
 			if(bitmapPaste!=null){
 				try {
 					document=ImageStore.Import(bitmapPaste,GetCurrentCategory(),ImageType.Photo,PatientCur);//Makes log entry
@@ -1815,7 +1816,8 @@ namespace OpenDental {
 				}//for
 			}//files
 			EventFillTree?.Invoke(this,false);
-			EventSelectTreeNode?.Invoke(this,new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
+			//Select the last successful document that was saved.
+			EventSelectTreeNode?.Invoke(this,nodeTypeAndKey);
 		}
 
 		public void ToolBarPasteTypeAndKey(NodeTypeAndKey nodeTypeAndKey){

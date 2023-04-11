@@ -48,6 +48,20 @@ namespace OpenDentBusiness{
 			return table;
 		}
 
+		///<summary>Gets a list of PerioExams from the DB for the API based on PatNum and/or ExamDate.
+		///Results ordered by PK.</summary>
+		public static List<PerioExam> GetPerioExamsForApi(long patNum,DateTime examDate) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<PerioExam>>(MethodBase.GetCurrentMethod(),patNum,examDate);
+			}
+			string command="SELECT * FROM perioexam WHERE ExamDate >= "+POut.Date(examDate)+" ";
+			if(patNum!=0){
+				command+=" AND PatNum = "+POut.Long(patNum)+" ";
+			}
+			command+=" ORDER BY perioexam.PerioExamNum";
+			return Crud.PerioExamCrud.SelectMany(command);
+		}
+
 		public static List<PerioExam> GetExamsList(long patNum) {
 			//No need to check MiddleTierRole; no call to db.
 			return Crud.PerioExamCrud.TableToList(GetExamsTable(patNum));
