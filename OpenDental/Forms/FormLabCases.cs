@@ -66,6 +66,8 @@ namespace OpenDental{
 			col=new GridColumn(Lan.g("TableLabCases","Appt Date Time"),120);
 			col.SortingStrategy=GridSortingStrategy.DateParse;
 			gridMain.Columns.Add(col);
+			col=new GridColumn(Lan.g("TableLabCases","Appt Status"),75);
+			gridMain.Columns.Add(col);
 			col=new GridColumn(Lan.g("TableLabCases","Procedures"),200);
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lan.g("TableLabCases","Patient"),120);
@@ -99,6 +101,7 @@ namespace OpenDental{
 				}
 				row=new GridRow();
 				row.Cells.Add(_table.Rows[i]["aptDateTime"].ToString());
+				row.Cells.Add(_table.Rows[i]["aptStatus"].ToString());
 				row.Cells.Add(_table.Rows[i]["ProcDescript"].ToString());
 				row.Cells.Add(_table.Rows[i]["patient"].ToString());
 				row.Cells.Add(_table.Rows[i]["status"].ToString());

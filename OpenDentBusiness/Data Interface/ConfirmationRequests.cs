@@ -125,27 +125,29 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<ConfirmationRequest>>(MethodBase.GetCurrentMethod(),shortGuid);
 			}
-			List<ConfirmationRequest> listConfirmationsByShortGuid=GetConfirmationsByShortGuid(shortGuid);
-			List<long> listApptNums=listConfirmationsByShortGuid.Select(x=>x.ApptNum).ToList();
-			CommType commType=listConfirmationsByShortGuid.FirstOrDefault()?.MessageType??CommType.Invalid;
-			long messageFk=listConfirmationsByShortGuid.FirstOrDefault()?.MessageFk??0;
-			//Remove any invalid appointment nums
-			listApptNums.RemoveAll(x=>x==0);
-			if(listApptNums.IsNullOrEmpty()) {
-				//Without any ApptNums, no updating of appointment status will be done so it's pointless to continue here. Just return an empty list.
+			List<ConfirmationRequest> listConfirmationsByShortGuid=GetConfirmationsByShortGuid(shortGuid).FindAll(x => x.ApptNum > 0);
+			if(listConfirmationsByShortGuid.IsNullOrEmpty()) {
+				//Return an empty list if there are no appointments to confirm for the ShortGUID passed in.
 				return new List<ConfirmationRequest>();
 			}
-			//We want the confirmation requests that have been sent for this appointment.
-			string whereClause=$" WHERE ApptNum IN ({string.Join(",",listApptNums.Select(x=>POut.Long(x)))})";
-			//we need a valid commtype and a real message FK and then we want to find any confirmationrequests sent on the same message (aka an aggregate message)
-			if(commType>=0 && messageFk>0) {
-				//There is a known bug with an unknown cause for aggregate confirmations where the first row in an aggregate confirmation gets entered correctly
-				//but the rest are missing their short guid. Because of this we want to only match on message IF the short guid wasn't set. If a short guid is set it should be found via
-				//a matching shortGuid in the ConfirmationTerminated table at HQ.
-				whereClause+=$" OR (ShortGuid='' AND MessageType={POut.Enum(commType)} AND MessageFk={POut.Long(messageFk)})";
+			List<long> listApptNums=listConfirmationsByShortGuid.Select(x => x.ApptNum).ToList();
+			//There is a bug where aggregate confirmations are getting entered with different ShortGUIDs.
+			//Therefore, include any confirmation requests that are associated to the same message that is being confirmed.
+			CommType commType=listConfirmationsByShortGuid.First().MessageType;
+			long messageFk=listConfirmationsByShortGuid.First().MessageFk;
+			if(commType!=CommType.Invalid && messageFk > 0) {
+				//The ShortGUID being confirmed is associated to a valid message (email, text, etc).
+				//Grab all of the confirmation requests associated with that exact message.
+				//E.g. The passed in ShortGUID='rlYEWau' and is associated with MessageType=1 and MessageFk=147
+				//Grab the rest of the confirmation requests associated with MessageType=1 and MessageFk=147
+				string command=$@"SELECT ApptNum FROM confirmationrequest 
+					WHERE ApptNum IN ({string.Join(",",listApptNums.Select(x => POut.Long(x)))})
+					OR (ApptNum > 0 AND MessageType={POut.Enum(commType)} AND MessageFk={POut.Long(messageFk)})";
+				//The above query may have grabbed a few NEW appointments that are associated with a different ShortGUID='2jWQxNr'
+				listApptNums=Db.GetListLong(command);
 			}
-			string command=$"SELECT * FROM confirmationrequest{whereClause}";
-			return Crud.ConfirmationRequestCrud.SelectMany(command);
+			//Return all confirmation requests that have been sent for these appointments.
+			return GetAllForAppts(listApptNums);
 		}
 
 		///<summary>Expire confirmations for any appointments that have been rescheduled since sending out a confirmation request.</summary>
