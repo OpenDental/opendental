@@ -57,7 +57,6 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.listMain.Location = new System.Drawing.Point(30, 81);
 			this.listMain.Name = "listMain";
-			this.listMain.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
 			this.listMain.Size = new System.Drawing.Size(300, 329);
 			this.listMain.TabIndex = 13;
 			this.listMain.DoubleClick += new System.EventHandler(this.listMain_DoubleClick);
@@ -103,7 +102,6 @@ namespace OpenDental{
 			// 
 			// FormSheetPicker
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(458, 436);
 			this.Controls.Add(this.labelTerminal);
 			this.Controls.Add(this.butTerminal);

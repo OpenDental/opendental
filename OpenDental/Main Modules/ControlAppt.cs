@@ -1573,8 +1573,7 @@ namespace OpenDental {
 				#region Prevent overlap
 				//Check for any blockout collisions when overlapping appointments are allowed.
 				if(PrefC.GetBool(PrefName.ApptsAllowOverlap)) {
-					if(Appointments.CheckForBlockoutOverlap(apptCur)) {
-						MsgBox.Show(this,"Appointment overlaps existing blockout.");
+					if(ShowAppointmentBlockoutMessage(apptCur)) {
 						return;
 					}
 				}
@@ -4290,8 +4289,7 @@ namespace OpenDental {
 			#region Prevent overlap
 			//Check for any blockout collisions when overlapping appointments are allowed.
 			if(PrefC.GetBool(PrefName.ApptsAllowOverlap)) {
-				if(!isOpUpdate && Appointments.CheckForBlockoutOverlap(appt)) {
-					MsgBox.Show(this,"Appointment overlaps existing blockout.");
+				if(!isOpUpdate && ShowAppointmentBlockoutMessage(appt)) {
 					return;
 				}
 			}
@@ -4969,6 +4967,21 @@ namespace OpenDental {
 			return isPatternChanged;
 		}
 
+		///<summary>Returns true if a message was displayed to the user telling them that the appointment could not be scheduled, otherwise false.</summary>
+		private bool ShowAppointmentBlockoutMessage(Appointment appointment) {
+			Schedule scheduleBlockout=Appointments.GetBlockoutsOverlappingNoSchedule(appointment).FirstOrDefault();
+			if(scheduleBlockout!=null) { //Appointment was moved on top of at least one conflicting blockout.
+				string itemValue=Defs.GetValue(DefCat.BlockoutTypes,scheduleBlockout.BlockoutType);
+				if(itemValue.Contains(BlockoutType.NoSchedule.GetDescription())) {
+					MsgBox.Show(this,"Appointment cannot be scheduled on a blockout marked as 'Block appointment scheduling'.");
+				} 
+				else {
+					MsgBox.Show(this,"Appointment type cannot be scheduled on this blockout.");
+				}
+				return true;
+			}
+			return false;
+		}
 
 		#endregion Methods - Private Other
 

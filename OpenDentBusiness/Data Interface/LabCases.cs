@@ -15,6 +15,8 @@ namespace OpenDentBusiness{
 			DataTable table=new DataTable();
 			DataRow row;
 			//columns that start with lowercase are altered for display rather than being raw data.
+			table.Columns.Add("AptStatus");
+			table.Columns.Add("aptStatus");
 			table.Columns.Add("AptDateTime",typeof(DateTime));
 			table.Columns.Add("aptDateTime");
 			table.Columns.Add("AptNum");
@@ -27,11 +29,12 @@ namespace OpenDentBusiness{
 			table.Columns.Add("status");
 			table.Columns.Add("Instructions");
 			List<DataRow> rows=new List<DataRow>();
-			//the first query only gets labcases that are attached to scheduled appointments
-			string command="SELECT AptDateTime,appointment.AptNum,appointment.Op,DateTimeChecked,DateTimeRecd,DateTimeSent,"
-				+"LabCaseNum,laboratory.Description,LName,FName,Preferred,MiddleI,Phone,ProcDescript,Instructions "
+			//the first query only gets labcases that are attached to scheduled or planned appointments
+			string command="SELECT appointment.AptStatus,AptDateTime,appointment.AptNum,appointment.Op,DateTimeChecked,DateTimeRecd,"
+				+"DateTimeSent,LabCaseNum,laboratory.Description,LName,FName,Preferred,MiddleI,Phone,ProcDescript,Instructions "
 				+"FROM labcase "
-				+"LEFT JOIN appointment ON labcase.AptNum=appointment.AptNum OR labcase.PlannedAptNum=appointment.AptNum "
+				+"LEFT JOIN appointment ON (labcase.AptNum=0 AND labcase.PlannedAptNum=appointment.AptNum) "
+				+"OR (labcase.AptNum>0 AND labcase.AptNum=appointment.AptNum) "
 				+"LEFT JOIN patient ON labcase.PatNum=patient.PatNum "
 				+"LEFT JOIN laboratory ON labcase.LaboratoryNum=laboratory.LaboratoryNum "
 				+"WHERE AptDateTime > "+POut.Date(aptStartDate)+" "
@@ -48,9 +51,11 @@ namespace OpenDentBusiness{
 			DateTime date;
 			for(int i=0;i<raw.Rows.Count;i++) {
 				row=table.NewRow();
-		    AptDateTime=PIn.DateT(raw.Rows[i]["AptDateTime"].ToString());
+				ApptStatus apptStatus=(ApptStatus)int.Parse(raw.Rows[i]["AptStatus"].ToString());//get the obj from the datatable, then convert to enum by casting to string->int->enum
+				row["aptStatus"]=Enum.GetName(typeof(ApptStatus),apptStatus);
+				AptDateTime=PIn.DateT(raw.Rows[i]["AptDateTime"].ToString());
 				row["AptDateTime"]=AptDateTime;
-				row["aptDateTime"]=AptDateTime.ToShortDateString()+" "+AptDateTime.ToShortTimeString();
+				row["aptDateTime"]=AptDateTime.ToShortDateString()+(apptStatus!=ApptStatus.Planned?" "+AptDateTime.ToShortTimeString():"");
 				row["AptNum"]=raw.Rows[i]["AptNum"].ToString();
 				row["OpNum"]=raw.Rows[i]["Op"].ToString();
 				row["lab"]=raw.Rows[i]["Description"].ToString();

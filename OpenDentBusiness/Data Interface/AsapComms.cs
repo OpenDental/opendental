@@ -494,11 +494,6 @@ namespace OpenDentBusiness{
 					}
 					bool isWithin30Minutes=(GetNextTextSendTime() < _dtSlotStart && (_dtSlotStart-GetNextTextSendTime()).TotalMinutes < TextMinMinutesBefore);
 					bool isAfterSlot=(GetNextTextSendTime() > _dtSlotStart);
-					ApptReminderSent apptReminderSent=ApptReminderSents.GetForApt(fkey).OrderByDescending(x => x.DateTimeEntry).FirstOrDefault();
-					bool isReminderSent=false;
-					if(apptReminderSent!=null) {
-						isReminderSent=apptReminderSent.SendStatus.In(AutoCommStatus.SendSuccessful,AutoCommStatus.SentAwaitingReceipt,AutoCommStatus.DoNotSend);
-					}
 					if(isWithin30Minutes) {
 						patDetail.AppendNote(Lans.g(_lanThis,"Not sending text because the text would be sent less than")+" "+TextMinMinutesBefore+" "
 							+Lans.g(_lanThis,"minutes before the time slot."));
@@ -506,10 +501,6 @@ namespace OpenDentBusiness{
 					}
 					if(isAfterSlot) {
 						patDetail.AppendNote(Lans.g(_lanThis,"Not sending text because the text would be sent after the time slot."));
-						return false;
-					}
-					if(isReminderSent) {
-						patDetail.AppendNote(Lans.g(_lanThis,"Not sending reminder text because a reminder text has already been sent."));
 						return false;
 					}
 					if(_sendMode==SendMode.Email) {
@@ -561,11 +552,6 @@ namespace OpenDentBusiness{
 					}
 					bool isWithin30Minutes=(DtSendEmail < _dtSlotStart && (_dtSlotStart-DtSendEmail).TotalMinutes < TextMinMinutesBefore);
 					bool isAfterSlot=(DtSendEmail > _dtSlotStart);
-					ApptReminderSent apptReminderSent=ApptReminderSents.GetForApt(fkey).OrderByDescending(x => x.DateTimeEntry).FirstOrDefault();
-					bool isReminderSent=false;
-					if(apptReminderSent!=null) {
-						isReminderSent=apptReminderSent.SendStatus.In(AutoCommStatus.SendSuccessful,AutoCommStatus.SentAwaitingReceipt,AutoCommStatus.DoNotSend);
-					}
 					if(isWithin30Minutes) {
 						patDetail.AppendNote(Lans.g(_lanThis,"Not sending email because the email would be sent less than")+" "+TextMinMinutesBefore+" "
 							+Lans.g(_lanThis,"minutes before the time slot."));
@@ -573,10 +559,6 @@ namespace OpenDentBusiness{
 					}
 					if(isAfterSlot) {
 						patDetail.AppendNote(Lans.g(_lanThis,"Not sending email because the email would be sent after the time slot."));
-						return false;
-					}
-					if(isReminderSent) {
-						patDetail.AppendNote(Lans.g(_lanThis,"Not sending reminder email because a reminder email has already been sent."));
 						return false;
 					}
 					if(_sendMode==SendMode.Text) {

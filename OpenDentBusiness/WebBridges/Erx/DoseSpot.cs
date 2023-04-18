@@ -1307,8 +1307,8 @@ namespace OpenDentBusiness {
 
 		private static byte[] GetSHA512Hash(byte[] arrayBytesToHash) {
 			byte[] arrayHash;
-			using(SHA512 sha512Managed=new SHA512Managed()) {//Use SHA512 to hash the byte value you just received
-				arrayHash=sha512Managed.ComputeHash(arrayBytesToHash);
+			using(SHA512 sha512CryptoSP=new SHA512CryptoServiceProvider()) {//Use SHA512 to hash the byte value you just received
+				arrayHash=sha512CryptoSP.ComputeHash(arrayBytesToHash);
 			}
 			return arrayHash;
 		}

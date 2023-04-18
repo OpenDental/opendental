@@ -95,7 +95,31 @@ namespace OpenDental {
 		}
 
 		public List<string> ValidateTemplates() {
-			List<string> listErrors=new List<string>();			
+			List<string> listErrors=new List<string>();
+			if(Rule.TypeCur==ApptReminderType.GeneralMessage) {
+				string sms="";
+				string email="";
+				if(Rule.TemplateSMSAggShared.Contains("[Appts]") && string.IsNullOrWhiteSpace(Rule.TemplateSMSAggPerAppt)) {
+					sms="SMS";
+				}
+				if(Rule.TemplateEmailAggShared.Contains("[Appts]") && string.IsNullOrWhiteSpace(Rule.TemplateEmailAggPerAppt)) {
+					email="Email";
+				}
+				if (sms!="" || email!="") {
+					string language=MiscUtils.GetCultureFromThreeLetter(Rule.Language)?.EnglishName??Rule.Language;
+					if (language.IsNullOrEmpty()) {
+						language="Default";
+					}
+					string and="";
+					string tab=Lan.g(this,"tab");
+					if(sms!="" && email!="") {
+						and=" "+Lan.g(this,"and")+" ";
+						tab=Lan.g(this,"tabs");
+					}
+					string errorMessage=Lan.g(this,"The [Appts] tag template has not been configured for ")+sms+and+email+Lan.g(this," messages for ")+language+". "+Lan.g(this,"Go to the ")+language+Lan.g(this," tab")+", "+Lan.g(this,"click on the Advanced button")+", "+Lan.g(this,"and set up Aggregated ")+sms+and+email+Lan.g(this," Template Per Appointment in the ")+sms+and+email+Lan.g(this," Templates ")+tab+".";
+					listErrors.Add(errorMessage);
+				}
+			}
 			if(Rule.TypeCur==ApptReminderType.Arrival) {
 				if(!textTemplateSms.Text.ToLower().Contains(OpenDentBusiness.AutoComm.ArrivalsTagReplacer.ARRIVED_TAG.ToLower())) {
 					listErrors.Add(Lan.g(this,$"Arrival texts must contain the \"{OpenDentBusiness.AutoComm.ArrivalsTagReplacer.ARRIVED_TAG}\" tag."));
@@ -106,7 +130,7 @@ namespace OpenDental {
 					listErrors.Add(Lan.g(this,"Text message cannot be blank."));
 				}
 			}
-			else {				
+			else {
 				if(Rule.TypeCur!=ApptReminderType.PatientPortalInvite) {
 					if(string.IsNullOrWhiteSpace(textTemplateSms.Text)) {
 						listErrors.Add(Lan.g(this,"Text message cannot be blank."));
@@ -117,7 +141,7 @@ namespace OpenDental {
 				}
 				if(string.IsNullOrWhiteSpace(_templateEmail)) {
 					listErrors.Add(Lan.g(this,"Email message cannot be blank."));
-				}				
+				}
 				if(PrefC.GetBool(PrefName.EmailDisclaimerIsOn) && !_templateEmail.ToLower().Contains("[emaildisclaimer]")) {
 					listErrors.Add(Lan.g(this,"Email must contain the \"[EmailDisclaimer]\" tag."));
 				}
@@ -135,9 +159,9 @@ namespace OpenDental {
 			}
 			listErrors.AddRange(AddCalendarTagErrors());
 			//new (non-birthday) rule, user may have not remembered to setup the aggregates
-			if(Rule.Language!="" && Rule.ApptReminderRuleNum==0 && Rule.TypeCur!=ApptReminderType.Birthday) {
-				string err=Lan.g(this,"Aggregated templates have not been set up for all additional languages. Click on the 'Advanced' button to set up " +
-					"aggregated templates.");
+			if(Rule.Language!="" && Rule.ApptReminderRuleNum==0 && !Rule.TypeCur.In(ApptReminderType.Birthday,ApptReminderType.GeneralMessage))
+			{
+				string err=Lan.g(this,"Aggregated templates have not been set up for all additional languages. Click on the 'Advanced' button to set up aggregated templates.");
 				if(Rule.TypeCur==ApptReminderType.Arrival) {
 					if(Rule.TemplateSMSAggShared=="" || Rule.TemplateSMSAggPerAppt=="") { //Arrivals don't include email
 						listErrors.Add(err);

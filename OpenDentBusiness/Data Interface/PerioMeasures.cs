@@ -149,7 +149,7 @@ namespace OpenDentBusiness{
 			return table;
 		}
 
-		///<summary>Get a list of periomeasures from the db. Used in the API.</summary>
+		///<summary>Get a list of periomeasures from the db.</summary>
 		public static List<PerioMeasure> GetPerioMeasuresForApi(int limit,int offset,long perioExamNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<PerioMeasure>>(MethodBase.GetCurrentMethod(),limit,offset,perioExamNum);
@@ -163,6 +163,16 @@ namespace OpenDentBusiness{
 			return Crud.PerioMeasureCrud.SelectMany(command);
 		}
 
+		///<summary>Gets a PerioMeasure by PerioMeasureNum from the database. Returns null if not found.</summary>
+		public static PerioMeasure GetOne(long perioMeasureNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<PerioMeasure>(MethodBase.GetCurrentMethod(),perioMeasureNum);
+			}
+			string command="SELECT * FROM periomeasure "
+				+"WHERE PerioMeasureNum = "+POut.Long(perioMeasureNum);
+			return Crud.PerioMeasureCrud.SelectOne(command);
+		}
+		
 		public static List<PerioMeasure> GetAllForExam(long perioExamNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<PerioMeasure>>(MethodBase.GetCurrentMethod(),perioExamNum);
@@ -182,7 +192,8 @@ namespace OpenDentBusiness{
 				return 100-measure;
 			}
 			return measure;//no adjustments needed.
-		}		
+		}
+
 	}
 	
 	

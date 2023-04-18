@@ -136,7 +136,7 @@ namespace OpenDental {
 					DialogResult=DialogResult.Abort;
 					return;
 				}
-				if(_claimProc.ClaimNum>0 && _claimProc.Status==ClaimProcStatus.Received
+				if(_claimProc.ClaimNum>0 && (_claimProc.Status==ClaimProcStatus.Received || _claimProc.Status==ClaimProcStatus.Supplemental)
 					//Prior to version 16.3.7 this perm check used claim.DateReceived but users with ClaimSentEdit perm but not ClaimProcReceivedEdit perm could
 					//edit the claim Date Received field and subvert the security perm intended to prevent them from editing the claimproc
 					&& !Security.IsAuthorized(Permissions.ClaimProcReceivedEdit,_claimProc.DateEntry,false))
