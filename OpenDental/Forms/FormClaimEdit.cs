@@ -2163,6 +2163,10 @@ namespace OpenDental{
 			if(!Security.IsAuthorized(Permissions.InsPayCreate)) {//date not checked here, but it will be checked when saving the check to prevent backdating
 				return;
 			}
+			if(comboClaimStatus.SelectedIndex==_listClaimStatuses.IndexOf(ClaimStatus.HoldForInProcess)) {
+				MsgBox.Show(Lan.g(this,"Cannot Finalize Payment with status "+ClaimStatus.HoldForInProcess.GetDescription()+"."));
+				return;
+			}
 			if(PrefC.GetBool(PrefName.ClaimPaymentBatchOnly)) {
 				//Is there a permission in the manage module that would block this behavior? Are we sending the user into a TRAP?!
 				MsgBox.Show(this,"Please use Batch Insurance in Manage Module to Finalize Payments.");

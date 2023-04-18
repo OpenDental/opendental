@@ -84,11 +84,11 @@
 			this.tabTemplates.Controls.Add(this.tabSMSTemplate);
 			this.tabTemplates.Controls.Add(this.tabAutoReplyTemplate);
 			this.tabTemplates.Controls.Add(this.tabArrivalTemplate);
-			this.tabTemplates.Location = new System.Drawing.Point(1, 76);
-			this.tabTemplates.MinimumSize = new System.Drawing.Size(639, 460);
+			this.tabTemplates.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+			this.tabTemplates.Location = new System.Drawing.Point(3, 76);
+			this.tabTemplates.MinimumSize = new System.Drawing.Size(635, 460);
 			this.tabTemplates.Name = "tabTemplates";
-			this.tabTemplates.SelectedIndex = 0;
-			this.tabTemplates.Size = new System.Drawing.Size(639, 460);
+			this.tabTemplates.Size = new System.Drawing.Size(635, 460);
 			this.tabTemplates.TabIndex = 11;
 			this.tabTemplates.SelectedIndexChanged += new System.EventHandler(this.tabTemplates_SelectedIndexChanged);
 			// 
@@ -98,10 +98,10 @@
 			this.tabEmailTemplate.Controls.Add(this.groupBoxEmailSubjAggShared);
 			this.tabEmailTemplate.Controls.Add(this.groupBoxEmailAggShared);
 			this.tabEmailTemplate.Controls.Add(this.groupBoxEmailAggPerAppt);
-			this.tabEmailTemplate.Location = new System.Drawing.Point(4, 22);
+			this.tabEmailTemplate.Location = new System.Drawing.Point(2, 21);
 			this.tabEmailTemplate.Name = "tabEmailTemplate";
 			this.tabEmailTemplate.Padding = new System.Windows.Forms.Padding(3);
-			this.tabEmailTemplate.Size = new System.Drawing.Size(631, 434);
+			this.tabEmailTemplate.Size = new System.Drawing.Size(631, 437);
 			this.tabEmailTemplate.TabIndex = 1;
 			this.tabEmailTemplate.Text = "Email Templates";
 			// 
@@ -167,9 +167,9 @@
 			this.groupBoxEmailSubjAggShared.BackColor = System.Drawing.SystemColors.Control;
 			this.groupBoxEmailSubjAggShared.Controls.Add(this.labelEmailSubjAggShared);
 			this.groupBoxEmailSubjAggShared.Controls.Add(this.textEmailSubjAggShared);
-			this.groupBoxEmailSubjAggShared.Location = new System.Drawing.Point(4, 2);
+			this.groupBoxEmailSubjAggShared.Location = new System.Drawing.Point(2, 3);
 			this.groupBoxEmailSubjAggShared.Name = "groupBoxEmailSubjAggShared";
-			this.groupBoxEmailSubjAggShared.Size = new System.Drawing.Size(625, 66);
+			this.groupBoxEmailSubjAggShared.Size = new System.Drawing.Size(627, 66);
 			this.groupBoxEmailSubjAggShared.TabIndex = 12;
 			this.groupBoxEmailSubjAggShared.Text = "Aggregated Email Subject";
 			// 
@@ -201,9 +201,9 @@
 			this.groupBoxEmailAggShared.Controls.Add(this.butEditEmail);
 			this.groupBoxEmailAggShared.Controls.Add(this.browserEmailBody);
 			this.groupBoxEmailAggShared.Controls.Add(this.labelEmailAggShared);
-			this.groupBoxEmailAggShared.Location = new System.Drawing.Point(5, 68);
+			this.groupBoxEmailAggShared.Location = new System.Drawing.Point(2, 68);
 			this.groupBoxEmailAggShared.Name = "groupBoxEmailAggShared";
-			this.groupBoxEmailAggShared.Size = new System.Drawing.Size(625, 227);
+			this.groupBoxEmailAggShared.Size = new System.Drawing.Size(627, 227);
 			this.groupBoxEmailAggShared.TabIndex = 14;
 			this.groupBoxEmailAggShared.Text = "Aggregated Email Template";
 			// 
@@ -244,9 +244,9 @@
 			this.groupBoxEmailAggPerAppt.BackColor = System.Drawing.SystemColors.Control;
 			this.groupBoxEmailAggPerAppt.Controls.Add(this.labelEmailAggPerAppt);
 			this.groupBoxEmailAggPerAppt.Controls.Add(this.textEmailAggPerAppt);
-			this.groupBoxEmailAggPerAppt.Location = new System.Drawing.Point(4, 301);
+			this.groupBoxEmailAggPerAppt.Location = new System.Drawing.Point(2, 300);
 			this.groupBoxEmailAggPerAppt.Name = "groupBoxEmailAggPerAppt";
-			this.groupBoxEmailAggPerAppt.Size = new System.Drawing.Size(625, 134);
+			this.groupBoxEmailAggPerAppt.Size = new System.Drawing.Size(627, 134);
 			this.groupBoxEmailAggPerAppt.TabIndex = 16;
 			this.groupBoxEmailAggPerAppt.Text = "Aggregated Email Template Per Appointment";
 			// 
@@ -284,9 +284,9 @@
 			this.groupBoxSMSAggPerAppt.BackColor = System.Drawing.SystemColors.Control;
 			this.groupBoxSMSAggPerAppt.Controls.Add(this.labelSMSAggPerAppt);
 			this.groupBoxSMSAggPerAppt.Controls.Add(this.textSMSAggPerAppt);
-			this.groupBoxSMSAggPerAppt.Location = new System.Drawing.Point(2, 4);
+			this.groupBoxSMSAggPerAppt.Location = new System.Drawing.Point(2, 163);
 			this.groupBoxSMSAggPerAppt.Name = "groupBoxSMSAggPerAppt";
-			this.groupBoxSMSAggPerAppt.Size = new System.Drawing.Size(625, 155);
+			this.groupBoxSMSAggPerAppt.Size = new System.Drawing.Size(627, 155);
 			this.groupBoxSMSAggPerAppt.TabIndex = 10;
 			this.groupBoxSMSAggPerAppt.Text = "Aggregated SMS Template Per Appointment";
 			// 
@@ -320,9 +320,9 @@
 			this.groupBoxSMSAggShared.BackColor = System.Drawing.SystemColors.Control;
 			this.groupBoxSMSAggShared.Controls.Add(this.labelSMSAggShared);
 			this.groupBoxSMSAggShared.Controls.Add(this.textSMSAggShared);
-			this.groupBoxSMSAggShared.Location = new System.Drawing.Point(3, 165);
+			this.groupBoxSMSAggShared.Location = new System.Drawing.Point(2, 3);
 			this.groupBoxSMSAggShared.Name = "groupBoxSMSAggShared";
-			this.groupBoxSMSAggShared.Size = new System.Drawing.Size(624, 211);
+			this.groupBoxSMSAggShared.Size = new System.Drawing.Size(627, 155);
 			this.groupBoxSMSAggShared.TabIndex = 8;
 			this.groupBoxSMSAggShared.Text = "Aggregated SMS Template";
 			// 
@@ -344,7 +344,7 @@
 			this.textSMSAggShared.Name = "textSMSAggShared";
 			this.textSMSAggShared.QuickPasteType = OpenDentBusiness.QuickPasteType.TxtMsg;
 			this.textSMSAggShared.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this.textSMSAggShared.Size = new System.Drawing.Size(615, 166);
+			this.textSMSAggShared.Size = new System.Drawing.Size(615, 110);
 			this.textSMSAggShared.TabIndex = 1;
 			this.textSMSAggShared.Text = "";
 			// 
@@ -355,9 +355,9 @@
 			this.groupAggregateAutoReplyTemplate.BackColor = System.Drawing.SystemColors.Control;
 			this.groupAggregateAutoReplyTemplate.Controls.Add(this.labelAggregateAutoReply);
 			this.groupAggregateAutoReplyTemplate.Controls.Add(this.textAggregateAutoReply);
-			this.groupAggregateAutoReplyTemplate.Location = new System.Drawing.Point(2, 141);
+			this.groupAggregateAutoReplyTemplate.Location = new System.Drawing.Point(2, 163);
 			this.groupAggregateAutoReplyTemplate.Name = "groupAggregateAutoReplyTemplate";
-			this.groupAggregateAutoReplyTemplate.Size = new System.Drawing.Size(628, 155);
+			this.groupAggregateAutoReplyTemplate.Size = new System.Drawing.Size(627, 155);
 			this.groupAggregateAutoReplyTemplate.TabIndex = 12;
 			this.groupAggregateAutoReplyTemplate.Text = "Aggregate Auto Reply Template";
 			// 
@@ -392,7 +392,7 @@
 			this.groupAutoReplySingle.Controls.Add(this.textSingleAutoReply);
 			this.groupAutoReplySingle.Location = new System.Drawing.Point(2, 3);
 			this.groupAutoReplySingle.Name = "groupAutoReplySingle";
-			this.groupAutoReplySingle.Size = new System.Drawing.Size(628, 155);
+			this.groupAutoReplySingle.Size = new System.Drawing.Size(627, 155);
 			this.groupAutoReplySingle.TabIndex = 11;
 			this.groupAutoReplySingle.Text = "Single Auto Reply Template";
 			// 
@@ -427,7 +427,7 @@
 			this.groupArrivedReply.Controls.Add(this.textArrivalResponse);
 			this.groupArrivedReply.Location = new System.Drawing.Point(2, 3);
 			this.groupArrivedReply.Name = "groupArrivedReply";
-			this.groupArrivedReply.Size = new System.Drawing.Size(628, 155);
+			this.groupArrivedReply.Size = new System.Drawing.Size(627, 155);
 			this.groupArrivedReply.TabIndex = 14;
 			this.groupArrivedReply.Text = "Arrival SMS Response Template";
 			// 
@@ -461,9 +461,9 @@
 			this.groupComeIn.BackColor = System.Drawing.SystemColors.Control;
 			this.groupComeIn.Controls.Add(this.label1);
 			this.groupComeIn.Controls.Add(this.textComeIn);
-			this.groupComeIn.Location = new System.Drawing.Point(2, 162);
+			this.groupComeIn.Location = new System.Drawing.Point(2, 163);
 			this.groupComeIn.Name = "groupComeIn";
-			this.groupComeIn.Size = new System.Drawing.Size(628, 155);
+			this.groupComeIn.Size = new System.Drawing.Size(627, 155);
 			this.groupComeIn.TabIndex = 13;
 			this.groupComeIn.Text = "Come In SMS Message Template";
 			// 

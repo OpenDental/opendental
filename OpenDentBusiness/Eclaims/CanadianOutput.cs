@@ -902,8 +902,9 @@ namespace OpenDentBusiness.Eclaims {
 				if(fieldInputter==null) {//happens in version 02 when a terminating message containing the text "NO MORE ITEMS" is received.
 					break;
 				}
+				string responseFormatVersion=fieldInputter.GetFieldById("A03").valuestr;
 				CCDField fieldA04=fieldInputter.GetFieldById("A04");//message format
-				if(formatVersion=="02") {
+				if(responseFormatVersion=="02") {
 					//In this case, there are only 4 possible responses:
 					//EOB, Claim Ack, Claim Ack with an error code, or Claim Ack with literal "NO MORE ITEMS" starting at character 13.
 					if(fieldA04.valuestr=="11") {
@@ -914,7 +915,7 @@ namespace OpenDentBusiness.Eclaims {
 						}
 					}
 				}
-				else if(formatVersion=="04") {
+				else if(responseFormatVersion=="04") {
 					//Remember, the only allowed response transaction types are:
 					//21 EOB Response, 11 Claim Ack, 14 Outstanding Transactions Response, 23 Predetermination EOB, 13 Predetermination Ack, 24 E-Mail Response
 					if(fieldA04.valuestr=="14") {//Outstanding Transaction Ack Format
