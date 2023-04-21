@@ -342,6 +342,11 @@
 			this._recalcErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
 			this.comboClaimStatus = new OpenDental.UI.ComboBox();
 			this.textPatResp = new OpenDental.ValidDouble();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.panel2 = new System.Windows.Forms.Panel();
+			this.panel3 = new System.Windows.Forms.Panel();
+			this.panel4 = new System.Windows.Forms.Panel();
+			this.panel5 = new System.Windows.Forms.Panel();
 			this.groupFinalizePayment.SuspendLayout();
 			this.tabControlMain.SuspendLayout();
 			this.tabGeneral.SuspendLayout();
@@ -374,6 +379,11 @@
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._recalcErrorProvider)).BeginInit();
+			this.panel1.SuspendLayout();
+			this.panel2.SuspendLayout();
+			this.panel3.SuspendLayout();
+			this.panel4.SuspendLayout();
+			this.panel5.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// label30
@@ -521,7 +531,7 @@
 			this.labelBatch.Text = "Click Batch after entering all ins payments for one EOB; or";
 			this.labelBatch.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
-			// tabMain
+			// tabControlMain
 			// 
 			this.tabControlMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
@@ -533,29 +543,18 @@
 			this.tabControlMain.Controls.Add(this.tabCanadian);
 			this.tabControlMain.Controls.Add(this.tabHistory);
 			this.tabControlMain.Location = new System.Drawing.Point(2, 478);
-			this.tabControlMain.Name = "tabMain";
-			this.tabControlMain.SelectedIndex = 0;
+			this.tabControlMain.Name = "tabControlMain";
 			this.tabControlMain.Size = new System.Drawing.Size(1148, 164);
 			this.tabControlMain.TabIndex = 133;
 			this.tabControlMain.SelectedIndexChanged += new System.EventHandler(this.tabControlMain_SelectedIndexChanged);
 			// 
 			// tabGeneral
 			// 
-			this.tabGeneral.AutoScroll = true;
 			this.tabGeneral.BackColor = System.Drawing.Color.Transparent;
-			this.tabGeneral.Controls.Add(this.groupAccident);
-			this.tabGeneral.Controls.Add(this.groupReferral);
-			this.tabGeneral.Controls.Add(this.groupProsth);
-			this.tabGeneral.Controls.Add(this.comboEmployRelated);
-			this.tabGeneral.Controls.Add(this.groupOrtho);
-			this.tabGeneral.Controls.Add(this.labelNote);
-			this.tabGeneral.Controls.Add(this.textNote);
-			this.tabGeneral.Controls.Add(this.comboPlaceService);
-			this.tabGeneral.Controls.Add(this.label48);
-			this.tabGeneral.Controls.Add(this.label49);
-			this.tabGeneral.Location = new System.Drawing.Point(4, 22);
+			this.tabGeneral.Controls.Add(this.panel1);
+			this.tabGeneral.Location = new System.Drawing.Point(2, 21);
 			this.tabGeneral.Name = "tabGeneral";
-			this.tabGeneral.Size = new System.Drawing.Size(1140, 138);
+			this.tabGeneral.Size = new System.Drawing.Size(1144, 141);
 			this.tabGeneral.TabIndex = 2;
 			this.tabGeneral.Text = "General";
 			// 
@@ -894,7 +893,7 @@
 			this.textNote.Name = "textNote";
 			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.Claim;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this.textNote.Size = new System.Drawing.Size(508, 136);
+			this.textNote.Size = new System.Drawing.Size(489, 136);
 			this.textNote.TabIndex = 118;
 			this.textNote.Text = "";
 			// 
@@ -927,24 +926,22 @@
 			// 
 			// tabAttachments
 			// 
-			this.tabAttachments.AutoScroll = true;
 			this.tabAttachments.BackColor = System.Drawing.Color.White;
-			this.tabAttachments.Controls.Add(this.tabControlAttach);
-			this.tabAttachments.Location = new System.Drawing.Point(4, 22);
+			this.tabAttachments.Controls.Add(this.panel2);
+			this.tabAttachments.Location = new System.Drawing.Point(2, 21);
 			this.tabAttachments.Name = "tabAttachments";
 			this.tabAttachments.Padding = new System.Windows.Forms.Padding(3);
-			this.tabAttachments.Size = new System.Drawing.Size(1140, 138);
+			this.tabAttachments.Size = new System.Drawing.Size(1144, 141);
 			this.tabAttachments.TabIndex = 6;
 			this.tabAttachments.Text = "Attachments";
 			// 
-			// tabAttach
+			// tabControlAttach
 			// 
 			this.tabControlAttach.Controls.Add(this.tabNEA);
 			this.tabControlAttach.Controls.Add(this.tabDXC);
 			this.tabControlAttach.Location = new System.Drawing.Point(6, 6);
-			this.tabControlAttach.Name = "tabAttach";
-			this.tabControlAttach.SelectedIndex = 0;
-			this.tabControlAttach.Size = new System.Drawing.Size(1128, 262);
+			this.tabControlAttach.Name = "tabControlAttach";
+			this.tabControlAttach.Size = new System.Drawing.Size(675, 231);
 			this.tabControlAttach.TabIndex = 152;
 			// 
 			// tabNEA
@@ -952,10 +949,10 @@
 			this.tabNEA.BackColor = System.Drawing.Color.White;
 			this.tabNEA.Controls.Add(this.groupAttachments);
 			this.tabNEA.Controls.Add(this.groupAttachedImages);
-			this.tabNEA.Location = new System.Drawing.Point(4, 22);
+			this.tabNEA.Location = new System.Drawing.Point(2, 21);
 			this.tabNEA.Name = "tabNEA";
 			this.tabNEA.Padding = new System.Windows.Forms.Padding(3);
-			this.tabNEA.Size = new System.Drawing.Size(1120, 236);
+			this.tabNEA.Size = new System.Drawing.Size(671, 208);
 			this.tabNEA.TabIndex = 0;
 			this.tabNEA.Text = "NEA/Manual";
 			// 
@@ -1189,10 +1186,10 @@
 			this.tabDXC.Controls.Add(this.textAttachmentID);
 			this.tabDXC.Controls.Add(this.labelAttachmentID);
 			this.tabDXC.Controls.Add(this.gridSent);
-			this.tabDXC.Location = new System.Drawing.Point(4, 22);
+			this.tabDXC.Location = new System.Drawing.Point(2, 21);
 			this.tabDXC.Name = "tabDXC";
 			this.tabDXC.Padding = new System.Windows.Forms.Padding(3);
-			this.tabDXC.Size = new System.Drawing.Size(1120, 236);
+			this.tabDXC.Size = new System.Drawing.Size(671, 208);
 			this.tabDXC.TabIndex = 1;
 			this.tabDXC.Text = "DXC";
 			// 
@@ -1234,7 +1231,7 @@
 			// 
 			this.gridSent.Location = new System.Drawing.Point(200, 6);
 			this.gridSent.Name = "gridSent";
-			this.gridSent.Size = new System.Drawing.Size(261, 224);
+			this.gridSent.Size = new System.Drawing.Size(261, 201);
 			this.gridSent.TabIndex = 0;
 			this.gridSent.Title = "Attachments Sent";
 			this.gridSent.TranslationName = "gridSent";
@@ -1242,28 +1239,11 @@
 			// 
 			// tabMisc
 			// 
-			this.tabMisc.AutoScroll = true;
-			this.tabMisc.Controls.Add(this.textClaimIdOriginal);
-			this.tabMisc.Controls.Add(this.labelClaimIdOriginal);
-			this.tabMisc.Controls.Add(this.labelShareOfCost);
-			this.tabMisc.Controls.Add(this.labelClaimIdentifierDentiCal);
-			this.tabMisc.Controls.Add(this.labelOrigRefNumDentiCal);
-			this.tabMisc.Controls.Add(this.labelPriorAuthDentiCal);
-			this.tabMisc.Controls.Add(this.textOrigRefNum);
-			this.tabMisc.Controls.Add(this.labelCorrectionType);
-			this.tabMisc.Controls.Add(this.labelPriorAuth);
-			this.tabMisc.Controls.Add(this.labelOrigRefNum);
-			this.tabMisc.Controls.Add(this.textPriorAuth);
-			this.tabMisc.Controls.Add(this.labelSpecialProgram);
-			this.tabMisc.Controls.Add(this.textClaimIdentifier);
-			this.tabMisc.Controls.Add(this.comboSpecialProgram);
-			this.tabMisc.Controls.Add(this.labelClaimIdentifier);
-			this.tabMisc.Controls.Add(this.comboCorrectionType);
-			this.tabMisc.Controls.Add(this.textShareOfCost);
-			this.tabMisc.Location = new System.Drawing.Point(4, 22);
+			this.tabMisc.Controls.Add(this.panel3);
+			this.tabMisc.Location = new System.Drawing.Point(2, 21);
 			this.tabMisc.Name = "tabMisc";
 			this.tabMisc.Padding = new System.Windows.Forms.Padding(3);
-			this.tabMisc.Size = new System.Drawing.Size(1140, 138);
+			this.tabMisc.Size = new System.Drawing.Size(1144, 141);
 			this.tabMisc.TabIndex = 4;
 			this.tabMisc.Text = "Misc";
 			// 
@@ -1411,17 +1391,12 @@
 			// 
 			// tabUB04
 			// 
-			this.tabUB04.AutoScroll = true;
 			this.tabUB04.BackColor = System.Drawing.Color.White;
-			this.tabUB04.Controls.Add(this.groupBox4);
-			this.tabUB04.Controls.Add(this.groupUb04);
-			this.tabUB04.Controls.Add(this.groupDateIllnessInjuryPreg);
-			this.tabUB04.Controls.Add(this.checkIsOutsideLab);
-			this.tabUB04.Controls.Add(this.groupDateOtherCondOrTreatment);
-			this.tabUB04.Location = new System.Drawing.Point(4, 22);
+			this.tabUB04.Controls.Add(this.panel4);
+			this.tabUB04.Location = new System.Drawing.Point(2, 21);
 			this.tabUB04.Name = "tabUB04";
 			this.tabUB04.Padding = new System.Windows.Forms.Padding(3);
-			this.tabUB04.Size = new System.Drawing.Size(1140, 138);
+			this.tabUB04.Size = new System.Drawing.Size(1144, 141);
 			this.tabUB04.TabIndex = 0;
 			this.tabUB04.Text = "Medical";
 			// 
@@ -2336,27 +2311,11 @@
 			// 
 			// tabCanadian
 			// 
-			this.tabCanadian.AutoScroll = true;
 			this.tabCanadian.BackColor = System.Drawing.Color.White;
-			this.tabCanadian.Controls.Add(this.textCanadaTransRefNum);
-			this.tabCanadian.Controls.Add(this.groupCanadaOrthoPredeterm);
-			this.tabCanadian.Controls.Add(this.label76);
-			this.tabCanadian.Controls.Add(this.butReverse);
-			this.tabCanadian.Controls.Add(this.textMissingTeeth);
-			this.tabCanadian.Controls.Add(this.labelCanadaMissingTeeth);
-			this.tabCanadian.Controls.Add(this.labelExtractedTeeth);
-			this.tabCanadian.Controls.Add(this.listExtractedTeeth);
-			this.tabCanadian.Controls.Add(this.checkCanadianIsOrtho);
-			this.tabCanadian.Controls.Add(this.label43);
-			this.tabCanadian.Controls.Add(this.butMissingTeethHelp);
-			this.tabCanadian.Controls.Add(this.groupMandPros);
-			this.tabCanadian.Controls.Add(this.groupMaxPros);
-			this.tabCanadian.Controls.Add(this.groupBox8);
-			this.tabCanadian.Controls.Add(this.groupBox9);
-			this.tabCanadian.Controls.Add(this.textCanadianAccidentDate);
-			this.tabCanadian.Location = new System.Drawing.Point(4, 22);
+			this.tabCanadian.Controls.Add(this.panel5);
+			this.tabCanadian.Location = new System.Drawing.Point(2, 21);
 			this.tabCanadian.Name = "tabCanadian";
-			this.tabCanadian.Size = new System.Drawing.Size(1140, 138);
+			this.tabCanadian.Size = new System.Drawing.Size(1144, 141);
 			this.tabCanadian.TabIndex = 3;
 			this.tabCanadian.Text = "Canadian";
 			// 
@@ -2821,14 +2780,13 @@
 			// 
 			// tabHistory
 			// 
-			this.tabHistory.AutoScroll = true;
 			this.tabHistory.Controls.Add(this.labelHistoryNone);
 			this.tabHistory.Controls.Add(this.butAdd);
 			this.tabHistory.Controls.Add(this.gridStatusHistory);
-			this.tabHistory.Location = new System.Drawing.Point(4, 22);
+			this.tabHistory.Location = new System.Drawing.Point(2, 21);
 			this.tabHistory.Name = "tabHistory";
 			this.tabHistory.Padding = new System.Windows.Forms.Padding(3);
-			this.tabHistory.Size = new System.Drawing.Size(1140, 138);
+			this.tabHistory.Size = new System.Drawing.Size(1144, 141);
 			this.tabHistory.TabIndex = 5;
 			this.tabHistory.Text = "Status History";
 			// 
@@ -2859,7 +2817,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridStatusHistory.Location = new System.Drawing.Point(6, 33);
 			this.gridStatusHistory.Name = "gridStatusHistory";
-			this.gridStatusHistory.Size = new System.Drawing.Size(1094, 105);
+			this.gridStatusHistory.Size = new System.Drawing.Size(1098, 108);
 			this.gridStatusHistory.TabIndex = 156;
 			this.gridStatusHistory.Title = "Claim Custom Tracking Status History";
 			this.gridStatusHistory.TranslationName = "TableStatusHistory";
@@ -3465,6 +3423,100 @@
 			this.textPatResp.TabStop = false;
 			this.textPatResp.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
+			// panel1
+			// 
+			this.panel1.AutoScroll = true;
+			this.panel1.Controls.Add(this.groupProsth);
+			this.panel1.Controls.Add(this.groupAccident);
+			this.panel1.Controls.Add(this.label49);
+			this.panel1.Controls.Add(this.groupReferral);
+			this.panel1.Controls.Add(this.label48);
+			this.panel1.Controls.Add(this.comboPlaceService);
+			this.panel1.Controls.Add(this.comboEmployRelated);
+			this.panel1.Controls.Add(this.textNote);
+			this.panel1.Controls.Add(this.groupOrtho);
+			this.panel1.Controls.Add(this.labelNote);
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(0, 0);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(1144, 141);
+			this.panel1.TabIndex = 150;
+			// 
+			// panel2
+			// 
+			this.panel2.AutoScroll = true;
+			this.panel2.Controls.Add(this.tabControlAttach);
+			this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel2.Location = new System.Drawing.Point(3, 3);
+			this.panel2.Name = "panel2";
+			this.panel2.Size = new System.Drawing.Size(1138, 135);
+			this.panel2.TabIndex = 153;
+			// 
+			// panel3
+			// 
+			this.panel3.AutoScroll = true;
+			this.panel3.Controls.Add(this.comboCorrectionType);
+			this.panel3.Controls.Add(this.textClaimIdOriginal);
+			this.panel3.Controls.Add(this.textShareOfCost);
+			this.panel3.Controls.Add(this.labelClaimIdOriginal);
+			this.panel3.Controls.Add(this.labelClaimIdentifier);
+			this.panel3.Controls.Add(this.labelShareOfCost);
+			this.panel3.Controls.Add(this.comboSpecialProgram);
+			this.panel3.Controls.Add(this.labelClaimIdentifierDentiCal);
+			this.panel3.Controls.Add(this.textClaimIdentifier);
+			this.panel3.Controls.Add(this.labelOrigRefNumDentiCal);
+			this.panel3.Controls.Add(this.labelSpecialProgram);
+			this.panel3.Controls.Add(this.labelPriorAuthDentiCal);
+			this.panel3.Controls.Add(this.textPriorAuth);
+			this.panel3.Controls.Add(this.textOrigRefNum);
+			this.panel3.Controls.Add(this.labelOrigRefNum);
+			this.panel3.Controls.Add(this.labelCorrectionType);
+			this.panel3.Controls.Add(this.labelPriorAuth);
+			this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel3.Location = new System.Drawing.Point(3, 3);
+			this.panel3.Name = "panel3";
+			this.panel3.Size = new System.Drawing.Size(1138, 135);
+			this.panel3.TabIndex = 168;
+			// 
+			// panel4
+			// 
+			this.panel4.AutoScroll = true;
+			this.panel4.Controls.Add(this.groupBox4);
+			this.panel4.Controls.Add(this.groupDateOtherCondOrTreatment);
+			this.panel4.Controls.Add(this.groupUb04);
+			this.panel4.Controls.Add(this.checkIsOutsideLab);
+			this.panel4.Controls.Add(this.groupDateIllnessInjuryPreg);
+			this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel4.Location = new System.Drawing.Point(3, 3);
+			this.panel4.Name = "panel4";
+			this.panel4.Size = new System.Drawing.Size(1138, 135);
+			this.panel4.TabIndex = 151;
+			// 
+			// panel5
+			// 
+			this.panel5.AutoScroll = true;
+			this.panel5.Controls.Add(this.groupBox9);
+			this.panel5.Controls.Add(this.textCanadaTransRefNum);
+			this.panel5.Controls.Add(this.textCanadianAccidentDate);
+			this.panel5.Controls.Add(this.groupCanadaOrthoPredeterm);
+			this.panel5.Controls.Add(this.groupBox8);
+			this.panel5.Controls.Add(this.label76);
+			this.panel5.Controls.Add(this.groupMaxPros);
+			this.panel5.Controls.Add(this.butReverse);
+			this.panel5.Controls.Add(this.groupMandPros);
+			this.panel5.Controls.Add(this.textMissingTeeth);
+			this.panel5.Controls.Add(this.butMissingTeethHelp);
+			this.panel5.Controls.Add(this.labelCanadaMissingTeeth);
+			this.panel5.Controls.Add(this.label43);
+			this.panel5.Controls.Add(this.labelExtractedTeeth);
+			this.panel5.Controls.Add(this.checkCanadianIsOrtho);
+			this.panel5.Controls.Add(this.listExtractedTeeth);
+			this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel5.Location = new System.Drawing.Point(0, 0);
+			this.panel5.Name = "panel5";
+			this.panel5.Size = new System.Drawing.Size(1144, 141);
+			this.panel5.TabIndex = 151;
+			// 
 			// FormClaimEdit
 			// 
 			this.AutoScroll = true;
@@ -3557,7 +3609,6 @@
 			this.tabDXC.ResumeLayout(false);
 			this.tabDXC.PerformLayout();
 			this.tabMisc.ResumeLayout(false);
-			this.tabMisc.PerformLayout();
 			this.tabUB04.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
 			this.groupUb04.ResumeLayout(false);
@@ -3571,7 +3622,6 @@
 			this.groupDateOtherCondOrTreatment.ResumeLayout(false);
 			this.groupDateOtherCondOrTreatment.PerformLayout();
 			this.tabCanadian.ResumeLayout(false);
-			this.tabCanadian.PerformLayout();
 			this.groupCanadaOrthoPredeterm.ResumeLayout(false);
 			this.groupCanadaOrthoPredeterm.PerformLayout();
 			this.groupMandPros.ResumeLayout(false);
@@ -3588,6 +3638,13 @@
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this._recalcErrorProvider)).EndInit();
+			this.panel1.ResumeLayout(false);
+			this.panel2.ResumeLayout(false);
+			this.panel3.ResumeLayout(false);
+			this.panel3.PerformLayout();
+			this.panel4.ResumeLayout(false);
+			this.panel5.ResumeLayout(false);
+			this.panel5.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -3912,5 +3969,10 @@
 		private OpenDental.UI.ComboBox comboClaimStatus;
 		private ValidDouble textPatResp;
 		private System.Windows.Forms.Label labelHistoryNone;
+		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.Panel panel2;
+		private System.Windows.Forms.Panel panel3;
+		private System.Windows.Forms.Panel panel4;
+		private System.Windows.Forms.Panel panel5;
 	}
 }

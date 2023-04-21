@@ -262,6 +262,11 @@ namespace OpenDental {
 		private void butOK_Click(object sender,EventArgs e) {
 			if(textBoxDescription.Text.Trim().IsNullOrEmpty()) {
 				MsgBox.Show(this,"Description cannot be blank. Please enter a description.");
+				return;
+			}
+			if(_listFlowActionDefs.IsNullOrEmpty()) {
+				MsgBox.Show(this, "Must have at least one action in flow definition.");
+				return;
 			}
 			Save();
 			Cache.Refresh(InvalidType.FlowDef);

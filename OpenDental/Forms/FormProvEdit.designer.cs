@@ -1160,7 +1160,7 @@ namespace OpenDental {
 			this.textWebSchedDescript.AcceptsTab = true;
 			this.textWebSchedDescript.BackColor = System.Drawing.SystemColors.Window;
 			this.textWebSchedDescript.Location = new System.Drawing.Point(153, 36);
-			this.textWebSchedDescript.MaxLength = 65000;
+			this.textWebSchedDescript.MaxLength = 500;
 			this.textWebSchedDescript.Multiline = true;
 			this.textWebSchedDescript.Name = "textWebSchedDescript";
 			this.textWebSchedDescript.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;

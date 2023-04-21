@@ -1638,6 +1638,7 @@ namespace OpenDentBusiness{
 				return;//authentication was cancelled or there was an error so just return.
 			}
 			emailAddress.AccessToken=microsoftTokenHelper.AccessToken;
+			emailAddress.RefreshToken=microsoftTokenHelper.AccountInfo;
 			EmailAddresses.Update(emailAddress);
 			EmailAddresses.RefreshCache();
 			Signalods.SetInvalid(InvalidType.Email);

@@ -189,7 +189,11 @@ namespace OpenDental {
 			_stopwatchKillSnipToolProcesses.Restart();
 			timerKillSnipToolProcesses.Start();
 			//Create the attachment but with default values
-			CreateImageAttachment(bitmapClipboard,isSnip:true);
+			try {
+				CreateImageAttachment(bitmapClipboard,isSnip:true);
+			}
+			catch { 
+			}
 		}
 
 		///<summary>100ms. Monitor the list of running processes for Snip & Sketch and Snipping Tool, for a short duration,

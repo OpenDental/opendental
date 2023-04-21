@@ -1661,10 +1661,10 @@ namespace OpenDentBusiness {
 		}
 		///<summary>Gets multiple Patients from database. Returns null if not found.</summary>
 		public static List<PatientWithServerDT> GetPatientsSimpleForApi(int limit,int offset,string lName,string fName,
-			DateTime birthdate,int patStatus,long clinicNum,DateTime dateTStamp,long priProv,int gender,int position,long guarantor)
+			DateTime birthdate,int patStatus,long clinicNum,DateTime dateTStamp,long priProv,int gender,int position,long guarantor,long superFamily)
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<PatientWithServerDT>>(MethodBase.GetCurrentMethod(),limit,offset,lName,fName,birthdate,patStatus,clinicNum,dateTStamp,priProv,gender,position,guarantor);
+				return Meth.GetObject<List<PatientWithServerDT>>(MethodBase.GetCurrentMethod(),limit,offset,lName,fName,birthdate,patStatus,clinicNum,dateTStamp,priProv,gender,position,guarantor,superFamily);
 			}
 			string command="SELECT * FROM patient WHERE DateTStamp >= "+POut.DateT(dateTStamp)+" "
 				+"AND PatStatus != "+POut.Int((int)PatientStatus.Deleted)+" ";//Do not return Deleted patients.
@@ -1694,6 +1694,9 @@ namespace OpenDentBusiness {
 			}
 			if(guarantor>-1) {
 				command+="AND Guarantor="+POut.Long(guarantor)+" ";
+			}
+			if(superFamily>-1) {
+				command+="AND SuperFamily="+POut.Long(superFamily)+" ";
 			}
 			command+="ORDER BY PatNum "//same fixed order each time
 				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);

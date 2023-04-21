@@ -4109,17 +4109,13 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			command="INSERT INTO preference(PrefName,ValueString) VALUES('InsPlansZeroWriteOffsOnFreqOrAging','0')";//Default to False
 			Db.NonQ(command);
-			command="ALTER TABLE insplan ADD InsPlansZeroWriteOffsOnAnnualMaxOverride tinyint NOT NULL";
-			Db.NonQ(command);
-			command="ALTER TABLE insplan ADD InsPlansZeroWriteOffsOnFreqOrAgingOverride tinyint NOT NULL";
+			command="ALTER TABLE insplan ADD InsPlansZeroWriteOffsOnAnnualMaxOverride tinyint NOT NULL,ADD InsPlansZeroWriteOffsOnFreqOrAgingOverride tinyint NOT NULL";
 			Db.NonQ(command);
 			command="ALTER TABLE userod ADD EClipboardClinicalPin text NOT NULL";
 			Db.NonQ(command);
 			command="INSERT INTO preference(Prefname,ValueString) VALUES('EClipboardClinicalValidationFrequency','-1')";//Default to disabled
 			Db.NonQ(command);
-			command = "ALTER TABLE mobileappdevice ADD UserNum bigint NOT NULL";
-			Db.NonQ(command);
-			command = "ALTER TABLE mobileappdevice ADD INDEX (UserNum)";
+			command = "ALTER TABLE mobileappdevice ADD UserNum bigint NOT NULL,ADD INDEX (UserNum)";
 			Db.NonQ(command);
 			command="SELECT ProgramNum from program WHERE ProgName='DentX' AND ProgDesc='ProImage from www.dent-x.com'";
 			long programNum=Db.GetLong(command);
@@ -4127,11 +4123,11 @@ namespace OpenDentBusiness {
 				command=$"UPDATE program SET ProgDesc='ProImage' WHERE ProgramNum={POut.Long(programNum)}";
 				Db.NonQ(command);
 			}
-			LargeTableHelper.AlterTable("sheetfield","SheetFieldNum",new ColNameAndDef("CanElectronicallySign","tinyint NOT NULL"));
-			LargeTableHelper.AlterTable("sheetfield","SheetFieldNum",new ColNameAndDef("IsSigProvRestricted","tinyint NOT NULL"));
-			command="ALTER TABLE sheetfielddef ADD CanElectronicallySign tinyint NOT NULL";
-			Db.NonQ(command);
-			command="ALTER TABLE sheetfielddef ADD IsSigProvRestricted tinyint NOT NULL";
+			AlterTable("sheetfield","SheetFieldNum",listColNamesAndDefs:new List<ColNameAndDef> {
+				new ColNameAndDef("CanElectronicallySign","tinyint NOT NULL"),
+				new ColNameAndDef("IsSigProvRestricted","tinyint NOT NULL")
+			});
+			command="ALTER TABLE sheetfielddef ADD CanElectronicallySign tinyint NOT NULL,ADD IsSigProvRestricted tinyint NOT NULL";
 			Db.NonQ(command);
 			command="DELETE FROM programproperty WHERE PropertyDesc = 'Access Token' AND programproperty.ProgramNum = (SELECT ProgramNum FROM program WHERE ProgName = 'QuickBooksOnline')";
 			Db.NonQ(command);
@@ -4369,7 +4365,13 @@ namespace OpenDentBusiness {
 
 		private static void To22_3_55() {
 			//Altering EClipboarcClinicalPin to a varchar(128) instead of IsText.
-			string command="ALTER TABLE userod MODIFY EClipboardClinicalPin VARCHAR(128)";
+			string command="ALTER TABLE userod MODIFY EClipboardClinicalPin varchar(128) NOT NULL";
+			Db.NonQ(command);
+		}
+
+		private static void To22_3_65() {
+			//Altering to a varchar(128) instead of IsText.
+			string command="ALTER TABLE provider MODIFY WebSchedDescript varchar(500) NOT NULL";
 			Db.NonQ(command);
 		}
 
@@ -4634,7 +4636,13 @@ namespace OpenDentBusiness {
 
 		private static void To22_4_29() { 
 			//Altering EClipboarcClinicalPin to a varchar(128) instead of IsText.
-			string command="ALTER TABLE userod MODIFY EClipboardClinicalPin VARCHAR(128)";
+			string command="ALTER TABLE userod MODIFY EClipboardClinicalPin varchar(128) NOT NULL";
+			Db.NonQ(command);
+		}
+
+		private static void To22_4_38() {
+			//Altering to a varchar(128) instead of IsText.
+			string command="ALTER TABLE provider MODIFY WebSchedDescript varchar(500) NOT NULL";
 			Db.NonQ(command);
 		}
 
