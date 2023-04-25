@@ -75,7 +75,7 @@ namespace OpenDentBusiness{
 				+"SendingApp,SendingFacility,medlab.PatNum,medlab.ProvNum,PatIDLab,PatIDAlt,PatAge,PatAccountNum,PatFasting,medlab.SpecimenID,"
 				+"SpecimenIDFiller,ObsTestID,ObsTestLoinc,ObsTestLoincText,DateTimeCollected,TotalVolume,ActionCode,ClinicalInfo,"
 				+"MIN(DateTimeEntered) AS DateTimeEntered,OrderingProvNPI,OrderingProvLocalID,OrderingProvLName,OrderingProvFName,SpecimenIDAlt,"
-				+"maxdate.DateTimeReported,MIN(CASE WHEN medlab.DateTimeReported=maxDate.DateTimeReported THEN ResultStatus ELSE NULL END) AS ResultStatus,"
+				+"maxDate.DateTimeReported,MIN(CASE WHEN medlab.DateTimeReported=maxDate.DateTimeReported THEN ResultStatus ELSE NULL END) AS ResultStatus,"
 				+"ParentObsID,ParentObsTestID,NotePat,NoteLab,FileName,"
 				+"MIN(CASE WHEN medlab.DateTimeReported=maxDate.DateTimeReported THEN OriginalPIDSegment ELSE NULL END) AS OriginalPIDSegment,"
 				+DbHelper.GroupConcat("ObsTestDescript",distinct:true,separator:"\r\n")+" AS ObsTestDescript "
@@ -91,7 +91,7 @@ namespace OpenDentBusiness{
 				command+="WHERE ("+string.Join(" OR ",listWhereClauseStrs)+") ";
 			}
 			command+="GROUP BY medlab.PatNum,medlab.ProvNum,medlab.SpecimenID "
-				+"ORDER BY maxdate.DateTimeReported DESC,medlab.SpecimenID,MedLabNum";//most recently received lab on top, with all for a specific specimen together
+				+"ORDER BY maxDate.DateTimeReported DESC,medlab.SpecimenID,MedLabNum";//most recently received lab on top, with all for a specific specimen together
 			return Crud.MedLabCrud.SelectMany(command);
 		}
 
