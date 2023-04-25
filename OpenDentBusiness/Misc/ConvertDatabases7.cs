@@ -4146,17 +4146,13 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			command="INSERT INTO preference(PrefName,ValueString) VALUES('InsPlansZeroWriteOffsOnFreqOrAging','0')";//Default to False
 			Db.NonQ(command);
-			command="ALTER TABLE insplan ADD InsPlansZeroWriteOffsOnAnnualMaxOverride tinyint NOT NULL";
-			Db.NonQ(command);
-			command="ALTER TABLE insplan ADD InsPlansZeroWriteOffsOnFreqOrAgingOverride tinyint NOT NULL";
+			command="ALTER TABLE insplan ADD InsPlansZeroWriteOffsOnAnnualMaxOverride tinyint NOT NULL,ADD InsPlansZeroWriteOffsOnFreqOrAgingOverride tinyint NOT NULL";
 			Db.NonQ(command);
 			command="ALTER TABLE userod ADD EClipboardClinicalPin text NOT NULL";
 			Db.NonQ(command);
 			command="INSERT INTO preference(Prefname,ValueString) VALUES('EClipboardClinicalValidationFrequency','-1')";//Default to disabled
 			Db.NonQ(command);
-			command = "ALTER TABLE mobileappdevice ADD UserNum bigint NOT NULL";
-			Db.NonQ(command);
-			command = "ALTER TABLE mobileappdevice ADD INDEX (UserNum)";
+			command = "ALTER TABLE mobileappdevice ADD UserNum bigint NOT NULL,ADD INDEX (UserNum)";
 			Db.NonQ(command);
 			command="SELECT ProgramNum from program WHERE ProgName='DentX' AND ProgDesc='ProImage from www.dent-x.com'";
 			long programNum=Db.GetLong(command);
@@ -4164,11 +4160,11 @@ namespace OpenDentBusiness {
 				command=$"UPDATE program SET ProgDesc='ProImage' WHERE ProgramNum={POut.Long(programNum)}";
 				Db.NonQ(command);
 			}
-			LargeTableHelper.AlterTable("sheetfield","SheetFieldNum",new ColNameAndDef("CanElectronicallySign","tinyint NOT NULL"));
-			LargeTableHelper.AlterTable("sheetfield","SheetFieldNum",new ColNameAndDef("IsSigProvRestricted","tinyint NOT NULL"));
-			command="ALTER TABLE sheetfielddef ADD CanElectronicallySign tinyint NOT NULL";
-			Db.NonQ(command);
-			command="ALTER TABLE sheetfielddef ADD IsSigProvRestricted tinyint NOT NULL";
+			AlterTable("sheetfield","SheetFieldNum",listColNamesAndDefs:new List<ColNameAndDef> {
+				new ColNameAndDef("CanElectronicallySign","tinyint NOT NULL"),
+				new ColNameAndDef("IsSigProvRestricted","tinyint NOT NULL")
+			});
+			command="ALTER TABLE sheetfielddef ADD CanElectronicallySign tinyint NOT NULL,ADD IsSigProvRestricted tinyint NOT NULL";
 			Db.NonQ(command);
 			command="DELETE FROM programproperty WHERE PropertyDesc = 'Access Token' AND programproperty.ProgramNum = (SELECT ProgramNum FROM program WHERE ProgName = 'QuickBooksOnline')";
 			Db.NonQ(command);

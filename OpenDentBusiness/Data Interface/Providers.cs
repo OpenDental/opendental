@@ -616,7 +616,7 @@ namespace OpenDentBusiness{
 			//Creates a dictionary of all UserNums and list of either each one's associated clinics (if in above dictionary) or an empty list
 			Dictionary<long,List<long>> dictUserClinics=Userods.GetDeepCopy()
 				.ToDictionary(x => x.UserNum,x => dictUserClinicsReference.ContainsKey(x.UserNum)?dictUserClinicsReference[x.UserNum]:new List<long>());  //kvp (AllUserNums, listAssociatedClinicNumsIfAny)
-																																																																									//Creates a dictionary of all ProvNums with each's list of associated UserNums (likely just one UserNum)
+			//Creates a dictionary of all ProvNums with each's list of associated UserNums (likely just one UserNum)
 			Dictionary<long,List<long>> dictProvUsers=Userods.GetWhere(x => x.ProvNum>0)	//Where the user is a provider
 				.GroupBy(x => x.ProvNum)
 				.ToDictionary(x => x.Key,x => x.Select(y => y.UserNum)	//kvp (provNum, listAssociatedUserNums)
@@ -628,7 +628,7 @@ namespace OpenDentBusiness{
 				(!dictProvUsers.ContainsKey(x.ProvNum) //provider not associated to any users.
 				|| dictProvUsers[x.ProvNum].Any(y=>dictUserClinics[y].Count==0) //provider associated with user not restricted to any clinics
 				|| dictProvUsers[x.ProvNum].Any(y=>dictUserClinics[y].Any(z => listClinicNums.Contains(z)))),true); //provider associated to user restricted to clinic in listClinicNums
-																																																						//returns list of ProvNums from the above providers that are also not restricted to a clinic in listClinicNums
+			//returns list of ProvNums from the above providers that are also not restricted to a clinic in listClinicNums
 			return listProviders.Where(x => !listProvsRestrictedOtherClinics.Contains(x.ProvNum)).OrderBy(x => x.ItemOrder).ToList();
 		}
 

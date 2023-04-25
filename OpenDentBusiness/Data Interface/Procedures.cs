@@ -1325,10 +1325,12 @@ namespace OpenDentBusiness {
 
 		#region Update
 		///<summary>A centralized form of Update combined with logic that was in FormProcEdit.  This should be called when you wish to matain the same logic as FormProcEdit AFTER changes are validated.</summary>
-		public static bool FormProcEditUpdate(Procedure procNew,Procedure procOld,ProcedureCode procCode,bool isProcLinkedToOrthoCase,bool isNew=false
+		public static void FormProcEditUpdate(Procedure procNew,Procedure procOld,ProcedureCode procCode,bool isProcLinkedToOrthoCase,bool isNew=false
 			,string procTeethStr="") 
 		{
-			bool wasUpdated=Update(procNew,procOld,false,isProcLinkedToOrthoCase:isProcLinkedToOrthoCase);
+			if(!CultureInfo.CurrentCulture.Name.EndsWith("CA") || procOld.ProcNumLab==0) {//Canadian. en-CA or fr-CA
+				Update(procNew,procOld,false,isProcLinkedToOrthoCase:isProcLinkedToOrthoCase);//Do not update Canadian labs here, because they are handled in SetCanadianLabFeesCompleteForProc below.
+			}
 			//No need to check MiddleTierRole; no call to db.
 			Appointments.UpdateProcDescriptionForAppt(procNew,procOld);//Does nothing if procNew is not associated to an appt or planned appt.
 			DiscountChangeSecLogEntry(procNew,procOld);//Does nothing if procNew.Discount is the same as procOld.Discount.
@@ -1373,7 +1375,7 @@ namespace OpenDentBusiness {
 				}
 			}
 			#endregion
-			return wasUpdated;
+			return;
 		}
 
 		///<summary>Updates only the changed columns.  Called from 44 places.  Also creates adjustments for discounts and sales tax, and updates payment plan charges.  =jordan 2020-05-29- This is a bad pattern.  Do not do anything like this in other S classes.  Insert and Update methods are sacred and should never have additional logic in them.  We will need to untangle and remove all this code when we have time.</summary>
@@ -4222,10 +4224,10 @@ namespace OpenDentBusiness {
 							+apptOldPlannedDateStr+" "+Lans.g("AppointmentEdit","to planned appointment created on")+" "
 							+AptCur.AptDateTime.ToShortDateString(),AptCur.AptNum,logSource,AptCur.DateTStamp);
 						//Add securityLog to previously planned appointment.
-						SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,apptOldPlanned.PatNum,Lans.g("AppointmentEdit","Procedure")+" "
+						SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,apptOldPlanned?.PatNum??AptCur.PatNum,Lans.g("AppointmentEdit","Procedure")+" "
 							+ProcedureCodes.GetProcCode(proc.CodeNum).AbbrDesc+" "+Lans.g("AppointmentEdit","moved from planned appointment created on")+" "
 							+apptOldPlannedDateStr+" "+Lans.g("AppointmentEdit","to planned appointment created on")+" "
-							+apptOldPlanned.AptDateTime.ToShortDateString(),apptOldPlanned.AptNum,logSource,apptOldPlanned.DateTStamp);
+							+apptOldPlannedDateStr,apptOldPlanned?.AptNum??0,logSource,apptOldPlanned?.DateTStamp??default);
 						UpdateOtherApptDesc(proc,AptCur,isAptPlanned,listAppointments,listProcs);
 					}
 					proc.PlannedAptNum=AptCur.AptNum;
@@ -4239,9 +4241,9 @@ namespace OpenDentBusiness {
 							+ProcedureCodes.GetProcCode(proc.CodeNum).AbbrDesc+" "+Lans.g("AppointmentEdit","moved from appointment on")+" "+apptOldDateStr
 							+" "+Lans.g("AppointmentEdit","to appointment on")+" "+AptCur.AptDateTime,AptCur.AptNum,logSource,AptCur.DateTStamp);
 						//Add securityLog to previous appointment.
-						SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,AptCur.PatNum,Lans.g("AppointmentEdit","Procedure")+" "
+						SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,apptOld?.PatNum??AptCur.PatNum,Lans.g("AppointmentEdit","Procedure")+" "
 							+ProcedureCodes.GetProcCode(proc.CodeNum).AbbrDesc+" "+Lans.g("AppointmentEdit","moved from appointment on")+" "+apptOldDateStr
-							+" "+Lans.g("AppointmentEdit","to appointment on")+" "+apptOld.AptDateTime,apptOld.AptNum,logSource,apptOld.DateTStamp);
+							+" "+Lans.g("AppointmentEdit","to appointment on")+" "+apptOldDateStr,apptOld?.AptNum??0,logSource,apptOld?.DateTStamp??default);
 						UpdateOtherApptDesc(proc,AptCur,isAptPlanned,listAppointments,listProcs);
 					}
 					proc.AptNum=AptCur.AptNum;
