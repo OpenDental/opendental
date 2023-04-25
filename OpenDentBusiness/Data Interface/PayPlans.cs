@@ -690,7 +690,6 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Automatically closes all payment plans that have no future charges and that are paid off.
-		///Not really a problem if it fails because the UPDATE statement happens all at once, so at worst, no changes are made to their database.
 		///Returns the number of payment plans that were closed.</summary>
 		public static long AutoClose() {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -718,18 +717,13 @@ namespace OpenDentBusiness{
 				+"GROUP BY payplan.PayPlanNum "
 				+"HAVING Princ+Interest <= (TotPay + InsPay) AND LastDate <="+DbHelper.Curdate();
 			table=Db.GetTable(command);
-			string payPlanNums="";
-			for(int i=0;i < table.Rows.Count;i++) {
-				if(i!=0) {
-					payPlanNums+=",";
-				}
-				payPlanNums+=table.Rows[i]["PayPlanNum"];
+			long[] arrayPayPlanNums=table.AsEnumerable().Select(x => (long)x["PayPlanNum"]).ToArray();
+			List<PayPlan> listPayPlans=PayPlans.GetMany(arrayPayPlanNums);
+			for(int i=0;i<listPayPlans.Count;i++) {
+				listPayPlans[i].IsClosed=true;
+				PayPlans.Update(listPayPlans[i]);
 			}
-			if(payPlanNums=="") {
-				return 0; //no plans to close.
-			}
-			command="UPDATE payplan SET IsClosed=1 WHERE PayPlanNum IN ("+payPlanNums+")";
-			return Db.NonQ(command);
+			return listPayPlans.Count;
 		}
 
 		///<summary>Returns the salted hash for the payplan. Will return an empty string if the calling program is unable to use CDT.dll. </summary>

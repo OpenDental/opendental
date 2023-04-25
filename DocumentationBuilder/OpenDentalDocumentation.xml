@@ -12931,7 +12931,7 @@
     <column order="40" name="SchedNote" type="varchar(255)">
       <summary>Indicates if the provider should only be scheduled in a certain way (e.g. Root canals only)</summary>
     </column>
-    <column order="41" name="WebSchedDescript" type="text">
+    <column order="41" name="WebSchedDescript" type="varchar(500)">
       <summary>The description of the provider that is displayed to patients in Web Sched.</summary>
     </column>
     <column order="42" name="WebSchedImageLocation" type="varchar(255)">

@@ -218,6 +218,12 @@
       <summary></summary>
     </column>
   </table>
+  <table name="provider">
+    <summary></summary>
+    <column order="41" name="WebSchedDescript" type="varchar(500)">
+      <summary>The description of the provider that is displayed to patients in Web Sched.</summary>
+    </column>
+  </table>
   <table name="requiredfield">
     <summary></summary>
     <column order="2" name="FieldName" type="varchar(50)">
@@ -286,6 +292,12 @@
         <summary></summary>
         <EnumValue name="BlockWithMessage">3</EnumValue>
       </Enumeration>
+    </column>
+  </table>
+  <table name="provider">
+    <summary></summary>
+    <column order="41" name="WebSchedDescript" type="text">
+      <summary>The description of the provider that is displayed to patients in Web Sched.</summary>
     </column>
   </table>
   <table name="webschedcarrierrule">
