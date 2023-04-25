@@ -1,0 +1,78 @@
+CREATE TABLE benefit(
+  BenefitNum mediumint unsigned NOT NULL auto_increment,
+  PlanNum int NOT NULL,
+  PatPlanNum mediumint unsigned NOT NULL,
+  CovCatNum mediumint unsigned NOT NULL,
+  ADACode varchar(15) character set utf8 collate utf8_bin NOT NULL default '',
+  BenefitType tinyint unsigned NOT NULL,
+  Percent tinyint unsigned NOT NULL,
+  MonetaryAmt double NOT NULL,
+  TimePeriod tinyint unsigned NOT NULL,
+  QuantityQualifier tinyint unsigned NOT NULL,
+  Quantity tinyint unsigned NOT NULL,
+  PRIMARY KEY (BenefitNum)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE payperiod(
+  PayPeriodNum mediumint unsigned NOT NULL auto_increment,
+  DateStart date NOT NULL default '0001-01-01',
+  DateStop date NOT NULL default '0001-01-01',
+  DatePaycheck date NOT NULL default '0001-01-01',
+  PRIMARY KEY (PayPeriodNum)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE appointmentrule(
+  AppointmentRuleNum mediumint unsigned NOT NULL auto_increment,
+  RuleDesc varchar(255) NOT NULL,
+  ADACodeStart varchar(15) character set utf8 collate utf8_bin NOT NULL default '',
+  ADACodeEnd varchar(15) character set utf8 collate utf8_bin NOT NULL default '',
+  IsEnabled tinyint unsigned NOT NULL,
+  PRIMARY KEY (AppointmentRuleNum)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE timeadjust(
+  TimeAdjustNum mediumint unsigned NOT NULL auto_increment,
+  EmployeeNum mediumint unsigned NOT NULL,
+  TimeEntry datetime NOT NULL default '0001-01-01',
+  RegHours double NOT NULL,
+  OTimeHours double NOT NULL,
+  Note text NOT NULL,
+  PRIMARY KEY (TimeAdjustNum)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE account(
+  AccountNum mediumint unsigned NOT NULL auto_increment,
+  Description varchar(255) NOT NULL,
+  AcctType tinyint unsigned NOT NULL,
+  BankNumber varchar(255) NOT NULL,
+  PRIMARY KEY (AccountNum)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE transaction(
+  TransactionNum mediumint unsigned NOT NULL auto_increment,
+  DateTimeEntry datetime NOT NULL default '0001-01-01',
+  UserNum mediumint unsigned NOT NULL,
+  DepositNum mediumint unsigned NOT NULL,
+  PRIMARY KEY (TransactionNum)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE journalentry(
+  JournalEntryNum mediumint unsigned NOT NULL auto_increment,
+  TransactionNum mediumint unsigned NOT NULL,
+  AccountNum mediumint unsigned NOT NULL,
+  DateDisplayed date NOT NULL default '0001-01-01',
+  DebitAmt double NOT NULL,
+  CreditAmt double NOT NULL,
+  Memo text NOT NULL,
+  Splits text NOT NULL,
+  CheckNumber varchar(255) NOT NULL,
+  PRIMARY KEY (JournalEntryNum)
+) DEFAULT CHARSET=utf8;
+
+
+ALTER TABLE insplan ADD SubscNote text NOT NULL;
+ALTER TABLE patient ADD TrophyFolder varchar(255) NOT NULL;
+ALTER TABLE procedurelog ADD LabFee double NOT NULL;
+ALTER TABLE program CHANGE Note Note text NOT NULL;
+INSERT INTO preference VALUES ('EasyHideInsurance','0');
+INSERT INTO preference VALUES ('BirthdayPostcardMsg','Dear ?FName,  Happy ?AgeOrdinal Birthday!  Now you are ?Age years old.');

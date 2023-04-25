@@ -1,0 +1,9 @@
+# config/source - options for live-helper(7), source stage
+
+# $LH_SOURCE: set source option
+# (Default: disabled)
+LH_SOURCE="disabled"
+
+# $LH_SOURCE_IMAGES: set image type
+# (Default: tar)
+LH_SOURCE_IMAGES="tar"

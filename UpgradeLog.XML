@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="OpenDental4_0">
+</Property><Property Name="Solution File" Value="C:\Documents and Settings\jordan\My Documents\Open Dental Project\OpenDental4_0\OpenDental4_0.sln">
+</Property><Property Name="Date" Value="Thursday, December 15, 2005">
+</Property><Property Name="Time" Value="17:30 PM">
+</Property></Properties><Event ErrorLevel="0" Project="OpenDental4_0" Source="OpenDental4_0.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="OpenDental4_0" Source="OpenDental4_0.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="ODR" Source="ODR\ODR.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="ODR" Source="ODR\ODR.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="RdlEngine" Source="RdlEngine\RdlEngine.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="RdlEngine" Source="RdlEngine\RdlEngine.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="RdlViewer" Source="RdlViewer\RdlViewer.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="RdlViewer" Source="RdlViewer\RdlViewer.csproj" Description="Converted">
+</Event><Event ErrorLevel="1" Project="C:\Documents and Settings\jordan\My Documents\Open Dental Project\OpenDental4_0\RdlDesign\ReportDesigner.csproj" Source="RdlDesign\ReportDesigner.csproj" Description="MSB2016: Found an empty .RESX file in the project (DesignerUtility.resx).  Removing it from the converted project.">
+</Event><Event ErrorLevel="0" Project="ReportDesigner" Source="RdlDesign\ReportDesigner.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="ReportDesigner" Source="RdlDesign\ReportDesigner.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="OpenDental4_0.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="OpenDental4_0.sln" Description="Converted">
+</Event><Event ErrorLevel="0" Project="OpenDental4_0" Source="OpenDental4_0.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="ODR" Source="ODR\ODR.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="RdlEngine" Source="RdlEngine\RdlEngine.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="RdlViewer" Source="RdlViewer\RdlViewer.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="ReportDesigner" Source="RdlDesign\ReportDesigner.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event></UpgradeLog>
