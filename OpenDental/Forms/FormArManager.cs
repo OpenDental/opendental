@@ -577,7 +577,7 @@ namespace OpenDental {
 			if(tabControlMain.SelectedTab==tabExcluded){
 				SetTotalsLocAndVisible(DisplayFieldCategory.ArManagerExcludedGrid,gridExcluded.HScrollValue);
 			}
-			LayoutManager.LayoutControlBoundsAndFonts(tabControlMain);
+			LayoutManager?.LayoutControlBoundsAndFonts(tabControlMain);
 		}
 
 		///<summary>Fills the grid, but only if not preceded by a ResizeBegin event, i.e. the form is being manually resized or moved around the screen.</summary>

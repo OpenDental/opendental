@@ -83,12 +83,10 @@ namespace OpenDental {
 					}
 				},comboProv,comboSite,comboClinic,comboAptStatus,comboNumberReminders,checkGroupFamilies);
 			CheckClinicsSignedUpForWebSched();
-			comboProv.Items.Add(Lan.g(this,"All"));
-			comboProv.SelectedIndex=0;
 			_listProviders=Providers.GetDeepCopy(true);
-			for(int i=0;i<_listProviders.Count;i++) {
-				comboProv.Items.Add(_listProviders[i].GetLongDesc());
-			}
+			comboProv.IncludeAll=true;
+			comboProv.Items.AddProvsFull(_listProviders);
+			comboProv.IsAllSelected=true;
 			if(PrefC.GetBool(PrefName.EnterpriseApptList)){
 				comboClinic.IncludeAll=false;
 			}
@@ -97,12 +95,11 @@ namespace OpenDental {
 				labelSite.Visible=false;
 			}
 			else{
-				comboSite.Items.Add(Lan.g(this,"All"));
-				comboSite.SelectedIndex=0;
 				_listSites=Sites.GetDeepCopy();
-				for(int i=0;i<_listSites.Count;i++) {
-					comboSite.Items.Add(_listSites[i].Description);
-				}
+				comboSite.IncludeAll=true;
+				comboSite.SelectedIndex=0;
+				comboSite.Items.AddList(_listSites,x => x.Description);
+				comboSite.IsAllSelected=true;
 			}
 			splitContainer.Panel2Collapsed=true;
 			if(PrefC.GetBool(PrefName.WebSchedAsapEnabled)) {
@@ -188,14 +185,9 @@ namespace OpenDental {
 		#region Appointments Tab
 
 		private void FillGridAppts(){
-			
-			long provNum=0;
-			if(comboProv.SelectedIndex!=0) {
-				provNum=_listProviders[comboProv.SelectedIndex-1].ProvNum;
-			}
 			long siteNum=0;
-			if(!PrefC.GetBool(PrefName.EasyHidePublicHealth) && comboSite.SelectedIndex!=0) {
-				siteNum=_listSites[comboSite.SelectedIndex-1].SiteNum;
+			if(!PrefC.GetBool(PrefName.EasyHidePublicHealth)) {
+				siteNum=comboSite.GetSelectedKey<Site>(x => x.SiteNum);
 			}
 			if(!SmsPhones.IsIntegratedTextingEnabled()) {
 				butText.Enabled=false;
@@ -207,7 +199,7 @@ namespace OpenDental {
 			}
 			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => { 
-				_listAppointmentsASAP=Appointments.RefreshASAP(provNum,siteNum,clinicNum,listAppStatuses,codeRangeFilter.StartRange,
+				_listAppointmentsASAP=Appointments.RefreshASAP(comboProv.GetSelectedProvNum(),siteNum,clinicNum,listAppStatuses,codeRangeFilter.StartRange,
 					codeRangeFilter.EndRange);
 				};
 			progressOD.ShowDialogProgress();
@@ -402,13 +394,9 @@ namespace OpenDental {
 			else {
 				dateTo=PIn.Date(textDateEnd.Text);
 			}
-			long provNum=0;
-			if(comboProv.SelectedIndex!=0) {
-				provNum=_listProviders[comboProv.SelectedIndex-1].ProvNum;
-			}
 			long siteNum=0;
-			if(!PrefC.GetBool(PrefName.EasyHidePublicHealth) && comboSite.SelectedIndex!=0) {
-				siteNum=_listSites[comboSite.SelectedIndex-1].SiteNum;
+			if(!PrefC.GetBool(PrefName.EasyHidePublicHealth)) {
+				siteNum=comboSite.GetSelectedKey<Site>(x => x.SiteNum);
 			}
 			long clinicNum=-1;
 			if(PrefC.HasClinicsEnabled) {
@@ -420,7 +408,7 @@ namespace OpenDental {
 			long maxReminders=PrefC.GetLong(PrefName.RecallMaxNumberReminders);
 			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => { 
-				tableRecalls=Recalls.GetRecallList(dateFrom,dateTo,checkGroupFamilies.Checked,provNum,clinicNum,
+				tableRecalls=Recalls.GetRecallList(dateFrom,dateTo,checkGroupFamilies.Checked,comboProv.GetSelectedProvNum(),clinicNum,
 					siteNum,RecallListSort.DueDate,recallListShowNumberReminders,maxReminders,isAsap: true,codeRangeFilter.StartRange,codeRangeFilter.EndRange);
 				listRecalls=Recalls.GetMultRecalls(tableRecalls.Rows.OfType<DataRow>().Select(x => PIn.Long(x["RecallNum"].ToString())).ToList());
 			};

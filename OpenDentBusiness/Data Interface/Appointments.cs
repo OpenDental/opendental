@@ -3816,8 +3816,9 @@ namespace OpenDentBusiness{
 			try {
 				return CDT.Class1.CreateSaltedHash(unhashedText);
 			}
-			catch {
-				return "";
+			catch(Exception ex)  {
+				ex.DoNothing();
+				return ex.GetType().Name;
 			}
 		}
 

@@ -642,6 +642,10 @@ namespace OpenDental {
 			if(!ShowOverridePrompt()) {
 				return;
 			}
+			if(_listPaySplits.Count>0 && PIn.Double(textAmount.Text)!=PIn.Double(textSplitTotal.Text)) {
+				MsgBox.Show(this,"Split totals must equal payment amount before running a credit card transaction.");
+				return;
+			}
 			MakePaySimpleTransaction();
 			if(_payment.IsCcCompleted) {
 				DisablePaymentControls();
@@ -2166,13 +2170,6 @@ namespace OpenDental {
 					AddOneSplit();
 					Reinitialize();
 				}
-				else if(_listPaySplits.Count==1//if one split
-					&& _listPaySplits[0].PayPlanNum!=0//and split is on a payment plan
-					&& _listPaySplits[0].SplitAmt!=_payment.PayAmt)//and amount doesn't match payment
-				{
-					_listPaySplits[0].SplitAmt=_payment.PayAmt;//make amounts match automatically
-					textSplitTotal.Text=textAmount.Text;
-				}
 				_payment.IsSplit=_listPaySplits.Count>1;
 				Payments.InsertVoidPayment(_payment,_listPaySplits,receipt,payNote,creditCardSource);
 				if(_doPrintReceipt && receipt!="") {
@@ -2516,7 +2513,7 @@ namespace OpenDental {
 					xWebResponse=EdgeExpress.CNP.VoidTransaction(_patient.PatNum,transactionId,amt,false);
 					payNote=xWebResponse.GetFormattedNote(false);
 					if(xWebResponse.XWebResponseCode==XWebResponseCodes.Approval) {// only continue if we got a approval code back from Edge Express
-																																				 //This matches what we do for PaySimple. We return early for transactions from the FormClainPayEdit.cs window to prevent an error in HandleVoidPayment.
+						//This matches what we do for PaySimple. We return early for transactions from the FormClainPayEdit.cs window to prevent an error in HandleVoidPayment.
 						if(prepaidAmount!=0) {
 							return payNote;
 						}
@@ -2629,7 +2626,13 @@ namespace OpenDental {
 
 		///<summary>Checks if the dynamic payment plan has any charges with overpaid interest or principal. If it does, prompts the user to balance on prepay, principal, or return to payment page. Returns false if the user wants to stay in the Payment window.</summary>
 		private bool CheckDynamicPaymentPlanRebalance() {
-			if(!PayPlanEdit.AreAnyPayPlansOverpaid(_listPaySplits)) {
+			List<long> listPayPlanNums=_listPaySplits.Where(x => x.PayPlanNum>0).Select(x => x.PayPlanNum).ToList();
+			if(listPayPlanNums.IsNullOrEmpty()) {
+				return true;
+			}
+			List<long> listPayPlanNumsDynamic=PayPlans.GetMany(listPayPlanNums.ToArray()).Where(x => x.IsDynamic).Select(x => x.PayPlanNum).ToList();
+			List<PaySplit> listPaySplitsPayPlanDynamic=_listPaySplits.Where(x => x.PayPlanNum.In(listPayPlanNumsDynamic.ToArray())).ToList();
+			if(!PayPlanEdit.AreAnyPayPlansOverpaid(listPaySplitsPayPlanDynamic)) {
 				return true;
 			}
 			DialogResult dialogResult=MessageBox.Show(Lan.g(this,"One or more Current Payment Splits are overpaying interest or principal for dynamic payment plan charges."
@@ -2639,7 +2642,7 @@ namespace OpenDental {
 				return false;
 			}
 			bool isPayOnPrincipal=(dialogResult==DialogResult.Yes);
-			List<PayPlanEdit.PayPlanRecalculationData> listPayPlanRecalculationDatas=PayPlanEdit.GetRecalculationDataForDynamicPaymentPlans(_patient,_listPaySplits);
+			List<PayPlanEdit.PayPlanRecalculationData> listPayPlanRecalculationDatas=PayPlanEdit.GetRecalculationDataForDynamicPaymentPlans(_patient,listPaySplitsPayPlanDynamic);
 			PayPlanEdit.CreateTransferForDynamicPaymentPlans(listPayPlanRecalculationDatas,isPayOnPrincipal);
 			return true;
 		}
@@ -2814,13 +2817,6 @@ namespace OpenDental {
 				}
 			}
 			else {//A new or existing payment with splits.
-				if(_listPaySplits.Count==1//if one split
-					&& _listPaySplits[0].PayPlanNum!=0//and split is on a payment plan
-					&& PIn.Double(textAmount.Text) != _listPaySplits[0].SplitAmt)//and amount doesn't match payment
-				{
-					_listPaySplits[0].SplitAmt=PIn.Double(textAmount.Text);//make amounts match automatically
-					textSplitTotal.Text=textAmount.Text;
-				}
 				if(_payment.PayAmt!=PIn.Double(textSplitTotal.Text)) {
 					MsgBox.Show(this,"Split totals must equal payment amount.");
 					//work on reallocation schemes here later
@@ -3049,9 +3045,7 @@ namespace OpenDental {
 				if(comboCreditCards.SelectedIndex < listCreditCards.Count && comboCreditCards.SelectedIndex >-1) {
 					creditCardSelected=listCreditCards[comboCreditCards.SelectedIndex];
 				}
-				if(_listPaySplits.Count>0 && PIn.Double(textAmount.Text)!=PIn.Double(textSplitTotal.Text)
-					&& (_listPaySplits.Count!=1 || _listPaySplits[0].PayPlanNum==0)) //Not one paysplit attached to payplan
-				{
+				if(_listPaySplits.Count>0 && PIn.Double(textAmount.Text)!=PIn.Double(textSplitTotal.Text)) {
 					MsgBox.Show(this,"Split totals must equal payment amount before running a credit card transaction.");
 					return false;
 				}
@@ -3411,9 +3405,7 @@ namespace OpenDental {
 					textAmount.Focus();
 					return null;
 				}
-				if(_listPaySplits.Count>0 && PIn.Double(textAmount.Text)!=PIn.Double(textSplitTotal.Text)
-					&& (_listPaySplits.Count!=1 || _listPaySplits[0].PayPlanNum==0)) //Not one paysplit attached to payplan
-				{
+				if(_listPaySplits.Count>0 && PIn.Double(textAmount.Text)!=PIn.Double(textSplitTotal.Text)) {
 					MsgBox.Show(this,"Split totals must equal payment amount before running a credit card transaction.");
 					return null;
 				}
@@ -3438,7 +3430,7 @@ namespace OpenDental {
 			using FormPayConnect formPayConnect=new FormPayConnect(_payment.ClinicNum,_patient,amount,creditCard);
 			formPayConnect.ShowDialog();
 			if(prepaidAmt==0 && formPayConnect.GetResponse()!=null) {//Regular credit cards (not prepaid cards).
-																															 //If PayConnect response is not null, refresh comboCreditCards and select the index of the card used for this payment if the token was saved
+				//If PayConnect response is not null, refresh comboCreditCards and select the index of the card used for this payment if the token was saved
 				listCreditCards=CreditCards.Refresh(_patient.PatNum);
 				AddCreditCardsToCombo(listCreditCards,x => x.PayConnectToken==formPayConnect.GetResponse().PaymentToken
 					&&x.PayConnectTokenExp.Year==formPayConnect.GetResponse().TokenExpiration.Year
@@ -3505,13 +3497,6 @@ namespace OpenDental {
 								AddOneSplit();
 								Reinitialize();
 							}
-							else if(_listPaySplits.Count==1//if one split
-								&& _listPaySplits[0].PayPlanNum!=0//and split is on a payment plan
-								&& _listPaySplits[0].SplitAmt!=_payment.PayAmt)//and amount doesn't match payment
-							{
-								_listPaySplits[0].SplitAmt=_payment.PayAmt;//make amounts match automatically
-								textSplitTotal.Text=textAmount.Text;
-							}
 							_payment.IsSplit=_listPaySplits.Count>1;
 							Payments.InsertVoidPayment(_payment,_listPaySplits,formPayConnect.ReceiptStr,resultNote,CreditCardSource.PayConnect,payAmt: amountCharged);
 							string strErrorMsg=Ledgers.ComputeAgingForPaysplitsAllocatedToDiffPats(_patient.PatNum,_listPaySplits);
@@ -3576,7 +3561,7 @@ namespace OpenDental {
 			formPaySimple.ShowDialog();
 			Program program=Programs.GetCur(ProgramName.PaySimple);
 			if(prepaidAmt==0) {//Regular credit cards (not prepaid cards).
-												 //If PaySimple response is not null, refresh comboCreditCards and select the index of the card used for this payment if the token was saved
+				//If PaySimple response is not null, refresh comboCreditCards and select the index of the card used for this payment if the token was saved
 				listCreditCards=CreditCards.Refresh(_patient.PatNum);
 				string paySimpleToken=creditCard==null ? "" : creditCard.PaySimpleToken;
 				if(formPaySimple.ApiResponseOut!=null) {
@@ -3647,13 +3632,6 @@ namespace OpenDental {
 						if(_listPaySplits.Count==0) {
 							AddOneSplit();
 							Reinitialize();
-						}
-						else if(_listPaySplits.Count==1//if one split
-							&& _listPaySplits[0].PayPlanNum!=0//and split is on a payment plan
-							&& _listPaySplits[0].SplitAmt!=_payment.PayAmt)//and amount doesn't match payment
-						{
-							_listPaySplits[0].SplitAmt=_payment.PayAmt;//make amounts match automatically
-							textSplitTotal.Text=textAmount.Text;
 						}
 						_payment.IsSplit=_listPaySplits.Count>1;
 						Payments.InsertVoidPayment(_payment,_listPaySplits,formPaySimple.ApiResponseOut.TransactionReceipt,resultNote,CreditCardSource.PaySimple);
@@ -4308,13 +4286,6 @@ namespace OpenDental {
 			if(_listPaySplits.Count==0) {
 				AddOneSplit();
 				//FillMain();
-			}
-			else if(_listPaySplits.Count==1//if one split
-				&& _listPaySplits[0].PayPlanNum!=0//and split is on a payment plan
-				&& _listPaySplits[0].SplitAmt!=_payment.PayAmt)//and amount doesn't match payment
-			{
-				_listPaySplits[0].SplitAmt=_payment.PayAmt;//make amounts match automatically
-				textSplitTotal.Text=textAmount.Text;
 			}
 			if(_payment.PayAmt!=_listPaySplits.Sum(x => x.SplitAmt)) {
 				MsgBox.Show(this,"Split totals must equal payment amount.");

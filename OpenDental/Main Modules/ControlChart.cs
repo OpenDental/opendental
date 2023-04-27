@@ -6856,6 +6856,7 @@ namespace OpenDental {
 				}
 				ImageInfo imageInfo=new ImageInfo();
 				imageInfo.DocNum=Pd.ListDocuments[i].DocNum;
+				imageInfo.DateCreated=Pd.ListDocuments[i].DateCreated;
 				_listImageInfos.Add(imageInfo);
 			}
 			_listImageInfos=_listImageInfos.OrderBy(x=>x.DateCreated).ToList();

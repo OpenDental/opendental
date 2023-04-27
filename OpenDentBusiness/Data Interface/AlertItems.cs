@@ -60,30 +60,6 @@ namespace OpenDentBusiness{
 			return true;
 		}
 
-		///<summary>Returns true if the heartbeat is less than 5 seconds old. Also returns the date time of the heartbeat.</summary>
-		public static ODTuple<bool,DateTime> IsPhoneTrackingServerHeartbeatValid(DateTime dateTimeLastHeartbeat) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<ODTuple<bool,DateTime>>(MethodBase.GetCurrentMethod(),dateTimeLastHeartbeat);
-			}
-			//Default to using our local time just in case we can't query MySQL every second (lessens false positives due to query / network failure).
-			DateTime dateTimeNow=DateTime.Now;
-			DateTime dateTimeRecentHeartbeat=dateTimeLastHeartbeat;
-			DataTable table=null;
-			//Check to make sure the asterisk server is still processing messages.
-			ODException.SwallowAnyException(() => {
-				table=DataCore.GetTable("SELECT ValueString,NOW() DateTNow FROM preference WHERE PrefName='AsteriskServerHeartbeat'");
-			});
-			if(table!=null && table.Rows.Count>=1 && table.Columns.Count>=2) {
-				dateTimeRecentHeartbeat=PIn.DateT(table.Rows[0]["ValueString"].ToString());
-				dateTimeNow=PIn.DateT(table.Rows[0]["DateTNow"].ToString());
-			}
-			//Check to see if the asterisk server heartbeat has stopped beating for the last 5 seconds.
-			if((dateTimeNow-dateTimeRecentHeartbeat).TotalSeconds > 5) {
-				return new ODTuple<bool,DateTime>(false,dateTimeRecentHeartbeat);
-			}
-			return new ODTuple<bool,DateTime>(true,dateTimeRecentHeartbeat);
-		}
-
 		/// <summary>This method grabs all unread webmails, and creates/modifies/deletes alerts for the providers and linked users the webmails are addressed to.</summary>
 		public static void CreateAlertsForNewWebmail(Logger.IWriteLine log) {
 			//This method first collect all unread webmails, and counts how many each provider has.

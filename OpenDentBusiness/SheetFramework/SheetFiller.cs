@@ -3977,6 +3977,12 @@ namespace OpenDentBusiness {
 		}
 
 		private static int CompareSheetFieldNames(SheetField input1,SheetField input2) {
+			if(input1.IsRequired && !input2.IsRequired) {
+				return -1;
+			}
+			if(!input1.IsRequired && input2.IsRequired) {
+				return 1;
+			}
 			if(Convert.ToInt32(input1.FieldName.Remove(0,8)) < Convert.ToInt32(input2.FieldName.Remove(0,8))) {
 				return -1;
 			}

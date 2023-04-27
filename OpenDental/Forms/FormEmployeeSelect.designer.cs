@@ -132,6 +132,7 @@ namespace OpenDental {
 			this.checkWorkingOffice.Size = new System.Drawing.Size(128, 18);
 			this.checkWorkingOffice.TabIndex = 28;
 			this.checkWorkingOffice.Text = "Working Office";
+			this.checkWorkingOffice.Visible = false;
 			this.checkWorkingOffice.CheckedChanged += new System.EventHandler(this.checkWorkingOffice_CheckedChanged);
 			// 
 			// checkWorkingHome
@@ -145,6 +146,7 @@ namespace OpenDental {
 			this.checkWorkingHome.Size = new System.Drawing.Size(128, 18);
 			this.checkWorkingHome.TabIndex = 27;
 			this.checkWorkingHome.Text = "Working From Home";
+			this.checkWorkingHome.Visible = false;
 			this.checkWorkingHome.CheckedChanged += new System.EventHandler(this.checkWorkingHome_CheckedChanged);
 			// 
 			// butExport

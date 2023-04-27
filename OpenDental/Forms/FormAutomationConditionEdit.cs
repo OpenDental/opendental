@@ -138,6 +138,10 @@ namespace OpenDental {
 				formDefinitionPicker.IsMultiSelectionMode=false;
 				formDefinitionPicker.ShowDialog();
 				if(formDefinitionPicker.DialogResult==DialogResult.OK) {
+					if(formDefinitionPicker.ListDefsSelected.Count==0) {
+						textCompareString.Text="";
+						return;
+					}
 					textCompareString.Text=formDefinitionPicker.ListDefsSelected?[0]?.ItemName??"";
 				}
 			}

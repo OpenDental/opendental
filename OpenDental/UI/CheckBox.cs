@@ -24,6 +24,7 @@ namespace OpenDental.UI {
 	public partial class CheckBox : Control {
 		#region Fields - Public
 		public LayoutManagerForms LayoutManager=new LayoutManagerForms();
+		public bool IsTextClickable=true;
 		#endregion Fields - Public
 
 		#region Fields - Private
@@ -281,6 +282,11 @@ namespace OpenDental.UI {
 			if(!AutoCheck){
 				return;
 			}
+			if(!IsTextClickable){
+				if(IsOnActualText(e.Location)){
+					return;
+				}
+			}
 			//Enabled is automatically handled by MS and mouse events don't even fire.
 			//order is off-on-indeterm
 			if(!Checked){
@@ -347,6 +353,7 @@ namespace OpenDental.UI {
 			//ContentAlignment.MiddleLeft,,ContentAlignment.TopLeft)){//I don't think we need to worry about these on FormPreferences, so skip
 			return true;
 		}
+
 		/*This is how I think checkboxes should behave, but we will instead
 		//make our behave like MS checkBox, where the whole control is clickable.
 		///<summary>This is not a strict hit test. The active area is a bit bigger than the actual box.</summary>

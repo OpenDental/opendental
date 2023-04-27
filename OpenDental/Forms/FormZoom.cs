@@ -164,7 +164,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please fix zoom, first.");
 				return;
 			}
-			if(zoom==0){
+			if(zoom==0 || zoom==100){
 				//that's fine
 			}
 			else if(zoom<50){//Anything less than this seems to have overlapping control issues, and < 10 can cause out of memory errors.
@@ -181,11 +181,11 @@ namespace OpenDental {
 				MsgBox.Show(this,"Zoom number cannot be so close to 100.  Make it smaller than 95, bigger than 105, or leave blank.");
 				return;
 			}
-			if(!_fits){
+			else if(!_fits){
 				MsgBox.Show(this,"Zoom setting would not fit.");
 				return;
 			}
-			if(zoom<80){
+			else if(zoom<80){
 				string msg=Lan.g(this,"You have chosen a zoom level that will make things smaller. Maybe you meant")
 					+" 1"+zoom.ToString()+". "//untranslated
 					+Lan.g(this,"Continue anyway?");

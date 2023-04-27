@@ -235,6 +235,7 @@ namespace OpenDental{
 			this.labelAutoSaveOverride.TabIndex = 105;
 			this.labelAutoSaveOverride.Text = "Autosave Image Category Override";
 			this.labelAutoSaveOverride.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			this.labelAutoSaveOverride.Visible = false;
 			// 
 			// FormSheetDef
 			// 

@@ -328,6 +328,7 @@ namespace OpenDental {
 
 		private void butAdd_Click(object sender,EventArgs e) {
 			using FormSheetPicker formSheetPicker=new FormSheetPicker(isWebForm:true);
+			formSheetPicker.AllowMultiSelect=true;
 			formSheetPicker.SheetType=SheetTypeEnum.PatientForm;
 			formSheetPicker.HideKioskButton=true;
 			formSheetPicker.ShowDialog();

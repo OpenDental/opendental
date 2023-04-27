@@ -45,7 +45,10 @@ namespace OpenDental {
 		private void FillAttributes() {
 			GridRow row;
 			EclaimsCommBridge eclaimsCommBridge=ElectIDCur.CommBridge;
-			List<long> listAttributes=ElectIDCur.Attributes.Split(",",StringSplitOptions.RemoveEmptyEntries).Select(x=>PIn.Long(x,hasExceptions:false)).ToList();
+			List<long> listAttributes=new List<long>();
+			if(ElectIDCur.Attributes!=null) {
+				listAttributes=ElectIDCur.Attributes.Split(",",StringSplitOptions.RemoveEmptyEntries).Select(x=>PIn.Long(x,hasExceptions:false)).ToList();
+			}
 			switch(eclaimsCommBridge) {
 				case EclaimsCommBridge.ClaimConnect:
 					for(int i=0;i<Enum.GetValues(typeof(EnumClaimConnectPayerAttributes)).Length;i++) {

@@ -162,6 +162,9 @@ namespace OpenDental.UI {
 				if(_selectedIndex==-1){
 					return null;
 				}
+				if(TabPages.Count==0){
+					return null;
+				}
 				return TabPages[_selectedIndex];
 			}
 			set{

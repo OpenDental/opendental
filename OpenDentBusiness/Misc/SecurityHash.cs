@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
 		///<summary>The date Open Dental started hashing fields into paysplit.SecurityHash. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2022,11,2);
+		public static DateTime DateStart=new DateTime(2023,4,24);
 		///<summary>Only set to false for standalone hashing tool. </summary>
 		public static bool IsThreaded=true;
 		private static bool _arePaySplitsUpdated=false;
@@ -84,7 +84,7 @@ namespace OpenDentBusiness.Misc {
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
-					hashedTextNew="";
+					hashedTextNew=ex.GetType().Name;
 				}
 				//Only update hashes that changed
 				if(hashedTextOld!=hashedTextNew) {
@@ -127,7 +127,7 @@ namespace OpenDentBusiness.Misc {
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
-					hashedTextNew="";
+					hashedTextNew=ex.GetType().Name;
 				}
 				//Only update hashes that changed
 				if(hashedTextOld!=hashedTextNew) {
@@ -165,8 +165,9 @@ namespace OpenDentBusiness.Misc {
 		}
 
 		private static void PatientWorker() {
-			//Get all ALL unhashed patients
-			string command="SELECT PatNum FROM patient WHERE SecurityHash=''";
+			//Get all ALL unhashed patients and any with duplicate SecurityHash values
+			string command="SELECT PatNum FROM patient LEFT JOIN (SELECT SecurityHash FROM patient GROUP BY SecurityHash HAVING COUNT(*)>1) "+
+				"patDup ON patDup.SecurityHash=patient.SecurityHash WHERE patient.SecurityHash='' OR patDup.SecurityHash IS NOT NULL";
 			DataTable table=Db.GetTable(command);
 			//Do not clear current hashes
 			long patNum;
@@ -180,7 +181,7 @@ namespace OpenDentBusiness.Misc {
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
-					hashedText="";
+					hashedText=ex.GetType().Name;
 				}
 				//This loop takes 7 minutes for 1M patients when run locally, but it's taking too long for customers.
 				command=$@"UPDATE patient SET SecurityHash='{POut.String(hashedText)}' WHERE PatNum={POut.Long(patNum)}";
@@ -224,7 +225,7 @@ namespace OpenDentBusiness.Misc {
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
-					hashedText="";
+					hashedText=ex.GetType().Name;
 				}
 				command=$@"UPDATE payplan SET SecurityHash='{POut.String(hashedText)}' WHERE PayPlanNum={POut.Long(payPlanNum)}";
 				Db.NonQ(command);

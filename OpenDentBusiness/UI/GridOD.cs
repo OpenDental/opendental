@@ -3395,7 +3395,7 @@ using OpenDental.UI;
 			//Save the current scale and adjust the rows and columns temporarily for printing.  Restore the rows and column sizes at the end of the method.
 			float scaleMS=_scaleMS;
 			float zoomLocal=_zoomLocal;
-			SetScaleAndZoom(1,0);
+			SetScaleAndZoom(1,1);
 			if(_printedRows==0 || scaleMS!=1) {
 				//Recalculate row heights, 4% larger on the first page of printing, or when using zoom.
 				ComputeRows(g,doActualCalc:true);

@@ -4649,6 +4649,10 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}
 
+		private static void To22_4_40() {
+			SecurityHash.UpdateHashing();
+		}
+
 		private static void To23_1_1() {
 			string command;
 			DataTable table;
@@ -4869,6 +4873,11 @@ namespace OpenDentBusiness {
 			}
 			//End of 23_1_1() method
 		}
+
+		private static void To23_1_5() {
+			SecurityHash.UpdateHashing();
+		}
+
 	}
 }
 

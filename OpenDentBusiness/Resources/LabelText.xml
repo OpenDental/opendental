@@ -23,9 +23,9 @@
       <FontName>Microsoft Sans Serif</FontName>
       <FontIsBold>false</FontIsBold>
       <XPos>25</XPos>
-      <YPos>30</YPos>
+      <YPos>20</YPos>
       <Width>300</Width>
-      <Height>60</Height>
+      <Height>80</Height>
       <GrowthBehavior>None</GrowthBehavior>
       <RadioButtonValue />
       <RadioButtonGroup />

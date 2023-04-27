@@ -106,7 +106,7 @@ namespace OpenDental {
 			this.checkIsHidden.Location = new System.Drawing.Point(93, 27);
 			this.checkIsHidden.Name = "checkIsHidden";
 			this.checkIsHidden.Size = new System.Drawing.Size(70, 18);
-			this.checkIsHidden.TabIndex = 32;
+			this.checkIsHidden.TabIndex = 14;
 			this.checkIsHidden.Text = "Hidden";
 			// 
 			// butCancel
@@ -116,7 +116,7 @@ namespace OpenDental {
 			this.butCancel.Location = new System.Drawing.Point(406, 389);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 25);
-			this.butCancel.TabIndex = 35;
+			this.butCancel.TabIndex = 12;
 			this.butCancel.Text = "&Cancel";
 			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
@@ -126,7 +126,7 @@ namespace OpenDental {
 			this.butOK.Location = new System.Drawing.Point(325, 389);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 25);
-			this.butOK.TabIndex = 10;
+			this.butOK.TabIndex = 11;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
@@ -138,7 +138,7 @@ namespace OpenDental {
 			this.butDelete.Location = new System.Drawing.Point(45, 389);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(81, 25);
-			this.butDelete.TabIndex = 36;
+			this.butDelete.TabIndex = 13;
 			this.butDelete.Text = "Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
@@ -230,24 +230,25 @@ namespace OpenDental {
 			// checkIsFurloughed
 			// 
 			this.checkIsFurloughed.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIsFurloughed.Location = new System.Drawing.Point(46, 260);
+			this.checkIsFurloughed.Location = new System.Drawing.Point(46, 286);
 			this.checkIsFurloughed.Name = "checkIsFurloughed";
 			this.checkIsFurloughed.Size = new System.Drawing.Size(117, 18);
-			this.checkIsFurloughed.TabIndex = 8;
+			this.checkIsFurloughed.TabIndex = 9;
 			this.checkIsFurloughed.Text = "Furloughed";
 			// 
 			// checkIsWorkingHome
 			// 
 			this.checkIsWorkingHome.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIsWorkingHome.Location = new System.Drawing.Point(12, 282);
+			this.checkIsWorkingHome.Location = new System.Drawing.Point(12, 310);
 			this.checkIsWorkingHome.Name = "checkIsWorkingHome";
 			this.checkIsWorkingHome.Size = new System.Drawing.Size(151, 18);
-			this.checkIsWorkingHome.TabIndex = 9;
+			this.checkIsWorkingHome.TabIndex = 10;
 			this.checkIsWorkingHome.Text = "Working From Home";
+			this.checkIsWorkingHome.Visible = false;
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(59, 309);
+			this.label5.Location = new System.Drawing.Point(59, 263);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(90, 14);
 			this.label5.TabIndex = 49;
@@ -256,10 +257,10 @@ namespace OpenDental {
 			// 
 			// comboReportsTo
 			// 
-			this.comboReportsTo.Location = new System.Drawing.Point(150, 305);
+			this.comboReportsTo.Location = new System.Drawing.Point(150, 259);
 			this.comboReportsTo.Name = "comboReportsTo";
 			this.comboReportsTo.Size = new System.Drawing.Size(174, 21);
-			this.comboReportsTo.TabIndex = 50;
+			this.comboReportsTo.TabIndex = 8;
 			// 
 			// FormEmployeeEdit
 			// 

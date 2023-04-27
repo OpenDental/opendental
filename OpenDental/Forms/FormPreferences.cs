@@ -124,12 +124,6 @@ namespace OpenDental {
 			panelInfo.Region=region;//This makes it transparent outside the circle, but there's no antialiasing
 			panelInfo.Paint+=PanelInfo_Paint;
 			LayoutManager.Add(panelInfo,this);
-			List<Control> listControlsAll=GetListControlsFlat(this);
-			for(int i=0;i<listControlsAll.Count;i++){
-				//we only care about labels and checkboxes, but we add all of them to handle the mouse leaving the ones we care about
-				listControlsAll[i].MouseMove+=FormPreferences_MouseMove;
-				listControlsAll[i].MouseDown+=FormPreferences_MouseDown;
-			}
 			string strXml=Properties.Resources.PrefInfos;
 			MemoryStream memoryStream=new MemoryStream();
 			StreamWriter streamWriter=new StreamWriter(memoryStream);
@@ -139,6 +133,19 @@ namespace OpenDental {
 			using StreamReader streamReader = new StreamReader(memoryStream,Encoding.UTF8,true);
 			XmlSerializer xmlSerializer=new XmlSerializer(_listPrefInfs.GetType());
 			_listPrefInfs=(List<PrefInf>)xmlSerializer.Deserialize(streamReader);
+			List<Control> listControlsAll=GetListControlsFlat(this);
+			for(int i=0;i<listControlsAll.Count;i++){
+				//we only care about labels and checkboxes, but we add all of them to handle the mouse leaving the ones we care about
+				listControlsAll[i].MouseMove+=FormPreferences_MouseMove;
+				listControlsAll[i].MouseDown+=FormPreferences_MouseDown;
+				if(listControlsAll[i] is UI.CheckBox checkBox){
+					//We need to make checkboxes with hoverinfo not have the text be clickable or checks will accidentally change when user clicks to see hover info.
+					PrefInf prefInf=GetPrefInf(checkBox);
+					if(prefInf!=null && !prefInf.Details.IsNullOrEmpty()){
+						checkBox.IsTextClickable=false;
+					}
+				}
+			}
 			Plugins.HookAddCode(this,"FormModuleSetup.FormModuleSetup_Load_end");
 		}
 
@@ -212,6 +219,9 @@ namespace OpenDental {
 		}
 
 		private void FormPreferences_MouseDown(object sender,MouseEventArgs e){
+			if(!panelInfo.Visible){
+				return;//This keeps it from popping up when clicking on a the box portion of a checkbox
+			}
 			Control control=(Control)sender;
 			if(!control.GetType().In(typeof(Label),typeof(UI.CheckBox),typeof(UI.GroupBox))){
 				return;
