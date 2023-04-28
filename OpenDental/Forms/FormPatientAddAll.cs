@@ -151,11 +151,6 @@ namespace OpenDental {
 				textBirthdate1.Text=Birthdate.ToShortDateString();
 			}
 			textBirthdate1_Validated(this,null);
-			listTextOk1.SelectedIndex=0;
-			listTextOk2.SelectedIndex=0;
-			listTextOk3.SelectedIndex=0;
-			listTextOk4.SelectedIndex=0;
-			listTextOk5.SelectedIndex=0;
 			SetGenderListBox(listGender1);
 			SetGenderListBox(listGender2);
 			SetGenderListBox(listGender3);
@@ -508,11 +503,11 @@ namespace OpenDental {
 						}
 						break;
 					case RequiredFieldName.TextOK:
-						SetRequiredListControl(labelTextOk,listTextOk1,areConditionsMet,0,"Selection cannot be '??'");
-						SetRequiredListOrComboControlNonGuarantor(labelTextOk,textFName2,textLName2,listTextOk2,areConditionsMet,0,"Selection cannot be '??'");
-						SetRequiredListOrComboControlNonGuarantor(labelTextOk,textFName3,textLName3,listTextOk3,areConditionsMet,0,"Selection cannot be '??'");
-						SetRequiredListOrComboControlNonGuarantor(labelTextOk,textFName4,textLName4,listTextOk4,areConditionsMet,0,"Selection cannot be '??'");
-						SetRequiredListOrComboControlNonGuarantor(labelTextOk,textFName5,textLName5,listTextOk5,areConditionsMet,0,"Selection cannot be '??'");
+						SetRequiredCheckBoxYN(labelTextOk,checkTextingY1,checkTextingN1,areConditionsMet,"Either Y or N must be selected.");
+						SetRequiredCheckBoxNonGuarantorYN(labelTextOk,textFName2,textLName2,checkTextingY2,checkTextingN2,areConditionsMet,"Either Y or N must be selected.");
+						SetRequiredCheckBoxNonGuarantorYN(labelTextOk,textFName3,textLName3,checkTextingY3,checkTextingN3,areConditionsMet,"Either Y or N must be selected.");
+						SetRequiredCheckBoxNonGuarantorYN(labelTextOk,textFName4,textLName4,checkTextingY4,checkTextingN4,areConditionsMet,"Either Y or N must be selected.");
+						SetRequiredCheckBoxNonGuarantorYN(labelTextOk,textFName5,textLName5,checkTextingY5,checkTextingN5,areConditionsMet,"Either Y or N must be selected.");
 						break;
 					case RequiredFieldName.WirelessPhone:
 						SetRequiredTextBox(labelWirelessPhone,textWirelessPhone1,areConditionsMet);
@@ -789,6 +784,26 @@ namespace OpenDental {
 			}
 		}
 
+		///<summary>Puts an asterisk next to the label if the field is required and the conditions are met.</summary>
+		private void SetRequiredCheckBoxYN(Label label,UI.CheckBox checkBoxY,UI.CheckBox checkBoxN,bool areConditionsMet,string errorMsg) {
+			label.Text=labelTextOk.Text.Replace("*","");	
+			if(areConditionsMet) {
+				label.Text=label.Text+"*";
+				if(checkBoxY.Checked || checkBoxN.Checked) {
+					_errorProvider.SetError(checkBoxN,"");
+				}
+				else{
+					_isMissingRequiredFields=true;
+					if(_isValidating) {
+						_errorProvider.SetError(checkBoxN,Lan.g(this,errorMsg));
+					}
+				}
+			}
+			else {
+				_errorProvider.SetError(checkBoxN,"");
+			}
+		}
+
 		///<summary>Puts an asterisk next to the label if the field is required and the conditions are met. If the disallowedIdx is also selected, 
 		///highlights the combobox background.</summary>
 		private void SetRequiredComboClinicPicker(Label label,ComboBoxClinicPicker comboBoxClinicPicker,bool areConditionsMet,int disallowedClinicNum,string errorMsg){
@@ -836,6 +851,18 @@ namespace OpenDental {
 			}
 			else {
 				_errorProvider.SetError(listBoxRequired,"");
+			}
+		}
+
+		///<summary>Calls the set required method that puts an asterisk next to the label if the field is required and if the textbox first or last name are empty when one is filled.</summary>
+		private void SetRequiredCheckBoxNonGuarantorYN(Label label,System.Windows.Forms.TextBox textBoxFName,System.Windows.Forms.TextBox textBoxLName,UI.CheckBox checkBoxY,UI.CheckBox checkBoxN,
+			bool areConditionsMet,string errorMsg) 
+		{
+			if(!string.IsNullOrWhiteSpace(textBoxFName.Text) || !string.IsNullOrWhiteSpace(textBoxLName.Text)) {
+				SetRequiredCheckBoxYN(label,checkBoxY,checkBoxN,areConditionsMet,errorMsg);
+			}
+			else {
+				_errorProvider.SetError(checkBoxN,"");
 			}
 		}
 
@@ -1250,15 +1277,111 @@ namespace OpenDental {
 			}
 		}
 
-		private void listTextOk1_SelectedIndexChanged(object sender,EventArgs e) {
-			listTextOk2.SelectedIndex=listTextOk1.SelectedIndex;
-			listTextOk3.SelectedIndex=listTextOk1.SelectedIndex;
-			listTextOk4.SelectedIndex=listTextOk1.SelectedIndex;
-			listTextOk5.SelectedIndex=listTextOk1.SelectedIndex;
+		#endregion Wireless Phone
+
+		#region TxtMsgOK
+
+		private YN GetTxtMsgOK(UI.CheckBox checkBoxY,UI.CheckBox checkBoxN) {
+			YN yNTxtMsgOk=YN.Unknown;
+			if(checkBoxY.Checked) {
+				yNTxtMsgOk=YN.Yes;
+			}
+			if(checkBoxN.Checked) {
+				yNTxtMsgOk=YN.No;
+			}
+			return yNTxtMsgOk;
+		}
+
+		private void checkTextingY1_Click(object sender,EventArgs e) {
+			if(checkTextingN1.Checked && checkTextingY1.Checked) {
+				checkTextingN1.Checked=false;
+			}
+			if(checkTextingY1.Checked) {
+				checkTextingY2.Checked=true;
+				checkTextingN2.Checked=false;
+				checkTextingY3.Checked=true;
+				checkTextingN3.Checked=false;
+				checkTextingY4.Checked=true;
+				checkTextingN4.Checked=false;
+				checkTextingY5.Checked=true;
+				checkTextingN5.Checked=false;
+			}
 			SetRequiredFields();
 		}
 
-		#endregion Wireless Phone
+		private void checkTextingN1_Click(object sender,EventArgs e) {
+			if(checkTextingN1.Checked && checkTextingY1.Checked) {
+				checkTextingY1.Checked=false;
+			}
+			if(checkTextingN1.Checked) {
+				checkTextingN2.Checked=true;
+				checkTextingY2.Checked=false;
+				checkTextingN3.Checked=true;
+				checkTextingY3.Checked=false;
+				checkTextingN4.Checked=true;
+				checkTextingY4.Checked=false;
+				checkTextingN5.Checked=true;
+				checkTextingY5.Checked=false;
+			}
+			SetRequiredFields();
+		}
+
+		private void checkTextingY2_Click(object sender,EventArgs e) {
+			if(checkTextingN2.Checked && checkTextingY2.Checked) {
+				checkTextingN2.Checked=false;
+			}
+			SetRequiredFields();
+		}
+
+		private void checkTextingN2_Click(object sender,EventArgs e) {
+			if(checkTextingN2.Checked && checkTextingY2.Checked) {
+				checkTextingY2.Checked=false;
+			}
+			SetRequiredFields();
+		}
+
+		private void checkTextingY3_Click(object sender,EventArgs e) {
+			if(checkTextingN3.Checked && checkTextingY3.Checked) {
+				checkTextingN3.Checked=false;
+			}
+			SetRequiredFields();
+		}
+
+		private void checkTextingN3_Click(object sender,EventArgs e) {
+			if(checkTextingN3.Checked && checkTextingY3.Checked) {
+				checkTextingY3.Checked=false;
+			}
+			SetRequiredFields();
+		}
+
+		private void checkTextingY4_Click(object sender,EventArgs e) {
+			if(checkTextingN4.Checked && checkTextingY4.Checked) {
+				checkTextingN4.Checked=false;
+			}
+			SetRequiredFields();
+		}
+
+		private void checkTextingN4_Click(object sender,EventArgs e) {
+			if(checkTextingN4.Checked && checkTextingY4.Checked) {
+				checkTextingY4.Checked=false;
+			}
+			SetRequiredFields();
+		}
+
+		private void checkTextingY5_Click(object sender,EventArgs e) {
+			if(checkTextingN5.Checked && checkTextingY5.Checked) {
+				checkTextingN5.Checked=false;
+			}
+			SetRequiredFields();
+		}
+
+		private void checkTextingN5_Click(object sender,EventArgs e) {
+			if(checkTextingN5.Checked && checkTextingY5.Checked) {
+				checkTextingY5.Checked=false;
+			}
+			SetRequiredFields();
+		}
+		#endregion
 
 		#region SSN
 		private void textSSN_Validating(object sender,System.ComponentModel.CancelEventArgs e) {
@@ -2443,7 +2566,7 @@ namespace OpenDental {
 						patient.SSN=Patients.SSNRemoveDashes(textSSN1.Text);
 						patient.Email=textEmail1.Text;
 						patient.WirelessPhone=textWirelessPhone1.Text;
-						patient.TxtMsgOk=(YN)listTextOk1.SelectedIndex;
+						patient.TxtMsgOk=GetTxtMsgOK(checkTextingY1,checkTextingN1);
 						patient.PatStatus=listStatus1.GetSelected<PatientStatus>();
 						patient.BillingType=_listDefsBillingType[comboBillType1.SelectedIndex].DefNum;
 						break;
@@ -2474,7 +2597,7 @@ namespace OpenDental {
 						patient.SSN=Patients.SSNRemoveDashes(textSSN2.Text);
 						patient.Email=textEmail2.Text;
 						patient.WirelessPhone=textWirelessPhone2.Text;
-						patient.TxtMsgOk=(YN)listTextOk2.SelectedIndex;
+						patient.TxtMsgOk=GetTxtMsgOK(checkTextingY2,checkTextingN2);
 						patient.PatStatus=listStatus2.GetSelected<PatientStatus>();
 						patient.BillingType=_listDefsBillingType[comboBillType2.SelectedIndex].DefNum;
 						break;
@@ -2505,7 +2628,7 @@ namespace OpenDental {
 						patient.SSN=Patients.SSNRemoveDashes(textSSN3.Text);
 						patient.Email=textEmail3.Text;
 						patient.WirelessPhone=textWirelessPhone3.Text;
-						patient.TxtMsgOk=(YN)listTextOk3.SelectedIndex;
+						patient.TxtMsgOk=GetTxtMsgOK(checkTextingY3,checkTextingN3);
 						patient.PatStatus=listStatus3.GetSelected<PatientStatus>();
 						patient.BillingType=_listDefsBillingType[comboBillType3.SelectedIndex].DefNum;
 						break;
@@ -2536,7 +2659,7 @@ namespace OpenDental {
 						patient.SSN=Patients.SSNRemoveDashes(textSSN4.Text);
 						patient.Email=textEmail4.Text;
 						patient.WirelessPhone=textWirelessPhone4.Text;
-						patient.TxtMsgOk=(YN)listTextOk4.SelectedIndex;
+						patient.TxtMsgOk=GetTxtMsgOK(checkTextingY4,checkTextingN4);
 						patient.PatStatus=listStatus4.GetSelected<PatientStatus>();
 						patient.BillingType=_listDefsBillingType[comboBillType4.SelectedIndex].DefNum;
 						break;
@@ -2567,7 +2690,7 @@ namespace OpenDental {
 						patient.SSN=Patients.SSNRemoveDashes(textSSN5.Text);
 						patient.Email=textEmail5.Text;
 						patient.WirelessPhone=textWirelessPhone5.Text;
-						patient.TxtMsgOk=(YN)listTextOk5.SelectedIndex;
+						patient.TxtMsgOk=GetTxtMsgOK(checkTextingY5,checkTextingN5);
 						patient.PatStatus=listStatus5.GetSelected<PatientStatus>();
 						patient.BillingType=_listDefsBillingType[comboBillType5.SelectedIndex].DefNum;
 						break;

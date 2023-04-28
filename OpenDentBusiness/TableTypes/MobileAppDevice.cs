@@ -94,6 +94,8 @@ namespace OpenDentBusiness{
 		PaymentPlanListPage,
 		[Description("Treatment Plan Edit Module Page")]
 		TreatPlanModuleEditPlanPage,
+		[Description("Troubleshoot Connections Page")]
+		TroubleshootConnectionsPage,
 		[Description("Payment Plan Page")]
 		PaymentPlanPage,
 		[Description("Perio Exam Edit Page")]

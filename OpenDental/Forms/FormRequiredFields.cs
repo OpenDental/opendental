@@ -269,11 +269,9 @@ namespace OpenDental {
 				case RequiredFieldName.Clinic:
 					labelExplanation.Text+=Lan.g(this,"cannot be 'Unassigned'.");
 					break;
+				case RequiredFieldName.TextOK:
 				case RequiredFieldName.StudentStatus:
 					labelExplanation.Text+=Lan.g(this,"must be chosen.");
-					break;
-				case RequiredFieldName.TextOK:
-					labelExplanation.Text+=Lan.g(this,"cannot be '??'.");
 					break;
 				case RequiredFieldName.EligibilityExceptCode:
 					labelExplanation.Text+=Lan.g(this,"cannot be '0 - Please Choose'.");

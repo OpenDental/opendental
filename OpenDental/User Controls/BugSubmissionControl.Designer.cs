@@ -39,7 +39,6 @@
 			this.butCompare = new OpenDental.UI.Button();
 			this.butBugTask = new OpenDental.UI.Button();
 			this.butGoToAccount = new OpenDental.UI.Button();
-			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabStackTrace = new System.Windows.Forms.TabPage();
 			this.textStack = new OpenDental.ODtextBox();
@@ -55,10 +54,6 @@
 			this.gridCustomerSubs = new OpenDental.UI.GridOD();
 			this.gridOfficeInfo = new OpenDental.UI.GridOD();
 			this.groupBox2.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-			this.splitContainer1.Panel1.SuspendLayout();
-			this.splitContainer1.Panel2.SuspendLayout();
-			this.splitContainer1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabStackTrace.SuspendLayout();
 			this.tabOdStackSig.SuspendLayout();
@@ -202,7 +197,6 @@
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(411, 148);
 			this.groupBox2.TabIndex = 41;
-			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Submitter Info.";
 			// 
 			// butCompare
@@ -232,36 +226,13 @@
 			this.butGoToAccount.Text = "&Go To Account";
 			this.butGoToAccount.Click += new System.EventHandler(this.butGoToAccount_Click);
 			// 
-			// splitContainer1
-			// 
-			this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.splitContainer1.Location = new System.Drawing.Point(3, 3);
-			this.splitContainer1.Name = "splitContainer1";
-			this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-			// 
-			// splitContainer1.Panel1
-			// 
-			this.splitContainer1.Panel1.Controls.Add(this.tabControl1);
-			// 
-			// splitContainer1.Panel2
-			// 
-			this.splitContainer1.Panel2.Controls.Add(this.textDevNote);
-			this.splitContainer1.Size = new System.Drawing.Size(410, 402);
-			this.splitContainer1.SplitterDistance = 360;
-			this.splitContainer1.TabIndex = 43;
-			// 
 			// tabControl1
 			// 
-			this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.tabControl1.Controls.Add(this.tabStackTrace);
 			this.tabControl1.Controls.Add(this.tabOdStackSig);
 			this.tabControl1.Controls.Add(this.tabSimpleStack);
 			this.tabControl1.Controls.Add(this.tabCategoryTags);
-			this.tabControl1.Location = new System.Drawing.Point(0, 0);
+			this.tabControl1.Location = new System.Drawing.Point(3, 3);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(407, 358);
@@ -403,13 +374,12 @@
 			// textDevNote
 			// 
 			this.textDevNote.AcceptsTab = true;
-			this.textDevNote.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.textDevNote.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
 			this.textDevNote.BackColor = System.Drawing.SystemColors.Window;
 			this.textDevNote.DetectLinksEnabled = false;
 			this.textDevNote.DetectUrls = false;
-			this.textDevNote.Location = new System.Drawing.Point(0, 0);
+			this.textDevNote.Location = new System.Drawing.Point(3, 363);
 			this.textDevNote.Name = "textDevNote";
 			this.textDevNote.QuickPasteType = OpenDentBusiness.QuickPasteType.JobManager;
 			this.textDevNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -448,8 +418,9 @@
 			// BugSubmissionControl
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.Controls.Add(this.textDevNote);
+			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.gridCustomerSubs);
-			this.Controls.Add(this.splitContainer1);
 			this.Controls.Add(this.gridOfficeInfo);
 			this.Controls.Add(this.groupBox2);
 			this.MinimumSize = new System.Drawing.Size(594, 521);
@@ -457,10 +428,6 @@
 			this.Size = new System.Drawing.Size(679, 561);
 			this.Load += new System.EventHandler(this.BugSubmissionControl_Load);
 			this.groupBox2.ResumeLayout(false);
-			this.splitContainer1.Panel1.ResumeLayout(false);
-			this.splitContainer1.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-			this.splitContainer1.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
 			this.tabStackTrace.ResumeLayout(false);
 			this.tabOdStackSig.ResumeLayout(false);
@@ -489,7 +456,6 @@
 		private System.Windows.Forms.Label labelRegKey;
 		private System.Windows.Forms.Label label6;
 		private ODtextBox textDevNote;
-		private System.Windows.Forms.SplitContainer splitContainer1;
 		private OpenDental.UI.GroupBox groupBox2;
 		private ODtextBox textStack;
 		private UI.GridOD gridCustomerSubs;

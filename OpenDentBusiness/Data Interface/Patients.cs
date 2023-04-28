@@ -1682,7 +1682,7 @@ namespace OpenDentBusiness {
 				command+="AND ClinicNum="+POut.Long(clinicNum)+" ";
 			}
 			if(birthdate>DateTime.MinValue) {
-				command+="AND patient.Birthdate="+POut.DateT(birthdate)+" ";
+				command+="AND Birthdate="+POut.Date(birthdate)+" ";
 			}
 			if(priProv>-1) {
 				command+="AND PriProv="+POut.Long(priProv)+" ";

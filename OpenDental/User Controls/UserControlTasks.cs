@@ -1396,7 +1396,8 @@ namespace OpenDental {
 				taskType=TaskType.Reminder;
 			}
 			//Clear copy lists if switching between tabs.
-			if(_previousTabName!=tabControl.SelectedTab.Name) {
+			UI.TabPage tabPageSelected=tabControl.SelectedTab;
+			if(tabPageSelected is null || _previousTabName!=tabPageSelected.Name) {
 				_listTaskListsCopy=new List<TaskList>();
 				_listTasksCopy=new List<Task>();
 			}
@@ -1576,7 +1577,9 @@ namespace OpenDental {
 			return listSubscribedTaskLists;
 		}
 
-		private void tabControl_Selected(object sender,EventArgs e) {
+		private void tabControl_Selecting(object sender,int e) {
+			//We use Selecting so that this fires even if user clicks on the same tab that's already selected.
+			tabControl.SelectedIndex=e;
 			_listTaskListTreeHistory=new List<TaskList>();//clear the tree no matter which tab clicked.
 			_hasListSwitched=true;
 			SetFiltersToDefault();//Fills Tree and Grid
@@ -3020,8 +3023,6 @@ namespace OpenDental {
 		private void butRefresh_Click(object sender,EventArgs e) {
 			FillGrid(isManualRefresh: true);
 		}
-
-		
 	}
 
 

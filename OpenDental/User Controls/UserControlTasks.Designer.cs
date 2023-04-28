@@ -408,7 +408,7 @@ namespace OpenDental {
 			this.tabControl.Name = "tabControl";
 			this.tabControl.Size = new System.Drawing.Size(941, 20);
 			this.tabControl.TabIndex = 5;
-			this.tabControl.Selected += new System.EventHandler(this.tabControl_Selected);
+			this.tabControl.Selecting += new System.EventHandler<int>(this.tabControl_Selecting);
 			// 
 			// tabUser
 			// 

@@ -175,12 +175,17 @@ namespace OpenDental {
 			this.textWirelessPhone4 = new OpenDental.ValidPhone();
 			this.textWirelessPhone5 = new OpenDental.ValidPhone();
 			this.labelTextOk = new System.Windows.Forms.Label();
-			this.listTextOk1 = new System.Windows.Forms.ListBox();
-			this.listTextOk2 = new System.Windows.Forms.ListBox();
-			this.listTextOk3 = new System.Windows.Forms.ListBox();
-			this.listTextOk4 = new System.Windows.Forms.ListBox();
-			this.listTextOk5 = new System.Windows.Forms.ListBox();
 			this.labelClinic = new System.Windows.Forms.Label();
+			this.checkTextingN1 = new OpenDental.UI.CheckBox();
+			this.checkTextingY1 = new OpenDental.UI.CheckBox();
+			this.checkTextingN2 = new OpenDental.UI.CheckBox();
+			this.checkTextingY2 = new OpenDental.UI.CheckBox();
+			this.checkTextingN3 = new OpenDental.UI.CheckBox();
+			this.checkTextingY3 = new OpenDental.UI.CheckBox();
+			this.checkTextingN4 = new OpenDental.UI.CheckBox();
+			this.checkTextingY4 = new OpenDental.UI.CheckBox();
+			this.checkTextingN5 = new OpenDental.UI.CheckBox();
+			this.checkTextingY5 = new OpenDental.UI.CheckBox();
 			this.groupBox1.SuspendLayout();
 			this.groupIns1.SuspendLayout();
 			this.groupIns2.SuspendLayout();
@@ -1594,73 +1599,6 @@ namespace OpenDental {
 			this.labelTextOk.Text = "Text OK";
 			this.labelTextOk.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// listTextOk1
-			// 
-			this.listTextOk1.ColumnWidth = 30;
-			this.listTextOk1.Items.AddRange(new object[] {
-            "??",
-            "Yes",
-            "No"});
-			this.listTextOk1.Location = new System.Drawing.Point(121, 237);
-			this.listTextOk1.MultiColumn = true;
-			this.listTextOk1.Name = "listTextOk1";
-			this.listTextOk1.Size = new System.Drawing.Size(95, 17);
-			this.listTextOk1.TabIndex = 195;
-			this.listTextOk1.Tag = "";
-			this.listTextOk1.SelectedIndexChanged += new System.EventHandler(this.listTextOk1_SelectedIndexChanged);
-			// 
-			// listTextOk2
-			// 
-			this.listTextOk2.ColumnWidth = 30;
-			this.listTextOk2.Items.AddRange(new object[] {
-            "??",
-            "Yes",
-            "No"});
-			this.listTextOk2.Location = new System.Drawing.Point(274, 237);
-			this.listTextOk2.MultiColumn = true;
-			this.listTextOk2.Name = "listTextOk2";
-			this.listTextOk2.Size = new System.Drawing.Size(95, 17);
-			this.listTextOk2.TabIndex = 196;
-			// 
-			// listTextOk3
-			// 
-			this.listTextOk3.ColumnWidth = 30;
-			this.listTextOk3.Items.AddRange(new object[] {
-            "??",
-            "Yes",
-            "No"});
-			this.listTextOk3.Location = new System.Drawing.Point(427, 237);
-			this.listTextOk3.MultiColumn = true;
-			this.listTextOk3.Name = "listTextOk3";
-			this.listTextOk3.Size = new System.Drawing.Size(95, 17);
-			this.listTextOk3.TabIndex = 197;
-			// 
-			// listTextOk4
-			// 
-			this.listTextOk4.ColumnWidth = 30;
-			this.listTextOk4.Items.AddRange(new object[] {
-            "??",
-            "Yes",
-            "No"});
-			this.listTextOk4.Location = new System.Drawing.Point(580, 237);
-			this.listTextOk4.MultiColumn = true;
-			this.listTextOk4.Name = "listTextOk4";
-			this.listTextOk4.Size = new System.Drawing.Size(95, 17);
-			this.listTextOk4.TabIndex = 198;
-			// 
-			// listTextOk5
-			// 
-			this.listTextOk5.ColumnWidth = 30;
-			this.listTextOk5.Items.AddRange(new object[] {
-            "??",
-            "Yes",
-            "No"});
-			this.listTextOk5.Location = new System.Drawing.Point(733, 237);
-			this.listTextOk5.MultiColumn = true;
-			this.listTextOk5.Name = "listTextOk5";
-			this.listTextOk5.Size = new System.Drawing.Size(95, 17);
-			this.listTextOk5.TabIndex = 199;
-			// 
 			// labelClinic
 			// 
 			this.labelClinic.Location = new System.Drawing.Point(28, 356);
@@ -1670,9 +1608,119 @@ namespace OpenDental {
 			this.labelClinic.Text = "Clinic";
 			this.labelClinic.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
+			// checkTextingN1
+			// 
+			this.checkTextingN1.Location = new System.Drawing.Point(164, 238);
+			this.checkTextingN1.Name = "checkTextingN1";
+			this.checkTextingN1.Size = new System.Drawing.Size(29, 17);
+			this.checkTextingN1.TabIndex = 222;
+			this.checkTextingN1.TabStop = false;
+			this.checkTextingN1.Text = "N";
+			this.checkTextingN1.Click += new System.EventHandler(this.checkTextingN1_Click);
+			// 
+			// checkTextingY1
+			// 
+			this.checkTextingY1.Location = new System.Drawing.Point(122, 238);
+			this.checkTextingY1.Name = "checkTextingY1";
+			this.checkTextingY1.Size = new System.Drawing.Size(29, 17);
+			this.checkTextingY1.TabIndex = 221;
+			this.checkTextingY1.TabStop = false;
+			this.checkTextingY1.Text = "Y";
+			this.checkTextingY1.Click += new System.EventHandler(this.checkTextingY1_Click);
+			// 
+			// checkTextingN2
+			// 
+			this.checkTextingN2.Location = new System.Drawing.Point(317, 238);
+			this.checkTextingN2.Name = "checkTextingN2";
+			this.checkTextingN2.Size = new System.Drawing.Size(29, 17);
+			this.checkTextingN2.TabIndex = 224;
+			this.checkTextingN2.TabStop = false;
+			this.checkTextingN2.Text = "N";
+			this.checkTextingN2.Click += new System.EventHandler(this.checkTextingN2_Click);
+			// 
+			// checkTextingY2
+			// 
+			this.checkTextingY2.Location = new System.Drawing.Point(274, 238);
+			this.checkTextingY2.Name = "checkTextingY2";
+			this.checkTextingY2.Size = new System.Drawing.Size(29, 17);
+			this.checkTextingY2.TabIndex = 223;
+			this.checkTextingY2.TabStop = false;
+			this.checkTextingY2.Text = "Y";
+			this.checkTextingY2.Click += new System.EventHandler(this.checkTextingY2_Click);
+			// 
+			// checkTextingN3
+			// 
+			this.checkTextingN3.Location = new System.Drawing.Point(470, 238);
+			this.checkTextingN3.Name = "checkTextingN3";
+			this.checkTextingN3.Size = new System.Drawing.Size(29, 17);
+			this.checkTextingN3.TabIndex = 226;
+			this.checkTextingN3.TabStop = false;
+			this.checkTextingN3.Text = "N";
+			this.checkTextingN3.Click += new System.EventHandler(this.checkTextingN3_Click);
+			// 
+			// checkTextingY3
+			// 
+			this.checkTextingY3.Location = new System.Drawing.Point(427, 238);
+			this.checkTextingY3.Name = "checkTextingY3";
+			this.checkTextingY3.Size = new System.Drawing.Size(29, 17);
+			this.checkTextingY3.TabIndex = 225;
+			this.checkTextingY3.TabStop = false;
+			this.checkTextingY3.Text = "Y";
+			this.checkTextingY3.Click += new System.EventHandler(this.checkTextingY3_Click);
+			// 
+			// checkTextingN4
+			// 
+			this.checkTextingN4.Location = new System.Drawing.Point(623, 238);
+			this.checkTextingN4.Name = "checkTextingN4";
+			this.checkTextingN4.Size = new System.Drawing.Size(29, 17);
+			this.checkTextingN4.TabIndex = 228;
+			this.checkTextingN4.TabStop = false;
+			this.checkTextingN4.Text = "N";
+			this.checkTextingN4.Click += new System.EventHandler(this.checkTextingN4_Click);
+			// 
+			// checkTextingY4
+			// 
+			this.checkTextingY4.Location = new System.Drawing.Point(580, 238);
+			this.checkTextingY4.Name = "checkTextingY4";
+			this.checkTextingY4.Size = new System.Drawing.Size(29, 17);
+			this.checkTextingY4.TabIndex = 227;
+			this.checkTextingY4.TabStop = false;
+			this.checkTextingY4.Text = "Y";
+			this.checkTextingY4.Click += new System.EventHandler(this.checkTextingY4_Click);
+			// 
+			// checkTextingN5
+			// 
+			this.checkTextingN5.Location = new System.Drawing.Point(776, 238);
+			this.checkTextingN5.Name = "checkTextingN5";
+			this.checkTextingN5.Size = new System.Drawing.Size(29, 17);
+			this.checkTextingN5.TabIndex = 230;
+			this.checkTextingN5.TabStop = false;
+			this.checkTextingN5.Text = "N";
+			this.checkTextingN5.Click += new System.EventHandler(this.checkTextingN5_Click);
+			// 
+			// checkTextingY5
+			// 
+			this.checkTextingY5.Location = new System.Drawing.Point(734, 238);
+			this.checkTextingY5.Name = "checkTextingY5";
+			this.checkTextingY5.Size = new System.Drawing.Size(29, 17);
+			this.checkTextingY5.TabIndex = 229;
+			this.checkTextingY5.TabStop = false;
+			this.checkTextingY5.Text = "Y";
+			this.checkTextingY5.Click += new System.EventHandler(this.checkTextingY5_Click);
+			// 
 			// FormPatientAddAll
 			// 
 			this.ClientSize = new System.Drawing.Size(896, 759);
+			this.Controls.Add(this.checkTextingN5);
+			this.Controls.Add(this.checkTextingY5);
+			this.Controls.Add(this.checkTextingN4);
+			this.Controls.Add(this.checkTextingY4);
+			this.Controls.Add(this.checkTextingN3);
+			this.Controls.Add(this.checkTextingY3);
+			this.Controls.Add(this.checkTextingN2);
+			this.Controls.Add(this.checkTextingY2);
+			this.Controls.Add(this.checkTextingN1);
+			this.Controls.Add(this.checkTextingY1);
 			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.labelClinic);
@@ -1781,11 +1829,6 @@ namespace OpenDental {
 			this.Controls.Add(this.textWirelessPhone4);
 			this.Controls.Add(this.textWirelessPhone5);
 			this.Controls.Add(this.labelTextOk);
-			this.Controls.Add(this.listTextOk1);
-			this.Controls.Add(this.listTextOk2);
-			this.Controls.Add(this.listTextOk3);
-			this.Controls.Add(this.listTextOk4);
-			this.Controls.Add(this.listTextOk5);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormPatientAddAll";
 			this.Text = "Add Family";
@@ -1956,11 +1999,16 @@ namespace OpenDental {
 		private ValidPhone textWirelessPhone4;
 		private ValidPhone textWirelessPhone5;
 		private System.Windows.Forms.Label labelTextOk;
-		private System.Windows.Forms.ListBox listTextOk1;
-		private System.Windows.Forms.ListBox listTextOk2;
-		private System.Windows.Forms.ListBox listTextOk3;
-		private System.Windows.Forms.ListBox listTextOk4;
-		private System.Windows.Forms.ListBox listTextOk5;
 		private System.Windows.Forms.Label labelClinic;
+		private UI.CheckBox checkTextingN1;
+		private UI.CheckBox checkTextingY1;
+		private UI.CheckBox checkTextingN2;
+		private UI.CheckBox checkTextingY2;
+		private UI.CheckBox checkTextingN3;
+		private UI.CheckBox checkTextingY3;
+		private UI.CheckBox checkTextingN4;
+		private UI.CheckBox checkTextingY4;
+		private UI.CheckBox checkTextingN5;
+		private UI.CheckBox checkTextingY5;
 	}
 }

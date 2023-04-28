@@ -97,23 +97,6 @@
 			this.textTestingHours = new OpenDental.ValidDouble();
 			this.gridTestingNotes = new OpenDental.UI.GridOD();
 			this.checkIncludeCompleteCanceled = new OpenDental.UI.CheckBox();
-			this.treeRelatedJobs = new OpenDental.UI.BufferedTreeView();
-			this.butParentPick = new OpenDental.UI.Button();
-			this.checkIsActive = new OpenDental.UI.CheckBox();
-			this.butParentRemove = new OpenDental.UI.Button();
-			this.butActions = new OpenDental.UI.Button();
-			this.butPopout = new OpenDental.UI.Button();
-			this.comboPriority = new OpenDental.UI.ComboBox();
-			this.butChangeEst = new OpenDental.UI.Button();
-			this.textHoursLeft = new OpenDental.ValidDouble();
-			this.butAddTime = new OpenDental.UI.Button();
-			this.butVersionPrompt = new OpenDental.UI.Button();
-			this.textEstHours = new OpenDental.ValidDouble();
-			this.textActualHours = new OpenDental.ValidDouble();
-			this.butTimeLog = new OpenDental.UI.Button();
-			this.textJobEditor = new OpenDental.ODjobTextEditor();
-			this.textEditorDocumentation = new OpenDental.OdtextEditor();
-			this.textTestingHours = new OpenDental.ValidDouble();
 			this.checkNotTested = new OpenDental.UI.CheckBox();
 			this.butTested = new OpenDental.UI.Button();
 			this.comboPriorityTesting = new OpenDental.UI.ComboBox();
@@ -394,6 +377,7 @@
 			this.panelLeftTop.Controls.Add(this.label1);
 			this.panelLeftTop.Controls.Add(this.label5);
 			this.panelLeftTop.Controls.Add(this.comboCategory);
+			this.panelLeftTop.Controls.Add(this.checkIncludeCompleteCanceled);
 			this.panelLeftTop.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panelLeftTop.Location = new System.Drawing.Point(3, 3);
 			this.panelLeftTop.Name = "panelLeftTop";
@@ -745,9 +729,9 @@
 			// 
 			this.treeRelatedJobs.AllowDrop = true;
 			this.treeRelatedJobs.Indent = 9;
-			this.treeRelatedJobs.Location = new System.Drawing.Point(1, 637);
+			this.treeRelatedJobs.Location = new System.Drawing.Point(1, 657);
 			this.treeRelatedJobs.Name = "treeRelatedJobs";
-			this.treeRelatedJobs.Size = new System.Drawing.Size(270, 215);
+			this.treeRelatedJobs.Size = new System.Drawing.Size(270, 195);
 			this.treeRelatedJobs.TabIndex = 308;
 			this.treeRelatedJobs.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.treeRelatedJobs_ItemDrag);
 			this.treeRelatedJobs.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeRelatedJobs_AfterSelect);
@@ -993,209 +977,12 @@
 			// checkIncludeCompleteCanceled
 			// 
 			this.checkIncludeCompleteCanceled.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIncludeCompleteCanceled.Location = new System.Drawing.Point(4, 635);
+			this.checkIncludeCompleteCanceled.Location = new System.Drawing.Point(109, 635);
 			this.checkIncludeCompleteCanceled.Name = "checkIncludeCompleteCanceled";
 			this.checkIncludeCompleteCanceled.Size = new System.Drawing.Size(162, 24);
 			this.checkIncludeCompleteCanceled.TabIndex = 322;
 			this.checkIncludeCompleteCanceled.Text = "Include Complete/Canceled";
 			this.checkIncludeCompleteCanceled.CheckedChanged += new System.EventHandler(this.checkIncludeCompleteCanceled_CheckedChanged);
-			// 
-			// treeRelatedJobs
-			// 
-			this.treeRelatedJobs.AllowDrop = true;
-			this.treeRelatedJobs.Indent = 9;
-			this.treeRelatedJobs.Location = new System.Drawing.Point(1, 663);
-			this.treeRelatedJobs.Name = "treeRelatedJobs";
-			this.treeRelatedJobs.Size = new System.Drawing.Size(270, 189);
-			this.treeRelatedJobs.TabIndex = 308;
-			this.treeRelatedJobs.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.treeRelatedJobs_ItemDrag);
-			this.treeRelatedJobs.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeRelatedJobs_AfterSelect);
-			this.treeRelatedJobs.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeRelatedJobs_NodeMouseClick);
-			this.treeRelatedJobs.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeRelatedJobs_DragDrop);
-			this.treeRelatedJobs.DragEnter += new System.Windows.Forms.DragEventHandler(this.treeRelatedJobs_DragEnter);
-			this.treeRelatedJobs.DragOver += new System.Windows.Forms.DragEventHandler(this.treeRelatedJobs_DragOver);
-			// 
-			// butParentPick
-			// 
-			this.butParentPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butParentPick.Location = new System.Drawing.Point(129, 614);
-			this.butParentPick.Name = "butParentPick";
-			this.butParentPick.Size = new System.Drawing.Size(63, 20);
-			this.butParentPick.TabIndex = 307;
-			this.butParentPick.Text = "Set Parent";
-			this.butParentPick.Click += new System.EventHandler(this.butParentPick_Click);
-			// 
-			// checkIsActive
-			// 
-			this.checkIsActive.Enabled = false;
-			this.checkIsActive.Location = new System.Drawing.Point(121, 5);
-			this.checkIsActive.Name = "checkIsActive";
-			this.checkIsActive.Size = new System.Drawing.Size(80, 24);
-			this.checkIsActive.TabIndex = 21;
-			this.checkIsActive.Text = "Is Active";
-			this.checkIsActive.CheckedChanged += new System.EventHandler(this.checkIsActive_CheckedChanged);
-			// 
-			// butParentRemove
-			// 
-			this.butParentRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butParentRemove.Icon = OpenDental.UI.EnumIcons.DeleteX;
-			this.butParentRemove.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butParentRemove.Location = new System.Drawing.Point(196, 614);
-			this.butParentRemove.Name = "butParentRemove";
-			this.butParentRemove.Size = new System.Drawing.Size(75, 20);
-			this.butParentRemove.TabIndex = 306;
-			this.butParentRemove.Text = "Remove";
-			this.butParentRemove.Click += new System.EventHandler(this.butParentRemove_Click);
-			// 
-			// butActions
-			// 
-			this.butActions.Enabled = false;
-			this.butActions.Image = global::OpenDental.Properties.Resources.downArrowWinForm;
-			this.butActions.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.butActions.Location = new System.Drawing.Point(3, 3);
-			this.butActions.Name = "butActions";
-			this.butActions.Size = new System.Drawing.Size(95, 24);
-			this.butActions.TabIndex = 314;
-			this.butActions.Text = "Job Actions";
-			this.butActions.Click += new System.EventHandler(this.butActions_Click);
-			// 
-			// butPopout
-			// 
-			this.butPopout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butPopout.Enabled = false;
-			this.butPopout.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.butPopout.Location = new System.Drawing.Point(221, 3);
-			this.butPopout.Name = "butPopout";
-			this.butPopout.Size = new System.Drawing.Size(52, 24);
-			this.butPopout.TabIndex = 319;
-			this.butPopout.Text = "Popout";
-			this.butPopout.Click += new System.EventHandler(this.butPopout_Click);
-			// 
-			// comboPriority
-			// 
-			this.comboPriority.Location = new System.Drawing.Point(94, 145);
-			this.comboPriority.Name = "comboPriority";
-			this.comboPriority.Size = new System.Drawing.Size(117, 21);
-			this.comboPriority.TabIndex = 286;
-			this.comboPriority.SelectionChangeCommitted += new System.EventHandler(this.comboPriority_SelectionChangeCommitted);
-			// 
-			// butChangeEst
-			// 
-			this.butChangeEst.Location = new System.Drawing.Point(140, 167);
-			this.butChangeEst.Name = "butChangeEst";
-			this.butChangeEst.Size = new System.Drawing.Size(71, 20);
-			this.butChangeEst.TabIndex = 312;
-			this.butChangeEst.Text = "Change Est.";
-			this.butChangeEst.Click += new System.EventHandler(this.butChangeEst_Click);
-			// 
-			// textHoursLeft
-			// 
-			this.textHoursLeft.Location = new System.Drawing.Point(94, 209);
-			this.textHoursLeft.MaxVal = 1000000D;
-			this.textHoursLeft.MinVal = 0D;
-			this.textHoursLeft.Name = "textHoursLeft";
-			this.textHoursLeft.ReadOnly = true;
-			this.textHoursLeft.Size = new System.Drawing.Size(44, 20);
-			this.textHoursLeft.TabIndex = 311;
-			// 
-			// butAddTime
-			// 
-			this.butAddTime.Location = new System.Drawing.Point(140, 188);
-			this.butAddTime.Name = "butAddTime";
-			this.butAddTime.Size = new System.Drawing.Size(71, 20);
-			this.butAddTime.TabIndex = 308;
-			this.butAddTime.Text = "Add Time";
-			this.butAddTime.Click += new System.EventHandler(this.butAddTime_Click);
-			// 
-			// butVersionPrompt
-			// 
-			this.butVersionPrompt.Location = new System.Drawing.Point(188, 230);
-			this.butVersionPrompt.Name = "butVersionPrompt";
-			this.butVersionPrompt.Size = new System.Drawing.Size(23, 20);
-			this.butVersionPrompt.TabIndex = 308;
-			this.butVersionPrompt.Text = "...";
-			this.butVersionPrompt.Click += new System.EventHandler(this.butVersionPrompt_Click);
-			// 
-			// textEstHours
-			// 
-			this.textEstHours.Location = new System.Drawing.Point(94, 167);
-			this.textEstHours.MaxVal = 1000000D;
-			this.textEstHours.MinVal = 0D;
-			this.textEstHours.Name = "textEstHours";
-			this.textEstHours.ReadOnly = true;
-			this.textEstHours.Size = new System.Drawing.Size(44, 20);
-			this.textEstHours.TabIndex = 269;
-			// 
-			// textActualHours
-			// 
-			this.textActualHours.Location = new System.Drawing.Point(94, 188);
-			this.textActualHours.MaxVal = 1000000D;
-			this.textActualHours.MinVal = 0D;
-			this.textActualHours.Name = "textActualHours";
-			this.textActualHours.ReadOnly = true;
-			this.textActualHours.Size = new System.Drawing.Size(44, 20);
-			this.textActualHours.TabIndex = 270;
-			// 
-			// butTimeLog
-			// 
-			this.butTimeLog.Location = new System.Drawing.Point(140, 209);
-			this.butTimeLog.Name = "butTimeLog";
-			this.butTimeLog.Size = new System.Drawing.Size(71, 20);
-			this.butTimeLog.TabIndex = 313;
-			this.butTimeLog.Text = "Log";
-			this.butTimeLog.Click += new System.EventHandler(this.butTimeLog_Click);
-			// 
-			// textJobEditor
-			// 
-			this.textJobEditor.ConceptRtf = "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil\\fcharset0 " +
-    "Microsoft Sans Serif;}}\r\n{\\*\\generator Riched20 10.0.19041}\\viewkind4\\uc1 \r\n\\par" +
-    "d\\f0\\fs17\\par\r\n}\r\n";
-			this.textJobEditor.ConceptText = "";
-			this.textJobEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.textJobEditor.HasEditorOptions = true;
-			this.textJobEditor.HasSaveButton = true;
-			this.textJobEditor.Location = new System.Drawing.Point(0, 0);
-			this.textJobEditor.Name = "textJobEditor";
-			this.textJobEditor.ReadOnlyConcept = false;
-			this.textJobEditor.ReadOnlyRequirementsGrid = false;
-			this.textJobEditor.ReadOnlyWriteup = false;
-			this.textJobEditor.Size = new System.Drawing.Size(928, 633);
-			this.textJobEditor.TabIndex = 20;
-			this.textJobEditor.WriteupRtf = "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil\\fcharset0 " +
-    "Microsoft Sans Serif;}}\r\n{\\*\\generator Riched20 10.0.19041}\\viewkind4\\uc1 \r\n\\par" +
-    "d\\f0\\fs17\\par\r\n}\r\n";
-			this.textJobEditor.WriteupText = "";
-			this.textJobEditor.SaveClick += new OpenDental.ODtextEditorSaveEventHandler(this.textEditor_SaveClick);
-			this.textJobEditor.OnTextEdited += new OpenDental.ODjobTextEditor.textChangedEventHandler(this.textEditor_OnTextEdited);
-			// 
-			// textEditorDocumentation
-			// 
-			this.textEditorDocumentation.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.textEditorDocumentation.HasEditorOptions = true;
-			this.textEditorDocumentation.HasSaveButton = true;
-			this.textEditorDocumentation.Location = new System.Drawing.Point(3, 3);
-			this.textEditorDocumentation.MainFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.textEditorDocumentation.MainRtf = "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil\\fcharset0 " +
-    "Microsoft Sans Serif;}}\r\n{\\*\\generator Riched20 10.0.19041}\\viewkind4\\uc1 \r\n\\par" +
-    "d\\f0\\fs17\\par\r\n}\r\n";
-			this.textEditorDocumentation.MainText = "";
-			this.textEditorDocumentation.MinimumSize = new System.Drawing.Size(450, 120);
-			this.textEditorDocumentation.Name = "textEditorDocumentation";
-			this.textEditorDocumentation.ReadOnly = false;
-			this.textEditorDocumentation.Size = new System.Drawing.Size(914, 158);
-			this.textEditorDocumentation.TabIndex = 261;
-			this.textEditorDocumentation.SaveClick += new OpenDental.ODtextEditorSaveEventHandler(this.textEditor_SaveClick);
-			this.textEditorDocumentation.OnTextEdited += new OpenDental.OdtextEditor.textChangedEventHandler(this.textEditor_OnTextEdited);
-			// 
-			// textTestingHours
-			// 
-			this.textTestingHours.Location = new System.Drawing.Point(544, 8);
-			this.textTestingHours.MaxVal = 1000000D;
-			this.textTestingHours.MinVal = 0D;
-			this.textTestingHours.Name = "textTestingHours";
-			this.textTestingHours.Size = new System.Drawing.Size(44, 20);
-			this.textTestingHours.TabIndex = 316;
-			this.textTestingHours.TextChanged += new System.EventHandler(this.textTestingHours_TextChanged);
 			// 
 			// checkNotTested
 			// 

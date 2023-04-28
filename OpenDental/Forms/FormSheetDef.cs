@@ -68,7 +68,7 @@ namespace OpenDental {
 			checkHasMobileLayout.Checked=SheetDefCur.HasMobileLayout;
 			checkAutoSaveCheck.Checked=SheetDefCur.AutoCheckSaveImage;
 			comboAutoSaveOverride.Items.AddDefNone();
-			comboAutoSaveOverride.Items.AddDefs(Defs.GetDefsForCategory(DefCat.ImageCats));
+			comboAutoSaveOverride.Items.AddDefs(Defs.GetDefsForCategory(DefCat.ImageCats,true));
 			comboAutoSaveOverride.SetSelectedDefNum(SheetDefCur.AutoCheckSaveImageDocCategory);
 			if(SetAutoCheckEnabled(SheetDefCur.SheetType,isLoading:true)) {
 				checkAutoSaveCheck.Enabled=true;

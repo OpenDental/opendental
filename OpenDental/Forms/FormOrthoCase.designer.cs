@@ -161,9 +161,9 @@ namespace OpenDental{
 			this.TextVisitCountComplete.MaxVal = 9999;
 			this.TextVisitCountComplete.MinVal = 0;
 			this.TextVisitCountComplete.Name = "TextVisitCountComplete";
+			this.TextVisitCountComplete.ShowZero = false;
 			this.TextVisitCountComplete.Size = new System.Drawing.Size(62, 20);
 			this.TextVisitCountComplete.TabIndex = 241;
-			this.TextVisitCountComplete.ShowZero = false;
 			// 
 			// labelVisitAmount
 			// 
@@ -212,11 +212,11 @@ namespace OpenDental{
 			this.textVisitCountPlanned.MaxVal = 9999;
 			this.textVisitCountPlanned.MinVal = 0;
 			this.textVisitCountPlanned.Name = "textVisitCountPlanned";
+			this.textVisitCountPlanned.ShowZero = false;
 			this.textVisitCountPlanned.Size = new System.Drawing.Size(62, 20);
 			this.textVisitCountPlanned.TabIndex = 2;
 			this.textVisitCountPlanned.TextChanged += new System.EventHandler(this.TextVisitCountPlanned_TextChanged);
 			this.textVisitCountPlanned.Leave += new System.EventHandler(this.TextVisitCountPlanned_Leave);
-			this.textVisitCountPlanned.ShowZero = false;
 			// 
 			// textAllVisitsPercent
 			// 
@@ -354,9 +354,9 @@ namespace OpenDental{
 			this.textTreatmentLength.MaxVal = 9999;
 			this.textTreatmentLength.MinVal = 0;
 			this.textTreatmentLength.Name = "textTreatmentLength";
+			this.textTreatmentLength.ShowZero = false;
 			this.textTreatmentLength.Size = new System.Drawing.Size(85, 20);
 			this.textTreatmentLength.TabIndex = 17;
-			this.textTreatmentLength.ShowZero = false;
 			// 
 			// textPatAR
 			// 
@@ -586,9 +586,9 @@ namespace OpenDental{
 			// 
 			// labelBandingDate
 			// 
-			this.labelBandingDate.Location = new System.Drawing.Point(28, 11);
+			this.labelBandingDate.Location = new System.Drawing.Point(41, 13);
 			this.labelBandingDate.Name = "labelBandingDate";
-			this.labelBandingDate.Size = new System.Drawing.Size(173, 17);
+			this.labelBandingDate.Size = new System.Drawing.Size(160, 17);
 			this.labelBandingDate.TabIndex = 0;
 			this.labelBandingDate.Text = "Banding Date";
 			this.labelBandingDate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;

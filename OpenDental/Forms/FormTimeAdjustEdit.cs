@@ -75,10 +75,10 @@ namespace OpenDental{
 			List<Def> listDefs=Defs.GetDefsForCategory(DefCat.TimeCardAdjTypes).OrderBy(x => x.ItemName).ToList();
 			for(int i=0;i<listDefs.Count;i++) {
 				if(listDefs[i].IsHidden && listDefs[i].DefNum==_timeAdjust.PtoDefNum) {
-					comboPTO.Items.Add(listDefs[i].ItemName+" "+Lan.g(this,"(hidden)"),listDefs);
+					comboPTO.Items.Add(listDefs[i].ItemName+" "+Lan.g(this,"(hidden)"),listDefs[i]);
 				}
 				else if(!listDefs[i].IsHidden) {
-					comboPTO.Items.Add(listDefs[i].ItemName,listDefs);
+					comboPTO.Items.Add(listDefs[i].ItemName,listDefs[i]);
 				}
 				if(listDefs[i].DefNum==_timeAdjust.PtoDefNum) {
 					comboPTO.SelectedIndex=comboPTO.Items.Count-1;
