@@ -584,7 +584,7 @@ namespace OpenDental{
 						}
 						break;
 					case "OtherInsSubscrIsGenderUnknown":
-						if(insPlan2.PlanNum!=0 && (patientOtherSubscriber.Gender==PatientGender.Unknown || patientSubscriber.Gender==PatientGender.Other)) {
+						if(insPlan2.PlanNum!=0 && (patientOtherSubscriber.Gender==PatientGender.Unknown || patientOtherSubscriber.Gender==PatientGender.Other)) {
 							_stringArrayDisplay[i]="X";
 						}
 						break;
@@ -932,7 +932,7 @@ namespace OpenDental{
 						}
 						break;
 					case "PatientIsGenderUnknown":
-						if(patient.Gender==PatientGender.Unknown || patientSubscriber.Gender==PatientGender.Other) {
+						if(patient.Gender==PatientGender.Unknown || patient.Gender==PatientGender.Other) {
 							_stringArrayDisplay[i]="X";
 						}
 						break;

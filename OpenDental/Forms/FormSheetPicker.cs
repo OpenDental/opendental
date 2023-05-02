@@ -143,7 +143,7 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
-			if(!AllowMultiSelect && listMain.SelectedIndices.Count!=1){
+			if(listMain.SelectedIndices.Count==0){
 				MsgBox.Show(this,"Please select one item first.");
 				return;
 			}

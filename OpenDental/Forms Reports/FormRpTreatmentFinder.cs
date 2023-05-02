@@ -166,6 +166,7 @@ namespace OpenDental{
 				return;
 			}
 			using FormSheetPicker FormS=new FormSheetPicker();
+			FormS.AllowMultiSelect=true;
 			FormS.SheetType=SheetTypeEnum.PatientLetter;
 			FormS.ShowDialog();
 			if(FormS.DialogResult!=DialogResult.OK) {

@@ -56,6 +56,7 @@ namespace OpenDental {
 
 		private void butSelectSheetsToIgnore_Click(object sender,EventArgs e) {
 			using FormSheetPicker formSheetPicker=new FormSheetPicker();
+			formSheetPicker.AllowMultiSelect=true;
 			SheetDef sheetDef=SheetDefs.GetFirstOrDefault(x=>x.SheetDefNum==_eClipboardSheetDef.SheetDefNum);
 			//Add any sheet defs that are ignoring this sheet def. We don't want to allow chaining ignores.
 			formSheetPicker.ListSheetDefsExclude=ListEClipboardSheetDefs
