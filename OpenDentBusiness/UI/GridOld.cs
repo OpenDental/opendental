@@ -3424,7 +3424,7 @@ namespace OpenDental.UI {
 			//Save the current scale and adjust the rows and columns temporarily for printing.  Restore the rows and column sizes at the end of the method.
 			float scaleMS=_scaleMS;
 			float zoomLocal=_zoomLocal;
-			SetScaleAndFont(1,0);
+			SetScaleAndFont(1,1);
 			if(_printedRows==0) {
 				//set row heights 4% larger when printing:
 				ComputeRows(g);
@@ -3742,7 +3742,7 @@ namespace OpenDental.UI {
 			}
 		}
 
-		///<summary>Defaults are 1,0.</summary>
+		///<summary>Defaults are 1,1.</summary>
 		public void SetScaleAndFont(float scaleMS,float zoomLocal){
 			if(scaleMS==_scaleMS && zoomLocal==_zoomLocal){
 				return;

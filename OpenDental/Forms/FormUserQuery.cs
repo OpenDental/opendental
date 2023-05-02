@@ -441,7 +441,13 @@ namespace OpenDental {
 					//replace data such as PatNums numbers based on column names if viewing Human Readable mode
 					valueChanged = value;
 					if (!showRawData) {
-						valueChanged = ReplaceColumnString(c,value);
+						try {
+							valueChanged = ReplaceColumnString(c,value);
+						}
+						catch(FormatException) {
+							// We expected that the data was in a particular format for a reserved column name, but it was in an unexpected format.
+							// Don't apply special formatting in this case.
+						}
 					}
 					if(_listQueryColumns[c].Name.ToLower() == "patnum") {
 						gridRow.Tag = value;

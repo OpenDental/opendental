@@ -902,11 +902,12 @@ namespace OpenDental {
 		private void panelMain_Paint(object sender,PaintEventArgs e) {
 			Graphics g=e.Graphics;
 			g.SmoothingMode=SmoothingMode.HighQuality;
-			g.TextRenderingHint=TextRenderingHint.AntiAlias;
+			g.TextRenderingHint=TextRenderingHint.ClearTypeGridFit;
 				//I tried all the rendering hints.  None of them match the popup textboxes.
 				//I made more comments about that in CreateFloatingTextBox().
 				//AntiAliasGridFit looks blocky
-				//ClearTypeGridFit;//This type is really a hack that I hate. It does not solve the size problem, either.
+				//ClearTypeGridFit;
+				//AntiAlias is not the best quality.  Looks fuzzy.
 			g.Clear(Color.White);
 			if(DesignMode){
 				g.DrawRectangle(Pens.Black,0,0,panelMain.Width-1,panelMain.Height-1);

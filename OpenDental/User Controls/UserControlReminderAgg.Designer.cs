@@ -84,10 +84,10 @@
 			this.tabTemplates.Controls.Add(this.tabSMSTemplate);
 			this.tabTemplates.Controls.Add(this.tabAutoReplyTemplate);
 			this.tabTemplates.Controls.Add(this.tabArrivalTemplate);
-			this.tabTemplates.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabTemplates.Location = new System.Drawing.Point(3, 76);
 			this.tabTemplates.MinimumSize = new System.Drawing.Size(635, 460);
 			this.tabTemplates.Name = "tabTemplates";
+			this.tabTemplates.SelectedIndex = 0;
 			this.tabTemplates.Size = new System.Drawing.Size(635, 460);
 			this.tabTemplates.TabIndex = 11;
 			this.tabTemplates.SelectedIndexChanged += new System.EventHandler(this.tabTemplates_SelectedIndexChanged);

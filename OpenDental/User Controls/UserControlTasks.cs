@@ -1780,14 +1780,14 @@ namespace OpenDental {
 					Task task=Tasks.GetOne(taskNum);
 					if (task!=null) { //don't show the task search form and just open up the task that has been found
 						FormTaskEdit formTaskEdit=new FormTaskEdit(task);
-						formTaskEdit.ShowDialog(this);
+						formTaskEdit.Show(this);
 						return;
 					}
 				}
 			}
 			// if the tasknum was the same as last time then we have already tried this search once
 			using FormTaskSearch formTaskbarSearch=new FormTaskSearch();
-			formTaskbarSearch.ShowDialog(this); //if there is no match, open the form as it normally would
+			formTaskbarSearch.Show(this); //if there is no match, open the form as it normally would
 		}
 
 		public void TaskGoToEvent(object sender,CancelEventArgs e) {

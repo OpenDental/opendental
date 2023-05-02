@@ -1630,14 +1630,19 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 					onShutdown(false);
 					return;
 				}
-				InvalidType[] cacheRefreshArray=listSignals.Where(x =>
-						(x.FKey==0 && x.FKeyType==KeyType.Undefined)
-						//Include the cache refresh signal for UserOdPrefs if for the currently logged in user.
-						|| (x.IType==InvalidType.UserOdPrefs && x.FKeyType==KeyType.UserOd && Security.CurUser!=null && x.FKey==Security.CurUser.UserNum)
-					).Select(x => x.IType)
+				//Create a distinct list of undefined invalid types which are from signals invalidating entire cache classes.
+				//Include the UserOdPrefs invalid type if there is a signal for the currently logged in user.
+				List<InvalidType> listInvalidTypes=listSignals.Where(x => (x.FKey==0 && x.FKeyType==KeyType.Undefined)
+						|| (x.IType==InvalidType.UserOdPrefs && x.FKeyType==KeyType.UserOd && Security.CurUser!=null && x.FKey==Security.CurUser.UserNum))
+					.Select(x => x.IType)
 					.Distinct()
-					.ToArray();
-				Cache.ClearCaches(cacheRefreshArray);
+					.ToList();
+				//The preference cache is unique in that it is heavily used and should never be cleared out. It should be refreshed immediately instead.
+				if(listInvalidTypes.Remove(InvalidType.Prefs)) {
+					Cache.Refresh(InvalidType.Prefs);
+				}
+				//The remaining caches should be cleared out and will be refilled when needed.
+				Cache.ClearCaches(listInvalidTypes.ToArray());
 				onProcess(_listODFormsSubscribed,listSignals);
 			});
 			threadRefreshSignals.AddExceptionHandler((e) => {

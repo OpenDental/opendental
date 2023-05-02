@@ -328,7 +328,12 @@ namespace OpenDental{
 				progressOD.ShowCancelButton=false;
 				progressOD.TypeEvent=typeof(ODEvent);
 				progressOD.ODEventType=ODEventType.ConvertDatabases;
-				progressOD.ShowDialogProgress();
+				if(isSilent) {
+					ConvertDatabases.InvokeConvertMethods();
+				}
+				else {
+					progressOD.ShowDialogProgress();
+				}
 				if(FromVersion>=new Version("3.4.0")) {
 					//CacheL.Refresh(InvalidType.Prefs);//or it won't know it has to update in the next line.
 					Prefs.UpdateBool(PrefName.CorruptedDatabase,false,true);//more forceful refresh in order to properly change flag

@@ -96,15 +96,10 @@ namespace OpenDental{
 			textPort.Enabled=isEnablingEmailFields;
 			textSMTPserverIncoming.ReadOnly=!isEnablingEmailFields;
 			textPortIncoming.Enabled=isEnablingEmailFields;
-			if(radioPassword.Checked) {
-				panelPassword.Visible=true;
-				ClearGmailInfo();
-				ClearMicrosoftInfo();
-			}
-			else if(radioGmail.Checked) {
-				panelPassword.Visible=false;
-				groupGmail.Visible=true;
-				ClearMicrosoftInfo();
+			panelPassword.Visible=radioPassword.Checked;
+			groupMicrosoft.Visible=radioMicrosoft.Checked;
+			groupGmail.Visible=radioGmail.Checked;
+			if(radioGmail.Checked) {
 				if(textAccessTokenGmail.Text.IsNullOrEmpty()) { //Not signed in
 					checkDownloadGmail.Enabled=false;
 					butClearTokensGmail.Enabled=false;
@@ -134,9 +129,6 @@ namespace OpenDental{
 				}
 			}
 			else if(radioMicrosoft.Checked) {
-				panelPassword.Visible=false;
-				ClearGmailInfo();
-				groupMicrosoft.Visible=true;
 				textPassword.Text="";
 				textSMTPserverIncoming.Text="";
 				textPortIncoming.Text="";
@@ -461,10 +453,15 @@ namespace OpenDental{
 				}
 			}
 			_authenticationType=OAuthType.None;
+			ClearGmailInfo();
+			ClearMicrosoftInfo();
 			RefreshEmailTextFields(true);
 		}
 
 		private void radioGmail_Click(object sender,EventArgs e) {
+			if(_authenticationType==OAuthType.Google) {
+				return;
+			}
 			if(_authenticationType==OAuthType.Microsoft && !textAccessTokenMicrosoft.Text.IsNullOrEmpty()) {
 				if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Do you want to Sign Out of Microsoft?")) {
 					radioMicrosoft.Checked=true;
@@ -472,10 +469,14 @@ namespace OpenDental{
 				}
 			}
 			_authenticationType=OAuthType.None;
+			ClearMicrosoftInfo();
 			RefreshEmailTextFields();
 		}
 
 		private void radioMicrosoft_Click(object sender,EventArgs e) {
+			if(_authenticationType==OAuthType.Microsoft) {
+				return;
+			}
 			if(_authenticationType==OAuthType.Google && !textAccessTokenGmail.Text.IsNullOrEmpty()) {
 				if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Do you want to Sign Out of Gmail?")) {
 					radioGmail.Checked=true;
@@ -483,6 +484,7 @@ namespace OpenDental{
 				}
 			}
 			_authenticationType=OAuthType.None;
+			ClearGmailInfo();
 			RefreshEmailTextFields();
 		}
 

@@ -1861,7 +1861,7 @@ namespace OpenDental {
 			float zoomLocal=LayoutManager.GetZoomLocal();
 			if(LayoutManager.ScaleMy()!=1) {				
 				LayoutManager.MoveSize(gridProg,new Size((int)(gridProg.Size.Width/LayoutManager.ScaleMy()),(int)(gridProg.Size.Height/LayoutManager.ScaleMy())));
-				gridProg.SetScaleAndFont(1,0);
+				gridProg.SetScaleAndFont(1,1);
 			}
 			yPos=gridProg.PrintPage(g,_countPagesPrinted,rectangleBounds,_heightHeadingPrint,true);
 			//Restore the grid's size back to it's original state.

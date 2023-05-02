@@ -80,10 +80,9 @@ namespace OpenDental{
 			}*/
 		}
 
-	
-
-		
-
+		private void butClear_Click(object sender, EventArgs e) {
+			listBoxPick.ClearSelected();
+		}
 
 	}
 }

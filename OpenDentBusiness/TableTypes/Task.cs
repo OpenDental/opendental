@@ -67,7 +67,7 @@ namespace OpenDentBusiness{
 		public DateTime SecDateTEdit;
 		///<summary>Limited to 256 char. If present, shows only this text in task list grids instead of prepending date, aggregating notes, etc. Shows as Short Descript in the UI for space reasons.</summary>
 		public string DescriptOverride;
-		///<summary>Determines if this task can be edited by most users</summary>
+		///<summary>Determines if this task can be edited by most users. Currently only used at HQ.</summary>
 		public bool IsReadOnly;
 		///<summary>FK to definition.DefNum. The category for this task. Currently only used at HQ.</summary>
 		public long TriageCategory;

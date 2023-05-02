@@ -315,6 +315,7 @@ namespace OpenDental {
 			this.tabControlProvider.Controls.Add(this.tabDentalSchools);
 			this.tabControlProvider.Controls.Add(this.tabWebSched);
 			this.tabControlProvider.Controls.Add(this.tabClinics);
+			this.tabControlProvider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabControlProvider.Location = new System.Drawing.Point(12, 12);
 			this.tabControlProvider.Name = "tabControlProvider";
 			this.tabControlProvider.Size = new System.Drawing.Size(870, 611);
@@ -407,6 +408,7 @@ namespace OpenDental {
 			// odColorPickerOutline
 			// 
 			this.odColorPickerOutline.BackgroundColor = System.Drawing.Color.Empty;
+			this.odColorPickerOutline.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.odColorPickerOutline.Location = new System.Drawing.Point(201, 496);
 			this.odColorPickerOutline.Name = "odColorPickerOutline";
 			this.odColorPickerOutline.Size = new System.Drawing.Size(74, 21);
@@ -415,6 +417,7 @@ namespace OpenDental {
 			// odColorPickerAppt
 			// 
 			this.odColorPickerAppt.BackgroundColor = System.Drawing.Color.Empty;
+			this.odColorPickerAppt.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.odColorPickerAppt.Location = new System.Drawing.Point(201, 475);
 			this.odColorPickerAppt.Name = "odColorPickerAppt";
 			this.odColorPickerAppt.Size = new System.Drawing.Size(74, 21);
@@ -896,9 +899,9 @@ namespace OpenDental {
 			// 
 			// radioTIN
 			// 
-			this.radioTIN.Location = new System.Drawing.Point(13, 34);
+			this.radioTIN.Location = new System.Drawing.Point(13, 35);
 			this.radioTIN.Name = "radioTIN";
-			this.radioTIN.Size = new System.Drawing.Size(135, 15);
+			this.radioTIN.Size = new System.Drawing.Size(104, 15);
 			this.radioTIN.TabIndex = 1;
 			this.radioTIN.Text = "TIN";
 			this.radioTIN.Click += new System.EventHandler(this.radioTIN_Click);
@@ -908,7 +911,7 @@ namespace OpenDental {
 			this.radioSSN.Checked = true;
 			this.radioSSN.Location = new System.Drawing.Point(13, 17);
 			this.radioSSN.Name = "radioSSN";
-			this.radioSSN.Size = new System.Drawing.Size(104, 14);
+			this.radioSSN.Size = new System.Drawing.Size(104, 15);
 			this.radioSSN.TabIndex = 0;
 			this.radioSSN.TabStop = true;
 			this.radioSSN.Text = "SSN";
@@ -1042,6 +1045,7 @@ namespace OpenDental {
 			// 
 			this.dateTerm.BackColor = System.Drawing.SystemColors.Control;
 			this.dateTerm.CalendarLocation = OpenDental.UI.ODDatePicker.EnumCalendarLocation.ToTheRight;
+			this.dateTerm.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.dateTerm.Location = new System.Drawing.Point(139, 453);
 			this.dateTerm.Name = "dateTerm";
 			this.dateTerm.Size = new System.Drawing.Size(228, 21);

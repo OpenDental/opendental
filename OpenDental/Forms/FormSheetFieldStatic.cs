@@ -137,8 +137,9 @@ namespace OpenDental {
 			}
 			using Font font=new Font(comboFontName.Text,fontSize,fontStyle);
 			using Graphics g=this.CreateGraphics();
+			g.TextRenderingHint=TextRenderingHint.ClearTypeGridFit;
 			SizeF sizeF=g.MeasureString(textFieldValue.Text,font);//for some reason, this is not off by the MS amount
-			labelTextW.Text=Lan.g(this,"TextW:")+" "+((int)sizeF.Width).ToString();
+			labelTextW.Text=Lan.g(this,"TextW:")+" "+((int)sizeF.Width+1).ToString();
 			labelTextH.Text=Lan.g(this,"TextH:")+" "+((int)sizeF.Height).ToString();
 		}
 

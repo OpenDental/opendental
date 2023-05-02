@@ -3014,7 +3014,7 @@ namespace OpenDental {
 		private void DrawFields(SheetDef sheetDef,Graphics g,bool isHighlightEligible=true) {
 			g.SmoothingMode=SmoothingMode.HighQuality;
 			g.CompositingQuality=CompositingQuality.HighQuality; 
-			g.TextRenderingHint=TextRenderingHint.AntiAlias;//see notes about this choice in FormSheetFillEdit.panelMain_Paint().
+			g.TextRenderingHint=TextRenderingHint.ClearTypeGridFit;//see notes about this choice in FormSheetFillEdit.panelMain_Paint().
 			List<SheetFieldDef> listSheetFieldDefs=GetPertinentSheetFieldDefs(sheetDef);
 			string selectedLanguage=GetSelectedLanguageThreeLetters();
 			List<SheetFieldDef> listSheetFieldDefsSelected=listBoxFields.GetListSelected<SheetFieldDef>();
