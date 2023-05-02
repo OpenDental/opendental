@@ -2644,7 +2644,13 @@ namespace OpenDental {
 
 		///<summary>Checks if the dynamic payment plan has any charges with overpaid interest or principal. If it does, prompts the user to balance on prepay, principal, or return to payment page. Returns false if the user wants to stay in the Payment window.</summary>
 		private bool CheckDynamicPaymentPlanRebalance() {
-			if(!PayPlanEdit.AreAnyPayPlansOverpaid(_listPaySplits)) {
+			List<long> listPayPlanNums=_listPaySplits.Where(x => x.PayPlanNum>0).Select(x => x.PayPlanNum).ToList();
+			if(listPayPlanNums.IsNullOrEmpty()) {
+				return true;
+			}
+			List<long> listPayPlanNumsDynamic=PayPlans.GetMany(listPayPlanNums.ToArray()).Where(x => x.IsDynamic).Select(x => x.PayPlanNum).ToList();
+			List<PaySplit> listPaySplitsPayPlanDynamic=_listPaySplits.Where(x => x.PayPlanNum.In(listPayPlanNumsDynamic.ToArray())).ToList();
+			if(!PayPlanEdit.AreAnyPayPlansOverpaid(listPaySplitsPayPlanDynamic)) {
 				return true;
 			}
 			DialogResult dialogResult=MessageBox.Show(Lan.g(this,"One or more Current Payment Splits are overpaying interest or principal for dynamic payment plan charges."
@@ -2654,7 +2660,7 @@ namespace OpenDental {
 				return false;
 			}
 			bool isPayOnPrincipal=(dialogResult==DialogResult.Yes);
-			List<PayPlanEdit.PayPlanRecalculationData> listPayPlanRecalculationDatas=PayPlanEdit.GetRecalculationDataForDynamicPaymentPlans(_patient,_listPaySplits);
+			List<PayPlanEdit.PayPlanRecalculationData> listPayPlanRecalculationDatas=PayPlanEdit.GetRecalculationDataForDynamicPaymentPlans(_patient,listPaySplitsPayPlanDynamic);
 			PayPlanEdit.CreateTransferForDynamicPaymentPlans(listPayPlanRecalculationDatas,isPayOnPrincipal);
 			return true;
 		}

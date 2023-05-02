@@ -1602,7 +1602,7 @@ namespace OpenDental {
 			this.checkShowBaseUnits.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.checkShowBaseUnits.Location = new System.Drawing.Point(153, 97);
 			this.checkShowBaseUnits.Name = "checkShowBaseUnits";
-			this.checkShowBaseUnits.Size = new System.Drawing.Size(289, 16);
+			this.checkShowBaseUnits.Size = new System.Drawing.Size(298, 16);
 			this.checkShowBaseUnits.TabIndex = 178;
 			this.checkShowBaseUnits.Text = "Claims show base units (Does not affect billed amount)";
 			this.checkShowBaseUnits.UseVisualStyleBackColor = true;

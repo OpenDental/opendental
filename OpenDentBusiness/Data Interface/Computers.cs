@@ -79,8 +79,13 @@ namespace OpenDentBusiness{
 				Cur.CompName=clientComputerName;
 				long computerNum = Computers.Insert(Cur);
 				//Never copy the printer rows for ODCloud
-				if(!ODBuild.IsWeb() && clientComputerName.ToLower() != hostComputerName.ToLower()) {
-					CopyPrinterRowsForComputer(computerNum,hostComputerName);//This computer is an RDP remote client. Copy the host computer's printer settings for the new computer.
+				if(!ODBuild.IsWeb()) {
+					if(clientComputerName.ToLower()!=hostComputerName.ToLower()) {
+						CopyPrinterRowsForComputer(computerNum,hostComputerName);//This computer is an RDP remote client. Copy the host computer's printer settings for the new computer.
+					}
+					else if(PrefC.GetBool(PrefName.EasyHidePrinters)) {
+						Printers.PutForSit(PrintSituation.Default,clientComputerName,"",true);
+					}
 				}
 			}
 		}

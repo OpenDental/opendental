@@ -37,6 +37,9 @@ namespace OpenDental{
 			List<Employee> listEmployees=Employees.GetDeepCopy(isShort:true);//excludes hidden
 			comboReportsTo.Items.AddList(listEmployees,x=>x.FName+" "+x.LName);
 			comboReportsTo.SetSelectedKey<Employee>(EmployeeCur.ReportsTo,x=>x.EmployeeNum);
+			if(PrefC.IsODHQ) {
+				checkIsWorkingHome.Visible=true;
+			}
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {

@@ -244,6 +244,7 @@ namespace OpenDental {
 			this.checkIsWorkingHome.Size = new System.Drawing.Size(151, 18);
 			this.checkIsWorkingHome.TabIndex = 9;
 			this.checkIsWorkingHome.Text = "Working From Home";
+			this.checkIsWorkingHome.Visible = false;
 			// 
 			// label5
 			// 

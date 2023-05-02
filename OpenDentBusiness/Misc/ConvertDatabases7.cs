@@ -4646,6 +4646,10 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}
 
+		private static void To22_4_40() {
+			SecurityHash.UpdateHashing();
+		}
+
 	}
 }
 

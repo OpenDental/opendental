@@ -115,7 +115,12 @@ namespace OpenDental {
 			UI.ProgressOD progressOD=new UI.ProgressOD();
 			progressOD.ActionMain=()=>MiscData.MakeABackup();
 			try{
-				progressOD.ShowDialogProgress();
+				if(isSilent) {
+					MiscData.MakeABackup();
+				}
+				else {
+					progressOD.ShowDialogProgress();
+				}
 			}
 			catch(Exception ex){
 				//Show the user that something what went wrong when not in silent mode.

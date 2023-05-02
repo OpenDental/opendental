@@ -141,6 +141,20 @@ namespace OpenDentBusiness {
 			return GetList(patNums);
 		}
 
+		///<summary>Gets a list of recalls from the datbase. Used for API.</summary>
+		public static List<Recall> GetRecallsForApi(int limit,int offset,long patNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Recall>>(MethodBase.GetCurrentMethod(),limit,offset,patNum);
+			}
+			string command="SELECT * FROM recall ";
+			if(patNum>0) {
+				command+="WHERE recall.PatNum="+POut.Long(patNum)+" ";
+			}
+			command+="ORDER BY recallnum "//Ensure order for limit and offset.
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.RecallCrud.SelectMany(command);
+		}
+
 		public static Recall GetRecall(long recallNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<Recall>(MethodBase.GetCurrentMethod(),recallNum);

@@ -4070,7 +4070,7 @@ namespace OpenDental {
 					docc.Description=Lan.g(this,"Statement");
 				}
 			}
-			docc.DateCreated=stmt.DateSent;
+			stmt.DateSent=docc.DateCreated;
 			stmt.DocNum=docc.DocNum;//this signals the calling class that the pdf was created successfully.
 			Statements.AttachDoc(stmt.StatementNum,docc);
 			//if(ImageStore.UpdatePatient == null){

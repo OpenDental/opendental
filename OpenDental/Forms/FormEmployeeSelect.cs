@@ -29,6 +29,10 @@ namespace OpenDental{
 			FillGrid();
 			Height=System.Windows.Forms.Screen.FromControl(this).WorkingArea.Height-2;
 			Top=2;
+			if(PrefC.IsODHQ) {
+				checkWorkingHome.Visible=true;
+				checkWorkingOffice.Visible=true;
+			}
 		}
 
 		private void RefreshList(){
@@ -87,8 +91,10 @@ namespace OpenDental{
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lan.g("FormEmployeeSelect","Furlo"),35,HorizontalAlignment.Center);
 			gridMain.Columns.Add(col);
-			col=new GridColumn(Lan.g("FormEmployeeSelect","Home"),30,HorizontalAlignment.Center);
-			gridMain.Columns.Add(col);
+			if(PrefC.IsODHQ) {
+				col=new GridColumn(Lan.g("FormEmployeeSelect","Home"),30,HorizontalAlignment.Center);
+				gridMain.Columns.Add(col);
+			}
 			gridMain.ListGridRows.Clear();
 			GridRow row;
 			for(int i=0;i<_listEmployeesShowing.Count;i++){
@@ -108,7 +114,9 @@ namespace OpenDental{
 				row.Cells.Add(_listEmployeesShowing[i].EmailWork);
 				row.Cells.Add(_listEmployeesShowing[i].EmailPersonal);
 				row.Cells.Add(_listEmployeesShowing[i].IsFurloughed?"X":"");
-				row.Cells.Add(_listEmployeesShowing[i].IsWorkingHome?"X":"");
+				if(PrefC.IsODHQ) {
+					row.Cells.Add(_listEmployeesShowing[i].IsWorkingHome?"X":"");
+				}
 				gridMain.ListGridRows.Add(row);
 			}
 			gridMain.EndUpdate();

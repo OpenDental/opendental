@@ -572,10 +572,10 @@ namespace OpenDentBusiness{
 					TimeSpan tsRate3BreakTimeCounter=new TimeSpan();
 					//Subtract overbreaks
 					for(int b=0;b<listClockEventBreak.Count;b++) {
-						if(listClockEventBreak[b].TimeDisplayed1.Date!=listClockEvent[i].TimeDisplayed1.Date) {
-							continue;//skip breaks for other days.
+						//sum breaks that occur during this clock event
+						if(timeClockEventsOverlapHelper(listClockEvent[i],listClockEventBreak[b])) {
+							tsRate3BreakTimeCounter+=listClockEventBreak[b].TimeDisplayed2-listClockEventBreak[b].TimeDisplayed1;
 						}
-						tsRate3BreakTimeCounter+=listClockEventBreak[b].TimeDisplayed2-listClockEventBreak[b].TimeDisplayed1;
 					}
 					TimeSpan tsRate3AdjustAmount=tsRate3BreakTimeCounter-System.TimeSpan.FromMinutes(30); //Overbreak
 					if(tsRate3AdjustAmount>TimeSpan.Zero) {
