@@ -944,7 +944,7 @@ namespace OpenDentBusiness {
 			List<FauxAccountEntry> listFauxAccountEntryProcAdjCredits=listFauxAccountEntriesCredits.FindAll(x => x.AccountEntryProc!=null && x.IsAdjustment);
 			for(int i=0;i<listFauxAccountEntryProcAdjCredits.Count;i++) {
 				//Blindly adjust PrincipalAdjusted and AmountEnd for this procedure credit by any adjustment credits associated with the same procedure even if it doesn't make sense.
-				List<FauxAccountEntry> listFauxAccountEntriesCreditsForProc=listFauxAccountEntryProcCredits.FindAll(x => x.AccountEntryProc==listFauxAccountEntryProcCredits[i].AccountEntryProc);
+				List<FauxAccountEntry> listFauxAccountEntriesCreditsForProc=listFauxAccountEntryProcCredits.FindAll(x => x.AccountEntryProc==listFauxAccountEntryProcAdjCredits[i].AccountEntryProc);
 				for(int j=0;j<listFauxAccountEntriesCreditsForProc.Count;j++) {
 					if(CompareDecimal.IsGreaterThanOrEqualToZero(listFauxAccountEntryProcAdjCredits[i].AmountEnd)) {
 						break;
@@ -957,7 +957,7 @@ namespace OpenDentBusiness {
 					listFauxAccountEntriesCreditsForProc[j].PrincipalAdjusted-=amountToAllocate;
 					listFauxAccountEntriesCreditsForProc[j].AccountEntryProc.AmountEnd+=amountToAllocate;
 					listFauxAccountEntriesCreditsForProc[j].AccountEntryProc.ListPayPlanPrincipalApplieds.Add(
-						new PayPlanPrincipalApplied(listFauxAccountEntryProcCredits[i].PayPlanNum,(amountToAllocate * -1))//Negative because this principal is being removed.
+						new PayPlanPrincipalApplied(listFauxAccountEntryProcAdjCredits[i].PayPlanNum,(amountToAllocate * -1))//Negative because this principal is being removed.
 					);
 				}
 			}

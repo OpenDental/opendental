@@ -99,7 +99,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEClipboardSecurityEdit";
-			this.Text = "eClipboard Clinical Security";
+			this.Text = "ODTouch Security";
 			this.Load += new System.EventHandler(this.FormEClipboardSecurityEdit_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();

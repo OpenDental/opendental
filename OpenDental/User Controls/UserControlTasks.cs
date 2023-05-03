@@ -1390,6 +1390,9 @@ namespace OpenDental {
 				_listTaskNotes=new List<TaskNote>();
 				return;
 			}
+			if(tabControl==null) {
+				return;
+			}
 			_listSentTaskSignalNums.Clear();//Full refresh, tracked sent signals are now irrelevant and taking up memory.
 			TaskType taskType=TaskType.Normal;
 			if(tabControl.SelectedTab==tabReminders) {
@@ -1552,7 +1555,10 @@ namespace OpenDental {
 				}
 			}
 			_listTaskNotes=TaskNotes.RefreshForTasks(taskNums);
-			_previousTabName=tabControl.SelectedTab.Name;
+			_previousTabName="";
+			if(tabControl.SelectedTab!=null) {
+				_previousTabName=tabControl.SelectedTab.Name;
+			}
 		}
 
 		///<summary>Returns a list of TaskLists containing all directly and indirectly subscribed TaskLists for the current user.</summary>
@@ -1786,8 +1792,9 @@ namespace OpenDental {
 				}
 			}
 			// if the tasknum was the same as last time then we have already tried this search once
-			using FormTaskSearch formTaskbarSearch=new FormTaskSearch();
+			FormTaskSearch formTaskbarSearch=new FormTaskSearch();
 			formTaskbarSearch.Show(this); //if there is no match, open the form as it normally would
+			// this doesn't need to be disposed of as it is not shown modally (https://stackoverflow.com/a/3097383)
 		}
 
 		public void TaskGoToEvent(object sender,CancelEventArgs e) {
