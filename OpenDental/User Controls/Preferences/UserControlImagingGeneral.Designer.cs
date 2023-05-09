@@ -25,8 +25,6 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			this.checkImagesModuleUsesOld2020 = new OpenDental.UI.CheckBox();
-			this.labelImageCategoryDefaultDetails = new System.Windows.Forms.Label();
-			this.labelVideoImageCategoryDefaultDetails = new System.Windows.Forms.Label();
 			this.butVideoImageCategoryDefault = new OpenDental.UI.Button();
 			this.label41 = new System.Windows.Forms.Label();
 			this.textVideoImageCategoryDefault = new System.Windows.Forms.TextBox();
@@ -47,11 +45,8 @@ namespace OpenDental {
 			this.textDefaultImageImportFolder = new System.Windows.Forms.TextBox();
 			this.label15 = new System.Windows.Forms.Label();
 			this.textAutoImportFolder = new System.Windows.Forms.TextBox();
-			this.labelImagesModuleUsesOld2020Details = new System.Windows.Forms.Label();
-			this.labelPDFLaunchWindowDetails = new System.Windows.Forms.Label();
 			this.groupImport = new OpenDental.UI.GroupBox();
 			this.groupBoxFunctionality = new OpenDental.UI.GroupBox();
-			this.labelDefaultMeasurementScaleDetails = new System.Windows.Forms.Label();
 			this.groupBoxOD2.SuspendLayout();
 			this.groupImport.SuspendLayout();
 			this.groupBoxFunctionality.SuspendLayout();
@@ -66,26 +61,6 @@ namespace OpenDental {
 			this.checkImagesModuleUsesOld2020.TabIndex = 316;
 			this.checkImagesModuleUsesOld2020.Text = "Use old Imaging module interface, pre 2020";
 			this.checkImagesModuleUsesOld2020.Click += new System.EventHandler(this.checkImagesModuleUsesOld2020_Click);
-			// 
-			// labelImageCategoryDefaultDetails
-			// 
-			this.labelImageCategoryDefaultDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelImageCategoryDefaultDetails.Location = new System.Drawing.Point(476, 121);
-			this.labelImageCategoryDefaultDetails.Name = "labelImageCategoryDefaultDetails";
-			this.labelImageCategoryDefaultDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelImageCategoryDefaultDetails.TabIndex = 315;
-			this.labelImageCategoryDefaultDetails.Text = "for new images when no category selected";
-			this.labelImageCategoryDefaultDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelVideoImageCategoryDefaultDetails
-			// 
-			this.labelVideoImageCategoryDefaultDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelVideoImageCategoryDefaultDetails.Location = new System.Drawing.Point(476, 154);
-			this.labelVideoImageCategoryDefaultDetails.Name = "labelVideoImageCategoryDefaultDetails";
-			this.labelVideoImageCategoryDefaultDetails.Size = new System.Drawing.Size(498, 18);
-			this.labelVideoImageCategoryDefaultDetails.TabIndex = 314;
-			this.labelVideoImageCategoryDefaultDetails.Text = "unless a mount is showing";
-			this.labelVideoImageCategoryDefaultDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// butVideoImageCategoryDefault
 			// 
@@ -277,26 +252,6 @@ namespace OpenDental {
 			this.textAutoImportFolder.Size = new System.Drawing.Size(230, 20);
 			this.textAutoImportFolder.TabIndex = 302;
 			// 
-			// labelImagesModuleUsesOld2020Details
-			// 
-			this.labelImagesModuleUsesOld2020Details.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelImagesModuleUsesOld2020Details.Location = new System.Drawing.Point(476, 236);
-			this.labelImagesModuleUsesOld2020Details.Name = "labelImagesModuleUsesOld2020Details";
-			this.labelImagesModuleUsesOld2020Details.Size = new System.Drawing.Size(498, 17);
-			this.labelImagesModuleUsesOld2020Details.TabIndex = 317;
-			this.labelImagesModuleUsesOld2020Details.Text = "not recommended";
-			this.labelImagesModuleUsesOld2020Details.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelPDFLaunchWindowDetails
-			// 
-			this.labelPDFLaunchWindowDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelPDFLaunchWindowDetails.Location = new System.Drawing.Point(476, 205);
-			this.labelPDFLaunchWindowDetails.Name = "labelPDFLaunchWindowDetails";
-			this.labelPDFLaunchWindowDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelPDFLaunchWindowDetails.TabIndex = 318;
-			this.labelPDFLaunchWindowDetails.Text = "can help with Remote Desktop";
-			this.labelPDFLaunchWindowDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// groupImport
 			// 
 			this.groupImport.Controls.Add(this.label61);
@@ -327,30 +282,15 @@ namespace OpenDental {
 			this.groupBoxFunctionality.TabIndex = 320;
 			this.groupBoxFunctionality.Text = "Functionality";
 			// 
-			// labelDefaultMeasurementScaleDetails
-			// 
-			this.labelDefaultMeasurementScaleDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelDefaultMeasurementScaleDetails.Location = new System.Drawing.Point(476, 278);
-			this.labelDefaultMeasurementScaleDetails.Name = "labelDefaultMeasurementScaleDetails";
-			this.labelDefaultMeasurementScaleDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelDefaultMeasurementScaleDetails.TabIndex = 321;
-			this.labelDefaultMeasurementScaleDetails.Text = "for new single images, does not apply to mounts";
-			this.labelDefaultMeasurementScaleDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// UserControlImagingGeneral
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.White;
-			this.Controls.Add(this.labelDefaultMeasurementScaleDetails);
 			this.Controls.Add(this.groupBoxFunctionality);
 			this.Controls.Add(this.groupImport);
-			this.Controls.Add(this.labelPDFLaunchWindowDetails);
-			this.Controls.Add(this.labelImagesModuleUsesOld2020Details);
-			this.Controls.Add(this.labelImageCategoryDefaultDetails);
-			this.Controls.Add(this.labelVideoImageCategoryDefaultDetails);
 			this.Controls.Add(this.groupBoxOD2);
 			this.Name = "UserControlImagingGeneral";
-			this.Size = new System.Drawing.Size(974, 624);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxOD2.ResumeLayout(false);
 			this.groupBoxOD2.PerformLayout();
 			this.groupImport.ResumeLayout(false);
@@ -362,8 +302,6 @@ namespace OpenDental {
 
 		#endregion
 		private OpenDental.UI.CheckBox checkImagesModuleUsesOld2020;
-		private System.Windows.Forms.Label labelImageCategoryDefaultDetails;
-		private System.Windows.Forms.Label labelVideoImageCategoryDefaultDetails;
 		private UI.Button butVideoImageCategoryDefault;
 		private System.Windows.Forms.Label label41;
 		private System.Windows.Forms.TextBox textVideoImageCategoryDefault;
@@ -384,10 +322,7 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textDefaultImageImportFolder;
 		private System.Windows.Forms.Label label15;
 		private System.Windows.Forms.TextBox textAutoImportFolder;
-		private System.Windows.Forms.Label labelImagesModuleUsesOld2020Details;
-		private System.Windows.Forms.Label labelPDFLaunchWindowDetails;
 		private UI.GroupBox groupImport;
 		private UI.GroupBox groupBoxFunctionality;
-		private System.Windows.Forms.Label labelDefaultMeasurementScaleDetails;
 	}
 }

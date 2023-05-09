@@ -25,8 +25,6 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			this.label62 = new System.Windows.Forms.Label();
-			this.labelCommLogAutoSaveDetails = new System.Windows.Forms.Label();
-			this.labelAccountShowPaymentNumsDetails = new System.Windows.Forms.Label();
 			this.butClearAgingBeginDateT = new OpenDental.UI.Button();
 			this.groupBoxFunctionality = new OpenDental.UI.GroupBox();
 			this.labelAgingBeginDateT = new System.Windows.Forms.Label();
@@ -40,7 +38,6 @@ namespace OpenDental {
 			this.groupCommLogs = new OpenDental.UI.GroupBox();
 			this.checkCommLogAutoSave = new OpenDental.UI.CheckBox();
 			this.checkShowFamilyCommByDefault = new OpenDental.UI.CheckBox();
-			this.labelAllowFutureTransDetails = new System.Windows.Forms.Label();
 			this.groupBoxFutureDatedTransactions = new OpenDental.UI.GroupBox();
 			this.labelFutureDatedOptions = new System.Windows.Forms.Label();
 			this.checkAllowFutureDebits = new OpenDental.UI.CheckBox();
@@ -59,28 +56,6 @@ namespace OpenDental {
 			this.label62.Text = "Allocation options for Line Item Accounting have been moved to a different window" +
     ".\r\nSee Main Menu, Setup, Account, Allocations.";
 			this.label62.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// labelCommLogAutoSaveDetails
-			// 
-			this.labelCommLogAutoSaveDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelCommLogAutoSaveDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelCommLogAutoSaveDetails.Location = new System.Drawing.Point(476, 49);
-			this.labelCommLogAutoSaveDetails.Name = "labelCommLogAutoSaveDetails";
-			this.labelCommLogAutoSaveDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelCommLogAutoSaveDetails.TabIndex = 321;
-			this.labelCommLogAutoSaveDetails.Text = "every ten seconds";
-			this.labelCommLogAutoSaveDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelAccountShowPaymentNumsDetails
-			// 
-			this.labelAccountShowPaymentNumsDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelAccountShowPaymentNumsDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelAccountShowPaymentNumsDetails.Location = new System.Drawing.Point(476, 162);
-			this.labelAccountShowPaymentNumsDetails.Name = "labelAccountShowPaymentNumsDetails";
-			this.labelAccountShowPaymentNumsDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelAccountShowPaymentNumsDetails.TabIndex = 325;
-			this.labelAccountShowPaymentNumsDetails.Text = "in the payment description, useful for foreign offices";
-			this.labelAccountShowPaymentNumsDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// butClearAgingBeginDateT
 			// 
@@ -214,17 +189,6 @@ namespace OpenDental {
 			this.checkShowFamilyCommByDefault.Text = "Show family commlog entries by default";
 			this.checkShowFamilyCommByDefault.Click += new System.EventHandler(this.checkShowFamilyCommByDefault_Click);
 			// 
-			// labelAllowFutureTransDetails
-			// 
-			this.labelAllowFutureTransDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelAllowFutureTransDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelAllowFutureTransDetails.Location = new System.Drawing.Point(476, 312);
-			this.labelAllowFutureTransDetails.Name = "labelAllowFutureTransDetails";
-			this.labelAllowFutureTransDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelAllowFutureTransDetails.TabIndex = 371;
-			this.labelAllowFutureTransDetails.Text = "including patient payments and insurance payments";
-			this.labelAllowFutureTransDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// groupBoxFutureDatedTransactions
 			// 
 			this.groupBoxFutureDatedTransactions.Controls.Add(this.labelFutureDatedOptions);
@@ -271,14 +235,11 @@ namespace OpenDental {
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.White;
 			this.Controls.Add(this.groupBoxFutureDatedTransactions);
-			this.Controls.Add(this.labelAllowFutureTransDetails);
-			this.Controls.Add(this.labelAccountShowPaymentNumsDetails);
-			this.Controls.Add(this.labelCommLogAutoSaveDetails);
 			this.Controls.Add(this.groupBoxFunctionality);
 			this.Controls.Add(this.label62);
 			this.Controls.Add(this.groupCommLogs);
 			this.Name = "UserControlAccountGeneral";
-			this.Size = new System.Drawing.Size(974, 624);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxFunctionality.ResumeLayout(false);
 			this.groupBoxFunctionality.PerformLayout();
 			this.groupCommLogs.ResumeLayout(false);
@@ -298,14 +259,11 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkStatementInvoiceGridShowWriteoffs;
 		private System.Windows.Forms.Label label62;
 		private UI.GroupBox groupBoxFunctionality;
-		private System.Windows.Forms.Label labelCommLogAutoSaveDetails;
-		private System.Windows.Forms.Label labelAccountShowPaymentNumsDetails;
 		private System.Windows.Forms.Label labelAgingBeginDateT;
 		private System.Windows.Forms.TextBox textAgingBeginDateT;
 		private System.Windows.Forms.Label labelAutoAgingRunTime;
 		private System.Windows.Forms.TextBox textAutoAgingRunTime;
 		private UI.Button butClearAgingBeginDateT;
-		private System.Windows.Forms.Label labelAllowFutureTransDetails;
 		private UI.GroupBox groupBoxFutureDatedTransactions;
 		private OpenDental.UI.CheckBox checkAllowFuturePayments;
 		private OpenDental.UI.CheckBox checkAllowFutureDebits;

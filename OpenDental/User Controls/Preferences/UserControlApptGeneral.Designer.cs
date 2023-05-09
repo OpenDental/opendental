@@ -24,12 +24,6 @@ namespace OpenDental {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.labelApptAutoRefreshRangeDetails = new System.Windows.Forms.Label();
-			this.labelApptModuleAdjInProdDetails = new System.Windows.Forms.Label();
-			this.labelApptModuleProductionUsesOpsDetails = new System.Windows.Forms.Label();
-			this.labelBrokenApptRequiredOnMoveDetails = new System.Windows.Forms.Label();
-			this.butSearchBehaviorDetails = new OpenDental.UI.Button();
-			this.butBrokenApptProcDetails = new OpenDental.UI.Button();
 			this.groupBoxProduction = new OpenDental.UI.GroupBox();
 			this.checkApptModuleAdjInProd = new OpenDental.UI.CheckBox();
 			this.checkApptModuleProductionUsesOps = new OpenDental.UI.CheckBox();
@@ -62,71 +56,6 @@ namespace OpenDental {
 			this.groupBoxCalendarBehavior.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// labelApptAutoRefreshRangeDetails
-			// 
-			this.labelApptAutoRefreshRangeDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelApptAutoRefreshRangeDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelApptAutoRefreshRangeDetails.Location = new System.Drawing.Point(476, 187);
-			this.labelApptAutoRefreshRangeDetails.Name = "labelApptAutoRefreshRangeDetails";
-			this.labelApptAutoRefreshRangeDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelApptAutoRefreshRangeDetails.TabIndex = 344;
-			this.labelApptAutoRefreshRangeDetails.Text = "-1 for all, only for large offices experiencing slowness";
-			this.labelApptAutoRefreshRangeDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelApptModuleAdjInProdDetails
-			// 
-			this.labelApptModuleAdjInProdDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelApptModuleAdjInProdDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelApptModuleAdjInProdDetails.Location = new System.Drawing.Point(476, 417);
-			this.labelApptModuleAdjInProdDetails.Name = "labelApptModuleAdjInProdDetails";
-			this.labelApptModuleAdjInProdDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelApptModuleAdjInProdDetails.TabIndex = 345;
-			this.labelApptModuleAdjInProdDetails.Text = "adjustments, discount plan adjustments, and TP procedure discounts will be includ" +
-    "ed";
-			this.labelApptModuleAdjInProdDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelApptModuleProductionUsesOpsDetails
-			// 
-			this.labelApptModuleProductionUsesOpsDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelApptModuleProductionUsesOpsDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelApptModuleProductionUsesOpsDetails.Location = new System.Drawing.Point(476, 436);
-			this.labelApptModuleProductionUsesOpsDetails.Name = "labelApptModuleProductionUsesOpsDetails";
-			this.labelApptModuleProductionUsesOpsDetails.Size = new System.Drawing.Size(498, 18);
-			this.labelApptModuleProductionUsesOpsDetails.TabIndex = 346;
-			this.labelApptModuleProductionUsesOpsDetails.Text = "uses operatories showing instead of provider bars at left";
-			this.labelApptModuleProductionUsesOpsDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelBrokenApptRequiredOnMoveDetails
-			// 
-			this.labelBrokenApptRequiredOnMoveDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelBrokenApptRequiredOnMoveDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelBrokenApptRequiredOnMoveDetails.Location = new System.Drawing.Point(476, 112);
-			this.labelBrokenApptRequiredOnMoveDetails.Name = "labelBrokenApptRequiredOnMoveDetails";
-			this.labelBrokenApptRequiredOnMoveDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelBrokenApptRequiredOnMoveDetails.TabIndex = 368;
-			this.labelBrokenApptRequiredOnMoveDetails.Text = "even if Broken appointment procedure type is set to \"None\"";
-			this.labelBrokenApptRequiredOnMoveDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// butSearchBehaviorDetails
-			// 
-			this.butSearchBehaviorDetails.ForeColor = System.Drawing.Color.Black;
-			this.butSearchBehaviorDetails.Location = new System.Drawing.Point(479, 156);
-			this.butSearchBehaviorDetails.Name = "butSearchBehaviorDetails";
-			this.butSearchBehaviorDetails.Size = new System.Drawing.Size(64, 21);
-			this.butSearchBehaviorDetails.TabIndex = 369;
-			this.butSearchBehaviorDetails.Text = "Details";
-			this.butSearchBehaviorDetails.Click += new System.EventHandler(this.butSearchBehaviorDetails_Click);
-			// 
-			// butBrokenApptProcDetails
-			// 
-			this.butBrokenApptProcDetails.ForeColor = System.Drawing.Color.Black;
-			this.butBrokenApptProcDetails.Location = new System.Drawing.Point(479, 25);
-			this.butBrokenApptProcDetails.Name = "butBrokenApptProcDetails";
-			this.butBrokenApptProcDetails.Size = new System.Drawing.Size(64, 21);
-			this.butBrokenApptProcDetails.TabIndex = 367;
-			this.butBrokenApptProcDetails.Text = "Details";
-			this.butBrokenApptProcDetails.Click += new System.EventHandler(this.butBrokenApptProcDetails_Click);
 			// 
 			// groupBoxProduction
 			// 
@@ -415,18 +344,12 @@ namespace OpenDental {
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.White;
-			this.Controls.Add(this.butSearchBehaviorDetails);
-			this.Controls.Add(this.labelBrokenApptRequiredOnMoveDetails);
-			this.Controls.Add(this.butBrokenApptProcDetails);
-			this.Controls.Add(this.labelApptModuleProductionUsesOpsDetails);
-			this.Controls.Add(this.labelApptModuleAdjInProdDetails);
-			this.Controls.Add(this.labelApptAutoRefreshRangeDetails);
 			this.Controls.Add(this.groupBoxProduction);
 			this.Controls.Add(this.groupBoxOD2);
 			this.Controls.Add(this.groupBoxCalendarBehavior);
 			this.Controls.Add(this.groupBox2);
 			this.Name = "UserControlApptGeneral";
-			this.Size = new System.Drawing.Size(974, 624);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxProduction.ResumeLayout(false);
 			this.groupBoxOD2.ResumeLayout(false);
 			this.groupBoxOD2.PerformLayout();
@@ -466,11 +389,5 @@ namespace OpenDental {
 		private UI.GroupBox groupBoxCalendarBehavior;
 		private UI.GroupBox groupBoxOD2;
 		private UI.GroupBox groupBoxProduction;
-		private System.Windows.Forms.Label labelApptAutoRefreshRangeDetails;
-		private System.Windows.Forms.Label labelApptModuleAdjInProdDetails;
-		private System.Windows.Forms.Label labelApptModuleProductionUsesOpsDetails;
-		private UI.Button butBrokenApptProcDetails;
-		private System.Windows.Forms.Label labelBrokenApptRequiredOnMoveDetails;
-		private UI.Button butSearchBehaviorDetails;
 	}
 }

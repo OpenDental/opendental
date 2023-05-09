@@ -37,26 +37,6 @@ namespace OpenDental {
 		#endregion Constructors
 
 		#region Methods - Event Handlers
-
-		private void butReadOnlyServerSetupDetails_Click(object sender,EventArgs e) {
-			string html=@"Note: Open Dental Cloud users cannot change Read-Only Server Setup.
-				<br><br>
-				If you would like to run certain database processes (read queries and cache refreshes) on a different server and database, enter settings here.
-				<br><br>
-				This is useful for larger offices that may experience slowness or that want to avoid the possibility of heavy queries locking up the database.
-				<br><br>
-				See <a href='https://www.opendental.com/manual/troubleshootingslowness.html' target='_blank' rel='noopener noreferrer'>Troubleshooting Slowness</a> for additional information on processes that utilize Read-Only Server Setup.";
-			using FormWebBrowserPrefs formWebBrowserPrefs=new FormWebBrowserPrefs();
-			formWebBrowserPrefs.HtmlContent=html;
-			formWebBrowserPrefs.SizeWindow=new Size(450,250);
-			formWebBrowserPrefs.PointStart=PointToScreen(butReadOnlyServerSetupDetails.Location);
-			formWebBrowserPrefs.ShowDialog();
-		}
-
-		private void butMiddleTierURIDetails_Click(object sender,EventArgs e) {
-			MsgBox.Show(this,"The currently logged in user's credentials will be used when accessing the Middle Tier database.");
-		}
-
 		private void checkReadOnlyServer_CheckChanged(object sender,EventArgs e) {
 			SetReadOnlyServerUIEnabled();
 		}

@@ -29,32 +29,6 @@ namespace OpenDental {
 		#endregion Constructors
 
 		#region Methods - Event Handlers
-		private void butClockEventAllowBreakDetails_Click(object sender,EventArgs e) {
-			string text="Checked: Count up to 30 minutes of break time as paid. Enables View Breaks button from the Manage Module and Breaks radio button in Time Card. " +
-				"Allows clock-out status of Lunch for unpaid breaks.\r\n\r\n" +
-				"Unchecked: All break time is considered unpaid. Disables Lunch clock-out status, View Breaks button, and Breaks radio button.\r\n\r\n" +
-				"All employees should be clocked out and time card adjustments made prior to changing this preference. Changing this preference does not affect historical " +
-				"time card breaks.";
-			MsgBox.Show(this,text);
-		}
-
-		private void butEraAutomationDetails_Click(object sender,EventArgs e) {
-			string html=$"Determines if ERAs are processed automatically or manually.<br><br>" +
-				"Review All: All ERAs must be processed manually.<br><br>" +
-				"Semi-automatic: ERAs can be processed with a single click of the Auto Process button on the ERA window. This will receive the claims associated with the " +
-				"ERA and finalize the payment. They can also be processed manually, if needed.<br><br>" +
-				"Fully-automatic: ERAs will be automatically processed when imported, receiving the claims associated with the ERA, and finalizing the payment. " +
-				"If an ERA does not get automatically processed while being imported for any reason, the user can still attempt to process them by clicking the " +
-				"Auto Process button on the ERA window, or process them manually.<br><br>" +
-				"Note: This preference can also be set on a Carrier level. See " +
-				"<a href='https://opendental.com/manual/carriers.html' target='_blank' rel='noopener noreferrer'>Carriers</a>.";
-			using FormWebBrowserPrefs formWebBrowserPrefs=new FormWebBrowserPrefs();
-			formWebBrowserPrefs.HtmlContent=html;
-			formWebBrowserPrefs.PointStart=PointToScreen(butIEraAutomationDetails.Location);
-			formWebBrowserPrefs.SizeWindow=new Size(500,350);
-			formWebBrowserPrefs.ShowDialog();
-		}
-
 		private void comboDepositSoftware_SelectionChangeCommitted(object sender,EventArgs e) {
 			if(comboDepositSoftware.GetSelected<AccountingSoftware>()==AccountingSoftware.QuickBooksOnline
 				&& !Programs.IsEnabled(ProgramName.QuickBooksOnline)) {

@@ -24,9 +24,6 @@ namespace OpenDental {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.labelPayPlansUseSheetsDetails = new System.Windows.Forms.Label();
-			this.labelDppUnearnedTypeDetails = new System.Windows.Forms.Label();
-			this.labelStoreCCTokensDetails = new System.Windows.Forms.Label();
 			this.groupBoxUnearnedIncome = new OpenDental.UI.GroupBox();
 			this.checkShowAllocateUnearnedPaymentPrompt = new OpenDental.UI.CheckBox();
 			this.checkAllowPrepayProvider = new OpenDental.UI.CheckBox();
@@ -54,47 +51,10 @@ namespace OpenDental {
 			this.label38 = new System.Windows.Forms.Label();
 			this.checkAllowEmailCCReceipt = new OpenDental.UI.CheckBox();
 			this.checkPaymentsPromptForPayType = new OpenDental.UI.CheckBox();
-			this.butIncTxfrTreatNegProdAsIncomeDetails = new OpenDental.UI.Button();
-			this.butPayPlansVersionDetails = new OpenDental.UI.Button();
-			this.label1 = new System.Windows.Forms.Label();
 			this.groupBoxUnearnedIncome.SuspendLayout();
 			this.groupBoxPayPlans.SuspendLayout();
 			this.groupBoxPayments.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// labelPayPlansUseSheetsDetails
-			// 
-			this.labelPayPlansUseSheetsDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelPayPlansUseSheetsDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelPayPlansUseSheetsDetails.Location = new System.Drawing.Point(476, 237);
-			this.labelPayPlansUseSheetsDetails.Name = "labelPayPlansUseSheetsDetails";
-			this.labelPayPlansUseSheetsDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelPayPlansUseSheetsDetails.TabIndex = 330;
-			this.labelPayPlansUseSheetsDetails.Text = "See Setup, Sheets";
-			this.labelPayPlansUseSheetsDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelDppUnearnedTypeDetails
-			// 
-			this.labelDppUnearnedTypeDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelDppUnearnedTypeDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelDppUnearnedTypeDetails.Location = new System.Drawing.Point(476, 356);
-			this.labelDppUnearnedTypeDetails.Name = "labelDppUnearnedTypeDetails";
-			this.labelDppUnearnedTypeDetails.Size = new System.Drawing.Size(498, 30);
-			this.labelDppUnearnedTypeDetails.TabIndex = 333;
-			this.labelDppUnearnedTypeDetails.Text = "Hides prepayments from income transfer system. Only PaySplit unearned types marke" +
-    "d as Do Not Show on Account are listed here.";
-			this.labelDppUnearnedTypeDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelStoreCCTokensDetails
-			// 
-			this.labelStoreCCTokensDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelStoreCCTokensDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelStoreCCTokensDetails.Location = new System.Drawing.Point(476, 29);
-			this.labelStoreCCTokensDetails.Name = "labelStoreCCTokensDetails";
-			this.labelStoreCCTokensDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelStoreCCTokensDetails.TabIndex = 334;
-			this.labelStoreCCTokensDetails.Text = "for use with XCharge and PayConnect";
-			this.labelStoreCCTokensDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// groupBoxUnearnedIncome
 			// 
@@ -377,52 +337,15 @@ namespace OpenDental {
 			this.checkPaymentsPromptForPayType.TabIndex = 284;
 			this.checkPaymentsPromptForPayType.Text = "Payments prompt for Payment Type";
 			// 
-			// butIncTxfrTreatNegProdAsIncomeDetails
-			// 
-			this.butIncTxfrTreatNegProdAsIncomeDetails.ForeColor = System.Drawing.Color.Black;
-			this.butIncTxfrTreatNegProdAsIncomeDetails.Location = new System.Drawing.Point(479, 123);
-			this.butIncTxfrTreatNegProdAsIncomeDetails.Name = "butIncTxfrTreatNegProdAsIncomeDetails";
-			this.butIncTxfrTreatNegProdAsIncomeDetails.Size = new System.Drawing.Size(64, 21);
-			this.butIncTxfrTreatNegProdAsIncomeDetails.TabIndex = 371;
-			this.butIncTxfrTreatNegProdAsIncomeDetails.Text = "Details";
-			this.butIncTxfrTreatNegProdAsIncomeDetails.Click += new System.EventHandler(this.butIncTxfrTreatNegProdAsIncomeDetails_Click);
-			// 
-			// butPayPlansVersionDetails
-			// 
-			this.butPayPlansVersionDetails.ForeColor = System.Drawing.Color.Black;
-			this.butPayPlansVersionDetails.Location = new System.Drawing.Point(479, 285);
-			this.butPayPlansVersionDetails.Name = "butPayPlansVersionDetails";
-			this.butPayPlansVersionDetails.Size = new System.Drawing.Size(64, 21);
-			this.butPayPlansVersionDetails.TabIndex = 372;
-			this.butPayPlansVersionDetails.Text = "Details";
-			this.butPayPlansVersionDetails.Click += new System.EventHandler(this.butPayPlansVersionDetails_Click);
-			// 
-			// label1
-			// 
-			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label1.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.label1.Location = new System.Drawing.Point(476, 171);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(498, 17);
-			this.label1.TabIndex = 373;
-			this.label1.Text = "otherwise review manually";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// UserControlAccountPayments
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.White;
-			this.Controls.Add(this.label1);
-			this.Controls.Add(this.butPayPlansVersionDetails);
-			this.Controls.Add(this.butIncTxfrTreatNegProdAsIncomeDetails);
-			this.Controls.Add(this.labelStoreCCTokensDetails);
-			this.Controls.Add(this.labelDppUnearnedTypeDetails);
-			this.Controls.Add(this.labelPayPlansUseSheetsDetails);
 			this.Controls.Add(this.groupBoxUnearnedIncome);
 			this.Controls.Add(this.groupBoxPayPlans);
 			this.Controls.Add(this.groupBoxPayments);
 			this.Name = "UserControlAccountPayments";
-			this.Size = new System.Drawing.Size(974, 624);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxUnearnedIncome.ResumeLayout(false);
 			this.groupBoxPayPlans.ResumeLayout(false);
 			this.groupBoxPayPlans.PerformLayout();
@@ -458,12 +381,6 @@ namespace OpenDental {
 		private UI.GroupBox groupBoxPayPlans;
 		private OpenDental.UI.CheckBox checkShowAllocateUnearnedPaymentPrompt;
 		private UI.GroupBox groupBoxUnearnedIncome;
-		private System.Windows.Forms.Label labelPayPlansUseSheetsDetails;
-		private System.Windows.Forms.Label labelDppUnearnedTypeDetails;
-		private System.Windows.Forms.Label labelStoreCCTokensDetails;
-		private UI.Button butIncTxfrTreatNegProdAsIncomeDetails;
-		private UI.Button butPayPlansVersionDetails;
 		private OpenDental.UI.CheckBox checkOnlinePaymentsMarkAsProcessed;
-		private System.Windows.Forms.Label label1;
 	}
 }

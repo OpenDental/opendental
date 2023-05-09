@@ -22,23 +22,6 @@ namespace OpenDental {
 		#endregion Constructors
 
 		#region Methods - Event Handlers
-		private void butAgingProcLifoDetails_Click(object sender,EventArgs e) {
-			MsgBox.Show(this,"Not recommended. Determines whether or not insurance estimates are created when a procedure is entered with a previous date (earlier than today) and an " +
-				"entry status of Complete. Typically only used by those who regularly enter completed procedures for previous dates.\r\n\r\n" +
-				"To prevent accidental activation, a password prompt will display when enabling this option. The password is abracadabra.");
-		}
-
-		private void butProcProvChangesCpDetails_Click(object sender,EventArgs e) {
-			string html=@"Leave this checked to prevent provider mismatches. See
-				<a href='https://www.opendental.com/manual/claimprocedureprovider.html' target='_blank'>Claimproc Provider</a>.<br><br>
-				 Claim procedures not attached to a claim (e.g. for insurance estimates) always inherit the procedure provider.";
-			using FormWebBrowserPrefs formWebBrowserPrefs=new FormWebBrowserPrefs();
-			formWebBrowserPrefs.HtmlContent=html;
-			formWebBrowserPrefs.SizeWindow=new Size(475,175);
-			formWebBrowserPrefs.PointStart=PointToScreen(butProcProvChangesCpDetails.Location);
-			formWebBrowserPrefs.ShowDialog();
-		}
-
 		private void checkClaimProcsAllowEstimatesOnCompl_Click(object sender,EventArgs e) {
 			if(checkClaimProcsAllowEstimatesOnCompl.Checked) {//user is attempting to Allow Estimates to be created for backdated complete procedures
 				using InputBox inputBox=new InputBox("Please enter password");

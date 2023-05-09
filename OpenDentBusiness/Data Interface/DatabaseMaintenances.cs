@@ -6046,7 +6046,7 @@ namespace OpenDentBusiness {
 		//	return log;
 		//}
 
-		[DbmMethodAttr(HasBreakDown = true)]
+		[DbmMethodAttr(HasBreakDown = true,HasExplain=true)]
 		public static string PatientNoClinicSet(bool verbose,DbmMode modeCur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
@@ -6716,7 +6716,7 @@ namespace OpenDentBusiness {
 		}
 
 		/// <summary>Shows patients that have paysplits attached to insurance payment plans.</summary>
-		[DbmMethodAttr(HasBreakDown=true)]
+		[DbmMethodAttr(HasBreakDown=true,HasExplain=true)]
 		public static string PaySplitAttachedToInsurancePaymentPlan(bool verbose,DbmMode modeCur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);

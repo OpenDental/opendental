@@ -225,9 +225,9 @@ namespace OpenDental {
 			// 
 			this.labelRecurChargPriProvDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelRecurChargPriProvDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelRecurChargPriProvDetails.Location = new System.Drawing.Point(476, 60);
+			this.labelRecurChargPriProvDetails.Location = new System.Drawing.Point(507, 74);
 			this.labelRecurChargPriProvDetails.Name = "labelRecurChargPriProvDetails";
-			this.labelRecurChargPriProvDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelRecurChargPriProvDetails.Size = new System.Drawing.Size(0, 0);
 			this.labelRecurChargPriProvDetails.TabIndex = 334;
 			this.labelRecurChargPriProvDetails.Text = "only used when Paysplit allocations is set to \'Rigorous\'";
 			this.labelRecurChargPriProvDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -238,7 +238,7 @@ namespace OpenDental {
 			this.labelRecurringChargesTimeDetails.ForeColor = System.Drawing.Color.MidnightBlue;
 			this.labelRecurringChargesTimeDetails.Location = new System.Drawing.Point(476, 187);
 			this.labelRecurringChargesTimeDetails.Name = "labelRecurringChargesTimeDetails";
-			this.labelRecurringChargesTimeDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelRecurringChargesTimeDetails.Size = new System.Drawing.Size(0, 0);
 			this.labelRecurringChargesTimeDetails.TabIndex = 335;
 			this.labelRecurringChargesTimeDetails.Text = "this should be set to run after Repeating charges";
 			this.labelRecurringChargesTimeDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -249,7 +249,7 @@ namespace OpenDental {
 			this.labelRecurringChargesInactivateDeclinedCardsDetails.ForeColor = System.Drawing.Color.MidnightBlue;
 			this.labelRecurringChargesInactivateDeclinedCardsDetails.Location = new System.Drawing.Point(476, 284);
 			this.labelRecurringChargesInactivateDeclinedCardsDetails.Name = "labelRecurringChargesInactivateDeclinedCardsDetails";
-			this.labelRecurringChargesInactivateDeclinedCardsDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelRecurringChargesInactivateDeclinedCardsDetails.Size = new System.Drawing.Size(0, 0);
 			this.labelRecurringChargesInactivateDeclinedCardsDetails.TabIndex = 336;
 			this.labelRecurringChargesInactivateDeclinedCardsDetails.Text = "recommend checked";
 			this.labelRecurringChargesInactivateDeclinedCardsDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -260,7 +260,7 @@ namespace OpenDental {
 			this.labelRepeatingChargesAutomatedTimeDetails.ForeColor = System.Drawing.Color.MidnightBlue;
 			this.labelRepeatingChargesAutomatedTimeDetails.Location = new System.Drawing.Point(476, 400);
 			this.labelRepeatingChargesAutomatedTimeDetails.Name = "labelRepeatingChargesAutomatedTimeDetails";
-			this.labelRepeatingChargesAutomatedTimeDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelRepeatingChargesAutomatedTimeDetails.Size = new System.Drawing.Size(0, 0);
 			this.labelRepeatingChargesAutomatedTimeDetails.TabIndex = 337;
 			this.labelRepeatingChargesAutomatedTimeDetails.Text = "this should be set to run before Recurring charges";
 			this.labelRepeatingChargesAutomatedTimeDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -271,7 +271,7 @@ namespace OpenDental {
 			this.labelRecurringChargesUseTransDateDetails.ForeColor = System.Drawing.Color.MidnightBlue;
 			this.labelRecurringChargesUseTransDateDetails.Location = new System.Drawing.Point(476, 91);
 			this.labelRecurringChargesUseTransDateDetails.Name = "labelRecurringChargesUseTransDateDetails";
-			this.labelRecurringChargesUseTransDateDetails.Size = new System.Drawing.Size(498, 17);
+			this.labelRecurringChargesUseTransDateDetails.Size = new System.Drawing.Size(0, 0);
 			this.labelRecurringChargesUseTransDateDetails.TabIndex = 338;
 			this.labelRecurringChargesUseTransDateDetails.Text = "otherwise, use the date the charge is scheduled to process";
 			this.labelRecurringChargesUseTransDateDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -288,7 +288,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupRepeatingCharges);
 			this.Controls.Add(this.groupRecurringCharges);
 			this.Name = "UserControlAccountRecAndRepCharges";
-			this.Size = new System.Drawing.Size(974, 624);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupRecurringCharges.ResumeLayout(false);
 			this.groupRecurringCharges.PerformLayout();
 			this.groupRepeatingCharges.ResumeLayout(false);

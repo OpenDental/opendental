@@ -26,8 +26,6 @@ namespace OpenDental {
 		private void InitializeComponent() {
 			this.checkScheduleProvEmpSelectAll = new OpenDental.UI.CheckBox();
 			this.checkAccountingInvoiceAttachmentsSaveInDatabase = new OpenDental.UI.CheckBox();
-			this.labelEraAllowTotalPaymentDetails = new System.Windows.Forms.Label();
-			this.butIEraAutomationDetails = new OpenDental.UI.Button();
 			this.groupBoxTimeCards = new OpenDental.UI.GroupBox();
 			this.comboTimeCardOvertimeFirstDayOfWeek = new OpenDental.UI.ComboBox();
 			this.label16 = new System.Windows.Forms.Label();
@@ -51,11 +49,6 @@ namespace OpenDental {
 			this.labelEraAutomation = new System.Windows.Forms.Label();
 			this.comboEraAutomation = new OpenDental.UI.ComboBox();
 			this.checkEraAllowTotalPayment = new OpenDental.UI.CheckBox();
-			this.linkLabelClaimsReceivedDaysDetails = new System.Windows.Forms.LinkLabel();
-			this.linkLabelClaimPaymentBatchOnly = new System.Windows.Forms.LinkLabel();
-			this.linkLabelShowAutoDepositDetails = new System.Windows.Forms.LinkLabel();
-			this.butClockEventAllowBreakDetails = new OpenDental.UI.Button();
-			this.labelAccountingInvoiceAttachmentsSaveInDatabaseDetails = new System.Windows.Forms.Label();
 			this.groupBoxTimeCards.SuspendLayout();
 			this.groupBoxDeposits.SuspendLayout();
 			this.groupBoxPrescriptions.SuspendLayout();
@@ -80,27 +73,6 @@ namespace OpenDental {
 			this.checkAccountingInvoiceAttachmentsSaveInDatabase.Size = new System.Drawing.Size(435, 17);
 			this.checkAccountingInvoiceAttachmentsSaveInDatabase.TabIndex = 308;
 			this.checkAccountingInvoiceAttachmentsSaveInDatabase.Text = "Save accounting invoice attachments in database";
-			// 
-			// labelEraAllowTotalPaymentDetails
-			// 
-			this.labelEraAllowTotalPaymentDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelEraAllowTotalPaymentDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelEraAllowTotalPaymentDetails.Location = new System.Drawing.Point(476, 65);
-			this.labelEraAllowTotalPaymentDetails.Name = "labelEraAllowTotalPaymentDetails";
-			this.labelEraAllowTotalPaymentDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelEraAllowTotalPaymentDetails.TabIndex = 363;
-			this.labelEraAllowTotalPaymentDetails.Text = "otherwise, must be allocated to procedures";
-			this.labelEraAllowTotalPaymentDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// butIEraAutomationDetails
-			// 
-			this.butIEraAutomationDetails.ForeColor = System.Drawing.Color.Black;
-			this.butIEraAutomationDetails.Location = new System.Drawing.Point(479, 90);
-			this.butIEraAutomationDetails.Name = "butIEraAutomationDetails";
-			this.butIEraAutomationDetails.Size = new System.Drawing.Size(64, 21);
-			this.butIEraAutomationDetails.TabIndex = 368;
-			this.butIEraAutomationDetails.Text = "Details";
-			this.butIEraAutomationDetails.Click += new System.EventHandler(this.butEraAutomationDetails_Click);
 			// 
 			// groupBoxTimeCards
 			// 
@@ -338,85 +310,10 @@ namespace OpenDental {
 			this.checkEraAllowTotalPayment.TabIndex = 296;
 			this.checkEraAllowTotalPayment.Text = "ERA allow total payments";
 			// 
-			// linkLabelClaimsReceivedDaysDetails
-			// 
-			this.linkLabelClaimsReceivedDaysDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelClaimsReceivedDaysDetails.LinkArea = new System.Windows.Forms.LinkArea(93, 23);
-			this.linkLabelClaimsReceivedDaysDetails.LinkColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelClaimsReceivedDaysDetails.Location = new System.Drawing.Point(476, 154);
-			this.linkLabelClaimsReceivedDaysDetails.Name = "linkLabelClaimsReceivedDaysDetails";
-			this.linkLabelClaimsReceivedDaysDetails.Size = new System.Drawing.Size(498, 29);
-			this.linkLabelClaimsReceivedDaysDetails.TabIndex = 369;
-			this.linkLabelClaimsReceivedDaysDetails.TabStop = true;
-			this.linkLabelClaimsReceivedDaysDetails.Text = "for $0 payments, how many days that it should appear in the Outstanding Claims ar" +
-    "ea of the \r\nBatch Insurance Payment window";
-			this.linkLabelClaimsReceivedDaysDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.linkLabelClaimsReceivedDaysDetails.UseCompatibleTextRendering = true;
-			this.linkLabelClaimsReceivedDaysDetails.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelClaimsReceivedDaysDetails_LinkClicked);
-			// 
-			// linkLabelClaimPaymentBatchOnly
-			// 
-			this.linkLabelClaimPaymentBatchOnly.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelClaimPaymentBatchOnly.LinkArea = new System.Windows.Forms.LinkArea(53, 10);
-			this.linkLabelClaimPaymentBatchOnly.LinkColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelClaimPaymentBatchOnly.Location = new System.Drawing.Point(476, 184);
-			this.linkLabelClaimPaymentBatchOnly.Name = "linkLabelClaimPaymentBatchOnly";
-			this.linkLabelClaimPaymentBatchOnly.Size = new System.Drawing.Size(498, 17);
-			this.linkLabelClaimPaymentBatchOnly.TabIndex = 370;
-			this.linkLabelClaimPaymentBatchOnly.TabStop = true;
-			this.linkLabelClaimPaymentBatchOnly.Text = "otherwise, users can also finalize payments from the Edit Claim window";
-			this.linkLabelClaimPaymentBatchOnly.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.linkLabelClaimPaymentBatchOnly.UseCompatibleTextRendering = true;
-			this.linkLabelClaimPaymentBatchOnly.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelClaimPaymentBatchOnly_LinkClicked);
-			// 
-			// linkLabelShowAutoDepositDetails
-			// 
-			this.linkLabelShowAutoDepositDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelShowAutoDepositDetails.LinkArea = new System.Windows.Forms.LinkArea(5, 31);
-			this.linkLabelShowAutoDepositDetails.LinkColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelShowAutoDepositDetails.Location = new System.Drawing.Point(476, 293);
-			this.linkLabelShowAutoDepositDetails.Name = "linkLabelShowAutoDepositDetails";
-			this.linkLabelShowAutoDepositDetails.Size = new System.Drawing.Size(498, 17);
-			this.linkLabelShowAutoDepositDetails.TabIndex = 371;
-			this.linkLabelShowAutoDepositDetails.TabStop = true;
-			this.linkLabelShowAutoDepositDetails.Text = "when Finalizing an Insurance Payment, automatically create deposits";
-			this.linkLabelShowAutoDepositDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.linkLabelShowAutoDepositDetails.UseCompatibleTextRendering = true;
-			this.linkLabelShowAutoDepositDetails.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelShowAutoDepositDetails_LinkClicked);
-			// 
-			// butClockEventAllowBreakDetails
-			// 
-			this.butClockEventAllowBreakDetails.ForeColor = System.Drawing.Color.Black;
-			this.butClockEventAllowBreakDetails.Location = new System.Drawing.Point(479, 411);
-			this.butClockEventAllowBreakDetails.Name = "butClockEventAllowBreakDetails";
-			this.butClockEventAllowBreakDetails.Size = new System.Drawing.Size(64, 21);
-			this.butClockEventAllowBreakDetails.TabIndex = 372;
-			this.butClockEventAllowBreakDetails.Text = "Details";
-			this.butClockEventAllowBreakDetails.Click += new System.EventHandler(this.butClockEventAllowBreakDetails_Click);
-			// 
-			// labelAccountingInvoiceAttachmentsSaveInDatabaseDetails
-			// 
-			this.labelAccountingInvoiceAttachmentsSaveInDatabaseDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelAccountingInvoiceAttachmentsSaveInDatabaseDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelAccountingInvoiceAttachmentsSaveInDatabaseDetails.Location = new System.Drawing.Point(476, 469);
-			this.labelAccountingInvoiceAttachmentsSaveInDatabaseDetails.Name = "labelAccountingInvoiceAttachmentsSaveInDatabaseDetails";
-			this.labelAccountingInvoiceAttachmentsSaveInDatabaseDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelAccountingInvoiceAttachmentsSaveInDatabaseDetails.TabIndex = 373;
-			this.labelAccountingInvoiceAttachmentsSaveInDatabaseDetails.Text = "otherwise, attachments are saved to the originating folder on the local computer " +
-    "only\r\n";
-			this.labelAccountingInvoiceAttachmentsSaveInDatabaseDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// UserControlManageGeneral
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.White;
-			this.Controls.Add(this.labelAccountingInvoiceAttachmentsSaveInDatabaseDetails);
-			this.Controls.Add(this.butClockEventAllowBreakDetails);
-			this.Controls.Add(this.linkLabelShowAutoDepositDetails);
-			this.Controls.Add(this.linkLabelClaimPaymentBatchOnly);
-			this.Controls.Add(this.linkLabelClaimsReceivedDaysDetails);
-			this.Controls.Add(this.butIEraAutomationDetails);
-			this.Controls.Add(this.labelEraAllowTotalPaymentDetails);
 			this.Controls.Add(this.checkAccountingInvoiceAttachmentsSaveInDatabase);
 			this.Controls.Add(this.groupBoxTimeCards);
 			this.Controls.Add(this.groupBoxDeposits);
@@ -425,7 +322,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxERA);
 			this.Controls.Add(this.checkScheduleProvEmpSelectAll);
 			this.Name = "UserControlManageGeneral";
-			this.Size = new System.Drawing.Size(974, 624);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxTimeCards.ResumeLayout(false);
 			this.groupBoxDeposits.ResumeLayout(false);
 			this.groupBoxPrescriptions.ResumeLayout(false);
@@ -463,12 +360,5 @@ namespace OpenDental {
 		private UI.GroupBox groupBoxDeposits;
 		private UI.GroupBox groupBoxTimeCards;
 		private OpenDental.UI.CheckBox checkAccountingInvoiceAttachmentsSaveInDatabase;
-		private System.Windows.Forms.Label labelEraAllowTotalPaymentDetails;
-		private UI.Button butIEraAutomationDetails;
-		private System.Windows.Forms.LinkLabel linkLabelClaimsReceivedDaysDetails;
-		private System.Windows.Forms.LinkLabel linkLabelClaimPaymentBatchOnly;
-		private System.Windows.Forms.LinkLabel linkLabelShowAutoDepositDetails;
-		private UI.Button butClockEventAllowBreakDetails;
-		private System.Windows.Forms.Label labelAccountingInvoiceAttachmentsSaveInDatabaseDetails;
 	}
 }

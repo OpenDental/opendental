@@ -99,8 +99,8 @@ namespace OpenDental{
 			// gridClinics
 			// 
 			this.gridClinics.AllowSortingByColumn = true;
-			this.gridClinics.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.gridClinics.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
 			this.gridClinics.HasAutoWrappedHeaders = true;
 			this.gridClinics.HasMultilineHeaders = true;
 			this.gridClinics.Location = new System.Drawing.Point(12, 98);

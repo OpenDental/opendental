@@ -27,7 +27,6 @@ namespace OpenDental {
 			this.checkCanadianPpoLabEst = new OpenDental.UI.CheckBox();
 			this.textInsWriteoffDescript = new System.Windows.Forms.TextBox();
 			this.label17 = new System.Windows.Forms.Label();
-			this.labelClaimIdPrefixDetails = new System.Windows.Forms.Label();
 			this.groupBoxClaimsMedical = new OpenDental.UI.GroupBox();
 			this.checkClaimMedTypeIsInstWhenInsPlanIsMedical = new OpenDental.UI.CheckBox();
 			this.checkEclaimsMedicalProvTreatmentAsOrdering = new OpenDental.UI.CheckBox();
@@ -60,7 +59,6 @@ namespace OpenDental {
 			this.butReplacements = new OpenDental.UI.Button();
 			this.textClaimIdentifier = new System.Windows.Forms.TextBox();
 			this.checkClaimsValidateACN = new OpenDental.UI.CheckBox();
-			this.label1 = new System.Windows.Forms.Label();
 			this.groupBoxClaimsMedical.SuspendLayout();
 			this.groupBoxClaimsPayments.SuspendLayout();
 			this.groupBoxOD2.SuspendLayout();
@@ -92,18 +90,6 @@ namespace OpenDental {
 			this.label17.TabIndex = 284;
 			this.label17.Text = "PPO write-off description (blank for \"Write-off\")";
 			this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// labelClaimIdPrefixDetails
-			// 
-			this.labelClaimIdPrefixDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelClaimIdPrefixDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelClaimIdPrefixDetails.Location = new System.Drawing.Point(476, 160);
-			this.labelClaimIdPrefixDetails.Name = "labelClaimIdPrefixDetails";
-			this.labelClaimIdPrefixDetails.Size = new System.Drawing.Size(498, 29);
-			this.labelClaimIdPrefixDetails.TabIndex = 324;
-			this.labelClaimIdPrefixDetails.Text = "Default is [PatNum]/. This prefix is followed by an auto-generated claim number. " +
-    "Useful for internal tracking of claims.\r\n";
-			this.labelClaimIdPrefixDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// groupBoxClaimsMedical
 			// 
@@ -420,22 +406,10 @@ namespace OpenDental {
 			this.checkClaimsValidateACN.TabIndex = 5;
 			this.checkClaimsValidateACN.Text = "Require ACN# in remarks on claims with ADDP group name";
 			// 
-			// label1
-			// 
-			this.label1.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.label1.Location = new System.Drawing.Point(476, 365);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(455, 17);
-			this.label1.TabIndex = 326;
-			this.label1.Text = "Only applies to claims with no payments entered and no received claim procedures." +
-    "";
-			// 
 			// UserControlAccountInsurance
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.White;
-			this.Controls.Add(this.label1);
-			this.Controls.Add(this.labelClaimIdPrefixDetails);
 			this.Controls.Add(this.groupBoxClaimsMedical);
 			this.Controls.Add(this.groupBoxClaimsPayments);
 			this.Controls.Add(this.groupBoxOD2);
@@ -444,7 +418,7 @@ namespace OpenDental {
 			this.Controls.Add(this.textInsWriteoffDescript);
 			this.Controls.Add(this.checkCanadianPpoLabEst);
 			this.Name = "UserControlAccountInsurance";
-			this.Size = new System.Drawing.Size(974, 624);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxClaimsMedical.ResumeLayout(false);
 			this.groupBoxClaimsPayments.ResumeLayout(false);
 			this.groupBoxOD2.ResumeLayout(false);
@@ -489,12 +463,10 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkPpoUseUcr;
 		private UI.GroupBox groupBoxClaimsMedical;
 		private UI.GroupBox groupBoxClaimsPayments;
-		private System.Windows.Forms.Label labelClaimIdPrefixDetails;
 		private OpenDental.UI.CheckBox checkNoInitialPrimaryInsMoreThanProc;
 		private OpenDental.UI.CheckBox checkEclaimsSeparateTreatProv;
 		private OpenDental.UI.CheckBox checkInsAutoReceiveNoAssign;
 		private OpenDental.UI.CheckBox checkClaimPaymentPickStatementType;
-		private System.Windows.Forms.Label label1;
 	}
         
 }

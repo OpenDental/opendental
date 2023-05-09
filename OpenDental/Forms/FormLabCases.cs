@@ -138,7 +138,7 @@ namespace OpenDental{
 			}
 		}
 
-		private void comboClinic_SelectedIndexChanged(object sender,EventArgs e) {
+		private void comboClinic_SelectionChangeCommitted(object sender,EventArgs e) {
 			FillGrid();
 		}
 
@@ -211,6 +211,7 @@ namespace OpenDental{
 		private void butClose_Click(object sender, System.EventArgs e) {
 			Close();
 		}
+
 	}
 }
 

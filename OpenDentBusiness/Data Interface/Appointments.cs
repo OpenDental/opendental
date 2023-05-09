@@ -4362,6 +4362,7 @@ namespace OpenDentBusiness{
 							if(!isOpUpdate && doUpdatePattern) {
 								string calcPattern=Appointments.CalculatePattern(apt.ProvNum,apt.ProvHyg,codeNums,true);
 								if(apt.Pattern!=calcPattern
+									&& Security.IsAuthorized(Permissions.AppointmentResize,suppressMessage:true)
 									&& !PrefC.GetBool(PrefName.AppointmentTimeIsLocked))//Updating op provs will not change apt lengths.
 								{
 									apt.Pattern=calcPattern;

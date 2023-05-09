@@ -351,7 +351,7 @@ If you have questions, call <a href=""tel:[OfficePhone]"">[OfficePhone]</a>.",
 						ClinicNum=clinicNum,//works with practice too because _listClinics[0] is a spoofed "Practice/Defaults" clinic with ClinicNum=0
 						TypeCur=ApptReminderType.NewPatientThankYou,
 						TSPrior=new TimeSpan(-1,0,0),//default to send thank you 1 hour after creating appointment.
-						TemplateSMS=@"[NameF] has an appointment coming up. Please fill out this form prior to the appointment <a href=""[NewPatWebFormURL]"">[NewPatWebFormURL]</a> ",//default message
+						TemplateSMS=@"[NameF] has an appointment coming up. Please fill out this form prior to the appointment [NewPatWebFormURL] ",//default message
 						TemplateEmail=@"[NameF] has an appointment coming up. Please fill out this form prior to the appointment <a href=""[NewPatWebFormURL]"">[NewPatWebFormURL]</a> ",
 						TemplateEmailSubject="New Patient Thank You",//default subject
 						TemplateSMSAggShared="Thank you for scheduling your appointments. \nPlease fill out these forms for each patient.",

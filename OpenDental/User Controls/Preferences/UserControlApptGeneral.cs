@@ -30,19 +30,6 @@ namespace OpenDental {
 		#endregion Constructors
 
 		#region Methods - Event Handlers
-		private void butBrokenApptProcDetails_Click(object sender,EventArgs e) {
-			MsgBox.Show(this,"None: Do not prompt user to add any procedure. If grayed out, the database does not have a D9986 or D9987 procedure code (example: foreign user). " +
-			"Procedure codes must already exist to use this preference.\r\n\r\n" +
-			"Missed: User will be prompted to add completed procedure D9986 (missed appointment).\r\n\r\n" +
-			"Cancelled: User will be prompted to add completed procedure D9987 (cancelled appointment).\r\n\r\n" +
-			"Both: Give user the option to add a completed D9986 or D9987.");
-		}
-
-		private void butSearchBehaviorDetails_Click(object sender,EventArgs e) {
-			MsgBox.Show(this,"ProviderTime: searches availability using only the provider time bar at the very left.\r\n\r\n" +
-			"ProviderTimeOperatory: searches availability using both the provider time bar and space in the provider's operatories. This will prevent overlap of appointments.");
-		}
-
 		private void checkAppointmentTimeIsLocked_MouseUp(object sender,MouseEventArgs e) {
 			if(checkAppointmentTimeIsLocked.Checked) {
 				if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Would you like to lock appointment times for all existing appointments?")){

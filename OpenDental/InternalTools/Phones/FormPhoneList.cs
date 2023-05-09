@@ -66,6 +66,7 @@ namespace OpenDental {
 			_listPeerInfos=new List<PeerInfo>();
 			_listMapAreas=MapAreas.Refresh();
 			listBoxQueueFilter.SelectedIndex=0;//all
+			Employees.RefreshCache();
 			FilterAndSortPhoneList();
 			FillGrid();
 			radioByExt.CheckedChanged+=radioSort_CheckedChanged;
@@ -414,7 +415,13 @@ namespace OpenDental {
 					row.Cells.Add("");
 				}
 				//Prox--------------------------------------------------------------------------------------------------------------
-				Employee employee=Employees.GetEmp(_listPhonesShowing[i].EmployeeNum);
+				Employee employee;
+				try {
+					employee=Employees.GetEmp(_listPhonesShowing[i].EmployeeNum);
+				}
+				catch {
+					employee=null;
+				}
 				bool isWorkingHome=false;
 				if(employee!=null) {
 					isWorkingHome=employee.IsWorkingHome;

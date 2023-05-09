@@ -30,27 +30,6 @@ namespace OpenDental {
 		#endregion Constructors
 
 		#region Methods - Event Handlers
-		private void butCoPayFeeScheduleBlankLikeZero_Click(object sender,EventArgs e) {
-			MsgBox.Show(this,"Set how blank entries in copay fee schedules are handled.\r\n\r\n" +
-				"Checked: Blank entries are treated as 0.\r\n" +
-				"Example: UCR =$200, Contracted = $150, Write-off = 50, Copay = blank, Percentage = %100, Patient Portion = $0\r\n\r\n" +
-				"Unchecked: Blank entries are treated as 100% copay.\r\n" + 
-				"Example: UCR =$200, Contracted = $150, Write-off = 50, Copay = blank, Percentage = %100, Patient Portion = $150");
-		}
-
-		private void butFixedBenefitBlankLikeZero_Click(object sender,EventArgs e) {
-			MsgBox.Show(this,"Set how blank entries in fixed benefit fee schedules are handled.\r\n\r\n" +
-				"Checked: Blank entries are treated as 0.\r\n" +
-				"Example: UCR =$200, PPO Fee = $150, Write-off = 50, Fixed = blank, Percentage = %100, Patient Portion = $150\r\n\r\n" +
-				"Unchecked: Blank entries are treated as 100% the PPO fee.\r\n" +
-				"Example: UCR =$200, PPO Fee = $150, Write-off = 50, Fixed = blank, Percentage = %100, Patient Portion = $0");
-		}
-
-		private void butInsPlanExclusionsUseUCR_Click(object sender,EventArgs e) {
-			MsgBox.Show(this,"Can be overridden by plan. For use with PPO plans where certain excluded procedures are allowed to be billed using UCR fee rather than a negotiated rate." +
-				"\r\n\r\nExclusions are defined using an Other Benefits exclusion rule, or for any benefit set to a 0% coverage level.");
-		}
-
 		private void butPickPerVisitPatAmountProcCode_Click(object sender,EventArgs e) {
 			using FormProcCodes formProcCodes=new FormProcCodes();
 			formProcCodes.IsSelectionMode=true;

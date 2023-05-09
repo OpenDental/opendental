@@ -276,7 +276,7 @@
 			// 
 			// butAutoProcessedEras
 			// 
-			this.butAutoProcessedEras.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.butAutoProcessedEras.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butAutoProcessedEras.Location = new System.Drawing.Point(16, 758);
 			this.butAutoProcessedEras.Name = "butAutoProcessedEras";
 			this.butAutoProcessedEras.Size = new System.Drawing.Size(149, 24);
@@ -287,7 +287,6 @@
 			// 
 			// FormEtrans835s
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(1034, 786);
 			this.Controls.Add(this.butAutoProcessedEras);
 			this.Controls.Add(this.checkShowFinalizedOnly);

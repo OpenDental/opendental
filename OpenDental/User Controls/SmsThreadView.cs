@@ -165,7 +165,8 @@ namespace OpenDental {
 				richTextBoxMessage.Name="textSmsThreadMsg_"+smsThreadMessage.ID;
 				richTextBoxMessage.BorderStyle=BorderStyle.None;
 				richTextBoxMessage.Multiline=true;
-				richTextBoxMessage.Text=smsThreadMessage.Message.Replace("\r\n","\n").Replace("\n","\r\n");//Normalize \n coming from RichTextBox to \r\n for TextBox.
+				string message=smsThreadMessage.Message.Trim();//Trim leading and trailing whitespace for 2 reasons: 1) Prevents scrolling within the textbox when trying to highlight and copy the text 2) Matches the web view behavior.
+				richTextBoxMessage.Text=message.Replace("\r\n","\n").Replace("\n","\r\n");//Normalize \n coming from RichTextBox to \r\n for TextBox.
 				//Each message wraps horizontally.
 				size=TextRenderer.MeasureText(richTextBoxMessage.Text,panelScroll.Font,
 					new Size((int)(bodyWidth*0.7),Int32.MaxValue),TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl);

@@ -1561,7 +1561,8 @@ namespace OpenDental {
 						bool doMake5Minute=procsForSingleApt.Count>0;//Appointments without procs are already returned in 5 minute increments.
 						string calcPattern=Appointments.CalculatePattern(appointment.ProvNum,appointment.ProvHyg,codeNums,doMake5Minute);
 						if(appointment.Pattern!=calcPattern) {
-							if(!appointment.TimeLocked) {//appt time not locked. Do not give popup for Timelocked appointments.
+							if(Security.IsAuthorized(Permissions.AppointmentResize,suppressMessage:true) && !appointment.TimeLocked) {
+								//User is authorized, and appt time not locked. Do not give popup for users without resizing permissions or for Timelocked appointments.
 								if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Change length for new provider?")) {
 									appointment.Pattern=calcPattern;
 								}
@@ -4235,7 +4236,8 @@ namespace OpenDental {
 							bool doMake5Minute=listProceduresForSingleApt.Count>0;//Appointments without procs are already returned in 5 minute increments.
 							string calcPattern=Appointments.CalculatePattern(appointment.ProvNum,appointment.ProvHyg,codeNums,doMake5Minute);
 							if(appointment.Pattern!=calcPattern) {//Updating op provs will not change apt lengths.
-								if(!appointment.TimeLocked) {//appt time not locked. Do not give popup for Timelocked appointments.
+								if(Security.IsAuthorized(Permissions.AppointmentResize,suppressMessage:true) && !appointment.TimeLocked) {
+									//User is authorized, and appt time not locked. Do not give popup for users without resizing permissions or for Timelocked appointments.
 									if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Change length for new provider?")) {
 										appointment.Pattern=calcPattern;
 									}

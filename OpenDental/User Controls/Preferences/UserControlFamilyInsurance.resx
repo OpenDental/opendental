@@ -117,7 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="labelPerVisit.Text" xml:space="preserve">
-    <value>Amounts are entered in the 'Edit Insurance Plan' window .  The patient procedure code is usually set to default to "Do Not Bill to Ins", while the Insurance procedure code is set for 100% coverage. When an appointment is scheduled or set complete, one or two new procedures get created with these codes.</value>
-  </data>
 </root>

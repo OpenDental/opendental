@@ -76,6 +76,7 @@ namespace OpenDentBusiness {
 				decimal patPortion=ClaimProcs.GetPatPortion(proc,listClaimProcs,listAdjustments);
 				if(proc.ProcStatus==ProcStat.TP) {
 					patPortion-=(decimal)proc.DiscountPlanAmt;
+					patPortion-=(decimal)proc.Discount;
 				}
 				//Get the amount that was paid to the procedure prior to the procedure being attached to a payment plan.
 				decimal patPaid=(decimal)listPaySplits.FindAll(x => x.ProcNum==proc.ProcNum && x.PayPlanNum==0 && x.PayPlanChargeNum==0).Sum(x => x.SplitAmt);

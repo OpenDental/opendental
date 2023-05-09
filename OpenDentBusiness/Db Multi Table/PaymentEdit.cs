@@ -378,6 +378,10 @@ namespace OpenDentBusiness {
 				if(!listInsPayPlans.IsNullOrEmpty()) {
 					listInsPayPlanNums=listInsPayPlans.Select(x => x.PayPlanNum).ToList();
 				}
+				if(listPayPlans==null) {
+					long[] payPlanNumArray=listPayPlanCharges.Select(x=>x.PayPlanNum).ToArray();
+					listPayPlans=PayPlans.GetMany(payPlanNumArray).FindAll(x=>x.PlanNum==0);
+				}
 				listCharges.AddRange(
 					GetFauxEntriesForPayPlans(listPayPlanCharges.FindAll(x => !listInsPayPlanNums.Contains(x.PayPlanNum)),listPayPlanLinks,listCharges,listPayPlans)
 				);
@@ -3469,7 +3473,8 @@ namespace OpenDentBusiness {
 				constructChargesData.ListPayPlanLinks,
 				true,
 				constructChargesData.ListClaimProcsFiltered,
-				constructChargesData.ListPayPlans.FindAll(x => x.PlanNum > 0));
+				constructChargesData.ListPayPlans.FindAll(x => x.PlanNum > 0),
+				constructChargesData.ListPayPlans.FindAll(x => x.PlanNum==0));
 			listAccountEntries.Sort(AccountEntrySort);
 			if(dateAsOf.Year > 1880) {
 				//Remove all account entries that fall after the 'as of date' passed in.

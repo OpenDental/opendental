@@ -24,15 +24,6 @@ namespace OpenDental {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.labelApptLineColorDetails = new System.Windows.Forms.Label();
-			this.labelApptProvbarWidthDetails = new System.Windows.Forms.Label();
-			this.labelApptClickDelayDetails = new System.Windows.Forms.Label();
-			this.labelApptSchedEnforceSpecialtyDetails = new System.Windows.Forms.Label();
-			this.labelApptFontSizeDetails = new System.Windows.Forms.Label();
-			this.labelApptBubNoteLengthDetails = new System.Windows.Forms.Label();
-			this.labelWaitRoomWarnDetails = new System.Windows.Forms.Label();
-			this.butUseOpHygProvDetails = new OpenDental.UI.Button();
-			this.butTimeArrivedTriggerDetails = new OpenDental.UI.Button();
 			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.labelApptSchedEnforceSpecialty = new System.Windows.Forms.Label();
 			this.checkApptExclamation = new OpenDental.UI.CheckBox();
@@ -72,111 +63,12 @@ namespace OpenDental {
 			this.checkWaitingRoomFilterByView = new OpenDental.UI.CheckBox();
 			this.butColor = new System.Windows.Forms.Button();
 			this.label23 = new System.Windows.Forms.Label();
-			this.labelApptRefreshEveryMinuteDetails = new System.Windows.Forms.Label();
 			this.groupBoxOD1.SuspendLayout();
 			this.groupBoxBlockouts.SuspendLayout();
 			this.groupBoxApptBubble.SuspendLayout();
 			this.groupBoxAppearance.SuspendLayout();
 			this.groupBoxWaitingRoom.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// labelApptLineColorDetails
-			// 
-			this.labelApptLineColorDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelApptLineColorDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelApptLineColorDetails.Location = new System.Drawing.Point(476, 21);
-			this.labelApptLineColorDetails.Name = "labelApptLineColorDetails";
-			this.labelApptLineColorDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelApptLineColorDetails.TabIndex = 339;
-			this.labelApptLineColorDetails.Text = "horizontal line that indicates current time";
-			this.labelApptLineColorDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelApptProvbarWidthDetails
-			// 
-			this.labelApptProvbarWidthDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelApptProvbarWidthDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelApptProvbarWidthDetails.Location = new System.Drawing.Point(476, 66);
-			this.labelApptProvbarWidthDetails.Name = "labelApptProvbarWidthDetails";
-			this.labelApptProvbarWidthDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelApptProvbarWidthDetails.TabIndex = 340;
-			this.labelApptProvbarWidthDetails.Text = "in pixels; enter 0 to remove; does not affect bars to the left of the operatories" +
-    "";
-			this.labelApptProvbarWidthDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelApptClickDelayDetails
-			// 
-			this.labelApptClickDelayDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelApptClickDelayDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelApptClickDelayDetails.Location = new System.Drawing.Point(476, 480);
-			this.labelApptClickDelayDetails.Name = "labelApptClickDelayDetails";
-			this.labelApptClickDelayDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelApptClickDelayDetails.TabIndex = 343;
-			this.labelApptClickDelayDetails.Text = "or a triple click could accidentally cause a procedure to be added";
-			this.labelApptClickDelayDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelApptSchedEnforceSpecialtyDetails
-			// 
-			this.labelApptSchedEnforceSpecialtyDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelApptSchedEnforceSpecialtyDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelApptSchedEnforceSpecialtyDetails.Location = new System.Drawing.Point(476, 419);
-			this.labelApptSchedEnforceSpecialtyDetails.Name = "labelApptSchedEnforceSpecialtyDetails";
-			this.labelApptSchedEnforceSpecialtyDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelApptSchedEnforceSpecialtyDetails.TabIndex = 344;
-			this.labelApptSchedEnforceSpecialtyDetails.Text = "when the patient’s specialty does not match the clinic’s";
-			this.labelApptSchedEnforceSpecialtyDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelApptFontSizeDetails
-			// 
-			this.labelApptFontSizeDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelApptFontSizeDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelApptFontSizeDetails.Location = new System.Drawing.Point(476, 44);
-			this.labelApptFontSizeDetails.Name = "labelApptFontSizeDetails";
-			this.labelApptFontSizeDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelApptFontSizeDetails.TabIndex = 368;
-			this.labelApptFontSizeDetails.Text = "default is 8; decimals allowed; in addition to Zoom";
-			this.labelApptFontSizeDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelApptBubNoteLengthDetails
-			// 
-			this.labelApptBubNoteLengthDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelApptBubNoteLengthDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelApptBubNoteLengthDetails.Location = new System.Drawing.Point(476, 122);
-			this.labelApptBubNoteLengthDetails.Name = "labelApptBubNoteLengthDetails";
-			this.labelApptBubNoteLengthDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelApptBubNoteLengthDetails.TabIndex = 369;
-			this.labelApptBubNoteLengthDetails.Text = "in characters, 0 for no limit";
-			this.labelApptBubNoteLengthDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelWaitRoomWarnDetails
-			// 
-			this.labelWaitRoomWarnDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelWaitRoomWarnDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelWaitRoomWarnDetails.Location = new System.Drawing.Point(476, 338);
-			this.labelWaitRoomWarnDetails.Name = "labelWaitRoomWarnDetails";
-			this.labelWaitRoomWarnDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelWaitRoomWarnDetails.TabIndex = 370;
-			this.labelWaitRoomWarnDetails.Text = "in minutes, 0 to disable";
-			this.labelWaitRoomWarnDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// butUseOpHygProvDetails
-			// 
-			this.butUseOpHygProvDetails.ForeColor = System.Drawing.Color.Black;
-			this.butUseOpHygProvDetails.Location = new System.Drawing.Point(479, 393);
-			this.butUseOpHygProvDetails.Name = "butUseOpHygProvDetails";
-			this.butUseOpHygProvDetails.Size = new System.Drawing.Size(64, 21);
-			this.butUseOpHygProvDetails.TabIndex = 371;
-			this.butUseOpHygProvDetails.Text = "Details";
-			this.butUseOpHygProvDetails.Click += new System.EventHandler(this.butUseOpHygProvDetails_Click);
-			// 
-			// butTimeArrivedTriggerDetails
-			// 
-			this.butTimeArrivedTriggerDetails.ForeColor = System.Drawing.Color.Black;
-			this.butTimeArrivedTriggerDetails.Location = new System.Drawing.Point(479, 248);
-			this.butTimeArrivedTriggerDetails.Name = "butTimeArrivedTriggerDetails";
-			this.butTimeArrivedTriggerDetails.Size = new System.Drawing.Size(64, 21);
-			this.butTimeArrivedTriggerDetails.TabIndex = 367;
-			this.butTimeArrivedTriggerDetails.Text = "Details";
-			this.butTimeArrivedTriggerDetails.Click += new System.EventHandler(this.butTimeArrivedTriggerDetails_Click);
 			// 
 			// groupBoxOD1
 			// 
@@ -575,38 +467,17 @@ namespace OpenDental {
 			this.label23.Text = "Waiting room alert color";
 			this.label23.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
-			// labelApptRefreshEveryMinuteDetails
-			// 
-			this.labelApptRefreshEveryMinuteDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelApptRefreshEveryMinuteDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelApptRefreshEveryMinuteDetails.Location = new System.Drawing.Point(476, 499);
-			this.labelApptRefreshEveryMinuteDetails.Name = "labelApptRefreshEveryMinuteDetails";
-			this.labelApptRefreshEveryMinuteDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelApptRefreshEveryMinuteDetails.TabIndex = 372;
-			this.labelApptRefreshEveryMinuteDetails.Text = "keeps waiting room times refreshed";
-			this.labelApptRefreshEveryMinuteDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// UserControlApptAppearance
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.White;
-			this.Controls.Add(this.labelApptRefreshEveryMinuteDetails);
-			this.Controls.Add(this.butUseOpHygProvDetails);
-			this.Controls.Add(this.labelWaitRoomWarnDetails);
-			this.Controls.Add(this.labelApptBubNoteLengthDetails);
-			this.Controls.Add(this.labelApptFontSizeDetails);
-			this.Controls.Add(this.butTimeArrivedTriggerDetails);
-			this.Controls.Add(this.labelApptSchedEnforceSpecialtyDetails);
-			this.Controls.Add(this.labelApptClickDelayDetails);
-			this.Controls.Add(this.labelApptProvbarWidthDetails);
-			this.Controls.Add(this.labelApptLineColorDetails);
 			this.Controls.Add(this.groupBoxOD1);
 			this.Controls.Add(this.groupBoxBlockouts);
 			this.Controls.Add(this.groupBoxApptBubble);
 			this.Controls.Add(this.groupBoxAppearance);
 			this.Controls.Add(this.groupBoxWaitingRoom);
 			this.Name = "UserControlApptAppearance";
-			this.Size = new System.Drawing.Size(974, 624);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxOD1.ResumeLayout(false);
 			this.groupBoxBlockouts.ResumeLayout(false);
 			this.groupBoxApptBubble.ResumeLayout(false);
@@ -659,15 +530,5 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelApptSchedEnforceSpecialty;
 		private UI.ComboBox comboApptSchedEnforceSpecialty;
 		private OpenDental.UI.CheckBox checkUseOpHygProv;
-		private System.Windows.Forms.Label labelApptLineColorDetails;
-		private System.Windows.Forms.Label labelApptProvbarWidthDetails;
-		private System.Windows.Forms.Label labelApptClickDelayDetails;
-		private System.Windows.Forms.Label labelApptSchedEnforceSpecialtyDetails;
-		private UI.Button butTimeArrivedTriggerDetails;
-		private System.Windows.Forms.Label labelApptFontSizeDetails;
-		private System.Windows.Forms.Label labelApptBubNoteLengthDetails;
-		private System.Windows.Forms.Label labelWaitRoomWarnDetails;
-		private UI.Button butUseOpHygProvDetails;
-		private System.Windows.Forms.Label labelApptRefreshEveryMinuteDetails;
 	}
 }

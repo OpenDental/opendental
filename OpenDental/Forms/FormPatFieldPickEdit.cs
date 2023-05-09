@@ -40,11 +40,9 @@ namespace OpenDental{
 		}
 
 		private void butOK_Click(object sender, System.EventArgs e) {
-			if(listBoxPick.SelectedIndex==-1) {
-				MsgBox.Show(this,"Please select an item in the list first.");
-				return;
+			if(listBoxPick.SelectedIndex!=-1) {//if a selection is made
+				_patField.FieldValue=listBoxPick.SelectedItem.ToString();
 			}
-			_patField.FieldValue=listBoxPick.SelectedItem.ToString();
 			if(_patField.FieldValue==""){//if blank, then delete
 				if(IsNew) {
 					DialogResult=DialogResult.Cancel;
@@ -82,6 +80,7 @@ namespace OpenDental{
 
 		private void butClear_Click(object sender, EventArgs e) {
 			listBoxPick.ClearSelected();
+			_patField.FieldValue=""; //Clears existing
 		}
 
 	}

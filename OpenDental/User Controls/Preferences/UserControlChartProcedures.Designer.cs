@@ -24,12 +24,6 @@ namespace OpenDental {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.labelAllowSettingProcsCompleteDetails = new System.Windows.Forms.Label();
-			this.labelProcEditRequireAutoCodeDetails = new System.Windows.Forms.Label();
-			this.labelProcFeeUpdatePromptDetails = new System.Windows.Forms.Label();
-			this.labelProcsPromptForAutoNoteDetails = new System.Windows.Forms.Label();
-			this.linkLabelProcLockingIsAllowedDetails = new System.Windows.Forms.LinkLabel();
-			this.butClaimProcsAllowEstimatesOnComplDetails = new OpenDental.UI.Button();
 			this.groupBoxProcedures = new OpenDental.UI.GroupBox();
 			this.checkProcProvChangesCp = new OpenDental.UI.CheckBox();
 			this.checkAllowSettingProcsComplete = new OpenDental.UI.CheckBox();
@@ -45,80 +39,9 @@ namespace OpenDental {
 			this.checkProcGroupNoteDoesAggregate = new OpenDental.UI.CheckBox();
 			this.checkNotesProviderSigOnly = new OpenDental.UI.CheckBox();
 			this.checkProcNoteConcurrencyMerge = new OpenDental.UI.CheckBox();
-			this.butProcProvChangesCpDetails = new OpenDental.UI.Button();
 			this.groupBoxProcedures.SuspendLayout();
 			this.groupProcNotes.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// labelAllowSettingProcsCompleteDetails
-			// 
-			this.labelAllowSettingProcsCompleteDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelAllowSettingProcsCompleteDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelAllowSettingProcsCompleteDetails.Location = new System.Drawing.Point(476, 54);
-			this.labelAllowSettingProcsCompleteDetails.Name = "labelAllowSettingProcsCompleteDetails";
-			this.labelAllowSettingProcsCompleteDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelAllowSettingProcsCompleteDetails.TabIndex = 349;
-			this.labelAllowSettingProcsCompleteDetails.Text = "not usually recommended, it\'s better to only set appointments complete";
-			this.labelAllowSettingProcsCompleteDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelProcEditRequireAutoCodeDetails
-			// 
-			this.labelProcEditRequireAutoCodeDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelProcEditRequireAutoCodeDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelProcEditRequireAutoCodeDetails.Location = new System.Drawing.Point(476, 116);
-			this.labelProcEditRequireAutoCodeDetails.Name = "labelProcEditRequireAutoCodeDetails";
-			this.labelProcEditRequireAutoCodeDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelProcEditRequireAutoCodeDetails.TabIndex = 354;
-			this.labelProcEditRequireAutoCodeDetails.Text = "otherwise, a user is allowed to chart the mismatched code";
-			this.labelProcEditRequireAutoCodeDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelProcFeeUpdatePromptDetails
-			// 
-			this.labelProcFeeUpdatePromptDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelProcFeeUpdatePromptDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelProcFeeUpdatePromptDetails.Location = new System.Drawing.Point(476, 181);
-			this.labelProcFeeUpdatePromptDetails.Name = "labelProcFeeUpdatePromptDetails";
-			this.labelProcFeeUpdatePromptDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelProcFeeUpdatePromptDetails.TabIndex = 355;
-			this.labelProcFeeUpdatePromptDetails.Text = "when changing the provider";
-			this.labelProcFeeUpdatePromptDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelProcsPromptForAutoNoteDetails
-			// 
-			this.labelProcsPromptForAutoNoteDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelProcsPromptForAutoNoteDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelProcsPromptForAutoNoteDetails.Location = new System.Drawing.Point(476, 269);
-			this.labelProcsPromptForAutoNoteDetails.Name = "labelProcsPromptForAutoNoteDetails";
-			this.labelProcsPromptForAutoNoteDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelProcsPromptForAutoNoteDetails.TabIndex = 356;
-			this.labelProcsPromptForAutoNoteDetails.Text = "if auto note prompts were not completed, be prompted when the procedure is next o" +
-    "pened";
-			this.labelProcsPromptForAutoNoteDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// linkLabelProcLockingIsAllowedDetails
-			// 
-			this.linkLabelProcLockingIsAllowedDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelProcLockingIsAllowedDetails.LinkArea = new System.Windows.Forms.LinkArea(4, 14);
-			this.linkLabelProcLockingIsAllowedDetails.LinkColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelProcLockingIsAllowedDetails.Location = new System.Drawing.Point(476, 85);
-			this.linkLabelProcLockingIsAllowedDetails.Name = "linkLabelProcLockingIsAllowedDetails";
-			this.linkLabelProcLockingIsAllowedDetails.Size = new System.Drawing.Size(498, 17);
-			this.linkLabelProcLockingIsAllowedDetails.TabIndex = 373;
-			this.linkLabelProcLockingIsAllowedDetails.TabStop = true;
-			this.linkLabelProcLockingIsAllowedDetails.Text = "see Procedure Lock";
-			this.linkLabelProcLockingIsAllowedDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.linkLabelProcLockingIsAllowedDetails.UseCompatibleTextRendering = true;
-			this.linkLabelProcLockingIsAllowedDetails.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelProcLockingIsAllowedDetails_LinkClicked);
-			// 
-			// butClaimProcsAllowEstimatesOnComplDetails
-			// 
-			this.butClaimProcsAllowEstimatesOnComplDetails.ForeColor = System.Drawing.Color.Black;
-			this.butClaimProcsAllowEstimatesOnComplDetails.Location = new System.Drawing.Point(479, 145);
-			this.butClaimProcsAllowEstimatesOnComplDetails.Name = "butClaimProcsAllowEstimatesOnComplDetails";
-			this.butClaimProcsAllowEstimatesOnComplDetails.Size = new System.Drawing.Size(64, 21);
-			this.butClaimProcsAllowEstimatesOnComplDetails.TabIndex = 375;
-			this.butClaimProcsAllowEstimatesOnComplDetails.Text = "Details";
-			this.butClaimProcsAllowEstimatesOnComplDetails.Click += new System.EventHandler(this.butAgingProcLifoDetails_Click);
 			// 
 			// groupBoxProcedures
 			// 
@@ -282,31 +205,14 @@ namespace OpenDental {
 			this.checkProcNoteConcurrencyMerge.TabIndex = 236;
 			this.checkProcNoteConcurrencyMerge.Text = "Procedure notes merge together when concurrency issues occur";
 			// 
-			// butProcProvChangesCpDetails
-			// 
-			this.butProcProvChangesCpDetails.ForeColor = System.Drawing.Color.Black;
-			this.butProcProvChangesCpDetails.Location = new System.Drawing.Point(479, 211);
-			this.butProcProvChangesCpDetails.Name = "butProcProvChangesCpDetails";
-			this.butProcProvChangesCpDetails.Size = new System.Drawing.Size(64, 21);
-			this.butProcProvChangesCpDetails.TabIndex = 376;
-			this.butProcProvChangesCpDetails.Text = "Details";
-			this.butProcProvChangesCpDetails.Click += new System.EventHandler(this.butProcProvChangesCpDetails_Click);
-			// 
 			// UserControlChartProcedures
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.White;
-			this.Controls.Add(this.butProcProvChangesCpDetails);
-			this.Controls.Add(this.butClaimProcsAllowEstimatesOnComplDetails);
-			this.Controls.Add(this.linkLabelProcLockingIsAllowedDetails);
-			this.Controls.Add(this.labelProcsPromptForAutoNoteDetails);
-			this.Controls.Add(this.labelProcFeeUpdatePromptDetails);
-			this.Controls.Add(this.labelProcEditRequireAutoCodeDetails);
-			this.Controls.Add(this.labelAllowSettingProcsCompleteDetails);
 			this.Controls.Add(this.groupBoxProcedures);
 			this.Controls.Add(this.groupProcNotes);
 			this.Name = "UserControlChartProcedures";
-			this.Size = new System.Drawing.Size(974, 624);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxProcedures.ResumeLayout(false);
 			this.groupProcNotes.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -329,13 +235,6 @@ namespace OpenDental {
 		private UI.GroupBox groupProcNotes;
 		private UI.GroupBox groupBoxProcedures;
 		private OpenDental.UI.CheckBox checkProcProvChangesCp;
-		private System.Windows.Forms.Label labelAllowSettingProcsCompleteDetails;
-		private System.Windows.Forms.Label labelProcEditRequireAutoCodeDetails;
-		private System.Windows.Forms.Label labelProcFeeUpdatePromptDetails;
-		private System.Windows.Forms.Label labelProcsPromptForAutoNoteDetails;
 		private OpenDental.UI.CheckBox checkProcNoteSigsBlocked;
-		private System.Windows.Forms.LinkLabel linkLabelProcLockingIsAllowedDetails;
-		private UI.Button butClaimProcsAllowEstimatesOnComplDetails;
-		private UI.Button butProcProvChangesCpDetails;
 	}
 }

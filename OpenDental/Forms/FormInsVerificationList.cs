@@ -811,6 +811,9 @@ namespace OpenDental {
 		///<summary>Firing on MouseUp allows time for the user to select multiple values via "dragging"</summary>
 		private void listBoxVerifyClinics_MouseUp(object sender,MouseEventArgs e) {
 			UpdateSelectedClinicNums();
+			FillDisplayInfo(null);
+			gridMain.SetAll(false);
+			gridPastDue.SetAll(false);
 			FillControls();
 		}
 

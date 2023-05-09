@@ -162,11 +162,13 @@ namespace OpenDentBusiness {
 
 		///<summary>Checks jsoncarrier->telephone->name->en first as the preferred number. Uses value in jsoncarrier->telephone->value if not found. Can return an empty string</summary>
 		private static string GetPhoneNumberFromJsonCarrier(Carrier jsonCarrier) {
-			string jsonCarrierPhone=jsonCarrier.Telephone?.First().Name.En;//Will be empty string if not found
+			//jsonCarrier.Telephone is a List<> and can be empty.
+			string jsonCarrierPhone=jsonCarrier.Telephone?.FirstOrDefault()?.Name?.En??"";//Will be empty string if not found
 			if(!string.IsNullOrWhiteSpace(jsonCarrierPhone)) {
 				string jsonCarrierPhoneFormatted=TelephoneNumbers.FormatNumbersExactTen(jsonCarrierPhone);//strip 1 if present
+				//If the telephone in the Telephone[0].Name.En field is improper, then use Telephone[0].Value instead.
 				if(string.IsNullOrWhiteSpace(jsonCarrierPhoneFormatted) || !TelephoneNumbers.IsNumberValidTenDigit(ref jsonCarrierPhoneFormatted)) {
-					jsonCarrierPhone=jsonCarrier.Telephone?.First().Value;//Will be empty string if not found
+					jsonCarrierPhone=jsonCarrier.Telephone?.FirstOrDefault()?.Value??"";//Will be empty string if not found
 				}
 			}
 			return jsonCarrierPhone;

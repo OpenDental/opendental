@@ -719,8 +719,9 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 			}
 			IsLayingOut=true;
 			if(!IsLayoutMS){
-				formODBase.Font=ScaleFontODZoom(formODBase.Font);
+				//formODBase.Font=ScaleFontODZoom(formODBase.Font);//infinite loop
 				//Font was set in constructor to 8.25
+				//We actually always ignore form.Font, so this doesn't matter.
 			}
 			if(FormODBase.AreBordersMS){
 				formODBase.PanelClient.Bounds=formODBase.ClientRectangle;

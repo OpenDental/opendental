@@ -44,22 +44,6 @@ namespace OpenDental {
 			}
 			_colorDialog.Dispose();
 		}
-
-		private void butTimeArrivedTriggerDetails_Click(object sender,EventArgs e) {
-			string html=@"Select the confirmed status that will trigger an automatic time entry in the Time Arrived field on the 
-				<a href='https://www.opendental.com/manual/aptedit.html' target='_blank' rel='noopener noreferrer'>Edit Appointment</a>, and add the patient to the 
-				<a href='https://www.opendental.com/manual/waitingroom.html' target='_blank' rel='noopener noreferrer'>Waiting Room</a>. Customize options in Definitions, 
-				Appt Confirmed (see <a href='https://www.opendental.com/manual/confirmationstatus.html' target='_blank' rel='noopener noreferrer'>Confirmation Status</a>).";
-			using FormWebBrowserPrefs formWebBrowserPrefs=new FormWebBrowserPrefs();
-			formWebBrowserPrefs.HtmlContent=html;
-			formWebBrowserPrefs.PointStart=PointToScreen(butTimeArrivedTriggerDetails.Location);
-			formWebBrowserPrefs.ShowDialog();
-		}
-
-		private void butUseOpHygProvDetails_Click(object sender,EventArgs e) {
-			MsgBox.Show(this,"Checked: The hygienist of the operatory is always assigned as the hygienist on the appointment, even if none.\r\n\r\n" +
-				"Unchecked: The hygienist of the operatory is assigned as the hygienist unless it is none. In that case, the patient's secondary provider is assigned.");
-		}
 		#endregion Methods - Event Handlers
 
 		#region Methods - Private
@@ -120,7 +104,6 @@ namespace OpenDental {
 			if(!PrefC.HasClinicsEnabled) {
 				comboApptSchedEnforceSpecialty.Visible=false;
 				labelApptSchedEnforceSpecialty.Visible=false;
-				labelApptSchedEnforceSpecialtyDetails.Visible=false;
 			}
 			checkReplaceBlockouts.Checked=PrefC.GetBool(PrefName.ReplaceExistingBlockout);
 		}

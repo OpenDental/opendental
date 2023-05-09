@@ -15192,6 +15192,22 @@ namespace UnitTests.PaymentEdit_Tests {
 
 		#endregion
 
+		#region ConstructListCharges
+
+		[TestMethod]
+		public void PaymentEdit_ConstructListCharges_PayPlanCharge() {
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			long provNum=ProviderT.CreateProvider(suffix);
+			Patient pat=PatientT.CreatePatient(suffix);
+			Procedure proc=ProcedureT.CreateProcedure(pat,"NU001",ProcStat.C,"",100,provNum:provNum);
+			PayPlan payPlan=PayPlanT.CreateDynamicPaymentPlan(pat.PatNum,pat.PatNum,DateTime.Today.AddMonths(-1),0,0,40,new List<Procedure>(){ proc },new List<Adjustment>(),PayPlanFrequency.Monthly,dynamicPayPlanTPOptions:DynamicPayPlanTPOptions.AwaitComplete,runService:false);
+			PayPlanCharge payPlanCharge=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,pat.PatNum,pat.PatNum,DateTime.Today,20);
+			List<AccountEntry> listAccountEntries=ConstructListCharges(listPayPlanCharges:new List<PayPlanCharge>() { payPlanCharge });
+			Assert.AreEqual(1,listAccountEntries.Count);
+		}
+
+		#endregion
+
 		#region Methods - Helpers
 
 		private List<AccountEntry> ConstructListCharges(List<long> listPatNums=null,List<Procedure> listProcs=null,List<Adjustment> listAdjustments=null,

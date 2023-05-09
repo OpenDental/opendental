@@ -24,10 +24,6 @@ namespace OpenDental {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.labelUsePhoneNumTableDetails = new System.Windows.Forms.Label();
-			this.labelSelectProvDetails = new System.Windows.Forms.Label();
-			this.labelSuperFamSyncDetails = new System.Windows.Forms.Label();
-			this.butSuperFamSortDetails = new OpenDental.UI.Button();
 			this.groupBoxHIPAA = new OpenDental.UI.GroupBox();
 			this.checkFamPhiAccess = new OpenDental.UI.CheckBox();
 			this.checkPatientSSNMasked = new OpenDental.UI.CheckBox();
@@ -59,50 +55,6 @@ namespace OpenDental {
 			this.groupBoxClaimSnapshot.SuspendLayout();
 			this.groupBoxSuperFamily.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// labelUsePhoneNumTableDetails
-			// 
-			this.labelUsePhoneNumTableDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelUsePhoneNumTableDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelUsePhoneNumTableDetails.Location = new System.Drawing.Point(476, 182);
-			this.labelUsePhoneNumTableDetails.Name = "labelUsePhoneNumTableDetails";
-			this.labelUsePhoneNumTableDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelUsePhoneNumTableDetails.TabIndex = 355;
-			this.labelUsePhoneNumTableDetails.Text = "strips out non-digit characters, useful to speed up the search in large databases" +
-    "";
-			this.labelUsePhoneNumTableDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelSelectProvDetails
-			// 
-			this.labelSelectProvDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelSelectProvDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelSelectProvDetails.Location = new System.Drawing.Point(476, 59);
-			this.labelSelectProvDetails.Name = "labelSelectProvDetails";
-			this.labelSelectProvDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelSelectProvDetails.TabIndex = 356;
-			this.labelSelectProvDetails.Text = "require user to select a provider";
-			this.labelSelectProvDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelSuperFamSyncDetails
-			// 
-			this.labelSuperFamSyncDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelSuperFamSyncDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelSuperFamSyncDetails.Location = new System.Drawing.Point(476, 327);
-			this.labelSuperFamSyncDetails.Name = "labelSuperFamSyncDetails";
-			this.labelSuperFamSyncDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelSuperFamSyncDetails.TabIndex = 370;
-			this.labelSuperFamSyncDetails.Text = "show \"Same for entire super family\" checkbox in Edit Patient Information window";
-			this.labelSuperFamSyncDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// butSuperFamSortDetails
-			// 
-			this.butSuperFamSortDetails.ForeColor = System.Drawing.Color.Black;
-			this.butSuperFamSortDetails.Location = new System.Drawing.Point(479, 304);
-			this.butSuperFamSortDetails.Name = "butSuperFamSortDetails";
-			this.butSuperFamSortDetails.Size = new System.Drawing.Size(64, 21);
-			this.butSuperFamSortDetails.TabIndex = 371;
-			this.butSuperFamSortDetails.Text = "Details";
-			this.butSuperFamSortDetails.Click += new System.EventHandler(this.butSuperFamSortDetails_Click);
 			// 
 			// groupBoxHIPAA
 			// 
@@ -377,16 +329,12 @@ namespace OpenDental {
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.White;
-			this.Controls.Add(this.butSuperFamSortDetails);
-			this.Controls.Add(this.labelSuperFamSyncDetails);
-			this.Controls.Add(this.labelSelectProvDetails);
-			this.Controls.Add(this.labelUsePhoneNumTableDetails);
 			this.Controls.Add(this.groupBoxHIPAA);
 			this.Controls.Add(this.groupBoxPatientEdit);
 			this.Controls.Add(this.groupBoxClaimSnapshot);
 			this.Controls.Add(this.groupBoxSuperFamily);
 			this.Name = "UserControlFamilyGeneral";
-			this.Size = new System.Drawing.Size(974, 624);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxHIPAA.ResumeLayout(false);
 			this.groupBoxPatientEdit.ResumeLayout(false);
 			this.groupBoxClaimSnapshot.ResumeLayout(false);
@@ -423,9 +371,5 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkPreferredPronouns;
 		private UI.GroupBox groupBoxPatientEdit;
 		private UI.GroupBox groupBoxHIPAA;
-		private System.Windows.Forms.Label labelUsePhoneNumTableDetails;
-		private System.Windows.Forms.Label labelSelectProvDetails;
-		private System.Windows.Forms.Label labelSuperFamSyncDetails;
-		private UI.Button butSuperFamSortDetails;
 	}
 }

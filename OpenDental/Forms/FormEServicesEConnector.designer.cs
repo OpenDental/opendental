@@ -166,8 +166,8 @@ namespace OpenDental{
 			this.checkEnableEServicesListener.Name = "checkEnableEServicesListener";
 			this.checkEnableEServicesListener.Size = new System.Drawing.Size(512, 17);
 			this.checkEnableEServicesListener.TabIndex = 503;
-			this.checkEnableEServicesListener.Text = "Enable eServices Listener. Reduces network latency for eClipboard/OD Mobile/OD To" +
-    "uch.";
+			this.checkEnableEServicesListener.Text = "Enable eServices Listener. Reduces network latency for eClipboard/ODMobile/ODTouc" +
+    "h.";
 			// 
 			// groupBox1
 			// 

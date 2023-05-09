@@ -36,7 +36,7 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(1062, 660);
+			this.butOK.Location = new System.Drawing.Point(582, 660);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
@@ -47,7 +47,7 @@ namespace OpenDental{
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(1143, 660);
+			this.butCancel.Location = new System.Drawing.Point(663, 660);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 2;
@@ -69,12 +69,11 @@ namespace OpenDental{
 			// 
 			// panelMain
 			// 
-			this.panelMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.panelMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
 			this.panelMain.Location = new System.Drawing.Point(244, 30);
 			this.panelMain.Name = "panelMain";
-			this.panelMain.Size = new System.Drawing.Size(974, 624);
+			this.panelMain.Size = new System.Drawing.Size(494, 624);
 			this.panelMain.TabIndex = 5;
 			// 
 			// labelCategories
@@ -107,7 +106,7 @@ namespace OpenDental{
 			// FormPreferences
 			// 
 			this.CancelButton = this.butCancel;
-			this.ClientSize = new System.Drawing.Size(1230, 696);
+			this.ClientSize = new System.Drawing.Size(750, 696);
 			this.Controls.Add(this.textSearch);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.labelCategories);

@@ -146,6 +146,7 @@ namespace OpenDental {
 					}
 				}
 			}
+			Left=Left-200;//to make room on the right for the popup info boxes.
 			Plugins.HookAddCode(this,"FormModuleSetup.FormModuleSetup_Load_end");
 		}
 

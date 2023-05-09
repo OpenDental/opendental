@@ -40,8 +40,6 @@ namespace OpenDental {
 			this.groupMiddleTier = new OpenDental.UI.GroupBox();
 			this.textMiddleTierURI = new System.Windows.Forms.TextBox();
 			this.labelURI = new System.Windows.Forms.Label();
-			this.butReadOnlyServerSetupDetails = new OpenDental.UI.Button();
-			this.butMiddleTierURIDetails = new OpenDental.UI.Button();
 			this.groupBoxReadOnlyServerSetup.SuspendLayout();
 			this.groupConnectionSettings.SuspendLayout();
 			this.groupMiddleTier.SuspendLayout();
@@ -201,36 +199,14 @@ namespace OpenDental {
 			this.labelURI.Text = "URI";
 			this.labelURI.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// butReadOnlyServerSetupDetails
-			// 
-			this.butReadOnlyServerSetupDetails.ForeColor = System.Drawing.Color.Black;
-			this.butReadOnlyServerSetupDetails.Location = new System.Drawing.Point(479, 8);
-			this.butReadOnlyServerSetupDetails.Name = "butReadOnlyServerSetupDetails";
-			this.butReadOnlyServerSetupDetails.Size = new System.Drawing.Size(64, 21);
-			this.butReadOnlyServerSetupDetails.TabIndex = 1;
-			this.butReadOnlyServerSetupDetails.Text = "Details";
-			this.butReadOnlyServerSetupDetails.Click += new System.EventHandler(this.butReadOnlyServerSetupDetails_Click);
-			// 
-			// butMiddleTierURIDetails
-			// 
-			this.butMiddleTierURIDetails.ForeColor = System.Drawing.Color.Black;
-			this.butMiddleTierURIDetails.Location = new System.Drawing.Point(479, 253);
-			this.butMiddleTierURIDetails.Name = "butMiddleTierURIDetails";
-			this.butMiddleTierURIDetails.Size = new System.Drawing.Size(64, 21);
-			this.butMiddleTierURIDetails.TabIndex = 10;
-			this.butMiddleTierURIDetails.Text = "Details";
-			this.butMiddleTierURIDetails.Click += new System.EventHandler(this.butMiddleTierURIDetails_Click);
-			// 
 			// UserControlServerConnections
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.White;
 			this.Controls.Add(this.checkUseReadOnlyServer);
-			this.Controls.Add(this.butReadOnlyServerSetupDetails);
 			this.Controls.Add(this.groupBoxReadOnlyServerSetup);
-			this.Controls.Add(this.butMiddleTierURIDetails);
 			this.Name = "UserControlServerConnections";
-			this.Size = new System.Drawing.Size(974, 624);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxReadOnlyServerSetup.ResumeLayout(false);
 			this.groupConnectionSettings.ResumeLayout(false);
 			this.groupConnectionSettings.PerformLayout();
@@ -257,7 +233,5 @@ namespace OpenDental {
 		private UI.GroupBox groupBoxReadOnlyServerSetup;
 		private System.Windows.Forms.ComboBox comboServerName;
 		private System.Windows.Forms.ComboBox comboDatabase;
-		private UI.Button butReadOnlyServerSetupDetails;
-		private UI.Button butMiddleTierURIDetails;
 	}
 }

@@ -41,10 +41,6 @@ namespace OpenDental {
 			this.textPayPlansBillInAdvanceDays = new OpenDental.ValidNum();
 			this.groupBoxBilling = new OpenDental.UI.GroupBox();
 			this.groupBoxStatements = new OpenDental.UI.GroupBox();
-			this.labelStatementShowProcBreakdownDetails = new System.Windows.Forms.Label();
-			this.labelPayPlansBillInAdvanceDaysDetails = new System.Windows.Forms.Label();
-			this.labelStatementsCalcDueDateDetails = new System.Windows.Forms.Label();
-			this.labelBillingElectBatchMaxDetails = new System.Windows.Forms.Label();
 			this.groupBoxBilling.SuspendLayout();
 			this.groupBoxStatements.SuspendLayout();
 			this.SuspendLayout();
@@ -226,64 +222,14 @@ namespace OpenDental {
 			this.groupBoxStatements.TabIndex = 219;
 			this.groupBoxStatements.Text = "Statements";
 			// 
-			// labelStatementShowProcBreakdownDetails
-			// 
-			this.labelStatementShowProcBreakdownDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelStatementShowProcBreakdownDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelStatementShowProcBreakdownDetails.Location = new System.Drawing.Point(476, 142);
-			this.labelStatementShowProcBreakdownDetails.Name = "labelStatementShowProcBreakdownDetails";
-			this.labelStatementShowProcBreakdownDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelStatementShowProcBreakdownDetails.TabIndex = 364;
-			this.labelStatementShowProcBreakdownDetails.Text = "shows in the Description column as patient portion, insurance paid, write-off, ad" +
-    "justment, etc.";
-			this.labelStatementShowProcBreakdownDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelPayPlansBillInAdvanceDaysDetails
-			// 
-			this.labelPayPlansBillInAdvanceDaysDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelPayPlansBillInAdvanceDaysDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelPayPlansBillInAdvanceDaysDetails.Location = new System.Drawing.Point(476, 240);
-			this.labelPayPlansBillInAdvanceDaysDetails.Name = "labelPayPlansBillInAdvanceDaysDetails";
-			this.labelPayPlansBillInAdvanceDaysDetails.Size = new System.Drawing.Size(498, 28);
-			this.labelPayPlansBillInAdvanceDaysDetails.TabIndex = 365;
-			this.labelPayPlansBillInAdvanceDaysDetails.Text = "usually 10 or 15, causes statements to be triggered to print, cannot be used with" +
-    " Dynamic Payment Plans";
-			this.labelPayPlansBillInAdvanceDaysDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelStatementsCalcDueDateDetails
-			// 
-			this.labelStatementsCalcDueDateDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelStatementsCalcDueDateDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelStatementsCalcDueDateDetails.Location = new System.Drawing.Point(476, 210);
-			this.labelStatementsCalcDueDateDetails.Name = "labelStatementsCalcDueDateDetails";
-			this.labelStatementsCalcDueDateDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelStatementsCalcDueDateDetails.TabIndex = 366;
-			this.labelStatementsCalcDueDateDetails.Text = "usually 10 or 15, leave blank to show \"Due on Receipt\"";
-			this.labelStatementsCalcDueDateDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelBillingElectBatchMaxDetails
-			// 
-			this.labelBillingElectBatchMaxDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelBillingElectBatchMaxDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelBillingElectBatchMaxDetails.Location = new System.Drawing.Point(476, 330);
-			this.labelBillingElectBatchMaxDetails.Name = "labelBillingElectBatchMaxDetails";
-			this.labelBillingElectBatchMaxDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelBillingElectBatchMaxDetails.TabIndex = 367;
-			this.labelBillingElectBatchMaxDetails.Text = "0 for no limit";
-			this.labelBillingElectBatchMaxDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// UserControlManageBillingStatements
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.White;
-			this.Controls.Add(this.labelBillingElectBatchMaxDetails);
-			this.Controls.Add(this.labelStatementsCalcDueDateDetails);
-			this.Controls.Add(this.labelPayPlansBillInAdvanceDaysDetails);
-			this.Controls.Add(this.labelStatementShowProcBreakdownDetails);
 			this.Controls.Add(this.groupBoxStatements);
 			this.Controls.Add(this.groupBoxBilling);
 			this.Name = "UserControlManageBillingStatements";
-			this.Size = new System.Drawing.Size(974, 624);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxBilling.ResumeLayout(false);
 			this.groupBoxBilling.PerformLayout();
 			this.groupBoxStatements.ResumeLayout(false);
@@ -310,9 +256,5 @@ namespace OpenDental {
 		private ValidNum textPayPlansBillInAdvanceDays;
 		private UI.GroupBox groupBoxBilling;
 		private UI.GroupBox groupBoxStatements;
-		private System.Windows.Forms.Label labelStatementShowProcBreakdownDetails;
-		private System.Windows.Forms.Label labelPayPlansBillInAdvanceDaysDetails;
-		private System.Windows.Forms.Label labelStatementsCalcDueDateDetails;
-		private System.Windows.Forms.Label labelBillingElectBatchMaxDetails;
 	}
 }

@@ -26,10 +26,6 @@ namespace OpenDental {
 		private void InitializeComponent() {
 			this.checkBoxRxClinicUseSelected = new OpenDental.UI.CheckBox();
 			this.checkChartOrthoTabAutomaticCheckboxes = new OpenDental.UI.CheckBox();
-			this.labelChartNonPatientWarnDetails = new System.Windows.Forms.Label();
-			this.labelShowPlannedApptPromptDetails = new System.Windows.Forms.Label();
-			this.labelProvColorChartDetails = new System.Windows.Forms.Label();
-			this.labelDxIcdVersionDetails = new System.Windows.Forms.Label();
 			this.groupBoxFunctionality = new OpenDental.UI.GroupBox();
 			this.checkAutoClearEntryStatus = new OpenDental.UI.CheckBox();
 			this.checkProvColorChart = new OpenDental.UI.CheckBox();
@@ -63,9 +59,6 @@ namespace OpenDental {
 			this.textICD9DefaultForNewProcs = new System.Windows.Forms.TextBox();
 			this.labelIcdCodeDefault = new System.Windows.Forms.Label();
 			this.butDiagnosisCode = new OpenDental.UI.Button();
-			this.labelMedicalFeeUsedForNewProcsDetails = new System.Windows.Forms.Label();
-			this.labelMedDefaultStopDaysDetails = new System.Windows.Forms.Label();
-			this.linkLabelIsAlertRadiologyProcsEnabledDetails = new System.Windows.Forms.LinkLabel();
 			this.groupBoxFunctionality.SuspendLayout();
 			this.groupBoxPerio.SuspendLayout();
 			this.groupBoxAppointments.SuspendLayout();
@@ -92,51 +85,6 @@ namespace OpenDental {
 			this.checkChartOrthoTabAutomaticCheckboxes.TabIndex = 253;
 			this.checkChartOrthoTabAutomaticCheckboxes.Text = "Automatically check and uncheck ortho mode and show grid checkboxes based on sele" +
     "ction of Ortho tab ";
-			// 
-			// labelChartNonPatientWarnDetails
-			// 
-			this.labelChartNonPatientWarnDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelChartNonPatientWarnDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelChartNonPatientWarnDetails.Location = new System.Drawing.Point(476, 202);
-			this.labelChartNonPatientWarnDetails.Name = "labelChartNonPatientWarnDetails";
-			this.labelChartNonPatientWarnDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelChartNonPatientWarnDetails.TabIndex = 346;
-			this.labelChartNonPatientWarnDetails.Text = "when opened from the Chart Module";
-			this.labelChartNonPatientWarnDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelShowPlannedApptPromptDetails
-			// 
-			this.labelShowPlannedApptPromptDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelShowPlannedApptPromptDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelShowPlannedApptPromptDetails.Location = new System.Drawing.Point(476, 223);
-			this.labelShowPlannedApptPromptDetails.Name = "labelShowPlannedApptPromptDetails";
-			this.labelShowPlannedApptPromptDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelShowPlannedApptPromptDetails.TabIndex = 347;
-			this.labelShowPlannedApptPromptDetails.Text = "when leaving the Chart Module and a patient has procedures that were treatment pl" +
-    "anned today";
-			this.labelShowPlannedApptPromptDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelProvColorChartDetails
-			// 
-			this.labelProvColorChartDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelProvColorChartDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelProvColorChartDetails.Location = new System.Drawing.Point(476, 432);
-			this.labelProvColorChartDetails.Name = "labelProvColorChartDetails";
-			this.labelProvColorChartDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelProvColorChartDetails.TabIndex = 348;
-			this.labelProvColorChartDetails.Text = "background color in grid for completed procedures";
-			this.labelProvColorChartDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelDxIcdVersionDetails
-			// 
-			this.labelDxIcdVersionDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelDxIcdVersionDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelDxIcdVersionDetails.Location = new System.Drawing.Point(476, 137);
-			this.labelDxIcdVersionDetails.Name = "labelDxIcdVersionDetails";
-			this.labelDxIcdVersionDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelDxIcdVersionDetails.TabIndex = 349;
-			this.labelDxIcdVersionDetails.Text = "uncheck for ICD-9";
-			this.labelDxIcdVersionDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// groupBoxFunctionality
 			// 
@@ -472,54 +420,10 @@ namespace OpenDental {
 			this.butDiagnosisCode.Text = "...";
 			this.butDiagnosisCode.Click += new System.EventHandler(this.butDiagnosisCode_Click);
 			// 
-			// labelMedicalFeeUsedForNewProcsDetails
-			// 
-			this.labelMedicalFeeUsedForNewProcsDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelMedicalFeeUsedForNewProcsDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelMedicalFeeUsedForNewProcsDetails.Location = new System.Drawing.Point(476, 116);
-			this.labelMedicalFeeUsedForNewProcsDetails.Name = "labelMedicalFeeUsedForNewProcsDetails";
-			this.labelMedicalFeeUsedForNewProcsDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelMedicalFeeUsedForNewProcsDetails.TabIndex = 350;
-			this.labelMedicalFeeUsedForNewProcsDetails.Text = "when cross-coding";
-			this.labelMedicalFeeUsedForNewProcsDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelMedDefaultStopDaysDetails
-			// 
-			this.labelMedDefaultStopDaysDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelMedDefaultStopDaysDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelMedDefaultStopDaysDetails.Location = new System.Drawing.Point(476, 347);
-			this.labelMedDefaultStopDaysDetails.Name = "labelMedDefaultStopDaysDetails";
-			this.labelMedDefaultStopDaysDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelMedDefaultStopDaysDetails.TabIndex = 351;
-			this.labelMedDefaultStopDaysDetails.Text = "0 for no automatic stop date";
-			this.labelMedDefaultStopDaysDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// linkLabelIsAlertRadiologyProcsEnabledDetails
-			// 
-			this.linkLabelIsAlertRadiologyProcsEnabledDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelIsAlertRadiologyProcsEnabledDetails.LinkArea = new System.Windows.Forms.LinkArea(4, 24);
-			this.linkLabelIsAlertRadiologyProcsEnabledDetails.LinkColor = System.Drawing.Color.MidnightBlue;
-			this.linkLabelIsAlertRadiologyProcsEnabledDetails.Location = new System.Drawing.Point(476, 368);
-			this.linkLabelIsAlertRadiologyProcsEnabledDetails.Name = "linkLabelIsAlertRadiologyProcsEnabledDetails";
-			this.linkLabelIsAlertRadiologyProcsEnabledDetails.Size = new System.Drawing.Size(498, 17);
-			this.linkLabelIsAlertRadiologyProcsEnabledDetails.TabIndex = 372;
-			this.linkLabelIsAlertRadiologyProcsEnabledDetails.TabStop = true;
-			this.linkLabelIsAlertRadiologyProcsEnabledDetails.Text = "see EHR Radiology Order List";
-			this.linkLabelIsAlertRadiologyProcsEnabledDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.linkLabelIsAlertRadiologyProcsEnabledDetails.UseCompatibleTextRendering = true;
-			this.linkLabelIsAlertRadiologyProcsEnabledDetails.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelIsAlertRadiologyProcsEnabledDetails_LinkClicked);
-			// 
 			// UserControlChartGeneral
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.White;
-			this.Controls.Add(this.linkLabelIsAlertRadiologyProcsEnabledDetails);
-			this.Controls.Add(this.labelMedDefaultStopDaysDetails);
-			this.Controls.Add(this.labelMedicalFeeUsedForNewProcsDetails);
-			this.Controls.Add(this.labelDxIcdVersionDetails);
-			this.Controls.Add(this.labelProvColorChartDetails);
-			this.Controls.Add(this.labelShowPlannedApptPromptDetails);
-			this.Controls.Add(this.labelChartNonPatientWarnDetails);
 			this.Controls.Add(this.checkChartOrthoTabAutomaticCheckboxes);
 			this.Controls.Add(this.groupBoxFunctionality);
 			this.Controls.Add(this.groupBoxPerio);
@@ -528,7 +432,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxMedicalCodes);
 			this.Controls.Add(this.checkBoxRxClinicUseSelected);
 			this.Name = "UserControlChartGeneral";
-			this.Size = new System.Drawing.Size(974, 624);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxFunctionality.ResumeLayout(false);
 			this.groupBoxFunctionality.PerformLayout();
 			this.groupBoxPerio.ResumeLayout(false);
@@ -578,12 +482,5 @@ namespace OpenDental {
 		private UI.GroupBox groupBoxPerio;
 		private UI.GroupBox groupBoxFunctionality;
 		private OpenDental.UI.CheckBox checkChartOrthoTabAutomaticCheckboxes;
-		private System.Windows.Forms.Label labelChartNonPatientWarnDetails;
-		private System.Windows.Forms.Label labelShowPlannedApptPromptDetails;
-		private System.Windows.Forms.Label labelProvColorChartDetails;
-		private System.Windows.Forms.Label labelDxIcdVersionDetails;
-		private System.Windows.Forms.Label labelMedicalFeeUsedForNewProcsDetails;
-		private System.Windows.Forms.Label labelMedDefaultStopDaysDetails;
-		private System.Windows.Forms.LinkLabel linkLabelIsAlertRadiologyProcsEnabledDetails;
 	}
 }

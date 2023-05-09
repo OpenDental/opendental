@@ -299,7 +299,7 @@ namespace OpenDental.UI {
 			}
 			#endregion Provider Term Date Check
 			List<Procedure> procsForSingleApt=Procedures.GetProcsForSingle(apt.AptNum,false);
-			if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Change length for new provider?")){
+			if(Security.IsAuthorized(Permissions.AppointmentResize,suppressMessage:true) && MsgBox.Show(this,MsgBoxButtons.YesNo,"Change length for new provider?")){
 				List<long> codeNums=new List<long>();
 				for(int p=0;p<procsForSingleApt.Count;p++) {
 					codeNums.Add(procsForSingleApt[p].CodeNum);

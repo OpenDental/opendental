@@ -36,26 +36,6 @@ namespace OpenDental {
 			}
 		}
 
-		private void butInsuranceHistoryDetails_Click(object sender,EventArgs e) {
-			string html=@"See <a href='https://opendental.com/manual/inshistory.html' target='_blank' rel='noopener noreferrer'>Insurance History.</a> 
-				The default codes are:
-				<br><br>-Bitewing: D0272
-				<br>-Pano/FMX: D0210
-				<br>-Exam: D0120
-				<br>-Prophylaxis: D1110
-				<br>-Full Debridement: D4355
-				<br>-Perio Maintenance: D4910
-				<br>-Perio Scaling LL Code: D4341
-				<br>-Perio Scaling LR Code: D4341
-				<br>-Perio Scaling UL Code: D4341
-				<br>-Perio Scaling UR Code: D4341";
-			using FormWebBrowserPrefs formWebBrowserPrefs=new FormWebBrowserPrefs();
-			formWebBrowserPrefs.HtmlContent=html;
-			formWebBrowserPrefs.SizeWindow=new Size(300,275);
-			formWebBrowserPrefs.PointStart=PointToScreen(butInsuranceHistoryDetails.Location);
-			formWebBrowserPrefs.ShowDialog();
-		}
-
 		private void linkLabelProcDiscountTypeDetails_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {
 			try {
 				Process.Start("https://www.opendental.com/manual/treatmentplandiscounts.html");

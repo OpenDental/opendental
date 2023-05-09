@@ -70,9 +70,9 @@ namespace OpenDental.Misc {
 					},
 				new DbmInfo() {
 						MethodName=nameof(DatabaseMaintenances.ClaimProcWriteOffNegative),
-						Explanation="Patients with procedures have negative writeoff amounts.",
+						Explanation="Patients with procedures have negative write-off amounts.",
 						ManualFix="Go to the patients listed and manually correct the write-off amounts on the insurance estimates.",
-						WhyItHappens="A negative writeoff amount was entered."
+						WhyItHappens="A negative write-off amount was entered."
 					},
 				new DbmInfo() {
 						MethodName=nameof(DatabaseMaintenances.ClaimProcsWithPartialDuplicates),
@@ -98,12 +98,12 @@ namespace OpenDental.Misc {
 						ManualFix="Automatically fixed. No manual fix needed.",
 						WhyItHappens="Can occur when copy/pasting content."
 					},
-				/*new DbmInfo() {
-						MethodName=nameof(DatabaseMaintenances.PatientsNoClinicSet),
+				new DbmInfo() {
+						MethodName=nameof(DatabaseMaintenances.PatientNoClinicSet),
 						Explanation="The office has clinics enabled, but there are patients with no clinic set.",
 						ManualFix="Edit the patient's info to assign them a clinic.",
 						WhyItHappens="No clinic was assigned to the patient."
-					},*/
+					},
 				new DbmInfo() {
 						MethodName=nameof(DatabaseMaintenances.PatientPriProvHidden),
 						Explanation="There are patients whose primary provider has been marked as hidden from the list of providers.",
@@ -115,6 +115,12 @@ namespace OpenDental.Misc {
 						Explanation="Insurance plan entries for a patient have the same ordinal.",
 						ManualFix="Go into each account's Family Module, double-click the secondary insurance plan and set Order to 2.",
 						WhyItHappens=""
+					},
+				new DbmInfo() {
+ 						MethodName=nameof(DatabaseMaintenances.PaymentAmtNotMatchPaySplitTotal),
+ 						Explanation="Paysplits and/or ClaimPayments are attached to payment plan with the incorrect type.",
+ 						ManualFix="Find problem payments and detach them from payment plans.",
+ 						WhyItHappens="Paysplits or ClaimPayments accidentally got attached to a payment plan with the incorrect type."
 					},
 				new DbmInfo() {
  						MethodName=nameof(DatabaseMaintenances.PaymentMissingPaySplit),

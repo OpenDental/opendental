@@ -24,9 +24,6 @@ namespace OpenDental {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.labelcomboSalesTaxDefaultProviderDetails = new System.Windows.Forms.Label();
-			this.labelcheckAutomateSalesTaxDetails = new System.Windows.Forms.Label();
-			this.labelNegativeAdjustmentsDetails = new System.Windows.Forms.Label();
 			this.groupBoxAdjustments = new OpenDental.UI.GroupBox();
 			this.labelNegativeAdjustments = new System.Windows.Forms.Label();
 			this.comboNegativeAdjustments = new OpenDental.UI.ComboBox();
@@ -56,37 +53,6 @@ namespace OpenDental {
 			this.groupBox4.SuspendLayout();
 			this.groupBoxOD3.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// labelcomboSalesTaxDefaultProviderDetails
-			// 
-			this.labelcomboSalesTaxDefaultProviderDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelcomboSalesTaxDefaultProviderDetails.Location = new System.Drawing.Point(476, 297);
-			this.labelcomboSalesTaxDefaultProviderDetails.Name = "labelcomboSalesTaxDefaultProviderDetails";
-			this.labelcomboSalesTaxDefaultProviderDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelcomboSalesTaxDefaultProviderDetails.TabIndex = 323;
-			this.labelcomboSalesTaxDefaultProviderDetails.Text = "for sales tax adjustments";
-			this.labelcomboSalesTaxDefaultProviderDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelcheckAutomateSalesTaxDetails
-			// 
-			this.labelcheckAutomateSalesTaxDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelcheckAutomateSalesTaxDetails.Location = new System.Drawing.Point(476, 325);
-			this.labelcheckAutomateSalesTaxDetails.Name = "labelcheckAutomateSalesTaxDetails";
-			this.labelcheckAutomateSalesTaxDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelcheckAutomateSalesTaxDetails.TabIndex = 324;
-			this.labelcheckAutomateSalesTaxDetails.Text = "as procedures are completed, if the Procedure Code is marked \'Auto Tax\', then add" +
-    " sales tax";
-			this.labelcheckAutomateSalesTaxDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// labelNegativeAdjustmentsDetails
-			// 
-			this.labelNegativeAdjustmentsDetails.ForeColor = System.Drawing.Color.MidnightBlue;
-			this.labelNegativeAdjustmentsDetails.Location = new System.Drawing.Point(476, 158);
-			this.labelNegativeAdjustmentsDetails.Name = "labelNegativeAdjustmentsDetails";
-			this.labelNegativeAdjustmentsDetails.Size = new System.Drawing.Size(498, 17);
-			this.labelNegativeAdjustmentsDetails.TabIndex = 325;
-			this.labelNegativeAdjustmentsDetails.Text = "when adjustment amount exceeds remaining";
-			this.labelNegativeAdjustmentsDetails.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// groupBoxAdjustments
 			// 
@@ -342,14 +308,11 @@ namespace OpenDental {
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.White;
-			this.Controls.Add(this.labelNegativeAdjustmentsDetails);
-			this.Controls.Add(this.labelcheckAutomateSalesTaxDetails);
-			this.Controls.Add(this.labelcomboSalesTaxDefaultProviderDetails);
 			this.Controls.Add(this.groupBoxAdjustments);
 			this.Controls.Add(this.groupBox4);
 			this.Controls.Add(this.groupBoxOD3);
 			this.Name = "UserControlAccountAdjustments";
-			this.Size = new System.Drawing.Size(974, 624);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxAdjustments.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
 			this.groupBoxOD3.ResumeLayout(false);
@@ -382,10 +345,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelCurrentBadDebtAdjTypes;
 		private UI.Button butBadDebt;
 		private UI.GroupBox groupBoxAdjustments;
-		private System.Windows.Forms.Label labelcomboSalesTaxDefaultProviderDetails;
-		private System.Windows.Forms.Label labelcheckAutomateSalesTaxDetails;
 		private System.Windows.Forms.Label labelNegativeAdjustments;
 		private UI.ComboBox comboNegativeAdjustments;
-		private System.Windows.Forms.Label labelNegativeAdjustmentsDetails;
 	}
 }

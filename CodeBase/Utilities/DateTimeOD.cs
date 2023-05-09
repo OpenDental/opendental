@@ -75,5 +75,21 @@ namespace CodeBase {
 			}
 			return dateCalc;
 		}
+
+		///<summary>Returns true if the current time is between the start and end timespans 
+		///ex.timeStart=3:00am, timeEnd=4:00pm, Now=1:00pm returns true. 
+		///Considers the case where timeStart is greater than timeEnd,  
+		///ex. timeStart=7:00pm, timeEnd=3:00am, Now=12:00am returns true.</summary>
+		public static bool IsNowBetweenTimeSpans(TimeSpan timeStart,TimeSpan timeEnd) {
+			DateTime curDateTime=DateTime_.Now;
+			DateTime start=curDateTime.Date.Add(timeStart);
+			DateTime end=curDateTime.Date.Add(timeEnd);
+			if(start<end) {
+				//ex. 3:00am to 4:00pm, run inside of the bound.
+				return curDateTime.Between(start,end,isUpperBoundInclusive:false);
+			}
+			//ex. 7:00pm to 3:00am, so run outside of 3:00am to 7:00pm bound.
+			return !curDateTime.Between(end,start,isUpperBoundInclusive:false);
+		}
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -22,7 +23,8 @@ namespace OpenDentBusiness {
 		///<param name="serviceCode">Used on case by case basis to validate that customer is registered for the given service.</param>
 		///<returns>An XML string that can be passed into an HQ hosted web method.</returns>
 		public static string CreatePayload(
-			string payloadContentxAsXml,eServiceCode serviceCode,string registrationKey=null,string practiceTitle=null,string practicePhone=null,string programVersion=null) 
+			string payloadContentxAsXml,eServiceCode serviceCode,string registrationKey=null,string practiceTitle=null,string practicePhone=null,string programVersion=null,
+			string computerName=null,string programName=null) 
 		{
 			StringBuilder strbuild=new StringBuilder();
 			using(XmlWriter writer=XmlWriter.Create(strbuild,WebSerializer.CreateXmlWriterSettings(false))) {
@@ -42,6 +44,12 @@ namespace OpenDentBusiness {
 				writer.WriteEndElement();
 				writer.WriteStartElement("ServiceCode");
 				writer.WriteString(serviceCode.ToString());
+				writer.WriteEndElement();
+				writer.WriteStartElement("ComputerName");
+				writer.WriteString(computerName??ODEnvironment.MachineName);
+				writer.WriteEndElement();
+				writer.WriteStartElement("ProgramName");
+				writer.WriteString(programName??Assembly.GetEntryAssembly()?.GetName()?.Name??"");
 				writer.WriteEndElement();
 				writer.WriteEndElement(); //Credentials
 				writer.WriteRaw(payloadContentxAsXml);
