@@ -1486,7 +1486,7 @@ namespace OpenDentBusiness {
 		///Used in eReminders, eConfirms, manual confirmations, ASAP list texting, and other places.</summary>
 		PatientCommunicationDateFormat,
 		[PrefName(ValueType=PrefValueType.BOOL)]
-		PatientFlowsUseHQDefaults,
+		ERoutingUseHQDefaults,
 		PatientFormsShowConsent,
 		///<summary>Bool, false by default. Global pref. When true, the current patient and module will be maintained when switching OD users.</summary>
 		PatientMaintainedOnUserChange,

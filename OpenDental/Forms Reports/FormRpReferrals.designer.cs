@@ -33,6 +33,7 @@ namespace OpenDental {
 			this.butCheckAll = new OpenDental.UI.Button();
 			this.butClear = new OpenDental.UI.Button();
 			this.tabFilters = new OpenDental.UI.TabPage();
+			this.label2 = new System.Windows.Forms.Label();
 			this.butDeleteFilter = new OpenDental.UI.Button();
 			this.listOptions = new OpenDental.UI.ListBox();
 			this.listPrerequisites = new OpenDental.UI.ListBox();
@@ -43,7 +44,6 @@ namespace OpenDental {
 			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.textSQL = new System.Windows.Forms.TextBox();
-			this.label2 = new System.Windows.Forms.Label();
 			this.tabReferrals.SuspendLayout();
 			this.tabData.SuspendLayout();
 			this.tabFilters.SuspendLayout();
@@ -53,6 +53,7 @@ namespace OpenDental {
 			// 
 			this.tabReferrals.Controls.Add(this.tabData);
 			this.tabReferrals.Controls.Add(this.tabFilters);
+			this.tabReferrals.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabReferrals.Location = new System.Drawing.Point(14, 16);
 			this.tabReferrals.Name = "tabReferrals";
 			this.tabReferrals.Size = new System.Drawing.Size(814, 492);
@@ -114,6 +115,15 @@ namespace OpenDental {
 			this.tabFilters.TabIndex = 0;
 			this.tabFilters.Text = "WHERE";
 			this.tabFilters.Visible = false;
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(7, 13);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(123, 18);
+			this.label2.TabIndex = 35;
+			this.label2.Text = "WHERE";
+			this.label2.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// butDeleteFilter
 			// 
@@ -186,7 +196,7 @@ namespace OpenDental {
 			this.DropListFilter.Size = new System.Drawing.Size(172, 21);
 			this.DropListFilter.TabIndex = 1;
 			this.DropListFilter.Text = "WHERE";
-			this.DropListFilter.SelectedIndexChanged += new System.EventHandler(this.DropListFilter_SelectedIndexChanged);
+			this.DropListFilter.SelectionChangeCommitted += new System.EventHandler(this.DropListFilter_SelectedIndexChanged);
 			// 
 			// butCancel
 			// 
@@ -220,18 +230,9 @@ namespace OpenDental {
 			this.textSQL.ReadOnly = true;
 			this.textSQL.Size = new System.Drawing.Size(692, 124);
 			this.textSQL.TabIndex = 42;
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(7, 13);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(123, 18);
-			this.label2.TabIndex = 35;
-			this.label2.Text = "WHERE";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-			// 
+			//
 			// FormRpReferrals
-			// 
+			//
 			this.AcceptButton = this.butOK;
 			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(842, 683);

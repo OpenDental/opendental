@@ -1,5 +1,5 @@
 namespace OpenDental{
-	partial class FormFlowDefs {
+	partial class FormERoutingDefs {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -23,9 +23,9 @@ namespace OpenDental{
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormFlowDefs));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormERoutingDefs));
 			this.butClose = new OpenDental.UI.Button();
-			this.gridPatientFlows = new OpenDental.UI.GridOD();
+			this.gridERouting = new OpenDental.UI.GridOD();
 			this.butAdd = new OpenDental.UI.Button();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.checkUseDefault = new System.Windows.Forms.CheckBox();
@@ -45,12 +45,12 @@ namespace OpenDental{
 			// 
 			// gridPatientFlows
 			// 
-			this.gridPatientFlows.Location = new System.Drawing.Point(103, 74);
-			this.gridPatientFlows.Name = "gridPatientFlows";
-			this.gridPatientFlows.Size = new System.Drawing.Size(242, 434);
-			this.gridPatientFlows.TabIndex = 4;
-			this.gridPatientFlows.Title = "Flow Defs";
-			this.gridPatientFlows.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.GridCell_DoubleClick);
+			this.gridERouting.Location = new System.Drawing.Point(103, 74);
+			this.gridERouting.Name = "gridPatientFlows";
+			this.gridERouting.Size = new System.Drawing.Size(242, 434);
+			this.gridERouting.TabIndex = 4;
+			this.gridERouting.Title = "ERouting Defs";
+			this.gridERouting.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.GridCell_DoubleClick);
 			// 
 			// butAdd
 			// 
@@ -114,12 +114,12 @@ namespace OpenDental{
 			this.Controls.Add(this.checkUseDefault);
 			this.Controls.Add(this.comboClinic);
 			this.Controls.Add(this.butAdd);
-			this.Controls.Add(this.gridPatientFlows);
+			this.Controls.Add(this.gridERouting);
 			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormFlowDefs";
-			this.Text = "Flow Defs";
-			this.Load += new System.EventHandler(this.FormPatientFlow_Load);
+			this.Text = "ERouting Defs";
+			this.Load += new System.EventHandler(this.FormERouting_Load);
 			this.ResumeLayout(false);
 
 		}
@@ -127,7 +127,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butClose;
-		private UI.GridOD gridPatientFlows;
+		private UI.GridOD gridERouting;
 		private UI.Button butAdd;
 		private UI.ComboBoxClinicPicker comboClinic;
 		private System.Windows.Forms.CheckBox checkUseDefault;

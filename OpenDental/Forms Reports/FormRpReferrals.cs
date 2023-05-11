@@ -141,6 +141,9 @@ namespace OpenDental{
 		
 		
 		private void DropListFilter_SelectedIndexChanged(object sender, System.EventArgs e) {
+			if(DropListFilter.SelectedItem==null) {
+				return;
+			}
 			switch(DropListFilter.SelectedItem.ToString()){
    		  case "Address":
    		  case "Address2":

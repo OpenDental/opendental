@@ -188,7 +188,11 @@ namespace OpenDental {
 
 		private void FillGrid() {
 			gridMain.SetScaleAndZoom(LayoutManager.GetScaleMS(),LayoutManager.GetZoomLocal());
-			long selectedApptOtherNum=gridMain.GetSelectedIndex();
+			long selectedApptOtherNum=-1;
+			ApptOther appointmentOtherSelected=ListApptOthers.Find(x=>x.AptNum==gridMain.SelectedTag<long>());
+			if(appointmentOtherSelected != null){
+				selectedApptOtherNum=appointmentOtherSelected.AptNum;
+			}
 			int selectedIndex=-1;
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();

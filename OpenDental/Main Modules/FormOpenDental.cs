@@ -6461,20 +6461,8 @@ namespace OpenDental{
 			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
-			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Running this tool will automatically mark all payment plans that have"
-				+" been paid off and have no future charges as closed.  Do you want to continue?")) 
-			{
-				return;
-			}
-			long plansClosed=PayPlans.AutoClose(); //returns # of payplans closed.
-			string msgText;
-			if(plansClosed>0) {
-				msgText=Lan.g(this,"Success.")+"  "+plansClosed+" "+Lan.g(this,"plan(s) closed.");
-			}
-			else {
-				msgText=Lan.g(this,"There were no plans to close.");
-			}
-			MessageBox.Show(msgText);
+			FormPayPlansClose formPayPlansClose=new FormPayPlansClose();
+			formPayPlansClose.ShowDialog();
 		}
 
 		private void menuItemOrthoAuto_Click(object sender,EventArgs e) {
@@ -6740,7 +6728,7 @@ namespace OpenDental{
 		}
 
 		private void _menuItemPatientFlow_Click(object sender, EventArgs e) {
-			using FormFlows formPatientFlows = new FormFlows();
+			using FormERoutings formPatientFlows = new FormERoutings();
 			formPatientFlows.ShowDialog();
 		}
 		#endregion Menu - eServices

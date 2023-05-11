@@ -578,16 +578,16 @@
 			// 
 			this.radioBeforePM.Location = new System.Drawing.Point(151, 41);
 			this.radioBeforePM.Name = "radioBeforePM";
-			this.radioBeforePM.Size = new System.Drawing.Size(37, 15);
+			this.radioBeforePM.Size = new System.Drawing.Size(39, 20);
 			this.radioBeforePM.TabIndex = 86;
 			this.radioBeforePM.Text = "pm";
 			// 
 			// radioBeforeAM
 			// 
 			this.radioBeforeAM.Checked = true;
-			this.radioBeforeAM.Location = new System.Drawing.Point(108, 41);
+			this.radioBeforeAM.Location = new System.Drawing.Point(106, 41);
 			this.radioBeforeAM.Name = "radioBeforeAM";
-			this.radioBeforeAM.Size = new System.Drawing.Size(37, 15);
+			this.radioBeforeAM.Size = new System.Drawing.Size(39, 20);
 			this.radioBeforeAM.TabIndex = 85;
 			this.radioBeforeAM.TabStop = true;
 			this.radioBeforeAM.Text = "am";
@@ -619,9 +619,9 @@
 			// 
 			// radioAfterAM
 			// 
-			this.radioAfterAM.Location = new System.Drawing.Point(3, 2);
+			this.radioAfterAM.Location = new System.Drawing.Point(0, 2);
 			this.radioAfterAM.Name = "radioAfterAM";
-			this.radioAfterAM.Size = new System.Drawing.Size(37, 15);
+			this.radioAfterAM.Size = new System.Drawing.Size(39, 20);
 			this.radioAfterAM.TabIndex = 89;
 			this.radioAfterAM.Text = "am";
 			// 
@@ -630,7 +630,7 @@
 			this.radioAfterPM.Checked = true;
 			this.radioAfterPM.Location = new System.Drawing.Point(46, 2);
 			this.radioAfterPM.Name = "radioAfterPM";
-			this.radioAfterPM.Size = new System.Drawing.Size(36, 15);
+			this.radioAfterPM.Size = new System.Drawing.Size(39, 20);
 			this.radioAfterPM.TabIndex = 90;
 			this.radioAfterPM.TabStop = true;
 			this.radioAfterPM.Text = "pm";

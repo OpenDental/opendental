@@ -1,5 +1,5 @@
 namespace OpenDental{
-	partial class FormFlowDefEdit {
+	partial class FormERoutingDefEdit {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -23,7 +23,7 @@ namespace OpenDental{
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormFlowDefEdit));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormERoutingDefEdit));
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
@@ -32,7 +32,7 @@ namespace OpenDental{
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
 			this.butRemove = new OpenDental.UI.Button();
-			this.gridPatientFlowActions = new OpenDental.UI.GridOD();
+			this.gridPatientERoutingActions = new OpenDental.UI.GridOD();
 			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.comboActionType = new OpenDental.UI.ComboBox();
 			this.butAdd = new OpenDental.UI.Button();
@@ -41,12 +41,12 @@ namespace OpenDental{
 			this.butRemoveLinkType = new OpenDental.UI.Button();
 			this.gridLinkTypes = new OpenDental.UI.GridOD();
 			this.groupBoxOD3 = new OpenDental.UI.GroupBox();
+			this.labelGenAppts = new System.Windows.Forms.Label();
 			this.butAddLinkType = new OpenDental.UI.Button();
 			this.butAddSpecificTypes = new OpenDental.UI.Button();
 			this.comboLinkType = new OpenDental.UI.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
-			this.labelGenAppts = new System.Windows.Forms.Label();
 			this.groupBoxOD1.SuspendLayout();
 			this.groupBoxActions.SuspendLayout();
 			this.groupBoxOD2.SuspendLayout();
@@ -137,12 +137,12 @@ namespace OpenDental{
 			// 
 			// gridPatientFlowActions
 			// 
-			this.gridPatientFlowActions.Location = new System.Drawing.Point(3, 21);
-			this.gridPatientFlowActions.Name = "gridPatientFlowActions";
-			this.gridPatientFlowActions.Size = new System.Drawing.Size(214, 246);
-			this.gridPatientFlowActions.TabIndex = 5;
-			this.gridPatientFlowActions.Title = "Actions";
-			this.gridPatientFlowActions.TitleVisible = false;
+			this.gridPatientERoutingActions.Location = new System.Drawing.Point(3, 21);
+			this.gridPatientERoutingActions.Name = "gridPatientFlowActions";
+			this.gridPatientERoutingActions.Size = new System.Drawing.Size(214, 246);
+			this.gridPatientERoutingActions.TabIndex = 5;
+			this.gridPatientERoutingActions.Title = "Actions";
+			this.gridPatientERoutingActions.TitleVisible = false;
 			// 
 			// groupBoxOD1
 			// 
@@ -175,7 +175,7 @@ namespace OpenDental{
 			// 
 			// groupBoxActions
 			// 
-			this.groupBoxActions.Controls.Add(this.gridPatientFlowActions);
+			this.groupBoxActions.Controls.Add(this.gridPatientERoutingActions);
 			this.groupBoxActions.Controls.Add(this.groupBoxOD1);
 			this.groupBoxActions.Controls.Add(this.butDown);
 			this.groupBoxActions.Controls.Add(this.butUp);
@@ -195,7 +195,7 @@ namespace OpenDental{
 			this.groupBoxOD2.Name = "groupBoxOD2";
 			this.groupBoxOD2.Size = new System.Drawing.Size(473, 286);
 			this.groupBoxOD2.TabIndex = 16;
-			this.groupBoxOD2.Text = "Flow Triggers";
+			this.groupBoxOD2.Text = "ERouting Triggers";
 			// 
 			// butRemoveLinkType
 			// 
@@ -227,6 +227,15 @@ namespace OpenDental{
 			this.groupBoxOD3.Size = new System.Drawing.Size(199, 143);
 			this.groupBoxOD3.TabIndex = 17;
 			this.groupBoxOD3.Text = "Add Trigger Type";
+			// 
+			// labelGenAppts
+			// 
+			this.labelGenAppts.Location = new System.Drawing.Point(81, 40);
+			this.labelGenAppts.Name = "labelGenAppts";
+			this.labelGenAppts.Size = new System.Drawing.Size(115, 36);
+			this.labelGenAppts.TabIndex = 19;
+			this.labelGenAppts.Text = "Add with no Appt Type";
+			this.labelGenAppts.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// butAddLinkType
 			// 
@@ -264,7 +273,7 @@ namespace OpenDental{
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(430, 24);
 			this.label2.TabIndex = 17;
-			this.label2.Text = "Determines what actions should take place in this Flow and their order.";
+			this.label2.Text = "Determines what actions should take place in this ERoutingand their order.";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// label3
@@ -273,18 +282,9 @@ namespace OpenDental{
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(413, 40);
 			this.label3.TabIndex = 18;
-			this.label3.Text = "Specifies the situations for which this Flow Def will be available. If none enter" +
-    "ed, the flow is treated as \"General\".";
+			this.label3.Text = "Specifies the situations for which this ERouting Def will be available. If none e" +
+    "ntered, the eRouting is treated as \"General\".";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-			// 
-			// lableGenAppts
-			// 
-			this.labelGenAppts.Location = new System.Drawing.Point(81, 40);
-			this.labelGenAppts.Name = "lableGenAppts";
-			this.labelGenAppts.Size = new System.Drawing.Size(115, 36);
-			this.labelGenAppts.TabIndex = 19;
-			this.labelGenAppts.Text = "Add with no Appt Type";
-			this.labelGenAppts.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// FormFlowDefEdit
 			// 
@@ -301,7 +301,7 @@ namespace OpenDental{
 			this.Controls.Add(this.groupBoxActions);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormFlowDefEdit";
-			this.Text = "Patient Flow Def Edit";
+			this.Text = "ERouting Def Edit";
 			this.Load += new System.EventHandler(this.FormPatientFlowEdit_Load);
 			this.groupBoxOD1.ResumeLayout(false);
 			this.groupBoxActions.ResumeLayout(false);
@@ -322,7 +322,7 @@ namespace OpenDental{
 		private UI.Button butDown;
 		private UI.Button butUp;
 		private UI.Button butRemove;
-		private UI.GridOD gridPatientFlowActions;
+		private UI.GridOD gridPatientERoutingActions;
 		private UI.GroupBox groupBoxOD1;
 		private UI.ComboBox comboActionType;
 		private UI.Button butAdd;

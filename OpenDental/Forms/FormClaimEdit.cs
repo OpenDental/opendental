@@ -168,7 +168,7 @@ namespace OpenDental{
 			}
 			else {
 				tabControlMain.TabPages.Remove(tabCanadian);
-				tabControlMain.TabPages.Remove(tabCanadianAttachments);
+				tabControlAttach.TabPages.Remove(tabCanadianAttachments);
 			}
 			if(IsNew){
 				//butCheckAdd.Enabled=false; //button was removed.

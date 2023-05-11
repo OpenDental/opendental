@@ -428,7 +428,7 @@ namespace OpenDental {
 					,createClaimDataWrapper.ErrorMessage,insPlan,insSub,relatOther);
 			}
 			catch(Exception e){
-				LogClaimError(createClaimDataWrapper,e.ToString(),isVerbose,msgBoxHeader);
+				LogClaimError(createClaimDataWrapper,e.Message,isVerbose,msgBoxHeader);
 				return claim;
 			}
 			createClaimDataWrapper.CountClaimsCreated++;

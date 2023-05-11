@@ -691,7 +691,7 @@ namespace OpenDentBusiness{
 
 		///<summary>Automatically closes all payment plans that have no future charges and that are paid off.
 		///Returns the number of payment plans that were closed.</summary>
-		public static long AutoClose() {
+		public static long AutoClose(bool canIncludeDynamic=false) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetLong(MethodBase.GetCurrentMethod());
 			}
@@ -719,11 +719,22 @@ namespace OpenDentBusiness{
 			table=Db.GetTable(command);
 			long[] arrayPayPlanNums=table.AsEnumerable().Select(x => (long)x["PayPlanNum"]).ToArray();
 			List<PayPlan> listPayPlans=PayPlans.GetMany(arrayPayPlanNums);
+			int count=0;
 			for(int i=0;i<listPayPlans.Count;i++) {
+				if(listPayPlans[i].IsDynamic && canIncludeDynamic) {
+					double totalPaidAmt=0.00;
+					totalPaidAmt+=PIn.Double(table.Rows[i]["TotPay"].ToString());
+					totalPaidAmt+=PIn.Double(table.Rows[i]["InsPay"].ToString());
+					double totalCost=PayPlans.GetTotalCost(listPayPlans[i].PayPlanNum);
+					if(totalPaidAmt<totalCost) {
+						continue;
+					}
+				}
 				listPayPlans[i].IsClosed=true;
 				PayPlans.Update(listPayPlans[i]);
+				count++;
 			}
-			return listPayPlans.Count;
+			return count;
 		}
 
 		///<summary>Returns the salted hash for the payplan. Will return an empty string if the calling program is unable to use CDT.dll. </summary>

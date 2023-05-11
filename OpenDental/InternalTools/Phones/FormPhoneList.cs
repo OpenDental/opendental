@@ -172,7 +172,7 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e){
-			if(e.Col==7){//Customer
+			if(e.Col==8){//Customer
 				butGotoPatient_Click(this,new EventArgs());
 				return;
 			}

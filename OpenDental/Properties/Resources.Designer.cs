@@ -1286,6 +1286,16 @@ namespace OpenDental.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Podium_logo_Black {
+            get {
+                object obj = ResourceManager.GetObject("Podium_logo_Black", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap PracticeByNumbers_100x24 {
             get {
                 object obj = ResourceManager.GetObject("PracticeByNumbers_100x24", resourceCulture);
@@ -1294,7 +1304,15 @@ namespace OpenDental.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;&lt;ArrayOfPrefInf xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;&lt;PrefInf&gt;&lt;PrefName /&gt;&lt;ControlName&gt;UserControlManageBillingStatements.checkIntermingleDefault&lt;/ControlName&gt;&lt;ControlText&gt;Account Module statements default to intermingled mode&lt;/ControlText&gt;&lt;/PrefInf&gt;&lt;PrefInf&gt;&lt;PrefName /&gt;&lt;ControlName&gt;UserControlManageBillingStatements.label10&lt;/ControlName&gt;&lt;ControlText&gt;Account Numbers use&lt;/ControlText&gt;&lt;/PrefInf&gt;&lt;PrefInf&gt;&lt;PrefN [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;
+        ///&lt;ArrayOfPrefInf xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+        ///  &lt;PrefInf&gt;
+        ///    &lt;PrefName&gt;SalesTaxDoAutomate&lt;/PrefName&gt;
+        ///    &lt;Category&gt;AccountAdjustments&lt;/Category&gt;
+        ///    &lt;ControlName&gt;checkAutomateSalesTax&lt;/ControlName&gt;
+        ///    &lt;ControlText&gt;Automate Sales Tax&lt;/ControlText&gt;
+        ///    &lt;Details&gt;as procedures are completed, if the Procedure Code is marked &apos;Auto Tax&apos;, then add sales tax&lt;/Details&gt;
+        ///    &lt;WidthWindow&gt;0&lt;/WidthWindo [rest of string was truncated]&quot;;.
         /// </summary>
         public static string PrefInfos {
             get {
@@ -1469,7 +1487,7 @@ namespace OpenDental.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Sparks3D is a DirectX 11 plugin for Open Dental that is licensed separately.  Open Dental will still work fine without this plugin, but the older 3D &quot;SparksToothChart&quot; will require the user to install the DirectX 9 SDK.  To make the newer Sparks3D plugin work, the following two files must be present in the Sparks3D folder within the application folder:  Sparks3D.dll and Sparks3DXEngine.dll.  To disable the plugin for troubleshooting, rename the folder temporarily.
         ///
-        ///License:---------------------------------- [rest of string was truncated]&quot;;.
+        ///License:-------------------------------- [rest of string was truncated]&quot;;.
         /// </summary>
         public static string Sparks3D {
             get {

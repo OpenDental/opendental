@@ -178,8 +178,9 @@ namespace OpenDental {
 				butDeletePayment.Enabled=false;
 			}
 			else {
-				//If the payment is attached to a deposit, or the payment type is already 'None', or the payment is not for $0, disable the 'None' checkbox. 
-				if(_payment.DepositNum!=0 || _payment.PayType==0 || _payment.PayAmt!=0) {
+				bool isAccountingTransaction=AccountingAutoPays.GetDeepCopy().Exists(x => x.PayType==_payment.PayType);
+				//If the payment is attached to a deposit, or the payment type is already 'None', or the payment is attached to an accounting transaction, or the payment is not for $0, disable the 'None' checkbox. 
+				if(_payment.DepositNum!=0 || _payment.PayType==0 || isAccountingTransaction || _payment.PayAmt!=0) {
 					checkPayTypeNone.Enabled=false;
 				}
 				checkRecurring.Checked=_payment.IsRecurringCC;

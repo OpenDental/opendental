@@ -197,9 +197,9 @@ namespace OpenDental{
 			// 
 			// radioBeforePM
 			// 
-			this.radioBeforePM.Location = new System.Drawing.Point(200, 75);
+			this.radioBeforePM.Location = new System.Drawing.Point(196, 72);
 			this.radioBeforePM.Name = "radioBeforePM";
-			this.radioBeforePM.Size = new System.Drawing.Size(37, 16);
+			this.radioBeforePM.Size = new System.Drawing.Size(39, 20);
 			this.radioBeforePM.TabIndex = 86;
 			this.radioBeforePM.Text = "pm";
 			// 
@@ -214,9 +214,9 @@ namespace OpenDental{
 			// radioBeforeAM
 			// 
 			this.radioBeforeAM.Checked = true;
-			this.radioBeforeAM.Location = new System.Drawing.Point(158, 75);
+			this.radioBeforeAM.Location = new System.Drawing.Point(155, 72);
 			this.radioBeforeAM.Name = "radioBeforeAM";
-			this.radioBeforeAM.Size = new System.Drawing.Size(37, 16);
+			this.radioBeforeAM.Size = new System.Drawing.Size(39, 20);
 			this.radioBeforeAM.TabIndex = 85;
 			this.radioBeforeAM.TabStop = true;
 			this.radioBeforeAM.Text = "am";
@@ -240,9 +240,9 @@ namespace OpenDental{
 			// radioAfterAM
 			// 
 			this.radioAfterAM.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.radioAfterAM.Location = new System.Drawing.Point(3, 2);
+			this.radioAfterAM.Location = new System.Drawing.Point(0, 0);
 			this.radioAfterAM.Name = "radioAfterAM";
-			this.radioAfterAM.Size = new System.Drawing.Size(37, 15);
+			this.radioAfterAM.Size = new System.Drawing.Size(39, 20);
 			this.radioAfterAM.TabIndex = 89;
 			this.radioAfterAM.Text = "am";
 			// 
@@ -250,9 +250,9 @@ namespace OpenDental{
 			// 
 			this.radioAfterPM.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.radioAfterPM.Checked = true;
-			this.radioAfterPM.Location = new System.Drawing.Point(46, 3);
+			this.radioAfterPM.Location = new System.Drawing.Point(41, 0);
 			this.radioAfterPM.Name = "radioAfterPM";
-			this.radioAfterPM.Size = new System.Drawing.Size(36, 15);
+			this.radioAfterPM.Size = new System.Drawing.Size(39, 20);
 			this.radioAfterPM.TabIndex = 90;
 			this.radioAfterPM.TabStop = true;
 			this.radioAfterPM.Text = "pm";

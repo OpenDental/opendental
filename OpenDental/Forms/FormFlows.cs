@@ -9,19 +9,19 @@ using OpenDental.UI;
 using OpenDentBusiness;
 
 namespace OpenDental {
-	public partial class FormFlows:FormODBase {
+	public partial class FormERoutings:FormODBase {
 
 		private long _clinicNum;
-		private List<Flow> _listFlows = new List<Flow>();
+		private List<ERouting> _listERouting = new List<ERouting>();
 		private Patient _patient;
 
-		public FormFlows() {
+		public FormERoutings() {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
 		}
 
-		private void FormPatientFlows_Load(object sender,EventArgs e) {
+		private void FormPatientERouting_Load(object sender,EventArgs e) {
 			_clinicNum = Clinics.ClinicNum;
 			LayoutMenu();
 			FillGrid();
@@ -34,34 +34,34 @@ namespace OpenDental {
 		}
 
 		private void FillGrid() {
-			_listFlows = Flows.GetAllForClinicInDateRange(_clinicNum, datePicker.GetDateTimeFrom(), datePicker.GetDateTimeTo(), comboClinic.IsAllSelected);
+			_listERouting = ERoutings.GetAllForClinicInDateRange(_clinicNum, datePicker.GetDateTimeFrom(), datePicker.GetDateTimeTo(), comboClinic.IsAllSelected);
 			if(_patient != null)
 			{
-				_listFlows = _listFlows.Where(x => x.PatNum == _patient.PatNum).ToList();
+				_listERouting = _listERouting.Where(x => x.PatNum == _patient.PatNum).ToList();
 			}
-			gridFlows.BeginUpdate();
-			gridFlows.Columns.Clear();
-			gridFlows.ListGridRows.Clear();
-			gridFlows.Columns.Add(new GridColumn("Date", 150, textAlign: HorizontalAlignment.Center));
-			gridFlows.Columns.Add(new GridColumn("Patient", 170,textAlign: HorizontalAlignment.Center));
-			gridFlows.Columns.Add(new GridColumn("Description", 225, textAlign: HorizontalAlignment.Center));
-			gridFlows.Columns.Add(new GridColumn("Status", 80, textAlign: HorizontalAlignment.Center));
-			_listFlows.ForEach(flow => {
+			gridERouting.BeginUpdate();
+			gridERouting.Columns.Clear();
+			gridERouting.ListGridRows.Clear();
+			gridERouting.Columns.Add(new GridColumn("Date", 150, textAlign: HorizontalAlignment.Center));
+			gridERouting.Columns.Add(new GridColumn("Patient", 170,textAlign: HorizontalAlignment.Center));
+			gridERouting.Columns.Add(new GridColumn("Description", 225, textAlign: HorizontalAlignment.Center));
+			gridERouting.Columns.Add(new GridColumn("Status", 80, textAlign: HorizontalAlignment.Center));
+			_listERouting.ForEach(eRouting => {
 				GridRow row = new GridRow();
 
-				row.Cells.Add(new GridCell() { Text = flow.SecDateTEntry.ToString("G") });
-				row.Cells.Add(new GridCell() { Text = Patients.GetNameFL(flow.PatNum) });
-				row.Cells.Add(new GridCell() { Text = flow.Description });
-				row.Cells.Add(new GridCell() { Text = flow.IsComplete ? "Complete" : "Incomplete", ColorText = flow.IsComplete ? Color.ForestGreen : Color.Red });
-				row.Tag = flow;
-				gridFlows.ListGridRows.Add(row);
+				row.Cells.Add(new GridCell() { Text = eRouting.SecDateTEntry.ToString("G") });
+				row.Cells.Add(new GridCell() { Text = Patients.GetNameFL(eRouting.PatNum) });
+				row.Cells.Add(new GridCell() { Text = eRouting.Description });
+				row.Cells.Add(new GridCell() { Text = eRouting.IsComplete ? "Complete" : "Incomplete", ColorText = eRouting.IsComplete ? Color.ForestGreen : Color.Red });
+				row.Tag = eRouting;
+				gridERouting.ListGridRows.Add(row);
 			});
-			gridFlows.EndUpdate();
+			gridERouting.EndUpdate();
 		}
 
 		private void menuSetup_Click(object sender,EventArgs e) {
-			using FormFlowDefs formPatientFlowDefs = new FormFlowDefs();
-			formPatientFlowDefs.ShowDialog();
+			using FormERoutingDefs formERoutingDefs = new FormERoutingDefs();
+			formERoutingDefs.ShowDialog();
 		}
 
 		private void comboClinic_SelectionChangeCommitted(object sender, EventArgs e) {
@@ -70,11 +70,11 @@ namespace OpenDental {
 		}
 
 		private void butSelectPatient_Click(object sender, EventArgs e) {
-			using FormPatientSelect formPatientSelect=new FormPatientSelect();
-			formPatientSelect.IsSelectionModeOnly=true;
-			if (formPatientSelect.ShowDialog() == DialogResult.OK)
+			using FormPatientSelect formERoutingSelect=new FormPatientSelect();
+			formERoutingSelect.IsSelectionModeOnly=true;
+			if (formERoutingSelect.ShowDialog() == DialogResult.OK)
 			{
-				_patient=Patients.GetPat(formPatientSelect.PatNumSelected);
+				_patient=Patients.GetPat(formERoutingSelect.PatNumSelected);
 				textBoxPatName.Text=_patient.GetNameFL();
 				FillGrid();
 			}
@@ -88,8 +88,8 @@ namespace OpenDental {
 		}
 
 		private void gridFlowsCellDoubleClick(object sender, ODGridClickEventArgs e) {
-			using FormFlow formFlow = new FormFlow(gridFlows.SelectedTag<Flow>().FlowNum);
-			formFlow.ShowDialog();
+			using FormERouting formERouting = new FormERouting(gridERouting.SelectedTag<ERouting>().ERoutingNum);
+			formERouting.ShowDialog();
 		}
 
 		private void butRefresh_Click(object sender,EventArgs e) {

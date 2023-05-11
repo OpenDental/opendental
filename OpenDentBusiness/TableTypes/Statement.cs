@@ -80,28 +80,174 @@ namespace OpenDentBusiness{
 
 
 		///<summary>List of attached adjustment.AdjNums for this statement.  Limit in db: 16M char.</summary>
-		[CrudColumn(IsNotDbColumn=true)]
+		[XmlIgnore,CrudColumn(IsNotDbColumn=true)]
 		public List<long> _listAdjNums;
 		///<summary>List of attached paysplit.PaySplitNums for this statement.  Limit in db: 16M char.</summary>
-		[CrudColumn(IsNotDbColumn=true)]
+		[XmlIgnore,CrudColumn(IsNotDbColumn=true)]
 		public List<long> _listPaySplitNums;
 		///<summary>List of attached procedure.ProcNums for this statement.  Limit in db: 16M char.</summary>
-		[CrudColumn(IsNotDbColumn=true)]
+		[XmlIgnore,CrudColumn(IsNotDbColumn=true)]
 		public List<long> _listProcNums;
 		///<summary>List of attached claim.ClaimNums for this statement to track insurance payments.  Limit in db: 16M char.</summary>
-		[CrudColumn(IsNotDbColumn=true)]
+		[XmlIgnore,CrudColumn(IsNotDbColumn=true)]
 		public List<long> _listInsPayClaimNums;
 		///<summary>List of attached payplancharge.PayPlanNums for this statement.  Limit in db: 16M char.</summary>
-		[CrudColumn(IsNotDbColumn=true)]
+		[XmlIgnore,CrudColumn(IsNotDbColumn=true)]
 		public List<long> _listPayPlanChargeNums;
 		///<summary>List of patient.PatNum attached to this statement. Used for family and superfamily limited custom statements.</summary>
-		[CrudColumn(IsNotDbColumn=true)]
+		[XmlIgnore,CrudColumn(IsNotDbColumn=true)]
 		public List<long> _listPatNums;
 		///<summary>List of installment plans for this account. If this is a super family statement, will contain installment plans for the entire
 		///super family.</summary>
-		[CrudColumn(IsNotDbColumn=true)]
+		[XmlIgnore,CrudColumn(IsNotDbColumn=true)]
 		public List<InstallmentPlan> ListInstallmentPlans;
+		
+		///<summary>Used only for serialization purposes</summary>
+		[XmlElement("_listAdjNums",typeof(long[]))]
+		public long[] _listAdjNumsXml {
+			get {
+				if(_listAdjNums==null) {
+					return null;
+				}
+				return _listAdjNums.ToArray();
+			}
+			set {
+				if(value==null) {
+					_listAdjNums=null;
+					return;
+				}
+				_listAdjNums=new List<long>();
+				for(int i=0;i<value.Length;i++) {
+					_listAdjNums.Add(value[i]);
+				}
+			}
+		}
 
+		///<summary>Used only for serialization purposes</summary>
+		[XmlElement("_listPaySplitNums",typeof(long[]))]
+		public long[] _listPaySplitNumsXml {
+			get {
+				if(_listPaySplitNums==null) {
+					return null;
+				}
+				return _listPaySplitNums.ToArray();
+			}
+			set {
+				if(value==null) {
+					_listPaySplitNums=null;
+					return;
+				}
+				_listPaySplitNums=new List<long>();
+				for(int i=0;i<value.Length;i++) {
+					_listPaySplitNums.Add(value[i]);
+				}
+			}
+		}
+
+		///<summary>Used only for serialization purposes</summary>
+		[XmlElement("_listProcNums",typeof(long[]))]
+		public long[] _listProcNumsXml {
+			get {
+				if(_listProcNums==null) {
+					return null;
+				}
+				return _listProcNums.ToArray();
+			}
+			set {
+				if(value==null) {
+					_listProcNums=null;
+					return;
+				}
+				_listProcNums=new List<long>();
+				for(int i=0;i<value.Length;i++) {
+					_listProcNums.Add(value[i]);
+				}
+			}
+		}
+
+		///<summary>Used only for serialization purposes</summary>
+		[XmlElement("_listInsPayClaimNums",typeof(long[]))]
+		public long[] _listInsPayClaimNumsXml {
+			get {
+				if(_listInsPayClaimNums==null) {
+					return new long[0];
+				}
+				return _listInsPayClaimNums.ToArray();
+			}
+			set {
+				if(value==null) {
+					_listInsPayClaimNums=null;
+					return;
+				}
+				_listInsPayClaimNums=new List<long>();
+				for(int i=0;i<value.Length;i++) {
+					_listInsPayClaimNums.Add(value[i]);
+				}
+			}
+		}
+		
+		///<summary>Used only for serialization purposes</summary>
+		[XmlElement("_listPayPlanChargeNums",typeof(long[]))]
+		public long[] _listPayPlanChargeNumsXml {
+			get {
+				if(_listPayPlanChargeNums==null) {
+					return null;
+				}
+				return _listPayPlanChargeNums.ToArray();
+			}
+			set {
+				if(value==null) {
+					_listPayPlanChargeNums=null;
+					return;
+				}
+				_listPayPlanChargeNums=new List<long>();
+				for(int i=0;i<value.Length;i++) {
+					_listPayPlanChargeNums.Add(value[i]);
+				}
+			}
+		}
+
+		///<summary>Used only for serialization purposes</summary>
+		[XmlElement("_listPatNums",typeof(long[]))]
+		public long[] _listPatNumsXml {
+			get {
+				if(_listPatNums==null) {
+					return null;
+				}
+				return _listPatNums.ToArray();
+			}
+			set {
+				if(value==null) {
+					_listPatNums=null;
+					return;
+				}
+				_listPatNums=new List<long>();
+				for(int i=0;i<value.Length;i++) {
+					_listPatNums.Add(value[i]);
+				}
+			}
+		}
+
+		///<summary>Used only for serialization purposes</summary>
+		[XmlElement("ListInstallmentPlans",typeof(InstallmentPlan[]))]
+		public InstallmentPlan[] ListInstallmentPlansXml {
+			get {
+				if(ListInstallmentPlans==null) {
+					return null;
+				}
+				return ListInstallmentPlans.ToArray();
+			}
+			set {
+				if(value==null) {
+					ListInstallmentPlans=null;
+					return;
+				}
+				ListInstallmentPlans=new List<InstallmentPlan>();
+				for(int i=0;i<value.Length;i++) {
+					ListInstallmentPlans.Add(value[i]);
+				}
+			}
+		}
 
 		///<summary>Set list to null to force refresh.</summary>
 		[XmlIgnore,JsonIgnore]

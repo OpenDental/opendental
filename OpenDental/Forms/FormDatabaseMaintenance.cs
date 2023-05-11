@@ -307,7 +307,7 @@ namespace OpenDental {
 		private void unhideToolStripMenuItem_Click(object sender,EventArgs e) {
 			//Users can only unhide DBM methods from gridHidden or gridOld.
 			if(tabControlDBM.SelectedTab==tabHidden) {
-				UpdateDbmIsHiddenForGrid(gridMain,false);
+				UpdateDbmIsHiddenForGrid(gridHidden,false);
 				return;
 			}
 			if(tabControlDBM.SelectedTab==tabOld) {

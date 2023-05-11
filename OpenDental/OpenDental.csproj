@@ -696,6 +696,18 @@
     <Compile Include="Forms Reports\FormSearchPatNotes.designer.cs">
       <DependentUpon>FormSearchPatNotes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormERouting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormERouting.Designer.cs">
+      <DependentUpon>FormERouting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormPayPlansClose.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormPayPlansClose.designer.cs">
+      <DependentUpon>FormPayPlansClose.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormPatientListDiscount.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -731,12 +743,6 @@
     </Compile>
     <Compile Include="Forms\FormFlows.Designer.cs">
       <DependentUpon>FormFlows.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FormFlow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormFlow.Designer.cs">
-      <DependentUpon>FormFlow.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormFlowDefEdit.cs">
       <SubType>Form</SubType>
@@ -7833,6 +7839,12 @@
     <EmbeddedResource Include="Forms Reports\FormRpServiceDateView.resx">
       <DependentUpon>FormRpServiceDateView.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormERouting.resx">
+      <DependentUpon>FormERouting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormPayPlansClose.resx">
+      <DependentUpon>FormPayPlansClose.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormPatientListDiscount.resx">
       <DependentUpon>FormPatientListDiscount.cs</DependentUpon>
     </EmbeddedResource>
@@ -7862,9 +7874,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormDatePicker.resx">
       <DependentUpon>FormDatePicker.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormFlow.resx">
-      <DependentUpon>FormFlow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormFlowDefEdit.resx">
       <DependentUpon>FormFlowDefEdit.cs</DependentUpon>
@@ -11576,6 +11585,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Podium_logo_Black.png" />
     <None Include="Resources\PrefInfos.xml" />
     <None Include="Resources\splashCanada.jpg" />
     <None Include="Resources\Unison_BDR_Logo.png" />

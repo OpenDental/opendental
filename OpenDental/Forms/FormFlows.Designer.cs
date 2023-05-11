@@ -1,5 +1,5 @@
 namespace OpenDental{
-	partial class FormFlows {
+	partial class FormERoutings {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -24,9 +24,9 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormFlows));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormERouting));
 			this.butClose = new OpenDental.UI.Button();
-			this.gridFlows = new OpenDental.UI.GridOD();
+			this.gridERouting = new OpenDental.UI.GridOD();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.datePicker = new OpenDental.UI.ODDateRangePicker();
 			this.menuSetup = new OpenDental.UI.MenuOD();
@@ -50,11 +50,11 @@ namespace OpenDental{
 			// 
 			// gridFlows
 			// 
-			this.gridFlows.Location = new System.Drawing.Point(26, 93);
-			this.gridFlows.Name = "gridFlows";
-			this.gridFlows.Size = new System.Drawing.Size(746, 433);
-			this.gridFlows.TabIndex = 4;
-			this.gridFlows.CellDoubleClick += new UI.ODGridClickEventHandler(gridFlowsCellDoubleClick);
+			this.gridERouting.Location = new System.Drawing.Point(26, 93);
+			this.gridERouting.Name = "gridFlows";
+			this.gridERouting.Size = new System.Drawing.Size(746, 433);
+			this.gridERouting.TabIndex = 4;
+			this.gridERouting.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridFlowsCellDoubleClick);
 			// 
 			// comboClinic
 			// 
@@ -69,6 +69,7 @@ namespace OpenDental{
 			// datePicker
 			// 
 			this.datePicker.BackColor = System.Drawing.Color.Transparent;
+			this.datePicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.datePicker.Location = new System.Drawing.Point(26, 64);
 			this.datePicker.Name = "datePicker";
 			this.datePicker.Size = new System.Drawing.Size(453, 24);
@@ -144,12 +145,12 @@ namespace OpenDental{
 			this.Controls.Add(this.butRefresh);
 			this.Controls.Add(this.menuSetup);
 			this.Controls.Add(this.datePicker);
-			this.Controls.Add(this.gridFlows);
+			this.Controls.Add(this.gridERouting);
 			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormFlows";
-			this.Text = "Flows";
-			this.Load += new System.EventHandler(this.FormPatientFlows_Load);
+			this.Text = "ERouting";
+			this.Load += new System.EventHandler(this.FormPatientERouting_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -158,7 +159,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butClose;
-		private UI.GridOD gridFlows;
+		private UI.GridOD gridERouting;
 		private UI.ComboBoxClinicPicker comboClinic;
 		private UI.ODDateRangePicker datePicker;
 		private UI.MenuOD menuSetup;

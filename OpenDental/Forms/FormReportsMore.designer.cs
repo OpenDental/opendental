@@ -66,7 +66,6 @@ namespace OpenDental {
 			this.groupBusiness.Name = "groupBusiness";
 			this.groupBusiness.Size = new System.Drawing.Size(120, 53);
 			this.groupBusiness.TabIndex = 28;
-			this.groupBusiness.TabStop = false;
 			this.groupBusiness.Text = "Business Analytics";
 			// 
 			// picturePracticeByNumbers
@@ -87,13 +86,12 @@ namespace OpenDental {
 			this.groupPatientReviews.Name = "groupPatientReviews";
 			this.groupPatientReviews.Size = new System.Drawing.Size(120, 54);
 			this.groupPatientReviews.TabIndex = 26;
-			this.groupPatientReviews.TabStop = false;
 			this.groupPatientReviews.Text = "Patient Reviews";
 			// 
 			// picturePodium
 			// 
 			this.picturePodium.HasBorder = false;
-			this.picturePodium.Image = global::OpenDental.Properties.Resources.Podium_Button_100x24;
+			this.picturePodium.Image = global::OpenDental.Properties.Resources.Podium_logo_Black;
 			this.picturePodium.Location = new System.Drawing.Point(8, 19);
 			this.picturePodium.Name = "picturePodium";
 			this.picturePodium.Size = new System.Drawing.Size(95, 24);

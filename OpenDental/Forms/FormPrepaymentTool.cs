@@ -255,6 +255,7 @@ namespace OpenDental {
 				}
 				else {
 					_listProcedureCharges[index].ProcCount+=count;
+					_listProcedureCharges[index].Calc();
 				}
 				return;
 			}
@@ -307,6 +308,7 @@ namespace OpenDental {
 				if(listRepeatChargesForProc[i].DateStop.Year<1880) {
 					_listProcedureCharges[index].ProcCount+=remainder;
 					remainder=0;
+					_listProcedureCharges[index].Calc();
 					continue;
 				}
 				//Has a stop date, see if we hit it.
@@ -324,10 +326,12 @@ namespace OpenDental {
 						_listProcedureCharges[index].HasReachedStopDate=true;
 						remainder=combinedCount-difference;
 						_listProcedureCharges[index].ProcCount=difference;
+						_listProcedureCharges[index].Calc();
 						continue;
 					}
 					_listProcedureCharges[index].ProcCount+=remainder;
 					remainder=0;
+					_listProcedureCharges[index].Calc();
 					continue;
 				}
 				//Start date in future.
@@ -339,10 +343,12 @@ namespace OpenDental {
 					_listProcedureCharges[index].HasReachedStopDate=true;
 					remainder=combinedCount-difference;
 					_listProcedureCharges[index].ProcCount=difference;
+					_listProcedureCharges[index].Calc();
 					continue;
 				}
 				_listProcedureCharges[index].ProcCount+=remainder;
 				remainder=0;
+				_listProcedureCharges[index].Calc();
 			}
 		}
 

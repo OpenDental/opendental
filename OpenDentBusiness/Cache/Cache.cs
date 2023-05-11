@@ -210,11 +210,11 @@ namespace OpenDentBusiness {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.FeeScheds.ToString());
 				ds.Tables.Add(FeeScheds.GetTableFromCache(doRefreshServerCache));
 			}
-			if(listITypes.Contains(InvalidType.FlowDef) || isAll) {
+			if(listITypes.Contains(InvalidType.ERoutingDef) || isAll) {
 				ODEvent.Fire(ODEventType.Cache, prefix + InvalidType.PatFields.ToString());
-				ds.Tables.Add(FlowDefs.GetTableFromCache(doRefreshServerCache));
-				ds.Tables.Add(FlowActionDefs.GetTableFromCache(doRefreshServerCache));
-				ds.Tables.Add(FlowDefLinks.GetTableFromCache(doRefreshServerCache));
+				ds.Tables.Add(ERoutingDefs.GetTableFromCache(doRefreshServerCache));
+				ds.Tables.Add(ERoutingActionDefs.GetTableFromCache(doRefreshServerCache));
+				ds.Tables.Add(ERoutingDefLinks.GetTableFromCache(doRefreshServerCache));
 			}
 			if(listITypes.Contains(InvalidType.HL7Defs) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.HL7Defs.ToString());
@@ -581,11 +581,11 @@ namespace OpenDentBusiness {
 				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.FeeScheds.ToString());
 				FeeScheds.FillCacheFromTable(ds.Tables["FeeSched"]);
 			}
-			if(listITypes.Contains(InvalidType.FlowDef) || isAll) {
+			if(listITypes.Contains(InvalidType.ERoutingDef) || isAll) {
 				ODEvent.Fire(ODEventType.Cache, suffix + InvalidType.PatFields.ToString());
-				FlowDefs.FillCacheFromTable(ds.Tables["FlowDef"]);
-				FlowActionDefs.FillCacheFromTable(ds.Tables["FlowActionDef"]);
-				FlowDefLinks.FillCacheFromTable(ds.Tables["FlowDefLink"]);
+				ERoutingDefs.FillCacheFromTable(ds.Tables["FlowDef"]);
+				ERoutingActionDefs.FillCacheFromTable(ds.Tables["FlowActionDef"]);
+				ERoutingDefLinks.FillCacheFromTable(ds.Tables["FlowDefLink"]);
 			}
 			if(listITypes.Contains(InvalidType.HL7Defs) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.HL7Defs.ToString());
@@ -895,7 +895,7 @@ namespace OpenDentBusiness {
 			listInvalidTypes.Add(InvalidType.UserOdPrefs);
 			listInvalidTypes.Add(InvalidType.JobTeams);
 			listInvalidTypes.Add(InvalidType.LimitedBetaFeature);
-			listInvalidTypes.Add(InvalidType.FlowDef);
+			listInvalidTypes.Add(InvalidType.ERoutingDef);
 			listInvalidTypes.Add(InvalidType.FlowActionDef);
 			listInvalidTypes.Add(InvalidType.FlowDefLink);
 			return listInvalidTypes;
@@ -1068,11 +1068,11 @@ namespace OpenDentBusiness {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.FeeScheds.ToString());
 				FeeScheds.ClearCache();
 			}
-			if(listITypes.Contains(InvalidType.FlowDef) || isAll) {
+			if(listITypes.Contains(InvalidType.ERoutingDef) || isAll) {
 				ODEvent.Fire(ODEventType.Cache, prefix + InvalidType.PatFields.ToString());
-				FlowDefs.ClearCache();
-				FlowActionDefs.ClearCache();
-				FlowDefLinks.ClearCache();
+				ERoutingDefs.ClearCache();
+				ERoutingActionDefs.ClearCache();
+				ERoutingDefLinks.ClearCache();
 			}
 			if(listITypes.Contains(InvalidType.HL7Defs) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.HL7Defs.ToString());

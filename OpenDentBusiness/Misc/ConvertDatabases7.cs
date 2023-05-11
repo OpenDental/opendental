@@ -4878,6 +4878,87 @@ namespace OpenDentBusiness {
 			SecurityHash.UpdateHashing();
 		}
 
+		private static void To23_1_10() {
+			string command = "DROP TABLE IF EXISTS flow";
+			Db.NonQ(command);
+			command = "DROP TABLE IF EXISTS erouting";
+			Db.NonQ(command);
+			command = @"CREATE TABLE erouting (
+					ERoutingNum bigint NOT NULL auto_increment PRIMARY KEY,
+					Description varchar(255) NOT NULL,
+					PatNum bigint NOT NULL,
+					ClinicNum bigint NOT NULL,
+					SecDateTEntry datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+					IsComplete tinyint NOT NULL,
+					INDEX(PatNum),
+					INDEX(ClinicNum)
+					) DEFAULT CHARSET=utf8";
+			Db.NonQ(command);
+			command = "DROP TABLE IF EXISTS flowaction";
+			Db.NonQ(command);
+			command = "DROP TABLE IF EXISTS eroutingaction";
+			Db.NonQ(command);
+			command = @"CREATE TABLE eroutingaction (
+				ERoutingActionNum bigint NOT NULL auto_increment PRIMARY KEY,
+				ERoutingNum bigint NOT NULL,
+				ItemOrder int NOT NULL,
+				ERoutingActionType tinyint NOT NULL,
+				UserNum bigint NOT NULL,
+				IsComplete tinyint NOT NULL,
+				DateTimeComplete datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+				INDEX(ERoutingNum),
+				INDEX(UserNum)
+				) DEFAULT CHARSET=utf8";
+			Db.NonQ(command);
+			command = "DROP TABLE IF EXISTS flowactiondef";
+			Db.NonQ(command);
+			command = "DROP TABLE IF EXISTS eroutingactiondef";
+			Db.NonQ(command);
+			command = @"CREATE TABLE eroutingactiondef (
+				ERoutingActionDefNum bigint NOT NULL auto_increment PRIMARY KEY,
+				ERoutingDefNum bigint NOT NULL,
+				ERoutingActionType tinyint NOT NULL,
+				ItemOrder int NOT NULL,
+				SecDateTEntry datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+				DateTLastModified datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+				INDEX(ERoutingDefNum)
+				) DEFAULT CHARSET=utf8";
+			Db.NonQ(command);
+			command = "DROP TABLE IF EXISTS flowdef";
+			Db.NonQ(command);
+			command = "DROP TABLE IF EXISTS eroutingdef";
+			Db.NonQ(command);
+			command = @"CREATE TABLE eroutingdef (
+				ERoutingDefNum bigint NOT NULL auto_increment PRIMARY KEY,
+				ClinicNum bigint NOT NULL,
+				Description varchar(255) NOT NULL,
+				UserNumCreated bigint NOT NULL,
+				UserNumModified bigint NOT NULL,
+				SecDateTEntered datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+				DateLastModified datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+				INDEX(ClinicNum),
+				INDEX(UserNumCreated),
+				INDEX(UserNumModified)
+				) DEFAULT CHARSET=utf8";
+			Db.NonQ(command);
+			command = "DROP TABLE IF EXISTS flowdeflink";
+			Db.NonQ(command);
+			command = "DROP TABLE IF EXISTS eroutingdeflink";
+			Db.NonQ(command);
+			command = @"CREATE TABLE eroutingdeflink (
+				ERoutingDefLinkNum bigint NOT NULL auto_increment PRIMARY KEY,
+				ERoutingDefNum bigint NOT NULL,
+				Fkey bigint NOT NULL,
+				ERoutingType tinyint NOT NULL,
+				INDEX(ERoutingDefNum),
+				INDEX(Fkey)
+				) DEFAULT CHARSET=utf8";
+			Db.NonQ(command);
+			command = "UPDATE preference SET PrefName = 'ERoutingUseHQDefaults' WHERE PrefName = 'PatientFlowsUseHQDefaults';";
+			Db.NonQ(command);
+
+		}
+
 	}
 }
 
