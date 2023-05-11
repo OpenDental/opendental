@@ -25,11 +25,6 @@
 		private void InitializeComponent() {
 			this.tabTemplates = new System.Windows.Forms.TabControl();
 			this.tabEmailTemplate = new System.Windows.Forms.TabPage();
-			this.tabSMSTemplate = new System.Windows.Forms.TabPage();
-			this.tabAutoReplyTemplate = new System.Windows.Forms.TabPage();
-			this.tabArrivalTemplate = new System.Windows.Forms.TabPage();
-			this.groupBoxTags = new OpenDental.UI.GroupBox();
-			this.labelTags = new System.Windows.Forms.Label();
 			this.groupBoxEmailSubjAggShared = new OpenDental.UI.GroupBox();
 			this.labelEmailSubjAggShared = new System.Windows.Forms.Label();
 			this.textEmailSubjAggShared = new OpenDental.ODtextBox();
@@ -40,46 +35,51 @@
 			this.groupBoxEmailAggPerAppt = new OpenDental.UI.GroupBox();
 			this.labelEmailAggPerAppt = new System.Windows.Forms.Label();
 			this.textEmailAggPerAppt = new OpenDental.ODtextBox();
+			this.tabSMSTemplate = new System.Windows.Forms.TabPage();
 			this.groupBoxSMSAggPerAppt = new OpenDental.UI.GroupBox();
 			this.labelSMSAggPerAppt = new System.Windows.Forms.Label();
 			this.textSMSAggPerAppt = new OpenDental.ODtextBox();
 			this.groupBoxSMSAggShared = new OpenDental.UI.GroupBox();
 			this.labelSMSAggShared = new System.Windows.Forms.Label();
 			this.textSMSAggShared = new OpenDental.ODtextBox();
+			this.tabAutoReplyTemplate = new System.Windows.Forms.TabPage();
 			this.groupAggregateAutoReplyTemplate = new OpenDental.UI.GroupBox();
 			this.labelAggregateAutoReply = new System.Windows.Forms.Label();
 			this.textAggregateAutoReply = new OpenDental.ODtextBox();
 			this.groupAutoReplySingle = new OpenDental.UI.GroupBox();
 			this.labelSingleAutoReply = new System.Windows.Forms.Label();
 			this.textSingleAutoReply = new OpenDental.ODtextBox();
+			this.tabArrivalTemplate = new System.Windows.Forms.TabPage();
 			this.groupArrivedReply = new OpenDental.UI.GroupBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textArrivalResponse = new OpenDental.ODtextBox();
 			this.groupComeIn = new OpenDental.UI.GroupBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.textComeIn = new OpenDental.ODtextBox();
+			this.groupBoxTags = new OpenDental.UI.GroupBox();
+			this.labelTags = new System.Windows.Forms.Label();
 			this.tabTemplates.SuspendLayout();
 			this.tabEmailTemplate.SuspendLayout();
-			this.tabSMSTemplate.SuspendLayout();
-			this.tabAutoReplyTemplate.SuspendLayout();
-			this.tabArrivalTemplate.SuspendLayout();
-			this.groupBoxTags.SuspendLayout();
 			this.groupBoxEmailSubjAggShared.SuspendLayout();
 			this.groupBoxEmailAggShared.SuspendLayout();
 			this.groupBoxEmailAggPerAppt.SuspendLayout();
+			this.tabSMSTemplate.SuspendLayout();
 			this.groupBoxSMSAggPerAppt.SuspendLayout();
 			this.groupBoxSMSAggShared.SuspendLayout();
+			this.tabAutoReplyTemplate.SuspendLayout();
 			this.groupAggregateAutoReplyTemplate.SuspendLayout();
 			this.groupAutoReplySingle.SuspendLayout();
+			this.tabArrivalTemplate.SuspendLayout();
 			this.groupArrivedReply.SuspendLayout();
 			this.groupComeIn.SuspendLayout();
+			this.groupBoxTags.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tabTemplates
 			// 
 			this.tabTemplates.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.tabTemplates.Controls.Add(this.tabEmailTemplate);
 			this.tabTemplates.Controls.Add(this.tabSMSTemplate);
 			this.tabTemplates.Controls.Add(this.tabAutoReplyTemplate);
@@ -105,65 +105,10 @@
 			this.tabEmailTemplate.TabIndex = 1;
 			this.tabEmailTemplate.Text = "Email Templates";
 			// 
-			// tabSMSTemplate
-			// 
-			this.tabSMSTemplate.BackColor = System.Drawing.SystemColors.Control;
-			this.tabSMSTemplate.Controls.Add(this.groupBoxSMSAggPerAppt);
-			this.tabSMSTemplate.Controls.Add(this.groupBoxSMSAggShared);
-			this.tabSMSTemplate.Location = new System.Drawing.Point(4, 22);
-			this.tabSMSTemplate.Name = "tabSMSTemplate";
-			this.tabSMSTemplate.Padding = new System.Windows.Forms.Padding(3);
-			this.tabSMSTemplate.Size = new System.Drawing.Size(631, 434);
-			this.tabSMSTemplate.TabIndex = 0;
-			this.tabSMSTemplate.Text = "SMS Templates";
-			// 
-			// tabAutoReplyTemplate
-			// 
-			this.tabAutoReplyTemplate.BackColor = System.Drawing.SystemColors.Control;
-			this.tabAutoReplyTemplate.Controls.Add(this.groupAggregateAutoReplyTemplate);
-			this.tabAutoReplyTemplate.Controls.Add(this.groupAutoReplySingle);
-			this.tabAutoReplyTemplate.Location = new System.Drawing.Point(4, 22);
-			this.tabAutoReplyTemplate.Name = "tabAutoReplyTemplate";
-			this.tabAutoReplyTemplate.Size = new System.Drawing.Size(631, 434);
-			this.tabAutoReplyTemplate.TabIndex = 2;
-			this.tabAutoReplyTemplate.Text = "Auto Reply Templates";
-			// 
-			// tabArrivalTemplate
-			// 
-			this.tabArrivalTemplate.BackColor = System.Drawing.SystemColors.Control;
-			this.tabArrivalTemplate.Controls.Add(this.groupArrivedReply);
-			this.tabArrivalTemplate.Controls.Add(this.groupComeIn);
-			this.tabArrivalTemplate.Location = new System.Drawing.Point(4, 22);
-			this.tabArrivalTemplate.Name = "tabArrivalTemplate";
-			this.tabArrivalTemplate.Size = new System.Drawing.Size(631, 434);
-			this.tabArrivalTemplate.TabIndex = 3;
-			this.tabArrivalTemplate.Text = "Arrival Templates";
-			// 
-			// groupBoxTags
-			// 
-			this.groupBoxTags.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBoxTags.Controls.Add(this.labelTags);
-			this.groupBoxTags.Location = new System.Drawing.Point(1, 2);
-			this.groupBoxTags.Name = "groupBoxTags";
-			this.groupBoxTags.Size = new System.Drawing.Size(639, 73);
-			this.groupBoxTags.TabIndex = 21;
-			this.groupBoxTags.Text = "Template Replacement Tags";
-			// 
-			// labelTags
-			// 
-			this.labelTags.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelTags.Location = new System.Drawing.Point(3, 16);
-			this.labelTags.Name = "labelTags";
-			this.labelTags.Size = new System.Drawing.Size(633, 54);
-			this.labelTags.TabIndex = 19;
-			this.labelTags.Text = "Use template tags to create dynamic messages.";
-			// 
 			// groupBoxEmailSubjAggShared
 			// 
 			this.groupBoxEmailSubjAggShared.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBoxEmailSubjAggShared.BackColor = System.Drawing.SystemColors.Control;
 			this.groupBoxEmailSubjAggShared.Controls.Add(this.labelEmailSubjAggShared);
 			this.groupBoxEmailSubjAggShared.Controls.Add(this.textEmailSubjAggShared);
@@ -222,8 +167,8 @@
 			// 
 			this.browserEmailBody.AllowWebBrowserDrop = false;
 			this.browserEmailBody.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.browserEmailBody.Location = new System.Drawing.Point(10, 36);
 			this.browserEmailBody.MinimumSize = new System.Drawing.Size(20, 20);
 			this.browserEmailBody.Name = "browserEmailBody";
@@ -256,16 +201,15 @@
 			this.labelEmailAggPerAppt.Name = "labelEmailAggPerAppt";
 			this.labelEmailAggPerAppt.Size = new System.Drawing.Size(471, 18);
 			this.labelEmailAggPerAppt.TabIndex = 17;
-			this.labelEmailAggPerAppt.Text = "A single appointment template. Formats each appointment listed in the aggregate m" +
-    "essage.";
+			this.labelEmailAggPerAppt.Text = "A single appointment template. Formats each appointment listed in the aggregate message.";
 			this.labelEmailAggPerAppt.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// textEmailAggPerAppt
 			// 
 			this.textEmailAggPerAppt.AcceptsTab = true;
 			this.textEmailAggPerAppt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.textEmailAggPerAppt.BackColor = System.Drawing.SystemColors.Window;
 			this.textEmailAggPerAppt.DetectLinksEnabled = false;
 			this.textEmailAggPerAppt.DetectUrls = false;
@@ -277,10 +221,22 @@
 			this.textEmailAggPerAppt.TabIndex = 5;
 			this.textEmailAggPerAppt.Text = "";
 			// 
+			// tabSMSTemplate
+			// 
+			this.tabSMSTemplate.BackColor = System.Drawing.SystemColors.Control;
+			this.tabSMSTemplate.Controls.Add(this.groupBoxSMSAggPerAppt);
+			this.tabSMSTemplate.Controls.Add(this.groupBoxSMSAggShared);
+			this.tabSMSTemplate.Location = new System.Drawing.Point(4, 22);
+			this.tabSMSTemplate.Name = "tabSMSTemplate";
+			this.tabSMSTemplate.Padding = new System.Windows.Forms.Padding(3);
+			this.tabSMSTemplate.Size = new System.Drawing.Size(631, 434);
+			this.tabSMSTemplate.TabIndex = 0;
+			this.tabSMSTemplate.Text = "SMS Templates";
+			// 
 			// groupBoxSMSAggPerAppt
 			// 
 			this.groupBoxSMSAggPerAppt.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBoxSMSAggPerAppt.BackColor = System.Drawing.SystemColors.Control;
 			this.groupBoxSMSAggPerAppt.Controls.Add(this.labelSMSAggPerAppt);
 			this.groupBoxSMSAggPerAppt.Controls.Add(this.textSMSAggPerAppt);
@@ -296,12 +252,13 @@
 			this.labelSMSAggPerAppt.Name = "labelSMSAggPerAppt";
 			this.labelSMSAggPerAppt.Size = new System.Drawing.Size(471, 13);
 			this.labelSMSAggPerAppt.TabIndex = 11;
-			this.labelSMSAggPerAppt.Text = "A single appointment template. Formats each appointment listed in the aggregate m" +
-    "essage.";
+			this.labelSMSAggPerAppt.Text = "A single appointment template. Formats each appointment listed in the aggregate message.";
 			// 
 			// textSMSAggPerAppt
 			// 
 			this.textSMSAggPerAppt.AcceptsTab = true;
+			this.textSMSAggPerAppt.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.textSMSAggPerAppt.BackColor = System.Drawing.SystemColors.Window;
 			this.textSMSAggPerAppt.DetectLinksEnabled = false;
 			this.textSMSAggPerAppt.DetectUrls = false;
@@ -316,13 +273,13 @@
 			// groupBoxSMSAggShared
 			// 
 			this.groupBoxSMSAggShared.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBoxSMSAggShared.BackColor = System.Drawing.SystemColors.Control;
 			this.groupBoxSMSAggShared.Controls.Add(this.labelSMSAggShared);
 			this.groupBoxSMSAggShared.Controls.Add(this.textSMSAggShared);
 			this.groupBoxSMSAggShared.Location = new System.Drawing.Point(2, 3);
 			this.groupBoxSMSAggShared.Name = "groupBoxSMSAggShared";
-			this.groupBoxSMSAggShared.Size = new System.Drawing.Size(627, 155);
+			this.groupBoxSMSAggShared.Size = new System.Drawing.Size(626, 155);
 			this.groupBoxSMSAggShared.TabIndex = 8;
 			this.groupBoxSMSAggShared.Text = "Aggregated SMS Template";
 			// 
@@ -337,6 +294,8 @@
 			// textSMSAggShared
 			// 
 			this.textSMSAggShared.AcceptsTab = true;
+			this.textSMSAggShared.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.textSMSAggShared.BackColor = System.Drawing.SystemColors.Window;
 			this.textSMSAggShared.DetectLinksEnabled = false;
 			this.textSMSAggShared.DetectUrls = false;
@@ -348,10 +307,21 @@
 			this.textSMSAggShared.TabIndex = 1;
 			this.textSMSAggShared.Text = "";
 			// 
+			// tabAutoReplyTemplate
+			// 
+			this.tabAutoReplyTemplate.BackColor = System.Drawing.SystemColors.Control;
+			this.tabAutoReplyTemplate.Controls.Add(this.groupAggregateAutoReplyTemplate);
+			this.tabAutoReplyTemplate.Controls.Add(this.groupAutoReplySingle);
+			this.tabAutoReplyTemplate.Location = new System.Drawing.Point(4, 22);
+			this.tabAutoReplyTemplate.Name = "tabAutoReplyTemplate";
+			this.tabAutoReplyTemplate.Size = new System.Drawing.Size(627, 434);
+			this.tabAutoReplyTemplate.TabIndex = 2;
+			this.tabAutoReplyTemplate.Text = "Auto Reply Templates";
+			// 
 			// groupAggregateAutoReplyTemplate
 			// 
 			this.groupAggregateAutoReplyTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.groupAggregateAutoReplyTemplate.BackColor = System.Drawing.SystemColors.Control;
 			this.groupAggregateAutoReplyTemplate.Controls.Add(this.labelAggregateAutoReply);
 			this.groupAggregateAutoReplyTemplate.Controls.Add(this.textAggregateAutoReply);
@@ -386,7 +356,7 @@
 			// groupAutoReplySingle
 			// 
 			this.groupAutoReplySingle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.groupAutoReplySingle.BackColor = System.Drawing.SystemColors.Control;
 			this.groupAutoReplySingle.Controls.Add(this.labelSingleAutoReply);
 			this.groupAutoReplySingle.Controls.Add(this.textSingleAutoReply);
@@ -418,10 +388,21 @@
 			this.textSingleAutoReply.TabIndex = 2;
 			this.textSingleAutoReply.Text = "";
 			// 
+			// tabArrivalTemplate
+			// 
+			this.tabArrivalTemplate.BackColor = System.Drawing.SystemColors.Control;
+			this.tabArrivalTemplate.Controls.Add(this.groupArrivedReply);
+			this.tabArrivalTemplate.Controls.Add(this.groupComeIn);
+			this.tabArrivalTemplate.Location = new System.Drawing.Point(4, 22);
+			this.tabArrivalTemplate.Name = "tabArrivalTemplate";
+			this.tabArrivalTemplate.Size = new System.Drawing.Size(627, 434);
+			this.tabArrivalTemplate.TabIndex = 3;
+			this.tabArrivalTemplate.Text = "Arrival Templates";
+			// 
 			// groupArrivedReply
 			// 
 			this.groupArrivedReply.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.groupArrivedReply.BackColor = System.Drawing.SystemColors.Control;
 			this.groupArrivedReply.Controls.Add(this.label2);
 			this.groupArrivedReply.Controls.Add(this.textArrivalResponse);
@@ -437,8 +418,7 @@
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(614, 13);
 			this.label2.TabIndex = 11;
-			this.label2.Text = "Automatic response when arrival message is received from patient.  Leave blank to" +
-    " disable.";
+			this.label2.Text = "Automatic response when arrival message is received from patient.  Leave blank to disable.";
 			// 
 			// textArrivalResponse
 			// 
@@ -457,7 +437,7 @@
 			// groupComeIn
 			// 
 			this.groupComeIn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.groupComeIn.BackColor = System.Drawing.SystemColors.Control;
 			this.groupComeIn.Controls.Add(this.label1);
 			this.groupComeIn.Controls.Add(this.textComeIn);
@@ -473,8 +453,7 @@
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(614, 13);
 			this.label1.TabIndex = 11;
-			this.label1.Text = "Message sent when office is ready for the patient.  Accessed by right-clicking on" +
-    " appointment.";
+			this.label1.Text = "Message sent when office is ready for the patient.  Accessed by right-clicking on appointment.";
 			// 
 			// textComeIn
 			// 
@@ -490,6 +469,27 @@
 			this.textComeIn.TabIndex = 2;
 			this.textComeIn.Text = "";
 			// 
+			// groupBoxTags
+			// 
+			this.groupBoxTags.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBoxTags.Controls.Add(this.labelTags);
+			this.groupBoxTags.Location = new System.Drawing.Point(1, 2);
+			this.groupBoxTags.Name = "groupBoxTags";
+			this.groupBoxTags.Size = new System.Drawing.Size(639, 73);
+			this.groupBoxTags.TabIndex = 21;
+			this.groupBoxTags.Text = "Template Replacement Tags";
+			// 
+			// labelTags
+			// 
+			this.labelTags.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.labelTags.Location = new System.Drawing.Point(3, 16);
+			this.labelTags.Name = "labelTags";
+			this.labelTags.Size = new System.Drawing.Size(633, 54);
+			this.labelTags.TabIndex = 19;
+			this.labelTags.Text = "Use template tags to create dynamic messages.";
+			// 
 			// UserControlReminderAgg
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -501,19 +501,19 @@
 			this.Size = new System.Drawing.Size(641, 537);
 			this.tabTemplates.ResumeLayout(false);
 			this.tabEmailTemplate.ResumeLayout(false);
-			this.tabSMSTemplate.ResumeLayout(false);
-			this.tabAutoReplyTemplate.ResumeLayout(false);
-			this.tabArrivalTemplate.ResumeLayout(false);
-			this.groupBoxTags.ResumeLayout(false);
 			this.groupBoxEmailSubjAggShared.ResumeLayout(false);
 			this.groupBoxEmailAggShared.ResumeLayout(false);
 			this.groupBoxEmailAggPerAppt.ResumeLayout(false);
+			this.tabSMSTemplate.ResumeLayout(false);
 			this.groupBoxSMSAggPerAppt.ResumeLayout(false);
 			this.groupBoxSMSAggShared.ResumeLayout(false);
+			this.tabAutoReplyTemplate.ResumeLayout(false);
 			this.groupAggregateAutoReplyTemplate.ResumeLayout(false);
 			this.groupAutoReplySingle.ResumeLayout(false);
+			this.tabArrivalTemplate.ResumeLayout(false);
 			this.groupArrivedReply.ResumeLayout(false);
 			this.groupComeIn.ResumeLayout(false);
+			this.groupBoxTags.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}

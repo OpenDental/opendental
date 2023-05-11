@@ -896,10 +896,10 @@ namespace OpenDental {
 		}
 
 		public void SelectTreeNode(NodeTypeAndKey nodeTypeAndKey,string localPathImportedCloud="") {
-			ClearObjects();
 			_pointTranslation=new Point();
 			panelMain.Visible=true;
 			_cloudIframe?.HideIframe();
+			ClearObjects();
 			if(_odWebView2!=null) {
 				_odWebView2.Visible=false;
 				IsImageFloatLocked=false;

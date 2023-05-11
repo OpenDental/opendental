@@ -148,8 +148,7 @@ namespace OpenDental{
 			// gridClaims
 			// 
 			this.gridClaims.AllowSortingByColumn = true;
-			this.gridClaims.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+			this.gridClaims.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridClaims.Location = new System.Drawing.Point(12, 242);
 			this.gridClaims.Name = "gridClaims";
@@ -208,14 +207,14 @@ namespace OpenDental{
 			this.butSelectEob.Visible = false;
 			this.butSelectEob.Click += new System.EventHandler(this.butSelectEob_Click);
 			// 
-			// gridClaimProcedureDetail
+			// gridClaimProcedureAdjustments
 			// 
 			this.gridClaimProcedureAdjustments.AllowSortingByColumn = true;
 			this.gridClaimProcedureAdjustments.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridClaimProcedureAdjustments.Location = new System.Drawing.Point(12, 536);
-			this.gridClaimProcedureAdjustments.Name = "gridClaimProcedureDetail";
+			this.gridClaimProcedureAdjustments.Name = "gridClaimProcedureAdjustments";
 			this.gridClaimProcedureAdjustments.Size = new System.Drawing.Size(1119, 154);
 			this.gridClaimProcedureAdjustments.TabIndex = 11;
 			this.gridClaimProcedureAdjustments.Title = "Claim Procedure Adjustments";

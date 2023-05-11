@@ -95,7 +95,6 @@ namespace OpenDental{
 			// 
 			// butSetup
 			// 
-			this.butSetup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.butSetup.Location = new System.Drawing.Point(11, 2);
 			this.butSetup.Name = "butSetup";
 			this.butSetup.Size = new System.Drawing.Size(75, 24);

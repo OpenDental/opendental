@@ -1389,13 +1389,16 @@ namespace OpenDental {
 				_listTaskNotes=new List<TaskNote>();
 				return;
 			}
+			if(tabContr==null) {
+				return;
+			}
 			_listSentTaskSignalNums.Clear();//Full refresh, tracked sent signals are now irrelevant and taking up memory.
 			TaskType taskType=TaskType.Normal;
 			if(tabContr.SelectedTab==tabReminders) {
 				taskType=TaskType.Reminder;
 			}
 			//Clear copy lists if switching between tabs.
-			if(_previousTabName!=tabContr.SelectedTab.Name) {
+			if(tabContr.SelectedTab==null || _previousTabName!=tabContr.SelectedTab.Name) {
 				_listTaskListsCopy=new List<TaskList>();
 				_listTasksCopy=new List<Task>();
 			}
@@ -1550,7 +1553,10 @@ namespace OpenDental {
 				}
 			}
 			_listTaskNotes=TaskNotes.RefreshForTasks(taskNums);
-			_previousTabName=tabContr.SelectedTab.Name;
+			_previousTabName="";
+			if(tabContr.SelectedTab!=null) {
+				_previousTabName=tabContr.SelectedTab.Name;
+			}
 		}
 
 		///<summary>Returns a list of TaskLists containing all directly and indirectly subscribed TaskLists for the current user.</summary>

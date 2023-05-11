@@ -31,6 +31,8 @@ namespace OpenDental {
 		private List<Procedure>_listProceduresForNewPayPlan;
 		///<summary>Will be false if pay plan was opened from another window</summary>
 		bool _hasGoToButtons;
+		private bool _isHeadingPrinted;
+		private int _pagesPrinted;
 		#endregion
 		#region Properties
 		private decimal _sumAttachedProduction {
@@ -831,11 +833,12 @@ namespace OpenDental {
 		}
 
 		private void ButPrintProduction_Click(object sender,EventArgs e) {
+			_pagesPrinted=0;
+			_isHeadingPrinted=false;
 			PrinterL.TryPrintOrDebugRpPreview(pd_PrintPage,Lan.g(this,"Attached PayPlan Production printed"),PrintoutOrientation.Landscape);
 		}
 
 		private void pd_PrintPage(object sender,PrintPageEventArgs e) {
-			int pagesPrinted=0; 
 			Rectangle bounds=e.MarginBounds;
 			//new Rectangle(50,40,800,1035);//Some printers can handle up to 1042
 			Graphics g=e.Graphics;
@@ -844,10 +847,9 @@ namespace OpenDental {
 			using Font fontSubHeading=new Font("Arial",10,FontStyle.Bold);
 			int yPos=bounds.Top;
 			int center=bounds.X+bounds.Width/2;
-			bool headingPrinted=false;
 			int headingPrintH=0;
 			#region printHeading
-			if(!headingPrinted) {
+			if(!_isHeadingPrinted) {
 				text=Lan.g(this,"Payment Plan Credits");
 				g.DrawString(text,fontHeading,Brushes.Black,center-g.MeasureString(text,fontHeading).Width/2,yPos);
 				yPos+=(int)g.MeasureString(text,fontHeading).Height;
@@ -857,12 +859,12 @@ namespace OpenDental {
 				text=Patients.GetNameFLnoPref(_dynamicPaymentPlanData.Patient.LName,_dynamicPaymentPlanData.Patient.FName,"");
 				g.DrawString(text,fontSubHeading,Brushes.Black,center-g.MeasureString(text,fontSubHeading).Width/2,yPos);
 				yPos+=20;
-				headingPrinted=true;
+				_isHeadingPrinted=true;
 				headingPrintH=yPos;
 			}
 			#endregion
-			yPos=gridLinkedProduction.PrintPage(g,pagesPrinted,bounds,headingPrintH);
-			pagesPrinted++;
+			yPos=gridLinkedProduction.PrintPage(g,_pagesPrinted,bounds,headingPrintH);
+			_pagesPrinted++;
 			if(yPos==-1) {
 				e.HasMorePages=true;
 			}

@@ -30,21 +30,24 @@ namespace OpenDentBusiness{
 			table.Columns.Add("Instructions");
 			List<DataRow> rows=new List<DataRow>();
 			//the first query only gets labcases that are attached to scheduled or planned appointments
-			string command="SELECT appointment.AptStatus,AptDateTime,appointment.AptNum,appointment.Op,DateTimeChecked,DateTimeRecd,"
-				+"DateTimeSent,LabCaseNum,laboratory.Description,LName,FName,Preferred,MiddleI,Phone,ProcDescript,Instructions "
+			string command="SELECT COALESCE(appointment.AptStatus,ap1.AptStatus) AptStatus, COALESCE(appointment.AptDateTime, ap1.AptDateTime) AS AptDateTime,"
+				+"COALESCE(appointment.AptNum, ap1.AptNum) AS AptNum, COALESCE(appointment.Op, ap1.Op) AS Op, DateTimeChecked,"
+				+"DateTimeRecd,DateTimeSent, LabCaseNum, laboratory.Description, LName, FName, Preferred, MiddleI, Phone,"
+				+"COALESCE(appointment.ProcDescript,ap1.ProcDescript) AS ProcDescript, Instructions "
 				+"FROM labcase "
-				+"LEFT JOIN appointment ON (labcase.AptNum=0 AND labcase.PlannedAptNum=appointment.AptNum) "
-				+"OR (labcase.AptNum>0 AND labcase.AptNum=appointment.AptNum) "
+				+"LEFT JOIN appointment ap1 ON labcase.AptNum=0 AND labcase.PlannedAptNum=ap1.AptNum "
+				+"LEFT JOIN appointment ON labcase.AptNum > 0 AND labcase.AptNum=appointment.AptNum "
 				+"LEFT JOIN patient ON labcase.PatNum=patient.PatNum "
 				+"LEFT JOIN laboratory ON labcase.LaboratoryNum=laboratory.LaboratoryNum "
-				+"WHERE AptDateTime > "+POut.Date(aptStartDate)+" "
-				+"AND AptDateTime < "+POut.Date(aptEndDate.AddDays(1))+" ";
+				+"WHERE COALESCE(appointment.AptDateTime,ap1.AptDateTime)"
+				+"BETWEEN DATE("+POut.Date(aptStartDate.AddDays(1))+") AND DATE("+POut.Date(aptEndDate)+") ";
 			if(!showCompleted){
-				command+=" AND (AptStatus="+POut.Long((int)ApptStatus.Broken)
-					+" OR AptStatus="+POut.Long((int)ApptStatus.Planned)
-					+" OR AptStatus="+POut.Long((int)ApptStatus.None)
-					+" OR AptStatus="+POut.Long((int)ApptStatus.Scheduled)
-					+" OR AptStatus="+POut.Long((int)ApptStatus.UnschedList)+") ";
+				command+=" AND COALESCE(appointment.AptStatus,ap1.AptStatus) IN " +
+					"("+POut.Long((int)ApptStatus.Broken)
+					+","+POut.Long((int)ApptStatus.Planned)
+					+","+POut.Long((int)ApptStatus.None)
+					+","+POut.Long((int)ApptStatus.Scheduled)
+					+","+POut.Long((int)ApptStatus.UnschedList)+") ";
 			}
 			DataTable raw=Db.GetTable(command);
 			DateTime AptDateTime;

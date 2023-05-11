@@ -4293,6 +4293,9 @@ namespace OpenDental {
 			payPlan.IsNew=true;
 			payPlan.PatNum=_patCur.PatNum;
 			payPlan.Guarantor=_patCur.Guarantor;
+			if(payPlanMode.HasFlag(PayPlanModes.Insurance)){
+				payPlan.Guarantor=0;//Insurance Payment Plans have a guarantor of 0 because it is billed to insurance
+			}
 			payPlan.PayPlanDate=DateTime.Today;
 			payPlan.CompletedAmt=0;
 			long goToPatNum=0;
