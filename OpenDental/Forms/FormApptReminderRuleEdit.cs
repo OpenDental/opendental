@@ -521,10 +521,10 @@ namespace OpenDental {
 			if(PIn.Int(textDays.Text,false)>=366) {
 				errors.Add(Lan.g(this,"Lead time must 365 days or less."));
 			}
-			//ScheduleThankYou and GeneralMessage can be 0, meaning send immediately.
+			//ScheduleThankYou, NewPatientThankYou, and GeneralMessage can be 0, meaning send immediately.
 			if(checkEnabled.Checked && PIn.Int(textHours.Text,false)==0 
 				&& PIn.Int(textDays.Text,false)==0 
-				&& !ApptReminderRuleCur.TypeCur.In(ApptReminderType.ScheduleThankYou,ApptReminderType.GeneralMessage))
+				&& !ApptReminderRuleCur.TypeCur.In(ApptReminderType.ScheduleThankYou,ApptReminderType.NewPatientThankYou,ApptReminderType.GeneralMessage))
 			{
 				errors.Add(Lan.g(this,"Lead time must be greater than 0 hours."));
 			}

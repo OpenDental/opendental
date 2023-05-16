@@ -2863,7 +2863,8 @@ namespace OpenDental{
 					&& validateClaimResponse.IsAttachmentRequired) 
 				{
 					if(MsgBox.Show(this,MsgBoxButtons.YesNo,"An attachment is required for this claim. Would you like to open the claim attachment form?")) {
-						FormClaimAttachment.Open(_claim);
+						FormClaimAttachmentDXC formClaimAttachmentDXC=new FormClaimAttachmentDXC(_claim);
+						formClaimAttachmentDXC.Show();
 						DialogResult=DialogResult.OK;
 						return;
 					}
@@ -3057,7 +3058,8 @@ namespace OpenDental{
 				}
 			}
 			if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"This will close the claim edit window without saving any changes. Continue?")) {
-				FormClaimAttachment.Open(_claim);
+				FormClaimAttachmentDXC formClaimAttachmentDXC=new FormClaimAttachmentDXC(_claim);
+				formClaimAttachmentDXC.Show();
 				DialogResult=DialogResult.Cancel;
 			}
 		}
@@ -3905,7 +3907,8 @@ namespace OpenDental{
 							Claims.Update(_claim);
 						}
 						if(MsgBox.Show(this,MsgBoxButtons.YesNo,"An attachment is required for this claim. Would you like to open the claim attachment form?")) {
-							FormClaimAttachment.Open(_claim);
+							FormClaimAttachmentDXC formClaimAttachmentDXC=new FormClaimAttachmentDXC(_claim);
+							formClaimAttachmentDXC.Show();
 						}
 					}
 					else if(_claim.Attachments.Count==0 && _claim.AttachedFlags!="Mail") {//Don't set to 'Mail' on claims with attachments or make unneccessary DB trips.

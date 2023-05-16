@@ -464,7 +464,10 @@ namespace OpenDental {
 					};
 					listGridRows.Add(row);
 					datePrevCharge=listPayPlanCharges[j].ChargeDate;
-					for(int k=listPaySplits.Count-1;k>=0;k--) {//This is why we are reversing the order of listPaySplits. 
+					for(int k=listPaySplits.Count-1;k>=0;k--) {//This is why we are reversing the order of listPaySplits.
+						if(listPayPlanCharges[j].PayPlanChargeNum==0) {
+							break;//Future payment plan charges will never have payments associated with them.
+						}
 						if(listPaySplits[k].PayPlanChargeNum!=listPayPlanCharges[j].PayPlanChargeNum) {
 							continue;
 						}

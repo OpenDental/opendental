@@ -361,6 +361,9 @@ namespace OpenDentBusiness{
 				claimProcCur.PaidOtherInsOverride=0;
 				claimProcCur.InsEstTotalOverride=0;
 				claimProcCur.WriteOffEstOverride=0;
+				if(claimProcCur.ClaimNum==0) {
+					claimProcCur.ProcDate=proc.ProcDate;
+				}
 				//Only primary and secondary insurance claimprocs get a nonzero override.
 				if(patPlanCur==null || patPlanCur.Ordinal>2) {
 					continue;

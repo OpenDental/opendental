@@ -2503,6 +2503,10 @@ namespace OpenDental {
 			Procedures.TryAutoCodesPrompt(ref _procedure,_procedureOld,_procedureCode,(listBoxTeeth.SelectedIndices.Count < 1),_patient,ref _listClaimProcs,funcPromptFormACLI);
 			bool isProcLinkedToOrthoCase=Procedures.IsProcLinkedToOrthoCase(_procedureOld,_procedure,ref _orthoProcLink);
 			//The actual update----------------------------------------------------------------------------------------------------------------------------------
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA") && _procedure.ProcNumLab!=0) {
+				//Update Canadian Lab Fees because they do not get updated singly in Procedures.FormProcEditUpdate
+				Procedures.Update(_procedure,_procedureOld,false,isProcLinkedToOrthoCase:isProcLinkedToOrthoCase);
+			}
 			Procedures.FormProcEditUpdate(_procedure,_procedureOld,_procedureCode,isProcLinkedToOrthoCase,IsNew,listBoxTeeth.Text);
 			for(int i=0;i<_listClaimProcs.Count;i++) {
 				_listClaimProcs[i].ClinicNum=comboClinic.SelectedClinicNum;//These changes save in Form_Closing ComputeEstimates depending on DialogResult

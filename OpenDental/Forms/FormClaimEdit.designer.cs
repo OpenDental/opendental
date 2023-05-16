@@ -1216,6 +1216,8 @@
 			this.listAttachments.Name = "listAttachments";
 			this.listAttachments.Size = new System.Drawing.Size(304, 69);
 			this.listAttachments.TabIndex = 149;
+			this.listAttachments.DoubleClick += new System.EventHandler(this.listAttachments_DoubleClick);
+			this.listAttachments.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listAttachments_MouseDown);
 			// 
 			// tabDXC
 			// 

@@ -917,7 +917,11 @@ namespace OpenDental.InternalTools.Job_Manager {
 			else {
 				textApprove.Text="No";
 			}
-			textGitBranchName.Text=Jobs.GetGitBranchName(job);
+			string gitBranchName=Jobs.GetGitBranchName(job);
+			if(gitBranchName.Length>50){
+				gitBranchName=gitBranchName.Substring(0,50);
+			}
+			textGitBranchName.Text=gitBranchName;
 			comboCategory.SelectedIndex=_listCategoryNamesFiltered.IndexOf(_jobCur.Category.ToString());
 			textDateEntry.Text=_jobCur.DateTimeEntry.Year>1880?_jobCur.DateTimeEntry.ToShortDateString():"";
 			textVersion.Text=_jobCur.JobVersion;

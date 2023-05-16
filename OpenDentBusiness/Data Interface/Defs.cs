@@ -777,6 +777,8 @@ namespace OpenDentBusiness {
 		N,
 		///<summary>Autosave Forms (only one)</summary>
 		U,
+		///<summary>Claim Attachments (only one)</summary>
+		C,
 	}
 
 

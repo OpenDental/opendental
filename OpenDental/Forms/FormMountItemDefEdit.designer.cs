@@ -243,7 +243,7 @@ namespace OpenDental{
 			// 
 			this.label9.Location = new System.Drawing.Point(215, 347);
 			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(222, 31);
+			this.label9.Size = new System.Drawing.Size(235, 31);
 			this.label9.TabIndex = 158;
 			this.label9.Text = "Decimals are allowed. Scale is mount pixels, so it will tend to be a very large n" +
     "umber.";

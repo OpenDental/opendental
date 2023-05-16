@@ -2517,10 +2517,9 @@ namespace OpenDental{
 				using FormSheetProcSelect formSheetProcSelect=new FormSheetProcSelect();
 				formSheetProcSelect.PatNum=PatNumCur;
 				formSheetProcSelect.ShowDialog();
-				if(formSheetProcSelect.DialogResult!=DialogResult.OK) {
-					return;
+				if(formSheetProcSelect.DialogResult==DialogResult.OK) {
+					SheetParameter.SetParameter(sheet,"ListProcNums",formSheetProcSelect.ListProcNumsSelected);
 				}
-				SheetParameter.SetParameter(sheet,"ListProcNums",formSheetProcSelect.ListProcNumsSelected);
 			}
 			if(!SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,PatNumCur)) {
 				return;
@@ -2622,10 +2621,9 @@ namespace OpenDental{
 					using FormSheetProcSelect formSheetProcSelect=new FormSheetProcSelect();
 					formSheetProcSelect.PatNum=PatNumCur;
 					formSheetProcSelect.ShowDialog();
-					if(formSheetProcSelect.DialogResult!=DialogResult.OK) {
-						return;
+					if(formSheetProcSelect.DialogResult==DialogResult.OK) {
+						SheetParameter.SetParameter(sheet,"ListProcNums",formSheetProcSelect.ListProcNumsSelected);
 					}
-					SheetParameter.SetParameter(sheet,"ListProcNums",formSheetProcSelect.ListProcNumsSelected);
 				}
 				if(!SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,PatNumCur)) {
 					return;
@@ -5990,7 +5988,7 @@ namespace OpenDental{
 		}
 
 		private void menuItemScreenSnip_Click(object sender,EventArgs e) {
-			if(!FormClaimAttachment.StartSnipAndSketchOrSnippingTool()) {
+			if(!FormClaimAttachmentDXC.StartSnipAndSketchOrSnippingTool()) {
 				MsgBox.Show(this,"Neither the Snip & Sketch tool nor the Snipping Tool could be launched.");
 				return;
 			}
@@ -7403,6 +7401,7 @@ namespace OpenDental{
 			formLogOn.ShowDialog(this);
 			if(formLogOn.DialogResult!=DialogResult.OK) {
 				//Using FormLogOn_.DialogResult==DailogResult.CANCEL previously resulted in a null user/UE.
+				CloseOpenForms(isForceClose:true);
 				Cursor=Cursors.Default;
 				Application.Exit();
 			}

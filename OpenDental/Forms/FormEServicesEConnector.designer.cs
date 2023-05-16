@@ -162,7 +162,7 @@ namespace OpenDental{
 			// checkEnableEServicesListener
 			// 
 			this.checkEnableEServicesListener.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.checkEnableEServicesListener.Location = new System.Drawing.Point(9, 316);
+			this.checkEnableEServicesListener.Location = new System.Drawing.Point(9, 339);
 			this.checkEnableEServicesListener.Name = "checkEnableEServicesListener";
 			this.checkEnableEServicesListener.Size = new System.Drawing.Size(512, 17);
 			this.checkEnableEServicesListener.TabIndex = 503;
@@ -203,7 +203,7 @@ namespace OpenDental{
 			// checkEmailsWithDiffProcess
 			// 
 			this.checkEmailsWithDiffProcess.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.checkEmailsWithDiffProcess.Location = new System.Drawing.Point(9, 339);
+			this.checkEmailsWithDiffProcess.Location = new System.Drawing.Point(9, 316);
 			this.checkEmailsWithDiffProcess.Name = "checkEmailsWithDiffProcess";
 			this.checkEmailsWithDiffProcess.Size = new System.Drawing.Size(347, 17);
 			this.checkEmailsWithDiffProcess.TabIndex = 257;

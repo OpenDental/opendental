@@ -1047,7 +1047,7 @@ namespace OpenDentBusiness{
 			}
 			//loop again only for procs not received.
 			//And for preauth.
-			Procedure ProcCur;
+			Procedure procCur;
 			//InsPlan plan=InsPlans.GetPlan(claimCur.PlanNum,planList);
 			List<ClaimProcHist> histList=ClaimProcs.GetHistList(claimCur.PatNum,benefitList,patPlans,listInsPlans,claimCur.ClaimNum,claimCur.DateService,subList);
 			List<ClaimProc> claimProcListOld=new List<ClaimProc>();//make a copy
@@ -1067,7 +1067,7 @@ namespace OpenDentBusiness{
 				listOrthoSchedules=OrthoSchedules.GetMany(listSchedulePlanLinksFKey);
 			}
 			for(int i=0;i<listClaimProcsForClaim.Count;i++) {//loop through each proc
-				ProcCur=Procedures.GetProcFromList(listProcedures,listClaimProcsForClaim[i].ProcNum);
+				procCur=Procedures.GetProcFromList(listProcedures,listClaimProcsForClaim[i].ProcNum);
 				//in order for ComputeEstimates to give accurate Writeoff when creating a claim, InsPayEst must be filled for the claimproc with status of NotReceived.
 				//So, we must set it here.  We need to set it in the claimProcsAll list.  Find the matching one.
 				for(int j=0;j<ClaimProcsAll.Count;j++){
@@ -1080,7 +1080,7 @@ namespace OpenDentBusiness{
 				//When this is the secondary claim, HistList includes the primary estimates, which is something we don't want because the primary calculations gets confused.
 				//So, we must remove those bad entries from histList.
 				for(int h=histList.Count-1;h>=0;h--) {//loop through the histList backwards
-					if(histList[h].ProcNum!=ProcCur.ProcNum) {
+					if(histList[h].ProcNum!=procCur.ProcNum) {
 						continue;//Makes sure we will only be excluding histList entries for procs on this claim.
 					}
 					//we already excluded this claimNum when getting the histList.
@@ -1092,20 +1092,20 @@ namespace OpenDentBusiness{
 				OrthoCase orthoCase=null;
 				OrthoSchedule orthoSchedule=null;
 				List<OrthoProcLink> listOrthoProcLinksForOrthoCase=null;
-				OrthoProcLink orthoProcLink = listOrthoProcLinks.Find(x => x.ProcNum==listProcedures[i].ProcNum);
+				OrthoProcLink orthoProcLink = listOrthoProcLinks.Find(x => x.ProcNum==procCur.ProcNum);
 				if(orthoProcLink!=null) {
 					long orthoCaseNum=orthoProcLink.OrthoCaseNum;
 					orthoCase=listOrthoCases.Find(x=>x.OrthoCaseNum==orthoCaseNum);
 					orthoSchedule=listOrthoSchedules.Find(x=>x.OrthoScheduleNum==orthoCaseNum);
 					listOrthoProcLinksForOrthoCase=listOrthoProcLinksAll.FindAll(x=>x.OrthoCaseNum==orthoCaseNum);
 				}
-				Procedures.ComputeEstimates(ProcCur,claimCur.PatNum,ref ClaimProcsAll,false,listInsPlans,patPlans,benefitList,histList,loopList,false,patient.Age
+				Procedures.ComputeEstimates(procCur,claimCur.PatNum,ref ClaimProcsAll,false,listInsPlans,patPlans,benefitList,histList,loopList,false,patient.Age
 					,subList,listSubstLinks:listSubstLinks,listFees:listFees,
 					orthoProcLink:orthoProcLink,orthoCase:orthoCase,orthoSchedule:orthoSchedule,listOrthoProcLinksForOrthoCase:listOrthoProcLinksForOrthoCase);
 				//then, add this information to loopList so that the next procedure is aware of it.
 				//Exclude preauths becase thier estimates would incorrectly add both NotRecieved and Preauth estimates when calculating limitations.
-				List<ClaimProc> listClaimProcs=ClaimProcsAll.Where(x => x.ProcNum==ProcCur.ProcNum && x.Status!=ClaimProcStatus.Preauth).ToList();
-				loopList.AddRange(ClaimProcs.GetHistForProc(listClaimProcs,ProcCur,ProcCur.CodeNum));
+				List<ClaimProc> listClaimProcs=ClaimProcsAll.Where(x => x.ProcNum==procCur.ProcNum && x.Status!=ClaimProcStatus.Preauth).ToList();
+				loopList.AddRange(ClaimProcs.GetHistForProc(listClaimProcs,procCur,procCur.CodeNum));
 			}
 			//save changes in the list to the database
 			ClaimProcs.Synch(ref ClaimProcsAll,claimProcListOld);
@@ -1117,30 +1117,30 @@ namespace OpenDentBusiness{
 					&& listClaimProcsForClaim[i].Status!=ClaimProcStatus.CapClaim) {
 					continue;
 				}
-				ProcCur=Procedures.GetProcFromList(listProcedures,listClaimProcsForClaim[i].ProcNum);
-				if(ProcCur.ProcNum==0) {
+				procCur=Procedures.GetProcFromList(listProcedures,listClaimProcsForClaim[i].ProcNum);
+				if(procCur.ProcNum==0) {
 					continue;//ignores payments, etc
 				}
 				//fee:
 				if(isFeeBilledUpdateNeeded && plan.ClaimsUseUCR) {//use UCR for the provider of the procedure
-					long provNum=ProcCur.ProvNum;
+					long provNum=procCur.ProvNum;
 					if(provNum==0) {//if no prov set, then use practice default.
 						provNum=PrefC.GetLong(PrefName.PracticeDefaultProv);
 					}
 					Provider providerFirst=Providers.GetFirst();//Used in order to preserve old behavior...  If this fails, then old code would have failed.
 					Provider provider=Providers.GetFirstOrDefault(x => x.ProvNum==provNum)??providerFirst;
 					//get the fee based on code and prov fee sched
-					double ppoFee=Fees.GetAmount0(ProcCur.CodeNum,provider.FeeSched,ProcCur.ClinicNum,provNum,listFees);
-					double ucrFee=ProcCur.ProcFee;//Usual Customary and Regular (UCR) fee.  Also known as billed fee.
+					double ppoFee=Fees.GetAmount0(procCur.CodeNum,provider.FeeSched,procCur.ClinicNum,provNum,listFees);
+					double ucrFee=procCur.ProcFee;//Usual Customary and Regular (UCR) fee.  Also known as billed fee.
 					if(ucrFee > ppoFee) {
-						listClaimProcsForClaim[i].FeeBilled=ProcCur.Quantity*ucrFee;
+						listClaimProcsForClaim[i].FeeBilled=procCur.Quantity*ucrFee;
 					}
 					else {
-						listClaimProcsForClaim[i].FeeBilled=ProcCur.Quantity*ppoFee;
+						listClaimProcsForClaim[i].FeeBilled=procCur.Quantity*ppoFee;
 					}
 				}
 				else if(isFeeBilledUpdateNeeded) {//don't use ucr. Use the procedure fee instead.
-					listClaimProcsForClaim[i].FeeBilled=ProcCur.ProcFeeTotal;
+					listClaimProcsForClaim[i].FeeBilled=procCur.ProcFeeTotal;
 				}
 				claimFee+=listClaimProcsForClaim[i].FeeBilled;
 				if(claimCur.ClaimType=="PreAuth" || claimCur.ClaimType=="Cap" || (claimCur.ClaimType=="Other" && !plan.IsMedical)) {

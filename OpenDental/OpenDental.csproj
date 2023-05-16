@@ -3239,11 +3239,11 @@
     <Compile Include="Forms\FormClaimAttachmentItemEdit.designer.cs">
       <DependentUpon>FormClaimAttachmentItemEdit.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormClaimAttachment.cs">
+    <Compile Include="Forms\FormClaimAttachmentDXC.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FormClaimAttachment.Designer.cs">
-      <DependentUpon>FormClaimAttachment.cs</DependentUpon>
+    <Compile Include="Forms\FormClaimAttachmentDXC.Designer.cs">
+      <DependentUpon>FormClaimAttachmentDXC.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormDefEditWebSchedApptTypes.cs">
       <SubType>Form</SubType>
@@ -8533,8 +8533,8 @@
     <EmbeddedResource Include="Forms\FormClaimAttachmentItemEdit.resx">
       <DependentUpon>FormClaimAttachmentItemEdit.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormClaimAttachment.resx">
-      <DependentUpon>FormClaimAttachment.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FormClaimAttachmentDXC.resx">
+      <DependentUpon>FormClaimAttachmentDXC.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormDefEditWebSchedApptTypes.resx">
       <DependentUpon>FormDefEditWebSchedApptTypes.cs</DependentUpon>

@@ -578,7 +578,11 @@ namespace OpenDental {
 			if(IsSelectedApptOtherNull()) {
 				return;
 			}
-			ApptOther apptOtherSelected=ListApptOthers[gridMain.GetSelectedIndex()];
+			ApptOther apptOtherSelected=ListApptOthers.FirstOrDefault(x => x.AptNum==gridMain.SelectedTag<long>());
+			if(apptOtherSelected==null) {
+				MsgBox.Show(this,"Unable to go to appointment.");
+				return;
+			}
 			if(apptOtherSelected.AptDateTime.Year<1880) {
 				MsgBox.Show(this,"Unable to go to unscheduled appointment.");
 				return;

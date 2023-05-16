@@ -4653,6 +4653,35 @@ namespace OpenDentBusiness {
 			SecurityHash.UpdateHashing();
 		}
 
+		private static void To22_4_42() { 
+			//B44132 Adding missing alert links for the 'All' option
+			string command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 17)";
+			Db.NonQ(command);
+			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 18)";
+			Db.NonQ(command);
+			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 19)";
+			Db.NonQ(command);
+			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 23)";
+			Db.NonQ(command);
+			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 25)";
+			Db.NonQ(command);
+			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 31)";
+			Db.NonQ(command);
+			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 33)";
+			Db.NonQ(command);
+			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 34)";
+			Db.NonQ(command);
+			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 35)";
+			Db.NonQ(command);
+			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 36)";
+			Db.NonQ(command);
+			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 37)";
+			Db.NonQ(command);
+			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 38)";
+			Db.NonQ(command);
+			//end B44132
+		}
+
 		private static void To23_1_1() {
 			string command;
 			DataTable table;
@@ -4959,6 +4988,18 @@ namespace OpenDentBusiness {
 
 		}
 
+		private static void To23_1_11() {
+			//B44132 Adding missing alert links for the 'All' option
+			List<int> listAlertTypes=new List<int> {17,18,19,23,25,31,33,34,35,36,37,38};
+			for (int i = 0; i < listAlertTypes.Count; i++) {
+				string command=$"SELECT AlertCategoryLinkNum FROM alertcategorylink WHERE AlertCategoryNum=1 AND AlertType={listAlertTypes[i]}";
+				long alertCategoryLinkNum=PIn.Long(Db.GetScalar(command));
+				if (alertCategoryLinkNum < 1 ) { 
+					command=$"INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, {listAlertTypes[i]});"; 
+					Db.NonQ(command);
+				}
+			}//end B44132
+		}
 	}
 }
 

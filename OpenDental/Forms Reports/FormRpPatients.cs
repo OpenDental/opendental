@@ -1042,6 +1042,8 @@ namespace OpenDental {
 							UsingProcLogFirst.Add(false);
 							UsingProcLogLast.Add(false);
 							UsingRecall.Add(false);
+							_usingProcFComplete.Add(false);
+							_usingProcLComplete.Add(false);
 						}
 						if(listConditions.SelectedIndex==0) {
 							listPrerequisites.Items.Add(DropListFilter.SelectedItem.ToString()+" LIKE '%"

@@ -69,7 +69,7 @@ namespace OpenDentBusiness {
 					"etrans.PatNum",
 					//"famaging.PatNum", //Taken care of down below as this should be the guarantor of the patient being merged into
 					"familyhealth.PatNum",
-					"flow.PatNum",
+					"erouting.PatNum",
 					//formpat.FormPatNum IS NOT a PatNum so it is should not be merged.  It is the primary key.
 					"formpat.PatNum",
 					"guardian.PatNumChild",  //This may create duplicate entries for a single patient and guardian
