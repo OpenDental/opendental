@@ -246,9 +246,9 @@
 			// 
 			// labelTooth
 			// 
-			this.labelTooth.Location = new System.Drawing.Point(68, 107);
+			this.labelTooth.Location = new System.Drawing.Point(58, 107);
 			this.labelTooth.Name = "labelTooth";
-			this.labelTooth.Size = new System.Drawing.Size(36, 12);
+			this.labelTooth.Size = new System.Drawing.Size(46, 16);
 			this.labelTooth.TabIndex = 2;
 			this.labelTooth.Text = "Tooth";
 			this.labelTooth.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -256,7 +256,7 @@
 			// 
 			// labelSurfaces
 			// 
-			this.labelSurfaces.Location = new System.Drawing.Point(33, 135);
+			this.labelSurfaces.Location = new System.Drawing.Point(31, 135);
 			this.labelSurfaces.Name = "labelSurfaces";
 			this.labelSurfaces.Size = new System.Drawing.Size(73, 16);
 			this.labelSurfaces.TabIndex = 3;
@@ -328,7 +328,7 @@
 			// 
 			// labelRange
 			// 
-			this.labelRange.Location = new System.Drawing.Point(24, 107);
+			this.labelRange.Location = new System.Drawing.Point(22, 107);
 			this.labelRange.Name = "labelRange";
 			this.labelRange.Size = new System.Drawing.Size(82, 16);
 			this.labelRange.TabIndex = 33;
