@@ -333,6 +333,21 @@ namespace OpenDentBusiness{
 			return PIn.Int(Db.GetCount(command));
 		}
 
+		///<summary>Returns a list of PatNums based on the list of insfilingcode.InsFilingCodeNums passed in.</summary>
+		public static List<long> GetPatNumsByInsFilingCodes(List<long> listInsFilingCodeNums) {
+			if(listInsFilingCodeNums.IsNullOrEmpty()) {
+				return new List<long>();
+			}
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod(),listInsFilingCodeNums);
+			}
+			string command=$@"SELECT PatNum FROM patplan
+				INNER JOIN inssub ON inssub.InsSubNum=patplan.InsSubNum
+				INNER JOIN insplan ON insplan.PlanNum=inssub.PlanNum
+				WHERE insplan.FilingCode IN ({string.Join(",",listInsFilingCodeNums)})";
+			return Db.GetListLong(command);
+		}
+
 		///<summary>Will return null if none exists.</summary>
 		public static PatPlan GetPatPlan(long patNum,int ordinal) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

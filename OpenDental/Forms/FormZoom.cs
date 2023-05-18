@@ -40,7 +40,11 @@ namespace OpenDental {
 				textWorkingArea2.Text=SizeToString(_screen2.WorkingArea.Size);
 				textScale2.Text=_scaleMS2.ToString()+"%";
 			}
-			textZoom.Text=ComputerPrefs.LocalComputer.Zoom.ToString();
+			int zoom=ComputerPrefs.LocalComputer.Zoom;
+			if(zoom==0) {
+				zoom=100;
+			}
+			textZoom.Text=zoom.ToString();
 			//always triggers textZoom_TextChanged
 		}
 
@@ -109,7 +113,7 @@ namespace OpenDental {
 		}
 
 		private void butReset_Click(object sender, EventArgs e){
-			textZoom.Text="0";
+			textZoom.Text="100";
 		}
 
 		private void butFit_Click(object sender, EventArgs e){
@@ -167,6 +171,10 @@ namespace OpenDental {
 			if(zoom==0 || zoom==100){
 				//that's fine
 			}
+			else if(zoom<0){
+				MsgBox.Show("Zoom cannot be negative.");
+				return;
+			}
 			else if(zoom<50){//Anything less than this seems to have overlapping control issues, and < 10 can cause out of memory errors.
 				string msg=Lan.g(this,"Zoom number should be greater than 50. Maybe you meant")
 					+" 1"+zoom.ToString()+".";//untranslated
@@ -210,7 +218,5 @@ namespace OpenDental {
 				MsgBox.Show(ex.Message);
 			}
 		}
-
-	
 	}
 }

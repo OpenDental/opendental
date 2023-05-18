@@ -181,6 +181,22 @@ namespace OpenDentBusiness {
 			return PatientLinks.GetPatNumsLinkedFromRecursive(patNumOriginal,PatientLinkType.Clone);
 		}
 
+		///<summary>Returns the patient's guarantors email. Will return the patient email if guarantors email is blank.</summary>
+		public static string GetEmailAddressForGuarantorOrPatient(Patient patient) {
+			//No need to check MiddleTierRole; no call to db.
+			if(patient==null) {
+				return "";
+			}
+			Patient patientGuar=null;
+			if(patient.PatNum!=patient.Guarantor) {
+				patientGuar=GetGuarForPat(patient.PatNum);
+			}
+			if(patientGuar==null || !EmailAddresses.IsValidEmail(patientGuar.Email)) {
+				return patient.Email;
+			}
+			return patientGuar.Email;
+		}
+
 		///<summary>Returns a Def representing the patient specialty associated through DefLinks to the passed in Patient.
 		///Returns null if no specialty found.</summary>
 		public static Def GetPatientSpecialtyDef(long patNum) {
@@ -2806,12 +2822,12 @@ namespace OpenDentBusiness {
 		public static List<PatAging> GetAgingList(string age,DateTime lastStatement,List<long> billingNums,bool excludeAddr,bool excludeNeg,
 			double excludeLessThan,bool excludeInactive,bool ignoreInPerson,List<long> clinicNums,bool isSuperStatements,bool isSinglePatient,
 			List<long> listPendingInsPatNums,List<long> listUnsentPatNums,SerializableDictionary<long,List<PatAgingTransaction>> dictPatAgingTransactions,
-			bool excludeNoTil=false,bool excludeNotBilledSince=false,bool isFinanceBilling=false,List<long> listInsSubNums=null)
+			bool excludeNoTil=false,bool excludeNotBilledSince=false,bool isFinanceBilling=false,List<long> listPatNumsToExclude=null)
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<PatAging>>(MethodBase.GetCurrentMethod(),age,lastStatement,billingNums,excludeAddr,excludeNeg,excludeLessThan,
 					excludeInactive,ignoreInPerson,clinicNums,isSuperStatements,isSinglePatient,listPendingInsPatNums,listUnsentPatNums,dictPatAgingTransactions,
-					excludeNoTil,excludeNotBilledSince,isFinanceBilling,listInsSubNums);
+					excludeNoTil,excludeNotBilledSince,isFinanceBilling,listPatNumsToExclude);
 			}
 			if(DataConnection.DBtype!=DatabaseType.MySql) {
 				//We are going to purposefully throw an exception so that users will call in and complain.
@@ -2869,8 +2885,8 @@ namespace OpenDentBusiness {
 				listWhereAnds.Add("guar.ClinicNum IN ("+string.Join(",",clinicNums.Select(x => POut.Long(x)))+")");
 			}
 			listWhereAnds.Add("(guar.PatStatus!="+POut.Int((int)PatientStatus.Archived)+" OR ROUND(guar.BalTotal,3) != 0)");//Hide archived patients with PatBal=0.
-			if(!listInsSubNums.IsNullOrEmpty()) {
-				listWhereAnds.Add("(inssub.Subscriber IS NULL OR inssub.InsSubNum NOT IN ("+string.Join(",",listInsSubNums)+"))");
+			if(!listPatNumsToExclude.IsNullOrEmpty()) {
+				listWhereAnds.Add("pat.PatNum NOT IN ("+string.Join(",",listPatNumsToExclude)+")");
 			}
 			string command="";
 			command="SELECT "+guarOrPat+".PatNum,"+guarOrPat+".FName,"+guarOrPat+".MiddleI,"+guarOrPat+".Preferred,"+guarOrPat+".LName,"+guarOrPat+".ClinicNum,guar.SuperFamily,"
@@ -2880,11 +2896,8 @@ namespace OpenDentBusiness {
 				+"FROM patient guar "
 				+"INNER JOIN patient pat ON guar.PatNum=pat.Guarantor AND pat.PatStatus NOT IN ("+string.Join(",",listPatStatusExclude)+") "
 				+"LEFT JOIN statement ON "+guarOrPat+".PatNum=statement.PatNum "
-					+(ignoreInPerson?("AND statement.Mode_!="+POut.Int((int)StatementMode.InPerson)+" "):"");
-				if(!listInsSubNums.IsNullOrEmpty()) {
-				 command+="LEFT JOIN inssub ON pat.PatNum=inssub.Subscriber ";
-				}
-				command+="WHERE "+string.Join(" AND ",listWhereAnds)+" "
+					+(ignoreInPerson?("AND statement.Mode_!="+POut.Int((int)StatementMode.InPerson)+" "):"")
+				+"WHERE "+string.Join(" AND ",listWhereAnds)+" "
 				+"GROUP BY "+guarOrPat+".PatNum "
 				+"ORDER BY "+guarOrPat+".LName,"+guarOrPat+".FName ";
 			DataTable table=Db.GetTable(command);

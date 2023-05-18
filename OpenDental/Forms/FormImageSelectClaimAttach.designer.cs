@@ -99,6 +99,7 @@ namespace OpenDental {
 			this.butPasteImage.TabIndex = 23;
 			this.butPasteImage.Text = "Paste Image";
 			this.butPasteImage.UseVisualStyleBackColor = true;
+			this.butPasteImage.Click += new System.EventHandler(this.butPasteImage_Click);
 			// 
 			// butSnipTool
 			// 
@@ -109,6 +110,7 @@ namespace OpenDental {
 			this.butSnipTool.TabIndex = 21;
 			this.butSnipTool.Text = "Snipping Tool";
 			this.butSnipTool.UseVisualStyleBackColor = true;
+			this.butSnipTool.Click += new System.EventHandler(this.butSnipTool_Click);
 			// 
 			// butImport
 			// 
@@ -119,6 +121,7 @@ namespace OpenDental {
 			this.butImport.TabIndex = 22;
 			this.butImport.Text = "Import";
 			this.butImport.UseVisualStyleBackColor = true;
+			this.butImport.Click += new System.EventHandler(this.butImport_Click);
 			// 
 			// timerMonitorClipboard
 			// 

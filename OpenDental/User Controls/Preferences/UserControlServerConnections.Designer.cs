@@ -63,15 +63,15 @@ namespace OpenDental {
 			this.groupBoxReadOnlyServerSetup.Controls.Add(this.groupMiddleTier);
 			this.groupBoxReadOnlyServerSetup.Location = new System.Drawing.Point(20, 30);
 			this.groupBoxReadOnlyServerSetup.Name = "groupBoxReadOnlyServerSetup";
-			this.groupBoxReadOnlyServerSetup.Size = new System.Drawing.Size(450, 263);
+			this.groupBoxReadOnlyServerSetup.Size = new System.Drawing.Size(450, 280);
 			this.groupBoxReadOnlyServerSetup.TabIndex = 99;
 			this.groupBoxReadOnlyServerSetup.Text = "Read-Only Server Setup";
 			// 
 			// radioReadOnlyServerDirect
 			// 
-			this.radioReadOnlyServerDirect.Location = new System.Drawing.Point(9, 24);
+			this.radioReadOnlyServerDirect.Location = new System.Drawing.Point(9, 29);
 			this.radioReadOnlyServerDirect.Name = "radioReadOnlyServerDirect";
-			this.radioReadOnlyServerDirect.Size = new System.Drawing.Size(157, 15);
+			this.radioReadOnlyServerDirect.Size = new System.Drawing.Size(157, 18);
 			this.radioReadOnlyServerDirect.TabIndex = 3;
 			this.radioReadOnlyServerDirect.TabStop = true;
 			this.radioReadOnlyServerDirect.Text = "Direct Connection";
@@ -88,7 +88,7 @@ namespace OpenDental {
 			this.groupConnectionSettings.Controls.Add(this.label2);
 			this.groupConnectionSettings.Controls.Add(this.label3);
 			this.groupConnectionSettings.Controls.Add(this.label4);
-			this.groupConnectionSettings.Location = new System.Drawing.Point(9, 45);
+			this.groupConnectionSettings.Location = new System.Drawing.Point(9, 54);
 			this.groupConnectionSettings.Name = "groupConnectionSettings";
 			this.groupConnectionSettings.Size = new System.Drawing.Size(438, 138);
 			this.groupConnectionSettings.TabIndex = 100;
@@ -164,9 +164,9 @@ namespace OpenDental {
 			// 
 			// radioReadOnlyServerMiddleTier
 			// 
-			this.radioReadOnlyServerMiddleTier.Location = new System.Drawing.Point(9, 196);
+			this.radioReadOnlyServerMiddleTier.Location = new System.Drawing.Point(9, 207);
 			this.radioReadOnlyServerMiddleTier.Name = "radioReadOnlyServerMiddleTier";
-			this.radioReadOnlyServerMiddleTier.Size = new System.Drawing.Size(157, 15);
+			this.radioReadOnlyServerMiddleTier.Size = new System.Drawing.Size(137, 18);
 			this.radioReadOnlyServerMiddleTier.TabIndex = 8;
 			this.radioReadOnlyServerMiddleTier.TabStop = true;
 			this.radioReadOnlyServerMiddleTier.Text = "Middle Tier";
@@ -177,7 +177,7 @@ namespace OpenDental {
 			// 
 			this.groupMiddleTier.Controls.Add(this.textMiddleTierURI);
 			this.groupMiddleTier.Controls.Add(this.labelURI);
-			this.groupMiddleTier.Location = new System.Drawing.Point(9, 215);
+			this.groupMiddleTier.Location = new System.Drawing.Point(9, 232);
 			this.groupMiddleTier.Name = "groupMiddleTier";
 			this.groupMiddleTier.Size = new System.Drawing.Size(438, 36);
 			this.groupMiddleTier.TabIndex = 105;

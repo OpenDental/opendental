@@ -603,9 +603,9 @@ namespace OpenDentBusiness {
 				emailMessageError.SentOrReceived=EmailSentOrReceived.Sent;
 				emailMessageError.MsgDateTime=DateTime_.Now;
 				emailMessageError.BodyText=errorMessage;
-				if(fromAddress==null || !EmailAddresses.IsValidEmail(fromAddress.SenderAddress)) {//Check to make sure that our "from" email address is valid.
+				if(fromAddress==null || !EmailAddresses.IsValidEmail(fromAddress.GetFrom())) {//Check to make sure that our "from" email address is valid.
 					throw new ODException("Thank you for your recent payment. An error occurred when attempting to email your receipt," 
-						+" please contact your provider.");
+						+" please contact your provider.",ODException.ErrorCodes.ReceiptEmailAddressInvalid);
 				}
 				fromAddress=EmailAddresses.OverrideSenderAddressClinical(fromAddress,patCur.ClinicNum); //Use clinic's Email Sender Address Override, if present
 				try {
@@ -631,9 +631,9 @@ namespace OpenDentBusiness {
 			fileName=DateTime.Now.ToString("yyyyMMdd")+DateTime.Now.TimeOfDay.Ticks.ToString()+ODRandom.Next(1000).ToString()+".pdf";
 			string filePathAndName=FileIO.FileAtoZ.CombinePaths(attachPath,fileName);
 			FileIO.FileAtoZ.Copy(ImageStore.GetFilePath(Documents.GetByNum(stmt.DocNum),guarFolder),filePathAndName,FileAtoZSourceDestination.AtoZToAtoZ);
-			if(fromAddress==null || !EmailAddresses.IsValidEmail(fromAddress.SenderAddress)) {//Check to make sure that our "from" email address is valid.
+			if(fromAddress==null || !EmailAddresses.IsValidEmail(fromAddress.GetFrom())) {//Check to make sure that our "from" email address is valid.
 				throw new ODException("Thank you for your recent payment. An error occurred when attempting to email your receipt," 
-					+" please refresh your page to view your statement.");
+					+" please refresh your page to view your statement.",ODException.ErrorCodes.ReceiptEmailAddressInvalid);
 			}
 			//Create email and attachment objects
 			EmailMessage emailMessage=GetEmailMessageForStatement(stmt,guarantor);
@@ -651,7 +651,7 @@ namespace OpenDentBusiness {
 			catch(Exception ex) {
 				ex.DoNothing();
 				throw new ODException("Thank you for your recent payment. An error occurred when attempting to send an email receipt," 
-					+" please refresh your page to view your statement.");
+					+" please refresh your page to view your statement.",ODException.ErrorCodes.ReceiptEmailFailedToSend);
 			}
 		}
 

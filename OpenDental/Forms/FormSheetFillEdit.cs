@@ -1235,6 +1235,7 @@ namespace OpenDental {
 			textBox.PreviewKeyDown+=TextBox_PreviewKeyDown;
 			textBox.TextChanged+=textBox_TextChanged;
 			textBox.FontChanged+=TextBox_FontChanged;
+			textBox.ReadOnly=sheetField.IsLocked;
 			LayoutManager.Add(textBox,panelMain);
 			//int scroll=panelScroll.VerticalScroll.Value;
 			//panelScroll.VerticalScroll.Value=scroll;

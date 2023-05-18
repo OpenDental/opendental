@@ -170,6 +170,10 @@ namespace CodeBase {
 			RecallAlreadyScheduled=408,
 			///<summary>The user's session has expired.</summary>
 			SessionExpired=409,
+			///<summary>The email address used to send receipts after successful payments is invalid.</summary>
+			ReceiptEmailAddressInvalid=410,
+			///<summary>The receipt email after a payment portal payment failed to send.</summary>
+			ReceiptEmailFailedToSend=411,
 			//500-599 range. Values used by Open Dental UI.
 			FormClosed = 500,
 			//600-699 range. Values used by RemotingClient/MiddleTier

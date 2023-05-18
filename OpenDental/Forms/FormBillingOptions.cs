@@ -794,12 +794,6 @@ namespace OpenDental{
 					listInsFilingCodeNums.Add(_listInsFilingCodes[comboInsFilingCodes.SelectedIndices[i]-2].InsFilingCodeNum);//-2 for None and (all).
 				}
 			}
-			List<InsSub> listInsSubs=InsSubs.GetManyByInsFilingCodes(listInsFilingCodeNums);
-			listInsSubs.RemoveAll(x => PatPlans.GetCountBySubNum(x.InsSubNum)==0);//Remove all inactive plans from initial exclusion.
-			//Find all the InsSubs associated to the patients who already have InsSubs excluded in listInsSubs and add them.
-			//This keeps the patient from showing up when we are trying to exclude them from the billing list (ex. primary ins's filing code excluded, but not secondary's).
-			List<InsSub> listInsSubsToExclude=InsSubs.GetListInsSubs(listInsSubs.Select(x => x.Subscriber).ToList());
-			List<long> listInsSubNums=listInsSubsToExclude.Select(x => x.InsSubNum).ToList();
 			List<PatAging> listPatAgings=new List<PatAging>();
 			if(dictionaryPatAgingData==null) {//If not passed in, we must generate the data here.
 				dictionaryPatAgingData=AgingData.GetAgingData(checkSinglePatient.Checked,checkIncludeChanged.Checked,checkExcludeInsPending.Checked,
@@ -829,9 +823,10 @@ namespace OpenDental{
 			}
 			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
+				List<long> listPatNumsToExclude=PatPlans.GetPatNumsByInsFilingCodes(listInsFilingCodeNums);
 				listPatAgings=Patients.GetAgingList(getAge,lastStatement,billingNums,checkBadAddress.Checked,!checkShowNegative.Checked,
 					PIn.Double(textExcludeLessThan.Text),checkExcludeInactive.Checked,checkIgnoreInPerson.Checked,listClinicNums,checkSuperFam.Checked,
-					checkSinglePatient.Checked,listPendingInsPatNums,listUnsentPatNums,dictionaryPatAgingTransactions,listInsSubNums: listInsSubNums);
+					checkSinglePatient.Checked,listPendingInsPatNums,listUnsentPatNums,dictionaryPatAgingTransactions,listPatNumsToExclude: listPatNumsToExclude);
 			};
 			try {
 				progressOD.ShowDialogProgress();
