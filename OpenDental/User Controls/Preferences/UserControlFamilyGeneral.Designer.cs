@@ -167,11 +167,11 @@ namespace OpenDental {
 			// 
 			this.checkTextMsgOkStatusTreatAsNo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkTextMsgOkStatusTreatAsNo.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkTextMsgOkStatusTreatAsNo.Location = new System.Drawing.Point(65, 10);
+			this.checkTextMsgOkStatusTreatAsNo.Location = new System.Drawing.Point(90, 10);
 			this.checkTextMsgOkStatusTreatAsNo.Name = "checkTextMsgOkStatusTreatAsNo";
-			this.checkTextMsgOkStatusTreatAsNo.Size = new System.Drawing.Size(375, 17);
+			this.checkTextMsgOkStatusTreatAsNo.Size = new System.Drawing.Size(350, 17);
 			this.checkTextMsgOkStatusTreatAsNo.TabIndex = 296;
-			this.checkTextMsgOkStatusTreatAsNo.Text = "Text Msg OK, assume default is \'No\' for patients with no selection";
+			this.checkTextMsgOkStatusTreatAsNo.Text = "Text Msg OK status, treat ?? as No instead of Yes";
 			// 
 			// checkAutoFillPatEmail
 			// 

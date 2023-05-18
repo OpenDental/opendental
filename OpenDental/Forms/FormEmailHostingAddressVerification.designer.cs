@@ -113,6 +113,7 @@ namespace OpenDental {
 			// 
 			// checkUseNoReply
 			// 
+			this.checkUseNoReply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.checkUseNoReply.Location = new System.Drawing.Point(19, 478);
 			this.checkUseNoReply.Name = "checkUseNoReply";
 			this.checkUseNoReply.Size = new System.Drawing.Size(287, 24);
