@@ -1925,7 +1925,7 @@ using OpenDental.UI;
 				textEdit.Dispose();
 				textEdit=null;
 				using Graphics g=this.CreateGraphics();
-				if(ListGridRows.Count-1>_selectedCellOld.Y) {
+				if(ListGridRows.Count>_selectedCellOld.Y) {
 					//In FormQueryParser, SetFilterControlsAndAction uses an action that calls FillGrid, but number of rows can be different than before.
 					//This is a problem when use is editing a cell and clicks Tab.  That should really be fixed, but this makes the grid more resilient.
 					ComputeRowHeightOne(g,_selectedCellOld.Y);

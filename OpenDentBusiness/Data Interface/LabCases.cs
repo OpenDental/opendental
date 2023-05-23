@@ -40,7 +40,7 @@ namespace OpenDentBusiness{
 				+"LEFT JOIN patient ON labcase.PatNum=patient.PatNum "
 				+"LEFT JOIN laboratory ON labcase.LaboratoryNum=laboratory.LaboratoryNum "
 				+"WHERE COALESCE(appointment.AptDateTime,ap1.AptDateTime)"
-				+"BETWEEN DATE("+POut.Date(aptStartDate.AddDays(1))+") AND DATE("+POut.Date(aptEndDate)+") ";
+				+"BETWEEN DATE("+POut.Date(aptStartDate)+") AND DATE("+POut.Date(aptEndDate.AddDays(1))+") ";
 			if(!showCompleted){
 				command+=" AND COALESCE(appointment.AptStatus,ap1.AptStatus) IN " +
 					"("+POut.Long((int)ApptStatus.Broken)

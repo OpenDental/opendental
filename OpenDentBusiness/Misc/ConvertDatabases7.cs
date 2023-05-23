@@ -4649,6 +4649,7 @@ namespace OpenDentBusiness {
 		private static void To22_4_40() {
 			SecurityHash.UpdateHashing();
 		}
+
 		private static void To22_4_42() { 
 			//B44132 Adding missing alert links for the 'All' option
 			string command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 17)";
@@ -4671,11 +4672,13 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 36)";
 			Db.NonQ(command);
-			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 37)";
-			Db.NonQ(command);
-			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 38)";
-			Db.NonQ(command);
 			//end B44132
+		}
+
+		private static void To22_4_44() { 
+			//Delete all alert category links that have an invalid AlertType.
+			string command=$"DELETE FROM alertcategorylink WHERE AlertType > 36";
+			Db.NonQ(command);
 		}
 	}
 }
