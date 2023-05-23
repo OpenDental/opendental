@@ -54,7 +54,7 @@ namespace OpenDental {
 			try {
 				//This will change the password for the local user that OpenDental.exe is running under.
 				userPrincipal.ChangePassword(textOldPass.Text,newPass);
-				ChangePasswordLBE(newPass);
+				ODProgress.ShowAction(() => ChangePasswordLBE(newPass));
 			}
 			catch(Exception ex) {
 				FriendlyException.Show("Unable to update password: "+ex.Message,ex);

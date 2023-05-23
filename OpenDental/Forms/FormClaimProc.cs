@@ -129,6 +129,19 @@ namespace OpenDental {
 			if(_claimProc.IsTransfer) {
 				this.DisableAllExcept(new Control[]{butCancel,butDelete});
 			}
+			if(_claimProc.IsOverpay) {
+				if(Claims.GetClaim(_claimProc.ClaimNum)==null) {
+					MsgBox.Show(this,"Claim has been deleted by another user.");
+					DialogResult=DialogResult.Abort;
+					return;
+				}
+				bool isOverpaid=(_claimProc.InsEstTotalOverride<0);
+				List<ClaimProc> listClaimProcs=ClaimProcs.RefreshForClaims(new List<long> { _claimProc.ClaimNum }).ToList();
+				FormClaimOverpay formClaimOverpay=new FormClaimOverpay(_claimProc.ClaimNum,listClaimProcs,_patient.PatNum,isOverpaid,_claimProc.ClaimProcNum);
+				formClaimOverpay.ShowDialog();
+				DialogResult=DialogResult.OK;
+				return;
+			}
 			if(_claimProc.ClaimNum>0) {
 				Claim claim=Claims.GetClaim(_claimProc.ClaimNum);
 				if(claim==null) {

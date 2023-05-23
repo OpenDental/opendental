@@ -908,7 +908,7 @@ namespace OpenDental {
 			this.checkToothRange.Name = "checkToothRange";
 			this.checkToothRange.Size = new System.Drawing.Size(118, 18);
 			this.checkToothRange.TabIndex = 49;
-			this.checkToothRange.Text = "&& Tooth Range";
+			this.checkToothRange.Text = "& Tooth Range";
 			// 
 			// butNoBillInsByInsPlan
 			// 

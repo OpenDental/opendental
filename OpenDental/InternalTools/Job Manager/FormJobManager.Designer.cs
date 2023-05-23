@@ -65,6 +65,7 @@
 			this.gridQueries = new OpenDental.UI.GridOD();
 			this.tabNotify = new System.Windows.Forms.TabPage();
 			this.gridNotify = new OpenDental.UI.GridOD();
+			this.checkNotifyShowHqOnly = new OpenDental.UI.CheckBox();
 			this.tabSubscribed = new System.Windows.Forms.TabPage();
 			this.checkSubscribedIncludeOnHold = new OpenDental.UI.CheckBox();
 			this.gridSubscribedJobs = new OpenDental.UI.GridOD();
@@ -126,7 +127,6 @@
 			this.menuGoToAccountMarketing = new System.Windows.Forms.MenuItem();
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.timerRefreshUI = new System.Windows.Forms.Timer(this.components);
-			this.checkNotifyShowHqOnly = new OpenDental.UI.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
@@ -605,6 +605,7 @@
 			// tabNotify
 			// 
 			this.tabNotify.Controls.Add(this.gridNotify);
+			this.tabNotify.Controls.Add(this.checkNotifyShowHqOnly);
 			this.tabNotify.Location = new System.Drawing.Point(4, 76);
 			this.tabNotify.Name = "tabNotify";
 			this.tabNotify.Size = new System.Drawing.Size(349, 687);
@@ -618,14 +619,25 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridNotify.HasMultilineHeaders = true;
-			this.gridNotify.Location = new System.Drawing.Point(3, 4);
+			this.gridNotify.Location = new System.Drawing.Point(3, 29);
 			this.gridNotify.Name = "gridNotify";
-			this.gridNotify.Size = new System.Drawing.Size(343, 680);
+			this.gridNotify.Size = new System.Drawing.Size(343, 655);
 			this.gridNotify.TabIndex = 240;
 			this.gridNotify.Title = "Action Items";
 			this.gridNotify.TranslationName = "FormTaskEdit";
 			this.gridNotify.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridNotify_CellDoubleClick);
 			this.gridNotify.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridNotify_CellClick);
+			// 
+			// checkNotifyShowHqOnly
+			// 
+			this.checkNotifyShowHqOnly.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.checkNotifyShowHqOnly.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkNotifyShowHqOnly.Location = new System.Drawing.Point(211, 4);
+			this.checkNotifyShowHqOnly.Name = "checkNotifyShowHqOnly";
+			this.checkNotifyShowHqOnly.Size = new System.Drawing.Size(135, 20);
+			this.checkNotifyShowHqOnly.TabIndex = 243;
+			this.checkNotifyShowHqOnly.Text = "Show HQ Only";
+			this.checkNotifyShowHqOnly.CheckedChanged += new System.EventHandler(this.checkNotifyShowHqOnly_CheckedChanged);
 			// 
 			// tabSubscribed
 			// 
@@ -1240,16 +1252,6 @@
 			// 
 			this.timerRefreshUI.Interval = 1000;
 			this.timerRefreshUI.Tick += new System.EventHandler(this.timerRefreshUI_Tick);
-			// 
-			// checkNotifyShowHqOnly
-			// 
-			this.checkNotifyShowHqOnly.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.checkNotifyShowHqOnly.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkNotifyShowHqOnly.Location = new System.Drawing.Point(211, 3);
-			this.checkNotifyShowHqOnly.Name = "checkNotifyShowHqOnly";
-			this.checkNotifyShowHqOnly.Size = new System.Drawing.Size(135, 20);
-			this.checkNotifyShowHqOnly.TabIndex = 243;
-			this.checkNotifyShowHqOnly.Text = "Show HQ Only";
 			// 
 			// FormJobManager
 			// 

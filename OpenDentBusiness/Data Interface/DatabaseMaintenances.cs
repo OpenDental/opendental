@@ -2780,7 +2780,7 @@ namespace OpenDentBusiness {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
 			}
 			string log="";
-			string command="SELECT * FROM claimproc WHERE NoBillIns=1 AND InsPayEst !=0";
+			string command="SELECT * FROM claimproc WHERE NoBillIns=1 AND IsOverpay=0 AND InsPayEst !=0";
 			List<ClaimProc> listClaimProcs=Crud.ClaimProcCrud.SelectMany(command);
 			switch(modeCur) {
 				case DbmMode.Check:
@@ -2793,7 +2793,7 @@ namespace OpenDentBusiness {
 					List<DbmLog> listDbmLogs=new List<DbmLog>();
 					string methodName=MethodBase.GetCurrentMethod().Name;
 					//This is just estimate info, regardless of the claimproc status, so totally safe.
-					command="UPDATE claimproc SET InsPayEst=0 WHERE NoBillIns=1 AND InsPayEst !=0";
+					command="UPDATE claimproc SET InsPayEst=0 WHERE NoBillIns=1 AND IsOverpay=0 AND InsPayEst !=0";
 					long numberFixed=Db.NonQ(command);
 					listClaimProcs.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x.ClaimProcNum,DbmLogFKeyType.ClaimProc,
 						DbmLogActionType.Update,methodName,"Updated InsPayEst from "+x.InsPayEst+" to 0 from ClaimProcEstNoBillIns.")));
@@ -2960,6 +2960,7 @@ namespace OpenDentBusiness {
 					FROM claimproc,claim
 					WHERE claimproc.ClaimNum=claim.ClaimNum
 					AND claim.ClaimStatus='R'
+					AND IsOverpay=0
 					AND claimproc.Status="+POut.Int((int)ClaimProcStatus.NotReceived)+" "
 					+patWhere;
 			//If a claim is re-sent after being received, the claimprocs Status will be Received but the claim will be Sent, which is to be expected, so we
@@ -3315,7 +3316,7 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
 			}
-			if(!CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
+			if(!CultureInfo.CurrentCulture.Name.EndsWith("CA") && !ODInitialize.IsRunningInUnitTest) {//Canadian. en-CA or fr-CA
 				return Lans.g("FormDatabaseMaintenance","Skipped. Local computer region must be set to Canada to run.");
 			}
 			StringBuilder log=new StringBuilder();
@@ -3323,7 +3324,7 @@ namespace OpenDentBusiness {
 				FROM claimproc 
 				INNER JOIN patient ON patient.PatNum=claimproc.PatNum
 				INNER JOIN claim ON claim.ClaimNum=claimproc.ClaimNum
-				WHERE claimproc.ClaimNum!=0 AND claimproc.ProcNum!=0 AND claimproc.Status!=4
+				WHERE claimproc.ClaimNum!=0 AND claimproc.ProcNum!=0 AND claimproc.Status!=4 AND claimproc.IsOverpay=0
 				GROUP BY claimproc.ClaimNum,claimproc.ProcNum,claimproc.Status
 				HAVING COUNT(*) > 1 
 				ORDER BY claim.DateSent";
@@ -8176,6 +8177,7 @@ namespace OpenDentBusiness {
 				+"OR claimproc.Status="+POut.Int((int)ClaimProcStatus.Received)+" "
 				+"OR claimproc.Status="+POut.Int((int)ClaimProcStatus.Estimate)+") "
 				+"AND procedurelog.ProcStatus!="+POut.Int((int)ProcStat.D)+" " //exclude deleted procedures
+				+"AND claimproc.IsOverpay=0 "
 				+"GROUP BY claimproc.ProcNum, claimproc.InsSubNum, claimproc.PlanNum "
 					+", patient.PatNum, patient.LName, patient.FName, procedurelog.ProcDate, procedurecode.ProcCode "//For Oracle.
 				+"HAVING COUNT(*)>1 "

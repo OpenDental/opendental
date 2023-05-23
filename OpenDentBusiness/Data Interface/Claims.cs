@@ -1122,7 +1122,7 @@ namespace OpenDentBusiness{
 					continue;//ignores payments, etc
 				}
 				//fee:
-				if(isFeeBilledUpdateNeeded && plan.ClaimsUseUCR) {//use UCR for the provider of the procedure
+				if(!listClaimProcsForClaim[i].IsOverpay && isFeeBilledUpdateNeeded && plan.ClaimsUseUCR) {//use UCR for the provider of the procedure
 					long provNum=procCur.ProvNum;
 					if(provNum==0) {//if no prov set, then use practice default.
 						provNum=PrefC.GetLong(PrefName.PracticeDefaultProv);
@@ -1139,10 +1139,12 @@ namespace OpenDentBusiness{
 						listClaimProcsForClaim[i].FeeBilled=procCur.Quantity*ppoFee;
 					}
 				}
-				else if(isFeeBilledUpdateNeeded) {//don't use ucr. Use the procedure fee instead.
+				else if(!listClaimProcsForClaim[i].IsOverpay && isFeeBilledUpdateNeeded) {//don't use ucr. Use the procedure fee instead.
 					listClaimProcsForClaim[i].FeeBilled=procCur.ProcFeeTotal;
 				}
-				claimFee+=listClaimProcsForClaim[i].FeeBilled;
+				if(!listClaimProcsForClaim[i].IsOverpay) {
+					claimFee+=listClaimProcsForClaim[i].FeeBilled;
+				}
 				if(claimCur.ClaimType=="PreAuth" || claimCur.ClaimType=="Cap" || (claimCur.ClaimType=="Other" && !plan.IsMedical)) {
 					//12-18-2015 ==tg:  We added medical plans as an exclusion to the above logic.  In past versions Medical plans did not copy over values into
 					//the claimproc InsPayEst, DedApplied, or Writeoff columns.  DG and I determined that for now this is acceptable.	 If we ever implement a 
@@ -1792,7 +1794,7 @@ namespace OpenDentBusiness{
 				//These fields don't get set for CapClaim procedures when a capitation claim is received.
 				//Capitation claims only allow As Total payments. See FormClaimEdit.butPayTotal_Click()
 				//These fields do get set when non-capitation claims are paid. See FormClaimEdit.butPayProc_Click()
-				if(claimProcNew.Status!=ClaimProcStatus.CapClaim) {
+				if(claimProcNew.Status!=ClaimProcStatus.CapClaim && !claimProcNew.IsOverpay) {
 					claimProcNew.Status=ClaimProcStatus.Received;
 					claimProcNew.DateEntry=DateTime.Now;
 					claimProcNew.DateCP=DateTime.Today;

@@ -4674,12 +4674,13 @@ namespace OpenDentBusiness {
 			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 35)";
 			Db.NonQ(command);
 			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 36)";
-			Db.NonQ(command);
-			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 37)";
-			Db.NonQ(command);
-			command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES(1, 38)";
-			Db.NonQ(command);
 			//end B44132
+		}
+
+		private static void To22_4_44() { 
+			//Delete all alert category links that have an invalid AlertType.
+			string command=$"DELETE FROM alertcategorylink WHERE AlertType > 36";
+			Db.NonQ(command);
 		}
 
 		private static void To23_1_1() {
@@ -4999,7 +5000,15 @@ namespace OpenDentBusiness {
 					Db.NonQ(command);
 				}
 			}//end B44132
-		}
+		}//End of 23_1_11() method
+
+		private static void To23_1_13(){
+			//B44848
+			string command="UPDATE clearinghouse SET CommBridge=22 WHERE Description='Vyne Dental' AND CommBridge=0";
+			Db.NonQ(command);
+			//end B44848
+			LargeTableHelper.AlterTable("claimproc","ClaimProcNum",new ColNameAndDef("IsOverpay","tinyint NOT NULL"));
+		}//End of 23_1_13() method
 	}
 }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using CodeBase;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenDentBusiness;
@@ -39,20 +40,41 @@ namespace UnitTests.DatabaseMaintenance_Tests {
 
 		private static MethodInfo _methodInfoPatientMissing => _listMethodInfoDbms.FirstOrDefault(x => x.Name==nameof(DatabaseMaintenances.PatientMissing));
 
-		///<summary>Runs a single DBM method.  Updates the DateLastRun column in the database for the method passed in if modeCur is set to Fix.</summary>
-		private bool RunMethod(MethodInfo method) {
-			try {
-				List<object> parameters=GetParametersForMethod(method,DbmMode.Fix);
-				string resultDoNothing=(string)method.Invoke(null,parameters.ToArray());
+		///<summary>Mimics DatabaseMaintenances.GetMethodsForDisplay(). Runs all database maintenance methods, including those which would be skipped based on region or preferences.</summary>
+		private void RunAllTests() {
+			List<MethodInfo> listMethodInfosAll=(typeof(DatabaseMaintenances)).GetMethods().ToList();
+			List<MethodInfo> listMethodInfos=new List<MethodInfo>();
+			for(int i=0;i<listMethodInfosAll.Count;i++){
+				DbmMethodAttr dbmAttribute=(DbmMethodAttr)Attribute.GetCustomAttribute(listMethodInfosAll[i],typeof(DbmMethodAttr));
+				if(dbmAttribute==null) {
+					continue;//This is not a valid DBM method.
+				}
+				//This is a valid DBM method and should be added to the list of methods to run.
+				listMethodInfos.Add(listMethodInfosAll[i]);
 			}
-			catch(Exception ex) {
-				ex.DoNothing();
-				return false;
+			DatabaseMaintenances.InsertMissingDBMs(listMethodInfos.Select(x => x.Name).ToList());
+			List<DatabaseMaintenance> listDatabaseMaintenances=DatabaseMaintenances.GetAll();
+			for(int i=0;i<listDatabaseMaintenances.Count;i++) {
+				//The following mimics FormDatabaseMaintenences.RunMethod().
+				MethodInfo methodInfo=listMethodInfos.Find(x => x.Name==listDatabaseMaintenances[i].MethodName);
+				List<object> listObjectsParameters=GetParametersForMethod(methodInfo,DbmMode.Fix);
+				string result="";
+				try {
+					result=(string)methodInfo.Invoke(null,listObjectsParameters.ToArray());//object is null because this invokes a public static method.
+					DatabaseMaintenances.UpdateDateLastRun(methodInfo.Name);
+				}
+				catch(Exception ex) {
+					if(ex.InnerException!=null) {
+						ExceptionDispatchInfo.Capture(ex.InnerException).Throw();//This preserves the stack trace of the InnerException.
+					}
+					throw;
+				}
 			}
-			return true;
 		}
+		
 
-		///<summary>Returns a list of parameters for the corresponding DBM method.  The order of these parameters is critical.</summary>
+		///<summary>Returns a list of parameters for the corresponding DBM method.  The order of these parameters is critical.
+		///Mimics FormDatabaseMaintenences.GetParametersForMethod().</summary>
 		private List<object> GetParametersForMethod(MethodInfo method,DbmMode modeCur) {
 			long patNum=0;
 			DbmMethodAttr methodAttributes=(DbmMethodAttr)Attribute.GetCustomAttribute(method,typeof(DbmMethodAttr));
@@ -632,6 +654,43 @@ namespace UnitTests.DatabaseMaintenance_Tests {
 			List<OrthoChartRow> listOrthoChartRows=OrthoChartRows.GetAllForPatient(pat.PatNum);
 			Assert.AreEqual(2,listOrthoChartRows.Count);
 			Assert.AreEqual(2,listOrthoChartRows.SelectMany(x => x.ListOrthoCharts).Count());
+		}
+
+		///<summary>Tests that users are not inadvertently warned about overpayment claimprocs nor that they are inadvertently deleted from the db.</summary>
+		[TestMethod]
+		public void DBMTests_ClaimProcOverpay() {
+			//Grab all methods from the DatabaseMaintenance class to dynamically fill the grid.
+			//First, setup the test scenario.
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			long provNum=ProviderT.CreateProvider(suffix);
+			Patient pat=PatientT.CreatePatient(suffix,provNum);
+			InsuranceT.AddInsurance(pat,suffix);
+			List<InsSub> listSubs=InsSubT.GetInsSubs(pat);
+			List<InsPlan> listPlans=InsPlans.RefreshForSubList(listSubs);
+			List<PatPlan> listPatPlans=PatPlans.Refresh(pat.PatNum);
+			InsPlan plan=InsPlanT.GetPlanForPriSecMed(PriSecMed.Primary,listPatPlans,listPlans,listSubs);
+			BenefitT.CreateDeductibleGeneral(plan.PlanNum,BenefitCoverageLevel.Individual,50);
+			BenefitT.CreateCategoryPercent(plan.PlanNum,EbenefitCategory.Diagnostic,100);
+			BenefitT.CreateCategoryPercent(plan.PlanNum,EbenefitCategory.Crowns,50);
+			BenefitT.CreateDeductible(plan.PlanNum,EbenefitCategory.Diagnostic,0);
+			BenefitT.CreateDeductible(plan.PlanNum,"D0220",50);
+			List<Benefit> listBens=Benefits.Refresh(listPatPlans,listSubs);
+			Procedure proc1=ProcedureT.CreateProcedure(pat,"D0220",ProcStat.C,"",30);//proc1 - Intraoral - periapical first film
+			Claim claim=ClaimT.CreateClaim("P",listPatPlans,listPlans,new List<ClaimProc>(),new List<Procedure> { proc1 },pat,new List<Procedure> { proc1 },
+				listBens,listSubs);
+			List<ClaimProc> listClaimProcs=ClaimProcs.RefreshForProc(proc1.ProcNum);
+			ClaimProc claimProc=listClaimProcs.FirstOrDefault();
+			ClaimProc claimProcOverpay=ClaimProcs.CreateOverpay(claimProc,insEstTotalOverride:-13.27,null);
+			claimProcOverpay.ClaimProcNum=ClaimProcs.Insert(claimProcOverpay);
+			RunAllTests();
+			//Get the updated claimproc
+			listClaimProcs=ClaimProcs.RefreshForProc(claimProc.ProcNum);
+			claimProcOverpay=ClaimProcs.GetFromList(listClaimProcs,claimProcOverpay.ClaimProcNum);
+			claimProc=ClaimProcs.GetFromList(listClaimProcs,claimProc.ClaimProcNum);
+			Assert.IsNotNull(claimProcOverpay);//Ensure DBM did not delete the overpay claimproc.
+			Assert.IsNotNull(claimProc);//Ensure DBM did not delete the payment claimproc.
+			Assert.AreEqual(true,claimProcOverpay.IsOverpay);//Our overpay claimproc is still marked as such.
+			Assert.AreEqual(-13.27,claimProcOverpay.InsPayEst);//Ensure the InsPayEst column was not reset to 0 due to the claimproc being labeled as NoBillIns.
 		}
 	}
 }

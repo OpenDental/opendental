@@ -115,6 +115,8 @@ namespace OpenDentBusiness{
 		public bool IsTransfer;
 		///<summary>Holds a comma delimited list of Claim Adjustment Reason Codes from an ERA. https://x12.org/codes/claim-adjustment-reason-codes </summary>
 		public string ClaimAdjReasonCodes;
+		///<summary>Bool, defaults to false. When true, indicates that a claimproc represents an insurance overpayment OR underpayment./summary>
+		public bool IsOverpay;
 
 		///<summary>Returns a copy of this ClaimProc.</summary>
 		public ClaimProc Copy(){
@@ -160,7 +162,8 @@ namespace OpenDentBusiness{
 				|| EstimateNote != cp.EstimateNote
 				|| WriteOffEst != cp.WriteOffEst
 				|| WriteOffEstOverride != cp.WriteOffEstOverride
-				|| ClinicNum != cp.ClinicNum) 
+				|| ClinicNum != cp.ClinicNum
+				|| IsOverpay != cp.IsOverpay) 
 			{
 				return false;
 			}

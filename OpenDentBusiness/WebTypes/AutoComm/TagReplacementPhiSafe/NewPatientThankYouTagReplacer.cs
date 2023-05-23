@@ -42,12 +42,19 @@ namespace OpenDentBusiness.AutoComm {
 
 		public void ReplaceNewPatWebFormURLTag(StringBuilder sbTemplate,AutoCommObj aco,bool isEmailBody) {
 			string webSheetDefIDs;
-			if(PrefC.HasClinicsEnabled) {
+			bool useClinicPref=false;
+			if(PrefC.HasClinicsEnabled) {//Check if customer has Clinics. If clinics are enabled check to see if the current clinic has chosen to use the HQ preference.
+				List<ClinicPref> listClinicPrefs=ClinicPrefs.GetPrefAllClinics(PrefName.AutoMsgingUseDefaultPref,includeDefault:false);//Get all ClinicPrefs for to see if Clinic is Using Defaults.
+				ClinicPref clinicPref=listClinicPrefs.FirstOrDefault(x => x.ClinicNum==aco.ClinicNum);
+				//If a clinicPref is null, no pref has been inserted meaning they have not checked the Use Default checkbox.
+				useClinicPref=clinicPref==null || !PIn.Bool(clinicPref.ValueString);//Pref value true means Clinic has chosen to use defaults, false means use the ClinicPref
+			}
+			if(useClinicPref) {//Clinic opted to use their own preference
 				List<ClinicPref> listClinicPrefs=ClinicPrefs.GetPrefAllClinics(PrefName.ApptNewPatientThankYouWebSheetDefID,true);
 				ClinicPref clinicPref=listClinicPrefs.FirstOrDefault(x => x.ClinicNum==aco.ClinicNum);
 				webSheetDefIDs=PIn.String(clinicPref?.ValueString??listClinicPrefs.FirstOrDefault(x => x.ClinicNum==0)?.ValueString??"0");
 			}
-			else {
+			else {//No clinics or clinic opted for using HQ preference
 				webSheetDefIDs=PrefC.GetString(PrefName.ApptNewPatientThankYouWebSheetDefID);
 			}
 			string replaceValue=GetNewPatWebFormURLTag(webSheetDefIDs);

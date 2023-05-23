@@ -68,13 +68,12 @@ namespace OpenDental{
 			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.checkUseDefaultsGeneralMessage = new OpenDental.UI.CheckBox();
 			this.butAddGeneralMessage = new OpenDental.UI.Button();
+			this.checkUseDefaultsInvite = new OpenDental.UI.CheckBox();
 			this.butActivateNewPatThanks = new OpenDental.UI.Button();
 			this.textStatusNewPatThanks = new System.Windows.Forms.TextBox();
-			this.checkUseDefaultsInvite = new OpenDental.UI.CheckBox();
 			this.groupBox4 = new OpenDental.UI.GroupBox();
 			this.textStatusGeneralMessage = new System.Windows.Forms.TextBox();
 			this.butActivateGeneralMessages = new OpenDental.UI.Button();
-			this.butExclusionDays = new OpenDental.UI.Button();
 			this.menuWebSchedVerifyTextTemplate.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
@@ -365,24 +364,6 @@ namespace OpenDental{
 			this.butAddPatientPortalInvite.UseVisualStyleBackColor = true;
 			this.butAddPatientPortalInvite.Click += new System.EventHandler(this.butAddPatientPortalInvite_Click);
 			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.checkUseDefaultNewPatTY);
-			this.groupBox1.Controls.Add(this.checkUseDefaultsInviteBefore);
-			this.groupBox1.Controls.Add(this.butAddNewPatThanks);
-			this.groupBox1.Controls.Add(this.butAddPatientPortalInviteBefore);
-			this.groupBox1.Controls.Add(this.checkUseDefaultThanks);
-			this.groupBox1.Controls.Add(this.checkUseDefaultsConfirmation);
-			this.groupBox1.Controls.Add(this.checkUseDefaultsReminder);
-			this.groupBox1.Controls.Add(this.butAddThankYouVerify);
-			this.groupBox1.Controls.Add(this.butAddReminder);
-			this.groupBox1.Controls.Add(this.butAddConfirmation);
-			this.groupBox1.Location = new System.Drawing.Point(12, 309);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(347, 166);
-			this.groupBox1.TabIndex = 512;
-			this.groupBox1.Text = "Before Appointment";
-			// 
 			// checkUseDefaultNewPatTY
 			// 
 			this.checkUseDefaultNewPatTY.Location = new System.Drawing.Point(6, 109);
@@ -412,6 +393,24 @@ namespace OpenDental{
 			this.butAddNewPatThanks.Text = "Add New Patient Thank-You";
 			this.butAddNewPatThanks.UseVisualStyleBackColor = true;
 			this.butAddNewPatThanks.Click += new System.EventHandler(this.butAddNewPatThanks_Click);
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Controls.Add(this.checkUseDefaultNewPatTY);
+			this.groupBox1.Controls.Add(this.checkUseDefaultsInviteBefore);
+			this.groupBox1.Controls.Add(this.butAddNewPatThanks);
+			this.groupBox1.Controls.Add(this.butAddPatientPortalInviteBefore);
+			this.groupBox1.Controls.Add(this.checkUseDefaultThanks);
+			this.groupBox1.Controls.Add(this.checkUseDefaultsConfirmation);
+			this.groupBox1.Controls.Add(this.checkUseDefaultsReminder);
+			this.groupBox1.Controls.Add(this.butAddThankYouVerify);
+			this.groupBox1.Controls.Add(this.butAddReminder);
+			this.groupBox1.Controls.Add(this.butAddConfirmation);
+			this.groupBox1.Location = new System.Drawing.Point(12, 309);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(347, 166);
+			this.groupBox1.TabIndex = 512;
+			this.groupBox1.Text = "Before Appointment";
 			// 
 			// butAddPatientPortalInviteBefore
 			// 
@@ -513,6 +512,25 @@ namespace OpenDental{
 			this.checkUseDefaultsInvite.Text = "Use Defaults";
 			this.checkUseDefaultsInvite.Click += new System.EventHandler(this.checkUseDefaultsInvite_Click);
 			// 
+			// butActivateNewPatThanks
+			// 
+			this.butActivateNewPatThanks.Location = new System.Drawing.Point(164, 104);
+			this.butActivateNewPatThanks.Name = "butActivateNewPatThanks";
+			this.butActivateNewPatThanks.Size = new System.Drawing.Size(177, 23);
+			this.butActivateNewPatThanks.TabIndex = 516;
+			this.butActivateNewPatThanks.Text = "Activate New Pat Thank-You";
+			this.butActivateNewPatThanks.UseVisualStyleBackColor = true;
+			this.butActivateNewPatThanks.Click += new System.EventHandler(this.butActivateNewPatThanks_Click);
+			// 
+			// textStatusNewPatThanks
+			// 
+			this.textStatusNewPatThanks.Location = new System.Drawing.Point(6, 106);
+			this.textStatusNewPatThanks.Name = "textStatusNewPatThanks";
+			this.textStatusNewPatThanks.ReadOnly = true;
+			this.textStatusNewPatThanks.Size = new System.Drawing.Size(152, 20);
+			this.textStatusNewPatThanks.TabIndex = 517;
+			this.textStatusNewPatThanks.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			// 
 			// groupBox4
 			// 
 			this.groupBox4.Controls.Add(this.butActivateNewPatThanks);
@@ -535,25 +553,6 @@ namespace OpenDental{
 			this.groupBox4.TabIndex = 515;
 			this.groupBox4.Text = "Activate for Practice";
 			// 
-			// butActivateNewPatThanks
-			// 
-			this.butActivateNewPatThanks.Location = new System.Drawing.Point(164, 104);
-			this.butActivateNewPatThanks.Name = "butActivateNewPatThanks";
-			this.butActivateNewPatThanks.Size = new System.Drawing.Size(177, 23);
-			this.butActivateNewPatThanks.TabIndex = 516;
-			this.butActivateNewPatThanks.Text = "Activate New Pat Thank-You";
-			this.butActivateNewPatThanks.UseVisualStyleBackColor = true;
-			this.butActivateNewPatThanks.Click += new System.EventHandler(this.butActivateNewPatThanks_Click);
-			// 
-			// textStatusNewPatThanks
-			// 
-			this.textStatusNewPatThanks.Location = new System.Drawing.Point(6, 106);
-			this.textStatusNewPatThanks.Name = "textStatusNewPatThanks";
-			this.textStatusNewPatThanks.ReadOnly = true;
-			this.textStatusNewPatThanks.Size = new System.Drawing.Size(152, 20);
-			this.textStatusNewPatThanks.TabIndex = 517;
-			this.textStatusNewPatThanks.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-			// 
 			// textStatusGeneralMessage
 			// 
 			this.textStatusGeneralMessage.Location = new System.Drawing.Point(6, 193);
@@ -573,20 +572,9 @@ namespace OpenDental{
 			this.butActivateGeneralMessages.UseVisualStyleBackColor = true;
 			this.butActivateGeneralMessages.Click += new System.EventHandler(this.butActivateGeneralMessages_Click);
 			// 
-			// butExclusionDays
-			// 
-			this.butExclusionDays.Location = new System.Drawing.Point(168, 618);
-			this.butExclusionDays.Name = "butExclusionDays";
-			this.butExclusionDays.Size = new System.Drawing.Size(185, 24);
-			this.butExclusionDays.TabIndex = 516;
-			this.butExclusionDays.Text = "eConfirmation Exclusion Days";
-			this.butExclusionDays.UseVisualStyleBackColor = true;
-			this.butExclusionDays.Click += new System.EventHandler(this.butExclusionDays_Click);
-			// 
 			// FormEServicesAutoMsging
 			// 
 			this.ClientSize = new System.Drawing.Size(1167, 679);
-			this.Controls.Add(this.butExclusionDays);
 			this.Controls.Add(this.groupBox4);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
@@ -662,6 +650,5 @@ namespace OpenDental{
 		private UI.Button butAddNewPatThanks;
 		private UI.Button butActivateNewPatThanks;
 		private System.Windows.Forms.TextBox textStatusNewPatThanks;
-		private UI.Button butExclusionDays;
 	}
 }

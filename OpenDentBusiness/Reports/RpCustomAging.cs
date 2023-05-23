@@ -41,8 +41,13 @@ namespace OpenDentBusiness {
 				ROUND(tSums.TotalCharges-tSums.TotalCredits,3) BalTotal
 				FROM (";
 			}
+			if(ageOptions.FamGroup == AgingOptions.FamilyGrouping.Individual) {
+				command+=@"SELECT p.PatNum, ";
+			}
+			else {
+				command+=@"SELECT p.Guarantor PatNum, ";
+			}
 			command += @"
-					SELECT p.Guarantor PatNum,
 					SUM(CASE WHEN trans.TranAmount > 0 AND trans.TranDate >= "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 30 DAY THEN trans.TranAmount ELSE 0 END) Charges_0_30,
 					SUM(CASE WHEN trans.TranAmount > 0 AND trans.TranDate BETWEEN "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 60 DAY AND "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 31 DAY THEN trans.TranAmount ELSE 0 END) Charges_31_60,
 					SUM(CASE WHEN trans.TranAmount > 0 AND trans.TranDate BETWEEN "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 90 DAY AND "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 61 DAY THEN trans.TranAmount ELSE 0 END) Charges_61_90,

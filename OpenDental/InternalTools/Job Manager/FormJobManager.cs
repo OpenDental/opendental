@@ -154,9 +154,9 @@ namespace OpenDental {
 			catch {
 				textVersionText.Text="";
 			}
-			if (System.Windows.Clipboard.ContainsText()) {
+			if (ClipboardDataIsValid()) {
 				//Load the new job into the job mananger controls and cache.
-				LoadJob(JobSearchFromClipboard(System.Windows.Clipboard.GetText()),false);
+				LoadJob(JobSearchFromClipboard(),false);
 				if(userControlJobManagerEditor.JobCur!=null) {
 					RefreshGridsForSearch();
 					gridSearch.ScrollToIndex(gridSearch.GetSelectedIndex());
@@ -1392,9 +1392,9 @@ namespace OpenDental {
 				if(listJobsSorted.Count==0) {
 					continue;
 				}
-				//Remove jobs with no FR for the ContactCustomer permission because documentation users should never have customer contact permission as well.
+				//Remove non-HqRequest jobs with no FR for the ContactCustomer permission because documentation users should never have customer contact permission as well.
 				listJobsSorted.RemoveAll(x => kvp.Key.In(JobAction.ContactCustomer,JobAction.ContactCustomerPreDoc)
-								&& !x.ListJobLinks.Any(y => y.LinkType==JobLinkType.Request));
+								&& x.Category!=JobCategory.HqRequest && !x.ListJobLinks.Any(y => y.LinkType==JobLinkType.Request));
 				if(listJobsSorted.Count>0) {
 					gridNotify.ListGridRows.Add(new GridRow("","",kvp.Key.ToString()) { ColorBackG=_colorGridHeaderBack,Bold=true });
 					JobAction[] writeAdviseReview=new[] { JobAction.WriteCode,JobAction.ReviewCode,JobAction.WaitForReview,JobAction.Advise };
@@ -1793,7 +1793,7 @@ namespace OpenDental {
 			gridSubmittedJobs.ListGridRows.Clear();
 			List<Job> listJobsFiltered = new List<Job>();
 			if(userFilter!=null) {
-				listJobsFiltered=JobManagerCore.ListJobsAll.Where(x => x.UserNumConcept==userFilter.UserNum).ToList();
+				listJobsFiltered=JobManagerCore.ListJobsAll.Where(x => x.UserNumConcept==userFilter.UserNum && !x.PhaseCur.In(JobPhase.Complete,JobPhase.Cancelled)).ToList();
 			}
 			else {
 				listJobsFiltered=JobManagerCore.ListJobsAll;
@@ -2303,6 +2303,10 @@ namespace OpenDental {
 			FillActiveTabGrid();
 		}
 
+		private void checkNotifyShowHqOnly_CheckedChanged(object sender, EventArgs e) {
+			FillGridNotify();
+		}
+
 		private void checkSubscribedIncludeCancelled_CheckedChanged(object sender,EventArgs e) {
 			FillActiveTabGrid();
 		}
@@ -2491,6 +2495,7 @@ namespace OpenDental {
 		private void AddNewJob(long parentNum=0,long topParentNum=0) {
 			Job jobNew=new Job();
 			jobNew.ParentNum=parentNum;
+			jobNew.TopParentNum=topParentNum;
 			List<Def> listJobPriorities=Defs.GetDefsForCategory(DefCat.JobPriorities,true);
 			if(listJobPriorities.Count==0) {
 				MsgBox.Show(this,"You have no priorities setup in definitions. Go to definitions and set up Job Priorities first.");
@@ -2654,8 +2659,8 @@ namespace OpenDental {
 		private void JobSearch() {
 			string searchTrimmed=textSearch.Text.Trim();
 			Job jobFound=null;
-			if(string.IsNullOrEmpty(searchTrimmed) && System.Windows.Clipboard.ContainsText()) {
-				jobFound=JobSearchFromClipboard(System.Windows.Clipboard.GetText());
+			if(string.IsNullOrEmpty(searchTrimmed) && ClipboardDataIsValid()) {
+				jobFound=JobSearchFromClipboard();
 			}
 			else if(!string.IsNullOrEmpty(searchTrimmed) && textSearch.Text.All(x => char.IsNumber(x))) {
 				jobFound=Jobs.GetOneFilled(PIn.Long(searchTrimmed));
@@ -2672,13 +2677,25 @@ namespace OpenDental {
 			tabControlNav.SelectedTab=tabSearch;
 		}
 
-		private Job JobSearchFromClipboard(string clipboardText) {
-			clipboardText=clipboardText.ToLower().Trim();
-			Job jobFound=null;
-			if(Regex.IsMatch(clipboardText,@"^jobnum:\d+$")) {
-				jobFound = Jobs.GetOneFilled(PIn.Long(clipboardText.Substring(7)));
+		private bool ClipboardDataIsValid() {
+			if (!System.Windows.Clipboard.ContainsText()) {
+				return false;
 			}
-			return jobFound;
+			try {
+				string clipboardText=System.Windows.Clipboard.GetText();
+			}
+			catch {
+				return false;
+			}
+			return true;
+		}
+
+		private Job JobSearchFromClipboard() {
+			string clipboardText=System.Windows.Clipboard.GetText().ToLower().Trim();
+			if(Regex.IsMatch(clipboardText,@"^jobnum:\d+$")) {
+				return Jobs.GetOneFilled(PIn.Long(clipboardText.Substring(7)));
+			}
+			return null;
 		}
 
 		private void RefreshGridsForSearch() {

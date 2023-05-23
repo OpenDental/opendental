@@ -167,6 +167,12 @@ namespace OpenDentBusiness.Eclaims
 					return;
 				}
 			}
+			else if(clearinghouseClin.CommBridge==EclaimsCommBridge.VyneDental){
+				if(!VyneDental.Launch(clearinghouseClin,batchNum)){
+					MessageBox.Show(Lans.g("Eclaims","Error sending.")+"\r\n"+VyneDental.ErrorMessage);
+					return;
+				}
+			}
 			StringBuilder errorMessage=new StringBuilder();
 			if(Plugins.HookMethod(null,"Eclaims.SendBatch_afterClientProgramLaunch",clearinghouseClin,messageText,errorMessage)
 				&& errorMessage.Length > 0)

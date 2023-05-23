@@ -129,7 +129,7 @@ namespace OpenDentBusiness {
 			//Invoke RefreshForClaims() instead of RefreshForClaim() so that Canadian labs are included.
 			List<ClaimProc> listClaimProcs=ClaimProcs.RefreshForClaims(new List<long>() { claim.ClaimNum });
 			for(int i=0;i<listClaimProcs.Count;i++) {
-				if(!listClaimProcs[i].Status.In(ClaimProcStatus.NotReceived,ClaimProcStatus.Preauth) || listClaimProcs[i].ClaimPaymentNum>0) {
+				if(!listClaimProcs[i].Status.In(ClaimProcStatus.NotReceived,ClaimProcStatus.Preauth) || listClaimProcs[i].ClaimPaymentNum>0 || listClaimProcs[i].IsOverpay) {
 					continue;
 				}
 				listClaimProcs[i].Status=ClaimProcStatus.Received;

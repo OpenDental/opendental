@@ -714,6 +714,12 @@
     <Compile Include="Forms\FormPatientListDiscount.Designer.cs">
       <DependentUpon>FormPatientListDiscount.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormClaimOverpay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormClaimOverpay.Designer.cs">
+      <DependentUpon>FormClaimOverpay.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormCommReferral.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -7847,6 +7853,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormPatientListDiscount.resx">
       <DependentUpon>FormPatientListDiscount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormClaimOverpay.resx">
+      <DependentUpon>FormClaimOverpay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormCommReferral.resx">
       <DependentUpon>FormCommReferral.cs</DependentUpon>

@@ -65,17 +65,17 @@ namespace OpenDentBusiness {
 			return job;
 		}
 
-		///<summary></summary>
-		public static long Insert(Job job,long topParentNum=0) {
+		///<summary>Inserts job into database. Sets the TopParentNum (and updates its TopParentList) if necessary. </summary>
+		public static long Insert(Job job) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				job.JobNum=Meth.GetLong(MethodBase.GetCurrentMethod(),job,topParentNum);
+				job.JobNum=Meth.GetLong(MethodBase.GetCurrentMethod(),job);
 				return job.JobNum;
 			}
 			long jobNum=Crud.JobCrud.Insert(job);
-			if(topParentNum==0) {
-				topParentNum=jobNum;
+			if(job.TopParentNum==0) {
+				job.TopParentNum=jobNum;
+				UpdateTopParentList(job.TopParentNum,new List<long> {jobNum});
 			}
-			UpdateTopParentList(topParentNum,new List<long>{jobNum});
 			return jobNum;
 		}
 
@@ -163,7 +163,7 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Gets all the jobs necessary for loading the Job Manager window.  This method will NOT invoke FillInMemoryLists() due to middle tier.
-		///Returns a list of jobs that are not cancelled and not complete (unless in Category "Feature" and have a UserNumCustContact=0).</summary>
+		///Returns a list of jobs that are not cancelled and not complete (unless in Category "Feature" or "HqRequest" and have a UserNumCustContact=0).</summary>
 		public static List<Job> GetAllForManager() {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<Job>>(MethodBase.GetCurrentMethod());
@@ -172,7 +172,7 @@ namespace OpenDentBusiness {
 				WHERE PhaseCur!={POut.Enum(JobPhase.Cancelled)}
 				AND (
 					PhaseCur!={POut.Enum(JobPhase.Complete)} 
-					OR (Category={POut.Enum(JobCategory.Feature)} AND UserNumCustContact=0)
+					OR (Category IN ({POut.Enum(JobCategory.Feature)},{POut.Enum(JobCategory.HqRequest)}) AND UserNumCustContact=0)
 				)";
 			return Crud.JobCrud.SelectMany(command);
 		}

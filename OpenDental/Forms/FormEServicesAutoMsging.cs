@@ -607,11 +607,6 @@ namespace OpenDental {
 			return note.Substring(0,100)+"(...)";
 		}
 
-		private void butExclusionDays_Click(object sender,EventArgs e) {
-			using FormeConfimationExclusionDays formAutoCommExclusionDays = new FormeConfimationExclusionDays(_clinic?.ClinicNum??0);
-			formAutoCommExclusionDays.ShowDialog();
-		}
-
 		private void ButOK_Click(object sender,EventArgs e) {
 			//check for duplicate rules
 			List<long> listClinicNums=_listApptReminderRules.Select(x => x.ClinicNum).Distinct().ToList();

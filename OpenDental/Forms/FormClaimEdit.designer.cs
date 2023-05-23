@@ -354,6 +354,9 @@
 			this._recalcErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
 			this.comboClaimStatus = new OpenDental.UI.ComboBox();
 			this.textPatResp = new OpenDental.ValidDouble();
+			this.groupBoxPendingPayment = new OpenDental.UI.GroupBox();
+			this.butInsuranceOverpaid = new OpenDental.UI.Button();
+			this.butInsuranceUnderpaid = new OpenDental.UI.Button();
 			this.groupFinalizePayment.SuspendLayout();
 			this.tabControlMain.SuspendLayout();
 			this.tabGeneral.SuspendLayout();
@@ -393,6 +396,7 @@
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._recalcErrorProvider)).BeginInit();
+			this.groupBoxPendingPayment.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// label30
@@ -3146,7 +3150,7 @@
 			this.groupEnterPayment.Controls.Add(this.butPayProc);
 			this.groupEnterPayment.Location = new System.Drawing.Point(809, 12);
 			this.groupEnterPayment.Name = "groupEnterPayment";
-			this.groupEnterPayment.Size = new System.Drawing.Size(133, 107);
+			this.groupEnterPayment.Size = new System.Drawing.Size(119, 107);
 			this.groupEnterPayment.TabIndex = 132;
 			this.groupEnterPayment.Text = "Enter Payment";
 			// 
@@ -3154,7 +3158,7 @@
 			// 
 			this.butPaySupp.Location = new System.Drawing.Point(17, 78);
 			this.butPaySupp.Name = "butPaySupp";
-			this.butPaySupp.Size = new System.Drawing.Size(99, 24);
+			this.butPaySupp.Size = new System.Drawing.Size(85, 24);
 			this.butPaySupp.TabIndex = 102;
 			this.butPaySupp.Text = "S&upplemental";
 			this.butPaySupp.Click += new System.EventHandler(this.butPaySupp_Click);
@@ -3163,7 +3167,7 @@
 			// 
 			this.butPayTotal.Location = new System.Drawing.Point(17, 16);
 			this.butPayTotal.Name = "butPayTotal";
-			this.butPayTotal.Size = new System.Drawing.Size(99, 24);
+			this.butPayTotal.Size = new System.Drawing.Size(85, 24);
 			this.butPayTotal.TabIndex = 100;
 			this.butPayTotal.Text = "As &Total";
 			this.butPayTotal.Click += new System.EventHandler(this.butPayTotal_Click);
@@ -3172,7 +3176,7 @@
 			// 
 			this.butPayProc.Location = new System.Drawing.Point(17, 42);
 			this.butPayProc.Name = "butPayProc";
-			this.butPayProc.Size = new System.Drawing.Size(99, 24);
+			this.butPayProc.Size = new System.Drawing.Size(85, 24);
 			this.butPayProc.TabIndex = 101;
 			this.butPayProc.Text = "&By Procedure";
 			this.butPayProc.Click += new System.EventHandler(this.butPayProc_Click);
@@ -3218,7 +3222,7 @@
 			// 
 			this.butSplit.Location = new System.Drawing.Point(826, 128);
 			this.butSplit.Name = "butSplit";
-			this.butSplit.Size = new System.Drawing.Size(99, 24);
+			this.butSplit.Size = new System.Drawing.Size(85, 24);
 			this.butSplit.TabIndex = 127;
 			this.butSplit.Text = "Split Claim";
 			this.butSplit.Click += new System.EventHandler(this.butSplit_Click);
@@ -3605,10 +3609,39 @@
 			this.textPatResp.TabStop = false;
 			this.textPatResp.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
+			// groupBoxPendingPayment
+			// 
+			this.groupBoxPendingPayment.Controls.Add(this.butInsuranceOverpaid);
+			this.groupBoxPendingPayment.Controls.Add(this.butInsuranceUnderpaid);
+			this.groupBoxPendingPayment.Location = new System.Drawing.Point(944, 12);
+			this.groupBoxPendingPayment.Name = "groupBoxPendingPayment";
+			this.groupBoxPendingPayment.Size = new System.Drawing.Size(117, 81);
+			this.groupBoxPendingPayment.TabIndex = 133;
+			this.groupBoxPendingPayment.Text = "Pending Payment";
+			// 
+			// butInsuranceOverpaid
+			// 
+			this.butInsuranceOverpaid.Location = new System.Drawing.Point(17, 16);
+			this.butInsuranceOverpaid.Name = "butInsuranceOverpaid";
+			this.butInsuranceOverpaid.Size = new System.Drawing.Size(85, 24);
+			this.butInsuranceOverpaid.TabIndex = 100;
+			this.butInsuranceOverpaid.Text = "&Ins Overpaid";
+			this.butInsuranceOverpaid.Click += new System.EventHandler(this.butInsuranceOverpaid_Click);
+			// 
+			// butInsuranceUnderpaid
+			// 
+			this.butInsuranceUnderpaid.Location = new System.Drawing.Point(17, 42);
+			this.butInsuranceUnderpaid.Name = "butInsuranceUnderpaid";
+			this.butInsuranceUnderpaid.Size = new System.Drawing.Size(85, 24);
+			this.butInsuranceUnderpaid.TabIndex = 101;
+			this.butInsuranceUnderpaid.Text = "&Ins Underpaid";
+			this.butInsuranceUnderpaid.Click += new System.EventHandler(this.butInsuranceUnderpaid_Click);
+			// 
 			// FormClaimEdit
 			// 
 			this.AutoScroll = true;
 			this.ClientSize = new System.Drawing.Size(1156, 696);
+			this.Controls.Add(this.groupBoxPendingPayment);
 			this.Controls.Add(this.textPatResp);
 			this.Controls.Add(this.comboClaimStatus);
 			this.Controls.Add(this.butViewEob);
@@ -3735,6 +3768,7 @@
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this._recalcErrorProvider)).EndInit();
+			this.groupBoxPendingPayment.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -4071,5 +4105,8 @@
 		private System.Windows.Forms.Panel panel3;
 		private System.Windows.Forms.Panel panel4;
 		private System.Windows.Forms.Panel panel5;
+		private UI.GroupBox groupBoxPendingPayment;
+		private UI.Button butInsuranceOverpaid;
+		private UI.Button butInsuranceUnderpaid;
 	}
 }

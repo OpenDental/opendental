@@ -206,6 +206,7 @@ namespace OpenDental{
 				labelNote.Text=Lan.g(this,"Preauth Note (this will show on the preauth when submitted)");
 				groupEnterPayment.Text=Lan.g(this,"Enter Estimate");
 				this.Text=Lan.g(this,"Edit Preauthorization");
+				groupBoxPendingPayment.Visible=false;
 			}
 			comboClaimType.Items.Add(Lan.g(this,"Primary"));
 			comboClaimType.Items.Add(Lan.g(this,"Secondary"));
@@ -1288,7 +1289,12 @@ namespace OpenDental{
 					row.Cells.Add(Lan.g("TableClaimProc","Recd"));
 					break;
 				case ClaimProcStatus.NotReceived:
-					row.Cells.Add("");
+					if(claimProc.IsOverpay) {
+						row.Cells.Add("PndSup");
+					}
+					else {
+						row.Cells.Add("NotRec");
+					}
 					break;
 				case ClaimProcStatus.Preauth:
 					row.Cells.Add(Lan.g("TableClaimProc","PreA"));
@@ -1503,7 +1509,7 @@ namespace OpenDental{
 			//There is no need to worry about removing those claimprocs in memory.
 				_listClaimProcsForClaim.Remove(claimProc);
 			}
-			if(claimProc.Status!=ClaimProcStatus.NotReceived) {
+			if(claimProc.Status!=ClaimProcStatus.NotReceived || claimProc.IsOverpay) {
 				return true;
 			}
 			ClaimProc claimProcInitial=formClaimProc.ClaimProcInitial;//Unedited ClaimProc with base estimates calculated in FormClaimProc.
@@ -1669,7 +1675,7 @@ namespace OpenDental{
 				listClaimProcs.Add(_listClaimProcsForClaim[i].Copy());
 			}
 			using FormClaimPayTotal formClaimPayTotal=new FormClaimPayTotal(_patient,_family,_listInsPlans,_listPatPlans,_listInsSubs,GetBlueBookEstimateData(),totalPayAmt:result);
-			formClaimPayTotal.ClaimProcArray=_listClaimProcsForClaim.ToArray(); //Might want to filter out all things that aren't marked as recieved or supplemental
+			formClaimPayTotal.ClaimProcArray=_listClaimProcsForClaim.FindAll(x => x.Status==ClaimProcStatus.Received || x.Status==ClaimProcStatus.Supplemental).ToArray();
 			formClaimPayTotal.ShowDialog();
 			if(formClaimPayTotal.DialogResult!=DialogResult.OK){
 				SetListClaimProcsForClaim(listClaimProcs);
@@ -1688,7 +1694,7 @@ namespace OpenDental{
 			Double dedEst=0;
 			Double payEst=0;
 			for(int i=0;i<_listClaimProcsForClaim.Count;i++){
-				if(_listClaimProcsForClaim[i].Status!=ClaimProcStatus.NotReceived){
+				if(_listClaimProcsForClaim[i].Status!=ClaimProcStatus.NotReceived || _listClaimProcsForClaim[i].IsOverpay){
 					continue;
 				}
 				if(_listClaimProcsForClaim[i].ProcNum==0){
@@ -1750,7 +1756,7 @@ namespace OpenDental{
 			}
 			else{//Claim still exists, and user didn't click cancel
 				for(int i=0;i<_listClaimProcsForClaim.Count;i++){
-					if(_listClaimProcsForClaim[i].Status!=ClaimProcStatus.NotReceived){
+					if(_listClaimProcsForClaim[i].Status!=ClaimProcStatus.NotReceived || _listClaimProcsForClaim[i].IsOverpay){
 						continue;
 					}
 					//ClaimProcs.Cur=ClaimProcs.ForClaim[i];
@@ -1788,6 +1794,11 @@ namespace OpenDental{
 						&& _listClaimProcsForClaim[i].ProcNum>0){//and is procedure
 						gridProc.SetSelected(i,true);
 					}
+				}
+			}
+			for(int i=0;i<_listClaimProcsForClaim.Count;i++){
+				if(_listClaimProcsForClaim[i].IsOverpay) { 
+					gridProc.SetSelected(i,false);
 				}
 			}
 			if(gridProc.SelectedIndices.Length==0){
@@ -3064,6 +3075,25 @@ namespace OpenDental{
 			}
 		}
 
+		private void EditOverpay(bool isOverpaid) {
+			long selectedClaimProcNum=0;
+			if(gridProc.SelectedIndices.Length>0) {
+				selectedClaimProcNum=gridProc.SelectedTags<ClaimProc>().First().ClaimProcNum;
+			}
+			using FormClaimOverpay formClaimOverpay=new FormClaimOverpay(_claim.ClaimNum,_listClaimProcsForClaim,_patient.PatNum,isOverpaid,selectedClaimProcNum);
+			formClaimOverpay.ShowDialog();
+			_listClaimProcs=ClaimProcs.Refresh(_patient.PatNum);
+			FillGrids();
+		}
+
+		private void butInsuranceOverpaid_Click(object sender,EventArgs e) {
+			EditOverpay(true);
+		}
+
+		private void butInsuranceUnderpaid_Click(object sender,EventArgs e) {
+			EditOverpay(false);
+		}
+
 		///<summary>Returns true if user inserted a new ClaimTracking and selected an Error Code.</summary>
 		public static bool AddClaimCustomTracking(Claim claim,string noteText="") {
 			using FormClaimCustomTrackingUpdate formClaimCustomTrackingUpdate=new FormClaimCustomTrackingUpdate(claim,noteText);
@@ -3699,7 +3729,8 @@ namespace OpenDental{
 				InsPlan insPlan=InsPlans.GetPlan(_claim.PlanNum,_listInsPlans);
 				for(int i=0;i<_listClaimProcsForClaim.Count;i++) {
 					if(_listClaimProcsForClaim[i].Status==ClaimProcStatus.Supplemental//supplementals are duplicate
-						|| _listClaimProcsForClaim[i].ProcNum==0)//total payments get deleted
+						|| _listClaimProcsForClaim[i].ProcNum==0//total payments get deleted
+						|| _listClaimProcsForClaim[i].IsOverpay)//Overpayment proc claims also get deleted
 					{
 						ClaimProcs.Delete(_listClaimProcsForClaim[i]);
 						continue;
@@ -3759,6 +3790,9 @@ namespace OpenDental{
 
 		private void MarkAllReceived() {
 			for(int i = 0;i<_listClaimProcsForClaim.Count;i++) {
+				if(_listClaimProcsForClaim[i].IsOverpay) {
+					continue;
+				}
 				if(_listClaimProcsForClaim[i].Status==ClaimProcStatus.NotReceived) {
 					//ClaimProcs.Cur=(ClaimProc)ClaimProcs.ForClaim[i];
 					_listClaimProcsForClaim[i].Status=ClaimProcStatus.Received;

@@ -1249,6 +1249,91 @@ namespace OpenDentBusiness{
 			return retVal;
 		}
 
+		///<summary>Gets claimprocs from the given list which are attached to the given claimNum and are not Canadian labs and are attached to a procedure.</summary>
+		public static List<ClaimProc> GetForClaimOverpay(List<ClaimProc> claimProcList,long claimNum) {
+			//No need to check MiddleTierRole; no call to db.
+			List<long> listLabProcNums=new List<long>();
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
+				listLabProcNums=Procedures.GetCanadianLabFees(claimProcList.Select(x=>x.ProcNum).Where(x => x!=0).ToList()).Select(x => x.ProcNum).ToList();
+			}
+			List<ClaimProc> retVal=new List<ClaimProc>();
+			for(int i=0;i<claimProcList.Count;i++) {
+				if(claimProcList[i].ClaimNum!=claimNum) {
+					continue;
+				}
+				if(claimProcList[i].ProcNum==0) {
+					continue;//skip total payments
+				}
+				if(CultureInfo.CurrentCulture.Name.EndsWith("CA") //Canada
+					&& listLabProcNums.Contains(claimProcList[i].ProcNum)) //Current claimProc is associated to a lab.
+				{
+					continue;
+				}
+				retVal.Add(claimProcList[i]);
+			}
+			return retVal;
+		}
+
+		///<summary>Sets the fields of an under/overpayment claimproc and then returns the claimproc. If the passed in claimProcOverpay is null, creates the claimproc.</summary>
+		public static ClaimProc CreateOverpay(ClaimProc claimProc,double insEstTotalOverride,ClaimProc claimProcOverpay=null) {
+			if(claimProcOverpay==null) {
+				claimProcOverpay=new ClaimProc();
+			}
+			//claimProcOverpay.ClaimProcNum//Either claimProcOverpay was given and ClaimProcNum is already set, or we created a new claimproc above with ClaimProcNum=0.
+			claimProcOverpay.ProcNum=claimProc.ProcNum;
+			claimProcOverpay.ClaimNum=claimProc.ClaimNum;
+			claimProcOverpay.PatNum=claimProc.PatNum;//Matches claim.PatNum
+			claimProcOverpay.ProvNum=claimProc.ProvNum;//Financial impact.
+			claimProcOverpay.FeeBilled=0;//Prevents matching in 835s.
+			//InsPayEst is what affects patient portion when in NotReceived status. See ClaimProcs.GetPatPortion() and more importantly ClaimProcs.GetInsPay().
+			claimProcOverpay.InsPayEst=insEstTotalOverride;
+			claimProcOverpay.DedApplied=0;//Not applicable.
+			claimProcOverpay.Status=ClaimProcStatus.NotReceived;
+			claimProcOverpay.InsPayAmt=0;//Is set later when converting this overpayment/underpayment to Supplemental status.
+			claimProcOverpay.Remarks="";//Is set outside of this function.
+			claimProcOverpay.ClaimPaymentNum=0;//Overpayments/underpayments will not be attached to claim payments.
+			claimProcOverpay.PlanNum=claimProc.PlanNum;//Financial impact.
+			claimProcOverpay.DateCP=claimProc.DateCP;
+			claimProcOverpay.WriteOff=0;//Not applicable.
+			claimProcOverpay.CodeSent=claimProc.CodeSent;
+			claimProcOverpay.AllowedOverride=-1;//Not applicable.
+			claimProcOverpay.Percentage=-1;//Not applicable.
+			claimProcOverpay.PercentOverride=-1;//Not applicable.
+			claimProcOverpay.CopayAmt=-1;//Not applicable.
+			claimProcOverpay.NoBillIns=true;//The regular payment claimproc is what you sent to insurance, not the overpay claimproc.
+			claimProcOverpay.PaidOtherIns=-1;//Not applicable.
+			claimProcOverpay.BaseEst=insEstTotalOverride;
+			claimProcOverpay.CopayOverride=-1;//Not applicable.
+			claimProcOverpay.ProcDate=claimProc.ProcDate;
+			//claimProcOverpay.DateEntry//CRUD automatically sets this.
+			//LineNumber is a one-based index which is used when printing claims to match up line items
+			claimProcOverpay.LineNumber=0;//Leave set to zero to prevent overpayments/underpayments from showing on printed claims.
+			claimProcOverpay.DedEst=-1;//Not applicable.
+			claimProcOverpay.DedEstOverride=-1;//Not applicable.
+			claimProcOverpay.InsEstTotal=insEstTotalOverride;
+			claimProcOverpay.InsEstTotalOverride=insEstTotalOverride;//Will be negative for overpayments, positive for underpayments.
+			claimProcOverpay.PaidOtherInsOverride=-1;//Not applicable.
+			claimProcOverpay.EstimateNote="";//Not applicable when attached to a claim. Overpayments/underpayments are always attached to a claim.
+			claimProcOverpay.WriteOffEst=-1;//Not applicable.
+			claimProcOverpay.WriteOffEstOverride=-1;//Not applicable.
+			claimProcOverpay.ClinicNum=claimProc.ClinicNum;//Financial impact.
+			claimProcOverpay.InsSubNum=claimProc.InsSubNum;//Financial impact.
+			claimProcOverpay.PaymentRow=0;//Overpayments/underpayments do not come directly from EOBs. 
+			//claimProcOverpay.DoDelete//Not a database field.
+			claimProcOverpay.PayPlanNum=0;//Not applicable.
+			claimProcOverpay.ClaimPaymentTracking=0;//Overpayments/underpayments will not be attached to claim payments.
+			claimProcOverpay.SecUserNumEntry=Security.CurUser.UserNum;
+			//claimProcOverpay.SecDateEntry//CRUD automatically sets this.
+			//claimProcOverpay.SecDateTEdit//CRUD automatically sets this.
+			claimProcOverpay.DateSuppReceived=DateTime.MinValue;
+			claimProcOverpay.DateInsFinalized=DateTime.MinValue;
+			claimProcOverpay.IsTransfer=false;
+			claimProcOverpay.ClaimAdjReasonCodes="";//Overpayments/underpayments do not come from ERAs directly.
+			claimProcOverpay.IsOverpay=true;
+			return claimProcOverpay;
+		}
+
+
 		///<summary>Gets all ClaimProcs for the current Procedure. The List must be all ClaimProcs for this patient.</summary>
 		public static List<ClaimProc> GetForProc(List<ClaimProc> listClaimProcs,long procNum) {
 			//No need to check MiddleTierRole; no call to db.

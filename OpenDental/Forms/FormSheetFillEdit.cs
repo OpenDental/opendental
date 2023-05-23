@@ -1131,7 +1131,8 @@ namespace OpenDental {
 			System.Windows.Forms.TextBox textBox=(System.Windows.Forms.TextBox)timerTextChanged.Tag;
 			timerTextChanged.Tag=null;
 			SheetField sheetField=(SheetField)textBox.Tag;
-			sheetField.FieldValue=textBox.Text;
+			string fieldValue=textBox.Text;
+			//sheetField.FieldValue=textBox.Text;
 			int cursorPos=textBox.SelectionStart;
 			if(sheetField.GrowthBehavior==GrowthBehaviorEnum.None){
 				return;
@@ -1143,7 +1144,7 @@ namespace OpenDental {
 			using Font font=new Font(sheetField.FontName,sheetField.FontSize,fontstyle);
 			using Graphics g=this.CreateGraphics();
 			//no need worry about scaling here. Not sure why.
-			SizeF sizeF=g.MeasureString(sheetField.FieldValue,font,sheetField.Width);
+			SizeF sizeF=g.MeasureString(fieldValue,font,sheetField.Width);
 			int calcH=(int)sizeF.Height;
 			calcH+=font.Height+2;//add one line just in case.
 			if(calcH<=sheetField.Height){//no growth needed. 

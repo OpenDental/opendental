@@ -401,14 +401,27 @@ namespace OpenDental {
 
 		///<summary>Creates all of the rows for the Production Tab. It will also create the rows when the "Show Attahed P&I" checkbox is checked.</summary>
 		public static List<GridRow> CreateGridRowsForProductionTab(DynamicPaymentPlanModuleData dynamicPaymentPlanModuleData,bool showAttachedProductionAndIncome) {
-			List<PayPlanCharge> listPayPlanCharges=ListTools.DeepCopy<PayPlanCharge,PayPlanCharge>(dynamicPaymentPlanModuleData.ListPayPlanChargesExpected);
+			List<PayPlanCharge> listPayPlanCharges=ListTools.DeepCopy<PayPlanCharge,PayPlanCharge>(dynamicPaymentPlanModuleData.ListPayPlanChargesExpected).OrderBy(x=>x.ChargeDate).ToList();
+			List<string> listDescriptions=new List<string>();
+			int numCharges=0;
+			DateTime datePrevCharge=DateTime.MinValue;
+			for(int i=0;i<listPayPlanCharges.Count;i++) {// Creates descriptions for charge rows
+				if(listPayPlanCharges[i].ChargeDate!=datePrevCharge) {
+					numCharges++;
+				}
+				string descript="#"+numCharges+": Charge";
+				if(listPayPlanCharges[i].Note=="Down Payment") {
+					descript+=" Down Payment";
+				}
+				listDescriptions.Add(descript);
+				datePrevCharge=listPayPlanCharges[i].ChargeDate;
+			}
 			listPayPlanCharges.Reverse();//Reversing the order so that we can remove elements from the list once they are found down below. 
+			listDescriptions.Reverse();
 			List<GridRow> listGridRows=new List<GridRow>();
 			DataTable tableBundledPayments=PaySplits.GetForPayPlan(dynamicPaymentPlanModuleData.PayPlan.PayPlanNum);
 			List<PaySplit> listPaySplits=PaySplits.GetFromBundled(tableBundledPayments);
-			listPaySplits.Reverse();//Same reason why we are reversing listPayPlanCharges. 
-			int numCharges=0;
-			DateTime datePrevCharge=DateTime.MinValue;
+			listPaySplits.Reverse();//Same reason why we are reversing listPayPlanCharges.
 			for(int i=0;i<dynamicPaymentPlanModuleData.ListPayPlanProductionEntries.Count;i++) {
 				GridRow row=new GridRow();
 				if(dynamicPaymentPlanModuleData.ListPayPlanProductionEntries[i].CreditDate==DateTime.MinValue) {
@@ -441,13 +454,6 @@ namespace OpenDental {
 						listPayPlanCharges[j].FKey!=dynamicPaymentPlanModuleData.ListPayPlanProductionEntries[i].PriKey) {
 						continue;
 					}
-					if(listPayPlanCharges[j].ChargeDate!=datePrevCharge) {
-						numCharges++;
-					}
-					string descript="#"+numCharges+": Charge";
-					if(listPayPlanCharges[j].Note=="Down Payment") {
-						descript+=" Down Payment";
-					}
 					row=new GridRow();
 					row.Cells.Add("");//Date Added
 					row.Cells.Add(listPayPlanCharges[j].ChargeDate.ToShortDateString());//Date
@@ -455,7 +461,7 @@ namespace OpenDental {
 					if(PrefC.HasClinicsEnabled) {
 						row.Cells.Add("");//Clinic
 					}
-					row.Cells.Add(descript);//Description
+					row.Cells.Add(listDescriptions[j]);//Description
 					row.Cells.Add((listPayPlanCharges[j].Principal+listPayPlanCharges[j].Interest).ToString("n"));//Amount
 					row.Cells.Add("");//Amount Override
 					row.ColorText=Defs.GetDefByExactName(DefCat.AccountColors,"PayPlan").ItemColor;//There isn't an ItemName for "Charge". Using "PayPlan" instead.
@@ -463,7 +469,6 @@ namespace OpenDental {
 						ListPayPlanChargeNums=listPayPlanCharges.Select(x=>x.PayPlanChargeNum).ToList()
 					};
 					listGridRows.Add(row);
-					datePrevCharge=listPayPlanCharges[j].ChargeDate;
 					for(int k=listPaySplits.Count-1;k>=0;k--) {//This is why we are reversing the order of listPaySplits.
 						if(listPayPlanCharges[j].PayPlanChargeNum==0) {
 							break;//Future payment plan charges will never have payments associated with them.
@@ -489,6 +494,7 @@ namespace OpenDental {
 						listPaySplits.RemoveAt(k);
 					}
 					listPayPlanCharges.RemoveAt(j);
+					listDescriptions.RemoveAt(j);
 				}
 			}
 			return listGridRows;

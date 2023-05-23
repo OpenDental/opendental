@@ -1047,7 +1047,12 @@ namespace OpenDental {
 						row.Cells.Add("Recd");
 						break;
 					case ClaimProcStatus.NotReceived:
-						row.Cells.Add("NotRec");
+						if(_listClaimProcs[i].IsOverpay) {
+							row.Cells.Add("PndSup");
+						}
+						else {
+							row.Cells.Add("NotRec");
+						}
 						break;
 					//adjustment would never show here
 					case ClaimProcStatus.Preauth:
@@ -1164,8 +1169,7 @@ namespace OpenDental {
 			InsSub insSub=formInsPlanSelect.InsSubSelected;
 			_listClaimProcs=ClaimProcs.RefreshForProc(_procedure.ProcNum);
 			ClaimProc claimProcForProcInsPlan=_listClaimProcs
-				.Where(x => x.PlanNum == insPlan.PlanNum)
-				.Where(x => x.Status != ClaimProcStatus.Preauth)
+				.Where(x => x.PlanNum == insPlan.PlanNum && x.Status != ClaimProcStatus.Preauth && !x.IsOverpay)
 				.FirstOrDefault();
 			ClaimProc claimProc = new ClaimProc();
 			BlueBookEstimateData blueBookEstimateData=new BlueBookEstimateData(_listInsPlans,_listInsSubs,_listPatPlans,new List<Procedure>{_procedure},_listSubstitutionLinks);

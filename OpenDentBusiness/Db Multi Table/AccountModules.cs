@@ -925,10 +925,12 @@ namespace OpenDentBusiness {
 				+"(SELECT ProvTreat FROM claim WHERE claimproc.ClaimNum=claim.ClaimNum) provNum_,"
 				+"MAX(claimproc.PayPlanNum) PayPlanNum,"//MAX PayPlanNum will return 0 or the num of the payplan tracking the payments. Each claim will have at most 1 PayPlanNum.
 				+"MAX(claimproc.SecDateTEdit) SecDateTEdit, "
-				+"MAX(claimproc.ProcNum) HasProc "//Any value other than 0 will indicate that this claim has actual procedures associated (not just pay as totals).
+				+"MAX(claimproc.ProcNum) HasProc, "//Any value other than 0 will indicate that this claim has actual procedures associated (not just pay as totals).
+				+"IsOverpay, "
+				+"SUM(InsEstTotalOverride) InsEstTotalOverride_ "
 				+"FROM claimproc "
-				+$"WHERE Status IN ({POut.Int((int)ClaimProcStatus.Received)},{POut.Int((int)ClaimProcStatus.Supplemental)},{POut.Int((int)ClaimProcStatus.CapClaim)}) "
-				+"AND (WriteOff!=0 OR InsPayAmt!=0) ";
+				+$"WHERE ClaimProc.IsOverpay=1 OR (Status IN ({POut.Int((int)ClaimProcStatus.Received)},{POut.Int((int)ClaimProcStatus.Supplemental)},{POut.Int((int)ClaimProcStatus.CapClaim)}) "
+				+"AND (WriteOff!=0 OR InsPayAmt!=0)) ";
 			if(familyPatNums!="") {
 				command+="AND PatNum IN ("+familyPatNums+") ";
 			}
@@ -944,7 +946,7 @@ namespace OpenDentBusiness {
 					command+="AND ("+string.Join(" OR ",strLimitedWhereClauses)+") ";
 				}
 			}
-			command+="GROUP BY claimproc.ClaimNum,claimproc.DateCP,claimproc.Status,"
+			command+="GROUP BY claimproc.ClaimNum,claimproc.DateCP,claimproc.Status,claimproc.IsOverpay,"
 				//Differentiate multiple supplemental payments on the same day.
 				+$"CASE WHEN claimproc.Status={POut.Int((int)ClaimProcStatus.Supplemental)} THEN claimproc.ClaimPaymentNum ELSE 0 END";
 			DataTable rawClaimPay=new DataTable();
@@ -991,19 +993,30 @@ namespace OpenDentBusiness {
 				dataRow["date"]=dateT.ToString(Lans.GetShortDateTimeFormat());
 				dataRow["dateTimeSort"]=PIn.DateT(rawClaimPayRow["SecDateTEdit"].ToString());//MAX SecDateTEdit will be used for sorting if RandomKeys is enabled
 				procdate=PIn.DateT(rawClaimPayRow["ProcDate"].ToString());
-				dataRow["description"]=Lans.g("AccountModule","Insurance Payment for Claim")+" "+procdate.ToShortDateString();
-				if(rawClaimPayRow["PayPlanNum"].ToString()!="0") {
-					dataRow["description"]+="\r\n("+Lans.g("AccountModule","Payments Tracked in Payment Plan")+")";
-				}
-				if(rawClaimPayRow["PayPlanNum"].ToString()!="0" || writeoff!=0) {
-					dataRow["description"]+="\r\n"+Lans.g("AccountModule","Payment")+": "+amt.ToString("c");
-				}
-				if(writeoff!=0) {
-					string writeoffDescript=PrefC.GetString(PrefName.InsWriteoffDescript);
-					if(writeoffDescript=="") {
-						writeoffDescript=Lans.g("AccountModule","Writeoff");
+				if(PIn.Bool(rawClaimPayRow["IsOverpay"].ToString())) {
+					double insEstTotalOverride=PIn.Double(rawClaimPayRow["InsEstTotalOverride_"].ToString());
+					if(insEstTotalOverride<0) {
+						dataRow["description"]=Lans.g("AccountModule","Insurance Overpayment")+": "+insEstTotalOverride.ToString("f");
 					}
-					dataRow["description"]+="\r\n"+writeoffDescript+": "+writeoff.ToString("c");
+					else {
+						dataRow["description"]=Lans.g("AccountModule","Insurance Underpayment")+": "+insEstTotalOverride.ToString("f");
+					}
+				}
+				else {
+					dataRow["description"]=Lans.g("AccountModule","Insurance Payment for Claim")+" "+procdate.ToShortDateString();
+					if(rawClaimPayRow["PayPlanNum"].ToString()!="0") {
+						dataRow["description"]+="\r\n("+Lans.g("AccountModule","Payments Tracked in Payment Plan")+")";
+					}
+					if(rawClaimPayRow["PayPlanNum"].ToString()!="0" || writeoff!=0) {
+						dataRow["description"]+="\r\n"+Lans.g("AccountModule","Payment")+": "+amt.ToString("c");
+					}
+					if(writeoff!=0) {
+						string writeoffDescript=PrefC.GetString(PrefName.InsWriteoffDescript);
+						if(writeoffDescript=="") {
+							writeoffDescript=Lans.g("AccountModule","Writeoff");
+						}
+						dataRow["description"]+="\r\n"+writeoffDescript+": "+writeoff.ToString("c");
+					}
 				}
 				if(!isForStatementPrinting && amt!=0 && rawClaimPayRow["ClaimPaymentNum"].ToString()=="0") {
 					//Not all claim payments have been finalized and are not yet attached to claim payments (checks).
