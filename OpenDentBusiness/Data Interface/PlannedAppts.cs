@@ -30,8 +30,12 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<PlannedAppt>(MethodBase.GetCurrentMethod(),patNum);
 			}
-			string command="SELECT * FROM plannedappt WHERE PatNum="+POut.Long(patNum)
-				+" ORDER BY ItemOrder";
+			string command=@$"SELECT plannedappt.* FROM plannedappt
+				LEFT JOIN appointment ON plannedappt.AptNum=appointment.NextAptNum
+				WHERE plannedappt.PatNum={POut.Long(patNum)}
+				AND (appointment.AptStatus IS NULL OR appointment.AptStatus!={POut.Enum<ApptStatus>(ApptStatus.Complete)})
+				GROUP BY plannedappt.AptNum
+				ORDER BY plannedappt.ItemOrder";
 			command=DbHelper.LimitOrderBy(command,1);
 			return Crud.PlannedApptCrud.SelectOne(command);
 		}

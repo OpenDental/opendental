@@ -150,9 +150,6 @@
       <HintPath>..\Required dlls\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NHunspell, Version=0.9.6.0, Culture=neutral, PublicKeyToken=1ac793ea843b4366" />
-    <Reference Include="ODCrypt">
-      <HintPath>..\Required dlls\ODCrypt.dll</HintPath>
-    </Reference>
     <Reference Include="OpenDentalCloud, Version=16.4.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\OpenDentalCloud\bin\Debug\OpenDentalCloud.dll</HintPath>
@@ -526,6 +523,10 @@
     <Compile Include="MiddleTier\WebServiceT.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ODCrypt\xODCrypt.csproj">
+      <Project>{c37b8157-f665-4ebe-8fd6-20d1c92a0797}</Project>
+      <Name>xODCrypt</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\OpenDentalHelp\OpenDentalHelp\OpenDentalHelp.csproj">
       <Project>{98b2999c-8a9f-4795-b452-7f6231ed56b4}</Project>
       <Name>OpenDentalHelp</Name>

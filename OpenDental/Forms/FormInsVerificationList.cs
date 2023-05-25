@@ -104,7 +104,11 @@ namespace OpenDental {
 			textCarrierPhoneNumber.Text="";
 			textInsPlanEmployer.Text="";
 			textInsVerifyReadOnlyNote.Text="";
+			textPatBirthdate.Text="";
 			if(insVerifyGridObject==null) {
+				//Remove selections from the vericiation grids because the selections are intended to match the UI inside of the Insurance Plan an Subscriber group boxes.
+				gridMain.SetAll(false);
+				gridPastDue.SetAll(false);
 				return;
 			}
 			PatPlan patPlanVerify=PatPlans.GetByPatPlanNum(insVerifyGridObject.GetPatPlanNum());
@@ -812,8 +816,6 @@ namespace OpenDental {
 		private void listBoxVerifyClinics_MouseUp(object sender,MouseEventArgs e) {
 			UpdateSelectedClinicNums();
 			FillDisplayInfo(null);
-			gridMain.SetAll(false);
-			gridPastDue.SetAll(false);
 			FillControls();
 		}
 
@@ -999,8 +1001,6 @@ namespace OpenDental {
 
 		private void tabControlVerificationList_Selected(object sender,EventArgs e) {
 			FillDisplayInfo(null);
-			gridMain.SetAll(false);
-			gridPastDue.SetAll(false);
 			FillControls();
 		}
 

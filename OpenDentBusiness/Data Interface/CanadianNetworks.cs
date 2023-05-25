@@ -80,16 +80,20 @@ namespace OpenDentBusiness{
 			Crud.CanadianNetworkCrud.Update(canadianNetwork);
 		}
 
-		///<summary>Uses cache.</summary>
-		public static CanadianNetwork GetNetwork(long networkNum,Clearinghouse clearinghouseClin) {
+		///<summary>Uses cache. Give a non-null claim if the transaction is for a claim.</summary>
+		public static CanadianNetwork GetNetwork(long networkNum,Clearinghouse clearinghouseClin,Claim claim=null) {
 			//No need to check MiddleTierRole; no call to db.
 			CanadianNetwork network=GetFirstOrDefault(x => x.CanadianNetworkNum==networkNum);
 			//CSI is the previous name for the network now known as INSTREAM.
-			//For ClaimStream, we use a "bidirect" such that any communication going to INSTREAM/CSI will be redirected to the TELUS B network instead.
-			//This works because INSTREAM was bought out by TELUS and communications to both networks and handled by the same organization now.
-			//Sending directly to INSTREAM fails with an error because TELUS expects us to use the "bidirect".
-			if(clearinghouseClin.CommBridge==EclaimsCommBridge.Claimstream && network.Abbrev=="CSI") {
-				network=GetFirstOrDefault(x => x.Abbrev=="TELUS B");
+			//According to Telus 05/18/2023: "TELUS has signed a contract with Instream Canada so that TELUS can send Denturists and Hygienists claims to Instream Canada
+			//for carriers defined as Instream, and also, Instream Canada can send Denturists and Hygienists claims to TELUS for carriers defined as TELUS"
+			//Dentist claims must not be redirected.
+			if(clearinghouseClin.CommBridge==EclaimsCommBridge.Claimstream && network.Abbrev=="CSI" && claim!=null) {
+				Provider provTreat=Providers.GetFirstOrDefault(x => x.ProvNum==claim.ProvTreat);
+				if(provTreat.NationalProvID.StartsWith("202") || provTreat.NationalProvID.StartsWith("8")) {//Hygienist or Denturist.
+					//Network redirect only allowed for Hygienists or Denturists.
+					network=GetFirstOrDefault(x => x.Abbrev=="TELUS B");
+				}
 			}
 			return network;
 		}
