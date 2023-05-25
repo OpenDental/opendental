@@ -2685,6 +2685,9 @@
     <column order="46" name="ClaimAdjReasonCodes" type="varchar(255)">
       <summary>Holds a comma delimited list of Claim Adjustment Reason Codes from an ERA. https://x12.org/codes/claim-adjustment-reason-codes </summary>
     </column>
+    <column order="47" name="IsOverpay" type="tinyint(4)">
+      <summary></summary>
+    </column>
   </table>
   <table name="claimsnapshot">
     <summary>Stores the original insurance writeoff, fee, and expected insurance payment information on claims.</summary>
@@ -2853,6 +2856,7 @@
         <EnumValue name="EdsMedical">19</EnumValue>
         <EnumValue name="Lantek">20</EnumValue>
         <EnumValue name="ITRANS2">21 Canadian clearinghouse.  Similar to ITRANS except supports certificate and carrier list web fetching.</EnumValue>
+        <EnumValue name="VyneDental">22</EnumValue>
       </Enumeration>
     </column>
     <column order="13" name="ClientProgram" type="varchar(255)">
@@ -5900,6 +5904,7 @@
         <EnumValue name="EdsMedical">19</EnumValue>
         <EnumValue name="Lantek">20</EnumValue>
         <EnumValue name="ITRANS2">21 Canadian clearinghouse.  Similar to ITRANS except supports certificate and carrier list web fetching.</EnumValue>
+        <EnumValue name="VyneDental">22</EnumValue>
       </Enumeration>
     </column>
     <column order="7" name="Attributes" type="varchar(255)">

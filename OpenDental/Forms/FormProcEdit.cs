@@ -2446,6 +2446,14 @@ namespace OpenDental {
 			#endregion Verify security authorization for provider change and completed proc status change. Can also change a few procedure field values.
 			#region Additional UI syncing (_procedure dates and fee).
 			Procedures.SetMiscDateAndTimeEditFields(_procedure,textDateTP.Text,PIn.Date(textDate.Text),textTimeStart.Text,textTimeEnd.Text);
+			DateTime procedureDate=DateTime.Parse(textDate.Text);
+			for(int i=0;i<_listClaimProcs.Count;i++) {//if the proc date has changed update the ClaimProcs
+				if(_listClaimProcs[i].DateCP!=procedureDate && procedureDate.Year>1880) {
+					ClaimProc claimProcOld=_listClaimProcs[i].Copy();
+					_listClaimProcs[i].ProcDate=procedureDate;
+					ClaimProcs.Update(_listClaimProcs[i],claimProcOld);
+				}
+			}
 			_procedure.ProcFee=PIn.Double(textProcFee.Text);
 			#endregion Additional UI syncing (_procedure dates and fee).
 			#region Tooth UI cleanup and validation, set various tooth fields for _procedure.

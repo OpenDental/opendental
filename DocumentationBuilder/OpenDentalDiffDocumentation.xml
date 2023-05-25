@@ -105,6 +105,22 @@
       </Enumeration>
     </column>
   </table>
+  <table name="claimproc">
+    <summary></summary>
+    <column order="47" name="IsOverpay" type="tinyint(4)">
+      <summary></summary>
+    </column>
+  </table>
+  <table name="clearinghouse">
+    <summary></summary>
+    <column order="12" name="CommBridge" type="tinyint">
+      <summary>Enum:EclaimsCommBridge  One of the included hard-coded communications bridges.  Or none to just create the claim files without uploading.</summary>
+      <Enumeration name="EclaimsCommBridge">
+        <summary>Each clearinghouse can have a hard-coded comm bridge which handles all the communications of transfering the claim files to the clearinghouse/carrier.  Does not just include X12, but can include any format at all.</summary>
+        <EnumValue name="VyneDental">22</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
   <table name="commlog">
     <summary></summary>
     <column order="12" name="CommSource" type="tinyint(4)">
@@ -196,6 +212,7 @@
         <EnumValue name="EdsMedical">19</EnumValue>
         <EnumValue name="Lantek">20</EnumValue>
         <EnumValue name="ITRANS2">21 Canadian clearinghouse.  Similar to ITRANS except supports certificate and carrier list web fetching.</EnumValue>
+        <EnumValue name="VyneDental">22</EnumValue>
       </Enumeration>
     </column>
     <column order="7" name="Attributes" type="varchar(255)">

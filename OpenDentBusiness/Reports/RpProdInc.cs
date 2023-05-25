@@ -1459,8 +1459,8 @@ namespace OpenDentBusiness {
 			#endregion
 			command+=@"
 				) details
-				LEFT JOIN clinic ON Clinic.ClinicNum=details.ClinicNum
-				LEFT JOIN patient ON Patient.PatNum=details.PatNum
+				LEFT JOIN clinic ON clinic.ClinicNum=details.ClinicNum
+				LEFT JOIN patient ON patient.PatNum=details.PatNum
 				LEFT JOIN procedurelog ON procedurelog.ProcNum=details.ProcNum
 				LEFT JOIN provider ON provider.ProvNum=details.ProvNum
 				LEFT JOIN procedurecode on procedurecode.CodeNum=procedurelog.CodeNum

@@ -97,11 +97,11 @@ namespace OpenDental{
 			// checkWebPayEnabled
 			// 
 			this.checkWebPayEnabled.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkWebPayEnabled.Location = new System.Drawing.Point(97, 122);
+			this.checkWebPayEnabled.Location = new System.Drawing.Point(88, 122);
 			this.checkWebPayEnabled.Name = "checkWebPayEnabled";
-			this.checkWebPayEnabled.Size = new System.Drawing.Size(273, 17);
+			this.checkWebPayEnabled.Size = new System.Drawing.Size(282, 17);
 			this.checkWebPayEnabled.TabIndex = 8;
-			this.checkWebPayEnabled.Text = "Enable payments for patient portal and eClipboard";
+			this.checkWebPayEnabled.Text = "Enable payments for payment portal and eClipboard";
 			this.checkWebPayEnabled.Click += new System.EventHandler(this.checkWebPayEnabled_Click);
 			// 
 			// checkPrintReceipt

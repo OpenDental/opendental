@@ -2818,8 +2818,14 @@ namespace OpenDental.InternalTools.Job_Manager {
 				textVersion.Text=FormVP.VersionText;
 				_jobCur.JobVersion=FormVP.VersionText;
 			}
-			if(_jobCur.ListJobLinks.Any(x => x.LinkType==JobLinkType.Bug)
-					&& !_jobCur.ListJobLinks.Where(x => x.LinkType==JobLinkType.Bug).All(x => Bugs.GetOne(x.FKey).VersionsFixed==_jobCur.JobVersion)) 
+			bool foundBug=false;
+			try {
+				foundBug=_jobCur.ListJobLinks.Any(x => x.LinkType==JobLinkType.Bug)
+					&& !_jobCur.ListJobLinks.Where(x => x.LinkType==JobLinkType.Bug).All(x => Bugs.GetOne(x.FKey).VersionsFixed==_jobCur.JobVersion);
+			}
+			catch {
+			}
+			if(foundBug) 
 			{
 				MsgBox.Show(this,"The job version and the bug fixed version are mismatched. Make sure the versions are the same and in the same order before sending the job to documentation.");
 				return;

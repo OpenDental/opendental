@@ -1802,7 +1802,7 @@ namespace OpenDental{
 			}
 			_menuItemQueryFavorites.Available=Security.IsAuthorized(Permissions.UserQuery,true);
 			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch, Clinics.ClinicNum)) {
-				_menuItemPatientFlow.Available = false;
+				_menuItemERouting.Available = false;
 			}
 		}
 
@@ -6725,7 +6725,7 @@ namespace OpenDental{
 			}
 		}
 
-		private void _menuItemPatientFlow_Click(object sender, EventArgs e) {
+		private void _menuItemERouting_Click(object sender, EventArgs e) {
 			using FormERoutings formPatientFlows = new FormERoutings();
 			formPatientFlows.ShowDialog();
 		}

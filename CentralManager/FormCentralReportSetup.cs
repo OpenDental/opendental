@@ -20,7 +20,7 @@ namespace CentralManager {
 		private void FormCentralReportSetup_Load(object sender,EventArgs e) {
 			userControlReportSetup.InitializeOnStartup(true,_userGroupNum,_isPermissionMode,true);
 			if(_isPermissionMode) {
-				tabControl1.SelectedIndex=1;
+				tabControl1.SelectedIndex=0;
 			}
 		}
 

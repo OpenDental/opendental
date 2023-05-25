@@ -59,7 +59,7 @@ namespace OpenDentBusiness.Eclaims {
 			if(claim.Attachments.Count==0) {
 				throw new ODException("No electronic attachments on this claim to send.");
 			}
-			CanadianNetwork network=CanadianNetworks.GetNetwork(carrier.CanadianNetworkNum,clearinghouseClin);
+			CanadianNetwork network=CanadianNetworks.GetNetwork(carrier.CanadianNetworkNum,clearinghouseClin,claim);
 			Patient patient=Patients.GetPat(patNum);
 			Provider provDefaultTreat=Providers.GetProv(PrefC.GetLong(PrefName.PracticeDefaultProv));
 			if(clearinghouseClin==null) {
@@ -547,7 +547,7 @@ namespace OpenDentBusiness.Eclaims {
 			if(carrier.CanadianNetworkNum==0) {
 				throw new ApplicationException("Carrier network not set.");
 			}
-			CanadianNetwork network=CanadianNetworks.GetNetwork(carrier.CanadianNetworkNum,clearinghouseClin);
+			CanadianNetwork network=CanadianNetworks.GetNetwork(carrier.CanadianNetworkNum,clearinghouseClin,claim);
 			Etrans etrans=Etranss.CreateCanadianOutput(claim.PatNum,carrier.CarrierNum,carrier.CanadianNetworkNum,
 				clearinghouseClin.HqClearinghouseNum,EtransType.ClaimReversal_CA,plan.PlanNum,insSub.InsSubNum,Security.CurUser.UserNum);
 			etrans.ClaimNum=claim.ClaimNum;//We don't normally use a claim number with Etranss.CreateCanadianOutput(), but here we need the claim number so that we can show the claim reversal in the claim history.

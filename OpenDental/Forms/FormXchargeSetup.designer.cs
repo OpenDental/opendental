@@ -208,7 +208,7 @@ namespace OpenDental {
 			this.checkWebPayEnabled.Name = "checkWebPayEnabled";
 			this.checkWebPayEnabled.Size = new System.Drawing.Size(273, 17);
 			this.checkWebPayEnabled.TabIndex = 7;
-			this.checkWebPayEnabled.Text = "Enable X-Web for patient portal payments";
+			this.checkWebPayEnabled.Text = "Enable X-Web for payment portal payments";
 			this.checkWebPayEnabled.Click += new System.EventHandler(this.checkWebPayEnabled_Click);
 			// 
 			// textTerminalID

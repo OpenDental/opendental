@@ -45,7 +45,7 @@ namespace OpenDental{
 		private MenuItemOD _menuItemNewCropBilling;
 		private MenuItemOD _menuItemNoAlerts;
 		private MenuItemOD _menuItemPatDashboards;
-		private MenuItemOD _menuItemPatientFlow;
+		private MenuItemOD _menuItemERouting;
 		private MenuItemOD _menuItemPatPortalTransactions;
 		private MenuItemOD _menuItemPayloadMonitor;
 		private MenuItemOD _menuItemOnlinePayments;
@@ -392,8 +392,10 @@ namespace OpenDental{
 			_menuItemCustManagement=new MenuItemOD("Customer Management",menuItemCustomerManage_Click);
 			menuItemTools.Add(_menuItemCustManagement);
 			menuItemTools.Add("Database Maintenance",menuItemDatabaseMaintenance_Click);
+			_menuItemERouting = new MenuItemOD("eRouting", _menuItemERouting_Click);
+			menuItemTools.Add(_menuItemERouting);
 			//menuItemTools.Add("Dispensary",menuItemDispensary_Click);//FormDispensary is not fully functional and should not be an available option at this time
-			_menuItemEvaluations=new MenuItemOD("Evaluations",menuItemEvaluations_Click);
+			_menuItemEvaluations =new MenuItemOD("Evaluations",menuItemEvaluations_Click);
 			menuItemTools.Add(_menuItemEvaluations);
 			menuItemTools.Add("Kiosk",menuItemTerminal_Click);
 			menuItemTools.Add("Kiosk Manager",menuItemTerminalManager_Click);
@@ -407,8 +409,6 @@ namespace OpenDental{
 			menuItemTools.Add("Ortho Auto Claims",menuItemOrthoAuto_Click);
 			_menuItemPatDashboards=new MenuItemOD("Patient Dashboards");
 			menuItemTools.Add(_menuItemPatDashboards);
-			_menuItemPatientFlow = new MenuItemOD("Patient Flow", _menuItemPatientFlow_Click);
-			menuItemTools.Add(_menuItemPatientFlow);
 			_menuItemPatPortalTransactions =new MenuItemOD("Patient Portal Transactions",menuItemXWebTrans_Click);
 			menuItemTools.Add(_menuItemPatPortalTransactions);
 			_menuItemOnlinePayments=new MenuItemOD("&Online Payments",menuItemOnlinePayments_Click);

@@ -199,7 +199,7 @@ namespace OpenDentBusiness.Eclaims {
 					throw new ApplicationException(Lans.g("Canadian","This carrier does not accept electronic Pre Authorizations (predeterminations)."));
 				}
 			}
-			CanadianNetwork network=CanadianNetworks.GetNetwork(carrierReceiver.CanadianNetworkNum,clearinghouseClin);
+			CanadianNetwork network=CanadianNetworks.GetNetwork(carrierReceiver.CanadianNetworkNum,clearinghouseClin,claim);
 			patPlansForPatient=PatPlans.Refresh(claim.PatNum);
 			patient=Patients.GetPat(claim.PatNum);
 			subscriber=Patients.GetPat(insSub.Subscriber);
@@ -1478,7 +1478,6 @@ namespace OpenDentBusiness.Eclaims {
 			}
 			//CommBridge can be None in testing when trying to write to local file (example CanadaFakeClearinghouse), and is
 			//also helpful in production if you want to see live payload output to file without worrying about software certificates.
-			bool isSimple=(clearinghouseClin.CommBridge==EclaimsCommBridge.None);
 			bool isItrans=(clearinghouseClin.CommBridge==EclaimsCommBridge.ITRANS);
 			bool isItrans2=(clearinghouseClin.CommBridge==EclaimsCommBridge.ITRANS2);
 			bool isClaimstream=(clearinghouseClin.CommBridge==EclaimsCommBridge.Claimstream);
@@ -1495,6 +1494,9 @@ namespace OpenDentBusiness.Eclaims {
 				string subDir="";
 				if(network.Abbrev=="ABC") {//Alberta Blue Cross
 					subDir="abc";
+				}
+				else if(network.Abbrev=="CSI") {
+					subDir="instream";
 				}
 				else if(network.Abbrev=="TELUS A") {
 					subDir="telusa";
@@ -1526,8 +1528,10 @@ namespace OpenDentBusiness.Eclaims {
 						certFileName="OD_2023-02-20_2028-02-24_prod.pem";
 					}
 				}
+				//The certFileName is always blank for Instream, because we do not use vendor certs for Instream, we expect the dentist to have their provider cert installed.
+				//Claims for hygienists and denturists intended for Instream are redirected to TELUS B inside CanadianNetworks.GetNetwork() before we get here.
 				string certFilePath=ODFileUtils.CombinePaths(saveFolder,certFileName);
-				if(isSimple && subDir!="" && !File.Exists(certFilePath)) {//Download a copy of the certificate from HQ if needed.
+				if(!string.IsNullOrEmpty(certFileName) && subDir!="" && !File.Exists(certFilePath)) {//Download a copy of the certificate from HQ if needed.
 					byte[] arrayCertFileBytes=null;
 					try {
 						XmlWriterSettings settings=new XmlWriterSettings();
@@ -1590,7 +1594,7 @@ namespace OpenDentBusiness.Eclaims {
 						return "";//Return empty response, since we never received one.
 					}
 				}
-				if(isSimple && File.Exists(configFilePath)) {
+				if(!string.IsNullOrEmpty(certFileName) && File.Exists(configFilePath)) {
 					//Update the config file .pem references automatically. Customer might still need to restart CCDWS.
 					string configText=File.ReadAllText(configFilePath);
 					string configTextModified=configText.Replace("OD_2018-02-26_2023-03-02_staging.pem","OD_2023-02-05_2028-02-09_staging.pem");

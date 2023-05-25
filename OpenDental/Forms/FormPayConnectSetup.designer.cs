@@ -179,7 +179,7 @@ namespace OpenDental {
 			this.groupBox1.Size = new System.Drawing.Size(307,74);
 			this.groupBox1.TabIndex = 9;
 			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Patient Portal Payments";
+			this.groupBox1.Text = "Payment Portal Payments";
 			// 
 			// butGenerateToken
 			// 

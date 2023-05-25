@@ -943,7 +943,7 @@ namespace OpenDental {
 				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
-				FriendlyException.Show(Lan.g(this,"Failed to send secure email."),ex);
+				FriendlyException.Show(Lan.g(this,"Failed to send secure email.")+"\r\n"+ex.Message,ex);
 				return;
 			}
 			if(progressOD.IsCancelled){

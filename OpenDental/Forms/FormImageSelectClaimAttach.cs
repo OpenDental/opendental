@@ -448,7 +448,8 @@ namespace OpenDental{
 			string selectedFilePath=openFileDialog.FileName;
 			try {
 				Bitmap bitmap=(Bitmap)Image.FromFile(selectedFilePath);
-				ImportImage(bitmap);
+				bitmap.Dispose();
+				ImportDocument(selectedFilePath);
 			}
 			catch(FileNotFoundException ex) {
 				FriendlyException.Show(Lan.g(this,"The selected file at")+": "+selectedFilePath+" "+Lan.g(this,"could not be found"),ex);
