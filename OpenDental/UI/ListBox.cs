@@ -70,7 +70,7 @@ namespace OpenDental.UI {
 
 		#region Fields - Private
 		///<summary>Based on Font. 13 at 96dpi.</summary>
-		private int _heightLine=13;
+		private float _heightLine=13f;
 		private int _hoverIndex=-1;
 		///<summary>Usually 0.  If scrolled, then this would be the top item showing.</summary>
 		private int _indexTopShowing=0;
@@ -195,27 +195,32 @@ namespace OpenDental.UI {
 			Graphics g=e.Graphics;
 			g.SmoothingMode=SmoothingMode.HighQuality;
 			g.Clear(Color.White);
-			_heightLine=LayoutManager.Scale(13);//We might need to add this in more places, but probably not.
-			//(int)LayoutManager.ScaleMS(Font.Height);//because fonts scale unevenly, this didn't work
+			//we must ignore the Font because of accumulated rounding errors.
+			using Font font=new Font(FontFamily.GenericSansSerif,LayoutManager.ScaleFontODZoom(8.25f));
+			_heightLine=(int)Math.Ceiling(font.GetHeight()+1);//bottoms of characters were getting cut off in rare cases due to font rounding.
 			if(DesignMode){
 				if(_itemStrings==null || _itemStrings.Length==0){
-					g.DrawString(this.Name,Font,Brushes.Black,2,2);
+					g.DrawString(this.Name,font,Brushes.Black,2,2);
 				}
 				else{
 					for(int i=0;i<_itemStrings.Length;i++){
-						g.DrawString(_itemStrings[i],Font,Brushes.Black,2,2+_heightLine*i);
+						g.DrawString(_itemStrings[i],font,Brushes.Black,2,2+_heightLine*i);
 					}
 				}
 				g.DrawRectangle(Pens.SlateGray,new Rectangle(0,0,Width-1,Height-1));
 				return;
 			}
-			int maxItems=(this.Height/_heightLine);//rounds down
+			float heightAvail=Height-2-2;//top and bottom
+			float maxItems=(heightAvail/_heightLine);//example 4.5
+			//int maxItems=(int)(this.Height/_heightLine);//rounds down
+			//Edge case example is when maxItems exactly equals count. No scrollbar should show
+			//Another edge case is when zoom is not 100%.
 			if(Items.Count>maxItems) {
 				LayoutManager.Move(vScrollBar,new Rectangle(Width-vScrollBar.Width-1,1,LayoutManager.Scale(17),Height-2));
 				//Give the maxmimum one extra line item so that the real last line item isn't cut off
 				int oldScrollMaxValue=vScrollBar.Maximum;
-				vScrollBar.Maximum=((Items.Count+1)*_heightLine);
-				vScrollBar.SmallChange=_heightLine;
+				vScrollBar.Maximum=(int)((Items.Count+1)*_heightLine);
+				vScrollBar.SmallChange=(int)_heightLine;
 				vScrollBar.LargeChange=this.Height;
 				vScrollBar.Visible=true;
 				vScrollBar.Enabled=true;
@@ -235,7 +240,7 @@ namespace OpenDental.UI {
 			StringFormat stringFormat=new StringFormat(StringFormatFlags.NoWrap);
 			stringFormat.LineAlignment=StringAlignment.Center;
 			//Determines where the index should start when the user has scrolled the list (always needs to round down)
-			_indexTopShowing=vScrollBar.Value/_heightLine;
+			_indexTopShowing=(int)(vScrollBar.Value/_heightLine);
 			//Only try to paint 200 objects at most
 			int totalToDraw=(200+_indexTopShowing)>Items.Count ? Items.Count : 200+_indexTopShowing;
 			for(int i=_indexTopShowing; i<totalToDraw; i++) {
@@ -244,13 +249,13 @@ namespace OpenDental.UI {
 					isSelected=true;
 				}
 				if(isSelected) { //Draw the selected index with gray background
-					g.FillRectangle(_brushSelectedBack,new Rectangle(2,((i-_indexTopShowing)*_heightLine)+2,this.Width-4,_heightLine));
+					g.FillRectangle(_brushSelectedBack,new Rectangle(2,(int)((i-_indexTopShowing)*_heightLine)+2,this.Width-4,(int)_heightLine));
 				}
 				else if(_hoverIndex==i) { //Draw the hovered index with a light blue background (only when being moused over)
-					g.FillRectangle(_brushHover,new Rectangle(2,((i-_indexTopShowing)*_heightLine)+2,this.Width-4,_heightLine));
+					g.FillRectangle(_brushHover,new Rectangle(2,(int)((i-_indexTopShowing)*_heightLine)+2,this.Width-4,(int)_heightLine));
 				}
-				Rectangle rectangle=new Rectangle(2,((i-_indexTopShowing)*_heightLine)+2,Width-2,_heightLine);
-				g.DrawString(Items.GetTextShowingAt(i),this.Font,brushText,rectangle);
+				Rectangle rectangle=new Rectangle(2,(int)((i-_indexTopShowing)*_heightLine)+2,Width-2,(int)_heightLine);
+				g.DrawString(Items.GetTextShowingAt(i),font,brushText,rectangle);
 			}
 			g.DrawRectangle(Pens.SlateGray,new Rectangle(0,0,Width-1,Height-1));
 		}
@@ -264,7 +269,7 @@ namespace OpenDental.UI {
 				return;
 			}
 			_isMouseDown=true;
-			_mouseDownIndex=((e.Location.Y-3)/_heightLine)+_indexTopShowing;
+			_mouseDownIndex=(int)((e.Location.Y-3)/_heightLine)+_indexTopShowing;
 			if(_mouseDownIndex>Items.Count-1){//clicked below items
 				return;//don't deselect anything, but preserve the clicked index in case they drag up
 			}
@@ -297,7 +302,7 @@ namespace OpenDental.UI {
 		protected override void OnMouseMove(MouseEventArgs e){
 			base.OnMouseMove(e);
 			//subtract 3 from the location to take border offset into account
-			_hoverIndex=((e.Location.Y-3)/_heightLine)+_indexTopShowing;
+			_hoverIndex=(int)((e.Location.Y-3)/_heightLine)+_indexTopShowing;
 			if(!_isMouseDown) {
 				Invalidate();
 				return;
@@ -363,12 +368,13 @@ namespace OpenDental.UI {
 			if(!DesignMode){
 				return;
 			}
-			if(!IntegralHeight){
-				return;
-			}
+			//if(!IntegralHeight){
+			//	return;
+			//}
 			//This only happens in design mode, so LayoutManager not involved.
-			int rows=Height/_heightLine;//rounds down
-			Height=_heightLine*rows+4;//this very nicely matches MS behavior
+			//IntegralHeight is unavoidably buggy, so we're turning it off.
+			//int rows=(int)(Height/_heightLine);//rounds down
+			//Height=_heightLine*rows+4;//this very nicely matches MS behavior
 		}
 
 		private void VScroll_KeyDown(object sender, KeyEventArgs e) {
@@ -387,8 +393,9 @@ namespace OpenDental.UI {
 		#endregion Properties - override
 
 		#region Properties - Public Browsable
-		[Description("Height of control jumps in increments.")]
-		[Category("OD")]
+		///<summary>Deprecated. Does nothing.</summary>
+		[Description("Deprecated. Does nothing.")]
+		[Browsable(false)]
 		[DefaultValue(true)]
 		public bool IntegralHeight{ get; set; } = true;
 
@@ -619,7 +626,7 @@ namespace OpenDental.UI {
 
 		///<summary>Gets the index at the specified point. Returns -1 if no index can be selected at that point.</summary>
 		public int IndexFromPoint(Point point) {
-			int indexAtPoint=((point.Y-3)/_heightLine)+_indexTopShowing;
+			int indexAtPoint=(int)((point.Y-3)/_heightLine)+_indexTopShowing;
 			if(indexAtPoint>=Items.Count) {
 				indexAtPoint=-1;
 			}
@@ -877,7 +884,7 @@ namespace OpenDental.UI {
 				}
 			}
 			else if((_listSelectedIndices[_listSelectedIndices.Count-1]-_indexTopShowing+1)*_heightLine>this.Height) {//the latest selected index is hidden below bounds
-				for(int i=this.Height;i<=(_listSelectedIndices[_listSelectedIndices.Count-1]-_indexTopShowing+1)*_heightLine;i+=_heightLine) {
+				for(int i=this.Height;i<=(_listSelectedIndices[_listSelectedIndices.Count-1]-_indexTopShowing+1)*_heightLine;i+=(int)_heightLine) {
 					if(i==_listSelectedIndices[_listSelectedIndices.Count-1]) {
 						break;
 					}
@@ -887,7 +894,7 @@ namespace OpenDental.UI {
 					}
 				}
 			}
-			_indexTopShowing=vScrollBar.Value/_heightLine;//update the top index of the ListBox showing since VScrollMoveUp/Down updates vScroll.Value.
+			_indexTopShowing=(int)(vScrollBar.Value/_heightLine);//update the top index of the ListBox showing since VScrollMoveUp/Down updates vScroll.Value.
 		}
 
 		private bool ShiftIsDown() {

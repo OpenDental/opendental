@@ -3715,7 +3715,7 @@ namespace OpenDentBusiness {
 					PrefName.TransworldPaidInFullBillingType,PrefName.ApptEConfirmStatusSent,PrefName.ApptEConfirmStatusAccepted,
 					PrefName.ApptEConfirmStatusDeclined,PrefName.ApptEConfirmStatusSendFailed,PrefName.ApptConfirmExcludeEConfirm,
 					PrefName.ApptConfirmExcludeERemind,PrefName.ApptConfirmExcludeESend,PrefName.ApptConfirmExcludeEThankYou,
-					PrefName.BrokenAppointmentAdjustmentType,PrefName.ConfirmStatusEmailed,
+					PrefName.ApptConfirmExcludeNewPatThankYou,PrefName.BrokenAppointmentAdjustmentType,PrefName.ConfirmStatusEmailed,
 					PrefName.ConfirmStatusTextMessaged,PrefName.PrepaymentUnearnedType,PrefName.SalesTaxAdjustmentType }
 				.Select(x => PrefC.GetString(x))
 				.SelectMany(x => x.Split(',').Select(y => PIn.Long(y,false)).Where(y => y>0))//some prefs are comma delimited lists of longs. SelectMany will return a single list of longs

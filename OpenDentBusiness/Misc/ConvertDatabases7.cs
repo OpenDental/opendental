@@ -5009,6 +5009,13 @@ namespace OpenDentBusiness {
 			//end B44848
 			LargeTableHelper.AlterTable("claimproc","ClaimProcNum",new ColNameAndDef("IsOverpay","tinyint NOT NULL"));
 		}//End of 23_1_13() method
+
+		private static void To23_1_15() {
+			//B45188
+			string command="UPDATE securitylog SET PatNum=0 WHERE PermType=241";//WebChatEdit
+			Db.NonQ(command);
+			//end B45188
+		}//End of 23_1_15() method
 	}
 }
 

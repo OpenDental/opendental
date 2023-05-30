@@ -243,11 +243,14 @@ namespace OpenDentBusiness {
 				List<Family> listFamilies=Patients.GetFamilies(listAllFamilyPatNums); //Organize the list of all family members into Families.
 				List<InsSub> listAllInsSubs=InsSubs.GetListInsSubs(listAllFamilyPatNums); //Get all the inssubs for every repeating charge PatNum and their family members
 				List<InsPlan> listAllInsPlans=InsPlans.GetByInsSubs(listAllInsSubs.Select(x=>x.InsSubNum).ToList()); //Lastly, get the insurance plans.
+				List<long> listAddedPatNums=new List<long>();
 				if(PrefC.IsODHQ) {
 					//EService charges have already been calculated and stored in EServiceBilling table. Add those here.
 					List<string> listEServiceCodes=EServiceCodeLink.GetProcCodesForAll();
 					List<RepeatCharge> listRepeatChargesEServices=listRepeatingCharges.FindAll(x => listEServiceCodes.Contains(x.ProcCode));
-					result.ProceduresAddedCount+=EServiceBillings.AddEServiceRepeatingChargesHelper(dateRun,listRepeatChargesEServices).Count;
+					List<Procedure> listProceduresEservices=EServiceBillings.AddEServiceRepeatingChargesHelper(dateRun,listRepeatChargesEServices);
+					listAddedPatNums=listProceduresEservices.Select(x => x.PatNum).Distinct().ToList();
+					result.ProceduresAddedCount+=listProceduresEservices.Count;
 					result.ProceduresAddedCount+=APIBillings.AddFHIRRepeatingChargesHelper(dateRun,listRepeatChargesEServices).Count;
 					result.ProceduresAddedCount+=CloudBillings.AddCloudRepeatingChargesHelper(dateRun);
 					//Remove all eService repeating charges.
@@ -257,7 +260,6 @@ namespace OpenDentBusiness {
 				List<Procedure> listExistingProcs=Procedures.GetCompletedForDateRange(dateRun.AddMonths(-3),dateRun.AddDays(1),
 					listRepeatingCharges.Select(x => x.ProcCode).Distinct().Select(x => ProcedureCodes.GetProcCode(x).CodeNum).ToList());
 				DateTime startedUsingFKs=UpdateHistories.GetDateForVersion(new Version("16.1.0.0"));//We started using FKs from procs to repeat charges in 16.1.
-				List<long> listAddedPatNums=new List<long>();
 				bool didEncounterAvaTaxError=false;
 				List<string> listInvalidProcCodes=new List<string>();//Used to contain all invalid procs that cannot be added to repeating charges.
 				OrthoCaseProcLinkingData orthoCaseProcLinkingData=new OrthoCaseProcLinkingData(listRepeatingCharges.Select(x => x.PatNum).ToList());

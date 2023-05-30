@@ -261,7 +261,7 @@ namespace OpenDental {
 			string strNoteNew=webChatNote.Note;
 			if(strNoteOld!=strNoteNew) {
 				string msg="Web Chat Session ("+webChatNote.WebChatSessionNum.ToString()+") Note has been created";
-				SecurityLogs.MakeLogEntry(Permissions.WebChatEdit,Security.CurUser.UserNum,msg);
+				SecurityLogs.MakeLogEntry(Permissions.WebChatEdit,_webChatSession.PatNum,msg);
 			}
 			FillGridODNotes();
 		}
@@ -283,7 +283,7 @@ namespace OpenDental {
 			string strNoteNew=webChatNote.Note;
 			if(strNoteOld!=strNoteNew) {
 				string msg="Web Chat Session ("+webChatNote.WebChatSessionNum.ToString()+") Note has been edited";
-				SecurityLogs.MakeLogEntry(Permissions.WebChatEdit,Security.CurUser.UserNum,msg);
+				SecurityLogs.MakeLogEntry(Permissions.WebChatEdit,_webChatSession.PatNum,msg);
 			}
 			FillGridODNotes();
 		}

@@ -195,6 +195,7 @@ namespace OpenDentBusiness {
 		///a specific redistributable that allows the creation of the image.</summary>
 		[Description("Couldn't generate a tooth chart or perio chart image in the mobile app")]
 		EConnectorRedistributableMissing,
+		///<summary>38 - Alert that is created when the SMSQueuer is turned on but no Broadcaster Servers are configured to send out text messages. Requires Engineers to update BroadcasterThreadSettings.</summary>
 		[Description("The SMS thread is not configured to run and we have queued messages.")]
 		SMSThread,
 	}

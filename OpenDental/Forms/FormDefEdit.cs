@@ -27,6 +27,7 @@ namespace OpenDental {
 		private List<long> _listExcludeArrivalResponseNums;
 		private List<long> _listExcludeEClipboardNums;
 		private List<long> _listByodEnabled;
+		private List<long> _listExcludeNewPatEThanksNums;
 		private List<long> _listExcludeGeneralMessageSendNums;
 		private DefCatOptions _defCatOptions;
 		private string _strSelectedValue;
@@ -54,6 +55,7 @@ namespace OpenDental {
 				_listExcludeArrivalResponseNums=PrefC.GetString(PrefName.ApptConfirmExcludeArrivalResponse).Split(',').Select(x => PIn.Long(x)).ToList();
 				_listExcludeEClipboardNums=PrefC.GetString(PrefName.ApptConfirmExcludeEclipboard).Split(',').ToList().Select(x => PIn.Long(x)).ToList();
 				_listByodEnabled=PrefC.GetString(PrefName.ApptConfirmByodEnabled).Split(',').ToList().Select(x => PIn.Long(x)).ToList();
+				_listExcludeNewPatEThanksNums=PrefC.GetString(PrefName.ApptConfirmExcludeNewPatThankYou).Split(',').Select(x => PIn.Long(x)).ToList();
 				_listExcludeGeneralMessageSendNums=PrefC.GetString(PrefName.ApptConfirmExcludeGeneralMessage).Split(',').ToList().Select(x => PIn.Long(x)).ToList();
 				//0 will get automatically added to the list when this is the first of its kind.  We never want 0 inserted.
 				_listExcludeSendNums.Remove(0);
@@ -414,6 +416,8 @@ namespace OpenDental {
 				UpdateAutoCommExcludes(checkIncludeRemind,_listExcludeRemindNums,_def,PrefName.ApptConfirmExcludeERemind);
 				//==================== EXCLUDE THANKYOU ====================
 				UpdateAutoCommExcludes(checkIncludeThanks,_listExcludeThanksNums,_def,PrefName.ApptConfirmExcludeEThankYou);
+				//==================== EXCLUDE NEWPATTHANKYOU ====================
+				UpdateAutoCommExcludes(checkIncludeThanks,_listExcludeNewPatEThanksNums,_def,PrefName.ApptConfirmExcludeNewPatThankYou);
 				//==================== EXCLUDE ARRIVAL SEND ====================
 				UpdateAutoCommExcludes(checkIncludeArrivalSend,_listExcludeArrivalSendNums,_def,PrefName.ApptConfirmExcludeArrivalSend);
 				//==================== EXCLUDE ARRIVAL RESPONSE ====================

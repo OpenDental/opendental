@@ -23,6 +23,7 @@ namespace OpenDental {
 		private List<long> _listDefNumsExcludeEclipboard;
 		private List<long> _listDefNumsByodEnabled;
 		private List<long> _listDefNumsExcludeGeneralMessage;
+		private List<long> _listDefNumsExcludeNewPatEThanks;
 		///<summary>This list holds specific DefNums so that we know which ones can't be edited.</summary>
 		private List<long> _listDefNumsUneditable;
 		private long _defNumTimeArrived;
@@ -126,6 +127,7 @@ namespace OpenDental {
 				AddToList(_listDefNumsUneditable[i],_listDefNumsExcludeArrivalSend);
 				AddToList(_listDefNumsUneditable[i],_listDefNumsExcludeArrivalResponse);
 				AddToList(_listDefNumsUneditable[i],_listDefNumsExcludeEclipboard);
+				AddToList(_listDefNumsUneditable[i],_listDefNumsExcludeNewPatEThanks);
 				if(_listDefNumsUneditable[i]!=PrefC.GetLong(PrefName.AppointmentTimeDismissedTrigger)) {
 					AddToList(_listDefNumsUneditable[i],_listDefNumsExcludeGeneralMessage);
 				}
@@ -144,6 +146,7 @@ namespace OpenDental {
 			_listDefNumsExcludeArrivalResponse=GetDefNumsFromPref(PrefName.ApptConfirmExcludeArrivalResponse);
 			_listDefNumsExcludeEclipboard=GetDefNumsFromPref(PrefName.ApptConfirmExcludeEclipboard);
 			_listDefNumsByodEnabled=GetDefNumsFromPref(PrefName.ApptConfirmByodEnabled);
+			_listDefNumsExcludeNewPatEThanks=GetDefNumsFromPref(PrefName.ApptConfirmExcludeNewPatThankYou);
 			_listDefNumsExcludeGeneralMessage=GetDefNumsFromPref(PrefName.ApptConfirmExcludeGeneralMessage);
 			_defNumTimeArrived=PrefC.GetLong(PrefName.AppointmentTimeArrivedTrigger);
 			_listDefNumsUneditable=new List<long>() { _defNumTimeArrived, PrefC.GetLong(PrefName.AppointmentTimeDismissedTrigger),
@@ -156,12 +159,13 @@ namespace OpenDental {
 			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Status"),100));
 			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Color"),40));
 			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Send eConfirmation"),80,HorizontalAlignment.Center) { Tag=_listDefNumsExcludeESend });
-			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Change eConfirmation Status"),120,HorizontalAlignment.Center) { Tag=_listDefNumsExcludeEConf });
-			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Send eReminder"),90,HorizontalAlignment.Center) { Tag=_listDefNumsExcludeERemind});
-			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Send Automated Thank-You"),115,HorizontalAlignment.Center) { Tag=_listDefNumsExcludeEThanks});
-			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Send Arrival SMS"),90,HorizontalAlignment.Center) { Tag=_listDefNumsExcludeArrivalSend});
-			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Send General Message"),90,HorizontalAlignment.Center) { Tag=_listDefNumsExcludeGeneralMessage });
-			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Send Arrival Response SMS"),110,HorizontalAlignment.Center) 
+			gridMain.Columns.Add(new GridColumn(Lan.g(this,"eConfirmation Status"),85,HorizontalAlignment.Center) { Tag=_listDefNumsExcludeEConf });
+			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Send eReminder"),75,HorizontalAlignment.Center) { Tag=_listDefNumsExcludeERemind});
+			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Send Auto Thank-You"),75,HorizontalAlignment.Center) { Tag=_listDefNumsExcludeEThanks});
+			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Send New Pat Thank-You"),85,HorizontalAlignment.Center) { Tag=_listDefNumsExcludeNewPatEThanks });
+			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Send Arrival SMS"),75,HorizontalAlignment.Center) { Tag=_listDefNumsExcludeArrivalSend});
+			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Send General Message"),85,HorizontalAlignment.Center) { Tag=_listDefNumsExcludeGeneralMessage });
+			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Send Arrival Response SMS"),100,HorizontalAlignment.Center) 
 				{ Tag=_listDefNumsExcludeArrivalResponse});
 			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Change on eClipboard Check-in"),130,HorizontalAlignment.Center) 
 				{ Tag=_listDefNumsExcludeEclipboard});
@@ -184,6 +188,9 @@ namespace OpenDental {
 				gridCell.ColorBackG=_listDefNumsUneditable.Contains(_listDefs[i].DefNum)?_color:Color.Empty;
 				row.Cells.Add(gridCell);
 				gridCell=new GridCell(_listDefNumsExcludeEThanks.Contains(_listDefs[i].DefNum)?"":"X");
+				gridCell.ColorBackG=_listDefNumsUneditable.Contains(_listDefs[i].DefNum)?_color:Color.Empty;
+				row.Cells.Add(gridCell);
+				gridCell=new GridCell(_listDefNumsExcludeNewPatEThanks.Contains(_listDefs[i].DefNum)?"":"X");
 				gridCell.ColorBackG=_listDefNumsUneditable.Contains(_listDefs[i].DefNum)?_color:Color.Empty;
 				row.Cells.Add(gridCell);
 				gridCell=new GridCell(_listDefNumsExcludeArrivalSend.Contains(_listDefs[i].DefNum)?"":"X");
@@ -255,6 +262,7 @@ namespace OpenDental {
 			isPrefRefreshRequired|=Prefs.UpdateString(PrefName.ApptConfirmByodEnabled,POut.String(string.Join(",",_listDefNumsByodEnabled)));
 			isPrefRefreshRequired|=Prefs.UpdateString(PrefName.ApptConfirmExcludeEclipboard,POut.String(string.Join(",",_listDefNumsExcludeEclipboard)));
 			isPrefRefreshRequired|=Prefs.UpdateString(PrefName.ApptConfirmExcludeGeneralMessage,POut.String(string.Join(",",_listDefNumsExcludeGeneralMessage)));
+			isPrefRefreshRequired|=Prefs.UpdateString(PrefName.ApptConfirmExcludeNewPatThankYou,POut.String(string.Join(",",_listDefNumsExcludeNewPatEThanks)));
 			if(isClinicPrefRefreshRequired) {
 				DataValid.SetInvalid(InvalidType.ClinicPrefs);
 			}
