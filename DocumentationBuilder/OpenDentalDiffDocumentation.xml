@@ -458,6 +458,24 @@
         <EnumValue name="PaySimplePaymentPortalACH">20 - PaySimple ACH Payment taken through the Payment Portal.</EnumValue>
       </Enumeration>
     </column>
+    <column order="22" name="MerchantFee" type="double">
+      <summary>Stores any additional fees charged to the customer during a transaction. For display purposes only.</summary>
+    </column>
+  </table>
+  <table name="payterminal">
+    <summary></summary>
+    <column order="0" name="PayTerminalNum" type="bigint(20)">
+      <summary>Primary key.</summary>
+    </column>
+    <column order="1" name="Name" type="varchar(255)">
+      <summary>User defined name for the payterminal. E.g. Front Desk.</summary>
+    </column>
+    <column order="2" name="ClinicNum" type="bigint(20)" fk="clinic">
+      <summary>FK to clinic.ClinicNum.</summary>
+    </column>
+    <column order="3" name="TerminalID" type="varchar(255)">
+      <summary>Serial number of physical device, typically provided by the card processor.</summary>
+    </column>
   </table>
   <table name="provider">
     <summary></summary>

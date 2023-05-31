@@ -378,6 +378,9 @@ namespace OpenDentBusiness {
 		///<summary>No UI for this pref. The number of clinics to run in parallel for AutoComm (eConfirms, eReminders, WebSchedRecall, etc.). If
 		///set to 0, then the number of threads to use will be the number of cores on the machine. Defaults to 0.</summary>
 		AutoCommNumClinicsParallel,
+		///<summary>Boolean - Send AutoComms to the guarantor for patients under the age of 18.</summary>
+		[PrefName(ValueType=PrefValueType.BOOL)]
+		AutoCommUnder18SendToGuarantor,
 		///<summary>Default folder for auto import in images module.</summary>
 		[PrefName(ValueType=PrefValueType.STRING)]
 		AutoImportFolder,

@@ -5061,6 +5061,8 @@ namespace OpenDentBusiness {
 					 +POut.Long(listClinicNums[i])+")";
 				Db.NonQ(command);
 			}//End of PayConnect2
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('AutoCommUnder18SendToGuarantor','0')";
+			Db.NonQ(command);
 		}
 	}
 }

@@ -11547,6 +11547,9 @@
     <column order="21" name="IsCcCompleted" type="tinyint(4)">
       <summary>A credit card transaction has been completed. This disables the CC buttons at the top of payment edit window to prevent duplicates.</summary>
     </column>
+    <column order="22" name="MerchantFee" type="double">
+      <summary>Stores any additional fees charged to the customer during a transaction. For display purposes only.</summary>
+    </column>
   </table>
   <table name="payortype">
     <summary>Used to identify the source of payment for a given patient at a given point in time.  As insurance is added and removed, rows should be either automatically inserted into this table, or the user should be prompted to specify what the new payor type is.  The DateStart of one payor type is interpreted as the end date of the previous payor type.  Example: Patient with no insurance may have payortype.SopCode=81 ("SelfPay").  Patient then adds Medicaid insurance and gets a second new PayorType entry with SopCode=2 (Medicaid).</summary>
@@ -11857,6 +11860,21 @@
     </column>
     <column order="20" name="SecurityHash" type="varchar(255)">
       <summary>Holds the salted hash of the following paysplit fields: PatNum, SplitAmt, DateEntry. </summary>
+    </column>
+  </table>
+  <table name="payterminal">
+    <summary>Stores information about credit card terminals used for taking payments. Only used for PayConnect.</summary>
+    <column order="0" name="PayTerminalNum" type="bigint(20)">
+      <summary>Primary key.</summary>
+    </column>
+    <column order="1" name="Name" type="varchar(255)">
+      <summary>User defined name for the payterminal. E.g. Front Desk.</summary>
+    </column>
+    <column order="2" name="ClinicNum" type="bigint(20)" fk="clinic">
+      <summary>FK to clinic.ClinicNum.</summary>
+    </column>
+    <column order="3" name="TerminalID" type="varchar(255)">
+      <summary>Serial number of physical device, typically provided by the card processor.</summary>
     </column>
   </table>
   <table name="perioexam">

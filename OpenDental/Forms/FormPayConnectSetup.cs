@@ -155,6 +155,7 @@ namespace OpenDental{
 				butGenerateToken.Visible=true;
 				textUsername.Visible=true;
 				textPassword.Visible=true;
+				textAPISecret.Visible=false;
 				groupBoxTerminals.Visible=false;
 				checkSurcharge.Visible=false;
 				label3.Text=Lan.g(this,"Password");

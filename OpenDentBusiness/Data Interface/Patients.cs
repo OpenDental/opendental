@@ -5036,7 +5036,9 @@ namespace OpenDentBusiness {
 			return false; 
 		}
 
-
+		public static bool IsMinor(DateTime birthdate,DateTime dateCompare,int minorAge) {
+			return new DateSpan(birthdate,dateCompare).YearsDiff<minorAge;
+		}
 
 	}
 

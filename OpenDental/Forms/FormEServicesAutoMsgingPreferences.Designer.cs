@@ -31,6 +31,7 @@ namespace OpenDental {
 			this.listBoxWebForms = new OpenDental.UI.ListBox();
 			this.labelWebForm = new System.Windows.Forms.Label();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
+			this.checkSendToGuarantorForMinors = new System.Windows.Forms.CheckBox();
 			this.groupNewPat.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -105,10 +106,21 @@ namespace OpenDental {
 			this.comboClinic.TabIndex = 278;
 			this.comboClinic.SelectionChangeCommitted += new System.EventHandler(this.comboClinic_SelectionChangeCommitted);
 			// 
+			// checkSendToGuarantorForMinors
+			// 
+			this.checkSendToGuarantorForMinors.Location = new System.Drawing.Point(95, 280);
+			this.checkSendToGuarantorForMinors.Name = "checkSendToGuarantorForMinors";
+			this.checkSendToGuarantorForMinors.Size = new System.Drawing.Size(260, 19);
+			this.checkSendToGuarantorForMinors.TabIndex = 517;
+			this.checkSendToGuarantorForMinors.Text = "Patients under age 18 - Send to Guarantor";
+			this.checkSendToGuarantorForMinors.UseVisualStyleBackColor = true;
+			this.checkSendToGuarantorForMinors.Click += new System.EventHandler(this.checkSendToGuarantorForMinors_Click);
+			// 
 			// FormEServicesAutoMsgingPreferences
 			// 
 			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(367, 346);
+			this.Controls.Add(this.checkSendToGuarantorForMinors);
 			this.Controls.Add(this.comboClinic);
 			this.Controls.Add(this.groupNewPat);
 			this.Controls.Add(this.checkUseDefaultPrefs);
@@ -132,5 +144,6 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelWebForm;
 		private UI.ComboBoxClinicPicker comboClinic;
 		private UI.ListBox listBoxWebForms;
+		private System.Windows.Forms.CheckBox checkSendToGuarantorForMinors;
 	}
 }

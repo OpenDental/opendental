@@ -13,6 +13,7 @@ namespace OpenDental {
 	public partial class FormEServicesAutoMsgingPreferences:FormODBase {
 		private List<ClinicPref> _listClinicPrefs=new List<ClinicPref>();
 		private string _webSheetIdDefaults;
+		private bool _under18SendToGuarantorDefault;
 
 		public FormEServicesAutoMsgingPreferences() {
 			InitializeComponent();
@@ -21,12 +22,17 @@ namespace OpenDental {
 		}
 
 		private void FormEServicesAutoMsgingPreferences_Load(object sender,EventArgs e) {
+			bool allowEdit=Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true);
 			_webSheetIdDefaults=PrefC.GetString(PrefName.ApptNewPatientThankYouWebSheetDefID);
+			_under18SendToGuarantorDefault=PrefC.GetBool(PrefName.AutoCommUnder18SendToGuarantor);
 			LoadWebFormPrefs();
-			List<PrefName> listPrefNames=new List<PrefName> { PrefName.ApptNewPatientThankYouWebSheetDefID, PrefName.AutoMsgingUseDefaultPref };
+			List<PrefName> listPrefNames=new List<PrefName> { PrefName.ApptNewPatientThankYouWebSheetDefID, PrefName.AutoMsgingUseDefaultPref, PrefName.AutoCommUnder18SendToGuarantor };
 			_listClinicPrefs=ClinicPrefs.GetWhere(x => listPrefNames.Contains(x.PrefName));
 			SetClinicComboBox();
 			LoadDefaultPreferences();
+			checkUseDefaultPrefs.Enabled=allowEdit;
+			butOK.Enabled=allowEdit;
+			EnablePreferenceControls(allowEdit);
 		}
 
 		private void SetClinicComboBox() {
@@ -39,6 +45,11 @@ namespace OpenDental {
 			comboClinic.IncludeAll=false;
 			comboClinic.SelectedClinicNum=0;
 			checkUseDefaultPrefs.Visible=false;
+		}
+
+		private void EnablePreferenceControls(bool allowEdit) {
+			checkSendToGuarantorForMinors.Enabled=allowEdit;
+			groupNewPat.Enabled=allowEdit;
 		}
 
 		private Clinic GetSelectedClinic() {
@@ -55,7 +66,8 @@ namespace OpenDental {
 			else {
 				LoadClinicPreferences();
 			}
-			groupNewPat.Enabled=isDefaultClinic || !checkUseDefaultPrefs.Checked;
+			bool allowEdit=Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true) && (isDefaultClinic || !checkUseDefaultPrefs.Checked);
+			EnablePreferenceControls(allowEdit);
 		}
 
 		private string ValidateChanges() {
@@ -83,6 +95,7 @@ namespace OpenDental {
 		private void SaveToDb() {
 			bool changedPrefs=false;
 			changedPrefs|=Prefs.UpdateString(PrefName.ApptNewPatientThankYouWebSheetDefID,_webSheetIdDefaults);
+			changedPrefs|=Prefs.UpdateBool(PrefName.AutoCommUnder18SendToGuarantor,checkSendToGuarantorForMinors.Checked);
 			bool changedClinicPrefs=changedPrefs;
 			for(int i=0;i<_listClinicPrefs.Count;i++) {
 				changedClinicPrefs|=ClinicPrefs.Upsert(_listClinicPrefs[i].PrefName,_listClinicPrefs[i].ClinicNum,_listClinicPrefs[i].ValueString);
@@ -125,6 +138,7 @@ namespace OpenDental {
 				}
 			}
 			listBoxWebForms.SelectedIndices=listSelectedIndicies;
+			checkSendToGuarantorForMinors.Checked=_under18SendToGuarantorDefault;
 		}
 
 		private void LoadClinicPreferences() {
@@ -150,6 +164,12 @@ namespace OpenDental {
 				}
 			}
 			listBoxWebForms.SelectedIndices=listSelectedIndicies;
+			clinicPref=_listClinicPrefs.FirstOrDefault(x => x.PrefName==PrefName.AutoCommUnder18SendToGuarantor && x.ClinicNum==clinic.ClinicNum);
+			bool doSendToGuarantor=false;
+			if(clinicPref!=null) {
+				doSendToGuarantor=PIn.Bool(clinicPref.ValueString);
+			}
+			checkSendToGuarantorForMinors.Checked=doSendToGuarantor;
 		}
 
 		private void checkUseDefaultPrefs_Click(object sender,EventArgs e) {
@@ -172,7 +192,23 @@ namespace OpenDental {
 				clinicPref.ValueString=POut.Bool(true);
 				LoadDefaultPreferences();
 			}
-			groupNewPat.Enabled=!checkUseDefaultPrefs.Checked;
+			bool allowEdit=Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true) && !checkUseDefaultPrefs.Checked;
+			EnablePreferenceControls(allowEdit);
+		}
+
+		private void checkSendToGuarantorForMinors_Click(object sender,EventArgs e) {
+			Clinic clinic=GetSelectedClinic();
+			if(clinic.ClinicNum==0) {
+				_under18SendToGuarantorDefault=checkSendToGuarantorForMinors.Checked;
+				return;
+			}
+			ClinicPref clinicPref=_listClinicPrefs.FirstOrDefault(x => x.ClinicNum==clinic.ClinicNum && x.PrefName==PrefName.AutoCommUnder18SendToGuarantor);
+			if(clinicPref==null) {
+				clinicPref=new ClinicPref(clinic.ClinicNum,PrefName.AutoCommUnder18SendToGuarantor,valueBool:checkSendToGuarantorForMinors.Checked);
+				_listClinicPrefs.Add(clinicPref);
+				return;
+			}
+			clinicPref.ValueString=POut.Bool(checkSendToGuarantorForMinors.Checked);
 		}
 
 		private void listBoxWebForm_SelectionChangeCommitted(object sender,EventArgs e) {
