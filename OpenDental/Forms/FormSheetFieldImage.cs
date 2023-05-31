@@ -159,7 +159,7 @@ namespace OpenDental {
 			}
 			else if(CloudStorage.IsCloudStorage) {
 				if(comboFieldName.Text==SheetFieldDefCur.FieldName && SheetFieldDefCur.ImageField != null) {
-					pictureBox.Image=SheetFieldDefCur.ImageField;
+					pictureBox.Image=new Bitmap(SheetFieldDefCur.ImageField);
 				}
 				else {
 					using FormProgress formProgress=new FormProgress();
@@ -293,7 +293,7 @@ namespace OpenDental {
 				if(comboFieldName.Text=="Patient Info.gif") {
 					pictureBox.Image=OpenDentBusiness.Properties.Resources.Patient_Info;
 				}
-				else {
+				else if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
 					GC.Collect();
 					if(!File.Exists(textFullPath.Text)) {
 						MsgBox.Show(this,"Image file does not exist.");
@@ -305,6 +305,34 @@ namespace OpenDental {
 					catch {
 						MsgBox.Show(this,"Not a valid image type.");
 						return;
+					}
+				}
+				else if(CloudStorage.IsCloudStorage) {
+					if(!CloudStorage.FileExists(textFullPath.Text)) {
+						MsgBox.Show(this,"Image file does not exist.");
+						return;
+					}
+					using FormProgress FormP=new FormProgress();
+					FormP.DisplayText=Lan.g(CloudStorage.LanThis,"Downloading...");
+					FormP.NumberFormat="F";
+					FormP.NumberMultiplication=1;
+					FormP.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+					FormP.TickMS=1000;
+					OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.DownloadAsync(SheetUtil.GetImagePath(),comboFieldName.Text,
+						new OpenDentalCloud.ProgressHandler(FormP.UpdateProgress));
+					if(FormP.ShowDialog()==DialogResult.Cancel) {
+						state.DoCancel=true;
+						MsgBox.Show(this,"Select a valid image first.");
+						return;
+					}
+					if(state==null || state.FileContent==null) {
+						MsgBox.Show(this,"Select a valid image first.");
+						return;
+					}
+					else {
+						using MemoryStream stream=new MemoryStream(state.FileContent);
+						using Image img=Image.FromStream(stream);
+						pictureBox.Image=new Bitmap(img);
 					}
 				}
 			}
