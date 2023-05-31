@@ -506,6 +506,7 @@ namespace OpenDentBusiness {
 			///<summary>The value of the "Patient Portal Payments Token" program property.
 			///This is the account token related to the username/password used for PayConnect.</summary>
 			public string Token;
+			public int ProgramVersion;
 		}
 		
 		public static class ProgramProperties {
@@ -514,6 +515,7 @@ namespace OpenDentBusiness {
 			public const string PayConnectPreventSavingNewCC="PayConnectPreventSavingNewCC";
 			public const string PatientPortalPaymentsEnabled="IsOnlinePaymentsEnabled";
 			public const string PatientPortalPaymentsToken="Patient Portal Payments Token";
+			public const string ProgramVersion="Program Version";
 		}
 	}
 

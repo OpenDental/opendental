@@ -5016,6 +5016,52 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			//end B45188
 		}//End of 23_1_15() method
+
+		private static void To23_1_16() {
+			//PayConnect2
+			string command="DROP TABLE IF EXISTS payterminal";
+			Db.NonQ(command);
+			command=@"CREATE TABLE payterminal (
+				PayTerminalNum bigint NOT NULL auto_increment PRIMARY KEY,
+				Name varchar(255) NOT NULL,
+				ClinicNum bigint NOT NULL,
+				TerminalID varchar(255) NOT NULL,
+				INDEX(ClinicNum)
+				) DEFAULT CHARSET=utf8";
+			Db.NonQ(command);
+			command="ALTER TABLE payment ADD MerchantFee double NOT NULL";
+			Db.NonQ(command);
+			command="SELECT ProgramNum FROM program WHERE ProgName='PayConnect'";
+			long payConnectProgNum=PIn.Long(Db.GetScalar(command));
+			command="SELECT DISTINCT ClinicNum FROM programproperty WHERE ProgramNum="+POut.Long(payConnectProgNum);
+			List<long> listClinicNums=Db.GetListLong(command);
+			for(int i = 0;i<listClinicNums.Count; i++) {
+				command="INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue,ComputerName,ClinicNum"
+					 +") VALUES("
+					 +POut.Long(payConnectProgNum)+", "
+					 +"'Program Version', "
+					 +"'1',"
+					 +"'',"
+					 +POut.Long(listClinicNums[i])+")";
+				Db.NonQ(command);
+				command="INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue,ComputerName,ClinicNum"
+					 +") VALUES("
+					 +POut.Long(payConnectProgNum)+", "
+					 +"'PayConnect2.0 Integration Type: 0 for normal, 1 for surcharge',"
+					 +"'0',"
+					 +"'',"
+					 +POut.Long(listClinicNums[i])+")";
+				Db.NonQ(command);
+				command="INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue,ComputerName,ClinicNum"
+					 +") VALUES("
+					 +POut.Long(payConnectProgNum)+", "
+					 +"'API Secret', "
+					 +"'',"
+					 +"'',"
+					 +POut.Long(listClinicNums[i])+")";
+				Db.NonQ(command);
+			}//End of PayConnect2
+		}
 	}
 }
 

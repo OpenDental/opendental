@@ -483,6 +483,7 @@ namespace OpenDentBusiness {
 			}
 			string paymentsAllowedVal=OpenDentBusiness.ProgramProperties.GetPropValFromList(listPayConnectProperties,PayConnect.ProgramProperties.PatientPortalPaymentsEnabled,clinicNum);
 			payConnectProps.IsPaymentsAllowed=OpenDentBusiness.PIn.Bool(paymentsAllowedVal);
+			payConnectProps.ProgramVersion=PIn.Int(OpenDentBusiness.ProgramProperties.GetPropValFromList(listPayConnectProperties,PayConnect.ProgramProperties.ProgramVersion,clinicNum));
 		}
 
 		/// <summary>Exception means failed. Return means success. paySimpleProps should be checked upon return. If false then assume payments cannot be made for this clinic.</summary>
@@ -502,11 +503,6 @@ namespace OpenDentBusiness {
 			}
 			string paymentsAllowedVal=OpenDentBusiness.ProgramProperties.GetPropValFromList(listPaySimpleProperties,PaySimple.PropertyDescs.PaySimpleIsOnlinePaymentsEnabled,clinicNum);
 			paySimpleProps.IsOnlinePaymentAllowed=OpenDentBusiness.PIn.Bool(paymentsAllowedVal);
-		}
-
-		public static bool IsPayConnect2EnabledForClinic() {
-			//TODO: Add logic after OD Proper has been implemented
-			return false;
 		}
 
 		///<summary>Returns an IsOnlinePaymentsEnabled program property if one of the programs (excluding the passed in program) with online payments capability has it enabled, returns null if they do not. We exclude the passed in program because we are concerned about the other programs being enabled before deciding what to do with the passed in program.</summary>

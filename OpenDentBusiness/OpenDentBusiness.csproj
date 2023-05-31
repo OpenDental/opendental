@@ -315,6 +315,7 @@
     <Compile Include="Crud\ERoutingDefLinkCrud.cs" />
     <Compile Include="Crud\PayConnectResponseWebCrud.cs" />
     <Compile Include="Crud\PayPlanLinkCrud.cs" />
+    <Compile Include="Crud\PayTerminalCrud.cs" />
     <Compile Include="Crud\PharmClinicCrud.cs" />
     <Compile Include="Crud\ProcMultiVisitCrud.cs" />
     <Compile Include="Crud\PromotionCrud.cs" />
@@ -392,6 +393,7 @@
     <Compile Include="Data Interface\ERoutingDefLinks.cs" />
     <Compile Include="Data Interface\ERoutingDefs.cs" />
     <Compile Include="Data Interface\ERoutings.cs" />
+    <Compile Include="Data Interface\PayTerminals.cs" />
     <Compile Include="Data Interface\ReferralClinicLinks.cs" />
     <Compile Include="Data Interface\HieClinics.cs" />
     <Compile Include="Data Interface\HieQueues.cs" />
@@ -706,6 +708,7 @@
     <Compile Include="TableTypes\ERoutingDefLink.cs" />
     <Compile Include="TableTypes\PayConnectResponseWeb.cs" />
     <Compile Include="TableTypes\PayPlanLink.cs" />
+    <Compile Include="TableTypes\PayTerminal.cs" />
     <Compile Include="TableTypes\PharmClinic.cs" />
     <Compile Include="TableTypes\ProcMultiVisit.cs" />
     <Compile Include="TableTypes\Promotion.cs" />

@@ -22,6 +22,7 @@ using OpenDentBusiness.WebTypes.Shared.XWeb;
 using PdfSharp.Pdf;
 using EdgeExpressProps = OpenDentBusiness.ProgramProperties.PropertyDescs.EdgeExpress;
 using Bridges;
+using static OpenDentBusiness.PayConnect2;
 
 namespace OpenDental {
 	///<summary></summary>
@@ -255,6 +256,10 @@ namespace OpenDental {
 			textAmount.Text=_payment.PayAmt.ToString("F");
 			textCheckNum.Text=_payment.CheckNum;
 			textBankBranch.Text=_payment.BankBranch;
+			if(_payment.MerchantFee>0) {
+				textSurcharge.Visible=true;
+			}
+			textSurcharge.Text=_payment.MerchantFee.ToString("F");
 			_listDefsPaymentType=Defs.GetDefsForCategory(DefCat.PaymentTypes,true);
 			for(int i = 0;i<_listDefsPaymentType.Count;i++) {
 				listPayType.Items.Add(_listDefsPaymentType[i].ItemName);
@@ -1216,17 +1221,42 @@ namespace OpenDental {
 			}
 			//show if enabled.  User could have all enabled.
 			if(programPayConnect.Enabled) {
+				string programVersion=ProgramProperties.GetPropVal(programPayConnect.ProgramNum,"Program Version",_payment.ClinicNum);
 				//if clinics are disabled, PayConnect is enabled if marked enabled
 				if(!PrefC.HasClinicsEnabled) {
 					butPayConnect.Visible=true;
 				}
 				else {//if clinics are enabled, PayConnect is enabled if the PaymentType is valid and the Username and Password are not blank
 					string paymentType=ProgramProperties.GetPropVal(programPayConnect.ProgramNum,"PaymentType",_payment.ClinicNum);
-					string password=CDT.Class1.TryDecrypt(ProgramProperties.GetPropVal(programPayConnect.ProgramNum,"Password",_payment.ClinicNum));
-					if(!string.IsNullOrEmpty(ProgramProperties.GetPropVal(programPayConnect.ProgramNum,"Username",_payment.ClinicNum))
-						&& !string.IsNullOrEmpty(password)
-						&& _listDefsPaymentType.Any(x => x.DefNum.ToString()==paymentType)) {
-						butPayConnect.Visible=true;
+					if(programVersion=="1") {
+						string password=CDT.Class1.TryDecrypt(ProgramProperties.GetPropVal(programPayConnect.ProgramNum,"Password",_payment.ClinicNum));
+						if(!string.IsNullOrEmpty(ProgramProperties.GetPropVal(programPayConnect.ProgramNum,"Username",_payment.ClinicNum))
+							&& !string.IsNullOrEmpty(password)
+							&& _listDefsPaymentType.Any(x => x.DefNum.ToString()==paymentType))
+						{
+							butPayConnect.Visible=true;
+						}
+					}
+					else if(programVersion=="2") {
+						string apiSecret=PayConnect2.GetApiSecretForClinic(_payment.ClinicNum);
+						if(!apiSecret.IsNullOrEmpty() && _listDefsPaymentType.Any(x => x.DefNum.ToString()==paymentType)) {
+							butPayConnect.Visible=true;
+						}
+					}
+				}
+				if(butPayConnect.Visible==true) {
+					//set visibility for PayConnect2.
+					if(programVersion=="2") {
+						groupXWeb.Visible=false;//All voids/refunds should be done through the PayConnect window.
+						string integrationType=ProgramProperties.GetPropVal(programPayConnect.ProgramNum,"PayConnect2.0 Integration Type: 0 for normal, 1 for surcharge",_payment.ClinicNum);
+						if(integrationType=="1") {//surcharge
+							labelSurchargeFee.Visible=true;
+							textSurcharge.Visible=true;
+						}
+						else {
+							labelSurchargeFee.Visible=false;
+							textSurcharge.Visible=false;
+						}
 					}
 				}
 			}
@@ -2207,14 +2237,27 @@ namespace OpenDental {
 			Program program=Programs.GetCur(ProgramName.PayConnect);
 			bool isSetupRequired=false;
 			if(program.Enabled) {
-				//If clinics are disabled, _paymentCur.ClinicNum will be 0 and the Username and Password will be the 'Headquarters' or practice credentials
-				string paymentType=ProgramProperties.GetPropVal(program.ProgramNum,"PaymentType",_payment.ClinicNum);
-				string password=CDT.Class1.TryDecrypt(ProgramProperties.GetPropVal(program.ProgramNum,"Password",_payment.ClinicNum));
-				if(string.IsNullOrEmpty(ProgramProperties.GetPropVal(program.ProgramNum,"Username",_payment.ClinicNum))
-					|| string.IsNullOrEmpty(password)
-					|| !_listDefsPaymentType.Any(x => x.DefNum.ToString()==paymentType)) {
-					isSetupRequired=true;
+				//check program version
+				string payconnectVersion=ProgramProperties.GetPropVal(program.ProgramNum,"Program Version",_payment.ClinicNum);
+				if(payconnectVersion=="1") {
+					//If clinics are disabled, _paymentCur.ClinicNum will be 0 and the Username and Password will be the 'Headquarters' or practice credentials
+					string password=CDT.Class1.TryDecrypt(ProgramProperties.GetPropVal(program.ProgramNum,"Password",_payment.ClinicNum));
+					if(string.IsNullOrEmpty(ProgramProperties.GetPropVal(program.ProgramNum,"Username",_payment.ClinicNum))
+						|| string.IsNullOrEmpty(password)) 
+					{
+						isSetupRequired=true;
+					}
 				}
+				else if(payconnectVersion=="2") { 
+					string apiSecret=ProgramProperties.GetPropVal(program.ProgramNum,"API Secret",_payment.ClinicNum);
+					if(apiSecret.IsNullOrEmpty()) {
+						isSetupRequired=true;
+					}
+				}
+				string paymentType=ProgramProperties.GetPropVal(program.ProgramNum,"PaymentType",_payment.ClinicNum);
+				if(!_listDefsPaymentType.Any(x => x.DefNum.ToString()==paymentType)) {
+					isSetupRequired=true;
+				}	
 			}
 			else {//Program link not enabled.  Launch a promo site.
 				ODException.SwallowAnyException(() =>
@@ -2550,6 +2593,8 @@ namespace OpenDental {
 		}
 
 		private void PayConnectReturn() {
+			Program programPayConnect=Programs.GetCur(ProgramName.PayConnect);
+			string payconnectVersion=ProgramProperties.GetPropVal(programPayConnect.ProgramNum,"Program Version",_payment.ClinicNum);
 			string refNum=_payConnectResponseWeb.RefNumber;
 			if(refNum.IsNullOrEmpty()) {
 				MsgBox.Show(this,"Missing PayConnect Reference Number. This return cannot be processed.");
@@ -3122,15 +3167,24 @@ namespace OpenDental {
 		}
 
 		private void VoidPayConnectTransaction(string refNum,string amount) {
+			Program program=Programs.GetCur(ProgramName.PayConnect);
+			string payconnectVersion=ProgramProperties.GetPropVal(program.ProgramNum,"Program Version",_payment.ClinicNum);
 			PayConnectResponse payConnectResponse=null;
 			string receiptStr="";
-			if(_creditCardRequestPayConnect==null) {//The payment was made through the terminal.
+			if(_creditCardRequestPayConnect==null || payconnectVersion=="2") {//The payment was made through the terminal or by PayConnect v2.
 				ProgressOD progressOD=new ProgressOD();
 				progressOD.ActionMain=() => {
-					PosRequest posRequest=PosRequest.CreateVoidByReference(refNum);
-					PosResponse posResponse=DpsPos.ProcessCreditCard(posRequest);
-					payConnectResponse=PayConnectTerminal.ToPayConnectResponse(posResponse);
-					receiptStr=PayConnectTerminal.BuildReceiptString(PayConnectTerminal.ToPayConnectResponse(posResponse),null,0);
+					if(payconnectVersion=="1") {
+						PosRequest posRequest=PosRequest.CreateVoidByReference(refNum);
+						PosResponse posResponse=DpsPos.ProcessCreditCard(posRequest);
+						payConnectResponse=PayConnectTerminal.ToPayConnectResponse(posResponse);				
+					}
+					else if(payconnectVersion=="2") {
+						VoidReferenceIDRequest voidReferenceIDRequest=new VoidReferenceIDRequest();
+						voidReferenceIDRequest.ReferenceId=refNum;
+						payConnectResponse=PayConnect2.ApiResponseToPayConnectResponse(PayConnect2.PutVoidWithReferenceID(voidReferenceIDRequest,_payment.ClinicNum));
+					}
+					receiptStr=PayConnectTerminal.BuildReceiptString(payConnectResponse,false,_payment.ClinicNum);
 				};
 				progressOD.ShowCancelButton=false;
 				progressOD.StartingMessage=Lan.g(this,"Processing void on terminal.");
@@ -3428,114 +3482,187 @@ namespace OpenDental {
 			else {//Prepaid card
 				amount=(decimal)prepaidAmt;
 			}
-			using FormPayConnect formPayConnect=new FormPayConnect(_payment.ClinicNum,_patient,amount,creditCard);
-			formPayConnect.ShowDialog();
-			if(prepaidAmt==0 && formPayConnect.GetResponse()!=null) {//Regular credit cards (not prepaid cards).
-				//If PayConnect response is not null, refresh comboCreditCards and select the index of the card used for this payment if the token was saved
-				listCreditCards=CreditCards.Refresh(_patient.PatNum);
-				AddCreditCardsToCombo(listCreditCards,x => x.PayConnectToken==formPayConnect.GetResponse().PaymentToken
-					&&x.PayConnectTokenExp.Year==formPayConnect.GetResponse().TokenExpiration.Year
-					&&x.PayConnectTokenExp.Month==formPayConnect.GetResponse().TokenExpiration.Month);
-				Program program=Programs.GetCur(ProgramName.PayConnect);
-				//still need to add functionality for accountingAutoPay
-				string paytype=ProgramProperties.GetPropVal(program.ProgramNum,"PaymentType",_payment.ClinicNum);//paytype could be an empty string
-				if(!PrefC.GetBool(PrefName.PaymentsPromptForPayType)) {
-					listPayType.SelectedIndex=Defs.GetOrder(DefCat.PaymentTypes,PIn.Long(paytype));
-				}
-				SetComboDepositAccounts();
-			}
-			double amountCharged=(double)amount;
-			if(amountCharged>0 && formPayConnect.TransType==PayConnectService.transType.VOID) {
-				amountCharged*=-1;
-			}
 			string resultNote=null;
-			if(formPayConnect.GetResponse()!=null) {
-				resultNote=Lan.g(this,"Transaction Type")+": "+Enum.GetName(typeof(PayConnectService.transType),formPayConnect.TransType)+Environment.NewLine+
-					Lan.g(this,"Status")+": "+formPayConnect.GetResponse().Description+Environment.NewLine+
-					Lan.g(this,"Amount")+": "+amountCharged.ToString("C")+Environment.NewLine+
-					Lan.g(this,"Card Type")+": "+formPayConnect.GetResponse().CardType+Environment.NewLine+
-					Lan.g(this,"Account")+": "+StringTools.TruncateBeginning(formPayConnect.GetCardNumber(),4).PadLeft(formPayConnect.GetCardNumber().Length,'X')+Environment.NewLine+
-					Lan.g(this,"Auth Code")+": "+formPayConnect.GetResponse().AuthCode+Environment.NewLine+
-					Lan.g(this,"Ref Number")+": "+formPayConnect.GetResponse().RefNumber;
-			}
-			if(prepaidAmt!=0) {
-				if(formPayConnect.GetResponse()!=null && formPayConnect.GetResponse().StatusCode=="0") { //The transaction succeeded.
-					_payment.IsCcCompleted=true;
-					return resultNote;
-				}
-				return null;
-			}
-			if(formPayConnect.GetResponse()!=null) {
-				if(formPayConnect.GetResponse().StatusCode=="0") { //The transaction succeeded.
-					_payment.IsCcCompleted=true;
-					_isCCDeclined=false;
-					if(formPayConnect.TransType==PayConnectService.transType.RETURN) {
-						textAmount.Text="-"+formPayConnect.GetAmountCharged();
-						_payment.Receipt=formPayConnect.ReceiptStr;
-					}
-					else if(formPayConnect.TransType==PayConnectService.transType.AUTH) {
-						textAmount.Text=formPayConnect.GetAmountCharged();
-					}
-					else if(formPayConnect.TransType==PayConnectService.transType.SALE) {
-						textAmount.Text=formPayConnect.GetAmountCharged();
-						_payment.Receipt=formPayConnect.ReceiptStr;
-					}
-					if(formPayConnect.TransType==PayConnectService.transType.VOID) {//Close FormPayment window now so the user will not have the option to hit Cancel
-						if(IsNew) {
-							if(!_wasCreditCardSuccessful) {
-								textAmount.Text="-"+formPayConnect.GetAmountCharged();
-								textNote.Text+=((textNote.Text=="") ? "" : Environment.NewLine)+resultNote;
-							}
-							_payment.Receipt=formPayConnect.ReceiptStr;
-							if(SavePaymentToDb()) {
-								MsgBox.Show(this,"Void successful.");
-								DialogResult=DialogResult.OK;//Close FormPayment window now so the user will not have the option to hit Cancel
-							}
-							return resultNote;
-						}
-						if(!IsNew || _wasCreditCardSuccessful) {//Create a new negative payment if the void is being run from an existing payment
-							if(_listPaySplits.Count==0) {
-								AddOneSplit();
-								Reinitialize();
-							}
-							_payment.IsSplit=_listPaySplits.Count>1;
-							Payments.InsertVoidPayment(_payment,_listPaySplits,formPayConnect.ReceiptStr,resultNote,CreditCardSource.PayConnect,payAmt: amountCharged);
-							string strErrorMsg=Ledgers.ComputeAgingForPaysplitsAllocatedToDiffPats(_patient.PatNum,_listPaySplits);
-							if(!string.IsNullOrEmpty(strErrorMsg)) {
-								MessageBox.Show(strErrorMsg);
-							}
-						}
-						MsgBox.Show(this,"Void successful.");
-						DialogResult=DialogResult.OK;//Close FormPayment window now so the user will not have the option to hit Cancel
-						return resultNote;
-					}
-					else {//Not Void
-						_wasCreditCardSuccessful=true; //Will void the transaction if user cancels out of window.
-					}
+			Program program=Programs.GetCur(ProgramName.PayConnect);
+			string payconnectVersion=ProgramProperties.GetPropVal(program.ProgramNum,"Program Version",_payment.ClinicNum);
+			//Get rid of "Unassigned variable" errors
+			string cardNumber="";
+			string receipt="";
+			string amountChargedString="";
+			bool wasPaymentAttempted=false;
+			PayConnectResponse payConnectResponse=null;
+			PayConnectService.transType transType=PayConnectService.transType.SALE;
+			if(payconnectVersion=="1") {
+				using FormPayConnect formPayConnect=new FormPayConnect(_payment.ClinicNum,_patient,amount,creditCard);
+				formPayConnect.ShowDialog();
+				payConnectResponse=formPayConnect.GetResponse();
+				cardNumber=formPayConnect.GetCardNumber();
+				receipt=formPayConnect.ReceiptStr;
+				amountChargedString=formPayConnect.GetAmountCharged();
+				transType=formPayConnect.TransType;
+				wasPaymentAttempted=formPayConnect.WasPaymentAttempted;
+				if(payConnectResponse!=null && payConnectResponse.StatusCode=="0") {
 					_creditCardRequestPayConnect=formPayConnect.CreditCardRequest;
 				}
-				textNote.Text+=((textNote.Text=="") ? "" : Environment.NewLine)+resultNote;
-				textNote.SelectionStart=textNote.TextLength;
-				textNote.ScrollToCaret();//Scroll to the end of the text box to see the newest notes.
-				_payment.PayNote=textNote.Text;
-				_payment.PaymentSource=CreditCardSource.PayConnect;
-				_payment.ProcessStatus=ProcessStat.OfficeProcessed;
-				Payments.Update(_paymentOld,true);
 			}
-			if(!string.IsNullOrEmpty(_payment.Receipt)) {
-				butPrintReceipt.Visible=true;
-				if(PrefC.GetBool(PrefName.AllowEmailCCReceipt)) {
-					butEmailReceipt.Visible=true;
+			else if(payconnectVersion=="2") {
+				using FormPayConnect2 formPayConnect2=new FormPayConnect2(_payment.ClinicNum,_patient,creditCard,amount);
+				if(formPayConnect2.ShowDialog()!=DialogResult.OK && !formPayConnect2.WasPaymentAttempted) {
+					return null;
+				}
+				payConnectResponse=formPayConnect2.GetPayConnectResponse();
+				//User canceled or just didn't run a transaction - nothing to process.
+				if(payConnectResponse.RefNumber.IsNullOrEmpty()) {
+					textNote.Text=Lan.g(this,"Response from PayConnect:\r\nStatus: ")+(payConnectResponse.StatusCode??"")+Lan.g(this,"\r\nDescription: ")+payConnectResponse.Description??"";
+					return null;
+				}
+				//iFrame was opened and closed without attempting a transaction.
+				if(payConnectResponse.Description.ToLower()=="onload") {
+					return null;
+				}
+				PayConnect2Response statusResponse=PayConnect2.GetTransactionStatus(_payment.ClinicNum,payConnectResponse.RefNumber);
+				if(statusResponse.ResponseType==ResponseType.Error) {
+					textNote.Text=Lan.g(this,"Response from PayConnect:\r\nStatus: Error ")+(payConnectResponse.StatusCode??"")
+						+Lan.g(this,"\r\nDescription: ")+(payConnectResponse.Description??"")
+						+Lan.g(this,"\r\nRef Number: ")+(payConnectResponse.RefNumber??"");
+					return null;
+				}
+				CardPaymentMethod cardPaymentMethod=statusResponse.GetStatusResponse.PaymentMethod.CardPaymentMethod;
+				cardNumber=cardPaymentMethod.CardLast4Digits;
+				receipt=formPayConnect2.ReceiptStr;
+				amountChargedString=(((double)statusResponse.GetStatusResponse.Amount)/100).ToString("F2");
+				transType=formPayConnect2.TransType;
+				wasPaymentAttempted=formPayConnect2.WasPaymentAttempted;
+				_creditCardRequestPayConnect=null;//PayConnect2 doesn't use this field, explicitly set it null for safety.
+				string integrationType=ProgramProperties.GetPropVal(program.ProgramNum,"PayConnect2.0 Integration Type: 0 for normal, 1 for surcharge",_payment.ClinicNum);
+				if(integrationType=="1") {//Surcharge integration
+					_payment.MerchantFee=((double)statusResponse.GetStatusResponse.AmountSurcharged)/100;
+					//Flip the sign for voids to show that this money was returned to the patient.
+					if(transType==PayConnectService.transType.VOID) {
+						_payment.MerchantFee=-_payment.MerchantFee;
+					}
+					textSurcharge.Text=_payment.MerchantFee.ToString("F2");
 				}
 			}
-			if(formPayConnect.WasPaymentAttempted && !_payment.IsCcCompleted && (formPayConnect.GetResponse()==null || formPayConnect.GetResponse().StatusCode!="0")) { //The transaction failed.
-				if(formPayConnect.TransType==PayConnectService.transType.SALE || formPayConnect.TransType==PayConnectService.transType.AUTH) {
-					textAmount.Text=formPayConnect.GetAmountCharged();//Preserve the amount so the user can try the payment again more easily.
+				if(prepaidAmt==0 && payConnectResponse!=null) {//Regular credit cards (not prepaid cards).
+					//If PayConnect response is not null, refresh comboCreditCards and select the index of the card used for this payment if the token was saved
+					listCreditCards=CreditCards.Refresh(_patient.PatNum);
+					AddCreditCardsToCombo(listCreditCards,x => x.PayConnectToken==payConnectResponse.PaymentToken
+						&&x.PayConnectTokenExp.Year==payConnectResponse.TokenExpiration.Year
+						&&x.PayConnectTokenExp.Month==payConnectResponse.TokenExpiration.Month);			
+					//still need to add functionality for accountingAutoPay
+					string paytype=ProgramProperties.GetPropVal(program.ProgramNum,"PaymentType",_payment.ClinicNum);//paytype could be an empty string
+					if(!PrefC.GetBool(PrefName.PaymentsPromptForPayType)) { 
+						listPayType.SelectedIndex=Defs.GetOrder(DefCat.PaymentTypes,PIn.Long(paytype));
+					}
+					SetComboDepositAccounts();
 				}
-				_isCCDeclined=true;
-				_wasCreditCardSuccessful=false;
-				return formPayConnect.GetResponse()?.Description??resultNote??Lan.g(this,"PayConnect charge failed to process.");
-			}
+				double amountCharged=(double)amount;
+				if(payConnectResponse!=null && payConnectResponse.TransType!=PayConnectResponse.TransactionType.Unknown) {
+					amountCharged=(double)payConnectResponse.Amount;
+				}
+				double surchargeFee=_payment.MerchantFee;
+				if(amountCharged>0 && transType==PayConnectService.transType.VOID) {
+					amountCharged*=-1;
+				}
+				if(payConnectResponse!=null) {
+					resultNote=Lan.g(this,"Transaction Type")+": "+Enum.GetName(typeof(PayConnectService.transType),transType)+Environment.NewLine+
+						Lan.g(this,"Status")+": "+payConnectResponse.Description+Environment.NewLine+
+						Lan.g(this,"Amount")+": "+amountCharged.ToString("C")+Environment.NewLine+
+						Lan.g(this,"Card Type")+": "+payConnectResponse.CardType+Environment.NewLine+
+						Lan.g(this,"Account")+": "+StringTools.TruncateBeginning(cardNumber,4).PadLeft(cardNumber.Length,'X')+Environment.NewLine+
+						Lan.g(this,"Auth Code")+": "+payConnectResponse.AuthCode+Environment.NewLine+
+						Lan.g(this,"Ref Number")+": "+payConnectResponse.RefNumber;
+					if(payconnectVersion=="2") {
+						long integrationType=PayConnect2.GetIntegrationType(_payment.ClinicNum);
+						if(integrationType==1) {
+							resultNote+=Environment.NewLine+Lan.g(this,"Surcharge Fee Amount")+": "+_payment.MerchantFee.ToString("C");
+						}
+					}
+				}
+				if(prepaidAmt!=0) {
+					if(payConnectResponse!=null && payConnectResponse.StatusCode=="0") { //The transaction succeeded.
+						_payment.IsCcCompleted=true;
+						return resultNote;
+					}
+					return null;
+				}
+				if(payConnectResponse!=null) {
+					if(payConnectResponse.StatusCode=="0" || payConnectResponse.StatusCode=="000") { //The transaction succeeded. API sends single digit 0 terminal sends 000
+						_payment.IsCcCompleted=true;
+						_isCCDeclined=false;
+						if(transType==PayConnectService.transType.RETURN) {
+							textAmount.Text=amountChargedString;
+							_payment.Receipt=receipt;
+						}
+						else if(transType==PayConnectService.transType.AUTH) {
+							textAmount.Text=amountChargedString;
+						}
+						else if(transType==PayConnectService.transType.SALE) {
+							textAmount.Text=amountChargedString;
+							_payment.Receipt=receipt;
+						}
+						if(transType==PayConnectService.transType.VOID) {//Close FormPayment window now so the user will not have the option to hit Cancel
+							if(IsNew) {
+								if(!_wasCreditCardSuccessful) {
+									textNote.Text+=((textNote.Text=="")?"":Environment.NewLine)+resultNote;
+								}
+								_payment.Receipt=receipt;
+								if(SavePaymentToDb()) {
+									MsgBox.Show(this,"Void successful.");
+									DialogResult=DialogResult.OK;//Close FormPayment window now so the user will not have the option to hit Cancel
+								}
+								return resultNote;
+							}
+							if(!IsNew || _wasCreditCardSuccessful) {//Create a new negative payment if the void is being run from an existing payment
+								if(_listPaySplits.Count==0) {
+									AddOneSplit();
+									Reinitialize();
+								}
+								else if(_listPaySplits.Count==1//if one split
+									&& _listPaySplits[0].PayPlanNum!=0//and split is on a payment plan
+									&& _listPaySplits[0].SplitAmt!=_payment.PayAmt)//and amount doesn't match payment
+								{
+									_listPaySplits[0].SplitAmt=_payment.PayAmt;//make amounts match automatically
+									textSplitTotal.Text=textAmount.Text;
+								}
+								_payment.IsSplit=_listPaySplits.Count>1;
+								Payments.InsertVoidPayment(_payment,_listPaySplits,receipt,resultNote,CreditCardSource.PayConnect,payAmt:amountCharged);
+								string strErrorMsg=Ledgers.ComputeAgingForPaysplitsAllocatedToDiffPats(_patient.PatNum,_listPaySplits);
+								if(!string.IsNullOrEmpty(strErrorMsg)) {
+									MessageBox.Show(strErrorMsg);
+								}
+							}
+							MsgBox.Show(this,"Void successful.");
+							DialogResult=DialogResult.OK;//Close FormPayment window now so the user will not have the option to hit Cancel
+							return resultNote;
+						}
+						else {//Not Void
+							_wasCreditCardSuccessful=true; //Will void the transaction if user cancels out of window.
+						}
+					}
+					textNote.Text+=((textNote.Text=="")?"":Environment.NewLine)+resultNote;
+					textNote.SelectionStart=textNote.TextLength;
+					textNote.ScrollToCaret();//Scroll to the end of the text box to see the newest notes.
+					_payment.PayNote=textNote.Text;
+					_payment.PaymentSource=CreditCardSource.PayConnect;
+					_payment.ProcessStatus=ProcessStat.OfficeProcessed;
+					Payments.Update(_paymentOld,true);
+				}
+				if(!string.IsNullOrEmpty(_payment.Receipt)) {
+					butPrintReceipt.Visible=true;
+					if(PrefC.GetBool(PrefName.AllowEmailCCReceipt)) {
+						butEmailReceipt.Visible=true;
+					}
+				}
+				if(wasPaymentAttempted && !_payment.IsCcCompleted && (payConnectResponse==null || payConnectResponse.StatusCode!="0")) { //The transaction failed.
+					if(transType==PayConnectService.transType.SALE || transType==PayConnectService.transType.AUTH) {
+						textAmount.Text=amountChargedString;//Preserve the amount so the user can try the payment again more easily.
+					}
+					_isCCDeclined=true;
+					_wasCreditCardSuccessful=false;
+					return payConnectResponse?.Description??resultNote??Lan.g(this,"PayConnect charge failed to process.");
+				}
 			return resultNote;
 		}
 

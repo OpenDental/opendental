@@ -163,17 +163,14 @@
 			this.tabControlCharges = new OpenDental.UI.TabControl();
 			this.tabPageOutstanding = new OpenDental.UI.TabPage();
 			this.checkShowSuperfamily = new OpenDental.UI.CheckBox();
-			this.gridCharges = new OpenDental.UI.GridOD();
 			this.checkIncludeExplicitCreditsOnly = new OpenDental.UI.CheckBox();
 			this.checkShowAll = new OpenDental.UI.CheckBox();
 			this.tabPageTreatPlan = new OpenDental.UI.TabPage();
 			this.labelTPProcWarning = new System.Windows.Forms.Label();
-			this.gridTreatPlan = new OpenDental.UI.GridOD();
 			this.butPay = new OpenDental.UI.Button();
 			this.labelPayPlan = new System.Windows.Forms.Label();
 			this.tabControlSplits = new OpenDental.UI.TabControl();
 			this.tabPageSplits = new OpenDental.UI.TabPage();
-			this.gridSplits = new OpenDental.UI.GridOD();
 			this.textChargeTotal = new System.Windows.Forms.TextBox();
 			this.butCreatePartial = new OpenDental.UI.Button();
 			this.label8 = new System.Windows.Forms.Label();
@@ -209,6 +206,11 @@
 			this.labelRecurringChargeWarning = new System.Windows.Forms.Label();
 			this.warningIntegrity1 = new OpenDental.UI.WarningIntegrity();
 			this.labelTransactionCompleted = new System.Windows.Forms.Label();
+			this.labelSurchargeFee = new System.Windows.Forms.Label();
+			this.textSurcharge = new System.Windows.Forms.TextBox();
+			this.gridCharges = new OpenDental.UI.GridOD();
+			this.gridTreatPlan = new OpenDental.UI.GridOD();
+			this.gridSplits = new OpenDental.UI.GridOD();
 			this.groupXWeb.SuspendLayout();
 			this.tabControlCharges.SuspendLayout();
 			this.tabPageOutstanding.SuspendLayout();
@@ -1200,18 +1202,84 @@
 			// labelTransactionCompleted
 			// 
 			this.labelTransactionCompleted.ForeColor = System.Drawing.Color.Firebrick;
-			this.labelTransactionCompleted.Location = new System.Drawing.Point(271,76);
+			this.labelTransactionCompleted.Location = new System.Drawing.Point(272, 94);
 			this.labelTransactionCompleted.Name = "labelTransactionCompleted";
 			this.labelTransactionCompleted.Size = new System.Drawing.Size(190,57);
 			this.labelTransactionCompleted.TabIndex = 1002;
 			this.labelTransactionCompleted.Text = "This transaction is already complete, you must make a new payment to process a ne" +
-		"w transaction.";
-			this.labelTransactionCompleted.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+    "w transaction.";
+			this.labelTransactionCompleted.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			this.labelTransactionCompleted.Visible = false;
+			// 
+			// labelSurchargeFee
+			// 
+			this.labelSurchargeFee.Location = new System.Drawing.Point(259, 62);
+			this.labelSurchargeFee.Name = "labelSurchargeFee";
+			this.labelSurchargeFee.Size = new System.Drawing.Size(100, 16);
+			this.labelSurchargeFee.TabIndex = 1004;
+			this.labelSurchargeFee.Text = "Surcharge Fee";
+			this.labelSurchargeFee.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			this.labelSurchargeFee.Visible = false;
+			// 
+			// textSurcharge
+			// 
+			this.textSurcharge.Location = new System.Drawing.Point(362, 59);
+			this.textSurcharge.Name = "textSurcharge";
+			this.textSurcharge.ReadOnly = true;
+			this.textSurcharge.Size = new System.Drawing.Size(100, 20);
+			this.textSurcharge.TabIndex = 1005;
+			// 
+			// gridCharges
+			// 
+			this.gridCharges.AllowSortingByColumn = true;
+			this.gridCharges.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.gridCharges.Location = new System.Drawing.Point(1, 22);
+			this.gridCharges.Name = "gridCharges";
+			this.gridCharges.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
+			this.gridCharges.Size = new System.Drawing.Size(602, 249);
+			this.gridCharges.TabIndex = 144;
+			this.gridCharges.Title = "Outstanding Charges";
+			this.gridCharges.TranslationName = "TableOutstandingCharges";
+			this.gridCharges.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridCharges_CellClick);
+			// 
+			// gridTreatPlan
+			// 
+			this.gridTreatPlan.AllowSortingByColumn = true;
+			this.gridTreatPlan.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.gridTreatPlan.Location = new System.Drawing.Point(1, 22);
+			this.gridTreatPlan.Name = "gridTreatPlan";
+			this.gridTreatPlan.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
+			this.gridTreatPlan.Size = new System.Drawing.Size(602, 245);
+			this.gridTreatPlan.TabIndex = 145;
+			this.gridTreatPlan.Title = "Treatment Planned Procedures";
+			this.gridTreatPlan.TranslationName = "TableOutstandingCharges";
+			this.gridTreatPlan.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridTreatPlan_CellClick);
+			// 
+			// gridSplits
+			// 
+			this.gridSplits.AllowSortingByColumn = true;
+			this.gridSplits.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.gridSplits.Location = new System.Drawing.Point(0, 0);
+			this.gridSplits.Name = "gridSplits";
+			this.gridSplits.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
+			this.gridSplits.Size = new System.Drawing.Size(483, 249);
+			this.gridSplits.TabIndex = 0;
+			this.gridSplits.Title = "Current Payment Splits";
+			this.gridSplits.TranslationName = "TableCurrentSplits";
+			this.gridSplits.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridSplits_CellDoubleClick);
+			this.gridSplits.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridSplits_CellClick);
 			// 
 			// FormPayment
 			// 
-			this.ClientSize = new System.Drawing.Size(1111,696);
+			this.ClientSize = new System.Drawing.Size(1111, 696);
+			this.Controls.Add(this.textSurcharge);
+			this.Controls.Add(this.labelSurchargeFee);
 			this.Controls.Add(this.labelTransactionCompleted);
 			this.Controls.Add(this.warningIntegrity1);
 			this.Controls.Add(this.labelRecurringChargeWarning);
@@ -1289,5 +1357,19 @@
 		private System.Windows.Forms.Label labelRecurringChargeWarning;
 		private UI.WarningIntegrity warningIntegrity1;
 		private System.Windows.Forms.Label labelTransactionCompleted;
+		private UI.GroupBox groupBoxFilteringPaySplits;
+		private UI.ComboBox comboProviderPaySplitsFilter;
+		private System.Windows.Forms.Label labelMaxPaySplitsFilter;
+		private System.Windows.Forms.Label labelMinPaySplitsFilter;
+		private System.Windows.Forms.Label labelClinicsPaySplitsFilter;
+		private System.Windows.Forms.NumericUpDown amtMinEndPaySplits;
+		private System.Windows.Forms.NumericUpDown amtMaxEndPaySplits;
+		private UI.Button butRefreshPaySplits;
+		private UI.ComboBox comboPatientPaySplitsFilter;
+		private UI.ComboBox comboClinicsPaySplitsFilter;
+		private System.Windows.Forms.Label labelPatPaySplitsFilter;
+		private System.Windows.Forms.Label labelProvPaySplitsFilter;
+		private System.Windows.Forms.Label labelSurchargeFee;
+		private System.Windows.Forms.TextBox textSurcharge;
 	}
 }

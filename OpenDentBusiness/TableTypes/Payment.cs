@@ -61,6 +61,8 @@ namespace OpenDentBusiness{
 		public PaymentStatus PaymentStatus;
 		///<summary>A credit card transaction has been completed. This disables the CC buttons at the top of payment edit window to prevent duplicates.</summary>
 		public bool IsCcCompleted;
+		///<summary>Stores any additional fees charged to the customer during a transaction. For display purposes only.</summary>
+		public double MerchantFee;
 
 		public Payment Clone() {
 			return (Payment)this.MemberwiseClone();

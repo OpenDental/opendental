@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using CodeBase;
 using Ionic.Zip;
+using OpenDental.UI;
 using OpenDentBusiness;
 
 namespace OpenDental{
@@ -27,6 +28,7 @@ namespace OpenDental{
 		///and the payment type has not been set.</summary>
 		private int _indexClinicRevert;
 		private List<Def> _listDefsPaymentType;
+		private List<PayTerminal> _listPayTerminals;
 
 		///<summary></summary>
 		public FormPayConnectSetup()
@@ -91,7 +93,9 @@ namespace OpenDental{
 			}
 			if(!ProgramProperties.CanEditProperties(_listProgramProperties)) {
 				textPassword.ReadOnly=true;
+				textAPISecret.ReadOnly=true;
 			}
+			
 			FillFields();
 		}
 
@@ -105,6 +109,15 @@ namespace OpenDental{
 			string payTypeDefNum=ProgramProperties.GetPropValFromList(_listProgramProperties,"PaymentType",clinicNum);
 			string processingMethod=ProgramProperties.GetPropValFromList(_listProgramProperties,PayConnect.ProgramProperties.DefaultProcessingMethod,clinicNum);
 			checkTerminal.Checked=PIn.Bool(ProgramProperties.GetPropValFromList(_listProgramProperties,"TerminalProcessingEnabled",clinicNum));
+			int programVersion=PIn.Int(ProgramProperties.GetPropValFromList(_listProgramProperties,"Program Version",clinicNum));
+			textAPISecret.Text=ProgramProperties.GetPropValFromList(_listProgramProperties,"API Secret",clinicNum);
+			if(programVersion==1) {
+				radioVersion1.Checked=true;
+			}
+			else {
+				radioVersion2.Checked=true;
+			}
+			ResetUIForVersion();
 			checkForceRecurring.Checked=PIn.Bool(ProgramProperties.GetPropValFromList(_listProgramProperties,
 				PayConnect.ProgramProperties.PayConnectForceRecurringCharge,clinicNum));
 			checkPreventSavingNewCC.Checked=PIn.Bool(ProgramProperties.GetPropValFromList(_listProgramProperties,
@@ -123,8 +136,74 @@ namespace OpenDental{
 			comboDefaultProcessing.Items.Add(Lan.g(this,PayConnectProcessingMethod.WebService.GetDescription()));
 			comboDefaultProcessing.Items.Add(Lan.g(this,PayConnectProcessingMethod.Terminal.GetDescription()));
 			if(processingMethod=="0" || processingMethod=="1") {
-				comboDefaultProcessing.SelectedIndex=PIn.Int(processingMethod);
+				comboDefaultProcessing.SelectedIndex=PIn.Int(ProgramProperties.GetPropValFromList(_listProgramProperties,"DefaultProcessingMethod",clinicNum));
 			}
+			int accountType=PIn.Int(ProgramProperties.GetPropValFromList(_listProgramProperties,"PayConnect2.0 Integration Type: 0 for normal, 1 for surcharge",clinicNum));
+			if(accountType==1) {
+				checkSurcharge.Checked=true;
+			}
+			else {
+				checkSurcharge.Checked=false;
+			}
+		}
+
+		private void ResetUIForVersion() {
+			if(radioVersion1.Checked) {
+				this.Height=LayoutManager.Scale(365);
+				label4.Visible=true;
+				textToken.Visible=true;
+				butGenerateToken.Visible=true;
+				textUsername.Visible=true;
+				textPassword.Visible=true;
+				groupBoxTerminals.Visible=false;
+				checkSurcharge.Visible=false;
+				label3.Text=Lan.g(this,"Password");
+				label2.Text=Lan.g(this,"Username");
+				checkForceRecurring.Visible=true;
+			}
+			//version 2
+			else {
+				this.Height=LayoutManager.Scale(745);
+				label4.Visible=false;
+				textToken.Visible=false;
+				butGenerateToken.Visible=false;
+				textUsername.Visible=false;
+				textPassword.Visible=false;
+				label3.Text=Lan.g(this,"");
+				label2.Text=Lan.g(this,"Secret");
+				textAPISecret.Visible=true;
+				groupBoxTerminals.Visible=true;
+				checkSurcharge.Visible=true;
+				label3.Visible=false;
+				checkForceRecurring.Visible=false;
+				FillGridTerminals();
+			}
+		}
+
+		private void FillGridTerminals() {
+			if(!radioVersion2.Checked) {
+				return;
+			}
+			long clinicNum=0;
+			if(PrefC.HasClinicsEnabled) {
+				clinicNum=_listUserClinicNums[comboClinic.SelectedIndex];
+			}
+			_listPayTerminals=PayTerminals.Refresh(clinicNum);
+			GridColumn col;
+			gridODTerminals.BeginUpdate();
+			gridODTerminals.Columns.Clear();
+			gridODTerminals.ListGridRows.Clear();
+			col=new GridColumn(Lan.g(this,"Name"),200);
+			gridODTerminals.Columns.Add(col);
+			col=new GridColumn(Lan.g(this,"Terminal ID"),200);
+			gridODTerminals.Columns.Add(col);
+			GridRow row;
+			for(int i=0;i<_listPayTerminals.Count;i++) {
+				row=new GridRow(_listPayTerminals[i].Name,_listPayTerminals[i].TerminalID);
+				row.Tag=_listPayTerminals[i];
+				gridODTerminals.ListGridRows.Add(row);
+			}
+			gridODTerminals.EndUpdate();
 		}
 
 		private void comboClinic_SelectionChangeCommitted(object sender,EventArgs e) {
@@ -209,6 +288,20 @@ namespace OpenDental{
 				.ForEach(x => x.PropertyValue=POut.Bool(checkPatientPortalPayEnabled.Checked));
 			_listProgramProperties.FindAll(x => x.ClinicNum==clinicNum && x.PropertyDesc==PayConnect.ProgramProperties.PatientPortalPaymentsToken)
 				.ForEach(x => x.PropertyValue=textToken.Text);
+			_listProgramProperties.FindAll(x => x.ClinicNum==clinicNum && x.PropertyDesc=="API Secret")
+				.ForEach(x => x.PropertyValue=textAPISecret.Text);//always 1 item; null safe
+			int progVersion=1;
+			if(radioVersion2.Checked) {
+				progVersion=2;
+			}
+			_listProgramProperties.FindAll(x => x.ClinicNum==clinicNum && x.PropertyDesc=="Program Version")
+				.ForEach(x => x.PropertyValue=POut.Int(progVersion));//always 1 item; null safe
+			int accountType=0;
+			if(checkSurcharge.Checked) {
+				accountType=1;
+			}
+			_listProgramProperties.FindAll(x => x.ClinicNum==clinicNum && x.PropertyDesc=="PayConnect2.0 Integration Type: 0 for normal, 1 for surcharge")
+				.ForEach(x => x.PropertyValue=POut.Int(accountType));//always 1 item; null safe
 		}
 
 		private void checkPatientPortalPayEnabled_Click(object sender,EventArgs e) {
@@ -230,6 +323,14 @@ namespace OpenDental{
 				//User wants to set as new processor for online payments, add to the list for the current session to remove currently enabled program.
 				_listProgramPropertiesXWebWebPay.Add(programPropertyWebPayEnabled);
 			}
+		}
+
+		private void radioVersion1_CheckedChanged(object sender,EventArgs e) {
+			ResetUIForVersion();
+		}
+
+		private void radioVersion2_CheckedChanged(object sender,EventArgs e) {
+			ResetUIForVersion();
 		}
 
 		private void butGenerateToken_Click(object sender,EventArgs e) {
@@ -261,6 +362,19 @@ namespace OpenDental{
 
 		private void checkTerminal_CheckedChanged(object sender,EventArgs e) {
 			butDownloadDriver.Visible=checkTerminal.Checked;
+		}
+
+		private void gridODTerminals_CellDoubleClick(object sender,ODGridClickEventArgs e) {
+			PayTerminal payTerminal=(PayTerminal)gridODTerminals.ListGridRows[e.Row].Tag;
+			using FormPayTerminalEdit formPayTerminalEdit=new FormPayTerminalEdit(payTerminal);
+			formPayTerminalEdit.ShowDialog();
+			FillGridTerminals();
+		}
+		
+		private void butAddTerminal_Click(object sender,EventArgs e) {
+			using FormPayTerminalEdit formPayTerminalEdit=new FormPayTerminalEdit();
+			formPayTerminalEdit.ShowDialog();
+			FillGridTerminals();
 		}
 
 		private void butDownloadDriver_Click(object sender,EventArgs e) {
@@ -323,10 +437,10 @@ namespace OpenDental{
 				MsgBox.Show(err);
 				return;
 			}
-			if(checkEnabled.Checked && !checkTerminal.Checked && !PrefC.HasClinicsEnabled && 
-				(textUsername.Text=="" || textPassword.Text=="")) 
+			if(checkEnabled.Checked //if PayConnect is enabled
+					&& comboDefaultProcessing.SelectedIndex < 0)
 			{
-				MsgBox.Show(this,"Please enter a username and password first.");
+				MsgBox.Show(this,"Please select a default processing method type first.");
 				return;
 			}
 			if(checkEnabled.Checked //if PayConnect is enabled
@@ -337,12 +451,23 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please select a payment type first.");
 				return;
 			}
-			if(checkEnabled.Checked //if PayConnect is enabled
-				&& comboDefaultProcessing.SelectedIndex < 0)
-			{
-				MsgBox.Show(this,"Please select a default processing method type first.");
-				return;
+			if(radioVersion1.Checked) {//version 1 specific validation
+				if(checkEnabled.Checked && !checkTerminal.Checked && !PrefC.HasClinicsEnabled && 
+				(textUsername.Text=="" || textPassword.Text=="")) 
+				{
+					MsgBox.Show(this,"Please enter a username and password first.");
+					return;
+				}
 			}
+			else if(radioVersion2.Checked) {
+				if(checkEnabled.Checked) {
+					if(textAPISecret.Text.IsNullOrEmpty()) {
+						MsgBox.Show(this,"Please enter a Secret first.");
+						return;
+					}
+				}
+			}
+			
 			SynchWithHQ();//if the user changes the HQ credentials, any clinic that had the same credentials will be kept in synch with HQ
 			long clinicNum=0;
 			if(PrefC.HasClinicsEnabled) {

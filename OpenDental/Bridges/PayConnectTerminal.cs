@@ -9,7 +9,7 @@ namespace OpenDental.Bridges {
 	public class PayConnectTerminal {
 
 		///<summary>Builds a receipt string for a terminal transaction.</summary>
-		public static string BuildReceiptString(PayConnectResponse pcResponse,signatureResponse sigResponse,long clinicNum) {
+		public static string BuildReceiptString(PayConnectResponse pcResponse,bool wasElectronicallySigned,long clinicNum) {
 			string result="";
 			int xleft=0;
 			int xright=15;
@@ -47,20 +47,25 @@ namespace OpenDental.Bridges {
 				result+=AddReceiptField("EMV AuthResp",pcResponse.EMV.AuthResponseCode);
 			}
 			result+=Environment.NewLine+Environment.NewLine+Environment.NewLine;
+			Program program=Programs.GetCur(ProgramName.PayConnect);
+			string integrationType=ProgramProperties.GetPropVal(program.ProgramNum,"PayConnect2.0 Integration Type: 0 for normal, 1 for surcharge",clinicNum);
+			if(integrationType=="1") {//Surcharge integration
+				result+=AddReceiptField("Surcharge Fee",pcResponse.AmountSurcharged.ToString("F2"));
+			}
 			if(pcResponse.TransType.In(PayConnectResponse.TransactionType.Refund,PayConnectResponse.TransactionType.Void)) {
-				result+="Total Amt".PadRight(xright-xleft,'.')+(pcResponse.Amount*-1)+Environment.NewLine;
+				result+="Trans. Amt".PadRight(xright-xleft,'.')+(pcResponse.Amount*-1)+Environment.NewLine;
 			}
 			else {
-				result+="Total Amt".PadRight(xright-xleft,'.')+pcResponse.Amount+Environment.NewLine;
+				result+="Trans. Amt".PadRight(xright-xleft,'.')+pcResponse.Amount.ToString("F2")+Environment.NewLine;
 			}
 			result+=Environment.NewLine+Environment.NewLine+Environment.NewLine;
 			result+="I agree to pay the above total amount according to my card issuer/bank agreement."+Environment.NewLine;
 			result+=Environment.NewLine+Environment.NewLine+Environment.NewLine+Environment.NewLine+Environment.NewLine;
-			if(sigResponse==null || sigResponse.Status==null || sigResponse.Status.code!=0) {
-				result+="Signature X".PadRight(xmax-xleft,'_');
+			if(wasElectronicallySigned) {
+				result+="Electronically signed";
 			}
 			else {
-				result+="Electronically signed";
+				result+="Signature X".PadRight(xmax-xleft,'_');
 			}
 			return result;
 		}

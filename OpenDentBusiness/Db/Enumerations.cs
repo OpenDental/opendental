@@ -1502,8 +1502,10 @@ namespace OpenDentBusiness{
 		QuickBooksOnline,
 		///<summary>3 - This flow replaces OOB. It should be used instead of "Google".</summary>
 		GoogleLoopbackIpAddressFlow,
-		///<summary>4 - Used for getting the Open Dental PayConnect2 key.</summary>
+		///<summary>4 - Used for getting the Open Dental PayConnect2 API key.</summary>
 		PayConnect2,
+		///<summary>5 - Used for getting the Open Dental PayConnect2 DLL key.</summary>
+		PayConnect2Dll,
 	}
 
 	///<summary></summary>

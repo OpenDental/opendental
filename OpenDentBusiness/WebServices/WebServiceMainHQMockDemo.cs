@@ -313,6 +313,9 @@ namespace OpenDentBusiness {
 						throw new NotImplementedException("Use introspection to test QuickBooks Online. See the Introspection wiki.");
 						//retVal=QUICKBOOKSONLINE_CLIENT_ID+":"+QUICKBOOKSONLINE_CLIENT_SECRET;
 						break;
+					case OAuthApplicationNames.PayConnect2:
+					case OAuthApplicationNames.PayConnect2Dll:
+						throw new NotImplementedException("Use introspection to test PayConnect2. See the Introspection wiki.");
 					default:
 						throw new ApplicationException("Could not find OAuthApplicationName: "+appName);
 				}

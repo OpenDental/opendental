@@ -195,6 +195,7 @@
             the type of autocomm that created this alert rather than a FKey to a db row.</EnumValue>
         <EnumValue name="EConnectorRedistributableMissing">37 - Alert that is created when an eClipboard/ODM/ODT device tries to get a tooth chart image, but their eConn server is missing 
             a specific redistributable that allows the creation of the image.</EnumValue>
+        <EnumValue name="SMSThread">38 - Alert that is created when the SMSQueuer is turned on but no Broadcaster Servers are configured to send out text messages. Requires Engineers to update BroadcasterThreadSettings.</EnumValue>
       </Enumeration>
     </column>
   </table>
@@ -257,6 +258,7 @@
             the type of autocomm that created this alert rather than a FKey to a db row.</EnumValue>
         <EnumValue name="EConnectorRedistributableMissing">37 - Alert that is created when an eClipboard/ODM/ODT device tries to get a tooth chart image, but their eConn server is missing 
             a specific redistributable that allows the creation of the image.</EnumValue>
+        <EnumValue name="SMSThread">38 - Alert that is created when the SMSQueuer is turned on but no Broadcaster Servers are configured to send out text messages. Requires Engineers to update BroadcasterThreadSettings.</EnumValue>
       </Enumeration>
     </column>
     <column order="4" name="Severity" type="tinyint(4)">

@@ -122,6 +122,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Required dlls\DpsPos.dll</HintPath>
     </Reference>
+    <Reference Include="DPSPOSv2">
+      <HintPath>..\Required dlls\DPSPOSv2.dll</HintPath>
+      <Aliases>payconnect2DLL</Aliases>
+    </Reference>
     <Reference Include="Health.Direct.Common">
       <HintPath>..\Required dlls\Health.Direct.Common.dll</HintPath>
     </Reference>
@@ -720,6 +724,12 @@
     <Compile Include="Forms\FormClaimOverpay.Designer.cs">
       <DependentUpon>FormClaimOverpay.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormPayConnect2iFrame.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormPayConnect2iFrame.Designer.cs">
+      <DependentUpon>FormPayConnect2iFrame.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormCommReferral.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -731,6 +741,18 @@
     </Compile>
     <Compile Include="Forms\FormSheetProcSelect.Designer.cs">
       <DependentUpon>FormSheetProcSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormPayConnect2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormPayConnect2.Designer.cs">
+      <DependentUpon>FormPayConnect2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormPayTerminalEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormPayTerminalEdit.Designer.cs">
+      <DependentUpon>FormPayTerminalEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormMobileBrandingProfileEdit.cs">
       <SubType>Form</SubType>
@@ -2851,6 +2873,7 @@
     <Compile Include="Logic\AutoNoteL.cs" />
     <Compile Include="Logic\CareCreditL.cs" />
     <Compile Include="Logic\CloudClientL.cs" />
+    <Compile Include="Logic\PayConnect2L.cs" />
     <Compile Include="Logic\PayConnectL.cs" />
     <Compile Include="Logic\PayPlanL.cs" />
     <Compile Include="Logic\aaLogicUI.cs" />
@@ -7857,11 +7880,20 @@
     <EmbeddedResource Include="Forms\FormClaimOverpay.resx">
       <DependentUpon>FormClaimOverpay.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormPayConnect2iFrame.resx">
+      <DependentUpon>FormPayConnect2iFrame.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormCommReferral.resx">
       <DependentUpon>FormCommReferral.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormSheetProcSelect.resx">
       <DependentUpon>FormSheetProcSelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormPayConnect2.resx">
+      <DependentUpon>FormPayConnect2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormPayTerminalEdit.resx">
+      <DependentUpon>FormPayTerminalEdit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormMobileBrandingProfileEdit.resx">
       <DependentUpon>FormMobileBrandingProfileEdit.cs</DependentUpon>

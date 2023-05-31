@@ -13,161 +13,81 @@ using System.ComponentModel;
 using Bridges;
 using OpenDentBusiness.com.dentalxchange.webservices;
 using Newtonsoft.Json.Converters;
+using System.Windows.Controls;
 
 namespace OpenDentBusiness {
 	public class PayConnect2 {
 
-		//Makes a call to ODHQ to retrieve the key the first time it is referenced during execution and saves the key in memory for subsequent calls.
-		private static string _payConnectApiKey=GetPayConnect2Key();
+		/// <summary>Do not access directly, use GetPayConnect2ApiKey() to ensure that this variable has been properly initialized.</summary>
+		private static string _payConnectApiKey;
+		/// <summary>Do not access directly, use GetPayConnect2DLLKey() to ensure that this variable has been properly initialized.</summary>
+		private static string _payConnectDllKey;
 
-		public static string GetPayConnect2Key() {
-			try {
-				string payConnectApiKey=Introspection.GetOverride(Introspection.IntrospectionEntity.PayConnect2Key);
-				if(payConnectApiKey=="") {//Only make call to HQ if we are not using introspection.
-					payConnectApiKey=WebServiceMainHQProxy.GetWebServiceMainHQInstance()
-						.BuildOAuthUrl(PrefC.GetString(PrefName.RegistrationKey),OAuthApplicationNames.PayConnect2.ToString());
+		/// <summary>Initializes the _payConnectApiKey variable if it has not been already.</summary>
+		public static string GetPayConnect2ApiKey() {
+			if(_payConnectApiKey.IsNullOrEmpty()) {
+				try {
+					_payConnectApiKey=Introspection.GetOverride(Introspection.IntrospectionEntity.PayConnect2Key);
+					if(_payConnectApiKey.IsNullOrEmpty()) {//Only make call to HQ if we are not using introspection.
+						_payConnectApiKey=WebServiceMainHQProxy.GetWebServiceMainHQInstance()
+							.BuildOAuthUrl(PrefC.GetString(PrefName.RegistrationKey),OAuthApplicationNames.PayConnect2.ToString());
+					}
+				}	
+				catch(Exception ex) {
+					throw new ODException($"Error occurred retrieving PayConnect key: {ex.Message}");
 				}
-				return payConnectApiKey;
 			}
-			catch(Exception ex) {
-				throw new ODException($"Error occured retreiving PayConnect key: {ex.Message}");
-			}
+			return _payConnectApiKey;
 		}
 
-		/// <summary>Will throw if unable to convert a double to int.</summary>
-		public static int TryConvertDollarsToCents(double amount) {
-			try {
-				return (int)(amount*100);
+		public static string GetPayConnect2DLLKey() {
+			if(_payConnectDllKey.IsNullOrEmpty()) {
+				try {
+					_payConnectDllKey=Introspection.GetOverride(Introspection.IntrospectionEntity.PayConnect2DLLKey);
+					if(_payConnectDllKey.IsNullOrEmpty()) {//Only make call to HQ if we are not using introspection.
+						_payConnectDllKey=WebServiceMainHQProxy.GetWebServiceMainHQInstance()
+							.BuildOAuthUrl(PrefC.GetString(PrefName.RegistrationKey),OAuthApplicationNames.PayConnect2.ToString());
+					}
+				}	
+				catch(Exception ex) {
+					throw new ODException($"Error occurred retrieving PayConnect key: {ex.Message}");
+				}
 			}
-			catch(Exception ex) {
-				throw new ODException("Unable to convert payment amount for PayConnect transaction.",ex);
-			}
+			return _payConnectDllKey;
 		}
-		
-		/// <summary>Will throw if unable to convert a int to double.</summary>
-		public static double TryConvertCentsToDollars(int amount) {
-			try {
-				return (double)(amount / 100);
-			}
-			catch(Exception ex) {
-				throw new ODException("Unable to convert payment amount for PayConnect transaction.",ex);
-			}
-		}
-
-		///<summary>Builds a receipt string for a web service transaction.</summary>
-		//public static string BuildReceiptString(PayConnectService.creditCardRequest request,PayConnect2Response response,
-		//	PayConnectService.signatureResponse sigResponse,long clinicNum) 
-		//{
-		//	if(response==null) {
-		//		return "";
-		//	}
-		//	bool doShowSignatureLine=DoShowSignatureLine(response.SignatureResponse);
-		//	return BuildReceiptString(request.TransType,response.RefNumber,request.NameOnCard,request.CardNumber,request.MagData,response.AuthCode,
-		//		response.Status.description,response.Messages==null ? null : response.Messages.ToList(),request.Amount,doShowSignatureLine,clinicNum);
-		//}
-
-		//public static string BuildReceiptString(Payment payment,CreditCard creditCard,PayConnect2Response payConnect2Response,
-		//	string magData,string authCode,string statusDescription,List<string> messages,decimal amount,bool doShowSignatureLine,long clinicNum) 
-		//{
-		//	string result="";
-		//	string cardnumber=paymentMethod.CardPaymentMethod.CardLast4Digits??""; //Prevents null reference exceptions when PayConnectPortal transactions don't have an associated card number
-		//	int xmin=0;
-		//	int xleft=xmin;
-		//	int xright=15;
-		//	int xmax=37;
-		//	result+=Environment.NewLine;
-		//	result+=CreditCardUtils.AddClinicToReceipt(clinicNum);
-		//	//Print body
-		//	result+="Date".PadRight(xright-xleft,'.')+DateTime.Now.ToString()+Environment.NewLine;
-		//	result+=Environment.NewLine;
-		//	result+="Trans Type".PadRight(xright-xleft,'.')+transType+Environment.NewLine;
-		//	result+=Environment.NewLine;
-		//	result+="Transaction #".PadRight(xright-xleft,'.')+refNum+Environment.NewLine;
-		//	result+="Name".PadRight(xright-xleft,'.')+nameOnCard+Environment.NewLine;
-		//	result+="Account".PadRight(xright-xleft,'.');
-		//	for(int i = 0;i<cardNumber.Length-4;i++) {
-		//		result+="*";
-		//	}
-		//	if(cardNumber.Length>=4) {
-		//		result+=cardNumber.Substring(cardNumber.Length-4)+Environment.NewLine;//last 4 digits of card number only.
-		//	}
-		//	result+="Card Type".PadRight(xright-xleft,'.')+CreditCardUtils.GetCardType(cardNumber)+Environment.NewLine;
-		//	result+="Entry".PadRight(xright-xleft,'.')+(String.IsNullOrEmpty(magData) ? "Manual" : "Swiped")+Environment.NewLine;
-		//	result+="Auth Code".PadRight(xright-xleft,'.')+authCode+Environment.NewLine;
-		//	result+="Result".PadRight(xright-xleft,'.')+statusDescription+Environment.NewLine;
-		//	if(messages!=null) {
-		//		string label="Message";
-		//		foreach(string m in messages) {
-		//			result+=label.PadRight(xright-xleft,'.')+m+Environment.NewLine;
-		//			label="";
-		//		}
-		//	}
-		//	result+=Environment.NewLine+Environment.NewLine+Environment.NewLine;
-		//	if(transType.In(PayConnectService.transType.RETURN,PayConnectService.transType.VOID)) {
-		//		result+="Total Amt".PadRight(xright-xleft,'.')+(amount*-1)+Environment.NewLine;
-		//	}
-		//	else {
-		//		result+="Total Amt".PadRight(xright-xleft,'.')+amount+Environment.NewLine;
-		//	}
-		//	result+=Environment.NewLine+Environment.NewLine+Environment.NewLine;
-		//	result+="I agree to pay the above total amount according to my card issuer/bank agreement."+Environment.NewLine;
-		//	result+=Environment.NewLine+Environment.NewLine+Environment.NewLine+Environment.NewLine+Environment.NewLine;
-		//	if(doShowSignatureLine) {
-		//		result+="Signature X".PadRight(xmax-xleft,'_');
-		//	}
-		//	else {
-		//		result+="Electronically signed";
-		//	}
-		//	return result;
-		//}
-
-		//private static bool DoShowSignatureLine(AddSignatureResponse sigResponse) {
-		//	if(sigResponse==null || sigResponse.Status!="Processed") {
-		//		return true;//no signature was provided or it was not processed by PayConnect, show line for user to sign manually
-		//	}
-		//	return false;
-		//}
 
 		///<summary>Throws exceptions.  Will purposefully throw ODExceptions that are already translated and formatted.</summary>
-		public static PayConnect2Response PostCreateTransactionByToken(Patient pat,CreditCard cc,int payAmt,long clinicNum) {
+		public static PayConnect2Response PostCreateTransactionByToken(Patient pat,CreditCard cc,int payAmtInCents,long clinicNum,TransactionType transactionType=TransactionType.Sale) {
 			if(cc==null || string.IsNullOrWhiteSpace(cc.PayConnectToken) || pat==null) {
 				throw new ODException("Error making payment by token");
 			}
+			return PostCreateTransactionByToken(pat,cc.CCExpiration.ToString("MMyy"),cc.PayConnectToken,cc.Zip,payAmtInCents,clinicNum,transactionType);
+		}
+
+		public static PayConnect2Response PostCreateTransactionByToken(Patient pat,string ccExpiration,string token,string zipCode,int payAmtInCents,long clinicNum,TransactionType transactionType=TransactionType.Sale) {
 			long integrationType=GetIntegrationType(clinicNum);
 			PayConnect2Response response;
 			if(integrationType==1) {
 				CreateSurchargeTransactionRequest req=new CreateSurchargeTransactionRequest();
 				req.Frequency=TransactionFrequency.OneTime;
-				req.TransType=TransactionType.Sale;
-				req.Amount=payAmt;
-				req.CardToken=cc.PayConnectToken;
-				req.Expiry=cc.PayConnectTokenExp.ToString("MMyy");
+				req.TransType=transactionType;
+				req.Amount=payAmtInCents;
+				req.CardToken=token;
+				req.Expiry=ccExpiration;
 				req.CardHolder=pat.GetNameFLnoPref();
-				req.ZipCode=cc.Zip;
+				req.ZipCode=zipCode;
 				response=PostCreateSurchargeTransaction(req,clinicNum);
 			}
 			else {
 				CreateTransactionRequest req=new CreateTransactionRequest();
 				req.Frequency=TransactionFrequency.OneTime;
-				req.TransType=TransactionType.Sale;
-				req.Amount=payAmt;
-				req.CardToken=cc.PayConnectToken;
-				req.Expiry=cc.PayConnectTokenExp.ToString("MMyy");
+				req.TransType=transactionType;
+				req.Amount=payAmtInCents;
+				req.CardToken=token;
+				req.Expiry=ccExpiration;
 				req.CardHolder=pat.GetNameFLnoPref();
 				response=PostCreateTransaction(req,clinicNum);
 			}
-			return response;
-		}
-
-		///<summary>Can be used to create a transaction for either a Normal or Surcharge account. Body needs to be ready to send before passing in.</summary>
-		public static PayConnect2Response PostCreateTransactionGeneric(string serializedBody,long clinicNum) {
-			long integrationType=GetIntegrationType(clinicNum);
-			List<string> listHeaders=GetHeadersForApi(clinicNum);
-			ApiRoute apiRoute=ApiRoute.CreateTransaction;
-			if(integrationType==1) {
-				apiRoute=ApiRoute.CreateTransactionSurcharge;
-			}
-			PayConnect2Response response=Request(apiRoute,HttpMethod.Post,listHeaders,serializedBody);
 			return response;
 		}
 
@@ -179,56 +99,57 @@ namespace OpenDentBusiness {
 		}
 
 		public static PayConnect2Response PostCreateSurchargeTransaction(CreateSurchargeTransactionRequest requestBody,long clinicNum) {
-			string body=JsonConvert.SerializeObject(requestBody);
+			string body=JsonConvert.SerializeObject(requestBody,new JsonSerializerSettings {NullValueHandling=NullValueHandling.Ignore});
 			List<string> listHeaders=GetHeadersForApi(clinicNum);
 			PayConnect2Response response=Request(ApiRoute.CreateTransactionSurcharge,HttpMethod.Post,listHeaders,body);
 			return response;
 		}
 
 		public static PayConnect2Response PutVoidWithReferenceID(VoidReferenceIDRequest requestBody,long clinicNum) {
-			string body=JsonConvert.SerializeObject(requestBody);
+			string body=JsonConvert.SerializeObject(requestBody,new JsonSerializerSettings {NullValueHandling=NullValueHandling.Ignore});
 			List<string> listHeaders=GetHeadersForApi(clinicNum);
 			PayConnect2Response response=Request(ApiRoute.VoidTransaction,HttpMethod.Put,listHeaders,body);
 			return response;
 		}
 
 		public static PayConnect2Response PutVoidWithInvoiceNumber(VoidInvoiceNumberRequest requestBody,long clinicNum) {
-			string body=JsonConvert.SerializeObject(requestBody);
+			string body=JsonConvert.SerializeObject(requestBody,new JsonSerializerSettings {NullValueHandling=NullValueHandling.Ignore});
 			List<string> listHeaders=GetHeadersForApi(clinicNum);
 			PayConnect2Response response=Request(ApiRoute.VoidTransaction,HttpMethod.Put,listHeaders,body);
 			return response;
 		}
 
-		public static PayConnect2Response PostRefund(RefundRequest requestBody,long clinicNum) {
-			string body=JsonConvert.SerializeObject(requestBody);
-			List<string> listHeaders=GetHeadersForApi(clinicNum);
-			PayConnect2Response response=Request(ApiRoute.RefundTransaction,HttpMethod.Post,listHeaders,body);
-			return response;
-		}
+		//Deprecated May 1st 2023 per DXC
+		//public static PayConnect2Response PostRefund(RefundRequest requestBody,long clinicNum) {
+		//	string body=JsonConvert.SerializeObject(requestBody,new JsonSerializerSettings {NullValueHandling=NullValueHandling.Ignore});
+		//	List<string> listHeaders=GetHeadersForApi(clinicNum);
+		//	PayConnect2Response response=Request(ApiRoute.RefundTransaction,HttpMethod.Post,listHeaders,body);
+		//	return response;
+		//}
 
 		public static PayConnect2Response PostRefundWithReferenceID(RefundReferenceIDRequest requestBody,long clinicNum) {
-			string body=JsonConvert.SerializeObject(requestBody);
+			string body=JsonConvert.SerializeObject(requestBody,new JsonSerializerSettings {NullValueHandling=NullValueHandling.Ignore});
 			List<string> listHeaders=GetHeadersForApi(clinicNum);
 			PayConnect2Response response=Request(ApiRoute.RefundTransaction,HttpMethod.Post,listHeaders,body);
 			return response;
 		}
 
 		public static PayConnect2Response PostRefundWithInvoiceNumber(RefundInvoiceNumberRequest requestBody,long clinicNum) {
-			string body=JsonConvert.SerializeObject(requestBody);
+			string body=JsonConvert.SerializeObject(requestBody,new JsonSerializerSettings {NullValueHandling=NullValueHandling.Ignore});
 			List<string> listHeaders=GetHeadersForApi(clinicNum);
 			PayConnect2Response response=Request(ApiRoute.RefundTransaction,HttpMethod.Post,listHeaders,body);
 			return response;
 		}
 
 		public static PayConnect2Response PutSignatureWithReferenceID(AddSignatureReferenceIDRequest requestBody,long clinicNum) {
-			string body=JsonConvert.SerializeObject(requestBody);
+			string body=JsonConvert.SerializeObject(requestBody,new JsonSerializerSettings {NullValueHandling=NullValueHandling.Ignore});
 			List<string> listHeaders=GetHeadersForApi(clinicNum);
 			PayConnect2Response response=Request(ApiRoute.AddSignature,HttpMethod.Put,listHeaders,body);
 			return response;
 		}
 
 		public static PayConnect2Response PutSignatureWithTransactionID(AddSignatureTransactionIDRequest requestBody,long clinicNum) {
-			string body=JsonConvert.SerializeObject(requestBody);
+			string body=JsonConvert.SerializeObject(requestBody,new JsonSerializerSettings {NullValueHandling=NullValueHandling.Ignore});
 			List<string> listHeaders=GetHeadersForApi(clinicNum);
 			PayConnect2Response response=Request(ApiRoute.AddSignature,HttpMethod.Put,listHeaders,body);
 			return response;
@@ -248,7 +169,8 @@ namespace OpenDentBusiness {
 		}
 
 		public static PayConnect2Response PostEmbedSession(EmbedSessionRequest requestBody,long clinicNum) {
-			string body=JsonConvert.SerializeObject(requestBody,new StringEnumConverter());
+			requestBody.ClientType="Patient";//This forces Surcharge fees to always show in the iFrame.
+			string body=JsonConvert.SerializeObject(requestBody,new JsonSerializerSettings {NullValueHandling=NullValueHandling.Ignore});
 			List<string> listHeaders=GetHeadersForApi(clinicNum);
 			PayConnect2Response response=Request(ApiRoute.EmbedSession,HttpMethod.Post,listHeaders,body);
 			return response;
@@ -265,20 +187,20 @@ namespace OpenDentBusiness {
 
 		public static List<string> GetHeadersForApi(long clinicNum) {
 			List<string> retVal=new List<string>();
-			retVal.Add("API-Key: "+_payConnectApiKey);
+			retVal.Add("API-Key: "+GetPayConnect2ApiKey());
 			retVal.Add("Secret: "+GetApiSecretForClinic(clinicNum));
 			return retVal;
 		}
 
 		public static string GetApiSecretForClinic(long clinicNum) {
 			Program prog=Programs.GetCur(ProgramName.PayConnect);
-			return ProgramProperties.GetPropVal(prog.ProgramNum,"API Secret");
+			return ProgramProperties.GetPropVal(prog.ProgramNum,"API Secret",clinicNum);
 		}
 
 		///<summary>Returns value of Integration Type program property. 0= normal account, 1= Surcharge account.</summary>
 		public static long GetIntegrationType(long clinicNum) {
 			Program prog=Programs.GetCur(ProgramName.PayConnect);
-			return PIn.Long(ProgramProperties.GetPropVal(prog.ProgramNum,"Integration Type"));
+			return PIn.Long(ProgramProperties.GetPropVal(prog.ProgramNum,"PayConnect2.0 Integration Type: 0 for normal, 1 for surcharge",clinicNum));
 		}
 
 		///<summary>Throws exception if the response from the server returned an http code of 300 or greater.</summary>
@@ -343,6 +265,7 @@ namespace OpenDentBusiness {
 					//Do nothing.  This is to allow someone to quickly grab the URL without having to make a copy+paste reference.
 					break;
 				case ApiRoute.CreateTransaction:
+				case ApiRoute.CreateTransactionSurcharge:
 					apiUrl+="/transactions";
 					break;
 				case ApiRoute.VoidTransaction:
@@ -353,7 +276,7 @@ namespace OpenDentBusiness {
 					break;
 				case ApiRoute.AddSignature:
 					//routeId[0]=transactionID
-					apiUrl+=$"/transactions/{arrayRouteIDs[0]}/signature";
+					apiUrl+=$"/transactions/signature";
 					break;
 				case ApiRoute.EmbedSession:
 					//routeId[0]=transactionID
@@ -385,12 +308,11 @@ namespace OpenDentBusiness {
 		/// <summary>Can throw exceptions if deserialization fails.</summary>
 		public static PayConnect2Response DeserializeRawResponse(string rawResponse,ApiRoute route) {
 			PayConnect2Response payConnect2Response=new PayConnect2Response();
-			var settings=new JsonSerializerSettings {
-        NullValueHandling=NullValueHandling.Ignore,
-        MissingMemberHandling=MissingMemberHandling.Ignore
-      };
+			JsonSerializerSettings settings=new JsonSerializerSettings();
+        	settings.NullValueHandling=NullValueHandling.Ignore;
+        	settings.MissingMemberHandling=MissingMemberHandling.Ignore;
 			switch(route) {
-					case ApiRoute.CreateTransaction:
+				case ApiRoute.CreateTransaction:
 					payConnect2Response.TransactionResponse=JsonConvert.DeserializeObject<CreateTransactionResponse>(rawResponse,settings);
 					payConnect2Response.ResponseType=ResponseType.CreateTransaction;
 						break;
@@ -420,8 +342,137 @@ namespace OpenDentBusiness {
 					break;
 				default:
 						break;
-				}
+			}
 			return payConnect2Response;
+		}
+
+		/// <summary>Throws exceptions. The PayConnect2 API accepts an integer amount field in total cents i.e. $13.62 should be sent as 1362. This method takes in a double as that is what Open Dental generally uses to store dollar amounts and multiplies it by 100 to move the decimal 2 places and then casts to an int.</summary>
+		public static int FormatAmountForApi(double amount) {
+			try {
+				return (int)(amount*100);
+			}
+			catch(Exception ex) {
+				throw new ODException("Unable to convert transaction amount for PayConnect.",ex);
+			}
+		}
+
+		/// <summary>Open Dental stores a double for monetary amounts. This method takes in an int as PayConnect2 represents money in cents and divides it by 100 to move the decimal 2 places and then casts to a double.</summary>
+		public static double FormatAmountForOpenDental(int amount) {
+			return ((double)amount)/100;
+		}
+
+		///<summary>Converts an any response we may have gotten from the API to the old PayConnectResponse class.</summary>
+		public static PayConnectResponse ApiResponseToPayConnectResponse(PayConnect2Response response) {
+			PayConnectResponse payConnectResponse=new PayConnectResponse();
+			switch(response.ResponseType) {
+				case ResponseType.CreateTransaction:
+					CreateTransactionResponse transactionResponse=response.TransactionResponse;
+					payConnectResponse.Description=transactionResponse.Status;
+					payConnectResponse.StatusCode="0";//0 indicates success
+					payConnectResponse.RefNumber=transactionResponse.ReferenceId;
+					payConnectResponse.Amount=((decimal)transactionResponse.Amount)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
+					payConnectResponse.AuthCode=transactionResponse.AuthCode;
+					payConnectResponse.MerchantId=transactionResponse.MerchantId.ToString();
+					payConnectResponse.PaymentToken=transactionResponse.PaymentMethod.CardPaymentMethod.CardToken;
+					payConnectResponse.CardType=transactionResponse.PaymentMethod.CardPaymentMethod.Network.ToString();
+					payConnectResponse.CardNumber=transactionResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
+					payConnectResponse.TransType=PayConnectResponse.TransactionType.Sale;
+					break;
+				case ResponseType.CreateSurchargeTransaction:
+					CreateSurchargeTransactionResponse transactionSurchargeResponse=response.TransactionSurchargeResponse;
+					payConnectResponse.Description=transactionSurchargeResponse.Status;
+					payConnectResponse.StatusCode="0";//0 indicates success
+					payConnectResponse.RefNumber=transactionSurchargeResponse.ReferenceId;
+					payConnectResponse.Amount=((decimal)transactionSurchargeResponse.Amount)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
+					payConnectResponse.SurchargePercent=transactionSurchargeResponse.SurchargePercent;
+					payConnectResponse.AmountSurcharged=((decimal)transactionSurchargeResponse.AmountSurcharged)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
+					payConnectResponse.AuthCode=transactionSurchargeResponse.AuthCode;
+					payConnectResponse.MerchantId=transactionSurchargeResponse.MerchantId.ToString();
+					payConnectResponse.PaymentToken=transactionSurchargeResponse.PaymentMethod.CardPaymentMethod.CardToken;
+					payConnectResponse.CardType=transactionSurchargeResponse.PaymentMethod.CardPaymentMethod.Network.ToString();
+					payConnectResponse.CardNumber=transactionSurchargeResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
+					payConnectResponse.TransType=PayConnectResponse.TransactionType.Sale;
+					break;
+				case ResponseType.Error:
+					//Happens when user tries to process a void past the allowed time limit.
+					if(response.ErrorResponse==null) {
+						payConnectResponse.TransType=PayConnectResponse.TransactionType.Unknown;
+						payConnectResponse.Description=response.httpStatusCode.ToString();
+						//Just needs to be not 0 to represent an error occured.
+						payConnectResponse.StatusCode="";
+						break;
+					}
+					ErrorResponse errorResponse=response.ErrorResponse;
+					payConnectResponse.TransType=PayConnectResponse.TransactionType.Unknown;
+					payConnectResponse.Description=errorResponse.Error.ToString();
+					payConnectResponse.StatusCode="";
+					break;
+				case ResponseType.AddSignature:
+					AddSignatureResponse addSignatureResponse=response.SignatureResponse;
+					payConnectResponse.Description=addSignatureResponse.Status;
+					payConnectResponse.StatusCode="0";//0 indicates success
+					payConnectResponse.RefNumber=addSignatureResponse.ReferenceId;
+					payConnectResponse.Amount=((decimal)addSignatureResponse.Amount)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
+					payConnectResponse.AuthCode=addSignatureResponse.AuthCode;
+					payConnectResponse.MerchantId=addSignatureResponse.MerchantId.ToString();
+					payConnectResponse.PaymentToken=addSignatureResponse.PaymentMethod.CardPaymentMethod.CardToken;
+					payConnectResponse.CardType=addSignatureResponse.PaymentMethod.CardPaymentMethod.Network.ToString();
+					payConnectResponse.CardNumber=addSignatureResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
+					payConnectResponse.TransType=PayConnectResponse.TransactionType.Unknown;
+
+					break;
+				case ResponseType.Void:
+					VoidResponse voidResponse=response.VoidResponse;
+					payConnectResponse.Description=voidResponse.Status;
+					payConnectResponse.StatusCode="0";//0 indicates success
+					payConnectResponse.RefNumber=voidResponse.ReferenceId;
+					payConnectResponse.Amount=((decimal)voidResponse.AmountVoided)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
+					payConnectResponse.AuthCode=voidResponse.AuthCode;
+					payConnectResponse.MerchantId=voidResponse.MerchantId.ToString();
+					payConnectResponse.PaymentToken=voidResponse.PaymentMethod.CardPaymentMethod.CardToken;
+					payConnectResponse.CardType=voidResponse.PaymentMethod.CardPaymentMethod.Network.ToString();
+					payConnectResponse.CardNumber=voidResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
+					payConnectResponse.TransType=PayConnectResponse.TransactionType.Void;
+
+					break;
+				case ResponseType.Refund:
+					RefundResponse refundResponse=response.RefundResponse;
+					payConnectResponse.Description=refundResponse.Status;
+					payConnectResponse.StatusCode="0";//0 indicates success
+					payConnectResponse.RefNumber=refundResponse.ReferenceId;
+					payConnectResponse.Amount=((decimal)refundResponse.AmountRefunded)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
+					payConnectResponse.AuthCode=refundResponse.AuthCode;
+					payConnectResponse.MerchantId=refundResponse.MerchantId.ToString();
+					if(refundResponse.PaymentMethod!=null) {
+						payConnectResponse.PaymentToken=refundResponse.PaymentMethod.CardPaymentMethod.CardToken;
+						payConnectResponse.CardType=refundResponse.PaymentMethod.CardPaymentMethod.Network.ToString();
+						payConnectResponse.CardNumber=refundResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
+					}
+					payConnectResponse.TransType=PayConnectResponse.TransactionType.Refund;
+					break;
+				case ResponseType.IFrame:
+					iFrameResponse iFrameResponse=response.iFrameResponse;
+					payConnectResponse.Description=iFrameResponse.Status;
+					if(iFrameResponse.Status.ToLower()!="success") {
+						payConnectResponse.StatusCode="";
+						break;
+					}
+					payConnectResponse.PaymentToken=iFrameResponse.Response.CardToken;
+					payConnectResponse.RefNumber=iFrameResponse.Response.ReferenceId;
+					int year=int.Parse(iFrameResponse.Response.ExpiryYear);
+					int month=int.Parse(iFrameResponse.Response.ExpiryMonth);
+					payConnectResponse.TokenExpiration=new DateTime(year,month,1);
+					payConnectResponse.Amount=((decimal)iFrameResponse.Response.Amount)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
+					if(iFrameResponse.Status.ToLower()=="success") {
+						payConnectResponse.StatusCode="0";
+					}
+					payConnectResponse.SurchargePercent=iFrameResponse.Response.SurchargePercent;
+					payConnectResponse.AmountSurcharged=((decimal)iFrameResponse.Response.AmountSurcharged)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
+					break;
+				default:
+					break;
+			}
+			return payConnectResponse;
 		}
 		#endregion Converters
 
@@ -458,12 +509,6 @@ namespace OpenDentBusiness {
 			///<summary>Patient for the payment.</summary>
 			[DataMember(Name = "patient",IsRequired=false)]
 			public PayConnectPatient Patient;
-
-			//public CreateTransactionRequest(CreditCard creditCard, Patient patient,Payment payment, TransactionType transactionType, TransactionFrequency transactionFrequency=TransactionFrequency.OneTime) {
-			//	Frequency=transactionFrequency;//Should always be OneTime, recurring payments are handled within OD.
-			//	TransType=transactionType;
-
-			//}
 		}
 
 		[DataContract]
@@ -514,36 +559,37 @@ namespace OpenDentBusiness {
 			public string ReferenceId;
 		}
 
-		[DataContract]
-		public class RefundRequest {
-			///<summary>Identidy if transaction is Recurring or OneTime</summary>
-			[DataMember(Name = "frequency")]
-			public TransactionFrequency Frequency;
-			///<summary>Type of transaction</summary>
-			[DataMember(Name = "type")]
-			public TransactionType TransType;
-			///<summary>Amount in cents</summary>
-			[DataMember(Name = "amount")]
-			public int Amount;
-			///<summary>Tokenized card number</summary>
-			[DataMember(Name = "cardToken")]
-			public string CardToken;
-			///<summary>Expiry in MMYY or YYYYMM format</summary>
-			[DataMember(Name = "expiry")]
-			public string Expiry;
-			///<summary>Security code for the card</summary>
-			[DataMember(Name = "cvv",IsRequired=false)]
-			public string Cvv;
-			///<summary>Full name of the card holder</summary>
-			[DataMember(Name = "cardHolder")]
-			public string CardHolder;
-			///<summary>Invoice number to identify the transaction</summary>
-			[DataMember(Name = "invoiceNumber",IsRequired=false)]
-			public string InvoiceNumber;
-			///<summary>Patient for the payment.</summary>
-			[DataMember(Name = "patient",IsRequired=false)]
-			public PayConnectPatient Patient;
-		}
+		//Deprecated May 1st 2023 per DXC
+		//[DataContract]
+		//public class RefundRequest {
+		//	///<summary>Identidy if transaction is Recurring or OneTime</summary>
+		//	[DataMember(Name = "frequency")]
+		//	public TransactionFrequency Frequency;
+		//	///<summary>Type of transaction</summary>
+		//	[DataMember(Name = "type")]
+		//	public TransactionType TransType;
+		//	///<summary>Amount in cents</summary>
+		//	[DataMember(Name = "amount")]
+		//	public int Amount;
+		//	///<summary>Tokenized card number</summary>
+		//	[DataMember(Name = "cardToken")]
+		//	public string CardToken;
+		//	///<summary>Expiry in MMYY or YYYYMM format</summary>
+		//	[DataMember(Name = "expiry")]
+		//	public string Expiry;
+		//	///<summary>Security code for the card</summary>
+		//	[DataMember(Name = "cvv",IsRequired=false)]
+		//	public string Cvv;
+		//	///<summary>Full name of the card holder</summary>
+		//	[DataMember(Name = "cardHolder")]
+		//	public string CardHolder;
+		//	///<summary>Invoice number to identify the transaction</summary>
+		//	[DataMember(Name = "invoiceNumber",IsRequired=false)]
+		//	public string InvoiceNumber;
+		//	///<summary>Patient for the payment.</summary>
+		//	[DataMember(Name = "patient",IsRequired=false)]
+		//	public PayConnectPatient Patient;
+		//}
 
 		public class RefundInvoiceNumberRequest {
 			///<summary>Invoice Number</summary>
@@ -561,7 +607,7 @@ namespace OpenDentBusiness {
 			public string ReferenceId;
 			///<summary>Amount in cents</summary>
 			[DataMember(Name = "amount",IsRequired=false)]
-			public int Amount;
+			public int? Amount;
 		}
 
 		[DataContract]
@@ -589,6 +635,9 @@ namespace OpenDentBusiness {
 			///<summary>Base64 string representation of the signature image. Default is Tokenizer. Required.</summary>
 			[DataMember(Name = "type")]
 			public IframeType Type;
+			///<summary>The consumer of the iFrame. Set to "Patient" to display surcharge info in iFrame.</summary>
+			[DataMember(Name = "clientType")]
+			public string ClientType;
 			///<summary>Amount in cents. If the amount is provided, Payment iFrame will disable the amount field.</summary>
 			[DataMember(Name = "amount",IsRequired=false)]
 			public int Amount;
@@ -626,6 +675,7 @@ namespace OpenDentBusiness {
 			public VoidResponse VoidResponse;
 			public EmbedSessionResponse EmbedSessionResponse;
 			public GetStatusResponse GetStatusResponse;
+			public iFrameResponse iFrameResponse;
 			public HttpStatusCode httpStatusCode;
 		}
 
@@ -990,17 +1040,17 @@ namespace OpenDentBusiness {
 			[DataMember(Name = "amountAuthorized")]
 			public int AmountAuthorized;
 			///<summary>Amount in cents</summary>
-			[DataMember(Name = "amountCaptured")]
-			public int AmountCaptured;
-			///<summary>Amount in cents</summary>
-			[DataMember(Name = "amountSurcharged")]
-			public int AmountSurcharged;
-			///<summary>Amount in cents</summary>
-			[DataMember(Name = "surchargePercent")]
-			public int SurchargePercent;
-			///<summary>Amount in cents</summary>
 			[DataMember(Name = "amount")]
 			public int Amount;
+			///<summary>Amount captured in cents</summary>
+			[DataMember(Name = "amountCaptured")]
+			public int AmountCaptured;
+			///<summary>Amount surcharged in cents</summary>
+			[DataMember(Name = "amountSurcharged")]
+			public int AmountSurcharged;
+			///<summary>Percentage of the amount surcharged</summary>
+			[DataMember(Name = "surchargePercent")]
+			public int SurchargePercent;
 			///<summary>Internal transaction id</summary>
 			[DataMember(Name = "transactionId")]
 			public int TransactionId;
@@ -1068,7 +1118,7 @@ namespace OpenDentBusiness {
 
 		[DataContract]
 		public class PaymentMethod {
-			public int paymentMedthodId;
+			public int paymentMethodId;
 			[DataMember(Name = "type")]
 			public PaymentMethodType MethodType;
 			[DataMember(Name = "patientId")]
@@ -1077,7 +1127,7 @@ namespace OpenDentBusiness {
 			public string CreatedAt;
 			[DataMember(Name = "updatedAt")]
 			public string UpdatedAt;
-			[DataMember(Name = "cardPaymentMedthod")]
+			[DataMember(Name = "cardPaymentMethod")]
 			public CardPaymentMethod CardPaymentMethod;
 
 			public enum PaymentMethodType {
@@ -1088,8 +1138,8 @@ namespace OpenDentBusiness {
 
 		[DataContract]
 		public class CardPaymentMethod {
-			[DataMember(Name = "cardPaymentMedthodId")]
-			public int CardPaymentMedthodId;
+			[DataMember(Name = "cardPaymentMethodId")]
+			public int CardPaymentMethodId;
 			[DataMember(Name = "paymentMethodId")]
 			public int PaymentMethodId;
 			[DataMember(Name = "cardHolder")]
@@ -1108,7 +1158,6 @@ namespace OpenDentBusiness {
 			public string CreatedAt;
 			[DataMember(Name = "updatedAt")]
 			public string UpdatedAt;
-			
 		}
 
 		public class PayConnectPatient {
@@ -1119,11 +1168,11 @@ namespace OpenDentBusiness {
 			[DataMember(Name = "lastName")]
 			public string LastName;
 			///<summary>Street line 1 in address</summary>
-			[DataMember(Name = "streetAddress1")]
-			public string StreetAddress1;
+			[DataMember(Name = "address1")]
+			public string Address1;
 			///<summary>Street line 2 in address</summary>
-			[DataMember(Name = "streetAddress2")]
-			public string StreetAddress2;
+			[DataMember(Name = "address2")]
+			public string Address2;
 			///<summary>City in address</summary>
 			[DataMember(Name = "city")]
 			public string City;
@@ -1157,26 +1206,77 @@ namespace OpenDentBusiness {
 			[DataMember(Name = "code")]
 			public int Code;
 		}
-
+		/// <summary>any type of request body error will return a VALIDATION error - PayConnect Dev Team.</summary>
 		[DataContract]
 		public class ValidationError {
-			[DataMember(Name = "type")]
-			public object ErrorType;
 			[DataMember(Name = "properties")]
-			public object Properties;
+			public string ErrorProperties;
+		}
+
+		public class ValidationErrorBody {
+			[DataMember(Name = "message")]
+			public string Message;
+			[DataMember(Name = "param")]
+			public string Param;
+			[DataMember(Name = "location")]
+			public string Location;
+			[DataMember(Name = "value")]
+			public string Value;
+		}
+
+		[DataContract]
+		public class iFrameResponse {
+			[DataMember(Name="status")]
+			public string Status;
+			[DataMember(Name="response")]
+			public iFrameSuccessResponse Response;
+		}
+
+		[DataContract]
+		public class iFrameSuccessResponse {
+			[DataMember(Name="cardToken")]
+			public string CardToken;
+			[DataMember(Name="cardHolder")]
+			public string CardHolder;
+			[DataMember(Name="expiryMonth")]
+			public string ExpiryMonth;
+			[DataMember(Name="expiryYear")]
+			public string ExpiryYear;
+			[DataMember(Name="zipCode")]
+			public string ZipCode;
+			[DataMember(Name="invoiceNumber")]
+			public string InvoiceNumber;
+			[DataMember(Name="patientFirstName")]
+			public string PatientFirstName;
+			[DataMember(Name="patientLastName")]
+			public string PatientLastName;
+			[DataMember(Name="amount")]
+			public int Amount;
+			[DataMember(Name="referenceId")]
+			public string ReferenceId;
+			///<summary>Amount surcharged in cents</summary>
+			[DataMember(Name="amountSurcharged")]
+			public int AmountSurcharged;
+			///<summary>Percentage of the amount surcharged</summary>
+			[DataMember(Name="surchargePercent")]
+			public int SurchargePercent;
 		}
 		#endregion Response Objects
 
+		[JsonConverter(typeof(StringEnumConverter))]
 		public enum TransactionType {
 			Sale,
 			AuthorizeOnly,
+			Refund,
 		}
 
+		[JsonConverter(typeof(StringEnumConverter))]
 		public enum TransactionFrequency {
 			OneTime,
 			Recurring,
 		}
 
+		[JsonConverter(typeof(StringEnumConverter))]
 		public enum TransactionSource {
 			ThirdParty,
 			Portal,
@@ -1184,6 +1284,7 @@ namespace OpenDentBusiness {
 			Integration,
 		}
 
+		[JsonConverter(typeof(StringEnumConverter))]
 		public enum CardNetwork {
 			Amex,
 			Discover,
@@ -1193,11 +1294,13 @@ namespace OpenDentBusiness {
 			Visa,
 		}
 
+		[JsonConverter(typeof(StringEnumConverter))]
 		public enum IframeType {
 			Tokenizer,
 			Payment,
 		}
 
+		[JsonConverter(typeof(StringEnumConverter))]
 		public enum ErrorType {
 			[Description("RESPONSE")]
 			Response,
@@ -1205,6 +1308,7 @@ namespace OpenDentBusiness {
 			Validation,
 		}
 
+		[JsonConverter(typeof(StringEnumConverter))]
 		public enum ResponseType {
 			[Description("Add Signature")]
 			AddSignature,
@@ -1212,17 +1316,22 @@ namespace OpenDentBusiness {
 			CreateTransaction,
 			[Description("Transaction")]
 			CreateSurchargeTransaction,
-			[Description("RESPONSE")]
+			[Description("Error")]
 			Error,
+			[Description("Refund")]
 			Refund,
+			[Description("Void")]
 			Void,
+			[Description("Embed Session")]
 			EmbedSession,
+			[Description("iFrame")]
+			IFrame,
+			[Description("Get Status")]
 			GetStatus,
 		}
 		#endregion Request/Response Objects
 
 		#region Mocks for UnitTesting
-
 		public static MockPayConnect2 Mock;
 		public class MockPayConnect2 {
 			public bool IsPostCreateTransactionRequest;

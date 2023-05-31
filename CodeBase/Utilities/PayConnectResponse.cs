@@ -5,6 +5,7 @@ namespace CodeBase {
 	///<summary>Response class that can hold information for a web service response or a terminal response.</summary>
 	public class PayConnectResponse {
 		public string Description;
+		///<summary>A non-zero value is an error, including empty string.</summary>
 		public string StatusCode;
 		public string AuthCode;
 		public string RefNumber;
@@ -13,6 +14,8 @@ namespace CodeBase {
 		public string CardType;
 		public decimal Amount;
 		public decimal OriginalAmount;
+		public decimal AmountSurcharged;
+		public decimal SurchargePercent;
 		public string EntryMode;
 		public string CardNumber;
 		public string MerchantId;

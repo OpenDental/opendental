@@ -205,9 +205,9 @@ namespace OpenDentBusiness {
 			///<summary></summary>
 			PayConnect2Key,
 			///<summary></summary>
-			PayConnect2Secret,
-			///<summary></summary>
 			DentalXChangeDciURL,
+			///<summary></summary>
+			PayConnect2DLLKey,
 		}
 	}
 }

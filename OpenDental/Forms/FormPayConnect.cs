@@ -575,7 +575,7 @@ namespace OpenDental {
 				}
 				textCardNumber.Text=_payConnectResponse.CardNumber;
 				textAmount.Text=_payConnectResponse.Amount.ToString("f");
-				ReceiptStr=PayConnectTerminal.BuildReceiptString(_payConnectResponse,null,_clinicNum);
+				ReceiptStr=PayConnectTerminal.BuildReceiptString(_payConnectResponse,false,_clinicNum);
 				PrintReceipt(ReceiptStr);
 				return true;
 			}//end of IsWeb()
@@ -645,7 +645,11 @@ namespace OpenDental {
 			}
 			textCardNumber.Text=_payConnectResponse.CardNumber;
 			textAmount.Text=_payConnectResponse.Amount.ToString("f");
-			ReceiptStr=PayConnectTerminal.BuildReceiptString(_payConnectResponse,signatureResponse,_clinicNum);
+			bool wasSigned=true;
+			if(signatureResponse==null || signatureResponse.Status==null || signatureResponse.Status.code!=0) {
+				wasSigned=false;
+			}
+			ReceiptStr=PayConnectTerminal.BuildReceiptString(_payConnectResponse,wasSigned,_clinicNum);
 			PrintReceipt(ReceiptStr);
 			return true;
 		}

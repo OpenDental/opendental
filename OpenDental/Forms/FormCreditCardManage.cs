@@ -404,8 +404,43 @@ namespace OpenDental {
 				}
 			}
 			if(hasPayConnect) {
-				using FormPayConnect formPayConnect=new FormPayConnect(Clinics.ClinicNum,_patient,(decimal)0.01,creditCard,isAddingCard:true);
-				formPayConnect.ShowDialog();
+				Program program=Programs.GetCur(ProgramName.PayConnect);
+				string payconnectVersion=ProgramProperties.GetPropVal(program.ProgramNum,"Program Version",Clinics.ClinicNum);
+				if(payconnectVersion=="1") {
+					using FormPayConnect formPayConnect=new FormPayConnect(Clinics.ClinicNum,_patient,(decimal)0.01,creditCard,isAddingCard:true);
+					formPayConnect.ShowDialog();
+				}
+				else if(payconnectVersion=="2") {
+					using FormPayConnect2iFrame formPayConnect2IFrame=new FormPayConnect2iFrame(Clinics.ClinicNum,isAddingCard:true);
+					formPayConnect2IFrame.ShowDialog();
+					PayConnect2.PayConnect2Response response=formPayConnect2IFrame.GetResponse();
+					if(response==null) {
+						return;
+					}
+					else if(response.ResponseType==PayConnect2.ResponseType.IFrame && response.iFrameResponse.Status=="SUCCESS") {
+						PayConnect2.iFrameSuccessResponse cardData=response.iFrameResponse.Response;
+						CreditCard newCreditCard=new CreditCard();
+						newCreditCard.IsNew=true;
+						newCreditCard.PatNum=_patient.PatNum;
+						List<CreditCard> listCreditCardsItemOrderCount=CreditCards.Refresh(_patient.PatNum);
+						newCreditCard.ItemOrder=listCreditCardsItemOrderCount.Count;
+						int expiryYear=int.Parse(cardData.ExpiryYear);
+						int expiryMonth=int.Parse(cardData.ExpiryMonth);
+						newCreditCard.CCExpiration=new DateTime(expiryYear,expiryMonth,DateTime.DaysInMonth(expiryYear,expiryMonth));
+						//PayConnect informed us that the last 4 digits of the token are the same as the last 4 digits
+						//of the credit card that was used to create the token. Get the last 4 characters
+						//of the token string and then pad left with 'X' to make it look like a masked CC number.
+						newCreditCard.CCNumberMasked=cardData.CardToken.Substring(cardData.CardToken.Length-4).PadLeft(12,'X');
+						newCreditCard.Zip=cardData.ZipCode;
+						newCreditCard.PayConnectToken="";
+						newCreditCard.PayConnectTokenExp=new DateTime(expiryYear,expiryMonth,DateTime.DaysInMonth(expiryYear,expiryMonth));//Testing has shown that this is now the same as the CC expiry.
+						newCreditCard.PayConnectToken=cardData.CardToken;
+						newCreditCard.CCSource=CreditCardSource.PayConnect;
+						newCreditCard.ClinicNum=Clinics.ClinicNum;
+						newCreditCard.Procedures=PrefC.GetString(PrefName.DefaultCCProcs);
+						CreditCards.Insert(newCreditCard);
+					}
+				}
 			}
 			if(hasPaySimple) {
 				using FormPaySimple formPaySimple=new FormPaySimple(Clinics.ClinicNum,_patient,(decimal)0.01,creditCard,isAddingCard:true);
