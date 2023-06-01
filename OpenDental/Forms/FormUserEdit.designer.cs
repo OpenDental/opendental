@@ -53,7 +53,6 @@ namespace OpenDental {
 			this.tabClinics = new OpenDental.UI.TabPage();
 			this.label6 = new System.Windows.Forms.Label();
 			this.listClinicMulti = new OpenDental.UI.ListBox();
-			this.checkClinicIsRestricted = new OpenDental.UI.CheckBox();
 			this.listClinic = new OpenDental.UI.ListBox();
 			this.labelClinic = new System.Windows.Forms.Label();
 			this.tabAlertSubs = new OpenDental.UI.TabPage();
@@ -111,10 +110,10 @@ namespace OpenDental {
 			this.tabUser.Controls.Add(this.listUserGroup);
 			this.tabUser.Controls.Add(this.label3);
 			this.tabUser.Controls.Add(this.label1);
-			this.tabUser.Location = new System.Drawing.Point(4, 22);
+			this.tabUser.Location = new System.Drawing.Point(2, 21);
 			this.tabUser.Name = "tabUser";
 			this.tabUser.Padding = new System.Windows.Forms.Padding(3);
-			this.tabUser.Size = new System.Drawing.Size(971, 615);
+			this.tabUser.Size = new System.Drawing.Size(975, 618);
 			this.tabUser.TabIndex = 0;
 			this.tabUser.Text = "User";
 			// 
@@ -144,7 +143,7 @@ namespace OpenDental {
 			this.securityTreeUser.Location = new System.Drawing.Point(603, 11);
 			this.securityTreeUser.Name = "securityTreeUser";
 			this.securityTreeUser.ReadOnly = true;
-			this.securityTreeUser.Size = new System.Drawing.Size(354, 558);
+			this.securityTreeUser.Size = new System.Drawing.Size(358, 561);
 			this.securityTreeUser.TabIndex = 174;
 			// 
 			// butDoseSpotAdditional
@@ -238,9 +237,10 @@ namespace OpenDental {
 			// 
 			this.listProv.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+			this.listProv.IntegralHeight = false;
 			this.listProv.Location = new System.Drawing.Point(217, 110);
 			this.listProv.Name = "listProv";
-			this.listProv.Size = new System.Drawing.Size(185, 459);
+			this.listProv.Size = new System.Drawing.Size(185, 462);
 			this.listProv.TabIndex = 160;
 			// 
 			// label5
@@ -255,7 +255,7 @@ namespace OpenDental {
 			// label4
 			// 
 			this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label4.Location = new System.Drawing.Point(24, 582);
+			this.label4.Location = new System.Drawing.Point(24, 585);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(378, 23);
 			this.label4.TabIndex = 158;
@@ -266,9 +266,10 @@ namespace OpenDental {
 			// 
 			this.listEmployee.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+			this.listEmployee.IntegralHeight = false;
 			this.listEmployee.Location = new System.Drawing.Point(24, 110);
 			this.listEmployee.Name = "listEmployee";
-			this.listEmployee.Size = new System.Drawing.Size(185, 459);
+			this.listEmployee.Size = new System.Drawing.Size(185, 462);
 			this.listEmployee.TabIndex = 157;
 			// 
 			// label2
@@ -291,10 +292,11 @@ namespace OpenDental {
 			// 
 			this.listUserGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+			this.listUserGroup.IntegralHeight = false;
 			this.listUserGroup.Location = new System.Drawing.Point(410, 110);
 			this.listUserGroup.Name = "listUserGroup";
 			this.listUserGroup.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
-			this.listUserGroup.Size = new System.Drawing.Size(185, 459);
+			this.listUserGroup.Size = new System.Drawing.Size(185, 462);
 			this.listUserGroup.TabIndex = 154;
 			this.listUserGroup.SelectedIndexChanged += new System.EventHandler(this.listUserGroup_SelectedIndexChanged);
 			// 
@@ -321,13 +323,12 @@ namespace OpenDental {
 			this.tabClinics.BackColor = System.Drawing.SystemColors.Control;
 			this.tabClinics.Controls.Add(this.label6);
 			this.tabClinics.Controls.Add(this.listClinicMulti);
-			this.tabClinics.Controls.Add(this.checkClinicIsRestricted);
 			this.tabClinics.Controls.Add(this.listClinic);
 			this.tabClinics.Controls.Add(this.labelClinic);
-			this.tabClinics.Location = new System.Drawing.Point(4, 22);
+			this.tabClinics.Location = new System.Drawing.Point(2, 21);
 			this.tabClinics.Name = "tabClinics";
 			this.tabClinics.Padding = new System.Windows.Forms.Padding(3);
-			this.tabClinics.Size = new System.Drawing.Size(971, 615);
+			this.tabClinics.Size = new System.Drawing.Size(975, 618);
 			this.tabClinics.TabIndex = 1;
 			this.tabClinics.Text = "Clinics";
 			// 
@@ -347,17 +348,8 @@ namespace OpenDental {
 			this.listClinicMulti.Location = new System.Drawing.Point(329, 66);
 			this.listClinicMulti.Name = "listClinicMulti";
 			this.listClinicMulti.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
-			this.listClinicMulti.Size = new System.Drawing.Size(250, 485);
+			this.listClinicMulti.Size = new System.Drawing.Size(250, 498);
 			this.listClinicMulti.TabIndex = 168;
-			// 
-			// checkClinicIsRestricted
-			// 
-			this.checkClinicIsRestricted.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkClinicIsRestricted.Location = new System.Drawing.Point(329, 557);
-			this.checkClinicIsRestricted.Name = "checkClinicIsRestricted";
-			this.checkClinicIsRestricted.Size = new System.Drawing.Size(250, 52);
-			this.checkClinicIsRestricted.TabIndex = 167;
-			this.checkClinicIsRestricted.Text = "Restrict user to only see these clinics";
 			// 
 			// listClinic
 			// 
@@ -365,7 +357,7 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.listClinic.Location = new System.Drawing.Point(28, 66);
 			this.listClinic.Name = "listClinic";
-			this.listClinic.Size = new System.Drawing.Size(250, 485);
+			this.listClinic.Size = new System.Drawing.Size(250, 498);
 			this.listClinic.TabIndex = 166;
 			this.listClinic.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listClinic_MouseClick);
 			// 
@@ -385,9 +377,9 @@ namespace OpenDental {
 			this.tabAlertSubs.Controls.Add(this.listAlertSubsClinicsMulti);
 			this.tabAlertSubs.Controls.Add(this.listAlertSubMulti);
 			this.tabAlertSubs.Controls.Add(this.label7);
-			this.tabAlertSubs.Location = new System.Drawing.Point(4, 22);
+			this.tabAlertSubs.Location = new System.Drawing.Point(2, 21);
 			this.tabAlertSubs.Name = "tabAlertSubs";
-			this.tabAlertSubs.Size = new System.Drawing.Size(971, 615);
+			this.tabAlertSubs.Size = new System.Drawing.Size(975, 618);
 			this.tabAlertSubs.TabIndex = 2;
 			this.tabAlertSubs.Text = "Alert Subs";
 			// 
@@ -407,7 +399,7 @@ namespace OpenDental {
 			this.listAlertSubsClinicsMulti.Location = new System.Drawing.Point(329, 66);
 			this.listAlertSubsClinicsMulti.Name = "listAlertSubsClinicsMulti";
 			this.listAlertSubsClinicsMulti.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
-			this.listAlertSubsClinicsMulti.Size = new System.Drawing.Size(250, 485);
+			this.listAlertSubsClinicsMulti.Size = new System.Drawing.Size(250, 498);
 			this.listAlertSubsClinicsMulti.TabIndex = 170;
 			// 
 			// listAlertSubMulti
@@ -417,7 +409,7 @@ namespace OpenDental {
 			this.listAlertSubMulti.Location = new System.Drawing.Point(28, 66);
 			this.listAlertSubMulti.Name = "listAlertSubMulti";
 			this.listAlertSubMulti.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
-			this.listAlertSubMulti.Size = new System.Drawing.Size(250, 485);
+			this.listAlertSubMulti.Size = new System.Drawing.Size(250, 498);
 			this.listAlertSubMulti.TabIndex = 168;
 			// 
 			// label7
@@ -528,7 +520,6 @@ namespace OpenDental {
 		private TextBox textUserNum;
 		private OpenDental.UI.ListBox listClinicMulti;
 		private Label label6;
-		private OpenDental.UI.CheckBox checkClinicIsRestricted;
 		private OpenDental.UI.TabPage tabAlertSubs;
 		private OpenDental.UI.ListBox listAlertSubMulti;
 		private Label label7;

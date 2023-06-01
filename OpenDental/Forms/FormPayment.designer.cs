@@ -1228,6 +1228,7 @@
 			this.textSurcharge.ReadOnly = true;
 			this.textSurcharge.Size = new System.Drawing.Size(100, 20);
 			this.textSurcharge.TabIndex = 1005;
+			this.textSurcharge.Visible = false;
 			// 
 			// gridCharges
 			// 

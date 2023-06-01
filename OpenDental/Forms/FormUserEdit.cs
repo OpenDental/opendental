@@ -131,7 +131,7 @@ namespace OpenDental{
 				listAlertSubsClinicsMulti.Items.Add(Lan.g(this,"Headquarters"));
 				if(UserodCur.ClinicNum==0) {//Unrestricted
 					listClinic.SetSelected(0);
-					checkClinicIsRestricted.Enabled=false;//We don't really need this checkbox any more but it's probably better for users to keep it....
+					listClinicMulti.Enabled=false;
 				}
 				if(isAllClinicsSubscribed) {//They are subscribed to all clinics
 					listAlertSubsClinicsMulti.SetSelected(0);
@@ -154,7 +154,6 @@ namespace OpenDental{
 						listAlertSubsClinicsMulti.SetSelected(i+2);//All+HQ
 					}
 				}
-				checkClinicIsRestricted.Checked=UserodCur.ClinicIsRestricted;
 			}
 			if(string.IsNullOrEmpty(UserodCur.PasswordHash)){
 				butPassword.Text=Lan.g(this,"Create Password");
@@ -245,11 +244,11 @@ namespace OpenDental{
 				return;
 			}
 			if(idx==0){//all
-				checkClinicIsRestricted.Checked=false;
-				checkClinicIsRestricted.Enabled=false;
+				listClinicMulti.Enabled=false;
+				listClinicMulti.SetAll(false);
 			}
 			else{
-				checkClinicIsRestricted.Enabled=true;
+				listClinicMulti.Enabled=true;
 			}
 		}
 
@@ -371,12 +370,12 @@ namespace OpenDental{
 				return;
 			}
 			List<UserClinic> listUserClinics=new List<UserClinic>();
-			if(PrefC.HasClinicsEnabled && checkClinicIsRestricted.Checked) {//They want to restrict the user to certain clinics or clinics are enabled.  
+			if(PrefC.HasClinicsEnabled) {//Check to see if users have restricted clinics set. 
 				for(int i=0;i<listClinicMulti.SelectedIndices.Count;i++) {
 					listUserClinics.Add(new UserClinic(_listClinics[listClinicMulti.SelectedIndices[i]].ClinicNum,UserodCur.UserNum));
 				}
 				//If they set the user up with a default clinic and it's not in the restricted list, return.
-				if(!listUserClinics.Exists(x => x.ClinicNum==_listClinics[listClinic.SelectedIndex-1].ClinicNum)) {
+				if(listUserClinics.Count>0 && !listUserClinics.Exists(x => x.ClinicNum==_listClinics[listClinic.SelectedIndex-1].ClinicNum)) {
 					MsgBox.Show(this,"User cannot have a default clinic that they are not restricted to.");
 					return;
 				}
@@ -387,7 +386,10 @@ namespace OpenDental{
 			else {
 				UserodCur.ClinicNum=_listClinics[listClinic.SelectedIndex-1].ClinicNum;
 			}
-			UserodCur.ClinicIsRestricted=checkClinicIsRestricted.Checked;//This is kept in sync with their choice of "All".
+			UserodCur.ClinicIsRestricted=false;//This is kept in sync with their choice of "All".
+			if(listClinicMulti.SelectedIndices.Count>0) {
+				UserodCur.ClinicIsRestricted=true;
+			}
 			UserodCur.IsHidden=checkIsHidden.Checked;
 			UserodCur.IsPasswordResetRequired=checkRequireReset.Checked;
 			UserodCur.UserName=textUserName.Text;

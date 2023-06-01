@@ -297,13 +297,13 @@ namespace OpenDental{
 			}
 			Dictionary<long,string> dictInsDefNames=new Dictionary<long,string>();
 			Dictionary<long,string> dictPatDefNames=new Dictionary<long,string>();
-			List<Def> insDefs=Defs.GetDefsForCategory(DefCat.InsurancePaymentType,true);
-			List<Def> patDefs=Defs.GetDefsForCategory(DefCat.PaymentTypes,true);
+			List<Def> insDefs=Defs.GetDefsForCategory(DefCat.InsurancePaymentType);
+			List<Def> patDefs=Defs.GetDefsForCategory(DefCat.PaymentTypes);
 			for(int i=0;i<insDefs.Count;i++) {
-				dictInsDefNames.Add(insDefs[i].DefNum,insDefs[i].ItemName);
+				dictInsDefNames.Add(insDefs[i].DefNum,insDefs[i].ItemName+(patDefs[i].IsHidden?" (hidden)":""));
 			}
 			for(int i=0;i<patDefs.Count;i++) {
-				dictPatDefNames.Add(patDefs[i].DefNum,patDefs[i].ItemName);
+				dictPatDefNames.Add(patDefs[i].DefNum,patDefs[i].ItemName+(patDefs[i].IsHidden?" (hidden)":""));
 			}
 			dictPatDefNames.Add(0,"Income Transfer");//Otherwise income transfers show up with a payment type of "Undefined"
 			int[] summaryGroups1= { 1 };

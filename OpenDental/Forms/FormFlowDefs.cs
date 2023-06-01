@@ -51,6 +51,9 @@ namespace OpenDental {
 			_clinicNum = comboClinic.SelectedClinicNum;
 			checkUseDefault.Checked=_clinicPrefHelper.GetBoolVal(PrefName.ERoutingUseHQDefaults, _clinicNum);
 			checkUseDefault.Visible=_clinicNum!=0;
+			labelUseDefaults.Visible=_clinicNum != 0 && checkUseDefault.Checked;
+			butAdd.Enabled=_clinicNum==0;
+			gridERouting.Enabled=_clinicNum==0;
 			FillGrid();
 		}
 

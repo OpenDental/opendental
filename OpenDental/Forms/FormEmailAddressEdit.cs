@@ -10,6 +10,7 @@ using System.Diagnostics;
 using OpenDental.UI;
 using Bridges;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace OpenDental{
 ///<summary></summary>
@@ -274,6 +275,11 @@ namespace OpenDental{
 		}
 
 		private void butPickUserod_Click(object sender,EventArgs e) {
+			List<Clinic> listClinics=Clinics.GetDeepCopy();
+ 			if(listClinics.Any(x=>x.EmailAddressNum==_emailAddress.EmailAddressNum)) {
+				MsgBox.Show(this,"Cannot associate a user to an email address that is linked to a clinic.");
+				return;
+			}
 			using FormUserPick formUserPick=new FormUserPick();
 			formUserPick.UserNumSuggested=((Userod)textUserod.Tag)?.UserNum??0;//Preselect current selection.
 			if(formUserPick.ShowDialog()!=DialogResult.OK) {

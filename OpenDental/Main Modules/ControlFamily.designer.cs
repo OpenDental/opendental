@@ -63,7 +63,7 @@ namespace OpenDental {
 			this.imageListToolBar.Images.SetKeyName(5, "");
 			this.imageListToolBar.Images.SetKeyName(6, "Umbrella.gif");
 			// 
-			// menuInsurance
+			// contextMenuInsurance
 			// 
 			this.contextMenuInsurance.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItemPlansForFam});
@@ -74,7 +74,7 @@ namespace OpenDental {
 			this.menuItemPlansForFam.Text = "Plans for Family";
 			this.menuItemPlansForFam.Click += new System.EventHandler(this.menuPlansForFam_Click);
 			// 
-			// menuDiscount
+			// contextMenuDiscount
 			// 
 			this.contextMenuDiscount.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItemRemoveDiscount});
@@ -186,9 +186,12 @@ namespace OpenDental {
 			// 
 			// splitContainerSuperClones
 			// 
+			this.splitContainerSuperClones.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
 			this.splitContainerSuperClones.Controls.Add(this.splitterPanel1);
 			this.splitContainerSuperClones.Controls.Add(this.splitterPanel2);
 			this.splitContainerSuperClones.Cursor = System.Windows.Forms.Cursors.Default;
+			this.splitContainerSuperClones.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.splitContainerSuperClones.Location = new System.Drawing.Point(254, 129);
 			this.splitContainerSuperClones.Name = "splitContainerSuperClones";
 			this.splitContainerSuperClones.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -231,6 +234,7 @@ namespace OpenDental {
 			this.splitterPanel1.ResumeLayout(false);
 			this.splitterPanel2.ResumeLayout(false);
 			this.ResumeLayout(false);
+
 		}
 		#endregion
 

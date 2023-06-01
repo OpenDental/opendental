@@ -54,7 +54,9 @@ namespace OpenDental{
 		private void butAdd_Click(object sender, System.EventArgs e) {
 			using FormZipCodeEdit formZipCodeEdit=new FormZipCodeEdit();
 			formZipCodeEdit.ZipCodeCur=new ZipCode();
-			formZipCodeEdit.ZipCodeCur.ZipCodeDigits=(_listZipCodes[0]).ZipCodeDigits;
+			if(_listZipCodes.Count>0) {
+				formZipCodeEdit.ZipCodeCur.ZipCodeDigits=(_listZipCodes[0]).ZipCodeDigits;
+			}
 			formZipCodeEdit.IsNew=true;
 			formZipCodeEdit.ShowDialog();
 			if(formZipCodeEdit.DialogResult!=DialogResult.OK){
