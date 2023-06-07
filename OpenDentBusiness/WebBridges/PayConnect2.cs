@@ -433,7 +433,7 @@ namespace OpenDentBusiness {
 					payConnectResponse.CardType=voidResponse.PaymentMethod.CardPaymentMethod.Network.ToString();
 					payConnectResponse.CardNumber=voidResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
 					payConnectResponse.TransType=PayConnectResponse.TransactionType.Void;
-
+					payConnectResponse.AmountSurcharged=voidResponse.AmountSurcharged;
 					break;
 				case ResponseType.Refund:
 					RefundResponse refundResponse=response.RefundResponse;
@@ -896,6 +896,9 @@ namespace OpenDentBusiness {
 			///<summary>Date the transaction was updated</summary>
 			[DataMember(Name = "updatedAt")]
 			public string UpdatedAt;
+			///<summary>Amount surcharged in cents</summary>
+			[DataMember(Name = "amountSurcharged")]
+			public int AmountSurcharged;
 		}
 
 		[DataContract]

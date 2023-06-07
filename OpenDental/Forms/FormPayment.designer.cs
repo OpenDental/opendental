@@ -1260,22 +1260,6 @@
 			this.gridTreatPlan.TranslationName = "TableOutstandingCharges";
 			this.gridTreatPlan.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridTreatPlan_CellClick);
 			// 
-			// gridSplits
-			// 
-			this.gridSplits.AllowSortingByColumn = true;
-			this.gridSplits.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.gridSplits.Location = new System.Drawing.Point(0, 0);
-			this.gridSplits.Name = "gridSplits";
-			this.gridSplits.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridSplits.Size = new System.Drawing.Size(483, 249);
-			this.gridSplits.TabIndex = 0;
-			this.gridSplits.Title = "Current Payment Splits";
-			this.gridSplits.TranslationName = "TableCurrentSplits";
-			this.gridSplits.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridSplits_CellDoubleClick);
-			this.gridSplits.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridSplits_CellClick);
-			// 
 			// FormPayment
 			// 
 			this.ClientSize = new System.Drawing.Size(1111, 696);

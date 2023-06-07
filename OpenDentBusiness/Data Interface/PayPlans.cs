@@ -723,16 +723,32 @@ namespace OpenDentBusiness{
 			for(int i=0;i<listPayPlans.Count;i++) {
 				if(listPayPlans[i].IsDynamic && canIncludeDynamic) {
 					double totalPaidAmt=0.00;
+					DynamicPaymentPlanModuleData dynamicPaymentPlanModuleData=PayPlanEdit.GetDynamicPaymentPlanModuleData(listPayPlans[i]);
+					PayPlanTerms payPlanTerms=PayPlanEdit.GetPayPlanTerms(listPayPlans[i],dynamicPaymentPlanModuleData.ListPayPlanLinks);
+					List<PayPlanCharge> listPayPlanChargesExpected=PayPlanEdit.GetPayPlanChargesForDynamicPaymentPlanSchedule(listPayPlans[i],payPlanTerms,
+						dynamicPaymentPlanModuleData.ListPayPlanChargesDb,dynamicPaymentPlanModuleData.ListPayPlanLinks,dynamicPaymentPlanModuleData.ListPaySplits);
 					totalPaidAmt+=PIn.Double(table.Rows[i]["TotPay"].ToString());
 					totalPaidAmt+=PIn.Double(table.Rows[i]["InsPay"].ToString());
-					double totalCost=PayPlans.GetTotalCost(listPayPlans[i].PayPlanNum);
-					if(totalPaidAmt<totalCost) {
+					double amountToPay=0.00;
+					for(int k=0;k<listPayPlanChargesExpected.Count;k++) {
+						if(listPayPlanChargesExpected[k].ChargeType==PayPlanChargeType.Credit) {
+							amountToPay-=(listPayPlanChargesExpected[k].Principal+listPayPlanChargesExpected[k].Interest);
+							continue;
+						}
+						amountToPay+=(listPayPlanChargesExpected[k].Principal+listPayPlanChargesExpected[k].Interest);
+					}
+					if(totalPaidAmt<amountToPay) {
 						continue;
 					}
+					//"isLocked" here is passed into "isLocking" further down. We are not locking here because the user has not way to lock the dynamic payment plan from this UI.
+					PayPlanEdit.CloseOutDynamicPaymentPlan(payPlanTerms,dynamicPaymentPlanModuleData,false,dynamicPaymentPlanModuleData.PayPlan.PlanCategory);
+					count++;
 				}
-				listPayPlans[i].IsClosed=true;
-				PayPlans.Update(listPayPlans[i]);
-				count++;
+				else if(!listPayPlans[i].IsDynamic) {
+					listPayPlans[i].IsClosed=true;
+					PayPlans.Update(listPayPlans[i]);
+					count++;
+				}
 			}
 			return count;
 		}

@@ -4834,7 +4834,7 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			command="INSERT INTO preference(PrefName,ValueString) VALUES('ApptNewPatientThankYouWebSheetDefID','0')";
 			Db.NonQ(command);
-			command="DROP TABLE IF EXISTS apptnewpatientthankyousent";
+			command="DROP TABLE IF EXISTS apptnewpatthankyousent";
 			Db.NonQ(command);
 			command=@"CREATE TABLE apptnewpatthankyousent (
 				ApptNewPatThankYouSentNum bigint NOT NULL auto_increment PRIMARY KEY,
@@ -5064,6 +5064,16 @@ namespace OpenDentBusiness {
 			command="INSERT INTO preference(PrefName,ValueString) VALUES('AutoCommUnder18SendToGuarantor','0')";
 			Db.NonQ(command);
 		}
+
+		private static void To23_1_20() {
+			//This was an issue with anyone who explicitly converted to 23.1.16 before converting to 23.1.16+
+			string command="SELECT * FROM preference WHERE PrefName='AutoCommUnder18SendToGuarantor'";
+			DataTable table=Db.GetTable(command);
+			if(table.Rows.Count==0) {
+				command="INSERT INTO preference(PrefName,ValueString) VALUES('AutoCommUnder18SendToGuarantor','0')";
+				Db.NonQ(command);
+			}
+		}//End To23_1_20
 	}
 }
 

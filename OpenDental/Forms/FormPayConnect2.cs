@@ -302,7 +302,7 @@ namespace OpenDental {
 			if(didParse) {
 				_creditCard.CCExpiration=expiryDate;
 			}
-			_creditCard.CCNumberMasked=cardPaymentMethod.CardLast4Digits.PadLeft(12,'X');
+			_creditCard.CCNumberMasked=cardPaymentMethod.CardLast4Digits.PadLeft(16,'X');
 			_creditCard.Zip=cardPaymentMethod.ZipCode;
 			_creditCard.PayConnectToken="";
 			_creditCard.PayConnectTokenExp=_response.TokenExpiration;//Typically the same as the card expiry but just to be safe.

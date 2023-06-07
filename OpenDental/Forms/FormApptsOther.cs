@@ -252,6 +252,8 @@ namespace OpenDental {
 				if(HieClinics.IsEnabled()) {
 					HieQueues.Insert(new HieQueue(_patient.PatNum));
 				}
+				Recalls.Synch(appointment.PatNum);
+				Recalls.SynchScheduledApptFull(appointment.PatNum);
 				DialogResult=DialogResult.OK;
 				return;
 			}

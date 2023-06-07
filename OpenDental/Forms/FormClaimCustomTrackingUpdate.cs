@@ -111,8 +111,9 @@ namespace OpenDental {
 			}
 			Def defErrorCode=comboErrorCode.GetSelected<Def>();
 			for(int i=0;i<_listClaims.Count;i++) { //when not called from FormRpOutstandingIns, this should only have one claim.
+				Claim claimOld=_listClaims[i].Copy();
 				_listClaims[i].CustomTracking=comboCustomTracking.GetSelectedDefNum();
-				Claims.Update(_listClaims[i]);
+				Claims.Update(_listClaims[i],claimOld);
 				ClaimTracking claimTrackingCur=ListClaimTrackingsNew[i];
 				if(claimTrackingCur==null) {
 					claimTrackingCur=new ClaimTracking();

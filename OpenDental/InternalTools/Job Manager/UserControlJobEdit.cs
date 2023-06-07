@@ -2710,6 +2710,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 			IsChanged=true;
 			_jobCur.IsApprovalNeeded=false;
 			_jobCur.PhaseCur=JobPhase.Complete;
+			_jobCur.DateTimeImplemented=DateTime.Now;
 			SaveJob(_jobCur);
 		}
 
