@@ -524,19 +524,14 @@ namespace OpenDental {
 				_creditCard.CCNumberMasked=StringTools.TruncateBeginning(textCardNumber.Text,4).PadLeft(textCardNumber.Text.Length,'X');
 			}
 			_creditCard.Zip=textZipCode.Text;
-			_creditCard.PayConnectToken="";
 			_creditCard.PayConnectTokenExp=DateTime.MinValue;
 			//Store the token and the masked CC number (only last four digits).
-			if(checkSaveToken.Checked && _transResponse.PaymentToken!=null) {
+			_creditCard.CCSource=CreditCardSource.PayConnect;
+			if(_creditCard.IsNew && checkSaveToken.Checked && _transResponse.PaymentToken!=null) {
+				_creditCard.ClinicNum=_clinicNum;
 				_creditCard.PayConnectToken=_transResponse.PaymentToken.TokenId;
 				_creditCard.PayConnectTokenExp=new DateTime(_transResponse.PaymentToken.Expiration.year,_transResponse.PaymentToken.Expiration.month,
-				DateTime.DaysInMonth(_transResponse.PaymentToken.Expiration.year,_transResponse.PaymentToken.Expiration.month));
-			}
-			_creditCard.CCSource=CreditCardSource.PayConnect;
-			if(_creditCard.IsNew) {
-				_creditCard.ClinicNum=_clinicNum;
-				_creditCard.Procedures=PrefC.GetString(PrefName.DefaultCCProcs);
-				CreditCards.Insert(_creditCard);
+					DateTime.DaysInMonth(_transResponse.PaymentToken.Expiration.year,_transResponse.PaymentToken.Expiration.month));
 			}
 			else {
 				if(_creditCard.CCSource==CreditCardSource.XServer) {//This card has also been added for XCharge.

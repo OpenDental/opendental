@@ -3766,7 +3766,25 @@ namespace OpenDentBusiness {
 			if(patPlan!=null) {
 				patPlanNum=patPlan.PatPlanNum;
 			}
-			List<Benefit> listBensForGroup=GetAllLimitationsForGroups(benefitList.FindAll(x => x.PlanNum==planCur.PlanNum || x.PatPlanNum==patPlanNum),planCur,patPlanNum,procCode);
+			List<Benefit> listBenefitsLimitations=new List<Benefit>();
+			for(int i=0;i<benefitList.Count;i++) {
+				if(benefitList[i].PlanNum==0 && benefitList[i].PatPlanNum!=patPlanNum) {
+					continue;
+				}
+				if(benefitList[i].PatPlanNum==0 && benefitList[i].PlanNum!=planCur.PlanNum) {
+					continue;
+				}
+				if(benefitList[i].BenefitType==InsBenefitType.Limitations //BW, Pano/FW, Exam, and Custom category frequency limitations
+					&& benefitList[i].MonetaryAmt==-1
+					&& benefitList[i].Percent==-1
+					&& (benefitList[i].QuantityQualifier==BenefitQuantity.Months
+					|| benefitList[i].QuantityQualifier==BenefitQuantity.Years
+					|| benefitList[i].QuantityQualifier==BenefitQuantity.NumberOfServices)) 
+				{
+					listBenefitsLimitations.Add(benefitList[i]);
+				}
+			}
+			List<Benefit> listBensForGroup=GetAllLimitationsForGroups(listBenefitsLimitations,planCur,patPlanNum,procCode);
 			ClaimProcStatus[] arrayClaimProcStatuses=new ClaimProcStatus[] {
 				ClaimProcStatus.Received,ClaimProcStatus.InsHist,ClaimProcStatus.NotReceived,ClaimProcStatus.Estimate
 			};

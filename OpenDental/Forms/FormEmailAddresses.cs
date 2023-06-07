@@ -46,6 +46,10 @@ namespace OpenDental {
 				return;
 			}
 			if(IsSelectionMode) {
+				if(selectedAddress.UserNum!=0) {
+					MsgBox.Show(this,"Please select an existing email address that is not associated with a user or clinic.");
+					return;
+				}
 				EmailAddressNum=selectedAddress.EmailAddressNum;
 				DialogResult=DialogResult.OK;
 			}
@@ -146,8 +150,8 @@ namespace OpenDental {
 
 		private void butOK_Click(object sender,EventArgs e) {
 			if(IsSelectionMode) {
-				if(gridMain.SelectedTag<EmailAddress>() is null) {
-					MsgBox.Show(this,"Please select an email address.");
+				if(gridMain.SelectedTag<EmailAddress>() is null || gridMain.SelectedTag<EmailAddress>().UserNum!=0) {
+					MsgBox.Show(this,"Please select an existing email address that is not associated with a user or clinic.");
 					return;
 				}
 				EmailAddressNum=gridMain.SelectedTag<EmailAddress>().EmailAddressNum;
