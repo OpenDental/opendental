@@ -65,7 +65,7 @@ namespace OpenDental {
 		///Anywhere we pull etrans from Etranss.RefreshHistory(...) will need to pull full object using an additional query.
 		///Eventually we should enhance Etranss.RefreshHistory(...) to return full objects.</summary>
 		public static void ViewFormForEra(Etrans etrans,Form formParent=null,long specificClaimNum=0) {
-			string messageText835=EtransMessageTexts.GetMessageText(etrans.EtransMessageTextNum,false);
+			string messageText835=EtransMessageTexts.GetMessageText(etrans.EtransMessageTextNum);
 			X12object x12Object835=new X12object(messageText835);
 			List<string> listTranSetIds=x12Object835.GetTranSetIds();
 			if(listTranSetIds.Count>=2 && etrans.TranSetId835=="") {//More than one EOB in the 835 and we do not know which one to pick.

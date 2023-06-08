@@ -120,7 +120,7 @@ namespace OpenDentBusiness.Eclaims {
 				//Now ensure that the primary claim received an EOB response, or else we cannot send a COB.
 				List <Etrans> etransPrimary=Etranss.GetHistoryOneClaim(claimNumPrimary);
 				for(int i=0;i<etransPrimary.Count;i++) {
-					primaryClaimRequestMessage=EtransMessageTexts.GetMessageText(etransPrimary[i].EtransMessageTextNum,false);
+					primaryClaimRequestMessage=EtransMessageTexts.GetMessageText(etransPrimary[i].EtransMessageTextNum);
 					Etrans etransPrimaryAck=Etranss.GetEtrans(etransPrimary[i].AckEtransNum);
 					if(etransPrimaryAck==null) {
 						continue;
@@ -128,7 +128,7 @@ namespace OpenDentBusiness.Eclaims {
 					if(etransPrimaryAck.AckCode.ToUpper()=="R") {
 						continue;
 					}
-					primaryEOBResponse=EtransMessageTexts.GetMessageText(etransPrimaryAck.EtransMessageTextNum,false);
+					primaryEOBResponse=EtransMessageTexts.GetMessageText(etransPrimaryAck.EtransMessageTextNum);
 					break;
 				}
 				if(primaryEOBResponse=="") {

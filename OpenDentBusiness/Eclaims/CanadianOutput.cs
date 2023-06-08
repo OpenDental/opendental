@@ -522,7 +522,7 @@ namespace OpenDentBusiness.Eclaims {
 				if(ack==null) {//For those claims sent that didn't receive a response (i.e. when there is an exception while sending a claim).
 					continue;
 				}
-				string messageText=EtransMessageTexts.GetMessageText(ack.EtransMessageTextNum,false);
+				string messageText=EtransMessageTexts.GetMessageText(ack.EtransMessageTextNum);
 				CCDFieldInputter messageData=new CCDFieldInputter(messageText);
 				CCDField transRefNum=messageData.GetFieldById("G01");
 				if(transRefNum!=null && transRefNum.valuestr==claim.CanadaTransRefNum && listEtrans[i].DateTimeTrans>originalEtransDateTime) {

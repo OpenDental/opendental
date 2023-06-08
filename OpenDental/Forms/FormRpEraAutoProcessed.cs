@@ -331,7 +331,7 @@ namespace OpenDental {
 				return;
 			}
 			#region Get ERA data 
-			string messageText835=EtransMessageTexts.GetMessageText(eraRowData.EtransForRow.EtransMessageTextNum,false);
+			string messageText835=EtransMessageTexts.GetMessageText(eraRowData.EtransForRow.EtransMessageTextNum);
 			Etrans etrans=eraRowData.EtransForRow;
 			string tranSetIdSelected=GetTranSetIdForEobSelected(etrans,messageText835);
 			if(tranSetIdSelected==null) {//Only null if user was prompted to select an EOB and they canceled instead of choosing one.
