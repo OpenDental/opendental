@@ -927,7 +927,7 @@ namespace OpenDental {
 					}
 				}
 				if(eTransPredetermEob!=null) {
-					string predetermResponseMessage=EtransMessageTexts.GetMessageText(eTransPredetermEob.EtransMessageTextNum,false);
+					string predetermResponseMessage=EtransMessageTexts.GetMessageText(eTransPredetermEob.EtransMessageTextNum);
 					CCDFieldInputter ccdFieldInputterPredetermResponseFields=new CCDFieldInputter(predetermResponseMessage);
 					CCDField predetermFieldG01=ccdFieldInputterPredetermResponseFields.GetFieldById("G01");
 					if(predetermFieldG01!=null) {

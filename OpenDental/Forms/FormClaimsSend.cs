@@ -1248,7 +1248,7 @@ namespace OpenDental{
 			}
 			//does not yet handle multiple selections
 			Etrans etrans=Etranss.GetEtrans(PIn.Long(_tableHistory.Rows[gridHistory.SelectedIndices[0]]["EtransNum"].ToString()));
-			new FormCCDPrint(etrans,EtransMessageTexts.GetMessageText(etrans.EtransMessageTextNum,false),false);//Show the form and allow the user to print manually if desired.
+			new FormCCDPrint(etrans,EtransMessageTexts.GetMessageText(etrans.EtransMessageTextNum),false);//Show the form and allow the user to print manually if desired.
 			//MessageBox.Show(etrans.MessageText);
 		}
 

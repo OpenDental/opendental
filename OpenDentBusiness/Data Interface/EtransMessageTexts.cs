@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
+using CodeBase;
 using OpenDentBusiness;
 
 namespace OpenDentBusiness{
@@ -20,19 +22,16 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>If the message text is X12, then it always normalizes it to include carriage returns for better readability.</summary>
-		public static string GetMessageText(long etransMessageTextNum,bool isFormattingNeededX12=true) {
+		public static string GetMessageText(long etransMessageTextNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetString(MethodBase.GetCurrentMethod(),etransMessageTextNum,isFormattingNeededX12);
+				return Meth.GetString(MethodBase.GetCurrentMethod(),etransMessageTextNum);
 			}
 			if(etransMessageTextNum==0) {
 				return "";
 			}
 			string command="SELECT MessageText FROM etransmessagetext WHERE EtransMessageTextNum="+POut.Long(etransMessageTextNum);
 			string msgText=Db.GetScalar(command);
-			if(isFormattingNeededX12) {
-				return TidyMessageTextX12(msgText);
-			}
-			return msgText;
+			return TidyMessageTextX12(msgText);
 		}
 
 		///<summary>This function is used to enhance readabilty of the X12 message when displayed.
@@ -41,12 +40,16 @@ namespace OpenDentBusiness{
 			if(!X12object.IsX12(msgText)) {
 				return msgText;
 			}
-			Match match=Regex.Match(msgText,"~[^(\n)(\r)]");
-			while(match.Success){
-				msgText=msgText.Substring(0,match.Index)+"~\r\n"+msgText.Substring(match.Index+1);
-				match=Regex.Match(msgText,"~[^(\n)(\r)]");
+			StringBuilder stringBuilder=new StringBuilder();
+			for(int i=0;i<msgText.Length;i++) {
+				if(msgText[i]=='~' && i<msgText.Length-1 && !msgText[i+1].In('\n','\r')) {
+					stringBuilder.Append("~\r\n");
+				}
+				else {
+					stringBuilder.Append(msgText[i]);
+				}
 			}
-			return msgText;
+			return stringBuilder.ToString();
 		}
 		
 		///<summary>Returns dictionary such that the key is an etransMessageTextNum and the value is the MessageText.
