@@ -23,7 +23,8 @@ namespace OpenDentBusiness{
 			ODException.SwallowAnyException(() => {
 				listMandibularCodes=JsonConvert.DeserializeObject<List<ProcedureCode>>(CDT.Class1.GetMandibularCodes());
 			});
-			return listMandibularCodes;
+			//The list of mandibular proc codes can be null, due to DeserializeObject interrupting an empty string as null
+			return listMandibularCodes??new List<ProcedureCode>();
 		}
 
 		public static List<ProcedureCode> GetMaxillaryCodes() {
@@ -31,7 +32,8 @@ namespace OpenDentBusiness{
 			ODException.SwallowAnyException(() => {
 				listMaxillaryCodes=JsonConvert.DeserializeObject<List<ProcedureCode>>(CDT.Class1.GetMaxillaryCodes());
 			});
-			return listMaxillaryCodes;
+			//The list of maxillary proc codes can be null, due to DeserializeObject interrupting an empty string as null
+			return listMaxillaryCodes??new List<ProcedureCode>();
 		}
 
 		public static List<ProcedureCode> GetProcCodeStartsWith(string codeStart) {

@@ -1730,7 +1730,12 @@ namespace OpenDental{
 				if(isMedical && (listDisplayFieldsAppts[i].InternalName=="Surf" || listDisplayFieldsAppts[i].InternalName=="Tth")) {
 					continue;
 				}
-				gridProc.Columns.Add(new GridColumn(listDisplayFieldsAppts[i].InternalName,listDisplayFieldsAppts[i].ColumnWidth));
+				if(listDisplayFieldsAppts[i].Description.IsNullOrEmpty()) {
+					gridProc.Columns.Add(new GridColumn(listDisplayFieldsAppts[i].InternalName,listDisplayFieldsAppts[i].ColumnWidth));
+				}
+				else {
+					gridProc.Columns.Add(new GridColumn(listDisplayFieldsAppts[i].Description,listDisplayFieldsAppts[i].ColumnWidth));
+				}
 			}
 			if(listDisplayFieldsAppts.Sum(x => x.ColumnWidth) > gridProc.Width) {
 				gridProc.HScrollVisible=true;

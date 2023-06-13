@@ -3781,7 +3781,7 @@ namespace OpenDental{
 			SetListClaimProcsForClaim(ClaimProcs.RefreshForClaim(_claim.ClaimNum,_listProcedures,_listClaimProcs));
 			bool areAllReceived=true;
 			for(int i = 0;i<_listClaimProcsForClaim.Count;i++) {
-				if(((ClaimProc)_listClaimProcsForClaim[i]).Status==ClaimProcStatus.NotReceived) {
+				if(((ClaimProc)_listClaimProcsForClaim[i]).Status==ClaimProcStatus.NotReceived && !_listClaimProcsForClaim[i].IsOverpay) {
 					areAllReceived=false;
 				}
 			}

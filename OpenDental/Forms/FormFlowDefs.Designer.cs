@@ -43,13 +43,13 @@ namespace OpenDental{
 			this.butClose.Text = "&Close";
 			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
-			// gridPatientFlows
+			// gridERouting
 			// 
 			this.gridERouting.Location = new System.Drawing.Point(103, 74);
-			this.gridERouting.Name = "gridPatientFlows";
+			this.gridERouting.Name = "gridERouting";
 			this.gridERouting.Size = new System.Drawing.Size(242, 434);
 			this.gridERouting.TabIndex = 4;
-			this.gridERouting.Title = "ERouting Defs";
+			this.gridERouting.Title = "eRouting Defs";
 			this.gridERouting.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.GridCell_DoubleClick);
 			// 
 			// butAdd
@@ -106,7 +106,7 @@ namespace OpenDental{
 			this.labelUseDefaults.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.labelUseDefaults.Visible = false;
 			// 
-			// FormFlowDefs
+			// FormERoutingDefs
 			// 
 			this.ClientSize = new System.Drawing.Size(488, 576);
 			this.Controls.Add(this.labelUseDefaults);
@@ -117,8 +117,8 @@ namespace OpenDental{
 			this.Controls.Add(this.gridERouting);
 			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.Name = "FormFlowDefs";
-			this.Text = "ERouting Defs";
+			this.Name = "FormERoutingDefs";
+			this.Text = "eRouting Defs";
 			this.Load += new System.EventHandler(this.FormERouting_Load);
 			this.ResumeLayout(false);
 

@@ -36,7 +36,7 @@ namespace OpenDental{
 			this.label6 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
-			this.numFontSize = new System.Windows.Forms.NumericUpDown();
+			this.textFontSize = new System.Windows.Forms.TextBox();
 			this.label10 = new System.Windows.Forms.Label();
 			this.butColor = new System.Windows.Forms.Button();
 			this.comboTextAlign = new OpenDental.UI.ComboBox();
@@ -57,7 +57,6 @@ namespace OpenDental{
 			this.labelTextH = new System.Windows.Forms.Label();
 			this.checkIncludeInMobile = new OpenDental.UI.CheckBox();
 			this.groupBox1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.numFontSize)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// checkPmtOpt
@@ -167,8 +166,7 @@ namespace OpenDental{
 			// 
 			// groupBox1
 			// 
-			this.groupBox1.ColorBackLabel = System.Drawing.Color.Empty;
-			this.groupBox1.Controls.Add(this.numFontSize);
+			this.groupBox1.Controls.Add(this.textFontSize);
 			this.groupBox1.Controls.Add(this.label10);
 			this.groupBox1.Controls.Add(this.butColor);
 			this.groupBox1.Controls.Add(this.comboTextAlign);
@@ -183,28 +181,13 @@ namespace OpenDental{
 			this.groupBox1.TabIndex = 85;
 			this.groupBox1.Text = "Font";
 			// 
-			// numFontSize
+			// textFontSize
 			// 
-			this.numFontSize.Location = new System.Drawing.Point(83, 42);
-			this.numFontSize.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-			this.numFontSize.Minimum = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-			this.numFontSize.Name = "numFontSize";
-			this.numFontSize.Size = new System.Drawing.Size(47, 20);
-			this.numFontSize.TabIndex = 89;
-			this.numFontSize.Value = new decimal(new int[] {
-            11,
-            0,
-            0,
-            0});
-			this.numFontSize.ValueChanged += new System.EventHandler(this.UpdateTextSizeLabels);
+			this.textFontSize.Location = new System.Drawing.Point(83, 40);
+			this.textFontSize.Name = "textFontSize";
+			this.textFontSize.Size = new System.Drawing.Size(44, 20);
+			this.textFontSize.TabIndex = 241;
+			this.textFontSize.TextChanged += new System.EventHandler(this.UpdateTextSizeLabels);
 			// 
 			// label10
 			// 
@@ -413,7 +396,7 @@ namespace OpenDental{
 			this.Text = "Edit Static Text Field";
 			this.Load += new System.EventHandler(this.FormSheetFieldStatic_Load);
 			this.groupBox1.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.numFontSize)).EndInit();
+			this.groupBox1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -451,7 +434,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Button butColor;
 		private OpenDental.UI.CheckBox checkIsLocked;
 		private System.Windows.Forms.Label labelTextH;
-		private System.Windows.Forms.NumericUpDown numFontSize;
 		private OpenDental.UI.CheckBox checkIncludeInMobile;
+		private System.Windows.Forms.TextBox textFontSize;
 	}
 }

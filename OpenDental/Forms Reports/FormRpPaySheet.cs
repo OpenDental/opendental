@@ -4,6 +4,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using CodeBase;
 using OpenDental.ReportingComplex;
 using OpenDentBusiness;
 
@@ -150,24 +151,16 @@ namespace OpenDental{
 				listPayNums.Add(PIn.Long(table.Rows[i]["PayNum"].ToString()));
 			}
 			List<Payment> listPayments=Payments.GetPayments(listPayNums);//No Cache
-			List<CreditCardSource> listCreditCardSources=new List<CreditCardSource>() {
-				CreditCardSource.XWebPortalLogin,
-				CreditCardSource.PayConnectPortal,
-				CreditCardSource.PayConnectPortalLogin,
-				CreditCardSource.EdgeExpressRCM,
-				CreditCardSource.EdgeExpressCNP,
-				CreditCardSource.API
-			};
 			for(int i=0;i<listPayments.Count;i++) {
-				if(!listCreditCardSources.Contains(listPayments[i].PaymentSource)) {
+				if(!listPayments[i].ProcessStatus.In(ProcessStat.OnlinePending,ProcessStat.OnlineProcessed)) {
 					continue;
 				}
-				for(int j=table.Rows.Count-1;j>=0;j--) {
+				for(int j=table.Rows.Count-1;j>=0;j--) {//Loop backwards to make it safe to remove by index.
 					if(table.Rows[j].GetLong("PayNum")!=listPayments[i].PayNum) {
 						continue;
 					}
 					dataTableOnlinePayments.Rows.Add(table.Rows[j].ItemArray);
-					table.Rows.Remove(table.Rows[j]);
+					table.Rows.RemoveAt(j);
 				}
 			}
 			return dataTableOnlinePayments;

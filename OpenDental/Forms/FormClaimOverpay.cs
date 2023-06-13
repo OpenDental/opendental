@@ -226,6 +226,10 @@ namespace OpenDental {
 			_listClaimProcs=ClaimProcs.RefreshForClaims(new List<long> { _claimNum }).ToList();
 			_listClaimProcs=ClaimProcs.GetForClaimOverpay(_listClaimProcs,_claimNum);
 			List<ClaimProc> listClaimProcsOverpaid=_listClaimProcs.FindAll(x => x.IsOverpay);
+			if(listClaimProcsOverpaid.Count==0) {
+				MsgBox.Show(this,"There are no pending supplemental insurance payments for this claim.");
+				return;
+			}
 			for(int i=0;i<listClaimProcsOverpaid.Count;i++) {
 				ClaimProc claimProcOld=listClaimProcsOverpaid[i].Copy();
 				listClaimProcsOverpaid[i].Status=ClaimProcStatus.Supplemental;
@@ -237,7 +241,7 @@ namespace OpenDental {
 				listClaimProcsOverpaid[i].IsOverpay=false;
 				ClaimProcs.Update(listClaimProcsOverpaid[i],claimProcOld);
 			}
-			FillGrid();
+			DialogResult=DialogResult.OK;
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {

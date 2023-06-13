@@ -181,8 +181,8 @@ namespace OpenDentBusiness{
 			return Crud.PaymentCrud.SelectMany(command);
 		}
 
-		///<summary>Gets all payments that have a ProcessStatus of OnlinePending. Pass in an empty list to get payments for all clinics.</summary>
-		public static List<Payment> GetPaymentsUsingFilters(List<long> clinicNums, DateTime startDate,DateTime endDate,List<ProcessStat> listProcessStatus,List<CreditCardSource> listCreditCardSources) {
+		///<summary>Gets all payments with the specified process statuses and credit card sources. Pass in an empty list to get payments for all clinics.</summary>
+		public static List<Payment> GetPaymentsUsingFilters(List<long> clinicNums,DateTime startDate,DateTime endDate,List<ProcessStat> listProcessStatus,List<CreditCardSource> listCreditCardSources) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<Payment>>(MethodBase.GetCurrentMethod(),clinicNums,startDate,endDate,listProcessStatus,listCreditCardSources);
 			}

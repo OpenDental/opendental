@@ -774,7 +774,7 @@ namespace OpenDental {
 			if(sheetField?.FieldType==SheetFieldType.CheckBox){
 				if(sheetField.FieldValue==""){
 					sheetField.FieldValue="X";
-					if(sheetField.RadioButtonValue!=""){
+					if(sheetField.RadioButtonValue!="" || sheetField.RadioButtonGroup!=""){
 						//this is a radioButton, so uncheck others in the group
 						for(int i=0;i<SheetCur.SheetFields.Count;i++){
 							if(sheetField==SheetCur.SheetFields[i]) {

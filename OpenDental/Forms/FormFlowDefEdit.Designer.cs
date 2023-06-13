@@ -135,10 +135,10 @@ namespace OpenDental{
 			this.butRemove.Text = "&Remove";
 			this.butRemove.Click += new System.EventHandler(this.butRemove_Click);
 			// 
-			// gridPatientFlowActions
+			// gridPatientERoutingActions
 			// 
 			this.gridPatientERoutingActions.Location = new System.Drawing.Point(3, 21);
-			this.gridPatientERoutingActions.Name = "gridPatientFlowActions";
+			this.gridPatientERoutingActions.Name = "gridPatientERoutingActions";
 			this.gridPatientERoutingActions.Size = new System.Drawing.Size(214, 246);
 			this.gridPatientERoutingActions.TabIndex = 5;
 			this.gridPatientERoutingActions.Title = "Actions";
@@ -195,7 +195,7 @@ namespace OpenDental{
 			this.groupBoxOD2.Name = "groupBoxOD2";
 			this.groupBoxOD2.Size = new System.Drawing.Size(473, 286);
 			this.groupBoxOD2.TabIndex = 16;
-			this.groupBoxOD2.Text = "ERouting Triggers";
+			this.groupBoxOD2.Text = "eRouting Triggers";
 			// 
 			// butRemoveLinkType
 			// 
@@ -273,7 +273,7 @@ namespace OpenDental{
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(430, 24);
 			this.label2.TabIndex = 17;
-			this.label2.Text = "Determines what actions should take place in this ERoutingand their order.";
+			this.label2.Text = "Determines what actions should take place in this eRouting and their order.";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// label3
@@ -286,7 +286,7 @@ namespace OpenDental{
     "ntered, the eRouting is treated as \"General\".";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
-			// FormFlowDefEdit
+			// FormERoutingDefEdit
 			// 
 			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(933, 465);
@@ -300,8 +300,8 @@ namespace OpenDental{
 			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.groupBoxActions);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.Name = "FormFlowDefEdit";
-			this.Text = "ERouting Def Edit";
+			this.Name = "FormERoutingDefEdit";
+			this.Text = "eRouting Def Edit";
 			this.Load += new System.EventHandler(this.FormPatientFlowEdit_Load);
 			this.groupBoxOD1.ResumeLayout(false);
 			this.groupBoxActions.ResumeLayout(false);

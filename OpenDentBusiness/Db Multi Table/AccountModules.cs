@@ -929,7 +929,7 @@ namespace OpenDentBusiness {
 				+"IsOverpay, "
 				+"SUM(InsEstTotalOverride) InsEstTotalOverride_ "
 				+"FROM claimproc "
-				+$"WHERE ClaimProc.IsOverpay=1 OR (Status IN ({POut.Int((int)ClaimProcStatus.Received)},{POut.Int((int)ClaimProcStatus.Supplemental)},{POut.Int((int)ClaimProcStatus.CapClaim)}) "
+				+$"WHERE claimproc.IsOverpay=1 OR (Status IN ({POut.Int((int)ClaimProcStatus.Received)},{POut.Int((int)ClaimProcStatus.Supplemental)},{POut.Int((int)ClaimProcStatus.CapClaim)}) "
 				+"AND (WriteOff!=0 OR InsPayAmt!=0)) ";
 			if(familyPatNums!="") {
 				command+="AND PatNum IN ("+familyPatNums+") ";

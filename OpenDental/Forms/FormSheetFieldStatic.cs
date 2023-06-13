@@ -71,7 +71,7 @@ namespace OpenDental {
 				comboFontName.Items.Add(SheetFieldDefCur.FontName+" (missing)",SheetFieldDefCur.FontName);
 				comboFontName.SetSelected(comboFontName.Items.Count-1);
 			}
-			numFontSize.Value=(decimal)SheetFieldDefCur.FontSize;
+			textFontSize.Text=SheetFieldDefCur.FontSize.ToString();
 			checkFontIsBold.Checked=SheetFieldDefCur.FontIsBold;
 			SheetUtilL.FillComboGrowthBehavior(comboGrowthBehavior,SheetFieldDefCur.GrowthBehavior);
 			for(int i=0;i<Enum.GetNames(typeof(System.Windows.Forms.HorizontalAlignment)).Length;i++) {
@@ -130,7 +130,17 @@ namespace OpenDental {
 
 		/// <summary>This method is tied to any event that could change text size, such as font size, text, or the Bold checkbox.</summary>
 		private void UpdateTextSizeLabels(object sender,EventArgs e) {
-			float fontSize=(float)numFontSize.Value;
+			float fontSize=0;
+			try{
+				fontSize=float.Parse(textFontSize.Text);
+			}
+			catch{
+			}
+			if(fontSize<2){
+				labelTextW.Text=Lan.g(this,"TextW:");
+				labelTextH.Text=Lan.g(this,"TextH:");
+				return;
+			}
 			FontStyle fontStyle=FontStyle.Regular;
 			if(checkFontIsBold.Checked) {
 				fontStyle=FontStyle.Bold;
@@ -196,7 +206,14 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please select a font name first.");
 				return;
 			}
-			float fontSize=(float)numFontSize.Value;
+			float fontSize;
+			try{
+				fontSize=float.Parse(textFontSize.Text);
+			}
+			catch{
+				MsgBox.Show(this,"Font size is invalid.");
+				return;
+			}
 			if(fontSize<2){
 				MsgBox.Show(this,"Font size is invalid.");
 				return;

@@ -24,7 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormERouting));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormERoutings));
 			this.butClose = new OpenDental.UI.Button();
 			this.gridERouting = new OpenDental.UI.GridOD();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
@@ -48,10 +48,10 @@ namespace OpenDental{
 			this.butClose.Text = "&Close";
 			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
-			// gridFlows
+			// gridERouting
 			// 
 			this.gridERouting.Location = new System.Drawing.Point(26, 93);
-			this.gridERouting.Name = "gridFlows";
+			this.gridERouting.Name = "gridERouting";
 			this.gridERouting.Size = new System.Drawing.Size(746, 433);
 			this.gridERouting.TabIndex = 4;
 			this.gridERouting.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridFlowsCellDoubleClick);
@@ -134,7 +134,7 @@ namespace OpenDental{
 			this.butShowAll.Text = "Show All";
 			this.butShowAll.Click += new System.EventHandler(this.butShowAll_Click);
 			// 
-			// FormFlows
+			// FormERoutings
 			// 
 			this.ClientSize = new System.Drawing.Size(795, 582);
 			this.Controls.Add(this.butShowAll);
@@ -148,8 +148,8 @@ namespace OpenDental{
 			this.Controls.Add(this.gridERouting);
 			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.Name = "FormFlows";
-			this.Text = "ERouting";
+			this.Name = "FormERoutings";
+			this.Text = "eRouting";
 			this.Load += new System.EventHandler(this.FormPatientERouting_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
