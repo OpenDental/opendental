@@ -1989,6 +1989,10 @@ namespace OpenDental {
 		#region Methods - Event Handlers ToolBarMain
 		private void ToolBarMain_ButtonClick(object sender,ODToolBarButtonClickEventArgs e) {
 			if(e.Button.Tag.GetType()==typeof(string)){
+				if(Patients.GetPat(_patCur.PatNum).PatStatus==PatientStatus.Deleted) {
+					MsgBox.Show(this, "Selected patient has been deleted by another workstation.");
+					return;
+				}
 				//standard predefined button
 				switch(e.Button.Tag.ToString()){
 					//case "Patient":

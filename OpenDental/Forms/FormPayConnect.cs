@@ -532,6 +532,8 @@ namespace OpenDental {
 				_creditCard.PayConnectToken=_transResponse.PaymentToken.TokenId;
 				_creditCard.PayConnectTokenExp=new DateTime(_transResponse.PaymentToken.Expiration.year,_transResponse.PaymentToken.Expiration.month,
 					DateTime.DaysInMonth(_transResponse.PaymentToken.Expiration.year,_transResponse.PaymentToken.Expiration.month));
+				_creditCard.Procedures=PrefC.GetString(PrefName.DefaultCCProcs);
+				CreditCards.Insert(_creditCard);
 			}
 			else {
 				if(_creditCard.CCSource==CreditCardSource.XServer) {//This card has also been added for XCharge.
