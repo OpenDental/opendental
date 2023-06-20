@@ -5074,6 +5074,11 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}
 		}//End To23_1_20
+
+		private static void To23_1_23() {
+			string command="INSERT INTO preference (PrefName,ValueString) VALUES ('ToothChartExternalProcess','2')";
+			Db.NonQ(command);
+		}//End of 23_1_23() method
 	}
 }
 

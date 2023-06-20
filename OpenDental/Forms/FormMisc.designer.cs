@@ -381,12 +381,12 @@ namespace OpenDental {
 			// 
 			// checkAllowRefreshWhileTyping
 			// 
+			this.checkAllowRefreshWhileTyping.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkAllowRefreshWhileTyping.Location = new System.Drawing.Point(55, 83);
 			this.checkAllowRefreshWhileTyping.Name = "checkAllowRefreshWhileTyping";
-			this.checkAllowRefreshWhileTyping.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.checkAllowRefreshWhileTyping.Size = new System.Drawing.Size(382, 18);
 			this.checkAllowRefreshWhileTyping.TabIndex = 293;
-			this.checkAllowRefreshWhileTyping.Text = "Allow Refresh While Typing in Select Patient Window";
+			this.checkAllowRefreshWhileTyping.Text = "Allow Refresh while typing in Select Patient window";
 			// 
 			// checkShowInactivePatientsDefault
 			// 

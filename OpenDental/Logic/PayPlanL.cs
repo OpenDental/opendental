@@ -476,6 +476,10 @@ namespace OpenDental {
 						if(listPaySplits[k].PayPlanChargeNum!=listPayPlanCharges[j].PayPlanChargeNum) {
 							continue;
 						}
+						string descript="Payment";
+						if(listPaySplits[k].PayPlanDebitType!=PayPlanDebitTypes.Unknown) {//Not a legacy split or a current prepayment.
+							descript+=" ("+listPaySplits[k].PayPlanDebitType+")";
+						}
 						row=new GridRow();
 						row.Cells.Add("");//Date Added
 						row.Cells.Add(listPaySplits[k].DatePay.ToShortDateString());//Date
@@ -483,7 +487,7 @@ namespace OpenDental {
 						if(PrefC.HasClinicsEnabled) {
 							row.Cells.Add("");//Clinic
 						}
-						row.Cells.Add("Payment ("+listPaySplits[k].PayPlanDebitType+")");//Description
+						row.Cells.Add(descript);//Description
 						row.Cells.Add(listPaySplits[k].SplitAmt.ToString("n"));//Amount
 						row.Cells.Add("");//Amount Override
 						row.ColorText=Defs.GetDefByExactName(DefCat.AccountColors,"Payment").ItemColor;

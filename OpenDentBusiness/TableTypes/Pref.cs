@@ -2196,6 +2196,8 @@ namespace OpenDentBusiness {
 		/// <summary>Boolean. 0 by default.  When enabled, Main title bar and Account module patient select grid will display the Patient's 
 		/// specialty.</summary>
 		TitleBarShowSpecialty,
+		///<summary>Tooth Chart uses external process to generate on the eConnector.Stores a YN enum.</summary>
+		ToothChartExternalProcess,
 		///<summary>Deprecated.  Not used anywhere.</summary>
 		ToothChartMoveMenuToRight,
 		///<summary>Prepayments for TP procedures are non-refundable. When appointment is broken that has one of these payments, payment will go to the 

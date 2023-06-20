@@ -322,6 +322,7 @@ namespace OpenDental{
 			}
 			if(PrefC.GetBool(PrefName.EasyHideMedicaid)) {
 				checkAlternateCode.Visible=false;
+				label41.Visible=false;
 			}
 			Program program=Programs.GetCur(ProgramName.Trojan);
 			if(program!=null && program.Enabled) {

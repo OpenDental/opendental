@@ -3685,7 +3685,13 @@ namespace OpenDental {
 			if(sheetFieldDef.TextAlign==HorizontalAlignment.Right){
 				stringFormat.Alignment=StringAlignment.Far;
 			}
-			g.DrawString(str,font,solidBrush,sheetFieldDef.Bounds,stringFormat);
+			if(sheetFieldDef.FieldType==SheetFieldType.InputField || sheetFieldDef.FieldType==SheetFieldType.OutputText) {
+				g.DrawString(str,font,solidBrush,sheetFieldDef.Bounds,stringFormat);
+			}
+			else {//static text needs to spill over the bottom so people can see it's too big for the box.
+				Rectangle rectangleText=new Rectangle(sheetFieldDef.Bounds.X,sheetFieldDef.Bounds.Y,sheetFieldDef.Bounds.Width,sheetFieldDef.Bounds.Height*2);
+				g.DrawString(str,font,solidBrush,rectangleText,stringFormat);
+			}
 			stringFormat?.Dispose();
 		}
 

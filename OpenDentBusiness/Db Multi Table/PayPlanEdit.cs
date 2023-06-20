@@ -738,13 +738,16 @@ namespace OpenDentBusiness {
 		#region PayPlanCredits
 		public static List<PayPlanEntry> CreatePayPlanEntriesForAccountCharges(List<AccountEntry> listAccountCharges,Patient patCur,PayPlan payPlan) {
 			//No remoting role check; no call to db
-			List<AccountEntry> listAccountEntries=listAccountCharges.FindAll(x => x.PayPlanNum==payPlan.PayPlanNum && x.ProcNum!=0);
-			List<long> listProcNums=listAccountEntries.Select(x => x.ProcNum).ToList();
+			List<AccountEntry> listAccountEntries=listAccountCharges.FindAll(x => x.PatNum==patCur.PatNum && x.GetType()==typeof(Procedure));
+			//Find all of the ProcNums associated to this payment plan.
+			List<long> listProcNums=listAccountCharges
+				.Where(x => x.PayPlanNum==payPlan.PayPlanNum 
+					&& x.GetType()==typeof(FauxAccountEntry) 
+					&& ((FauxAccountEntry)x).AccountEntryProc!=null)
+				.Select(x => ((FauxAccountEntry)x).AccountEntryProc.ProcNum)
+				.ToList();
 			List<PayPlanEntry>listPayPlanEntries=new List<PayPlanEntry>();
-			foreach(AccountEntry entryCharge in listAccountCharges) {
-				if(entryCharge.GetType()!=typeof(Procedure) || entryCharge.PatNum!=patCur.PatNum) {
-					continue;
-				}
+			foreach(AccountEntry entryCharge in listAccountEntries) {
 				//Don't make a PayPlanEntry object for procedures that are paid off and have nothing to do with the current payment plan.
 				if(entryCharge.AmountEnd==0 && (listProcNums.IsNullOrEmpty() || !listProcNums.Contains(entryCharge.ProcNum))) {
 					continue;

@@ -124,7 +124,18 @@ namespace OpenDental {
 				}
 				string filePath=(string)row.Tag;
 				ShowStatus(Lan.g(this,"Parsing file")+" "+Path.GetFileName(filePath));
-				string messageText=File.ReadAllText(filePath);
+				string messageText="";
+				//OD will inform users if any of the files they've selected are invalid targets for this operation; however, if we do not catch any raised exceptions here then Windows may crash OD over file lock conflicts
+				try{
+					messageText=File.ReadAllText(filePath);
+				}
+				catch (IOException) {//If the file is locked by the OS, then specify that in the error message
+					row.Cells[_idxErrorCol].Text="Is inaccessible, locked by OS.";
+					continue;
+				}
+				catch (Exception ex) {//Any other exception types will be silently dropped
+					ex.DoNothing();
+				}
 				X12object x12object=X12object.ToX12object(messageText);
 				if(x12object==null) {
 					row.Cells[_idxErrorCol].Text="Is not in X12 format.";

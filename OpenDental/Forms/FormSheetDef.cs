@@ -17,6 +17,8 @@ namespace OpenDental {
 		public bool IsInitial;
 		///<summary>The Autosave feature needs to be considered when there is at least one image category flagged to Autosave Forms.</summary>
 		private bool _doConsiderAutoSave;
+		///<summary>This keeps track of how much font reduction must occur based upon how many times the ReduceFontSize button is pressed in order to update all at once when the butOK button is clicked.  This resets if butCancel or X is clicked.  The sheet and each field could be at a different font, so we can't track an absolute font value.</summary>
+		private float _amountToReduceFontSize=0;
 
 		public FormSheetDef() {
 			InitializeComponent();
@@ -28,6 +30,7 @@ namespace OpenDental {
 			SetHeightWidthMin();
 			if(IsReadOnly){
 				butOK.Enabled=false;
+				butReduceFontSize.Enabled=false;
 			}
 			if(!IsInitial){
 				listSheetType.Enabled=false;
@@ -206,6 +209,29 @@ namespace OpenDental {
 			checkIsLandscape.Checked=SheetDefCur.IsLandscape;
 		}
 
+		private void butReduceFontSize_Click(object sender,EventArgs e) {
+			_amountToReduceFontSize+=0.5f;
+			float fontSize;
+			try {
+				fontSize=float.Parse(textFontSize.Text);
+			}
+			catch{
+				MsgBox.Show(this,"Font size is invalid.");
+				return;
+			}
+			if(fontSize<2.5) {
+				textFontSize.Text="2";
+				return;
+			}
+			fontSize-=0.5f;
+			textFontSize.Text=fontSize.ToString();
+		}
+
+		private void butAbout_Click(object sender,EventArgs e) {
+			MsgBox.Show(this,"When updating to 23.1 from previous versions, the horizontal space between letters within sheets has increased slightly.  If some text no longer fits inside the boxes, there are two ways to fix it:\r\n1. Make the field boundaries bigger.  This can work for just a few fields.\r\n2. Use this tool to reduce the font size for all text fields in the entire sheet. This can be done repeatedly if needed.");
+			return;
+		}
+
 		private void butOK_Click(object sender,EventArgs e) {
 			if(!textWidth.IsValid() || !textHeight.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
@@ -269,6 +295,21 @@ namespace OpenDental {
 			SheetDefCur.HasMobileLayout=checkHasMobileLayout.Checked;
 			SheetDefCur.AutoCheckSaveImage=SetAutoCheckEnabled(SheetDefCur.SheetType) && checkAutoSaveCheck.Checked;
 			SheetDefCur.AutoCheckSaveImageDocCategory=comboAutoSaveOverride.GetSelectedDefNum();
+			List<SheetFieldDef> listSheetFieldDefs=SheetDefCur.SheetFieldDefs;
+			for(int i=0;i<listSheetFieldDefs.Count();i++) {
+				if(listSheetFieldDefs[i].FieldType!=SheetFieldType.InputField
+					&& listSheetFieldDefs[i].FieldType!=SheetFieldType.OutputText
+					&& listSheetFieldDefs[i].FieldType!=SheetFieldType.StaticText)
+				{
+					continue;
+				}
+				if(listSheetFieldDefs[i].FontSize<(_amountToReduceFontSize+2)) {
+					listSheetFieldDefs[i].FontSize=2;
+					continue;
+				}
+				fontSize=listSheetFieldDefs[i].FontSize-_amountToReduceFontSize;
+				listSheetFieldDefs[i].FontSize=fontSize;
+			}
 			//don't save to database here.
 			DialogResult=DialogResult.OK;
 		}

@@ -45,7 +45,13 @@ namespace OpenDental{
 			this.checkAutoSaveCheck = new OpenDental.UI.CheckBox();
 			this.comboAutoSaveOverride = new OpenDental.UI.ComboBox();
 			this.labelAutoSaveOverride = new System.Windows.Forms.Label();
+			this.butReduceFontSize = new OpenDental.UI.Button();
+			this.groupBox2 = new OpenDental.UI.GroupBox();
+			this.label2 = new System.Windows.Forms.Label();
+			this.butAbout = new OpenDental.UI.Button();
+			this.label5 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
+			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// labelSheetType
@@ -173,7 +179,7 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(331, 512);
+			this.butOK.Location = new System.Drawing.Point(417, 505);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
@@ -183,7 +189,7 @@ namespace OpenDental{
 			// butCancel
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(421, 512);
+			this.butCancel.Location = new System.Drawing.Point(505, 505);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 2;
@@ -237,9 +243,60 @@ namespace OpenDental{
 			this.labelAutoSaveOverride.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			this.labelAutoSaveOverride.Visible = false;
 			// 
+			// butReduceFontSize
+			// 
+			this.butReduceFontSize.Location = new System.Drawing.Point(16, 54);
+			this.butReduceFontSize.Name = "butReduceFontSize";
+			this.butReduceFontSize.Size = new System.Drawing.Size(98, 24);
+			this.butReduceFontSize.TabIndex = 107;
+			this.butReduceFontSize.Text = "Reduce Font Size";
+			this.butReduceFontSize.UseVisualStyleBackColor = true;
+			this.butReduceFontSize.Click += new System.EventHandler(this.butReduceFontSize_Click);
+			// 
+			// groupBox2
+			// 
+			this.groupBox2.Controls.Add(this.label5);
+			this.groupBox2.Controls.Add(this.label2);
+			this.groupBox2.Controls.Add(this.butAbout);
+			this.groupBox2.Controls.Add(this.butReduceFontSize);
+			this.groupBox2.Location = new System.Drawing.Point(394, 332);
+			this.groupBox2.Name = "groupBox2";
+			this.groupBox2.Size = new System.Drawing.Size(162, 107);
+			this.groupBox2.TabIndex = 108;
+			this.groupBox2.Text = "Sheet Font Size Reduction";
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(118, 58);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(40, 16);
+			this.label2.TabIndex = 109;
+			this.label2.Text = "by 0.5";
+			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// butAbout
+			// 
+			this.butAbout.Location = new System.Drawing.Point(16, 24);
+			this.butAbout.Name = "butAbout";
+			this.butAbout.Size = new System.Drawing.Size(98, 24);
+			this.butAbout.TabIndex = 108;
+			this.butAbout.Text = "About this tool";
+			this.butAbout.UseVisualStyleBackColor = true;
+			this.butAbout.Click += new System.EventHandler(this.butAbout_Click);
+			// 
+			// label5
+			// 
+			this.label5.Location = new System.Drawing.Point(16, 81);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(143, 18);
+			this.label5.TabIndex = 110;
+			this.label5.Text = "changes all fields on sheet";
+			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// FormSheetDef
 			// 
-			this.ClientSize = new System.Drawing.Size(508, 548);
+			this.ClientSize = new System.Drawing.Size(594, 541);
+			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.labelAutoSaveOverride);
 			this.Controls.Add(this.comboAutoSaveOverride);
 			this.Controls.Add(this.checkAutoSaveCheck);
@@ -263,6 +320,7 @@ namespace OpenDental{
 			this.Load += new System.EventHandler(this.FormSheetDef_Load);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
+			this.groupBox2.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -291,5 +349,10 @@ namespace OpenDental{
 		private OpenDental.UI.CheckBox checkAutoSaveCheck;
 		private UI.ComboBox comboAutoSaveOverride;
 		private System.Windows.Forms.Label labelAutoSaveOverride;
+		private UI.Button butReduceFontSize;
+		private UI.GroupBox groupBox2;
+		private System.Windows.Forms.Label label2;
+		private UI.Button butAbout;
+		private System.Windows.Forms.Label label5;
 	}
 }

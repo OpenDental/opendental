@@ -896,16 +896,11 @@ namespace OpenDental {
 		}
 
 		private void butGoto_Click(object sender,System.EventArgs e) {
-			if(_formTaskNoteEdit!=null && !_formTaskNoteEdit.IsDisposed) {
-				MsgBox.Show(this,"One or more task note edit windows are open and must be closed.");
-				return;
-			}
-			if(!SaveCur()) {
+			if(!TrySaveAndShouldClose()) {
 				return;
 			}
 			TaskObjectTypeGoTo=TaskCur.ObjectType;
 			KeyNumGoTo=TaskCur.KeyNum;
-			DialogResult=DialogResult.OK;
 			Close();
 			FormOpenDental.S_TaskGoTo(TaskObjectTypeGoTo,KeyNumGoTo);
 		}
@@ -1296,6 +1291,33 @@ namespace OpenDental {
 			return true;
 		}
 
+		///<summary>Tries to save the task based on the current state of the window. Warns the user if anything is wrong.
+		///Sets the DialogResult correctly and sends task signals if necessary.
+		///Returns true if the calling method should close the window. Otherwise false, which indicates that the window should stay open.</summary>
+		private bool TrySaveAndShouldClose() {
+			if(_formTaskNoteEdit != null && !_formTaskNoteEdit.IsDisposed) {
+				MsgBox.Show(this,"One or more task note edit windows are open and must be closed.");
+				return false;
+			}
+			if(!SaveCur()) {//If user clicked OK without changing anything, then this will have no effect.
+				return false;
+			}
+			if(TaskCur.Equals(_taskOld) && !_hasStatusChanged) {//if there were no changes, then don't bother with the signal
+				DialogResult=DialogResult.OK;
+				return true;
+			}
+			if(IsNew || textDescript.Text!=TaskCur.Descript //notes or descript changed
+				|| (DidNotesChange && _taskOld.TaskStatus==TaskStatusEnum.Done) //Because the taskunread would not have been inserted when saving the note
+				|| (_taskOld.ReminderType==TaskReminderType.NoReminder && TaskCur.ReminderType!=TaskReminderType.NoReminder)) //Add taskunread for when "due"
+			{
+				Signalods.SetInvalid(InvalidType.TaskPopup,KeyType.Task,TaskCur.TaskNum);//popup
+				TaskUnreads.AddUnreads(TaskCur,Security.CurUser.UserNum);//we also need to tell the database about all the users with unread tasks
+			}
+			SendSignalsRefillLocal(TaskCur);
+			DialogResult=DialogResult.OK;
+			return true;
+		}
+
 		private void butRefresh_Click(object sender,EventArgs e) {
 			RefreshTask();
 		}
@@ -1559,27 +1581,9 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender,System.EventArgs e) {
-			if(_formTaskNoteEdit != null && !_formTaskNoteEdit.IsDisposed) {
-				MsgBox.Show(this,"One or more task note edit windows are open and must be closed.");
+			if(!TrySaveAndShouldClose()) {
 				return;
 			}
-			if(!SaveCur()) {//If user clicked OK without changing anything, then this will have no effect.
-				return;
-			}
-			if(TaskCur.Equals(_taskOld) && !_hasStatusChanged) {//if there were no changes, then don't bother with the signal
-				DialogResult=DialogResult.OK;
-				Close();
-				return;
-			}
-			if(IsNew || textDescript.Text!=TaskCur.Descript //notes or descript changed
-				|| (DidNotesChange && _taskOld.TaskStatus==TaskStatusEnum.Done) //Because the taskunread would not have been inserted when saving the note
-				|| (_taskOld.ReminderType==TaskReminderType.NoReminder && TaskCur.ReminderType!=TaskReminderType.NoReminder)) //Add taskunread for when "due"
-			{
-				Signalods.SetInvalid(InvalidType.TaskPopup,KeyType.Task,TaskCur.TaskNum);//popup
-				TaskUnreads.AddUnreads(TaskCur,Security.CurUser.UserNum);//we also need to tell the database about all the users with unread tasks
-			}
-			SendSignalsRefillLocal(TaskCur);
-			DialogResult=DialogResult.OK;
 			Close();
 		}
 

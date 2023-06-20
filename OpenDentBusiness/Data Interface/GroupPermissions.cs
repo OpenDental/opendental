@@ -622,7 +622,7 @@ namespace OpenDentBusiness{
 				//case Permissions.ShowFeatures:
 				//case Permissions.PrinterSetup:
 				//case Permissions.ProviderAdd:
-				case Permissions.ClinicEdit:
+				//case Permissions.ClinicEdit:
 				case Permissions.ApiAccountEdit:
 				//case Permissions.RegistrationKeyCreate:
 				//case Permissions.RegistrationKeyEdit:

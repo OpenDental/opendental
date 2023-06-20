@@ -129,10 +129,10 @@ namespace OpenDental {
 			// 
 			this.timePickerReminder.CustomFormat = "hh:mm:ss tt";
 			this.timePickerReminder.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-			this.timePickerReminder.Location = new System.Drawing.Point(150, 35);
+			this.timePickerReminder.Location = new System.Drawing.Point(165, 35);
 			this.timePickerReminder.Name = "timePickerReminder";
 			this.timePickerReminder.ShowUpDown = true;
-			this.timePickerReminder.Size = new System.Drawing.Size(89, 20);
+			this.timePickerReminder.Size = new System.Drawing.Size(96, 20);
 			this.timePickerReminder.TabIndex = 4;
 			this.timePickerReminder.Visible = false;
 			// 
@@ -242,7 +242,7 @@ namespace OpenDental {
 			this.groupReminder.Controls.Add(this.panelReminderDays);
 			this.groupReminder.Location = new System.Drawing.Point(336, 1);
 			this.groupReminder.Name = "groupReminder";
-			this.groupReminder.Size = new System.Drawing.Size(250, 93);
+			this.groupReminder.Size = new System.Drawing.Size(265, 93);
 			this.groupReminder.TabIndex = 169;
 			this.groupReminder.Text = "Reminder";
 			this.groupReminder.Visible = false;
@@ -253,7 +253,7 @@ namespace OpenDental {
 			this.datePickerReminder.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
 			this.datePickerReminder.Location = new System.Drawing.Point(4, 35);
 			this.datePickerReminder.Name = "datePickerReminder";
-			this.datePickerReminder.Size = new System.Drawing.Size(144, 20);
+			this.datePickerReminder.Size = new System.Drawing.Size(159, 20);
 			this.datePickerReminder.TabIndex = 2;
 			this.datePickerReminder.Visible = false;
 			// 
@@ -264,7 +264,7 @@ namespace OpenDental {
 			this.panelReminderFrequency.Controls.Add(this.label2);
 			this.panelReminderFrequency.Location = new System.Drawing.Point(1, 34);
 			this.panelReminderFrequency.Name = "panelReminderFrequency";
-			this.panelReminderFrequency.Size = new System.Drawing.Size(245, 22);
+			this.panelReminderFrequency.Size = new System.Drawing.Size(260, 22);
 			this.panelReminderFrequency.TabIndex = 2;
 			this.panelReminderFrequency.TabStop = true;
 			// 
@@ -312,7 +312,7 @@ namespace OpenDental {
 			this.comboReminderRepeat.FormattingEnabled = true;
 			this.comboReminderRepeat.Location = new System.Drawing.Point(93, 10);
 			this.comboReminderRepeat.Name = "comboReminderRepeat";
-			this.comboReminderRepeat.Size = new System.Drawing.Size(153, 21);
+			this.comboReminderRepeat.Size = new System.Drawing.Size(168, 21);
 			this.comboReminderRepeat.TabIndex = 1;
 			this.comboReminderRepeat.SelectedIndexChanged += new System.EventHandler(this.comboReminderRepeat_SelectedIndexChanged);
 			// 
@@ -329,7 +329,7 @@ namespace OpenDental {
 			this.panelReminderDays.Controls.Add(this.checkReminderRepeatThursday);
 			this.panelReminderDays.Location = new System.Drawing.Point(1, 55);
 			this.panelReminderDays.Name = "panelReminderDays";
-			this.panelReminderDays.Size = new System.Drawing.Size(245, 32);
+			this.panelReminderDays.Size = new System.Drawing.Size(260, 32);
 			this.panelReminderDays.TabIndex = 3;
 			this.panelReminderDays.TabStop = true;
 			// 

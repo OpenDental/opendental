@@ -5945,7 +5945,7 @@ namespace OpenDentBusiness {
 		///of the remaining SuperFamily as the new SuperHead, we use the new Guarantor of the previous SuperHead as the new SuperHead, or in the event 
 		///the old SuperHead has been moved to a new SuperFamily we use the SuperHead of that SuperFamily, effectively merging the SuperFamily into this 
 		///new Family/SuperFamily where the previous SuperHead now resides.</summary>
-		[DbmMethodAttr(IsReplicationUnsafe=true)]
+		[DbmMethodAttr(IsReplicationUnsafe=true,IsOneOff=true)]
 		public static string PatientInvalidSuperFamilyHead(bool verbose,DbmMode modeCur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
@@ -6012,11 +6012,6 @@ namespace OpenDentBusiness {
 							+countValidPatientsStartingNewSuperFamily.ToString()+"\r\n";
 						Crud.DbmLogCrud.InsertMany(listDbmLogs);
 					}
-					//This is the first implementation of a Dbm that should be moved to the Old tab once it has been run once.  The thought is that we have 
-					//added a bug fix that prevents this scenario from occurring again, so it is unreasonable to include the Dbm in the normal list of 'Checks'
-					//anymore, where it would run every time and eat up processing power and time.
-					MoveToOld(methodName);
-					log+=Lans.g("FormDatabaseMaintenance","DatabaseMaintenance method moved to Old tab")+": "+methodName;
 					break;
 			}
 			return log;
@@ -6783,7 +6778,7 @@ namespace OpenDentBusiness {
 			return log;
 		}
 
-		[DbmMethodAttr(IsReplicationUnsafe=true)]
+		[DbmMethodAttr(IsReplicationUnsafe=true,IsOneOff=true)]
 		public static string PaySplitTransfersWithNoUnearnedType(bool verbose,DbmMode modeCur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
@@ -6825,7 +6820,6 @@ namespace OpenDentBusiness {
 					if(count > 0 || verbose) {
 						log+=Lans.g("FormDatabaseMaintenance","Paysplit transfers with no UnearnedType fixed")+": "+count;
 					}
-					MoveToOld(methodName);
 					break;
 			}
 			return log;

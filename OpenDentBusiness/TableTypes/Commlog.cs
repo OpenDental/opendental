@@ -29,7 +29,7 @@ namespace OpenDentBusiness{
 		//public bool IsStatementSent;
 		///<summary>FK to userod.UserNum.</summary>
 		public long UserNum;
-		///<summary>Signature.  For details, see procedurelog.Signature.</summary>
+		///<summary>Signature.  For details, see procnote.Signature.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string Signature;
 		///<summary>True if signed using the Topaz signature pad, false otherwise.</summary>
