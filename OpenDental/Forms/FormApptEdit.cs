@@ -1409,7 +1409,7 @@ namespace OpenDental{
 						Procedure procedure=(Procedure)gridProc.ListGridRows[j].Tag;
 						if(procedure.CodeNum==listProcedureCodesApptType[i].CodeNum
 							//if the procedure code already exists in the grid and it's not attached to another appointment or planned appointment
-							&& (_isPlanned && (procedure.PlannedAptNum==0 || procedure.PlannedAptNum==_appointment.AptNum)
+							&& (_isPlanned && procedure.AptNum==0 && (procedure.PlannedAptNum==0 || procedure.PlannedAptNum==_appointment.AptNum)
 								|| (!_isPlanned && (procedure.AptNum==0 || procedure.AptNum==_appointment.AptNum)))
 							//The row is not already selected. This is necessary so that Apt Types with two of the same procs will select both procs.
 							&& !gridProc.SelectedIndices.Contains(j)) {

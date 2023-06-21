@@ -11209,23 +11209,21 @@ HAVING cnt>1";
 				HAVING COUNT(*)>1";
 			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Getting duplicate email messages from the database..."));
 			List<string> listDupMsgNums=Db.GetListString(command);
-			if(listDupMsgUidNums.Count==0) {
+			if(listDupMsgNums.Count==0) {
 				return Lans.g("DatabaseMaintenance","There are no duplicate emails that need to be cleaned up.");
 			}
-     	if(listDupMsgNums.Count>0) {
-				for(int i=0;i<listDupMsgNums.Count;i++) {
-					try {
-						List<string> listMsgNums=listDupMsgNums[i].Split(",",StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();//Keep one of the EmailMessageNums
-						if(listMsgNums.Count==0) {
-							continue;
-						}
-						ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting duplicate email messages from the database..."));
-						Db.NonQ($"DELETE FROM emailmessage WHERE EmailMessageNum IN({string.Join(",",listMsgNums)})");
+			for(int i=0;i<listDupMsgNums.Count;i++) {
+				try {
+					List<string> listMsgNums=listDupMsgNums[i].Split(",",StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();//Keep one of the EmailMessageNums
+					if(listMsgNums.Count==0) {
+						continue;
 					}
-					catch(Exception ex) {
-						ex.DoNothing();
-						continue; //Skip any failures and continue
-					}
+					ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting duplicate email messages from the database..."));
+					Db.NonQ($"DELETE FROM emailmessage WHERE EmailMessageNum IN({string.Join(",",listMsgNums)})");
+				}
+				catch(Exception ex) {
+					ex.DoNothing();
+					continue; //Skip any failures and continue
 				}
 			}
 			if(DataConnection.DBtype==DatabaseType.MySql) {//Using MySQL.

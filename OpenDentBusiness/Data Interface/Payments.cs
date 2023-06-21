@@ -345,7 +345,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Insert Payment and PaySplit. Returns newly inserted Payment.PayNum.</summary>
-		public static long InsertFromPayConnect(long patNum,long provNum,long clinicNum,double amount,string payNote,string receipt,CreditCardSource ccSource,string logGuid="") {
+		public static long InsertFromPayConnect(long patNum,long provNum,long clinicNum,double amount,string payNote,string receipt,CreditCardSource ccSource,string logGuid="",double merchantFee=0) {
 			//No need to check MiddleTierRole;no call to db.
 			Payment payment=new Payment() {
 				ClinicNum=clinicNum,
@@ -359,6 +359,7 @@ namespace OpenDentBusiness{
 				ProcessStatus=ProcessStat.OnlinePending,
 				Receipt=receipt,
 				PayNote=payNote,
+				MerchantFee=merchantFee,
 			};
 			if(PrefC.GetBool(PrefName.OnlinePaymentsMarkAsProcessed)) {
 				payment.ProcessStatus=ProcessStat.OnlineProcessed;
@@ -418,15 +419,11 @@ namespace OpenDentBusiness{
 			payment.ProcessStatus=ProcessStat.OnlinePending;
 			payment.PayNote=payNote;
 			payment.IsCcCompleted=true;
-			long payNum=Insert(payment);
-			PaySplit paySplit=new PaySplit();
-			paySplit.ClinicNum=clinicNum;
-			paySplit.DatePay=DateTime.Now;
-			paySplit.PatNum=patNum;
-			paySplit.PayNum=payNum;
-			paySplit.ProvNum=provNum;
-			paySplit.SplitAmt=amount;
-			PaySplits.Insert(paySplit);
+			if(PrefC.GetBool(PrefName.OnlinePaymentsMarkAsProcessed)) {
+				payment.ProcessStatus=ProcessStat.OnlineProcessed;
+			}
+			Patient patient=Patients.GetPat(patNum);
+			long payNum=ProcessPaymentForWeb(payment,patient,amount);
 			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,patNum,Lans.g("Payments.InsertFromPaySimple","PaySimple payment by") + " "
 				+ Patients.GetLim(patNum).GetNameLF() + ", " + amount.ToString("c"),LogSources.PaymentPortal);
 			return payNum;

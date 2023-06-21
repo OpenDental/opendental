@@ -903,7 +903,7 @@ namespace OpenDental{
 		}
 
 		private void LimitedCustomStatementLayoutHelper() {
-			this.DisableAllExcept(butDelete,butPreview,butCancel,butOK,checkIntermingled,checkExportCSV,checkShowLName,checkExcludeTxfr, checkHidePayment,butPrint,butEmail,butPatPortal,textNote,textNoteBold,listMode,label1,label2,label3,label4,textDate);
+			this.DisableAllExcept(butDelete,butPreview,butCancel,butOK,checkIsSent,checkIntermingled,checkExportCSV,checkShowLName,checkExcludeTxfr, checkHidePayment,butPrint,butEmail,butPatPortal,textNote,textNoteBold,listMode,label1,label2,label3,label4,textDate);
 			checkSuperStatement.Checked=false;
 			checkSinglePatient.Checked=false;
 			if(StatementCur.LimitedCustomFamily==EnumLimitedCustomFamily.Patient) {

@@ -295,6 +295,10 @@ namespace OpenDental {
 			SheetDefCur.HasMobileLayout=checkHasMobileLayout.Checked;
 			SheetDefCur.AutoCheckSaveImage=SetAutoCheckEnabled(SheetDefCur.SheetType) && checkAutoSaveCheck.Checked;
 			SheetDefCur.AutoCheckSaveImageDocCategory=comboAutoSaveOverride.GetSelectedDefNum();
+			if(SheetDefCur.SheetFieldDefs==null) { // A new sheet def, so it will not have sheet field defs. 
+				DialogResult=DialogResult.OK;
+				return;
+			}
 			List<SheetFieldDef> listSheetFieldDefs=SheetDefCur.SheetFieldDefs;
 			for(int i=0;i<listSheetFieldDefs.Count();i++) {
 				if(listSheetFieldDefs[i].FieldType!=SheetFieldType.InputField

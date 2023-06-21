@@ -79,7 +79,7 @@ namespace OpenDental {
 				if(_listClinicsAll[i].IsHidden) {
 					continue;
 				}
-				comboWebSchedClinic.Items.Add(_listClinicsAll[i].Abbr);
+				comboWebSchedClinic.Items.Add(_listClinicsAll[i].Abbr,_listClinicsAll[i]);
 			}
 			comboWebSchedClinic.SelectedIndex=0;
 			_listProvidersAll=Providers.GetDeepCopy(true).FindAll(x => !x.IsNotPerson);//Make sure that we only return not is not persons.
@@ -457,7 +457,7 @@ namespace OpenDental {
 		private void comboWebSchedClinic_SelectionChangeCommitted(object sender,EventArgs e) {
 			_clinicNum=0;
 			if(comboWebSchedClinic.SelectedIndex>0) {//Greater than 0 due to "Unassigned"
-				_clinicNum=_listClinicsAll[comboWebSchedClinic.SelectedIndex-1].ClinicNum;//-1 for 'Unassigned'
+				_clinicNum=comboWebSchedClinic.GetSelected<Clinic>().ClinicNum;
 			}
 		}
 

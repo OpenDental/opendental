@@ -25,6 +25,12 @@ namespace OpenDental {
 		///This is used to populate gridOld.</summary>
 		private List<MethodInfo> _listMethodInfosOld;
 		private long _patNum;
+		///<summary>True if the user has been prompted to enter a password, and successfully entered the password for replication DBMs. False otherwise.</summary>
+		private bool _isReplicationPasswordEntered=false;
+		///<summary>Set on load, true if we detect the office is using replication. Otherwise false.</summary>
+		private bool _isUsingReplication=false;
+		///<summary>True if the MySQL user has the privileges necessary to determine if the database is using replication (REPLICATION CLIENT and SUPER). Otherwise, false.</summary>
+		private bool _hasReplicationPermission=true;
 
 		///<summary>Ensures the column name matches the name for looking up the column index when grids have different column lengths.</summary>
 		private readonly string BREAKDOWN_COLUMN_NAME="Break\r\nDown";
@@ -51,6 +57,12 @@ namespace OpenDental {
 			FillGrid();
 			FillGridOld();
 			FillGridHidden();
+			try {
+				_isUsingReplication=ReplicationServers.IsUsingReplication();
+			}
+			catch {
+				_hasReplicationPermission=false;
+			}
 		}
 
 		private void FillGrid() {
@@ -143,8 +155,12 @@ namespace OpenDental {
 			}
 			string strResult;
 			int[] selectedIndices=gridCur.SelectedIndices;
+			if(dbmModeCur==DbmMode.Fix && HasReplicationUnsafeMethods(gridCur)){
+				VerifyPermissionToRunReplicationUnsafeMethods();
+			}
 			for(int i=0;i<gridCur.SelectedIndices.Length;i++) {
-				DbmMethodAttr dbmMethodAttr=(DbmMethodAttr)Attribute.GetCustomAttribute((MethodInfo)gridCur.ListGridRows[gridCur.SelectedIndices[i]].Tag,typeof(DbmMethodAttr));
+				MethodInfo methodInfo=(MethodInfo)gridCur.ListGridRows[gridCur.SelectedIndices[i]].Tag;
+				DbmMethodAttr dbmMethodAttr=(DbmMethodAttr)Attribute.GetCustomAttribute(methodInfo,typeof(DbmMethodAttr));
 				//We always send verbose and modeCur into all DBM methods.
 				List<object> listObjectsParameters=new List<object>() { isVerbose,dbmModeCur };
 				//There are optional paramaters available to some methods and adding them in the following order is very important.
@@ -154,17 +170,9 @@ namespace OpenDental {
 				gridCur.ScrollToIndexBottom(gridCur.SelectedIndices[i]);
 				UpdateResultTextForRow(gridCur.SelectedIndices[i],Lan.g("FormDatabaseMaintenance","Running")+"...",gridCur);
 				gridCur.SetSelected(selectedIndices,true);//Reselect all rows that were originally selected.
-				try {
-					strResult=(string)((MethodInfo)gridCur.ListGridRows[gridCur.SelectedIndices[i]].Tag).Invoke(null,listObjectsParameters.ToArray());
-				}
-				catch(Exception ex) {
-					if(ex.InnerException!=null) {
-						ExceptionDispatchInfo.Capture(ex.InnerException).Throw();//This preserves the stack trace of the InnerException.
-					}
-					throw;
-				}
+				strResult=RunMethod(methodInfo,dbmModeCur,listObjectsParameters);
 				if(dbmModeCur==DbmMode.Fix) {
-					DatabaseMaintenances.UpdateDateLastRun(((MethodInfo)gridCur.ListGridRows[gridCur.SelectedIndices[i]].Tag).Name);
+					DatabaseMaintenances.UpdateDateLastRun(methodInfo.Name);
 				}
 				string strStatus="";
 				if(strResult=="") {//Only possible if running a check / fix in non-verbose mode and nothing happened or needs to happen.
@@ -180,12 +188,74 @@ namespace OpenDental {
 				//_isCacheInvalid=true;//Flag cache to be invalidated on closing.  Some DBM fixes alter cached tables.
 			}
 		}
+		
+		private string RunMethod(MethodInfo methodInfo,DbmMode dbmModeCur,List<object> listObjectsParameters) {
+			if(dbmModeCur==DbmMode.Fix) {
+				DbmMethodAttr dbmMethodAttr=(DbmMethodAttr)Attribute.GetCustomAttribute(methodInfo,typeof(DbmMethodAttr));
+				if(dbmMethodAttr!=null && dbmMethodAttr.IsReplicationUnsafe) {
+					if(!_hasReplicationPermission){
+						return "Replication unsafe method, requires MySQL privilege REPLICATION CLIENT or SUPER";
+					}
+					if(_isUsingReplication && !_isReplicationPasswordEntered) {
+						return "Replication unsafe method, unable to run without authorization.";
+					}
+				}
+			}
+			try {
+				return (string)(methodInfo.Invoke(null,listObjectsParameters.ToArray()));
+			}
+			catch(Exception ex) {
+				if(ex.InnerException!=null) {
+					ExceptionDispatchInfo.Capture(ex.InnerException).Throw();//This preserves the stack trace of the InnerException.
+				}
+				throw;
+			}
+		}
+
 		///<summary>Looks at _listDatabaseMaintenances to determine Old and Hidden status and then returns the corresponding MethodInfos from _listDbmMethodInfosDbm.</summary>
 		private List<MethodInfo> DbmMethodsForGridHelper(bool isHidden=false,bool isOld=false) {
 			List<string> listStrMethods=_listDatabaseMaintenances.FindAll(x => x.IsHidden==isHidden && x.IsOld==isOld)
 				.Select(y => y.MethodName)
 				.ToList();
 			return _listMethodInfosDbm.FindAll(x => listStrMethods.Contains(x.Name));
+		}
+
+		private void VerifyPermissionToRunReplicationUnsafeMethods() {
+			if(_isReplicationPasswordEntered) {
+				return;
+			}
+			if(!_hasReplicationPermission) {
+				MsgBox.Show(this,"Unable to determine if replication is enabled without the MySQL privileges REPLICATION CLIENT or SUPER." +
+					" At least one dbm method is not safe to run when replication is enabled. Unsafe methods will be skipped.");
+				return;
+			}
+			if(!MsgBox.Show(MsgBoxButtons.YesNo,"At least one dbm method is not safe to run when replication is enabled. Would you like to continue?")) {
+				return;
+			}
+			using InputBox inputBox=new InputBox("Please enter password");
+			inputBox.setTitle("Run Replication Unsafe DBMs");
+			inputBox.textResult.PasswordChar='*';
+			inputBox.ShowDialog();
+			if(inputBox.DialogResult!=DialogResult.OK) {
+				return;
+			}
+			if(inputBox.textResult.Text!="abracadabra") {
+				MsgBox.Show(this,"Wrong password");
+				return;
+			}
+			_isReplicationPasswordEntered=true;
+		}
+
+		///<summary>Returns true if any of the selected gridrows have a method tag that is marked as IsReplicationUnsafe and the office is running replication. Otherwise false.</summary>
+		private bool HasReplicationUnsafeMethods(GridOD grid) {
+			List<MethodInfo> listGridRowTags=grid.SelectedTags<MethodInfo>();
+			for(int i=0;i<listGridRowTags.Count;i++) {
+				DbmMethodAttr dbmMethodAttr=(DbmMethodAttr)Attribute.GetCustomAttribute(listGridRowTags[i],typeof(DbmMethodAttr));
+				if(dbmMethodAttr!=null && dbmMethodAttr.IsReplicationUnsafe && (_isUsingReplication || !_hasReplicationPermission)) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		///<summary>Updates the result column for the specified row in the grid with the text passed in.</summary>

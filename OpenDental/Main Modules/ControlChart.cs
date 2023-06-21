@@ -8319,11 +8319,15 @@ namespace OpenDental {
 					erxOption=ErxOption.DoseSpot;
 				}
 			}
+			bool willSeeProviderPicker=false;
+			if(erxOption==ErxOption.DoseSpot && isEmp && !isShowRefillsAndErrors) {
+				willSeeProviderPicker=true;
+			}
 			#region Provider Term Date Check
 			//Prevents prescriptions from being added that have a provider selected that is past their term date
 			string message="";
 			List<long> listInvalidProvs=Providers.GetInvalidProvsByTermDate(new List<long> { provider.ProvNum },DateTime.Now);
-			if(listInvalidProvs.Count>0) {
+			if(listInvalidProvs.Count>0 && !willSeeProviderPicker) {
 				if(!isEmp && Security.CurUser.ProvNum!=0) {
 					message="The provider attached to this user has a Term Date that has expired. "
 						+"Please select another user or change the provider's term date.";
@@ -8336,6 +8340,10 @@ namespace OpenDental {
 				return;
 			}
 			#endregion Provider Term Date Check
+			if(!willSeeProviderPicker && provider.IsHidden) {
+				MsgBox.Show(this,"The primary provider for this patient is hidden. Please select another provider.");
+				return;
+			}
 			if(erxOption==ErxOption.NewCrop) {
 				if(ODBuild.IsWeb()) {
 					//ODCloud does not support NewCrop eRx.
@@ -8493,7 +8501,7 @@ namespace OpenDental {
 						if(!listProviders.Any(x => x.ProvNum==provider.ProvNum)) {
 							listProviders.Add(provider);
 						}
-						using FormProviderPick formProviderPick=new FormProviderPick(listProviders);
+						using FormProviderPick formProviderPick=new FormProviderPick(listProviders.FindAll(x =>!x.IsHidden));
 						formProviderPick.ProvNumSelected=provider.ProvNum;
 						formProviderPick.IsNoneAvailable=false;
 						formProviderPick.IsShowAllAvailable=true;
@@ -8523,6 +8531,10 @@ namespace OpenDental {
 							return;
 						}
 						provider=Providers.GetProv(formProviderPick.ProvNumSelected);
+						if(provider.IsHidden) {
+							MsgBox.Show(this,"The primary provider for this patient is hidden. Please select another provider.");
+							return;
+						}
 						#region Provider Term Date Check
 						//Prevents prescriptions from being added that have a provider selected that is past their term date
 						listInvalidProvs=Providers.GetInvalidProvsByTermDate(new List<long> { provider.ProvNum },DateTime.Now);

@@ -40,7 +40,7 @@ namespace OpenDentBusiness {
 			if(!hasAllProvs) {
 				query+="AND procedurelog.ProvNum IN ("+String.Join(",",listProvNums)+") ";
 			}
-			if(hasClinicsEnabled) {
+			if(hasClinicsEnabled && listClinicNums.Count>0) {
 				query+="AND procedurelog.ClinicNum IN ("+String.Join(",",listClinicNums)+") ";
 			}
 			if(!string.IsNullOrEmpty(procCode)) {//don't include ProcCode condition if blank, it changes the execution plan and is much slower

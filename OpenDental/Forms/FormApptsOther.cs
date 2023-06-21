@@ -532,16 +532,17 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please select appointment first.");
 				return;
 			}
+			ApptOther apptOther=ListApptOthers.FirstOrDefault(x => x.AptNum==gridMain.SelectedTag<long>());
 			if(IsSelectedApptOtherNull()) {
 				return;
 			}
 			if(PatRestrictionL.IsRestricted(_patient.PatNum,PatRestrict.ApptSchedule)) {
 				return;
 			}
-			if(!AppointmentL.OKtoSendToPinboard(ListApptOthers[selectedIndex],ListApptOthers,this)) {//Tag is AptNum
+			if(!AppointmentL.OKtoSendToPinboard(apptOther,ListApptOthers,this)) {//Tag is AptNum
 				return;
 			}
-			ListAptNumsSelected.Add(ListApptOthers[selectedIndex].AptNum);
+			ListAptNumsSelected.Add(apptOther.AptNum);
 			_otherResult=OtherResult.CopyToPinBoard;
 			DialogResult=DialogResult.OK;
 		}
@@ -603,7 +604,8 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please select appointment first.");
 				return;
 			}
-			ListAptNumsSelected.Add(ListApptOthers[gridMain.GetSelectedIndex()].AptNum);
+			ApptOther apptOther=ListApptOthers.FirstOrDefault(x => x.AptNum==gridMain.SelectedTag<long>());
+			ListAptNumsSelected.Add(apptOther.AptNum);
 			DialogResult=DialogResult.OK;
 		}
 
@@ -796,7 +798,8 @@ namespace OpenDental {
 				if(IsSelectedApptOtherNull()) {
 					return;
 				}
-				SendToPinboardEvent.Fire(ODEventType.SendToPinboard,new PinBoardArgs(_patient,ListApptOthers[e.Row],ListApptOthers));
+				ApptOther apptOther=ListApptOthers.FirstOrDefault(x => x.AptNum==(long)gridMain.ListGridRows[e.Row].Tag);
+				SendToPinboardEvent.Fire(ODEventType.SendToPinboard,new PinBoardArgs(_patient,apptOther,ListApptOthers));
 				return;
 			}
 			RefreshData();
@@ -813,7 +816,8 @@ namespace OpenDental {
 			int idxSelected=gridMain.GetSelectedIndex();
 			Appointment appointment=null;
 			if(idxSelected!=-1) {
-				appointment=Appointments.GetOneApt(ListApptOthers[idxSelected].AptNum);
+				ApptOther apptOther=ListApptOthers.FirstOrDefault(x => x.AptNum==gridMain.SelectedTag<long>());
+				appointment=Appointments.GetOneApt(apptOther.AptNum);
 			}
 			if(idxSelected==-1 || appointment==null) {
 				MsgBox.Show(this,"Selected appointment no longer exists.");

@@ -1044,13 +1044,17 @@ namespace OpenDentBusiness {
 				else {
 					strBuilderResultText.AppendLine("CARD TYPE="+CreditCardUtils.GetCardType(tokenOrCCMasked));
 				}
+				if(payConnectResponse.AmountSurcharged>0) {
+					strBuilderResultText.AppendLine("SURCHARGE FEE="+payConnectResponse.AmountSurcharged.ToString("F2"));
+				}
 				strBuilderResultText.AppendLine("AMOUNT="+payConnectResponse.Amount.ToString("F2"));
 				amount=(double)payConnectResponse.Amount;
 			}
 			string receipt=PayConnect.BuildReceiptString(transType.SALE,payConnectResponse.RefNumber,patCur.GetNameFLnoPref(),
 			payConnectResponse.CardNumber,null,payConnectResponse.AuthCode,payConnectResponse.Description,null,
 			payConnectResponse.Amount,false,clinicNumCur);
-			CreatePayment(patCur,chargeData,strBuilderResultText.ToString(),amount,receipt,CreditCardSource.PayConnect);
+			//AmountSurcharged will be 0 for clinics that don't have surcharging turned on.
+			CreatePayment(patCur,chargeData,strBuilderResultText.ToString(),amount,receipt,CreditCardSource.PayConnect,merchantFee:(double)payConnectResponse.AmountSurcharged);
 			strBuilderResultFile.AppendLine(strBuilderResultText.ToString());
 		}
 
@@ -1232,7 +1236,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Inserts a payment and paysplits for the recurring charge data, call after processing a payment through merchant services.</summary>
 		protected void CreatePayment(Patient patCur,RecurringChargeData recCharge,string note,double amount,string receipt,CreditCardSource ccSource,
-			long xWebResponseNum=0)
+			long xWebResponseNum=0,double merchantFee=0)
 		{
 			Payment paymentCur=new Payment();
 			paymentCur.DateEntry=_nowDateTime.Date;
@@ -1281,6 +1285,7 @@ namespace OpenDentBusiness {
 			paymentCur.IsRecurringCC=true;
 			paymentCur.PaymentSource=ccSource;
 			paymentCur.Receipt=receipt;
+			paymentCur.MerchantFee=merchantFee;
 			Payments.Insert(paymentCur);
 			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,paymentCur.PatNum,patCur.GetNameLF()+", "
 				+paymentCur.PayAmt.ToString("c")+", "+Lans.g(_lanThis,"created from the Recurring Charges List"));

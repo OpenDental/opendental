@@ -10,22 +10,16 @@ namespace OpenDentBusiness{
 	public class TaskTakens{
 		#region Insert
 
-		///<summary>Tries to insert a TaskTaken for the given tasknum. Returns true if successful, returns false if a row with that tasknum already
-		///exists. Defaults to run on the primary customers database to prevent the triage tasks from getting claimed twice.</summary>
-		///<param name="doRetryOnLocal">If true and a connection to the primary customers database cannot be established, the insert will be attempted
-		///on the local database.</param>
-		public static bool TryInsert(long taskNum,bool doRunOnPrimaryCustomers=true,bool doRetryOnLocal=true) {
+		///<summary>Throws exceptions. Inserts a row into the tasktaken table that resides on the 'TriageHQ' database for the TaskNum passed in.
+		///Set doRetry to true in order to recursively call this method one more time in the event of an "unable to connect" MySQL UE.
+		///Throws an exception if the insert failed. Otherwise, no excpetion will be thrown thus indicating success.</summary>
+		public static void InsertForTaskNum(long taskNum,bool doRetry=true) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),taskNum,doRunOnPrimaryCustomers,doRetryOnLocal);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),taskNum,doRetry);
+				return;
 			}
 			try {
-				if(doRunOnPrimaryCustomers) {
-					DataAction.RunTriageHQ(() => Crud.TaskTakenCrud.Insert(new TaskTaken { TaskNum=taskNum }));
-				}
-				else {
-					Crud.TaskTakenCrud.Insert(new TaskTaken { TaskNum=taskNum });
-				}
-				return true;
+				DataAction.RunTriageHQ(() => Crud.TaskTakenCrud.Insert(new TaskTaken { TaskNum=taskNum }));
 			}
 			catch(Exception ex) {
 				MySqlException mysqlEx=null;
@@ -37,14 +31,17 @@ namespace OpenDentBusiness{
 				}
 				if(mysqlEx!=null && mysqlEx.Number==1062 && mysqlEx.Message.ToLower().Contains("duplicate entry")) {
 					//Someone else has already taken this task so there is already a row in the tasktaken table for this task.
-					return false;
+					throw new Exception("Not allowed to save changes because the task has been claimed by someone else.");
 				}
-				if(mysqlEx!=null && mysqlEx.Number==1042 && mysqlEx.Message.ToLower().Contains("unable to connect") && doRetryOnLocal) {
-					//Unable to connect to the primary customers database. We will still allow them to claim the task, and we will record that the task was 
-					//taken in the local database.
-					return TryInsert(taskNum,false,false);
+				if(mysqlEx!=null && mysqlEx.Number==1042 && mysqlEx.Message.ToLower().Contains("unable to connect")) {
+					if(doRetry) {
+						//Could be a network hiccup so try inserting the tasktaken once more.
+						InsertForTaskNum(taskNum,false);
+						return;
+					}
+					throw new Exception("Failed to save changes to the database. Please try again.\r\n\r\nNotify your supervisor if this keeps happening.");
 				}
-				throw;
+				throw new Exception("Failed to save changes due to a generic error. Please try again.\r\n\r\nError: "+ex.Message);
 			}
 		}
 

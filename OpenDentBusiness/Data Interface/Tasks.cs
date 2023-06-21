@@ -1127,10 +1127,11 @@ namespace OpenDentBusiness{
 			if(WasTaskAltered(oldTask)){
 				throw new Exception(Lans.g("Tasks","Not allowed to save changes because the task has been altered by someone else."));
 			}
-			if(PrefC.IsODHQ && oldTask.TaskListNum==TriageTaskListNum && task.TaskListNum!=TriageTaskListNum //Trying to claim a Triage task
-				&& !TaskTakens.TryInsert(task.TaskNum)) 
-			{				
-				throw new Exception(Lans.g("Tasks","Not allowed to save changes because the task has been claimed by someone else."));
+			//HQ Only - Every workstation needs to communicate with the same server when moving triage tasks out of the task list (e.g. trying to claim the task).
+			if(PrefC.IsODHQ && oldTask.TaskListNum==TriageTaskListNum && task.TaskListNum!=TriageTaskListNum) {
+				//Try and insert a tasktaken entry using the data action for the 'TriageHQ' database.
+				//If no error occurs then this user has claimed the task. Otherwise, something went wrong and the user needs to be made aware.
+				TaskTakens.InsertForTaskNum(task.TaskNum);
 			}
 			if(task.IsNew) {
 				TaskEditCreateLog(Lans.g("Tasks","New task added"),task);

@@ -478,12 +478,13 @@ namespace OpenDentBusiness {
 			//Validate the online token, since it is requiored for PayConnect online payments to work.
 			List<OpenDentBusiness.ProgramProperty> listPayConnectProperties=OpenDentBusiness.ProgramProperties.GetListForProgramAndClinic(programPayConnect.ProgramNum,clinicNum);
 			payConnectProps.Token=OpenDentBusiness.ProgramProperties.GetPropValFromList(listPayConnectProperties,PayConnect.ProgramProperties.PatientPortalPaymentsToken,clinicNum);
-			if(string.IsNullOrEmpty(payConnectProps.Token)) {
+			payConnectProps.ProgramVersion=PIn.Int(OpenDentBusiness.ProgramProperties.GetPropValFromList(listPayConnectProperties,PayConnect.ProgramProperties.ProgramVersion,clinicNum));
+			if(payConnectProps.ProgramVersion==1 && string.IsNullOrEmpty(payConnectProps.Token)) {
+				//PayConnect version 1 uses the Token property.
 				throw new ODException("PayConnect online token not found.",ODException.ErrorCodes.PayConnectProgramProperties);
 			}
 			string paymentsAllowedVal=OpenDentBusiness.ProgramProperties.GetPropValFromList(listPayConnectProperties,PayConnect.ProgramProperties.PatientPortalPaymentsEnabled,clinicNum);
 			payConnectProps.IsPaymentsAllowed=OpenDentBusiness.PIn.Bool(paymentsAllowedVal);
-			payConnectProps.ProgramVersion=PIn.Int(OpenDentBusiness.ProgramProperties.GetPropValFromList(listPayConnectProperties,PayConnect.ProgramProperties.ProgramVersion,clinicNum));
 		}
 
 		/// <summary>Exception means failed. Return means success. paySimpleProps should be checked upon return. If false then assume payments cannot be made for this clinic.</summary>

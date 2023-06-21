@@ -372,19 +372,19 @@ namespace OpenDental{
 		}
 
 		private void butGoToPat_Click(object sender,System.EventArgs e) {
-			if(HasErrors()) {
+			//Performs the same steps as if user had clicked 'Ok'. 
+			if(!Save()) {
 				return;
 			}
-			SaveData();
 			PatNumGoto=_payPlan.PatNum;
 			DialogResult=DialogResult.OK;
 		}
 
 		private void butGoTo_Click(object sender,System.EventArgs e) {
-			if(HasErrors()) {
+			//Performs the same steps as if user had clicked 'Ok'. 
+			if(!Save()) {
 				return;
 			}
-			SaveData();
 			PatNumGoto=_payPlan.Guarantor;
 			DialogResult=DialogResult.OK;
 		}

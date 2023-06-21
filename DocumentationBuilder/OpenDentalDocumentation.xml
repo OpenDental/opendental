@@ -3283,7 +3283,7 @@
       <summary>FK to userod.UserNum.</summary>
     </column>
     <column order="8" name="Signature" type="text">
-      <summary>Signature.  For details, see procedurelog.Signature.</summary>
+      <summary>Signature.  For details, see procnote.Signature.</summary>
     </column>
     <column order="9" name="SigIsTopaz" type="tinyint(4)">
       <summary>True if signed using the Topaz signature pad, false otherwise.</summary>
