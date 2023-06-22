@@ -5928,7 +5928,7 @@ namespace OpenDentBusiness {
 		///of the remaining SuperFamily as the new SuperHead, we use the new Guarantor of the previous SuperHead as the new SuperHead, or in the event 
 		///the old SuperHead has been moved to a new SuperFamily we use the SuperHead of that SuperFamily, effectively merging the SuperFamily into this 
 		///new Family/SuperFamily where the previous SuperHead now resides.</summary>
-		[DbmMethodAttr(IsReplicationUnsafe=true)]
+		[DbmMethodAttr(IsReplicationUnsafe=true,IsOneOff=true)]
 		public static string PatientInvalidSuperFamilyHead(bool verbose,DbmMode modeCur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
@@ -5995,11 +5995,6 @@ namespace OpenDentBusiness {
 							+countValidPatientsStartingNewSuperFamily.ToString()+"\r\n";
 						Crud.DbmLogCrud.InsertMany(listDbmLogs);
 					}
-					//This is the first implementation of a Dbm that should be moved to the Old tab once it has been run once.  The thought is that we have 
-					//added a bug fix that prevents this scenario from occurring again, so it is unreasonable to include the Dbm in the normal list of 'Checks'
-					//anymore, where it would run every time and eat up processing power and time.
-					MoveToOld(methodName);
-					log+=Lans.g("FormDatabaseMaintenance","DatabaseMaintenance method moved to Old tab")+": "+methodName;
 					break;
 			}
 			return log;
@@ -6766,7 +6761,7 @@ namespace OpenDentBusiness {
 			return log;
 		}
 
-		[DbmMethodAttr(IsReplicationUnsafe=true)]
+		[DbmMethodAttr(IsReplicationUnsafe=true,IsOneOff=true)]
 		public static string PaySplitTransfersWithNoUnearnedType(bool verbose,DbmMode modeCur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
@@ -6808,7 +6803,6 @@ namespace OpenDentBusiness {
 					if(count > 0 || verbose) {
 						log+=Lans.g("FormDatabaseMaintenance","Paysplit transfers with no UnearnedType fixed")+": "+count;
 					}
-					MoveToOld(methodName);
 					break;
 			}
 			return log;
@@ -11172,23 +11166,21 @@ HAVING cnt>1";
 				HAVING COUNT(*)>1";
 			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Getting duplicate email messages from the database..."));
 			List<string> listDupMsgNums=Db.GetListString(command);
-			if(listDupMsgUidNums.Count==0) {
+			if(listDupMsgNums.Count==0) {
 				return Lans.g("DatabaseMaintenance","There are no duplicate emails that need to be cleaned up.");
 			}
-     	if(listDupMsgNums.Count>0) {
-				for(int i=0;i<listDupMsgNums.Count;i++) {
-					try {
-						List<string> listMsgNums=listDupMsgNums[i].Split(",",StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();//Keep one of the EmailMessageNums
-						if(listMsgNums.Count==0) {
-							continue;
-						}
-						ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting duplicate email messages from the database..."));
-						Db.NonQ($"DELETE FROM emailmessage WHERE EmailMessageNum IN({string.Join(",",listMsgNums)})");
+			for(int i=0;i<listDupMsgNums.Count;i++) {
+				try {
+					List<string> listMsgNums=listDupMsgNums[i].Split(",",StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();//Keep one of the EmailMessageNums
+					if(listMsgNums.Count==0) {
+						continue;
 					}
-					catch(Exception ex) {
-						ex.DoNothing();
-						continue; //Skip any failures and continue
-					}
+					ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting duplicate email messages from the database..."));
+					Db.NonQ($"DELETE FROM emailmessage WHERE EmailMessageNum IN({string.Join(",",listMsgNums)})");
+				}
+				catch(Exception ex) {
+					ex.DoNothing();
+					continue; //Skip any failures and continue
 				}
 			}
 			if(DataConnection.DBtype==DatabaseType.MySql) {//Using MySQL.

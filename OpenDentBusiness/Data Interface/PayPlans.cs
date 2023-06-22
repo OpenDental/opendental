@@ -722,6 +722,7 @@ namespace OpenDentBusiness{
 			for(int i=0;i<listPayPlans.Count;i++) {
 				listPayPlans[i].IsClosed=true;
 				PayPlans.Update(listPayPlans[i]);
+				SecurityLogs.MakeLogEntry(Permissions.PayPlanEdit,listPayPlans[i].PatNum,Lans.g("PayPlans","Payment Plan closed using Close Payment Plan tool."));
 			}
 			return listPayPlans.Count;
 		}

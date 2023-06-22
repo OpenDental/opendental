@@ -289,11 +289,13 @@ namespace OpenDental{
 			}
 			Cursor=Cursors.Default;
 			FillGrid();
+			int index=-1;
 			for(int i=0;i<_listRefAttaches.Count;i++) {
 				if(_listRefAttaches[i].ReferralNum==refattach.ReferralNum) {
-					gridMain.SetSelected(i,true);
+					index=i;
 				}
 			}
+			gridMain.SetSelected(index,true);
 		}
 
 		private void butAddCustom_Click(object sender,EventArgs e) {

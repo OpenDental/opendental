@@ -886,7 +886,7 @@ namespace OpenDentBusiness {
 				clinicAbbr=Clinics.GetClinic(clinicNum).Abbr;//Abbr is required by our interface, so no need to check if blank.
 			}
 			string fileName=Path.GetFileNameWithoutExtension(filePath)+'-'+clinicAbbr+Path.GetExtension(filePath);
-			return ODFileUtils.CombinePaths(Path.GetDirectoryName(filePath),fileName);
+			return ODFileUtils.CombinePaths(Path.GetDirectoryName(filePath),ODFileUtils.CleanFileName(fileName));
 		}
 
 		public static void HandleSmsSent(List<SmsToMobile> listSmsToMobiles,List<Tuple<string,long>> listStmtNumsToUpdate,

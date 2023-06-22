@@ -4958,7 +4958,7 @@ namespace OpenDentBusiness{
 							&& !retList.Any(x => x.ProcNum==proc.ProcNum)) 
 						{
 							//appt.AptNum can be 0.
-							if((isApptPlanned && (proc.PlannedAptNum==0 || proc.PlannedAptNum == appt.AptNum))
+							if((isApptPlanned && proc.AptNum==0 && (proc.PlannedAptNum==0 || proc.PlannedAptNum == appt.AptNum))
 								|| (!isApptPlanned && (proc.AptNum==0 || proc.AptNum == appt.AptNum)))
 							{
 								retList.Add(proc.Copy());

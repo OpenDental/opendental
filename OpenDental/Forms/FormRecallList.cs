@@ -2087,6 +2087,19 @@ namespace OpenDental {
 		private void checkGroupFamilies_Click(object sender,MouseEventArgs e) {
 
 		}
+
+		///<summary>Rebuilds the context menu when the user right-clicks on the grids in this form. Rebuilding the context menu each time rather than just once on form_load is necessary to ensure that the correct context values are passed along to the user's selected function.</summary>
+		private void gridContextMenu_Popup(object sender, EventArgs e) {
+			menuRightClick.MenuItems.Clear();
+			if(_grid.GetSelectedIndex()==-1) {
+				return;
+			}
+			//add our local-only context menu entries
+			menuRightClick.MenuItems.Add(menuItemSeeFamily);
+			menuRightClick.MenuItems.Add(menuItemSeeAccount);
+		}
+
+
 	}
 	
 }

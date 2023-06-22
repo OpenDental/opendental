@@ -130,9 +130,7 @@
 			// 
 			// menuRightClick
 			// 
-			this.menuRightClick.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemSeeFamily,
-            this.menuItemSeeAccount});
+			this.menuRightClick.Popup+=gridContextMenu_Popup;
 			// 
 			// menuItemSeeFamily
 			// 
