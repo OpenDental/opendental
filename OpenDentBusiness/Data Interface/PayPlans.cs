@@ -742,11 +742,13 @@ namespace OpenDentBusiness{
 					}
 					//"isLocked" here is passed into "isLocking" further down. We are not locking here because the user has not way to lock the dynamic payment plan from this UI.
 					PayPlanEdit.CloseOutDynamicPaymentPlan(payPlanTerms,dynamicPaymentPlanModuleData,false,dynamicPaymentPlanModuleData.PayPlan.PlanCategory);
+					SecurityLogs.MakeLogEntry(Permissions.PayPlanEdit,listPayPlans[i].PatNum,Lans.g("PayPlans","Dynamic Payment Plan closed using Close Payment Plan tool."));
 					count++;
 				}
 				else if(!listPayPlans[i].IsDynamic) {
 					listPayPlans[i].IsClosed=true;
 					PayPlans.Update(listPayPlans[i]);
+					SecurityLogs.MakeLogEntry(Permissions.PayPlanEdit,listPayPlans[i].PatNum,Lans.g("PayPlans","Patient Payment Plan closed using Close Payment Plan tool."));
 					count++;
 				}
 			}

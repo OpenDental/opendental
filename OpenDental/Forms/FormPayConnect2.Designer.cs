@@ -27,7 +27,6 @@ namespace OpenDental{
 			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.sigBoxWrapper = new OpenDental.UI.SignatureBoxWrapper();
-			this.checkForceDuplicate = new OpenDental.UI.CheckBox();
 			this.checkSaveToken = new OpenDental.UI.CheckBox();
 			this.labelRefNumber = new System.Windows.Forms.Label();
 			this.textRefNumber = new System.Windows.Forms.TextBox();
@@ -50,7 +49,7 @@ namespace OpenDental{
 			// butCancel
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(342, 390);
+			this.butCancel.Location = new System.Drawing.Point(342, 362);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 40;
@@ -60,7 +59,7 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(245, 390);
+			this.butOK.Location = new System.Drawing.Point(245, 362);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 39;
@@ -70,21 +69,13 @@ namespace OpenDental{
 			// sigBoxWrapper
 			// 
 			this.sigBoxWrapper.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.sigBoxWrapper.Location = new System.Drawing.Point(21, 285);
+			this.sigBoxWrapper.Location = new System.Drawing.Point(21, 266);
 			this.sigBoxWrapper.Name = "sigBoxWrapper";
 			this.sigBoxWrapper.SignatureMode = OpenDental.UI.SignatureBoxWrapper.SigMode.Default;
 			this.sigBoxWrapper.Size = new System.Drawing.Size(369, 81);
 			this.sigBoxWrapper.TabIndex = 42;
 			this.sigBoxWrapper.TabStop = false;
 			this.sigBoxWrapper.UserSig = null;
-			// 
-			// checkForceDuplicate
-			// 
-			this.checkForceDuplicate.Location = new System.Drawing.Point(23, 259);
-			this.checkForceDuplicate.Name = "checkForceDuplicate";
-			this.checkForceDuplicate.Size = new System.Drawing.Size(217, 17);
-			this.checkForceDuplicate.TabIndex = 41;
-			this.checkForceDuplicate.Text = "Force Duplicate";
 			// 
 			// checkSaveToken
 			// 
@@ -234,7 +225,7 @@ namespace OpenDental{
 			// 
 			// FormPayConnect2
 			// 
-			this.ClientSize = new System.Drawing.Size(436, 435);
+			this.ClientSize = new System.Drawing.Size(436, 407);
 			this.Controls.Add(this.textAmount);
 			this.Controls.Add(this.labelTerminal);
 			this.Controls.Add(this.comboTerminal);
@@ -242,7 +233,6 @@ namespace OpenDental{
 			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.sigBoxWrapper);
-			this.Controls.Add(this.checkForceDuplicate);
 			this.Controls.Add(this.checkSaveToken);
 			this.Controls.Add(this.labelRefNumber);
 			this.Controls.Add(this.textRefNumber);
@@ -266,7 +256,6 @@ namespace OpenDental{
 		private UI.Button butCancel;
 		private UI.Button butOK;
 		private UI.SignatureBoxWrapper sigBoxWrapper;
-		private UI.CheckBox checkForceDuplicate;
 		private UI.CheckBox checkSaveToken;
 		private System.Windows.Forms.Label labelRefNumber;
 		private System.Windows.Forms.TextBox textRefNumber;

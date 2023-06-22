@@ -94,13 +94,9 @@ namespace OpenDental {
 				}
 			}
 			if(radioWebService.Checked) {
-				//Only the Terminal has the option to force duplicates
-				checkForceDuplicate.Enabled=false;
-				checkForceDuplicate.Checked=false;
 				comboTerminal.Enabled=false;
 			}
 			else if(radioTerminal.Checked) {
-				checkForceDuplicate.Enabled=true;
 				comboTerminal.Enabled=true;
 			}
 		}
@@ -124,17 +120,24 @@ namespace OpenDental {
 		/// <summary>Returns true if we contacted and got a response from PayConnect.</summary>
 		private bool ProcessTransaction() {
 			WasPaymentAttempted=true;
+			PayConnect2Response payConnect2Response=new PayConnect2Response();
+			int amountInCents=GetAmountFieldAsCents();
 			if(radioTerminal.Checked) {
 				if(comboTerminal.SelectedItem==null) {
 					MsgBox.Show(this,"Please select a terminal from the dropdown.");
 					return false;
 				}
-				string apiKey=PayConnect2.GetPayConnect2DLLKey();
 				string terminalId=((PayTerminal)comboTerminal.SelectedItem).TerminalID;
 				decimal amount=(decimal)textAmount.Value;//textAmount will be a value between 0 and 100,000,000
 				if(radioSale.Checked) {
 					if(amount>0) {
-						_response=PayConnect2L.CreateSale(amount,apiKey,terminalId,forceDuplicate:checkForceDuplicate.Checked);
+						CreateTerminalTransactionRequest request=new CreateTerminalTransactionRequest();
+						request.Amount=amountInCents;
+						request.Terminal=terminalId;
+						request.TransType=TransactionType.Sale;
+						request.Frequency=TransactionFrequency.OneTime;
+						request.Signature=false;//TODO in future: Eventually PayConnect will support terminals with built in signature pads in which case this will need to be set based on the terminal/user choice for signing.
+						payConnect2Response=PayConnect2.PostCreateTerminalTransaction(request,_clinicNum);
 						TransType=PayConnectService.transType.SALE;
 					}
 					else {
@@ -144,7 +147,13 @@ namespace OpenDental {
 				}
 				else if(radioAuthorization.Checked) {
 					if(amount>0) {
-						_response=PayConnect2L.CreateAuth(amount,apiKey,terminalId,forceDuplicate:checkForceDuplicate.Checked);
+						CreateTerminalTransactionRequest request=new CreateTerminalTransactionRequest();
+						request.Amount=amountInCents;
+						request.Terminal=terminalId;
+						request.TransType=TransactionType.AuthorizeOnly;
+						request.Frequency=TransactionFrequency.OneTime;
+						request.Signature=false;//TODO in future: Eventually PayConnect will support terminals with built in signature pads in which case this will need to be set based on the terminal/user choice for signing.
+						payConnect2Response=PayConnect2.PostCreateTerminalTransaction(request,_clinicNum);
 						TransType=PayConnectService.transType.AUTH;
 					}
 					else {
@@ -152,32 +161,31 @@ namespace OpenDental {
 						return false;
 					}
 				}
-				else if(radioVoid.Checked) {
-					if(textRefNumber.Text.IsNullOrEmpty()) {
-						MsgBox.Show(this,"Reference Number is required to void a transaction.");
-						return false;
-					}
-					_response=PayConnect2L.CreateVoid(textRefNumber.Text,apiKey,terminalId,forceDuplicate:checkForceDuplicate.Checked);
-					TransType=PayConnectService.transType.VOID;
-				}
-				else if(radioRefund.Checked) {
-					if(textRefNumber.Text.IsNullOrEmpty()) {
-						MsgBox.Show(this,"Reference Number is required to refund a transaction.");
-						return false;
-					}
-					if(amount>0) {
-						_response=PayConnect2L.CreateRefund(amount,apiKey,terminalId,textRefNumber.Text,forceDuplicate:checkForceDuplicate.Checked);
-						TransType=PayConnectService.transType.RETURN;
-					}
-					else {
-						MsgBox.Show(this,"Amount must be greater than 0.00");
-						return false;
-					}
-				}
+				//The New Terminal API endpoint only allows for Sale and Auths, keeping the below block of code around incase PayConnect adds functionality later.
+				//else if(radioVoid.Checked) {
+				//	if(textRefNumber.Text.IsNullOrEmpty()) {
+				//		MsgBox.Show(this,"Reference Number is required to void a transaction.");
+				//		return false;
+				//	}
+				//	_response=PayConnect2L.CreateVoid(textRefNumber.Text,apiKey,terminalId,forceDuplicate:checkForceDuplicate.Checked);
+				//	TransType=PayConnectService.transType.VOID;
+				//}
+				//else if(radioRefund.Checked) {
+				//	if(textRefNumber.Text.IsNullOrEmpty()) {
+				//		MsgBox.Show(this,"Reference Number is required to refund a transaction.");
+				//		return false;
+				//	}
+				//	if(amount>0) {
+				//		_response=PayConnect2L.CreateRefund(amount,apiKey,terminalId,textRefNumber.Text,forceDuplicate:checkForceDuplicate.Checked);
+				//		TransType=PayConnectService.transType.RETURN;
+				//	}
+				//	else {
+				//		MsgBox.Show(this,"Amount must be greater than 0.00");
+				//		return false;
+				//	}
+				//}
 			}
 			else if(radioWebService.Checked) {
-				int amountInCents=GetAmountFieldAsCents();
-				PayConnect2Response payConnect2Response=new PayConnect2Response();
 				if(radioSale.Checked) {
 					if(amountInCents < 0) {
 						MsgBox.Show(this,"Amount must be greater than 0.00");
@@ -246,9 +254,9 @@ namespace OpenDental {
 					voidReferenceIDRequest.ReferenceId=textRefNumber.Text;
 					payConnect2Response=PayConnect2.PutVoidWithReferenceID(voidReferenceIDRequest,_clinicNum);
 					TransType=PayConnectService.transType.VOID;
-				}
-				_response=PayConnect2.ApiResponseToPayConnectResponse(payConnect2Response);
+				}	
 			}
+			_response=PayConnect2.ApiResponseToPayConnectResponse(payConnect2Response);
 			bool wasSigned=false;
 			if(TransType==transType.SALE || TransType==transType.AUTH) {
 				PayConnect2Response signatureResponse=SendSignature();
@@ -328,18 +336,24 @@ namespace OpenDental {
 		
 		private void radioTerminal_CheckedChanged(object sender,EventArgs e) {
 			if(radioTerminal.Checked) {
-				checkForceDuplicate.Enabled=true;
+				if(radioRefund.Checked || radioVoid.Checked) {
+					MsgBox.Show(this,"Not allowed to send refunds or voids via Terminal. Please select Web Service to process a refund or void.");
+					radioWebService.Checked=true;
+					return;
+				}
 				comboTerminal.Enabled=true;
+				radioVoid.Enabled=false;
+				radioRefund.Enabled=false;
+				
 			}
 		}
 
 		private void radioWebService_CheckedChanged(object sender,EventArgs e) {
 			if(radioWebService.Checked) {
 				checkSaveToken.Enabled=true;
-				//Only the Terminal has the option to force duplicates
-				checkForceDuplicate.Enabled=false;
-				checkForceDuplicate.Checked=false;
 				comboTerminal.Enabled=false;
+				radioVoid.Enabled=true;
+				radioRefund.Enabled=true;
 			}
 		}
 

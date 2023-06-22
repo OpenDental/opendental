@@ -358,7 +358,7 @@ namespace OpenDental{
 		}
 
 		private void linkLabel1_LinkClicked(object sender,LinkLabelLinkClickedEventArgs e) {
-			Process.Start("http://www.opendental.com/resources/redirects/redirectpayconnect.html");
+			Process.Start("https://www.payconnect.com/");
 		}
 
 		private void checkTerminal_CheckedChanged(object sender,EventArgs e) {

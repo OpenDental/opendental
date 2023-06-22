@@ -122,10 +122,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Required dlls\DpsPos.dll</HintPath>
     </Reference>
-    <Reference Include="DPSPOSv2">
-      <HintPath>..\Required dlls\DPSPOSv2.dll</HintPath>
-      <Aliases>payconnect2DLL</Aliases>
-    </Reference>
     <Reference Include="Health.Direct.Common">
       <HintPath>..\Required dlls\Health.Direct.Common.dll</HintPath>
     </Reference>
@@ -2873,7 +2869,6 @@
     <Compile Include="Logic\AutoNoteL.cs" />
     <Compile Include="Logic\CareCreditL.cs" />
     <Compile Include="Logic\CloudClientL.cs" />
-    <Compile Include="Logic\PayConnect2L.cs" />
     <Compile Include="Logic\PayConnectL.cs" />
     <Compile Include="Logic\PayPlanL.cs" />
     <Compile Include="Logic\aaLogicUI.cs" />

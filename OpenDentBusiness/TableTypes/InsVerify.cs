@@ -136,7 +136,7 @@ namespace OpenDentBusiness {
 	public enum VerifyTypes {
 		///<summary>0.  This means FKey should be 0.</summary>
 		None,
-		///<summary>1.  This means FKey will link to insplan.InsPlanNum</summary>
+		///<summary>1.  This means FKey will link to insplan.PlanNum</summary>
 		InsuranceBenefit,
 		///<summary>2.  This means FKey will link to patplan.PatPlanNum</summary>
 		PatientEnrollment

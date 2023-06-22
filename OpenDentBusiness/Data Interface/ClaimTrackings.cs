@@ -183,7 +183,7 @@ namespace OpenDentBusiness{
 
 		///<summary>Supplied two claims, this function will make new copies of the custom trackings for claimOrig, attach them to claimDest, and insert them. </summary>
 		public static void CopyToClaim(long claimOrigNum,long claimDestNum) {
-			GetForClaim(claimOrigNum).ForEach(x => {
+			GetForClaim(claimOrigNum).OrderByDescending(x => x.DateTimeEntry).ForEach(x => {
 				x.ClaimNum=claimDestNum;
 				x.Note=$"Split claim original entry timestamp: {x.DateTimeEntry.ToString()}\r\n{x.Note}";
 				Insert(x);

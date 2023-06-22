@@ -176,6 +176,13 @@ namespace OpenDentBusiness {
 			return response;
 		}
 
+		public static PayConnect2Response PostCreateTerminalTransaction(CreateTerminalTransactionRequest requestBody,long clinicNum) {
+			string body=JsonConvert.SerializeObject(requestBody,new JsonSerializerSettings {NullValueHandling=NullValueHandling.Ignore});
+			List<string> listHeaders=GetHeadersForApi(clinicNum);
+			PayConnect2Response response=Request(ApiRoute.CreateTerminalTransaction,HttpMethod.Post,listHeaders,body);
+			return response;
+		}
+
 		///<summary>Handles Debug/Introspection overrides</summary>
 		public static string GetApiBaseUrl() {
 			string apiUrl=Introspection.GetOverride(Introspection.IntrospectionEntity.PayConnectRestURL,"https://api.dentalxchange.com/payments");
@@ -234,17 +241,26 @@ namespace OpenDentBusiness {
 				}
 				catch(WebException wex) {
 					if(!(wex.Response is HttpWebResponse)) {
-						throw new Exception("Error connecting to the PayConnect server:\r\n"+wex.Message,wex);
+						response.ErrorResponse=new ErrorResponse();
+						response.ErrorResponse.Error="Error connecting to the PayConnect server:\r\n"+wex.Message;
+						response.ErrorResponse.ErrorType=ErrorType.Response;
+						response.ResponseType=ResponseType.Error;
 					}
-					using(var sr=new StreamReader(((HttpWebResponse)wex.Response).GetResponseStream())) {
-						res=sr.ReadToEnd();
+					else {
+						using(var sr=new StreamReader(((HttpWebResponse)wex.Response).GetResponseStream())) {
+							res=sr.ReadToEnd();
+						}
+						response.ErrorResponse=JsonConvert.DeserializeObject<ErrorResponse>(res);
+						response.ResponseType=ResponseType.Error;
+						response.httpStatusCode=((HttpWebResponse)wex.Response).StatusCode;
 					}
-					response.ErrorResponse=JsonConvert.DeserializeObject<ErrorResponse>(res);
-					response.ResponseType=ResponseType.Error;
-					response.httpStatusCode=((HttpWebResponse)wex.Response).StatusCode;
+					
 				}
 				catch(JsonException jEx) {
-					throw new Exception("Error processing PayConnect response:\r\nResponse from PayConnect:\r\n"+res,jEx);
+					response.ErrorResponse=new ErrorResponse();
+					response.ErrorResponse.Error="Error processing PayConnect response:\r\nResponse from PayConnect:\r\n"+res;
+					response.ErrorResponse.ErrorType=ErrorType.Response;
+					response.ResponseType=ResponseType.Error;
 				}
 				catch(Exception ex) {
 					//WebClient returned an http status code >= 300
@@ -286,6 +302,9 @@ namespace OpenDentBusiness {
 					//routeId[0]=transactionID
 					apiUrl+=$"/transactions/status";
 					break;
+				case ApiRoute.CreateTerminalTransaction:
+					apiUrl+=$"/terminals/transactions";
+					break;
 				default:
 					break;
 			}
@@ -301,6 +320,7 @@ namespace OpenDentBusiness {
 			RefundTransaction,
 			VoidTransaction,
 			GetStatus,
+			CreateTerminalTransaction,
 		}
 
 		#region Converters
@@ -339,6 +359,10 @@ namespace OpenDentBusiness {
 				case ApiRoute.GetStatus:
 					payConnect2Response.GetStatusResponse=JsonConvert.DeserializeObject<GetStatusResponse>(rawResponse,settings);
 					payConnect2Response.ResponseType=ResponseType.GetStatus;
+					break;
+				case ApiRoute.CreateTerminalTransaction:
+					payConnect2Response.TerminalTransactionResponse=JsonConvert.DeserializeObject<TerminalTransactionResponse>(rawResponse,settings);
+					payConnect2Response.ResponseType=ResponseType.TerminalTransaction;
 					break;
 				default:
 						break;
@@ -468,6 +492,22 @@ namespace OpenDentBusiness {
 					}
 					payConnectResponse.SurchargePercent=iFrameResponse.Response.SurchargePercent;
 					payConnectResponse.AmountSurcharged=((decimal)iFrameResponse.Response.AmountSurcharged)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
+					break;
+				case ResponseType.TerminalTransaction:
+					TerminalTransactionResponse terminalTransactionResponse=response.TerminalTransactionResponse;
+					payConnectResponse.Description=terminalTransactionResponse.Status;
+					payConnectResponse.StatusCode="0";//0 indicates success
+					payConnectResponse.RefNumber=terminalTransactionResponse.ReferenceId;
+					payConnectResponse.Amount=((decimal)terminalTransactionResponse.Amount)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
+					payConnectResponse.AuthCode=terminalTransactionResponse.AuthCode;
+					payConnectResponse.MerchantId=terminalTransactionResponse.MerchantId.ToString();
+					payConnectResponse.PaymentToken=terminalTransactionResponse.PaymentMethod.CardPaymentMethod.CardToken;
+					payConnectResponse.CardType=terminalTransactionResponse.PaymentMethod.CardPaymentMethod.Network.ToString();
+					payConnectResponse.CardNumber=terminalTransactionResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
+					payConnectResponse.TransType=PayConnectResponse.TransactionType.Authorize;
+					if(terminalTransactionResponse.TransType==TransactionType.Sale) {
+						payConnectResponse.TransType=PayConnectResponse.TransactionType.Sale;
+					}
 					break;
 				default:
 					break;
@@ -652,6 +692,7 @@ namespace OpenDentBusiness {
 			public string ButtonLabel;
 		}
 
+		[DataContract]
 		public class TransactionStatusRequest {
 			///<summary>Reference ID of the transaction</summary>
 			[DataMember(Name = "referenceId",IsRequired=false)]
@@ -659,6 +700,31 @@ namespace OpenDentBusiness {
 			///<summary>ID of the transaction</summary>
 			[DataMember(Name = "transactionId",IsRequired=false)]
 			public string TransactionId;
+		}
+
+		[DataContract]
+		public class CreateTerminalTransactionRequest {
+			///<summary>Identifies if transaction is Recurring or OneTime</summary>
+			[DataMember(Name = "frequency"),JsonConverter(typeof(StringEnumConverter))]
+			public TransactionFrequency Frequency;
+			///<summary>Type of transaction</summary>
+			[DataMember(Name = "type"),JsonConverter(typeof(StringEnumConverter))]
+			public TransactionType TransType;
+			///<summary>Amount in cents</summary>
+			[DataMember(Name = "amount")]
+			public int Amount;
+			///<summary>Terminal ID for processing the transaction.</summary>
+			[DataMember(Name = "terminal")]
+			public string Terminal;
+			///<summary>Full name of the card holder</summary>
+			[DataMember(Name = "signature")]
+			public bool Signature;
+			///<summary>Invoice number to identify the transaction</summary>
+			[DataMember(Name = "invoiceNumber",IsRequired=false)]
+			public string InvoiceNumber;
+			///<summary>Patient for the payment.</summary>
+			[DataMember(Name = "patient",IsRequired=false)]
+			public PayConnectPatient Patient;
 		}
 
 		#endregion Request Objects
@@ -676,6 +742,7 @@ namespace OpenDentBusiness {
 			public EmbedSessionResponse EmbedSessionResponse;
 			public GetStatusResponse GetStatusResponse;
 			public iFrameResponse iFrameResponse;
+			public TerminalTransactionResponse TerminalTransactionResponse;
 			public HttpStatusCode httpStatusCode;
 		}
 
@@ -1120,6 +1187,79 @@ namespace OpenDentBusiness {
 		}
 
 		[DataContract]
+		public class TerminalTransactionResponse {
+			///<summary>Amount authorized in cents</summary>
+			[DataMember(Name = "amountAuthorized")]
+			public int AmountAuthorized;
+			///<summary>Amount captured in cents</summary>
+			[DataMember(Name = "amountCaptured")]
+			public int AmountCaptured;
+			///<summary>Amount in cents</summary>
+			[DataMember(Name = "amount")]
+			public int Amount;
+			///<summary>Internal transaction id</summary>
+			[DataMember(Name = "transactionId")]
+			public int TransactionId;
+			///<summary>The user who ran the transaction</summary>
+			[DataMember(Name = "userId")]
+			public int UserId;
+			///<summary>Transaction reference number</summary>
+			[DataMember(Name = "referenceId")]
+			public string ReferenceId;
+			///<summary>Type of transaction</summary>
+			[DataMember(Name = "type")]
+			public TransactionType TransType;
+			///<summary>Authorization code send by the gateway</summary>
+			[DataMember(Name = "authCode")]
+			public string AuthCode;
+			///<summary>Ternimal ID, if the transaction was run fron a terminal</summary>
+			[DataMember(Name = "terminal")]
+			public string Terminal;
+			///<summary>Invoice number to identify the transaction</summary>
+			[DataMember(Name = "invoiceNumber")]
+			public string InvoiceNumber;
+			///<summary>Identidy if transaction is Recurring or OneTime</summary>
+			[DataMember(Name = "frequency")]
+			public TransactionFrequency Frequency;
+			///<summary>Status</summary>
+			[DataMember(Name = "status")]
+			public string Status;
+			///<summary>Base64 encoded signature image. Can be null.</summary>
+			[DataMember(Name = "signature")]
+			public string Signature;
+			///<summary>Transaction origination point</summary>
+			[DataMember(Name = "source")]
+			public TransactionSource Source;
+			///<summary>Raw response form the gateway</summary>
+			[DataMember(Name = "gatewayResponse")]
+			public object GatewayResponse;
+			///<summary>Merchant identification number</summary>
+			[DataMember(Name = "merchantId")]
+			public int MerchantId;
+			///<summary>Patient identification number. From testing can be null.</summary>
+			[DataMember(Name = "patientId")]
+			public int? PatientId;
+			///<summary>Returned if the transaction is refund or void</summary>
+			[DataMember(Name = "parentTransactionId")]
+			public int? ParentTransactionId;
+			///<summary>Batch identification number the transaction belongs to</summary>
+			[DataMember(Name = "batchId")]
+			public int BatchId;
+			///<summary>Patient for the payment.</summary>
+			[DataMember(Name = "patient")]
+			PayConnectPatient Patient;
+			///<summary></summary>
+			[DataMember(Name = "paymentMethod")]
+			public PaymentMethod PaymentMethod;
+			///<summary>Date the transaction was created</summary>
+			[DataMember(Name = "createdAt")]
+			public string CreatedAt;
+			///<summary>Date the transaction was updated</summary>
+			[DataMember(Name = "updatedAt")]
+			public string UpdatedAt;
+		}
+
+		[DataContract]
 		public class PaymentMethod {
 			public int paymentMethodId;
 			[DataMember(Name = "type")]
@@ -1285,6 +1425,7 @@ namespace OpenDentBusiness {
 			Portal,
 			Terminal,
 			Integration,
+			Text2Pay,
 		}
 
 		[JsonConverter(typeof(StringEnumConverter))]
@@ -1331,6 +1472,7 @@ namespace OpenDentBusiness {
 			IFrame,
 			[Description("Get Status")]
 			GetStatus,
+			TerminalTransaction,
 		}
 		#endregion Request/Response Objects
 

@@ -78,7 +78,7 @@ namespace OpenDental {
 			this.linkLabel1.Size = new System.Drawing.Size(312,16);
 			this.linkLabel1.TabIndex = 0;
 			this.linkLabel1.TabStop = true;
-			this.linkLabel1.Text = "The PayConnect website is at www.dentalxchange.com";
+			this.linkLabel1.Text = "The PayConnect website is at www.payconnect.com";
 			this.linkLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.linkLabel1.UseCompatibleTextRendering = true;
 			this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
