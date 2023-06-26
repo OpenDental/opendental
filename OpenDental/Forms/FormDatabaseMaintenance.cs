@@ -948,11 +948,12 @@ namespace OpenDental {
 				gridMain.SetAll(true);
 			}
 			int[] intArraySelectedIndices=gridMain.SelectedIndices;
+			int indexOfColumn=gridMain.Columns.GetIndex("Results");
 			for(int i=0;i<intArraySelectedIndices.Length;i++) {
-				string strResult=gridMain.ListGridRows[intArraySelectedIndices[i]].Cells[2].Text;
+				string strResult=gridMain.ListGridRows[intArraySelectedIndices[i]].Cells[indexOfColumn].Text;
 				if(!String.IsNullOrEmpty(strResult) && strResult!="Done.  No maintenance needed.") {
 					stringBuilder.Append(gridMain.ListGridRows[intArraySelectedIndices[i]].Cells[0].Text+"\r\n");
-					stringBuilder.Append("---"+gridMain.ListGridRows[intArraySelectedIndices[i]].Cells[2].Text+"\r\n");
+					stringBuilder.Append("---"+gridMain.ListGridRows[intArraySelectedIndices[i]].Cells[indexOfColumn].Text+"\r\n");
 					stringBuilder.AppendLine();
 				}
 			}

@@ -110,14 +110,15 @@ namespace OpenDental{
 			}
 			textVersion.Text=CarrierCur.CDAnetVersion;
 			textEncryptionMethod.Text=CarrierCur.CanadianEncryptionMethod.ToString();
-			check08.Checked=((CarrierCur.CanadianSupportedTypes & CanSupTransTypes.EligibilityTransaction_08) == CanSupTransTypes.EligibilityTransaction_08);
-			check07.Checked=((CarrierCur.CanadianSupportedTypes & CanSupTransTypes.CobClaimTransaction_07) == CanSupTransTypes.CobClaimTransaction_07);
-			check02.Checked=((CarrierCur.CanadianSupportedTypes & CanSupTransTypes.ClaimReversal_02) == CanSupTransTypes.ClaimReversal_02);
-			check03.Checked=((CarrierCur.CanadianSupportedTypes & CanSupTransTypes.PredeterminationSinglePage_03) == CanSupTransTypes.PredeterminationSinglePage_03);
-			check03m.Checked=((CarrierCur.CanadianSupportedTypes & CanSupTransTypes.PredeterminationMultiPage_03) == CanSupTransTypes.PredeterminationMultiPage_03);
-			check04.Checked=((CarrierCur.CanadianSupportedTypes & CanSupTransTypes.RequestForOutstandingTrans_04) == CanSupTransTypes.RequestForOutstandingTrans_04);
-			check05.Checked=((CarrierCur.CanadianSupportedTypes & CanSupTransTypes.RequestForSummaryReconciliation_05) == CanSupTransTypes.RequestForSummaryReconciliation_05);
-			check06.Checked=((CarrierCur.CanadianSupportedTypes & CanSupTransTypes.RequestForPaymentReconciliation_06) == CanSupTransTypes.RequestForPaymentReconciliation_06);
+			check08.Checked = CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.EligibilityTransaction_08);
+			check07.Checked = CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.CobClaimTransaction_07);
+			check02.Checked = CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.ClaimReversal_02);
+			check03.Checked = CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.PredeterminationSinglePage_03);
+			check03m.Checked = CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.PredeterminationMultiPage_03);
+			check04.Checked = CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.RequestForOutstandingTrans_04);
+			check05.Checked = CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.RequestForSummaryReconciliation_05);
+			check06.Checked = CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.RequestForPaymentReconciliation_06);
+			check09.Checked = CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.Attachment_09);
 			odColorPickerBack.AllowTransparentColor=true;
 			if(CarrierCur.IsNew) {
 				odColorPickerBack.BackgroundColor=Color.Black;//Black means no color

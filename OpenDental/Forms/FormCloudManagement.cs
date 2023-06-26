@@ -37,7 +37,7 @@ namespace OpenDental {
 			string officeData=PayloadHelper.CreatePayload("",eServiceCode.Undefined);
 			Cursor=Cursors.WaitCursor;
 			try {
-				string maxSize=WebSerializer.DeserializePrimitive<long>(WebServiceMainHQProxy.GetWebServiceMainHQInstance().GetMaxAtoZSizeGB(officeData)).ToString();
+				string maxSize=WebSerializer.DeserializePrimitive<int>(WebServiceMainHQProxy.GetWebServiceMainHQInstance().GetMaxAtoZSizeGB(officeData)).ToString();
 				string filePath=FileAtoZ.GetFilesInDirectoryRelative("cloudbackupsize")
 					.FirstOrDefault(x => !string.IsNullOrEmpty(Path.GetExtension(x)));
 				labelCurAtoZSize.Text=(string.IsNullOrEmpty(filePath)?"":FileAtoZ.ReadAllText(filePath)).Trim()+$"/{maxSize}GB";

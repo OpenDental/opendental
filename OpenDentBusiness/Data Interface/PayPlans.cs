@@ -689,6 +689,20 @@ namespace OpenDentBusiness{
 			return false;
 		}
 
+		public static List<long> GetDynamicPayPlanNumsWithTP(List<long> listPayPlanNums=null) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod(),listPayPlanNums);
+			}
+			string command="";
+			command="SELECT DISTINCT payplannum FROM payplanlink JOIN procedurelog ON payplanlink.fkey=procedurelog.procnum WHERE procedurelog.procstatus="+POut.Enum<ProcStat>(ProcStat.TP)+" ";
+		  if(listPayPlanNums!=null || listPayPlanNums.Count!=0){
+				string dynamicPayPlanNums=string.Join(",",listPayPlanNums);
+				command+="AND payplanlink.payplannum IN "+"("+dynamicPayPlanNums+")"+" ";
+			}
+			command+="AND payplanlink.linktype="+POut.Enum<PayPlanLinkType>(PayPlanLinkType.Procedure);
+			return Db.GetListLong(command);
+		}
+
 		///<summary>Automatically closes all payment plans that have no future charges and that are paid off.
 		///Returns the number of payment plans that were closed.</summary>
 		public static long AutoClose(bool canIncludeDynamic=false) {
@@ -719,9 +733,16 @@ namespace OpenDentBusiness{
 			table=Db.GetTable(command);
 			long[] arrayPayPlanNums=table.AsEnumerable().Select(x => (long)x["PayPlanNum"]).ToArray();
 			List<PayPlan> listPayPlans=PayPlans.GetMany(arrayPayPlanNums);
+			List<long> listPayPlanNumWithTP=new List<long>();
+			if(canIncludeDynamic) {
+				listPayPlanNumWithTP=GetDynamicPayPlanNumsWithTP(listPayPlans.Where(x => x.IsDynamic).Select(x => x.PayPlanNum).ToList());
+			}
 			int count=0;
 			for(int i=0;i<listPayPlans.Count;i++) {
 				if(listPayPlans[i].IsDynamic && canIncludeDynamic) {
+					if(listPayPlans[i].DynamicPayPlanTPOption==DynamicPayPlanTPOptions.AwaitComplete && listPayPlanNumWithTP.Contains(listPayPlans[i].PayPlanNum)) {
+						continue;
+					}
 					double totalPaidAmt=0.00;
 					DynamicPaymentPlanModuleData dynamicPaymentPlanModuleData=PayPlanEdit.GetDynamicPaymentPlanModuleData(listPayPlans[i]);
 					PayPlanTerms payPlanTerms=PayPlanEdit.GetPayPlanTerms(listPayPlans[i],dynamicPaymentPlanModuleData.ListPayPlanLinks);

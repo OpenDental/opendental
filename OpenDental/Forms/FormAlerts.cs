@@ -78,7 +78,7 @@ namespace OpenDental {
 				}
 				if(listActionTypes[i]==ActionType.OpenForm) {
 					butOpenForm.Enabled=true;
-					labelOpenForm.Text=Lan.g(this,AlertItemCur.FormToOpen.GetDescription())+" window.";
+					labelOpenForm.Text=Lan.g(this,"Window to open")+ ": " + Lan.g(this,AlertItemCur.FormToOpen.GetDescription());
 				}
 			}
 		}

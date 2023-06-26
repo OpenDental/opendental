@@ -116,14 +116,19 @@ namespace OpenDentBusiness {
 
 		///<summary>Formats a note that can be used as a PayNote on a payment. If the PayConnectResponseWeb is a return or a void of a positive payment, pass in
 		///false for keepAmountPositive.</summary>
-		public string GetFormattedNote(bool keepAmountPositive) {
+		public string GetFormattedNote(bool keepAmountPositive,bool isPayConnect2=false) {
 			//This is the class layout for the fields to be pulled out from the successful response string stored in the table
-			var responseTypeParial=new {
+			var responseTypePartial=new {
 				CreditCardNumber="",
 				TransactionID=0,
+				PaymentMethod=new {
+					CardPaymentMethod=new {
+						CardLast4Digits=""
+					}
+				},
 			};
 			//Pull out all of the field values we care about from the response string
-			var responseValues=JsonConvert.DeserializeAnonymousType(LastResponseStr,responseTypeParial);
+			var responseValues=JsonConvert.DeserializeAnonymousType(LastResponseStr,responseTypePartial);
 			DateTime dateTimeProcessed;
 			if(DateTimeEntry.Year>1880 || DateTimeCompleted.Year>1880) {
 				dateTimeProcessed=(DateTimeEntry>DateTimeCompleted ? DateTimeEntry : DateTimeCompleted);//The greater of the two dates
@@ -131,9 +136,19 @@ namespace OpenDentBusiness {
 			else {
 				dateTimeProcessed=DateTime.Now;
 			}
+			string creditCard="";
+			string transactionID="";
+			if(isPayConnect2) {
+				creditCard=Lans.g(this,"Card Last Four:")+" "+responseValues.PaymentMethod.CardPaymentMethod.CardLast4Digits+"\r\n";
+				transactionID=RefNumber;
+			}
+			else {
+				creditCard=Lans.g(this,"Card Number:")+" "+responseValues.CreditCardNumber+"\r\n";
+				transactionID=responseValues.TransactionID.ToString();
+			}
 			return Lans.g(this,"Amount:")+" "+(keepAmountPositive ? Amount : -Amount).ToString("f")+"\r\n"
-				+Lans.g(this,"Card Number:")+" "+responseValues.CreditCardNumber+"\r\n"
-				+Lans.g(this,"Transaction ID:")+" "+responseValues.TransactionID+"\r\n"
+				+creditCard
+				+Lans.g(this,"Transaction ID:")+" "+transactionID+"\r\n"
 				+Lans.g(this,"Processed:")+" "+dateTimeProcessed.ToShortDateString()+" "+dateTimeProcessed.ToShortTimeString()+"\r\n"
 				+Lans.g(this,"Note:")+" "+PayNote;
 		}

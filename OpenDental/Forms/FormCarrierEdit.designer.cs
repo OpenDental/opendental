@@ -61,6 +61,7 @@ namespace OpenDental {
 			this.label13 = new System.Windows.Forms.Label();
 			this.label11 = new System.Windows.Forms.Label();
 			this.groupBox3 = new OpenDental.UI.GroupBox();
+			this.check09 = new OpenDental.UI.CheckBox();
 			this.check01 = new OpenDental.UI.CheckBox();
 			this.check03m = new OpenDental.UI.CheckBox();
 			this.check03 = new OpenDental.UI.CheckBox();
@@ -309,7 +310,7 @@ namespace OpenDental {
 			this.label14.Size = new System.Drawing.Size(325, 34);
 			this.label14.TabIndex = 0;
 			this.label14.Text = "The values in this section are set and maintained by clicking \"Update Carriers\" i" +
-    "n the Carriers list";
+		"n the Carriers list";
 			this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// label12
@@ -350,8 +351,9 @@ namespace OpenDental {
 			// 
 			// groupBox3
 			// 
-			this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+			this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)));
+			this.groupBox3.Controls.Add(this.check09);
 			this.groupBox3.Controls.Add(this.check01);
 			this.groupBox3.Controls.Add(this.check03m);
 			this.groupBox3.Controls.Add(this.check03);
@@ -366,6 +368,16 @@ namespace OpenDental {
 			this.groupBox3.Size = new System.Drawing.Size(312, 181);
 			this.groupBox3.TabIndex = 6;
 			this.groupBox3.Text = "Supported Transaction Types";
+			// 
+			// check09
+			// 
+			this.check09.Enabled = false;
+			this.check09.Location = new System.Drawing.Point(16, 156);
+			this.check09.Name = "check09";
+			this.check09.Size = new System.Drawing.Size(251, 18);
+			this.check09.TabIndex = 278;
+			this.check09.TabStop = false;
+			this.check09.Text = "Attachments";
 			// 
 			// check01
 			// 
@@ -382,7 +394,7 @@ namespace OpenDental {
 			// check03m
 			// 
 			this.check03m.Enabled = false;
-			this.check03m.Location = new System.Drawing.Point(16, 106);
+			this.check03m.Location = new System.Drawing.Point(16, 94);
 			this.check03m.Name = "check03m";
 			this.check03m.Size = new System.Drawing.Size(251, 18);
 			this.check03m.TabIndex = 5;
@@ -392,7 +404,7 @@ namespace OpenDental {
 			// check03
 			// 
 			this.check03.Enabled = false;
-			this.check03.Location = new System.Drawing.Point(16, 88);
+			this.check03.Location = new System.Drawing.Point(16, 78);
 			this.check03.Name = "check03";
 			this.check03.Size = new System.Drawing.Size(251, 18);
 			this.check03.TabIndex = 4;
@@ -402,7 +414,7 @@ namespace OpenDental {
 			// check07
 			// 
 			this.check07.Enabled = false;
-			this.check07.Location = new System.Drawing.Point(16, 52);
+			this.check07.Location = new System.Drawing.Point(16, 47);
 			this.check07.Name = "check07";
 			this.check07.Size = new System.Drawing.Size(251, 18);
 			this.check07.TabIndex = 2;
@@ -412,7 +424,7 @@ namespace OpenDental {
 			// check06
 			// 
 			this.check06.Enabled = false;
-			this.check06.Location = new System.Drawing.Point(16, 160);
+			this.check06.Location = new System.Drawing.Point(16, 140);
 			this.check06.Name = "check06";
 			this.check06.Size = new System.Drawing.Size(251, 18);
 			this.check06.TabIndex = 8;
@@ -422,7 +434,7 @@ namespace OpenDental {
 			// check04
 			// 
 			this.check04.Enabled = false;
-			this.check04.Location = new System.Drawing.Point(16, 124);
+			this.check04.Location = new System.Drawing.Point(16, 109);
 			this.check04.Name = "check04";
 			this.check04.Size = new System.Drawing.Size(294, 18);
 			this.check04.TabIndex = 6;
@@ -432,7 +444,7 @@ namespace OpenDental {
 			// check05
 			// 
 			this.check05.Enabled = false;
-			this.check05.Location = new System.Drawing.Point(16, 142);
+			this.check05.Location = new System.Drawing.Point(16, 124);
 			this.check05.Name = "check05";
 			this.check05.Size = new System.Drawing.Size(251, 18);
 			this.check05.TabIndex = 7;
@@ -442,7 +454,7 @@ namespace OpenDental {
 			// check02
 			// 
 			this.check02.Enabled = false;
-			this.check02.Location = new System.Drawing.Point(16, 70);
+			this.check02.Location = new System.Drawing.Point(16, 62);
 			this.check02.Name = "check02";
 			this.check02.Size = new System.Drawing.Size(251, 18);
 			this.check02.TabIndex = 3;
@@ -452,7 +464,7 @@ namespace OpenDental {
 			// check08
 			// 
 			this.check08.Enabled = false;
-			this.check08.Location = new System.Drawing.Point(16, 34);
+			this.check08.Location = new System.Drawing.Point(16, 31);
 			this.check08.Name = "check08";
 			this.check08.Size = new System.Drawing.Size(251, 18);
 			this.check08.TabIndex = 1;
@@ -878,5 +890,6 @@ namespace OpenDental {
 		private Label labelEraAutomation;
 		private UI.ComboBox comboOrthoConsolidate;
 		private Label labelOrthoConsolidate;
+		private UI.CheckBox check09;
 	}
 }

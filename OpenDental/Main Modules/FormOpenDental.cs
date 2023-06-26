@@ -7372,23 +7372,42 @@ namespace OpenDental{
 			if(Security.IsAuthorized(Permissions.AllowLoginFromAnyLocation, true)) {
 				return true;
 			}
+			string message=Lan.g(this,"The IP address you are attempting to connect from")+", "+addressCur+", "
+				+Lan.g(this,"is not an approved address for accessing this cloud environment and you are not authorized for")+" "
+				+GroupPermissions.GetDesc(Permissions.AllowLoginFromAnyLocation)+".";
 			//Security Admins can add their own IP if it is not already allowed.
 			if(Security.IsAuthorized(Permissions.SecurityAdmin, true)) {
-				string message=$"The IP address you are attempting to connect from, {addressCur}, is not an approved address for accessing this cloud" +
-					" environment. To connect from this IP address, you will need to add it to the approved list.";
-				if(MsgBox.Show(MsgBoxButtons.OKCancel, message)) {
-					using(FormCloudManagement formCloudManagement=new FormCloudManagement()) {
+				message+="\r\n"+Lan.g(this,"To connect from this IP address, you will need to do one of the following")+":";
+				List<string> listOptions = new List<string> {
+					Lan.g(this,"Add this address to the approved list"),
+					Lan.g(this,"Grant access for")+" "+GroupPermissions.GetDesc(Permissions.AllowLoginFromAnyLocation)
+				};
+				InputBox ibox=new InputBox(message,listOptions);
+				if(ibox.ShowDialog()==DialogResult.OK) {
+					if(ibox.SelectedIndex==0) {
+						using FormCloudManagement formCloudManagement=new FormCloudManagement();
 						//Either Security Admin has no password or the user must have authenticated to get to this step.
 						//We can safely (temporarily) allow the cache so formCloudManagement can be shown without crashing.
 						Userods.SetIsCacheAllowed(true);//Enable the cache
 						formCloudManagement.ShowDialog();
 						Userods.SetIsCacheAllowed(false);//Disable the cache, it will be enabled again by the calling method if it needs to be.
 					}
+					if(ibox.SelectedIndex==1) {
+						//Either Security Admin has no password or the user must have authenticated to get to this step.
+						//We can safely (temporarily) allow the cache so formCloudManagement can be shown without crashing.
+						Userods.SetIsCacheAllowed(true);//Enable the cache
+						using FormSecurity formSecurity=new FormSecurity();
+						formSecurity.ShowDialog();
+						SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,"Security Window");
+						Userods.SetIsCacheAllowed(false);//Disable the cache, it will be enabled again by the calling method if it needs to be.
+					}
 					return IsCloudUserIpAllowed();
 				}
 			}
 			else {
-				MessageBox.Show($"The IP address you are attempting to connect from, {addressCur}, is not an approved address for accessing this cloud environment.");
+				message+="\r\n"+Lan.g(this,"A user with the SecurityAdmin permission must either add this address to the approved list or grant you the permission for")+" "
+					+GroupPermissions.GetDesc(Permissions.AllowLoginFromAnyLocation)+".";
+				MsgBox.Show(message);
 			}
 			return false;
 		}

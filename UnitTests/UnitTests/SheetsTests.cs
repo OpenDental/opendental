@@ -181,7 +181,9 @@ namespace UnitTests {
 				countValue++;
 			});
 			sheetNew=Sheets.PreFillSheetFromPreviousAndDatabase(sheetDef, sheet);
-			List<SheetField> newFields=sheetNew.SheetFields.FindAll(x => x.FieldName!="" && x.FieldType!=SheetFieldType.CheckBox && x.FieldType!=SheetFieldType.ComboBox);
+			List<SheetField> newFields=sheetNew.SheetFields.FindAll(x => x.FieldName!="" 
+				&& (x.FieldType!=SheetFieldType.CheckBox|| x.FieldName=="misc") 
+				&& (x.FieldType!=SheetFieldType.ComboBox|| x.FieldName=="misc"));
 			List<SheetField> allergyFields=sheetNew.SheetFields.FindAll(x => x.FieldName.ToLower().Contains("allergy") 
 				|| (x.FieldValue!=null && x.FieldValue.ToLower().Contains("allergy")));
 			//assert that these values are pulled from the db as expected
@@ -202,8 +204,8 @@ namespace UnitTests {
 					&&sheet.SheetFields[i].FieldName!="City"
 					&&sheet.SheetFields[i].FieldName!="State"
 					&&!sheet.SheetFields[i].FieldValue.Contains("Date")
-					&&sheet.SheetFields[i].FieldType!=SheetFieldType.CheckBox					
-					&&sheet.SheetFields[i].FieldType!=SheetFieldType.ComboBox
+					&&(sheet.SheetFields[i].FieldType!=SheetFieldType.CheckBox || sheet.SheetFields[i].FieldName=="misc")
+					&&(sheet.SheetFields[i].FieldType!=SheetFieldType.ComboBox || sheet.SheetFields[i].FieldName=="misc")
 					&&!sheet.SheetFields[i].FieldName.Contains("inputMed"))
 				Assert.AreEqual(sheet.SheetFields[i].FieldValue, sheetNew.SheetFields[i].FieldValue);
 			}

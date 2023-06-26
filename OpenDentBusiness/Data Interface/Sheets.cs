@@ -413,11 +413,13 @@ namespace OpenDentBusiness{
 			bool doUseMedicationsFromPreviousSheet=!MedicationPats.GetPatientData(sheet.PatNum).Any(x=>MedicationPats.IsMedActive(x));
 			//Get the fields that we want to fill from previous sheet.
 			//Always skip insurance fields, skip medications if they have active medications in the DB.
-			List<SheetField> listSheetNewFieldsEmpty=sheetNew.SheetFields.FindAll(x => !x.FieldType.In(SheetFieldType.CheckBox,SheetFieldType.ComboBox, SheetFieldType.StaticText) 
+			//Always exclude static text. Allow combo or check boxes if the fieldName is misc
+			List<SheetField> listSheetNewFieldsEmpty=sheetNew.SheetFields.FindAll(x => x.FieldType!=(SheetFieldType.StaticText) 
+				&& (!x.FieldType.In(SheetFieldType.CheckBox,SheetFieldType.ComboBox) || x.FieldName=="misc")
 				&& x.FieldValue.IsNullOrEmpty()
-				&&!x.FieldName.StartsWith("ins1")	
-				&&!x.FieldName.StartsWith("ins2")	
-				&&(!x.FieldName.StartsWith("inputMed")	|| doUseMedicationsFromPreviousSheet)
+				&& !x.FieldName.StartsWith("ins1")	
+				&& !x.FieldName.StartsWith("ins2")	
+				&& (!x.FieldName.StartsWith("inputMed")	|| doUseMedicationsFromPreviousSheet)
 			);
 			//Find the fields that were passed in that can be used with pre-fill logic.
 			List<SheetField> listSheetFieldsOriginal=sheet.SheetFields.FindAll(x => x.SheetFieldDefNum > 0 && !x.FieldValue.IsNullOrEmpty());
