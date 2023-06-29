@@ -120,8 +120,8 @@ namespace OpenDentBusiness {
 		///<summary>Bool. Allows adjustments from FormClaimEdit. 0 by default.</summary>
 		AllowProcAdjFromClaim,
 		AllowSettingProcsComplete,
-		///<summary>DefNum for the payment type to be used for payments created through our Extended (FHIR) API.</summary>
-		ApiPaymentType,
+        ///<summary>DefNum for the default PaymentType for ODApi payments.</summary>
+        ApiPaymentType,
 		AppointmentBubblesDisabled,
 		AppointmentBubblesNoteLength,
 		///<summary>Reset calendar to today on clinic select.</summary>

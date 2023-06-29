@@ -29,6 +29,7 @@ namespace OpenDental {
 		#region Fields - Public
 		///<summary>If it's internal, then the edit windows will all be set to IsReadOnly.</summary>
 		public bool IsInternal;
+		public SheetDef SheetDef_;
 		#endregion Fields - Public
 
 		#region Fields - Private
@@ -95,7 +96,6 @@ namespace OpenDental {
 		private Margins _margins=new Margins(0,0,40,60);
 		private Random _random=new Random();
 		private Rectangle _rectangleRestoreBoundsOld=new Rectangle();
-		private SheetDef _sheetDef;
 		private SheetEditMobileCtrl _sheetEditMobileCtrl=new SheetEditMobileCtrl() { Size=new Size(642,758) };
 		private SheetFieldDef _sheetFieldDefResizing;
 		///<summary>Most sheets will only have the default mode. Dynamic module layouts can have multiple.</summary>
@@ -114,11 +114,21 @@ namespace OpenDental {
 			InitializeLayoutManager();
 			InitializeComponentSheetEditMobile();
 			Lan.F(this);
-			_sheetDef=sheetDef;
+			SheetDef_=sheetDef;
 		}
 		#endregion Constructor
 
 		#region Properties
+
+		public void UpdateSheetDefInBackground() {
+			textDescription.Text=SheetDef_.Description;
+			SetPanelMainSize();
+			panelMain.Invalidate();
+			if(SheetDef_.HasMobileLayout) { //Always open the mobile editor since they want to use the mobile layout.
+				ShowMobile();
+			}
+		}
+
 		///<summary>The currently selected languages three letter abbr from comboLanguages. When 'Default' is selected an empty string is returned. When 'Add New' is selected NULL is returned.</summary>
 		private string GetSelectedLanguageThreeLetters() {
 			if(comboLanguages.SelectedIndex<0) {
@@ -151,7 +161,7 @@ namespace OpenDental {
 
 		///<summary>Returns a list of all translations that are currently being used in memory. If user selects a translation but it isn't in the DB yet it will be included in this list.</summary>
 		private List<string> GetListUsedTranslations() {
-			return _sheetDef.SheetFieldDefs.Select(x => x.Language).Distinct().ToList();
+			return SheetDef_.SheetFieldDefs.Select(x => x.Language).Distinct().ToList();
 		}
 		#endregion Properties
 
@@ -300,11 +310,11 @@ namespace OpenDental {
 			if(_isTabMode) {
 				return;
 			}
-			if(_sheetDef.IsNew) {
+			if(SheetDef_.IsNew) {
 				DialogResult=DialogResult.Cancel;
 				return;
 			}
-			if(IsChartModuleSheetType() && _sheetDef.SheetDefNum==PrefC.GetLong(PrefName.SheetsDefaultChartModule)) {
+			if(IsChartModuleSheetType() && SheetDef_.SheetDefNum==PrefC.GetLong(PrefName.SheetsDefaultChartModule)) {
 				MsgBox.Show(this,"This is the current Chart module default layout.\r\nPlease select a new default in Sheet Def Defaults first.");
 				return;
 			}
@@ -313,7 +323,7 @@ namespace OpenDental {
 					+"You will only be able to un-do this by clicking Cancel in the Edit Sheet window before clicking OK.\n"
 					+"Continue?";
 				if(MsgBox.Show(MsgBoxButtons.YesNo,msg)){
-					_sheetDef.SheetFieldDefs.RemoveAll(x => x.Language==GetSelectedLanguageThreeLetters());//Remove all translated SheetFieldDefs for current language.
+					SheetDef_.SheetFieldDefs.RemoveAll(x => x.Language==GetSelectedLanguageThreeLetters());//Remove all translated SheetFieldDefs for current language.
 					RefreshLanguagesAndPanelMain();
 				}
 				return;
@@ -322,8 +332,8 @@ namespace OpenDental {
 				return;
 			}
 			try {
-				SheetDefs.DeleteObject(_sheetDef.SheetDefNum);
-				SecurityLogs.MakeLogEntry(Permissions.Setup,0,Lan.g(this,"SheetDef")+" "+_sheetDef.Description+" "+Lan.g(this,"was deleted."));
+				SheetDefs.DeleteObject(SheetDef_.SheetDefNum);
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,Lan.g(this,"SheetDef")+" "+SheetDef_.Description+" "+Lan.g(this,"was deleted."));
 				DialogResult=DialogResult.OK;
 			}
 			catch(Exception ex) {
@@ -333,7 +343,8 @@ namespace OpenDental {
 
 		private void butEdit_Click(object sender,EventArgs e) {
 			using FormSheetDef formSheetDef=new FormSheetDef();
-			formSheetDef.SheetDefCur=_sheetDef;
+			formSheetDef._formSheetDefEdit=this;
+			formSheetDef.SheetDefCur=SheetDef_;
 			if(this.IsInternal) {
 				formSheetDef.IsReadOnly=true;
 			}
@@ -341,11 +352,11 @@ namespace OpenDental {
 			if(formSheetDef.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			textDescription.Text=_sheetDef.Description;
+			textDescription.Text=SheetDef_.Description;
 			SetPanelMainSize();
 			FillFieldList();
 			panelMain.Invalidate();
-			if(_sheetDef.HasMobileLayout) { //Always open the mobile editor since they want to use the mobile layout.
+			if(SheetDef_.HasMobileLayout) { //Always open the mobile editor since they want to use the mobile layout.
 				ShowMobile();
 			}
 			AddUndoLevel("Edit Properties");
@@ -371,10 +382,10 @@ namespace OpenDental {
 				height:rectangleWorkingArea.Height);
 			Bounds=new Rectangle(rectangleBoth.Left,rectangleBoth.Top,Width,rectangleBoth.Height);
 			Rectangle rectangleFloat=new Rectangle(Right,rectangleWorkingArea.Top,_sheetEditMobileCtrl.Width,rectangleWorkingArea.Height);
-			_sheetEditMobileCtrl.ShowModeless(_sheetDef.Description,this,rectangleFloat);
+			_sheetEditMobileCtrl.ShowModeless(SheetDef_.Description,this,rectangleFloat);
 			//The next two lines are because we skip those during Undo if mobile is not showing.
 			_sheetEditMobileCtrl.UpdateLanguage(GetSelectedLanguageThreeLetters());
-			_sheetEditMobileCtrl.SetSheetDef(_sheetDef);
+			_sheetEditMobileCtrl.SetSheetDef(SheetDef_);
 			butMobile.Text=Lan.g(this,"Hide Mobile");				
 		}
 
@@ -389,35 +400,35 @@ namespace OpenDental {
 			if(!ValidateInOK()) {
 				return;
 			}
-			if(!_sheetEditMobileCtrl.MergeMobileSheetFieldDefs(_sheetDef,true,new Action<string>((err) => { MsgBox.Show(this,err); }))) {
+			if(!_sheetEditMobileCtrl.MergeMobileSheetFieldDefs(SheetDef_,true,new Action<string>((err) => { MsgBox.Show(this,err); }))) {
 				return;
 			}
 			if(!UpdateWebSheetDef()) {
 				return;
 			}
 			//If we added or subtracted any field defs, increment the revision ID
-			SheetDef sheetDefStored=SheetDefs.GetSheetDef(_sheetDef.SheetDefNum,false);
-			if(sheetDefStored!=null && sheetDefStored.SheetFieldDefs.Count!=_sheetDef.SheetFieldDefs.Count) {
-				_sheetDef.RevID++;
+			SheetDef sheetDefStored=SheetDefs.GetSheetDef(SheetDef_.SheetDefNum,false);
+			if(sheetDefStored!=null && sheetDefStored.SheetFieldDefs.Count!=SheetDef_.SheetFieldDefs.Count) {
+				SheetDef_.RevID++;
 			}
 			if(!PromptUpdateEClipboardSheetDefs()) {
 				return;
 			}
-			SheetDefs.InsertOrUpdate(_sheetDef);
+			SheetDefs.InsertOrUpdate(SheetDef_);
 			DialogResult=DialogResult.OK;
 		}
 
 		private void butPageAdd_Click(object sender,EventArgs e) {
-			if(_sheetDef.PageCount>9) {
+			if(SheetDef_.PageCount>9) {
 				MsgBox.Show(this,"More than 10 pages are not allowed.");
 				//Maximum PageCount 10, this is an arbitrary number. If this number gets too big there may be issues with the graphics trying to draw the sheet.
 				return;
 			}
-			_sheetDef.PageCount++;
-			panelMain.Height=_sheetDef.HeightTotal;
-			if(_sheetDef.PageCount>1){
+			SheetDef_.PageCount++;
+			panelMain.Height=SheetDef_.HeightTotal;
+			if(SheetDef_.PageCount>1){
 				panelMain.Height-=_margins.Bottom;//first page
-				panelMain.Height-=(_sheetDef.PageCount-1)*(_margins.Top+_margins.Bottom);//remaining pages
+				panelMain.Height-=(SheetDef_.PageCount-1)*(_margins.Top+_margins.Bottom);//remaining pages
 			}
 			//RefreshBitmapBackground();
 			AddUndoLevel("Page Add");
@@ -425,31 +436,31 @@ namespace OpenDental {
 		}
 
 		private void butPageRemove_Click(object sender,EventArgs e) {
-			if(_sheetDef.PageCount<2) {
+			if(SheetDef_.PageCount<2) {
 				MsgBox.Show(this,"Already at one page minimum.");
 				//SheetDefCur.IsMultiPage=false;
 				//Minimum PageCount 1
 				return;
 			}
-			_sheetDef.PageCount--;
+			SheetDef_.PageCount--;
 			//Once sheet defs are enhanced to allow showing users editable margins we can go back to using the SheetDefCur.HeightTotal property.
 			//For now we need to use the algorithm that Ryan provided me.  See task #743211 for more information.
-			int lowestYPos=SheetUtil.GetLowestYPos(_sheetDef.SheetFieldDefs);
+			int lowestYPos=SheetUtil.GetLowestYPos(SheetDef_.SheetFieldDefs);
 			int arbitraryHeight=lowestYPos-_margins.Bottom;//-60;
-			int onePageHeight=_sheetDef.Height;
-			if(_sheetDef.IsLandscape){
-				onePageHeight=_sheetDef.Width;
+			int onePageHeight=SheetDef_.Height;
+			if(SheetDef_.IsLandscape){
+				onePageHeight=SheetDef_.Width;
 			}
 			int minimumPageCount=(int)Math.Ceiling((double)arbitraryHeight / (onePageHeight-_margins.Top-_margins.Bottom));
-			if(minimumPageCount > _sheetDef.PageCount) { //There are fields that have a YPos and heights that push them past the bottom of the page.
+			if(minimumPageCount > SheetDef_.PageCount) { //There are fields that have a YPos and heights that push them past the bottom of the page.
 				MsgBox.Show(this,"Cannot remove pages that contain sheet fields. The fields might be hidden or in another language.");
-				_sheetDef.PageCount++;//Forcefully add a page back.
+				SheetDef_.PageCount++;//Forcefully add a page back.
 				return;
 			}
-			panelMain.Height=LayoutManager.Scale(_sheetDef.HeightTotal);
-			if(_sheetDef.PageCount>1){
+			panelMain.Height=LayoutManager.Scale(SheetDef_.HeightTotal);
+			if(SheetDef_.PageCount>1){
 				panelMain.Height-=_margins.Bottom;//-60 first page
-				panelMain.Height-=(_sheetDef.PageCount-1)*(_margins.Top+_margins.Bottom);//-100 remaining pages
+				panelMain.Height-=(SheetDef_.PageCount-1)*(_margins.Top+_margins.Bottom);//-100 remaining pages
 			}
 			//RefreshBitmapBackground();
 			AddUndoLevel("Page Remove");
@@ -469,11 +480,11 @@ namespace OpenDental {
 			//example count=5, _undoLevel=1, so target is last item, or 5-1=4
 			//example count=5, _undoLevel=2, so target is second from end, or 5-2=3
 			//_undoLevel=3, target is third from end, or 5-3=2
-			_sheetDef=_listUndoLevels[idxTarget].SheetDef_.Copy();
-			_sheetDef.SheetFieldDefs=DeepCopy(_listUndoLevels[idxTarget].ListSheetFieldDefs);
+			SheetDef_=_listUndoLevels[idxTarget].SheetDef_.Copy();
+			SheetDef_.SheetFieldDefs=DeepCopy(_listUndoLevels[idxTarget].ListSheetFieldDefs);
 			_undoLevel--;
 			FillFieldList();
-			textDescription.Text=_sheetDef.Description;
+			textDescription.Text=SheetDef_.Description;
 			SetPanelMainSize();
 			panelMain.Invalidate();
 		}
@@ -530,25 +541,25 @@ namespace OpenDental {
 			//example count=5, _undoLevel=1, so target is third from end, or 5-2-1=2
 			//It's too slow to FillFieldList if we are just undoing movements.
 			bool isOnlyMovements=true;
-			if(_sheetDef.SheetFieldDefs.Count!=_listUndoLevels[idxTarget].ListSheetFieldDefs.Count){
+			if(SheetDef_.SheetFieldDefs.Count!=_listUndoLevels[idxTarget].ListSheetFieldDefs.Count){
 				isOnlyMovements=false;
 			}
 			else{
 				//guaranteed to be same count
-				for(int i=0;i<_sheetDef.SheetFieldDefs.Count;i++){
-					if(_sheetDef.SheetFieldDefs[i].SheetFieldDefNum!=_listUndoLevels[idxTarget].ListSheetFieldDefs[i].SheetFieldDefNum){
+				for(int i=0;i<SheetDef_.SheetFieldDefs.Count;i++){
+					if(SheetDef_.SheetFieldDefs[i].SheetFieldDefNum!=_listUndoLevels[idxTarget].ListSheetFieldDefs[i].SheetFieldDefNum){
 						isOnlyMovements=false;
 					}
 				}
 			}
-			_sheetDef=_listUndoLevels[idxTarget].SheetDef_.Copy();
-			_sheetDef.SheetFieldDefs=DeepCopy(_listUndoLevels[idxTarget].ListSheetFieldDefs);
+			SheetDef_=_listUndoLevels[idxTarget].SheetDef_.Copy();
+			SheetDef_.SheetFieldDefs=DeepCopy(_listUndoLevels[idxTarget].ListSheetFieldDefs);
 			//but we leave it on the list in case they want to redo
 			_undoLevel++;
 			if(isOnlyMovements){
 				for(int i=0;i<listBoxFields.Items.Count;i++){
 					SheetFieldDef sheetFieldDefOld=(SheetFieldDef)listBoxFields.Items.GetObjectAt(i);
-					SheetFieldDef sheetFieldDefNew=_sheetDef.SheetFieldDefs.Find(x=>x.SheetFieldDefNum==sheetFieldDefOld.SheetFieldDefNum);
+					SheetFieldDef sheetFieldDefNew=SheetDef_.SheetFieldDefs.Find(x=>x.SheetFieldDefNum==sheetFieldDefOld.SheetFieldDefNum);
 					if(sheetFieldDefNew is null){
 						continue;//shouldn't be possible
 					}
@@ -556,7 +567,7 @@ namespace OpenDental {
 				}
 				if(_sheetEditMobileCtrl.IsFormFloatVisible()){
 					_sheetEditMobileCtrl.UpdateLanguage(GetSelectedLanguageThreeLetters());
-					_sheetEditMobileCtrl.SetSheetDef(_sheetDef);
+					_sheetEditMobileCtrl.SetSheetDef(SheetDef_);
 				}
 				panelMain.Invalidate();
 			}
@@ -570,7 +581,7 @@ namespace OpenDental {
 					}
 				}
 			}
-			textDescription.Text=_sheetDef.Description;
+			textDescription.Text=SheetDef_.Description;
 			SetPanelMainSize();
 			panelMain.Invalidate();
 		}
@@ -593,10 +604,10 @@ namespace OpenDental {
 				}
 				wasTranslationAdded=true;
 			}
-			List<SheetFieldDef> listSheetFieldDefsTranslatedFields=_sheetDef.SheetFieldDefs.FindAll(x => x.Language==selectedThreeLetterLanguage);
+			List<SheetFieldDef> listSheetFieldDefsTranslatedFields=SheetDef_.SheetFieldDefs.FindAll(x => x.Language==selectedThreeLetterLanguage);
 			if(listSheetFieldDefsTranslatedFields.IsNullOrEmpty()) {//New translation
 				//Create in memory duplicates for every 'Default' SheetFieldDef for the new language.
-				_sheetDef.SheetFieldDefs.FindAll(x => x.Language.IsNullOrEmpty())//'Default' aka non-translated SheetFieldDefs
+				SheetDef_.SheetFieldDefs.FindAll(x => x.Language.IsNullOrEmpty())//'Default' aka non-translated SheetFieldDefs
 					.ForEach(x => AddNewSheetFieldDefsForTranslations(x,selectedThreeLetterLanguage));
 			}
 			else {
@@ -610,7 +621,7 @@ namespace OpenDental {
 		}
 
 		private void FormSheetDefEdit_FormClosing(object sender,FormClosingEventArgs e) {
-			List<SheetFieldDef> listSheetFieldDefs=_sheetDef.SheetFieldDefs.FindAll(x=>x.FieldType==SheetFieldType.Image);
+			List<SheetFieldDef> listSheetFieldDefs=SheetDef_.SheetFieldDefs.FindAll(x=>x.FieldType==SheetFieldType.Image);
 			for(int i=0;i<listSheetFieldDefs.Count();i++) {
 				listSheetFieldDefs[i].ImageField?.Dispose();
 			}
@@ -663,12 +674,12 @@ namespace OpenDental {
 						doRefreshBuffer=true;
 					}
 					if(sheetFieldDef.FieldType==SheetFieldType.Grid && sheetFieldDef.FieldName=="TreatPlanMain"
-						&& _sheetDef.SheetFieldDefs.FindAll(x=>x.FieldType==SheetFieldType.Grid && x.FieldName=="TreatPlanMain").Count==1) 
+						&& SheetDef_.SheetFieldDefs.FindAll(x=>x.FieldType==SheetFieldType.Grid && x.FieldName=="TreatPlanMain").Count==1) 
 					{
 						MsgBox.Show(this,"Cannot delete the last main grid from treatment plan.");
 						continue;//skip this one.
 					}
-					_sheetDef.SheetFieldDefs.Remove(sheetFieldDef);
+					SheetDef_.SheetFieldDefs.Remove(sheetFieldDef);
 				}
 				AddUndoLevel("Delete");
 				FillFieldList();
@@ -736,13 +747,13 @@ namespace OpenDental {
 		}
 
 		private void FormSheetDefEdit_Load(object sender,EventArgs e) {
-			if(_sheetDef.IsLandscape){
-				Width=LayoutManager.Scale(_sheetDef.Height+315);
-				Height=LayoutManager.Scale(_sheetDef.Width+65);
+			if(SheetDef_.IsLandscape){
+				Width=LayoutManager.Scale(SheetDef_.Height+315);
+				Height=LayoutManager.Scale(SheetDef_.Width+65);
 			}
 			else{
-				Width=LayoutManager.Scale(_sheetDef.Width+315);
-				Height=LayoutManager.Scale(_sheetDef.Height+65);
+				Width=LayoutManager.Scale(SheetDef_.Width+315);
+				Height=LayoutManager.Scale(SheetDef_.Height+65);
 			}
 			if(Width<LayoutManager.Scale(600)){
 				Width=LayoutManager.Scale(600);
@@ -778,7 +789,7 @@ namespace OpenDental {
 			else {
 				labelInternal.Visible=false;
 			}
-			List<SheetFieldType> listSheetFieldTypes=SheetDefs.GetVisibleButtons(_sheetDef.SheetType);
+			List<SheetFieldType> listSheetFieldTypes=SheetDefs.GetVisibleButtons(SheetDef_.SheetType);
 			butOutputText.Visible=listSheetFieldTypes.Contains(SheetFieldType.OutputText);
 			butInputField.Visible=listSheetFieldTypes.Contains(SheetFieldType.InputField);
 			butStaticText.Visible=listSheetFieldTypes.Contains(SheetFieldType.StaticText);
@@ -810,11 +821,11 @@ namespace OpenDental {
 			checkShowScreenChart.Visible=listSheetFieldTypes.Contains(SheetFieldType.ScreenChart);
 			checkShowMobileHeader.Visible=listSheetFieldTypes.Contains(SheetFieldType.MobileHeader);
 			_sheetEditMobileCtrl.IsReadOnly=IsInternal;
-			butMobile.Visible=SheetDefs.IsMobileAllowed(_sheetDef.SheetType);
-			if(Sheets.SheetTypeIsSinglePage(_sheetDef.SheetType)) {
+			butMobile.Visible=SheetDefs.IsMobileAllowed(SheetDef_.SheetType);
+			if(Sheets.SheetTypeIsSinglePage(SheetDef_.SheetType)) {
 				groupPage.Visible=false;
 			}
-			if(_sheetDef.SheetType==SheetTypeEnum.ChartModule) {
+			if(SheetDef_.SheetType==SheetTypeEnum.ChartModule) {
 				groupPage.Visible=false;
 			}
 			SetPanelMainSize();
@@ -823,7 +834,7 @@ namespace OpenDental {
 			//	panelMain.Height-=_sheetDefCur.PageCount*100-40;
 			//}
 			EnableDashboardWidgetOptions();
-			textDescription.Text=_sheetDef.Description;
+			textDescription.Text=SheetDef_.Description;
 			if(!TryInitLayoutModes()) {//TryInitLayoutModes() must be called before initial FillFieldList().
 				//If we are not associated with a SheetType that uses the above layoutmode logic then setup translations UI.
 				RefreshLanguages();//Fill list
@@ -833,7 +844,7 @@ namespace OpenDental {
 			FillFieldList();
 			panelMain.Invalidate();
 			panelMain.Focus();
-			if(_sheetDef.HasMobileLayout) { //Always open the mobile editor since they want to use the mobile layout.
+			if(SheetDef_.HasMobileLayout) { //Always open the mobile editor since they want to use the mobile layout.
 				ShowMobile();
 			}
 			ODThread threadGetWebSheetId=new ODThread(GetWebSheetDefs);
@@ -847,20 +858,20 @@ namespace OpenDental {
 			}));
 			threadGetWebSheetId.Name="GetWebSheetIdThread";
 			threadGetWebSheetId.Start(true);
-			this.Text="Sheet Def Edit - Revision "+_sheetDef.RevID.ToString();
+			this.Text="Sheet Def Edit - Revision "+SheetDef_.RevID.ToString();
 			_sheetEditMobileCtrl.SyncSheetFieldsWithDefualt=checkSynchMatchedFields.Checked;
 			//textDescription.Focus();
 			AddUndoLevel("Base");
 		}
 
 		private void FormSheetDefEdit_Shown(object sender, EventArgs e){
-			if(_sheetDef.SheetType.In(SheetTypeEnum.TreatmentPlan,SheetTypeEnum.ReferralLetter)){
+			if(SheetDef_.SheetType.In(SheetTypeEnum.TreatmentPlan,SheetTypeEnum.ReferralLetter)){
 				SetToothChartImage();
 			}
-			if(_sheetDef.SheetType==SheetTypeEnum.ChartModule) {
+			if(SheetDef_.SheetType==SheetTypeEnum.ChartModule) {
 				SetToothChartImage();
 			}
-			if(_sheetDef.SheetType==SheetTypeEnum.PatientDashboardWidget) {
+			if(SheetDef_.SheetType==SheetTypeEnum.PatientDashboardWidget) {
 				SetToothChartImage();
 			}
 		}
@@ -1208,7 +1219,7 @@ namespace OpenDental {
 			if(_gridSnapDistance>0) {
 				DrawAutoSnapLines(g);
 			}
-			DrawFields(_sheetDef,g);
+			DrawFields(SheetDef_,g);
 			DrawSelectionRectangle(g);
 			DrawAlignmentLines(g);
 			//Draw pagebreak
@@ -1217,9 +1228,9 @@ namespace OpenDental {
 			using Pen penDashMargin=new Pen(Color.Green);
 			penDashMargin.DashPattern=new float[] {1.0F,5.0F};
 			int margins=(_margins.Top+_margins.Bottom);
-			for(int i=1;i<_sheetDef.PageCount;i++) {
+			for(int i=1;i<SheetDef_.PageCount;i++) {
 				//g.DrawLine(pDashMargin,0,i*SheetDefCur.HeightPage-_printMargin.Bottom,SheetDefCur.WidthPage,i*SheetDefCur.HeightPage-_printMargin.Bottom);
-				g.DrawLine(penDashPage,0,i*(_sheetDef.HeightPage-margins)+_margins.Top,_sheetDef.WidthPage,i*(_sheetDef.HeightPage-margins)+_margins.Top);
+				g.DrawLine(penDashPage,0,i*(SheetDef_.HeightPage-margins)+_margins.Top,SheetDef_.WidthPage,i*(SheetDef_.HeightPage-margins)+_margins.Top);
 				//g.DrawLine(pDashMargin,0,i*SheetDefCur.HeightPage+_printMargin.Top,SheetDefCur.WidthPage,i*SheetDefCur.HeightPage+_printMargin.Top);
 			}
 			//End Draw Page Break
@@ -1259,15 +1270,15 @@ namespace OpenDental {
 
 		#region Methods - Event Handlers - Add Buttons
 		private void butOutputText_Click(object sender,EventArgs e) {
-			if(SheetFieldsAvailable.GetList(_sheetDef.SheetType,OutInCheck.Out).Count==0) {
+			if(SheetFieldsAvailable.GetList(SheetDef_.SheetType,OutInCheck.Out).Count==0) {
 				MsgBox.Show(this,"There are no output fields available for this type of sheet.");
 				return;
 			}
-			Font font=new Font(_sheetDef.FontName,_sheetDef.FontSize);
+			Font font=new Font(SheetDef_.FontName,SheetDef_.FontSize);
 			using FormSheetFieldOutput formSheetFieldOutput=new FormSheetFieldOutput();
 			formSheetFieldOutput.IsNew=true;
-			formSheetFieldOutput.SheetDefCur=_sheetDef;
-			formSheetFieldOutput.SheetFieldDefCur=SheetFieldDef.NewOutput("",_sheetDef.FontSize,_sheetDef.FontName,false,0,0,100,font.Height);
+			formSheetFieldOutput.SheetDefCur=SheetDef_;
+			formSheetFieldOutput.SheetFieldDefCur=SheetFieldDef.NewOutput("",SheetDef_.FontSize,SheetDef_.FontName,false,0,0,100,font.Height);
 			formSheetFieldOutput.ShowDialog();
 			if(formSheetFieldOutput.DialogResult!=DialogResult.OK  || formSheetFieldOutput.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
 				return;
@@ -1278,14 +1289,14 @@ namespace OpenDental {
 		}
 
 		private void butInputField_Click(object sender,EventArgs e) {
-			if(SheetFieldsAvailable.GetList(_sheetDef.SheetType,OutInCheck.In).Count==0) {
+			if(SheetFieldsAvailable.GetList(SheetDef_.SheetType,OutInCheck.In).Count==0) {
 				MsgBox.Show(this,"There are no input fields available for this type of sheet.");
 				return;
 			}
-			Font font=new Font(_sheetDef.FontName,_sheetDef.FontSize);
+			Font font=new Font(SheetDef_.FontName,SheetDef_.FontSize);
 			using FormSheetFieldInput formSheetFieldInput=new FormSheetFieldInput();
-			formSheetFieldInput.SheetDefCur=_sheetDef;
-			formSheetFieldInput.SheetFieldDefCur=SheetFieldDef.NewInput("",_sheetDef.FontSize,_sheetDef.FontName,false,0,0,100,font.Height);
+			formSheetFieldInput.SheetDefCur=SheetDef_;
+			formSheetFieldInput.SheetFieldDefCur=SheetFieldDef.NewInput("",SheetDef_.FontSize,SheetDef_.FontName,false,0,0,100,font.Height);
 			formSheetFieldInput.ShowDialog();
 			if(formSheetFieldInput.DialogResult!=DialogResult.OK  || formSheetFieldInput.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
 				return;
@@ -1296,10 +1307,10 @@ namespace OpenDental {
 		}
 
 		private void butStaticText_Click(object sender,EventArgs e) {
-			Font font=new Font(_sheetDef.FontName,_sheetDef.FontSize);
+			Font font=new Font(SheetDef_.FontName,SheetDef_.FontSize);
 			using FormSheetFieldStatic formSheetFieldStatic=new FormSheetFieldStatic();
-			formSheetFieldStatic.SheetDefCur=_sheetDef;
-			formSheetFieldStatic.SheetFieldDefCur=SheetFieldDef.NewStaticText("",_sheetDef.FontSize,_sheetDef.FontName,false,0,0,100,font.Height);
+			formSheetFieldStatic.SheetDefCur=SheetDef_;
+			formSheetFieldStatic.SheetFieldDefCur=SheetFieldDef.NewStaticText("",SheetDef_.FontSize,SheetDef_.FontName,false,0,0,100,font.Height);
 			formSheetFieldStatic.ShowDialog();
 			if(formSheetFieldStatic.DialogResult!=DialogResult.OK  || formSheetFieldStatic.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
 				return;
@@ -1310,14 +1321,14 @@ namespace OpenDental {
 		}
 
 		private void butCheckBox_Click(object sender,EventArgs e) {
-			if(SheetFieldsAvailable.GetList(_sheetDef.SheetType,OutInCheck.Check).Count==0) {
+			if(SheetFieldsAvailable.GetList(SheetDef_.SheetType,OutInCheck.Check).Count==0) {
 				MsgBox.Show(this,"There are no checkbox fields available for this type of sheet.");
 				return;
 			}
 			using FormSheetFieldCheckBox formSheetFieldCheckBox=new FormSheetFieldCheckBox();
 			formSheetFieldCheckBox.SheetFieldDefCur=SheetFieldDef.NewCheckBox("",0,0,11,11);
 			formSheetFieldCheckBox.SheetFieldDefCur.Language=GetSelectedLanguageThreeLetters();
-			formSheetFieldCheckBox.SheetDefCur=_sheetDef;
+			formSheetFieldCheckBox.SheetDefCur=SheetDef_;
 			formSheetFieldCheckBox.ShowDialog();
 			if(formSheetFieldCheckBox.DialogResult!=DialogResult.OK  || formSheetFieldCheckBox.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
 				return;
@@ -1329,7 +1340,7 @@ namespace OpenDental {
 
 		private void butComboBox_Click(object sender,EventArgs e) {
 			using FormSheetFieldComboBox formSheetFieldComboBox=new FormSheetFieldComboBox();
-			formSheetFieldComboBox.SheetDefCur=_sheetDef;
+			formSheetFieldComboBox.SheetDefCur=SheetDef_;
 			formSheetFieldComboBox.SheetFieldDefCur=SheetFieldDef.NewComboBox("","",0,0);
 			formSheetFieldComboBox.ShowDialog();
 			if(formSheetFieldComboBox.DialogResult!=DialogResult.OK || formSheetFieldComboBox.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
@@ -1347,7 +1358,7 @@ namespace OpenDental {
 			}
 			//Font font=new Font(SheetDefCur.FontName,SheetDefCur.FontSize);
 			using FormSheetFieldImage formSheetFieldImage=new FormSheetFieldImage();
-			formSheetFieldImage.SheetDefCur=_sheetDef;
+			formSheetFieldImage.SheetDefCur=SheetDef_;
 			formSheetFieldImage.SheetFieldDefCur=SheetFieldDef.NewImage("",0,0,100,100);
 			formSheetFieldImage.SheetFieldDefCur.Language=GetSelectedLanguageThreeLetters();
 			formSheetFieldImage.ShowDialog();
@@ -1367,7 +1378,7 @@ namespace OpenDental {
 			}
 			//Font font=new Font(SheetDefCur.FontName,SheetDefCur.FontSize);
 			using FormSheetFieldPatImage formSheetFieldPatImage=new FormSheetFieldPatImage();
-			formSheetFieldPatImage.SheetDefCur=_sheetDef;
+			formSheetFieldPatImage.SheetDefCur=SheetDef_;
 			formSheetFieldPatImage.SheetFieldDefCur=SheetFieldDef.NewPatImage(0,0,100,100);
 			formSheetFieldPatImage.SheetFieldDefCur.FieldType=SheetFieldType.PatImage;
 			formSheetFieldPatImage.ShowDialog();
@@ -1381,7 +1392,7 @@ namespace OpenDental {
 
 		private void butLine_Click(object sender,EventArgs e) {
 			using FormSheetFieldLine formSheetFieldLine=new FormSheetFieldLine();
-			formSheetFieldLine.SheetDefCur=_sheetDef;
+			formSheetFieldLine.SheetDefCur=SheetDef_;
 			formSheetFieldLine.SheetFieldDefCur=SheetFieldDef.NewLine(0,0,0,0);
 			formSheetFieldLine.ShowDialog();
 			if(formSheetFieldLine.DialogResult!=DialogResult.OK  || formSheetFieldLine.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
@@ -1394,7 +1405,7 @@ namespace OpenDental {
 
 		private void butRectangle_Click(object sender,EventArgs e) {
 			using FormSheetFieldRect formSheetFieldRect=new FormSheetFieldRect();
-			formSheetFieldRect.SheetDefCur=_sheetDef;
+			formSheetFieldRect.SheetDefCur=SheetDef_;
 			formSheetFieldRect.SheetFieldDefCur=SheetFieldDef.NewRect(0,0,0,0);
 			formSheetFieldRect.ShowDialog();
 			if(formSheetFieldRect.DialogResult!=DialogResult.OK  || formSheetFieldRect.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
@@ -1415,7 +1426,7 @@ namespace OpenDental {
 
 		private void AddSignatureBox(SheetFieldType sheetFieldType) {
 			using FormSheetFieldSigBox formSheetFieldSigBox=new FormSheetFieldSigBox();
-			formSheetFieldSigBox.SheetDefCur=_sheetDef;
+			formSheetFieldSigBox.SheetDefCur=SheetDef_;
 			formSheetFieldSigBox.SheetFieldDefCur=SheetFieldDef.NewSigBox(0,0,364,81,sigBox:sheetFieldType);
 			formSheetFieldSigBox.ShowDialog();
 			if(formSheetFieldSigBox.DialogResult!=DialogResult.OK  || formSheetFieldSigBox.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
@@ -1428,15 +1439,15 @@ namespace OpenDental {
 
 		private void butSpecial_Click(object sender,EventArgs e) {
 			using FormSheetFieldSpecial formSheetFieldSpecial=new FormSheetFieldSpecial();
-			formSheetFieldSpecial.SheetDefCur=_sheetDef;
+			formSheetFieldSpecial.SheetDefCur=SheetDef_;
 			formSheetFieldSpecial.SheetFieldDefCur=new SheetFieldDef(){IsNew=true };
 			formSheetFieldSpecial.LayoutMode=_sheetFieldLayoutMode;
 			formSheetFieldSpecial.ShowDialog();
 			if(formSheetFieldSpecial.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			bool isChartModuleSheetType=EnumTools.GetAttributeOrDefault<SheetLayoutAttribute>(_sheetDef.SheetType).IsChartModule;
-			List<SheetFieldDef> listSheetFieldDefsPertinent=_sheetDef.SheetFieldDefs.FindAll(x => x.LayoutMode==_sheetFieldLayoutMode && x.Language==GetSelectedLanguageThreeLetters());
+			bool isChartModuleSheetType=EnumTools.GetAttributeOrDefault<SheetLayoutAttribute>(SheetDef_.SheetType).IsChartModule;
+			List<SheetFieldDef> listSheetFieldDefsPertinent=SheetDef_.SheetFieldDefs.FindAll(x => x.LayoutMode==_sheetFieldLayoutMode && x.Language==GetSelectedLanguageThreeLetters());
 			if(isChartModuleSheetType && listSheetFieldDefsPertinent.Any(x => x.FieldName==formSheetFieldSpecial.SheetFieldDefCur.FieldName)) {
 				MsgBox.Show(this,"Field already exists.");
 				return;
@@ -1447,16 +1458,16 @@ namespace OpenDental {
 		}
 
 		private void butGrid_Click(object sender,EventArgs e) {
-			bool isChartModuleSheetType=EnumTools.GetAttributeOrDefault<SheetLayoutAttribute>(_sheetDef.SheetType).IsChartModule;
+			bool isChartModuleSheetType=EnumTools.GetAttributeOrDefault<SheetLayoutAttribute>(SheetDef_.SheetType).IsChartModule;
 			using FormSheetFieldGrid formSheetFieldGrid=new FormSheetFieldGrid();
-			formSheetFieldGrid.SheetDefCur=_sheetDef;
-			if(SheetDefs.IsDashboardType(_sheetDef)) {
+			formSheetFieldGrid.SheetDefCur=SheetDef_;
+			if(SheetDefs.IsDashboardType(SheetDef_)) {
 				//is resized in dialog window.
 				formSheetFieldGrid.SheetFieldDefCur=SheetFieldDef.NewGrid(DashApptGrid.SheetFieldName,0,0,100,150,growthBehavior:GrowthBehaviorEnum.None); 
 			}
 			else {
 				using FormSheetFieldGridType formSheetFieldGridType=new FormSheetFieldGridType();
-				formSheetFieldGridType.SheetDefCur=_sheetDef;
+				formSheetFieldGridType.SheetDefCur=SheetDef_;
 				formSheetFieldGridType.LayoutMode=_sheetFieldLayoutMode;
 				formSheetFieldGridType.ShowDialog();
 				if(formSheetFieldGridType.DialogResult!=DialogResult.OK) {
@@ -1472,7 +1483,7 @@ namespace OpenDental {
 			if(formSheetFieldGrid.DialogResult!=DialogResult.OK  || formSheetFieldGrid.SheetFieldDefCur==null) {//SheetFieldDefCur==null if it was Deleted
 				return;
 			}
-			List<SheetFieldDef> listSheetFieldDefsPertinent=_sheetDef.SheetFieldDefs.FindAll(x => x.LayoutMode==_sheetFieldLayoutMode && x.Language==GetSelectedLanguageThreeLetters());
+			List<SheetFieldDef> listSheetFieldDefsPertinent=SheetDef_.SheetFieldDefs.FindAll(x => x.LayoutMode==_sheetFieldLayoutMode && x.Language==GetSelectedLanguageThreeLetters());
 			if(isChartModuleSheetType && listSheetFieldDefsPertinent.Any(x => x.FieldName==formSheetFieldGrid.SheetFieldDefCur.FieldName)) {
 				MsgBox.Show(this,"Grid already exists.");
 				return;
@@ -1632,8 +1643,8 @@ namespace OpenDental {
 			int tries=0;
 			do {
 				sheetFieldDef.SheetFieldDefNum=_random.Next(int.MaxValue);
-			} while(_sheetDef.SheetFieldDefs.Any(x => x.SheetFieldDefNum==sheetFieldDef.SheetFieldDefNum) && ++tries<100);
-			_sheetDef.SheetFieldDefs.Add(sheetFieldDef);
+			} while(SheetDef_.SheetFieldDefs.Any(x => x.SheetFieldDefNum==sheetFieldDef.SheetFieldDefNum) && ++tries<100);
+			SheetDef_.SheetFieldDefs.Add(sheetFieldDef);
 			if(doAddToTranslatedViews){
 				AddNewSheetFieldDefsForTranslations(sheetFieldDef,GetListUsedTranslations().ToArray());
 			}
@@ -1646,7 +1657,7 @@ namespace OpenDental {
 				if(arrThreeLetterLanguages[i].IsNullOrEmpty()){//Ignore 'Default' 
 					continue;
 				}
-				int countScreenChartsForLanguage=_sheetDef.SheetFieldDefs.FindAll(x=>x.Language==arrThreeLetterLanguages[i] && x.FieldType==SheetFieldType.ScreenChart).Count();
+				int countScreenChartsForLanguage=SheetDef_.SheetFieldDefs.FindAll(x=>x.Language==arrThreeLetterLanguages[i] && x.FieldType==SheetFieldType.ScreenChart).Count();
 				if(sheetFieldDefDefault.FieldType==SheetFieldType.ScreenChart && countScreenChartsForLanguage==2) {
 					continue;//only 2 screencharts are allowed per translation
 				}
@@ -1674,8 +1685,8 @@ namespace OpenDental {
 			}
 			UndoLevel undoLevel=new UndoLevel();
 			undoLevel.Description=description;
-			undoLevel.SheetDef_=_sheetDef.Copy();//does not include list
-			undoLevel.ListSheetFieldDefs=DeepCopy(_sheetDef.SheetFieldDefs);		
+			undoLevel.SheetDef_=SheetDef_.Copy();//does not include list
+			undoLevel.ListSheetFieldDefs=DeepCopy(SheetDef_.SheetFieldDefs);		
 			_listUndoLevels.Add(undoLevel);
 			//FillComboUndo();
 			//_undoLevel is always 0 at the end of this method
@@ -1798,7 +1809,7 @@ namespace OpenDental {
 
 		///<summary>If is PatientDashboardWidget, only certain buttons will show, including DashboardWidget specific buttons.  Otherwise, DashboardWidget specific buttons will be hidden.</summary>
 		private void EnableDashboardWidgetOptions() {
-			if(_sheetDef.SheetType!=SheetTypeEnum.PatientDashboardWidget){
+			if(SheetDef_.SheetType!=SheetTypeEnum.PatientDashboardWidget){
 				return;
 			}
 			groupPage.Visible=false;
@@ -1820,40 +1831,40 @@ namespace OpenDental {
 		}
 
 		///<summary>Fills the listbox of fields.</summary>
-		private void FillFieldList() {
+		public void FillFieldList() {
 			listBoxFields.Items.Clear();
 			string txt;
 			if(IsChartModuleSheetType()) {
-				_sheetDef.SheetFieldDefs=_sheetDef.SheetFieldDefs
+				SheetDef_.SheetFieldDefs=SheetDef_.SheetFieldDefs
 					.OrderByDescending(x => x.FieldType==SheetFieldType.Grid)//Grids first
 					.ThenBy(x => x.FieldName.Contains("Button")).ToList();//Buttons last, always drawn on top.
 			}
 			else {
-				_sheetDef.SheetFieldDefs.Sort(SheetFieldDefs.CompareTabOrder);
+				SheetDef_.SheetFieldDefs.Sort(SheetFieldDefs.CompareTabOrder);
 			}
 			string selectedLanguage=GetSelectedLanguageThreeLetters();
-			for(int i=0;i<_sheetDef.SheetFieldDefs.Count();i++) {
-				if(_sheetDef.SheetFieldDefs[i].LayoutMode!=_sheetFieldLayoutMode || _sheetDef.SheetFieldDefs[i].Language!=selectedLanguage) {//Currently both of these can not be set at the same time.
+			for(int i=0;i<SheetDef_.SheetFieldDefs.Count();i++) {
+				if(SheetDef_.SheetFieldDefs[i].LayoutMode!=_sheetFieldLayoutMode || SheetDef_.SheetFieldDefs[i].Language!=selectedLanguage) {//Currently both of these can not be set at the same time.
 					continue;
 				}
-				if(!IsTypeShowing(_sheetDef.SheetFieldDefs[i].FieldType)){
+				if(!IsTypeShowing(SheetDef_.SheetFieldDefs[i].FieldType)){
 					continue;
 				}
-				switch(_sheetDef.SheetFieldDefs[i].FieldType) {
+				switch(SheetDef_.SheetFieldDefs[i].FieldType) {
 					case SheetFieldType.StaticText:
-						txt=_sheetDef.SheetFieldDefs[i].FieldValue;
+						txt=SheetDef_.SheetFieldDefs[i].FieldValue;
 						break;
 					case SheetFieldType.Image:
-						txt=Lan.g(this,"Image:")+_sheetDef.SheetFieldDefs[i].FieldName;
+						txt=Lan.g(this,"Image:")+SheetDef_.SheetFieldDefs[i].FieldName;
 						break;
 					case SheetFieldType.PatImage:
-						txt=Lan.g(this,"PatImg:")+Defs.GetName(DefCat.ImageCats,PIn.Long(_sheetDef.SheetFieldDefs[i].FieldName));
+						txt=Lan.g(this,"PatImg:")+Defs.GetName(DefCat.ImageCats,PIn.Long(SheetDef_.SheetFieldDefs[i].FieldName));
 						break;
 					case SheetFieldType.Line:
-						txt=Lan.g(this,"Line:")+_sheetDef.SheetFieldDefs[i].XPos.ToString()+","+_sheetDef.SheetFieldDefs[i].YPos.ToString()+","+"W:"+_sheetDef.SheetFieldDefs[i].Width.ToString()+","+"H:"+_sheetDef.SheetFieldDefs[i].Height.ToString();
+						txt=Lan.g(this,"Line:")+SheetDef_.SheetFieldDefs[i].XPos.ToString()+","+SheetDef_.SheetFieldDefs[i].YPos.ToString()+","+"W:"+SheetDef_.SheetFieldDefs[i].Width.ToString()+","+"H:"+SheetDef_.SheetFieldDefs[i].Height.ToString();
 						break;
 					case SheetFieldType.Rectangle:
-						txt=Lan.g(this,"Rect:")+_sheetDef.SheetFieldDefs[i].XPos.ToString()+","+_sheetDef.SheetFieldDefs[i].YPos.ToString()+","+"W:"+_sheetDef.SheetFieldDefs[i].Width.ToString()+","+"H:"+_sheetDef.SheetFieldDefs[i].Height.ToString();
+						txt=Lan.g(this,"Rect:")+SheetDef_.SheetFieldDefs[i].XPos.ToString()+","+SheetDef_.SheetFieldDefs[i].YPos.ToString()+","+"W:"+SheetDef_.SheetFieldDefs[i].Width.ToString()+","+"H:"+SheetDef_.SheetFieldDefs[i].Height.ToString();
 						break;
 					case SheetFieldType.SigBox:
 						txt=Lan.g(this,"Signature Box");
@@ -1862,54 +1873,54 @@ namespace OpenDental {
 						txt=Lan.g(this,"Practice Signature Box");
 						break;
 					case SheetFieldType.CheckBox:
-						txt=_sheetDef.SheetFieldDefs[i].TabOrder.ToString()+": ";
-						if(_sheetDef.SheetFieldDefs[i].FieldName.StartsWith("allergy:") || _sheetDef.SheetFieldDefs[i].FieldName.StartsWith("problem:")) {
-							txt+=_sheetDef.SheetFieldDefs[i].FieldName.Remove(0,8);
+						txt=SheetDef_.SheetFieldDefs[i].TabOrder.ToString()+": ";
+						if(SheetDef_.SheetFieldDefs[i].FieldName.StartsWith("allergy:") || SheetDef_.SheetFieldDefs[i].FieldName.StartsWith("problem:")) {
+							txt+=SheetDef_.SheetFieldDefs[i].FieldName.Remove(0,8);
 						}
 						else {
-							txt+=_sheetDef.SheetFieldDefs[i].FieldName;
+							txt+=SheetDef_.SheetFieldDefs[i].FieldName;
 						}
-						if(_sheetDef.SheetFieldDefs[i].RadioButtonValue!="") {
-							if(!_sheetDef.SheetFieldDefs[i].UiLabelMobileRadioButton.IsNullOrEmpty()) {
-								txt+=" - "+_sheetDef.SheetFieldDefs[i].UiLabelMobileRadioButton;
+						if(SheetDef_.SheetFieldDefs[i].RadioButtonValue!="") {
+							if(!SheetDef_.SheetFieldDefs[i].UiLabelMobileRadioButton.IsNullOrEmpty()) {
+								txt+=" - "+SheetDef_.SheetFieldDefs[i].UiLabelMobileRadioButton;
 							}
 							else {
-								txt+=" - "+_sheetDef.SheetFieldDefs[i].RadioButtonValue;
+								txt+=" - "+SheetDef_.SheetFieldDefs[i].RadioButtonValue;
 							}
 						}
 						break;
 					case SheetFieldType.ComboBox:
-						txt=_sheetDef.SheetFieldDefs[i].TabOrder > 0 ? _sheetDef.SheetFieldDefs[i].TabOrder.ToString()+": " : "";
-						txt+=Lan.g(this,"ComboBox:")+_sheetDef.SheetFieldDefs[i].XPos.ToString()+","+_sheetDef.SheetFieldDefs[i].YPos.ToString()
-							+","+"W:"+_sheetDef.SheetFieldDefs[i].Width.ToString();
+						txt=SheetDef_.SheetFieldDefs[i].TabOrder > 0 ? SheetDef_.SheetFieldDefs[i].TabOrder.ToString()+": " : "";
+						txt+=Lan.g(this,"ComboBox:")+SheetDef_.SheetFieldDefs[i].XPos.ToString()+","+SheetDef_.SheetFieldDefs[i].YPos.ToString()
+							+","+"W:"+SheetDef_.SheetFieldDefs[i].Width.ToString();
 						break;
 					case SheetFieldType.InputField:
-						txt=_sheetDef.SheetFieldDefs[i].TabOrder.ToString()+": "+_sheetDef.SheetFieldDefs[i].FieldName;
+						txt=SheetDef_.SheetFieldDefs[i].TabOrder.ToString()+": "+SheetDef_.SheetFieldDefs[i].FieldName;
 						break;
 					case SheetFieldType.Grid:
-						txt="Grid:"+_sheetDef.SheetFieldDefs[i].FieldName;
+						txt="Grid:"+SheetDef_.SheetFieldDefs[i].FieldName;
 						break;
 					case SheetFieldType.MobileHeader:
-						txt=Lan.g(this,"Mobile Only:")+" "+_sheetDef.SheetFieldDefs[i].UiLabelMobile;
+						txt=Lan.g(this,"Mobile Only:")+" "+SheetDef_.SheetFieldDefs[i].UiLabelMobile;
 						break;
 					default:
-						txt=_sheetDef.SheetFieldDefs[i].FieldName;
+						txt=SheetDef_.SheetFieldDefs[i].FieldName;
 						break;
 				} //end switch
-				listBoxFields.Items.Add(txt,_sheetDef.SheetFieldDefs[i]);
+				listBoxFields.Items.Add(txt,SheetDef_.SheetFieldDefs[i]);
 			}
 			_sheetEditMobileCtrl.UpdateLanguage(selectedLanguage);//This must be called before sheetEditMobile.SheetDef
-			_sheetEditMobileCtrl.SetSheetDef(_sheetDef);
+			_sheetEditMobileCtrl.SetSheetDef(SheetDef_);
 		}
 
 		private bool IsChartModuleSheetType() {
-			return EnumTools.GetAttributeOrDefault<SheetLayoutAttribute>(_sheetDef.SheetType).IsChartModule;
+			return EnumTools.GetAttributeOrDefault<SheetLayoutAttribute>(SheetDef_.SheetType).IsChartModule;
 		}
 
 		///<summary>Returns all sheetFieldDefs from sheetDef for the current layout mode, sheetDef defaults to _sheetDefCur.</summary>
 		private List<SheetFieldDef> GetPertinentSheetFieldDefs(SheetDef sheetDef=null) {
 			if(sheetDef==null) {
-				sheetDef=_sheetDef;
+				sheetDef=SheetDef_;
 			}
 			string selectedLanguage=GetSelectedLanguageThreeLetters();
 			List<SheetFieldDef> listSheetFieldDefs=new List<SheetFieldDef>();
@@ -1937,16 +1948,16 @@ namespace OpenDental {
 			List<WebForms_SheetDef> listWebForms_SheetDefs;
 			if(WebForms_SheetDefs.TryDownloadSheetDefs(out listWebForms_SheetDefs)) {
 				lock(_lock) {
-					_listWebForms_SheetDefs=listWebForms_SheetDefs.FindAll(x => x.SheetDefNum==_sheetDef.SheetDefNum);
+					_listWebForms_SheetDefs=listWebForms_SheetDefs.FindAll(x => x.SheetDefNum==SheetDef_.SheetDefNum);
 				}
 			}
 		}
 
 		private bool HasScreeningChart(bool isTreatmentChart) {
-			if(_sheetDef.SheetType!=SheetTypeEnum.Screening) {
+			if(SheetDef_.SheetType!=SheetTypeEnum.Screening) {
 				return false;
 			}
-			List<SheetFieldDef> listSheetFieldDefsPertinent=_sheetDef.SheetFieldDefs.FindAll( x => x.LayoutMode==_sheetFieldLayoutMode && x.Language==GetSelectedLanguageThreeLetters());
+			List<SheetFieldDef> listSheetFieldDefsPertinent=SheetDef_.SheetFieldDefs.FindAll( x => x.LayoutMode==_sheetFieldLayoutMode && x.Language==GetSelectedLanguageThreeLetters());
 			List<SheetFieldDef> listSheetFieldDefs=listSheetFieldDefsPertinent;
 			if(listSheetFieldDefs.Count==0) {
 				return false;
@@ -2009,7 +2020,7 @@ namespace OpenDental {
 		private bool HasTranslatedSheetDefS(SheetFieldDef sheetFieldDef,out List<SheetFieldDef> listSheetFieldDefsMatched){
 			listSheetFieldDefsMatched=null;
 			if(sheetFieldDef.Language.IsNullOrEmpty()){//Method should only be called using 'Default' SheetFieldDefs
-				listSheetFieldDefsMatched=_sheetDef.SheetFieldDefs.FindAll(x => !x.Language.IsNullOrEmpty() && IsEquivalentSheetDef(x,sheetFieldDef));
+				listSheetFieldDefsMatched=SheetDef_.SheetFieldDefs.FindAll(x => !x.Language.IsNullOrEmpty() && IsEquivalentSheetDef(x,sheetFieldDef));
 			}
 			return (!listSheetFieldDefsMatched.IsNullOrEmpty());
 		}
@@ -2101,28 +2112,28 @@ namespace OpenDental {
 			_sheetEditMobileCtrl.AddMobileHeader+=new EventHandler(butAddMobileHeader_Click);
 			//HasMobileLayout must be kept in sync because both FromSheetDefEdit and SheetEditMobileCtrl can changes its value at any time.
 			_sheetEditMobileCtrl.HasMobileLayoutChanged+=new EventHandler<bool>((o,hasMobileLayout) => {
-				_sheetDef.HasMobileLayout=hasMobileLayout;
+				SheetDef_.HasMobileLayout=hasMobileLayout;
 			});
 			_sheetEditMobileCtrl.TranslationProvider=new Func<string,string>((s) => { return Lan.g(this,s); });
 			_sheetEditMobileCtrl.NewMobileHeader+=new EventHandler<SheetEditMobileCtrl.NewMobileFieldValueArgs>((o,e) => {
-				SheetFieldDef sheetFieldDef=_sheetDef.SheetFieldDefs.FirstOrDefault(x => x.SheetFieldDefNum==e.SheetFieldDefNum);
+				SheetFieldDef sheetFieldDef=SheetDef_.SheetFieldDefs.FirstOrDefault(x => x.SheetFieldDefNum==e.SheetFieldDefNum);
 				if(sheetFieldDef!=null) {
 					sheetFieldDef.UiLabelMobile=e.NewFieldValue;
 					FillFieldList();
 				}
 			});
 			_sheetEditMobileCtrl.NewStaticText+=new EventHandler<SheetEditMobileCtrl.NewMobileFieldValueArgs>((o,e) => {
-				SheetFieldDef sheetFieldDef=_sheetDef.SheetFieldDefs.FirstOrDefault(x => x.SheetFieldDefNum==e.SheetFieldDefNum);
+				SheetFieldDef sheetFieldDef=SheetDef_.SheetFieldDefs.FirstOrDefault(x => x.SheetFieldDefNum==e.SheetFieldDefNum);
 				if(sheetFieldDef!=null) {
 					sheetFieldDef.FieldValue=e.NewFieldValue;
 					FillFieldList();
 				}
 			});
 			_sheetEditMobileCtrl.SheetFieldDefEdit+=new EventHandler<SheetEditMobileCtrl.SheetFieldDefEditArgs>((o,e) => {
-				if(!_sheetDef.SheetFieldDefs.Any(x => e.SheetFieldDefNums.Contains(x.SheetFieldDefNum))) {
+				if(!SheetDef_.SheetFieldDefs.Any(x => e.SheetFieldDefNums.Contains(x.SheetFieldDefNum))) {
 					return;
 				}
-				List<SheetFieldDef> listSheetFieldDefs=_sheetDef.SheetFieldDefs.FindAll(x => e.SheetFieldDefNums.Contains(x.SheetFieldDefNum));
+				List<SheetFieldDef> listSheetFieldDefs=SheetDef_.SheetFieldDefs.FindAll(x => e.SheetFieldDefNums.Contains(x.SheetFieldDefNum));
 				SheetFieldDef sheetFieldDef=listSheetFieldDefs[0];
 				//check to see if checkbox and if yes, check to see which one is highlighted or selected to pass in. 
 				if(listSheetFieldDefs.Any(x => x.FieldType==SheetFieldType.CheckBox)) {
@@ -2230,11 +2241,11 @@ namespace OpenDental {
 			SheetFieldDef sheetFieldDefCopy=sheetFieldDef.Copy();//Keep a copy of the unaltered sheetFieldDef for comparison
 			bool hasClickedDelete=false;
 			//not every field will have been saved to the database, so we can't depend on SheetFieldDefNum.
-			int idx=_sheetDef.SheetFieldDefs.IndexOf(sheetFieldDef);
+			int idx=SheetDef_.SheetFieldDefs.IndexOf(sheetFieldDef);
 			switch(sheetFieldDef.FieldType) {
 				case SheetFieldType.InputField:
 					using(FormSheetFieldInput formSheetFieldInput=new FormSheetFieldInput()) {
-						formSheetFieldInput.SheetDefCur=_sheetDef;
+						formSheetFieldInput.SheetDefCur=SheetDef_;
 						formSheetFieldInput.SheetFieldDefCur=sheetFieldDef;
 						formSheetFieldInput.IsReadOnly=IsInternal;
 						formSheetFieldInput.IsEditMobile=isEditMobile;
@@ -2247,7 +2258,7 @@ namespace OpenDental {
 					break;
 				case SheetFieldType.OutputText:
 					using(FormSheetFieldOutput formSheetFieldOutput=new FormSheetFieldOutput()){
-						formSheetFieldOutput.SheetDefCur=_sheetDef;
+						formSheetFieldOutput.SheetDefCur=SheetDef_;
 						formSheetFieldOutput.SheetFieldDefCur=sheetFieldDef;
 						formSheetFieldOutput.IsReadOnly=IsInternal;
 						formSheetFieldOutput.IsEditMobile=isEditMobile;
@@ -2260,7 +2271,7 @@ namespace OpenDental {
 					break;
 				case SheetFieldType.StaticText:
 					using(FormSheetFieldStatic formSheetFieldStatic=new FormSheetFieldStatic()) {
-						formSheetFieldStatic.SheetDefCur=_sheetDef;
+						formSheetFieldStatic.SheetDefCur=SheetDef_;
 						formSheetFieldStatic.SheetFieldDefCur=sheetFieldDef;
 						formSheetFieldStatic.IsReadOnly=IsInternal;
 						formSheetFieldStatic.IsEditMobile=isEditMobile;
@@ -2273,7 +2284,7 @@ namespace OpenDental {
 					break;
 				case SheetFieldType.Image:
 					using(FormSheetFieldImage formSheetFieldImage=new FormSheetFieldImage()) {
-						formSheetFieldImage.SheetDefCur=_sheetDef;
+						formSheetFieldImage.SheetDefCur=SheetDef_;
 						formSheetFieldImage.SheetFieldDefCur=sheetFieldDef;
 						formSheetFieldImage.IsReadOnly=IsInternal;
 						formSheetFieldImage.IsEditMobile=isEditMobile;
@@ -2287,7 +2298,7 @@ namespace OpenDental {
 					break;
 				case SheetFieldType.PatImage:
 					using(FormSheetFieldPatImage formSheetFieldPatImage=new FormSheetFieldPatImage()) {
-						formSheetFieldPatImage.SheetDefCur=_sheetDef;
+						formSheetFieldPatImage.SheetDefCur=SheetDef_;
 						formSheetFieldPatImage.SheetFieldDefCur=sheetFieldDef;
 						formSheetFieldPatImage.IsReadOnly=IsInternal;
 						formSheetFieldPatImage.IsEditMobile=isEditMobile;
@@ -2301,7 +2312,7 @@ namespace OpenDental {
 					break;
 				case SheetFieldType.Line:
 					using(FormSheetFieldLine formSheetFieldLine=new FormSheetFieldLine()){
-						formSheetFieldLine.SheetDefCur=_sheetDef;
+						formSheetFieldLine.SheetDefCur=SheetDef_;
 						formSheetFieldLine.SheetFieldDefCur=sheetFieldDef;
 						formSheetFieldLine.IsReadOnly=IsInternal;
 						formSheetFieldLine.IsEditMobile=isEditMobile;
@@ -2314,7 +2325,7 @@ namespace OpenDental {
 					break;
 				case SheetFieldType.Rectangle:
 					using(FormSheetFieldRect formSheetFieldRect=new FormSheetFieldRect()){
-						formSheetFieldRect.SheetDefCur=_sheetDef;
+						formSheetFieldRect.SheetDefCur=SheetDef_;
 						formSheetFieldRect.SheetFieldDefCur=sheetFieldDef;
 						formSheetFieldRect.IsReadOnly=IsInternal;
 						formSheetFieldRect.IsEditMobile=isEditMobile;
@@ -2327,7 +2338,7 @@ namespace OpenDental {
 					break;
 				case SheetFieldType.CheckBox:
 					using(FormSheetFieldCheckBox formSheetFieldCheckBox=new FormSheetFieldCheckBox()){
-						formSheetFieldCheckBox.SheetDefCur=_sheetDef;
+						formSheetFieldCheckBox.SheetDefCur=SheetDef_;
 						formSheetFieldCheckBox.SheetFieldDefCur=sheetFieldDef;
 						formSheetFieldCheckBox.IsReadOnly=IsInternal;
 						formSheetFieldCheckBox.IsEditMobile=isEditMobile;
@@ -2340,7 +2351,7 @@ namespace OpenDental {
 					break;
 				case SheetFieldType.ComboBox:
 					using(FormSheetFieldComboBox formSheetFieldComboBox=new FormSheetFieldComboBox()){
-						formSheetFieldComboBox.SheetDefCur=_sheetDef;
+						formSheetFieldComboBox.SheetDefCur=SheetDef_;
 						formSheetFieldComboBox.SheetFieldDefCur=sheetFieldDef;
 						formSheetFieldComboBox.IsReadOnly=IsInternal;
 						formSheetFieldComboBox.IsEditMobile=isEditMobile;
@@ -2354,7 +2365,7 @@ namespace OpenDental {
 				case SheetFieldType.SigBox:
 				case SheetFieldType.SigBoxPractice:
 					using(FormSheetFieldSigBox formSheetFieldSigBox=new FormSheetFieldSigBox()){
-						formSheetFieldSigBox.SheetDefCur=_sheetDef;
+						formSheetFieldSigBox.SheetDefCur=SheetDef_;
 						formSheetFieldSigBox.SheetFieldDefCur=sheetFieldDef;
 						formSheetFieldSigBox.IsReadOnly=IsInternal;
 						formSheetFieldSigBox.IsEditMobile=isEditMobile;
@@ -2367,7 +2378,7 @@ namespace OpenDental {
 					break;
 				case SheetFieldType.Special:
 					using(FormSheetFieldSpecial formSheetFieldSpecial=new FormSheetFieldSpecial()){
-						formSheetFieldSpecial.SheetDefCur=_sheetDef;
+						formSheetFieldSpecial.SheetDefCur=SheetDef_;
 						formSheetFieldSpecial.LayoutMode=_sheetFieldLayoutMode;
 						formSheetFieldSpecial.SheetFieldDefCur=sheetFieldDef;
 						formSheetFieldSpecial.IsReadOnly=IsInternal;
@@ -2381,7 +2392,7 @@ namespace OpenDental {
 					break;
 				case SheetFieldType.Grid:
 					using(FormSheetFieldGrid formSheetFieldGrid=new FormSheetFieldGrid()){
-						formSheetFieldGrid.SheetDefCur=_sheetDef;
+						formSheetFieldGrid.SheetDefCur=SheetDef_;
 						formSheetFieldGrid.SheetFieldDefCur=sheetFieldDef;
 						formSheetFieldGrid.IsReadOnly=IsInternal;
 						formSheetFieldGrid.IsEditMobile=isEditMobile;
@@ -2394,7 +2405,7 @@ namespace OpenDental {
 					break;
 				case SheetFieldType.ScreenChart:
 					using(FormSheetFieldChart formSheetFieldChart=new FormSheetFieldChart()){
-						formSheetFieldChart.SheetDefCur=_sheetDef;
+						formSheetFieldChart.SheetDefCur=SheetDef_;
 						formSheetFieldChart.SheetFieldDefCur=sheetFieldDef;
 						formSheetFieldChart.IsReadOnly=IsInternal;
 						formSheetFieldChart.IsEditMobile=isEditMobile;
@@ -2412,7 +2423,7 @@ namespace OpenDental {
 							return;
 						}
 						if(FormInputBox.IsDeleteClicked) {
-							_sheetDef.SheetFieldDefs.RemoveAt(idx);//Deleted
+							SheetDef_.SheetFieldDefs.RemoveAt(idx);//Deleted
 						}
 						else {
 							sheetFieldDef.UiLabelMobile=FormInputBox.textResult.Text;
@@ -2424,9 +2435,9 @@ namespace OpenDental {
 			if(sheetFieldDefCopy.FieldType!=SheetFieldType.MobileHeader) {
 				if(hasClickedDelete) {
 					if(sheetFieldDefCopy.FieldType==SheetFieldType.Image) {
-						_sheetDef.SheetFieldDefs[idx].ImageField?.Dispose();
+						SheetDef_.SheetFieldDefs[idx].ImageField?.Dispose();
 					}
-					_sheetDef.SheetFieldDefs.RemoveAt(idx);
+					SheetDef_.SheetFieldDefs.RemoveAt(idx);
 					RemoveEquivalentTranslatedSheetDefs(sheetFieldDefCopy);//Remove all SheetFieldDefs that were not change for translated fields.
 					AddUndoLevel("Delete");
 					panelMain.Invalidate();
@@ -2438,8 +2449,8 @@ namespace OpenDental {
 						sheetFieldDef2.SheetFieldDefNum=listSheetFieldDefsMatched[i].SheetFieldDefNum;
 						sheetFieldDef2.Language=listSheetFieldDefsMatched[i].Language;
 						sheetFieldDef2.UiLabelMobile=listSheetFieldDefsMatched[i].UiLabelMobile;
-						_sheetDef.SheetFieldDefs.RemoveAll(x => x.SheetFieldDefNum == listSheetFieldDefsMatched[i].SheetFieldDefNum);
-						_sheetDef.SheetFieldDefs.Add(sheetFieldDef2);
+						SheetDef_.SheetFieldDefs.RemoveAll(x => x.SheetFieldDefNum == listSheetFieldDefsMatched[i].SheetFieldDefNum);
+						SheetDef_.SheetFieldDefs.Add(sheetFieldDef2);
 					}
 					AddUndoLevel("Edit");
 				}
@@ -2507,11 +2518,11 @@ namespace OpenDental {
 
 		///<summary>Just during load.</summary>
 		private void LoadImages() {
-			for(int i=0;i<_sheetDef.SheetFieldDefs.Count();i++) {
-				if(_sheetDef.SheetFieldDefs[i].FieldType!=SheetFieldType.Image){
+			for(int i=0;i<SheetDef_.SheetFieldDefs.Count();i++) {
+				if(SheetDef_.SheetFieldDefs[i].FieldType!=SheetFieldType.Image){
 					continue;
 				}
-				LoadImageOne(_sheetDef.SheetFieldDefs[i]);
+				LoadImageOne(SheetDef_.SheetFieldDefs[i]);
 			}
 		}
 
@@ -2523,8 +2534,8 @@ namespace OpenDental {
 			List<SheetFieldDef> listSheetFieldDefsShowing=listBoxFields.Items.GetAll<SheetFieldDef>();
 			if(IsChartModuleSheetType() && _listSheetFieldDefsCopyPaste!=null) {
 				//Only paste controls that are valid for _sheetFieldLayoutMode
-				List<string> listGridNames=SheetUtil.GetGridsAvailable(_sheetDef.SheetType,_sheetFieldLayoutMode);
-				List<SheetFieldDef> listSheetFieldDefsSpecial=SheetFieldsAvailable.GetSpecial(_sheetDef.SheetType,_sheetFieldLayoutMode);
+				List<string> listGridNames=SheetUtil.GetGridsAvailable(SheetDef_.SheetType,_sheetFieldLayoutMode);
+				List<SheetFieldDef> listSheetFieldDefsSpecial=SheetFieldsAvailable.GetSpecial(SheetDef_.SheetType,_sheetFieldLayoutMode);
 				_listSheetFieldDefsCopyPaste.RemoveAll(
 					x =>  listSheetFieldDefsShowing.Any(y => y.FieldName==x.FieldName) //Remove duplicates
 					|| (x.FieldType==SheetFieldType.Grid && !listGridNames.Any(y => y==x.FieldName))//Remove invalid grid from paste logic
@@ -2586,7 +2597,7 @@ namespace OpenDental {
 		}
 
 		private bool PromptUpdateEClipboardSheetDefs() {
-			List<EClipboardSheetDef> listEClipboardSheetDefs = EClipboardSheetDefs.GetAllForSheetDefForOnceRule(_sheetDef.SheetDefNum);
+			List<EClipboardSheetDef> listEClipboardSheetDefs = EClipboardSheetDefs.GetAllForSheetDefForOnceRule(SheetDef_.SheetDefNum);
 			if(listEClipboardSheetDefs == null || listEClipboardSheetDefs.Count == 0) {
 				return true; // nothing to update, no need to prompt.
 			}
@@ -2613,7 +2624,7 @@ namespace OpenDental {
 			}
 			//got to here, user wants to update eClipboard sheets and force patients to refill them.
 			for(int i=0;i<listEClipboardSheetDefs.Count();i++) {
-				listEClipboardSheetDefs[i].PrefillStatusOverride=_sheetDef.RevID;
+				listEClipboardSheetDefs[i].PrefillStatusOverride=SheetDef_.RevID;
 				EClipboardSheetDefs.Update(listEClipboardSheetDefs[i]);
 			}
 			return true;
@@ -2624,7 +2635,7 @@ namespace OpenDental {
 			List<string> listAllLanguages=PrefC.GetString(PrefName.LanguagesUsedByPatients)//Must be before initial InitLayoutModes().
 				.Split(new char[] { ',' },StringSplitOptions.RemoveEmptyEntries)
 				.Where(x => x!=Patients.LANGUAGE_DECLINED_TO_SPECIFY).ToList();
-			List<string> listUsedLanguageThreeLetters=_sheetDef.SheetFieldDefs.FindAll(x => !x.Language.IsNullOrEmpty())
+			List<string> listUsedLanguageThreeLetters=SheetDef_.SheetFieldDefs.FindAll(x => !x.Language.IsNullOrEmpty())
 				.Select(x => x.Language)
 				.Distinct().ToList();
 			_listSheetDefLanguagesUsed=listUsedLanguageThreeLetters
@@ -2655,7 +2666,7 @@ namespace OpenDental {
 
 		///<summary>Removes all translated SheetFieldDefs from _sheetDefCur.SheetFieldDefs that are equivilant to given def.</summary>
 		private void RemoveEquivalentTranslatedSheetDefs(SheetFieldDef defDefault){
-			_sheetDef.SheetFieldDefs.RemoveAll(x => !x.Language.IsNullOrEmpty() && IsEquivalentSheetDef(x,defDefault));
+			SheetDef_.SheetFieldDefs.RemoveAll(x => !x.Language.IsNullOrEmpty() && IsEquivalentSheetDef(x,defDefault));
 		}
 
 		///<summary>Used To renumber TabOrder on controls</summary>
@@ -2683,14 +2694,14 @@ namespace OpenDental {
 		}
 
 		private void SetPanelMainSize(){
-			Size sizeNew=new Size(LayoutManager.Scale(_sheetDef.Width),LayoutManager.Scale(_sheetDef.Height));
-			if(_sheetDef.IsLandscape) {
-				sizeNew=new Size(LayoutManager.Scale(_sheetDef.Height),LayoutManager.Scale(_sheetDef.Width));
+			Size sizeNew=new Size(LayoutManager.Scale(SheetDef_.Width),LayoutManager.Scale(SheetDef_.Height));
+			if(SheetDef_.IsLandscape) {
+				sizeNew=new Size(LayoutManager.Scale(SheetDef_.Height),LayoutManager.Scale(SheetDef_.Width));
 			}
-			sizeNew.Height=LayoutManager.Scale(_sheetDef.HeightTotal);
-			if(_sheetDef.PageCount>1){
+			sizeNew.Height=LayoutManager.Scale(SheetDef_.HeightTotal);
+			if(SheetDef_.PageCount>1){
 				sizeNew.Height-=_margins.Bottom;//-60 first page
-				sizeNew.Height-=(_sheetDef.PageCount-1)*(_margins.Top+_margins.Bottom);//-100 remaining pages
+				sizeNew.Height-=(SheetDef_.PageCount-1)*(_margins.Top+_margins.Bottom);//-100 remaining pages
 			}
 			if(panelMain.Size==sizeNew){
 				//this is called repeatedly during resize, and we also don't want to resize position unless required
@@ -2705,7 +2716,7 @@ namespace OpenDental {
 		///<summary>Called during load to set _sheetFieldLayoutMode. Returns true if current _sheetDefCur.SheetTYpe is associated with a dynamic layout SheetType, otherwise false.</summary>
 		private bool TryInitLayoutModes() {
 			_sheetFieldLayoutMode=SheetFieldLayoutMode.Default;
-			switch(_sheetDef.SheetType) {
+			switch(SheetDef_.SheetType) {
 				case SheetTypeEnum.PatientDashboardWidget:
 					groupBoxSubViews.Visible=false;
 					comboLanguages.Visible=false;
@@ -2727,7 +2738,7 @@ namespace OpenDental {
 
 		///<summary>Updates the web sheet defs linked to this sheet def if the user agrees. Returns true if this sheet is okay to be saved to the database.</summary>
 		private bool UpdateWebSheetDef() {
-			if(_sheetDef.IsNew) {
+			if(SheetDef_.IsNew) {
 				//There is no Web Form to sync because they just created this sheet def.
 				//Without this return we would show the user that this Sheet Def matches all web forms that are not yet linked to a valid Sheet Def.
 				return true;
@@ -2747,12 +2758,12 @@ namespace OpenDental {
 			if(MessageBox.Show(message,"",MessageBoxButtons.YesNo)==DialogResult.No) {
 				return true;
 			}
-			if(!WebFormL.VerifyRequiredFieldsPresent(_sheetDef)) {
+			if(!WebFormL.VerifyRequiredFieldsPresent(SheetDef_)) {
 				return false;
 			}
 			Cursor=Cursors.WaitCursor;
-			WebFormL.LoadImagesToSheetDef(_sheetDef);
-			bool isSuccess=WebFormL.TryAddOrUpdateSheetDef(this,_sheetDef,false,_listWebForms_SheetDefs);
+			WebFormL.LoadImagesToSheetDef(SheetDef_);
+			bool isSuccess=WebFormL.TryAddOrUpdateSheetDef(this,SheetDef_,false,_listWebForms_SheetDefs);
 			Cursor=Cursors.Default;
 			return isSuccess;
 		}
@@ -2766,10 +2777,10 @@ namespace OpenDental {
 			List<SheetFieldDef> listSheetFieldDefsErroneousDuplicates=new List<SheetFieldDef>();
 			List<SheetFieldDef> listSheetFieldDefsToDelete=new List<SheetFieldDef>();
 			//Verify radio button groups.
-			for(int i=0;i<_sheetDef.SheetFieldDefs.Count;i++) {
-				SheetFieldDef sheetFieldDef=_sheetDef.SheetFieldDefs[i];
+			for(int i=0;i<SheetDef_.SheetFieldDefs.Count;i++) {
+				SheetFieldDef sheetFieldDef=SheetDef_.SheetFieldDefs[i];
 				if(PrefC.GetBool(PrefName.EasyHidePublicHealth) //Public health disabled
-					&& _sheetDef.SheetType==SheetTypeEnum.PatientForm //Is Patient Form
+					&& SheetDef_.SheetType==SheetTypeEnum.PatientForm //Is Patient Form
 					&& sheetFieldDef.FieldName.In("Sexual Orientation","Gender Identity")) //Contains public health fields
 				{
 					listSheetFieldDefsToDelete.Add(sheetFieldDef);
@@ -2781,8 +2792,8 @@ namespace OpenDental {
 				{
 					//All radio buttons within a group must either all be marked required or all be marked not required. 
 					//Not the most efficient check, but there won't usually be more than a few hundred items so the user will not ever notice. We can speed up later if needed.
-					for(int j=0;j<_sheetDef.SheetFieldDefs.Count;j++) {
-						SheetFieldDef sheetFieldDef2=_sheetDef.SheetFieldDefs[j];
+					for(int j=0;j<SheetDef_.SheetFieldDefs.Count;j++) {
+						SheetFieldDef sheetFieldDef2=SheetDef_.SheetFieldDefs[j];
 						if(sheetFieldDef2.FieldType==SheetFieldType.CheckBox && !sheetFieldDef2.IsRequired && sheetFieldDef2.RadioButtonGroup.ToLower()==sheetFieldDef.RadioButtonGroup.ToLower() //for misc groups
 							&& sheetFieldDef2.FieldName.ToLower()==sheetFieldDef.FieldName.ToLower()) //for misc groups
 						{
@@ -2824,8 +2835,8 @@ namespace OpenDental {
 					listSheetFieldDefsCheckMedList.Add(sheetFieldDef);
 				}
 				if(sheetFieldDef.FieldType==SheetFieldType.InputField && sheetFieldDef.FieldName=="State") {
-					for(int j=0;j<_sheetDef.SheetFieldDefs.Count;j++) {
-						if(_sheetDef.SheetFieldDefs[j].FieldName=="StateNoValidation") {
+					for(int j=0;j<SheetDef_.SheetFieldDefs.Count;j++) {
+						if(SheetDef_.SheetFieldDefs[j].FieldName=="StateNoValidation") {
 							MessageBox.Show(Lan.g(this,"Input Fields \"State\" and \"StateNoValidation\" may not be present on the same form.  " +
 								"Please remove one of these fields to continue."));
 							return false;
@@ -2844,7 +2855,7 @@ namespace OpenDental {
 				fieldsDeletedMessage.AppendLine("Public Health is no longer enabled. The following fields have been deleted:");
 				listSheetFieldDefsToDelete.ForEach(x => { 
 					fieldsDeletedMessage.AppendLine(x.FieldName);
-					_sheetDef.SheetFieldDefs.Remove(x);
+					SheetDef_.SheetFieldDefs.Remove(x);
 				});
 				MessageBox.Show(fieldsDeletedMessage.ToString());
 			}
@@ -2854,17 +2865,17 @@ namespace OpenDental {
 				MessageBox.Show(Lan.g(this,"Missing checkMed boxes found")+": '"+inputMedMissingCheckBox.Replace("inputMed","checkMed")+"'. "+Lan.g(this,"All inputMed should have a corresponding checkMed, or all checkMeds should be excluded."));
 				return false;
 			}
-			switch(_sheetDef.SheetType) {
+			switch(SheetDef_.SheetType) {
 				case SheetTypeEnum.TreatmentPlan:
-					if(_sheetDef.SheetFieldDefs.FindAll(x => x.FieldType==SheetFieldType.SigBox).GroupBy(x => x.Language).Any(x => x.ToList().Count!=1)) {
+					if(SheetDef_.SheetFieldDefs.FindAll(x => x.FieldType==SheetFieldType.SigBox).GroupBy(x => x.Language).Any(x => x.ToList().Count!=1)) {
 						MessageBox.Show(Lan.g(this,"Treatment plans must have exactly one patient signature box."));
 						return false;
 					}
-					if(_sheetDef.SheetFieldDefs.FindAll(x => x.FieldType==SheetFieldType.SigBoxPractice).GroupBy(x => x.Language).Any(x => x.ToList().Count>1)) {
+					if(SheetDef_.SheetFieldDefs.FindAll(x => x.FieldType==SheetFieldType.SigBoxPractice).GroupBy(x => x.Language).Any(x => x.ToList().Count>1)) {
 						MessageBox.Show(Lan.g(this,"Treatment plans cannot have more than one practice signature box."));
 						return false;
 					}
-					if(_sheetDef.SheetFieldDefs.FindAll(x => x.FieldType==SheetFieldType.Grid && x.FieldName=="TreatPlanMain").GroupBy(x => x.Language).Any(x => x.ToList().Count<1)) {
+					if(SheetDef_.SheetFieldDefs.FindAll(x => x.FieldType==SheetFieldType.Grid && x.FieldName=="TreatPlanMain").GroupBy(x => x.Language).Any(x => x.ToList().Count<1)) {
 						MessageBox.Show(Lan.g(this,"Treatment plans must have one main grid."));
 						return false;
 					}
@@ -2876,7 +2887,7 @@ namespace OpenDental {
 			try {
 				//Make sure that C# can serialize the SheetDef object.
 				using XmlWriter xmlWriter=XmlWriter.Create(stringBuilder);
-				xmlSerializer.Serialize(xmlWriter,_sheetDef);//documentation says this flushes, so next line is superfluous but safe
+				xmlSerializer.Serialize(xmlWriter,SheetDef_);//documentation says this flushes, so next line is superfluous but safe
 				xmlWriter.Close();
 				//Make sure that C# can deserialize the string representation of the SheetDef object.
 				using TextReader textReader=new StringReader(stringBuilder.ToString());
@@ -3287,7 +3298,7 @@ namespace OpenDental {
 			#endregion
 			if(isSelected) {
 				//Most dynamic grids do not modify the user set width.
-				if(!(IsChartModuleSheetType() || SheetDefs.IsDashboardType(_sheetDef)) 
+				if(!(IsChartModuleSheetType() || SheetDefs.IsDashboardType(SheetDef_)) 
 					|| sheetFieldDef.GrowthBehavior==GrowthBehaviorEnum.FillDownFitColumns) 
 				{
 					listDisplayFieldColumns=SheetUtil.GetGridColumnsAvailable(sheetFieldDef.FieldName);
@@ -3415,23 +3426,23 @@ namespace OpenDental {
 					}
 					//left:
 					if(listSheetFieldDefsShowing[j].XPos==listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]].XPos){
-						g.DrawLine(pen,listSheetFieldDefsShowing[j].XPos,0,listSheetFieldDefsShowing[j].XPos,_sheetDef.Height*_sheetDef.PageCount);
+						g.DrawLine(pen,listSheetFieldDefsShowing[j].XPos,0,listSheetFieldDefsShowing[j].XPos,SheetDef_.Height*SheetDef_.PageCount);
 					}
 					//right:
 					if(listSheetFieldDefsShowing[j].XPos+listSheetFieldDefsShowing[j].Width
 						==listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]].XPos+listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]].Width)
 					{
-						g.DrawLine(pen,listSheetFieldDefsShowing[j].XPos+listSheetFieldDefsShowing[j].Width,0,listSheetFieldDefsShowing[j].XPos+listSheetFieldDefsShowing[j].Width,_sheetDef.Height*_sheetDef.PageCount);
+						g.DrawLine(pen,listSheetFieldDefsShowing[j].XPos+listSheetFieldDefsShowing[j].Width,0,listSheetFieldDefsShowing[j].XPos+listSheetFieldDefsShowing[j].Width,SheetDef_.Height*SheetDef_.PageCount);
 					}
 					//top:
 					if(listSheetFieldDefsShowing[j].YPos==listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]].YPos){
-						g.DrawLine(pen,0,listSheetFieldDefsShowing[j].YPos,_sheetDef.Width,listSheetFieldDefsShowing[j].YPos);
+						g.DrawLine(pen,0,listSheetFieldDefsShowing[j].YPos,SheetDef_.Width,listSheetFieldDefsShowing[j].YPos);
 					}
 					//bottom:
 					if(listSheetFieldDefsShowing[j].YPos+listSheetFieldDefsShowing[j].Height
 						==listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]].YPos+listSheetFieldDefsShowing[listBoxFields.SelectedIndices[i]].Height)
 					{
-						g.DrawLine(pen,0,listSheetFieldDefsShowing[j].YPos+listSheetFieldDefsShowing[j].Height,_sheetDef.Width,listSheetFieldDefsShowing[j].YPos+listSheetFieldDefsShowing[j].Height);
+						g.DrawLine(pen,0,listSheetFieldDefsShowing[j].YPos+listSheetFieldDefsShowing[j].Height,SheetDef_.Width,listSheetFieldDefsShowing[j].YPos+listSheetFieldDefsShowing[j].Height);
 					}
 				}
 			}
@@ -3484,13 +3495,13 @@ namespace OpenDental {
 				case "toothChartLegend":
 					List<Def> listDefs=Defs.GetDefsForCategory(DefCat.ChartGraphicColors,true);
 					int width;
-					if(SheetDefs.IsDashboardType(_sheetDef)) {
+					if(SheetDefs.IsDashboardType(SheetDef_)) {
 						width=sheetFieldDef.Width;
 					}
 					else {
 						width=sheetDefWidth;
 					}
-					OpenDentBusiness.SheetPrinting.DrawToothChartLegend(sheetFieldDef.XPos,sheetFieldDef.YPos,width,0,listDefs,g,null,SheetDefs.IsDashboardType(_sheetDef),LayoutManager.GetScaleMS());
+					OpenDentBusiness.SheetPrinting.DrawToothChartLegend(sheetFieldDef.XPos,sheetFieldDef.YPos,width,0,listDefs,g,null,SheetDefs.IsDashboardType(SheetDef_),LayoutManager.GetScaleMS());
 					break;
 				case "familyInsurance":
 				case "individualInsurance":
@@ -3739,7 +3750,7 @@ namespace OpenDental {
 			if(sheetFieldDef.Language.IsNullOrEmpty()){//Always use defaultPen when working with a non-translated def.
 				return colorDefault;
 			}
-			if(_sheetDef.SheetFieldDefs.Any(x => x.Language.IsNullOrEmpty() && IsEquivalentSheetDef(x,sheetFieldDef))){
+			if(SheetDef_.SheetFieldDefs.Any(x => x.Language.IsNullOrEmpty() && IsEquivalentSheetDef(x,sheetFieldDef))){
 				//if there is a field in the default language that matches this one (not green)
 				return colorDefault;
 			}

@@ -132,7 +132,7 @@ namespace OpenDental{
 				}
 				
 				List<Def> listDefsPaymentTypes=Defs.GetDefsForCategory(DefCat.PaymentTypes,true);
-				List<Def> listDefsInsurancePaymentTypes=Defs.GetDefsForCategory(DefCat.InsurancePaymentType,true);
+				List<Def> listDefsInsurancePaymentTypes=Defs.GetDefsForCategory(DefCat.InsurancePaymentType,isShort:true);
 				_listPayTypeDefNums=new List<long>();
 				for(int i=0;i<listDefsPaymentTypes.Count;i++) {
 					if(listDefsPaymentTypes[i].ItemValue!="") {

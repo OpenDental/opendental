@@ -131,7 +131,7 @@ namespace OpenDental{
 			this.groupEClipboard.Name = "groupEClipboard";
 			this.groupEClipboard.Size = new System.Drawing.Size(425, 91);
 			this.groupEClipboard.TabIndex = 50;
-			this.groupEClipboard.Text = "Send to eClipboard Clinical";
+			this.groupEClipboard.Text = "Send to OD Touch";
 			// 
 			// label2
 			// 

@@ -76,7 +76,7 @@ namespace OpenDental{
 				ItemName="Income Transfer",
 				DefNum=0,//Income Transfer's PayType is 0.
 			});
-			_listInsDefs=Defs.GetDefsForCategory(DefCat.InsurancePaymentType,true);
+			_listInsDefs=Defs.GetDefsForCategory(DefCat.InsurancePaymentType,isShort:true);
 			_listClaimPayGroupDefs=Defs.GetDefsForCategory(DefCat.ClaimPaymentGroups,true);
 			listPatientTypes.Items.AddList(_listPayDefs,x => x.ItemName);
 			listPatientTypes.Visible=false;
@@ -176,13 +176,10 @@ namespace OpenDental{
 				return;
 			}
 			if(!checkPatientTypes.Checked && listPatientTypes.SelectedIndices.Count==0
-				&& !checkInsuranceTypes.Checked && listInsuranceTypes.SelectedIndices.Count==0)
+				&& !checkInsuranceTypes.Checked && listInsuranceTypes.SelectedIndices.Count==0
+				&& !checkAllClaimPayGroups.Checked && listClaimPayGroups.SelectedIndices.Count==0)
 			{
-				MsgBox.Show(this,"At least one type must be selected.");
-				return;
-			}
-			if(!checkAllClaimPayGroups.Checked && listClaimPayGroups.SelectedIndices.Count==0) {
-				MsgBox.Show(this,"At least one claim payment group must be selected.");
+				MsgBox.Show(this,"At least one type or group must be selected.");
 				return;
 			}
 			ReportComplex report=new ReportComplex(true,false);
@@ -293,10 +290,10 @@ namespace OpenDental{
 			List<Def> insDefs=Defs.GetDefsForCategory(DefCat.InsurancePaymentType);
 			List<Def> patDefs=Defs.GetDefsForCategory(DefCat.PaymentTypes);
 			for(int i=0;i<insDefs.Count;i++) {
-				dictInsDefNames.Add(insDefs[i].DefNum,insDefs[i].ItemName+(patDefs[i].IsHidden?" (hidden)":""));
+				dictInsDefNames.Add(insDefs[i].DefNum,Defs.GetNameWithHidden(insDefs[i].DefNum));
 			}
 			for(int i=0;i<patDefs.Count;i++) {
-				dictPatDefNames.Add(patDefs[i].DefNum,patDefs[i].ItemName+(patDefs[i].IsHidden?" (hidden)":""));
+				dictPatDefNames.Add(patDefs[i].DefNum,Defs.GetNameWithHidden(patDefs[i].DefNum));
 			}
 			dictPatDefNames.Add(0,"Income Transfer");//Otherwise income transfers show up with a payment type of "Undefined"
 			int[] summaryGroups1= { 1 };

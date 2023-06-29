@@ -215,16 +215,16 @@ namespace OpenDental {
 			this.groupBox2.Controls.Add(this.radioOrderEmp);
 			this.groupBox2.Location = new System.Drawing.Point(688, 12);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(132, 40);
+			this.groupBox2.Size = new System.Drawing.Size(148, 44);
 			this.groupBox2.TabIndex = 2;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Order By";
 			// 
 			// radioOrderCarrier
 			// 
-			this.radioOrderCarrier.Location = new System.Drawing.Point(75, 13);
+			this.radioOrderCarrier.Location = new System.Drawing.Point(80, 15);
 			this.radioOrderCarrier.Name = "radioOrderCarrier";
-			this.radioOrderCarrier.Size = new System.Drawing.Size(48, 16);
+			this.radioOrderCarrier.Size = new System.Drawing.Size(65, 18);
 			this.radioOrderCarrier.TabIndex = 1;
 			this.radioOrderCarrier.Text = "Carrier";
 			this.radioOrderCarrier.Click += new System.EventHandler(this.radioOrderCarrier_Click);
@@ -232,9 +232,9 @@ namespace OpenDental {
 			// radioOrderEmp
 			// 
 			this.radioOrderEmp.Checked = true;
-			this.radioOrderEmp.Location = new System.Drawing.Point(9, 13);
+			this.radioOrderEmp.Location = new System.Drawing.Point(6, 15);
 			this.radioOrderEmp.Name = "radioOrderEmp";
-			this.radioOrderEmp.Size = new System.Drawing.Size(69, 16);
+			this.radioOrderEmp.Size = new System.Drawing.Size(77, 18);
 			this.radioOrderEmp.TabIndex = 0;
 			this.radioOrderEmp.TabStop = true;
 			this.radioOrderEmp.Text = "Employer";

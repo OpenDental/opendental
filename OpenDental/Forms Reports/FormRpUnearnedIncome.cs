@@ -20,6 +20,7 @@ namespace OpenDental {
 		private void FormRpUnearnedIncome_Load(object sender,System.EventArgs e) {
 			checkUnearnedAllocationShowProv.Checked=PrefC.GetBool(PrefName.AllowPrepayProvider);
 			checkLineItemShowProv.Checked=PrefC.GetBool(PrefName.AllowPrepayProvider);
+			checkUnearnedAllocationExcludeZero.Checked=true;
 			FillClinics();
 			FillProviders();
 			FillUnearnedTypes();

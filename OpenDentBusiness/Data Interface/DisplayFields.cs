@@ -611,7 +611,6 @@ namespace OpenDentBusiness {
 					list.Add(new DisplayField("Description",270,category));
 					list.Add(new DisplayField("Charges",60,category));
 					list.Add(new DisplayField("Credits",60,category));
-					list.Add(new DisplayField("Balance",60,category));
 					//list.Add(new DisplayField("Signed",60,category));
 					//list.Add(new DisplayField("Abbr",110,category));
 					break;
@@ -1129,7 +1128,6 @@ namespace OpenDentBusiness {
 					list.Add(new DisplayField("Description",270,category));
 					list.Add(new DisplayField("Charges",60,category));
 					list.Add(new DisplayField("Credits",60,category));
-					list.Add(new DisplayField("Balance",60,category));
 					list.Add(new DisplayField("Signed",60,category));
 					list.Add(new DisplayField("Abbr",110,category));
 					break;

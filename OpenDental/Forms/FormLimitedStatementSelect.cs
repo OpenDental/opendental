@@ -100,6 +100,8 @@ namespace OpenDental {
 				limitedRow.Charges=TableAccount.Rows[i]["charges"].ToString();
 				limitedRow.Credits=TableAccount.Rows[i]["credits"].ToString();
 				limitedRow.ProvName=TableAccount.Rows[i]["prov"].ToString();
+				limitedRow.Abbr=TableAccount.Rows[i]["AbbrDesc"].ToString();
+				limitedRow.Signed=TableAccount.Rows[i]["signed"].ToString();
 				limitedRow.Tooth=Tooth.Display(TableAccount.Rows[i]["ToothNum"].ToString());
 				limitedRow.ColorText=Color.FromArgb(PIn.Int(TableAccount.Rows[i]["colorText"].ToString()));
 				if(PrefC.HasClinicsEnabled) {
@@ -169,7 +171,7 @@ namespace OpenDental {
 				//remove clinics from displayfields if clinics are disabled
 				listDisplayFields.RemoveAll(x => x.InternalName.ToLower().Contains("clinic"));
 			}
-			listDisplayFields.RemoveAll(x => x.InternalName.In("Abbr","Balance","Signed"));
+			listDisplayFields.RemoveAll(x => x.InternalName.In("Balance"));
 			HorizontalAlignment align;
 			GridSortingStrategy sort;
 			for(int i=0;i<listDisplayFields.Count;i++) {
@@ -255,6 +257,12 @@ namespace OpenDental {
 							break;
 						case "Credits":
 							row.Cells.Add(limitedRow.Credits);
+							break;						
+						case "Abbr":
+							row.Cells.Add(limitedRow.Abbr);
+							break;						
+						case "Signed":
+							row.Cells.Add(limitedRow.Signed);
 							break;
 						default:
 							row.Cells.Add("");
@@ -492,6 +500,8 @@ namespace OpenDental {
 			public string ProcCode;
 			public string Tooth;
 			public string ProvName;
+			public string Abbr;
+			public string Signed;
 			public long ClinicNum;
 			public Color ColorText;
 			public long ProcNumLab;

@@ -2302,9 +2302,8 @@ namespace OpenDental {
 			}
 			if(PrefC.GetBool(PrefName.ApptsRequireProc)) {
 				bool areApptsGoingToBeEmpty=Appointments.AreApptsGoingToBeEmpty(new List<Procedure>() { _procedure });
-				if(areApptsGoingToBeEmpty && !MsgBox.Show(this,MsgBoxButtons.YesNo,
-						"This is the only procedure attached to an appointment. If you delete this procedure, it will leave the appointment empty. Continue?"))
-				{
+				if(areApptsGoingToBeEmpty) {
+					MsgBox.Show("At least one procedure must be attached to the appointment.");
 					return;
 				}
 			}

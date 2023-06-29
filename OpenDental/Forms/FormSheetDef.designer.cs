@@ -323,6 +323,7 @@ namespace OpenDental{
 			this.groupBox2.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormSheetDef_FormClosed);
 
 		}
 

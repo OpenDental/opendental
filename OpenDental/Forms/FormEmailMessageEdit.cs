@@ -324,6 +324,7 @@ namespace OpenDental {
 				emailPreview.HtmlText=emailPreview.BodyText;
 				emailPreview.BodyText=emailPreview.BodyText;
 				_isRawHtml=isRawHtml;
+				ChangeViewToHtml(_isRawHtml);
 			}
 			else {
 				//regular template. 
@@ -416,10 +417,16 @@ namespace OpenDental {
 
 		/// <summary>Returns true if the given EmailAutograph contains HTML tags, false otherwise. </summary>
 		private bool IsAutographHTML(EmailAutograph emailAutograph) {
-			string allTagsPattern = "<(?:\"[^\"]*\"|'[^']*'|[^'\">])+>"; //Matches all HTML tags including inline css with double or single quotations.
-			bool doesContainHtml = Regex.IsMatch(emailAutograph.AutographText,allTagsPattern); 
+			string allTagsPattern="<(?:\"[^\"]*\"|'[^']*'|[^'\">])+>"; //Matches all HTML tags including inline css with double or single quotations.
+			bool doesContainHtml=Regex.IsMatch(emailAutograph.AutographText,allTagsPattern);
+			//An autograph without HTML tags may still have an OD-style image link (which requires HTML to insert correctly), so check for that as well
+			//This regex looks for any tags of the syntax "[[img:FILE.EXT]]" where "FILE" is any valid file name and "EXT" is a file extension that matches one of the image formats specified below
+			//We check for a valid file extension to prevent matching against non-image links, e.g. "[[How To Check A Patient In]]"
+			string imageTagPattern="\\[\\[img:.*(bmp|gif|jpeg|jpg|png|svg)\\]\\]$";
+			doesContainHtml|=Regex.IsMatch(emailAutograph.AutographText,imageTagPattern);
 			return doesContainHtml;
 		}
+
 		private void listAutographs_DoubleClick(object sender,EventArgs e) { //edit an autograph
 			if(listAutographs.SelectedIndex==-1) {
 				return;
@@ -449,7 +456,7 @@ namespace OpenDental {
 				return;
 			}
 			if(emailPreview.IsHtml || IsAutographHTML(listAutographs.GetSelected<EmailAutograph>())) {
-				if(MsgBox.Show(MsgBoxButtons.YesNo,"Autographs must be inserted from the Edit HTML window using the autograph dropdown in the toolbar."
+				if(MsgBox.Show(MsgBoxButtons.YesNo,"Autographs with images or HTML tags must be inserted from the Edit HTML window using the Autograph dropdown in the toolbar."
 					+"\r\n\r\nWould you like to open the Edit HTML window?")) 
 				{
 					OpenEditHtmlWindow();

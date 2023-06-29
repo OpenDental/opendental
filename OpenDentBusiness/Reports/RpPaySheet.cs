@@ -41,7 +41,7 @@ namespace OpenDentBusiness {
 				whereClin+=") ";
 			}
 			string whereClaimPayGroup="";
-			if(!hasAllClaimPayGroups){
+			if(!hasAllClaimPayGroups && listClaimPayGroups.Count>0){
 				whereClaimPayGroup=" AND PayGroup IN ("+String.Join(",",listClaimPayGroups)+") ";
 			}
 			string queryIns=

@@ -500,6 +500,9 @@ namespace OpenDental {
 			bool isChanged=false;
 			for(int i=0;i<_listChartViews.Count;i++) {
 				ChartView chartView=_listChartViews[i];
+				if(chartView.ItemOrder==i) {
+					continue;
+				}
 				ChartView chartViewOld=chartView.Copy();
 				chartView.ItemOrder=i;
 				isChanged|=ChartViews.Update(chartView,chartViewOld);
@@ -9622,9 +9625,8 @@ namespace OpenDental {
 					.ToList();
 				List<Procedure> listProceduresSelected=Procedures.GetManyProc(listProcNumsSelected,false);
 				bool areApptsGoingToBeEmpty=Appointments.AreApptsGoingToBeEmpty(listProceduresSelected);
-				if(areApptsGoingToBeEmpty && !MsgBox.Show(this,MsgBoxButtons.YesNo,
-					"One or more procedures being deleted are attached to appointments. If you permanently delete all selected procedure(s), it will leave one or more appointments empty. Continue?"))
-				{
+				if(areApptsGoingToBeEmpty) {
+					MsgBox.Show("At least one procedure must be attached to the appointment.");
 					return;
 				}
 			}

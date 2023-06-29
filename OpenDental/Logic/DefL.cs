@@ -170,7 +170,7 @@ namespace OpenDental {
 						break;
 					case DefCat.InsurancePaymentType:
 						defCatOptions.CanDelete=true;
-						defCatOptions.CanHide=false;
+						defCatOptions.CanHide=true;
 						defCatOptions.EnableValue=true;
 						defCatOptions.ValueText=Lans.g("FormDefinitions","N=Not selected for deposit");
 						defCatOptions.HelpText=Lans.g("FormDefinitions","These are claim payment types for insurance payments attached to claims.");

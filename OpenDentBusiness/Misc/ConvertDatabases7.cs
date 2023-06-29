@@ -4720,7 +4720,7 @@ namespace OpenDentBusiness {
 			if(table.Rows.Count>0) {
 				//DisplayFieldCategory.StatementLimitedCustomSuperFamily=20, DisplayFieldCategory.AccountModule=3
 				command="INSERT INTO displayfield (InternalName, ItemOrder, Description, ColumnWidth, Category, ChartViewNum, PickList, DescriptionOverride) " 
-					+"(SELECT InternalName, ItemOrder, Description, ColumnWidth, 20, ChartViewNum, PickList, DescriptionOverride FROM displayfield WHERE Category=3)";
+					+"(SELECT InternalName, ItemOrder, Description, ColumnWidth, 20, ChartViewNum, PickList, DescriptionOverride FROM displayfield WHERE Category=3 AND InternalName != 'Balance')";
 				Db.NonQ(command);
 				command="SELECT * FROM preference where prefname=\"ShowFeatureSuperfamilies\";";
 				bool showFeatureSuperFamilies=PIn.Bool(Db.GetTable(command).Rows[0].GetString("ValueString"));

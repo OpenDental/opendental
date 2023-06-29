@@ -695,7 +695,7 @@ namespace OpenDentBusiness{
 			}
 			string command="";
 			command="SELECT DISTINCT payplannum FROM payplanlink JOIN procedurelog ON payplanlink.fkey=procedurelog.procnum WHERE procedurelog.procstatus="+POut.Enum<ProcStat>(ProcStat.TP)+" ";
-		  if(listPayPlanNums!=null || listPayPlanNums.Count!=0){
+		  if(listPayPlanNums!=null && listPayPlanNums.Count!=0){
 				string dynamicPayPlanNums=string.Join(",",listPayPlanNums);
 				command+="AND payplanlink.payplannum IN "+"("+dynamicPayPlanNums+")"+" ";
 			}

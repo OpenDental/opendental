@@ -131,6 +131,7 @@ namespace OpenDental {
 								MessageBox.Show(Lans.g(_lanThis,"Error at line:")+" "+textContent.GetLineFromCharIndex(matches[i].Index)+" - "
 									+Lans.g(_lanThis,"Not allowed to save because image does not exist: ")+" "+imgPath);
 							}
+							return false;
 						}
 					}
 				}

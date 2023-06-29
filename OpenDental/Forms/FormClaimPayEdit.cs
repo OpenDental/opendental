@@ -21,7 +21,6 @@ namespace OpenDental{
 		private List<Def> _listDefsClaimPaymentGroups;
 		///<summary>Used to tell if a InsPayCreate log is necessary instead of a InsPayEdit log when IsNew is set to false.</summary>
 		public bool IsCreateLogEntry;
-		private List<Def> _listDefsInsurancePaymentTypes;
 		///<summary>This is the deposit that was originally associated to the claimpayment OR is set to a deposit that came back from the Deposit Edit window via the Edit button.
 		///Can be null if no deposit was associated to the claimpayment passed in or if the user deletes the deposit via the Edit window.</summary>
 		private Deposit _depositOld;
@@ -63,18 +62,15 @@ namespace OpenDental{
 			else {
 				labelClinic.Visible=false;
 			}
-			_listDefsInsurancePaymentTypes=Defs.GetDefsForCategory(DefCat.InsurancePaymentType,true);
-			for(int i=0;i<_listDefsInsurancePaymentTypes.Count;i++) {
-				comboPayType.Items.Add(_listDefsInsurancePaymentTypes[i].ItemName);
-				if(_listDefsInsurancePaymentTypes[i].DefNum==ClaimPaymentCur.PayType) {
-					comboPayType.SelectedIndex=i;
-				}
-			}
-			if(comboPayType.Items.Count > 0 
-				&& comboPayType.SelectedIndex < 0 
+			List<Def> listDefsInsurancePaymentTypes=Defs.GetDefsForCategory(DefCat.InsurancePaymentType,isShort:true);
+			comboPayType.Items.AddDefs(listDefsInsurancePaymentTypes);
+			comboPayType.SetSelectedDefNum(ClaimPaymentCur.PayType);
+			//Select the 'default' or first payment type when there are InsurancePaymentTypes and none are selected.
+			if(listDefsInsurancePaymentTypes.Count > 0 
+				&& ClaimPaymentCur.PayType==0
 				&& !PrefC.GetBool(PrefName.ClaimPaymentPickStatementType)) 
-			{//There are InsurancePaymentTypes and none are selected.  Should never happen.
-				comboPayType.SelectedIndex=0;//Select the first one in the list.
+			{
+				comboPayType.SetSelectedDefNum(listDefsInsurancePaymentTypes.First().DefNum);
 			}
 			if(ClaimPaymentCur.CheckDate.Year>1880) {
 				textDate.Text=ClaimPaymentCur.CheckDate.ToShortDateString();
@@ -655,14 +651,16 @@ namespace OpenDental{
 				}
 				SecurityLogs.MakeLogEntry(Permissions.RequiredFields,ClaimPaymentCur.ClaimPaymentNum,"Saved claim payment with required fields missing.");
 			}
-			if(comboPayType.SelectedIndex==-1) {
+			//Purposefully get the selected DefNum which could be a PK for a hidden def.
+			long defNumPaymentType=comboPayType.GetSelectedDefNum();
+			if(defNumPaymentType==0) {
 				MsgBox.Show(this,"Payment type is required.");
 				return;
 			}
 			#region Automatic Deposit
-			Def defPaymentType=Defs.GetDefsForCategory(DefCat.InsurancePaymentType,isShort:true)[comboPayType.SelectedIndex];
 			//Create an Auto Deposit if the claim payment is new or does not have an attached Auto Deposit. 
 			//Auto deposits will NOT be made for Payment Types marked 'N' (not selected for deposit).
+			Def defPaymentType=Defs.GetDef(DefCat.InsurancePaymentType,defNumPaymentType);
 			if(_hasAutoDeposit && !_isAutoDepositDeleted && _depositOld==null && defPaymentType.ItemValue.ToLower()!="n") {
 				//Insert the deposit, this must happen first as the claimpayment FK's to deposit.
 				//The deposit cannot be updated in this form, that is handled by the edit button.

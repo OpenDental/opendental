@@ -799,19 +799,20 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please select one or more procedures first.");
 				return;
 			}
-			string deleteMsg="Permanently delete all selected procedure(s)?";
 			if(PrefC.GetBool(PrefName.ApptsRequireProc)) {
-				List<long> listApptNums=_listAppointments.Where(x => x.AptNum!=_appointment.AptNum).Select(x => x.AptNum).ToList();
-				if(!listApptNums.IsNullOrEmpty()) {//Will be empty if there is only the current appointment in the grid.
-					bool areApptsGoingToBeEmpty=Appointments.AreApptsGoingToBeEmpty(gridProc.SelectedTags<Procedure>(),listApptNums);
-					if(areApptsGoingToBeEmpty) {
-						deleteMsg="One or more procedures being deleted are attached to another appointment. "
-							+"If you permanently delete all selected procedure(s), it will leave an appointment empty. Continue?";
-					}
+				List<long> listApptNumsSelected=gridProc.SelectedTags<Procedure>().Select(x => x.AptNum).ToList();
+				if(listApptNumsSelected.Exists(x => x!=_appointment.AptNum) && listApptNumsSelected.Any(x => x>0)) {
+					MsgBox.Show("One or more selected procedures are attached to another appointment.");
+					return;
 				}
-			}
-			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,deleteMsg)) {//deleteMsg can only be of two strings, okay to use in MsgBox.Show()
-				return;
+				bool areApptsEmpty=Appointments.AreApptsGoingToBeEmpty(gridProc.SelectedTags<Procedure>(),listApptNumsSelected);
+				if(areApptsEmpty) {//If true, appts have to have one attached proc when PrefName.ApptsRequireProc is checked
+					MsgBox.Show("If you permanently delete all selected procedure(s), it will leave an appointment empty.");
+					return;
+				}
+				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Permanently delete all selected procedure(s)?")) {//deleteMsg can only be of two strings, okay to use in MsgBox.Show()
+					return;
+				}
 			}
 			int skipped=0;
 			int skippedSecurity=0;
@@ -1407,6 +1408,9 @@ namespace OpenDental{
 					}
 					for(int j = 0;j<gridProc.ListGridRows.Count;j++) {
 						Procedure procedure=(Procedure)gridProc.ListGridRows[j].Tag;
+						if(procedure.PlannedAptNum!=0 && procedure.PlannedAptNum!=_appointment.AptNum) {//do not select procedures attached to planned appointments
+							continue;
+						}
 						if(procedure.CodeNum==listProcedureCodesApptType[i].CodeNum
 							//if the procedure code already exists in the grid and it's not attached to another appointment or planned appointment
 							&& (_isPlanned && procedure.AptNum==0 && (procedure.PlannedAptNum==0 || procedure.PlannedAptNum==_appointment.AptNum)
@@ -2701,6 +2705,10 @@ namespace OpenDental{
 			if(!UpdateListAndDB(isClosing: true, doCreateSecLog: true, doInsertHL7: true)) {
 				return;
 			}
+			if(_appointment.AptStatus==ApptStatus.Scheduled && gridProc.SelectedIndices.Length==0 && PrefC.GetBool(PrefName.ApptsRequireProc)) {
+				MsgBox.Show("At least one procedure must be attached to the appointment.");
+				return;
+			}
 			if(IsNew) {
 				//Refresh pat to check if PatStatus has changed.
 				Patient patOld=Patients.GetPat(_patient.PatNum);
@@ -2728,6 +2736,13 @@ namespace OpenDental{
 
 		private void FormApptEdit_FormClosing(object sender,FormClosingEventArgs e) {
 			if(_appointment==null) {//Could not find _appointment in the Db on load.
+				return;
+			}
+			if(_appointment.AptStatus==ApptStatus.Scheduled && gridProc.SelectedIndices.Length==0
+				&& PrefC.GetBool(PrefName.ApptsRequireProc) && !_isDeleted
+				&& !IsNew) {
+				MsgBox.Show("At least one procedure must be attached to the appointment.");
+				e.Cancel=true; //form won't close until procedure is attached or appointment is canceled.
 				return;
 			}
 			//Do not use pat.PatNum here.  Use _appointment.PatNum instead.  Pat will be null in the case that the user does not have the appt create permission.

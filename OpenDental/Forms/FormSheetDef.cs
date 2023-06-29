@@ -17,8 +17,10 @@ namespace OpenDental {
 		public bool IsInitial;
 		///<summary>The Autosave feature needs to be considered when there is at least one image category flagged to Autosave Forms.</summary>
 		private bool _doConsiderAutoSave;
-		///<summary>This keeps track of how much font reduction must occur based upon how many times the ReduceFontSize button is pressed in order to update all at once when the butOK button is clicked.  This resets if butCancel or X is clicked.  The sheet and each field could be at a different font, so we can't track an absolute font value.</summary>
-		private float _amountToReduceFontSize=0;
+		///<summary>This is the FormSheetDefEdit that is passed into this window when it is opened in order for us to update the fontsize in the background for a preview.</summary>
+		public FormSheetDefEdit _formSheetDefEdit;
+		///<summary>This is a copy of the SheetDef in order to revert the font size back to what it was in case the customer doesn't press the OK button.</summary>
+		private SheetDef _sheetDefCopy;
 
 		public FormSheetDef() {
 			InitializeComponent();
@@ -92,6 +94,16 @@ namespace OpenDental {
 				checkIsLandscape.Visible=false;
 				checkHasMobileLayout.Visible=false;
 			}
+			_sheetDefCopy=SheetDefCur.Copy();
+			if(SheetDefCur.SheetFieldDefs==null) {
+				return;
+			}
+			List<SheetFieldDef> listSheetFieldDefs=new List<SheetFieldDef>();
+			for(int i=0;i<SheetDefCur.SheetFieldDefs.Count;i++){
+				SheetFieldDef sheetFieldDef=SheetDefCur.SheetFieldDefs[i].Copy();
+				listSheetFieldDefs.Add(sheetFieldDef);
+			}
+			_sheetDefCopy.SheetFieldDefs=listSheetFieldDefs;
 		}
 
 		private bool SetAutoCheckEnabled(SheetTypeEnum sheetType,bool isLoading=false) {
@@ -210,7 +222,6 @@ namespace OpenDental {
 		}
 
 		private void butReduceFontSize_Click(object sender,EventArgs e) {
-			_amountToReduceFontSize+=0.5f;
 			float fontSize;
 			try {
 				fontSize=float.Parse(textFontSize.Text);
@@ -225,6 +236,25 @@ namespace OpenDental {
 			}
 			fontSize-=0.5f;
 			textFontSize.Text=fontSize.ToString();
+			if(_formSheetDefEdit==null) {
+				return;
+			}
+			List<SheetFieldDef> listSheetFieldDefs=SheetDefCur.SheetFieldDefs;
+			for(int i=0;i<listSheetFieldDefs.Count();i++) {
+				if(listSheetFieldDefs[i].FieldType!=SheetFieldType.InputField
+					&& listSheetFieldDefs[i].FieldType!=SheetFieldType.OutputText
+					&& listSheetFieldDefs[i].FieldType!=SheetFieldType.StaticText)
+				{
+					continue;
+				}
+				if(listSheetFieldDefs[i].FontSize<(2.5f)) {
+					listSheetFieldDefs[i].FontSize=2;
+					continue;
+				}
+				fontSize=listSheetFieldDefs[i].FontSize-0.5f;
+				listSheetFieldDefs[i].FontSize=fontSize;
+			}
+			_formSheetDefEdit.UpdateSheetDefInBackground();
 		}
 
 		private void butAbout_Click(object sender,EventArgs e) {
@@ -299,23 +329,21 @@ namespace OpenDental {
 				DialogResult=DialogResult.OK;
 				return;
 			}
-			List<SheetFieldDef> listSheetFieldDefs=SheetDefCur.SheetFieldDefs;
-			for(int i=0;i<listSheetFieldDefs.Count();i++) {
-				if(listSheetFieldDefs[i].FieldType!=SheetFieldType.InputField
-					&& listSheetFieldDefs[i].FieldType!=SheetFieldType.OutputText
-					&& listSheetFieldDefs[i].FieldType!=SheetFieldType.StaticText)
-				{
-					continue;
-				}
-				if(listSheetFieldDefs[i].FontSize<(_amountToReduceFontSize+2)) {
-					listSheetFieldDefs[i].FontSize=2;
-					continue;
-				}
-				fontSize=listSheetFieldDefs[i].FontSize-_amountToReduceFontSize;
-				listSheetFieldDefs[i].FontSize=fontSize;
-			}
 			//don't save to database here.
 			DialogResult=DialogResult.OK;
+		}
+
+		private void FormSheetDef_FormClosed(object sender,FormClosedEventArgs e) {
+			if(DialogResult==DialogResult.OK
+				|| _sheetDefCopy==null
+				|| _formSheetDefEdit==null) 
+			{
+				return;
+			}
+			_formSheetDefEdit.SheetDef_=_sheetDefCopy;
+			_formSheetDefEdit.FillFieldList();
+			SheetDefCur=_formSheetDefEdit.SheetDef_;
+			_formSheetDefEdit.UpdateSheetDefInBackground();
 		}
 
 		private void butCancel_Click(object sender,EventArgs e) {

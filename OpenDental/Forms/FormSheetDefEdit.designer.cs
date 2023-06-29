@@ -15,10 +15,10 @@ namespace OpenDental{
 				components?.Dispose();
 				_imageToothChart?.Dispose();
 				_imageToothChart=null;
-				if(_sheetDef!=null){
-					for(int i=0;i<_sheetDef.SheetFieldDefs.Count;i++){
-						if(_sheetDef.SheetFieldDefs[i].FieldType==OpenDentBusiness.SheetFieldType.Image){
-							_sheetDef.SheetFieldDefs[i].ImageField?.Dispose();
+				if(SheetDef_!=null){
+					for(int i=0;i<SheetDef_.SheetFieldDefs.Count;i++){
+						if(SheetDef_.SheetFieldDefs[i].FieldType==OpenDentBusiness.SheetFieldType.Image){
+							SheetDef_.SheetFieldDefs[i].ImageField?.Dispose();
 						}
 					}
 				}
