@@ -482,6 +482,9 @@ namespace OpenDental {
 			bool isChanged=false;
 			for(int i=0;i<_listChartViews.Count;i++) {
 				ChartView chartView=_listChartViews[i];
+				if(chartView.ItemOrder==i) {
+					continue;
+				}
 				ChartView chartViewOld=chartView.Copy();
 				chartView.ItemOrder=i;
 				isChanged|=ChartViews.Update(chartView,chartViewOld);

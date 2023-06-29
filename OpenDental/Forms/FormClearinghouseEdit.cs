@@ -62,6 +62,7 @@ namespace OpenDental{
 				comboCommBridge.Items.Add(translatedCommBridgeName,(EclaimsCommBridge)i);
 			}
 			comboClinic.SelectedClinicNum=ClinicNum;
+			_clinicNumLastSelected=ClinicNum;
 			FillFields();
 		}
 

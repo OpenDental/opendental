@@ -1406,6 +1406,9 @@ namespace OpenDental{
 					}
 					for(int j = 0;j<gridProc.ListGridRows.Count;j++) {
 						Procedure procedure=(Procedure)gridProc.ListGridRows[j].Tag;
+						if(procedure.PlannedAptNum!=0 && procedure.PlannedAptNum!=_appointment.AptNum) {//do not select procedures attached to planned appointments
+							continue;
+						}
 						if(procedure.CodeNum==listProcedureCodesApptType[i].CodeNum
 							//if the procedure code already exists in the grid and it's not attached to another appointment or planned appointment
 							&& (_isPlanned && procedure.AptNum==0 && (procedure.PlannedAptNum==0 || procedure.PlannedAptNum==_appointment.AptNum)

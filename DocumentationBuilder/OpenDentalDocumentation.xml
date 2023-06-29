@@ -3218,7 +3218,7 @@
       <summary>FK to userod.UserNum.</summary>
     </column>
     <column order="8" name="Signature" type="text">
-      <summary>Signature.  For details, see procedurelog.Signature.</summary>
+      <summary>Signature.  For details, see procnote.Signature.</summary>
     </column>
     <column order="9" name="SigIsTopaz" type="tinyint(4)">
       <summary>True if signed using the Topaz signature pad, false otherwise.</summary>
@@ -8830,7 +8830,7 @@
       <Enumeration name="VerifyTypes">
         <summary></summary>
         <EnumValue name="None">0.  This means FKey should be 0.</EnumValue>
-        <EnumValue name="InsuranceBenefit">1.  This means FKey will link to insplan.InsPlanNum</EnumValue>
+        <EnumValue name="InsuranceBenefit">1.  This means FKey will link to insplan.PlanNum</EnumValue>
         <EnumValue name="PatientEnrollment">2.  This means FKey will link to patplan.PatPlanNum</EnumValue>
       </Enumeration>
     </column>

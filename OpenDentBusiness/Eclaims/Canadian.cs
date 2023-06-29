@@ -1170,6 +1170,9 @@ namespace OpenDentBusiness.Eclaims {
 				if(claimProcCur.LineNumber==0) {
 					continue;
 				}
+				if(!dictProcDataClaim.ContainsKey(claimProcCur.LineNumber)) {
+					continue;//See task 5538948. This can happen rarely when the EOB does not contain a response for one of the procedures going out on the eclaim.
+				}
 				//List of lab ProcNums for the current parent procedure if any.  Excludes by total payment rows.  Contains at most 2 lab proc nums.
 				List<long> listLabProcNums=listPatProcs.FindAll(x => claimProcCur.ProcNum!=0 && x.ProcNumLab==claimProcCur.ProcNum).Select(x => x.ProcNum).ToList();
 				//List of claim procs associated to labs that are associated to the current procedure/claimProcsClaim2[i] and claim. At most 2 items.

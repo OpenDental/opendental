@@ -201,9 +201,8 @@ namespace OpenDental{
 		private void AddInputControls() {
 			_listInputControls=new List<Control>();
 			_listLabels=new List<Label>();
-			_curLocationY=2;
+			_curLocationY=12;
 			int controlWidth=385;
-			int controlHeight=36;
 			_minWidth=250;
 			int posX=32;
 			int itemOrder=1;
@@ -212,16 +211,22 @@ namespace OpenDental{
 					continue;
 				}
 				if(!string.IsNullOrEmpty(inputParam.LabelText)) {
+					if(itemOrder>1) {
+						_curLocationY+=10;
+					}
 					Label label=new Label();
-					label.AutoSize=false;
-					label.Size= inputParam.ParamSize==Size.Empty ? new Size(controlWidth,controlHeight) : new Size(inputParam.ParamSize.Width,inputParam.ParamSize.Height);
 					label.Text=inputParam.LabelText;
+					label.Size=inputParam.ParamSize;
+					if(inputParam.ParamSize==Size.Empty) {
+						int labelH=label.GetPreferredSize(new Size(controlWidth,0)).Height;
+						label.Size=new Size(controlWidth,labelH);
+					}
 					label.Name="labelPrompt"+itemOrder;
 					label.TextAlign=ContentAlignment.BottomLeft;
 					label.Location=new Point(posX,_curLocationY);
 					label.Tag=inputParam;
 					_listLabels.Add(label);
-					_curLocationY+=38;
+					_curLocationY+=label.Height+2;
 				}
 				Control inputControl;
 				switch(inputParam.ParamType) {
@@ -237,7 +242,6 @@ namespace OpenDental{
 							textBox.SelectionLength=textBox.Text.Length;
 						}
 						inputControl=textBox;
-						_curLocationY+=22;
 						break;
 					case InputBoxType.TextBoxMultiLine:
 						TextBox textBoxMulti=new TextBox();
@@ -249,7 +253,6 @@ namespace OpenDental{
 						this.AcceptButton=null;
 						textBoxMulti.ScrollBars=ScrollBars.Vertical;
 						inputControl=textBoxMulti;
-						_curLocationY+=102;
 						break;
 					case InputBoxType.CheckBox:
 						System.Windows.Forms.CheckBox checkBox=new System.Windows.Forms.CheckBox();
@@ -262,7 +265,6 @@ namespace OpenDental{
 						if(inputParam.HasTimeout) {
 							_hasTimeout=true;
 						}
-						_curLocationY+=checkBox.Size.Height+2;
 						break;
 					case InputBoxType.ComboSelect:
 						UI.ComboBox comboBoxPlus=new UI.ComboBox();
@@ -275,7 +277,6 @@ namespace OpenDental{
 							comboBoxPlus.SetSelected(inputParam.ListSelectedIndices[0]);//If there is a valid initial selection, select it.
 						}
 						inputControl=comboBoxPlus;
-						_curLocationY+=23;
 						break;
 					case InputBoxType.ComboMultiSelect:
 						UI.ComboBox comboBoxPlus2=new UI.ComboBox();
@@ -294,7 +295,6 @@ namespace OpenDental{
 							}
 						}
 						inputControl=comboBoxPlus2;
-						_curLocationY+=23;
 						break;
 					case InputBoxType.ValidDate:
 						ValidDate validDate=new ValidDate();
@@ -311,7 +311,6 @@ namespace OpenDental{
 						label.Location=new Point(validDate.Location.X+validDate.Width+12,_curLocationY);
 						label.Tag=inputParam;
 						_listLabels.Add(label);
-						_curLocationY+=22;
 						break;
 					case InputBoxType.ValidTime:
 						ValidTime validTime=new ValidTime();
@@ -319,7 +318,6 @@ namespace OpenDental{
 						validTime.Location=new Point(posX,_curLocationY);
 						validTime.Size=new Size(120,20);
 						inputControl=validTime;
-						_curLocationY+=22;
 						break;
 					case InputBoxType.ValidDouble:
 						ValidDouble validDouble=new ValidDouble();
@@ -327,7 +325,6 @@ namespace OpenDental{
 						validDouble.Location=new Point(posX,_curLocationY);
 						validDouble.Size=new Size(120,20);
 						inputControl=validDouble;
-						_curLocationY+=22;
 						break;
 					case InputBoxType.ValidPhone:
 						ValidPhone validPhone=new ValidPhone();
@@ -340,7 +337,6 @@ namespace OpenDental{
 							validPhone.SelectionLength=validPhone.Text.Length;
 						}
 						inputControl=validPhone;
-						_curLocationY+=22;
 						break;
 					case InputBoxType.ListBoxMulti:
 						ListBoxOD listBox=new ListBoxOD();
@@ -351,7 +347,6 @@ namespace OpenDental{
 						listBox.Items.AddList(inputParam.ListSelections,x => x.ToString());
 						listBox.Size=new Size(controlWidth,listBox.Height);
 						inputControl=listBox;
-						_curLocationY+=(listBox.Height)+2;
 						break;
 					case InputBoxType.RadioButton:
 						RadioButton radioButton=new RadioButton();
@@ -364,15 +359,15 @@ namespace OpenDental{
 						if(inputParam.HasTimeout) {
 							_hasTimeout=true;
 						}
-						_curLocationY+=radioButton.Size.Height+2;
 						break;
 					default:
 						throw new NotImplementedException("InputBoxType: "+inputParam.ParamType+" not implemented.");
 				}
-				inputControl.TabIndex=itemOrder;
+				inputControl.TabIndex=itemOrder++;
 				inputControl.Tag=inputParam;
 				_listInputControls.Add(inputControl);
 				_minWidth=Math.Max(_minWidth,inputControl.Width+80);
+				_curLocationY+=inputControl.Height+2;
 			}
 			//Now that we know the minWidth, we can center any controls that need to be centered.
 			foreach(Control inputControl in _listInputControls.Union(_listLabels)) {

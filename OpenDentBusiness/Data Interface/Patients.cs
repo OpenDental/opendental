@@ -2470,12 +2470,7 @@ namespace OpenDentBusiness {
 				fname=PIn.String(table.Rows[i][2].ToString());
 				middlei=PIn.String(table.Rows[i][3].ToString());
 				preferred=PIn.String(table.Rows[i][4].ToString());
-				if(preferred=="") {
-					dict.Add(patnum,lname+", "+fname+" "+middlei);
-				}
-				else {
-					dict.Add(patnum,lname+", '"+preferred+"' "+fname+" "+middlei);
-				}
+				dict.Add(patnum,Patients.GetNameLF(lname,fname,preferred,middlei));
 			}
 			return dict;
 		}
