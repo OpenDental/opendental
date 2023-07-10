@@ -5776,8 +5776,8 @@ namespace OpenDental{
 				MsgBox.Show(this,"You do not have permission to run this report.");
 				return;
 			}
-			using FormRpUnfinalizedInsPay formRpUnfinalizedInsPay=new FormRpUnfinalizedInsPay();
-			formRpUnfinalizedInsPay.ShowDialog();
+			FormRpUnfinalizedInsPay formRpUnfinalizedInsPay=new FormRpUnfinalizedInsPay();
+			formRpUnfinalizedInsPay.Show();
 		}
 
 		private void menuItemReportsActivityLog_Click(object sender, EventArgs e) {

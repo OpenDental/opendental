@@ -915,21 +915,27 @@ namespace OpenDentBusiness.Eclaims {
 				claim.DateSentOrig=claim.DateSent;
 				claim.ClaimStatus="S";//Reflect changes in cached object.
 			}
+			CCDFieldInputter fieldInputter2=null;
 			bool canCreateSecClaim=(claim.ClaimType!="PreAuth" && claim.ClaimType!="S" && etransAck.Etype==EtransType.ClaimEOB_CA && planNum2>0);
-			//If we intend to create a secondary claim and there is an embedded secondary EOB inside of the primary EOB response.
-			if(canCreateSecClaim && fieldInputter.GetValue("G39")!="" && fieldInputter.GetValue("G39")!="0000") {
+			if(fieldInputter.GetValue("G39")!="" && fieldInputter.GetValue("G39")!="0000") {//There exists an embedded message within the response.
 				embeddedMsg=fieldInputter.GetValue("G40");
-				//remove the embedded response from primary eTrans	
-				StringBuilder sbPrimaryOnly=new StringBuilder();
-				foreach(CCDField field in fieldInputter.GetLoadedFields()) {
-					if(field.fieldId=="G39") {
-						sbPrimaryOnly.Append("0000");
+				fieldInputter2=new CCDFieldInputter(embeddedMsg);
+				if(canCreateSecClaim && fieldInputter2.GetFieldById("A05").valuestr==carrier2.ElectID) {//Is the embedded message for the secondary carrier?
+					//Remove the embedded response from primary eTrans. Embedded message will be attached to secondary claim below.
+					StringBuilder sbPrimaryOnly=new StringBuilder();
+					foreach(CCDField field in fieldInputter.GetLoadedFields()) {
+						if(field.fieldId=="G39") {
+							sbPrimaryOnly.Append("0000");
+						}
+						else if(field.fieldId!="G40") {
+							sbPrimaryOnly.Append(field.valuestr);
+						}
 					}
-					else if(field.fieldId!="G40") {
-						sbPrimaryOnly.Append(field.valuestr);
-					}
+					result=sbPrimaryOnly.ToString();
 				}
-				result=sbPrimaryOnly.ToString();
+				else {
+					canCreateSecClaim=false;
+				}
 			}
 			Etranss.Insert(etransAck);
 			Etranss.SetMessage(etransAck.EtransNum,result);//Save incomming history.
@@ -1050,7 +1056,6 @@ namespace OpenDentBusiness.Eclaims {
 						etransAck2.ClaimNum=etrans2.ClaimNum;
 						etransAck2.DateTimeTrans=DateTime.Now;
 						etransAck2.UserNum=Security.CurUser.UserNum;
-						CCDFieldInputter fieldInputter2=new CCDFieldInputter(embeddedMsg);
 						//embedded response occurs when patient has the same carrier for primary and secondary so an embedded response is a COB by default
 						etransAck2.Etype=EtransType.ClaimCOB_CA;
 						Claims.SetClaimSent(queueItem2.ClaimNum);//No error, safe to set sent.

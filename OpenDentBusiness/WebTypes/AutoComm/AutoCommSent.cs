@@ -14,9 +14,9 @@ namespace OpenDentBusiness.WebTypes.AutoComm {
 		///<summary>Contact information used for sending a message.</summary>
 		[CrudColumn(IsNotDbColumn=true)]
 		public string Contact;
-		///<summary>Indicates status of message.</summary>
+		///<summary>Enum:AutoCommStatus The status of the email or text being sent for this recall.</summary>
 		public AutoCommStatus SendStatus;
-		///<summary></summary>
+		///<summary>Enum:CommType The type of message being sent for this recall.</summary>
 		public CommType MessageType=CommType.Invalid; 
 		///<summary>The template that will be used when creating the message.</summary>
 		[CrudColumn(IsNotDbColumn=true)]

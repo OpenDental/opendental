@@ -69,7 +69,7 @@
 			// butCancel
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(656, 661);
+			this.butCancel.Location = new System.Drawing.Point(656, 666);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 26);
 			this.butCancel.TabIndex = 0;
@@ -89,7 +89,7 @@
 			// butOk
 			// 
 			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOk.Location = new System.Drawing.Point(574, 661);
+			this.butOk.Location = new System.Drawing.Point(574, 666);
 			this.butOk.Name = "butOk";
 			this.butOk.Size = new System.Drawing.Size(76, 26);
 			this.butOk.TabIndex = 124;
@@ -139,7 +139,7 @@
 			// 
 			this.labelTags.Location = new System.Drawing.Point(3, 16);
 			this.labelTags.Name = "labelTags";
-			this.labelTags.Size = new System.Drawing.Size(698, 37);
+			this.labelTags.Size = new System.Drawing.Size(705, 44);
 			this.labelTags.TabIndex = 110;
 			this.labelTags.Text = "Use template tags to create dynamic messages.";
 			// 
@@ -148,7 +148,7 @@
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(12, 661);
+			this.butDelete.Location = new System.Drawing.Point(12, 666);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(84, 26);
 			this.butDelete.TabIndex = 111;
@@ -286,7 +286,7 @@
 			this.groupBox2.Controls.Add(this.labelTags);
 			this.groupBox2.Location = new System.Drawing.Point(18, 599);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(713, 56);
+			this.groupBox2.Size = new System.Drawing.Size(713, 61);
 			this.groupBox2.TabIndex = 115;
 			this.groupBox2.Text = "Template Replacement Tags";
 			// 
@@ -301,7 +301,7 @@
 			// butAdvanced
 			// 
 			this.butAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butAdvanced.Location = new System.Drawing.Point(234, 661);
+			this.butAdvanced.Location = new System.Drawing.Point(251, 666);
 			this.butAdvanced.Name = "butAdvanced";
 			this.butAdvanced.Size = new System.Drawing.Size(75, 26);
 			this.butAdvanced.TabIndex = 125;
@@ -312,7 +312,7 @@
 			// butLanguage
 			// 
 			this.butLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butLanguage.Location = new System.Drawing.Point(315, 661);
+			this.butLanguage.Location = new System.Drawing.Point(332, 666);
 			this.butLanguage.Name = "butLanguage";
 			this.butLanguage.Size = new System.Drawing.Size(83, 26);
 			this.butLanguage.TabIndex = 129;
@@ -323,16 +323,16 @@
 			// tabPageDefault
 			// 
 			this.tabPageDefault.BackColor = System.Drawing.SystemColors.Control;
-			this.tabPageDefault.Location = new System.Drawing.Point(4, 22);
+			this.tabPageDefault.Location = new System.Drawing.Point(2, 21);
 			this.tabPageDefault.Name = "tabPageDefault";
-			this.tabPageDefault.Size = new System.Drawing.Size(705, 303);
+			this.tabPageDefault.Size = new System.Drawing.Size(709, 307);
 			this.tabPageDefault.TabIndex = 0;
 			this.tabPageDefault.Text = "Default";
 			// 
 			// checkSendSecureEmail
 			// 
 			this.checkSendSecureEmail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.checkSendSecureEmail.Location = new System.Drawing.Point(29, 567);
+			this.checkSendSecureEmail.Location = new System.Drawing.Point(29, 572);
 			this.checkSendSecureEmail.Name = "checkSendSecureEmail";
 			this.checkSendSecureEmail.Size = new System.Drawing.Size(179, 18);
 			this.checkSendSecureEmail.TabIndex = 134;
@@ -348,7 +348,7 @@
 			this.tabControl.Location = new System.Drawing.Point(18, 266);
 			this.tabControl.Name = "tabControl";
 			this.tabControl.SelectedIndex = 0;
-			this.tabControl.Size = new System.Drawing.Size(713, 329);
+			this.tabControl.Size = new System.Drawing.Size(713, 330);
 			this.tabControl.TabIndex = 130;
 			// 
 			// checkEConfirmationAutoReplies
@@ -362,7 +362,7 @@
 			// butRemove
 			// 
 			this.butRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butRemove.Location = new System.Drawing.Point(404, 661);
+			this.butRemove.Location = new System.Drawing.Point(421, 666);
 			this.butRemove.Name = "butRemove";
 			this.butRemove.Size = new System.Drawing.Size(105, 26);
 			this.butRemove.TabIndex = 132;
