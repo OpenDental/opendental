@@ -727,7 +727,7 @@ namespace OpenDental{
 
 		///<summary>Unique to when eClipboard is viewing / editing this patients perio exams. Starts the eClipboard timer check.</summary>
 		private void SetEClipBoardEditing(bool isEditingOnEClipBoard) {
-			contrPerio.perioEdit=!isEditingOnEClipBoard;
+			contrPerio.AllowPerioEdit=!isEditingOnEClipBoard;
 			gridODExam.Enabled=!isEditingOnEClipBoard;
 			butAdd.Enabled=!isEditingOnEClipBoard;
 			butCopyNote.Enabled=!isEditingOnEClipBoard;
@@ -744,9 +744,9 @@ namespace OpenDental{
 		///<summary>Usually set the selected index first</summary>
 		private void FillGrid(bool doSelectCell=true) {
 			if(gridODExam.GetSelectedIndex()!=-1){
-				contrPerio.perioEdit=true;
+				contrPerio.AllowPerioEdit=true;
 				if(!Security.IsAuthorized(Permissions.PerioEdit,PerioExams.ListExams[gridODExam.GetSelectedIndex()].ExamDate,true)) {
-					contrPerio.perioEdit=false;
+					contrPerio.AllowPerioEdit=false;
 				}
 				_perioExam=PerioExams.ListExams[gridODExam.GetSelectedIndex()];
 			}
@@ -1718,7 +1718,12 @@ namespace OpenDental{
 				else if(charArrayInputs[i]=='b'
 					|| charArrayInputs[i]=='c'
 					|| charArrayInputs[i]=='s'
-					|| charArrayInputs[i]=='p') 
+					|| charArrayInputs[i]=='p'
+					|| charArrayInputs[i]=='j'
+					|| charArrayInputs[i]=='g'
+					|| charArrayInputs[i]=='f'
+					|| charArrayInputs[i]=='m'
+					|| charArrayInputs[i]=='.') 
 				{
 					contrPerio.ButtonPressed(charArrayInputs[i].ToString());
 				}

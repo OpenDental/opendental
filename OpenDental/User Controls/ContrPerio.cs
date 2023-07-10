@@ -32,9 +32,9 @@ namespace OpenDental
 		///<summary>Height of one of the shorter rows (non probing).</summary> 
 		private int _heightShort;
 		///<summary>Rows of probing depths.</summary> 
-		private int RowsProbing;
+		private int _rowsProbing;
 		///<summary>First dimension is either UF, UL, LF, or LL. Second dim is an array of the types of rows showing in that section.</summary>
-		private PerioSequenceType[][] RowTypes;
+		private PerioSequenceType[][] _perioSequenceTypeArray;
 		///<summary>Width of the left column that holds descriptions and dates.</summary> 
 		private int _widthLeft;
 		///<summary>Height of the 'tooth' sections. Right now, it just holds the tooth number.</summary> 
@@ -80,9 +80,9 @@ namespace OpenDental
 		///<summary>Auto advance direction.</summary>
 		public AutoAdvanceDirection Direction;
 		///<summary>The index in PerioExams.List of the currently selected exam.</summary>
-		private int selectedExam;
+		private int _idxExamSelected;
 		///<summary>the offset when there are more rows than will display. Value is set at the same time as SelectedExam. So usually 0. Otherwise 1,2,3 or....</summary>
-		private int ProbingOffset;
+		private int _probingOffset;
 		///<summary>Keeps track of what has changed for current exam.  This object contains an toothnum int and a PerioSequenceType enum.</summary>
 		public List<PerioMeasureItem> listChangedMeasurements;
 		///<summary>Valid values 1-32 int. User can highlight teeth to mark them as skip tooth. The highighting is done completely separately from the normal highlighting functionality because multiple teeth can be highlighted.</summary>
@@ -99,7 +99,7 @@ namespace OpenDental
 		public bool ThreeAtATime;
 		//public PerioExam PerioExamCur;
 		///<summary>Perio security:  False will only allow user to see information but not edit.</summary>
-		public bool perioEdit;
+		public bool AllowPerioEdit;
 		///<summary>True if all gingival margin values entered should be positive. (Stored in DB as negative.)</summary>
 		public bool GingMargPlus;
 		///<summary>Used to determine if a tooth had an implant proc.</summary>
@@ -117,10 +117,10 @@ namespace OpenDental
 		///<summary>The index in PerioExams.List of the currently selected exam.</summary>
 		public int SelectedExam{
 			get{
-				return selectedExam;
+				return _idxExamSelected;
 			}
 			set{
-				selectedExam=value;
+				_idxExamSelected=value;
 				SetProbingOffset();
 			}
 		}
@@ -137,12 +137,12 @@ namespace OpenDental
 		}
 
 		private void SetProbingOffset() {
-			ProbingOffset=0;
+			_probingOffset=0;
 			if(_doShowCurrentExamOnly) {
-				ProbingOffset=selectedExam;
+				_probingOffset=_idxExamSelected;
 			}
-			else if(selectedExam>RowsProbing-1) {
-				ProbingOffset=selectedExam-RowsProbing+1;
+			else if(_idxExamSelected>_rowsProbing-1) {
+				_probingOffset=_idxExamSelected-_rowsProbing+1;
 			}
 		}
 
@@ -173,44 +173,44 @@ namespace OpenDental
 			SetColors();
 			cOldText=Color.FromArgb(120,120,120);
 			cOldTextRed=Color.FromArgb(200,80,80);
-			RowsProbing=6;
-			RowTypes=new PerioSequenceType[4][];
+			_rowsProbing=6;
+			_perioSequenceTypeArray=new PerioSequenceType[4][];
 			//Upper facial:
-			RowTypes[0]=new PerioSequenceType[5+RowsProbing];
-			RowTypes[0][0]=PerioSequenceType.Mobility;
-			RowTypes[0][1]=PerioSequenceType.Furcation;
-			RowTypes[0][2]=PerioSequenceType.CAL;
-			RowTypes[0][3]=PerioSequenceType.GingMargin;
-			RowTypes[0][4]=PerioSequenceType.MGJ;
-			for(int i=0;i<RowsProbing;i++){
-				RowTypes[0][5+i]=PerioSequenceType.Probing;
+			_perioSequenceTypeArray[0]=new PerioSequenceType[5+_rowsProbing];
+			_perioSequenceTypeArray[0][0]=PerioSequenceType.Mobility;
+			_perioSequenceTypeArray[0][1]=PerioSequenceType.Furcation;
+			_perioSequenceTypeArray[0][2]=PerioSequenceType.CAL;
+			_perioSequenceTypeArray[0][3]=PerioSequenceType.GingMargin;
+			_perioSequenceTypeArray[0][4]=PerioSequenceType.MGJ;
+			for(int i=0;i<_rowsProbing;i++){
+				_perioSequenceTypeArray[0][5+i]=PerioSequenceType.Probing;
 			}
 			//Upper lingual:
-			RowTypes[1]=new PerioSequenceType[3+RowsProbing];
-			RowTypes[1][0]=PerioSequenceType.Furcation;
-			RowTypes[1][1]=PerioSequenceType.CAL;
-			RowTypes[1][2]=PerioSequenceType.GingMargin;
-			for(int i=0;i<RowsProbing;i++){
-				RowTypes[1][3+i]=PerioSequenceType.Probing;
+			_perioSequenceTypeArray[1]=new PerioSequenceType[3+_rowsProbing];
+			_perioSequenceTypeArray[1][0]=PerioSequenceType.Furcation;
+			_perioSequenceTypeArray[1][1]=PerioSequenceType.CAL;
+			_perioSequenceTypeArray[1][2]=PerioSequenceType.GingMargin;
+			for(int i=0;i<_rowsProbing;i++){
+				_perioSequenceTypeArray[1][3+i]=PerioSequenceType.Probing;
 			}
 			//Lower lingual:
-			RowTypes[2]=new PerioSequenceType[4+RowsProbing];
-			RowTypes[2][0]=PerioSequenceType.Furcation;
-			RowTypes[2][1]=PerioSequenceType.CAL;
-			RowTypes[2][2]=PerioSequenceType.GingMargin;
-			RowTypes[2][3]=PerioSequenceType.MGJ;
-			for(int i=0;i<RowsProbing;i++){
-				RowTypes[2][4+i]=PerioSequenceType.Probing;
+			_perioSequenceTypeArray[2]=new PerioSequenceType[4+_rowsProbing];
+			_perioSequenceTypeArray[2][0]=PerioSequenceType.Furcation;
+			_perioSequenceTypeArray[2][1]=PerioSequenceType.CAL;
+			_perioSequenceTypeArray[2][2]=PerioSequenceType.GingMargin;
+			_perioSequenceTypeArray[2][3]=PerioSequenceType.MGJ;
+			for(int i=0;i<_rowsProbing;i++){
+				_perioSequenceTypeArray[2][4+i]=PerioSequenceType.Probing;
 			}
 			//Lower facial:
-			RowTypes[3]=new PerioSequenceType[5+RowsProbing];
-			RowTypes[3][0]=PerioSequenceType.Mobility;
-			RowTypes[3][1]=PerioSequenceType.Furcation;
-			RowTypes[3][2]=PerioSequenceType.CAL;
-			RowTypes[3][3]=PerioSequenceType.GingMargin;
-			RowTypes[3][4]=PerioSequenceType.MGJ;
-			for(int i=0;i<RowsProbing;i++){
-				RowTypes[3][5+i]=PerioSequenceType.Probing;
+			_perioSequenceTypeArray[3]=new PerioSequenceType[5+_rowsProbing];
+			_perioSequenceTypeArray[3][0]=PerioSequenceType.Mobility;
+			_perioSequenceTypeArray[3][1]=PerioSequenceType.Furcation;
+			_perioSequenceTypeArray[3][2]=PerioSequenceType.CAL;
+			_perioSequenceTypeArray[3][3]=PerioSequenceType.GingMargin;
+			_perioSequenceTypeArray[3][4]=PerioSequenceType.MGJ;
+			for(int i=0;i<_rowsProbing;i++){
+				_perioSequenceTypeArray[3][5+i]=PerioSequenceType.Probing;
 			}
 			ClearDataArray();
 			CurCell=new Point(-1,-1);//my way of setting it to null.
@@ -303,23 +303,23 @@ namespace OpenDental
 			int bottom;
 			g.FillRectangle(SystemBrushes.Control,ClientRectangle);
 			g.FillRectangle(Brushes.White,0,0,_widthShowing,_heightShowing);
-			int yPos1=1+RowsProbing*(_heightProb+1);
-			int yPos2=yPos1+(RowTypes[0].Length-RowsProbing)*(_heightShort+1)-1;
+			int yPos1=1+_rowsProbing*(_heightProb+1);
+			int yPos2=yPos1+(_perioSequenceTypeArray[0].Length-_rowsProbing)*(_heightShort+1)-1;
 			top=yPos1;
 			bottom=yPos2;
 			g.FillRectangle(new SolidBrush(cBackShort),0,top,_widthShowing,bottom-top);
 			yPos1=yPos2+1+_heightTooth+1;
-			yPos2=yPos1+(RowTypes[1].Length-RowsProbing)*(_heightShort+1)-1;
+			yPos2=yPos1+(_perioSequenceTypeArray[1].Length-_rowsProbing)*(_heightShort+1)-1;
 			top=yPos1;
 			bottom=yPos2;
 			g.FillRectangle(new SolidBrush(cBackShort),0,top,_widthShowing,bottom-top);
-			yPos1=yPos2+1+RowsProbing*(_heightProb+1)+1+RowsProbing*(_heightProb+1);
-			yPos2=yPos1+(RowTypes[2].Length-RowsProbing)*(_heightShort+1)-1;
+			yPos1=yPos2+1+_rowsProbing*(_heightProb+1)+1+_rowsProbing*(_heightProb+1);
+			yPos2=yPos1+(_perioSequenceTypeArray[2].Length-_rowsProbing)*(_heightShort+1)-1;
 			top=yPos1;
 			bottom=yPos2;
 			g.FillRectangle(new SolidBrush(cBackShort),0,top,_widthShowing,bottom-top);
 			yPos1=yPos2+1+_heightTooth+1;
-			yPos2=yPos1+(RowTypes[3].Length-RowsProbing)*(_heightShort+1)-1;
+			yPos2=yPos1+(_perioSequenceTypeArray[3].Length-_rowsProbing)*(_heightShort+1)-1;
 			top=yPos1;
 			bottom=yPos2;
 			g.FillRectangle(new SolidBrush(cBackShort),0,top,_widthShowing,bottom-top);
@@ -340,13 +340,13 @@ namespace OpenDental
 					xLoc=1+_widthLeft+1+((int)skippedTeeth[i]-1)*_widthTooth;
 					//xLoc=1+Wleft+1+(col-1)*(Wmeas+1);
 					yLoc=1;
-					h=_rowPosArray[GetTableRow(1,RowTypes[1].Length-1)]-yLoc+_heightProb;
+					h=_rowPosArray[GetTableRow(1,_perioSequenceTypeArray[1].Length-1)]-yLoc+_heightProb;
 					w=_widthTooth;
 				}
 				else{//mand tooth
 					xLoc=1+_widthLeft+1+(33-(int)skippedTeeth[i]-1)*_widthTooth;
-					yLoc=_rowPosArray[GetTableRow(2,RowTypes[2].Length-1)];
-					h=_rowPosArray[GetTableRow(3,RowTypes[3].Length-1)]-yLoc+_heightProb;
+					yLoc=_rowPosArray[GetTableRow(2,_perioSequenceTypeArray[2].Length-1)];
+					h=_rowPosArray[GetTableRow(3,_perioSequenceTypeArray[3].Length-1)]-yLoc+_heightProb;
 					w=_widthTooth;
 				}
 				bounds=new RectangleF(xLoc,yLoc,w,h);
@@ -400,12 +400,12 @@ namespace OpenDental
 			if(CurCell.X==-1){
 				return;
 			}
-			if(!perioEdit) {
+			if(!AllowPerioEdit) {
 				return;
 			}
 			Graphics g=e.Graphics;
 			RectangleF bounds=GetBounds(CurCell.X,CurCell.Y);
-			if(RowTypes[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]==PerioSequenceType.Probing){
+			if(_perioSequenceTypeArray[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]==PerioSequenceType.Probing){
 				bounds=new RectangleF(bounds.X,bounds.Y+_heightProb-_heightShort,
 					bounds.Width,_heightShort);
 			}
@@ -463,7 +463,7 @@ namespace OpenDental
 			g.DrawLine(penMain,0,y,_widthShowing,y);
 			y=(int)_rowPosArray[GetTableRow(0,1,PerioSequenceType.GingMargin)+1];
 			g.DrawLine(penMain,0,y,_widthShowing,y);
-			y=(int)_rowPosArray[GetTableRow(1,RowTypes[1].Length)];
+			y=(int)_rowPosArray[GetTableRow(1,_perioSequenceTypeArray[1].Length)];
 			using(Pen penHeavy=new Pen(Color.Black,2f)){
 				g.DrawLine(penHeavy,0,y,_widthShowing,y);
 			}
@@ -509,7 +509,7 @@ namespace OpenDental
 				if(i==0){//first column, dates and row labels
 					float x=rect.Right-g.MeasureString(DataArray[i,row].Text,font).Width-1;
 					float y=rect.Top-1;
-					if(GetSection(row)!=-1 && RowTypes[GetSection(row)][GetSectionRow(row)]==PerioSequenceType.Probing){//date
+					if(GetSection(row)!=-1 && _perioSequenceTypeArray[GetSection(row)][GetSectionRow(row)]==PerioSequenceType.Probing){//date
 						y+=LayoutManager.ScaleF(3);
 					}
 					e.Graphics.DrawString(DataArray[i,row].Text,font,new SolidBrush(textColor),x,y);
@@ -526,7 +526,7 @@ namespace OpenDental
 					continue;
 				}
 				format.Alignment=StringAlignment.Center;//center left/right
-				if(RowTypes[GetSection(row)][GetSectionRow(row)]==PerioSequenceType.Probing){
+				if(_perioSequenceTypeArray[GetSection(row)][GetSectionRow(row)]==PerioSequenceType.Probing){
 					if((DataArray[i,row].Bleeding & BleedingFlags.Plaque) > 0){
 						e.Graphics.FillRectangle(new SolidBrush(cPlaque),rect.X+0,rect.Y,LayoutManager.ScaleF(2.5f),LayoutManager.ScaleF(3.5f));
 					}
@@ -560,12 +560,12 @@ namespace OpenDental
 						cellValue=100-cellValue;//i.e. 100-103 = -3
 					}
 					textColor=Color.Black;
-					if(!perioEdit) {
+					if(!AllowPerioEdit) {
 						textColor=Color.Gray;
 					}
 				}
 				//test for red
-				switch(RowTypes[GetSection(row)][GetSectionRow(row)]){
+				switch(_perioSequenceTypeArray[GetSection(row)][GetSectionRow(row)]){
 					case PerioSequenceType.Probing:
 						redThresh=PrefC.GetInt(PrefName.PerioRedProb);
 						break;
@@ -585,9 +585,9 @@ namespace OpenDental
 						redThresh=PrefC.GetInt(PrefName.PerioRedMob);
 						break;
 				}
-				if((RowTypes[GetSection(row)][GetSectionRow(row)]
+				if((_perioSequenceTypeArray[GetSection(row)][GetSectionRow(row)]
 					==PerioSequenceType.MGJ && cellValue<=redThresh)
-					||(RowTypes[GetSection(row)][GetSectionRow(row)]
+					||(_perioSequenceTypeArray[GetSection(row)][GetSectionRow(row)]
 					!=PerioSequenceType.MGJ && cellValue>=redThresh))
 				{
 					if(drawOld) {
@@ -595,7 +595,7 @@ namespace OpenDental
 					}
 					else {
 						textColor=cRedText;
-						if(!perioEdit) {
+						if(!AllowPerioEdit) {
 							textColor=cOldTextRed;
 						}
 					}
@@ -612,7 +612,7 @@ namespace OpenDental
 					rect=new RectangleF(rect.X-3,rect.Y+1,rect.Width+5,rect.Height);//shift text left, 1 more pixel than usual.
 				}
 				//e.Graphics.DrawString(cellValue.ToString(),Font,Brushes.Black,rect);
-				if((RowTypes[GetSection(row)][GetSectionRow(row)]==PerioSequenceType.GingMargin)) {
+				if((_perioSequenceTypeArray[GetSection(row)][GetSectionRow(row)]==PerioSequenceType.GingMargin)) {
 					e.Graphics.DrawString(cellValue.ToString().Replace('-','+'),font,new SolidBrush(textColor),rect.X,rect.Y);//replace '-' with '+' for Gingival Margin Hyperplasia
 				}
 				else {
@@ -645,7 +645,7 @@ namespace OpenDental
 			if(GetSection(row)==-1){//tooth row
 				h=_heightTooth;
 			}
-			else if(RowTypes[GetSection(row)][GetSectionRow(row)]==PerioSequenceType.Probing){//probing
+			else if(_perioSequenceTypeArray[GetSection(row)][GetSectionRow(row)]==PerioSequenceType.Probing){//probing
 				h=_heightProb;
 			}
 			else{
@@ -684,10 +684,10 @@ namespace OpenDental
 			//int curRow=0;
 			int yPos=0;
 			//U facial
-			for(int i=RowTypes[0].Length-1;i>=0;i--){
+			for(int i=_perioSequenceTypeArray[0].Length-1;i>=0;i--){
 				_rowPosArray[GetTableRow(0,i)]=yPos;
 				//MessageBox.Show(GetTableRow(0,i));
-				if(RowTypes[0][i]==PerioSequenceType.Probing){
+				if(_perioSequenceTypeArray[0][i]==PerioSequenceType.Probing){
 					yPos+=_heightProb+1;
 				}
 				else{
@@ -697,9 +697,9 @@ namespace OpenDental
 			_rowPosArray[GetTableRow(true)]=yPos;
 			yPos+=_heightTooth+1;
 			//upper lingual
-			for(int i=0;i<RowTypes[1].Length;i++){
+			for(int i=0;i<_perioSequenceTypeArray[1].Length;i++){
 				_rowPosArray[GetTableRow(1,i)]=yPos;
-				if(RowTypes[1][i]==PerioSequenceType.Probing){
+				if(_perioSequenceTypeArray[1][i]==PerioSequenceType.Probing){
 					yPos+=_heightProb+1;
 				}
 				else{
@@ -709,9 +709,9 @@ namespace OpenDental
 			yPos+=1;//makes a double line between u and L
 			//lower lingual
 			//MessageBox.Show(GetTableRow(2,3).ToString());
-			for(int i=RowTypes[2].Length-1;i>=0;i--){
+			for(int i=_perioSequenceTypeArray[2].Length-1;i>=0;i--){
 				_rowPosArray[GetTableRow(2,i)]=yPos;
-				if(RowTypes[2][i]==PerioSequenceType.Probing){
+				if(_perioSequenceTypeArray[2][i]==PerioSequenceType.Probing){
 					yPos+=_heightProb+1;
 				}
 				else{
@@ -721,9 +721,9 @@ namespace OpenDental
 			_rowPosArray[GetTableRow(false)]=yPos;
 			yPos+=_heightTooth+1;
 			//lower facial
-			for(int i=0;i<RowTypes[3].Length;i++){
+			for(int i=0;i<_perioSequenceTypeArray[3].Length;i++){
 				_rowPosArray[GetTableRow(3,i)]=yPos;
-				if(RowTypes[3][i]==PerioSequenceType.Probing){
+				if(_perioSequenceTypeArray[3][i]==PerioSequenceType.Probing){
 					yPos+=_heightProb+1;
 				}
 				else{
@@ -752,7 +752,7 @@ namespace OpenDental
 			skippedTeeth=new List<int>();
 			//reset the list of modified teeth
 			listChangedMeasurements=new List<PerioMeasureItem>();
-			if(selectedExam==-1){
+			if(_idxExamSelected==-1){
 				return;
 			}
 			FillDates();
@@ -761,7 +761,7 @@ namespace OpenDental
 			//int examI=selectedExam;
 			string cellText="";
 			int cellBleed=0;
-			for(int examI=0;examI<=selectedExam;examI++){//exams, earliest through current
+			for(int examI=0;examI<=_idxExamSelected;examI++){//exams, earliest through current
 				for(int seqI=0;seqI<PerioMeasures.List.GetLength(1);seqI++){//sequences
 					for(int toothI=1;toothI<PerioMeasures.List.GetLength(2);toothI++){//measurements
 						if(PerioMeasures.List[examI,seqI,toothI]==null)//.PerioMeasureNum==0)
@@ -772,7 +772,7 @@ namespace OpenDental
 								if(surfI!=(int)PerioSurf.None){
 									continue;
 								}
-								if(examI!=selectedExam){//only mark skipped teeth for current exam
+								if(examI!=_idxExamSelected){//only mark skipped teeth for current exam
 									continue;
 								}
 								if(PerioMeasures.List[examI,seqI,toothI].ToothValue==1){
@@ -790,7 +790,7 @@ namespace OpenDental
 								if(cellText=="-1"){
 									cellText="";
 								}
-								if(examI==selectedExam) {
+								if(examI==_idxExamSelected) {
 									perioCellCur.Text=cellText;
 									DataArray[curCell.X,curCell.Y]=perioCellCur;
 								}
@@ -865,7 +865,7 @@ namespace OpenDental
 							if (cellText=="-1") {//seqI==2 means it is gingival margin.
 								cellText="";
 							}
-							if(examI==selectedExam) {
+							if(examI==_idxExamSelected) {
 								perioCellCur.Text=cellText;
 								DataArray[curCell.X,curCell.Y]=perioCellCur;
 							}
@@ -883,7 +883,7 @@ namespace OpenDental
 			}//for examI
 			//Start in the very first cell on the first tooth and loop through teeth until we come across one that is not missing.
 			if(doSelectCell) {
-				CurCell=new Point(1,GetTableRow(selectedExam,0,PerioSequenceType.Probing));
+				CurCell=new Point(1,GetTableRow(_idxExamSelected,0,PerioSequenceType.Probing));
 				OnDirectionChangedLeft();//Always start looping to the left.
 				if(skippedTeeth.Count==32) {
 					return;
@@ -901,7 +901,7 @@ namespace OpenDental
 		///<summary>Used in LoadData.</summary>
 		private void FillDates(){
 			int tableRow;
-			for(int examI=0;examI<selectedExam+1;examI++){//-ProbingOffset;examI++){
+			for(int examI=0;examI<_idxExamSelected+1;examI++){//-ProbingOffset;examI++){
 				for(int section=0;section<4;section++){
 					tableRow=GetTableRow(examI,section,PerioSequenceType.Probing);
 					if(tableRow==-1)
@@ -998,7 +998,7 @@ namespace OpenDental
 		}
 
 		public PerioSequenceType GetSequenceForPoint(Point point) {
-			return RowTypes[GetSection(point.Y)][GetSectionRow(point.Y)];
+			return _perioSequenceTypeArray[GetSection(point.Y)][GetSectionRow(point.Y)];
 		}
 
 		///<summary>Saves the cur exam measurements to the db by looping through each tooth and deciding whether the data for that tooth has changed.  If so, it either updates or inserts a measurement.  It won't delete a measurement if all values for that tooth are cleared, but just sets that measurement to all -1's.</summary>
@@ -1034,7 +1034,7 @@ namespace OpenDental
 				PerioSequenceType seqI=measureItem.SeqType;
 				int toothI=measureItem.ToothNum;
 				//new measurement
-				if(PerioMeasures.List[selectedExam,(int)seqI,toothI]==null || PerioExamCur.IsNew) {//.PerioMeasureNum==0){
+				if(PerioMeasures.List[_idxExamSelected,(int)seqI,toothI]==null || PerioExamCur.IsNew) {//.PerioMeasureNum==0){
 					//MessageBox.Show(toothI.ToString());
 					PerioMeasureCur=new PerioMeasure();
 					PerioMeasureCur.PerioExamNum=PerioExamCur.PerioExamNum;
@@ -1042,7 +1042,7 @@ namespace OpenDental
 					PerioMeasureCur.IntTooth=toothI;
 				}
 				else{
-					PerioMeasureCur=PerioMeasures.List[selectedExam,(int)seqI,toothI];
+					PerioMeasureCur=PerioMeasures.List[_idxExamSelected,(int)seqI,toothI];
 					//PerioExam
 					//Sequence
 					//tooth
@@ -1056,7 +1056,7 @@ namespace OpenDental
 					PerioMeasureCur.DLvalue=-1;
 					if(seqI==PerioSequenceType.Mobility){
 						PerioMeasureCur.ToothValue
-							=GetCellValue(selectedExam,seqI,toothI,PerioSurf.B);
+							=GetCellValue(_idxExamSelected,seqI,toothI,PerioSurf.B);
 					}
 					else{//skiptooth
 						//skipped teeth are only saved when user marks them, not as part of regular saving.
@@ -1065,38 +1065,38 @@ namespace OpenDental
 				else if(seqI==PerioSequenceType.Bleeding){
 					PerioMeasureCur.ToothValue=-1;
 					PerioMeasureCur.MBvalue
-						=GetCellBleedValue(selectedExam,toothI,PerioSurf.MB);
+						=GetCellBleedValue(_idxExamSelected,toothI,PerioSurf.MB);
 					PerioMeasureCur.Bvalue
-						=GetCellBleedValue(selectedExam,toothI,PerioSurf.B);
+						=GetCellBleedValue(_idxExamSelected,toothI,PerioSurf.B);
 					PerioMeasureCur.DBvalue
-						=GetCellBleedValue(selectedExam,toothI,PerioSurf.DB);
+						=GetCellBleedValue(_idxExamSelected,toothI,PerioSurf.DB);
 					PerioMeasureCur.MLvalue
-						=GetCellBleedValue(selectedExam,toothI,PerioSurf.ML);
+						=GetCellBleedValue(_idxExamSelected,toothI,PerioSurf.ML);
 					PerioMeasureCur.Lvalue
-						=GetCellBleedValue(selectedExam,toothI,PerioSurf.L);
+						=GetCellBleedValue(_idxExamSelected,toothI,PerioSurf.L);
 					PerioMeasureCur.DLvalue
-						=GetCellBleedValue(selectedExam,toothI,PerioSurf.DL);
+						=GetCellBleedValue(_idxExamSelected,toothI,PerioSurf.DL);
 				}
 				else{
 					PerioMeasureCur.ToothValue=-1;
 					PerioMeasureCur.MBvalue
-						=GetCellValue(selectedExam,seqI,toothI,PerioSurf.MB);
+						=GetCellValue(_idxExamSelected,seqI,toothI,PerioSurf.MB);
 					PerioMeasureCur.Bvalue
-						=GetCellValue(selectedExam,seqI,toothI,PerioSurf.B);
+						=GetCellValue(_idxExamSelected,seqI,toothI,PerioSurf.B);
 					PerioMeasureCur.DBvalue
-						=GetCellValue(selectedExam,seqI,toothI,PerioSurf.DB);
+						=GetCellValue(_idxExamSelected,seqI,toothI,PerioSurf.DB);
 					PerioMeasureCur.MLvalue
-						=GetCellValue(selectedExam,seqI,toothI,PerioSurf.ML);
+						=GetCellValue(_idxExamSelected,seqI,toothI,PerioSurf.ML);
 					PerioMeasureCur.Lvalue
-						=GetCellValue(selectedExam,seqI,toothI,PerioSurf.L);
+						=GetCellValue(_idxExamSelected,seqI,toothI,PerioSurf.L);
 					PerioMeasureCur.DLvalue
-						=GetCellValue(selectedExam,seqI,toothI,PerioSurf.DL);
+						=GetCellValue(_idxExamSelected,seqI,toothI,PerioSurf.DL);
 				}
 				//then to the database
 				if(seqI==PerioSequenceType.Mobility && PerioMeasureCur.ToothValue==-1 && !PerioExamCur.IsNew) {
 					PerioMeasures.Delete(PerioMeasureCur);//-1 is an invalid value for mobility, keep Db bloat down
 				}
-				else if(PerioMeasures.List[selectedExam,(int)seqI,toothI]==null || PerioExamCur.IsNew) {
+				else if(PerioMeasures.List[_idxExamSelected,(int)seqI,toothI]==null || PerioExamCur.IsNew) {
 					PerioMeasures.Insert(PerioMeasureCur);
 				}
 				else{
@@ -1139,14 +1139,14 @@ namespace OpenDental
 
 		private void ClearDataArray(){
 			//MessageBox.Show("clearing");
-			DataArray=new PerioCell[49,RowTypes[0].Length+RowTypes[1].Length
-				+RowTypes[2].Length+RowTypes[3].Length+2];//the 2 is for the tooth cells.
+			DataArray=new PerioCell[49,_perioSequenceTypeArray[0].Length+_perioSequenceTypeArray[1].Length
+				+_perioSequenceTypeArray[2].Length+_perioSequenceTypeArray[3].Length+2];//the 2 is for the tooth cells.
 			//int curX=0;
 			int curY=0;
 			for(int sect=0;sect<4;sect++){
-				for(int i=0;i<RowTypes[sect].Length;i++){
+				for(int i=0;i<_perioSequenceTypeArray[sect].Length;i++){
 					curY=GetTableRow(sect,i);
-					switch(RowTypes[sect][i]){
+					switch(_perioSequenceTypeArray[sect][i]){
 						case PerioSequenceType.Mobility:
 							DataArray[0,curY].Text=Lan.g(this,"Mobility");
 							break;
@@ -1211,15 +1211,15 @@ namespace OpenDental
 		///<summary>Used in GetCell during LoadData. Also used in AdvanceCell when looping to a new section.</summary>
 		private int GetTableRow(int examIndex,int section,PerioSequenceType seqType){
 			if(seqType==PerioSequenceType.Probing || seqType==PerioSequenceType.Bleeding){
-				if(examIndex-ProbingOffset<0)//older exam that won't fit.
+				if(examIndex-_probingOffset<0)//older exam that won't fit.
 					return -1;
-				int sectionRow=examIndex-ProbingOffset//correct for offset
-					+RowTypes[section].Length-RowsProbing;//plus number of non-probing rows
+				int sectionRow=examIndex-_probingOffset//correct for offset
+					+_perioSequenceTypeArray[section].Length-_rowsProbing;//plus number of non-probing rows
 				return GetTableRow(section,sectionRow);
 			}
 			//for types other than probing and bleeding, do a loop through the non-probing rows:
-			for(int i=0;i<RowTypes[section].Length-RowsProbing;i++){
-				if(RowTypes[section][i]==seqType)
+			for(int i=0;i<_perioSequenceTypeArray[section].Length-_rowsProbing;i++){
+				if(_perioSequenceTypeArray[section][i]==seqType)
 					return GetTableRow(section,i);
 			}
 			//MessageBox.Show("Error in GetTableRows: seqType not found");
@@ -1229,44 +1229,44 @@ namespace OpenDental
 		private int GetTableRow(int section,int sectionRow){
 			int retVal=0;
 			if(section==0){
-				retVal=RowTypes[0].Length-sectionRow-1;
+				retVal=_perioSequenceTypeArray[0].Length-sectionRow-1;
 			}
 			else if(section==1){
-				retVal=RowTypes[0].Length+1+sectionRow;
+				retVal=_perioSequenceTypeArray[0].Length+1+sectionRow;
 			}
 			else if(section==2){
-				retVal=RowTypes[0].Length+1+RowTypes[1].Length+RowTypes[2].Length-sectionRow-1;
+				retVal=_perioSequenceTypeArray[0].Length+1+_perioSequenceTypeArray[1].Length+_perioSequenceTypeArray[2].Length-sectionRow-1;
 			}
 			else
-				retVal=RowTypes[0].Length+1+RowTypes[1].Length+RowTypes[2].Length+1+sectionRow;
+				retVal=_perioSequenceTypeArray[0].Length+1+_perioSequenceTypeArray[1].Length+_perioSequenceTypeArray[2].Length+1+sectionRow;
 			return retVal;
 		}
 
 		///<summary>If true, then returns the row of the max teeth, otherwise mand.</summary>
 		private int GetTableRow(bool getMax){
 			if(getMax){
-				return RowTypes[0].Length;
+				return _perioSequenceTypeArray[0].Length;
 			}
-			return RowTypes[0].Length+1+RowTypes[1].Length+RowTypes[2].Length;
+			return _perioSequenceTypeArray[0].Length+1+_perioSequenceTypeArray[1].Length+_perioSequenceTypeArray[2].Length;
 		}
 
 		
 		///<summary>Returns -1 if tooth row and not section row.  0 = Maxillary Facial, 1 = Maxillary Lingual, 2 = Mandible Facial, 3 = Mandible Lingual.
 		///Used in GetBounds, DrawRow, and OnMouseDown.</summary>
 		private int GetSection(int tableRow){
-			if(tableRow<RowTypes[0].Length) {//0 = Maxillary Facial
+			if(tableRow<_perioSequenceTypeArray[0].Length) {//0 = Maxillary Facial
 				return 0;
 			}
-			if(tableRow==RowTypes[0].Length){
+			if(tableRow==_perioSequenceTypeArray[0].Length){
 				return -1;//max teeth
 			}
-			if(tableRow<RowTypes[0].Length+1+RowTypes[1].Length) {//1 = Maxillary Lingual
+			if(tableRow<_perioSequenceTypeArray[0].Length+1+_perioSequenceTypeArray[1].Length) {//1 = Maxillary Lingual
 				return 1;
 			}
-			if(tableRow<RowTypes[0].Length+1+RowTypes[1].Length+RowTypes[2].Length) {//2 = Mandible Facial
+			if(tableRow<_perioSequenceTypeArray[0].Length+1+_perioSequenceTypeArray[1].Length+_perioSequenceTypeArray[2].Length) {//2 = Mandible Facial
 				return 2;
 			}
-			if(tableRow==RowTypes[0].Length+1+RowTypes[1].Length+RowTypes[2].Length) {//3 = Mandible Lingual
+			if(tableRow==_perioSequenceTypeArray[0].Length+1+_perioSequenceTypeArray[1].Length+_perioSequenceTypeArray[2].Length) {//3 = Mandible Lingual
 				return -1;//mand teeth
 			}
 			return 3;
@@ -1296,23 +1296,23 @@ namespace OpenDental
 
 		///<summary>Returns -1 if a tooth row and not a section row.  Used in GetBounds,SetHasChanged, AdvanceCell, and DrawRow</summary>
 		private int GetSectionRow(int tableRow){
-			if(tableRow<RowTypes[0].Length){
-				return RowTypes[0].Length-tableRow-1;
+			if(tableRow<_perioSequenceTypeArray[0].Length){
+				return _perioSequenceTypeArray[0].Length-tableRow-1;
 			}
 			//return 0;
-			if(tableRow==RowTypes[0].Length){
+			if(tableRow==_perioSequenceTypeArray[0].Length){
 				return -1;//max teeth
 			}
-			if(tableRow<RowTypes[0].Length+1+RowTypes[1].Length){
-				return tableRow-RowTypes[0].Length-1;
+			if(tableRow<_perioSequenceTypeArray[0].Length+1+_perioSequenceTypeArray[1].Length){
+				return tableRow-_perioSequenceTypeArray[0].Length-1;
 			}
-			if(tableRow<RowTypes[0].Length+1+RowTypes[1].Length+RowTypes[2].Length){
-				return RowTypes[0].Length+1+RowTypes[1].Length+RowTypes[2].Length-tableRow-1;//-1?
+			if(tableRow<_perioSequenceTypeArray[0].Length+1+_perioSequenceTypeArray[1].Length+_perioSequenceTypeArray[2].Length){
+				return _perioSequenceTypeArray[0].Length+1+_perioSequenceTypeArray[1].Length+_perioSequenceTypeArray[2].Length-tableRow-1;//-1?
 			}
-			if(tableRow==RowTypes[0].Length+1+RowTypes[1].Length+RowTypes[2].Length){
+			if(tableRow==_perioSequenceTypeArray[0].Length+1+_perioSequenceTypeArray[1].Length+_perioSequenceTypeArray[2].Length){
 				return -1;//mand teeth
 			}
-			return tableRow-RowTypes[0].Length-1-RowTypes[1].Length-RowTypes[2].Length-1;//-1?
+			return tableRow-_perioSequenceTypeArray[0].Length-1-_perioSequenceTypeArray[1].Length-_perioSequenceTypeArray[2].Length-1;//-1?
 		}
 
 		///<summary>Gets the current cell as a col,row based on the x-y pixel coordinate supplied.</summary>
@@ -1358,7 +1358,7 @@ namespace OpenDental
 
 		///<summary></summary>
 		protected override void OnMouseDown(MouseEventArgs e){
-			if(!perioEdit) {
+			if(!AllowPerioEdit) {
 				return;
 			}
 			base.OnMouseDown(e);
@@ -1388,24 +1388,24 @@ namespace OpenDental
 				Invalidate();
 			}
 			int sectRow=GetSectionRow(newCell.Y);
-			if(sectRow<0 || sectRow>=RowTypes[section].Length) {
+			if(sectRow<0 || sectRow>=_perioSequenceTypeArray[section].Length) {
 				//User clicked on a tooth row, not a section row.
 				return;
 			}
-			if(RowTypes[section][sectRow]==PerioSequenceType.Probing){
-				if(this.selectedExam-ProbingOffset//correct for offset
-					+RowTypes[section].Length-RowsProbing//plus non-probing rows
+			if(_perioSequenceTypeArray[section][sectRow]==PerioSequenceType.Probing){
+				if(this._idxExamSelected-_probingOffset//correct for offset
+					+_perioSequenceTypeArray[section].Length-_rowsProbing//plus non-probing rows
 					!=sectRow)
 				{
 					return;//not allowed to click on probing rows other than selectedRow
 				}
 			}
-			else if(RowTypes[section][sectRow]==PerioSequenceType.Mobility){
+			else if(_perioSequenceTypeArray[section][sectRow]==PerioSequenceType.Mobility){
 				if(Math.IEEERemainder(((double)newCell.X+1),3) != 0){//{2,5,8,11};examples of acceptable cols
 					return;//for mobility, not allowed to click on anything but B
 				}
 			}
-			else if(RowTypes[section][sectRow]==PerioSequenceType.CAL){
+			else if(_perioSequenceTypeArray[section][sectRow]==PerioSequenceType.CAL){
 				return;//never allowed to edit CAL
 			}
 			if(section==0)
@@ -1433,10 +1433,10 @@ namespace OpenDental
 		///<summary></summary>
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if(!perioEdit) {
+			if(!AllowPerioEdit) {
 				return;
 			}
-			if (selectedExam == -1)
+			if (_idxExamSelected == -1)
 			{
 				MessageBox.Show(Lan.g(this, "Please add or select an exam first in the list to the left."));
 				return;
@@ -1447,7 +1447,7 @@ namespace OpenDental
 			//base.OnKeyDown (e);
 			if(e.KeyValue>=96 && e.KeyValue<=105){//keypad 0 through 9
 				if(e.Control){
-					if(RowTypes[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]==PerioSequenceType.GingMargin) {
+					if(_perioSequenceTypeArray[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]==PerioSequenceType.GingMargin) {
 						int val=(e.KeyValue-96);
 						ButtonPressed((val==0?0:val+100));//0 if val==0, val+100 if val != 0
 					}
@@ -1461,7 +1461,7 @@ namespace OpenDental
 			}
 			else if(e.KeyValue>=48 && e.KeyValue<=57){//0 through 9
 				if(e.Control) {
-					if(RowTypes[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]==PerioSequenceType.GingMargin) {//gm
+					if(_perioSequenceTypeArray[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]==PerioSequenceType.GingMargin) {//gm
 						int val=(e.KeyValue-48);
 						ButtonPressed((val==0?0:val+100));//0 if val==0, val+100 if val != 0
 					}
@@ -1487,6 +1487,21 @@ namespace OpenDental
 			}
 			else if(e.KeyCode==Keys.C){
 				ButtonPressed("c");
+			}
+			else if(e.KeyCode==Keys.J){
+				ButtonPressed("j");
+			}
+			else if(e.KeyCode==Keys.G){
+				ButtonPressed("g");
+			}
+			else if(e.KeyCode==Keys.F){
+				ButtonPressed("f");
+			}
+			else if(e.KeyCode==Keys.M){
+				ButtonPressed("m");
+			}
+			else if(e.KeyCode==Keys.OemPeriod){
+				ButtonPressed(".");
 			}
 			else if(e.KeyCode==Keys.Back){
 				if(ThreeAtATime){
@@ -1555,18 +1570,116 @@ namespace OpenDental
 					}
 				}
 			}
+			else if(e.KeyCode==Keys.Up) {
+				KeyUp_Clicked(CurCell);
+			}
+			else if(e.KeyCode==Keys.Down) {
+				KeyDown_Clicked(CurCell);
+			}
 			//else{
 			//	return;
 			//}
+		}
+
+		///<summary></summary>
+		private void KeyDown_Clicked(Point pointSelected) {
+			if(!AllowPerioEdit) {
+				return;
+			}
+			int colSelected=pointSelected.X;
+			int rowDownOne=pointSelected.Y+1;
+			int idxMax=_rowPosArray.Length-1;
+			for(int i=0;i<idxMax-pointSelected.Y;i++) {//all of the rows below current row
+				int rowNext=rowDownOne+i;
+				int sectRowIdx=GetSectionRow(rowNext);
+				int section=GetSection(rowNext);
+				if(rowNext==-1 ||  rowNext==_rowPosArray.Length) {//Out of bounds.
+					SetNewCell(pointSelected.X,pointSelected.Y);
+					break;
+				}
+				if(sectRowIdx==-1 && section==-1) {//Skip "teeth number" rows.  They have no section or sectRowIdx, so they will return as -1
+					continue;
+				}
+				if(_perioSequenceTypeArray[section][sectRowIdx]==PerioSequenceType.CAL){//Skip auto cal rows.
+					continue;
+				}
+				if(_perioSequenceTypeArray[section][sectRowIdx]==PerioSequenceType.Probing){
+					if(this._idxExamSelected-_probingOffset//correct for offset
+						+_perioSequenceTypeArray[section].Length-_rowsProbing//plus non-probing rows
+						!=sectRowIdx)
+					{
+						continue;
+					}
+				}
+				if(_perioSequenceTypeArray[section][sectRowIdx]==PerioSequenceType.Mobility) {
+					int colLeft=colSelected-1;
+					int colRight=colSelected+1;
+					if(Math.IEEERemainder(((double)colLeft+1),3)==0) {//Currently on the right col of tooth and need to move to the left to get to the middle
+						colSelected=colLeft;
+					}
+					else if(Math.IEEERemainder(((double)colRight+1),3)==0) {//Currently on the left col of tooth and need to move to the right to get to the middle
+						colSelected=colRight;
+					}
+				}
+				SetNewCell(colSelected,rowNext);
+				break;
+			}
+			Focus();
+		}
+
+		///<summary></summary>
+		private void KeyUp_Clicked(Point colRowSelected) {
+			if(!AllowPerioEdit) {
+				return;
+			}
+			int colCol=colRowSelected.X;
+			int rowUpOne=colRowSelected.Y-1;
+			for(int i=0;i<colRowSelected.Y;i++) {//all the rows above current row
+				int rowPrevious=rowUpOne-i;
+				int sectRowIdx=GetSectionRow(rowPrevious);
+				int section=GetSection(rowPrevious);
+				if(rowPrevious==-1 ||  rowPrevious==_rowPosArray.Length) {//Out of bounds.
+					SetNewCell(colRowSelected.X,colRowSelected.Y);
+					break;
+				}
+				if(sectRowIdx==-1 && section==-1) {//Skip "teeth number" rows.  They have no section or sectRowIdx, so they will return as -1
+					continue;
+				}
+				if(_perioSequenceTypeArray[section][sectRowIdx]==PerioSequenceType.CAL){//Skip auto cal rows.
+					continue;
+				}
+				if(_perioSequenceTypeArray[section][sectRowIdx]==PerioSequenceType.Probing){
+					if(this._idxExamSelected-_probingOffset//correct for offset
+						+_perioSequenceTypeArray[section].Length-_rowsProbing//plus non-probing rows
+						!=sectRowIdx)
+					{//not the probing row of current perio exam
+						continue;
+					}
+				}
+				if(_perioSequenceTypeArray[section][sectRowIdx]==PerioSequenceType.Mobility) {
+					int colLeft=colCol-1;
+					int colRight=colCol+1;
+					if(Math.IEEERemainder(((double)colLeft+1),3)==0) {//Currently on the right col of tooth and need to go to the left
+						colCol=colLeft;
+					}
+					else if(Math.IEEERemainder(((double)colRight+1),3)==0) {//Currently on the left col of tooth and need to go to the right
+						colCol=colRight;
+					}
+				}
+				SetNewCell(colCol,rowPrevious);
+				break;
+				//MsgBox.Show("CRS.Col="+colCol.ToString()+"\nCRS.Row="+colRowPrevious.ToString());//For debug.
+			}
+			Focus();
 		}
 
 		public void KeyPressed(KeyEventArgs e) {
 			OnKeyDown(e);
 		}
  
-		///<summary>Accepts button clicks from window rather than the usual keyboard entry.  All validation MUST be done before the value is sent here.  Only valid values are b,s,p,or c. Numbers entered using overload.</summary>
+		///<summary>Accepts button clicks from window rather than the usual keyboard entry.  All validation MUST be done before the value is sent here.  Only valid values are b,s,p,or c,j,g,f,m,or period (.). Numbers entered using overload.</summary>
 		public void ButtonPressed(string keyValue){
-			if(!perioEdit) {
+			if(!AllowPerioEdit) {
 				return;
 			}
 			if(ThreeAtATime){
@@ -1582,10 +1695,10 @@ namespace OpenDental
 			if(CurCell.X==-1) {
 				return;
 			}
-			if(!perioEdit) {
+			if(!AllowPerioEdit) {
 				return;
 			}
-			if(GingMargPlus && RowTypes[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]==PerioSequenceType.GingMargin) {
+			if(GingMargPlus && _perioSequenceTypeArray[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]==PerioSequenceType.GingMargin) {
 				//Possible values for keyValue are 0-19,101-109
 				if(keyValue<100) {
 					keyValue=keyValue%10;//in case the +10 was down when the number was pressed on the onscreen keypad.
@@ -1605,67 +1718,127 @@ namespace OpenDental
 			}
 		}
 
-		///<summary>Only valid values are b,s,p, and c.</summary>
+		///<summary>Only valid values are b,s,p,c,j,g,f,m, and period (.).</summary>
 		private void EnterValue(string keyValue){
 			if(CurCell.X==-1) {
 				return;
 			}
-			if(keyValue !="b" && keyValue !="s" && keyValue !="p" && keyValue !="c"){
-				MessageBox.Show("Only b,s,p, and c are allowed");//just for debugging
+			if(keyValue !="b" && keyValue !="s" && keyValue !="p" && keyValue !="c" && keyValue !="j" && keyValue !="g" && keyValue !="f" && keyValue !="m" && keyValue !="."){
+				MessageBox.Show("Only b,s,p,c,j,g,f,m,and period (.) are allowed");//just for debugging
 				return;
 			}
-			PerioCell perioCell=GetPerioCell(CurCell,false);
-			bool curCellHasText=false;
-			if(ThreeAtATime){
-				//don't backup
-			}
-			else if(perioCell.Text!=null && perioCell.Text!=""){
-				curCellHasText=true;
-				//so enter value for current cell
-			}
-			else{
-				curCellHasText=false;
-				AdvanceCell(true);//so backup
-				perioCell=DataArray[CurCell.X,CurCell.Y];
-				if(perioCell.Text==null || perioCell.Text=="") {//the previous cell is also empty
-					curCellHasText=true;//treat it like a cell with text
-					AdvanceCell();//go forward again
-					perioCell=DataArray[CurCell.X,CurCell.Y];
+			if(keyValue=="b" || keyValue=="s" || keyValue=="p" || keyValue=="c") {
+				PerioCell perioCell=GetPerioCell(CurCell,false);
+				bool curCellHasText=false;
+				if(ThreeAtATime){
+					//don't backup
 				}
-				//enter value, then advance.
+				else if(perioCell.Text!=null && perioCell.Text!=""){
+					curCellHasText=true;
+					//so enter value for current cell
+				}
+				else{
+					curCellHasText=false;
+					AdvanceCell(true);//so backup
+					perioCell=DataArray[CurCell.X,CurCell.Y];
+					if(perioCell.Text==null || perioCell.Text=="") {//the previous cell is also empty
+						curCellHasText=true;//treat it like a cell with text
+						AdvanceCell();//go forward again
+						perioCell=DataArray[CurCell.X,CurCell.Y];
+					}
+					//enter value, then advance.
+				}
+				if(keyValue=="b"){
+					if((perioCell.Bleeding & BleedingFlags.Blood)==0)//if it was off
+						perioCell.Bleeding=perioCell.Bleeding | BleedingFlags.Blood;//turn it on
+					else//if it was on
+						perioCell.Bleeding=perioCell.Bleeding & ~BleedingFlags.Blood; //turn it off
+				}
+				if(keyValue=="s"){
+					if((perioCell.Bleeding & BleedingFlags.Suppuration)==0)
+						perioCell.Bleeding=perioCell.Bleeding | BleedingFlags.Suppuration;
+					else
+						perioCell.Bleeding=perioCell.Bleeding & ~BleedingFlags.Suppuration;
+				}
+				if(keyValue=="p"){
+					if((perioCell.Bleeding & BleedingFlags.Plaque)==0)
+						perioCell.Bleeding=perioCell.Bleeding | BleedingFlags.Plaque;
+					else
+						perioCell.Bleeding=perioCell.Bleeding & ~BleedingFlags.Plaque;
+				}
+				if(keyValue=="c"){
+					if((perioCell.Bleeding & BleedingFlags.Calculus)==0)
+						perioCell.Bleeding=perioCell.Bleeding | BleedingFlags.Calculus;
+					else
+						perioCell.Bleeding=perioCell.Bleeding & ~BleedingFlags.Calculus;
+				}
+				DataArray[CurCell.X,CurCell.Y]=perioCell;
+				Invalidate(Rectangle.Ceiling(GetBounds(CurCell.X,CurCell.Y)));
+				SetHasChanged(CurCell.X,CurCell.Y);
+				if(ThreeAtATime){
+					AdvanceCell();
+				}
+				else if(!curCellHasText){
+					AdvanceCell();//to return to original location
+				}
+				return;
 			}
-			if(keyValue=="b"){
-				if((perioCell.Bleeding & BleedingFlags.Blood)==0)//if it was off
-					perioCell.Bleeding=perioCell.Bleeding | BleedingFlags.Blood;//turn it on
-				else//if it was on
-					perioCell.Bleeding=perioCell.Bleeding & ~BleedingFlags.Blood; //turn it off
-			}
-			if(keyValue=="s"){
-				if((perioCell.Bleeding & BleedingFlags.Suppuration)==0)
-					perioCell.Bleeding=perioCell.Bleeding | BleedingFlags.Suppuration;
-				else
-					perioCell.Bleeding=perioCell.Bleeding & ~BleedingFlags.Suppuration;
-			}
-			if(keyValue=="p"){
-				if((perioCell.Bleeding & BleedingFlags.Plaque)==0)
-					perioCell.Bleeding=perioCell.Bleeding | BleedingFlags.Plaque;
-				else
-					perioCell.Bleeding=perioCell.Bleeding & ~BleedingFlags.Plaque;
-			}
-			if(keyValue=="c"){
-				if((perioCell.Bleeding & BleedingFlags.Calculus)==0)
-					perioCell.Bleeding=perioCell.Bleeding | BleedingFlags.Calculus;
-				else
-					perioCell.Bleeding=perioCell.Bleeding & ~BleedingFlags.Calculus;
-			}
-			DataArray[CurCell.X,CurCell.Y]=perioCell;
-			Invalidate(Rectangle.Ceiling(GetBounds(CurCell.X,CurCell.Y)));
-			SetHasChanged(CurCell.X,CurCell.Y);
-			if(ThreeAtATime){
-				AdvanceCell();
-			}
-			else if(!curCellHasText){
-				AdvanceCell();//to return to original location
+			int section=GetSection(CurCell.Y);
+			for(int i=0;i<_rowPosArray.Length;i++) {
+				int idxSectRow=GetSectionRow(i);
+				if(GetSection(i)!=section) {
+					continue;
+				}
+				if(keyValue=="j") {
+					if(_perioSequenceTypeArray[section][idxSectRow]==PerioSequenceType.MGJ) {
+						SetNewCell(CurCell.X,i);
+						Focus();
+						return;
+					}
+				}
+				if(keyValue=="g") {
+					if(_perioSequenceTypeArray[section][idxSectRow]==PerioSequenceType.GingMargin) {
+						SetNewCell(CurCell.X,i);
+						Focus();
+						return;
+					}
+				}
+				if(keyValue=="f") {
+					if(_perioSequenceTypeArray[section][idxSectRow]==PerioSequenceType.Furcation) {
+						SetNewCell(CurCell.X,i);
+						Focus();
+						return;
+					}
+				}
+				if(keyValue=="m") {
+					int colSelected=CurCell.X;
+					int colLeft=colSelected-1;
+					int colRight=colSelected+1;
+					if(Math.IEEERemainder(((double)colLeft+1),3)==0) {//Currently on the right col of tooth and need to go to the left to get to the middle
+						colSelected=colLeft;
+					}
+					else if(Math.IEEERemainder(((double)colRight+1),3)==0) {//Currently on the left col of tooth and need to go to the right to get to the middle
+						colSelected=colRight;
+					}
+					if(_perioSequenceTypeArray[section][idxSectRow]==PerioSequenceType.Mobility) {
+						SetNewCell(colSelected,i);
+						Focus();
+						return;
+					}
+				}
+				if(keyValue==".") {
+					if(_perioSequenceTypeArray[section][idxSectRow]==PerioSequenceType.Probing) {
+						if(this._idxExamSelected-_probingOffset//correct for offset
+							+_perioSequenceTypeArray[section].Length-_rowsProbing//plus non-probing rows
+							!=idxSectRow)
+						{//not the probing row of current perio exam
+							continue;
+						}
+						SetNewCell(CurCell.X,i);
+						Focus();
+						return;
+					}
+				}
 			}
 		}
 
@@ -1675,7 +1848,7 @@ namespace OpenDental
 				return;
 			}
 			if((keyValue < 0 || keyValue > 19) 
-				&& RowTypes[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]!=PerioSequenceType.GingMargin){//large values are allowed for GingMargin to represent hyperplasia (e.g. 101 to 109 represent -1 to -9)
+				&& _perioSequenceTypeArray[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]!=PerioSequenceType.GingMargin){//large values are allowed for GingMargin to represent hyperplasia (e.g. 101 to 109 represent -1 to -9)
 				MessageBox.Show("Only values 0 through 19 allowed");//just for debugging
 				return;
 			}
@@ -1685,12 +1858,12 @@ namespace OpenDental
 			DataArray[CurCell.X,CurCell.Y]=cur;
 			Invalidate(Rectangle.Ceiling(GetBounds(CurCell.X,CurCell.Y)));
 			SetHasChanged(CurCell.X,CurCell.Y);
-			if(RowTypes[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]==PerioSequenceType.Probing){ 
+			if(_perioSequenceTypeArray[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]==PerioSequenceType.Probing){ 
 				CalculateCAL(CurCell,true);
 			}
-			else if(RowTypes[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]==PerioSequenceType.GingMargin){
+			else if(_perioSequenceTypeArray[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]==PerioSequenceType.GingMargin){
 				CalculateCAL(new Point(CurCell.X,GetTableRow
-					(selectedExam,GetSection(CurCell.Y),PerioSequenceType.Probing)),true);
+					(_idxExamSelected,GetSection(CurCell.Y),PerioSequenceType.Probing)),true);
 			}
 			AdvanceCell();
 		}
@@ -1709,9 +1882,9 @@ namespace OpenDental
 
 		private void CalculateCAL(Point probingCell,bool alsoInvalidate){
 			Point calLoc=new Point(probingCell.X,GetTableRow
-				(selectedExam,GetSection(probingCell.Y),PerioSequenceType.CAL));
+				(_idxExamSelected,GetSection(probingCell.Y),PerioSequenceType.CAL));
 			Point gingLoc=new Point(probingCell.X,GetTableRow
-				(selectedExam,GetSection(probingCell.Y),PerioSequenceType.GingMargin));
+				(_idxExamSelected,GetSection(probingCell.Y),PerioSequenceType.GingMargin));
 			//PerioCell calCell=DataArray[calLoc.X,calLoc.Y];
 			if(DataArray[probingCell.X,probingCell.Y].Text==null 
 				|| DataArray[probingCell.X,probingCell.Y].Text==""
@@ -1743,10 +1916,10 @@ namespace OpenDental
 				intTooth=33-intTooth;
 			}
 			//If the section row is outside the array bounds, we simply return.
-			if(sectionRow==-1 || sectionRow>=RowTypes[section].Count() || intTooth>32 || intTooth<1) {
+			if(sectionRow==-1 || sectionRow>=_perioSequenceTypeArray[section].Count() || intTooth>32 || intTooth<1) {
 				return;
 			}
-			PerioSequenceType seqI=RowTypes[section][sectionRow];
+			PerioSequenceType seqI=_perioSequenceTypeArray[section][sectionRow];
 			if((int)seqI>PerioMeasures.List.GetLength(1)) {
 				return;
 			}
@@ -1831,7 +2004,7 @@ namespace OpenDental
 		///<summary>Finds the next cell based on where the cursor currently is. Returns false if there is no next cell.</summary>
 		public bool TryFindNextCell(Point curCell,bool isReverse,out Point nextCell,bool doSetDirection=true) {
 			nextCell=curCell;
-			PerioSequenceType seqType=RowTypes[GetSection(nextCell.Y)][GetSectionRow(nextCell.Y)];
+			PerioSequenceType seqType=_perioSequenceTypeArray[GetSection(nextCell.Y)][GetSectionRow(nextCell.Y)];
 			bool startedOnSkipped=false;//special situation:
 			int section=GetSection(nextCell.Y);//used to test skipped teeth
 			int newSection=section;//in case it doesn't change
@@ -1867,7 +2040,7 @@ namespace OpenDental
 				if(skippedTeeth.Contains(intTooth)) {//if we are on a skipped tooth
 					locIsValid=false;
 				}
-				if(RowTypes[GetSection(nextCell.Y)][GetSectionRow(nextCell.Y)]==PerioSequenceType.Mobility) {
+				if(_perioSequenceTypeArray[GetSection(nextCell.Y)][GetSectionRow(nextCell.Y)]==PerioSequenceType.Mobility) {
 					if(Math.IEEERemainder(((double)nextCell.X+1),3) != 0) {//{2,5,8,11};examples of acceptable cols
 						locIsValid=false;//for mobility, not allowed to click on anything but B
 					}
@@ -1899,7 +2072,7 @@ namespace OpenDental
 				}
 				else if(section==1) {
 					newSection=3;
-					newRow=GetTableRow(selectedExam,newSection,seqType);
+					newRow=GetTableRow(_idxExamSelected,newSection,seqType);
 					if(doSetDirection) {
 						OnDirectionChangedLeft();
 					}
@@ -1918,22 +2091,22 @@ namespace OpenDental
 				}
 				else if(section==3) {//usually in reverse
 					newSection=1;
-					newRow=GetTableRow(selectedExam,newSection,seqType);
+					newRow=GetTableRow(_idxExamSelected,newSection,seqType);
 					if(newRow!=-1 && doSetDirection) {
 						OnDirectionChangedRight();
 					}
 				}
 				if(newRow==-1) {//MGJ and mobility aren't present in all 4 sections, so can't loop normally
-					if(RowTypes[section][GetSectionRow(nextCell.Y)]==PerioSequenceType.Mobility) {
+					if(_perioSequenceTypeArray[section][GetSectionRow(nextCell.Y)]==PerioSequenceType.Mobility) {
 						if(section==3) {//usually in reverse
 							newSection=0;
-							nextCell=new Point(1+16*3,GetTableRow(selectedExam,newSection,PerioSequenceType.Mobility));
+							nextCell=new Point(1+16*3,GetTableRow(_idxExamSelected,newSection,PerioSequenceType.Mobility));
 						}
 					}
-					else if(RowTypes[section][GetSectionRow(nextCell.Y)]==PerioSequenceType.MGJ) {
+					else if(_perioSequenceTypeArray[section][GetSectionRow(nextCell.Y)]==PerioSequenceType.MGJ) {
 						//section 3. in reverse
 						newSection=0;
-						nextCell=new Point(16*3,GetTableRow(selectedExam,newSection,PerioSequenceType.MGJ));
+						nextCell=new Point(16*3,GetTableRow(_idxExamSelected,newSection,PerioSequenceType.MGJ));
 					}
 				}
 				else {
@@ -1944,7 +2117,7 @@ namespace OpenDental
 			else if(section==1 && nextCell.X==1 && startedOnSkipped) {
 				//Tooth 16 is missing so we need to jump down to section 3 (tooth 32) and start going the other direction.
 				newSection=3;
-				nextCell=new Point(1,GetTableRow(selectedExam,newSection,seqType));
+				nextCell=new Point(1,GetTableRow(_idxExamSelected,newSection,seqType));
 				if(doSetDirection) {
 					OnDirectionChangedLeft();
 				}
@@ -1991,45 +2164,45 @@ namespace OpenDental
 			if(nextCell.X==DataArray.GetLength(0)-1) {//if last column
 				if(section==0) {
 					newSection=1;
-					newRow=GetTableRow(selectedExam,newSection,seqType);
+					newRow=GetTableRow(_idxExamSelected,newSection,seqType);
 					if(newRow!=-1 && doSetDirection) {
 						OnDirectionChangedRight();
 					}
 				}
 				else if(section==1) {//usually in reverse
 					newSection=0;
-					newRow=GetTableRow(selectedExam,newSection,seqType);
+					newRow=GetTableRow(_idxExamSelected,newSection,seqType);
 					if(doSetDirection) {
 						OnDirectionChangedLeft();
 					}
 				}
 				else if(section==2) {//usually in reverse
 					newSection=3;
-					newRow=GetTableRow(selectedExam,newSection,seqType);
+					newRow=GetTableRow(_idxExamSelected,newSection,seqType);
 					if(doSetDirection) {
 						OnDirectionChangedLeft();
 					}
 				}
 				else if(section==3) {
 					newSection=2;
-					newRow=GetTableRow(selectedExam,newSection,seqType);
+					newRow=GetTableRow(_idxExamSelected,newSection,seqType);
 					if(newRow!=-1 && doSetDirection)
 						OnDirectionChangedRight();
 				}
 				if(newRow==-1) {//MGJ and mobility aren't present in all 4 sections, so can't loop normally
-					if(RowTypes[section][GetSectionRow(nextCell.Y)]==PerioSequenceType.Mobility) {
+					if(_perioSequenceTypeArray[section][GetSectionRow(nextCell.Y)]==PerioSequenceType.Mobility) {
 						if(section==0) {
 							newSection=3;
-							nextCell=new Point(1,GetTableRow(selectedExam,newSection,PerioSequenceType.Mobility));
+							nextCell=new Point(1,GetTableRow(_idxExamSelected,newSection,PerioSequenceType.Mobility));
 						}
 						if(section==3) {
 							return false;//end of sequence
 						}
 					}
-					else if(RowTypes[section][GetSectionRow(nextCell.Y)]==PerioSequenceType.MGJ) {
+					else if(_perioSequenceTypeArray[section][GetSectionRow(nextCell.Y)]==PerioSequenceType.MGJ) {
 						//section 0
 						newSection=3;
-						nextCell=new Point(1,GetTableRow(selectedExam,newSection,PerioSequenceType.MGJ));
+						nextCell=new Point(1,GetTableRow(_idxExamSelected,newSection,PerioSequenceType.MGJ));
 					}
 				}
 				else {
@@ -2195,12 +2368,12 @@ namespace OpenDental
 			DataArray[CurCell.X,CurCell.Y]=cur;
 			SetHasChanged(CurCell.X,CurCell.Y);
 			Invalidate(Rectangle.Ceiling(GetBounds(CurCell.X,CurCell.Y)));
-			if(RowTypes[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]==PerioSequenceType.Probing){ 
+			if(_perioSequenceTypeArray[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]==PerioSequenceType.Probing){ 
 				CalculateCAL(CurCell,true);
 			}
-			else if(RowTypes[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]==PerioSequenceType.GingMargin){
+			else if(_perioSequenceTypeArray[GetSection(CurCell.Y)][GetSectionRow(CurCell.Y)]==PerioSequenceType.GingMargin){
 				CalculateCAL(new Point(CurCell.X,GetTableRow
-					(selectedExam,GetSection(CurCell.Y),PerioSequenceType.Probing)),true);
+					(_idxExamSelected,GetSection(CurCell.Y),PerioSequenceType.Probing)),true);
 			}
 		}
 
@@ -2243,11 +2416,11 @@ namespace OpenDental
 
 		///<summary></summary>
 		public string ComputeOrionPlaqueIndex() {
-			if(this.selectedExam==-1) {
+			if(this._idxExamSelected==-1) {
 				return "";
 			}
 			int counter=0;
-			List<PerioMeasure> pm=PerioMeasures.GetAllForExam(PerioExams.ListExams[selectedExam].PerioExamNum);
+			List<PerioMeasure> pm=PerioMeasures.GetAllForExam(PerioExams.ListExams[_idxExamSelected].PerioExamNum);
 			for(int i=0;i<pm.Count;i++) {
 				if(pm[i].SequenceType==PerioSequenceType.Bleeding) {
 					//If tooth has plaque on any of the six points
@@ -2285,13 +2458,13 @@ namespace OpenDental
 
 		///<summary></summary>
 		public string ComputeIndex(BleedingFlags bleedFlag){
-			if(this.selectedExam==-1){
+			if(this._idxExamSelected==-1){
 				return "";
 			}
 			int counter=0;
 			for(int section=0;section<4;section++){
 				for(int x=1;x<1+3*16;x++){
-					if((DataArray[x,GetTableRow(selectedExam,section,PerioSequenceType.Probing)].Bleeding 
+					if((DataArray[x,GetTableRow(_idxExamSelected,section,PerioSequenceType.Probing)].Bleeding 
 						& bleedFlag)>0)
 					{
 						counter++;
@@ -2310,7 +2483,7 @@ namespace OpenDental
 
 		///<summary>Returns a list of strings, each between "1" and "32" (or similar international #'s), representing the teeth with red values based on prefs.  The result can be used to print summary, or can be counted to show # of teeth.</summary>
 		public List<string> CountTeeth(PerioSequenceType seqType){
-			if(selectedExam==-1){
+			if(_idxExamSelected==-1){
 				return new List<string>();
 			}
 			int prefVal=0;
@@ -2340,7 +2513,7 @@ namespace OpenDental
 			int row=0;
 			for(int section=0;section<4;section++){
 				for(int x=1;x<1+3*16;x++){
-					row=GetTableRow(selectedExam,section,seqType);
+					row=GetTableRow(_idxExamSelected,section,seqType);
 					if(row==-1)
 						continue;//eg MGJ or Mobility
 					cellText=DataArray[x,row].Text;

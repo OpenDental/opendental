@@ -402,13 +402,14 @@ namespace OpenDentBusiness {
 		///<summary>Processes charges for the enabled program. The object is used while a payment is processed.
 		///When the program is signalled to shutdown, it will wait until an in-progress payment finishes before shutting down.</summary>
 		public void SendCharges(List<RecurringChargeData> listRecurringChargeData,bool forceDuplicates) {
-			if(!PaymentsWithinLockDate(listRecurringChargeData)) {
+			List<RecurringChargeData> listRecurringChargesNoBackPayments=PaymentsWithinLockDate(listRecurringChargeData);
+			if(listRecurringChargesNoBackPayments.Count==0) {
 				return;
 			}
 			Prefs.UpdateDateT(PrefName.RecurringChargesBeginDateTime,MiscData.GetNowDateTime());
 			try {
 				IsCharging=true;
-				InsertRecurringCharges(listRecurringChargeData);
+				InsertRecurringCharges(listRecurringChargesNoBackPayments);
 				ClearStats();
 				StringBuilder strBuilderResultFileXCharge=new StringBuilder();
 				StringBuilder strBuilderResultFilePayConnect=new StringBuilder();
@@ -422,7 +423,7 @@ namespace OpenDentBusiness {
 					CreditCardSource.EdgeExpressRCM,
 					CreditCardSource.EdgeExpressCNP, 
 				};
-				foreach(RecurringChargeData chargeData in listRecurringChargeData) {
+				foreach(RecurringChargeData chargeData in listRecurringChargesNoBackPayments) {
 					if(!chargeData.CCIsRecurringActive) {
 						continue;
 					}
@@ -1205,8 +1206,9 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Tests the recurring charges with newly calculated pay dates.  If there's a date violation, a warning shows and false is returned.</summary>
-		public bool PaymentsWithinLockDate(List<RecurringChargeData> listChargeData) {
+		public List<RecurringChargeData> PaymentsWithinLockDate(List<RecurringChargeData> listChargeData) {
 			List<string> warnings=new List<string>();
+			List<RecurringChargeData> listRecurringCharges=new List<RecurringChargeData>();
 			foreach(RecurringChargeData chargeCur in listChargeData) {
 				//Calculate what the new pay date will be.
 				DateTime newPayDate=GetPayDate(chargeCur);
@@ -1224,14 +1226,15 @@ namespace OpenDentBusiness {
 					}
 					warnings.Add(newPayDate.ToShortDateString()+" - "+chargeCur.RecurringCharge.PatNum+": "+chargeCur.PatName+" - "
 						+chargeCur.RecurringCharge.FamBal.ToString("c")+" - "+chargeCur.RecurringCharge.ChargeAmt.ToString("c"));
+					continue;
 				}
+				listRecurringCharges.Add(chargeCur);
 			}
 			if(warnings.Count>0) {
 				//Show the warning message.  This allows the user the ability to unhighlight rows or go change the date limitation.
 				_log.WriteLine(string.Join("\r\n",warnings),LogLevel.Error);
-				return false;
 			}
-			return true;
+			return listRecurringCharges;
 		}
 
 		///<summary>Inserts a payment and paysplits for the recurring charge data, call after processing a payment through merchant services.</summary>

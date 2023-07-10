@@ -473,10 +473,8 @@ namespace OpenDental {
 					return false;
 				}
 			}
-			//if the user has chosen to store CC tokens and the stored CC has a token and the token is not expired,
-			//then use it instead of the CC number and CC expiration.
-			if(checkSaveToken.Checked
-				&& _creditCard!=null //if the user selected a saved CC
+			//if stored CC has a token and the token is not expired use it instead of the CC number and CC expiration.
+			if(_creditCard!=null //if the user selected a saved CC
 				&& _creditCard.PayConnectToken!="" //there is a stored token for this card
 				&& _creditCard.PayConnectTokenExp.Date>=DateTime.Today.Date) //the token is not expired
 			{
@@ -523,11 +521,19 @@ namespace OpenDental {
 			else {
 				_creditCard.CCNumberMasked=StringTools.TruncateBeginning(textCardNumber.Text,4).PadLeft(textCardNumber.Text.Length,'X');
 			}
-			_creditCard.Zip=textZipCode.Text;
-			_creditCard.PayConnectTokenExp=DateTime.MinValue;
+			if(!_creditCard.IsNew && _transResponse.PaymentToken!=null) {
+				DateTime transactionTokenExpField=new DateTime(_transResponse.PaymentToken.Expiration.year,_transResponse.PaymentToken.Expiration.month,
+					DateTime.DaysInMonth(_transResponse.PaymentToken.Expiration.year,_transResponse.PaymentToken.Expiration.month));
+				//If the token expiration doesn't match what is returned by PayConnect, update the token expiration
+				if(_creditCard.PayConnectTokenExp!=transactionTokenExpField) {
+					_creditCard.PayConnectTokenExp=transactionTokenExpField;
+					CreditCards.Update(_creditCard);
+				}
+			}
 			//Store the token and the masked CC number (only last four digits).
 			_creditCard.CCSource=CreditCardSource.PayConnect;
 			if(_creditCard.IsNew && checkSaveToken.Checked && _transResponse.PaymentToken!=null) {
+				_creditCard.Zip=textZipCode.Text;
 				_creditCard.ClinicNum=_clinicNum;
 				_creditCard.PayConnectToken=_transResponse.PaymentToken.TokenId;
 				_creditCard.PayConnectTokenExp=new DateTime(_transResponse.PaymentToken.Expiration.year,_transResponse.PaymentToken.Expiration.month,

@@ -759,6 +759,9 @@ namespace OpenDentBusiness{
 			if(trans==null){//no previous link, but user is trying to create one. newAcct>0.
 				return true;//new transaction will be required
 			}
+			if(newAcct==0 && Transactions.IsAttachedToLockedReconcile(trans)) {//trying to change payment type to one without deposit account
+				throw new ApplicationException(Lans.g("Transactions","Not allowed to change a transaction that is attached to a locked accounting reconcile."));
+			}
 			//at this point, we have established that there is a previous transaction.
 			//If payment is attached to a transaction which is more than 48 hours old, then not allowed to change.
 			if(amtChanged && trans.DateTimeEntry < MiscData.GetNowDateTime().AddDays(-2)) {

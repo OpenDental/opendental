@@ -46,7 +46,8 @@ namespace OpenDental.Bridges{
 				else{
 					writer.WriteAttributeString("ChartNumber",pat.ChartNumber);
 				}
-				writer.WriteElementString("Birthday",pat.Birthdate.ToString("dd/MM/yyyy"));
+				//Ewoo EZDent requires slashes for date separators: this format string enforces the syntax regardless of user's regional settings.
+				writer.WriteElementString("Birthday",pat.Birthdate.ToString("dd'/'MM'/'yyyy"));
 				string addr=pat.Address;
 				if(pat.Address2!=""){
 					addr+=", "+pat.Address2;

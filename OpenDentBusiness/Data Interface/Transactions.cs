@@ -85,15 +85,10 @@ namespace OpenDentBusiness{
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),trans);
 				return;
 			}
-			string command="SELECT IsLocked FROM journalentry j, reconcile r WHERE j.TransactionNum="+POut.Long(trans.TransactionNum)
-				+" AND j.ReconcileNum = r.ReconcileNum";
-			DataTable table=Db.GetTable(command);
-			if(table.Rows.Count>0) {
-				if(PIn.Int(table.Rows[0][0].ToString())==1) {
-					throw new ApplicationException(Lans.g("Transactions","Not allowed to delete transactions because it is attached to a reconcile that is locked."));
-				}
+			if(IsTransactionLocked(trans.TransactionNum)) {
+				throw new ApplicationException(Lans.g("Transactions","Not allowed to delete transactions because it is attached to a reconcile that is locked."));
 			}
-			command="DELETE FROM journalentry WHERE TransactionNum="+POut.Long(trans.TransactionNum);
+			string command="DELETE FROM journalentry WHERE TransactionNum="+POut.Long(trans.TransactionNum);
 			Db.NonQ(command);
 			if(trans.TransactionInvoiceNum!=0) {
 				command="DELETE FROM transactioninvoice WHERE TransactionInvoiceNum="+POut.Long(trans.TransactionInvoiceNum);
@@ -101,6 +96,26 @@ namespace OpenDentBusiness{
 			}
 			command= "DELETE FROM transaction WHERE TransactionNum="+POut.Long(trans.TransactionNum);
 			Db.NonQ(command);
+		}
+
+		private static bool IsTransactionLocked(long transactionNum) {
+			//no need to check remoting role; private method
+			string command="SELECT IsLocked FROM journalentry j, reconcile r WHERE j.TransactionNum="+POut.Long(transactionNum)
+				+" AND j.ReconcileNum = r.ReconcileNum";
+			DataTable table=Db.GetTable(command);	
+			if(table.Rows.Count>0) {
+				if(PIn.Int(table.Rows[0][0].ToString())==1) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public static bool IsAttachedToLockedReconcile(Transaction transaction) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),transaction);
+			}
+			return IsTransactionLocked(transaction.TransactionNum);
 		}
 
 		///<summary></summary>

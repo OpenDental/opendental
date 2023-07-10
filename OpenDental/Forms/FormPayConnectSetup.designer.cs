@@ -37,11 +37,14 @@ namespace OpenDental {
 			this.comboPaymentType = new OpenDental.UI.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textUsername = new System.Windows.Forms.TextBox();
-			this.label3 = new System.Windows.Forms.Label();
+			this.labelPassword = new System.Windows.Forms.Label();
 			this.textPassword = new System.Windows.Forms.TextBox();
 			this.comboClinic = new OpenDental.UI.ComboBox();
 			this.labelClinic = new System.Windows.Forms.Label();
 			this.groupPaySettings = new OpenDental.UI.GroupBox();
+			this.groupBoxVersion = new OpenDental.UI.GroupBox();
+			this.radioVersion2 = new System.Windows.Forms.RadioButton();
+			this.radioVersion1 = new System.Windows.Forms.RadioButton();
 			this.checkSurcharge = new OpenDental.UI.CheckBox();
 			this.textAPISecret = new System.Windows.Forms.TextBox();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
@@ -60,14 +63,11 @@ namespace OpenDental {
 			this.butCancel = new OpenDental.UI.Button();
 			this.groupBoxTerminals = new OpenDental.UI.GroupBox();
 			this.butAddTerminal = new OpenDental.UI.Button();
-			this.groupBoxVersion = new OpenDental.UI.GroupBox();
-			this.radioVersion2 = new System.Windows.Forms.RadioButton();
-			this.radioVersion1 = new System.Windows.Forms.RadioButton();
 			this.gridODTerminals = new OpenDental.UI.GridOD();
 			this.groupPaySettings.SuspendLayout();
+			this.groupBoxVersion.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.groupBoxTerminals.SuspendLayout();
-			this.groupBoxVersion.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// linkLabel1
@@ -75,7 +75,7 @@ namespace OpenDental {
 			this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(29, 28);
 			this.linkLabel1.Location = new System.Drawing.Point(12, 9);
 			this.linkLabel1.Name = "linkLabel1";
-			this.linkLabel1.Size = new System.Drawing.Size(312,16);
+			this.linkLabel1.Size = new System.Drawing.Size(312, 16);
 			this.linkLabel1.TabIndex = 0;
 			this.linkLabel1.TabStop = true;
 			this.linkLabel1.Text = "The PayConnect website is at www.payconnect.com";
@@ -88,7 +88,7 @@ namespace OpenDental {
 			this.checkEnabled.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkEnabled.Location = new System.Drawing.Point(97, 34);
 			this.checkEnabled.Name = "checkEnabled";
-			this.checkEnabled.Size = new System.Drawing.Size(226,18);
+			this.checkEnabled.Size = new System.Drawing.Size(226, 18);
 			this.checkEnabled.TabIndex = 1;
 			this.checkEnabled.Text = "Enabled (affects all clinics)";
 			// 
@@ -96,7 +96,7 @@ namespace OpenDental {
 			// 
 			this.label1.Location = new System.Drawing.Point(432, 22);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(124,16);
+			this.label1.Size = new System.Drawing.Size(124, 16);
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Payment Type";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -105,7 +105,7 @@ namespace OpenDental {
 			// 
 			this.comboPaymentType.Location = new System.Drawing.Point(557, 19);
 			this.comboPaymentType.Name = "comboPaymentType";
-			this.comboPaymentType.Size = new System.Drawing.Size(175,21);
+			this.comboPaymentType.Size = new System.Drawing.Size(175, 21);
 			this.comboPaymentType.TabIndex = 0;
 			// 
 			// label2
@@ -121,23 +121,23 @@ namespace OpenDental {
 			// 
 			this.textUsername.Location = new System.Drawing.Point(218, 21);
 			this.textUsername.Name = "textUsername";
-			this.textUsername.Size = new System.Drawing.Size(175,20);
+			this.textUsername.Size = new System.Drawing.Size(175, 20);
 			this.textUsername.TabIndex = 1;
 			// 
-			// label3
+			// labelPassword
 			// 
-			this.label3.Location = new System.Drawing.Point(132, 50);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(85, 16);
-			this.label3.TabIndex = 0;
-			this.label3.Text = "Password";
-			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.labelPassword.Location = new System.Drawing.Point(132, 50);
+			this.labelPassword.Name = "labelPassword";
+			this.labelPassword.Size = new System.Drawing.Size(85, 16);
+			this.labelPassword.TabIndex = 0;
+			this.labelPassword.Text = "Password";
+			this.labelPassword.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textPassword
 			// 
 			this.textPassword.Location = new System.Drawing.Point(218, 48);
 			this.textPassword.Name = "textPassword";
-			this.textPassword.Size = new System.Drawing.Size(175,20);
+			this.textPassword.Size = new System.Drawing.Size(175, 20);
 			this.textPassword.TabIndex = 2;
 			this.textPassword.UseSystemPasswordChar = true;
 			// 
@@ -145,7 +145,7 @@ namespace OpenDental {
 			// 
 			this.comboClinic.Location = new System.Drawing.Point(148, 89);
 			this.comboClinic.Name = "comboClinic";
-			this.comboClinic.Size = new System.Drawing.Size(175,21);
+			this.comboClinic.Size = new System.Drawing.Size(175, 21);
 			this.comboClinic.TabIndex = 3;
 			this.comboClinic.SelectionChangeCommitted += new System.EventHandler(this.comboClinic_SelectionChangeCommitted);
 			// 
@@ -170,7 +170,7 @@ namespace OpenDental {
 			this.groupPaySettings.Controls.Add(this.checkForceRecurring);
 			this.groupPaySettings.Controls.Add(this.checkTerminal);
 			this.groupPaySettings.Controls.Add(this.textPassword);
-			this.groupPaySettings.Controls.Add(this.label3);
+			this.groupPaySettings.Controls.Add(this.labelPassword);
 			this.groupPaySettings.Controls.Add(this.textUsername);
 			this.groupPaySettings.Controls.Add(this.label2);
 			this.groupPaySettings.Controls.Add(this.comboPaymentType);
@@ -180,179 +180,6 @@ namespace OpenDental {
 			this.groupPaySettings.Size = new System.Drawing.Size(754, 173);
 			this.groupPaySettings.TabIndex = 4;
 			this.groupPaySettings.Text = "Clinic Payment Settings";
-			// 
-			// checkSurcharge
-			// 
-			this.checkSurcharge.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkSurcharge.Location = new System.Drawing.Point(243, 141);
-			this.checkSurcharge.Name = "checkSurcharge";
-			this.checkSurcharge.Size = new System.Drawing.Size(150, 18);
-			this.checkSurcharge.TabIndex = 12;
-			this.checkSurcharge.Text = "Surcharge account";
-			// 
-			// textAPISecret
-			// 
-			this.textAPISecret.Location = new System.Drawing.Point(218, 21);
-			this.textAPISecret.Name = "textAPISecret";
-			this.textAPISecret.Size = new System.Drawing.Size(175, 20);
-			this.textAPISecret.TabIndex = 11;
-			this.textAPISecret.UseSystemPasswordChar = true;
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.butGenerateToken);
-			this.groupBox1.Controls.Add(this.label4);
-			this.groupBox1.Controls.Add(this.textToken);
-			this.groupBox1.Controls.Add(this.checkPatientPortalPayEnabled);
-			this.groupBox1.Location = new System.Drawing.Point(435, 82);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(307,74);
-			this.groupBox1.TabIndex = 9;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Payment Portal Payments";
-			// 
-			// butGenerateToken
-			// 
-			this.butGenerateToken.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butGenerateToken.Location = new System.Drawing.Point(212,37);
-			this.butGenerateToken.Name = "butGenerateToken";
-			this.butGenerateToken.Size = new System.Drawing.Size(75,26);
-			this.butGenerateToken.TabIndex = 12;
-			this.butGenerateToken.Text = "Generate";
-			this.butGenerateToken.Click += new System.EventHandler(this.butGenerateToken_Click);
-			// 
-			// label4
-			// 
-			this.label4.Location = new System.Drawing.Point(35,41);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(69,16);
-			this.label4.TabIndex = 11;
-			this.label4.Text = "Token";
-			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// textToken
-			// 
-			this.textToken.Location = new System.Drawing.Point(106,40);
-			this.textToken.Name = "textToken";
-			this.textToken.ReadOnly = true;
-			this.textToken.Size = new System.Drawing.Size(103,20);
-			this.textToken.TabIndex = 10;
-			// 
-			// checkPatientPortalPayEnabled
-			// 
-			this.checkPatientPortalPayEnabled.Location = new System.Drawing.Point(106,19);
-			this.checkPatientPortalPayEnabled.Name = "checkPatientPortalPayEnabled";
-			this.checkPatientPortalPayEnabled.Size = new System.Drawing.Size(127,17);
-			this.checkPatientPortalPayEnabled.TabIndex = 9;
-			this.checkPatientPortalPayEnabled.Text = "Enabled";
-			this.checkPatientPortalPayEnabled.Click += new System.EventHandler(this.checkPatientPortalPayEnabled_Click);
-			// 
-			// checkPreventSavingNewCC
-			// 
-			this.checkPreventSavingNewCC.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkPreventSavingNewCC.Location = new System.Drawing.Point(175, 119);
-			this.checkPreventSavingNewCC.Name = "checkPreventSavingNewCC";
-			this.checkPreventSavingNewCC.Size = new System.Drawing.Size(218,17);
-			this.checkPreventSavingNewCC.TabIndex = 8;
-			this.checkPreventSavingNewCC.Text = "Prevent saving new cards";
-			// 
-			// comboDefaultProcessing
-			// 
-			this.comboDefaultProcessing.Location = new System.Drawing.Point(557, 46);
-			this.comboDefaultProcessing.Name = "comboDefaultProcessing";
-			this.comboDefaultProcessing.Size = new System.Drawing.Size(175,21);
-			this.comboDefaultProcessing.TabIndex = 6;
-			// 
-			// labelDefaultProcMethod
-			// 
-			this.labelDefaultProcMethod.Location = new System.Drawing.Point(432, 43);
-			this.labelDefaultProcMethod.Name = "labelDefaultProcMethod";
-			this.labelDefaultProcMethod.Size = new System.Drawing.Size(124,26);
-			this.labelDefaultProcMethod.TabIndex = 7;
-			this.labelDefaultProcMethod.Text = "Default Processing Method";
-			this.labelDefaultProcMethod.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// checkForceRecurring
-			// 
-			this.checkForceRecurring.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkForceRecurring.Location = new System.Drawing.Point(175, 89);
-			this.checkForceRecurring.Name = "checkForceRecurring";
-			this.checkForceRecurring.Size = new System.Drawing.Size(218,30);
-			this.checkForceRecurring.TabIndex = 5;
-			this.checkForceRecurring.Text = "Recurring charges force duplicates by default";
-			// 
-			// checkTerminal
-			// 
-			this.checkTerminal.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkTerminal.Location = new System.Drawing.Point(175, 74);
-			this.checkTerminal.Name = "checkTerminal";
-			this.checkTerminal.Size = new System.Drawing.Size(218,17);
-			this.checkTerminal.TabIndex = 3;
-			this.checkTerminal.Text = "Enable terminal processing";
-			this.checkTerminal.CheckedChanged += new System.EventHandler(this.checkTerminal_CheckedChanged);
-			// 
-			// butDownloadDriver
-			// 
-			this.butDownloadDriver.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butDownloadDriver.Location = new System.Drawing.Point(10, 670);
-			this.butDownloadDriver.Name = "butDownloadDriver";
-			this.butDownloadDriver.Size = new System.Drawing.Size(93,26);
-			this.butDownloadDriver.TabIndex = 5;
-			this.butDownloadDriver.Text = "Download Driver";
-			this.butDownloadDriver.Visible = false;
-			this.butDownloadDriver.Click += new System.EventHandler(this.butDownloadDriver_Click);
-			// 
-			// labelClinicEnable
-			// 
-			this.labelClinicEnable.Location = new System.Drawing.Point(77, 55);
-			this.labelClinicEnable.Name = "labelClinicEnable";
-			this.labelClinicEnable.Size = new System.Drawing.Size(246,28);
-			this.labelClinicEnable.TabIndex = 2;
-			this.labelClinicEnable.Text = "To enable PayConnect for a clinic, set the credentials for that clinic.";
-			this.labelClinicEnable.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// butOK
-			// 
-			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(607, 670);
-			this.butOK.Name = "butOK";
-			this.butOK.Size = new System.Drawing.Size(75,26);
-			this.butOK.TabIndex = 6;
-			this.butOK.Text = "&OK";
-			this.butOK.Click += new System.EventHandler(this.butOK_Click);
-			// 
-			// butCancel
-			// 
-			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(693, 670);
-			this.butCancel.Name = "butCancel";
-			this.butCancel.Size = new System.Drawing.Size(75,26);
-			this.butCancel.TabIndex = 7;
-			this.butCancel.Text = "&Cancel";
-			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
-			// 
-			// groupBoxTerminals
-			// 
-			this.groupBoxTerminals.Controls.Add(this.butAddTerminal);
-			this.groupBoxTerminals.Controls.Add(this.gridODTerminals);
-			this.groupBoxTerminals.Location = new System.Drawing.Point(9, 302);
-			this.groupBoxTerminals.Name = "groupBoxTerminals";
-			this.groupBoxTerminals.Size = new System.Drawing.Size(754, 355);
-			this.groupBoxTerminals.TabIndex = 8;
-			this.groupBoxTerminals.Text = "Terminals";
-			// 
-			// butAddTerminal
-			// 
-			this.butAddTerminal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butAddTerminal.Icon = OpenDental.UI.EnumIcons.Add;
-			this.butAddTerminal.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAddTerminal.Location = new System.Drawing.Point(632, 318);
-			this.butAddTerminal.Name = "butAddTerminal";
-			this.butAddTerminal.Size = new System.Drawing.Size(110, 24);
-			this.butAddTerminal.TabIndex = 152;
-			this.butAddTerminal.Text = "Add Terminal";
-			this.butAddTerminal.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this.butAddTerminal.Click += new System.EventHandler(this.butAddTerminal_Click);
 			// 
 			// groupBoxVersion
 			// 
@@ -385,6 +212,178 @@ namespace OpenDental {
 			this.radioVersion1.Text = "1.0";
 			this.radioVersion1.UseVisualStyleBackColor = true;
 			this.radioVersion1.CheckedChanged += new System.EventHandler(this.radioVersion1_CheckedChanged);
+			// 
+			// checkSurcharge
+			// 
+			this.checkSurcharge.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkSurcharge.Location = new System.Drawing.Point(243, 141);
+			this.checkSurcharge.Name = "checkSurcharge";
+			this.checkSurcharge.Size = new System.Drawing.Size(150, 18);
+			this.checkSurcharge.TabIndex = 12;
+			this.checkSurcharge.Text = "Surcharge account";
+			// 
+			// textAPISecret
+			// 
+			this.textAPISecret.Location = new System.Drawing.Point(218, 21);
+			this.textAPISecret.Name = "textAPISecret";
+			this.textAPISecret.Size = new System.Drawing.Size(175, 20);
+			this.textAPISecret.TabIndex = 11;
+			this.textAPISecret.UseSystemPasswordChar = true;
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Controls.Add(this.butGenerateToken);
+			this.groupBox1.Controls.Add(this.label4);
+			this.groupBox1.Controls.Add(this.textToken);
+			this.groupBox1.Controls.Add(this.checkPatientPortalPayEnabled);
+			this.groupBox1.Location = new System.Drawing.Point(435, 82);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(307, 74);
+			this.groupBox1.TabIndex = 9;
+			this.groupBox1.Text = "Payment Portal Payments";
+			// 
+			// butGenerateToken
+			// 
+			this.butGenerateToken.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butGenerateToken.Location = new System.Drawing.Point(212, 37);
+			this.butGenerateToken.Name = "butGenerateToken";
+			this.butGenerateToken.Size = new System.Drawing.Size(75, 26);
+			this.butGenerateToken.TabIndex = 12;
+			this.butGenerateToken.Text = "Generate";
+			this.butGenerateToken.Click += new System.EventHandler(this.butGenerateToken_Click);
+			// 
+			// label4
+			// 
+			this.label4.Location = new System.Drawing.Point(35, 41);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(69, 16);
+			this.label4.TabIndex = 11;
+			this.label4.Text = "Token";
+			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// textToken
+			// 
+			this.textToken.Location = new System.Drawing.Point(106, 40);
+			this.textToken.Name = "textToken";
+			this.textToken.ReadOnly = true;
+			this.textToken.Size = new System.Drawing.Size(103, 20);
+			this.textToken.TabIndex = 10;
+			// 
+			// checkPatientPortalPayEnabled
+			// 
+			this.checkPatientPortalPayEnabled.Location = new System.Drawing.Point(106, 19);
+			this.checkPatientPortalPayEnabled.Name = "checkPatientPortalPayEnabled";
+			this.checkPatientPortalPayEnabled.Size = new System.Drawing.Size(127, 17);
+			this.checkPatientPortalPayEnabled.TabIndex = 9;
+			this.checkPatientPortalPayEnabled.Text = "Enabled";
+			this.checkPatientPortalPayEnabled.Click += new System.EventHandler(this.checkPatientPortalPayEnabled_Click);
+			// 
+			// checkPreventSavingNewCC
+			// 
+			this.checkPreventSavingNewCC.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkPreventSavingNewCC.Location = new System.Drawing.Point(175, 119);
+			this.checkPreventSavingNewCC.Name = "checkPreventSavingNewCC";
+			this.checkPreventSavingNewCC.Size = new System.Drawing.Size(218, 17);
+			this.checkPreventSavingNewCC.TabIndex = 8;
+			this.checkPreventSavingNewCC.Text = "Prevent saving new cards";
+			// 
+			// comboDefaultProcessing
+			// 
+			this.comboDefaultProcessing.Location = new System.Drawing.Point(557, 46);
+			this.comboDefaultProcessing.Name = "comboDefaultProcessing";
+			this.comboDefaultProcessing.Size = new System.Drawing.Size(175, 21);
+			this.comboDefaultProcessing.TabIndex = 6;
+			// 
+			// labelDefaultProcMethod
+			// 
+			this.labelDefaultProcMethod.Location = new System.Drawing.Point(432, 43);
+			this.labelDefaultProcMethod.Name = "labelDefaultProcMethod";
+			this.labelDefaultProcMethod.Size = new System.Drawing.Size(124, 26);
+			this.labelDefaultProcMethod.TabIndex = 7;
+			this.labelDefaultProcMethod.Text = "Default Processing Method";
+			this.labelDefaultProcMethod.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// checkForceRecurring
+			// 
+			this.checkForceRecurring.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkForceRecurring.Location = new System.Drawing.Point(175, 89);
+			this.checkForceRecurring.Name = "checkForceRecurring";
+			this.checkForceRecurring.Size = new System.Drawing.Size(218, 30);
+			this.checkForceRecurring.TabIndex = 5;
+			this.checkForceRecurring.Text = "Recurring charges force duplicates by default";
+			// 
+			// checkTerminal
+			// 
+			this.checkTerminal.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkTerminal.Location = new System.Drawing.Point(175, 74);
+			this.checkTerminal.Name = "checkTerminal";
+			this.checkTerminal.Size = new System.Drawing.Size(218, 17);
+			this.checkTerminal.TabIndex = 3;
+			this.checkTerminal.Text = "Enable terminal processing";
+			this.checkTerminal.CheckedChanged += new System.EventHandler(this.checkTerminal_CheckedChanged);
+			// 
+			// butDownloadDriver
+			// 
+			this.butDownloadDriver.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.butDownloadDriver.Location = new System.Drawing.Point(10, 670);
+			this.butDownloadDriver.Name = "butDownloadDriver";
+			this.butDownloadDriver.Size = new System.Drawing.Size(93, 26);
+			this.butDownloadDriver.TabIndex = 5;
+			this.butDownloadDriver.Text = "Download Driver";
+			this.butDownloadDriver.Visible = false;
+			this.butDownloadDriver.Click += new System.EventHandler(this.butDownloadDriver_Click);
+			// 
+			// labelClinicEnable
+			// 
+			this.labelClinicEnable.Location = new System.Drawing.Point(77, 55);
+			this.labelClinicEnable.Name = "labelClinicEnable";
+			this.labelClinicEnable.Size = new System.Drawing.Size(246, 28);
+			this.labelClinicEnable.TabIndex = 2;
+			this.labelClinicEnable.Text = "To enable PayConnect for a clinic, set the credentials for that clinic.";
+			this.labelClinicEnable.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(607, 670);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 6;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(693, 670);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 7;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// groupBoxTerminals
+			// 
+			this.groupBoxTerminals.Controls.Add(this.butAddTerminal);
+			this.groupBoxTerminals.Controls.Add(this.gridODTerminals);
+			this.groupBoxTerminals.Location = new System.Drawing.Point(9, 302);
+			this.groupBoxTerminals.Name = "groupBoxTerminals";
+			this.groupBoxTerminals.Size = new System.Drawing.Size(754, 355);
+			this.groupBoxTerminals.TabIndex = 8;
+			this.groupBoxTerminals.Text = "Terminals";
+			// 
+			// butAddTerminal
+			// 
+			this.butAddTerminal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.butAddTerminal.Icon = OpenDental.UI.EnumIcons.Add;
+			this.butAddTerminal.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butAddTerminal.Location = new System.Drawing.Point(632, 318);
+			this.butAddTerminal.Name = "butAddTerminal";
+			this.butAddTerminal.Size = new System.Drawing.Size(110, 24);
+			this.butAddTerminal.TabIndex = 152;
+			this.butAddTerminal.Text = "Add Terminal";
+			this.butAddTerminal.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this.butAddTerminal.Click += new System.EventHandler(this.butAddTerminal_Click);
 			// 
 			// gridODTerminals
 			// 
@@ -419,10 +418,10 @@ namespace OpenDental {
 			this.Load += new System.EventHandler(this.FormPayConnectSetup_Load);
 			this.groupPaySettings.ResumeLayout(false);
 			this.groupPaySettings.PerformLayout();
+			this.groupBoxVersion.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			this.groupBoxTerminals.ResumeLayout(false);
-			this.groupBoxVersion.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -436,7 +435,7 @@ namespace OpenDental {
 		private OpenDental.UI.ComboBox comboPaymentType;
 		private Label label2;
 		private TextBox textUsername;
-		private Label label3;
+		private Label labelPassword;
 		private TextBox textPassword;
 		private OpenDental.UI.ComboBox comboClinic;
 		private Label labelClinic;

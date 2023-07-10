@@ -799,20 +799,13 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please select one or more procedures first.");
 				return;
 			}
-			if(PrefC.GetBool(PrefName.ApptsRequireProc)) {
-				List<long> listApptNumsSelected=gridProc.SelectedTags<Procedure>().Select(x => x.AptNum).ToList();
-				if(listApptNumsSelected.Exists(x => x!=_appointment.AptNum) && listApptNumsSelected.Any(x => x>0)) {
-					MsgBox.Show("One or more selected procedures are attached to another appointment.");
-					return;
-				}
-				bool areApptsEmpty=Appointments.AreApptsGoingToBeEmpty(gridProc.SelectedTags<Procedure>(),listApptNumsSelected);
-				if(areApptsEmpty) {//If true, appts have to have one attached proc when PrefName.ApptsRequireProc is checked
-					MsgBox.Show("If you permanently delete all selected procedure(s), it will leave an appointment empty.");
-					return;
-				}
-				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Permanently delete all selected procedure(s)?")) {//deleteMsg can only be of two strings, okay to use in MsgBox.Show()
-					return;
-				}
+			List<long> listApptNumsSelected=gridProc.SelectedTags<Procedure>().Select(x => x.AptNum).ToList();
+			if(listApptNumsSelected.Exists(x => x!=_appointment.AptNum) && listApptNumsSelected.Any(x => x>0)) {
+				MsgBox.Show("One or more selected procedures are attached to another appointment.");
+				return;
+			}
+			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Permanently delete all selected procedure(s)?")) {//deleteMsg can only be of two strings, okay to use in MsgBox.Show()
+				return;
 			}
 			int skipped=0;
 			int skippedSecurity=0;

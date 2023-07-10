@@ -116,6 +116,7 @@ namespace OpenDental {
 			FillFieldsFromControls();
 			FieldValueChanged(sender);//the sender doesn't matter
 			LayoutFields();
+			LoadImages();
 		}
 
 		private void butCancel_Click(object sender,EventArgs e) {
@@ -1872,7 +1873,7 @@ namespace OpenDental {
 			/*
 			//SheetField field;
 			//Images------------------------------------------------------
-				//Images can't be changed in this UI
+				//Images can't be cha nged in this UI
 			//RichTextBoxes-----------------------------------------------
 			using RichTextBox richTextBoxFormatted=new RichTextBox(); //Used to compare text and only update when the user has changed something.
 			for(int i=0;i<panelMain.Controls.Count;i++){

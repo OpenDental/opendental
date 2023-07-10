@@ -20,7 +20,6 @@ namespace OpenDentBusiness {
 		///<summary>The number of reminders that have been sent for this recall.</summary>
 		[XmlIgnore]
 		public int ReminderCount;
-		/// <summary>Enum:ContactMethod </summary>
 		///<summary>The most recent time that sending a reminder failed. Will be 01/01/0001 if a reminder has never been attempted.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
 		[XmlIgnore]

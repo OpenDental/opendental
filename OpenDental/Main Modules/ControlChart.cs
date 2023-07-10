@@ -5020,6 +5020,7 @@ namespace OpenDental {
 
 		///<summary>Only use this overload when isFullRefresh is set to false.  This is ONLY in a few places and only for eCW at this point.  Speeds things up by refreshing less data.</summary>
 		public void ModuleSelected(long patNum,bool isFullRefresh,bool isClinicRefresh) {
+			long patNumPrevious=_patNumPrevious;
 			_isModuleSelected=true;
 			EasyHideClinicalData();
 			UserOdPref userOdPrefShowAutoCommlog=UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.ShowAutomatedCommlog).FirstOrDefault();
@@ -5051,7 +5052,7 @@ namespace OpenDental {
 			}
 			Logger.LogAction("RefreshModuleScreen",LogPath.ChartModule,() => RefreshModuleScreen(isClinicRefresh));//Update UI to reflect any changed dynamic SheetDefs.
 			LayoutControls();
-			if(gridProg.VScrollVisible) {
+			if(patNumPrevious!=patNum && gridProg.VScrollVisible) {
 				gridProg.ScrollToEnd();
 			}
 			Plugins.HookAddCode(this,"ContrChart.ModuleSelected_end",patNum);

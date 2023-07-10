@@ -31,6 +31,7 @@ namespace OpenDental{
 		private bool _isFromCentralUserEdit;
 		private List<UserOdPref> _listUserOdPrefsDoseSpotOld;
 		private List<UserOdPref> _listUserOdPrefsDoseSpotNew;
+		private List<UserOdPref> _listUserOdPrefsDoseSpotNewPrevious;
 		private bool _isFillingList;
 		private UserOdPref _userOdPrefLogOffAfterMinutes;
 		private string _logOffAfterMinutesInitialValue;
@@ -294,6 +295,7 @@ namespace OpenDental{
 		}
 
 		private void butDoseSpotAdditional_Click(object sender,EventArgs e) {
+			_listUserOdPrefsDoseSpotNewPrevious=_listUserOdPrefsDoseSpotNew.Select(x=>x).ToList();
 			_userOdPrefDoseSpotDefault.ValueString=textDoseSpotUserID.Text;
 			using FormUserPrefAdditional formUserPrefAdditional=new FormUserPrefAdditional(_listUserOdPrefsDoseSpotNew,UserodCur);
 			formUserPrefAdditional.ShowDialog();
@@ -348,6 +350,30 @@ namespace OpenDental{
 			}
 			if(listUserGroup.SelectedIndices.Count == 0) {
 				MsgBox.Show(this,"Users must have at least one user group associated. Please select a user group to continue.");
+				return;
+			}
+			List<UserOdPref> listUserOdPrefs=UserOdPrefs.GetByFkeyAndFkeyType(Programs.GetCur(ProgramName.eRx).ProgramNum,UserOdFkeyType.Program);
+			List<UserOdPref> listUserOdPrefsNotEmpty=listUserOdPrefs.FindAll(x=>!x.ValueString.IsNullOrEmpty()
+				&& x.UserNum!=UserodCur.UserNum);//Allow user to reuse their ID at the different clinics
+			List<UserOdPref> listUserOdPrefsToPrint=_listUserOdPrefsDoseSpotNew.FindAll(x => listUserOdPrefsNotEmpty.Select(y => y.ValueString).Contains(x.ValueString));
+			if((textDoseSpotUserID.Text!=_userOdPrefDoseSpotDefault.ValueString || _userOdPrefDoseSpotDefault.IsNew)
+				&& listUserOdPrefsNotEmpty.Select(x => x.ValueString).Contains(textDoseSpotUserID.Text)
+				|| !listUserOdPrefsToPrint.IsNullOrEmpty())
+			{
+				string msg="The DoseSpot User ID entered is already being used.\r\n" +
+					"The following list shows the users and the DoseSpot User ID aleady in use.\r\n\n";
+				msg +="DoseSpot User ID\tUser\r\n";
+				listUserOdPrefsNotEmpty=listUserOdPrefsNotEmpty.DistinctBy(x=>x.ValueString).ToList();
+				for(int i=0;i<listUserOdPrefsNotEmpty.Count;i++) {
+					//Add the DoseSpotIDs and corresponding user name to the msg to be displayed in the msgBox.
+					//\t\t used for layout. \r\n used to create new line.
+					msg+=String.Format("{0}\t\t{1}\r\n",listUserOdPrefsNotEmpty[i].ValueString,Userods.GetName(listUserOdPrefsNotEmpty[i].UserNum));
+				}
+				MessageBox.Show(this,msg);
+				textDoseSpotUserID.Text=_userOdPrefDoseSpotDefault.ValueString;//sets DoseSpotID back to what it was before change
+				if(!_listUserOdPrefsDoseSpotNewPrevious.IsNullOrEmpty() ) {
+					_listUserOdPrefsDoseSpotNew=_listUserOdPrefsDoseSpotNewPrevious.Select(x=>x).ToList();//change _listUserOdPrefsDoseSpotNew back to what it was previously
+				}
 				return;
 			}
 			if(_isFromAddUser && !Security.IsAuthorized(Permissions.SecurityAdmin,true)) {

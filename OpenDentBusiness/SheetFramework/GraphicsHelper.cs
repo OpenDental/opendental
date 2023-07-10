@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 //using System.Windows;
 using PdfSharp.Drawing;
+using PdfSharp.Pdf;
 using OpenDentBusiness;
 using System.Drawing.Drawing2D;
 using CodeBase;
@@ -146,123 +148,99 @@ namespace OpenDentBusiness {
 			g.Restore(graphicsState);
 		}
 
-		///<summary>Since Graphics doesn't have a line height property. Our rendering algorithm focuses on wrapping the text on the same character on each line for all printing options (screen, printer, pdf), as well as making the text exactly fix vertically within the bounds given in order to properly support sheet vertical growth behavior. Since all printing options have slightly different implementations within their drivers, the same font when used in each option is slightly different.  As a result, the printed text width will vary depending on which printing option is used.  We return a rectangle representing the actual drawn area of the output string for use in special cases such as the TreatmentPlan.Note, which has a border drawn around it always.</summary>
-		public static RectangleF DrawString(Graphics g,string str,Font font,Brush brush,Rectangle bounds,HorizontalAlignment align) {
+		///<summary></summary>
+		public static RectangleF DrawString(Graphics g,string str,Font font,Brush brush,Rectangle rectangle,HorizontalAlignment align) {
 			if(str.Trim()=="") {
-				return bounds;//Nothing to draw.
+				return rectangle;//Nothing to draw.
 			}
-			StringFormat stringFormat=StringFormat.GenericTypographic;
-			//The overload for DrawString that takes a StringFormat will cause the tabs '\t' to be ignored.
-			//In order for the tabs to not get ignored, we have to tell StringFormat how many pixels each tab should be.  
-			//50.0f is the closest to our Fill Sheet Edit preview.
-			stringFormat.SetTabStops(0.0f,new float[1] { 50.0f });
-			RichTextBox textbox=CreateTextBoxForSheetDisplay(str,font,bounds.Width,bounds.Height,align);
-			//This can sometimes return a line that's wider than the bounds passed in:
-			List<RichTextLineInfo> listTextLines=GetTextSheetDisplayLines(textbox);
-			float deviceLineHeight=g.MeasureString(str.Replace("\r","").Replace("\n",""),font,int.MaxValue,stringFormat).Height;
-			float scale=deviceLineHeight/textbox.Font.Height;//(size when printed)/(size on screen)
-			font=new Font(font.FontFamily,font.Size*scale,font.Style);
-			float maxLineWidth=0;
-			List<float>listTextWidths=new List<float>();
-			for(int i=0;i<listTextLines.Count;i++) {
-				string line=RichTextLineInfo.GetTextForLine(textbox.Text,listTextLines,i);
-				if(line.Trim().Length > 0) {
-					float textWidth=g.MeasureString(line,font,int.MaxValue,stringFormat).Width;
-					listTextWidths.Add(textWidth);
-					maxLineWidth=Math.Max(maxLineWidth,textWidth+4);
-				}
-				else {
-					listTextWidths.Add(0);
-				}
+			//Screen is at 96 dpi (DIPs actually) and printer is at 100 dpi (device units actually)
+			//Font follows dpi, so fonts always draw 4% bigger on printers.
+			//We will increase the text width and height by 4% (by dividing by .96) to make wrapping identical.
+			//But this still doesn't make everything perfect.
+			//To be perfect, we would need to adjust positions of all elements by 4%.
+			//That would be a massive undertaking, affecting the drawing logic at all levels.
+			//Not practical right now, and only a tiny benefit for a huge cost.
+			//We can't do g.ScaleTransform() because that would also scale the font size, so it wouldn't fix the wrap.
+			//Shrinking the font size by 4% wouldn't work because fonts scale incrementally instead of smoothly.
+			//The remaining imperfection will only be noticeable when a tall section of text spills down too close to the next element.
+			Rectangle rectangleActual=new Rectangle(rectangle.X,rectangle.Y,(int)(rectangle.Width/0.96f),(int)(rectangle.Height/0.96f));
+			StringFormat stringFormat=new StringFormat();
+			stringFormat.Alignment=StringAlignment.Near;
+			if(align==HorizontalAlignment.Center){
+				stringFormat.Alignment=StringAlignment.Center;
 			}
-			float maxRectangleWidth=Math.Max(maxLineWidth,bounds.Width);
-			for(int i=0;i<listTextLines.Count;i++) {
-				string line=RichTextLineInfo.GetTextForLine(textbox.Text,listTextLines,i);
-				if(line.Trim().Length > 0) {
-					float x;
-					if(align==HorizontalAlignment.Left) {
-						x=bounds.X + listTextLines[i].Left * scale;
-					}
-					else if(align==HorizontalAlignment.Center) {
-						x=bounds.X + ((maxRectangleWidth - listTextWidths[i]) / 2);
-					}
-					else {//Right
-						x=bounds.X + maxRectangleWidth - listTextWidths[i];
-					}
-					float y=bounds.Y+listTextLines[i].Top*scale;
-					g.DrawString(line,font,brush,x,y,stringFormat);
-				}
+			if(align==HorizontalAlignment.Right){
+				stringFormat.Alignment=StringAlignment.Far;
 			}
-			textbox.Font.Dispose();//This font was dynamically created when the textbox was created.
-			textbox.Dispose();
-			stringFormat.Dispose();
-			font.Dispose();
-			return new RectangleF(bounds.X,bounds.Y,maxLineWidth,bounds.Height);
-		}
+			g.DrawString(str,font,brush,rectangleActual,stringFormat);
+			stringFormat?.Dispose();
+			return rectangleActual;
+			}
 
-		///<summary>The PdfSharp version of Graphics.DrawString().  scaleToPix scales xObjects to pixels. Our rendering algorithm focuses on wrapping the text on the same character on each line for all printing options (screen, printer, pdf), as well as making the text exactly fix vertically within the bounds given in order to properly support sheet vertical growth behavior. Since all printing options have slightly different implementations within their drivers, the same font when used in each option is slightly different.  As a result, the printed text width will vary depending on which printing option is used.  We return a rectangle representing the actual drawn area of the output string for use in special cases such as the TreatmentPlan.Note, which has a border drawn around it always.</summary>
-		public static RectangleF DrawStringX(XGraphics xg,string str,XFont xfont,XBrush xbrush,RectangleF bounds,HorizontalAlignment align) {
+		///<summary></summary>
+		public static RectangleF DrawStringX(XGraphics xg,string str,XFont xfont,XBrush xbrush,RectangleF rectangleF,HorizontalAlignment horizontalAlignment) {
 			if(str.Trim()=="") {
-				return bounds;//Nothing to draw.
+				return rectangleF;//Nothing to draw.
 			}
-			XStringFormat sf=XStringFormats.Default;
-			//There are two coordinate systems here: pixels (used by us) and points (used by PdfSharp).
-			//MeasureString and ALL related measurement functions must use pixels.
-			//DrawString is the ONLY function that uses points.
-			//pixels:
+			Bitmap bitmap=new Bitmap(100,100);//only used for measurements.
+			bitmap.SetResolution(96,96);
+			Graphics g=Graphics.FromImage(bitmap);
+			//There are two coordinate systems here: pixels (used by us) and points (used by PdfSharp)..
+			//PDFSharp is not capable of wrapping, so we need to do that manually.
+			//Our incoming rectangleF is already in pixels.
+			//It does not need to be adjusted by 4% like for the printer.
+			//We need to do all our measurement using Graphics, not XGraphics.
 			FontStyle fontstyle=FontStyle.Regular;
 			if(xfont.Style==XFontStyle.Bold) {
 				fontstyle=FontStyle.Bold;
 			}
-			//pixels: (except Size is em-size)
 			Font font=new Font(xfont.Name,(float)xfont.Size,fontstyle);
-			RichTextBox textbox=CreateTextBoxForSheetDisplay(str,font,(int)Math.Ceiling(bounds.Width),(int)Math.Ceiling(bounds.Height),align);
-			List<RichTextLineInfo> listTextLines=GetTextSheetDisplayLines(textbox);
-			float deviceLineHeight=PointsToPixels((float)xg.MeasureString(str.Replace("\r","").Replace("\n",""),xfont,sf).Height);
-			float scale=deviceLineHeight/textbox.Font.Height;//(size when printed)/(size on screen)
-			font.Dispose();
-			xfont=new XFont(xfont.Name,xfont.Size*scale,xfont.Style);
-			double maxLineWidth=0;
-			//Calculate the bottom of the first line of text just in case this is a multiline text box.
-			//Will be used as a scaled reference point for additional lines of text (so that they are spaced out correctly).
-			float yPosBottomFirstLine=PixelsToPoints(bounds.Y + PixelsToPoints(textbox.Font.Height+1)*scale);
-			for(int i=0;i<listTextLines.Count;i++) {
-				string line=RichTextLineInfo.GetTextForLine(textbox.Text,listTextLines,i);
-				if(line.Trim().Length<=0) {
-					continue;
-				}
-				double textWidth=xg.MeasureString(line,xfont,sf).Width;
-				float x;
-				if(align==HorizontalAlignment.Left) {
-					x=PixelsToPoints(bounds.X + listTextLines[i].Left * scale);
-				}
-				else if(align==HorizontalAlignment.Center) {
-					x=PixelsToPoints(bounds.X) + ((PixelsToPoints(bounds.Width) - (float)textWidth) / 2);
-				}
-				else {//Right
-					x=PixelsToPoints(bounds.X + bounds.Width) - (float)textWidth;
-				}
-				//Calculate the y position of the current line of text.
-				//The nested call to PixelsToPoints below is not intuitive.  It is necessary because the actual yPos of the first line drawn on the
-				//PDF turns out to be ~95% of the yPos calculated when simply using PixelsToPoints alone.  The nested call calculates based on the font height of
-				//the rich text box + 1 which should be the same as the typical line height calculated by GetTextSheetDisplayLines. The last line
-				//generated by GetTextSheetDisplayLines is equivilant to the font height of the rich text box + 2.
-				//Combining this with the bounds.Y and scale give a value that can be used to calculate the correct yPos on the PDF.
-				//Multiline text boxes need to use the bottom of the first line as a reference point instead of bounds.Y due to scaling.
-				//This line will work for single and multi line text boxes since .Top is 0 when there is only one line.
-				float y=yPosBottomFirstLine + PixelsToPoints(listTextLines[i].Top)*scale;
-				//There is currently a problem with printing the tab character '\t' when using XStringFormat.
-				//C#'s StringFormat has a method called SetTabStops() which can be used to get the tabs to be drawn (see regular printing above).
-				//We're doing nothing for now because the current complaint is only for printing, not PDF creation.  
-				//A workaround is to not use tabs and to instead use separate static text fields that are spaced out as desired.
-				xg.DrawString(line,xfont,xbrush,x,y,sf);
-				maxLineWidth=Math.Max(maxLineWidth,PixelsToPoints(listTextLines[i].Left*scale)+textWidth);
+			bool hasNonAscii=str.Any(x => x > 127);
+			if(hasNonAscii) {
+				XPdfFontOptions options=new XPdfFontOptions(PdfFontEncoding.Unicode,PdfFontEmbedding.Always);
+				xfont=new XFont(xfont.Name,xfont.Size,xfont.Style,options);
 			}
-			textbox.Font.Dispose();//This font was dynamically created when the textbox was created.
-			textbox.Dispose();
-			//sf.Dispose();//Does not exist for PDF.
-			//xfont.Dispose();//Does not exist for PDF fonts.
-			return new RectangleF(bounds.X,bounds.Y,PointsToPixels((float)maxLineWidth),bounds.Height);
+			else {
+				xfont=new XFont(xfont.Name,xfont.Size,xfont.Style);
+			}
+			SizeF sizeLayout=new SizeF(rectangleF.Width,font.Height);
+			StringFormat stringFormat=new StringFormat();
+			stringFormat.Trimming=StringTrimming.Word;
+			float pixelsPerLine=font.GetHeight();
+			XStringFormat xStringFormat=new XStringFormat();//or maybe XStringFormats.Default
+			xStringFormat.Alignment=XStringAlignment.Near;
+			if(horizontalAlignment==HorizontalAlignment.Center){
+				xStringFormat.Alignment=XStringAlignment.Center;
+			}
+			if(horizontalAlignment==HorizontalAlignment.Right){
+				xStringFormat.Alignment=XStringAlignment.Far;
+			}
+			float lineIdx=0;
+			int chars;
+			for(int i=0;i<str.Length;i+=chars) {
+				if(rectangleF.Y+pixelsPerLine*lineIdx>rectangleF.Bottom) {
+					break;
+				}
+				//pixels:
+				//TextRenderer.MeasureText(str.Substring(i),font, //no overload for measuring line by line
+				g.MeasureString(str.Substring(i),font,sizeLayout,stringFormat,out chars,out int _lines);
+				//use points here:
+				double x=PixelsToPoints(rectangleF.X);
+				if(horizontalAlignment==HorizontalAlignment.Right){
+					x=PixelsToPoints(rectangleF.Right);
+				}
+				if(horizontalAlignment==HorizontalAlignment.Center){
+					x=PixelsToPoints(rectangleF.X+rectangleF.Width/2f);
+				}
+				double y=PixelsToPoints(rectangleF.Y+pixelsPerLine*lineIdx);
+				xg.DrawString(str.Substring(i,chars),xfont,xbrush,x,y,xStringFormat);
+				lineIdx+=1;
+			}
+			g.Dispose();
+			stringFormat?.Dispose();
+			font?.Dispose();
+			//xStringFormat?.Dispose();//Does not exist
+			return rectangleF;
 		}
 
 		///<summary>If lineIndex is past the last line, then the information of the last line will be returned. </summary>

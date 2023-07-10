@@ -1147,12 +1147,14 @@ namespace OpenDentBusiness {
 			if(gx==null){
 				FontStyle fontstyle=(field.FontIsBold?FontStyle.Bold:FontStyle.Regular);
 				Font font=new Font(field.FontName,field.FontSize,fontstyle);
-				Rectangle bounds=new Rectangle(field.XPos,field.YPos-yPosPrint,field.Width,field.Height);//Math.Min(field.Height,_yPosPrint+sheet.HeightPage-_printMargin.Bottom-field.YPos));
-				boundsActual=GraphicsHelper.DrawString(g,field.FieldValue,font,
-					field.ItemColor.ToArgb()==Color.FromArgb(0).ToArgb() ? Brushes.Black : new SolidBrush(field.ItemColor),
-					bounds,field.TextAlign);
-				font.Dispose();
-				font=null;
+				Rectangle bounds=new Rectangle(field.XPos,field.YPos-yPosPrint,field.Width,field.Height);
+				Brush brushText=Brushes.Black;
+				if(field.ItemColor.ToArgb()!=Color.FromArgb(0).ToArgb()){
+					brushText=new SolidBrush(field.ItemColor);
+				}
+				boundsActual=GraphicsHelper.DrawString(g,field.FieldValue,font,brushText,bounds,field.TextAlign);
+				brushText?.Dispose();
+				font?.Dispose();
 			}
 			else{
 				XFontStyle xfontstyle=(field.FontIsBold?XFontStyle.Bold:XFontStyle.Regular);
@@ -1180,11 +1182,13 @@ namespace OpenDentBusiness {
 				//}
 				#endregion
 				RectangleF rect=new RectangleF(field.XPos,field.YPos-yPosPrint,field.Width,field.Height);
-				boundsActual=GraphicsHelper.DrawStringX(gx,field.FieldValue,xfont,
-					field.ItemColor.ToArgb()==Color.FromArgb(0).ToArgb() ? XBrushes.Black : new XSolidBrush(field.ItemColor),
-					rect,field.TextAlign);
+				XBrush xbrushText=XBrushes.Black;
+				if(field.ItemColor.ToArgb()!=Color.FromArgb(0).ToArgb()){
+					xbrushText=new XSolidBrush(field.ItemColor);
+				}
+				boundsActual=GraphicsHelper.DrawStringX(gx,field.FieldValue,xfont,xbrushText,rect,field.TextAlign);
 				//xfont.Dispose();
-				xfont=null;
+				//xfont=null;
 			}
 			if(field.FieldType==SheetFieldType.OutputText) {
 				switch(sheet.SheetType.ToString()+"."+field.FieldName) {

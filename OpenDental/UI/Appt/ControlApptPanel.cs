@@ -1748,6 +1748,10 @@ namespace OpenDental.UI{
 			decimal netproduction=0;
 			int indexProv;
 			foreach(DataRow dataRow in listDataRows){//TableAppointments.Rows){
+				//Skip planned appointments, so that their production does not get added to daily production
+				if(dataRow["AptStatus"].ToString()==POut.Enum<ApptStatus>(ApptStatus.Planned)) {
+					continue;
+				}
 				indexProv=-1;
 				bool isHygiene=PIn.Bool(dataRow["IsHygiene"].ToString());
 				long provNum=PIn.Long(dataRow["ProvNum"].ToString());

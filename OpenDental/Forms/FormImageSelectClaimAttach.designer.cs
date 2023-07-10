@@ -83,9 +83,9 @@ namespace OpenDental {
 			// labelPasteImage
 			// 
 			this.labelPasteImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelPasteImage.Location = new System.Drawing.Point(504, 135);
+			this.labelPasteImage.Location = new System.Drawing.Point(493, 136);
 			this.labelPasteImage.Name = "labelPasteImage";
-			this.labelPasteImage.Size = new System.Drawing.Size(87, 18);
+			this.labelPasteImage.Size = new System.Drawing.Size(110, 18);
 			this.labelPasteImage.TabIndex = 24;
 			this.labelPasteImage.Text = "(from clipboard)";
 			this.labelPasteImage.TextAlign = System.Drawing.ContentAlignment.TopCenter;

@@ -4721,10 +4721,13 @@ namespace OpenDental {
 			for(int i=0;i<aptNums.Count;i++){
 				//sometimes, before this method was called, module was refreshed, and these appts were included.
 				DataRow dataRow=null;
+				//We need to know the indexOfAppt in case it is a planned appointment and we need to find the appointment in the Rows collection in order to get information for it later
+				int indexOfAppt=-1;
 				for(int r=0;r<contrApptPanel.TableAppointments.Rows.Count;r++){
 					if(contrApptPanel.TableAppointments.Rows[r]["AptNum"].ToString()!=aptNums[i].ToString()){
 						continue;
 					}
+					indexOfAppt=r;
 					dataRow=contrApptPanel.TableAppointments.Rows[r];
 				}
 				if(dataRow==null){
@@ -4750,6 +4753,10 @@ namespace OpenDental {
 						continue;
 					}
 					dataRow=table.Rows[0];
+					//We must update the information for this current appointment with what we just gathered in RefreshOneApt (currently it holds information from GetPeriodApptsTable which is incorrect)
+					if(indexOfAppt>=0) {
+						contrApptPanel.TableAppointments.Rows[indexOfAppt].ItemArray=dataRow.ItemArray;
+					}
 				}
 				string pattern=PIn.String(dataRow["Pattern"].ToString());
 				string patternShowing=contrApptPanel.GetPatternShowing(pattern);

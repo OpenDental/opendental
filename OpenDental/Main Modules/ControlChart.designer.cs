@@ -222,6 +222,7 @@
 			this.listCommonProcs = new OpenDental.UI.ListBox();
 			this.gridCustomerViews = new OpenDental.UI.GridOD();
 			this.tabOrtho = new OpenDental.UI.TabPage();
+			this.checkShowHidden = new OpenDental.UI.CheckBox();
 			this.checkOrthoGraphics = new OpenDental.UI.CheckBox();
 			this.label25 = new System.Windows.Forms.Label();
 			this.checkOrthoMode = new OpenDental.UI.CheckBox();
@@ -276,7 +277,6 @@
 			this.gridPtInfo = new OpenDental.UI.GridOD();
 			this.textTreatmentNotes = new OpenDental.ODtextBox();
 			this.odInternalCustomerGrids = new OpenDental.UI.ODInternalCustomerGrids();
-			this.checkShowHidden = new OpenDental.UI.CheckBox();
 			this.tabControlImages.SuspendLayout();
 			this.panelImages.SuspendLayout();
 			this.tabControlProc.SuspendLayout();
@@ -725,7 +725,6 @@
 			// groupBox2
 			// 
 			this.groupBox2.BackColor = System.Drawing.SystemColors.Window;
-			this.groupBox2.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupBox2.Controls.Add(this.radioEntryCn);
 			this.groupBox2.Controls.Add(this.radioEntryR);
 			this.groupBox2.Controls.Add(this.radioEntryC);
@@ -961,7 +960,6 @@
 			// groupBox5
 			// 
 			this.groupBox5.BackColor = System.Drawing.Color.White;
-			this.groupBox5.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupBox5.Controls.Add(this.butPerm);
 			this.groupBox5.Controls.Add(this.butPrimary);
 			this.groupBox5.Location = new System.Drawing.Point(275, 7);
@@ -1016,7 +1014,6 @@
 			// groupBox1
 			// 
 			this.groupBox1.BackColor = System.Drawing.Color.White;
-			this.groupBox1.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupBox1.Controls.Add(this.label7);
 			this.groupBox1.Controls.Add(this.butNotMissing);
 			this.groupBox1.Controls.Add(this.butMissing);
@@ -1087,7 +1084,6 @@
 			// 
 			// groupBox9
 			// 
-			this.groupBox9.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupBox9.Controls.Add(this.butClearSelectedMovements);
 			this.groupBox9.Controls.Add(this.butClearAllMovements);
 			this.groupBox9.Location = new System.Drawing.Point(20, 140);
@@ -1125,7 +1121,6 @@
 			// 
 			// groupBox4
 			// 
-			this.groupBox4.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupBox4.Controls.Add(this.butTipBplus);
 			this.groupBox4.Controls.Add(this.butTipBminus);
 			this.groupBox4.Controls.Add(this.butTipMplus);
@@ -1264,7 +1259,6 @@
 			// groupBox3
 			// 
 			this.groupBox3.BackColor = System.Drawing.Color.White;
-			this.groupBox3.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupBox3.Controls.Add(this.butShiftBplus);
 			this.groupBox3.Controls.Add(this.butShiftBminus);
 			this.groupBox3.Controls.Add(this.butShiftOplus);
@@ -1593,7 +1587,6 @@
 			// 
 			// groupBox7
 			// 
-			this.groupBox7.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupBox7.Controls.Add(this.checkCommSuperFamily);
 			this.groupBox7.Controls.Add(this.checkSheets);
 			this.groupBox7.Controls.Add(this.checkTasks);
@@ -1710,7 +1703,6 @@
 			// 
 			// groupBox6
 			// 
-			this.groupBox6.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupBox6.Controls.Add(this.checkShowCn);
 			this.groupBox6.Controls.Add(this.checkShowE);
 			this.groupBox6.Controls.Add(this.checkShowR);
@@ -2001,7 +1993,6 @@
 			// 
 			// groupBox8
 			// 
-			this.groupBox8.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupBox8.Controls.Add(this.panelBlack);
 			this.groupBox8.Controls.Add(this.label22);
 			this.groupBox8.Controls.Add(this.butColorOther);
@@ -2371,6 +2362,15 @@
 			this.tabOrtho.TabIndex = 9;
 			this.tabOrtho.Text = "Ortho";
 			// 
+			// checkShowHidden
+			// 
+			this.checkShowHidden.Location = new System.Drawing.Point(27, 120);
+			this.checkShowHidden.Name = "checkShowHidden";
+			this.checkShowHidden.Size = new System.Drawing.Size(191, 18);
+			this.checkShowHidden.TabIndex = 207;
+			this.checkShowHidden.Text = "Show Hidden";
+			this.checkShowHidden.Click += new System.EventHandler(this.checkShowHidden_Click);
+			// 
 			// checkOrthoGraphics
 			// 
 			this.checkOrthoGraphics.Checked = true;
@@ -2384,7 +2384,7 @@
 			// 
 			// label25
 			// 
-			this.label25.Location = new System.Drawing.Point(10, 152);
+			this.label25.Location = new System.Drawing.Point(9, 152);
 			this.label25.Name = "label25";
 			this.label25.Size = new System.Drawing.Size(112, 17);
 			this.label25.TabIndex = 202;
@@ -2411,7 +2411,6 @@
 			// 
 			// groupBoxOD1
 			// 
-			this.groupBoxOD1.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupBoxOD1.Controls.Add(this.butUnhideOrtho);
 			this.groupBoxOD1.Controls.Add(this.butHideOrtho);
 			this.groupBoxOD1.Controls.Add(this.butOrthoRx);
@@ -2500,7 +2499,7 @@
 			// 
 			// comboOrthoDate
 			// 
-			this.comboOrthoDate.Location = new System.Drawing.Point(122, 149);
+			this.comboOrthoDate.Location = new System.Drawing.Point(124, 149);
 			this.comboOrthoDate.Name = "comboOrthoDate";
 			this.comboOrthoDate.Size = new System.Drawing.Size(96, 21);
 			this.comboOrthoDate.TabIndex = 201;
@@ -2898,17 +2897,6 @@
 			this.odInternalCustomerGrids.Size = new System.Drawing.Size(410, 334);
 			this.odInternalCustomerGrids.TabIndex = 213;
 			this.odInternalCustomerGrids.Visible = false;
-			// 
-			// checkShowHidden
-			// 
-			this.checkShowHidden.Checked = false;
-			this.checkShowHidden.CheckState = System.Windows.Forms.CheckState.Unchecked;
-			this.checkShowHidden.Location = new System.Drawing.Point(27, 120);
-			this.checkShowHidden.Name = "checkShowHidden";
-			this.checkShowHidden.Size = new System.Drawing.Size(191, 18);
-			this.checkShowHidden.TabIndex = 207;
-			this.checkShowHidden.Text = "Show Hidden";
-			this.checkShowHidden.Click += new System.EventHandler(this.checkShowHidden_Click);
 			// 
 			// ControlChart
 			// 

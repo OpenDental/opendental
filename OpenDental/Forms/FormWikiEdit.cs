@@ -210,6 +210,10 @@ namespace OpenDental {
 			toolBar2.Buttons.Add(new ODToolBarButton(Lan.g(this,"Italic"),13,"","Italic"));
 			toolBar2.Buttons.Add(new ODToolBarButton(Lan.g(this,"Color"),14,"","Color"));
 			toolBar2.Buttons.Add(new ODToolBarButton(Lan.g(this,"Font"),17,"","Font"));
+			//There was a bug where if the window was resized from the bottom it would make the toolbars unclickable even though
+			//Enabled for both was returning true.  By using Refresh() it has fixed the problem.
+			ToolBarMain.Refresh();
+			toolBar2.Refresh();
 		}
 
 		private void ToolBarMain_ButtonClick(object sender,OpenDental.UI.ODToolBarButtonClickEventArgs e) {

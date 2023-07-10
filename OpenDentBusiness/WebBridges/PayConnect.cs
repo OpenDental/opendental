@@ -892,6 +892,8 @@ namespace OpenDentBusiness {
 					}
 				}
 				pcResponse.CardType=CreditCardUtils.GetCardType(request.CardNumber);
+				//PayConnectService.transResponse does not have an amount field, so use the amount we sent them.
+				pcResponse.Amount=request.Amount;
 			}
 			return pcResponse;
 		}

@@ -326,6 +326,7 @@ namespace OpenDentBusiness.Eclaims {
 			return fields[0];
 		}
 
+		///<summary>Returns empty string if field not found.</summary>
 		public string GetValue(string fieldId) {
 			CCDField[] fields=GetFieldsById(fieldId);
 			if(fields==null || fields.Length==0) {

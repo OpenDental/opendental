@@ -149,16 +149,17 @@ namespace OpenDental{
 
 		private void ResetUIForVersion() {
 			if(radioVersion1.Checked) {
-				this.Height=LayoutManager.Scale(365);
+				this.Height=LayoutManager.Scale(380);
 				label4.Visible=true;
 				textToken.Visible=true;
 				butGenerateToken.Visible=true;
 				textUsername.Visible=true;
 				textPassword.Visible=true;
+				labelPassword.Visible=true;
 				textAPISecret.Visible=false;
 				groupBoxTerminals.Visible=false;
 				checkSurcharge.Visible=false;
-				label3.Text=Lan.g(this,"Password");
+				labelPassword.Text=Lan.g(this,"Password");
 				label2.Text=Lan.g(this,"Username");
 				checkForceRecurring.Visible=true;
 			}
@@ -170,12 +171,12 @@ namespace OpenDental{
 				butGenerateToken.Visible=false;
 				textUsername.Visible=false;
 				textPassword.Visible=false;
-				label3.Text=Lan.g(this,"");
+				labelPassword.Text=Lan.g(this,"");
 				label2.Text=Lan.g(this,"Secret");
 				textAPISecret.Visible=true;
 				groupBoxTerminals.Visible=true;
 				checkSurcharge.Visible=true;
-				label3.Visible=false;
+				labelPassword.Visible=false;
 				checkForceRecurring.Visible=false;
 				FillGridTerminals();
 			}
