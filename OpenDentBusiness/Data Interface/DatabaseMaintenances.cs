@@ -4483,10 +4483,46 @@ namespace OpenDentBusiness {
 			}
 			return log;
 		}
-		#endregion
-		#region InsPayPlan, InsPlan, InsSub-------------------------------------------------------------------------------------------------------------
+        #endregion
+        #region InsPayPlan, InsPlan, InsSub-------------------------------------------------------------------------------------------------------------
+        [DbmMethodAttr(IsOneOff=true)]
+        public static string InsPayPlanWithNonZeroGuarantor(bool verbose,DbmMode modeCur) {
+            if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+                return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
+            }
+            //Gets a list of payplans of type insurance that have a guarantor that is greater than 0 
+			//Insurance Payment Plans gathered based on PlanNum and InsSubNum, which should only be populated for non-Insurance Payment Plans
+			//as per our Database Documentation.
+            string command= @"SELECT PayPlanNum FROM payplan WHERE PlanNum!=0";
+			List<long> listPayPlanNums=Db.GetListLong(command);
+            string log="";
+            switch(modeCur) {
+                case DbmMode.Check:
+                    if(listPayPlanNums.Count>0||verbose) {
+                        log+=Lans.g("FormDatabaseMaintenance","Ins payment plans with guarantors set")+": "+listPayPlanNums.Count+"\r\n";
+                    }
+                    break;
+                case DbmMode.Fix:
+                    List<DbmLog> listDbmLogs=new List<DbmLog>();
+                    string methodName=MethodBase.GetCurrentMethod().Name;
+                    if(listPayPlanNums.Count>0) {
+                        //Set the guarantors in the listPayPlanNums to 0
+                        command="UPDATE payplan SET Guarantor=0 WHERE PayPlanNum IN("+String.Join(",",listPayPlanNums)+")";
+                        Db.NonQ(command);
+                        listPayPlanNums.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x,DbmLogFKeyType.PayPlan,
+                            DbmLogActionType.Update,methodName,"Updated Guarantor to 0 from InsPayPlanWithNonZeroGuarantor.")));
+                    }
+                    int numberFixed=listPayPlanNums.Count;
+                    if(numberFixed>0||verbose) {
+                        log+=Lans.g("FormDatabaseMaintenance","Ins payment plans with guarantors set are now 0")+": "+numberFixed.ToString()+"\r\n";
+                        Crud.DbmLogCrud.InsertMany(listDbmLogs);
+                    }
+                    break;
+            }
+            return log;
+        }
 
-		[DbmMethodAttr(IsReplicationUnsafe=true)]
+        [DbmMethodAttr(IsReplicationUnsafe=true)]
 		public static string InsPayPlanWithPatientPayments(bool verbose,DbmMode modeCur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);

@@ -81,6 +81,7 @@ namespace OpenDental{
 			this.tabControl1.Controls.Add(this.tabReportPermissions);
 			this.tabControl1.Controls.Add(this.tabReportServer);
 			this.tabControl1.Controls.Add(this.tabMiscOptions);
+			this.tabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabControl1.Location = new System.Drawing.Point(6, 4);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.Size = new System.Drawing.Size(545, 638);
@@ -101,6 +102,7 @@ namespace OpenDental{
 			// userControlReportSetup
 			// 
 			this.userControlReportSetup.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
+			this.userControlReportSetup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.userControlReportSetup.Location = new System.Drawing.Point(2, 2);
 			this.userControlReportSetup.Name = "userControlReportSetup";
 			this.userControlReportSetup.Size = new System.Drawing.Size(525, 607);
@@ -152,7 +154,7 @@ namespace OpenDental{
 			// 
 			// radioReportServerDirect
 			// 
-			this.radioReportServerDirect.Location = new System.Drawing.Point(38, 76);
+			this.radioReportServerDirect.Location = new System.Drawing.Point(38, 74);
 			this.radioReportServerDirect.Name = "radioReportServerDirect";
 			this.radioReportServerDirect.Size = new System.Drawing.Size(219, 20);
 			this.radioReportServerDirect.TabIndex = 227;

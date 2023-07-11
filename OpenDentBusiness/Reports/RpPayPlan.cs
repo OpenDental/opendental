@@ -224,12 +224,13 @@ namespace OpenDentBusiness {
 				pat.Preferred=raw.Rows[i]["Preferred"].ToString();
 				row["provider"]=Providers.GetLName(PIn.Long(raw.Rows[i]["ProvNum"].ToString()),listProvs);
 				row["guarantor"]=pat.GetNameLF();
-				if(raw.Rows[i]["PlanNum"].ToString()=="0") {
+                if(raw.Rows[i]["PlanNum"].ToString()=="0") {
 					row["ins"]="";
 				}
 				else {
 					row["ins"]="X";
-				}
+                    row["guarantor"]="0";
+                }
 				row["princ"]=princ.ToString("f");
 				row["accumInt"]=interest.ToString("f");
 				row["paid"]=paid.ToString("f");

@@ -3504,15 +3504,20 @@ namespace OpenDental {
 				}
 				row=new GridRow();
 				row.Cells.Add(table.Rows[i]["date"].ToString());
-				if(table.Rows[i]["InstallmentPlanNum"].ToString()!="0" && table.Rows[i]["PatNum"].ToString()!=_patient.Guarantor.ToString()) {//Installment plan and not on guar
+                if(table.Rows[i]["InstallmentPlanNum"].ToString()!="0" && table.Rows[i]["PatNum"].ToString()!=_patient.Guarantor.ToString()) {//Installment plan and not on guar
 					cell=new GridCell(((string)"Invalid Guarantor"));
 					cell.Bold=YN.Yes;
 					cell.ColorText=Color.Red;
 				}
 				else {
-					cell=new GridCell(table.Rows[i]["guarantor"].ToString());
+                    long payPlanNum=PIn.Long(table.Rows[i]["PayPlanNum"].ToString());
+                    PayPlan payPlan=PayPlans.GetOne(payPlanNum);
+                    cell=new GridCell("0");//If not an Insurance PayPlan set guarantor as per usual.
+                    if(payPlan.PlanNum==0) {//Only test via PlanNum for Insurance PayPlans as per RPPayPlan.cs' logic.
+                        cell=new GridCell(table.Rows[i]["guarantor"].ToString());
+                    }
 				}
-				row.Cells.Add(cell);
+                row.Cells.Add(cell);
 				row.Cells.Add(table.Rows[i]["patient"].ToString());
 				row.Cells.Add(table.Rows[i]["type"].ToString());
 				long planCategory=PIn.Long(table.Rows[i]["PlanCategory"].ToString());
