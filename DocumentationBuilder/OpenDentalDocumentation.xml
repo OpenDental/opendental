@@ -17777,19 +17777,7 @@
       <summary></summary>
     </column>
     <column order="8" name="DateTimeSendFailed" type="datetime">
-      <summary>Enum:ContactMethod </summary>
-      <Enumeration name="ContactMethod">
-        <summary></summary>
-        <EnumValue name="None">0</EnumValue>
-        <EnumValue name="DoNotCall">1</EnumValue>
-        <EnumValue name="HmPhone">2</EnumValue>
-        <EnumValue name="WkPhone">3</EnumValue>
-        <EnumValue name="WirelessPh">4</EnumValue>
-        <EnumValue name="Email">5</EnumValue>
-        <EnumValue name="SeeNotes">6</EnumValue>
-        <EnumValue name="Mail">7</EnumValue>
-        <EnumValue name="TextMessage">8</EnumValue>
-      </Enumeration>
+      <summary>The most recent time that sending a reminder failed. Will be 01/01/0001 if a reminder has never been attempted.</summary>
     </column>
     <column order="9" name="SendStatus" type="tinyint(4)">
       <summary></summary>
