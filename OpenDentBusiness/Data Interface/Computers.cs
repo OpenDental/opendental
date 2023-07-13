@@ -70,6 +70,16 @@ namespace OpenDentBusiness{
 		}
 		#endregion
 
+		///<summary>Gets a list of all computers from the database.</summary>
+		public static List<Computer> GetComputersForApi(int limit,int offset) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Computer>>(MethodBase.GetCurrentMethod(),limit,offset);
+			}
+			string command="SELECT * FROM computer ORDER BY ComputerNum "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.ComputerCrud.SelectMany(command);
+		}
+
 		public static void EnsureComputerInDB(string clientComputerName,string hostComputerName){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),clientComputerName,hostComputerName);

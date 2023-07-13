@@ -1148,7 +1148,7 @@ namespace OpenDentBusiness {
 				FontStyle fontstyle=(field.FontIsBold?FontStyle.Bold:FontStyle.Regular);
 				Font font=new Font(field.FontName,field.FontSize,fontstyle);
 				Rectangle bounds=new Rectangle(field.XPos,field.YPos-yPosPrint,field.Width,field.Height);
-				Brush brushText=Brushes.Black;
+				Brush brushText=(Brush)Brushes.Black.Clone();
 				if(field.ItemColor.ToArgb()!=Color.FromArgb(0).ToArgb()){
 					brushText=new SolidBrush(field.ItemColor);
 				}

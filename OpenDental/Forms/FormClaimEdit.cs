@@ -1675,7 +1675,11 @@ namespace OpenDental{
 				listClaimProcs.Add(_listClaimProcsForClaim[i].Copy());
 			}
 			using FormClaimPayTotal formClaimPayTotal=new FormClaimPayTotal(_patient,_family,_listInsPlans,_listPatPlans,_listInsSubs,GetBlueBookEstimateData(),totalPayAmt:result);
-			formClaimPayTotal.ClaimProcArray=_listClaimProcsForClaim.FindAll(x => x.Status==ClaimProcStatus.Received || x.Status==ClaimProcStatus.Supplemental).ToArray();
+			formClaimPayTotal.ClaimProcArray=_listClaimProcsForClaim.FindAll(x => x.Status==ClaimProcStatus.NotReceived || x.Status==ClaimProcStatus.Supplemental).ToArray(); //Filter list down to only procs that expect payments
+			if(formClaimPayTotal.ClaimProcArray.IsNullOrEmpty()){
+				MsgBox.Show(this,"There are no procedures to be paid on this claim.");
+				return false;
+			}
 			formClaimPayTotal.ShowDialog();
 			if(formClaimPayTotal.DialogResult!=DialogResult.OK){
 				SetListClaimProcsForClaim(listClaimProcs);

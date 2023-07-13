@@ -55,8 +55,8 @@ namespace OpenDental {
 				_listClaimProcsOld.Add(ClaimProcArray[i].Copy());
 			}
 			_listProcedures=Procedures.Refresh(_patient.PatNum);
-			_isWriteOffEditable=Security.IsAuthorized(Permissions.InsWriteOffEdit,
-				_listProcedures.FindAll(x => ClaimProcArray.Any(y => y.ProcNum==x.ProcNum)).Select(x => x.DateEntryC).Min());
+			DateTime dateTClaimProcMin=_listProcedures.FindAll(x => ClaimProcArray.Any(y => y.ProcNum==x.ProcNum)).Select(x => x.DateEntryC).Min();
+			_isWriteOffEditable=Security.IsAuthorized(Permissions.InsWriteOffEdit, dateTClaimProcMin);
 			butWriteOff.Enabled=_isWriteOffEditable;
 			_doShowPatResp=PrefC.GetBool(PrefName.ClaimEditShowPatResponsibility);
 			textPatResp.Visible=_doShowPatResp;

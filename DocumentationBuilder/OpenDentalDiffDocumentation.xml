@@ -691,10 +691,4 @@
       </Enumeration>
     </column>
   </table>
-  <table name="webschedrecall">
-    <summary></summary>
-    <column order="8" name="DateTimeSendFailed" type="datetime">
-      <summary>The most recent time that sending a reminder failed. Will be 01/01/0001 if a reminder has never been attempted.</summary>
-    </column>
-  </table>
 </database>

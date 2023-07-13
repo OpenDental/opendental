@@ -115,8 +115,9 @@ namespace OpenDental {
 			}
 			FillFieldsFromControls();
 			FieldValueChanged(sender);//the sender doesn't matter
-			LayoutFields();
 			LoadImages();
+			LayoutFields();
+			panelMain.Invalidate();
 		}
 
 		private void butCancel_Click(object sender,EventArgs e) {

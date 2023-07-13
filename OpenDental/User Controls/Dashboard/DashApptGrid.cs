@@ -159,7 +159,7 @@ namespace OpenDental {
 				if(IsSelectedApptOtherNull()) {
 					return;
 				}
-				SendToPinboardEvent.Fire(ODEventType.SendToPinboard,new PinBoardArgs(PatientCur,ListApptOthers[e.Row],ListApptOthers));
+				SendToPinboardEvent.Fire(ODEventType.SendToPinboard,new PinBoardArgs(PatientCur,ListApptOthers.FirstOrDefault(x=>x.AptNum==gridMain.SelectedTag<long>()),ListApptOthers));
 				return;
 			}
 			RefreshData(PatientCur,null);

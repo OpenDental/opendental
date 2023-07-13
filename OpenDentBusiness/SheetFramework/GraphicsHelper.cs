@@ -163,7 +163,7 @@ namespace OpenDentBusiness {
 			//We can't do g.ScaleTransform() because that would also scale the font size, so it wouldn't fix the wrap.
 			//Shrinking the font size by 4% wouldn't work because fonts scale incrementally instead of smoothly.
 			//The remaining imperfection will only be noticeable when a tall section of text spills down too close to the next element.
-			Rectangle rectangleActual=new Rectangle(rectangle.X,rectangle.Y,(int)(rectangle.Width/0.96f),(int)(rectangle.Height/0.96f));
+			RectangleF rectangleActual=new RectangleF(rectangle.X,rectangle.Y,(rectangle.Width/0.96f),(rectangle.Height/0.96f));
 			StringFormat stringFormat=new StringFormat();
 			stringFormat.Alignment=StringAlignment.Near;
 			if(align==HorizontalAlignment.Center){

@@ -25,6 +25,37 @@ namespace OpenDentBusiness{
 			return Crud.HistAppointmentCrud.SelectOne(histApptNum);
 		}
 
+		///<summary>Gets histappointments from database.</summary>
+		public static List<HistAppointment> GetHistAppointmentsForApi(int limit,int offset,
+			DateTime dateTStart,DateTime dateTEnd,long clinicNum,long patNum,int aptStatus,int histApptAction,long aptNum)
+		{
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<HistAppointment>>(MethodBase.GetCurrentMethod(),limit,offset,
+					dateTStart,dateTEnd,clinicNum,patNum,aptStatus,histApptAction,aptNum);
+			}
+			string command="SELECT * FROM histappointment "
+				+"WHERE AptDateTime >= "+POut.DateT(dateTStart)+" "
+				+"AND AptDateTime < "+POut.DateT(dateTEnd)+" ";
+			if(clinicNum>-1) {
+				command+="AND ClinicNum="+POut.Long(clinicNum)+" ";
+			}
+			if(patNum>0) {
+				command+="AND PatNum="+POut.Long(patNum)+" ";
+			}
+			if(aptStatus>-1) {
+				command+="AND AptStatus="+POut.Int(aptStatus)+" ";
+			}
+			if(histApptAction>-1) {
+				command+="AND HistApptAction="+POut.Int(histApptAction)+" ";
+			}
+			if(aptNum>0) {
+				command+="AND AptNum="+POut.Long(aptNum)+" ";
+			}
+			command+="ORDER BY HistApptNum "//same fixed order each time
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.HistAppointmentCrud.SelectMany(command);
+		}
+
 		public static List<HistAppointment> GetForApt(long aptNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<HistAppointment>>(MethodBase.GetCurrentMethod(),aptNum);
