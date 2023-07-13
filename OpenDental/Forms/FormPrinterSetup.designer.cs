@@ -293,9 +293,9 @@ namespace OpenDental {
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(512, 53);
+			this.label11.Location = new System.Drawing.Point(500, 53);
 			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(100, 126);
+			this.label11.Size = new System.Drawing.Size(110, 150);
 			this.label11.TabIndex = 28;
 			this.label11.Text = "It is recommended to use the prompt option for most functions.  But if you are us" +
     "ing a default, it is not necessary to check the box.";
