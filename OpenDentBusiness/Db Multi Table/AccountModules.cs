@@ -1103,7 +1103,8 @@ namespace OpenDentBusiness {
 			List<long> listSignedProcNums=new List<long>();//filled with subset of procnums from the rawProc table where most recent ProcNote is signed
 			if(!isForStatementPrinting //not for a statement
 				&& familyPatNums!="" //and we have a family
-				&& DisplayFields.GetForCategory(DisplayFieldCategory.AccountModule).Any(x => x.InternalName=="Signed")) //"Signed" is displayed in acct grid
+				&& DisplayFields.GetForCategory(DisplayFieldCategory.AccountModule).Any(x => x.InternalName=="Signed") //"Signed" is displayed in acct grid
+				||DisplayFields.GetForCategory(DisplayFieldCategory.LimitedCustomStatement).Any(x => x.InternalName=="Signed")) //or in Limited (Custom) Statements
 			{
 				listSignedProcNums=ProcNotes.GetIsProcNoteSigned(rawProc.Select().Select(x => PIn.Long(x["ProcNum"].ToString())).ToList());
 			}

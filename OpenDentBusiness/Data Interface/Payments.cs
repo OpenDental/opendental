@@ -174,7 +174,8 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<Payment>>(MethodBase.GetCurrentMethod(),clinicNums);
 			}
-			string command="SELECT * FROM payment WHERE ProcessStatus="+POut.Int((int)ProcessStat.OnlinePending)+" ";
+			string command= "SELECT * FROM payment WHERE ProcessStatus="+POut.Int((int)ProcessStat.OnlinePending)
+				+" AND PaymentSource IN ("+string.Join(",",CreditCards.GetCreditCardSourcesForOnlinePayments().Select(x => (long)x))+") ";
 			if(clinicNums.Count>0) {
 				command+="AND payment.ClinicNum IN ("+string.Join(",",clinicNums)+") ";
 			}

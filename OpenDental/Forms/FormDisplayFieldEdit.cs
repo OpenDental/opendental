@@ -42,10 +42,10 @@ namespace OpenDental{
 			Graphics g=this.CreateGraphics();
 			int width;
 			if(textDescription.Text==""){
-				width=(int)g.MeasureString(textInternalName.Text,_font).Width;
+				width=(int)g.MeasureString(textInternalName.Text,_font).Width+1;
 			}
 			else{
-				width=(int)g.MeasureString(textDescription.Text,_font).Width;
+				width=(int)g.MeasureString(textDescription.Text,_font).Width+1;
 			}
 			textWidthMin.Text=width.ToString();
 			g.Dispose();

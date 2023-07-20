@@ -806,6 +806,12 @@ namespace OpenDentBusiness{
 			return Crud.CreditCardCrud.SelectMany(command);
 		}
 
+		public static List<CreditCardSource> GetCreditCardSourcesForOnlinePayments() {
+			//No need to check MiddleTierRole; no call to db.
+			return typeof(CreditCardSource).GetFields(BindingFlags.Public | BindingFlags.Static)
+				.Where(x => x.IsDefined(typeof(OnlinePaymentMethod),false)).Select(x => (CreditCardSource)x.GetValue(null)).ToList();
+		}
+
 		///<summary>Gets every credit card in the db with an X-Charge token that was created from the specified source.</summary>
 		public static List<CreditCard> GetCardsWithXChargeTokens(CreditCardSource ccSource=CreditCardSource.XServer) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

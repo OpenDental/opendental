@@ -788,8 +788,10 @@ namespace OpenDental {
 
 		///<summary>Becomes the reply button if the email was received.</summary>
 		private void butSend_Click(object sender, System.EventArgs e) {
+			toolBarSend.Enabled=false;
 			if(EmailMessages.IsReceived(_emailMessage.SentOrReceived)) {
 				if(!Security.IsAuthorized(Permissions.EmailSend)) {
+					toolBarSend.Enabled=true;
 					return;
 				}
 				using FormEmailMessageEdit formEmailMessageEdit=new FormEmailMessageEdit(EmailMessages.CreateReply(_emailMessage,emailPreview.EmailAddressPreview)
@@ -802,22 +804,27 @@ namespace OpenDental {
 					DialogResult=DialogResult.OK;
 					Close();//this form can be opened modelessly.
 				}
+				toolBarSend.Enabled=true;
 				return;
 			}
 			//this will not be available if already sent.
 			if(!ValidateFieldsForSend()) {
+				toolBarSend.Enabled=true;
 				return;
 			}
 			if(EhrCCD.HasCcdEmailAttachment(_emailMessage)) {
 				MsgBox.Show(this,"The email has a summary of care attachment which may contain sensitive patient data.  Use the Direct Message button instead.");
+				toolBarSend.Enabled=true;
 				return;
 			}
 			EmailAddress emailAddress=GetOutgoingEmailForSending();
 			if(emailAddress==null) {
+				toolBarSend.Enabled=true;
 				return;
 			}
 			if(emailAddress.SMTPserver==""){
 				MsgBox.Show(this,"The email address in email setup must have an SMTP server.");
+				toolBarSend.Enabled=true;
 				return;
 			}
 			if(emailAddress.AccessToken.IsNullOrEmpty() && emailAddress.AuthenticationType==OAuthType.Microsoft) {
@@ -825,6 +832,7 @@ namespace OpenDental {
 					MicrosoftTokenHelper microsoftToken=new MicrosoftTokenHelper();
 					if(ODBuild.IsWeb()) {
 						if(!CloudClientL.IsCloudClientRunning()) {
+							toolBarSend.Enabled=true;
 							return; 
 						}
 						string strMicrosoftAuthCodesJSON=ODCloudClient.GetMicrosoftAccessToken(emailAddress.EmailUsername,"");
@@ -836,13 +844,16 @@ namespace OpenDental {
 					}
 					if(microsoftToken.ErrorMessage!="") {
 						MsgBox.Show("Error: "+microsoftToken.ErrorMessage);
+						toolBarSend.Enabled=true;
 						return;
 					}
 					if(microsoftToken.AccessToken=="") {
+						toolBarSend.Enabled=true;
 						return; //Authentication was cancelled so do nothing.
 					}
 					if(microsoftToken.EmailAddress!=emailAddress.EmailUsername) {
 						MsgBox.Show("Please sign in with the same email address.");
+						toolBarSend.Enabled=true;
 						return;
 					}
 					emailAddress.AccessToken=microsoftToken.AccessToken;
@@ -852,6 +863,7 @@ namespace OpenDental {
 					DataValid.SetInvalid(InvalidType.Email);
 				}
 				else {
+					toolBarSend.Enabled=true;
 					return;//User wants to manually sign into the email in the setup window.
 				}
 			}
@@ -867,6 +879,7 @@ namespace OpenDental {
 				catch(Exception ex) {
 					ex.DoNothing();
 					if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"There was a problem automatically appending the HTML autograph. Continue without an autograph?")) {
+						toolBarSend.Enabled=true;
 						return;//User wants to manually fix the HTML autograph and try again.
 					}
 				}
@@ -894,11 +907,13 @@ namespace OpenDental {
 						EmailAddresses.Update(emailAddress);
 						DataValid.SetInvalid(InvalidType.Email);
 						butSend_Click(sender,e);
+					toolBarSend.Enabled=true;
 					return;
 					}
 				}
 				string errMsg=Lan.g(this,"Failed to send email.")+"\r\n"+Lan.g(this, "Click Details to see the error message from the Email Client.");
 				FriendlyException.Show(errMsg, ex);
+				toolBarSend.Enabled=true;
 				return;
 			}
 			Cursor=Cursors.Default;

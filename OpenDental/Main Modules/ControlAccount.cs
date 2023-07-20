@@ -3512,9 +3512,9 @@ namespace OpenDental {
 				else {
                     long payPlanNum=PIn.Long(table.Rows[i]["PayPlanNum"].ToString());
                     PayPlan payPlan=PayPlans.GetOne(payPlanNum);
-                    cell=new GridCell("0");//If not an Insurance PayPlan set guarantor as per usual.
+                    cell=new GridCell("");
                     if(payPlan.PlanNum==0) {//Only test via PlanNum for Insurance PayPlans as per RPPayPlan.cs' logic.
-                        cell=new GridCell(table.Rows[i]["guarantor"].ToString());
+                        cell=new GridCell(table.Rows[i]["guarantor"].ToString());//If not an Insurance PayPlan set guarantor as per usual.
                     }
 				}
                 row.Cells.Add(cell);

@@ -198,7 +198,7 @@ namespace OpenDental {
 
 		private void checkSendToGuarantorForMinors_Click(object sender,EventArgs e) {
 			Clinic clinic=GetSelectedClinic();
-			if(clinic.ClinicNum==0) {
+			if(!PrefC.HasClinicsEnabled || clinic.ClinicNum==0) {
 				_under18SendToGuarantorDefault=checkSendToGuarantorForMinors.Checked;
 				return;
 			}
@@ -214,7 +214,7 @@ namespace OpenDental {
 		private void listBoxWebForm_SelectionChangeCommitted(object sender,EventArgs e) {
 			Clinic clinic=GetSelectedClinic();
 			string webSheetDefIDs=string.Join(",",listBoxWebForms.GetListSelected<WebForms_SheetDef>().Select(x => x.WebSheetDefID));
-			if(clinic.ClinicNum==0) {
+			if(!PrefC.HasClinicsEnabled || clinic.ClinicNum==0) {
 				_webSheetIdDefaults=webSheetDefIDs;
 				return;
 			}

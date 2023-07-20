@@ -31,7 +31,6 @@ namespace OpenDental{
 		private bool _isFromCentralUserEdit;
 		private List<UserOdPref> _listUserOdPrefsDoseSpotOld;
 		private List<UserOdPref> _listUserOdPrefsDoseSpotNew;
-		private List<UserOdPref> _listUserOdPrefsDoseSpotNewPrevious;
 		private bool _isFillingList;
 		private UserOdPref _userOdPrefLogOffAfterMinutes;
 		private string _logOffAfterMinutesInitialValue;
@@ -295,7 +294,6 @@ namespace OpenDental{
 		}
 
 		private void butDoseSpotAdditional_Click(object sender,EventArgs e) {
-			_listUserOdPrefsDoseSpotNewPrevious=_listUserOdPrefsDoseSpotNew.Select(x=>x).ToList();
 			_userOdPrefDoseSpotDefault.ValueString=textDoseSpotUserID.Text;
 			using FormUserPrefAdditional formUserPrefAdditional=new FormUserPrefAdditional(_listUserOdPrefsDoseSpotNew,UserodCur);
 			formUserPrefAdditional.ShowDialog();
@@ -353,27 +351,41 @@ namespace OpenDental{
 				return;
 			}
 			List<UserOdPref> listUserOdPrefs=UserOdPrefs.GetByFkeyAndFkeyType(Programs.GetCur(ProgramName.eRx).ProgramNum,UserOdFkeyType.Program);
-			List<UserOdPref> listUserOdPrefsNotEmpty=listUserOdPrefs.FindAll(x=>!x.ValueString.IsNullOrEmpty()
+			List<UserOdPref> listUserOdPrefsNotEmpty=listUserOdPrefs.FindAll(x => !x.ValueString.IsNullOrEmpty()
 				&& x.UserNum!=UserodCur.UserNum);//Allow user to reuse their ID at the different clinics
-			List<UserOdPref> listUserOdPrefsToPrint=_listUserOdPrefsDoseSpotNew.FindAll(x => listUserOdPrefsNotEmpty.Select(y => y.ValueString).Contains(x.ValueString));
+			List<string> listValueStrings=listUserOdPrefsNotEmpty.Select(x => x.ValueString).ToList();
+			List<UserOdPref> listUserOdPrefsDuplicateIDs=_listUserOdPrefsDoseSpotNew.FindAll(x => listValueStrings.Contains(x.ValueString));
 			if((textDoseSpotUserID.Text!=_userOdPrefDoseSpotDefault.ValueString || _userOdPrefDoseSpotDefault.IsNew)
-				&& listUserOdPrefsNotEmpty.Select(x => x.ValueString).Contains(textDoseSpotUserID.Text)
-				|| !listUserOdPrefsToPrint.IsNullOrEmpty())
+				&& listValueStrings.Contains(textDoseSpotUserID.Text)
+				|| !listUserOdPrefsDuplicateIDs.IsNullOrEmpty())
 			{
-				string msg="The DoseSpot User ID entered is already being used.\r\n" +
+				string msg="One or more of your DoseSpot User IDs is already in use.\r\n" +
 					"The following list shows the users and the DoseSpot User ID aleady in use.\r\n\n";
-				msg +="DoseSpot User ID\tUser\r\n";
-				listUserOdPrefsNotEmpty=listUserOdPrefsNotEmpty.DistinctBy(x=>x.ValueString).ToList();
+				msg +="DoseSpot User ID\tUser\r\n";;
+				listUserOdPrefsNotEmpty=listUserOdPrefsNotEmpty.DistinctBy(x => x.UserNum).ToList();
 				for(int i=0;i<listUserOdPrefsNotEmpty.Count;i++) {
 					//Add the DoseSpotIDs and corresponding user name to the msg to be displayed in the msgBox.
 					//\t\t used for layout. \r\n used to create new line.
 					msg+=String.Format("{0}\t\t{1}\r\n",listUserOdPrefsNotEmpty[i].ValueString,Userods.GetName(listUserOdPrefsNotEmpty[i].UserNum));
 				}
 				MessageBox.Show(this,msg);
-				textDoseSpotUserID.Text=_userOdPrefDoseSpotDefault.ValueString;//sets DoseSpotID back to what it was before change
-				if(!_listUserOdPrefsDoseSpotNewPrevious.IsNullOrEmpty() ) {
-					_listUserOdPrefsDoseSpotNew=_listUserOdPrefsDoseSpotNewPrevious.Select(x=>x).ToList();//change _listUserOdPrefsDoseSpotNew back to what it was previously
+				//reset the DoseSpotIDs back to what the values before a duplicate was entered
+				for(int i=0;i<_listUserOdPrefsDoseSpotNew.Count;i++) {
+					//new user set the DoseSpotIDs back to blank
+					if(_listUserOdPrefsDoseSpotNew[i].IsNew) {
+						_listUserOdPrefsDoseSpotNew[i].ValueString="";
+					}
+					//only changes the duplicate DoseSpotIDs that were entered back, but keeps the entered DoseSpotIDs that are not duplicates
+					if(listValueStrings.Contains(_listUserOdPrefsDoseSpotNew[i].ValueString) && !_listUserOdPrefsDoseSpotNew[i].IsNew) {
+						_listUserOdPrefsDoseSpotNew[i].ValueString=_listUserOdPrefsDoseSpotOld[i].ValueString;//change _listUserOdPrefsDoseSpotNew back to what it was previously
+					}
 				}
+				//if the default DoseSpotID is changed not from the FormUserPrefAdditional, check that textDoseSpotUserID.Text is not a duplicate
+				//and change the _userOdPrefDoseSpotDefault.ValueString
+				if(textDoseSpotUserID.Text!=_userOdPrefDoseSpotDefault.ValueString && !listValueStrings.Contains(textDoseSpotUserID.Text)) {
+					_userOdPrefDoseSpotDefault.ValueString=textDoseSpotUserID.Text;
+				}
+				textDoseSpotUserID.Text=_userOdPrefDoseSpotDefault.ValueString;
 				return;
 			}
 			if(_isFromAddUser && !Security.IsAuthorized(Permissions.SecurityAdmin,true)) {

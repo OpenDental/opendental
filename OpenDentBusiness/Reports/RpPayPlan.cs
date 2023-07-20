@@ -224,12 +224,10 @@ namespace OpenDentBusiness {
 				pat.Preferred=raw.Rows[i]["Preferred"].ToString();
 				row["provider"]=Providers.GetLName(PIn.Long(raw.Rows[i]["ProvNum"].ToString()),listProvs);
 				row["guarantor"]=pat.GetNameLF();
-                if(raw.Rows[i]["PlanNum"].ToString()=="0") {
-					row["ins"]="";
-				}
-				else {
+                row["ins"]="";
+				if(raw.Rows[i]["PlanNum"].ToString()!="0") {//Is Insurance PayPlan
 					row["ins"]="X";
-                    row["guarantor"]="0";
+                    row["guarantor"]="";
                 }
 				row["princ"]=princ.ToString("f");
 				row["accumInt"]=interest.ToString("f");
@@ -243,8 +241,16 @@ namespace OpenDentBusiness {
 					// this could be done better, by getting a list of guarantors outside of the loop and pulling the family balance value from a list
 					// we can implement something like this if a customer experiences slowness from this.
 					Family famCur=ReportsComplex.RunFuncOnReportServer(() => Patients.GetFamily(PIn.Long(raw.Rows[i]["PatNum"].ToString())));
-					famBal=(decimal)famCur.ListPats[0].BalTotal;
-					row["famBal"]=(famBal - (decimal)famCur.ListPats[0].InsEst).ToString("F");
+					//Prevents UE when attempting to assign from an empty list. This is only possible if the user selects Insurance PayPlans only while
+					//also checking the "Show Family Balance" checkbox - meaning a PayPlan exists but has not patient.
+                    if(famCur.ListPats.Length>0) {
+						famBal=(decimal)famCur.ListPats[0].BalTotal;
+						row["famBal"]=(famBal - (decimal)famCur.ListPats[0].InsEst).ToString("F");
+					}
+					else {//If Insurance PayPlan we will set the values to empty/0 to not impact totaling logic.
+						famBal=0;
+						row["famBal"]="";
+					}
 				}
 				if(hasClinicsEnabled) {//Using clinics
 					string clinicAbbr=Clinics.GetAbbr(PIn.Long(raw.Rows[i]["ClinicNum"].ToString()),listClinics);

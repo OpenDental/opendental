@@ -132,15 +132,7 @@ namespace OpenDental {
 		public void FillPaymentSource() {
 			comboPaymentSource.IncludeAll=true;
 			//Adding only online payment sources to combobox
-			List<CreditCardSource> onlinePaymentSources=new List<CreditCardSource> {
-				CreditCardSource.XWeb,
-				CreditCardSource.XWebPortalLogin,
-				CreditCardSource.PayConnectPortal,
-				CreditCardSource.PayConnectPortalLogin,
-				CreditCardSource.EdgeExpressRCM,
-				CreditCardSource.EdgeExpressCNP,
-				CreditCardSource.CareCredit
-			};
+			List<CreditCardSource> onlinePaymentSources=CreditCards.GetCreditCardSourcesForOnlinePayments();
 			comboPaymentSource.Items.AddListEnum<CreditCardSource>(onlinePaymentSources);
 			comboPaymentSource.IsAllSelected=true;
 		}

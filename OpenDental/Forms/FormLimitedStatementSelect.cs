@@ -187,6 +187,9 @@ namespace OpenDental {
 				if(listDisplayFields[i].InternalName=="Date") {
 					sort=GridSortingStrategy.DateParse;
 				}
+				if(listDisplayFields[i].InternalName=="Signed") {
+					align=HorizontalAlignment.Center;
+				}
 				gridMain.Columns.Add(new GridColumn(listDisplayFields[i].Description==""?listDisplayFields[i].InternalName:listDisplayFields[i].Description,
 					listDisplayFields[i].ColumnWidth,align,sort));
 			}

@@ -116,48 +116,66 @@ namespace OpenDentBusiness {
 		}
 	}
 
+	/// <summary>CreditCardSources that are used online</summary>
+	public class OnlinePaymentMethod:Attribute {
+	}
+	
 	public enum CreditCardSource {
 		///<summary>0 - This is used when the payment is not a Credit Card. If CC, then this means we are storing the actual credit card number. Not recommended.</summary>
 		None,
 		///<summary>1 - Local installation of X-Charge</summary>
 		XServer,
 		///<summary>2 - Credit card created via X-Web (an eService)</summary>
+		[OnlinePaymentMethod]
 		XWeb,
 		///<summary>3 - PayConnect web service (from within OD).</summary>
 		PayConnect,
 		///<summary>4 - Credit card has been added through the local installation of X-Charge and the PayConnect web service.</summary>
 		XServerPayConnect,
 		///<summary>5 - Made from the login screen of the Patient Portal.</summary>
+		[OnlinePaymentMethod]
 		XWebPortalLogin,
 		///<summary>6 - PaySimple web service (from within OD).</summary>
 		PaySimple,
 		///<summary>7 - PaySimple ACH web service (from within OD).</summary>
 		PaySimpleACH,
 		///<summary>8 - PayConnect credit card (made from Patient Portal)</summary>
+		[OnlinePaymentMethod]
 		PayConnectPortal,
 		///<summary>9 - PayConnect credit card (made from Patient Portal Login screen).</summary>
+		[OnlinePaymentMethod]
 		PayConnectPortalLogin,
 		///<summary>10 - CareCredit.</summary>
+		[OnlinePaymentMethod]
 		CareCredit,
 		///<summary>11 - EdgeExpress Cloud when calling the RCM program.</summary>
+		[OnlinePaymentMethod]
 		EdgeExpressRCM,
 		///<summary>12 - EdgeExpress Card Not Present API.</summary>
+		[OnlinePaymentMethod]
 		EdgeExpressCNP,
 		///<summary>13 - Payment taken through Open Dental API.</summary>
 		API,
 		///<summary>14 - EdgeExpress payment taken through the Payment Portal.</summary>
+		[OnlinePaymentMethod]
 		EdgeExpressPaymentPortal,
 		///<summary>15 - EdgeExpress payment taken through the Payment Portal as a guest.</summary>
+		[OnlinePaymentMethod]
 		EdgeExpressPaymentPortalGuest,
 		///<summary>16 - PayConnect payment taken through the Payment Portal.</summary>
+		[OnlinePaymentMethod]
 		PayConnectPaymentPortal,
 		///<summary>17 - PayConnect payment taken through the Payment Portal as a guest.</summary>
+		[OnlinePaymentMethod]
 		PayConnectPaymentPortalGuest,
 		///<summary>18 - PaySimple payment taken through the Payment Portal.</summary>
+		[OnlinePaymentMethod]
 		PaySimplePaymentPortal,
 		///<summary>19 - PaySimple payment taken through the Payment Portal as a guest.</summary>
+		[OnlinePaymentMethod]
 		PaySimplePaymentPortalGuest,
 		///<summary>20 - PaySimple ACH Payment taken through the Payment Portal.</summary>
+		[OnlinePaymentMethod]
 		PaySimplePaymentPortalACH,
 	}
 

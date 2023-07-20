@@ -30,6 +30,9 @@ namespace OpenDental{
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
+			if(FormODBase.AreBordersMS) {
+				this.AutoSize=true;
+			}
 			if(PrefC.GetBool(PrefName.EasyHideDentalSchools)) {
 				this.Width=960;
 			}

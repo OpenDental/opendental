@@ -92,9 +92,9 @@ namespace OpenDental {
 			// 
 			this.picturePodium.HasBorder = false;
 			this.picturePodium.Image = global::OpenDental.Properties.Resources.Podium_logo_Black;
-			this.picturePodium.Location = new System.Drawing.Point(8, 19);
+			this.picturePodium.Location = new System.Drawing.Point(8, 14);
 			this.picturePodium.Name = "picturePodium";
-			this.picturePodium.Size = new System.Drawing.Size(95, 24);
+			this.picturePodium.Size = new System.Drawing.Size(95, 37);
 			this.picturePodium.TabIndex = 28;
 			this.picturePodium.TextNullImage = null;
 			this.picturePodium.Click += new System.EventHandler(this.picturePodium_Click);
