@@ -1654,9 +1654,6 @@ namespace OpenDental {
 				}
 				SetWindowingSlider();
 				bool doShowPrint=pictureBoxMain.Visible;
-				if(_odWebView2!=null) {
-					doShowPrint=(doShowPrint || _odWebView2.Visible);
-				}
 				EnableToolBarButtons(print:doShowPrint,delete:true,info:true,copy:pictureBoxMain.Visible, sign:true, brightAndContrast:pictureBoxMain.Visible, crop:pictureBoxMain.Visible, hand:pictureBoxMain.Visible, zoomIn:pictureBoxMain.Visible, zoomOut:pictureBoxMain.Visible, flip:pictureBoxMain.Visible, rotateL:pictureBoxMain.Visible, rotateR:pictureBoxMain.Visible, export:_isExportable);
 			}
 			else if(nodeIdTag.NodeType==EnumNodeType.Mount) {
@@ -3131,13 +3128,15 @@ namespace OpenDental {
 						_isExportable=true;
 						return;
 					}
-					Application.DoEvents();//Show the browser control before loading, in case loading a large PDF, so the user can see the preview has started without 			
+					//Set these fields before calling _odWebView2.Init() because the calling function will continue its execution while the Init() below is awaiting. And the calling
+					//function expects these fields to have already been set to their correct value.
+					pictureBoxMain.Visible=false;
+					_isExportable=true;
+					Application.DoEvents();//Show the browser control before loading, in case loading a large PDF, so the user can see the preview has started without
 					if(_odWebView2.CoreWebView2==null) {
 						await _odWebView2.Init();//Throws exception if Microsoft WebView2 Runtime is not installed so need to have in try-catch.
 					}
 					_odWebView2.CoreWebView2.Navigate(_odWebView2FilePath);//The return status of this function doesn't seem to be helpful.
-					pictureBoxMain.Visible=false;
-					_isExportable=true;
 				}
 			}
 			catch(Exception ex) {

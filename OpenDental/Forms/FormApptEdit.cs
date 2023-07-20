@@ -1403,7 +1403,7 @@ namespace OpenDental{
 						Procedure procedure=(Procedure)gridProc.ListGridRows[j].Tag;
 						if(procedure.CodeNum==listProcedureCodesApptType[i].CodeNum
 							//if the procedure code already exists in the grid and it's not attached to another appointment or planned appointment
-							&& (_isPlanned && (procedure.PlannedAptNum==0 || procedure.PlannedAptNum==_appointment.AptNum)
+							&& (_isPlanned && procedure.AptNum==0 && (procedure.PlannedAptNum==0 || procedure.PlannedAptNum==_appointment.AptNum)
 								|| (!_isPlanned && (procedure.AptNum==0 || procedure.AptNum==_appointment.AptNum)))
 							//The row is not already selected. This is necessary so that Apt Types with two of the same procs will select both procs.
 							&& !gridProc.SelectedIndices.Contains(j)) {
@@ -1719,7 +1719,12 @@ namespace OpenDental{
 				if(isMedical && (listDisplayFieldsAppts[i].InternalName=="Surf" || listDisplayFieldsAppts[i].InternalName=="Tth")) {
 					continue;
 				}
-				gridProc.Columns.Add(new GridColumn(listDisplayFieldsAppts[i].InternalName,listDisplayFieldsAppts[i].ColumnWidth));
+				if(listDisplayFieldsAppts[i].Description.IsNullOrEmpty()) {
+					gridProc.Columns.Add(new GridColumn(listDisplayFieldsAppts[i].InternalName,listDisplayFieldsAppts[i].ColumnWidth));
+				}
+				else {
+					gridProc.Columns.Add(new GridColumn(listDisplayFieldsAppts[i].Description,listDisplayFieldsAppts[i].ColumnWidth));
+				}
 			}
 			if(listDisplayFieldsAppts.Sum(x => x.ColumnWidth) > gridProc.Width) {
 				gridProc.HScrollVisible=true;
