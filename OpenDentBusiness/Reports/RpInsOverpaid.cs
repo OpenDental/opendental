@@ -26,6 +26,9 @@ namespace OpenDentBusiness {
 						FROM claimproc
 						WHERE claimproc.Status IN (1,4,5,7)
 						AND claimproc.ProcDate BETWEEN DATE({POut.Date(dateStart)}) AND DATE({POut.Date(dateEnd)}) ";
+			if(listClinicNums.Count>0) {
+				query+=$"AND claimproc.ClinicNum IN({string.Join(",",listClinicNums)}) ";
+			}
 			if(groupByProc) {
 				query+="GROUP BY claimproc.ProcNum ";
 			}

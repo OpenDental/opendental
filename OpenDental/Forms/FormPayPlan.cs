@@ -595,9 +595,7 @@ namespace OpenDental{
 					if(payPlanCharge.Principal<0) {//adjustment
 						textAmount.Text=(PIn.Double(textAmount.Text)-(payPlanChargeOldAmt)).ToString("f");//charge will be negative, - to add the amount back
 					}
-					gridCharges.BeginUpdate();
-					gridCharges.ListGridRows.RemoveAt(e.Row);
-					gridCharges.EndUpdate();
+					FillCharges();
 					return;
 				}
 				//modifying the existing charge

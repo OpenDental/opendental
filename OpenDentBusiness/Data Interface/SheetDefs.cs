@@ -435,7 +435,8 @@ namespace OpenDentBusiness{
 				SheetTypeEnum.LabelPatient,
 				SheetTypeEnum.LabelReferral,
 				SheetTypeEnum.LabelAppointment,
-				SheetTypeEnum.Statement)) 
+				SheetTypeEnum.Statement,
+				SheetTypeEnum.TreatmentPlan))
 			{
 				listSheetFieldTypes.Add(SheetFieldType.ComboBox);
 			}

@@ -5142,7 +5142,7 @@ namespace OpenDentBusiness {
 				canadaLabFee1=PIn.Double(textCanadaLabFee1Text);
 			}
 			if(canadaLabFee1==0) {
-				if(isCanadianLab && listCanadaLabFees.Count>0) { //Don't worry about deleting child lab fees if we are editing a lab fee. No such concept.
+				if(!isCanadianLab && listCanadaLabFees.Count>0) { //Don't worry about deleting child lab fees if we are editing a lab fee. No such concept.
 					TryDeleteLab(listCanadaLabFees[0]);
 				}
 			}
@@ -5161,7 +5161,7 @@ namespace OpenDentBusiness {
 				canadaLabFee2=PIn.Double(textCanadaLabFee2Text);
 			}
 			if(canadaLabFee2==0) {
-				if(isCanadianLab && listCanadaLabFees.Count>1) { //Don't worry about deleting child lab fees if we are editing a lab fee. No such concept.
+				if(!isCanadianLab && listCanadaLabFees.Count>1) { //Don't worry about deleting child lab fees if we are editing a lab fee. No such concept.
 					TryDeleteLab(listCanadaLabFees[1]);
 				}
 			}

@@ -5301,6 +5301,10 @@ namespace OpenDentBusiness{
 						hasProcsConcurrent=true;
 						listProceduresBeingMoved.Add(listProceduresInGrid[i]);
 					}
+					else if(listProceduresInGrid[i].AptNum != 0 && listProceduresInGrid[i].AptNum != appointment.AptNum) {//However, the procedure is attached to another appointment.
+						hasProcsConcurrent=true;
+						listProceduresBeingMoved.Add(listProceduresInGrid[i]);
+					}
 				}
 				else if(!isAttachedStart && isAttaching && !isPlanned) {//Attaching to this appointment.
 					if(listProceduresInGrid[i].AptNum != 0 && listProceduresInGrid[i].AptNum != appointment.AptNum) {//However, the procedure is attached to another appointment.
