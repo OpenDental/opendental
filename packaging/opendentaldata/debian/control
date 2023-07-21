@@ -1,0 +1,17 @@
+Source: opendentaldata
+Section: misc
+Priority: optional
+Maintainer: Frederik Carlier <frederik.carlier@carlier-online.be>
+Build-Depends-Indep: debhelper (>> 3.0.0)
+Standards-Version: 3.5.9
+
+Package: opendentaldata
+Architecture: all
+Depends: dbconfig-common, mysql-server
+Description: Open Dental Database
+ *** Unofficial package from frederik.carlier@carlier-online.be ***
+ .
+ Modern dental software includes Appointment Scheduling, Imaging, 
+ and 3D Dental Charting.
+ .
+ This package provides the database.

@@ -1,0 +1,16 @@
+<local:FrmODBase x:Class="OpenDental.FrmAccountingLock"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="473" Height="249" 
+             Text="Lock Accounting" Loaded="FrmAccountingLock_Loaded" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:TextVDate x:Name="textVDate" Width="100" Height="20" Margin="14,121,0,0" />
+		<ui:Label x:Name="label1" Width="440" Height="101" Margin="12,9,0,0" Text="This locks all accounting entries on or before the date entered below, regardless of security level.  The lock would have to be turned off by a security admin before anyone could change history.  Typically used to lock previous years from accidental or intentional alteration.  But any complex database may develop flaws, so the lock is not perfect.  It is strongly recommended to print a hard copy of the General Ledger at the same time as the lock is set." />
+        <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,40,25" Text="_Save" Click="butSave_Click" />
+		</Grid>
+</local:FrmODBase>

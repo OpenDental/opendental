@@ -1,0 +1,22 @@
+<local:FrmODBase x:Class="OpenDental.FrmGradingScaleItemEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="405" Height="147" 
+             Text="Grading Scale Item Edit" Loaded="FrmGradingScaleItemEdit_Loaded" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="butDelete" Width="78" VerticalAlignment="Bottom" Height="24" Margin="6,0,0,12" Text="_Delete" Icon="DeleteX" Click="butDelete_Click" />
+		<ui:TextBox x:Name="textGradeNumber" Width="61" Height="20" Margin="129,40,0,0" />
+		<ui:Label x:Name="labelNumber" Width="205" Height="33" Margin="196,35,0,0" Text="*Required" VAlign="Center" />
+		<ui:TextBox x:Name="textDescription" Width="199" Height="20" Margin="129,69,0,0" />
+		<ui:Label x:Name="labelGradeNumber" Width="125" Height="18" Margin="4,40,0,0" Text="Grade Number" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textGradeShowing" Width="61" Height="20" Margin="129,12,0,0" />
+		<ui:Label x:Name="labelGradeShowing" Width="125" Height="18" Margin="4,12,0,0" Text="Grade Showing" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="labelDescription" Width="125" Height="18" Margin="4,69,0,0" Text="Description" HAlign="Right" VAlign="Center" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="Save" Click="butSave_Click" />
+	</Grid>
+</local:FrmODBase>

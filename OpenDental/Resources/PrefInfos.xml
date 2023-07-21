@@ -1,0 +1,2295 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ArrayOfPrefInf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <PrefInf>
+    <PrefName>SalesTaxDoAutomate</PrefName>
+    <Category>AccountAdjustments</Category>
+    <ControlName>checkAutomateSalesTax</ControlName>
+    <ControlText>Automate Sales Tax</ControlText>
+    <Details>as procedures are completed, if the Procedure Code is marked 'Auto Tax', then add sales tax</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>BillingChargeAdjustmentType</PrefName>
+    <Category>AccountAdjustments</Category>
+    <ControlName>labelBillingChargeAdjustmentType</ControlName>
+    <ControlText>Billing charge adj type</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>BadDebtAdjustmentTypes</PrefName>
+    <Category>AccountAdjustments</Category>
+    <ControlName>labelCurrentBadDebtAdjTypes</ControlName>
+    <ControlText>Current Bad Debt adj types:</ControlText>
+    <Details>
+</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>FinanceChargeAdjustmentType</PrefName>
+    <Category>AccountAdjustments</Category>
+    <ControlName>labelFinanceChargeAdjustmentType</ControlName>
+    <ControlText>Finance charge adj type</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>LateChargeAdjustmentType</PrefName>
+    <Category>AccountAdjustments</Category>
+    <ControlName>labelLateChargeAdjType</ControlName>
+    <ControlText>Late charge adj type</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>AdjustmentBlockNegativeExceedingPatPortion</PrefName>
+    <Category>AccountAdjustments</Category>
+    <ControlName>labelNegativeAdjustments</ControlName>
+    <ControlText>Negative Adjustments</ControlText>
+    <Details>when adjustment amount exceeds remaining</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>PayPlanAdjType</PrefName>
+    <Category>AccountAdjustments</Category>
+    <ControlName>labelPaymentPlanAdjType</ControlName>
+    <ControlText>Payment Plan adj type</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>SalesTaxAdjustmentType</PrefName>
+    <Category>AccountAdjustments</Category>
+    <ControlName>labelSalesTaxAdjType</ControlName>
+    <ControlText>Sales Tax adj type</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>SalesTaxDefaultProvider</PrefName>
+    <Category>AccountAdjustments</Category>
+    <ControlName>labelSalesTaxDefaultProvider</ControlName>
+    <ControlText>Sales Tax default provider</ControlText>
+    <Details>for sales tax adjustments</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>SalesTaxPercentage</PrefName>
+    <Category>AccountAdjustments</Category>
+    <ControlName>labelSalesTaxPercentage</ControlName>
+    <ControlText>Sales Tax percentage</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>AllowFutureInsPayments</PrefName>
+    <Category>AccountGeneral</Category>
+    <ControlName>checkAllowFuturePayments</ControlName>
+    <ControlText>Allow future dated insurance payments</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>AccountAllowFutureDebits</PrefName>
+    <Category>AccountGeneral</Category>
+    <ControlName>checkAllowFutureDebits</ControlName>
+    <ControlText>Allow future dated patient payments</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>FutureTransDatesAllowed</PrefName>
+    <Category>AccountGeneral</Category>
+    <ControlName>checkAllowFutureTrans</ControlName>
+    <ControlText>Allow future dated transactions</ControlText>
+    <Details>including patient payments and insurance payments</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>AgingServiceTimeDue</PrefName>
+    <Category>AccountGeneral</Category>
+    <ControlName>labelAutoAgingRunTime</ControlName>
+    <ControlText>Automated aging run time, Leave blank to disable</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>BalancesDontSubtractIns</PrefName>
+    <Category>AccountGeneral</Category>
+    <ControlName>checkBalancesDontSubtractIns</ControlName>
+    <ControlText>Balances don't subtract insurance estimate</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>CommLogAutoSave</PrefName>
+    <Category>AccountGeneral</Category>
+    <ControlName>checkCommLogAutoSave</ControlName>
+    <ControlText>Commlogs auto save</ControlText>
+    <Details>every ten seconds</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>AgingBeginDateTime</PrefName>
+    <Category>AccountGeneral</Category>
+    <ControlName>labelAgingBeginDateT</ControlName>
+    <ControlText>DateTime the currently running aging started
+Usually blank</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>InvoicePaymentsGridShowNetProd</PrefName>
+    <Category>AccountGeneral</Category>
+    <ControlName>checkStatementInvoiceGridShowWriteoffs</ControlName>
+    <ControlText>Invoice payments grid shows write-offs
+</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ShowAccountFamilyCommEntries</PrefName>
+    <Category>AccountGeneral</Category>
+    <ControlName>checkShowFamilyCommByDefault</ControlName>
+    <ControlText>Show family commlog entries by default</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>AccountShowPaymentNums</PrefName>
+    <Category>AccountGeneral</Category>
+    <ControlName>checkAccountShowPaymentNums</ControlName>
+    <ControlText>Show payment numbers in Account Module</ControlText>
+    <Details>in the payment description, useful for foreign offices</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>checkPriClaimAllowSetToHoldUntilPriReceived</ControlName>
+    <ControlText>Allow primary claim status to be 'Hold Until Pri Received'</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>checkAllowProcAdjFromClaim</ControlName>
+    <ControlText>Allow procedure adjustments from Edit Claim window</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>InsAutoReceiveNoAssign</PrefName>
+    <Category>AccountInsurance</Category>
+    <ControlName>checkInsAutoReceiveNoAssign</ControlName>
+    <ControlText>Auto receive claims with no assignment of benefits</ControlText>
+    <Details>Only applies to claims with no payments entered and no received claim procedures.</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ClaimAttachExportPath</PrefName>
+    <Category>AccountInsurance</Category>
+    <ControlName>labelClaimAttachmentExportPath</ControlName>
+    <ControlText>Claim attachment export path</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>checkClaimFormTreatDentSaysSigOnFile</ControlName>
+    <ControlText>Claim form treating provider shows 'Signature On File' rather than name</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ClaimIdPrefix</PrefName>
+    <Category>AccountInsurance</Category>
+    <ControlName />
+    <ControlText>Claim Identification Prefix</ControlText>
+    <Details>Default is [PatNum]/. This prefix is followed by an auto-generated claim number. Useful for internal tracking of claims.
+</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>checkClaimPaymentPickStatementType</ControlName>
+    <ControlText>Claim payments prompt for Payment Type</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ClaimZeroDollarProcBehavior</PrefName>
+    <Category>AccountInsurance</Category>
+    <ControlName>labelCreatingClaimsZeroProcedures</ControlName>
+    <ControlText>Creating claims with $0 procedures</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>checkInsPayNoWriteoffMoreThanProc</ControlName>
+    <ControlText>Disallow write-offs greater than the adjusted procedure fee</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>checkClaimTrackingExcludeNone</ControlName>
+    <ControlText>Exclude 'None' as an option on Custom Tracking Status</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>checkNoInitialPrimaryInsMoreThanProc</ControlName>
+    <ControlText>Initial primary insurance payment and write-off cannot exceed adjusted proc fee</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>EclaimsSeparateTreatProv</PrefName>
+    <Category>AccountInsurance</Category>
+    <ControlName>checkEclaimsSeparateTreatProv</ControlName>
+    <ControlText>On e-claims, send treating provider info for each separate procedure</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>checkEclaimsMedicalProvTreatmentAsOrdering</ControlName>
+    <ControlText>On medical e-claims, send treating provider as ordering provider by default</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>labelClaimCredit</ControlName>
+    <ControlText>Payment exceeds procedure balance</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>label17</ControlName>
+    <ControlText>PPO write-off description (blank for "Write-off")</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>checkPromptForSecondaryClaim</ControlName>
+    <ControlText>Prompt for secondary claims</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>checkInsEstRecalcReceived</ControlName>
+    <ControlText>Recalculate estimates for received claim procedures</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>checkClaimPrimaryRecievedForceSecondaryStatus</ControlName>
+    <ControlText>Remove 'Do Nothing' for secondary claims with 'Hold until Pri received'</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>checkClaimsValidateACN</ControlName>
+    <ControlText>Require ACN# in remarks on claims with ADDP group name</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>checkClaimMedTypeIsInstWhenInsPlanIsMedical</ControlName>
+    <ControlText>Set medical claims to institutional when using medical insurance</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>checkShowClaimPatResp</ControlName>
+    <ControlText>Show Patient Responsibility column in the Edit Claim/Payment windows</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>checkShowClaimPayTracking</ControlName>
+    <ControlText>Show Payment Tracking column in the Edit Claim/Payment windows</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountInsurance</Category>
+    <ControlName>checkProviderIncomeShows</ControlName>
+    <ControlText>Show provider income transfer window after entering insurance payment</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>InsPpoAlwaysUseUcrFee</PrefName>
+    <Category>AccountInsurance</Category>
+    <ControlName>checkPpoUseUcr</ControlName>
+    <ControlText>Use UCR fee for billed fee even if PPO fee is higher</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountPayments</Category>
+    <ControlName>checkAllowPrepayProvider</ControlName>
+    <ControlText>Allow assigning unearned income to providers</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountPayments</Category>
+    <ControlName>checkAllowEmailCCReceipt</ControlName>
+    <ControlText>Allow emailing credit card receipts</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>StoreCCtokens</PrefName>
+    <Category>AccountPayments</Category>
+    <ControlName>checkStoreCCTokens</ControlName>
+    <ControlText>Automatically store credit card tokens</ControlText>
+    <Details>for use with XCharge and PayConnect</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountPayments</Category>
+    <ControlName>label38</ControlName>
+    <ControlText>Default Clinic for patient payments</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountPayments</Category>
+    <ControlName>label28</ControlName>
+    <ControlText>Default unearned type for unallocated paysplits</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountPayments</Category>
+    <ControlName>checkPaymentCompletedDisableMerchantButtons</ControlName>
+    <ControlText>Disable merchant buttons for completed payments</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountPayments</Category>
+    <ControlName>label59</ControlName>
+    <ControlText>Dynamic Pay Plan run time</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>DynamicPayPlanPrepaymentUnearnedType</PrefName>
+    <Category>AccountPayments</Category>
+    <ControlName>label39</ControlName>
+    <ControlText>Dynamic payment plan unearned type</ControlText>
+    <Details>Hides prepayments from income transfer system. Only PaySplit unearned types marked as Do Not Show on Account are listed here.</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountPayments</Category>
+    <ControlName>checkHideDueNow</ControlName>
+    <ControlText>Hide "Due Now" in Payment Plans Grid</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountPayments</Category>
+    <ControlName>checkPayPlanSaveSignedPdf</ControlName>
+    <ControlText>In eClipboard, save signed Payment Plans as PDF</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>IncomeTransfersTreatNegativeProductionAsIncome</PrefName>
+    <Category>AccountPayments</Category>
+    <ControlName>checkIncTxfrTreatNegProdAsIncome</ControlName>
+    <ControlText>Income transfers treat negative production as income</ControlText>
+    <Details>See &lt;a href='https://opendental.com/manual/incometransfermanager.html' target='_blank' rel='noopener noreferrer'&gt;Income Transfer Manager.&lt;/a&gt; Not recommended for offices that pay providers based on collections. If using the FIFO button (rare), then this will also reallocate overpayments.</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>OnlinePaymentsMarkAsProcessed</PrefName>
+    <Category>AccountPayments</Category>
+    <ControlName>checkOnlinePaymentsMarkAsProcessed</ControlName>
+    <ControlText>Mark online payments as processed</ControlText>
+    <Details>otherwise review manually</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>PayPlanHideDueNow</PrefName>
+    <Category>AccountPayments</Category>
+    <ControlName>label27</ControlName>
+    <ControlText>Pay Plan charge logic</ControlText>
+    <Details>Determines how charges and credits for Patient Payment Plans show in the patient account ledger and whether they affect balances, aging, and reports. 
+				This logic does not apply to insurance payment plans and will continue to use the old logic:
+				&lt;br&gt;&lt;br&gt;&lt;FONT COLOR='RED'&gt;Do Not Age (Legacy):&lt;/FONT&gt; Payment plan debits (amounts due) and payments only show within the payment plan and will not affect balance or aging.
+				&lt;br&gt;-Payment plan debits are totaled in the Payment Plans grid under Due Now.
+				&lt;br&gt;-Payment plan payments do not show in the ledger but in the payment plan. Double-clicking the plan row is the only way to view payment plan payments.
+				&lt;br&gt;-One payment plan credit (PayPln) will show as a single line item in the patient account ledger, thus reducing the total account balance by the amount. The credit 
+				amount is based on the Tx Completed Amt set in the payment plan.
+				&lt;br&gt;-Other payment plan credits, debits, and payments do not show in the ledger nor do they affect balances or aging.
+				&lt;br&gt;-The total A/R in the Aging of A/R report will not include payment plan due amounts.
+				&lt;br&gt;-Only changes to the Tx Completed Amount affect aging and production and income reports.
+				&lt;br&gt;-Payment plan amounts are not included on the Receivables Breakdown Report.
+				&lt;br&gt;&lt;FONT COLOR='RED'&gt;Age Credits and Debits (Default):&lt;/FONT&gt; Payment plan debits, credits, and payments will show as line items in patient account ledger and affect 
+				balances and aging. 
+				&lt;br&gt;When the patient is in the same family as the payment plan guarantor, the behavior is as follows.
+				&lt;br&gt;-Payment plan amounts due (PayPln: Debit) and credits (PayPln: Credit) show as line items in the patient account ledger.
+				&lt;br&gt;-Payment plan payments show in the account ledger.
+				&lt;br&gt;-Payment plan due amounts are included the patient's balance.
+				&lt;br&gt;-Payment plan amounts due and payments are considered when calculating aging.
+				&lt;br&gt;-Payment plan credits and debits are included on the Receivables Breakdown report.
+				&lt;br&gt;-Changes made to historical payment plan charges will affect historical information (e.g. Aging of A/R, Production and Income reports).
+				&lt;br&gt;When the patient is in a different family than the payment plan guarantor, the behavior is as follows.
+				&lt;br&gt;-Payment plan amounts due (PayPln: Debit) show as line items in the guarantor's account ledger.
+				&lt;br&gt;-Payment plan credits (PayPln: Credit) show as line items in the patient's account ledger.
+				&lt;br&gt;-Payment plan payments show in the guarantor's account ledger.
+				&lt;br&gt;-Payment plan due amounts are included in the guarantor's balance.
+				&lt;br&gt;&lt;FONT COLOR='RED'&gt;Age Credits Only:&lt;/FONT&gt; Patients are credited for payment plans when the credit comes due, but debits all exist separately from the account ledger.
+				&lt;br&gt;-Each payment plan credit line item will show in the account ledger, sorted by Tx Credit date.
+				&lt;br&gt;-Payment plan amounts due only show in the Payment Plan grid. They do not show in the account ledger.
+				&lt;br&gt;-Payment plan amounts due will not be considered when calculating balances and aging.
+				&lt;br&gt;-Payment plan credits and debits will not be included on the Receivables Breakdown report.
+				&lt;br&gt;-Changes made to historical payment plan credits will affect historical information (e.g. Aging of A/R, Production and Income reports).
+				&lt;br&gt;&lt;FONT COLOR='RED'&gt;No Charges to Account (Rarely Used):&lt;/FONT&gt; Patients are not credited for payment plans so the account balance is aged normally.
+				&lt;br&gt;-Payment plan amounts due only show in the Payment Plan grid. They do not show in the account ledger.
+				&lt;br&gt;-Payments to payment plans show in ledger and payment plan.
+				&lt;br&gt;-Payment plan amounts will not be included on the Receivables Breakdown report.
+				&lt;br&gt;&lt;br&gt;See &lt;a href='https://opendental.com/manual/paymentplanpatientfaq.html' target='_blank' rel='noopener noreferrer'&gt;Payment Plan Q and A&lt;/a&gt; for additional details.</Details>
+    <WidthWindow>725</WidthWindow>
+    <HeightWindow>675</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>PayPlansUseSheets</PrefName>
+    <Category>AccountPayments</Category>
+    <ControlName>checkPayPlansUseSheets</ControlName>
+    <ControlText>Pay Plans use Sheets for printing</ControlText>
+    <Details>See Setup, Sheets</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountPayments</Category>
+    <ControlName>labelTermsAndConditions</ControlName>
+    <ControlText>Payment Plan Terms and Conditions</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountPayments</Category>
+    <ControlName>checkPayPlansExcludePastActivity</ControlName>
+    <ControlText>Payment Plans exclude past activity by default</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountPayments</Category>
+    <ControlName>checkPaymentsPromptForPayType</ControlName>
+    <ControlText>Payments prompt for Payment Type</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountPayments</Category>
+    <ControlName>checkShowAllocateUnearnedPaymentPrompt</ControlName>
+    <ControlText>Prompt user to allocate unearned income after creating a claim</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>RecurringChargesAllowedWhenNoPatBal</PrefName>
+    <Category>AccountRecAndRepCharges</Category>
+    <ControlName>checkRecurPatBal0</ControlName>
+    <ControlText>Allow recurring charges to run even if no family balance present</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>RecurringChargesInactivateDeclinedCards</PrefName>
+    <Category>AccountRecAndRepCharges</Category>
+    <ControlName>checkRecurringChargesInactivateDeclinedCards</ControlName>
+    <ControlText>Automatically inactivate declined cards</ControlText>
+    <Details>recommend checked</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>AccountRecAndRepCharges</Category>
+    <ControlName>label56</ControlName>
+    <ControlText>Pay type for CC</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>RecurringChargesAutomatedEnabled</PrefName>
+    <Category>AccountRecAndRepCharges</Category>
+    <ControlName>checkRecurringChargesAutomated</ControlName>
+    <ControlText>Recurring charges run automatically</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>RecurringChargesAutomatedTime</PrefName>
+    <Category>AccountRecAndRepCharges</Category>
+    <ControlName>labelRecurringChargesAutomatedTime</ControlName>
+    <ControlText>Recurring charges run time</ControlText>
+    <Details>this should be set to run after Repeating charges</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>RecurringChargesShowInactive</PrefName>
+    <Category>AccountRecAndRepCharges</Category>
+    <ControlName>checkRecurringChargesShowInactive</ControlName>
+    <ControlText>Recurring charges show inactive charges by default</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>RecurringChargesUsePriProv</PrefName>
+    <Category>AccountRecAndRepCharges</Category>
+    <ControlName>checkRecurChargPriProv</ControlName>
+    <ControlText>Recurring charges use primary provider instead of FIFO</ControlText>
+    <Details>only used when Paysplit allocations is set to 'Rigorous'</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>RecurringChargesUseTransDate</PrefName>
+    <Category>AccountRecAndRepCharges</Category>
+    <ControlName>checkRecurringChargesUseTransDate</ControlName>
+    <ControlText>Recurring charges use transaction date</ControlText>
+    <Details>otherwise, use the date the charge is scheduled to process</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>RepeatingChargesAutomated</PrefName>
+    <Category>AccountRecAndRepCharges</Category>
+    <ControlName>labelRepeatingChargesAutomatedTime</ControlName>
+    <ControlText>Repeating charges run time</ControlText>
+    <Details>this should be set to run before Recurring charges</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ApptAppearance</Category>
+    <ControlName>checkReplaceBlockouts</ControlName>
+    <ControlText>Allow 'Block appointment scheduling' blockouts to replace conflicting blockouts</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>AppointmentBubblesNoteLength</PrefName>
+    <Category>ApptAppearance</Category>
+    <ControlName>label21</ControlName>
+    <ControlText>Appointment bubble max note length</ControlText>
+    <Details>in characters, 0 for no limit</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ApptAppearance</Category>
+    <ControlName>checkApptBubbleDelay</ControlName>
+    <ControlText>Appointment bubble popup delay</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ApptFontSize</PrefName>
+    <Category>ApptAppearance</Category>
+    <ControlName>label54</ControlName>
+    <ControlText>Appointment font size</ControlText>
+    <Details>default is 8; decimals allowed; in addition to Zoom</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>AppointmentTimeLineColor</PrefName>
+    <Category>ApptAppearance</Category>
+    <ControlName>label25</ControlName>
+    <ControlText>Appointment time line color</ControlText>
+    <Details>horizontal line that indicates current time</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ApptAppearance</Category>
+    <ControlName>checkApptModuleDefaultToWeek</ControlName>
+    <ControlText>Appointments Module defaults to week view</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>FormClickDelay</PrefName>
+    <Category>ApptAppearance</Category>
+    <ControlName>apptClickDelay</ControlName>
+    <ControlText>Click delay after opening Appt Edit</ControlText>
+    <Details>or a triple click could accidentally cause a procedure to be added</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ApptAppearance</Category>
+    <ControlName>checkAppointmentBubblesDisabled</ControlName>
+    <ControlText>Default appointment bubble to 'disabled' for new appointment views</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ApptSchedEnforceSpecialty</PrefName>
+    <Category>ApptAppearance</Category>
+    <ControlName>labelApptSchedEnforceSpecialty</ControlName>
+    <ControlText>Enforce clinic specialties</ControlText>
+    <Details>when the patient's specialty does not match the clinic's</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ApptAppearance</Category>
+    <ControlName>checkWaitingRoomFilterByView</ControlName>
+    <ControlText>Filter the waiting room based on the selected appointment view</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ApptSecondaryProviderConsiderOpOnly</PrefName>
+    <Category>ApptAppearance</Category>
+    <ControlName>checkUseOpHygProv</ControlName>
+    <ControlText>Force op's hygiene provider as secondary provider</ControlText>
+    <Details>Checked: The hygienist of the operatory is always assigned as the hygienist on the appointment, even if none.&lt;br/&gt;&lt;br/&gt;Unchecked: The hygienist of the operatory is assigned as the hygienist unless it is none. In that case, the patient's secondary provider is assigned.</Details>
+    <WidthWindow>400</WidthWindow>
+    <HeightWindow>275</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ApptModuleRefreshesEveryMinute</PrefName>
+    <Category>ApptAppearance</Category>
+    <ControlName>checkApptRefreshEveryMinute</ControlName>
+    <ControlText>Refresh every 60 seconds</ControlText>
+    <Details>keeps waiting room times refreshed</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ApptAppearance</Category>
+    <ControlName>checkApptExclamation</ControlName>
+    <ControlText>Show ! on appts for ins not sent, if added to Appt View (might cause slowdown)</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>AppointmentTimeArrivedTrigger</PrefName>
+    <Category>ApptAppearance</Category>
+    <ControlName>label3</ControlName>
+    <ControlText>Time Arrived trigger</ControlText>
+    <Details>Select the confirmed status that will trigger an automatic time entry in the Time Arrived field on the &lt;a href='https://www.opendental.com/manual/aptedit.html' target='_blank' rel='noopener noreferrer'&gt;Edit Appointment&lt;/a&gt;, and add the patient to the &lt;a href='https://www.opendental.com/manual/waitingroom.html' target='_blank' rel='noopener noreferrer'&gt;Waiting Room&lt;/a&gt;. Customize options in Definitions,&lt;br/&gt;Appt Confirmed (see &lt;a href='https://www.opendental.com/manual/confirmationstatus.html' target='_blank' rel='noopener noreferrer'&gt;Confirmation Status&lt;/a&gt;).";</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ApptAppearance</Category>
+    <ControlName>label6</ControlName>
+    <ControlText>Time Dismissed trigger</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ApptAppearance</Category>
+    <ControlName>label5</ControlName>
+    <ControlText>Time Seated (in op) trigger</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ApptAppearance</Category>
+    <ControlName>checkSolidBlockouts</ControlName>
+    <ControlText>Use solid blockouts instead of outlines on the Appointments Module</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ApptAppearance</Category>
+    <ControlName>label23</ControlName>
+    <ControlText>Waiting room alert color</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>WaitingRoomAlertTime</PrefName>
+    <Category>ApptAppearance</Category>
+    <ControlName>label22</ControlName>
+    <ControlText>Waiting room alert time</ControlText>
+    <Details>in minutes, 0 to disable</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ApptAppearance</Category>
+    <ControlName>label45</ControlName>
+    <ControlText>Week View start day</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ApptProvbarWidth</PrefName>
+    <Category>ApptAppearance</Category>
+    <ControlName>label58</ControlName>
+    <ControlText>Width of provider time bar on left of each appointment</ControlText>
+    <Details>in pixels; enter 0 to remove; does not affect bars to the left of the operatories</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ApptModuleAdjustmentsInProd</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName />
+    <ControlText>Add daily adjustments to net production</ControlText>
+    <Details>adjustments, discount plan adjustments, and TP procedure discounts will be included</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ApptAllowEmptyComplete</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName>checkApptAllowEmptyComplete</ControlName>
+    <ControlText>Allow setting appointments without procedures complete</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ApptAllowFutureComplete</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName>checkApptAllowFutureComplete</ControlName>
+    <ControlText>Allow setting future appointments complete</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>AppointmentTimeIsLocked</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName>checkAppointmentTimeIsLocked</ControlName>
+    <ControlText>Appointment time locked by default</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>AppointmentWithoutProcsDefaultLength</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName>labelApptWithoutProcsDefaultLength</ControlName>
+    <ControlText>Appointment without procedures default length</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ApptsAllowOverlap</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName>checkApptsAllowOverlap</ControlName>
+    <ControlText>Appointments allow overlap</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ApptModuleProductionUsesOps</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName>checkApptModuleProductionUsesOps</ControlName>
+    <ControlText>Appointments Module production uses operatories</ControlText>
+    <Details>uses operatories showing instead of provider bars at left</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ApptsRequireProc</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName>checkApptsRequireProcs</ControlName>
+    <ControlText>Appointments require procedures</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>BrokenApptProcedure</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName>label37</ControlName>
+    <ControlText>Broken appointment procedure type</ControlText>
+    <Details>None: Do not prompt user to add any procedure. If grayed out, the database does not have a D9986 or D9987 procedure code (example: foreign user). Procedure codes must already exist to use this preference.&lt;/br&gt;&lt;/br&gt;Missed: User will be prompted to add completed procedure D9986 (missed appointment).&lt;/br&gt;&lt;/br&gt;Cancelled: User will be prompted to add completed procedure D9987 (cancelled appointment).&lt;/br&gt;&lt;/br&gt;Both: Give user the option to add a completed D9986 or D9987.</Details>
+    <WidthWindow>400</WidthWindow>
+    <HeightWindow>350</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>BrokenAppointmentAdjustmentType</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName>label7</ControlName>
+    <ControlText>Broken appt default adj type</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>UnscheduledListNoRecalls</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName>checkUnscheduledListNoRecalls</ControlName>
+    <ControlText>Do not allow recall appointments on the Unscheduled List</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>BrokenApptRequiredOnMove</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName>checkBrokenApptRequiredOnMove</ControlName>
+    <ControlText>Force users to break scheduled appointments before rescheduling</ControlText>
+    <Details>even if Broken appointment procedure type is set to "None"</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>BrokenApptAdjustment</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName>checkBrokenApptAdjustment</ControlName>
+    <ControlText>Make broken appointment adjustment</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>BrokenApptCommLog</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName>checkBrokenApptCommLog</ControlName>
+    <ControlText>Make broken appointment commlog</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ApptAutoRefreshRange</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName>labelApptAutoRefreshRange</ControlName>
+    <ControlText>Number of days out to automatically refresh Appointments Module</ControlText>
+    <Details>-1 for all, only for large offices experiencing slowness</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ApptPreventChangesToCompleted</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName>checkPreventChangesToComplAppts</ControlName>
+    <ControlText>Prevent changes to completed appointments with completed procedures</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>AppointmentSearchBehavior</PrefName>
+    <Category>ApptGeneral</Category>
+    <ControlName>label13</ControlName>
+    <ControlText>Search Behavior</ControlText>
+    <Details>ProviderTime: searches availability using only the provider time bar at the very left.&lt;br/&gt;&lt;br/&gt;
+ProviderTimeOperatory: searches availability using both the provider time bar and space in the provider's operatories. This will prevent overlap of appointments.</Details>
+    <WidthWindow>400</WidthWindow>
+    <HeightWindow>275</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ChartGeneral</Category>
+    <ControlName>checkChartOrthoTabAutomaticCheckboxes</ControlName>
+    <ControlText>Automatically check and uncheck ortho mode and show grid checkboxes based on selection of Ortho tab </ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ChartGeneral</Category>
+    <ControlName>labelIcdCodeDefault</ControlName>
+    <ControlText>Default ICD-9 code for new procedures and when set complete</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ChartGeneral</Category>
+    <ControlName>label14</ControlName>
+    <ControlText>Indicator patient has no allergies</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ChartGeneral</Category>
+    <ControlName>label9</ControlName>
+    <ControlText>Indicator patient has no medications</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ChartGeneral</Category>
+    <ControlName>label8</ControlName>
+    <ControlText>Indicator patient has no problems</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>MedDefaultStopDays</PrefName>
+    <Category>ChartGeneral</Category>
+    <ControlName>label11</ControlName>
+    <ControlText>Medication Order default days until stop date</ControlText>
+    <Details>0 for no automatic stop date</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ChartNonPatientWarn</PrefName>
+    <Category>ChartGeneral</Category>
+    <ControlName>checkChartNonPatientWarn</ControlName>
+    <ControlText>Non-Patient warning</ControlText>
+    <Details>when opened from the Chart Module</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>IsAlertRadiologyProcsEnabled</PrefName>
+    <Category>ChartGeneral</Category>
+    <ControlName>checkIsAlertRadiologyProcsEnabled</ControlName>
+    <ControlText>OpenDentalService alerts for scheduled non-CPOE radiology procedures</ControlText>
+    <Details>See &lt;a href='https://opendental.com/manual/ehrcpoeradapprove.html' target='_blank'&gt;EHR Radiology Order List&lt;/a&gt;</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ChartGeneral</Category>
+    <ControlName>checkPerioSkipMissingTeeth</ControlName>
+    <ControlText>Perio exams always skip missing teeth</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ChartGeneral</Category>
+    <ControlName>checkPerioTreatImplantsAsNotMissing</ControlName>
+    <ControlText>Perio exams treat implants as not missing</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ChartGeneral</Category>
+    <ControlName>label32</ControlName>
+    <ControlText>Procedure Code List sort</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ShowPlannedAppointmentPrompt</PrefName>
+    <Category>ChartGeneral</Category>
+    <ControlName>checkShowPlannedApptPrompt</ControlName>
+    <ControlText>Prompt for Planned Appointment</ControlText>
+    <Details>when leaving the Chart Module and a patient has procedures that were treatment planned today</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ChartGeneral</Category>
+    <ControlName>checkAutoClearEntryStatus</ControlName>
+    <ControlText>Reset entry status to 'TreatPlan' when switching patients</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ChartGeneral</Category>
+    <ControlName>checkScreeningsUseSheets</ControlName>
+    <ControlText>Screenings use Sheets</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ChartGeneral</Category>
+    <ControlName>labelToothNomenclature</ControlName>
+    <ControlText>Tooth Nomenclature</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>DxIcdVersion</PrefName>
+    <Category>ChartGeneral</Category>
+    <ControlName>checkDxIcdVersion</ControlName>
+    <ControlText>Use ICD-10 Diagnosis Codes</ControlText>
+    <Details>uncheck for ICD-9</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>MedicalFeeUsedForNewProcs</PrefName>
+    <Category>ChartGeneral</Category>
+    <ControlName>checkMedicalFeeUsedForNewProcs</ControlName>
+    <ControlText>Use medical fee for new procedures</ControlText>
+    <Details>when cross-coding</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>UseProviderColorsInChart</PrefName>
+    <Category>ChartGeneral</Category>
+    <ControlName>checkProvColorChart</ControlName>
+    <ControlText>Use provider color in chart</ControlText>
+    <Details>background color in grid for completed procedures</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ChartProcedures</Category>
+    <ControlName>checkSignatureAllowDigital</ControlName>
+    <ControlText>Allow digital signatures</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ClaimProcsAllowedToBackdate</PrefName>
+    <Category>ChartProcedures</Category>
+    <ControlName>checkClaimProcsAllowEstimatesOnCompl</ControlName>
+    <ControlText>Allow estimates to be created for backdated completed procedures</ControlText>
+    <Details>Not recommended. Determines whether or not insurance estimates are created when a procedure is entered with a previous date (earlier than today) and an entry status of Complete. Typically only used by those who regularly enter completed procedures for previous dates.&lt;br/&gt;&lt;br/&gt;To prevent accidental activation, a password prompt will display when enabling this option. The password is abracadabra.</Details>
+    <WidthWindow>375</WidthWindow>
+    <HeightWindow>300</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>AllowSettingProcsComplete</PrefName>
+    <Category>ChartProcedures</Category>
+    <ControlName>checkAllowSettingProcsComplete</ControlName>
+    <ControlText>Allow setting procedures complete</ControlText>
+    <Details>not usually recommended, it's better to only set appointments complete</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ChartProcedures</Category>
+    <ControlName>checkProcNoteSigsBlocked</ControlName>
+    <ControlText>Block procedure note signatures when there are uncompleted auto note prompts</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ProcProvChangesClaimProcWithClaim</PrefName>
+    <Category>ChartProcedures</Category>
+    <ControlName>checkProcProvChangesCp</ControlName>
+    <ControlText>Changing treating provider updates Claim Proc provider</ControlText>
+    <Details>Leave this checked to prevent provider mismatches. See &lt;a href='https://www.opendental.com/manual/claimprocedureprovider.html' target='_blank'&gt;Claimproc Provider&lt;/a&gt;.&lt;br&gt;&lt;br&gt;Claim procedures not attached to a claim (e.g. for insurance estimates) always inherit the procedure provider.</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ChartProcedures</Category>
+    <ControlName>checkNotesProviderSigOnly</ControlName>
+    <ControlText>Notes can only be signed by providers</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ProcFeeUpdatePrompt</PrefName>
+    <Category>ChartProcedures</Category>
+    <ControlName>labelProcFeeUpdatePrompt</ControlName>
+    <ControlText>Procedure fee update behavior</ControlText>
+    <Details>when changing the provider</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ProcLockingIsAllowed</PrefName>
+    <Category>ChartProcedures</Category>
+    <ControlName>checkProcLockingIsAllowed</ControlName>
+    <ControlText>Procedure locking is allowed</ControlText>
+    <Details>see&lt;a href='https:/www.opendental.com/manual/procedurelocking.html' target='_blank'&gt; Procedure Lock&lt;/a&gt;</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ChartProcedures</Category>
+    <ControlName>checkProcNoteConcurrencyMerge</ControlName>
+    <ControlText>Procedure notes merge together when concurrency issues occur</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ProcPromptForAutoNote</PrefName>
+    <Category>ChartProcedures</Category>
+    <ControlName>checkProcsPromptForAutoNote</ControlName>
+    <ControlText>Procedures Prompt For Auto Note</ControlText>
+    <Details>if auto note prompts were not completed, be prompted when the procedure is next opened</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ProcEditRequireAutoCodes</PrefName>
+    <Category>ChartProcedures</Category>
+    <ControlName>checkProcEditRequireAutoCode</ControlName>
+    <ControlText>Require use of suggested auto codes</ControlText>
+    <Details>otherwise, a user is allowed to chart the mismatched code</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ChartProcedures</Category>
+    <ControlName>checkProcGroupNoteDoesAggregate</ControlName>
+    <ControlText>When creating a Group Note, aggregate procedure notes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>AgingProcLifo</PrefName>
+    <Category>ExperimentalPrefs</Category>
+    <ControlName>checkAgingProcLifo</ControlName>
+    <ControlText>Transactions attached to a procedure offset each other before aging</ControlText>
+    <Details>3 state checkbox. When indeterminate (filled), it behaves as checked. Recommended is checked. Adjustment and payment plan credits attached to a procedure are summed by date. If the sum of the attached charges and credits results in a credit, the credit is applied to the balance of the procedure's aging category. Any remaining credit is aged normally. This is a LIFO strategy.</Details>
+    <WidthWindow>400</WidthWindow>
+    <HeightWindow>275</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>FamilyGeneral</Category>
+    <ControlName>checkFamPhiAccess</ControlName>
+    <ControlText>Allow guarantor access to family health information in the Patient Portal</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>PatientAllSuperFamilySync</PrefName>
+    <Category>FamilyGeneral</Category>
+    <ControlName>checkSuperFamSync</ControlName>
+    <ControlText>Allow syncing patient information to all super family members</ControlText>
+    <Details>show "Same for entire super family" checkbox in Edit Patient Information window</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>FamilyGeneral</Category>
+    <ControlName>checkAutoFillPatEmail</ControlName>
+    <ControlText>Autofill patient's email with the guarantor's when adding many new patients</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>FamilyGeneral</Category>
+    <ControlName>checkSameForFamily</ControlName>
+    <ControlText>In Patient Edit window, checks for "Same for Entire Family" default to unchecked</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>FamilyGeneral</Category>
+    <ControlName>checkPatientDOBMasked</ControlName>
+    <ControlText>Mask patient date of birth</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>FamilyGeneral</Category>
+    <ControlName>checkPatientSSNMasked</ControlName>
+    <ControlText>Mask patient Social Security Numbers</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>PriProvDefaultToSelectProv</PrefName>
+    <Category>FamilyGeneral</Category>
+    <ControlName>checkSelectProv</ControlName>
+    <ControlText>Pri Prov defaults to 'Select Provider' in Patient Edit and Add Family windows</ControlText>
+    <Details>require user to select a provider</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>FamilyGeneral</Category>
+    <ControlName>checkGoogleAddress</ControlName>
+    <ControlText>Show Google Maps in Patient Edit window</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>FamilyGeneral</Category>
+    <ControlName>checkPreferredPronouns</ControlName>
+    <ControlText>Show Preferred Pronouns for Patients</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>FamilyGeneral</Category>
+    <ControlName>checkPreferredReferrals</ControlName>
+    <ControlText>Show preferred referrals only in the Select Referral window by default</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>PatientPhoneUsePhonenumberTable</PrefName>
+    <Category>FamilyGeneral</Category>
+    <ControlName>checkUsePhoneNumTable</ControlName>
+    <ControlText>Store patient phone numbers in a separate table for patient search</ControlText>
+    <Details>strips out non-digit characters, useful to speed up the search in large databases</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>SuperFamSortStrategy</PrefName>
+    <Category>FamilyGeneral</Category>
+    <ControlName>labelSuperFamSort</ControlName>
+    <ControlText>Super family sorting strategy</ControlText>
+    <Details>Determines the order of super family names as they appear in the Family Module.&lt;br/&gt;.&lt;br/&gt;NameAsc: Sort by last names in ascending alphabetical order (A-Z).&lt;br/&gt;&lt;br/&gt;NameDesc: Sort by last names in descending alphabetical order (Z-A).&lt;br/&gt;&lt;br/&gt;PatNumAsc: Sort by patient numbers in ascending order. The patient with the lowest number will be first, followed by patients with higher numbers.&lt;br/&gt;&lt;br/&gt;PatNumDesc: Sort by patient numbers in descending order. The patient with the highest number will be first, followed by patients with lower numbers.</Details>
+    <WidthWindow>425</WidthWindow>
+    <HeightWindow>350</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>FamilyGeneral</Category>
+    <ControlName>checkTextMsgOkStatusTreatAsNo</ControlName>
+    <ControlText>Text Msg OK status, treat ?? as No instead of Yes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>PatInitBillingTypeFromPriInsPlan</PrefName>
+    <Category>FamilyInsurance</Category>
+    <ControlName>checkPatInitBillingTypeFromPriInsPlan</ControlName>
+    <ControlText>Adding new primary insurance plan to patient sets billing type</ControlText>
+    <Details>but changing an existing insurance plan's billing type will not change the patient's billing type</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>InsPPOsecWriteoffs</PrefName>
+    <Category>FamilyInsurance</Category>
+    <ControlName>checkInsPPOsecWriteoffs</ControlName>
+    <ControlText>Calculate secondary insurance PPO write-offs</ControlText>
+    <Details>not recommended</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>InsDefaultCobRule</PrefName>
+    <Category>FamilyInsurance</Category>
+    <ControlName>labelCobRule</ControlName>
+    <ControlText>Coordination of Benefits (COB) rule</ControlText>
+    <Details>see &lt;a href='https://www.opendental.com/manual/cob.html' target='_blank'&gt;Coordination of Benefits&lt;/a&gt;</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>CoPay_FeeSchedule_BlankLikeZero</PrefName>
+    <Category>FamilyInsurance</Category>
+    <ControlName>checkCoPayFeeScheduleBlankLikeZero</ControlName>
+    <ControlText>Copay fee schedules treat blank entries as zero</ControlText>
+    <Details>Set how blank entries in copay fee schedules are handled.&lt;br/&gt;&lt;br/&gt;Checked: Blank entries are treated as 0.&lt;br/&gt;Example: UCR =$200, Contracted = $150, Write-off = 50, Copay = blank,&lt;br/&gt;Percentage = %100, Patient Portion = $0&lt;br/&gt;&lt;br/&gt;Unchecked: Blank entries are treated as 100% copay.&lt;br/&gt;Example: UCR =$200, Contracted = $150, Write-off = 50, Copay = blank,&lt;br/&gt; Percentage = %100, Patient Portion = $150.</Details>
+    <WidthWindow>420</WidthWindow>
+    <HeightWindow>300</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>InsDefaultPPOpercent</PrefName>
+    <Category>FamilyInsurance</Category>
+    <ControlName>checkPPOpercentage</ControlName>
+    <ControlText>Default new insurance plans to PPO Percentage plan type</ControlText>
+    <Details>otherwise, default to 'Category Percentage'</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>FixedBenefitBlankLikeZero</PrefName>
+    <Category>FamilyInsurance</Category>
+    <ControlName>checkFixedBenefitBlankLikeZero</ControlName>
+    <ControlText>Fixed benefit fee schedules treat blank entries as zero</ControlText>
+    <Details>Set how blank entries in fixed benefit fee schedules are handled.&lt;br/&gt;&lt;br/&gt;
+Checked: Blank entries are treated as 0.&lt;br/&gt;Example: UCR =$200, PPO Fee = $150, Write-off = 50, Fixed = blank,&lt;br/&gt; Percentage = %100, Patient Portion = $150&lt;br/&gt;&lt;br/&gt;Unchecked: Blank entries are treated as 100% the PPO fee.&lt;br/&gt;Example: UCR =$200, PPO Fee = $150, Write-off = 50, Fixed = blank,&lt;br/&gt; Percentage = %100, Patient Portion = $0</Details>
+    <WidthWindow>420</WidthWindow>
+    <HeightWindow>300</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>InsPlanExclusionsMarkDoNotBillIns</PrefName>
+    <Category>FamilyInsurance</Category>
+    <ControlName>checkInsPlanExclusionsMarkDoNotBill</ControlName>
+    <ControlText>Ins plans with exclusions mark as Do Not Bill Ins</ControlText>
+    <Details>only used when "exclusions use UCR fee" above is checked</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>InsPlanUseUcrFeeForExclusions</PrefName>
+    <Category>FamilyInsurance</Category>
+    <ControlName>checkInsPlanExclusionsUseUCR</ControlName>
+    <ControlText>Ins plans with exclusions use UCR fee</ControlText>
+    <Details>Can be overridden by plan. For use with PPO plans where certain excluded procedures are allowed to be billed using UCR fee rather than a negotiated rate.&lt;br/&gt;&lt;br/&gt;Exclusions are defined using an Other Benefits exclusion rule, or for any benefit set to a 0% coverage level.</Details>
+    <WidthWindow>400</WidthWindow>
+    <HeightWindow>275</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>InsPlansZeroWriteOffsOnAnnualMax</PrefName>
+    <Category>FamilyInsurance</Category>
+    <ControlName>checkEnableZeroWriteoffOnAnnualMax</ControlName>
+    <ControlText>Ins plans zero out write-offs when annual max is met</ControlText>
+    <Details>can be overridden by plan; also see &lt;a href='https://www.opendental.com/resources/UnitTestsDocumentation.xml#InsPlans_ComputeEstimates_ZeroWriteoffOverAnnualMaxGlobalLevel' target='_blank'&gt;Unit Tests&lt;/a&gt; 115-117</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>InsPlansZeroWriteOffsOnFreqOrAging</PrefName>
+    <Category>FamilyInsurance</Category>
+    <ControlName>checkEnableZeroWriteoffOnLimitations</ControlName>
+    <ControlText>Ins plans zero out write-offs when frequencies or age limits are met</ControlText>
+    <Details>can be overridden by plan; also see &lt;a href='https://www.opendental.com/resources/UnitTestsDocumentation.xml#InsPlans_ComputeEstimates_ZeroWriteoffOverFrequencyGlobalLevel' target='_blank'&gt;Unit Tests&lt;/a&gt; 118-123</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>FamilyInsurance</Category>
+    <ControlName>checkInsurancePlansShared</ControlName>
+    <ControlText>InsPlan option at bottom, 'Change Plan for all subscribers', is default</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>FamilyInsurance</Category>
+    <ControlName>checkInsDefaultAssignmentOfBenefits</ControlName>
+    <ControlText>Insurance plans default to assignment of benefits</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>FamilyInsurance</Category>
+    <ControlName>checkInsDefaultShowUCRonClaims</ControlName>
+    <ControlText>Insurance plans default to show UCR fee on claims</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>FamilyInsurance</Category>
+    <ControlName>labelPerVisitInsAmount</ControlName>
+    <ControlText>Insurance procedure code</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>PerVisitPatAmountProcCode</PrefName>
+    <Category>FamilyInsurance</Category>
+    <ControlName>labelPerVisitPatCopay</ControlName>
+    <ControlText>Patient copay procedure code</ControlText>
+    <Details>Amounts are entered in the 'Edit Insurance Plan' window. The patient procedure code is usually set to default to "Do Not Bill to Ins", while the Insurance procedure code is set for 100% coverage. When an appointment is scheduled or set complete, one or two new procedures get created with these codes.</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>FamilyInsurance</Category>
+    <ControlName>checkClaimTrackingRequireError</ControlName>
+    <ControlText>Require error code when adding claim custom tracking status</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ClaimCobInsPaidBehavior</PrefName>
+    <Category>FamilyInsurance</Category>
+    <ControlName>labelCobSendPaidByOtherInsAt</ControlName>
+    <ControlText>Send Paid By Other Insurance At</ControlText>
+    <Details>Claim Level means just the total for the claim, Procedure Level means the amount for each procedure</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ClaimPrintProcChartedDesc</PrefName>
+    <Category>FamilyInsurance</Category>
+    <ControlName>checkClaimUseOverrideProcDescript</ControlName>
+    <ControlText>Use the description for the charted procedure code on printed claims</ControlText>
+    <Details>useful when charting custom procedures, otherwise uses base procedure code description</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ImagingGeneral</Category>
+    <ControlName>label36</ControlName>
+    <ControlText>Decimal Places</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ImagingGeneral</Category>
+    <ControlName>label15</ControlName>
+    <ControlText>Default folder for automatic import</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ImageCategoryDefault</PrefName>
+    <Category>ImagingGeneral</Category>
+    <ControlName>labelDefaultImageCategory</ControlName>
+    <ControlText>Default Image Category</ControlText>
+    <Details>for new images when no category selected</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>VideoImageCategoryDefault</PrefName>
+    <Category>ImagingGeneral</Category>
+    <ControlName>label41</ControlName>
+    <ControlText>Default Image Category for video capture</ControlText>
+    <Details>unless a mount is showing</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ImagingGeneral</Category>
+    <ControlName>label61</ControlName>
+    <ControlText>Default import folder</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ImagingGeneral</Category>
+    <ControlName>label35</ControlName>
+    <ControlText>Optional Units (mm)</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>PdfLaunchWindow</PrefName>
+    <Category>ImagingGeneral</Category>
+    <ControlName>checkPDFLaunchWindow</ControlName>
+    <ControlText>PDF files always launch in a separate window</ControlText>
+    <Details>can help with Remote Desktop</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ImagingDefaultScaleValue</PrefName>
+    <Category>ImagingGeneral</Category>
+    <ControlName>label34</ControlName>
+    <ControlText>Scale, pixels per unit</ControlText>
+    <Details>for new single images, does not apply to mounts</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ImagesModuleUsesOld2020</PrefName>
+    <Category>ImagingGeneral</Category>
+    <ControlName>checkImagesModuleUsesOld2020</ControlName>
+    <ControlText>Use old Imaging module interface, pre 2020</ControlText>
+    <Details>not recommended</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>PayPlansBillInAdvanceDays</PrefName>
+    <Category>ManageBilling</Category>
+    <ControlName>label18</ControlName>
+    <ControlText>Days in advance to bill payment plan amounts due</ControlText>
+    <Details>usually 10 or 15, causes statements to be triggered to print, cannot be used with Dynamic Payment Plans</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>StatementsCalcDueDate</PrefName>
+    <Category>ManageBilling</Category>
+    <ControlName>label2</ControlName>
+    <ControlText>Days to calculate due date</ControlText>
+    <Details>usually 10 or 15, leave blank to show "Due on Receipt"</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>BillingElectBatchMax</PrefName>
+    <Category>ManageBilling</Category>
+    <ControlName>label24</ControlName>
+    <ControlText>Max number of statements per batch</ControlText>
+    <Details>0 for no limit</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>StatementShowProcBreakdown</PrefName>
+    <Category>ManageBilling</Category>
+    <ControlName>checkStatementShowProcBreakdown</ControlName>
+    <ControlText>Show procedure breakdown</ControlText>
+    <Details>shows in the Description column as patient portion, insurance paid, write-off, adjustment, etc.</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ManageBillingStatements</Category>
+    <ControlName>checkIntermingleDefault</ControlName>
+    <ControlText>Account Module statements default to intermingled mode</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ManageBillingStatements</Category>
+    <ControlName>label10</ControlName>
+    <ControlText>Account Numbers use</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ManageBillingStatements</Category>
+    <ControlName>checkStatementShowAdjNotes</ControlName>
+    <ControlText>Show notes for adjustments</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ManageBillingStatements</Category>
+    <ControlName>checkStatementShowNotes</ControlName>
+    <ControlText>Show notes for payments</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ManageBillingStatements</Category>
+    <ControlName>checkBillingShowProgress</ControlName>
+    <ControlText>Show progress when sending statements</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ManageBillingStatements</Category>
+    <ControlName>checkStatementShowReturnAddress</ControlName>
+    <ControlText>Show return address</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ManageGeneral</Category>
+    <ControlName>checkTimeCardADP</ControlName>
+    <ControlText>ADP export includes employee name</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ClockEventAllowBreak</PrefName>
+    <Category>ManageGeneral</Category>
+    <ControlName>checkClockEventAllowBreak</ControlName>
+    <ControlText>Allow paid 30 minute breaks</ControlText>
+    <Details>Checked: Count up to 30 minutes of break time as paid. Enables View Breaks button from the Manage Module and Breaks radio button in Time Card. Allows clock-out status of Lunch for unpaid breaks.&lt;br/&gt;&lt;br/&gt;Unchecked: All break time is considered unpaid. Disables Lunch clock-out status, View Breaks button, and Breaks radio button.&lt;br/&gt;&lt;br/&gt;All employees should be clocked out and time card adjustments made prior to changing this preference. Changing this preference does not affect historical time card breaks.</Details>
+    <WidthWindow>400</WidthWindow>
+    <HeightWindow>300</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ManageGeneral</Category>
+    <ControlName>checkScheduleProvEmpSelectAll</ControlName>
+    <ControlText>Automatically select all providers/employees when loading schedules</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ManageGeneral</Category>
+    <ControlName>checkClaimsSendWindowValidateOnLoad</ControlName>
+    <ControlText>Claims Send window validate on load (can cause slowness)</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ManageGeneral</Category>
+    <ControlName>labelDepositSoftware</ControlName>
+    <ControlText>Deposit Software</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>EraAllowTotalPayments</PrefName>
+    <Category>ManageGeneral</Category>
+    <ControlName>checkEraAllowTotalPayment</ControlName>
+    <ControlText>ERA allow total payments</ControlText>
+    <Details>otherwise, must be allocated to procedures</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>EraAutomationBehavior</PrefName>
+    <Category>ManageGeneral</Category>
+    <ControlName>labelEraAutomation</ControlName>
+    <ControlText>ERA Automation</ControlText>
+    <Details>Determines if ERAs are processed automatically or manually.&lt;br&gt;&lt;br&gt;Review All: All ERAs must be processed manually.&lt;br&gt;&lt;br&gt;Semi-automatic: ERAs can be processed with a single click of the Auto Process button on the ERA window. This will receive the claims associated with the ERA and finalize the payment. They can also be processed manually, if needed.&lt;br&gt;&lt;br&gt;Fully-automatic: ERAs will be automatically processed when imported, receiving the claims associated with the ERA, and finalizing the payment. If an ERA does not get automatically processed while being imported for any reason, the user can still attempt to process them by clicking the Auto Process button on the ERA window, or process them manually.&lt;br&gt;&lt;br&gt;Note: This preference can also be set on a Carrier level. See &lt;a href='https://opendental.com/manual/carriers.html' target='_blank' rel='noopener noreferrer'&gt;Carriers&lt;/a&gt;.</Details>
+    <WidthWindow>600</WidthWindow>
+    <HeightWindow>400</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ManageGeneral</Category>
+    <ControlName>checkIncludeEraWOPercCoPay</ControlName>
+    <ControlText>ERA posts write-offs for Category Percentage and Medicaid/Flat Copay</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ManageGeneral</Category>
+    <ControlName>checkEraOneClaimPerPage</ControlName>
+    <ControlText>ERA prints one page per claim</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ClaimPaymentBatchOnly</PrefName>
+    <Category>ManageGeneral</Category>
+    <ControlName>checkClaimPaymentBatchOnly</ControlName>
+    <ControlText>Finalize claim payments in Batch Insurance window only</ControlText>
+    <Details> otherwise, users can also finalize payments from the 
+&lt;a href='https://www.opendental.com/manual/claimedit.html' target='_blank'&gt; Edit Claim&lt;/a&gt; window.
+</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ManageGeneral</Category>
+    <ControlName>checkRxHideProvsWithoutDEA</ControlName>
+    <ControlText>Hide providers without DEA number from making (non-electronic)  prescriptions</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ShowAutoDeposit</PrefName>
+    <Category>ManageGeneral</Category>
+    <ControlName>checkShowAutoDeposit</ControlName>
+    <ControlText>Insurance payments show auto deposit</ControlText>
+    <Details>when &lt;a href='https://opendental.com/manual/claimpayfinalize.html' target='_blank'&gt;Finalizing an Insurance Payment&lt;/a&gt;, automatically create deposits.</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>AccountingInvoiceAttachmentsSaveInDatabase</PrefName>
+    <Category>ManageGeneral</Category>
+    <ControlName>checkAccountingInvoiceAttachmentsSaveInDatabase</ControlName>
+    <ControlText>Save accounting invoice attachments in database</ControlText>
+    <Details>otherwise, attachments are saved to the originating folder on the local computer only
+</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ManageGeneral</Category>
+    <ControlName>checkRxSendNewToQueue</ControlName>
+    <ControlText>Send all new prescriptions to electronic queue</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ClaimPaymentNoShowZeroDate</PrefName>
+    <Category>ManageGeneral</Category>
+    <ControlName>labelClaimsReceivedDays</ControlName>
+    <ControlText>Show claims received after days (blank to disable)</ControlText>
+    <Details>for $0 payments, how many days that it should appear in the Outstanding Claims area of the 
+&lt;a href='https://www.opendental.com/manual/claimpaymentbatch.html' target='_blank'&gt;Batch Insurance Payment&lt;/a&gt; window</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>ManageGeneral</Category>
+    <ControlName>label16</ControlName>
+    <ControlText>Time Card first day of week for overtime</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ReadOnlyServerURI</PrefName>
+    <Category>ServerConnections</Category>
+    <ControlName>labelURI</ControlName>
+    <ControlText>URI</ControlText>
+    <Details>The currently logged in user's credentials will be used when accessing the Middle Tier database.</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>ReadOnlyServerCompName</PrefName>
+    <Category>ServerConnections</Category>
+    <ControlName>checkUseReadOnlyServer</ControlName>
+    <ControlText>Use Separate Read-Only Server</ControlText>
+    <Details>Note: Open Dental Cloud users cannot change Read-Only Server Setup.&lt;br&gt;&lt;br&gt;If you would like to run certain database processes (read queries and cache refreshes) on a different server and database, enter settings here.&lt;br&gt;&lt;br&gt;This is useful for larger offices that may experience slowness or that want to avoid the possibility of heavy queries locking up the database.&lt;br&gt;&lt;br&gt;See &lt;a href='https://www.opendental.com/manual/troubleshootingslowness.html' target='_blank' rel='noopener noreferrer'&gt;Troubleshooting Slowness&lt;/a&gt; for additional information on processes that utilize Read-Only Server Setup.</Details>
+    <WidthWindow>400</WidthWindow>
+    <HeightWindow>350</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>label52</ControlName>
+    <ControlText>(all codes should be comma separated)</ControlText>
+    <Details>See &lt;a href='https://www.opendental.com/manual/insfrequencylimitations.html' target='_blank' rel='noopener noreferrer'&gt;Frequency Limitations.&lt;/a&gt; 
+The default codes are:
+&lt;br&gt;&lt;br&gt;-BWs: D0272, D0274
+&lt;br&gt;-Pano/FMX: D0210, D0330
+&lt;br&gt;-Exams: D0120, D0150
+&lt;br&gt;-Cancer Screening: D0431
+&lt;br&gt;-Prophylaxis: D1110, D1120
+&lt;br&gt;-Fluoride: D1206, D1208
+&lt;br&gt;-Sealant: D1351
+&lt;br&gt;-Crown: D2740,D2750,D2751,D2752,D2780,D2781,D2782,D2783,D2790,D2791,D2792,D2794
+&lt;br&gt;-SRP: D4341,D4342
+&lt;br&gt;-Full Debridement: D4355
+&lt;br&gt;-Perio Maintenance: D4910
+&lt;br&gt;-Dentures: D5110,D5120,D5130,D5140,D5211,D5212,D5213,D5214,D5221,D5222,D5223,D5224,D5225,D5226
+&lt;br&gt;-Implant: D6010</Details>
+    <WidthWindow>625</WidthWindow>
+    <HeightWindow>350</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelInsBW</ControlName>
+    <ControlText>Bitewing Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelInsCancerScreen</ControlName>
+    <ControlText>Cancer Screening Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelInsCrown</ControlName>
+    <ControlText>Crown Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelInsDentures</ControlName>
+    <ControlText>Denture Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>InsChecksFrequency</PrefName>
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>checkFrequency</ControlName>
+    <ControlText>Enable Insurance Frequency Checking</ControlText>
+    <Details>when calculating insurance estimates</Details>
+    <WidthWindow>300</WidthWindow>
+    <HeightWindow>250</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelInsExam</ControlName>
+    <ControlText>Exam Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelDiscountExamFreq</ControlName>
+    <ControlText>Exam Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelInsFlouride</ControlName>
+    <ControlText>Fluoride Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelDiscountFluorideFreq</ControlName>
+    <ControlText>Fluoride Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelInsDebridement</ControlName>
+    <ControlText>Full Debridement Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelInsImplant</ControlName>
+    <ControlText>Implant Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelDiscountLimitedFreq</ControlName>
+    <ControlText>Limited Exam Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelInsPano</ControlName>
+    <ControlText>Pano/FMX Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelDiscountPAFreq</ControlName>
+    <ControlText>Periapical X-Ray Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelInsPerioMaint</ControlName>
+    <ControlText>Perio Maintenance Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelDiscountPerioFreq</ControlName>
+    <ControlText>Perio Maintenance Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelInsProphy</ControlName>
+    <ControlText>Prophylaxis Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelDiscountProphyFreq</ControlName>
+    <ControlText>Prophylaxis Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelInsSealant</ControlName>
+    <ControlText>Sealant Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelInsSRP</ControlName>
+    <ControlText>SRP Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanFreqLimit</Category>
+    <ControlName>labelDiscountXrayFreq</ControlName>
+    <ControlText>X-Ray Codes</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>InsHistBWCodes</PrefName>
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>labelInsHistBW</ControlName>
+    <ControlText>Bitewing Code</ControlText>
+    <Details>See &lt;a href='https://opendental.com/manual/inshistory.html' target='_blank' rel='noopener noreferrer'&gt;Insurance History.&lt;/a&gt; The default codes are:
+&lt;br&gt;&lt;br&gt;-Bitewing: D0272
+&lt;br&gt;-Pano/FMX: D0210
+&lt;br&gt;-Exam: D0120
+&lt;br&gt;-Prophylaxis: D1110
+&lt;br&gt;-Full Debridement: D4355
+&lt;br&gt;-Perio Maintenance: D4910
+&lt;br&gt;-Perio Scaling LL Code: D4341
+&lt;br&gt;-Perio Scaling LR Code: D4341
+&lt;br&gt;-Perio Scaling UL Code: D4341
+&lt;br&gt;-Perio Scaling UR Code: D4341</Details>
+    <WidthWindow>350</WidthWindow>
+    <HeightWindow>350</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>label1</ControlName>
+    <ControlText>Default Note</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>labelDiscountPercentage</ControlName>
+    <ControlText>Default Procedure discount percentage</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>labelInsHistExam</ControlName>
+    <ControlText>Exam Code</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>labelInsHistDebridement</ControlName>
+    <ControlText>Full Debridement Code</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>labelInsHistFMX</ControlName>
+    <ControlText>Pano/FMX Code</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>labelInsHistPerioMaint</ControlName>
+    <ControlText>Perio Maintenance Code</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>labelInsHistPerioLL</ControlName>
+    <ControlText>Perio Scaling LL Code</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>labelInsHistPerioLR</ControlName>
+    <ControlText>Perio Scaling LR Code</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>labelInsHistPerioUL</ControlName>
+    <ControlText>Perio Scaling UL Code</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>labelInsHistPerioUR</ControlName>
+    <ControlText>Perio Scaling UR Code</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>TreatPlanDiscountAdjustmentType</PrefName>
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>label19</ControlName>
+    <ControlText>Procedure discount adj type</ControlText>
+    <Details>when a procedure with a &lt;a href='https://www.opendental.com/manual/treatmentplandiscounts.html' target='_blank'&gt;Discount &lt;/a&gt; attached is set complete&lt;br/&gt; set in &lt;a href='https://opendental.com/manual/definitionsadjtypes.html' target='_blank'&gt;Definitions: Adj Types&lt;/a&gt;</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>labelInsHistProphy</ControlName>
+    <ControlText>Prophylaxis Code</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>checkTPSaveSigned</ControlName>
+    <ControlText>Save signed Treatment Plans to PDF</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName />
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>checkTreatPlanShowCompleted</ControlName>
+    <ControlText>Show completed work on graphical tooth chart</ControlText>
+    <Details />
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>TreatPlanItemized</PrefName>
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>checkTreatPlanItemized</ControlName>
+    <ControlText>Show itemized fees</ControlText>
+    <Details>only when printing</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+  <PrefInf>
+    <PrefName>TreatPlanPromptSave</PrefName>
+    <Category>TreatPlanGeneral</Category>
+    <ControlName>checkPromptSaveTP</ControlName>
+    <ControlText>When saving Treatment Plans, prompt for name change</ControlText>
+    <Details>otherwise, it uses a default name</Details>
+    <WidthWindow>0</WidthWindow>
+    <HeightWindow>0</HeightWindow>
+  </PrefInf>
+</ArrayOfPrefInf>

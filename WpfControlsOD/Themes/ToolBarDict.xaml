@@ -1,0 +1,45 @@
+﻿<ResourceDictionary 
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style TargetType="{x:Type ToolBar}" x:Key="ToolBarStyleOD">
+        <Style.Resources>
+            <SolidColorBrush x:Key="ToolBarButtonHover" Color="#210080FF"/>
+            <SolidColorBrush x:Key="ToolBarMenuBorder" Color="#FFB6BDC5"/>
+            <SolidColorBrush x:Key="ToolBarSubMenuBackground" Color="#FFEEF5FD"/>
+            <SolidColorBrush x:Key="ToolBarHorizontalBackground" Color="#FFEEF5FD"/>
+            <SolidColorBrush x:Key="ToolBarVerticalBackground" Color="#FFEEF5FD"/>
+            <SolidColorBrush x:Key="ToolBarGripper" Color="#FF6D6D6D"/>
+            <SolidColorBrush x:Key="ToolBarToggleButtonHorizontalBackground" Color="#FFEEF5FD"/>
+            <SolidColorBrush x:Key="ToolBarToggleButtonVerticalBackground" Color="#FFEEF5FD"/>
+        </Style.Resources>
+        <Setter Property="Background" Value="{DynamicResource ToolBarHorizontalBackground}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToolBar}">
+                    <Grid x:Name="Grid" Margin="0,0,0,0" SnapsToDevicePixels="true">
+                        <Border x:Name="MainPanelBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+                            <DockPanel KeyboardNavigation.TabIndex="1" KeyboardNavigation.TabNavigation="Local">
+                                <ContentPresenter x:Name="ToolBarHeader" ContentSource="Header" HorizontalAlignment="Center" Margin="4,0,4,0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
+                                <ToolBarPanel x:Name="PART_ToolBarPanel" IsItemsHost="true" Margin="0,0,0,0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </DockPanel>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Header" Value="{x:Null}">
+                            <Setter Property="Visibility" TargetName="ToolBarHeader" Value="Collapsed"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="true">
+                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+            </DataTrigger>
+        </Style.Triggers>
+
+    </Style>
+</ResourceDictionary>

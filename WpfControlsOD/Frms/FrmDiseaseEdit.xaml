@@ -1,0 +1,39 @@
+<local:FrmODBase x:Class="OpenDental.FrmDiseaseEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="495" Height="426" 
+             Text="Edit Problem" Loaded="FrmDiseaseEdit_Loaded" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:TextBox x:Name="textIcd10" Width="321" Height="20" Margin="118,64,0,0" ColorBack="#FFF0F0F0" />
+		<ui:Label x:Name="label9" Width="100" Height="19" Margin="14,65,0,0" Text="ICD10" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="label8" Width="150" Height="17" Margin="333,349,0,0" Text="Only for CCD" VAlign="Center" />
+		<ui:Label x:Name="labelFunctionalStatus" Width="97" Height="23" Margin="17,346,0,0" Text="Functional Status" HAlign="Right" VAlign="Center" />
+		<ui:ComboBox x:Name="comboEhrFunctionalStatus" Width="210" Height="21" Margin="118,348,0,0" />
+		<ui:Label x:Name="label7" Width="150" Height="17" Margin="333,322,0,0" Text="Only for CCD" VAlign="Center" />
+		<ui:Label x:Name="labelSnomedProblemType" Width="100" Height="17" Margin="12,322,0,0" Text="Problem Type" HAlign="Right" VAlign="Center" />
+		<ui:ComboBox x:Name="comboSnomedProblemType" Width="209" Height="21" Margin="118,321,0,0" />
+		<ui:Label x:Name="label6" Width="100" Height="19" Margin="14,90,0,0" Text="SNOMED CT" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textSnomed" Width="322" Height="20" Margin="118,90,0,0" ColorBack="#FFF0F0F0" />
+		<ui:Button x:Name="butTodayStop" Width="64" Height="23" Margin="263,167,0,0" Text="Today" Click="butTodayStop_Click" />
+		<ui:Button x:Name="butTodayStart" Width="65" Height="23" Margin="263,141,0,0" Text="Today" Click="butTodayStart_Click" />
+		<ui:TextVDate x:Name="textVDateStop" Width="126" Height="20" Margin="118,169,0,0" />
+		<ui:TextVDate x:Name="textVDateStart" Width="126" Height="20" Margin="118,143,0,0" />
+		<ui:Label x:Name="labelStatus" Width="111" Height="15" Margin="3,118,0,0" Text="Status" HAlign="Right" VAlign="Center" />
+		<ui:ComboBox x:Name="comboStatus" Width="126" Height="21" Margin="118,116,0,0" />
+		<ui:TextBox x:Name="textIcd9" Width="321" Height="20" Margin="118,38,0,0" ColorBack="#FFF0F0F0" />
+		<ui:Label x:Name="label3" Width="100" Height="19" Margin="14,39,0,0" Text="ICD9" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textProblem" Width="199" Height="20" Margin="118,12,0,0" ColorBack="#FFF0F0F0" />
+		<ui:Button x:Name="butDelete" Width="83" VerticalAlignment="Bottom" Height="26" Margin="12,0,0,12" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
+		<ui:Label x:Name="label5" Width="100" Height="19" Margin="14,169,0,0" Text="Stop Date" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="label4" Width="100" Height="19" Margin="14,143,0,0" Text="Start Date" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="label2" Width="100" Height="19" Margin="14,13,0,0" Text="Problem" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="label1" Width="100" Height="17" Margin="12,195,0,0" Text="Note" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textNote" Width="322" Height="120" Margin="118,195,0,0" IsMultiline="True" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,12,12" Text="Save" Click="butSave_Click" />
+	</Grid>
+</local:FrmODBase>

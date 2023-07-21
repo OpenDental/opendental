@@ -1,0 +1,17 @@
+<local:FrmODBase x:Class="OpenDental.FrmAutoCodeLessIntrusive"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="511" Height="211" 
+             Text="Change Code?" Loaded="FrmAutoCodeLessIntrusive_Loaded" >
+    <Grid Background="#FFFCFDFE" >
+        <ui:Button x:Name="butYes" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,30,57" Text="_Yes" Click="butYes_Click" />
+        <ui:Button x:Name="butNo" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,30,16" Text="_No" Click="butNo_Click" />
+        <ui:Label x:Name="labelPrompt" Width="388" VerticalAlignment="Bottom" Height="48" Margin="12,0,0,11" Text="If you don't want to be prompted to change this type of procedure in the future, then edit this Auto Code and check the box for &quot;Do not check codes...&quot;" />
+        <ui:Label x:Name="labelMain" Width="438" Height="79" Margin="35,32,0,0" Text="labelMain" HAlign="Center" />
+    </Grid>
+</local:FrmODBase>

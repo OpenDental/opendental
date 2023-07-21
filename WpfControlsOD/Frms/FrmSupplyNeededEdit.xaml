@@ -1,0 +1,20 @@
+<local:FrmODBase x:Class="OpenDental.FrmSupplyNeededEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="628" Height="291" 
+             Text="Supply Needed" Loaded="FrmSupplyNeededEdit_Loaded" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="butsave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,25,25" Text="Save" Click="butSave_Click" />
+		<ui:Label x:Name="label3" Width="217" VerticalAlignment="Bottom" Height="33" Margin="114,0,0,18" Text="Once the supply is added to an order, delete it from this list." />
+		<ui:Label x:Name="label2" Width="132" Height="18" Margin="2,40,0,0" Text="Date" HAlign="Right" VAlign="Center" />
+		<ui:TextVDate x:Name="textVDate" Width="100" Height="20" Margin="135,39,0,0" />
+		<ui:Button x:Name="butDelete" Width="81" VerticalAlignment="Bottom" Height="26" Margin="27,0,0,25" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
+		<ui:TextBox x:Name="textDescription" Width="401" Height="47" Margin="135,80,0,0" />
+		<ui:Label x:Name="label1" Width="132" Height="18" Margin="2,81,0,0" Text="Description" HAlign="Right" VAlign="Center" />
+	</Grid>
+</local:FrmODBase>

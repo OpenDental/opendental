@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="dxci.dea" xmlns:ns1="dxci.common" elementFormDefault="qualified" targetNamespace="dxci.dea" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="https://prelive2.dentalxchange.com:443/dea/DeaPartnerService?xsd=2" namespace="dxci.common" />
+  <xs:element name="addImage" type="tns:addImage" />
+  <xs:element name="addImageResponse" type="tns:addImageResponse" />
+  <xs:element name="attachmentReference" type="tns:AttachmentReference" />
+  <xs:element name="attachmentReferenceResponse" type="tns:AttachmentReferenceResponse" />
+  <xs:element name="deaServiceResponse" type="tns:DeaResponse" />
+  <xs:element name="imageReferenceResponse" type="tns:ImageReferenceResponse" />
+  <xs:element name="imageReferenceResponses" type="tns:ImageReferenceResponses" />
+  <xs:element name="openAttachment" type="tns:openAttachment" />
+  <xs:element name="openAttachmentResponse" type="tns:openAttachmentResponse" />
+  <xs:element name="sendCompleteAttachment" type="tns:sendCompleteAttachment" />
+  <xs:element name="sendCompleteAttachmentResponse" type="tns:sendCompleteAttachmentResponse" />
+  <xs:element name="submitAttachment" type="tns:submitAttachment" />
+  <xs:element name="submitAttachmentResponse" type="tns:submitAttachmentResponse" />
+  <xs:complexType name="sendCompleteAttachment">
+    <xs:sequence>
+      <xs:element minOccurs="0" form="unqualified" name="Credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" form="unqualified" name="attachment" type="tns:Attachment" />
+      <xs:element minOccurs="0" form="unqualified" name="attachmentImages" type="tns:attachmentImages" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Attachment">
+    <xs:sequence>
+      <xs:element minOccurs="0" form="unqualified" name="ClaimId" type="xs:int" />
+      <xs:element form="unqualified" name="ProviderClaimID" type="xs:string" />
+      <xs:element form="unqualified" name="PayerIdCode" type="xs:string" />
+      <xs:element minOccurs="0" form="unqualified" name="PayerClaimID" type="xs:string" />
+      <xs:element minOccurs="0" form="unqualified" name="Narrative" type="xs:string" />
+      <xs:element form="unqualified" name="SubscriberId" type="xs:string" />
+      <xs:element form="unqualified" name="PatientLastName" type="xs:string" />
+      <xs:element form="unqualified" name="PatientFirstName" type="xs:string" />
+      <xs:element form="unqualified" name="PatientDOB" type="xs:date" />
+      <xs:element minOccurs="0" form="unqualified" name="DateOfService" type="xs:date" />
+      <xs:element form="unqualified" name="BillProviderNpi" type="xs:string" />
+      <xs:element form="unqualified" name="BillProviderLastName" type="xs:string" />
+      <xs:element minOccurs="0" form="unqualified" name="BillProviderFirstName" type="xs:string" />
+      <xs:element form="unqualified" name="BillProviderTaxonomy" type="xs:string" />
+      <xs:element form="unqualified" name="BillProviderAdd1" type="xs:string" />
+      <xs:element minOccurs="0" form="unqualified" name="BillProviderAdd2" type="xs:string" />
+      <xs:element form="unqualified" name="BillProviderCity" type="xs:string" />
+      <xs:element form="unqualified" name="BillProviderState" type="xs:string" />
+      <xs:element form="unqualified" name="BillProviderZip" type="xs:string" />
+      <xs:element form="unqualified" name="BillProviderTaxID" type="xs:string" />
+      <xs:element minOccurs="0" form="unqualified" name="PartnerClaimID" type="xs:string" />
+      <xs:element minOccurs="0" form="unqualified" name="STCDetail" type="xs:string" />
+      <xs:element form="unqualified" name="SubscriberLastName" type="xs:string" />
+      <xs:element form="unqualified" name="SubscriberFirstName" type="xs:string" />
+      <xs:element minOccurs="0" form="unqualified" name="RenderingProviderAdd1" type="xs:string" />
+      <xs:element minOccurs="0" form="unqualified" name="RenderingProviderAdd2" type="xs:string" />
+      <xs:element minOccurs="0" form="unqualified" name="RenderingProviderCity" type="xs:string" />
+      <xs:element minOccurs="0" form="unqualified" name="RenderingProviderState" type="xs:string" />
+      <xs:element minOccurs="0" form="unqualified" name="RenderingProviderZip" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="attachmentImages">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" form="unqualified" name="attachmentImage" type="tns:AttachmentImage" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="AttachmentImage">
+    <xs:sequence>
+      <xs:element minOccurs="0" form="unqualified" name="ImageTypeCode" type="tns:imageTypeCode" />
+      <xs:element form="unqualified" name="ImageFileAsBase64" type="xs:base64Binary" />
+      <xs:element minOccurs="0" form="unqualified" name="ImageFileName" type="xs:string" />
+      <xs:element minOccurs="0" form="unqualified" name="ImageOrientationType" type="tns:orientationType" />
+      <xs:element minOccurs="0" form="unqualified" name="VendorImageId" type="xs:string" />
+      <xs:element minOccurs="0" form="unqualified" name="ImageDate" type="xs:date" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="sendCompleteAttachmentResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" form="unqualified" name="return" type="tns:AttachmentReferenceResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="AttachmentReferenceResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:DeaResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" form="unqualified" name="AttachmentReference" type="tns:AttachmentReference" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="DeaResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="ns1:Response">
+        <xs:sequence>
+          <xs:element name="MsgSuccess" type="xs:boolean" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="AttachmentReference">
+    <xs:sequence>
+      <xs:element minOccurs="0" form="unqualified" name="AttachmentID" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="openAttachment">
+    <xs:sequence>
+      <xs:element minOccurs="0" form="unqualified" name="Credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" form="unqualified" name="attachment" type="tns:Attachment" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="openAttachmentResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" form="unqualified" name="return" type="tns:AttachmentReferenceResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="submitAttachment">
+    <xs:sequence>
+      <xs:element minOccurs="0" form="unqualified" name="Credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" form="unqualified" name="AttachmentReference" type="tns:AttachmentReference" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="submitAttachmentResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" form="unqualified" name="return" type="tns:DeaResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="addImage">
+    <xs:sequence>
+      <xs:element minOccurs="0" form="unqualified" name="Credentials" type="ns1:Credentials" />
+      <xs:element minOccurs="0" form="unqualified" name="AttachmentReference" type="tns:AttachmentReference" />
+      <xs:element minOccurs="0" form="unqualified" name="attachmentImage" type="tns:AttachmentImage" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="addImageResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" form="unqualified" name="return" type="tns:ImageReferenceResponses" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ImageReferenceResponses">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:DeaResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" form="unqualified" name="ImageReferenceResponses">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" form="unqualified" name="ImageReferenceResponse" type="tns:ImageReferenceResponse" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ImageReferenceResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:DeaResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ImageReference" type="tns:ImageReference" />
+          <xs:element minOccurs="0" name="NewSecurityToken" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ImageReference">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ImageReferenceId" type="xs:int" />
+      <xs:element minOccurs="0" name="VendorImageId" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="imageTypeCode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="B4" />
+      <xs:enumeration value="DA" />
+      <xs:enumeration value="DG" />
+      <xs:enumeration value="EB" />
+      <xs:enumeration value="OZ" />
+      <xs:enumeration value="P6" />
+      <xs:enumeration value="RB" />
+      <xs:enumeration value="RR" />
+      <xs:enumeration value="XP" />
+      <xs:enumeration value="03" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="orientationType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="LEFT" />
+      <xs:enumeration value="RIGHT" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

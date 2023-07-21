@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml-stylesheet type='text/xsl' href='OpenDentalDiffDocumentation.xsl'?>
+<database version="23.2.0.0">
+  <table name="alertcategorylink">
+    <summary></summary>
+    <column order="2" name="AlertType" type="tinyint(4)">
+      <summary>Enum:AlertType Identifies what types of alert this row is associated to.</summary>
+      <Enumeration name="AlertType">
+        <summary>Enum representing different alert types.</summary>
+        <EnumValue name="WebMailReceived">21 - Triggered when a new WebMail is received from the patient portal.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="alertitem">
+    <summary></summary>
+    <column order="3" name="Type" type="tinyint(4)">
+      <summary>Enum:AlertType Identifies what type of alert this row is.</summary>
+      <Enumeration name="AlertType">
+        <summary>Enum representing different alert types.</summary>
+        <EnumValue name="WebMailReceived">21 - Triggered when a new WebMail is received from the patient portal.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="benefit">
+    <summary></summary>
+    <column order="14" name="CodeGroupNum" type="bigint(20)" fk="codegroup">
+      <summary>FK to codegroup.CodeGroupNum  The group of procedure codes that apply to this frequency limitation benefit.</summary>
+    </column>
+  </table>
+  <table name="codegroup">
+    <summary></summary>
+    <column order="0" name="CodeGroupNum" type="bigint(20)">
+      <summary>Primary key.</summary>
+    </column>
+    <column order="1" name="GroupName" type="varchar(50)">
+      <summary>.</summary>
+    </column>
+    <column order="2" name="ProcCodes" type="text">
+      <summary>list of D codes. Comma delimited, no spaces.</summary>
+    </column>
+    <column order="3" name="ItemOrder" type="int(11)">
+      <summary>0-based.</summary>
+    </column>
+    <column order="4" name="CodeGroupFixed" type="tinyint(4)">
+      <summary>Enum:EnumCodeGroupFixed 0=None,BW,PanoFMX,Exam,Perio,Prophy,SRP,FMDebride,Fluoride,Sealant. This allows five groups to be shown in the Simplified View of Edit Benefits Window, six are used in sheet static text fields (example StaticTextField.dateLastBW), and seven are used in Ins History Window.</summary>
+      <Enumeration name="EnumCodeGroupFixed">
+        <summary>This enum replaces the FrequencyType enum at bottom of Benefits.cs.  See description in CodeGroup.CodeGroupFixed.</summary>
+        <EnumValue name="None">0</EnumValue>
+        <EnumValue name="BW">1</EnumValue>
+        <EnumValue name="PanoFMX">2</EnumValue>
+        <EnumValue name="Exam">3</EnumValue>
+        <EnumValue name="Perio">4</EnumValue>
+        <EnumValue name="Prophy">5</EnumValue>
+        <EnumValue name="SRP">6- When used in InsHist window, the quadrant is hard coded for each of the 4 rows.</EnumValue>
+        <EnumValue name="FMDebride">7</EnumValue>
+        <EnumValue name="Fluoride">8</EnumValue>
+        <EnumValue name="Sealant">9</EnumValue>
+      </Enumeration>
+    </column>
+    <column order="5" name="IsHidden" type="tinyint(4)">
+      <summary>.</summary>
+    </column>
+  </table>
+  <table name="grouppermission">
+    <summary></summary>
+    <column order="4" name="PermType" type="tinyint">
+      <summary>Enum:Permissions Some permissions will treat a zero FKey differently. Some denote it as having access to everything for that PermType. I.e. Reports.</summary>
+      <Enumeration name="Permissions">
+        <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+        <EnumValue name="ViewAppointmentAuditTrail">247 - Only for viewing the audit trail in FormEditAppointment</EnumValue>
+        <EnumValue name="PayPlanChargeEdit">248 - Logs when a user edits a payment plan charge.</EnumValue>
+        <EnumValue name="ArchivedPatientSelect">249 - Also see ArchivedPatientEdit. Blocking user from patient selection prevents changes to all the other tables besides the patient table.  It's more rigorous.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="mobiledatabyte">
+    <summary></summary>
+    <column order="5" name="ActionType" type="tinyint(4)">
+      <summary>Enum:eActionType Stores the intended action associated to this rows data.</summary>
+      <Enumeration name="eActionType">
+        <summary>Actions representing different endpoints in mobile app.</summary>
+        <EnumValue name="Checkin">6 - Used by eClilpboard to checkin using QR code.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="provider">
+    <summary></summary>
+    <column order="41" name="WebSchedDescript" type="varchar(500)">
+      <summary>The description of the provider that is displayed to patients in Web Sched.</summary>
+    </column>
+  </table>
+  <table name="securitylog">
+    <summary></summary>
+    <column order="1" name="PermType" type="tinyint">
+      <summary>Enum:Permissions</summary>
+      <Enumeration name="Permissions">
+        <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+        <EnumValue name="ViewAppointmentAuditTrail">247 - Only for viewing the audit trail in FormEditAppointment</EnumValue>
+        <EnumValue name="PayPlanChargeEdit">248 - Logs when a user edits a payment plan charge.</EnumValue>
+        <EnumValue name="ArchivedPatientSelect">249 - Also see ArchivedPatientEdit. Blocking user from patient selection prevents changes to all the other tables besides the patient table.  It's more rigorous.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="signalod">
+    <summary></summary>
+    <column order="5" name="IType" type="tinyint(4)">
+      <summary>Enum:InvalidType Indicates what cache or entity has been changed.</summary>
+      <Enumeration name="InvalidType">
+        <summary>When the autorefresh message is sent to the other computers, this is the type.</summary>
+        <EnumValue name="CodeGroups">110. Group of codes used with frequency limitations.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="webschedrecall">
+    <summary></summary>
+    <column order="9" name="SendStatus" type="tinyint(4)">
+      <summary>Enum:AutoCommStatus The status of the email or text being sent for this recall.</summary>
+      <Enumeration name="AutoCommStatus">
+        <summary></summary>
+        <EnumValue name="DoNotSend">1 - Do not send a reminder.</EnumValue>
+        <EnumValue name="SendNotAttempted">2 - Has not been attempted to send yet.</EnumValue>
+        <EnumValue name="SendSuccessful">3 - Has been sent successfully.</EnumValue>
+        <EnumValue name="SendFailed">4 - Attempted to send but not successful.</EnumValue>
+        <EnumValue name="SentAwaitingReceipt">5 - Has been sent successfully, awaiting receipt.</EnumValue>
+      </Enumeration>
+    </column>
+    <column order="14" name="MessageType" type="tinyint(4)">
+      <summary>Enum:CommType The type of message being sent for this recall.</summary>
+      <Enumeration name="CommType">
+        <summary></summary>
+        <EnumValue name="Invalid">-1 - Do not use.</EnumValue>
+        <EnumValue name="Preferred">0 - Use text OR email based on patient preference.</EnumValue>
+        <EnumValue name="Text">1 - Attempt to send text message, if successful do not send via email. (Unless, a SendAll bool is used, which usually negates the need for this enumeration.)</EnumValue>
+        <EnumValue name="Email">2 - Attempt to send email message, if successful do not send via text. (Unless, a SendAll bool is used, which usually negates the need for this enumeration.)</EnumValue>
+        <EnumValue name="SecureEmail">3 - Attempt to send secure email message. </EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="alertcategorylink">
+    <summary></summary>
+    <column order="2" name="AlertType" type="tinyint(4)">
+      <summary>Enum:AlertType Identifies what types of alert this row is associated to.</summary>
+      <Enumeration name="AlertType">
+        <summary>Enum representing different alert types.</summary>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="alertitem">
+    <summary></summary>
+    <column order="3" name="Type" type="tinyint(4)">
+      <summary>Enum:AlertType Identifies what type of alert this row is.</summary>
+      <Enumeration name="AlertType">
+        <summary>Enum representing different alert types.</summary>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="eroutingdeflink">
+    <summary></summary>
+    <column order="3" name="ERoutingType" type="tinyint(4)">
+      <summary>Enum:EnumeRoutingType </summary>
+      <Enumeration name="EnumeRoutingType">
+        <summary></summary>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="provider">
+    <summary></summary>
+    <column order="41" name="WebSchedDescript" type="text">
+      <summary>The description of the provider that is displayed to patients in Web Sched.</summary>
+    </column>
+  </table>
+</database>

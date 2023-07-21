@@ -1,0 +1,4 @@
+usr/share/opendentaldata
+usr/share/dbconfig-common/data/opendentaldata/install
+usr/share/dbconfig-common/data/opendentaldata/upgrade/mysql
+etc/opendentaldata

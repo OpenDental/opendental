@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SheetDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <IsNew>false</IsNew>
+  <SheetDefNum>0</SheetDefNum>
+  <Description>Patient Letter</Description>
+  <SheetType>PatientLetter</SheetType>
+  <FontSize>11</FontSize>
+  <FontName>Microsoft Sans Serif</FontName>
+  <Width>850</Width>
+  <Height>1100</Height>
+  <IsLandscape>false</IsLandscape>
+  <PageCount>1</PageCount>
+  <IsMultiPage>false</IsMultiPage>
+  <SheetFieldDefs>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3616</SheetFieldDefNum>
+      <SheetDefNum>72</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>patient.priProvNameFL</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>680</YPos>
+      <Width>240</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3615</SheetFieldDefNum>
+      <SheetDefNum>72</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Sincerely,</FieldValue>
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>604</YPos>
+      <Width>100</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3613</SheetFieldDefNum>
+      <SheetDefNum>72</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>patient.salutation</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>347</YPos>
+      <Width>280</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3614</SheetFieldDefNum>
+      <SheetDefNum>72</SheetDefNum>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>letter text</FieldValue>
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>385</YPos>
+      <Width>650</Width>
+      <Height>200</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3612</SheetFieldDefNum>
+      <SheetDefNum>72</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>today.DayDate</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>309</YPos>
+      <Width>200</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3611</SheetFieldDefNum>
+      <SheetDefNum>72</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>patient.cityStateZip</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>233</YPos>
+      <Width>200</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3610</SheetFieldDefNum>
+      <SheetDefNum>72</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>patient.address</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>214</YPos>
+      <Width>200</Width>
+      <Height>19</Height>
+      <GrowthBehavior>DownLocal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3609</SheetFieldDefNum>
+      <SheetDefNum>72</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>patient.nameFL</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>195</YPos>
+      <Width>200</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3608</SheetFieldDefNum>
+      <SheetDefNum>72</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>practiceCityStateZip</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>138</YPos>
+      <Width>200</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3607</SheetFieldDefNum>
+      <SheetDefNum>72</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>PracticeAddress</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>119</YPos>
+      <Width>200</Width>
+      <Height>19</Height>
+      <GrowthBehavior>DownLocal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <SheetFieldDefNum>3606</SheetFieldDefNum>
+      <SheetDefNum>72</SheetDefNum>
+      <FieldType>OutputText</FieldType>
+      <FieldName>PracticeTitle</FieldName>
+      <FieldValue />
+      <FontSize>11</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>100</XPos>
+      <YPos>100</YPos>
+      <Width>200</Width>
+      <Height>19</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+  </SheetFieldDefs>
+</SheetDef>

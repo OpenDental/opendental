@@ -1,0 +1,17 @@
+<local:FrmODBase x:Class="OpenDental.FrmWikiListAdvancedSearch"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="334" Height="461" 
+             Text="Wiki List Advanced Search" Loaded="FrmWikiListAdvancedSearch_Loaded" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="23" Margin="0,0,12,10" Text="_OK" Click="butOK_Click" />
+		<ui:Label x:Name="labelSummary" Width="310" Height="37" Margin="12,9,0,0" Text="Choose one or more columns to be used within the search of the Wiki List Edit window.
+" />
+		<ui:Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,49,12,41" Title="Columns" SelectionMode="MultiExtended" />
+	</Grid>
+</local:FrmODBase>

@@ -1,0 +1,1191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://open-dent.com/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://open-dent.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://open-dent.com/">
+      <s:element name="EstablishConnection">
+        <s:complexType />
+      </s:element>
+      <s:element name="EstablishConnectionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="EstablishConnectionResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestUpdate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestUpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestUpdateResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestCustomerID">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestCustomerIDResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestCustomerIDResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestCustomerIDStrict">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestCustomerIDStrictResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestCustomerIDStrictResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestEmailVerificationCode">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestEmailVerificationCodeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestEmailVerificationCodeResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PostEmailCertificate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PostEmailCertificateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PostEmailCertificateResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestCertCanadaABC">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestCertCanadaABCResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestCertCanadaABCResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestCertCanadaTelusAandB">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestCertCanadaTelusAandBResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestCertCanadaTelusAandBResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestCertCanadaTelusAandBtest">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestCertCanadaTelusAandBtestResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestCertCanadaTelusAandBtestResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsForeignRegKey">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsForeignRegKeyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="IsForeignRegKeyResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestCodeSystems">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestCodeSystemsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestCodeSystemsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestCodeSystemDownload">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestCodeSystemDownloadResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestCodeSystemDownloadResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="FeatureRequestGetList">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="FeatureRequestGetListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="FeatureRequestGetListResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="FeatureRequestGetOne">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="FeatureRequestGetOneResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="FeatureRequestGetOneResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="FeatureRequestSubmitChanges">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="FeatureRequestSubmitChangesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="FeatureRequestSubmitChangesResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="FeatureRequestDiscussSubmit">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="FeatureRequestDiscussSubmitResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="FeatureRequestDiscussSubmitResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="FeatureRequestDiscussGetList">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="FeatureRequestDiscussGetListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="FeatureRequestDiscussGetListResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestFeeSched">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestFeeSchedResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestFeeSchedResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PracticeTitleReset">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PracticeTitleResetResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetErxAccess">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetErxAccessResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetErxAccessResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetClinicErxAccess">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetClinicErxAccessResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetClinicErxAccessResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestPatientPortalURL">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestPatientPortalURLResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestPatientPortalURLResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidatePatientPortalOffice">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidatePatientPortalOfficeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ValidatePatientPortalOfficeResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidateWebSched">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidateWebSchedResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ValidateWebSchedResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidateWebSchedNewPatAppt">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidateWebSchedNewPatApptResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ValidateWebSchedNewPatApptResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetWebSchedURLs">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetWebSchedURLsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetWebSchedURLsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidateResellerCredentials">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidateResellerCredentialsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ValidateResellerCredentialsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestIsDevKey">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="regKeyString" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RequestIsDevKeyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RequestIsDevKeyResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="EstablishConnectionSoapIn">
+    <wsdl:part name="parameters" element="tns:EstablishConnection" />
+  </wsdl:message>
+  <wsdl:message name="EstablishConnectionSoapOut">
+    <wsdl:part name="parameters" element="tns:EstablishConnectionResponse" />
+  </wsdl:message>
+  <wsdl:message name="RequestUpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:RequestUpdate" />
+  </wsdl:message>
+  <wsdl:message name="RequestUpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:RequestUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="RequestCustomerIDSoapIn">
+    <wsdl:part name="parameters" element="tns:RequestCustomerID" />
+  </wsdl:message>
+  <wsdl:message name="RequestCustomerIDSoapOut">
+    <wsdl:part name="parameters" element="tns:RequestCustomerIDResponse" />
+  </wsdl:message>
+  <wsdl:message name="RequestCustomerIDStrictSoapIn">
+    <wsdl:part name="parameters" element="tns:RequestCustomerIDStrict" />
+  </wsdl:message>
+  <wsdl:message name="RequestCustomerIDStrictSoapOut">
+    <wsdl:part name="parameters" element="tns:RequestCustomerIDStrictResponse" />
+  </wsdl:message>
+  <wsdl:message name="RequestEmailVerificationCodeSoapIn">
+    <wsdl:part name="parameters" element="tns:RequestEmailVerificationCode" />
+  </wsdl:message>
+  <wsdl:message name="RequestEmailVerificationCodeSoapOut">
+    <wsdl:part name="parameters" element="tns:RequestEmailVerificationCodeResponse" />
+  </wsdl:message>
+  <wsdl:message name="PostEmailCertificateSoapIn">
+    <wsdl:part name="parameters" element="tns:PostEmailCertificate" />
+  </wsdl:message>
+  <wsdl:message name="PostEmailCertificateSoapOut">
+    <wsdl:part name="parameters" element="tns:PostEmailCertificateResponse" />
+  </wsdl:message>
+  <wsdl:message name="RequestCertCanadaABCSoapIn">
+    <wsdl:part name="parameters" element="tns:RequestCertCanadaABC" />
+  </wsdl:message>
+  <wsdl:message name="RequestCertCanadaABCSoapOut">
+    <wsdl:part name="parameters" element="tns:RequestCertCanadaABCResponse" />
+  </wsdl:message>
+  <wsdl:message name="RequestCertCanadaTelusAandBSoapIn">
+    <wsdl:part name="parameters" element="tns:RequestCertCanadaTelusAandB" />
+  </wsdl:message>
+  <wsdl:message name="RequestCertCanadaTelusAandBSoapOut">
+    <wsdl:part name="parameters" element="tns:RequestCertCanadaTelusAandBResponse" />
+  </wsdl:message>
+  <wsdl:message name="RequestCertCanadaTelusAandBtestSoapIn">
+    <wsdl:part name="parameters" element="tns:RequestCertCanadaTelusAandBtest" />
+  </wsdl:message>
+  <wsdl:message name="RequestCertCanadaTelusAandBtestSoapOut">
+    <wsdl:part name="parameters" element="tns:RequestCertCanadaTelusAandBtestResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsForeignRegKeySoapIn">
+    <wsdl:part name="parameters" element="tns:IsForeignRegKey" />
+  </wsdl:message>
+  <wsdl:message name="IsForeignRegKeySoapOut">
+    <wsdl:part name="parameters" element="tns:IsForeignRegKeyResponse" />
+  </wsdl:message>
+  <wsdl:message name="RequestCodeSystemsSoapIn">
+    <wsdl:part name="parameters" element="tns:RequestCodeSystems" />
+  </wsdl:message>
+  <wsdl:message name="RequestCodeSystemsSoapOut">
+    <wsdl:part name="parameters" element="tns:RequestCodeSystemsResponse" />
+  </wsdl:message>
+  <wsdl:message name="RequestCodeSystemDownloadSoapIn">
+    <wsdl:part name="parameters" element="tns:RequestCodeSystemDownload" />
+  </wsdl:message>
+  <wsdl:message name="RequestCodeSystemDownloadSoapOut">
+    <wsdl:part name="parameters" element="tns:RequestCodeSystemDownloadResponse" />
+  </wsdl:message>
+  <wsdl:message name="FeatureRequestGetListSoapIn">
+    <wsdl:part name="parameters" element="tns:FeatureRequestGetList" />
+  </wsdl:message>
+  <wsdl:message name="FeatureRequestGetListSoapOut">
+    <wsdl:part name="parameters" element="tns:FeatureRequestGetListResponse" />
+  </wsdl:message>
+  <wsdl:message name="FeatureRequestGetOneSoapIn">
+    <wsdl:part name="parameters" element="tns:FeatureRequestGetOne" />
+  </wsdl:message>
+  <wsdl:message name="FeatureRequestGetOneSoapOut">
+    <wsdl:part name="parameters" element="tns:FeatureRequestGetOneResponse" />
+  </wsdl:message>
+  <wsdl:message name="FeatureRequestSubmitChangesSoapIn">
+    <wsdl:part name="parameters" element="tns:FeatureRequestSubmitChanges" />
+  </wsdl:message>
+  <wsdl:message name="FeatureRequestSubmitChangesSoapOut">
+    <wsdl:part name="parameters" element="tns:FeatureRequestSubmitChangesResponse" />
+  </wsdl:message>
+  <wsdl:message name="FeatureRequestDiscussSubmitSoapIn">
+    <wsdl:part name="parameters" element="tns:FeatureRequestDiscussSubmit" />
+  </wsdl:message>
+  <wsdl:message name="FeatureRequestDiscussSubmitSoapOut">
+    <wsdl:part name="parameters" element="tns:FeatureRequestDiscussSubmitResponse" />
+  </wsdl:message>
+  <wsdl:message name="FeatureRequestDiscussGetListSoapIn">
+    <wsdl:part name="parameters" element="tns:FeatureRequestDiscussGetList" />
+  </wsdl:message>
+  <wsdl:message name="FeatureRequestDiscussGetListSoapOut">
+    <wsdl:part name="parameters" element="tns:FeatureRequestDiscussGetListResponse" />
+  </wsdl:message>
+  <wsdl:message name="RequestFeeSchedSoapIn">
+    <wsdl:part name="parameters" element="tns:RequestFeeSched" />
+  </wsdl:message>
+  <wsdl:message name="RequestFeeSchedSoapOut">
+    <wsdl:part name="parameters" element="tns:RequestFeeSchedResponse" />
+  </wsdl:message>
+  <wsdl:message name="PracticeTitleResetSoapIn">
+    <wsdl:part name="parameters" element="tns:PracticeTitleReset" />
+  </wsdl:message>
+  <wsdl:message name="PracticeTitleResetSoapOut">
+    <wsdl:part name="parameters" element="tns:PracticeTitleResetResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetErxAccessSoapIn">
+    <wsdl:part name="parameters" element="tns:GetErxAccess" />
+  </wsdl:message>
+  <wsdl:message name="GetErxAccessSoapOut">
+    <wsdl:part name="parameters" element="tns:GetErxAccessResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetClinicErxAccessSoapIn">
+    <wsdl:part name="parameters" element="tns:GetClinicErxAccess" />
+  </wsdl:message>
+  <wsdl:message name="GetClinicErxAccessSoapOut">
+    <wsdl:part name="parameters" element="tns:GetClinicErxAccessResponse" />
+  </wsdl:message>
+  <wsdl:message name="RequestPatientPortalURLSoapIn">
+    <wsdl:part name="parameters" element="tns:RequestPatientPortalURL" />
+  </wsdl:message>
+  <wsdl:message name="RequestPatientPortalURLSoapOut">
+    <wsdl:part name="parameters" element="tns:RequestPatientPortalURLResponse" />
+  </wsdl:message>
+  <wsdl:message name="ValidatePatientPortalOfficeSoapIn">
+    <wsdl:part name="parameters" element="tns:ValidatePatientPortalOffice" />
+  </wsdl:message>
+  <wsdl:message name="ValidatePatientPortalOfficeSoapOut">
+    <wsdl:part name="parameters" element="tns:ValidatePatientPortalOfficeResponse" />
+  </wsdl:message>
+  <wsdl:message name="ValidateWebSchedSoapIn">
+    <wsdl:part name="parameters" element="tns:ValidateWebSched" />
+  </wsdl:message>
+  <wsdl:message name="ValidateWebSchedSoapOut">
+    <wsdl:part name="parameters" element="tns:ValidateWebSchedResponse" />
+  </wsdl:message>
+  <wsdl:message name="ValidateWebSchedNewPatApptSoapIn">
+    <wsdl:part name="parameters" element="tns:ValidateWebSchedNewPatAppt" />
+  </wsdl:message>
+  <wsdl:message name="ValidateWebSchedNewPatApptSoapOut">
+    <wsdl:part name="parameters" element="tns:ValidateWebSchedNewPatApptResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetWebSchedURLsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetWebSchedURLs" />
+  </wsdl:message>
+  <wsdl:message name="GetWebSchedURLsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetWebSchedURLsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ValidateResellerCredentialsSoapIn">
+    <wsdl:part name="parameters" element="tns:ValidateResellerCredentials" />
+  </wsdl:message>
+  <wsdl:message name="ValidateResellerCredentialsSoapOut">
+    <wsdl:part name="parameters" element="tns:ValidateResellerCredentialsResponse" />
+  </wsdl:message>
+  <wsdl:message name="RequestIsDevKeySoapIn">
+    <wsdl:part name="parameters" element="tns:RequestIsDevKey" />
+  </wsdl:message>
+  <wsdl:message name="RequestIsDevKeySoapOut">
+    <wsdl:part name="parameters" element="tns:RequestIsDevKeyResponse" />
+  </wsdl:message>
+  <wsdl:portType name="Service1Soap">
+    <wsdl:operation name="EstablishConnection">
+      <wsdl:input message="tns:EstablishConnectionSoapIn" />
+      <wsdl:output message="tns:EstablishConnectionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestUpdate">
+      <wsdl:input message="tns:RequestUpdateSoapIn" />
+      <wsdl:output message="tns:RequestUpdateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestCustomerID">
+      <wsdl:input message="tns:RequestCustomerIDSoapIn" />
+      <wsdl:output message="tns:RequestCustomerIDSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestCustomerIDStrict">
+      <wsdl:input message="tns:RequestCustomerIDStrictSoapIn" />
+      <wsdl:output message="tns:RequestCustomerIDStrictSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestEmailVerificationCode">
+      <wsdl:input message="tns:RequestEmailVerificationCodeSoapIn" />
+      <wsdl:output message="tns:RequestEmailVerificationCodeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PostEmailCertificate">
+      <wsdl:input message="tns:PostEmailCertificateSoapIn" />
+      <wsdl:output message="tns:PostEmailCertificateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestCertCanadaABC">
+      <wsdl:input message="tns:RequestCertCanadaABCSoapIn" />
+      <wsdl:output message="tns:RequestCertCanadaABCSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestCertCanadaTelusAandB">
+      <wsdl:input message="tns:RequestCertCanadaTelusAandBSoapIn" />
+      <wsdl:output message="tns:RequestCertCanadaTelusAandBSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestCertCanadaTelusAandBtest">
+      <wsdl:input message="tns:RequestCertCanadaTelusAandBtestSoapIn" />
+      <wsdl:output message="tns:RequestCertCanadaTelusAandBtestSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsForeignRegKey">
+      <wsdl:input message="tns:IsForeignRegKeySoapIn" />
+      <wsdl:output message="tns:IsForeignRegKeySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestCodeSystems">
+      <wsdl:input message="tns:RequestCodeSystemsSoapIn" />
+      <wsdl:output message="tns:RequestCodeSystemsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestCodeSystemDownload">
+      <wsdl:input message="tns:RequestCodeSystemDownloadSoapIn" />
+      <wsdl:output message="tns:RequestCodeSystemDownloadSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="FeatureRequestGetList">
+      <wsdl:input message="tns:FeatureRequestGetListSoapIn" />
+      <wsdl:output message="tns:FeatureRequestGetListSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="FeatureRequestGetOne">
+      <wsdl:input message="tns:FeatureRequestGetOneSoapIn" />
+      <wsdl:output message="tns:FeatureRequestGetOneSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="FeatureRequestSubmitChanges">
+      <wsdl:input message="tns:FeatureRequestSubmitChangesSoapIn" />
+      <wsdl:output message="tns:FeatureRequestSubmitChangesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="FeatureRequestDiscussSubmit">
+      <wsdl:input message="tns:FeatureRequestDiscussSubmitSoapIn" />
+      <wsdl:output message="tns:FeatureRequestDiscussSubmitSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="FeatureRequestDiscussGetList">
+      <wsdl:input message="tns:FeatureRequestDiscussGetListSoapIn" />
+      <wsdl:output message="tns:FeatureRequestDiscussGetListSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestFeeSched">
+      <wsdl:input message="tns:RequestFeeSchedSoapIn" />
+      <wsdl:output message="tns:RequestFeeSchedSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PracticeTitleReset">
+      <wsdl:input message="tns:PracticeTitleResetSoapIn" />
+      <wsdl:output message="tns:PracticeTitleResetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetErxAccess">
+      <wsdl:input message="tns:GetErxAccessSoapIn" />
+      <wsdl:output message="tns:GetErxAccessSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetClinicErxAccess">
+      <wsdl:input message="tns:GetClinicErxAccessSoapIn" />
+      <wsdl:output message="tns:GetClinicErxAccessSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestPatientPortalURL">
+      <wsdl:input message="tns:RequestPatientPortalURLSoapIn" />
+      <wsdl:output message="tns:RequestPatientPortalURLSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ValidatePatientPortalOffice">
+      <wsdl:input message="tns:ValidatePatientPortalOfficeSoapIn" />
+      <wsdl:output message="tns:ValidatePatientPortalOfficeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ValidateWebSched">
+      <wsdl:input message="tns:ValidateWebSchedSoapIn" />
+      <wsdl:output message="tns:ValidateWebSchedSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ValidateWebSchedNewPatAppt">
+      <wsdl:input message="tns:ValidateWebSchedNewPatApptSoapIn" />
+      <wsdl:output message="tns:ValidateWebSchedNewPatApptSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetWebSchedURLs">
+      <wsdl:input message="tns:GetWebSchedURLsSoapIn" />
+      <wsdl:output message="tns:GetWebSchedURLsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ValidateResellerCredentials">
+      <wsdl:input message="tns:ValidateResellerCredentialsSoapIn" />
+      <wsdl:output message="tns:ValidateResellerCredentialsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RequestIsDevKey">
+      <wsdl:input message="tns:RequestIsDevKeySoapIn" />
+      <wsdl:output message="tns:RequestIsDevKeySoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="Service1Soap" type="tns:Service1Soap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="EstablishConnection">
+      <soap:operation soapAction="http://open-dent.com/EstablishConnection" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestUpdate">
+      <soap:operation soapAction="http://open-dent.com/RequestUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestCustomerID">
+      <soap:operation soapAction="http://open-dent.com/RequestCustomerID" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestCustomerIDStrict">
+      <soap:operation soapAction="http://open-dent.com/RequestCustomerIDStrict" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestEmailVerificationCode">
+      <soap:operation soapAction="http://open-dent.com/RequestEmailVerificationCode" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PostEmailCertificate">
+      <soap:operation soapAction="http://open-dent.com/PostEmailCertificate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestCertCanadaABC">
+      <soap:operation soapAction="http://open-dent.com/RequestCertCanadaABC" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestCertCanadaTelusAandB">
+      <soap:operation soapAction="http://open-dent.com/RequestCertCanadaTelusAandB" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestCertCanadaTelusAandBtest">
+      <soap:operation soapAction="http://open-dent.com/RequestCertCanadaTelusAandBtest" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsForeignRegKey">
+      <soap:operation soapAction="http://open-dent.com/IsForeignRegKey" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestCodeSystems">
+      <soap:operation soapAction="http://open-dent.com/RequestCodeSystems" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestCodeSystemDownload">
+      <soap:operation soapAction="http://open-dent.com/RequestCodeSystemDownload" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FeatureRequestGetList">
+      <soap:operation soapAction="http://open-dent.com/FeatureRequestGetList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FeatureRequestGetOne">
+      <soap:operation soapAction="http://open-dent.com/FeatureRequestGetOne" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FeatureRequestSubmitChanges">
+      <soap:operation soapAction="http://open-dent.com/FeatureRequestSubmitChanges" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FeatureRequestDiscussSubmit">
+      <soap:operation soapAction="http://open-dent.com/FeatureRequestDiscussSubmit" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FeatureRequestDiscussGetList">
+      <soap:operation soapAction="http://open-dent.com/FeatureRequestDiscussGetList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestFeeSched">
+      <soap:operation soapAction="http://open-dent.com/RequestFeeSched" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PracticeTitleReset">
+      <soap:operation soapAction="http://open-dent.com/PracticeTitleReset" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetErxAccess">
+      <soap:operation soapAction="http://open-dent.com/GetErxAccess" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetClinicErxAccess">
+      <soap:operation soapAction="http://open-dent.com/GetClinicErxAccess" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestPatientPortalURL">
+      <soap:operation soapAction="http://open-dent.com/RequestPatientPortalURL" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidatePatientPortalOffice">
+      <soap:operation soapAction="http://open-dent.com/ValidatePatientPortalOffice" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateWebSched">
+      <soap:operation soapAction="http://open-dent.com/ValidateWebSched" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateWebSchedNewPatAppt">
+      <soap:operation soapAction="http://open-dent.com/ValidateWebSchedNewPatAppt" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetWebSchedURLs">
+      <soap:operation soapAction="http://open-dent.com/GetWebSchedURLs" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateResellerCredentials">
+      <soap:operation soapAction="http://open-dent.com/ValidateResellerCredentials" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestIsDevKey">
+      <soap:operation soapAction="http://open-dent.com/RequestIsDevKey" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="Service1Soap12" type="tns:Service1Soap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="EstablishConnection">
+      <soap12:operation soapAction="http://open-dent.com/EstablishConnection" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestUpdate">
+      <soap12:operation soapAction="http://open-dent.com/RequestUpdate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestCustomerID">
+      <soap12:operation soapAction="http://open-dent.com/RequestCustomerID" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestCustomerIDStrict">
+      <soap12:operation soapAction="http://open-dent.com/RequestCustomerIDStrict" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestEmailVerificationCode">
+      <soap12:operation soapAction="http://open-dent.com/RequestEmailVerificationCode" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PostEmailCertificate">
+      <soap12:operation soapAction="http://open-dent.com/PostEmailCertificate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestCertCanadaABC">
+      <soap12:operation soapAction="http://open-dent.com/RequestCertCanadaABC" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestCertCanadaTelusAandB">
+      <soap12:operation soapAction="http://open-dent.com/RequestCertCanadaTelusAandB" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestCertCanadaTelusAandBtest">
+      <soap12:operation soapAction="http://open-dent.com/RequestCertCanadaTelusAandBtest" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsForeignRegKey">
+      <soap12:operation soapAction="http://open-dent.com/IsForeignRegKey" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestCodeSystems">
+      <soap12:operation soapAction="http://open-dent.com/RequestCodeSystems" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestCodeSystemDownload">
+      <soap12:operation soapAction="http://open-dent.com/RequestCodeSystemDownload" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FeatureRequestGetList">
+      <soap12:operation soapAction="http://open-dent.com/FeatureRequestGetList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FeatureRequestGetOne">
+      <soap12:operation soapAction="http://open-dent.com/FeatureRequestGetOne" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FeatureRequestSubmitChanges">
+      <soap12:operation soapAction="http://open-dent.com/FeatureRequestSubmitChanges" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FeatureRequestDiscussSubmit">
+      <soap12:operation soapAction="http://open-dent.com/FeatureRequestDiscussSubmit" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FeatureRequestDiscussGetList">
+      <soap12:operation soapAction="http://open-dent.com/FeatureRequestDiscussGetList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestFeeSched">
+      <soap12:operation soapAction="http://open-dent.com/RequestFeeSched" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PracticeTitleReset">
+      <soap12:operation soapAction="http://open-dent.com/PracticeTitleReset" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetErxAccess">
+      <soap12:operation soapAction="http://open-dent.com/GetErxAccess" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetClinicErxAccess">
+      <soap12:operation soapAction="http://open-dent.com/GetClinicErxAccess" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestPatientPortalURL">
+      <soap12:operation soapAction="http://open-dent.com/RequestPatientPortalURL" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidatePatientPortalOffice">
+      <soap12:operation soapAction="http://open-dent.com/ValidatePatientPortalOffice" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateWebSched">
+      <soap12:operation soapAction="http://open-dent.com/ValidateWebSched" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateWebSchedNewPatAppt">
+      <soap12:operation soapAction="http://open-dent.com/ValidateWebSchedNewPatAppt" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetWebSchedURLs">
+      <soap12:operation soapAction="http://open-dent.com/GetWebSchedURLs" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateResellerCredentials">
+      <soap12:operation soapAction="http://open-dent.com/ValidateResellerCredentials" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestIsDevKey">
+      <soap12:operation soapAction="http://open-dent.com/RequestIsDevKey" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Service1">
+    <wsdl:port name="Service1Soap" binding="tns:Service1Soap">
+      <soap:address location="http://50.201.161.44:1942/WebServiceCustomerUpdates/Service1.asmx" />
+    </wsdl:port>
+    <wsdl:port name="Service1Soap12" binding="tns:Service1Soap12">
+      <soap12:address location="http://50.201.161.44:1942/WebServiceCustomerUpdates/Service1.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

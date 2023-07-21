@@ -1,0 +1,2165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ClaimForm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <IsNew>false</IsNew>
+  <ClaimFormNum>0</ClaimFormNum>
+  <Description>UB04</Description>
+  <IsHidden>false</IsHidden>
+  <FontName>Tahoma</FontName>
+  <FontSize>9.75</FontSize>
+  <UniqueID>OD10</UniqueID>
+  <PrintImages>false</PrintImages>
+  <OffsetX>0</OffsetX>
+  <OffsetY>0</OffsetY>
+  <Width>850</Width>
+  <Height>1100</Height>
+  <Items>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2535</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName>UB04.jpg</ImageFileName>
+      <FieldName />
+      <FormatString />
+      <XPos>4</XPos>
+      <YPos>5</YPos>
+      <Width>860</Width>
+      <Height>1120</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2536</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>AccidentDate</FieldName>
+      <FormatString>MMddyyyy</FormatString>
+      <XPos>45</XPos>
+      <YPos>164</YPos>
+      <Width>68</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2537</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>AccidentST</FieldName>
+      <FormatString />
+      <XPos>675</XPos>
+      <YPos>130</YPos>
+      <Width>30</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2538</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>BillingDentist</FieldName>
+      <FormatString />
+      <XPos>24</XPos>
+      <YPos>14</YPos>
+      <Width>239</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2539</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>PayToDentistAddress</FieldName>
+      <FormatString />
+      <XPos>24</XPos>
+      <YPos>30</YPos>
+      <Width>239</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2540</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>PayToDentistAddress2</FieldName>
+      <FormatString />
+      <XPos>24</XPos>
+      <YPos>46</YPos>
+      <Width>239</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2541</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>PayToDentistCity</FieldName>
+      <FormatString />
+      <XPos>24</XPos>
+      <YPos>63</YPos>
+      <Width>113</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2542</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>BillingDentistNPI</FieldName>
+      <FormatString />
+      <XPos>682</XPos>
+      <YPos>682</YPos>
+      <Width>151</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2543</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>BillingDentistSSNorTIN</FieldName>
+      <FormatString />
+      <XPos>515</XPos>
+      <YPos>64</YPos>
+      <Width>98</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2544</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>PayToDentistST</FieldName>
+      <FormatString />
+      <XPos>145</XPos>
+      <YPos>63</YPos>
+      <Width>30</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2545</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>PayToDentistZip</FieldName>
+      <FormatString />
+      <XPos>183</XPos>
+      <YPos>63</YPos>
+      <Width>80</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2546</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>DateService</FieldName>
+      <FormatString>MMddyy</FormatString>
+      <XPos>685</XPos>
+      <YPos>64</YPos>
+      <Width>68</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2547</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>DateService</FieldName>
+      <FormatString>MMddyyyy</FormatString>
+      <XPos>132</XPos>
+      <YPos>130</YPos>
+      <Width>66</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2548</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>DateService</FieldName>
+      <FormatString>MMddyy</FormatString>
+      <XPos>615</XPos>
+      <YPos>64</YPos>
+      <Width>68</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2549</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>DateService</FieldName>
+      <FormatString>MMddyyyy</FormatString>
+      <XPos>460</XPos>
+      <YPos>666</YPos>
+      <Width>68</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2550</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>Diagnosis1</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>26</XPos>
+      <YPos>880</YPos>
+      <Width>78</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2551</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>Diagnosis2</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>105</XPos>
+      <YPos>881</YPos>
+      <Width>78</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2552</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>Diagnosis3</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>185</XPos>
+      <YPos>881</YPos>
+      <Width>78</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2553</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>Diagnosis4</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>265</XPos>
+      <YPos>881</YPos>
+      <Width>78</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2554</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>FixedText</FieldName>
+      <FormatString>1</FormatString>
+      <XPos>116</XPos>
+      <YPos>663</YPos>
+      <Width>10</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2555</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>FixedText</FieldName>
+      <FormatString>1</FormatString>
+      <XPos>172</XPos>
+      <YPos>663</YPos>
+      <Width>10</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2556</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>FixedText</FieldName>
+      <FormatString>0001</FormatString>
+      <XPos>15</XPos>
+      <YPos>664</YPos>
+      <Width>46</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2557</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>FixedText</FieldName>
+      <FormatString>9</FormatString>
+      <XPos>13</XPos>
+      <YPos>897</YPos>
+      <Width>9</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2558</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedAccidentCode</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>164</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2559</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedAdmissionSourceCode</FieldName>
+      <FormatString />
+      <XPos>255</XPos>
+      <YPos>130</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2560</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedAdmissionTypeCode</FieldName>
+      <FormatString />
+      <XPos>225</XPos>
+      <YPos>130</YPos>
+      <Width>27</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2561</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedConditionCode18</FieldName>
+      <FormatString />
+      <XPos>345</XPos>
+      <YPos>130</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2562</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedConditionCode19</FieldName>
+      <FormatString />
+      <XPos>375</XPos>
+      <YPos>130</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2563</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedConditionCode20</FieldName>
+      <FormatString />
+      <XPos>405</XPos>
+      <YPos>130</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2564</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedConditionCode21</FieldName>
+      <FormatString />
+      <XPos>435</XPos>
+      <YPos>130</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2565</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedConditionCode22</FieldName>
+      <FormatString />
+      <XPos>465</XPos>
+      <YPos>130</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2566</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedConditionCode23</FieldName>
+      <FormatString />
+      <XPos>495</XPos>
+      <YPos>130</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2567</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedConditionCode24</FieldName>
+      <FormatString />
+      <XPos>525</XPos>
+      <YPos>130</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2568</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedConditionCode25</FieldName>
+      <FormatString />
+      <XPos>555</XPos>
+      <YPos>130</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2569</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedConditionCode26</FieldName>
+      <FormatString />
+      <XPos>585</XPos>
+      <YPos>130</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2570</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedConditionCode27</FieldName>
+      <FormatString />
+      <XPos>615</XPos>
+      <YPos>130</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2571</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedConditionCode28</FieldName>
+      <FormatString />
+      <XPos>645</XPos>
+      <YPos>130</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2572</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsAAmtDue</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>654</XPos>
+      <YPos>697</YPos>
+      <Width>110</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2573</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsAAssignBen</FieldName>
+      <FormatString />
+      <XPos>425</XPos>
+      <YPos>697</YPos>
+      <Width>18</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2574</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsAAuthCode</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>831</YPos>
+      <Width>308</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2575</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsAEmployer</FieldName>
+      <FormatString />
+      <XPos>584</XPos>
+      <YPos>831</YPos>
+      <Width>249</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2576</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsAGroupName</FieldName>
+      <FormatString />
+      <XPos>504</XPos>
+      <YPos>764</YPos>
+      <Width>148</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2577</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsAGroupNum</FieldName>
+      <FormatString />
+      <XPos>654</XPos>
+      <YPos>764</YPos>
+      <Width>179</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2578</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsAInsuredID</FieldName>
+      <FormatString />
+      <XPos>303</XPos>
+      <YPos>764</YPos>
+      <Width>199</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2579</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsAInsuredName</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>764</YPos>
+      <Width>257</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2580</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsAName</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>697</YPos>
+      <Width>228</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2581</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsAOtherProvID</FieldName>
+      <FormatString />
+      <XPos>682</XPos>
+      <YPos>698</YPos>
+      <Width>151</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2582</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsAPlanID</FieldName>
+      <FormatString />
+      <XPos>244</XPos>
+      <YPos>697</YPos>
+      <Width>148</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2583</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsAPriorPmt</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>544</XPos>
+      <YPos>697</YPos>
+      <Width>101</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2584</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsARelation</FieldName>
+      <FormatString />
+      <XPos>274</XPos>
+      <YPos>764</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2585</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsARelInfo</FieldName>
+      <FormatString />
+      <XPos>394</XPos>
+      <YPos>697</YPos>
+      <Width>18</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2586</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsBAmtDue</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>654</XPos>
+      <YPos>714</YPos>
+      <Width>110</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2587</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsBAssignBen</FieldName>
+      <FormatString />
+      <XPos>425</XPos>
+      <YPos>714</YPos>
+      <Width>18</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2588</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsBAuthCode</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>848</YPos>
+      <Width>308</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2589</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsBEmployer</FieldName>
+      <FormatString />
+      <XPos>584</XPos>
+      <YPos>848</YPos>
+      <Width>249</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2590</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsBGroupName</FieldName>
+      <FormatString />
+      <XPos>504</XPos>
+      <YPos>781</YPos>
+      <Width>148</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2591</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsBGroupNum</FieldName>
+      <FormatString />
+      <XPos>654</XPos>
+      <YPos>781</YPos>
+      <Width>179</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2592</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsBInsuredID</FieldName>
+      <FormatString />
+      <XPos>303</XPos>
+      <YPos>781</YPos>
+      <Width>199</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2593</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsBInsuredName</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>781</YPos>
+      <Width>257</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2594</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsBName</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>714</YPos>
+      <Width>228</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2595</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsBOtherProvID</FieldName>
+      <FormatString />
+      <XPos>682</XPos>
+      <YPos>715</YPos>
+      <Width>151</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2596</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsBPlanID</FieldName>
+      <FormatString />
+      <XPos>244</XPos>
+      <YPos>714</YPos>
+      <Width>148</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2597</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsBPriorPmt</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>544</XPos>
+      <YPos>714</YPos>
+      <Width>101</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2598</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsBRelation</FieldName>
+      <FormatString />
+      <XPos>274</XPos>
+      <YPos>781</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2599</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsBRelInfo</FieldName>
+      <FormatString />
+      <XPos>394</XPos>
+      <YPos>714</YPos>
+      <Width>18</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2600</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsCAmtDue</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>654</XPos>
+      <YPos>732</YPos>
+      <Width>110</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2601</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsCAssignBen</FieldName>
+      <FormatString />
+      <XPos>425</XPos>
+      <YPos>732</YPos>
+      <Width>18</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2602</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsCAuthCode</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>864</YPos>
+      <Width>308</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2603</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsCEmployer</FieldName>
+      <FormatString />
+      <XPos>584</XPos>
+      <YPos>864</YPos>
+      <Width>249</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2604</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsCGroupName</FieldName>
+      <FormatString />
+      <XPos>504</XPos>
+      <YPos>798</YPos>
+      <Width>148</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2605</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsCGroupNum</FieldName>
+      <FormatString />
+      <XPos>654</XPos>
+      <YPos>798</YPos>
+      <Width>179</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2606</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsCInsuredID</FieldName>
+      <FormatString />
+      <XPos>303</XPos>
+      <YPos>798</YPos>
+      <Width>199</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2607</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsCInsuredName</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>798</YPos>
+      <Width>257</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2608</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsCName</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>732</YPos>
+      <Width>228</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2609</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsCOtherProvID</FieldName>
+      <FormatString />
+      <XPos>682</XPos>
+      <YPos>733</YPos>
+      <Width>151</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2610</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsCPlanID</FieldName>
+      <FormatString />
+      <XPos>244</XPos>
+      <YPos>732</YPos>
+      <Width>148</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2611</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsCPriorPmt</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>544</XPos>
+      <YPos>732</YPos>
+      <Width>101</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2612</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsCRelation</FieldName>
+      <FormatString />
+      <XPos>274</XPos>
+      <YPos>798</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2613</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsCRelInfo</FieldName>
+      <FormatString />
+      <XPos>394</XPos>
+      <YPos>732</YPos>
+      <Width>18</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2614</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedInsCrossoverIndicator</FieldName>
+      <FormatString />
+      <XPos>776</XPos>
+      <YPos>53</YPos>
+      <Width>50</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2615</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedPatientStatusCode</FieldName>
+      <FormatString />
+      <XPos>315</XPos>
+      <YPos>130</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2616</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedUniformBillType</FieldName>
+      <FormatString />
+      <XPos>785</XPos>
+      <YPos>30</YPos>
+      <Width>49</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2617</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValAmount39a</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>574</XPos>
+      <YPos>216</YPos>
+      <Width>99</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2618</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValAmount39b</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>574</XPos>
+      <YPos>232</YPos>
+      <Width>99</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2619</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValAmount39c</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>574</XPos>
+      <YPos>249</YPos>
+      <Width>99</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2620</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValAmount39d</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>574</XPos>
+      <YPos>265</YPos>
+      <Width>99</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2621</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValAmount40a</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>704</XPos>
+      <YPos>216</YPos>
+      <Width>99</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2622</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValAmount40b</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>704</XPos>
+      <YPos>232</YPos>
+      <Width>99</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2623</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValAmount40c</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>704</XPos>
+      <YPos>249</YPos>
+      <Width>99</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2624</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValAmount40d</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>704</XPos>
+      <YPos>265</YPos>
+      <Width>99</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2625</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValAmount41a</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>833</XPos>
+      <YPos>216</YPos>
+      <Width>99</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2626</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValAmount41b</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>833</XPos>
+      <YPos>232</YPos>
+      <Width>99</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2627</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValAmount41c</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>833</XPos>
+      <YPos>249</YPos>
+      <Width>99</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2628</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValAmount41d</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>833</XPos>
+      <YPos>265</YPos>
+      <Width>99</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2629</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValCode39a</FieldName>
+      <FormatString />
+      <XPos>445</XPos>
+      <YPos>216</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2630</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValCode39b</FieldName>
+      <FormatString />
+      <XPos>445</XPos>
+      <YPos>232</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2631</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValCode39c</FieldName>
+      <FormatString />
+      <XPos>445</XPos>
+      <YPos>249</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2632</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValCode39d</FieldName>
+      <FormatString />
+      <XPos>445</XPos>
+      <YPos>265</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2633</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValCode40a</FieldName>
+      <FormatString />
+      <XPos>575</XPos>
+      <YPos>216</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2634</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValCode40b</FieldName>
+      <FormatString />
+      <XPos>575</XPos>
+      <YPos>232</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2635</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValCode40c</FieldName>
+      <FormatString />
+      <XPos>575</XPos>
+      <YPos>249</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2636</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValCode40d</FieldName>
+      <FormatString />
+      <XPos>575</XPos>
+      <YPos>265</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2637</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValCode41a</FieldName>
+      <FormatString />
+      <XPos>705</XPos>
+      <YPos>216</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2638</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValCode41b</FieldName>
+      <FormatString />
+      <XPos>705</XPos>
+      <YPos>232</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2639</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValCode41c</FieldName>
+      <FormatString />
+      <XPos>705</XPos>
+      <YPos>249</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2640</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>MedValCode41d</FieldName>
+      <FormatString />
+      <XPos>705</XPos>
+      <YPos>265</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2641</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P10CodeAndMods</FieldName>
+      <FormatString />
+      <XPos>311</XPos>
+      <YPos>448</YPos>
+      <Width>148</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2642</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P10Date</FieldName>
+      <FormatString>MMddyyyy</FormatString>
+      <XPos>461</XPos>
+      <YPos>448</YPos>
+      <Width>68</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2643</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P10Description</FieldName>
+      <FormatString />
+      <XPos>62</XPos>
+      <YPos>448</YPos>
+      <Width>247</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2644</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P10Fee</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>704</XPos>
+      <YPos>448</YPos>
+      <Width>93</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2645</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P10RevCode</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>448</YPos>
+      <Width>45</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2646</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P10UnitQty</FieldName>
+      <FormatString />
+      <XPos>531</XPos>
+      <YPos>448</YPos>
+      <Width>77</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2647</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P1CodeAndMods</FieldName>
+      <FormatString />
+      <XPos>311</XPos>
+      <YPos>299</YPos>
+      <Width>148</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2648</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P1Date</FieldName>
+      <FormatString>MMddyyyy</FormatString>
+      <XPos>461</XPos>
+      <YPos>299</YPos>
+      <Width>68</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2649</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P1Description</FieldName>
+      <FormatString />
+      <XPos>62</XPos>
+      <YPos>299</YPos>
+      <Width>247</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2650</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P1Fee</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>704</XPos>
+      <YPos>299</YPos>
+      <Width>93</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2651</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P1RevCode</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>299</YPos>
+      <Width>45</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2652</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P1UnitQty</FieldName>
+      <FormatString />
+      <XPos>531</XPos>
+      <YPos>299</YPos>
+      <Width>77</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2653</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P2CodeAndMods</FieldName>
+      <FormatString />
+      <XPos>311</XPos>
+      <YPos>316</YPos>
+      <Width>148</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2654</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P2Date</FieldName>
+      <FormatString>MMddyyyy</FormatString>
+      <XPos>461</XPos>
+      <YPos>316</YPos>
+      <Width>68</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2655</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P2Description</FieldName>
+      <FormatString />
+      <XPos>62</XPos>
+      <YPos>316</YPos>
+      <Width>247</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2656</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P2Fee</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>704</XPos>
+      <YPos>316</YPos>
+      <Width>93</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2657</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P2RevCode</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>316</YPos>
+      <Width>45</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2658</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P2UnitQty</FieldName>
+      <FormatString />
+      <XPos>531</XPos>
+      <YPos>316</YPos>
+      <Width>77</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2659</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P3CodeAndMods</FieldName>
+      <FormatString />
+      <XPos>311</XPos>
+      <YPos>332</YPos>
+      <Width>148</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2660</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P3Date</FieldName>
+      <FormatString>MMddyyyy</FormatString>
+      <XPos>461</XPos>
+      <YPos>332</YPos>
+      <Width>68</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2661</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P3Description</FieldName>
+      <FormatString />
+      <XPos>62</XPos>
+      <YPos>332</YPos>
+      <Width>247</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2662</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P3Fee</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>704</XPos>
+      <YPos>332</YPos>
+      <Width>93</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2663</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P3RevCode</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>332</YPos>
+      <Width>45</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2664</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P3UnitQty</FieldName>
+      <FormatString />
+      <XPos>531</XPos>
+      <YPos>332</YPos>
+      <Width>77</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2665</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P4CodeAndMods</FieldName>
+      <FormatString />
+      <XPos>311</XPos>
+      <YPos>349</YPos>
+      <Width>148</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2666</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P4Date</FieldName>
+      <FormatString>MMddyyyy</FormatString>
+      <XPos>461</XPos>
+      <YPos>349</YPos>
+      <Width>68</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2667</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P4Description</FieldName>
+      <FormatString />
+      <XPos>62</XPos>
+      <YPos>349</YPos>
+      <Width>247</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2668</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P4Fee</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>704</XPos>
+      <YPos>349</YPos>
+      <Width>93</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2669</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P4RevCode</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>349</YPos>
+      <Width>45</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2670</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P4UnitQty</FieldName>
+      <FormatString />
+      <XPos>531</XPos>
+      <YPos>349</YPos>
+      <Width>77</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2671</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P5CodeAndMods</FieldName>
+      <FormatString />
+      <XPos>311</XPos>
+      <YPos>365</YPos>
+      <Width>148</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2672</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P5Date</FieldName>
+      <FormatString>MMddyyyy</FormatString>
+      <XPos>461</XPos>
+      <YPos>365</YPos>
+      <Width>68</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2673</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P5Description</FieldName>
+      <FormatString />
+      <XPos>62</XPos>
+      <YPos>365</YPos>
+      <Width>247</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2674</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P5Fee</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>704</XPos>
+      <YPos>365</YPos>
+      <Width>93</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2675</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P5RevCode</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>365</YPos>
+      <Width>45</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2676</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P5UnitQty</FieldName>
+      <FormatString />
+      <XPos>531</XPos>
+      <YPos>365</YPos>
+      <Width>77</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2677</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P6CodeAndMods</FieldName>
+      <FormatString />
+      <XPos>311</XPos>
+      <YPos>382</YPos>
+      <Width>148</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2678</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P6Date</FieldName>
+      <FormatString>MMddyyyy</FormatString>
+      <XPos>461</XPos>
+      <YPos>382</YPos>
+      <Width>68</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2679</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P6Description</FieldName>
+      <FormatString />
+      <XPos>62</XPos>
+      <YPos>382</YPos>
+      <Width>247</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2680</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P6Fee</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>704</XPos>
+      <YPos>382</YPos>
+      <Width>93</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2681</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P6RevCode</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>382</YPos>
+      <Width>45</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2682</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P6UnitQty</FieldName>
+      <FormatString />
+      <XPos>531</XPos>
+      <YPos>382</YPos>
+      <Width>77</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2683</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P7CodeAndMods</FieldName>
+      <FormatString />
+      <XPos>311</XPos>
+      <YPos>398</YPos>
+      <Width>148</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2684</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P7Date</FieldName>
+      <FormatString>MMddyyyy</FormatString>
+      <XPos>461</XPos>
+      <YPos>398</YPos>
+      <Width>68</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2685</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P7Description</FieldName>
+      <FormatString />
+      <XPos>62</XPos>
+      <YPos>398</YPos>
+      <Width>247</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2686</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P7Fee</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>704</XPos>
+      <YPos>398</YPos>
+      <Width>93</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2687</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P7RevCode</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>398</YPos>
+      <Width>45</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2688</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P7UnitQty</FieldName>
+      <FormatString />
+      <XPos>531</XPos>
+      <YPos>398</YPos>
+      <Width>77</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2689</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P8CodeAndMods</FieldName>
+      <FormatString />
+      <XPos>311</XPos>
+      <YPos>415</YPos>
+      <Width>148</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2690</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P8Date</FieldName>
+      <FormatString>MMddyyyy</FormatString>
+      <XPos>461</XPos>
+      <YPos>415</YPos>
+      <Width>68</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2691</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P8Description</FieldName>
+      <FormatString />
+      <XPos>62</XPos>
+      <YPos>415</YPos>
+      <Width>247</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2692</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P8Fee</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>704</XPos>
+      <YPos>415</YPos>
+      <Width>93</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2693</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P8RevCode</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>415</YPos>
+      <Width>45</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2694</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P8UnitQty</FieldName>
+      <FormatString />
+      <XPos>531</XPos>
+      <YPos>415</YPos>
+      <Width>77</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2695</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P9CodeAndMods</FieldName>
+      <FormatString />
+      <XPos>311</XPos>
+      <YPos>431</YPos>
+      <Width>148</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2696</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P9Date</FieldName>
+      <FormatString>MMddyyyy</FormatString>
+      <XPos>461</XPos>
+      <YPos>431</YPos>
+      <Width>68</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2697</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P9Description</FieldName>
+      <FormatString />
+      <XPos>62</XPos>
+      <YPos>431</YPos>
+      <Width>247</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2698</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P9Fee</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>704</XPos>
+      <YPos>431</YPos>
+      <Width>93</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2699</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P9RevCode</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>431</YPos>
+      <Width>45</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2700</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>P9UnitQty</FieldName>
+      <FormatString />
+      <XPos>531</XPos>
+      <YPos>431</YPos>
+      <Width>77</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2701</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>PatientAddress</FieldName>
+      <FormatString />
+      <XPos>426</XPos>
+      <YPos>80</YPos>
+      <Width>409</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2702</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>PatientChartNum</FieldName>
+      <FormatString />
+      <XPos>545</XPos>
+      <YPos>14</YPos>
+      <Width>238</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2703</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>PatientCity</FieldName>
+      <FormatString />
+      <XPos>325</XPos>
+      <YPos>97</YPos>
+      <Width>319</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2704</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>PatientDOB</FieldName>
+      <FormatString>MMddyyyy</FormatString>
+      <XPos>15</XPos>
+      <YPos>130</YPos>
+      <Width>88</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2705</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>PatientFirstMiddleLast</FieldName>
+      <FormatString />
+      <XPos>26</XPos>
+      <YPos>97</YPos>
+      <Width>287</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2706</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>PatientGenderLetter</FieldName>
+      <FormatString />
+      <XPos>105</XPos>
+      <YPos>130</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2707</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>PatientST</FieldName>
+      <FormatString />
+      <XPos>655</XPos>
+      <YPos>97</YPos>
+      <Width>28</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2708</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>PatientZip</FieldName>
+      <FormatString />
+      <XPos>695</XPos>
+      <YPos>97</YPos>
+      <Width>98</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2709</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>Remarks</FieldName>
+      <FormatString />
+      <XPos>15</XPos>
+      <YPos>1014</YPos>
+      <Width>238</Width>
+      <Height>50</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2710</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>TotalFee</FieldName>
+      <FormatString>NoDec</FormatString>
+      <XPos>704</XPos>
+      <YPos>666</YPos>
+      <Width>94</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2711</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>TreatingDentistFName</FieldName>
+      <FormatString />
+      <XPos>715</XPos>
+      <YPos>982</YPos>
+      <Width>118</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2712</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>TreatingDentistLName</FieldName>
+      <FormatString />
+      <XPos>538</XPos>
+      <YPos>982</YPos>
+      <Width>155</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+    <ClaimFormItem>
+      <IsNew>false</IsNew>
+      <ClaimFormItemNum>2713</ClaimFormItemNum>
+      <ClaimFormNum>0</ClaimFormNum>
+      <ImageFileName />
+      <FieldName>TreatingDentistNPI</FieldName>
+      <FormatString />
+      <XPos>600</XPos>
+      <YPos>966</YPos>
+      <Width>100</Width>
+      <Height>17</Height>
+    </ClaimFormItem>
+  </Items>
+</ClaimForm>
